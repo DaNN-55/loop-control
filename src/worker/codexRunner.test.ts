@@ -125,6 +125,31 @@ describe("本地 Codex Worker runner", () => {
     }));
   });
 
+  it("把冻结的分层 Prompt 上下文传给 Codex Worker", async () => {
+    const execute = vi.fn().mockResolvedValue(JSON.stringify({
+      version: "worker-result/v1",
+      taskId: "task-1",
+      status: "completed",
+      artifacts: [],
+      validation: { passed: true, checks: [] },
+      actualCostCents: 0,
+      blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." },
+      nextStep: "Submit the visual package for Owner review.",
+    }));
+
+    await runCodexWorker({
+      claimNextTask: async () => ({ ...claimedTask, inputSnapshot: { ...claimedTask.inputSnapshot, prompt_context: { version: "prompt-context/v1", blueprint_version_id: "blueprint-1", series_version_id: "series-version-3", account_hard_constraints: { restrictions: ["不得承诺医疗效果"] }, account_defaults: { positioning: "民俗短视频" }, series_baseline: { version_id: "series-version-3", version: 3, rules: { visual_style: "写实雨夜" } }, episode_input: { commission: { creative_direction: "克制", core_content: "人物选择" } }, review_feedback: { reason: "补充人物动机" }, hash: "context-hash-1" } } }),
+      reportResult: vi.fn().mockResolvedValue(undefined),
+      execute,
+      verifyAssetRoot: async () => undefined,
+      verifyArtifacts: async () => undefined,
+      actualCostCents: 0,
+    });
+
+    expect(execute).toHaveBeenCalledWith(expect.objectContaining({ promptContext: expect.objectContaining({ version: "prompt-context/v1", blueprintVersionId: "blueprint-1", seriesVersionId: "series-version-3", hash: "context-hash-1" }) }));
+  });
+
   it("把逐镜头批注和已批准视觉依据冻结给分镜 Worker", async () => {
     const verifyArtifacts = vi.fn().mockResolvedValue(undefined);
     const execute = vi.fn().mockResolvedValue(JSON.stringify({

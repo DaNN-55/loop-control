@@ -66,6 +66,25 @@ describe("Worker 契约", () => {
     });
   });
 
+  it("把冻结的分层 Prompt 上下文原样交给 Worker", () => {
+    const taskPackage = createWorkerTaskPackage({
+      ...packageInput,
+      promptContext: {
+        version: "prompt-context/v1",
+        blueprintVersionId: "blueprint-3",
+        seriesVersionId: "series-version-3",
+        accountHardConstraints: { forbidden_topics: ["医疗承诺"] },
+        accountDefaults: { positioning: "民俗短视频" },
+        seriesBaseline: { visual_style: "写实雨夜" },
+        episodeInput: { commission: { creativeDirection: "克制", coreContent: "人物选择" } },
+        reviewFeedback: { reason: "补充人物动机" },
+        hash: "context-hash-1",
+      },
+    });
+
+    expect(taskPackage.promptContext).toMatchObject({ version: "prompt-context/v1", blueprintVersionId: "blueprint-3", seriesVersionId: "series-version-3", hash: "context-hash-1" });
+  });
+
   it("拒绝缺少资产根目录或预算已耗尽的任务包", () => {
     expect(() => createWorkerTaskPackage({ ...packageInput, allowedAssetRoot: "" })).toThrow("allowedAssetRoot");
     expect(() => createWorkerTaskPackage({ ...packageInput, task: { ...packageInput.task, attempt: 2 } })).toThrow("maxAttempts");

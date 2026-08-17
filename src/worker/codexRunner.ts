@@ -6,6 +6,7 @@ import {
   type WorkerResult,
   type WorkerTaskPackageInput,
   type WorkerTaskPackage,
+  type PromptContextSnapshot,
   validateWorkerResult,
 } from "./contracts.js";
 
@@ -99,6 +100,7 @@ function createTaskPackage(task: ClaimedWorkerTask): WorkerTaskPackage {
       title: task.title,
     },
     capability: requiredString(snapshot.capability, "任务缺少能力声明。"),
+    promptContext: promptContext(snapshot),
     commission: commission(snapshot),
     seriesBaseline: seriesBaseline(snapshot),
     reviewFeedback: reviewFeedback(snapshot),
@@ -112,6 +114,23 @@ function createTaskPackage(task: ClaimedWorkerTask): WorkerTaskPackage {
     output,
     inputArtifacts: inputArtifacts(snapshot),
   });
+}
+
+function promptContext(snapshot: Record<string, unknown>): WorkerTaskPackageInput["promptContext"] {
+  const value = snapshot.prompt_context;
+  if (value === undefined) return undefined;
+  if (!isRecord(value) || value.version !== "prompt-context/v1" || typeof value.blueprint_version_id !== "string" || typeof value.hash !== "string" || !isRecord(value.account_hard_constraints) || !isRecord(value.account_defaults) || !isRecord(value.episode_input)) throw new Error("任务 Prompt 上下文格式无效。");
+  return {
+    version: "prompt-context/v1",
+    blueprintVersionId: value.blueprint_version_id,
+    ...(typeof value.series_version_id === "string" ? { seriesVersionId: value.series_version_id } : {}),
+    accountHardConstraints: value.account_hard_constraints,
+    accountDefaults: value.account_defaults,
+    ...(value.series_baseline && isRecord(value.series_baseline) ? { seriesBaseline: value.series_baseline } : {}),
+    episodeInput: value.episode_input,
+    ...(value.review_feedback && isRecord(value.review_feedback) ? { reviewFeedback: value.review_feedback } : {}),
+    hash: value.hash,
+  } satisfies PromptContextSnapshot;
 }
 
 function finalRender(snapshot: Record<string, unknown>): WorkerTaskPackageInput["finalRender"] {

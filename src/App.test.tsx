@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { Database } from "./lib/database.types";
-import { App, EpisodeWorkspace, NavigationButtons, SeriesSettings, navigation, navigationBadgeCounts } from "./App";
+import { AccountWorkspace, App, EpisodeWorkspace, NavigationButtons, SeriesSettings, navigation, navigationBadgeCounts } from "./App";
 import { defaultBlueprintPolicy, parseBlueprintPolicy, withBlueprintAssetRoot } from "./platform/blueprintPolicy";
 
 vi.mock("./lib/supabase", () => ({
@@ -42,10 +42,26 @@ describe("approval console", () => {
     render(<SeriesSettings isPending={false} onCreate={onCreate} series={[]} seriesVersions={[]} />);
 
     fireEvent.change(screen.getByRole("textbox", { name: "系列名称" }), { target: { value: "越南道士" } });
+    fireEvent.change(screen.getByRole("textbox", { name: "系列定位" }), { target: { value: "雨夜民俗" } });
     fireEvent.change(screen.getByRole("textbox", { name: "系列规则" }), { target: { value: '{"tone":"calm"}' } });
     fireEvent.click(screen.getByRole("button", { name: "创建系列 v1" }));
 
-    await waitFor(() => expect(onCreate).toHaveBeenCalledWith({ name: "越南道士", rules: { tone: "calm" } }));
+    await waitFor(() => expect(onCreate).toHaveBeenCalledWith({ name: "越南道士", rules: { tone: "calm", positioning: "雨夜民俗" } }));
+  });
+
+  it("通过结构化表单编辑蓝图并保留高级规则", async () => {
+    const user = userEvent.setup();
+    const account = { created_at: "2026-08-15T00:00:00.000Z", current_blueprint_version_id: "blueprint-1", id: "account-1", name: "道工作室", slug: "dao-studio", timezone: "Asia/Shanghai" } as Database["public"]["Tables"]["accounts"]["Row"];
+    const blueprint = { account_id: account.id, created_at: "2026-08-15T00:00:00.000Z", id: "blueprint-1", is_active: true, policy: { positioning: "旧定位", asset_root: "/Volumes/Media/dao", approval_gates: ["script"], allowed_tools: ["read", "write"], budgets: { script_writing_cents: 0, visual_planning_cents: 0, storyboard_planning_cents: 0 }, executors: { script_writing: { provider: "codex", model: "model-a", prompt_version: "script-v1" }, visual_planning: { provider: "codex", model: "model-b", prompt_version: "visual-v1" }, storyboard_planning: { provider: "codex", model: "model-c", prompt_version: "storyboard-v1" } }, soundtrack: { budget_cents: 99 } }, version: 1 } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
+    const onCreateBlueprint = vi.fn().mockResolvedValue({ ...blueprint, id: "blueprint-2", version: 2, is_active: false });
+    render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onActivate={vi.fn()} onCreateBlueprint={onCreateBlueprint} onCreateSeries={vi.fn()} onSelectAccount={vi.fn()} series={[]} seriesVersions={[]} />);
+
+    await user.click(screen.getByRole("button", { name: "以此版本编辑" }));
+    await user.clear(screen.getByLabelText("账号定位"));
+    await user.type(screen.getByLabelText("账号定位"), "新定位");
+    await user.click(screen.getByRole("button", { name: "保存为新版本" }));
+
+    await waitFor(() => expect(onCreateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ positioning: "新定位", soundtrack: { budget_cents: 99 } })));
   });
 
   it("按日常工作流顺序显示导航，并为审核和发布显示待办数量", () => {

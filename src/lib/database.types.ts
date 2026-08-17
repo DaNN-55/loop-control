@@ -1017,6 +1017,24 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      create_series_version: {
+        Args: { p_rules: Json; p_series_id: string }
+        Returns: {
+          account_id: string
+          created_at: string
+          created_by: string
+          id: string
+          rules: Json
+          series_id: string
+          version: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "series_versions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       import_production_material: {
         Args: {
           p_episode_id: string

@@ -182,6 +182,47 @@ body { min-width: 0; }
   .episode-detail-drawer { width: min(480px, 56vw); }
 }
 
+.configuration-form { display: grid; gap: 16px; }
+.configuration-form header h2 { margin-bottom: 5px; }
+.configuration-form header p { color: #697386; font-size: 12px; line-height: 1.5; margin: 0; }
+.configuration-form fieldset { border: 1px solid #dce2eb; border-radius: 8px; display: grid; gap: 11px; margin: 0; padding: 14px; }
+.configuration-form legend { color: #303845; font-size: 12px; font-weight: 800; padding: 0 5px; }
+.configuration-form label { color: #303845; display: grid; font-size: 11px; font-weight: 750; gap: 7px; }
+.configuration-form input:not([type="checkbox"]), .configuration-form select, .configuration-form textarea { background: #fff; border: 1px solid #cfd5df; border-radius: 6px; color: #262c37; font: 400 13px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif; min-height: 38px; padding: 8px 10px; width: 100%; }
+.configuration-form textarea { resize: vertical; }
+.configuration-check-grid, .configuration-input-grid { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.configuration-input-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.configuration-check-grid > div { display: grid; gap: 8px; }
+.configuration-label { color: #697386; font-size: 10px; font-weight: 800; }
+.configuration-check { align-items: center; display: flex !important; font-size: 11px !important; font-weight: 600 !important; gap: 8px !important; grid-template-columns: auto 1fr; }
+.configuration-check input { min-height: 0; width: auto; }
+.executor-grid { display: grid; gap: 10px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.executor-card { background: #f8fafc; border: 1px solid #e1e6ee; border-radius: 7px; display: grid; gap: 9px; padding: 11px; }
+.executor-card h4 { color: #2f3a4a; font-size: 12px; margin: 0; }
+.executor-card label { font-size: 10px; }
+.executor-card input { min-height: 34px !important; }
+.advanced-configuration { border: 1px solid #dce2eb; border-radius: 8px; padding: 12px 14px; }
+.advanced-configuration summary { color: #3e4a5c; cursor: pointer; font-size: 12px; font-weight: 800; }
+.advanced-configuration[open] summary { margin-bottom: 12px; }
+.advanced-configuration pre { background: #f7f9fc; border: 1px solid #dce1e9; border-radius: 6px; max-height: 300px; overflow: auto; padding: 10px; white-space: pre-wrap; }
+.configuration-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.configuration-summary { display: grid; gap: 8px; margin: 0; }
+.configuration-summary > div { align-items: baseline; display: grid; gap: 10px; grid-template-columns: 75px minmax(0, 1fr); }
+.configuration-summary dt { color: #778191; font-size: 10px; font-weight: 800; }
+.configuration-summary dd { color: #354050; font-size: 12px; margin: 0; overflow-wrap: anywhere; }
+.series-settings .configuration-form { align-content: start; }
+.series-settings .blueprint-card .button { font-size: 11px; min-height: 32px; justify-self: start; padding: 0 10px; }
+.app-shell[data-theme="dark"] .configuration-form header p, .app-shell[data-theme="dark"] .configuration-form label, .app-shell[data-theme="dark"] .configuration-label { color: #aab5c5; }
+.app-shell[data-theme="dark"] .configuration-form fieldset, .app-shell[data-theme="dark"] .advanced-configuration { border-color: #394250; }
+.app-shell[data-theme="dark"] .configuration-form legend, .app-shell[data-theme="dark"] .advanced-configuration summary { color: #eef3fb; }
+.app-shell[data-theme="dark"] .configuration-form input:not([type="checkbox"]), .app-shell[data-theme="dark"] .configuration-form select, .app-shell[data-theme="dark"] .configuration-form textarea { background: #191e27; border-color: #394250; color: #eef3fb; }
+.app-shell[data-theme="dark"] .executor-card { background: #171c25; border-color: #344052; }
+.app-shell[data-theme="dark"] .executor-card h4, .app-shell[data-theme="dark"] .configuration-summary dd { color: #e3eaf5; }
+.app-shell[data-theme="dark"] .configuration-summary dt { color: #9aa7ba; }
+.app-shell[data-theme="dark"] .advanced-configuration pre { background: #10151d; border-color: #394250; color: #dce5f2; }
+@media (max-width: 900px) { .executor-grid { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .configuration-check-grid, .configuration-input-grid { grid-template-columns: 1fr; } .configuration-actions { display: grid; } .configuration-actions .button { width: 100%; } }
+
 .composition-adjustments { border: 1px solid #d9dee7; border-radius: 7px; display: grid; gap: 10px; margin: 0; padding: 12px; }
 .composition-adjustments legend { color: #303845; font-size: 12px; font-weight: 800; padding: 0 5px; }
 .composition-adjustments .muted-copy { margin: 0; }

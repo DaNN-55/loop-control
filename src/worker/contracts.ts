@@ -3,6 +3,18 @@ export const workerResultVersion = "worker-result/v1" as const;
 
 export type WorkerResultStatus = "completed" | "blocked" | "failed";
 
+export interface PromptContextSnapshot {
+  version: "prompt-context/v1";
+  blueprintVersionId: string;
+  seriesVersionId?: string;
+  accountHardConstraints: unknown;
+  accountDefaults: unknown;
+  seriesBaseline?: unknown;
+  episodeInput: unknown;
+  reviewFeedback?: unknown;
+  hash: string;
+}
+
 export interface ArtifactManifest {
   artifactType: string;
   relativePath: string;
@@ -62,6 +74,7 @@ export interface WorkerTaskPackageInput {
     title: string;
   };
   capability: string;
+  promptContext?: PromptContextSnapshot;
   commission?: {
     creativeDirection: string;
     coreContent: string;
@@ -155,6 +168,7 @@ export interface WorkerTaskPackage {
   model: string;
   promptVersion: string;
   capability: string;
+  promptContext?: PromptContextSnapshot;
   commission?: {
     creativeDirection: string;
     coreContent: string;
@@ -246,6 +260,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
   if (!input.task.model.trim() || !input.task.promptVersion.trim()) throw new Error("model and promptVersion are required.");
   if (!isNonEmptyString(input.task.type)) throw new Error("task type is required.");
   if (!isNonEmptyString(input.capability)) throw new Error("capability is required.");
+  if (input.promptContext && (!isNonEmptyString(input.promptContext.blueprintVersionId) || input.promptContext.version !== "prompt-context/v1" || !isNonEmptyString(input.promptContext.hash) || !isRecord(input.promptContext.accountHardConstraints) || !isRecord(input.promptContext.accountDefaults) || !isRecord(input.promptContext.episodeInput))) throw new Error("promptContext must contain a frozen version, hash, and context objects.");
   if (input.commission && (!isNonEmptyString(input.commission.creativeDirection) || !isNonEmptyString(input.commission.coreContent))) throw new Error("commission must contain creative direction and core content.");
   if (input.seriesBaseline && (!isNonEmptyString(input.seriesBaseline.versionId) || !Number.isInteger(input.seriesBaseline.version) || input.seriesBaseline.version < 1 || !isRecord(input.seriesBaseline.rules))) throw new Error("seriesBaseline must contain a version and rule object.");
   if (input.reviewFeedback && (!isNonEmptyString(input.reviewFeedback.reviewPackageId) || !isNonEmptyString(input.reviewFeedback.reason))) throw new Error("review feedback must contain its package and reason.");
@@ -322,6 +337,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     model: input.task.model,
     promptVersion: input.task.promptVersion,
     capability: input.capability,
+    ...(input.promptContext ? { promptContext: { ...input.promptContext } } : {}),
     ...(input.commission ? { commission: { creativeDirection: input.commission.creativeDirection, coreContent: input.commission.coreContent } } : {}),
     ...(input.seriesBaseline ? { seriesBaseline: { versionId: input.seriesBaseline.versionId, version: input.seriesBaseline.version, rules: input.seriesBaseline.rules } } : {}),
     ...(input.reviewFeedback ? { reviewFeedback: { reviewPackageId: input.reviewFeedback.reviewPackageId, reason: input.reviewFeedback.reason } } : {}),
