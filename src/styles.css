@@ -364,3 +364,21 @@ body { min-width: 0; }
   .sidebar .wordmark > img { display: block; margin: 0 auto; }
   .sidebar .wordmark::after { display: none; }
 }
+
+/* 详情页控件基线：标签可以加粗，控件内容保持统一的普通字重。 */
+.episode-detail-drawer input:not([type="checkbox"]), .episode-detail-drawer select, .episode-detail-drawer textarea { color: #262c37; font-family: inherit; font-size: 13px; font-weight: 400; line-height: 1.45; }
+.episode-detail-drawer .audio-annotation-form { align-items: end; grid-template-columns: minmax(0, 1.15fr) 88px minmax(0, 1.25fr); }
+.episode-detail-drawer .audio-annotation-form > button { grid-column: 1 / -1; justify-self: end; min-width: 160px; }
+.loading-indicator { align-items: center; color: #697386; display: inline-flex; font-size: 12px; gap: 9px; line-height: 1.45; }
+.loading-indicator-compact { font-size: 11px; }
+.loading-spinner { animation: detail-spinner 800ms linear infinite; border: 2px solid #cbd7e8; border-radius: 50%; border-top-color: #376fba; display: inline-block; height: 16px; width: 16px; }
+.loading-indicator-compact .loading-spinner { height: 13px; width: 13px; }
+@keyframes detail-spinner { to { transform: rotate(360deg); } }
+.audio-track-card .loading-indicator { min-height: 34px; }
+.app-shell[data-theme="dark"] .episode-detail-drawer input:not([type="checkbox"]), .app-shell[data-theme="dark"] .episode-detail-drawer select, .app-shell[data-theme="dark"] .episode-detail-drawer textarea { color: #eef3fb; }
+.app-shell[data-theme="dark"] .loading-indicator { color: #aab5c5; }
+.app-shell[data-theme="dark"] .loading-spinner { border-color: #3a4b63; border-top-color: #9bc2ff; }
+@media (max-width: 640px) {
+  .episode-detail-drawer .audio-annotation-form { grid-template-columns: 1fr; }
+  .episode-detail-drawer .audio-annotation-form > button { grid-column: auto; justify-self: stretch; }
+}
