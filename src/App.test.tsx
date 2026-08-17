@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { Database } from "./lib/database.types";
-import { App, EpisodeWorkspace, SeriesSettings, navigation, navigationBadgeCounts } from "./App";
+import { App, EpisodeWorkspace, NavigationButtons, SeriesSettings, navigation, navigationBadgeCounts } from "./App";
 import { defaultBlueprintPolicy, parseBlueprintPolicy, withBlueprintAssetRoot } from "./platform/blueprintPolicy";
 
 vi.mock("./lib/supabase", () => ({
@@ -52,6 +52,13 @@ describe("approval console", () => {
     expect(navigation.map((item) => item.label)).toEqual(["系列运营", "生产单", "审核", "发布队列", "复盘", "账号"]);
     const episode = { account_id: "account-1", blueprint_version_id: "blueprint-1", created_at: "2026-08-15T00:00:00.000Z", id: "episode-1", stage: "script_review", title: "待审核", updated_at: "2026-08-15T00:00:00.000Z" } as Database["public"]["Tables"]["episodes"]["Row"];
     expect(navigationBadgeCounts([episode], [], [])).toEqual({ reviews: 1, publish: 0 });
+  });
+
+  it("收起态导航仍保留审核和发布角标节点", () => {
+    render(<NavigationButtons activeNavigation="reviews" badges={{ reviews: 2, publish: 1 }} onSelect={vi.fn()} />);
+
+    expect(screen.getByLabelText("2 个待处理")).toBeTruthy();
+    expect(screen.getByLabelText("1 个待处理")).toBeTruthy();
   });
 
   it("只显示当前筛选的生产单，并用分页控制长列表", async () => {

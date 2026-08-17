@@ -213,6 +213,7 @@ describe("审核台", () => {
 
     expect(await screen.findByLabelText("narration 音轨")).toBeTruthy();
     expect(fetch).toHaveBeenCalledWith(`/_local-artifact?episode=episode-review&path=episodes%2Fepisode-review%2Faudio%2Fnarration.mp3&sha256=${"a".repeat(64)}`, { headers: { Authorization: "Bearer owner-token" } });
+    expect(screen.getByLabelText("narration 音轨").closest(".audio-track-card")).toBeTruthy();
     expect(screen.getByLabelText("音轨时间点").getAttribute("min")).toBe("2");
     expect(screen.getByLabelText("音轨时间点").getAttribute("max")).toBe("10");
     await user.clear(screen.getByLabelText("音轨时间点"));
@@ -339,6 +340,8 @@ describe("审核台", () => {
     const waitingEpisode: Episode = { ...reviewEpisode, id: "episode-waiting", stage: "waiting_input", title: "等待脚本委托" };
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={waitingEpisode} isDirectoryPending={false} isTransitionPending={false} onCommissionScript={onCommissionScript} onCreateLocalDirectory={vi.fn()} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
+
+    expect(screen.getByRole("heading", { name: "委托生成脚本" }).closest("form")?.className).toContain("script-commission");
 
     await user.type(screen.getByLabelText("创作方向"), "雨夜民俗悬疑，节奏克制。 ");
     await user.type(screen.getByLabelText("必须表达的核心内容"), "仪式感与人物抉择。 ");
