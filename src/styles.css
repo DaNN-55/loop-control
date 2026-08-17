@@ -366,7 +366,10 @@ body { min-width: 0; }
 }
 
 /* 详情页控件基线：标签可以加粗，控件内容保持统一的普通字重。 */
-.episode-detail-drawer input:not([type="checkbox"]), .episode-detail-drawer select, .episode-detail-drawer textarea { color: #262c37; font-family: inherit; font-size: 13px; font-weight: 400; line-height: 1.45; }
+.episode-detail-drawer input:not([type="checkbox"]), .episode-detail-drawer select, .episode-detail-drawer textarea { background: #fff; border: 1px solid #cfd5df; border-radius: 6px; color: #262c37; font-family: inherit; font-size: 13px; font-weight: 400; line-height: 1.45; min-height: 38px; padding: 8px 10px; width: 100%; }
+.episode-detail-drawer select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24' stroke='%23636b78' stroke-width='1.8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-position: right 10px center; background-repeat: no-repeat; padding-right: 36px; }
+.episode-detail-drawer input[type="number"] { appearance: textfield; }
+.episode-detail-drawer input[type="number"]::-webkit-inner-spin-button, .episode-detail-drawer input[type="number"]::-webkit-outer-spin-button { margin: 0; }
 .episode-detail-drawer .audio-annotation-form { align-items: end; grid-template-columns: minmax(0, 1.15fr) 88px minmax(0, 1.25fr); }
 .episode-detail-drawer .audio-annotation-form > button { grid-column: 1 / -1; justify-self: end; min-width: 160px; }
 .loading-indicator { align-items: center; color: #697386; display: inline-flex; font-size: 12px; gap: 9px; line-height: 1.45; }
@@ -375,7 +378,8 @@ body { min-width: 0; }
 .loading-indicator-compact .loading-spinner { height: 13px; width: 13px; }
 @keyframes detail-spinner { to { transform: rotate(360deg); } }
 .audio-track-card .loading-indicator { min-height: 34px; }
-.app-shell[data-theme="dark"] .episode-detail-drawer input:not([type="checkbox"]), .app-shell[data-theme="dark"] .episode-detail-drawer select, .app-shell[data-theme="dark"] .episode-detail-drawer textarea { color: #eef3fb; }
+.app-shell[data-theme="dark"] .episode-detail-drawer input:not([type="checkbox"]), .app-shell[data-theme="dark"] .episode-detail-drawer select, .app-shell[data-theme="dark"] .episode-detail-drawer textarea { background-color: #191e27; border-color: #394250; color: #eef3fb; }
+.app-shell[data-theme="dark"] .episode-detail-drawer select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 24 24' stroke='%23aab5c5' stroke-width='1.8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); }
 .app-shell[data-theme="dark"] .loading-indicator { color: #aab5c5; }
 .app-shell[data-theme="dark"] .loading-spinner { border-color: #3a4b63; border-top-color: #9bc2ff; }
 @media (max-width: 640px) {
