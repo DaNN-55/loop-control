@@ -6,7 +6,7 @@ import { mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } from "node:fs/
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { createLocalEpisodeDirectory, removeLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveEpisodeDeletion, serveLocalEpisodeDirectory } from "../vite.config";
+import { createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, removeLocalEpisodeDirectory, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveEpisodeDeletion, stageLocalEpisodeDirectoryForDeletion, serveLocalEpisodeDirectory } from "../vite.config";
 
 const episodeId = "00000000-0000-0000-0000-000000000000";
 let server: ReturnType<typeof createServer>;
@@ -153,6 +153,27 @@ describe("本地 Episode 目录路由", () => {
       expect((await stat(outside)).isDirectory()).toBe(true);
     } finally {
       await Promise.all([rm(root, { force: true, recursive: true }), rm(outside, { force: true, recursive: true })]);
+    }
+  });
+
+  it("数据库删除失败时可以恢复暂存目录，成功时再永久清理", async () => {
+    const root = await mkdtemp(join(tmpdir(), "tk-workflow-delete-"));
+    try {
+      const episodeDirectory = await createLocalEpisodeDirectory(root, episodeId);
+      await writeFile(join(episodeDirectory, "render.mp4"), "video");
+
+      const staged = await stageLocalEpisodeDirectoryForDeletion(root, episodeId);
+      expect(staged.existed).toBe(true);
+      await expect(stat(episodeDirectory)).rejects.toMatchObject({ code: "ENOENT" });
+      await restoreStagedLocalEpisodeDirectory(root, episodeId);
+      expect((await stat(join(episodeDirectory, "render.mp4"))).isFile()).toBe(true);
+
+      await stageLocalEpisodeDirectoryForDeletion(root, episodeId);
+      expect(await finalizeStagedLocalEpisodeDirectory(root, episodeId)).toBe(true);
+      await expect(stat(episodeDirectory)).rejects.toMatchObject({ code: "ENOENT" });
+      expect(await finalizeStagedLocalEpisodeDirectory(root, episodeId)).toBe(false);
+    } finally {
+      await rm(root, { force: true, recursive: true });
     }
   });
 });

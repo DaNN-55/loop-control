@@ -404,6 +404,7 @@ export type Database = {
           blueprint_version_id: string
           created_at: string
           id: string
+          is_test?: boolean
           main_script_revision_id?: string | null
           series_version_id?: string | null
           stage: Database["public"]["Enums"]["episode_stage"]
@@ -416,6 +417,7 @@ export type Database = {
           blueprint_version_id: string
           created_at?: string
           id?: string
+          is_test?: boolean
           main_script_revision_id?: string | null
           series_version_id?: string | null
           stage?: Database["public"]["Enums"]["episode_stage"]
@@ -428,6 +430,7 @@ export type Database = {
           blueprint_version_id?: string
           created_at?: string
           id?: string
+          is_test?: boolean
           main_script_revision_id?: string | null
           series_version_id?: string | null
           stage?: Database["public"]["Enums"]["episode_stage"]
@@ -978,6 +981,7 @@ export type Database = {
         Args: {
           p_account_id: string
           p_blueprint_version_id: string
+          p_is_test?: boolean
           p_series_version_id: string | null
           p_title: string
         }

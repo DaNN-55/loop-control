@@ -259,6 +259,17 @@ function formatDate(source: string) {
   return new Intl.DateTimeFormat("zh-CN", { dateStyle: "medium", timeStyle: "short" }).format(new Date(source));
 }
 
+function episodeDeletionMessage(value: unknown): string {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return "Episode、本地产物和数据库记录已删除。";
+  const result = value as { local?: { existed?: unknown; removed?: unknown }; database?: { counts?: unknown } };
+  const localStatus = result.local?.existed === true && result.local?.removed === true ? "本地目录已清理" : "本地目录原本不存在";
+  const counts = result.database?.counts;
+  if (!counts || typeof counts !== "object" || Array.isArray(counts)) return `Episode 已删除；${localStatus}。`;
+  const labels: Record<string, string> = { tasks: "任务", artifacts: "产物", review_packages: "审核包", production_material_revisions: "材料修订", audit_events: "审计事件" };
+  const summary = Object.entries(counts as Record<string, unknown>).flatMap(([key, count]) => typeof count === "number" && labels[key] ? [`${labels[key]} ${count}`] : []).join("、");
+  return `Episode 已删除；${localStatus}${summary ? `；数据库清理：${summary}` : ""}。`;
+}
+
 function episodeIsArchived(episode: Episode): boolean {
   return Boolean((episode as EpisodeWithArchive).archived_at);
 }
@@ -606,7 +617,7 @@ export function App() {
     }
   }
 
-  async function createEpisode(input: { title: string; accountId: string; seriesVersionId: string | null }) {
+  async function createEpisode(input: { title: string; accountId: string; isTest: boolean; seriesVersionId: string | null }) {
     const account = workspace?.accounts.find((candidate) => candidate.id === input.accountId);
     if (!account?.current_blueprint_version_id) return;
     setPendingAction("episode");
@@ -615,6 +626,7 @@ export function App() {
       const { data, error } = await supabase.rpc("create_episode", {
         p_account_id: account.id,
         p_blueprint_version_id: account.current_blueprint_version_id,
+        p_is_test: input.isTest,
         p_series_version_id: input.seriesVersionId,
         p_title: input.title,
       });
@@ -673,9 +685,10 @@ export function App() {
         body: JSON.stringify({ confirmation }),
       });
       if (!response.ok) throw new Error((await response.text()).trim() || "无法删除 Episode。");
+      const deletionResult: unknown = await response.json();
       setIsEpisodeDetailOpen(false);
       setSelectedEpisodeId("");
-      setMessage("Episode、本地产物和数据库记录已删除。");
+      setMessage(episodeDeletionMessage(deletionResult));
       await refreshWorkspace();
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "无法删除 Episode。");
@@ -1268,7 +1281,7 @@ export function PublicationConfirmationForm({ episode, isPending, onConfirm, own
   return <form className="publication-confirmation" onSubmit={submit}><label><input checked={acknowledged} onChange={(event) => updateDraft({ acknowledged: event.target.checked, reason })} type="checkbox" />我已在目标平台手工发布，并核对发布包内容。</label><label>确认理由<input aria-label="发布确认理由" onChange={(event) => updateDraft({ acknowledged, reason: event.target.value })} placeholder="例如：已在 TikTok Studio 发布并复核" required value={reason} /></label>{draft ? <OperationDraftNotice isRestored={isRestoredDraft} onClear={clearDraft} /> : null}<button className="button button-primary" disabled={isPending} type="submit">{isPending ? "确认中…" : "确认已发布"}</button>{formError ? <p className="form-error">{formError}</p> : null}</form>;
 }
 
-function EpisodeLifecycleControls({ archived, assetRoot, episodeId, isArchivePending, isDeletePending, onDelete, onSetArchived, title }: { archived: boolean; assetRoot: string; episodeId: string; isArchivePending: boolean; isDeletePending: boolean; onDelete: (episodeId: string, confirmation: string) => Promise<void>; onSetArchived: (episodeId: string, archived: boolean) => Promise<void>; title: string }) {
+function EpisodeLifecycleControls({ archived, assetRoot, episodeId, isArchivePending, isDeletePending, isTest, onDelete, onSetArchived, title }: { archived: boolean; assetRoot: string; episodeId: string; isArchivePending: boolean; isDeletePending: boolean; isTest: boolean; onDelete: (episodeId: string, confirmation: string) => Promise<void>; onSetArchived: (episodeId: string, archived: boolean) => Promise<void>; title: string }) {
   const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] = useState(false);
   const [confirmation, setConfirmation] = useState("");
   const confirmationTarget = title.trim() || "DELETE";
@@ -1285,7 +1298,7 @@ function EpisodeLifecycleControls({ archived, assetRoot, episodeId, isArchivePen
     await onDelete(episodeId, confirmation);
   }
 
-  return <section className="review-section episode-lifecycle-controls"><h3>生产单管理</h3><p className="muted-copy">归档不会删除生产数据或本地产物；永久删除仅对已归档 Episode 开放。</p><div className="review-actions"><button className="button button-secondary" disabled={isArchivePending || isDeletePending} onClick={() => void onSetArchived(episodeId, !archived)} type="button">{isArchivePending ? "处理中…" : archived ? "恢复到进行中" : "归档生产单"}</button><button className="button button-danger" disabled={!archived || isArchivePending || isDeletePending} onClick={() => setIsDeleteConfirmationOpen(true)} type="button">永久删除</button></div>{isDeleteConfirmationOpen ? <form className="episode-delete-confirmation" onSubmit={(event) => void submitDeletion(event)}><strong>永久删除将清理以下内容</strong><p>本地 Episode 目录：</p><code>{localEpisodePath}</code><p>同时删除数据库中的 Episode、任务、产物索引、审批、审计记录和关联生产数据。此操作不可恢复。</p><label>输入确认文本：<input aria-label="永久删除确认文本" onChange={(event) => setConfirmation(event.target.value)} placeholder={confirmationTarget} value={confirmation} /></label><div className="review-actions"><button className="button button-secondary" onClick={() => { setIsDeleteConfirmationOpen(false); setConfirmation(""); }} type="button">取消</button><button className="button button-danger" disabled={isDeletePending || confirmation !== confirmationTarget} type="submit">{isDeletePending ? "删除中…" : "确认永久删除"}</button></div></form> : null}</section>;
+  return <section className="review-section episode-lifecycle-controls"><h3>生产单管理</h3><p className="muted-copy">归档不会删除生产数据或本地产物；永久删除仅对已归档且标记为测试的 Episode 开放。</p><div className="review-actions"><button className="button button-secondary" disabled={isArchivePending || isDeletePending} onClick={() => void onSetArchived(episodeId, !archived)} type="button">{isArchivePending ? "处理中…" : archived ? "恢复到进行中" : "归档生产单"}</button><button className="button button-danger" disabled={!archived || !isTest || isArchivePending || isDeletePending} onClick={() => setIsDeleteConfirmationOpen(true)} type="button">{isTest ? "永久删除" : "仅测试 Episode 可删除"}</button></div>{isDeleteConfirmationOpen ? <form className="episode-delete-confirmation" onSubmit={(event) => void submitDeletion(event)}><strong>永久删除将清理以下内容</strong><p>本地 Episode 目录：</p><code>{localEpisodePath}</code><p>同时删除数据库中的 Episode、任务、产物索引、审批、审计记录和关联生产数据。此操作不可恢复。</p><label>输入确认文本：<input aria-label="永久删除确认文本" onChange={(event) => setConfirmation(event.target.value)} placeholder={confirmationTarget} value={confirmation} /></label><div className="review-actions"><button className="button button-secondary" onClick={() => { setIsDeleteConfirmationOpen(false); setConfirmation(""); }} type="button">取消</button><button className="button button-danger" disabled={isDeletePending || confirmation !== confirmationTarget} type="submit">{isDeletePending ? "删除中…" : "确认永久删除"}</button></div></form> : null}</section>;
 }
 
 export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, blueprint, episode, isArchivePending = false, isDeletePending = false, isDirectoryPending, isMaterialPending, isScriptCommissionPending, isStoryboardAnnotationPending, isTitlePending, isTransitionPending, materialRevisions, onCreateAudioTrackAnnotation, onCreateLocalDirectory, onCommissionScript, onCreateStoryboardAnnotation, onDelete = async () => {}, onImportMaterial, onRequestReviewRenderRevision, onReviewPreRenderMember = async () => {}, onSetArchived = async () => {}, onTransition, onUpdateTitle, ownerId = "local-owner", preRenderReviewMemberDecisions = [], preRenderReviewMembers = [], reviewAnnotations, reviewPackages, tasks, transitions }: { artifacts: Artifact[]; audioTrackAnnotations: AudioTrackAnnotation[]; audioTracks: AudioTrack[]; blueprint: Blueprint | null; episode: Episode; isArchivePending?: boolean; isDeletePending?: boolean; isDirectoryPending: boolean; isMaterialPending: boolean; isScriptCommissionPending: boolean; isStoryboardAnnotationPending: boolean; isTitlePending: boolean; isTransitionPending: boolean; materialRevisions: MaterialRevision[]; onCreateAudioTrackAnnotation: (input: AudioTrackAnnotationRequest) => Promise<void>; onCreateLocalDirectory: (episodeId: string) => Promise<void>; onCommissionScript: (input: ScriptCommissionRequest) => Promise<void>; onCreateStoryboardAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onDelete?: (episodeId: string, confirmation: string) => Promise<void>; onImportMaterial: (input: MaterialImportRequest) => Promise<void>; onRequestReviewRenderRevision: (input: ReviewRenderRevisionRequest) => Promise<boolean>; onReviewPreRenderMember?: (input: PreRenderMemberReviewRequest) => Promise<void>; onSetArchived?: (episodeId: string, archived: boolean) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; onUpdateTitle: (episodeId: string, title: string) => Promise<void>; ownerId?: string; preRenderReviewMemberDecisions?: PreRenderReviewMemberDecision[]; preRenderReviewMembers?: PreRenderReviewMember[]; reviewAnnotations: ReviewAnnotation[]; reviewPackages: ReviewPackage[]; tasks: Task[]; transitions: Transition[] }) {
@@ -1322,7 +1335,7 @@ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, b
     <p className="review-meta">蓝图 v{blueprint?.version ?? "—"} · 创建于 {formatDate(episode.created_at)}</p>
     <section className="episode-next-step-card"><div><span>当前阶段</span><strong className={`stage stage-${stageTone(episode.stage)}`}>{stageLabels[episode.stage]}</strong></div><div><span>下一步</span><p>{nextStepForEpisode(episode.stage)}</p></div></section>
     <EpisodeTitleForm episode={episode} isPending={isTitlePending} onSave={onUpdateTitle} />
-    <EpisodeLifecycleControls archived={episodeIsArchived(episode)} assetRoot={blueprint ? blueprintAssetRoot(blueprint.policy) : ""} episodeId={episode.id} isArchivePending={isArchivePending} isDeletePending={isDeletePending} onDelete={onDelete} onSetArchived={onSetArchived} title={episode.title} />
+    <EpisodeLifecycleControls archived={episodeIsArchived(episode)} assetRoot={blueprint ? blueprintAssetRoot(blueprint.policy) : ""} episodeId={episode.id} isArchivePending={isArchivePending} isDeletePending={isDeletePending} isTest={Boolean(episode.is_test)} onDelete={onDelete} onSetArchived={onSetArchived} title={episode.title} />
     <section className="review-section episode-local-directory"><h3>项目输入目录</h3><label>完整 Episode ID<input aria-label="完整 Episode ID" readOnly value={episode.id} /></label><p className="muted-copy">目录文件放入 <code>episodes/{episode.id}/input</code>，再在下方显式确认导入。</p><div className="review-actions"><button className="button button-secondary" onClick={() => void copyEpisodeId()} type="button">复制 Episode ID</button><button className="button button-secondary" disabled={isDirectoryPending} onClick={() => void onCreateLocalDirectory(episode.id)} type="button">{isDirectoryPending ? "创建中…" : "创建本地目录"}</button></div>{directoryMessage ? <p className="muted-copy">{directoryMessage}</p> : null}</section>
     {episode.stage === "waiting_input" && !episode.main_script_revision_id ? <ScriptCommissionForm episodeId={episode.id} isPending={isScriptCommissionPending} onCommission={onCommissionScript} /> : null}
     <MaterialImportForm episodeId={episode.id} isPending={isMaterialPending} onImport={onImportMaterial} />
@@ -1829,13 +1842,14 @@ export function EpisodeDetailDrawer({ children, isOpen, onClose }: { children: R
 
 function Artifact({ complete = false, label, name }: { complete?: boolean; label: string; name: string }) { return <div className="artifact-row"><i className={complete ? "artifact-complete" : "artifact-pending"}>{complete ? "✓" : ""}</i><span>{label}</span><small>{name}</small></div>; }
 
-function EpisodeForm({ accounts, isPending, onClose, onSubmit, series, seriesVersions }: { accounts: Account[]; isPending: boolean; onClose: () => void; onSubmit: (input: { title: string; accountId: string; seriesVersionId: string | null }) => Promise<void>; series: Series[]; seriesVersions: SeriesVersion[] }) {
+function EpisodeForm({ accounts, isPending, onClose, onSubmit, series, seriesVersions }: { accounts: Account[]; isPending: boolean; onClose: () => void; onSubmit: (input: { title: string; accountId: string; isTest: boolean; seriesVersionId: string | null }) => Promise<void>; series: Series[]; seriesVersions: SeriesVersion[] }) {
   const [title, setTitle] = useState("");
   const [accountId, setAccountId] = useState(accounts[0]?.id ?? "");
+  const [isTest, setIsTest] = useState(false);
   const [seriesVersionId, setSeriesVersionId] = useState("");
   const seriesById = new Map(series.map((candidate) => [candidate.id, candidate]));
   const availableVersions = seriesVersions.filter((version) => version.account_id === accountId);
-  return <div className="modal-backdrop" role="presentation"><form aria-label="新建生产单" className="modal-card" onSubmit={(event) => { event.preventDefault(); void onSubmit({ accountId, seriesVersionId: seriesVersionId || null, title }); }}><header><div><h2>新建生产单</h2><p>会固定所选账号当前激活蓝图和可选系列版本。</p></div><button aria-label="关闭新建生产单" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></button></header><label>账号<select onChange={(event) => { setAccountId(event.target.value); setSeriesVersionId(""); }} value={accountId}>{accounts.map((account) => <option key={account.id} value={account.id}>{account.name}</option>)}</select></label><label>系列版本（可选）<select aria-label="系列版本" onChange={(event) => setSeriesVersionId(event.target.value)} value={seriesVersionId}><option value="">不关联系列</option>{availableVersions.map((version) => <option key={version.id} value={version.id}>{seriesById.get(version.series_id)?.name ?? "未知系列"} · v{version.version}</option>)}</select></label><label>工作标题（可留空）<input autoFocus onChange={(event) => setTitle(event.target.value)} placeholder="可在首次适用审核前补充" value={title} /></label><p className="form-hint">标题只是管理元数据，后续修改不会使已导入内容失效。</p><div className="modal-actions"><button className="button button-secondary" onClick={onClose} type="button">取消</button><button className="button button-primary" disabled={isPending || !accountId} type="submit">{isPending ? "创建中…" : "创建生产单"}</button></div></form></div>;
+  return <div className="modal-backdrop" role="presentation"><form aria-label="新建生产单" className="modal-card" onSubmit={(event) => { event.preventDefault(); void onSubmit({ accountId, isTest, seriesVersionId: seriesVersionId || null, title }); }}><header><div><h2>新建生产单</h2><p>会固定所选账号当前激活蓝图和可选系列版本。</p></div><button aria-label="关闭新建生产单" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></button></header><label>账号<select onChange={(event) => { setAccountId(event.target.value); setSeriesVersionId(""); }} value={accountId}>{accounts.map((account) => <option key={account.id} value={account.id}>{account.name}</option>)}</select></label><label>系列版本（可选）<select aria-label="系列版本" onChange={(event) => setSeriesVersionId(event.target.value)} value={seriesVersionId}><option value="">不关联系列</option>{availableVersions.map((version) => <option key={version.id} value={version.id}>{seriesById.get(version.series_id)?.name ?? "未知系列"} · v{version.version}</option>)}</select></label><label>工作标题（可留空）<input autoFocus onChange={(event) => setTitle(event.target.value)} placeholder="可在首次适用审核前补充" value={title} /></label><label className="checkbox-label"><input checked={isTest} onChange={(event) => setIsTest(event.target.checked)} type="checkbox" />这是测试生产单（归档后允许 Owner 永久删除）</label><p className="form-hint">标题只是管理元数据，后续修改不会使已导入内容失效。</p><div className="modal-actions"><button className="button button-secondary" onClick={onClose} type="button">取消</button><button className="button button-primary" disabled={isPending || !accountId} type="submit">{isPending ? "创建中…" : "创建生产单"}</button></div></form></div>;
 }
 
 function AccountForm({ isPending, onClose, onSubmit }: { isPending: boolean; onClose: () => void; onSubmit: (input: { name: string; slug: string; timezone: string; policy: Json }) => Promise<void> }) {

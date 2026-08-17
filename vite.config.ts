@@ -206,18 +206,33 @@ export function serveEpisodeDeletion(supabaseUrl: string | undefined, supabasePu
       }
       if (!supabaseUrl || !supabasePublishableKey) throw new Error("Supabase 连接未配置。");
 
-      const local = await removeLocalEpisodeDirectory(context.assetRoot, episodeId);
+      const local = await stageLocalEpisodeDirectoryForDeletion(context.assetRoot, episodeId);
       const supabase = createClient(supabaseUrl, supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: authorization } } });
       const { data: deletion, error } = await supabase.rpc("delete_episode", { p_episode_id: episodeId });
       if (error) {
+        try {
+          if (local.existed) await restoreStagedLocalEpisodeDirectory(context.assetRoot, episodeId);
+        } catch (restoreError) {
+          response.statusCode = 500;
+          response.end(`数据库记录删除失败，且本地目录恢复失败：${restoreError instanceof Error ? restoreError.message : "未知恢复错误"}`);
+          return;
+        }
         response.statusCode = 500;
-        response.end(`本地 Episode 目录已清理，但数据库记录删除失败：${error.message}`);
+        response.end(`数据库记录删除失败，本地 Episode 目录已恢复：${error.message}`);
+        return;
+      }
+      let localRemoved = false;
+      try {
+        localRemoved = local.existed ? await finalizeStagedLocalEpisodeDirectory(context.assetRoot, episodeId) : false;
+      } catch (cleanupError) {
+        response.statusCode = 500;
+        response.end(`数据库记录已删除，但本地删除暂存目录失败：${cleanupError instanceof Error ? cleanupError.message : "未知清理错误"}`);
         return;
       }
 
       response.setHeader("Content-Type", "application/json");
       response.statusCode = 200;
-      response.end(JSON.stringify({ database: deletion, episodeId, local }));
+      response.end(JSON.stringify({ database: deletion, episodeId, local: { existed: local.existed, path: local.path, removed: localRemoved } }));
     } catch (error) {
       response.statusCode = 400;
       response.end(error instanceof Error ? error.message : "无法删除 Episode。");
@@ -282,6 +297,85 @@ export async function removeLocalEpisodeDirectory(assetRoot: string, episodeId: 
   if (!isDescendant(resolvedRoot, resolvedEpisodeDirectory)) throw new Error("目录超出资产根。");
   await fs.rm(resolvedEpisodeDirectory, { force: false, recursive: true });
   return { existed: true, path: episodeDirectory };
+}
+
+export async function stageLocalEpisodeDirectoryForDeletion(assetRoot: string, episodeId: string): Promise<{ existed: boolean; path: string; stagingPath: string }> {
+  if (!isEpisodeId(episodeId)) throw new Error("无效的 Episode ID。");
+  const resolvedRoot = await fs.realpath(assetRoot);
+  if (isFilesystemRoot(resolvedRoot)) throw new Error("资产根不能是文件系统根目录。");
+  const episodesDirectory = resolve(resolvedRoot, "episodes");
+  const episodeDirectory = resolve(episodesDirectory, episodeId);
+  let episodesStat;
+  try {
+    episodesStat = await fs.lstat(episodesDirectory);
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") return { existed: false, path: episodeDirectory, stagingPath: resolve(episodesDirectory, ".deletion-staging", episodeId) };
+    throw error;
+  }
+  if (episodesStat.isSymbolicLink() || !episodesStat.isDirectory()) throw new Error("目录不是安全目录。");
+
+  const stagingRoot = await ensureDirectoryWithinRoot(episodesDirectory, resolve(episodesDirectory, ".deletion-staging"));
+  const stagingPath = resolve(stagingRoot, episodeId);
+  let stagedStat;
+  try {
+    stagedStat = await fs.lstat(stagingPath);
+  } catch (error) {
+    if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) throw error;
+    stagedStat = null;
+  }
+  if (stagedStat && (stagedStat.isSymbolicLink() || !stagedStat.isDirectory())) throw new Error("删除暂存目录不是安全目录。");
+
+  let episodeStat;
+  try {
+    episodeStat = await fs.lstat(episodeDirectory);
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
+      if (stagedStat) return { existed: true, path: episodeDirectory, stagingPath };
+      return { existed: false, path: episodeDirectory, stagingPath };
+    }
+    throw error;
+  }
+  if (episodeStat.isSymbolicLink() || !episodeStat.isDirectory()) throw new Error("目录不是安全目录。");
+  if (stagedStat) throw new Error("Episode 已有待删除的暂存目录。");
+
+  const resolvedEpisodeDirectory = await fs.realpath(episodeDirectory);
+  if (!isDescendant(resolvedRoot, resolvedEpisodeDirectory)) throw new Error("目录超出资产根。");
+  await fs.rename(resolvedEpisodeDirectory, stagingPath);
+  return { existed: true, path: episodeDirectory, stagingPath };
+}
+
+export async function restoreStagedLocalEpisodeDirectory(assetRoot: string, episodeId: string): Promise<void> {
+  if (!isEpisodeId(episodeId)) throw new Error("无效的 Episode ID。");
+  const resolvedRoot = await fs.realpath(assetRoot);
+  const episodesDirectory = resolve(resolvedRoot, "episodes");
+  const episodeDirectory = resolve(episodesDirectory, episodeId);
+  const stagingPath = resolve(episodesDirectory, ".deletion-staging", episodeId);
+  const stagedDirectory = await fs.realpath(stagingPath);
+  if (!isDescendant(resolvedRoot, stagedDirectory)) throw new Error("删除暂存目录超出资产根。");
+  const existingEpisode = await fs.lstat(episodeDirectory).catch((error: unknown) => {
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") return null;
+    throw error;
+  });
+  if (existingEpisode) throw new Error("原 Episode 目录已存在，无法恢复删除暂存目录。");
+  await fs.rename(stagedDirectory, episodeDirectory);
+}
+
+export async function finalizeStagedLocalEpisodeDirectory(assetRoot: string, episodeId: string): Promise<boolean> {
+  if (!isEpisodeId(episodeId)) throw new Error("无效的 Episode ID。");
+  const resolvedRoot = await fs.realpath(assetRoot);
+  const stagingPath = resolve(resolvedRoot, "episodes", ".deletion-staging", episodeId);
+  let stagedStat;
+  try {
+    stagedStat = await fs.lstat(stagingPath);
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") return false;
+    throw error;
+  }
+  if (stagedStat.isSymbolicLink() || !stagedStat.isDirectory()) throw new Error("删除暂存目录不是安全目录。");
+  const resolvedStagingPath = await fs.realpath(stagingPath);
+  if (!isDescendant(resolvedRoot, resolvedStagingPath)) throw new Error("删除暂存目录超出资产根。");
+  await fs.rm(resolvedStagingPath, { force: false, recursive: true });
+  return true;
 }
 
 interface MaterialSnapshotInput {

@@ -151,11 +151,11 @@ describe("审核台", () => {
     const { rerender } = render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onDelete={onDelete} onSetArchived={onSetArchived} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
     expect(screen.getByRole("button", { name: "归档生产单" })).toBeTruthy();
-    expect((screen.getByRole("button", { name: "永久删除" }) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByRole("button", { name: "仅测试 Episode 可删除" }) as HTMLButtonElement).disabled).toBe(true);
     await user.click(screen.getByRole("button", { name: "归档生产单" }));
     expect(onSetArchived).toHaveBeenCalledWith(reviewEpisode.id, true);
 
-    const archivedEpisode = { ...reviewEpisode, archived_at: "2026-08-16T00:00:00.000Z" };
+    const archivedEpisode = { ...reviewEpisode, archived_at: "2026-08-16T00:00:00.000Z", is_test: true };
     rerender(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={archivedEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onDelete={onDelete} onSetArchived={onSetArchived} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
     await user.click(screen.getByRole("button", { name: "永久删除" }));
     expect(screen.getByText("/Volumes/素材盘/tk-workflow/dao/episodes/episode-review")).toBeTruthy();
