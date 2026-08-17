@@ -6,7 +6,7 @@ import { mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } from "node:fs/
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, removeLocalEpisodeDirectory, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveEpisodeDeletion, serveEpisodeDeletionCleanup, stageLocalEpisodeDirectoryForDeletion, serveLocalEpisodeDirectory } from "../vite.config";
+import { createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveEpisodeDeletion, serveEpisodeDeletionCleanup, stageLocalEpisodeDirectoryForDeletion, serveLocalEpisodeDirectory } from "../vite.config";
 
 const episodeId = "00000000-0000-0000-0000-000000000000";
 let server: ReturnType<typeof createServer>;
@@ -145,33 +145,13 @@ describe("本地 Episode 目录路由", () => {
     }
   });
 
-  it("只删除资产根内的 Episode 目录，并允许重复清理已不存在的目录", async () => {
-    const root = await mkdtemp(join(tmpdir(), "tk-workflow-delete-"));
-    try {
-      const episodeDirectory = await createLocalEpisodeDirectory(root, episodeId);
-      await writeFile(join(episodeDirectory, "render.mp4"), "video");
-
-      await expect(removeLocalEpisodeDirectory(root, episodeId)).resolves.toEqual({
-        existed: true,
-        path: episodeDirectory,
-      });
-      await expect(stat(episodeDirectory)).rejects.toMatchObject({ code: "ENOENT" });
-      await expect(removeLocalEpisodeDirectory(root, episodeId)).resolves.toEqual({
-        existed: false,
-        path: episodeDirectory,
-      });
-    } finally {
-      await rm(root, { force: true, recursive: true });
-    }
-  });
-
   it("拒绝删除符号链接形式的 Episode 目录", async () => {
     const root = await mkdtemp(join(tmpdir(), "tk-workflow-delete-"));
     const outside = await mkdtemp(join(tmpdir(), "tk-workflow-delete-outside-"));
     try {
       await mkdir(join(root, "episodes"), { recursive: true });
       await symlink(outside, join(root, "episodes", episodeId));
-      await expect(removeLocalEpisodeDirectory(root, episodeId)).rejects.toThrow("目录不是安全目录");
+      await expect(stageLocalEpisodeDirectoryForDeletion(root, episodeId)).rejects.toThrow("目录不是安全目录");
       expect((await stat(outside)).isDirectory()).toBe(true);
     } finally {
       await Promise.all([rm(root, { force: true, recursive: true }), rm(outside, { force: true, recursive: true })]);

@@ -168,13 +168,15 @@ describe("审核台", () => {
     const user = userEvent.setup();
     const onSelectEpisode = vi.fn();
     const productionEpisode: Episode = { ...reviewEpisode, id: "episode-production", stage: "production_ready", title: "预渲染审核" };
+    const archivedReviewEpisode: Episode = { ...reviewEpisode, id: "episode-archived-review", title: "已归档待审", archived_at: "2026-08-16T00:00:00.000Z" };
 
-    render(<ReviewWorkspace accountsById={new Map([[account.id, account]])} episodes={[reviewEpisode, productionEpisode, draftEpisode]} onSelectEpisode={onSelectEpisode} selectedEpisode={null} />);
+    render(<ReviewWorkspace accountsById={new Map([[account.id, account]])} episodes={[reviewEpisode, productionEpisode, draftEpisode, archivedReviewEpisode]} onSelectEpisode={onSelectEpisode} selectedEpisode={null} />);
 
     expect(screen.getByRole("heading", { name: "待审核 Episode" })).toBeTruthy();
     expect(screen.getByRole("button", { name: /越南民间信仰中的符号/ })).toBeTruthy();
     expect(screen.getByRole("button", { name: /预渲染审核/ })).toBeTruthy();
     expect(screen.queryByText("不应出现在审核队列")).toBeNull();
+    expect(screen.queryByText("已归档待审")).toBeNull();
 
     await user.click(screen.getByRole("button", { name: /越南民间信仰中的符号/ }));
     expect(onSelectEpisode).toHaveBeenCalledWith(reviewEpisode.id);

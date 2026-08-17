@@ -313,37 +313,6 @@ export async function createLocalEpisodeDirectory(assetRoot: string, episodeId: 
   return episodeDirectory;
 }
 
-export async function removeLocalEpisodeDirectory(assetRoot: string, episodeId: string): Promise<{ existed: boolean; path: string }> {
-  if (!isEpisodeId(episodeId)) throw new Error("无效的 Episode ID。");
-  const resolvedRoot = await fs.realpath(assetRoot);
-  if (isFilesystemRoot(resolvedRoot)) throw new Error("资产根不能是文件系统根目录。");
-
-  const episodesDirectory = resolve(resolvedRoot, "episodes");
-  const episodeDirectory = resolve(episodesDirectory, episodeId);
-  let episodesStat;
-  try {
-    episodesStat = await fs.lstat(episodesDirectory);
-  } catch (error) {
-    if (error instanceof Error && "code" in error && error.code === "ENOENT") return { existed: false, path: episodeDirectory };
-    throw error;
-  }
-  if (episodesStat.isSymbolicLink() || !episodesStat.isDirectory()) throw new Error("目录不是安全目录。");
-
-  let episodeStat;
-  try {
-    episodeStat = await fs.lstat(episodeDirectory);
-  } catch (error) {
-    if (error instanceof Error && "code" in error && error.code === "ENOENT") return { existed: false, path: episodeDirectory };
-    throw error;
-  }
-  if (episodeStat.isSymbolicLink() || !episodeStat.isDirectory()) throw new Error("目录不是安全目录。");
-
-  const resolvedEpisodeDirectory = await fs.realpath(episodeDirectory);
-  if (!isDescendant(resolvedRoot, resolvedEpisodeDirectory)) throw new Error("目录超出资产根。");
-  await fs.rm(resolvedEpisodeDirectory, { force: false, recursive: true });
-  return { existed: true, path: episodeDirectory };
-}
-
 export async function stageLocalEpisodeDirectoryForDeletion(assetRoot: string, episodeId: string): Promise<{ existed: boolean; path: string; stagingPath: string }> {
   if (!isEpisodeId(episodeId)) throw new Error("无效的 Episode ID。");
   const resolvedRoot = await fs.realpath(assetRoot);

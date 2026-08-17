@@ -47,7 +47,7 @@ export function OperationsWorkspace({ episodes, onSelectEpisode, preRenderReview
     const unassigned: SeriesOperation = { id: "unassigned", name: "未归属系列", episodes: [] };
     const unavailable: SeriesOperation = { id: "unavailable", name: "关联系列不可用", episodes: [] };
 
-    for (const episode of episodes) {
+    for (const episode of episodes.filter((item) => !item.archived_at)) {
       const version = episode.series_version_id ? seriesVersionsById.get(episode.series_version_id) : null;
       const operation = version && seriesById.has(version.series_id) ? items.get(version.series_id) : episode.series_version_id ? unavailable : unassigned;
       if (!operation) continue;
@@ -87,7 +87,7 @@ export function OperationsWorkspace({ episodes, onSelectEpisode, preRenderReview
 
     <div className="operations-detail-grid">
       <section className="operations-list"><header><h3>待审核</h3><span>{pendingReviews.length} 个待审核包</span></header>{pendingReviews.length ? <ul>{pendingReviews.map(({ episode, reviewPackage }) => <li key={episode.id}><button onClick={() => onSelectEpisode(episode.id)} type="button"><strong>{episode.title || "未命名生产单"}</strong><span>{operationalStageLabel(episode.stage)} · 审核包 v{reviewPackage?.revision_number}</span></button></li>)}</ul> : <p>当前筛选范围没有待审核包。</p>}</section>
-      <section className="operations-list operations-blocker-list"><header><h3>阻塞项</h3><span>{blockers.length} 个阻塞项</span></header>{blockers.length ? <ul>{blockers.map((blocker) => <li key={`${blocker.taskId}-${blocker.code}`}><button className="operations-blocker-trigger" onClick={() => onSelectEpisode(blocker.episode.id)} type="button"><strong>{blocker.episode.title || "未命名生产单"}</strong><span>{blocker.code}</span></button><WorkerBlockerCard blocker={blocker} compact /></li>)}</ul> : <p>当前筛选范围没有 Worker 阻塞项。</p>}</section>
+      <section className="operations-list operations-blocker-list"><header><h3>阻塞项</h3><span>{blockers.length} 个阻塞项</span></header>{blockers.length ? <ul>{blockers.map((blocker) => <li key={`${blocker.taskId}-${blocker.code}`}><button className="operations-blocker-trigger" onClick={() => onSelectEpisode(blocker.episode.id)} type="button"><strong>{blocker.episode.title || "未命名生产单"}</strong><span>{blocker.code}</span></button><WorkerBlockerCard blocker={blocker} compact context={{ episodeId: blocker.episode.id }} /></li>)}</ul> : <p>当前筛选范围没有 Worker 阻塞项。</p>}</section>
     </div>
 
     <section className="operations-episode-list" aria-label="系列生产单"><header><h3>生产单明细</h3><span>{visibleEpisodes.length} 个生产单</span></header>{visibleEpisodes.length ? <><div>{visibleEpisodePage.map(({ episode, blockers: episodeBlockers, reviewPackage, reviewPending }) => <button className={`operations-episode-row ${selectedEpisode?.id === episode.id ? "is-selected" : ""}`} key={episode.id} onClick={() => onSelectEpisode(episode.id)} type="button"><span><strong>{episode.title || "未命名生产单"}</strong><small>{episode.id.slice(0, 8)}</small></span><span>{operationalStageLabel(episode.stage)}</span><span>{reviewPending ? `待审 v${reviewPackage?.revision_number}` : reviewPackage ? `审核包 v${reviewPackage.revision_number} 已审完` : "无待审包"}</span><span>{episodeBlockers.length ? `${episodeBlockers.length} 个阻塞项` : "无阻塞"}</span></button>)}</div><PaginationControls page={safeEpisodePage} pageSize={episodePageSize} total={visibleEpisodes.length} onPageChange={setEpisodePage} /></> : <p>当前没有可汇总的生产单。</p>}</section>

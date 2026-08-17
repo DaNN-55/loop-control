@@ -271,6 +271,20 @@ function episodeDeletionMessage(value: unknown): string {
   return `Episode 已删除；${localStatus}${localPath ? `（${localPath}）` : ""}${summary ? `；数据库清理：${summary}` : ""}。`;
 }
 
+interface EpisodeDeletionCleanupPending {
+  accountId: string;
+  blueprintVersionId: string;
+  cleanupPending: true;
+  episodeId: string;
+  local?: { existed?: unknown; path?: unknown; removed?: unknown };
+}
+
+function isEpisodeDeletionCleanupPending(value: unknown): value is EpisodeDeletionCleanupPending {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return false;
+  const candidate = value as Record<string, unknown>;
+  return candidate.cleanupPending === true && typeof candidate.accountId === "string" && typeof candidate.blueprintVersionId === "string" && typeof candidate.episodeId === "string";
+}
+
 function episodeIsArchived(episode: Episode): boolean {
   return Boolean((episode as EpisodeWithArchive).archived_at);
 }
@@ -673,7 +687,7 @@ export function App() {
     }
   }
 
-  async function deleteEpisode(episodeId: string, confirmation: string) {
+async function deleteEpisode(episodeId: string, confirmation: string) {
     setPendingAction(`delete-${episodeId}`);
     setErrorMessage("");
     try {
@@ -685,8 +699,25 @@ export function App() {
         headers: { Authorization: `Bearer ${data.session.access_token}`, "Content-Type": "application/json" },
         body: JSON.stringify({ confirmation }),
       });
-      if (!response.ok) throw new Error((await response.text()).trim() || "无法删除 Episode。");
-      const deletionResult: unknown = await response.json();
+      const responseText = await response.text();
+      let deletionResult: unknown = null;
+      try { deletionResult = responseText ? JSON.parse(responseText) : null; } catch { deletionResult = responseText; }
+      if (!response.ok && isEpisodeDeletionCleanupPending(deletionResult)) {
+        const cleanupResponse = await fetch("/_finalize-episode-deletion", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${data.session.access_token}`, "Content-Type": "application/json" },
+          body: JSON.stringify({ accountId: deletionResult.accountId, blueprintVersionId: deletionResult.blueprintVersionId, episodeId }),
+        });
+        if (cleanupResponse.ok) {
+          const cleanupResult: unknown = await cleanupResponse.json();
+          if (deletionResult.local) deletionResult.local.removed = true;
+          if (cleanupResult && typeof cleanupResult === "object" && !Array.isArray(cleanupResult) && "removed" in cleanupResult && cleanupResult.removed === false) throw new Error("数据库记录已删除，但本地删除暂存目录仍未清理。");
+        } else {
+          throw new Error(`数据库记录已删除，但本地删除暂存目录仍未清理：${(await cleanupResponse.text()).trim() || "请稍后重试本机清理"}`);
+        }
+      } else if (!response.ok) {
+        throw new Error(typeof deletionResult === "string" && deletionResult.trim() ? deletionResult : "无法删除 Episode。");
+      }
       setIsEpisodeDetailOpen(false);
       setSelectedEpisodeId("");
       setMessage(episodeDeletionMessage(deletionResult));
@@ -1242,7 +1273,7 @@ export function EpisodeWorkspace({ accounts, accountsById, artifacts, blueprints
 }
 
 export function ReviewWorkspace({ accountsById, episodes, onSelectEpisode, selectedEpisode }: { accountsById: Map<string, Account>; episodes: Episode[]; onSelectEpisode: (id: string) => void; selectedEpisode: Episode | null }) {
-  const reviewEpisodes = episodes.filter((episode) => reviewActionFor(episode.stage) || episode.stage === "production_ready");
+  const reviewEpisodes = episodes.filter((episode) => !episode.archived_at && (reviewActionFor(episode.stage) || episode.stage === "production_ready"));
   const [page, setPage] = useState(1);
   const pageSize = 20;
   const pageCount = Math.max(1, Math.ceil(reviewEpisodes.length / pageSize));
@@ -1346,7 +1377,7 @@ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, b
     <ArollTaskEvidencePanel tasks={tasks.filter((task) => task.episode_id === episode.id)} />
     <AudioTrackPanel annotations={audioTrackAnnotations.filter((annotation) => audioTracks.some((track) => track.episode_id === episode.id && track.id === annotation.audio_track_id))} onCreateAnnotation={onCreateAudioTrackAnnotation} tasks={tasks.filter((task) => task.episode_id === episode.id)} tracks={audioTracks.filter((track) => track.episode_id === episode.id)} />
     <details className="review-section detail-card-collapsible"><summary><h3>产物索引</h3></summary><div className="detail-card-body">{episodeArtifacts.length ? episodeArtifacts.map((artifact) => <Artifact key={artifact.id} label={artifact.artifact_type} name={artifact.relative_path} complete />) : <p className="muted-copy">尚无 Worker 生成的产物。</p>}</div></details>
-    {blockers.length ? <details className="review-section worker-blockers detail-card-collapsible" open><summary><h3>Worker 阻塞项</h3></summary><div className="detail-card-body">{blockers.map((blocker) => <WorkerBlockerCard blocker={blocker} key={`${blocker.taskId}-${blocker.code}-${blocker.detail}`} />)}</div></details> : null}
+    {blockers.length ? <details className="review-section worker-blockers detail-card-collapsible" open><summary><h3>Worker 阻塞项</h3></summary><div className="detail-card-body">{blockers.map((blocker) => <WorkerBlockerCard blocker={blocker} context={{ assetRoot: blueprint ? blueprintAssetRoot(blueprint.policy) : undefined, episodeId: episode.id }} key={`${blocker.taskId}-${blocker.code}-${blocker.detail}`} />)}</div></details> : null}
     {reviewAction && isStoryboardReviewValid ? <ReviewActions episode={episode} initialReviewRenderAdjustments={reviewRenderAdjustmentsFromContext(reviewPackage?.context_snapshot ?? {})} isPending={isTransitionPending} onRequestReviewRenderRevision={onRequestReviewRenderRevision} onTransition={onTransition} ownerId={ownerId} reviewAction={reviewAction} reviewPackageId={reviewPackage?.id ?? null} /> : null}
     {episode.stage === "publishing_review" ? <section className="review-section publication-decision"><h3>发布确认</h3><PublicationConfirmationForm episode={episode} isPending={isTransitionPending} onConfirm={onTransition} ownerId={ownerId} /></section> : null}
     <details className="review-section detail-card-collapsible"><summary><h3>审计时间线</h3></summary><div className="detail-card-body">{history.length ? <ol className="timeline">{history.map((transition) => { const reason = userFacingTransitionReason(transition.reason); return <li key={transition.id}><i className={`timeline-dot ${stageTone(transition.to_stage)}`} /><div><strong>{stageLabels[transition.to_stage]}</strong><span>{reason}</span>{reason !== transition.reason ? <small className="timeline-technical-reason">技术原文：{transition.reason}</small> : null}</div><time>{formatDate(transition.created_at)}</time></li>; })}</ol> : <p className="muted-copy">生产单创建与后续状态变化将显示在此处。</p>}</div></details>

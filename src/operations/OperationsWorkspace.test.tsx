@@ -74,4 +74,11 @@ describe("系列运营视图", () => {
     await user.click(screen.getByRole("button", { name: "下一页" }));
     expect(screen.getByText("分页生产单 21")).toBeTruthy();
   });
+
+  it("默认不把已归档 Episode 纳入运营汇总", () => {
+    const archivedEpisode = { ...episodes[0], archived_at: "2026-08-16T00:00:00.000Z", id: "episode-archived-operation", title: "已归档运营" };
+    render(<OperationsWorkspace episodes={[...episodes, archivedEpisode]} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={reviewPackages} series={[series]} seriesVersions={[seriesVersion]} tasks={tasks} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
+
+    expect(screen.queryByText("已归档运营")).toBeNull();
+  });
 });
