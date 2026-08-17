@@ -1084,6 +1084,15 @@ export type Database = {
         Returns: Database["public"]["Tables"]["episodes"]["Row"]
         SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
       }
+      set_episode_archived: {
+        Args: { p_archived: boolean; p_episode_id: string }
+        Returns: Database["public"]["Tables"]["episodes"]["Row"]
+        SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
+      }
+      delete_episode: {
+        Args: { p_episode_id: string }
+        Returns: Json
+      }
       create_blueprint_change_suggestion: {
         Args: { p_learning_report_id: string; p_proposed_policy: Json; p_rationale: string }
         Returns: {

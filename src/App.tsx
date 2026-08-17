@@ -11,6 +11,7 @@ import type { ApproveBlueprintChangeSuggestionInput, SaveBlueprintChangeSuggesti
 import { clearOperationDraft, readOperationDraft, writeOperationDraft } from "./operationDraft";
 import { OperationsWorkspace } from "./operations/OperationsWorkspace";
 import { currentReviewPackage, workerBlockers } from "./reviews/reviewSelectors";
+import { WorkerBlockerCard } from "./reviews/WorkerBlockerCard";
 import type { StoryboardAudioCue, StoryboardShotManifest } from "./worker/contracts";
 import { accountIdentityColor, accountIdentityInitials } from "./platform/accountIdentity";
 import { PaginationControls } from "./ui/PaginationControls";
@@ -644,6 +645,45 @@ export function App() {
     }
   }
 
+  async function setEpisodeArchived(episodeId: string, archived: boolean) {
+    setPendingAction(`archive-${episodeId}`);
+    setErrorMessage("");
+    try {
+      const { error } = await supabase.rpc("set_episode_archived", { p_archived: archived, p_episode_id: episodeId });
+      if (error) throw error;
+      setMessage(archived ? "生产单已归档；默认列表将隐藏它。" : "生产单已恢复到进行中列表。");
+      await refreshWorkspace();
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "无法更新生产单归档状态。");
+    } finally {
+      setPendingAction("");
+    }
+  }
+
+  async function deleteEpisode(episodeId: string, confirmation: string) {
+    setPendingAction(`delete-${episodeId}`);
+    setErrorMessage("");
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      if (!data.session) throw new Error("需要 Owner 登录会话。");
+      const response = await fetch(`/_delete-episode?${new URLSearchParams({ episode: episodeId }).toString()}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${data.session.access_token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ confirmation }),
+      });
+      if (!response.ok) throw new Error((await response.text()).trim() || "无法删除 Episode。");
+      setIsEpisodeDetailOpen(false);
+      setSelectedEpisodeId("");
+      setMessage("Episode、本地产物和数据库记录已删除。");
+      await refreshWorkspace();
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "无法删除 Episode。");
+    } finally {
+      setPendingAction("");
+    }
+  }
+
   async function importProductionMaterial(input: MaterialImportRequest) {
     setPendingAction(`material-${input.episodeId}`);
     setErrorMessage("");
@@ -1042,6 +1082,8 @@ export function App() {
             isMaterialPending={pendingAction === `material-${selectedEpisode.id}`}
             isScriptCommissionPending={pendingAction === `commission-${selectedEpisode.id}`}
             isTitlePending={pendingAction === `title-${selectedEpisode.id}`}
+            isArchivePending={pendingAction === `archive-${selectedEpisode.id}`}
+            isDeletePending={pendingAction === `delete-${selectedEpisode.id}`}
             isTransitionPending={pendingAction.startsWith(`transition-${selectedEpisode.id}-`) || pendingAction.startsWith("review-render-revision-")}
             onCreateLocalDirectory={createLocalEpisodeDirectory}
             onCommissionScript={commissionScript}
@@ -1049,6 +1091,8 @@ export function App() {
             onRequestReviewRenderRevision={requestReviewRenderRevision}
             onTransition={transitionEpisode}
             onUpdateTitle={updateEpisodeTitle}
+            onSetArchived={setEpisodeArchived}
+            onDelete={deleteEpisode}
             ownerId={session.user.id}
             materialRevisions={workspace.materialRevisions}
             reviewPackages={workspace.reviewPackages}
@@ -1224,7 +1268,27 @@ export function PublicationConfirmationForm({ episode, isPending, onConfirm, own
   return <form className="publication-confirmation" onSubmit={submit}><label><input checked={acknowledged} onChange={(event) => updateDraft({ acknowledged: event.target.checked, reason })} type="checkbox" />我已在目标平台手工发布，并核对发布包内容。</label><label>确认理由<input aria-label="发布确认理由" onChange={(event) => updateDraft({ acknowledged, reason: event.target.value })} placeholder="例如：已在 TikTok Studio 发布并复核" required value={reason} /></label>{draft ? <OperationDraftNotice isRestored={isRestoredDraft} onClear={clearDraft} /> : null}<button className="button button-primary" disabled={isPending} type="submit">{isPending ? "确认中…" : "确认已发布"}</button>{formError ? <p className="form-error">{formError}</p> : null}</form>;
 }
 
-export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, blueprint, episode, isDirectoryPending, isMaterialPending, isScriptCommissionPending, isStoryboardAnnotationPending, isTitlePending, isTransitionPending, materialRevisions, onCreateAudioTrackAnnotation, onCreateLocalDirectory, onCommissionScript, onCreateStoryboardAnnotation, onImportMaterial, onRequestReviewRenderRevision, onReviewPreRenderMember = async () => {}, onTransition, onUpdateTitle, ownerId = "local-owner", preRenderReviewMemberDecisions = [], preRenderReviewMembers = [], reviewAnnotations, reviewPackages, tasks, transitions }: { artifacts: Artifact[]; audioTrackAnnotations: AudioTrackAnnotation[]; audioTracks: AudioTrack[]; blueprint: Blueprint | null; episode: Episode; isDirectoryPending: boolean; isMaterialPending: boolean; isScriptCommissionPending: boolean; isStoryboardAnnotationPending: boolean; isTitlePending: boolean; isTransitionPending: boolean; materialRevisions: MaterialRevision[]; onCreateAudioTrackAnnotation: (input: AudioTrackAnnotationRequest) => Promise<void>; onCreateLocalDirectory: (episodeId: string) => Promise<void>; onCommissionScript: (input: ScriptCommissionRequest) => Promise<void>; onCreateStoryboardAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onImportMaterial: (input: MaterialImportRequest) => Promise<void>; onRequestReviewRenderRevision: (input: ReviewRenderRevisionRequest) => Promise<boolean>; onReviewPreRenderMember?: (input: PreRenderMemberReviewRequest) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; onUpdateTitle: (episodeId: string, title: string) => Promise<void>; ownerId?: string; preRenderReviewMemberDecisions?: PreRenderReviewMemberDecision[]; preRenderReviewMembers?: PreRenderReviewMember[]; reviewAnnotations: ReviewAnnotation[]; reviewPackages: ReviewPackage[]; tasks: Task[]; transitions: Transition[] }) {
+function EpisodeLifecycleControls({ archived, assetRoot, episodeId, isArchivePending, isDeletePending, onDelete, onSetArchived, title }: { archived: boolean; assetRoot: string; episodeId: string; isArchivePending: boolean; isDeletePending: boolean; onDelete: (episodeId: string, confirmation: string) => Promise<void>; onSetArchived: (episodeId: string, archived: boolean) => Promise<void>; title: string }) {
+  const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] = useState(false);
+  const [confirmation, setConfirmation] = useState("");
+  const confirmationTarget = title.trim() || "DELETE";
+  const localEpisodePath = assetRoot ? `${assetRoot}/episodes/${episodeId}` : `episodes/${episodeId}（账号资产目录未配置）`;
+
+  useEffect(() => {
+    setIsDeleteConfirmationOpen(false);
+    setConfirmation("");
+  }, [episodeId, archived]);
+
+  async function submitDeletion(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (confirmation !== confirmationTarget) return;
+    await onDelete(episodeId, confirmation);
+  }
+
+  return <section className="review-section episode-lifecycle-controls"><h3>生产单管理</h3><p className="muted-copy">归档不会删除生产数据或本地产物；永久删除仅对已归档 Episode 开放。</p><div className="review-actions"><button className="button button-secondary" disabled={isArchivePending || isDeletePending} onClick={() => void onSetArchived(episodeId, !archived)} type="button">{isArchivePending ? "处理中…" : archived ? "恢复到进行中" : "归档生产单"}</button><button className="button button-danger" disabled={!archived || isArchivePending || isDeletePending} onClick={() => setIsDeleteConfirmationOpen(true)} type="button">永久删除</button></div>{isDeleteConfirmationOpen ? <form className="episode-delete-confirmation" onSubmit={(event) => void submitDeletion(event)}><strong>永久删除将清理以下内容</strong><p>本地 Episode 目录：</p><code>{localEpisodePath}</code><p>同时删除数据库中的 Episode、任务、产物索引、审批、审计记录和关联生产数据。此操作不可恢复。</p><label>输入确认文本：<input aria-label="永久删除确认文本" onChange={(event) => setConfirmation(event.target.value)} placeholder={confirmationTarget} value={confirmation} /></label><div className="review-actions"><button className="button button-secondary" onClick={() => { setIsDeleteConfirmationOpen(false); setConfirmation(""); }} type="button">取消</button><button className="button button-danger" disabled={isDeletePending || confirmation !== confirmationTarget} type="submit">{isDeletePending ? "删除中…" : "确认永久删除"}</button></div></form> : null}</section>;
+}
+
+export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, blueprint, episode, isArchivePending = false, isDeletePending = false, isDirectoryPending, isMaterialPending, isScriptCommissionPending, isStoryboardAnnotationPending, isTitlePending, isTransitionPending, materialRevisions, onCreateAudioTrackAnnotation, onCreateLocalDirectory, onCommissionScript, onCreateStoryboardAnnotation, onDelete = async () => {}, onImportMaterial, onRequestReviewRenderRevision, onReviewPreRenderMember = async () => {}, onSetArchived = async () => {}, onTransition, onUpdateTitle, ownerId = "local-owner", preRenderReviewMemberDecisions = [], preRenderReviewMembers = [], reviewAnnotations, reviewPackages, tasks, transitions }: { artifacts: Artifact[]; audioTrackAnnotations: AudioTrackAnnotation[]; audioTracks: AudioTrack[]; blueprint: Blueprint | null; episode: Episode; isArchivePending?: boolean; isDeletePending?: boolean; isDirectoryPending: boolean; isMaterialPending: boolean; isScriptCommissionPending: boolean; isStoryboardAnnotationPending: boolean; isTitlePending: boolean; isTransitionPending: boolean; materialRevisions: MaterialRevision[]; onCreateAudioTrackAnnotation: (input: AudioTrackAnnotationRequest) => Promise<void>; onCreateLocalDirectory: (episodeId: string) => Promise<void>; onCommissionScript: (input: ScriptCommissionRequest) => Promise<void>; onCreateStoryboardAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onDelete?: (episodeId: string, confirmation: string) => Promise<void>; onImportMaterial: (input: MaterialImportRequest) => Promise<void>; onRequestReviewRenderRevision: (input: ReviewRenderRevisionRequest) => Promise<boolean>; onReviewPreRenderMember?: (input: PreRenderMemberReviewRequest) => Promise<void>; onSetArchived?: (episodeId: string, archived: boolean) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; onUpdateTitle: (episodeId: string, title: string) => Promise<void>; ownerId?: string; preRenderReviewMemberDecisions?: PreRenderReviewMemberDecision[]; preRenderReviewMembers?: PreRenderReviewMember[]; reviewAnnotations: ReviewAnnotation[]; reviewPackages: ReviewPackage[]; tasks: Task[]; transitions: Transition[] }) {
   const episodeArtifacts = artifacts.filter((artifact) => artifact.episode_id === episode.id);
   const episodeMaterials = materialRevisions.filter((revision) => revision.episode_id === episode.id);
   const history = transitions.filter((transition) => transition.episode_id === episode.id);
@@ -1258,6 +1322,7 @@ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, b
     <p className="review-meta">蓝图 v{blueprint?.version ?? "—"} · 创建于 {formatDate(episode.created_at)}</p>
     <section className="episode-next-step-card"><div><span>当前阶段</span><strong className={`stage stage-${stageTone(episode.stage)}`}>{stageLabels[episode.stage]}</strong></div><div><span>下一步</span><p>{nextStepForEpisode(episode.stage)}</p></div></section>
     <EpisodeTitleForm episode={episode} isPending={isTitlePending} onSave={onUpdateTitle} />
+    <EpisodeLifecycleControls archived={episodeIsArchived(episode)} assetRoot={blueprint ? blueprintAssetRoot(blueprint.policy) : ""} episodeId={episode.id} isArchivePending={isArchivePending} isDeletePending={isDeletePending} onDelete={onDelete} onSetArchived={onSetArchived} title={episode.title} />
     <section className="review-section episode-local-directory"><h3>项目输入目录</h3><label>完整 Episode ID<input aria-label="完整 Episode ID" readOnly value={episode.id} /></label><p className="muted-copy">目录文件放入 <code>episodes/{episode.id}/input</code>，再在下方显式确认导入。</p><div className="review-actions"><button className="button button-secondary" onClick={() => void copyEpisodeId()} type="button">复制 Episode ID</button><button className="button button-secondary" disabled={isDirectoryPending} onClick={() => void onCreateLocalDirectory(episode.id)} type="button">{isDirectoryPending ? "创建中…" : "创建本地目录"}</button></div>{directoryMessage ? <p className="muted-copy">{directoryMessage}</p> : null}</section>
     {episode.stage === "waiting_input" && !episode.main_script_revision_id ? <ScriptCommissionForm episodeId={episode.id} isPending={isScriptCommissionPending} onCommission={onCommissionScript} /> : null}
     <MaterialImportForm episodeId={episode.id} isPending={isMaterialPending} onImport={onImportMaterial} />
@@ -1267,7 +1332,7 @@ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, b
     <ArollTaskEvidencePanel tasks={tasks.filter((task) => task.episode_id === episode.id)} />
     <AudioTrackPanel annotations={audioTrackAnnotations.filter((annotation) => audioTracks.some((track) => track.episode_id === episode.id && track.id === annotation.audio_track_id))} onCreateAnnotation={onCreateAudioTrackAnnotation} tasks={tasks.filter((task) => task.episode_id === episode.id)} tracks={audioTracks.filter((track) => track.episode_id === episode.id)} />
     <details className="review-section detail-card-collapsible"><summary><h3>产物索引</h3></summary><div className="detail-card-body">{episodeArtifacts.length ? episodeArtifacts.map((artifact) => <Artifact key={artifact.id} label={artifact.artifact_type} name={artifact.relative_path} complete />) : <p className="muted-copy">尚无 Worker 生成的产物。</p>}</div></details>
-    {blockers.length ? <details className="review-section worker-blockers detail-card-collapsible" open><summary><h3>Worker 阻塞项</h3></summary><div className="detail-card-body">{blockers.map((blocker) => <div className="worker-blocker" key={`${blocker.taskId}-${blocker.code}-${blocker.detail}`}><strong>{blocker.code}</strong><span>{blocker.detail}</span></div>)}</div></details> : null}
+    {blockers.length ? <details className="review-section worker-blockers detail-card-collapsible" open><summary><h3>Worker 阻塞项</h3></summary><div className="detail-card-body">{blockers.map((blocker) => <WorkerBlockerCard blocker={blocker} key={`${blocker.taskId}-${blocker.code}-${blocker.detail}`} />)}</div></details> : null}
     {reviewAction && isStoryboardReviewValid ? <ReviewActions episode={episode} initialReviewRenderAdjustments={reviewRenderAdjustmentsFromContext(reviewPackage?.context_snapshot ?? {})} isPending={isTransitionPending} onRequestReviewRenderRevision={onRequestReviewRenderRevision} onTransition={onTransition} ownerId={ownerId} reviewAction={reviewAction} reviewPackageId={reviewPackage?.id ?? null} /> : null}
     {episode.stage === "publishing_review" ? <section className="review-section publication-decision"><h3>发布确认</h3><PublicationConfirmationForm episode={episode} isPending={isTransitionPending} onConfirm={onTransition} ownerId={ownerId} /></section> : null}
     <details className="review-section detail-card-collapsible"><summary><h3>审计时间线</h3></summary><div className="detail-card-body">{history.length ? <ol className="timeline">{history.map((transition) => { const reason = userFacingTransitionReason(transition.reason); return <li key={transition.id}><i className={`timeline-dot ${stageTone(transition.to_stage)}`} /><div><strong>{stageLabels[transition.to_stage]}</strong><span>{reason}</span>{reason !== transition.reason ? <small className="timeline-technical-reason">技术原文：{transition.reason}</small> : null}</div><time>{formatDate(transition.created_at)}</time></li>; })}</ol> : <p className="muted-copy">生产单创建与后续状态变化将显示在此处。</p>}</div></details>

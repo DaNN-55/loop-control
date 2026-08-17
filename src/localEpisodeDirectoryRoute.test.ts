@@ -2,11 +2,11 @@
 
 import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
-import { mkdtemp, readFile, rm, stat, symlink, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { createLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveLocalEpisodeDirectory } from "../vite.config";
+import { createLocalEpisodeDirectory, removeLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveEpisodeDeletion, serveLocalEpisodeDirectory } from "../vite.config";
 
 const episodeId = "00000000-0000-0000-0000-000000000000";
 let server: ReturnType<typeof createServer>;
@@ -36,6 +36,28 @@ describe("本地 Episode 目录路由", () => {
     expect(unauthorized.status).toBe(401);
     expect(invalidId.status).toBe(400);
     expect(wrongMethod.status).toBe(405);
+  });
+
+  it("永久删除路由在执行文件系统操作前拒绝未登录、非法 ID 和错误方法", async () => {
+    const middleware = serveEpisodeDeletion(undefined, undefined);
+    const deletionServer = createServer((request, response) => {
+      void middleware(request, response);
+    });
+    await new Promise<void>((resolve) => deletionServer.listen(0, "127.0.0.1", resolve));
+    const deletionOrigin = `http://127.0.0.1:${(deletionServer.address() as AddressInfo).port}`;
+    try {
+      const [unauthorized, invalidId, wrongMethod] = await Promise.all([
+        fetch(`${deletionOrigin}/_delete-episode?episode=${episodeId}`, { body: "{}", method: "DELETE" }),
+        fetch(`${deletionOrigin}/_delete-episode?episode=not-an-episode-id`, { body: "{}", headers: { Authorization: "Bearer invalid" }, method: "DELETE" }),
+        fetch(`${deletionOrigin}/_delete-episode?episode=${episodeId}`, { headers: { Authorization: "Bearer invalid" } }),
+      ]);
+
+      expect(unauthorized.status).toBe(401);
+      expect(invalidId.status).toBe(400);
+      expect(wrongMethod.status).toBe(405);
+    } finally {
+      await new Promise<void>((resolve, reject) => deletionServer.close((error) => error ? reject(error) : resolve()));
+    }
   });
 
   it("只在资产根的 episodes 目录下创建，并发创建保持幂等", async () => {
@@ -98,6 +120,39 @@ describe("本地 Episode 目录路由", () => {
       await expect(saveProductionMaterialSnapshot(root, episodeId, { sourceKind: "directory", sourcePath: "../secret.txt" })).rejects.toThrow("输入文件路径无效");
     } finally {
       await rm(root, { force: true, recursive: true });
+    }
+  });
+
+  it("只删除资产根内的 Episode 目录，并允许重复清理已不存在的目录", async () => {
+    const root = await mkdtemp(join(tmpdir(), "tk-workflow-delete-"));
+    try {
+      const episodeDirectory = await createLocalEpisodeDirectory(root, episodeId);
+      await writeFile(join(episodeDirectory, "render.mp4"), "video");
+
+      await expect(removeLocalEpisodeDirectory(root, episodeId)).resolves.toEqual({
+        existed: true,
+        path: episodeDirectory,
+      });
+      await expect(stat(episodeDirectory)).rejects.toMatchObject({ code: "ENOENT" });
+      await expect(removeLocalEpisodeDirectory(root, episodeId)).resolves.toEqual({
+        existed: false,
+        path: episodeDirectory,
+      });
+    } finally {
+      await rm(root, { force: true, recursive: true });
+    }
+  });
+
+  it("拒绝删除符号链接形式的 Episode 目录", async () => {
+    const root = await mkdtemp(join(tmpdir(), "tk-workflow-delete-"));
+    const outside = await mkdtemp(join(tmpdir(), "tk-workflow-delete-outside-"));
+    try {
+      await mkdir(join(root, "episodes"), { recursive: true });
+      await symlink(outside, join(root, "episodes", episodeId));
+      await expect(removeLocalEpisodeDirectory(root, episodeId)).rejects.toThrow("目录不是安全目录");
+      expect((await stat(outside)).isDirectory()).toBe(true);
+    } finally {
+      await Promise.all([rm(root, { force: true, recursive: true }), rm(outside, { force: true, recursive: true })]);
     }
   });
 });

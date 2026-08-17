@@ -43,7 +43,9 @@ describe("系列运营视图", () => {
     expect(screen.getByText("1 个待审核包")).toBeTruthy();
     expect(screen.getByText("测试媒体适配器未配置。")).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "脚本待审 输入与脚本 · 审核包 v2" }));
-    await user.click(screen.getByRole("button", { name: "媒体受阻 · media_provider_unavailable 测试媒体适配器未配置。" }));
+    expect(screen.getByText("媒体供应商暂不可用")).toBeTruthy();
+    expect(screen.getByText("Worker 无法调用当前媒体供应商，可能是供应商适配器、凭据或网络配置问题。")).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "媒体受阻 media_provider_unavailable" }));
     expect(onSelectEpisode).toHaveBeenNthCalledWith(1, "episode-review");
     expect(onSelectEpisode).toHaveBeenNthCalledWith(2, "episode-blocked");
   });

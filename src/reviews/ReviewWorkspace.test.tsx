@@ -144,6 +144,26 @@ describe("审核台", () => {
     expect((screen.getByRole("heading", { name: "产物索引" }).closest("details") as HTMLDetailsElement).open).toBe(false);
   });
 
+  it("允许归档 Episode，并要求先归档再确认永久删除", async () => {
+    const user = userEvent.setup();
+    const onSetArchived = vi.fn().mockResolvedValue(undefined);
+    const onDelete = vi.fn().mockResolvedValue(undefined);
+    const { rerender } = render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onDelete={onDelete} onSetArchived={onSetArchived} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
+
+    expect(screen.getByRole("button", { name: "归档生产单" })).toBeTruthy();
+    expect((screen.getByRole("button", { name: "永久删除" }) as HTMLButtonElement).disabled).toBe(true);
+    await user.click(screen.getByRole("button", { name: "归档生产单" }));
+    expect(onSetArchived).toHaveBeenCalledWith(reviewEpisode.id, true);
+
+    const archivedEpisode = { ...reviewEpisode, archived_at: "2026-08-16T00:00:00.000Z" };
+    rerender(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={archivedEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onDelete={onDelete} onSetArchived={onSetArchived} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
+    await user.click(screen.getByRole("button", { name: "永久删除" }));
+    expect(screen.getByText("/Volumes/素材盘/tk-workflow/dao/episodes/episode-review")).toBeTruthy();
+    await user.type(screen.getByLabelText("永久删除确认文本"), archivedEpisode.title);
+    await user.click(screen.getByRole("button", { name: "确认永久删除" }));
+    expect(onDelete).toHaveBeenCalledWith(archivedEpisode.id, archivedEpisode.title);
+  });
+
   it("只列出需要 Owner 审核的 Episode，并允许选择其中一项", async () => {
     const user = userEvent.setup();
     const onSelectEpisode = vi.fn();

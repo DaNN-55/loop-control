@@ -10,6 +10,7 @@ import { loadEnv, type Plugin } from "vite";
 const localArtifactRoute = "/_local-artifact";
 const localEpisodeDirectoryRoute = "/_local-episode-directory";
 const localProductionMaterialRoute = "/_production-material";
+const localEpisodeDeletionRoute = "/_delete-episode";
 const maxProductionMaterialBytes = 100 * 1024 * 1024;
 const maxEncodedMaterialRequestBytes = 140 * 1024 * 1024;
 
@@ -158,6 +159,72 @@ export function serveLocalEpisodeDirectory(supabaseUrl: string | undefined, supa
   };
 }
 
+export function serveEpisodeDeletion(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+  return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+    if (request.method !== "DELETE") {
+      response.statusCode = 405;
+      response.end();
+      return;
+    }
+    const authorization = request.headers.authorization;
+    if (!authorization?.startsWith("Bearer ")) {
+      response.statusCode = 401;
+      response.end("需要 Owner 登录会话。");
+      return;
+    }
+    const episodeId = new URL(request.url ?? "", "http://127.0.0.1").searchParams.get("episode") ?? "";
+    if (!isEpisodeId(episodeId)) {
+      response.statusCode = 400;
+      response.end("无效的 Episode ID。");
+      return;
+    }
+
+    try {
+      const body = await readJsonBody(request);
+      if (typeof body.confirmation !== "string") throw new Error("缺少删除确认文本。");
+      const context = await episodeDeletionContextForOwner({ authorization, episodeId, supabasePublishableKey, supabaseUrl });
+      if (!context) {
+        response.statusCode = 404;
+        response.end("未找到可删除的 Episode。");
+        return;
+      }
+      const expectedConfirmation = context.title.trim() || "DELETE";
+      if (body.confirmation !== expectedConfirmation) {
+        response.statusCode = 409;
+        response.end("删除确认文本不匹配。");
+        return;
+      }
+      if (!context.archivedAt) {
+        response.statusCode = 409;
+        response.end("请先归档 Episode，再执行永久删除。");
+        return;
+      }
+      if (context.hasRunningTask || context.hasActiveAssetLock) {
+        response.statusCode = 409;
+        response.end("Episode 仍有运行中的 Worker 任务或资产锁，暂时不能删除。");
+        return;
+      }
+      if (!supabaseUrl || !supabasePublishableKey) throw new Error("Supabase 连接未配置。");
+
+      const local = await removeLocalEpisodeDirectory(context.assetRoot, episodeId);
+      const supabase = createClient(supabaseUrl, supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: authorization } } });
+      const { data: deletion, error } = await supabase.rpc("delete_episode", { p_episode_id: episodeId });
+      if (error) {
+        response.statusCode = 500;
+        response.end(`本地 Episode 目录已清理，但数据库记录删除失败：${error.message}`);
+        return;
+      }
+
+      response.setHeader("Content-Type", "application/json");
+      response.statusCode = 200;
+      response.end(JSON.stringify({ database: deletion, episodeId, local }));
+    } catch (error) {
+      response.statusCode = 400;
+      response.end(error instanceof Error ? error.message : "无法删除 Episode。");
+    }
+  };
+}
+
 async function ensureDirectoryWithinRoot(root: string, directory: string): Promise<string> {
   if (!isDescendant(root, directory)) throw new Error("目录超出资产根。");
   try {
@@ -184,6 +251,37 @@ export async function createLocalEpisodeDirectory(assetRoot: string, episodeId: 
   await ensureDirectoryWithinRoot(episodeDirectory, resolve(episodeDirectory, "input"));
   await ensureDirectoryWithinRoot(episodeDirectory, resolve(episodeDirectory, "materials"));
   return episodeDirectory;
+}
+
+export async function removeLocalEpisodeDirectory(assetRoot: string, episodeId: string): Promise<{ existed: boolean; path: string }> {
+  if (!isEpisodeId(episodeId)) throw new Error("无效的 Episode ID。");
+  const resolvedRoot = await fs.realpath(assetRoot);
+  if (isFilesystemRoot(resolvedRoot)) throw new Error("资产根不能是文件系统根目录。");
+
+  const episodesDirectory = resolve(resolvedRoot, "episodes");
+  const episodeDirectory = resolve(episodesDirectory, episodeId);
+  let episodesStat;
+  try {
+    episodesStat = await fs.lstat(episodesDirectory);
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") return { existed: false, path: episodeDirectory };
+    throw error;
+  }
+  if (episodesStat.isSymbolicLink() || !episodesStat.isDirectory()) throw new Error("目录不是安全目录。");
+
+  let episodeStat;
+  try {
+    episodeStat = await fs.lstat(episodeDirectory);
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") return { existed: false, path: episodeDirectory };
+    throw error;
+  }
+  if (episodeStat.isSymbolicLink() || !episodeStat.isDirectory()) throw new Error("目录不是安全目录。");
+
+  const resolvedEpisodeDirectory = await fs.realpath(episodeDirectory);
+  if (!isDescendant(resolvedRoot, resolvedEpisodeDirectory)) throw new Error("目录超出资产根。");
+  await fs.rm(resolvedEpisodeDirectory, { force: false, recursive: true });
+  return { existed: true, path: episodeDirectory };
 }
 
 interface MaterialSnapshotInput {
@@ -243,6 +341,35 @@ async function readJsonBody(request: IncomingMessage): Promise<Record<string, un
   const parsed: unknown = JSON.parse(Buffer.concat(chunks).toString("utf8"));
   if (!parsed || Array.isArray(parsed) || typeof parsed !== "object") throw new Error("生产材料请求无效。");
   return parsed as Record<string, unknown>;
+}
+
+async function episodeDeletionContextForOwner(input: { authorization: string; episodeId: string; supabasePublishableKey: string | undefined; supabaseUrl: string | undefined }): Promise<{ accountId: string; archivedAt: string | null; assetRoot: string; hasActiveAssetLock: boolean; hasRunningTask: boolean; title: string } | null> {
+  if (!input.supabaseUrl || !input.supabasePublishableKey) return null;
+  const accessToken = input.authorization.slice("Bearer ".length);
+  const supabase = createClient(input.supabaseUrl, input.supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: input.authorization } } });
+  const { data: userData, error: userError } = await supabase.auth.getUser(accessToken);
+  if (userError || !userData.user) return null;
+
+  const { data: episode, error: episodeError } = await supabase.from("episodes").select("account_id, archived_at, blueprint_version_id, title").eq("id", input.episodeId).maybeSingle();
+  if (episodeError || !episode) return null;
+  const { data: membership, error: membershipError } = await supabase.from("account_memberships").select("role").eq("account_id", episode.account_id).eq("user_id", userData.user.id).eq("role", "owner").maybeSingle();
+  if (membershipError || !membership) return null;
+  const [{ data: runningTasks, error: runningTasksError }, { data: activeLocks, error: activeLocksError }, { data: blueprint, error: blueprintError }] = await Promise.all([
+    supabase.from("tasks").select("id").eq("episode_id", input.episodeId).eq("status", "running").limit(1),
+    supabase.from("asset_locks").select("resource_key").eq("episode_id", input.episodeId).gt("expires_at", new Date().toISOString()).limit(1),
+    supabase.from("account_blueprint_versions").select("policy").eq("id", episode.blueprint_version_id).maybeSingle(),
+  ]);
+  if (runningTasksError || activeLocksError || blueprintError || !blueprint || !blueprint.policy || Array.isArray(blueprint.policy) || typeof blueprint.policy !== "object") return null;
+  const assetRoot = blueprint.policy.asset_root;
+  if (typeof assetRoot !== "string" || !assetRoot.trim()) return null;
+  return {
+    accountId: episode.account_id,
+    archivedAt: typeof episode.archived_at === "string" ? episode.archived_at : null,
+    assetRoot: assetRoot.trim(),
+    hasActiveAssetLock: Boolean(activeLocks?.length),
+    hasRunningTask: Boolean(runningTasks?.length),
+    title: episode.title,
+  };
 }
 
 export function serveProductionMaterial(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
@@ -345,17 +472,20 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
   const artifactMiddleware = serveLocalArtifact(supabaseUrl, supabasePublishableKey);
   const directoryMiddleware = serveLocalEpisodeDirectory(supabaseUrl, supabasePublishableKey);
   const productionMaterialMiddleware = serveProductionMaterial(supabaseUrl, supabasePublishableKey);
+  const deletionMiddleware = serveEpisodeDeletion(supabaseUrl, supabasePublishableKey);
   return {
     name: "local-artifact-preview",
     configureServer(server) {
       server.middlewares.use(localArtifactRoute, artifactMiddleware);
       server.middlewares.use(localEpisodeDirectoryRoute, directoryMiddleware);
       server.middlewares.use(localProductionMaterialRoute, productionMaterialMiddleware);
+      server.middlewares.use(localEpisodeDeletionRoute, deletionMiddleware);
     },
     configurePreviewServer(server) {
       server.middlewares.use(localArtifactRoute, artifactMiddleware);
       server.middlewares.use(localEpisodeDirectoryRoute, directoryMiddleware);
       server.middlewares.use(localProductionMaterialRoute, productionMaterialMiddleware);
+      server.middlewares.use(localEpisodeDeletionRoute, deletionMiddleware);
     },
   };
 }
