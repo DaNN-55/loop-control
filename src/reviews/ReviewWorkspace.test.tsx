@@ -2,7 +2,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Database } from "../lib/database.types";
-import { EpisodeDetail, ReviewWorkspace } from "../App";
+import { EpisodeDetail, EpisodeDetailDrawer, ReviewWorkspace } from "../App";
 
 vi.mock("../lib/supabase", () => ({
   supabase: {
@@ -126,6 +126,24 @@ describe("审核台", () => {
     else delete (navigator as { clipboard?: Clipboard }).clipboard;
   });
 
+  it("点击抽屉外遮罩或按 Escape 可以关闭生产单详情", async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+    render(<EpisodeDetailDrawer isOpen onClose={onClose}><p>详情内容</p></EpisodeDetailDrawer>);
+
+    await user.click(screen.getByTestId("episode-detail-scrim"));
+    expect(onClose).toHaveBeenCalledTimes(1);
+    await user.keyboard("{Escape}");
+    expect(onClose).toHaveBeenCalledTimes(2);
+  });
+
+  it("在详情顶部显示当前阶段和下一步，并默认收起技术索引", () => {
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
+
+    expect(screen.getByText("审核生成脚本")).toBeTruthy();
+    expect((screen.getByRole("heading", { name: "产物索引" }).closest("details") as HTMLDetailsElement).open).toBe(false);
+  });
+
   it("只列出需要 Owner 审核的 Episode，并允许选择其中一项", async () => {
     const user = userEvent.setup();
     const onSelectEpisode = vi.fn();
@@ -140,6 +158,17 @@ describe("审核台", () => {
 
     await user.click(screen.getByRole("button", { name: /越南民间信仰中的符号/ }));
     expect(onSelectEpisode).toHaveBeenCalledWith(reviewEpisode.id);
+  });
+
+  it("对待审核 Episode 使用分页", async () => {
+    const user = userEvent.setup();
+    const manyEpisodes = Array.from({ length: 21 }, (_, index) => ({ ...reviewEpisode, id: `episode-review-page-${index}`, title: `待审分页 ${index + 1}` }));
+
+    render(<ReviewWorkspace accountsById={new Map([[account.id, account]])} episodes={manyEpisodes} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
+
+    expect(screen.getByText("第 1 / 2 页 · 共 21 条")).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "下一页" }));
+    expect(screen.getByText("待审分页 21")).toBeTruthy();
   });
 
   it("显示可预览产物和 Worker 阻塞项，并以理由执行批准或要求修改", async () => {
@@ -213,7 +242,7 @@ describe("审核台", () => {
     render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onTransition={vi.fn()} tasks={[aRollTask]} transitions={[]} />);
 
     expect(screen.getByRole("heading", { name: "A-roll 生成运行" })).toBeTruthy();
-    expect(screen.getByText("shot-01 · running")).toBeTruthy();
+    expect(screen.getByText("shot-01 · 执行中")).toBeTruthy();
     expect(screen.getByText("codex · gpt-5.6-luna · a-roll-v1")).toBeTruthy();
     expect(screen.getByText("72 分")).toBeTruthy();
     expect(screen.getByText("最新结果：执行中")).toBeTruthy();
@@ -229,7 +258,7 @@ describe("审核台", () => {
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onTransition={vi.fn()} tasks={[aRollTask]} transitions={[]} />);
 
-    expect(screen.getByText("A-roll 任务 · blocked")).toBeTruthy();
+    expect(screen.getByText("A-roll 任务 · 已阻塞")).toBeTruthy();
     expect(screen.getByText("冻结执行器配置不可用；请查看下方 Worker 阻塞项。")).toBeTruthy();
     expect(screen.getByText("a_roll_executor_missing")).toBeTruthy();
   });

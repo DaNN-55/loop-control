@@ -12,6 +12,8 @@ import { clearOperationDraft, readOperationDraft, writeOperationDraft } from "./
 import { OperationsWorkspace } from "./operations/OperationsWorkspace";
 import { currentReviewPackage, workerBlockers } from "./reviews/reviewSelectors";
 import type { StoryboardAudioCue, StoryboardShotManifest } from "./worker/contracts";
+import { accountIdentityColor, accountIdentityInitials } from "./platform/accountIdentity";
+import { PaginationControls } from "./ui/PaginationControls";
 
 type NavigationItem = "accounts" | "episodes" | "operations" | "reviews" | "publish" | "learning";
 type Theme = "light" | "dark";
@@ -34,6 +36,9 @@ type Experiment = Database["public"]["Tables"]["experiments"]["Row"];
 type LearningReport = Database["public"]["Tables"]["learning_reports"]["Row"];
 type MetricSnapshot = Database["public"]["Tables"]["metric_snapshots"]["Row"];
 type BlueprintChangeSuggestion = Database["public"]["Tables"]["blueprint_change_suggestions"]["Row"];
+
+type EpisodeVisibility = "active" | "archived" | "all";
+type EpisodeWithArchive = Episode & { archived_at?: string | null };
 
 interface ReviewAction {
   approveStage: EpisodeStage;
@@ -128,13 +133,13 @@ interface Workspace {
   blueprintChangeSuggestions: BlueprintChangeSuggestion[];
 }
 
-const navigation: Array<{ id: NavigationItem; label: string }> = [
-  { id: "accounts", label: "账号" },
-  { id: "episodes", label: "生产单" },
+export const navigation: Array<{ id: NavigationItem; label: string }> = [
   { id: "operations", label: "系列运营" },
+  { id: "episodes", label: "生产单" },
   { id: "reviews", label: "审核" },
   { id: "publish", label: "发布队列" },
   { id: "learning", label: "复盘" },
+  { id: "accounts", label: "账号" },
 ];
 
 const themeStorageKey = "loop-control.theme.v1";
@@ -156,8 +161,15 @@ function storedSidebarCollapsed(): boolean {
   }
 }
 
-function NavigationButtons({ activeNavigation, onSelect }: { activeNavigation: NavigationItem; onSelect: (item: NavigationItem) => void }) {
-  return <>{navigation.map((item) => <button className={`navigation-item ${activeNavigation === item.id ? "is-active" : ""}`} key={item.id} onClick={() => onSelect(item.id)} type="button"><Icon name={item.id} /><span>{item.label}</span></button>)}</>;
+export function navigationBadgeCounts(episodes: Episode[], artifacts: Artifact[], tasks: Task[]): Partial<Record<NavigationItem, number>> {
+  const activeEpisodes = episodes.filter((episode) => !episodeIsArchived(episode));
+  const reviewCount = activeEpisodes.filter((episode) => reviewActionFor(episode.stage) || episode.stage === "production_ready").length;
+  const publishCount = activeEpisodes.filter((episode) => episode.stage === "publish_ready" || episode.stage === "publishing_review" || (episode.stage === "qc_passed" && artifacts.some((artifact) => artifact.episode_id === episode.id && artifact.artifact_type === "publish_package") && tasks.some((task) => task.episode_id === episode.id && task.task_type === "verify_publish_package" && task.status === "completed"))).length;
+  return { reviews: reviewCount, publish: publishCount };
+}
+
+function NavigationButtons({ activeNavigation, badges = {}, onSelect }: { activeNavigation: NavigationItem; badges?: Partial<Record<NavigationItem, number>>; onSelect: (item: NavigationItem) => void }) {
+  return <>{navigation.map((item) => <button className={`navigation-item ${activeNavigation === item.id ? "is-active" : ""}`} key={item.id} onClick={() => onSelect(item.id)} type="button"><Icon name={item.id} /><span>{item.label}</span>{badges[item.id] ? <span aria-label={`${badges[item.id]} 个待处理`} className="navigation-badge">{badges[item.id]}</span> : null}</button>)}</>;
 }
 
 function OwnerMenu({ onOpenSettings, onSignOut }: { onOpenSettings: () => void; onSignOut: () => void }) {
@@ -203,8 +215,50 @@ function stageTone(stage: EpisodeStage): "review" | "approved" | "muted" {
   return "muted";
 }
 
+const taskStatusLabels: Record<Task["status"], string> = { ready: "等待领取", running: "执行中", completed: "已完成", blocked: "已阻塞", failed: "失败" };
+const transitionReasonLabels: Record<string, string> = {
+  "Owner confirmed an imported main script revision.": "Owner 已确认导入的主脚本修订。",
+  "Orchestrator froze the first visual planning task from the confirmed main script.": "编排器已根据确认的主脚本冻结首个视觉规划任务。",
+  "Worker submitted a frozen visual planning review package.": "Worker 已提交冻结的视觉规划审核包。",
+  "HyperFrames deterministic review render completed.": "HyperFrames 已完成确定性的审核渲染。",
+};
+
+const nextStepLabels: Partial<Record<EpisodeStage, string>> = {
+  waiting_input: "导入主脚本或提交脚本委托",
+  script_draft: "等待 Worker 生成脚本",
+  script_review: "审核生成脚本",
+  script_approved: "等待生成视觉方案",
+  visual_draft: "等待 Worker 生成视觉方案",
+  visual_review: "审核视觉方案",
+  visual_approved: "等待生成分镜",
+  storyboard_draft: "等待 Worker 生成分镜",
+  storyboard_review: "审核分镜并处理镜头批注",
+  storyboard_approved: "等待媒体任务生成",
+  production_ready: "逐项审核预渲染成员",
+  render_ready: "等待生成审核渲染",
+  qc_review: "审核合成渲染与 QC 报告",
+  qc_passed: "生成并验证发布包",
+  publish_ready: "进入发布确认",
+  publishing_review: "完成外部平台发布并确认",
+  published: "开始收集指标",
+  metrics_collecting: "定义实验并录入每周指标",
+  learning_recorded: "查看复盘并评估蓝图建议",
+};
+
+function userFacingTransitionReason(reason: string): string {
+  return transitionReasonLabels[reason.trim()] ?? reason;
+}
+
+function nextStepForEpisode(stage: EpisodeStage): string {
+  return nextStepLabels[stage] ?? "查看生产单详情";
+}
+
 function formatDate(source: string) {
   return new Intl.DateTimeFormat("zh-CN", { dateStyle: "medium", timeStyle: "short" }).format(new Date(source));
+}
+
+function episodeIsArchived(episode: Episode): boolean {
+  return Boolean((episode as EpisodeWithArchive).archived_at);
 }
 
 function formatPolicy(policy: Json) {
@@ -332,6 +386,7 @@ export function App() {
   const [selectedEpisodeId, setSelectedEpisodeId] = useState("");
   const [accountFilter, setAccountFilter] = useState("全部账号");
   const [seriesFilter, setSeriesFilter] = useState("全部系列");
+  const [episodeVisibility, setEpisodeVisibility] = useState<EpisodeVisibility>("active");
   const [showAccountForm, setShowAccountForm] = useState(false);
   const [showEpisodeForm, setShowEpisodeForm] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
@@ -393,11 +448,14 @@ export function App() {
   );
   const visibleEpisodes = useMemo(
     () => accountVisibleEpisodes.filter((episode) => {
+      if (episodeVisibility === "active" && episodeIsArchived(episode)) return false;
+      if (episodeVisibility === "archived" && !episodeIsArchived(episode)) return false;
       if (seriesFilter === "全部系列") return true;
       return episode.series_version_id ? seriesVersionsById.get(episode.series_version_id)?.series_id === seriesFilter : false;
     }),
-    [accountVisibleEpisodes, seriesFilter, seriesVersionsById],
+    [accountVisibleEpisodes, episodeVisibility, seriesFilter, seriesVersionsById],
   );
+  const navigationBadges = useMemo(() => navigationBadgeCounts(workspace?.episodes ?? [], workspace?.artifacts ?? [], workspace?.tasks ?? []), [workspace]);
 
   function changeTheme() {
     setTheme((current) => {
@@ -853,7 +911,7 @@ export function App() {
     <main className="app-shell" data-sidebar={sidebarCollapsed ? "collapsed" : "expanded"} data-theme={theme}>
       <aside className="sidebar" aria-label="主导航">
         <div className="wordmark"><img alt="Loop 控制台" src="/brand/loop-mark.png" /><span>Loop 控制台</span></div>
-        <nav className="navigation"><NavigationButtons activeNavigation={activeNavigation} onSelect={changeNavigation} /></nav>
+        <nav className="navigation"><NavigationButtons activeNavigation={activeNavigation} badges={navigationBadges} onSelect={changeNavigation} /></nav>
         <div className="sidebar-footer"><div className="sidebar-utilities"><button aria-label={theme === "light" ? "切换至深色模式" : "切换至浅色模式"} className="sidebar-utility" onClick={changeTheme} title={theme === "light" ? "深色模式" : "浅色模式"} type="button"><Icon name={theme === "light" ? "Moon" : "Sun"} /></button><button aria-label={sidebarCollapsed ? "展开侧栏" : "收起侧栏"} className="sidebar-collapse-button sidebar-utility" onClick={changeSidebarCollapsed} title={sidebarCollapsed ? "展开侧栏" : "收起侧栏"} type="button"><Icon name="PanelLeft" /></button><OwnerMenu onOpenSettings={() => setShowPasswordForm(true)} onSignOut={() => void supabase.auth.signOut()} /></div></div>
       </aside>
 
@@ -884,13 +942,13 @@ export function App() {
         ) : activeNavigation === "reviews" ? (
           <ReviewWorkspace
             accountsById={accountsById}
-            episodes={workspace.episodes}
+            episodes={workspace.episodes.filter((episode) => !episodeIsArchived(episode))}
             onSelectEpisode={openEpisodeDetail}
             selectedEpisode={selectedEpisode}
           />
         ) : activeNavigation === "operations" ? (
           <OperationsWorkspace
-            episodes={workspace.episodes}
+            episodes={workspace.episodes.filter((episode) => !episodeIsArchived(episode))}
             onSelectEpisode={openEpisodeDetail}
             preRenderReviewMemberDecisions={workspace.preRenderReviewMemberDecisions}
             preRenderReviewMembers={workspace.preRenderReviewMembers}
@@ -905,7 +963,7 @@ export function App() {
             accountsById={accountsById}
             artifacts={workspace.artifacts}
             tasks={workspace.tasks}
-            episodes={accountVisibleEpisodes}
+            episodes={accountVisibleEpisodes.filter((episode) => !episodeIsArchived(episode))}
             isPending={pendingAction}
             onSelectEpisode={openEpisodeDetail}
             onTransition={transitionEpisode}
@@ -915,7 +973,7 @@ export function App() {
           <LearningWorkspace
             accountsById={accountsById}
             blueprintVersionsById={blueprintsById}
-            episodes={accountVisibleEpisodes}
+            episodes={accountVisibleEpisodes.filter((episode) => !episodeIsArchived(episode))}
             experiments={workspace.experiments}
             learningReports={workspace.learningReports}
             metricSnapshots={workspace.metricSnapshots}
@@ -936,6 +994,8 @@ export function App() {
             episodes={visibleEpisodes}
             filter={accountFilter}
             onFilter={setAccountFilter}
+            episodeVisibility={episodeVisibility}
+            onEpisodeVisibilityChange={setEpisodeVisibility}
             onSeriesFilter={setSeriesFilter}
             onSelectEpisode={openEpisodeDetail}
             series={workspace.series}
@@ -980,7 +1040,7 @@ export function App() {
           />
       </EpisodeDetailDrawer> : null}
 
-      <nav aria-label="移动端主导航" className="mobile-navigation"><NavigationButtons activeNavigation={activeNavigation} onSelect={changeNavigation} /></nav>
+      <nav aria-label="移动端主导航" className="mobile-navigation"><NavigationButtons activeNavigation={activeNavigation} badges={navigationBadges} onSelect={changeNavigation} /></nav>
 
       {showEpisodeForm ? <EpisodeForm accounts={workspace.accounts} isPending={pendingAction === "episode"} onClose={() => setShowEpisodeForm(false)} onSubmit={createEpisode} series={workspace.series} seriesVersions={workspace.seriesVersions} /> : null}
       {showAccountForm ? <AccountForm isPending={pendingAction === "account"} onClose={() => setShowAccountForm(false)} onSubmit={createAccount} /> : null}
@@ -1137,14 +1197,28 @@ export function SeriesSettings({ isPending, onCreate, series, seriesVersions }: 
   return <section className="series-settings"><div><h2>系列</h2>{series.length ? <div className="series-list">{series.map((candidate) => { const versions = seriesVersions.filter((version) => version.series_id === candidate.id); return <article className="blueprint-card" key={candidate.id}><div><strong>{candidate.name}</strong><span>{versions.length} 个版本</span></div><p>{versions.length ? `最新规则 v${Math.max(...versions.map((version) => version.version))}` : "暂无规则版本"}</p></article>; })}</div> : <p>还没有系列。创建后即可在生产单中关联和筛选。</p>}</div><form onSubmit={(event) => void submit(event)}><h2>新建系列</h2><label>系列名称<input aria-label="系列名称" onChange={(event) => setName(event.target.value)} required value={name} /></label><label>系列规则（JSON）<textarea aria-label="系列规则" onChange={(event) => setRules(event.target.value)} rows={6} value={rules} /></label><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "创建中…" : "创建系列 v1"}</button>{formError ? <p className="form-error">{formError}</p> : null}</form></section>;
 }
 
-function EpisodeWorkspace({ accounts, accountsById, artifacts, blueprintsById, currentNavigation, episodes, filter, onFilter, onSeriesFilter, onSelectEpisode, series, seriesById, seriesFilter, seriesVersionsById, selectedEpisode }: { accounts: Account[]; accountsById: Map<string, Account>; artifacts: Artifact[]; blueprintsById: Map<string, Blueprint>; currentNavigation: NavigationItem; episodes: Episode[]; filter: string; onFilter: (value: string) => void; onSeriesFilter: (value: string) => void; onSelectEpisode: (id: string) => void; series: Series[]; seriesById: Map<string, Series>; seriesFilter: string; seriesVersionsById: Map<string, SeriesVersion>; selectedEpisode: Episode | null }) {
+export function EpisodeWorkspace({ accounts, accountsById, artifacts, blueprintsById, currentNavigation, episodeVisibility, episodes, filter, onEpisodeVisibilityChange, onFilter, onSeriesFilter, onSelectEpisode, series, seriesById, seriesFilter, seriesVersionsById, selectedEpisode }: { accounts: Account[]; accountsById: Map<string, Account>; artifacts: Artifact[]; blueprintsById: Map<string, Blueprint>; currentNavigation: NavigationItem; episodeVisibility: EpisodeVisibility; episodes: Episode[]; filter: string; onEpisodeVisibilityChange: (value: EpisodeVisibility) => void; onFilter: (value: string) => void; onSeriesFilter: (value: string) => void; onSelectEpisode: (id: string) => void; series: Series[]; seriesById: Map<string, Series>; seriesFilter: string; seriesVersionsById: Map<string, SeriesVersion>; selectedEpisode: Episode | null }) {
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
+  const filteredEpisodes = episodes.filter((episode) => episodeVisibility === "all" || (episodeVisibility === "archived" ? episodeIsArchived(episode) : !episodeIsArchived(episode)));
+  const pageCount = Math.max(1, Math.ceil(filteredEpisodes.length / pageSize));
+  const safePage = Math.min(page, pageCount);
+  const pageItems = filteredEpisodes.slice((safePage - 1) * pageSize, safePage * pageSize);
+  useEffect(() => setPage(1), [episodeVisibility, filter, seriesFilter]);
+  useEffect(() => setPage((current) => Math.min(current, pageCount)), [pageCount]);
   if (currentNavigation !== "episodes") return <div className="empty-state"><h2>复盘记录</h2><p>该模块将在后续学习闭环任务中接入。当前所有状态与审计均来自真实数据库。</p></div>;
-  return <><div className="filters"><label><span>账号</span><select onChange={(event) => onFilter(event.target.value)} value={filter}><option value="全部账号">全部账号</option>{accounts.map((account) => <option key={account.id} value={account.id}>{account.name}</option>)}</select></label><label><span>系列</span><select onChange={(event) => onSeriesFilter(event.target.value)} value={seriesFilter}><option value="全部系列">全部系列</option>{series.map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.name}</option>)}</select></label><span className="summary-count">{episodes.length} 个生产单</span></div><div className="episode-table" role="table" aria-label="生产单"><div className="table-row table-header" role="row"><span>生产单</span><span>账号</span><span>系列</span><span>蓝图</span><span>当前阶段</span><span>产物数</span><span>更新时间</span></div>{episodes.map((episode) => { const seriesVersion = episode.series_version_id ? seriesVersionsById.get(episode.series_version_id) : null; return <button className={`table-row episode-row ${selectedEpisode?.id === episode.id ? "is-selected" : ""}`} key={episode.id} onClick={() => onSelectEpisode(episode.id)} role="row" type="button"><span className="episode-name"><strong>{episode.title || "未命名生产单"}</strong><small>{episode.id.slice(0, 8)}</small></span><span className="account-name"><i>{accountsById.get(episode.account_id)?.slug.slice(0, 2).toUpperCase()}</i>{accountsById.get(episode.account_id)?.name}</span><span>{seriesVersion ? `${seriesById.get(seriesVersion.series_id)?.name ?? "未知系列"} v${seriesVersion.version}` : "—"}</span><span>v{blueprintsById.get(episode.blueprint_version_id)?.version ?? "—"}</span><span className={`stage stage-${stageTone(episode.stage)}`}>{stageLabels[episode.stage]}</span><span>{artifacts.filter((artifact) => artifact.episode_id === episode.id).length}</span><span>{formatDate(episode.updated_at)}</span></button>; })}</div>{episodes.length === 0 ? <div className="empty-state compact"><h2>还没有符合条件的生产单</h2><p>调整筛选条件，或点击右上角“新建生产单”。</p></div> : null}<div className="status-legend"><span><i className="legend-approved" />已通过</span><span><i className="legend-review" />待审核</span><span><i className="legend-muted" />草稿 / 制作</span></div></>;
+  return <><div className="filters"><label><span>账号</span><select onChange={(event) => onFilter(event.target.value)} value={filter}><option value="全部账号">全部账号</option>{accounts.map((account) => <option key={account.id} value={account.id}>{account.name}</option>)}</select></label><label><span>系列</span><select onChange={(event) => onSeriesFilter(event.target.value)} value={seriesFilter}><option value="全部系列">全部系列</option>{series.map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.name}</option>)}</select></label><label><span>生产单状态</span><select aria-label="生产单状态" onChange={(event) => onEpisodeVisibilityChange(event.target.value as EpisodeVisibility)} value={episodeVisibility}><option value="active">进行中</option><option value="archived">已归档</option><option value="all">全部</option></select></label><span className="summary-count">{filteredEpisodes.length} 个生产单</span></div><div className="episode-table" role="table" aria-label="生产单"><div className="table-row table-header" role="row"><span>生产单</span><span>账号</span><span>系列</span><span>蓝图</span><span>当前阶段</span><span>产物数</span><span>更新时间</span></div>{pageItems.map((episode) => { const seriesVersion = episode.series_version_id ? seriesVersionsById.get(episode.series_version_id) : null; const account = accountsById.get(episode.account_id); const accountSlug = account?.slug ?? ""; return <button className={`table-row episode-row ${selectedEpisode?.id === episode.id ? "is-selected" : ""}`} key={episode.id} onClick={() => onSelectEpisode(episode.id)} role="row" type="button"><span className="episode-name"><strong>{episode.title || "未命名生产单"}</strong><small>{episode.id.slice(0, 8)}</small></span><span className="account-name"><i aria-hidden="true" className={`account-avatar account-avatar-${accountIdentityColor(accountSlug)}`} title={account?.name ?? "未知账号"}>{accountIdentityInitials(accountSlug)}</i>{account?.name ?? "未知账号"}</span><span>{seriesVersion ? `${seriesById.get(seriesVersion.series_id)?.name ?? "未知系列"} v${seriesVersion.version}` : "—"}</span><span>v{blueprintsById.get(episode.blueprint_version_id)?.version ?? "—"}</span><span className={`stage stage-${stageTone(episode.stage)}`}>{stageLabels[episode.stage]}</span><span>{artifacts.filter((artifact) => artifact.episode_id === episode.id).length}</span><span>{formatDate(episode.updated_at)}</span></button>; })}</div>{filteredEpisodes.length === 0 ? <div className="empty-state compact"><h2>{episodeVisibility === "archived" ? "还没有已归档的生产单" : "还没有符合条件的生产单"}</h2><p>调整筛选条件，或点击右上角“新建生产单”。</p></div> : null}<PaginationControls page={safePage} pageSize={pageSize} total={filteredEpisodes.length} onPageChange={setPage} /><div className="status-legend"><span><i className="legend-approved" />已通过</span><span><i className="legend-review" />待审核</span><span><i className="legend-muted" />草稿 / 制作</span></div></>;
 }
 
 export function ReviewWorkspace({ accountsById, episodes, onSelectEpisode, selectedEpisode }: { accountsById: Map<string, Account>; episodes: Episode[]; onSelectEpisode: (id: string) => void; selectedEpisode: Episode | null }) {
   const reviewEpisodes = episodes.filter((episode) => reviewActionFor(episode.stage) || episode.stage === "production_ready");
-  return <><p className="muted-copy">审核决定会通过受控状态迁移写入审批与审计记录；Worker 的阻塞项会显示在右侧 Episode 详情中。</p><section className="review-queue" aria-label="待审核 Episode"><h2>待审核 Episode</h2>{reviewEpisodes.length ? <div className="review-queue-list">{reviewEpisodes.map((episode) => <button className={`review-queue-item ${selectedEpisode?.id === episode.id ? "is-selected" : ""}`} key={episode.id} onClick={() => onSelectEpisode(episode.id)} type="button"><strong>{episode.title}</strong><span>{accountsById.get(episode.account_id)?.name ?? "未知账号"} · {stageLabels[episode.stage]}</span></button>)}</div> : <div className="empty-state compact"><h2>没有待审核 Episode</h2><p>Worker 将产物推进到审核阶段后，会在这里显示。</p></div>}</section></>;
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
+  const pageCount = Math.max(1, Math.ceil(reviewEpisodes.length / pageSize));
+  const safePage = Math.min(page, pageCount);
+  const pageItems = reviewEpisodes.slice((safePage - 1) * pageSize, safePage * pageSize);
+  useEffect(() => setPage((current) => Math.min(current, pageCount)), [pageCount]);
+  return <><p className="muted-copy">审核决定会通过受控状态迁移写入审批与审计记录；Worker 的阻塞项会显示在右侧 Episode 详情中。</p><section className="review-queue" aria-label="待审核 Episode"><h2>待审核 Episode</h2>{reviewEpisodes.length ? <><div className="review-queue-list">{pageItems.map((episode) => <button className={`review-queue-item ${selectedEpisode?.id === episode.id ? "is-selected" : ""}`} key={episode.id} onClick={() => onSelectEpisode(episode.id)} type="button"><strong>{episode.title}</strong><span>{accountsById.get(episode.account_id)?.name ?? "未知账号"} · {stageLabels[episode.stage]}</span></button>)}</div><PaginationControls page={safePage} pageSize={pageSize} total={reviewEpisodes.length} onPageChange={setPage} /></> : <div className="empty-state compact"><h2>没有待审核 Episode</h2><p>Worker 将产物推进到审核阶段后，会在这里显示。</p></div>}</section></>;
 }
 
 export function PublishWorkspace({ accountsById, artifacts, episodes, isPending, onSelectEpisode, onTransition, selectedEpisode, tasks }: { accountsById: Map<string, Account>; artifacts: Artifact[]; episodes: Episode[]; isPending: string; onSelectEpisode: (id: string) => void; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; selectedEpisode: Episode | null; tasks: Task[] }) {
@@ -1209,21 +1283,21 @@ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, b
   return <>
     <header className="review-heading"><div><h2>{episode.title || "未命名生产单"}</h2><span>{episode.id.slice(0, 8)}</span></div></header>
     <p className="review-meta">蓝图 v{blueprint?.version ?? "—"} · 创建于 {formatDate(episode.created_at)}</p>
+    <section className="episode-next-step-card"><div><span>当前阶段</span><strong className={`stage stage-${stageTone(episode.stage)}`}>{stageLabels[episode.stage]}</strong></div><div><span>下一步</span><p>{nextStepForEpisode(episode.stage)}</p></div></section>
     <EpisodeTitleForm episode={episode} isPending={isTitlePending} onSave={onUpdateTitle} />
     <section className="review-section episode-local-directory"><h3>项目输入目录</h3><label>完整 Episode ID<input aria-label="完整 Episode ID" readOnly value={episode.id} /></label><p className="muted-copy">目录文件放入 <code>episodes/{episode.id}/input</code>，再在下方显式确认导入。</p><div className="review-actions"><button className="button button-secondary" onClick={() => void copyEpisodeId()} type="button">复制 Episode ID</button><button className="button button-secondary" disabled={isDirectoryPending} onClick={() => void onCreateLocalDirectory(episode.id)} type="button">{isDirectoryPending ? "创建中…" : "创建本地目录"}</button></div>{directoryMessage ? <p className="muted-copy">{directoryMessage}</p> : null}</section>
     {episode.stage === "waiting_input" && !episode.main_script_revision_id ? <ScriptCommissionForm episodeId={episode.id} isPending={isScriptCommissionPending} onCommission={onCommissionScript} /> : null}
     <MaterialImportForm episodeId={episode.id} isPending={isMaterialPending} onImport={onImportMaterial} />
     <section className="review-section"><h3>生产材料修订</h3>{episodeMaterials.length ? episodeMaterials.map((revision) => <div className="material-revision" key={revision.id}><strong>{revision.is_main_script ? "主脚本" : revision.material_type} · v{revision.revision_number}</strong><span>{revision.source_kind} · {revision.source_path}</span><code>{revision.sha256.slice(0, 12)}… · {revision.storage_path}</code></div>) : <p className="muted-copy">还没有导入材料修订。</p>}</section>
-    <div className="stage-heading"><span>当前阶段</span><strong className={`stage stage-${stageTone(episode.stage)}`}>{stageLabels[episode.stage]}</strong></div>
     {reviewPackage?.stage !== "visual_review" && reviewPackage?.stage !== "storyboard_review" ? <ArtifactPreview artifacts={episodeArtifacts} /> : null}
     {reviewPackage?.stage === "production_ready" ? <PreRenderReviewPackage artifacts={episodeArtifacts} decisions={preRenderMemberDecisions} isTransitionPending={isTransitionPending} members={preRenderMembers} onReviewMember={onReviewPreRenderMember} onTransition={onTransition} reviewPackage={reviewPackage} /> : reviewPackage && reviewArtifact ? reviewPackage.stage === "qc_review" && isHyperframesReviewRender(reviewPackage.context_snapshot) ? <HyperframesReviewRenderPackage artifact={reviewArtifact} artifacts={reviewArtifacts} reviewPackage={reviewPackage} /> : reviewPackage.stage === "visual_review" ? <VisualReviewPackage artifact={reviewArtifact} artifacts={reviewArtifacts} reviewPackage={reviewPackage} /> : reviewPackage.stage === "storyboard_review" ? <StoryboardReviewPackage annotations={storyboardAnnotations} artifact={reviewArtifact} isAnnotationPending={isStoryboardAnnotationPending} onCreateAnnotation={onCreateStoryboardAnnotation} onValidationChange={onStoryboardValidationChange} reviewPackage={reviewPackage} /> : <TextReviewPackage artifact={reviewArtifact} reviewPackage={reviewPackage} /> : null}
     <ArollTaskEvidencePanel tasks={tasks.filter((task) => task.episode_id === episode.id)} />
     <AudioTrackPanel annotations={audioTrackAnnotations.filter((annotation) => audioTracks.some((track) => track.episode_id === episode.id && track.id === annotation.audio_track_id))} onCreateAnnotation={onCreateAudioTrackAnnotation} tasks={tasks.filter((task) => task.episode_id === episode.id)} tracks={audioTracks.filter((track) => track.episode_id === episode.id)} />
-    <section className="review-section"><h3>产物索引</h3>{episodeArtifacts.length ? episodeArtifacts.map((artifact) => <Artifact key={artifact.id} label={artifact.artifact_type} name={artifact.relative_path} complete />) : <p className="muted-copy">尚无 Worker 生成的产物。</p>}</section>
-    {blockers.length ? <section className="review-section worker-blockers"><h3>Worker 阻塞项</h3>{blockers.map((blocker) => <div className="worker-blocker" key={`${blocker.taskId}-${blocker.code}-${blocker.detail}`}><strong>{blocker.code}</strong><span>{blocker.detail}</span></div>)}</section> : null}
+    <details className="review-section detail-card-collapsible"><summary><h3>产物索引</h3></summary><div className="detail-card-body">{episodeArtifacts.length ? episodeArtifacts.map((artifact) => <Artifact key={artifact.id} label={artifact.artifact_type} name={artifact.relative_path} complete />) : <p className="muted-copy">尚无 Worker 生成的产物。</p>}</div></details>
+    {blockers.length ? <details className="review-section worker-blockers detail-card-collapsible" open><summary><h3>Worker 阻塞项</h3></summary><div className="detail-card-body">{blockers.map((blocker) => <div className="worker-blocker" key={`${blocker.taskId}-${blocker.code}-${blocker.detail}`}><strong>{blocker.code}</strong><span>{blocker.detail}</span></div>)}</div></details> : null}
     {reviewAction && isStoryboardReviewValid ? <ReviewActions episode={episode} initialReviewRenderAdjustments={reviewRenderAdjustmentsFromContext(reviewPackage?.context_snapshot ?? {})} isPending={isTransitionPending} onRequestReviewRenderRevision={onRequestReviewRenderRevision} onTransition={onTransition} ownerId={ownerId} reviewAction={reviewAction} reviewPackageId={reviewPackage?.id ?? null} /> : null}
     {episode.stage === "publishing_review" ? <section className="review-section publication-decision"><h3>发布确认</h3><PublicationConfirmationForm episode={episode} isPending={isTransitionPending} onConfirm={onTransition} ownerId={ownerId} /></section> : null}
-    <section className="review-section"><h3>审计时间线</h3>{history.length ? <ol className="timeline">{history.map((transition) => <li key={transition.id}><i className={`timeline-dot ${stageTone(transition.to_stage)}`} /><div><strong>{stageLabels[transition.to_stage]}</strong><span>{transition.reason}</span></div><time>{formatDate(transition.created_at)}</time></li>)}</ol> : <p className="muted-copy">生产单创建与后续状态变化将显示在此处。</p>}</section>
+    <details className="review-section detail-card-collapsible"><summary><h3>审计时间线</h3></summary><div className="detail-card-body">{history.length ? <ol className="timeline">{history.map((transition) => { const reason = userFacingTransitionReason(transition.reason); return <li key={transition.id}><i className={`timeline-dot ${stageTone(transition.to_stage)}`} /><div><strong>{stageLabels[transition.to_stage]}</strong><span>{reason}</span>{reason !== transition.reason ? <small className="timeline-technical-reason">技术原文：{transition.reason}</small> : null}</div><time>{formatDate(transition.created_at)}</time></li>; })}</ol> : <p className="muted-copy">生产单创建与后续状态变化将显示在此处。</p>}</div></details>
   </>;
 }
 
@@ -1308,7 +1382,7 @@ function AudioTrackPanel({ annotations, onCreateAnnotation, tasks, tracks }: { a
     await onCreateAnnotation({ audioTrackId: track.id, atSeconds: seconds, reason: reason.trim() });
     setReason("");
   }
-  return <section className="review-section"><h3>音轨</h3>{tracks.map((track) => <AudioTrackCard annotations={annotations.filter((annotation) => annotation.audio_track_id === track.id)} key={track.id} sourceTask={tasks.find((task) => task.id === track.source_task_id)} track={track} />)}<form className="review-actions" onSubmit={(event) => void submit(event)}><label>音轨<select aria-label="音轨" onChange={(event) => { const nextTrack = tracks.find((track) => track.id === event.target.value); setTrackId(event.target.value); if (nextTrack) setAtSeconds(String(nextTrack.start_seconds)); }} value={trackId}>{tracks.map((track) => <option key={track.id} value={track.id}>{track.track_kind} · {track.cue_id ?? track.id.slice(0, 8)}</option>)}</select></label><label>时间点（秒）<input aria-label="音轨时间点" max={selectedTrackEnd} min={selectedTrack?.start_seconds ?? 0} onChange={(event) => setAtSeconds(event.target.value)} step="0.001" type="number" value={atSeconds} /></label><label>批注<input aria-label="音轨批注" onChange={(event) => setReason(event.target.value)} value={reason} /></label><button className="button button-secondary" type="submit">添加音轨批注</button></form>{formError ? <p className="form-error">{formError}</p> : null}</section>;
+  return <details className="review-section detail-card-collapsible" open><summary><h3>音轨</h3></summary><div className="detail-card-body">{tracks.map((track) => <AudioTrackCard annotations={annotations.filter((annotation) => annotation.audio_track_id === track.id)} key={track.id} sourceTask={tasks.find((task) => task.id === track.source_task_id)} track={track} />)}<form className="review-actions" onSubmit={(event) => void submit(event)}><label>音轨<select aria-label="音轨" onChange={(event) => { const nextTrack = tracks.find((track) => track.id === event.target.value); setTrackId(event.target.value); if (nextTrack) setAtSeconds(String(nextTrack.start_seconds)); }} value={trackId}>{tracks.map((track) => <option key={track.id} value={track.id}>{track.track_kind} · {track.cue_id ?? track.id.slice(0, 8)}</option>)}</select></label><label>时间点（秒）<input aria-label="音轨时间点" max={selectedTrackEnd} min={selectedTrack?.start_seconds ?? 0} onChange={(event) => setAtSeconds(event.target.value)} step="0.001" type="number" value={atSeconds} /></label><label>批注<input aria-label="音轨批注" onChange={(event) => setReason(event.target.value)} value={reason} /></label><button className="button button-secondary" type="submit">添加音轨批注</button></form>{formError ? <p className="form-error">{formError}</p> : null}</div></details>;
 }
 
 function AudioTrackCard({ annotations, sourceTask, track }: { annotations: AudioTrackAnnotation[]; sourceTask?: Task; track: AudioTrack }) {
@@ -1330,10 +1404,10 @@ function freesoundMediaSource(task: Task | undefined): { title: string; creator:
 function ArollTaskEvidencePanel({ tasks }: { tasks: Task[] }) {
   const aRollTasks = tasks.filter((task) => task.task_type === "generate_a_roll");
   if (!aRollTasks.length) return null;
-  return <section className="review-section"><h3>A-roll 生成运行</h3>{aRollTasks.map((task) => {
+  return <details className="review-section detail-card-collapsible"><summary><h3>A-roll 生成运行</h3></summary><div className="detail-card-body">{aRollTasks.map((task) => {
     const evidence = aRollTaskEvidence(task);
-    return <article className="worker-blocker" key={task.id}><strong>{evidence?.shotId ?? "A-roll 任务"} · {task.status}</strong>{evidence ? <dl><div><dt>执行器</dt><dd>{evidence.provider} · {evidence.model} · {evidence.promptVersion}</dd></div><div><dt>适配器</dt><dd>{evidence.adapter}</dd></div><div><dt>允许工具</dt><dd>{evidence.allowedTools.join("、")}</dd></div><div><dt>冻结输入哈希</dt><dd>{evidence.inputHashes.map((hash) => `${hash.slice(0, 12)}…`).join("、")}</dd></div></dl> : <p className="muted-copy">冻结执行器配置不可用；请查看下方 Worker 阻塞项。</p>}<dl><div><dt>运行尝试</dt><dd>{task.attempt} / {task.max_attempts}</dd></div><div><dt>实际成本</dt><dd>{task.actual_cost_cents ?? 0} 分</dd></div></dl>{task.last_result ? <p className="muted-copy">最新结果：{task.status === "completed" ? "已完成" : task.status === "running" ? "执行中" : task.status === "ready" ? "等待领取" : "需要 Owner 处理"}</p> : null}</article>;
-  })}</section>;
+    return <article className="worker-blocker" key={task.id}><strong>{evidence?.shotId ?? "A-roll 任务"} · {taskStatusLabels[task.status]}</strong>{evidence ? <dl><div><dt>执行器</dt><dd>{evidence.provider} · {evidence.model} · {evidence.promptVersion}</dd></div><div><dt>适配器</dt><dd>{evidence.adapter}</dd></div><div><dt>允许工具</dt><dd>{evidence.allowedTools.join("、")}</dd></div><div><dt>冻结输入哈希</dt><dd>{evidence.inputHashes.map((hash) => `${hash.slice(0, 12)}…`).join("、")}</dd></div></dl> : <p className="muted-copy">冻结执行器配置不可用；请查看下方 Worker 阻塞项。</p>}<dl><div><dt>运行尝试</dt><dd>{task.attempt} / {task.max_attempts}</dd></div><div><dt>实际成本</dt><dd>{task.actual_cost_cents ?? 0} 分</dd></div></dl>{task.last_result ? <p className="muted-copy">最新结果：{taskStatusLabels[task.status]}</p> : null}</article>;
+  })}</div></details>;
 }
 
 function ScriptCommissionForm({ episodeId, isPending, onCommission }: { episodeId: string; isPending: boolean; onCommission: (input: ScriptCommissionRequest) => Promise<void> }) {
@@ -1712,7 +1786,7 @@ function OperationDraftNotice({ isRestored = false, onClear }: { isRestored?: bo
 export function EpisodeDetailDrawer({ children, isOpen, onClose }: { children: ReactNode; isOpen: boolean; onClose: () => void }) {
   useEffect(() => { if (!isOpen) return; function closeOnEscape(event: KeyboardEvent) { if (event.key === "Escape") onClose(); } window.addEventListener("keydown", closeOnEscape); return () => window.removeEventListener("keydown", closeOnEscape); }, [isOpen, onClose]);
   if (!isOpen) return null;
-  return <aside aria-label="当前生产单详情" className="episode-detail-drawer" role="complementary"><button aria-label="关闭生产单详情" className="drawer-close icon-button" onClick={onClose} type="button"><Icon name="Close" /></button>{children}</aside>;
+  return <><div aria-hidden="true" className="episode-detail-scrim" data-testid="episode-detail-scrim" onClick={onClose} /><aside aria-label="当前生产单详情" className="episode-detail-drawer" role="complementary"><button aria-label="关闭生产单详情" className="drawer-close icon-button" onClick={onClose} type="button"><Icon name="Close" /></button>{children}</aside></>;
 }
 
 function Artifact({ complete = false, label, name }: { complete?: boolean; label: string; name: string }) { return <div className="artifact-row"><i className={complete ? "artifact-complete" : "artifact-pending"}>{complete ? "✓" : ""}</i><span>{label}</span><small>{name}</small></div>; }

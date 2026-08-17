@@ -1,7 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Database } from "../lib/database.types";
 import type { EpisodeStage } from "../platform/types";
 import { currentReviewPackage, isReviewPackagePending, workerBlockers } from "../reviews/reviewSelectors";
+import { PaginationControls } from "../ui/PaginationControls";
 
 type Episode = Database["public"]["Tables"]["episodes"]["Row"];
 type PreRenderReviewMember = Database["public"]["Tables"]["pre_render_review_members"]["Row"];
@@ -64,6 +65,13 @@ export function OperationsWorkspace({ episodes, onSelectEpisode, preRenderReview
   const visibleEpisodes = visibleOperations.flatMap((operation) => operation.episodes);
   const pendingReviews = visibleEpisodes.filter((item) => item.reviewPending);
   const blockers = visibleEpisodes.flatMap((item) => item.blockers.map((blocker) => ({ ...blocker, episode: item.episode })));
+  const [episodePage, setEpisodePage] = useState(1);
+  const episodePageSize = 20;
+  const episodePageCount = Math.max(1, Math.ceil(visibleEpisodes.length / episodePageSize));
+  const safeEpisodePage = Math.min(episodePage, episodePageCount);
+  const visibleEpisodePage = visibleEpisodes.slice((safeEpisodePage - 1) * episodePageSize, safeEpisodePage * episodePageSize);
+  useEffect(() => setEpisodePage(1), [selectedSeriesId]);
+  useEffect(() => setEpisodePage((current) => Math.min(current, episodePageCount)), [episodePageCount]);
 
   return <section className="operations-workspace" aria-label="系列运营概览">
     <header className="operations-intro"><div><h2>系列运营概览</h2><p>按生产单的当前阶段、待审包和 Worker 阻塞项汇总。这里不折算统一完成百分比。</p></div><label>系列<select aria-label="运营系列筛选" onChange={(event) => setSelectedSeriesId(event.target.value)} value={selectedSeriesId}><option value="all">全部系列</option>{operations.map((operation) => <option key={operation.id} value={operation.id}>{operation.name}</option>)}</select></label></header>
@@ -81,6 +89,6 @@ export function OperationsWorkspace({ episodes, onSelectEpisode, preRenderReview
       <section className="operations-list operations-blocker-list"><header><h3>阻塞项</h3><span>{blockers.length} 个阻塞项</span></header>{blockers.length ? <ul>{blockers.map((blocker) => <li key={`${blocker.taskId}-${blocker.code}`}><button onClick={() => onSelectEpisode(blocker.episode.id)} type="button"><strong>{blocker.episode.title || "未命名生产单"} · {blocker.code}</strong><span>{blocker.detail}</span></button></li>)}</ul> : <p>当前筛选范围没有 Worker 阻塞项。</p>}</section>
     </div>
 
-    <section className="operations-episode-list" aria-label="系列生产单"><header><h3>生产单明细</h3><span>{visibleEpisodes.length} 个生产单</span></header>{visibleEpisodes.length ? <div>{visibleEpisodes.map(({ episode, blockers: episodeBlockers, reviewPackage, reviewPending }) => <button className={`operations-episode-row ${selectedEpisode?.id === episode.id ? "is-selected" : ""}`} key={episode.id} onClick={() => onSelectEpisode(episode.id)} type="button"><span><strong>{episode.title || "未命名生产单"}</strong><small>{episode.id.slice(0, 8)}</small></span><span>{operationalStageLabel(episode.stage)}</span><span>{reviewPending ? `待审 v${reviewPackage?.revision_number}` : reviewPackage ? `审核包 v${reviewPackage.revision_number} 已审完` : "无待审包"}</span><span>{episodeBlockers.length ? `${episodeBlockers.length} 个阻塞项` : "无阻塞"}</span></button>)}</div> : <p>当前没有可汇总的生产单。</p>}</section>
+    <section className="operations-episode-list" aria-label="系列生产单"><header><h3>生产单明细</h3><span>{visibleEpisodes.length} 个生产单</span></header>{visibleEpisodes.length ? <><div>{visibleEpisodePage.map(({ episode, blockers: episodeBlockers, reviewPackage, reviewPending }) => <button className={`operations-episode-row ${selectedEpisode?.id === episode.id ? "is-selected" : ""}`} key={episode.id} onClick={() => onSelectEpisode(episode.id)} type="button"><span><strong>{episode.title || "未命名生产单"}</strong><small>{episode.id.slice(0, 8)}</small></span><span>{operationalStageLabel(episode.stage)}</span><span>{reviewPending ? `待审 v${reviewPackage?.revision_number}` : reviewPackage ? `审核包 v${reviewPackage.revision_number} 已审完` : "无待审包"}</span><span>{episodeBlockers.length ? `${episodeBlockers.length} 个阻塞项` : "无阻塞"}</span></button>)}</div><PaginationControls page={safeEpisodePage} pageSize={episodePageSize} total={visibleEpisodes.length} onPageChange={setEpisodePage} /></> : <p>当前没有可汇总的生产单。</p>}</section>
   </section>;
 }

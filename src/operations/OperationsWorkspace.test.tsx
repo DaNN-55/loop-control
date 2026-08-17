@@ -61,4 +61,15 @@ describe("系列运营视图", () => {
     expect(screen.getByText("0 个待审核包")).toBeTruthy();
     expect(screen.getByText("审核包 v1 已审完")).toBeTruthy();
   });
+
+  it("对系列生产单明细使用分页", async () => {
+    const user = userEvent.setup();
+    const manyEpisodes = Array.from({ length: 21 }, (_, index) => ({ ...episodes[2], id: `episode-page-${index}`, title: `分页生产单 ${index + 1}` }));
+
+    render(<OperationsWorkspace episodes={manyEpisodes} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={[]} series={[series]} seriesVersions={[seriesVersion]} tasks={[]} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
+
+    expect(screen.getByText("第 1 / 2 页 · 共 21 条")).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "下一页" }));
+    expect(screen.getByText("分页生产单 21")).toBeTruthy();
+  });
 });
