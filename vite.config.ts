@@ -2,7 +2,7 @@ import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import { createClient } from "@supabase/supabase-js";
 import { createHash } from "node:crypto";
-import { createReadStream, promises as fs } from "node:fs";
+import { createReadStream, promises as fs, readFileSync } from "node:fs";
 import { basename, extname, isAbsolute, join, parse, relative, resolve } from "node:path";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { loadEnv, type Plugin } from "vite";
@@ -11,6 +11,7 @@ const localArtifactRoute = "/_local-artifact";
 const localEpisodeDirectoryRoute = "/_local-episode-directory";
 const localProductionMaterialRoute = "/_production-material";
 const localEpisodeDeletionRoute = "/_delete-episode";
+const localEpisodeDeletionCleanupRoute = "/_finalize-episode-deletion";
 const maxProductionMaterialBytes = 100 * 1024 * 1024;
 const maxEncodedMaterialRequestBytes = 140 * 1024 * 1024;
 
@@ -159,7 +160,7 @@ export function serveLocalEpisodeDirectory(supabaseUrl: string | undefined, supa
   };
 }
 
-export function serveEpisodeDeletion(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+export function serveEpisodeDeletion(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined, supabaseServiceRoleKey?: string) {
   return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
     if (request.method !== "DELETE") {
       response.statusCode = 405;
@@ -204,11 +205,11 @@ export function serveEpisodeDeletion(supabaseUrl: string | undefined, supabasePu
         response.end("Episode 仍有运行中的 Worker 任务或资产锁，暂时不能删除。");
         return;
       }
-      if (!supabaseUrl || !supabasePublishableKey) throw new Error("Supabase 连接未配置。");
+      if (!supabaseUrl || !supabasePublishableKey || !supabaseServiceRoleKey) throw new Error("缺少本机 Supabase service role 配置，无法安全执行永久删除。");
 
       const local = await stageLocalEpisodeDirectoryForDeletion(context.assetRoot, episodeId);
-      const supabase = createClient(supabaseUrl, supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: authorization } } });
-      const { data: deletion, error } = await supabase.rpc("delete_episode", { p_episode_id: episodeId });
+      const supabase = createClient(supabaseUrl, supabaseServiceRoleKey, { auth: { persistSession: false } });
+      const { data: deletion, error } = await supabase.rpc("delete_episode", { p_actor_id: context.actorId, p_episode_id: episodeId });
       if (error) {
         try {
           if (local.existed) await restoreStagedLocalEpisodeDirectory(context.assetRoot, episodeId);
@@ -226,7 +227,15 @@ export function serveEpisodeDeletion(supabaseUrl: string | undefined, supabasePu
         localRemoved = local.existed ? await finalizeStagedLocalEpisodeDirectory(context.assetRoot, episodeId) : false;
       } catch (cleanupError) {
         response.statusCode = 500;
-        response.end(`数据库记录已删除，但本地删除暂存目录失败：${cleanupError instanceof Error ? cleanupError.message : "未知清理错误"}`);
+        response.setHeader("Content-Type", "application/json");
+        response.end(JSON.stringify({
+          accountId: context.accountId,
+          blueprintVersionId: context.blueprintVersionId,
+          cleanupPending: true,
+          episodeId,
+          error: `数据库记录已删除，但本地删除暂存目录失败：${cleanupError instanceof Error ? cleanupError.message : "未知清理错误"}`,
+          path: local.path,
+        }));
         return;
       }
 
@@ -236,6 +245,42 @@ export function serveEpisodeDeletion(supabaseUrl: string | undefined, supabasePu
     } catch (error) {
       response.statusCode = 400;
       response.end(error instanceof Error ? error.message : "无法删除 Episode。");
+    }
+  };
+}
+
+export function serveEpisodeDeletionCleanup(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+  return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+    if (request.method !== "POST") {
+      response.statusCode = 405;
+      response.end();
+      return;
+    }
+    const authorization = request.headers.authorization;
+    if (!authorization?.startsWith("Bearer ")) {
+      response.statusCode = 401;
+      response.end("需要 Owner 登录会话。");
+      return;
+    }
+    try {
+      const body = await readJsonBody(request);
+      const episodeId = body.episodeId;
+      const accountId = body.accountId;
+      const blueprintVersionId = body.blueprintVersionId;
+      if (typeof episodeId !== "string" || typeof accountId !== "string" || typeof blueprintVersionId !== "string" || !isEpisodeId(episodeId) || !isEpisodeId(accountId) || !isEpisodeId(blueprintVersionId)) throw new Error("删除暂存清理参数无效。");
+      const assetRoot = await assetRootForOwnedAccountBlueprint({ authorization, accountId, blueprintVersionId, supabasePublishableKey, supabaseUrl });
+      if (!assetRoot) {
+        response.statusCode = 404;
+        response.end("未找到可清理的账号资产目录。");
+        return;
+      }
+      const removed = await finalizeStagedLocalEpisodeDirectory(assetRoot, episodeId);
+      response.setHeader("Content-Type", "application/json");
+      response.statusCode = 200;
+      response.end(JSON.stringify({ episodeId, removed }));
+    } catch (error) {
+      response.statusCode = 400;
+      response.end(error instanceof Error ? error.message : "无法清理删除暂存目录。");
     }
   };
 }
@@ -437,7 +482,7 @@ async function readJsonBody(request: IncomingMessage): Promise<Record<string, un
   return parsed as Record<string, unknown>;
 }
 
-async function episodeDeletionContextForOwner(input: { authorization: string; episodeId: string; supabasePublishableKey: string | undefined; supabaseUrl: string | undefined }): Promise<{ accountId: string; archivedAt: string | null; assetRoot: string; hasActiveAssetLock: boolean; hasRunningTask: boolean; title: string } | null> {
+async function episodeDeletionContextForOwner(input: { authorization: string; episodeId: string; supabasePublishableKey: string | undefined; supabaseUrl: string | undefined }): Promise<{ accountId: string; actorId: string; archivedAt: string | null; assetRoot: string; blueprintVersionId: string; hasActiveAssetLock: boolean; hasRunningTask: boolean; title: string } | null> {
   if (!input.supabaseUrl || !input.supabasePublishableKey) return null;
   const accessToken = input.authorization.slice("Bearer ".length);
   const supabase = createClient(input.supabaseUrl, input.supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: input.authorization } } });
@@ -458,12 +503,38 @@ async function episodeDeletionContextForOwner(input: { authorization: string; ep
   if (typeof assetRoot !== "string" || !assetRoot.trim()) return null;
   return {
     accountId: episode.account_id,
+    actorId: userData.user.id,
     archivedAt: typeof episode.archived_at === "string" ? episode.archived_at : null,
     assetRoot: assetRoot.trim(),
+    blueprintVersionId: episode.blueprint_version_id,
     hasActiveAssetLock: Boolean(activeLocks?.length),
     hasRunningTask: Boolean(runningTasks?.length),
     title: episode.title,
   };
+}
+
+async function assetRootForOwnedAccountBlueprint(input: { accountId: string; authorization: string; blueprintVersionId: string; supabasePublishableKey: string | undefined; supabaseUrl: string | undefined }): Promise<string | null> {
+  if (!input.supabaseUrl || !input.supabasePublishableKey) return null;
+  const accessToken = input.authorization.slice("Bearer ".length);
+  const supabase = createClient(input.supabaseUrl, input.supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: input.authorization } } });
+  const { data: userData, error: userError } = await supabase.auth.getUser(accessToken);
+  if (userError || !userData.user) return null;
+  const { data: membership, error: membershipError } = await supabase.from("account_memberships").select("role").eq("account_id", input.accountId).eq("user_id", userData.user.id).eq("role", "owner").maybeSingle();
+  if (membershipError || !membership) return null;
+  const { data: blueprint, error: blueprintError } = await supabase.from("account_blueprint_versions").select("policy").eq("account_id", input.accountId).eq("id", input.blueprintVersionId).maybeSingle();
+  if (blueprintError || !blueprint || !blueprint.policy || Array.isArray(blueprint.policy) || typeof blueprint.policy !== "object") return null;
+  const assetRoot = blueprint.policy.asset_root;
+  return typeof assetRoot === "string" && assetRoot.trim() ? assetRoot.trim() : null;
+}
+
+function localWorkerServiceRoleKey(): string | undefined {
+  if (process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()) return process.env.SUPABASE_SERVICE_ROLE_KEY.trim();
+  try {
+    const workerEnv = readFileSync(resolve("n8n", "worker.env.local"), "utf8");
+    return workerEnv.match(/^SUPABASE_SERVICE_ROLE_KEY=(.+)$/m)?.[1]?.trim() || undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 export function serveProductionMaterial(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
@@ -566,7 +637,8 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
   const artifactMiddleware = serveLocalArtifact(supabaseUrl, supabasePublishableKey);
   const directoryMiddleware = serveLocalEpisodeDirectory(supabaseUrl, supabasePublishableKey);
   const productionMaterialMiddleware = serveProductionMaterial(supabaseUrl, supabasePublishableKey);
-  const deletionMiddleware = serveEpisodeDeletion(supabaseUrl, supabasePublishableKey);
+  const deletionMiddleware = serveEpisodeDeletion(supabaseUrl, supabasePublishableKey, localWorkerServiceRoleKey());
+  const deletionCleanupMiddleware = serveEpisodeDeletionCleanup(supabaseUrl, supabasePublishableKey);
   return {
     name: "local-artifact-preview",
     configureServer(server) {
@@ -574,12 +646,14 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(localEpisodeDirectoryRoute, directoryMiddleware);
       server.middlewares.use(localProductionMaterialRoute, productionMaterialMiddleware);
       server.middlewares.use(localEpisodeDeletionRoute, deletionMiddleware);
+      server.middlewares.use(localEpisodeDeletionCleanupRoute, deletionCleanupMiddleware);
     },
     configurePreviewServer(server) {
       server.middlewares.use(localArtifactRoute, artifactMiddleware);
       server.middlewares.use(localEpisodeDirectoryRoute, directoryMiddleware);
       server.middlewares.use(localProductionMaterialRoute, productionMaterialMiddleware);
       server.middlewares.use(localEpisodeDeletionRoute, deletionMiddleware);
+      server.middlewares.use(localEpisodeDeletionCleanupRoute, deletionCleanupMiddleware);
     },
   };
 }

@@ -143,7 +143,7 @@ begin
 end;
 $$;
 
-create function public.delete_episode(p_episode_id uuid)
+create function public.delete_episode(p_episode_id uuid, p_actor_id uuid)
 returns jsonb
 language plpgsql
 security definer
@@ -161,6 +161,16 @@ declare
   material_count bigint;
   review_package_count bigint;
   audio_track_count bigint;
+  audio_annotation_count bigint;
+  composition_revision_count bigint;
+  review_annotation_count bigint;
+  pre_render_member_count bigint;
+  pre_render_decision_count bigint;
+  dependency_count bigint;
+  invalidation_count bigint;
+  experiment_count bigint;
+  metric_snapshot_count bigint;
+  asset_lock_count bigint;
 begin
   select episode.* into current_episode
   from public.episodes episode
@@ -172,7 +182,7 @@ begin
 
   select role into membership_role
   from public.account_memberships
-  where account_id = current_episode.account_id and user_id = auth.uid();
+  where account_id = current_episode.account_id and user_id = p_actor_id;
   if membership_role is distinct from 'owner' then
     raise exception 'Owner membership is required to delete an episode' using errcode = '42501';
   end if;
@@ -197,6 +207,16 @@ begin
   select count(*) into material_count from public.production_material_revisions where episode_id = p_episode_id;
   select count(*) into review_package_count from public.review_packages where episode_id = p_episode_id;
   select count(*) into audio_track_count from public.audio_tracks where episode_id = p_episode_id;
+  select count(*) into audio_annotation_count from public.audio_track_annotations where audio_track_id in (select id from public.audio_tracks where episode_id = p_episode_id);
+  select count(*) into composition_revision_count from public.review_render_composition_revisions where episode_id = p_episode_id;
+  select count(*) into review_annotation_count from public.review_annotations where review_package_id in (select id from public.review_packages where episode_id = p_episode_id);
+  select count(*) into pre_render_member_count from public.pre_render_review_members where review_package_id in (select id from public.review_packages where episode_id = p_episode_id);
+  select count(*) into pre_render_decision_count from public.pre_render_review_member_decisions where review_package_id in (select id from public.review_packages where episode_id = p_episode_id);
+  select count(*) into dependency_count from public.production_dependencies where episode_id = p_episode_id;
+  select count(*) into invalidation_count from public.production_invalidations where episode_id = p_episode_id;
+  select count(*) into experiment_count from public.experiments where episode_id = p_episode_id;
+  select count(*) into metric_snapshot_count from public.metric_snapshots where episode_id = p_episode_id;
+  select count(*) into asset_lock_count from public.asset_locks where episode_id = p_episode_id;
 
   delete from public.pre_render_review_member_decisions
   where review_package_id in (select id from public.review_packages where episode_id = p_episode_id);
@@ -227,7 +247,17 @@ begin
       'audit_events', audit_event_count,
       'production_material_revisions', material_count,
       'review_packages', review_package_count,
-      'audio_tracks', audio_track_count
+      'audio_tracks', audio_track_count,
+      'audio_track_annotations', audio_annotation_count,
+      'review_render_composition_revisions', composition_revision_count,
+      'review_annotations', review_annotation_count,
+      'pre_render_review_members', pre_render_member_count,
+      'pre_render_review_member_decisions', pre_render_decision_count,
+      'production_dependencies', dependency_count,
+      'production_invalidations', invalidation_count,
+      'experiments', experiment_count,
+      'metric_snapshots', metric_snapshot_count,
+      'asset_locks', asset_lock_count
     )
   );
 end;
@@ -235,7 +265,7 @@ $$;
 
 revoke execute on function public.create_episode(uuid, uuid, uuid, text, boolean) from public, anon;
 revoke execute on function public.set_episode_archived(uuid, boolean) from public, anon;
-revoke execute on function public.delete_episode(uuid) from public, anon;
+revoke execute on function public.delete_episode(uuid, uuid) from public, anon, authenticated;
 grant execute on function public.create_episode(uuid, uuid, uuid, text, boolean) to authenticated;
 grant execute on function public.set_episode_archived(uuid, boolean) to authenticated;
-grant execute on function public.delete_episode(uuid) to authenticated;
+grant execute on function public.delete_episode(uuid, uuid) to service_role;

@@ -1094,7 +1094,7 @@ export type Database = {
         SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
       }
       delete_episode: {
-        Args: { p_episode_id: string }
+        Args: { p_actor_id: string; p_episode_id: string }
         Returns: Json
       }
       create_blueprint_change_suggestion: {

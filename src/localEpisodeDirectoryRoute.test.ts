@@ -6,7 +6,7 @@ import { mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } from "node:fs/
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, removeLocalEpisodeDirectory, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveEpisodeDeletion, stageLocalEpisodeDirectoryForDeletion, serveLocalEpisodeDirectory } from "../vite.config";
+import { createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, removeLocalEpisodeDirectory, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveEpisodeDeletion, serveEpisodeDeletionCleanup, stageLocalEpisodeDirectoryForDeletion, serveLocalEpisodeDirectory } from "../vite.config";
 
 const episodeId = "00000000-0000-0000-0000-000000000000";
 let server: ReturnType<typeof createServer>;
@@ -57,6 +57,28 @@ describe("本地 Episode 目录路由", () => {
       expect(wrongMethod.status).toBe(405);
     } finally {
       await new Promise<void>((resolve, reject) => deletionServer.close((error) => error ? reject(error) : resolve()));
+    }
+  });
+
+  it("删除暂存清理路由在执行文件系统操作前拒绝未登录和非法参数", async () => {
+    const middleware = serveEpisodeDeletionCleanup(undefined, undefined);
+    const cleanupServer = createServer((request, response) => {
+      void middleware(request, response);
+    });
+    await new Promise<void>((resolve) => cleanupServer.listen(0, "127.0.0.1", resolve));
+    const cleanupOrigin = `http://127.0.0.1:${(cleanupServer.address() as AddressInfo).port}`;
+    try {
+      const [unauthorized, invalidId, wrongMethod] = await Promise.all([
+        fetch(`${cleanupOrigin}/_finalize-episode-deletion`, { body: "{}", method: "POST" }),
+        fetch(`${cleanupOrigin}/_finalize-episode-deletion`, { body: JSON.stringify({ accountId: "bad", blueprintVersionId: "bad", episodeId }), headers: { Authorization: "Bearer invalid", "Content-Type": "application/json" }, method: "POST" }),
+        fetch(`${cleanupOrigin}/_finalize-episode-deletion`, { headers: { Authorization: "Bearer invalid" } }),
+      ]);
+
+      expect(unauthorized.status).toBe(401);
+      expect(invalidId.status).toBe(400);
+      expect(wrongMethod.status).toBe(405);
+    } finally {
+      await new Promise<void>((resolve, reject) => cleanupServer.close((error) => error ? reject(error) : resolve()));
     }
   });
 

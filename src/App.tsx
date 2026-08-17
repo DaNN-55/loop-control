@@ -261,13 +261,14 @@ function formatDate(source: string) {
 
 function episodeDeletionMessage(value: unknown): string {
   if (!value || typeof value !== "object" || Array.isArray(value)) return "Episode、本地产物和数据库记录已删除。";
-  const result = value as { local?: { existed?: unknown; removed?: unknown }; database?: { counts?: unknown } };
+  const result = value as { local?: { existed?: unknown; path?: unknown; removed?: unknown }; database?: { counts?: unknown } };
   const localStatus = result.local?.existed === true && result.local?.removed === true ? "本地目录已清理" : "本地目录原本不存在";
+  const localPath = typeof result.local?.path === "string" ? result.local.path : "";
   const counts = result.database?.counts;
   if (!counts || typeof counts !== "object" || Array.isArray(counts)) return `Episode 已删除；${localStatus}。`;
-  const labels: Record<string, string> = { tasks: "任务", artifacts: "产物", review_packages: "审核包", production_material_revisions: "材料修订", audit_events: "审计事件" };
+  const labels: Record<string, string> = { tasks: "任务", artifacts: "产物", review_packages: "审核包", production_material_revisions: "材料修订", audit_events: "审计事件", approvals: "审批", audio_tracks: "音轨", review_annotations: "审核批注" };
   const summary = Object.entries(counts as Record<string, unknown>).flatMap(([key, count]) => typeof count === "number" && labels[key] ? [`${labels[key]} ${count}`] : []).join("、");
-  return `Episode 已删除；${localStatus}${summary ? `；数据库清理：${summary}` : ""}。`;
+  return `Episode 已删除；${localStatus}${localPath ? `（${localPath}）` : ""}${summary ? `；数据库清理：${summary}` : ""}。`;
 }
 
 function episodeIsArchived(episode: Episode): boolean {
