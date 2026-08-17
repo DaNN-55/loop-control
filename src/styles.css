@@ -371,7 +371,8 @@ body { min-width: 0; }
 .episode-detail-drawer input[type="number"] { appearance: textfield; }
 .episode-detail-drawer input[type="number"]::-webkit-inner-spin-button, .episode-detail-drawer input[type="number"]::-webkit-outer-spin-button { margin: 0; }
 .episode-detail-drawer .audio-annotation-form { align-items: end; grid-template-columns: minmax(0, 1.15fr) 88px minmax(0, 1.25fr); }
-.episode-detail-drawer .audio-annotation-form > button { grid-column: 1 / -1; justify-self: end; min-width: 160px; }
+.episode-detail-drawer .audio-annotation-form > button { grid-column: 1 / -1; justify-self: stretch; min-width: 0; width: 100%; }
+.episode-detail-drawer .publication-confirmation .button { justify-self: stretch; width: 100%; }
 .loading-indicator { align-items: center; color: #697386; display: inline-flex; font-size: 12px; gap: 9px; line-height: 1.45; }
 .loading-indicator-compact { font-size: 11px; }
 .loading-spinner { animation: detail-spinner 800ms linear infinite; border: 2px solid #cbd7e8; border-radius: 50%; border-top-color: #376fba; display: inline-block; height: 16px; width: 16px; }

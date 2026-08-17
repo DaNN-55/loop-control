@@ -214,6 +214,7 @@ describe("审核台", () => {
     expect(await screen.findByLabelText("narration 音轨")).toBeTruthy();
     expect(fetch).toHaveBeenCalledWith(`/_local-artifact?episode=episode-review&path=episodes%2Fepisode-review%2Faudio%2Fnarration.mp3&sha256=${"a".repeat(64)}`, { headers: { Authorization: "Bearer owner-token" } });
     expect(screen.getByLabelText("narration 音轨").closest(".audio-track-card")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "添加音轨批注" }).className).toContain("button-primary");
     expect(screen.getByLabelText("音轨时间点").getAttribute("min")).toBe("2");
     expect(screen.getByLabelText("音轨时间点").getAttribute("max")).toBe("10");
     await user.clear(screen.getByLabelText("音轨时间点"));

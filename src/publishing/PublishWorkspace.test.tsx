@@ -63,6 +63,7 @@ describe("发布队列", () => {
     expect(onTransition).not.toHaveBeenCalled();
 
     await user.click(screen.getByRole("checkbox"));
+    expect(screen.getByRole("button", { name: "确认已发布" }).className).toContain("button-primary");
     await user.click(screen.getByRole("button", { name: "确认已发布" }));
 
     expect(onTransition).toHaveBeenCalledWith("episode-1", "published", "已在 TikTok Studio 发布并复核。");
