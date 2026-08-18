@@ -181,6 +181,7 @@ body { min-width: 0; }
 .app-shell[data-theme="dark"] .publication-confirmation label { color: #d9e0ea; }
 .app-shell[data-theme="dark"] .publication-confirmation input[type="text"], .app-shell[data-theme="dark"] .publication-confirmation input:not([type]) { background: #191e27; border-color: #394250; color: #eef3fb; }
 .app-shell[data-sidebar="collapsed"] .system-status-panel { left: 80px; }
+.sidebar .system-status-hover-card { left: 44px; right: auto; }
 
 .mobile-header-actions { align-items: center; display: none; gap: 9px; margin-left: auto; }
 .system-status { position: relative; }
