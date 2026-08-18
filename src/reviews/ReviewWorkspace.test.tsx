@@ -30,6 +30,7 @@ const account: Account = {
 
 const blueprint: Blueprint = {
   account_id: account.id,
+  archived_at: null,
   created_at: "2026-08-14T00:00:00.000Z",
   id: "blueprint-1",
   is_active: true,

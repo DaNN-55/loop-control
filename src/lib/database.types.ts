@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       account_blueprint_versions: {
         Row: {
+          archived_at?: string | null
           account_id: string
           created_at: string
           id: string
@@ -24,6 +25,7 @@ export type Database = {
           version: number
         }
         Insert: {
+          archived_at?: string | null
           account_id: string
           created_at?: string
           id?: string
@@ -32,6 +34,7 @@ export type Database = {
           version: number
         }
         Update: {
+          archived_at?: string | null
           account_id?: string
           created_at?: string
           id?: string
@@ -1002,6 +1005,25 @@ export type Database = {
       activate_blueprint_version: {
         Args: { p_account_id: string; p_blueprint_version_id: string }
         Returns: {
+          archived_at: string | null
+          account_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          policy: Json
+          version: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "account_blueprint_versions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      deactivate_blueprint_version: {
+        Args: { p_account_id: string; p_blueprint_version_id: string }
+        Returns: {
+          archived_at: string | null
           account_id: string
           created_at: string
           id: string
@@ -1063,6 +1085,42 @@ export type Database = {
       create_blueprint_version: {
         Args: { p_account_id: string; p_policy: Json }
         Returns: {
+          archived_at: string | null
+          account_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          policy: Json
+          version: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "account_blueprint_versions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      rename_account: {
+        Args: { p_account_id: string; p_account_name: string }
+        Returns: {
+          created_at: string
+          current_blueprint_version_id: string | null
+          id: string
+          name: string
+          slug: string
+          timezone: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "accounts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      set_blueprint_archived: {
+        Args: { p_account_id: string; p_archived: boolean; p_blueprint_version_id: string }
+        Returns: {
+          archived_at: string | null
           account_id: string
           created_at: string
           id: string

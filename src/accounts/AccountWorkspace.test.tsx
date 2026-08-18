@@ -21,6 +21,7 @@ const account: Account = {
 
 const blueprintV3: Blueprint = {
   account_id: account.id,
+  archived_at: null,
   created_at: "2026-08-14T00:00:00.000Z",
   id: "blueprint-3",
   is_active: true,
@@ -51,10 +52,11 @@ describe("账号页蓝图版本", () => {
     const latestCard = screen.getByRole("button", { name: /v3.*当前生效/ });
     expect(latestCard.textContent).not.toContain("越南民间信仰");
     expect(latestCard.textContent).not.toContain("/Volumes/dao/v3");
-    const historySummary = screen.getByText("历史版本", { selector: "summary" });
-    expect(historySummary.closest("details")?.open).toBe(false);
-    await user.click(historySummary);
-    await user.click(screen.getByRole("button", { name: /v2.*历史版本/ }));
+    const historyTrigger = screen.getByRole("button", { name: /历史版本/ });
+    expect(screen.queryByRole("menu")).toBeNull();
+    await user.click(historyTrigger);
+    expect(screen.getByRole("menu")).toBeTruthy();
+    await user.click(screen.getByRole("menuitem", { name: /v2.*历史版本/ }));
     expect(screen.getByRole("heading", { name: "蓝图 v2" })).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "激活此版本" }));
     expect(onActivate).toHaveBeenCalledWith(blueprintV2.id);
@@ -68,8 +70,8 @@ describe("账号页蓝图版本", () => {
 
     renderWorkspace({ onActivate, onCreateBlueprint });
 
-    await user.click(screen.getByText("历史版本", { selector: "summary" }));
-    await user.click(screen.getByRole("button", { name: /v2.*历史版本/ }));
+    await user.click(screen.getByRole("button", { name: /历史版本/ }));
+    await user.click(screen.getByRole("menuitem", { name: /v2.*历史版本/ }));
     await user.click(screen.getByRole("button", { name: "以此版本编辑" }));
     await user.clear(screen.getByLabelText("资产目录"));
     await user.type(screen.getByLabelText("资产目录"), "/Volumes/dao/v4");
@@ -85,9 +87,52 @@ describe("账号页蓝图版本", () => {
     render(<AccountWorkspace account={accountWithPendingLatest} accounts={[accountWithPendingLatest]} blueprints={[{ ...blueprintV3, is_active: false }, { ...blueprintV2, is_active: true }]} isPending="" onActivate={vi.fn()} onCreateBlueprint={vi.fn()} onSelectAccount={vi.fn()} />);
 
     expect(screen.getByRole("button", { name: /v3.*待激活/ })).toBeTruthy();
-    const historySummary = screen.getByText("历史版本", { selector: "summary" });
-    expect(historySummary).toBeTruthy();
-    await user.click(historySummary);
-    expect(screen.getByRole("button", { name: /v2.*当前生效/ })).toBeTruthy();
+    const historyTrigger = screen.getByRole("button", { name: /历史版本/ });
+    expect(historyTrigger).toBeTruthy();
+    await user.click(historyTrigger);
+    expect(screen.getByRole("heading", { name: "蓝图 v2" })).toBeTruthy();
+    expect(screen.getByText("当前生效", { selector: ".blueprint-editor-heading > span" })).toBeTruthy();
+  });
+
+  it("只通过账号显示名称入口重命名账号", async () => {
+    const user = userEvent.setup();
+    const onRenameAccount = vi.fn().mockResolvedValue(undefined);
+    renderWorkspace({ onRenameAccount });
+
+    await user.click(screen.getByRole("button", { name: "重命名账号" }));
+    await user.clear(screen.getByRole("textbox", { name: "账号显示名称" }));
+    await user.type(screen.getByRole("textbox", { name: "账号显示名称" }), "新显示名称");
+    await user.click(screen.getByRole("button", { name: "保存名称" }));
+
+    expect(onRenameAccount).toHaveBeenCalledWith(account.id, "新显示名称");
+  });
+
+  it("重命名失败时保留弹窗内容", async () => {
+    const user = userEvent.setup();
+    const onRenameAccount = vi.fn().mockResolvedValue(false);
+    renderWorkspace({ onRenameAccount });
+
+    await user.click(screen.getByRole("button", { name: "重命名账号" }));
+    await user.clear(screen.getByRole("textbox", { name: "账号显示名称" }));
+    await user.type(screen.getByRole("textbox", { name: "账号显示名称" }), "保存失败名称");
+    await user.click(screen.getByRole("button", { name: "保存名称" }));
+
+    expect(screen.getByRole("form", { name: "重命名账号" })).toBeTruthy();
+    expect((screen.getByRole("textbox", { name: "账号显示名称" }) as HTMLInputElement).value).toBe("保存失败名称");
+  });
+
+  it("提供蓝图停用和归档入口", async () => {
+    const user = userEvent.setup();
+    const onDeactivateBlueprint = vi.fn().mockResolvedValue(undefined);
+    const onArchiveBlueprint = vi.fn().mockResolvedValue(undefined);
+    renderWorkspace({ onArchiveBlueprint, onDeactivateBlueprint });
+
+    await user.click(screen.getByRole("button", { name: "停用当前版本" }));
+    expect(onDeactivateBlueprint).toHaveBeenCalledWith(blueprintV3.id);
+
+    await user.click(screen.getByRole("button", { name: /历史版本/ }));
+    await user.click(screen.getByRole("menuitem", { name: /v2.*历史版本/ }));
+    await user.click(screen.getByRole("button", { name: "归档此版本" }));
+    expect(onArchiveBlueprint).toHaveBeenCalledWith(blueprintV2.id, true);
   });
 });
