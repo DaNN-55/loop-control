@@ -47,7 +47,7 @@ describe("账号页分区与蓝图版本", () => {
     renderWorkspace();
 
     expect(screen.queryByRole("tab", { name: "账号概览" })).toBeNull();
-    expect(screen.getByRole("tab", { name: "蓝图版本" }).getAttribute("aria-selected")).toBe("true");
+    expect(screen.getByRole("tab", { name: "蓝图" }).getAttribute("aria-selected")).toBe("true");
     expect(screen.getByRole("heading", { name: "蓝图 v3" })).toBeTruthy();
 
     await user.click(screen.getByRole("tab", { name: "系列" }));
@@ -59,7 +59,7 @@ describe("账号页分区与蓝图版本", () => {
     const onActivate = vi.fn().mockResolvedValue(undefined);
 
     renderWorkspace({ onActivate });
-    await user.click(screen.getByRole("tab", { name: "蓝图版本" }));
+    await user.click(screen.getByRole("tab", { name: "蓝图" }));
 
     expect(screen.getByRole("heading", { name: "蓝图 v3" })).toBeTruthy();
     const latestCard = screen.getByRole("button", { name: /v3.*当前生效/ });
@@ -79,7 +79,7 @@ describe("账号页分区与蓝图版本", () => {
     const onCreateBlueprint = vi.fn().mockResolvedValue(createdBlueprint);
 
     renderWorkspace({ onActivate, onCreateBlueprint });
-    await user.click(screen.getByRole("tab", { name: "蓝图版本" }));
+    await user.click(screen.getByRole("tab", { name: "蓝图" }));
 
     await user.click(screen.getByRole("button", { name: /v2.*历史版本/ }));
     await user.click(screen.getByRole("button", { name: "以此版本编辑" }));
@@ -95,7 +95,7 @@ describe("账号页分区与蓝图版本", () => {
     const user = userEvent.setup();
     const accountWithPendingLatest = { ...account, current_blueprint_version_id: blueprintV2.id };
     render(<AccountWorkspace account={accountWithPendingLatest} accounts={[accountWithPendingLatest]} blueprints={[{ ...blueprintV3, is_active: false }, { ...blueprintV2, is_active: true }]} isPending="" onActivate={vi.fn()} onCreateBlueprint={vi.fn()} onSelectAccount={vi.fn()} />);
-    await user.click(screen.getByRole("tab", { name: "蓝图版本" }));
+    await user.click(screen.getByRole("tab", { name: "蓝图" }));
 
     expect(screen.getByRole("button", { name: /v3.*待激活/ })).toBeTruthy();
     expect(screen.getByRole("button", { name: /v2.*当前生效/ })).toBeTruthy();
@@ -135,10 +135,10 @@ describe("账号页分区与蓝图版本", () => {
     const onDeactivateBlueprint = vi.fn().mockResolvedValue(undefined);
     const onArchiveBlueprint = vi.fn().mockResolvedValue(undefined);
     renderWorkspace({ onArchiveBlueprint, onDeactivateBlueprint });
-    await user.click(screen.getByRole("tab", { name: "蓝图版本" }));
+    await user.click(screen.getByRole("tab", { name: "蓝图" }));
 
     await user.click(screen.getByRole("button", { name: "停用当前版本" }));
-    expect(screen.getByText("谨慎操作")).toBeTruthy();
+    expect(screen.queryByText("谨慎操作")).toBeNull();
     expect(onDeactivateBlueprint).toHaveBeenCalledWith(blueprintV3.id);
 
     await user.click(screen.getByRole("button", { name: /v2.*历史版本/ }));

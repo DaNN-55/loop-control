@@ -58,8 +58,7 @@ describe("approval console", () => {
     await waitFor(() => expect(onCreate).toHaveBeenCalledWith({ name: "越南道士", rules: { tone: "calm", positioning: "雨夜民俗" } }));
   });
 
-  it("将系列历史版本收进折叠列表", async () => {
-    const user = userEvent.setup();
+  it("直接展开系列历史版本，并限制列表高度", () => {
     const series = { account_id: "account-1", created_at: "2026-08-15T00:00:00.000Z", id: "series-1", name: "越南道士" } as Database["public"]["Tables"]["series"]["Row"];
     const seriesVersions = [
       { account_id: "account-1", created_at: "2026-08-17T00:00:00.000Z", id: "series-version-2", rules: {}, series_id: series.id, version: 2 },
@@ -69,10 +68,9 @@ describe("approval console", () => {
     render(<SeriesSettings isPending={false} onCreate={vi.fn()} series={[series]} seriesVersions={seriesVersions} />);
 
     expect(screen.getByText("最新 v2")).toBeTruthy();
-    const historySummary = screen.getByText("历史版本", { selector: "summary" });
-    expect(historySummary.closest("details")?.open).toBe(false);
-    await user.click(historySummary);
+    expect(screen.getByText("历史版本", { selector: "strong" })).toBeTruthy();
     expect(screen.getByText("v1")).toBeTruthy();
+    expect(screen.getByLabelText("越南道士 历史版本")).toBeTruthy();
   });
 
   it("通过结构化表单编辑蓝图并保留高级规则", async () => {
@@ -82,7 +80,7 @@ describe("approval console", () => {
     const onCreateBlueprint = vi.fn().mockResolvedValue({ ...blueprint, id: "blueprint-2", version: 2, is_active: false });
     render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onActivate={vi.fn()} onCreateBlueprint={onCreateBlueprint} onCreateSeries={vi.fn()} onSelectAccount={vi.fn()} series={[]} seriesVersions={[]} />);
 
-    await user.click(screen.getByRole("tab", { name: "蓝图版本" }));
+    await user.click(screen.getByRole("tab", { name: "蓝图" }));
     await user.click(screen.getByRole("button", { name: "以此版本编辑" }));
     await user.clear(screen.getByLabelText("账号定位"));
     await user.type(screen.getByLabelText("账号定位"), "新定位");
