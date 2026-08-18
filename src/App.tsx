@@ -19,6 +19,8 @@ import type { StoryboardAudioCue, StoryboardShotManifest } from "./worker/contra
 import { accountIdentityColor, accountIdentityInitials } from "./platform/accountIdentity";
 import { PaginationControls } from "./ui/PaginationControls";
 import { BlueprintConfigurationForm, SeriesConfigurationForm } from "./platform/ConfigurationForms";
+import { TaskProgressPanel } from "./observability/TaskProgressPanel";
+import { SystemStatusPanel, type LocalSystemStatusReport } from "./observability/SystemStatusPanel";
 
 type NavigationItem = "accounts" | "episodes" | "operations" | "reviews" | "publish" | "learning";
 type Theme = "light" | "dark";
@@ -36,6 +38,7 @@ type AudioTrackAnnotation = Database["public"]["Tables"]["audio_track_annotation
 type PreRenderReviewMember = Database["public"]["Tables"]["pre_render_review_members"]["Row"];
 type PreRenderReviewMemberDecision = Database["public"]["Tables"]["pre_render_review_member_decisions"]["Row"];
 type Task = Database["public"]["Tables"]["tasks"]["Row"];
+type TaskRun = Database["public"]["Tables"]["task_runs"]["Row"];
 type Transition = Database["public"]["Tables"]["state_transitions"]["Row"];
 type Experiment = Database["public"]["Tables"]["experiments"]["Row"];
 type LearningReport = Database["public"]["Tables"]["learning_reports"]["Row"];
@@ -133,6 +136,7 @@ interface Workspace {
   preRenderReviewMembers: PreRenderReviewMember[];
   preRenderReviewMemberDecisions: PreRenderReviewMemberDecision[];
   tasks: Task[];
+  taskRuns: TaskRun[];
   transitions: Transition[];
   experiments: Experiment[];
   learningReports: LearningReport[];
@@ -269,6 +273,22 @@ function formatDate(source: string) {
   return new Intl.DateTimeFormat("zh-CN", { dateStyle: "medium", timeStyle: "short" }).format(new Date(source));
 }
 
+function taskStatusSignature(task: Task): string {
+  return `${task.status}:${task.attempt}:${task.completed_at ?? ""}:${task.claimed_at ?? ""}`;
+}
+
+function taskChangeNotice(previous: Workspace, next: Workspace, episodeId: string): string | null {
+  if (!episodeId) return null;
+  const previousTasks = new Map(previous.tasks.filter((task) => task.episode_id === episodeId).map((task) => [task.id, task]));
+  const nextTasks = next.tasks.filter((task) => task.episode_id === episodeId);
+  const changedTasks = nextTasks.filter((task) => taskStatusSignature(task) !== taskStatusSignature(previousTasks.get(task.id) ?? task));
+  const newBlocked = changedTasks.some((task) => task.status === "blocked");
+  if (newBlocked) return "Worker 任务已阻塞，请打开任务详情查看原因。";
+  if (changedTasks.length === 0) return null;
+  const changed = changedTasks.slice(0, 2).map((task) => `${task.task_type}：${taskStatusLabels[task.status]}`).join("、");
+  return `Worker 任务状态已更新：${changed}${changedTasks.length > 2 ? "等" : ""}。`;
+}
+
 function episodeDeletionMessage(value: unknown): string {
   if (!value || typeof value !== "object" || Array.isArray(value)) return "Episode、本地产物和数据库记录已删除。";
   const result = value as { local?: { existed?: unknown; path?: unknown; removed?: unknown }; database?: { counts?: unknown } };
@@ -351,7 +371,7 @@ function bytesToBase64(content: Uint8Array): string {
 }
 
 async function loadWorkspace(): Promise<Workspace> {
-  const [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, materialRevisionsResult, reviewPackagesResult, reviewAnnotationsResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult] = await Promise.all([
+  const [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, materialRevisionsResult, reviewPackagesResult, reviewAnnotationsResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, taskRunsResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult] = await Promise.all([
     supabase.from("accounts").select("*").order("created_at"),
     supabase.from("account_blueprint_versions").select("*").order("version", { ascending: false }),
     supabase.from("episodes").select("*").order("updated_at", { ascending: false }),
@@ -366,6 +386,7 @@ async function loadWorkspace(): Promise<Workspace> {
     supabase.from("pre_render_review_members").select("*").order("created_at"),
     supabase.from("pre_render_review_member_decisions").select("*").order("created_at"),
     supabase.from("tasks").select("*").order("created_at", { ascending: false }),
+    supabase.from("task_runs").select("*").order("started_at", { ascending: false }),
     supabase.from("state_transitions").select("*").order("created_at", { ascending: false }),
     supabase.from("experiments").select("*").order("created_at", { ascending: false }),
     supabase.from("learning_reports").select("*").order("created_at", { ascending: false }),
@@ -373,7 +394,7 @@ async function loadWorkspace(): Promise<Workspace> {
     supabase.from("blueprint_change_suggestions").select("*").order("created_at", { ascending: false }),
     supabase.from("publication_records").select("*").order("created_at", { ascending: false }),
   ]);
-  const error = [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, materialRevisionsResult, reviewPackagesResult, reviewAnnotationsResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult]
+  const error = [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, materialRevisionsResult, reviewPackagesResult, reviewAnnotationsResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, taskRunsResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult]
     .map((result) => result.error)
     .find(Boolean);
 
@@ -394,6 +415,7 @@ async function loadWorkspace(): Promise<Workspace> {
     preRenderReviewMembers: preRenderReviewMembersResult.data ?? [],
     preRenderReviewMemberDecisions: preRenderReviewMemberDecisionsResult.data ?? [],
     tasks: tasksResult.data ?? [],
+    taskRuns: taskRunsResult.data ?? [],
     transitions: transitionsResult.data ?? [],
     experiments: experimentsResult.data ?? [],
     learningReports: learningReportsResult.data ?? [],
@@ -401,6 +423,16 @@ async function loadWorkspace(): Promise<Workspace> {
     blueprintChangeSuggestions: blueprintChangeSuggestionsResult.data ?? [],
     publicationRecords: publicationRecordsResult.data ?? [],
   };
+}
+
+async function loadSystemStatusReport(): Promise<LocalSystemStatusReport | null> {
+  const { data, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError || !data.session) return null;
+  const response = await fetch("/_system-status", { headers: { Authorization: `Bearer ${data.session.access_token}` } });
+  if (!response.ok) return null;
+  const report: unknown = await response.json();
+  if (!report || Array.isArray(report) || typeof report !== "object") return null;
+  return report as LocalSystemStatusReport;
 }
 
 export function App() {
@@ -423,12 +455,26 @@ export function App() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [pendingAction, setPendingAction] = useState("");
+  const [systemStatus, setSystemStatus] = useState<LocalSystemStatusReport | null>(null);
+  const [isSystemStatusLoading, setIsSystemStatusLoading] = useState(false);
+  const workspaceRef = useRef<Workspace | null>(null);
+  const selectedEpisodeIdRef = useRef(selectedEpisodeId);
 
-  const refreshWorkspace = useCallback(async () => {
+  useEffect(() => {
+    selectedEpisodeIdRef.current = selectedEpisodeId;
+  }, [selectedEpisodeId]);
+
+  const refreshWorkspace = useCallback(async (source: "auto" | "manual" | "action" = "action") => {
     setIsLoading(true);
     setErrorMessage("");
     try {
       const nextWorkspace = await loadWorkspace();
+      const previousWorkspace = workspaceRef.current;
+      if (source === "auto" && previousWorkspace) {
+        const notice = taskChangeNotice(previousWorkspace, nextWorkspace, selectedEpisodeIdRef.current);
+        if (notice) setMessage(notice);
+      }
+      workspaceRef.current = nextWorkspace;
       setWorkspace(nextWorkspace);
       setSelectedAccountId((current) => current && nextWorkspace.accounts.some((account) => account.id === current) ? current : nextWorkspace.accounts[0]?.id ?? "");
       setSelectedEpisodeId((current) => current && nextWorkspace.episodes.some((episode) => episode.id === current) ? current : nextWorkspace.episodes[0]?.id ?? "");
@@ -436,6 +482,25 @@ export function App() {
       setErrorMessage(error instanceof Error ? error.message : "无法读取控制数据。");
     } finally {
       setIsLoading(false);
+    }
+  }, []);
+
+  const refreshEpisodeStatus = useCallback(async () => {
+    setPendingAction("workspace-refresh");
+    try {
+      await refreshWorkspace("manual");
+      setMessage("已刷新当前控制台状态。");
+    } finally {
+      setPendingAction("");
+    }
+  }, [refreshWorkspace]);
+
+  const refreshSystemStatus = useCallback(async () => {
+    setIsSystemStatusLoading(true);
+    try {
+      setSystemStatus(await loadSystemStatusReport());
+    } finally {
+      setIsSystemStatusLoading(false);
     }
   }, []);
 
@@ -463,6 +528,20 @@ export function App() {
       listener.subscription.unsubscribe();
     };
   }, [refreshWorkspace]);
+
+  useEffect(() => {
+    if (session) void refreshSystemStatus();
+    else setSystemStatus(null);
+  }, [refreshSystemStatus, session]);
+
+  useEffect(() => {
+    if (!isEpisodeDetailOpen || !selectedEpisodeId) return;
+    const interval = window.setInterval(() => {
+      void refreshWorkspace("auto");
+      void refreshSystemStatus();
+    }, 15000);
+    return () => window.clearInterval(interval);
+  }, [isEpisodeDetailOpen, refreshSystemStatus, refreshWorkspace, selectedEpisodeId]);
 
   const accountsById = useMemo(() => new Map(workspace?.accounts.map((account) => [account.id, account])), [workspace]);
   const blueprintsById = useMemo(() => new Map(workspace?.blueprints.map((blueprint) => [blueprint.id, blueprint])), [workspace]);
@@ -1088,7 +1167,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
       <aside className="sidebar" aria-label="主导航">
         <div className="wordmark"><img alt="Loop 控制台" src="/brand/loop-mark.png" /><span>Loop 控制台</span></div>
         <nav className="navigation"><NavigationButtons activeNavigation={activeNavigation} badges={navigationBadges} onSelect={changeNavigation} /></nav>
-        <div className="sidebar-footer"><div className="sidebar-utilities"><button aria-label={theme === "light" ? "切换至深色模式" : "切换至浅色模式"} className="sidebar-utility" onClick={changeTheme} title={theme === "light" ? "深色模式" : "浅色模式"} type="button"><Icon name={theme === "light" ? "Moon" : "Sun"} /></button><button aria-label={sidebarCollapsed ? "展开侧栏" : "收起侧栏"} className="sidebar-collapse-button sidebar-utility" onClick={changeSidebarCollapsed} title={sidebarCollapsed ? "展开侧栏" : "收起侧栏"} type="button"><Icon name="PanelLeft" /></button><OwnerMenu onOpenSettings={() => setShowPasswordForm(true)} onSignOut={() => void supabase.auth.signOut()} /></div></div>
+        <div className="sidebar-footer"><div className="sidebar-utilities"><SystemStatusPanel isRefreshing={isSystemStatusLoading} onRefresh={refreshSystemStatus} report={systemStatus} tasks={workspace.tasks} /><button aria-label={theme === "light" ? "切换至深色模式" : "切换至浅色模式"} className="sidebar-utility" onClick={changeTheme} title={theme === "light" ? "深色模式" : "浅色模式"} type="button"><Icon name={theme === "light" ? "Moon" : "Sun"} /></button><button aria-label={sidebarCollapsed ? "展开侧栏" : "收起侧栏"} className="sidebar-collapse-button sidebar-utility" onClick={changeSidebarCollapsed} title={sidebarCollapsed ? "展开侧栏" : "收起侧栏"} type="button"><Icon name="PanelLeft" /></button><OwnerMenu onOpenSettings={() => setShowPasswordForm(true)} onSignOut={() => void supabase.auth.signOut()} /></div></div>
       </aside>
 
       <section className="content-pane" aria-label="平台工作台">
@@ -1096,7 +1175,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
           <h1>{navigation.find((item) => item.id === activeNavigation)?.label}</h1>
           {activeNavigation === "accounts" ? <button className="button button-primary" onClick={() => setShowAccountForm(true)} type="button">新建账号</button> : null}
           {activeNavigation === "episodes" ? <button className="button button-primary" onClick={() => setShowEpisodeForm(true)} type="button">新建生产单</button> : null}
-          <div className="mobile-owner-settings"><OwnerMenu onOpenSettings={() => setShowPasswordForm(true)} onSignOut={() => void supabase.auth.signOut()} /></div>
+          <div className="mobile-header-actions"><SystemStatusPanel isRefreshing={isSystemStatusLoading} onRefresh={refreshSystemStatus} report={systemStatus} tasks={workspace.tasks} /><OwnerMenu onOpenSettings={() => setShowPasswordForm(true)} onSignOut={() => void supabase.auth.signOut()} /></div>
         </header>
 
         {message ? <div className="notice-message" role="status">{message}<button aria-label="关闭通知" onClick={() => setMessage("")} type="button">×</button></div> : null}
@@ -1204,12 +1283,14 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             isDirectoryOpenPending={pendingAction === `directory-open-${selectedEpisode.id}`}
             isMaterialPending={pendingAction === `material-${selectedEpisode.id}`}
             isScriptCommissionPending={pendingAction === `commission-${selectedEpisode.id}`}
+            isRefreshPending={pendingAction === "workspace-refresh"}
             isTransitionPending={pendingAction.startsWith(`transition-${selectedEpisode.id}-`) || pendingAction.startsWith("review-render-revision-")}
             onCreateLocalDirectory={createLocalEpisodeDirectory}
             onOpenLocalDirectory={openLocalEpisodeDirectory}
             onCommissionScript={commissionScript}
             onImportMaterial={importProductionMaterial}
             onRequestReviewRenderRevision={requestReviewRenderRevision}
+            onRefresh={refreshEpisodeStatus}
             onTransition={transitionEpisode}
             ownerId={session.user.id}
             materialRevisions={workspace.materialRevisions}
@@ -1220,6 +1301,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             onCreateAudioTrackAnnotation={createAudioTrackAnnotation}
             onReviewPreRenderMember={reviewPreRenderMember}
             tasks={workspace.tasks}
+            taskRuns={workspace.taskRuns}
             transitions={workspace.transitions}
           />
       </EpisodeDetailDrawer> : null}
@@ -1425,7 +1507,7 @@ export function PublicationConfirmationForm({ episode, isPending, onConfirm, own
   return <form className="publication-confirmation" onSubmit={submit}><label><input checked={acknowledged} onChange={(event) => updateDraft({ acknowledged: event.target.checked, reason })} type="checkbox" />我已在目标平台手工发布，并核对发布包内容。</label><label>确认理由<input aria-label="发布确认理由" onChange={(event) => updateDraft({ acknowledged, reason: event.target.value })} placeholder="例如：已在 TikTok Studio 发布并复核" required value={reason} /></label>{draft ? <OperationDraftNotice isRestored={isRestoredDraft} onClear={clearDraft} /> : null}<button className="button button-primary" disabled={isPending} type="submit">{isPending ? "确认中…" : "确认已发布"}</button>{formError ? <p className="form-error">{formError}</p> : null}</form>;
 }
 
-export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, blueprint, episode, isDirectoryPending, isDirectoryOpenPending = false, isMaterialPending, isScriptCommissionPending, isStoryboardAnnotationPending, isTransitionPending, materialRevisions, onCreateAudioTrackAnnotation, onCreateLocalDirectory, onOpenLocalDirectory = async () => {}, onCommissionScript, onCreateStoryboardAnnotation, onImportMaterial, onRequestReviewRenderRevision, onReviewPreRenderMember = async () => {}, onTransition, ownerId = "local-owner", preRenderReviewMemberDecisions = [], preRenderReviewMembers = [], reviewAnnotations, reviewPackages, tasks, transitions }: { artifacts: Artifact[]; audioTrackAnnotations: AudioTrackAnnotation[]; audioTracks: AudioTrack[]; blueprint: Blueprint | null; episode: Episode; isDirectoryPending: boolean; isDirectoryOpenPending?: boolean; isMaterialPending: boolean; isScriptCommissionPending: boolean; isStoryboardAnnotationPending: boolean; isTransitionPending: boolean; materialRevisions: MaterialRevision[]; onCreateAudioTrackAnnotation: (input: AudioTrackAnnotationRequest) => Promise<void>; onCreateLocalDirectory: (episodeId: string) => Promise<void>; onOpenLocalDirectory?: (episodeId: string) => Promise<void>; onCommissionScript: (input: ScriptCommissionRequest) => Promise<void>; onCreateStoryboardAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onImportMaterial: (input: MaterialImportRequest) => Promise<void>; onRequestReviewRenderRevision: (input: ReviewRenderRevisionRequest) => Promise<boolean>; onReviewPreRenderMember?: (input: PreRenderMemberReviewRequest) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; ownerId?: string; preRenderReviewMemberDecisions?: PreRenderReviewMemberDecision[]; preRenderReviewMembers?: PreRenderReviewMember[]; reviewAnnotations: ReviewAnnotation[]; reviewPackages: ReviewPackage[]; tasks: Task[]; transitions: Transition[] }) {
+export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, blueprint, episode, isDirectoryPending, isDirectoryOpenPending = false, isMaterialPending, isRefreshPending = false, isScriptCommissionPending, isStoryboardAnnotationPending, isTransitionPending, materialRevisions, onCreateAudioTrackAnnotation, onCreateLocalDirectory, onOpenLocalDirectory = async () => {}, onCommissionScript, onCreateStoryboardAnnotation, onImportMaterial, onRefresh = async () => {}, onRequestReviewRenderRevision, onReviewPreRenderMember = async () => {}, onTransition, ownerId = "local-owner", preRenderReviewMemberDecisions = [], preRenderReviewMembers = [], reviewAnnotations, reviewPackages, taskRuns = [], tasks, transitions }: { artifacts: Artifact[]; audioTrackAnnotations: AudioTrackAnnotation[]; audioTracks: AudioTrack[]; blueprint: Blueprint | null; episode: Episode; isDirectoryPending: boolean; isDirectoryOpenPending?: boolean; isMaterialPending: boolean; isRefreshPending?: boolean; isScriptCommissionPending: boolean; isStoryboardAnnotationPending: boolean; isTransitionPending: boolean; materialRevisions: MaterialRevision[]; onCreateAudioTrackAnnotation: (input: AudioTrackAnnotationRequest) => Promise<void>; onCreateLocalDirectory: (episodeId: string) => Promise<void>; onOpenLocalDirectory?: (episodeId: string) => Promise<void>; onCommissionScript: (input: ScriptCommissionRequest) => Promise<void>; onCreateStoryboardAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onImportMaterial: (input: MaterialImportRequest) => Promise<void>; onRefresh?: () => Promise<void>; onRequestReviewRenderRevision: (input: ReviewRenderRevisionRequest) => Promise<boolean>; onReviewPreRenderMember?: (input: PreRenderMemberReviewRequest) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; ownerId?: string; preRenderReviewMemberDecisions?: PreRenderReviewMemberDecision[]; preRenderReviewMembers?: PreRenderReviewMember[]; reviewAnnotations: ReviewAnnotation[]; reviewPackages: ReviewPackage[]; taskRuns?: TaskRun[]; tasks: Task[]; transitions: Transition[] }) {
   const episodeArtifacts = artifacts.filter((artifact) => artifact.episode_id === episode.id);
   const episodeMaterials = materialRevisions.filter((revision) => revision.episode_id === episode.id);
   const history = transitions.filter((transition) => transition.episode_id === episode.id);
@@ -1457,7 +1539,7 @@ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, b
   }
 
   return <>
-    <header className="review-heading"><div><h2>{episode.title || "未命名生产单"}</h2><span>{episode.id.slice(0, 8)}</span></div></header>
+    <header className="review-heading"><div><h2>{episode.title || "未命名生产单"}</h2><span>{episode.id.slice(0, 8)}</span></div><button className="button button-secondary" disabled={isRefreshPending} onClick={() => void onRefresh()} type="button">{isRefreshPending ? "刷新中…" : "刷新状态"}</button></header>
     <p className="review-meta">蓝图 v{blueprint?.version ?? "—"} · 创建于 {formatDate(episode.created_at)}</p>
     <section className="episode-next-step-card"><div><span>当前阶段</span><strong className={`stage stage-${stageTone(episode.stage)}`}>{stageLabels[episode.stage]}</strong></div><div><span>下一步</span><p>{nextStepForEpisode(episode.stage)}</p></div></section>
     <details className="review-section detail-card-collapsible episode-local-directory"><summary><h3>准备本地输入目录</h3></summary><div className="detail-card-body"><p className="muted-copy">先创建目录，再点击“打开输入目录”把脚本、图片或其他材料放进去。系统会自动绑定当前生产单，你不需要记住或填写 Episode ID。</p><p className="episode-local-directory-path"><span>实际输入目录</span><code>{localInputPath}</code></p><div className="episode-local-directory-actions"><button className="button button-primary" disabled={isDirectoryPending} onClick={() => void onCreateLocalDirectory(episode.id)} type="button">{isDirectoryPending ? "创建中…" : "创建本地输入目录"}</button><button className="button button-secondary" disabled={isDirectoryOpenPending} onClick={() => void onOpenLocalDirectory(episode.id)} type="button">{isDirectoryOpenPending ? "打开中…" : "打开输入目录"}</button><button className="button button-secondary" onClick={() => void copyLocalInputPath()} type="button">复制目录路径</button></div>{directoryMessage ? <p className="muted-copy">{directoryMessage}</p> : null}</div></details>
@@ -1466,6 +1548,7 @@ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, b
     <details className="review-section detail-card-collapsible"><summary><h3>生产材料修订</h3></summary><div className="detail-card-body">{episodeMaterials.length ? episodeMaterials.map((revision) => <div className="material-revision" key={revision.id}><strong>{revision.is_main_script ? "主脚本" : revision.material_type} · v{revision.revision_number}</strong><span>{revision.source_kind} · {revision.source_path}</span><code>{revision.sha256.slice(0, 12)}… · {revision.storage_path}</code></div>) : <p className="muted-copy">还没有导入材料修订。</p>}</div></details>
     {reviewPackage?.stage !== "visual_review" && reviewPackage?.stage !== "storyboard_review" ? <details className="review-section detail-card-collapsible"><summary><h3>产物预览</h3></summary><div className="detail-card-body"><ArtifactPreview artifacts={episodeArtifacts} /></div></details> : null}
     {reviewPackage?.stage === "production_ready" ? <PreRenderReviewPackage artifacts={episodeArtifacts} decisions={preRenderMemberDecisions} isTransitionPending={isTransitionPending} members={preRenderMembers} onReviewMember={onReviewPreRenderMember} onTransition={onTransition} reviewPackage={reviewPackage} /> : reviewPackage && reviewArtifact ? reviewPackage.stage === "qc_review" && isHyperframesReviewRender(reviewPackage.context_snapshot) ? <HyperframesReviewRenderPackage artifact={reviewArtifact} artifacts={reviewArtifacts} reviewPackage={reviewPackage} /> : reviewPackage.stage === "visual_review" ? <VisualReviewPackage artifact={reviewArtifact} artifacts={reviewArtifacts} reviewPackage={reviewPackage} /> : reviewPackage.stage === "storyboard_review" ? <StoryboardReviewPackage annotations={storyboardAnnotations} artifact={reviewArtifact} isAnnotationPending={isStoryboardAnnotationPending} onCreateAnnotation={onCreateStoryboardAnnotation} onValidationChange={onStoryboardValidationChange} reviewPackage={reviewPackage} /> : <TextReviewPackage artifact={reviewArtifact} reviewPackage={reviewPackage} /> : null}
+    <TaskProgressPanel taskRuns={taskRuns.filter((run) => tasks.some((task) => task.id === run.task_id && task.episode_id === episode.id))} tasks={tasks.filter((task) => task.episode_id === episode.id)} />
     <ArollTaskEvidencePanel tasks={tasks.filter((task) => task.episode_id === episode.id)} />
     <AudioTrackPanel annotations={audioTrackAnnotations.filter((annotation) => audioTracks.some((track) => track.episode_id === episode.id && track.id === annotation.audio_track_id))} onCreateAnnotation={onCreateAudioTrackAnnotation} tasks={tasks.filter((task) => task.episode_id === episode.id)} tracks={audioTracks.filter((track) => track.episode_id === episode.id)} />
     <details className="review-section detail-card-collapsible"><summary><h3>产物索引</h3></summary><div className="detail-card-body">{episodeArtifacts.length ? episodeArtifacts.map((artifact) => <Artifact key={artifact.id} label={artifact.artifact_type} name={artifact.relative_path} complete />) : <p className="muted-copy">尚无 Worker 生成的产物。</p>}</div></details>

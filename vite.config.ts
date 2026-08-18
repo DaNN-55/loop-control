@@ -16,6 +16,7 @@ const openLocalArtifactRoute = "/_open-local-artifact";
 const localProductionMaterialRoute = "/_production-material";
 const localEpisodeDeletionRoute = "/_delete-episode";
 const localEpisodeDeletionCleanupRoute = "/_finalize-episode-deletion";
+const systemStatusRoute = "/_system-status";
 const maxProductionMaterialBytes = 100 * 1024 * 1024;
 const maxEncodedMaterialRequestBytes = 140 * 1024 * 1024;
 const execFileAsync = promisify(execFile);
@@ -627,6 +628,92 @@ function localWorkerServiceRoleKey(): string | undefined {
   }
 }
 
+function localWorkerEnvironmentValue(name: string): string | undefined {
+  const fromProcess = process.env[name]?.trim();
+  if (fromProcess) return fromProcess.replace(/^['"]|['"]$/g, "");
+  try {
+    const workerEnv = readFileSync(resolve("n8n", "worker.env.local"), "utf8");
+    const value = workerEnv.match(new RegExp(`^${name}=(.+)$`, "m"))?.[1]?.trim();
+    return value?.replace(/^['"]|['"]$/g, "") || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+async function latestModifiedAt(paths: string[]): Promise<string | null> {
+  const entries = await Promise.all(paths.map(async (path) => {
+    try {
+      return (await fs.stat(path)).mtime.toISOString();
+    } catch {
+      return null;
+    }
+  }));
+  return entries.filter((entry): entry is string => Boolean(entry)).sort().at(-1) ?? null;
+}
+
+async function dependencyStatus(name: string, command: string, args: string[]): Promise<{ detail: string; name: string; state: "healthy" | "offline" }> {
+  try {
+    const result = await execFileAsync(command, args);
+    return { detail: result.stdout.split("\n")[0] || "可调用", name, state: "healthy" };
+  } catch (error) {
+    return { detail: error instanceof Error ? error.message : "无法调用", name, state: "offline" };
+  }
+}
+
+export function serveSystemStatus(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+  return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+    if (request.method !== "GET") {
+      response.statusCode = 405;
+      response.end();
+      return;
+    }
+    const authorization = request.headers.authorization;
+    if (!authorization?.startsWith("Bearer ")) {
+      response.statusCode = 401;
+      response.end("需要 Owner 登录会话。");
+      return;
+    }
+    if (!supabaseUrl || !supabasePublishableKey) {
+      response.statusCode = 503;
+      response.end("Supabase 本地客户端未配置。");
+      return;
+    }
+    try {
+      const accessToken = authorization.slice("Bearer ".length);
+      const client = createClient(supabaseUrl, supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: authorization } } });
+      const { data, error } = await client.auth.getUser(accessToken);
+      if (error || !data.user) {
+        response.statusCode = 401;
+        response.end("Owner 登录会话无效。");
+        return;
+      }
+
+      const runtimeDirectory = resolve("n8n", "runtime", ".n8n");
+      const eventLogPaths = (await fs.readdir(runtimeDirectory).catch(() => [])).filter((entry) => entry.startsWith("n8nEventLog") && entry.endsWith(".log")).map((entry) => join(runtimeDirectory, entry));
+      const lastEventAt = await latestModifiedAt(eventLogPaths);
+      const runtimeExists = await fs.stat(runtimeDirectory).then((stats) => stats.isDirectory()).catch(() => false);
+      const mediaRoot = localWorkerEnvironmentValue("MEDIA_LIBRARY_MOUNT_PATH");
+      const mediaExists = mediaRoot ? await fs.stat(mediaRoot).then((stats) => stats.isDirectory()).catch(() => false) : false;
+      const dependencies = await Promise.all([
+        dependencyStatus("Codex CLI", "codex", ["--version"]),
+        dependencyStatus("ffmpeg", "ffmpeg", ["-version"]),
+      ]);
+      const report = {
+        dependencies,
+        mediaLibrary: { detail: mediaRoot ? (mediaExists ? `已挂载：${mediaRoot}` : `未找到挂载目录：${mediaRoot}`) : "未配置 MEDIA_LIBRARY_MOUNT_PATH。", state: mediaExists ? "healthy" : "offline" },
+        n8n: { detail: runtimeExists ? (lastEventAt ? "已读取本地 n8n 事件日志；n8n 负责编排、通知和健康检查，不代替 Worker。" : "已发现 n8n 运行时目录，但暂无事件日志。") : "未发现本地 n8n 运行时目录。", lastDispatchAt: null, lastEventAt, lastHealthCheckAt: null, lastRunAt: null, state: lastEventAt ? "healthy" : runtimeExists ? "unknown" : "offline" },
+        observedAt: new Date().toISOString(),
+      };
+      response.setHeader("Content-Type", "application/json");
+      response.statusCode = 200;
+      response.end(JSON.stringify(report));
+    } catch (error) {
+      response.statusCode = 500;
+      response.end(error instanceof Error ? error.message : "无法读取系统状态。");
+    }
+  };
+}
+
 export function serveProductionMaterial(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
   return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
     if (request.method !== "POST") {
@@ -731,6 +818,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
   const productionMaterialMiddleware = serveProductionMaterial(supabaseUrl, supabasePublishableKey);
   const deletionMiddleware = serveEpisodeDeletion(supabaseUrl, supabasePublishableKey, localWorkerServiceRoleKey());
   const deletionCleanupMiddleware = serveEpisodeDeletionCleanup(supabaseUrl, supabasePublishableKey);
+  const systemStatusMiddleware = serveSystemStatus(supabaseUrl, supabasePublishableKey);
   return {
     name: "local-artifact-preview",
     configureServer(server) {
@@ -741,6 +829,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(localProductionMaterialRoute, productionMaterialMiddleware);
       server.middlewares.use(localEpisodeDeletionRoute, deletionMiddleware);
       server.middlewares.use(localEpisodeDeletionCleanupRoute, deletionCleanupMiddleware);
+      server.middlewares.use(systemStatusRoute, systemStatusMiddleware);
     },
     configurePreviewServer(server) {
       server.middlewares.use(localArtifactRoute, artifactMiddleware);
@@ -750,6 +839,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(localProductionMaterialRoute, productionMaterialMiddleware);
       server.middlewares.use(localEpisodeDeletionRoute, deletionMiddleware);
       server.middlewares.use(localEpisodeDeletionCleanupRoute, deletionCleanupMiddleware);
+      server.middlewares.use(systemStatusRoute, systemStatusMiddleware);
     },
   };
 }

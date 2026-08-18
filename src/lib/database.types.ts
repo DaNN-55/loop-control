@@ -880,6 +880,50 @@ export type Database = {
           },
         ]
       }
+      task_runs: {
+        Row: {
+          actual_cost_cents: number
+          attempt: number
+          completed_at: string | null
+          id: string
+          result: Json | null
+          started_at: string
+          status: Database["public"]["Enums"]["task_status"]
+          task_id: string
+          task_package: Json
+        }
+        Insert: {
+          actual_cost_cents?: number
+          attempt: number
+          completed_at?: string | null
+          id?: string
+          result?: Json | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["task_status"]
+          task_id: string
+          task_package: Json
+        }
+        Update: {
+          actual_cost_cents?: number
+          attempt?: number
+          completed_at?: string | null
+          id?: string
+          result?: Json | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["task_status"]
+          task_id?: string
+          task_package?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_runs_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tasks: {
         Row: {
           actual_cost_cents: number | null
