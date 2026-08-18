@@ -48,6 +48,8 @@ describe("系列运营视图", () => {
     await user.click(screen.getByRole("button", { name: "媒体受阻 media_provider_unavailable" }));
     expect(onSelectEpisode).toHaveBeenNthCalledWith(1, "episode-review");
     expect(onSelectEpisode).toHaveBeenNthCalledWith(2, "episode-blocked");
+    await user.click(screen.getByRole("button", { name: "打开 Episode 详情" }));
+    expect(onSelectEpisode).toHaveBeenNthCalledWith(3, "episode-blocked");
   });
 
   it("不把已逐项批准的预渲染包计为待审核，并保留缺失系列关联的生产单", () => {

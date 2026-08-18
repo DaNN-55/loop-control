@@ -566,6 +566,62 @@ export type Database = {
           },
         ]
       }
+      publication_records: {
+        Row: {
+          adapter: string | null
+          created_at: string
+          created_by: string | null
+          episode_id: string
+          external_content_id: string | null
+          external_url: string | null
+          id: string
+          notes: string
+          platform: string
+          published_at: string | null
+          publishing_account: string
+          source: Database["public"]["Enums"]["publication_source"]
+          status: Database["public"]["Enums"]["publication_status"]
+        }
+        Insert: {
+          adapter?: string | null
+          created_at?: string
+          created_by?: string | null
+          episode_id: string
+          external_content_id?: string | null
+          external_url?: string | null
+          id?: string
+          notes?: string
+          platform: string
+          published_at?: string | null
+          publishing_account: string
+          source?: Database["public"]["Enums"]["publication_source"]
+          status: Database["public"]["Enums"]["publication_status"]
+        }
+        Update: {
+          adapter?: string | null
+          created_at?: string
+          created_by?: string | null
+          episode_id?: string
+          external_content_id?: string | null
+          external_url?: string | null
+          id?: string
+          notes?: string
+          platform?: string
+          published_at?: string | null
+          publishing_account?: string
+          source?: Database["public"]["Enums"]["publication_source"]
+          status?: Database["public"]["Enums"]["publication_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "publication_records_episode_id_fkey"
+            columns: ["episode_id"]
+            isOneToOne: false
+            referencedRelation: "episodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       production_material_revisions: {
         Row: {
           created_at: string
@@ -1177,6 +1233,35 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      record_publication: {
+        Args: {
+          p_adapter?: string | null
+          p_episode_id: string
+          p_external_content_id?: string | null
+          p_external_url?: string | null
+          p_notes?: string
+          p_platform: string
+          p_published_at?: string | null
+          p_publishing_account: string
+          p_source?: Database["public"]["Enums"]["publication_source"]
+          p_status?: Database["public"]["Enums"]["publication_status"]
+        }
+        Returns: Database["public"]["Tables"]["publication_records"]["Row"]
+        SetofOptions: { from: "*"; to: "publication_records"; isOneToOne: true; isSetofReturn: false }
+      }
+      record_manual_publication: {
+        Args: {
+          p_episode_id: string
+          p_external_content_id?: string | null
+          p_external_url?: string | null
+          p_notes?: string
+          p_platform: string
+          p_published_at?: string | null
+          p_publishing_account: string
+        }
+        Returns: Database["public"]["Tables"]["publication_records"]["Row"]
+        SetofOptions: { from: "*"; to: "publication_records"; isOneToOne: true; isSetofReturn: false }
+      }
       record_learning_report: {
         Args: { p_episode_id: string; p_recommendation: "keep" | "change" | "kill" | "insufficient_data"; p_summary: string }
         Returns: {
@@ -1305,6 +1390,8 @@ export type Database = {
         | "metrics_collecting"
         | "learning_recorded"
       member_role: "owner" | "worker"
+      publication_source: "manual" | "automated"
+      publication_status: "pending" | "published" | "failed"
       task_status: "ready" | "running" | "completed" | "blocked" | "failed"
     }
     CompositeTypes: {
@@ -1456,6 +1543,8 @@ export const Constants = {
         "learning_recorded",
       ],
       member_role: ["owner", "worker"],
+      publication_source: ["manual", "automated"],
+      publication_status: ["pending", "published", "failed"],
       task_status: ["ready", "running", "completed", "blocked", "failed"],
     },
   },
