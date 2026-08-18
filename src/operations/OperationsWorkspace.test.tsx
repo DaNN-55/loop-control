@@ -29,7 +29,8 @@ describe("系列运营视图", () => {
   it("按当前生产单阶段汇总系列，并且不显示统一完成百分比", () => {
     render(<OperationsWorkspace episodes={episodes} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={reviewPackages} series={[series]} seriesVersions={[seriesVersion]} tasks={tasks} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
 
-    expect(screen.getByRole("button", { name: /雨夜志怪/ })).toBeTruthy();
+    expect(screen.getByLabelText("运营系列筛选")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /雨夜志怪/ })).toBeNull();
     expect(screen.getAllByText("输入与脚本").length).toBeGreaterThan(0);
     expect(screen.getAllByText("分镜与媒体").length).toBeGreaterThan(0);
     expect(screen.queryByText(/\d+%/)).toBeNull();
@@ -60,8 +61,7 @@ describe("系列运营视图", () => {
 
     render(<OperationsWorkspace episodes={[productionEpisode]} preRenderReviewMemberDecisions={[decision]} preRenderReviewMembers={[member]} reviewPackages={[productionPackage]} series={[]} seriesVersions={[]} tasks={[]} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
 
-    expect(screen.getByRole("button", { name: /关联系列不可用/ })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /0 个待审核包/ })).toBeTruthy();
+    expect(screen.getByRole("option", { name: "关联系列不可用" })).toBeTruthy();
     expect(screen.getByText("0 个待审核包")).toBeTruthy();
     expect(screen.getByText("审核包 v1 已审完")).toBeTruthy();
   });

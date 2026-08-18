@@ -75,13 +75,7 @@ export function OperationsWorkspace({ episodes, onSelectEpisode, preRenderReview
   useEffect(() => setEpisodePage((current) => Math.min(current, episodePageCount)), [episodePageCount]);
 
   return <section className="operations-workspace" aria-label="系列运营概览">
-    <header className="operations-intro"><div><h2>系列运营概览</h2><p>按生产单的当前阶段、待审包和 Worker 阻塞项汇总。这里不折算统一完成百分比。</p></div><label>系列<select aria-label="运营系列筛选" onChange={(event) => setSelectedSeriesId(event.target.value)} value={selectedSeriesId}><option value="all">全部系列</option>{operations.map((operation) => <option key={operation.id} value={operation.id}>{operation.name}</option>)}</select></label></header>
-
-    <div className="operations-series-grid">{visibleOperations.map((operation) => {
-      const operationReviews = operation.episodes.filter((item) => item.reviewPending).length;
-      const operationBlockers = operation.episodes.flatMap((item) => item.blockers);
-      return <button className={`operations-series-card ${selectedSeriesId === operation.id ? "is-selected" : ""}`} key={operation.id} onClick={() => setSelectedSeriesId(operation.id)} type="button"><strong>{operation.name}</strong><span>{operation.episodes.length} 个生产单</span><small>{operationReviews} 个待审核包 · {operationBlockers.length} 个阻塞项</small></button>;
-    })}</div>
+    <header className="operations-intro"><div><h2>系列运营概览</h2><p>按生产单的当前阶段、待审包和 Worker 阻塞项汇总。这里不折算统一完成百分比。</p></div><label className="operations-series-filter"><span>系列</span><select aria-label="运营系列筛选" className="operations-series-select" onChange={(event) => setSelectedSeriesId(event.target.value)} value={selectedSeriesId}><option value="all">全部系列</option>{operations.map((operation) => <option key={operation.id} value={operation.id}>{operation.name}</option>)}</select></label></header>
 
     <div className="operations-stage-grid" aria-label="阶段分布">{stageGroups.map((group) => <article key={group.id}><span>{group.label}</span><strong>{visibleEpisodes.filter((item) => group.stages.includes(item.episode.stage)).length}</strong><small>个生产单</small></article>)}</div>
 
