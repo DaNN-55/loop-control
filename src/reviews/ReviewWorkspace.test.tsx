@@ -147,11 +147,15 @@ describe("审核台", () => {
   });
 
   it("审计时间线只显示中文原因，不展示技术原文", () => {
-    const transition = { actor_id: null, created_at: "2026-08-15T01:00:00.000Z", episode_id: reviewEpisode.id, from_stage: "script_draft" as const, id: "transition-1", reason: "Worker submitted a frozen visual planning review package.", to_stage: "script_review" as const };
-    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onTransition={vi.fn()} tasks={[]} transitions={[transition]} />);
+    const transitions = [
+      { actor_id: null, created_at: "2026-08-15T01:00:00.000Z", episode_id: reviewEpisode.id, from_stage: "script_draft" as const, id: "transition-1", reason: "Worker submitted a frozen visual planning review package.", to_stage: "script_review" as const },
+      { actor_id: null, created_at: "2026-08-15T01:01:00.000Z", episode_id: reviewEpisode.id, from_stage: "script_review" as const, id: "transition-2", reason: "Worker submitted a frozen storyboard review package.", to_stage: "script_review" as const },
+    ];
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onTransition={vi.fn()} tasks={[]} transitions={transitions} />);
 
     expect(screen.getByText("Worker 已提交冻结的视觉规划审核包。")).toBeTruthy();
-    expect(screen.queryByText("技术原文：Worker submitted a frozen visual planning review package.")).toBeNull();
+    expect(screen.getByText("后台执行结果已记录，生产单状态已更新。")).toBeTruthy();
+    expect(screen.queryByText(/Worker submitted/)).toBeNull();
   });
 
   it("只列出需要 Owner 审核的 Episode，并允许选择其中一项", async () => {

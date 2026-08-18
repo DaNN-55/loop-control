@@ -249,7 +249,11 @@ const nextStepLabels: Partial<Record<EpisodeStage, string>> = {
 };
 
 function userFacingTransitionReason(reason: string): string {
-  return transitionReasonLabels[reason.trim()] ?? reason;
+  const trimmed = reason.trim();
+  if (transitionReasonLabels[trimmed]) return transitionReasonLabels[trimmed];
+  if (/owner/i.test(trimmed)) return "Owner 已提交该阶段决定。";
+  if (/worker|orchestrator|hyperframes/i.test(trimmed)) return "后台执行结果已记录，生产单状态已更新。";
+  return "已记录该阶段状态变化。";
 }
 
 function nextStepForEpisode(stage: EpisodeStage): string {
