@@ -20,6 +20,7 @@ describe("系统状态面板", () => {
     const user = userEvent.setup();
     render(<SystemStatusPanel report={report} tasks={[blockedTask]} />);
 
+    expect(screen.getByRole("button", { name: /系统状态/ }).textContent).toBe("");
     await user.hover(screen.getByRole("button", { name: /系统状态/ }));
     expect(screen.getByText(/Supabase：正常/)).toBeTruthy();
     await user.click(screen.getByRole("button", { name: /系统状态/ }));

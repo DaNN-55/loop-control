@@ -184,7 +184,7 @@ body { min-width: 0; }
 
 .mobile-header-actions { align-items: center; display: none; gap: 9px; margin-left: auto; }
 .system-status { position: relative; }
-.system-status-trigger { align-items: center; background: transparent; border: 1px solid #d9dde5; border-radius: 5px; color: #4a5362; display: inline-flex; font-size: 11px; font-weight: 750; gap: 7px; height: 36px; padding: 0 10px; white-space: nowrap; }
+.system-status-trigger { align-items: center; background: transparent; border: 1px solid #d9dde5; border-radius: 5px; color: #4a5362; display: inline-flex; height: 36px; justify-content: center; padding: 0; width: 36px; }
 .system-status-trigger:hover { background: #f6f8fb; border-color: #abb5c5; }
 .system-status-trigger i { background: #9aa3af; border-radius: 50%; display: block; height: 8px; width: 8px; }
 .system-status-healthy i { background: #3e9a61; }.system-status-attention i { background: #d18b10; }.system-status-offline i { background: #c84955; }
