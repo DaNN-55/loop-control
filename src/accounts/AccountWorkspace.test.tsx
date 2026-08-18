@@ -48,7 +48,13 @@ describe("账号页蓝图版本", () => {
     renderWorkspace({ onActivate });
 
     expect(screen.getByRole("heading", { name: "蓝图 v3" })).toBeTruthy();
-    await user.click(screen.getByRole("button", { name: /v2.*旧定位/ }));
+    const latestCard = screen.getByRole("button", { name: /v3.*当前生效/ });
+    expect(latestCard.textContent).not.toContain("越南民间信仰");
+    expect(latestCard.textContent).not.toContain("/Volumes/dao/v3");
+    const historySummary = screen.getByText("历史版本", { selector: "summary" });
+    expect(historySummary.closest("details")?.open).toBe(false);
+    await user.click(historySummary);
+    await user.click(screen.getByRole("button", { name: /v2.*历史版本/ }));
     expect(screen.getByRole("heading", { name: "蓝图 v2" })).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "激活此版本" }));
     expect(onActivate).toHaveBeenCalledWith(blueprintV2.id);
@@ -62,7 +68,8 @@ describe("账号页蓝图版本", () => {
 
     renderWorkspace({ onActivate, onCreateBlueprint });
 
-    await user.click(screen.getByRole("button", { name: /v2.*旧定位/ }));
+    await user.click(screen.getByText("历史版本", { selector: "summary" }));
+    await user.click(screen.getByRole("button", { name: /v2.*历史版本/ }));
     await user.click(screen.getByRole("button", { name: "以此版本编辑" }));
     await user.clear(screen.getByLabelText("资产目录"));
     await user.type(screen.getByLabelText("资产目录"), "/Volumes/dao/v4");
@@ -70,5 +77,17 @@ describe("账号页蓝图版本", () => {
 
     expect(onCreateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ asset_root: "/Volumes/dao/v4" }));
     expect(onActivate).toHaveBeenCalledWith(createdBlueprint.id);
+  });
+
+  it("保留旧版当前生效状态", async () => {
+    const user = userEvent.setup();
+    const accountWithPendingLatest = { ...account, current_blueprint_version_id: blueprintV2.id };
+    render(<AccountWorkspace account={accountWithPendingLatest} accounts={[accountWithPendingLatest]} blueprints={[{ ...blueprintV3, is_active: false }, { ...blueprintV2, is_active: true }]} isPending="" onActivate={vi.fn()} onCreateBlueprint={vi.fn()} onSelectAccount={vi.fn()} />);
+
+    expect(screen.getByRole("button", { name: /v3.*待激活/ })).toBeTruthy();
+    const historySummary = screen.getByText("历史版本", { selector: "summary" });
+    expect(historySummary).toBeTruthy();
+    await user.click(historySummary);
+    expect(screen.getByRole("button", { name: /v2.*当前生效/ })).toBeTruthy();
   });
 });

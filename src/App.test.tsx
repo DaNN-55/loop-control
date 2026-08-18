@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { Database } from "./lib/database.types";
-import { AccountWorkspace, App, EpisodeWorkspace, NavigationButtons, SeriesSettings, navigation, navigationBadgeCounts } from "./App";
+import { AccountWorkspace, App, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, navigation, navigationBadgeCounts } from "./App";
 import { defaultBlueprintPolicy, parseBlueprintPolicy, withBlueprintAssetRoot } from "./platform/blueprintPolicy";
 
 vi.mock("./lib/supabase", () => ({
@@ -23,6 +23,15 @@ describe("approval console", () => {
     expect(screen.getByLabelText("密码")).toBeTruthy();
     expect(screen.getByRole("button", { name: "使用密码登录" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "发送登录链接" })).toBeTruthy();
+  });
+
+  it("用明确的时区选项替代自由填写", () => {
+    render(<TimezoneSelect value="Asia/Shanghai" onChange={vi.fn()} />);
+
+    const timezone = screen.getByRole("combobox", { name: "时区" }) as HTMLSelectElement;
+    expect(timezone.value).toBe("Asia/Shanghai");
+    expect(screen.getByRole("option", { name: /越南.*胡志明市/ })).toBeTruthy();
+    expect(screen.getByRole("option", { name: /美国.*洛杉矶/ })).toBeTruthy();
   });
 
   it("accepts the default blueprint policy and rejects a non-object policy", () => {
@@ -47,6 +56,23 @@ describe("approval console", () => {
     fireEvent.click(screen.getByRole("button", { name: "创建系列 v1" }));
 
     await waitFor(() => expect(onCreate).toHaveBeenCalledWith({ name: "越南道士", rules: { tone: "calm", positioning: "雨夜民俗" } }));
+  });
+
+  it("将系列历史版本收进折叠列表", async () => {
+    const user = userEvent.setup();
+    const series = { account_id: "account-1", created_at: "2026-08-15T00:00:00.000Z", id: "series-1", name: "越南道士" } as Database["public"]["Tables"]["series"]["Row"];
+    const seriesVersions = [
+      { account_id: "account-1", created_at: "2026-08-17T00:00:00.000Z", id: "series-version-2", rules: {}, series_id: series.id, version: 2 },
+      { account_id: "account-1", created_at: "2026-08-15T00:00:00.000Z", id: "series-version-1", rules: {}, series_id: series.id, version: 1 },
+    ] as Database["public"]["Tables"]["series_versions"]["Row"][];
+
+    render(<SeriesSettings isPending={false} onCreate={vi.fn()} series={[series]} seriesVersions={seriesVersions} />);
+
+    expect(screen.getByText("最新 v2")).toBeTruthy();
+    const historySummary = screen.getByText("历史版本", { selector: "summary" });
+    expect(historySummary.closest("details")?.open).toBe(false);
+    await user.click(historySummary);
+    expect(screen.getByText("v1")).toBeTruthy();
   });
 
   it("通过结构化表单编辑蓝图并保留高级规则", async () => {
