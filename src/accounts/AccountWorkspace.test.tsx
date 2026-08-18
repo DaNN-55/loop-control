@@ -41,12 +41,27 @@ function renderWorkspace(overrides: Partial<ComponentProps<typeof AccountWorkspa
   return render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprintV3, blueprintV2]} isPending="" onActivate={vi.fn()} onCreateBlueprint={vi.fn()} onSelectAccount={vi.fn()} {...overrides} />);
 }
 
-describe("账号页蓝图版本", () => {
+describe("账号页分区与蓝图版本", () => {
+  it("按账号概览、蓝图版本和系列分区组织内容", async () => {
+    const user = userEvent.setup();
+    renderWorkspace();
+
+    expect(screen.getByRole("heading", { name: "账号概览" })).toBeTruthy();
+    expect(screen.queryByRole("heading", { name: "蓝图 v3" })).toBeNull();
+
+    await user.click(screen.getByRole("tab", { name: "蓝图版本" }));
+    expect(screen.getByRole("heading", { name: "蓝图 v3" })).toBeTruthy();
+
+    await user.click(screen.getByRole("tab", { name: "系列" }));
+    expect(screen.getByRole("heading", { name: "系列" })).toBeTruthy();
+  });
+
   it("选择版本后在右侧查看，并可直接激活待激活版本", async () => {
     const user = userEvent.setup();
     const onActivate = vi.fn().mockResolvedValue(undefined);
 
     renderWorkspace({ onActivate });
+    await user.click(screen.getByRole("tab", { name: "蓝图版本" }));
 
     expect(screen.getByRole("heading", { name: "蓝图 v3" })).toBeTruthy();
     const latestCard = screen.getByRole("button", { name: /v3.*当前生效/ });
@@ -69,6 +84,7 @@ describe("账号页蓝图版本", () => {
     const onCreateBlueprint = vi.fn().mockResolvedValue(createdBlueprint);
 
     renderWorkspace({ onActivate, onCreateBlueprint });
+    await user.click(screen.getByRole("tab", { name: "蓝图版本" }));
 
     await user.click(screen.getByRole("button", { name: /历史版本/ }));
     await user.click(screen.getByRole("menuitem", { name: /v2.*历史版本/ }));
@@ -85,6 +101,7 @@ describe("账号页蓝图版本", () => {
     const user = userEvent.setup();
     const accountWithPendingLatest = { ...account, current_blueprint_version_id: blueprintV2.id };
     render(<AccountWorkspace account={accountWithPendingLatest} accounts={[accountWithPendingLatest]} blueprints={[{ ...blueprintV3, is_active: false }, { ...blueprintV2, is_active: true }]} isPending="" onActivate={vi.fn()} onCreateBlueprint={vi.fn()} onSelectAccount={vi.fn()} />);
+    await user.click(screen.getByRole("tab", { name: "蓝图版本" }));
 
     expect(screen.getByRole("button", { name: /v3.*待激活/ })).toBeTruthy();
     const historyTrigger = screen.getByRole("button", { name: /历史版本/ });
@@ -126,6 +143,7 @@ describe("账号页蓝图版本", () => {
     const onDeactivateBlueprint = vi.fn().mockResolvedValue(undefined);
     const onArchiveBlueprint = vi.fn().mockResolvedValue(undefined);
     renderWorkspace({ onArchiveBlueprint, onDeactivateBlueprint });
+    await user.click(screen.getByRole("tab", { name: "蓝图版本" }));
 
     await user.click(screen.getByRole("button", { name: "停用当前版本" }));
     expect(onDeactivateBlueprint).toHaveBeenCalledWith(blueprintV3.id);

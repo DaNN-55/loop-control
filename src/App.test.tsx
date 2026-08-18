@@ -82,6 +82,7 @@ describe("approval console", () => {
     const onCreateBlueprint = vi.fn().mockResolvedValue({ ...blueprint, id: "blueprint-2", version: 2, is_active: false });
     render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onActivate={vi.fn()} onCreateBlueprint={onCreateBlueprint} onCreateSeries={vi.fn()} onSelectAccount={vi.fn()} series={[]} seriesVersions={[]} />);
 
+    await user.click(screen.getByRole("tab", { name: "蓝图版本" }));
     await user.click(screen.getByRole("button", { name: "以此版本编辑" }));
     await user.clear(screen.getByLabelText("账号定位"));
     await user.type(screen.getByLabelText("账号定位"), "新定位");

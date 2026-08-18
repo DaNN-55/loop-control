@@ -1508,6 +1508,7 @@ function LoadingScreen() { return <main className="access-shell"><div className=
 function ErrorScreen({ errorMessage, onRetry }: { errorMessage: string; onRetry: () => Promise<void> }) { return <main className="access-shell"><section className="access-card"><h1>无法读取控制数据</h1><p className="form-error">{errorMessage}</p><button className="button button-primary" onClick={() => void onRetry()} type="button">重试</button></section></main>; }
 
 export function AccountWorkspace({ account, accounts, blueprints, isPending, onActivate, onArchiveBlueprint = async () => {}, onCreateBlueprint, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeactivateBlueprint = async () => {}, onRenameAccount = async () => {}, onSelectAccount, series = [], seriesVersions = [] }: { account: Account | null; accounts: Account[]; blueprints: Blueprint[]; isPending: string; onActivate: (id: string) => Promise<void>; onArchiveBlueprint?: (id: string, archived: boolean) => Promise<void>; onCreateBlueprint: (policy: Json) => Promise<Blueprint | null>; onCreateSeries?: (input: { name: string; rules: Json }) => Promise<void>; onCreateSeriesVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>; onDeactivateBlueprint?: (id: string) => Promise<void>; onRenameAccount?: (id: string, name: string) => Promise<boolean | void>; onSelectAccount: (id: string) => void; series?: Series[]; seriesVersions?: SeriesVersion[] }) {
+  const [activeSection, setActiveSection] = useState<"overview" | "blueprints" | "series">("overview");
   const [isEditing, setIsEditing] = useState(false);
   const [isBlueprintHistoryOpen, setIsBlueprintHistoryOpen] = useState(false);
   const [isAccountRenameOpen, setIsAccountRenameOpen] = useState(false);
@@ -1523,6 +1524,7 @@ export function AccountWorkspace({ account, accounts, blueprints, isPending, onA
 
   useEffect(() => {
     setSelectedBlueprintId(account?.current_blueprint_version_id ?? "");
+    setActiveSection("overview");
     setIsEditing(false);
     setIsBlueprintHistoryOpen(false);
     setIsAccountRenameOpen(false);
@@ -1534,6 +1536,7 @@ export function AccountWorkspace({ account, accounts, blueprints, isPending, onA
   if (!selectedBlueprint) return <div className="empty-state">该账号没有可读取的蓝图版本。</div>;
   const selectedStatus = blueprintStatusLabel(selectedBlueprint, latestBlueprint?.id ?? "", account.current_blueprint_version_id);
   const isSelectedCurrent = selectedBlueprint.id === account.current_blueprint_version_id;
+  const currentBlueprint = sortedBlueprints.find((blueprint) => blueprint.id === account.current_blueprint_version_id) ?? null;
   return <>
     <div className="account-selector">
       <div className="account-selector-control">
@@ -1542,9 +1545,23 @@ export function AccountWorkspace({ account, accounts, blueprints, isPending, onA
       </div>
       <p>{policyPositioning(activePolicy)}<br />资产目录：{policyAssetRoot(activePolicy)}</p>
     </div>
-    <div className="account-layout">
+    <nav aria-label="账号设置导航" className="account-tabs" role="tablist">
+      <button aria-controls="account-overview-panel" aria-selected={activeSection === "overview"} className={`account-tab ${activeSection === "overview" ? "is-active" : ""}`} onClick={() => setActiveSection("overview")} role="tab" type="button">账号概览</button>
+      <button aria-controls="account-blueprints-panel" aria-selected={activeSection === "blueprints"} className={`account-tab ${activeSection === "blueprints" ? "is-active" : ""}`} onClick={() => setActiveSection("blueprints")} role="tab" type="button">蓝图版本</button>
+      <button aria-controls="account-series-panel" aria-selected={activeSection === "series"} className={`account-tab ${activeSection === "series" ? "is-active" : ""}`} onClick={() => setActiveSection("series")} role="tab" type="button">系列</button>
+    </nav>
+    {activeSection === "overview" ? <section aria-labelledby="account-overview-heading" className="account-overview" id="account-overview-panel" role="tabpanel">
+      <header className="account-section-heading"><div><h2 id="account-overview-heading">账号概览</h2><p>账号级信息保持稳定，蓝图和系列规则分别在独立分区维护。</p></div></header>
+      <div className="account-overview-grid">
+        <article className="account-summary-card"><span>当前生效蓝图</span><strong>{currentBlueprint ? `v${currentBlueprint.version}` : "未设置"}</strong><p>{currentBlueprint ? `更新于 ${formatDate(currentBlueprint.created_at)}` : "暂无生效版本"}</p><button className="text-button" onClick={() => setActiveSection("blueprints")} type="button">查看蓝图版本</button></article>
+        <article className="account-summary-card"><span>蓝图版本</span><strong>{blueprints.length}</strong><p>包含当前版本和历史记录</p><button className="text-button" onClick={() => setActiveSection("blueprints")} type="button">管理蓝图</button></article>
+        <article className="account-summary-card"><span>系列</span><strong>{series.length}</strong><p>{series.length ? "可在生产单中关联和筛选" : "创建后可固定系列基线"}</p><button className="text-button" onClick={() => setActiveSection("series")} type="button">管理系列</button></article>
+      </div>
+      <dl className="account-overview-details"><div><dt>账号定位</dt><dd>{policyPositioning(activePolicy)}</dd></div><div><dt>资产目录</dt><dd><code>{policyAssetRoot(activePolicy)}</code></dd></div><div><dt>运营时区</dt><dd>{account.timezone}</dd></div></dl>
+    </section> : null}
+    {activeSection === "blueprints" ? <div aria-labelledby="account-blueprints-heading" className="account-layout" id="account-blueprints-panel" role="tabpanel">
       <section className="blueprint-list">
-        <h2>蓝图版本</h2>
+        <h2 id="account-blueprints-heading">蓝图版本</h2>
         {latestBlueprint ? <button aria-pressed={selectedBlueprint.id === latestBlueprint.id} className={`blueprint-card ${latestBlueprint.is_active ? "is-active" : ""} ${selectedBlueprint.id === latestBlueprint.id ? "is-selected" : ""}`} onClick={() => { setSelectedBlueprintId(latestBlueprint.id); setIsEditing(false); setIsBlueprintHistoryOpen(false); }} type="button">
           <div><strong>v{latestBlueprint.version}</strong><span>{blueprintStatusLabel(latestBlueprint, latestBlueprint.id, account.current_blueprint_version_id)}</span></div>
           <p>创建于 {formatDate(latestBlueprint.created_at)}</p>
@@ -1566,8 +1583,8 @@ export function AccountWorkspace({ account, accounts, blueprints, isPending, onA
           {!selectedBlueprint.is_active && !selectedBlueprint.archived_at ? <button className="button button-secondary" disabled={isPending === `archive-${selectedBlueprint.id}`} onClick={() => void onArchiveBlueprint(selectedBlueprint.id, true)} type="button">{isPending === `archive-${selectedBlueprint.id}` ? "归档中…" : "归档此版本"}</button> : null}
         </div>
       </section>
-    </div>
-    <SeriesSettings isPending={isPending} onCreate={onCreateSeries} onCreateVersion={onCreateSeriesVersion} series={series} seriesVersions={seriesVersions} />
+    </div> : null}
+    {activeSection === "series" ? <div aria-labelledby="account-series-heading" id="account-series-panel" role="tabpanel"><SeriesSettings isPending={isPending} onCreate={onCreateSeries} onCreateVersion={onCreateSeriesVersion} series={series} seriesVersions={seriesVersions} /></div> : null}
     {isAccountRenameOpen ? <AccountRenameModal account={account} isPending={isPending === `rename-account-${account.id}`} onClose={() => setIsAccountRenameOpen(false)} onSave={(name) => onRenameAccount(account.id, name)} /> : null}
   </>;
 }
@@ -1579,7 +1596,7 @@ export function SeriesSettings({ isPending, onCreate, onCreateVersion = async ()
 
   const seriesPending = isPending === true || isPending === "series";
   const versionPending = Boolean(editingSeriesId && isPending === `series-version-${editingSeriesId}`);
-  return <section className="series-settings"><div><h2>系列</h2>{series.length ? <div className="series-list">{series.map((candidate) => { const versions = [...seriesVersions.filter((version) => version.series_id === candidate.id)].sort((a, b) => b.version - a.version); const latest = versions[0] ?? null; const history = versions.slice(1); return <article className="blueprint-card" key={candidate.id}><div><strong>{candidate.name}</strong><span>{latest ? `最新 v${latest.version}` : "暂无版本"}</span></div><p>{latest ? `更新于 ${formatDate(latest.created_at)}` : "创建后可固定系列基线"}</p>{history.length ? <details className="series-version-history"><summary>历史版本 <span>{history.length}</span></summary><ul>{history.map((version) => <li key={version.id}><strong>v{version.version}</strong><span>{formatDate(version.created_at)}</span></li>)}</ul></details> : null}<button className="button button-secondary" onClick={() => setEditingSeriesId(candidate.id)} type="button">编辑最新规则</button></article>; })}</div> : <p>还没有系列。创建后即可在生产单中关联和筛选。</p>}</div><SeriesConfigurationForm initialName={editingSeries?.name ?? ""} initialRules={latestVersion?.rules ?? {}} isEditing={Boolean(editingSeries)} isPending={seriesPending || versionPending} onCancel={() => setEditingSeriesId(null)} onSave={async (name, rules) => { if (editingSeries) { await onCreateVersion({ seriesId: editingSeries.id, rules }); setEditingSeriesId(null); } else { await onCreate({ name, rules }); } }} /></section>;
+  return <section className="series-settings"><div><h2 id="account-series-heading">系列</h2>{series.length ? <div className="series-list">{series.map((candidate) => { const versions = [...seriesVersions.filter((version) => version.series_id === candidate.id)].sort((a, b) => b.version - a.version); const latest = versions[0] ?? null; const history = versions.slice(1); return <article className="blueprint-card" key={candidate.id}><div><strong>{candidate.name}</strong><span>{latest ? `最新 v${latest.version}` : "暂无版本"}</span></div><p>{latest ? `更新于 ${formatDate(latest.created_at)}` : "创建后可固定系列基线"}</p>{history.length ? <details className="series-version-history"><summary>历史版本 <span>{history.length}</span></summary><ul>{history.map((version) => <li key={version.id}><strong>v{version.version}</strong><span>{formatDate(version.created_at)}</span></li>)}</ul></details> : null}<button className="button button-secondary" onClick={() => setEditingSeriesId(candidate.id)} type="button">编辑最新规则</button></article>; })}</div> : <p>还没有系列。创建后即可在生产单中关联和筛选。</p>}</div><SeriesConfigurationForm initialName={editingSeries?.name ?? ""} initialRules={latestVersion?.rules ?? {}} isEditing={Boolean(editingSeries)} isPending={seriesPending || versionPending} onCancel={() => setEditingSeriesId(null)} onSave={async (name, rules) => { if (editingSeries) { await onCreateVersion({ seriesId: editingSeries.id, rules }); setEditingSeriesId(null); } else { await onCreate({ name, rules }); } }} /></section>;
 }
 
 function EpisodeActionsMenu({ blueprint, episode, isArchivePending, isDeletePending, isTitlePending, onDelete, onSetArchived, onUpdateTitle }: { blueprint: Blueprint | undefined; episode: Episode; isArchivePending: boolean; isDeletePending: boolean; isTitlePending: boolean; onDelete: (episodeId: string, confirmation: string) => Promise<void>; onSetArchived: (episodeId: string, archived: boolean) => Promise<void>; onUpdateTitle: (episodeId: string, title: string) => Promise<void> }) {
