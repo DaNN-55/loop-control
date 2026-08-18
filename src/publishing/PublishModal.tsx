@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import type { Database } from "../lib/database.types";
+import { artifactPreviewKind, localArtifactUrl, useLocalArtifactBlob } from "../reviews/localArtifactPreview";
 import { createManualPublicationRecord, type PublicationRecordInput } from "./publicationRecord";
 
 type Episode = Database["public"]["Tables"]["episodes"]["Row"];
@@ -47,23 +48,35 @@ export function PublishModal({ artifacts, episode, isPending, onClose, onRecord,
         <div><span>发布包</span><strong>{episodeArtifacts.some((artifact) => artifact.artifact_type === "publish_package") ? "发布包已固定" : "缺少发布包"}</strong></div>
         <div><span>发布包校验</span><strong className={publishVerification ? "publish-verification-passed" : "publish-verification-failed"}>{publishVerification ? "校验已通过" : "尚未通过"}</strong></div>
       </div>
-      <section className="publish-materials"><h3>发布材料</h3><div className="publish-material-grid">{["final_render", "cover", "publish_package", "final_qc_report", "metadata"].map((artifactType) => { const artifact = episodeArtifacts.find((candidate) => candidate.artifact_type === artifactType); return <article key={artifactType}><strong>{artifactLabels[artifactType]}</strong>{artifact ? <><span>{artifactName(artifact.relative_path)}</span><code>{artifact.relative_path}</code></> : <span className="publish-material-missing">未索引</span>}</article>; })}</div></section>
-      {publicationRecords.length ? <section className="publication-history"><h3>已记录发布历史</h3><div>{publicationRecords.map((record) => <article key={record.id}><strong>{record.platform} · {record.publishing_account}</strong><span>{record.status === "published" ? "已发布" : record.status} · {record.published_at ? formatPublicationDate(record.published_at) : "未记录时间"}</span>{record.external_url ? <a href={record.external_url} rel="noreferrer" target="_blank">{record.external_url}</a> : record.external_content_id ? <code>内容 ID：{record.external_content_id}</code> : null}</article>)}</div><p>历史发布记录只读保存，重新发布会追加新记录。</p></section> : null}
-      <form className="publication-record-form" onSubmit={(event) => void submit(event)}>
-        <label className="checkbox-label"><input checked={acknowledged} onChange={(event) => setAcknowledged(event.target.checked)} type="checkbox" />我已在目标平台手工发布，并核对发布包内容。</label>
-        <div className="publication-record-fields">
-          <label>目标平台<input aria-label="目标平台" onChange={(event) => setPlatform(event.target.value)} required value={platform} /></label>
-          <label>发布账号或频道<input aria-label="发布账号或频道" onChange={(event) => setPublishingAccount(event.target.value)} required value={publishingAccount} /></label>
-          <label>外部 URL<input aria-label="外部 URL" onChange={(event) => setExternalUrl(event.target.value)} placeholder="https://…" value={externalUrl} /></label>
-          <label>外部内容 ID<input aria-label="外部内容 ID" onChange={(event) => setExternalContentId(event.target.value)} value={externalContentId} /></label>
-          <label>实际发布时间<input aria-label="实际发布时间" onChange={(event) => setPublishedAt(event.target.value)} required type="datetime-local" value={publishedAt} /></label>
-          <label className="publication-record-notes">备注<textarea aria-label="发布备注" onChange={(event) => setNotes(event.target.value)} placeholder="可填写标题、封面或发布异常说明" rows={3} value={notes} /></label>
-        </div>
-        {formError ? <p className="form-error">{formError}</p> : null}
-        <div className="modal-actions"><button className="button button-secondary" onClick={onClose} type="button">取消</button><button className="button button-primary" disabled={isPending || !publishVerification} type="submit">{isPending ? "记录中…" : "记录发布并完成确认"}</button></div>
-      </form>
+      <section className="publish-materials"><header><div><h3>发布材料</h3><p>视频和封面可直接预览；发布包、QC 报告和元数据保留固定路径供核对。</p></div></header><div className="publish-material-grid">{["final_render", "cover", "publish_package", "final_qc_report", "metadata"].map((artifactType) => { const artifact = episodeArtifacts.find((candidate) => candidate.artifact_type === artifactType); return <PublishMaterialCard artifact={artifact ?? null} key={artifactType} label={artifactLabels[artifactType]} />; })}</div></section>
+      {publicationRecords.length ? <section className="publication-history"><h3>已记录发布历史</h3><div>{publicationRecords.map((record) => <article key={record.id}><strong>{record.platform} · {record.publishing_account}</strong><span>{record.status === "published" ? "已发布" : record.status} · {record.published_at ? formatPublicationDate(record.published_at) : "未记录时间"}</span>{record.external_url ? <a href={record.external_url} rel="noreferrer" target="_blank">{record.external_url}</a> : record.external_content_id ? <code>内容 ID：{record.external_content_id}</code> : null}</article>)}</div><p>支持多平台：每个平台分别记录一次，历史记录会追加保存。</p></section> : null}
+      <details className="publication-record-form"><summary>确认材料无误后，展开填写发布信息</summary><form onSubmit={(event) => void submit(event)}>
+          <label className="checkbox-label"><input checked={acknowledged} onChange={(event) => setAcknowledged(event.target.checked)} type="checkbox" />我已在目标平台手工发布，并核对发布包内容。</label>
+          <div className="publication-record-fields">
+            <label>目标平台<input aria-label="目标平台" onChange={(event) => setPlatform(event.target.value)} required value={platform} /></label>
+            <label>发布账号或频道<input aria-label="发布账号或频道" onChange={(event) => setPublishingAccount(event.target.value)} required value={publishingAccount} /></label>
+            <label>外部 URL<input aria-label="外部 URL" onChange={(event) => setExternalUrl(event.target.value)} placeholder="https://…" value={externalUrl} /></label>
+            <label>外部内容 ID<input aria-label="外部内容 ID" onChange={(event) => setExternalContentId(event.target.value)} value={externalContentId} /></label>
+            <label>实际发布时间<input aria-label="实际发布时间" onChange={(event) => setPublishedAt(event.target.value)} required type="datetime-local" value={publishedAt} /></label>
+            <label className="publication-record-notes">备注<textarea aria-label="发布备注" onChange={(event) => setNotes(event.target.value)} placeholder="可填写标题、封面或发布异常说明" rows={3} value={notes} /></label>
+          </div>
+          {formError ? <p className="form-error">{formError}</p> : null}
+          <div className="modal-actions"><button className="button button-secondary" onClick={onClose} type="button">取消</button><button className="button button-primary" disabled={isPending || !publishVerification} type="submit">{isPending ? "记录中…" : "记录发布并完成确认"}</button></div>
+        </form></details>
     </section>
   </div>;
+}
+
+function PublishMaterialCard({ artifact, label }: { artifact: Artifact | null; label: string }) {
+  const kind = artifact ? artifactPreviewKind(artifact.relative_path) : null;
+  if (!artifact) return <article><strong>{label}</strong><span className="publish-material-missing">未索引</span></article>;
+  return <article className={kind ? "publish-material-card-with-preview" : ""}><strong>{label}</strong>{kind ? <PublishMaterialPreview artifact={artifact} kind={kind} label={label} /> : <span className="publish-material-structured">已固定索引</span>}<span>{artifactName(artifact.relative_path)}</span><code>{artifact.relative_path}</code></article>;
+}
+
+function PublishMaterialPreview({ artifact, kind, label }: { artifact: Artifact; kind: "image" | "video" | "audio"; label: string }) {
+  const source = localArtifactUrl(artifact.episode_id, artifact.relative_path, artifact.sha256);
+  const { error, url } = useLocalArtifactBlob(source);
+  return <div aria-label={`${label}预览`} className="publish-material-preview">{error ? <span className="publish-material-preview-error">{error}</span> : url ? kind === "image" ? <img alt={`${label}预览`} src={url} /> : kind === "video" ? <video aria-label={`${label}预览`} controls preload="metadata" src={url} /> : <audio aria-label={`${label}预览`} controls preload="metadata" src={url} /> : <span>正在加载预览…</span>}</div>;
 }
 
 function artifactName(path: string): string {

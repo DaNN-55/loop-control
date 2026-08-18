@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { Database } from "../lib/database.types";
@@ -22,7 +22,7 @@ const artifacts = [
 ] as Database["public"]["Tables"]["artifacts"]["Row"][];
 
 describe("专用发布弹窗", () => {
-  it("展示发布包、视频、封面、校验结果和本地路径", () => {
+  it("展示发布包、视频、封面、校验结果和本地路径", async () => {
     render(<PublishModal artifacts={artifacts} episode={episode} isPending={false} onClose={vi.fn()} onRecord={vi.fn()} publicationRecords={[]} publishVerification={true} />);
 
     expect(screen.getByRole("dialog", { name: "发布确认" })).toBeTruthy();
@@ -31,6 +31,11 @@ describe("专用发布弹窗", () => {
     expect(screen.getByText("发布包已固定")).toBeTruthy();
     expect(screen.getByText("校验已通过")).toBeTruthy();
     expect(screen.getByText("episodes/episode-1")).toBeTruthy();
+    expect(screen.getByText("视频和封面可直接预览；发布包、QC 报告和元数据保留固定路径供核对。")).toBeTruthy();
+    expect(screen.getByLabelText("视频预览")).toBeTruthy();
+    expect(screen.getByLabelText("封面预览")).toBeTruthy();
+    expect(screen.getByText("确认材料无误后，展开填写发布信息").closest("details")?.hasAttribute("open")).toBe(false);
+    await waitFor(() => expect(screen.queryByText("正在加载预览…")).toBeNull());
   });
 
   it("记录手工发布字段并交给受控写入入口", async () => {
@@ -38,6 +43,7 @@ describe("专用发布弹窗", () => {
     const onRecord = vi.fn().mockResolvedValue(true);
     render(<PublishModal artifacts={artifacts} episode={episode} isPending={false} onClose={vi.fn()} onRecord={onRecord} publicationRecords={[]} publishVerification={true} />);
 
+    await user.click(screen.getByText("确认材料无误后，展开填写发布信息"));
     await user.click(screen.getByRole("checkbox", { name: /手工发布/ }));
     await user.type(screen.getByLabelText("目标平台"), "TikTok");
     await user.type(screen.getByLabelText("发布账号或频道"), "dao.main");

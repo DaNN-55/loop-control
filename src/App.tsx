@@ -13,6 +13,7 @@ import type { ApproveBlueprintChangeSuggestionInput, SaveBlueprintChangeSuggesti
 import { clearOperationDraft, readOperationDraft, writeOperationDraft } from "./operationDraft";
 import { OperationsWorkspace } from "./operations/OperationsWorkspace";
 import { currentReviewPackage, workerBlockers } from "./reviews/reviewSelectors";
+import { artifactPreviewKind, localArtifactUrl, useLocalArtifactBlob } from "./reviews/localArtifactPreview";
 import { WorkerBlockerCard } from "./reviews/WorkerBlockerCard";
 import type { StoryboardAudioCue, StoryboardShotManifest } from "./worker/contracts";
 import { accountIdentityColor, accountIdentityInitials } from "./platform/accountIdentity";
@@ -339,23 +340,6 @@ function aRollTaskEvidence(task: Task): ArollTaskEvidence | null {
 
 function LoadingIndicator({ compact = false, label }: { compact?: boolean; label: string }) {
   return <div className={`loading-indicator ${compact ? "loading-indicator-compact" : ""}`} role="status"><span aria-hidden="true" className="loading-spinner" /><span>{label}</span></div>;
-}
-
-function isSafeRelativePath(relativePath: string): boolean {
-  return relativePath.length > 0 && !relativePath.split(/[\\/]/).some((segment) => !segment || segment === "." || segment === "..");
-}
-
-function localArtifactUrl(episodeId: string, relativePath: string, expectedSha256?: string): string | null {
-  if (!episodeId || !isSafeRelativePath(relativePath)) return null;
-  return `/_local-artifact?${new URLSearchParams({ episode: episodeId, path: relativePath, ...(expectedSha256 ? { sha256: expectedSha256 } : {}) }).toString()}`;
-}
-
-function artifactPreviewKind(relativePath: string): "image" | "video" | "audio" | null {
-  const path = relativePath.toLowerCase();
-  if (/\.(avif|gif|jpe?g|png|svg|webp)$/.test(path)) return "image";
-  if (/\.(mp4|mov|webm)$/.test(path)) return "video";
-  if (/\.(aac|m4a|mp3|ogg|opus|wav)$/.test(path)) return "audio";
-  return null;
 }
 
 function bytesToBase64(content: Uint8Array): string {
@@ -1870,30 +1854,6 @@ function LocalArtifactMedia({ artifact, kind, source }: { artifact: Artifact; ki
   const previewLabel = `${artifact.artifact_type} 产物预览`;
   const expandedLabel = `${artifact.artifact_type} 产物放大预览`;
   return <><figure className="local-artifact-preview"><ArtifactPreviewMedia kind={kind} label={previewLabel} source={previewUrl} /><button aria-label={`放大查看 ${artifact.artifact_type} 产物`} className="artifact-expand-button" onClick={() => setIsExpanded(true)} type="button">放大查看</button><figcaption>{artifact.artifact_type} · {artifact.relative_path}</figcaption></figure>{isExpanded ? <div aria-label={expandedLabel} aria-modal="true" className="artifact-lightbox" onMouseDown={(event) => { if (event.target === event.currentTarget) setIsExpanded(false); }} ref={lightboxRef} role="dialog"><div className="artifact-lightbox-content"><button aria-label="关闭放大预览" className="artifact-lightbox-close" onClick={() => setIsExpanded(false)} type="button">关闭</button><ArtifactPreviewMedia kind={kind} label={expandedLabel} source={previewUrl} /></div></div> : null}</>;
-}
-
-function useLocalArtifactBlob(source: string | null) {
-  const [url, setUrl] = useState("");
-  const [error, setError] = useState("");
-  useEffect(() => {
-    let objectUrl = "";
-    let isCurrent = true;
-    async function load() {
-      if (!source) throw new Error("本地产物路径无效。");
-      const { data, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !data.session) throw new Error("需要 Owner 登录会话。");
-      const response = await fetch(source, { headers: { Authorization: `Bearer ${data.session.access_token}` } });
-      if (!response.ok) throw new Error("无法读取本地产物。");
-      objectUrl = URL.createObjectURL(await response.blob());
-      if (isCurrent) setUrl(objectUrl);
-      else URL.revokeObjectURL(objectUrl);
-    }
-    setUrl("");
-    setError("");
-    void load().catch((cause: unknown) => { if (isCurrent) setError(cause instanceof Error ? cause.message : "无法读取本地产物。"); });
-    return () => { isCurrent = false; if (objectUrl) URL.revokeObjectURL(objectUrl); };
-  }, [source]);
-  return { error, url };
 }
 
 function ReviewActions({ episode, initialReviewRenderAdjustments, isPending, onRequestReviewRenderRevision, onTransition, ownerId, reviewAction, reviewPackageId }: { episode: Episode; initialReviewRenderAdjustments: ReviewRenderAdjustmentDraft; isPending: boolean; onRequestReviewRenderRevision: (input: ReviewRenderRevisionRequest) => Promise<boolean>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; ownerId: string; reviewAction: ReviewAction; reviewPackageId: string | null }) {
