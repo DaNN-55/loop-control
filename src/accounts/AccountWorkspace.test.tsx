@@ -42,14 +42,12 @@ function renderWorkspace(overrides: Partial<ComponentProps<typeof AccountWorkspa
 }
 
 describe("账号页分区与蓝图版本", () => {
-  it("按账号概览、蓝图版本和系列分区组织内容", async () => {
+  it("直接进入蓝图版本，并只保留蓝图和系列两个分区", async () => {
     const user = userEvent.setup();
     renderWorkspace();
 
-    expect(screen.getByRole("heading", { name: "账号概览" })).toBeTruthy();
-    expect(screen.queryByRole("heading", { name: "蓝图 v3" })).toBeNull();
-
-    await user.click(screen.getByRole("tab", { name: "蓝图版本" }));
+    expect(screen.queryByRole("tab", { name: "账号概览" })).toBeNull();
+    expect(screen.getByRole("tab", { name: "蓝图版本" }).getAttribute("aria-selected")).toBe("true");
     expect(screen.getByRole("heading", { name: "蓝图 v3" })).toBeTruthy();
 
     await user.click(screen.getByRole("tab", { name: "系列" }));
@@ -108,7 +106,7 @@ describe("账号页分区与蓝图版本", () => {
     expect(historyTrigger).toBeTruthy();
     await user.click(historyTrigger);
     expect(screen.getByRole("heading", { name: "蓝图 v2" })).toBeTruthy();
-    expect(screen.getByText("当前生效", { selector: ".blueprint-editor-heading > span" })).toBeTruthy();
+    expect(screen.getAllByText("当前生效").length).toBe(2);
   });
 
   it("只通过账号显示名称入口重命名账号", async () => {

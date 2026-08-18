@@ -130,34 +130,22 @@ button:disabled { cursor: not-allowed; }
 .account-tab:hover { color: #185cc4; }
 .account-tab.is-active { border-bottom-color: #1457d9; color: #1457d9; }
 .account-tab:focus-visible { outline: 3px solid #bdd3ff; outline-offset: 2px; }
-.account-overview { display: grid; gap: 24px; }
-.account-section-heading { align-items: flex-start; display: flex; justify-content: space-between; }
-.account-section-heading h2 { font-size: 18px; letter-spacing: -.45px; margin: 0 0 7px; }
-.account-section-heading p { color: #697386; font-size: 12px; line-height: 1.55; margin: 0; }
-.account-overview-grid { display: grid; gap: 12px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.account-summary-card { border: 1px solid #dce1e9; border-radius: 6px; display: grid; gap: 7px; min-width: 0; padding: 16px; }
-.account-summary-card > span { color: #778191; font-size: 11px; font-weight: 750; }
-.account-summary-card > strong { color: #27313f; font-size: 24px; letter-spacing: -.7px; }
-.account-summary-card > p { color: #697386; font-size: 11px; line-height: 1.45; margin: 0 0 4px; min-height: 32px; }
-.account-summary-card .text-button { justify-self: start; }
-.account-overview-details { border-top: 1px solid #e2e5eb; display: grid; gap: 14px 24px; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; padding-top: 18px; }
-.account-overview-details > div { min-width: 0; }
-.account-overview-details dt { color: #778191; font-size: 10px; font-weight: 750; }
-.account-overview-details dd { color: #354050; font-size: 12px; line-height: 1.5; margin: 5px 0 0; overflow-wrap: anywhere; }
-.account-overview-details code { font: 11px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.account-selector-row { align-items: end; display: grid; gap: 12px; grid-template-columns: minmax(0, 240px) auto; }
+.blueprint-editor-heading-actions { align-items: center; display: flex; gap: 10px; }
+.blueprint-editor-heading-actions > span { color: #2e79cf; font-size: 11px; font-weight: 750; white-space: nowrap; }
+.blueprint-editor-heading-actions .button { font-size: 12px; min-height: 34px; padding: 0 12px; white-space: nowrap; }
 .app-shell[data-theme="dark"] .account-tabs { border-color: #2e3745; }
 .app-shell[data-theme="dark"] .account-tab { color: #9aa7ba; }
 .app-shell[data-theme="dark"] .account-tab:hover, .app-shell[data-theme="dark"] .account-tab.is-active { color: #9fc2ff; }
 .app-shell[data-theme="dark"] .account-tab.is-active { border-color: #5b91f2; }
-.app-shell[data-theme="dark"] .account-section-heading p, .app-shell[data-theme="dark"] .account-summary-card > p { color: #9aa7ba; }
-.app-shell[data-theme="dark"] .account-summary-card, .app-shell[data-theme="dark"] .account-overview-details { border-color: #2e3745; }
-.app-shell[data-theme="dark"] .account-summary-card > span, .app-shell[data-theme="dark"] .account-overview-details dt { color: #9aa7ba; }
-.app-shell[data-theme="dark"] .account-summary-card > strong, .app-shell[data-theme="dark"] .account-overview-details dd { color: #e5ebf5; }
+.series-settings.is-empty { grid-template-columns: 1fr; }
+.series-settings.is-empty > div, .series-settings.is-empty .series-configuration-form { max-width: 780px; width: 100%; }
 @media (max-width: 640px) {
   .account-tabs { gap: 17px; margin-bottom: 22px; overflow-x: auto; }
   .account-tab { flex: 0 0 auto; }
-  .account-overview-grid, .account-overview-details { grid-template-columns: 1fr; }
-  .account-overview { gap: 20px; }
+  .account-selector-row { grid-template-columns: 1fr; gap: 7px; }
+  .account-selector-row .text-button { justify-self: start; }
+  .blueprint-editor-heading-actions { align-items: flex-end; flex-direction: column; gap: 8px; }
 }
 @media (max-width: 640px) { .metric-grid, .experiment-summary dl, .metric-snapshot-list li { grid-template-columns: 1fr; }.metric-snapshot-list li { gap: 3px; } }
 
@@ -463,7 +451,6 @@ body { min-width: 0; }
 .blueprint-editor-heading { align-items: flex-start; display: flex; gap: 16px; justify-content: space-between; }
 .blueprint-editor-heading h2 { margin-bottom: 7px; }
 .blueprint-editor-heading p, .blueprint-editor-note { color: #697386; font-size: 12px; line-height: 1.55; margin: 0; }
-.blueprint-editor-heading > span { color: #2e79cf; font-size: 11px; font-weight: 750; white-space: nowrap; }
 .blueprint-editor-note { background: #f5f8ff; border-left: 3px solid #77a1dd; padding: 10px 12px; }
 .blueprint-view { border-top: 1px solid #e5e8ee; padding-top: 14px; }
 .blueprint-view h3 { color: #303845; font-size: 12px; margin: 0 0 8px; }
