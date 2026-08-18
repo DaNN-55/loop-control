@@ -141,27 +141,17 @@ describe("审核台", () => {
     render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
     expect(screen.getByText("审核生成脚本")).toBeTruthy();
+    expect(screen.queryByText("工作标题（可留空）")).toBeNull();
+    expect(screen.queryByRole("heading", { name: "生产单管理" })).toBeNull();
     expect((screen.getByRole("heading", { name: "产物索引" }).closest("details") as HTMLDetailsElement).open).toBe(false);
   });
 
-  it("允许归档 Episode，并要求先归档再确认永久删除", async () => {
-    const user = userEvent.setup();
-    const onSetArchived = vi.fn().mockResolvedValue(undefined);
-    const onDelete = vi.fn().mockResolvedValue(undefined);
-    const { rerender } = render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onDelete={onDelete} onSetArchived={onSetArchived} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
+  it("审计时间线只显示中文原因，不展示技术原文", () => {
+    const transition = { actor_id: null, created_at: "2026-08-15T01:00:00.000Z", episode_id: reviewEpisode.id, from_stage: "script_draft" as const, id: "transition-1", reason: "Worker submitted a frozen visual planning review package.", to_stage: "script_review" as const };
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onTransition={vi.fn()} tasks={[]} transitions={[transition]} />);
 
-    expect(screen.getByRole("button", { name: "归档生产单" })).toBeTruthy();
-    expect((screen.getByRole("button", { name: "仅测试 Episode 可删除" }) as HTMLButtonElement).disabled).toBe(true);
-    await user.click(screen.getByRole("button", { name: "归档生产单" }));
-    expect(onSetArchived).toHaveBeenCalledWith(reviewEpisode.id, true);
-
-    const archivedEpisode = { ...reviewEpisode, archived_at: "2026-08-16T00:00:00.000Z", is_test: true };
-    rerender(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={archivedEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onDelete={onDelete} onSetArchived={onSetArchived} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
-    await user.click(screen.getByRole("button", { name: "永久删除" }));
-    expect(screen.getByText("/Volumes/素材盘/tk-workflow/dao/episodes/episode-review")).toBeTruthy();
-    await user.type(screen.getByLabelText("永久删除确认文本"), archivedEpisode.title);
-    await user.click(screen.getByRole("button", { name: "确认永久删除" }));
-    expect(onDelete).toHaveBeenCalledWith(archivedEpisode.id, archivedEpisode.title);
+    expect(screen.getByText("Worker 已提交冻结的视觉规划审核包。")).toBeTruthy();
+    expect(screen.queryByText("技术原文：Worker submitted a frozen visual planning review package.")).toBeNull();
   });
 
   it("只列出需要 Owner 审核的 Episode，并允许选择其中一项", async () => {
@@ -328,11 +318,10 @@ describe("审核台", () => {
     expect(onCreateLocalDirectory).toHaveBeenCalledWith(reviewEpisode.id);
   });
 
-  it("要求显式确认粘贴的主脚本，并允许独立更新标题", async () => {
+  it("要求显式确认粘贴的主脚本", async () => {
     const user = userEvent.setup();
     const onImportMaterial = vi.fn().mockResolvedValue(undefined);
-    const onUpdateTitle = vi.fn().mockResolvedValue(undefined);
-    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onImportMaterial={onImportMaterial} onTransition={vi.fn()} onUpdateTitle={onUpdateTitle} tasks={[]} transitions={[]} />);
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onImportMaterial={onImportMaterial} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
     await user.selectOptions(screen.getByLabelText("材料来源"), "paste");
     await user.type(screen.getByLabelText("粘贴的生产材料"), "经确认的脚本");
@@ -351,10 +340,6 @@ describe("审核台", () => {
       sourcePath: "pasted-script.txt",
     }));
 
-    await user.clear(screen.getByLabelText("工作标题"));
-    await user.type(screen.getByLabelText("工作标题"), "后补的标题");
-    await user.click(screen.getByRole("button", { name: "保存标题" }));
-    expect(onUpdateTitle).toHaveBeenCalledWith(reviewEpisode.id, "后补的标题");
   });
 
   it("允许无主脚本的生产单提交冻结的脚本委托", async () => {

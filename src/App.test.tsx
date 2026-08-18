@@ -91,4 +91,33 @@ describe("approval console", () => {
     await user.click(screen.getByRole("button", { name: "下一页" }));
     expect(screen.getByText("生产单 21")).toBeTruthy();
   });
+
+  it("从生产单操作菜单打开重命名、归档和测试删除入口", async () => {
+    const user = userEvent.setup();
+    const account = { created_at: "2026-08-15T00:00:00.000Z", current_blueprint_version_id: "blueprint-1", id: "account-1", name: "道工作室", slug: "dao-studio", timezone: "Asia/Shanghai" } as Database["public"]["Tables"]["accounts"]["Row"];
+    const blueprint = { account_id: account.id, created_at: "2026-08-15T00:00:00.000Z", id: "blueprint-1", is_active: true, policy: { asset_root: "/Volumes/Media/dao" }, version: 1 } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
+    const episode = { account_id: account.id, blueprint_version_id: blueprint.id, created_at: "2026-08-15T00:00:00.000Z", id: "episode-test", is_test: true, stage: "waiting_input" as const, title: "测试生产单", updated_at: "2026-08-15T00:00:00.000Z" };
+    const onUpdateTitle = vi.fn().mockResolvedValue(undefined);
+    const onSetArchived = vi.fn().mockResolvedValue(undefined);
+    const onDelete = vi.fn().mockResolvedValue(undefined);
+
+    render(<EpisodeWorkspace accounts={[account]} accountsById={new Map([[account.id, account]])} artifacts={[]} blueprintsById={new Map([[blueprint.id, blueprint]])} currentNavigation="episodes" episodeVisibility="active" episodes={[episode]} filter="全部账号" onDelete={onDelete} onEpisodeVisibilityChange={vi.fn()} onFilter={vi.fn()} onSetArchived={onSetArchived} onSeriesFilter={vi.fn()} onSelectEpisode={vi.fn()} onUpdateTitle={onUpdateTitle} series={[]} seriesById={new Map()} seriesFilter="全部系列" seriesVersionsById={new Map()} selectedEpisode={null} />);
+
+    await user.click(screen.getByRole("button", { name: "生产单操作：测试生产单" }));
+    expect(screen.getByRole("menuitem", { name: "重命名" })).toBeTruthy();
+    expect(screen.getByRole("menuitem", { name: "归档" })).toBeTruthy();
+    expect(screen.queryByRole("menuitem", { name: "永久删除" })).toBeNull();
+
+    await user.click(screen.getByRole("menuitem", { name: "重命名" }));
+    await user.clear(screen.getByLabelText("新生产单标题"));
+    await user.type(screen.getByLabelText("新生产单标题"), "新测试标题");
+    await user.click(screen.getByRole("button", { name: "保存新标题" }));
+    expect(onUpdateTitle).toHaveBeenCalledWith(episode.id, "新测试标题");
+
+    await user.click(screen.getByRole("button", { name: "生产单操作：测试生产单" }));
+    await user.click(screen.getByRole("menuitem", { name: "归档" }));
+    expect(screen.getByRole("heading", { name: "归档生产单" })).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "确认归档" }));
+    expect(onSetArchived).toHaveBeenCalledWith(episode.id, true);
+  });
 });
