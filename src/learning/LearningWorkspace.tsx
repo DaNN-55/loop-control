@@ -73,12 +73,13 @@ export function LearningWorkspace({ accountsById, blueprintVersionsById, episode
     suggestionsByReportId.set(suggestion.learning_report_id, existing);
   }
   const learningEpisodes = episodes.filter((episode) => episode.stage === "metrics_collecting" || (episode.stage === "learning_recorded" && experimentsByEpisodeId.has(episode.id)));
+  const demoAction = onPrepareLearningDemo ? <div className="learning-demo-actions"><button className="button button-secondary" disabled={isPreparingDemo} onClick={() => void onPrepareLearningDemo()} type="button">{isPreparingDemo ? "准备中…" : "准备复盘演示数据"}</button></div> : null;
 
   if (learningEpisodes.length === 0) {
-    return <div className="empty-state compact"><h2>没有待录入指标的生产单</h2><p>生产单发布后进入“收集指标”，即可在这里定义实验并每周录入数据。</p>{onPrepareLearningDemo ? <><p>可以准备一组隔离的复盘演示账号和生产单，不会触发 Worker，也不会混入真实账号。</p><button className="button button-secondary" disabled={isPreparingDemo} onClick={() => void onPrepareLearningDemo()} type="button">{isPreparingDemo ? "准备中…" : "准备复盘演示数据"}</button></> : null}</div>;
+    return <div className="empty-state compact"><h2>没有待录入指标的生产单</h2><p>生产单发布后进入“收集指标”，即可在这里定义实验并每周录入数据。</p>{onPrepareLearningDemo ? <><p>可以准备一组隔离的复盘演示账号和生产单，不会触发 Worker，也不会混入真实账号。</p>{demoAction}</> : null}</div>;
   }
 
-  return <section className="learning-workspace" aria-label="实验与周指标"><p className="muted-copy">每个生产单只能定义一个实验：填写一个主指标和最多两个护栏指标。指标由 Owner 每周手工录入；复盘报告和蓝图建议也必须由 Owner 确认后才会生效。</p><div className="learning-list">{learningEpisodes.map((episode) => {
+  return <section className="learning-workspace" aria-label="实验与周指标"><p className="muted-copy">每个生产单只能定义一个实验：填写一个主指标和最多两个护栏指标。指标由 Owner 每周手工录入；复盘报告和蓝图建议也必须由 Owner 确认后才会生效。</p>{demoAction}<div className="learning-list">{learningEpisodes.map((episode) => {
     const experiment = experimentsByEpisodeId.get(episode.id);
     const report = reportsByEpisodeId.get(episode.id);
     const snapshots = snapshotsByEpisodeId.get(episode.id) ?? [];

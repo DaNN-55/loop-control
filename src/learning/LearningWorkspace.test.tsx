@@ -79,6 +79,13 @@ describe("复盘工作台", () => {
     expect(onPrepareLearningDemo).toHaveBeenCalledOnce();
   });
 
+  it("已有复盘生产单时仍保留演示数据入口", () => {
+    const onPrepareLearningDemo = vi.fn().mockResolvedValue(undefined);
+    render(<LearningWorkspace {...workspaceProps({ onPrepareLearningDemo })} />);
+
+    expect(screen.getByRole("button", { name: "准备复盘演示数据" })).toBeTruthy();
+  });
+
   it("为生产单定义一个主指标和最多两个护栏指标", async () => {
     const user = userEvent.setup();
     const onSaveExperiment = vi.fn().mockResolvedValue(undefined);
