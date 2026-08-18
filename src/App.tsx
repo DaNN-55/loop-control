@@ -950,6 +950,26 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
     }
   }
 
+  async function openLocalArtifact(artifact: Artifact): Promise<void> {
+    setPendingAction(`artifact-open-${artifact.id}`);
+    setErrorMessage("");
+    try {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      if (!data.session) throw new Error("需要 Owner 登录会话。");
+      const response = await fetch(`/_open-local-artifact?${new URLSearchParams({ episode: artifact.episode_id, path: artifact.relative_path, sha256: artifact.sha256 }).toString()}`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${data.session.access_token}` },
+      });
+      if (!response.ok) throw new Error((await response.text()).trim() || "无法打开本地产物。");
+      setMessage(`已打开本地文件：${artifact.relative_path.split(/[\\/]/).pop() ?? artifact.relative_path}`);
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "无法打开本地产物。");
+    } finally {
+      setPendingAction("");
+    }
+  }
+
   async function saveExperiment(input: SaveExperimentInput) {
     setPendingAction(`experiment-${input.episodeId}`);
     setErrorMessage("");
@@ -1209,6 +1229,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
         episode={selectedEpisode}
         isPending={pendingAction === `publication-${selectedEpisode.id}`}
         onClose={() => setIsPublishModalOpen(false)}
+        onOpenArtifact={openLocalArtifact}
         onRecord={recordManualPublication}
         publicationRecords={workspace.publicationRecords.filter((record) => record.episode_id === selectedEpisode.id)}
         publishVerification={workspace.tasks.some((task) => task.episode_id === selectedEpisode.id && task.task_type === "verify_publish_package" && task.status === "completed")}

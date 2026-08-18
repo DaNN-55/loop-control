@@ -41,3 +41,25 @@ export function useLocalArtifactBlob(source: string | null) {
   }, [source]);
   return { error, url };
 }
+
+export function useLocalArtifactText(source: string | null) {
+  const [content, setContent] = useState("");
+  const [error, setError] = useState("");
+  useEffect(() => {
+    let isCurrent = true;
+    async function loadText() {
+      if (!source) throw new Error("文本产物路径无效。");
+      const { data, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !data.session) throw new Error("需要 Owner 登录会话。");
+      const response = await fetch(source, { headers: { Authorization: `Bearer ${data.session.access_token}` } });
+      if (!response.ok) throw new Error("无法读取文本产物。");
+      const nextContent = await response.text();
+      if (isCurrent) setContent(nextContent);
+    }
+    setContent("");
+    setError("");
+    void loadText().catch((cause: unknown) => { if (isCurrent) setError(cause instanceof Error ? cause.message : "无法读取文本产物。"); });
+    return () => { isCurrent = false; };
+  }, [source]);
+  return { content, error };
+}

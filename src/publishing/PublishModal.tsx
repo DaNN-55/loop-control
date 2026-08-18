@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import type { Database } from "../lib/database.types";
-import { artifactPreviewKind, localArtifactUrl, useLocalArtifactBlob } from "../reviews/localArtifactPreview";
+import { artifactPreviewKind, localArtifactUrl, useLocalArtifactBlob, useLocalArtifactText } from "../reviews/localArtifactPreview";
 import { createManualPublicationRecord, type PublicationRecordInput } from "./publicationRecord";
 
 type Episode = Database["public"]["Tables"]["episodes"]["Row"];
@@ -16,8 +16,15 @@ const artifactLabels: Record<string, string> = {
   publish_package: "发布包",
 };
 
-export function PublishModal({ artifacts, episode, isPending, onClose, onRecord, publicationRecords, publishVerification }: { artifacts: Artifact[]; episode: Episode; isPending: boolean; onClose: () => void; onRecord: (input: PublicationRecordInput) => Promise<boolean>; publicationRecords: PublicationRecord[]; publishVerification: boolean }) {
+export function PublishModal({ artifacts, episode, isPending, onClose, onOpenArtifact, onRecord, publicationRecords, publishVerification }: { artifacts: Artifact[]; episode: Episode; isPending: boolean; onClose: () => void; onOpenArtifact: (artifact: Artifact) => Promise<void>; onRecord: (input: PublicationRecordInput) => Promise<boolean>; publicationRecords: PublicationRecord[]; publishVerification: boolean }) {
   const episodeArtifacts = artifacts.filter((artifact) => artifact.episode_id === episode.id);
+  const metadataArtifact = episodeArtifacts.find((artifact) => artifact.artifact_type === "metadata") ?? null;
+  const coverArtifact = episodeArtifacts.find((artifact) => artifact.artifact_type === "cover") ?? null;
+  const videoArtifact = episodeArtifacts.find((artifact) => artifact.artifact_type === "final_render") ?? null;
+  const extraArtifacts = [
+    episodeArtifacts.find((artifact) => artifact.artifact_type === "publish_package"),
+    episodeArtifacts.find((artifact) => artifact.artifact_type === "final_qc_report"),
+  ].filter((artifact): artifact is Artifact => Boolean(artifact));
   const [acknowledged, setAcknowledged] = useState(false);
   const [platform, setPlatform] = useState("");
   const [publishingAccount, setPublishingAccount] = useState("");
@@ -48,7 +55,7 @@ export function PublishModal({ artifacts, episode, isPending, onClose, onRecord,
         <div><span>发布包</span><strong>{episodeArtifacts.some((artifact) => artifact.artifact_type === "publish_package") ? "发布包已固定" : "缺少发布包"}</strong></div>
         <div><span>发布包校验</span><strong className={publishVerification ? "publish-verification-passed" : "publish-verification-failed"}>{publishVerification ? "校验已通过" : "尚未通过"}</strong></div>
       </div>
-      <section className="publish-materials"><header><div><h3>发布材料</h3><p>视频和封面可直接预览；发布包、QC 报告和元数据保留固定路径供核对。</p></div></header><div className="publish-material-grid">{["final_render", "cover", "publish_package", "final_qc_report", "metadata"].map((artifactType) => { const artifact = episodeArtifacts.find((candidate) => candidate.artifact_type === artifactType); return <PublishMaterialCard artifact={artifact ?? null} key={artifactType} label={artifactLabels[artifactType]} />; })}</div></section>
+      <section className="publish-materials"><header><div><h3>发布材料</h3><p>先核对元数据，再查看封面和视频；技术文件按需打开。</p></div></header><PublishMetadataSummary artifact={metadataArtifact} onOpenArtifact={onOpenArtifact} /><div className="publish-visual-material-grid"><PublishVisualMaterialCard artifact={coverArtifact} label="封面" onOpenArtifact={onOpenArtifact} /><PublishVisualMaterialCard artifact={videoArtifact} label="视频" onOpenArtifact={onOpenArtifact} /></div>{extraArtifacts.length ? <details className="publish-extra-materials"><summary>更多材料 <span>QC 报告 · 发布包</span></summary><div className="publish-extra-material-list">{extraArtifacts.map((artifact) => <PublishStructuredMaterialCard artifact={artifact} key={artifact.id} label={artifactLabels[artifact.artifact_type] ?? artifact.artifact_type} onOpenArtifact={onOpenArtifact} />)}</div></details> : null}</section>
       {publicationRecords.length ? <section className="publication-history"><h3>已记录发布历史</h3><div>{publicationRecords.map((record) => <article key={record.id}><strong>{record.platform} · {record.publishing_account}</strong><span>{record.status === "published" ? "已发布" : record.status} · {record.published_at ? formatPublicationDate(record.published_at) : "未记录时间"}</span>{record.external_url ? <a href={record.external_url} rel="noreferrer" target="_blank">{record.external_url}</a> : record.external_content_id ? <code>内容 ID：{record.external_content_id}</code> : null}</article>)}</div><p>支持多平台：每个平台分别记录一次，历史记录会追加保存。</p></section> : null}
       <details className="publication-record-form"><summary>确认材料无误后，展开填写发布信息</summary><form onSubmit={(event) => void submit(event)}>
           <label className="checkbox-label"><input checked={acknowledged} onChange={(event) => setAcknowledged(event.target.checked)} type="checkbox" />我已在目标平台手工发布，并核对发布包内容。</label>
@@ -67,16 +74,65 @@ export function PublishModal({ artifacts, episode, isPending, onClose, onRecord,
   </div>;
 }
 
-function PublishMaterialCard({ artifact, label }: { artifact: Artifact | null; label: string }) {
-  const kind = artifact ? artifactPreviewKind(artifact.relative_path) : null;
-  if (!artifact) return <article><strong>{label}</strong><span className="publish-material-missing">未索引</span></article>;
-  return <article className={kind ? "publish-material-card-with-preview" : ""}><strong>{label}</strong>{kind ? <PublishMaterialPreview artifact={artifact} kind={kind} label={label} /> : <span className="publish-material-structured">已固定索引</span>}<span>{artifactName(artifact.relative_path)}</span><code>{artifact.relative_path}</code></article>;
+function PublishMetadataSummary({ artifact, onOpenArtifact }: { artifact: Artifact | null; onOpenArtifact: (artifact: Artifact) => Promise<void> }) {
+  if (!artifact) return <section className="publish-metadata-summary"><header><h4>发布元数据</h4><span className="publish-material-missing">未索引</span></header></section>;
+  return <PublishMetadataSummaryContent artifact={artifact} onOpenArtifact={onOpenArtifact} />;
+}
+
+function PublishMetadataSummaryContent({ artifact, onOpenArtifact }: { artifact: Artifact; onOpenArtifact: (artifact: Artifact) => Promise<void> }) {
+  const source = localArtifactUrl(artifact.episode_id, artifact.relative_path, artifact.sha256);
+  const { content, error } = useLocalArtifactText(source);
+  const metadata = parsePublicationMetadata(content);
+  return <section className="publish-metadata-summary"><header><div><h4>发布元数据</h4><span>{artifactName(artifact.relative_path)}</span></div><OpenLocalArtifactButton artifact={artifact} onOpenArtifact={onOpenArtifact} /></header>{error ? <p className="publish-material-preview-error">{error}</p> : metadata ? <div className="publish-metadata-grid"><div><span>标题</span><strong>{metadata.title || "未填写"}</strong></div><div><span>Tags</span><strong>{metadata.tags.length ? metadata.tags.join("、") : "未填写"}</strong></div><div className="publish-metadata-description"><span>简介</span><p>{metadata.description || "未填写"}</p></div></div> : <p className="publish-material-loading">{content ? "元数据格式无法摘要展示，请点击本地打开查看。" : "正在读取元数据…"}</p>}</section>;
+}
+
+function PublishVisualMaterialCard({ artifact, label, onOpenArtifact }: { artifact: Artifact | null; label: string; onOpenArtifact: (artifact: Artifact) => Promise<void> }) {
+  if (!artifact) return <article className="publish-visual-material-card"><header><h4>{label}</h4><span className="publish-material-missing">未索引</span></header></article>;
+  const kind = artifactPreviewKind(artifact.relative_path);
+  return <article className="publish-visual-material-card"><header><div><h4>{label}</h4><span>{artifactName(artifact.relative_path)}</span></div><OpenLocalArtifactButton artifact={artifact} onOpenArtifact={onOpenArtifact} /></header>{kind ? <PublishMaterialPreview artifact={artifact} kind={kind} label={label} /> : <p className="publish-material-preview-error">该文件暂不支持预览。</p>}</article>;
+}
+
+function PublishStructuredMaterialCard({ artifact, label, onOpenArtifact }: { artifact: Artifact; label: string; onOpenArtifact: (artifact: Artifact) => Promise<void> }) {
+  return <article className="publish-structured-material"><div><strong>{label}</strong><span>{artifactName(artifact.relative_path)}</span></div><OpenLocalArtifactButton artifact={artifact} onOpenArtifact={onOpenArtifact} /></article>;
 }
 
 function PublishMaterialPreview({ artifact, kind, label }: { artifact: Artifact; kind: "image" | "video" | "audio"; label: string }) {
   const source = localArtifactUrl(artifact.episode_id, artifact.relative_path, artifact.sha256);
   const { error, url } = useLocalArtifactBlob(source);
-  return <div aria-label={`${label}预览`} className="publish-material-preview">{error ? <span className="publish-material-preview-error">{error}</span> : url ? kind === "image" ? <img alt={`${label}预览`} src={url} /> : kind === "video" ? <video aria-label={`${label}预览`} controls preload="metadata" src={url} /> : <audio aria-label={`${label}预览`} controls preload="metadata" src={url} /> : <span>正在加载预览…</span>}</div>;
+  const [isExpanded, setIsExpanded] = useState(false);
+  if (error) return <div aria-label={`${label}预览`} className="publish-material-preview"><span className="publish-material-preview-error">{error}</span></div>;
+  if (!url) return <div aria-label={`${label}预览`} className="publish-material-preview"><span>正在加载预览…</span></div>;
+  const media = kind === "image" ? <img alt={`${label}预览`} src={url} /> : kind === "video" ? <video aria-label={`${label}预览`} controls preload="metadata" src={url} /> : <audio aria-label={`${label}预览`} controls preload="metadata" src={url} />;
+  return <><figure className="publish-material-preview"><div>{media}</div><button aria-label={`放大查看${label}`} className="publish-material-zoom" onClick={() => setIsExpanded(true)} type="button">放大查看</button></figure>{isExpanded ? <div aria-label={`${label}放大预览`} aria-modal="true" className="publish-material-lightbox" onMouseDown={(event) => { if (event.target === event.currentTarget) setIsExpanded(false); }} role="dialog"><div><button aria-label={`关闭${label}放大预览`} className="publish-material-lightbox-close" onClick={() => setIsExpanded(false)} type="button">关闭</button>{media}</div></div> : null}</>;
+}
+
+function OpenLocalArtifactButton({ artifact, onOpenArtifact }: { artifact: Artifact; onOpenArtifact: (artifact: Artifact) => Promise<void> }) {
+  const [isOpening, setIsOpening] = useState(false);
+  async function openArtifact() {
+    setIsOpening(true);
+    try {
+      await onOpenArtifact(artifact);
+    } finally {
+      setIsOpening(false);
+    }
+  }
+  return <button className="publish-local-open" disabled={isOpening} onClick={() => void openArtifact()} type="button">{isOpening ? "打开中…" : "在本地打开"}</button>;
+}
+
+function parsePublicationMetadata(content: string): { description: string; tags: string[]; title: string } | null {
+  if (!content) return null;
+  try {
+    const value: unknown = JSON.parse(content);
+    if (!value || Array.isArray(value) || typeof value !== "object") return null;
+    const record = value as Record<string, unknown>;
+    const title = typeof record.title === "string" ? record.title : "";
+    const description = typeof record.description === "string" ? record.description : typeof record.desc === "string" ? record.desc : "";
+    const tagsValue = record.tags ?? record.hashtags ?? record.tag;
+    const tags = Array.isArray(tagsValue) ? tagsValue.filter((tag): tag is string => typeof tag === "string") : typeof tagsValue === "string" ? tagsValue.split(/[，,\s]+/).filter(Boolean) : [];
+    return { description, tags, title };
+  } catch {
+    return null;
+  }
 }
 
 function artifactName(path: string): string {

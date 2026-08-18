@@ -6,7 +6,7 @@ import { mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } from "node:fs/
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveEpisodeDeletion, serveEpisodeDeletionCleanup, stageLocalEpisodeDirectoryForDeletion, serveLocalEpisodeDirectory } from "../vite.config";
+import { createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveEpisodeDeletion, serveEpisodeDeletionCleanup, serveLocalEpisodeDirectory, serveOpenLocalArtifact, serveOpenLocalEpisodeDirectory, stageLocalEpisodeDirectoryForDeletion } from "../vite.config";
 
 const episodeId = "00000000-0000-0000-0000-000000000000";
 let server: ReturnType<typeof createServer>;
@@ -36,6 +36,52 @@ describe("本地 Episode 目录路由", () => {
     expect(unauthorized.status).toBe(401);
     expect(invalidId.status).toBe(400);
     expect(wrongMethod.status).toBe(405);
+  });
+
+  it("打开目录路由拒绝未登录、非法 ID 和错误方法", async () => {
+    const middleware = serveOpenLocalEpisodeDirectory(undefined, undefined);
+    const openServer = createServer((request, response) => {
+      void middleware(request, response);
+    });
+    await new Promise<void>((resolve) => openServer.listen(0, "127.0.0.1", resolve));
+    const openOrigin = `http://127.0.0.1:${(openServer.address() as AddressInfo).port}`;
+    try {
+      const [unauthorized, invalidId, wrongMethod] = await Promise.all([
+        fetch(`${openOrigin}/_open-local-episode-directory?episode=${episodeId}`, { method: "POST" }),
+        fetch(`${openOrigin}/_open-local-episode-directory?episode=not-an-episode-id`, { headers: { Authorization: "Bearer invalid" }, method: "POST" }),
+        fetch(`${openOrigin}/_open-local-episode-directory?episode=${episodeId}`, { headers: { Authorization: "Bearer invalid" } }),
+      ]);
+
+      expect(unauthorized.status).toBe(401);
+      expect(invalidId.status).toBe(400);
+      expect(wrongMethod.status).toBe(405);
+    } finally {
+      await new Promise<void>((resolve, reject) => openServer.close((error) => error ? reject(error) : resolve()));
+    }
+  });
+
+  it("打开产物路由拒绝未登录、非法参数和错误方法", async () => {
+    const middleware = serveOpenLocalArtifact(undefined, undefined);
+    const openServer = createServer((request, response) => {
+      void middleware(request, response);
+    });
+    await new Promise<void>((resolve) => openServer.listen(0, "127.0.0.1", resolve));
+    const openOrigin = `http://127.0.0.1:${(openServer.address() as AddressInfo).port}`;
+    try {
+      const [unauthorized, invalidId, invalidPath, wrongMethod] = await Promise.all([
+        fetch(`${openOrigin}/_open-local-artifact?episode=${episodeId}&path=episodes%2F${episodeId}%2Fcover.png`, { method: "POST" }),
+        fetch(`${openOrigin}/_open-local-artifact?episode=not-an-episode-id&path=cover.png`, { headers: { Authorization: "Bearer invalid" }, method: "POST" }),
+        fetch(`${openOrigin}/_open-local-artifact?episode=${episodeId}&path=../cover.png`, { headers: { Authorization: "Bearer invalid" }, method: "POST" }),
+        fetch(`${openOrigin}/_open-local-artifact?episode=${episodeId}&path=cover.png`, { headers: { Authorization: "Bearer invalid" } }),
+      ]);
+
+      expect(unauthorized.status).toBe(401);
+      expect(invalidId.status).toBe(400);
+      expect(invalidPath.status).toBe(400);
+      expect(wrongMethod.status).toBe(405);
+    } finally {
+      await new Promise<void>((resolve, reject) => openServer.close((error) => error ? reject(error) : resolve()));
+    }
   });
 
   it("永久删除路由在执行文件系统操作前拒绝未登录、非法 ID 和错误方法", async () => {

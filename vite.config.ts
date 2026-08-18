@@ -1,19 +1,24 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import { createClient } from "@supabase/supabase-js";
+import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
 import { createReadStream, promises as fs, readFileSync } from "node:fs";
 import { basename, extname, isAbsolute, join, parse, relative, resolve } from "node:path";
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { promisify } from "node:util";
 import { loadEnv, type Plugin } from "vite";
 
 const localArtifactRoute = "/_local-artifact";
 const localEpisodeDirectoryRoute = "/_local-episode-directory";
+const openLocalEpisodeDirectoryRoute = "/_open-local-episode-directory";
+const openLocalArtifactRoute = "/_open-local-artifact";
 const localProductionMaterialRoute = "/_production-material";
 const localEpisodeDeletionRoute = "/_delete-episode";
 const localEpisodeDeletionCleanupRoute = "/_finalize-episode-deletion";
 const maxProductionMaterialBytes = 100 * 1024 * 1024;
 const maxEncodedMaterialRequestBytes = 140 * 1024 * 1024;
+const execFileAsync = promisify(execFile);
 
 const mediaTypes: Record<string, string> = {
   ".avif": "image/avif",
@@ -156,6 +161,122 @@ export function serveLocalEpisodeDirectory(supabaseUrl: string | undefined, supa
     } catch {
       response.statusCode = 403;
       response.end("无法创建本地 Episode 目录。");
+    }
+  };
+}
+
+export function serveOpenLocalEpisodeDirectory(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+  return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+    if (request.method !== "POST") {
+      response.statusCode = 405;
+      response.end();
+      return;
+    }
+
+    const url = new URL(request.url ?? "", "http://127.0.0.1");
+    const episodeId = url.searchParams.get("episode") ?? "";
+    const authorization = request.headers.authorization;
+    if (!authorization?.startsWith("Bearer ")) {
+      response.statusCode = 401;
+      response.end("需要 Owner 登录会话。");
+      return;
+    }
+    if (!isEpisodeId(episodeId)) {
+      response.statusCode = 400;
+      response.end("无效的 Episode ID。");
+      return;
+    }
+
+    try {
+      const assetRoot = await assetRootForOwnedEpisode({ authorization, episodeId, supabasePublishableKey, supabaseUrl });
+      if (!assetRoot || !isAbsolute(assetRoot)) {
+        response.statusCode = 404;
+        response.end("未找到可打开的 Episode 资产根。");
+        return;
+      }
+
+      const episodeDirectory = await createLocalEpisodeDirectory(assetRoot, episodeId);
+      const command = process.platform === "darwin" ? "open" : process.platform === "win32" ? "explorer.exe" : "xdg-open";
+      await execFileAsync(command, [episodeDirectory]);
+
+      response.statusCode = 204;
+      response.end();
+    } catch {
+      response.statusCode = 503;
+      response.end("无法打开本地 Episode 目录，请使用页面显示的路径。");
+    }
+  };
+}
+
+export function serveOpenLocalArtifact(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+  return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+    if (request.method !== "POST") {
+      response.statusCode = 405;
+      response.end();
+      return;
+    }
+    const url = new URL(request.url ?? "", "http://127.0.0.1");
+    const episodeId = url.searchParams.get("episode") ?? "";
+    const relativePath = url.searchParams.get("path") ?? "";
+    const expectedSha256 = url.searchParams.get("sha256") ?? "";
+    const authorization = request.headers.authorization;
+    if (!authorization?.startsWith("Bearer ")) {
+      response.statusCode = 401;
+      response.end("需要 Owner 登录会话。");
+      return;
+    }
+    if (!isEpisodeId(episodeId)) {
+      response.statusCode = 400;
+      response.end("无效的 Episode ID。");
+      return;
+    }
+    if (!isSafeRelativeArtifactPath(relativePath)) {
+      response.statusCode = 400;
+      response.end("无效的本地产物路径。");
+      return;
+    }
+    if (expectedSha256 && !/^[0-9a-f]{64}$/.test(expectedSha256)) {
+      response.statusCode = 400;
+      response.end("无效的产物修订哈希。");
+      return;
+    }
+
+    try {
+      const indexedArtifact = await indexedArtifactForPreview({ authorization, episodeId, relativePath, supabasePublishableKey, supabaseUrl });
+      if (!indexedArtifact || !isAbsolute(indexedArtifact.assetRoot)) {
+        response.statusCode = 404;
+        response.end("未找到可打开的本地产物。");
+        return;
+      }
+      if (expectedSha256 && expectedSha256 !== indexedArtifact.sha256) {
+        response.statusCode = 409;
+        response.end("产物修订与索引不一致。");
+        return;
+      }
+      const resolvedRoot = await fs.realpath(indexedArtifact.assetRoot);
+      const resolvedArtifact = await fs.realpath(`${indexedArtifact.assetRoot}/${relativePath}`);
+      if (!isDescendant(resolvedRoot, resolvedArtifact)) {
+        response.statusCode = 403;
+        response.end("产物路径超出账号资产目录。");
+        return;
+      }
+      if (!(await fs.stat(resolvedArtifact)).isFile()) {
+        response.statusCode = 404;
+        response.end("未找到可打开的本地产物。");
+        return;
+      }
+      if (expectedSha256 && createHash("sha256").update(await fs.readFile(resolvedArtifact)).digest("hex") !== expectedSha256) {
+        response.statusCode = 409;
+        response.end("产物内容与冻结修订不一致。");
+        return;
+      }
+      const command = process.platform === "darwin" ? "open" : process.platform === "win32" ? "explorer.exe" : "xdg-open";
+      await execFileAsync(command, [resolvedArtifact]);
+      response.statusCode = 204;
+      response.end();
+    } catch {
+      response.statusCode = 503;
+      response.end("无法打开本地产物，请检查本机文件关联设置。");
     }
   };
 }
@@ -604,7 +725,9 @@ async function assetRootForOwnedEpisode(input: { authorization: string; episodeI
 
 function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined): Plugin {
   const artifactMiddleware = serveLocalArtifact(supabaseUrl, supabasePublishableKey);
+  const openArtifactMiddleware = serveOpenLocalArtifact(supabaseUrl, supabasePublishableKey);
   const directoryMiddleware = serveLocalEpisodeDirectory(supabaseUrl, supabasePublishableKey);
+  const openDirectoryMiddleware = serveOpenLocalEpisodeDirectory(supabaseUrl, supabasePublishableKey);
   const productionMaterialMiddleware = serveProductionMaterial(supabaseUrl, supabasePublishableKey);
   const deletionMiddleware = serveEpisodeDeletion(supabaseUrl, supabasePublishableKey, localWorkerServiceRoleKey());
   const deletionCleanupMiddleware = serveEpisodeDeletionCleanup(supabaseUrl, supabasePublishableKey);
@@ -612,14 +735,18 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
     name: "local-artifact-preview",
     configureServer(server) {
       server.middlewares.use(localArtifactRoute, artifactMiddleware);
+      server.middlewares.use(openLocalArtifactRoute, openArtifactMiddleware);
       server.middlewares.use(localEpisodeDirectoryRoute, directoryMiddleware);
+      server.middlewares.use(openLocalEpisodeDirectoryRoute, openDirectoryMiddleware);
       server.middlewares.use(localProductionMaterialRoute, productionMaterialMiddleware);
       server.middlewares.use(localEpisodeDeletionRoute, deletionMiddleware);
       server.middlewares.use(localEpisodeDeletionCleanupRoute, deletionCleanupMiddleware);
     },
     configurePreviewServer(server) {
       server.middlewares.use(localArtifactRoute, artifactMiddleware);
+      server.middlewares.use(openLocalArtifactRoute, openArtifactMiddleware);
       server.middlewares.use(localEpisodeDirectoryRoute, directoryMiddleware);
+      server.middlewares.use(openLocalEpisodeDirectoryRoute, openDirectoryMiddleware);
       server.middlewares.use(localProductionMaterialRoute, productionMaterialMiddleware);
       server.middlewares.use(localEpisodeDeletionRoute, deletionMiddleware);
       server.middlewares.use(localEpisodeDeletionCleanupRoute, deletionCleanupMiddleware);
