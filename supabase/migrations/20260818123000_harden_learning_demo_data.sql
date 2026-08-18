@@ -125,26 +125,3 @@ $$;
 
 revoke execute on function public.ensure_learning_demo_data() from public, anon;
 grant execute on function public.ensure_learning_demo_data() to authenticated;
-
-do $$
-declare
-  legacy_account_id uuid;
-  member_count integer;
-  episode_count integer;
-  unexpected_episode_count integer;
-begin
-  select id into legacy_account_id from public.accounts where slug = 'demo-learning';
-  if legacy_account_id is null then
-    return;
-  end if;
-  select count(*) into member_count from public.account_memberships where account_id = legacy_account_id;
-  select count(*) into episode_count from public.episodes where account_id = legacy_account_id;
-  select count(*) into unexpected_episode_count from public.episodes where account_id = legacy_account_id and title not in ('演示·复盘·待录入指标', '演示·复盘·已完成报告');
-  if member_count = 1 and episode_count = 2 and unexpected_episode_count = 0 and not exists (select 1 from public.series where account_id = legacy_account_id) then
-    delete from public.episodes where account_id = legacy_account_id;
-    update public.accounts set current_blueprint_version_id = null where id = legacy_account_id;
-    delete from public.account_blueprint_versions where account_id = legacy_account_id;
-    delete from public.account_memberships where account_id = legacy_account_id;
-    delete from public.accounts where id = legacy_account_id;
-  end if;
-end $$;

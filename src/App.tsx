@@ -1078,6 +1078,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
     try {
       const { error } = await supabase.rpc("ensure_learning_demo_data");
       if (error) throw error;
+      setAccountFilter("全部账号");
       setMessage("复盘演示数据已准备，可以在复盘页查看两条演示生产单。");
       await refreshWorkspace();
     } catch (error) {
