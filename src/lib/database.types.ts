@@ -1235,6 +1235,10 @@ export type Database = {
         }
         SetofOptions: { from: "*"; to: "experiments"; isOneToOne: true; isSetofReturn: false }
       }
+      ensure_learning_demo_data: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       has_required_artifacts: {
         Args: {
           p_episode_id: string

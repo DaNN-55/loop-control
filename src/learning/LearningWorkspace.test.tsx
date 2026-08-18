@@ -69,6 +69,16 @@ function workspaceProps(overrides: Partial<Parameters<typeof LearningWorkspace>[
 }
 
 describe("复盘工作台", () => {
+  it("在没有复盘生产单时可以准备隔离的演示数据", async () => {
+    const user = userEvent.setup();
+    const onPrepareLearningDemo = vi.fn().mockResolvedValue(undefined);
+    render(<LearningWorkspace {...workspaceProps({ episodes: [], experiments: [], onPrepareLearningDemo })} />);
+
+    expect(screen.getByText("可以准备一组隔离的复盘演示账号和生产单，不会触发 Worker，也不会混入真实账号。")).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "准备复盘演示数据" }));
+    expect(onPrepareLearningDemo).toHaveBeenCalledOnce();
+  });
+
   it("为生产单定义一个主指标和最多两个护栏指标", async () => {
     const user = userEvent.setup();
     const onSaveExperiment = vi.fn().mockResolvedValue(undefined);

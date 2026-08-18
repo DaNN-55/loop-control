@@ -1072,6 +1072,22 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
     }
   }
 
+  async function prepareLearningDemo() {
+    setPendingAction("learning-demo");
+    setErrorMessage("");
+    try {
+      const { error } = await supabase.rpc("ensure_learning_demo_data");
+      if (error) throw error;
+      setMessage("复盘演示数据已准备，可以在复盘页查看两条演示生产单。");
+      await refreshWorkspace();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "无法准备复盘演示数据。";
+      setErrorMessage(message);
+    } finally {
+      setPendingAction("");
+    }
+  }
+
   async function saveMetricSnapshot(input: SaveMetricSnapshotInput) {
     setPendingAction(`metrics-${input.episodeId}`);
     setErrorMessage("");
@@ -1235,6 +1251,8 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             learningReports={workspace.learningReports}
             metricSnapshots={workspace.metricSnapshots}
             blueprintChangeSuggestions={workspace.blueprintChangeSuggestions}
+            isPreparingDemo={pendingAction === "learning-demo"}
+            onPrepareLearningDemo={prepareLearningDemo}
             onSaveExperiment={saveExperiment}
             onSaveLearningReport={saveLearningReport}
             onSaveMetricSnapshot={saveMetricSnapshot}
