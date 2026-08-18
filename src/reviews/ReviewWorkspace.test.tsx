@@ -306,20 +306,28 @@ describe("审核台", () => {
     expect(screen.queryByRole("dialog", { name: "cover 产物放大预览" })).toBeNull();
   });
 
-  it("显示完整 Episode ID，并允许 Owner 复制 ID 和创建固定本地目录", async () => {
+  it("不要求 Owner 了解 Episode ID，只需创建绑定的本地输入目录", async () => {
     const user = userEvent.setup();
     const onCreateLocalDirectory = vi.fn().mockResolvedValue(undefined);
+    const onOpenLocalDirectory = vi.fn().mockResolvedValue(undefined);
     const writeText = vi.fn().mockResolvedValue(undefined);
+    const localInputPath = "/Volumes/素材盘/tk-workflow/dao/episodes/episode-review/input";
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} onCreateLocalDirectory={onCreateLocalDirectory} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} onCreateLocalDirectory={onCreateLocalDirectory} onOpenLocalDirectory={onOpenLocalDirectory} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
-    expect((screen.getByLabelText("完整 Episode ID") as HTMLInputElement).value).toBe(reviewEpisode.id);
-    await user.click(screen.getByRole("button", { name: "复制 Episode ID" }));
-    expect(writeText).toHaveBeenCalledWith(reviewEpisode.id);
+    expect(screen.queryByLabelText("完整 Episode ID")).toBeNull();
+    expect(screen.getByText(/你不需要记住或填写 Episode ID/)).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "复制 Episode ID" })).toBeNull();
+    expect(screen.getByText(localInputPath)).toBeTruthy();
 
-    await user.click(screen.getByRole("button", { name: "创建本地目录" }));
+    await user.click(screen.getByRole("heading", { name: "准备本地输入目录" }));
+    await user.click(screen.getByRole("button", { name: "创建本地输入目录" }));
     expect(onCreateLocalDirectory).toHaveBeenCalledWith(reviewEpisode.id);
+    await user.click(screen.getByRole("button", { name: "打开输入目录" }));
+    expect(onOpenLocalDirectory).toHaveBeenCalledWith(reviewEpisode.id);
+    await user.click(screen.getByRole("button", { name: "复制目录路径" }));
+    expect(writeText).toHaveBeenCalledWith(localInputPath);
   });
 
   it("要求显式确认粘贴的主脚本", async () => {
@@ -327,6 +335,7 @@ describe("审核台", () => {
     const onImportMaterial = vi.fn().mockResolvedValue(undefined);
     render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onImportMaterial={onImportMaterial} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
+    await user.click(screen.getByRole("heading", { name: "导入生产材料" }));
     await user.selectOptions(screen.getByLabelText("材料来源"), "paste");
     await user.type(screen.getByLabelText("粘贴的生产材料"), "经确认的脚本");
     await user.click(screen.getByRole("button", { name: "确认并固定修订" }));
@@ -353,8 +362,9 @@ describe("审核台", () => {
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={waitingEpisode} isDirectoryPending={false} isTransitionPending={false} onCommissionScript={onCommissionScript} onCreateLocalDirectory={vi.fn()} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
-    expect(screen.getByRole("heading", { name: "委托生成脚本" }).closest("form")?.className).toContain("script-commission");
+    expect(screen.getByRole("heading", { name: "委托生成脚本" }).closest("details")?.className).toContain("detail-card-collapsible");
 
+    await user.click(screen.getByRole("heading", { name: "委托生成脚本" }));
     await user.type(screen.getByLabelText("创作方向"), "雨夜民俗悬疑，节奏克制。 ");
     await user.type(screen.getByLabelText("必须表达的核心内容"), "仪式感与人物抉择。 ");
     await user.click(screen.getByRole("button", { name: "提交脚本委托" }));
