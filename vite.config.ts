@@ -29,6 +29,7 @@ const mediaTypes: Record<string, string> = {
   ".mov": "video/quicktime",
   ".mp4": "video/mp4",
   ".png": "image/png",
+  ".svg": "image/svg+xml",
   ".webm": "video/webm",
   ".webp": "image/webp",
 };
@@ -740,9 +741,11 @@ export function serveProductionMaterial(supabaseUrl: string | undefined, supabas
       const sourceKind = body.sourceKind;
       const sourcePath = body.sourcePath;
       const materialType = body.materialType;
+      const materialPurpose = body.materialPurpose;
       const mimeType = body.mimeType;
       const isMainScript = body.isMainScript;
-      if ((sourceKind !== "directory" && sourceKind !== "file" && sourceKind !== "paste") || typeof sourcePath !== "string" || typeof materialType !== "string" || typeof mimeType !== "string" || typeof isMainScript !== "boolean") {
+      const allowedMaterialPurposes = new Set(["main_script", "supplemental_script", "general_reference", "visual_reference", "b_roll", "narration", "background_music", "sound_effect"]);
+      if ((sourceKind !== "directory" && sourceKind !== "file" && sourceKind !== "paste") || typeof sourcePath !== "string" || typeof materialType !== "string" || typeof materialPurpose !== "string" || !allowedMaterialPurposes.has(materialPurpose) || typeof mimeType !== "string" || typeof isMainScript !== "boolean") {
         throw new Error("生产材料元数据无效。");
       }
       let content: Uint8Array | undefined;
@@ -757,6 +760,7 @@ export function serveProductionMaterial(supabaseUrl: string | undefined, supabas
         p_episode_id: episodeId,
         p_file_size: snapshot.fileSize,
         p_is_main_script: isMainScript,
+        p_material_purpose: materialPurpose,
         p_material_type: materialType,
         p_mime_type: mimeType,
         p_sha256: snapshot.sha256,

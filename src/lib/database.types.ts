@@ -409,6 +409,7 @@ export type Database = {
           id: string
           is_test?: boolean
           main_script_revision_id?: string | null
+          script_source?: "provided" | "delegated"
           series_version_id?: string | null
           stage: Database["public"]["Enums"]["episode_stage"]
           title: string
@@ -422,6 +423,7 @@ export type Database = {
           id?: string
           is_test?: boolean
           main_script_revision_id?: string | null
+          script_source?: "provided" | "delegated"
           series_version_id?: string | null
           stage?: Database["public"]["Enums"]["episode_stage"]
           title: string
@@ -435,6 +437,7 @@ export type Database = {
           id?: string
           is_test?: boolean
           main_script_revision_id?: string | null
+          script_source?: "provided" | "delegated"
           series_version_id?: string | null
           stage?: Database["public"]["Enums"]["episode_stage"]
           title?: string
@@ -498,6 +501,56 @@ export type Database = {
             columns: ["episode_id"]
             isOneToOne: true
             referencedRelation: "episodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prompt_versions: {
+        Row: {
+          account_id: string
+          capability: "script_writing" | "visual_planning" | "storyboard_planning"
+          created_at: string
+          created_by: string | null
+          id: string
+          instructions: string
+          is_active: boolean
+          name: string
+          slug: string
+          summary: string
+          version: number
+        }
+        Insert: {
+          account_id: string
+          capability: "script_writing" | "visual_planning" | "storyboard_planning"
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          instructions?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          summary: string
+          version: number
+        }
+        Update: {
+          account_id?: string
+          capability?: "script_writing" | "visual_planning" | "storyboard_planning"
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          instructions?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          summary?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prompt_versions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
             referencedColumns: ["id"]
           },
         ]
@@ -633,6 +686,7 @@ export type Database = {
           file_size: number
           id: string
           is_main_script: boolean
+          material_purpose: string
           material_type: string
           mime_type: string
           revision_number: number
@@ -648,6 +702,7 @@ export type Database = {
           file_size: number
           id?: string
           is_main_script?: boolean
+          material_purpose: string
           material_type: string
           mime_type: string
           revision_number: number
@@ -663,6 +718,7 @@ export type Database = {
           file_size?: number
           id?: string
           is_main_script?: boolean
+          material_purpose?: string
           material_type?: string
           mime_type?: string
           revision_number?: number
@@ -1161,6 +1217,17 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      create_prompt_version: {
+        Args: {
+          p_account_id: string
+          p_capability: "script_writing" | "visual_planning" | "storyboard_planning"
+          p_instructions?: string
+          p_name: string
+          p_summary: string
+        }
+        Returns: Database["public"]["Tables"]["prompt_versions"]["Row"]
+        SetofOptions: { from: "*"; to: "prompt_versions"; isOneToOne: true; isSetofReturn: false }
+      }
       create_series: {
         Args: { p_account_id: string; p_name: string; p_rules: Json }
         Returns: {
@@ -1202,6 +1269,7 @@ export type Database = {
           p_episode_id: string
           p_file_size: number
           p_is_main_script: boolean
+          p_material_purpose: string
           p_material_type: string
           p_mime_type: string
           p_sha256: string
@@ -1212,10 +1280,20 @@ export type Database = {
         Returns: Database["public"]["Tables"]["production_material_revisions"]["Row"]
         SetofOptions: { from: "*"; to: "production_material_revisions"; isOneToOne: true; isSetofReturn: false }
       }
+      start_episode_production: {
+        Args: { p_episode_id: string }
+        Returns: Database["public"]["Tables"]["episodes"]["Row"]
+        SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
+      }
       commission_script: {
         Args: { p_core_content: string; p_creative_direction: string; p_episode_id: string }
         Returns: Database["public"]["Tables"]["tasks"]["Row"]
         SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      set_episode_script_source: {
+        Args: { p_episode_id: string; p_script_source: "provided" | "delegated" }
+        Returns: Database["public"]["Tables"]["episodes"]["Row"]
+        SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
       }
       create_storyboard_annotation: {
         Args: { p_reason: string; p_review_package_id: string; p_shot_id: string }

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
-import { BarChart3, BookOpen, LogOut, MessageSquare, Moon, PanelLeft, Pencil, Play, Sun, Table2, Upload, User, Users, X, type LucideIcon } from "lucide-react";
+import { Activity, BarChart3, BookOpen, ClipboardList, Copy, FolderOpen, History, LogOut, MessageSquare, Moon, PanelLeft, Pencil, Play, RefreshCw, Sun, Table2, Upload, User, Users, X, type LucideIcon } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 import type { Database, Json } from "./lib/database.types";
 import { supabase } from "./lib/supabase";
@@ -13,15 +13,19 @@ import { LearningWorkspace } from "./learning/LearningWorkspace";
 import type { ApproveBlueprintChangeSuggestionInput, SaveBlueprintChangeSuggestionInput, SaveExperimentInput, SaveLearningReportInput, SaveMetricSnapshotInput } from "./learning/LearningWorkspace";
 import { clearOperationDraft, readOperationDraft, writeOperationDraft } from "./operationDraft";
 import { OperationsWorkspace } from "./operations/OperationsWorkspace";
-import { currentReviewPackage, workerBlockers } from "./reviews/reviewSelectors";
+import { blockersFromResult, currentReviewPackage, type WorkerBlocker, workerBlockers } from "./reviews/reviewSelectors";
+import { workerBlockerGuidance } from "./reviews/blockerGuidance";
 import { artifactPreviewKind, localArtifactUrl, useLocalArtifactBlob } from "./reviews/localArtifactPreview";
 import { WorkerBlockerCard } from "./reviews/WorkerBlockerCard";
 import type { StoryboardAudioCue, StoryboardShotManifest } from "./worker/contracts";
 import { accountIdentityColor, accountIdentityInitials } from "./platform/accountIdentity";
+import { HelpTip } from "./ui/HelpTip";
 import { PaginationControls } from "./ui/PaginationControls";
 import { BlueprintConfigurationForm, SeriesConfigurationForm } from "./platform/ConfigurationForms";
-import { TaskProgressPanel } from "./observability/TaskProgressPanel";
+import { taskTypeLabel } from "./observability/TaskProgressPanel";
 import { SystemStatusPanel, type LocalSystemStatusReport } from "./observability/SystemStatusPanel";
+import { MarkdownPreview } from "./ui/MarkdownPreview";
+import { defaultMaterialPurpose, materialPurposeOptions, materialTypeForFile, type MaterialPurpose, type MaterialType } from "./reviews/materialImport";
 
 type NavigationItem = "accounts" | "episodes" | "operations" | "reviews" | "publish" | "learning";
 type Theme = "light" | "dark";
@@ -30,6 +34,7 @@ type Blueprint = Database["public"]["Tables"]["account_blueprint_versions"]["Row
 type Episode = Database["public"]["Tables"]["episodes"]["Row"];
 type Series = Database["public"]["Tables"]["series"]["Row"];
 type SeriesVersion = Database["public"]["Tables"]["series_versions"]["Row"];
+type PromptVersion = Database["public"]["Tables"]["prompt_versions"]["Row"];
 type MaterialRevision = Database["public"]["Tables"]["production_material_revisions"]["Row"];
 type ReviewPackage = Database["public"]["Tables"]["review_packages"]["Row"];
 type ReviewAnnotation = Database["public"]["Tables"]["review_annotations"]["Row"];
@@ -118,14 +123,9 @@ interface MaterialImportRequest {
   sourcePath: string;
   content?: Uint8Array;
   materialType: string;
+  materialPurpose: MaterialPurpose;
   mimeType: string;
   isMainScript: boolean;
-}
-
-interface ScriptCommissionRequest {
-  episodeId: string;
-  creativeDirection: string;
-  coreContent: string;
 }
 
 interface StoryboardAnnotationRequest {
@@ -153,6 +153,7 @@ interface Workspace {
   episodes: Episode[];
   series: Series[];
   seriesVersions: SeriesVersion[];
+  promptVersions: PromptVersion[];
   materialRevisions: MaterialRevision[];
   reviewPackages: ReviewPackage[];
   reviewAnnotations: ReviewAnnotation[];
@@ -256,13 +257,14 @@ function stageTone(stage: EpisodeStage): "review" | "approved" | "muted" {
 const taskStatusLabels: Record<Task["status"], string> = { ready: "等待领取", running: "执行中", completed: "已完成", blocked: "已阻塞", failed: "失败" };
 const transitionReasonLabels: Record<string, string> = {
   "Owner confirmed an imported main script revision.": "Owner 已确认导入的主脚本修订。",
+  "Owner confirmed all production materials are ready; start production.": "Owner 已确认材料准备完成，开始制作。",
   "Orchestrator froze the first visual planning task from the confirmed main script.": "编排器已根据确认的主脚本冻结首个视觉规划任务。",
   "Worker submitted a frozen visual planning review package.": "Worker 已提交冻结的视觉规划审核包。",
   "HyperFrames deterministic review render completed.": "HyperFrames 已完成确定性的审核渲染。",
 };
 
 const nextStepLabels: Partial<Record<EpisodeStage, string>> = {
-  waiting_input: "导入主脚本或提交脚本委托",
+  waiting_input: "导入主脚本",
   script_draft: "等待 Worker 生成脚本",
   script_review: "审核生成脚本",
   script_approved: "等待生成视觉方案",
@@ -293,6 +295,42 @@ function userFacingTransitionReason(reason: string): string {
 
 function nextStepForEpisode(stage: EpisodeStage): string {
   return nextStepLabels[stage] ?? "查看生产单详情";
+}
+
+function groupWorkerBlockers(blockers: WorkerBlocker[]): Array<{ blocker: WorkerBlocker; count: number }> {
+  const groups = new Map<string, { blocker: WorkerBlocker; count: number }>();
+  for (const blocker of blockers) {
+    const key = `${blocker.code}\u0000${blocker.detail}`;
+    const group = groups.get(key);
+    if (group) group.count += 1;
+    else groups.set(key, { blocker, count: 1 });
+  }
+  return [...groups.values()];
+}
+
+type EpisodeWorkerStatusTone = "running" | "review" | "completed" | "waiting" | "blocked" | "idle";
+interface EpisodeWorkerStatus {
+  detail: string;
+  label: string;
+  tone: EpisodeWorkerStatusTone;
+}
+
+const reviewStages = new Set<EpisodeStage>(["script_review", "visual_review", "storyboard_review", "qc_review", "publishing_review"]);
+
+export function episodeWorkerStatus(episode: Pick<Episode, "stage"> & Partial<Pick<Episode, "main_script_revision_id">>, episodeTasks: Pick<Task, "status" | "task_type">[]): EpisodeWorkerStatus {
+  const blockedTask = episodeTasks.find((task) => task.status === "blocked");
+  if (blockedTask) return { detail: `${taskTypeLabel(blockedTask.task_type)} 需要处理阻塞项。`, label: "已阻塞", tone: "blocked" };
+  const failedTask = episodeTasks.find((task) => task.status === "failed");
+  if (failedTask) return { detail: `${taskTypeLabel(failedTask.task_type)} 最近执行失败。`, label: "失败", tone: "blocked" };
+  const runningTask = episodeTasks.find((task) => task.status === "running");
+  if (runningTask) return { detail: `${taskTypeLabel(runningTask.task_type)} 正在执行。`, label: "执行中", tone: "running" };
+  const readyTask = episodeTasks.find((task) => task.status === "ready");
+  if (readyTask) return { detail: `${taskTypeLabel(readyTask.task_type)} 已排队，等待 Worker 领取。`, label: "等待 Worker", tone: "waiting" };
+  if (reviewStages.has(episode.stage)) return { detail: "审核包已就绪，等待 Owner 决定。", label: "等待审核", tone: "review" };
+  if (episodeTasks.some((task) => task.status === "completed")) return { detail: "最近一次 Worker 任务已完成。", label: "已完成", tone: "completed" };
+  if (episode.stage === "waiting_input" && episode.main_script_revision_id) return { detail: "材料已导入，等待 Owner 确认开始制作。", label: "待开始制作", tone: "waiting" };
+  if (episode.stage === "waiting_input" || episode.stage === "brief_draft") return { detail: nextStepForEpisode(episode.stage), label: "等待输入", tone: "idle" };
+  return { detail: nextStepForEpisode(episode.stage), label: "等待 Worker", tone: "waiting" };
 }
 
 function formatDate(source: string) {
@@ -404,12 +442,13 @@ function bytesToBase64(content: Uint8Array): string {
 }
 
 async function loadWorkspace(): Promise<Workspace> {
-  const [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, materialRevisionsResult, reviewPackagesResult, reviewAnnotationsResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, taskRunsResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult] = await Promise.all([
+  const [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, promptVersionsResult, materialRevisionsResult, reviewPackagesResult, reviewAnnotationsResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, taskRunsResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult] = await Promise.all([
     supabase.from("accounts").select("*").order("created_at"),
     supabase.from("account_blueprint_versions").select("*").order("version", { ascending: false }),
     supabase.from("episodes").select("*").order("updated_at", { ascending: false }),
     supabase.from("series").select("*").order("name"),
     supabase.from("series_versions").select("*").order("version", { ascending: false }),
+    supabase.from("prompt_versions").select("*").order("capability").order("version", { ascending: false }),
     supabase.from("production_material_revisions").select("*").order("created_at", { ascending: false }),
     supabase.from("review_packages").select("*").order("created_at", { ascending: false }),
     supabase.from("review_annotations").select("*").order("created_at"),
@@ -427,7 +466,7 @@ async function loadWorkspace(): Promise<Workspace> {
     supabase.from("blueprint_change_suggestions").select("*").order("created_at", { ascending: false }),
     supabase.from("publication_records").select("*").order("created_at", { ascending: false }),
   ]);
-  const error = [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, materialRevisionsResult, reviewPackagesResult, reviewAnnotationsResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, taskRunsResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult]
+  const error = [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, promptVersionsResult, materialRevisionsResult, reviewPackagesResult, reviewAnnotationsResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, taskRunsResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult]
     .map((result) => result.error)
     .find(Boolean);
 
@@ -439,6 +478,7 @@ async function loadWorkspace(): Promise<Workspace> {
     episodes: episodesResult.data ?? [],
     series: seriesResult.data ?? [],
     seriesVersions: seriesVersionsResult.data ?? [],
+    promptVersions: promptVersionsResult.data ?? [],
     materialRevisions: materialRevisionsResult.data ?? [],
     reviewPackages: reviewPackagesResult.data ?? [],
     reviewAnnotations: reviewAnnotationsResult.data ?? [],
@@ -496,6 +536,18 @@ export function App() {
   useEffect(() => {
     selectedEpisodeIdRef.current = selectedEpisodeId;
   }, [selectedEpisodeId]);
+
+  useEffect(() => {
+    if (!message) return;
+    const timer = window.setTimeout(() => setMessage(""), 4500);
+    return () => window.clearTimeout(timer);
+  }, [message]);
+
+  useEffect(() => {
+    if (!errorMessage) return;
+    const timer = window.setTimeout(() => setErrorMessage(""), 8000);
+    return () => window.clearTimeout(timer);
+  }, [errorMessage]);
 
   const refreshWorkspace = useCallback(async (source: "auto" | "manual" | "action" = "action") => {
     setIsLoading(true);
@@ -626,6 +678,12 @@ export function App() {
     setIsEpisodeDetailOpen(true);
   }
 
+  function openAccountBlueprint(accountId: string) {
+    setSelectedAccountId(accountId);
+    changeNavigation("accounts");
+    setMessage("已打开对应账号的蓝图配置；保存新版本后需要重新创建任务。");
+  }
+
   function openPublishModal(episodeId: string) {
     setSelectedEpisodeId(episodeId);
     setIsEpisodeDetailOpen(false);
@@ -703,6 +761,30 @@ export function App() {
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "创建系列版本失败。");
       throw error;
+    } finally {
+      setPendingAction("");
+    }
+  }
+
+  async function createPromptVersion(input: { capability: PromptVersion["capability"]; name: string; summary: string; instructions: string }): Promise<PromptVersion | null> {
+    if (!selectedAccount) return null;
+    setPendingAction("prompt-version");
+    setErrorMessage("");
+    try {
+      const { data, error } = await supabase.rpc("create_prompt_version", {
+        p_account_id: selectedAccount.id,
+        p_capability: input.capability,
+        p_instructions: input.instructions,
+        p_name: input.name,
+        p_summary: input.summary,
+      });
+      if (error) throw error;
+      setMessage("Prompt 新版本已登记；请保存蓝图后让新建生产单使用它。");
+      await refreshWorkspace();
+      return data;
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "登记 Prompt 版本失败。");
+      return null;
     } finally {
       setPendingAction("");
     }
@@ -820,9 +902,20 @@ export function App() {
       });
       if (error) throw error;
       setShowEpisodeForm(false);
-      setMessage("生产单已创建，正在等待确认主脚本或其他输入。");
-      if (data) setSelectedEpisodeId(data.id);
+      let localDirectoryReady = false;
+      let localDirectoryError = "";
+      if (data) {
+        setSelectedEpisodeId(data.id);
+        try {
+          await requestLocalEpisodeDirectory(data.id, "create");
+          localDirectoryReady = true;
+        } catch (directoryError) {
+          localDirectoryError = directoryError instanceof Error ? `生产单已创建，但本地输入目录准备失败：${directoryError.message}` : "生产单已创建，但本地输入目录准备失败。可稍后从详情页重试。";
+        }
+      }
+      setMessage(localDirectoryReady ? "生产单已创建，本地输入目录已准备就绪，等待导入主脚本。" : "生产单已创建，等待导入主脚本；本地输入目录可稍后从详情页重试。");
       await refreshWorkspace();
+      if (localDirectoryError) setErrorMessage(localDirectoryError);
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "创建生产单失败。");
     } finally {
@@ -916,13 +1009,14 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
           contentBase64: input.content ? bytesToBase64(input.content) : undefined,
           isMainScript: input.isMainScript,
           materialType: input.materialType,
+          materialPurpose: input.materialPurpose,
           mimeType: input.mimeType,
           sourceKind: input.sourceKind,
           sourcePath: input.sourcePath,
         }),
       });
       if (!response.ok) throw new Error((await response.text()).trim() || "无法导入生产材料。");
-      setMessage(input.isMainScript ? "主脚本已确认为不可变修订，生产单已进入分镜前准备。" : "生产材料已导入为不可变修订。");
+      setMessage(input.isMainScript ? "主脚本已确认为不可变修订；你可以继续导入材料，准备完成后再开始制作。" : "生产材料已导入为不可变修订。");
       await refreshWorkspace();
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "无法导入生产材料。");
@@ -932,21 +1026,16 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
     }
   }
 
-  async function commissionScript(input: ScriptCommissionRequest) {
-    setPendingAction(`commission-${input.episodeId}`);
+  async function startEpisodeProduction(episodeId: string) {
+    setPendingAction(`start-production-${episodeId}`);
     setErrorMessage("");
     try {
-      const { error } = await supabase.rpc("commission_script", {
-        p_core_content: input.coreContent,
-        p_creative_direction: input.creativeDirection,
-        p_episode_id: input.episodeId,
-      });
+      const { error } = await supabase.rpc("start_episode_production", { p_episode_id: episodeId });
       if (error) throw error;
-      setMessage("脚本委托已冻结，正在等待 Worker 生成脚本。");
+      setMessage("材料准备已确认；Worker 将从下一轮开始制作。");
       await refreshWorkspace();
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "无法提交脚本委托。");
-      throw error;
+      setErrorMessage(error instanceof Error ? error.message : "无法开始生产单制作。");
     } finally {
       setPendingAction("");
     }
@@ -1078,38 +1167,24 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
     }
   }
 
-  async function createLocalEpisodeDirectory(episodeId: string) {
-    setPendingAction(`directory-${episodeId}`);
-    setErrorMessage("");
-    try {
-      const { data, error } = await supabase.auth.getSession();
-      if (error) throw error;
-      if (!data.session) throw new Error("需要 Owner 登录会话。");
-      const response = await fetch(`/_local-episode-directory?${new URLSearchParams({ episode: episodeId }).toString()}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${data.session.access_token}` },
-      });
-      if (!response.ok) throw new Error((await response.text()).trim() || "无法创建本地 Episode 目录。");
-      setMessage("本地 Episode 目录已准备就绪。");
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "无法创建本地 Episode 目录。");
-    } finally {
-      setPendingAction("");
-    }
+  async function requestLocalEpisodeDirectory(episodeId: string, action: "create" | "open") {
+    const { data, error } = await supabase.auth.getSession();
+    if (error) throw error;
+    if (!data.session) throw new Error("需要 Owner 登录会话。");
+    const endpoint = action === "open" ? "/_open-local-episode-directory" : "/_local-episode-directory";
+    const fallbackMessage = action === "open" ? "无法打开本地 Episode 目录。" : "无法创建本地 Episode 目录。";
+    const response = await fetch(`${endpoint}?${new URLSearchParams({ episode: episodeId }).toString()}`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${data.session.access_token}` },
+    });
+    if (!response.ok) throw new Error((await response.text()).trim() || fallbackMessage);
   }
 
   async function openLocalEpisodeDirectory(episodeId: string) {
     setPendingAction(`directory-open-${episodeId}`);
     setErrorMessage("");
     try {
-      const { data, error } = await supabase.auth.getSession();
-      if (error) throw error;
-      if (!data.session) throw new Error("需要 Owner 登录会话。");
-      const response = await fetch(`/_open-local-episode-directory?${new URLSearchParams({ episode: episodeId }).toString()}`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${data.session.access_token}` },
-      });
-      if (!response.ok) throw new Error((await response.text()).trim() || "无法打开本地 Episode 目录。");
+      await requestLocalEpisodeDirectory(episodeId, "open");
       setMessage("已打开本地 Episode 输入目录。");
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "无法打开本地 Episode 目录。");
@@ -1284,7 +1359,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
           <div className="mobile-header-actions"><SystemStatusPanel isRefreshing={isSystemStatusLoading} onRefresh={refreshSystemStatus} report={systemStatus} tasks={workspace.tasks} /><OwnerMenu onOpenSettings={() => setShowPasswordForm(true)} onSignOut={() => void supabase.auth.signOut()} /></div>
         </header>
 
-        {message || errorMessage ? <div className="floating-notices" aria-live="polite">{message ? <div className="notice-message" role="status">{message}<button aria-label="关闭通知" onClick={() => setMessage("")} type="button">×</button></div> : null}{errorMessage ? <div className="error-message" role="alert">{errorMessage}</div> : null}</div> : null}
+        {message || errorMessage ? <div className="floating-notices" aria-live="polite">{message ? <div className="notice-message" role="status">{message}<button aria-label="关闭通知" onClick={() => setMessage("")} type="button">×</button></div> : null}{errorMessage ? <div className="error-message" role="alert">{errorMessage}<button aria-label="关闭错误通知" onClick={() => setErrorMessage("")} type="button">×</button></div> : null}</div> : null}
 
         {activeNavigation === "accounts" ? (
           <AccountWorkspace
@@ -1295,11 +1370,13 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             isPending={pendingAction}
             onActivate={activateBlueprint}
             onCreateBlueprint={createBlueprint}
+            onCreatePromptVersion={createPromptVersion}
             onCreateSeries={createSeries}
             onCreateSeriesVersion={createSeriesVersion}
             onDeactivateBlueprint={deactivateBlueprint}
             onRenameAccount={renameAccount}
             onSelectAccount={setSelectedAccountId}
+            promptVersions={workspace.promptVersions.filter((version) => version.account_id === selectedAccount?.id)}
             series={workspace.series.filter((candidate) => candidate.account_id === selectedAccount?.id)}
             seriesVersions={workspace.seriesVersions.filter((version) => version.account_id === selectedAccount?.id)}
           />
@@ -1389,21 +1466,19 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             preRenderReviewMemberDecisions={workspace.preRenderReviewMemberDecisions}
             blueprint={blueprintsById.get(selectedEpisode.blueprint_version_id) ?? null}
             episode={selectedEpisode}
-            isDirectoryPending={pendingAction === `directory-${selectedEpisode.id}`}
             isDirectoryOpenPending={pendingAction === `directory-open-${selectedEpisode.id}`}
             isMaterialPending={pendingAction === `material-${selectedEpisode.id}`}
-            isScriptCommissionPending={pendingAction === `commission-${selectedEpisode.id}`}
+            isStartProductionPending={pendingAction === `start-production-${selectedEpisode.id}`}
             isRefreshPending={pendingAction === "workspace-refresh"}
             isTransitionPending={pendingAction.startsWith(`transition-${selectedEpisode.id}-`) || pendingAction.startsWith("review-render-revision-")}
-            onCreateLocalDirectory={createLocalEpisodeDirectory}
+            onOpenBlueprint={() => openAccountBlueprint(selectedEpisode.account_id)}
             onOpenLocalDirectory={openLocalEpisodeDirectory}
-            onCommissionScript={commissionScript}
             onImportMaterial={importProductionMaterial}
+            onStartProduction={startEpisodeProduction}
             onRequestReviewRenderRevision={requestReviewRenderRevision}
             onRefresh={refreshEpisodeStatus}
             onTransition={transitionEpisode}
             ownerId={session.user.id}
-            materialRevisions={workspace.materialRevisions}
             reviewPackages={workspace.reviewPackages}
             reviewAnnotations={workspace.reviewAnnotations}
             isStoryboardAnnotationPending={pendingAction.startsWith("storyboard-annotation-")}
@@ -1411,7 +1486,6 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             onCreateAudioTrackAnnotation={createAudioTrackAnnotation}
             onReviewPreRenderMember={reviewPreRenderMember}
             tasks={workspace.tasks}
-            taskRuns={workspace.taskRuns}
             transitions={workspace.transitions}
           />
       </EpisodeDetailDrawer> : null}
@@ -1507,7 +1581,7 @@ function BootstrapScreen({ errorMessage, isPending, onSubmit }: { errorMessage: 
 function LoadingScreen() { return <main className="access-shell"><div className="loading-mark">正在连接受控平台…</div></main>; }
 function ErrorScreen({ errorMessage, onRetry }: { errorMessage: string; onRetry: () => Promise<void> }) { return <main className="access-shell"><section className="access-card"><h1>无法读取控制数据</h1><p className="form-error">{errorMessage}</p><button className="button button-primary" onClick={() => void onRetry()} type="button">重试</button></section></main>; }
 
-export function AccountWorkspace({ account, accounts, blueprints, isPending, onActivate, onArchiveBlueprint = async () => {}, onCreateBlueprint, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeactivateBlueprint = async () => {}, onRenameAccount = async () => {}, onSelectAccount, series = [], seriesVersions = [] }: { account: Account | null; accounts: Account[]; blueprints: Blueprint[]; isPending: string; onActivate: (id: string) => Promise<void>; onArchiveBlueprint?: (id: string, archived: boolean) => Promise<void>; onCreateBlueprint: (policy: Json) => Promise<Blueprint | null>; onCreateSeries?: (input: { name: string; rules: Json }) => Promise<void>; onCreateSeriesVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>; onDeactivateBlueprint?: (id: string) => Promise<void>; onRenameAccount?: (id: string, name: string) => Promise<boolean | void>; onSelectAccount: (id: string) => void; series?: Series[]; seriesVersions?: SeriesVersion[] }) {
+export function AccountWorkspace({ account, accounts, blueprints, isPending, onActivate, onArchiveBlueprint = async () => {}, onCreateBlueprint, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeactivateBlueprint = async () => {}, onRenameAccount = async () => {}, onSelectAccount, promptVersions = [], series = [], seriesVersions = [] }: { account: Account | null; accounts: Account[]; blueprints: Blueprint[]; isPending: string; onActivate: (id: string) => Promise<void>; onArchiveBlueprint?: (id: string, archived: boolean) => Promise<void>; onCreateBlueprint: (policy: Json) => Promise<Blueprint | null>; onCreatePromptVersion?: (input: { capability: PromptVersion["capability"]; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onCreateSeries?: (input: { name: string; rules: Json }) => Promise<void>; onCreateSeriesVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>; onDeactivateBlueprint?: (id: string) => Promise<void>; onRenameAccount?: (id: string, name: string) => Promise<boolean | void>; onSelectAccount: (id: string) => void; promptVersions?: PromptVersion[]; series?: Series[]; seriesVersions?: SeriesVersion[] }) {
   const [activeSection, setActiveSection] = useState<"blueprints" | "series">("blueprints");
   const [isEditing, setIsEditing] = useState(false);
   const [isAccountRenameOpen, setIsAccountRenameOpen] = useState(false);
@@ -1559,7 +1633,7 @@ export function AccountWorkspace({ account, accounts, blueprints, isPending, onA
       </section>
       <section className="blueprint-editor">
         <header className="blueprint-editor-heading"><div><h2>蓝图 v{selectedBlueprint.version}</h2><p>{selectedStatus === "当前生效" ? "当前生效版本；仅影响之后新建的生产单。" : selectedStatus === "已归档" ? "已归档版本；保留历史记录，不能直接用于新建生产单。" : "待激活版本；查看确认后可直接启用。"}</p></div><div className="blueprint-editor-heading-actions">{!isEditing && !selectedBlueprint.archived_at ? <button className="button button-secondary button-small" onClick={() => setIsEditing(true)} type="button">以此版本编辑</button> : null}{isSelectedCurrent ? <button aria-label="停用当前版本" className="button button-danger-soft button-small" disabled={isPending === `deactivate-${selectedBlueprint.id}`} onClick={() => void onDeactivateBlueprint(selectedBlueprint.id)} title="停用后该版本不再用于新建生产单" type="button">{isPending === `deactivate-${selectedBlueprint.id}` ? "停用中…" : "停用当前版本"}</button> : null}</div></header>
-        {isEditing ? <BlueprintConfigurationForm initialAssetRoot={blueprintAssetRoot(selectedBlueprint.policy)} initialPolicy={selectedBlueprint.policy} isPending={isPending === "blueprint"} onCancel={() => setIsEditing(false)} onSave={async (policy, activate) => { const createdBlueprint = await onCreateBlueprint(policy); if (!createdBlueprint) return; setSelectedBlueprintId(createdBlueprint.id); setIsEditing(false); if (activate) await onActivate(createdBlueprint.id); }} /> : <><section className="blueprint-view"><h3>资产目录</h3><code>{policyAssetRoot(selectedBlueprint.policy)}</code><p>路径由运行 Worker 的本机验证，浏览器不会读取该目录。</p></section><section className="blueprint-view"><h3>蓝图规则摘要</h3><dl className="configuration-summary blueprint-summary-grid"><div className="blueprint-summary-wide"><dt>账号定位</dt><dd>{policyPositioning(selectedBlueprint.policy)}</dd></div><div><dt>审批关卡</dt><dd><span className="summary-chip-list">{Array.isArray((selectedBlueprint.policy as Record<string, unknown>).approval_gates) ? ((selectedBlueprint.policy as Record<string, unknown>).approval_gates as unknown[]).map((gate) => <span className="summary-chip" key={String(gate)}>{String(gate)}</span>) : <span className="summary-empty">未配置</span>}</span></dd></div><div><dt>允许工具</dt><dd><span className="summary-chip-list">{Array.isArray((selectedBlueprint.policy as Record<string, unknown>).allowed_tools) ? ((selectedBlueprint.policy as Record<string, unknown>).allowed_tools as unknown[]).map((tool) => <span className="summary-chip" key={String(tool)}>{String(tool)}</span>) : <span className="summary-empty">未配置</span>}</span></dd></div></dl><details className="advanced-configuration"><summary>查看原始规则</summary><pre>{formatPolicy(selectedBlueprint.policy)}</pre></details></section></>}
+        {isEditing ? <BlueprintConfigurationForm initialAssetRoot={blueprintAssetRoot(selectedBlueprint.policy)} initialPolicy={selectedBlueprint.policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} onCancel={() => setIsEditing(false)} onCreatePromptVersion={onCreatePromptVersion} onSave={async (policy, activate) => { const createdBlueprint = await onCreateBlueprint(policy); if (!createdBlueprint) return; setSelectedBlueprintId(createdBlueprint.id); setIsEditing(false); if (activate) await onActivate(createdBlueprint.id); }} promptVersions={promptVersions} /> : <><section className="blueprint-view"><h3>资产目录</h3><code>{policyAssetRoot(selectedBlueprint.policy)}</code><p>路径由运行 Worker 的本机验证，浏览器不会读取该目录。</p></section><section className="blueprint-view"><h3>蓝图规则摘要</h3><dl className="configuration-summary blueprint-summary-grid"><div className="blueprint-summary-wide"><dt>账号定位</dt><dd>{policyPositioning(selectedBlueprint.policy)}</dd></div><div><dt>审批关卡</dt><dd><span className="summary-chip-list">{Array.isArray((selectedBlueprint.policy as Record<string, unknown>).approval_gates) ? ((selectedBlueprint.policy as Record<string, unknown>).approval_gates as unknown[]).map((gate) => <span className="summary-chip" key={String(gate)}>{String(gate)}</span>) : <span className="summary-empty">未配置</span>}</span></dd></div><div><dt>允许工具</dt><dd><span className="summary-chip-list">{Array.isArray((selectedBlueprint.policy as Record<string, unknown>).allowed_tools) ? ((selectedBlueprint.policy as Record<string, unknown>).allowed_tools as unknown[]).map((tool) => <span className="summary-chip" key={String(tool)}>{String(tool)}</span>) : <span className="summary-empty">未配置</span>}</span></dd></div></dl><details className="advanced-configuration"><summary>查看原始规则</summary><pre>{formatPolicy(selectedBlueprint.policy)}</pre></details></section></>}
         <div className="blueprint-editor-actions">
           {selectedBlueprint.archived_at ? <button className="button button-secondary" disabled={isPending === `unarchive-${selectedBlueprint.id}`} onClick={() => void onArchiveBlueprint(selectedBlueprint.id, false)} type="button">{isPending === `unarchive-${selectedBlueprint.id}` ? "处理中…" : "取消归档"}</button> : !isSelectedCurrent ? <button className="button button-primary" disabled={isPending === `activate-${selectedBlueprint.id}`} onClick={() => void onActivate(selectedBlueprint.id)} type="button">{isPending === `activate-${selectedBlueprint.id}` ? "激活中…" : "激活此版本"}</button> : null}
           {!selectedBlueprint.is_active && !selectedBlueprint.archived_at ? <button className="button button-secondary" disabled={isPending === `archive-${selectedBlueprint.id}`} onClick={() => void onArchiveBlueprint(selectedBlueprint.id, true)} type="button">{isPending === `archive-${selectedBlueprint.id}` ? "归档中…" : "归档此版本"}</button> : null}
@@ -1663,11 +1737,23 @@ export function PublicationConfirmationForm({ episode, isPending, onConfirm, own
   return <form className="publication-confirmation" onSubmit={submit}><label><input checked={acknowledged} onChange={(event) => updateDraft({ acknowledged: event.target.checked, reason })} type="checkbox" />我已在目标平台手工发布，并核对发布包内容。</label><label>确认理由<input aria-label="发布确认理由" onChange={(event) => updateDraft({ acknowledged, reason: event.target.value })} placeholder="例如：已在 TikTok Studio 发布并复核" required value={reason} /></label>{draft ? <OperationDraftNotice isRestored={isRestoredDraft} onClear={clearDraft} /> : null}<button className="button button-primary" disabled={isPending} type="submit">{isPending ? "确认中…" : "确认已发布"}</button>{formError ? <p className="form-error">{formError}</p> : null}</form>;
 }
 
-export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, blueprint, episode, isDirectoryPending, isDirectoryOpenPending = false, isMaterialPending, isRefreshPending = false, isScriptCommissionPending, isStoryboardAnnotationPending, isTransitionPending, materialRevisions, onCreateAudioTrackAnnotation, onCreateLocalDirectory, onOpenLocalDirectory = async () => {}, onCommissionScript, onCreateStoryboardAnnotation, onImportMaterial, onRefresh = async () => {}, onRequestReviewRenderRevision, onReviewPreRenderMember = async () => {}, onTransition, ownerId = "local-owner", preRenderReviewMemberDecisions = [], preRenderReviewMembers = [], reviewAnnotations, reviewPackages, taskRuns = [], tasks, transitions }: { artifacts: Artifact[]; audioTrackAnnotations: AudioTrackAnnotation[]; audioTracks: AudioTrack[]; blueprint: Blueprint | null; episode: Episode; isDirectoryPending: boolean; isDirectoryOpenPending?: boolean; isMaterialPending: boolean; isRefreshPending?: boolean; isScriptCommissionPending: boolean; isStoryboardAnnotationPending: boolean; isTransitionPending: boolean; materialRevisions: MaterialRevision[]; onCreateAudioTrackAnnotation: (input: AudioTrackAnnotationRequest) => Promise<void>; onCreateLocalDirectory: (episodeId: string) => Promise<void>; onOpenLocalDirectory?: (episodeId: string) => Promise<void>; onCommissionScript: (input: ScriptCommissionRequest) => Promise<void>; onCreateStoryboardAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onImportMaterial: (input: MaterialImportRequest) => Promise<void>; onRefresh?: () => Promise<void>; onRequestReviewRenderRevision: (input: ReviewRenderRevisionRequest) => Promise<boolean>; onReviewPreRenderMember?: (input: PreRenderMemberReviewRequest) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; ownerId?: string; preRenderReviewMemberDecisions?: PreRenderReviewMemberDecision[]; preRenderReviewMembers?: PreRenderReviewMember[]; reviewAnnotations: ReviewAnnotation[]; reviewPackages: ReviewPackage[]; taskRuns?: TaskRun[]; tasks: Task[]; transitions: Transition[] }) {
+type UtilityPanelKind = "worker" | "artifacts" | "timeline";
+
+function EpisodeUtilityPopover({ artifacts, history, kind, onClose, tasks, workerStatus }: { artifacts: Artifact[]; history: Transition[]; kind: UtilityPanelKind; onClose: () => void; tasks: Task[]; workerStatus: EpisodeWorkerStatus }) {
+  const completedTasks = tasks.filter((task) => task.status === "completed").length;
+  const timeline = history.slice().sort((left, right) => right.created_at.localeCompare(left.created_at));
+  const heading = kind === "worker" ? "Worker 状态" : kind === "artifacts" ? "产物索引" : "审计时间线";
+
+  return <div aria-label={heading} className="episode-utility-popover" role="dialog"><header><strong>{heading}</strong><button aria-label={`关闭${heading}`} className="icon-button" onClick={onClose} type="button"><X className="icon" /></button></header>{kind === "worker" ? <div className={`episode-utility-status episode-utility-status-${workerStatus.tone}`}><strong>{workerStatus.label}</strong><p>{workerStatus.detail}</p><span>{tasks.length ? `${completedTasks} / ${tasks.length} 个任务已完成` : "尚无任务记录"}</span></div> : kind === "artifacts" ? <div className="episode-utility-artifacts">{artifacts.length ? artifacts.map((artifact) => <Artifact complete key={artifact.id} label={artifact.artifact_type} name={artifact.relative_path} />) : <div className="episode-utility-summary"><strong>尚无产物</strong><p>Worker 尚未生成可查看的产物。</p></div>}</div> : timeline.length ? <ol className="timeline">{timeline.map((transition) => <li key={transition.id}><i className={`timeline-dot ${stageTone(transition.to_stage)}`} /><div><strong>{stageLabels[transition.to_stage]}</strong><span>{userFacingTransitionReason(transition.reason)}</span></div><time>{formatDate(transition.created_at)}</time></li>)}</ol> : <div className="episode-utility-summary"><strong>暂无状态变化</strong><p>生产单创建与状态变化会显示在这里。</p></div>}</div>;
+}
+
+export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, blueprint, episode, isDirectoryOpenPending = false, isMaterialPending, isRefreshPending = false, isStartProductionPending = false, isStoryboardAnnotationPending, isTransitionPending, onCreateAudioTrackAnnotation, onOpenBlueprint, onOpenLocalDirectory = async () => {}, onCreateStoryboardAnnotation, onImportMaterial, onRefresh = async () => {}, onRequestReviewRenderRevision, onReviewPreRenderMember = async () => {}, onStartProduction = async () => {}, onTransition, ownerId = "local-owner", preRenderReviewMemberDecisions = [], preRenderReviewMembers = [], reviewAnnotations, reviewPackages, tasks, transitions }: { artifacts: Artifact[]; audioTrackAnnotations: AudioTrackAnnotation[]; audioTracks: AudioTrack[]; blueprint: Blueprint | null; episode: Episode; isDirectoryOpenPending?: boolean; isMaterialPending: boolean; isRefreshPending?: boolean; isStartProductionPending?: boolean; isStoryboardAnnotationPending: boolean; isTransitionPending: boolean; onCreateAudioTrackAnnotation: (input: AudioTrackAnnotationRequest) => Promise<void>; onOpenBlueprint?: () => void; onOpenLocalDirectory?: (episodeId: string) => Promise<void>; onCreateStoryboardAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onImportMaterial: (input: MaterialImportRequest) => Promise<void>; onRefresh?: () => Promise<void>; onRequestReviewRenderRevision: (input: ReviewRenderRevisionRequest) => Promise<boolean>; onReviewPreRenderMember?: (input: PreRenderMemberReviewRequest) => Promise<void>; onStartProduction?: (episodeId: string) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; ownerId?: string; preRenderReviewMemberDecisions?: PreRenderReviewMemberDecision[]; preRenderReviewMembers?: PreRenderReviewMember[]; reviewAnnotations: ReviewAnnotation[]; reviewPackages: ReviewPackage[]; tasks: Task[]; transitions: Transition[] }) {
   const episodeArtifacts = artifacts.filter((artifact) => artifact.episode_id === episode.id);
-  const episodeMaterials = materialRevisions.filter((revision) => revision.episode_id === episode.id);
   const history = transitions.filter((transition) => transition.episode_id === episode.id);
   const blockers = workerBlockers(tasks, episode.id);
+  const blockerGroups = groupWorkerBlockers(blockers);
+  const episodeTasks = tasks.filter((task) => task.episode_id === episode.id);
+  const workerStatus = episodeWorkerStatus(episode, episodeTasks);
   const reviewAction = reviewActionFor(episode.stage);
   const reviewPackage = currentReviewPackage(reviewPackages, episode);
   const reviewArtifact = reviewPackage ? episodeArtifacts.find((candidate) => candidate.id === reviewPackage.artifact_id) : null;
@@ -1684,6 +1770,7 @@ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, b
   const assetRoot = blueprint ? blueprintAssetRoot(blueprint.policy).replace(/[\\/]+$/, "") : "";
   const localInputPath = assetRoot ? `${assetRoot}/episodes/${episode.id}/input` : `episodes/${episode.id}/input`;
   const [directoryMessage, setDirectoryMessage] = useState("");
+  const [openUtilityPanel, setOpenUtilityPanel] = useState<UtilityPanelKind | null>(null);
 
   async function copyLocalInputPath() {
     try {
@@ -1694,23 +1781,22 @@ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, b
     }
   }
 
+  const waitingForMainScript = episode.stage === "waiting_input" && !episode.main_script_revision_id;
+  const inputReadyToStart = episode.stage === "waiting_input" && Boolean(episode.main_script_revision_id);
+  const nextStep = inputReadyToStart ? "确认材料并开始制作" : nextStepForEpisode(episode.stage);
+
   return <>
-    <header className="review-heading"><div><h2>{episode.title || "未命名生产单"}</h2><span>{episode.id.slice(0, 8)}</span></div><button className="button button-secondary" disabled={isRefreshPending} onClick={() => void onRefresh()} type="button">{isRefreshPending ? "刷新中…" : "刷新状态"}</button></header>
+    <header className="review-heading"><div className="review-heading-copy"><h2>{episode.title || "未命名生产单"}</h2><span>{episode.id.slice(0, 8)}</span></div></header>
+    <div aria-label="生产单操作" className="episode-detail-toolbar"><div className="episode-toolbar-actions"><button aria-label="刷新生产单状态" className="icon-button episode-toolbar-button" disabled={isRefreshPending} onClick={() => void onRefresh()} title="刷新状态" type="button"><RefreshCw className="icon" /></button><button aria-label="打开本地输入目录" className="icon-button episode-toolbar-button" disabled={isDirectoryOpenPending} onClick={() => void onOpenLocalDirectory(episode.id)} title={`打开本地输入目录：${localInputPath}`} type="button"><FolderOpen className="icon" /></button><button aria-label="复制本地输入目录路径" className="icon-button episode-toolbar-button" onClick={() => void copyLocalInputPath()} title={`复制本地输入目录路径：${localInputPath}`} type="button"><Copy className="icon" /></button><button aria-expanded={openUtilityPanel === "worker"} aria-haspopup="dialog" aria-label={`Worker 状态：${workerStatus.label}`} className="icon-button episode-toolbar-button" onClick={() => setOpenUtilityPanel((current) => current === "worker" ? null : "worker")} title={`Worker 状态：${workerStatus.label} · ${workerStatus.detail}`} type="button"><Activity className="icon" /></button><button aria-expanded={openUtilityPanel === "artifacts"} aria-haspopup="dialog" aria-label="查看产物索引" className="icon-button episode-toolbar-button" onClick={() => setOpenUtilityPanel((current) => current === "artifacts" ? null : "artifacts")} title="查看产物索引" type="button"><ClipboardList className="icon" /></button><button aria-expanded={openUtilityPanel === "timeline"} aria-haspopup="dialog" aria-label="查看审计时间线" className="icon-button episode-toolbar-button" onClick={() => setOpenUtilityPanel((current) => current === "timeline" ? null : "timeline")} title="查看审计时间线" type="button"><History className="icon" /></button></div>{directoryMessage ? <span className="episode-toolbar-status" role="status">{directoryMessage}</span> : null}{openUtilityPanel ? <EpisodeUtilityPopover artifacts={episodeArtifacts} history={history} kind={openUtilityPanel} onClose={() => setOpenUtilityPanel(null)} tasks={episodeTasks} workerStatus={workerStatus} /> : null}</div>
     <p className="review-meta">蓝图 v{blueprint?.version ?? "—"} · 创建于 {formatDate(episode.created_at)}</p>
-    <section className="episode-next-step-card"><div><span>当前阶段</span><strong className={`stage stage-${stageTone(episode.stage)}`}>{stageLabels[episode.stage]}</strong></div><div><span>下一步</span><p>{nextStepForEpisode(episode.stage)}</p></div></section>
-    <details className="review-section detail-card-collapsible episode-local-directory"><summary><h3>准备本地输入目录</h3></summary><div className="detail-card-body"><p className="muted-copy">先创建目录，再点击“打开输入目录”把脚本、图片或其他材料放进去。系统会自动绑定当前生产单，你不需要记住或填写 Episode ID。</p><p className="episode-local-directory-path"><span>实际输入目录</span><code>{localInputPath}</code></p><div className="episode-local-directory-actions"><button className="button button-primary" disabled={isDirectoryPending} onClick={() => void onCreateLocalDirectory(episode.id)} type="button">{isDirectoryPending ? "创建中…" : "创建本地输入目录"}</button><button className="button button-secondary" disabled={isDirectoryOpenPending} onClick={() => void onOpenLocalDirectory(episode.id)} type="button">{isDirectoryOpenPending ? "打开中…" : "打开输入目录"}</button><button className="button button-secondary" onClick={() => void copyLocalInputPath()} type="button">复制目录路径</button></div>{directoryMessage ? <p className="muted-copy">{directoryMessage}</p> : null}</div></details>
-    {episode.stage === "waiting_input" && !episode.main_script_revision_id ? <details className="review-section detail-card-collapsible"><summary><h3>委托生成脚本</h3></summary><div className="detail-card-body"><ScriptCommissionForm episodeId={episode.id} isPending={isScriptCommissionPending} onCommission={onCommissionScript} /></div></details> : null}
-    <details className="review-section detail-card-collapsible"><summary><h3>导入生产材料</h3></summary><div className="detail-card-body"><MaterialImportForm episodeId={episode.id} isPending={isMaterialPending} onImport={onImportMaterial} /></div></details>
-    <details className="review-section detail-card-collapsible"><summary><h3>生产材料修订</h3></summary><div className="detail-card-body">{episodeMaterials.length ? episodeMaterials.map((revision) => <div className="material-revision" key={revision.id}><strong>{revision.is_main_script ? "主脚本" : revision.material_type} · v{revision.revision_number}</strong><span>{revision.source_kind} · {revision.source_path}</span><code>{revision.sha256.slice(0, 12)}… · {revision.storage_path}</code></div>) : <p className="muted-copy">还没有导入材料修订。</p>}</div></details>
+    <section className="episode-next-step-card"><div><span>当前阶段</span><strong className={`stage stage-${stageTone(episode.stage)}`}>{stageLabels[episode.stage]}</strong></div><div><span>下一步</span><p>{nextStep}</p></div><div className={`episode-worker-status episode-worker-status-${workerStatus.tone}`}><span>Worker 状态</span><strong>{workerStatus.label}</strong><p>{workerStatus.detail}</p></div></section>
+    <details className="review-section detail-card-collapsible" open={waitingForMainScript || inputReadyToStart}><summary><h3>准备生产材料</h3></summary><div className="detail-card-body">{waitingForMainScript ? <p className="material-import-subtitle">一次选择本单需要的主脚本、图片、音频、视频和参考材料；每个文件会单独记录用途。确认材料后，再点击“材料准备完成，开始制作”。</p> : inputReadyToStart ? <p className="material-import-subtitle">主脚本已确认。你可以继续添加补充材料；所有材料准备好后，点击下方按钮，Worker 才会开始制作。</p> : null}<MaterialImportForm allowMainScript={!episode.main_script_revision_id} defaultMainScript={waitingForMainScript} episodeId={episode.id} isPending={isMaterialPending} onImport={onImportMaterial} />{inputReadyToStart ? <div className="production-start-gate"><div><strong>材料已准备到可开始状态</strong><p>确认后将推进生产单并创建后续 Worker 任务。</p></div><button className="button button-primary" disabled={isStartProductionPending} onClick={() => void onStartProduction(episode.id)} type="button">{isStartProductionPending ? "开始中…" : "材料准备完成，开始制作"}</button></div> : null}</div></details>
     {reviewPackage?.stage !== "visual_review" && reviewPackage?.stage !== "storyboard_review" ? <details className="review-section detail-card-collapsible"><summary><h3>产物预览</h3></summary><div className="detail-card-body"><ArtifactPreview artifacts={episodeArtifacts} /></div></details> : null}
     {reviewPackage?.stage === "production_ready" ? <PreRenderReviewPackage artifacts={episodeArtifacts} decisions={preRenderMemberDecisions} isTransitionPending={isTransitionPending} members={preRenderMembers} onReviewMember={onReviewPreRenderMember} onTransition={onTransition} reviewPackage={reviewPackage} /> : reviewPackage && reviewArtifact ? reviewPackage.stage === "qc_review" && isHyperframesReviewRender(reviewPackage.context_snapshot) ? <HyperframesReviewRenderPackage artifact={reviewArtifact} artifacts={reviewArtifacts} reviewPackage={reviewPackage} /> : reviewPackage.stage === "visual_review" ? <VisualReviewPackage artifact={reviewArtifact} artifacts={reviewArtifacts} reviewPackage={reviewPackage} /> : reviewPackage.stage === "storyboard_review" ? <StoryboardReviewPackage annotations={storyboardAnnotations} artifact={reviewArtifact} isAnnotationPending={isStoryboardAnnotationPending} onCreateAnnotation={onCreateStoryboardAnnotation} onValidationChange={onStoryboardValidationChange} reviewPackage={reviewPackage} /> : <TextReviewPackage artifact={reviewArtifact} reviewPackage={reviewPackage} /> : null}
-    <TaskProgressPanel taskRuns={taskRuns.filter((run) => tasks.some((task) => task.id === run.task_id && task.episode_id === episode.id))} tasks={tasks.filter((task) => task.episode_id === episode.id)} />
-    <ArollTaskEvidencePanel tasks={tasks.filter((task) => task.episode_id === episode.id)} />
-    <AudioTrackPanel annotations={audioTrackAnnotations.filter((annotation) => audioTracks.some((track) => track.episode_id === episode.id && track.id === annotation.audio_track_id))} onCreateAnnotation={onCreateAudioTrackAnnotation} tasks={tasks.filter((task) => task.episode_id === episode.id)} tracks={audioTracks.filter((track) => track.episode_id === episode.id)} />
-    <details className="review-section detail-card-collapsible"><summary><h3>产物索引</h3></summary><div className="detail-card-body">{episodeArtifacts.length ? episodeArtifacts.map((artifact) => <Artifact key={artifact.id} label={artifact.artifact_type} name={artifact.relative_path} complete />) : <p className="muted-copy">尚无 Worker 生成的产物。</p>}</div></details>
-    {blockers.length ? <details className="review-section worker-blockers detail-card-collapsible"><summary><h3>Worker 阻塞项（{blockers.length}）</h3></summary><div className="detail-card-body">{blockers.map((blocker) => <WorkerBlockerCard blocker={blocker} context={{ assetRoot: blueprint ? blueprintAssetRoot(blueprint.policy) : undefined, episodeId: episode.id }} key={`${blocker.taskId}-${blocker.code}-${blocker.detail}`} />)}</div></details> : null}
+    <ArollTaskEvidencePanel tasks={episodeTasks} />
+    <AudioTrackPanel annotations={audioTrackAnnotations.filter((annotation) => audioTracks.some((track) => track.episode_id === episode.id && track.id === annotation.audio_track_id))} onCreateAnnotation={onCreateAudioTrackAnnotation} tasks={episodeTasks} tracks={audioTracks.filter((track) => track.episode_id === episode.id)} />
+    {blockers.length ? <details className="review-section worker-blockers detail-card-collapsible"><summary><h3>Worker 阻塞项（{blockers.length}）</h3></summary><div className="detail-card-body">{blockerGroups.map(({ blocker, count }) => <WorkerBlockerCard affectedTaskCount={count} blocker={blocker} context={{ assetRoot: blueprint ? blueprintAssetRoot(blueprint.policy) : undefined, episodeId: episode.id, onOpenBlueprint }} key={`${blocker.code}-${blocker.detail}`} />)}</div></details> : null}
     {reviewAction && isStoryboardReviewValid ? <ReviewActions episode={episode} initialReviewRenderAdjustments={reviewRenderAdjustmentsFromContext(reviewPackage?.context_snapshot ?? {})} isPending={isTransitionPending} onRequestReviewRenderRevision={onRequestReviewRenderRevision} onTransition={onTransition} ownerId={ownerId} reviewAction={reviewAction} reviewPackageId={reviewPackage?.id ?? null} /> : null}
-    <details className="review-section detail-card-collapsible"><summary><h3>审计时间线</h3></summary><div className="detail-card-body">{history.length ? <ol className="timeline">{history.map((transition) => <li key={transition.id}><i className={`timeline-dot ${stageTone(transition.to_stage)}`} /><div><strong>{stageLabels[transition.to_stage]}</strong><span>{userFacingTransitionReason(transition.reason)}</span></div><time>{formatDate(transition.created_at)}</time></li>)}</ol> : <p className="muted-copy">生产单创建与后续状态变化将显示在此处。</p>}</div></details>
   </>;
 }
 
@@ -1819,73 +1905,140 @@ function ArollTaskEvidencePanel({ tasks }: { tasks: Task[] }) {
   if (!aRollTasks.length) return null;
   return <details className="review-section detail-card-collapsible"><summary><h3>A-roll 生成运行</h3></summary><div className="detail-card-body">{aRollTasks.map((task) => {
     const evidence = aRollTaskEvidence(task);
-    return <article className="worker-blocker" key={task.id}><strong>{evidence?.shotId ?? "A-roll 任务"} · {taskStatusLabels[task.status]}</strong>{evidence ? <dl><div><dt>执行器</dt><dd>{evidence.provider} · {evidence.model} · {evidence.promptVersion}</dd></div><div><dt>适配器</dt><dd>{evidence.adapter}</dd></div><div><dt>允许工具</dt><dd>{evidence.allowedTools.join("、")}</dd></div><div><dt>冻结输入哈希</dt><dd>{evidence.inputHashes.map((hash) => `${hash.slice(0, 12)}…`).join("、")}</dd></div></dl> : <p className="muted-copy">冻结执行器配置不可用；请查看下方 Worker 阻塞项。</p>}<dl><div><dt>运行尝试</dt><dd>{task.attempt} / {task.max_attempts}</dd></div><div><dt>实际成本</dt><dd>{task.actual_cost_cents ?? 0} 分</dd></div></dl>{task.last_result ? <p className="muted-copy">最新结果：{taskStatusLabels[task.status]}</p> : null}</article>;
+    const blocker = blockersFromResult(task.last_result)[0];
+    const guidance = blocker ? workerBlockerGuidance(blocker) : null;
+    return <article className={`worker-blocker ${task.status === "blocked" ? "a-roll-blocked-task" : ""}`} key={task.id}><strong>{evidence?.shotId ?? "A-roll 任务"} · {taskStatusLabels[task.status]}</strong>{task.status === "blocked" ? <div className="a-roll-blocker-copy"><strong>{guidance?.title ?? "A-roll 任务已阻塞"}</strong><p>{guidance?.summary ?? "A-roll 任务缺少可执行条件，请先处理下方阻塞项。"}</p><span>{guidance?.retryLabel ?? "处理阻塞项后重新创建任务"}。</span></div> : evidence ? <dl><div><dt>执行器</dt><dd>{evidence.provider} · {evidence.model} · {evidence.promptVersion}</dd></div><div><dt>适配器</dt><dd>{evidence.adapter}</dd></div><div><dt>允许工具</dt><dd>{evidence.allowedTools.join("、")}</dd></div><div><dt>冻结输入哈希</dt><dd>{evidence.inputHashes.map((hash) => `${hash.slice(0, 12)}…`).join("、")}</dd></div></dl> : <p className="muted-copy">执行证据尚未生成。</p>}<dl><div><dt>运行尝试</dt><dd>{task.attempt} / {task.max_attempts}</dd></div><div><dt>实际成本</dt><dd>{task.actual_cost_cents ?? 0} 分</dd></div></dl>{task.last_result ? <p className="muted-copy">最新结果：{taskStatusLabels[task.status]}</p> : null}</article>;
   })}</div></details>;
 }
 
-function ScriptCommissionForm({ episodeId, isPending, onCommission }: { episodeId: string; isPending: boolean; onCommission: (input: ScriptCommissionRequest) => Promise<void> }) {
-  const [creativeDirection, setCreativeDirection] = useState("");
-  const [coreContent, setCoreContent] = useState("");
-  const [formError, setFormError] = useState("");
-
-  async function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    try {
-      const direction = creativeDirection.trim();
-      const content = coreContent.trim();
-      if (!direction || !content) throw new Error("请填写创作方向和必须表达的核心内容。");
-      setFormError("");
-      await onCommission({ episodeId, creativeDirection: direction, coreContent: content });
-    } catch (error) {
-      setFormError(error instanceof Error ? error.message : "无法提交脚本委托。");
-    }
-  }
-
-  return <form className="script-commission" onSubmit={submit}><p className="muted-copy">提交后将冻结以下输入，脚本须经 Owner 审核通过才会进入分镜前准备。</p><label>创作方向<textarea aria-label="创作方向" onChange={(event) => setCreativeDirection(event.target.value)} rows={4} value={creativeDirection} /></label><label>必须表达的核心内容<textarea aria-label="必须表达的核心内容" onChange={(event) => setCoreContent(event.target.value)} rows={4} value={coreContent} /></label><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "提交中…" : "提交脚本委托"}</button>{formError ? <p className="form-error">{formError}</p> : null}</form>;
+interface MaterialImportDraft {
+  file: File;
+  id: string;
+  isMainScript: boolean;
+  materialPurpose: MaterialPurpose;
+  materialType: MaterialType;
 }
 
-function MaterialImportForm({ episodeId, isPending, onImport }: { episodeId: string; isPending: boolean; onImport: (input: MaterialImportRequest) => Promise<void> }) {
-  const [sourceKind, setSourceKind] = useState<MaterialImportRequest["sourceKind"]>("directory");
+const supportedMaterialAccept = ".md,.markdown,.txt,.jpg,.jpeg,.png,.webp,.gif,.avif,.mp3,.wav,.m4a,.aac,.flac,.ogg,.mp4,.mov,.webm,.m4v,.avi";
+const materialTypeLabels: Record<MaterialType, string> = { script: "脚本", reference: "参考材料", image: "图片", audio: "音频", video: "视频" };
+
+function MaterialImportForm({ allowMainScript = true, defaultMainScript = true, episodeId, isPending, onImport }: { allowMainScript?: boolean; defaultMainScript?: boolean; episodeId: string; isPending: boolean; onImport: (input: MaterialImportRequest) => Promise<void> }) {
+  const [sourceKind, setSourceKind] = useState<MaterialImportRequest["sourceKind"]>("file");
   const [sourcePath, setSourcePath] = useState("");
   const [pastedContent, setPastedContent] = useState("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [materialType, setMaterialType] = useState("script");
-  const [isMainScript, setIsMainScript] = useState(true);
+  const [selectedFiles, setSelectedFiles] = useState<MaterialImportDraft[]>([]);
+  const initialMaterialType: MaterialType = allowMainScript ? "script" : "reference";
+  const [materialType, setMaterialType] = useState<MaterialType>(initialMaterialType);
+  const [materialPurpose, setMaterialPurpose] = useState<MaterialPurpose>(defaultMaterialPurpose(initialMaterialType, allowMainScript));
+  const [isMainScript, setIsMainScript] = useState(allowMainScript && defaultMainScript);
   const [confirmed, setConfirmed] = useState(false);
   const [formError, setFormError] = useState("");
+  const [fileInputKey, setFileInputKey] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const nextType: MaterialType = allowMainScript ? "script" : "reference";
+    setMaterialType(nextType);
+    setMaterialPurpose(defaultMaterialPurpose(nextType, allowMainScript));
+    setIsMainScript(allowMainScript && defaultMainScript);
+    setConfirmed(false);
+  }, [allowMainScript, defaultMainScript]);
+
+  function changeSourceKind(nextSourceKind: MaterialImportRequest["sourceKind"]) {
+    setSourceKind(nextSourceKind);
+    setSourcePath("");
+    setPastedContent("");
+    setSelectedFiles([]);
+    setFormError("");
+    setFileInputKey((current) => current + 1);
+  }
+
+  function changeMaterialType(nextMaterialType: MaterialType) {
+    setMaterialType(nextMaterialType);
+    setMaterialPurpose(defaultMaterialPurpose(nextMaterialType, allowMainScript));
+    setSourcePath("");
+    setPastedContent("");
+    setFormError("");
+    setIsMainScript(nextMaterialType === "script" && allowMainScript && isMainScript);
+    setFileInputKey((current) => current + 1);
+  }
+
+  function changeDraftType(id: string, nextMaterialType: MaterialType) {
+    setSelectedFiles((current) => current.map((draft) => {
+      if (draft.id !== id) return draft;
+      const options = materialPurposeOptions(nextMaterialType, allowMainScript);
+      const nextPurpose = options.some((option) => option.value === draft.materialPurpose) ? draft.materialPurpose : (options[0]?.value ?? "general_reference");
+      return { ...draft, isMainScript: nextMaterialType === "script" ? draft.isMainScript : false, materialPurpose: nextPurpose, materialType: nextMaterialType };
+    }));
+  }
+
+  function changeDraftPurpose(id: string, nextPurpose: MaterialPurpose) {
+    setSelectedFiles((current) => current.map((draft) => draft.id === id ? { ...draft, materialPurpose: nextPurpose } : draft));
+  }
+
+  function markDraftAsMainScript(id: string) {
+    setSelectedFiles((current) => current.map((draft) => ({ ...draft, isMainScript: draft.id === id && draft.materialType === "script", materialPurpose: draft.id === id && draft.materialType === "script" ? "main_script" : draft.materialPurpose })));
+    setConfirmed(false);
+  }
+
+  function selectFiles(files: File[]) {
+    const detectedTypes = files.map(materialTypeForFile);
+    if (!allowMainScript && detectedTypes.some((type) => type === "script")) {
+      setSelectedFiles([]);
+      setFormError("主脚本已确认，不能再次导入脚本；如需补充说明，请将文本作为参考材料导入。");
+      return;
+    }
+    const firstScriptIndex = detectedTypes.findIndex((type) => type === "script");
+    setSelectedFiles(files.map((file, index) => {
+      const type = detectedTypes[index];
+      const isMain = allowMainScript && defaultMainScript && type === "script" && index === firstScriptIndex;
+      return { file, id: `${file.name}-${file.lastModified}-${index}`, isMainScript: isMain, materialPurpose: isMain ? "main_script" : defaultMaterialPurpose(type, allowMainScript), materialType: type };
+    }));
+    setConfirmed(false);
+    setFormError("");
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
       setFormError("");
-      if (isMainScript && !confirmed) throw new Error("请明确确认这份材料是主脚本。");
-      let content: Uint8Array | undefined;
-      let resolvedPath = sourcePath.trim();
-      let mimeType = "application/octet-stream";
+      const mainScriptSelected = sourceKind === "file" ? selectedFiles.some((draft) => draft.isMainScript) : allowMainScript && isMainScript;
+      if (allowMainScript && sourceKind === "file" && selectedFiles.filter((draft) => draft.isMainScript).length !== 1) throw new Error("请在本批材料中指定且只指定一个主脚本。");
+      if (mainScriptSelected && !confirmed) throw new Error("请明确确认这份材料是主脚本。");
+
       if (sourceKind === "file") {
-        if (!selectedFile) throw new Error("请选择要导入的文件。");
-        resolvedPath = selectedFile.name;
-        content = new Uint8Array(await selectedFile.arrayBuffer());
-        mimeType = selectedFile.type || mimeType;
-      } else if (sourceKind === "paste") {
-        if (!pastedContent) throw new Error("请粘贴要导入的内容。");
-        resolvedPath = resolvedPath || "pasted-script.txt";
-        content = new TextEncoder().encode(pastedContent);
-        mimeType = "text/plain;charset=utf-8";
-      } else if (!resolvedPath) {
-        throw new Error("请填写项目输入目录内的相对文件路径。");
+        if (!selectedFiles.length) throw new Error("请选择要导入的材料文件，可一次选择多个文件。");
+        for (const draft of selectedFiles) {
+          await onImport({ content: new Uint8Array(await new Response(draft.file).arrayBuffer()), episodeId, isMainScript: draft.isMainScript, materialPurpose: draft.materialPurpose, materialType: draft.materialType, mimeType: draft.file.type || "application/octet-stream", sourceKind, sourcePath: draft.file.name });
+          setSelectedFiles((current) => current.filter((item) => item.id !== draft.id));
+        }
+      } else {
+        let content: Uint8Array | undefined;
+        let resolvedPath = sourcePath.trim();
+        let mimeType = "application/octet-stream";
+        if (sourceKind === "paste") {
+          if (!pastedContent) throw new Error("请粘贴要导入的内容。");
+          resolvedPath = resolvedPath || "pasted-material.txt";
+          content = new TextEncoder().encode(pastedContent);
+          mimeType = "text/plain;charset=utf-8";
+        } else if (!resolvedPath) {
+          throw new Error("请填写项目输入目录内的相对文件路径。");
+        }
+        await onImport({ content, episodeId, isMainScript: Boolean(mainScriptSelected), materialPurpose, materialType, mimeType, sourceKind, sourcePath: resolvedPath });
       }
-      await onImport({ content, episodeId, isMainScript, materialType, mimeType, sourceKind, sourcePath: resolvedPath });
       setConfirmed(false);
       setPastedContent("");
-      setSelectedFile(null);
+      setSelectedFiles([]);
       setSourcePath("");
+      setFileInputKey((current) => current + 1);
     } catch (error) {
       setFormError(error instanceof Error ? error.message : "无法导入生产材料。");
     }
   }
 
-  return <form className="material-import" onSubmit={submit}><label>来源<select aria-label="材料来源" onChange={(event) => setSourceKind(event.target.value as MaterialImportRequest["sourceKind"])} value={sourceKind}><option value="directory">项目输入目录</option><option value="file">文件选择</option><option value="paste">粘贴内容</option></select></label><label>材料类型<select aria-label="材料类型" onChange={(event) => { const nextType = event.target.value; setMaterialType(nextType); if (nextType !== "script") setIsMainScript(false); }} value={materialType}><option value="script">脚本</option><option value="reference">参考材料</option><option value="image">图片</option><option value="audio">音频</option><option value="video">视频</option></select></label>{sourceKind === "file" ? <label>选择文件<input aria-label="选择生产材料文件" onChange={(event) => setSelectedFile(event.target.files?.[0] ?? null)} type="file" /></label> : sourceKind === "paste" ? <><label>来源名称<input aria-label="粘贴内容来源名称" onChange={(event) => setSourcePath(event.target.value)} placeholder="pasted-script.txt" value={sourcePath} /></label><label>粘贴内容<textarea aria-label="粘贴的生产材料" onChange={(event) => setPastedContent(event.target.value)} rows={7} value={pastedContent} /></label></> : <label>输入目录内路径<input aria-label="输入目录文件路径" onChange={(event) => setSourcePath(event.target.value)} placeholder="script.md" value={sourcePath} /></label>}<label className="checkbox-label"><input checked={isMainScript} disabled={materialType !== "script"} onChange={(event) => setIsMainScript(event.target.checked)} type="checkbox" />将此修订设为主脚本</label>{isMainScript ? <label className="checkbox-label confirmation"><input checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} type="checkbox" />我已检查内容，明确确认这是本生产单的主脚本。</label> : null}<button className="button button-primary" disabled={isPending} type="submit">{isPending ? "导入中…" : "确认并固定修订"}</button>{formError ? <p className="form-error">{formError}</p> : null}</form>;
+  const typeOptions = (Object.keys(materialTypeLabels) as MaterialType[]).filter((type) => allowMainScript || type !== "script");
+  const mainScriptSelected = sourceKind === "file" ? selectedFiles.some((draft) => draft.isMainScript) : allowMainScript && isMainScript;
+  return <form className="material-import" onSubmit={(event) => void submit(event)}><label><span>来源</span><select aria-label="材料来源" onChange={(event) => changeSourceKind(event.target.value as MaterialImportRequest["sourceKind"])} value={sourceKind}><option value="file">文件选择</option><option value="directory">项目输入目录</option><option value="paste">粘贴内容</option></select></label>{sourceKind === "file" ? <label><span>选择材料 <HelpTip label="选择材料" >可以一次选择多个文件。脚本建议使用 .md 或 .txt；图片支持 .jpg、.jpeg、.png、.webp、.gif、.avif；音频支持 .mp3、.wav、.m4a、.aac、.flac、.ogg；视频支持 .mp4、.mov、.webm、.m4v、.avi。</HelpTip></span><div className="material-file-picker"><input accept={supportedMaterialAccept} aria-label="选择生产材料文件" className="material-file-input" key={`${sourceKind}-${fileInputKey}`} multiple onChange={(event) => selectFiles(Array.from(event.target.files ?? []))} ref={fileInputRef} type="file" /><button className="material-file-trigger" onClick={() => fileInputRef.current?.click()} type="button"><Upload className="icon" />选择材料</button><span className="material-file-name">{selectedFiles.length ? `已选择 ${selectedFiles.length} 个文件` : "未选择任何文件"}</span></div></label> : <label><span>材料类型 <HelpTip label="材料类型" >主脚本只能有一个；图片、音频和视频会分别保存，后续 Worker 会根据用途和任务依赖使用，不会自动合并成一个文件。</HelpTip></span><select aria-label="材料类型" onChange={(event) => changeMaterialType(event.target.value as MaterialType)} value={materialType}>{typeOptions.map((type) => <option key={type} value={type}>{materialTypeLabels[type]}</option>)}</select></label>}{sourceKind === "file" ? selectedFiles.length ? <div className="material-batch-list" aria-label="已选择的生产材料">{selectedFiles.map((draft) => { const draftTypeOptions = typeOptions.includes(draft.materialType) ? typeOptions : [draft.materialType, ...typeOptions]; const draftPurposeOptions = materialPurposeOptions(draft.materialType, allowMainScript || draft.isMainScript); return <article className="material-batch-item" key={draft.id}><div className="material-batch-file"><strong>{draft.file.name}</strong><span>{Math.max(1, Math.round(draft.file.size / 1024))} KB</span></div><div className="material-batch-controls"><label><span>类型</span><select aria-label={`材料类型 ${draft.file.name}`} onChange={(event) => changeDraftType(draft.id, event.target.value as MaterialType)} value={draft.materialType}>{draftTypeOptions.map((type) => <option key={type} value={type}>{materialTypeLabels[type]}</option>)}</select></label><label><span>用途</span><select aria-label={`材料用途 ${draft.file.name}`} onChange={(event) => changeDraftPurpose(draft.id, event.target.value as MaterialPurpose)} value={draft.materialPurpose}>{draftPurposeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label>{allowMainScript && draft.materialType === "script" ? <label className="checkbox-label material-main-script"><input checked={draft.isMainScript} onChange={() => markDraftAsMainScript(draft.id)} type="checkbox" />设为主脚本</label> : null}</div></article>; })}</div> : <p className="muted-copy">支持一次选择多个文件；每个文件会独立保存并按用途参与后续制作。</p> : sourceKind === "paste" ? <><label><span>用途</span><select aria-label="材料用途" onChange={(event) => setMaterialPurpose(event.target.value as MaterialPurpose)} value={materialPurpose}>{materialPurposeOptions(materialType, allowMainScript).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label><label><span>来源名称 <HelpTip label="来源名称" >粘贴内容会按这个名称保存，建议使用 .md 或 .txt 后缀。</HelpTip></span><input aria-label="粘贴内容来源名称" onChange={(event) => setSourcePath(event.target.value)} placeholder="pasted-material.txt" value={sourcePath} /></label><label>粘贴内容<textarea aria-label="粘贴的生产材料" onChange={(event) => setPastedContent(event.target.value)} rows={7} value={pastedContent} /></label></> : <><label><span>用途</span><select aria-label="材料用途" onChange={(event) => setMaterialPurpose(event.target.value as MaterialPurpose)} value={materialPurpose}>{materialPurposeOptions(materialType, allowMainScript).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label><label><span>输入目录内路径 <HelpTip label="输入目录内路径" >填写相对于 input 目录的路径，例如 script.md 或 references/location.jpg。主脚本建议使用 .md 或 .txt。</HelpTip></span><input aria-label="输入目录文件路径" onChange={(event) => setSourcePath(event.target.value)} placeholder={materialType === "script" ? "script.md" : "references/location.jpg"} value={sourcePath} /></label></>}{sourceKind !== "file" ? allowMainScript ? <label className="checkbox-label"><input checked={isMainScript} disabled={materialType !== "script"} onChange={(event) => setIsMainScript(event.target.checked)} type="checkbox" />将此修订设为主脚本</label> : <p className="muted-copy">主脚本已确认；当前仅添加补充材料。</p> : null}{mainScriptSelected ? <label className="checkbox-label confirmation"><input checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} type="checkbox" />我已检查内容，明确确认这是本生产单的主脚本。</label> : null}<button className="button button-primary" disabled={isPending} type="submit">{isPending ? "导入中…" : sourceKind === "file" ? allowMainScript ? "导入全部材料" : "添加补充材料" : allowMainScript && isMainScript ? "确认并导入主脚本" : "导入材料"}</button>{formError ? <p className="form-error">{formError}</p> : null}</form>;
 }
 
 interface FrozenReviewContext {
@@ -1946,8 +2099,9 @@ function TextReviewPackage({ artifact, reviewPackage }: { artifact: Artifact; re
   const context = parseFrozenReviewContext(reviewPackage.context_snapshot);
   const artifactMatchesContext = context?.artifactRelativePath === artifact.relative_path && context.artifactSha256 === artifact.sha256;
   const source = artifactMatchesContext ? localArtifactUrl(artifact.episode_id, context.artifactRelativePath, context.artifactSha256) : null;
+  const contentHeading = artifact.artifact_type === "script" ? "具体脚本" : artifact.artifact_type === "visual_brief" ? "具体视觉简报" : "具体文本";
 
-  return <section className="review-section text-review-package"><h3>可审核文本 · 修订 v{reviewPackage.revision_number}</h3><TextArtifactContent source={source} /><h4>冻结审核上下文</h4>{context ? <dl>{context.input.kind === "provided_script" ? <div><dt>主脚本 SHA-256</dt><dd>{context.input.scriptSha256.slice(0, 12)}…</dd></div> : <><div><dt>创作方向</dt><dd>{context.input.creativeDirection}</dd></div><div><dt>核心内容</dt><dd>{context.input.coreContent}</dd></div></>}{context.seriesBaseline ? <><div><dt>系列基准</dt><dd>系列基准 · v{context.seriesBaseline.version}</dd></div><div><dt>冻结系列规则</dt><dd><code>{JSON.stringify(context.seriesBaseline.rules)}</code></dd></div></> : null}<div><dt>能力</dt><dd>{context.capability}</dd></div><div><dt>执行器</dt><dd>{context.provider} · <span>{context.model}</span></dd></div><div><dt>预算</dt><dd>{context.budgetLimitCents} 分</dd></div><div><dt>允许工具</dt><dd>{context.allowedTools.join("、") || "无"}</dd></div><div><dt>输出契约</dt><dd>{context.contentType} · {context.requiredArtifactTypes.join("、")}</dd></div></dl> : <p className="form-error">冻结审核上下文格式无效。</p>}</section>;
+  return <section className="review-section text-review-package"><h3>可审核文本 · 修订 v{reviewPackage.revision_number}</h3><details className="detail-card-collapsible frozen-review-context" open><summary><h4>冻结审核上下文</h4></summary>{context ? <dl>{context.input.kind === "provided_script" ? <div><dt>主脚本 SHA-256</dt><dd>{context.input.scriptSha256.slice(0, 12)}…</dd></div> : <><div><dt>创作方向</dt><dd>{context.input.creativeDirection}</dd></div><div><dt>核心内容</dt><dd>{context.input.coreContent}</dd></div></>}{context.seriesBaseline ? <><div><dt>系列基准</dt><dd>系列基准 · v{context.seriesBaseline.version}</dd></div><div><dt>冻结系列规则</dt><dd><code>{JSON.stringify(context.seriesBaseline.rules)}</code></dd></div></> : null}<div><dt>能力</dt><dd>{context.capability}</dd></div><div><dt>执行器</dt><dd>{context.provider} · <span>{context.model}</span></dd></div><div><dt>预算</dt><dd>{context.budgetLimitCents} 分</dd></div><div><dt>允许工具</dt><dd>{context.allowedTools.join("、") || "无"}</dd></div><div><dt>输出契约</dt><dd>{context.contentType} · {context.requiredArtifactTypes.join("、")}</dd></div></dl> : <p className="form-error">冻结审核上下文格式无效。</p>}</details><h4>{contentHeading}</h4><TextArtifactContent source={source} /></section>;
 }
 
 function useTextArtifactContent(source: string | null) {
@@ -1978,13 +2132,13 @@ function useTextArtifactContent(source: string | null) {
 
 function TextArtifactContent({ source }: { source: string | null }) {
   const { content, error } = useTextArtifactContent(source);
-  return error ? <p className="form-error">{error}</p> : content ? <pre>{content}</pre> : <LoadingIndicator compact label="正在读取文本产物…" />;
+  return error ? <p className="form-error">{error}</p> : content ? <MarkdownPreview content={content} /> : <LoadingIndicator compact label="正在读取文本产物…" />;
 }
 
 function VisualReviewPackage({ artifact, artifacts, reviewPackage }: { artifact: Artifact; artifacts: Artifact[]; reviewPackage: ReviewPackage }) {
   const referenceGroups = artifacts.filter((candidate) => candidate.artifact_type === "visual_reference_group");
   const staticVisuals = artifacts.filter((candidate) => candidate.artifact_type === "static_visual");
-  return <><TextReviewPackage artifact={artifact} reviewPackage={reviewPackage} /><section className="review-section"><h3>角色 / 地点 / 关键道具参考组</h3>{referenceGroups.length ? referenceGroups.map((candidate) => <div key={candidate.id}><Artifact complete label={candidate.artifact_type} name={candidate.relative_path} /><TextArtifactContent source={localArtifactUrl(candidate.episode_id, candidate.relative_path, candidate.sha256)} /></div>) : <p className="form-error">视觉审核包缺少参考组。</p>}</section><section className="review-section"><h3>所需静态视觉</h3><ArtifactPreview artifacts={staticVisuals} />{staticVisuals.map((candidate) => <Artifact complete key={candidate.id} label={candidate.artifact_type} name={candidate.relative_path} />)}</section></>;
+  return <><TextReviewPackage artifact={artifact} reviewPackage={reviewPackage} /><section className="review-section"><h3>角色 / 地点 / 关键道具参考组</h3>{referenceGroups.length ? referenceGroups.map((candidate) => <div key={candidate.id}><TextArtifactContent source={localArtifactUrl(candidate.episode_id, candidate.relative_path, candidate.sha256)} /></div>) : <p className="form-error">视觉审核包缺少参考组。</p>}</section><section className="review-section"><h3>所需静态视觉</h3><p className="muted-copy">这是视觉方案生成的静态参考图，不是分镜。分镜会在后续“分镜生成与审核”阶段单独展示。</p><ArtifactPreview artifacts={staticVisuals} /></section></>;
 }
 
 type StoryboardShot = StoryboardShotManifest;
@@ -2211,8 +2365,8 @@ function AccountRenameModal({ account, isPending, onClose, onSave }: { account: 
   const [name, setName] = useState(account.name);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const saved = await onSave(name);
-    if (saved === false) return;
+    const saved = await onSave(name.trim());
+    if (saved !== false) onClose();
   }
   return <div className="modal-backdrop" role="presentation"><form aria-label="重命名账号" className="modal-card" onSubmit={(event) => void submit(event)}><header><div><h2>重命名账号</h2><p>只修改页面显示名称，账号标识和已有生产数据不变。</p></div><button aria-label="关闭重命名账号" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></button></header><label>显示名称<input aria-label="账号显示名称" autoFocus onChange={(event) => setName(event.target.value)} required value={name} /></label><div className="modal-actions"><button className="button button-secondary" onClick={onClose} type="button">取消</button><button className="button button-primary" disabled={isPending || name.trim() === account.name} type="submit">{isPending ? "保存中…" : "保存名称"}</button></div></form></div>;
 }

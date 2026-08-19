@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Database } from "../lib/database.types";
@@ -93,17 +93,14 @@ const materialInputProps = {
   audioTrackAnnotations: [],
   audioTracks: [],
   isMaterialPending: false,
-  isScriptCommissionPending: false,
   isStoryboardAnnotationPending: false,
   isTitlePending: false,
-  materialRevisions: [],
   reviewAnnotations: [],
   reviewPackages: [],
   onCreateStoryboardAnnotation: vi.fn().mockResolvedValue(undefined),
   onCreateAudioTrackAnnotation: vi.fn().mockResolvedValue(undefined),
   onImportMaterial: vi.fn().mockResolvedValue(undefined),
   onRequestReviewRenderRevision: vi.fn().mockResolvedValue(true),
-  onCommissionScript: vi.fn().mockResolvedValue(undefined),
   onUpdateTitle: vi.fn().mockResolvedValue(undefined),
 };
 
@@ -139,23 +136,42 @@ describe("审核台", () => {
   });
 
   it("在详情顶部显示当前阶段和下一步，并默认收起技术索引", () => {
-    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
     expect(screen.getByText("审核生成脚本")).toBeTruthy();
     expect(screen.queryByText("工作标题（可留空）")).toBeNull();
     expect(screen.queryByRole("heading", { name: "生产单管理" })).toBeNull();
-    expect((screen.getByRole("heading", { name: "产物索引" }).closest("details") as HTMLDetailsElement).open).toBe(false);
+    expect(screen.getByRole("button", { name: "查看产物索引" }).getAttribute("aria-expanded")).toBe("false");
+    expect(screen.queryByRole("heading", { name: "产物索引" })).toBeNull();
   });
 
-  it("审计时间线只显示中文原因，不展示技术原文", () => {
+  it("通过顶部图标按需打开 Worker、产物索引和审计时间线", async () => {
+    const user = userEvent.setup();
+    render(<EpisodeDetail {...materialInputProps} artifacts={[previewArtifact]} blueprint={blueprint} episode={reviewEpisode} isTransitionPending={false} onTransition={vi.fn()} tasks={[blockedTask]} transitions={[{ actor_id: null, created_at: "2026-08-15T01:00:00.000Z", episode_id: reviewEpisode.id, from_stage: "script_draft" as const, id: "transition-utility", reason: "Worker submitted a frozen visual planning review package.", to_stage: "script_review" as const }]} />);
+
+    await user.click(screen.getByRole("button", { name: /Worker 状态：已阻塞/ }));
+    expect(screen.getByRole("dialog", { name: "Worker 状态" })).toBeTruthy();
+    expect(screen.getByRole("dialog", { name: "Worker 状态" }).textContent).toContain("已阻塞");
+    await user.click(screen.getByRole("button", { name: "查看产物索引" }));
+    expect(screen.getByRole("dialog", { name: "产物索引" })).toBeTruthy();
+    expect(screen.getByText(previewArtifact.relative_path)).toBeTruthy();
+    expect(screen.queryByRole("dialog", { name: "Worker 状态" })).toBeNull();
+    await user.click(screen.getByRole("button", { name: "查看审计时间线" }));
+    expect(screen.getByRole("dialog", { name: "审计时间线" })).toBeTruthy();
+    expect(screen.getByText("Worker 已提交冻结的视觉规划审核包。", { exact: false })).toBeTruthy();
+    expect(screen.queryByText("后台执行结果已记录，生产单状态已更新。")).toBeNull();
+  });
+
+  it("审计时间线只显示中文原因，不展示技术原文", async () => {
+    const user = userEvent.setup();
     const transitions = [
       { actor_id: null, created_at: "2026-08-15T01:00:00.000Z", episode_id: reviewEpisode.id, from_stage: "script_draft" as const, id: "transition-1", reason: "Worker submitted a frozen visual planning review package.", to_stage: "script_review" as const },
       { actor_id: null, created_at: "2026-08-15T01:01:00.000Z", episode_id: reviewEpisode.id, from_stage: "script_review" as const, id: "transition-2", reason: "Worker submitted a frozen storyboard review package.", to_stage: "script_review" as const },
     ];
-    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onTransition={vi.fn()} tasks={[]} transitions={transitions} />);
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={transitions} />);
 
-    expect(screen.getByText("Worker 已提交冻结的视觉规划审核包。")).toBeTruthy();
-    expect(screen.getByText("后台执行结果已记录，生产单状态已更新。")).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "查看审计时间线" }));
+    expect(screen.getByText("后台执行结果已记录，生产单状态已更新。", { exact: false })).toBeTruthy();
     expect(screen.queryByText(/Worker submitted/)).toBeNull();
   });
 
@@ -192,8 +208,7 @@ describe("审核台", () => {
     const user = userEvent.setup();
     const onTransition = vi.fn().mockResolvedValue(undefined);
 
-    const onCreateLocalDirectory = vi.fn().mockResolvedValue(undefined);
-    const { rerender } = render(<EpisodeDetail {...materialInputProps} artifacts={[previewArtifact, videoArtifact]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={onCreateLocalDirectory} onTransition={onTransition} tasks={[blockedTask]} transitions={[]} />);
+    const { rerender } = render(<EpisodeDetail {...materialInputProps} artifacts={[previewArtifact, videoArtifact]} blueprint={blueprint} episode={reviewEpisode} isTransitionPending={false} onTransition={onTransition} tasks={[blockedTask]} transitions={[]} />);
 
     expect((await screen.findByAltText("cover 产物预览")).getAttribute("src")).toBe("blob:local-preview");
     expect(fetch).toHaveBeenCalledWith("/_local-artifact?episode=episode-review&path=episodes%2Fepisode-review%2Fcover.png", { headers: { Authorization: "Bearer owner-token" } });
@@ -215,7 +230,7 @@ describe("审核台", () => {
     expect(onTransition).toHaveBeenLastCalledWith(reviewEpisode.id, "script_draft", "脚本符合账号蓝图。");
 
     const nextEpisode: Episode = { ...reviewEpisode, id: "episode-next", title: "新的审核 Episode" };
-    rerender(<EpisodeDetail {...materialInputProps} artifacts={[previewArtifact]} blueprint={blueprint} episode={nextEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={onCreateLocalDirectory} onTransition={onTransition} tasks={[]} transitions={[]} />);
+    rerender(<EpisodeDetail {...materialInputProps} artifacts={[previewArtifact]} blueprint={blueprint} episode={nextEpisode} isTransitionPending={false} onTransition={onTransition} tasks={[]} transitions={[]} />);
     await user.click(screen.getByRole("button", { name: "批准" }));
     expect(screen.getByText("请填写审批理由。")).toBeTruthy();
     expect(onTransition).toHaveBeenCalledTimes(2);
@@ -226,7 +241,7 @@ describe("审核台", () => {
     const onCreateAudioTrackAnnotation = vi.fn().mockResolvedValue(undefined);
     render(<EpisodeDetail {...materialInputProps} artifacts={[]} audioTracks={[{
       id: "audio-1", episode_id: reviewEpisode.id, source_task_id: "task-audio", source_artifact_id: "artifact-audio", source_material_revision_id: null, source_review_package_id: "package-1", track_kind: "narration", cue_id: "shot-02", relative_path: "episodes/episode-review/audio/narration.mp3", sha256: "a".repeat(64), file_size: 10, start_seconds: 2, duration_seconds: 8, created_at: "2026-08-15T00:00:00.000Z",
-    }]} audioTrackAnnotations={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateAudioTrackAnnotation={onCreateAudioTrackAnnotation} onCreateLocalDirectory={vi.fn()} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
+    }]} audioTrackAnnotations={[]} blueprint={blueprint} episode={reviewEpisode} isTransitionPending={false} onCreateAudioTrackAnnotation={onCreateAudioTrackAnnotation} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
     expect(await screen.findByLabelText("narration 音轨")).toBeTruthy();
     expect(fetch).toHaveBeenCalledWith(`/_local-artifact?episode=episode-review&path=episodes%2Fepisode-review%2Faudio%2Fnarration.mp3&sha256=${"a".repeat(64)}`, { headers: { Authorization: "Bearer owner-token" } });
@@ -258,7 +273,7 @@ describe("审核台", () => {
       task_type: "generate_a_roll",
     };
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onTransition={vi.fn()} tasks={[aRollTask]} transitions={[]} />);
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isTransitionPending={false} onTransition={vi.fn()} tasks={[aRollTask]} transitions={[]} />);
 
     expect(screen.getByRole("heading", { name: "A-roll 生成运行" })).toBeTruthy();
     expect(screen.getByText("shot-01 · 执行中")).toBeTruthy();
@@ -275,17 +290,33 @@ describe("审核台", () => {
       task_type: "generate_a_roll",
     };
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onTransition={vi.fn()} tasks={[aRollTask]} transitions={[]} />);
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isTransitionPending={false} onTransition={vi.fn()} tasks={[aRollTask]} transitions={[]} />);
 
     expect(screen.getByText("A-roll 任务 · 已阻塞")).toBeTruthy();
-    expect(screen.getByText("冻结执行器配置不可用；请查看下方 Worker 阻塞项。")).toBeTruthy();
+    expect(screen.getAllByText("Worker 执行器配置不完整").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("任务没有可用的执行器或适配器，Worker 不会自行替换供应商继续执行。")).toHaveLength(2);
     expect(screen.getByText("a_roll_executor_missing")).toBeTruthy();
+  });
+
+  it("合并重复阻塞任务并提供蓝图修改入口", async () => {
+    const user = userEvent.setup();
+    const onOpenBlueprint = vi.fn();
+    const blockerResult = { blockers: [{ code: "executor_invalid", detail: "执行器 adapter 未配置。" }] };
+    const executorTask1: Task = { ...blockedTask, id: "task-executor-1", last_result: blockerResult };
+    const executorTask2: Task = { ...blockedTask, id: "task-executor-2", last_result: blockerResult };
+
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isTransitionPending={false} onOpenBlueprint={onOpenBlueprint} onTransition={vi.fn()} tasks={[executorTask1, executorTask2]} transitions={[]} />);
+
+    expect(screen.getByRole("heading", { name: "Worker 阻塞项（2）" })).toBeTruthy();
+    expect(screen.getByText("影响 2 个任务")).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "去修改蓝图" }));
+    expect(onOpenBlueprint).toHaveBeenCalledTimes(1);
   });
 
   it("以纵向缩略图展示产物，并允许 Owner 放大后关闭预览", async () => {
     const user = userEvent.setup();
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[previewArtifact]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
+    render(<EpisodeDetail {...materialInputProps} artifacts={[previewArtifact]} blueprint={blueprint} episode={reviewEpisode} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
     const preview = await screen.findByAltText("cover 产物预览");
     expect(preview.closest("figure")?.className).toContain("local-artifact-preview");
@@ -307,74 +338,111 @@ describe("审核台", () => {
     expect(screen.queryByRole("dialog", { name: "cover 产物放大预览" })).toBeNull();
   });
 
-  it("不要求 Owner 了解 Episode ID，只需创建绑定的本地输入目录", async () => {
+  it("在详情头部以图标提供刷新、打开和复制本地目录", async () => {
     const user = userEvent.setup();
-    const onCreateLocalDirectory = vi.fn().mockResolvedValue(undefined);
     const onOpenLocalDirectory = vi.fn().mockResolvedValue(undefined);
+    const onRefresh = vi.fn().mockResolvedValue(undefined);
     const writeText = vi.fn().mockResolvedValue(undefined);
     const localInputPath = "/Volumes/素材盘/tk-workflow/dao/episodes/episode-review/input";
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} onCreateLocalDirectory={onCreateLocalDirectory} onOpenLocalDirectory={onOpenLocalDirectory} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryOpenPending={false} onOpenLocalDirectory={onOpenLocalDirectory} onRefresh={onRefresh} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
-    expect(screen.queryByLabelText("完整 Episode ID")).toBeNull();
-    expect(screen.getByText(/你不需要记住或填写 Episode ID/)).toBeTruthy();
-    expect(screen.queryByRole("button", { name: "复制 Episode ID" })).toBeNull();
-    expect(screen.getByText(localInputPath)).toBeTruthy();
+    expect(screen.queryByRole("heading", { name: "准备本地输入目录" })).toBeNull();
+    expect(screen.getByRole("button", { name: "刷新生产单状态" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "打开本地输入目录" }).getAttribute("title")).toBe(`打开本地输入目录：${localInputPath}`);
+    expect(screen.getByRole("button", { name: "复制本地输入目录路径" }).getAttribute("title")).toBe(`复制本地输入目录路径：${localInputPath}`);
 
-    await user.click(screen.getByRole("heading", { name: "准备本地输入目录" }));
-    await user.click(screen.getByRole("button", { name: "创建本地输入目录" }));
-    expect(onCreateLocalDirectory).toHaveBeenCalledWith(reviewEpisode.id);
-    await user.click(screen.getByRole("button", { name: "打开输入目录" }));
+    await user.click(screen.getByRole("button", { name: "刷新生产单状态" }));
+    expect(onRefresh).toHaveBeenCalledTimes(1);
+    await user.click(screen.getByRole("button", { name: "打开本地输入目录" }));
     expect(onOpenLocalDirectory).toHaveBeenCalledWith(reviewEpisode.id);
-    await user.click(screen.getByRole("button", { name: "复制目录路径" }));
+    await user.click(screen.getByRole("button", { name: "复制本地输入目录路径" }));
     expect(writeText).toHaveBeenCalledWith(localInputPath);
   });
 
   it("要求显式确认粘贴的主脚本", async () => {
     const user = userEvent.setup();
     const onImportMaterial = vi.fn().mockResolvedValue(undefined);
-    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onImportMaterial={onImportMaterial} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
+    const waitingEpisode: Episode = { ...reviewEpisode, id: "episode-paste-script", stage: "waiting_input" };
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={waitingEpisode} isTransitionPending={false} onImportMaterial={onImportMaterial} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
-    await user.click(screen.getByRole("heading", { name: "导入生产材料" }));
+    await user.click(screen.getByRole("heading", { name: "准备生产材料" }));
     await user.selectOptions(screen.getByLabelText("材料来源"), "paste");
     await user.type(screen.getByLabelText("粘贴的生产材料"), "经确认的脚本");
-    await user.click(screen.getByRole("button", { name: "确认并固定修订" }));
+    await user.click(screen.getByRole("button", { name: "确认并导入主脚本" }));
     expect(screen.getByText("请明确确认这份材料是主脚本。")).toBeTruthy();
     expect(onImportMaterial).not.toHaveBeenCalled();
 
     await user.click(screen.getByRole("checkbox", { name: "我已检查内容，明确确认这是本生产单的主脚本。" }));
-    await user.click(screen.getByRole("button", { name: "确认并固定修订" }));
+    await user.click(screen.getByRole("button", { name: "确认并导入主脚本" }));
     expect(onImportMaterial).toHaveBeenCalledWith(expect.objectContaining({
-      episodeId: reviewEpisode.id,
+      episodeId: waitingEpisode.id,
       isMainScript: true,
+      materialPurpose: "main_script",
       materialType: "script",
       mimeType: "text/plain;charset=utf-8",
       sourceKind: "paste",
-      sourcePath: "pasted-script.txt",
+      sourcePath: "pasted-material.txt",
     }));
 
   });
 
-  it("允许无主脚本的生产单提交冻结的脚本委托", async () => {
+  it("等待输入时将主脚本和补充材料合并为一次准备入口", () => {
+    const waitingEpisode: Episode = { ...reviewEpisode, id: "episode-waiting", stage: "waiting_input", title: "等待主脚本" };
+
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={waitingEpisode} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
+
+    expect(screen.getByRole("heading", { name: "准备生产材料" }).closest("details")?.className).toContain("detail-card-collapsible");
+    expect(screen.getByText(/一次选择本单需要的主脚本、图片、音频、视频和参考材料/)).toBeTruthy();
+    expect(screen.queryByRole("heading", { name: "委托生成脚本" })).toBeNull();
+    expect(screen.getByRole("button", { name: "导入全部材料" })).toBeTruthy();
+    expect((screen.getByLabelText("选择生产材料文件") as HTMLInputElement).multiple).toBe(true);
+  });
+
+  it("主脚本导入后等待 Owner 明确开始制作", async () => {
     const user = userEvent.setup();
-    const onCommissionScript = vi.fn().mockResolvedValue(undefined);
-    const waitingEpisode: Episode = { ...reviewEpisode, id: "episode-waiting", stage: "waiting_input", title: "等待脚本委托" };
+    const onStartProduction = vi.fn().mockResolvedValue(undefined);
+    const readyEpisode: Episode = { ...reviewEpisode, id: "episode-input-ready", stage: "waiting_input", main_script_revision_id: "revision-script-1", title: "材料准备中" };
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={waitingEpisode} isDirectoryPending={false} isTransitionPending={false} onCommissionScript={onCommissionScript} onCreateLocalDirectory={vi.fn()} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={readyEpisode} isStartProductionPending={false} onStartProduction={onStartProduction} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
-    expect(screen.getByRole("heading", { name: "委托生成脚本" }).closest("details")?.className).toContain("detail-card-collapsible");
+    expect(screen.getByText("待开始制作")).toBeTruthy();
+    expect(screen.getByText("材料已导入，等待 Owner 确认开始制作。")).toBeTruthy();
+    expect(screen.queryByText("将此修订设为主脚本")).toBeNull();
+    expect(screen.getByText("主脚本已确认。你可以继续添加补充材料；所有材料准备好后，点击下方按钮，Worker 才会开始制作。")).toBeTruthy();
+    expect(screen.getByRole("button", { name: "添加补充材料" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "材料准备完成，开始制作" })).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "材料准备完成，开始制作" }));
+    expect(onStartProduction).toHaveBeenCalledWith(readyEpisode.id);
+  });
 
-    await user.click(screen.getByRole("heading", { name: "委托生成脚本" }));
-    await user.type(screen.getByLabelText("创作方向"), "雨夜民俗悬疑，节奏克制。 ");
-    await user.type(screen.getByLabelText("必须表达的核心内容"), "仪式感与人物抉择。 ");
-    await user.click(screen.getByRole("button", { name: "提交脚本委托" }));
+  it("一次选择多个文件并分别指定用途后逐个导入", async () => {
+    const user = userEvent.setup();
+    const onImportMaterial = vi.fn().mockResolvedValue(undefined);
+    const waitingEpisode: Episode = { ...reviewEpisode, id: "episode-materials", stage: "waiting_input", title: "首次准备材料" };
 
-    expect(onCommissionScript).toHaveBeenCalledWith({
-      coreContent: "仪式感与人物抉择。",
-      creativeDirection: "雨夜民俗悬疑，节奏克制。",
-      episodeId: waitingEpisode.id,
-    });
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={waitingEpisode} isStartProductionPending={false} onImportMaterial={onImportMaterial} onStartProduction={vi.fn()} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
+
+    const fileInput = screen.getByLabelText("选择生产材料文件") as HTMLInputElement;
+    expect(fileInput.multiple).toBe(true);
+    expect(fileInput.accept).toContain(".md");
+    const scriptFile = new File(["# 主脚本"], "script.md", { type: "text/markdown" });
+    const imageFile = new File(["image"], "character.png", { type: "image/png" });
+    await user.upload(fileInput, [scriptFile, imageFile]);
+
+    expect(screen.getByText("已选择 2 个文件")).toBeTruthy();
+    expect((screen.getByLabelText("材料类型 script.md") as HTMLSelectElement).value).toBe("script");
+    expect((screen.getByLabelText("材料用途 script.md") as HTMLSelectElement).value).toBe("main_script");
+    expect((screen.getByLabelText("材料类型 character.png") as HTMLSelectElement).value).toBe("image");
+    expect((screen.getByLabelText("材料用途 character.png") as HTMLSelectElement).value).toBe("visual_reference");
+    expect(screen.getByRole("checkbox", { name: "我已检查内容，明确确认这是本生产单的主脚本。" })).toBeTruthy();
+    await user.click(screen.getByRole("checkbox", { name: "我已检查内容，明确确认这是本生产单的主脚本。" }));
+    await user.click(screen.getByRole("button", { name: "导入全部材料" }));
+
+    await waitFor(() => expect(onImportMaterial).toHaveBeenCalledTimes(2));
+    expect(onImportMaterial).toHaveBeenNthCalledWith(1, expect.objectContaining({ isMainScript: true, materialPurpose: "main_script", materialType: "script", sourcePath: "script.md" }));
+    expect(onImportMaterial).toHaveBeenNthCalledWith(2, expect.objectContaining({ isMainScript: false, materialPurpose: "visual_reference", materialType: "image", sourcePath: "character.png" }));
   });
 
   it("展示委托脚本的冻结输入，并让 Owner 完成审核或要求重写", async () => {
@@ -389,7 +457,7 @@ describe("审核台", () => {
     };
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("# 雨夜祭坛\n\n主角在仪式中作出选择。", { status: 200, headers: { "Content-Type": "text/markdown" } })));
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[scriptArtifact]} blueprint={blueprint} episode={reviewEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onTransition={onTransition} reviewPackages={[{
+    render(<EpisodeDetail {...materialInputProps} artifacts={[scriptArtifact]} blueprint={blueprint} episode={reviewEpisode} isTransitionPending={false} onTransition={onTransition} reviewPackages={[{
       artifact_id: scriptArtifact.id,
       context_snapshot: {
         allowed_tools: ["read", "write"],
@@ -447,7 +515,7 @@ describe("审核台", () => {
     };
     vi.stubGlobal("fetch", vi.fn().mockImplementation((source: string) => Promise.resolve(new Response(source.includes("visual-references") ? "# 角色\n\n林砚：雨夜深色雨衣。" : "# 视觉方案\n\n第一镜：雨夜古宅。", { status: 200, headers: { "Content-Type": "text/markdown" } }))));
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[visualBrief, referenceGroup, staticVisual]} blueprint={blueprint} episode={visualEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onTransition={onTransition} reviewPackages={[{
+    render(<EpisodeDetail {...materialInputProps} artifacts={[visualBrief, referenceGroup, staticVisual]} blueprint={blueprint} episode={visualEpisode} isTransitionPending={false} onTransition={onTransition} reviewPackages={[{
       artifact_id: visualBrief.id,
       context_snapshot: {
         allowed_tools: ["read", "write"],
@@ -482,6 +550,10 @@ describe("审核台", () => {
     expect(screen.getByText("角色 / 地点 / 关键道具参考组")).toBeTruthy();
     expect(await screen.findByText("林砚：雨夜深色雨衣。", { exact: false })).toBeTruthy();
     expect(screen.getByText("所需静态视觉")).toBeTruthy();
+    const frozenContext = screen.getByText("冻结审核上下文").closest("details");
+    expect(frozenContext?.open).toBe(true);
+    await user.click(screen.getByText("冻结审核上下文"));
+    expect(frozenContext?.open).toBe(false);
 
     await user.type(screen.getByLabelText("审批理由"), "视觉方向清晰，符合主脚本。");
     await user.click(screen.getByRole("button", { name: "批准" }));
@@ -500,7 +572,7 @@ describe("审核台", () => {
       context_snapshot: { review_kind: "hyperframes_review_render", pre_render_review_package_id: "pre-render-package", project_revision: "2", project_relative_path: "episodes/episode-qc/review-render/v2/index.html", composition_adjustments: { caption_style: "minimal", pacing: "gentle", crop: "contain", transition: "cut", layout: "center" }, technical_evidence: { checks: [] } },
       created_at: "2026-08-15T00:00:00.000Z", episode_id: qcEpisode.id, id: "review-package-qc-2", invalidated_at: null, invalidated_reason: null, revision_number: 2, stage: "qc_review" as const, task_id: "task-qc-render", task_run_id: "task-run-qc-render",
     };
-    const props = { ...materialInputProps, artifacts: [renderArtifact], blueprint, episode: qcEpisode, isDirectoryPending: false, isTransitionPending: false, onCreateLocalDirectory: vi.fn(), onRequestReviewRenderRevision, onTransition: vi.fn(), reviewPackages: [qcPackage], tasks: [], transitions: [] };
+    const props = { ...materialInputProps, artifacts: [renderArtifact], blueprint, episode: qcEpisode, isTransitionPending: false, onRequestReviewRenderRevision, onTransition: vi.fn(), reviewPackages: [qcPackage], tasks: [], transitions: [] };
     const { rerender } = render(<EpisodeDetail {...props} />);
 
     expect((screen.getByLabelText("字幕风格") as HTMLSelectElement).value).toBe("minimal");
@@ -548,7 +620,7 @@ describe("审核台", () => {
       }],
     }), { status: 200, headers: { "Content-Type": "application/json" } })));
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[previousStoryboardArtifact, storyboardArtifact]} blueprint={blueprint} episode={storyboardEpisode} isDirectoryPending={false} isStoryboardAnnotationPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onCreateStoryboardAnnotation={onCreateStoryboardAnnotation} onTransition={onTransition} reviewAnnotations={[{
+    render(<EpisodeDetail {...materialInputProps} artifacts={[previousStoryboardArtifact, storyboardArtifact]} blueprint={blueprint} episode={storyboardEpisode} isStoryboardAnnotationPending={false} isTransitionPending={false} onCreateStoryboardAnnotation={onCreateStoryboardAnnotation} onTransition={onTransition} reviewAnnotations={[{
       actor_id: "owner-1",
       created_at: "2026-08-15T00:00:00.000Z",
       id: "annotation-1",
@@ -605,7 +677,7 @@ describe("审核台", () => {
     const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", id: "artifact-invalid-storyboard", producer_task_id: "task-invalid-storyboard", relative_path: "episodes/episode-review/storyboard-invalid.json" };
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("{}", { status: 200, headers: { "Content-Type": "application/json" } })));
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={storyboardEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onTransition={vi.fn()} reviewPackages={[{
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={storyboardEpisode} isTransitionPending={false} onTransition={vi.fn()} reviewPackages={[{
       artifact_id: storyboardArtifact.id,
       context_snapshot: {},
       created_at: "2026-08-15T00:00:00.000Z",
@@ -657,7 +729,7 @@ describe("审核台", () => {
       source_task_id: "task-b-roll-1",
     };
 
-    const { rerender } = render(<EpisodeDetail {...materialInputProps} artifacts={[videoArtifact]} blueprint={blueprint} episode={productionEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onReviewPreRenderMember={onReviewPreRenderMember} onTransition={onTransition} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[member]} reviewPackages={[preRenderPackage]} tasks={[]} transitions={[]} />);
+    const { rerender } = render(<EpisodeDetail {...materialInputProps} artifacts={[videoArtifact]} blueprint={blueprint} episode={productionEpisode} isTransitionPending={false} onReviewPreRenderMember={onReviewPreRenderMember} onTransition={onTransition} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[member]} reviewPackages={[preRenderPackage]} tasks={[]} transitions={[]} />);
 
     expect(screen.getByText("预渲染审核包 · 修订 v1")).toBeTruthy();
     expect(screen.getByRole("button", { name: "批准预渲染包并进入合成" }).hasAttribute("disabled")).toBe(true);
@@ -665,7 +737,7 @@ describe("审核台", () => {
     await user.click(screen.getByRole("button", { name: "批准此项" }));
     expect(onReviewPreRenderMember).toHaveBeenCalledWith({ decision: "approved", memberKey: "shot:shot-02", reason: "镜头节奏与素材质量符合要求。", reviewPackageId: preRenderPackage.id });
 
-    rerender(<EpisodeDetail {...materialInputProps} artifacts={[videoArtifact]} blueprint={blueprint} episode={productionEpisode} isDirectoryPending={false} isTransitionPending={false} onCreateLocalDirectory={vi.fn()} onTransition={onTransition} preRenderReviewMemberDecisions={[{ actor_id: "owner-1", created_at: "2026-08-15T00:00:00.000Z", decision: "approved", inherited_from_review_package_id: null, member_key: member.member_key, reason: "镜头节奏与素材质量符合要求。", review_package_id: preRenderPackage.id }]} preRenderReviewMembers={[member]} reviewPackages={[preRenderPackage]} tasks={[]} transitions={[]} />);
+    rerender(<EpisodeDetail {...materialInputProps} artifacts={[videoArtifact]} blueprint={blueprint} episode={productionEpisode} isTransitionPending={false} onTransition={onTransition} preRenderReviewMemberDecisions={[{ actor_id: "owner-1", created_at: "2026-08-15T00:00:00.000Z", decision: "approved", inherited_from_review_package_id: null, member_key: member.member_key, reason: "镜头节奏与素材质量符合要求。", review_package_id: preRenderPackage.id }]} preRenderReviewMembers={[member]} reviewPackages={[preRenderPackage]} tasks={[]} transitions={[]} />);
     await user.type(screen.getByLabelText("预渲染审核理由"), "所有冻结媒体与音频都已审核完毕。");
     await user.click(screen.getByRole("button", { name: "批准预渲染包并进入合成" }));
     expect(onTransition).toHaveBeenLastCalledWith(productionEpisode.id, "render_ready", "所有冻结媒体与音频都已审核完毕。");

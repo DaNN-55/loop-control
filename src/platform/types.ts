@@ -35,6 +35,7 @@ export interface Episode {
   accountId: string;
   blueprintVersionId: string;
   seriesVersionId: string | null;
+  mainScriptRevisionId?: string | null;
   title: string;
   status: EpisodeStage;
   createdAt: string;
@@ -88,6 +89,7 @@ export interface ProductionMaterialRevision {
   storagePath: string;
   content: Uint8Array;
   mimeType: string;
+  materialPurpose: string;
   sha256: string;
   fileSize: number;
   isMainScript: boolean;
@@ -101,5 +103,6 @@ export interface ImportMaterialInput {
   sourcePath: string;
   content: Uint8Array;
   mimeType: string;
+  materialPurpose: string;
   isMainScript: boolean;
 }

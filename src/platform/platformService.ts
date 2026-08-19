@@ -1,6 +1,7 @@
 import type { PlatformRepository } from "./repository";
 import type {
   AuditEvent,
+  Actor,
   CreateEpisodeInput,
   Episode,
   EpisodeStage,
@@ -70,6 +71,7 @@ export interface PlatformService {
   listTasks(episodeId: string): Promise<Task[]>;
   listAuditEvents(episodeId: string): Promise<AuditEvent[]>;
   importMaterial(input: ImportMaterialInput): Promise<ProductionMaterialRevision>;
+  startProduction(input: { episodeId: string; actor: Actor }): Promise<Episode>;
   listMaterialRevisions(episodeId: string): Promise<ProductionMaterialRevision[]>;
   updateEpisodeTitle(episodeId: string, title: string): Promise<Episode>;
 }
@@ -87,6 +89,7 @@ export function createPlatformService(repository: PlatformRepository): PlatformS
         id: crypto.randomUUID(),
         accountId: input.accountId,
         blueprintVersionId: input.blueprintVersionId,
+        mainScriptRevisionId: null,
         seriesVersionId: input.seriesVersionId ?? null,
         title: input.title,
         status: "waiting_input",
@@ -146,6 +149,7 @@ export function createPlatformService(repository: PlatformRepository): PlatformS
     async importMaterial(input) {
       const episode = await repository.getEpisode(input.episodeId);
       if (!episode) throw new EpisodeNotFoundError(input.episodeId);
+      if (input.isMainScript && episode.status === "waiting_input" && episode.mainScriptRevisionId) throw new Error("A main script is already confirmed for this episode.");
       const content = input.content.slice();
       const sha256 = await sha256Hex(content);
       const sourceName = input.sourcePath.split(/[\\/]/).pop() || "material.bin";
@@ -158,6 +162,7 @@ export function createPlatformService(repository: PlatformRepository): PlatformS
         storagePath: `episodes/${input.episodeId}/materials/${sha256}-${sourceName}`,
         content,
         mimeType: input.mimeType,
+        materialPurpose: input.materialPurpose,
         sha256,
         fileSize: content.byteLength,
         isMainScript: input.isMainScript,
@@ -165,9 +170,15 @@ export function createPlatformService(repository: PlatformRepository): PlatformS
       };
       await repository.createMaterialRevision(revision);
       if (input.isMainScript && episode.status === "waiting_input") {
-        await repository.updateEpisode({ ...episode, status: "script_approved", updatedAt: revision.createdAt });
+        await repository.updateEpisode({ ...episode, mainScriptRevisionId: revision.id, updatedAt: revision.createdAt });
       }
       return { ...revision, content: revision.content.slice() };
+    },
+    async startProduction(input) {
+      const episode = await repository.getEpisode(input.episodeId);
+      if (!episode) throw new EpisodeNotFoundError(input.episodeId);
+      if (!episode.mainScriptRevisionId) throw new Error("A confirmed main script is required before starting production.");
+      return this.transitionEpisode({ episodeId: input.episodeId, actor: input.actor, to: "script_approved", reason: "Owner confirmed all production materials are ready; start production." });
     },
     listMaterialRevisions: (episodeId) => repository.listMaterialRevisions(episodeId),
     async updateEpisodeTitle(episodeId, title) {
