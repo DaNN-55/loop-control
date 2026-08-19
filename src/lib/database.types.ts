@@ -1076,6 +1076,21 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      apply_blueprint_to_episode: {
+        Args: {
+          p_blocker_code?: string | null
+          p_blocker_detail?: string | null
+          p_blueprint_version_id: string
+          p_episode_id: string
+        }
+        Returns: Json
+        SetofOptions: {
+          from: "*"
+          to: "Json"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       deactivate_blueprint_version: {
         Args: { p_account_id: string; p_blueprint_version_id: string }
         Returns: {
@@ -1576,7 +1591,7 @@ export type Database = {
       member_role: "owner" | "worker"
       publication_source: "manual" | "automated"
       publication_status: "pending" | "published" | "failed"
-      task_status: "ready" | "running" | "completed" | "blocked" | "failed"
+      task_status: "ready" | "running" | "completed" | "blocked" | "failed" | "superseded"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1729,7 +1744,7 @@ export const Constants = {
       member_role: ["owner", "worker"],
       publication_source: ["manual", "automated"],
       publication_status: ["pending", "published", "failed"],
-      task_status: ["ready", "running", "completed", "blocked", "failed"],
+      task_status: ["ready", "running", "completed", "blocked", "failed", "superseded"],
     },
   },
 } as const

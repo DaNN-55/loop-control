@@ -293,8 +293,8 @@ describe("审核台", () => {
     render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isTransitionPending={false} onTransition={vi.fn()} tasks={[aRollTask]} transitions={[]} />);
 
     expect(screen.getByText("A-roll 任务 · 已阻塞")).toBeTruthy();
-    expect(screen.getAllByText("当前媒体能力暂不可用").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(/不是填写蓝图字段即可解决/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("媒体适配器配置不完整").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/账号蓝图 → 媒体适配器/).length).toBeGreaterThanOrEqual(1);
     expect(screen.queryByRole("button", { name: "打开蓝图配置" })).toBeNull();
     expect(screen.getByText("a_roll_executor_missing")).toBeTruthy();
   });
@@ -313,8 +313,8 @@ describe("审核台", () => {
     expect(screen.getAllByText("处理位置")).toHaveLength(1);
     expect(screen.queryByText("Episode")).toBeNull();
     expect(screen.queryByText("资产目录")).toBeNull();
-    await user.click(screen.getByRole("button", { name: "打开蓝图配置" }));
-    expect(onOpenBlueprint).toHaveBeenCalledTimes(1);
+    await user.click(screen.getByRole("button", { name: "修改配置并继续当前生产单" }));
+    expect(onOpenBlueprint).toHaveBeenCalledWith(expect.objectContaining({ code: "executor_invalid", detail: "执行器 adapter 未配置。" }));
   });
 
   it("以纵向缩略图展示产物，并允许 Owner 放大后关闭预览", async () => {

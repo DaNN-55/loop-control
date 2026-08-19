@@ -11,16 +11,33 @@ export interface WorkerBlockerGuidance {
   technicalDetail: string;
 }
 
-function specializedMediaGuidance(blocker: Pick<WorkerBlocker, "detail">): WorkerBlockerGuidance {
+function specializedMediaBlueprintGuidance(blocker: Pick<WorkerBlocker, "detail">): WorkerBlockerGuidance {
+  return {
+    primaryAction: "blueprint",
+    title: "媒体适配器配置不完整",
+    summary: "这个媒体任务缺少 Provider、Adapter、预算或其他必填字段，需要先在账号蓝图的“媒体适配器”区域补齐。",
+    resolution: [
+      "点击“修改配置并继续当前生产单”，在“媒体适配器”中找到对应的 A-roll、B-roll、旁白或配乐 / 音效卡片。",
+      "按卡片提示补齐 Provider、Adapter、模型、Prompt 版本，以及该能力要求的预算、并发或声音参数。",
+      "如果当前系列有同名媒体规则，先在“系列”页修正它；否则保存新蓝图后应用到当前生产单。已完成的工作和审核记录保留，只重建受阻任务。",
+    ],
+    retryLabel: "修改配置并继续当前生产单",
+    location: "账号蓝图 → 媒体适配器",
+    locationNote: "这里配置媒体任务需要冻结的专用执行器声明；同名系列规则存在时，系列规则优先。",
+    technicalDetail: blocker.detail,
+  };
+}
+
+function specializedMediaUnavailableGuidance(blocker: Pick<WorkerBlocker, "detail">): WorkerBlockerGuidance {
   return {
     title: "当前媒体能力暂不可用",
-    summary: "这个任务需要专用媒体适配器，当前系统没有可用的结构化配置或已注册适配器，不是填写蓝图字段即可解决。",
+    summary: "蓝图可以声明这个适配器，但当前 Worker 尚未注册可用的媒体适配器，不是继续填写字段即可解决。",
     resolution: [
-      "当前页面没有该能力的可用配置字段，不要随意填写 adapter。",
-      "确认系统是否已接入对应媒体适配器；如果尚未接入，需要先完成 Worker 能力接入。",
-      "适配器可用后，用新的冻结配置重新创建任务；当前阻塞任务不会自动更新。",
+      "确认运行 Worker 的版本是否已接入对应媒体适配器，以及供应商凭据和网络是否可用。",
+      "如果尚未接入，需要先完成 Worker 能力接入；仅修改蓝图字段不能替代适配器实现。",
+      "适配器可用后，在当前生产单中重新排队受阻任务；已完成工作不会重复执行。",
     ],
-    retryLabel: "适配器可用后重建任务",
+    retryLabel: "适配器恢复后继续当前生产单",
     location: "系统能力 / Worker 适配器",
     locationNote: "当前没有可操作的页面入口。",
     technicalDetail: blocker.detail,
@@ -31,8 +48,13 @@ export function workerBlockerGuidance(blocker: Pick<WorkerBlocker, "code" | "det
   const normalized = `${blocker.code} ${blocker.detail}`.toLowerCase();
   const isSpecializedMedia = /a[_-]?roll|b[_-]?roll|narration|soundtrack|sound.?effect/.test(normalized);
 
-  if (isSpecializedMedia && /executor|adapter|budget|allowed.?tools|provider|适配器|配置/.test(normalized)) {
-    return specializedMediaGuidance(blocker);
+  const isRegisteredCapabilityGap = /a_roll_executor_unavailable|soundtrack_executor_unavailable/.test(normalized);
+  if (isSpecializedMedia && isRegisteredCapabilityGap) {
+    return specializedMediaUnavailableGuidance(blocker);
+  }
+
+  if (isSpecializedMedia && /executor|adapter|budget|allowed.?tools|provider|voice|scheduling|适配器|配置|预算|声音|并发/.test(normalized)) {
+    return specializedMediaBlueprintGuidance(blocker);
   }
 
   if (/allowed.?tools|read\s*\/\s*write|asset\.?(allowedroot|root)|asset_root/.test(normalized)) {
@@ -41,11 +63,11 @@ export function workerBlockerGuidance(blocker: Pick<WorkerBlocker, "code" | "det
       title: "资产目录权限或路径配置有问题",
       summary: "Worker 无法在账号资产目录中创建必需产物，通常是允许工具或本地资产路径与任务要求不匹配。",
       resolution: [
-        "点击“打开蓝图配置”，在“本地资产与审批”中确认资产目录和 read、write 工具。",
+        "点击“修改配置并继续当前生产单”，在“本地资产与审批”中确认资产目录和 read、write 工具。",
         "确认 asset_root 位于已挂载的媒体库内，并且 Worker 使用同一台机器和同一目录。",
-        "保存为新版本并激活后重新创建任务；旧任务已经冻结，不会自动更新。",
+        "保存新版本后应用到当前生产单；只重建受影响任务，旧任务会保留为历史记录。",
       ],
-      retryLabel: "修正后重建任务",
+      retryLabel: "修改配置并继续当前生产单",
       location: "账号蓝图 → 本地资产与审批",
       locationNote: "点击按钮后，进入对应账号蓝图的编辑入口。",
       technicalDetail: blocker.detail,
@@ -74,11 +96,11 @@ export function workerBlockerGuidance(blocker: Pick<WorkerBlocker, "code" | "det
       title: "任务预算不足或配置无效",
       summary: "当前任务的单项预算、总预算或剩余预算无法满足执行要求。",
       resolution: [
-        "点击“打开蓝图配置”，在“阶段预算”中检查对应阶段的预算上限。",
+        "点击“修改配置并继续当前生产单”，在“阶段预算”中检查对应阶段的预算上限。",
         "确认已失败或被替换的任务没有继续占用旧预算。",
-        "保存为新版本并激活后重新创建任务，不要直接重试旧任务。",
+        "保存新版本后应用到当前生产单；系统会释放旧预算并重新排队受阻任务。",
       ],
-      retryLabel: "调整预算后重建任务",
+      retryLabel: "调整预算并继续当前生产单",
       location: "账号蓝图 → 阶段预算",
       locationNote: "需要实际计费的任务不能使用 0 分预算。",
       technicalDetail: blocker.detail,
@@ -91,11 +113,11 @@ export function workerBlockerGuidance(blocker: Pick<WorkerBlocker, "code" | "det
       title: "Worker 执行器配置不完整",
       summary: "任务没有可用的通用执行器，Worker 不会自行替换供应商继续执行。",
       resolution: [
-        "点击“打开蓝图配置”，在“执行器”区域检查 Provider、模型和 Prompt 版本。",
+        "点击“修改配置并继续当前生产单”，在“执行器”区域检查 Provider、模型和 Prompt 版本。",
         "只有系统已登记或支持的执行器才能使用；不要随意填写未知 adapter。",
-        "保存为新版本并激活后重新创建任务；旧任务已经冻结，不会自动更新。",
+        "保存新版本后应用到当前生产单；已完成任务不会重跑。",
       ],
-      retryLabel: "修正执行器后重建任务",
+      retryLabel: "修正执行器并继续当前生产单",
       location: "账号蓝图 → 执行器",
       locationNote: "这里可以修改通用脚本、视觉和分镜执行器。",
       technicalDetail: blocker.detail,
@@ -158,7 +180,7 @@ export function workerBlockerGuidance(blocker: Pick<WorkerBlocker, "code" | "det
       "根据原因修正账号蓝图、系列规则、本地素材或外部服务配置。",
       "修正后创建新的任务配置，不要在原因未解决时重复点击重试。",
     ],
-    retryLabel: "修正原因后创建新的任务",
+    retryLabel: "先修正原因，再继续当前生产单",
     location: "技术详情 / Worker 运行环境",
     locationNote: "当前没有足够信息提供自动跳转入口。",
     technicalDetail: blocker.detail,

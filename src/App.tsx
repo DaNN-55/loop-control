@@ -52,6 +52,11 @@ type MetricSnapshot = Database["public"]["Tables"]["metric_snapshots"]["Row"];
 type BlueprintChangeSuggestion = Database["public"]["Tables"]["blueprint_change_suggestions"]["Row"];
 type PublicationRecord = Database["public"]["Tables"]["publication_records"]["Row"];
 
+interface BlueprintRepairContext {
+  blocker: WorkerBlocker;
+  episodeId: string;
+}
+
 type EpisodeVisibility = "active" | "archived" | "all";
 type EpisodeAction = "rename" | "archive" | "delete" | null;
 type EpisodeWithArchive = Episode & { archived_at?: string | null };
@@ -254,7 +259,7 @@ function stageTone(stage: EpisodeStage): "review" | "approved" | "muted" {
   return "muted";
 }
 
-const taskStatusLabels: Record<Task["status"], string> = { ready: "等待领取", running: "执行中", completed: "已完成", blocked: "已阻塞", failed: "失败" };
+const taskStatusLabels: Record<Task["status"], string> = { ready: "等待领取", running: "执行中", completed: "已完成", blocked: "已阻塞", failed: "失败", superseded: "已由新配置替代" };
 const transitionReasonLabels: Record<string, string> = {
   "Owner confirmed an imported main script revision.": "Owner 已确认导入的主脚本修订。",
   "Owner confirmed all production materials are ready; start production.": "Owner 已确认材料准备完成，开始制作。",
@@ -524,6 +529,7 @@ export function App() {
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [isEpisodeDetailOpen, setIsEpisodeDetailOpen] = useState(false);
   const [isPublishModalOpen, setIsPublishModalOpen] = useState(false);
+  const [blueprintRepairContext, setBlueprintRepairContext] = useState<BlueprintRepairContext | null>(null);
   const [message, setMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -678,10 +684,11 @@ export function App() {
     setIsEpisodeDetailOpen(true);
   }
 
-  function openAccountBlueprint(accountId: string) {
+  function openAccountBlueprint(accountId: string, repairContext: BlueprintRepairContext | null = null) {
     setSelectedAccountId(accountId);
+    setBlueprintRepairContext(repairContext);
     changeNavigation("accounts");
-    setMessage("已打开对应账号的蓝图配置；保存新版本后需要重新创建任务。");
+    setMessage(repairContext ? "已打开对应账号的蓝图配置；保存后可以应用到当前生产单并继续。" : "已打开对应账号的蓝图配置。");
   }
 
   function openPublishModal(episodeId: string) {
@@ -723,6 +730,34 @@ export function App() {
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "创建蓝图版本失败。");
       return null;
+    } finally {
+      setPendingAction("");
+    }
+  }
+
+  async function applyBlueprintToEpisode(input: { blueprintVersionId: string; context: BlueprintRepairContext }): Promise<boolean> {
+    setPendingAction(`apply-blueprint-${input.context.episodeId}`);
+    setErrorMessage("");
+    try {
+      const { data, error } = await supabase.rpc("apply_blueprint_to_episode", {
+        p_blocker_code: input.context.blocker.code,
+        p_blocker_detail: input.context.blocker.detail,
+        p_blueprint_version_id: input.blueprintVersionId,
+        p_episode_id: input.context.episodeId,
+      });
+      if (error) throw error;
+      const result = data && typeof data === "object" && !Array.isArray(data) ? data as Record<string, unknown> : {};
+      const recreatedCount = typeof result.recreated_task_count === "number" ? result.recreated_task_count : 0;
+      await refreshWorkspace();
+      setBlueprintRepairContext(null);
+      setSelectedEpisodeId(input.context.episodeId);
+      setIsEpisodeDetailOpen(true);
+      setActiveNavigation("episodes");
+      setMessage(`配置已应用到当前生产单，已保留原有工作并重新排队 ${recreatedCount} 个受阻任务。`);
+      return true;
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "无法将蓝图配置应用到当前生产单。");
+      return false;
     } finally {
       setPendingAction("");
     }
@@ -1366,7 +1401,10 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             account={selectedAccount}
             accounts={workspace.accounts}
             blueprints={workspace.blueprints.filter((blueprint) => blueprint.account_id === selectedAccount?.id)}
+            blueprintRepairContext={blueprintRepairContext}
             onArchiveBlueprint={setBlueprintArchived}
+            onApplyBlueprintToEpisode={applyBlueprintToEpisode}
+            onDismissBlueprintRepair={() => setBlueprintRepairContext(null)}
             isPending={pendingAction}
             onActivate={activateBlueprint}
             onCreateBlueprint={createBlueprint}
@@ -1375,7 +1413,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             onCreateSeriesVersion={createSeriesVersion}
             onDeactivateBlueprint={deactivateBlueprint}
             onRenameAccount={renameAccount}
-            onSelectAccount={setSelectedAccountId}
+            onSelectAccount={(accountId) => { setBlueprintRepairContext(null); setSelectedAccountId(accountId); }}
             promptVersions={workspace.promptVersions.filter((version) => version.account_id === selectedAccount?.id)}
             series={workspace.series.filter((candidate) => candidate.account_id === selectedAccount?.id)}
             seriesVersions={workspace.seriesVersions.filter((version) => version.account_id === selectedAccount?.id)}
@@ -1472,7 +1510,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             isStartProductionPending={pendingAction === `start-production-${selectedEpisode.id}`}
             isRefreshPending={pendingAction === "workspace-refresh"}
             isTransitionPending={pendingAction.startsWith(`transition-${selectedEpisode.id}-`) || pendingAction.startsWith("review-render-revision-")}
-            onOpenBlueprint={() => openAccountBlueprint(selectedEpisode.account_id)}
+            onOpenBlueprint={(blocker) => openAccountBlueprint(selectedEpisode.account_id, blocker ? { blocker, episodeId: selectedEpisode.id } : null)}
             onOpenLocalDirectory={openLocalEpisodeDirectory}
             onImportMaterial={importProductionMaterial}
             onStartProduction={startEpisodeProduction}
@@ -1582,10 +1620,11 @@ function BootstrapScreen({ errorMessage, isPending, onSubmit }: { errorMessage: 
 function LoadingScreen() { return <main className="access-shell"><div className="loading-mark">正在连接受控平台…</div></main>; }
 function ErrorScreen({ errorMessage, onRetry }: { errorMessage: string; onRetry: () => Promise<void> }) { return <main className="access-shell"><section className="access-card"><h1>无法读取控制数据</h1><p className="form-error">{errorMessage}</p><button className="button button-primary" onClick={() => void onRetry()} type="button">重试</button></section></main>; }
 
-export function AccountWorkspace({ account, accounts, blueprints, isPending, onActivate, onArchiveBlueprint = async () => {}, onCreateBlueprint, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeactivateBlueprint = async () => {}, onRenameAccount = async () => {}, onSelectAccount, promptVersions = [], series = [], seriesVersions = [] }: { account: Account | null; accounts: Account[]; blueprints: Blueprint[]; isPending: string; onActivate: (id: string) => Promise<void>; onArchiveBlueprint?: (id: string, archived: boolean) => Promise<void>; onCreateBlueprint: (policy: Json) => Promise<Blueprint | null>; onCreatePromptVersion?: (input: { capability: PromptVersion["capability"]; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onCreateSeries?: (input: { name: string; rules: Json }) => Promise<void>; onCreateSeriesVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>; onDeactivateBlueprint?: (id: string) => Promise<void>; onRenameAccount?: (id: string, name: string) => Promise<boolean | void>; onSelectAccount: (id: string) => void; promptVersions?: PromptVersion[]; series?: Series[]; seriesVersions?: SeriesVersion[] }) {
+export function AccountWorkspace({ account, accounts, blueprints, blueprintRepairContext = null, isPending, onActivate, onApplyBlueprintToEpisode, onArchiveBlueprint = async () => {}, onCreateBlueprint, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeactivateBlueprint = async () => {}, onDismissBlueprintRepair, onRenameAccount = async () => {}, onSelectAccount, promptVersions = [], series = [], seriesVersions = [] }: { account: Account | null; accounts: Account[]; blueprints: Blueprint[]; blueprintRepairContext?: BlueprintRepairContext | null; isPending: string; onActivate: (id: string) => Promise<void>; onApplyBlueprintToEpisode?: (input: { blueprintVersionId: string; context: BlueprintRepairContext }) => Promise<boolean>; onArchiveBlueprint?: (id: string, archived: boolean) => Promise<void>; onCreateBlueprint: (policy: Json) => Promise<Blueprint | null>; onCreatePromptVersion?: (input: { capability: PromptVersion["capability"]; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onCreateSeries?: (input: { name: string; rules: Json }) => Promise<void>; onCreateSeriesVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>; onDeactivateBlueprint?: (id: string) => Promise<void>; onDismissBlueprintRepair?: () => void; onRenameAccount?: (id: string, name: string) => Promise<boolean | void>; onSelectAccount: (id: string) => void; promptVersions?: PromptVersion[]; series?: Series[]; seriesVersions?: SeriesVersion[] }) {
   const [activeSection, setActiveSection] = useState<"blueprints" | "series">("blueprints");
   const [isEditing, setIsEditing] = useState(false);
   const [isAccountRenameOpen, setIsAccountRenameOpen] = useState(false);
+  const [repairConfirmation, setRepairConfirmation] = useState<{ blueprint: Blueprint; context: BlueprintRepairContext } | null>(null);
   const [selectedBlueprintId, setSelectedBlueprintId] = useState("");
   const activePolicy = account ? blueprints.find((blueprint) => blueprint.id === account.current_blueprint_version_id)?.policy ?? defaultBlueprintPolicy : defaultBlueprintPolicy;
   const sortedBlueprints = [...blueprints].sort((left, right) => right.version - left.version);
@@ -1601,6 +1640,7 @@ export function AccountWorkspace({ account, accounts, blueprints, isPending, onA
     setActiveSection("blueprints");
     setIsEditing(false);
     setIsAccountRenameOpen(false);
+    setRepairConfirmation(null);
   }, [account?.id]);
 
   function selectBlueprint(blueprintId: string) { setSelectedBlueprintId(blueprintId); setIsEditing(false); }
@@ -1634,7 +1674,7 @@ export function AccountWorkspace({ account, accounts, blueprints, isPending, onA
       </section>
       <section className="blueprint-editor">
         <header className="blueprint-editor-heading"><div><h2>蓝图 v{selectedBlueprint.version}</h2><p>{selectedStatus === "当前生效" ? "当前生效版本；仅影响之后新建的生产单。" : selectedStatus === "已归档" ? "已归档版本；保留历史记录，不能直接用于新建生产单。" : "待激活版本；查看确认后可直接启用。"}</p></div><div className="blueprint-editor-heading-actions">{!isEditing && !selectedBlueprint.archived_at ? <button className="button button-secondary button-small" onClick={() => setIsEditing(true)} type="button">以此版本编辑</button> : null}{isSelectedCurrent ? <button aria-label="停用当前版本" className="button button-danger-soft button-small" disabled={isPending === `deactivate-${selectedBlueprint.id}`} onClick={() => void onDeactivateBlueprint(selectedBlueprint.id)} title="停用后该版本不再用于新建生产单" type="button">{isPending === `deactivate-${selectedBlueprint.id}` ? "停用中…" : "停用当前版本"}</button> : null}</div></header>
-        {isEditing ? <BlueprintConfigurationForm initialAssetRoot={blueprintAssetRoot(selectedBlueprint.policy)} initialPolicy={selectedBlueprint.policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} onCancel={() => setIsEditing(false)} onCreatePromptVersion={onCreatePromptVersion} onSave={async (policy, activate) => { const createdBlueprint = await onCreateBlueprint(policy); if (!createdBlueprint) return; setSelectedBlueprintId(createdBlueprint.id); setIsEditing(false); if (activate) await onActivate(createdBlueprint.id); }} promptVersions={promptVersions} /> : <><section className="blueprint-view"><h3>资产目录</h3><code>{policyAssetRoot(selectedBlueprint.policy)}</code><p>路径由运行 Worker 的本机验证，浏览器不会读取该目录。</p></section><section className="blueprint-view"><h3>蓝图规则摘要</h3><dl className="configuration-summary blueprint-summary-grid"><div className="blueprint-summary-wide"><dt>账号定位</dt><dd>{policyPositioning(selectedBlueprint.policy)}</dd></div><div><dt>审批关卡</dt><dd><span className="summary-chip-list">{Array.isArray((selectedBlueprint.policy as Record<string, unknown>).approval_gates) ? ((selectedBlueprint.policy as Record<string, unknown>).approval_gates as unknown[]).map((gate) => <span className="summary-chip" key={String(gate)}>{String(gate)}</span>) : <span className="summary-empty">未配置</span>}</span></dd></div><div><dt>允许工具</dt><dd><span className="summary-chip-list">{Array.isArray((selectedBlueprint.policy as Record<string, unknown>).allowed_tools) ? ((selectedBlueprint.policy as Record<string, unknown>).allowed_tools as unknown[]).map((tool) => <span className="summary-chip" key={String(tool)}>{String(tool)}</span>) : <span className="summary-empty">未配置</span>}</span></dd></div></dl><details className="advanced-configuration"><summary>查看原始规则</summary><pre>{formatPolicy(selectedBlueprint.policy)}</pre></details></section></>}
+        {isEditing ? <BlueprintConfigurationForm initialAssetRoot={blueprintAssetRoot(selectedBlueprint.policy)} initialPolicy={selectedBlueprint.policy} isEpisodeRepair={Boolean(blueprintRepairContext)} isPending={isPending === "blueprint" || isPending === "prompt-version"} onCancel={() => setIsEditing(false)} onCreatePromptVersion={onCreatePromptVersion} onSave={async (policy, activate) => { const createdBlueprint = await onCreateBlueprint(policy); if (!createdBlueprint) return; setSelectedBlueprintId(createdBlueprint.id); setIsEditing(false); if (activate) await onActivate(createdBlueprint.id); if (blueprintRepairContext) setRepairConfirmation({ blueprint: createdBlueprint, context: blueprintRepairContext }); }} promptVersions={promptVersions} /> : <><section className="blueprint-view"><h3>资产目录</h3><code>{policyAssetRoot(selectedBlueprint.policy)}</code><p>路径由运行 Worker 的本机验证，浏览器不会读取该目录。</p></section><section className="blueprint-view"><h3>蓝图规则摘要</h3><dl className="configuration-summary blueprint-summary-grid"><div className="blueprint-summary-wide"><dt>账号定位</dt><dd>{policyPositioning(selectedBlueprint.policy)}</dd></div><div><dt>审批关卡</dt><dd><span className="summary-chip-list">{Array.isArray((selectedBlueprint.policy as Record<string, unknown>).approval_gates) ? ((selectedBlueprint.policy as Record<string, unknown>).approval_gates as unknown[]).map((gate) => <span className="summary-chip" key={String(gate)}>{String(gate)}</span>) : <span className="summary-empty">未配置</span>}</span></dd></div><div><dt>允许工具</dt><dd><span className="summary-chip-list">{Array.isArray((selectedBlueprint.policy as Record<string, unknown>).allowed_tools) ? ((selectedBlueprint.policy as Record<string, unknown>).allowed_tools as unknown[]).map((tool) => <span className="summary-chip" key={String(tool)}>{String(tool)}</span>) : <span className="summary-empty">未配置</span>}</span></dd></div></dl><details className="advanced-configuration"><summary>查看原始规则</summary><pre>{formatPolicy(selectedBlueprint.policy)}</pre></details></section></>}
         <div className="blueprint-editor-actions">
           {selectedBlueprint.archived_at ? <button className="button button-secondary" disabled={isPending === `unarchive-${selectedBlueprint.id}`} onClick={() => void onArchiveBlueprint(selectedBlueprint.id, false)} type="button">{isPending === `unarchive-${selectedBlueprint.id}` ? "处理中…" : "取消归档"}</button> : !isSelectedCurrent ? <button className="button button-primary" disabled={isPending === `activate-${selectedBlueprint.id}`} onClick={() => void onActivate(selectedBlueprint.id)} type="button">{isPending === `activate-${selectedBlueprint.id}` ? "激活中…" : "激活此版本"}</button> : null}
           {!selectedBlueprint.is_active && !selectedBlueprint.archived_at ? <button className="button button-secondary" disabled={isPending === `archive-${selectedBlueprint.id}`} onClick={() => void onArchiveBlueprint(selectedBlueprint.id, true)} type="button">{isPending === `archive-${selectedBlueprint.id}` ? "归档中…" : "归档此版本"}</button> : null}
@@ -1643,7 +1683,12 @@ export function AccountWorkspace({ account, accounts, blueprints, isPending, onA
     </div> : null}
     {activeSection === "series" ? <div aria-labelledby="account-series-heading" id="account-series-panel" role="tabpanel"><SeriesSettings isPending={isPending} onCreate={onCreateSeries} onCreateVersion={onCreateSeriesVersion} series={series} seriesVersions={seriesVersions} /></div> : null}
     {isAccountRenameOpen ? <AccountRenameModal account={account} isPending={isPending === `rename-account-${account.id}`} onClose={() => setIsAccountRenameOpen(false)} onSave={(name) => onRenameAccount(account.id, name)} /> : null}
+    {repairConfirmation ? <BlueprintRepairConfirmation blueprint={repairConfirmation.blueprint} isPending={isPending === `apply-blueprint-${repairConfirmation.context.episodeId}`} onApply={async () => { if (!onApplyBlueprintToEpisode) return; if (await onApplyBlueprintToEpisode({ blueprintVersionId: repairConfirmation.blueprint.id, context: repairConfirmation.context })) { setRepairConfirmation(null); onDismissBlueprintRepair?.(); } }} onClose={() => { setRepairConfirmation(null); onDismissBlueprintRepair?.(); }} /> : null}
   </>;
+}
+
+function BlueprintRepairConfirmation({ blueprint, isPending, onApply, onClose }: { blueprint: Blueprint; isPending: boolean; onApply: () => Promise<void>; onClose: () => void }) {
+  return <div className="modal-backdrop" role="presentation"><section aria-label="应用蓝图到当前生产单" className="modal-card"><header><div><h2>蓝图 v{blueprint.version} 已创建</h2><p>可以把这次修正应用到原生产单，继续之前的工作。</p></div><button aria-label="关闭蓝图应用确认" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></button></header><div className="blueprint-repair-summary"><strong>会保留</strong><p>主脚本、已导入材料、审核包、批注、已完成任务和审计记录。</p><strong>会重新排队</strong><p>当前受阻任务；后续未完成任务会按新配置继续编排，旧任务会保留为历史记录，不会再次领取。</p></div><div className="modal-actions"><button className="button button-secondary" disabled={isPending} onClick={onClose} type="button">仅保存蓝图</button><button className="button button-primary" disabled={isPending} onClick={() => void onApply()} type="button">{isPending ? "应用中…" : "应用并继续当前生产单"}</button></div></section></div>;
 }
 
 export function SeriesSettings({ isPending, onCreate, onCreateVersion = async () => {}, series, seriesVersions }: { isPending: boolean | string; onCreate: (input: { name: string; rules: Json }) => Promise<void>; onCreateVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>; series: Series[]; seriesVersions: SeriesVersion[] }) {
@@ -1748,7 +1793,7 @@ function EpisodeUtilityPopover({ artifacts, history, kind, onClose, tasks, worke
   return <div aria-label={heading} className="episode-utility-popover" role="dialog"><header><strong>{heading}</strong><button aria-label={`关闭${heading}`} className="icon-button" onClick={onClose} type="button"><X className="icon" /></button></header>{kind === "worker" ? <div className={`episode-utility-status episode-utility-status-${workerStatus.tone}`}><strong>{workerStatus.label}</strong><p>{workerStatus.detail}</p><span>{tasks.length ? `${completedTasks} / ${tasks.length} 个任务已完成` : "尚无任务记录"}</span></div> : kind === "artifacts" ? <div className="episode-utility-artifacts">{artifacts.length ? artifacts.map((artifact) => <Artifact complete key={artifact.id} label={artifact.artifact_type} name={artifact.relative_path} />) : <div className="episode-utility-summary"><strong>尚无产物</strong><p>Worker 尚未生成可查看的产物。</p></div>}</div> : timeline.length ? <ol className="timeline">{timeline.map((transition) => <li key={transition.id}><i className={`timeline-dot ${stageTone(transition.to_stage)}`} /><div><strong>{stageLabels[transition.to_stage]}</strong><span>{userFacingTransitionReason(transition.reason)}</span></div><time>{formatDate(transition.created_at)}</time></li>)}</ol> : <div className="episode-utility-summary"><strong>暂无状态变化</strong><p>生产单创建与状态变化会显示在这里。</p></div>}</div>;
 }
 
-export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, blueprint, episode, isDirectoryOpenPending = false, isMaterialPending, isRefreshPending = false, isStartProductionPending = false, isStoryboardAnnotationPending, isTransitionPending, onCreateAudioTrackAnnotation, onOpenBlueprint, onOpenLocalDirectory = async () => {}, onCreateStoryboardAnnotation, onImportMaterial, onRefresh = async () => {}, onRequestReviewRenderRevision, onReviewPreRenderMember = async () => {}, onStartProduction = async () => {}, onTransition, ownerId = "local-owner", preRenderReviewMemberDecisions = [], preRenderReviewMembers = [], reviewAnnotations, reviewPackages, tasks, transitions }: { artifacts: Artifact[]; audioTrackAnnotations: AudioTrackAnnotation[]; audioTracks: AudioTrack[]; blueprint: Blueprint | null; episode: Episode; isDirectoryOpenPending?: boolean; isMaterialPending: boolean; isRefreshPending?: boolean; isStartProductionPending?: boolean; isStoryboardAnnotationPending: boolean; isTransitionPending: boolean; onCreateAudioTrackAnnotation: (input: AudioTrackAnnotationRequest) => Promise<void>; onOpenBlueprint?: () => void; onOpenLocalDirectory?: (episodeId: string) => Promise<void>; onCreateStoryboardAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onImportMaterial: (input: MaterialImportRequest) => Promise<void>; onRefresh?: () => Promise<void>; onRequestReviewRenderRevision: (input: ReviewRenderRevisionRequest) => Promise<boolean>; onReviewPreRenderMember?: (input: PreRenderMemberReviewRequest) => Promise<void>; onStartProduction?: (episodeId: string) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; ownerId?: string; preRenderReviewMemberDecisions?: PreRenderReviewMemberDecision[]; preRenderReviewMembers?: PreRenderReviewMember[]; reviewAnnotations: ReviewAnnotation[]; reviewPackages: ReviewPackage[]; tasks: Task[]; transitions: Transition[] }) {
+export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, blueprint, episode, isDirectoryOpenPending = false, isMaterialPending, isRefreshPending = false, isStartProductionPending = false, isStoryboardAnnotationPending, isTransitionPending, onCreateAudioTrackAnnotation, onOpenBlueprint, onOpenLocalDirectory = async () => {}, onCreateStoryboardAnnotation, onImportMaterial, onRefresh = async () => {}, onRequestReviewRenderRevision, onReviewPreRenderMember = async () => {}, onStartProduction = async () => {}, onTransition, ownerId = "local-owner", preRenderReviewMemberDecisions = [], preRenderReviewMembers = [], reviewAnnotations, reviewPackages, tasks, transitions }: { artifacts: Artifact[]; audioTrackAnnotations: AudioTrackAnnotation[]; audioTracks: AudioTrack[]; blueprint: Blueprint | null; episode: Episode; isDirectoryOpenPending?: boolean; isMaterialPending: boolean; isRefreshPending?: boolean; isStartProductionPending?: boolean; isStoryboardAnnotationPending: boolean; isTransitionPending: boolean; onCreateAudioTrackAnnotation: (input: AudioTrackAnnotationRequest) => Promise<void>; onOpenBlueprint?: (blocker: WorkerBlocker) => void; onOpenLocalDirectory?: (episodeId: string) => Promise<void>; onCreateStoryboardAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onImportMaterial: (input: MaterialImportRequest) => Promise<void>; onRefresh?: () => Promise<void>; onRequestReviewRenderRevision: (input: ReviewRenderRevisionRequest) => Promise<boolean>; onReviewPreRenderMember?: (input: PreRenderMemberReviewRequest) => Promise<void>; onStartProduction?: (episodeId: string) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; ownerId?: string; preRenderReviewMemberDecisions?: PreRenderReviewMemberDecision[]; preRenderReviewMembers?: PreRenderReviewMember[]; reviewAnnotations: ReviewAnnotation[]; reviewPackages: ReviewPackage[]; tasks: Task[]; transitions: Transition[] }) {
   const episodeArtifacts = artifacts.filter((artifact) => artifact.episode_id === episode.id);
   const history = transitions.filter((transition) => transition.episode_id === episode.id);
   const blockers = workerBlockers(tasks, episode.id);

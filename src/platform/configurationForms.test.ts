@@ -4,6 +4,7 @@ import {
   blueprintPolicyToForm,
   seriesFormToRules,
   seriesRulesToForm,
+  validateMediaAdapters,
   validateSeriesRules,
 } from "./configurationFormValues";
 
@@ -22,9 +23,23 @@ describe("账号蓝图表单转换", () => {
     expect(form.positioning).toBe("越南民俗短视频");
     expect(form.assetRoot).toBe("/Volumes/Media/dao");
     expect(form.budgets.scriptWritingCents).toBe("12");
-    expect(form.advancedJson).toContain("soundtrack");
+    expect(form.mediaAdapters.soundtrack.provider).toBe("freesound");
+    expect(form.advancedJson).not.toContain("soundtrack");
     expect(form.advancedJson).toContain("global_cap_cents");
     expect(form.advancedJson).toContain("temperature");
+  });
+
+  it("把媒体适配器从高级 JSON 提升为独立配置字段", () => {
+    const form = blueprintPolicyToForm({
+      a_roll: { executor: { provider: "codex", adapter: "codex", model: "video-model", prompt_version: "a-roll-v1" }, allowed_tools: ["read", "write"], budget_cents: 20, max_attempts: 2 },
+      narration: { executor: { provider: "google_tts", adapter: "google_tts", model: "tts-model", prompt_version: "narration-v1" }, allowed_tools: ["network", "write"], budget_cents: 12, max_attempts: 1, voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 1 } },
+    });
+
+    expect(form.mediaAdapters.a_roll.adapter).toBe("codex");
+    expect(form.mediaAdapters.a_roll.allowedTools).toBe("read, write");
+    expect(form.mediaAdapters.narration.voiceName).toBe("voice-a");
+    expect(form.advancedJson).not.toContain("a_roll");
+    expect(form.advancedJson).not.toContain("narration");
   });
 
   it("用表单字段覆盖已知配置，但不丢失高级字段", () => {
@@ -39,13 +54,24 @@ describe("账号蓝图表单转换", () => {
         visual_planning: { provider: "codex", model: "model-b", promptVersion: "prompt-b" },
         storyboard_planning: { provider: "codex", model: "model-c", promptVersion: "prompt-c" },
       },
+      mediaAdapters: {
+        a_roll: { provider: "codex", adapter: "codex", model: "video-model", promptVersion: "a-roll-v1", allowedTools: "read, write", budgetCents: "20", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "2", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
+        b_roll: { provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", promptVersion: "b-roll-v1", allowedTools: "network, write", budgetCents: "", perShotBudgetCents: "10", totalBudgetCents: "100", maxAttempts: "2", maxConcurrency: "3", providerMaxConcurrency: "2", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
+        narration: { provider: "google_tts", adapter: "google_tts", model: "tts-model", promptVersion: "narration-v1", allowedTools: "network, write", budgetCents: "12", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "1", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "zh-CN", voiceName: "voice-a", voiceSpeakingRate: "0.8" },
+        soundtrack: { provider: "freesound", adapter: "freesound_preview", model: "sound-model", promptVersion: "soundtrack-v1", allowedTools: "network, write", budgetCents: "", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
+      },
       advancedJson: '{"soundtrack":{"budget_cents":99}}',
     });
 
     expect(result).toMatchObject({ positioning: "新的账号定位", asset_root: "/Volumes/Media/new", approval_gates: ["script", "publish"], allowed_tools: ["read", "write", "network"] });
     expect(result).toMatchObject({ budgets: { script_writing_cents: 10, visual_planning_cents: 20, storyboard_planning_cents: 30 } });
     expect(result).toMatchObject({ executors: { script_writing: { model: "model-a" }, visual_planning: { model: "model-b" }, storyboard_planning: { model: "model-c" } } });
-    expect(result).toMatchObject({ soundtrack: { budget_cents: 99 } });
+    expect(result).toMatchObject({ a_roll: { executor: { adapter: "codex" }, budget_cents: 20, max_attempts: 2 }, b_roll: { executor: { adapter: "pexels_video" }, per_shot_budget_cents: 10, total_budget_cents: 100 }, narration: { voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 0.8 } }, soundtrack: { executor: { adapter: "freesound_preview" } } });
+  });
+
+  it("拒绝未完成的媒体适配器配置", () => {
+    const form = blueprintPolicyToForm({ a_roll: { executor: { provider: "codex" } } });
+    expect(() => validateMediaAdapters(form.mediaAdapters)).toThrow("A-roll适配器");
   });
 });
 

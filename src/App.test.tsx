@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { Database } from "./lib/database.types";
-import { AccountWorkspace, App, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, navigation, navigationBadgeCounts } from "./App";
+import { AccountWorkspace, App, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, episodeWorkerStatus, navigation, navigationBadgeCounts } from "./App";
 import { defaultBlueprintPolicy, parseBlueprintPolicy, withBlueprintAssetRoot } from "./platform/blueprintPolicy";
 
 vi.mock("./lib/supabase", () => ({
@@ -89,10 +89,36 @@ describe("approval console", () => {
     await waitFor(() => expect(onCreateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ positioning: "新定位", soundtrack: { budget_cents: 99 } })));
   });
 
+  it("从阻塞项编辑蓝图后可以应用到原生产单", async () => {
+    const user = userEvent.setup();
+    const account = { created_at: "2026-08-15T00:00:00.000Z", current_blueprint_version_id: "blueprint-1", id: "account-1", name: "道工作室", slug: "dao-studio", timezone: "Asia/Shanghai" } as Database["public"]["Tables"]["accounts"]["Row"];
+    const blueprint = { account_id: account.id, created_at: "2026-08-15T00:00:00.000Z", id: "blueprint-1", is_active: true, policy: { positioning: "旧定位", asset_root: "/Volumes/Media/dao", approval_gates: ["script"], allowed_tools: ["read", "write"], budgets: { script_writing_cents: 0, visual_planning_cents: 0, storyboard_planning_cents: 0 }, executors: { script_writing: { provider: "codex", model: "model-a", prompt_version: "script-v1" }, visual_planning: { provider: "codex", model: "model-b", prompt_version: "visual-v1" }, storyboard_planning: { provider: "codex", model: "model-c", prompt_version: "storyboard-v1" } } }, version: 1 } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
+    const nextBlueprint = { ...blueprint, id: "blueprint-2", version: 2, is_active: false };
+    const onCreateBlueprint = vi.fn().mockResolvedValue(nextBlueprint);
+    const onApplyBlueprintToEpisode = vi.fn().mockResolvedValue(true);
+
+    render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} blueprintRepairContext={{ blocker: { code: "executor_invalid", detail: "执行器 adapter 未配置。" }, episodeId: "episode-1" }} isPending="" onActivate={vi.fn()} onApplyBlueprintToEpisode={onApplyBlueprintToEpisode} onCreateBlueprint={onCreateBlueprint} onCreateSeries={vi.fn()} onSelectAccount={vi.fn()} series={[]} seriesVersions={[]} />);
+
+    await user.click(screen.getByRole("button", { name: "以此版本编辑" }));
+    await user.click(screen.getByRole("button", { name: "保存为新版本" }));
+    expect(await screen.findByRole("heading", { name: "蓝图 v2 已创建" })).toBeTruthy();
+    expect(screen.getByText("主脚本、已导入材料、审核包、批注、已完成任务和审计记录。", { exact: false })).toBeTruthy();
+
+    await user.click(screen.getByRole("button", { name: "应用并继续当前生产单" }));
+    await waitFor(() => expect(onApplyBlueprintToEpisode).toHaveBeenCalledWith({ blueprintVersionId: "blueprint-2", context: { blocker: { code: "executor_invalid", detail: "执行器 adapter 未配置。" }, episodeId: "episode-1" } }));
+  });
+
   it("按日常工作流顺序显示导航，并为审核和发布显示待办数量", () => {
     expect(navigation.map((item) => item.label)).toEqual(["系列运营", "生产单", "审核", "发布队列", "复盘", "账号"]);
     const episode = { account_id: "account-1", blueprint_version_id: "blueprint-1", created_at: "2026-08-15T00:00:00.000Z", id: "episode-1", stage: "script_review", title: "待审核", updated_at: "2026-08-15T00:00:00.000Z" } as Database["public"]["Tables"]["episodes"]["Row"];
     expect(navigationBadgeCounts([episode], [], [])).toEqual({ reviews: 1, publish: 0 });
+  });
+
+  it("把 Worker 执行、完成和审核等待状态区分展示", () => {
+    expect(episodeWorkerStatus({ main_script_revision_id: "revision-1", stage: "waiting_input" }, [])).toMatchObject({ label: "待开始制作", tone: "waiting" });
+    expect(episodeWorkerStatus({ stage: "visual_draft" }, [{ status: "running", task_type: "prepare_visual_brief" }])).toMatchObject({ label: "执行中", tone: "running" });
+    expect(episodeWorkerStatus({ stage: "visual_review" }, [{ status: "completed", task_type: "prepare_visual_brief" }])).toMatchObject({ label: "等待审核", tone: "review" });
+    expect(episodeWorkerStatus({ stage: "storyboard_approved" }, [{ status: "completed", task_type: "draft_storyboard" }])).toMatchObject({ label: "已完成", tone: "completed" });
   });
 
   it("收起态导航仍保留审核和发布角标节点", () => {

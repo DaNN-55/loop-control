@@ -3,6 +3,25 @@ import type { Json } from "../lib/database.types";
 type JsonObject = Record<string, Json | undefined>;
 type ExecutorForm = { provider: string; model: string; promptVersion: string };
 
+export const mediaAdapterKeys = ["a_roll", "b_roll", "narration", "soundtrack"] as const;
+export type MediaAdapterKey = typeof mediaAdapterKeys[number];
+export type MediaAdapterForm = {
+  provider: string;
+  adapter: string;
+  model: string;
+  promptVersion: string;
+  allowedTools: string;
+  budgetCents: string;
+  perShotBudgetCents: string;
+  totalBudgetCents: string;
+  maxAttempts: string;
+  maxConcurrency: string;
+  providerMaxConcurrency: string;
+  voiceLanguageCode: string;
+  voiceName: string;
+  voiceSpeakingRate: string;
+};
+
 export interface BlueprintFormValues {
   positioning: string;
   assetRoot: string;
@@ -10,6 +29,7 @@ export interface BlueprintFormValues {
   allowedTools: string[];
   budgets: { scriptWritingCents: string; visualPlanningCents: string; storyboardPlanningCents: string };
   executors: Record<"script_writing" | "visual_planning" | "storyboard_planning", ExecutorForm>;
+  mediaAdapters: Record<MediaAdapterKey, MediaAdapterForm>;
   advancedJson: string;
 }
 
@@ -24,7 +44,7 @@ export interface SeriesFormValues {
   advancedJson: string;
 }
 
-const blueprintKnownKeys = new Set(["positioning", "asset_root", "approval_gates", "allowed_tools", "budgets", "executors"]);
+const blueprintKnownKeys = new Set(["positioning", "asset_root", "approval_gates", "allowed_tools", "budgets", "executors", ...mediaAdapterKeys]);
 const seriesKnownKeys = new Set(["positioning", "format", "characters", "locations", "visual_style", "narrative_structure", "restrictions"]);
 const executorKeys = ["script_writing", "visual_planning", "storyboard_planning"] as const;
 
@@ -44,6 +64,10 @@ function displayValue(value: Json | undefined): string {
 
 function stringArray(value: Json | undefined): string[] {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
+}
+
+function commaSeparatedValues(source: string): string[] {
+  return source.split(",").map((item) => item.trim()).filter(Boolean);
 }
 
 function advancedJson(value: JsonObject, knownKeys: Set<string>, nestedKeys: Record<string, Set<string>> = {}): string {
@@ -69,6 +93,17 @@ function blueprintAdvancedJson(value: JsonObject): string {
     if (Object.keys(fields).length) executorExtra[key] = fields;
   }
   if (Object.keys(executorExtra).length) extra.executors = executorExtra;
+  for (const key of mediaAdapterKeys) {
+    const mediaAdapter = objectValue(value[key]);
+    const mediaAdapterExtra: JsonObject = {};
+    for (const [field, rawValue] of Object.entries(mediaAdapter)) {
+      if (field !== "executor" && field !== "allowed_tools" && field !== "budget_cents" && field !== "per_shot_budget_cents" && field !== "total_budget_cents" && field !== "max_attempts" && field !== "max_concurrency" && field !== "provider_max_concurrency" && field !== "voice") mediaAdapterExtra[field] = rawValue;
+    }
+    const mediaExecutor = objectValue(mediaAdapter.executor);
+    const mediaExecutorExtra = Object.fromEntries(Object.entries(mediaExecutor).filter(([field]) => !new Set(["provider", "adapter", "model", "prompt_version"]).has(field)));
+    if (Object.keys(mediaExecutorExtra).length) mediaAdapterExtra.executor = mediaExecutorExtra;
+    if (Object.keys(mediaAdapterExtra).length) extra[key] = mediaAdapterExtra;
+  }
   return JSON.stringify(extra, null, 2);
 }
 
@@ -95,6 +130,106 @@ function formExecutor(value: Json | undefined): ExecutorForm {
   return { provider: stringValue(executor.provider) || "codex", model: stringValue(executor.model) || "gpt-5.6-codex", promptVersion: stringValue(executor.prompt_version) || "unversioned" };
 }
 
+function formMediaAdapter(value: Json | undefined): MediaAdapterForm {
+  const mediaAdapter = objectValue(value);
+  const executor = objectValue(mediaAdapter.executor);
+  const voice = objectValue(mediaAdapter.voice);
+  return {
+    provider: stringValue(executor.provider),
+    adapter: stringValue(executor.adapter),
+    model: stringValue(executor.model),
+    promptVersion: stringValue(executor.prompt_version),
+    allowedTools: stringArray(mediaAdapter.allowed_tools).join(", "),
+    budgetCents: displayValue(mediaAdapter.budget_cents),
+    perShotBudgetCents: displayValue(mediaAdapter.per_shot_budget_cents),
+    totalBudgetCents: displayValue(mediaAdapter.total_budget_cents),
+    maxAttempts: displayValue(mediaAdapter.max_attempts),
+    maxConcurrency: displayValue(mediaAdapter.max_concurrency),
+    providerMaxConcurrency: displayValue(mediaAdapter.provider_max_concurrency),
+    voiceLanguageCode: stringValue(voice.language_code),
+    voiceName: stringValue(voice.name),
+    voiceSpeakingRate: displayValue(voice.speaking_rate),
+  };
+}
+
+function mediaAdapterHasValues(form: MediaAdapterForm): boolean {
+  return Object.values(form).some((value) => value.trim() !== "");
+}
+
+function positiveInteger(source: string, label: string): number {
+  const value = Number(source);
+  if (!Number.isInteger(value) || value <= 0) throw new Error(`${label}必须是大于 0 的整数。`);
+  return value;
+}
+
+function positiveNumber(source: string, label: string): number {
+  const value = Number(source);
+  if (!Number.isFinite(value) || value <= 0) throw new Error(`${label}必须是大于 0 的数字。`);
+  return value;
+}
+
+function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterForm): void {
+  if (!mediaAdapterHasValues(form)) return;
+  const labels: Record<MediaAdapterKey, string> = { a_roll: "A-roll", b_roll: "B-roll", narration: "旁白", soundtrack: "配乐 / 音效" };
+  const label = labels[key];
+  if (key === "soundtrack") return;
+  if (!form.provider.trim() || !form.adapter.trim() || !form.model.trim() || !form.promptVersion.trim()) throw new Error(`${label}适配器的 Provider、Adapter、模型和 Prompt 版本不能为空。`);
+  if (!commaSeparatedValues(form.allowedTools).length) throw new Error(`${label}适配器至少需要一个允许工具。`);
+  if (key === "a_roll") {
+    positiveInteger(form.budgetCents, `${label}预算`);
+    positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
+  }
+  if (key === "b_roll") {
+    positiveInteger(form.perShotBudgetCents, `${label}单镜头预算`);
+    positiveInteger(form.totalBudgetCents, `${label}总预算`);
+    positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
+    positiveInteger(form.maxConcurrency, `${label}最大并发数`);
+    positiveInteger(form.providerMaxConcurrency, `${label}供应商并发上限`);
+  }
+  if (key === "narration") {
+    positiveInteger(form.budgetCents, `${label}预算`);
+    positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
+    if (!form.voiceLanguageCode.trim() || !form.voiceName.trim()) throw new Error("旁白适配器必须填写语言和声音名称。");
+    positiveNumber(form.voiceSpeakingRate, "旁白语速");
+  }
+}
+
+export function validateMediaAdapters(mediaAdapters: Record<MediaAdapterKey, MediaAdapterForm>): void {
+  for (const key of mediaAdapterKeys) validateMediaAdapter(key, mediaAdapters[key]);
+}
+
+export function mediaAdapterStatus(key: MediaAdapterKey, form: MediaAdapterForm): "未配置" | "待补齐" | "已配置" {
+  if (!mediaAdapterHasValues(form)) return "未配置";
+  try {
+    validateMediaAdapter(key, form);
+    return "已配置";
+  } catch {
+    return "待补齐";
+  }
+}
+
+function mediaAdapterToPolicy(form: MediaAdapterForm, existing: JsonObject): JsonObject {
+  const policy: JsonObject = { ...existing };
+  const executorValues: Array<[keyof MediaAdapterForm, string]> = [["provider", "provider"], ["adapter", "adapter"], ["model", "model"], ["promptVersion", "prompt_version"]];
+  if (executorValues.some(([formKey]) => form[formKey].trim())) {
+    const executor = objectValue(existing.executor);
+    for (const [formKey, policyKey] of executorValues) if (form[formKey].trim()) executor[policyKey] = form[formKey].trim();
+    policy.executor = executor;
+  }
+  if (form.allowedTools.trim()) policy.allowed_tools = commaSeparatedValues(form.allowedTools);
+  const numericFields: Array<[keyof MediaAdapterForm, string]> = [["budgetCents", "budget_cents"], ["perShotBudgetCents", "per_shot_budget_cents"], ["totalBudgetCents", "total_budget_cents"], ["maxAttempts", "max_attempts"], ["maxConcurrency", "max_concurrency"], ["providerMaxConcurrency", "provider_max_concurrency"]];
+  for (const [formKey, policyKey] of numericFields) {
+    if (form[formKey].trim()) policy[policyKey] = Number(form[formKey]);
+    else delete policy[policyKey];
+  }
+  if (form.voiceLanguageCode.trim() || form.voiceName.trim() || form.voiceSpeakingRate.trim()) {
+    policy.voice = { ...objectValue(existing.voice), language_code: form.voiceLanguageCode.trim(), name: form.voiceName.trim(), speaking_rate: Number(form.voiceSpeakingRate) };
+  } else {
+    delete policy.voice;
+  }
+  return policy;
+}
+
 export function blueprintPolicyToForm(policy: Json): BlueprintFormValues {
   const value = objectValue(policy);
   const budgets = objectValue(value.budgets);
@@ -114,6 +249,12 @@ export function blueprintPolicyToForm(policy: Json): BlueprintFormValues {
       visual_planning: formExecutor(executors.visual_planning),
       storyboard_planning: formExecutor(executors.storyboard_planning),
     },
+    mediaAdapters: {
+      a_roll: formMediaAdapter(value.a_roll),
+      b_roll: formMediaAdapter(value.b_roll),
+      narration: formMediaAdapter(value.narration),
+      soundtrack: formMediaAdapter(value.soundtrack),
+    },
     advancedJson: blueprintAdvancedJson(value),
   };
 }
@@ -122,9 +263,11 @@ export function blueprintFormToPolicy(form: BlueprintFormValues): Json {
   const advanced = parseAdvancedJson(form.advancedJson);
   const existingBudgets = objectValue(advanced.budgets);
   const existingExecutors = objectValue(advanced.executors);
+  const existingMediaAdapters = Object.fromEntries(mediaAdapterKeys.map((key) => [key, objectValue(advanced[key])])) as Record<MediaAdapterKey, JsonObject>;
   delete advanced.budgets;
   delete advanced.executors;
-  return {
+  for (const key of mediaAdapterKeys) delete advanced[key];
+  const result: JsonObject = {
     ...advanced,
     positioning: form.positioning.trim(),
     asset_root: form.assetRoot.trim(),
@@ -145,7 +288,11 @@ export function blueprintFormToPolicy(form: BlueprintFormValues): Json {
         prompt_version: form.executors[key].promptVersion.trim(),
       }])),
     },
-  } as Json;
+  };
+  for (const key of mediaAdapterKeys) {
+    if (mediaAdapterHasValues(form.mediaAdapters[key])) result[key] = mediaAdapterToPolicy(form.mediaAdapters[key], existingMediaAdapters[key]);
+  }
+  return result as Json;
 }
 
 export function seriesRulesToForm(rules: Json): SeriesFormValues {

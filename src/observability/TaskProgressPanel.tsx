@@ -27,6 +27,7 @@ const taskStatusLabels: Record<Task["status"], string> = {
   completed: "已完成",
   blocked: "已阻塞",
   failed: "失败",
+  superseded: "已由新配置替代",
 };
 
 function formatDate(source: string): string {

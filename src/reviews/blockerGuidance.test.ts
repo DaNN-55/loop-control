@@ -13,9 +13,9 @@ describe("Worker 阻塞项指导", () => {
     expect(guidance.resolution).toEqual(expect.arrayContaining([
       expect.stringContaining("read"),
       expect.stringContaining("asset_root"),
-      expect.stringContaining("重新创建任务"),
+      expect.stringContaining("当前生产单"),
     ]));
-    expect(guidance.retryLabel).toBe("修正后重建任务");
+    expect(guidance.retryLabel).toBe("修改配置并继续当前生产单");
     expect(guidance.primaryAction).toBe("blueprint");
     expect(guidance.location).toBe("账号蓝图 → 本地资产与审批");
   });
@@ -30,13 +30,29 @@ describe("Worker 阻塞项指导", () => {
     expect(guidance.location).toBe("Worker 运行环境 / 供应商凭据");
   });
 
-  it("把专用媒体适配器问题标记为系统能力，不引导用户填写蓝图", () => {
+  it("把可通过蓝图修正的专用媒体配置指向媒体适配器区域", () => {
+    const guidance = workerBlockerGuidance({ code: "a_roll_executor_invalid", detail: "A-roll 配置缺少 adapter。" });
+
+    expect(guidance.title).toBe("媒体适配器配置不完整");
+    expect(guidance.primaryAction).toBe("blueprint");
+    expect(guidance.location).toBe("账号蓝图 → 媒体适配器");
+  });
+
+  it("把确实尚未注册的媒体能力保留为系统阻塞", () => {
     const guidance = workerBlockerGuidance({ code: "a_roll_executor_unavailable", detail: "尚未注册可生成并验证视频输出的 A-roll 适配器。" });
 
     expect(guidance.title).toBe("当前媒体能力暂不可用");
-    expect(guidance.summary).toContain("不是填写蓝图字段即可解决");
+    expect(guidance.summary).toContain("尚未注册可用的媒体适配器");
     expect(guidance.primaryAction).toBeUndefined();
     expect(guidance.location).toBe("系统能力 / Worker 适配器");
+  });
+
+  it("把 B-roll 供应商配置不匹配指向蓝图媒体适配器", () => {
+    const guidance = workerBlockerGuidance({ code: "b_roll_executor_unavailable", detail: "当前仅注册 Pexels 视频适配器；配置必须精确声明 pexels/pexels_video/pexels-video-v1。" });
+
+    expect(guidance.title).toBe("媒体适配器配置不完整");
+    expect(guidance.primaryAction).toBe("blueprint");
+    expect(guidance.location).toBe("账号蓝图 → 媒体适配器");
   });
 
   it("未知 code 也给出明确的人工处理路径，并保留技术原因", () => {
