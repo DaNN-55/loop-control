@@ -45,12 +45,21 @@ describe("系列运营视图", () => {
     expect(screen.getByText("测试媒体适配器未配置。")).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "脚本待审 输入与脚本 · 审核包 v2" }));
     expect(screen.getByText("媒体供应商暂不可用")).toBeTruthy();
-    expect(screen.getByText("Worker 无法调用当前媒体供应商，可能是供应商适配器、凭据或网络配置问题。")).toBeTruthy();
+    expect(screen.getByText("Worker 无法调用当前媒体供应商，通常是供应商适配器、凭据或网络状态问题。")).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "媒体受阻 media_provider_unavailable" }));
     expect(onSelectEpisode).toHaveBeenNthCalledWith(1, "episode-review");
     expect(onSelectEpisode).toHaveBeenNthCalledWith(2, "episode-blocked");
-    await user.click(screen.getByRole("button", { name: "打开 Episode 详情" }));
-    expect(onSelectEpisode).toHaveBeenNthCalledWith(3, "episode-blocked");
+  });
+
+  it("为运营页可修复的通用执行器阻塞提供蓝图入口", async () => {
+    const user = userEvent.setup();
+    const onOpenBlueprint = vi.fn();
+    const genericTask = { ...tasks[0], id: "generic-blocked-task", last_result: { blockers: [{ code: "executor_invalid", detail: "执行器 adapter 未配置。" }] } };
+
+    render(<OperationsWorkspace episodes={episodes} onOpenBlueprint={onOpenBlueprint} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={reviewPackages} series={[series]} seriesVersions={[seriesVersion]} tasks={[genericTask]} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
+
+    await user.click(screen.getByRole("button", { name: "打开蓝图配置" }));
+    expect(onOpenBlueprint).toHaveBeenCalledWith("account-1");
   });
 
   it("不把已逐项批准的预渲染包计为待审核，并保留缺失系列关联的生产单", () => {

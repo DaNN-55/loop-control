@@ -293,8 +293,9 @@ describe("审核台", () => {
     render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isTransitionPending={false} onTransition={vi.fn()} tasks={[aRollTask]} transitions={[]} />);
 
     expect(screen.getByText("A-roll 任务 · 已阻塞")).toBeTruthy();
-    expect(screen.getAllByText("Worker 执行器配置不完整").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText("任务没有可用的执行器或适配器，Worker 不会自行替换供应商继续执行。")).toHaveLength(2);
+    expect(screen.getAllByText("当前媒体能力暂不可用").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/不是填写蓝图字段即可解决/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.queryByRole("button", { name: "打开蓝图配置" })).toBeNull();
     expect(screen.getByText("a_roll_executor_missing")).toBeTruthy();
   });
 
@@ -309,7 +310,10 @@ describe("审核台", () => {
 
     expect(screen.getByRole("heading", { name: "Worker 阻塞项（2）" })).toBeTruthy();
     expect(screen.getByText("影响 2 个任务")).toBeTruthy();
-    await user.click(screen.getByRole("button", { name: "去修改蓝图" }));
+    expect(screen.getAllByText("处理位置")).toHaveLength(1);
+    expect(screen.queryByText("Episode")).toBeNull();
+    expect(screen.queryByText("资产目录")).toBeNull();
+    await user.click(screen.getByRole("button", { name: "打开蓝图配置" }));
     expect(onOpenBlueprint).toHaveBeenCalledTimes(1);
   });
 

@@ -13,9 +13,11 @@ describe("Worker 阻塞项指导", () => {
     expect(guidance.resolution).toEqual(expect.arrayContaining([
       expect.stringContaining("read"),
       expect.stringContaining("asset_root"),
-      expect.stringContaining("新的任务配置"),
+      expect.stringContaining("重新创建任务"),
     ]));
-    expect(guidance.retryLabel).toBe("修正配置后创建新的任务");
+    expect(guidance.retryLabel).toBe("修正后重建任务");
+    expect(guidance.primaryAction).toBe("blueprint");
+    expect(guidance.location).toBe("账号蓝图 → 本地资产与审批");
   });
 
   it("把媒体供应商不可用说明为凭据或网络问题", () => {
@@ -23,7 +25,18 @@ describe("Worker 阻塞项指导", () => {
 
     expect(guidance.title).toBe("媒体供应商暂不可用");
     expect(guidance.summary).toContain("供应商适配器、凭据或网络");
-    expect(guidance.retryLabel).toBe("修正供应商配置后创建新的任务");
+    expect(guidance.retryLabel).toBe("供应商恢复后重建任务");
+    expect(guidance.primaryAction).toBeUndefined();
+    expect(guidance.location).toBe("Worker 运行环境 / 供应商凭据");
+  });
+
+  it("把专用媒体适配器问题标记为系统能力，不引导用户填写蓝图", () => {
+    const guidance = workerBlockerGuidance({ code: "a_roll_executor_unavailable", detail: "尚未注册可生成并验证视频输出的 A-roll 适配器。" });
+
+    expect(guidance.title).toBe("当前媒体能力暂不可用");
+    expect(guidance.summary).toContain("不是填写蓝图字段即可解决");
+    expect(guidance.primaryAction).toBeUndefined();
+    expect(guidance.location).toBe("系统能力 / Worker 适配器");
   });
 
   it("未知 code 也给出明确的人工处理路径，并保留技术原因", () => {
@@ -32,5 +45,6 @@ describe("Worker 阻塞项指导", () => {
     expect(guidance.title).toBe("Worker 任务需要人工处理");
     expect(guidance.resolution).toHaveLength(3);
     expect(guidance.technicalDetail).toBe("内部错误");
+    expect(guidance.location).toBe("技术详情 / Worker 运行环境");
   });
 });
