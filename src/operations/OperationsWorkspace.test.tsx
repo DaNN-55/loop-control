@@ -59,7 +59,7 @@ describe("系列运营视图", () => {
     render(<OperationsWorkspace episodes={episodes} onOpenBlueprint={onOpenBlueprint} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={reviewPackages} series={[series]} seriesVersions={[seriesVersion]} tasks={[genericTask]} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
 
     await user.click(screen.getByRole("button", { name: "修改配置并继续当前生产单" }));
-    expect(onOpenBlueprint).toHaveBeenCalledWith("account-1", { blocker: expect.objectContaining({ code: "executor_invalid", detail: "执行器 adapter 未配置。" }), episodeId: "episode-blocked" });
+    expect(onOpenBlueprint).toHaveBeenCalledWith("account-1", { blocker: expect.objectContaining({ code: "executor_invalid", detail: "执行器 adapter 未配置。" }), blueprintVersionId: "blueprint-1", episodeId: "episode-blocked" });
   });
 
   it("不把已逐项批准的预渲染包计为待审核，并保留缺失系列关联的生产单", () => {

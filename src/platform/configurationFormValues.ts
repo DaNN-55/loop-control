@@ -168,7 +168,7 @@ function positiveNumber(source: string, label: string): number {
   return value;
 }
 
-function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterForm): void {
+export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterForm): void {
   if (!mediaAdapterHasValues(form)) return;
   const labels: Record<MediaAdapterKey, string> = { a_roll: "A-roll", b_roll: "B-roll", narration: "旁白", soundtrack: "配乐 / 音效" };
   const label = labels[key];

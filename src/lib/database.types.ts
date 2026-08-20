@@ -1091,6 +1091,36 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      apply_episode_configuration_repair: {
+        Args: {
+          p_blocker_code?: string | null
+          p_blocker_detail?: string | null
+          p_episode_id: string
+          p_policy: Json
+        }
+        Returns: Json
+        SetofOptions: {
+          from: "*"
+          to: "Json"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      apply_episode_configuration_repair_v2: {
+        Args: {
+          p_blocker_code?: string | null
+          p_blocker_detail?: string | null
+          p_episode_id: string
+          p_policy: Json
+        }
+        Returns: Json
+        SetofOptions: {
+          from: "*"
+          to: "Json"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       deactivate_blueprint_version: {
         Args: { p_account_id: string; p_blueprint_version_id: string }
         Returns: {

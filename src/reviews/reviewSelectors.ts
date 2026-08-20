@@ -10,6 +10,7 @@ export interface WorkerBlocker {
   code: string;
   detail: string;
   taskId?: string;
+  taskType?: Task["task_type"];
 }
 
 export function currentReviewPackage(reviewPackages: ReviewPackage[], episode: Episode): ReviewPackage | null {
@@ -30,7 +31,7 @@ export function blockersFromResult(result: Json | null): WorkerBlocker[] {
 export function workerBlockers(tasks: Task[], episodeId: string): WorkerBlocker[] {
   return tasks
     .filter((task) => task.episode_id === episodeId && task.status === "blocked")
-    .flatMap((task) => blockersFromResult(task.last_result).map((blocker) => ({ ...blocker, taskId: task.id })));
+    .flatMap((task) => blockersFromResult(task.last_result).map((blocker) => ({ ...blocker, taskId: task.id, taskType: task.task_type })));
 }
 
 export function isReviewPackagePending(reviewPackage: ReviewPackage, members: PreRenderReviewMember[], decisions: PreRenderReviewMemberDecision[]): boolean {

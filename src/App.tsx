@@ -4,7 +4,7 @@ import { Activity, BarChart3, BookOpen, ClipboardList, Copy, FolderOpen, History
 import type { Session } from "@supabase/supabase-js";
 import type { Database, Json } from "./lib/database.types";
 import { supabase } from "./lib/supabase";
-import { blueprintAssetRoot, defaultBlueprintPolicy, parseBlueprintPolicy, withBlueprintAssetRoot } from "./platform/blueprintPolicy";
+import { blueprintAssetRoot, defaultBlueprintPolicy } from "./platform/blueprintPolicy";
 import type { EpisodeStage } from "./platform/types";
 import { createPublicationConfirmation } from "./publishing/publicationConfirmation";
 import { PublishModal } from "./publishing/PublishModal";
@@ -21,7 +21,7 @@ import type { StoryboardAudioCue, StoryboardShotManifest } from "./worker/contra
 import { accountIdentityColor, accountIdentityInitials } from "./platform/accountIdentity";
 import { HelpTip } from "./ui/HelpTip";
 import { PaginationControls } from "./ui/PaginationControls";
-import { BlueprintConfigurationForm, SeriesConfigurationForm } from "./platform/ConfigurationForms";
+import { BlueprintConfigurationForm, EpisodeConfigurationRepairForm, SeriesConfigurationForm } from "./platform/ConfigurationForms";
 import { taskTypeLabel } from "./observability/TaskProgressPanel";
 import { SystemStatusPanel, type LocalSystemStatusReport } from "./observability/SystemStatusPanel";
 import { MarkdownPreview } from "./ui/MarkdownPreview";
@@ -54,6 +54,7 @@ type PublicationRecord = Database["public"]["Tables"]["publication_records"]["Ro
 
 interface BlueprintRepairContext {
   blocker: WorkerBlocker;
+  blueprintVersionId: string;
   episodeId: string;
 }
 
@@ -688,7 +689,7 @@ export function App() {
     setSelectedAccountId(accountId);
     setBlueprintRepairContext(repairContext);
     changeNavigation("accounts");
-    setMessage(repairContext ? "已打开对应账号的蓝图配置；保存后可以应用到当前生产单并继续。" : "已打开对应账号的蓝图配置。");
+    setMessage(repairContext ? "已打开当前生产单的配置修复；保存后会直接继续生产，不会创建蓝图版本。" : "已打开对应账号的蓝图配置。");
   }
 
   function openPublishModal(episodeId: string) {
@@ -735,15 +736,15 @@ export function App() {
     }
   }
 
-  async function applyBlueprintToEpisode(input: { blueprintVersionId: string; context: BlueprintRepairContext }): Promise<boolean> {
-    setPendingAction(`apply-blueprint-${input.context.episodeId}`);
+  async function applyEpisodeConfigurationRepair(input: { context: BlueprintRepairContext; policy: Json }): Promise<boolean> {
+    setPendingAction(`apply-episode-repair-${input.context.episodeId}`);
     setErrorMessage("");
     try {
-      const { data, error } = await supabase.rpc("apply_blueprint_to_episode", {
+      const { data, error } = await supabase.rpc("apply_episode_configuration_repair_v2", {
         p_blocker_code: input.context.blocker.code,
         p_blocker_detail: input.context.blocker.detail,
-        p_blueprint_version_id: input.blueprintVersionId,
         p_episode_id: input.context.episodeId,
+        p_policy: input.policy,
       });
       if (error) throw error;
       const result = data && typeof data === "object" && !Array.isArray(data) ? data as Record<string, unknown> : {};
@@ -753,7 +754,7 @@ export function App() {
       setSelectedEpisodeId(input.context.episodeId);
       setIsEpisodeDetailOpen(true);
       setActiveNavigation("episodes");
-      setMessage(`配置已应用到当前生产单，已保留原有工作并重新排队 ${recreatedCount} 个受阻任务。`);
+      setMessage(`配置已直接应用到当前生产单，账号蓝图未变；已重新排队 ${recreatedCount} 个受阻任务。`);
       return true;
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "无法将蓝图配置应用到当前生产单。");
@@ -1403,8 +1404,8 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             blueprints={workspace.blueprints.filter((blueprint) => blueprint.account_id === selectedAccount?.id)}
             blueprintRepairContext={blueprintRepairContext}
             onArchiveBlueprint={setBlueprintArchived}
-            onApplyBlueprintToEpisode={applyBlueprintToEpisode}
-            onDismissBlueprintRepair={() => setBlueprintRepairContext(null)}
+            onApplyEpisodeRepair={applyEpisodeConfigurationRepair}
+            onDismissBlueprintRepair={() => { setBlueprintRepairContext(null); setActiveNavigation("episodes"); }}
             isPending={pendingAction}
             onActivate={activateBlueprint}
             onCreateBlueprint={createBlueprint}
@@ -1510,7 +1511,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             isStartProductionPending={pendingAction === `start-production-${selectedEpisode.id}`}
             isRefreshPending={pendingAction === "workspace-refresh"}
             isTransitionPending={pendingAction.startsWith(`transition-${selectedEpisode.id}-`) || pendingAction.startsWith("review-render-revision-")}
-            onOpenBlueprint={(blocker) => openAccountBlueprint(selectedEpisode.account_id, blocker ? { blocker, episodeId: selectedEpisode.id } : null)}
+            onOpenBlueprint={(blocker) => openAccountBlueprint(selectedEpisode.account_id, blocker ? { blocker, blueprintVersionId: selectedEpisode.blueprint_version_id, episodeId: selectedEpisode.id } : null)}
             onOpenLocalDirectory={openLocalEpisodeDirectory}
             onImportMaterial={importProductionMaterial}
             onStartProduction={startEpisodeProduction}
@@ -1596,35 +1597,27 @@ function AuthScreen({ errorMessage, onSignedIn }: { errorMessage: string; onSign
   return <main className="access-shell"><section className="access-card"><div className="wordmark">Loop 控制台</div><h1>登录控制台</h1><p>使用你的所有者邮箱登录。平台数据、审批和蓝图均受账号权限控制。</p><form onSubmit={submit}><label>邮箱<input aria-label="邮箱" autoComplete="email" onChange={(event) => setEmail(event.target.value)} placeholder="you@example.com" required type="email" value={email} /></label><label>密码<input aria-label="密码" autoComplete="current-password" onChange={(event) => setPassword(event.target.value)} placeholder="首次恢复后可设置" type="password" value={password} /></label><button className="button button-primary" disabled={pending || !password} onClick={() => void signInWithPassword()} type="button">{pending ? "登录中…" : "使用密码登录"}</button><button className="button button-secondary" disabled={pending} type="submit">{pending ? "发送中…" : "发送登录链接"}</button></form>{notice ? <p className="form-notice">{notice}</p> : null}{errorMessage ? <p className="form-error">{errorMessage}</p> : null}</section></main>;
 }
 
-function BootstrapScreen({ errorMessage, isPending, onSubmit }: { errorMessage: string; isPending: boolean; onSubmit: (input: { name: string; slug: string; timezone: string; policy: Json }) => Promise<void> }) {
+export function BootstrapScreen({ errorMessage, isPending, onSubmit }: { errorMessage: string; isPending: boolean; onSubmit: (input: { name: string; slug: string; timezone: string; policy: Json }) => Promise<void> }) {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [timezone, setTimezone] = useState("Asia/Shanghai");
-  const [policy, setPolicy] = useState(formatPolicy(defaultBlueprintPolicy));
-  const [assetRoot, setAssetRoot] = useState(blueprintAssetRoot(defaultBlueprintPolicy));
-  const [formError, setFormError] = useState("");
+  const [positioning, setPositioning] = useState("");
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    try {
-      setFormError("");
-      await onSubmit({ name, slug, timezone, policy: withBlueprintAssetRoot(parseBlueprintPolicy(policy), assetRoot) });
-    } catch (error) {
-      setFormError(error instanceof Error ? error.message : "蓝图规则无法解析。");
-    }
+    await onSubmit({ name, slug, timezone, policy: { ...defaultBlueprintPolicy, positioning: positioning.trim() } });
   }
 
-  return <main className="access-shell"><section className="access-card bootstrap-card"><div className="wordmark">Loop 控制台</div><h1>初始化首个账号</h1><p>这会创建你的所有者成员资格与蓝图 v1。后续账号、蓝图和生产单都会通过受控接口创建。</p><form onSubmit={submit}><label>账号名称<input onChange={(event) => setName(event.target.value)} placeholder="例如：道工作室" required value={name} /></label><label>账号标识<input onChange={(event) => setSlug(event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))} pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="dao-studio" required value={slug} /></label><TimezoneSelect onChange={setTimezone} value={timezone} /><p className="form-hint">选择账号日常运营和任务时间所使用的时区，不代表账号内容必须来自该国家。</p><label>资产目录<input aria-label="资产目录" onChange={(event) => setAssetRoot(event.target.value)} placeholder="例如：/Volumes/素材盘/tk-workflow/dao" value={assetRoot} /></label><p className="form-hint">路径由运行 Worker 的电脑验证；Windows 可填写如 D:\\tk-workflow\\dao。</p><label>蓝图规则（JSON）<textarea onChange={(event) => setPolicy(event.target.value)} rows={10} value={policy} /></label><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "初始化中…" : "创建首个账号"}</button></form>{formError || errorMessage ? <p className="form-error">{formError || errorMessage}</p> : null}</section></main>;
+  return <main className="access-shell"><section className="access-card bootstrap-card"><div className="wordmark">Loop 控制台</div><h1>初始化首个账号</h1><p>先填写账号业务信息；执行器、审核关卡、工具和资产目录使用默认配置，开始生产前可在蓝图中调整。</p><form onSubmit={submit}><label>账号名称<input onChange={(event) => setName(event.target.value)} placeholder="例如：道工作室" required value={name} /></label><label>账号标识<input onChange={(event) => setSlug(event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))} pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="dao-studio" required value={slug} /></label><label>账号定位<textarea aria-label="账号定位" onChange={(event) => setPositioning(event.target.value)} placeholder="例如：越南民俗短视频，写实悬疑风格" required rows={3} value={positioning} /></label><TimezoneSelect onChange={setTimezone} value={timezone} /><p className="form-hint">选择账号日常运营和任务时间所使用的时区。</p><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "初始化中…" : "创建首个账号"}</button></form>{errorMessage ? <p className="form-error">{errorMessage}</p> : null}</section></main>;
 }
 
 function LoadingScreen() { return <main className="access-shell"><div className="loading-mark">正在连接受控平台…</div></main>; }
 function ErrorScreen({ errorMessage, onRetry }: { errorMessage: string; onRetry: () => Promise<void> }) { return <main className="access-shell"><section className="access-card"><h1>无法读取控制数据</h1><p className="form-error">{errorMessage}</p><button className="button button-primary" onClick={() => void onRetry()} type="button">重试</button></section></main>; }
 
-export function AccountWorkspace({ account, accounts, blueprints, blueprintRepairContext = null, isPending, onActivate, onApplyBlueprintToEpisode, onArchiveBlueprint = async () => {}, onCreateBlueprint, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeactivateBlueprint = async () => {}, onDismissBlueprintRepair, onRenameAccount = async () => {}, onSelectAccount, promptVersions = [], series = [], seriesVersions = [] }: { account: Account | null; accounts: Account[]; blueprints: Blueprint[]; blueprintRepairContext?: BlueprintRepairContext | null; isPending: string; onActivate: (id: string) => Promise<void>; onApplyBlueprintToEpisode?: (input: { blueprintVersionId: string; context: BlueprintRepairContext }) => Promise<boolean>; onArchiveBlueprint?: (id: string, archived: boolean) => Promise<void>; onCreateBlueprint: (policy: Json) => Promise<Blueprint | null>; onCreatePromptVersion?: (input: { capability: PromptVersion["capability"]; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onCreateSeries?: (input: { name: string; rules: Json }) => Promise<void>; onCreateSeriesVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>; onDeactivateBlueprint?: (id: string) => Promise<void>; onDismissBlueprintRepair?: () => void; onRenameAccount?: (id: string, name: string) => Promise<boolean | void>; onSelectAccount: (id: string) => void; promptVersions?: PromptVersion[]; series?: Series[]; seriesVersions?: SeriesVersion[] }) {
+export function AccountWorkspace({ account, accounts, blueprints, blueprintRepairContext = null, isPending, onActivate, onApplyEpisodeRepair, onArchiveBlueprint = async () => {}, onCreateBlueprint, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeactivateBlueprint = async () => {}, onDismissBlueprintRepair, onRenameAccount = async () => {}, onSelectAccount, promptVersions = [], series = [], seriesVersions = [] }: { account: Account | null; accounts: Account[]; blueprints: Blueprint[]; blueprintRepairContext?: BlueprintRepairContext | null; isPending: string; onActivate: (id: string) => Promise<void>; onApplyEpisodeRepair?: (input: { context: BlueprintRepairContext; policy: Json }) => Promise<boolean>; onArchiveBlueprint?: (id: string, archived: boolean) => Promise<void>; onCreateBlueprint: (policy: Json) => Promise<Blueprint | null>; onCreatePromptVersion?: (input: { capability: PromptVersion["capability"]; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onCreateSeries?: (input: { name: string; rules: Json }) => Promise<void>; onCreateSeriesVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>; onDeactivateBlueprint?: (id: string) => Promise<void>; onDismissBlueprintRepair?: () => void; onRenameAccount?: (id: string, name: string) => Promise<boolean | void>; onSelectAccount: (id: string) => void; promptVersions?: PromptVersion[]; series?: Series[]; seriesVersions?: SeriesVersion[] }) {
   const [activeSection, setActiveSection] = useState<"blueprints" | "series">("blueprints");
   const [isEditing, setIsEditing] = useState(false);
   const [isAccountRenameOpen, setIsAccountRenameOpen] = useState(false);
-  const [repairConfirmation, setRepairConfirmation] = useState<{ blueprint: Blueprint; context: BlueprintRepairContext } | null>(null);
   const [selectedBlueprintId, setSelectedBlueprintId] = useState("");
   const activePolicy = account ? blueprints.find((blueprint) => blueprint.id === account.current_blueprint_version_id)?.policy ?? defaultBlueprintPolicy : defaultBlueprintPolicy;
   const sortedBlueprints = [...blueprints].sort((left, right) => right.version - left.version);
@@ -1636,12 +1629,11 @@ export function AccountWorkspace({ account, accounts, blueprints, blueprintRepai
   const historyBlueprints = latestBlueprint ? visibleBlueprints.filter((blueprint) => blueprint.id !== latestBlueprint.id) : [];
 
   useEffect(() => {
-    setSelectedBlueprintId(account?.current_blueprint_version_id ?? "");
+    setSelectedBlueprintId(blueprintRepairContext?.blueprintVersionId ?? account?.current_blueprint_version_id ?? "");
     setActiveSection("blueprints");
     setIsEditing(false);
     setIsAccountRenameOpen(false);
-    setRepairConfirmation(null);
-  }, [account?.id]);
+  }, [account?.id, blueprintRepairContext?.blueprintVersionId, blueprintRepairContext?.episodeId]);
 
   function selectBlueprint(blueprintId: string) { setSelectedBlueprintId(blueprintId); setIsEditing(false); }
 
@@ -1673,22 +1665,17 @@ export function AccountWorkspace({ account, accounts, blueprints, blueprintRepai
         </div> : null}
       </section>
       <section className="blueprint-editor">
-        <header className="blueprint-editor-heading"><div><h2>蓝图 v{selectedBlueprint.version}</h2><p>{selectedStatus === "当前生效" ? "当前生效版本；仅影响之后新建的生产单。" : selectedStatus === "已归档" ? "已归档版本；保留历史记录，不能直接用于新建生产单。" : "待激活版本；查看确认后可直接启用。"}</p></div><div className="blueprint-editor-heading-actions">{!isEditing && !selectedBlueprint.archived_at ? <button className="button button-secondary button-small" onClick={() => setIsEditing(true)} type="button">以此版本编辑</button> : null}{isSelectedCurrent ? <button aria-label="停用当前版本" className="button button-danger-soft button-small" disabled={isPending === `deactivate-${selectedBlueprint.id}`} onClick={() => void onDeactivateBlueprint(selectedBlueprint.id)} title="停用后该版本不再用于新建生产单" type="button">{isPending === `deactivate-${selectedBlueprint.id}` ? "停用中…" : "停用当前版本"}</button> : null}</div></header>
-        {isEditing ? <BlueprintConfigurationForm initialAssetRoot={blueprintAssetRoot(selectedBlueprint.policy)} initialPolicy={selectedBlueprint.policy} isEpisodeRepair={Boolean(blueprintRepairContext)} isPending={isPending === "blueprint" || isPending === "prompt-version"} onCancel={() => setIsEditing(false)} onCreatePromptVersion={onCreatePromptVersion} onSave={async (policy, activate) => { const createdBlueprint = await onCreateBlueprint(policy); if (!createdBlueprint) return; setSelectedBlueprintId(createdBlueprint.id); setIsEditing(false); if (activate) await onActivate(createdBlueprint.id); if (blueprintRepairContext) setRepairConfirmation({ blueprint: createdBlueprint, context: blueprintRepairContext }); }} promptVersions={promptVersions} /> : <><section className="blueprint-view"><h3>资产目录</h3><code>{policyAssetRoot(selectedBlueprint.policy)}</code><p>路径由运行 Worker 的本机验证，浏览器不会读取该目录。</p></section><section className="blueprint-view"><h3>蓝图规则摘要</h3><dl className="configuration-summary blueprint-summary-grid"><div className="blueprint-summary-wide"><dt>账号定位</dt><dd>{policyPositioning(selectedBlueprint.policy)}</dd></div><div><dt>审批关卡</dt><dd><span className="summary-chip-list">{Array.isArray((selectedBlueprint.policy as Record<string, unknown>).approval_gates) ? ((selectedBlueprint.policy as Record<string, unknown>).approval_gates as unknown[]).map((gate) => <span className="summary-chip" key={String(gate)}>{String(gate)}</span>) : <span className="summary-empty">未配置</span>}</span></dd></div><div><dt>允许工具</dt><dd><span className="summary-chip-list">{Array.isArray((selectedBlueprint.policy as Record<string, unknown>).allowed_tools) ? ((selectedBlueprint.policy as Record<string, unknown>).allowed_tools as unknown[]).map((tool) => <span className="summary-chip" key={String(tool)}>{String(tool)}</span>) : <span className="summary-empty">未配置</span>}</span></dd></div></dl><details className="advanced-configuration"><summary>查看原始规则</summary><pre>{formatPolicy(selectedBlueprint.policy)}</pre></details></section></>}
-        <div className="blueprint-editor-actions">
+        <header className="blueprint-editor-heading"><div><h2>{blueprintRepairContext ? "修复当前生产单" : `蓝图 v${selectedBlueprint.version}`}</h2><p>{blueprintRepairContext ? "只会更新当前生产单受阻任务的冻结配置，不会生成蓝图新版本。" : selectedStatus === "当前生效" ? "当前生效版本；仅影响之后新建的生产单。" : selectedStatus === "已归档" ? "已归档版本；保留历史记录，不能直接用于新建生产单。" : "待激活版本；查看确认后可直接启用。"}</p></div><div className="blueprint-editor-heading-actions">{!blueprintRepairContext && !isEditing && !selectedBlueprint.archived_at ? <button className="button button-secondary button-small" onClick={() => setIsEditing(true)} type="button">以此版本编辑</button> : null}{!blueprintRepairContext && isSelectedCurrent ? <button aria-label="停用当前版本" className="button button-danger-soft button-small" disabled={isPending === `deactivate-${selectedBlueprint.id}`} onClick={() => void onDeactivateBlueprint(selectedBlueprint.id)} title="停用后该版本不再用于新建生产单" type="button">{isPending === `deactivate-${selectedBlueprint.id}` ? "停用中…" : "停用当前版本"}</button> : null}</div></header>
+        {blueprintRepairContext ? <EpisodeConfigurationRepairForm blocker={blueprintRepairContext.blocker} initialPolicy={selectedBlueprint.policy} isPending={isPending === `apply-episode-repair-${blueprintRepairContext.episodeId}`} onCancel={() => onDismissBlueprintRepair?.()} onSave={async (policy) => { if (onApplyEpisodeRepair) await onApplyEpisodeRepair({ context: blueprintRepairContext, policy }); }} /> : isEditing ? <BlueprintConfigurationForm initialAssetRoot={blueprintAssetRoot(selectedBlueprint.policy)} initialPolicy={selectedBlueprint.policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} onCancel={() => setIsEditing(false)} onCreatePromptVersion={onCreatePromptVersion} onSave={async (policy, activate) => { const createdBlueprint = await onCreateBlueprint(policy); if (!createdBlueprint) return; setSelectedBlueprintId(createdBlueprint.id); setIsEditing(false); if (activate) await onActivate(createdBlueprint.id); }} promptVersions={promptVersions} /> : <><section className="blueprint-view"><h3>资产目录</h3><code>{policyAssetRoot(selectedBlueprint.policy)}</code><p>路径由运行 Worker 的本机验证，浏览器不会读取该目录。</p></section><section className="blueprint-view"><h3>蓝图规则摘要</h3><dl className="configuration-summary blueprint-summary-grid"><div className="blueprint-summary-wide"><dt>账号定位</dt><dd>{policyPositioning(selectedBlueprint.policy)}</dd></div><div><dt>审批关卡</dt><dd><span className="summary-chip-list">{Array.isArray((selectedBlueprint.policy as Record<string, unknown>).approval_gates) ? ((selectedBlueprint.policy as Record<string, unknown>).approval_gates as unknown[]).map((gate) => <span className="summary-chip" key={String(gate)}>{String(gate)}</span>) : <span className="summary-empty">未配置</span>}</span></dd></div><div><dt>允许工具</dt><dd><span className="summary-chip-list">{Array.isArray((selectedBlueprint.policy as Record<string, unknown>).allowed_tools) ? ((selectedBlueprint.policy as Record<string, unknown>).allowed_tools as unknown[]).map((tool) => <span className="summary-chip" key={String(tool)}>{String(tool)}</span>) : <span className="summary-empty">未配置</span>}</span></dd></div></dl><details className="advanced-configuration"><summary>查看原始规则</summary><pre>{formatPolicy(selectedBlueprint.policy)}</pre></details></section></>}
+        {!blueprintRepairContext ? <div className="blueprint-editor-actions">
           {selectedBlueprint.archived_at ? <button className="button button-secondary" disabled={isPending === `unarchive-${selectedBlueprint.id}`} onClick={() => void onArchiveBlueprint(selectedBlueprint.id, false)} type="button">{isPending === `unarchive-${selectedBlueprint.id}` ? "处理中…" : "取消归档"}</button> : !isSelectedCurrent ? <button className="button button-primary" disabled={isPending === `activate-${selectedBlueprint.id}`} onClick={() => void onActivate(selectedBlueprint.id)} type="button">{isPending === `activate-${selectedBlueprint.id}` ? "激活中…" : "激活此版本"}</button> : null}
           {!selectedBlueprint.is_active && !selectedBlueprint.archived_at ? <button className="button button-secondary" disabled={isPending === `archive-${selectedBlueprint.id}`} onClick={() => void onArchiveBlueprint(selectedBlueprint.id, true)} type="button">{isPending === `archive-${selectedBlueprint.id}` ? "归档中…" : "归档此版本"}</button> : null}
-        </div>
+        </div> : null}
       </section>
     </div> : null}
     {activeSection === "series" ? <div aria-labelledby="account-series-heading" id="account-series-panel" role="tabpanel"><SeriesSettings isPending={isPending} onCreate={onCreateSeries} onCreateVersion={onCreateSeriesVersion} series={series} seriesVersions={seriesVersions} /></div> : null}
     {isAccountRenameOpen ? <AccountRenameModal account={account} isPending={isPending === `rename-account-${account.id}`} onClose={() => setIsAccountRenameOpen(false)} onSave={(name) => onRenameAccount(account.id, name)} /> : null}
-    {repairConfirmation ? <BlueprintRepairConfirmation blueprint={repairConfirmation.blueprint} isPending={isPending === `apply-blueprint-${repairConfirmation.context.episodeId}`} onApply={async () => { if (!onApplyBlueprintToEpisode) return; if (await onApplyBlueprintToEpisode({ blueprintVersionId: repairConfirmation.blueprint.id, context: repairConfirmation.context })) { setRepairConfirmation(null); onDismissBlueprintRepair?.(); } }} onClose={() => { setRepairConfirmation(null); onDismissBlueprintRepair?.(); }} /> : null}
   </>;
-}
-
-function BlueprintRepairConfirmation({ blueprint, isPending, onApply, onClose }: { blueprint: Blueprint; isPending: boolean; onApply: () => Promise<void>; onClose: () => void }) {
-  return <div className="modal-backdrop" role="presentation"><section aria-label="应用蓝图到当前生产单" className="modal-card"><header><div><h2>蓝图 v{blueprint.version} 已创建</h2><p>可以把这次修正应用到原生产单，继续之前的工作。</p></div><button aria-label="关闭蓝图应用确认" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></button></header><div className="blueprint-repair-summary"><strong>会保留</strong><p>主脚本、已导入材料、审核包、批注、已完成任务和审计记录。</p><strong>会重新排队</strong><p>当前受阻任务；后续未完成任务会按新配置继续编排，旧任务会保留为历史记录，不会再次领取。</p></div><div className="modal-actions"><button className="button button-secondary" disabled={isPending} onClick={onClose} type="button">仅保存蓝图</button><button className="button button-primary" disabled={isPending} onClick={() => void onApply()} type="button">{isPending ? "应用中…" : "应用并继续当前生产单"}</button></div></section></div>;
 }
 
 export function SeriesSettings({ isPending, onCreate, onCreateVersion = async () => {}, series, seriesVersions }: { isPending: boolean | string; onCreate: (input: { name: string; rules: Json }) => Promise<void>; onCreateVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>; series: Series[]; seriesVersions: SeriesVersion[] }) {
@@ -2390,21 +2377,14 @@ function AccountForm({ isPending, onClose, onSubmit }: { isPending: boolean; onC
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [timezone, setTimezone] = useState("Asia/Shanghai");
-  const [policy, setPolicy] = useState(formatPolicy(defaultBlueprintPolicy));
-  const [assetRoot, setAssetRoot] = useState(blueprintAssetRoot(defaultBlueprintPolicy));
-  const [formError, setFormError] = useState("");
+  const [positioning, setPositioning] = useState("");
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    try {
-      setFormError("");
-      await onSubmit({ name, slug, timezone, policy: withBlueprintAssetRoot(parseBlueprintPolicy(policy), assetRoot) });
-    } catch (error) {
-      setFormError(error instanceof Error ? error.message : "蓝图规则无法解析。");
-    }
+    await onSubmit({ name, slug, timezone, policy: { ...defaultBlueprintPolicy, positioning: positioning.trim() } });
   }
 
-  return <div className="modal-backdrop" role="presentation"><form aria-label="新建账号" className="modal-card" onSubmit={submit}><header><div><h2>新建账号</h2><p>将创建独立的蓝图 v1；生产单、审批和审计记录互相隔离。</p></div><button aria-label="关闭新建账号" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></button></header><label>账号名称<input autoFocus onChange={(event) => setName(event.target.value)} placeholder="例如：道工作室 2" required value={name} /></label><label>账号标识<input onChange={(event) => setSlug(event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))} pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="dao-studio-2" required value={slug} /></label><TimezoneSelect onChange={setTimezone} value={timezone} /><p className="form-hint">选择账号日常运营和任务时间所使用的时区，不代表账号内容必须来自该国家。</p><label>资产目录<input aria-label="资产目录" onChange={(event) => setAssetRoot(event.target.value)} placeholder="例如：/Volumes/素材盘/tk-workflow/dao-2" value={assetRoot} /></label><p className="form-hint">目录不会上传；Worker 会在本机验证它。</p><label>蓝图规则（JSON）<textarea onChange={(event) => setPolicy(event.target.value)} rows={8} value={policy} /></label><div className="modal-actions"><button className="button button-secondary" onClick={onClose} type="button">取消</button><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "创建中…" : "创建账号"}</button></div>{formError ? <p className="form-error">{formError}</p> : null}</form></div>;
+  return <div className="modal-backdrop" role="presentation"><form aria-label="新建账号" className="modal-card" onSubmit={submit}><header><div><h2>新建账号</h2><p>将创建独立的蓝图 v1；执行器、审批和资产目录使用默认配置，开始生产前可在蓝图中调整。</p></div><button aria-label="关闭新建账号" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></button></header><label>账号名称<input autoFocus onChange={(event) => setName(event.target.value)} placeholder="例如：道工作室 2" required value={name} /></label><label>账号标识<input onChange={(event) => setSlug(event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))} pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="dao-studio-2" required value={slug} /></label><label>账号定位<textarea aria-label="账号定位" onChange={(event) => setPositioning(event.target.value)} placeholder="例如：越南民俗短视频，写实悬疑风格" required rows={3} value={positioning} /></label><TimezoneSelect onChange={setTimezone} value={timezone} /><p className="form-hint">选择账号日常运营和任务时间所使用的时区。</p><div className="modal-actions"><button className="button button-secondary" onClick={onClose} type="button">取消</button><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "创建中…" : "创建账号"}</button></div></form></div>;
 }
 
 function AccountRenameModal({ account, isPending, onClose, onSave }: { account: Account; isPending: boolean; onClose: () => void; onSave: (name: string) => Promise<boolean | void> }) {

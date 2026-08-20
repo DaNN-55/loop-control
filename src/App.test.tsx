@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { Database } from "./lib/database.types";
-import { AccountWorkspace, App, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, episodeWorkerStatus, navigation, navigationBadgeCounts } from "./App";
+import { AccountWorkspace, App, BootstrapScreen, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, episodeWorkerStatus, navigation, navigationBadgeCounts } from "./App";
 import { defaultBlueprintPolicy, parseBlueprintPolicy, withBlueprintAssetRoot } from "./platform/blueprintPolicy";
 
 vi.mock("./lib/supabase", () => ({
@@ -44,6 +44,27 @@ describe("approval console", () => {
       ...defaultBlueprintPolicy,
       asset_root: "/Volumes/Content Disk/tk-workflow/dao",
     });
+  });
+
+  it("initializes the first account without exposing blueprint JSON", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn().mockResolvedValue(undefined);
+    render(<BootstrapScreen errorMessage="" isPending={false} onSubmit={onSubmit} />);
+
+    expect(screen.queryByLabelText("蓝图规则（JSON）")).toBeNull();
+    expect(screen.queryByLabelText("资产目录")).toBeNull();
+    await user.type(screen.getByLabelText("账号名称"), "道工作室");
+    await user.type(screen.getByLabelText("账号标识"), "dao-studio");
+    await user.type(screen.getByLabelText("账号定位"), "面向中文观众的越南民俗短视频");
+    await user.click(screen.getByRole("button", { name: "创建首个账号" }));
+
+    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({
+      name: "道工作室",
+      slug: "dao-studio",
+      policy: expect.objectContaining({
+        positioning: "面向中文观众的越南民俗短视频",
+      }),
+    }));
   });
 
   it("creates the first series version from account settings", async () => {
@@ -89,23 +110,35 @@ describe("approval console", () => {
     await waitFor(() => expect(onCreateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ positioning: "新定位", soundtrack: { budget_cents: 99 } })));
   });
 
-  it("从阻塞项编辑蓝图后可以应用到原生产单", async () => {
+  it("从阻塞项直接修复当前生产单而不新增蓝图版本", async () => {
     const user = userEvent.setup();
     const account = { created_at: "2026-08-15T00:00:00.000Z", current_blueprint_version_id: "blueprint-1", id: "account-1", name: "道工作室", slug: "dao-studio", timezone: "Asia/Shanghai" } as Database["public"]["Tables"]["accounts"]["Row"];
     const blueprint = { account_id: account.id, created_at: "2026-08-15T00:00:00.000Z", id: "blueprint-1", is_active: true, policy: { positioning: "旧定位", asset_root: "/Volumes/Media/dao", approval_gates: ["script"], allowed_tools: ["read", "write"], budgets: { script_writing_cents: 0, visual_planning_cents: 0, storyboard_planning_cents: 0 }, executors: { script_writing: { provider: "codex", model: "model-a", prompt_version: "script-v1" }, visual_planning: { provider: "codex", model: "model-b", prompt_version: "visual-v1" }, storyboard_planning: { provider: "codex", model: "model-c", prompt_version: "storyboard-v1" } } }, version: 1 } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
-    const nextBlueprint = { ...blueprint, id: "blueprint-2", version: 2, is_active: false };
-    const onCreateBlueprint = vi.fn().mockResolvedValue(nextBlueprint);
-    const onApplyBlueprintToEpisode = vi.fn().mockResolvedValue(true);
+    const onCreateBlueprint = vi.fn();
+    const onApplyEpisodeRepair = vi.fn().mockResolvedValue(true);
 
-    render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} blueprintRepairContext={{ blocker: { code: "executor_invalid", detail: "执行器 adapter 未配置。" }, episodeId: "episode-1" }} isPending="" onActivate={vi.fn()} onApplyBlueprintToEpisode={onApplyBlueprintToEpisode} onCreateBlueprint={onCreateBlueprint} onCreateSeries={vi.fn()} onSelectAccount={vi.fn()} series={[]} seriesVersions={[]} />);
+    render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} blueprintRepairContext={{ blocker: { code: "a_roll_executor_invalid", detail: "A-roll 执行器 adapter 未配置。" }, blueprintVersionId: blueprint.id, episodeId: "episode-1" }} isPending="" onActivate={vi.fn()} onApplyEpisodeRepair={onApplyEpisodeRepair} onCreateBlueprint={onCreateBlueprint} onCreateSeries={vi.fn()} onSelectAccount={vi.fn()} series={[]} seriesVersions={[]} />);
 
-    await user.click(screen.getByRole("button", { name: "以此版本编辑" }));
-    await user.click(screen.getByRole("button", { name: "保存为新版本" }));
-    expect(await screen.findByRole("heading", { name: "蓝图 v2 已创建" })).toBeTruthy();
-    expect(screen.getByText("主脚本、已导入材料、审核包、批注、已完成任务和审计记录。", { exact: false })).toBeTruthy();
+    expect(await screen.findByRole("heading", { name: "修复当前生产单的 A-roll" })).toBeTruthy();
+    expect(screen.queryByText("脚本生成", { selector: "h4" })).toBeNull();
+    await user.type(screen.getByLabelText("Provider"), "codex");
+    await user.type(screen.getByLabelText("Adapter"), "codex");
+    await user.type(screen.getByLabelText("模型"), "video-generation-v1");
+    await user.type(screen.getByLabelText("Prompt 版本"), "a-roll-v1");
+    await user.type(screen.getByLabelText("允许工具"), "read, write");
+    await user.type(screen.getByLabelText("预算（分）"), "100");
+    await user.type(screen.getByLabelText("最大尝试次数"), "2");
+    await user.click(screen.getByRole("button", { name: "保存并继续当前生产单" }));
 
-    await user.click(screen.getByRole("button", { name: "应用并继续当前生产单" }));
-    await waitFor(() => expect(onApplyBlueprintToEpisode).toHaveBeenCalledWith({ blueprintVersionId: "blueprint-2", context: { blocker: { code: "executor_invalid", detail: "执行器 adapter 未配置。" }, episodeId: "episode-1" } }));
+    await waitFor(() => expect(onApplyEpisodeRepair).toHaveBeenCalledWith(expect.objectContaining({
+      context: { blocker: { code: "a_roll_executor_invalid", detail: "A-roll 执行器 adapter 未配置。" }, blueprintVersionId: "blueprint-1", episodeId: "episode-1" },
+      policy: expect.objectContaining({
+        a_roll: expect.objectContaining({
+          executor: expect.objectContaining({ adapter: "codex", model: "video-generation-v1", provider: "codex" }),
+        }),
+      }),
+    })));
+    expect(onCreateBlueprint).not.toHaveBeenCalled();
   });
 
   it("按日常工作流顺序显示导航，并为审核和发布显示待办数量", () => {

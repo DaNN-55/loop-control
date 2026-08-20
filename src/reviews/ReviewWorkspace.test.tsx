@@ -294,7 +294,7 @@ describe("审核台", () => {
 
     expect(screen.getByText("A-roll 任务 · 已阻塞")).toBeTruthy();
     expect(screen.getAllByText("媒体适配器配置不完整").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(/账号蓝图 → 媒体适配器/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/当前生产单 → 专用媒体配置/).length).toBeGreaterThanOrEqual(1);
     expect(screen.queryByRole("button", { name: "打开蓝图配置" })).toBeNull();
     expect(screen.getByText("a_roll_executor_missing")).toBeTruthy();
   });

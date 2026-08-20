@@ -9,6 +9,7 @@ import {
   seriesRulesToForm,
   mediaAdapterKeys,
   mediaAdapterStatus,
+  validateMediaAdapter,
   validateMediaAdapters,
   validateSeriesRules,
   type BlueprintFormValues,
@@ -119,8 +120,8 @@ function MediaAdapterCard({ adapterKey, form, onChange }: { adapterKey: MediaAda
   const placeholder = mediaAdapterPlaceholders[adapterKey];
   const status = mediaAdapterStatus(adapterKey, form);
   const statusClass = status === "已配置" ? "is-configured" : status === "待补齐" ? "is-incomplete" : "is-empty";
-  const textField = (field: keyof MediaAdapterForm, title: string, help: string, fieldPlaceholder: string) => <label><FieldLabel help={help}>{title}</FieldLabel><input onChange={(event) => onChange(field, event.target.value)} placeholder={fieldPlaceholder} value={form[field]} /></label>;
-  const numberField = (field: keyof MediaAdapterForm, title: string, help: string, min = 1) => <label><FieldLabel help={help}>{title}</FieldLabel><input min={min} onChange={(event) => onChange(field, event.target.value)} step={min < 1 ? "0.1" : "1"} type="number" value={form[field]} /></label>;
+  const textField = (field: keyof MediaAdapterForm, title: string, help: string, fieldPlaceholder: string) => <label><FieldLabel help={help}>{title}</FieldLabel><input aria-label={title} onChange={(event) => onChange(field, event.target.value)} placeholder={fieldPlaceholder} value={form[field]} /></label>;
+  const numberField = (field: keyof MediaAdapterForm, title: string, help: string, min = 1) => <label><FieldLabel help={help}>{title}</FieldLabel><input aria-label={title} min={min} onChange={(event) => onChange(field, event.target.value)} step={min < 1 ? "0.1" : "1"} type="number" value={form[field]} /></label>;
 
   return <article className={`media-adapter-card ${statusClass}`}>
     <header><div><h4>{label}</h4><p>{mediaAdapterDescriptions[adapterKey]}</p></div><span className="media-adapter-status">{status}</span></header>
@@ -130,7 +131,7 @@ function MediaAdapterCard({ adapterKey, form, onChange }: { adapterKey: MediaAda
       {textField("model", "模型", "媒体适配器使用的模型或版本名称。", placeholder.model)}
       {textField("promptVersion", "Prompt 版本", "媒体任务使用的提示词版本标签；先用稳定、可追溯的 slug，例如 a-roll-v1。", placeholder.promptVersion)}
     </div>
-    <label><FieldLabel help="任务允许使用的工具，使用英文逗号分隔，例如 read, write 或 network, write。至少填写一个。">允许工具</FieldLabel><input onChange={(event) => onChange("allowedTools", event.target.value)} placeholder="例如：read, write" value={form.allowedTools} /></label>
+    <label><FieldLabel help="任务允许使用的工具，使用英文逗号分隔，例如 read, write 或 network, write。至少填写一个。">允许工具</FieldLabel><input aria-label="允许工具" onChange={(event) => onChange("allowedTools", event.target.value)} placeholder="例如：read, write" value={form.allowedTools} /></label>
     {adapterKey === "a_roll" ? <div className="media-adapter-field-grid">{numberField("budgetCents", "预算（分）", "单个 A-roll 任务的最大预算，必须大于 0。")}{numberField("maxAttempts", "最大尝试次数", "单个任务失败后的最大执行尝试次数。")}</div> : null}
     {adapterKey === "b_roll" ? <div className="media-adapter-field-grid">{numberField("perShotBudgetCents", "单镜头预算（分）", "每个 B-roll 镜头允许使用的预算。")}{numberField("totalBudgetCents", "总预算（分）", "本次分镜中所有 B-roll 镜头共享的总预算。")}{numberField("maxAttempts", "最大尝试次数", "单个任务失败后的最大执行尝试次数。")}{numberField("maxConcurrency", "最大并发数", "同一生产单同时运行的 B-roll 任务数。")}{numberField("providerMaxConcurrency", "供应商并发上限", "发给同一供应商的最大并发数。")}</div> : null}
     {adapterKey === "narration" ? <div className="media-adapter-field-grid">{numberField("budgetCents", "预算（分）", "旁白任务的最大预算，必须大于 0。")}{numberField("maxAttempts", "最大尝试次数", "旁白任务失败后的最大执行尝试次数。")}{textField("voiceLanguageCode", "语言代码", "声音使用的语言代码，例如 zh-CN 或 vi-VN。", "例如：zh-CN")}{textField("voiceName", "声音名称", "供应商注册的声音名称。", "例如：cmn-CN-Standard-A")}{numberField("voiceSpeakingRate", "语速", "旁白播放速度，通常填写 1。", 0.1)}</div> : null}
@@ -185,6 +186,63 @@ export function BlueprintConfigurationForm({ initialAssetRoot, initialPolicy, is
     {error ? <p className="form-error">{error}</p> : null}
     <div className="configuration-actions"><button className="button button-secondary" disabled={isPending} onClick={onCancel} type="button">取消编辑</button><button className="button button-secondary" disabled={isPending} onClick={() => void submit(false)} type="button">{isPending ? "保存中…" : "保存为新版本"}</button><button className="button button-primary" disabled={isPending} onClick={() => void submit(true)} type="button">{isPending ? "保存中…" : "保存并激活"}</button></div>
   </section>;
+}
+
+function mediaAdapterKeyForBlocker(blocker: { code: string; detail: string }): MediaAdapterKey | null {
+  const source = `${blocker.code} ${blocker.detail}`.toLowerCase();
+  if (/a[_-]?roll/.test(source)) return "a_roll";
+  if (/b[_-]?roll/.test(source)) return "b_roll";
+  if (/narration|旁白/.test(source)) return "narration";
+  if (/soundtrack|sound.?effect|配乐|音效/.test(source)) return "soundtrack";
+  return null;
+}
+
+function executorKeyForTask(taskType?: string): keyof BlueprintFormValues["executors"] | null {
+  if (taskType === "draft_script") return "script_writing";
+  if (taskType === "prepare_visual_brief") return "visual_planning";
+  if (taskType === "draft_storyboard") return "storyboard_planning";
+  return null;
+}
+
+export function EpisodeConfigurationRepairForm({ blocker, initialPolicy, isPending, onCancel, onSave }: { blocker: { code: string; detail: string; taskType?: string }; initialPolicy: Json; isPending: boolean; onCancel: () => void; onSave: (policy: Json) => Promise<void> }) {
+  const adapterKey = mediaAdapterKeyForBlocker(blocker);
+  const executorKey = executorKeyForTask(blocker.taskType);
+  const [form, setForm] = useState<BlueprintFormValues>(() => blueprintPolicyToForm(initialPolicy));
+  const [error, setError] = useState("");
+  useEffect(() => setForm(blueprintPolicyToForm(initialPolicy)), [initialPolicy]);
+
+  function updateMediaAdapter(field: keyof MediaAdapterForm, value: string) {
+    if (!adapterKey) return;
+    setForm((current) => ({ ...current, mediaAdapters: { ...current.mediaAdapters, [adapterKey]: { ...current.mediaAdapters[adapterKey], [field]: value } } }));
+  }
+
+  function updateExecutor(field: keyof BlueprintFormValues["executors"]["script_writing"], value: string) {
+    if (!executorKey) return;
+    setForm((current) => ({ ...current, executors: { ...current.executors, [executorKey]: { ...current.executors[executorKey], [field]: value } } }));
+  }
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    try {
+      setError("");
+      if (adapterKey) validateMediaAdapter(adapterKey, form.mediaAdapters[adapterKey]);
+      else if (executorKey) {
+        const executor = form.executors[executorKey];
+        if (!executor.provider.trim() || !executor.model.trim() || !executor.promptVersion.trim()) throw new Error("执行器的 Provider、模型和 Prompt 版本不能为空。");
+      } else throw new Error("当前阻塞项无法映射到可修复的配置。");
+      await onSave(blueprintFormToPolicy(form));
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "无法保存当前生产单修复。");
+    }
+  }
+
+  if (!adapterKey && !executorKey) return <section className="configuration-form"><p className="form-error">当前阻塞项不能通过配置修复，请按阻塞卡片提示处理。</p><button className="button button-secondary" onClick={onCancel} type="button">返回生产单</button></section>;
+  return <form className="configuration-form blueprint-configuration-form" onSubmit={(event) => void submit(event)}>
+    <header><h2>修复当前生产单的 {adapterKey ? mediaAdapterLabels[adapterKey] : executorLabels[executorKey!]}</h2><p className="blueprint-editor-note">只修改这类受阻任务的冻结配置。不会创建或修改账号蓝图，也不会影响之后的新生产单。</p></header>
+    {adapterKey ? <fieldset><legend>需要补齐的媒体配置</legend><MediaAdapterCard adapterKey={adapterKey} form={form.mediaAdapters[adapterKey]} onChange={updateMediaAdapter} /></fieldset> : <fieldset><legend>需要补齐的执行器配置</legend><label><FieldLabel help="执行服务名称。">Provider</FieldLabel><input aria-label="Provider" onChange={(event) => updateExecutor("provider", event.target.value)} value={form.executors[executorKey!].provider} /></label><label><FieldLabel help="当前任务使用的模型名称。">模型</FieldLabel><input aria-label="模型" onChange={(event) => updateExecutor("model", event.target.value)} value={form.executors[executorKey!].model} /></label><label><FieldLabel help="当前任务使用的可追溯 Prompt 版本。">Prompt 版本</FieldLabel><input aria-label="Prompt 版本" onChange={(event) => updateExecutor("promptVersion", event.target.value)} value={form.executors[executorKey!].promptVersion} /></label></fieldset>}
+    {error ? <p className="form-error">{error}</p> : null}
+    <div className="configuration-actions"><button className="button button-secondary" disabled={isPending} onClick={onCancel} type="button">取消</button><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "应用中…" : "保存并继续当前生产单"}</button></div>
+  </form>;
 }
 
 export function SeriesConfigurationForm({ initialName, initialRules, isEditing, isPending, onCancel, onSave }: { initialName: string; initialRules: Json; isEditing: boolean; isPending: boolean; onCancel: () => void; onSave: (name: string, rules: Json) => Promise<void> }) {
