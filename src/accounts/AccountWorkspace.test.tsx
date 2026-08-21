@@ -75,8 +75,26 @@ describe("账号页分区与蓝图版本", () => {
     expect(screen.queryByRole("menu")).toBeNull();
     await user.click(screen.getByRole("button", { name: /v2.*历史版本/ }));
     expect(screen.getByRole("heading", { name: "蓝图 v2" })).toBeTruthy();
+    expect((screen.getByLabelText("账号定位") as HTMLTextAreaElement).value).toBe("旧定位");
     await user.click(screen.getByRole("button", { name: "激活此版本" }));
     expect(onActivate).toHaveBeenCalledWith(blueprintV2.id);
+  });
+
+  it("按结构化表单显示所选蓝图规则，不展示原始 JSON", () => {
+    renderWorkspace();
+
+    expect(screen.queryByText("查看原始规则")).toBeNull();
+    expect(screen.getByText("本地资产与审批")).toBeTruthy();
+    expect((screen.getByLabelText("账号定位") as HTMLTextAreaElement).value).toBe("越南民间信仰");
+    expect((screen.getByLabelText("资产目录") as HTMLInputElement).value).toBe("/Volumes/dao/v3");
+  });
+
+  it("按键值字段显示未结构化的扩展规则", () => {
+    renderWorkspace({ blueprints: [{ ...blueprintV3, policy: { ...(blueprintV3.policy as Record<string, unknown>), hard_constraints: { prohibited_topics: ["政治", "医疗"], publishing: "人工确认" } } }] });
+
+    expect(screen.getByText("其他规则")).toBeTruthy();
+    expect(screen.getByText("prohibited topics：政治、医疗；publishing：人工确认")).toBeTruthy();
+    expect(screen.queryByText(/\"hard_constraints\"/)).toBeNull();
   });
 
   it("默认折叠已归档版本，展开后可选择历史蓝图", async () => {

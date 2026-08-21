@@ -187,6 +187,10 @@ export const navigation: Array<{ id: NavigationItem; label: string }> = [
   { id: "accounts", label: "账号" },
 ];
 
+export function initialNavigationForWorkspace(workspace: Pick<Workspace, "accounts" | "episodes">): NavigationItem {
+  return workspace.accounts.length && workspace.episodes.length ? "operations" : "accounts";
+}
+
 const themeStorageKey = "loop-control.theme.v1";
 const sidebarStorageKey = "loop-control.sidebar.v1";
 
@@ -396,10 +400,6 @@ function episodeIsArchived(episode: Episode): boolean {
   return Boolean((episode as EpisodeWithArchive).archived_at);
 }
 
-function formatPolicy(policy: Json) {
-  return JSON.stringify(policy, null, 2);
-}
-
 function policyPositioning(policy: Json) {
   if (policy && typeof policy === "object" && !Array.isArray(policy) && "positioning" in policy) {
     return typeof policy.positioning === "string" && policy.positioning ? policy.positioning : "尚未填写定位";
@@ -539,6 +539,7 @@ export function App() {
   const [isSystemStatusLoading, setIsSystemStatusLoading] = useState(false);
   const workspaceRef = useRef<Workspace | null>(null);
   const selectedEpisodeIdRef = useRef(selectedEpisodeId);
+  const hasInitializedNavigationRef = useRef(false);
 
   useEffect(() => {
     selectedEpisodeIdRef.current = selectedEpisodeId;
@@ -568,6 +569,10 @@ export function App() {
       }
       workspaceRef.current = nextWorkspace;
       setWorkspace(nextWorkspace);
+      if (!hasInitializedNavigationRef.current) {
+        setActiveNavigation(initialNavigationForWorkspace(nextWorkspace));
+        hasInitializedNavigationRef.current = true;
+      }
       setSelectedAccountId((current) => current && nextWorkspace.accounts.some((account) => account.id === current) ? current : nextWorkspace.accounts[0]?.id ?? "");
       setSelectedEpisodeId((current) => current && nextWorkspace.episodes.some((episode) => episode.id === current) ? current : nextWorkspace.episodes[0]?.id ?? "");
     } catch (error) {
@@ -612,6 +617,7 @@ export function App() {
       if (nextSession) void refreshWorkspace();
       else {
         setWorkspace(null);
+        hasInitializedNavigationRef.current = false;
         setIsLoading(false);
       }
     });
@@ -709,6 +715,7 @@ export function App() {
         p_policy: input.policy,
       });
       if (error) throw error;
+      setActiveNavigation("accounts");
       setMessage("首个账号和蓝图 v1 已初始化。");
       await refreshWorkspace();
     } catch (error) {
@@ -839,6 +846,7 @@ export function App() {
       if (error) throw error;
       setShowAccountForm(false);
       if (data) setSelectedAccountId(data.id);
+      setActiveNavigation("accounts");
       setMessage("新账号和蓝图 v1 已创建；数据将与其他账号隔离。");
       await refreshWorkspace();
     } catch (error) {
@@ -1666,7 +1674,7 @@ export function AccountWorkspace({ account, accounts, blueprints, blueprintRepai
       </section>
       <section className="blueprint-editor">
         <header className="blueprint-editor-heading"><div><h2>{blueprintRepairContext ? "修复当前生产单" : `蓝图 v${selectedBlueprint.version}`}</h2><p>{blueprintRepairContext ? "只会更新当前生产单受阻任务的冻结配置，不会生成蓝图新版本。" : selectedStatus === "当前生效" ? "当前生效版本；仅影响之后新建的生产单。" : selectedStatus === "已归档" ? "已归档版本；保留历史记录，不能直接用于新建生产单。" : "待激活版本；查看确认后可直接启用。"}</p></div><div className="blueprint-editor-heading-actions">{!blueprintRepairContext && !isEditing && !selectedBlueprint.archived_at ? <button className="button button-secondary button-small" onClick={() => setIsEditing(true)} type="button">以此版本编辑</button> : null}{!blueprintRepairContext && isSelectedCurrent ? <button aria-label="停用当前版本" className="button button-danger-soft button-small" disabled={isPending === `deactivate-${selectedBlueprint.id}`} onClick={() => void onDeactivateBlueprint(selectedBlueprint.id)} title="停用后该版本不再用于新建生产单" type="button">{isPending === `deactivate-${selectedBlueprint.id}` ? "停用中…" : "停用当前版本"}</button> : null}</div></header>
-        {blueprintRepairContext ? <EpisodeConfigurationRepairForm blocker={blueprintRepairContext.blocker} initialPolicy={selectedBlueprint.policy} isPending={isPending === `apply-episode-repair-${blueprintRepairContext.episodeId}`} onCancel={() => onDismissBlueprintRepair?.()} onSave={async (policy) => { if (onApplyEpisodeRepair) await onApplyEpisodeRepair({ context: blueprintRepairContext, policy }); }} /> : isEditing ? <BlueprintConfigurationForm initialAssetRoot={blueprintAssetRoot(selectedBlueprint.policy)} initialPolicy={selectedBlueprint.policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} onCancel={() => setIsEditing(false)} onCreatePromptVersion={onCreatePromptVersion} onSave={async (policy, activate) => { const createdBlueprint = await onCreateBlueprint(policy); if (!createdBlueprint) return; setSelectedBlueprintId(createdBlueprint.id); setIsEditing(false); if (activate) await onActivate(createdBlueprint.id); }} promptVersions={promptVersions} /> : <><section className="blueprint-view"><h3>资产目录</h3><code>{policyAssetRoot(selectedBlueprint.policy)}</code><p>路径由运行 Worker 的本机验证，浏览器不会读取该目录。</p></section><section className="blueprint-view"><h3>蓝图规则摘要</h3><dl className="configuration-summary blueprint-summary-grid"><div className="blueprint-summary-wide"><dt>账号定位</dt><dd>{policyPositioning(selectedBlueprint.policy)}</dd></div><div><dt>审批关卡</dt><dd><span className="summary-chip-list">{Array.isArray((selectedBlueprint.policy as Record<string, unknown>).approval_gates) ? ((selectedBlueprint.policy as Record<string, unknown>).approval_gates as unknown[]).map((gate) => <span className="summary-chip" key={String(gate)}>{String(gate)}</span>) : <span className="summary-empty">未配置</span>}</span></dd></div><div><dt>允许工具</dt><dd><span className="summary-chip-list">{Array.isArray((selectedBlueprint.policy as Record<string, unknown>).allowed_tools) ? ((selectedBlueprint.policy as Record<string, unknown>).allowed_tools as unknown[]).map((tool) => <span className="summary-chip" key={String(tool)}>{String(tool)}</span>) : <span className="summary-empty">未配置</span>}</span></dd></div></dl><details className="advanced-configuration"><summary>查看原始规则</summary><pre>{formatPolicy(selectedBlueprint.policy)}</pre></details></section></>}
+        {blueprintRepairContext ? <EpisodeConfigurationRepairForm blocker={blueprintRepairContext.blocker} initialPolicy={selectedBlueprint.policy} isPending={isPending === `apply-episode-repair-${blueprintRepairContext.episodeId}`} onCancel={() => onDismissBlueprintRepair?.()} onSave={async (policy) => { if (onApplyEpisodeRepair) await onApplyEpisodeRepair({ context: blueprintRepairContext, policy }); }} /> : isEditing ? <BlueprintConfigurationForm initialAssetRoot={blueprintAssetRoot(selectedBlueprint.policy)} initialPolicy={selectedBlueprint.policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} onCancel={() => setIsEditing(false)} onCreatePromptVersion={onCreatePromptVersion} onSave={async (policy, activate) => { const createdBlueprint = await onCreateBlueprint(policy); if (!createdBlueprint) return; setSelectedBlueprintId(createdBlueprint.id); setIsEditing(false); if (activate) await onActivate(createdBlueprint.id); }} promptVersions={promptVersions} /> : <BlueprintConfigurationForm initialAssetRoot={blueprintAssetRoot(selectedBlueprint.policy)} initialPolicy={selectedBlueprint.policy} isPending={false} onCancel={() => {}} onSave={async () => {}} promptVersions={promptVersions} readOnly />}
         {!blueprintRepairContext ? <div className="blueprint-editor-actions">
           {selectedBlueprint.archived_at ? <button className="button button-secondary" disabled={isPending === `unarchive-${selectedBlueprint.id}`} onClick={() => void onArchiveBlueprint(selectedBlueprint.id, false)} type="button">{isPending === `unarchive-${selectedBlueprint.id}` ? "处理中…" : "取消归档"}</button> : !isSelectedCurrent ? <button className="button button-primary" disabled={isPending === `activate-${selectedBlueprint.id}`} onClick={() => void onActivate(selectedBlueprint.id)} type="button">{isPending === `activate-${selectedBlueprint.id}` ? "激活中…" : "激活此版本"}</button> : null}
           {!selectedBlueprint.is_active && !selectedBlueprint.archived_at ? <button className="button button-secondary" disabled={isPending === `archive-${selectedBlueprint.id}`} onClick={() => void onArchiveBlueprint(selectedBlueprint.id, true)} type="button">{isPending === `archive-${selectedBlueprint.id}` ? "归档中…" : "归档此版本"}</button> : null}

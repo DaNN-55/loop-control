@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { Database } from "./lib/database.types";
-import { AccountWorkspace, App, BootstrapScreen, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, episodeWorkerStatus, navigation, navigationBadgeCounts } from "./App";
+import { AccountWorkspace, App, BootstrapScreen, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, episodeWorkerStatus, initialNavigationForWorkspace, navigation, navigationBadgeCounts } from "./App";
 import { defaultBlueprintPolicy, parseBlueprintPolicy, withBlueprintAssetRoot } from "./platform/blueprintPolicy";
 
 vi.mock("./lib/supabase", () => ({
@@ -145,6 +145,12 @@ describe("approval console", () => {
     expect(navigation.map((item) => item.label)).toEqual(["系列运营", "生产单", "审核", "发布队列", "复盘", "账号"]);
     const episode = { account_id: "account-1", blueprint_version_id: "blueprint-1", created_at: "2026-08-15T00:00:00.000Z", id: "episode-1", stage: "script_review", title: "待审核", updated_at: "2026-08-15T00:00:00.000Z" } as Database["public"]["Tables"]["episodes"]["Row"];
     expect(navigationBadgeCounts([episode], [], [])).toEqual({ reviews: 1, publish: 0 });
+  });
+
+  it("按工作区状态选择首次进入页面", () => {
+    expect(initialNavigationForWorkspace({ accounts: [], episodes: [] })).toBe("accounts");
+    expect(initialNavigationForWorkspace({ accounts: [{} as Database["public"]["Tables"]["accounts"]["Row"]], episodes: [] })).toBe("accounts");
+    expect(initialNavigationForWorkspace({ accounts: [{} as Database["public"]["Tables"]["accounts"]["Row"]], episodes: [{} as Database["public"]["Tables"]["episodes"]["Row"]] })).toBe("operations");
   });
 
   it("把 Worker 执行、完成和审核等待状态区分展示", () => {
