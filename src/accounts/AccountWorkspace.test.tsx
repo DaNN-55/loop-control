@@ -37,6 +37,13 @@ const blueprintV2: Blueprint = {
   version: 2,
 };
 
+const archivedBlueprintV1: Blueprint = {
+  ...blueprintV2,
+  archived_at: "2026-08-15T00:00:00.000Z",
+  id: "blueprint-1",
+  version: 1,
+};
+
 function renderWorkspace(overrides: Partial<ComponentProps<typeof AccountWorkspace>> = {}) {
   return render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprintV3, blueprintV2]} isPending="" onActivate={vi.fn()} onCreateBlueprint={vi.fn()} onSelectAccount={vi.fn()} {...overrides} />);
 }
@@ -70,6 +77,19 @@ describe("账号页分区与蓝图版本", () => {
     expect(screen.getByRole("heading", { name: "蓝图 v2" })).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "激活此版本" }));
     expect(onActivate).toHaveBeenCalledWith(blueprintV2.id);
+  });
+
+  it("默认折叠已归档版本，展开后可选择历史蓝图", async () => {
+    const user = userEvent.setup();
+    renderWorkspace({ blueprints: [blueprintV3, blueprintV2, archivedBlueprintV1] });
+
+    const archivedSummary = screen.getByText("已归档", { selector: "summary" });
+    expect(archivedSummary.parentElement?.hasAttribute("open")).toBe(false);
+
+    await user.click(archivedSummary);
+
+    expect(archivedSummary.parentElement?.hasAttribute("open")).toBe(true);
+    expect(screen.getByRole("button", { name: /v1.*已归档/ })).toBeTruthy();
   });
 
   it("基于所选版本保存新版本后可立即激活", async () => {
