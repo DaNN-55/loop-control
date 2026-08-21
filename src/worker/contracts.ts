@@ -1,7 +1,27 @@
 export const workerTaskPackageVersion = "worker-task/v1" as const;
 export const workerResultVersion = "worker-result/v1" as const;
+export const workerPreflightVersion = "worker-preflight/v1" as const;
 
 export type WorkerResultStatus = "completed" | "blocked" | "failed";
+export type WorkerPreflightPhase = "preflight" | "execution";
+export type WorkerPreflightStatus = "passed" | "blocked" | "retryable" | "unavailable";
+export type WorkerPreflightAction = "none" | "edit_blueprint" | "retry" | "contact_environment_admin";
+export type WorkerPreflightScope = "blueprint" | "episode" | "worker";
+
+export interface WorkerPreflightCheck {
+  capability: string;
+  check: string;
+  phase: WorkerPreflightPhase;
+  status: WorkerPreflightStatus;
+  reason: string;
+  action: WorkerPreflightAction;
+  scope: WorkerPreflightScope;
+}
+
+export interface WorkerPreflightResult {
+  version: typeof workerPreflightVersion;
+  checks: WorkerPreflightCheck[];
+}
 
 export interface PromptContextSnapshot {
   version: "prompt-context/v1";
@@ -231,6 +251,7 @@ export interface WorkerResult {
     passed: boolean;
     checks: Array<{ name: string; passed: boolean; detail: string }>;
   };
+  preflight?: WorkerPreflightResult;
   actualCostCents: number;
   audioDurationSeconds?: number;
   mediaSource?: {
@@ -242,7 +263,16 @@ export interface WorkerResult {
     sourceUrl: string;
     previewUrl: string;
   };
-  blockers: Array<{ code: string; detail: string }>;
+  blockers: Array<{
+    code: string;
+    detail: string;
+    capability?: string;
+    check?: string;
+    phase?: WorkerPreflightPhase;
+    status?: WorkerPreflightStatus;
+    action?: WorkerPreflightAction;
+    scope?: WorkerPreflightScope;
+  }>;
   retry: {
     shouldRetry: boolean;
     reason: string;
@@ -377,6 +407,7 @@ export function validateWorkerResult(value: unknown, taskPackage: WorkerTaskPack
   if (!isNonNegativeInteger(actualCostCents)) throw new Error("实际成本必须是非负整数。");
   const audioDurationSeconds = value.audioDurationSeconds;
   if (audioDurationSeconds !== undefined && !isPositiveFiniteNumber(audioDurationSeconds)) throw new Error("音频实际时长必须是正数。");
+  const preflight = value.preflight === undefined ? undefined : parseWorkerPreflight(value.preflight);
   const mediaSource = value.mediaSource === undefined ? undefined : parseMediaSource(value.mediaSource);
   if (taskPackage.provider === "freesound" && value.status === "completed" && mediaSource === undefined) throw new Error("Freesound 任务必须返回媒体来源记录。");
   if (taskPackage.provider !== "freesound" && mediaSource !== undefined) throw new Error("非 Freesound 任务不能返回媒体来源记录。");
@@ -421,6 +452,7 @@ export function validateWorkerResult(value: unknown, taskPackage: WorkerTaskPack
       passed: value.validation.passed,
       checks: value.validation.checks as WorkerResult["validation"]["checks"],
     },
+    ...(preflight ? { preflight } : {}),
     actualCostCents,
     ...(audioDurationSeconds !== undefined ? { audioDurationSeconds } : {}),
     ...(mediaSource ? { mediaSource: { provider: "freesound", sourceId: mediaSource.sourceId, title: mediaSource.title, creator: mediaSource.creator, license: mediaSource.license, sourceUrl: mediaSource.sourceUrl, previewUrl: mediaSource.previewUrl } } : {}),
@@ -495,6 +527,36 @@ function assertValidationCheck(value: unknown): void {
 
 function assertBlocker(value: unknown): void {
   if (!isRecord(value) || !isNonEmptyString(value.code) || !isNonEmptyString(value.detail)) throw new Error("blockers 格式无效。");
+  if (value.capability !== undefined && !isNonEmptyString(value.capability)) throw new Error("blocker capability 格式无效。");
+  if (value.check !== undefined && !isNonEmptyString(value.check)) throw new Error("blocker check 格式无效。");
+  if (value.phase !== undefined && !isWorkerPreflightPhase(value.phase)) throw new Error("blocker phase 格式无效。");
+  if (value.status !== undefined && !isWorkerPreflightStatus(value.status)) throw new Error("blocker status 格式无效。");
+  if (value.action !== undefined && !isWorkerPreflightAction(value.action)) throw new Error("blocker action 格式无效。");
+  if (value.scope !== undefined && !isWorkerPreflightScope(value.scope)) throw new Error("blocker scope 格式无效。");
+}
+
+function parseWorkerPreflight(value: unknown): WorkerPreflightResult {
+  if (!isRecord(value) || value.version !== workerPreflightVersion || !Array.isArray(value.checks)) throw new Error("Worker preflight 格式无效。");
+  return { version: workerPreflightVersion, checks: value.checks.map((check) => {
+    if (!isRecord(check) || !isNonEmptyString(check.capability) || !isNonEmptyString(check.check) || !isWorkerPreflightPhase(check.phase) || !isWorkerPreflightStatus(check.status) || !isNonEmptyString(check.reason) || !isWorkerPreflightAction(check.action) || !isWorkerPreflightScope(check.scope)) throw new Error("Worker preflight 检查项格式无效。");
+    return { capability: check.capability, check: check.check, phase: check.phase, status: check.status, reason: check.reason, action: check.action, scope: check.scope };
+  }) };
+}
+
+function isWorkerPreflightPhase(value: unknown): value is WorkerPreflightPhase {
+  return value === "preflight" || value === "execution";
+}
+
+function isWorkerPreflightStatus(value: unknown): value is WorkerPreflightStatus {
+  return value === "passed" || value === "blocked" || value === "retryable" || value === "unavailable";
+}
+
+function isWorkerPreflightAction(value: unknown): value is WorkerPreflightAction {
+  return value === "none" || value === "edit_blueprint" || value === "retry" || value === "contact_environment_admin";
+}
+
+function isWorkerPreflightScope(value: unknown): value is WorkerPreflightScope {
+  return value === "blueprint" || value === "episode" || value === "worker";
 }
 
 function assertRetry(value: Record<string, unknown>): asserts value is WorkerResult["retry"] {

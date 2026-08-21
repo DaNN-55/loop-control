@@ -35,6 +35,10 @@ describe("本地 Codex Worker runner", () => {
 
   it("将通过校验的 Codex 结果回写给同一个任务", async () => {
     const reportResult = vi.fn().mockResolvedValue(undefined);
+    const preflight = vi.fn().mockResolvedValue({
+      version: "worker-preflight/v1",
+      checks: [{ capability: "visual_planning", check: "capability_registration", phase: "preflight", status: "passed", reason: "Worker 已注册 codex 执行路径。", action: "none", scope: "worker" }],
+    });
     const execute = vi.fn().mockResolvedValue(JSON.stringify({
       version: "worker-result/v1",
       taskId: "task-1",
@@ -47,8 +51,8 @@ describe("本地 Codex Worker runner", () => {
       nextStep: "Create the script draft task.",
     }));
 
-    await expect(runCodexWorker({ claimNextTask: async () => claimedTask, reportResult, execute, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 })).resolves.toEqual({ status: "completed", taskId: "task-1" });
-    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({ actualCostCents: 0, status: "completed" }));
+    await expect(runCodexWorker({ claimNextTask: async () => claimedTask, reportResult, execute, preflight, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 })).resolves.toEqual({ status: "completed", taskId: "task-1" });
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({ actualCostCents: 0, status: "completed", preflight: expect.objectContaining({ version: "worker-preflight/v1" }) }));
     expect(execute).toHaveBeenCalledWith(expect.objectContaining({ accountId: "account-1", episode: expect.objectContaining({ blueprintVersionId: "blueprint-1" }) }));
   });
 
@@ -288,6 +292,58 @@ describe("本地 Codex Worker runner", () => {
     expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({
       status: "blocked",
       blockers: [expect.objectContaining({ code: "asset_root_unavailable" })],
+    }));
+  });
+
+  it("在执行前回写结构化 preflight 阻塞，不调用 Worker", async () => {
+    const execute = vi.fn();
+    const reportResult = vi.fn().mockResolvedValue(undefined);
+    const preflight = vi.fn().mockResolvedValue({
+      version: "worker-preflight/v1",
+      checks: [{
+        capability: "b_roll_generation",
+        check: "credential_presence",
+        phase: "preflight",
+        status: "unavailable",
+        reason: "PEXELS_API_KEY 未配置。",
+        action: "contact_environment_admin",
+        scope: "worker",
+      }],
+    });
+
+    await expect(runCodexWorker({ claimNextTask: async () => claimedTask, reportResult, execute, preflight, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 })).resolves.toEqual({ status: "blocked", taskId: "task-1" });
+
+    expect(preflight).toHaveBeenCalledWith(expect.objectContaining({ capability: "visual_planning" }));
+    expect(execute).not.toHaveBeenCalled();
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({
+      status: "blocked",
+      preflight: expect.objectContaining({ version: "worker-preflight/v1" }),
+      blockers: [expect.objectContaining({ check: "credential_presence", action: "contact_environment_admin", scope: "worker" })],
+    }));
+  });
+
+  it("把 retryable preflight 保留为可见阻塞，不让数据库自动重试", async () => {
+    const reportResult = vi.fn().mockResolvedValue(undefined);
+    const execute = vi.fn();
+
+    await expect(runCodexWorker({
+      claimNextTask: async () => claimedTask,
+      reportResult,
+      execute,
+      preflight: async () => ({
+        version: "worker-preflight/v1",
+        checks: [{ capability: "visual_planning", check: "network_request", phase: "preflight", status: "retryable", reason: "供应商连接暂时失败。", action: "retry", scope: "worker" }],
+      }),
+      verifyAssetRoot: async () => undefined,
+      verifyArtifacts: async () => undefined,
+      actualCostCents: 0,
+    })).resolves.toEqual({ status: "blocked", taskId: "task-1" });
+
+    expect(execute).not.toHaveBeenCalled();
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({
+      status: "blocked",
+      retry: { shouldRetry: false, reason: expect.any(String) },
+      blockers: [expect.objectContaining({ action: "retry", status: "retryable" })],
     }));
   });
 

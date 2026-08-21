@@ -88,13 +88,47 @@ const commonResultProperties = {
     },
   },
   actualCostCents: { type: "integer", minimum: 0 },
+  preflight: {
+    type: "object",
+    additionalProperties: false,
+    required: ["version", "checks"],
+    properties: {
+      version: { type: "string", const: "worker-preflight/v1" },
+      checks: {
+        type: "array",
+        items: {
+          type: "object",
+          additionalProperties: false,
+          required: ["capability", "check", "phase", "status", "reason", "action", "scope"],
+          properties: {
+            capability: { type: "string", minLength: 1 },
+            check: { type: "string", minLength: 1 },
+            phase: { type: "string", enum: ["preflight", "execution"] },
+            status: { type: "string", enum: ["passed", "blocked", "retryable", "unavailable"] },
+            reason: { type: "string", minLength: 1 },
+            action: { type: "string", enum: ["none", "edit_blueprint", "retry", "contact_environment_admin"] },
+            scope: { type: "string", enum: ["blueprint", "episode", "worker"] },
+          },
+        },
+      },
+    },
+  },
   blockers: {
     type: "array",
     items: {
       type: "object",
       additionalProperties: false,
       required: ["code", "detail"],
-      properties: { code: { type: "string" }, detail: { type: "string" } },
+      properties: {
+        code: { type: "string" },
+        detail: { type: "string" },
+        capability: { type: "string" },
+        check: { type: "string" },
+        phase: { type: "string", enum: ["preflight", "execution"] },
+        status: { type: "string", enum: ["passed", "blocked", "retryable", "unavailable"] },
+        action: { type: "string", enum: ["none", "edit_blueprint", "retry", "contact_environment_admin"] },
+        scope: { type: "string", enum: ["blueprint", "episode", "worker"] },
+      },
     },
   },
   retry: {

@@ -7,6 +7,8 @@ import {
   type WorkerTaskPackageInput,
   type WorkerTaskPackage,
   type PromptContextSnapshot,
+  type WorkerPreflightResult,
+  type WorkerPreflightCheck,
   validateWorkerResult,
 } from "./contracts.js";
 
@@ -32,6 +34,7 @@ export interface CodexWorkerDependencies {
   verifyAssetRoot(allowedAssetRoot: string): Promise<void>;
   verifyArtifacts(taskPackage: WorkerTaskPackage, artifacts: ArtifactManifest[], storyboard?: WorkerResult["storyboard"]): Promise<void>;
   execute(taskPackage: WorkerTaskPackage): Promise<string>;
+  preflight?(taskPackage: WorkerTaskPackage): Promise<WorkerPreflightResult>;
   reportResult(taskId: string, attempt: number, result: WorkerResult): Promise<void>;
   actualCostCents: number;
 }
@@ -52,17 +55,26 @@ export async function runCodexWorker(dependencies: CodexWorkerDependencies): Pro
     return { status: "blocked", taskId: task.taskId };
   }
 
+  const preflight = dependencies.preflight ? await runPreflight(dependencies.preflight, taskPackage) : undefined;
+  if (preflight) {
+    if (preflight.checks.some((check) => check.status !== "passed")) {
+      const result = createPreflightResult(task.taskId, dependencies.actualCostCents, preflight);
+      await dependencies.reportResult(task.taskId, task.attempt, result);
+      return { status: result.status, taskId: task.taskId };
+    }
+  }
+
   try {
     await dependencies.verifyAssetRoot(taskPackage.assets.allowedRoot);
   } catch (error) {
-    await dependencies.reportResult(task.taskId, task.attempt, createBlockedResult(task.taskId, dependencies.actualCostCents, error, "asset_root_unavailable"));
+    await dependencies.reportResult(task.taskId, task.attempt, addPreflight(createBlockedResult(task.taskId, dependencies.actualCostCents, error, "asset_root_unavailable"), preflight));
     return { status: "blocked", taskId: task.taskId };
   }
 
   try {
     await dependencies.verifyArtifacts(taskPackage, taskPackage.assets.inputs);
   } catch (error) {
-    await dependencies.reportResult(task.taskId, task.attempt, createBlockedResult(task.taskId, dependencies.actualCostCents, error, "input_artifacts_invalid"));
+    await dependencies.reportResult(task.taskId, task.attempt, addPreflight(createBlockedResult(task.taskId, dependencies.actualCostCents, error, "input_artifacts_invalid"), preflight));
     return { status: "blocked", taskId: task.taskId };
   }
 
@@ -70,12 +82,32 @@ export async function runCodexWorker(dependencies: CodexWorkerDependencies): Pro
     const output = await dependencies.execute(taskPackage);
     const candidate = parseCodexOutput(output, dependencies.actualCostCents);
     const result = validateWorkerResult(candidate, taskPackage);
+    if (preflight) result.preflight = preflight;
     await dependencies.verifyArtifacts(taskPackage, result.artifacts, result.storyboard);
     await dependencies.reportResult(task.taskId, task.attempt, result);
     return { status: result.status, taskId: task.taskId };
   } catch (error) {
-    await dependencies.reportResult(task.taskId, task.attempt, createFailedResult(taskPackage, dependencies.actualCostCents, error));
+    await dependencies.reportResult(task.taskId, task.attempt, addPreflight(createFailedResult(taskPackage, dependencies.actualCostCents, error), preflight));
     return { status: "failed", taskId: task.taskId };
+  }
+}
+
+async function runPreflight(preflight: NonNullable<CodexWorkerDependencies["preflight"]>, taskPackage: WorkerTaskPackage): Promise<WorkerPreflightResult> {
+  try {
+    return await preflight(taskPackage);
+  } catch (error) {
+    return {
+      version: "worker-preflight/v1",
+      checks: [{
+        capability: taskPackage.capability,
+        check: "preflight",
+        phase: "preflight",
+        status: "unavailable",
+        reason: errorMessage(error),
+        action: "contact_environment_admin",
+        scope: "worker",
+      }],
+    };
   }
 }
 
@@ -400,6 +432,42 @@ function createBlockedResult(taskId: string, actualCostCents: number, error: unk
     blockers: [{ code, detail: errorMessage(error) }],
     retry: { shouldRetry: false, reason: "Owner action is required before retrying this task." },
     nextStep: "Correct the task package and create a new task attempt.",
+  };
+}
+
+function createPreflightResult(taskId: string, actualCostCents: number, preflight: WorkerPreflightResult): WorkerResult {
+  const failedChecks = preflight.checks.filter((check) => check.status !== "passed");
+  return {
+    version: "worker-result/v1",
+    taskId,
+    status: "blocked",
+    artifacts: [],
+    validation: {
+      passed: false,
+      checks: preflight.checks.map((check) => ({ name: `preflight:${check.check}`, passed: check.status === "passed", detail: check.reason })),
+    },
+    preflight,
+    actualCostCents,
+    blockers: failedChecks.map((check) => preflightBlocker(check)),
+    retry: { shouldRetry: false, reason: "Worker preflight requires action before retrying this task." },
+    nextStep: "Resolve the Worker preflight blocker before retrying this task.",
+  };
+}
+
+function addPreflight(result: WorkerResult, preflight: WorkerPreflightResult | undefined): WorkerResult {
+  return preflight ? { ...result, preflight } : result;
+}
+
+function preflightBlocker(check: WorkerPreflightCheck): NonNullable<WorkerResult["blockers"]>[number] {
+  return {
+    code: check.check,
+    detail: check.reason,
+    capability: check.capability,
+    check: check.check,
+    phase: check.phase,
+    status: check.status,
+    action: check.action,
+    scope: check.scope,
   };
 }
 

@@ -44,7 +44,47 @@ function specializedMediaUnavailableGuidance(blocker: Pick<WorkerBlocker, "detai
   };
 }
 
-export function workerBlockerGuidance(blocker: Pick<WorkerBlocker, "code" | "detail">): WorkerBlockerGuidance {
+function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "action">): WorkerBlockerGuidance | undefined {
+  if (blocker.action === "retry") {
+    return {
+      title: "Worker 外部依赖暂时失败",
+      summary: "这是临时运行故障，不是蓝图配置缺失。",
+      resolution: ["确认网络或供应商服务恢复。", "等待 Worker 依赖恢复后重新执行当前任务。", "如果连续失败，打开技术详情检查返回原因。"],
+      retryLabel: "重试当前任务",
+      location: "Worker 运行环境",
+      locationNote: "无需修改蓝图配置。",
+      technicalDetail: blocker.detail,
+    };
+  }
+  if (blocker.action === "edit_blueprint") {
+    return {
+      primaryAction: "blueprint",
+      title: "蓝图能力配置需要修复",
+      summary: "Worker 已识别到当前蓝图声明缺失或无效。",
+      resolution: ["打开蓝图配置，修正当前能力的 Provider、Adapter、模型或工具声明。", "保存配置后修复当前受阻生产单。", "已完成工作和审核记录会保留。"],
+      retryLabel: "修改配置并继续当前生产单",
+      location: "账号蓝图 → 能力配置",
+      locationNote: "只修复当前能力的声明，不修改 Worker 秘密。",
+      technicalDetail: blocker.detail,
+    };
+  }
+  if (blocker.action === "contact_environment_admin") {
+    return {
+      title: "Worker 运行环境暂不可用",
+      summary: "问题位于 Worker 注册、凭据、权限、网络或挂载环境，不是蓝图创作字段。",
+      resolution: ["确认 Worker 已注册当前能力并加载对应适配器。", "确认本机凭据、模型权限、工具权限和媒体库挂载状态。", "环境恢复后重新执行当前任务。"],
+      retryLabel: "环境恢复后重试当前任务",
+      location: "Worker 运行环境",
+      locationNote: "当前页面没有可修改的环境入口。",
+      technicalDetail: blocker.detail,
+    };
+  }
+  return undefined;
+}
+
+export function workerBlockerGuidance(blocker: Pick<WorkerBlocker, "code" | "detail" | "action">): WorkerBlockerGuidance {
+  const structured = structuredPreflightGuidance(blocker);
+  if (structured) return structured;
   const normalized = `${blocker.code} ${blocker.detail}`.toLowerCase();
   const isSpecializedMedia = /a[_-]?roll|b[_-]?roll|narration|soundtrack|sound.?effect/.test(normalized);
 

@@ -15,4 +15,13 @@ describe("workerResultJsonSchema", () => {
     expect(schema.required).not.toContain("storyboard");
     expect(schema.properties).not.toHaveProperty("storyboard");
   });
+
+  it("accepts the additive structured preflight result", () => {
+    const schema = workerResultJsonSchema("b_roll_generation");
+
+    expect(schema.properties.preflight).toMatchObject({
+      type: "object",
+      required: ["version", "checks"],
+    });
+  });
 });

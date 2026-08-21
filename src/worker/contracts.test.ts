@@ -93,17 +93,35 @@ describe("Worker 契约", () => {
 
   it("只接受在预算内、带验证结果的完整 Worker 结果", () => {
     const taskPackage = createWorkerTaskPackage(packageInput);
-    expect(validateWorkerResult({
+    const result = validateWorkerResult({
       version: "worker-result/v1",
       taskId: "task-1",
       status: "completed",
       artifacts: [{ artifactType: "brief", relativePath: "episodes/episode-1/brief.md", sha256: "b".repeat(64), fileSize: 256 }],
       validation: { passed: true, checks: [{ name: "schema", passed: true, detail: "brief fields are present" }] },
+      preflight: {
+        version: "worker-preflight/v1",
+        checks: [{ capability: "visual_planning", check: "capability_registration", phase: "preflight", status: "passed", reason: "Worker 已通过执行路径校验。", action: "none", scope: "worker" }],
+      },
       actualCostCents: 0,
       blockers: [],
       retry: { shouldRetry: false, reason: "Completed successfully." },
       nextStep: "Create the script draft task.",
-    }, taskPackage)).toMatchObject({ status: "completed", actualCostCents: 0 });
+    }, taskPackage);
+    expect(result).toMatchObject({ status: "completed", actualCostCents: 0, preflight: { version: "worker-preflight/v1" } });
+
+    expect(() => validateWorkerResult({
+      version: "worker-result/v1",
+      taskId: "task-1",
+      status: "completed",
+      artifacts: [{ artifactType: "brief", relativePath: "episodes/episode-1/brief.md", sha256: "b".repeat(64), fileSize: 256 }],
+      validation: { passed: true, checks: [{ name: "schema", passed: true, detail: "brief fields are present" }] },
+      preflight: { version: "worker-preflight/v1", checks: [{ capability: "visual_planning", check: "network", phase: "preflight", status: "retryable", reason: "暂时失败。", action: "not_a_real_action", scope: "worker" }] },
+      actualCostCents: 0,
+      blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." },
+      nextStep: "Create the script draft task.",
+    }, taskPackage)).toThrow("Worker preflight");
 
     expect(() => validateWorkerResult({
       version: "worker-result/v1",

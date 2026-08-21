@@ -69,6 +69,14 @@ describe("Worker 阻塞项指导", () => {
     expect(guidance.location).toBe("当前生产单 → 专用媒体配置");
   });
 
+  it("尊重结构化 preflight 的重试动作", () => {
+    const guidance = workerBlockerGuidance({ code: "network_request", detail: "供应商连接暂时失败。", action: "retry" });
+
+    expect(guidance.title).toBe("Worker 外部依赖暂时失败");
+    expect(guidance.retryLabel).toBe("重试当前任务");
+    expect(guidance.primaryAction).toBeUndefined();
+  });
+
   it("未知 code 也给出明确的人工处理路径，并保留技术原因", () => {
     const guidance = workerBlockerGuidance({ code: "unknown_blocker", detail: "内部错误" });
 
