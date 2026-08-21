@@ -2,8 +2,9 @@ import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ComponentProps } from "react";
 import { describe, expect, it, vi } from "vitest";
-import type { Database } from "../lib/database.types";
+import type { Database, Json } from "../lib/database.types";
 import type { LocalSystemStatusReport } from "../observability/SystemStatusPanel";
+import type { WorkerPreflightResult } from "../worker/contracts";
 import { AccountWorkspace } from "../App";
 
 vi.mock("../lib/supabase", () => ({ supabase: {} }));
@@ -55,6 +56,14 @@ const systemStatus: LocalSystemStatusReport = {
   observedAt: "2026-08-21T09:01:00.000Z",
 };
 
+const blueprintPreflight: WorkerPreflightResult = {
+  version: "worker-preflight/v1",
+  checks: [
+    { action: "none", capability: "b_roll_generation", check: "capability_registration", phase: "preflight", reason: "Pexels 已注册", scope: "worker", status: "passed" },
+    { action: "contact_environment_admin", capability: "b_roll_generation", check: "credential_presence", phase: "preflight", reason: "缺少 PEXELS_API_KEY", scope: "worker", status: "unavailable" },
+  ],
+};
+
 function renderWorkspace(overrides: Partial<ComponentProps<typeof AccountWorkspace>> = {}) {
   return render(<AccountWorkspace account={account} accountEpisodeCount={0} accounts={[account]} blueprints={[blueprintV3, blueprintV2]} isPending="" onActivate={vi.fn()} onCreateBlueprint={vi.fn()} onSelectAccount={vi.fn()} {...overrides} />);
 }
@@ -86,6 +95,22 @@ describe("账号页分区与蓝图版本", () => {
     const panel = screen.getByRole("complementary", { name: "技术配置侧边面板" });
     expect(within(panel).getByText("Codex CLI · 正常")).toBeTruthy();
     expect(within(panel).getByText("已挂载：/Volumes/Media")).toBeTruthy();
+  });
+
+  it("只展示已启用能力的外部连接状态并提供重新检查", async () => {
+    const user = userEvent.setup();
+    const onRefreshBlueprintPreflight = vi.fn().mockResolvedValue(undefined);
+    const enabledBlueprint = { ...blueprintV3, policy: { ...(blueprintV3.policy as Record<string, Json>), b_roll: { executor: { provider: "pexels", adapter: "pexels_video" } } } };
+    renderWorkspace({ blueprints: [enabledBlueprint, blueprintV2], blueprintPreflight, onRefreshBlueprintPreflight });
+
+    const summary = screen.getByRole("region", { name: "外部连接状态" });
+    expect(within(summary).getByText(/Pexels/)).toBeTruthy();
+    expect(within(summary).getByText("Pexels · 凭据缺失")).toBeTruthy();
+    expect(within(summary).getByText("缺少 PEXELS_API_KEY · 请联系环境管理员")).toBeTruthy();
+    expect(within(summary).queryByText("Google TTS")).toBeNull();
+
+    await user.click(within(summary).getByRole("button", { name: "重新检查连接" }));
+    expect(onRefreshBlueprintPreflight).toHaveBeenCalledOnce();
   });
 
   it("从技术配置侧边面板编辑并保存当前蓝图", async () => {

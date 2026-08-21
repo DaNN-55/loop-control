@@ -3,6 +3,8 @@ import type { FormEvent, ReactNode } from "react";
 import type { Database, Json } from "../lib/database.types";
 import { HelpTip } from "../ui/HelpTip";
 import type { LocalSystemStatusReport, SystemState } from "../observability/SystemStatusPanel";
+import type { WorkerPreflightResult } from "../worker/contracts";
+import { externalConnectionStatuses, type ExternalConnectionStatus } from "./connectionStatus";
 import {
   blueprintFormToPolicy,
   blueprintPolicyToForm,
@@ -172,6 +174,30 @@ function runtimeDependencyItems(report: LocalSystemStatusReport | null): Array<{
   ];
 }
 
+function externalConnectionProviderLabel(provider: string): string {
+  return provider === "google_tts" ? "Google TTS" : provider === "pexels" ? "Pexels" : provider || "未选择供应商";
+}
+
+function externalConnectionStatusLabel(status: ExternalConnectionStatus["status"], check: string | null): string {
+  if (status === "passed") return "可用";
+  const checkLabels: Record<string, string> = { blueprint_configuration: "配置不完整", capability_registration: "能力未注册", command_availability: "命令不可用", credential_presence: "凭据缺失", credential_validity: "凭据校验失败", model_permission: "模型权限不足", network_connectivity: "网络失败", tool_permission: "工具权限不足" };
+  return check ? checkLabels[check] ?? (status === "retryable" ? "检查失败" : "不可用") : status === "blocked" ? "配置不完整" : status === "retryable" ? "检查失败" : status === "unavailable" ? "不可用" : "待检查";
+}
+
+function externalConnectionActionLabel(action: ExternalConnectionStatus["action"]): string {
+  return action === "retry" ? "可重试" : action === "edit_blueprint" ? "请编辑蓝图" : action === "contact_environment_admin" ? "请联系环境管理员" : "";
+}
+
+function ExternalConnectionSummary({ isLoading = false, onRefresh, preflight, preflightError, policy }: { isLoading?: boolean; onRefresh?: () => Promise<void>; preflight: WorkerPreflightResult | null; preflightError?: string; policy: Json }) {
+  const items = externalConnectionStatuses(policy, preflight);
+  return <section aria-label="外部连接状态" className="external-connection-summary technical-runtime-status">
+    <header><div><h3>外部连接状态</h3><p>只显示当前蓝图已启用的 B-roll 和旁白连接；凭据仍由 Worker 环境管理。</p></div>{onRefresh ? <button className="button button-secondary button-small" disabled={isLoading} onClick={() => void onRefresh()} type="button">{isLoading ? "检查中…" : preflight ? "重新检查连接" : "检查连接"}</button> : null}</header>
+    {preflightError ? <p className="form-error">连接检查失败：{preflightError}</p> : null}
+    {items.length ? <ul>{items.map((item) => <li key={item.key}><div><strong>{externalConnectionProviderLabel(item.provider)} · {externalConnectionStatusLabel(item.status, item.check)}</strong><span>{item.adapter || "未声明适配器"}</span></div><p>{item.reason}{externalConnectionActionLabel(item.action) ? ` · ${externalConnectionActionLabel(item.action)}` : ""}</p></li>)}</ul> : <p className="summary-empty">当前蓝图没有启用需要外部连接的生产能力。</p>}
+    <FieldHint>“可用”表示本次 Worker 检查已通过；“不可用”或“检查失败”分别按检查结果处理，不会在前端保存 API Key。</FieldHint>
+  </section>;
+}
+
 function RuntimeDependencyStatus({ report }: { report: LocalSystemStatusReport | null }) {
   const items = runtimeDependencyItems(report);
   return <fieldset className="technical-runtime-status"><legend>依赖状态</legend>{items.length ? <ul>{items.map((item) => <li key={item.name}><strong>{item.name} · {systemStateLabel(item.state)}</strong><span>{item.detail}</span></li>)}</ul> : <p className="summary-empty">尚未读取本地依赖报告；保存的只是配置声明。</p>}<FieldHint>这里复用本地系统状态报告；Worker 注册、凭据、模型权限和实际供应商接受仍在生产前检查。</FieldHint></fieldset>;
@@ -194,7 +220,7 @@ function mediaAdapterPreview(key: MediaAdapterKey, form: MediaAdapterForm): stri
   return `${mediaAdapterLabels[key]} · ${details.join(" · ") || "未配置"}`;
 }
 
-export function BlueprintEffectiveSummary({ policy, systemStatus = null, version, onEditTechnical }: { policy: Json; systemStatus?: LocalSystemStatusReport | null; version?: number; onEditTechnical?: () => void }) {
+export function BlueprintEffectiveSummary({ blueprintPreflight = null, blueprintPreflightError = "", isBlueprintPreflightLoading = false, onEditTechnical, onRefreshBlueprintPreflight, policy, systemStatus = null, version }: { blueprintPreflight?: WorkerPreflightResult | null; blueprintPreflightError?: string; isBlueprintPreflightLoading?: boolean; onEditTechnical?: () => void; onRefreshBlueprintPreflight?: () => Promise<void>; policy: Json; systemStatus?: LocalSystemStatusReport | null; version?: number }) {
   const form = blueprintPolicyToForm(policy);
   const enabledMediaAdapters = form.enabledMediaAdapters ?? [];
   const policyValue = policy && typeof policy === "object" && !Array.isArray(policy) ? policy as Record<string, unknown> : {};
@@ -214,6 +240,7 @@ export function BlueprintEffectiveSummary({ policy, systemStatus = null, version
       <div className="blueprint-summary-wide"><dt>依赖状态</dt><dd>{dependencyItems.length ? <div className="summary-chip-list">{dependencyItems.map((item) => <span className="summary-chip" key={item.name}>{item.name} · {systemStateLabel(item.state)}</span>)}</div> : "尚未读取本地依赖报告"}</dd></div>
       <div className="blueprint-summary-wide"><dt>生产前状态</dt><dd>{productionStatus}。Worker 会在生产前确认注册、凭据、工具、网络和模型权限。</dd></div>
     </dl>
+    <ExternalConnectionSummary isLoading={isBlueprintPreflightLoading} onRefresh={onRefreshBlueprintPreflight} preflight={blueprintPreflight} preflightError={blueprintPreflightError} policy={policy} />
   </section>;
 }
 

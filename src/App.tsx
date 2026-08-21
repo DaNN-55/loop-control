@@ -582,6 +582,11 @@ export function App() {
   const [systemStatus, setSystemStatus] = useState<LocalSystemStatusReport | null>(null);
   const [isSystemStatusLoading, setIsSystemStatusLoading] = useState(false);
   const [productionPreflight, setProductionPreflight] = useState<WorkerPreflightResult | null>(null);
+  const [blueprintPreflight, setBlueprintPreflight] = useState<WorkerPreflightResult | null>(null);
+  const [blueprintPreflightError, setBlueprintPreflightError] = useState("");
+  const [isBlueprintPreflightLoading, setIsBlueprintPreflightLoading] = useState(false);
+  const blueprintPreflightRequestRef = useRef(0);
+  const blueprintPreflightTargetRef = useRef("");
   const workspaceRef = useRef<Workspace | null>(null);
   const selectedEpisodeIdRef = useRef(selectedEpisodeId);
   const hasInitializedNavigationRef = useRef(false);
@@ -647,6 +652,30 @@ export function App() {
     }
   }, []);
 
+  const refreshBlueprintPreflight = useCallback(async (accountId: string) => {
+    const account = workspaceRef.current?.accounts.find((candidate) => candidate.id === accountId);
+    if (!account?.current_blueprint_version_id) {
+      setBlueprintPreflight(null);
+      setBlueprintPreflightError("当前账号没有可检查的有效蓝图。");
+      return;
+    }
+    const target = `${account.id}:${account.current_blueprint_version_id}`;
+    const requestId = ++blueprintPreflightRequestRef.current;
+    setIsBlueprintPreflightLoading(true);
+    setBlueprintPreflightError("");
+    try {
+      const preflight = await runEpisodePreflight({ accountId: account.id, blueprintVersionId: account.current_blueprint_version_id, seriesVersionId: null });
+      if (requestId !== blueprintPreflightRequestRef.current || target !== blueprintPreflightTargetRef.current) return;
+      setBlueprintPreflight(preflight);
+    } catch (error) {
+      if (requestId !== blueprintPreflightRequestRef.current || target !== blueprintPreflightTargetRef.current) return;
+      setBlueprintPreflight(null);
+      setBlueprintPreflightError(error instanceof Error ? error.message : "无法完成连接检查。");
+    } finally {
+      if (requestId === blueprintPreflightRequestRef.current && target === blueprintPreflightTargetRef.current) setIsBlueprintPreflightLoading(false);
+    }
+  }, []);
+
   useEffect(() => {
     let isMounted = true;
     const initialize = async () => {
@@ -693,6 +722,18 @@ export function App() {
   const seriesVersionsById = useMemo(() => new Map(workspace?.seriesVersions.map((version) => [version.id, version])), [workspace]);
   const selectedAccount = workspace?.accounts.find((account) => account.id === selectedAccountId) ?? null;
   const selectedEpisode = workspace?.episodes.find((episode) => episode.id === selectedEpisodeId) ?? null;
+  blueprintPreflightTargetRef.current = selectedAccount?.current_blueprint_version_id ? `${selectedAccount.id}:${selectedAccount.current_blueprint_version_id}` : "";
+
+  useEffect(() => {
+    if (!session || activeNavigation !== "accounts" || !selectedAccount?.current_blueprint_version_id) {
+      blueprintPreflightRequestRef.current += 1;
+      setBlueprintPreflight(null);
+      setBlueprintPreflightError("");
+      setIsBlueprintPreflightLoading(false);
+      return;
+    }
+    void refreshBlueprintPreflight(selectedAccount.id);
+  }, [activeNavigation, refreshBlueprintPreflight, selectedAccount?.current_blueprint_version_id, selectedAccount?.id, session]);
   const accountVisibleEpisodes = useMemo(
     () => (workspace?.episodes ?? []).filter((episode) => accountFilter === "全部账号" || episode.account_id === accountFilter),
     [accountFilter, workspace],
@@ -780,6 +821,7 @@ export function App() {
       if (error) throw error;
       setMessage("当前蓝图规则已更新；之后新建的生产单会使用最新规则。");
       await refreshWorkspace();
+      await refreshBlueprintPreflight(selectedAccount.id);
       return data;
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "创建蓝图版本失败。");
@@ -1507,6 +1549,10 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             series={workspace.series.filter((candidate) => candidate.account_id === selectedAccount?.id)}
             seriesVersions={workspace.seriesVersions.filter((version) => version.account_id === selectedAccount?.id)}
             systemStatus={systemStatus}
+            blueprintPreflight={blueprintPreflight}
+            blueprintPreflightError={blueprintPreflightError}
+            isBlueprintPreflightLoading={isBlueprintPreflightLoading}
+            onRefreshBlueprintPreflight={() => selectedAccount ? refreshBlueprintPreflight(selectedAccount.id) : Promise.resolve()}
           />
         ) : activeNavigation === "reviews" ? (
           <ReviewWorkspace
@@ -1704,7 +1750,7 @@ export function BootstrapScreen({ errorMessage, isPending, onSubmit }: { errorMe
 function LoadingScreen() { return <main className="access-shell"><div className="loading-mark">正在连接受控平台…</div></main>; }
 function ErrorScreen({ errorMessage, onRetry }: { errorMessage: string; onRetry: () => Promise<void> }) { return <main className="access-shell"><section className="access-card"><h1>无法读取控制数据</h1><p className="form-error">{errorMessage}</p><button className="button button-primary" onClick={() => void onRetry()} type="button">重试</button></section></main>; }
 
-export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, blueprints, blueprintRepairContext = null, isPending, onActivate, onApplyEpisodeRepair, onArchiveBlueprint = async () => {}, onCreateBlueprint, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeactivateBlueprint = async () => {}, onDeleteAccount = async () => {}, onDismissBlueprintRepair, onRenameAccount = async () => {}, onSelectAccount, onUpdateBlueprint, promptVersions = [], series = [], seriesVersions = [], systemStatus = null }: { account: Account | null; accountEpisodeCount?: number; accounts: Account[]; blueprints: Blueprint[]; blueprintRepairContext?: BlueprintRepairContext | null; isPending: string; onActivate: (id: string) => Promise<void>; onApplyEpisodeRepair?: (input: { context: BlueprintRepairContext; policy: Json }) => Promise<boolean>; onArchiveBlueprint?: (id: string, archived: boolean) => Promise<void>; onCreateBlueprint?: (policy: Json) => Promise<Blueprint | null>; onCreatePromptVersion?: (input: { capability: PromptVersion["capability"]; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onCreateSeries?: (input: { name: string; rules: Json }) => Promise<void>; onCreateSeriesVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>; onDeactivateBlueprint?: (id: string) => Promise<void>; onDeleteAccount?: (id: string, confirmation: string) => Promise<boolean | void>; onDismissBlueprintRepair?: () => void; onRenameAccount?: (id: string, name: string) => Promise<boolean | void>; onSelectAccount: (id: string) => void; onUpdateBlueprint?: (policy: Json) => Promise<Blueprint | null>; promptVersions?: PromptVersion[]; series?: Series[]; seriesVersions?: SeriesVersion[]; systemStatus?: LocalSystemStatusReport | null }) {
+export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, blueprints, blueprintPreflight = null, blueprintPreflightError = "", blueprintRepairContext = null, isBlueprintPreflightLoading = false, isPending, onActivate, onApplyEpisodeRepair, onArchiveBlueprint = async () => {}, onCreateBlueprint, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeactivateBlueprint = async () => {}, onDeleteAccount = async () => {}, onDismissBlueprintRepair, onRefreshBlueprintPreflight, onRenameAccount = async () => {}, onSelectAccount, onUpdateBlueprint, promptVersions = [], series = [], seriesVersions = [], systemStatus = null }: { account: Account | null; accountEpisodeCount?: number; accounts: Account[]; blueprints: Blueprint[]; blueprintPreflight?: WorkerPreflightResult | null; blueprintPreflightError?: string; blueprintRepairContext?: BlueprintRepairContext | null; isBlueprintPreflightLoading?: boolean; isPending: string; onActivate: (id: string) => Promise<void>; onApplyEpisodeRepair?: (input: { context: BlueprintRepairContext; policy: Json }) => Promise<boolean>; onArchiveBlueprint?: (id: string, archived: boolean) => Promise<void>; onCreateBlueprint?: (policy: Json) => Promise<Blueprint | null>; onCreatePromptVersion?: (input: { capability: PromptVersion["capability"]; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onCreateSeries?: (input: { name: string; rules: Json }) => Promise<void>; onCreateSeriesVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>; onDeactivateBlueprint?: (id: string) => Promise<void>; onDeleteAccount?: (id: string, confirmation: string) => Promise<boolean | void>; onDismissBlueprintRepair?: () => void; onRefreshBlueprintPreflight?: () => Promise<void>; onRenameAccount?: (id: string, name: string) => Promise<boolean | void>; onSelectAccount: (id: string) => void; onUpdateBlueprint?: (policy: Json) => Promise<Blueprint | null>; promptVersions?: PromptVersion[]; series?: Series[]; seriesVersions?: SeriesVersion[]; systemStatus?: LocalSystemStatusReport | null }) {
   const [activeSection, setActiveSection] = useState<"blueprints" | "series">("blueprints");
   const [isEditing, setIsEditing] = useState(false);
   const [isAccountRenameOpen, setIsAccountRenameOpen] = useState(false);
@@ -1750,6 +1796,8 @@ export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, b
   if (!account) return <div className="empty-state">没有可读取的账号。</div>;
   if (!selectedBlueprint) return <div className="empty-state">该账号没有可读取的蓝图版本。</div>;
   const effectiveBlueprint = activeBlueprint ?? selectedBlueprint;
+  const effectiveBlueprintPreflight = effectiveBlueprint.id === account.current_blueprint_version_id ? blueprintPreflight : null;
+  const effectiveBlueprintPreflightError = effectiveBlueprint.id === account.current_blueprint_version_id ? blueprintPreflightError : "";
   const selectedStatus = blueprintStatusLabel(selectedBlueprint, latestBlueprint?.id ?? "", account.current_blueprint_version_id);
   const isSelectedCurrent = selectedBlueprint.id === account.current_blueprint_version_id;
   return <>
@@ -1760,7 +1808,7 @@ export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, b
       <p>{policyPositioning(activePolicy)}<br />资产目录：{policyAssetRoot(activePolicy)}</p>
       <div className="account-actions"><button aria-label="重命名账号" className="account-rename-button" onClick={() => setIsAccountRenameOpen(true)} title="重命名账号" type="button"><Icon name="Edit" /></button><button aria-label="删除账号" className="account-delete-button" onClick={() => setIsAccountDeleteOpen(true)} title="删除账号" type="button"><Icon name="Delete" /></button></div>
     </div>
-    <BlueprintEffectiveSummary onEditTechnical={activeBlueprint && onUpdateBlueprint && !blueprintRepairContext ? () => setIsTechnicalPanelOpen(true) : undefined} policy={effectiveBlueprint.policy} systemStatus={systemStatus} version={effectiveBlueprint.version} />
+    <BlueprintEffectiveSummary blueprintPreflight={effectiveBlueprintPreflight} blueprintPreflightError={effectiveBlueprintPreflightError} isBlueprintPreflightLoading={isBlueprintPreflightLoading} onEditTechnical={activeBlueprint && onUpdateBlueprint && !blueprintRepairContext ? () => setIsTechnicalPanelOpen(true) : undefined} onRefreshBlueprintPreflight={activeBlueprint && !blueprintRepairContext ? onRefreshBlueprintPreflight : undefined} policy={effectiveBlueprint.policy} systemStatus={systemStatus} version={effectiveBlueprint.version} />
     <nav aria-label="账号设置导航" className="account-tabs" role="tablist">
       <button aria-controls="account-blueprints-panel" aria-selected={activeSection === "blueprints"} className={`account-tab ${activeSection === "blueprints" ? "is-active" : ""}`} onClick={() => setActiveSection("blueprints")} role="tab" type="button">蓝图</button>
       <button aria-controls="account-series-panel" aria-selected={activeSection === "series"} className={`account-tab ${activeSection === "series" ? "is-active" : ""}`} onClick={() => setActiveSection("series")} role="tab" type="button">系列</button>
