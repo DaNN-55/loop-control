@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
-import { Activity, BarChart3, BookOpen, ClipboardList, Copy, FolderOpen, History, LogOut, MessageSquare, Moon, PanelLeft, Pencil, Play, RefreshCw, Sun, Table2, Upload, User, Users, X, type LucideIcon } from "lucide-react";
+import { Activity, BarChart3, BookOpen, ClipboardList, Copy, FolderOpen, History, LogOut, MessageSquare, Moon, PanelLeft, Pencil, Play, RefreshCw, Sun, Table2, Trash2, Upload, User, Users, X, type LucideIcon } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 import type { Database, Json } from "./lib/database.types";
 import { supabase } from "./lib/supabase";
@@ -873,6 +873,23 @@ export function App() {
     }
   }
 
+  async function deleteAccount(accountId: string, confirmation: string): Promise<boolean> {
+    setPendingAction(`delete-account-${accountId}`);
+    setErrorMessage("");
+    try {
+      const { error } = await supabase.rpc("delete_account", { p_account_id: accountId, p_confirmation: confirmation });
+      if (error) throw error;
+      setMessage("账号已删除。没有生产单的账号及其蓝图、系列配置已清理。");
+      await refreshWorkspace();
+      return true;
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "删除账号失败。只有没有生产单的账号可以删除。");
+      return false;
+    } finally {
+      setPendingAction("");
+    }
+  }
+
   async function activateBlueprint(blueprintId: string) {
     if (!selectedAccount) return;
     setPendingAction(`activate-${blueprintId}`);
@@ -1421,8 +1438,10 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             onCreateSeries={createSeries}
             onCreateSeriesVersion={createSeriesVersion}
             onDeactivateBlueprint={deactivateBlueprint}
+            onDeleteAccount={deleteAccount}
             onRenameAccount={renameAccount}
             onSelectAccount={(accountId) => { setBlueprintRepairContext(null); setSelectedAccountId(accountId); }}
+            accountEpisodeCount={workspace.episodes.filter((episode) => episode.account_id === selectedAccount?.id).length}
             promptVersions={workspace.promptVersions.filter((version) => version.account_id === selectedAccount?.id)}
             series={workspace.series.filter((candidate) => candidate.account_id === selectedAccount?.id)}
             seriesVersions={workspace.seriesVersions.filter((version) => version.account_id === selectedAccount?.id)}
@@ -1622,10 +1641,11 @@ export function BootstrapScreen({ errorMessage, isPending, onSubmit }: { errorMe
 function LoadingScreen() { return <main className="access-shell"><div className="loading-mark">正在连接受控平台…</div></main>; }
 function ErrorScreen({ errorMessage, onRetry }: { errorMessage: string; onRetry: () => Promise<void> }) { return <main className="access-shell"><section className="access-card"><h1>无法读取控制数据</h1><p className="form-error">{errorMessage}</p><button className="button button-primary" onClick={() => void onRetry()} type="button">重试</button></section></main>; }
 
-export function AccountWorkspace({ account, accounts, blueprints, blueprintRepairContext = null, isPending, onActivate, onApplyEpisodeRepair, onArchiveBlueprint = async () => {}, onCreateBlueprint, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeactivateBlueprint = async () => {}, onDismissBlueprintRepair, onRenameAccount = async () => {}, onSelectAccount, promptVersions = [], series = [], seriesVersions = [] }: { account: Account | null; accounts: Account[]; blueprints: Blueprint[]; blueprintRepairContext?: BlueprintRepairContext | null; isPending: string; onActivate: (id: string) => Promise<void>; onApplyEpisodeRepair?: (input: { context: BlueprintRepairContext; policy: Json }) => Promise<boolean>; onArchiveBlueprint?: (id: string, archived: boolean) => Promise<void>; onCreateBlueprint: (policy: Json) => Promise<Blueprint | null>; onCreatePromptVersion?: (input: { capability: PromptVersion["capability"]; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onCreateSeries?: (input: { name: string; rules: Json }) => Promise<void>; onCreateSeriesVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>; onDeactivateBlueprint?: (id: string) => Promise<void>; onDismissBlueprintRepair?: () => void; onRenameAccount?: (id: string, name: string) => Promise<boolean | void>; onSelectAccount: (id: string) => void; promptVersions?: PromptVersion[]; series?: Series[]; seriesVersions?: SeriesVersion[] }) {
+export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, blueprints, blueprintRepairContext = null, isPending, onActivate, onApplyEpisodeRepair, onArchiveBlueprint = async () => {}, onCreateBlueprint, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeactivateBlueprint = async () => {}, onDeleteAccount = async () => {}, onDismissBlueprintRepair, onRenameAccount = async () => {}, onSelectAccount, promptVersions = [], series = [], seriesVersions = [] }: { account: Account | null; accountEpisodeCount?: number; accounts: Account[]; blueprints: Blueprint[]; blueprintRepairContext?: BlueprintRepairContext | null; isPending: string; onActivate: (id: string) => Promise<void>; onApplyEpisodeRepair?: (input: { context: BlueprintRepairContext; policy: Json }) => Promise<boolean>; onArchiveBlueprint?: (id: string, archived: boolean) => Promise<void>; onCreateBlueprint: (policy: Json) => Promise<Blueprint | null>; onCreatePromptVersion?: (input: { capability: PromptVersion["capability"]; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onCreateSeries?: (input: { name: string; rules: Json }) => Promise<void>; onCreateSeriesVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>; onDeactivateBlueprint?: (id: string) => Promise<void>; onDeleteAccount?: (id: string, confirmation: string) => Promise<boolean | void>; onDismissBlueprintRepair?: () => void; onRenameAccount?: (id: string, name: string) => Promise<boolean | void>; onSelectAccount: (id: string) => void; promptVersions?: PromptVersion[]; series?: Series[]; seriesVersions?: SeriesVersion[] }) {
   const [activeSection, setActiveSection] = useState<"blueprints" | "series">("blueprints");
   const [isEditing, setIsEditing] = useState(false);
   const [isAccountRenameOpen, setIsAccountRenameOpen] = useState(false);
+  const [isAccountDeleteOpen, setIsAccountDeleteOpen] = useState(false);
   const [selectedBlueprintId, setSelectedBlueprintId] = useState("");
   const activePolicy = account ? blueprints.find((blueprint) => blueprint.id === account.current_blueprint_version_id)?.policy ?? defaultBlueprintPolicy : defaultBlueprintPolicy;
   const sortedBlueprints = [...blueprints].sort((left, right) => right.version - left.version);
@@ -1641,6 +1661,7 @@ export function AccountWorkspace({ account, accounts, blueprints, blueprintRepai
     setActiveSection("blueprints");
     setIsEditing(false);
     setIsAccountRenameOpen(false);
+    setIsAccountDeleteOpen(false);
   }, [account?.id, blueprintRepairContext?.blueprintVersionId, blueprintRepairContext?.episodeId]);
 
   function selectBlueprint(blueprintId: string) { setSelectedBlueprintId(blueprintId); setIsEditing(false); }
@@ -1652,9 +1673,10 @@ export function AccountWorkspace({ account, accounts, blueprints, blueprintRepai
   return <>
     <div className="account-selector">
       <div className="account-selector-control">
-        <div className="account-selector-row"><label>当前账号<select onChange={(event) => onSelectAccount(event.target.value)} value={account.id}>{accounts.map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.name}</option>)}</select></label><button aria-label="重命名账号" className="account-rename-button" onClick={() => setIsAccountRenameOpen(true)} title="重命名账号" type="button"><Icon name="Edit" /></button></div>
+        <div className="account-selector-row"><label>当前账号<select onChange={(event) => onSelectAccount(event.target.value)} value={account.id}>{accounts.map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.name}</option>)}</select></label></div>
       </div>
       <p>{policyPositioning(activePolicy)}<br />资产目录：{policyAssetRoot(activePolicy)}</p>
+      <div className="account-actions"><button aria-label="重命名账号" className="account-rename-button" onClick={() => setIsAccountRenameOpen(true)} title="重命名账号" type="button"><Icon name="Edit" /></button><button aria-label="删除账号" className="account-delete-button" onClick={() => setIsAccountDeleteOpen(true)} title="删除账号" type="button"><Icon name="Delete" /></button></div>
     </div>
     <nav aria-label="账号设置导航" className="account-tabs" role="tablist">
       <button aria-controls="account-blueprints-panel" aria-selected={activeSection === "blueprints"} className={`account-tab ${activeSection === "blueprints" ? "is-active" : ""}`} onClick={() => setActiveSection("blueprints")} role="tab" type="button">蓝图</button>
@@ -1683,6 +1705,7 @@ export function AccountWorkspace({ account, accounts, blueprints, blueprintRepai
     </div> : null}
     {activeSection === "series" ? <div aria-labelledby="account-series-heading" id="account-series-panel" role="tabpanel"><SeriesSettings isPending={isPending} onCreate={onCreateSeries} onCreateVersion={onCreateSeriesVersion} series={series} seriesVersions={seriesVersions} /></div> : null}
     {isAccountRenameOpen ? <AccountRenameModal account={account} isPending={isPending === `rename-account-${account.id}`} onClose={() => setIsAccountRenameOpen(false)} onSave={(name) => onRenameAccount(account.id, name)} /> : null}
+    {isAccountDeleteOpen ? <AccountDeleteModal account={account} accountEpisodeCount={accountEpisodeCount} isPending={isPending === `delete-account-${account.id}`} onClose={() => setIsAccountDeleteOpen(false)} onDelete={(confirmation) => onDeleteAccount(account.id, confirmation)} /> : null}
   </>;
 }
 
@@ -2405,6 +2428,19 @@ function AccountRenameModal({ account, isPending, onClose, onSave }: { account: 
   return <div className="modal-backdrop" role="presentation"><form aria-label="重命名账号" className="modal-card" onSubmit={(event) => void submit(event)}><header><div><h2>重命名账号</h2><p>只修改页面显示名称，账号标识和已有生产数据不变。</p></div><button aria-label="关闭重命名账号" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></button></header><label>显示名称<input aria-label="账号显示名称" autoFocus onChange={(event) => setName(event.target.value)} required value={name} /></label><div className="modal-actions"><button className="button button-secondary" onClick={onClose} type="button">取消</button><button className="button button-primary" disabled={isPending || name.trim() === account.name} type="submit">{isPending ? "保存中…" : "保存名称"}</button></div></form></div>;
 }
 
+function AccountDeleteModal({ account, accountEpisodeCount, isPending, onClose, onDelete }: { account: Account; accountEpisodeCount: number; isPending: boolean; onClose: () => void; onDelete: (confirmation: string) => Promise<boolean | void> }) {
+  const [confirmation, setConfirmation] = useState("");
+  const confirmationTarget = account.name.trim() || "DELETE";
+  const canDelete = accountEpisodeCount === 0;
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!canDelete || confirmation !== confirmationTarget) return;
+    const deleted = await onDelete(confirmation);
+    if (deleted !== false) onClose();
+  }
+  return <div className="modal-backdrop" role="presentation"><form aria-label="删除账号" className="modal-card modal-card-danger" onSubmit={(event) => void submit(event)}><header><div><h2>删除账号</h2><p>此操作不可恢复，会删除该账号的蓝图、系列和账号配置。</p></div><button aria-label="关闭删除账号" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></button></header>{canDelete ? <p>请输入账号名称 <strong>{confirmationTarget}</strong> 以确认删除。</p> : <p className="form-error">该账号有 {accountEpisodeCount} 个生产单，当前不能删除。</p>}<label>输入确认文本：<input aria-label="删除账号确认文本" autoFocus onChange={(event) => setConfirmation(event.target.value)} placeholder={confirmationTarget} value={confirmation} /></label><div className="modal-actions"><button className="button button-secondary" onClick={onClose} type="button">取消</button><button className="button button-danger" disabled={isPending || !canDelete || confirmation !== confirmationTarget} type="submit">{isPending ? "删除中…" : "确认删除账号"}</button></div></form></div>;
+}
+
 function PasswordForm({ isPending, onClose, onSubmit }: { isPending: boolean; onClose: () => void; onSubmit: (password: string) => Promise<void> }) {
   const [password, setPassword] = useState("");
   const [confirmation, setConfirmation] = useState("");
@@ -2427,9 +2463,9 @@ function PasswordForm({ isPending, onClose, onSubmit }: { isPending: boolean; on
   return <div className="modal-backdrop" role="presentation"><form aria-label="设置登录密码" className="modal-card" onSubmit={submit}><header><div><h2>设置登录密码</h2><p>密码只用于登录，不会显示或保存在控制台记录中。</p></div><button aria-label="关闭设置登录密码" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></button></header><label>新密码<input aria-label="新密码" autoComplete="new-password" autoFocus onChange={(event) => setPassword(event.target.value)} required type="password" value={password} /></label><label>确认密码<input aria-label="确认密码" autoComplete="new-password" onChange={(event) => setConfirmation(event.target.value)} required type="password" value={confirmation} /></label><div className="modal-actions"><button className="button button-secondary" onClick={onClose} type="button">取消</button><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "保存中…" : "保存密码"}</button></div>{formError ? <p className="form-error">{formError}</p> : null}</form></div>;
 }
 
-type IconName = NavigationItem | "Moon" | "Sun" | "Exit" | "Close" | "Play" | "PanelLeft" | "User" | "Edit";
+type IconName = NavigationItem | "Moon" | "Sun" | "Exit" | "Close" | "Play" | "PanelLeft" | "User" | "Edit" | "Delete";
 
-const iconComponents: Record<IconName, LucideIcon> = { accounts: Users, episodes: Table2, operations: BarChart3, reviews: MessageSquare, publish: Upload, learning: BookOpen, Moon, Sun, Exit: LogOut, Close: X, Play, PanelLeft, User, Edit: Pencil };
+const iconComponents: Record<IconName, LucideIcon> = { accounts: Users, episodes: Table2, operations: BarChart3, reviews: MessageSquare, publish: Upload, learning: BookOpen, Moon, Sun, Exit: LogOut, Close: X, Play, PanelLeft, User, Edit: Pencil, Delete: Trash2 };
 
 function Icon({ name }: { name: IconName }) {
   const IconComponent = iconComponents[name];

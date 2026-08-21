@@ -45,7 +45,7 @@ const archivedBlueprintV1: Blueprint = {
 };
 
 function renderWorkspace(overrides: Partial<ComponentProps<typeof AccountWorkspace>> = {}) {
-  return render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprintV3, blueprintV2]} isPending="" onActivate={vi.fn()} onCreateBlueprint={vi.fn()} onSelectAccount={vi.fn()} {...overrides} />);
+  return render(<AccountWorkspace account={account} accountEpisodeCount={0} accounts={[account]} blueprints={[blueprintV3, blueprintV2]} isPending="" onActivate={vi.fn()} onCreateBlueprint={vi.fn()} onSelectAccount={vi.fn()} {...overrides} />);
 }
 
 describe("账号页分区与蓝图版本", () => {
@@ -166,6 +166,35 @@ describe("账号页分区与蓝图版本", () => {
 
     expect(screen.getByRole("form", { name: "重命名账号" })).toBeTruthy();
     expect((screen.getByRole("textbox", { name: "账号显示名称" }) as HTMLInputElement).value).toBe("保存失败名称");
+  });
+
+  it("删除无生产单账号前要求输入账号名称", async () => {
+    const user = userEvent.setup();
+    const onDeleteAccount = vi.fn().mockResolvedValue(true);
+    renderWorkspace({ onDeleteAccount });
+
+    await user.click(screen.getByRole("button", { name: "删除账号" }));
+    expect(screen.getByRole("form", { name: "删除账号" })).toBeTruthy();
+    const submit = screen.getByRole("button", { name: "确认删除账号" }) as HTMLButtonElement;
+    expect(submit.disabled).toBe(true);
+    await user.type(screen.getByRole("textbox", { name: "删除账号确认文本" }), account.name);
+    expect(submit.disabled).toBe(false);
+    await user.click(submit);
+
+    expect(onDeleteAccount).toHaveBeenCalledWith(account.id, account.name);
+    expect(screen.queryByRole("form", { name: "删除账号" })).toBeNull();
+  });
+
+  it("有生产单的账号不能删除", async () => {
+    const user = userEvent.setup();
+    const onDeleteAccount = vi.fn();
+    renderWorkspace({ accountEpisodeCount: 1, onDeleteAccount });
+
+    await user.click(screen.getByRole("button", { name: "删除账号" }));
+
+    expect(screen.getByText("该账号有 1 个生产单，当前不能删除。")).toBeTruthy();
+    expect((screen.getByRole("button", { name: "确认删除账号" }) as HTMLButtonElement).disabled).toBe(true);
+    expect(onDeleteAccount).not.toHaveBeenCalled();
   });
 
   it("提供蓝图停用和归档入口", async () => {

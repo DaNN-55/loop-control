@@ -1201,6 +1201,10 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      delete_account: {
+        Args: { p_account_id: string; p_confirmation: string }
+        Returns: boolean
+      }
       rename_account: {
         Args: { p_account_id: string; p_account_name: string }
         Returns: {
