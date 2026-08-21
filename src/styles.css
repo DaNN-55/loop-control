@@ -279,9 +279,7 @@ body { min-width: 0; }
 .blueprint-readiness { background: #f5f8ff; border-left: 3px solid #77a1dd; color: #52647d; font-size: 11px; line-height: 1.5; margin: -2px 0 0; padding: 8px 10px; }
 .capability-grid { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .capability-option { align-items: start; background: #f8fafc; border: 1px solid #dce2eb; border-radius: 7px; display: flex !important; gap: 9px !important; padding: 11px 12px; }
-.capability-option.is-unavailable { background: #f1f3f6; }
 .capability-option input { flex: 0 0 auto; margin-top: 2px; min-height: 0; width: auto; }
-.capability-option.is-unavailable input { cursor: not-allowed; }
 .capability-option span { display: grid; gap: 4px; }
 .capability-option strong { color: #303845; font-size: 12px; }
 .capability-option small, .unavailable-capabilities { color: #697386; font-size: 10px; font-weight: 500; line-height: 1.45; }
@@ -330,7 +328,6 @@ body { min-width: 0; }
 .app-shell[data-theme="dark"] .configuration-form input:not([type="checkbox"]), .app-shell[data-theme="dark"] .configuration-form select, .app-shell[data-theme="dark"] .configuration-form textarea { background: #191e27; border-color: #394250; color: #eef3fb; }
 .app-shell[data-theme="dark"] .blueprint-readiness { background: #172a46; border-color: #3d76bc; color: #b7c9e4; }
 .app-shell[data-theme="dark"] .capability-option { background: #171c25; border-color: #344052; }.app-shell[data-theme="dark"] .capability-option strong { color: #e3eaf5; }.app-shell[data-theme="dark"] .capability-option small, .app-shell[data-theme="dark"] .unavailable-capabilities { color: #aab5c5; }
-.app-shell[data-theme="dark"] .capability-option.is-unavailable { opacity: .72; }
 .app-shell[data-theme="dark"] .executor-card, .app-shell[data-theme="dark"] .media-adapter-card { background: #171c25; border-color: #344052; }
 .app-shell[data-theme="dark"] .executor-card h4, .app-shell[data-theme="dark"] .configuration-summary dd { color: #e3eaf5; }
 .app-shell[data-theme="dark"] .media-adapter-card h4 { color: #e3eaf5; }

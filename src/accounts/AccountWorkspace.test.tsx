@@ -76,8 +76,8 @@ describe("账号页分区与蓝图版本", () => {
 
     expect((screen.getByRole("checkbox", { name: "启用B-roll" }) as HTMLInputElement).checked).toBe(false);
     expect((screen.getByRole("checkbox", { name: "启用旁白" }) as HTMLInputElement).checked).toBe(false);
-    expect((screen.getByRole("checkbox", { name: "启用A-roll" }) as HTMLInputElement).disabled).toBe(true);
-    expect((screen.getByRole("checkbox", { name: "启用配乐 / 音效" }) as HTMLInputElement).disabled).toBe(true);
+    expect((screen.getByRole("checkbox", { name: "启用A-roll" }) as HTMLInputElement).disabled).toBe(false);
+    expect((screen.getByRole("checkbox", { name: "启用配乐 / 音效" }) as HTMLInputElement).disabled).toBe(false);
     expect(screen.queryByRole("heading", { name: "A-roll" })).toBeNull();
     expect(screen.queryByText(/network/)).toBeNull();
     expect((screen.getByRole("checkbox", { name: "脚本审核" }) as HTMLInputElement).disabled).toBe(false);
@@ -87,6 +87,14 @@ describe("账号页分区与蓝图版本", () => {
     expect(screen.getByRole("heading", { name: "B-roll" })).toBeTruthy();
     expect((screen.getByDisplayValue("pexels") as HTMLInputElement).value).toBe("pexels");
     expect(screen.getByText("已启用能力的技术配置（1）", { selector: "summary" }).parentElement?.hasAttribute("open")).toBe(true);
+
+    await user.click(screen.getByRole("checkbox", { name: "启用A-roll" }));
+    await user.click(screen.getByRole("checkbox", { name: "启用配乐 / 音效" }));
+
+    expect(screen.getByRole("heading", { name: "A-roll" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "配乐 / 音效" })).toBeTruthy();
+    expect((screen.getByDisplayValue("video-generation-v1") as HTMLInputElement).value).toBe("video-generation-v1");
+    expect((screen.getByDisplayValue("freesound") as HTMLInputElement).value).toBe("freesound");
   });
 
   it("不把 Episode 规则快照显示成蓝图版本", () => {

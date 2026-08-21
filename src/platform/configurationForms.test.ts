@@ -4,32 +4,36 @@ import {
   blueprintPolicyToForm,
   seriesFormToRules,
   seriesRulesToForm,
+  validateMediaAdapter,
   validateMediaAdapters,
   validateSeriesRules,
 } from "./configurationFormValues";
 
 describe("账号蓝图表单转换", () => {
-  it("默认关闭可选媒体能力，并只保存已启用的能力", () => {
+  it("默认关闭所有媒体能力，并只保存已启用的能力", () => {
     const form = blueprintPolicyToForm({});
 
     expect(form.enabledMediaAdapters).toEqual([]);
 
     const result = blueprintFormToPolicy({
       ...form,
-      enabledMediaAdapters: ["b_roll"],
+      enabledMediaAdapters: ["b_roll", "soundtrack"],
       mediaAdapters: {
         ...form.mediaAdapters,
         b_roll: { ...form.mediaAdapters.b_roll, provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", promptVersion: "b-roll-v1", allowedTools: "read, write", perShotBudgetCents: "10", totalBudgetCents: "100", maxAttempts: "1", maxConcurrency: "1", providerMaxConcurrency: "1" },
+        soundtrack: { ...form.mediaAdapters.soundtrack, provider: "freesound", adapter: "freesound_preview", model: "freesound-preview-v1", promptVersion: "soundtrack-v1", allowedTools: "read, write", budgetCents: "10", maxAttempts: "1" },
       },
     });
 
     expect(result).toHaveProperty("b_roll");
     expect(result).not.toHaveProperty("narration");
+    expect(result).toHaveProperty("soundtrack");
   });
 
-  it("保存表单时保留旧的不可用媒体配置", () => {
+  it("读取已有 A-roll 和配乐配置为已启用状态", () => {
     const form = blueprintPolicyToForm({ a_roll: { executor: { provider: "codex", adapter: "codex" } }, soundtrack: { budget_cents: 99 } });
 
+    expect(form.enabledMediaAdapters).toEqual(["a_roll", "soundtrack"]);
     const result = blueprintFormToPolicy(form) as Record<string, unknown>;
 
     expect(result.a_roll).toEqual(expect.objectContaining({ executor: { provider: "codex", adapter: "codex" } }));
@@ -99,6 +103,13 @@ describe("账号蓝图表单转换", () => {
   it("拒绝未完成的媒体适配器配置", () => {
     const form = blueprintPolicyToForm({ a_roll: { executor: { provider: "codex" } } });
     expect(() => validateMediaAdapters(form.mediaAdapters)).toThrow("A-roll适配器");
+  });
+
+  it("校验配乐必须使用已注册的 Freesound 适配器", () => {
+    const form = blueprintPolicyToForm({ soundtrack: { executor: { provider: "freesound", adapter: "freesound_preview", model: "freesound-preview-v1", prompt_version: "soundtrack-v1" }, allowed_tools: ["read", "write"], budget_cents: 10, max_attempts: 1 } }).mediaAdapters.soundtrack;
+
+    expect(() => validateMediaAdapter("soundtrack", form)).not.toThrow();
+    expect(() => validateMediaAdapter("soundtrack", { ...form, adapter: "other" })).toThrow("freesound/freesound_preview/freesound-preview-v1");
   });
 });
 

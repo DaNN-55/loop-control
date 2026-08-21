@@ -5,8 +5,8 @@ type ExecutorForm = { provider: string; model: string; promptVersion: string };
 
 export const mediaAdapterKeys = ["a_roll", "b_roll", "narration", "soundtrack"] as const;
 export type MediaAdapterKey = typeof mediaAdapterKeys[number];
-export const configurableMediaAdapterKeys = ["b_roll", "narration"] as const;
-export type ConfigurableMediaAdapterKey = typeof configurableMediaAdapterKeys[number];
+export const configurableMediaAdapterKeys = mediaAdapterKeys;
+export type ConfigurableMediaAdapterKey = MediaAdapterKey;
 export type MediaAdapterForm = {
   provider: string;
   adapter: string;
@@ -158,8 +158,10 @@ function formMediaAdapter(value: Json | undefined): MediaAdapterForm {
 
 export function defaultMediaAdapterForm(key: ConfigurableMediaAdapterKey): MediaAdapterForm {
   const empty: MediaAdapterForm = { provider: "", adapter: "", model: "", promptVersion: "", allowedTools: "read, write", budgetCents: "", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "1", maxConcurrency: "1", providerMaxConcurrency: "1", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "1" };
+  if (key === "a_roll") return { ...empty, provider: "codex", adapter: "codex", model: "video-generation-v1", promptVersion: "a-roll-v1" };
   if (key === "b_roll") return { ...empty, provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", promptVersion: "b-roll-v1" };
-  return { ...empty, provider: "google_tts", adapter: "google_tts", model: "standard", promptVersion: "narration-v1" };
+  if (key === "narration") return { ...empty, provider: "google_tts", adapter: "google_tts", model: "standard", promptVersion: "narration-v1" };
+  return { ...empty, provider: "freesound", adapter: "freesound_preview", model: "freesound-preview-v1", promptVersion: "soundtrack-v1" };
 }
 
 function mediaAdapterHasValues(form: MediaAdapterForm): boolean {
@@ -182,7 +184,6 @@ export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterFor
   if (!mediaAdapterHasValues(form)) return;
   const labels: Record<MediaAdapterKey, string> = { a_roll: "A-roll", b_roll: "B-roll", narration: "旁白", soundtrack: "配乐 / 音效" };
   const label = labels[key];
-  if (key === "soundtrack") return;
   if (!form.provider.trim() || !form.adapter.trim() || !form.model.trim() || !form.promptVersion.trim()) throw new Error(`${label}适配器的 Provider、Adapter、模型和 Prompt 版本不能为空。`);
   if (!commaSeparatedValues(form.allowedTools).length) throw new Error(`${label}适配器至少需要一个允许工具。`);
   if (key === "a_roll") {
@@ -202,6 +203,11 @@ export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterFor
     if (!form.voiceLanguageCode.trim() || !form.voiceName.trim()) throw new Error("旁白适配器必须填写语言和声音名称。");
     positiveNumber(form.voiceSpeakingRate, "旁白语速");
   }
+  if (key === "soundtrack") {
+    if (form.provider !== "freesound" || form.adapter !== "freesound_preview" || form.model !== "freesound-preview-v1") throw new Error("配乐 / 音效适配器必须使用 freesound/freesound_preview/freesound-preview-v1。");
+    positiveInteger(form.budgetCents, `${label}预算`);
+    positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
+  }
 }
 
 export function validateMediaAdapters(mediaAdapters: Record<MediaAdapterKey, MediaAdapterForm>): void {
@@ -209,8 +215,9 @@ export function validateMediaAdapters(mediaAdapters: Record<MediaAdapterKey, Med
 }
 
 export function validateEnabledMediaAdapters(mediaAdapters: Record<MediaAdapterKey, MediaAdapterForm>, enabledKeys: readonly ConfigurableMediaAdapterKey[]): void {
+  const labels: Record<MediaAdapterKey, string> = { a_roll: "A-roll", b_roll: "B-roll", narration: "旁白", soundtrack: "配乐 / 音效" };
   for (const key of enabledKeys) {
-    if (!mediaAdapterHasValues(mediaAdapters[key])) throw new Error(`${key === "b_roll" ? "B-roll" : "旁白"}能力已启用，但配置为空。`);
+    if (!mediaAdapterHasValues(mediaAdapters[key])) throw new Error(`${labels[key]}能力已启用，但配置为空。`);
     validateMediaAdapter(key, mediaAdapters[key]);
   }
 }
@@ -251,7 +258,7 @@ export function blueprintPolicyToForm(policy: Json): BlueprintFormValues {
   const value = objectValue(policy);
   const budgets = objectValue(value.budgets);
   const executors = objectValue(value.executors);
-  const enabledMediaAdapters = configurableMediaAdapterKeys.filter((key) => value[key] !== undefined && value[key] !== null);
+  const enabledMediaAdapters = mediaAdapterKeys.filter((key) => value[key] !== undefined && value[key] !== null);
   return {
     positioning: stringValue(value.positioning),
     assetRoot: stringValue(value.asset_root),
@@ -310,7 +317,7 @@ export function blueprintFormToPolicy(form: BlueprintFormValues): Json {
   };
   const enabledMediaAdapters = form.enabledMediaAdapters ?? mediaAdapterKeys;
   for (const key of mediaAdapterKeys) {
-    if (configurableMediaAdapterKeys.includes(key as ConfigurableMediaAdapterKey) && !enabledMediaAdapters.includes(key as ConfigurableMediaAdapterKey)) continue;
+    if (!enabledMediaAdapters.includes(key)) continue;
     if (mediaAdapterHasValues(form.mediaAdapters[key])) result[key] = mediaAdapterToPolicy(form.mediaAdapters[key], existingMediaAdapters[key]);
   }
   return result as Json;

@@ -109,7 +109,7 @@ describe("approval console", () => {
   it("通过结构化表单编辑蓝图并保留高级规则", async () => {
     const user = userEvent.setup();
     const account = { created_at: "2026-08-15T00:00:00.000Z", current_blueprint_version_id: "blueprint-1", id: "account-1", name: "道工作室", slug: "dao-studio", timezone: "Asia/Shanghai" } as Database["public"]["Tables"]["accounts"]["Row"];
-    const blueprint = { account_id: account.id, created_at: "2026-08-15T00:00:00.000Z", id: "blueprint-1", is_active: true, policy: { positioning: "旧定位", asset_root: "/Volumes/Media/dao", approval_gates: ["script"], allowed_tools: ["read", "write"], budgets: { script_writing_cents: 0, visual_planning_cents: 0, storyboard_planning_cents: 0 }, executors: { script_writing: { provider: "codex", model: "model-a", prompt_version: "script-v1" }, visual_planning: { provider: "codex", model: "model-b", prompt_version: "visual-v1" }, storyboard_planning: { provider: "codex", model: "model-c", prompt_version: "storyboard-v1" } }, soundtrack: { budget_cents: 99 } }, version: 1 } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
+    const blueprint = { account_id: account.id, created_at: "2026-08-15T00:00:00.000Z", id: "blueprint-1", is_active: true, policy: { positioning: "旧定位", asset_root: "/Volumes/Media/dao", approval_gates: ["script"], allowed_tools: ["read", "write"], budgets: { script_writing_cents: 0, visual_planning_cents: 0, storyboard_planning_cents: 0 }, executors: { script_writing: { provider: "codex", model: "model-a", prompt_version: "script-v1" }, visual_planning: { provider: "codex", model: "model-b", prompt_version: "visual-v1" }, storyboard_planning: { provider: "codex", model: "model-c", prompt_version: "storyboard-v1" } }, soundtrack: { executor: { provider: "freesound", adapter: "freesound_preview", model: "freesound-preview-v1", prompt_version: "soundtrack-v1" }, allowed_tools: ["read", "write"], budget_cents: 99, max_attempts: 1 } }, version: 1 } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
     const onUpdateBlueprint = vi.fn().mockResolvedValue(blueprint);
     render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onActivate={vi.fn()} onUpdateBlueprint={onUpdateBlueprint} onCreateSeries={vi.fn()} onSelectAccount={vi.fn()} series={[]} seriesVersions={[]} />);
 
@@ -119,7 +119,7 @@ describe("approval console", () => {
     await user.type(screen.getByLabelText("账号定位"), "新定位");
     await user.click(screen.getByRole("button", { name: "保存蓝图" }));
 
-    await waitFor(() => expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ positioning: "新定位", soundtrack: { budget_cents: 99 } })));
+    await waitFor(() => expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ positioning: "新定位", soundtrack: expect.objectContaining({ budget_cents: 99 }) })));
   });
 
   it("从阻塞项直接修复当前生产单而不新增蓝图版本", async () => {
