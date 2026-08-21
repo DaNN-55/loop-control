@@ -67,7 +67,19 @@ export async function runCodexWorker(dependencies: CodexWorkerDependencies): Pro
   try {
     await dependencies.verifyAssetRoot(taskPackage.assets.allowedRoot);
   } catch (error) {
-    await dependencies.reportResult(task.taskId, task.attempt, addPreflight(createBlockedResult(task.taskId, dependencies.actualCostCents, error, "asset_root_unavailable"), preflight));
+    const check: WorkerPreflightCheck = {
+      capability: taskPackage.capability,
+      check: "media_library",
+      phase: "preflight",
+      status: "unavailable",
+      reason: errorMessage(error),
+      action: "contact_environment_admin",
+      scope: "worker",
+    };
+    const result = createBlockedResult(task.taskId, dependencies.actualCostCents, error, "asset_root_unavailable");
+    result.preflight = appendPreflight(preflight, check);
+    result.blockers = [{ ...preflightBlocker(check), code: "asset_root_unavailable", detail: check.reason }];
+    await dependencies.reportResult(task.taskId, task.attempt, result);
     return { status: "blocked", taskId: task.taskId };
   }
 
@@ -456,6 +468,10 @@ function createPreflightResult(taskId: string, actualCostCents: number, prefligh
 
 function addPreflight(result: WorkerResult, preflight: WorkerPreflightResult | undefined): WorkerResult {
   return preflight ? { ...result, preflight } : result;
+}
+
+function appendPreflight(preflight: WorkerPreflightResult | undefined, check: WorkerPreflightCheck): WorkerPreflightResult {
+  return { version: "worker-preflight/v1", checks: [...(preflight?.checks ?? []), check] };
 }
 
 function preflightBlocker(check: WorkerPreflightCheck): NonNullable<WorkerResult["blockers"]>[number] {

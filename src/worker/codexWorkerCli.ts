@@ -18,6 +18,7 @@ import { executeControlledMediaTask } from "./controlledMediaExecutor.js";
 import { executeHyperframesReviewRender } from "./hyperframesReviewRenderer.js";
 import { executeHyperframesFinalRender } from "./hyperframesFinalRenderer.js";
 import { readTaskIdArgument } from "./taskClaimArguments.js";
+import { createRuntimePreflight, credentialEnvironmentForProvider, runtimeCapabilityFromTask, runtimeCommandArguments, runtimeCommandForProvider } from "./runtimePreflight.js";
 
 const supabaseUrl = requiredEnvironment("SUPABASE_URL");
 const serviceRoleKey = requiredEnvironment("SUPABASE_SERVICE_ROLE_KEY");
@@ -83,35 +84,22 @@ async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
 }
 
 async function preflightTask(taskPackage: WorkerTaskPackage): Promise<WorkerPreflightResult> {
-  const checks: WorkerPreflightResult["checks"] = [{
-    capability: taskPackage.capability,
-    check: "capability_registration",
-    phase: "preflight",
-    status: "passed",
-    reason: `Worker 已通过 ${taskPackage.provider} Provider 与冻结 Adapter 的执行路径校验。`,
-    action: "none",
-    scope: "worker",
-  }];
-  const credential = credentialEnvironmentName(taskPackage.provider);
-  if (credential && !process.env[credential]?.trim()) {
-    checks.push({
-      capability: taskPackage.capability,
-      check: "credential_presence",
-      phase: "preflight",
-      status: "unavailable",
-      reason: `${credential} 未配置。`,
-      action: "contact_environment_admin",
-      scope: "worker",
-    });
-  }
-  return { version: "worker-preflight/v1", checks };
+  const credential = credentialEnvironmentForProvider(taskPackage.provider);
+  const command = runtimeCommandForProvider(taskPackage.provider);
+  const commands = command ? { [command]: await workerCommandStatus(command) } : undefined;
+  return createRuntimePreflight([runtimeCapabilityFromTask(taskPackage)], {
+    credentials: credential ? { [credential]: Boolean(process.env[credential]?.trim()) } : undefined,
+    commands,
+  });
 }
 
-function credentialEnvironmentName(provider: WorkerTaskPackage["provider"]): "GOOGLE_TTS_API_KEY" | "PEXELS_API_KEY" | "FREESOUND_API_KEY" | undefined {
-  if (provider === "google_tts") return "GOOGLE_TTS_API_KEY";
-  if (provider === "pexels") return "PEXELS_API_KEY";
-  if (provider === "freesound") return "FREESOUND_API_KEY";
-  return undefined;
+async function workerCommandStatus(command: string): Promise<{ available: boolean; detail: string }> {
+  try {
+    const result = await runCommandWithOutput(command, runtimeCommandArguments(command));
+    return { available: true, detail: result.stdout.split("\n")[0] || `${command} 可调用。` };
+  } catch (error) {
+    return { available: false, detail: error instanceof Error ? `${command} 无法调用：${error.message}` : `${command} 无法调用。` };
+  }
 }
 
 async function extractMp3Artifact(sourcePath: string, minimumDurationSeconds: number): Promise<Uint8Array> {

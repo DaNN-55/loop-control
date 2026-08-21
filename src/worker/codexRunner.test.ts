@@ -291,7 +291,8 @@ describe("本地 Codex Worker runner", () => {
     expect(execute).not.toHaveBeenCalled();
     expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({
       status: "blocked",
-      blockers: [expect.objectContaining({ code: "asset_root_unavailable" })],
+      preflight: expect.objectContaining({ checks: [expect.objectContaining({ check: "media_library", action: "contact_environment_admin" })] }),
+      blockers: [expect.objectContaining({ code: "asset_root_unavailable", check: "media_library", action: "contact_environment_admin" })],
     }));
   });
 

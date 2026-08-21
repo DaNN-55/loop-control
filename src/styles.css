@@ -779,11 +779,21 @@ select:not([multiple]):focus, select:not([multiple]):focus-visible { background-
 .material-import .confirmation { align-items: center; background: #f6f8fb; border: 1px solid #d8e0eb; border-radius: 6px; color: #3d4959; display: flex; gap: 9px; grid-template-columns: none; padding: 10px 12px; }
 .material-import .confirmation input { flex: 0 0 auto; height: 17px; margin: 0; width: 17px; }
 .production-start-gate { align-items: center; background: #f5f8fd; border: 1px solid #cbdcf4; border-radius: 7px; display: flex; gap: 14px; justify-content: space-between; margin-top: 14px; padding: 12px; }
+.production-preflight { background: #f8fafc; border: 1px solid #d7e0eb; border-radius: 7px; display: grid; gap: 8px; margin-top: 10px; padding: 11px; }
+.production-preflight > strong { color: #2b3d56; font-size: 12px; }
+.production-preflight > p { color: #68788e; font-size: 11px; line-height: 1.45; margin: 0; }
+.production-preflight.is-blocked { background: #fff7f7; border-color: #efd8da; }
+.production-preflight.is-blocked > strong { color: #a72d37; }
 .production-start-gate strong { color: #2b3d56; display: block; font-size: 12px; }
 .production-start-gate p { color: #68788e; font-size: 11px; line-height: 1.45; margin: 4px 0 0; }
 .production-start-gate .button { flex: 0 0 auto; }
 .app-shell[data-theme="dark"] .material-import .confirmation { background: #1c2532; border-color: #3b506d; color: #dce7f5; }
 .app-shell[data-theme="dark"] .production-start-gate { background: #18263a; border-color: #36577f; }
+.app-shell[data-theme="dark"] .production-preflight { background: #18202d; border-color: #344052; }
+.app-shell[data-theme="dark"] .production-preflight > strong { color: #dce9ff; }
+.app-shell[data-theme="dark"] .production-preflight > p { color: #aabbd3; }
+.app-shell[data-theme="dark"] .production-preflight.is-blocked { background: #2d191d; border-color: #5a343b; }
+.app-shell[data-theme="dark"] .production-preflight.is-blocked > strong { color: #ffadb4; }
 .app-shell[data-theme="dark"] .production-start-gate strong { color: #dce9ff; }
 .app-shell[data-theme="dark"] .production-start-gate p { color: #aabbd3; }
 .material-batch-list { display: grid; gap: 8px; margin-top: 4px; }

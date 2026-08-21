@@ -535,7 +535,7 @@ function assertBlocker(value: unknown): void {
   if (value.scope !== undefined && !isWorkerPreflightScope(value.scope)) throw new Error("blocker scope 格式无效。");
 }
 
-function parseWorkerPreflight(value: unknown): WorkerPreflightResult {
+export function parseWorkerPreflight(value: unknown): WorkerPreflightResult {
   if (!isRecord(value) || value.version !== workerPreflightVersion || !Array.isArray(value.checks)) throw new Error("Worker preflight 格式无效。");
   return { version: workerPreflightVersion, checks: value.checks.map((check) => {
     if (!isRecord(check) || !isNonEmptyString(check.capability) || !isNonEmptyString(check.check) || !isWorkerPreflightPhase(check.phase) || !isWorkerPreflightStatus(check.status) || !isNonEmptyString(check.reason) || !isWorkerPreflightAction(check.action) || !isWorkerPreflightScope(check.scope)) throw new Error("Worker preflight 检查项格式无效。");

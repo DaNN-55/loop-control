@@ -8,6 +8,8 @@ import { basename, extname, isAbsolute, join, parse, relative, resolve } from "n
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { promisify } from "node:util";
 import { loadEnv, type Plugin } from "vite";
+import { verifyMediaLibrary } from "./src/worker/mediaLibrary";
+import { createRuntimePreflight, runtimeCapabilitiesFromBlueprintPolicy, runtimeCommandArguments } from "./src/worker/runtimePreflight";
 
 const localArtifactRoute = "/_local-artifact";
 const localEpisodeDirectoryRoute = "/_local-episode-directory";
@@ -17,6 +19,7 @@ const localProductionMaterialRoute = "/_production-material";
 const localEpisodeDeletionRoute = "/_delete-episode";
 const localEpisodeDeletionCleanupRoute = "/_finalize-episode-deletion";
 const systemStatusRoute = "/_system-status";
+const workerPreflightRoute = "/_worker-preflight";
 const maxProductionMaterialBytes = 100 * 1024 * 1024;
 const maxEncodedMaterialRequestBytes = 140 * 1024 * 1024;
 const execFileAsync = promisify(execFile);
@@ -715,6 +718,132 @@ export function serveSystemStatus(supabaseUrl: string | undefined, supabasePubli
   };
 }
 
+export function serveWorkerPreflight(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+  return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+    if (request.method !== "GET" && request.method !== "POST") {
+      response.statusCode = 405;
+      response.end();
+      return;
+    }
+    const authorization = request.headers.authorization;
+    if (!authorization?.startsWith("Bearer ")) {
+      response.statusCode = 401;
+      response.end("需要 Owner 登录会话。");
+      return;
+    }
+    const episodeId = new URL(request.url ?? "", "http://127.0.0.1").searchParams.get("episode") ?? "";
+    if (!isEpisodeId(episodeId)) {
+      response.statusCode = 400;
+      response.end("无效的 Episode ID。");
+      return;
+    }
+    if (!supabaseUrl || !supabasePublishableKey) {
+      response.statusCode = 503;
+      response.end("Supabase 本地客户端未配置。");
+      return;
+    }
+    try {
+      const accessToken = authorization.slice("Bearer ".length);
+      const client = createClient(supabaseUrl, supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: authorization } } });
+      const { data: userData, error: userError } = await client.auth.getUser(accessToken);
+      if (userError || !userData.user) {
+        response.statusCode = 401;
+        response.end("Owner 登录会话无效。");
+        return;
+      }
+
+      const { data: episode, error: episodeError } = await client.from("episodes").select("account_id, blueprint_version_id, series_version_id").eq("id", episodeId).maybeSingle();
+      if (episodeError) throw episodeError;
+      if (!episode) {
+        response.statusCode = 404;
+        response.end("未找到当前 Episode。");
+        return;
+      }
+      const { data: membership, error: membershipError } = await client.from("account_memberships").select("role").eq("account_id", episode.account_id).eq("user_id", userData.user.id).eq("role", "owner").maybeSingle();
+      if (membershipError) throw membershipError;
+      if (!membership) {
+        response.statusCode = 403;
+        response.end("Owner 权限不足。");
+        return;
+      }
+      let seriesRules: unknown;
+      if (episode.series_version_id) {
+        const { data: seriesVersion, error: seriesVersionError } = await client.from("series_versions").select("rules").eq("id", episode.series_version_id).eq("account_id", episode.account_id).maybeSingle();
+        if (seriesVersionError) throw seriesVersionError;
+        seriesRules = seriesVersion?.rules;
+      }
+      const { data: blueprint, error: blueprintError } = await client.from("account_blueprint_versions").select("policy").eq("id", episode.blueprint_version_id).eq("account_id", episode.account_id).maybeSingle();
+      if (blueprintError) throw blueprintError;
+      if (!blueprint) {
+        response.statusCode = 404;
+        response.end("未找到当前 Episode 的蓝图快照。");
+        return;
+      }
+
+      const capabilities = runtimeCapabilitiesFromBlueprintPolicy(blueprint.policy, seriesRules);
+      const commandNames = [...new Set(capabilities.map((capability) => capability.command).filter((command): command is string => Boolean(command)))];
+      const commandEntries = await Promise.all(commandNames.map(async (command) => [command, await dependencyStatus(command, command, runtimeCommandArguments(command))] as const));
+      const commands = Object.fromEntries(commandEntries.map(([command, status]) => [command, { available: status.state === "healthy", detail: status.detail }]));
+      const credentialNames = [...new Set(capabilities.map((capability) => capability.credential).filter((credential): credential is string => Boolean(credential)))];
+      const credentials = Object.fromEntries(credentialNames.map((credential) => [credential, Boolean(localWorkerEnvironmentValue(credential))]));
+      const mediaLibrary = await workerMediaLibraryStatus(blueprint.policy);
+      const report = createRuntimePreflight(capabilities, { commands, credentials, ...(mediaLibrary ? { mediaLibrary } : {}) });
+      if (request.method === "POST") {
+        response.setHeader("Content-Type", "application/json");
+        if (report.checks.some((check) => check.status !== "passed")) {
+          response.statusCode = 409;
+          response.end(JSON.stringify({ preflight: report }));
+          return;
+        }
+        const workerServiceRoleKey = localWorkerServiceRoleKey();
+        if (!workerServiceRoleKey) {
+          response.statusCode = 503;
+          response.end(JSON.stringify({ error: "本地 Worker 服务角色密钥未配置，无法记录运行态检查。", preflight: report }));
+          return;
+        }
+        const adminClient = createClient(supabaseUrl, workerServiceRoleKey, { auth: { persistSession: false } });
+        const { error: recordPreflightError } = await adminClient.rpc("record_episode_worker_preflight", { p_episode_id: episodeId, p_owner_id: userData.user.id });
+        if (recordPreflightError) {
+          response.statusCode = 503;
+          response.end(JSON.stringify({ error: recordPreflightError.message, preflight: report }));
+          return;
+        }
+        const { data: startedEpisode, error: startError } = await client.rpc("start_episode_production", { p_episode_id: episodeId });
+        if (startError) {
+          response.statusCode = 400;
+          response.end(JSON.stringify({ error: startError.message, preflight: report }));
+          return;
+        }
+        response.statusCode = 200;
+        response.end(JSON.stringify({ episode: startedEpisode, preflight: report }));
+        return;
+      }
+      response.setHeader("Content-Type", "application/json");
+      response.statusCode = 200;
+      response.end(JSON.stringify(report));
+    } catch (error) {
+      response.statusCode = 500;
+      response.end(error instanceof Error ? error.message : "无法读取 Worker 运行态检查。");
+    }
+  };
+}
+
+async function workerMediaLibraryStatus(policy: unknown): Promise<{ available: boolean; detail: string } | undefined> {
+  const assetRoot = policy && typeof policy === "object" && !Array.isArray(policy) && typeof (policy as Record<string, unknown>).asset_root === "string" ? ((policy as Record<string, unknown>).asset_root as string).trim() : "";
+  if (!assetRoot) return { available: false, detail: "蓝图未配置 asset_root。" };
+  if (!isAbsolute(assetRoot)) return { available: false, detail: "蓝图 asset_root 必须使用绝对路径。" };
+  const mountPath = localWorkerEnvironmentValue("MEDIA_LIBRARY_MOUNT_PATH");
+  if (!mountPath) return { available: false, detail: "未配置 MEDIA_LIBRARY_MOUNT_PATH。" };
+  const minimumFreeBytesValue = localWorkerEnvironmentValue("MEDIA_LIBRARY_MIN_FREE_BYTES");
+  if (!minimumFreeBytesValue || !/^\d+$/.test(minimumFreeBytesValue) || !Number.isSafeInteger(Number(minimumFreeBytesValue))) return { available: false, detail: "MEDIA_LIBRARY_MIN_FREE_BYTES 未配置为非负整数。" };
+  try {
+    const status = await verifyMediaLibrary({ assetRoot, mountPath, minimumFreeBytes: Number(minimumFreeBytesValue) });
+    return { available: true, detail: `媒体库已验证：${status.mountPath}，可用空间 ${status.availableBytes} 字节。` };
+  } catch (error) {
+    return { available: false, detail: error instanceof Error ? error.message : "媒体库无法通过运行态检查。" };
+  }
+}
+
 export function serveProductionMaterial(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
   return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
     if (request.method !== "POST") {
@@ -823,6 +952,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
   const deletionMiddleware = serveEpisodeDeletion(supabaseUrl, supabasePublishableKey, localWorkerServiceRoleKey());
   const deletionCleanupMiddleware = serveEpisodeDeletionCleanup(supabaseUrl, supabasePublishableKey);
   const systemStatusMiddleware = serveSystemStatus(supabaseUrl, supabasePublishableKey);
+  const workerPreflightMiddleware = serveWorkerPreflight(supabaseUrl, supabasePublishableKey);
   return {
     name: "local-artifact-preview",
     configureServer(server) {
@@ -834,6 +964,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(localEpisodeDeletionRoute, deletionMiddleware);
       server.middlewares.use(localEpisodeDeletionCleanupRoute, deletionCleanupMiddleware);
       server.middlewares.use(systemStatusRoute, systemStatusMiddleware);
+      server.middlewares.use(workerPreflightRoute, workerPreflightMiddleware);
     },
     configurePreviewServer(server) {
       server.middlewares.use(localArtifactRoute, artifactMiddleware);
@@ -844,6 +975,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(localEpisodeDeletionRoute, deletionMiddleware);
       server.middlewares.use(localEpisodeDeletionCleanupRoute, deletionCleanupMiddleware);
       server.middlewares.use(systemStatusRoute, systemStatusMiddleware);
+      server.middlewares.use(workerPreflightRoute, workerPreflightMiddleware);
     },
   };
 }
