@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { Database } from "./lib/database.types";
-import { AccountWorkspace, App, BootstrapScreen, EpisodeForm, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, episodeWorkerStatus, initialNavigationForWorkspace, navigation, navigationBadgeCounts } from "./App";
+import { AccountWorkspace, App, BootstrapScreen, EpisodeForm, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, episodeWorkerStatus, initialNavigationForWorkspace, navigation, navigationBadgeCounts, workerPreflightFailureMessage } from "./App";
 import { defaultBlueprintPolicy, parseBlueprintPolicy, withBlueprintAssetRoot } from "./platform/blueprintPolicy";
 
 vi.mock("./lib/supabase", () => ({
@@ -140,25 +140,24 @@ describe("approval console", () => {
 
   it("从阻塞项直接修复当前生产单而不新增蓝图版本", async () => {
     const user = userEvent.setup();
-    const account = { created_at: "2026-08-15T00:00:00.000Z", current_blueprint_version_id: "blueprint-1", id: "account-1", name: "道工作室", slug: "dao-studio", timezone: "Asia/Shanghai" } as Database["public"]["Tables"]["accounts"]["Row"];
-    const blueprint = { account_id: account.id, created_at: "2026-08-15T00:00:00.000Z", id: "blueprint-1", is_active: true, policy: { positioning: "旧定位", asset_root: "/Volumes/Media/dao", approval_gates: ["script"], allowed_tools: ["read", "write"], budgets: { script_writing_cents: 0, visual_planning_cents: 0, storyboard_planning_cents: 0 }, executors: { script_writing: { provider: "codex", model: "model-a", prompt_version: "script-v1" }, visual_planning: { provider: "codex", model: "model-b", prompt_version: "visual-v1" }, storyboard_planning: { provider: "codex", model: "model-c", prompt_version: "storyboard-v1" } } }, version: 1 } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
+    const account = { created_at: "2026-08-15T00:00:00.000Z", current_blueprint_version_id: "blueprint-current", id: "account-1", name: "道工作室", slug: "dao-studio", timezone: "Asia/Shanghai" } as Database["public"]["Tables"]["accounts"]["Row"];
+    const blueprint = { account_id: account.id, created_at: "2026-08-15T00:00:00.000Z", id: "blueprint-episode", is_active: true, policy: { positioning: "旧定位", asset_root: "/Volumes/Media/dao", approval_gates: ["script"], allowed_tools: ["read", "write"], budgets: { script_writing_cents: 0, visual_planning_cents: 0, storyboard_planning_cents: 0 }, executors: { script_writing: { provider: "codex", model: "model-a", prompt_version: "script-v1" }, visual_planning: { provider: "codex", model: "model-b", prompt_version: "visual-v1" }, storyboard_planning: { provider: "codex", model: "model-c", prompt_version: "storyboard-v1" } } }, version: 1 } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
+    const currentBlueprint = { ...blueprint, id: "blueprint-current", policy: { ...(blueprint.policy as Record<string, unknown>), a_roll: { executor: { provider: "codex", adapter: "codex", model: "video-generation-v1", prompt_version: "a-roll-v1" }, allowed_tools: ["read", "write"], budget_cents: 100, max_attempts: 2 } } } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
     const onCreateBlueprint = vi.fn();
     const onApplyEpisodeRepair = vi.fn().mockResolvedValue(true);
 
-    render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} blueprintRepairContext={{ blocker: { code: "a_roll_executor_invalid", detail: "A-roll 执行器 adapter 未配置。" }, blueprintVersionId: blueprint.id, episodeId: "episode-1" }} isPending="" onActivate={vi.fn()} onApplyEpisodeRepair={onApplyEpisodeRepair} onCreateBlueprint={onCreateBlueprint} onCreateSeries={vi.fn()} onSelectAccount={vi.fn()} series={[]} seriesVersions={[]} />);
+    render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint, currentBlueprint]} blueprintRepairContext={{ blocker: { code: "a_roll_executor_invalid", detail: "A-roll 执行器 adapter 未配置。" }, blueprintVersionId: blueprint.id, episodeId: "episode-1" }} isPending="" onActivate={vi.fn()} onApplyEpisodeRepair={onApplyEpisodeRepair} onCreateBlueprint={onCreateBlueprint} onCreateSeries={vi.fn()} onSelectAccount={vi.fn()} series={[]} seriesVersions={[]} />);
 
     expect(await screen.findByRole("heading", { name: "修复当前生产单的 A-roll" })).toBeTruthy();
     expect(screen.queryByText("脚本生成", { selector: "h4" })).toBeNull();
-    await user.type(screen.getByLabelText("Provider"), "codex");
-    await user.type(screen.getByLabelText("Adapter"), "codex");
-    await user.type(screen.getByLabelText("模型"), "video-generation-v1");
-    await user.type(screen.getByLabelText("Prompt 版本"), "a-roll-v1");
-    await user.type(screen.getByLabelText("预算（分）"), "100");
-    await user.type(screen.getByLabelText("最大尝试次数"), "2");
+    expect((screen.getByLabelText("Provider") as HTMLInputElement).value).toBe("codex");
+    expect((screen.getByLabelText("Adapter") as HTMLInputElement).value).toBe("codex");
+    expect((screen.getByLabelText("模型") as HTMLInputElement).value).toBe("video-generation-v1");
+    expect((screen.getByLabelText("Prompt 版本") as HTMLInputElement).value).toBe("a-roll-v1");
     await user.click(screen.getByRole("button", { name: "保存并继续当前生产单" }));
 
     await waitFor(() => expect(onApplyEpisodeRepair).toHaveBeenCalledWith(expect.objectContaining({
-      context: { blocker: { code: "a_roll_executor_invalid", detail: "A-roll 执行器 adapter 未配置。" }, blueprintVersionId: "blueprint-1", episodeId: "episode-1" },
+      context: { blocker: { code: "a_roll_executor_invalid", detail: "A-roll 执行器 adapter 未配置。" }, blueprintVersionId: "blueprint-episode", episodeId: "episode-1" },
       policy: expect.objectContaining({
         a_roll: expect.objectContaining({
           executor: expect.objectContaining({ adapter: "codex", model: "video-generation-v1", provider: "codex" }),
@@ -185,6 +184,10 @@ describe("approval console", () => {
     expect(episodeWorkerStatus({ stage: "visual_draft" }, [{ status: "running", task_type: "prepare_visual_brief" }])).toMatchObject({ label: "执行中", tone: "running" });
     expect(episodeWorkerStatus({ stage: "visual_review" }, [{ status: "completed", task_type: "prepare_visual_brief" }])).toMatchObject({ label: "等待审核", tone: "review" });
     expect(episodeWorkerStatus({ stage: "storyboard_approved" }, [{ status: "completed", task_type: "draft_storyboard" }])).toMatchObject({ label: "已完成", tone: "completed" });
+  });
+
+  it("显示修复前真实 preflight 返回的具体检查原因", () => {
+    expect(workerPreflightFailureMessage({ version: "worker-preflight/v1", checks: [{ capability: "b_roll_generation", check: "network_connectivity", phase: "preflight", status: "retryable", reason: "Pexels 网络探测超时。", action: "retry", scope: "worker" }] })).toBe("修复前真实运行态检查未通过：network_connectivity：Pexels 网络探测超时。");
   });
 
   it("收起态导航仍保留审核和发布角标节点", () => {

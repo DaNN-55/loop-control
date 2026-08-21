@@ -857,9 +857,12 @@ export function serveEpisodePreflight(supabaseUrl: string | undefined, supabaseP
     }
     const accountId = typeof body.accountId === "string" ? body.accountId : "";
     const blueprintVersionId = typeof body.blueprintVersionId === "string" ? body.blueprintVersionId : "";
+    const episodeIdValue = body.episodeId;
+    const episodeId = episodeIdValue === undefined ? null : typeof episodeIdValue === "string" ? episodeIdValue : "";
+    const policy = body.policy;
     const seriesVersionValue = body.seriesVersionId;
     const seriesVersionId = seriesVersionValue === null || seriesVersionValue === undefined ? null : typeof seriesVersionValue === "string" ? seriesVersionValue : "";
-    if (!isUuid(accountId) || !isUuid(blueprintVersionId) || (seriesVersionId !== null && !isUuid(seriesVersionId))) {
+    if (!isUuid(accountId) || !isUuid(blueprintVersionId) || (episodeId !== null && !isUuid(episodeId)) || (seriesVersionId !== null && !isUuid(seriesVersionId)) || (policy !== undefined && (!policy || Array.isArray(policy) || typeof policy !== "object"))) {
       response.statusCode = 400;
       response.end("创建前检查参数无效。");
       return;
@@ -895,6 +898,23 @@ export function serveEpisodePreflight(supabaseUrl: string | undefined, supabaseP
         return;
       }
 
+      let episodeSeriesVersionId = seriesVersionId;
+      if (episodeId) {
+        const { data: episode, error: episodeError } = await client.from("episodes").select("account_id, series_version_id").eq("id", episodeId).maybeSingle();
+        if (episodeError) throw episodeError;
+        if (!episode) {
+          response.statusCode = 404;
+          response.end("未找到当前生产单。");
+          return;
+        }
+        if (episode.account_id !== accountId) {
+          response.statusCode = 403;
+          response.end("生产单不属于当前账号。");
+          return;
+        }
+        episodeSeriesVersionId = episode.series_version_id;
+      }
+
       const { data: blueprint, error: blueprintError } = await client.from("account_blueprint_versions").select("policy, is_active").eq("id", blueprintVersionId).eq("account_id", accountId).maybeSingle();
       if (blueprintError) throw blueprintError;
       if (!blueprint) {
@@ -909,22 +929,22 @@ export function serveEpisodePreflight(supabaseUrl: string | undefined, supabaseP
       }
 
       let seriesRules: unknown;
-      if (seriesVersionId) {
-        const { data: seriesVersion, error: seriesVersionError } = await client.from("series_versions").select("rules").eq("id", seriesVersionId).eq("account_id", accountId).maybeSingle();
+      if (episodeSeriesVersionId) {
+        const { data: seriesVersion, error: seriesVersionError } = await client.from("series_versions").select("rules").eq("id", episodeSeriesVersionId).eq("account_id", accountId).maybeSingle();
         if (seriesVersionError) throw seriesVersionError;
         if (!seriesVersion) {
           response.statusCode = 400;
-          response.end("所选系列版本不属于当前账号。");
+          response.end(episodeId ? "当前生产单的系列版本不属于当前账号。" : "所选系列版本不属于当前账号。");
           return;
         }
         seriesRules = seriesVersion.rules;
       }
 
-      const report = await runtimePreflightForPolicy(blueprint.policy, seriesRules, true);
+      const report = await runtimePreflightForPolicy(policy ?? blueprint.policy, seriesRules, Boolean(episodeId));
       response.setHeader("Content-Type", "application/json");
       if (report.checks.some((check) => check.status !== "passed")) {
         response.statusCode = 409;
-        response.end(JSON.stringify({ error: "生产前可生产性检查未通过，尚未创建生产单。", preflight: report }));
+        response.end(JSON.stringify({ error: episodeId ? "修复前真实运行态检查未通过，当前生产单仍保持阻塞。" : "生产前可生产性检查未通过，尚未创建生产单。", preflight: report }));
         return;
       }
       response.statusCode = 200;

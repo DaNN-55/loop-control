@@ -529,7 +529,7 @@ async function startProductionThroughWorkerPreflight(episodeId: string): Promise
   return { episode: record.episode, preflight };
 }
 
-async function runEpisodePreflight(input: { accountId: string; blueprintVersionId: string; seriesVersionId: string | null }): Promise<WorkerPreflightResult> {
+async function runEpisodePreflight(input: { accountId: string; blueprintVersionId: string; episodeId?: string; policy?: Json; seriesVersionId: string | null }): Promise<WorkerPreflightResult> {
   const { data, error: sessionError } = await supabase.auth.getSession();
   if (sessionError) throw sessionError;
   if (!data.session) throw new Error("需要 Owner 登录会话。");
@@ -551,6 +551,11 @@ async function runEpisodePreflight(input: { accountId: string; blueprintVersionI
 
 function workerBlockersFromPreflight(preflight: WorkerPreflightResult | null): WorkerBlocker[] {
   return preflight?.checks.filter((check) => check.status !== "passed").map((check) => ({ code: check.check, detail: check.reason, capability: check.capability, check: check.check, phase: check.phase, status: check.status, action: check.action, scope: check.scope })) ?? [];
+}
+
+export function workerPreflightFailureMessage(preflight: WorkerPreflightResult): string {
+  const blockers = workerBlockersFromPreflight(preflight);
+  return blockers.length ? `修复前真实运行态检查未通过：${blockers.map((blocker) => `${blocker.code}：${blocker.detail}`).join("；")}` : "修复前真实运行态检查未通过。";
 }
 
 export function App() {
@@ -788,6 +793,14 @@ export function App() {
     setPendingAction(`apply-episode-repair-${input.context.episodeId}`);
     setErrorMessage("");
     try {
+      const episode = workspace?.episodes.find((candidate) => candidate.id === input.context.episodeId);
+      const account = episode ? workspace?.accounts.find((candidate) => candidate.id === episode.account_id) : null;
+      if (!episode || !account?.current_blueprint_version_id) throw new Error("当前生产单或账号蓝图已变化，请刷新后重试。");
+      const preflight = await runEpisodePreflight({ accountId: account.id, blueprintVersionId: account.current_blueprint_version_id, episodeId: episode.id, policy: input.policy, seriesVersionId: episode.series_version_id ?? null });
+      if (preflight.checks.some((check) => check.status !== "passed")) {
+        setErrorMessage(workerPreflightFailureMessage(preflight));
+        return false;
+      }
       const { data, error } = await supabase.rpc("apply_episode_configuration_repair_v2", {
         p_blocker_code: input.context.blocker.code,
         p_blocker_detail: input.context.blocker.detail,
@@ -1766,7 +1779,7 @@ export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, b
       </section>
       <section className="blueprint-editor">
         <header className="blueprint-editor-heading"><div><h2>{blueprintRepairContext ? "修复当前生产单" : `蓝图 v${selectedBlueprint.version}`}</h2><p>{blueprintRepairContext ? "只会更新当前生产单受阻任务的冻结配置，不会生成蓝图新版本。" : selectedStatus === "当前生效" ? "当前生效版本；仅影响之后新建的生产单。" : selectedStatus === "已归档" ? "已归档版本；保留历史记录，不能直接用于新建生产单。" : "待激活版本；查看确认后可直接启用。"}</p></div><div className="blueprint-editor-heading-actions">{!blueprintRepairContext && !isEditing && !selectedBlueprint.archived_at ? <button className="button button-secondary button-small" onClick={() => setIsEditing(true)} type="button">以此版本编辑</button> : null}{!blueprintRepairContext && isSelectedCurrent ? <button aria-label="停用当前版本" className="button button-danger-soft button-small" disabled={isPending === `deactivate-${selectedBlueprint.id}`} onClick={() => void onDeactivateBlueprint(selectedBlueprint.id)} title="停用后该版本不再用于新建生产单" type="button">{isPending === `deactivate-${selectedBlueprint.id}` ? "停用中…" : "停用当前版本"}</button> : null}</div></header>
-        {blueprintRepairContext ? <EpisodeConfigurationRepairForm blocker={blueprintRepairContext.blocker} initialPolicy={selectedBlueprint.policy} isPending={isPending === `apply-episode-repair-${blueprintRepairContext.episodeId}`} onCancel={() => onDismissBlueprintRepair?.()} onSave={async (policy) => { if (onApplyEpisodeRepair) await onApplyEpisodeRepair({ context: blueprintRepairContext, policy }); }} /> : isEditing ? <BlueprintConfigurationForm initialAssetRoot={blueprintAssetRoot(selectedBlueprint.policy)} initialPolicy={selectedBlueprint.policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} onCancel={() => setIsEditing(false)} onCreatePromptVersion={onCreatePromptVersion} onSave={async (policy) => { const savedBlueprint = onUpdateBlueprint ? await onUpdateBlueprint(policy) : onCreateBlueprint ? await onCreateBlueprint(policy) : null; if (!savedBlueprint) return; setSelectedBlueprintId(savedBlueprint.id); setIsEditing(false); }} promptVersions={promptVersions} /> : <BlueprintConfigurationForm initialAssetRoot={blueprintAssetRoot(selectedBlueprint.policy)} initialPolicy={selectedBlueprint.policy} isPending={false} onCancel={() => {}} onSave={async () => {}} promptVersions={promptVersions} readOnly />}
+        {blueprintRepairContext ? <EpisodeConfigurationRepairForm blocker={blueprintRepairContext.blocker} initialPolicy={activeBlueprint?.policy ?? selectedBlueprint.policy} isPending={isPending === `apply-episode-repair-${blueprintRepairContext.episodeId}`} onCancel={() => onDismissBlueprintRepair?.()} onSave={async (policy) => { if (onApplyEpisodeRepair) await onApplyEpisodeRepair({ context: blueprintRepairContext, policy }); }} /> : isEditing ? <BlueprintConfigurationForm initialAssetRoot={blueprintAssetRoot(selectedBlueprint.policy)} initialPolicy={selectedBlueprint.policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} onCancel={() => setIsEditing(false)} onCreatePromptVersion={onCreatePromptVersion} onSave={async (policy) => { const savedBlueprint = onUpdateBlueprint ? await onUpdateBlueprint(policy) : onCreateBlueprint ? await onCreateBlueprint(policy) : null; if (!savedBlueprint) return; setSelectedBlueprintId(savedBlueprint.id); setIsEditing(false); }} promptVersions={promptVersions} /> : <BlueprintConfigurationForm initialAssetRoot={blueprintAssetRoot(selectedBlueprint.policy)} initialPolicy={selectedBlueprint.policy} isPending={false} onCancel={() => {}} onSave={async () => {}} promptVersions={promptVersions} readOnly />}
         {!blueprintRepairContext ? <div className="blueprint-editor-actions">
           {selectedBlueprint.archived_at ? <button className="button button-secondary" disabled={isPending === `unarchive-${selectedBlueprint.id}`} onClick={() => void onArchiveBlueprint(selectedBlueprint.id, false)} type="button">{isPending === `unarchive-${selectedBlueprint.id}` ? "处理中…" : "取消归档"}</button> : !isSelectedCurrent ? <button className="button button-primary" disabled={isPending === `activate-${selectedBlueprint.id}`} onClick={() => void onActivate(selectedBlueprint.id)} type="button">{isPending === `activate-${selectedBlueprint.id}` ? "激活中…" : "激活此版本"}</button> : null}
           {!selectedBlueprint.is_active && !selectedBlueprint.archived_at ? <button className="button button-secondary" disabled={isPending === `archive-${selectedBlueprint.id}`} onClick={() => void onArchiveBlueprint(selectedBlueprint.id, true)} type="button">{isPending === `archive-${selectedBlueprint.id}` ? "归档中…" : "归档此版本"}</button> : null}
