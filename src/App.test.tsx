@@ -67,6 +67,18 @@ describe("approval console", () => {
     }));
   });
 
+  it("allows creating the first account without positioning", async () => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn().mockResolvedValue(undefined);
+    render(<BootstrapScreen errorMessage="" isPending={false} onSubmit={onSubmit} />);
+
+    await user.type(screen.getByLabelText("账号名称"), "道工作室");
+    await user.type(screen.getByLabelText("账号标识"), "dao-studio");
+    await user.click(screen.getByRole("button", { name: "创建首个账号" }));
+
+    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ policy: expect.objectContaining({ positioning: "" }) }));
+  });
+
   it("creates the first series version from account settings", async () => {
     const onCreate = vi.fn().mockResolvedValue(undefined);
     render(<SeriesSettings isPending={false} onCreate={onCreate} series={[]} seriesVersions={[]} />);
@@ -98,16 +110,16 @@ describe("approval console", () => {
     const user = userEvent.setup();
     const account = { created_at: "2026-08-15T00:00:00.000Z", current_blueprint_version_id: "blueprint-1", id: "account-1", name: "道工作室", slug: "dao-studio", timezone: "Asia/Shanghai" } as Database["public"]["Tables"]["accounts"]["Row"];
     const blueprint = { account_id: account.id, created_at: "2026-08-15T00:00:00.000Z", id: "blueprint-1", is_active: true, policy: { positioning: "旧定位", asset_root: "/Volumes/Media/dao", approval_gates: ["script"], allowed_tools: ["read", "write"], budgets: { script_writing_cents: 0, visual_planning_cents: 0, storyboard_planning_cents: 0 }, executors: { script_writing: { provider: "codex", model: "model-a", prompt_version: "script-v1" }, visual_planning: { provider: "codex", model: "model-b", prompt_version: "visual-v1" }, storyboard_planning: { provider: "codex", model: "model-c", prompt_version: "storyboard-v1" } }, soundtrack: { budget_cents: 99 } }, version: 1 } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
-    const onCreateBlueprint = vi.fn().mockResolvedValue({ ...blueprint, id: "blueprint-2", version: 2, is_active: false });
-    render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onActivate={vi.fn()} onCreateBlueprint={onCreateBlueprint} onCreateSeries={vi.fn()} onSelectAccount={vi.fn()} series={[]} seriesVersions={[]} />);
+    const onUpdateBlueprint = vi.fn().mockResolvedValue(blueprint);
+    render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onActivate={vi.fn()} onUpdateBlueprint={onUpdateBlueprint} onCreateSeries={vi.fn()} onSelectAccount={vi.fn()} series={[]} seriesVersions={[]} />);
 
     await user.click(screen.getByRole("tab", { name: "蓝图" }));
     await user.click(screen.getByRole("button", { name: "以此版本编辑" }));
     await user.clear(screen.getByLabelText("账号定位"));
     await user.type(screen.getByLabelText("账号定位"), "新定位");
-    await user.click(screen.getByRole("button", { name: "保存为新版本" }));
+    await user.click(screen.getByRole("button", { name: "保存蓝图" }));
 
-    await waitFor(() => expect(onCreateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ positioning: "新定位", soundtrack: { budget_cents: 99 } })));
+    await waitFor(() => expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ positioning: "新定位", soundtrack: { budget_cents: 99 } })));
   });
 
   it("从阻塞项直接修复当前生产单而不新增蓝图版本", async () => {
@@ -125,7 +137,6 @@ describe("approval console", () => {
     await user.type(screen.getByLabelText("Adapter"), "codex");
     await user.type(screen.getByLabelText("模型"), "video-generation-v1");
     await user.type(screen.getByLabelText("Prompt 版本"), "a-roll-v1");
-    await user.type(screen.getByLabelText("允许工具"), "read, write");
     await user.type(screen.getByLabelText("预算（分）"), "100");
     await user.type(screen.getByLabelText("最大尝试次数"), "2");
     await user.click(screen.getByRole("button", { name: "保存并继续当前生产单" }));

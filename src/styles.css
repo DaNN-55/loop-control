@@ -276,6 +276,14 @@ body { min-width: 0; }
 .configuration-label { color: #697386; font-size: 10px; font-weight: 800; }
 .configuration-check { align-items: center; display: flex !important; font-size: 11px !important; font-weight: 600 !important; gap: 8px !important; grid-template-columns: auto 1fr; }
 .configuration-check input { min-height: 0; width: auto; }
+.blueprint-readiness { background: #f5f8ff; border-left: 3px solid #77a1dd; color: #52647d; font-size: 11px; line-height: 1.5; margin: -2px 0 0; padding: 8px 10px; }
+.capability-grid { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.capability-option { align-items: start; background: #f8fafc; border: 1px solid #dce2eb; border-radius: 7px; display: flex !important; gap: 9px !important; padding: 11px 12px; }
+.capability-option input { flex: 0 0 auto; margin-top: 2px; min-height: 0; width: auto; }
+.capability-option span { display: grid; gap: 4px; }
+.capability-option strong { color: #303845; font-size: 12px; }
+.capability-option small, .unavailable-capabilities { color: #697386; font-size: 10px; font-weight: 500; line-height: 1.45; }
+.unavailable-capabilities { margin: 0; }
 .executor-grid { display: grid; gap: 10px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .executor-card { background: #f8fafc; border: 1px solid #e1e6ee; border-radius: 7px; display: grid; gap: 9px; padding: 11px; }
 .executor-card h4 { color: #2f3a4a; font-size: 12px; margin: 0; }
@@ -318,6 +326,8 @@ body { min-width: 0; }
 .app-shell[data-theme="dark"] .configuration-form fieldset, .app-shell[data-theme="dark"] .advanced-configuration { border-color: #394250; }
 .app-shell[data-theme="dark"] .configuration-form legend, .app-shell[data-theme="dark"] .advanced-configuration summary { color: #eef3fb; }
 .app-shell[data-theme="dark"] .configuration-form input:not([type="checkbox"]), .app-shell[data-theme="dark"] .configuration-form select, .app-shell[data-theme="dark"] .configuration-form textarea { background: #191e27; border-color: #394250; color: #eef3fb; }
+.app-shell[data-theme="dark"] .blueprint-readiness { background: #172a46; border-color: #3d76bc; color: #b7c9e4; }
+.app-shell[data-theme="dark"] .capability-option { background: #171c25; border-color: #344052; }.app-shell[data-theme="dark"] .capability-option strong { color: #e3eaf5; }.app-shell[data-theme="dark"] .capability-option small, .app-shell[data-theme="dark"] .unavailable-capabilities { color: #aab5c5; }
 .app-shell[data-theme="dark"] .executor-card, .app-shell[data-theme="dark"] .media-adapter-card { background: #171c25; border-color: #344052; }
 .app-shell[data-theme="dark"] .executor-card h4, .app-shell[data-theme="dark"] .configuration-summary dd { color: #e3eaf5; }
 .app-shell[data-theme="dark"] .media-adapter-card h4 { color: #e3eaf5; }
@@ -330,7 +340,7 @@ body { min-width: 0; }
 .app-shell[data-theme="dark"] .configuration-summary dt { color: #9aa7ba; }
 .app-shell[data-theme="dark"] .blueprint-summary-grid > div { background: #171c25; border-color: #344052; }.app-shell[data-theme="dark"] .summary-chip { background: #1c3151; border-color: #355781; color: #b9d4ff; }.app-shell[data-theme="dark"] .summary-empty { color: #aab7c8; }
 .app-shell[data-theme="dark"] .advanced-configuration pre { background: #10151d; border-color: #394250; color: #dce5f2; }
-@media (max-width: 900px) { .executor-grid, .media-adapter-grid { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .executor-grid, .media-adapter-grid, .capability-grid { grid-template-columns: 1fr; } }
 @media (max-width: 640px) { .configuration-check-grid, .configuration-input-grid, .series-baseline-grid, .media-adapter-field-grid { grid-template-columns: 1fr; } .configuration-actions { display: grid; } .configuration-actions .button { width: 100%; } }
 
 .composition-adjustments { border: 1px solid #d9dee7; border-radius: 7px; display: grid; gap: 10px; margin: 0; padding: 12px; }

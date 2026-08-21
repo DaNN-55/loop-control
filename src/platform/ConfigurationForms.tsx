@@ -5,14 +5,16 @@ import { HelpTip } from "../ui/HelpTip";
 import {
   blueprintFormToPolicy,
   blueprintPolicyToForm,
+  configurableMediaAdapterKeys,
+  defaultMediaAdapterForm,
   seriesFormToRules,
   seriesRulesToForm,
-  mediaAdapterKeys,
   mediaAdapterStatus,
   validateMediaAdapter,
-  validateMediaAdapters,
+  validateEnabledMediaAdapters,
   validateSeriesRules,
   type BlueprintFormValues,
+  type ConfigurableMediaAdapterKey,
   type MediaAdapterForm,
   type MediaAdapterKey,
   type SeriesFormValues,
@@ -31,7 +33,6 @@ const approvalGateOptions = [
 const toolOptions = [
   ["read", "读取本地素材"],
   ["write", "写入本地产物"],
-  ["network", "访问网络供应商"],
 ] as const;
 const executorLabels = {
   script_writing: "脚本生成",
@@ -56,6 +57,7 @@ const mediaAdapterPlaceholders: Record<MediaAdapterKey, { provider: string; adap
   narration: { provider: "google_tts", adapter: "google_tts", model: "standard", promptVersion: "narration-v1" },
   soundtrack: { provider: "freesound", adapter: "freesound_preview", model: "preview-v1", promptVersion: "soundtrack-v1" },
 };
+const configurableMediaAdapterLabels: Record<ConfigurableMediaAdapterKey, string> = { b_roll: "B-roll", narration: "旁白" };
 
 function FieldHint({ children }: { children: ReactNode }) {
   return <p className="field-hint">{children}</p>;
@@ -115,7 +117,7 @@ function PromptVersionManager({ isPending, onCreate, promptVersions, onSelect }:
   </details>;
 }
 
-function MediaAdapterCard({ adapterKey, form, onChange, readOnly = false }: { adapterKey: MediaAdapterKey; form: MediaAdapterForm; onChange: (field: keyof MediaAdapterForm, value: string) => void; readOnly?: boolean }) {
+function MediaAdapterCard({ adapterKey, form, onChange, readOnly = false, showAllowedTools = true }: { adapterKey: MediaAdapterKey; form: MediaAdapterForm; onChange: (field: keyof MediaAdapterForm, value: string) => void; readOnly?: boolean; showAllowedTools?: boolean }) {
   const label = mediaAdapterLabels[adapterKey];
   const placeholder = mediaAdapterPlaceholders[adapterKey];
   const status = mediaAdapterStatus(adapterKey, form);
@@ -131,7 +133,7 @@ function MediaAdapterCard({ adapterKey, form, onChange, readOnly = false }: { ad
       {textField("model", "模型", "媒体适配器使用的模型或版本名称。", placeholder.model)}
       {textField("promptVersion", "Prompt 版本", "媒体任务使用的提示词版本标签；先用稳定、可追溯的 slug，例如 a-roll-v1。", placeholder.promptVersion)}
     </div>
-    <label><FieldLabel help="任务允许使用的工具，使用英文逗号分隔，例如 read, write 或 network, write。至少填写一个。">允许工具</FieldLabel><input aria-label="允许工具" onChange={(event) => onChange("allowedTools", event.target.value)} placeholder="例如：read, write" readOnly={readOnly} value={form.allowedTools} /></label>
+    {showAllowedTools ? <label><FieldLabel help="任务允许使用的工具，使用英文逗号分隔。至少填写一个。">允许工具</FieldLabel><input aria-label="允许工具" onChange={(event) => onChange("allowedTools", event.target.value)} placeholder="例如：read, write" readOnly={readOnly} value={form.allowedTools} /></label> : null}
     {adapterKey === "a_roll" ? <div className="media-adapter-field-grid">{numberField("budgetCents", "预算（分）", "单个 A-roll 任务的最大预算，必须大于 0。")}{numberField("maxAttempts", "最大尝试次数", "单个任务失败后的最大执行尝试次数。")}</div> : null}
     {adapterKey === "b_roll" ? <div className="media-adapter-field-grid">{numberField("perShotBudgetCents", "单镜头预算（分）", "每个 B-roll 镜头允许使用的预算。")}{numberField("totalBudgetCents", "总预算（分）", "本次分镜中所有 B-roll 镜头共享的总预算。")}{numberField("maxAttempts", "最大尝试次数", "单个任务失败后的最大执行尝试次数。")}{numberField("maxConcurrency", "最大并发数", "同一生产单同时运行的 B-roll 任务数。")}{numberField("providerMaxConcurrency", "供应商并发上限", "发给同一供应商的最大并发数。")}</div> : null}
     {adapterKey === "narration" ? <div className="media-adapter-field-grid">{numberField("budgetCents", "预算（分）", "旁白任务的最大预算，必须大于 0。")}{numberField("maxAttempts", "最大尝试次数", "旁白任务失败后的最大执行尝试次数。")}{textField("voiceLanguageCode", "语言代码", "声音使用的语言代码，例如 zh-CN 或 vi-VN。", "例如：zh-CN")}{textField("voiceName", "声音名称", "供应商注册的声音名称。", "例如：cmn-CN-Standard-A")}{numberField("voiceSpeakingRate", "语速", "旁白播放速度，通常填写 1。", 0.1)}</div> : null}
@@ -176,7 +178,17 @@ export function BlueprintConfigurationForm({ initialAssetRoot, initialPolicy, is
     updateExecutor(key, "promptVersion", slug);
   }
 
-  async function submit(activate: boolean) {
+  function toggleMediaAdapter(key: ConfigurableMediaAdapterKey, enabled: boolean) {
+    setForm((current) => {
+      const enabledMediaAdapters = current.enabledMediaAdapters ?? [];
+      const nextEnabled = enabled ? [...enabledMediaAdapters, key] : enabledMediaAdapters.filter((item) => item !== key);
+      const currentAdapter = current.mediaAdapters[key];
+      const hasValues = Object.entries(currentAdapter).some(([field, value]) => value.trim() !== "" && !(field === "allowedTools" && value === "read, write"));
+      return { ...current, enabledMediaAdapters: nextEnabled, mediaAdapters: { ...current.mediaAdapters, [key]: enabled && !hasValues ? defaultMediaAdapterForm(key) : currentAdapter } };
+    });
+  }
+
+  async function submit() {
     try {
       setError("");
       if (!form.allowedTools.length) throw new Error("至少保留一个允许工具。");
@@ -184,23 +196,25 @@ export function BlueprintConfigurationForm({ initialAssetRoot, initialPolicy, is
       for (const [key, executor] of Object.entries(form.executors)) {
         if (!executor.provider.trim() || !executor.model.trim() || !executor.promptVersion.trim()) throw new Error(`${executorLabels[key as keyof typeof executorLabels]}执行器的 Provider、模型和 Prompt 版本不能为空。`);
       }
-      validateMediaAdapters(form.mediaAdapters);
-      await onSave(blueprintFormToPolicy(form), activate);
+      validateEnabledMediaAdapters(form.mediaAdapters, form.enabledMediaAdapters ?? []);
+      await onSave(blueprintFormToPolicy(form), true);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "蓝图规则无法保存。");
     }
   }
 
+  const enabledMediaAdapters = form.enabledMediaAdapters ?? [];
+  const readinessMessage = form.assetRoot.trim() ? "资产目录已填写；保存后仍需 Worker 验证目录可读写。" : "草稿：未填写资产目录，不能达到生产就绪。";
   return <section className="configuration-form blueprint-configuration-form">
-    <p className="blueprint-editor-note">{readOnly ? "以下按表单结构显示此蓝图版本当前保存的规则。" : isEpisodeRepair ? "表单字段会生成新的蓝图版本；应用后只重建当前生产单的受阻任务，已完成工作和审核记录会保留。" : "表单字段会生成新的蓝图版本，不会修改历史版本或已经创建的 Episode。"}</p>
+    <p className="blueprint-editor-note">{readOnly ? "以下按表单结构显示此蓝图版本当前保存的规则。" : isEpisodeRepair ? "只修改当前生产单需要的冻结配置；已完成工作和审核记录会保留。" : "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。"}</p>
     <fieldset><legend><FieldLabel help="账号级的长期方向。它会作为脚本、视觉和分镜生成的共同背景。">账号定位</FieldLabel></legend><label><textarea aria-label="账号定位" onChange={(event) => update({ positioning: event.target.value })} placeholder="例如：面向越南华人和对民俗故事感兴趣的观众，持续讲述真实地点中的民间传说。" readOnly={readOnly} rows={3} value={form.positioning} /></label><FieldHint>描述账号面向谁、持续讲什么以及希望保持的表达方向。</FieldHint></fieldset>
-    <fieldset><legend><FieldLabel help="Worker 在本机读取输入、写入产物的根目录；路径不会上传到 Supabase。">本地资产与审批</FieldLabel></legend><label><FieldLabel help="建议填写一个稳定的账号目录，例如 /Volumes/素材盘/tk-workflow/dao。">资产目录</FieldLabel><input aria-label="资产目录" onChange={(event) => update({ assetRoot: event.target.value })} placeholder="例如：/Volumes/素材盘/tk-workflow/dao" readOnly={readOnly} value={form.assetRoot} /></label><FieldHint>Worker 会在这台电脑上验证目录；目录不会上传到 Supabase。</FieldHint><div className="configuration-check-grid"><div><span className="configuration-label"><FieldLabel help="勾选后，对应阶段会保留 Owner 的人工确认节点。建议先全部保留。">审批关卡</FieldLabel></span>{approvalGateOptions.map(([value, label]) => <label className="configuration-check" key={value}><input checked={form.approvalGates.includes(value)} disabled={readOnly} onChange={(event) => update({ approvalGates: event.target.checked ? [...form.approvalGates, value] : form.approvalGates.filter((item) => item !== value) })} type="checkbox" />{label}</label>)}</div><div><span className="configuration-label"><FieldLabel help="这是账号级硬约束，不是模型能力。没有 write 时，Worker 不能创建输出产物。">允许工具</FieldLabel></span>{toolOptions.map(([value, label]) => <label className="configuration-check" key={value}><input checked={form.allowedTools.includes(value)} disabled={readOnly} onChange={(event) => update({ allowedTools: event.target.checked ? [...form.allowedTools, value] : form.allowedTools.filter((item) => item !== value) })} type="checkbox" />{label}</label>)}</div></div><FieldHint>访问网络供应商默认关闭；只有使用 Pexels、Freesound 或其他外部服务时才开启。</FieldHint></fieldset>
-    <fieldset><legend><FieldLabel help="每个阶段任务的成本上限，单位为最小计费单位“分”。不是内容数量，也不是时间。">阶段预算（分）</FieldLabel></legend><div className="configuration-input-grid"><label><FieldLabel help="脚本生成任务允许的最大成本。">脚本生成</FieldLabel><input min="0" onChange={(event) => update({ budgets: { ...form.budgets, scriptWritingCents: event.target.value } })} readOnly={readOnly} type="number" value={form.budgets.scriptWritingCents} /></label><label><FieldLabel help="视觉规划任务允许的最大成本。">视觉规划</FieldLabel><input min="0" onChange={(event) => update({ budgets: { ...form.budgets, visualPlanningCents: event.target.value } })} readOnly={readOnly} type="number" value={form.budgets.visualPlanningCents} /></label><label><FieldLabel help="分镜规划任务允许的最大成本。">分镜规划</FieldLabel><input min="0" onChange={(event) => update({ budgets: { ...form.budgets, storyboardPlanningCents: event.target.value } })} readOnly={readOnly} type="number" value={form.budgets.storyboardPlanningCents} /></label></div><FieldHint>0 表示没有配置该阶段的可用预算；需要实际计费的任务建议填写大于 0 的上限。</FieldHint></fieldset>
-    <fieldset><legend><FieldLabel help={isEpisodeRepair ? "应用到当前生产单后，新的 Provider、模型和 Prompt 版本只会作用于受阻任务；其他已完成工作保持不变。" : "Provider、模型和 Prompt 版本会在创建生产单时冻结，之后修改蓝图只影响新的生产单。"}>执行器</FieldLabel></legend><div className="executor-grid">{Object.entries(executorLabels).map(([key, label]) => { const executor = form.executors[key as keyof BlueprintFormValues["executors"]]; const versions = promptVersions.filter((version) => version.capability === key && version.is_active); const hasSelectedVersion = versions.some((version) => version.slug === executor.promptVersion); const selectedVersion = versions.find((version) => version.slug === executor.promptVersion); return <article className="executor-card" key={key}><h4>{label}</h4><label><FieldLabel help="执行服务，例如 codex。">Provider</FieldLabel><input onChange={(event) => updateExecutor(key as keyof BlueprintFormValues["executors"], "provider", event.target.value)} readOnly={readOnly} value={executor.provider} /></label><label><FieldLabel help="执行时使用的模型名称。">模型</FieldLabel><input onChange={(event) => updateExecutor(key as keyof BlueprintFormValues["executors"], "model", event.target.value)} readOnly={readOnly} value={executor.model} /></label><label><FieldLabel help="从已登记目录选择一个版本；创建生产单后，该版本标签会写入任务记录。">Prompt 版本</FieldLabel>{versions.length ? <select aria-label={`${label} Prompt 版本`} disabled={readOnly} onChange={(event) => selectPromptVersion(key as keyof BlueprintFormValues["executors"], event.target.value)} value={hasSelectedVersion ? executor.promptVersion : "__unregistered__"}>{!hasSelectedVersion ? <option value="__unregistered__">{executor.promptVersion || "当前值"}（未登记）</option> : null}{versions.map((version) => <option key={version.id} value={version.slug}>{version.name} · {version.slug}</option>)}</select> : <input aria-label={`${label} Prompt 版本`} onChange={(event) => updateExecutor(key as keyof BlueprintFormValues["executors"], "promptVersion", event.target.value)} readOnly={readOnly} value={executor.promptVersion} />}</label>{selectedVersion ? <p className="executor-version-summary">{selectedVersion.summary}</p> : null}</article>; })}</div><FieldHint>{isEpisodeRepair ? "应用后只会重新排队当前生产单中受阻的配置任务；已完成任务不会重跑。" : "选择会影响新建 Episode；已存在的生产单不会追溯修改。"}</FieldHint>{readOnly ? null : <PromptVersionManager isPending={isPending} onCreate={onCreatePromptVersion} onSelect={(capability, slug) => selectPromptVersion(capability, slug)} promptVersions={promptVersions} />}</fieldset>
-    <fieldset className="media-adapter-configuration"><legend><FieldLabel help={isEpisodeRepair ? "应用到当前生产单后，只会重新排队受阻的媒体任务；如果该系列有同名媒体规则，系列规则会优先，需要到系列标签页修正。" : "这里配置 A-roll、B-roll、旁白和配乐 / 音效任务使用的专用媒体适配器。生产单创建后会冻结当时的配置，修改蓝图只影响新的生产单。"}>媒体适配器</FieldLabel></legend><p className="media-adapter-intro">把需要专用媒体能力的配置集中在这里。未配置或字段不完整时，使用到该能力的 Worker 任务会明确显示阻塞原因。{isEpisodeRepair ? " 如果当前系列规则包含同名媒体配置，应用蓝图前请先修正系列规则。" : ""}</p><div className="media-adapter-grid">{mediaAdapterKeys.map((key) => <MediaAdapterCard adapterKey={key} form={form.mediaAdapters[key]} key={key} onChange={(field, value) => updateMediaAdapter(key, field, value)} readOnly={readOnly} />)}</div><FieldHint>{isEpisodeRepair ? "应用到当前生产单后，只会重新排队受阻任务；清空整张卡片并保存，可以移除该能力的配置声明。" : "保存为新版本后，已经创建的生产单不会追溯修改；清空整张卡片并保存，可以移除该能力的配置声明。"}</FieldHint></fieldset>
-    {readOnly ? <ReadOnlyAdvancedRules source={form.advancedJson} /> : <details className="advanced-configuration"><summary><FieldLabel help="这里保留尚未做成表单的其他扩展规则。媒体适配器请优先在上方的独立区域配置。无特殊需要时不要修改。">高级规则（JSON）</FieldLabel></summary><label>高级规则 JSON<textarea aria-label="高级蓝图规则" onChange={(event) => update({ advancedJson: event.target.value })} rows={10} value={form.advancedJson} /></label><FieldHint>高级规则会跟随这个蓝图版本保存，并作用于之后新建的生产单。</FieldHint></details>}
+    <fieldset><legend>本地资产与审批</legend><label><FieldLabel help="建议填写一个稳定的账号目录，例如 /Volumes/素材盘/tk-workflow/dao。">资产目录</FieldLabel><input aria-label="资产目录" onChange={(event) => update({ assetRoot: event.target.value })} placeholder="例如：/Volumes/素材盘/tk-workflow/dao" readOnly={readOnly} value={form.assetRoot} /></label><p className="blueprint-readiness" role="status">{readinessMessage}</p><div className="configuration-check-grid"><div><span className="configuration-label"><FieldLabel help="勾选后，对应阶段会保留 Owner 的人工确认节点。至少保留一个关卡。">审批关卡</FieldLabel></span>{approvalGateOptions.map(([value, label]) => <label className="configuration-check" key={value}><input checked={form.approvalGates.includes(value)} disabled={readOnly || (form.approvalGates.length === 1 && form.approvalGates.includes(value))} onChange={(event) => update({ approvalGates: event.target.checked ? [...form.approvalGates, value] : form.approvalGates.filter((item) => item !== value) })} type="checkbox" />{label}</label>)}</div><div><span className="configuration-label"><FieldLabel help="这是账号级硬约束。没有 write 时，Worker 不能创建输出产物。">允许工具</FieldLabel></span>{toolOptions.map(([value, label]) => <label className="configuration-check" key={value}><input checked={form.allowedTools.includes(value)} disabled={readOnly} onChange={(event) => update({ allowedTools: event.target.checked ? [...form.allowedTools, value] : form.allowedTools.filter((item) => item !== value) })} type="checkbox" />{label}</label>)}</div></div></fieldset>
+    <fieldset><legend>生产能力</legend><p className="media-adapter-intro">所有可选媒体能力默认关闭。启用后才会纳入当前蓝图，并显示对应配置卡片。</p><div className="capability-grid">{configurableMediaAdapterKeys.map((key) => <label className="capability-option" key={key}><input aria-label={`启用${configurableMediaAdapterLabels[key]}`} checked={enabledMediaAdapters.includes(key)} disabled={readOnly} onChange={(event) => toggleMediaAdapter(key, event.target.checked)} type="checkbox" /><span><strong>{configurableMediaAdapterLabels[key]}</strong><small>{mediaAdapterDescriptions[key]}</small></span></label>)}</div><p className="unavailable-capabilities">当前不可用：A-roll、配乐 / 音效。它们保留旧规则兼容性，但不会作为正常生产能力启用。</p></fieldset>
+    {enabledMediaAdapters.length ? <details className="advanced-configuration media-adapter-configuration" open={readOnly}><summary>已启用能力的技术配置（{enabledMediaAdapters.length}）</summary><div className="media-adapter-grid">{enabledMediaAdapters.map((key) => <MediaAdapterCard adapterKey={key} form={form.mediaAdapters[key]} key={key} onChange={(field, value) => updateMediaAdapter(key, field, value)} readOnly={readOnly} showAllowedTools={false} />)}</div><FieldHint>Provider、Adapter、模型、Prompt、预算和调度参数只作用于之后新建的生产单。</FieldHint></details> : null}
+    <details className="advanced-configuration"><summary>技术配置</summary><fieldset><legend>阶段预算（分）</legend><div className="configuration-input-grid"><label><FieldLabel help="脚本生成任务允许的最大成本。">脚本生成</FieldLabel><input min="0" onChange={(event) => update({ budgets: { ...form.budgets, scriptWritingCents: event.target.value } })} readOnly={readOnly} type="number" value={form.budgets.scriptWritingCents} /></label><label><FieldLabel help="视觉规划任务允许的最大成本。">视觉规划</FieldLabel><input min="0" onChange={(event) => update({ budgets: { ...form.budgets, visualPlanningCents: event.target.value } })} readOnly={readOnly} type="number" value={form.budgets.visualPlanningCents} /></label><label><FieldLabel help="分镜规划任务允许的最大成本。">分镜规划</FieldLabel><input min="0" onChange={(event) => update({ budgets: { ...form.budgets, storyboardPlanningCents: event.target.value } })} readOnly={readOnly} type="number" value={form.budgets.storyboardPlanningCents} /></label></div><FieldHint>系统默认值会保留；0 表示该阶段尚未配置可用预算。</FieldHint></fieldset><fieldset><legend>核心执行器</legend><div className="executor-grid">{Object.entries(executorLabels).map(([key, label]) => { const executor = form.executors[key as keyof BlueprintFormValues["executors"]]; const versions = promptVersions.filter((version) => version.capability === key && version.is_active); const hasSelectedVersion = versions.some((version) => version.slug === executor.promptVersion); const selectedVersion = versions.find((version) => version.slug === executor.promptVersion); return <article className="executor-card" key={key}><h4>{label}</h4><label><FieldLabel help="执行服务，例如 codex。">Provider</FieldLabel><input onChange={(event) => updateExecutor(key as keyof BlueprintFormValues["executors"], "provider", event.target.value)} readOnly={readOnly} value={executor.provider} /></label><label><FieldLabel help="执行时使用的模型名称。">模型</FieldLabel><input onChange={(event) => updateExecutor(key as keyof BlueprintFormValues["executors"], "model", event.target.value)} readOnly={readOnly} value={executor.model} /></label><label><FieldLabel help="从已登记目录选择一个版本；创建生产单后，该版本标签会写入任务记录。">Prompt 版本</FieldLabel>{versions.length ? <select aria-label={`${label} Prompt 版本`} disabled={readOnly} onChange={(event) => selectPromptVersion(key as keyof BlueprintFormValues["executors"], event.target.value)} value={hasSelectedVersion ? executor.promptVersion : "__unregistered__"}>{!hasSelectedVersion ? <option value="__unregistered__">{executor.promptVersion || "当前值"}（未登记）</option> : null}{versions.map((version) => <option key={version.id} value={version.slug}>{version.name} · {version.slug}</option>)}</select> : <input aria-label={`${label} Prompt 版本`} onChange={(event) => updateExecutor(key as keyof BlueprintFormValues["executors"], "promptVersion", event.target.value)} readOnly={readOnly} value={executor.promptVersion} />}</label>{selectedVersion ? <p className="executor-version-summary">{selectedVersion.summary}</p> : null}</article>; })}</div>{readOnly ? null : <PromptVersionManager isPending={isPending} onCreate={onCreatePromptVersion} onSelect={(capability, slug) => selectPromptVersion(capability, slug)} promptVersions={promptVersions} />}</fieldset></details>
+    {readOnly ? <ReadOnlyAdvancedRules source={form.advancedJson} /> : null}
     {error ? <p className="form-error">{error}</p> : null}
-    {readOnly ? null : <div className="configuration-actions"><button className="button button-secondary" disabled={isPending} onClick={onCancel} type="button">取消编辑</button><button className="button button-secondary" disabled={isPending} onClick={() => void submit(false)} type="button">{isPending ? "保存中…" : "保存为新版本"}</button><button className="button button-primary" disabled={isPending} onClick={() => void submit(true)} type="button">{isPending ? "保存中…" : "保存并激活"}</button></div>}
+    {readOnly ? null : <div className="configuration-actions"><button className="button button-secondary" disabled={isPending} onClick={onCancel} type="button">取消编辑</button><button className="button button-primary" disabled={isPending} onClick={() => void submit()} type="button">{isPending ? "保存中…" : "保存蓝图"}</button></div>}
   </section>;
 }
 
@@ -241,8 +255,14 @@ export function EpisodeConfigurationRepairForm({ blocker, initialPolicy, isPendi
     event.preventDefault();
     try {
       setError("");
-      if (adapterKey) validateMediaAdapter(adapterKey, form.mediaAdapters[adapterKey]);
-      else if (executorKey) {
+      if (adapterKey) {
+        const adapter = form.mediaAdapters[adapterKey];
+        const repairForm = adapter.allowedTools.trim() ? adapter : { ...adapter, allowedTools: "read, write" };
+        validateMediaAdapter(adapterKey, repairForm);
+        await onSave(blueprintFormToPolicy({ ...form, mediaAdapters: { ...form.mediaAdapters, [adapterKey]: repairForm } }));
+        return;
+      }
+      if (executorKey) {
         const executor = form.executors[executorKey];
         if (!executor.provider.trim() || !executor.model.trim() || !executor.promptVersion.trim()) throw new Error("执行器的 Provider、模型和 Prompt 版本不能为空。");
       } else throw new Error("当前阻塞项无法映射到可修复的配置。");
@@ -255,7 +275,7 @@ export function EpisodeConfigurationRepairForm({ blocker, initialPolicy, isPendi
   if (!adapterKey && !executorKey) return <section className="configuration-form"><p className="form-error">当前阻塞项不能通过配置修复，请按阻塞卡片提示处理。</p><button className="button button-secondary" onClick={onCancel} type="button">返回生产单</button></section>;
   return <form className="configuration-form blueprint-configuration-form" onSubmit={(event) => void submit(event)}>
     <header><h2>修复当前生产单的 {adapterKey ? mediaAdapterLabels[adapterKey] : executorLabels[executorKey!]}</h2><p className="blueprint-editor-note">只修改这类受阻任务的冻结配置。不会创建或修改账号蓝图，也不会影响之后的新生产单。</p></header>
-    {adapterKey ? <fieldset><legend>需要补齐的媒体配置</legend><MediaAdapterCard adapterKey={adapterKey} form={form.mediaAdapters[adapterKey]} onChange={updateMediaAdapter} /></fieldset> : <fieldset><legend>需要补齐的执行器配置</legend><label><FieldLabel help="执行服务名称。">Provider</FieldLabel><input aria-label="Provider" onChange={(event) => updateExecutor("provider", event.target.value)} value={form.executors[executorKey!].provider} /></label><label><FieldLabel help="当前任务使用的模型名称。">模型</FieldLabel><input aria-label="模型" onChange={(event) => updateExecutor("model", event.target.value)} value={form.executors[executorKey!].model} /></label><label><FieldLabel help="当前任务使用的可追溯 Prompt 版本。">Prompt 版本</FieldLabel><input aria-label="Prompt 版本" onChange={(event) => updateExecutor("promptVersion", event.target.value)} value={form.executors[executorKey!].promptVersion} /></label></fieldset>}
+    {adapterKey ? <fieldset><legend>需要补齐的媒体配置</legend><MediaAdapterCard adapterKey={adapterKey} form={form.mediaAdapters[adapterKey]} onChange={updateMediaAdapter} showAllowedTools={false} /></fieldset> : <fieldset><legend>需要补齐的执行器配置</legend><label><FieldLabel help="执行服务名称。">Provider</FieldLabel><input aria-label="Provider" onChange={(event) => updateExecutor("provider", event.target.value)} value={form.executors[executorKey!].provider} /></label><label><FieldLabel help="当前任务使用的模型名称。">模型</FieldLabel><input aria-label="模型" onChange={(event) => updateExecutor("model", event.target.value)} value={form.executors[executorKey!].model} /></label><label><FieldLabel help="当前任务使用的可追溯 Prompt 版本。">Prompt 版本</FieldLabel><input aria-label="Prompt 版本" onChange={(event) => updateExecutor("promptVersion", event.target.value)} value={form.executors[executorKey!].promptVersion} /></label></fieldset>}
     {error ? <p className="form-error">{error}</p> : null}
     <div className="configuration-actions"><button className="button button-secondary" disabled={isPending} onClick={onCancel} type="button">取消</button><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "应用中…" : "保存并继续当前生产单"}</button></div>
   </form>;

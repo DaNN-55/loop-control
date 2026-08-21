@@ -25,6 +25,7 @@ const blueprintV3: Blueprint = {
   created_at: "2026-08-14T00:00:00.000Z",
   id: "blueprint-3",
   is_active: true,
+  is_snapshot: false,
   policy: { approval_gates: ["script", "qc"], asset_root: "/Volumes/dao/v3", positioning: "越南民间信仰" },
   version: 3,
 };
@@ -33,6 +34,7 @@ const blueprintV2: Blueprint = {
   ...blueprintV3,
   id: "blueprint-2",
   is_active: false,
+  is_snapshot: false,
   policy: { approval_gates: ["script"], asset_root: "/Volumes/dao/v2", positioning: "旧定位" },
   version: 2,
 };
@@ -41,6 +43,7 @@ const archivedBlueprintV1: Blueprint = {
   ...blueprintV2,
   archived_at: "2026-08-15T00:00:00.000Z",
   id: "blueprint-1",
+  is_snapshot: false,
   version: 1,
 };
 
@@ -49,6 +52,46 @@ function renderWorkspace(overrides: Partial<ComponentProps<typeof AccountWorkspa
 }
 
 describe("账号页分区与蓝图版本", () => {
+  it("保存蓝图时直接更新当前规则，不创建新的可见版本", async () => {
+    const user = userEvent.setup();
+    const onUpdateBlueprint = vi.fn().mockResolvedValue({ ...blueprintV3, policy: { approval_gates: ["script", "qc"], asset_root: "/Volumes/dao/v3", positioning: "新定位" } });
+    renderWorkspace({ onUpdateBlueprint });
+
+    await user.click(screen.getByRole("button", { name: /v3.*当前生效/ }));
+    await user.click(screen.getByRole("button", { name: "以此版本编辑" }));
+    await user.clear(screen.getByLabelText("账号定位"));
+    await user.type(screen.getByLabelText("账号定位"), "新定位");
+    await user.click(screen.getByRole("button", { name: "保存蓝图" }));
+
+    expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ positioning: "新定位" }));
+    expect(screen.queryByRole("button", { name: "保存蓝图" })).toBeNull();
+  });
+
+  it("默认关闭媒体能力，只显示已启用的能力卡片并隐藏 network", async () => {
+    const user = userEvent.setup();
+    renderWorkspace({ onUpdateBlueprint: vi.fn().mockResolvedValue(blueprintV3) });
+
+    await user.click(screen.getByRole("button", { name: /v3.*当前生效/ }));
+    await user.click(screen.getByRole("button", { name: "以此版本编辑" }));
+
+    expect((screen.getByRole("checkbox", { name: "启用B-roll" }) as HTMLInputElement).checked).toBe(false);
+    expect((screen.getByRole("checkbox", { name: "启用旁白" }) as HTMLInputElement).checked).toBe(false);
+    expect(screen.queryByRole("heading", { name: "A-roll" })).toBeNull();
+    expect(screen.queryByText(/network/)).toBeNull();
+    expect((screen.getByRole("checkbox", { name: "脚本审核" }) as HTMLInputElement).disabled).toBe(false);
+
+    await user.click(screen.getByRole("checkbox", { name: "启用B-roll" }));
+
+    expect(screen.getByRole("heading", { name: "B-roll" })).toBeTruthy();
+    expect((screen.getByDisplayValue("pexels") as HTMLInputElement).value).toBe("pexels");
+  });
+
+  it("不把 Episode 规则快照显示成蓝图版本", () => {
+    renderWorkspace({ blueprints: [blueprintV3, { ...blueprintV3, id: "episode-snapshot", is_snapshot: true }] });
+
+    expect(screen.getAllByRole("button", { name: /v3.*当前生效/ })).toHaveLength(1);
+  });
+
   it("直接进入蓝图版本，并只保留蓝图和系列两个分区", async () => {
     const user = userEvent.setup();
     renderWorkspace();
@@ -110,23 +153,20 @@ describe("账号页分区与蓝图版本", () => {
     expect(screen.getByRole("button", { name: /v1.*已归档/ })).toBeTruthy();
   });
 
-  it("基于所选版本保存新版本后可立即激活", async () => {
+  it("基于所选版本保存后直接更新当前蓝图", async () => {
     const user = userEvent.setup();
-    const createdBlueprint: Blueprint = { ...blueprintV3, id: "blueprint-4", is_active: false, version: 4 };
-    const onActivate = vi.fn().mockResolvedValue(undefined);
-    const onCreateBlueprint = vi.fn().mockResolvedValue(createdBlueprint);
+    const onUpdateBlueprint = vi.fn().mockResolvedValue(blueprintV3);
 
-    renderWorkspace({ onActivate, onCreateBlueprint });
+    renderWorkspace({ onUpdateBlueprint });
     await user.click(screen.getByRole("tab", { name: "蓝图" }));
 
     await user.click(screen.getByRole("button", { name: /v2.*历史版本/ }));
     await user.click(screen.getByRole("button", { name: "以此版本编辑" }));
     await user.clear(screen.getByLabelText("资产目录"));
     await user.type(screen.getByLabelText("资产目录"), "/Volumes/dao/v4");
-    await user.click(screen.getByRole("button", { name: "保存并激活" }));
+    await user.click(screen.getByRole("button", { name: "保存蓝图" }));
 
-    expect(onCreateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ asset_root: "/Volumes/dao/v4" }));
-    expect(onActivate).toHaveBeenCalledWith(createdBlueprint.id);
+    expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ asset_root: "/Volumes/dao/v4" }));
   });
 
   it("保留旧版当前生效状态", async () => {
@@ -152,6 +192,7 @@ describe("账号页分区与蓝图版本", () => {
     await user.click(screen.getByRole("button", { name: "保存名称" }));
 
     expect(onRenameAccount).toHaveBeenCalledWith(account.id, "新显示名称");
+    expect(screen.queryByRole("form", { name: "重命名账号" })).toBeNull();
   });
 
   it("重命名失败时保留弹窗内容", async () => {

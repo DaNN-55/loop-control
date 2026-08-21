@@ -34,6 +34,7 @@ const blueprint: Blueprint = {
   created_at: "2026-08-14T00:00:00.000Z",
   id: "blueprint-1",
   is_active: true,
+  is_snapshot: false,
   policy: { asset_root: "/Volumes/素材盘/tk-workflow/dao" },
   version: 1,
 };

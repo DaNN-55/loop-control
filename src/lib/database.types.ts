@@ -21,6 +21,7 @@ export type Database = {
           created_at: string
           id: string
           is_active: boolean
+          is_snapshot?: boolean
           policy: Json
           version: number
         }
@@ -30,6 +31,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_active?: boolean
+          is_snapshot?: boolean
           policy: Json
           version: number
         }
@@ -39,6 +41,7 @@ export type Database = {
           created_at?: string
           id?: string
           is_active?: boolean
+          is_snapshot?: boolean
           policy?: Json
           version?: number
         }
@@ -1066,6 +1069,7 @@ export type Database = {
           created_at: string
           id: string
           is_active: boolean
+          is_snapshot?: boolean
           policy: Json
           version: number
         }
@@ -1576,6 +1580,25 @@ export type Database = {
           updated_at: string
         }
         SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
+      }
+      update_current_blueprint: {
+        Args: { p_account_id: string; p_policy: Json }
+        Returns: {
+          archived_at: string | null
+          account_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          is_snapshot?: boolean
+          policy: Json
+          version: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "account_blueprint_versions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       transition_episode: {
         Args: {

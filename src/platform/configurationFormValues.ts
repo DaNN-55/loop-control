@@ -5,6 +5,8 @@ type ExecutorForm = { provider: string; model: string; promptVersion: string };
 
 export const mediaAdapterKeys = ["a_roll", "b_roll", "narration", "soundtrack"] as const;
 export type MediaAdapterKey = typeof mediaAdapterKeys[number];
+export const configurableMediaAdapterKeys = ["b_roll", "narration"] as const;
+export type ConfigurableMediaAdapterKey = typeof configurableMediaAdapterKeys[number];
 export type MediaAdapterForm = {
   provider: string;
   adapter: string;
@@ -27,6 +29,7 @@ export interface BlueprintFormValues {
   assetRoot: string;
   approvalGates: string[];
   allowedTools: string[];
+  enabledMediaAdapters?: ConfigurableMediaAdapterKey[];
   budgets: { scriptWritingCents: string; visualPlanningCents: string; storyboardPlanningCents: string };
   executors: Record<"script_writing" | "visual_planning" | "storyboard_planning", ExecutorForm>;
   mediaAdapters: Record<MediaAdapterKey, MediaAdapterForm>;
@@ -47,6 +50,7 @@ export interface SeriesFormValues {
 const blueprintKnownKeys = new Set(["positioning", "asset_root", "approval_gates", "allowed_tools", "budgets", "executors", ...mediaAdapterKeys]);
 const seriesKnownKeys = new Set(["positioning", "format", "characters", "locations", "visual_style", "narrative_structure", "restrictions"]);
 const executorKeys = ["script_writing", "visual_planning", "storyboard_planning"] as const;
+const visibleToolKeys = new Set(["read", "write"]);
 
 function objectValue(value: Json | undefined): JsonObject {
   return value && typeof value === "object" && !Array.isArray(value) ? value as JsonObject : {};
@@ -152,6 +156,12 @@ function formMediaAdapter(value: Json | undefined): MediaAdapterForm {
   };
 }
 
+export function defaultMediaAdapterForm(key: ConfigurableMediaAdapterKey): MediaAdapterForm {
+  const empty: MediaAdapterForm = { provider: "", adapter: "", model: "", promptVersion: "", allowedTools: "read, write", budgetCents: "", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "1", maxConcurrency: "1", providerMaxConcurrency: "1", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "1" };
+  if (key === "b_roll") return { ...empty, provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", promptVersion: "b-roll-v1" };
+  return { ...empty, provider: "google_tts", adapter: "google_tts", model: "standard", promptVersion: "narration-v1" };
+}
+
 function mediaAdapterHasValues(form: MediaAdapterForm): boolean {
   return Object.values(form).some((value) => value.trim() !== "");
 }
@@ -198,6 +208,13 @@ export function validateMediaAdapters(mediaAdapters: Record<MediaAdapterKey, Med
   for (const key of mediaAdapterKeys) validateMediaAdapter(key, mediaAdapters[key]);
 }
 
+export function validateEnabledMediaAdapters(mediaAdapters: Record<MediaAdapterKey, MediaAdapterForm>, enabledKeys: readonly ConfigurableMediaAdapterKey[]): void {
+  for (const key of enabledKeys) {
+    if (!mediaAdapterHasValues(mediaAdapters[key])) throw new Error(`${key === "b_roll" ? "B-roll" : "旁白"}能力已启用，但配置为空。`);
+    validateMediaAdapter(key, mediaAdapters[key]);
+  }
+}
+
 export function mediaAdapterStatus(key: MediaAdapterKey, form: MediaAdapterForm): "未配置" | "待补齐" | "已配置" {
   if (!mediaAdapterHasValues(form)) return "未配置";
   try {
@@ -234,11 +251,13 @@ export function blueprintPolicyToForm(policy: Json): BlueprintFormValues {
   const value = objectValue(policy);
   const budgets = objectValue(value.budgets);
   const executors = objectValue(value.executors);
+  const enabledMediaAdapters = configurableMediaAdapterKeys.filter((key) => value[key] !== undefined && value[key] !== null);
   return {
     positioning: stringValue(value.positioning),
     assetRoot: stringValue(value.asset_root),
     approvalGates: stringArray(value.approval_gates).length ? stringArray(value.approval_gates) : ["script", "visual", "storyboard", "qc", "publish"],
-    allowedTools: stringArray(value.allowed_tools).length ? stringArray(value.allowed_tools) : ["read", "write"],
+    allowedTools: stringArray(value.allowed_tools).filter((tool) => visibleToolKeys.has(tool)).length ? stringArray(value.allowed_tools).filter((tool) => visibleToolKeys.has(tool)) : ["read", "write"],
+    enabledMediaAdapters,
     budgets: {
       scriptWritingCents: String(budgets.script_writing_cents ?? 0),
       visualPlanningCents: String(budgets.visual_planning_cents ?? 0),
@@ -272,7 +291,7 @@ export function blueprintFormToPolicy(form: BlueprintFormValues): Json {
     positioning: form.positioning.trim(),
     asset_root: form.assetRoot.trim(),
     approval_gates: form.approvalGates,
-    allowed_tools: form.allowedTools,
+    allowed_tools: form.allowedTools.filter((tool) => visibleToolKeys.has(tool)),
     budgets: {
       ...existingBudgets,
       script_writing_cents: nonNegativeInteger(form.budgets.scriptWritingCents, "脚本预算"),
@@ -289,7 +308,9 @@ export function blueprintFormToPolicy(form: BlueprintFormValues): Json {
       }])),
     },
   };
+  const enabledMediaAdapters = form.enabledMediaAdapters ?? mediaAdapterKeys;
   for (const key of mediaAdapterKeys) {
+    if (configurableMediaAdapterKeys.includes(key as ConfigurableMediaAdapterKey) && !enabledMediaAdapters.includes(key as ConfigurableMediaAdapterKey)) continue;
     if (mediaAdapterHasValues(form.mediaAdapters[key])) result[key] = mediaAdapterToPolicy(form.mediaAdapters[key], existingMediaAdapters[key]);
   }
   return result as Json;

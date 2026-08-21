@@ -9,6 +9,33 @@ import {
 } from "./configurationFormValues";
 
 describe("账号蓝图表单转换", () => {
+  it("默认关闭可选媒体能力，并只保存已启用的能力", () => {
+    const form = blueprintPolicyToForm({});
+
+    expect(form.enabledMediaAdapters).toEqual([]);
+
+    const result = blueprintFormToPolicy({
+      ...form,
+      enabledMediaAdapters: ["b_roll"],
+      mediaAdapters: {
+        ...form.mediaAdapters,
+        b_roll: { ...form.mediaAdapters.b_roll, provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", promptVersion: "b-roll-v1", allowedTools: "read, write", perShotBudgetCents: "10", totalBudgetCents: "100", maxAttempts: "1", maxConcurrency: "1", providerMaxConcurrency: "1" },
+      },
+    });
+
+    expect(result).toHaveProperty("b_roll");
+    expect(result).not.toHaveProperty("narration");
+  });
+
+  it("保存表单时保留旧的不可用媒体配置", () => {
+    const form = blueprintPolicyToForm({ a_roll: { executor: { provider: "codex", adapter: "codex" } }, soundtrack: { budget_cents: 99 } });
+
+    const result = blueprintFormToPolicy(form) as Record<string, unknown>;
+
+    expect(result.a_roll).toEqual(expect.objectContaining({ executor: { provider: "codex", adapter: "codex" } }));
+    expect(result.soundtrack).toEqual(expect.objectContaining({ budget_cents: 99 }));
+  });
+
   it("读取常用字段并保留高级规则", () => {
     const form = blueprintPolicyToForm({
       positioning: "越南民俗短视频",
@@ -63,7 +90,7 @@ describe("账号蓝图表单转换", () => {
       advancedJson: '{"soundtrack":{"budget_cents":99}}',
     });
 
-    expect(result).toMatchObject({ positioning: "新的账号定位", asset_root: "/Volumes/Media/new", approval_gates: ["script", "publish"], allowed_tools: ["read", "write", "network"] });
+    expect(result).toMatchObject({ positioning: "新的账号定位", asset_root: "/Volumes/Media/new", approval_gates: ["script", "publish"], allowed_tools: ["read", "write"] });
     expect(result).toMatchObject({ budgets: { script_writing_cents: 10, visual_planning_cents: 20, storyboard_planning_cents: 30 } });
     expect(result).toMatchObject({ executors: { script_writing: { model: "model-a" }, visual_planning: { model: "model-b" }, storyboard_planning: { model: "model-c" } } });
     expect(result).toMatchObject({ a_roll: { executor: { adapter: "codex" }, budget_cents: 20, max_attempts: 2 }, b_roll: { executor: { adapter: "pexels_video" }, per_shot_budget_cents: 10, total_budget_cents: 100 }, narration: { voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 0.8 } }, soundtrack: { executor: { adapter: "freesound_preview" } } });
