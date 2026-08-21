@@ -54,6 +54,12 @@ describe("runtime preflight", () => {
     ]));
   });
 
+  it("把资产目录不可访问映射为独立的资产目录阻塞", () => {
+    const result = createRuntimePreflight([], { assetRoot: { available: false, detail: "媒体库账号目录不可访问。" } });
+
+    expect(result.checks).toContainEqual(expect.objectContaining({ capability: "worker_runtime", check: "asset_root", status: "unavailable", action: "contact_environment_admin" }));
+  });
+
   it("忽略当前不可用的 A-roll 旧规则", () => {
     const capabilities = runtimeCapabilitiesFromBlueprintPolicy({
       a_roll: { executor: { provider: "codex", adapter: "codex", model: "blueprint-model", prompt_version: "blueprint-v1" }, allowed_tools: ["read", "write"] },

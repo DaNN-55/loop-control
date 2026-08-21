@@ -17,6 +17,7 @@ export interface RuntimeDependencyStatus {
 }
 
 export interface RuntimePreflightEnvironment {
+  assetRoot?: RuntimeDependencyStatus;
   credentials?: Record<string, boolean>;
   commands?: Record<string, RuntimeDependencyStatus>;
   mediaLibrary?: RuntimeDependencyStatus;
@@ -121,6 +122,10 @@ export function createRuntimePreflight(capabilities: RuntimeCapability[], enviro
       const commandStatus = environment.commands[capability.command];
       checks.push({ capability: capability.capability, check: "command_availability", phase: "preflight", status: commandStatus.available ? "passed" : "unavailable", reason: commandStatus.detail, action: commandStatus.available ? "none" : "contact_environment_admin", scope: "worker" });
     }
+  }
+
+  if (environment.assetRoot) {
+    checks.push({ capability: "worker_runtime", check: "asset_root", phase: "preflight", status: environment.assetRoot.available ? "passed" : "unavailable", reason: environment.assetRoot.detail, action: environment.assetRoot.available ? "none" : "contact_environment_admin", scope: "worker" });
   }
 
   if (environment.mediaLibrary) {

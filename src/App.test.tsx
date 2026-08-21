@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { Database } from "./lib/database.types";
-import { AccountWorkspace, App, BootstrapScreen, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, episodeWorkerStatus, initialNavigationForWorkspace, navigation, navigationBadgeCounts } from "./App";
+import { AccountWorkspace, App, BootstrapScreen, EpisodeForm, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, episodeWorkerStatus, initialNavigationForWorkspace, navigation, navigationBadgeCounts } from "./App";
 import { defaultBlueprintPolicy, parseBlueprintPolicy, withBlueprintAssetRoot } from "./platform/blueprintPolicy";
 
 vi.mock("./lib/supabase", () => ({
@@ -15,6 +15,22 @@ vi.mock("./lib/supabase", () => ({
 }));
 
 describe("approval console", () => {
+  it("创建生产单前展示阻塞原因并保持生产单未创建", async () => {
+    const user = userEvent.setup();
+    const account = { current_blueprint_version_id: "00000000-0000-0000-0000-000000000001", id: "00000000-0000-0000-0000-000000000002", name: "道工作室" } as Database["public"]["Tables"]["accounts"]["Row"];
+    const preflight = { version: "worker-preflight/v1" as const, checks: [{ capability: "script_writing", check: "blueprint_configuration", phase: "preflight" as const, status: "blocked" as const, reason: "脚本能力缺少模型。", action: "edit_blueprint" as const, scope: "blueprint" as const }] };
+    const onSubmit = vi.fn().mockResolvedValue(preflight);
+
+    render(<EpisodeForm accounts={[account]} isPending={false} onClose={vi.fn()} onOpenBlueprint={vi.fn()} onSubmit={onSubmit} series={[]} seriesVersions={[]} />);
+
+    await user.click(screen.getByRole("button", { name: "创建生产单" }));
+
+    expect(await screen.findByText("创建前可生产性检查：未通过（1）")).toBeTruthy();
+    expect(screen.getByText("本次检查未通过，因此尚未创建生产单。处理下面的原因后，点击“创建生产单”重新检查。")).toBeTruthy();
+    expect(screen.getByText("蓝图能力配置需要修复")).toBeTruthy();
+    expect(onSubmit).toHaveBeenCalledWith({ accountId: account.id, isTest: false, seriesVersionId: null, title: "" });
+  });
+
   it("shows Chinese password and magic-link sign-in choices when no session exists", async () => {
     render(<App />);
 

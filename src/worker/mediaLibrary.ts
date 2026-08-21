@@ -8,6 +8,7 @@ export interface MediaLibraryCheckInput {
   assetRoot: string;
   mountPath: string;
   minimumFreeBytes: number;
+  requireEpisodesDirectory?: boolean;
 }
 
 export interface MediaLibraryStatus {
@@ -37,8 +38,7 @@ export async function verifyMediaLibrary(input: MediaLibraryCheckInput): Promise
     throw new Error("媒体库账号目录必须位于预期挂载点下。");
   }
 
-  const episodesDirectory = join(assetRoot, "episodes");
-  await directoryPath(episodesDirectory, "媒体库 episodes 目录");
+  if (input.requireEpisodesDirectory !== false) await directoryPath(join(assetRoot, "episodes"), "媒体库 episodes 目录");
   await access(assetRoot, constants.R_OK | constants.W_OK);
 
   const filesystem = await statfs(assetRoot);

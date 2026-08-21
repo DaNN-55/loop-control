@@ -20,6 +20,7 @@ const localEpisodeDeletionRoute = "/_delete-episode";
 const localEpisodeDeletionCleanupRoute = "/_finalize-episode-deletion";
 const systemStatusRoute = "/_system-status";
 const workerPreflightRoute = "/_worker-preflight";
+const episodePreflightRoute = "/_episode-preflight";
 const maxProductionMaterialBytes = 100 * 1024 * 1024;
 const maxEncodedMaterialRequestBytes = 140 * 1024 * 1024;
 const execFileAsync = promisify(execFile);
@@ -42,6 +43,10 @@ function isSafeRelativeArtifactPath(value: string): boolean {
 }
 
 function isEpisodeId(value: string): boolean {
+  return isUuid(value);
+}
+
+function isUuid(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
 }
 
@@ -780,14 +785,7 @@ export function serveWorkerPreflight(supabaseUrl: string | undefined, supabasePu
         return;
       }
 
-      const capabilities = runtimeCapabilitiesFromBlueprintPolicy(blueprint.policy, seriesRules);
-      const commandNames = [...new Set(capabilities.map((capability) => capability.command).filter((command): command is string => Boolean(command)))];
-      const commandEntries = await Promise.all(commandNames.map(async (command) => [command, await dependencyStatus(command, command, runtimeCommandArguments(command))] as const));
-      const commands = Object.fromEntries(commandEntries.map(([command, status]) => [command, { available: status.state === "healthy", detail: status.detail }]));
-      const credentialNames = [...new Set(capabilities.map((capability) => capability.credential).filter((credential): credential is string => Boolean(credential)))];
-      const credentials = Object.fromEntries(credentialNames.map((credential) => [credential, Boolean(localWorkerEnvironmentValue(credential))]));
-      const mediaLibrary = await workerMediaLibraryStatus(blueprint.policy);
-      const report = createRuntimePreflight(capabilities, { commands, credentials, ...(mediaLibrary ? { mediaLibrary } : {}) });
+      const report = await runtimePreflightForPolicy(blueprint.policy, seriesRules);
       if (request.method === "POST") {
         response.setHeader("Content-Type", "application/json");
         if (report.checks.some((check) => check.status !== "passed")) {
@@ -828,7 +826,144 @@ export function serveWorkerPreflight(supabaseUrl: string | undefined, supabasePu
   };
 }
 
-async function workerMediaLibraryStatus(policy: unknown): Promise<{ available: boolean; detail: string } | undefined> {
+export function serveEpisodePreflight(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+  return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+    if (request.method !== "POST") {
+      response.statusCode = 405;
+      response.end();
+      return;
+    }
+    const authorization = request.headers.authorization;
+    if (!authorization?.startsWith("Bearer ")) {
+      response.statusCode = 401;
+      response.end("需要 Owner 登录会话。");
+      return;
+    }
+    if (!supabaseUrl || !supabasePublishableKey) {
+      response.statusCode = 503;
+      response.end("Supabase 本地客户端未配置。");
+      return;
+    }
+
+    let body: Record<string, unknown>;
+    try {
+      body = await readJsonBody(request);
+    } catch {
+      response.statusCode = 400;
+      response.end("创建前检查参数无效。");
+      return;
+    }
+    const accountId = typeof body.accountId === "string" ? body.accountId : "";
+    const blueprintVersionId = typeof body.blueprintVersionId === "string" ? body.blueprintVersionId : "";
+    const seriesVersionValue = body.seriesVersionId;
+    const seriesVersionId = seriesVersionValue === null || seriesVersionValue === undefined ? null : typeof seriesVersionValue === "string" ? seriesVersionValue : "";
+    if (!isUuid(accountId) || !isUuid(blueprintVersionId) || (seriesVersionId !== null && !isUuid(seriesVersionId))) {
+      response.statusCode = 400;
+      response.end("创建前检查参数无效。");
+      return;
+    }
+
+    try {
+      const accessToken = authorization.slice("Bearer ".length);
+      const client = createClient(supabaseUrl, supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: authorization } } });
+      const { data: userData, error: userError } = await client.auth.getUser(accessToken);
+      if (userError || !userData.user) {
+        response.statusCode = 401;
+        response.end("Owner 登录会话无效。");
+        return;
+      }
+
+      const { data: membership, error: membershipError } = await client.from("account_memberships").select("role").eq("account_id", accountId).eq("user_id", userData.user.id).eq("role", "owner").maybeSingle();
+      if (membershipError) throw membershipError;
+      if (!membership) {
+        response.statusCode = 403;
+        response.end("Owner 权限不足。");
+        return;
+      }
+      const { data: account, error: accountError } = await client.from("accounts").select("current_blueprint_version_id").eq("id", accountId).maybeSingle();
+      if (accountError) throw accountError;
+      if (!account) {
+        response.statusCode = 404;
+        response.end("未找到当前账号。");
+        return;
+      }
+      if (account.current_blueprint_version_id !== blueprintVersionId) {
+        response.statusCode = 409;
+        response.end("所选蓝图已不是当前激活版本，请刷新后重试。");
+        return;
+      }
+
+      const { data: blueprint, error: blueprintError } = await client.from("account_blueprint_versions").select("policy, is_active").eq("id", blueprintVersionId).eq("account_id", accountId).maybeSingle();
+      if (blueprintError) throw blueprintError;
+      if (!blueprint) {
+        response.statusCode = 404;
+        response.end("未找到当前账号蓝图。");
+        return;
+      }
+      if (!blueprint.is_active) {
+        response.statusCode = 409;
+        response.end("所选蓝图已停用，请刷新后重试。");
+        return;
+      }
+
+      let seriesRules: unknown;
+      if (seriesVersionId) {
+        const { data: seriesVersion, error: seriesVersionError } = await client.from("series_versions").select("rules").eq("id", seriesVersionId).eq("account_id", accountId).maybeSingle();
+        if (seriesVersionError) throw seriesVersionError;
+        if (!seriesVersion) {
+          response.statusCode = 400;
+          response.end("所选系列版本不属于当前账号。");
+          return;
+        }
+        seriesRules = seriesVersion.rules;
+      }
+
+      const report = await runtimePreflightForPolicy(blueprint.policy, seriesRules, true);
+      response.setHeader("Content-Type", "application/json");
+      if (report.checks.some((check) => check.status !== "passed")) {
+        response.statusCode = 409;
+        response.end(JSON.stringify({ error: "生产前可生产性检查未通过，尚未创建生产单。", preflight: report }));
+        return;
+      }
+      response.statusCode = 200;
+      response.end(JSON.stringify({ preflight: report }));
+    } catch (error) {
+      response.setHeader("Content-Type", "application/json");
+      if (isTransientPreflightError(error)) {
+        response.statusCode = 503;
+        response.end(JSON.stringify({ error: "生产前检查暂时失败，请重试。", preflight: retryablePreflight(error) }));
+        return;
+      }
+      response.statusCode = 500;
+      response.end(JSON.stringify({ error: error instanceof Error ? error.message : "无法完成生产前检查。" }));
+    }
+  };
+}
+
+async function runtimePreflightForPolicy(policy: unknown, seriesRules: unknown, checkAssetRoot = false) {
+  const capabilities = runtimeCapabilitiesFromBlueprintPolicy(policy, seriesRules);
+  const commandNames = [...new Set(capabilities.map((capability) => capability.command).filter((command): command is string => Boolean(command)))];
+  const commandEntries = await Promise.all(commandNames.map(async (command) => [command, await dependencyStatus(command, command, runtimeCommandArguments(command))] as const));
+  const commands = Object.fromEntries(commandEntries.map(([command, status]) => [command, { available: status.state === "healthy", detail: status.detail }]));
+  const credentialNames = [...new Set(capabilities.map((capability) => capability.credential).filter((credential): credential is string => Boolean(credential)))];
+  const credentials = Object.fromEntries(credentialNames.map((credential) => [credential, Boolean(localWorkerEnvironmentValue(credential))]));
+  const assetRoot = await workerMediaLibraryStatus(policy, checkAssetRoot);
+  return createRuntimePreflight(capabilities, { commands, credentials, ...(checkAssetRoot ? { assetRoot } : { mediaLibrary: assetRoot }) });
+}
+
+function isTransientPreflightError(error: unknown): boolean {
+  const detail = error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+  return /fetch failed|network|timeout|timed out|econnreset|econnrefused|etimedout|502|503|504/.test(detail);
+}
+
+function retryablePreflight(error: unknown) {
+  return {
+    version: "worker-preflight/v1" as const,
+    checks: [{ capability: "worker_runtime", check: "connection", phase: "preflight" as const, status: "retryable" as const, reason: error instanceof Error ? error.message : "Worker 或 Supabase 连接暂时失败。", action: "retry" as const, scope: "worker" as const }],
+  };
+}
+
+async function workerMediaLibraryStatus(policy: unknown, beforeEpisodeCreation = false): Promise<{ available: boolean; detail: string } | undefined> {
   const assetRoot = policy && typeof policy === "object" && !Array.isArray(policy) && typeof (policy as Record<string, unknown>).asset_root === "string" ? ((policy as Record<string, unknown>).asset_root as string).trim() : "";
   if (!assetRoot) return { available: false, detail: "蓝图未配置 asset_root。" };
   if (!isAbsolute(assetRoot)) return { available: false, detail: "蓝图 asset_root 必须使用绝对路径。" };
@@ -837,7 +972,7 @@ async function workerMediaLibraryStatus(policy: unknown): Promise<{ available: b
   const minimumFreeBytesValue = localWorkerEnvironmentValue("MEDIA_LIBRARY_MIN_FREE_BYTES");
   if (!minimumFreeBytesValue || !/^\d+$/.test(minimumFreeBytesValue) || !Number.isSafeInteger(Number(minimumFreeBytesValue))) return { available: false, detail: "MEDIA_LIBRARY_MIN_FREE_BYTES 未配置为非负整数。" };
   try {
-    const status = await verifyMediaLibrary({ assetRoot, mountPath, minimumFreeBytes: Number(minimumFreeBytesValue) });
+    const status = await verifyMediaLibrary({ assetRoot, mountPath, minimumFreeBytes: Number(minimumFreeBytesValue), requireEpisodesDirectory: !beforeEpisodeCreation });
     return { available: true, detail: `媒体库已验证：${status.mountPath}，可用空间 ${status.availableBytes} 字节。` };
   } catch (error) {
     return { available: false, detail: error instanceof Error ? error.message : "媒体库无法通过运行态检查。" };
@@ -952,6 +1087,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
   const deletionMiddleware = serveEpisodeDeletion(supabaseUrl, supabasePublishableKey, localWorkerServiceRoleKey());
   const deletionCleanupMiddleware = serveEpisodeDeletionCleanup(supabaseUrl, supabasePublishableKey);
   const systemStatusMiddleware = serveSystemStatus(supabaseUrl, supabasePublishableKey);
+  const episodePreflightMiddleware = serveEpisodePreflight(supabaseUrl, supabasePublishableKey);
   const workerPreflightMiddleware = serveWorkerPreflight(supabaseUrl, supabasePublishableKey);
   return {
     name: "local-artifact-preview",
@@ -964,6 +1100,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(localEpisodeDeletionRoute, deletionMiddleware);
       server.middlewares.use(localEpisodeDeletionCleanupRoute, deletionCleanupMiddleware);
       server.middlewares.use(systemStatusRoute, systemStatusMiddleware);
+      server.middlewares.use(episodePreflightRoute, episodePreflightMiddleware);
       server.middlewares.use(workerPreflightRoute, workerPreflightMiddleware);
     },
     configurePreviewServer(server) {
@@ -975,6 +1112,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(localEpisodeDeletionRoute, deletionMiddleware);
       server.middlewares.use(localEpisodeDeletionCleanupRoute, deletionCleanupMiddleware);
       server.middlewares.use(systemStatusRoute, systemStatusMiddleware);
+      server.middlewares.use(episodePreflightRoute, episodePreflightMiddleware);
       server.middlewares.use(workerPreflightRoute, workerPreflightMiddleware);
     },
   };

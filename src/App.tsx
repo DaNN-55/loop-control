@@ -529,6 +529,30 @@ async function startProductionThroughWorkerPreflight(episodeId: string): Promise
   return { episode: record.episode, preflight };
 }
 
+async function runEpisodePreflight(input: { accountId: string; blueprintVersionId: string; seriesVersionId: string | null }): Promise<WorkerPreflightResult> {
+  const { data, error: sessionError } = await supabase.auth.getSession();
+  if (sessionError) throw sessionError;
+  if (!data.session) throw new Error("需要 Owner 登录会话。");
+  const response = await fetch("/_episode-preflight", {
+    body: JSON.stringify(input),
+    headers: { Authorization: `Bearer ${data.session.access_token}`, "Content-Type": "application/json" },
+    method: "POST",
+  });
+  const payload: unknown = await response.json().catch(() => null);
+  const record = payload && typeof payload === "object" && !Array.isArray(payload) ? payload as Record<string, unknown> : {};
+  const preflight = record.preflight === undefined ? null : parseWorkerPreflight(record.preflight);
+  if (!response.ok) {
+    if (preflight?.checks.some((check) => check.status !== "passed")) return preflight;
+    throw new Error(typeof record.error === "string" ? record.error : "无法完成生产前检查。");
+  }
+  if (!preflight) throw new Error("生产前检查未返回有效结果。");
+  return preflight;
+}
+
+function workerBlockersFromPreflight(preflight: WorkerPreflightResult | null): WorkerBlocker[] {
+  return preflight?.checks.filter((check) => check.status !== "passed").map((check) => ({ code: check.check, detail: check.reason, capability: check.capability, check: check.check, phase: check.phase, status: check.status, action: check.action, scope: check.scope })) ?? [];
+}
+
 export function App() {
   const [activeNavigation, setActiveNavigation] = useState<NavigationItem>("episodes");
   const [theme, setTheme] = useState<Theme>(storedTheme);
@@ -965,12 +989,14 @@ export function App() {
     }
   }
 
-  async function createEpisode(input: { title: string; accountId: string; isTest: boolean; seriesVersionId: string | null }) {
+  async function createEpisode(input: { title: string; accountId: string; isTest: boolean; seriesVersionId: string | null }): Promise<WorkerPreflightResult | null> {
     const account = workspace?.accounts.find((candidate) => candidate.id === input.accountId);
-    if (!account?.current_blueprint_version_id) return;
+    if (!account?.current_blueprint_version_id) return null;
     setPendingAction("episode");
     setErrorMessage("");
     try {
+      const preflight = await runEpisodePreflight({ accountId: account.id, blueprintVersionId: account.current_blueprint_version_id, seriesVersionId: input.seriesVersionId });
+      if (preflight.checks.some((check) => check.status !== "passed")) return preflight;
       const { data, error } = await supabase.rpc("create_episode", {
         p_account_id: account.id,
         p_blueprint_version_id: account.current_blueprint_version_id,
@@ -994,8 +1020,10 @@ export function App() {
       setMessage(localDirectoryReady ? "生产单已创建，本地输入目录已准备就绪，等待导入主脚本。" : "生产单已创建，等待导入主脚本；本地输入目录可稍后从详情页重试。");
       await refreshWorkspace();
       if (localDirectoryError) setErrorMessage(localDirectoryError);
+      return null;
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "创建生产单失败。");
+      return null;
     } finally {
       setPendingAction("");
     }
@@ -1592,7 +1620,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
 
       <nav aria-label="移动端主导航" className="mobile-navigation"><NavigationButtons activeNavigation={activeNavigation} badges={navigationBadges} onSelect={changeNavigation} /></nav>
 
-      {showEpisodeForm ? <EpisodeForm accounts={workspace.accounts} isPending={pendingAction === "episode"} onClose={() => setShowEpisodeForm(false)} onSubmit={createEpisode} series={workspace.series} seriesVersions={workspace.seriesVersions} /> : null}
+      {showEpisodeForm ? <EpisodeForm accounts={workspace.accounts} isPending={pendingAction === "episode"} onClose={() => setShowEpisodeForm(false)} onOpenBlueprint={(accountId) => { setShowEpisodeForm(false); openAccountBlueprint(accountId); }} onSubmit={createEpisode} series={workspace.series} seriesVersions={workspace.seriesVersions} /> : null}
       {showAccountForm ? <AccountForm isPending={pendingAction === "account"} onClose={() => setShowAccountForm(false)} onSubmit={createAccount} /> : null}
       {showPasswordForm ? <PasswordForm onClose={() => setShowPasswordForm(false)} onSubmit={async (password) => {
         setPendingAction("password");
@@ -1866,7 +1894,7 @@ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, b
   const history = transitions.filter((transition) => transition.episode_id === episode.id);
   const blockers = workerBlockers(tasks, episode.id);
   const blockerGroups = groupWorkerBlockers(blockers);
-  const productionBlockers: WorkerBlocker[] = productionPreflight?.checks.filter((check) => check.status !== "passed").map((check) => ({ code: check.check, detail: check.reason, capability: check.capability, check: check.check, phase: check.phase, status: check.status, action: check.action, scope: check.scope })) ?? [];
+  const productionBlockers = workerBlockersFromPreflight(productionPreflight);
   const episodeTasks = tasks.filter((task) => task.episode_id === episode.id);
   const workerStatus = episodeWorkerStatus(episode, episodeTasks);
   const reviewAction = reviewActionFor(episode.stage);
@@ -2443,16 +2471,25 @@ export function EpisodeDetailDrawer({ children, isOpen, onClose }: { children: R
 
 function Artifact({ complete = false, label, name }: { complete?: boolean; label: string; name: string }) { return <div className="artifact-row"><i className={complete ? "artifact-complete" : "artifact-pending"}>{complete ? "✓" : ""}</i><span>{label}</span><small>{name}</small></div>; }
 
-function EpisodeForm({ accounts, isPending, onClose, onSubmit, series, seriesVersions }: { accounts: Account[]; isPending: boolean; onClose: () => void; onSubmit: (input: { title: string; accountId: string; isTest: boolean; seriesVersionId: string | null }) => Promise<void>; series: Series[]; seriesVersions: SeriesVersion[] }) {
+export function EpisodeForm({ accounts, isPending, onClose, onOpenBlueprint, onSubmit, preflight = null, series, seriesVersions }: { accounts: Account[]; isPending: boolean; onClose: () => void; onOpenBlueprint?: (accountId: string) => void; onSubmit: (input: { title: string; accountId: string; isTest: boolean; seriesVersionId: string | null }) => Promise<WorkerPreflightResult | null>; preflight?: WorkerPreflightResult | null; series: Series[]; seriesVersions: SeriesVersion[] }) {
   const [title, setTitle] = useState("");
   const [accountId, setAccountId] = useState(accounts[0]?.id ?? "");
   const [isTest, setIsTest] = useState(false);
   const [seriesVersionId, setSeriesVersionId] = useState("");
+  const [episodePreflight, setEpisodePreflight] = useState<WorkerPreflightResult | null>(preflight);
   const seriesById = new Map(series.map((candidate) => [candidate.id, candidate]));
   const availableVersions = seriesVersions.filter((version) => version.account_id === accountId);
   const selectedAccount = accounts.find((account) => account.id === accountId);
   const canCreateEpisode = Boolean(selectedAccount?.current_blueprint_version_id);
-  return <div className="modal-backdrop" role="presentation"><form aria-label="新建生产单" className="modal-card" onSubmit={(event) => { event.preventDefault(); if (!canCreateEpisode) return; void onSubmit({ accountId, isTest, seriesVersionId: seriesVersionId || null, title }); }}><header><div><h2>新建生产单</h2><p>会固定所选账号当前激活蓝图和可选系列版本。</p></div><button aria-label="关闭新建生产单" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></button></header><label>账号<select onChange={(event) => { setAccountId(event.target.value); setSeriesVersionId(""); }} value={accountId}>{accounts.map((account) => <option key={account.id} value={account.id}>{account.name}</option>)}</select></label><label>系列版本（可选）<select aria-label="系列版本" onChange={(event) => setSeriesVersionId(event.target.value)} value={seriesVersionId}><option value="">不关联系列</option>{availableVersions.map((version) => <option key={version.id} value={version.id}>{seriesById.get(version.series_id)?.name ?? "未知系列"} · v{version.version}</option>)}</select></label><label>工作标题（可留空）<input autoFocus onChange={(event) => setTitle(event.target.value)} placeholder="可在首次适用审核前补充" value={title} /></label><label className="checkbox-label"><input checked={isTest} onChange={(event) => setIsTest(event.target.checked)} type="checkbox" />这是测试生产单（归档后允许 Owner 永久删除）</label>{canCreateEpisode ? <p className="form-hint">标题只是管理元数据，后续修改不会使已导入内容失效。</p> : <p className="form-error">当前账号没有启用蓝图，请先激活一个蓝图版本。</p>}<div className="modal-actions"><button className="button button-secondary" onClick={onClose} type="button">取消</button><button className="button button-primary" disabled={isPending || !accountId || !canCreateEpisode} type="submit">{isPending ? "创建中…" : "创建生产单"}</button></div></form></div>;
+  const blockers = workerBlockersFromPreflight(episodePreflight);
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!canCreateEpisode) return;
+    setEpisodePreflight(null);
+    const result = await onSubmit({ accountId, isTest, seriesVersionId: seriesVersionId || null, title });
+    if (result) setEpisodePreflight(result);
+  }
+  return <div className="modal-backdrop" role="presentation"><form aria-label="新建生产单" className="modal-card" onSubmit={(event) => void submit(event)}><header><div><h2>新建生产单</h2><p>会固定所选账号当前激活蓝图和可选系列版本。</p></div><button aria-label="关闭新建生产单" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></button></header><label>账号<select onChange={(event) => { setAccountId(event.target.value); setSeriesVersionId(""); setEpisodePreflight(null); }} value={accountId}>{accounts.map((account) => <option key={account.id} value={account.id}>{account.name}</option>)}</select></label><label>系列版本（可选）<select aria-label="系列版本" onChange={(event) => { setSeriesVersionId(event.target.value); setEpisodePreflight(null); }} value={seriesVersionId}><option value="">不关联系列</option>{availableVersions.map((version) => <option key={version.id} value={version.id}>{seriesById.get(version.series_id)?.name ?? "未知系列"} · v{version.version}</option>)}</select></label><label>工作标题（可留空）<input autoFocus onChange={(event) => setTitle(event.target.value)} placeholder="可在首次适用审核前补充" value={title} /></label><label className="checkbox-label"><input checked={isTest} onChange={(event) => setIsTest(event.target.checked)} type="checkbox" />这是测试生产单（归档后允许 Owner 永久删除）</label>{canCreateEpisode ? <p className="form-hint">标题只是管理元数据，后续修改不会使已导入内容失效。</p> : <p className="form-error">当前账号没有启用蓝图，请先激活一个蓝图版本。</p>}{episodePreflight ? <div aria-live="polite" className={`production-preflight ${blockers.length ? "is-blocked" : "is-passed"}`} role="alert"><strong>创建前可生产性检查：未通过（{blockers.length}）</strong><p>本次检查未通过，因此尚未创建生产单。处理下面的原因后，点击“创建生产单”重新检查。</p>{blockers.map((blocker) => <WorkerBlockerCard blocker={blocker} key={`${blocker.code}-${blocker.capability}`} onOpenBlueprint={onOpenBlueprint ? () => onOpenBlueprint(accountId) : undefined} />)}</div> : null}<div className="modal-actions"><button className="button button-secondary" onClick={onClose} type="button">取消</button><button className="button button-primary" disabled={isPending || !accountId || !canCreateEpisode} type="submit">{isPending ? "检查并创建中…" : "创建生产单"}</button></div></form></div>;
 }
 
 function AccountForm({ isPending, onClose, onSubmit }: { isPending: boolean; onClose: () => void; onSubmit: (input: { name: string; slug: string; timezone: string; policy: Json }) => Promise<void> }) {

@@ -6,7 +6,7 @@ import { mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } from "node:fs/
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveEpisodeDeletion, serveEpisodeDeletionCleanup, serveLocalEpisodeDirectory, serveOpenLocalArtifact, serveOpenLocalEpisodeDirectory, stageLocalEpisodeDirectoryForDeletion } from "../vite.config";
+import { createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveEpisodeDeletion, serveEpisodeDeletionCleanup, serveEpisodePreflight, serveLocalEpisodeDirectory, serveOpenLocalArtifact, serveOpenLocalEpisodeDirectory, stageLocalEpisodeDirectoryForDeletion } from "../vite.config";
 
 const episodeId = "00000000-0000-0000-0000-000000000000";
 let server: ReturnType<typeof createServer>;
@@ -36,6 +36,28 @@ describe("本地 Episode 目录路由", () => {
     expect(unauthorized.status).toBe(401);
     expect(invalidId.status).toBe(400);
     expect(wrongMethod.status).toBe(405);
+  });
+
+  it("创建前 Worker 检查拒绝未登录、错误方法和未配置 Supabase", async () => {
+    const middleware = serveEpisodePreflight(undefined, undefined);
+    const preflightServer = createServer((request, response) => {
+      void middleware(request, response);
+    });
+    await new Promise<void>((resolve) => preflightServer.listen(0, "127.0.0.1", resolve));
+    const preflightOrigin = `http://127.0.0.1:${(preflightServer.address() as AddressInfo).port}`;
+    try {
+      const [unauthorized, wrongMethod, unavailable] = await Promise.all([
+        fetch(`${preflightOrigin}/_episode-preflight`, { method: "POST" }),
+        fetch(`${preflightOrigin}/_episode-preflight`, { headers: { Authorization: "Bearer invalid" } }),
+        fetch(`${preflightOrigin}/_episode-preflight`, { body: "{}", headers: { Authorization: "Bearer invalid", "Content-Type": "application/json" }, method: "POST" }),
+      ]);
+
+      expect(unauthorized.status).toBe(401);
+      expect(wrongMethod.status).toBe(405);
+      expect(unavailable.status).toBe(503);
+    } finally {
+      await new Promise<void>((resolve, reject) => preflightServer.close((error) => error ? reject(error) : resolve()));
+    }
   });
 
   it("打开目录路由拒绝未登录、非法 ID 和错误方法", async () => {
