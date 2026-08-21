@@ -10,34 +10,80 @@ import {
 } from "./configurationFormValues";
 
 describe("账号蓝图表单转换", () => {
-  it("默认关闭所有媒体能力，并只保存已启用的能力", () => {
+  it("默认关闭可用媒体能力，并只保存已启用的能力", () => {
     const form = blueprintPolicyToForm({});
 
     expect(form.enabledMediaAdapters).toEqual([]);
 
     const result = blueprintFormToPolicy({
       ...form,
-      enabledMediaAdapters: ["b_roll", "soundtrack"],
+      enabledMediaAdapters: ["b_roll"],
       mediaAdapters: {
         ...form.mediaAdapters,
         b_roll: { ...form.mediaAdapters.b_roll, provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", promptVersion: "b-roll-v1", allowedTools: "read, write", perShotBudgetCents: "10", totalBudgetCents: "100", maxAttempts: "1", maxConcurrency: "1", providerMaxConcurrency: "1" },
-        soundtrack: { ...form.mediaAdapters.soundtrack, provider: "freesound", adapter: "freesound_preview", model: "freesound-preview-v1", promptVersion: "soundtrack-v1", allowedTools: "read, write", budgetCents: "10", maxAttempts: "1" },
       },
     });
 
     expect(result).toHaveProperty("b_roll");
     expect(result).not.toHaveProperty("narration");
-    expect(result).toHaveProperty("soundtrack");
+    expect(result).not.toHaveProperty("soundtrack");
   });
 
-  it("读取已有 A-roll 和配乐配置为已启用状态", () => {
+  it("保留已有 A-roll 和配乐旧规则，但不把它们作为可用能力启用", () => {
     const form = blueprintPolicyToForm({ a_roll: { executor: { provider: "codex", adapter: "codex" } }, soundtrack: { budget_cents: 99 } });
 
-    expect(form.enabledMediaAdapters).toEqual(["a_roll", "soundtrack"]);
+    expect(form.enabledMediaAdapters).toEqual([]);
     const result = blueprintFormToPolicy(form) as Record<string, unknown>;
 
     expect(result.a_roll).toEqual(expect.objectContaining({ executor: { provider: "codex", adapter: "codex" } }));
     expect(result.soundtrack).toEqual(expect.objectContaining({ budget_cents: 99 }));
+  });
+
+  it("保留只含未表单化字段的媒体旧规则", () => {
+    const form = blueprintPolicyToForm({ a_roll: { legacy_mode: "keep" }, soundtrack: { cue_source: "legacy" } });
+    const result = blueprintFormToPolicy(form) as Record<string, unknown>;
+
+    expect(result.a_roll).toEqual({ legacy_mode: "keep" });
+    expect(result.soundtrack).toEqual({ cue_source: "legacy" });
+  });
+
+  it("保留旧媒体规则中的 network 工具", () => {
+    const form = blueprintPolicyToForm({ a_roll: { allowed_tools: ["network"] }, soundtrack: { allowed_tools: ["network"] } });
+    const result = blueprintFormToPolicy(form) as Record<string, unknown>;
+
+    expect(result.a_roll).toEqual({ allowed_tools: ["network"] });
+    expect(result.soundtrack).toEqual({ allowed_tools: ["network"] });
+  });
+
+  it("媒体能力工具不能超过账号级工具白名单", () => {
+    const form = blueprintPolicyToForm({ allowed_tools: ["read"], b_roll: { allowed_tools: ["read", "write"] } });
+    const result = blueprintFormToPolicy(form) as Record<string, unknown>;
+
+    expect(result.b_roll).toMatchObject({ allowed_tools: ["read"] });
+  });
+
+  it("把旧媒体工具归一化到账号级白名单", () => {
+    const form = blueprintPolicyToForm({
+      allowed_tools: ["read"],
+      b_roll: { allowed_tools: ["network"], executor: { provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", prompt_version: "b-roll-v1" }, per_shot_budget_cents: 10, total_budget_cents: 100, max_attempts: 1, max_concurrency: 1, provider_max_concurrency: 1 },
+    });
+    const result = blueprintFormToPolicy(form) as Record<string, unknown>;
+
+    expect(form.mediaAdapters.b_roll.allowedTools).toBe("read");
+    expect(result.b_roll).toMatchObject({ allowed_tools: ["read"] });
+  });
+
+  it("拒绝媒体工具与账号白名单没有交集的直接提交", () => {
+    const form = blueprintPolicyToForm({});
+    expect(() => blueprintFormToPolicy({
+      ...form,
+      allowedTools: ["read"],
+      enabledMediaAdapters: ["b_roll"],
+      mediaAdapters: {
+        ...form.mediaAdapters,
+        b_roll: { ...form.mediaAdapters.b_roll, provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", promptVersion: "b-roll-v1", allowedTools: "network", perShotBudgetCents: "10", totalBudgetCents: "100", maxAttempts: "1", maxConcurrency: "1", providerMaxConcurrency: "1" },
+      },
+    })).toThrow("账号级工具");
   });
 
   it("读取常用字段并保留高级规则", () => {

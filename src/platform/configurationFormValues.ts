@@ -5,8 +5,8 @@ type ExecutorForm = { provider: string; model: string; promptVersion: string };
 
 export const mediaAdapterKeys = ["a_roll", "b_roll", "narration", "soundtrack"] as const;
 export type MediaAdapterKey = typeof mediaAdapterKeys[number];
-export const configurableMediaAdapterKeys = mediaAdapterKeys;
-export type ConfigurableMediaAdapterKey = MediaAdapterKey;
+export const configurableMediaAdapterKeys = ["b_roll", "narration"] as const;
+export type ConfigurableMediaAdapterKey = typeof configurableMediaAdapterKeys[number];
 export type MediaAdapterForm = {
   provider: string;
   adapter: string;
@@ -134,16 +134,18 @@ function formExecutor(value: Json | undefined): ExecutorForm {
   return { provider: stringValue(executor.provider) || "codex", model: stringValue(executor.model) || "gpt-5.6-codex", promptVersion: stringValue(executor.prompt_version) || "unversioned" };
 }
 
-function formMediaAdapter(value: Json | undefined): MediaAdapterForm {
+function formMediaAdapter(value: Json | undefined, fallbackAllowedTools: readonly string[] = [], filterAllowedTools = true): MediaAdapterForm {
   const mediaAdapter = objectValue(value);
   const executor = objectValue(mediaAdapter.executor);
   const voice = objectValue(mediaAdapter.voice);
+  const allowedTools = stringArray(mediaAdapter.allowed_tools);
+  const visibleAllowedTools = filterAllowedTools ? allowedTools.filter((tool) => visibleToolKeys.has(tool)) : allowedTools;
   return {
     provider: stringValue(executor.provider),
     adapter: stringValue(executor.adapter),
     model: stringValue(executor.model),
     promptVersion: stringValue(executor.prompt_version),
-    allowedTools: stringArray(mediaAdapter.allowed_tools).join(", "),
+    allowedTools: (visibleAllowedTools.length ? visibleAllowedTools : fallbackAllowedTools).join(", "),
     budgetCents: displayValue(mediaAdapter.budget_cents),
     perShotBudgetCents: displayValue(mediaAdapter.per_shot_budget_cents),
     totalBudgetCents: displayValue(mediaAdapter.total_budget_cents),
@@ -158,10 +160,8 @@ function formMediaAdapter(value: Json | undefined): MediaAdapterForm {
 
 export function defaultMediaAdapterForm(key: ConfigurableMediaAdapterKey): MediaAdapterForm {
   const empty: MediaAdapterForm = { provider: "", adapter: "", model: "", promptVersion: "", allowedTools: "read, write", budgetCents: "", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "1", maxConcurrency: "1", providerMaxConcurrency: "1", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "1" };
-  if (key === "a_roll") return { ...empty, provider: "codex", adapter: "codex", model: "video-generation-v1", promptVersion: "a-roll-v1" };
   if (key === "b_roll") return { ...empty, provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", promptVersion: "b-roll-v1" };
-  if (key === "narration") return { ...empty, provider: "google_tts", adapter: "google_tts", model: "standard", promptVersion: "narration-v1" };
-  return { ...empty, provider: "freesound", adapter: "freesound_preview", model: "freesound-preview-v1", promptVersion: "soundtrack-v1" };
+  return { ...empty, provider: "google_tts", adapter: "google_tts", model: "standard", promptVersion: "narration-v1" };
 }
 
 function mediaAdapterHasValues(form: MediaAdapterForm): boolean {
@@ -232,7 +232,7 @@ export function mediaAdapterStatus(key: MediaAdapterKey, form: MediaAdapterForm)
   }
 }
 
-function mediaAdapterToPolicy(form: MediaAdapterForm, existing: JsonObject): JsonObject {
+function mediaAdapterToPolicy(form: MediaAdapterForm, existing: JsonObject, accountAllowedTools?: readonly string[]): JsonObject {
   const policy: JsonObject = { ...existing };
   const executorValues: Array<[keyof MediaAdapterForm, string]> = [["provider", "provider"], ["adapter", "adapter"], ["model", "model"], ["promptVersion", "prompt_version"]];
   if (executorValues.some(([formKey]) => form[formKey].trim())) {
@@ -240,7 +240,12 @@ function mediaAdapterToPolicy(form: MediaAdapterForm, existing: JsonObject): Jso
     for (const [formKey, policyKey] of executorValues) if (form[formKey].trim()) executor[policyKey] = form[formKey].trim();
     policy.executor = executor;
   }
-  if (form.allowedTools.trim()) policy.allowed_tools = commaSeparatedValues(form.allowedTools);
+  if (form.allowedTools.trim()) {
+    const requestedTools = commaSeparatedValues(form.allowedTools);
+    const effectiveTools = accountAllowedTools ? requestedTools.filter((tool) => accountAllowedTools.includes(tool)) : requestedTools;
+    if (accountAllowedTools && !effectiveTools.length) throw new Error("媒体能力至少需要一个账号级工具。");
+    policy.allowed_tools = effectiveTools;
+  }
   const numericFields: Array<[keyof MediaAdapterForm, string]> = [["budgetCents", "budget_cents"], ["perShotBudgetCents", "per_shot_budget_cents"], ["totalBudgetCents", "total_budget_cents"], ["maxAttempts", "max_attempts"], ["maxConcurrency", "max_concurrency"], ["providerMaxConcurrency", "provider_max_concurrency"]];
   for (const [formKey, policyKey] of numericFields) {
     if (form[formKey].trim()) policy[policyKey] = Number(form[formKey]);
@@ -258,12 +263,14 @@ export function blueprintPolicyToForm(policy: Json): BlueprintFormValues {
   const value = objectValue(policy);
   const budgets = objectValue(value.budgets);
   const executors = objectValue(value.executors);
-  const enabledMediaAdapters = mediaAdapterKeys.filter((key) => value[key] !== undefined && value[key] !== null);
+  const accountAllowedTools = stringArray(value.allowed_tools).filter((tool) => visibleToolKeys.has(tool));
+  const fallbackMediaAdapterTools = accountAllowedTools.length ? accountAllowedTools : ["read", "write"];
+  const enabledMediaAdapters = configurableMediaAdapterKeys.filter((key) => value[key] !== undefined && value[key] !== null);
   return {
     positioning: stringValue(value.positioning),
     assetRoot: stringValue(value.asset_root),
     approvalGates: stringArray(value.approval_gates).length ? stringArray(value.approval_gates) : ["script", "visual", "storyboard", "qc", "publish"],
-    allowedTools: stringArray(value.allowed_tools).filter((tool) => visibleToolKeys.has(tool)).length ? stringArray(value.allowed_tools).filter((tool) => visibleToolKeys.has(tool)) : ["read", "write"],
+    allowedTools: fallbackMediaAdapterTools,
     enabledMediaAdapters,
     budgets: {
       scriptWritingCents: String(budgets.script_writing_cents ?? 0),
@@ -276,10 +283,10 @@ export function blueprintPolicyToForm(policy: Json): BlueprintFormValues {
       storyboard_planning: formExecutor(executors.storyboard_planning),
     },
     mediaAdapters: {
-      a_roll: formMediaAdapter(value.a_roll),
-      b_roll: formMediaAdapter(value.b_roll),
-      narration: formMediaAdapter(value.narration),
-      soundtrack: formMediaAdapter(value.soundtrack),
+      a_roll: formMediaAdapter(value.a_roll, [], false),
+      b_roll: formMediaAdapter(value.b_roll, fallbackMediaAdapterTools),
+      narration: formMediaAdapter(value.narration, fallbackMediaAdapterTools),
+      soundtrack: formMediaAdapter(value.soundtrack, [], false),
     },
     advancedJson: blueprintAdvancedJson(value),
   };
@@ -315,10 +322,16 @@ export function blueprintFormToPolicy(form: BlueprintFormValues): Json {
       }])),
     },
   };
-  const enabledMediaAdapters = form.enabledMediaAdapters ?? mediaAdapterKeys;
+  const enabledMediaAdapters = form.enabledMediaAdapters ?? configurableMediaAdapterKeys;
   for (const key of mediaAdapterKeys) {
-    if (!enabledMediaAdapters.includes(key)) continue;
-    if (mediaAdapterHasValues(form.mediaAdapters[key])) result[key] = mediaAdapterToPolicy(form.mediaAdapters[key], existingMediaAdapters[key]);
+    const isConfigurable = configurableMediaAdapterKeys.includes(key as ConfigurableMediaAdapterKey);
+    if (isConfigurable && !enabledMediaAdapters.includes(key as ConfigurableMediaAdapterKey)) continue;
+    const hasFormValues = mediaAdapterHasValues(form.mediaAdapters[key]);
+    const hasLegacyFields = !isConfigurable && Object.keys(existingMediaAdapters[key]).length > 0;
+    if (hasFormValues || hasLegacyFields) {
+      const accountAllowedTools = isConfigurable ? form.allowedTools.filter((tool) => visibleToolKeys.has(tool)) : undefined;
+      result[key] = hasFormValues ? mediaAdapterToPolicy(form.mediaAdapters[key], existingMediaAdapters[key], accountAllowedTools) : existingMediaAdapters[key];
+    }
   }
   return result as Json;
 }

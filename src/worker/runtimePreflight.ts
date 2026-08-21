@@ -23,10 +23,8 @@ export interface RuntimePreflightEnvironment {
 }
 
 const mediaCapabilities = [
-  { key: "a_roll", capability: "a_roll_generation" },
   { key: "b_roll", capability: "b_roll_generation" },
   { key: "narration", capability: "narration_generation" },
-  { key: "soundtrack", capability: "soundtrack_generation" },
 ] as const;
 
 const registeredAdapters = new Set([
@@ -52,7 +50,9 @@ export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, seriesRu
   ];
 
   for (const mediaCapability of mediaCapabilities) {
-    const configuredValue = series[mediaCapability.key] !== undefined && series[mediaCapability.key] !== null ? series[mediaCapability.key] : root[mediaCapability.key];
+    const blueprintValue = root[mediaCapability.key];
+    if (blueprintValue === undefined || blueprintValue === null) continue;
+    const configuredValue = series[mediaCapability.key] !== undefined && series[mediaCapability.key] !== null ? series[mediaCapability.key] : blueprintValue;
     if (configuredValue === undefined || configuredValue === null) continue;
     const config = record(configuredValue);
     const executor = record(config.executor);
@@ -179,5 +179,5 @@ function stringValue(value: unknown): string {
 }
 
 function requiredToolsForProvider(provider: string): string[] {
-  return provider === "google_tts" || provider === "pexels" || provider === "freesound" ? ["network", "write"] : ["read", "write"];
+  return provider === "freesound" ? ["network", "write"] : ["read", "write"];
 }

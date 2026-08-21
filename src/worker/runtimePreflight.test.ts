@@ -54,14 +54,36 @@ describe("runtime preflight", () => {
     ]));
   });
 
-  it("使用系列媒体规则覆盖蓝图媒体规则", () => {
+  it("忽略当前不可用的 A-roll 旧规则", () => {
     const capabilities = runtimeCapabilitiesFromBlueprintPolicy({
       a_roll: { executor: { provider: "codex", adapter: "codex", model: "blueprint-model", prompt_version: "blueprint-v1" }, allowed_tools: ["read", "write"] },
     }, {
       a_roll: { executor: { provider: "codex", adapter: "codex", model: "series-model", prompt_version: "series-v1" }, allowed_tools: ["read", "write"] },
     });
 
-    expect(capabilities.find((capability) => capability.capability === "a_roll_generation")).toMatchObject({ model: "series-model", promptVersion: "series-v1" });
+    expect(capabilities.some((capability) => capability.capability === "a_roll_generation")).toBe(false);
+  });
+
+  it("蓝图关闭时不被系列旧媒体规则重新启用", () => {
+    const capabilities = runtimeCapabilitiesFromBlueprintPolicy({}, {
+      b_roll: { executor: { provider: "pexels", adapter: "pexels_video", model: "series-model", prompt_version: "series-v1" } },
+      narration: { executor: { provider: "google_tts", adapter: "google_tts", model: "series-model", prompt_version: "series-v1" } },
+    });
+
+    expect(capabilities.some((capability) => capability.capability === "b_roll_generation" || capability.capability === "narration_generation")).toBe(false);
+  });
+
+  it("媒体适配器不要求向蓝图工具白名单暴露 network", () => {
+    const result = createRuntimePreflight([{
+      capability: "b_roll_generation",
+      provider: "pexels",
+      adapter: "pexels_video",
+      model: "pexels-video-v1",
+      promptVersion: "b-roll-v1",
+      allowedTools: ["read", "write"],
+    }]);
+
+    expect(result.checks).toContainEqual(expect.objectContaining({ capability: "b_roll_generation", check: "tool_permission", status: "passed" }));
   });
 
   it("不把未注册的 provider 当作可用运行路径", () => {
