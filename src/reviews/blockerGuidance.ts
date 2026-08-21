@@ -44,7 +44,86 @@ function specializedMediaUnavailableGuidance(blocker: Pick<WorkerBlocker, "detai
   };
 }
 
-function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "action">): WorkerBlockerGuidance | undefined {
+function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "action" | "check" | "status">): WorkerBlockerGuidance | undefined {
+  if (blocker.check === "capability_registration") {
+    return {
+      title: "Worker 能力未注册",
+      summary: "当前 Worker 没有注册这个能力的执行器，蓝图字段不能替代 Worker 接入。",
+      resolution: ["确认 Worker 版本已安装并注册当前 Provider / Adapter。", "确认 Worker 使用的是当前运行环境，而不是另一台未更新的机器。", "能力注册完成后，重新执行当前任务。"],
+      retryLabel: "能力注册后重试当前任务",
+      location: "系统能力 / Worker 适配器",
+      locationNote: "当前页面没有可修改的环境入口。",
+      technicalDetail: blocker.detail,
+    };
+  }
+  if (blocker.check === "credential_presence") {
+    return {
+      title: "Worker 凭据缺失",
+      summary: "Worker 环境没有发现当前 Provider 所需的凭据，蓝图不会保存或显示密钥。",
+      resolution: ["在运行 Worker 的机器上配置对应 Provider 的凭据环境变量。", "重启或刷新 Worker，使它重新读取环境变量。", "凭据出现后，重新执行当前任务。"],
+      retryLabel: "配置凭据后重试当前任务",
+      location: "Worker 运行环境 / Provider 凭据",
+      locationNote: "当前页面没有可修改的凭据入口。",
+      technicalDetail: blocker.detail,
+    };
+  }
+  if (blocker.check === "credential_validity") {
+    return {
+      title: "Worker 凭据无效",
+      summary: "Provider 已收到 Worker 请求，但拒绝了当前凭据。",
+      resolution: ["在 Worker 环境中更新或更换对应 Provider 凭据。", "确认凭据属于正确的供应商账户，并具备当前能力权限。", "更新后重新执行当前任务。"],
+      retryLabel: "更新凭据后重试当前任务",
+      location: "Worker 运行环境 / Provider 凭据",
+      locationNote: "当前页面不会展示或编辑秘密。",
+      technicalDetail: blocker.detail,
+    };
+  }
+  if (blocker.check === "model_permission") {
+    const retry = blocker.status === "retryable" || blocker.action === "retry";
+    return {
+      title: retry ? "模型权限探测暂时失败" : "模型权限不可用",
+      summary: retry ? "Worker 尚未完成真实模型权限探测，当前网络或模型服务暂时没有返回结果。" : "Worker 已执行真实模型权限探测，但当前模型或账户没有可用权限。",
+      resolution: retry ? ["确认模型服务网络恢复。", "等待 Worker 完成模型权限探测。", "探测恢复后重新执行当前任务。"] : ["确认 Worker 使用的模型名称与供应商账户授权一致。", "在 Worker 运行环境或供应商账户中补齐模型访问权限。", "权限恢复后重新执行当前任务。"],
+      retryLabel: retry ? "模型服务恢复后重试当前任务" : "模型权限恢复后重试当前任务",
+      location: "Worker 运行环境 / 模型账户",
+      locationNote: "当前页面没有可修改的模型账户入口。",
+      technicalDetail: blocker.detail,
+    };
+  }
+  if (blocker.check === "network_connectivity" || blocker.check === "network_request" || blocker.check === "connection") {
+    const retry = blocker.action === "retry";
+    return {
+      title: retry ? "网络连接暂时失败" : "Worker 网络不可用",
+      summary: "Worker 已执行真实网络探测，但当前网络或供应商连接未通过。",
+      resolution: ["确认运行 Worker 的机器可以访问对应供应商服务。", "检查代理、防火墙、DNS 和供应商服务状态。", "网络恢复后重新执行当前任务。"],
+      retryLabel: retry ? "网络恢复后重试当前任务" : "网络恢复后重试当前任务",
+      location: "Worker 运行环境 / 网络连接",
+      locationNote: "当前页面没有可修改的网络入口。",
+      technicalDetail: blocker.detail,
+    };
+  }
+  if (blocker.check === "asset_root" || blocker.check === "media_library") {
+    return {
+      title: "资产目录不可用",
+      summary: "Worker 无法访问或写入当前账号的资产目录，生产不能安全继续。",
+      resolution: ["确认 asset_root 位于已挂载的媒体库内，并且路径使用绝对路径。", "确认运行 Worker 的账号对该目录有读写权限且剩余空间足够。", "目录恢复后重新执行当前任务。"],
+      retryLabel: "目录恢复后重试当前任务",
+      location: "Worker 运行环境 / 资产目录",
+      locationNote: "当前页面不能替代本机挂载和文件权限配置。",
+      technicalDetail: blocker.detail,
+    };
+  }
+  if (blocker.check === "command_availability") {
+    return {
+      title: "Worker 命令不可用",
+      summary: "Worker 已注册执行路径，但本机找不到或无法调用所需命令。",
+      resolution: ["确认命令已安装，并且 Worker 进程的 PATH 可以找到它。", "确认命令版本与当前 Worker 适配器兼容。", "命令恢复后重新执行当前任务。"],
+      retryLabel: "命令恢复后重试当前任务",
+      location: "Worker 运行环境 / 命令依赖",
+      locationNote: "当前页面没有可修改的命令入口。",
+      technicalDetail: blocker.detail,
+    };
+  }
   if (blocker.action === "retry") {
     return {
       title: "Worker 外部依赖暂时失败",
@@ -82,7 +161,7 @@ function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "ac
   return undefined;
 }
 
-export function workerBlockerGuidance(blocker: Pick<WorkerBlocker, "code" | "detail" | "action">): WorkerBlockerGuidance {
+export function workerBlockerGuidance(blocker: Pick<WorkerBlocker, "code" | "detail" | "action" | "check" | "status">): WorkerBlockerGuidance {
   const structured = structuredPreflightGuidance(blocker);
   if (structured) return structured;
   const normalized = `${blocker.code} ${blocker.detail}`.toLowerCase();

@@ -69,7 +69,7 @@ export async function runCodexWorker(dependencies: CodexWorkerDependencies): Pro
   } catch (error) {
     const check: WorkerPreflightCheck = {
       capability: taskPackage.capability,
-      check: "media_library",
+      check: "asset_root",
       phase: "preflight",
       status: "unavailable",
       reason: errorMessage(error),
@@ -99,7 +99,10 @@ export async function runCodexWorker(dependencies: CodexWorkerDependencies): Pro
     await dependencies.reportResult(task.taskId, task.attempt, result);
     return { status: result.status, taskId: task.taskId };
   } catch (error) {
-    await dependencies.reportResult(task.taskId, task.attempt, addPreflight(createFailedResult(taskPackage, dependencies.actualCostCents, error), preflight));
+    const executionCheck = executionPreflightCheck(taskPackage, error);
+    const result = createFailedResult(taskPackage, dependencies.actualCostCents, error);
+    if (executionCheck) result.blockers = [preflightBlocker(executionCheck)];
+    await dependencies.reportResult(task.taskId, task.attempt, addPreflight(result, executionCheck ? appendPreflight(preflight, executionCheck) : preflight));
     return { status: "failed", taskId: task.taskId };
   }
 }
@@ -502,6 +505,44 @@ function createFailedResult(taskPackage: WorkerTaskPackage, actualCostCents: num
     },
     nextStep: "Retry only after the reported failure is understood.",
   };
+}
+
+function executionPreflightCheck(taskPackage: WorkerTaskPackage, error: unknown): WorkerPreflightCheck | undefined {
+  const detail = errorMessage(error);
+  if (taskPackage.provider === "codex" && /model|permission|access denied|does not have access|not allowed|not supported|unauthorized|forbidden|模型|权限|无权|未授权|不支持/i.test(detail)) {
+    return {
+      capability: taskPackage.capability,
+      check: "model_permission",
+      phase: "execution",
+      status: "unavailable",
+      reason: detail,
+      action: "contact_environment_admin",
+      scope: "worker",
+    };
+  }
+  if (/api[ _-]?key|credential|token|401|403|凭据|密钥|令牌/i.test(detail)) {
+    return {
+      capability: taskPackage.capability,
+      check: "credential_validity",
+      phase: "execution",
+      status: "unavailable",
+      reason: detail,
+      action: "contact_environment_admin",
+      scope: "worker",
+    };
+  }
+  if (/fetch failed|network|timeout|timed out|econnreset|econnrefused|etimedout|socket|dns|connection|连接|网络|超时/i.test(detail)) {
+    return {
+      capability: taskPackage.capability,
+      check: "network_connectivity",
+      phase: "execution",
+      status: "retryable",
+      reason: detail,
+      action: "retry",
+      scope: "worker",
+    };
+  }
+  return undefined;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

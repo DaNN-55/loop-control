@@ -427,7 +427,7 @@ describe("审核台", () => {
     render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={readyEpisode} productionPreflight={{ version: "worker-preflight/v1", checks: [{ capability: "worker_runtime", check: "media_library", phase: "preflight", status: "unavailable", reason: "媒体库未挂载。", action: "contact_environment_admin", scope: "worker" }] }} isStartProductionPending={false} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
     expect(screen.getByText("生产前运行态检查：未通过（1）")).toBeTruthy();
-    expect(screen.getByText("Worker 运行环境暂不可用")).toBeTruthy();
+    expect(screen.getByText("资产目录不可用")).toBeTruthy();
     expect(screen.getByText("媒体库未挂载。")).toBeTruthy();
   });
 

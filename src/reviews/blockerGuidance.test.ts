@@ -70,11 +70,25 @@ describe("Worker 阻塞项指导", () => {
   });
 
   it("尊重结构化 preflight 的重试动作", () => {
-    const guidance = workerBlockerGuidance({ code: "network_request", detail: "供应商连接暂时失败。", action: "retry" });
+    const guidance = workerBlockerGuidance({ code: "network_request", check: "network_connectivity", detail: "供应商连接暂时失败。", action: "retry" });
 
-    expect(guidance.title).toBe("Worker 外部依赖暂时失败");
-    expect(guidance.retryLabel).toBe("重试当前任务");
+    expect(guidance.title).toBe("网络连接暂时失败");
+    expect(guidance.retryLabel).toBe("网络恢复后重试当前任务");
     expect(guidance.primaryAction).toBeUndefined();
+  });
+
+  it.each([
+    ["capability_registration", "Worker 能力未注册"],
+    ["credential_presence", "Worker 凭据缺失"],
+    ["credential_validity", "Worker 凭据无效"],
+    ["model_permission", "模型权限不可用"],
+    ["asset_root", "资产目录不可用"],
+  ] as const)("按结构化检查码显示 %s", (check, title) => {
+    expect(workerBlockerGuidance({ code: check, check, detail: "机器检查详情", action: "contact_environment_admin" }).title).toBe(title);
+  });
+
+  it("不把网络导致的模型探测未完成误报为权限已拒绝", () => {
+    expect(workerBlockerGuidance({ code: "model_permission", check: "model_permission", detail: "模型权限探测未完成：网络超时。", status: "retryable", action: "retry" }).title).toBe("模型权限探测暂时失败");
   });
 
   it("未知 code 也给出明确的人工处理路径，并保留技术原因", () => {

@@ -5,11 +5,13 @@ import { execFile } from "node:child_process";
 import { createHash } from "node:crypto";
 import { createReadStream, promises as fs, readFileSync } from "node:fs";
 import { basename, extname, isAbsolute, join, parse, relative, resolve } from "node:path";
+import { tmpdir } from "node:os";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { promisify } from "node:util";
 import { loadEnv, type Plugin } from "vite";
 import { verifyMediaLibrary } from "./src/worker/mediaLibrary";
 import { createRuntimePreflight, runtimeCapabilitiesFromBlueprintPolicy, runtimeCommandArguments } from "./src/worker/runtimePreflight";
+import { probeCodexModel, probeProviderConnection } from "./src/worker/runtimeProbes";
 
 const localArtifactRoute = "/_local-artifact";
 const localEpisodeDirectoryRoute = "/_local-episode-directory";
@@ -947,8 +949,31 @@ async function runtimePreflightForPolicy(policy: unknown, seriesRules: unknown, 
   const commands = Object.fromEntries(commandEntries.map(([command, status]) => [command, { available: status.state === "healthy", detail: status.detail }]));
   const credentialNames = [...new Set(capabilities.map((capability) => capability.credential).filter((credential): credential is string => Boolean(credential)))];
   const credentials = Object.fromEntries(credentialNames.map((credential) => [credential, Boolean(localWorkerEnvironmentValue(credential))]));
+  const modelEntries = await Promise.all([...new Set(capabilities.filter((capability) => capability.provider === "codex" && capability.model && commands.codex?.available).map((capability) => capability.model as string))].map(async (model) => {
+    const probe = await probeCodexModel(model, async (command, argumentsList, options) => {
+      const result = await execFileAsync(command, argumentsList, { timeout: options?.timeoutMs, maxBuffer: 64 * 1024 });
+      return { stdout: String(result.stdout), stderr: String(result.stderr) };
+    }, tmpdir());
+    return [model, probe] as const;
+  }));
+  const providerEntries = await Promise.all([...new Set(capabilities.filter((capability) => capability.credential).map((capability) => capability.provider))].map(async (provider) => {
+    const credential = capabilities.find((capability) => capability.provider === provider)?.credential;
+    const apiKey = credential ? localWorkerEnvironmentValue(credential) : undefined;
+    if (!apiKey) return null;
+    return { provider, credential, probe: await probeProviderConnection(provider, apiKey) };
+  }));
+  const modelPermissions = Object.fromEntries(modelEntries.map(([model, probe]) => [model, probe.modelPermission]));
+  const connections = Object.fromEntries(providerEntries.filter((entry): entry is NonNullable<typeof entry> => Boolean(entry)).map((entry) => [entry.provider, entry.probe.connection]));
+  const credentialValidity = Object.fromEntries(providerEntries.filter((entry): entry is NonNullable<typeof entry> => Boolean(entry?.probe.credentialValidity)).map((entry) => [entry.credential, entry.probe.credentialValidity]));
   const assetRoot = await workerMediaLibraryStatus(policy, checkAssetRoot);
-  return createRuntimePreflight(capabilities, { commands, credentials, ...(checkAssetRoot ? { assetRoot } : { mediaLibrary: assetRoot }) });
+  return createRuntimePreflight(capabilities, {
+    commands,
+    credentials,
+    ...(Object.keys(modelPermissions).length ? { modelPermissions } : {}),
+    ...(Object.keys(connections).length ? { connections } : {}),
+    ...(Object.keys(credentialValidity).length ? { credentialValidity } : {}),
+    ...(checkAssetRoot ? { assetRoot } : { mediaLibrary: assetRoot }),
+  });
 }
 
 function isTransientPreflightError(error: unknown): boolean {

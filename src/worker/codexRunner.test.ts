@@ -291,8 +291,8 @@ describe("本地 Codex Worker runner", () => {
     expect(execute).not.toHaveBeenCalled();
     expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({
       status: "blocked",
-      preflight: expect.objectContaining({ checks: [expect.objectContaining({ check: "media_library", action: "contact_environment_admin" })] }),
-      blockers: [expect.objectContaining({ code: "asset_root_unavailable", check: "media_library", action: "contact_environment_admin" })],
+      preflight: expect.objectContaining({ checks: [expect.objectContaining({ check: "asset_root", action: "contact_environment_admin" })] }),
+      blockers: [expect.objectContaining({ code: "asset_root_unavailable", check: "asset_root", action: "contact_environment_admin" })],
     }));
   });
 
@@ -409,5 +409,29 @@ describe("本地 Codex Worker runner", () => {
 
     await expect(runCodexWorker({ claimNextTask: async () => claimedTask, reportResult, execute: async () => { throw new Error("temporary provider failure"); }, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 })).resolves.toEqual({ status: "failed", taskId: "task-1" });
     expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({ status: "failed", retry: { shouldRetry: true, reason: "temporary provider failure" } }));
+  });
+
+  it("真实网络失败回写 execution 阶段网络检查", async () => {
+    const reportResult = vi.fn().mockResolvedValue(undefined);
+
+    await expect(runCodexWorker({ claimNextTask: async () => claimedTask, reportResult, execute: async () => { throw new Error("供应商网络连接超时"); }, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 })).resolves.toEqual({ status: "failed", taskId: "task-1" });
+
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({
+      status: "failed",
+      preflight: expect.objectContaining({ checks: [expect.objectContaining({ check: "network_connectivity", phase: "execution", status: "retryable", action: "retry" })] }),
+      blockers: [expect.objectContaining({ check: "network_connectivity", status: "retryable", action: "retry" })],
+    }));
+  });
+
+  it("真实模型权限失败回写 execution 阶段模型权限检查", async () => {
+    const reportResult = vi.fn().mockResolvedValue(undefined);
+
+    await expect(runCodexWorker({ claimNextTask: async () => claimedTask, reportResult, execute: async () => { throw new Error("模型没有权限访问当前模型"); }, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 })).resolves.toEqual({ status: "failed", taskId: "task-1" });
+
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({
+      status: "failed",
+      preflight: expect.objectContaining({ checks: [expect.objectContaining({ check: "model_permission", phase: "execution", status: "unavailable", action: "contact_environment_admin" })] }),
+      blockers: [expect.objectContaining({ check: "model_permission", status: "unavailable", action: "contact_environment_admin" })],
+    }));
   });
 });

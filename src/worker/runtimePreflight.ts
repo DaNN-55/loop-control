@@ -1,4 +1,4 @@
-import type { WorkerTaskPackage, WorkerPreflightResult } from "./contracts.js";
+import type { WorkerPreflightCheck, WorkerPreflightResult, WorkerPreflightStatus, WorkerTaskPackage } from "./contracts.js";
 
 export interface RuntimeCapability {
   capability: string;
@@ -14,13 +14,17 @@ export interface RuntimeCapability {
 export interface RuntimeDependencyStatus {
   available: boolean;
   detail: string;
+  status?: "retryable" | "unavailable";
 }
 
 export interface RuntimePreflightEnvironment {
   assetRoot?: RuntimeDependencyStatus;
   credentials?: Record<string, boolean>;
+  credentialValidity?: Record<string, RuntimeDependencyStatus>;
   commands?: Record<string, RuntimeDependencyStatus>;
+  connections?: Record<string, RuntimeDependencyStatus>;
   mediaLibrary?: RuntimeDependencyStatus;
+  modelPermissions?: Record<string, RuntimeDependencyStatus>;
 }
 
 const mediaCapabilities = [
@@ -120,16 +124,28 @@ export function createRuntimePreflight(capabilities: RuntimeCapability[], enviro
 
     if (capability.command && environment.commands && Object.prototype.hasOwnProperty.call(environment.commands, capability.command)) {
       const commandStatus = environment.commands[capability.command];
-      checks.push({ capability: capability.capability, check: "command_availability", phase: "preflight", status: commandStatus.available ? "passed" : "unavailable", reason: commandStatus.detail, action: commandStatus.available ? "none" : "contact_environment_admin", scope: "worker" });
+      checks.push(dependencyCheck(capability.capability, "command_availability", commandStatus));
+    }
+
+    if (capability.model && environment.modelPermissions && Object.prototype.hasOwnProperty.call(environment.modelPermissions, capability.model)) {
+      checks.push(dependencyCheck(capability.capability, "model_permission", environment.modelPermissions[capability.model]));
+    }
+
+    if (environment.connections && Object.prototype.hasOwnProperty.call(environment.connections, capability.provider)) {
+      checks.push(dependencyCheck(capability.capability, "network_connectivity", environment.connections[capability.provider]));
+    }
+
+    if (capability.credential && environment.credentialValidity && Object.prototype.hasOwnProperty.call(environment.credentialValidity, capability.credential)) {
+      checks.push(dependencyCheck(capability.capability, "credential_validity", environment.credentialValidity[capability.credential]));
     }
   }
 
   if (environment.assetRoot) {
-    checks.push({ capability: "worker_runtime", check: "asset_root", phase: "preflight", status: environment.assetRoot.available ? "passed" : "unavailable", reason: environment.assetRoot.detail, action: environment.assetRoot.available ? "none" : "contact_environment_admin", scope: "worker" });
+    checks.push(dependencyCheck("worker_runtime", "asset_root", environment.assetRoot));
   }
 
   if (environment.mediaLibrary) {
-    checks.push({ capability: "worker_runtime", check: "media_library", phase: "preflight", status: environment.mediaLibrary.available ? "passed" : "unavailable", reason: environment.mediaLibrary.detail, action: environment.mediaLibrary.available ? "none" : "contact_environment_admin", scope: "worker" });
+    checks.push(dependencyCheck("worker_runtime", "media_library", environment.mediaLibrary));
   }
 
   return { version: "worker-preflight/v1", checks };
@@ -185,4 +201,17 @@ function stringValue(value: unknown): string {
 
 function requiredToolsForProvider(provider: string): string[] {
   return provider === "freesound" ? ["network", "write"] : ["read", "write"];
+}
+
+function dependencyCheck(capability: string, check: string, dependency: RuntimeDependencyStatus): WorkerPreflightCheck {
+  const status: WorkerPreflightStatus = dependency.available ? "passed" : dependency.status ?? "unavailable";
+  return {
+    capability,
+    check,
+    phase: "preflight" as const,
+    status,
+    reason: dependency.detail,
+    action: dependency.available ? "none" as const : status === "retryable" ? "retry" as const : "contact_environment_admin" as const,
+    scope: "worker" as const,
+  };
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { blockersFromResult } from "./reviewSelectors";
+import { blockersFromResult, workerBlockers } from "./reviewSelectors";
 
 describe("blockersFromResult", () => {
   it("从结构化 preflight 结果提取未通过检查", () => {
@@ -27,5 +27,25 @@ describe("blockersFromResult", () => {
       action: "contact_environment_admin",
       scope: "worker",
     }]);
+  });
+
+  it("把带结构化执行失败的 failed 任务也呈现为 Worker 阻塞项", () => {
+    expect(workerBlockers([{
+      id: "task-1",
+      episode_id: "episode-1",
+      task_type: "generate_script",
+      status: "failed",
+      last_result: {
+        blockers: [{
+          code: "network_connectivity",
+          detail: "模型服务网络探测失败。",
+          check: "network_connectivity",
+          phase: "execution",
+          status: "retryable",
+          action: "retry",
+          scope: "worker",
+        }],
+      },
+    }], "episode-1")).toEqual([expect.objectContaining({ code: "network_connectivity", taskId: "task-1" })]);
   });
 });

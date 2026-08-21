@@ -60,6 +60,42 @@ describe("runtime preflight", () => {
     expect(result.checks).toContainEqual(expect.objectContaining({ capability: "worker_runtime", check: "asset_root", status: "unavailable", action: "contact_environment_admin" }));
   });
 
+  it("保留真实模型权限和网络探测的独立结果", () => {
+    const result = createRuntimePreflight([{
+      capability: "script_writing",
+      provider: "codex",
+      model: "gpt-5.6-codex",
+      promptVersion: "script-v1",
+      allowedTools: ["read", "write"],
+    }], {
+      modelPermissions: { "gpt-5.6-codex": { available: false, status: "unavailable", detail: "模型账户无权访问。" } },
+      connections: { codex: { available: false, status: "retryable", detail: "模型服务连接超时。" } },
+    });
+
+    expect(result.checks).toEqual(expect.arrayContaining([
+      expect.objectContaining({ check: "model_permission", status: "unavailable", action: "contact_environment_admin" }),
+      expect.objectContaining({ check: "network_connectivity", status: "retryable", action: "retry" }),
+    ]));
+  });
+
+  it("区分凭据存在和凭据有效性", () => {
+    const result = createRuntimePreflight([{
+      capability: "narration_generation",
+      provider: "google_tts",
+      adapter: "google_tts",
+      model: "standard",
+      promptVersion: "narration-v1",
+      allowedTools: ["read", "write"],
+      credential: "GOOGLE_TTS_API_KEY",
+    }], {
+      credentials: { GOOGLE_TTS_API_KEY: true },
+      credentialValidity: { GOOGLE_TTS_API_KEY: { available: false, detail: "Google TTS 拒绝凭据。" } },
+    });
+
+    expect(result.checks).toContainEqual(expect.objectContaining({ check: "credential_presence", status: "passed" }));
+    expect(result.checks).toContainEqual(expect.objectContaining({ check: "credential_validity", status: "unavailable", action: "contact_environment_admin" }));
+  });
+
   it("忽略当前不可用的 A-roll 旧规则", () => {
     const capabilities = runtimeCapabilitiesFromBlueprintPolicy({
       a_roll: { executor: { provider: "codex", adapter: "codex", model: "blueprint-model", prompt_version: "blueprint-v1" }, allowed_tools: ["read", "write"] },

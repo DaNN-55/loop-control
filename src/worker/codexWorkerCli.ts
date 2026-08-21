@@ -19,6 +19,7 @@ import { executeHyperframesReviewRender } from "./hyperframesReviewRenderer.js";
 import { executeHyperframesFinalRender } from "./hyperframesFinalRenderer.js";
 import { readTaskIdArgument } from "./taskClaimArguments.js";
 import { createRuntimePreflight, credentialEnvironmentForProvider, runtimeCapabilityFromTask, runtimeCommandArguments, runtimeCommandForProvider } from "./runtimePreflight.js";
+import { probeCodexModel, probeProviderConnection } from "./runtimeProbes.js";
 
 const supabaseUrl = requiredEnvironment("SUPABASE_URL");
 const serviceRoleKey = requiredEnvironment("SUPABASE_SERVICE_ROLE_KEY");
@@ -84,12 +85,21 @@ async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
 }
 
 async function preflightTask(taskPackage: WorkerTaskPackage): Promise<WorkerPreflightResult> {
+  const capability = runtimeCapabilityFromTask(taskPackage);
   const credential = credentialEnvironmentForProvider(taskPackage.provider);
   const command = runtimeCommandForProvider(taskPackage.provider);
-  const commands = command ? { [command]: await workerCommandStatus(command) } : undefined;
-  return createRuntimePreflight([runtimeCapabilityFromTask(taskPackage)], {
+  const commandStatus = command ? await workerCommandStatus(command) : undefined;
+  const commands = command && commandStatus ? { [command]: commandStatus } : undefined;
+  const modelProbe = taskPackage.provider === "codex" && commandStatus?.available
+    ? await probeCodexModel(taskPackage.model, (probeCommand, argumentsList, options) => runCommandWithOutput(probeCommand, argumentsList, options?.timeoutMs), tmpdir())
+    : undefined;
+  const apiKey = credential ? process.env[credential]?.trim() : undefined;
+  const providerProbe = apiKey && taskPackage.provider !== "codex" ? await probeProviderConnection(taskPackage.provider, apiKey) : undefined;
+  return createRuntimePreflight([capability], {
     credentials: credential ? { [credential]: Boolean(process.env[credential]?.trim()) } : undefined,
     commands,
+    ...(modelProbe ? { modelPermissions: { [taskPackage.model]: modelProbe.modelPermission }, connections: { [taskPackage.provider]: modelProbe.connection } } : {}),
+    ...(providerProbe ? { connections: { [taskPackage.provider]: providerProbe.connection }, ...(providerProbe.credentialValidity && credential ? { credentialValidity: { [credential]: providerProbe.credentialValidity } } : {}) } : {}),
   });
 }
 
@@ -216,15 +226,30 @@ function runCommand(command: string, argumentsList: string[]): Promise<void> {
   return runCommandWithOutput(command, argumentsList).then(() => undefined);
 }
 
-function runCommandWithOutput(command: string, argumentsList: string[]): Promise<{ stdout: string; stderr: string }> {
+function runCommandWithOutput(command: string, argumentsList: string[], timeoutMs?: number): Promise<{ stdout: string; stderr: string }> {
   return new Promise((resolve, reject) => {
     const child = spawn(command, argumentsList, { stdio: ["ignore", "pipe", "pipe"] });
     let stdout = "";
     let stderr = "";
+    let settled = false;
+    const timeout = timeoutMs ? setTimeout(() => {
+      child.kill("SIGTERM");
+      if (settled) return;
+      settled = true;
+      reject(new Error(`${command} 执行超时。`));
+    }, timeoutMs) : undefined;
     child.stdout.on("data", (chunk: Buffer) => { stdout += chunk.toString(); });
     child.stderr.on("data", (chunk: Buffer) => { stderr += chunk.toString(); });
-    child.once("error", reject);
+    child.once("error", (error) => {
+      if (settled) return;
+      settled = true;
+      if (timeout) clearTimeout(timeout);
+      reject(error);
+    });
     child.once("close", (code) => {
+      if (settled) return;
+      settled = true;
+      if (timeout) clearTimeout(timeout);
       if (code === 0) resolve({ stdout, stderr });
       else reject(new Error(stderr.trim() || `Codex exited with status ${code ?? "unknown"}.`));
     });
