@@ -317,6 +317,7 @@ body { min-width: 0; }
 .configuration-summary > div { align-items: baseline; display: grid; gap: 10px; grid-template-columns: 75px minmax(0, 1fr); }
 .configuration-summary dt { color: #778191; font-size: 10px; font-weight: 800; }
 .configuration-summary dd { color: #354050; font-size: 12px; margin: 0; overflow-wrap: anywhere; }
+.technical-runtime-status ul { display: grid; gap: 8px; list-style: none; margin: 0; padding: 0; }.technical-runtime-status li { background: #f8fafc; border: 1px solid #e1e6ee; border-radius: 6px; display: grid; gap: 4px; padding: 9px 10px; }.technical-runtime-status li strong { color: #354050; font-size: 11px; }.technical-runtime-status li span { color: #697386; font-size: 10px; line-height: 1.45; }
 .blueprint-summary-grid { gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .blueprint-summary-grid > div { background: #f8fafc; border: 1px solid #e1e6ee; border-radius: 6px; display: grid; gap: 6px; grid-template-columns: 1fr; padding: 11px 12px; }
 .blueprint-summary-grid > .blueprint-summary-wide { grid-column: 1 / -1; }
@@ -341,7 +342,7 @@ body { min-width: 0; }
 .app-shell[data-theme="dark"] .media-adapter-status { background: #242a34; border-color: #414b5c; color: #aab7c8; }
 .app-shell[data-theme="dark"] .media-adapter-card.is-incomplete .media-adapter-status { background: #3a301b; border-color: #806a32; color: #f2d27e; }
 .app-shell[data-theme="dark"] .media-adapter-card.is-configured .media-adapter-status { background: #1d3527; border-color: #37684c; color: #a8e0bb; }
-.app-shell[data-theme="dark"] .configuration-summary dt { color: #9aa7ba; }
+.app-shell[data-theme="dark"] .configuration-summary dt { color: #9aa7ba; }.app-shell[data-theme="dark"] .technical-runtime-status li { background: #171c25; border-color: #344052; }.app-shell[data-theme="dark"] .technical-runtime-status li strong { color: #e3eaf5; }.app-shell[data-theme="dark"] .technical-runtime-status li span { color: #aab5c5; }
 .app-shell[data-theme="dark"] .blueprint-summary-grid > div { background: #171c25; border-color: #344052; }.app-shell[data-theme="dark"] .summary-chip { background: #1c3151; border-color: #355781; color: #b9d4ff; }.app-shell[data-theme="dark"] .summary-empty { color: #aab7c8; }
 .app-shell[data-theme="dark"] .advanced-configuration pre { background: #10151d; border-color: #394250; color: #dce5f2; }
 @media (max-width: 900px) { .executor-grid, .media-adapter-grid, .capability-grid { grid-template-columns: 1fr; } }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import type { Database, Json } from "../lib/database.types";
 import { HelpTip } from "../ui/HelpTip";
+import type { LocalSystemStatusReport, SystemState } from "../observability/SystemStatusPanel";
 import {
   blueprintFormToPolicy,
   blueprintPolicyToForm,
@@ -156,11 +157,48 @@ function ReadOnlyAdvancedRules({ source }: { source: string }) {
   return <fieldset><legend>其他规则</legend><dl className="configuration-summary blueprint-summary-grid">{entries.map(([key, value]) => <div key={key}><dt>{key.replaceAll("_", " ")}</dt><dd>{readableRuleValue(value)}</dd></div>)}</dl><FieldHint>未单独做成字段的规则也会在这里按键值显示，不使用原始 JSON。</FieldHint></fieldset>;
 }
 
-export function BlueprintEffectiveSummary({ policy, version, onEditTechnical }: { policy: Json; version?: number; onEditTechnical?: () => void }) {
+function systemStateLabel(state: SystemState): string {
+  return state === "healthy" ? "正常" : state === "attention" ? "需处理" : state === "offline" ? "不可用" : "待确认";
+}
+
+function runtimeDependencyItems(report: LocalSystemStatusReport | null): Array<{ detail: string; name: string; state: SystemState }> {
+  if (!report) return [];
+  return [
+    { detail: report.mediaLibrary.detail, name: "媒体库", state: report.mediaLibrary.state },
+    { detail: report.n8n.detail, name: "n8n 编排", state: report.n8n.state },
+    ...report.dependencies,
+  ];
+}
+
+function RuntimeDependencyStatus({ report }: { report: LocalSystemStatusReport | null }) {
+  const items = runtimeDependencyItems(report);
+  return <fieldset className="technical-runtime-status"><legend>依赖状态</legend>{items.length ? <ul>{items.map((item) => <li key={item.name}><strong>{item.name} · {systemStateLabel(item.state)}</strong><span>{item.detail}</span></li>)}</ul> : <p className="summary-empty">尚未读取本地依赖报告；保存的只是配置声明。</p>}<FieldHint>这里复用本地系统状态报告；Worker 注册、凭据、模型权限和实际供应商接受仍在生产前检查。</FieldHint></fieldset>;
+}
+
+function mediaAdapterPreview(key: MediaAdapterKey, form: MediaAdapterForm): string {
+  const details = [
+    form.provider && `${form.provider}/${form.adapter}/${form.model}/${form.promptVersion}`,
+    form.allowedTools && `工具 ${form.allowedTools}`,
+    form.budgetCents && `预算 ${form.budgetCents} 分`,
+    form.perShotBudgetCents && `单镜头 ${form.perShotBudgetCents} 分`,
+    form.totalBudgetCents && `总预算 ${form.totalBudgetCents} 分`,
+    form.maxAttempts && `尝试 ${form.maxAttempts}`,
+    form.maxConcurrency && `并发 ${form.maxConcurrency}`,
+    form.providerMaxConcurrency && `供应商并发 ${form.providerMaxConcurrency}`,
+    form.voiceLanguageCode && `语言 ${form.voiceLanguageCode}`,
+    form.voiceName && `声音 ${form.voiceName}`,
+    form.voiceSpeakingRate && `语速 ${form.voiceSpeakingRate}`,
+  ].filter(Boolean);
+  return `${mediaAdapterLabels[key]} · ${details.join(" · ") || "未配置"}`;
+}
+
+export function BlueprintEffectiveSummary({ policy, systemStatus = null, version, onEditTechnical }: { policy: Json; systemStatus?: LocalSystemStatusReport | null; version?: number; onEditTechnical?: () => void }) {
   const form = blueprintPolicyToForm(policy);
   const enabledMediaAdapters = form.enabledMediaAdapters ?? [];
   const mediaConfigurationReady = enabledMediaAdapters.every((key) => mediaAdapterStatus(key, form.mediaAdapters[key]) === "已配置");
-  const productionStatus = form.assetRoot.trim() && mediaConfigurationReady ? "配置声明已保存，待 Worker 生产前检查" : "配置待补齐，生产前检查会阻塞";
+  const dependencyItems = runtimeDependencyItems(systemStatus);
+  const dependencyStatus = !systemStatus ? "依赖状态待确认" : dependencyItems.some((item) => item.state === "attention" || item.state === "offline") ? "依赖需处理" : dependencyItems.some((item) => item.state === "unknown") ? "依赖状态待确认" : "依赖状态正常";
+  const productionStatus = form.assetRoot.trim() && mediaConfigurationReady ? `${dependencyStatus}；仍需 Worker 生产前检查` : "配置待补齐，生产前检查会阻塞";
   return <section aria-labelledby="effective-config-heading" className="effective-config-summary">
     <header><div><span className="effective-config-eyebrow">生产配置摘要</span><h2 id="effective-config-heading">当前有效配置</h2><p>蓝图 v{version ?? "—"} · 配置声明已保存；Worker 注册、凭据、网络和模型权限仍需生产前检查。</p></div>{onEditTechnical ? <button className="button button-secondary button-small" onClick={onEditTechnical} type="button">编辑技术配置</button> : null}</header>
     <dl className="configuration-summary blueprint-summary-grid">
@@ -169,7 +207,8 @@ export function BlueprintEffectiveSummary({ policy, version, onEditTechnical }: 
       <div><dt>资产目录</dt><dd>{form.assetRoot || "未配置，生产前检查会阻塞"}</dd></div>
       <div><dt>生产能力</dt><dd>{enabledMediaAdapters.length ? <div className="summary-chip-list">{enabledMediaAdapters.map((key) => <span className="summary-chip" key={key}>{mediaAdapterLabels[key]} · {mediaAdapterStatus(key, form.mediaAdapters[key])}</span>)}</div> : <span className="summary-empty">暂未启用可选媒体能力</span>}</dd></div>
       <div className="blueprint-summary-wide"><dt>核心执行器</dt><dd><div className="summary-chip-list">{Object.entries(form.executors).map(([key, executor]) => <span className="summary-chip" key={key}>{executorLabels[key as keyof typeof executorLabels]} · {executor.provider} / {executor.model} / {executor.promptVersion}</span>)}</div></dd></div>
-      <div className="blueprint-summary-wide"><dt>生产状态</dt><dd>{productionStatus}。Worker 会在生产前确认注册、凭据、工具、网络和模型权限。</dd></div>
+      <div className="blueprint-summary-wide"><dt>依赖状态</dt><dd>{dependencyItems.length ? <div className="summary-chip-list">{dependencyItems.map((item) => <span className="summary-chip" key={item.name}>{item.name} · {systemStateLabel(item.state)}</span>)}</div> : "尚未读取本地依赖报告"}</dd></div>
+      <div className="blueprint-summary-wide"><dt>生产前状态</dt><dd>{productionStatus}。Worker 会在生产前确认注册、凭据、工具、网络和模型权限。</dd></div>
     </dl>
   </section>;
 }
@@ -181,11 +220,13 @@ function BlueprintPolicyPreview({ form }: { form: BlueprintFormValues }) {
     <div><dt>允许工具</dt><dd>{form.allowedTools.join("、") || "未配置"}</dd></div>
     <div><dt>生产能力</dt><dd>{enabledMediaAdapters.length ? enabledMediaAdapters.map((key) => `${mediaAdapterLabels[key]} · ${mediaAdapterStatus(key, form.mediaAdapters[key])}`).join("；") : "暂未启用可选媒体能力"}</dd></div>
     <div><dt>阶段预算</dt><dd>脚本 {form.budgets.scriptWritingCents} 分 · 视觉 {form.budgets.visualPlanningCents} 分 · 分镜 {form.budgets.storyboardPlanningCents} 分</dd></div>
+    <div className="blueprint-summary-wide"><dt>核心执行器</dt><dd><div className="summary-chip-list">{Object.entries(form.executors).map(([key, executor]) => <span className="summary-chip" key={key}>{executorLabels[key as keyof typeof executorLabels]} · {executor.provider} / {executor.model} / {executor.promptVersion}</span>)}</div></dd></div>
+    <div className="blueprint-summary-wide"><dt>媒体适配器</dt><dd>{enabledMediaAdapters.length ? enabledMediaAdapters.map((key) => mediaAdapterPreview(key, form.mediaAdapters[key])).join("；") : "暂未启用可选媒体能力"}</dd></div>
     <div className="blueprint-summary-wide"><dt>冻结边界</dt><dd>保存后只影响之后新建的 Episode；已有 Episode 保留创建时的规则快照。</dd></div>
   </dl><FieldHint>这里只显示会写入蓝图并在新 Episode 创建时冻结的静态声明，不包含 API Key、Token 或 Worker 运行态。</FieldHint></fieldset>;
 }
 
-export function BlueprintConfigurationForm({ initialAssetRoot, initialPolicy, isEpisodeRepair = false, isPending, onCancel, onCreatePromptVersion, onSave, promptVersions = [], readOnly = false, technicalOnly = false }: { initialAssetRoot: string; initialPolicy: Json; isEpisodeRepair?: boolean; isPending: boolean; onCancel: () => void; onCreatePromptVersion?: (input: { capability: PromptCapability; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onSave: (policy: Json, activate: boolean) => Promise<void>; promptVersions?: PromptVersion[]; readOnly?: boolean; technicalOnly?: boolean }) {
+export function BlueprintConfigurationForm({ initialAssetRoot, initialPolicy, isEpisodeRepair = false, isPending, onCancel, onCreatePromptVersion, onSave, promptVersions = [], readOnly = false, systemStatus = null, technicalOnly = false }: { initialAssetRoot: string; initialPolicy: Json; isEpisodeRepair?: boolean; isPending: boolean; onCancel: () => void; onCreatePromptVersion?: (input: { capability: PromptCapability; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onSave: (policy: Json, activate: boolean) => Promise<void>; promptVersions?: PromptVersion[]; readOnly?: boolean; systemStatus?: LocalSystemStatusReport | null; technicalOnly?: boolean }) {
   const [form, setForm] = useState<BlueprintFormValues>(() => blueprintPolicyToForm({ ...(initialPolicy && typeof initialPolicy === "object" && !Array.isArray(initialPolicy) ? initialPolicy : {}), asset_root: initialAssetRoot } as Json));
   const [error, setError] = useState("");
   const [technicalConfigOpen, setTechnicalConfigOpen] = useState(readOnly || technicalOnly);
@@ -238,6 +279,7 @@ export function BlueprintConfigurationForm({ initialAssetRoot, initialPolicy, is
   const readinessMessage = form.assetRoot.trim() ? "资产目录已填写；保存后仍需 Worker 验证目录可读写。" : "草稿：未填写资产目录，不能达到生产就绪。";
   return <section className="configuration-form blueprint-configuration-form">
     <p className="blueprint-editor-note">{readOnly ? "以下按表单结构显示此蓝图版本当前保存的规则。" : isEpisodeRepair ? "只修改当前生产单需要的冻结配置；已完成工作和审核记录会保留。" : technicalOnly ? "这里编辑当前蓝图的技术与运行前置声明；保存后只影响之后新建的 Episode，已有 Episode 继续使用冻结配置。" : "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。"}</p>
+    {technicalOnly ? <RuntimeDependencyStatus report={systemStatus} /> : null}
     {technicalOnly ? null : <fieldset><legend><FieldLabel help="账号级的长期方向。它会作为脚本、视觉和分镜生成的共同背景。">账号定位</FieldLabel></legend><label><textarea aria-label="账号定位" onChange={(event) => update({ positioning: event.target.value })} placeholder="例如：面向越南华人和对民俗故事感兴趣的观众，持续讲述真实地点中的民间传说。" readOnly={readOnly} rows={3} value={form.positioning} /></label><FieldHint>描述账号面向谁、持续讲什么以及希望保持的表达方向。</FieldHint></fieldset>}
     <fieldset><legend>{technicalOnly ? "运行前置与权限声明" : "本地资产与审批"}</legend><label><FieldLabel help="建议填写一个稳定的账号目录，例如 /Volumes/素材盘/tk-workflow/dao。">资产目录</FieldLabel><input aria-label="资产目录" onChange={(event) => update({ assetRoot: event.target.value })} placeholder="例如：/Volumes/素材盘/tk-workflow/dao" readOnly={readOnly} value={form.assetRoot} /></label><p className="blueprint-readiness" role="status">{readinessMessage}</p>{technicalOnly ? <><div><span className="configuration-label"><FieldLabel help="这是账号级硬约束。没有 write 时，Worker 不能创建输出产物。">允许工具</FieldLabel></span>{toolOptions.map(([value, label]) => <label className="configuration-check" key={value}><input checked={form.allowedTools.includes(value)} disabled={readOnly} onChange={(event) => update({ allowedTools: event.target.checked ? [...form.allowedTools, value] : form.allowedTools.filter((item) => item !== value) })} type="checkbox" />{label}</label>)}</div><FieldHint>资产目录、工具白名单和媒体能力只影响之后新建的 Episode；账号定位和审批关卡保留在蓝图主表单中。</FieldHint></> : <div className="configuration-check-grid"><div><span className="configuration-label"><FieldLabel help="勾选后，对应阶段会保留 Owner 的人工确认节点。至少保留一个关卡。">审批关卡</FieldLabel></span>{approvalGateOptions.map(([value, label]) => <label className="configuration-check" key={value}><input checked={form.approvalGates.includes(value)} disabled={readOnly || (form.approvalGates.length === 1 && form.approvalGates.includes(value))} onChange={(event) => update({ approvalGates: event.target.checked ? [...form.approvalGates, value] : form.approvalGates.filter((item) => item !== value) })} type="checkbox" />{label}</label>)}</div><div><span className="configuration-label"><FieldLabel help="这是账号级硬约束。没有 write 时，Worker 不能创建输出产物。">允许工具</FieldLabel></span>{toolOptions.map(([value, label]) => <label className="configuration-check" key={value}><input checked={form.allowedTools.includes(value)} disabled={readOnly} onChange={(event) => update({ allowedTools: event.target.checked ? [...form.allowedTools, value] : form.allowedTools.filter((item) => item !== value) })} type="checkbox" />{label}</label>)}</div></div>}</fieldset>
     <fieldset><legend>生产能力</legend><p className="media-adapter-intro">所有生产能力都会列出；打开后会展开对应的技术配置。供应商凭据、网络和 Worker 适配器状态会在保存或执行时校验。</p><div className="capability-grid">{mediaAdapterKeys.map((key) => <label className="capability-option" key={key}><input aria-label={`启用${mediaAdapterLabels[key]}`} checked={enabledMediaAdapters.includes(key)} disabled={readOnly} onChange={(event) => toggleMediaAdapter(key, event.target.checked)} type="checkbox" /><span><strong>{mediaAdapterLabels[key]}</strong><small>{mediaAdapterDescriptions[key]}</small></span></label>)}</div><p className="unavailable-capabilities">A-roll 使用 codex；配乐 / 音效使用 freesound/freesound_preview。两者的模型、凭据和运行环境由 Worker 在执行时确认。</p></fieldset>

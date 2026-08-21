@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import type { ComponentProps } from "react";
 import { describe, expect, it, vi } from "vitest";
 import type { Database } from "../lib/database.types";
+import type { LocalSystemStatusReport } from "../observability/SystemStatusPanel";
 import { AccountWorkspace } from "../App";
 
 vi.mock("../lib/supabase", () => ({ supabase: {} }));
@@ -47,6 +48,13 @@ const archivedBlueprintV1: Blueprint = {
   version: 1,
 };
 
+const systemStatus: LocalSystemStatusReport = {
+  dependencies: [{ detail: "codex 已注册", name: "Codex CLI", state: "healthy" }],
+  mediaLibrary: { detail: "已挂载：/Volumes/Media", state: "healthy" },
+  n8n: { detail: "最近健康检查正常", lastDispatchAt: null, lastEventAt: null, lastHealthCheckAt: "2026-08-21T09:00:00.000Z", lastRunAt: null, state: "healthy" },
+  observedAt: "2026-08-21T09:01:00.000Z",
+};
+
 function renderWorkspace(overrides: Partial<ComponentProps<typeof AccountWorkspace>> = {}) {
   return render(<AccountWorkspace account={account} accountEpisodeCount={0} accounts={[account]} blueprints={[blueprintV3, blueprintV2]} isPending="" onActivate={vi.fn()} onCreateBlueprint={vi.fn()} onSelectAccount={vi.fn()} {...overrides} />);
 }
@@ -59,6 +67,19 @@ describe("账号页分区与蓝图版本", () => {
     expect(screen.getByText("仅影响之后新建的 Episode")).toBeTruthy();
     expect(screen.getByText("保留创建时的冻结配置")).toBeTruthy();
     expect(screen.getByText("暂未启用可选媒体能力")).toBeTruthy();
+  });
+
+  it("在摘要和技术面板显示真实依赖报告", async () => {
+    const user = userEvent.setup();
+    renderWorkspace({ onUpdateBlueprint: vi.fn().mockResolvedValue(blueprintV3), systemStatus });
+
+    expect(screen.getByText("媒体库 · 正常")).toBeTruthy();
+    expect(screen.getByText("Codex CLI · 正常")).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "编辑技术配置" }));
+
+    const panel = screen.getByRole("complementary", { name: "技术配置侧边面板" });
+    expect(within(panel).getByText("Codex CLI · 正常")).toBeTruthy();
+    expect(within(panel).getByText("已挂载：/Volumes/Media")).toBeTruthy();
   });
 
   it("从技术配置侧边面板编辑并保存当前蓝图", async () => {
