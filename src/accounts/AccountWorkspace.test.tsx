@@ -67,7 +67,7 @@ describe("账号页分区与蓝图版本", () => {
     expect(screen.queryByRole("button", { name: "保存蓝图" })).toBeNull();
   });
 
-  it("默认关闭媒体能力，只显示已启用的能力卡片并隐藏 network", async () => {
+  it("完整列出生产能力，并在启用后展开技术配置", async () => {
     const user = userEvent.setup();
     renderWorkspace({ onUpdateBlueprint: vi.fn().mockResolvedValue(blueprintV3) });
 
@@ -76,6 +76,8 @@ describe("账号页分区与蓝图版本", () => {
 
     expect((screen.getByRole("checkbox", { name: "启用B-roll" }) as HTMLInputElement).checked).toBe(false);
     expect((screen.getByRole("checkbox", { name: "启用旁白" }) as HTMLInputElement).checked).toBe(false);
+    expect((screen.getByRole("checkbox", { name: "启用A-roll" }) as HTMLInputElement).disabled).toBe(true);
+    expect((screen.getByRole("checkbox", { name: "启用配乐 / 音效" }) as HTMLInputElement).disabled).toBe(true);
     expect(screen.queryByRole("heading", { name: "A-roll" })).toBeNull();
     expect(screen.queryByText(/network/)).toBeNull();
     expect((screen.getByRole("checkbox", { name: "脚本审核" }) as HTMLInputElement).disabled).toBe(false);
@@ -84,6 +86,7 @@ describe("账号页分区与蓝图版本", () => {
 
     expect(screen.getByRole("heading", { name: "B-roll" })).toBeTruthy();
     expect((screen.getByDisplayValue("pexels") as HTMLInputElement).value).toBe("pexels");
+    expect(screen.getByText("已启用能力的技术配置（1）", { selector: "summary" }).parentElement?.hasAttribute("open")).toBe(true);
   });
 
   it("不把 Episode 规则快照显示成蓝图版本", () => {
