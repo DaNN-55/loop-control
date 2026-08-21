@@ -21,7 +21,7 @@ import { parseWorkerPreflight, type StoryboardAudioCue, type StoryboardShotManif
 import { accountIdentityColor, accountIdentityInitials } from "./platform/accountIdentity";
 import { HelpTip } from "./ui/HelpTip";
 import { PaginationControls } from "./ui/PaginationControls";
-import { BlueprintConfigurationForm, EpisodeConfigurationRepairForm, SeriesConfigurationForm } from "./platform/ConfigurationForms";
+import { BlueprintConfigurationForm, BlueprintEffectiveSummary, EpisodeConfigurationRepairForm, SeriesConfigurationForm } from "./platform/ConfigurationForms";
 import { taskTypeLabel } from "./observability/TaskProgressPanel";
 import { SystemStatusPanel, type LocalSystemStatusReport } from "./observability/SystemStatusPanel";
 import { MarkdownPreview } from "./ui/MarkdownPreview";
@@ -1667,9 +1667,11 @@ export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, b
   const [isEditing, setIsEditing] = useState(false);
   const [isAccountRenameOpen, setIsAccountRenameOpen] = useState(false);
   const [isAccountDeleteOpen, setIsAccountDeleteOpen] = useState(false);
+  const [isTechnicalPanelOpen, setIsTechnicalPanelOpen] = useState(false);
   const [selectedBlueprintId, setSelectedBlueprintId] = useState("");
   const activePolicy = account ? blueprints.find((blueprint) => blueprint.id === account.current_blueprint_version_id)?.policy ?? defaultBlueprintPolicy : defaultBlueprintPolicy;
   const sortedBlueprints = blueprints.filter((blueprint) => !blueprint.is_snapshot).sort((left, right) => right.version - left.version);
+  const activeBlueprint = sortedBlueprints.find((blueprint) => blueprint.id === account?.current_blueprint_version_id) ?? null;
   const visibleBlueprints = sortedBlueprints.filter((blueprint) => !blueprint.archived_at);
   const archivedBlueprints = sortedBlueprints.filter((blueprint) => blueprint.archived_at);
   const latestBlueprint = visibleBlueprints[0] ?? archivedBlueprints[0] ?? null;
@@ -1683,12 +1685,29 @@ export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, b
     setIsEditing(false);
     setIsAccountRenameOpen(false);
     setIsAccountDeleteOpen(false);
+    setIsTechnicalPanelOpen(false);
   }, [account?.id, blueprintRepairContext?.blueprintVersionId, blueprintRepairContext?.episodeId]);
+
+  useEffect(() => {
+    if (!isTechnicalPanelOpen) return;
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") setIsTechnicalPanelOpen(false);
+    }
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [isTechnicalPanelOpen]);
 
   function selectBlueprint(blueprintId: string) { setSelectedBlueprintId(blueprintId); setIsEditing(false); }
 
+  async function saveTechnicalBlueprint(policy: Json) {
+    if (!onUpdateBlueprint) return;
+    const savedBlueprint = await onUpdateBlueprint(policy);
+    if (savedBlueprint) setIsTechnicalPanelOpen(false);
+  }
+
   if (!account) return <div className="empty-state">没有可读取的账号。</div>;
   if (!selectedBlueprint) return <div className="empty-state">该账号没有可读取的蓝图版本。</div>;
+  const effectiveBlueprint = activeBlueprint ?? selectedBlueprint;
   const selectedStatus = blueprintStatusLabel(selectedBlueprint, latestBlueprint?.id ?? "", account.current_blueprint_version_id);
   const isSelectedCurrent = selectedBlueprint.id === account.current_blueprint_version_id;
   return <>
@@ -1699,6 +1718,7 @@ export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, b
       <p>{policyPositioning(activePolicy)}<br />资产目录：{policyAssetRoot(activePolicy)}</p>
       <div className="account-actions"><button aria-label="重命名账号" className="account-rename-button" onClick={() => setIsAccountRenameOpen(true)} title="重命名账号" type="button"><Icon name="Edit" /></button><button aria-label="删除账号" className="account-delete-button" onClick={() => setIsAccountDeleteOpen(true)} title="删除账号" type="button"><Icon name="Delete" /></button></div>
     </div>
+    <BlueprintEffectiveSummary onEditTechnical={activeBlueprint && onUpdateBlueprint && !blueprintRepairContext ? () => setIsTechnicalPanelOpen(true) : undefined} policy={effectiveBlueprint.policy} version={effectiveBlueprint.version} />
     <nav aria-label="账号设置导航" className="account-tabs" role="tablist">
       <button aria-controls="account-blueprints-panel" aria-selected={activeSection === "blueprints"} className={`account-tab ${activeSection === "blueprints" ? "is-active" : ""}`} onClick={() => setActiveSection("blueprints")} role="tab" type="button">蓝图</button>
       <button aria-controls="account-series-panel" aria-selected={activeSection === "series"} className={`account-tab ${activeSection === "series" ? "is-active" : ""}`} onClick={() => setActiveSection("series")} role="tab" type="button">系列</button>
@@ -1725,6 +1745,14 @@ export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, b
       </section>
     </div> : null}
     {activeSection === "series" ? <div aria-labelledby="account-series-heading" id="account-series-panel" role="tabpanel"><SeriesSettings isPending={isPending} onCreate={onCreateSeries} onCreateVersion={onCreateSeriesVersion} series={series} seriesVersions={seriesVersions} /></div> : null}
+    {isTechnicalPanelOpen && activeBlueprint && !blueprintRepairContext ? <>
+      <div aria-hidden="true" className="episode-detail-scrim" data-testid="blueprint-technical-scrim" onClick={() => setIsTechnicalPanelOpen(false)} />
+      <aside aria-label="技术配置侧边面板" className="blueprint-technical-drawer" role="complementary">
+        <button aria-label="关闭技术配置侧边面板" className="drawer-close icon-button" onClick={() => setIsTechnicalPanelOpen(false)} type="button"><X className="icon" /></button>
+        <header><h2>技术配置</h2><p>蓝图 v{activeBlueprint.version} · 保存后只影响之后新建的 Episode；已有 Episode 保留冻结配置。</p></header>
+        <BlueprintConfigurationForm initialAssetRoot={blueprintAssetRoot(activeBlueprint.policy)} initialPolicy={activeBlueprint.policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} onCancel={() => setIsTechnicalPanelOpen(false)} onCreatePromptVersion={onCreatePromptVersion} onSave={async (policy) => { await saveTechnicalBlueprint(policy); }} promptVersions={promptVersions} technicalOnly />
+      </aside>
+    </> : null}
     {isAccountRenameOpen ? <AccountRenameModal account={account} isPending={isPending === `rename-account-${account.id}`} onClose={() => setIsAccountRenameOpen(false)} onSave={(name) => onRenameAccount(account.id, name)} /> : null}
     {isAccountDeleteOpen ? <AccountDeleteModal account={account} accountEpisodeCount={accountEpisodeCount} isPending={isPending === `delete-account-${account.id}`} onClose={() => setIsAccountDeleteOpen(false)} onDelete={(confirmation) => onDeleteAccount(account.id, confirmation)} /> : null}
   </>;

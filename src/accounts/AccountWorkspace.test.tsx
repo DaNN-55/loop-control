@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ComponentProps } from "react";
 import { describe, expect, it, vi } from "vitest";
@@ -52,6 +52,43 @@ function renderWorkspace(overrides: Partial<ComponentProps<typeof AccountWorkspa
 }
 
 describe("账号页分区与蓝图版本", () => {
+  it("显示当前有效配置及 Episode 生效边界", () => {
+    renderWorkspace();
+
+    expect(screen.getByRole("heading", { name: "当前有效配置" })).toBeTruthy();
+    expect(screen.getByText("仅影响之后新建的 Episode")).toBeTruthy();
+    expect(screen.getByText("保留创建时的冻结配置")).toBeTruthy();
+    expect(screen.getByText("暂未启用可选媒体能力")).toBeTruthy();
+  });
+
+  it("从技术配置侧边面板编辑并保存当前蓝图", async () => {
+    const user = userEvent.setup();
+    const onUpdateBlueprint = vi.fn().mockResolvedValue(blueprintV3);
+    renderWorkspace({ onUpdateBlueprint });
+
+    await user.click(screen.getByRole("button", { name: "编辑技术配置" }));
+    const panel = screen.getByRole("complementary", { name: "技术配置侧边面板" });
+    expect(within(panel).getByText("最终写入与冻结预览")).toBeTruthy();
+    expect(within(panel).queryByLabelText("账号定位")).toBeNull();
+
+    await user.clear(within(panel).getByLabelText("资产目录"));
+    await user.type(within(panel).getByLabelText("资产目录"), "/Volumes/dao/technical");
+    await user.click(within(panel).getByRole("button", { name: "保存技术配置" }));
+
+    expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ asset_root: "/Volumes/dao/technical" }));
+    expect(screen.queryByRole("complementary", { name: "技术配置侧边面板" })).toBeNull();
+  });
+
+  it("支持通过遮罩关闭技术配置侧边面板", async () => {
+    const user = userEvent.setup();
+    renderWorkspace({ onUpdateBlueprint: vi.fn().mockResolvedValue(blueprintV3) });
+
+    await user.click(screen.getByRole("button", { name: "编辑技术配置" }));
+    await user.click(screen.getByTestId("blueprint-technical-scrim"));
+
+    expect(screen.queryByRole("complementary", { name: "技术配置侧边面板" })).toBeNull();
+  });
+
   it("保存蓝图时直接更新当前规则，不创建新的可见版本", async () => {
     const user = userEvent.setup();
     const onUpdateBlueprint = vi.fn().mockResolvedValue({ ...blueprintV3, policy: { approval_gates: ["script", "qc"], asset_root: "/Volumes/dao/v3", positioning: "新定位" } });
