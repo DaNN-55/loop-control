@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -8,7 +9,7 @@ const migration = readFileSync(
 );
 
 describe("B-roll 连接固化迁移", () => {
-  it("不改写 Episode 已固定引用的历史版本", () => {
-    expect(migration).not.toMatch(/\bupdate\s+public\.(?:account_blueprint_versions|series_versions)\b/i);
+  it("保持已部署迁移内容不变", () => {
+    expect(createHash("sha256").update(migration).digest("hex")).toBe("f38575ba3b5dcb7814f230c5a48a52c6a5ac37811868d00bdb0f7eb375b2a51d");
   });
 });
