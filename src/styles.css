@@ -659,6 +659,56 @@ body { min-width: 0; }
 .blueprint-policy-details > summary::after { color: #71839d; content: "＋"; float: right; font-size: 15px; font-weight: 400; }
 .blueprint-policy-details[open] > summary::after { content: "−"; }
 .blueprint-policy-details pre { margin-top: 9px; }
+
+.account-configuration-heading { align-items: flex-end; display: flex; gap: 24px; justify-content: space-between; margin-bottom: 14px; }
+.account-configuration-heading > div:first-child > span, .account-status-eyebrow { color: #6781a5; font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.account-configuration-heading h2 { color: #263244; font-size: 24px; letter-spacing: -.6px; margin: 4px 0; }
+.account-configuration-heading p { color: #697386; font-size: 12px; margin: 0; }
+.account-heading-actions { align-items: center; display: flex; gap: 8px; }
+.account-heading-actions label { color: #697386; display: grid; font-size: 10px; font-weight: 750; gap: 4px; }
+.account-heading-actions select { background: #fff; border: 1px solid #cfd5df; border-radius: 6px; color: #303845; min-height: 36px; padding: 0 30px 0 10px; }
+.account-configuration-layout { align-items: start; display: grid; gap: 18px; grid-template-columns: 150px minmax(0, 1fr) 230px; margin-top: 18px; }
+.account-section-nav { display: grid; gap: 3px; position: sticky; top: 20px; }
+.account-section-nav strong { color: #263244; font-size: 12px; padding: 8px 10px; }
+.account-section-nav a { border-left: 2px solid transparent; color: #697386; font-size: 11px; padding: 8px 10px; text-decoration: none; }
+.account-section-nav a:hover, .account-section-nav a:first-of-type { background: #f4f8ff; border-color: #77a1dd; color: #2f5fa8; }
+.account-section-nav small { border-top: 1px solid #e5e8ee; color: #8791a1; font-size: 9px; line-height: 1.55; margin-top: 10px; padding: 12px 10px; }
+.account-configuration-form { min-width: 0; }
+.account-configuration-form .blueprint-configuration-form { gap: 18px; }
+.account-configuration-form .blueprint-configuration-form > fieldset, .account-configuration-form .advanced-configuration { background: #fff; }
+.account-configuration-form .configuration-actions { background: rgba(255,255,255,.94); border-top: 1px solid #e5e8ee; bottom: 0; margin-top: 2px; padding: 12px 0 2px; position: sticky; z-index: 4; }
+.account-status-rail { display: grid; gap: 12px; position: sticky; top: 20px; }
+.account-status-rail > section { background: #fff; border: 1px solid #dce2eb; border-radius: 8px; padding: 14px; }
+.account-status-rail > section:first-child { border-top: 3px solid #8eafe1; }
+.account-status-rail > section:first-child.is-blocked { border-top-color: #d98f63; }
+.account-status-rail h2 { color: #263244; font-size: 15px; margin: 7px 0 5px; }
+.account-status-rail h3 { color: #52647d; font-size: 11px; margin: 0 0 10px; }
+.account-status-rail p { color: #697386; font-size: 10px; line-height: 1.5; margin: 0 0 10px; }
+.account-status-rail ul { display: grid; gap: 8px; list-style: none; margin: 10px 0; padding: 0; }
+.account-status-rail li { background: #fff7f1; border-radius: 5px; display: grid; gap: 3px; padding: 8px; }
+.account-status-rail li strong { color: #8d4d2a; font-size: 10px; }
+.account-status-rail li span { color: #765f52; font-size: 9px; line-height: 1.4; overflow-wrap: anywhere; }
+.account-status-rail dl { display: grid; gap: 8px; margin: 0; }
+.account-status-rail dl div { display: flex; gap: 8px; justify-content: space-between; }
+.account-status-rail dt { color: #8791a1; font-size: 9px; }
+.account-status-rail dd { color: #354050; font-size: 10px; font-weight: 700; margin: 0; text-align: right; }
+.capability-option.is-unavailable { background: #f7f8fa; opacity: .72; }
+.series-current-layout { align-items: start; display: grid; gap: 24px; grid-template-columns: 230px minmax(0, 1fr); margin-top: 20px; }
+.series-current-layout > aside { display: grid; gap: 8px; }
+.series-current-layout > aside header { align-items: center; display: flex; justify-content: space-between; }
+.series-current-layout > aside h2 { color: #263244; font-size: 17px; margin: 0; }
+.series-current-layout > aside > button { background: #fff; border: 1px solid #dce2eb; border-radius: 7px; color: #52647d; cursor: pointer; display: grid; gap: 3px; padding: 11px; text-align: left; }
+.series-current-layout > aside > button.is-active { background: #f4f8ff; border-color: #8eafe1; color: #2f5fa8; }
+.series-current-layout > aside > button span { color: #8791a1; font-size: 9px; }
+
+.app-shell[data-theme="dark"] .account-configuration-heading h2, .app-shell[data-theme="dark"] .account-section-nav strong, .app-shell[data-theme="dark"] .account-status-rail h2, .app-shell[data-theme="dark"] .series-current-layout > aside h2 { color: #eef3fb; }
+.app-shell[data-theme="dark"] .account-heading-actions select, .app-shell[data-theme="dark"] .account-configuration-form .blueprint-configuration-form > fieldset, .app-shell[data-theme="dark"] .account-configuration-form .advanced-configuration, .app-shell[data-theme="dark"] .account-status-rail > section, .app-shell[data-theme="dark"] .series-current-layout > aside > button { background: #171c25; border-color: #394250; color: #eef3fb; }
+.app-shell[data-theme="dark"] .account-configuration-form .configuration-actions { background: rgba(17,19,24,.94); border-color: #2e3745; }
+.app-shell[data-theme="dark"] .account-section-nav a:hover, .app-shell[data-theme="dark"] .account-section-nav a:first-of-type, .app-shell[data-theme="dark"] .series-current-layout > aside > button.is-active { background: #172a46; border-color: #5070a1; color: #c5dcff; }
+
+@media (max-width: 1100px) { .account-configuration-layout { grid-template-columns: 125px minmax(0, 1fr) 200px; } }
+@media (max-width: 900px) { .account-configuration-layout { grid-template-columns: 120px minmax(0, 1fr); } .account-status-rail { grid-column: 1 / -1; grid-template-columns: repeat(2, minmax(0, 1fr)); position: static; } }
+@media (max-width: 640px) { .account-configuration-heading { align-items: stretch; flex-direction: column; } .account-heading-actions { align-items: stretch; } .account-heading-actions label { flex: 1; } .account-configuration-layout, .series-current-layout { grid-template-columns: 1fr; } .account-section-nav { display: none; } .account-status-rail { display: grid; grid-template-columns: 1fr; } }
 .learning-collapsible { border-top: 1px solid #e4e9f0; padding-top: 11px; }
 .learning-collapsible > summary { color: #496b9e; cursor: pointer; font-size: 11px; font-weight: 750; list-style: none; }
 .learning-collapsible > summary::-webkit-details-marker { display: none; }
