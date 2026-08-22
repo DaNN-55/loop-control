@@ -59,6 +59,7 @@ const checkLabels: Record<string, string> = {
   network_connectivity: "供应商网络不可达",
   tool_permission: "工具权限不足",
 };
+const emptySeriesRules: Json = {};
 
 function ReadinessRail({ isLoading, onRefresh, policy, preflight, preflightError, systemStatus }: { isLoading: boolean; onRefresh?: () => Promise<void>; policy: Json; preflight: WorkerPreflightResult | null; preflightError: string; systemStatus: LocalSystemStatusReport | null }) {
   const failed = preflight?.checks.filter((check) => check.status !== "passed") ?? [];
@@ -123,11 +124,12 @@ export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, b
 export function SeriesSettings({ isPending, onCreate, onCreateVersion = async () => {}, onDirtyChange, onLeave, series, seriesVersions }: { isPending: boolean | string; onCreate: (input: { name: string; rules: Json }) => Promise<void>; onCreateVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>; onDirtyChange?: (dirty: boolean) => void; onLeave?: (action: () => void) => void; series: Series[]; seriesVersions: SeriesVersion[] }) {
   const [selectedId, setSelectedId] = useState(series[0]?.id ?? "");
   const [creating, setCreating] = useState(series.length === 0);
-  useEffect(() => { setSelectedId(series[0]?.id ?? ""); setCreating(series.length === 0); }, [series]);
+  const firstSeriesId = series[0]?.id ?? "";
+  useEffect(() => { setSelectedId(firstSeriesId); setCreating(series.length === 0); }, [firstSeriesId, series.length]);
   const selected = series.find((candidate) => candidate.id === selectedId) ?? series[0] ?? null;
   const latest = selected ? seriesVersions.filter((version) => version.series_id === selected.id).sort((left, right) => right.version - left.version)[0] ?? null : null;
   const leave = (action: () => void) => onLeave ? onLeave(action) : action();
-  return <section className="series-current-layout"><aside><header><h2 id="account-series-heading">系列</h2><button className="button button-secondary button-small" onClick={() => leave(() => setCreating(true))} type="button">新建系列</button></header>{series.map((candidate) => <button className={!creating && candidate.id === selected?.id ? "is-active" : ""} key={candidate.id} onClick={() => leave(() => { setSelectedId(candidate.id); setCreating(false); })} type="button"><strong>{candidate.name}</strong><span>当前配置</span></button>)}</aside><div>{creating || !selected ? <SeriesConfigurationForm initialName="" initialRules={{}} isEditing={false} isPending={isPending === true || isPending === "series"} onCancel={() => setCreating(false)} onDirtyChange={onDirtyChange} onSave={async (name, rules) => { await onCreate({ name, rules }); }} /> : <SeriesConfigurationForm key={selected.id} initialName={selected.name} initialRules={latest?.rules ?? {}} isEditing isPending={isPending === `series-version-${selected.id}`} onCancel={() => {}} onDirtyChange={onDirtyChange} onSave={async (_name, rules) => { await onCreateVersion({ seriesId: selected.id, rules }); }} />}</div></section>;
+  return <section className="series-current-layout"><aside><header><h2 id="account-series-heading">系列</h2><button className="button button-secondary button-small" onClick={() => leave(() => setCreating(true))} type="button">新建系列</button></header>{series.map((candidate) => <button className={!creating && candidate.id === selected?.id ? "is-active" : ""} key={candidate.id} onClick={() => leave(() => { setSelectedId(candidate.id); setCreating(false); })} type="button"><strong>{candidate.name}</strong><span>当前配置</span></button>)}</aside><div>{creating || !selected ? <SeriesConfigurationForm initialName="" initialRules={emptySeriesRules} isEditing={false} isPending={isPending === true || isPending === "series"} onCancel={() => setCreating(false)} onDirtyChange={onDirtyChange} onSave={async (name, rules) => { await onCreate({ name, rules }); }} /> : <SeriesConfigurationForm key={selected.id} initialName={selected.name} initialRules={latest?.rules ?? {}} isEditing isPending={isPending === `series-version-${selected.id}`} onCancel={() => {}} onDirtyChange={onDirtyChange} onSave={async (_name, rules) => { await onCreateVersion({ seriesId: selected.id, rules }); }} />}</div></section>;
 }
 
 function AccountRenameModal({ account, isPending, onClose, onSave }: { account: Account; isPending: boolean; onClose: () => void; onSave: (name: string) => Promise<boolean | void> }) {

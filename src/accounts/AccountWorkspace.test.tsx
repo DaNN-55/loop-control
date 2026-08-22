@@ -1,6 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ComponentProps } from "react";
+import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import type { Database } from "../lib/database.types";
 import type { WorkerPreflightResult } from "../worker/contracts";
@@ -159,11 +160,17 @@ describe("账号配置工作区", () => {
 
   it("保留新建系列入口", async () => {
     const user = userEvent.setup();
-    renderWorkspace({ series: [series], seriesVersions });
+    function RerenderingWorkspace() {
+      const [, setDirty] = useState(false);
+      return <AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onActivate={vi.fn()} onDirtyChange={setDirty} onSelectAccount={vi.fn()} series={[series]} seriesVersions={[...seriesVersions]} />;
+    }
+    render(<RerenderingWorkspace />);
     await user.click(screen.getByRole("tab", { name: "系列" }));
     await user.click(screen.getByRole("button", { name: "新建系列" }));
     expect(screen.getByRole("heading", { name: "新建系列" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "创建系列" })).toBeTruthy();
+    await user.type(screen.getByRole("textbox", { name: "系列名称" }), "新系列");
+    expect((screen.getByRole("textbox", { name: "系列名称" }) as HTMLInputElement).value).toBe("新系列");
   });
 
   it("支持重命名账号", async () => {
