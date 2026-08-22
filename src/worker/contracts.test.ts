@@ -85,6 +85,13 @@ describe("Worker 契约", () => {
     });
   });
 
+  it("没有导入视觉素材且没有已登记图片 Adapter 时阻塞视觉资产准备", () => {
+    expect(() => createWorkerTaskPackage({
+      ...packageInput,
+      visualAssetPreparation: { externalInputs: [] },
+    } as unknown as WorkerTaskPackageInput)).toThrow("视觉资产准备");
+  });
+
   it("把冻结的分层 Prompt 上下文原样交给 Worker", () => {
     const taskPackage = createWorkerTaskPackage({
       ...packageInput,
@@ -292,6 +299,22 @@ describe("Worker 契约", () => {
       retry: { shouldRetry: false, reason: "Completed successfully." },
       nextStep: "Continue.",
     }, taskPackage)).toThrow("可预览图片");
+
+    expect(() => validateWorkerResult({
+      version: "worker-result/v1",
+      taskId: "task-1",
+      status: "completed",
+      artifacts: [
+        { artifactType: "visual_brief", relativePath: "episodes/episode-1/visual-brief.md", sha256: "c".repeat(64), fileSize: 256 },
+        { artifactType: "visual_reference_group", relativePath: "episodes/episode-1/references.md", sha256: "d".repeat(64), fileSize: 256 },
+        { artifactType: "static_visual", relativePath: "episodes/episode-1/static-visual.svg", sha256: "e".repeat(64), fileSize: 256 },
+      ],
+      validation: { passed: true, checks: [{ name: "schema", passed: true, detail: "valid" }] },
+      actualCostCents: 0,
+      blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." },
+      nextStep: "Continue.",
+    }, taskPackage)).toThrow("SVG");
   });
 
   it("只接受可追溯到冻结脚本和视觉依据的唯一分镜镜头", () => {

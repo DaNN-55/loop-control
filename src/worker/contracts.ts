@@ -1,6 +1,9 @@
+import { adapterRegistration } from "./adapterRegistry.js";
+
 export const workerTaskPackageVersion = "worker-task/v1" as const;
 export const workerResultVersion = "worker-result/v1" as const;
 export const workerPreflightVersion = "worker-preflight/v1" as const;
+export const missingVisualAssetAdapterMessage = "视觉资产准备没有导入视觉素材，也没有已登记的图片 Adapter。";
 
 export type WorkerResultStatus = "completed" | "blocked" | "failed";
 export type WorkerPreflightPhase = "preflight" | "execution";
@@ -123,6 +126,13 @@ export interface WorkerTaskPackageInput {
     version: number;
     rules: unknown;
   };
+  visualAssetPreparation?: {
+    externalInputs: ArtifactManifest[];
+    imageGeneration?: {
+      provider: string;
+      adapter: string;
+    };
+  };
   reviewFeedback?: {
     reviewPackageId: string;
     reason: string;
@@ -220,6 +230,7 @@ export interface WorkerTaskPackage {
     version: number;
     rules: unknown;
   };
+  visualAssetPreparation?: WorkerTaskPackageInput["visualAssetPreparation"];
   reviewFeedback?: {
     reviewPackageId: string;
     reason: string;
@@ -317,6 +328,15 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
   if (input.capability === "storyboard_planning" && !input.promptHarness) throw new Error("分镜规划必须包含冻结的 Codex Adapter 与 Prompt Harness。");
   if (input.commission && (!isNonEmptyString(input.commission.creativeDirection) || !isNonEmptyString(input.commission.coreContent))) throw new Error("commission must contain creative direction and core content.");
   if (input.seriesBaseline && (!isNonEmptyString(input.seriesBaseline.versionId) || !Number.isInteger(input.seriesBaseline.version) || input.seriesBaseline.version < 1 || !isRecord(input.seriesBaseline.rules))) throw new Error("seriesBaseline must contain a version and rule object.");
+  if (input.visualAssetPreparation) {
+    if (input.capability !== "visual_planning") throw new Error("只有视觉资产准备任务可以声明视觉输入。");
+    input.visualAssetPreparation.externalInputs.forEach(assertArtifactManifest);
+    const imageGeneration = input.visualAssetPreparation.imageGeneration;
+    if (imageGeneration && (!isNonEmptyString(imageGeneration.provider) || !isNonEmptyString(imageGeneration.adapter))) throw new Error("图片 Adapter 配置无效。");
+    if (input.visualAssetPreparation.externalInputs.length === 0 && (!imageGeneration || adapterRegistration(imageGeneration.provider, imageGeneration.adapter)?.capability !== "static_visual_generation")) {
+      throw new Error(missingVisualAssetAdapterMessage);
+    }
+  }
   if (input.reviewFeedback && (!isNonEmptyString(input.reviewFeedback.reviewPackageId) || !isNonEmptyString(input.reviewFeedback.reason))) throw new Error("review feedback must contain its package and reason.");
   if (input.reviewAnnotations?.some((annotation) => !isNonEmptyString(annotation.shotId) || !isNonEmptyString(annotation.reason))) throw new Error("review annotations must contain a shot and reason.");
   if (input.capability === "a_roll_generation" && !input.aRoll) throw new Error("a-roll generation requires its frozen adapter and shot.");
@@ -398,6 +418,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     ...(input.promptHarness ? { promptHarness: { ...input.promptHarness } } : {}),
     ...(input.commission ? { commission: { creativeDirection: input.commission.creativeDirection, coreContent: input.commission.coreContent } } : {}),
     ...(input.seriesBaseline ? { seriesBaseline: { versionId: input.seriesBaseline.versionId, version: input.seriesBaseline.version, rules: input.seriesBaseline.rules } } : {}),
+    ...(input.visualAssetPreparation ? { visualAssetPreparation: { externalInputs: input.visualAssetPreparation.externalInputs.map((artifact) => ({ ...artifact })), ...(input.visualAssetPreparation.imageGeneration ? { imageGeneration: { ...input.visualAssetPreparation.imageGeneration } } : {}) } } : {}),
     ...(input.reviewFeedback ? { reviewFeedback: { reviewPackageId: input.reviewFeedback.reviewPackageId, reason: input.reviewFeedback.reason } } : {}),
     ...(input.reviewAnnotations?.length ? { reviewAnnotations: input.reviewAnnotations.map((annotation) => ({ shotId: annotation.shotId, reason: annotation.reason })) } : {}),
     ...(input.aRoll ? { aRoll: { adapter: input.aRoll.adapter, shot: input.aRoll.shot } } : {}),
@@ -464,6 +485,9 @@ export function validateWorkerResult(value: unknown, taskPackage: WorkerTaskPack
   }
   if (value.status === "completed" && !taskPackage.output.requiredArtifactTypes.every((artifactType) => artifacts.some((artifact) => artifact.artifactType === artifactType))) {
     throw new Error("已完成结果缺少必需产物。");
+  }
+  if (value.status === "completed" && artifacts.some((artifact) => artifact.artifactType === "static_visual" && artifact.relativePath.toLowerCase().endsWith(".svg"))) {
+    throw new Error("静态视觉正式产物不能使用 SVG 占位图。");
   }
   if (value.status === "completed" && artifacts.some((artifact) => artifact.artifactType === "static_visual" && !isPreviewableImagePath(artifact.relativePath))) {
     throw new Error("静态视觉产物必须使用可预览图片路径。");
@@ -648,5 +672,5 @@ function isSafeRelativePath(value: unknown): value is string {
 }
 
 function isPreviewableImagePath(value: string): boolean {
-  return /\.(avif|gif|jpe?g|png|svg|webp)$/i.test(value);
+  return /\.(avif|gif|jpe?g|png|webp)$/i.test(value);
 }

@@ -1,5 +1,6 @@
 import {
   createWorkerTaskPackage,
+  missingVisualAssetAdapterMessage,
   type ArtifactManifest,
   type ReviewRenderAdjustments,
   type StoryboardManifest,
@@ -51,7 +52,23 @@ export async function runCodexWorker(dependencies: CodexWorkerDependencies): Pro
   try {
     taskPackage = createTaskPackage(task);
   } catch (error) {
-    await dependencies.reportResult(task.taskId, task.attempt, createBlockedResult(task.taskId, dependencies.actualCostCents, error));
+    const missingVisualAssetAdapter = errorMessage(error) === missingVisualAssetAdapterMessage;
+    const result = createBlockedResult(task.taskId, dependencies.actualCostCents, error, missingVisualAssetAdapter ? "capability_registration" : undefined);
+    if (missingVisualAssetAdapter) {
+      const check: WorkerPreflightCheck = {
+        capability: "static_visual_generation",
+        check: "capability_registration",
+        phase: "preflight",
+        status: "unavailable",
+        reason: missingVisualAssetAdapterMessage,
+        action: "contact_environment_admin",
+        scope: "worker",
+      };
+      result.preflight = { version: "worker-preflight/v1", checks: [check] };
+      result.blockers = [preflightBlocker(check)];
+      result.nextStep = "Register an image-generation Adapter in the Worker environment before creating a new task attempt.";
+    }
+    await dependencies.reportResult(task.taskId, task.attempt, result);
     return { status: "blocked", taskId: task.taskId };
   }
 
@@ -152,6 +169,7 @@ function createTaskPackage(task: ClaimedWorkerTask): WorkerTaskPackage {
     promptHarness: promptHarness(snapshot),
     commission: commission(snapshot),
     seriesBaseline: seriesBaseline(snapshot),
+    visualAssetPreparation: visualAssetPreparation(snapshot),
     reviewFeedback: reviewFeedback(snapshot),
     reviewAnnotations: reviewAnnotations(snapshot),
     aRoll: aRoll(snapshot),
@@ -332,6 +350,22 @@ function seriesBaseline(snapshot: Record<string, unknown>): WorkerTaskPackageInp
     versionId: requiredString(value.version_id, "任务系列基准缺少版本。"),
     version: value.version,
     rules: value.rules,
+  };
+}
+
+function visualAssetPreparation(snapshot: Record<string, unknown>): WorkerTaskPackageInput["visualAssetPreparation"] {
+  const value = snapshot.visual_assets;
+  if (value === undefined) return undefined;
+  if (!isRecord(value) || !Array.isArray(value.external_inputs)) throw new Error("视觉资产准备冻结配置格式无效。");
+  const imageGeneration = value.image_generation;
+  if (imageGeneration === undefined || imageGeneration === null) return { externalInputs: value.external_inputs as ArtifactManifest[] };
+  if (!isRecord(imageGeneration)) throw new Error("视觉资产准备图片 Adapter 格式无效。");
+  return {
+    externalInputs: value.external_inputs as ArtifactManifest[],
+    imageGeneration: {
+      provider: requiredString(imageGeneration.provider, "视觉资产准备图片 Adapter 缺少 Provider。"),
+      adapter: requiredString(imageGeneration.adapter, "视觉资产准备图片 Adapter 缺少 Adapter。"),
+    },
   };
 }
 

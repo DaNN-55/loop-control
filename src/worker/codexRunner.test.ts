@@ -131,6 +131,48 @@ describe("本地 Codex Worker runner", () => {
     }));
   });
 
+  it("把冻结的外部视觉输入交给视觉资产准备，不调用 SVG 占位路径", async () => {
+    const execute = vi.fn().mockResolvedValue(JSON.stringify({
+      version: "worker-result/v1",
+      taskId: "task-1",
+      status: "completed",
+      artifacts: [{ artifactType: "visual_asset_manifest", relativePath: "episodes/episode-1/visual-assets-v1.md", sha256: "a".repeat(64), fileSize: 128 }],
+      validation: { passed: true, checks: [{ name: "manifest", passed: true, detail: "外部视觉素材与缺失项已列出。" }] },
+      actualCostCents: 0,
+      blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." },
+      nextStep: "Submit the visual asset manifest for Owner review.",
+    }));
+    const externalInput = { artifactType: "external_visual_input", relativePath: "episodes/episode-1/materials/character.png", sha256: "b".repeat(64), fileSize: 128 };
+
+    await runCodexWorker({
+      claimNextTask: async () => ({
+        ...claimedTask,
+        taskType: "prepare_visual_brief",
+        inputSnapshot: {
+          capability: "visual_planning",
+          visual_assets: { external_inputs: [externalInput] },
+          allowed_tools: ["read", "write"],
+          output: { required_artifact_types: ["visual_asset_manifest"], content_type: "text/markdown", relative_path: "episodes/episode-1/visual-assets-v1.md", review_stage: "visual_review" },
+          input_artifacts: [
+            { artifactType: "main_script", relativePath: "episodes/episode-1/main-script.md", sha256: "c".repeat(64), fileSize: 128 },
+            externalInput,
+          ],
+        },
+      }),
+      reportResult: vi.fn().mockResolvedValue(undefined),
+      execute,
+      verifyAssetRoot: async () => undefined,
+      verifyArtifacts: async () => undefined,
+      actualCostCents: 0,
+    });
+
+    expect(execute).toHaveBeenCalledWith(expect.objectContaining({
+      visualAssetPreparation: { externalInputs: [externalInput] },
+      output: expect.objectContaining({ requiredArtifactTypes: ["visual_asset_manifest"] }),
+    }));
+  });
+
   it("把冻结的分层 Prompt 上下文传给 Codex Worker", async () => {
     const execute = vi.fn().mockResolvedValue(JSON.stringify({
       version: "worker-result/v1",
@@ -303,6 +345,37 @@ describe("本地 Codex Worker runner", () => {
     await expect(runCodexWorker({ claimNextTask: async () => ({ ...claimedTask, allowedAssetRoot: "" }), reportResult, execute, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 })).resolves.toEqual({ status: "blocked", taskId: "task-1" });
     expect(execute).not.toHaveBeenCalled();
     expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({ status: "blocked", blockers: expect.any(Array) }));
+  });
+
+  it("没有视觉输入且图片 Adapter 未注册时回写 Worker 能力阻塞", async () => {
+    const execute = vi.fn();
+    const reportResult = vi.fn().mockResolvedValue(undefined);
+
+    await expect(runCodexWorker({
+      claimNextTask: async () => ({
+        ...claimedTask,
+        taskType: "prepare_visual_brief",
+        inputSnapshot: {
+          capability: "visual_planning",
+          visual_assets: { external_inputs: [] },
+          allowed_tools: ["read", "write"],
+          output: { required_artifact_types: ["visual_asset_manifest"], content_type: "text/markdown", relative_path: "episodes/episode-1/visual-assets-v1.md", review_stage: "visual_review" },
+          input_artifacts: [{ artifactType: "main_script", relativePath: "episodes/episode-1/main-script.md", sha256: "a".repeat(64), fileSize: 128 }],
+        },
+      }),
+      reportResult,
+      execute,
+      verifyAssetRoot: async () => undefined,
+      verifyArtifacts: async () => undefined,
+      actualCostCents: 0,
+    })).resolves.toEqual({ status: "blocked", taskId: "task-1" });
+
+    expect(execute).not.toHaveBeenCalled();
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({
+      status: "blocked",
+      preflight: expect.objectContaining({ checks: [expect.objectContaining({ capability: "static_visual_generation", check: "capability_registration", action: "contact_environment_admin", scope: "worker" })] }),
+      blockers: [expect.objectContaining({ code: "capability_registration", check: "capability_registration", action: "contact_environment_admin", scope: "worker" })],
+    }));
   });
 
   it("资产根目录不可访问时写入 blocked，不调用 Codex", async () => {

@@ -2296,7 +2296,38 @@ function TextArtifactContent({ source }: { source: string | null }) {
   return error ? <p className="form-error">{error}</p> : content ? <MarkdownPreview content={content} /> : <LoadingIndicator compact label="正在读取文本产物…" />;
 }
 
+type FrozenVisualInput = { relativePath: string; sha256: string; fileSize: number };
+
+function frozenVisualInputs(reviewPackage: ReviewPackage): FrozenVisualInput[] {
+  const context = reviewPackage.context_snapshot;
+  if (!context || typeof context !== "object" || Array.isArray(context)) return [];
+  const visualAssets = (context as Record<string, unknown>).visual_assets;
+  if (!visualAssets || typeof visualAssets !== "object" || Array.isArray(visualAssets)) return [];
+  const externalInputs = (visualAssets as Record<string, unknown>).external_inputs;
+  if (!Array.isArray(externalInputs)) return [];
+  return externalInputs.flatMap((input) => {
+    if (!input || typeof input !== "object" || Array.isArray(input)) return [];
+    const { fileSize, relativePath, sha256 } = input as Record<string, unknown>;
+    return typeof relativePath === "string" && relativePath && typeof sha256 === "string" && /^[0-9a-f]{64}$/.test(sha256) && typeof fileSize === "number" && Number.isFinite(fileSize) && fileSize >= 0
+      ? [{ relativePath, sha256, fileSize }]
+      : [];
+  });
+}
+
+function FrozenVisualInputMedia({ episodeId, input }: { episodeId: string; input: FrozenVisualInput }) {
+  const source = localArtifactUrl(episodeId, input.relativePath, input.sha256);
+  const { error, url } = useLocalArtifactBlob(source);
+  const kind = artifactPreviewKind(input.relativePath);
+  if (error) return <p className="form-error">{error}</p>;
+  if (!url || (kind !== "image" && kind !== "video")) return null;
+  return kind === "image" ? <img alt="冻结的外部视觉输入" src={url} /> : <video aria-label="冻结的外部视觉输入" controls src={url} />;
+}
+
 function VisualReviewPackage({ artifact, artifacts, reviewPackage }: { artifact: Artifact; artifacts: Artifact[]; reviewPackage: ReviewPackage }) {
+  if (artifact.artifact_type === "visual_asset_manifest") {
+    const externalInputs = frozenVisualInputs(reviewPackage);
+    return <><TextReviewPackage artifact={artifact} reviewPackage={reviewPackage} /><section className="review-section"><h3>已冻结的外部视觉输入</h3><p className="muted-copy">以下素材是资产清单的实际依据；清单中的缺失项不会被 SVG 占位图自动补齐。</p>{externalInputs.length ? <div className="artifact-preview">{externalInputs.map((input) => <article key={`${input.relativePath}-${input.sha256}`}><strong>{input.relativePath}</strong><small>{input.sha256.slice(0, 12)}… · {input.fileSize} B</small>{artifactPreviewKind(input.relativePath) === "image" || artifactPreviewKind(input.relativePath) === "video" ? <FrozenVisualInputMedia episodeId={artifact.episode_id} input={input} /> : null}</article>)}</div> : <p className="muted-copy">本次没有导入视觉素材；需要已登记图片 Adapter 后才能补齐缺失项。</p>}</section></>;
+  }
   const referenceGroups = artifacts.filter((candidate) => candidate.artifact_type === "visual_reference_group");
   const staticVisuals = artifacts.filter((candidate) => candidate.artifact_type === "static_visual");
   return <><TextReviewPackage artifact={artifact} reviewPackage={reviewPackage} /><section className="review-section"><h3>角色 / 地点 / 关键道具参考组</h3>{referenceGroups.length ? referenceGroups.map((candidate) => <div key={candidate.id}><TextArtifactContent source={localArtifactUrl(candidate.episode_id, candidate.relative_path, candidate.sha256)} /></div>) : <p className="form-error">视觉审核包缺少参考组。</p>}</section><section className="review-section"><h3>所需静态视觉</h3><p className="muted-copy">这是视觉方案生成的静态参考图，不是分镜。分镜会在后续“分镜生成与审核”阶段单独展示。</p><ArtifactPreview artifacts={staticVisuals} /></section></>;

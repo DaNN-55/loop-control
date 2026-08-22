@@ -590,6 +590,48 @@ describe("审核台", () => {
     expect(onTransition).toHaveBeenLastCalledWith(visualEpisode.id, "visual_draft", "视觉方向清晰，符合主脚本。");
   });
 
+  it("将冻结的外部视觉输入连同视觉资产清单交给 Owner 审核", async () => {
+    const visualEpisode: Episode = { ...reviewEpisode, stage: "visual_review" };
+    const manifest: Artifact = {
+      ...previewArtifact,
+      artifact_type: "visual_asset_manifest",
+      id: "artifact-visual-assets",
+      producer_task_id: "task-visual-assets",
+      relative_path: "episodes/episode-review/visual-assets-v1.md",
+    };
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("# 视觉资产清单\n\n- 已提供：林砚角色参考。", { status: 200, headers: { "Content-Type": "text/markdown" } })));
+
+    render(<EpisodeDetail {...materialInputProps} artifacts={[manifest]} blueprint={blueprint} episode={visualEpisode} isTransitionPending={false} onTransition={vi.fn()} reviewPackages={[{
+      artifact_id: manifest.id,
+      context_snapshot: {
+        allowed_tools: ["read", "write"],
+        artifact: { relative_path: manifest.relative_path, sha256: manifest.sha256 },
+        budget: { limit_cents: 120 },
+        capability: "visual_planning",
+        executor: { model: "gpt-5.6-codex", provider: "codex" },
+        output: { content_type: "text/markdown", required_artifact_types: ["visual_asset_manifest"] },
+        script_revision: { sha256: "c".repeat(64) },
+        visual_assets: {
+          external_inputs: [{ artifactType: "external_visual_input", relativePath: "episodes/episode-review/materials/character.png", sha256: "b".repeat(64), fileSize: 128 }],
+        },
+      },
+      created_at: "2026-08-22T00:00:00.000Z",
+      episode_id: visualEpisode.id,
+      id: "review-package-visual-assets",
+      invalidated_at: null,
+      invalidated_reason: null,
+      revision_number: 1,
+      stage: "visual_review",
+      task_id: "task-visual-assets",
+      task_run_id: "task-run-visual-assets",
+    }]} tasks={[]} transitions={[]} />);
+
+    expect(await screen.findByText("视觉资产清单", { exact: false })).toBeTruthy();
+    expect(screen.getByText("已冻结的外部视觉输入")).toBeTruthy();
+    expect(screen.getByText("episodes/episode-review/materials/character.png")).toBeTruthy();
+    expect(screen.queryByText("视觉审核包缺少参考组。")).toBeNull();
+  });
+
   it("回填并保存当前审核渲染的合成配置，只提交新的渲染修订", async () => {
     const user = userEvent.setup();
     const onRequestReviewRenderRevision = vi.fn().mockResolvedValue(true);

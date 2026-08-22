@@ -19,6 +19,9 @@ const audioAdapterConnectionsMigration = resolve(
 const audioToolPermissionsMigration = resolve(
   "supabase/migrations/20260822223500_normalize_audio_tool_permissions.sql",
 );
+const approvedVisualManifestMigration = resolve(
+  "supabase/migrations/20260822223700_freeze_approved_visual_manifest.sql",
+);
 const deployedMigrations = {
   "20260822095959_guard_legacy_b_roll_history.sql": "b36e63037ca12c2785d7bbb9f2fe8596f31377de734dcf8b96cb03af23613c9b",
   "20260822100000_freeze_b_roll_adapter_connection.sql": "f38575ba3b5dcb7814f230c5a48a52c6a5ac37811868d00bdb0f7eb375b2a51d",
@@ -81,5 +84,13 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("'{narration,allowed_tools}'");
     expect(migration).toContain("'{soundtrack,allowed_tools}'");
     expect(migration).not.toContain("'network'");
+  });
+
+  it("分镜只冻结 Owner 已批准的视觉资产清单", () => {
+    const migration = readFileSync(approvedVisualManifestMigration, "utf8");
+
+    expect(migration).toContain("visual_package.artifact_id as approved_visual_artifact_id");
+    expect(migration).toContain("artifact.id = candidate.approved_visual_artifact_id");
+    expect(migration).not.toContain("artifact.producer_task_id = candidate.visual_task_id and artifact.artifact_type = 'visual_asset_manifest'");
   });
 });
