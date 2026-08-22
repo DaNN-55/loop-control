@@ -1,14 +1,3 @@
-update public.account_blueprint_versions blueprint
-set policy = jsonb_set(blueprint.policy, '{b_roll,credential_ref}', to_jsonb('pexels-default'::text))
-where jsonb_typeof(blueprint.policy -> 'b_roll') = 'object'
-  and blueprint.policy #>> '{b_roll,executor,provider}' = 'pexels'
-  and blueprint.policy #>> '{b_roll,executor,adapter}' = 'pexels_video'
-  and coalesce(btrim(blueprint.policy #>> '{b_roll,credential_ref}'), '') = '';
-
-update public.series_versions series_version
-set rules = series_version.rules - 'b_roll'
-where series_version.rules ? 'b_roll';
-
 alter function public.orchestrate_b_roll_tasks_configured(uuid)
 rename to orchestrate_b_roll_tasks_without_connection_ref;
 
