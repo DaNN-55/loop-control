@@ -4,6 +4,12 @@ create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
 select plan(8);
 
+drop function public.orchestrate_b_roll_tasks_configured(uuid);
+alter function public.orchestrate_b_roll_tasks_without_connection_ref(uuid)
+rename to orchestrate_b_roll_tasks_configured;
+
+\ir ../migrations/20260822095959_guard_legacy_b_roll_history.sql
+
 insert into auth.users (id, email)
 values ('52000000-0000-4000-8000-000000000001', 'issue-52-migration@test.invalid');
 
@@ -50,7 +56,9 @@ values (
   true
 );
 
+\ir ../migrations/20260822100000_freeze_b_roll_adapter_connection.sql
 \ir ../migrations/20260822104421_expand_legacy_b_roll_blueprints.sql
+\ir ../migrations/20260822112024_remove_legacy_b_roll_history_guard.sql
 
 select is(
   (select policy from public.account_blueprint_versions where id = '52000000-0000-4000-8000-000000000003'),
