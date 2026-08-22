@@ -94,6 +94,7 @@ export interface WorkerTaskPackageInput {
     title: string;
   };
   capability: string;
+  credentialRef?: string;
   promptContext?: PromptContextSnapshot;
   commission?: {
     creativeDirection: string;
@@ -188,6 +189,7 @@ export interface WorkerTaskPackage {
   model: string;
   promptVersion: string;
   capability: string;
+  credentialRef?: string;
   promptContext?: PromptContextSnapshot;
   commission?: {
     creativeDirection: string;
@@ -303,6 +305,8 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
   }
   if (input.capability === "narration_generation" && (!input.media || input.media.adapter !== "google_tts")) throw new Error("旁白生成必须包含冻结的 Google TTS 配置。");
   if (input.capability === "b_roll_generation" && (!input.media || input.media.adapter !== "pexels_video")) throw new Error("B-roll 生成必须包含冻结的 Pexels 配置。");
+  if (input.capability === "b_roll_generation" && !isNonEmptyString(input.credentialRef)) throw new Error("B-roll 生成必须包含冻结的外部连接引用。");
+  if (input.credentialRef !== undefined && !isNonEmptyString(input.credentialRef)) throw new Error("外部连接引用格式无效。");
   if (input.capability === "embedded_audio_extraction" && (!input.media || input.media.adapter !== "ffmpeg_extract_audio")) throw new Error("派生音频提取必须包含冻结的视频输入。");
   if (input.capability === "soundtrack_generation" && (!input.media || input.media.adapter !== "freesound_preview")) throw new Error("声轨生成必须包含冻结的 Freesound 配置。");
   if (input.capability === "review_rendering" && !input.reviewRender) throw new Error("审核渲染必须包含冻结的合成工程。 ");
@@ -367,6 +371,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     model: input.task.model,
     promptVersion: input.task.promptVersion,
     capability: input.capability,
+    ...(input.credentialRef ? { credentialRef: input.credentialRef } : {}),
     ...(input.promptContext ? { promptContext: { ...input.promptContext } } : {}),
     ...(input.commission ? { commission: { creativeDirection: input.commission.creativeDirection, coreContent: input.commission.coreContent } } : {}),
     ...(input.seriesBaseline ? { seriesBaseline: { versionId: input.seriesBaseline.versionId, version: input.seriesBaseline.version, rules: input.seriesBaseline.rules } } : {}),

@@ -1,4 +1,5 @@
 import type { Json } from "../lib/database.types";
+import { adapterRegistration } from "../worker/adapterRegistry";
 
 type JsonObject = Record<string, Json | undefined>;
 type ExecutorForm = { provider: string; model: string; promptVersion: string };
@@ -10,6 +11,7 @@ export type ConfigurableMediaAdapterKey = typeof configurableMediaAdapterKeys[nu
 export type MediaAdapterForm = {
   provider: string;
   adapter: string;
+  credentialRef: string;
   model: string;
   promptVersion: string;
   allowedTools: string;
@@ -101,7 +103,7 @@ function blueprintAdvancedJson(value: JsonObject): string {
     const mediaAdapter = objectValue(value[key]);
     const mediaAdapterExtra: JsonObject = {};
     for (const [field, rawValue] of Object.entries(mediaAdapter)) {
-      if (field !== "executor" && field !== "allowed_tools" && field !== "budget_cents" && field !== "per_shot_budget_cents" && field !== "total_budget_cents" && field !== "max_attempts" && field !== "max_concurrency" && field !== "provider_max_concurrency" && field !== "voice") mediaAdapterExtra[field] = rawValue;
+      if (field !== "executor" && field !== "credential_ref" && field !== "allowed_tools" && field !== "budget_cents" && field !== "per_shot_budget_cents" && field !== "total_budget_cents" && field !== "max_attempts" && field !== "max_concurrency" && field !== "provider_max_concurrency" && field !== "voice") mediaAdapterExtra[field] = rawValue;
     }
     const mediaExecutor = objectValue(mediaAdapter.executor);
     const mediaExecutorExtra = Object.fromEntries(Object.entries(mediaExecutor).filter(([field]) => !new Set(["provider", "adapter", "model", "prompt_version"]).has(field)));
@@ -140,9 +142,11 @@ function formMediaAdapter(value: Json | undefined, fallbackAllowedTools: readonl
   const voice = objectValue(mediaAdapter.voice);
   const allowedTools = stringArray(mediaAdapter.allowed_tools);
   const visibleAllowedTools = filterAllowedTools ? allowedTools.filter((tool) => visibleToolKeys.has(tool)) : allowedTools;
+  const registration = adapterRegistration(stringValue(executor.provider), stringValue(executor.adapter));
   return {
     provider: stringValue(executor.provider),
     adapter: stringValue(executor.adapter),
+    credentialRef: stringValue(mediaAdapter.credential_ref) || registration?.connections[0]?.credentialRef || "",
     model: stringValue(executor.model),
     promptVersion: stringValue(executor.prompt_version),
     allowedTools: (visibleAllowedTools.length ? visibleAllowedTools : fallbackAllowedTools).join(", "),
@@ -159,8 +163,8 @@ function formMediaAdapter(value: Json | undefined, fallbackAllowedTools: readonl
 }
 
 export function defaultMediaAdapterForm(key: ConfigurableMediaAdapterKey): MediaAdapterForm {
-  const empty: MediaAdapterForm = { provider: "", adapter: "", model: "", promptVersion: "", allowedTools: "read, write", budgetCents: "", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "1", maxConcurrency: "1", providerMaxConcurrency: "1", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "1" };
-  if (key === "b_roll") return { ...empty, provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", promptVersion: "b-roll-v1" };
+  const empty: MediaAdapterForm = { provider: "", adapter: "", credentialRef: "", model: "", promptVersion: "", allowedTools: "read, write", budgetCents: "", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "1", maxConcurrency: "1", providerMaxConcurrency: "1", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "1" };
+  if (key === "b_roll") return { ...empty, provider: "pexels", adapter: "pexels_video", credentialRef: "pexels-default", model: "pexels-video-v1", promptVersion: "b-roll-v1" };
   return { ...empty, provider: "google_tts", adapter: "google_tts", model: "standard", promptVersion: "narration-v1" };
 }
 
@@ -191,6 +195,9 @@ export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterFor
     positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
   }
   if (key === "b_roll") {
+    const registration = adapterRegistration(form.provider.trim(), form.adapter.trim());
+    if (!registration || registration.capability !== "b_roll_generation") throw new Error("B-roll 必须选择已注册的 Adapter。");
+    if (!registration.connections.some((connection) => connection.credentialRef === form.credentialRef.trim())) throw new Error("B-roll 必须选择可用的外部连接。");
     positiveInteger(form.perShotBudgetCents, `${label}单镜头预算`);
     positiveInteger(form.totalBudgetCents, `${label}总预算`);
     positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
@@ -246,6 +253,8 @@ function mediaAdapterToPolicy(form: MediaAdapterForm, existing: JsonObject, acco
     if (accountAllowedTools && !effectiveTools.length) throw new Error("媒体能力至少需要一个账号级工具。");
     policy.allowed_tools = effectiveTools;
   }
+  if (form.credentialRef.trim()) policy.credential_ref = form.credentialRef.trim();
+  else delete policy.credential_ref;
   const numericFields: Array<[keyof MediaAdapterForm, string]> = [["budgetCents", "budget_cents"], ["perShotBudgetCents", "per_shot_budget_cents"], ["totalBudgetCents", "total_budget_cents"], ["maxAttempts", "max_attempts"], ["maxConcurrency", "max_concurrency"], ["providerMaxConcurrency", "provider_max_concurrency"]];
   for (const [formKey, policyKey] of numericFields) {
     if (form[formKey].trim()) policy[policyKey] = Number(form[formKey]);

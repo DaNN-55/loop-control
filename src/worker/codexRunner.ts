@@ -147,6 +147,7 @@ function createTaskPackage(task: ClaimedWorkerTask): WorkerTaskPackage {
       title: task.title,
     },
     capability: requiredString(snapshot.capability, "任务缺少能力声明。"),
+    ...(typeof snapshot.credential_ref === "string" ? { credentialRef: snapshot.credential_ref } : {}),
     promptContext: promptContext(snapshot),
     commission: commission(snapshot),
     seriesBaseline: seriesBaseline(snapshot),

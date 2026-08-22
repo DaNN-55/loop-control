@@ -49,6 +49,24 @@ describe("Worker 契约", () => {
     });
   });
 
+  it("在 B-roll Worker 任务包中冻结非秘密连接引用", () => {
+    const inputBasis = [
+      { relativePath: "episodes/episode-1/script.md", sha256: "a".repeat(64) },
+      { relativePath: "episodes/episode-1/visual.png", sha256: "b".repeat(64) },
+    ];
+    const taskPackage = createWorkerTaskPackage({
+      ...packageInput,
+      task: { ...packageInput.task, type: "generate_b_roll", provider: "pexels", model: "pexels-video-v1", promptVersion: "b-roll-v1" },
+      capability: "b_roll_generation",
+      credentialRef: "pexels-default",
+      media: { adapter: "pexels_video", bRoll: { query: "rainy street", targetDurationSeconds: 3, shot: { id: "shot-1", scriptSegment: "rainy street", durationSeconds: 3, shotType: "b_roll", productionMethod: "Pexels", inputBasis, targetSpec: "9:16" } } },
+      output: { requiredArtifactTypes: ["b_roll_asset"], contentType: "video/mp4", relativePath: "episodes/episode-1/b-roll/shot-1.mp4", reviewStage: "production_ready" },
+      inputArtifacts: [{ artifactType: "main_script", ...inputBasis[0], fileSize: 128 }, { artifactType: "static_visual", ...inputBasis[1], fileSize: 128 }],
+    });
+
+    expect(taskPackage).toMatchObject({ provider: "pexels", credentialRef: "pexels-default", media: { adapter: "pexels_video" } });
+  });
+
   it("把固定的系列基准原样放入视觉 Worker 任务包", () => {
     const taskPackage = createWorkerTaskPackage({
       ...packageInput,

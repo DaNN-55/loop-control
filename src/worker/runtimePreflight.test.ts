@@ -27,6 +27,29 @@ describe("runtime preflight", () => {
     expect(capabilities.at(-1)).toMatchObject({ credential: "GOOGLE_TTS_API_KEY" });
   });
 
+  it("用注册目录解析 Pexels 的非秘密连接引用", () => {
+    const [capability] = runtimeCapabilitiesFromBlueprintPolicy({
+      b_roll: {
+        credential_ref: "pexels-default",
+        executor: { provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", prompt_version: "b-roll-v1" },
+        allowed_tools: ["read", "write"],
+      },
+    }).filter((candidate) => candidate.capability === "b_roll_generation");
+
+    expect(capability).toMatchObject({ adapter: "pexels_video", credentialRef: "pexels-default", credential: "PEXELS_API_KEY" });
+  });
+
+  it("兼容未写 credential_ref 的旧 Pexels 蓝图", () => {
+    const [capability] = runtimeCapabilitiesFromBlueprintPolicy({
+      b_roll: {
+        executor: { provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", prompt_version: "b-roll-v1" },
+        allowed_tools: ["read", "write"],
+      },
+    }).filter((candidate) => candidate.capability === "b_roll_generation");
+
+    expect(capability).toMatchObject({ credentialRef: "pexels-default", credential: "PEXELS_API_KEY" });
+  });
+
   it("把真实运行态失败映射为结构化环境阻塞", () => {
     const result = createRuntimePreflight([
       {
@@ -120,6 +143,7 @@ describe("runtime preflight", () => {
       capability: "b_roll_generation",
       provider: "pexels",
       adapter: "pexels_video",
+      credentialRef: "pexels-default",
       model: "pexels-video-v1",
       promptVersion: "b-roll-v1",
       allowedTools: ["read", "write"],

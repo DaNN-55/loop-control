@@ -10,6 +10,23 @@ import {
 } from "./configurationFormValues";
 
 describe("账号蓝图表单转换", () => {
+  it("将旧 Pexels 配置展开为非秘密连接引用", () => {
+    const form = blueprintPolicyToForm({
+      b_roll: {
+        executor: { provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", prompt_version: "b-roll-v1" },
+        allowed_tools: ["read", "write"],
+        per_shot_budget_cents: 10,
+        total_budget_cents: 100,
+        max_attempts: 1,
+        max_concurrency: 1,
+        provider_max_concurrency: 1,
+      },
+    });
+
+    expect(form.mediaAdapters.b_roll).toMatchObject({ adapter: "pexels_video", credentialRef: "pexels-default" });
+    expect(blueprintFormToPolicy(form)).toMatchObject({ b_roll: { credential_ref: "pexels-default" } });
+  });
+
   it("默认关闭可用媒体能力，并只保存已启用的能力", () => {
     const form = blueprintPolicyToForm({});
 
@@ -132,10 +149,10 @@ describe("账号蓝图表单转换", () => {
         storyboard_planning: { provider: "codex", model: "model-c", promptVersion: "prompt-c" },
       },
       mediaAdapters: {
-        a_roll: { provider: "codex", adapter: "codex", model: "video-model", promptVersion: "a-roll-v1", allowedTools: "read, write", budgetCents: "20", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "2", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
-        b_roll: { provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", promptVersion: "b-roll-v1", allowedTools: "network, write", budgetCents: "", perShotBudgetCents: "10", totalBudgetCents: "100", maxAttempts: "2", maxConcurrency: "3", providerMaxConcurrency: "2", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
-        narration: { provider: "google_tts", adapter: "google_tts", model: "tts-model", promptVersion: "narration-v1", allowedTools: "network, write", budgetCents: "12", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "1", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "zh-CN", voiceName: "voice-a", voiceSpeakingRate: "0.8" },
-        soundtrack: { provider: "freesound", adapter: "freesound_preview", model: "sound-model", promptVersion: "soundtrack-v1", allowedTools: "network, write", budgetCents: "", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
+        a_roll: { provider: "codex", adapter: "codex", credentialRef: "", model: "video-model", promptVersion: "a-roll-v1", allowedTools: "read, write", budgetCents: "20", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "2", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
+        b_roll: { provider: "pexels", adapter: "pexels_video", credentialRef: "pexels-default", model: "pexels-video-v1", promptVersion: "b-roll-v1", allowedTools: "network, write", budgetCents: "", perShotBudgetCents: "10", totalBudgetCents: "100", maxAttempts: "2", maxConcurrency: "3", providerMaxConcurrency: "2", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
+        narration: { provider: "google_tts", adapter: "google_tts", credentialRef: "", model: "tts-model", promptVersion: "narration-v1", allowedTools: "network, write", budgetCents: "12", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "1", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "zh-CN", voiceName: "voice-a", voiceSpeakingRate: "0.8" },
+        soundtrack: { provider: "freesound", adapter: "freesound_preview", credentialRef: "", model: "sound-model", promptVersion: "soundtrack-v1", allowedTools: "network, write", budgetCents: "", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
       },
       advancedJson: '{"soundtrack":{"budget_cents":99}}',
     });

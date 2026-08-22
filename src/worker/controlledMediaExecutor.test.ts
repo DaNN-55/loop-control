@@ -48,7 +48,7 @@ describe("受控媒体执行器", () => {
   it("拒绝将非 MP4 的 Pexels 下载伪装成视频产物", async () => {
     const rootPackage = await packageFor({
       task: { id: "task-2", type: "generate_b_roll", attempt: 0, budgetLimitCents: 100, maxAttempts: 1, provider: "pexels", model: "pexels-video-v1", promptVersion: "b-roll-v1" },
-      capability: "b_roll_generation", output: { requiredArtifactTypes: ["b_roll_asset"], contentType: "video/mp4", relativePath: "episodes/episode-1/b-roll/shot-1.mp4", reviewStage: "production_ready" },
+      capability: "b_roll_generation", credentialRef: "pexels-default", output: { requiredArtifactTypes: ["b_roll_asset"], contentType: "video/mp4", relativePath: "episodes/episode-1/b-roll/shot-1.mp4", reviewStage: "production_ready" },
       inputArtifacts: [{ artifactType: "main_script", relativePath: "episodes/episode-1/main.txt", sha256: "a".repeat(64), fileSize: 1 }, { artifactType: "static_visual", relativePath: "episodes/episode-1/ref.png", sha256: "b".repeat(64), fileSize: 1 }],
       media: { adapter: "pexels_video", bRoll: { query: "雨夜", targetDurationSeconds: 2, shot: { id: "shot-1", scriptSegment: "雨夜", durationSeconds: 2, shotType: "b_roll", productionMethod: "Pexels", inputBasis: [{ relativePath: "episodes/episode-1/main.txt", sha256: "a".repeat(64) }, { relativePath: "episodes/episode-1/ref.png", sha256: "b".repeat(64) }], targetSpec: "9:16" } } },
     });
@@ -61,7 +61,7 @@ describe("受控媒体执行器", () => {
   it("返回的 MP4 无法播放时不上报成功", async () => {
     const taskPackage = await packageFor({
       task: { id: "task-3", type: "generate_b_roll", attempt: 0, budgetLimitCents: 100, maxAttempts: 1, provider: "pexels", model: "pexels-video-v1", promptVersion: "b-roll-v1" },
-      capability: "b_roll_generation", output: { requiredArtifactTypes: ["b_roll_asset"], contentType: "video/mp4", relativePath: "episodes/episode-1/b-roll/shot-1.mp4", reviewStage: "production_ready" },
+      capability: "b_roll_generation", credentialRef: "pexels-default", output: { requiredArtifactTypes: ["b_roll_asset"], contentType: "video/mp4", relativePath: "episodes/episode-1/b-roll/shot-1.mp4", reviewStage: "production_ready" },
       inputArtifacts: [{ artifactType: "main_script", relativePath: "episodes/episode-1/main.txt", sha256: "a".repeat(64), fileSize: 1 }, { artifactType: "static_visual", relativePath: "episodes/episode-1/ref.png", sha256: "b".repeat(64), fileSize: 1 }],
       media: { adapter: "pexels_video", bRoll: { query: "雨夜", targetDurationSeconds: 2, shot: { id: "shot-1", scriptSegment: "雨夜", durationSeconds: 2, shotType: "b_roll", productionMethod: "Pexels", inputBasis: [{ relativePath: "episodes/episode-1/main.txt", sha256: "a".repeat(64) }, { relativePath: "episodes/episode-1/ref.png", sha256: "b".repeat(64) }], targetSpec: "9:16" } } },
     });
@@ -69,6 +69,26 @@ describe("受控媒体执行器", () => {
       .mockResolvedValueOnce(new Response(JSON.stringify({ videos: [{ id: 1, duration: 3, video_files: [{ link: "https://cdn.test/video.mp4", width: 1080, height: 1920, file_type: "video/mp4" }] }] }), { status: 200 }))
       .mockResolvedValueOnce(new Response("not-playable", { status: 200, headers: { "content-type": "video/mp4" } }));
     await expect(executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: undefined, pexelsApiKey: "pexels-key", validateMp4: async () => { throw new Error("无法播放"); }, probeMp3: vi.fn(), extractMp3: vi.fn() })).rejects.toThrow("无法播放");
+  });
+
+  it("按冻结分镜检索、下载、校验并登记 Pexels MP4", async () => {
+    const inputBasis = [{ relativePath: "episodes/episode-1/main.txt", sha256: "a".repeat(64) }, { relativePath: "episodes/episode-1/ref.png", sha256: "b".repeat(64) }];
+    const taskPackage = await packageFor({
+      task: { id: "task-pexels", type: "generate_b_roll", attempt: 0, budgetLimitCents: 100, maxAttempts: 1, provider: "pexels", model: "pexels-video-v1", promptVersion: "b-roll-v1" },
+      capability: "b_roll_generation", credentialRef: "pexels-default", output: { requiredArtifactTypes: ["b_roll_asset"], contentType: "video/mp4", relativePath: "episodes/episode-1/b-roll/shot-1.mp4", reviewStage: "production_ready" },
+      inputArtifacts: [{ artifactType: "main_script", ...inputBasis[0], fileSize: 1 }, { artifactType: "static_visual", ...inputBasis[1], fileSize: 1 }],
+      media: { adapter: "pexels_video", bRoll: { query: "雨夜", targetDurationSeconds: 2, shot: { id: "shot-1", scriptSegment: "雨夜", durationSeconds: 2, shotType: "b_roll", productionMethod: "Pexels", inputBasis, targetSpec: "9:16" } } },
+    });
+    const fetcher = vi.fn()
+      .mockResolvedValueOnce(new Response(JSON.stringify({ videos: [{ id: 1, duration: 3, video_files: [{ link: "https://cdn.test/video.mp4", width: 1080, height: 1920, file_type: "video/mp4" }] }] }), { status: 200 }))
+      .mockResolvedValueOnce(new Response("mp4-data", { status: 200, headers: { "content-type": "video/mp4" } }));
+    const validateMp4 = vi.fn().mockResolvedValue(undefined);
+
+    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: undefined, pexelsApiKey: "pexels-key", validateMp4, probeMp3: vi.fn(), extractMp3: vi.fn() }));
+
+    expect(result).toMatchObject({ status: "completed", artifacts: [{ artifactType: "b_roll_asset", relativePath: taskPackage.output.relativePath, fileSize: 8 }] });
+    expect(validateMp4).toHaveBeenCalledWith(expect.any(String), 2);
+    await expect(readFile(join(taskPackage.assets.allowedRoot, taskPackage.output.relativePath), "utf8")).resolves.toBe("mp4-data");
   });
 
   it("仅从冻结的视频修订提取派生音频", async () => {

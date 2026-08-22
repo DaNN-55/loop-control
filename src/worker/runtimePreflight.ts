@@ -1,4 +1,5 @@
 import type { WorkerPreflightCheck, WorkerPreflightResult, WorkerPreflightStatus, WorkerTaskPackage } from "./contracts.js";
+import { adapterRegistration } from "./adapterRegistry.js";
 
 export interface RuntimeCapability {
   capability: string;
@@ -7,6 +8,7 @@ export interface RuntimeCapability {
   model?: string;
   promptVersion?: string;
   allowedTools?: unknown;
+  credentialRef?: string;
   credential?: string;
   command?: string;
 }
@@ -32,9 +34,8 @@ const mediaCapabilities = [
   { key: "narration", capability: "narration_generation" },
 ] as const;
 
-const registeredAdapters = new Set([
+const legacyRegisteredAdapters = new Set([
   "codex:codex",
-  "pexels:pexels_video",
   "google_tts:google_tts",
   "ffmpeg:ffmpeg_extract_audio",
   "freesound:freesound_preview",
@@ -62,14 +63,18 @@ export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, seriesRu
     const config = record(configuredValue);
     const executor = record(config.executor);
     const provider = stringValue(executor.provider);
+    const adapter = stringValue(executor.adapter);
+    const registration = adapterRegistration(provider, adapter);
+    const credentialRef = stringValue(config.credential_ref) || registration?.connections[0]?.credentialRef;
     capabilities.push({
       capability: mediaCapability.capability,
       provider,
-      adapter: stringValue(executor.adapter),
+      adapter,
       model: stringValue(executor.model),
       promptVersion: stringValue(executor.prompt_version),
       allowedTools: config.allowed_tools,
-      credential: credentialEnvironmentForProvider(provider),
+      ...(credentialRef ? { credentialRef } : {}),
+      credential: credentialEnvironmentForReference(provider, adapter, credentialRef),
       command: runtimeCommandForProvider(provider),
     });
   }
@@ -86,7 +91,8 @@ export function runtimeCapabilityFromTask(taskPackage: WorkerTaskPackage): Runti
     model: taskPackage.model,
     promptVersion: taskPackage.promptVersion,
     allowedTools: taskPackage.allowedTools,
-    credential: credentialEnvironmentForProvider(taskPackage.provider),
+    ...(taskPackage.credentialRef ? { credentialRef: taskPackage.credentialRef } : {}),
+    credential: credentialEnvironmentForReference(taskPackage.provider, adapter, taskPackage.credentialRef),
     command: runtimeCommandForProvider(taskPackage.provider),
   };
 }
@@ -101,7 +107,7 @@ export function createRuntimePreflight(capabilities: RuntimeCapability[], enviro
     }
 
     const registrationValid = capability.adapter
-      ? registeredAdapters.has(`${capability.provider}:${capability.adapter}`)
+      ? Boolean(adapterRegistration(capability.provider, capability.adapter)) || legacyRegisteredAdapters.has(`${capability.provider}:${capability.adapter}`)
       : capability.provider === "codex" || capability.provider === "hyperframes" || capability.provider === "ffmpeg";
     if (!registrationValid) {
       checks.push({ capability: capability.capability, check: "capability_registration", phase: "preflight", status: "unavailable", reason: `当前 Worker 未注册 ${capability.provider}/${capability.adapter ?? "default"} 执行路径。`, action: "contact_environment_admin", scope: "worker" });
@@ -158,6 +164,12 @@ export function credentialEnvironmentForProvider(provider: string): string | und
   return undefined;
 }
 
+export function credentialEnvironmentForReference(provider: string, adapter: string | undefined, credentialRef: string | undefined): string | undefined {
+  const registration = adapter ? adapterRegistration(provider, adapter) : undefined;
+  if (registration) return registration.connections.find((connection) => connection.credentialRef === credentialRef)?.environmentVariable;
+  return credentialEnvironmentForProvider(provider);
+}
+
 export function runtimeCommandForProvider(provider: string): string | undefined {
   if (provider === "codex") return "codex";
   if (provider === "ffmpeg") return "ffmpeg";
@@ -184,6 +196,8 @@ function capabilityFromExecutor(capability: string, executor: Record<string, unk
 function configurationErrorFor(capability: RuntimeCapability): string | undefined {
   if (!capability.provider || !capability.model || !capability.promptVersion) return `能力 ${capability.capability} 缺少 Provider、模型或 Prompt 版本。`;
   if (capability.adapter !== undefined && !capability.adapter) return `能力 ${capability.capability} 缺少 Adapter。`;
+  const registration = capability.adapter ? adapterRegistration(capability.provider, capability.adapter) : undefined;
+  if (registration?.connections.length && !registration.connections.some((connection) => connection.credentialRef === capability.credentialRef)) return `能力 ${capability.capability} 缺少可用的外部连接引用。`;
   return undefined;
 }
 

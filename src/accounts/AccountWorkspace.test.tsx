@@ -101,6 +101,18 @@ describe("账号配置工作区", () => {
     expect(screen.getByText("已启用能力的技术配置（1）", { selector: "summary" }).parentElement?.hasAttribute("open")).toBe(true);
   });
 
+  it("从注册目录选择 B-roll Adapter 和非秘密连接引用", async () => {
+    const user = userEvent.setup();
+    const onUpdateBlueprint = vi.fn().mockResolvedValue(blueprint);
+    renderWorkspace({ onUpdateBlueprint });
+
+    await user.click(screen.getByRole("checkbox", { name: "启用B-roll" }));
+
+    expect((screen.getByRole("combobox", { name: "B-roll Adapter" }) as HTMLSelectElement).value).toBe("pexels_video");
+    expect((screen.getByRole("combobox", { name: "B-roll 外部连接" }) as HTMLSelectElement).value).toBe("pexels-default");
+    expect(screen.queryByLabelText("API Key")).toBeNull();
+  });
+
   it("展示真实 Worker 就绪检查并允许重新检查", async () => {
     const user = userEvent.setup();
     const onRefreshBlueprintPreflight = vi.fn().mockResolvedValue(undefined);

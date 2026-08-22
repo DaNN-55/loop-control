@@ -323,6 +323,43 @@ describe("本地 Codex Worker runner", () => {
     }));
   });
 
+  it("把 B-roll 的冻结连接引用交给预检和 Worker", async () => {
+    const inputBasis = [
+      { relativePath: "episodes/episode-1/script.md", sha256: "a".repeat(64) },
+      { relativePath: "episodes/episode-1/visual.png", sha256: "b".repeat(64) },
+    ];
+    const preflight = vi.fn().mockResolvedValue({
+      version: "worker-preflight/v1",
+      checks: [{ capability: "b_roll_generation", check: "credential_presence", phase: "preflight", status: "unavailable", reason: "Pexels 连接缺少凭据。", action: "contact_environment_admin", scope: "worker" }],
+    });
+
+    await runCodexWorker({
+      claimNextTask: async () => ({
+        ...claimedTask,
+        taskType: "generate_b_roll",
+        provider: "pexels",
+        model: "pexels-video-v1",
+        promptVersion: "b-roll-v1",
+        inputSnapshot: {
+          capability: "b_roll_generation",
+          credential_ref: "pexels-default",
+          media: { adapter: "pexels_video", b_roll: { query: "rainy street", target_duration_seconds: 3, shot: { id: "shot-1", scriptSegment: "rainy street", durationSeconds: 3, shotType: "b_roll", productionMethod: "Pexels", inputBasis, targetSpec: "9:16" } } },
+          allowed_tools: ["read", "write"],
+          output: { required_artifact_types: ["b_roll_asset"], content_type: "video/mp4", relative_path: "episodes/episode-1/b-roll/shot-1.mp4", review_stage: "production_ready" },
+          input_artifacts: [{ artifactType: "main_script", ...inputBasis[0], fileSize: 128 }, { artifactType: "static_visual", ...inputBasis[1], fileSize: 128 }],
+        },
+      }),
+      preflight,
+      reportResult: vi.fn().mockResolvedValue(undefined),
+      execute: vi.fn(),
+      verifyAssetRoot: async () => undefined,
+      verifyArtifacts: async () => undefined,
+      actualCostCents: 0,
+    });
+
+    expect(preflight).toHaveBeenCalledWith(expect.objectContaining({ credentialRef: "pexels-default", media: { adapter: "pexels_video", bRoll: expect.any(Object) } }));
+  });
+
   it("把 retryable preflight 保留为可见阻塞，不让数据库自动重试", async () => {
     const reportResult = vi.fn().mockResolvedValue(undefined);
     const execute = vi.fn();

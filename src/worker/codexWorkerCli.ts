@@ -18,7 +18,7 @@ import { executeControlledMediaTask } from "./controlledMediaExecutor.js";
 import { executeHyperframesReviewRender } from "./hyperframesReviewRenderer.js";
 import { executeHyperframesFinalRender } from "./hyperframesFinalRenderer.js";
 import { readTaskIdArgument } from "./taskClaimArguments.js";
-import { createRuntimePreflight, credentialEnvironmentForProvider, runtimeCapabilityFromTask, runtimeCommandArguments, runtimeCommandForProvider } from "./runtimePreflight.js";
+import { createRuntimePreflight, credentialEnvironmentForReference, runtimeCapabilityFromTask, runtimeCommandArguments, runtimeCommandForProvider } from "./runtimePreflight.js";
 import { probeCodexModel, probeProviderConnection } from "./runtimeProbes.js";
 
 const supabaseUrl = requiredEnvironment("SUPABASE_URL");
@@ -72,12 +72,14 @@ async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
     const input = { taskPackage, run: runCommand, validateMp4: validateMp4Artifact, inspectMp4: inspectMp4Artifact };
     return taskPackage.capability === "final_rendering" ? executeHyperframesFinalRender(input) : executeHyperframesReviewRender(input);
   }
+  const credential = credentialEnvironmentForReference(taskPackage.provider, taskPackage.aRoll?.adapter ?? taskPackage.media?.adapter, taskPackage.credentialRef);
+  const apiKey = credential ? process.env[credential] : undefined;
   return executeControlledMediaTask({
     taskPackage,
     fetcher: fetch,
-    pexelsApiKey: process.env.PEXELS_API_KEY,
-    googleTtsApiKey: process.env.GOOGLE_TTS_API_KEY,
-    freesoundApiKey: process.env.FREESOUND_API_KEY,
+    pexelsApiKey: taskPackage.provider === "pexels" ? apiKey : undefined,
+    googleTtsApiKey: taskPackage.provider === "google_tts" ? apiKey : undefined,
+    freesoundApiKey: taskPackage.provider === "freesound" ? apiKey : undefined,
     validateMp4: validateMp4Artifact,
     probeMp3: probeMp3Artifact,
     extractMp3: extractMp3Artifact,
@@ -86,7 +88,7 @@ async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
 
 async function preflightTask(taskPackage: WorkerTaskPackage): Promise<WorkerPreflightResult> {
   const capability = runtimeCapabilityFromTask(taskPackage);
-  const credential = credentialEnvironmentForProvider(taskPackage.provider);
+  const credential = credentialEnvironmentForReference(taskPackage.provider, taskPackage.aRoll?.adapter ?? taskPackage.media?.adapter, taskPackage.credentialRef);
   const command = runtimeCommandForProvider(taskPackage.provider);
   const commandStatus = command ? await workerCommandStatus(command) : undefined;
   const commands = command && commandStatus ? { [command]: commandStatus } : undefined;

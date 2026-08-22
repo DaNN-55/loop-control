@@ -4,6 +4,7 @@ import type { Database, Json } from "../lib/database.types";
 import { HelpTip } from "../ui/HelpTip";
 import type { LocalSystemStatusReport, SystemState } from "../observability/SystemStatusPanel";
 import type { WorkerPreflightResult } from "../worker/contracts";
+import { adapterRegistration, registeredAdaptersForCapability } from "../worker/adapterRegistry";
 import { externalConnectionStatuses, type ExternalConnectionStatus } from "./connectionStatus";
 import {
   blueprintFormToPolicy,
@@ -126,14 +127,22 @@ function MediaAdapterCard({ adapterKey, form, onChange, readOnly = false, showAl
   const statusClass = status === "已配置" ? "is-configured" : status === "待补齐" ? "is-incomplete" : "is-empty";
   const textField = (field: keyof MediaAdapterForm, title: string, help: string, fieldPlaceholder: string) => <label><FieldLabel help={help}>{title}</FieldLabel><input aria-label={title} onChange={(event) => onChange(field, event.target.value)} placeholder={fieldPlaceholder} readOnly={readOnly} value={form[field]} /></label>;
   const numberField = (field: keyof MediaAdapterForm, title: string, help: string, min = 1) => <label><FieldLabel help={help}>{title}</FieldLabel><input aria-label={title} min={min} onChange={(event) => onChange(field, event.target.value)} readOnly={readOnly} step={min < 1 ? "0.1" : "1"} type="number" value={form[field]} /></label>;
+  const bRollAdapters = adapterKey === "b_roll" ? registeredAdaptersForCapability("b_roll_generation") : [];
+  const selectedBrollAdapter = adapterKey === "b_roll" ? adapterRegistration(form.provider, form.adapter) : undefined;
 
   return <article className={`media-adapter-card ${statusClass}`}>
     <header><div><h4>{label}</h4><p>{mediaAdapterDescriptions[adapterKey]}</p></div><span className="media-adapter-status">{status}</span></header>
     <div className="media-adapter-field-grid">
-      {textField("provider", "Provider", "执行服务名称。这个值必须与 Worker 已注册的供应商一致。", placeholder.provider)}
-      {textField("adapter", "Adapter", "具体媒体适配器名称。它会随生产单冻结，Worker 不会自动替换。", placeholder.adapter)}
-      {textField("model", "模型", "媒体适配器使用的模型或版本名称。", placeholder.model)}
-      {textField("promptVersion", "Prompt 版本", "媒体任务使用的提示词版本标签；先用稳定、可追溯的 slug，例如 a-roll-v1。", placeholder.promptVersion)}
+      {adapterKey === "b_roll" ? <>
+        <label><FieldLabel help="Provider 由已注册 Adapter 声明，不能自由填写。">Provider</FieldLabel><input aria-label="Provider" readOnly value={selectedBrollAdapter?.provider ?? form.provider} /></label>
+        <label><FieldLabel help="只能选择 Worker 已注册的 B-roll Adapter。">Adapter</FieldLabel><select aria-label="B-roll Adapter" disabled={readOnly} onChange={(event) => { const registration = bRollAdapters.find((candidate) => candidate.id === event.target.value); if (!registration) return; onChange("provider", registration.provider); onChange("adapter", registration.id); onChange("credentialRef", registration.connections[0]?.credentialRef ?? ""); onChange("model", placeholder.model); onChange("promptVersion", placeholder.promptVersion); }} value={selectedBrollAdapter?.id ?? "__unregistered__"}>{selectedBrollAdapter ? null : <option value="__unregistered__">当前值（未登记）</option>}{bRollAdapters.map((registration) => <option key={registration.id} value={registration.id}>{registration.provider} · {registration.id}</option>)}</select></label>
+        <label><FieldLabel help="蓝图只保存连接的非秘密引用，不保存 API Key。">外部连接</FieldLabel><select aria-label="B-roll 外部连接" disabled={readOnly || !selectedBrollAdapter} onChange={(event) => onChange("credentialRef", event.target.value)} value={selectedBrollAdapter?.connections.some((connection) => connection.credentialRef === form.credentialRef) ? form.credentialRef : ""}><option value="">请选择连接</option>{selectedBrollAdapter?.connections.map((connection) => <option key={connection.credentialRef} value={connection.credentialRef}>{connection.label}</option>)}</select></label>
+      </> : <>
+        {textField("provider", "Provider", "执行服务名称。这个值必须与 Worker 已注册的供应商一致。", placeholder.provider)}
+        {textField("adapter", "Adapter", "具体媒体适配器名称。它会随生产单冻结，Worker 不会自动替换。", placeholder.adapter)}
+        {textField("model", "模型", "媒体适配器使用的模型或版本名称。", placeholder.model)}
+        {textField("promptVersion", "Prompt 版本", "媒体任务使用的提示词版本标签；先用稳定、可追溯的 slug，例如 a-roll-v1。", placeholder.promptVersion)}
+      </>}
     </div>
     {showAllowedTools ? <label><FieldLabel help="任务允许使用的工具，使用英文逗号分隔。至少填写一个。">允许工具</FieldLabel><input aria-label="允许工具" onChange={(event) => onChange("allowedTools", event.target.value)} placeholder="例如：read, write" readOnly={readOnly} value={form.allowedTools} /></label> : null}
     {adapterKey === "a_roll" ? <div className="media-adapter-field-grid">{numberField("budgetCents", "预算（分）", "单个 A-roll 任务的最大预算，必须大于 0。")}{numberField("maxAttempts", "最大尝试次数", "单个任务失败后的最大执行尝试次数。")}</div> : null}
