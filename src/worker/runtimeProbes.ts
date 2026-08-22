@@ -17,6 +17,7 @@ export interface CodexModelProbeResult {
 export interface ProviderConnectionProbeResult {
   connection: RuntimeDependencyStatus;
   credentialValidity?: RuntimeDependencyStatus;
+  modelPermission?: RuntimeDependencyStatus;
 }
 
 export async function probeCodexModel(model: string, runCommand: RuntimeProbeCommand, workingDirectory = tmpdir()): Promise<CodexModelProbeResult> {
@@ -54,8 +55,8 @@ export async function probeCodexModel(model: string, runCommand: RuntimeProbeCom
   }
 }
 
-export async function probeProviderConnection(provider: string, apiKey: string, fetcher: RuntimeProbeFetcher = fetch): Promise<ProviderConnectionProbeResult> {
-  const request = providerProbeRequest(provider, apiKey);
+export async function probeProviderConnection(provider: string, apiKey: string, fetcher: RuntimeProbeFetcher = fetch, model?: string): Promise<ProviderConnectionProbeResult> {
+  const request = providerProbeRequest(provider, apiKey, model);
   if (!request) return { connection: { available: true, detail: `${provider} 不需要外部网络探测。` } };
 
   try {
@@ -66,17 +67,24 @@ export async function probeProviderConnection(provider: string, apiKey: string, 
         credentialValidity: { available: false, status: "unavailable", detail: `${provider} 凭据被供应商拒绝：HTTP ${response.status}。` },
       };
     }
+    if (provider === "openai" && response.status === 404) {
+      return {
+        connection: { available: true, detail: `${provider} 网络已连通，供应商已接受 Worker 请求。` },
+        modelPermission: { available: false, status: "unavailable", detail: `${provider} 模型不可用：HTTP 404。` },
+      };
+    }
     if (!response.ok) {
       return { connection: { available: false, status: response.status >= 500 || response.status === 408 || response.status === 429 ? "retryable" : "unavailable", detail: `${provider} 网络探测返回 HTTP ${response.status}。` } };
     }
-    return { connection: { available: true, detail: `${provider} 网络已连通，供应商已接受 Worker 请求。` } };
+    return { connection: { available: true, detail: `${provider} 网络已连通，供应商已接受 Worker 请求。` }, ...(provider === "openai" ? { modelPermission: { available: true, detail: `${provider} 模型已通过 Worker 权限探测。` } } : {}) };
   } catch (error) {
     const detail = errorMessage(error);
     return { connection: { available: false, status: "retryable", detail: `${provider} 网络探测失败：${detail}` } };
   }
 }
 
-function providerProbeRequest(provider: string, apiKey: string): { url: string; init?: RequestInit } | undefined {
+function providerProbeRequest(provider: string, apiKey: string, model?: string): { url: string; init?: RequestInit } | undefined {
+  if (provider === "openai") return { url: `https://api.openai.com/v1/models/${encodeURIComponent(model || "gpt-image-1")}`, init: { headers: { Authorization: `Bearer ${apiKey}` } } };
   if (provider === "google_tts") {
     const endpoint = new URL("https://texttospeech.googleapis.com/v1/voices");
     endpoint.searchParams.set("languageCode", "en-US");

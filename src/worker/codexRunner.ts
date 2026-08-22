@@ -365,6 +365,8 @@ function visualAssetPreparation(snapshot: Record<string, unknown>): WorkerTaskPa
     imageGeneration: {
       provider: requiredString(imageGeneration.provider, "视觉资产准备图片 Adapter 缺少 Provider。"),
       adapter: requiredString(imageGeneration.adapter, "视觉资产准备图片 Adapter 缺少 Adapter。"),
+      model: requiredString(imageGeneration.model, "视觉资产准备图片 Adapter 缺少模型。"),
+      credentialRef: requiredString(imageGeneration.credential_ref, "视觉资产准备图片 Adapter 缺少外部连接。"),
     },
   };
 }
@@ -441,7 +443,7 @@ function aRoll(snapshot: Record<string, unknown>): WorkerTaskPackageInput["aRoll
   };
 }
 
-function parseCodexOutput(output: string, actualCostCents: number): unknown {
+export function parseCodexOutput(output: string, actualCostCents: number): unknown {
   const parsed: unknown = JSON.parse(output);
   if (!isRecord(parsed)) throw new Error("Codex 必须返回一个 JSON 对象。");
   return { ...parsed, actualCostCents };

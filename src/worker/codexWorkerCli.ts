@@ -5,16 +5,18 @@ import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import {
   runCodexWorker,
+  parseCodexOutput,
   type ClaimedWorkerTask,
 } from "./codexRunner.js";
-import type { WorkerPreflightResult, WorkerTaskPackage } from "./contracts.js";
-import type { ArtifactManifest } from "./contracts.js";
+import type { ArtifactManifest, VisualAssetRequest, WorkerPreflightResult, WorkerTaskPackage } from "./contracts.js";
 import type { StoryboardManifest } from "./contracts.js";
 import { verifyArtifactIndex, verifyMediaLibrary } from "./mediaLibrary.js";
 import { nonNegativeIntegerEnvironment, requiredEnvironment } from "./runtimeEnvironment.js";
 import { verifyReportedStoryboardArtifact } from "./storyboardArtifact.js";
 import { workerResultJsonSchema } from "./workerResultSchema.js";
-import { executeControlledMediaTask } from "./controlledMediaExecutor.js";
+import { executeControlledMediaTask, writeSafeAssetFile } from "./controlledMediaExecutor.js";
+import { generateOpenAiImage } from "./mediaProviders.js";
+import { createHash } from "node:crypto";
 import { executeHyperframesReviewRender } from "./hyperframesReviewRenderer.js";
 import { executeHyperframesFinalRender } from "./hyperframesFinalRenderer.js";
 import { readTaskIdArgument } from "./taskClaimArguments.js";
@@ -46,7 +48,7 @@ async function claimNextTask(): Promise<ClaimedWorkerTask | null> {
   if (error) throw new Error(`Unable to claim a worker task: ${error.message}`);
   const row = data?.[0];
   if (!row) return null;
-  if (row.provider !== "codex" && row.provider !== "google_tts" && row.provider !== "pexels" && row.provider !== "ffmpeg" && row.provider !== "freesound" && row.provider !== "hyperframes") throw new Error(`Unsupported worker provider: ${row.provider}`);
+  if (row.provider !== "codex" && row.provider !== "google_tts" && row.provider !== "pexels" && row.provider !== "ffmpeg" && row.provider !== "freesound" && row.provider !== "hyperframes" && row.provider !== "openai") throw new Error(`Unsupported worker provider: ${row.provider}`);
 
   return {
     taskId: row.task_id,
@@ -67,7 +69,10 @@ async function claimNextTask(): Promise<ClaimedWorkerTask | null> {
 }
 
 async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
-  if (taskPackage.provider === "codex") return executeCodex(taskPackage);
+  if (taskPackage.provider === "codex") {
+    const output = await executeCodex(taskPackage);
+    return taskPackage.visualAssetPreparation?.imageGeneration ? generateVisualAssets(taskPackage, output) : output;
+  }
   if (taskPackage.provider === "hyperframes") {
     const input = { taskPackage, run: runCommand, validateMp4: validateMp4Artifact, inspectMp4: inspectMp4Artifact };
     return taskPackage.capability === "final_rendering" ? executeHyperframesFinalRender(input) : executeHyperframesReviewRender(input);
@@ -80,9 +85,44 @@ async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
     pexelsApiKey: taskPackage.provider === "pexels" ? apiKey : undefined,
     googleTtsApiKey: taskPackage.provider === "google_tts" ? apiKey : undefined,
     freesoundApiKey: taskPackage.provider === "freesound" ? apiKey : undefined,
+    openaiApiKey: taskPackage.provider === "openai" ? apiKey : undefined,
     validateMp4: validateMp4Artifact,
     probeMp3: probeMp3Artifact,
     extractMp3: extractMp3Artifact,
+  });
+}
+
+async function generateVisualAssets(taskPackage: WorkerTaskPackage, output: string): Promise<string> {
+  const candidate = parseCodexOutput(output, 0);
+  if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) throw new Error("视觉资产准备结果格式无效。");
+  const result = candidate as Record<string, unknown>;
+  if (result.status !== "completed") return output;
+  const requests = visualAssetRequests(result.visualAssetRequests);
+  if (!requests.length) return output;
+  const imageGeneration = taskPackage.visualAssetPreparation?.imageGeneration;
+  if (!imageGeneration) throw new Error("视觉资产存在缺失项，但没有冻结的图片 Adapter。" );
+  if (imageGeneration.provider !== "openai" || imageGeneration.adapter !== "openai_images") throw new Error("冻结的图片 Adapter 没有可用执行路径。" );
+  const apiKey = process.env[credentialEnvironmentForReference(imageGeneration.provider, imageGeneration.adapter, imageGeneration.credentialRef) ?? ""];
+  if (!apiKey?.trim()) throw new Error("OPENAI_API_KEY 未配置，无法生成冻结视觉资产。" );
+  const generated: ArtifactManifest[] = [];
+  for (const request of requests) {
+    const bytes = await generateOpenAiImage({ apiKey, fetcher: fetch, model: imageGeneration.model, prompt: request.prompt });
+    const relativePath = `episodes/${taskPackage.episode.id}/visuals/${request.id}.png`;
+    await writeSafeAssetFile(taskPackage.assets.allowedRoot, relativePath, bytes);
+    generated.push({ artifactType: "static_visual", relativePath, sha256: createHash("sha256").update(bytes).digest("hex"), fileSize: bytes.byteLength });
+  }
+  if (!Array.isArray(result.artifacts)) throw new Error("视觉资产准备结果缺少产物清单。" );
+  result.artifacts = [...result.artifacts, ...generated];
+  return JSON.stringify(result);
+}
+
+function visualAssetRequests(value: unknown): VisualAssetRequest[] {
+  if (!Array.isArray(value)) throw new Error("视觉资产准备缺少图片生成需求。" );
+  return value.map((request) => {
+    if (!request || typeof request !== "object" || Array.isArray(request)) throw new Error("视觉图片生成需求格式无效。" );
+    const value = request as Record<string, unknown>;
+    if (typeof value.id !== "string" || !/^[a-z0-9][a-z0-9-]{0,63}$/.test(value.id) || typeof value.prompt !== "string" || !value.prompt.trim()) throw new Error("视觉图片生成需求格式无效。" );
+    return { id: value.id, prompt: value.prompt, inputBasis: [] };
   });
 }
 
@@ -96,12 +136,12 @@ async function preflightTask(taskPackage: WorkerTaskPackage): Promise<WorkerPref
     ? await probeCodexModel(taskPackage.model, (probeCommand, argumentsList, options) => runCommandWithOutput(probeCommand, argumentsList, options?.timeoutMs), tmpdir())
     : undefined;
   const apiKey = credential ? process.env[credential]?.trim() : undefined;
-  const providerProbe = apiKey && taskPackage.provider !== "codex" ? await probeProviderConnection(taskPackage.provider, apiKey) : undefined;
+  const providerProbe = apiKey && taskPackage.provider !== "codex" ? await probeProviderConnection(taskPackage.provider, apiKey, fetch, taskPackage.model) : undefined;
   return createRuntimePreflight([capability], {
     credentials: credential ? { [credential]: Boolean(process.env[credential]?.trim()) } : undefined,
     commands,
     ...(modelProbe ? { modelPermissions: { [taskPackage.model]: modelProbe.modelPermission }, connections: { [taskPackage.provider]: modelProbe.connection } } : {}),
-    ...(providerProbe ? { connections: { [taskPackage.provider]: providerProbe.connection }, ...(providerProbe.credentialValidity && credential ? { credentialValidity: { [credential]: providerProbe.credentialValidity } } : {}) } : {}),
+    ...(providerProbe ? { connections: { [taskPackage.provider]: providerProbe.connection }, ...(providerProbe.credentialValidity && credential ? { credentialValidity: { [credential]: providerProbe.credentialValidity } } : {}), ...(providerProbe.modelPermission ? { modelPermissions: { [taskPackage.model]: providerProbe.modelPermission } } : {}) } : {}),
   });
 }
 
@@ -212,7 +252,7 @@ export function buildCodexPrompt(taskPackage: WorkerTaskPackage): string {
     "Work only inside assets.allowedRoot. Do not inspect, modify, or transmit files outside that directory.",
     "Use only the tools listed in allowedTools. If the task cannot be completed with them, return blocked instead of substituting another tool.",
     "allowedTools is a capability policy, not a list of Codex tool names. When it includes read and write, use your normal workspace filesystem tools only to read and write within assets.allowedRoot.",
-    "When task package includes seriesBaseline, it is an approved, frozen reusable base. For visual planning, do not regenerate covered characters, voices, or visual references; create only additions or explicit deviations. When visualAssetPreparation is present, write the required visual_asset_manifest as Markdown: list every frozen external visual input by its role, list only the missing character, location, prop, or key-frame needs, and cite the frozen input paths that justify each item. Do not create SVGs, placeholder images, or a static_visual artifact. A visual asset manifest is a reviewable list; it does not silently satisfy an unmet image-generation need.",
+    "When task package includes seriesBaseline, it is an approved, frozen reusable base. For visual planning, do not regenerate covered characters, voices, or visual references; create only additions or explicit deviations. When visualAssetPreparation is present, write the required visual_asset_manifest as Markdown: list every frozen external visual input by its role, list only the missing character, location, prop, or key-frame needs, and cite the frozen input paths that justify each item. Also return visualAssetRequests: [] when external assets fully cover the need; otherwise return one request per missing item, each with a lowercase kebab-case id, an explicit image prompt, and inputBasis paths/hashes drawn only from frozen inputs. Do not create SVGs, placeholder images, or a static_visual artifact yourself. The registered image Adapter will create only the returned missing requests; without one, return blocked rather than claiming completion.",
     "For a completed storyboard_planning task, write the primary artifact as valid JSON and also return the identical object in result.storyboard. It must have version storyboard/v1, a non-empty shots array, and an audioCues array (empty when no BGM/SFX is needed). Every shot needs id, scriptSegment, durationSeconds, shotType (a_roll or b_roll), productionMethod, inputBasis (objects containing each frozen input's relativePath and sha256), and targetSpec. Each optional audio cue needs id, kind (bgm or sfx), description, searchQuery, startSeconds, and durationSeconds. description is the Owner-facing display text; searchQuery is a concise English Freesound search phrase of at most 100 characters. Each shot must include the frozen main script and at least one approved visual input. For a blocked or failed storyboard_planning task, set result.storyboard to null. Do not generate or queue A-roll, B-roll, or audio media; this task is only the reviewable storyboard. When reviewAnnotations are present, revise the matching shot IDs to address their reasons.",
     "For a_roll_generation, create only the frozen shot in aRoll with its declared aRoll.adapter. Do not replace the adapter, add other shots, scan for newer inputs, or advance an Episode stage. Use only aRoll.shot.inputBasis and produce the frozen video output contract; if the declared adapter cannot produce that output, return blocked with an explicit blocker.",
     "Do not approve, publish, change any blueprint, call platform APIs, or change an Episode stage.",

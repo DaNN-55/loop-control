@@ -193,6 +193,11 @@ export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterFor
     positiveInteger(form.budgetCents, `${label}预算`);
     positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
   }
+  if (key === "static_visual") {
+    validateRegisteredMediaConnection("静态视觉 / 图片生成", "static_visual_generation", form);
+    positiveInteger(form.budgetCents, `${label}预算`);
+    positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
+  }
   if (key === "b_roll") {
     validateRegisteredMediaConnection("B-roll", "b_roll_generation", form);
     positiveInteger(form.perShotBudgetCents, `${label}单镜头预算`);

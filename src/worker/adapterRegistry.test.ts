@@ -24,6 +24,15 @@ describe("adapter registry", () => {
     ]);
   });
 
+  it("为静态视觉登记 OpenAI Images 与非秘密连接", () => {
+    expect(adapterRegistration("openai", "openai_images")).toMatchObject({
+      capability: "static_visual_generation",
+      connectionType: "openai_api",
+      requiresNetwork: true,
+      connections: [{ credentialRef: "openai-default", environmentVariable: "OPENAI_API_KEY" }],
+    });
+  });
+
   it("为旁白、配乐与内部派生音频登记实际执行路径", () => {
     expect(adapterRegistration("google_tts", "google_tts")).toMatchObject({
       capability: "narration_generation",

@@ -148,6 +148,19 @@ export function workerResultJsonSchema(capability: string) {
     required: isStoryboardTask ? [...requiredResultFields, "storyboard"] : [...requiredResultFields],
     properties: {
       ...commonResultProperties,
+      ...(capability === "visual_planning" ? { visualAssetRequests: {
+        type: "array",
+        items: {
+          type: "object",
+          additionalProperties: false,
+          required: ["id", "prompt", "inputBasis"],
+          properties: {
+            id: { type: "string", pattern: "^[a-z0-9][a-z0-9-]{0,63}$" },
+            prompt: { type: "string", minLength: 1, maxLength: 4000 },
+            inputBasis: { type: "array", minItems: 1, items: { type: "object", additionalProperties: false, required: ["relativePath", "sha256"], properties: { relativePath: { type: "string" }, sha256: { type: "string", pattern: "^[0-9a-f]{64}$" } } } },
+          },
+        },
+      } } : {}),
       ...(isStoryboardTask ? { storyboard: { ...storyboardSchema, type: ["object", "null"] } } : {}),
     },
   };

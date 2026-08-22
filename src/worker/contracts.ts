@@ -55,6 +55,12 @@ export interface ArtifactManifest {
   fileSize: number;
 }
 
+export interface VisualAssetRequest {
+  id: string;
+  prompt: string;
+  inputBasis: Array<Pick<ArtifactManifest, "relativePath" | "sha256">>;
+}
+
 export interface StoryboardShotManifest {
   id: string;
   scriptSegment: string;
@@ -103,7 +109,7 @@ export interface WorkerTaskPackageInput {
     attempt: number;
     budgetLimitCents: number;
     maxAttempts: number;
-    provider: "codex" | "google_tts" | "pexels" | "ffmpeg" | "freesound" | "hyperframes";
+    provider: "codex" | "google_tts" | "pexels" | "ffmpeg" | "freesound" | "hyperframes" | "openai";
     model: string;
     promptVersion: string;
   };
@@ -131,6 +137,8 @@ export interface WorkerTaskPackageInput {
     imageGeneration?: {
       provider: string;
       adapter: string;
+      model: string;
+      credentialRef: string;
     };
   };
   reviewFeedback?: {
@@ -174,6 +182,12 @@ export interface WorkerTaskPackageInput {
         query: string;
         targetDurationSeconds: number;
         cue: StoryboardAudioCue;
+      };
+    }
+    | {
+      adapter: "openai_images";
+      staticVisual: {
+        prompt: string;
       };
     };
   reviewRender?: {
@@ -280,6 +294,7 @@ export interface WorkerResult {
   status: WorkerResultStatus;
   artifacts: ArtifactManifest[];
   storyboard?: StoryboardManifest;
+  visualAssetRequests?: VisualAssetRequest[];
   validation: {
     passed: boolean;
     checks: Array<{ name: string; passed: boolean; detail: string }>;
@@ -332,7 +347,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     if (input.capability !== "visual_planning") throw new Error("只有视觉资产准备任务可以声明视觉输入。");
     input.visualAssetPreparation.externalInputs.forEach(assertArtifactManifest);
     const imageGeneration = input.visualAssetPreparation.imageGeneration;
-    if (imageGeneration && (!isNonEmptyString(imageGeneration.provider) || !isNonEmptyString(imageGeneration.adapter))) throw new Error("图片 Adapter 配置无效。");
+    if (imageGeneration && (!isNonEmptyString(imageGeneration.provider) || !isNonEmptyString(imageGeneration.adapter) || !isNonEmptyString(imageGeneration.model) || !isNonEmptyString(imageGeneration.credentialRef))) throw new Error("图片 Adapter 配置无效。");
     if (input.visualAssetPreparation.externalInputs.length === 0 && (!imageGeneration || adapterRegistration(imageGeneration.provider, imageGeneration.adapter)?.capability !== "static_visual_generation")) {
       throw new Error(missingVisualAssetAdapterMessage);
     }
@@ -351,6 +366,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
   if (input.credentialRef !== undefined && !isNonEmptyString(input.credentialRef)) throw new Error("外部连接引用格式无效。");
   if (input.capability === "embedded_audio_extraction" && (!input.media || input.media.adapter !== "ffmpeg_extract_audio")) throw new Error("派生音频提取必须包含冻结的视频输入。");
   if (input.capability === "soundtrack_generation" && (!input.media || input.media.adapter !== "freesound_preview")) throw new Error("声轨生成必须包含冻结的 Freesound 配置。");
+  if (input.capability === "static_visual_generation" && (!input.media || input.media.adapter !== "openai_images")) throw new Error("静态视觉生成必须包含冻结的 OpenAI Images 配置。");
   if (input.capability === "review_rendering" && !input.reviewRender) throw new Error("审核渲染必须包含冻结的合成工程。 ");
   if (input.capability !== "review_rendering" && input.reviewRender) throw new Error("只有审核渲染任务可以包含合成工程。 ");
   if (input.capability === "final_rendering" && !input.finalRender) throw new Error("最终渲染必须包含冻结的审核工程。 ");
@@ -400,6 +416,9 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     const soundtrack = input.media.soundtrack;
     if (!isNonEmptyString(soundtrack.query) || soundtrack.query.length > 100 || !isPositiveFiniteNumber(soundtrack.targetDurationSeconds)) throw new Error("声轨任务的冻结检索词或时长无效。");
     validateStoryboardAudioCue(soundtrack.cue);
+  }
+  if (input.media?.adapter === "openai_images") {
+    if (input.task.provider !== "openai" || !isNonEmptyString(input.credentialRef) || !isNonEmptyString(input.media.staticVisual.prompt)) throw new Error("静态视觉任务的冻结 OpenAI Images 配置无效。");
   }
   if (input.allowedTools.some((tool) => !isNonEmptyString(tool))) throw new Error("allowedTools must contain non-empty names.");
   if (input.output.requiredArtifactTypes.length === 0 || input.output.requiredArtifactTypes.some((artifactType) => !isNonEmptyString(artifactType))) throw new Error("至少需要一个输出产物类型。");
@@ -463,6 +482,7 @@ export function validateWorkerResult(value: unknown, taskPackage: WorkerTaskPack
   if (audioDurationSeconds !== undefined && !isPositiveFiniteNumber(audioDurationSeconds)) throw new Error("音频实际时长必须是正数。");
   const preflight = value.preflight === undefined ? undefined : parseWorkerPreflight(value.preflight);
   const mediaSource = value.mediaSource === undefined ? undefined : parseMediaSource(value.mediaSource);
+  const visualAssetRequests = value.visualAssetRequests === undefined ? undefined : parseVisualAssetRequests(value.visualAssetRequests, taskPackage.assets.inputs);
   if (taskPackage.provider === "freesound" && value.status === "completed" && mediaSource === undefined) throw new Error("Freesound 任务必须返回媒体来源记录。");
   if (taskPackage.provider !== "freesound" && mediaSource !== undefined) throw new Error("非 Freesound 任务不能返回媒体来源记录。");
   if ((taskPackage.capability === "narration_generation" || taskPackage.capability === "embedded_audio_extraction" || taskPackage.capability === "soundtrack_generation") && value.status === "completed" && audioDurationSeconds === undefined) throw new Error("已完成音频任务必须返回实际时长。");
@@ -480,6 +500,8 @@ export function validateWorkerResult(value: unknown, taskPackage: WorkerTaskPack
     : undefined;
   if (taskPackage.capability === "storyboard_planning" && value.status !== "completed" && value.storyboard !== null) throw new Error("未完成的分镜任务必须返回空分镜内容。");
   if (taskPackage.capability !== "storyboard_planning" && value.storyboard !== undefined) throw new Error("非分镜任务不能返回分镜内容。");
+  if (taskPackage.capability !== "visual_planning" && visualAssetRequests !== undefined) throw new Error("非视觉资产准备任务不能返回图片生成需求。");
+  if (taskPackage.visualAssetPreparation && value.status === "completed" && visualAssetRequests === undefined) throw new Error("视觉资产准备必须明确返回图片生成需求。" );
   if (value.status === "completed" && (!value.validation.passed || value.artifacts.length === 0 || value.blockers.length > 0)) {
     throw new Error("已完成结果必须包含通过验证的产物，且不能带有 blockers。");
   }
@@ -505,6 +527,7 @@ export function validateWorkerResult(value: unknown, taskPackage: WorkerTaskPack
     status: value.status,
     artifacts,
     ...(storyboard ? { storyboard } : {}),
+    ...(visualAssetRequests ? { visualAssetRequests } : {}),
     validation: {
       passed: value.validation.passed,
       checks: value.validation.checks as WorkerResult["validation"]["checks"],
@@ -517,6 +540,20 @@ export function validateWorkerResult(value: unknown, taskPackage: WorkerTaskPack
     retry: value.retry as WorkerResult["retry"],
     nextStep: value.nextStep,
   };
+}
+
+function parseVisualAssetRequests(value: unknown, frozenInputs: ArtifactManifest[]): VisualAssetRequest[] {
+  if (!Array.isArray(value)) throw new Error("视觉图片生成需求格式无效。");
+  const ids = new Set<string>();
+  return value.map((request) => {
+    if (!isRecord(request) || !isNonEmptyString(request.id) || !/^[a-z0-9][a-z0-9-]{0,63}$/.test(request.id) || !isNonEmptyString(request.prompt) || request.prompt.length > 4_000 || !Array.isArray(request.inputBasis) || request.inputBasis.length === 0 || ids.has(request.id)) throw new Error("视觉图片生成需求格式无效。");
+    ids.add(request.id);
+    const inputBasis = request.inputBasis.map((input) => {
+      if (!isRecord(input) || !isSafeRelativePath(input.relativePath) || !isSha256(input.sha256) || !frozenInputs.some((artifact) => artifact.relativePath === input.relativePath && artifact.sha256 === input.sha256)) throw new Error("视觉图片生成需求引用了未冻结输入。");
+      return { relativePath: input.relativePath, sha256: input.sha256 };
+    });
+    return { id: request.id, prompt: request.prompt, inputBasis };
+  });
 }
 
 export function validateStoryboardManifest(value: unknown, frozenInputs: ArtifactManifest[]): StoryboardManifest {

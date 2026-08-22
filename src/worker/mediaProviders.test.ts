@@ -1,7 +1,14 @@
 import { describe, expect, it, vi } from "vitest";
-import { searchFreesoundPreview, searchPexelsVideo, synthesizeGoogleTts } from "./mediaProviders";
+import { generateOpenAiImage, searchFreesoundPreview, searchPexelsVideo, synthesizeGoogleTts } from "./mediaProviders";
 
 describe("受控媒体供应商", () => {
+  it("使用 OpenAI Images 的 base64 PNG 响应", async () => {
+    const png = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 1]);
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ data: [{ b64_json: png.toString("base64") }] }), { status: 200 }));
+
+    await expect(generateOpenAiImage({ apiKey: "openai-key", fetcher, model: "gpt-image-1", prompt: "雨夜的古城门" })).resolves.toEqual(new Uint8Array(png));
+    expect(fetcher).toHaveBeenCalledWith("https://api.openai.com/v1/images/generations", expect.objectContaining({ method: "POST", headers: expect.objectContaining({ Authorization: "Bearer openai-key" }) }));
+  });
   it("使用冻结的旁白文本和声音向 Google TTS 请求 MP3", async () => {
     const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ audioContent: Buffer.from("audio-bytes").toString("base64") }), { status: 200 }));
 

@@ -140,7 +140,7 @@ function MediaAdapterCard({ adapterKey, form, onChange, readOnly = false, showAl
   const statusClass = status === "已配置" ? "is-configured" : status === "待补齐" ? "is-incomplete" : "is-empty";
   const textField = (field: keyof MediaAdapterForm, title: string, help: string, fieldPlaceholder: string) => <label><FieldLabel help={help}>{title}</FieldLabel><input aria-label={title} onChange={(event) => onChange(field, event.target.value)} placeholder={fieldPlaceholder} readOnly={readOnly} value={form[field]} /></label>;
   const numberField = (field: keyof MediaAdapterForm, title: string, help: string, min = 1) => <label><FieldLabel help={help}>{title}</FieldLabel><input aria-label={title} min={min} onChange={(event) => onChange(field, event.target.value)} readOnly={readOnly} step={min < 1 ? "0.1" : "1"} type="number" value={form[field]} /></label>;
-  const registeredCapability = adapterKey === "b_roll" ? "b_roll_generation" : adapterKey === "narration" ? "narration_generation" : adapterKey === "soundtrack" ? "soundtrack_generation" : undefined;
+  const registeredCapability = adapterKey === "static_visual" ? "static_visual_generation" : adapterKey === "b_roll" ? "b_roll_generation" : adapterKey === "narration" ? "narration_generation" : adapterKey === "soundtrack" ? "soundtrack_generation" : undefined;
   const registeredAdapters = registeredCapability ? registeredAdaptersForCapability(registeredCapability) : [];
   const selectedRegisteredAdapter = registeredCapability ? adapterRegistration(form.provider, form.adapter) : undefined;
 
@@ -159,6 +159,7 @@ function MediaAdapterCard({ adapterKey, form, onChange, readOnly = false, showAl
       </>}
     </div>
     {showAllowedTools && !registeredCapability ? <label><FieldLabel help="任务允许使用的工具，使用英文逗号分隔。至少填写一个。">允许工具</FieldLabel><input aria-label="允许工具" onChange={(event) => onChange("allowedTools", event.target.value)} placeholder="例如：read, write" readOnly={readOnly} value={form.allowedTools} /></label> : null}
+    {adapterKey === "static_visual" ? <div className="media-adapter-field-grid">{numberField("budgetCents", "预算（分）", "视觉资产准备中图片生成允许的最大预算。")}{numberField("maxAttempts", "最大尝试次数", "图片生成失败后的最大执行尝试次数。")}</div> : null}
     {adapterKey === "a_roll" ? <div className="media-adapter-field-grid">{numberField("budgetCents", "预算（分）", "单个 A-roll 任务的最大预算，必须大于 0。")}{numberField("maxAttempts", "最大尝试次数", "单个任务失败后的最大执行尝试次数。")}</div> : null}
     {adapterKey === "b_roll" ? <div className="media-adapter-field-grid">{numberField("perShotBudgetCents", "单镜头预算（分）", "每个 B-roll 镜头允许使用的预算。")}{numberField("totalBudgetCents", "总预算（分）", "本次分镜中所有 B-roll 镜头共享的总预算。")}{numberField("maxAttempts", "最大尝试次数", "单个任务失败后的最大执行尝试次数。")}{numberField("maxConcurrency", "最大并发数", "同一生产单同时运行的 B-roll 任务数。")}{numberField("providerMaxConcurrency", "供应商并发上限", "发给同一供应商的最大并发数。")}</div> : null}
     {adapterKey === "narration" ? <div className="media-adapter-field-grid">{numberField("budgetCents", "预算（分）", "旁白任务的最大预算，必须大于 0。")}{numberField("maxAttempts", "最大尝试次数", "旁白任务失败后的最大执行尝试次数。")}{textField("voiceLanguageCode", "语言代码", "声音使用的语言代码，例如 zh-CN 或 vi-VN。", "例如：zh-CN")}{textField("voiceName", "声音名称", "供应商注册的声音名称。", "例如：cmn-CN-Standard-A")}{numberField("voiceSpeakingRate", "语速", "旁白播放速度，通常填写 1。", 0.1)}</div> : null}
@@ -196,7 +197,7 @@ function runtimeDependencyItems(report: LocalSystemStatusReport | null): Array<{
 }
 
 function externalConnectionProviderLabel(provider: string): string {
-  return provider === "google_tts" ? "Google TTS" : provider === "pexels" ? "Pexels" : provider === "freesound" ? "Freesound" : provider || "未选择供应商";
+  return provider === "openai" ? "OpenAI Images" : provider === "google_tts" ? "Google TTS" : provider === "pexels" ? "Pexels" : provider === "freesound" ? "Freesound" : provider || "未选择供应商";
 }
 
 function externalConnectionStatusLabel(status: ExternalConnectionStatus["status"], check: string | null): string {

@@ -23,6 +23,15 @@ const adapterRegistry: readonly AdapterRegistration[] = [
     connections: [],
   },
   {
+    id: "openai_images",
+    capability: "static_visual_generation",
+    provider: "openai",
+    connectionType: "openai_api",
+    requiresNetwork: true,
+    configurationFields: ["model", "credential_ref", "budget_cents", "max_attempts"],
+    connections: [{ credentialRef: "openai-default", environmentVariable: "OPENAI_API_KEY", label: "OpenAI 默认连接" }],
+  },
+  {
     id: "pexels_video",
     capability: "b_roll_generation",
     provider: "pexels",
