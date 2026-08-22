@@ -42,9 +42,8 @@ const legacyRegisteredAdapters = new Set([
   "hyperframes:hyperframes",
 ]);
 
-export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, seriesRules?: unknown): RuntimeCapability[] {
+export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, _seriesRules?: unknown): RuntimeCapability[] {
   const root = record(policy);
-  const series = record(seriesRules);
   const executors = record(root.executors);
   const allowedTools = root.allowed_tools;
   const capabilities: RuntimeCapability[] = [
@@ -58,14 +57,12 @@ export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, seriesRu
   for (const mediaCapability of mediaCapabilities) {
     const blueprintValue = root[mediaCapability.key];
     if (blueprintValue === undefined || blueprintValue === null) continue;
-    const configuredValue = series[mediaCapability.key] !== undefined && series[mediaCapability.key] !== null ? series[mediaCapability.key] : blueprintValue;
-    if (configuredValue === undefined || configuredValue === null) continue;
-    const config = record(configuredValue);
+    const config = record(blueprintValue);
     const executor = record(config.executor);
     const provider = stringValue(executor.provider);
     const adapter = stringValue(executor.adapter);
-    const registration = adapterRegistration(provider, adapter);
-    const credentialRef = stringValue(config.credential_ref) || registration?.connections[0]?.credentialRef;
+    const credentialRef = stringValue(config.credential_ref);
+    const credential = credentialEnvironmentForReference(provider, adapter, credentialRef);
     capabilities.push({
       capability: mediaCapability.capability,
       provider,
@@ -74,7 +71,7 @@ export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, seriesRu
       promptVersion: stringValue(executor.prompt_version),
       allowedTools: config.allowed_tools,
       ...(credentialRef ? { credentialRef } : {}),
-      credential: credentialEnvironmentForReference(provider, adapter, credentialRef),
+      ...(credential ? { credential } : {}),
       command: runtimeCommandForProvider(provider),
     });
   }

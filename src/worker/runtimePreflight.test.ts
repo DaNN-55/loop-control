@@ -39,7 +39,7 @@ describe("runtime preflight", () => {
     expect(capability).toMatchObject({ adapter: "pexels_video", credentialRef: "pexels-default", credential: "PEXELS_API_KEY" });
   });
 
-  it("兼容未写 credential_ref 的旧 Pexels 蓝图", () => {
+  it("把未写 credential_ref 的 Pexels 蓝图标记为配置缺失", () => {
     const [capability] = runtimeCapabilitiesFromBlueprintPolicy({
       b_roll: {
         executor: { provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", prompt_version: "b-roll-v1" },
@@ -47,7 +47,9 @@ describe("runtime preflight", () => {
       },
     }).filter((candidate) => candidate.capability === "b_roll_generation");
 
-    expect(capability).toMatchObject({ credentialRef: "pexels-default", credential: "PEXELS_API_KEY" });
+    expect(capability).not.toHaveProperty("credentialRef");
+    expect(capability).not.toHaveProperty("credential");
+    expect(createRuntimePreflight([capability]).checks).toContainEqual(expect.objectContaining({ check: "blueprint_configuration", status: "blocked", action: "edit_blueprint" }));
   });
 
   it("把真实运行态失败映射为结构化环境阻塞", () => {
@@ -136,6 +138,23 @@ describe("runtime preflight", () => {
     });
 
     expect(capabilities.some((capability) => capability.capability === "b_roll_generation" || capability.capability === "narration_generation")).toBe(false);
+  });
+
+  it("忽略系列中的 B-roll 执行覆盖", () => {
+    const [capability] = runtimeCapabilitiesFromBlueprintPolicy({
+      b_roll: {
+        credential_ref: "pexels-default",
+        executor: { provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", prompt_version: "b-roll-v1" },
+        allowed_tools: ["read", "write"],
+      },
+    }, {
+      b_roll: {
+        credential_ref: "other-connection",
+        executor: { provider: "other", adapter: "other", model: "other", prompt_version: "other" },
+      },
+    }).filter((candidate) => candidate.capability === "b_roll_generation");
+
+    expect(capability).toMatchObject({ provider: "pexels", adapter: "pexels_video", credentialRef: "pexels-default" });
   });
 
   it("媒体适配器不要求向蓝图工具白名单暴露 network", () => {

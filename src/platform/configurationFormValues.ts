@@ -142,11 +142,10 @@ function formMediaAdapter(value: Json | undefined, fallbackAllowedTools: readonl
   const voice = objectValue(mediaAdapter.voice);
   const allowedTools = stringArray(mediaAdapter.allowed_tools);
   const visibleAllowedTools = filterAllowedTools ? allowedTools.filter((tool) => visibleToolKeys.has(tool)) : allowedTools;
-  const registration = adapterRegistration(stringValue(executor.provider), stringValue(executor.adapter));
   return {
     provider: stringValue(executor.provider),
     adapter: stringValue(executor.adapter),
-    credentialRef: stringValue(mediaAdapter.credential_ref) || registration?.connections[0]?.credentialRef || "",
+    credentialRef: stringValue(mediaAdapter.credential_ref),
     model: stringValue(executor.model),
     promptVersion: stringValue(executor.prompt_version),
     allowedTools: (visibleAllowedTools.length ? visibleAllowedTools : fallbackAllowedTools).join(", "),
@@ -385,6 +384,6 @@ function parseSeriesField(source: string): Json | undefined {
 
 export function validateSeriesRules(rules: Json): void {
   const value = objectValue(rules);
-  const forbidden = ["asset_root", "allowed_tools", "approval_gates", "publishing"].filter((key) => value[key] !== undefined);
+  const forbidden = ["asset_root", "allowed_tools", "approval_gates", "publishing", ...mediaAdapterKeys].filter((key) => value[key] !== undefined);
   if (forbidden.length) throw new Error(`系列规则不能覆盖账号硬约束：${forbidden.join("、")}。`);
 }

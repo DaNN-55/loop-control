@@ -1,3 +1,14 @@
+update public.account_blueprint_versions blueprint
+set policy = jsonb_set(blueprint.policy, '{b_roll,credential_ref}', to_jsonb('pexels-default'::text))
+where jsonb_typeof(blueprint.policy -> 'b_roll') = 'object'
+  and blueprint.policy #>> '{b_roll,executor,provider}' = 'pexels'
+  and blueprint.policy #>> '{b_roll,executor,adapter}' = 'pexels_video'
+  and coalesce(btrim(blueprint.policy #>> '{b_roll,credential_ref}'), '') = '';
+
+update public.series_versions series_version
+set rules = series_version.rules - 'b_roll'
+where series_version.rules ? 'b_roll';
+
 alter function public.orchestrate_b_roll_tasks_configured(uuid)
 rename to orchestrate_b_roll_tasks_without_connection_ref;
 
@@ -14,15 +25,15 @@ begin
   for created_task in
     select * from public.orchestrate_b_roll_tasks_without_connection_ref(p_episode_id)
   loop
-    select coalesce(
-      nullif(btrim((coalesce(series_version.rules -> 'b_roll', blueprint.policy -> 'b_roll')) ->> 'credential_ref'), ''),
-      'pexels-default'
-    )
+    select nullif(btrim(blueprint.policy #>> '{b_roll,credential_ref}'), '')
     into frozen_credential_ref
     from public.episodes episode
     join public.account_blueprint_versions blueprint on blueprint.id = episode.blueprint_version_id
-    left join public.series_versions series_version on series_version.id = episode.series_version_id and series_version.account_id = episode.account_id
     where episode.id = created_task.episode_id;
+
+    if frozen_credential_ref is null then
+      raise exception 'B-roll task is missing a frozen credential reference' using errcode = '22023';
+    end if;
 
     update public.tasks task
     set input_snapshot = jsonb_set(task.input_snapshot, '{credential_ref}', to_jsonb(frozen_credential_ref))

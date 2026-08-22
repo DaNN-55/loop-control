@@ -58,7 +58,7 @@ export async function runCodexWorker(dependencies: CodexWorkerDependencies): Pro
   const preflight = dependencies.preflight ? await runPreflight(dependencies.preflight, taskPackage) : undefined;
   if (preflight) {
     if (preflight.checks.some((check) => check.status !== "passed")) {
-      const result = createPreflightResult(task.taskId, dependencies.actualCostCents, preflight);
+      const result = createPreflightResult(taskPackage, dependencies.actualCostCents, preflight);
       await dependencies.reportResult(task.taskId, task.attempt, result);
       return { status: result.status, taskId: task.taskId };
     }
@@ -451,12 +451,15 @@ function createBlockedResult(taskId: string, actualCostCents: number, error: unk
   };
 }
 
-function createPreflightResult(taskId: string, actualCostCents: number, preflight: WorkerPreflightResult): WorkerResult {
+function createPreflightResult(taskPackage: WorkerTaskPackage, actualCostCents: number, preflight: WorkerPreflightResult): WorkerResult {
   const failedChecks = preflight.checks.filter((check) => check.status !== "passed");
+  const retryable = failedChecks.length > 0 && failedChecks.every((check) => check.status === "retryable" && check.action === "retry");
+  const shouldRetry = retryable && taskPackage.budget.attempt + 1 < taskPackage.budget.maxAttempts;
+  const reason = failedChecks.map((check) => check.reason).join("；");
   return {
     version: "worker-result/v1",
-    taskId,
-    status: "blocked",
+    taskId: taskPackage.task.id,
+    status: retryable ? "failed" : "blocked",
     artifacts: [],
     validation: {
       passed: false,
@@ -465,8 +468,8 @@ function createPreflightResult(taskId: string, actualCostCents: number, prefligh
     preflight,
     actualCostCents,
     blockers: failedChecks.map((check) => preflightBlocker(check)),
-    retry: { shouldRetry: false, reason: "Worker preflight requires action before retrying this task." },
-    nextStep: "Resolve the Worker preflight blocker before retrying this task.",
+    retry: { shouldRetry, reason },
+    nextStep: shouldRetry ? "Retry the task after the temporary dependency failure recovers." : "Resolve the Worker preflight blocker before retrying this task.",
   };
 }
 

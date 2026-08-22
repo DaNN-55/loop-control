@@ -10,7 +10,7 @@ import {
 } from "./configurationFormValues";
 
 describe("账号蓝图表单转换", () => {
-  it("将旧 Pexels 配置展开为非秘密连接引用", () => {
+  it("不在运行时替旧 Pexels 配置静默选择连接", () => {
     const form = blueprintPolicyToForm({
       b_roll: {
         executor: { provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", prompt_version: "b-roll-v1" },
@@ -23,8 +23,8 @@ describe("账号蓝图表单转换", () => {
       },
     });
 
-    expect(form.mediaAdapters.b_roll).toMatchObject({ adapter: "pexels_video", credentialRef: "pexels-default" });
-    expect(blueprintFormToPolicy(form)).toMatchObject({ b_roll: { credential_ref: "pexels-default" } });
+    expect(form.mediaAdapters.b_roll).toMatchObject({ adapter: "pexels_video", credentialRef: "" });
+    expect(() => validateMediaAdapter("b_roll", form.mediaAdapters.b_roll)).toThrow("外部连接");
   });
 
   it("默认关闭可用媒体能力，并只保存已启用的能力", () => {
@@ -186,7 +186,7 @@ describe("系列规则表单转换", () => {
     expect(form.advancedJson).toContain("b_roll");
   });
 
-  it("将表单保存为对象并保留高级规则", () => {
+  it("拒绝从系列高级规则覆盖账号 B-roll 执行配置", () => {
     const result = seriesFormToRules({
       positioning: "新的系列",
       format: "三段式",
@@ -198,7 +198,7 @@ describe("系列规则表单转换", () => {
       advancedJson: '{"b_roll":{"executor":{"provider":"pexels"}}}',
     });
 
-    expect(result).toMatchObject({ positioning: "新的系列", format: "三段式", visual_style: "电影感", b_roll: { executor: { provider: "pexels" } } });
+    expect(() => validateSeriesRules(result)).toThrow("系列规则不能覆盖账号硬约束");
     expect((result as Record<string, unknown>).characters).toBe("林砚、铜铃");
   });
 

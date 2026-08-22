@@ -360,7 +360,7 @@ describe("本地 Codex Worker runner", () => {
     expect(preflight).toHaveBeenCalledWith(expect.objectContaining({ credentialRef: "pexels-default", media: { adapter: "pexels_video", bRoll: expect.any(Object) } }));
   });
 
-  it("把 retryable preflight 保留为可见阻塞，不让数据库自动重试", async () => {
+  it("把 retryable preflight 报告为可自动重试的失败", async () => {
     const reportResult = vi.fn().mockResolvedValue(undefined);
     const execute = vi.fn();
 
@@ -375,12 +375,12 @@ describe("本地 Codex Worker runner", () => {
       verifyAssetRoot: async () => undefined,
       verifyArtifacts: async () => undefined,
       actualCostCents: 0,
-    })).resolves.toEqual({ status: "blocked", taskId: "task-1" });
+    })).resolves.toEqual({ status: "failed", taskId: "task-1" });
 
     expect(execute).not.toHaveBeenCalled();
     expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({
-      status: "blocked",
-      retry: { shouldRetry: false, reason: expect.any(String) },
+      status: "failed",
+      retry: { shouldRetry: true, reason: "供应商连接暂时失败。" },
       blockers: [expect.objectContaining({ action: "retry", status: "retryable" })],
     }));
   });
