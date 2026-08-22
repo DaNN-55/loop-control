@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
-select plan(8);
+select plan(12);
 
 drop function public.orchestrate_b_roll_tasks_configured(uuid);
 alter function public.orchestrate_b_roll_tasks_without_connection_ref(uuid)
@@ -59,6 +59,7 @@ values (
 \ir ../migrations/20260822100000_freeze_b_roll_adapter_connection.sql
 \ir ../migrations/20260822104421_expand_legacy_b_roll_blueprints.sql
 \ir ../migrations/20260822112024_remove_legacy_b_roll_history_guard.sql
+\ir ../migrations/20260822121000_use_blueprint_b_roll_technical_config.sql
 
 select is(
   (select policy from public.account_blueprint_versions where id = '52000000-0000-4000-8000-000000000003'),
@@ -109,6 +110,53 @@ select is(
    where episode.title = 'New episode'),
   'pexels-default',
   'the new episode freezes the explicit connection reference'
+);
+
+update public.episodes
+set stage = 'storyboard_approved'
+where title = 'New episode';
+
+insert into public.review_packages (id, episode_id, stage, revision_number, context_snapshot)
+values (
+  '52000000-0000-4000-8000-000000000007',
+  (select id from public.episodes where title = 'New episode'),
+  'storyboard_review',
+  1,
+  '{"worker_result":{"storyboard":{"shots":[{"id":"shot-1","shotType":"b_roll","productionMethod":"city","scriptSegment":"night","durationSeconds":3,"inputBasis":[]}]}},"input_artifacts":[]}'::jsonb
+);
+insert into public.approvals (episode_id, stage, decision, reason, actor_id, review_package_id)
+values (
+  (select id from public.episodes where title = 'New episode'),
+  'storyboard_approved',
+  'approved',
+  'Use the expanded blueprint configuration.',
+  '52000000-0000-4000-8000-000000000001',
+  '52000000-0000-4000-8000-000000000007'
+);
+
+select is(
+  (select provider from public.orchestrate_b_roll_tasks_configured((select id from public.episodes where title = 'New episode'))),
+  'pexels',
+  'a legacy series B-roll rule cannot replace the frozen blueprint adapter'
+);
+select is(
+  (select input_snapshot #>> '{credential_ref}' from public.tasks where episode_id = (select id from public.episodes where title = 'New episode') and task_type = 'generate_b_roll'),
+  'pexels-default',
+  'the B-roll task freezes the expanded blueprint connection reference'
+);
+update public.tasks
+set input_snapshot = jsonb_set(input_snapshot, '{configuration_hash}', to_jsonb('legacy-series-config'::text))
+where episode_id = (select id from public.episodes where title = 'New episode')
+  and task_type = 'generate_b_roll';
+select is(
+  (select count(*) from public.orchestrate_b_roll_tasks_configured((select id from public.episodes where title = 'New episode'))),
+  0::bigint,
+  'a task frozen with the legacy series configuration is not recreated'
+);
+select is(
+  (select count(*) from public.tasks where episode_id = (select id from public.episodes where title = 'New episode') and task_type = 'generate_b_roll'),
+  1::bigint,
+  'the existing B-roll task remains the only task for its approved shot'
 );
 
 select * from finish();
