@@ -3,6 +3,7 @@ import type { FormEvent } from "react";
 import type { Database, Json } from "../lib/database.types";
 import { blueprintAssetRoot, defaultBlueprintPolicy } from "../platform/blueprintPolicy";
 import { BlueprintConfigurationForm, EpisodeConfigurationRepairForm, SeriesConfigurationForm } from "../platform/ConfigurationForms";
+import { mediaAdapterKeys } from "../platform/configurationFormValues";
 import type { LocalSystemStatusReport } from "../observability/SystemStatusPanel";
 import type { WorkerBlocker } from "../reviews/reviewSelectors";
 import type { WorkerPreflightResult } from "../worker/contracts";
@@ -63,7 +64,7 @@ const emptySeriesRules: Json = {};
 
 function ReadinessRail({ isLoading, onRefresh, policy, preflight, preflightError, systemStatus }: { isLoading: boolean; onRefresh?: () => Promise<void>; policy: Json; preflight: WorkerPreflightResult | null; preflightError: string; systemStatus: LocalSystemStatusReport | null }) {
   const failed = preflight?.checks.filter((check) => check.status !== "passed") ?? [];
-  const enabledCount = policy && typeof policy === "object" && !Array.isArray(policy) ? [policy.b_roll, policy.narration].filter(Boolean).length : 0;
+  const enabledCount = policy && typeof policy === "object" && !Array.isArray(policy) ? mediaAdapterKeys.filter((key) => policy[key]).length : 0;
   const displayedError = preflightError.length > 120 ? "生产就绪检查暂时失败，请稍后重新检查。" : preflightError;
   return <aside aria-label="生产就绪检查" className="account-status-rail">
     <section className={failed.length || preflightError ? "is-blocked" : "is-ready"}>

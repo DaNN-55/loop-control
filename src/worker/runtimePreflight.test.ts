@@ -121,14 +121,26 @@ describe("runtime preflight", () => {
     expect(result.checks).toContainEqual(expect.objectContaining({ check: "credential_validity", status: "unavailable", action: "contact_environment_admin" }));
   });
 
-  it("忽略当前不可用的 A-roll 旧规则", () => {
+  it("将已启用的五项生产能力纳入预检，并把空草稿标为可编辑阻塞", () => {
     const capabilities = runtimeCapabilitiesFromBlueprintPolicy({
-      a_roll: { executor: { provider: "codex", adapter: "codex", model: "blueprint-model", prompt_version: "blueprint-v1" }, allowed_tools: ["read", "write"] },
-    }, {
-      a_roll: { executor: { provider: "codex", adapter: "codex", model: "series-model", prompt_version: "series-v1" }, allowed_tools: ["read", "write"] },
+      static_visual: {},
+      a_roll: {},
+      b_roll: {},
+      narration: {},
+      soundtrack: {},
     });
 
-    expect(capabilities.some((capability) => capability.capability === "a_roll_generation")).toBe(false);
+    expect(capabilities.map((capability) => capability.capability)).toEqual(expect.arrayContaining([
+      "static_visual_generation",
+      "a_roll_generation",
+      "b_roll_generation",
+      "narration_generation",
+      "soundtrack_generation",
+    ]));
+    expect(createRuntimePreflight(capabilities).checks).toEqual(expect.arrayContaining([
+      expect.objectContaining({ capability: "static_visual_generation", check: "blueprint_configuration", status: "blocked", action: "edit_blueprint", scope: "blueprint" }),
+      expect.objectContaining({ capability: "a_roll_generation", check: "blueprint_configuration", status: "blocked", action: "edit_blueprint", scope: "blueprint" }),
+    ]));
   });
 
   it("蓝图关闭时不被系列旧媒体规则重新启用", () => {

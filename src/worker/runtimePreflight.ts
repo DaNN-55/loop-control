@@ -30,8 +30,11 @@ export interface RuntimePreflightEnvironment {
 }
 
 const mediaCapabilities = [
+  { key: "static_visual", capability: "static_visual_generation" },
+  { key: "a_roll", capability: "a_roll_generation" },
   { key: "b_roll", capability: "b_roll_generation" },
   { key: "narration", capability: "narration_generation" },
+  { key: "soundtrack", capability: "soundtrack_generation" },
 ] as const;
 
 const legacyRegisteredAdapters = new Set([

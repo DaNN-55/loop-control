@@ -4,9 +4,9 @@ import { adapterRegistration } from "../worker/adapterRegistry";
 type JsonObject = Record<string, Json | undefined>;
 type ExecutorForm = { provider: string; adapter?: string; harnessId?: string; model: string; promptVersion: string };
 
-export const mediaAdapterKeys = ["a_roll", "b_roll", "narration", "soundtrack"] as const;
+export const mediaAdapterKeys = ["static_visual", "a_roll", "b_roll", "narration", "soundtrack"] as const;
 export type MediaAdapterKey = typeof mediaAdapterKeys[number];
-export const configurableMediaAdapterKeys = ["b_roll", "narration"] as const;
+export const configurableMediaAdapterKeys = mediaAdapterKeys;
 export type ConfigurableMediaAdapterKey = typeof configurableMediaAdapterKeys[number];
 export type MediaAdapterForm = {
   provider: string;
@@ -161,10 +161,8 @@ function formMediaAdapter(value: Json | undefined, fallbackAllowedTools: readonl
   };
 }
 
-export function defaultMediaAdapterForm(key: ConfigurableMediaAdapterKey): MediaAdapterForm {
-  const empty: MediaAdapterForm = { provider: "", adapter: "", credentialRef: "", model: "", promptVersion: "", allowedTools: "read, write", budgetCents: "", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "1", maxConcurrency: "1", providerMaxConcurrency: "1", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "1" };
-  if (key === "b_roll") return { ...empty, provider: "pexels", adapter: "pexels_video", credentialRef: "pexels-default", model: "pexels-video-v1", promptVersion: "b-roll-v1" };
-  return { ...empty, provider: "google_tts", adapter: "google_tts", model: "standard", promptVersion: "narration-v1" };
+export function defaultMediaAdapterForm(_key: ConfigurableMediaAdapterKey): MediaAdapterForm {
+  return { provider: "", adapter: "", credentialRef: "", model: "", promptVersion: "", allowedTools: "", budgetCents: "", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" };
 }
 
 function mediaAdapterHasValues(form: MediaAdapterForm): boolean {
@@ -185,7 +183,7 @@ function positiveNumber(source: string, label: string): number {
 
 export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterForm): void {
   if (!mediaAdapterHasValues(form)) return;
-  const labels: Record<MediaAdapterKey, string> = { a_roll: "A-roll", b_roll: "B-roll", narration: "旁白", soundtrack: "配乐 / 音效" };
+  const labels: Record<MediaAdapterKey, string> = { static_visual: "静态视觉 / 图片生成", a_roll: "A-roll", b_roll: "B-roll", narration: "旁白", soundtrack: "配乐 / 音效" };
   const label = labels[key];
   if (!form.provider.trim() || !form.adapter.trim() || !form.model.trim() || !form.promptVersion.trim()) throw new Error(`${label}适配器的 Provider、Adapter、模型和 Prompt 版本不能为空。`);
   if (!commaSeparatedValues(form.allowedTools).length) throw new Error(`${label}适配器至少需要一个允许工具。`);
@@ -218,14 +216,6 @@ export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterFor
 
 export function validateMediaAdapters(mediaAdapters: Record<MediaAdapterKey, MediaAdapterForm>): void {
   for (const key of mediaAdapterKeys) validateMediaAdapter(key, mediaAdapters[key]);
-}
-
-export function validateEnabledMediaAdapters(mediaAdapters: Record<MediaAdapterKey, MediaAdapterForm>, enabledKeys: readonly ConfigurableMediaAdapterKey[]): void {
-  const labels: Record<MediaAdapterKey, string> = { a_roll: "A-roll", b_roll: "B-roll", narration: "旁白", soundtrack: "配乐 / 音效" };
-  for (const key of enabledKeys) {
-    if (!mediaAdapterHasValues(mediaAdapters[key])) throw new Error(`${labels[key]}能力已启用，但配置为空。`);
-    validateMediaAdapter(key, mediaAdapters[key]);
-  }
 }
 
 export function mediaAdapterStatus(key: MediaAdapterKey, form: MediaAdapterForm): "未配置" | "待补齐" | "已配置" {
@@ -291,6 +281,7 @@ export function blueprintPolicyToForm(policy: Json): BlueprintFormValues {
       storyboard_planning: formExecutor(executors.storyboard_planning),
     },
     mediaAdapters: {
+      static_visual: formMediaAdapter(value.static_visual, [], false),
       a_roll: formMediaAdapter(value.a_roll, [], false),
       b_roll: formMediaAdapter(value.b_roll, fallbackMediaAdapterTools),
       narration: formMediaAdapter(value.narration, fallbackMediaAdapterTools),
@@ -339,14 +330,11 @@ export function blueprintFormToPolicy(form: BlueprintFormValues): Json {
   };
   const enabledMediaAdapters = form.enabledMediaAdapters ?? configurableMediaAdapterKeys;
   for (const key of mediaAdapterKeys) {
-    const isConfigurable = configurableMediaAdapterKeys.includes(key as ConfigurableMediaAdapterKey);
-    if (isConfigurable && !enabledMediaAdapters.includes(key as ConfigurableMediaAdapterKey)) continue;
-    const hasFormValues = mediaAdapterHasValues(form.mediaAdapters[key]);
-    const hasLegacyFields = !isConfigurable && Object.keys(existingMediaAdapters[key]).length > 0;
-    if (hasFormValues || hasLegacyFields) {
-      const accountAllowedTools = isConfigurable ? form.allowedTools.filter((tool) => visibleToolKeys.has(tool)) : undefined;
-      result[key] = hasFormValues ? mediaAdapterToPolicy(form.mediaAdapters[key], existingMediaAdapters[key], accountAllowedTools) : existingMediaAdapters[key];
-    }
+    if (!enabledMediaAdapters.includes(key)) continue;
+    const mediaAdapter = form.mediaAdapters[key] ?? defaultMediaAdapterForm(key);
+    const hasFormValues = mediaAdapterHasValues(mediaAdapter);
+    const accountAllowedTools = key === "b_roll" || key === "narration" ? form.allowedTools.filter((tool) => visibleToolKeys.has(tool)) : undefined;
+    result[key] = hasFormValues ? mediaAdapterToPolicy(mediaAdapter, existingMediaAdapters[key], accountAllowedTools) : existingMediaAdapters[key];
   }
   return result as Json;
 }

@@ -83,13 +83,14 @@ describe("账号配置工作区", () => {
     expect(document.querySelector("#account-budget")?.hasAttribute("open")).toBe(true);
   });
 
-  it("始终展示四项能力并禁用尚未接入的能力", () => {
+  it("始终展示默认关闭的五项生产能力", () => {
     renderWorkspace();
 
-    for (const name of ["启用A-roll", "启用B-roll", "启用旁白", "启用配乐 / 音效"]) expect(screen.getByRole("checkbox", { name })).toBeTruthy();
-    expect((screen.getByRole("checkbox", { name: "启用A-roll" }) as HTMLInputElement).disabled).toBe(true);
-    expect((screen.getByRole("checkbox", { name: "启用配乐 / 音效" }) as HTMLInputElement).disabled).toBe(true);
-    expect(screen.getAllByText("Worker 尚未接入")).toHaveLength(2);
+    for (const name of ["启用静态视觉 / 图片生成", "启用A-roll", "启用B-roll", "启用旁白", "启用配乐 / 音效"]) {
+      const checkbox = screen.getByRole("checkbox", { name }) as HTMLInputElement;
+      expect(checkbox.checked).toBe(false);
+      expect(checkbox.disabled).toBe(false);
+    }
   });
 
   it("打开可用能力后显示配置卡片", async () => {
@@ -101,6 +102,19 @@ describe("账号配置工作区", () => {
     expect(screen.getByText("已启用能力的技术配置（1）", { selector: "summary" }).parentElement?.hasAttribute("open")).toBe(true);
   });
 
+  it("保存启用但未完成的能力草稿", async () => {
+    const user = userEvent.setup();
+    const onUpdateBlueprint = vi.fn().mockResolvedValue(blueprint);
+    renderWorkspace({ onUpdateBlueprint });
+
+    await user.click(screen.getByRole("checkbox", { name: "启用静态视觉 / 图片生成" }));
+    expect(screen.getByRole("heading", { name: "静态视觉 / 图片生成" })).toBeTruthy();
+    expect(screen.getByText("未配置", { selector: ".media-adapter-status" })).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "保存蓝图" }));
+
+    expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ static_visual: {} }));
+  });
+
   it("从注册目录选择 B-roll Adapter 和非秘密连接引用", async () => {
     const user = userEvent.setup();
     const onUpdateBlueprint = vi.fn().mockResolvedValue(blueprint);
@@ -108,8 +122,8 @@ describe("账号配置工作区", () => {
 
     await user.click(screen.getByRole("checkbox", { name: "启用B-roll" }));
 
-    expect((screen.getByRole("combobox", { name: "B-roll Adapter" }) as HTMLSelectElement).value).toBe("pexels_video");
-    expect((screen.getByRole("combobox", { name: "B-roll 外部连接" }) as HTMLSelectElement).value).toBe("pexels-default");
+    expect((screen.getByRole("combobox", { name: "B-roll Adapter" }) as HTMLSelectElement).value).toBe("__unregistered__");
+    expect((screen.getByRole("combobox", { name: "B-roll 外部连接" }) as HTMLSelectElement).value).toBe("");
     expect(screen.queryByLabelText("API Key")).toBeNull();
   });
 

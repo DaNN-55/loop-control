@@ -27,29 +27,23 @@ describe("账号蓝图表单转换", () => {
     expect(() => validateMediaAdapter("b_roll", form.mediaAdapters.b_roll)).toThrow("外部连接");
   });
 
-  it("默认关闭可用媒体能力，并只保存已启用的能力", () => {
+  it("默认关闭五项生产能力，并保存启用但未完成的草稿", () => {
     const form = blueprintPolicyToForm({});
 
     expect(form.enabledMediaAdapters).toEqual([]);
 
     const result = blueprintFormToPolicy({
       ...form,
-      enabledMediaAdapters: ["b_roll"],
-      mediaAdapters: {
-        ...form.mediaAdapters,
-        b_roll: { ...form.mediaAdapters.b_roll, provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", promptVersion: "b-roll-v1", allowedTools: "read, write", perShotBudgetCents: "10", totalBudgetCents: "100", maxAttempts: "1", maxConcurrency: "1", providerMaxConcurrency: "1" },
-      },
+      enabledMediaAdapters: ["static_visual", "a_roll", "b_roll", "narration", "soundtrack"],
     });
 
-    expect(result).toHaveProperty("b_roll");
-    expect(result).not.toHaveProperty("narration");
-    expect(result).not.toHaveProperty("soundtrack");
+    expect(result).toMatchObject({ static_visual: {}, a_roll: {}, b_roll: {}, narration: {}, soundtrack: {} });
   });
 
-  it("保留已有 A-roll 和配乐旧规则，但不把它们作为可用能力启用", () => {
+  it("保留已有 A-roll 和配乐规则，并将其作为已启用能力读取", () => {
     const form = blueprintPolicyToForm({ a_roll: { executor: { provider: "codex", adapter: "codex" } }, soundtrack: { budget_cents: 99 } });
 
-    expect(form.enabledMediaAdapters).toEqual([]);
+    expect(form.enabledMediaAdapters).toEqual(["a_roll", "soundtrack"]);
     const result = blueprintFormToPolicy(form) as Record<string, unknown>;
 
     expect(result.a_roll).toEqual(expect.objectContaining({ executor: { provider: "codex", adapter: "codex" } }));
@@ -150,6 +144,7 @@ describe("账号蓝图表单转换", () => {
         storyboard_planning: { provider: "codex", model: "model-c", promptVersion: "prompt-c" },
       },
       mediaAdapters: {
+        static_visual: { provider: "", adapter: "", credentialRef: "", model: "", promptVersion: "", allowedTools: "", budgetCents: "", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
         a_roll: { provider: "codex", adapter: "codex", credentialRef: "", model: "video-model", promptVersion: "a-roll-v1", allowedTools: "read, write", budgetCents: "20", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "2", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
         b_roll: { provider: "pexels", adapter: "pexels_video", credentialRef: "pexels-default", model: "pexels-video-v1", promptVersion: "b-roll-v1", allowedTools: "network, write", budgetCents: "", perShotBudgetCents: "10", totalBudgetCents: "100", maxAttempts: "2", maxConcurrency: "3", providerMaxConcurrency: "2", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
         narration: { provider: "google_tts", adapter: "google_tts", credentialRef: "", model: "tts-model", promptVersion: "narration-v1", allowedTools: "network, write", budgetCents: "12", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "1", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "zh-CN", voiceName: "voice-a", voiceSpeakingRate: "0.8" },

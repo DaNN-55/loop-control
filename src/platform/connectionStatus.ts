@@ -2,7 +2,7 @@ import type { Json } from "../lib/database.types";
 import type { WorkerPreflightAction, WorkerPreflightResult, WorkerPreflightStatus } from "../worker/contracts";
 import { blueprintPolicyToForm, type ConfigurableMediaAdapterKey } from "./configurationFormValues";
 
-const capabilityByMediaAdapter: Record<ConfigurableMediaAdapterKey, string> = { b_roll: "b_roll_generation", narration: "narration_generation" };
+const capabilityByMediaAdapter: Record<ConfigurableMediaAdapterKey, string> = { static_visual: "static_visual_generation", a_roll: "a_roll_generation", b_roll: "b_roll_generation", narration: "narration_generation", soundtrack: "soundtrack_generation" };
 
 export type ExternalConnectionStatus = {
   action: WorkerPreflightAction;
