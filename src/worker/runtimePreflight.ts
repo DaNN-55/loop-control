@@ -42,9 +42,6 @@ const mediaCapabilities = [
 
 const legacyRegisteredAdapters = new Set([
   "codex:codex",
-  "google_tts:google_tts",
-  "ffmpeg:ffmpeg_extract_audio",
-  "freesound:freesound_preview",
   "hyperframes:hyperframes",
 ]);
 
@@ -122,11 +119,11 @@ export function createRuntimePreflight(capabilities: RuntimeCapability[], enviro
     checks.push({ capability: capability.capability, check: "capability_registration", phase: "preflight", status: "passed", reason: `Worker 已注册 ${capability.provider}${capability.adapter ? `/${capability.adapter}` : ""} 执行路径。`, action: "none", scope: "worker" });
 
     const allowedTools = stringArray(capability.allowedTools);
-    const missingTools = requiredToolsForProvider(capability.provider).filter((tool) => !allowedTools.includes(tool));
+    const missingTools = requiredTools().filter((tool) => !allowedTools.includes(tool));
     if (missingTools.length) {
       checks.push({ capability: capability.capability, check: "tool_permission", phase: "preflight", status: "blocked", reason: `冻结工具白名单缺少 ${missingTools.join("、")}。`, action: "edit_blueprint", scope: "blueprint" });
     } else {
-      checks.push({ capability: capability.capability, check: "tool_permission", phase: "preflight", status: "passed", reason: `冻结工具白名单包含 ${requiredToolsForProvider(capability.provider).join(" 和 ")}。`, action: "none", scope: "blueprint" });
+      checks.push({ capability: capability.capability, check: "tool_permission", phase: "preflight", status: "passed", reason: `冻结工具白名单包含 ${requiredTools().join(" 和 ")}。`, action: "none", scope: "blueprint" });
     }
 
     if (capability.credential && environment.credentials && Object.prototype.hasOwnProperty.call(environment.credentials, capability.credential)) {
@@ -226,8 +223,8 @@ function stringValue(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function requiredToolsForProvider(provider: string): string[] {
-  return provider === "freesound" ? ["network", "write"] : ["read", "write"];
+function requiredTools(): string[] {
+  return ["read", "write"];
 }
 
 function dependencyCheck(capability: string, check: string, dependency: RuntimeDependencyStatus): WorkerPreflightCheck {

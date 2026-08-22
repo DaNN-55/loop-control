@@ -11,6 +11,7 @@ describe("runtime preflight", () => {
         storyboard_planning: { provider: "codex", model: "model-1", prompt_version: "storyboard-v1" },
       },
       narration: {
+        credential_ref: "google-tts-default",
         allowed_tools: ["read", "write"],
         executor: { provider: "google_tts", adapter: "google_tts", model: "standard", prompt_version: "narration-v1" },
       },
@@ -24,7 +25,7 @@ describe("runtime preflight", () => {
       "final_rendering",
       "narration_generation",
     ]);
-    expect(capabilities.at(-1)).toMatchObject({ credential: "GOOGLE_TTS_API_KEY" });
+    expect(capabilities.at(-1)).toMatchObject({ credentialRef: "google-tts-default", credential: "GOOGLE_TTS_API_KEY" });
   });
 
   it("分镜必须冻结已注册的 Codex Adapter 与 Prompt Harness", () => {
@@ -67,12 +68,25 @@ describe("runtime preflight", () => {
     expect(createRuntimePreflight([capability]).checks).toContainEqual(expect.objectContaining({ check: "blueprint_configuration", status: "blocked", action: "edit_blueprint" }));
   });
 
+  it("把未写连接引用的旁白和配乐标记为蓝图配置缺失", () => {
+    const capabilities = runtimeCapabilitiesFromBlueprintPolicy({
+      narration: { executor: { provider: "google_tts", adapter: "google_tts", model: "standard", prompt_version: "narration-v1" }, allowed_tools: ["read", "write"] },
+      soundtrack: { executor: { provider: "freesound", adapter: "freesound_preview", model: "freesound-preview-v1", prompt_version: "soundtrack-v1" }, allowed_tools: ["read", "write"] },
+    });
+
+    expect(createRuntimePreflight(capabilities).checks).toEqual(expect.arrayContaining([
+      expect.objectContaining({ capability: "narration_generation", check: "blueprint_configuration", status: "blocked" }),
+      expect.objectContaining({ capability: "soundtrack_generation", check: "blueprint_configuration", status: "blocked" }),
+    ]));
+  });
+
   it("把真实运行态失败映射为结构化环境阻塞", () => {
     const result = createRuntimePreflight([
       {
         capability: "narration_generation",
         provider: "google_tts",
         adapter: "google_tts",
+        credentialRef: "google-tts-default",
         model: "standard",
         promptVersion: "narration-v1",
         allowedTools: ["network", "write"],
@@ -123,6 +137,7 @@ describe("runtime preflight", () => {
       capability: "narration_generation",
       provider: "google_tts",
       adapter: "google_tts",
+      credentialRef: "google-tts-default",
       model: "standard",
       promptVersion: "narration-v1",
       allowedTools: ["read", "write"],
@@ -196,6 +211,32 @@ describe("runtime preflight", () => {
     }]);
 
     expect(result.checks).toContainEqual(expect.objectContaining({ capability: "b_roll_generation", check: "tool_permission", status: "passed" }));
+  });
+
+  it("Freesound 使用 Worker 网络探测而非蓝图 network 工具", () => {
+    const result = createRuntimePreflight([{
+      capability: "soundtrack_generation",
+      provider: "freesound",
+      adapter: "freesound_preview",
+      credentialRef: "freesound-default",
+      model: "freesound-preview-v1",
+      promptVersion: "soundtrack-v1",
+      allowedTools: ["read", "write"],
+    }]);
+
+    expect(result.checks).toContainEqual(expect.objectContaining({ capability: "soundtrack_generation", check: "tool_permission", status: "passed" }));
+  });
+
+  it("Freesound 不会绕过账号冻结的工具白名单", () => {
+    const [capability] = runtimeCapabilitiesFromBlueprintPolicy({
+      soundtrack: {
+        credential_ref: "freesound-default",
+        executor: { provider: "freesound", adapter: "freesound_preview", model: "freesound-preview-v1", prompt_version: "soundtrack-v1" },
+        allowed_tools: ["read"],
+      },
+    }).filter((candidate) => candidate.capability === "soundtrack_generation");
+
+    expect(createRuntimePreflight([capability]).checks).toContainEqual(expect.objectContaining({ capability: "soundtrack_generation", check: "tool_permission", status: "blocked", action: "edit_blueprint" }));
   });
 
   it("不把未注册的 provider 当作可用运行路径", () => {

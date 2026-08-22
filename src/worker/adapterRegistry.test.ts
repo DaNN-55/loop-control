@@ -23,4 +23,25 @@ describe("adapter registry", () => {
       { credentialRef: "pexels-default", environmentVariable: "PEXELS_API_KEY", label: "Pexels 默认连接" },
     ]);
   });
+
+  it("为旁白、配乐与内部派生音频登记实际执行路径", () => {
+    expect(adapterRegistration("google_tts", "google_tts")).toMatchObject({
+      capability: "narration_generation",
+      connectionType: "google_tts_api",
+      requiresNetwork: true,
+      connections: [{ credentialRef: "google-tts-default", environmentVariable: "GOOGLE_TTS_API_KEY" }],
+    });
+    expect(adapterRegistration("freesound", "freesound_preview")).toMatchObject({
+      capability: "soundtrack_generation",
+      connectionType: "freesound_api",
+      requiresNetwork: true,
+      connections: [{ credentialRef: "freesound-default", environmentVariable: "FREESOUND_API_KEY" }],
+    });
+    expect(adapterRegistration("ffmpeg", "ffmpeg_extract_audio")).toMatchObject({
+      capability: "embedded_audio_extraction",
+      connectionType: "internal",
+      requiresNetwork: false,
+      connections: [],
+    });
+  });
 });

@@ -142,13 +142,15 @@ function formMediaAdapter(value: Json | undefined, fallbackAllowedTools: readonl
   const voice = objectValue(mediaAdapter.voice);
   const allowedTools = stringArray(mediaAdapter.allowed_tools);
   const visibleAllowedTools = filterAllowedTools ? allowedTools.filter((tool) => visibleToolKeys.has(tool)) : allowedTools;
+  const registration = adapterRegistration(stringValue(executor.provider), stringValue(executor.adapter));
+  const effectiveAllowedTools = registration && fallbackAllowedTools.length ? fallbackAllowedTools : visibleAllowedTools;
   return {
     provider: stringValue(executor.provider),
     adapter: stringValue(executor.adapter),
     credentialRef: stringValue(mediaAdapter.credential_ref),
     model: stringValue(executor.model),
     promptVersion: stringValue(executor.prompt_version),
-    allowedTools: (visibleAllowedTools.length ? visibleAllowedTools : fallbackAllowedTools).join(", "),
+    allowedTools: effectiveAllowedTools.join(", "),
     budgetCents: displayValue(mediaAdapter.budget_cents),
     perShotBudgetCents: displayValue(mediaAdapter.per_shot_budget_cents),
     totalBudgetCents: displayValue(mediaAdapter.total_budget_cents),
@@ -192,9 +194,7 @@ export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterFor
     positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
   }
   if (key === "b_roll") {
-    const registration = adapterRegistration(form.provider.trim(), form.adapter.trim());
-    if (!registration || registration.capability !== "b_roll_generation") throw new Error("B-roll 必须选择已注册的 Adapter。");
-    if (!registration.connections.some((connection) => connection.credentialRef === form.credentialRef.trim())) throw new Error("B-roll 必须选择可用的外部连接。");
+    validateRegisteredMediaConnection("B-roll", "b_roll_generation", form);
     positiveInteger(form.perShotBudgetCents, `${label}单镜头预算`);
     positiveInteger(form.totalBudgetCents, `${label}总预算`);
     positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
@@ -202,16 +202,23 @@ export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterFor
     positiveInteger(form.providerMaxConcurrency, `${label}供应商并发上限`);
   }
   if (key === "narration") {
+    validateRegisteredMediaConnection("旁白", "narration_generation", form);
     positiveInteger(form.budgetCents, `${label}预算`);
     positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
     if (!form.voiceLanguageCode.trim() || !form.voiceName.trim()) throw new Error("旁白适配器必须填写语言和声音名称。");
     positiveNumber(form.voiceSpeakingRate, "旁白语速");
   }
   if (key === "soundtrack") {
-    if (form.provider !== "freesound" || form.adapter !== "freesound_preview" || form.model !== "freesound-preview-v1") throw new Error("配乐 / 音效适配器必须使用 freesound/freesound_preview/freesound-preview-v1。");
+    validateRegisteredMediaConnection("配乐 / 音效", "soundtrack_generation", form);
     positiveInteger(form.budgetCents, `${label}预算`);
     positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
   }
+}
+
+function validateRegisteredMediaConnection(label: string, capability: string, form: MediaAdapterForm): void {
+  const registration = adapterRegistration(form.provider.trim(), form.adapter.trim());
+  if (!registration || registration.capability !== capability) throw new Error(`${label}必须选择已注册的 Adapter。`);
+  if (!registration.connections.some((connection) => connection.credentialRef === form.credentialRef.trim())) throw new Error(`${label}必须选择可用的外部连接。`);
 }
 
 export function validateMediaAdapters(mediaAdapters: Record<MediaAdapterKey, MediaAdapterForm>): void {
@@ -285,7 +292,7 @@ export function blueprintPolicyToForm(policy: Json): BlueprintFormValues {
       a_roll: formMediaAdapter(value.a_roll, [], false),
       b_roll: formMediaAdapter(value.b_roll, fallbackMediaAdapterTools),
       narration: formMediaAdapter(value.narration, fallbackMediaAdapterTools),
-      soundtrack: formMediaAdapter(value.soundtrack, [], false),
+      soundtrack: formMediaAdapter(value.soundtrack, fallbackMediaAdapterTools, false),
     },
     advancedJson: blueprintAdvancedJson(value),
   };
@@ -333,7 +340,7 @@ export function blueprintFormToPolicy(form: BlueprintFormValues): Json {
     if (!enabledMediaAdapters.includes(key)) continue;
     const mediaAdapter = form.mediaAdapters[key] ?? defaultMediaAdapterForm(key);
     const hasFormValues = mediaAdapterHasValues(mediaAdapter);
-    const accountAllowedTools = key === "b_roll" || key === "narration" ? form.allowedTools.filter((tool) => visibleToolKeys.has(tool)) : undefined;
+    const accountAllowedTools = key === "b_roll" || key === "narration" || key === "soundtrack" ? form.allowedTools.filter((tool) => visibleToolKeys.has(tool)) : undefined;
     result[key] = hasFormValues ? mediaAdapterToPolicy(mediaAdapter, existingMediaAdapters[key], accountAllowedTools) : existingMediaAdapters[key];
   }
   return result as Json;

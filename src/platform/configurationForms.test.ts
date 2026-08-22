@@ -58,12 +58,10 @@ describe("账号蓝图表单转换", () => {
     expect(result.soundtrack).toEqual({ cue_source: "legacy" });
   });
 
-  it("保留旧媒体规则中的 network 工具", () => {
+  it("不允许配乐配置继续保存虚假的 network 工具", () => {
     const form = blueprintPolicyToForm({ a_roll: { allowed_tools: ["network"] }, soundtrack: { allowed_tools: ["network"] } });
-    const result = blueprintFormToPolicy(form) as Record<string, unknown>;
 
-    expect(result.a_roll).toEqual({ allowed_tools: ["network"] });
-    expect(result.soundtrack).toEqual({ allowed_tools: ["network"] });
+    expect(() => blueprintFormToPolicy(form)).toThrow("账号级工具");
   });
 
   it("媒体能力工具不能超过账号级工具白名单", () => {
@@ -71,6 +69,17 @@ describe("账号蓝图表单转换", () => {
     const result = blueprintFormToPolicy(form) as Record<string, unknown>;
 
     expect(result.b_roll).toMatchObject({ allowed_tools: ["read"] });
+  });
+
+  it("配乐同样受账号级工具白名单限制", () => {
+    const form = blueprintPolicyToForm({
+      allowed_tools: ["read"],
+      soundtrack: { credential_ref: "freesound-default", executor: { provider: "freesound", adapter: "freesound_preview", model: "freesound-preview-v1", prompt_version: "soundtrack-v1" }, allowed_tools: ["network", "write"], budget_cents: 10, max_attempts: 1 },
+    });
+    const result = blueprintFormToPolicy(form) as Record<string, unknown>;
+
+    expect(form.mediaAdapters.soundtrack.allowedTools).toBe("read");
+    expect(result.soundtrack).toMatchObject({ allowed_tools: ["read"] });
   });
 
   it("把旧媒体工具归一化到账号级白名单", () => {
@@ -121,7 +130,7 @@ describe("账号蓝图表单转换", () => {
   it("把媒体适配器从高级 JSON 提升为独立配置字段", () => {
     const form = blueprintPolicyToForm({
       a_roll: { executor: { provider: "codex", adapter: "codex", model: "video-model", prompt_version: "a-roll-v1" }, allowed_tools: ["read", "write"], budget_cents: 20, max_attempts: 2 },
-      narration: { executor: { provider: "google_tts", adapter: "google_tts", model: "tts-model", prompt_version: "narration-v1" }, allowed_tools: ["network", "write"], budget_cents: 12, max_attempts: 1, voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 1 } },
+      narration: { credential_ref: "google-tts-default", executor: { provider: "google_tts", adapter: "google_tts", model: "tts-model", prompt_version: "narration-v1" }, allowed_tools: ["network", "write"], budget_cents: 12, max_attempts: 1, voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 1 } },
     });
 
     expect(form.mediaAdapters.a_roll.adapter).toBe("codex");
@@ -147,8 +156,8 @@ describe("账号蓝图表单转换", () => {
         static_visual: { provider: "", adapter: "", credentialRef: "", model: "", promptVersion: "", allowedTools: "", budgetCents: "", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
         a_roll: { provider: "codex", adapter: "codex", credentialRef: "", model: "video-model", promptVersion: "a-roll-v1", allowedTools: "read, write", budgetCents: "20", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "2", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
         b_roll: { provider: "pexels", adapter: "pexels_video", credentialRef: "pexels-default", model: "pexels-video-v1", promptVersion: "b-roll-v1", allowedTools: "network, write", budgetCents: "", perShotBudgetCents: "10", totalBudgetCents: "100", maxAttempts: "2", maxConcurrency: "3", providerMaxConcurrency: "2", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
-        narration: { provider: "google_tts", adapter: "google_tts", credentialRef: "", model: "tts-model", promptVersion: "narration-v1", allowedTools: "network, write", budgetCents: "12", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "1", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "zh-CN", voiceName: "voice-a", voiceSpeakingRate: "0.8" },
-        soundtrack: { provider: "freesound", adapter: "freesound_preview", credentialRef: "", model: "sound-model", promptVersion: "soundtrack-v1", allowedTools: "network, write", budgetCents: "", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
+        narration: { provider: "google_tts", adapter: "google_tts", credentialRef: "google-tts-default", model: "tts-model", promptVersion: "narration-v1", allowedTools: "network, write", budgetCents: "12", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "1", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "zh-CN", voiceName: "voice-a", voiceSpeakingRate: "0.8" },
+        soundtrack: { provider: "freesound", adapter: "freesound_preview", credentialRef: "freesound-default", model: "sound-model", promptVersion: "soundtrack-v1", allowedTools: "network, write", budgetCents: "", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
       },
       advancedJson: '{"soundtrack":{"budget_cents":99}}',
     });
@@ -164,11 +173,15 @@ describe("账号蓝图表单转换", () => {
     expect(() => validateMediaAdapters(form.mediaAdapters)).toThrow("A-roll适配器");
   });
 
-  it("校验配乐必须使用已注册的 Freesound 适配器", () => {
-    const form = blueprintPolicyToForm({ soundtrack: { executor: { provider: "freesound", adapter: "freesound_preview", model: "freesound-preview-v1", prompt_version: "soundtrack-v1" }, allowed_tools: ["read", "write"], budget_cents: 10, max_attempts: 1 } }).mediaAdapters.soundtrack;
+  it("校验旁白和配乐必须选择已登记的外部连接", () => {
+    const narration = blueprintPolicyToForm({ narration: { credential_ref: "google-tts-default", executor: { provider: "google_tts", adapter: "google_tts", model: "standard", prompt_version: "narration-v1" }, allowed_tools: ["read", "write"], budget_cents: 10, max_attempts: 1, voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 1 } } }).mediaAdapters.narration;
+    const form = blueprintPolicyToForm({ soundtrack: { credential_ref: "freesound-default", executor: { provider: "freesound", adapter: "freesound_preview", model: "freesound-preview-v1", prompt_version: "soundtrack-v1" }, allowed_tools: ["read", "write"], budget_cents: 10, max_attempts: 1 } }).mediaAdapters.soundtrack;
 
+    expect(() => validateMediaAdapter("narration", narration)).not.toThrow();
+    expect(() => validateMediaAdapter("narration", { ...narration, credentialRef: "" })).toThrow("外部连接");
     expect(() => validateMediaAdapter("soundtrack", form)).not.toThrow();
-    expect(() => validateMediaAdapter("soundtrack", { ...form, adapter: "other" })).toThrow("freesound/freesound_preview/freesound-preview-v1");
+    expect(() => validateMediaAdapter("soundtrack", { ...form, adapter: "other" })).toThrow("已注册");
+    expect(() => validateMediaAdapter("soundtrack", { ...form, credentialRef: "" })).toThrow("外部连接");
   });
 });
 

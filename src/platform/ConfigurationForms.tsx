@@ -54,7 +54,7 @@ const mediaAdapterDescriptions: Record<MediaAdapterKey, string> = {
   a_roll: "生成需要实际出镜或演示的视频镜头，需要 codex A-roll 适配器和可用的视频模型。",
   b_roll: "按分镜检索或生成补充画面。当前 Worker 仍会检查是否注册了兼容的 B-roll 适配器。",
   narration: "根据分镜中的旁白文本生成叙述音频，需要声音和语速参数。",
-  soundtrack: "根据分镜中的 BGM / SFX cue 检索配乐或音效，需要 Freesound 适配器、API Key 和网络。",
+  soundtrack: "根据分镜中的 BGM / SFX cue 检索配乐或音效，需要已配置的 Freesound 连接。",
 };
 const mediaAdapterPlaceholders: Record<MediaAdapterKey, { provider: string; adapter: string; model: string; promptVersion: string }> = {
   static_visual: { provider: "image-provider", adapter: "image-generation", model: "image-model-v1", promptVersion: "static-visual-v1" },
@@ -140,16 +140,17 @@ function MediaAdapterCard({ adapterKey, form, onChange, readOnly = false, showAl
   const statusClass = status === "已配置" ? "is-configured" : status === "待补齐" ? "is-incomplete" : "is-empty";
   const textField = (field: keyof MediaAdapterForm, title: string, help: string, fieldPlaceholder: string) => <label><FieldLabel help={help}>{title}</FieldLabel><input aria-label={title} onChange={(event) => onChange(field, event.target.value)} placeholder={fieldPlaceholder} readOnly={readOnly} value={form[field]} /></label>;
   const numberField = (field: keyof MediaAdapterForm, title: string, help: string, min = 1) => <label><FieldLabel help={help}>{title}</FieldLabel><input aria-label={title} min={min} onChange={(event) => onChange(field, event.target.value)} readOnly={readOnly} step={min < 1 ? "0.1" : "1"} type="number" value={form[field]} /></label>;
-  const bRollAdapters = adapterKey === "b_roll" ? registeredAdaptersForCapability("b_roll_generation") : [];
-  const selectedBrollAdapter = adapterKey === "b_roll" ? adapterRegistration(form.provider, form.adapter) : undefined;
+  const registeredCapability = adapterKey === "b_roll" ? "b_roll_generation" : adapterKey === "narration" ? "narration_generation" : adapterKey === "soundtrack" ? "soundtrack_generation" : undefined;
+  const registeredAdapters = registeredCapability ? registeredAdaptersForCapability(registeredCapability) : [];
+  const selectedRegisteredAdapter = registeredCapability ? adapterRegistration(form.provider, form.adapter) : undefined;
 
   return <article className={`media-adapter-card ${statusClass}`}>
     <header><div><h4>{label}</h4><p>{mediaAdapterDescriptions[adapterKey]}</p></div><span className="media-adapter-status">{status}</span></header>
     <div className="media-adapter-field-grid">
-      {adapterKey === "b_roll" ? <>
-        <label><FieldLabel help="Provider 由已注册 Adapter 声明，不能自由填写。">Provider</FieldLabel><input aria-label="Provider" readOnly value={selectedBrollAdapter?.provider ?? form.provider} /></label>
-        <label><FieldLabel help="只能选择 Worker 已注册的 B-roll Adapter。">Adapter</FieldLabel><select aria-label="B-roll Adapter" disabled={readOnly} onChange={(event) => { const registration = bRollAdapters.find((candidate) => candidate.id === event.target.value); if (!registration) return; onChange("provider", registration.provider); onChange("adapter", registration.id); onChange("credentialRef", registration.connections[0]?.credentialRef ?? ""); onChange("model", placeholder.model); onChange("promptVersion", placeholder.promptVersion); }} value={selectedBrollAdapter?.id ?? "__unregistered__"}>{selectedBrollAdapter ? null : <option value="__unregistered__">当前值（未登记）</option>}{bRollAdapters.map((registration) => <option key={registration.id} value={registration.id}>{registration.provider} · {registration.id}</option>)}</select></label>
-        <label><FieldLabel help="蓝图只保存连接的非秘密引用，不保存 API Key。">外部连接</FieldLabel><select aria-label="B-roll 外部连接" disabled={readOnly || !selectedBrollAdapter} onChange={(event) => onChange("credentialRef", event.target.value)} value={selectedBrollAdapter?.connections.some((connection) => connection.credentialRef === form.credentialRef) ? form.credentialRef : ""}><option value="">请选择连接</option>{selectedBrollAdapter?.connections.map((connection) => <option key={connection.credentialRef} value={connection.credentialRef}>{connection.label}</option>)}</select></label>
+      {registeredCapability ? <>
+        <label><FieldLabel help="Provider 由已注册 Adapter 声明，不能自由填写。">Provider</FieldLabel><input aria-label="Provider" readOnly value={selectedRegisteredAdapter?.provider ?? form.provider} /></label>
+        <label><FieldLabel help="只能选择 Worker 已注册的 Adapter。">Adapter</FieldLabel><select aria-label={`${label} Adapter`} disabled={readOnly} onChange={(event) => { const registration = registeredAdapters.find((candidate) => candidate.id === event.target.value); if (!registration) return; onChange("provider", registration.provider); onChange("adapter", registration.id); onChange("credentialRef", registration.connections[0]?.credentialRef ?? ""); onChange("model", placeholder.model); onChange("promptVersion", placeholder.promptVersion); onChange("allowedTools", "read, write"); }} value={selectedRegisteredAdapter?.id ?? "__unregistered__"}>{selectedRegisteredAdapter ? null : <option value="__unregistered__">当前值（未登记）</option>}{registeredAdapters.map((registration) => <option key={registration.id} value={registration.id}>{registration.provider} · {registration.id}</option>)}</select></label>
+        <label><FieldLabel help="蓝图只保存连接的非秘密引用，不保存 API Key。">外部连接</FieldLabel><select aria-label={`${label} 外部连接`} disabled={readOnly || !selectedRegisteredAdapter} onChange={(event) => onChange("credentialRef", event.target.value)} value={selectedRegisteredAdapter?.connections.some((connection) => connection.credentialRef === form.credentialRef) ? form.credentialRef : ""}><option value="">请选择连接</option>{selectedRegisteredAdapter?.connections.map((connection) => <option key={connection.credentialRef} value={connection.credentialRef}>{connection.label}</option>)}</select></label>
       </> : <>
         {textField("provider", "Provider", "执行服务名称。这个值必须与 Worker 已注册的供应商一致。", placeholder.provider)}
         {textField("adapter", "Adapter", "具体媒体适配器名称。它会随生产单冻结，Worker 不会自动替换。", placeholder.adapter)}
@@ -157,7 +158,7 @@ function MediaAdapterCard({ adapterKey, form, onChange, readOnly = false, showAl
         {textField("promptVersion", "Prompt 版本", "媒体任务使用的提示词版本标签；先用稳定、可追溯的 slug，例如 a-roll-v1。", placeholder.promptVersion)}
       </>}
     </div>
-    {showAllowedTools ? <label><FieldLabel help="任务允许使用的工具，使用英文逗号分隔。至少填写一个。">允许工具</FieldLabel><input aria-label="允许工具" onChange={(event) => onChange("allowedTools", event.target.value)} placeholder="例如：read, write" readOnly={readOnly} value={form.allowedTools} /></label> : null}
+    {showAllowedTools && !registeredCapability ? <label><FieldLabel help="任务允许使用的工具，使用英文逗号分隔。至少填写一个。">允许工具</FieldLabel><input aria-label="允许工具" onChange={(event) => onChange("allowedTools", event.target.value)} placeholder="例如：read, write" readOnly={readOnly} value={form.allowedTools} /></label> : null}
     {adapterKey === "a_roll" ? <div className="media-adapter-field-grid">{numberField("budgetCents", "预算（分）", "单个 A-roll 任务的最大预算，必须大于 0。")}{numberField("maxAttempts", "最大尝试次数", "单个任务失败后的最大执行尝试次数。")}</div> : null}
     {adapterKey === "b_roll" ? <div className="media-adapter-field-grid">{numberField("perShotBudgetCents", "单镜头预算（分）", "每个 B-roll 镜头允许使用的预算。")}{numberField("totalBudgetCents", "总预算（分）", "本次分镜中所有 B-roll 镜头共享的总预算。")}{numberField("maxAttempts", "最大尝试次数", "单个任务失败后的最大执行尝试次数。")}{numberField("maxConcurrency", "最大并发数", "同一生产单同时运行的 B-roll 任务数。")}{numberField("providerMaxConcurrency", "供应商并发上限", "发给同一供应商的最大并发数。")}</div> : null}
     {adapterKey === "narration" ? <div className="media-adapter-field-grid">{numberField("budgetCents", "预算（分）", "旁白任务的最大预算，必须大于 0。")}{numberField("maxAttempts", "最大尝试次数", "旁白任务失败后的最大执行尝试次数。")}{textField("voiceLanguageCode", "语言代码", "声音使用的语言代码，例如 zh-CN 或 vi-VN。", "例如：zh-CN")}{textField("voiceName", "声音名称", "供应商注册的声音名称。", "例如：cmn-CN-Standard-A")}{numberField("voiceSpeakingRate", "语速", "旁白播放速度，通常填写 1。", 0.1)}</div> : null}
@@ -195,7 +196,7 @@ function runtimeDependencyItems(report: LocalSystemStatusReport | null): Array<{
 }
 
 function externalConnectionProviderLabel(provider: string): string {
-  return provider === "google_tts" ? "Google TTS" : provider === "pexels" ? "Pexels" : provider || "未选择供应商";
+  return provider === "google_tts" ? "Google TTS" : provider === "pexels" ? "Pexels" : provider === "freesound" ? "Freesound" : provider || "未选择供应商";
 }
 
 function externalConnectionStatusLabel(status: ExternalConnectionStatus["status"], check: string | null): string {

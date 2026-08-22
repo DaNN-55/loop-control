@@ -128,6 +128,20 @@ describe("账号配置工作区", () => {
     expect(screen.queryByLabelText("API Key")).toBeNull();
   });
 
+  it("旁白和配乐只选择登记的 Adapter 与非秘密连接", async () => {
+    const user = userEvent.setup();
+    renderWorkspace();
+
+    await user.click(screen.getByRole("checkbox", { name: "启用旁白" }));
+    await user.click(screen.getByRole("checkbox", { name: "启用配乐 / 音效" }));
+    await user.selectOptions(screen.getByRole("combobox", { name: "旁白 Adapter" }), "google_tts");
+    await user.selectOptions(screen.getByRole("combobox", { name: "配乐 / 音效 Adapter" }), "freesound_preview");
+
+    expect((screen.getByRole("combobox", { name: "旁白 外部连接" }) as HTMLSelectElement).value).toBe("google-tts-default");
+    expect((screen.getByRole("combobox", { name: "配乐 / 音效 外部连接" }) as HTMLSelectElement).value).toBe("freesound-default");
+    expect(screen.queryByLabelText("API Key")).toBeNull();
+  });
+
   it("选择分镜 Prompt Harness 时保存其不可变标识", async () => {
     const user = userEvent.setup();
     const onUpdateBlueprint = vi.fn().mockResolvedValue(blueprint);

@@ -31,6 +31,33 @@ const adapterRegistry: readonly AdapterRegistration[] = [
     configurationFields: ["per_shot_budget_cents", "total_budget_cents", "max_attempts", "max_concurrency", "provider_max_concurrency"],
     connections: [{ credentialRef: "pexels-default", environmentVariable: "PEXELS_API_KEY", label: "Pexels 默认连接" }],
   },
+  {
+    id: "google_tts",
+    capability: "narration_generation",
+    provider: "google_tts",
+    connectionType: "google_tts_api",
+    requiresNetwork: true,
+    configurationFields: ["credential_ref", "voice", "budget_cents", "max_attempts"],
+    connections: [{ credentialRef: "google-tts-default", environmentVariable: "GOOGLE_TTS_API_KEY", label: "Google TTS 默认连接" }],
+  },
+  {
+    id: "freesound_preview",
+    capability: "soundtrack_generation",
+    provider: "freesound",
+    connectionType: "freesound_api",
+    requiresNetwork: true,
+    configurationFields: ["credential_ref", "budget_cents", "max_attempts"],
+    connections: [{ credentialRef: "freesound-default", environmentVariable: "FREESOUND_API_KEY", label: "Freesound 默认连接" }],
+  },
+  {
+    id: "ffmpeg_extract_audio",
+    capability: "embedded_audio_extraction",
+    provider: "ffmpeg",
+    connectionType: "internal",
+    requiresNetwork: false,
+    configurationFields: [],
+    connections: [],
+  },
 ];
 
 export function registeredAdaptersForCapability(capability: string): readonly AdapterRegistration[] {
