@@ -78,11 +78,18 @@ export interface StoryboardAudioCue {
 }
 
 export interface ReviewRenderAdjustments {
+  aspectRatio: "9:16" | "16:9" | "1:1";
+  width: number;
+  height: number;
+  captionsEnabled: boolean;
   captionStyle: "cinematic" | "minimal";
   pacing: "gentle" | "standard" | "compact";
   crop: "cover" | "contain";
   transition: "fade" | "cut";
   layout: "lower_third" | "center";
+  narrationGainDb: number;
+  bgmGainDb: number;
+  sfxGainDb: number;
   reason: string;
 }
 
@@ -168,6 +175,7 @@ export interface WorkerTaskPackageInput {
     members: Array<{
       memberKey: string;
       memberKind: "shot_media" | "narration" | "soundtrack";
+      audioKind?: "bgm" | "sfx";
       relativePath: string;
       sha256: string;
       startSeconds: number;
@@ -333,7 +341,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     validateReviewRenderStoryboard(render.storyboard);
     if (!isReviewRenderAdjustments(render.adjustments)) throw new Error("冻结审核渲染合成配置无效。 ");
     for (const member of render.members) {
-      if (!isNonEmptyString(member.memberKey) || (member.memberKind !== "shot_media" && member.memberKind !== "narration" && member.memberKind !== "soundtrack") || !isSafeRelativePath(member.relativePath) || !isSha256(member.sha256) || !isNonNegativeNumber(member.startSeconds) || !isPositiveFiniteNumber(member.durationSeconds) || !input.inputArtifacts.some((artifact) => artifact.relativePath === member.relativePath && artifact.sha256 === member.sha256)) throw new Error("冻结审核渲染成员格式无效。 ");
+      if (!isNonEmptyString(member.memberKey) || (member.memberKind !== "shot_media" && member.memberKind !== "narration" && member.memberKind !== "soundtrack") || (member.audioKind !== undefined && member.audioKind !== "bgm" && member.audioKind !== "sfx") || !isSafeRelativePath(member.relativePath) || !isSha256(member.sha256) || !isNonNegativeNumber(member.startSeconds) || !isPositiveFiniteNumber(member.durationSeconds) || !input.inputArtifacts.some((artifact) => artifact.relativePath === member.relativePath && artifact.sha256 === member.sha256)) throw new Error("冻结审核渲染成员格式无效。 ");
     }
   }
   if (input.finalRender) {
@@ -407,11 +415,16 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
 }
 
 function isReviewRenderAdjustments(value: ReviewRenderAdjustments): boolean {
-  return (value.captionStyle === "cinematic" || value.captionStyle === "minimal")
+  return (value.aspectRatio === "9:16" || value.aspectRatio === "16:9" || value.aspectRatio === "1:1")
+    && Number.isInteger(value.width) && Number.isInteger(value.height) && value.width > 0 && value.height > 0
+    && ((value.aspectRatio === "9:16" && value.width * 16 === value.height * 9) || (value.aspectRatio === "16:9" && value.width * 9 === value.height * 16) || (value.aspectRatio === "1:1" && value.width === value.height))
+    && typeof value.captionsEnabled === "boolean"
+    && (value.captionStyle === "cinematic" || value.captionStyle === "minimal")
     && (value.pacing === "gentle" || value.pacing === "standard" || value.pacing === "compact")
     && (value.crop === "cover" || value.crop === "contain")
     && (value.transition === "fade" || value.transition === "cut")
     && (value.layout === "lower_third" || value.layout === "center")
+    && Number.isFinite(value.narrationGainDb) && Number.isFinite(value.bgmGainDb) && Number.isFinite(value.sfxGainDb)
     && isNonEmptyString(value.reason);
 }
 

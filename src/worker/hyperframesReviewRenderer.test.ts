@@ -15,7 +15,7 @@ describe("HyperFrames 审核渲染工程", () => {
       ],
       reviewRender: {
         projectRelativePath: "episodes/episode-1/review-render/v1/index.html", projectRevision: 1, preRenderReviewPackageId: "package-1",
-        adjustments: { captionStyle: "minimal", pacing: "gentle", crop: "contain", transition: "cut", layout: "center", reason: "字幕需要更克制，保留完整画面。" },
+        adjustments: { aspectRatio: "9:16", width: 1080, height: 1920, captionsEnabled: true, captionStyle: "minimal", pacing: "gentle", crop: "contain", transition: "cut", layout: "center", narrationGainDb: 0, bgmGainDb: -12, sfxGainDb: -6, reason: "字幕需要更克制，保留完整画面。" },
         storyboard: { version: "storyboard/v1", shots: [{ id: "shot-1", scriptSegment: "雨落在旧街。", durationSeconds: 4, shotType: "b_roll", productionMethod: "Pexels", inputBasis: [{ relativePath: "episodes/episode-1/b-roll/shot-1.mp4", sha256: "a".repeat(64) }], targetSpec: "9:16" }], audioCues: [] },
         members: [
           { memberKey: "shot:shot-1", memberKind: "shot_media", relativePath: "episodes/episode-1/b-roll/shot-1.mp4", sha256: "a".repeat(64), startSeconds: 0, durationSeconds: 4 },
@@ -39,15 +39,24 @@ describe("HyperFrames 审核渲染工程", () => {
     expect(fadedHtml).toContain("tl.from(node,{opacity:0,duration:.35},start).to(node,{opacity:0,duration:.35},start+duration-.35)");
     expect(fadedHtml).toContain("scale:1.08");
 
+    const wideHtml = projectHtml({ ...taskPackage, reviewRender: { ...taskPackage.reviewRender!, adjustments: { ...taskPackage.reviewRender!.adjustments, aspectRatio: "16:9", width: 1920, height: 1080, captionsEnabled: false, narrationGainDb: -3 } } });
+    expect(wideHtml).toContain('data-aspect-ratio="16:9"');
+    expect(wideHtml).toContain("width:1920px;height:1080px");
+    expect(wideHtml).not.toContain("caption-0");
+    expect(wideHtml).toContain('volume="0.707946"');
+
     const report = buildQcReport({ taskPackage, projectContents: html, inspection: { durationSeconds: 4, width: 1080, height: 1920, hasAudio: true, blackFrameCount: 0 }, outputRelativePath: taskPackage.output.relativePath, projectRelativePath: taskPackage.reviewRender!.projectRelativePath });
     expect(report.passed).toBe(true);
     expect(report.checks.map((check) => check.name)).toEqual(["duration_coverage", "resolution", "audio", "black_frames", "subtitles", "completeness"]);
+
+    const wideReport = buildQcReport({ taskPackage: { ...taskPackage, reviewRender: { ...taskPackage.reviewRender!, adjustments: { ...taskPackage.reviewRender!.adjustments, aspectRatio: "16:9", width: 1920, height: 1080, captionsEnabled: false } } }, projectContents: wideHtml, inspection: { durationSeconds: 4, width: 1920, height: 1080, hasAudio: true, blackFrameCount: 0 }, outputRelativePath: taskPackage.output.relativePath, projectRelativePath: taskPackage.reviewRender!.projectRelativePath });
+    expect(wideReport.passed).toBe(true);
   });
 
   it("最终渲染固定已审核工程与其 QC 证据", () => {
     const reviewRender = {
       projectRelativePath: "episodes/episode-1/review-render/v1/index.html", projectRevision: 1, preRenderReviewPackageId: "package-1",
-      adjustments: { captionStyle: "cinematic" as const, pacing: "standard" as const, crop: "cover" as const, transition: "fade" as const, layout: "lower_third" as const, reason: "默认合成配置。" },
+      adjustments: { aspectRatio: "9:16" as const, width: 1080, height: 1920, captionsEnabled: true, captionStyle: "cinematic" as const, pacing: "standard" as const, crop: "cover" as const, transition: "fade" as const, layout: "lower_third" as const, narrationGainDb: 0, bgmGainDb: -12, sfxGainDb: -6, reason: "默认合成配置。" },
       storyboard: { version: "storyboard/v1" as const, shots: [{ id: "shot-1", scriptSegment: "雨落在旧街。", durationSeconds: 4, shotType: "b_roll" as const, productionMethod: "Pexels", inputBasis: [{ relativePath: "episodes/episode-1/b-roll/shot-1.mp4", sha256: "a".repeat(64) }], targetSpec: "9:16" }], audioCues: [] },
       members: [{ memberKey: "shot:shot-1", memberKind: "shot_media" as const, relativePath: "episodes/episode-1/b-roll/shot-1.mp4", sha256: "a".repeat(64), startSeconds: 0, durationSeconds: 4 }],
     };

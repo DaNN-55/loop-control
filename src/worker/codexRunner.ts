@@ -216,6 +216,7 @@ function reviewRender(snapshot: Record<string, unknown>): WorkerTaskPackageInput
       return {
         memberKey: requiredString(member.member_key, "审核渲染成员缺少标识。"),
         memberKind: requiredReviewRenderMemberKind(member.member_kind),
+        ...(member.audio_kind === "bgm" || member.audio_kind === "sfx" ? { audioKind: member.audio_kind } : {}),
         relativePath: requiredString(member.relative_path, "审核渲染成员缺少路径。"),
         sha256: requiredString(member.sha256, "审核渲染成员缺少哈希。"),
         startSeconds: requiredNonNegativeNumber(member.start_seconds, "审核渲染成员缺少起始时间。"),
@@ -232,8 +233,15 @@ function reviewRenderAdjustments(value: unknown): ReviewRenderAdjustments {
   const crop = value.crop;
   const transition = value.transition;
   const layout = value.layout;
-  if ((captionStyle !== "cinematic" && captionStyle !== "minimal") || (pacing !== "gentle" && pacing !== "standard" && pacing !== "compact") || (crop !== "cover" && crop !== "contain") || (transition !== "fade" && transition !== "cut") || (layout !== "lower_third" && layout !== "center")) throw new Error("审核渲染任务冻结合成配置无效。");
-  return { captionStyle, pacing, crop, transition, layout, reason: requiredString(value.reason, "审核渲染任务缺少调整理由。") };
+  const aspectRatio = value.aspect_ratio;
+  const width = value.width;
+  const height = value.height;
+  const captionsEnabled = value.captions_enabled;
+  const narrationGainDb = value.narration_gain_db;
+  const bgmGainDb = value.bgm_gain_db;
+  const sfxGainDb = value.sfx_gain_db;
+  if ((aspectRatio !== "9:16" && aspectRatio !== "16:9" && aspectRatio !== "1:1") || typeof width !== "number" || typeof height !== "number" || !Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1 || (aspectRatio === "9:16" && width * 16 !== height * 9) || (aspectRatio === "16:9" && width * 9 !== height * 16) || (aspectRatio === "1:1" && width !== height) || typeof captionsEnabled !== "boolean" || (captionStyle !== "cinematic" && captionStyle !== "minimal") || (pacing !== "gentle" && pacing !== "standard" && pacing !== "compact") || (crop !== "cover" && crop !== "contain") || (transition !== "fade" && transition !== "cut") || (layout !== "lower_third" && layout !== "center") || typeof narrationGainDb !== "number" || typeof bgmGainDb !== "number" || typeof sfxGainDb !== "number" || !Number.isFinite(narrationGainDb) || !Number.isFinite(bgmGainDb) || !Number.isFinite(sfxGainDb)) throw new Error("审核渲染任务冻结合成配置无效。");
+  return { aspectRatio, width, height, captionsEnabled, captionStyle, pacing, crop, transition, layout, narrationGainDb, bgmGainDb, sfxGainDb, reason: requiredString(value.reason, "审核渲染任务缺少调整理由。") };
 }
 
 function requiredReviewRenderMemberKind(value: unknown): "shot_media" | "narration" | "soundtrack" {
