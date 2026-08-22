@@ -21,6 +21,7 @@ export const defaultBlueprintPolicy = {
     },
     storyboard_planning: {
       provider: "codex",
+      adapter: "codex",
       model: "gpt-5.6-luna",
       prompt_version: "storyboard-planning-v1",
     },

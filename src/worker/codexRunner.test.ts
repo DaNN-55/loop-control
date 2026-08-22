@@ -191,6 +191,7 @@ describe("本地 Codex Worker runner", () => {
         taskType: "draft_storyboard",
         inputSnapshot: {
           capability: "storyboard_planning",
+          harness: { id: "harness-storyboard-1", version: 3, content: "先确定镜头叙事目的，再编排可执行声画。", content_hash: "d".repeat(64), adapter: "codex", model: "gpt-5.6-luna", prompt_version: "storyboard-planning-v3" },
           review_annotations: [{ shot_id: "shot-02", reason: "铜铃特写需要延长。" }],
           allowed_tools: ["read", "write"],
           output: { required_artifact_types: ["storyboard"], content_type: "application/json", relative_path: "episodes/episode-1/storyboard-v2.json", review_stage: "storyboard_review" },
@@ -208,11 +209,38 @@ describe("本地 Codex Worker runner", () => {
     });
 
     expect(execute).toHaveBeenCalledWith(expect.objectContaining({
+      promptHarness: { id: "harness-storyboard-1", version: 3, content: "先确定镜头叙事目的，再编排可执行声画。", contentHash: "d".repeat(64), adapter: "codex", model: "gpt-5.6-luna", promptVersion: "storyboard-planning-v3" },
       reviewAnnotations: [{ shotId: "shot-02", reason: "铜铃特写需要延长。" }],
       output: expect.objectContaining({ reviewStage: "storyboard_review" }),
       assets: expect.objectContaining({ inputs: [expect.objectContaining({ artifactType: "main_script" }), expect.objectContaining({ artifactType: "visual_brief" })] }),
     }));
     expect(verifyArtifacts).toHaveBeenLastCalledWith(expect.any(Object), [expect.objectContaining({ artifactType: "storyboard" })], expect.objectContaining({ version: "storyboard/v1", shots: [expect.objectContaining({ id: "shot-02" })] }));
+  });
+
+  it("阻塞未冻结 Adapter 与 Prompt Harness 的分镜任务，且不调用 Codex", async () => {
+    const execute = vi.fn();
+    const reportResult = vi.fn().mockResolvedValue(undefined);
+
+    await expect(runCodexWorker({
+      claimNextTask: async () => ({
+        ...claimedTask,
+        taskType: "draft_storyboard",
+        inputSnapshot: {
+          capability: "storyboard_planning",
+          allowed_tools: ["read", "write"],
+          output: { required_artifact_types: ["storyboard"], content_type: "application/json", relative_path: "episodes/episode-1/storyboard-v1.json", review_stage: "storyboard_review" },
+          input_artifacts: [],
+        },
+      }),
+      execute,
+      reportResult,
+      verifyAssetRoot: async () => undefined,
+      verifyArtifacts: async () => undefined,
+      actualCostCents: 0,
+    })).resolves.toEqual({ status: "blocked", taskId: "task-1" });
+
+    expect(execute).not.toHaveBeenCalled();
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({ blockers: [expect.objectContaining({ detail: expect.stringContaining("Prompt Harness") })] }));
   });
 
   it("把冻结的 A-roll 镜头、适配器与输入交给 Worker", async () => {

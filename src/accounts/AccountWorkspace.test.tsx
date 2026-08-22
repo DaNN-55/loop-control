@@ -13,6 +13,7 @@ type Account = Database["public"]["Tables"]["accounts"]["Row"];
 type Blueprint = Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
 type Series = Database["public"]["Tables"]["series"]["Row"];
 type SeriesVersion = Database["public"]["Tables"]["series_versions"]["Row"];
+type PromptVersion = Database["public"]["Tables"]["prompt_versions"]["Row"];
 
 const account: Account = { created_at: "2026-08-14T00:00:00.000Z", current_blueprint_version_id: "blueprint-3", id: "account-1", name: "道工作室", slug: "dao-studio", timezone: "Asia/Shanghai" };
 const blueprint: Blueprint = { account_id: account.id, archived_at: null, created_at: "2026-08-14T00:00:00.000Z", id: "blueprint-3", is_active: true, is_snapshot: false, policy: { approval_gates: ["script", "qc"], asset_root: "/Volumes/dao", positioning: "越南民间信仰" }, version: 3 };
@@ -125,6 +126,18 @@ describe("账号配置工作区", () => {
     expect((screen.getByRole("combobox", { name: "B-roll Adapter" }) as HTMLSelectElement).value).toBe("__unregistered__");
     expect((screen.getByRole("combobox", { name: "B-roll 外部连接" }) as HTMLSelectElement).value).toBe("");
     expect(screen.queryByLabelText("API Key")).toBeNull();
+  });
+
+  it("选择分镜 Prompt Harness 时保存其不可变标识", async () => {
+    const user = userEvent.setup();
+    const onUpdateBlueprint = vi.fn().mockResolvedValue(blueprint);
+    const harness: PromptVersion = { account_id: account.id, capability: "storyboard_planning", content_hash: "a".repeat(64), created_at: "2026-08-22T00:00:00.000Z", created_by: "owner-1", id: "harness-storyboard-1", instructions: "先写可执行镜头。", is_active: true, name: "分镜规划 v2", slug: "storyboard-planning-v2", summary: "为审核准备可执行分镜。", version: 2 };
+    renderWorkspace({ onUpdateBlueprint, promptVersions: [harness] });
+
+    await user.selectOptions(screen.getByRole("combobox", { name: "分镜规划 Prompt Harness" }), harness.id);
+    await user.click(screen.getByRole("button", { name: "保存蓝图" }));
+
+    expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ executors: expect.objectContaining({ storyboard_planning: expect.objectContaining({ adapter: "codex", harness_id: harness.id, prompt_version: harness.slug }) }) }));
   });
 
   it("展示真实 Worker 就绪检查并允许重新检查", async () => {

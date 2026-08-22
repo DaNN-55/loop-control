@@ -1,5 +1,5 @@
 import type { WorkerPreflightCheck, WorkerPreflightResult, WorkerPreflightStatus, WorkerTaskPackage } from "./contracts.js";
-import { adapterRegistration } from "./adapterRegistry.js";
+import { adapterRegistration, registeredAdaptersForCapability } from "./adapterRegistry.js";
 
 export interface RuntimeCapability {
   capability: string;
@@ -7,6 +7,9 @@ export interface RuntimeCapability {
   adapter?: string;
   model?: string;
   promptVersion?: string;
+  promptHarnessId?: string;
+  requiresAdapter?: boolean;
+  requiresPromptHarness?: boolean;
   allowedTools?: unknown;
   credentialRef?: string;
   credential?: string;
@@ -52,7 +55,7 @@ export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, _seriesR
   const capabilities: RuntimeCapability[] = [
     capabilityFromExecutor("script_writing", record(executors.script_writing), allowedTools, "codex"),
     capabilityFromExecutor("visual_planning", record(executors.visual_planning), allowedTools, "codex"),
-    capabilityFromExecutor("storyboard_planning", record(executors.storyboard_planning), allowedTools, "codex"),
+    capabilityFromExecutor("storyboard_planning", record(executors.storyboard_planning), allowedTools, "codex", { adapter: true, promptHarness: true }),
     { capability: "review_rendering", provider: "hyperframes", model: "hyperframes@0.7.109", promptVersion: "review-render-v1", allowedTools: ["read", "write"], command: "hyperframes" },
     { capability: "final_rendering", provider: "hyperframes", model: "hyperframes@0.7.109", promptVersion: "final-render-v1", allowedTools: ["read", "write"], command: "hyperframes" },
   ];
@@ -83,13 +86,16 @@ export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, _seriesR
 }
 
 export function runtimeCapabilityFromTask(taskPackage: WorkerTaskPackage): RuntimeCapability {
-  const adapter = taskPackage.aRoll?.adapter ?? taskPackage.media?.adapter;
+  const storyboardPlanning = taskPackage.capability === "storyboard_planning";
+  const adapter = taskPackage.aRoll?.adapter ?? taskPackage.media?.adapter ?? (storyboardPlanning ? taskPackage.promptHarness?.adapter : undefined);
   return {
     capability: taskPackage.capability,
     provider: taskPackage.provider,
     ...(adapter ? { adapter } : {}),
     model: taskPackage.model,
     promptVersion: taskPackage.promptVersion,
+    ...(storyboardPlanning && taskPackage.promptHarness ? { promptHarnessId: taskPackage.promptHarness.id } : {}),
+    ...(storyboardPlanning ? { requiresAdapter: true, requiresPromptHarness: true } : {}),
     allowedTools: taskPackage.allowedTools,
     ...(taskPackage.credentialRef ? { credentialRef: taskPackage.credentialRef } : {}),
     credential: credentialEnvironmentForReference(taskPackage.provider, adapter, taskPackage.credentialRef),
@@ -107,7 +113,7 @@ export function createRuntimePreflight(capabilities: RuntimeCapability[], enviro
     }
 
     const registrationValid = capability.adapter
-      ? Boolean(adapterRegistration(capability.provider, capability.adapter)) || legacyRegisteredAdapters.has(`${capability.provider}:${capability.adapter}`)
+      ? registeredAdaptersForCapability(capability.capability).some((registration) => registration.provider === capability.provider && registration.id === capability.adapter) || legacyRegisteredAdapters.has(`${capability.provider}:${capability.adapter}`)
       : capability.provider === "codex" || capability.provider === "hyperframes" || capability.provider === "ffmpeg";
     if (!registrationValid) {
       checks.push({ capability: capability.capability, check: "capability_registration", phase: "preflight", status: "unavailable", reason: `当前 Worker 未注册 ${capability.provider}/${capability.adapter ?? "default"} 执行路径。`, action: "contact_environment_admin", scope: "worker" });
@@ -181,13 +187,19 @@ export function runtimeCommandArguments(command: string): string[] {
   return command === "ffmpeg" ? ["-version"] : ["--version"];
 }
 
-function capabilityFromExecutor(capability: string, executor: Record<string, unknown>, allowedTools: unknown, defaultProvider: string): RuntimeCapability {
+function capabilityFromExecutor(capability: string, executor: Record<string, unknown>, allowedTools: unknown, defaultProvider: string, requirements: { adapter?: boolean; promptHarness?: boolean } = {}): RuntimeCapability {
   const provider = stringValue(executor.provider) || defaultProvider;
+  const adapter = stringValue(executor.adapter);
+  const promptHarnessId = stringValue(executor.harness_id);
   return {
     capability,
     provider,
+    ...(adapter ? { adapter } : {}),
     model: stringValue(executor.model),
     promptVersion: stringValue(executor.prompt_version),
+    ...(promptHarnessId ? { promptHarnessId } : {}),
+    ...(requirements.adapter ? { requiresAdapter: true } : {}),
+    ...(requirements.promptHarness ? { requiresPromptHarness: true } : {}),
     allowedTools,
     command: runtimeCommandForProvider(provider),
   };
@@ -195,7 +207,8 @@ function capabilityFromExecutor(capability: string, executor: Record<string, unk
 
 function configurationErrorFor(capability: RuntimeCapability): string | undefined {
   if (!capability.provider || !capability.model || !capability.promptVersion) return `能力 ${capability.capability} 缺少 Provider、模型或 Prompt 版本。`;
-  if (capability.adapter !== undefined && !capability.adapter) return `能力 ${capability.capability} 缺少 Adapter。`;
+  if (capability.requiresAdapter && !capability.adapter) return `能力 ${capability.capability} 缺少已注册 Adapter。`;
+  if (capability.requiresPromptHarness && !capability.promptHarnessId) return `能力 ${capability.capability} 缺少 Prompt Harness。`;
   const registration = capability.adapter ? adapterRegistration(capability.provider, capability.adapter) : undefined;
   if (registration?.connections.length && !registration.connections.some((connection) => connection.credentialRef === capability.credentialRef)) return `能力 ${capability.capability} 缺少可用的外部连接引用。`;
   return undefined;

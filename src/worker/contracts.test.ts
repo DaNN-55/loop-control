@@ -32,6 +32,7 @@ const packageInput: WorkerTaskPackageInput = {
     },
   ],
 };
+const storyboardHarness = { id: "harness-storyboard-1", version: 1, content: "根据已审核输入生成可执行分镜。", contentHash: "d".repeat(64), adapter: "codex" as const, model: "gpt-5.6-codex", promptVersion: "storyboard-planning-v1" };
 
 describe("Worker 契约", () => {
   it("构建包含固定账号、蓝图、预算和禁止事项的任务包", () => {
@@ -198,6 +199,7 @@ describe("Worker 契约", () => {
     const taskPackage = createWorkerTaskPackage({
       ...packageInput,
       capability: "storyboard_planning",
+      promptHarness: storyboardHarness,
       output: { requiredArtifactTypes: ["storyboard"], contentType: "application/json", relativePath: "episodes/episode-1/storyboard-v1.json", reviewStage: "storyboard_review" },
     });
     const blockedResult = {
@@ -296,6 +298,7 @@ describe("Worker 契约", () => {
     const taskPackage = createWorkerTaskPackage({
       ...packageInput,
       capability: "storyboard_planning",
+      promptHarness: storyboardHarness,
       output: { requiredArtifactTypes: ["storyboard"], contentType: "application/json", relativePath: "episodes/episode-1/storyboard-v1.json", reviewStage: "storyboard_review" },
       inputArtifacts: [
         { artifactType: "main_script", relativePath: "episodes/episode-1/main-script.md", sha256: "a".repeat(64), fileSize: 128 },

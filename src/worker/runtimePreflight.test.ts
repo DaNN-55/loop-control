@@ -27,6 +27,21 @@ describe("runtime preflight", () => {
     expect(capabilities.at(-1)).toMatchObject({ credential: "GOOGLE_TTS_API_KEY" });
   });
 
+  it("分镜必须冻结已注册的 Codex Adapter 与 Prompt Harness", () => {
+    const blocked = runtimeCapabilitiesFromBlueprintPolicy({
+      allowed_tools: ["read", "write"],
+      executors: { storyboard_planning: { provider: "codex", model: "gpt-5.6-luna", prompt_version: "storyboard-planning-v1" } },
+    }).find((capability) => capability.capability === "storyboard_planning");
+    const configured = runtimeCapabilitiesFromBlueprintPolicy({
+      allowed_tools: ["read", "write"],
+      executors: { storyboard_planning: { provider: "codex", adapter: "codex", harness_id: "harness-1", model: "gpt-5.6-luna", prompt_version: "storyboard-planning-v2" } },
+    }).find((capability) => capability.capability === "storyboard_planning");
+
+    expect(createRuntimePreflight([blocked!]).checks).toContainEqual(expect.objectContaining({ capability: "storyboard_planning", check: "blueprint_configuration", status: "blocked", action: "edit_blueprint" }));
+    expect(configured).toMatchObject({ adapter: "codex", promptHarnessId: "harness-1" });
+    expect(createRuntimePreflight([configured!]).checks).toContainEqual(expect.objectContaining({ capability: "storyboard_planning", check: "capability_registration", status: "passed" }));
+  });
+
   it("用注册目录解析 Pexels 的非秘密连接引用", () => {
     const [capability] = runtimeCapabilitiesFromBlueprintPolicy({
       b_roll: {
