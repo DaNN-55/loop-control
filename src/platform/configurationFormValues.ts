@@ -2,7 +2,7 @@ import type { Json } from "../lib/database.types";
 import { adapterRegistration } from "../worker/adapterRegistry";
 
 type JsonObject = Record<string, Json | undefined>;
-type ExecutorForm = { provider: string; model: string; promptVersion: string };
+type ExecutorForm = { provider: string; adapter?: string; harnessId?: string; model: string; promptVersion: string };
 
 export const mediaAdapterKeys = ["a_roll", "b_roll", "narration", "soundtrack"] as const;
 export type MediaAdapterKey = typeof mediaAdapterKeys[number];
@@ -95,7 +95,7 @@ function blueprintAdvancedJson(value: JsonObject): string {
   const executorExtra: JsonObject = {};
   for (const [key, rawExecutor] of Object.entries(executors)) {
     const executor = objectValue(rawExecutor);
-    const fields = Object.fromEntries(Object.entries(executor).filter(([field]) => !new Set(["provider", "model", "prompt_version"]).has(field)));
+    const fields = Object.fromEntries(Object.entries(executor).filter(([field]) => !new Set(["provider", "adapter", "harness_id", "model", "prompt_version"]).has(field)));
     if (Object.keys(fields).length) executorExtra[key] = fields;
   }
   if (Object.keys(executorExtra).length) extra.executors = executorExtra;
@@ -133,7 +133,7 @@ function nonNegativeInteger(source: string, label: string): number {
 
 function formExecutor(value: Json | undefined): ExecutorForm {
   const executor = objectValue(value);
-  return { provider: stringValue(executor.provider) || "codex", model: stringValue(executor.model) || "gpt-5.6-codex", promptVersion: stringValue(executor.prompt_version) || "unversioned" };
+  return { provider: stringValue(executor.provider) || "codex", adapter: stringValue(executor.adapter) || "codex", harnessId: stringValue(executor.harness_id), model: stringValue(executor.model) || "gpt-5.6-codex", promptVersion: stringValue(executor.prompt_version) || "unversioned" };
 }
 
 function formMediaAdapter(value: Json | undefined, fallbackAllowedTools: readonly string[] = [], filterAllowedTools = true): MediaAdapterForm {
@@ -322,12 +322,19 @@ export function blueprintFormToPolicy(form: BlueprintFormValues): Json {
     },
     executors: {
       ...existingExecutors,
-      ...Object.fromEntries(executorKeys.map((key) => [key, {
-        ...objectValue(existingExecutors[key]),
-        provider: form.executors[key].provider.trim(),
-        model: form.executors[key].model.trim(),
-        prompt_version: form.executors[key].promptVersion.trim(),
-      }])),
+      ...Object.fromEntries(executorKeys.map((key) => {
+        const executor = form.executors[key];
+        const adapter = executor.adapter?.trim();
+        const harnessId = executor.harnessId?.trim();
+        return [key, {
+          ...objectValue(existingExecutors[key]),
+          provider: executor.provider.trim(),
+          ...(adapter ? { adapter } : {}),
+          model: executor.model.trim(),
+          prompt_version: executor.promptVersion.trim(),
+          ...(harnessId ? { harness_id: harnessId } : {}),
+        }];
+      })),
     },
   };
   const enabledMediaAdapters = form.enabledMediaAdapters ?? configurableMediaAdapterKeys;

@@ -149,6 +149,7 @@ function createTaskPackage(task: ClaimedWorkerTask): WorkerTaskPackage {
     capability: requiredString(snapshot.capability, "任务缺少能力声明。"),
     ...(typeof snapshot.credential_ref === "string" ? { credentialRef: snapshot.credential_ref } : {}),
     promptContext: promptContext(snapshot),
+    promptHarness: promptHarness(snapshot),
     commission: commission(snapshot),
     seriesBaseline: seriesBaseline(snapshot),
     reviewFeedback: reviewFeedback(snapshot),
@@ -333,6 +334,21 @@ function commission(snapshot: Record<string, unknown>): WorkerTaskPackageInput["
   return {
     creativeDirection: requiredString(value.creative_direction, "任务脚本委托缺少创作方向。"),
     coreContent: requiredString(value.core_content, "任务脚本委托缺少核心内容。"),
+  };
+}
+
+function promptHarness(snapshot: Record<string, unknown>): WorkerTaskPackageInput["promptHarness"] {
+  const value = snapshot.harness;
+  if (value === undefined) return undefined;
+  if (!isRecord(value) || value.adapter !== "codex" || typeof value.version !== "number" || !Number.isInteger(value.version) || value.version < 1) throw new Error("任务 Prompt Harness 格式无效。");
+  return {
+    id: requiredString(value.id, "任务 Prompt Harness 缺少标识。"),
+    version: value.version,
+    content: requiredString(value.content, "任务 Prompt Harness 缺少冻结内容。"),
+    contentHash: requiredString(value.content_hash, "任务 Prompt Harness 缺少内容哈希。"),
+    adapter: "codex",
+    model: requiredString(value.model, "任务 Prompt Harness 缺少模型。"),
+    promptVersion: requiredString(value.prompt_version, "任务 Prompt Harness 缺少版本。"),
   };
 }
 

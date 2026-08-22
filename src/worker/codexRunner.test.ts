@@ -77,6 +77,7 @@ describe("本地 Codex Worker runner", () => {
         inputSnapshot: {
           capability: "script_writing",
           commission: { creative_direction: "雨夜民俗悬疑", core_content: "仪式感与人物抉择" },
+          harness: { id: "harness-1", version: 2, content: "开头三秒提出冲突。", content_hash: "a".repeat(64), adapter: "codex", model: "gpt-5.6-codex", prompt_version: "script-writing-v2" },
           review_feedback: { review_package_id: "review-1", reason: "补充人物动机", actor_id: "owner-1" },
           allowed_tools: ["read", "write"],
           output: { required_artifact_types: ["script"], content_type: "text/markdown", relative_path: "episodes/episode-1/generated-script-v1.md", review_stage: "script_review" },
@@ -92,6 +93,7 @@ describe("本地 Codex Worker runner", () => {
 
     expect(execute).toHaveBeenCalledWith(expect.objectContaining({
       commission: { creativeDirection: "雨夜民俗悬疑", coreContent: "仪式感与人物抉择" },
+      promptHarness: { id: "harness-1", version: 2, content: "开头三秒提出冲突。", contentHash: "a".repeat(64), adapter: "codex", model: "gpt-5.6-codex", promptVersion: "script-writing-v2" },
       reviewFeedback: { reviewPackageId: "review-1", reason: "补充人物动机" },
     }));
   });

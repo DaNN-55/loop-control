@@ -110,7 +110,7 @@ describe("账号蓝图表单转换", () => {
       approval_gates: ["script", "qc"],
       allowed_tools: ["read", "write"],
       budgets: { script_writing_cents: 12, visual_planning_cents: 34, storyboard_planning_cents: 56, global_cap_cents: 99 },
-      executors: { script_writing: { provider: "codex", model: "gpt-5.6", prompt_version: "script-v2", adapter: "codex", temperature: 0.2 } },
+      executors: { script_writing: { provider: "codex", model: "gpt-5.6", prompt_version: "script-v2", adapter: "codex", harness_id: "harness-2", temperature: 0.2 } },
       soundtrack: { executor: { provider: "freesound" } },
     });
 
@@ -118,6 +118,7 @@ describe("账号蓝图表单转换", () => {
     expect(form.assetRoot).toBe("/Volumes/Media/dao");
     expect(form.budgets.scriptWritingCents).toBe("12");
     expect(form.mediaAdapters.soundtrack.provider).toBe("freesound");
+    expect(form.executors.script_writing).toMatchObject({ adapter: "codex", harnessId: "harness-2" });
     expect(form.advancedJson).not.toContain("soundtrack");
     expect(form.advancedJson).toContain("global_cap_cents");
     expect(form.advancedJson).toContain("temperature");
@@ -144,7 +145,7 @@ describe("账号蓝图表单转换", () => {
       allowedTools: ["read", "write", "network"],
       budgets: { scriptWritingCents: "10", visualPlanningCents: "20", storyboardPlanningCents: "30" },
       executors: {
-        script_writing: { provider: "codex", model: "model-a", promptVersion: "prompt-a" },
+        script_writing: { provider: "codex", adapter: "codex", harnessId: "harness-a", model: "model-a", promptVersion: "prompt-a" },
         visual_planning: { provider: "codex", model: "model-b", promptVersion: "prompt-b" },
         storyboard_planning: { provider: "codex", model: "model-c", promptVersion: "prompt-c" },
       },
@@ -159,7 +160,7 @@ describe("账号蓝图表单转换", () => {
 
     expect(result).toMatchObject({ positioning: "新的账号定位", asset_root: "/Volumes/Media/new", approval_gates: ["script", "publish"], allowed_tools: ["read", "write"] });
     expect(result).toMatchObject({ budgets: { script_writing_cents: 10, visual_planning_cents: 20, storyboard_planning_cents: 30 } });
-    expect(result).toMatchObject({ executors: { script_writing: { model: "model-a" }, visual_planning: { model: "model-b" }, storyboard_planning: { model: "model-c" } } });
+    expect(result).toMatchObject({ executors: { script_writing: { adapter: "codex", harness_id: "harness-a", model: "model-a" }, visual_planning: { model: "model-b" }, storyboard_planning: { model: "model-c" } } });
     expect(result).toMatchObject({ a_roll: { executor: { adapter: "codex" }, budget_cents: 20, max_attempts: 2 }, b_roll: { executor: { adapter: "pexels_video" }, per_shot_budget_cents: 10, total_budget_cents: 100 }, narration: { voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 0.8 } }, soundtrack: { executor: { adapter: "freesound_preview" } } });
   });
 

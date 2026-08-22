@@ -393,16 +393,30 @@ describe("审核台", () => {
 
   });
 
-  it("等待输入时将主脚本和补充材料合并为一次准备入口", () => {
+  it("等待输入时允许选择外部导入或委托生成脚本", async () => {
+    const user = userEvent.setup();
+    const onCommissionScript = vi.fn().mockResolvedValue(undefined);
+    const onSetScriptSource = vi.fn().mockResolvedValue(undefined);
     const waitingEpisode: Episode = { ...reviewEpisode, id: "episode-waiting", stage: "waiting_input", title: "等待主脚本" };
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={waitingEpisode} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={waitingEpisode} isTransitionPending={false} onCommissionScript={onCommissionScript} onSetScriptSource={onSetScriptSource} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
     expect(screen.getByRole("heading", { name: "准备生产材料" }).closest("details")?.className).toContain("detail-card-collapsible");
-    expect(screen.getByText(/一次选择本单需要的主脚本、图片、音频、视频和参考材料/)).toBeTruthy();
-    expect(screen.queryByRole("heading", { name: "委托生成脚本" })).toBeNull();
+    expect(screen.getByRole("radio", { name: "外部导入脚本" })).toBeTruthy();
+    expect(screen.getByRole("radio", { name: "委托生成脚本" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "导入全部材料" })).toBeTruthy();
     expect((screen.getByLabelText("选择生产材料文件") as HTMLInputElement).multiple).toBe(true);
+
+    await user.click(screen.getByRole("radio", { name: "委托生成脚本" }));
+    expect(onSetScriptSource).toHaveBeenCalledWith(waitingEpisode.id, "delegated");
+    await user.type(screen.getByLabelText("创作方向"), "雨夜民俗悬疑");
+    await user.type(screen.getByLabelText("核心内容"), "仪式感与人物抉择");
+    await user.click(screen.getByRole("button", { name: "提交委托并生成脚本" }));
+    expect(onCommissionScript).toHaveBeenCalledWith({
+      creativeDirection: "雨夜民俗悬疑",
+      coreContent: "仪式感与人物抉择",
+      episodeId: waitingEpisode.id,
+    });
   });
 
   it("主脚本导入后等待 Owner 明确开始制作", async () => {

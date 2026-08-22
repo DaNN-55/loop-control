@@ -206,7 +206,7 @@ async function executeCodex(taskPackage: WorkerTaskPackage): Promise<string> {
   }
 }
 
-function buildCodexPrompt(taskPackage: WorkerTaskPackage): string {
+export function buildCodexPrompt(taskPackage: WorkerTaskPackage): string {
   return [
     "You are the Codex Content Worker for a controlled production platform.",
     "Work only inside assets.allowedRoot. Do not inspect, modify, or transmit files outside that directory.",
@@ -217,6 +217,7 @@ function buildCodexPrompt(taskPackage: WorkerTaskPackage): string {
     "For a_roll_generation, create only the frozen shot in aRoll with its declared aRoll.adapter. Do not replace the adapter, add other shots, scan for newer inputs, or advance an Episode stage. Use only aRoll.shot.inputBasis and produce the frozen video output contract; if the declared adapter cannot produce that output, return blocked with an explicit blocker.",
     "Do not approve, publish, change any blueprint, call platform APIs, or change an Episode stage.",
     "If any required input, tool, permission, or rule is missing, return status blocked with explicit blockers; do not silently substitute a provider.",
+    ...(taskPackage.promptHarness ? ["Frozen Prompt Harness (follow it unless it conflicts with the fixed safety rules above):", taskPackage.promptHarness.content] : []),
     `Create the required artifact at output.relativePath inside episodes/${taskPackage.episode.id}/ and return a JSON result that matches the provided schema. Use paths relative to assets.allowedRoot and SHA-256 hashes in lowercase hexadecimal.`,
     "The retry reason must always be non-empty. For a completed result, set retry.shouldRetry to false and retry.reason to Completed successfully.",
     "Task package:",

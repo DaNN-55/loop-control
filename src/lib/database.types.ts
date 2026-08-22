@@ -512,6 +512,7 @@ export type Database = {
         Row: {
           account_id: string
           capability: "script_writing" | "visual_planning" | "storyboard_planning"
+          content_hash: string
           created_at: string
           created_by: string | null
           id: string
@@ -525,6 +526,7 @@ export type Database = {
         Insert: {
           account_id: string
           capability: "script_writing" | "visual_planning" | "storyboard_planning"
+          content_hash?: string
           created_at?: string
           created_by?: string | null
           id?: string
@@ -538,6 +540,7 @@ export type Database = {
         Update: {
           account_id?: string
           capability?: "script_writing" | "visual_planning" | "storyboard_planning"
+          content_hash?: string
           created_at?: string
           created_by?: string | null
           id?: string

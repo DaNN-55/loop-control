@@ -35,6 +35,16 @@ export interface PromptContextSnapshot {
   hash: string;
 }
 
+export interface PromptHarnessSnapshot {
+  id: string;
+  version: number;
+  content: string;
+  contentHash: string;
+  adapter: "codex";
+  model: string;
+  promptVersion: string;
+}
+
 export interface ArtifactManifest {
   artifactType: string;
   relativePath: string;
@@ -96,6 +106,7 @@ export interface WorkerTaskPackageInput {
   capability: string;
   credentialRef?: string;
   promptContext?: PromptContextSnapshot;
+  promptHarness?: PromptHarnessSnapshot;
   commission?: {
     creativeDirection: string;
     coreContent: string;
@@ -191,6 +202,7 @@ export interface WorkerTaskPackage {
   capability: string;
   credentialRef?: string;
   promptContext?: PromptContextSnapshot;
+  promptHarness?: PromptHarnessSnapshot;
   commission?: {
     creativeDirection: string;
     coreContent: string;
@@ -293,6 +305,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
   if (!isNonEmptyString(input.task.type)) throw new Error("task type is required.");
   if (!isNonEmptyString(input.capability)) throw new Error("capability is required.");
   if (input.promptContext && (!isNonEmptyString(input.promptContext.blueprintVersionId) || input.promptContext.version !== "prompt-context/v1" || !isNonEmptyString(input.promptContext.hash) || !isRecord(input.promptContext.accountHardConstraints) || !isRecord(input.promptContext.accountDefaults) || !isRecord(input.promptContext.episodeInput))) throw new Error("promptContext must contain a frozen version, hash, and context objects.");
+  if (input.promptHarness && (!isNonEmptyString(input.promptHarness.id) || !Number.isInteger(input.promptHarness.version) || input.promptHarness.version < 1 || !isNonEmptyString(input.promptHarness.content) || !/^[0-9a-f]{64}$/.test(input.promptHarness.contentHash) || input.promptHarness.adapter !== "codex" || !isNonEmptyString(input.promptHarness.model) || !isNonEmptyString(input.promptHarness.promptVersion))) throw new Error("promptHarness must contain a frozen Codex harness and content hash.");
   if (input.commission && (!isNonEmptyString(input.commission.creativeDirection) || !isNonEmptyString(input.commission.coreContent))) throw new Error("commission must contain creative direction and core content.");
   if (input.seriesBaseline && (!isNonEmptyString(input.seriesBaseline.versionId) || !Number.isInteger(input.seriesBaseline.version) || input.seriesBaseline.version < 1 || !isRecord(input.seriesBaseline.rules))) throw new Error("seriesBaseline must contain a version and rule object.");
   if (input.reviewFeedback && (!isNonEmptyString(input.reviewFeedback.reviewPackageId) || !isNonEmptyString(input.reviewFeedback.reason))) throw new Error("review feedback must contain its package and reason.");
@@ -373,6 +386,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     capability: input.capability,
     ...(input.credentialRef ? { credentialRef: input.credentialRef } : {}),
     ...(input.promptContext ? { promptContext: { ...input.promptContext } } : {}),
+    ...(input.promptHarness ? { promptHarness: { ...input.promptHarness } } : {}),
     ...(input.commission ? { commission: { creativeDirection: input.commission.creativeDirection, coreContent: input.commission.coreContent } } : {}),
     ...(input.seriesBaseline ? { seriesBaseline: { versionId: input.seriesBaseline.versionId, version: input.seriesBaseline.version, rules: input.seriesBaseline.rules } } : {}),
     ...(input.reviewFeedback ? { reviewFeedback: { reviewPackageId: input.reviewFeedback.reviewPackageId, reason: input.reviewFeedback.reason } } : {}),

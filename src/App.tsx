@@ -1177,6 +1177,41 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
     }
   }
 
+  async function setEpisodeScriptSource(episodeId: string, scriptSource: "provided" | "delegated") {
+    setPendingAction(`script-source-${episodeId}`);
+    setErrorMessage("");
+    try {
+      const { error } = await supabase.rpc("set_episode_script_source", { p_episode_id: episodeId, p_script_source: scriptSource });
+      if (error) throw error;
+      await refreshWorkspace();
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "无法选择脚本来源。");
+      throw error;
+    } finally {
+      setPendingAction("");
+    }
+  }
+
+  async function commissionScript(input: { episodeId: string; creativeDirection: string; coreContent: string }) {
+    setPendingAction(`script-commission-${input.episodeId}`);
+    setErrorMessage("");
+    try {
+      const { error } = await supabase.rpc("commission_script", {
+        p_core_content: input.coreContent,
+        p_creative_direction: input.creativeDirection,
+        p_episode_id: input.episodeId,
+      });
+      if (error) throw error;
+      setMessage("脚本委托已冻结并进入 Worker 队列，完成后会提交 Owner 审核。");
+      await refreshWorkspace();
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "无法委托生成脚本。");
+      throw error;
+    } finally {
+      setPendingAction("");
+    }
+  }
+
   async function startEpisodeProduction(episodeId: string) {
     setPendingAction(`start-production-${episodeId}`);
     setErrorMessage("");
@@ -1641,6 +1676,8 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             onOpenBlueprint={(blocker) => openAccountBlueprint(selectedEpisode.account_id, blocker.taskId ? { blocker, blueprintVersionId: selectedEpisode.blueprint_version_id, episodeId: selectedEpisode.id } : null)}
             onOpenLocalDirectory={openLocalEpisodeDirectory}
             onImportMaterial={importProductionMaterial}
+            onCommissionScript={commissionScript}
+            onSetScriptSource={setEpisodeScriptSource}
             onStartProduction={startEpisodeProduction}
             onRequestReviewRenderRevision={requestReviewRenderRevision}
             onRefresh={refreshEpisodeStatus}
@@ -1833,7 +1870,44 @@ function EpisodeUtilityPopover({ artifacts, history, kind, onClose, tasks, worke
   return <div aria-label={heading} className="episode-utility-popover" role="dialog"><header><strong>{heading}</strong><button aria-label={`关闭${heading}`} className="icon-button" onClick={onClose} type="button"><X className="icon" /></button></header>{kind === "worker" ? <div className={`episode-utility-status episode-utility-status-${workerStatus.tone}`}><strong>{workerStatus.label}</strong><p>{workerStatus.detail}</p><span>{tasks.length ? `${completedTasks} / ${tasks.length} 个任务已完成` : "尚无任务记录"}</span></div> : kind === "artifacts" ? <div className="episode-utility-artifacts">{artifacts.length ? artifacts.map((artifact) => <Artifact complete key={artifact.id} label={artifact.artifact_type} name={artifact.relative_path} />) : <div className="episode-utility-summary"><strong>尚无产物</strong><p>Worker 尚未生成可查看的产物。</p></div>}</div> : timeline.length ? <ol className="timeline">{timeline.map((transition) => <li key={transition.id}><i className={`timeline-dot ${stageTone(transition.to_stage)}`} /><div><strong>{stageLabels[transition.to_stage]}</strong><span>{userFacingTransitionReason(transition.reason)}</span></div><time>{formatDate(transition.created_at)}</time></li>)}</ol> : <div className="episode-utility-summary"><strong>暂无状态变化</strong><p>生产单创建与状态变化会显示在这里。</p></div>}</div>;
 }
 
-export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, blueprint, episode, isDirectoryOpenPending = false, isMaterialPending, isRefreshPending = false, isStartProductionPending = false, isStoryboardAnnotationPending, isTransitionPending, onCreateAudioTrackAnnotation, onOpenBlueprint, onOpenLocalDirectory = async () => {}, onCreateStoryboardAnnotation, onImportMaterial, onRefresh = async () => {}, onRequestReviewRenderRevision, onReviewPreRenderMember = async () => {}, onStartProduction = async () => {}, onTransition, ownerId = "local-owner", preRenderReviewMemberDecisions = [], preRenderReviewMembers = [], productionPreflight = null, reviewAnnotations, reviewPackages, tasks, transitions }: { artifacts: Artifact[]; audioTrackAnnotations: AudioTrackAnnotation[]; audioTracks: AudioTrack[]; blueprint: Blueprint | null; episode: Episode; isDirectoryOpenPending?: boolean; isMaterialPending: boolean; isRefreshPending?: boolean; isStartProductionPending?: boolean; isStoryboardAnnotationPending: boolean; isTransitionPending: boolean; onCreateAudioTrackAnnotation: (input: AudioTrackAnnotationRequest) => Promise<void>; onOpenBlueprint?: (blocker: WorkerBlocker) => void; onOpenLocalDirectory?: (episodeId: string) => Promise<void>; onCreateStoryboardAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onImportMaterial: (input: MaterialImportRequest) => Promise<void>; onRefresh?: () => Promise<void>; onRequestReviewRenderRevision: (input: ReviewRenderRevisionRequest) => Promise<boolean>; onReviewPreRenderMember?: (input: PreRenderMemberReviewRequest) => Promise<void>; onStartProduction?: (episodeId: string) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; ownerId?: string; preRenderReviewMemberDecisions?: PreRenderReviewMemberDecision[]; preRenderReviewMembers?: PreRenderReviewMember[]; productionPreflight?: WorkerPreflightResult | null; reviewAnnotations: ReviewAnnotation[]; reviewPackages: ReviewPackage[]; tasks: Task[]; transitions: Transition[] }) {
+function ScriptSourceChooser({ children, episodeId, initialSource, isPending, onCommission, onSelectSource }: { children: (source: "provided" | "delegated") => ReactNode; episodeId: string; initialSource: "provided" | "delegated"; isPending: boolean; onCommission: (input: { episodeId: string; creativeDirection: string; coreContent: string }) => Promise<void>; onSelectSource: (episodeId: string, source: "provided" | "delegated") => Promise<void> }) {
+  const [source, setSource] = useState(initialSource);
+  const [creativeDirection, setCreativeDirection] = useState("");
+  const [coreContent, setCoreContent] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => setSource(initialSource), [initialSource]);
+
+  async function selectSource(nextSource: "provided" | "delegated") {
+    if (nextSource === source) return;
+    setError("");
+    setSource(nextSource);
+    try {
+      await onSelectSource(episodeId, nextSource);
+    } catch (cause) {
+      setSource(source);
+      setError(cause instanceof Error ? cause.message : "无法保存脚本来源。");
+    }
+  }
+
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!creativeDirection.trim() || !coreContent.trim()) {
+      setError("请填写创作方向和核心内容。");
+      return;
+    }
+    setError("");
+    try {
+      await onCommission({ episodeId, creativeDirection: creativeDirection.trim(), coreContent: coreContent.trim() });
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "无法提交脚本委托。");
+    }
+  }
+
+  return <section className="script-source-chooser"><p className="material-import-subtitle">先选择主脚本来源。外部导入不会创建脚本生成任务；委托生成会冻结本期提示并提交给 Codex，结果仍需 Owner 审核。</p><div aria-label="主脚本来源" className="configuration-check-grid"><label className="configuration-check"><input aria-label="外部导入脚本" checked={source === "provided"} disabled={isPending} name={`script-source-${episodeId}`} onChange={() => void selectSource("provided")} type="radio" />外部导入脚本</label><label className="configuration-check"><input aria-label="委托生成脚本" checked={source === "delegated"} disabled={isPending} name={`script-source-${episodeId}`} onChange={() => void selectSource("delegated")} type="radio" />委托生成脚本</label></div>{source === "delegated" ? <form className="script-commission" onSubmit={(event) => void submit(event)}><h4>委托生成脚本</h4><label>创作方向<textarea aria-label="创作方向" onChange={(event) => setCreativeDirection(event.target.value)} placeholder="例如：雨夜民俗悬疑，克制叙述。" rows={3} value={creativeDirection} /></label><label>核心内容<textarea aria-label="核心内容" onChange={(event) => setCoreContent(event.target.value)} placeholder="例如：围绕仪式中的人物选择展开。" rows={3} value={coreContent} /></label><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "提交中…" : "提交委托并生成脚本"}</button></form> : children(source)}{error ? <p className="form-error">{error}</p> : null}</section>;
+}
+
+export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, blueprint, episode, isDirectoryOpenPending = false, isMaterialPending, isRefreshPending = false, isStartProductionPending = false, isStoryboardAnnotationPending, isTransitionPending, onCommissionScript = async () => {}, onCreateAudioTrackAnnotation, onOpenBlueprint, onOpenLocalDirectory = async () => {}, onCreateStoryboardAnnotation, onImportMaterial, onRefresh = async () => {}, onRequestReviewRenderRevision, onReviewPreRenderMember = async () => {}, onSetScriptSource = async () => {}, onStartProduction = async () => {}, onTransition, ownerId = "local-owner", preRenderReviewMemberDecisions = [], preRenderReviewMembers = [], productionPreflight = null, reviewAnnotations, reviewPackages, tasks, transitions }: { artifacts: Artifact[]; audioTrackAnnotations: AudioTrackAnnotation[]; audioTracks: AudioTrack[]; blueprint: Blueprint | null; episode: Episode; isDirectoryOpenPending?: boolean; isMaterialPending: boolean; isRefreshPending?: boolean; isStartProductionPending?: boolean; isStoryboardAnnotationPending: boolean; isTransitionPending: boolean; onCommissionScript?: (input: { episodeId: string; creativeDirection: string; coreContent: string }) => Promise<void>; onCreateAudioTrackAnnotation: (input: AudioTrackAnnotationRequest) => Promise<void>; onOpenBlueprint?: (blocker: WorkerBlocker) => void; onOpenLocalDirectory?: (episodeId: string) => Promise<void>; onCreateStoryboardAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onImportMaterial: (input: MaterialImportRequest) => Promise<void>; onRefresh?: () => Promise<void>; onRequestReviewRenderRevision: (input: ReviewRenderRevisionRequest) => Promise<boolean>; onReviewPreRenderMember?: (input: PreRenderMemberReviewRequest) => Promise<void>; onSetScriptSource?: (episodeId: string, scriptSource: "provided" | "delegated") => Promise<void>; onStartProduction?: (episodeId: string) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; ownerId?: string; preRenderReviewMemberDecisions?: PreRenderReviewMemberDecision[]; preRenderReviewMembers?: PreRenderReviewMember[]; productionPreflight?: WorkerPreflightResult | null; reviewAnnotations: ReviewAnnotation[]; reviewPackages: ReviewPackage[]; tasks: Task[]; transitions: Transition[] }) {
   const episodeArtifacts = artifacts.filter((artifact) => artifact.episode_id === episode.id);
   const history = transitions.filter((transition) => transition.episode_id === episode.id);
   const blockers = workerBlockers(tasks, episode.id);
@@ -1877,7 +1951,7 @@ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, b
     <div aria-label="生产单操作" className="episode-detail-toolbar"><div className="episode-toolbar-actions"><button aria-label="刷新生产单状态" className="icon-button episode-toolbar-button" disabled={isRefreshPending} onClick={() => void onRefresh()} title="刷新状态" type="button"><RefreshCw className="icon" /></button><button aria-label="打开本地输入目录" className="icon-button episode-toolbar-button" disabled={isDirectoryOpenPending} onClick={() => void onOpenLocalDirectory(episode.id)} title={`打开本地输入目录：${localInputPath}`} type="button"><FolderOpen className="icon" /></button><button aria-label="复制本地输入目录路径" className="icon-button episode-toolbar-button" onClick={() => void copyLocalInputPath()} title={`复制本地输入目录路径：${localInputPath}`} type="button"><Copy className="icon" /></button><button aria-expanded={openUtilityPanel === "worker"} aria-haspopup="dialog" aria-label={`Worker 状态：${workerStatus.label}`} className="icon-button episode-toolbar-button" onClick={() => setOpenUtilityPanel((current) => current === "worker" ? null : "worker")} title={`Worker 状态：${workerStatus.label} · ${workerStatus.detail}`} type="button"><Activity className="icon" /></button><button aria-expanded={openUtilityPanel === "artifacts"} aria-haspopup="dialog" aria-label="查看产物索引" className="icon-button episode-toolbar-button" onClick={() => setOpenUtilityPanel((current) => current === "artifacts" ? null : "artifacts")} title="查看产物索引" type="button"><ClipboardList className="icon" /></button><button aria-expanded={openUtilityPanel === "timeline"} aria-haspopup="dialog" aria-label="查看审计时间线" className="icon-button episode-toolbar-button" onClick={() => setOpenUtilityPanel((current) => current === "timeline" ? null : "timeline")} title="查看审计时间线" type="button"><History className="icon" /></button></div>{directoryMessage ? <span className="episode-toolbar-status" role="status">{directoryMessage}</span> : null}{openUtilityPanel ? <EpisodeUtilityPopover artifacts={episodeArtifacts} history={history} kind={openUtilityPanel} onClose={() => setOpenUtilityPanel(null)} tasks={episodeTasks} workerStatus={workerStatus} /> : null}</div>
     <p className="review-meta">蓝图 v{blueprint?.version ?? "—"} · 创建于 {formatDate(episode.created_at)}</p>
     <section className="episode-next-step-card"><div><span>当前阶段</span><strong className={`stage stage-${stageTone(episode.stage)}`}>{stageLabels[episode.stage]}</strong></div><div><span>下一步</span><p>{nextStep}</p></div><div className={`episode-worker-status episode-worker-status-${workerStatus.tone}`}><span>Worker 状态</span><strong>{workerStatus.label}</strong><p>{workerStatus.detail}</p></div></section>
-    <details className="review-section detail-card-collapsible" open={waitingForMainScript || inputReadyToStart}><summary><h3>准备生产材料</h3></summary><div className="detail-card-body">{waitingForMainScript ? <p className="material-import-subtitle">一次选择本单需要的主脚本、图片、音频、视频和参考材料；每个文件会单独记录用途。确认材料后，再点击“材料准备完成，开始制作”。</p> : inputReadyToStart ? <p className="material-import-subtitle">主脚本已确认。你可以继续添加补充材料；所有材料准备好后，点击下方按钮，Worker 才会开始制作。</p> : null}<MaterialImportForm allowMainScript={!episode.main_script_revision_id} defaultMainScript={waitingForMainScript} episodeId={episode.id} isPending={isMaterialPending} onImport={onImportMaterial} />{inputReadyToStart ? <><div className="production-start-gate"><div><strong>材料已准备到可开始状态</strong><p>确认后将先检查本机 Worker 的真实运行态；检查通过后才推进生产单。</p></div><button className="button button-primary" disabled={isStartProductionPending} onClick={() => void onStartProduction(episode.id)} type="button">{isStartProductionPending ? "检查并开始中…" : "材料准备完成，开始制作"}</button></div>{productionPreflight ? <div aria-live="polite" className={`production-preflight ${productionBlockers.length ? "is-blocked" : "is-passed"}`}><strong>生产前运行态检查：{productionBlockers.length ? `未通过（${productionBlockers.length}）` : "已通过"}</strong><p>已检查当前冻结蓝图对应的 Worker 注册、工具白名单、凭据存在性、有效性、模型权限、网络连通性和媒体库；实际媒体搜索、下载和产物验证仍在任务执行阶段确认。</p>{productionBlockers.map((blocker) => <WorkerBlockerCard blocker={blocker} key={`${blocker.code}-${blocker.capability}`} onOpenBlueprint={onOpenBlueprint} />)}</div> : null}</> : null}</div></details>
+    <details className="review-section detail-card-collapsible" open={waitingForMainScript || inputReadyToStart}><summary><h3>准备生产材料</h3></summary><div className="detail-card-body">{waitingForMainScript ? <ScriptSourceChooser episodeId={episode.id} initialSource={episode.script_source ?? "provided"} isPending={isMaterialPending} onCommission={onCommissionScript} onSelectSource={onSetScriptSource}>{(source) => source === "provided" ? <MaterialImportForm allowMainScript defaultMainScript episodeId={episode.id} isPending={isMaterialPending} onImport={onImportMaterial} /> : null}</ScriptSourceChooser> : <><p className="material-import-subtitle">主脚本已确认。你可以继续添加补充材料；所有材料准备好后，点击下方按钮，Worker 才会开始制作。</p><MaterialImportForm allowMainScript={false} defaultMainScript={false} episodeId={episode.id} isPending={isMaterialPending} onImport={onImportMaterial} /></>}{inputReadyToStart ? <><div className="production-start-gate"><div><strong>材料已准备到可开始状态</strong><p>确认后将先检查本机 Worker 的真实运行态；检查通过后才推进生产单。</p></div><button className="button button-primary" disabled={isStartProductionPending} onClick={() => void onStartProduction(episode.id)} type="button">{isStartProductionPending ? "检查并开始中…" : "材料准备完成，开始制作"}</button></div>{productionPreflight ? <div aria-live="polite" className={`production-preflight ${productionBlockers.length ? "is-blocked" : "is-passed"}`}><strong>生产前运行态检查：{productionBlockers.length ? `未通过（${productionBlockers.length}）` : "已通过"}</strong><p>已检查当前冻结蓝图对应的 Worker 注册、工具白名单、凭据存在性、有效性、模型权限、网络连通性和媒体库；实际媒体搜索、下载和产物验证仍在任务执行阶段确认。</p>{productionBlockers.map((blocker) => <WorkerBlockerCard blocker={blocker} key={`${blocker.code}-${blocker.capability}`} onOpenBlueprint={onOpenBlueprint} />)}</div> : null}</> : null}</div></details>
     {reviewPackage?.stage !== "visual_review" && reviewPackage?.stage !== "storyboard_review" ? <details className="review-section detail-card-collapsible"><summary><h3>产物预览</h3></summary><div className="detail-card-body"><ArtifactPreview artifacts={episodeArtifacts} /></div></details> : null}
     {reviewPackage?.stage === "production_ready" ? <PreRenderReviewPackage artifacts={episodeArtifacts} decisions={preRenderMemberDecisions} isTransitionPending={isTransitionPending} members={preRenderMembers} onReviewMember={onReviewPreRenderMember} onTransition={onTransition} reviewPackage={reviewPackage} /> : reviewPackage && reviewArtifact ? reviewPackage.stage === "qc_review" && isHyperframesReviewRender(reviewPackage.context_snapshot) ? <HyperframesReviewRenderPackage artifact={reviewArtifact} artifacts={reviewArtifacts} reviewPackage={reviewPackage} /> : reviewPackage.stage === "visual_review" ? <VisualReviewPackage artifact={reviewArtifact} artifacts={reviewArtifacts} reviewPackage={reviewPackage} /> : reviewPackage.stage === "storyboard_review" ? <StoryboardReviewPackage annotations={storyboardAnnotations} artifact={reviewArtifact} isAnnotationPending={isStoryboardAnnotationPending} onCreateAnnotation={onCreateStoryboardAnnotation} onValidationChange={onStoryboardValidationChange} reviewPackage={reviewPackage} /> : <TextReviewPackage artifact={reviewArtifact} reviewPackage={reviewPackage} /> : null}
     <ArollTaskEvidencePanel tasks={episodeTasks} />
