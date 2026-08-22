@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
-select plan(12);
+select plan(15);
 
 drop function public.orchestrate_b_roll_tasks_configured(uuid);
 alter function public.orchestrate_b_roll_tasks_without_connection_ref(uuid)
@@ -60,6 +60,7 @@ values (
 \ir ../migrations/20260822104421_expand_legacy_b_roll_blueprints.sql
 \ir ../migrations/20260822112024_remove_legacy_b_roll_history_guard.sql
 \ir ../migrations/20260822121000_use_blueprint_b_roll_technical_config.sql
+\ir ../migrations/20260822121948_restrict_b_roll_legacy_orchestration.sql
 
 select is(
   (select policy from public.account_blueprint_versions where id = '52000000-0000-4000-8000-000000000003'),
@@ -157,6 +158,18 @@ select is(
   (select count(*) from public.tasks where episode_id = (select id from public.episodes where title = 'New episode') and task_type = 'generate_b_roll'),
   1::bigint,
   'the existing B-roll task remains the only task for its approved shot'
+);
+select ok(
+  not has_function_privilege('anon', 'public.orchestrate_b_roll_tasks_legacy(uuid)', 'EXECUTE'),
+  'anonymous callers cannot invoke internal B-roll orchestration'
+);
+select ok(
+  not has_function_privilege('authenticated', 'public.orchestrate_b_roll_tasks_legacy(uuid)', 'EXECUTE'),
+  'signed-in callers cannot invoke internal B-roll orchestration'
+);
+select ok(
+  has_function_privilege('service_role', 'public.orchestrate_b_roll_tasks_legacy(uuid)', 'EXECUTE'),
+  'the Worker service role can invoke internal B-roll orchestration'
 );
 
 select * from finish();

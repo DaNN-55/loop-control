@@ -7,6 +7,9 @@ const migrationNames = readdirSync(resolve("supabase/migrations"));
 const technicalConfigMigration = resolve(
   "supabase/migrations/20260822121000_use_blueprint_b_roll_technical_config.sql",
 );
+const legacyOrchestrationPermissionsMigration = resolve(
+  "supabase/migrations/20260822121948_restrict_b_roll_legacy_orchestration.sql",
+);
 const deployedMigrations = {
   "20260822095959_guard_legacy_b_roll_history.sql": "b36e63037ca12c2785d7bbb9f2fe8596f31377de734dcf8b96cb03af23613c9b",
   "20260822100000_freeze_b_roll_adapter_connection.sql": "f38575ba3b5dcb7814f230c5a48a52c6a5ac37811868d00bdb0f7eb375b2a51d",
@@ -33,5 +36,12 @@ describe("B-roll 连接固化迁移", () => {
     expect(technicalConfig).toContain("create or replace function public.orchestrate_b_roll_tasks_legacy");
     expect(technicalConfig).toContain("selected_config := candidate.blueprint_policy -> 'b_roll';");
     expect(technicalConfig).not.toContain("series_version.rules as series_rules");
+  });
+
+  it("只允许 Worker 调用内部 B-roll 编排函数", () => {
+    const permissions = readFileSync(legacyOrchestrationPermissionsMigration, "utf8");
+
+    expect(permissions).toContain("revoke all on function public.orchestrate_b_roll_tasks_legacy(uuid) from public, anon, authenticated;");
+    expect(permissions).toContain("grant execute on function public.orchestrate_b_roll_tasks_legacy(uuid) to service_role;");
   });
 });
