@@ -48,6 +48,37 @@ describe("账号配置工作区", () => {
     expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ positioning: "新定位" }));
   });
 
+  it("取消编辑会恢复当前保存值", async () => {
+    const user = userEvent.setup();
+    renderWorkspace();
+    await user.clear(screen.getByLabelText("账号定位"));
+    await user.type(screen.getByLabelText("账号定位"), "未保存定位");
+    await user.click(screen.getByRole("button", { name: "取消编辑" }));
+    expect((screen.getByLabelText("账号定位") as HTMLTextAreaElement).value).toBe("越南民间信仰");
+  });
+
+  it("有未保存修改时确认后才切换到系列", async () => {
+    const user = userEvent.setup();
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+    renderWorkspace();
+    await user.type(screen.getByLabelText("账号定位"), "未保存");
+    await user.click(screen.getByRole("tab", { name: "系列" }));
+    expect(screen.getByRole("tab", { name: "蓝图" }).getAttribute("aria-selected")).toBe("true");
+    confirm.mockReturnValue(true);
+    await user.click(screen.getByRole("tab", { name: "系列" }));
+    expect(screen.getByRole("tab", { name: "系列" }).getAttribute("aria-selected")).toBe("true");
+    confirm.mockRestore();
+  });
+
+  it("左侧分区导航都有真实目标", () => {
+    renderWorkspace();
+    expect(document.querySelector("#account-rules")).toBeTruthy();
+    expect(document.querySelector("#account-core")).toBeTruthy();
+    expect(document.querySelector("#account-capabilities")).toBeTruthy();
+    expect(document.querySelector("#account-budget")).toBeTruthy();
+    expect(document.querySelector("#account-budget")?.hasAttribute("open")).toBe(true);
+  });
+
   it("始终展示四项能力并禁用尚未接入的能力", () => {
     renderWorkspace();
 
@@ -87,6 +118,13 @@ describe("账号配置工作区", () => {
 
     expect(screen.getByText("运行环境检查未通过，请联系环境管理员。")).toBeTruthy();
     expect(screen.queryByText(reason)).toBeNull();
+  });
+
+  it("不在第一屏展示冗长的接口错误", () => {
+    const error = `检查接口失败：${"server trace ".repeat(20)}`;
+    renderWorkspace({ blueprintPreflightError: error });
+    expect(screen.getByText("生产就绪检查暂时失败，请稍后重新检查。")).toBeTruthy();
+    expect(screen.queryByText(error)).toBeNull();
   });
 
   it("系列页只展示当前配置并通过内部快照保存", async () => {
