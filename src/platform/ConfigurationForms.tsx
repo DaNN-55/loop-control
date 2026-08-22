@@ -404,11 +404,11 @@ export function EpisodeConfigurationRepairForm({ blocker, initialPolicy, isPendi
   </form>;
 }
 
-export function SeriesConfigurationForm({ initialName, initialRules, isEditing, isPending, onCancel, onSave }: { initialName: string; initialRules: Json; isEditing: boolean; isPending: boolean; onCancel: () => void; onSave: (name: string, rules: Json) => Promise<void> }) {
+export function SeriesConfigurationForm({ initialName, initialRules, isEditing, isPending, onCancel, onDirtyChange, onSave }: { initialName: string; initialRules: Json; isEditing: boolean; isPending: boolean; onCancel: () => void; onDirtyChange?: (dirty: boolean) => void; onSave: (name: string, rules: Json) => Promise<void> }) {
   const [name, setName] = useState(initialName);
   const [form, setForm] = useState<SeriesFormValues>(() => seriesRulesToForm(initialRules));
   const [error, setError] = useState("");
-  useEffect(() => { setName(initialName); setForm(seriesRulesToForm(initialRules)); }, [initialName, initialRules]);
+  useEffect(() => { setName(initialName); setForm(seriesRulesToForm(initialRules)); onDirtyChange?.(false); }, [initialName, initialRules, onDirtyChange]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -419,13 +419,22 @@ export function SeriesConfigurationForm({ initialName, initialRules, isEditing, 
       const rules = seriesFormToRules(form);
       validateSeriesRules(rules);
       await onSave(name.trim(), rules);
+      onDirtyChange?.(false);
       if (!isEditing) { setName(""); setForm(seriesRulesToForm({})); }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "系列规则无法保存。");
     }
   }
 
-  return <form className="configuration-form series-configuration-form" onSubmit={(event) => void submit(event)}>
+  function reset() {
+    setName(initialName);
+    setForm(seriesRulesToForm(initialRules));
+    setError("");
+    onDirtyChange?.(false);
+    onCancel();
+  }
+
+  return <form className="configuration-form series-configuration-form" onChangeCapture={() => onDirtyChange?.(true)} onSubmit={(event) => void submit(event)}>
     <header><div><h2>{isEditing ? initialName : "新建系列"}</h2><p>{isEditing ? "保存当前系列配置；已有生产单继续使用创建时的内部快照。" : "创建系列后，可以在新建生产单时固定系列基线。"}</p></div></header>
     <label><FieldLabel help="系列名称用于生产单筛选和运营识别。">系列名称</FieldLabel><input aria-label="系列名称" onChange={(event) => setName(event.target.value)} placeholder="例如：越南民间传说" required value={name} /></label>
     <fieldset><legend><FieldLabel help="系列规则会作为固定基线传给脚本、视觉和分镜任务；新建生产单会冻结当前系列版本。">系列基线</FieldLabel></legend>
@@ -442,6 +451,6 @@ export function SeriesConfigurationForm({ initialName, initialRules, isEditing, 
     </fieldset>
     <details className="advanced-configuration"><summary><FieldLabel help="保留 B-roll、旁白、声轨和其他暂未做成表单的规则。">高级系列规则（JSON）</FieldLabel></summary><label>高级系列规则<textarea aria-label="系列规则" onChange={(event) => setForm((current) => ({ ...current, advancedJson: event.target.value }))} rows={10} value={form.advancedJson} /></label><FieldHint>系列不能覆盖账号的资产目录、工具权限、审批关卡和发布权限。</FieldHint></details>
     {error ? <p className="form-error">{error}</p> : null}
-    <div className="configuration-actions">{isEditing ? null : <button className="button button-secondary" onClick={onCancel} type="button">取消</button>}<button className="button button-primary" disabled={isPending} type="submit">{isPending ? "保存中…" : isEditing ? "保存系列配置" : "创建系列"}</button></div>
+    <div className="configuration-actions"><button className="button button-secondary" onClick={reset} type="button">{isEditing ? "取消编辑" : "取消"}</button><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "保存中…" : isEditing ? "保存系列配置" : "创建系列"}</button></div>
   </form>;
 }

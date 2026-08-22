@@ -50,11 +50,14 @@ describe("账号配置工作区", () => {
 
   it("取消编辑会恢复当前保存值", async () => {
     const user = userEvent.setup();
-    renderWorkspace();
+    const onDirtyChange = vi.fn();
+    renderWorkspace({ onDirtyChange });
     await user.clear(screen.getByLabelText("账号定位"));
     await user.type(screen.getByLabelText("账号定位"), "未保存定位");
     await user.click(screen.getByRole("button", { name: "取消编辑" }));
     expect((screen.getByLabelText("账号定位") as HTMLTextAreaElement).value).toBe("越南民间信仰");
+    expect(onDirtyChange).toHaveBeenCalledWith(true);
+    expect(onDirtyChange).toHaveBeenLastCalledWith(false);
   });
 
   it("有未保存修改时确认后才切换到系列", async () => {
@@ -138,6 +141,20 @@ describe("账号配置工作区", () => {
     expect(screen.queryByText("历史版本")).toBeNull();
     await user.click(screen.getByRole("button", { name: "保存系列配置" }));
     expect(onCreateSeriesVersion).toHaveBeenCalledWith({ seriesId: series.id, rules: expect.objectContaining({ positioning: "当前系列定位" }) });
+  });
+
+  it("系列有未保存修改时也会拦截离开", async () => {
+    const user = userEvent.setup();
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+    renderWorkspace({ series: [series], seriesVersions });
+    await user.click(screen.getByRole("tab", { name: "系列" }));
+    await user.type(screen.getByLabelText("系列定位"), "未保存");
+    await user.click(screen.getByRole("tab", { name: "蓝图" }));
+    expect(screen.getByRole("tab", { name: "系列" }).getAttribute("aria-selected")).toBe("true");
+    confirm.mockReturnValue(true);
+    await user.click(screen.getByRole("tab", { name: "蓝图" }));
+    expect(screen.getByRole("tab", { name: "蓝图" }).getAttribute("aria-selected")).toBe("true");
+    confirm.mockRestore();
   });
 
   it("保留新建系列入口", async () => {

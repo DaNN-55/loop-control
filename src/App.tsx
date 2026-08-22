@@ -545,6 +545,7 @@ export function workerPreflightFailureMessage(preflight: WorkerPreflightResult):
 
 export function App() {
   const [activeNavigation, setActiveNavigation] = useState<NavigationItem>("episodes");
+  const [accountConfigurationDirty, setAccountConfigurationDirty] = useState(false);
   const [theme, setTheme] = useState<Theme>(storedTheme);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(storedSidebarCollapsed);
   const [session, setSession] = useState<Session | null | undefined>(undefined);
@@ -751,6 +752,10 @@ export function App() {
   }
 
   function changeNavigation(nextNavigation: NavigationItem) {
+    if (activeNavigation === "accounts" && nextNavigation !== "accounts" && accountConfigurationDirty) {
+      if (!window.confirm("当前配置有未保存修改，确定放弃吗？")) return;
+      setAccountConfigurationDirty(false);
+    }
     setActiveNavigation(nextNavigation);
     if (nextNavigation !== "publish") setIsPublishModalOpen(false);
     if (nextNavigation === "accounts" || nextNavigation === "learning" || nextNavigation === "publish") {
@@ -1519,6 +1524,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             onArchiveBlueprint={setBlueprintArchived}
             onApplyEpisodeRepair={applyEpisodeConfigurationRepair}
             onDismissBlueprintRepair={() => { setBlueprintRepairContext(null); setActiveNavigation("episodes"); }}
+            onDirtyChange={setAccountConfigurationDirty}
             isPending={pendingAction}
             onActivate={activateBlueprint}
             onUpdateBlueprint={updateBlueprint}

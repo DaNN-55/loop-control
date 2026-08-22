@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import type { Database, Json } from "../lib/database.types";
 import { blueprintAssetRoot, defaultBlueprintPolicy } from "../platform/blueprintPolicy";
@@ -39,6 +39,7 @@ interface AccountWorkspaceProps {
   onDeactivateBlueprint?: (id: string) => Promise<void>;
   onDeleteAccount?: (id: string, confirmation: string) => Promise<boolean | void>;
   onDismissBlueprintRepair?: () => void;
+  onDirtyChange?: (dirty: boolean) => void;
   onRefreshBlueprintPreflight?: () => Promise<void>;
   onRenameAccount?: (id: string, name: string) => Promise<boolean | void>;
   onSelectAccount: (id: string) => void;
@@ -76,52 +77,57 @@ function ReadinessRail({ isLoading, onRefresh, policy, preflight, preflightError
   </aside>;
 }
 
-export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, blueprints, blueprintPreflight = null, blueprintPreflightError = "", blueprintRepairContext = null, isBlueprintPreflightLoading = false, isPending, onApplyEpisodeRepair, onCreateBlueprint, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeleteAccount = async () => {}, onDismissBlueprintRepair, onRefreshBlueprintPreflight, onRenameAccount = async () => {}, onSelectAccount, onUpdateBlueprint, promptVersions = [], series = [], seriesVersions = [], systemStatus = null }: AccountWorkspaceProps) {
+export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, blueprints, blueprintPreflight = null, blueprintPreflightError = "", blueprintRepairContext = null, isBlueprintPreflightLoading = false, isPending, onApplyEpisodeRepair, onCreateBlueprint, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeleteAccount = async () => {}, onDismissBlueprintRepair, onDirtyChange, onRefreshBlueprintPreflight, onRenameAccount = async () => {}, onSelectAccount, onUpdateBlueprint, promptVersions = [], series = [], seriesVersions = [], systemStatus = null }: AccountWorkspaceProps) {
   const [activeSection, setActiveSection] = useState<"blueprints" | "series">("blueprints");
-  const [blueprintDirty, setBlueprintDirty] = useState(false);
+  const [configurationDirty, setConfigurationDirtyState] = useState(false);
   const [renameOpen, setRenameOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
+  const setConfigurationDirty = useCallback((dirty: boolean) => {
+    setConfigurationDirtyState(dirty);
+    onDirtyChange?.(dirty);
+  }, [onDirtyChange]);
   const currentBlueprint = blueprints.find((blueprint) => blueprint.id === account?.current_blueprint_version_id) ?? blueprints.filter((blueprint) => !blueprint.is_snapshot).sort((left, right) => right.version - left.version)[0] ?? null;
 
-  useEffect(() => { setActiveSection("blueprints"); setBlueprintDirty(false); setRenameOpen(false); setDeleteOpen(false); }, [account?.id, blueprintRepairContext?.episodeId]);
+  useEffect(() => { setActiveSection("blueprints"); setConfigurationDirty(false); setRenameOpen(false); setDeleteOpen(false); }, [account?.id, blueprintRepairContext?.episodeId, setConfigurationDirty]);
   useEffect(() => {
-    if (!blueprintDirty) return;
+    if (!configurationDirty) return;
     const guard = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ""; };
     window.addEventListener("beforeunload", guard);
     return () => window.removeEventListener("beforeunload", guard);
-  }, [blueprintDirty]);
+  }, [configurationDirty]);
   if (!account) return <div className="empty-state">没有可读取的账号。</div>;
   if (!currentBlueprint) return <div className="empty-state">该账号没有可读取的蓝图配置。</div>;
 
   const policy = currentBlueprint.policy ?? defaultBlueprintPolicy;
-  function leaveBlueprint(action: () => void) {
-    if (blueprintDirty && !window.confirm("当前蓝图有未保存修改，确定放弃吗？")) return;
-    setBlueprintDirty(false);
+  function leaveConfiguration(action: () => void) {
+    if (configurationDirty && !window.confirm("当前配置有未保存修改，确定放弃吗？")) return;
+    setConfigurationDirty(false);
     action();
   }
   return <>
     <header className="account-configuration-heading">
       <div><span>账号配置控制台</span><h2>蓝图配置</h2><p>{account.name} · 直接维护当前配置，不再管理用户可见版本。</p></div>
-      <div className="account-heading-actions"><label>当前账号<select aria-label="当前账号" onChange={(event) => leaveBlueprint(() => onSelectAccount(event.target.value))} value={account.id}>{accounts.map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.name}</option>)}</select></label><button aria-label="重命名账号" className="icon-button" onClick={() => setRenameOpen(true)} type="button">✎</button><button aria-label="删除账号" className="icon-button" onClick={() => setDeleteOpen(true)} type="button">⌫</button></div>
+      <div className="account-heading-actions"><label>当前账号<select aria-label="当前账号" onChange={(event) => leaveConfiguration(() => onSelectAccount(event.target.value))} value={account.id}>{accounts.map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.name}</option>)}</select></label><button aria-label="重命名账号" className="icon-button" onClick={() => setRenameOpen(true)} type="button">✎</button><button aria-label="删除账号" className="icon-button" onClick={() => setDeleteOpen(true)} type="button">⌫</button></div>
     </header>
-    <nav aria-label="账号设置导航" className="account-tabs" role="tablist"><button aria-selected={activeSection === "blueprints"} className={`account-tab ${activeSection === "blueprints" ? "is-active" : ""}`} onClick={() => setActiveSection("blueprints")} role="tab" type="button">蓝图</button><button aria-selected={activeSection === "series"} className={`account-tab ${activeSection === "series" ? "is-active" : ""}`} onClick={() => leaveBlueprint(() => setActiveSection("series"))} role="tab" type="button">系列</button></nav>
+    <nav aria-label="账号设置导航" className="account-tabs" role="tablist"><button aria-selected={activeSection === "blueprints"} className={`account-tab ${activeSection === "blueprints" ? "is-active" : ""}`} onClick={() => leaveConfiguration(() => setActiveSection("blueprints"))} role="tab" type="button">蓝图</button><button aria-selected={activeSection === "series"} className={`account-tab ${activeSection === "series" ? "is-active" : ""}`} onClick={() => leaveConfiguration(() => setActiveSection("series"))} role="tab" type="button">系列</button></nav>
     {activeSection === "blueprints" ? blueprintRepairContext ? <EpisodeConfigurationRepairForm blocker={blueprintRepairContext.blocker} initialPolicy={policy} isPending={isPending === `apply-episode-repair-${blueprintRepairContext.episodeId}`} onCancel={() => onDismissBlueprintRepair?.()} onSave={async (nextPolicy) => { if (onApplyEpisodeRepair) await onApplyEpisodeRepair({ context: blueprintRepairContext, policy: nextPolicy }); }} /> : <div className="account-configuration-layout" role="tabpanel">
       <nav aria-label="蓝图配置分区" className="account-section-nav"><strong>蓝图配置</strong><a href="#account-rules">账号基础规则</a><a href="#account-core">核心执行器</a><a href="#account-capabilities">生产能力</a><a href="#account-budget">预算与权限</a><small>直接保存当前配置<br />已有生产单不受影响</small></nav>
-      <main className="account-configuration-form" id="account-rules"><BlueprintConfigurationForm initialAssetRoot={blueprintAssetRoot(policy)} initialPolicy={policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} onCancel={() => {}} onCreatePromptVersion={onCreatePromptVersion} onDirtyChange={setBlueprintDirty} onSave={async (nextPolicy) => { if (onUpdateBlueprint) await onUpdateBlueprint(nextPolicy); else if (onCreateBlueprint) await onCreateBlueprint(nextPolicy); }} promptVersions={promptVersions} /></main>
+      <main className="account-configuration-form" id="account-rules"><BlueprintConfigurationForm initialAssetRoot={blueprintAssetRoot(policy)} initialPolicy={policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} onCancel={() => {}} onCreatePromptVersion={onCreatePromptVersion} onDirtyChange={setConfigurationDirty} onSave={async (nextPolicy) => { if (onUpdateBlueprint) await onUpdateBlueprint(nextPolicy); else if (onCreateBlueprint) await onCreateBlueprint(nextPolicy); }} promptVersions={promptVersions} /></main>
       <ReadinessRail isLoading={isBlueprintPreflightLoading} onRefresh={onRefreshBlueprintPreflight} policy={policy} preflight={blueprintPreflight} preflightError={blueprintPreflightError} systemStatus={systemStatus} />
-    </div> : <div role="tabpanel"><SeriesSettings isPending={isPending} onCreate={onCreateSeries} onCreateVersion={onCreateSeriesVersion} series={series} seriesVersions={seriesVersions} /></div>}
+    </div> : <div role="tabpanel"><SeriesSettings isPending={isPending} onCreate={onCreateSeries} onDirtyChange={setConfigurationDirty} onLeave={leaveConfiguration} onCreateVersion={onCreateSeriesVersion} series={series} seriesVersions={seriesVersions} /></div>}
     {renameOpen ? <AccountRenameModal account={account} isPending={isPending === `rename-account-${account.id}`} onClose={() => setRenameOpen(false)} onSave={(name) => onRenameAccount(account.id, name)} /> : null}
     {deleteOpen ? <AccountDeleteModal account={account} episodeCount={accountEpisodeCount} isPending={isPending === `delete-account-${account.id}`} onClose={() => setDeleteOpen(false)} onDelete={(confirmation) => onDeleteAccount(account.id, confirmation)} /> : null}
   </>;
 }
 
-export function SeriesSettings({ isPending, onCreate, onCreateVersion = async () => {}, series, seriesVersions }: { isPending: boolean | string; onCreate: (input: { name: string; rules: Json }) => Promise<void>; onCreateVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>; series: Series[]; seriesVersions: SeriesVersion[] }) {
+export function SeriesSettings({ isPending, onCreate, onCreateVersion = async () => {}, onDirtyChange, onLeave, series, seriesVersions }: { isPending: boolean | string; onCreate: (input: { name: string; rules: Json }) => Promise<void>; onCreateVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>; onDirtyChange?: (dirty: boolean) => void; onLeave?: (action: () => void) => void; series: Series[]; seriesVersions: SeriesVersion[] }) {
   const [selectedId, setSelectedId] = useState(series[0]?.id ?? "");
   const [creating, setCreating] = useState(series.length === 0);
   useEffect(() => { setSelectedId(series[0]?.id ?? ""); setCreating(series.length === 0); }, [series]);
   const selected = series.find((candidate) => candidate.id === selectedId) ?? series[0] ?? null;
   const latest = selected ? seriesVersions.filter((version) => version.series_id === selected.id).sort((left, right) => right.version - left.version)[0] ?? null : null;
-  return <section className="series-current-layout"><aside><header><h2 id="account-series-heading">系列</h2><button className="button button-secondary button-small" onClick={() => setCreating(true)} type="button">新建系列</button></header>{series.map((candidate) => <button className={!creating && candidate.id === selected?.id ? "is-active" : ""} key={candidate.id} onClick={() => { setSelectedId(candidate.id); setCreating(false); }} type="button"><strong>{candidate.name}</strong><span>当前配置</span></button>)}</aside><div>{creating || !selected ? <SeriesConfigurationForm initialName="" initialRules={{}} isEditing={false} isPending={isPending === true || isPending === "series"} onCancel={() => setCreating(false)} onSave={async (name, rules) => { await onCreate({ name, rules }); }} /> : <SeriesConfigurationForm key={selected.id} initialName={selected.name} initialRules={latest?.rules ?? {}} isEditing isPending={isPending === `series-version-${selected.id}`} onCancel={() => {}} onSave={async (_name, rules) => { await onCreateVersion({ seriesId: selected.id, rules }); }} />}</div></section>;
+  const leave = (action: () => void) => onLeave ? onLeave(action) : action();
+  return <section className="series-current-layout"><aside><header><h2 id="account-series-heading">系列</h2><button className="button button-secondary button-small" onClick={() => leave(() => setCreating(true))} type="button">新建系列</button></header>{series.map((candidate) => <button className={!creating && candidate.id === selected?.id ? "is-active" : ""} key={candidate.id} onClick={() => leave(() => { setSelectedId(candidate.id); setCreating(false); })} type="button"><strong>{candidate.name}</strong><span>当前配置</span></button>)}</aside><div>{creating || !selected ? <SeriesConfigurationForm initialName="" initialRules={{}} isEditing={false} isPending={isPending === true || isPending === "series"} onCancel={() => setCreating(false)} onDirtyChange={onDirtyChange} onSave={async (name, rules) => { await onCreate({ name, rules }); }} /> : <SeriesConfigurationForm key={selected.id} initialName={selected.name} initialRules={latest?.rules ?? {}} isEditing isPending={isPending === `series-version-${selected.id}`} onCancel={() => {}} onDirtyChange={onDirtyChange} onSave={async (_name, rules) => { await onCreateVersion({ seriesId: selected.id, rules }); }} />}</div></section>;
 }
 
 function AccountRenameModal({ account, isPending, onClose, onSave }: { account: Account; isPending: boolean; onClose: () => void; onSave: (name: string) => Promise<boolean | void> }) {
