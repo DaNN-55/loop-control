@@ -53,6 +53,10 @@ export function isSupportedManualARollVideo(sourcePath: string, materialType: st
   return materialType === "video" && /\.(mp4|mov|webm)$/i.test(sourcePath) && (mimeType === "application/octet-stream" || mimeType.toLowerCase().startsWith("video/"));
 }
 
+export function isSupportedManualAudio(sourcePath: string, materialType: string, mimeType: string): boolean {
+  return materialType === "audio" && /\.(mp3|wav|m4a|aac|flac|ogg)$/i.test(sourcePath) && (mimeType === "application/octet-stream" || mimeType.toLowerCase().startsWith("audio/"));
+}
+
 export function materialPurposeLabel(purpose: MaterialPurpose): string {
   return purposeLabels[purpose];
 }

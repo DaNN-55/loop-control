@@ -34,6 +34,9 @@ const manualArollTakeoverMigration = resolve(
 const scopedEmbeddedAudioMigration = resolve(
   "supabase/migrations/20260823114000_scope_embedded_audio_orchestration.sql",
 );
+const manualMediaBindingsMigration = resolve(
+  "supabase/migrations/20260823120000_add_manual_media_bindings.sql",
+);
 const deployedMigrations = {
   "20260822095959_guard_legacy_b_roll_history.sql": "b36e63037ca12c2785d7bbb9f2fe8596f31377de734dcf8b96cb03af23613c9b",
   "20260822100000_freeze_b_roll_adapter_connection.sql": "f38575ba3b5dcb7814f230c5a48a52c6a5ac37811868d00bdb0f7eb375b2a51d",
@@ -117,5 +120,9 @@ describe("B-roll 连接固化迁移", () => {
     expect(readFileSync(manualArollFixMigration, "utf8")).toContain("as shot(value)");
     expect(readFileSync(manualArollTakeoverMigration, "utf8")).toContain("task.status in ('ready', 'blocked', 'failed')");
     expect(readFileSync(scopedEmbeddedAudioMigration, "utf8")).toContain("p_episode_id uuid default null");
+    const manualMedia = readFileSync(manualMediaBindingsMigration, "utf8");
+    expect(manualMedia).toContain("create function public.register_manual_b_roll");
+    expect(manualMedia).toContain("create function public.register_manual_audio");
+    expect(manualMedia).toContain("if has_approved_video and exists");
   });
 });

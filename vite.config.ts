@@ -12,7 +12,7 @@ import { loadEnv, type Plugin } from "vite";
 import { verifyMediaLibrary } from "./src/worker/mediaLibrary";
 import { createRuntimePreflight, runtimeCapabilitiesFromBlueprintPolicy, runtimeCommandArguments } from "./src/worker/runtimePreflight";
 import { probeCodexModel, probeProviderConnection } from "./src/worker/runtimeProbes";
-import { isSupportedManualARollVideo } from "./src/reviews/materialImport";
+import { isSupportedManualARollVideo, isSupportedManualAudio } from "./src/reviews/materialImport";
 
 const localArtifactRoute = "/_local-artifact";
 const localEpisodeDirectoryRoute = "/_local-episode-directory";
@@ -1058,7 +1058,8 @@ export function serveProductionMaterial(supabaseUrl: string | undefined, supabas
       if ((sourceKind !== "directory" && sourceKind !== "file" && sourceKind !== "paste") || typeof sourcePath !== "string" || typeof materialType !== "string" || typeof materialPurpose !== "string" || !allowedMaterialPurposes.has(materialPurpose) || typeof mimeType !== "string" || typeof isMainScript !== "boolean") {
         throw new Error("生产材料元数据无效。");
       }
-      if (materialPurpose === "a_roll" && !isSupportedManualARollVideo(sourcePath, materialType, mimeType)) throw new Error("人工 A-roll 仅支持 MP4、MOV 或 WebM 视频。");
+      if ((materialPurpose === "a_roll" || materialPurpose === "b_roll") && !isSupportedManualARollVideo(sourcePath, materialType, mimeType)) throw new Error("人工 A-roll/B-roll 仅支持 MP4、MOV 或 WebM 视频。");
+      if ((materialPurpose === "narration" || materialPurpose === "background_music" || materialPurpose === "sound_effect") && !isSupportedManualAudio(sourcePath, materialType, mimeType)) throw new Error("人工旁白、配乐和音效仅支持常见音频文件。");
       let content: Uint8Array | undefined;
       if (sourceKind !== "directory") {
         if (typeof body.contentBase64 !== "string") throw new Error("生产材料内容无效。");
