@@ -37,6 +37,9 @@ const scopedEmbeddedAudioMigration = resolve(
 const manualMediaBindingsMigration = resolve(
   "supabase/migrations/20260823120000_add_manual_media_bindings.sql",
 );
+const scopedSoundtrackMigration = resolve(
+  "supabase/migrations/20260823121000_scope_soundtrack_orchestration.sql",
+);
 const deployedMigrations = {
   "20260822095959_guard_legacy_b_roll_history.sql": "b36e63037ca12c2785d7bbb9f2fe8596f31377de734dcf8b96cb03af23613c9b",
   "20260822100000_freeze_b_roll_adapter_connection.sql": "f38575ba3b5dcb7814f230c5a48a52c6a5ac37811868d00bdb0f7eb375b2a51d",
@@ -124,5 +127,14 @@ describe("B-roll 连接固化迁移", () => {
     expect(manualMedia).toContain("create function public.register_manual_b_roll");
     expect(manualMedia).toContain("create function public.register_manual_audio");
     expect(manualMedia).toContain("if has_approved_video and exists");
+  });
+
+  it("声轨编排只处理已开启该能力的指定生产单", () => {
+    const migration = readFileSync(scopedSoundtrackMigration, "utf8");
+
+    expect(migration).toContain("p_episode_id uuid default null");
+    expect(migration).toContain("blueprint.policy -> 'soundtrack'");
+    expect(migration).toContain("p_episode_id is null or episode.id = p_episode_id");
+    expect(migration).toContain("'credential_ref', frozen_credential_ref");
   });
 });

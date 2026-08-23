@@ -64,10 +64,11 @@ async function dispatchTask(): Promise<void> {
 async function planScopedMediaTasks(episodeId: string): Promise<Array<{ id: string }>> {
   const bRollTasks = await orchestrateTasks("orchestrate_b_roll_tasks", { p_episode_id: episodeId });
   const narrationTasks = await orchestrateTasks("orchestrate_narration_tasks", { p_episode_id: episodeId });
+  const soundtrackTasks = await orchestrateTasks("orchestrate_soundtrack_tasks", { p_episode_id: episodeId });
   const derivedAudioTasks = await orchestrateTasks("orchestrate_embedded_audio_tasks", { p_episode_id: episodeId });
   const reviewRenderTasks = await orchestrateTasks("orchestrate_review_render_tasks", { p_episode_id: episodeId });
   const finalRenderTasks = await orchestrateTasks("orchestrate_final_render_tasks", { p_episode_id: episodeId });
-  return [...bRollTasks, ...narrationTasks, ...derivedAudioTasks, ...reviewRenderTasks, ...finalRenderTasks];
+  return [...bRollTasks, ...narrationTasks, ...soundtrackTasks, ...derivedAudioTasks, ...reviewRenderTasks, ...finalRenderTasks];
 }
 
 async function planWorkerTasks(): Promise<Array<{ id: string }>> {
@@ -77,10 +78,11 @@ async function planWorkerTasks(): Promise<Array<{ id: string }>> {
   ]);
   const bRollTasks = await orchestrateTasks("orchestrate_b_roll_tasks");
   const narrationTasks = await orchestrateTasks("orchestrate_narration_tasks");
+  const soundtrackTasks = await orchestrateTasks("orchestrate_soundtrack_tasks");
   const derivedAudioTasks = await orchestrateTasks("orchestrate_embedded_audio_tasks");
   const reviewRenderTasks = await orchestrateTasks("orchestrate_review_render_tasks");
   const finalRenderTasks = await orchestrateTasks("orchestrate_final_render_tasks");
-  return [...visualTasks, ...storyboardTasks, ...bRollTasks, ...narrationTasks, ...derivedAudioTasks, ...reviewRenderTasks, ...finalRenderTasks];
+  return [...visualTasks, ...storyboardTasks, ...bRollTasks, ...narrationTasks, ...soundtrackTasks, ...derivedAudioTasks, ...reviewRenderTasks, ...finalRenderTasks];
 }
 
 async function orchestrateTasks(functionName: string, args: Record<string, string> = {}): Promise<Array<{ id: string }>> {
