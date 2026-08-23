@@ -5,6 +5,7 @@ export type MaterialPurpose =
   | "supplemental_script"
   | "general_reference"
   | "visual_reference"
+  | "a_roll"
   | "b_roll"
   | "narration"
   | "background_music"
@@ -20,6 +21,7 @@ const purposeLabels: Record<MaterialPurpose, string> = {
   supplemental_script: "补充脚本",
   general_reference: "一般参考",
   visual_reference: "视觉参考",
+  a_roll: "A-roll / 人工出镜视频",
   b_roll: "B-roll / 视频参考",
   narration: "旁白 / 人声",
   background_music: "背景音乐",
@@ -31,7 +33,7 @@ const purposeOptions: Record<MaterialType, readonly MaterialPurpose[]> = {
   reference: ["general_reference", "visual_reference", "b_roll"],
   image: ["visual_reference", "general_reference"],
   audio: ["narration", "background_music", "sound_effect", "general_reference"],
-  video: ["b_roll", "visual_reference", "general_reference"],
+  video: ["b_roll", "a_roll", "visual_reference", "general_reference"],
 };
 
 const extensionPattern = (file: File, extensions: readonly string[]) => {
@@ -45,6 +47,10 @@ export function materialTypeForFile(file: File): MaterialType {
   if (extensionPattern(file, [".mp3", ".wav", ".m4a", ".aac", ".flac", ".ogg", "audio/"])) return "audio";
   if (extensionPattern(file, [".mp4", ".mov", ".webm", ".m4v", ".avi", "video/"])) return "video";
   return "reference";
+}
+
+export function isSupportedManualARollVideo(sourcePath: string, materialType: string, mimeType: string): boolean {
+  return materialType === "video" && /\.(mp4|mov|webm)$/i.test(sourcePath) && (mimeType === "application/octet-stream" || mimeType.toLowerCase().startsWith("video/"));
 }
 
 export function materialPurposeLabel(purpose: MaterialPurpose): string {

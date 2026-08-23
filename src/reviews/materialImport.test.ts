@@ -15,6 +15,7 @@ describe("生产材料导入规则", () => {
     expect(defaultMaterialPurpose("image", false)).toBe("visual_reference");
     expect(defaultMaterialPurpose("audio", false)).toBe("narration");
     expect(defaultMaterialPurpose("video", false)).toBe("b_roll");
+    expect(materialPurposeOptions("video", false).map((option) => option.value)).toContain("a_roll");
     expect(materialPurposeOptions("script", false).map((option) => option.value)).not.toContain("main_script");
     expect(materialPurposeOptions("image", false).map((option) => option.value)).toContain("visual_reference");
     expect(materialPurposeLabel("background_music")).toBe("背景音乐");

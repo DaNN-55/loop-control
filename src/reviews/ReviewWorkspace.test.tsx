@@ -16,6 +16,7 @@ type Account = Database["public"]["Tables"]["accounts"]["Row"];
 type Artifact = Database["public"]["Tables"]["artifacts"]["Row"];
 type Blueprint = Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
 type Episode = Database["public"]["Tables"]["episodes"]["Row"];
+type MaterialRevision = Database["public"]["Tables"]["production_material_revisions"]["Row"];
 type Task = Database["public"]["Tables"]["tasks"]["Row"];
 const originalClipboard = Object.getOwnPropertyDescriptor(navigator, "clipboard");
 
@@ -740,6 +741,49 @@ describe("审核台", () => {
     expect(onTransition).toHaveBeenLastCalledWith(storyboardEpisode.id, "storyboard_approved", "镜头拆分、规格与输入均可执行。");
     await user.click(screen.getByRole("button", { name: "要求修改" }));
     expect(onTransition).toHaveBeenLastCalledWith(storyboardEpisode.id, "storyboard_draft", "镜头拆分、规格与输入均可执行。");
+  });
+
+  it("在自动 A-roll 关闭后仍可将人工上传视频冻结到已批准分镜", async () => {
+    const user = userEvent.setup();
+    const onRegisterManualARoll = vi.fn().mockResolvedValue(undefined);
+    const storyboardEpisode: Episode = { ...reviewEpisode, stage: "storyboard_approved" };
+    const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", id: "artifact-manual-a-roll", producer_task_id: "task-manual-a-roll", relative_path: "episodes/episode-review/storyboard-manual-a-roll.json" };
+    const manualAroll: MaterialRevision = {
+      created_at: "2026-08-23T00:00:00.000Z",
+      created_by: "owner-1",
+      episode_id: storyboardEpisode.id,
+      file_size: 2048,
+      id: "material-a-roll-1",
+      is_main_script: false,
+      material_purpose: "a_roll",
+      material_type: "video",
+      mime_type: "video/mp4",
+      revision_number: 1,
+      sha256: "d".repeat(64),
+      source_kind: "file",
+      source_path: "presenter.mp4",
+      storage_path: "episodes/episode-review/materials/manual-presenter.mp4",
+    };
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ version: "storyboard/v1", shots: [{ durationSeconds: 5, id: "shot-a-roll-1", inputBasis: [{ relativePath: "episodes/episode-review/materials/script.md", sha256: "c".repeat(64) }], productionMethod: "人工出镜", scriptSegment: "主持人出镜说明。", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } })));
+
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={storyboardEpisode} isTransitionPending={false} materialRevisions={[manualAroll]} onRegisterManualARoll={onRegisterManualARoll} onTransition={vi.fn()} reviewPackages={[{
+      artifact_id: storyboardArtifact.id,
+      context_snapshot: {},
+      created_at: "2026-08-23T00:00:00.000Z",
+      episode_id: storyboardEpisode.id,
+      id: "review-package-manual-a-roll",
+      invalidated_at: null,
+      invalidated_reason: null,
+      revision_number: 1,
+      stage: "storyboard_review",
+      task_id: "task-manual-a-roll",
+      task_run_id: "task-run-manual-a-roll",
+    }]} tasks={[]} transitions={[]} />);
+
+    await screen.findByText("主持人出镜说明。");
+    await user.selectOptions(screen.getByLabelText("shot-a-roll-1 人工 A-roll 视频"), manualAroll.id);
+    await user.click(screen.getByRole("button", { name: "冻结人工 A-roll" }));
+    expect(onRegisterManualARoll).toHaveBeenCalledWith({ episodeId: storyboardEpisode.id, materialRevisionId: manualAroll.id, shotId: "shot-a-roll-1", storyboardReviewPackageId: "review-package-manual-a-roll" });
   });
 
   it("分镜产物格式无效时不允许 Owner 批准或退回", async () => {

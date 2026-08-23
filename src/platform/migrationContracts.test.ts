@@ -22,6 +22,18 @@ const audioToolPermissionsMigration = resolve(
 const approvedVisualManifestMigration = resolve(
   "supabase/migrations/20260822223700_freeze_approved_visual_manifest.sql",
 );
+const manualArollMigration = resolve(
+  "supabase/migrations/20260823103000_add_manual_a_roll_uploads.sql",
+);
+const manualArollFixMigration = resolve(
+  "supabase/migrations/20260823110000_fix_manual_a_roll_shot_lookup.sql",
+);
+const manualArollTakeoverMigration = resolve(
+  "supabase/migrations/20260823113000_allow_manual_a_roll_takeover.sql",
+);
+const scopedEmbeddedAudioMigration = resolve(
+  "supabase/migrations/20260823114000_scope_embedded_audio_orchestration.sql",
+);
 const deployedMigrations = {
   "20260822095959_guard_legacy_b_roll_history.sql": "b36e63037ca12c2785d7bbb9f2fe8596f31377de734dcf8b96cb03af23613c9b",
   "20260822100000_freeze_b_roll_adapter_connection.sql": "f38575ba3b5dcb7814f230c5a48a52c6a5ac37811868d00bdb0f7eb375b2a51d",
@@ -92,5 +104,18 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("visual_package.artifact_id as approved_visual_artifact_id");
     expect(migration).toContain("artifact.id = candidate.approved_visual_artifact_id");
     expect(migration).not.toContain("artifact.producer_task_id = candidate.visual_task_id and artifact.artifact_type = 'visual_asset_manifest'");
+  });
+
+  it("人工 A-roll 独立于自动能力开关，并冻结到已批准的分镜镜头", () => {
+    const migration = readFileSync(manualArollMigration, "utf8");
+
+    expect(migration).toContain("'a_roll'");
+    expect(migration).toContain("create function public.register_manual_a_roll");
+    expect(migration).toContain("'manual_upload'");
+    expect(migration).toContain("'a_roll_video'");
+    expect(migration).not.toContain("credential_ref");
+    expect(readFileSync(manualArollFixMigration, "utf8")).toContain("as shot(value)");
+    expect(readFileSync(manualArollTakeoverMigration, "utf8")).toContain("task.status in ('ready', 'blocked', 'failed')");
+    expect(readFileSync(scopedEmbeddedAudioMigration, "utf8")).toContain("p_episode_id uuid default null");
   });
 });
