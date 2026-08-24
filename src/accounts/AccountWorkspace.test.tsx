@@ -93,7 +93,7 @@ describe("账号配置工作区", () => {
     expect(document.querySelector("#account-rules")).toBeTruthy();
     expect(document.querySelector("#account-capabilities")).toBeTruthy();
     expect(document.querySelector("#account-budget")).toBeTruthy();
-    expect(document.querySelector("#account-budget")?.tagName).toBe("SECTION");
+    expect(document.querySelector("#account-budget")?.tagName).toBe("FIELDSET");
   });
 
   it("右侧滚动时更新左侧当前分区", async () => {
