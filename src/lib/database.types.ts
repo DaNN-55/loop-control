@@ -406,6 +406,7 @@ export type Database = {
       episodes: {
         Row: {
           archived_at?: string | null
+          audio_source_mode?: "source" | "tts"
           account_id: string
           blueprint_version_id: string
           created_at: string
@@ -420,6 +421,7 @@ export type Database = {
         }
         Insert: {
           archived_at?: string | null
+          audio_source_mode?: "source" | "tts"
           account_id: string
           blueprint_version_id: string
           created_at?: string
@@ -434,6 +436,7 @@ export type Database = {
         }
         Update: {
           archived_at?: string | null
+          audio_source_mode?: "source" | "tts"
           account_id?: string
           blueprint_version_id?: string
           created_at?: string
@@ -872,6 +875,56 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "review_annotations_review_package_id_fkey"
+            columns: ["review_package_id"]
+            isOneToOne: false
+            referencedRelation: "review_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      qc_review_issues: {
+        Row: {
+          at_seconds: number
+          created_at: string
+          created_by: string
+          id: string
+          member_key: string | null
+          reason: string
+          resolved_at: string | null
+          resolved_by: string | null
+          review_package_id: string
+          severity: string
+          status: string
+        }
+        Insert: {
+          at_seconds: number
+          created_at?: string
+          created_by: string
+          id?: string
+          member_key?: string | null
+          reason: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          review_package_id: string
+          severity: string
+          status?: string
+        }
+        Update: {
+          at_seconds?: number
+          created_at?: string
+          created_by?: string
+          id?: string
+          member_key?: string | null
+          reason?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          review_package_id?: string
+          severity?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qc_review_issues_review_package_id_fkey"
             columns: ["review_package_id"]
             isOneToOne: false
             referencedRelation: "review_packages"
@@ -1400,6 +1453,11 @@ export type Database = {
         Returns: Database["public"]["Tables"]["episodes"]["Row"]
         SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
       }
+      set_episode_audio_source_mode: {
+        Args: { p_audio_source_mode: "source" | "tts"; p_episode_id: string }
+        Returns: Database["public"]["Tables"]["episodes"]["Row"]
+        SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
+      }
       delete_episode: {
         Args: { p_actor_id: string; p_episode_id: string }
         Returns: Json
@@ -1578,16 +1636,45 @@ export type Database = {
         Returns: Database["public"]["Tables"]["pre_render_review_member_decisions"]["Row"]
         SetofOptions: { from: "*"; to: "pre_render_review_member_decisions"; isOneToOne: true; isSetofReturn: false }
       }
+      create_qc_review_issue: {
+        Args: { p_at_seconds: number; p_member_key: string | null; p_reason: string; p_review_package_id: string; p_severity: string }
+        Returns: Database["public"]["Tables"]["qc_review_issues"]["Row"]
+        SetofOptions: { from: "*"; to: "qc_review_issues"; isOneToOne: true; isSetofReturn: false }
+      }
+      resolve_qc_review_issue: {
+        Args: { p_issue_id: string; p_status: string }
+        Returns: Database["public"]["Tables"]["qc_review_issues"]["Row"]
+        SetofOptions: { from: "*"; to: "qc_review_issues"; isOneToOne: true; isSetofReturn: false }
+      }
+      request_qc_member_revision: {
+        Args: { p_issue_id: string }
+        Returns: Database["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
       request_review_render_revision: {
         Args: {
-          p_caption_style: string
-          p_crop: string
-          p_layout: string
-          p_pacing: string
+          p_composition: Json
           p_reason: string
           p_review_package_id: string
-          p_transition: string
         }
+        Returns: {
+          account_id: string
+          blueprint_version_id: string
+          created_at: string
+          id: string
+          stage: Database["public"]["Enums"]["episode_stage"]
+          title: string
+          updated_at: string
+        }
+        SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
+      }
+      retry_failed_final_render: {
+        Args: { p_episode_id: string; p_reason: string }
+        Returns: Database["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      request_studio_storyboard_revision: {
+        Args: { p_reason: string; p_review_package_id: string }
         Returns: {
           account_id: string
           blueprint_version_id: string
