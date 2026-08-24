@@ -2,6 +2,16 @@ import { describe, expect, it, vi } from "vitest";
 import { probeCodexModel, probeProviderConnection } from "./runtimeProbes";
 
 describe("runtime probes", () => {
+  it("使用当前 Codex CLI 的只读探测参数", async () => {
+    const command = vi.fn().mockResolvedValue({ stdout: "READY", stderr: "" });
+
+    await probeCodexModel("gpt-5.6-codex", command, "/tmp");
+
+    expect(command).toHaveBeenCalledWith("codex", expect.arrayContaining(["exec", "--sandbox", "read-only"]), { timeoutMs: 30_000 });
+    expect(command.mock.calls[0][1]).not.toContain("--ask-for-approval");
+    expect(command.mock.calls[0][1]).not.toContain("--approve-for-me");
+  });
+
   it("用真实 Codex 命令区分模型权限失败和网络失败", async () => {
     const permission = await probeCodexModel("gpt-5.6-codex", async () => { throw new Error("403 model access denied"); }, "/tmp");
     expect(permission).toEqual({

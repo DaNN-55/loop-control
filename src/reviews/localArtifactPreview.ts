@@ -18,6 +18,13 @@ export function artifactPreviewKind(relativePath: string): "image" | "video" | "
   return null;
 }
 
+function artifactContentType(source: string): string | null {
+  const encodedPath = /[?&]path=([^&]*)/.exec(source)?.[1];
+  const relativePath = encodedPath ? decodeURIComponent(encodedPath).toLowerCase() : "";
+  if (relativePath.endsWith(".svg")) return "image/svg+xml";
+  return null;
+}
+
 export function useLocalArtifactBlob(source: string | null) {
   const [url, setUrl] = useState("");
   const [error, setError] = useState("");
@@ -30,7 +37,12 @@ export function useLocalArtifactBlob(source: string | null) {
       if (sessionError || !data.session) throw new Error("需要 Owner 登录会话。");
       const response = await fetch(source, { headers: { Authorization: `Bearer ${data.session.access_token}` } });
       if (!response.ok) throw new Error("无法读取本地产物。");
-      objectUrl = URL.createObjectURL(await response.blob());
+      const responseBlob = await response.blob();
+      const expectedContentType = artifactContentType(source);
+      const previewBlob = expectedContentType && responseBlob.type !== expectedContentType
+        ? new Blob([responseBlob], { type: expectedContentType })
+        : responseBlob;
+      objectUrl = URL.createObjectURL(previewBlob);
       if (isCurrent) setUrl(objectUrl);
       else URL.revokeObjectURL(objectUrl);
     }

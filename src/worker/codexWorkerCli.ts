@@ -28,6 +28,8 @@ const serviceRoleKey = requiredEnvironment("SUPABASE_SERVICE_ROLE_KEY");
 const actualCostCents = nonNegativeIntegerEnvironment("CODEX_WORKER_ACTUAL_COST_CENTS");
 const mediaLibraryMountPath = requiredEnvironment("MEDIA_LIBRARY_MOUNT_PATH");
 const mediaLibraryMinimumFreeBytes = nonNegativeIntegerEnvironment("MEDIA_LIBRARY_MIN_FREE_BYTES");
+const codexExecutionTimeoutMs = Number(process.env.CODEX_WORKER_EXECUTION_TIMEOUT_MS ?? "300000");
+if (!Number.isSafeInteger(codexExecutionTimeoutMs) || codexExecutionTimeoutMs <= 0) throw new Error("CODEX_WORKER_EXECUTION_TIMEOUT_MS must be a positive integer.");
 const requestedTaskId = readTaskIdArgument(process.argv.slice(2));
 const supabase = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
 
@@ -71,7 +73,8 @@ async function claimNextTask(): Promise<ClaimedWorkerTask | null> {
 async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
   if (taskPackage.provider === "codex") {
     const output = await executeCodex(taskPackage);
-    return taskPackage.visualAssetPreparation?.imageGeneration ? generateVisualAssets(taskPackage, output) : output;
+    const completedOutput = taskPackage.visualAssetPreparation?.imageGeneration ? await generateVisualAssets(taskPackage, output) : output;
+    return taskPackage.capability === "storyboard_planning" ? useWrittenStoryboard(taskPackage, completedOutput) : completedOutput;
   }
   if (taskPackage.provider === "hyperframes") {
     const input = { taskPackage, run: runCommand, validateMp4: validateMp4Artifact, inspectMp4: inspectMp4Artifact };
@@ -89,7 +92,18 @@ async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
     validateMp4: validateMp4Artifact,
     probeMp3: probeMp3Artifact,
     extractMp3: extractMp3Artifact,
+    trimMp3: trimMp3Artifact,
   });
+}
+
+async function useWrittenStoryboard(taskPackage: WorkerTaskPackage, output: string): Promise<string> {
+  const candidate = parseCodexOutput(output, 0);
+  if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) throw new Error("分镜结果格式无效。");
+  const result = candidate as Record<string, unknown>;
+  if (result.status !== "completed") return output;
+  const relativePath = taskPackage.output.relativePath;
+  const storyboard = JSON.parse(await readFile(join(taskPackage.assets.allowedRoot, relativePath), "utf8"));
+  return JSON.stringify({ ...result, storyboard });
 }
 
 async function generateVisualAssets(taskPackage: WorkerTaskPackage, output: string): Promise<string> {
@@ -168,6 +182,21 @@ async function extractMp3Artifact(sourcePath: string, minimumDurationSeconds: nu
   }
 }
 
+async function trimMp3Artifact(bytes: Uint8Array, targetDurationSeconds: number): Promise<Uint8Array> {
+  const directory = await mkdtemp(join(tmpdir(), "tk-workflow-soundtrack-"));
+  const inputPath = join(directory, "source.mp3");
+  const outputPath = join(directory, "trimmed.mp3");
+  try {
+    await writeFile(inputPath, bytes);
+    await runCommand("ffmpeg", ["-nostdin", "-v", "error", "-i", inputPath, "-t", String(targetDurationSeconds), "-codec:a", "libmp3lame", "-q:a", "2", outputPath]);
+    const duration = await probeMp3Artifact(outputPath);
+    if (duration + 0.15 < targetDurationSeconds) throw new Error(`Freesound 裁剪后的音频时长不足：${duration} 秒。`);
+    return new Uint8Array(await readFile(outputPath));
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+}
+
 async function probeMp3Artifact(path: string): Promise<number> {
   const { stdout } = await runCommandWithOutput("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", path]);
   const duration = Number(stdout.trim());
@@ -229,17 +258,16 @@ async function executeCodex(taskPackage: WorkerTaskPackage): Promise<string> {
   try {
     await writeFile(schemaPath, JSON.stringify(workerResultJsonSchema(taskPackage.capability)));
     await runCommand("codex", [
-      "--ask-for-approval", "never",
       "exec",
+      "--approve-for-me",
       "--ephemeral",
-      "--sandbox", "workspace-write",
       "--skip-git-repo-check",
       "--cd", taskPackage.assets.allowedRoot,
       "--model", taskPackage.model,
       "--output-schema", schemaPath,
       "--output-last-message", resultPath,
       buildCodexPrompt(taskPackage),
-    ]);
+    ], codexExecutionTimeoutMs);
     return await readFile(resultPath, "utf8");
   } finally {
     await rm(directory, { recursive: true, force: true });
@@ -265,8 +293,8 @@ export function buildCodexPrompt(taskPackage: WorkerTaskPackage): string {
   ].join("\n\n");
 }
 
-function runCommand(command: string, argumentsList: string[]): Promise<void> {
-  return runCommandWithOutput(command, argumentsList).then(() => undefined);
+function runCommand(command: string, argumentsList: string[], timeoutMs?: number): Promise<void> {
+  return runCommandWithOutput(command, argumentsList, timeoutMs).then(() => undefined);
 }
 
 function runCommandWithOutput(command: string, argumentsList: string[], timeoutMs?: number): Promise<{ stdout: string; stderr: string }> {

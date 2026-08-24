@@ -25,7 +25,7 @@ describe("受控媒体执行器", () => {
   it("只用冻结的 Google 旁白配置写入冻结输出路径", async () => {
     const taskPackage = await packageFor({});
     const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ audioContent: Buffer.from("mp3-data").toString("base64") }), { status: 200 }));
-    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: "google-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(2), extractMp3: vi.fn() }));
+    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: "google-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(2), extractMp3: vi.fn(), trimMp3: vi.fn() }));
     expect(result.status).toBe("completed");
     await expect(readFile(join(taskPackage.assets.allowedRoot, taskPackage.output.relativePath), "utf8")).resolves.toBe("mp3-data");
   });
@@ -33,7 +33,7 @@ describe("受控媒体执行器", () => {
   it("Google TTS 产物无法探测为音频时不上报成功", async () => {
     const taskPackage = await packageFor({});
     const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ audioContent: Buffer.from("not-an-mp3").toString("base64") }), { status: 200 }));
-    await expect(executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: "google-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: async () => { throw new Error("无法播放"); }, extractMp3: vi.fn() })).rejects.toThrow("无法播放");
+    await expect(executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: "google-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: async () => { throw new Error("无法播放"); }, extractMp3: vi.fn(), trimMp3: vi.fn() })).rejects.toThrow("无法播放");
   });
 
   it("拒绝通过输出目录符号链接写出资产根目录", async () => {
@@ -42,7 +42,7 @@ describe("受控媒体执行器", () => {
     directories.push(outside);
     await symlink(outside, join(taskPackage.assets.allowedRoot, "episodes"));
     const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ audioContent: Buffer.from("mp3-data").toString("base64") }), { status: 200 }));
-    await expect(executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: "google-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(2), extractMp3: vi.fn() })).rejects.toThrow("符号链接");
+    await expect(executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: "google-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(2), extractMp3: vi.fn(), trimMp3: vi.fn() })).rejects.toThrow("符号链接");
   });
 
   it("拒绝将非 MP4 的 Pexels 下载伪装成视频产物", async () => {
@@ -55,7 +55,7 @@ describe("受控媒体执行器", () => {
     const fetcher = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ videos: [{ id: 1, duration: 3, video_files: [{ link: "https://cdn.test/video.mp4", width: 1080, height: 1920, file_type: "video/mp4" }] }] }), { status: 200 }))
       .mockResolvedValueOnce(new Response("not-video", { status: 200, headers: { "content-type": "text/plain" } }));
-    await expect(executeControlledMediaTask({ taskPackage: rootPackage, fetcher, googleTtsApiKey: undefined, pexelsApiKey: "pexels-key", validateMp4: vi.fn(), probeMp3: vi.fn(), extractMp3: vi.fn() })).rejects.toThrow("不是 MP4");
+    await expect(executeControlledMediaTask({ taskPackage: rootPackage, fetcher, googleTtsApiKey: undefined, pexelsApiKey: "pexels-key", validateMp4: vi.fn(), probeMp3: vi.fn(), extractMp3: vi.fn(), trimMp3: vi.fn() })).rejects.toThrow("不是 MP4");
   });
 
   it("返回的 MP4 无法播放时不上报成功", async () => {
@@ -68,7 +68,7 @@ describe("受控媒体执行器", () => {
     const fetcher = vi.fn()
       .mockResolvedValueOnce(new Response(JSON.stringify({ videos: [{ id: 1, duration: 3, video_files: [{ link: "https://cdn.test/video.mp4", width: 1080, height: 1920, file_type: "video/mp4" }] }] }), { status: 200 }))
       .mockResolvedValueOnce(new Response("not-playable", { status: 200, headers: { "content-type": "video/mp4" } }));
-    await expect(executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: undefined, pexelsApiKey: "pexels-key", validateMp4: async () => { throw new Error("无法播放"); }, probeMp3: vi.fn(), extractMp3: vi.fn() })).rejects.toThrow("无法播放");
+    await expect(executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: undefined, pexelsApiKey: "pexels-key", validateMp4: async () => { throw new Error("无法播放"); }, probeMp3: vi.fn(), extractMp3: vi.fn(), trimMp3: vi.fn() })).rejects.toThrow("无法播放");
   });
 
   it("按冻结分镜检索、下载、校验并登记 Pexels MP4", async () => {
@@ -84,7 +84,7 @@ describe("受控媒体执行器", () => {
       .mockResolvedValueOnce(new Response("mp4-data", { status: 200, headers: { "content-type": "video/mp4" } }));
     const validateMp4 = vi.fn().mockResolvedValue(undefined);
 
-    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: undefined, pexelsApiKey: "pexels-key", validateMp4, probeMp3: vi.fn(), extractMp3: vi.fn() }));
+    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: undefined, pexelsApiKey: "pexels-key", validateMp4, probeMp3: vi.fn(), extractMp3: vi.fn(), trimMp3: vi.fn() }));
 
     expect(result).toMatchObject({ status: "completed", artifacts: [{ artifactType: "b_roll_asset", relativePath: taskPackage.output.relativePath, fileSize: 8 }] });
     expect(validateMp4).toHaveBeenCalledWith(expect.any(String), 2);
@@ -100,7 +100,7 @@ describe("受控媒体执行器", () => {
       media: { adapter: "ffmpeg_extract_audio", embeddedAudio: { sourceRelativePath: "episodes/episode-1/a-roll/source.mp4", durationSeconds: 4 } },
     });
     const extractMp3 = vi.fn().mockResolvedValue(new Uint8Array(Buffer.from("mp3-data")));
-    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher: vi.fn(), googleTtsApiKey: undefined, pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(4), extractMp3 }));
+    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher: vi.fn(), googleTtsApiKey: undefined, pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(4), extractMp3, trimMp3: vi.fn() }));
     expect(result.status).toBe("completed");
     expect(extractMp3).toHaveBeenCalledWith(join(taskPackage.assets.allowedRoot, "episodes/episode-1/a-roll/source.mp4"), 4);
     await expect(readFile(join(taskPackage.assets.allowedRoot, taskPackage.output.relativePath), "utf8")).resolves.toBe("mp3-data");
@@ -117,8 +117,10 @@ describe("受控媒体执行器", () => {
       .mockResolvedValueOnce(new Response(JSON.stringify({ results: [{ id: 9, name: "rain bell", username: "creator", license: "Creative Commons 0", duration: 5, url: "https://freesound.org/s/9/", previews: { "preview-hq-mp3": "https://cdn.test/bell.mp3" } }] }), { status: 200 }))
       .mockResolvedValueOnce(new Response("mp3-data", { status: 200, headers: { "content-type": "audio/mpeg" } }));
 
-    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: undefined, pexelsApiKey: undefined, freesoundApiKey: "freesound-key", validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(5), extractMp3: vi.fn() }));
-    expect(result).toMatchObject({ status: "completed", audioDurationSeconds: 5, mediaSource: { provider: "freesound", sourceId: 9, creator: "creator", license: "Creative Commons 0" } });
-    await expect(readFile(join(taskPackage.assets.allowedRoot, taskPackage.output.relativePath), "utf8")).resolves.toBe("mp3-data");
+    const trimMp3 = vi.fn().mockResolvedValue(new Uint8Array(Buffer.from("trimmed-mp3")));
+    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: undefined, pexelsApiKey: undefined, freesoundApiKey: "freesound-key", validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(4), extractMp3: vi.fn(), trimMp3 }));
+    expect(result).toMatchObject({ status: "completed", audioDurationSeconds: 4, mediaSource: { provider: "freesound", sourceId: 9, creator: "creator", license: "Creative Commons 0" } });
+    expect(trimMp3).toHaveBeenCalledWith(new Uint8Array(Buffer.from("mp3-data")), 4);
+    await expect(readFile(join(taskPackage.assets.allowedRoot, taskPackage.output.relativePath), "utf8")).resolves.toBe("trimmed-mp3");
   });
 });

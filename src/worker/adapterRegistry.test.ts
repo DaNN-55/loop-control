@@ -16,7 +16,7 @@ describe("adapter registry", () => {
         provider: "pexels",
         connectionType: "pexels_api",
         requiresNetwork: true,
-        configurationFields: ["per_shot_budget_cents", "total_budget_cents", "max_attempts", "max_concurrency", "provider_max_concurrency"],
+        configurationFields: ["max_attempts", "max_concurrency", "provider_max_concurrency"],
       }),
     ]);
     expect(adapterRegistration("pexels", "pexels_video")?.connections).toEqual([

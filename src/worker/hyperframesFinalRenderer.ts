@@ -3,7 +3,7 @@ import { readFile } from "node:fs/promises";
 import { dirname } from "node:path";
 import type { ArtifactManifest, WorkerResult, WorkerTaskPackage } from "./contracts.js";
 import { safeAssetOutputPath, writeSafeAssetFile } from "./controlledMediaExecutor.js";
-import { buildQcReport, copyFrozenProjectAssets, type QcInspection } from "./hyperframesReviewRenderer.js";
+import { buildQcReport, copyFrozenProjectAssets, materializeBgmLoops, type QcInspection } from "./hyperframesReviewRenderer.js";
 
 export async function executeHyperframesFinalRender(input: {
   taskPackage: WorkerTaskPackage;
@@ -23,6 +23,7 @@ export async function executeHyperframesFinalRender(input: {
   const projectPath = await safeAssetOutputPath(input.taskPackage.assets.allowedRoot, finalRender.projectRelativePath);
   const outputPath = await safeAssetOutputPath(input.taskPackage.assets.allowedRoot, input.taskPackage.output.relativePath);
   await copyFrozenProjectAssets(input.taskPackage, { ...finalRender.reviewRender, projectRelativePath: finalRender.projectRelativePath });
+  await materializeBgmLoops(input.taskPackage, input.run, { ...finalRender.reviewRender, projectRelativePath: finalRender.projectRelativePath });
   await writeSafeAssetFile(input.taskPackage.assets.allowedRoot, finalRender.projectRelativePath, sourceContents);
   await writeSafeAssetFile(input.taskPackage.assets.allowedRoot, `${dirname(finalRender.projectRelativePath)}/assets/gsap.min.js`, sourceRuntime);
   await input.run("hyperframes", ["check", dirname(projectPath)]);

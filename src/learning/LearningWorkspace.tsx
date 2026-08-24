@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import type { Database, Json } from "../lib/database.types";
 
@@ -10,6 +10,7 @@ type Experiment = Database["public"]["Tables"]["experiments"]["Row"];
 type LearningReport = Database["public"]["Tables"]["learning_reports"]["Row"];
 type MetricSnapshot = Database["public"]["Tables"]["metric_snapshots"]["Row"];
 type LearningRecommendation = LearningReport["recommendation"];
+type LearningStep = "experiment" | "metrics" | "report" | "suggestion" | "approval" | "completed";
 
 export interface SaveExperimentInput {
   episodeId: string;
@@ -74,20 +75,87 @@ export function LearningWorkspace({ accountsById, blueprintVersionsById, episode
   }
   const learningEpisodes = episodes.filter((episode) => episode.stage === "metrics_collecting" || (episode.stage === "learning_recorded" && experimentsByEpisodeId.has(episode.id)));
   const demoAction = onPrepareLearningDemo ? <div className="learning-demo-actions"><button className="button button-secondary" disabled={isPreparingDemo} onClick={() => void onPrepareLearningDemo()} type="button">{isPreparingDemo ? "准备中…" : "准备复盘演示数据"}</button></div> : null;
-
-  if (learningEpisodes.length === 0) {
-    return <div className="empty-state compact"><h2>没有待录入指标的生产单</h2><p>生产单发布后进入“收集指标”，即可在这里定义实验并每周录入数据。</p>{onPrepareLearningDemo ? <><p>可以准备一组隔离的复盘演示账号和生产单，不会触发 Worker，也不会混入真实账号。</p>{demoAction}</> : null}</div>;
-  }
-
-  return <section className="learning-workspace" aria-label="实验与周指标"><p className="muted-copy">每个生产单只能定义一个实验：填写一个主指标和最多两个护栏指标。指标由 Owner 每周手工录入；复盘报告和蓝图建议也必须由 Owner 确认后才会生效。</p>{demoAction}<div className="learning-list">{learningEpisodes.map((episode) => {
+  const episodeViewModels = learningEpisodes.map((episode) => {
     const experiment = experimentsByEpisodeId.get(episode.id);
     const report = reportsByEpisodeId.get(episode.id);
     const snapshots = snapshotsByEpisodeId.get(episode.id) ?? [];
     const suggestions = report ? suggestionsByReportId.get(report.id) ?? [] : [];
     const sourceBlueprint = blueprintVersionsById.get(episode.blueprint_version_id) ?? null;
-    return <article className="learning-card" key={episode.id}><header><div><h2>{episode.title}</h2><p>{accountsById.get(episode.account_id)?.name ?? "未知账号"} · {episode.stage === "metrics_collecting" ? "收集指标" : "已记录复盘"}</p></div></header>{experiment ? <><ExperimentSummary experiment={experiment} />{episode.stage === "metrics_collecting" ? <MetricSnapshotForm experiment={experiment} episodeId={episode.id} onSave={onSaveMetricSnapshot} /> : <p className="field-hint">该生产单已完成复盘，不能继续修改周指标。</p>}<MetricSnapshotList snapshots={snapshots} />{report ? <><LearningReportSummary report={report} />{suggestions.length ? <BlueprintChangeSuggestionList suggestions={suggestions} onApprove={onApproveBlueprintChangeSuggestion} /> : <BlueprintChangeSuggestionForm defaultPolicy={sourceBlueprint?.policy ?? null} learningReportId={report.id} onSave={onSaveBlueprintChangeSuggestion} sourceVersion={sourceBlueprint?.version ?? null} />}</> : snapshots.length ? <LearningReportForm episodeId={episode.id} onSave={onSaveLearningReport} /> : <p className="field-hint">至少录入一周指标后，才能记录复盘报告。</p>}</> : <ExperimentDefinitionForm episodeId={episode.id} onSave={onSaveExperiment} />}</article>;
-  })}</div></section>;
+    const step = getLearningStep({ episodeStage: episode.stage, experiment, report, snapshots, suggestions });
+    return { episode, experiment, report, snapshots, suggestions, sourceBlueprint, step };
+  });
+  const activeEpisodes = episodeViewModels.filter(({ step }) => step !== "completed");
+  const completedEpisodes = episodeViewModels.filter(({ step }) => step === "completed");
+  const [activeEpisodeId, setActiveEpisodeId] = useState<string | null>(activeEpisodes[0]?.episode.id ?? null);
+  const [detailEpisodeId, setDetailEpisodeId] = useState<string | null>(null);
+  useEffect(() => {
+    if (activeEpisodeId && activeEpisodes.some(({ episode }) => episode.id === activeEpisodeId)) return;
+    setActiveEpisodeId(activeEpisodes[0]?.episode.id ?? null);
+  }, [activeEpisodeId, activeEpisodes]);
+
+  if (learningEpisodes.length === 0) {
+    return <div className="empty-state compact"><h2>没有待录入指标的生产单</h2><p>生产单发布后进入“收集指标”，即可在这里定义实验并每周录入数据。</p>{onPrepareLearningDemo ? <><p>可以准备一组隔离的复盘演示账号和生产单，不会触发 Worker，也不会混入真实账号。</p>{demoAction}</> : null}</div>;
+  }
+
+  const detailEpisode = completedEpisodes.find(({ episode }) => episode.id === detailEpisodeId) ?? null;
+
+  return <section className="learning-workspace" aria-label="复盘工作台"><header className="learning-workspace-heading"><div><p className="learning-eyebrow">学习闭环</p><h2>复盘工作台</h2><p className="muted-copy">围绕一个实验，记录每周数据，形成结论，再决定是否调整后续生产规则。</p></div>{demoAction}</header><div className="learning-stats" aria-label="复盘状态汇总"><LearningStat count={activeEpisodes.filter(({ step }) => step === "metrics").length} label="待录入指标" /><LearningStat count={activeEpisodes.filter(({ step }) => step === "report").length} label="待写复盘报告" /><LearningStat count={activeEpisodes.filter(({ step }) => step === "suggestion" || step === "approval").length} label="待处理建议" /></div>{activeEpisodes.length ? <section className="learning-section" aria-labelledby="learning-pending-title"><header className="learning-section-heading"><div><h2 id="learning-pending-title">待处理</h2><p>每次只完成当前生产单的一个下一步。</p></div><span>{activeEpisodes.length} 个生产单</span></header><div className="learning-list">{activeEpisodes.map((viewModel) => <LearningEpisodeCard accountsById={accountsById} isExpanded={activeEpisodeId === viewModel.episode.id} key={viewModel.episode.id} onApproveBlueprintChangeSuggestion={onApproveBlueprintChangeSuggestion} onExpand={() => setActiveEpisodeId(viewModel.episode.id)} onSaveBlueprintChangeSuggestion={onSaveBlueprintChangeSuggestion} onSaveExperiment={onSaveExperiment} onSaveLearningReport={onSaveLearningReport} onSaveMetricSnapshot={onSaveMetricSnapshot} viewModel={viewModel} />)}</div></section> : null}{completedEpisodes.length ? <section className="learning-section" aria-labelledby="learning-completed-title"><header className="learning-section-heading"><div><h2 id="learning-completed-title">已完成</h2><p>完成的复盘保留在这里，点击查看完整记录。</p></div><span>{completedEpisodes.length} 个生产单</span></header><div className="learning-completed-list">{completedEpisodes.map(({ episode, report, suggestions }) => <button className="learning-completed-card" key={episode.id} onClick={() => setDetailEpisodeId(episode.id)} type="button"><span className="learning-completed-card-main"><strong>{episode.title}</strong><small>{accountsById.get(episode.account_id)?.name ?? "未知账号"} · 已完成复盘</small></span><span className="learning-completed-card-result">{report ? recommendationLabels[report.recommendation] : "已完成"}{suggestions.length ? ` · ${suggestions[0].status === "approved" ? "蓝图已更新" : suggestions[0].status === "rejected" ? "建议已拒绝" : "建议已提交"}` : ""}</span><span aria-hidden="true" className="learning-completed-card-arrow">›</span></button>)}</div></section> : null}{detailEpisode ? <LearningDetailDrawer accountsById={accountsById} onApproveBlueprintChangeSuggestion={onApproveBlueprintChangeSuggestion} onClose={() => setDetailEpisodeId(null)} onSaveBlueprintChangeSuggestion={onSaveBlueprintChangeSuggestion} viewModel={detailEpisode} /> : null}</section>;
 }
+
+function LearningStat({ count, label }: { count: number; label: string }) {
+  return <div className="learning-stat"><strong>{count}</strong><span>{label}</span></div>;
+}
+
+type LearningViewModel = {
+  episode: Episode;
+  experiment: Experiment | undefined;
+  report: LearningReport | undefined;
+  snapshots: MetricSnapshot[];
+  suggestions: BlueprintChangeSuggestion[];
+  sourceBlueprint: BlueprintVersion | null;
+  step: LearningStep;
+};
+
+function LearningEpisodeCard({ accountsById, isExpanded, onApproveBlueprintChangeSuggestion, onExpand, onSaveBlueprintChangeSuggestion, onSaveExperiment, onSaveLearningReport, onSaveMetricSnapshot, viewModel }: { accountsById: Map<string, Account>; isExpanded: boolean; onApproveBlueprintChangeSuggestion: (input: ApproveBlueprintChangeSuggestionInput) => Promise<void>; onExpand: () => void; onSaveBlueprintChangeSuggestion: (input: SaveBlueprintChangeSuggestionInput) => Promise<void>; onSaveExperiment: (input: SaveExperimentInput) => Promise<void>; onSaveLearningReport: (input: SaveLearningReportInput) => Promise<void>; onSaveMetricSnapshot: (input: SaveMetricSnapshotInput) => Promise<void>; viewModel: LearningViewModel }) {
+  const { episode, experiment, report, snapshots, suggestions, sourceBlueprint, step } = viewModel;
+  return <article className={`learning-card ${isExpanded ? "is-expanded" : ""}`}><button className="learning-card-summary" onClick={onExpand} type="button"><span><strong>{episode.title}</strong><small>{accountsById.get(episode.account_id)?.name ?? "未知账号"} · {episode.stage === "metrics_collecting" ? "收集指标" : "已记录复盘"}</small></span><span className={`learning-step-badge learning-step-${step}`}>{learningStepLabel[step]}</span><span className="learning-card-next-step">{learningStepAction[step]}</span><span aria-hidden="true" className="learning-card-arrow">{isExpanded ? "−" : "+"}</span></button>{isExpanded ? <div className="learning-card-body"><LearningStepProgress currentStep={step} /><LearningCurrentStep episode={episode} experiment={experiment} onApproveBlueprintChangeSuggestion={onApproveBlueprintChangeSuggestion} onSaveBlueprintChangeSuggestion={onSaveBlueprintChangeSuggestion} onSaveExperiment={onSaveExperiment} onSaveLearningReport={onSaveLearningReport} onSaveMetricSnapshot={onSaveMetricSnapshot} report={report} snapshots={snapshots} sourceBlueprint={sourceBlueprint} suggestions={suggestions} /></div> : null}</article>;
+}
+
+function LearningStepProgress({ currentStep }: { currentStep: LearningStep }) {
+  const steps: Array<[Exclude<LearningStep, "completed" | "approval">, string]> = [["experiment", "定义实验"], ["metrics", "录入指标"], ["report", "复盘报告"], ["suggestion", "修改建议"]];
+  const currentIndex = currentStep === "approval" ? 3 : steps.findIndex(([step]) => step === currentStep);
+  return <ol className="learning-step-progress">{steps.map(([step, label], index) => <li className={index < currentIndex ? "is-complete" : index === currentIndex ? "is-current" : ""} key={step}><span>{index < currentIndex ? "✓" : index + 1}</span>{label}</li>)}</ol>;
+}
+
+function LearningCurrentStep({ episode, experiment, onApproveBlueprintChangeSuggestion, onSaveBlueprintChangeSuggestion, onSaveExperiment, onSaveLearningReport, onSaveMetricSnapshot, report, snapshots, sourceBlueprint, suggestions }: { episode: Episode; experiment: Experiment | undefined; onApproveBlueprintChangeSuggestion: (input: ApproveBlueprintChangeSuggestionInput) => Promise<void>; onSaveBlueprintChangeSuggestion: (input: SaveBlueprintChangeSuggestionInput) => Promise<void>; onSaveExperiment: (input: SaveExperimentInput) => Promise<void>; onSaveLearningReport: (input: SaveLearningReportInput) => Promise<void>; onSaveMetricSnapshot: (input: SaveMetricSnapshotInput) => Promise<void>; report: LearningReport | undefined; snapshots: MetricSnapshot[]; sourceBlueprint: BlueprintVersion | null; suggestions: BlueprintChangeSuggestion[] }) {
+  const step = getLearningStep({ episodeStage: episode.stage, experiment, report, snapshots, suggestions });
+  if (!experiment) return <section className="learning-current-step"><header><div><p className="learning-step-kicker">当前步骤</p><h3>定义实验</h3><p>先写清楚要验证的假设，以及什么数据能证明它。</p></div></header><ExperimentDefinitionForm episodeId={episode.id} onSave={onSaveExperiment} /></section>;
+  return <section className="learning-current-step"><header><div><p className="learning-step-kicker">当前步骤</p><h3>{learningStepTitle[step]}</h3><p>{learningStepDescription[step]}</p></div></header><details className="learning-collapsible"><summary>查看实验定义</summary><ExperimentSummary experiment={experiment} /></details>{step === "metrics" ? <MetricSnapshotForm experiment={experiment} episodeId={episode.id} onSave={onSaveMetricSnapshot} /> : null}{step === "report" ? <><details className="learning-collapsible"><summary>查看已录入指标（{snapshots.length} 周）</summary><MetricSnapshotList snapshots={snapshots} /></details><LearningReportForm episodeId={episode.id} onSave={onSaveLearningReport} /></> : null}{step === "suggestion" && report ? <><LearningReportSummary report={report} /><BlueprintChangeSuggestionForm defaultPolicy={sourceBlueprint?.policy ?? null} learningReportId={report.id} onSave={onSaveBlueprintChangeSuggestion} sourceVersion={sourceBlueprint?.version ?? null} /></> : null}{step === "approval" && report ? <><LearningReportSummary report={report} /><BlueprintChangeSuggestionList suggestions={suggestions} onApprove={onApproveBlueprintChangeSuggestion} /></> : null}{step === "completed" ? <LearningReportSummary report={report!} /> : null}{step === "metrics" && snapshots.length ? <details className="learning-collapsible"><summary>查看已录入指标（{snapshots.length} 周）</summary><MetricSnapshotList snapshots={snapshots} /></details> : null}</section>;
+}
+
+function LearningDetailDrawer({ accountsById, onApproveBlueprintChangeSuggestion, onClose, onSaveBlueprintChangeSuggestion, viewModel }: { accountsById: Map<string, Account>; onApproveBlueprintChangeSuggestion: (input: ApproveBlueprintChangeSuggestionInput) => Promise<void>; onClose: () => void; onSaveBlueprintChangeSuggestion: (input: SaveBlueprintChangeSuggestionInput) => Promise<void>; viewModel: LearningViewModel }) {
+  const { episode, experiment, report, snapshots, suggestions, sourceBlueprint } = viewModel;
+  return <><div aria-hidden="true" className="learning-detail-scrim" onClick={onClose} /><aside aria-label={`${episode.title}复盘详情`} className="learning-detail-drawer"><header><div><p className="learning-eyebrow">完整记录</p><h2>{episode.title}</h2><p>{accountsById.get(episode.account_id)?.name ?? "未知账号"} · 已完成复盘</p></div><button aria-label="关闭复盘详情" className="icon-button" onClick={onClose} type="button">×</button></header>{experiment ? <section className="learning-detail-section"><h3>实验定义</h3><ExperimentSummary experiment={experiment} /></section> : null}<section className="learning-detail-section"><h3>周指标（{snapshots.length} 周）</h3><MetricSnapshotList snapshots={snapshots} /></section>{report ? <section className="learning-detail-section"><LearningReportSummary report={report} /></section> : null}{suggestions.length ? <section className="learning-detail-section"><BlueprintChangeSuggestionList onApprove={onApproveBlueprintChangeSuggestion} suggestions={suggestions} /></section> : report && report.recommendation === "change" ? <section className="learning-detail-section"><BlueprintChangeSuggestionForm defaultPolicy={sourceBlueprint?.policy ?? null} learningReportId={report.id} onSave={onSaveBlueprintChangeSuggestion} sourceVersion={sourceBlueprint?.version ?? null} /></section> : null}</aside></>;
+}
+
+function getLearningStep({ episodeStage, experiment, report, snapshots, suggestions }: { episodeStage?: Episode["stage"]; experiment: Experiment | undefined; report: LearningReport | undefined; snapshots: MetricSnapshot[]; suggestions: BlueprintChangeSuggestion[] }): LearningStep {
+  if (!experiment) return "experiment";
+  if (episodeStage === "learning_recorded" && report) {
+    if (report.recommendation === "change" && !suggestions.length) return "suggestion";
+    if (suggestions.some((suggestion) => suggestion.status === "pending")) return "approval";
+    return "completed";
+  }
+  if (!snapshots.length) return "metrics";
+  if (!report) return "report";
+  if (report.recommendation === "change" && !suggestions.length) return "suggestion";
+  if (suggestions.some((suggestion) => suggestion.status === "pending")) return "approval";
+  return "completed";
+}
+
+const learningStepLabel: Record<LearningStep, string> = { experiment: "待定义", metrics: "待录入", report: "待复盘", suggestion: "待提议", approval: "待审批", completed: "已完成" };
+const learningStepAction: Record<LearningStep, string> = { experiment: "先定义实验", metrics: "录入本周数据", report: "形成复盘结论", suggestion: "提出蓝图修改", approval: "Owner 审批建议", completed: "查看完整记录" };
+const learningStepTitle: Record<LearningStep, string> = { experiment: "定义实验", metrics: "录入本周指标", report: "记录复盘报告", suggestion: "提交修改建议", approval: "审批蓝图修改", completed: "复盘已完成" };
+const learningStepDescription: Record<LearningStep, string> = { experiment: "", metrics: "每周录入主指标和护栏指标，数据来自外部平台。", report: "对比已录入数据，写下本次实验的结论。", suggestion: "只在结论需要改变规则时提出蓝图修改。", approval: "确认修改理由和影响范围，再决定是否激活新版本。", completed: "这条生产单已经完成复盘，可以查看完整记录。" };
 
 function ExperimentDefinitionForm({ episodeId, onSave }: { episodeId: string; onSave: (input: SaveExperimentInput) => Promise<void> }) {
   const [hypothesis, setHypothesis] = useState("");
@@ -219,7 +287,7 @@ function BlueprintChangeSuggestionCard({ onApprove, suggestion }: { onApprove: (
     }
   }
 
-  return <article className="blueprint-change-suggestion"><p>{suggestion.rationale}</p><pre>{JSON.stringify(suggestion.proposed_policy, null, 2)}</pre>{suggestion.status === "pending" ? <form className="learning-form" onSubmit={approve}><label>批准理由<textarea aria-label="批准理由" onChange={(event) => setDecisionReason(event.target.value)} placeholder="说明批准该变更的依据。" required rows={3} value={decisionReason} /></label><p className="field-hint">批准后系统会创建并激活新蓝图版本；它只会影响之后新建的生产单。</p><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "批准中…" : "批准并激活新蓝图版本"}</button>{error ? <p className="form-error">{error}</p> : null}</form> : <p className="field-hint">{suggestion.status === "approved" ? `已批准并生成蓝图 ${suggestion.proposed_blueprint_version_id ?? "版本"}。` : `已拒绝：${suggestion.decision_reason}`}</p>}</article>;
+  return <article className="blueprint-change-suggestion"><p>{suggestion.rationale}</p><details className="blueprint-policy-details"><summary>查看完整蓝图规则</summary><pre>{JSON.stringify(suggestion.proposed_policy, null, 2)}</pre></details>{suggestion.status === "pending" ? <form className="learning-form" onSubmit={approve}><label>批准理由<textarea aria-label="批准理由" onChange={(event) => setDecisionReason(event.target.value)} placeholder="说明批准该变更的依据。" required rows={3} value={decisionReason} /></label><p className="field-hint">批准后系统会创建并激活新蓝图版本；它只会影响之后新建的生产单。</p><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "批准中…" : "批准并激活新蓝图版本"}</button>{error ? <p className="form-error">{error}</p> : null}</form> : <p className="field-hint">{suggestion.status === "approved" ? `已批准并生成蓝图 ${suggestion.proposed_blueprint_version_id ?? "版本"}。` : `已拒绝：${suggestion.decision_reason}`}</p>}</article>;
 }
 
 const recommendationLabels: Record<LearningRecommendation, string> = {

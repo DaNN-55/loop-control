@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { defaultMaterialPurpose, materialPurposeOptions, materialPurposeLabel, materialTypeForFile } from "./materialImport";
+import { canonicalMaterialName, defaultMaterialPurpose, materialPurposeOptions, materialPurposeLabel, materialTypeForFile } from "./materialImport";
 
 describe("生产材料导入规则", () => {
   it("根据文件名和 MIME 类型识别材料类型", () => {
@@ -19,5 +19,14 @@ describe("生产材料导入规则", () => {
     expect(materialPurposeOptions("script", false).map((option) => option.value)).not.toContain("main_script");
     expect(materialPurposeOptions("image", false).map((option) => option.value)).toContain("visual_reference");
     expect(materialPurposeLabel("background_music")).toBe("背景音乐");
+    expect(materialPurposeOptions("image", false).map((option) => option.value)).toContain("cover");
+  });
+
+  it("为可重复上传的生产材料生成稳定的逻辑名称", () => {
+    expect(canonicalMaterialName("main_script", "外部脚本.txt", "script")).toBe("script.md");
+    expect(canonicalMaterialName("visual_reference", "主角.jpg", "image")).toBe("actor.jpg");
+    expect(canonicalMaterialName("cover", "封面.webp", "image")).toBe("cover.webp");
+    expect(canonicalMaterialName("a_roll", "shot.mov", "video", 12)).toBe("a-shot-012.mov");
+    expect(canonicalMaterialName("b_roll", "cutaway.webm", "video", 3)).toBe("b-shot-003.webm");
   });
 });

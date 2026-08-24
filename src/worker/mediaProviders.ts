@@ -78,8 +78,10 @@ export async function searchFreesoundPreview(input: { apiKey: string; fetcher: M
   const endpoint = new URL("https://freesound.org/apiv2/search/");
   endpoint.searchParams.set("token", input.apiKey);
   endpoint.searchParams.set("query", input.query.replace(/\s+/g, " ").trim());
+  endpoint.searchParams.set("filter", `duration:[${input.targetDurationSeconds} TO *]`);
+  endpoint.searchParams.set("sort", "duration_asc");
   endpoint.searchParams.set("fields", "id,name,username,license,duration,url,previews");
-  endpoint.searchParams.set("page_size", "20");
+  endpoint.searchParams.set("page_size", "50");
   const response = await input.fetcher(endpoint.toString());
   const payload: unknown = await response.json();
   if (!response.ok) throw new Error(`Freesound 请求失败：HTTP ${response.status}。`);

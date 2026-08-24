@@ -56,6 +56,8 @@ describe("受控媒体供应商", () => {
 
     await expect(searchFreesoundPreview({ apiKey: "freesound-key", fetcher, query: "雨夜\n铜铃", targetDurationSeconds: 5 })).resolves.toEqual({ id: 2, title: "rain bell", creator: "creator-2", license: "Attribution", sourceUrl: "https://freesound.org/s/2/", previewUrl: "https://cdn.test/2.mp3" });
     expect(fetcher.mock.calls[0][0]).toContain("query=%E9%9B%A8%E5%A4%9C+%E9%93%9C%E9%93%83");
+    expect(fetcher.mock.calls[0][0]).toContain("filter=duration%3A%5B5+TO+*%5D");
+    expect(fetcher.mock.calls[0][0]).toContain("sort=duration_asc");
   });
 
   it("拒绝缺失的音频内容和无法使用的 Pexels 视频", async () => {

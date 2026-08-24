@@ -28,7 +28,7 @@ const adapterRegistry: readonly AdapterRegistration[] = [
     provider: "openai",
     connectionType: "openai_api",
     requiresNetwork: true,
-    configurationFields: ["model", "credential_ref", "budget_cents", "max_attempts"],
+    configurationFields: ["model", "credential_ref", "max_attempts"],
     connections: [{ credentialRef: "openai-default", environmentVariable: "OPENAI_API_KEY", label: "OpenAI 默认连接" }],
   },
   {
@@ -37,7 +37,7 @@ const adapterRegistry: readonly AdapterRegistration[] = [
     provider: "pexels",
     connectionType: "pexels_api",
     requiresNetwork: true,
-    configurationFields: ["per_shot_budget_cents", "total_budget_cents", "max_attempts", "max_concurrency", "provider_max_concurrency"],
+    configurationFields: ["max_attempts", "max_concurrency", "provider_max_concurrency"],
     connections: [{ credentialRef: "pexels-default", environmentVariable: "PEXELS_API_KEY", label: "Pexels 默认连接" }],
   },
   {
@@ -46,7 +46,7 @@ const adapterRegistry: readonly AdapterRegistration[] = [
     provider: "google_tts",
     connectionType: "google_tts_api",
     requiresNetwork: true,
-    configurationFields: ["credential_ref", "voice", "budget_cents", "max_attempts"],
+    configurationFields: ["credential_ref", "voice", "max_attempts"],
     connections: [{ credentialRef: "google-tts-default", environmentVariable: "GOOGLE_TTS_API_KEY", label: "Google TTS 默认连接" }],
   },
   {
@@ -55,7 +55,7 @@ const adapterRegistry: readonly AdapterRegistration[] = [
     provider: "freesound",
     connectionType: "freesound_api",
     requiresNetwork: true,
-    configurationFields: ["credential_ref", "budget_cents", "max_attempts"],
+    configurationFields: ["credential_ref", "max_attempts"],
     connections: [{ credentialRef: "freesound-default", environmentVariable: "FREESOUND_API_KEY", label: "Freesound 默认连接" }],
   },
   {

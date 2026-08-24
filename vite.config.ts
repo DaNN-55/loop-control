@@ -2,11 +2,12 @@ import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import { createClient } from "@supabase/supabase-js";
 import { execFile } from "node:child_process";
-import { createHash } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { createReadStream, promises as fs, readFileSync } from "node:fs";
-import { basename, extname, isAbsolute, join, parse, relative, resolve } from "node:path";
+import { basename, dirname, extname, isAbsolute, join, parse, relative, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { createServer as createTcpServer } from "node:net";
 import { promisify } from "node:util";
 import { loadEnv, type Plugin } from "vite";
 import { verifyMediaLibrary } from "./src/worker/mediaLibrary";
@@ -17,12 +18,16 @@ import { isSupportedManualARollVideo, isSupportedManualAudio } from "./src/revie
 const localArtifactRoute = "/_local-artifact";
 const localEpisodeDirectoryRoute = "/_local-episode-directory";
 const openLocalEpisodeDirectoryRoute = "/_open-local-episode-directory";
+const chooseLocalAssetDirectoryRoute = "/_choose-local-asset-directory";
+const openLocalAssetDirectoryRoute = "/_open-local-asset-directory";
 const openLocalArtifactRoute = "/_open-local-artifact";
 const localProductionMaterialRoute = "/_production-material";
 const localEpisodeDeletionRoute = "/_delete-episode";
 const localEpisodeDeletionCleanupRoute = "/_finalize-episode-deletion";
 const systemStatusRoute = "/_system-status";
 const workerPreflightRoute = "/_worker-preflight";
+const openHyperframesStudioRoute = "/_open-hyperframes-studio";
+const freezeHyperframesStudioRoute = "/_freeze-hyperframes-studio";
 const episodePreflightRoute = "/_episode-preflight";
 const maxProductionMaterialBytes = 100 * 1024 * 1024;
 const maxEncodedMaterialRequestBytes = 140 * 1024 * 1024;
@@ -61,6 +66,81 @@ function isDescendant(parentPath: string, childPath: string): boolean {
 function isFilesystemRoot(path: string): boolean {
   const resolvedPath = resolve(path);
   return parse(resolvedPath).root === resolvedPath;
+}
+
+export interface StudioProjectSnapshot {
+  relativePath: string;
+  sha256: string;
+  fileSize: number;
+}
+
+function isReviewRenderProjectPath(episodeId: string, value: string): boolean {
+  return new RegExp(`^episodes/${episodeId}/review-render/v[1-9][0-9]*/index\\.html$`).test(value);
+}
+
+function isStudioWorkspacePath(episodeId: string, value: string, kind: "studio" | "studio-frozen"): boolean {
+  return new RegExp(`^episodes/${episodeId}/${kind}/[0-9a-f-]{36}/index\\.html$`, "i").test(value);
+}
+
+async function assertDirectoryTreeHasNoLinks(directory: string): Promise<void> {
+  const details = await fs.lstat(directory);
+  if (details.isSymbolicLink() || !details.isDirectory()) throw new Error("HyperFrames 工程目录不安全。");
+  for (const entry of await fs.readdir(directory)) {
+    const path = join(directory, entry);
+    const child = await fs.lstat(path);
+    if (child.isSymbolicLink()) throw new Error("HyperFrames 工程不能包含符号链接。");
+    if (child.isDirectory()) await assertDirectoryTreeHasNoLinks(path);
+  }
+}
+
+async function copyStudioProject(assetRoot: string, episodeId: string, sourceRelativePath: string, targetKind: "studio" | "studio-frozen"): Promise<StudioProjectSnapshot> {
+  if (!isEpisodeId(episodeId)) throw new Error("无效的 Episode ID。");
+  const isExpectedSource = targetKind === "studio" ? isReviewRenderProjectPath(episodeId, sourceRelativePath) : isStudioWorkspacePath(episodeId, sourceRelativePath, "studio");
+  if (!isExpectedSource) throw new Error("HyperFrames 工程路径无效。");
+  const root = await fs.realpath(assetRoot);
+  if (isFilesystemRoot(root)) throw new Error("资产根不能是文件系统根目录。");
+  const source = await fs.realpath(resolve(root, sourceRelativePath));
+  if (!isDescendant(root, source) || basename(source) !== "index.html") throw new Error("HyperFrames 工程超出资产根。");
+  const sourceDirectory = dirname(source);
+  await assertDirectoryTreeHasNoLinks(sourceDirectory);
+
+  const relativePath = `episodes/${episodeId}/${targetKind}/${randomUUID()}/index.html`;
+  const targetDirectory = resolve(root, dirname(relativePath));
+  const targetParent = await ensureDirectoryWithinRoot(root, dirname(targetDirectory));
+  if (!isDescendant(root, targetDirectory) || targetParent !== dirname(targetDirectory)) throw new Error("HyperFrames 工程目标路径无效。");
+  const projectPath = join(targetDirectory, "index.html");
+  if (targetKind === "studio-frozen") {
+    await fs.mkdir(targetDirectory);
+    await fs.copyFile(source, projectPath);
+  } else {
+    await fs.cp(sourceDirectory, targetDirectory, { errorOnExist: true, force: false, recursive: true, verbatimSymlinks: true });
+  }
+  const content = await fs.readFile(projectPath);
+  return { relativePath, sha256: createHash("sha256").update(content).digest("hex"), fileSize: content.byteLength };
+}
+
+export async function prepareHyperframesStudioWorkspace(assetRoot: string, episodeId: string, sourceRelativePath: string): Promise<StudioProjectSnapshot> {
+  return copyStudioProject(assetRoot, episodeId, sourceRelativePath, "studio");
+}
+
+export async function freezeHyperframesStudioWorkspace(assetRoot: string, episodeId: string, workspaceRelativePath: string): Promise<StudioProjectSnapshot> {
+  return copyStudioProject(assetRoot, episodeId, workspaceRelativePath, "studio-frozen");
+}
+
+async function availableLocalPort(): Promise<number> {
+  const server = createTcpServer();
+  await new Promise<void>((resolvePort, reject) => {
+    server.once("error", reject);
+    server.listen(0, "127.0.0.1", resolvePort);
+  });
+  const address = server.address();
+  await new Promise<void>((resolveClose, reject) => server.close((error) => error ? reject(error) : resolveClose()));
+  if (!address || typeof address === "string") throw new Error("无法分配 HyperFrames Studio 端口。");
+  return address.port;
+}
+
+export function hyperframesStudioPreviewArguments(workspaceRelativePath: string, port: number): string[] {
+  return ["preview", workspaceRelativePath, `--port=${port}`, "--background", "--no-open"];
 }
 
 function serveLocalArtifact(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
@@ -217,6 +297,101 @@ export function serveOpenLocalEpisodeDirectory(supabaseUrl: string | undefined, 
     } catch {
       response.statusCode = 503;
       response.end("无法打开本地 Episode 目录，请使用页面显示的路径。");
+    }
+  };
+}
+
+export function serveOpenHyperframesStudio(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+  return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+    if (request.method !== "POST") { response.statusCode = 405; response.end(); return; }
+    const authorization = request.headers.authorization;
+    const episodeId = new URL(request.url ?? "", "http://127.0.0.1").searchParams.get("episode") ?? "";
+    if (!authorization?.startsWith("Bearer ")) { response.statusCode = 401; response.end("需要 Owner 登录会话。"); return; }
+    if (!isEpisodeId(episodeId)) { response.statusCode = 400; response.end("无效的 Episode ID。"); return; }
+    try {
+      const body = await readJsonBody(request);
+      if (typeof body.projectRelativePath !== "string") throw new Error("缺少审核工程路径。");
+      const assetRoot = await assetRootForOwnedEpisode({ authorization, episodeId, supabasePublishableKey, supabaseUrl });
+      if (!assetRoot || !isAbsolute(assetRoot)) { response.statusCode = 404; response.end("未找到可编辑的审核工程。"); return; }
+      const workspace = await prepareHyperframesStudioWorkspace(assetRoot, episodeId, body.projectRelativePath);
+      const port = await availableLocalPort();
+      await execFileAsync(join(process.cwd(), "node_modules", ".bin", "hyperframes"), hyperframesStudioPreviewArguments(dirname(join(assetRoot, workspace.relativePath)), port));
+      response.setHeader("Content-Type", "application/json");
+      response.statusCode = 201;
+      response.end(JSON.stringify({ studioUrl: `http://127.0.0.1:${port}/`, workspace }));
+    } catch (error) {
+      response.statusCode = 400;
+      response.end(error instanceof Error ? error.message : "无法打开 HyperFrames Studio。");
+    }
+  };
+}
+
+export function serveFreezeHyperframesStudio(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+  return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+    if (request.method !== "POST") { response.statusCode = 405; response.end(); return; }
+    const authorization = request.headers.authorization;
+    const episodeId = new URL(request.url ?? "", "http://127.0.0.1").searchParams.get("episode") ?? "";
+    if (!authorization?.startsWith("Bearer ")) { response.statusCode = 401; response.end("需要 Owner 登录会话。"); return; }
+    if (!isEpisodeId(episodeId)) { response.statusCode = 400; response.end("无效的 Episode ID。"); return; }
+    try {
+      const body = await readJsonBody(request);
+      if (typeof body.workspaceRelativePath !== "string") throw new Error("缺少 Studio 工作区路径。");
+      const assetRoot = await assetRootForOwnedEpisode({ authorization, episodeId, supabasePublishableKey, supabaseUrl });
+      if (!assetRoot || !isAbsolute(assetRoot)) { response.statusCode = 404; response.end("未找到可冻结的 Studio 工程。"); return; }
+      const frozenProject = await freezeHyperframesStudioWorkspace(assetRoot, episodeId, body.workspaceRelativePath);
+      response.setHeader("Content-Type", "application/json");
+      response.statusCode = 201;
+      response.end(JSON.stringify({ frozenProject }));
+    } catch (error) {
+      response.statusCode = 400;
+      response.end(error instanceof Error ? error.message : "无法冻结 HyperFrames Studio 工程。");
+    }
+  };
+}
+
+export function serveChooseLocalAssetDirectory(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+  return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+    if (request.method !== "POST") { response.statusCode = 405; response.end(); return; }
+    const url = new URL(request.url ?? "", "http://127.0.0.1");
+    const accountId = url.searchParams.get("account") ?? "";
+    const authorization = request.headers.authorization;
+    if (!authorization?.startsWith("Bearer ")) { response.statusCode = 401; response.end("需要 Owner 登录会话。"); return; }
+    if (!isUuid(accountId)) { response.statusCode = 400; response.end("无效的账号 ID。"); return; }
+    if (!await accountIsOwned({ accountId, authorization, supabasePublishableKey, supabaseUrl })) { response.statusCode = 403; response.end("没有该账号的 Owner 权限。"); return; }
+    if (process.platform !== "darwin") { response.statusCode = 501; response.end("当前本机不支持目录选择器，请直接填写路径。"); return; }
+    try {
+      const { stdout } = await execFileAsync("/usr/bin/osascript", ["-e", "POSIX path of (choose folder with prompt \"选择账号资产目录\")"]);
+      const assetRoot = stdout.trim();
+      if (!isAbsolute(assetRoot)) throw new Error("无效目录");
+      response.setHeader("Content-Type", "application/json");
+      response.statusCode = 200;
+      response.end(JSON.stringify({ assetRoot }));
+    } catch {
+      response.statusCode = 503;
+      response.end("未选择本地文件夹。");
+    }
+  };
+}
+
+export function serveOpenLocalAssetDirectory(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+  return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+    if (request.method !== "POST") { response.statusCode = 405; response.end(); return; }
+    const url = new URL(request.url ?? "", "http://127.0.0.1");
+    const accountId = url.searchParams.get("account") ?? "";
+    const assetRoot = url.searchParams.get("path")?.trim() ?? "";
+    const authorization = request.headers.authorization;
+    if (!authorization?.startsWith("Bearer ")) { response.statusCode = 401; response.end("需要 Owner 登录会话。"); return; }
+    if (!isUuid(accountId) || !isAbsolute(assetRoot)) { response.statusCode = 400; response.end("无效的账号或本地目录路径。"); return; }
+    if (!await accountIsOwned({ accountId, authorization, supabasePublishableKey, supabaseUrl })) { response.statusCode = 403; response.end("没有该账号的 Owner 权限。"); return; }
+    try {
+      if (!(await fs.stat(assetRoot)).isDirectory()) throw new Error("不是目录");
+      const command = process.platform === "darwin" ? "open" : process.platform === "win32" ? "explorer.exe" : "xdg-open";
+      await execFileAsync(command, [assetRoot]);
+      response.statusCode = 204;
+      response.end();
+    } catch {
+      response.statusCode = 503;
+      response.end("无法打开本地文件夹，请检查路径是否存在。");
     }
   };
 }
@@ -529,6 +704,7 @@ export async function finalizeStagedLocalEpisodeDirectory(assetRoot: string, epi
 interface MaterialSnapshotInput {
   sourceKind: "directory" | "file" | "paste";
   sourcePath: string;
+  logicalName?: string;
   content?: Uint8Array;
 }
 
@@ -542,6 +718,7 @@ interface MaterialSnapshot {
 export async function saveProductionMaterialSnapshot(assetRoot: string, episodeId: string, input: MaterialSnapshotInput): Promise<MaterialSnapshot> {
   if (!isEpisodeId(episodeId)) throw new Error("无效的 Episode ID。");
   if (!isSafeRelativeArtifactPath(input.sourcePath)) throw new Error("输入文件路径无效。");
+  if (input.logicalName && !isSafeRelativeArtifactPath(input.logicalName)) throw new Error("材料逻辑名称无效。");
   const episodeDirectory = await createLocalEpisodeDirectory(assetRoot, episodeId);
   let content: Uint8Array;
   if (input.sourceKind === "directory") {
@@ -558,7 +735,8 @@ export async function saveProductionMaterialSnapshot(assetRoot: string, episodeI
   if (content.byteLength > maxProductionMaterialBytes) throw new Error("生产材料超过 100 MB 上限。");
 
   const sha256 = createHash("sha256").update(content).digest("hex");
-  const fileName = basename(input.sourcePath);
+  const sourcePath = input.logicalName ?? input.sourcePath;
+  const fileName = basename(sourcePath);
   const storagePath = `episodes/${episodeId}/materials/${sha256}-${fileName}`;
   const targetPath = join(assetRoot, storagePath);
   try {
@@ -568,7 +746,7 @@ export async function saveProductionMaterialSnapshot(assetRoot: string, episodeI
     const existingHash = createHash("sha256").update(await fs.readFile(targetPath)).digest("hex");
     if (existingHash !== sha256) throw new Error("已有材料快照与内容哈希不一致。");
   }
-  return { sourcePath: input.sourcePath, storagePath, sha256, fileSize: content.byteLength };
+  return { sourcePath, storagePath, sha256, fileSize: content.byteLength };
 }
 
 async function readJsonBody(request: IncomingMessage): Promise<Record<string, unknown>> {
@@ -1050,12 +1228,13 @@ export function serveProductionMaterial(supabaseUrl: string | undefined, supabas
       const body = await readJsonBody(request);
       const sourceKind = body.sourceKind;
       const sourcePath = body.sourcePath;
+      const logicalName = body.logicalName;
       const materialType = body.materialType;
       const materialPurpose = body.materialPurpose;
       const mimeType = body.mimeType;
       const isMainScript = body.isMainScript;
-      const allowedMaterialPurposes = new Set(["main_script", "supplemental_script", "general_reference", "visual_reference", "a_roll", "b_roll", "narration", "background_music", "sound_effect"]);
-      if ((sourceKind !== "directory" && sourceKind !== "file" && sourceKind !== "paste") || typeof sourcePath !== "string" || typeof materialType !== "string" || typeof materialPurpose !== "string" || !allowedMaterialPurposes.has(materialPurpose) || typeof mimeType !== "string" || typeof isMainScript !== "boolean") {
+      const allowedMaterialPurposes = new Set(["main_script", "supplemental_script", "general_reference", "visual_reference", "a_roll", "b_roll", "narration", "background_music", "sound_effect", "cover"]);
+      if ((sourceKind !== "directory" && sourceKind !== "file" && sourceKind !== "paste") || typeof sourcePath !== "string" || (logicalName !== undefined && typeof logicalName !== "string") || typeof materialType !== "string" || typeof materialPurpose !== "string" || !allowedMaterialPurposes.has(materialPurpose) || typeof mimeType !== "string" || typeof isMainScript !== "boolean") {
         throw new Error("生产材料元数据无效。");
       }
       if ((materialPurpose === "a_roll" || materialPurpose === "b_roll") && !isSupportedManualARollVideo(sourcePath, materialType, mimeType)) throw new Error("人工 A-roll/B-roll 仅支持 MP4、MOV 或 WebM 视频。");
@@ -1065,7 +1244,8 @@ export function serveProductionMaterial(supabaseUrl: string | undefined, supabas
         if (typeof body.contentBase64 !== "string") throw new Error("生产材料内容无效。");
         content = Buffer.from(body.contentBase64, "base64");
       }
-      const snapshot = await saveProductionMaterialSnapshot(assetRoot, episodeId, { content, sourceKind, sourcePath });
+      if (materialPurpose === "cover" && (materialType !== "image" || !(mimeType === "application/octet-stream" || mimeType.toLowerCase().startsWith("image/")))) throw new Error("封面素材仅支持图片文件。");
+      const snapshot = await saveProductionMaterialSnapshot(assetRoot, episodeId, { content, logicalName, sourceKind, sourcePath });
       if (!supabaseUrl || !supabasePublishableKey) throw new Error("Supabase 连接未配置。");
       const supabase = createClient(supabaseUrl, supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: authorization } } });
       const { data, error } = await supabase.rpc("import_production_material", {
@@ -1126,11 +1306,25 @@ async function assetRootForOwnedEpisode(input: { authorization: string; episodeI
   return typeof assetRoot === "string" ? assetRoot.trim() || null : null;
 }
 
+async function accountIsOwned(input: { accountId: string; authorization: string; supabasePublishableKey: string | undefined; supabaseUrl: string | undefined }): Promise<boolean> {
+  if (!input.supabaseUrl || !input.supabasePublishableKey) return false;
+  const accessToken = input.authorization.slice("Bearer ".length);
+  const supabase = createClient(input.supabaseUrl, input.supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: input.authorization } } });
+  const { data: userData, error: userError } = await supabase.auth.getUser(accessToken);
+  if (userError || !userData.user) return false;
+  const { data: membership, error: membershipError } = await supabase.from("account_memberships").select("role").eq("account_id", input.accountId).eq("user_id", userData.user.id).eq("role", "owner").maybeSingle();
+  return !membershipError && Boolean(membership);
+}
+
 function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined): Plugin {
   const artifactMiddleware = serveLocalArtifact(supabaseUrl, supabasePublishableKey);
   const openArtifactMiddleware = serveOpenLocalArtifact(supabaseUrl, supabasePublishableKey);
   const directoryMiddleware = serveLocalEpisodeDirectory(supabaseUrl, supabasePublishableKey);
   const openDirectoryMiddleware = serveOpenLocalEpisodeDirectory(supabaseUrl, supabasePublishableKey);
+  const openHyperframesStudioMiddleware = serveOpenHyperframesStudio(supabaseUrl, supabasePublishableKey);
+  const freezeHyperframesStudioMiddleware = serveFreezeHyperframesStudio(supabaseUrl, supabasePublishableKey);
+  const chooseAssetDirectoryMiddleware = serveChooseLocalAssetDirectory(supabaseUrl, supabasePublishableKey);
+  const openAssetDirectoryMiddleware = serveOpenLocalAssetDirectory(supabaseUrl, supabasePublishableKey);
   const productionMaterialMiddleware = serveProductionMaterial(supabaseUrl, supabasePublishableKey);
   const deletionMiddleware = serveEpisodeDeletion(supabaseUrl, supabasePublishableKey, localWorkerServiceRoleKey());
   const deletionCleanupMiddleware = serveEpisodeDeletionCleanup(supabaseUrl, supabasePublishableKey);
@@ -1144,6 +1338,10 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(openLocalArtifactRoute, openArtifactMiddleware);
       server.middlewares.use(localEpisodeDirectoryRoute, directoryMiddleware);
       server.middlewares.use(openLocalEpisodeDirectoryRoute, openDirectoryMiddleware);
+      server.middlewares.use(openHyperframesStudioRoute, openHyperframesStudioMiddleware);
+      server.middlewares.use(freezeHyperframesStudioRoute, freezeHyperframesStudioMiddleware);
+      server.middlewares.use(chooseLocalAssetDirectoryRoute, chooseAssetDirectoryMiddleware);
+      server.middlewares.use(openLocalAssetDirectoryRoute, openAssetDirectoryMiddleware);
       server.middlewares.use(localProductionMaterialRoute, productionMaterialMiddleware);
       server.middlewares.use(localEpisodeDeletionRoute, deletionMiddleware);
       server.middlewares.use(localEpisodeDeletionCleanupRoute, deletionCleanupMiddleware);
@@ -1156,6 +1354,10 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(openLocalArtifactRoute, openArtifactMiddleware);
       server.middlewares.use(localEpisodeDirectoryRoute, directoryMiddleware);
       server.middlewares.use(openLocalEpisodeDirectoryRoute, openDirectoryMiddleware);
+      server.middlewares.use(openHyperframesStudioRoute, openHyperframesStudioMiddleware);
+      server.middlewares.use(freezeHyperframesStudioRoute, freezeHyperframesStudioMiddleware);
+      server.middlewares.use(chooseLocalAssetDirectoryRoute, chooseAssetDirectoryMiddleware);
+      server.middlewares.use(openLocalAssetDirectoryRoute, openAssetDirectoryMiddleware);
       server.middlewares.use(localProductionMaterialRoute, productionMaterialMiddleware);
       server.middlewares.use(localEpisodeDeletionRoute, deletionMiddleware);
       server.middlewares.use(localEpisodeDeletionCleanupRoute, deletionCleanupMiddleware);

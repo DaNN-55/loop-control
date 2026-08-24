@@ -127,11 +127,13 @@ describe("复盘工作台", () => {
     });
   });
 
-  it("不会为已完成复盘的生产单展示周指标提交表单", () => {
+  it("将已完成复盘收进详情，不展示周指标提交表单", async () => {
+    const user = userEvent.setup();
     render(<LearningWorkspace {...workspaceProps({ episodes: [{ ...episode, stage: "learning_recorded" }], learningReports: [learningReport] })} />);
 
-    expect(screen.getByText("实验定义")).toBeTruthy();
     expect(screen.queryByRole("button", { name: "保存本周指标" })).toBeNull();
+    await user.click(screen.getByRole("button", { name: /雨天出门提醒/ }));
+    expect(screen.getByText("实验定义")).toBeTruthy();
   });
 
   it("在已有周指标后记录复盘结论和建议", async () => {

@@ -62,13 +62,12 @@ describe("系列运营视图", () => {
     expect(onOpenBlueprint).toHaveBeenCalledWith("account-1", { blocker: expect.objectContaining({ code: "executor_invalid", detail: "执行器 adapter 未配置。" }), blueprintVersionId: "blueprint-1", episodeId: "episode-blocked" });
   });
 
-  it("不把已逐项批准的预渲染包计为待审核，并保留缺失系列关联的生产单", () => {
+  it("不把自动审核渲染前的冻结包计为待审核，并保留缺失系列关联的生产单", () => {
     const productionEpisode = { ...episodes[1], id: "episode-production", series_version_id: "missing-series-version", stage: "production_ready" as const, title: "预渲染已审核" };
-    const productionPackage = { ...reviewPackages[0], episode_id: productionEpisode.id, id: "pre-render-package", revision_number: 1, stage: "production_ready" as const };
+    const productionPackage = { ...reviewPackages[0], context_snapshot: { approval_mode: "qc_only" }, episode_id: productionEpisode.id, id: "pre-render-package", revision_number: 1, stage: "production_ready" as const };
     const member = { artifact_id: null, audio_track_id: null, created_at: "2026-08-15T00:00:00.000Z", evidence_snapshot: {}, id: "pre-render-member", member_key: "shot:shot-01", member_kind: "shot_media", review_package_id: productionPackage.id, source_task_id: "task-media" } as Database["public"]["Tables"]["pre_render_review_members"]["Row"];
-    const decision = { actor_id: "owner-1", created_at: "2026-08-15T00:00:00.000Z", decision: "approved", inherited_from_review_package_id: null, member_key: member.member_key, reason: "已审完。", review_package_id: productionPackage.id } as Database["public"]["Tables"]["pre_render_review_member_decisions"]["Row"];
 
-    render(<OperationsWorkspace episodes={[productionEpisode]} preRenderReviewMemberDecisions={[decision]} preRenderReviewMembers={[member]} reviewPackages={[productionPackage]} series={[]} seriesVersions={[]} tasks={[]} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
+    render(<OperationsWorkspace episodes={[productionEpisode]} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[member]} reviewPackages={[productionPackage]} series={[]} seriesVersions={[]} tasks={[]} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
 
     expect(screen.getByRole("option", { name: "关联系列不可用" })).toBeTruthy();
     expect(screen.getByText("0 个待审核包")).toBeTruthy();

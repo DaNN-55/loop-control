@@ -227,6 +227,7 @@ function reviewRender(snapshot: Record<string, unknown>): WorkerTaskPackageInput
     projectRelativePath: requiredString(value.project_relative_path, "审核渲染任务缺少工程路径。"),
     projectRevision: requiredPositiveNumber(value.project_revision, "审核渲染任务缺少工程修订。"),
     preRenderReviewPackageId: requiredString(value.pre_render_review_package_id, "审核渲染任务缺少预渲染审核包。"),
+    ...(value.studio_project === undefined && (!isRecord(value.adjustments) || value.adjustments.studio_project === undefined) ? {} : { studioProject: studioProject(value.studio_project ?? (value.adjustments as Record<string, unknown>).studio_project) }),
     adjustments: reviewRenderAdjustments(value.adjustments),
     storyboard: storyboard as unknown as StoryboardManifest,
     members: value.members.map((member) => {
@@ -242,6 +243,15 @@ function reviewRender(snapshot: Record<string, unknown>): WorkerTaskPackageInput
       };
     }),
   };
+}
+
+function studioProject(value: unknown): NonNullable<WorkerTaskPackageInput["reviewRender"]>["studioProject"] {
+  if (!isRecord(value)) throw new Error("Studio 冻结工程格式无效。");
+  const relativePath = requiredString(value.relative_path, "Studio 冻结工程缺少路径。");
+  const sha256 = requiredString(value.sha256, "Studio 冻结工程缺少哈希。");
+  const fileSize = requiredPositiveNumber(value.file_size, "Studio 冻结工程缺少文件大小。");
+  if (!/^episodes\/[0-9a-f-]{36}\/studio-frozen\/[0-9a-f-]{36}\/index\.html$/i.test(relativePath) || !/^[0-9a-f]{64}$/i.test(sha256)) throw new Error("Studio 冻结工程格式无效。");
+  return { relativePath, sha256, fileSize };
 }
 
 function reviewRenderAdjustments(value: unknown): ReviewRenderAdjustments {

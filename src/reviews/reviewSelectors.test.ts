@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { blockersFromResult, workerBlockers } from "./reviewSelectors";
+import { blockersFromResult, isReviewPackagePending, workerBlockers } from "./reviewSelectors";
+import type { Database } from "../lib/database.types";
 
 describe("blockersFromResult", () => {
   it("从结构化 preflight 结果提取未通过检查", () => {
@@ -47,5 +48,12 @@ describe("blockersFromResult", () => {
         }],
       },
     }], "episode-1")).toEqual([expect.objectContaining({ code: "network_connectivity", taskId: "task-1" })]);
+  });
+
+  it("不把自动审核渲染前的冻结包计为人工待审", () => {
+    const reviewPackage = { context_snapshot: { approval_mode: "qc_only" }, id: "package-1", stage: "production_ready" } as unknown as Database["public"]["Tables"]["review_packages"]["Row"];
+    const member = { member_key: "shot:shot-1", review_package_id: reviewPackage.id } as Database["public"]["Tables"]["pre_render_review_members"]["Row"];
+
+    expect(isReviewPackagePending(reviewPackage, [member], [])).toBe(false);
   });
 });

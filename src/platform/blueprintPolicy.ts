@@ -7,7 +7,6 @@ export const defaultBlueprintPolicy = {
   asset_root: "",
   allowed_tools: ["read", "write"],
   budgets: { script_writing_cents: 0, visual_planning_cents: 0, storyboard_planning_cents: 0 },
-  hyperframes_composition: { aspect_ratio: "9:16", width: 1080, height: 1920, captions_enabled: true, caption_style: "cinematic", crop: "cover", pacing: "standard", transition: "fade", layout: "lower_third", narration_gain_db: 0, bgm_gain_db: -12, sfx_gain_db: -6 },
   executors: {
     script_writing: {
       provider: "codex",

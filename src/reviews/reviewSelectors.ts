@@ -67,6 +67,7 @@ export function workerBlockers(tasks: Array<Pick<Task, "episode_id" | "status" |
 
 export function isReviewPackagePending(reviewPackage: ReviewPackage, members: PreRenderReviewMember[], decisions: PreRenderReviewMemberDecision[]): boolean {
   if (reviewPackage.stage !== "production_ready") return true;
+  if (reviewPackage.context_snapshot && !Array.isArray(reviewPackage.context_snapshot) && typeof reviewPackage.context_snapshot === "object" && reviewPackage.context_snapshot.approval_mode === "qc_only") return false;
   const packageMembers = members.filter((member) => member.review_package_id === reviewPackage.id);
   return packageMembers.length === 0 || packageMembers.some((member) => !decisions.some((decision) => decision.review_package_id === reviewPackage.id && decision.member_key === member.member_key));
 }

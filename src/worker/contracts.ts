@@ -194,6 +194,11 @@ export interface WorkerTaskPackageInput {
     projectRelativePath: string;
     projectRevision: number;
     preRenderReviewPackageId: string;
+    studioProject?: {
+      relativePath: string;
+      sha256: string;
+      fileSize: number;
+    };
     adjustments: ReviewRenderAdjustments;
     storyboard: StoryboardManifest;
     members: Array<{
@@ -375,6 +380,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     if (input.task.provider !== "hyperframes") throw new Error("审核渲染任务 Provider 必须是 HyperFrames。 ");
     const render = input.reviewRender;
     if (!isSafeRelativePath(render.projectRelativePath) || !isNonEmptyString(render.preRenderReviewPackageId) || !Number.isInteger(render.projectRevision) || render.projectRevision < 1 || render.members.length === 0) throw new Error("冻结审核渲染工程格式无效。 ");
+    if (render.studioProject && (!isSafeRelativePath(render.studioProject.relativePath) || !render.studioProject.relativePath.startsWith(`episodes/${input.episode.id}/studio-frozen/`) || !render.studioProject.relativePath.endsWith("/index.html") || !isSha256(render.studioProject.sha256) || !Number.isInteger(render.studioProject.fileSize) || render.studioProject.fileSize < 1)) throw new Error("Studio 冻结工程格式无效。 ");
     validateReviewRenderStoryboard(render.storyboard);
     if (!isReviewRenderAdjustments(render.adjustments)) throw new Error("冻结审核渲染合成配置无效。 ");
     for (const member of render.members) {
@@ -442,7 +448,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     ...(input.reviewAnnotations?.length ? { reviewAnnotations: input.reviewAnnotations.map((annotation) => ({ shotId: annotation.shotId, reason: annotation.reason })) } : {}),
     ...(input.aRoll ? { aRoll: { adapter: input.aRoll.adapter, shot: input.aRoll.shot } } : {}),
     ...(input.media ? { media: input.media } : {}),
-    ...(input.reviewRender ? { reviewRender: { ...input.reviewRender, members: input.reviewRender.members.map((member) => ({ ...member })) } } : {}),
+    ...(input.reviewRender ? { reviewRender: { ...input.reviewRender, ...(input.reviewRender.studioProject ? { studioProject: { ...input.reviewRender.studioProject } } : {}), members: input.reviewRender.members.map((member) => ({ ...member })) } } : {}),
     ...(input.finalRender ? { finalRender: { ...input.finalRender, sourceProject: { ...input.finalRender.sourceProject }, sourceRuntime: { ...input.finalRender.sourceRuntime }, sourceQcReport: { ...input.finalRender.sourceQcReport }, reviewRender: { ...input.finalRender.reviewRender, members: input.finalRender.reviewRender.members.map((member) => ({ ...member })) } } } : {}),
     allowedTools: [...new Set(input.allowedTools)],
     task: { id: input.task.id, type: input.task.type },
@@ -486,8 +492,6 @@ export function validateWorkerResult(value: unknown, taskPackage: WorkerTaskPack
   if (taskPackage.provider === "freesound" && value.status === "completed" && mediaSource === undefined) throw new Error("Freesound 任务必须返回媒体来源记录。");
   if (taskPackage.provider !== "freesound" && mediaSource !== undefined) throw new Error("非 Freesound 任务不能返回媒体来源记录。");
   if ((taskPackage.capability === "narration_generation" || taskPackage.capability === "embedded_audio_extraction" || taskPackage.capability === "soundtrack_generation") && value.status === "completed" && audioDurationSeconds === undefined) throw new Error("已完成音频任务必须返回实际时长。");
-  if (actualCostCents > taskPackage.budget.limitCents) throw new Error("实际成本超过预算。");
-
   if (value.taskId !== taskPackage.task.id) throw new Error("Worker 结果不属于当前任务。");
   value.artifacts.forEach(assertArtifactManifest);
   const artifacts = value.artifacts as ArtifactManifest[];

@@ -9,7 +9,8 @@ export type MaterialPurpose =
   | "b_roll"
   | "narration"
   | "background_music"
-  | "sound_effect";
+  | "sound_effect"
+  | "cover";
 
 export interface MaterialPurposeOption {
   label: string;
@@ -26,12 +27,13 @@ const purposeLabels: Record<MaterialPurpose, string> = {
   narration: "旁白 / 人声",
   background_music: "背景音乐",
   sound_effect: "音效",
+  cover: "封面素材",
 };
 
 const purposeOptions: Record<MaterialType, readonly MaterialPurpose[]> = {
   script: ["main_script", "supplemental_script", "general_reference"],
   reference: ["general_reference", "visual_reference", "b_roll"],
-  image: ["visual_reference", "general_reference"],
+  image: ["visual_reference", "cover", "general_reference"],
   audio: ["narration", "background_music", "sound_effect", "general_reference"],
   video: ["b_roll", "a_roll", "visual_reference", "general_reference"],
 };
@@ -59,6 +61,25 @@ export function isSupportedManualAudio(sourcePath: string, materialType: string,
 
 export function materialPurposeLabel(purpose: MaterialPurpose): string {
   return purposeLabels[purpose];
+}
+
+function extensionFor(sourcePath: string, materialType: MaterialType): string {
+  const extension = /\.[a-z0-9]+$/i.exec(sourcePath)?.[0]?.toLowerCase();
+  if (extension) return extension;
+  return materialType === "script" ? ".md" : materialType === "image" ? ".png" : materialType === "audio" ? ".mp3" : materialType === "video" ? ".mp4" : ".bin";
+}
+
+export function canonicalMaterialName(purpose: MaterialPurpose, sourcePath: string, materialType: MaterialType, ordinal = 1): string {
+  const extension = extensionFor(sourcePath, materialType);
+  if (purpose === "main_script") return "script.md";
+  if (purpose === "visual_reference") return `actor${extension}`;
+  if (purpose === "cover") return `cover${extension}`;
+  if (purpose === "a_roll") return `a-shot-${String(ordinal).padStart(3, "0")}${extension}`;
+  if (purpose === "b_roll") return `b-shot-${String(ordinal).padStart(3, "0")}${extension}`;
+  if (purpose === "narration") return `narration-${String(ordinal).padStart(3, "0")}${extension}`;
+  if (purpose === "background_music") return `bgm-${String(ordinal).padStart(3, "0")}${extension}`;
+  if (purpose === "sound_effect") return `sfx-${String(ordinal).padStart(3, "0")}${extension}`;
+  return sourcePath.split(/[\\/]/).pop() || `material${extension}`;
 }
 
 export function materialPurposeOptions(materialType: MaterialType, allowMainScript: boolean): MaterialPurposeOption[] {

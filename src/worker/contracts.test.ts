@@ -117,7 +117,7 @@ describe("Worker 契约", () => {
     expect(() => createWorkerTaskPackage({ ...packageInput, inputArtifacts: [{ ...packageInput.inputArtifacts[0], relativePath: "../outside.md" }] })).toThrow("相对路径");
   });
 
-  it("只接受在预算内、带验证结果的完整 Worker 结果", () => {
+  it("记录实际成本但不以预算阻塞完整 Worker 结果", () => {
     const taskPackage = createWorkerTaskPackage(packageInput);
     const result = validateWorkerResult({
       version: "worker-result/v1",
@@ -129,12 +129,12 @@ describe("Worker 契约", () => {
         version: "worker-preflight/v1",
         checks: [{ capability: "visual_planning", check: "capability_registration", phase: "preflight", status: "passed", reason: "Worker 已通过执行路径校验。", action: "none", scope: "worker" }],
       },
-      actualCostCents: 0,
+      actualCostCents: 1,
       blockers: [],
       retry: { shouldRetry: false, reason: "Completed successfully." },
       nextStep: "Create the script draft task.",
     }, taskPackage);
-    expect(result).toMatchObject({ status: "completed", actualCostCents: 0, preflight: { version: "worker-preflight/v1" } });
+    expect(result).toMatchObject({ status: "completed", actualCostCents: 1, preflight: { version: "worker-preflight/v1" } });
 
     expect(() => validateWorkerResult({
       version: "worker-result/v1",
@@ -157,9 +157,9 @@ describe("Worker 契约", () => {
       validation: { passed: true, checks: [] },
       actualCostCents: 1,
       blockers: [],
-      retry: { shouldRetry: false, reason: "Budget exceeded." },
+      retry: { shouldRetry: false, reason: "缺少产物。" },
       nextStep: "Continue.",
-    }, taskPackage)).toThrow("预算");
+    }, taskPackage)).toThrow("产物");
   });
 
   it("要求 blocked 结果明确说明阻塞原因", () => {

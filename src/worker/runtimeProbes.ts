@@ -24,7 +24,6 @@ export async function probeCodexModel(model: string, runCommand: RuntimeProbeCom
   try {
     await runCommand("codex", [
       "exec",
-      "--ask-for-approval", "never",
       "--ephemeral",
       "--sandbox", "read-only",
       "--skip-git-repo-check",

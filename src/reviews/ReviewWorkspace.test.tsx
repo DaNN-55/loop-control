@@ -17,6 +17,7 @@ type Artifact = Database["public"]["Tables"]["artifacts"]["Row"];
 type Blueprint = Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
 type Episode = Database["public"]["Tables"]["episodes"]["Row"];
 type MaterialRevision = Database["public"]["Tables"]["production_material_revisions"]["Row"];
+type PreRenderReviewMember = Database["public"]["Tables"]["pre_render_review_members"]["Row"];
 type Task = Database["public"]["Tables"]["tasks"]["Row"];
 const originalClipboard = Object.getOwnPropertyDescriptor(navigator, "clipboard");
 
@@ -367,57 +368,27 @@ describe("审核台", () => {
     expect(writeText).toHaveBeenCalledWith(localInputPath);
   });
 
-  it("要求显式确认粘贴的主脚本", async () => {
-    const user = userEvent.setup();
-    const onImportMaterial = vi.fn().mockResolvedValue(undefined);
-    const waitingEpisode: Episode = { ...reviewEpisode, id: "episode-paste-script", stage: "waiting_input" };
-    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={waitingEpisode} isTransitionPending={false} onImportMaterial={onImportMaterial} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
+  it("材料区只提供分类文件上传", () => {
+    const waitingEpisode: Episode = { ...reviewEpisode, id: "episode-file-only", stage: "waiting_input" };
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={waitingEpisode} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
-    await user.click(screen.getByRole("heading", { name: "准备生产材料" }));
-    await user.selectOptions(screen.getByLabelText("材料来源"), "paste");
-    await user.type(screen.getByLabelText("粘贴的生产材料"), "经确认的脚本");
-    await user.click(screen.getByRole("button", { name: "确认并导入主脚本" }));
-    expect(screen.getByText("请明确确认这份材料是主脚本。")).toBeTruthy();
-    expect(onImportMaterial).not.toHaveBeenCalled();
-
-    await user.click(screen.getByRole("checkbox", { name: "我已检查内容，明确确认这是本生产单的主脚本。" }));
-    await user.click(screen.getByRole("button", { name: "确认并导入主脚本" }));
-    expect(onImportMaterial).toHaveBeenCalledWith(expect.objectContaining({
-      episodeId: waitingEpisode.id,
-      isMainScript: true,
-      materialPurpose: "main_script",
-      materialType: "script",
-      mimeType: "text/plain;charset=utf-8",
-      sourceKind: "paste",
-      sourcePath: "pasted-material.txt",
-    }));
-
+    expect(screen.getByRole("region", { name: "素材分类上传" })).toBeTruthy();
+    expect(screen.queryByLabelText("材料来源")).toBeNull();
+    expect(screen.queryByLabelText("粘贴的生产材料")).toBeNull();
+    expect(screen.queryByLabelText("输入目录文件路径")).toBeNull();
   });
 
-  it("等待输入时允许选择外部导入或委托生成脚本", async () => {
-    const user = userEvent.setup();
-    const onCommissionScript = vi.fn().mockResolvedValue(undefined);
-    const onSetScriptSource = vi.fn().mockResolvedValue(undefined);
+  it("等待输入时仅允许上传外部制作的主脚本", () => {
     const waitingEpisode: Episode = { ...reviewEpisode, id: "episode-waiting", stage: "waiting_input", title: "等待主脚本" };
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={waitingEpisode} isTransitionPending={false} onCommissionScript={onCommissionScript} onSetScriptSource={onSetScriptSource} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={waitingEpisode} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
     expect(screen.getByRole("heading", { name: "准备生产材料" }).closest("details")?.className).toContain("detail-card-collapsible");
-    expect(screen.getByRole("radio", { name: "外部导入脚本" })).toBeTruthy();
-    expect(screen.getByRole("radio", { name: "委托生成脚本" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "导入全部材料" })).toBeTruthy();
-    expect((screen.getByLabelText("选择生产材料文件") as HTMLInputElement).multiple).toBe(true);
-
-    await user.click(screen.getByRole("radio", { name: "委托生成脚本" }));
-    expect(onSetScriptSource).toHaveBeenCalledWith(waitingEpisode.id, "delegated");
-    await user.type(screen.getByLabelText("创作方向"), "雨夜民俗悬疑");
-    await user.type(screen.getByLabelText("核心内容"), "仪式感与人物抉择");
-    await user.click(screen.getByRole("button", { name: "提交委托并生成脚本" }));
-    expect(onCommissionScript).toHaveBeenCalledWith({
-      creativeDirection: "雨夜民俗悬疑",
-      coreContent: "仪式感与人物抉择",
-      episodeId: waitingEpisode.id,
-    });
+    expect(screen.getByText("主脚本由外部制作后上传；确认后会作为本生产单不可变输入。")).toBeTruthy();
+    expect(screen.queryByRole("radio", { name: "委托生成脚本" })).toBeNull();
+    expect(screen.getByRole("button", { name: "导入所选材料" })).toBeTruthy();
+    expect(screen.getByRole("region", { name: "素材分类上传" })).toBeTruthy();
+    expect((screen.getByLabelText("上传A-shot") as HTMLInputElement).multiple).toBe(true);
   });
 
   it("主脚本导入后等待 Owner 明确开始制作", async () => {
@@ -431,7 +402,7 @@ describe("审核台", () => {
     expect(screen.getByText("材料已导入，等待 Owner 确认开始制作。")).toBeTruthy();
     expect(screen.queryByText("将此修订设为主脚本")).toBeNull();
     expect(screen.getByText("主脚本已确认。你可以继续添加补充材料；所有材料准备好后，点击下方按钮，Worker 才会开始制作。")).toBeTruthy();
-    expect(screen.getByRole("button", { name: "添加补充材料" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "导入所选材料" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "材料准备完成，开始制作" })).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "材料准备完成，开始制作" }));
     expect(onStartProduction).toHaveBeenCalledWith(readyEpisode.id);
@@ -446,32 +417,49 @@ describe("审核台", () => {
     expect(screen.getByText("媒体库未挂载。")).toBeTruthy();
   });
 
-  it("一次选择多个文件并分别指定用途后逐个导入", async () => {
+  it("通过常驻分类上传槽导入脚本、主角视觉和多个 A-shot", async () => {
     const user = userEvent.setup();
     const onImportMaterial = vi.fn().mockResolvedValue(undefined);
     const waitingEpisode: Episode = { ...reviewEpisode, id: "episode-materials", stage: "waiting_input", title: "首次准备材料" };
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={waitingEpisode} isStartProductionPending={false} onImportMaterial={onImportMaterial} onStartProduction={vi.fn()} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
-    const fileInput = screen.getByLabelText("选择生产材料文件") as HTMLInputElement;
-    expect(fileInput.multiple).toBe(true);
-    expect(fileInput.accept).toContain(".md");
     const scriptFile = new File(["# 主脚本"], "script.md", { type: "text/markdown" });
     const imageFile = new File(["image"], "character.png", { type: "image/png" });
-    await user.upload(fileInput, [scriptFile, imageFile]);
+    const firstShot = new File(["video"], "shot-1.mp4", { type: "video/mp4" });
+    const secondShot = new File(["video"], "shot-2.mp4", { type: "video/mp4" });
+    await user.upload(screen.getByLabelText("上传脚本"), scriptFile);
+    await user.upload(screen.getByLabelText("上传主角视觉"), imageFile);
+    await user.upload(screen.getByLabelText("上传A-shot"), [firstShot, secondShot]);
 
-    expect(screen.getByText("已选择 2 个文件")).toBeTruthy();
-    expect((screen.getByLabelText("材料类型 script.md") as HTMLSelectElement).value).toBe("script");
-    expect((screen.getByLabelText("材料用途 script.md") as HTMLSelectElement).value).toBe("main_script");
-    expect((screen.getByLabelText("材料类型 character.png") as HTMLSelectElement).value).toBe("image");
-    expect((screen.getByLabelText("材料用途 character.png") as HTMLSelectElement).value).toBe("visual_reference");
+    expect(screen.getByText("已选择 4 个文件；导入时会按卡片类别固定命名。")).toBeTruthy();
+    expect(screen.getByText("shot-1.mp4")).toBeTruthy();
+    expect(screen.getByText("shot-2.mp4")).toBeTruthy();
     expect(screen.getByRole("checkbox", { name: "我已检查内容，明确确认这是本生产单的主脚本。" })).toBeTruthy();
     await user.click(screen.getByRole("checkbox", { name: "我已检查内容，明确确认这是本生产单的主脚本。" }));
-    await user.click(screen.getByRole("button", { name: "导入全部材料" }));
+    await user.click(screen.getByRole("button", { name: "导入所选材料" }));
 
-    await waitFor(() => expect(onImportMaterial).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(onImportMaterial).toHaveBeenCalledTimes(4));
     expect(onImportMaterial).toHaveBeenNthCalledWith(1, expect.objectContaining({ isMainScript: true, materialPurpose: "main_script", materialType: "script", sourcePath: "script.md" }));
     expect(onImportMaterial).toHaveBeenNthCalledWith(2, expect.objectContaining({ isMainScript: false, materialPurpose: "visual_reference", materialType: "image", sourcePath: "character.png" }));
+    expect(onImportMaterial).toHaveBeenNthCalledWith(3, expect.objectContaining({ materialPurpose: "a_roll", materialType: "video", logicalName: "a-shot-001.mp4", sourcePath: "shot-1.mp4" }));
+    expect(onImportMaterial).toHaveBeenNthCalledWith(4, expect.objectContaining({ materialPurpose: "a_roll", materialType: "video", logicalName: "a-shot-002.mp4", sourcePath: "shot-2.mp4" }));
+  });
+
+  it("由 Owner 明确决定上传视频保留原声或使用 TTS", async () => {
+    const user = userEvent.setup();
+    const onUpdateAudioSourceMode = vi.fn().mockResolvedValue(undefined);
+    const readyEpisode: Episode = { ...reviewEpisode, id: "episode-audio-source", stage: "waiting_input", main_script_revision_id: "revision-script-1" };
+    const uploadedVideo: MaterialRevision = {
+      created_at: "2026-08-23T00:00:00.000Z", created_by: "owner-1", episode_id: readyEpisode.id, file_size: 2048, id: "material-source-video", is_main_script: false,
+      material_purpose: "a_roll", material_type: "video", mime_type: "video/mp4", revision_number: 1, sha256: "d".repeat(64), source_kind: "file", source_path: "presenter.mp4", storage_path: "episodes/episode-audio-source/materials/a-shot-001.mp4",
+    };
+
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={readyEpisode} isStartProductionPending={false} materialRevisions={[uploadedVideo]} onStartProduction={vi.fn()} onTransition={vi.fn()} onUpdateAudioSourceMode={onUpdateAudioSourceMode} isTransitionPending={false} tasks={[]} transitions={[]} />);
+
+    expect((screen.getByRole("radio", { name: /使用 TTS 替代原声/ }) as HTMLInputElement).checked).toBe(true);
+    await user.click(screen.getByRole("radio", { name: /保留上传视频原声/ }));
+    expect(onUpdateAudioSourceMode).toHaveBeenCalledWith(readyEpisode.id, "source");
   });
 
   it("展示委托脚本的冻结输入，并让 Owner 完成审核或要求重写", async () => {
@@ -633,7 +621,7 @@ describe("审核台", () => {
     expect(screen.queryByText("视觉审核包缺少参考组。")).toBeNull();
   });
 
-  it("回填并保存当前审核渲染的合成配置，只提交新的渲染修订", async () => {
+  it("在 Studio 提交一次合成修订并重新审核", async () => {
     const user = userEvent.setup();
     const onRequestReviewRenderRevision = vi.fn().mockResolvedValue(true);
     const qcEpisode: Episode = { ...reviewEpisode, id: "episode-qc", stage: "qc_review", title: "合成调整" };
@@ -643,18 +631,42 @@ describe("审核台", () => {
       context_snapshot: { review_kind: "hyperframes_review_render", pre_render_review_package_id: "pre-render-package", project_revision: "2", project_relative_path: "episodes/episode-qc/review-render/v2/index.html", composition_adjustments: { caption_style: "minimal", pacing: "gentle", crop: "contain", transition: "cut", layout: "center" }, technical_evidence: { checks: [] } },
       created_at: "2026-08-15T00:00:00.000Z", episode_id: qcEpisode.id, id: "review-package-qc-2", invalidated_at: null, invalidated_reason: null, revision_number: 2, stage: "qc_review" as const, task_id: "task-qc-render", task_run_id: "task-run-qc-render",
     };
-    const props = { ...materialInputProps, artifacts: [renderArtifact], blueprint, episode: qcEpisode, isTransitionPending: false, onRequestReviewRenderRevision, onTransition: vi.fn(), reviewPackages: [qcPackage], tasks: [], transitions: [] };
-    const { rerender } = render(<EpisodeDetail {...props} />);
+    const renderTask = { ...blockedTask, id: qcPackage.task_id, episode_id: qcEpisode.id, input_snapshot: { review_render: { adjustments: { aspect_ratio: "9:16", width: 1080, height: 1920, captions_enabled: true, caption_style: "minimal", crop: "contain", pacing: "gentle", transition: "cut", layout: "center", narration_gain_db: 0, bgm_gain_db: -12, sfx_gain_db: -6 } } } } as unknown as Task;
+    const onOpenHyperframesStudio = vi.fn().mockResolvedValue({ fileSize: 24, relativePath: "episodes/episode-qc/studio/00000000-0000-0000-0000-000000000001/index.html", sha256: "a".repeat(64) });
+    const onFreezeHyperframesStudio = vi.fn().mockResolvedValue({ fileSize: 31, relativePath: "episodes/episode-qc/studio-frozen/00000000-0000-0000-0000-000000000002/index.html", sha256: "b".repeat(64) });
+    const props = { ...materialInputProps, artifacts: [renderArtifact], blueprint, episode: qcEpisode, isTransitionPending: false, onFreezeHyperframesStudio, onOpenHyperframesStudio, onRequestReviewRenderRevision, onTransition: vi.fn(), reviewPackages: [qcPackage], tasks: [renderTask], transitions: [] };
+    render(<EpisodeDetail {...props} />);
 
-    expect((screen.getByLabelText("字幕风格") as HTMLSelectElement).value).toBe("minimal");
-    expect((screen.getByLabelText("画面裁切") as HTMLSelectElement).value).toBe("contain");
-    await user.selectOptions(screen.getByLabelText("字幕风格"), "cinematic");
-    await user.type(screen.getByLabelText("调整原因"), "字幕需要更醒目。");
-    rerender(<EpisodeDetail {...props} />);
-    expect((screen.getByLabelText("字幕风格") as HTMLSelectElement).value).toBe("cinematic");
+    expect(screen.getByRole("heading", { name: "在 HyperFrames Studio 编辑" })).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "在 HyperFrames Studio 中打开" }));
+    expect(onOpenHyperframesStudio).toHaveBeenCalledWith(qcEpisode.id, "episodes/episode-qc/review-render/v2/index.html");
+    await user.click(screen.getByRole("button", { name: "提交 Studio 修改" }));
+    await user.type(screen.getByLabelText("Studio 修改说明"), "字幕需要更醒目。");
+    await user.click(screen.getByRole("button", { name: "确认并重新审核" }));
+    expect(onFreezeHyperframesStudio).toHaveBeenCalledWith(qcEpisode.id, expect.stringContaining("/studio/"));
+    expect(onRequestReviewRenderRevision).toHaveBeenCalledWith(expect.objectContaining({ reason: "字幕需要更醒目。", reviewPackageId: qcPackage.id, studioProject: expect.objectContaining({ relativePath: expect.stringContaining("/studio-frozen/") }) }));
+  });
 
-    await user.click(screen.getByRole("button", { name: "按此配置重渲染" }));
-    expect(onRequestReviewRenderRevision).toHaveBeenCalledWith({ reviewPackageId: qcPackage.id, captionStyle: "cinematic", pacing: "gentle", crop: "contain", transition: "cut", layout: "center", reason: "字幕需要更醒目。" });
+  it("在审核渲染中只提供官方 Studio 入口", async () => {
+    const onCreateQcReviewIssue = vi.fn().mockResolvedValue(undefined);
+    const qcEpisode: Episode = { ...reviewEpisode, id: "episode-qc-desk", stage: "qc_review", title: "QC 台" };
+    const renderArtifact: Artifact = { ...previewArtifact, episode_id: qcEpisode.id, artifact_type: "render", id: "artifact-qc-desk", producer_task_id: "task-qc-desk", relative_path: "episodes/episode-qc-desk/review-render/v1/review-render.mp4" };
+    const qcPackage = {
+      artifact_id: renderArtifact.id,
+      context_snapshot: { review_kind: "hyperframes_review_render", pre_render_review_package_id: "pre-render-qc-desk", project_revision: "1", project_relative_path: "episodes/episode-qc-desk/review-render/v1/index.html", technical_evidence: { checks: [{ name: "duration_coverage", detail: "时长匹配。" }] } },
+      created_at: "2026-08-23T00:00:00.000Z", episode_id: qcEpisode.id, id: "review-package-qc-desk", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "qc_review" as const, task_id: "task-qc-desk", task_run_id: "task-run-qc-desk",
+    };
+    const storyboardTask = { id: qcPackage.task_id, episode_id: qcEpisode.id, input_snapshot: { review_render: { storyboard: { version: "storyboard/v1", shots: [{ durationSeconds: 3, id: "shot-first", inputBasis: [{ relativePath: "episodes/episode-qc-desk/materials/script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜", shotType: "a_roll", targetSpec: "9:16" }, { durationSeconds: 2, id: "shot-second", inputBasis: [{ relativePath: "episodes/episode-qc-desk/materials/script.md", sha256: "a".repeat(64) }], productionMethod: "生成", scriptSegment: "第二镜", shotType: "b_roll", targetSpec: "9:16" }], audioCues: [] } } } } as unknown as Task;
+    const members = [
+      { member_key: "shot:shot-second", member_kind: "shot_media", review_package_id: "pre-render-qc-desk", source_task_id: "task-b-roll" },
+      { member_key: "shot:shot-first", member_kind: "shot_media", review_package_id: "pre-render-qc-desk", source_task_id: "task-a-roll" },
+    ] as PreRenderReviewMember[];
+
+    render(<EpisodeDetail {...materialInputProps} artifacts={[renderArtifact]} blueprint={blueprint} episode={qcEpisode} isTransitionPending={false} onCreateQcReviewIssue={onCreateQcReviewIssue} onTransition={vi.fn()} preRenderReviewMembers={members} reviewPackages={[qcPackage]} tasks={[storyboardTask]} transitions={[]} />);
+
+    expect(screen.getByRole("heading", { name: "在 HyperFrames Studio 编辑" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "在 HyperFrames Studio 中打开" })).toBeTruthy();
+    expect(screen.queryByText("QC 问题")).toBeNull();
   });
 
   it("按镜头审核冻结分镜、保存批注，并执行批准或返工", async () => {
@@ -822,14 +834,13 @@ describe("审核台", () => {
     expect(screen.queryByRole("button", { name: "要求修改" })).toBeNull();
   });
 
-  it("逐项审核冻结的预渲染成员，全部批准后才进入合成", async () => {
-    const user = userEvent.setup();
+  it("将预渲染成员作为审计证据，并自动进入审核渲染", async () => {
     const onReviewPreRenderMember = vi.fn().mockResolvedValue(undefined);
     const onTransition = vi.fn().mockResolvedValue(true);
     const productionEpisode: Episode = { ...reviewEpisode, stage: "production_ready" };
     const preRenderPackage = {
       artifact_id: null,
-      context_snapshot: {},
+      context_snapshot: { approval_mode: "qc_only" },
       created_at: "2026-08-15T00:00:00.000Z",
       episode_id: productionEpisode.id,
       id: "pre-render-package-1",
@@ -855,17 +866,13 @@ describe("审核台", () => {
       source_task_id: "task-b-roll-1",
     };
 
-    const { rerender } = render(<EpisodeDetail {...materialInputProps} artifacts={[videoArtifact]} blueprint={blueprint} episode={productionEpisode} isTransitionPending={false} onReviewPreRenderMember={onReviewPreRenderMember} onTransition={onTransition} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[member]} reviewPackages={[preRenderPackage]} tasks={[]} transitions={[]} />);
+    render(<EpisodeDetail {...materialInputProps} artifacts={[videoArtifact]} blueprint={blueprint} episode={productionEpisode} isTransitionPending={false} onReviewPreRenderMember={onReviewPreRenderMember} onTransition={onTransition} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[member]} reviewPackages={[preRenderPackage]} tasks={[]} transitions={[]} />);
 
     expect(screen.getByText("预渲染审核包 · 修订 v1")).toBeTruthy();
-    expect(screen.getByRole("button", { name: "批准预渲染包并进入合成" }).hasAttribute("disabled")).toBe(true);
-    await user.type(screen.getByLabelText("shot:shot-02 审核理由"), "镜头节奏与素材质量符合要求。");
-    await user.click(screen.getByRole("button", { name: "批准此项" }));
-    expect(onReviewPreRenderMember).toHaveBeenCalledWith({ decision: "approved", memberKey: "shot:shot-02", reason: "镜头节奏与素材质量符合要求。", reviewPackageId: preRenderPackage.id });
-
-    rerender(<EpisodeDetail {...materialInputProps} artifacts={[videoArtifact]} blueprint={blueprint} episode={productionEpisode} isTransitionPending={false} onTransition={onTransition} preRenderReviewMemberDecisions={[{ actor_id: "owner-1", created_at: "2026-08-15T00:00:00.000Z", decision: "approved", inherited_from_review_package_id: null, member_key: member.member_key, reason: "镜头节奏与素材质量符合要求。", review_package_id: preRenderPackage.id }]} preRenderReviewMembers={[member]} reviewPackages={[preRenderPackage]} tasks={[]} transitions={[]} />);
-    await user.type(screen.getByLabelText("预渲染审核理由"), "所有冻结媒体与音频都已审核完毕。");
-    await user.click(screen.getByRole("button", { name: "批准预渲染包并进入合成" }));
-    expect(onTransition).toHaveBeenLastCalledWith(productionEpisode.id, "render_ready", "所有冻结媒体与音频都已审核完毕。");
+    expect(screen.getByText("媒体与音轨已冻结，正在自动生成审核渲染。" )).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "批准此项" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "批准预渲染包并进入合成" })).toBeNull();
+    expect(onReviewPreRenderMember).not.toHaveBeenCalled();
+    expect(onTransition).not.toHaveBeenCalled();
   });
 });

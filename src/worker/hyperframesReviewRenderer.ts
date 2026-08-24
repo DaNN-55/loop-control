@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { readFile, realpath } from "node:fs/promises";
+import { readFile, realpath, stat } from "node:fs/promises";
 import { basename, dirname, extname, isAbsolute, relative, resolve } from "node:path";
 import type { ArtifactManifest, StoryboardShotManifest, WorkerResult, WorkerTaskPackage } from "./contracts.js";
 import { safeAssetOutputPath, writeSafeAssetFile } from "./controlledMediaExecutor.js";
@@ -14,8 +14,10 @@ export async function executeHyperframesReviewRender(input: {
   if (!render) throw new Error("审核渲染任务缺少冻结工程。");
   const projectPath = await safeAssetOutputPath(input.taskPackage.assets.allowedRoot, render.projectRelativePath);
   const outputPath = await safeAssetOutputPath(input.taskPackage.assets.allowedRoot, input.taskPackage.output.relativePath);
+  if (render.studioProject) await materializeStudioProject(input.taskPackage);
   await copyFrozenProjectAssets(input.taskPackage);
-  await writeSafeAssetFile(input.taskPackage.assets.allowedRoot, render.projectRelativePath, projectHtml(input.taskPackage));
+  await materializeBgmLoops(input.taskPackage, input.run);
+  if (!render.studioProject) await writeSafeAssetFile(input.taskPackage.assets.allowedRoot, render.projectRelativePath, projectHtml(input.taskPackage));
   const projectDirectory = dirname(projectPath);
   await input.run("hyperframes", ["check", projectDirectory]);
   await input.run("hyperframes", ["render", projectDirectory, "--quality", "standard", "--strict", "--no-best-effort", "--output", outputPath]);
@@ -50,6 +52,16 @@ export async function executeHyperframesReviewRender(input: {
     nextStep: "Owner reviews the deterministic composition and QC evidence.",
   };
   return JSON.stringify(result);
+}
+
+async function materializeStudioProject(taskPackage: WorkerTaskPackage): Promise<void> {
+  const studioProject = taskPackage.reviewRender?.studioProject;
+  if (!studioProject) return;
+  const sourcePath = await safeAssetOutputPath(taskPackage.assets.allowedRoot, studioProject.relativePath);
+  const [content, metadata] = await Promise.all([readFile(sourcePath), stat(sourcePath)]);
+  const actualSha256 = createHash("sha256").update(content).digest("hex");
+  if (actualSha256 !== studioProject.sha256 || metadata.size !== studioProject.fileSize) throw new Error("Studio 冻结工程与提交版本不一致。");
+  await writeSafeAssetFile(taskPackage.assets.allowedRoot, taskPackage.reviewRender!.projectRelativePath, content);
 }
 
 export interface QcInspection { durationSeconds: number; width: number; height: number; hasAudio: boolean; blackFrameCount: number; }
@@ -88,7 +100,7 @@ export function projectHtml(taskPackage: WorkerTaskPackage): string {
     if (!member) throw new Error(`冻结审核渲染缺少镜头 ${shot.id} 的媒体。`);
     return `<video id="shot-${index}" class="clip shot shot-${index}" data-start="${timelineStart(render.storyboard.shots, index)}" data-duration="${shot.durationSeconds}" data-track-index="0" muted playsinline preload="auto" src="${mediaFor(member.relativePath)}"></video>${adjustments.captionsEnabled ? `<div id="caption-${index}" class="clip caption ${captionClass}" data-start="${timelineStart(render.storyboard.shots, index)}" data-duration="${shot.durationSeconds}" data-track-index="1"><span>${escapeHtml(shot.scriptSegment)}</span></div>` : ""}`;
   }).join("\n");
-  const audio = render.members.filter((member) => member.memberKind !== "shot_media").map((member, index) => `<audio id="audio-${index}" class="clip" data-start="${member.startSeconds}" data-duration="${member.durationSeconds}" data-track-index="${2 + index}" volume="${dbToGain(member.memberKind === "narration" ? adjustments.narrationGainDb : member.audioKind === "sfx" ? adjustments.sfxGainDb : adjustments.bgmGainDb)}" preload="auto" src="${mediaFor(member.relativePath)}"></audio>`).join("\n");
+  const audio = render.members.filter((member) => member.memberKind !== "shot_media").map((member, index) => `<audio id="audio-${index}" class="clip" data-start="${member.startSeconds}" data-duration="${member.durationSeconds}" data-track-index="${2 + index}" data-volume="${dbToGain(member.memberKind === "narration" ? adjustments.narrationGainDb : member.audioKind === "sfx" ? adjustments.sfxGainDb : adjustments.bgmGainDb)}" preload="auto" src="${mediaFor(member.audioKind === "bgm" ? loopedBgmAssetPath(member.relativePath) : member.relativePath)}"></audio>`).join("\n");
   return `<!doctype html>
 <html lang="zh-CN" data-aspect-ratio="${adjustments.aspectRatio}"><head><meta charset="UTF-8"/><meta name="viewport" content="width=${adjustments.width},height=${adjustments.height}"/><script src="assets/gsap.min.js"></script><style>
 *{box-sizing:border-box}html,body,#root{width:${adjustments.width}px;height:${adjustments.height}px;margin:0;overflow:hidden;background:#08111d}body{font-family:system-ui,sans-serif;color:#f3ead8}.clip{visibility:hidden}.shot{position:absolute;inset:0;width:100%;height:100%;object-fit:${adjustments.crop};filter:saturate(.82) contrast(1.08) brightness(.82);z-index:0}.caption{position:absolute;left:72px;right:72px;bottom:${captionBottom};text-align:center;font-size:40px;line-height:1.45;text-shadow:0 3px 14px #000;letter-spacing:.06em;z-index:2}.caption span{display:inline;box-decoration-break:clone;padding:12px 20px}.caption-cinematic span{background:rgba(8,17,29,.72);border-left:4px solid #be8345}.caption-minimal{font-size:34px;letter-spacing:.02em}.caption-minimal span{background:rgba(8,17,29,.48)}.vignette{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 42%,rgba(3,7,12,.66) 100%);z-index:1}
@@ -119,6 +131,17 @@ export async function copyFrozenProjectAssets(taskPackage: WorkerTaskPackage, re
   }
   await writeSafeAssetFile(taskPackage.assets.allowedRoot, `${dirname(render.projectRelativePath)}/assets/gsap.min.js`, await readFile(resolve(process.cwd(), "node_modules", "gsap", "dist", "gsap.min.js")));
 }
+
+export async function materializeBgmLoops(taskPackage: WorkerTaskPackage, run: (command: string, args: string[]) => Promise<void>, render = taskPackage.reviewRender): Promise<void> {
+  if (!render) throw new Error("冻结工程缺失。");
+  for (const member of render.members.filter((candidate) => candidate.audioKind === "bgm")) {
+    const sourcePath = await safeAssetOutputPath(taskPackage.assets.allowedRoot, member.relativePath);
+    const outputPath = await safeAssetOutputPath(taskPackage.assets.allowedRoot, `${dirname(render.projectRelativePath)}/assets/${assetFilename(loopedBgmAssetPath(member.relativePath))}`);
+    await run("ffmpeg", ["-nostdin", "-v", "error", "-stream_loop", "-1", "-i", sourcePath, "-t", String(member.durationSeconds + 0.5), "-vn", "-codec:a", "libmp3lame", "-q:a", "2", outputPath]);
+  }
+}
+
+function loopedBgmAssetPath(relativePath: string): string { const extension = extname(relativePath); return `${relativePath.slice(0, -extension.length)}.looped${extension}`; }
 
 function assetFilename(relativePath: string): string { return `${createHash("sha256").update(relativePath).digest("hex")}${extname(basename(relativePath))}`; }
 

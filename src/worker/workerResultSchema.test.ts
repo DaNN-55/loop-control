@@ -16,12 +16,10 @@ describe("workerResultJsonSchema", () => {
     expect(schema.properties).not.toHaveProperty("storyboard");
   });
 
-  it("accepts the additive structured preflight result", () => {
-    const schema = workerResultJsonSchema("b_roll_generation");
+  it("uses an OpenAI strict-compatible schema", () => {
+    const schema = workerResultJsonSchema("visual_planning");
 
-    expect(schema.properties.preflight).toMatchObject({
-      type: "object",
-      required: ["version", "checks"],
-    });
+    expect(schema.required).toEqual(expect.arrayContaining(Object.keys(schema.properties)));
+    expect(schema.properties.blockers.items).toMatchObject({ required: ["code", "detail"] });
   });
 });
