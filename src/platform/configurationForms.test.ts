@@ -40,14 +40,14 @@ describe("账号蓝图表单转换", () => {
     expect(result).toMatchObject({ static_visual: {}, a_roll: {}, b_roll: {}, narration: {}, soundtrack: {} });
   });
 
-  it("保留已有 A-roll 和配乐规则，并将其作为已启用能力读取", () => {
+  it("保留已有媒体规则，并在保存时去除用户预算", () => {
     const form = blueprintPolicyToForm({ a_roll: { executor: { provider: "codex", adapter: "codex" } }, soundtrack: { budget_cents: 99 } });
 
     expect(form.enabledMediaAdapters).toEqual(["a_roll", "soundtrack"]);
     const result = blueprintFormToPolicy(form) as Record<string, unknown>;
 
     expect(result.a_roll).toEqual(expect.objectContaining({ executor: { provider: "codex", adapter: "codex" } }));
-    expect(result.soundtrack).toEqual(expect.objectContaining({ budget_cents: 99 }));
+    expect(result.soundtrack).toEqual(expect.objectContaining({ budget_cents: 2147483647 }));
   });
 
   it("保留只含未表单化字段的媒体旧规则", () => {
@@ -119,11 +119,11 @@ describe("账号蓝图表单转换", () => {
 
     expect(form.positioning).toBe("越南民俗短视频");
     expect(form.assetRoot).toBe("/Volumes/Media/dao");
-    expect(form.budgets.scriptWritingCents).toBe("12");
+    expect(form.budgets.scriptWritingCents).toBe("0");
     expect(form.mediaAdapters.soundtrack.provider).toBe("freesound");
     expect(form.executors.script_writing).toMatchObject({ adapter: "codex", harnessId: "harness-2" });
     expect(form.advancedJson).not.toContain("soundtrack");
-    expect(form.advancedJson).toContain("global_cap_cents");
+    expect(form.advancedJson).not.toContain("global_cap_cents");
     expect(form.advancedJson).toContain("temperature");
   });
 
@@ -150,7 +150,7 @@ describe("账号蓝图表单转换", () => {
       executors: {
         script_writing: { provider: "codex", adapter: "codex", harnessId: "harness-a", model: "model-a", promptVersion: "prompt-a" },
         visual_planning: { provider: "codex", model: "model-b", promptVersion: "prompt-b" },
-        storyboard_planning: { provider: "codex", model: "model-c", promptVersion: "prompt-c" },
+        storyboard_planning: { provider: "codex", adapter: "codex", harnessId: "harness-storyboard", model: "model-c", promptVersion: "prompt-c" },
       },
       mediaAdapters: {
         static_visual: { provider: "", adapter: "", credentialRef: "", model: "", promptVersion: "", allowedTools: "", budgetCents: "", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
@@ -163,9 +163,9 @@ describe("账号蓝图表单转换", () => {
     });
 
     expect(result).toMatchObject({ positioning: "新的账号定位", asset_root: "/Volumes/Media/new", approval_gates: ["script", "publish"], allowed_tools: ["read", "write"] });
-    expect(result).toMatchObject({ budgets: { script_writing_cents: 10, visual_planning_cents: 20, storyboard_planning_cents: 30 } });
-    expect(result).toMatchObject({ executors: { script_writing: { adapter: "codex", harness_id: "harness-a", model: "model-a" }, visual_planning: { model: "model-b" }, storyboard_planning: { model: "model-c" } } });
-    expect(result).toMatchObject({ a_roll: { executor: { adapter: "codex" }, budget_cents: 20, max_attempts: 2 }, b_roll: { executor: { adapter: "pexels_video" }, per_shot_budget_cents: 10, total_budget_cents: 100 }, narration: { voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 0.8 } }, soundtrack: { executor: { adapter: "freesound_preview" } } });
+    expect(result).toMatchObject({ budgets: { script_writing_cents: 0, visual_planning_cents: 0, storyboard_planning_cents: 0 } });
+    expect(result).toMatchObject({ executors: { script_writing: { adapter: "codex", harness_id: "harness-a", model: "model-a" }, visual_planning: { adapter: "codex", harness_id: "harness-storyboard", model: "model-c", prompt_version: "prompt-c" }, storyboard_planning: { adapter: "codex", harness_id: "harness-storyboard", model: "model-c", prompt_version: "prompt-c" } } });
+    expect(result).toMatchObject({ a_roll: { executor: { adapter: "codex" }, budget_cents: 2147483647, max_attempts: 2 }, b_roll: { executor: { adapter: "pexels_video" }, per_shot_budget_cents: 2147483647, total_budget_cents: 2147483647 }, narration: { voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 0.8 }, budget_cents: 2147483647 }, soundtrack: { executor: { adapter: "freesound_preview" }, budget_cents: 2147483647 } });
   });
 
   it("拒绝未完成的媒体适配器配置", () => {
@@ -186,37 +186,21 @@ describe("账号蓝图表单转换", () => {
 });
 
 describe("系列规则表单转换", () => {
-  it("将常用文本字段和高级 JSON 分开读取", () => {
+  it("只读取表单支持的创作基线字段", () => {
     const form = seriesRulesToForm({ positioning: "雨夜志怪", format: "短视频", visual_style: "写实", characters: [{ name: "林砚" }], b_roll: { executor: { provider: "pexels" } } });
 
     expect(form.positioning).toBe("雨夜志怪");
     expect(form.format).toBe("短视频");
     expect(form.characters).toContain("林砚");
-    expect(form.advancedJson).toContain("b_roll");
+    expect(form).not.toHaveProperty("advancedJson");
   });
 
-  it("拒绝从系列高级规则覆盖账号 B-roll 执行配置", () => {
-    const result = seriesFormToRules({
-      positioning: "新的系列",
-      format: "三段式",
-      characters: "林砚、铜铃",
-      locations: "古宅",
-      visualStyle: "电影感",
-      narrativeStructure: "冲突—选择—余韵",
-      restrictions: "不使用现代品牌",
-      advancedJson: '{"b_roll":{"executor":{"provider":"pexels"}}}',
-    });
-
-    expect(() => validateSeriesRules(result)).toThrow("系列规则不能覆盖账号硬约束");
-    expect((result as Record<string, unknown>).characters).toBe("林砚、铜铃");
-  });
-
-  it("拒绝系列覆盖账号硬约束", () => {
-    expect(() => validateSeriesRules({ allowed_tools: ["network"] })).toThrow("系列规则不能覆盖账号硬约束");
+  it("拒绝系列携带未被表单支持的配置", () => {
+    expect(() => validateSeriesRules({ b_roll: { executor: { provider: "pexels" } } })).toThrow("系列规则仅支持表单字段");
   });
 
   it("往返保存 JSON 数组形式的角色设定", () => {
-    const result = seriesFormToRules({ positioning: "", format: "", characters: '[{"name":"林砚"}]', locations: "", visualStyle: "", narrativeStructure: "", restrictions: "", advancedJson: "{}" });
+    const result = seriesFormToRules({ positioning: "", format: "", characters: '[{"name":"林砚"}]', locations: "", visualStyle: "", narrativeStructure: "", restrictions: "" });
     expect(result).toMatchObject({ characters: [{ name: "林砚" }] });
   });
 });

@@ -46,13 +46,13 @@ export interface SeriesFormValues {
   visualStyle: string;
   narrativeStructure: string;
   restrictions: string;
-  advancedJson: string;
 }
 
 const blueprintKnownKeys = new Set(["positioning", "asset_root", "approval_gates", "allowed_tools", "budgets", "executors", ...mediaAdapterKeys]);
 const seriesKnownKeys = new Set(["positioning", "format", "characters", "locations", "visual_style", "narrative_structure", "restrictions"]);
 const executorKeys = ["script_writing", "visual_planning", "storyboard_planning"] as const;
 const visibleToolKeys = new Set(["read", "write"]);
+const unrestrictedBudgetCents = 2147483647;
 
 function objectValue(value: Json | undefined): JsonObject {
   return value && typeof value === "object" && !Array.isArray(value) ? value as JsonObject : {};
@@ -76,21 +76,8 @@ function commaSeparatedValues(source: string): string[] {
   return source.split(",").map((item) => item.trim()).filter(Boolean);
 }
 
-function advancedJson(value: JsonObject, knownKeys: Set<string>, nestedKeys: Record<string, Set<string>> = {}): string {
-  const extra = Object.fromEntries(Object.entries(value).filter(([key]) => !knownKeys.has(key)));
-  for (const [parentKey, childKeys] of Object.entries(nestedKeys)) {
-    const parent = objectValue(value[parentKey]);
-    const nestedExtra = Object.fromEntries(Object.entries(parent).filter(([key]) => !childKeys.has(key)));
-    if (Object.keys(nestedExtra).length) extra[parentKey] = nestedExtra;
-  }
-  return JSON.stringify(extra, null, 2);
-}
-
 function blueprintAdvancedJson(value: JsonObject): string {
   const extra = Object.fromEntries(Object.entries(value).filter(([key]) => !blueprintKnownKeys.has(key)));
-  const budgets = objectValue(value.budgets);
-  const budgetExtra = Object.fromEntries(Object.entries(budgets).filter(([key]) => !new Set(["script_writing_cents", "visual_planning_cents", "storyboard_planning_cents"]).has(key)));
-  if (Object.keys(budgetExtra).length) extra.budgets = budgetExtra;
   const executors = objectValue(value.executors);
   const executorExtra: JsonObject = {};
   for (const [key, rawExecutor] of Object.entries(executors)) {
@@ -123,12 +110,6 @@ function parseAdvancedJson(source: string): JsonObject {
   }
   if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error("高级规则必须是 JSON 对象。");
   return parsed as JsonObject;
-}
-
-function nonNegativeInteger(source: string, label: string): number {
-  const value = Number(source || "0");
-  if (!Number.isInteger(value) || value < 0) throw new Error(`${label}必须是大于等于 0 的整数。`);
-  return value;
 }
 
 function formExecutor(value: Json | undefined): ExecutorForm {
@@ -190,32 +171,26 @@ export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterFor
   if (!form.provider.trim() || !form.adapter.trim() || !form.model.trim() || !form.promptVersion.trim()) throw new Error(`${label}适配器的 Provider、Adapter、模型和 Prompt 版本不能为空。`);
   if (!commaSeparatedValues(form.allowedTools).length) throw new Error(`${label}适配器至少需要一个允许工具。`);
   if (key === "a_roll") {
-    positiveInteger(form.budgetCents, `${label}预算`);
     positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
   }
   if (key === "static_visual") {
     validateRegisteredMediaConnection("静态视觉 / 图片生成", "static_visual_generation", form);
-    positiveInteger(form.budgetCents, `${label}预算`);
     positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
   }
   if (key === "b_roll") {
     validateRegisteredMediaConnection("B-roll", "b_roll_generation", form);
-    positiveInteger(form.perShotBudgetCents, `${label}单镜头预算`);
-    positiveInteger(form.totalBudgetCents, `${label}总预算`);
     positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
     positiveInteger(form.maxConcurrency, `${label}最大并发数`);
     positiveInteger(form.providerMaxConcurrency, `${label}供应商并发上限`);
   }
   if (key === "narration") {
     validateRegisteredMediaConnection("旁白", "narration_generation", form);
-    positiveInteger(form.budgetCents, `${label}预算`);
     positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
     if (!form.voiceLanguageCode.trim() || !form.voiceName.trim()) throw new Error("旁白适配器必须填写语言和声音名称。");
     positiveNumber(form.voiceSpeakingRate, "旁白语速");
   }
   if (key === "soundtrack") {
     validateRegisteredMediaConnection("配乐 / 音效", "soundtrack_generation", form);
-    positiveInteger(form.budgetCents, `${label}预算`);
     positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
   }
 }
@@ -240,7 +215,7 @@ export function mediaAdapterStatus(key: MediaAdapterKey, form: MediaAdapterForm)
   }
 }
 
-function mediaAdapterToPolicy(form: MediaAdapterForm, existing: JsonObject, accountAllowedTools?: readonly string[]): JsonObject {
+function mediaAdapterToPolicy(key: MediaAdapterKey, form: MediaAdapterForm, existing: JsonObject, accountAllowedTools?: readonly string[]): JsonObject {
   const policy: JsonObject = { ...existing };
   const executorValues: Array<[keyof MediaAdapterForm, string]> = [["provider", "provider"], ["adapter", "adapter"], ["model", "model"], ["promptVersion", "prompt_version"]];
   if (executorValues.some(([formKey]) => form[formKey].trim())) {
@@ -256,7 +231,16 @@ function mediaAdapterToPolicy(form: MediaAdapterForm, existing: JsonObject, acco
   }
   if (form.credentialRef.trim()) policy.credential_ref = form.credentialRef.trim();
   else delete policy.credential_ref;
-  const numericFields: Array<[keyof MediaAdapterForm, string]> = [["budgetCents", "budget_cents"], ["perShotBudgetCents", "per_shot_budget_cents"], ["totalBudgetCents", "total_budget_cents"], ["maxAttempts", "max_attempts"], ["maxConcurrency", "max_concurrency"], ["providerMaxConcurrency", "provider_max_concurrency"]];
+  delete policy.budget_cents;
+  delete policy.per_shot_budget_cents;
+  delete policy.total_budget_cents;
+  if (key === "b_roll") {
+    policy.per_shot_budget_cents = unrestrictedBudgetCents;
+    policy.total_budget_cents = unrestrictedBudgetCents;
+  } else {
+    policy.budget_cents = unrestrictedBudgetCents;
+  }
+  const numericFields: Array<[keyof MediaAdapterForm, string]> = [["maxAttempts", "max_attempts"], ["maxConcurrency", "max_concurrency"], ["providerMaxConcurrency", "provider_max_concurrency"]];
   for (const [formKey, policyKey] of numericFields) {
     if (form[formKey].trim()) policy[policyKey] = Number(form[formKey]);
     else delete policy[policyKey];
@@ -271,7 +255,6 @@ function mediaAdapterToPolicy(form: MediaAdapterForm, existing: JsonObject, acco
 
 export function blueprintPolicyToForm(policy: Json): BlueprintFormValues {
   const value = objectValue(policy);
-  const budgets = objectValue(value.budgets);
   const executors = objectValue(value.executors);
   const accountAllowedTools = stringArray(value.allowed_tools).filter((tool) => visibleToolKeys.has(tool));
   const fallbackMediaAdapterTools = accountAllowedTools.length ? accountAllowedTools : ["read", "write"];
@@ -282,11 +265,7 @@ export function blueprintPolicyToForm(policy: Json): BlueprintFormValues {
     approvalGates: stringArray(value.approval_gates).length ? stringArray(value.approval_gates) : ["script", "visual", "storyboard", "qc", "publish"],
     allowedTools: fallbackMediaAdapterTools,
     enabledMediaAdapters,
-    budgets: {
-      scriptWritingCents: String(budgets.script_writing_cents ?? 0),
-      visualPlanningCents: String(budgets.visual_planning_cents ?? 0),
-      storyboardPlanningCents: String(budgets.storyboard_planning_cents ?? 0),
-    },
+    budgets: { scriptWritingCents: "0", visualPlanningCents: "0", storyboardPlanningCents: "0" },
     executors: {
       script_writing: formExecutor(executors.script_writing),
       visual_planning: formExecutor(executors.visual_planning),
@@ -305,7 +284,6 @@ export function blueprintPolicyToForm(policy: Json): BlueprintFormValues {
 
 export function blueprintFormToPolicy(form: BlueprintFormValues): Json {
   const advanced = parseAdvancedJson(form.advancedJson);
-  const existingBudgets = objectValue(advanced.budgets);
   const existingExecutors = objectValue(advanced.executors);
   const existingMediaAdapters = Object.fromEntries(mediaAdapterKeys.map((key) => [key, objectValue(advanced[key])])) as Record<MediaAdapterKey, JsonObject>;
   delete advanced.budgets;
@@ -318,10 +296,9 @@ export function blueprintFormToPolicy(form: BlueprintFormValues): Json {
     approval_gates: form.approvalGates,
     allowed_tools: form.allowedTools.filter((tool) => visibleToolKeys.has(tool)),
     budgets: {
-      ...existingBudgets,
-      script_writing_cents: nonNegativeInteger(form.budgets.scriptWritingCents, "脚本预算"),
-      visual_planning_cents: nonNegativeInteger(form.budgets.visualPlanningCents, "视觉预算"),
-      storyboard_planning_cents: nonNegativeInteger(form.budgets.storyboardPlanningCents, "分镜预算"),
+      script_writing_cents: 0,
+      visual_planning_cents: 0,
+      storyboard_planning_cents: 0,
     },
     executors: {
       ...existingExecutors,
@@ -340,13 +317,21 @@ export function blueprintFormToPolicy(form: BlueprintFormValues): Json {
       })),
     },
   };
+  const planningExecutor = objectValue(objectValue(result.executors).storyboard_planning);
+  result.executors = {
+    ...objectValue(result.executors),
+    visual_planning: {
+      ...objectValue(existingExecutors.storyboard_planning),
+      ...planningExecutor,
+    },
+  };
   const enabledMediaAdapters = form.enabledMediaAdapters ?? configurableMediaAdapterKeys;
   for (const key of mediaAdapterKeys) {
     if (!enabledMediaAdapters.includes(key)) continue;
     const mediaAdapter = form.mediaAdapters[key] ?? defaultMediaAdapterForm(key);
     const hasFormValues = mediaAdapterHasValues(mediaAdapter);
     const accountAllowedTools = key === "b_roll" || key === "narration" || key === "soundtrack" ? form.allowedTools.filter((tool) => visibleToolKeys.has(tool)) : undefined;
-    result[key] = hasFormValues ? mediaAdapterToPolicy(mediaAdapter, existingMediaAdapters[key], accountAllowedTools) : existingMediaAdapters[key];
+    result[key] = hasFormValues ? mediaAdapterToPolicy(key, mediaAdapter, existingMediaAdapters[key], accountAllowedTools) : existingMediaAdapters[key];
   }
   return result as Json;
 }
@@ -361,14 +346,11 @@ export function seriesRulesToForm(rules: Json): SeriesFormValues {
     visualStyle: displayValue(value.visual_style),
     narrativeStructure: displayValue(value.narrative_structure),
     restrictions: displayValue(value.restrictions),
-    advancedJson: advancedJson(value, seriesKnownKeys),
   };
 }
 
 export function seriesFormToRules(form: SeriesFormValues): Json {
-  const advanced = parseAdvancedJson(form.advancedJson);
-  for (const key of seriesKnownKeys) delete advanced[key];
-  const known = Object.fromEntries([
+  return Object.fromEntries([
     ["positioning", parseSeriesField(form.positioning)],
     ["format", parseSeriesField(form.format)],
     ["characters", parseSeriesField(form.characters)],
@@ -376,8 +358,7 @@ export function seriesFormToRules(form: SeriesFormValues): Json {
     ["visual_style", parseSeriesField(form.visualStyle)],
     ["narrative_structure", parseSeriesField(form.narrativeStructure)],
     ["restrictions", parseSeriesField(form.restrictions)],
-  ].filter(([, value]) => value !== undefined));
-  return { ...advanced, ...known } as Json;
+  ].filter(([, value]) => value !== undefined)) as Json;
 }
 
 function parseSeriesField(source: string): Json | undefined {
@@ -391,6 +372,6 @@ function parseSeriesField(source: string): Json | undefined {
 
 export function validateSeriesRules(rules: Json): void {
   const value = objectValue(rules);
-  const forbidden = ["asset_root", "allowed_tools", "approval_gates", "publishing", ...mediaAdapterKeys].filter((key) => value[key] !== undefined);
-  if (forbidden.length) throw new Error(`系列规则不能覆盖账号硬约束：${forbidden.join("、")}。`);
+  const unsupported = Object.keys(value).filter((key) => !seriesKnownKeys.has(key));
+  if (unsupported.length) throw new Error(`系列规则仅支持表单字段：${unsupported.join("、")}。`);
 }

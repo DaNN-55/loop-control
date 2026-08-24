@@ -1,9 +1,9 @@
-import { render, screen, within } from "@testing-library/react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ComponentProps } from "react";
 import { useState } from "react";
 import { describe, expect, it, vi } from "vitest";
-import type { Database } from "../lib/database.types";
+import type { Database, Json } from "../lib/database.types";
 import type { WorkerPreflightResult } from "../worker/contracts";
 import { AccountWorkspace } from "../App";
 
@@ -16,7 +16,8 @@ type SeriesVersion = Database["public"]["Tables"]["series_versions"]["Row"];
 type PromptVersion = Database["public"]["Tables"]["prompt_versions"]["Row"];
 
 const account: Account = { created_at: "2026-08-14T00:00:00.000Z", current_blueprint_version_id: "blueprint-3", id: "account-1", name: "道工作室", slug: "dao-studio", timezone: "Asia/Shanghai" };
-const blueprint: Blueprint = { account_id: account.id, archived_at: null, created_at: "2026-08-14T00:00:00.000Z", id: "blueprint-3", is_active: true, is_snapshot: false, policy: { approval_gates: ["script", "qc"], asset_root: "/Volumes/dao", positioning: "越南民间信仰" }, version: 3 };
+const storyboardHarness: PromptVersion = { account_id: account.id, capability: "storyboard_planning", content_hash: "a".repeat(64), created_at: "2026-08-22T00:00:00.000Z", created_by: "owner-1", id: "harness-storyboard-1", instructions: "先写可执行镜头。", is_active: true, name: "分镜规划 v1", slug: "storyboard-planning-v1", summary: "为审核准备可执行分镜。", version: 1 };
+const blueprint: Blueprint = { account_id: account.id, archived_at: null, created_at: "2026-08-14T00:00:00.000Z", id: "blueprint-3", is_active: true, is_snapshot: false, policy: { approval_gates: ["script", "qc"], asset_root: "/Volumes/dao", executors: { storyboard_planning: { adapter: "codex", harness_id: storyboardHarness.id, model: "gpt-5.6-luna", prompt_version: storyboardHarness.slug }, visual_planning: { adapter: "codex", harness_id: storyboardHarness.id, model: "gpt-5.6-luna", prompt_version: storyboardHarness.slug } }, positioning: "越南民间信仰" }, version: 3 };
 const series: Series = { account_id: account.id, created_at: "2026-08-14T00:00:00.000Z", id: "series-1", name: "越南民间传说" };
 const seriesVersions: SeriesVersion[] = [
   { account_id: account.id, created_at: "2026-08-15T00:00:00.000Z", created_by: "owner-1", id: "series-version-2", rules: { positioning: "当前系列定位" }, series_id: series.id, version: 2 },
@@ -24,14 +25,26 @@ const seriesVersions: SeriesVersion[] = [
 ];
 
 function renderWorkspace(overrides: Partial<ComponentProps<typeof AccountWorkspace>> = {}) {
-  return render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onActivate={vi.fn()} onSelectAccount={vi.fn()} {...overrides} />);
+  return render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onActivate={vi.fn()} onSelectAccount={vi.fn()} promptVersions={[storyboardHarness]} {...overrides} />);
+}
+
+function PromptVersionRefreshWorkspace() {
+  const [policy, setPolicy] = useState<Record<string, Json>>(blueprint.policy as Record<string, Json>);
+  const [promptVersions, setPromptVersions] = useState<PromptVersion[]>([]);
+  return <AccountWorkspace account={account} accounts={[account]} blueprints={[{ ...blueprint, policy }]} isPending="" onActivate={vi.fn()} onCreatePromptVersion={async (input) => {
+    const created: PromptVersion = { account_id: account.id, capability: input.capability, content_hash: "a".repeat(64), created_at: "2026-08-23T00:00:00.000Z", created_by: "owner-1", id: "harness-storyboard-2", instructions: input.instructions, is_active: true, name: input.name, slug: "storyboard-planning-v2", summary: input.summary, version: 2 };
+    setPolicy({ ...policy });
+    setPromptVersions([created]);
+    return created;
+  }} onSelectAccount={vi.fn()} promptVersions={promptVersions} />;
 }
 
 describe("账号配置工作区", () => {
   it("用当前配置工作区取代蓝图版本管理", () => {
     renderWorkspace({ blueprints: [blueprint, { ...blueprint, id: "old", is_active: false, version: 2 }], onUpdateBlueprint: vi.fn().mockResolvedValue(blueprint) });
 
-    expect(screen.getByRole("heading", { name: "蓝图配置" })).toBeTruthy();
+    expect(screen.getByLabelText("当前账号")).toBeTruthy();
+    expect(screen.queryByRole("heading", { name: "蓝图配置" })).toBeNull();
     expect(screen.getByRole("navigation", { name: "蓝图配置分区" })).toBeTruthy();
     expect(screen.getByRole("complementary", { name: "生产就绪检查" })).toBeTruthy();
     expect(screen.queryByText("蓝图版本")).toBeNull();
@@ -78,10 +91,21 @@ describe("账号配置工作区", () => {
   it("左侧分区导航都有真实目标", () => {
     renderWorkspace();
     expect(document.querySelector("#account-rules")).toBeTruthy();
-    expect(document.querySelector("#account-core")).toBeTruthy();
     expect(document.querySelector("#account-capabilities")).toBeTruthy();
     expect(document.querySelector("#account-budget")).toBeTruthy();
     expect(document.querySelector("#account-budget")?.hasAttribute("open")).toBe(true);
+  });
+
+  it("右侧滚动时更新左侧当前分区", async () => {
+    renderWorkspace();
+    const positions = { "#account-rules": -400, "#account-capabilities": 80, "#account-budget": 420 };
+    for (const [selector, top] of Object.entries(positions)) {
+      Object.defineProperty(document.querySelector(selector), "getBoundingClientRect", { configurable: true, value: () => ({ top }) });
+    }
+
+    await act(async () => window.dispatchEvent(new Event("scroll")));
+
+    await waitFor(() => expect(screen.getByRole("link", { name: "生产能力" }).getAttribute("aria-current")).toBe("location"));
   });
 
   it("始终展示默认关闭的五项生产能力", () => {
@@ -145,13 +169,55 @@ describe("账号配置工作区", () => {
   it("选择分镜 Prompt Harness 时保存其不可变标识", async () => {
     const user = userEvent.setup();
     const onUpdateBlueprint = vi.fn().mockResolvedValue(blueprint);
-    const harness: PromptVersion = { account_id: account.id, capability: "storyboard_planning", content_hash: "a".repeat(64), created_at: "2026-08-22T00:00:00.000Z", created_by: "owner-1", id: "harness-storyboard-1", instructions: "先写可执行镜头。", is_active: true, name: "分镜规划 v2", slug: "storyboard-planning-v2", summary: "为审核准备可执行分镜。", version: 2 };
+    const harness: PromptVersion = { ...storyboardHarness, name: "分镜规划 v2", slug: "storyboard-planning-v2", version: 2 };
     renderWorkspace({ onUpdateBlueprint, promptVersions: [harness] });
 
+    await user.click(screen.getByRole("button", { name: "修改分镜规划配置" }));
     await user.selectOptions(screen.getByRole("combobox", { name: "分镜规划 Prompt Harness" }), harness.id);
+    await user.click(screen.getByRole("button", { name: "完成" }));
     await user.click(screen.getByRole("button", { name: "保存蓝图" }));
 
     expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ executors: expect.objectContaining({ storyboard_planning: expect.objectContaining({ adapter: "codex", harness_id: harness.id, prompt_version: harness.slug }) }) }));
+  });
+
+  it("登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿", async () => {
+    const user = userEvent.setup();
+    render(<PromptVersionRefreshWorkspace />);
+
+    await user.click(screen.getByRole("checkbox", { name: "启用静态视觉 / 图片生成" }));
+    await user.click(screen.getByRole("checkbox", { name: "启用A-roll" }));
+    await user.click(screen.getByRole("checkbox", { name: "启用B-roll" }));
+    await user.click(screen.getByRole("checkbox", { name: "启用旁白" }));
+    await user.click(screen.getByRole("checkbox", { name: "启用配乐 / 音效" }));
+    await user.selectOptions(screen.getByRole("combobox", { name: "B-roll Adapter" }), "pexels_video");
+    await user.selectOptions(screen.getByRole("combobox", { name: "旁白 Adapter" }), "google_tts");
+    await user.selectOptions(screen.getByRole("combobox", { name: "配乐 / 音效 Adapter" }), "freesound_preview");
+    await user.click(screen.getByRole("button", { name: "修改分镜规划配置" }));
+    await user.click(screen.getByText("Prompt 版本管理"));
+    await user.type(screen.getByPlaceholderText("例如：脚本生成·强化冲突 v2"), "分镜规划 v2");
+    await user.type(screen.getByPlaceholderText("例如：强化开头钩子和人物动机"), "保留已有能力草稿");
+    await user.type(screen.getByPlaceholderText("例如：开头 3 秒必须提出冲突；结尾保留审核所需的事实依据。"), "生成可审核脚本。");
+    await user.click(screen.getByRole("button", { name: "登记新版本" }));
+
+    for (const name of ["启用静态视觉 / 图片生成", "启用A-roll", "启用B-roll", "启用旁白", "启用配乐 / 音效"]) {
+      expect((screen.getByRole("checkbox", { name }) as HTMLInputElement).checked).toBe(true);
+    }
+    expect((screen.getByRole("combobox", { name: "B-roll Adapter" }) as HTMLSelectElement).value).toBe("pexels_video");
+    expect((screen.getByRole("combobox", { name: "旁白 Adapter" }) as HTMLSelectElement).value).toBe("google_tts");
+    expect((screen.getByRole("combobox", { name: "配乐 / 音效 Adapter" }) as HTMLSelectElement).value).toBe("freesound_preview");
+    expect((screen.getByRole("combobox", { name: "分镜规划 Prompt Harness" }) as HTMLSelectElement).value).toBe("harness-storyboard-2");
+  });
+
+  it("只暴露一套分镜规划配置", async () => {
+    const user = userEvent.setup();
+    renderWorkspace({ onCreatePromptVersion: vi.fn().mockResolvedValue(null) });
+
+    expect(screen.queryByRole("button", { name: "修改视觉规划配置" })).toBeNull();
+    await user.click(screen.getByRole("button", { name: "修改分镜规划配置" }));
+
+    expect(screen.getByRole("dialog")).toBeTruthy();
+    expect(screen.queryByRole("spinbutton", { name: "分镜规划 阶段预算" })).toBeNull();
+    expect(screen.getByRole("heading", { name: "登记新版本" })).toBeTruthy();
   });
 
   it("展示真实 Worker 就绪检查并允许重新检查", async () => {
@@ -250,5 +316,16 @@ describe("账号配置工作区", () => {
     expect(screen.getByRole("heading", { name: "修复当前生产单的 B-roll" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "保存并继续当前生产单" })).toBeTruthy();
     expect(screen.queryByRole("complementary", { name: "生产就绪检查" })).toBeNull();
+  });
+
+  it("修复视觉或分镜阻塞时冻结同一个已登记 Harness", async () => {
+    const user = userEvent.setup();
+    const onApplyEpisodeRepair = vi.fn().mockResolvedValue(true);
+    renderWorkspace({ blueprintRepairContext: { blocker: { code: "storyboard_executor_invalid", detail: "分镜规划缺少 Harness", taskType: "prepare_visual_brief" }, blueprintVersionId: blueprint.id, episodeId: "episode-1" }, onApplyEpisodeRepair });
+
+    expect((screen.getByLabelText("Prompt Harness") as HTMLSelectElement).value).toBe(storyboardHarness.id);
+    await user.click(screen.getByRole("button", { name: "保存并继续当前生产单" }));
+
+    await waitFor(() => expect(onApplyEpisodeRepair).toHaveBeenCalledWith(expect.objectContaining({ policy: expect.objectContaining({ executors: expect.objectContaining({ storyboard_planning: expect.objectContaining({ harness_id: storyboardHarness.id }), visual_planning: expect.objectContaining({ harness_id: storyboardHarness.id }) }) }) })));
   });
 });

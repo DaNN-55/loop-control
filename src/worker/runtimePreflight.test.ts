@@ -18,7 +18,6 @@ describe("runtime preflight", () => {
     });
 
     expect(capabilities.map((capability) => capability.capability)).toEqual([
-      "script_writing",
       "visual_planning",
       "storyboard_planning",
       "review_rendering",
@@ -41,6 +40,15 @@ describe("runtime preflight", () => {
     expect(createRuntimePreflight([blocked!]).checks).toContainEqual(expect.objectContaining({ capability: "storyboard_planning", check: "blueprint_configuration", status: "blocked", action: "edit_blueprint" }));
     expect(configured).toMatchObject({ adapter: "codex", promptHarnessId: "harness-1" });
     expect(createRuntimePreflight([configured!]).checks).toContainEqual(expect.objectContaining({ capability: "storyboard_planning", check: "capability_registration", status: "passed" }));
+  });
+
+  it("视觉准备与分镜共用 Adapter 和 Prompt Harness 要求", () => {
+    const visual = runtimeCapabilitiesFromBlueprintPolicy({
+      allowed_tools: ["read", "write"],
+      executors: { visual_planning: { provider: "codex", model: "gpt-5.6-luna", prompt_version: "storyboard-planning-v1" } },
+    }).find((capability) => capability.capability === "visual_planning");
+
+    expect(createRuntimePreflight([visual!]).checks).toContainEqual(expect.objectContaining({ capability: "visual_planning", check: "blueprint_configuration", status: "blocked", action: "edit_blueprint" }));
   });
 
   it("用注册目录解析 Pexels 的非秘密连接引用", () => {

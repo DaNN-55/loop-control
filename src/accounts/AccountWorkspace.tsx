@@ -61,6 +61,11 @@ const checkLabels: Record<string, string> = {
   tool_permission: "工具权限不足",
 };
 const emptySeriesRules: Json = {};
+const blueprintSections = [
+  { id: "account-rules", label: "账号基础规则" },
+  { id: "account-capabilities", label: "生产能力" },
+  { id: "account-budget", label: "分镜规划" },
+] as const;
 
 function ReadinessRail({ isLoading, onRefresh, policy, preflight, preflightError, systemStatus }: { isLoading: boolean; onRefresh?: () => Promise<void>; policy: Json; preflight: WorkerPreflightResult | null; preflightError: string; systemStatus: LocalSystemStatusReport | null }) {
   const failed = preflight?.checks.filter((check) => check.status !== "passed") ?? [];
@@ -82,6 +87,7 @@ function ReadinessRail({ isLoading, onRefresh, policy, preflight, preflightError
 export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, blueprints, blueprintPreflight = null, blueprintPreflightError = "", blueprintRepairContext = null, isBlueprintPreflightLoading = false, isPending, onApplyEpisodeRepair, onCreateBlueprint, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeleteAccount = async () => {}, onDismissBlueprintRepair, onDirtyChange, onRefreshBlueprintPreflight, onRenameAccount = async () => {}, onSelectAccount, onUpdateBlueprint, promptVersions = [], series = [], seriesVersions = [], systemStatus = null }: AccountWorkspaceProps) {
   const [activeSection, setActiveSection] = useState<"blueprints" | "series">("blueprints");
   const [configurationDirty, setConfigurationDirtyState] = useState(false);
+  const [activeBlueprintSection, setActiveBlueprintSection] = useState<(typeof blueprintSections)[number]["id"]>("account-rules");
   const [renameOpen, setRenameOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const setConfigurationDirty = useCallback((dirty: boolean) => {
@@ -97,6 +103,17 @@ export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, b
     window.addEventListener("beforeunload", guard);
     return () => window.removeEventListener("beforeunload", guard);
   }, [configurationDirty]);
+  useEffect(() => {
+    if (activeSection !== "blueprints" || blueprintRepairContext) return;
+    const updateActiveSection = () => {
+      const sections = blueprintSections.map(({ id }) => ({ id, top: document.getElementById(id)?.getBoundingClientRect().top ?? Infinity })).sort((left, right) => left.top - right.top);
+      const next = sections.every(({ top }) => top === 0) ? sections[0] : sections.filter(({ top }) => top <= 160).at(-1) ?? sections[0];
+      setActiveBlueprintSection(next.id);
+    };
+    updateActiveSection();
+    window.addEventListener("scroll", updateActiveSection, { passive: true });
+    return () => window.removeEventListener("scroll", updateActiveSection);
+  }, [activeSection, blueprintRepairContext]);
   if (!account) return <div className="empty-state">没有可读取的账号。</div>;
   if (!currentBlueprint) return <div className="empty-state">该账号没有可读取的蓝图配置。</div>;
 
@@ -108,13 +125,12 @@ export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, b
   }
   return <>
     <header className="account-configuration-heading">
-      <div><span>账号配置控制台</span><h2>蓝图配置</h2><p>{account.name} · 直接维护当前配置，不再管理用户可见版本。</p></div>
       <div className="account-heading-actions"><label>当前账号<select aria-label="当前账号" onChange={(event) => leaveConfiguration(() => onSelectAccount(event.target.value))} value={account.id}>{accounts.map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.name}</option>)}</select></label><button aria-label="重命名账号" className="icon-button" onClick={() => setRenameOpen(true)} type="button">✎</button><button aria-label="删除账号" className="icon-button" onClick={() => setDeleteOpen(true)} type="button">⌫</button></div>
     </header>
     <nav aria-label="账号设置导航" className="account-tabs" role="tablist"><button aria-selected={activeSection === "blueprints"} className={`account-tab ${activeSection === "blueprints" ? "is-active" : ""}`} onClick={() => leaveConfiguration(() => setActiveSection("blueprints"))} role="tab" type="button">蓝图</button><button aria-selected={activeSection === "series"} className={`account-tab ${activeSection === "series" ? "is-active" : ""}`} onClick={() => leaveConfiguration(() => setActiveSection("series"))} role="tab" type="button">系列</button></nav>
-    {activeSection === "blueprints" ? blueprintRepairContext ? <EpisodeConfigurationRepairForm blocker={blueprintRepairContext.blocker} initialPolicy={policy} isPending={isPending === `apply-episode-repair-${blueprintRepairContext.episodeId}`} onCancel={() => onDismissBlueprintRepair?.()} onSave={async (nextPolicy) => { if (onApplyEpisodeRepair) await onApplyEpisodeRepair({ context: blueprintRepairContext, policy: nextPolicy }); }} /> : <div className="account-configuration-layout" role="tabpanel">
-      <nav aria-label="蓝图配置分区" className="account-section-nav"><strong>蓝图配置</strong><a href="#account-rules">账号基础规则</a><a href="#account-core">核心执行器</a><a href="#account-capabilities">生产能力</a><a href="#account-budget">预算与权限</a><small>直接保存当前配置<br />已有生产单不受影响</small></nav>
-      <main className="account-configuration-form" id="account-rules"><BlueprintConfigurationForm initialAssetRoot={blueprintAssetRoot(policy)} initialPolicy={policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} onCancel={() => {}} onCreatePromptVersion={onCreatePromptVersion} onDirtyChange={setConfigurationDirty} onSave={async (nextPolicy) => { if (onUpdateBlueprint) await onUpdateBlueprint(nextPolicy); else if (onCreateBlueprint) await onCreateBlueprint(nextPolicy); }} promptVersions={promptVersions} /></main>
+    {activeSection === "blueprints" ? blueprintRepairContext ? <EpisodeConfigurationRepairForm blocker={blueprintRepairContext.blocker} initialPolicy={policy} isPending={isPending === `apply-episode-repair-${blueprintRepairContext.episodeId}`} onCancel={() => onDismissBlueprintRepair?.()} onSave={async (nextPolicy) => { if (onApplyEpisodeRepair) await onApplyEpisodeRepair({ context: blueprintRepairContext, policy: nextPolicy }); }} promptVersions={promptVersions} /> : <div className="account-configuration-layout" role="tabpanel">
+      <nav aria-label="蓝图配置分区" className="account-section-nav">{blueprintSections.map(({ id, label }) => <a aria-current={activeBlueprintSection === id ? "location" : undefined} href={`#${id}`} key={id}>{label}</a>)}</nav>
+      <main className="account-configuration-form" id="account-rules"><BlueprintConfigurationForm accountId={account.id} initialAssetRoot={blueprintAssetRoot(policy)} initialPolicy={policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} onCancel={() => {}} onCreatePromptVersion={onCreatePromptVersion} onDirtyChange={setConfigurationDirty} onSave={async (nextPolicy) => { if (onUpdateBlueprint) await onUpdateBlueprint(nextPolicy); else if (onCreateBlueprint) await onCreateBlueprint(nextPolicy); }} promptVersions={promptVersions} /></main>
       <ReadinessRail isLoading={isBlueprintPreflightLoading} onRefresh={onRefreshBlueprintPreflight} policy={policy} preflight={blueprintPreflight} preflightError={blueprintPreflightError} systemStatus={systemStatus} />
     </div> : <div role="tabpanel"><SeriesSettings isPending={isPending} onCreate={onCreateSeries} onDirtyChange={setConfigurationDirty} onLeave={leaveConfiguration} onCreateVersion={onCreateSeriesVersion} series={series} seriesVersions={seriesVersions} /></div>}
     {renameOpen ? <AccountRenameModal account={account} isPending={isPending === `rename-account-${account.id}`} onClose={() => setRenameOpen(false)} onSave={(name) => onRenameAccount(account.id, name)} /> : null}

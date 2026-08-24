@@ -50,8 +50,7 @@ export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, _seriesR
   const executors = record(root.executors);
   const allowedTools = root.allowed_tools;
   const capabilities: RuntimeCapability[] = [
-    capabilityFromExecutor("script_writing", record(executors.script_writing), allowedTools, "codex"),
-    capabilityFromExecutor("visual_planning", record(executors.visual_planning), allowedTools, "codex"),
+    capabilityFromExecutor("visual_planning", record(executors.visual_planning), allowedTools, "codex", { adapter: true, promptHarness: true }),
     capabilityFromExecutor("storyboard_planning", record(executors.storyboard_planning), allowedTools, "codex", { adapter: true, promptHarness: true }),
     { capability: "review_rendering", provider: "hyperframes", model: "hyperframes@0.7.109", promptVersion: "review-render-v1", allowedTools: ["read", "write"], command: "hyperframes" },
     { capability: "final_rendering", provider: "hyperframes", model: "hyperframes@0.7.109", promptVersion: "final-render-v1", allowedTools: ["read", "write"], command: "hyperframes" },
@@ -83,16 +82,16 @@ export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, _seriesR
 }
 
 export function runtimeCapabilityFromTask(taskPackage: WorkerTaskPackage): RuntimeCapability {
-  const storyboardPlanning = taskPackage.capability === "storyboard_planning";
-  const adapter = taskPackage.aRoll?.adapter ?? taskPackage.media?.adapter ?? (storyboardPlanning ? taskPackage.promptHarness?.adapter : undefined);
+  const sharedPlanning = taskPackage.capability === "visual_planning" || taskPackage.capability === "storyboard_planning";
+  const adapter = taskPackage.aRoll?.adapter ?? taskPackage.media?.adapter ?? (sharedPlanning ? taskPackage.promptHarness?.adapter : undefined);
   return {
     capability: taskPackage.capability,
     provider: taskPackage.provider,
     ...(adapter ? { adapter } : {}),
     model: taskPackage.model,
     promptVersion: taskPackage.promptVersion,
-    ...(storyboardPlanning && taskPackage.promptHarness ? { promptHarnessId: taskPackage.promptHarness.id } : {}),
-    ...(storyboardPlanning ? { requiresAdapter: true, requiresPromptHarness: true } : {}),
+    ...(sharedPlanning && taskPackage.promptHarness ? { promptHarnessId: taskPackage.promptHarness.id } : {}),
+    ...(sharedPlanning ? { requiresAdapter: true, requiresPromptHarness: true } : {}),
     allowedTools: taskPackage.allowedTools,
     ...(taskPackage.credentialRef ? { credentialRef: taskPackage.credentialRef } : {}),
     credential: credentialEnvironmentForReference(taskPackage.provider, adapter, taskPackage.credentialRef),
