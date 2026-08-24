@@ -30,14 +30,10 @@ interface AccountWorkspaceProps {
   blueprintRepairContext?: BlueprintRepairContext | null;
   isBlueprintPreflightLoading?: boolean;
   isPending: string;
-  onActivate: (id: string) => Promise<void>;
   onApplyEpisodeRepair?: (input: { context: BlueprintRepairContext; policy: Json }) => Promise<boolean>;
-  onArchiveBlueprint?: (id: string, archived: boolean) => Promise<void>;
-  onCreateBlueprint?: (policy: Json) => Promise<Blueprint | null>;
   onCreatePromptVersion?: (input: { capability: PromptVersion["capability"]; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>;
   onCreateSeries?: (input: { name: string; rules: Json }) => Promise<void>;
   onCreateSeriesVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>;
-  onDeactivateBlueprint?: (id: string) => Promise<void>;
   onDeleteAccount?: (id: string, confirmation: string) => Promise<boolean | void>;
   onDismissBlueprintRepair?: () => void;
   onDirtyChange?: (dirty: boolean) => void;
@@ -75,7 +71,7 @@ function ReadinessRail({ isLoading, onRefresh, policy, preflight, preflightError
     <section className={failed.length || preflightError ? "is-blocked" : "is-ready"}>
       <span className="account-status-eyebrow">生产就绪检查</span>
       <h2>{isLoading ? "正在检查…" : preflightError ? "检查暂不可用" : failed.length ? `${failed.length} 项需要处理` : preflight ? "已具备生产条件" : "等待运行检查"}</h2>
-      <p>依据当前蓝图与 Worker 环境判断之后新建的生产单。</p>
+      <p>保存蓝图后会自动重新检查，结果决定之后新建的生产单能否开始生产。</p>
       {failed.length ? <ul>{failed.slice(0, 3).map((check) => <li key={`${check.capability}-${check.check}`}><strong>{checkLabels[check.check] ?? "运行检查未通过"}</strong><span>{check.reason.length > 120 ? (check.action === "retry" ? "运行检查失败，请稍后重新检查。" : "运行环境检查未通过，请联系环境管理员。") : check.reason}</span></li>)}</ul> : null}
       {displayedError ? <p className="form-error">{displayedError}</p> : null}
       {onRefresh ? <button className="button button-secondary button-small" disabled={isLoading} onClick={() => void onRefresh()} type="button">{isLoading ? "检查中…" : "重新检查"}</button> : null}
@@ -84,7 +80,7 @@ function ReadinessRail({ isLoading, onRefresh, policy, preflight, preflightError
   </aside>;
 }
 
-export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, blueprints, blueprintPreflight = null, blueprintPreflightError = "", blueprintRepairContext = null, isBlueprintPreflightLoading = false, isPending, onApplyEpisodeRepair, onCreateBlueprint, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeleteAccount = async () => {}, onDismissBlueprintRepair, onDirtyChange, onRefreshBlueprintPreflight, onRenameAccount = async () => {}, onSelectAccount, onUpdateBlueprint, promptVersions = [], series = [], seriesVersions = [], systemStatus = null }: AccountWorkspaceProps) {
+export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, blueprints, blueprintPreflight = null, blueprintPreflightError = "", blueprintRepairContext = null, isBlueprintPreflightLoading = false, isPending, onApplyEpisodeRepair, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeleteAccount = async () => {}, onDismissBlueprintRepair, onDirtyChange, onRefreshBlueprintPreflight, onRenameAccount = async () => {}, onSelectAccount, onUpdateBlueprint, promptVersions = [], series = [], seriesVersions = [], systemStatus = null }: AccountWorkspaceProps) {
   const [activeSection, setActiveSection] = useState<"blueprints" | "series">("blueprints");
   const [configurationDirty, setConfigurationDirtyState] = useState(false);
   const [activeBlueprintSection, setActiveBlueprintSection] = useState<(typeof blueprintSections)[number]["id"]>("account-rules");
@@ -129,8 +125,8 @@ export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, b
     </header>
     <nav aria-label="账号设置导航" className="account-tabs" role="tablist"><button aria-selected={activeSection === "blueprints"} className={`account-tab ${activeSection === "blueprints" ? "is-active" : ""}`} onClick={() => leaveConfiguration(() => setActiveSection("blueprints"))} role="tab" type="button">蓝图</button><button aria-selected={activeSection === "series"} className={`account-tab ${activeSection === "series" ? "is-active" : ""}`} onClick={() => leaveConfiguration(() => setActiveSection("series"))} role="tab" type="button">系列</button></nav>
     {activeSection === "blueprints" ? blueprintRepairContext ? <EpisodeConfigurationRepairForm blocker={blueprintRepairContext.blocker} initialPolicy={policy} isPending={isPending === `apply-episode-repair-${blueprintRepairContext.episodeId}`} onCancel={() => onDismissBlueprintRepair?.()} onSave={async (nextPolicy) => { if (onApplyEpisodeRepair) await onApplyEpisodeRepair({ context: blueprintRepairContext, policy: nextPolicy }); }} promptVersions={promptVersions} /> : <div className="account-configuration-layout" role="tabpanel">
-      <nav aria-label="蓝图配置分区" className="account-section-nav">{blueprintSections.map(({ id, label }) => <a aria-current={activeBlueprintSection === id ? "location" : undefined} href={`#${id}`} key={id}>{label}</a>)}</nav>
-      <main className="account-configuration-form" id="account-rules"><BlueprintConfigurationForm accountId={account.id} initialAssetRoot={blueprintAssetRoot(policy)} initialPolicy={policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} onCancel={() => {}} onCreatePromptVersion={onCreatePromptVersion} onDirtyChange={setConfigurationDirty} onSave={async (nextPolicy) => { if (onUpdateBlueprint) await onUpdateBlueprint(nextPolicy); else if (onCreateBlueprint) await onCreateBlueprint(nextPolicy); }} promptVersions={promptVersions} /></main>
+      <nav aria-label="蓝图配置分区" className="account-section-nav">{blueprintSections.map(({ id, label }, index) => <a aria-current={activeBlueprintSection === id ? "location" : undefined} href={`#${id}`} key={id}><span aria-hidden="true">{index + 1}</span>{label}</a>)}</nav>
+      <main className="account-configuration-form" id="account-rules"><BlueprintConfigurationForm accountId={account.id} initialAssetRoot={blueprintAssetRoot(policy)} initialPolicy={policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} onCancel={() => {}} onCreatePromptVersion={onCreatePromptVersion} onDirtyChange={setConfigurationDirty} onSave={async (nextPolicy) => { if (onUpdateBlueprint) await onUpdateBlueprint(nextPolicy); }} promptVersions={promptVersions} /></main>
       <ReadinessRail isLoading={isBlueprintPreflightLoading} onRefresh={onRefreshBlueprintPreflight} policy={policy} preflight={blueprintPreflight} preflightError={blueprintPreflightError} systemStatus={systemStatus} />
     </div> : <div role="tabpanel"><SeriesSettings isPending={isPending} onCreate={onCreateSeries} onDirtyChange={setConfigurationDirty} onLeave={leaveConfiguration} onCreateVersion={onCreateSeriesVersion} series={series} seriesVersions={seriesVersions} /></div>}
     {renameOpen ? <AccountRenameModal account={account} isPending={isPending === `rename-account-${account.id}`} onClose={() => setRenameOpen(false)} onSave={(name) => onRenameAccount(account.id, name)} /> : null}

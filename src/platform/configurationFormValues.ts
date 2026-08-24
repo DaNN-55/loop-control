@@ -1,11 +1,11 @@
 import type { Json } from "../lib/database.types";
-import { adapterRegistration } from "../worker/adapterRegistry";
+import { adapterRegistration, mediaCapabilityForKey, mediaCapabilityKeys, type MediaCapabilityKey } from "../worker/adapterRegistry";
 
 type JsonObject = Record<string, Json | undefined>;
 type ExecutorForm = { provider: string; adapter?: string; harnessId?: string; model: string; promptVersion: string };
 
-export const mediaAdapterKeys = ["static_visual", "a_roll", "b_roll", "narration", "soundtrack"] as const;
-export type MediaAdapterKey = typeof mediaAdapterKeys[number];
+export const mediaAdapterKeys = mediaCapabilityKeys;
+export type MediaAdapterKey = MediaCapabilityKey;
 export const configurableMediaAdapterKeys = mediaAdapterKeys;
 export type ConfigurableMediaAdapterKey = typeof configurableMediaAdapterKeys[number];
 export type MediaAdapterForm = {
@@ -166,38 +166,27 @@ function positiveNumber(source: string, label: string): number {
 
 export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterForm): void {
   if (!mediaAdapterHasValues(form)) return;
-  const labels: Record<MediaAdapterKey, string> = { static_visual: "静态视觉 / 图片生成", a_roll: "A-roll", b_roll: "B-roll", narration: "旁白", soundtrack: "配乐 / 音效" };
-  const label = labels[key];
+  const definition = mediaCapabilityForKey(key);
+  const { configurationFields, label } = definition;
   if (!form.provider.trim() || !form.adapter.trim() || !form.model.trim() || !form.promptVersion.trim()) throw new Error(`${label}适配器的 Provider、Adapter、模型和 Prompt 版本不能为空。`);
   if (!commaSeparatedValues(form.allowedTools).length) throw new Error(`${label}适配器至少需要一个允许工具。`);
-  if (key === "a_roll") {
-    positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
+  if (definition.requiresRegisteredAdapter) {
+    validateRegisteredMediaConnection(label, key, form);
   }
-  if (key === "static_visual") {
-    validateRegisteredMediaConnection("静态视觉 / 图片生成", "static_visual_generation", form);
-    positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
-  }
-  if (key === "b_roll") {
-    validateRegisteredMediaConnection("B-roll", "b_roll_generation", form);
-    positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
-    positiveInteger(form.maxConcurrency, `${label}最大并发数`);
-    positiveInteger(form.providerMaxConcurrency, `${label}供应商并发上限`);
-  }
-  if (key === "narration") {
-    validateRegisteredMediaConnection("旁白", "narration_generation", form);
-    positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
+  if (configurationFields.includes("max_attempts")) positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
+  if (configurationFields.includes("max_concurrency")) positiveInteger(form.maxConcurrency, `${label}最大并发数`);
+  if (configurationFields.includes("provider_max_concurrency")) positiveInteger(form.providerMaxConcurrency, `${label}供应商并发上限`);
+  if (configurationFields.includes("voice")) {
     if (!form.voiceLanguageCode.trim() || !form.voiceName.trim()) throw new Error("旁白适配器必须填写语言和声音名称。");
-    positiveNumber(form.voiceSpeakingRate, "旁白语速");
   }
-  if (key === "soundtrack") {
-    validateRegisteredMediaConnection("配乐 / 音效", "soundtrack_generation", form);
-    positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
+  if (configurationFields.includes("voice_speaking_rate")) {
+    positiveNumber(form.voiceSpeakingRate, "旁白语速");
   }
 }
 
-function validateRegisteredMediaConnection(label: string, capability: string, form: MediaAdapterForm): void {
+function validateRegisteredMediaConnection(label: string, key: MediaAdapterKey, form: MediaAdapterForm): void {
   const registration = adapterRegistration(form.provider.trim(), form.adapter.trim());
-  if (!registration || registration.capability !== capability) throw new Error(`${label}必须选择已注册的 Adapter。`);
+  if (!registration || registration.capability !== mediaCapabilityForKey(key).capability) throw new Error(`${label}必须选择已注册的 Adapter。`);
   if (!registration.connections.some((connection) => connection.credentialRef === form.credentialRef.trim())) throw new Error(`${label}必须选择可用的外部连接。`);
 }
 

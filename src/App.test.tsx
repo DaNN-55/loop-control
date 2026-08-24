@@ -129,12 +129,12 @@ describe("approval console", () => {
     const storyboardHarness = { account_id: account.id, capability: "storyboard_planning", content_hash: "a".repeat(64), created_at: "2026-08-15T00:00:00.000Z", created_by: "owner-1", id: "harness-storyboard-1", instructions: "生成可审核分镜。", is_active: true, name: "分镜规划 v1", slug: "storyboard-planning-v1", summary: "测试 Harness。", version: 1 } as Database["public"]["Tables"]["prompt_versions"]["Row"];
     const blueprint = { account_id: account.id, created_at: "2026-08-15T00:00:00.000Z", id: "blueprint-1", is_active: true, policy: { positioning: "旧定位", asset_root: "/Volumes/Media/dao", approval_gates: ["script"], allowed_tools: ["read", "write"], budgets: { script_writing_cents: 0, visual_planning_cents: 0, storyboard_planning_cents: 0 }, executors: { script_writing: { provider: "codex", model: "model-a", prompt_version: "script-v1" }, visual_planning: { adapter: "codex", harness_id: storyboardHarness.id, provider: "codex", model: "model-c", prompt_version: storyboardHarness.slug }, storyboard_planning: { adapter: "codex", harness_id: storyboardHarness.id, provider: "codex", model: "model-c", prompt_version: storyboardHarness.slug } }, soundtrack: { executor: { provider: "freesound", adapter: "freesound_preview", model: "freesound-preview-v1", prompt_version: "soundtrack-v1" }, allowed_tools: ["read", "write"], budget_cents: 99, max_attempts: 1 } }, version: 1 } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
     const onUpdateBlueprint = vi.fn().mockResolvedValue(blueprint);
-    render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onActivate={vi.fn()} onUpdateBlueprint={onUpdateBlueprint} onCreateSeries={vi.fn()} onSelectAccount={vi.fn()} promptVersions={[storyboardHarness]} series={[]} seriesVersions={[]} />);
+    render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onUpdateBlueprint={onUpdateBlueprint} onCreateSeries={vi.fn()} onSelectAccount={vi.fn()} promptVersions={[storyboardHarness]} series={[]} seriesVersions={[]} />);
 
     await user.click(screen.getByRole("tab", { name: "蓝图" }));
     await user.clear(screen.getByLabelText("账号定位"));
     await user.type(screen.getByLabelText("账号定位"), "新定位");
-    await user.click(screen.getByRole("button", { name: "保存蓝图" }));
+    await user.click(screen.getByRole("button", { name: /保存蓝图|保存并检查/ }));
 
     await waitFor(() => expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ positioning: "新定位", soundtrack: expect.objectContaining({ executor: expect.objectContaining({ adapter: "freesound_preview" }) }) })));
   });
@@ -144,10 +144,9 @@ describe("approval console", () => {
     const account = { created_at: "2026-08-15T00:00:00.000Z", current_blueprint_version_id: "blueprint-current", id: "account-1", name: "道工作室", slug: "dao-studio", timezone: "Asia/Shanghai" } as Database["public"]["Tables"]["accounts"]["Row"];
     const blueprint = { account_id: account.id, created_at: "2026-08-15T00:00:00.000Z", id: "blueprint-episode", is_active: true, policy: { positioning: "旧定位", asset_root: "/Volumes/Media/dao", approval_gates: ["script"], allowed_tools: ["read", "write"], budgets: { script_writing_cents: 0, visual_planning_cents: 0, storyboard_planning_cents: 0 }, executors: { script_writing: { provider: "codex", model: "model-a", prompt_version: "script-v1" }, visual_planning: { provider: "codex", model: "model-b", prompt_version: "visual-v1" }, storyboard_planning: { provider: "codex", model: "model-c", prompt_version: "storyboard-v1" } } }, version: 1 } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
     const currentBlueprint = { ...blueprint, id: "blueprint-current", policy: { ...(blueprint.policy as Record<string, unknown>), a_roll: { executor: { provider: "codex", adapter: "codex", model: "video-generation-v1", prompt_version: "a-roll-v1" }, allowed_tools: ["read", "write"], budget_cents: 100, max_attempts: 2 } } } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
-    const onCreateBlueprint = vi.fn();
     const onApplyEpisodeRepair = vi.fn().mockResolvedValue(true);
 
-    render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint, currentBlueprint]} blueprintRepairContext={{ blocker: { code: "a_roll_executor_invalid", detail: "A-roll 执行器 adapter 未配置。" }, blueprintVersionId: blueprint.id, episodeId: "episode-1" }} isPending="" onActivate={vi.fn()} onApplyEpisodeRepair={onApplyEpisodeRepair} onCreateBlueprint={onCreateBlueprint} onCreateSeries={vi.fn()} onSelectAccount={vi.fn()} series={[]} seriesVersions={[]} />);
+    render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint, currentBlueprint]} blueprintRepairContext={{ blocker: { code: "a_roll_executor_invalid", detail: "A-roll 执行器 adapter 未配置。" }, blueprintVersionId: blueprint.id, episodeId: "episode-1" }} isPending="" onApplyEpisodeRepair={onApplyEpisodeRepair} onCreateSeries={vi.fn()} onSelectAccount={vi.fn()} series={[]} seriesVersions={[]} />);
 
     expect(await screen.findByRole("heading", { name: "修复当前生产单的 A-roll" })).toBeTruthy();
     expect(screen.queryByText("脚本生成", { selector: "h4" })).toBeNull();
@@ -165,7 +164,6 @@ describe("approval console", () => {
         }),
       }),
     })));
-    expect(onCreateBlueprint).not.toHaveBeenCalled();
   });
 
   it("按日常工作流顺序显示导航，并为审核和发布显示待办数量", () => {
@@ -199,13 +197,11 @@ describe("approval console", () => {
     const reviewPackage = { artifact_id: "artifact-1", context_snapshot: { pre_render_review_package_id: "pre-render-1", project_relative_path: "episodes/episode-1/studio/index.html", review_kind: "hyperframes_review_render" }, episode_id: episode.id, id: "review-1", invalidated_at: null, revision_number: 1, stage: "qc_review", task_id: "task-1" } as unknown as Database["public"]["Tables"]["review_packages"]["Row"];
     const artifact = { artifact_type: "review_render", episode_id: episode.id, id: "artifact-1", producer_task_id: "task-1", relative_path: "episodes/episode-1/review.mp4" } as Database["public"]["Tables"]["artifacts"]["Row"];
     const task = { episode_id: episode.id, id: "task-1", input_snapshot: null, status: "completed", task_type: "generate_review_render" } as Database["public"]["Tables"]["tasks"]["Row"];
-    const onFreeze = vi.fn().mockResolvedValue({ fileSize: 1, relativePath: "episodes/episode-1/studio-edits/index.html", sha256: "frozen" });
     const onOpen = vi.fn().mockResolvedValue({ fileSize: 1, relativePath: "episodes/episode-1/studio-edits/index.html", sha256: "draft" });
-    const onRefresh = vi.fn().mockResolvedValue(undefined);
-    const onRequestRenderRevision = vi.fn().mockResolvedValue(true);
+    const onRequestRevision = vi.fn().mockResolvedValue({ kind: "storyboard" });
     vi.mocked(supabase.rpc).mockClear();
 
-    render(<EpisodeDetail artifacts={[artifact]} audioTrackAnnotations={[]} audioTracks={[]} blueprint={null} episode={episode} isMaterialPending={false} isStoryboardAnnotationPending={false} isTransitionPending={false} onCreateAudioTrackAnnotation={vi.fn()} onCreateStoryboardAnnotation={vi.fn()} onFreezeHyperframesStudio={onFreeze} onImportMaterial={vi.fn()} onOpenHyperframesStudio={onOpen} onRefresh={onRefresh} onRequestReviewRenderRevision={onRequestRenderRevision} onTransition={vi.fn().mockResolvedValue(true)} reviewAnnotations={[]} reviewPackages={[reviewPackage]} tasks={[task]} transitions={[]} />);
+    render(<EpisodeDetail artifacts={[artifact]} audioTrackAnnotations={[]} audioTracks={[]} blueprint={null} episode={episode} isMaterialPending={false} isStoryboardAnnotationPending={false} isTransitionPending={false} onCreateAudioTrackAnnotation={vi.fn()} onCreateStoryboardAnnotation={vi.fn()} onImportMaterial={vi.fn()} onOpenHyperframesStudio={onOpen} onRequestRevision={onRequestRevision} onTransition={vi.fn().mockResolvedValue(true)} reviewAnnotations={[]} reviewPackages={[reviewPackage]} tasks={[task]} transitions={[]} />);
 
     await user.click(screen.getByRole("button", { name: "在 HyperFrames Studio 中打开" }));
     await user.click(await screen.findByRole("button", { name: "提交 Studio 修改" }));
@@ -213,10 +209,8 @@ describe("approval console", () => {
     await user.type(screen.getByLabelText("Studio 修改说明"), "删除 shot-02，并将后续镜头前移。");
     await user.click(screen.getByRole("button", { name: "确认并返回分镜审核" }));
 
-    await waitFor(() => expect(supabase.rpc).toHaveBeenCalledWith("request_studio_storyboard_revision", { p_reason: "删除 shot-02，并将后续镜头前移。", p_review_package_id: reviewPackage.id }));
-    expect(onFreeze).not.toHaveBeenCalled();
-    expect(onRequestRenderRevision).not.toHaveBeenCalled();
-    expect(onRefresh).toHaveBeenCalledOnce();
+    await waitFor(() => expect(onRequestRevision).toHaveBeenCalledWith({ kind: "storyboard", reason: "删除 shot-02，并将后续镜头前移。", reviewPackageId: reviewPackage.id }));
+    expect(onRequestRevision).toHaveBeenCalledOnce();
   });
 
   it("收起态导航仍保留审核和发布角标节点", () => {

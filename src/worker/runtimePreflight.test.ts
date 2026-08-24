@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { mediaCapabilityForKey, mediaCapabilityKeys } from "./adapterRegistry";
 import { createRuntimePreflight, runtimeCapabilitiesFromBlueprintPolicy } from "./runtimePreflight";
 
 describe("runtime preflight", () => {
@@ -168,17 +169,20 @@ describe("runtime preflight", () => {
       soundtrack: {},
     });
 
-    expect(capabilities.map((capability) => capability.capability)).toEqual(expect.arrayContaining([
-      "static_visual_generation",
-      "a_roll_generation",
-      "b_roll_generation",
-      "narration_generation",
-      "soundtrack_generation",
-    ]));
+    expect(capabilities.map((capability) => capability.capability)).toEqual(expect.arrayContaining(mediaCapabilityKeys.map((key) => mediaCapabilityForKey(key).capability)));
     expect(createRuntimePreflight(capabilities).checks).toEqual(expect.arrayContaining([
       expect.objectContaining({ capability: "static_visual_generation", check: "blueprint_configuration", status: "blocked", action: "edit_blueprint", scope: "blueprint" }),
       expect.objectContaining({ capability: "a_roll_generation", check: "blueprint_configuration", status: "blocked", action: "edit_blueprint", scope: "blueprint" }),
     ]));
+  });
+
+  it("不会把 Codex 的规划 Adapter 误当成可执行的 A-roll Adapter", () => {
+    const capabilities = runtimeCapabilitiesFromBlueprintPolicy({
+      allowed_tools: ["read", "write"],
+      a_roll: { executor: { provider: "codex", adapter: "codex", model: "video-generation-v1", prompt_version: "a-roll-v1" } },
+    });
+
+    expect(createRuntimePreflight(capabilities).checks).toContainEqual(expect.objectContaining({ capability: "a_roll_generation", check: "capability_registration", status: "unavailable" }));
   });
 
   it("蓝图关闭时不被系列旧媒体规则重新启用", () => {

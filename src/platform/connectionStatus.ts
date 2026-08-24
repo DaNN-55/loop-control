@@ -1,8 +1,7 @@
 import type { Json } from "../lib/database.types";
 import type { WorkerPreflightAction, WorkerPreflightResult, WorkerPreflightStatus } from "../worker/contracts";
 import { blueprintPolicyToForm, type ConfigurableMediaAdapterKey } from "./configurationFormValues";
-
-const capabilityByMediaAdapter: Record<ConfigurableMediaAdapterKey, string> = { static_visual: "static_visual_generation", a_roll: "a_roll_generation", b_roll: "b_roll_generation", narration: "narration_generation", soundtrack: "soundtrack_generation" };
+import { mediaCapabilityForKey } from "../worker/adapterRegistry";
 
 export type ExternalConnectionStatus = {
   action: WorkerPreflightAction;
@@ -18,7 +17,7 @@ export type ExternalConnectionStatus = {
 export function externalConnectionStatuses(policy: Json, preflight: WorkerPreflightResult | null): ExternalConnectionStatus[] {
   const form = blueprintPolicyToForm(policy);
   return (form.enabledMediaAdapters ?? []).map((key) => {
-    const capability = capabilityByMediaAdapter[key];
+    const capability = mediaCapabilityForKey(key).capability;
     const checks = preflight?.checks.filter((check) => check.capability === capability) ?? [];
     const failedCheck = checks.find((check) => check.status !== "passed");
     const adapter = form.mediaAdapters[key];

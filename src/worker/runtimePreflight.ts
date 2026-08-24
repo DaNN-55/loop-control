@@ -1,5 +1,5 @@
 import type { WorkerPreflightCheck, WorkerPreflightResult, WorkerPreflightStatus, WorkerTaskPackage } from "./contracts.js";
-import { adapterRegistration, registeredAdaptersForCapability } from "./adapterRegistry.js";
+import { adapterRegistration, mediaCapabilityForCapability, mediaCapabilityForKey, mediaCapabilityKeys, registeredAdaptersForCapability } from "./adapterRegistry.js";
 
 export interface RuntimeCapability {
   capability: string;
@@ -32,14 +32,6 @@ export interface RuntimePreflightEnvironment {
   modelPermissions?: Record<string, RuntimeDependencyStatus>;
 }
 
-const mediaCapabilities = [
-  { key: "static_visual", capability: "static_visual_generation" },
-  { key: "a_roll", capability: "a_roll_generation" },
-  { key: "b_roll", capability: "b_roll_generation" },
-  { key: "narration", capability: "narration_generation" },
-  { key: "soundtrack", capability: "soundtrack_generation" },
-] as const;
-
 const legacyRegisteredAdapters = new Set([
   "codex:codex",
   "hyperframes:hyperframes",
@@ -56,8 +48,9 @@ export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, _seriesR
     { capability: "final_rendering", provider: "hyperframes", model: "hyperframes@0.7.109", promptVersion: "final-render-v1", allowedTools: ["read", "write"], command: "hyperframes" },
   ];
 
-  for (const mediaCapability of mediaCapabilities) {
-    const blueprintValue = root[mediaCapability.key];
+  for (const key of mediaCapabilityKeys) {
+    const mediaCapability = mediaCapabilityForKey(key);
+    const blueprintValue = root[key];
     if (blueprintValue === undefined || blueprintValue === null) continue;
     const config = record(blueprintValue);
     const executor = record(config.executor);
@@ -108,7 +101,8 @@ export function createRuntimePreflight(capabilities: RuntimeCapability[], enviro
       continue;
     }
 
-    const registrationValid = capability.adapter
+    const mediaCapability = mediaCapabilityForCapability(capability.capability);
+    const registrationValid = mediaCapability?.workerAvailable === false ? false : capability.adapter
       ? registeredAdaptersForCapability(capability.capability).some((registration) => registration.provider === capability.provider && registration.id === capability.adapter) || legacyRegisteredAdapters.has(`${capability.provider}:${capability.adapter}`)
       : capability.provider === "codex" || capability.provider === "hyperframes" || capability.provider === "ffmpeg";
     if (!registrationValid) {

@@ -76,6 +76,9 @@ const removeSeriesAdvancedRulesMigration = resolve(
 const sharedPlanningMigration = resolve(
   "supabase/migrations/20260824103000_unify_planning_configuration.sql",
 );
+const reviewRevisionPreconditionsMigration = resolve(
+  "supabase/migrations/20260824110000_deepen_review_revision_preconditions.sql",
+);
 const deployedMigrations = {
   "20260822095959_guard_legacy_b_roll_history.sql": "b36e63037ca12c2785d7bbb9f2fe8596f31377de734dcf8b96cb03af23613c9b",
   "20260822100000_freeze_b_roll_adapter_connection.sql": "f38575ba3b5dcb7814f230c5a48a52c6a5ac37811868d00bdb0f7eb375b2a51d",
@@ -274,5 +277,17 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("'storyboard_review', 'changes_requested'");
     expect(migration).toContain("selected_pre_render_package.context_snapshot ->> 'storyboard_review_package_id'");
     expect(migration).toContain("grant execute on function public.request_studio_storyboard_revision(uuid, text) to authenticated");
+  });
+
+  it("两类审核修订共享当前包与 Owner 前置条件，但保留各自编排", () => {
+    const migration = readFileSync(reviewRevisionPreconditionsMigration, "utf8");
+
+    expect(migration).toContain("create function public.current_hyperframes_review_package");
+    expect(migration).toContain("for update");
+    expect(migration).toContain("membership_role is distinct from 'owner'");
+    expect(migration).toContain("revoke all on function public.current_hyperframes_review_package(uuid, boolean) from public, anon, authenticated");
+    expect(migration).toContain("select * into selected_package from public.current_hyperframes_review_package(p_review_package_id, true)");
+    expect(migration).toContain("select * into selected_qc_package from public.current_hyperframes_review_package(p_review_package_id, false)");
+    expect(migration).toContain("perform public.orchestrate_storyboard_tasks_for_episode(selected_episode.id)");
   });
 });

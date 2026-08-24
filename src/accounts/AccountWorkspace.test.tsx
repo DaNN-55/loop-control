@@ -25,13 +25,13 @@ const seriesVersions: SeriesVersion[] = [
 ];
 
 function renderWorkspace(overrides: Partial<ComponentProps<typeof AccountWorkspace>> = {}) {
-  return render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onActivate={vi.fn()} onSelectAccount={vi.fn()} promptVersions={[storyboardHarness]} {...overrides} />);
+  return render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onSelectAccount={vi.fn()} promptVersions={[storyboardHarness]} {...overrides} />);
 }
 
 function PromptVersionRefreshWorkspace() {
   const [policy, setPolicy] = useState<Record<string, Json>>(blueprint.policy as Record<string, Json>);
   const [promptVersions, setPromptVersions] = useState<PromptVersion[]>([]);
-  return <AccountWorkspace account={account} accounts={[account]} blueprints={[{ ...blueprint, policy }]} isPending="" onActivate={vi.fn()} onCreatePromptVersion={async (input) => {
+  return <AccountWorkspace account={account} accounts={[account]} blueprints={[{ ...blueprint, policy }]} isPending="" onCreatePromptVersion={async (input) => {
     const created: PromptVersion = { account_id: account.id, capability: input.capability, content_hash: "a".repeat(64), created_at: "2026-08-23T00:00:00.000Z", created_by: "owner-1", id: "harness-storyboard-2", instructions: input.instructions, is_active: true, name: input.name, slug: "storyboard-planning-v2", summary: input.summary, version: 2 };
     setPolicy({ ...policy });
     setPromptVersions([created]);
@@ -58,7 +58,7 @@ describe("账号配置工作区", () => {
 
     await user.clear(screen.getByLabelText("账号定位"));
     await user.type(screen.getByLabelText("账号定位"), "新定位");
-    await user.click(screen.getByRole("button", { name: "保存蓝图" }));
+    await user.click(screen.getByRole("button", { name: "保存并检查" }));
 
     expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ positioning: "新定位" }));
   });
@@ -135,7 +135,7 @@ describe("账号配置工作区", () => {
     await user.click(screen.getByRole("checkbox", { name: "启用静态视觉 / 图片生成" }));
     expect(screen.getByRole("heading", { name: "静态视觉 / 图片生成" })).toBeTruthy();
     expect(screen.getByText("未配置", { selector: ".media-adapter-status" })).toBeTruthy();
-    await user.click(screen.getByRole("button", { name: "保存蓝图" }));
+    await user.click(screen.getByRole("button", { name: "保存并检查" }));
 
     expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ static_visual: {} }));
   });
@@ -175,7 +175,7 @@ describe("账号配置工作区", () => {
     renderWorkspace({ onUpdateBlueprint, promptVersions: [harness] });
 
     await user.selectOptions(screen.getByRole("combobox", { name: "分镜规划 Prompt Harness" }), harness.id);
-    await user.click(screen.getByRole("button", { name: "保存蓝图" }));
+    await user.click(screen.getByRole("button", { name: "保存并检查" }));
 
     expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ executors: expect.objectContaining({ storyboard_planning: expect.objectContaining({ adapter: "codex", harness_id: harness.id, prompt_version: harness.slug }) }) }));
   });
@@ -279,7 +279,7 @@ describe("账号配置工作区", () => {
     const user = userEvent.setup();
     function RerenderingWorkspace() {
       const [, setDirty] = useState(false);
-      return <AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onActivate={vi.fn()} onDirtyChange={setDirty} onSelectAccount={vi.fn()} series={[series]} seriesVersions={[...seriesVersions]} />;
+      return <AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onDirtyChange={setDirty} onSelectAccount={vi.fn()} series={[series]} seriesVersions={[...seriesVersions]} />;
     }
     render(<RerenderingWorkspace />);
     await user.click(screen.getByRole("tab", { name: "系列" }));

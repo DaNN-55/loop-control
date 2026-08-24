@@ -103,7 +103,7 @@ const materialInputProps = {
   onCreateStoryboardAnnotation: vi.fn().mockResolvedValue(undefined),
   onCreateAudioTrackAnnotation: vi.fn().mockResolvedValue(undefined),
   onImportMaterial: vi.fn().mockResolvedValue(undefined),
-  onRequestReviewRenderRevision: vi.fn().mockResolvedValue(true),
+  onRequestRevision: vi.fn().mockResolvedValue({ kind: "composition" }),
   onUpdateTitle: vi.fn().mockResolvedValue(undefined),
 };
 
@@ -311,7 +311,11 @@ describe("审核台", () => {
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isTransitionPending={false} onOpenBlueprint={onOpenBlueprint} onTransition={vi.fn()} tasks={[executorTask1, executorTask2]} transitions={[]} />);
 
-    expect(screen.getByRole("heading", { name: "Worker 阻塞项（2）" })).toBeTruthy();
+    const blockerSection = screen.getByRole("heading", { name: "优先处理 Worker 阻塞项（2）" }).closest("details");
+    const materialSection = screen.getByRole("heading", { name: "准备生产材料" }).closest("details");
+    expect(blockerSection?.open).toBe(true);
+    expect(blockerSection?.compareDocumentPosition(materialSection as Node)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(screen.getByText("先处理 Worker 阻塞项")).toBeTruthy();
     expect(screen.getByText("影响 2 个任务")).toBeTruthy();
     expect(screen.getAllByText("处理位置")).toHaveLength(1);
     expect(screen.queryByText("Episode")).toBeNull();
@@ -623,7 +627,7 @@ describe("审核台", () => {
 
   it("在 Studio 提交一次合成修订并重新审核", async () => {
     const user = userEvent.setup();
-    const onRequestReviewRenderRevision = vi.fn().mockResolvedValue(true);
+    const onSubmitStudioRevision = vi.fn().mockResolvedValue({ kind: "composition" });
     const qcEpisode: Episode = { ...reviewEpisode, id: "episode-qc", stage: "qc_review", title: "合成调整" };
     const renderArtifact: Artifact = { ...previewArtifact, episode_id: qcEpisode.id, artifact_type: "render", id: "artifact-qc-render", producer_task_id: "task-qc-render", relative_path: "episodes/episode-qc/review-render/v2/review-render.mp4" };
     const qcPackage = {
@@ -633,8 +637,7 @@ describe("审核台", () => {
     };
     const renderTask = { ...blockedTask, id: qcPackage.task_id, episode_id: qcEpisode.id, input_snapshot: { review_render: { adjustments: { aspect_ratio: "9:16", width: 1080, height: 1920, captions_enabled: true, caption_style: "minimal", crop: "contain", pacing: "gentle", transition: "cut", layout: "center", narration_gain_db: 0, bgm_gain_db: -12, sfx_gain_db: -6 } } } } as unknown as Task;
     const onOpenHyperframesStudio = vi.fn().mockResolvedValue({ fileSize: 24, relativePath: "episodes/episode-qc/studio/00000000-0000-0000-0000-000000000001/index.html", sha256: "a".repeat(64) });
-    const onFreezeHyperframesStudio = vi.fn().mockResolvedValue({ fileSize: 31, relativePath: "episodes/episode-qc/studio-frozen/00000000-0000-0000-0000-000000000002/index.html", sha256: "b".repeat(64) });
-    const props = { ...materialInputProps, artifacts: [renderArtifact], blueprint, episode: qcEpisode, isTransitionPending: false, onFreezeHyperframesStudio, onOpenHyperframesStudio, onRequestReviewRenderRevision, onTransition: vi.fn(), reviewPackages: [qcPackage], tasks: [renderTask], transitions: [] };
+    const props = { ...materialInputProps, artifacts: [renderArtifact], blueprint, episode: qcEpisode, isTransitionPending: false, onOpenHyperframesStudio, onSubmitStudioRevision, onTransition: vi.fn(), reviewPackages: [qcPackage], tasks: [renderTask], transitions: [] };
     render(<EpisodeDetail {...props} />);
 
     expect(screen.getByRole("heading", { name: "在 HyperFrames Studio 编辑" })).toBeTruthy();
@@ -643,8 +646,7 @@ describe("审核台", () => {
     await user.click(screen.getByRole("button", { name: "提交 Studio 修改" }));
     await user.type(screen.getByLabelText("Studio 修改说明"), "字幕需要更醒目。");
     await user.click(screen.getByRole("button", { name: "确认并重新审核" }));
-    expect(onFreezeHyperframesStudio).toHaveBeenCalledWith(qcEpisode.id, expect.stringContaining("/studio/"));
-    expect(onRequestReviewRenderRevision).toHaveBeenCalledWith(expect.objectContaining({ reason: "字幕需要更醒目。", reviewPackageId: qcPackage.id, studioProject: expect.objectContaining({ relativePath: expect.stringContaining("/studio-frozen/") }) }));
+    expect(onSubmitStudioRevision).toHaveBeenCalledWith(expect.objectContaining({ episodeId: qcEpisode.id, reason: "字幕需要更醒目。", reviewPackageId: qcPackage.id, workspaceRelativePath: expect.stringContaining("/studio/") }));
   });
 
   it("在审核渲染中只提供官方 Studio 入口", async () => {

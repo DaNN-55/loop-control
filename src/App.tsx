@@ -16,6 +16,7 @@ import { OperationsWorkspace } from "./operations/OperationsWorkspace";
 import { blockersFromResult, currentReviewPackage, type WorkerBlocker, workerBlockers } from "./reviews/reviewSelectors";
 import { workerBlockerGuidance } from "./reviews/blockerGuidance";
 import { artifactPreviewKind, localArtifactUrl, useLocalArtifactBlob } from "./reviews/localArtifactPreview";
+import { defaultReviewRenderComposition, recoverFinalReviewRender, requestReviewRevision, submitStudioReviewRevision, type HyperframesStudioWorkspace, type ReviewRevisionOutcome, type ReviewRevisionRequest, type ReviewRenderComposition, type StudioReviewRevisionRequest } from "./reviews/reviewRevision";
 import { WorkerBlockerCard } from "./reviews/WorkerBlockerCard";
 import { parseWorkerPreflight, type StoryboardAudioCue, type StoryboardShotManifest, type WorkerPreflightResult } from "./worker/contracts";
 import { accountIdentityColor, accountIdentityInitials } from "./platform/accountIdentity";
@@ -72,55 +73,7 @@ interface ReviewAction {
   requestChangesStage: EpisodeStage;
 }
 
-interface ReviewRenderComposition {
-  aspectRatio: "9:16" | "16:9" | "1:1";
-  width: number;
-  height: number;
-  captionsEnabled: boolean;
-  captionStyle: "cinematic" | "minimal";
-  pacing: "gentle" | "standard" | "compact";
-  crop: "cover" | "contain";
-  transition: "fade" | "cut";
-  layout: "lower_third" | "center";
-  narrationGainDb: number;
-  bgmGainDb: number;
-  sfxGainDb: number;
-}
-
-interface ReviewRenderRevisionRequest {
-  reviewPackageId: string;
-  composition?: ReviewRenderComposition;
-  studioProject?: { relativePath: string; sha256: string; fileSize: number };
-  captionStyle?: "cinematic" | "minimal";
-  pacing?: "gentle" | "standard" | "compact";
-  crop?: "cover" | "contain";
-  transition?: "fade" | "cut";
-  layout?: "lower_third" | "center";
-  reason: string;
-}
-
-interface HyperframesStudioWorkspace {
-  relativePath: string;
-  sha256: string;
-  fileSize: number;
-}
-
 type ReviewDecisionDraft = { reason: string };
-
-const defaultReviewRenderComposition: ReviewRenderComposition = {
-  aspectRatio: "9:16",
-  width: 1080,
-  height: 1920,
-  captionsEnabled: true,
-  captionStyle: "cinematic",
-  pacing: "standard",
-  crop: "cover",
-  transition: "fade",
-  layout: "lower_third",
-  narrationGainDb: 0,
-  bgmGainDb: -12,
-  sfxGainDb: -6,
-};
 
 export const timezoneOptions = [
   ["Asia/Shanghai", "中国大陆 · 上海"],
@@ -449,10 +402,6 @@ function episodeIsArchived(episode: Episode): boolean {
 
 function reviewActionFor(stage: EpisodeStage): ReviewAction | null {
   return reviewActions[stage] ?? null;
-}
-
-function reviewRenderCompositionToJson(composition: ReviewRenderComposition): Json {
-  return { aspect_ratio: composition.aspectRatio, width: composition.width, height: composition.height, captions_enabled: composition.captionsEnabled, caption_style: composition.captionStyle, pacing: composition.pacing, crop: composition.crop, transition: composition.transition, layout: composition.layout, narration_gain_db: composition.narrationGainDb, bgm_gain_db: composition.bgmGainDb, sfx_gain_db: composition.sfxGainDb };
 }
 
 function studioWorkspaceFromPayload(value: unknown): HyperframesStudioWorkspace {
@@ -870,25 +819,6 @@ export function App() {
     }
   }
 
-  async function updateBlueprint(policy: Json): Promise<Blueprint | null> {
-    if (!selectedAccount) return null;
-    setPendingAction("blueprint");
-    setErrorMessage("");
-    try {
-      const { data, error } = await supabase.rpc("update_current_blueprint", { p_account_id: selectedAccount.id, p_policy: policy });
-      if (error) throw error;
-      setMessage("当前蓝图规则已更新；之后新建的生产单会使用最新规则。");
-      await refreshWorkspace();
-      void refreshBlueprintPreflight(selectedAccount.id);
-      return data;
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "创建蓝图版本失败。");
-      return null;
-    } finally {
-      setPendingAction("");
-    }
-  }
-
   async function applyEpisodeConfigurationRepair(input: { context: BlueprintRepairContext; policy: Json }): Promise<boolean> {
     setPendingAction(`apply-episode-repair-${input.context.episodeId}`);
     setErrorMessage("");
@@ -925,16 +855,31 @@ export function App() {
     }
   }
 
+  async function updateBlueprint(policy: Json): Promise<Blueprint | null> {
+    if (!selectedAccount) return null;
+    setPendingAction("blueprint");
+    setErrorMessage("");
+    try {
+      const { data, error } = await supabase.rpc("update_current_blueprint", { p_account_id: selectedAccount.id, p_policy: policy });
+      if (error) throw error;
+      setMessage("当前蓝图规则已更新；之后新建的生产单会使用最新规则。");
+      await refreshWorkspace();
+      void refreshBlueprintPreflight(selectedAccount.id);
+      return data;
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "创建蓝图版本失败。");
+      return null;
+    } finally {
+      setPendingAction("");
+    }
+  }
+
   async function createSeries(input: { name: string; rules: Json }) {
     if (!selectedAccount) return;
     setPendingAction("series");
     setErrorMessage("");
     try {
-      const { error } = await supabase.rpc("create_series", {
-        p_account_id: selectedAccount.id,
-        p_name: input.name,
-        p_rules: input.rules,
-      });
+      const { error } = await supabase.rpc("create_series", { p_account_id: selectedAccount.id, p_name: input.name, p_rules: input.rules });
       if (error) throw error;
       setMessage("系列和 v1 规则已创建，可在新建生产单时关联。");
       await refreshWorkspace();
@@ -1039,64 +984,6 @@ export function App() {
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "删除账号失败。只有没有生产单的账号可以删除。");
       return false;
-    } finally {
-      setPendingAction("");
-    }
-  }
-
-  async function activateBlueprint(blueprintId: string) {
-    if (!selectedAccount) return;
-    setPendingAction(`activate-${blueprintId}`);
-    setErrorMessage("");
-    try {
-      const { error } = await supabase.rpc("activate_blueprint_version", {
-        p_account_id: selectedAccount.id,
-        p_blueprint_version_id: blueprintId,
-      });
-      if (error) throw error;
-      setMessage("蓝图已激活；它只影响之后新建的生产单。");
-      await refreshWorkspace();
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "激活蓝图失败。");
-    } finally {
-      setPendingAction("");
-    }
-  }
-
-  async function deactivateBlueprint(blueprintId: string) {
-    if (!selectedAccount) return;
-    setPendingAction(`deactivate-${blueprintId}`);
-    setErrorMessage("");
-    try {
-      const { error } = await supabase.rpc("deactivate_blueprint_version", {
-        p_account_id: selectedAccount.id,
-        p_blueprint_version_id: blueprintId,
-      });
-      if (error) throw error;
-      setMessage("蓝图已停用；重新激活蓝图后才能创建新的生产单。");
-      await refreshWorkspace();
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "停用蓝图失败。");
-    } finally {
-      setPendingAction("");
-    }
-  }
-
-  async function setBlueprintArchived(blueprintId: string, archived: boolean) {
-    if (!selectedAccount) return;
-    setPendingAction(`${archived ? "archive" : "unarchive"}-${blueprintId}`);
-    setErrorMessage("");
-    try {
-      const { error } = await supabase.rpc("set_blueprint_archived", {
-        p_account_id: selectedAccount.id,
-        p_archived: archived,
-        p_blueprint_version_id: blueprintId,
-      });
-      if (error) throw error;
-      setMessage(archived ? "蓝图已归档，仍保留历史记录。" : "蓝图已取消归档，可重新激活。 ");
-      await refreshWorkspace();
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : archived ? "归档蓝图失败。" : "取消归档蓝图失败。");
     } finally {
       setPendingAction("");
     }
@@ -1351,22 +1238,35 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
     }
   }
 
-  async function requestReviewRenderRevision(input: ReviewRenderRevisionRequest): Promise<boolean> {
+  async function submitReviewRevision(input: ReviewRevisionRequest): Promise<ReviewRevisionOutcome> {
     setPendingAction(`review-render-revision-${input.reviewPackageId}`);
     setErrorMessage("");
     try {
-      const composition = reviewRenderCompositionToJson(input.composition ?? { ...defaultReviewRenderComposition, captionStyle: input.captionStyle ?? defaultReviewRenderComposition.captionStyle, pacing: input.pacing ?? defaultReviewRenderComposition.pacing, crop: input.crop ?? defaultReviewRenderComposition.crop, transition: input.transition ?? defaultReviewRenderComposition.transition, layout: input.layout ?? defaultReviewRenderComposition.layout }) as Record<string, Json>;
-      const { error } = await supabase.rpc("request_review_render_revision", {
-        p_composition: input.studioProject ? { ...composition, studio_project: { relative_path: input.studioProject.relativePath, sha256: input.studioProject.sha256, file_size: input.studioProject.fileSize } } : composition,
-        p_reason: input.reason,
-        p_review_package_id: input.reviewPackageId,
-      });
-      if (error) throw error;
-      setMessage("合成调整已冻结；会复用已批准媒体和音轨生成新的审核渲染。");
+      const outcome = await requestReviewRevision(input);
+      setMessage(outcome.message);
       await refreshWorkspace();
-      return true;
+      return outcome;
     } catch (error) {
-      const detail = error instanceof Error ? error.message : error && typeof error === "object" && "message" in error && typeof error.message === "string" ? error.message : "无法提交合成调整。";
+      const detail = error instanceof Error ? error.message : error && typeof error === "object" && "message" in error && typeof error.message === "string" ? error.message : "无法提交审核修订。";
+      setErrorMessage(detail);
+      throw new Error(detail);
+    } finally {
+      setPendingAction("");
+    }
+  }
+
+  async function submitStudioRevision(input: Omit<StudioReviewRevisionRequest, "accessToken">): Promise<ReviewRevisionOutcome> {
+    const token = session?.access_token;
+    if (!token) throw new Error("需要 Owner 登录会话。");
+    setPendingAction(`review-render-revision-${input.reviewPackageId}`);
+    setErrorMessage("");
+    try {
+      const outcome = await submitStudioReviewRevision({ ...input, accessToken: token });
+      setMessage(outcome.message);
+      await refreshWorkspace();
+      return outcome;
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : "无法提交审核修订。";
       setErrorMessage(detail);
       throw new Error(detail);
     } finally {
@@ -1378,9 +1278,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
     setPendingAction(`final-render-retry-${episodeId}`);
     setErrorMessage("");
     try {
-      const { error } = await supabase.rpc("retry_failed_final_render", { p_episode_id: episodeId, p_reason: reason });
-      if (error) throw error;
-      setMessage("最终渲染已重新排队；会复用已批准的审核工程。");
+      setMessage(await recoverFinalReviewRender(episodeId, reason));
       await refreshWorkspace();
       return true;
     } catch (error) {
@@ -1405,15 +1303,6 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
     if (studioWindow) studioWindow.location.replace(payload.studioUrl);
     else window.open(payload.studioUrl, "_blank", "noopener,noreferrer");
     return workspace;
-  }
-
-  async function freezeHyperframesStudio(episodeId: string, workspaceRelativePath: string): Promise<HyperframesStudioWorkspace> {
-    const token = session?.access_token;
-    if (!token) throw new Error("需要 Owner 登录会话。");
-    const response = await fetch(`/_freeze-hyperframes-studio?episode=${encodeURIComponent(episodeId)}`, { body: JSON.stringify({ workspaceRelativePath }), headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, method: "POST" });
-    const payload: unknown = await response.json().catch(() => null);
-    if (!response.ok || !payload || typeof payload !== "object" || Array.isArray(payload) || !("frozenProject" in payload)) throw new Error("无法冻结 Studio 修改。");
-    return studioWorkspaceFromPayload(payload.frozenProject);
   }
 
   async function createStoryboardAnnotation(input: StoryboardAnnotationRequest): Promise<void> {
@@ -1727,17 +1616,14 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             accounts={workspace.accounts}
             blueprints={workspace.blueprints.filter((blueprint) => blueprint.account_id === selectedAccount?.id && !blueprint.is_snapshot)}
             blueprintRepairContext={blueprintRepairContext}
-            onArchiveBlueprint={setBlueprintArchived}
             onApplyEpisodeRepair={applyEpisodeConfigurationRepair}
             onDismissBlueprintRepair={() => { setBlueprintRepairContext(null); setActiveNavigation("episodes"); }}
             onDirtyChange={setAccountConfigurationDirty}
             isPending={pendingAction}
-            onActivate={activateBlueprint}
             onUpdateBlueprint={updateBlueprint}
             onCreatePromptVersion={createPromptVersion}
             onCreateSeries={createSeries}
             onCreateSeriesVersion={createSeriesVersion}
-            onDeactivateBlueprint={deactivateBlueprint}
             onDeleteAccount={deleteAccount}
             onRenameAccount={renameAccount}
             onSelectAccount={(accountId) => { setBlueprintRepairContext(null); setSelectedAccountId(accountId); }}
@@ -1853,10 +1739,10 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             onUpdateAudioSourceMode={updateEpisodeAudioSourceMode}
             onRegisterManualMedia={registerManualMedia}
             onStartProduction={startEpisodeProduction}
-            onRequestReviewRenderRevision={requestReviewRenderRevision}
+            onRequestRevision={submitReviewRevision}
             onRetryFinalRender={retryFinalRender}
             onOpenHyperframesStudio={openHyperframesStudio}
-            onFreezeHyperframesStudio={freezeHyperframesStudio}
+            onSubmitStudioRevision={submitStudioRevision}
             onRefresh={refreshEpisodeStatus}
             onTransition={transitionEpisode}
             ownerId={session.user.id}
@@ -2049,7 +1935,7 @@ function EpisodeUtilityPopover({ artifacts, history, kind, onClose, tasks, worke
   return <div aria-label={heading} className="episode-utility-popover" role="dialog"><header><strong>{heading}</strong><button aria-label={`关闭${heading}`} className="icon-button" onClick={onClose} type="button"><X className="icon" /></button></header>{kind === "worker" ? <div className={`episode-utility-status episode-utility-status-${workerStatus.tone}`}><strong>{workerStatus.label}</strong><p>{workerStatus.detail}</p><span>{tasks.length ? `${completedTasks} / ${tasks.length} 个任务已完成` : "尚无任务记录"}</span></div> : kind === "artifacts" ? <div className="episode-utility-artifacts">{artifacts.length ? artifacts.map((artifact) => <Artifact complete key={artifact.id} label={artifact.artifact_type} name={artifact.relative_path} />) : <div className="episode-utility-summary"><strong>尚无产物</strong><p>Worker 尚未生成可查看的产物。</p></div>}</div> : timeline.length ? <ol className="timeline">{timeline.map((transition) => <li key={transition.id}><i className={`timeline-dot ${stageTone(transition.to_stage)}`} /><div><strong>{stageLabels[transition.to_stage]}</strong><span>{userFacingTransitionReason(transition.reason)}</span></div><time>{formatDate(transition.created_at)}</time></li>)}</ol> : <div className="episode-utility-summary"><strong>暂无状态变化</strong><p>生产单创建与状态变化会显示在这里。</p></div>}</div>;
 }
 
-export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, blueprint, episode, isAudioSourceModePending = false, isDirectoryOpenPending = false, isMaterialPending, isRefreshPending = false, isStartProductionPending = false, isStoryboardAnnotationPending, isTransitionPending, materialRevisions = [], onCreateAudioTrackAnnotation, onCreateQcReviewIssue = async () => {}, onOpenBlueprint, onOpenHyperframesStudio = async () => { throw new Error("当前无法打开 HyperFrames Studio。"); }, onOpenLocalDirectory = async () => {}, onCreateStoryboardAnnotation, onImportMaterial, onRegisterManualMedia = async () => {}, onRefresh = async () => {}, onRequestQcMemberRevision = async () => {}, onRequestReviewRenderRevision, onRetryFinalRender = async () => false, onFreezeHyperframesStudio = async () => { throw new Error("当前无法冻结 HyperFrames Studio 修改。"); }, onResolveQcReviewIssue = async () => {}, onReviewPreRenderMember = async () => {}, onStartProduction = async () => {}, onTransition, onUpdateAudioSourceMode = async () => {}, ownerId = "local-owner", preRenderReviewMemberDecisions = [], preRenderReviewMembers = [], productionPreflight = null, qcReviewIssues = [], reviewAnnotations, reviewPackages, tasks, transitions }: { artifacts: Artifact[]; audioTrackAnnotations: AudioTrackAnnotation[]; audioTracks: AudioTrack[]; blueprint: Blueprint | null; episode: Episode; isAudioSourceModePending?: boolean; isDirectoryOpenPending?: boolean; isMaterialPending: boolean; isRefreshPending?: boolean; isStartProductionPending?: boolean; isStoryboardAnnotationPending: boolean; isTransitionPending: boolean; materialRevisions?: MaterialRevision[]; onCreateAudioTrackAnnotation: (input: AudioTrackAnnotationRequest) => Promise<void>; onCreateQcReviewIssue?: (input: QcReviewIssueRequest) => Promise<void>; onOpenBlueprint?: (blocker: WorkerBlocker) => void; onOpenHyperframesStudio?: (episodeId: string, projectRelativePath: string) => Promise<HyperframesStudioWorkspace>; onOpenLocalDirectory?: (episodeId: string) => Promise<void>; onCreateStoryboardAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onImportMaterial: (input: MaterialImportRequest) => Promise<void>; onRegisterManualMedia?: (input: ManualMediaBindingRequest) => Promise<void>; onRefresh?: () => Promise<void>; onRequestQcMemberRevision?: (issueId: string) => Promise<void>; onRequestReviewRenderRevision: (input: ReviewRenderRevisionRequest) => Promise<boolean>; onRetryFinalRender?: (episodeId: string, reason: string) => Promise<boolean>; onFreezeHyperframesStudio?: (episodeId: string, workspaceRelativePath: string) => Promise<HyperframesStudioWorkspace>; onResolveQcReviewIssue?: (issueId: string, status: "accepted" | "ignored") => Promise<void>; onReviewPreRenderMember?: (input: PreRenderMemberReviewRequest) => Promise<void>; onStartProduction?: (episodeId: string) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; onUpdateAudioSourceMode?: (episodeId: string, audioSourceMode: EpisodeAudioSourceMode) => Promise<void>; ownerId?: string; preRenderReviewMemberDecisions?: PreRenderReviewMemberDecision[]; preRenderReviewMembers?: PreRenderReviewMember[]; productionPreflight?: WorkerPreflightResult | null; qcReviewIssues?: QcReviewIssue[]; reviewAnnotations: ReviewAnnotation[]; reviewPackages: ReviewPackage[]; tasks: Task[]; transitions: Transition[] }) {
+export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, blueprint, episode, isAudioSourceModePending = false, isDirectoryOpenPending = false, isMaterialPending, isRefreshPending = false, isStartProductionPending = false, isStoryboardAnnotationPending, isTransitionPending, materialRevisions = [], onCreateAudioTrackAnnotation, onCreateQcReviewIssue = async () => {}, onOpenBlueprint, onOpenHyperframesStudio = async () => { throw new Error("当前无法打开 HyperFrames Studio。"); }, onOpenLocalDirectory = async () => {}, onCreateStoryboardAnnotation, onImportMaterial, onRegisterManualMedia = async () => {}, onRefresh = async () => {}, onRequestQcMemberRevision = async () => {}, onRequestRevision, onRetryFinalRender = async () => false, onSubmitStudioRevision = async () => { throw new Error("当前无法提交 Studio 修订。"); }, onResolveQcReviewIssue = async () => {}, onReviewPreRenderMember = async () => {}, onStartProduction = async () => {}, onTransition, onUpdateAudioSourceMode = async () => {}, ownerId = "local-owner", preRenderReviewMemberDecisions = [], preRenderReviewMembers = [], productionPreflight = null, qcReviewIssues = [], reviewAnnotations, reviewPackages, tasks, transitions }: { artifacts: Artifact[]; audioTrackAnnotations: AudioTrackAnnotation[]; audioTracks: AudioTrack[]; blueprint: Blueprint | null; episode: Episode; isAudioSourceModePending?: boolean; isDirectoryOpenPending?: boolean; isMaterialPending: boolean; isRefreshPending?: boolean; isStartProductionPending?: boolean; isStoryboardAnnotationPending: boolean; isTransitionPending: boolean; materialRevisions?: MaterialRevision[]; onCreateAudioTrackAnnotation: (input: AudioTrackAnnotationRequest) => Promise<void>; onCreateQcReviewIssue?: (input: QcReviewIssueRequest) => Promise<void>; onOpenBlueprint?: (blocker: WorkerBlocker) => void; onOpenHyperframesStudio?: (episodeId: string, projectRelativePath: string) => Promise<HyperframesStudioWorkspace>; onOpenLocalDirectory?: (episodeId: string) => Promise<void>; onCreateStoryboardAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onImportMaterial: (input: MaterialImportRequest) => Promise<void>; onRegisterManualMedia?: (input: ManualMediaBindingRequest) => Promise<void>; onRefresh?: () => Promise<void>; onRequestQcMemberRevision?: (issueId: string) => Promise<void>; onRequestRevision: (input: ReviewRevisionRequest) => Promise<ReviewRevisionOutcome>; onRetryFinalRender?: (episodeId: string, reason: string) => Promise<boolean>; onSubmitStudioRevision?: (input: Omit<StudioReviewRevisionRequest, "accessToken">) => Promise<ReviewRevisionOutcome>; onResolveQcReviewIssue?: (issueId: string, status: "accepted" | "ignored") => Promise<void>; onReviewPreRenderMember?: (input: PreRenderMemberReviewRequest) => Promise<void>; onStartProduction?: (episodeId: string) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; onUpdateAudioSourceMode?: (episodeId: string, audioSourceMode: EpisodeAudioSourceMode) => Promise<void>; ownerId?: string; preRenderReviewMemberDecisions?: PreRenderReviewMemberDecision[]; preRenderReviewMembers?: PreRenderReviewMember[]; productionPreflight?: WorkerPreflightResult | null; qcReviewIssues?: QcReviewIssue[]; reviewAnnotations: ReviewAnnotation[]; reviewPackages: ReviewPackage[]; tasks: Task[]; transitions: Transition[] }) {
   void onCreateQcReviewIssue;
   void onRequestQcMemberRevision;
   void onResolveQcReviewIssue;
@@ -2101,21 +1987,21 @@ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, b
   const episodeMaterials = materialRevisions.filter((material) => material.episode_id === episode.id);
   const hasUploadedVideo = episodeMaterials.some((material) => material.material_type === "video");
   const audioSourceMode: EpisodeAudioSourceMode = episode.audio_source_mode === "source" ? "source" : "tts";
-  const nextStep = inputReadyToStart ? "确认材料并开始制作" : nextStepForEpisode(episode.stage);
+  const nextStep = blockers.length ? "先处理 Worker 阻塞项" : inputReadyToStart ? "确认材料并开始制作" : nextStepForEpisode(episode.stage);
 
   return <>
     <header className="review-heading"><div className="review-heading-copy"><h2>{episode.title || "未命名生产单"}</h2><span>{episode.id.slice(0, 8)}</span></div></header>
     <div aria-label="生产单操作" className="episode-detail-toolbar"><div className="episode-toolbar-actions"><button aria-label="刷新生产单状态" className="icon-button episode-toolbar-button" disabled={isRefreshPending} onClick={() => void onRefresh()} title="刷新状态" type="button"><RefreshCw className="icon" /></button><button aria-label="打开本地输入目录" className="icon-button episode-toolbar-button" disabled={isDirectoryOpenPending} onClick={() => void onOpenLocalDirectory(episode.id)} title={`打开本地输入目录：${localInputPath}`} type="button"><FolderOpen className="icon" /></button><button aria-label="复制本地输入目录路径" className="icon-button episode-toolbar-button" onClick={() => void copyLocalInputPath()} title={`复制本地输入目录路径：${localInputPath}`} type="button"><Copy className="icon" /></button><button aria-expanded={openUtilityPanel === "worker"} aria-haspopup="dialog" aria-label={`Worker 状态：${workerStatus.label}`} className="icon-button episode-toolbar-button" onClick={() => setOpenUtilityPanel((current) => current === "worker" ? null : "worker")} title={`Worker 状态：${workerStatus.label} · ${workerStatus.detail}`} type="button"><Activity className="icon" /></button><button aria-expanded={openUtilityPanel === "artifacts"} aria-haspopup="dialog" aria-label="查看产物索引" className="icon-button episode-toolbar-button" onClick={() => setOpenUtilityPanel((current) => current === "artifacts" ? null : "artifacts")} title="查看产物索引" type="button"><ClipboardList className="icon" /></button><button aria-expanded={openUtilityPanel === "timeline"} aria-haspopup="dialog" aria-label="查看审计时间线" className="icon-button episode-toolbar-button" onClick={() => setOpenUtilityPanel((current) => current === "timeline" ? null : "timeline")} title="查看审计时间线" type="button"><History className="icon" /></button></div>{directoryMessage ? <span className="episode-toolbar-status" role="status">{directoryMessage}</span> : null}{openUtilityPanel ? <EpisodeUtilityPopover artifacts={episodeArtifacts} history={history} kind={openUtilityPanel} onClose={() => setOpenUtilityPanel(null)} tasks={episodeTasks} workerStatus={workerStatus} /> : null}</div>
     <p className="review-meta">蓝图 v{blueprint?.version ?? "—"} · 创建于 {formatDate(episode.created_at)}</p>
     <section className="episode-next-step-card"><div><span>当前阶段</span><strong className={`stage stage-${stageTone(episode.stage)}`}>{stageLabels[episode.stage]}</strong></div><div><span>下一步</span><p>{nextStep}</p></div><div className={`episode-worker-status episode-worker-status-${workerStatus.tone}`}><span>Worker 状态</span><strong>{workerStatus.label}</strong><p>{workerStatus.detail}</p></div></section>
+    {blockers.length ? <details className="review-section worker-blockers detail-card-collapsible" open><summary><h3>优先处理 Worker 阻塞项（{blockers.length}）</h3></summary><div className="detail-card-body">{blockerGroups.map(({ blocker, count }) => <WorkerBlockerCard affectedTaskCount={count} blocker={blocker} onOpenBlueprint={onOpenBlueprint} key={`${blocker.code}-${blocker.detail}`} />)}</div></details> : null}
     <details className="review-section detail-card-collapsible" open={waitingForMainScript || inputReadyToStart}><summary><h3>准备生产材料</h3></summary><div className="detail-card-body">{waitingForMainScript ? <><p className="material-import-subtitle">主脚本由外部制作后上传；确认后会作为本生产单不可变输入。</p><MaterialImportForm allowMainScript defaultMainScript episodeId={episode.id} existingMaterials={episodeMaterials} isPending={isMaterialPending} onImport={onImportMaterial} /></> : <><p className="material-import-subtitle">主脚本已确认。你可以继续添加补充材料；所有材料准备好后，点击下方按钮，Worker 才会开始制作。</p><MaterialImportForm allowMainScript={false} defaultMainScript={false} episodeId={episode.id} existingMaterials={episodeMaterials} isPending={isMaterialPending} onImport={onImportMaterial} /></>}<fieldset className="audio-source-mode"><legend>上传视频的声音</legend><label><input checked={audioSourceMode === "tts"} disabled={isAudioSourceModePending} name={`audio-source-${episode.id}`} onChange={() => void onUpdateAudioSourceMode(episode.id, "tts")} type="radio" />使用 TTS 替代原声<span>导出时静音上传视频，并按蓝图生成旁白。</span></label><label><input checked={audioSourceMode === "source"} disabled={isAudioSourceModePending || !hasUploadedVideo} name={`audio-source-${episode.id}`} onChange={() => void onUpdateAudioSourceMode(episode.id, "source")} type="radio" />保留上传视频原声<span>{hasUploadedVideo ? "跳过 TTS，并从上传视频提取原声。" : "请先上传至少一个视频素材。"}</span></label></fieldset>{inputReadyToStart ? <><div className="production-start-gate"><div><strong>材料已准备到可开始状态</strong><p>确认后将先检查本机 Worker 的真实运行态；检查通过后才推进生产单。</p></div><button className="button button-primary" disabled={isStartProductionPending || isAudioSourceModePending} onClick={() => void onStartProduction(episode.id)} type="button">{isAudioSourceModePending ? "保存声音选择中…" : isStartProductionPending ? "检查并开始中…" : "材料准备完成，开始制作"}</button></div>{productionPreflight ? <div aria-live="polite" className={`production-preflight ${productionBlockers.length ? "is-blocked" : "is-passed"}`}><strong>生产前运行态检查：{productionBlockers.length ? `未通过（${productionBlockers.length}）` : "已通过"}</strong><p>已检查当前冻结蓝图对应的 Worker 注册、工具白名单、凭据存在性、有效性、模型权限、网络连通性和媒体库；实际媒体搜索、下载和产物验证仍在任务执行阶段确认。</p>{productionBlockers.map((blocker) => <WorkerBlockerCard blocker={blocker} key={`${blocker.code}-${blocker.capability}`} onOpenBlueprint={onOpenBlueprint} />)}</div> : null}</> : null}</div></details>
     {reviewPackage?.stage !== "visual_review" && reviewPackage?.stage !== "storyboard_review" ? <details className="review-section detail-card-collapsible"><summary><h3>产物预览</h3></summary><div className="detail-card-body"><ArtifactPreview artifacts={episodeArtifacts} /></div></details> : null}
-    {reviewPackage?.stage === "production_ready" ? <PreRenderReviewPackage artifacts={episodeArtifacts} decisions={preRenderMemberDecisions} isTransitionPending={isTransitionPending} members={preRenderMembers} onReviewMember={onReviewPreRenderMember} onTransition={onTransition} reviewPackage={reviewPackage} /> : reviewPackage && reviewArtifact ? reviewPackage.stage === "qc_review" && isHyperframesReviewRender(reviewPackage.context_snapshot) ? <HyperframesReviewRenderPackage artifact={reviewArtifact} artifacts={reviewArtifacts} onFreezeStudio={onFreezeHyperframesStudio} onOpenStudio={onOpenHyperframesStudio} onRefresh={onRefresh} onRequestRenderRevision={onRequestReviewRenderRevision} reviewPackage={reviewPackage} tasks={episodeTasks} /> : reviewPackage.stage === "visual_review" ? <VisualReviewPackage artifact={reviewArtifact} artifacts={reviewArtifacts} reviewPackage={reviewPackage} /> : reviewPackage.stage === "storyboard_review" ? <StoryboardReviewPackage annotations={storyboardAnnotations} artifact={reviewArtifact} episode={episode} isAnnotationPending={isStoryboardAnnotationPending} materialRevisions={materialRevisions.filter((material) => material.episode_id === episode.id)} onCreateAnnotation={onCreateStoryboardAnnotation} onRegisterManualMedia={onRegisterManualMedia} onValidationChange={onStoryboardValidationChange} reviewPackage={reviewPackage} /> : <TextReviewPackage artifact={reviewArtifact} reviewPackage={reviewPackage} /> : null}
+    {reviewPackage?.stage === "production_ready" ? <PreRenderReviewPackage artifacts={episodeArtifacts} decisions={preRenderMemberDecisions} isTransitionPending={isTransitionPending} members={preRenderMembers} onReviewMember={onReviewPreRenderMember} onTransition={onTransition} reviewPackage={reviewPackage} /> : reviewPackage && reviewArtifact ? reviewPackage.stage === "qc_review" && isHyperframesReviewRender(reviewPackage.context_snapshot) ? <HyperframesReviewRenderPackage artifact={reviewArtifact} artifacts={reviewArtifacts} onOpenStudio={onOpenHyperframesStudio} onRequestRevision={onRequestRevision} onSubmitStudioRevision={onSubmitStudioRevision} reviewPackage={reviewPackage} tasks={episodeTasks} /> : reviewPackage.stage === "visual_review" ? <VisualReviewPackage artifact={reviewArtifact} artifacts={reviewArtifacts} reviewPackage={reviewPackage} /> : reviewPackage.stage === "storyboard_review" ? <StoryboardReviewPackage annotations={storyboardAnnotations} artifact={reviewArtifact} episode={episode} isAnnotationPending={isStoryboardAnnotationPending} materialRevisions={materialRevisions.filter((material) => material.episode_id === episode.id)} onCreateAnnotation={onCreateStoryboardAnnotation} onRegisterManualMedia={onRegisterManualMedia} onValidationChange={onStoryboardValidationChange} reviewPackage={reviewPackage} /> : <TextReviewPackage artifact={reviewArtifact} reviewPackage={reviewPackage} /> : null}
     <ArollTaskEvidencePanel tasks={episodeTasks} />
     <AudioTrackPanel annotations={audioTrackAnnotations.filter((annotation) => audioTracks.some((track) => track.episode_id === episode.id && track.id === annotation.audio_track_id))} onCreateAnnotation={onCreateAudioTrackAnnotation} tasks={episodeTasks} tracks={audioTracks.filter((track) => track.episode_id === episode.id)} />
     {failedFinalRender ? <FinalRenderRetryAction episodeId={episode.id} isPending={isTransitionPending} onRetry={onRetryFinalRender} /> : null}
-    {blockers.length ? <details className="review-section worker-blockers detail-card-collapsible"><summary><h3>Worker 阻塞项（{blockers.length}）</h3></summary><div className="detail-card-body">{blockerGroups.map(({ blocker, count }) => <WorkerBlockerCard affectedTaskCount={count} blocker={blocker} onOpenBlueprint={onOpenBlueprint} key={`${blocker.code}-${blocker.detail}`} />)}</div></details> : null}
-    {effectiveReviewAction && isStoryboardReviewValid ? <ReviewActions episode={episode} hasOpenQcBlockers={hasOpenQcBlockers} isPending={isTransitionPending} onRequestReviewRenderRevision={onRequestReviewRenderRevision} onTransition={onTransition} ownerId={ownerId} reviewAction={effectiveReviewAction} reviewPackageId={reviewPackage?.id ?? null} /> : null}
+    {effectiveReviewAction && isStoryboardReviewValid ? <ReviewActions episode={episode} hasOpenQcBlockers={hasOpenQcBlockers} isPending={isTransitionPending} onRequestRevision={onRequestRevision} onTransition={onTransition} ownerId={ownerId} reviewAction={effectiveReviewAction} reviewPackageId={reviewPackage?.id ?? null} /> : null}
   </>;
 }
 
@@ -2127,17 +2013,17 @@ function isQcOnlyPreRender(value: Json): boolean {
   return Boolean(value && !Array.isArray(value) && typeof value === "object" && value.approval_mode === "qc_only");
 }
 
-function HyperframesReviewRenderPackage({ artifact, artifacts, onFreezeStudio, onOpenStudio, onRefresh, onRequestRenderRevision, reviewPackage, tasks }: { artifact: Artifact; artifacts: Artifact[]; onFreezeStudio: (episodeId: string, workspaceRelativePath: string) => Promise<HyperframesStudioWorkspace>; onOpenStudio: (episodeId: string, projectRelativePath: string) => Promise<HyperframesStudioWorkspace>; onRefresh: () => Promise<void>; onRequestRenderRevision: (input: ReviewRenderRevisionRequest) => Promise<boolean>; reviewPackage: ReviewPackage; tasks: Task[] }) {
+function HyperframesReviewRenderPackage({ artifact, artifacts, onOpenStudio, onRequestRevision, onSubmitStudioRevision, reviewPackage, tasks }: { artifact: Artifact; artifacts: Artifact[]; onOpenStudio: (episodeId: string, projectRelativePath: string) => Promise<HyperframesStudioWorkspace>; onRequestRevision: (input: ReviewRevisionRequest) => Promise<ReviewRevisionOutcome>; onSubmitStudioRevision: (input: Omit<StudioReviewRevisionRequest, "accessToken">) => Promise<ReviewRevisionOutcome>; reviewPackage: ReviewPackage; tasks: Task[] }) {
   const context = reviewPackage.context_snapshot && typeof reviewPackage.context_snapshot === "object" && !Array.isArray(reviewPackage.context_snapshot) ? reviewPackage.context_snapshot as Record<string, unknown> : null;
   const projectRevision = context && typeof context.project_revision === "string" ? context.project_revision : "—";
   const upstreamPackage = context && typeof context.pre_render_review_package_id === "string" ? context.pre_render_review_package_id : "—";
   const projectPath = context && typeof context.project_relative_path === "string" ? context.project_relative_path : "—";
   const checks = context && context.technical_evidence && typeof context.technical_evidence === "object" && !Array.isArray(context.technical_evidence) && Array.isArray((context.technical_evidence as Record<string, unknown>).checks) ? (context.technical_evidence as { checks: Array<{ name?: unknown; detail?: unknown }> }).checks : [];
   const qcReport = artifacts.find((candidate) => candidate.artifact_type === "review_qc_report");
-  return <section className="review-section review-render-package"><h3>HyperFrames 审核渲染 · 工程 v{projectRevision}</h3><QcEditingDesk artifact={artifact} onFreezeStudio={onFreezeStudio} onOpenStudio={onOpenStudio} onRefresh={onRefresh} onRequestRenderRevision={onRequestRenderRevision} projectPath={projectPath} reviewPackage={reviewPackage} tasks={tasks} /><dl><div><dt>上游审核包</dt><dd>{upstreamPackage}</dd></div><div><dt>冻结工程</dt><dd>{projectPath}</dd></div><div><dt>渲染产物</dt><dd>{artifact.relative_path}</dd></div><div><dt>QC 报告</dt><dd>{qcReport?.relative_path ?? "缺少 QC 报告"}</dd></div></dl><h4>技术 QC</h4>{checks.length ? <ul className="technical-evidence">{checks.map((check, index) => <li key={`${String(check.name)}-${index}`}><strong>{typeof check.name === "string" ? check.name : "check"}</strong><span>{typeof check.detail === "string" ? check.detail : "证据格式无效。"}</span></li>)}</ul> : <p className="form-error">QC 报告格式无效。</p>}</section>;
+  return <section className="review-section review-render-package"><h3>HyperFrames 审核渲染 · 工程 v{projectRevision}</h3><QcEditingDesk artifact={artifact} onOpenStudio={onOpenStudio} onRequestRevision={onRequestRevision} onSubmitStudioRevision={onSubmitStudioRevision} projectPath={projectPath} reviewPackage={reviewPackage} tasks={tasks} /><dl><div><dt>上游审核包</dt><dd>{upstreamPackage}</dd></div><div><dt>冻结工程</dt><dd>{projectPath}</dd></div><div><dt>渲染产物</dt><dd>{artifact.relative_path}</dd></div><div><dt>QC 报告</dt><dd>{qcReport?.relative_path ?? "缺少 QC 报告"}</dd></div></dl><h4>技术 QC</h4>{checks.length ? <ul className="technical-evidence">{checks.map((check, index) => <li key={`${String(check.name)}-${index}`}><strong>{typeof check.name === "string" ? check.name : "check"}</strong><span>{typeof check.detail === "string" ? check.detail : "证据格式无效。"}</span></li>)}</ul> : <p className="form-error">QC 报告格式无效。</p>}</section>;
 }
 
-function QcEditingDesk({ artifact, onFreezeStudio, onOpenStudio, onRefresh, onRequestRenderRevision, projectPath, reviewPackage, tasks }: { artifact: Artifact; onFreezeStudio: (episodeId: string, workspaceRelativePath: string) => Promise<HyperframesStudioWorkspace>; onOpenStudio: (episodeId: string, projectRelativePath: string) => Promise<HyperframesStudioWorkspace>; onRefresh: () => Promise<void>; onRequestRenderRevision: (input: ReviewRenderRevisionRequest) => Promise<boolean>; projectPath: string; reviewPackage: ReviewPackage; tasks: Task[] }) {
+function QcEditingDesk({ artifact, onOpenStudio, onRequestRevision, onSubmitStudioRevision, projectPath, reviewPackage, tasks }: { artifact: Artifact; onOpenStudio: (episodeId: string, projectRelativePath: string) => Promise<HyperframesStudioWorkspace>; onRequestRevision: (input: ReviewRevisionRequest) => Promise<ReviewRevisionOutcome>; onSubmitStudioRevision: (input: Omit<StudioReviewRevisionRequest, "accessToken">) => Promise<ReviewRevisionOutcome>; projectPath: string; reviewPackage: ReviewPackage; tasks: Task[] }) {
   const [workspace, setWorkspace] = useState<HyperframesStudioWorkspace | null>(null);
   const [reason, setReason] = useState("");
   const [error, setError] = useState("");
@@ -2156,12 +2042,9 @@ function QcEditingDesk({ artifact, onFreezeStudio, onOpenStudio, onRefresh, onRe
     setIsPending(true); setError("");
     try {
       if (submissionKind === "composition") {
-        const frozenProject = await onFreezeStudio(artifact.episode_id, workspace.relativePath);
-        if (!await onRequestRenderRevision({ composition, reason: reason.trim(), reviewPackageId: reviewPackage.id, studioProject: frozenProject })) throw new Error("无法提交 Studio 修订。");
+        await onSubmitStudioRevision({ composition, episodeId: artifact.episode_id, reason: reason.trim(), reviewPackageId: reviewPackage.id, workspaceRelativePath: workspace.relativePath });
       } else {
-        const { error: requestError } = await supabase.rpc("request_studio_storyboard_revision", { p_reason: reason.trim(), p_review_package_id: reviewPackage.id });
-        if (requestError) throw requestError;
-        await onRefresh();
+        await onRequestRevision({ kind: "storyboard", reason: reason.trim(), reviewPackageId: reviewPackage.id });
         setSubmissionKind(null);
       }
     } catch (cause) {
@@ -2655,7 +2538,7 @@ function FinalRenderRetryAction({ episodeId, isPending, onRetry }: { episodeId: 
   return <section className="review-section review-decision"><h3>最终渲染恢复</h3><p className="muted-copy">只重试失败的最终渲染；复用已批准的审核工程和冻结素材。</p><label>重试原因<textarea aria-label="最终渲染重试原因" onChange={(event) => setReason(event.target.value)} placeholder="说明已定位的问题和本次重试原因" rows={3} value={reason} /></label>{error ? <p className="form-error">{error}</p> : null}<div className="review-actions"><button className="button button-secondary" disabled={isPending} onClick={() => void retry()} type="button">重新生成最终渲染</button></div></section>;
 }
 
-function ReviewActions({ episode, hasOpenQcBlockers = false, isPending, onRequestReviewRenderRevision, onTransition, ownerId, reviewAction, reviewPackageId }: { episode: Episode; hasOpenQcBlockers?: boolean; isPending: boolean; onRequestReviewRenderRevision: (input: ReviewRenderRevisionRequest) => Promise<boolean>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; ownerId: string; reviewAction: ReviewAction; reviewPackageId: string | null }) {
+function ReviewActions({ episode, hasOpenQcBlockers = false, isPending, onRequestRevision, onTransition, ownerId, reviewAction, reviewPackageId }: { episode: Episode; hasOpenQcBlockers?: boolean; isPending: boolean; onRequestRevision: (input: ReviewRevisionRequest) => Promise<ReviewRevisionOutcome>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; ownerId: string; reviewAction: ReviewAction; reviewPackageId: string | null }) {
   const [draft, setDraft] = useState(() => readOperationDraft<ReviewDecisionDraft>(ownerId, episode.id, "review-decision"));
   const [reason, setReason] = useState(draft?.reason ?? "");
   const [error, setError] = useState("");
@@ -2683,7 +2566,7 @@ function ReviewActions({ episode, hasOpenQcBlockers = false, isPending, onReques
     if (isReviewRenderRevision && toStage === "render_ready") {
       if (!reviewPackageId) { setError("当前审核渲染包不存在，无法提交调整。"); return; }
       setError("");
-      try { if (await onRequestReviewRenderRevision({ reviewPackageId, reason: trimmedReason })) clearDraft(); } catch (cause) { setError(cause instanceof Error ? cause.message : "无法提交合成调整。"); }
+      try { await onRequestRevision({ kind: "composition", reviewPackageId, reason: trimmedReason }); clearDraft(); } catch (cause) { setError(cause instanceof Error ? cause.message : "无法提交审核修订。"); }
       return;
     }
     setError("");
