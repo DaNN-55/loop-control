@@ -93,7 +93,7 @@ describe("账号配置工作区", () => {
     expect(document.querySelector("#account-rules")).toBeTruthy();
     expect(document.querySelector("#account-capabilities")).toBeTruthy();
     expect(document.querySelector("#account-budget")).toBeTruthy();
-    expect(document.querySelector("#account-budget")?.hasAttribute("open")).toBe(true);
+    expect(document.querySelector("#account-budget")?.tagName).toBe("SECTION");
   });
 
   it("右侧滚动时更新左侧当前分区", async () => {
@@ -161,6 +161,8 @@ describe("账号配置工作区", () => {
     await user.selectOptions(screen.getByRole("combobox", { name: "旁白 Adapter" }), "google_tts");
     await user.selectOptions(screen.getByRole("combobox", { name: "配乐 / 音效 Adapter" }), "freesound_preview");
 
+    expect(within(screen.getByRole("combobox", { name: "语言代码" })).getByRole("option", { name: "en-US" })).toBeTruthy();
+
     expect((screen.getByRole("combobox", { name: "旁白 外部连接" }) as HTMLSelectElement).value).toBe("google-tts-default");
     expect((screen.getByRole("combobox", { name: "配乐 / 音效 外部连接" }) as HTMLSelectElement).value).toBe("freesound-default");
     expect(screen.queryByLabelText("API Key")).toBeNull();
@@ -172,9 +174,7 @@ describe("账号配置工作区", () => {
     const harness: PromptVersion = { ...storyboardHarness, name: "分镜规划 v2", slug: "storyboard-planning-v2", version: 2 };
     renderWorkspace({ onUpdateBlueprint, promptVersions: [harness] });
 
-    await user.click(screen.getByRole("button", { name: "修改分镜规划配置" }));
     await user.selectOptions(screen.getByRole("combobox", { name: "分镜规划 Prompt Harness" }), harness.id);
-    await user.click(screen.getByRole("button", { name: "完成" }));
     await user.click(screen.getByRole("button", { name: "保存蓝图" }));
 
     expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ executors: expect.objectContaining({ storyboard_planning: expect.objectContaining({ adapter: "codex", harness_id: harness.id, prompt_version: harness.slug }) }) }));
@@ -192,7 +192,6 @@ describe("账号配置工作区", () => {
     await user.selectOptions(screen.getByRole("combobox", { name: "B-roll Adapter" }), "pexels_video");
     await user.selectOptions(screen.getByRole("combobox", { name: "旁白 Adapter" }), "google_tts");
     await user.selectOptions(screen.getByRole("combobox", { name: "配乐 / 音效 Adapter" }), "freesound_preview");
-    await user.click(screen.getByRole("button", { name: "修改分镜规划配置" }));
     await user.click(screen.getByText("Prompt 版本管理"));
     await user.type(screen.getByPlaceholderText("例如：脚本生成·强化冲突 v2"), "分镜规划 v2");
     await user.type(screen.getByPlaceholderText("例如：强化开头钩子和人物动机"), "保留已有能力草稿");
@@ -208,15 +207,14 @@ describe("账号配置工作区", () => {
     expect((screen.getByRole("combobox", { name: "分镜规划 Prompt Harness" }) as HTMLSelectElement).value).toBe("harness-storyboard-2");
   });
 
-  it("只暴露一套分镜规划配置", async () => {
-    const user = userEvent.setup();
+  it("只暴露一套常驻展开的分镜规划配置", () => {
     renderWorkspace({ onCreatePromptVersion: vi.fn().mockResolvedValue(null) });
 
     expect(screen.queryByRole("button", { name: "修改视觉规划配置" })).toBeNull();
-    await user.click(screen.getByRole("button", { name: "修改分镜规划配置" }));
-
-    expect(screen.getByRole("dialog")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "修改分镜规划配置" })).toBeNull();
+    expect(screen.queryByRole("dialog")).toBeNull();
     expect(screen.queryByRole("spinbutton", { name: "分镜规划 阶段预算" })).toBeNull();
+    expect(screen.getByRole("combobox", { name: "分镜规划 Prompt Harness" })).toBeTruthy();
     expect(screen.getByRole("heading", { name: "登记新版本" })).toBeTruthy();
   });
 
