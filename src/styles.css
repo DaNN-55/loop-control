@@ -688,8 +688,7 @@ body { min-width: 0; }
 .account-configuration-form { min-width: 0; }
 .account-configuration-form .blueprint-configuration-form { gap: 18px; padding-block-end: 72px; }
 .account-configuration-form .blueprint-configuration-form > fieldset, .account-configuration-form .advanced-configuration { background: #fff; }
-.account-configuration-form .configuration-actions { background: rgba(255,255,255,.94); border-top: 1px solid #e5e8ee; bottom: 0; margin-top: 2px; padding: 12px 0 2px; position: sticky; z-index: 4; }
-.series-configuration-form .configuration-actions { background: rgba(255,255,255,.94); border-top: 1px solid #e5e8ee; bottom: 0; margin-top: 2px; padding: 12px 0 2px; position: sticky; z-index: 4; }
+.account-configuration-form .configuration-actions, .series-configuration-form .configuration-actions { background: rgba(255,255,255,.94); border-top: 1px solid #e5e8ee; bottom: 12px; margin-top: 2px; padding: 12px 0 2px; position: sticky; z-index: 4; }
 .account-status-rail { display: grid; gap: 12px; position: sticky; top: 20px; }
 .account-status-rail > section { background: #fff; border: 1px solid #dce2eb; border-radius: 8px; padding: 14px; }
 .account-status-rail > section:first-child { border-top: 3px solid #8eafe1; }
