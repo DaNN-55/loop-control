@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { adapterRegistration, availableExecutionPathsForCapability, externalAdapterForMediaCapability, localAdapterRegistrationsForCapability, mediaCapabilityForKey, mediaCapabilityKeys, registeredAdaptersForCapability } from "./adapterRegistry";
+import { adapterRegistration, availableExecutionPathsForCapability, externalAdapterForMediaCapability, localAdapterRegistrationsForCapability, mediaCapabilityForKey, mediaCapabilityKeys, readyLocalAdapterRegistrations, registeredAdaptersForCapability, type LocalAdapterRegistration } from "./adapterRegistry";
 
 describe("adapter registry", () => {
   it("集中五项可选生产能力的标识与展示事实", () => {
@@ -74,5 +74,17 @@ describe("adapter registry", () => {
     expect(localAdapterRegistrationsForCapability("a_roll_generation")).toEqual([]);
     expect(adapterRegistration("openai", "openai_images")).toMatchObject({ modelCatalog: ["gpt-image-1"], presetCatalog: ["static-visual-v1"] });
     expect(adapterRegistration("google_tts", "google_tts")?.voiceCatalog?.["zh-CN"]).toContain("cmn-CN-Standard-A");
+  });
+
+  it("只有注册、Worker 可用且当前探测通过的本地 Adapter 才可选", () => {
+    const registrations: LocalAdapterRegistration[] = [
+      { id: "ready", capability: "a_roll_generation", provider: "local", workerAvailable: true, modelCatalog: ["m"], presetCatalog: ["p"] },
+      { id: "not-ready", capability: "a_roll_generation", provider: "local", workerAvailable: true, modelCatalog: ["m"], presetCatalog: ["p"] },
+      { id: "not-deployed", capability: "a_roll_generation", provider: "local", workerAvailable: false, modelCatalog: ["m"], presetCatalog: ["p"] },
+    ];
+
+    expect(readyLocalAdapterRegistrations(registrations, { "local:ready": true }).map((registration) => registration.id)).toEqual(["ready"]);
+    expect(readyLocalAdapterRegistrations(registrations).map((registration) => registration.id)).toEqual([]);
+    expect(availableExecutionPathsForCapability("a_roll_generation")).toEqual(["manual"]);
   });
 });

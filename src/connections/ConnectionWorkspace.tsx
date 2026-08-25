@@ -42,7 +42,7 @@ export function ExternalConnectionPicker({ adapter, connections, isPending = fal
   const [rotationSecret, setRotationSecret] = useState("");
   const [error, setError] = useState("");
   const compatibleConnections = connections.filter((connection) => connection.provider === provider && connection.adapter === adapter);
-  const compatibleVersions = versions.filter((version) => version.provider === provider && version.adapter === adapter && version.status === "verified" && !version.revoked_at);
+  const compatibleVersions = versions.filter((version) => version.provider === provider && version.adapter === adapter && version.is_current && version.status === "verified" && !version.revoked_at);
   const selectedVersion = compatibleVersions.find((version) => version.id === selectedVersionId);
   const connectionNames = new Map(compatibleConnections.map((connection) => [connection.id, connection.name]));
   const selectedConnection = selectedVersion ? compatibleConnections.find((connection) => connection.id === selectedVersion.connection_id) : undefined;

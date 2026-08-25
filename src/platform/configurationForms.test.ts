@@ -114,6 +114,14 @@ describe("账号蓝图表单转换", () => {
     })).toThrow("账号级工具");
   });
 
+  it("轮换后拒绝仍冻结的旧外部连接版本", () => {
+    const form = blueprintPolicyToForm({
+      b_roll: { execution_path: "external", credential_ref: "11111111-1111-4111-8111-111111111111", executor: { provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", prompt_version: "b-roll-v1" }, allowed_tools: ["read", "write"], max_attempts: 1, max_concurrency: 1, provider_max_concurrency: 1 },
+    });
+
+    expect(() => validateMediaAdapter("b_roll", form.mediaAdapters.b_roll, { availableExternalConnectionVersionIds: ["22222222-2222-4222-8222-222222222222"] })).toThrow("当前且已验证");
+  });
+
   it("读取常用字段并保留高级规则", () => {
     const form = blueprintPolicyToForm({
       positioning: "越南民俗短视频",

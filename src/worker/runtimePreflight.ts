@@ -115,13 +115,13 @@ export function createRuntimePreflight(capabilities: RuntimeCapability[], enviro
       const localRegistration = localAdapterRegistrationsForCapability(capability.capability).find((registration) => registration.provider === capability.provider && registration.id === capability.adapter);
       const localKey = `${capability.provider}:${capability.adapter ?? ""}`;
       if (!localRegistration || !localRegistration.workerAvailable) {
-        checks.push({ capability: capability.capability, check: "local_adapter_readiness", phase: "preflight", status: "unavailable", reason: `当前 Worker 未部署或未注册本地 ${capability.provider}/${capability.adapter ?? "Adapter"}。`, action: "contact_environment_admin", scope: "worker" });
+        checks.push({ adapter: capability.adapter, capability: capability.capability, check: "local_adapter_readiness", phase: "preflight", status: "unavailable", reason: `当前 Worker 未部署或未注册本地 ${capability.provider}/${capability.adapter ?? "Adapter"}。`, action: "contact_environment_admin", scope: "worker" });
         continue;
       }
       if (environment.localAdapters && Object.prototype.hasOwnProperty.call(environment.localAdapters, localKey)) {
-        checks.push(dependencyCheck(capability.capability, "local_adapter_readiness", environment.localAdapters[localKey]));
+        checks.push({ ...dependencyCheck(capability.capability, "local_adapter_readiness", environment.localAdapters[localKey]), adapter: capability.adapter });
       } else {
-        checks.push({ capability: capability.capability, check: "local_adapter_readiness", phase: "preflight", status: "unavailable", reason: `本地 ${localKey} 尚未完成当前 Worker 就绪探测。`, action: "contact_environment_admin", scope: "worker" });
+        checks.push({ adapter: capability.adapter, capability: capability.capability, check: "local_adapter_readiness", phase: "preflight", status: "unavailable", reason: `本地 ${localKey} 尚未完成当前 Worker 就绪探测。`, action: "contact_environment_admin", scope: "worker" });
       }
       continue;
     }

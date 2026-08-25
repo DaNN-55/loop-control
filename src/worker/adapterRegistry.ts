@@ -29,6 +29,8 @@ export interface LocalAdapterRegistration {
   voiceCatalog?: Readonly<Record<string, readonly string[]>>;
 }
 
+export type LocalAdapterReadiness = Readonly<Record<string, boolean>>;
+
 export const mediaCapabilityKeys = ["static_visual", "a_roll", "b_roll", "narration", "soundtrack"] as const;
 
 export type MediaCapabilityKey = typeof mediaCapabilityKeys[number];
@@ -142,10 +144,14 @@ export function localAdapterRegistrationsForCapability(capability: string): read
   return localAdapterRegistry.filter((registration) => registration.capability === capability);
 }
 
-export function availableExecutionPathsForCapability(capability: string): readonly ExecutionPath[] {
+export function readyLocalAdapterRegistrations(registrations: readonly LocalAdapterRegistration[], readiness: LocalAdapterReadiness = {}): readonly LocalAdapterRegistration[] {
+  return registrations.filter((registration) => readiness[`${registration.provider}:${registration.id}`] === true && registration.workerAvailable);
+}
+
+export function availableExecutionPathsForCapability(capability: string, readiness: LocalAdapterReadiness = {}): readonly ExecutionPath[] {
   return [
     ...(registeredAdaptersForCapability(capability).some((registration) => registration.requiresNetwork) ? ["external" as const] : []),
-    ...(localAdapterRegistrationsForCapability(capability).length ? ["local" as const] : []),
+    ...(readyLocalAdapterRegistrations(localAdapterRegistrationsForCapability(capability), readiness).length ? ["local" as const] : []),
     "manual",
   ];
 }

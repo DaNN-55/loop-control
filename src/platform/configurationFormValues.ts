@@ -170,7 +170,7 @@ function positiveNumber(source: string, label: string): number {
   return value;
 }
 
-export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterForm): void {
+export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterForm, options: { availableExternalConnectionVersionIds?: readonly string[] } = {}): void {
   if (!mediaAdapterHasValues(form)) return;
   const definition = mediaCapabilityForKey(key);
   const { configurationFields, label } = definition;
@@ -178,7 +178,7 @@ export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterFor
   if (form.executionPath === "manual") return;
   if (!form.provider.trim() || !form.adapter.trim() || !form.model.trim() || !form.promptVersion.trim()) throw new Error(`${label}适配器的 Provider、Adapter、模型和 Prompt 版本不能为空。`);
   if (!commaSeparatedValues(form.allowedTools).length) throw new Error(`${label}适配器至少需要一个允许工具。`);
-  validateRegisteredMediaConnection(label, key, form);
+  validateRegisteredMediaConnection(label, key, form, options);
   if (configurationFields.includes("max_attempts")) positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
   if (configurationFields.includes("max_concurrency")) positiveInteger(form.maxConcurrency, `${label}最大并发数`);
   if (configurationFields.includes("provider_max_concurrency")) positiveInteger(form.providerMaxConcurrency, `${label}供应商并发上限`);
@@ -190,7 +190,7 @@ export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterFor
   }
 }
 
-function validateRegisteredMediaConnection(label: string, key: MediaAdapterKey, form: MediaAdapterForm): void {
+function validateRegisteredMediaConnection(label: string, key: MediaAdapterKey, form: MediaAdapterForm, options: { availableExternalConnectionVersionIds?: readonly string[] }): void {
   const registration = adapterRegistration(form.provider.trim(), form.adapter.trim());
   if (form.executionPath === "local") {
     const localRegistration = localAdapterRegistrationsForCapability(mediaCapabilityForKey(key).capability).find((candidate) => candidate.provider === form.provider.trim() && candidate.id === form.adapter.trim());
@@ -204,6 +204,7 @@ function validateRegisteredMediaConnection(label: string, key: MediaAdapterKey, 
   if (!registration.presetCatalog?.includes(form.promptVersion.trim())) throw new Error(`${label}预设必须从 Adapter 目录选择。`);
   const credentialRef = form.credentialRef.trim();
   const dynamicConnection = isOwnerManagedConnection(form.provider.trim(), form.adapter.trim()) && isUuid(credentialRef);
+  if (dynamicConnection && options.availableExternalConnectionVersionIds && !options.availableExternalConnectionVersionIds.includes(credentialRef)) throw new Error(`${label}必须选择当前且已验证的外部连接版本。`);
   if (registration.connections.length && !registration.connections.some((connection) => connection.credentialRef === credentialRef) && !dynamicConnection) throw new Error(`${label}必须选择可用的外部连接。`);
   if (isOwnerManagedConnection(form.provider.trim(), form.adapter.trim()) && !dynamicConnection) throw new Error(`${label}必须选择可用的外部连接。`);
 }
@@ -212,8 +213,8 @@ function isUuid(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
 }
 
-export function validateMediaAdapters(mediaAdapters: Record<MediaAdapterKey, MediaAdapterForm>): void {
-  for (const key of mediaAdapterKeys) validateMediaAdapter(key, mediaAdapters[key]);
+export function validateMediaAdapters(mediaAdapters: Record<MediaAdapterKey, MediaAdapterForm>, options: { availableExternalConnectionVersionIds?: readonly string[] } = {}): void {
+  for (const key of mediaAdapterKeys) validateMediaAdapter(key, mediaAdapters[key], options);
 }
 
 export function mediaAdapterStatus(key: MediaAdapterKey, form: MediaAdapterForm): "未配置" | "待补齐" | "已配置" {

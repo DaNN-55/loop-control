@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { ConnectionWorkspace } from "./ConnectionWorkspace";
+import { ConnectionWorkspace, ExternalConnectionPicker } from "./ConnectionWorkspace";
 
 describe("外部连接工作区", () => {
   it("从空连接池创建并显式测试 Pexels 连接，表单提交后清空秘密", async () => {
@@ -54,5 +54,19 @@ describe("外部连接工作区", () => {
     expect(onRevokeVersion).toHaveBeenCalledWith("version-1");
     await user.click(screen.getByRole("button", { name: "删除草稿" }));
     expect(onDeleteVersion).toHaveBeenCalledWith("version-3");
+  });
+
+  it("轮换后只暴露当前且已验证版本，并能把新版本保存到蓝图选择", async () => {
+    const user = userEvent.setup();
+    const onSelectVersion = vi.fn();
+    const versions = [
+      { adapter: "openai_images", connection_id: "connection-1", created_at: "", endpoint: "https://api.openai.com/v1", id: "version-1", is_current: false, provider: "openai", revoked_at: null, status: "verified" as const, version: 1 },
+      { adapter: "openai_images", connection_id: "connection-1", created_at: "", endpoint: "https://api.openai.com/v1", id: "version-2", is_current: true, provider: "openai", revoked_at: null, status: "verified" as const, version: 2 },
+    ];
+    render(<ExternalConnectionPicker adapter="openai_images" connections={[{ adapter: "openai_images", created_at: "", created_by: "owner", current_version_id: "version-2", description: "", endpoint: "https://api.openai.com/v1", id: "connection-1", last_verification_detail: null, last_verified_at: null, name: "主 OpenAI", provider: "openai", status: "verified" }]} onSelectVersion={onSelectVersion} provider="openai" selectedVersionId="" versions={versions} />);
+
+    expect(screen.queryByRole("option", { name: /v1/ })).toBeNull();
+    await user.selectOptions(screen.getByRole("combobox", { name: "外部连接 外部连接" }), "version-2");
+    expect(onSelectVersion).toHaveBeenCalledWith("version-2");
   });
 });

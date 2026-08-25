@@ -52,6 +52,9 @@ const manualMediaBindingsMigration = resolve(
 const scopedSoundtrackMigration = resolve(
   "supabase/migrations/20260823121000_scope_soundtrack_orchestration.sql",
 );
+const manualPathOrchestrationMigration = resolve(
+  "supabase/migrations/20260825150000_skip_manual_media_orchestration.sql",
+);
 const scopedCoreOrchestrationMigration = resolve(
   "supabase/migrations/20260823200000_add_scoped_core_task_orchestration.sql",
 );
@@ -187,6 +190,14 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("blueprint.policy -> 'soundtrack'");
     expect(migration).toContain("p_episode_id is null or episode.id = p_episode_id");
     expect(migration).toContain("'credential_ref', frozen_credential_ref");
+  });
+
+  it("人工路径不进入媒体 Worker 编排", () => {
+    const migration = readFileSync(manualPathOrchestrationMigration, "utf8");
+
+    expect(migration).toContain("execution_path}', 'external') <> 'manual");
+    expect(migration).toContain("orchestrate_soundtrack_tasks_without_manual_path");
+    expect(migration).toContain("orchestrate_a_roll_tasks_without_manual_path");
   });
 
   it("定向调度只会创建指定生产单的视觉与分镜任务", () => {

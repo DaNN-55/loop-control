@@ -13,6 +13,7 @@ export type WorkerPreflightAction = "none" | "edit_blueprint" | "manage_connecti
 export type WorkerPreflightScope = "blueprint" | "connection" | "episode" | "worker";
 
 export interface WorkerPreflightCheck {
+  adapter?: string;
   capability: string;
   check: string;
   phase: WorkerPreflightPhase;
@@ -641,7 +642,7 @@ export function parseWorkerPreflight(value: unknown): WorkerPreflightResult {
   if (!isRecord(value) || (value.version !== "worker-preflight/v1" && value.version !== workerPreflightVersion) || !Array.isArray(value.checks)) throw new Error("Worker preflight 格式无效。");
   return { version: workerPreflightVersion, checks: value.checks.map((check) => {
     if (!isRecord(check) || !isNonEmptyString(check.capability) || !isNonEmptyString(check.check) || !isWorkerPreflightPhase(check.phase) || !isWorkerPreflightStatus(check.status) || !isNonEmptyString(check.reason) || !isWorkerPreflightAction(check.action) || !isWorkerPreflightScope(check.scope)) throw new Error("Worker preflight 检查项格式无效。");
-    return { capability: check.capability, check: check.check, phase: check.phase, status: check.status, reason: check.reason, action: check.action, scope: check.scope };
+    return { ...(typeof check.adapter === "string" ? { adapter: check.adapter } : {}), capability: check.capability, check: check.check, phase: check.phase, status: check.status, reason: check.reason, action: check.action, scope: check.scope };
   }) };
 }
 
