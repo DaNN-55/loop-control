@@ -40,6 +40,14 @@ describe("账号蓝图表单转换", () => {
     expect(result).toMatchObject({ static_visual: {}, a_roll: {}, b_roll: {}, narration: {}, soundtrack: {} });
   });
 
+  it("人工素材路径只冻结路径并清除执行器与连接", () => {
+    const form = blueprintPolicyToForm({ a_roll: { execution_path: "manual", executor: { provider: "codex", adapter: "codex" }, credential_ref: "11111111-1111-4111-8111-111111111111" } });
+    const result = blueprintFormToPolicy(form) as Record<string, unknown>;
+
+    expect(form.mediaAdapters.a_roll.executionPath).toBe("manual");
+    expect(result.a_roll).toEqual({ execution_path: "manual" });
+  });
+
   it("保留已有媒体规则，并在保存时去除用户预算", () => {
     const form = blueprintPolicyToForm({ a_roll: { executor: { provider: "codex", adapter: "codex" } }, soundtrack: { budget_cents: 99 } });
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { adapterRegistration, externalAdapterForMediaCapability, mediaCapabilityForKey, mediaCapabilityKeys, registeredAdaptersForCapability } from "./adapterRegistry";
+import { adapterRegistration, availableExecutionPathsForCapability, externalAdapterForMediaCapability, localAdapterRegistrationsForCapability, mediaCapabilityForKey, mediaCapabilityKeys, registeredAdaptersForCapability } from "./adapterRegistry";
 
 describe("adapter registry", () => {
   it("集中五项可选生产能力的标识与展示事实", () => {
@@ -67,5 +67,12 @@ describe("adapter registry", () => {
       requiresNetwork: false,
       connections: [],
     });
+  });
+
+  it("只把已登记的本地 Adapter 暴露为本地执行路径", () => {
+    expect(availableExecutionPathsForCapability("a_roll_generation")).toEqual(["manual"]);
+    expect(localAdapterRegistrationsForCapability("a_roll_generation")).toEqual([]);
+    expect(adapterRegistration("openai", "openai_images")).toMatchObject({ modelCatalog: ["gpt-image-1"], presetCatalog: ["static-visual-v1"] });
+    expect(adapterRegistration("google_tts", "google_tts")?.voiceCatalog?.["zh-CN"]).toContain("cmn-CN-Standard-A");
   });
 });

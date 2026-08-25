@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import type { Database } from "../lib/database.types";
 
-type ExternalConnection = Database["public"]["Tables"]["external_connections"]["Row"];
+export type ExternalConnection = Database["public"]["Tables"]["external_connections"]["Row"];
 
 export type ExternalConnectionInput = {
   name: string;
@@ -23,6 +23,62 @@ export type ExternalConnectionVersion = {
   status: "unverified" | "verified" | "invalid" | "retryable" | "revoked";
   version: number;
 };
+
+export function ExternalConnectionPicker({ adapter, connections, isPending = false, label = "外部连接", onCreateConnection, onRotateConnection, onSelectVersion, onTestConnection, provider, selectedVersionId, versions = [] }: {
+  adapter: ExternalConnectionInput["adapter"];
+  connections: ExternalConnection[];
+  isPending?: boolean;
+  label?: string;
+  onCreateConnection?: (input: ExternalConnectionInput) => Promise<ExternalConnection | null>;
+  onRotateConnection?: (input: { connectionId: string; provider: ExternalConnectionInput["provider"]; adapter: ExternalConnectionInput["adapter"]; secret: string }) => Promise<ExternalConnection | null>;
+  onSelectVersion: (versionId: string) => void;
+  onTestConnection?: (connectionId: string) => Promise<void>;
+  provider: ExternalConnectionInput["provider"];
+  selectedVersionId: string;
+  versions?: ExternalConnectionVersion[];
+}) {
+  const [name, setName] = useState("");
+  const [secret, setSecret] = useState("");
+  const [rotationSecret, setRotationSecret] = useState("");
+  const [error, setError] = useState("");
+  const compatibleConnections = connections.filter((connection) => connection.provider === provider && connection.adapter === adapter);
+  const compatibleVersions = versions.filter((version) => version.provider === provider && version.adapter === adapter && version.status === "verified" && !version.revoked_at);
+  const selectedVersion = compatibleVersions.find((version) => version.id === selectedVersionId);
+  const connectionNames = new Map(compatibleConnections.map((connection) => [connection.id, connection.name]));
+  const selectedConnection = selectedVersion ? compatibleConnections.find((connection) => connection.id === selectedVersion.connection_id) : undefined;
+
+  async function create(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!onCreateConnection) return;
+    setError("");
+    try {
+      const connection = await onCreateConnection({ adapter, name: name.trim(), provider, secret });
+      if (connection) {
+        setName("");
+        setSecret("");
+        if (onTestConnection) await onTestConnection(connection.id);
+      }
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "无法创建外部连接。"); }
+  }
+
+  async function rotate() {
+    if (!onRotateConnection || !selectedConnection || !rotationSecret.trim()) return;
+    setError("");
+    try {
+      const connection = await onRotateConnection({ adapter, connectionId: selectedConnection.id, provider, secret: rotationSecret });
+      if (connection && onTestConnection) await onTestConnection(connection.id);
+      setRotationSecret("");
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "无法轮换外部连接版本。"); }
+  }
+
+  return <div className="external-connection-picker" aria-label={`${label}连接选择`}>
+    <label><span>已验证连接版本</span><select aria-label={`${label} 外部连接`} disabled={isPending} onChange={(event) => onSelectVersion(event.target.value)} value={selectedVersionId}><option value="">请选择已验证连接</option>{compatibleVersions.map((version) => <option key={version.id} value={version.id}>{connectionNames.get(version.connection_id) ?? "Owner 连接"} · v{version.version}</option>)}</select></label>
+    {selectedVersion ? <p className="field-hint">官方 Endpoint：{selectedVersion.endpoint}</p> : null}
+    {onCreateConnection ? <details><summary>创建并测试新连接</summary><form onSubmit={(event) => void create(event)}><label>连接名称<input aria-label="新连接名称" onChange={(event) => setName(event.target.value)} required value={name} /></label><label>认证材料<input aria-label="新连接认证材料" autoComplete="off" onChange={(event) => setSecret(event.target.value)} required type="password" value={secret} /></label><button className="button button-secondary button-small" disabled={isPending || !name.trim() || !secret.trim()} type="submit">保存并测试</button></form></details> : null}
+    {selectedConnection && onRotateConnection ? <details><summary>轮换当前连接</summary><label>新的认证材料<input aria-label="新的认证材料" autoComplete="off" onChange={(event) => setRotationSecret(event.target.value)} type="password" value={rotationSecret} /></label><button className="button button-secondary button-small" disabled={isPending || !rotationSecret.trim()} onClick={() => void rotate()} type="button">创建新版本并测试</button></details> : null}
+    {error ? <p className="form-error" role="alert">{error}</p> : null}
+  </div>;
+}
 
 const connectionTypes = [
   { adapter: "pexels_video", label: "Pexels B-roll", provider: "pexels", secretLabel: "Pexels API Key" },

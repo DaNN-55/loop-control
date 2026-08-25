@@ -1,8 +1,9 @@
 import { workerPreflightVersion, type WorkerPreflightCheck, type WorkerPreflightResult, type WorkerPreflightStatus, type WorkerTaskPackage } from "./contracts.js";
-import { adapterRegistration, externalAdapterForMediaCapability, isOwnerManagedConnection, mediaCapabilityForCapability, mediaCapabilityForKey, mediaCapabilityKeys, registeredAdaptersForCapability } from "./adapterRegistry.js";
+import { adapterRegistration, externalAdapterForMediaCapability, isOwnerManagedConnection, localAdapterRegistrationsForCapability, mediaCapabilityForCapability, mediaCapabilityForKey, mediaCapabilityKeys, registeredAdaptersForCapability, type ExecutionPath } from "./adapterRegistry.js";
 
 export interface RuntimeCapability {
   capability: string;
+  executionPath?: ExecutionPath | "";
   provider: string;
   adapter?: string;
   model?: string;
@@ -30,6 +31,7 @@ export interface RuntimePreflightEnvironment {
   commands?: Record<string, RuntimeDependencyStatus>;
   connections?: Record<string, RuntimeDependencyStatus>;
   mediaLibrary?: RuntimeDependencyStatus;
+  localAdapters?: Record<string, RuntimeDependencyStatus>;
   modelPermissions?: Record<string, RuntimeDependencyStatus>;
 }
 
@@ -58,11 +60,15 @@ export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, _seriesR
     const executor = record(config.executor);
     const provider = stringValue(executor.provider);
     const adapter = stringValue(executor.adapter);
+    const configuredPath = stringValue(config.execution_path) as ExecutionPath | "";
+    const executionPath = configuredPath || (externalAdapterForMediaCapability(key, provider, adapter) ? "external" : "");
+    if (executionPath === "manual") continue;
     const credentialRef = stringValue(config.credential_ref);
-    if (required ? !required.has(mediaCapability.capability) : !externalAdapterForMediaCapability(key, provider, adapter)) continue;
+    if (required ? !required.has(mediaCapability.capability) : !executionPath) continue;
     const credential = credentialEnvironmentForReference(provider, adapter, credentialRef);
     capabilities.push({
       capability: mediaCapability.capability,
+      executionPath,
       provider,
       adapter,
       model: stringValue(executor.model),
@@ -105,6 +111,20 @@ export function createRuntimePreflight(capabilities: RuntimeCapability[], enviro
     }
 
     const mediaCapability = mediaCapabilityForCapability(capability.capability);
+    if (capability.executionPath === "local") {
+      const localRegistration = localAdapterRegistrationsForCapability(capability.capability).find((registration) => registration.provider === capability.provider && registration.id === capability.adapter);
+      const localKey = `${capability.provider}:${capability.adapter ?? ""}`;
+      if (!localRegistration || !localRegistration.workerAvailable) {
+        checks.push({ capability: capability.capability, check: "local_adapter_readiness", phase: "preflight", status: "unavailable", reason: `当前 Worker 未部署或未注册本地 ${capability.provider}/${capability.adapter ?? "Adapter"}。`, action: "contact_environment_admin", scope: "worker" });
+        continue;
+      }
+      if (environment.localAdapters && Object.prototype.hasOwnProperty.call(environment.localAdapters, localKey)) {
+        checks.push(dependencyCheck(capability.capability, "local_adapter_readiness", environment.localAdapters[localKey]));
+      } else {
+        checks.push({ capability: capability.capability, check: "local_adapter_readiness", phase: "preflight", status: "unavailable", reason: `本地 ${localKey} 尚未完成当前 Worker 就绪探测。`, action: "contact_environment_admin", scope: "worker" });
+      }
+      continue;
+    }
     const registrationValid = mediaCapability?.workerAvailable === false ? false : capability.adapter
       ? registeredAdaptersForCapability(capability.capability).some((registration) => registration.provider === capability.provider && registration.id === capability.adapter) || legacyRegisteredAdapters.has(`${capability.provider}:${capability.adapter}`)
       : capability.provider === "codex" || capability.provider === "hyperframes" || capability.provider === "ffmpeg";
@@ -212,6 +232,7 @@ function capabilityFromExecutor(capability: string, executor: Record<string, unk
 }
 
 function configurationErrorFor(capability: RuntimeCapability): string | undefined {
+  if (mediaCapabilityForCapability(capability.capability) && capability.executionPath === "") return `能力 ${capability.capability} 缺少执行路径。`;
   if (!capability.provider || !capability.model || !capability.promptVersion) return `能力 ${capability.capability} 缺少 Provider、模型或 Prompt 版本。`;
   if (capability.requiresAdapter && !capability.adapter) return `能力 ${capability.capability} 缺少已注册 Adapter。`;
   if (isOwnerManagedConnection(capability.provider, capability.adapter ?? "") && !isConnectionId(capability.credentialRef)) return `${capability.provider === "openai" ? "OpenAI Images" : capability.provider === "google_tts" ? "Google TTS" : capability.provider === "freesound" ? "Freesound" : "Pexels"} 必须选择已验证的外部连接版本。`;

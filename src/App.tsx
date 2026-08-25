@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
-import { Activity, BarChart3, BookOpen, ClipboardList, Copy, FolderOpen, History, KeyRound, LogOut, MessageSquare, Moon, PanelLeft, Pencil, Play, RefreshCw, Sun, Table2, Trash2, Upload, User, Users, X, type LucideIcon } from "lucide-react";
+import { Activity, BarChart3, BookOpen, ClipboardList, Copy, FolderOpen, History, LogOut, MessageSquare, Moon, PanelLeft, Pencil, Play, RefreshCw, Sun, Table2, Trash2, Upload, User, Users, X, type LucideIcon } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 import type { Database, Json } from "./lib/database.types";
 import { supabase } from "./lib/supabase";
@@ -26,12 +26,12 @@ import { SystemStatusPanel, type LocalSystemStatusReport } from "./observability
 import { MarkdownPreview } from "./ui/MarkdownPreview";
 import { canonicalMaterialName, materialTypeForFile, type MaterialPurpose, type MaterialType } from "./reviews/materialImport";
 import { AccountWorkspace } from "./accounts/AccountWorkspace";
-import { ConnectionWorkspace, type ExternalConnectionInput, type ExternalConnectionVersion } from "./connections/ConnectionWorkspace";
+import type { ExternalConnectionInput, ExternalConnectionVersion } from "./connections/ConnectionWorkspace";
 
 export { AccountWorkspace, SeriesSettings } from "./accounts/AccountWorkspace";
 
 
-type NavigationItem = "accounts" | "connections" | "episodes" | "operations" | "reviews" | "publish" | "learning";
+type NavigationItem = "accounts" | "episodes" | "operations" | "reviews" | "publish" | "learning";
 type Theme = "light" | "dark";
 type Account = Database["public"]["Tables"]["accounts"]["Row"];
 type Blueprint = Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
@@ -195,7 +195,6 @@ export const navigation: Array<{ id: NavigationItem; label: string }> = [
   { id: "publish", label: "发布队列" },
   { id: "learning", label: "复盘" },
   { id: "accounts", label: "账号" },
-  { id: "connections", label: "外部连接" },
 ];
 
 export function initialNavigationForWorkspace(workspace: Pick<Workspace, "accounts" | "episodes">): NavigationItem {
@@ -619,7 +618,7 @@ export function App() {
 
   useEffect(() => {
     const openConnections = () => {
-      setActiveNavigation("connections");
+      setActiveNavigation("accounts");
       setIsEpisodeDetailOpen(false);
     };
     window.addEventListener("open-external-connections", openConnections);
@@ -1023,16 +1022,6 @@ export function App() {
     }
   }
 
-  async function updateExternalConnection(input: { connectionId: string; name: string; description: string }): Promise<void> {
-    setPendingAction(`update-external-connection-${input.connectionId}`); setErrorMessage("");
-    try {
-      const { error } = await supabase.rpc("update_external_connection", { p_connection_id: input.connectionId, p_description: input.description, p_name: input.name });
-      if (error) throw error;
-      await refreshWorkspace(); setMessage("连接名称和说明已更新；连接版本未改变。");
-    } catch (error) { setErrorMessage(error instanceof Error ? error.message : "无法更新外部连接说明。"); }
-    finally { setPendingAction(""); }
-  }
-
   async function rotateExternalConnection(input: { connectionId: string; provider: ExternalConnectionInput["provider"]; adapter: ExternalConnectionInput["adapter"]; secret: string }): Promise<ExternalConnection | null> {
     setPendingAction(`rotate-external-connection-${input.connectionId}`); setErrorMessage("");
     try {
@@ -1040,26 +1029,6 @@ export function App() {
       if (error) throw error;
       await refreshWorkspace(); return data;
     } catch (error) { setErrorMessage(error instanceof Error ? error.message : "无法创建外部连接新版本。"); return null; }
-    finally { setPendingAction(""); }
-  }
-
-  async function revokeExternalConnectionVersion(versionId: string): Promise<void> {
-    setPendingAction(`revoke-external-connection-${versionId}`); setErrorMessage("");
-    try {
-      const { error } = await supabase.rpc("revoke_external_connection_version", { p_version_id: versionId });
-      if (error) throw error;
-      await refreshWorkspace(); setMessage("连接版本已撤销；已有生产单不会自动切换连接。");
-    } catch (error) { setErrorMessage(error instanceof Error ? error.message : "无法撤销连接版本。"); }
-    finally { setPendingAction(""); }
-  }
-
-  async function deleteExternalConnectionVersion(versionId: string): Promise<void> {
-    setPendingAction(`delete-external-connection-${versionId}`); setErrorMessage("");
-    try {
-      const { error } = await supabase.rpc("delete_external_connection_version", { p_version_id: versionId });
-      if (error) throw error;
-      await refreshWorkspace(); setMessage("未引用的连接草稿已删除。");
-    } catch (error) { setErrorMessage(error instanceof Error ? error.message : "无法删除连接草稿。"); }
     finally { setPendingAction(""); }
   }
 
@@ -1730,9 +1699,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
 
         {message || errorMessage ? <div className="floating-notices" aria-live="polite">{message ? <div className="notice-message" role="status">{message}<button aria-label="关闭通知" onClick={() => setMessage("")} type="button">×</button></div> : null}{errorMessage ? <div className="error-message" role="alert">{errorMessage}<button aria-label="关闭错误通知" onClick={() => setErrorMessage("")} type="button">×</button></div> : null}</div> : null}
 
-        {activeNavigation === "connections" ? (
-          <ConnectionWorkspace connections={workspace.externalConnections} isPending={pendingAction.includes("external-connection")} onCreateConnection={createExternalConnection} onDeleteVersion={deleteExternalConnectionVersion} onRevokeVersion={revokeExternalConnectionVersion} onRotateConnection={rotateExternalConnection} onTestConnection={testExternalConnection} onUpdateConnection={updateExternalConnection} versions={workspace.externalConnectionVersions} />
-        ) : activeNavigation === "accounts" ? (
+        {activeNavigation === "accounts" ? (
           <AccountWorkspace
             account={selectedAccount}
             accounts={workspace.accounts}
@@ -1759,6 +1726,10 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             isBlueprintPreflightLoading={isBlueprintPreflightLoading}
             onRefreshBlueprintPreflight={() => selectedAccount ? refreshBlueprintPreflight(selectedAccount.id) : Promise.resolve()}
             externalConnections={workspace.externalConnections}
+            connectionVersions={workspace.externalConnectionVersions}
+            onCreateConnection={createExternalConnection}
+            onRotateConnection={rotateExternalConnection}
+            onTestConnection={testExternalConnection}
           />
         ) : activeNavigation === "reviews" ? (
           <ReviewWorkspace
@@ -2780,7 +2751,7 @@ function PasswordForm({ isPending, onClose, onSubmit }: { isPending: boolean; on
 
 type IconName = NavigationItem | "Moon" | "Sun" | "Exit" | "Close" | "Play" | "PanelLeft" | "User" | "Edit" | "Delete";
 
-const iconComponents: Record<IconName, LucideIcon> = { accounts: Users, connections: KeyRound, episodes: Table2, operations: BarChart3, reviews: MessageSquare, publish: Upload, learning: BookOpen, Moon, Sun, Exit: LogOut, Close: X, Play, PanelLeft, User, Edit: Pencil, Delete: Trash2 };
+const iconComponents: Record<IconName, LucideIcon> = { accounts: Users, episodes: Table2, operations: BarChart3, reviews: MessageSquare, publish: Upload, learning: BookOpen, Moon, Sun, Exit: LogOut, Close: X, Play, PanelLeft, User, Edit: Pencil, Delete: Trash2 };
 
 function Icon({ name }: { name: IconName }) {
   const IconComponent = iconComponents[name];

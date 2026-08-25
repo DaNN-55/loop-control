@@ -3,6 +3,24 @@ import { mediaCapabilityForKey, mediaCapabilityKeys } from "./adapterRegistry";
 import { createRuntimePreflight, runtimeCapabilitiesFromBlueprintPolicy } from "./runtimePreflight";
 
 describe("runtime preflight", () => {
+  it("按执行路径跳过人工素材，并把缺少路径指向蓝图", () => {
+    const capabilities = runtimeCapabilitiesFromBlueprintPolicy({
+      a_roll: { execution_path: "manual" },
+      b_roll: {},
+    }, undefined, ["a_roll_generation", "b_roll_generation"]);
+
+    expect(capabilities.some((capability) => capability.capability === "a_roll_generation")).toBe(false);
+    expect(createRuntimePreflight(capabilities).checks).toContainEqual(expect.objectContaining({ capability: "b_roll_generation", check: "blueprint_configuration", reason: "能力 b_roll_generation 缺少执行路径。", action: "edit_blueprint", scope: "blueprint" }));
+  });
+
+  it("未部署的本地 Adapter 指向环境管理员", () => {
+    const capability = runtimeCapabilitiesFromBlueprintPolicy({
+      a_roll: { execution_path: "local", executor: { provider: "hyperframes", adapter: "hyperframes_card_video", model: "hyperframes@0.7.109", prompt_version: "a-roll-v1" } },
+    }, undefined, ["a_roll_generation"]).find((candidate) => candidate.capability === "a_roll_generation")!;
+
+    expect(createRuntimePreflight([capability]).checks).toContainEqual(expect.objectContaining({ capability: "a_roll_generation", check: "local_adapter_readiness", status: "unavailable", action: "contact_environment_admin", scope: "worker" }));
+  });
+
   it("从蓝图读取核心能力和已启用媒体能力", () => {
     const capabilities = runtimeCapabilitiesFromBlueprintPolicy({
       allowed_tools: ["read", "write"],
@@ -211,7 +229,7 @@ describe("runtime preflight", () => {
   it("不会把 Codex 的规划 Adapter 误当成可执行的 A-roll Adapter", () => {
     const capabilities = runtimeCapabilitiesFromBlueprintPolicy({
       allowed_tools: ["read", "write"],
-      a_roll: { executor: { provider: "codex", adapter: "codex", model: "video-generation-v1", prompt_version: "a-roll-v1" } },
+      a_roll: { execution_path: "external", executor: { provider: "codex", adapter: "codex", model: "video-generation-v1", prompt_version: "a-roll-v1" } },
     }, undefined, ["a_roll_generation"]);
 
     expect(createRuntimePreflight(capabilities).checks).toContainEqual(expect.objectContaining({ capability: "a_roll_generation", check: "capability_registration", status: "unavailable" }));

@@ -3,6 +3,7 @@ import type { FormEvent } from "react";
 import type { Database, Json } from "../lib/database.types";
 import { blueprintAssetRoot, defaultBlueprintPolicy } from "../platform/blueprintPolicy";
 import { BlueprintConfigurationForm, EpisodeConfigurationRepairForm, SeriesConfigurationForm } from "../platform/ConfigurationForms";
+import type { ExternalConnectionInput, ExternalConnectionVersion } from "../connections/ConnectionWorkspace";
 import { mediaAdapterKeys } from "../platform/configurationFormValues";
 import type { LocalSystemStatusReport } from "../observability/SystemStatusPanel";
 import type { WorkerBlocker } from "../reviews/reviewSelectors";
@@ -27,6 +28,7 @@ interface AccountWorkspaceProps {
   accounts: Account[];
   blueprints: Blueprint[];
   externalConnections?: ExternalConnection[];
+  connectionVersions?: ExternalConnectionVersion[];
   blueprintPreflight?: WorkerPreflightResult | null;
   blueprintPreflightError?: string;
   blueprintRepairContext?: BlueprintRepairContext | null;
@@ -34,6 +36,7 @@ interface AccountWorkspaceProps {
   isPending: string;
   onApplyEpisodeRepair?: (input: { context: BlueprintRepairContext; policy: Json }) => Promise<boolean>;
   onCreatePromptVersion?: (input: { capability: PromptVersion["capability"]; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>;
+  onCreateConnection?: (input: ExternalConnectionInput) => Promise<ExternalConnection | null>;
   onCreateSeries?: (input: { name: string; rules: Json }) => Promise<void>;
   onCreateSeriesVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>;
   onDeleteAccount?: (id: string, confirmation: string) => Promise<boolean | void>;
@@ -41,8 +44,10 @@ interface AccountWorkspaceProps {
   onDirtyChange?: (dirty: boolean) => void;
   onRefreshBlueprintPreflight?: () => Promise<void>;
   onRenameAccount?: (id: string, name: string) => Promise<boolean | void>;
+  onRotateConnection?: (input: { connectionId: string; provider: ExternalConnectionInput["provider"]; adapter: ExternalConnectionInput["adapter"]; secret: string }) => Promise<ExternalConnection | null>;
   onSelectAccount: (id: string) => void;
   onUpdateBlueprint?: (policy: Json) => Promise<Blueprint | null>;
+  onTestConnection?: (connectionId: string) => Promise<void>;
   promptVersions?: PromptVersion[];
   series?: Series[];
   seriesVersions?: SeriesVersion[];
@@ -54,6 +59,7 @@ const checkLabels: Record<string, string> = {
   capability_registration: "Worker 能力未接入",
   credential_presence: "缺少外部连接凭据",
   credential_validity: "外部连接凭据无效",
+  local_adapter_readiness: "本地 Adapter 未就绪",
   model_permission: "模型权限未通过",
   network_connectivity: "供应商网络不可达",
   tool_permission: "工具权限不足",
@@ -82,7 +88,7 @@ function ReadinessRail({ isLoading, onRefresh, policy, preflight, preflightError
   </aside>;
 }
 
-export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, blueprints, blueprintPreflight = null, blueprintPreflightError = "", blueprintRepairContext = null, externalConnections = [], isBlueprintPreflightLoading = false, isPending, onApplyEpisodeRepair, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeleteAccount = async () => {}, onDismissBlueprintRepair, onDirtyChange, onRefreshBlueprintPreflight, onRenameAccount = async () => {}, onSelectAccount, onUpdateBlueprint, promptVersions = [], series = [], seriesVersions = [], systemStatus = null }: AccountWorkspaceProps) {
+export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, blueprints, blueprintPreflight = null, blueprintPreflightError = "", blueprintRepairContext = null, connectionVersions = [], externalConnections = [], isBlueprintPreflightLoading = false, isPending, onApplyEpisodeRepair, onCreateConnection, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeleteAccount = async () => {}, onDismissBlueprintRepair, onDirtyChange, onRefreshBlueprintPreflight, onRenameAccount = async () => {}, onRotateConnection, onSelectAccount, onTestConnection, onUpdateBlueprint, promptVersions = [], series = [], seriesVersions = [], systemStatus = null }: AccountWorkspaceProps) {
   const [activeSection, setActiveSection] = useState<"blueprints" | "series">("blueprints");
   const [configurationDirty, setConfigurationDirtyState] = useState(false);
   const [activeBlueprintSection, setActiveBlueprintSection] = useState<(typeof blueprintSections)[number]["id"]>("account-rules");
@@ -128,7 +134,7 @@ export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, b
     <nav aria-label="账号设置导航" className="account-tabs" role="tablist"><button aria-selected={activeSection === "blueprints"} className={`account-tab ${activeSection === "blueprints" ? "is-active" : ""}`} onClick={() => leaveConfiguration(() => setActiveSection("blueprints"))} role="tab" type="button">蓝图</button><button aria-selected={activeSection === "series"} className={`account-tab ${activeSection === "series" ? "is-active" : ""}`} onClick={() => leaveConfiguration(() => setActiveSection("series"))} role="tab" type="button">系列</button></nav>
     {activeSection === "blueprints" ? blueprintRepairContext ? <EpisodeConfigurationRepairForm blocker={blueprintRepairContext.blocker} initialPolicy={policy} isPending={isPending === `apply-episode-repair-${blueprintRepairContext.episodeId}`} onCancel={() => onDismissBlueprintRepair?.()} onSave={async (nextPolicy) => { if (onApplyEpisodeRepair) await onApplyEpisodeRepair({ context: blueprintRepairContext, policy: nextPolicy }); }} promptVersions={promptVersions} /> : <div className="account-configuration-layout" role="tabpanel">
       <nav aria-label="蓝图配置分区" className="account-section-nav">{blueprintSections.map(({ id, label }, index) => <a aria-current={activeBlueprintSection === id ? "location" : undefined} href={`#${id}`} key={id}><span aria-hidden="true">{index + 1}</span>{label}</a>)}</nav>
-      <main className="account-configuration-form" id="account-rules"><BlueprintConfigurationForm accountId={account.id} externalConnections={externalConnections} initialAssetRoot={blueprintAssetRoot(policy)} initialPolicy={policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} onCancel={() => {}} onCreatePromptVersion={onCreatePromptVersion} onDirtyChange={setConfigurationDirty} onSave={async (nextPolicy) => { if (onUpdateBlueprint) await onUpdateBlueprint(nextPolicy); }} promptVersions={promptVersions} /></main>
+      <main className="account-configuration-form" id="account-rules"><BlueprintConfigurationForm accountId={account.id} connectionVersions={connectionVersions} externalConnections={externalConnections} initialAssetRoot={blueprintAssetRoot(policy)} initialPolicy={policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} onCancel={() => {}} onCreateConnection={onCreateConnection} onCreatePromptVersion={onCreatePromptVersion} onDirtyChange={setConfigurationDirty} onRotateConnection={onRotateConnection} onSave={async (nextPolicy) => { if (onUpdateBlueprint) await onUpdateBlueprint(nextPolicy); }} onTestConnection={onTestConnection} promptVersions={promptVersions} /></main>
       <ReadinessRail isLoading={isBlueprintPreflightLoading} onRefresh={onRefreshBlueprintPreflight} policy={policy} preflight={blueprintPreflight} preflightError={blueprintPreflightError} systemStatus={systemStatus} />
     </div> : <div role="tabpanel"><SeriesSettings isPending={isPending} onCreate={onCreateSeries} onDirtyChange={setConfigurationDirty} onLeave={leaveConfiguration} onCreateVersion={onCreateSeriesVersion} series={series} seriesVersions={seriesVersions} /></div>}
     {renameOpen ? <AccountRenameModal account={account} isPending={isPending === `rename-account-${account.id}`} onClose={() => setRenameOpen(false)} onSave={(name) => onRenameAccount(account.id, name)} /> : null}

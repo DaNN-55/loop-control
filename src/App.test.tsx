@@ -127,9 +127,9 @@ describe("approval console", () => {
     const user = userEvent.setup();
     const account = { created_at: "2026-08-15T00:00:00.000Z", current_blueprint_version_id: "blueprint-1", id: "account-1", name: "道工作室", slug: "dao-studio", timezone: "Asia/Shanghai" } as Database["public"]["Tables"]["accounts"]["Row"];
     const storyboardHarness = { account_id: account.id, capability: "storyboard_planning", content_hash: "a".repeat(64), created_at: "2026-08-15T00:00:00.000Z", created_by: "owner-1", id: "harness-storyboard-1", instructions: "生成可审核分镜。", is_active: true, name: "分镜规划 v1", slug: "storyboard-planning-v1", summary: "测试 Harness。", version: 1 } as Database["public"]["Tables"]["prompt_versions"]["Row"];
-    const blueprint = { account_id: account.id, created_at: "2026-08-15T00:00:00.000Z", id: "blueprint-1", is_active: true, policy: { positioning: "旧定位", asset_root: "/Volumes/Media/dao", approval_gates: ["script"], allowed_tools: ["read", "write"], budgets: { script_writing_cents: 0, visual_planning_cents: 0, storyboard_planning_cents: 0 }, executors: { script_writing: { provider: "codex", model: "model-a", prompt_version: "script-v1" }, visual_planning: { adapter: "codex", harness_id: storyboardHarness.id, provider: "codex", model: "model-c", prompt_version: storyboardHarness.slug }, storyboard_planning: { adapter: "codex", harness_id: storyboardHarness.id, provider: "codex", model: "model-c", prompt_version: storyboardHarness.slug } }, soundtrack: { executor: { provider: "freesound", adapter: "freesound_preview", model: "freesound-preview-v1", prompt_version: "soundtrack-v1" }, allowed_tools: ["read", "write"], budget_cents: 99, max_attempts: 1 } }, version: 1 } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
+    const blueprint = { account_id: account.id, created_at: "2026-08-15T00:00:00.000Z", id: "blueprint-1", is_active: true, policy: { positioning: "旧定位", asset_root: "/Volumes/Media/dao", approval_gates: ["script"], allowed_tools: ["read", "write"], budgets: { script_writing_cents: 0, visual_planning_cents: 0, storyboard_planning_cents: 0 }, executors: { script_writing: { provider: "codex", model: "model-a", prompt_version: "script-v1" }, visual_planning: { adapter: "codex", harness_id: storyboardHarness.id, provider: "codex", model: "model-c", prompt_version: storyboardHarness.slug }, storyboard_planning: { adapter: "codex", harness_id: storyboardHarness.id, provider: "codex", model: "model-c", prompt_version: storyboardHarness.slug } }, soundtrack: { execution_path: "external", credential_ref: "44444444-4444-4444-8444-444444444444", executor: { provider: "freesound", adapter: "freesound_preview", model: "freesound-preview-v1", prompt_version: "soundtrack-v1" }, allowed_tools: ["read", "write"], budget_cents: 99, max_attempts: 1 } }, version: 1 } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
     const onUpdateBlueprint = vi.fn().mockResolvedValue(blueprint);
-    render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} isPending="" onUpdateBlueprint={onUpdateBlueprint} onCreateSeries={vi.fn()} onSelectAccount={vi.fn()} promptVersions={[storyboardHarness]} series={[]} seriesVersions={[]} />);
+    render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint]} connectionVersions={[{ adapter: "freesound_preview", connection_id: "44444444-4444-4444-8444-444444444444", created_at: "2026-08-15T00:00:00.000Z", endpoint: "https://api.freesound.org", id: "44444444-4444-4444-8444-444444444444", is_current: true, provider: "freesound", revoked_at: null, status: "verified", version: 1 }]} externalConnections={[{ adapter: "freesound_preview", created_at: "2026-08-15T00:00:00.000Z", created_by: "owner-1", current_version_id: "44444444-4444-4444-8444-444444444444", id: "44444444-4444-4444-8444-444444444444", last_verification_detail: null, last_verified_at: "2026-08-15T00:00:00.000Z", name: "主 Freesound", provider: "freesound", status: "verified" }]} isPending="" onUpdateBlueprint={onUpdateBlueprint} onCreateSeries={vi.fn()} onSelectAccount={vi.fn()} promptVersions={[storyboardHarness]} series={[]} seriesVersions={[]} />);
 
     await user.click(screen.getByRole("tab", { name: "蓝图" }));
     await user.clear(screen.getByLabelText("账号定位"));
@@ -143,31 +143,29 @@ describe("approval console", () => {
     const user = userEvent.setup();
     const account = { created_at: "2026-08-15T00:00:00.000Z", current_blueprint_version_id: "blueprint-current", id: "account-1", name: "道工作室", slug: "dao-studio", timezone: "Asia/Shanghai" } as Database["public"]["Tables"]["accounts"]["Row"];
     const blueprint = { account_id: account.id, created_at: "2026-08-15T00:00:00.000Z", id: "blueprint-episode", is_active: true, policy: { positioning: "旧定位", asset_root: "/Volumes/Media/dao", approval_gates: ["script"], allowed_tools: ["read", "write"], budgets: { script_writing_cents: 0, visual_planning_cents: 0, storyboard_planning_cents: 0 }, executors: { script_writing: { provider: "codex", model: "model-a", prompt_version: "script-v1" }, visual_planning: { provider: "codex", model: "model-b", prompt_version: "visual-v1" }, storyboard_planning: { provider: "codex", model: "model-c", prompt_version: "storyboard-v1" } } }, version: 1 } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
-    const currentBlueprint = { ...blueprint, id: "blueprint-current", policy: { ...(blueprint.policy as Record<string, unknown>), a_roll: { executor: { provider: "codex", adapter: "codex", model: "video-generation-v1", prompt_version: "a-roll-v1" }, allowed_tools: ["read", "write"], budget_cents: 100, max_attempts: 2 } } } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
+    const currentBlueprint = { ...blueprint, id: "blueprint-current", policy: { ...(blueprint.policy as Record<string, unknown>), a_roll: { execution_path: "manual", executor: { provider: "codex", adapter: "codex", model: "video-generation-v1", prompt_version: "a-roll-v1" }, allowed_tools: ["read", "write"], budget_cents: 100, max_attempts: 2 } } } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
     const onApplyEpisodeRepair = vi.fn().mockResolvedValue(true);
 
     render(<AccountWorkspace account={account} accounts={[account]} blueprints={[blueprint, currentBlueprint]} blueprintRepairContext={{ blocker: { code: "a_roll_executor_invalid", detail: "A-roll 执行器 adapter 未配置。" }, blueprintVersionId: blueprint.id, episodeId: "episode-1" }} isPending="" onApplyEpisodeRepair={onApplyEpisodeRepair} onCreateSeries={vi.fn()} onSelectAccount={vi.fn()} series={[]} seriesVersions={[]} />);
 
     expect(await screen.findByRole("heading", { name: "修复当前生产单的 A-roll" })).toBeTruthy();
     expect(screen.queryByText("脚本生成", { selector: "h4" })).toBeNull();
-    expect((screen.getByLabelText("Provider") as HTMLInputElement).value).toBe("codex");
-    expect((screen.getByLabelText("Adapter") as HTMLInputElement).value).toBe("codex");
-    expect((screen.getByLabelText("模型") as HTMLInputElement).value).toBe("video-generation-v1");
-    expect((screen.getByLabelText("Prompt 版本") as HTMLInputElement).value).toBe("a-roll-v1");
+    expect((screen.getByLabelText("A-roll 执行路径") as HTMLSelectElement).value).toBe("manual");
+    expect(screen.getByText("Episode 会按镜头与音频 cue 生成待补齐素材清单，不创建 Worker 或外部任务。")).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "保存并继续当前生产单" }));
 
     await waitFor(() => expect(onApplyEpisodeRepair).toHaveBeenCalledWith(expect.objectContaining({
       context: { blocker: { code: "a_roll_executor_invalid", detail: "A-roll 执行器 adapter 未配置。" }, blueprintVersionId: "blueprint-episode", episodeId: "episode-1" },
       policy: expect.objectContaining({
         a_roll: expect.objectContaining({
-          executor: expect.objectContaining({ adapter: "codex", model: "video-generation-v1", provider: "codex" }),
+          execution_path: "manual",
         }),
       }),
     })));
   });
 
   it("按日常工作流顺序显示导航，并为审核和发布显示待办数量", () => {
-    expect(navigation.map((item) => item.label)).toEqual(["系列运营", "生产单", "审核", "发布队列", "复盘", "账号", "外部连接"]);
+    expect(navigation.map((item) => item.label)).toEqual(["系列运营", "生产单", "审核", "发布队列", "复盘", "账号"]);
     const episode = { account_id: "account-1", blueprint_version_id: "blueprint-1", created_at: "2026-08-15T00:00:00.000Z", id: "episode-1", stage: "script_review", title: "待审核", updated_at: "2026-08-15T00:00:00.000Z" } as Database["public"]["Tables"]["episodes"]["Row"];
     expect(navigationBadgeCounts([episode], [], [])).toEqual({ reviews: 1, publish: 0 });
   });

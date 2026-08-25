@@ -1,5 +1,5 @@
 import type { Json } from "../lib/database.types";
-import { adapterRegistration, isOwnerManagedConnection, mediaCapabilityForKey, mediaCapabilityKeys, type MediaCapabilityKey } from "../worker/adapterRegistry";
+import { adapterRegistration, executionPathKeys, isOwnerManagedConnection, localAdapterRegistrationsForCapability, mediaCapabilityForKey, mediaCapabilityKeys, type ExecutionPath, type MediaCapabilityKey } from "../worker/adapterRegistry";
 
 type JsonObject = Record<string, Json | undefined>;
 type ExecutorForm = { provider: string; adapter?: string; harnessId?: string; model: string; promptVersion: string };
@@ -9,6 +9,7 @@ export type MediaAdapterKey = MediaCapabilityKey;
 export const configurableMediaAdapterKeys = mediaAdapterKeys;
 export type ConfigurableMediaAdapterKey = typeof configurableMediaAdapterKeys[number];
 export type MediaAdapterForm = {
+  executionPath?: ExecutionPath | "";
   provider: string;
   adapter: string;
   credentialRef: string;
@@ -124,8 +125,13 @@ function formMediaAdapter(value: Json | undefined, fallbackAllowedTools: readonl
   const allowedTools = stringArray(mediaAdapter.allowed_tools);
   const visibleAllowedTools = filterAllowedTools ? allowedTools.filter((tool) => visibleToolKeys.has(tool)) : allowedTools;
   const registration = adapterRegistration(stringValue(executor.provider), stringValue(executor.adapter));
+  const configuredPath = stringValue(mediaAdapter.execution_path);
+  const executionPath = executionPathKeys.includes(configuredPath as ExecutionPath)
+    ? configuredPath as ExecutionPath
+    : registration?.requiresNetwork ? "external" : "";
   const effectiveAllowedTools = registration && fallbackAllowedTools.length ? fallbackAllowedTools : visibleAllowedTools;
   return {
+    ...(executionPath ? { executionPath } : {}),
     provider: stringValue(executor.provider),
     adapter: stringValue(executor.adapter),
     credentialRef: stringValue(mediaAdapter.credential_ref),
@@ -168,11 +174,11 @@ export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterFor
   if (!mediaAdapterHasValues(form)) return;
   const definition = mediaCapabilityForKey(key);
   const { configurationFields, label } = definition;
+  if (!form.executionPath) throw new Error(`${label}适配器必须先选择执行路径。`);
+  if (form.executionPath === "manual") return;
   if (!form.provider.trim() || !form.adapter.trim() || !form.model.trim() || !form.promptVersion.trim()) throw new Error(`${label}适配器的 Provider、Adapter、模型和 Prompt 版本不能为空。`);
   if (!commaSeparatedValues(form.allowedTools).length) throw new Error(`${label}适配器至少需要一个允许工具。`);
-  if (definition.requiresRegisteredAdapter) {
-    validateRegisteredMediaConnection(label, key, form);
-  }
+  validateRegisteredMediaConnection(label, key, form);
   if (configurationFields.includes("max_attempts")) positiveInteger(form.maxAttempts, `${label}最大尝试次数`);
   if (configurationFields.includes("max_concurrency")) positiveInteger(form.maxConcurrency, `${label}最大并发数`);
   if (configurationFields.includes("provider_max_concurrency")) positiveInteger(form.providerMaxConcurrency, `${label}供应商并发上限`);
@@ -186,7 +192,16 @@ export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterFor
 
 function validateRegisteredMediaConnection(label: string, key: MediaAdapterKey, form: MediaAdapterForm): void {
   const registration = adapterRegistration(form.provider.trim(), form.adapter.trim());
-  if (!registration || registration.capability !== mediaCapabilityForKey(key).capability) throw new Error(`${label}必须选择已注册的 Adapter。`);
+  if (form.executionPath === "local") {
+    const localRegistration = localAdapterRegistrationsForCapability(mediaCapabilityForKey(key).capability).find((candidate) => candidate.provider === form.provider.trim() && candidate.id === form.adapter.trim());
+    if (!localRegistration) throw new Error(`${label}没有已部署且可用的本地 Adapter。`);
+    if (!localRegistration.modelCatalog.includes(form.model.trim())) throw new Error(`${label}模型必须从本地 Adapter 目录选择。`);
+    if (!localRegistration.presetCatalog.includes(form.promptVersion.trim())) throw new Error(`${label}预设必须从本地 Adapter 目录选择。`);
+    return;
+  }
+  if (!registration || registration.capability !== mediaCapabilityForKey(key).capability || !registration.requiresNetwork) throw new Error(`${label}必须选择已注册的外部 Adapter。`);
+  if (!registration.modelCatalog?.includes(form.model.trim())) throw new Error(`${label}模型必须从 Adapter 目录选择。`);
+  if (!registration.presetCatalog?.includes(form.promptVersion.trim())) throw new Error(`${label}预设必须从 Adapter 目录选择。`);
   const credentialRef = form.credentialRef.trim();
   const dynamicConnection = isOwnerManagedConnection(form.provider.trim(), form.adapter.trim()) && isUuid(credentialRef);
   if (registration.connections.length && !registration.connections.some((connection) => connection.credentialRef === credentialRef) && !dynamicConnection) throw new Error(`${label}必须选择可用的外部连接。`);
@@ -213,7 +228,21 @@ export function mediaAdapterStatus(key: MediaAdapterKey, form: MediaAdapterForm)
 
 function mediaAdapterToPolicy(key: MediaAdapterKey, form: MediaAdapterForm, existing: JsonObject, accountAllowedTools?: readonly string[]): JsonObject {
   const policy: JsonObject = { ...existing };
-  const executorValues: Array<[keyof MediaAdapterForm, string]> = [["provider", "provider"], ["adapter", "adapter"], ["model", "model"], ["promptVersion", "prompt_version"]];
+  policy.execution_path = form.executionPath;
+  if (form.executionPath === "manual") {
+    delete policy.executor;
+    delete policy.credential_ref;
+    delete policy.allowed_tools;
+    delete policy.voice;
+    delete policy.max_attempts;
+    delete policy.max_concurrency;
+    delete policy.provider_max_concurrency;
+    delete policy.budget_cents;
+    delete policy.per_shot_budget_cents;
+    delete policy.total_budget_cents;
+    return policy;
+  }
+  const executorValues: Array<["provider" | "adapter" | "model" | "promptVersion", string]> = [["provider", "provider"], ["adapter", "adapter"], ["model", "model"], ["promptVersion", "prompt_version"]];
   if (executorValues.some(([formKey]) => form[formKey].trim())) {
     const executor = objectValue(existing.executor);
     for (const [formKey, policyKey] of executorValues) if (form[formKey].trim()) executor[policyKey] = form[formKey].trim();
@@ -236,7 +265,7 @@ function mediaAdapterToPolicy(key: MediaAdapterKey, form: MediaAdapterForm, exis
   } else {
     policy.budget_cents = unrestrictedBudgetCents;
   }
-  const numericFields: Array<[keyof MediaAdapterForm, string]> = [["maxAttempts", "max_attempts"], ["maxConcurrency", "max_concurrency"], ["providerMaxConcurrency", "provider_max_concurrency"]];
+  const numericFields: Array<["maxAttempts" | "maxConcurrency" | "providerMaxConcurrency", string]> = [["maxAttempts", "max_attempts"], ["maxConcurrency", "max_concurrency"], ["providerMaxConcurrency", "provider_max_concurrency"]];
   for (const [formKey, policyKey] of numericFields) {
     if (form[formKey].trim()) policy[policyKey] = Number(form[formKey]);
     else delete policy[policyKey];
