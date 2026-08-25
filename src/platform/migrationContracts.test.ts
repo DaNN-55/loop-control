@@ -209,6 +209,11 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("orchestrate_a_roll_tasks_for_episode");
     expect(migration).toContain("p_episode_id is null or episode.id = p_episode_id");
     expect(migration).toContain("episode.audio_source_mode = 'tts'");
+    expect(migration).toContain("blueprint.policy #>> ''{a_roll,execution_path}'' in (''external'', ''local'')");
+    expect(migration).toContain("blueprint.policy #>> '{a_roll,execution_path}' in ('external', 'local')");
+    expect(migration).toContain("blueprint.policy #>> '{narration,execution_path}' in ('external', 'local')");
+    expect(migration).not.toContain("coalesce(blueprint.policy #>> '{a_roll,execution_path}', 'external')");
+    expect(migration).not.toContain("coalesce(blueprint.policy #>> '{narration,execution_path}', 'external')");
     expect(migration).not.toContain("if exists (\n    select 1\n    from public.episodes episode\n    join public.account_blueprint_versions blueprint");
   });
 
@@ -218,6 +223,13 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("register_manual_episode_narration");
     expect(migration).toContain("p_episode_id uuid");
     expect(migration).toContain("track.cue_id = candidate.id::text");
+  });
+
+  it("只允许 service_role 调用动态创建的 A-roll Episode 编排函数", () => {
+    const migration = readFileSync(scopedManualPathCorrectionMigration, "utf8");
+
+    expect(migration).toContain("revoke all on function public.orchestrate_a_roll_tasks_for_episode(uuid) from public, anon, authenticated;");
+    expect(migration).toContain("grant execute on function public.orchestrate_a_roll_tasks_for_episode(uuid) to service_role;");
   });
 
   it("定向调度只会创建指定生产单的视觉与分镜任务", () => {

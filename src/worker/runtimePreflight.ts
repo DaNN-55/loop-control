@@ -1,5 +1,5 @@
 import { workerPreflightVersion, type WorkerPreflightCheck, type WorkerPreflightResult, type WorkerPreflightStatus, type WorkerTaskPackage } from "./contracts.js";
-import { adapterRegistration, externalAdapterForMediaCapability, isOwnerManagedConnection, localAdapterRegistrationsForCapability, mediaCapabilityForCapability, mediaCapabilityForKey, mediaCapabilityKeys, registeredAdaptersForCapability, type ExecutionPath } from "./adapterRegistry.js";
+import { adapterRegistration, isOwnerManagedConnection, localAdapterRegistrationsForCapability, mediaCapabilityForCapability, mediaCapabilityForKey, mediaCapabilityKeys, registeredAdaptersForCapability, type ExecutionPath } from "./adapterRegistry.js";
 
 export interface RuntimeCapability {
   capability: string;
@@ -60,11 +60,10 @@ export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, _seriesR
     const executor = record(config.executor);
     const provider = stringValue(executor.provider);
     const adapter = stringValue(executor.adapter);
-    const configuredPath = stringValue(config.execution_path) as ExecutionPath | "";
-    const executionPath = configuredPath || (externalAdapterForMediaCapability(key, provider, adapter) ? "external" : "");
+    const executionPath = stringValue(config.execution_path) as ExecutionPath | "";
     if (executionPath === "manual") continue;
+    if (required ? !required.has(mediaCapability.capability) : Object.keys(config).length === 0) continue;
     const credentialRef = stringValue(config.credential_ref);
-    if (required ? !required.has(mediaCapability.capability) : !executionPath) continue;
     const credential = credentialEnvironmentForReference(provider, adapter, credentialRef);
     capabilities.push({
       capability: mediaCapability.capability,

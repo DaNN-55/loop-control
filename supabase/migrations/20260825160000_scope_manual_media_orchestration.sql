@@ -14,7 +14,7 @@ begin
     raise exception 'Unable to scope A-roll orchestration by Episode';
   end if;
   definition := regexp_replace(definition, 'CREATE OR REPLACE FUNCTION public\.orchestrate_a_roll_tasks_without_card_adapter\(\)', 'CREATE OR REPLACE FUNCTION public.orchestrate_a_roll_tasks_for_episode(p_episode_id uuid)', 1, 1, 'i');
-  definition := replace(definition, 'where episode.stage = ''storyboard_approved''', 'where episode.stage = ''storyboard_approved'' and (p_episode_id is null or episode.id = p_episode_id) and coalesce(blueprint.policy #>> ''{a_roll,execution_path}'', ''external'') <> ''manual''');
+  definition := replace(definition, 'where episode.stage = ''storyboard_approved''', 'where episode.stage = ''storyboard_approved'' and (p_episode_id is null or episode.id = p_episode_id) and blueprint.policy #>> ''{a_roll,execution_path}'' in (''external'', ''local'')');
   execute definition;
 end;
 $migration$;
@@ -31,7 +31,7 @@ begin
     select episode.id
     from public.episodes episode
     join public.account_blueprint_versions blueprint on blueprint.id = episode.blueprint_version_id
-    where coalesce(blueprint.policy #>> '{a_roll,execution_path}', 'external') <> 'manual'
+    where blueprint.policy #>> '{a_roll,execution_path}' in ('external', 'local')
   loop
     for created_task in select * from public.orchestrate_a_roll_tasks_for_episode(candidate_id)
     loop
@@ -65,7 +65,7 @@ begin
       and episode.audio_source_mode = 'tts'
       and (blueprint.policy -> 'narration') is not null
       and jsonb_typeof(blueprint.policy -> 'narration') <> 'null'
-      and coalesce(blueprint.policy #>> '{narration,execution_path}', 'external') <> 'manual'
+      and blueprint.policy #>> '{narration,execution_path}' in ('external', 'local')
   loop
     return query select * from public.orchestrate_narration_tasks_configured(candidate_id);
   end loop;
@@ -139,6 +139,8 @@ $migration$;
 
 revoke all on function public.orchestrate_a_roll_tasks() from public, anon, authenticated;
 grant execute on function public.orchestrate_a_roll_tasks() to service_role;
+revoke all on function public.orchestrate_a_roll_tasks_for_episode(uuid) from public, anon, authenticated;
+grant execute on function public.orchestrate_a_roll_tasks_for_episode(uuid) to service_role;
 revoke all on function public.orchestrate_narration_tasks(uuid) from public, anon, authenticated;
 grant execute on function public.orchestrate_narration_tasks(uuid) to service_role;
 revoke all on function public.register_manual_episode_narration(uuid, uuid, uuid) from public, anon;

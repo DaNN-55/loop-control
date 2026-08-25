@@ -30,6 +30,7 @@ describe("runtime preflight", () => {
         storyboard_planning: { provider: "codex", model: "model-1", prompt_version: "storyboard-v1" },
       },
       narration: {
+        execution_path: "external",
         credential_ref: "google-tts-default",
         allowed_tools: ["read", "write"],
         executor: { provider: "google_tts", adapter: "google_tts", model: "standard", prompt_version: "narration-v1" },
@@ -45,6 +46,18 @@ describe("runtime preflight", () => {
     ]);
     expect(capabilities.at(-1)).toMatchObject({ credentialRef: "google-tts-default" });
     expect(capabilities.at(-1)).not.toHaveProperty("credential");
+  });
+
+  it("缺少执行路径时不从已登记外部 Adapter 推断 external", () => {
+    const capability = runtimeCapabilitiesFromBlueprintPolicy({
+      narration: {
+        credential_ref: "google-tts-default",
+        executor: { provider: "google_tts", adapter: "google_tts", model: "standard", prompt_version: "narration-v1" },
+      },
+    }, undefined, ["narration_generation"]).find((candidate) => candidate.capability === "narration_generation")!;
+
+    expect(capability).toMatchObject({ capability: "narration_generation", executionPath: "" });
+    expect(createRuntimePreflight([capability]).checks).toContainEqual(expect.objectContaining({ capability: "narration_generation", check: "blueprint_configuration", status: "blocked", action: "edit_blueprint" }));
   });
 
   it("分镜必须冻结已注册的 Codex Adapter 与 Prompt Harness", () => {
@@ -74,6 +87,7 @@ describe("runtime preflight", () => {
   it("不为旧 Pexels 引用声明环境变量秘密", () => {
     const [capability] = runtimeCapabilitiesFromBlueprintPolicy({
       b_roll: {
+        execution_path: "external",
         credential_ref: "pexels-default",
         executor: { provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", prompt_version: "b-roll-v1" },
         allowed_tools: ["read", "write"],
@@ -220,7 +234,7 @@ describe("runtime preflight", () => {
 
   it("仍为明确声明的外部 Adapter 执行蓝图预检", () => {
     const capabilities = runtimeCapabilitiesFromBlueprintPolicy({
-      b_roll: { credential_ref: "pexels-default", executor: { provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", prompt_version: "b-roll-v1" }, allowed_tools: ["read", "write"] },
+      b_roll: { execution_path: "external", credential_ref: "pexels-default", executor: { provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", prompt_version: "b-roll-v1" }, allowed_tools: ["read", "write"] },
     });
 
     expect(capabilities).toEqual(expect.arrayContaining([expect.objectContaining({ capability: "b_roll_generation", credentialRef: "pexels-default" })]));
@@ -292,6 +306,7 @@ describe("runtime preflight", () => {
   it("Freesound 不会绕过账号冻结的工具白名单", () => {
     const [capability] = runtimeCapabilitiesFromBlueprintPolicy({
       soundtrack: {
+        execution_path: "external",
         credential_ref: "33333333-3333-4333-8333-333333333333",
         executor: { provider: "freesound", adapter: "freesound_preview", model: "freesound-preview-v1", prompt_version: "soundtrack-v1" },
         allowed_tools: ["read"],
