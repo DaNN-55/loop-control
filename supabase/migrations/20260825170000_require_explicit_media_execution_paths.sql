@@ -6,16 +6,16 @@ declare
   definition text;
 begin
   select pg_get_functiondef(to_regprocedure('public.orchestrate_b_roll_tasks(uuid)')) into definition;
-  if definition is null or position('coalesce(blueprint.policy #>> ''{b_roll,execution_path}'', ''external'')' in definition) = 0 then
+  if definition is null or position('coalesce(blueprint.policy #>> ''{b_roll,execution_path}'', ''external'') <> ''manual''' in definition) = 0 then
     raise exception 'Unable to require an explicit B-roll execution path';
   end if;
-  execute replace(definition, 'coalesce(blueprint.policy #>> ''{b_roll,execution_path}'', ''external'')', 'blueprint.policy #>> ''{b_roll,execution_path}'' in (''external'', ''local'')');
+  execute replace(definition, 'coalesce(blueprint.policy #>> ''{b_roll,execution_path}'', ''external'') <> ''manual''', 'blueprint.policy #>> ''{b_roll,execution_path}'' in (''external'', ''local'')');
 
   select pg_get_functiondef(to_regprocedure('public.orchestrate_soundtrack_tasks(uuid)')) into definition;
-  if definition is null or position('coalesce(blueprint.policy #>> ''{soundtrack,execution_path}'', ''external'')' in definition) = 0 then
+  if definition is null or position('coalesce(blueprint.policy #>> ''{soundtrack,execution_path}'', ''external'') <> ''manual''' in definition) = 0 then
     raise exception 'Unable to require an explicit soundtrack execution path';
   end if;
-  execute replace(definition, 'coalesce(blueprint.policy #>> ''{soundtrack,execution_path}'', ''external'')', 'blueprint.policy #>> ''{soundtrack,execution_path}'' in (''external'', ''local'')');
+  execute replace(definition, 'coalesce(blueprint.policy #>> ''{soundtrack,execution_path}'', ''external'') <> ''manual''', 'blueprint.policy #>> ''{soundtrack,execution_path}'' in (''external'', ''local'')');
 end;
 $migration$;
 

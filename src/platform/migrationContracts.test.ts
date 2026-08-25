@@ -237,11 +237,20 @@ describe("B-roll 连接固化迁移", () => {
 
   it("B-roll 与 soundtrack 只调度显式 external 或 local 路径", () => {
     const migration = readFileSync(explicitMediaPathMigration, "utf8");
+    const bRollPredicate = "coalesce(blueprint.policy #>> '{b_roll,execution_path}', 'external') <> 'manual'";
+    const soundtrackPredicate = "coalesce(blueprint.policy #>> '{soundtrack,execution_path}', 'external') <> 'manual'";
+    const bRollReplacement = "blueprint.policy #>> '{b_roll,execution_path}' in ('external', 'local')";
+    const soundtrackReplacement = "blueprint.policy #>> '{soundtrack,execution_path}' in ('external', 'local')";
+    const sqlString = (value: string) => value.replaceAll("'", "''");
 
-    expect(migration).toContain("blueprint.policy #>> ''{b_roll,execution_path}'' in (''external'', ''local'')");
-    expect(migration).toContain("blueprint.policy #>> ''{soundtrack,execution_path}'' in (''external'', ''local'')");
-    expect(migration).toContain("execute replace(definition, 'coalesce(blueprint.policy #>> ''{b_roll,execution_path}'', ''external'')'");
-    expect(migration).toContain("execute replace(definition, 'coalesce(blueprint.policy #>> ''{soundtrack,execution_path}'', ''external'')'");
+    expect(migration).toContain(`execute replace(definition, '${sqlString(bRollPredicate)}', '${sqlString(bRollReplacement)}')`);
+    expect(migration).toContain(`execute replace(definition, '${sqlString(soundtrackPredicate)}', '${sqlString(soundtrackReplacement)}')`);
+    const simulatedBrollDefinition = `where ${bRollPredicate}`.replace(bRollPredicate, bRollReplacement);
+    const simulatedSoundtrackDefinition = `where ${soundtrackPredicate}`.replace(soundtrackPredicate, soundtrackReplacement);
+    expect(simulatedBrollDefinition).not.toContain("<> 'manual'");
+    expect(simulatedSoundtrackDefinition).not.toContain("<> 'manual'");
+    expect(simulatedBrollDefinition).toContain(bRollReplacement);
+    expect(simulatedSoundtrackDefinition).toContain(soundtrackReplacement);
     expect(migration).toContain("revoke all on function public.orchestrate_b_roll_tasks(uuid) from public, anon, authenticated;");
     expect(migration).toContain("grant execute on function public.orchestrate_b_roll_tasks(uuid) to service_role;");
     expect(migration).toContain("revoke all on function public.orchestrate_soundtrack_tasks(uuid) from public, anon, authenticated;");
