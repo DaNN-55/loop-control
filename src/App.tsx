@@ -601,6 +601,15 @@ export function App() {
   const hasInitializedNavigationRef = useRef(false);
 
   useEffect(() => {
+    const openConnections = () => {
+      setActiveNavigation("connections");
+      setIsEpisodeDetailOpen(false);
+    };
+    window.addEventListener("open-external-connections", openConnections);
+    return () => window.removeEventListener("open-external-connections", openConnections);
+  }, []);
+
+  useEffect(() => {
     selectedEpisodeIdRef.current = selectedEpisodeId;
     setProductionPreflight(null);
   }, [selectedEpisodeId]);

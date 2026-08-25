@@ -1,7 +1,7 @@
 import type { WorkerBlocker } from "./reviewSelectors";
 
 export interface WorkerBlockerGuidance {
-  primaryAction?: "blueprint";
+  primaryAction?: "blueprint" | "connection";
   location: string;
   locationNote: string;
   title: string;
@@ -45,6 +45,18 @@ function specializedMediaUnavailableGuidance(blocker: Pick<WorkerBlocker, "detai
 }
 
 function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "action" | "check" | "status">): WorkerBlockerGuidance | undefined {
+  if (blocker.action === "manage_connection") {
+    return {
+      primaryAction: "connection",
+      title: "外部连接需要更新",
+      summary: "当前连接引用仍然有效，但供应商拒绝了认证材料或连接秘密已不可用。",
+      resolution: ["打开外部连接管理，重新提交 Pexels API Key。", "点击测试连接，确认供应商接受新的认证材料。", "连接恢复后重新执行当前任务。"],
+      retryLabel: "管理连接并重试当前任务",
+      location: "外部连接管理 → Pexels",
+      locationNote: "连接秘密不会写入蓝图、Episode、任务或普通日志。",
+      technicalDetail: blocker.detail,
+    };
+  }
   if (blocker.check === "capability_registration") {
     return {
       title: "Worker 能力未注册",
@@ -144,17 +156,6 @@ function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "ac
       retryLabel: "修改配置并继续当前生产单",
       location: "账号蓝图 → 能力配置",
       locationNote: "只修复当前能力的声明，不修改 Worker 秘密。",
-      technicalDetail: blocker.detail,
-    };
-  }
-  if (blocker.action === "manage_connection") {
-    return {
-      title: "外部连接需要更新",
-      summary: "当前连接引用仍然有效，但供应商拒绝了认证材料或连接秘密已不可用。",
-      resolution: ["打开外部连接管理，重新提交 Pexels API Key。", "点击测试连接，确认供应商接受新的认证材料。", "连接恢复后重新执行当前任务。"],
-      retryLabel: "管理连接并重试当前任务",
-      location: "外部连接管理 → Pexels",
-      locationNote: "连接秘密不会写入蓝图、Episode、任务或普通日志。",
       technicalDetail: blocker.detail,
     };
   }

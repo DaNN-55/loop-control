@@ -121,6 +121,7 @@ export type Database = {
           adapter: string
           created_at: string
           created_by: string
+          current_version_id: string
           id: string
           last_verification_detail: string | null
           last_verified_at: string | null
@@ -132,6 +133,7 @@ export type Database = {
           adapter: string
           created_at?: string
           created_by: string
+          current_version_id: string
           id?: string
           last_verification_detail?: string | null
           last_verified_at?: string | null
@@ -143,12 +145,37 @@ export type Database = {
           adapter?: string
           created_at?: string
           created_by?: string
+          current_version_id?: string
           id?: string
           last_verification_detail?: string | null
           last_verified_at?: string | null
           name?: string
           provider?: string
           status?: "unverified" | "verified" | "invalid" | "retryable"
+        }
+        Relationships: []
+      }
+      external_connection_versions: {
+        Row: {
+          connection_id: string
+          created_at: string
+          id: string
+          vault_secret_id: string
+          version: number
+        }
+        Insert: {
+          connection_id: string
+          created_at?: string
+          id?: string
+          vault_secret_id: string
+          version: number
+        }
+        Update: {
+          connection_id?: string
+          created_at?: string
+          id?: string
+          vault_secret_id?: string
+          version?: number
         }
         Relationships: []
       }

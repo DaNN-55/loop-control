@@ -2,14 +2,15 @@ import { adapterRegistration } from "./adapterRegistry.js";
 
 export const workerTaskPackageVersion = "worker-task/v1" as const;
 export const workerResultVersion = "worker-result/v1" as const;
-export const workerPreflightVersion = "worker-preflight/v1" as const;
+export const workerPreflightVersion = "worker-preflight/v2" as const;
+export type WorkerPreflightVersion = "worker-preflight/v1" | typeof workerPreflightVersion;
 export const missingVisualAssetAdapterMessage = "视觉资产准备没有导入视觉素材，也没有已登记的图片 Adapter。";
 
 export type WorkerResultStatus = "completed" | "blocked" | "failed";
 export type WorkerPreflightPhase = "preflight" | "execution";
 export type WorkerPreflightStatus = "passed" | "blocked" | "retryable" | "unavailable";
 export type WorkerPreflightAction = "none" | "edit_blueprint" | "manage_connection" | "retry" | "contact_environment_admin";
-export type WorkerPreflightScope = "blueprint" | "episode" | "worker";
+export type WorkerPreflightScope = "blueprint" | "connection" | "episode" | "worker";
 
 export interface WorkerPreflightCheck {
   capability: string;
@@ -22,7 +23,7 @@ export interface WorkerPreflightCheck {
 }
 
 export interface WorkerPreflightResult {
-  version: typeof workerPreflightVersion;
+  version: WorkerPreflightVersion;
   checks: WorkerPreflightCheck[];
 }
 
@@ -634,7 +635,7 @@ function assertBlocker(value: unknown): void {
 }
 
 export function parseWorkerPreflight(value: unknown): WorkerPreflightResult {
-  if (!isRecord(value) || value.version !== workerPreflightVersion || !Array.isArray(value.checks)) throw new Error("Worker preflight 格式无效。");
+  if (!isRecord(value) || (value.version !== "worker-preflight/v1" && value.version !== workerPreflightVersion) || !Array.isArray(value.checks)) throw new Error("Worker preflight 格式无效。");
   return { version: workerPreflightVersion, checks: value.checks.map((check) => {
     if (!isRecord(check) || !isNonEmptyString(check.capability) || !isNonEmptyString(check.check) || !isWorkerPreflightPhase(check.phase) || !isWorkerPreflightStatus(check.status) || !isNonEmptyString(check.reason) || !isWorkerPreflightAction(check.action) || !isWorkerPreflightScope(check.scope)) throw new Error("Worker preflight 检查项格式无效。");
     return { capability: check.capability, check: check.check, phase: check.phase, status: check.status, reason: check.reason, action: check.action, scope: check.scope };
@@ -654,7 +655,7 @@ function isWorkerPreflightAction(value: unknown): value is WorkerPreflightAction
 }
 
 function isWorkerPreflightScope(value: unknown): value is WorkerPreflightScope {
-  return value === "blueprint" || value === "episode" || value === "worker";
+  return value === "blueprint" || value === "connection" || value === "episode" || value === "worker";
 }
 
 function assertRetry(value: Record<string, unknown>): asserts value is WorkerResult["retry"] {

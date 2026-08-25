@@ -1,6 +1,7 @@
 import {
   createWorkerTaskPackage,
   missingVisualAssetAdapterMessage,
+  workerPreflightVersion,
   type ArtifactManifest,
   type ReviewRenderAdjustments,
   type StoryboardManifest,
@@ -64,7 +65,7 @@ export async function runCodexWorker(dependencies: CodexWorkerDependencies): Pro
         action: "contact_environment_admin",
         scope: "worker",
       };
-      result.preflight = { version: "worker-preflight/v1", checks: [check] };
+      result.preflight = { version: workerPreflightVersion, checks: [check] };
       result.blockers = [preflightBlocker(check)];
       result.nextStep = "Register an image-generation Adapter in the Worker environment before creating a new task attempt.";
     }
@@ -129,7 +130,7 @@ async function runPreflight(preflight: NonNullable<CodexWorkerDependencies["pref
     return await preflight(taskPackage);
   } catch (error) {
     return {
-      version: "worker-preflight/v1",
+      version: workerPreflightVersion,
       checks: [{
         capability: taskPackage.capability,
         check: "preflight",
@@ -548,7 +549,7 @@ function addPreflight(result: WorkerResult, preflight: WorkerPreflightResult | u
 }
 
 function appendPreflight(preflight: WorkerPreflightResult | undefined, check: WorkerPreflightCheck): WorkerPreflightResult {
-  return { version: "worker-preflight/v1", checks: [...(preflight?.checks ?? []), check] };
+  return { version: workerPreflightVersion, checks: [...(preflight?.checks ?? []), check] };
 }
 
 function preflightBlocker(check: WorkerPreflightCheck): NonNullable<WorkerResult["blockers"]>[number] {

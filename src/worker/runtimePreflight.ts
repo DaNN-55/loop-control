@@ -1,4 +1,4 @@
-import type { WorkerPreflightCheck, WorkerPreflightResult, WorkerPreflightStatus, WorkerTaskPackage } from "./contracts.js";
+import { workerPreflightVersion, type WorkerPreflightCheck, type WorkerPreflightResult, type WorkerPreflightStatus, type WorkerTaskPackage } from "./contracts.js";
 import { adapterRegistration, mediaCapabilityForCapability, mediaCapabilityForKey, mediaCapabilityKeys, registeredAdaptersForCapability } from "./adapterRegistry.js";
 
 export interface RuntimeCapability {
@@ -131,7 +131,7 @@ export function createRuntimePreflight(capabilities: RuntimeCapability[], enviro
 
     if (capability.credentialRef && environment.credentials && Object.prototype.hasOwnProperty.call(environment.credentials, capability.credentialRef)) {
       const available = environment.credentials[capability.credentialRef];
-      checks.push({ capability: capability.capability, check: "credential_presence", phase: "preflight", status: available ? "passed" : "unavailable", reason: available ? "外部连接秘密已由 Worker 解析。" : "外部连接秘密不可用，请管理该连接。", action: available ? "none" : "manage_connection", scope: "worker" });
+      checks.push({ capability: capability.capability, check: "credential_presence", phase: "preflight", status: available ? "passed" : "unavailable", reason: available ? "外部连接秘密已由 Worker 解析。" : "外部连接秘密不可用，请管理该连接。", action: available ? "none" : "manage_connection", scope: "connection" });
     }
 
     if (capability.command && environment.commands && Object.prototype.hasOwnProperty.call(environment.commands, capability.command)) {
@@ -163,7 +163,7 @@ export function createRuntimePreflight(capabilities: RuntimeCapability[], enviro
     checks.push(dependencyCheck("worker_runtime", "media_library", environment.mediaLibrary));
   }
 
-  return { version: "worker-preflight/v1", checks };
+  return { version: workerPreflightVersion, checks };
 }
 
 export function credentialEnvironmentForProvider(provider: string): string | undefined {
@@ -273,6 +273,6 @@ function connectionCredentialValidityCheck(capability: string, dependency: Runti
     status,
     reason: dependency.detail,
     action: dependency.available ? "none" : status === "retryable" ? "retry" : "manage_connection",
-    scope: status === "retryable" ? "worker" : "blueprint",
+    scope: status === "retryable" ? "worker" : "connection",
   };
 }

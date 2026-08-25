@@ -14,6 +14,7 @@ import { verifyMediaLibrary } from "./src/worker/mediaLibrary";
 import { createRuntimePreflight, runtimeCapabilitiesFromBlueprintPolicy, runtimeCommandArguments } from "./src/worker/runtimePreflight";
 import { probeCodexModel, probeProviderConnection } from "./src/worker/runtimeProbes";
 import { isSupportedManualARollVideo, isSupportedManualAudio } from "./src/reviews/materialImport";
+import { workerPreflightVersion } from "./src/worker/contracts";
 
 const localArtifactRoute = "/_local-artifact";
 const localEpisodeDirectoryRoute = "/_local-episode-directory";
@@ -1185,7 +1186,7 @@ export function serveExternalConnectionTest(supabaseUrl: string | undefined, sup
         response.end("Owner 登录会话无效。");
         return;
       }
-      const { data: connection, error: connectionError } = await ownerClient.from("external_connections").select("id, provider, adapter, name, status, last_verification_detail, last_verified_at, created_by, created_at").eq("id", connectionId).eq("created_by", userData.user.id).maybeSingle();
+      const { data: connection, error: connectionError } = await ownerClient.from("external_connections").select("id, provider, adapter, name, status, last_verification_detail, last_verified_at, created_by, created_at, current_version_id").eq("id", connectionId).eq("created_by", userData.user.id).maybeSingle();
       if (connectionError) throw connectionError;
       if (!connection) {
         response.statusCode = 404;
@@ -1194,14 +1195,14 @@ export function serveExternalConnectionTest(supabaseUrl: string | undefined, sup
       }
 
       const serviceClient = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
-      const { data: secret, error: secretError } = await serviceClient.rpc("resolve_external_connection_secret", { p_connection_id: connectionId });
+      const { data: secret, error: secretError } = await serviceClient.rpc("resolve_external_connection_secret", { p_connection_id: connection.current_version_id });
       if (secretError) throw secretError;
       const probe = typeof secret === "string" && secret.trim()
         ? await probeProviderConnection(connection.provider, secret.trim(), fetch)
         : { connection: { available: false, status: "unavailable" as const, detail: "连接秘密不可用。" } };
       const status = probe.credentialValidity?.status === "unavailable" ? "invalid" : !probe.connection.available ? (probe.connection.status === "retryable" ? "retryable" : "invalid") : "verified";
       const detail = redactConnectionSecret(probe.credentialValidity?.detail ?? probe.connection.detail, typeof secret === "string" ? secret : "");
-      const { data: updatedConnection, error: recordError } = await serviceClient.rpc("record_external_connection_verification", { p_connection_id: connectionId, p_status: status, p_detail: detail });
+      const { data: updatedConnection, error: recordError } = await serviceClient.rpc("record_external_connection_verification", { p_connection_id: connection.current_version_id, p_status: status, p_detail: detail });
       if (recordError) throw recordError;
       response.setHeader("Content-Type", "application/json");
       response.statusCode = 200;
@@ -1281,7 +1282,7 @@ function isTransientPreflightError(error: unknown): boolean {
 
 function retryablePreflight(error: unknown) {
   return {
-    version: "worker-preflight/v1" as const,
+    version: workerPreflightVersion,
     checks: [{ capability: "worker_runtime", check: "connection", phase: "preflight" as const, status: "retryable" as const, reason: error instanceof Error ? error.message : "Worker 或 Supabase 连接暂时失败。", action: "retry" as const, scope: "worker" as const }],
   };
 }

@@ -1,7 +1,7 @@
 import type { WorkerBlocker } from "./reviewSelectors";
 import { workerBlockerGuidance } from "./blockerGuidance";
 
-export function WorkerBlockerCard({ affectedTaskCount, blocker, compact = false, onOpenBlueprint }: { affectedTaskCount?: number; blocker: WorkerBlocker; compact?: boolean; onOpenBlueprint?: (blocker: WorkerBlocker) => void }) {
+export function WorkerBlockerCard({ affectedTaskCount, blocker, compact = false, onOpenBlueprint, onOpenConnection }: { affectedTaskCount?: number; blocker: WorkerBlocker; compact?: boolean; onOpenBlueprint?: (blocker: WorkerBlocker) => void; onOpenConnection?: () => void }) {
   const guidance = workerBlockerGuidance(blocker);
   return <article className={`worker-blocker ${compact ? "worker-blocker-compact" : ""}`}>
     <header className="worker-blocker-heading"><strong>{guidance.title}</strong><span>{guidance.retryLabel}</span></header>
@@ -12,6 +12,7 @@ export function WorkerBlockerCard({ affectedTaskCount, blocker, compact = false,
       <div><span>处理位置</span><strong>{guidance.location}</strong></div>
       <p>{guidance.locationNote}</p>
       {guidance.primaryAction === "blueprint" && onOpenBlueprint ? <button className="button button-danger-soft button-small" onClick={() => onOpenBlueprint(blocker)} type="button">{blocker.taskId ? "修改配置并继续当前生产单" : "打开蓝图配置"}</button> : null}
+      {guidance.primaryAction === "connection" ? <button className="button button-danger-soft button-small" onClick={() => onOpenConnection ? onOpenConnection() : window.dispatchEvent(new Event("open-external-connections"))} type="button">打开外部连接管理</button> : null}
     </div>
     <details className="worker-blocker-technical"><summary>技术详情</summary><dl><div><dt>错误码</dt><dd>{blocker.code}</dd></div><div><dt>原始原因</dt><dd>{guidance.technicalDetail}</dd></div>{blocker.taskId ? <div><dt>任务 ID</dt><dd>{blocker.taskId}</dd></div> : null}</dl></details>
   </article>;

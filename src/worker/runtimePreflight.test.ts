@@ -108,7 +108,7 @@ describe("runtime preflight", () => {
       mediaLibrary: { available: false, detail: "媒体库未挂载。" },
     });
 
-    expect(result.version).toBe("worker-preflight/v1");
+    expect(result.version).toBe("worker-preflight/v2");
     expect(result.checks).toEqual(expect.arrayContaining([
       expect.objectContaining({ check: "capability_registration", status: "passed" }),
       expect.objectContaining({ check: "credential_presence", status: "unavailable", action: "contact_environment_admin" }),

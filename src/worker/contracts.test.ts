@@ -134,7 +134,7 @@ describe("Worker 契约", () => {
       retry: { shouldRetry: false, reason: "Completed successfully." },
       nextStep: "Create the script draft task.",
     }, taskPackage);
-    expect(result).toMatchObject({ status: "completed", actualCostCents: 1, preflight: { version: "worker-preflight/v1" } });
+    expect(result).toMatchObject({ status: "completed", actualCostCents: 1, preflight: { version: "worker-preflight/v2" } });
 
     expect(() => validateWorkerResult({
       version: "worker-result/v1",
