@@ -147,6 +147,17 @@ function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "ac
       technicalDetail: blocker.detail,
     };
   }
+  if (blocker.action === "manage_connection") {
+    return {
+      title: "外部连接需要更新",
+      summary: "当前连接引用仍然有效，但供应商拒绝了认证材料或连接秘密已不可用。",
+      resolution: ["打开外部连接管理，重新提交 Pexels API Key。", "点击测试连接，确认供应商接受新的认证材料。", "连接恢复后重新执行当前任务。"],
+      retryLabel: "管理连接并重试当前任务",
+      location: "外部连接管理 → Pexels",
+      locationNote: "连接秘密不会写入蓝图、Episode、任务或普通日志。",
+      technicalDetail: blocker.detail,
+    };
+  }
   if (blocker.action === "contact_environment_admin") {
     return {
       title: "Worker 运行环境暂不可用",

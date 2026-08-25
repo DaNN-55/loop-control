@@ -54,7 +54,7 @@ function structuredFields(record: Record<string, unknown>): Pick<WorkerBlocker, 
   if (typeof record.check === "string" && record.check) fields.check = record.check;
   if (record.phase === "preflight" || record.phase === "execution") fields.phase = record.phase;
   if (record.status === "passed" || record.status === "blocked" || record.status === "retryable" || record.status === "unavailable") fields.status = record.status;
-  if (record.action === "none" || record.action === "edit_blueprint" || record.action === "retry" || record.action === "contact_environment_admin") fields.action = record.action;
+  if (record.action === "none" || record.action === "edit_blueprint" || record.action === "manage_connection" || record.action === "retry" || record.action === "contact_environment_admin") fields.action = record.action;
   if (record.scope === "blueprint" || record.scope === "episode" || record.scope === "worker") fields.scope = record.scope;
   return fields;
 }

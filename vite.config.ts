@@ -26,6 +26,7 @@ const localEpisodeDeletionRoute = "/_delete-episode";
 const localEpisodeDeletionCleanupRoute = "/_finalize-episode-deletion";
 const systemStatusRoute = "/_system-status";
 const workerPreflightRoute = "/_worker-preflight";
+const externalConnectionTestRoute = "/_external-connection-test";
 const openHyperframesStudioRoute = "/_open-hyperframes-studio";
 const freezeHyperframesStudioRoute = "/_freeze-hyperframes-studio";
 const episodePreflightRoute = "/_episode-preflight";
@@ -1141,13 +1142,101 @@ export function serveEpisodePreflight(supabaseUrl: string | undefined, supabaseP
   };
 }
 
-async function runtimePreflightForPolicy(policy: unknown, seriesRules: unknown, checkAssetRoot = false) {
+export function serveExternalConnectionTest(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined, serviceRoleKey = localWorkerServiceRoleKey()) {
+  return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+    if (request.method !== "POST") {
+      response.statusCode = 405;
+      response.end();
+      return;
+    }
+    const authorization = request.headers.authorization;
+    if (!authorization?.startsWith("Bearer ")) {
+      response.statusCode = 401;
+      response.end("需要 Owner 登录会话。");
+      return;
+    }
+    if (!supabaseUrl || !supabasePublishableKey || !serviceRoleKey) {
+      response.statusCode = 503;
+      response.end("连接测试 Worker 未配置。");
+      return;
+    }
+
+    let body: Record<string, unknown>;
+    try {
+      body = await readJsonBody(request);
+    } catch {
+      response.statusCode = 400;
+      response.end("连接测试请求无效。");
+      return;
+    }
+    const connectionId = typeof body.connectionId === "string" ? body.connectionId : "";
+    if (!isUuid(connectionId)) {
+      response.statusCode = 400;
+      response.end("连接 ID 无效。");
+      return;
+    }
+
+    try {
+      const accessToken = authorization.slice("Bearer ".length);
+      const ownerClient = createClient(supabaseUrl, supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: authorization } } });
+      const { data: userData, error: userError } = await ownerClient.auth.getUser(accessToken);
+      if (userError || !userData.user) {
+        response.statusCode = 401;
+        response.end("Owner 登录会话无效。");
+        return;
+      }
+      const { data: connection, error: connectionError } = await ownerClient.from("external_connections").select("id, provider, adapter, name, status, last_verification_detail, last_verified_at, created_by, created_at").eq("id", connectionId).eq("created_by", userData.user.id).maybeSingle();
+      if (connectionError) throw connectionError;
+      if (!connection) {
+        response.statusCode = 404;
+        response.end("未找到可测试的外部连接。");
+        return;
+      }
+
+      const serviceClient = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
+      const { data: secret, error: secretError } = await serviceClient.rpc("resolve_external_connection_secret", { p_connection_id: connectionId });
+      if (secretError) throw secretError;
+      const probe = typeof secret === "string" && secret.trim()
+        ? await probeProviderConnection(connection.provider, secret.trim(), fetch)
+        : { connection: { available: false, status: "unavailable" as const, detail: "连接秘密不可用。" } };
+      const status = probe.credentialValidity?.status === "unavailable" ? "invalid" : !probe.connection.available ? (probe.connection.status === "retryable" ? "retryable" : "invalid") : "verified";
+      const detail = redactConnectionSecret(probe.credentialValidity?.detail ?? probe.connection.detail, typeof secret === "string" ? secret : "");
+      const { data: updatedConnection, error: recordError } = await serviceClient.rpc("record_external_connection_verification", { p_connection_id: connectionId, p_status: status, p_detail: detail });
+      if (recordError) throw recordError;
+      response.setHeader("Content-Type", "application/json");
+      response.statusCode = 200;
+      response.end(JSON.stringify({ connection: updatedConnection ?? { ...connection, status, last_verification_detail: detail }, verification: { status, detail } }));
+    } catch (error) {
+      response.statusCode = 500;
+      response.end(error instanceof Error ? error.message : "无法完成连接测试。");
+    }
+  };
+}
+
+function redactConnectionSecret(detail: string, secret: string): string {
+  return secret ? detail.split(secret).join("[已隐藏]") : detail;
+}
+
+export async function runtimePreflightForPolicy(policy: unknown, seriesRules: unknown, hasExistingEpisode = false) {
   const capabilities = runtimeCapabilitiesFromBlueprintPolicy(policy, seriesRules);
   const commandNames = [...new Set(capabilities.map((capability) => capability.command).filter((command): command is string => Boolean(command)))];
-  const commandEntries = await Promise.all(commandNames.map(async (command) => [command, await dependencyStatus(command, command, runtimeCommandArguments(command))] as const));
-  const commands = Object.fromEntries(commandEntries.map(([command, status]) => [command, { available: status.state === "healthy", detail: status.detail }]));
   const credentialNames = [...new Set(capabilities.map((capability) => capability.credential).filter((credential): credential is string => Boolean(credential)))];
   const credentials = Object.fromEntries(credentialNames.map((credential) => [credential, Boolean(localWorkerEnvironmentValue(credential))]));
+  const referenceCapabilities = capabilities.filter((capability) => capability.credentialRef);
+  const referenceEntriesPromise = Promise.all(referenceCapabilities.map(async (capability) => [capability.credentialRef!, await localWorkerSecretForCapability(capability)] as const));
+  const commandEntriesPromise = Promise.all(commandNames.map(async (command) => [command, await dependencyStatus(command, command, runtimeCommandArguments(command))] as const));
+  const providerEntriesPromise = Promise.all([...new Set(capabilities.filter((capability) => capability.credential || capability.credentialRef).map((capability) => capability.provider))].map(async (provider) => {
+    const capability = capabilities.find((candidate) => candidate.provider === provider);
+    const credential = capability?.credential;
+    const apiKey = capability?.credentialRef && isUuid(capability.credentialRef)
+      ? await localWorkerSecretForCapability(capability)
+      : capability?.credential ? localWorkerEnvironmentValue(capability.credential) : undefined;
+    if (!apiKey) return null;
+    return { provider, credential: credential ?? capability?.credentialRef, probe: await probeProviderConnection(provider, apiKey) };
+  }));
+  const assetRootPromise = workerMediaLibraryStatus(policy, hasExistingEpisode);
+  const commandEntries = await commandEntriesPromise;
+  const commands = Object.fromEntries(commandEntries.map(([command, status]) => [command, { available: status.state === "healthy", detail: status.detail }]));
   const modelEntries = await Promise.all([...new Set(capabilities.filter((capability) => capability.provider === "codex" && capability.model && commands.codex?.available).map((capability) => capability.model as string))].map(async (model) => {
     const probe = await probeCodexModel(model, async (command, argumentsList, options) => {
       const result = await execFileAsync(command, argumentsList, { timeout: options?.timeoutMs, maxBuffer: 64 * 1024 });
@@ -1155,24 +1244,34 @@ async function runtimePreflightForPolicy(policy: unknown, seriesRules: unknown, 
     }, tmpdir());
     return [model, probe] as const;
   }));
-  const providerEntries = await Promise.all([...new Set(capabilities.filter((capability) => capability.credential).map((capability) => capability.provider))].map(async (provider) => {
-    const credential = capabilities.find((capability) => capability.provider === provider)?.credential;
-    const apiKey = credential ? localWorkerEnvironmentValue(credential) : undefined;
-    if (!apiKey) return null;
-    return { provider, credential, probe: await probeProviderConnection(provider, apiKey) };
-  }));
+  const [providerEntries, referenceEntries, assetRoot] = await Promise.all([providerEntriesPromise, referenceEntriesPromise, assetRootPromise]);
   const modelPermissions = Object.fromEntries(modelEntries.map(([model, probe]) => [model, probe.modelPermission]));
   const connections = Object.fromEntries(providerEntries.filter((entry): entry is NonNullable<typeof entry> => Boolean(entry)).map((entry) => [entry.provider, entry.probe.connection]));
   const credentialValidity = Object.fromEntries(providerEntries.filter((entry): entry is NonNullable<typeof entry> => Boolean(entry?.probe.credentialValidity)).map((entry) => [entry.credential, entry.probe.credentialValidity]));
-  const assetRoot = await workerMediaLibraryStatus(policy, checkAssetRoot);
+  const connectionReferences = Object.fromEntries(referenceEntries.map(([reference, secret]) => [reference, secret ? { available: true, detail: "外部连接引用已解析。" } : { available: false, detail: "外部连接引用不存在或尚未验证。" }]));
   return createRuntimePreflight(capabilities, {
     commands,
-    credentials,
+    credentials: { ...credentials, ...Object.fromEntries(referenceEntries.map(([reference, secret]) => [reference, Boolean(secret)])) },
+    ...(Object.keys(connectionReferences).length ? { connectionReferences } : {}),
     ...(Object.keys(modelPermissions).length ? { modelPermissions } : {}),
     ...(Object.keys(connections).length ? { connections } : {}),
     ...(Object.keys(credentialValidity).length ? { credentialValidity } : {}),
-    ...(checkAssetRoot ? { assetRoot } : { mediaLibrary: assetRoot }),
+    ...(hasExistingEpisode ? { assetRoot } : { mediaLibrary: assetRoot }),
   });
+}
+
+async function localWorkerSecretForCapability(capability: { credential?: string; credentialRef?: string }): Promise<string | undefined> {
+  const reference = capability.credentialRef;
+  if (reference && isUuid(reference)) {
+    const key = localWorkerServiceRoleKey();
+    const url = localWorkerEnvironmentValue("SUPABASE_URL") ?? process.env.VITE_SUPABASE_URL;
+    if (!key || !url) return undefined;
+    const client = createClient(url, key, { auth: { persistSession: false } });
+    const { data, error } = await client.rpc("resolve_external_connection_secret", { p_connection_id: reference });
+    if (error || typeof data !== "string") return undefined;
+    return data.trim() || undefined;
+  }
+  return capability.credential ? localWorkerEnvironmentValue(capability.credential) : undefined;
 }
 
 function isTransientPreflightError(error: unknown): boolean {
@@ -1330,6 +1429,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
   const deletionCleanupMiddleware = serveEpisodeDeletionCleanup(supabaseUrl, supabasePublishableKey);
   const systemStatusMiddleware = serveSystemStatus(supabaseUrl, supabasePublishableKey);
   const episodePreflightMiddleware = serveEpisodePreflight(supabaseUrl, supabasePublishableKey);
+  const externalConnectionTestMiddleware = serveExternalConnectionTest(supabaseUrl, supabasePublishableKey, localWorkerServiceRoleKey());
   const workerPreflightMiddleware = serveWorkerPreflight(supabaseUrl, supabasePublishableKey);
   return {
     name: "local-artifact-preview",
@@ -1347,6 +1447,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(localEpisodeDeletionCleanupRoute, deletionCleanupMiddleware);
       server.middlewares.use(systemStatusRoute, systemStatusMiddleware);
       server.middlewares.use(episodePreflightRoute, episodePreflightMiddleware);
+      server.middlewares.use(externalConnectionTestRoute, externalConnectionTestMiddleware);
       server.middlewares.use(workerPreflightRoute, workerPreflightMiddleware);
     },
     configurePreviewServer(server) {
@@ -1363,6 +1464,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(localEpisodeDeletionCleanupRoute, deletionCleanupMiddleware);
       server.middlewares.use(systemStatusRoute, systemStatusMiddleware);
       server.middlewares.use(episodePreflightRoute, episodePreflightMiddleware);
+      server.middlewares.use(externalConnectionTestRoute, externalConnectionTestMiddleware);
       server.middlewares.use(workerPreflightRoute, workerPreflightMiddleware);
     },
   };

@@ -116,6 +116,66 @@ export type Database = {
           },
         ]
       }
+      external_connections: {
+        Row: {
+          adapter: string
+          created_at: string
+          created_by: string
+          id: string
+          last_verification_detail: string | null
+          last_verified_at: string | null
+          name: string
+          provider: string
+          status: "unverified" | "verified" | "invalid" | "retryable"
+        }
+        Insert: {
+          adapter: string
+          created_at?: string
+          created_by: string
+          id?: string
+          last_verification_detail?: string | null
+          last_verified_at?: string | null
+          name: string
+          provider: string
+          status?: "unverified" | "verified" | "invalid" | "retryable"
+        }
+        Update: {
+          adapter?: string
+          created_at?: string
+          created_by?: string
+          id?: string
+          last_verification_detail?: string | null
+          last_verified_at?: string | null
+          name?: string
+          provider?: string
+          status?: "unverified" | "verified" | "invalid" | "retryable"
+        }
+        Relationships: []
+      }
+      external_connection_verifications: {
+        Row: {
+          connection_id: string
+          created_at: string
+          detail: string
+          id: string
+          status: "verified" | "invalid" | "retryable"
+        }
+        Insert: {
+          connection_id: string
+          created_at?: string
+          detail: string
+          id?: string
+          status: "verified" | "invalid" | "retryable"
+        }
+        Update: {
+          connection_id?: string
+          created_at?: string
+          detail?: string
+          id?: string
+          status?: "verified" | "invalid" | "retryable"
+        }
+        Relationships: []
+      }
       approvals: {
         Row: {
           actor_id: string
@@ -1112,6 +1172,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_external_connection: {
+        Args: { p_adapter: string; p_name: string; p_provider: string; p_secret: string }
+        Returns: Database["public"]["Tables"]["external_connections"]["Row"]
+        SetofOptions: { from: "*"; to: "external_connections"; isOneToOne: true; isSetofReturn: false }
+      }
+      record_external_connection_verification: {
+        Args: { p_connection_id: string; p_detail: string; p_status: "verified" | "invalid" | "retryable" }
+        Returns: Database["public"]["Tables"]["external_connections"]["Row"]
+        SetofOptions: { from: "*"; to: "external_connections"; isOneToOne: true; isSetofReturn: false }
+      }
+      resolve_external_connection_secret: {
+        Args: { p_connection_id: string }
+        Returns: string
+      }
       create_pre_render_review_packages: {
         Args: Record<PropertyKey, never>
         Returns: Database["public"]["Tables"]["review_packages"]["Row"][]

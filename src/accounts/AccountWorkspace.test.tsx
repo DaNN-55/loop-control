@@ -14,6 +14,7 @@ type Blueprint = Database["public"]["Tables"]["account_blueprint_versions"]["Row
 type Series = Database["public"]["Tables"]["series"]["Row"];
 type SeriesVersion = Database["public"]["Tables"]["series_versions"]["Row"];
 type PromptVersion = Database["public"]["Tables"]["prompt_versions"]["Row"];
+type ExternalConnection = Database["public"]["Tables"]["external_connections"]["Row"];
 
 const account: Account = { created_at: "2026-08-14T00:00:00.000Z", current_blueprint_version_id: "blueprint-3", id: "account-1", name: "道工作室", slug: "dao-studio", timezone: "Asia/Shanghai" };
 const storyboardHarness: PromptVersion = { account_id: account.id, capability: "storyboard_planning", content_hash: "a".repeat(64), created_at: "2026-08-22T00:00:00.000Z", created_by: "owner-1", id: "harness-storyboard-1", instructions: "先写可执行镜头。", is_active: true, name: "分镜规划 v1", slug: "storyboard-planning-v1", summary: "为审核准备可执行分镜。", version: 1 };
@@ -151,6 +152,19 @@ describe("账号配置工作区", () => {
     expect((screen.getByRole("combobox", { name: "B-roll 外部连接" }) as HTMLSelectElement).value).toBe("");
     expect(screen.queryByLabelText("API Key")).toBeNull();
   });
+
+  it("只把已验证的 Pexels 连接提供给 B-roll 蓝图", async () => {
+    const user = userEvent.setup();
+    const connection: ExternalConnection = { adapter: "pexels_video", created_at: "2026-08-25T00:00:00.000Z", created_by: "owner-1", id: "11111111-1111-4111-8111-111111111111", last_verification_detail: "Pexels 已接受请求。", last_verified_at: "2026-08-25T00:01:00.000Z", name: "主 Pexels", provider: "pexels", status: "verified" };
+    renderWorkspace({ externalConnections: [connection] });
+
+    await user.click(screen.getByRole("checkbox", { name: "启用B-roll" }));
+    await user.selectOptions(screen.getByRole("combobox", { name: "B-roll Adapter" }), "pexels_video");
+
+    expect(screen.getByRole("option", { name: "主 Pexels · 已验证" })).toBeTruthy();
+    expect((screen.getByRole("combobox", { name: "B-roll 外部连接" }) as HTMLSelectElement).value).toBe(connection.id);
+  });
+
 
   it("旁白和配乐只选择登记的 Adapter 与非秘密连接", async () => {
     const user = userEvent.setup();

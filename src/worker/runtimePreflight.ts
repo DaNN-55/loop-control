@@ -25,6 +25,7 @@ export interface RuntimeDependencyStatus {
 export interface RuntimePreflightEnvironment {
   assetRoot?: RuntimeDependencyStatus;
   credentials?: Record<string, boolean>;
+  connectionReferences?: Record<string, RuntimeDependencyStatus>;
   credentialValidity?: Record<string, RuntimeDependencyStatus>;
   commands?: Record<string, RuntimeDependencyStatus>;
   connections?: Record<string, RuntimeDependencyStatus>;
@@ -124,6 +125,15 @@ export function createRuntimePreflight(capabilities: RuntimeCapability[], enviro
       checks.push({ capability: capability.capability, check: "credential_presence", phase: "preflight", status: credentialAvailable ? "passed" : "unavailable", reason: credentialAvailable ? `${capability.credential} 已在 Worker 环境中配置。` : `${capability.credential} 未配置。`, action: credentialAvailable ? "none" : "contact_environment_admin", scope: "worker" });
     }
 
+    if (capability.credentialRef && environment.connectionReferences && Object.prototype.hasOwnProperty.call(environment.connectionReferences, capability.credentialRef)) {
+      checks.push(connectionReferenceCheck(capability.capability, environment.connectionReferences[capability.credentialRef]));
+    }
+
+    if (capability.credentialRef && environment.credentials && Object.prototype.hasOwnProperty.call(environment.credentials, capability.credentialRef)) {
+      const available = environment.credentials[capability.credentialRef];
+      checks.push({ capability: capability.capability, check: "credential_presence", phase: "preflight", status: available ? "passed" : "unavailable", reason: available ? "外部连接秘密已由 Worker 解析。" : "外部连接秘密不可用，请管理该连接。", action: available ? "none" : "manage_connection", scope: "worker" });
+    }
+
     if (capability.command && environment.commands && Object.prototype.hasOwnProperty.call(environment.commands, capability.command)) {
       const commandStatus = environment.commands[capability.command];
       checks.push(dependencyCheck(capability.capability, "command_availability", commandStatus));
@@ -139,6 +149,9 @@ export function createRuntimePreflight(capabilities: RuntimeCapability[], enviro
 
     if (capability.credential && environment.credentialValidity && Object.prototype.hasOwnProperty.call(environment.credentialValidity, capability.credential)) {
       checks.push(dependencyCheck(capability.capability, "credential_validity", environment.credentialValidity[capability.credential]));
+    }
+    if (capability.credentialRef && environment.credentialValidity && Object.prototype.hasOwnProperty.call(environment.credentialValidity, capability.credentialRef)) {
+      checks.push(connectionCredentialValidityCheck(capability.capability, environment.credentialValidity[capability.credentialRef]));
     }
   }
 
@@ -201,7 +214,7 @@ function configurationErrorFor(capability: RuntimeCapability): string | undefine
   if (capability.requiresAdapter && !capability.adapter) return `能力 ${capability.capability} 缺少已注册 Adapter。`;
   if (capability.requiresPromptHarness && !capability.promptHarnessId) return `能力 ${capability.capability} 缺少 Prompt Harness。`;
   const registration = capability.adapter ? adapterRegistration(capability.provider, capability.adapter) : undefined;
-  if (registration?.connections.length && !registration.connections.some((connection) => connection.credentialRef === capability.credentialRef)) return `能力 ${capability.capability} 缺少可用的外部连接引用。`;
+  if (registration?.connections.length && !registration.connections.some((connection) => connection.credentialRef === capability.credentialRef) && !isConnectionId(capability.credentialRef)) return `能力 ${capability.capability} 缺少可用的外部连接引用。`;
   return undefined;
 }
 
@@ -221,6 +234,10 @@ function requiredTools(): string[] {
   return ["read", "write"];
 }
 
+function isConnectionId(value: string | undefined): boolean {
+  return Boolean(value && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value));
+}
+
 function dependencyCheck(capability: string, check: string, dependency: RuntimeDependencyStatus): WorkerPreflightCheck {
   const status: WorkerPreflightStatus = dependency.available ? "passed" : dependency.status ?? "unavailable";
   return {
@@ -231,5 +248,31 @@ function dependencyCheck(capability: string, check: string, dependency: RuntimeD
     reason: dependency.detail,
     action: dependency.available ? "none" as const : status === "retryable" ? "retry" as const : "contact_environment_admin" as const,
     scope: "worker" as const,
+  };
+}
+
+function connectionReferenceCheck(capability: string, dependency: RuntimeDependencyStatus): WorkerPreflightCheck {
+  const status: WorkerPreflightStatus = dependency.available ? "passed" : dependency.status ?? "unavailable";
+  return {
+    capability,
+    check: "connection_reference",
+    phase: "preflight",
+    status,
+    reason: dependency.detail,
+    action: dependency.available ? "none" : status === "retryable" ? "retry" : "edit_blueprint",
+    scope: status === "retryable" ? "worker" : "blueprint",
+  };
+}
+
+function connectionCredentialValidityCheck(capability: string, dependency: RuntimeDependencyStatus): WorkerPreflightCheck {
+  const status: WorkerPreflightStatus = dependency.available ? "passed" : dependency.status ?? "unavailable";
+  return {
+    capability,
+    check: "credential_validity",
+    phase: "preflight",
+    status,
+    reason: dependency.detail,
+    action: dependency.available ? "none" : status === "retryable" ? "retry" : "manage_connection",
+    scope: status === "retryable" ? "worker" : "blueprint",
   };
 }

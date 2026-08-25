@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
-import { Activity, BarChart3, BookOpen, ClipboardList, Copy, FolderOpen, History, LogOut, MessageSquare, Moon, PanelLeft, Pencil, Play, RefreshCw, Sun, Table2, Trash2, Upload, User, Users, X, type LucideIcon } from "lucide-react";
+import { Activity, BarChart3, BookOpen, ClipboardList, Copy, FolderOpen, History, KeyRound, LogOut, MessageSquare, Moon, PanelLeft, Pencil, Play, RefreshCw, Sun, Table2, Trash2, Upload, User, Users, X, type LucideIcon } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 import type { Database, Json } from "./lib/database.types";
 import { supabase } from "./lib/supabase";
@@ -26,11 +26,12 @@ import { SystemStatusPanel, type LocalSystemStatusReport } from "./observability
 import { MarkdownPreview } from "./ui/MarkdownPreview";
 import { canonicalMaterialName, materialTypeForFile, type MaterialPurpose, type MaterialType } from "./reviews/materialImport";
 import { AccountWorkspace } from "./accounts/AccountWorkspace";
+import { ConnectionWorkspace } from "./connections/ConnectionWorkspace";
 
 export { AccountWorkspace, SeriesSettings } from "./accounts/AccountWorkspace";
 
 
-type NavigationItem = "accounts" | "episodes" | "operations" | "reviews" | "publish" | "learning";
+type NavigationItem = "accounts" | "connections" | "episodes" | "operations" | "reviews" | "publish" | "learning";
 type Theme = "light" | "dark";
 type Account = Database["public"]["Tables"]["accounts"]["Row"];
 type Blueprint = Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
@@ -55,6 +56,7 @@ type LearningReport = Database["public"]["Tables"]["learning_reports"]["Row"];
 type MetricSnapshot = Database["public"]["Tables"]["metric_snapshots"]["Row"];
 type BlueprintChangeSuggestion = Database["public"]["Tables"]["blueprint_change_suggestions"]["Row"];
 type PublicationRecord = Database["public"]["Tables"]["publication_records"]["Row"];
+type ExternalConnection = Database["public"]["Tables"]["external_connections"]["Row"];
 
 interface BlueprintRepairContext {
   blocker: WorkerBlocker;
@@ -182,6 +184,7 @@ interface Workspace {
   metricSnapshots: MetricSnapshot[];
   blueprintChangeSuggestions: BlueprintChangeSuggestion[];
   publicationRecords: PublicationRecord[];
+  externalConnections: ExternalConnection[];
 }
 
 export const navigation: Array<{ id: NavigationItem; label: string }> = [
@@ -191,6 +194,7 @@ export const navigation: Array<{ id: NavigationItem; label: string }> = [
   { id: "publish", label: "发布队列" },
   { id: "learning", label: "复盘" },
   { id: "accounts", label: "账号" },
+  { id: "connections", label: "外部连接" },
 ];
 
 export function initialNavigationForWorkspace(workspace: Pick<Workspace, "accounts" | "episodes">): NavigationItem {
@@ -447,7 +451,7 @@ function bytesToBase64(content: Uint8Array): string {
 }
 
 async function loadWorkspace(): Promise<Workspace> {
-  const [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, promptVersionsResult, materialRevisionsResult, reviewPackagesResult, reviewAnnotationsResult, qcReviewIssuesResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, taskRunsResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult] = await Promise.all([
+  const [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, promptVersionsResult, materialRevisionsResult, reviewPackagesResult, reviewAnnotationsResult, qcReviewIssuesResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, taskRunsResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult, externalConnectionsResult] = await Promise.all([
     supabase.from("accounts").select("*").order("created_at"),
     supabase.from("account_blueprint_versions").select("*").order("version", { ascending: false }),
     supabase.from("episodes").select("*").order("updated_at", { ascending: false }),
@@ -471,8 +475,9 @@ async function loadWorkspace(): Promise<Workspace> {
     supabase.from("metric_snapshots").select("*").order("captured_at", { ascending: false }),
     supabase.from("blueprint_change_suggestions").select("*").order("created_at", { ascending: false }),
     supabase.from("publication_records").select("*").order("created_at", { ascending: false }),
+    supabase.from("external_connections").select("*").order("created_at", { ascending: false }),
   ]);
-  const error = [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, promptVersionsResult, materialRevisionsResult, reviewPackagesResult, reviewAnnotationsResult, qcReviewIssuesResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, taskRunsResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult]
+  const error = [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, promptVersionsResult, materialRevisionsResult, reviewPackagesResult, reviewAnnotationsResult, qcReviewIssuesResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, taskRunsResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult, externalConnectionsResult]
     .map((result) => result.error)
     .find(Boolean);
 
@@ -502,6 +507,7 @@ async function loadWorkspace(): Promise<Workspace> {
     metricSnapshots: metricSnapshotsResult.data ?? [],
     blueprintChangeSuggestions: blueprintChangeSuggestionsResult.data ?? [],
     publicationRecords: publicationRecordsResult.data ?? [],
+    externalConnections: externalConnectionsResult.data ?? [],
   };
 }
 
@@ -950,6 +956,41 @@ export function App() {
       await refreshWorkspace();
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "创建账号失败。");
+    } finally {
+      setPendingAction("");
+    }
+  }
+
+  async function createExternalConnection(input: { name: string; provider: "pexels"; adapter: "pexels_video"; secret: string }): Promise<ExternalConnection | null> {
+    setPendingAction("external-connection");
+    setErrorMessage("");
+    try {
+      const { data, error } = await supabase.rpc("create_external_connection", { p_adapter: input.adapter, p_name: input.name, p_provider: input.provider, p_secret: input.secret });
+      if (error) throw error;
+      await refreshWorkspace();
+      return data;
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "创建外部连接失败。");
+      return null;
+    } finally {
+      setPendingAction("");
+    }
+  }
+
+  async function testExternalConnection(connectionId: string): Promise<void> {
+    setPendingAction(`test-external-connection-${connectionId}`);
+    setErrorMessage("");
+    try {
+      const { data, error: sessionError } = await supabase.auth.getSession();
+      if (sessionError || !data.session) throw sessionError ?? new Error("需要 Owner 登录会话。");
+      const response = await fetch("/_external-connection-test", { body: JSON.stringify({ connectionId }), headers: { Authorization: `Bearer ${data.session.access_token}`, "Content-Type": "application/json" }, method: "POST" });
+      const payload: unknown = await response.json().catch(() => null);
+      if (!response.ok) throw new Error(payload && typeof payload === "object" && !Array.isArray(payload) && typeof (payload as Record<string, unknown>).error === "string" ? (payload as Record<string, unknown>).error as string : "无法完成外部连接测试。");
+      await refreshWorkspace();
+      setMessage("Pexels 连接测试已完成；蓝图只可选择已验证连接。");
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "外部连接测试失败。");
+      throw error;
     } finally {
       setPendingAction("");
     }
@@ -1610,7 +1651,9 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
 
         {message || errorMessage ? <div className="floating-notices" aria-live="polite">{message ? <div className="notice-message" role="status">{message}<button aria-label="关闭通知" onClick={() => setMessage("")} type="button">×</button></div> : null}{errorMessage ? <div className="error-message" role="alert">{errorMessage}<button aria-label="关闭错误通知" onClick={() => setErrorMessage("")} type="button">×</button></div> : null}</div> : null}
 
-        {activeNavigation === "accounts" ? (
+        {activeNavigation === "connections" ? (
+          <ConnectionWorkspace connections={workspace.externalConnections} isPending={pendingAction === "external-connection" || pendingAction.startsWith("test-external-connection-")} onCreateConnection={createExternalConnection} onTestConnection={testExternalConnection} />
+        ) : activeNavigation === "accounts" ? (
           <AccountWorkspace
             account={selectedAccount}
             accounts={workspace.accounts}
@@ -1636,6 +1679,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             blueprintPreflightError={blueprintPreflightError}
             isBlueprintPreflightLoading={isBlueprintPreflightLoading}
             onRefreshBlueprintPreflight={() => selectedAccount ? refreshBlueprintPreflight(selectedAccount.id) : Promise.resolve()}
+            externalConnections={workspace.externalConnections}
           />
         ) : activeNavigation === "reviews" ? (
           <ReviewWorkspace
@@ -2655,7 +2699,7 @@ function PasswordForm({ isPending, onClose, onSubmit }: { isPending: boolean; on
 
 type IconName = NavigationItem | "Moon" | "Sun" | "Exit" | "Close" | "Play" | "PanelLeft" | "User" | "Edit" | "Delete";
 
-const iconComponents: Record<IconName, LucideIcon> = { accounts: Users, episodes: Table2, operations: BarChart3, reviews: MessageSquare, publish: Upload, learning: BookOpen, Moon, Sun, Exit: LogOut, Close: X, Play, PanelLeft, User, Edit: Pencil, Delete: Trash2 };
+const iconComponents: Record<IconName, LucideIcon> = { accounts: Users, connections: KeyRound, episodes: Table2, operations: BarChart3, reviews: MessageSquare, publish: Upload, learning: BookOpen, Moon, Sun, Exit: LogOut, Close: X, Play, PanelLeft, User, Edit: Pencil, Delete: Trash2 };
 
 function Icon({ name }: { name: IconName }) {
   const IconComponent = iconComponents[name];

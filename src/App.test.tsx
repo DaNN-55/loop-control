@@ -167,7 +167,7 @@ describe("approval console", () => {
   });
 
   it("按日常工作流顺序显示导航，并为审核和发布显示待办数量", () => {
-    expect(navigation.map((item) => item.label)).toEqual(["系列运营", "生产单", "审核", "发布队列", "复盘", "账号"]);
+    expect(navigation.map((item) => item.label)).toEqual(["系列运营", "生产单", "审核", "发布队列", "复盘", "账号", "外部连接"]);
     const episode = { account_id: "account-1", blueprint_version_id: "blueprint-1", created_at: "2026-08-15T00:00:00.000Z", id: "episode-1", stage: "script_review", title: "待审核", updated_at: "2026-08-15T00:00:00.000Z" } as Database["public"]["Tables"]["episodes"]["Row"];
     expect(navigationBadgeCounts([episode], [], [])).toEqual({ reviews: 1, publish: 0 });
   });

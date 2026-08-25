@@ -185,9 +185,15 @@ export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterFor
 }
 
 function validateRegisteredMediaConnection(label: string, key: MediaAdapterKey, form: MediaAdapterForm): void {
-  const registration = adapterRegistration(form.provider.trim(), form.adapter.trim());
+  const registration = adapterRegistration(form.provider.trim(), form.adapter.trim(), mediaCapabilityForKey(key).capability);
   if (!registration || registration.capability !== mediaCapabilityForKey(key).capability) throw new Error(`${label}必须选择已注册的 Adapter。`);
-  if (!registration.connections.some((connection) => connection.credentialRef === form.credentialRef.trim())) throw new Error(`${label}必须选择可用的外部连接。`);
+  const credentialRef = form.credentialRef.trim();
+  const dynamicPexelsConnection = form.provider.trim() === "pexels" && form.adapter.trim() === "pexels_video" && isUuid(credentialRef);
+  if (registration.connections.length && !registration.connections.some((connection) => connection.credentialRef === credentialRef) && !dynamicPexelsConnection) throw new Error(`${label}必须选择可用的外部连接。`);
+}
+
+function isUuid(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
 }
 
 export function validateMediaAdapters(mediaAdapters: Record<MediaAdapterKey, MediaAdapterForm>): void {

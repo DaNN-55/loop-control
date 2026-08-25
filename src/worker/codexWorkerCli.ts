@@ -80,8 +80,7 @@ async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
     const input = { taskPackage, run: runCommand, validateMp4: validateMp4Artifact, inspectMp4: inspectMp4Artifact };
     return taskPackage.capability === "final_rendering" ? executeHyperframesFinalRender(input) : executeHyperframesReviewRender(input);
   }
-  const credential = credentialEnvironmentForReference(taskPackage.provider, taskPackage.aRoll?.adapter ?? taskPackage.media?.adapter, taskPackage.credentialRef);
-  const apiKey = credential ? process.env[credential] : undefined;
+  const apiKey = await resolveTaskSecret(taskPackage);
   return executeControlledMediaTask({
     taskPackage,
     fetcher: fetch,
@@ -116,7 +115,7 @@ async function generateVisualAssets(taskPackage: WorkerTaskPackage, output: stri
   const imageGeneration = taskPackage.visualAssetPreparation?.imageGeneration;
   if (!imageGeneration) throw new Error("视觉资产存在缺失项，但没有冻结的图片 Adapter。" );
   if (imageGeneration.provider !== "openai" || imageGeneration.adapter !== "openai_images") throw new Error("冻结的图片 Adapter 没有可用执行路径。" );
-  const apiKey = process.env[credentialEnvironmentForReference(imageGeneration.provider, imageGeneration.adapter, imageGeneration.credentialRef) ?? ""];
+  const apiKey = await resolveConnectionSecret(imageGeneration.credentialRef, imageGeneration.provider, imageGeneration.adapter);
   if (!apiKey?.trim()) throw new Error("OPENAI_API_KEY 未配置，无法生成冻结视觉资产。" );
   const generated: ArtifactManifest[] = [];
   for (const request of requests) {
@@ -149,14 +148,33 @@ async function preflightTask(taskPackage: WorkerTaskPackage): Promise<WorkerPref
   const modelProbe = taskPackage.provider === "codex" && commandStatus?.available
     ? await probeCodexModel(taskPackage.model, (probeCommand, argumentsList, options) => runCommandWithOutput(probeCommand, argumentsList, options?.timeoutMs), tmpdir())
     : undefined;
-  const apiKey = credential ? process.env[credential]?.trim() : undefined;
+  const apiKey = await resolveTaskSecret(taskPackage);
   const providerProbe = apiKey && taskPackage.provider !== "codex" ? await probeProviderConnection(taskPackage.provider, apiKey, fetch, taskPackage.model) : undefined;
   return createRuntimePreflight([capability], {
-    credentials: credential ? { [credential]: Boolean(process.env[credential]?.trim()) } : undefined,
+    credentials: credential ? { [credential]: Boolean(apiKey) } : taskPackage.credentialRef ? { [taskPackage.credentialRef]: Boolean(apiKey) } : undefined,
+    ...(taskPackage.credentialRef ? { connectionReferences: { [taskPackage.credentialRef]: apiKey ? { available: true, detail: "外部连接引用已解析。" } : { available: false, detail: "外部连接秘密不可用。" } } } : {}),
     commands,
     ...(modelProbe ? { modelPermissions: { [taskPackage.model]: modelProbe.modelPermission }, connections: { [taskPackage.provider]: modelProbe.connection } } : {}),
-    ...(providerProbe ? { connections: { [taskPackage.provider]: providerProbe.connection }, ...(providerProbe.credentialValidity && credential ? { credentialValidity: { [credential]: providerProbe.credentialValidity } } : {}), ...(providerProbe.modelPermission ? { modelPermissions: { [taskPackage.model]: providerProbe.modelPermission } } : {}) } : {}),
+    ...(providerProbe ? { connections: { [taskPackage.provider]: providerProbe.connection }, ...(providerProbe.credentialValidity && (credential || taskPackage.credentialRef) ? { credentialValidity: { [credential ?? taskPackage.credentialRef!]: providerProbe.credentialValidity } } : {}), ...(providerProbe.modelPermission ? { modelPermissions: { [taskPackage.model]: providerProbe.modelPermission } } : {}) } : {}),
   });
+}
+
+async function resolveTaskSecret(taskPackage: WorkerTaskPackage): Promise<string | undefined> {
+  return resolveConnectionSecret(taskPackage.credentialRef, taskPackage.provider, taskPackage.aRoll?.adapter ?? taskPackage.media?.adapter);
+}
+
+async function resolveConnectionSecret(credentialRef: string | undefined, provider: string, adapter?: string): Promise<string | undefined> {
+  if (credentialRef && isConnectionId(credentialRef)) {
+    const { data, error } = await supabase.rpc("resolve_external_connection_secret", { p_connection_id: credentialRef });
+    if (error) throw new Error("无法解析 Worker 外部连接秘密。");
+    return typeof data === "string" && data.trim() ? data.trim() : undefined;
+  }
+  const credential = credentialEnvironmentForReference(provider, adapter, credentialRef);
+  return credential ? process.env[credential]?.trim() : undefined;
+}
+
+function isConnectionId(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
 }
 
 async function workerCommandStatus(command: string): Promise<{ available: boolean; detail: string }> {
