@@ -98,6 +98,21 @@ const deployedMigrations = {
 };
 
 describe("B-roll 连接固化迁移", () => {
+  it("OpenAI Images 只冻结已验证连接版本，不信任任务输入中的自由执行路径", () => {
+    const migration = readFileSync("supabase/migrations/20260825120000_owner_openai_connection.sql", "utf8");
+
+    expect(migration).toContain("external_connection_versions");
+    expect(migration).toContain("openai_images");
+    expect(migration).toContain("current_version_id");
+    expect(migration).toContain("vault.create_secret");
+    expect(migration).toContain("freeze_openai_image_generation_config");
+    expect(migration).toContain("blueprint_policy #>> '{static_visual,credential_ref}'");
+    expect(migration).toContain("if new.is_snapshot then return new;");
+    expect(migration).toContain("Static visual model must come from the OpenAI Images Adapter catalog");
+    expect(migration).not.toContain("'provider', image_generation");
+    expect(migration).not.toContain("'adapter', image_generation");
+  });
+
   it("保存已被生产单引用的蓝图时，为旧规则分配独立快照版本", () => {
     const migration = readFileSync(blueprintSnapshotVersionMigration, "utf8");
 

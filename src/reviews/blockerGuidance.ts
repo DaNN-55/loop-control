@@ -159,6 +159,17 @@ function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "ac
       technicalDetail: blocker.detail,
     };
   }
+  if (blocker.action === "manage_connection") {
+    return {
+      title: "OpenAI Images 连接需要处理",
+      summary: "供应商拒绝了当前冻结连接版本的认证材料。",
+      resolution: ["在静态视觉配置入口显式测试当前连接。", "如果认证材料已失效，创建并测试新的 OpenAI Images 连接。", "验证通过后只重试当前受阻任务。"],
+      retryLabel: "连接恢复后重试当前任务",
+      location: "账号蓝图 → 静态视觉配置",
+      locationNote: "不在蓝图中保存或展示 API Key。",
+      technicalDetail: blocker.detail,
+    };
+  }
   if (blocker.action === "contact_environment_admin") {
     return {
       title: "Worker 运行环境暂不可用",

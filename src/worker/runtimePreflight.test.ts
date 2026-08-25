@@ -98,6 +98,51 @@ describe("runtime preflight", () => {
     expect(capability?.credential).toBeUndefined();
   });
 
+  it("静态视觉只从蓝图读取 OpenAI Images 连接版本", () => {
+    const [capability] = runtimeCapabilitiesFromBlueprintPolicy({
+      static_visual: {
+        credential_ref: "11111111-1111-4111-8111-111111111111",
+        executor: { provider: "openai", adapter: "openai_images", model: "gpt-image-1", prompt_version: "static-visual-v1" },
+        allowed_tools: ["read", "write"],
+      },
+    }).filter((candidate) => candidate.capability === "static_visual_generation");
+
+    expect(capability).toMatchObject({ provider: "openai", adapter: "openai_images", model: "gpt-image-1", credentialRef: "11111111-1111-4111-8111-111111111111" });
+    expect(capability).not.toHaveProperty("credential");
+    expect(createRuntimePreflight([capability], { modelPermissions: { "gpt-image-1": { available: false, detail: "OpenAI Images 不支持该模型。" } } }).checks).toContainEqual(expect.objectContaining({ check: "model_permission", action: "edit_blueprint", scope: "blueprint" }));
+  });
+
+  it("OpenAI Images 认证失败指向连接管理", () => {
+    const result = createRuntimePreflight([{
+      capability: "static_visual_generation",
+      provider: "openai",
+      adapter: "openai_images",
+      credentialRef: "11111111-1111-4111-8111-111111111111",
+      model: "gpt-image-1",
+      promptVersion: "static-visual-v1",
+      allowedTools: ["read", "write"],
+    }], {
+      connectionReferences: { "11111111-1111-4111-8111-111111111111": { available: true, detail: "连接版本已解析。" } },
+      credentialValidity: { "11111111-1111-4111-8111-111111111111": { available: false, detail: "OpenAI 认证材料被拒绝。" } },
+    });
+
+    expect(result.checks).toContainEqual(expect.objectContaining({ check: "credential_validity", action: "manage_connection", scope: "connection" }));
+  });
+
+  it("OpenAI Images 不支持的模型指向蓝图配置", () => {
+    const result = createRuntimePreflight([{
+      capability: "static_visual_generation",
+      provider: "openai",
+      adapter: "openai_images",
+      credentialRef: "11111111-1111-4111-8111-111111111111",
+      model: "gpt-4o",
+      promptVersion: "static-visual-v1",
+      allowedTools: ["read", "write"],
+    }]);
+
+    expect(result.checks).toContainEqual(expect.objectContaining({ check: "blueprint_configuration", action: "edit_blueprint", scope: "blueprint" }));
+  });
+
   it("把未写 credential_ref 的 Pexels 蓝图标记为配置缺失", () => {
     const [capability] = runtimeCapabilitiesFromBlueprintPolicy({
       b_roll: {
