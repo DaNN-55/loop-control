@@ -24,9 +24,10 @@ export type ExternalConnectionVersion = {
   version: number;
 };
 
-export function ExternalConnectionPicker({ adapter, connections, isPending = false, label = "外部连接", onCreateConnection, onRotateConnection, onSelectVersion, onTestConnection, provider, selectedVersionId, versions = [] }: {
+export function ExternalConnectionPicker({ adapter, connections, isPending = false, label = "外部连接", officialEndpoint, onCreateConnection, onRotateConnection, onSelectVersion, onTestConnection, provider, selectedVersionId, versions = [] }: {
   adapter: ExternalConnectionInput["adapter"];
   connections: ExternalConnection[];
+  officialEndpoint?: string;
   isPending?: boolean;
   label?: string;
   onCreateConnection?: (input: ExternalConnectionInput) => Promise<ExternalConnection | null>;
@@ -73,7 +74,7 @@ export function ExternalConnectionPicker({ adapter, connections, isPending = fal
 
   return <div className="external-connection-picker" aria-label={`${label}连接选择`}>
     <label><span>已验证连接版本</span><select aria-label={`${label} 外部连接`} disabled={isPending} onChange={(event) => onSelectVersion(event.target.value)} value={selectedVersionId}><option value="">请选择已验证连接</option>{compatibleVersions.map((version) => <option key={version.id} value={version.id}>{connectionNames.get(version.connection_id) ?? "Owner 连接"} · v{version.version}</option>)}</select></label>
-    {selectedVersion ? <p className="field-hint">官方 Endpoint：{selectedVersion.endpoint}</p> : null}
+    {officialEndpoint || selectedVersion ? <p className="field-hint">官方 Endpoint：{officialEndpoint ?? selectedVersion?.endpoint}</p> : null}
     {onCreateConnection ? <details><summary>创建并测试新连接</summary><form onSubmit={(event) => void create(event)}><label>连接名称<input aria-label="新连接名称" onChange={(event) => setName(event.target.value)} required value={name} /></label><label>认证材料<input aria-label="新连接认证材料" autoComplete="off" onChange={(event) => setSecret(event.target.value)} required type="password" value={secret} /></label><button className="button button-secondary button-small" disabled={isPending || !name.trim() || !secret.trim()} type="submit">保存并测试</button></form></details> : null}
     {selectedConnection && onRotateConnection ? <details><summary>轮换当前连接</summary><label>新的认证材料<input aria-label="新的认证材料" autoComplete="off" onChange={(event) => setRotationSecret(event.target.value)} type="password" value={rotationSecret} /></label><button className="button button-secondary button-small" disabled={isPending || !rotationSecret.trim()} onClick={() => void rotate()} type="button">创建新版本并测试</button></details> : null}
     {error ? <p className="form-error" role="alert">{error}</p> : null}

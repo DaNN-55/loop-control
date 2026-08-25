@@ -192,6 +192,7 @@ describe("账号配置工作区", () => {
     await user.selectOptions(screen.getByRole("combobox", { name: "配乐 / 音效 Adapter" }), "freesound_preview");
 
     expect(within(screen.getByRole("combobox", { name: "语言代码" })).getByRole("option", { name: "en-US" })).toBeTruthy();
+    expect(screen.getByText("官方 Endpoint：https://freesound.org/apiv2")).toBeTruthy();
 
     expect((screen.getByRole("combobox", { name: "旁白 外部连接" }) as HTMLSelectElement).value).toBe("");
     expect((screen.getByRole("combobox", { name: "配乐 / 音效 外部连接" }) as HTMLSelectElement).value).toBe("");

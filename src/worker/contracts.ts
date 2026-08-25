@@ -373,7 +373,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
   if (input.capability === "b_roll_generation" && !isConnectionId(input.credentialRef)) throw new Error("B-roll 生成必须包含冻结的外部连接版本 ID。");
   if (input.credentialRef !== undefined && !isNonEmptyString(input.credentialRef)) throw new Error("外部连接引用格式无效。");
   if (input.capability === "embedded_audio_extraction" && (!input.media || input.media.adapter !== "ffmpeg_extract_audio")) throw new Error("派生音频提取必须包含冻结的视频输入。");
-  if (input.capability === "soundtrack_generation" && (!input.media || input.media.adapter !== "freesound_preview")) throw new Error("声轨生成必须包含冻结的 Freesound 配置。");
+  if (input.capability === "soundtrack_generation" && (input.task.provider !== "freesound" || !input.media || input.media.adapter !== "freesound_preview")) throw new Error("声轨生成必须包含冻结的 Freesound 配置。");
   if (input.capability === "soundtrack_generation" && !isConnectionId(input.credentialRef)) throw new Error("声轨生成必须包含冻结的外部连接版本 ID。");
   if (input.capability === "static_visual_generation" && (!input.media || input.media.adapter !== "openai_images")) throw new Error("静态视觉生成必须包含冻结的 OpenAI Images 配置。");
   if (input.capability === "static_visual_generation" && !isConnectionId(input.credentialRef)) throw new Error("静态视觉生成必须包含冻结的外部连接版本 ID。");

@@ -5,6 +5,7 @@ export type ExecutionPath = typeof executionPathKeys[number];
 export interface AdapterRegistration {
   id: string;
   capability: string;
+  endpoint?: string;
   provider: string;
   connectionType: string;
   requiresNetwork: boolean;
@@ -102,7 +103,7 @@ const mediaCapabilities: Record<MediaCapabilityKey, MediaCapability> = {
     defaultConfiguration: { model: "freesound-preview-v1", promptVersion: "soundtrack-v1" },
     description: "根据分镜中的 BGM / SFX cue 检索配乐或音效，需要已配置的 Freesound 连接。",
     label: "配乐 / 音效",
-    registeredAdapter: { id: "freesound_preview", provider: "freesound", connectionType: "freesound_api", requiresNetwork: true, configurationFields: ["credential_ref", "max_attempts"], modelCatalog: ["freesound-preview-v1"], presetCatalog: ["soundtrack-v1"], connections: [] },
+    registeredAdapter: { id: "freesound_preview", endpoint: "https://freesound.org/apiv2", provider: "freesound", connectionType: "freesound_api", requiresNetwork: true, configurationFields: ["credential_ref", "max_attempts"], modelCatalog: ["freesound-preview-v1"], presetCatalog: ["soundtrack-v1"], connections: [] },
     requiresRegisteredAdapter: true,
     workerAvailable: true,
   },

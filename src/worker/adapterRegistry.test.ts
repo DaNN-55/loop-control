@@ -58,6 +58,7 @@ describe("adapter registry", () => {
     expect(adapterRegistration("freesound", "freesound_preview")).toMatchObject({
       capability: "soundtrack_generation",
       connectionType: "freesound_api",
+      endpoint: "https://freesound.org/apiv2",
       requiresNetwork: true,
       connections: [],
     });

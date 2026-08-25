@@ -68,6 +68,20 @@ describe("Worker 契约", () => {
     expect(taskPackage).toMatchObject({ provider: "pexels", credentialRef: "11111111-1111-4111-8111-111111111111", media: { adapter: "pexels_video" } });
   });
 
+  it("声轨任务只接受 Freesound Provider 与连接版本 ID", () => {
+    const soundtrackInput: WorkerTaskPackageInput = {
+      ...packageInput,
+      task: { ...packageInput.task, type: "generate_soundtrack", provider: "freesound" as const, model: "freesound-preview-v1", promptVersion: "soundtrack-v1" },
+      capability: "soundtrack_generation",
+      credentialRef: "11111111-1111-4111-8111-111111111111",
+      media: { adapter: "freesound_preview", soundtrack: { query: "rain", targetDurationSeconds: 3, cue: { id: "cue-1", kind: "bgm", description: "雨声", searchQuery: "rain", startSeconds: 0, durationSeconds: 3 } } },
+      output: { requiredArtifactTypes: ["soundtrack_asset"], contentType: "audio/mpeg", relativePath: "episodes/episode-1/audio/cue-1.mp3", reviewStage: "production_ready" },
+    };
+    expect(createWorkerTaskPackage(soundtrackInput)).toMatchObject({ provider: "freesound", credentialRef: "11111111-1111-4111-8111-111111111111", media: { adapter: "freesound_preview" } });
+    expect(() => createWorkerTaskPackage({ ...soundtrackInput, task: { ...soundtrackInput.task, provider: "openai" as const } })).toThrow("Freesound");
+    expect(() => createWorkerTaskPackage({ ...soundtrackInput, credentialRef: "freesound-default" })).toThrow("连接版本 ID");
+  });
+
   it("把固定的系列基准原样放入视觉 Worker 任务包", () => {
     const taskPackage = createWorkerTaskPackage({
       ...packageInput,
