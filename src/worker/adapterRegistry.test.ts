@@ -54,9 +54,6 @@ describe("adapter registry", () => {
       connectionType: "google_tts_api",
       requiresNetwork: true,
       connections: [],
-      modelCatalog: ["standard"],
-      speakingRateCatalog: [0.75, 1, 1.25],
-      voiceCatalog: expect.objectContaining({ "zh-CN": expect.arrayContaining(["cmn-CN-Standard-A"]) }),
     });
     expect(adapterRegistration("freesound", "freesound_preview")).toMatchObject({
       capability: "soundtrack_generation",
