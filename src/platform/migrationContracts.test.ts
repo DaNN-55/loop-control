@@ -58,6 +58,9 @@ const manualPathOrchestrationMigration = resolve(
 const scopedManualPathCorrectionMigration = resolve(
   "supabase/migrations/20260825160000_scope_manual_media_orchestration.sql",
 );
+const explicitMediaPathMigration = resolve(
+  "supabase/migrations/20260825170000_require_explicit_media_execution_paths.sql",
+);
 const scopedCoreOrchestrationMigration = resolve(
   "supabase/migrations/20260823200000_add_scoped_core_task_orchestration.sql",
 );
@@ -230,6 +233,19 @@ describe("B-roll 连接固化迁移", () => {
 
     expect(migration).toContain("revoke all on function public.orchestrate_a_roll_tasks_for_episode(uuid) from public, anon, authenticated;");
     expect(migration).toContain("grant execute on function public.orchestrate_a_roll_tasks_for_episode(uuid) to service_role;");
+  });
+
+  it("B-roll 与 soundtrack 只调度显式 external 或 local 路径", () => {
+    const migration = readFileSync(explicitMediaPathMigration, "utf8");
+
+    expect(migration).toContain("blueprint.policy #>> ''{b_roll,execution_path}'' in (''external'', ''local'')");
+    expect(migration).toContain("blueprint.policy #>> ''{soundtrack,execution_path}'' in (''external'', ''local'')");
+    expect(migration).toContain("execute replace(definition, 'coalesce(blueprint.policy #>> ''{b_roll,execution_path}'', ''external'')'");
+    expect(migration).toContain("execute replace(definition, 'coalesce(blueprint.policy #>> ''{soundtrack,execution_path}'', ''external'')'");
+    expect(migration).toContain("revoke all on function public.orchestrate_b_roll_tasks(uuid) from public, anon, authenticated;");
+    expect(migration).toContain("grant execute on function public.orchestrate_b_roll_tasks(uuid) to service_role;");
+    expect(migration).toContain("revoke all on function public.orchestrate_soundtrack_tasks(uuid) from public, anon, authenticated;");
+    expect(migration).toContain("grant execute on function public.orchestrate_soundtrack_tasks(uuid) to service_role;");
   });
 
   it("定向调度只会创建指定生产单的视觉与分镜任务", () => {
