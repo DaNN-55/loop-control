@@ -69,6 +69,23 @@ function workspaceProps(overrides: Partial<Parameters<typeof LearningWorkspace>[
 }
 
 describe("复盘工作台", () => {
+  it("在没有复盘生产单时可以准备隔离的演示数据", async () => {
+    const user = userEvent.setup();
+    const onPrepareLearningDemo = vi.fn().mockResolvedValue(undefined);
+    render(<LearningWorkspace {...workspaceProps({ episodes: [], experiments: [], onPrepareLearningDemo })} />);
+
+    expect(screen.getByText("可以准备一组隔离的复盘演示账号和生产单，不会触发 Worker，也不会混入真实账号。")).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "准备复盘演示数据" }));
+    expect(onPrepareLearningDemo).toHaveBeenCalledOnce();
+  });
+
+  it("已有复盘生产单时仍保留演示数据入口", () => {
+    const onPrepareLearningDemo = vi.fn().mockResolvedValue(undefined);
+    render(<LearningWorkspace {...workspaceProps({ onPrepareLearningDemo })} />);
+
+    expect(screen.getByRole("button", { name: "准备复盘演示数据" })).toBeTruthy();
+  });
+
   it("为生产单定义一个主指标和最多两个护栏指标", async () => {
     const user = userEvent.setup();
     const onSaveExperiment = vi.fn().mockResolvedValue(undefined);
@@ -110,11 +127,13 @@ describe("复盘工作台", () => {
     });
   });
 
-  it("不会为已完成复盘的生产单展示周指标提交表单", () => {
+  it("将已完成复盘收进详情，不展示周指标提交表单", async () => {
+    const user = userEvent.setup();
     render(<LearningWorkspace {...workspaceProps({ episodes: [{ ...episode, stage: "learning_recorded" }], learningReports: [learningReport] })} />);
 
-    expect(screen.getByText("实验定义")).toBeTruthy();
     expect(screen.queryByRole("button", { name: "保存本周指标" })).toBeNull();
+    await user.click(screen.getByRole("button", { name: /雨天出门提醒/ }));
+    expect(screen.getByText("实验定义")).toBeTruthy();
   });
 
   it("在已有周指标后记录复盘结论和建议", async () => {

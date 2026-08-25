@@ -43,7 +43,16 @@ function projectRefFromEnvFile() {
 }
 
 function runDbPush(projectRef, dryRun) {
-  const args = ["--yes", "supabase@2.114.0", "db", "push", "--project-ref", projectRef, "--skip-vault"];
+  const cliPackage = {
+    "darwin-arm64": "@supabase/cli-darwin-arm64",
+    "darwin-x64": "@supabase/cli-darwin-x64",
+    "linux-arm64": "@supabase/cli-linux-arm64",
+    "linux-x64": "@supabase/cli-linux-x64",
+    "win32-arm64": "@supabase/cli-windows-arm64",
+    "win32-x64": "@supabase/cli-windows-x64",
+  }[`${process.platform}-${process.arch}`];
+  if (!cliPackage) throw new Error(`当前平台没有对应的 Supabase CLI 二进制：${process.platform}-${process.arch}`);
+  const args = ["--yes", `--package=supabase@2.114.0`, `--package=${cliPackage}@2.114.0`, "--", "supabase", "db", "push", "--project-ref", projectRef, "--skip-vault"];
   if (dryRun) args.push("--dry-run");
   const result = spawnSync("npx", args, { stdio: "inherit" });
   if (result.error) throw result.error;

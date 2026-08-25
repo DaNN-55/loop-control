@@ -1,7 +1,14 @@
 import { describe, expect, it, vi } from "vitest";
-import { searchFreesoundPreview, searchPexelsVideo, synthesizeGoogleTts } from "./mediaProviders";
+import { generateOpenAiImage, searchFreesoundPreview, searchPexelsVideo, synthesizeGoogleTts } from "./mediaProviders";
 
 describe("受控媒体供应商", () => {
+  it("使用 OpenAI Images 的 base64 PNG 响应", async () => {
+    const png = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 1]);
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ data: [{ b64_json: png.toString("base64") }] }), { status: 200 }));
+
+    await expect(generateOpenAiImage({ apiKey: "openai-key", fetcher, model: "gpt-image-1", prompt: "雨夜的古城门" })).resolves.toEqual(new Uint8Array(png));
+    expect(fetcher).toHaveBeenCalledWith("https://api.openai.com/v1/images/generations", expect.objectContaining({ method: "POST", headers: expect.objectContaining({ Authorization: "Bearer openai-key" }) }));
+  });
   it("使用冻结的旁白文本和声音向 Google TTS 请求 MP3", async () => {
     const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ audioContent: Buffer.from("audio-bytes").toString("base64") }), { status: 200 }));
 
@@ -49,6 +56,8 @@ describe("受控媒体供应商", () => {
 
     await expect(searchFreesoundPreview({ apiKey: "freesound-key", fetcher, query: "雨夜\n铜铃", targetDurationSeconds: 5 })).resolves.toEqual({ id: 2, title: "rain bell", creator: "creator-2", license: "Attribution", sourceUrl: "https://freesound.org/s/2/", previewUrl: "https://cdn.test/2.mp3" });
     expect(fetcher.mock.calls[0][0]).toContain("query=%E9%9B%A8%E5%A4%9C+%E9%93%9C%E9%93%83");
+    expect(fetcher.mock.calls[0][0]).toContain("filter=duration%3A%5B5+TO+*%5D");
+    expect(fetcher.mock.calls[0][0]).toContain("sort=duration_asc");
   });
 
   it("拒绝缺失的音频内容和无法使用的 Pexels 视频", async () => {

@@ -17,6 +17,22 @@ export interface FreesoundPreview {
   previewUrl: string;
 }
 
+export async function generateOpenAiImage(input: { apiKey: string; fetcher: MediaFetcher; model: string; prompt: string }): Promise<Uint8Array> {
+  if (!input.apiKey.trim() || !input.model.trim() || !input.prompt.trim()) throw new Error("OpenAI Images 配置或视觉提示词无效。");
+  const response = await input.fetcher("https://api.openai.com/v1/images/generations", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${input.apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ model: input.model, prompt: input.prompt, size: "1024x1536", output_format: "png" }),
+  });
+  const payload: unknown = await response.json();
+  if (!response.ok) throw new Error(`OpenAI Images 请求失败：HTTP ${response.status}。`);
+  const encoded = isRecord(payload) && Array.isArray(payload.data) && isRecord(payload.data[0]) ? payload.data[0].b64_json : undefined;
+  if (typeof encoded !== "string" || !encoded) throw new Error("OpenAI Images 响应缺少 PNG 数据。");
+  const bytes = Uint8Array.from(Buffer.from(encoded, "base64"));
+  if (bytes.byteLength < 8 || !bytes.slice(0, 8).every((value, index) => value === [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a][index])) throw new Error("OpenAI Images 响应不是 PNG 图片。");
+  return bytes;
+}
+
 export async function synthesizeGoogleTts(input: { apiKey: string; fetcher: MediaFetcher; text: string; voice: GoogleTtsVoice }): Promise<Uint8Array> {
   if (!input.apiKey.trim() || !input.text.trim() || !input.voice.languageCode.trim() || !input.voice.name.trim() || !Number.isFinite(input.voice.speakingRate) || input.voice.speakingRate <= 0) throw new Error("Google TTS 配置或旁白文本无效。");
   const response = await input.fetcher("https://texttospeech.googleapis.com/v1/text:synthesize", {
@@ -62,8 +78,10 @@ export async function searchFreesoundPreview(input: { apiKey: string; fetcher: M
   const endpoint = new URL("https://freesound.org/apiv2/search/");
   endpoint.searchParams.set("token", input.apiKey);
   endpoint.searchParams.set("query", input.query.replace(/\s+/g, " ").trim());
+  endpoint.searchParams.set("filter", `duration:[${input.targetDurationSeconds} TO *]`);
+  endpoint.searchParams.set("sort", "duration_asc");
   endpoint.searchParams.set("fields", "id,name,username,license,duration,url,previews");
-  endpoint.searchParams.set("page_size", "20");
+  endpoint.searchParams.set("page_size", "50");
   const response = await input.fetcher(endpoint.toString());
   const payload: unknown = await response.json();
   if (!response.ok) throw new Error(`Freesound 请求失败：HTTP ${response.status}。`);

@@ -16,26 +16,32 @@ export type Database = {
     Tables: {
       account_blueprint_versions: {
         Row: {
+          archived_at?: string | null
           account_id: string
           created_at: string
           id: string
           is_active: boolean
+          is_snapshot?: boolean
           policy: Json
           version: number
         }
         Insert: {
+          archived_at?: string | null
           account_id: string
           created_at?: string
           id?: string
           is_active?: boolean
+          is_snapshot?: boolean
           policy: Json
           version: number
         }
         Update: {
+          archived_at?: string | null
           account_id?: string
           created_at?: string
           id?: string
           is_active?: boolean
+          is_snapshot?: boolean
           policy?: Json
           version?: number
         }
@@ -399,33 +405,45 @@ export type Database = {
       }
       episodes: {
         Row: {
+          archived_at?: string | null
+          audio_source_mode?: "source" | "tts"
           account_id: string
           blueprint_version_id: string
           created_at: string
           id: string
+          is_test?: boolean
           main_script_revision_id?: string | null
+          script_source?: "provided" | "delegated"
           series_version_id?: string | null
           stage: Database["public"]["Enums"]["episode_stage"]
           title: string
           updated_at: string
         }
         Insert: {
+          archived_at?: string | null
+          audio_source_mode?: "source" | "tts"
           account_id: string
           blueprint_version_id: string
           created_at?: string
           id?: string
+          is_test?: boolean
           main_script_revision_id?: string | null
+          script_source?: "provided" | "delegated"
           series_version_id?: string | null
           stage?: Database["public"]["Enums"]["episode_stage"]
           title: string
           updated_at?: string
         }
         Update: {
+          archived_at?: string | null
+          audio_source_mode?: "source" | "tts"
           account_id?: string
           blueprint_version_id?: string
           created_at?: string
           id?: string
+          is_test?: boolean
           main_script_revision_id?: string | null
+          script_source?: "provided" | "delegated"
           series_version_id?: string | null
           stage?: Database["public"]["Enums"]["episode_stage"]
           title?: string
@@ -489,6 +507,59 @@ export type Database = {
             columns: ["episode_id"]
             isOneToOne: true
             referencedRelation: "episodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prompt_versions: {
+        Row: {
+          account_id: string
+          capability: "script_writing" | "visual_planning" | "storyboard_planning"
+          content_hash: string
+          created_at: string
+          created_by: string | null
+          id: string
+          instructions: string
+          is_active: boolean
+          name: string
+          slug: string
+          summary: string
+          version: number
+        }
+        Insert: {
+          account_id: string
+          capability: "script_writing" | "visual_planning" | "storyboard_planning"
+          content_hash?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          instructions?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          summary: string
+          version: number
+        }
+        Update: {
+          account_id?: string
+          capability?: "script_writing" | "visual_planning" | "storyboard_planning"
+          content_hash?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          instructions?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          summary?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prompt_versions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
             referencedColumns: ["id"]
           },
         ]
@@ -560,6 +631,62 @@ export type Database = {
           },
         ]
       }
+      publication_records: {
+        Row: {
+          adapter: string | null
+          created_at: string
+          created_by: string | null
+          episode_id: string
+          external_content_id: string | null
+          external_url: string | null
+          id: string
+          notes: string
+          platform: string
+          published_at: string | null
+          publishing_account: string
+          source: Database["public"]["Enums"]["publication_source"]
+          status: Database["public"]["Enums"]["publication_status"]
+        }
+        Insert: {
+          adapter?: string | null
+          created_at?: string
+          created_by?: string | null
+          episode_id: string
+          external_content_id?: string | null
+          external_url?: string | null
+          id?: string
+          notes?: string
+          platform: string
+          published_at?: string | null
+          publishing_account: string
+          source?: Database["public"]["Enums"]["publication_source"]
+          status: Database["public"]["Enums"]["publication_status"]
+        }
+        Update: {
+          adapter?: string | null
+          created_at?: string
+          created_by?: string | null
+          episode_id?: string
+          external_content_id?: string | null
+          external_url?: string | null
+          id?: string
+          notes?: string
+          platform?: string
+          published_at?: string | null
+          publishing_account?: string
+          source?: Database["public"]["Enums"]["publication_source"]
+          status?: Database["public"]["Enums"]["publication_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "publication_records_episode_id_fkey"
+            columns: ["episode_id"]
+            isOneToOne: false
+            referencedRelation: "episodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       production_material_revisions: {
         Row: {
           created_at: string
@@ -568,6 +695,7 @@ export type Database = {
           file_size: number
           id: string
           is_main_script: boolean
+          material_purpose: string
           material_type: string
           mime_type: string
           revision_number: number
@@ -583,6 +711,7 @@ export type Database = {
           file_size: number
           id?: string
           is_main_script?: boolean
+          material_purpose: string
           material_type: string
           mime_type: string
           revision_number: number
@@ -598,6 +727,7 @@ export type Database = {
           file_size?: number
           id?: string
           is_main_script?: boolean
+          material_purpose?: string
           material_type?: string
           mime_type?: string
           revision_number?: number
@@ -752,6 +882,56 @@ export type Database = {
           },
         ]
       }
+      qc_review_issues: {
+        Row: {
+          at_seconds: number
+          created_at: string
+          created_by: string
+          id: string
+          member_key: string | null
+          reason: string
+          resolved_at: string | null
+          resolved_by: string | null
+          review_package_id: string
+          severity: string
+          status: string
+        }
+        Insert: {
+          at_seconds: number
+          created_at?: string
+          created_by: string
+          id?: string
+          member_key?: string | null
+          reason: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          review_package_id: string
+          severity: string
+          status?: string
+        }
+        Update: {
+          at_seconds?: number
+          created_at?: string
+          created_by?: string
+          id?: string
+          member_key?: string | null
+          reason?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          review_package_id?: string
+          severity?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "qc_review_issues_review_package_id_fkey"
+            columns: ["review_package_id"]
+            isOneToOne: false
+            referencedRelation: "review_packages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       series: {
         Row: { account_id: string; created_at: string; id: string; name: string }
         Insert: { account_id: string; created_at?: string; id?: string; name: string }
@@ -814,6 +994,50 @@ export type Database = {
             columns: ["episode_id"]
             isOneToOne: false
             referencedRelation: "episodes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_runs: {
+        Row: {
+          actual_cost_cents: number
+          attempt: number
+          completed_at: string | null
+          id: string
+          result: Json | null
+          started_at: string
+          status: Database["public"]["Enums"]["task_status"]
+          task_id: string
+          task_package: Json
+        }
+        Insert: {
+          actual_cost_cents?: number
+          attempt: number
+          completed_at?: string | null
+          id?: string
+          result?: Json | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["task_status"]
+          task_id: string
+          task_package: Json
+        }
+        Update: {
+          actual_cost_cents?: number
+          attempt?: number
+          completed_at?: string | null
+          id?: string
+          result?: Json | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["task_status"]
+          task_id?: string
+          task_package?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_runs_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "tasks"
             referencedColumns: ["id"]
           },
         ]
@@ -896,6 +1120,71 @@ export type Database = {
       activate_blueprint_version: {
         Args: { p_account_id: string; p_blueprint_version_id: string }
         Returns: {
+          archived_at: string | null
+          account_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          is_snapshot?: boolean
+          policy: Json
+          version: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "account_blueprint_versions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      apply_blueprint_to_episode: {
+        Args: {
+          p_blocker_code?: string | null
+          p_blocker_detail?: string | null
+          p_blueprint_version_id: string
+          p_episode_id: string
+        }
+        Returns: Json
+        SetofOptions: {
+          from: "*"
+          to: "Json"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      apply_episode_configuration_repair: {
+        Args: {
+          p_blocker_code?: string | null
+          p_blocker_detail?: string | null
+          p_episode_id: string
+          p_policy: Json
+        }
+        Returns: Json
+        SetofOptions: {
+          from: "*"
+          to: "Json"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      apply_episode_configuration_repair_v2: {
+        Args: {
+          p_blocker_code?: string | null
+          p_blocker_detail?: string | null
+          p_episode_id: string
+          p_policy: Json
+        }
+        Returns: Json
+        SetofOptions: {
+          from: "*"
+          to: "Json"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      deactivate_blueprint_version: {
+        Args: { p_account_id: string; p_blueprint_version_id: string }
+        Returns: {
+          archived_at: string | null
           account_id: string
           created_at: string
           id: string
@@ -957,6 +1246,46 @@ export type Database = {
       create_blueprint_version: {
         Args: { p_account_id: string; p_policy: Json }
         Returns: {
+          archived_at: string | null
+          account_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          policy: Json
+          version: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "account_blueprint_versions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      delete_account: {
+        Args: { p_account_id: string; p_confirmation: string }
+        Returns: boolean
+      }
+      rename_account: {
+        Args: { p_account_id: string; p_account_name: string }
+        Returns: {
+          created_at: string
+          current_blueprint_version_id: string | null
+          id: string
+          name: string
+          slug: string
+          timezone: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "accounts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      set_blueprint_archived: {
+        Args: { p_account_id: string; p_archived: boolean; p_blueprint_version_id: string }
+        Returns: {
+          archived_at: string | null
           account_id: string
           created_at: string
           id: string
@@ -975,6 +1304,7 @@ export type Database = {
         Args: {
           p_account_id: string
           p_blueprint_version_id: string
+          p_is_test?: boolean
           p_series_version_id: string | null
           p_title: string
         }
@@ -996,8 +1326,37 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      create_prompt_version: {
+        Args: {
+          p_account_id: string
+          p_capability: "script_writing" | "visual_planning" | "storyboard_planning"
+          p_instructions?: string
+          p_name: string
+          p_summary: string
+        }
+        Returns: Database["public"]["Tables"]["prompt_versions"]["Row"]
+        SetofOptions: { from: "*"; to: "prompt_versions"; isOneToOne: true; isSetofReturn: false }
+      }
       create_series: {
         Args: { p_account_id: string; p_name: string; p_rules: Json }
+        Returns: {
+          account_id: string
+          created_at: string
+          created_by: string
+          id: string
+          rules: Json
+          series_id: string
+          version: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "series_versions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      create_series_version: {
+        Args: { p_rules: Json; p_series_id: string }
         Returns: {
           account_id: string
           created_at: string
@@ -1019,6 +1378,7 @@ export type Database = {
           p_episode_id: string
           p_file_size: number
           p_is_main_script: boolean
+          p_material_purpose: string
           p_material_type: string
           p_mime_type: string
           p_sha256: string
@@ -1029,10 +1389,35 @@ export type Database = {
         Returns: Database["public"]["Tables"]["production_material_revisions"]["Row"]
         SetofOptions: { from: "*"; to: "production_material_revisions"; isOneToOne: true; isSetofReturn: false }
       }
+      register_manual_a_roll: {
+        Args: { p_episode_id: string; p_material_revision_id: string; p_shot_id: string; p_storyboard_review_package_id: string }
+        Returns: Database["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      register_manual_audio: {
+        Args: { p_episode_id: string; p_material_revision_id: string; p_storyboard_review_package_id: string; p_target_id: string }
+        Returns: Database["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      register_manual_b_roll: {
+        Args: { p_episode_id: string; p_material_revision_id: string; p_shot_id: string; p_storyboard_review_package_id: string }
+        Returns: Database["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      start_episode_production: {
+        Args: { p_episode_id: string }
+        Returns: Database["public"]["Tables"]["episodes"]["Row"]
+        SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
+      }
       commission_script: {
         Args: { p_core_content: string; p_creative_direction: string; p_episode_id: string }
         Returns: Database["public"]["Tables"]["tasks"]["Row"]
         SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      set_episode_script_source: {
+        Args: { p_episode_id: string; p_script_source: "provided" | "delegated" }
+        Returns: Database["public"]["Tables"]["episodes"]["Row"]
+        SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
       }
       create_storyboard_annotation: {
         Args: { p_reason: string; p_review_package_id: string; p_shot_id: string }
@@ -1062,6 +1447,20 @@ export type Database = {
         Args: { p_episode_id: string; p_title: string }
         Returns: Database["public"]["Tables"]["episodes"]["Row"]
         SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
+      }
+      set_episode_archived: {
+        Args: { p_archived: boolean; p_episode_id: string }
+        Returns: Database["public"]["Tables"]["episodes"]["Row"]
+        SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
+      }
+      set_episode_audio_source_mode: {
+        Args: { p_audio_source_mode: "source" | "tts"; p_episode_id: string }
+        Returns: Database["public"]["Tables"]["episodes"]["Row"]
+        SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
+      }
+      delete_episode: {
+        Args: { p_actor_id: string; p_episode_id: string }
+        Returns: Json
       }
       create_blueprint_change_suggestion: {
         Args: { p_learning_report_id: string; p_proposed_policy: Json; p_rationale: string }
@@ -1100,6 +1499,10 @@ export type Database = {
           primary_variable: string
         }
         SetofOptions: { from: "*"; to: "experiments"; isOneToOne: true; isSetofReturn: false }
+      }
+      ensure_learning_demo_data: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
       }
       has_required_artifacts: {
         Args: {
@@ -1142,6 +1545,35 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      record_publication: {
+        Args: {
+          p_adapter?: string | null
+          p_episode_id: string
+          p_external_content_id?: string | null
+          p_external_url?: string | null
+          p_notes?: string
+          p_platform: string
+          p_published_at?: string | null
+          p_publishing_account: string
+          p_source?: Database["public"]["Enums"]["publication_source"]
+          p_status?: Database["public"]["Enums"]["publication_status"]
+        }
+        Returns: Database["public"]["Tables"]["publication_records"]["Row"]
+        SetofOptions: { from: "*"; to: "publication_records"; isOneToOne: true; isSetofReturn: false }
+      }
+      record_manual_publication: {
+        Args: {
+          p_episode_id: string
+          p_external_content_id?: string | null
+          p_external_url?: string | null
+          p_notes?: string
+          p_platform: string
+          p_published_at?: string | null
+          p_publishing_account: string
+        }
+        Returns: Database["public"]["Tables"]["publication_records"]["Row"]
+        SetofOptions: { from: "*"; to: "publication_records"; isOneToOne: true; isSetofReturn: false }
       }
       record_learning_report: {
         Args: { p_episode_id: string; p_recommendation: "keep" | "change" | "kill" | "insufficient_data"; p_summary: string }
@@ -1204,15 +1636,26 @@ export type Database = {
         Returns: Database["public"]["Tables"]["pre_render_review_member_decisions"]["Row"]
         SetofOptions: { from: "*"; to: "pre_render_review_member_decisions"; isOneToOne: true; isSetofReturn: false }
       }
+      create_qc_review_issue: {
+        Args: { p_at_seconds: number; p_member_key: string | null; p_reason: string; p_review_package_id: string; p_severity: string }
+        Returns: Database["public"]["Tables"]["qc_review_issues"]["Row"]
+        SetofOptions: { from: "*"; to: "qc_review_issues"; isOneToOne: true; isSetofReturn: false }
+      }
+      resolve_qc_review_issue: {
+        Args: { p_issue_id: string; p_status: string }
+        Returns: Database["public"]["Tables"]["qc_review_issues"]["Row"]
+        SetofOptions: { from: "*"; to: "qc_review_issues"; isOneToOne: true; isSetofReturn: false }
+      }
+      request_qc_member_revision: {
+        Args: { p_issue_id: string }
+        Returns: Database["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
       request_review_render_revision: {
         Args: {
-          p_caption_style: string
-          p_crop: string
-          p_layout: string
-          p_pacing: string
+          p_composition: Json
           p_reason: string
           p_review_package_id: string
-          p_transition: string
         }
         Returns: {
           account_id: string
@@ -1224,6 +1667,43 @@ export type Database = {
           updated_at: string
         }
         SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
+      }
+      retry_failed_final_render: {
+        Args: { p_episode_id: string; p_reason: string }
+        Returns: Database["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      request_studio_storyboard_revision: {
+        Args: { p_reason: string; p_review_package_id: string }
+        Returns: {
+          account_id: string
+          blueprint_version_id: string
+          created_at: string
+          id: string
+          stage: Database["public"]["Enums"]["episode_stage"]
+          title: string
+          updated_at: string
+        }
+        SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
+      }
+      update_current_blueprint: {
+        Args: { p_account_id: string; p_policy: Json }
+        Returns: {
+          archived_at: string | null
+          account_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          is_snapshot?: boolean
+          policy: Json
+          version: number
+        }
+        SetofOptions: {
+          from: "*"
+          to: "account_blueprint_versions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       transition_episode: {
         Args: {
@@ -1271,7 +1751,9 @@ export type Database = {
         | "metrics_collecting"
         | "learning_recorded"
       member_role: "owner" | "worker"
-      task_status: "ready" | "running" | "completed" | "blocked" | "failed"
+      publication_source: "manual" | "automated"
+      publication_status: "pending" | "published" | "failed"
+      task_status: "ready" | "running" | "completed" | "blocked" | "failed" | "superseded"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1422,7 +1904,9 @@ export const Constants = {
         "learning_recorded",
       ],
       member_role: ["owner", "worker"],
-      task_status: ["ready", "running", "completed", "blocked", "failed"],
+      publication_source: ["manual", "automated"],
+      publication_status: ["pending", "published", "failed"],
+      task_status: ["ready", "running", "completed", "blocked", "failed", "superseded"],
     },
   },
 } as const

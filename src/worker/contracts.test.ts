@@ -32,6 +32,7 @@ const packageInput: WorkerTaskPackageInput = {
     },
   ],
 };
+const storyboardHarness = { id: "harness-storyboard-1", version: 1, content: "根据已审核输入生成可执行分镜。", contentHash: "d".repeat(64), adapter: "codex" as const, model: "gpt-5.6-codex", promptVersion: "storyboard-planning-v1" };
 
 describe("Worker 契约", () => {
   it("构建包含固定账号、蓝图、预算和禁止事项的任务包", () => {
@@ -47,6 +48,24 @@ describe("Worker 契约", () => {
       output: { requiredArtifactTypes: ["brief"], contentType: "text/markdown", relativePath: "episodes/episode-1/brief.md", reviewStage: "visual_review" },
       forbiddenActions: ["approve", "publish", "change_blueprint", "change_episode_stage"],
     });
+  });
+
+  it("在 B-roll Worker 任务包中冻结非秘密连接引用", () => {
+    const inputBasis = [
+      { relativePath: "episodes/episode-1/script.md", sha256: "a".repeat(64) },
+      { relativePath: "episodes/episode-1/visual.png", sha256: "b".repeat(64) },
+    ];
+    const taskPackage = createWorkerTaskPackage({
+      ...packageInput,
+      task: { ...packageInput.task, type: "generate_b_roll", provider: "pexels", model: "pexels-video-v1", promptVersion: "b-roll-v1" },
+      capability: "b_roll_generation",
+      credentialRef: "pexels-default",
+      media: { adapter: "pexels_video", bRoll: { query: "rainy street", targetDurationSeconds: 3, shot: { id: "shot-1", scriptSegment: "rainy street", durationSeconds: 3, shotType: "b_roll", productionMethod: "Pexels", inputBasis, targetSpec: "9:16" } } },
+      output: { requiredArtifactTypes: ["b_roll_asset"], contentType: "video/mp4", relativePath: "episodes/episode-1/b-roll/shot-1.mp4", reviewStage: "production_ready" },
+      inputArtifacts: [{ artifactType: "main_script", ...inputBasis[0], fileSize: 128 }, { artifactType: "static_visual", ...inputBasis[1], fileSize: 128 }],
+    });
+
+    expect(taskPackage).toMatchObject({ provider: "pexels", credentialRef: "pexels-default", media: { adapter: "pexels_video" } });
   });
 
   it("把固定的系列基准原样放入视觉 Worker 任务包", () => {
@@ -66,25 +85,69 @@ describe("Worker 契约", () => {
     });
   });
 
+  it("没有导入视觉素材且没有已登记图片 Adapter 时阻塞视觉资产准备", () => {
+    expect(() => createWorkerTaskPackage({
+      ...packageInput,
+      visualAssetPreparation: { externalInputs: [] },
+    } as unknown as WorkerTaskPackageInput)).toThrow("视觉资产准备");
+  });
+
+  it("把冻结的分层 Prompt 上下文原样交给 Worker", () => {
+    const taskPackage = createWorkerTaskPackage({
+      ...packageInput,
+      promptContext: {
+        version: "prompt-context/v1",
+        blueprintVersionId: "blueprint-3",
+        seriesVersionId: "series-version-3",
+        accountHardConstraints: { forbidden_topics: ["医疗承诺"] },
+        accountDefaults: { positioning: "民俗短视频" },
+        seriesBaseline: { visual_style: "写实雨夜" },
+        episodeInput: { commission: { creativeDirection: "克制", coreContent: "人物选择" } },
+        reviewFeedback: { reason: "补充人物动机" },
+        hash: "context-hash-1",
+      },
+    });
+
+    expect(taskPackage.promptContext).toMatchObject({ version: "prompt-context/v1", blueprintVersionId: "blueprint-3", seriesVersionId: "series-version-3", hash: "context-hash-1" });
+  });
+
   it("拒绝缺少资产根目录或预算已耗尽的任务包", () => {
     expect(() => createWorkerTaskPackage({ ...packageInput, allowedAssetRoot: "" })).toThrow("allowedAssetRoot");
     expect(() => createWorkerTaskPackage({ ...packageInput, task: { ...packageInput.task, attempt: 2 } })).toThrow("maxAttempts");
     expect(() => createWorkerTaskPackage({ ...packageInput, inputArtifacts: [{ ...packageInput.inputArtifacts[0], relativePath: "../outside.md" }] })).toThrow("相对路径");
   });
 
-  it("只接受在预算内、带验证结果的完整 Worker 结果", () => {
+  it("记录实际成本但不以预算阻塞完整 Worker 结果", () => {
     const taskPackage = createWorkerTaskPackage(packageInput);
-    expect(validateWorkerResult({
+    const result = validateWorkerResult({
       version: "worker-result/v1",
       taskId: "task-1",
       status: "completed",
       artifacts: [{ artifactType: "brief", relativePath: "episodes/episode-1/brief.md", sha256: "b".repeat(64), fileSize: 256 }],
       validation: { passed: true, checks: [{ name: "schema", passed: true, detail: "brief fields are present" }] },
+      preflight: {
+        version: "worker-preflight/v1",
+        checks: [{ capability: "visual_planning", check: "capability_registration", phase: "preflight", status: "passed", reason: "Worker 已通过执行路径校验。", action: "none", scope: "worker" }],
+      },
+      actualCostCents: 1,
+      blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." },
+      nextStep: "Create the script draft task.",
+    }, taskPackage);
+    expect(result).toMatchObject({ status: "completed", actualCostCents: 1, preflight: { version: "worker-preflight/v1" } });
+
+    expect(() => validateWorkerResult({
+      version: "worker-result/v1",
+      taskId: "task-1",
+      status: "completed",
+      artifacts: [{ artifactType: "brief", relativePath: "episodes/episode-1/brief.md", sha256: "b".repeat(64), fileSize: 256 }],
+      validation: { passed: true, checks: [{ name: "schema", passed: true, detail: "brief fields are present" }] },
+      preflight: { version: "worker-preflight/v1", checks: [{ capability: "visual_planning", check: "network", phase: "preflight", status: "retryable", reason: "暂时失败。", action: "not_a_real_action", scope: "worker" }] },
       actualCostCents: 0,
       blockers: [],
       retry: { shouldRetry: false, reason: "Completed successfully." },
       nextStep: "Create the script draft task.",
-    }, taskPackage)).toMatchObject({ status: "completed", actualCostCents: 0 });
+    }, taskPackage)).toThrow("Worker preflight");
 
     expect(() => validateWorkerResult({
       version: "worker-result/v1",
@@ -94,9 +157,9 @@ describe("Worker 契约", () => {
       validation: { passed: true, checks: [] },
       actualCostCents: 1,
       blockers: [],
-      retry: { shouldRetry: false, reason: "Budget exceeded." },
+      retry: { shouldRetry: false, reason: "缺少产物。" },
       nextStep: "Continue.",
-    }, taskPackage)).toThrow("预算");
+    }, taskPackage)).toThrow("产物");
   });
 
   it("要求 blocked 结果明确说明阻塞原因", () => {
@@ -143,6 +206,7 @@ describe("Worker 契约", () => {
     const taskPackage = createWorkerTaskPackage({
       ...packageInput,
       capability: "storyboard_planning",
+      promptHarness: storyboardHarness,
       output: { requiredArtifactTypes: ["storyboard"], contentType: "application/json", relativePath: "episodes/episode-1/storyboard-v1.json", reviewStage: "storyboard_review" },
     });
     const blockedResult = {
@@ -235,12 +299,29 @@ describe("Worker 契约", () => {
       retry: { shouldRetry: false, reason: "Completed successfully." },
       nextStep: "Continue.",
     }, taskPackage)).toThrow("可预览图片");
+
+    expect(() => validateWorkerResult({
+      version: "worker-result/v1",
+      taskId: "task-1",
+      status: "completed",
+      artifacts: [
+        { artifactType: "visual_brief", relativePath: "episodes/episode-1/visual-brief.md", sha256: "c".repeat(64), fileSize: 256 },
+        { artifactType: "visual_reference_group", relativePath: "episodes/episode-1/references.md", sha256: "d".repeat(64), fileSize: 256 },
+        { artifactType: "static_visual", relativePath: "episodes/episode-1/static-visual.svg", sha256: "e".repeat(64), fileSize: 256 },
+      ],
+      validation: { passed: true, checks: [{ name: "schema", passed: true, detail: "valid" }] },
+      actualCostCents: 0,
+      blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." },
+      nextStep: "Continue.",
+    }, taskPackage)).toThrow("SVG");
   });
 
   it("只接受可追溯到冻结脚本和视觉依据的唯一分镜镜头", () => {
     const taskPackage = createWorkerTaskPackage({
       ...packageInput,
       capability: "storyboard_planning",
+      promptHarness: storyboardHarness,
       output: { requiredArtifactTypes: ["storyboard"], contentType: "application/json", relativePath: "episodes/episode-1/storyboard-v1.json", reviewStage: "storyboard_review" },
       inputArtifacts: [
         { artifactType: "main_script", relativePath: "episodes/episode-1/main-script.md", sha256: "a".repeat(64), fileSize: 128 },

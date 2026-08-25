@@ -62,11 +62,17 @@ async function dispatchTask(): Promise<void> {
 }
 
 async function planScopedMediaTasks(episodeId: string): Promise<Array<{ id: string }>> {
+  const [visualTasks, storyboardTasks] = await Promise.all([
+    orchestrateTasks("orchestrate_provided_script_tasks_for_episode", { p_episode_id: episodeId }),
+    orchestrateTasks("orchestrate_storyboard_tasks_for_episode", { p_episode_id: episodeId }),
+  ]);
   const bRollTasks = await orchestrateTasks("orchestrate_b_roll_tasks", { p_episode_id: episodeId });
   const narrationTasks = await orchestrateTasks("orchestrate_narration_tasks", { p_episode_id: episodeId });
+  const soundtrackTasks = await orchestrateTasks("orchestrate_soundtrack_tasks", { p_episode_id: episodeId });
+  const derivedAudioTasks = await orchestrateTasks("orchestrate_embedded_audio_tasks", { p_episode_id: episodeId });
   const reviewRenderTasks = await orchestrateTasks("orchestrate_review_render_tasks", { p_episode_id: episodeId });
   const finalRenderTasks = await orchestrateTasks("orchestrate_final_render_tasks", { p_episode_id: episodeId });
-  return [...bRollTasks, ...narrationTasks, ...reviewRenderTasks, ...finalRenderTasks];
+  return [...visualTasks, ...storyboardTasks, ...bRollTasks, ...narrationTasks, ...soundtrackTasks, ...derivedAudioTasks, ...reviewRenderTasks, ...finalRenderTasks];
 }
 
 async function planWorkerTasks(): Promise<Array<{ id: string }>> {
@@ -74,14 +80,13 @@ async function planWorkerTasks(): Promise<Array<{ id: string }>> {
     orchestrateTasks("orchestrate_provided_script_tasks"),
     orchestrateTasks("orchestrate_storyboard_tasks"),
   ]);
-  const aRollTasks = await orchestrateTasks("orchestrate_a_roll_tasks");
   const bRollTasks = await orchestrateTasks("orchestrate_b_roll_tasks");
   const narrationTasks = await orchestrateTasks("orchestrate_narration_tasks");
-  const derivedAudioTasks = await orchestrateTasks("orchestrate_embedded_audio_tasks");
   const soundtrackTasks = await orchestrateTasks("orchestrate_soundtrack_tasks");
+  const derivedAudioTasks = await orchestrateTasks("orchestrate_embedded_audio_tasks");
   const reviewRenderTasks = await orchestrateTasks("orchestrate_review_render_tasks");
   const finalRenderTasks = await orchestrateTasks("orchestrate_final_render_tasks");
-  return [...visualTasks, ...storyboardTasks, ...aRollTasks, ...bRollTasks, ...narrationTasks, ...derivedAudioTasks, ...soundtrackTasks, ...reviewRenderTasks, ...finalRenderTasks];
+  return [...visualTasks, ...storyboardTasks, ...bRollTasks, ...narrationTasks, ...soundtrackTasks, ...derivedAudioTasks, ...reviewRenderTasks, ...finalRenderTasks];
 }
 
 async function orchestrateTasks(functionName: string, args: Record<string, string> = {}): Promise<Array<{ id: string }>> {

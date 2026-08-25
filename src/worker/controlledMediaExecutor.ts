@@ -4,7 +4,7 @@ import { lstat, mkdir, mkdtemp, open, realpath, rm, writeFile } from "node:fs/pr
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import type { ArtifactManifest, WorkerResult, WorkerTaskPackage } from "./contracts.js";
-import { searchFreesoundPreview, searchPexelsVideo, synthesizeGoogleTts, type FreesoundPreview, type MediaFetcher } from "./mediaProviders.js";
+import { generateOpenAiImage, searchFreesoundPreview, searchPexelsVideo, synthesizeGoogleTts, type FreesoundPreview, type MediaFetcher } from "./mediaProviders.js";
 
 export async function executeControlledMediaTask(input: {
   taskPackage: WorkerTaskPackage;
@@ -12,9 +12,11 @@ export async function executeControlledMediaTask(input: {
   pexelsApiKey: string | undefined;
   googleTtsApiKey: string | undefined;
   freesoundApiKey?: string;
+  openaiApiKey?: string;
   validateMp4: (path: string, minimumDurationSeconds: number) => Promise<void>;
   probeMp3: (path: string) => Promise<number>;
   extractMp3: (sourcePath: string, minimumDurationSeconds: number) => Promise<Uint8Array>;
+  trimMp3: (bytes: Uint8Array, targetDurationSeconds: number) => Promise<Uint8Array>;
 }): Promise<string> {
   const media = await mediaBytes(input);
   const audioDurationSeconds = await validateTemporaryMedia(input, media.bytes);
@@ -44,9 +46,11 @@ async function mediaBytes(input: {
   pexelsApiKey: string | undefined;
   googleTtsApiKey: string | undefined;
   freesoundApiKey?: string;
+  openaiApiKey?: string;
   validateMp4: (path: string, minimumDurationSeconds: number) => Promise<void>;
   probeMp3: (path: string) => Promise<number>;
   extractMp3: (sourcePath: string, minimumDurationSeconds: number) => Promise<Uint8Array>;
+  trimMp3: (bytes: Uint8Array, targetDurationSeconds: number) => Promise<Uint8Array>;
 }): Promise<{ bytes: Uint8Array; source?: FreesoundPreview }> {
   const { taskPackage } = input;
   if (taskPackage.provider === "google_tts" && taskPackage.media?.adapter === "google_tts") {
@@ -94,7 +98,11 @@ async function mediaBytes(input: {
     if (!contentType.startsWith("audio/mpeg")) throw new Error("Freesound 下载响应不是 MP3 音频。");
     const bytes = new Uint8Array(await response.arrayBuffer());
     if (bytes.byteLength === 0) throw new Error("Freesound 下载的音频为空。");
-    return { bytes, source: selected };
+    return { bytes: await input.trimMp3(bytes, taskPackage.media.soundtrack.targetDurationSeconds), source: selected };
+  }
+  if (taskPackage.provider === "openai" && taskPackage.media?.adapter === "openai_images") {
+    if (!input.openaiApiKey) throw new Error("OPENAI_API_KEY 未配置，无法执行冻结静态视觉任务。");
+    return { bytes: await generateOpenAiImage({ apiKey: input.openaiApiKey, fetcher: input.fetcher, model: taskPackage.model, prompt: taskPackage.media.staticVisual.prompt }) };
   }
   throw new Error("任务 Provider 与冻结媒体适配器不匹配。");
 }

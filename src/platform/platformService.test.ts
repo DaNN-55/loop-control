@@ -97,7 +97,7 @@ describe("platform service", () => {
     });
   });
 
-  it("imports a main script as an immutable material revision", async () => {
+  it("imports a main script and waits for an explicit production start", async () => {
     const platform = createPlatformService(createInMemoryPlatformRepository());
     const episode = await platform.createEpisode({
       accountId: "account-2",
@@ -110,6 +110,7 @@ describe("platform service", () => {
       content: sourceContent,
       episodeId: episode.id,
       isMainScript: true,
+      materialPurpose: "main_script",
       materialType: "script",
       mimeType: "text/plain",
       sourceKind: "directory",
@@ -126,7 +127,10 @@ describe("platform service", () => {
       sourcePath: "inbox/script.txt",
     });
     expect(new TextDecoder().decode((await platform.listMaterialRevisions(episode.id))[0]?.content)).toBe("First script");
-    expect(await platform.listEpisodes()).toContainEqual(expect.objectContaining({ id: episode.id, status: "script_approved" }));
+    expect(await platform.listEpisodes()).toContainEqual(expect.objectContaining({ id: episode.id, mainScriptRevisionId: revision.id, status: "waiting_input" }));
+
+    const started = await platform.startProduction({ actor: { id: "owner-1", role: "owner" }, episodeId: episode.id });
+    expect(started.status).toBe("script_approved");
   });
 
   it("updates episode title without invalidating imported content", async () => {
@@ -140,6 +144,7 @@ describe("platform service", () => {
       content: new TextEncoder().encode("Approved source"),
       episodeId: episode.id,
       isMainScript: true,
+      materialPurpose: "main_script",
       materialType: "script",
       mimeType: "text/plain",
       sourceKind: "paste",

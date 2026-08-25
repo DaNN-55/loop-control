@@ -15,4 +15,11 @@ describe("workerResultJsonSchema", () => {
     expect(schema.required).not.toContain("storyboard");
     expect(schema.properties).not.toHaveProperty("storyboard");
   });
+
+  it("uses an OpenAI strict-compatible schema", () => {
+    const schema = workerResultJsonSchema("visual_planning");
+
+    expect(schema.required).toEqual(expect.arrayContaining(Object.keys(schema.properties)));
+    expect(schema.properties.blockers.items).toMatchObject({ required: ["code", "detail"] });
+  });
 });

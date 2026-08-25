@@ -1,11 +1,15 @@
 import {
   createWorkerTaskPackage,
+  missingVisualAssetAdapterMessage,
   type ArtifactManifest,
   type ReviewRenderAdjustments,
   type StoryboardManifest,
   type WorkerResult,
   type WorkerTaskPackageInput,
   type WorkerTaskPackage,
+  type PromptContextSnapshot,
+  type WorkerPreflightResult,
+  type WorkerPreflightCheck,
   validateWorkerResult,
 } from "./contracts.js";
 
@@ -31,6 +35,7 @@ export interface CodexWorkerDependencies {
   verifyAssetRoot(allowedAssetRoot: string): Promise<void>;
   verifyArtifacts(taskPackage: WorkerTaskPackage, artifacts: ArtifactManifest[], storyboard?: WorkerResult["storyboard"]): Promise<void>;
   execute(taskPackage: WorkerTaskPackage): Promise<string>;
+  preflight?(taskPackage: WorkerTaskPackage): Promise<WorkerPreflightResult>;
   reportResult(taskId: string, attempt: number, result: WorkerResult): Promise<void>;
   actualCostCents: number;
 }
@@ -47,21 +52,58 @@ export async function runCodexWorker(dependencies: CodexWorkerDependencies): Pro
   try {
     taskPackage = createTaskPackage(task);
   } catch (error) {
-    await dependencies.reportResult(task.taskId, task.attempt, createBlockedResult(task.taskId, dependencies.actualCostCents, error));
+    const missingVisualAssetAdapter = errorMessage(error) === missingVisualAssetAdapterMessage;
+    const result = createBlockedResult(task.taskId, dependencies.actualCostCents, error, missingVisualAssetAdapter ? "capability_registration" : undefined);
+    if (missingVisualAssetAdapter) {
+      const check: WorkerPreflightCheck = {
+        capability: "static_visual_generation",
+        check: "capability_registration",
+        phase: "preflight",
+        status: "unavailable",
+        reason: missingVisualAssetAdapterMessage,
+        action: "contact_environment_admin",
+        scope: "worker",
+      };
+      result.preflight = { version: "worker-preflight/v1", checks: [check] };
+      result.blockers = [preflightBlocker(check)];
+      result.nextStep = "Register an image-generation Adapter in the Worker environment before creating a new task attempt.";
+    }
+    await dependencies.reportResult(task.taskId, task.attempt, result);
     return { status: "blocked", taskId: task.taskId };
+  }
+
+  const preflight = dependencies.preflight ? await runPreflight(dependencies.preflight, taskPackage) : undefined;
+  if (preflight) {
+    if (preflight.checks.some((check) => check.status !== "passed")) {
+      const result = createPreflightResult(taskPackage, dependencies.actualCostCents, preflight);
+      await dependencies.reportResult(task.taskId, task.attempt, result);
+      return { status: result.status, taskId: task.taskId };
+    }
   }
 
   try {
     await dependencies.verifyAssetRoot(taskPackage.assets.allowedRoot);
   } catch (error) {
-    await dependencies.reportResult(task.taskId, task.attempt, createBlockedResult(task.taskId, dependencies.actualCostCents, error, "asset_root_unavailable"));
+    const check: WorkerPreflightCheck = {
+      capability: taskPackage.capability,
+      check: "asset_root",
+      phase: "preflight",
+      status: "unavailable",
+      reason: errorMessage(error),
+      action: "contact_environment_admin",
+      scope: "worker",
+    };
+    const result = createBlockedResult(task.taskId, dependencies.actualCostCents, error, "asset_root_unavailable");
+    result.preflight = appendPreflight(preflight, check);
+    result.blockers = [{ ...preflightBlocker(check), code: "asset_root_unavailable", detail: check.reason }];
+    await dependencies.reportResult(task.taskId, task.attempt, result);
     return { status: "blocked", taskId: task.taskId };
   }
 
   try {
     await dependencies.verifyArtifacts(taskPackage, taskPackage.assets.inputs);
   } catch (error) {
-    await dependencies.reportResult(task.taskId, task.attempt, createBlockedResult(task.taskId, dependencies.actualCostCents, error, "input_artifacts_invalid"));
+    await dependencies.reportResult(task.taskId, task.attempt, addPreflight(createBlockedResult(task.taskId, dependencies.actualCostCents, error, "input_artifacts_invalid"), preflight));
     return { status: "blocked", taskId: task.taskId };
   }
 
@@ -69,12 +111,35 @@ export async function runCodexWorker(dependencies: CodexWorkerDependencies): Pro
     const output = await dependencies.execute(taskPackage);
     const candidate = parseCodexOutput(output, dependencies.actualCostCents);
     const result = validateWorkerResult(candidate, taskPackage);
+    if (preflight) result.preflight = preflight;
     await dependencies.verifyArtifacts(taskPackage, result.artifacts, result.storyboard);
     await dependencies.reportResult(task.taskId, task.attempt, result);
     return { status: result.status, taskId: task.taskId };
   } catch (error) {
-    await dependencies.reportResult(task.taskId, task.attempt, createFailedResult(taskPackage, dependencies.actualCostCents, error));
+    const executionCheck = executionPreflightCheck(taskPackage, error);
+    const result = createFailedResult(taskPackage, dependencies.actualCostCents, error);
+    if (executionCheck) result.blockers = [preflightBlocker(executionCheck)];
+    await dependencies.reportResult(task.taskId, task.attempt, addPreflight(result, executionCheck ? appendPreflight(preflight, executionCheck) : preflight));
     return { status: "failed", taskId: task.taskId };
+  }
+}
+
+async function runPreflight(preflight: NonNullable<CodexWorkerDependencies["preflight"]>, taskPackage: WorkerTaskPackage): Promise<WorkerPreflightResult> {
+  try {
+    return await preflight(taskPackage);
+  } catch (error) {
+    return {
+      version: "worker-preflight/v1",
+      checks: [{
+        capability: taskPackage.capability,
+        check: "preflight",
+        phase: "preflight",
+        status: "unavailable",
+        reason: errorMessage(error),
+        action: "contact_environment_admin",
+        scope: "worker",
+      }],
+    };
   }
 }
 
@@ -99,8 +164,12 @@ function createTaskPackage(task: ClaimedWorkerTask): WorkerTaskPackage {
       title: task.title,
     },
     capability: requiredString(snapshot.capability, "任务缺少能力声明。"),
+    ...(typeof snapshot.credential_ref === "string" ? { credentialRef: snapshot.credential_ref } : {}),
+    promptContext: promptContext(snapshot),
+    promptHarness: promptHarness(snapshot),
     commission: commission(snapshot),
     seriesBaseline: seriesBaseline(snapshot),
+    visualAssetPreparation: visualAssetPreparation(snapshot),
     reviewFeedback: reviewFeedback(snapshot),
     reviewAnnotations: reviewAnnotations(snapshot),
     aRoll: aRoll(snapshot),
@@ -112,6 +181,23 @@ function createTaskPackage(task: ClaimedWorkerTask): WorkerTaskPackage {
     output,
     inputArtifacts: inputArtifacts(snapshot),
   });
+}
+
+function promptContext(snapshot: Record<string, unknown>): WorkerTaskPackageInput["promptContext"] {
+  const value = snapshot.prompt_context;
+  if (value === undefined) return undefined;
+  if (!isRecord(value) || value.version !== "prompt-context/v1" || typeof value.blueprint_version_id !== "string" || typeof value.hash !== "string" || !isRecord(value.account_hard_constraints) || !isRecord(value.account_defaults) || !isRecord(value.episode_input)) throw new Error("任务 Prompt 上下文格式无效。");
+  return {
+    version: "prompt-context/v1",
+    blueprintVersionId: value.blueprint_version_id,
+    ...(typeof value.series_version_id === "string" ? { seriesVersionId: value.series_version_id } : {}),
+    accountHardConstraints: value.account_hard_constraints,
+    accountDefaults: value.account_defaults,
+    ...(value.series_baseline && isRecord(value.series_baseline) ? { seriesBaseline: value.series_baseline } : {}),
+    episodeInput: value.episode_input,
+    ...(value.review_feedback && isRecord(value.review_feedback) ? { reviewFeedback: value.review_feedback } : {}),
+    hash: value.hash,
+  } satisfies PromptContextSnapshot;
 }
 
 function finalRender(snapshot: Record<string, unknown>): WorkerTaskPackageInput["finalRender"] {
@@ -141,6 +227,7 @@ function reviewRender(snapshot: Record<string, unknown>): WorkerTaskPackageInput
     projectRelativePath: requiredString(value.project_relative_path, "审核渲染任务缺少工程路径。"),
     projectRevision: requiredPositiveNumber(value.project_revision, "审核渲染任务缺少工程修订。"),
     preRenderReviewPackageId: requiredString(value.pre_render_review_package_id, "审核渲染任务缺少预渲染审核包。"),
+    ...(value.studio_project === undefined && (!isRecord(value.adjustments) || value.adjustments.studio_project === undefined) ? {} : { studioProject: studioProject(value.studio_project ?? (value.adjustments as Record<string, unknown>).studio_project) }),
     adjustments: reviewRenderAdjustments(value.adjustments),
     storyboard: storyboard as unknown as StoryboardManifest,
     members: value.members.map((member) => {
@@ -148,6 +235,7 @@ function reviewRender(snapshot: Record<string, unknown>): WorkerTaskPackageInput
       return {
         memberKey: requiredString(member.member_key, "审核渲染成员缺少标识。"),
         memberKind: requiredReviewRenderMemberKind(member.member_kind),
+        ...(member.audio_kind === "bgm" || member.audio_kind === "sfx" ? { audioKind: member.audio_kind } : {}),
         relativePath: requiredString(member.relative_path, "审核渲染成员缺少路径。"),
         sha256: requiredString(member.sha256, "审核渲染成员缺少哈希。"),
         startSeconds: requiredNonNegativeNumber(member.start_seconds, "审核渲染成员缺少起始时间。"),
@@ -157,6 +245,15 @@ function reviewRender(snapshot: Record<string, unknown>): WorkerTaskPackageInput
   };
 }
 
+function studioProject(value: unknown): NonNullable<WorkerTaskPackageInput["reviewRender"]>["studioProject"] {
+  if (!isRecord(value)) throw new Error("Studio 冻结工程格式无效。");
+  const relativePath = requiredString(value.relative_path, "Studio 冻结工程缺少路径。");
+  const sha256 = requiredString(value.sha256, "Studio 冻结工程缺少哈希。");
+  const fileSize = requiredPositiveNumber(value.file_size, "Studio 冻结工程缺少文件大小。");
+  if (!/^episodes\/[0-9a-f-]{36}\/studio-frozen\/[0-9a-f-]{36}\/index\.html$/i.test(relativePath) || !/^[0-9a-f]{64}$/i.test(sha256)) throw new Error("Studio 冻结工程格式无效。");
+  return { relativePath, sha256, fileSize };
+}
+
 function reviewRenderAdjustments(value: unknown): ReviewRenderAdjustments {
   if (!isRecord(value)) throw new Error("审核渲染任务缺少冻结合成配置。");
   const captionStyle = value.caption_style;
@@ -164,8 +261,15 @@ function reviewRenderAdjustments(value: unknown): ReviewRenderAdjustments {
   const crop = value.crop;
   const transition = value.transition;
   const layout = value.layout;
-  if ((captionStyle !== "cinematic" && captionStyle !== "minimal") || (pacing !== "gentle" && pacing !== "standard" && pacing !== "compact") || (crop !== "cover" && crop !== "contain") || (transition !== "fade" && transition !== "cut") || (layout !== "lower_third" && layout !== "center")) throw new Error("审核渲染任务冻结合成配置无效。");
-  return { captionStyle, pacing, crop, transition, layout, reason: requiredString(value.reason, "审核渲染任务缺少调整理由。") };
+  const aspectRatio = value.aspect_ratio;
+  const width = value.width;
+  const height = value.height;
+  const captionsEnabled = value.captions_enabled;
+  const narrationGainDb = value.narration_gain_db;
+  const bgmGainDb = value.bgm_gain_db;
+  const sfxGainDb = value.sfx_gain_db;
+  if ((aspectRatio !== "9:16" && aspectRatio !== "16:9" && aspectRatio !== "1:1") || typeof width !== "number" || typeof height !== "number" || !Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1 || (aspectRatio === "9:16" && width * 16 !== height * 9) || (aspectRatio === "16:9" && width * 9 !== height * 16) || (aspectRatio === "1:1" && width !== height) || typeof captionsEnabled !== "boolean" || (captionStyle !== "cinematic" && captionStyle !== "minimal") || (pacing !== "gentle" && pacing !== "standard" && pacing !== "compact") || (crop !== "cover" && crop !== "contain") || (transition !== "fade" && transition !== "cut") || (layout !== "lower_third" && layout !== "center") || typeof narrationGainDb !== "number" || typeof bgmGainDb !== "number" || typeof sfxGainDb !== "number" || !Number.isFinite(narrationGainDb) || !Number.isFinite(bgmGainDb) || !Number.isFinite(sfxGainDb)) throw new Error("审核渲染任务冻结合成配置无效。");
+  return { aspectRatio, width, height, captionsEnabled, captionStyle, pacing, crop, transition, layout, narrationGainDb, bgmGainDb, sfxGainDb, reason: requiredString(value.reason, "审核渲染任务缺少调整理由。") };
 }
 
 function requiredReviewRenderMemberKind(value: unknown): "shot_media" | "narration" | "soundtrack" {
@@ -259,6 +363,24 @@ function seriesBaseline(snapshot: Record<string, unknown>): WorkerTaskPackageInp
   };
 }
 
+function visualAssetPreparation(snapshot: Record<string, unknown>): WorkerTaskPackageInput["visualAssetPreparation"] {
+  const value = snapshot.visual_assets;
+  if (value === undefined) return undefined;
+  if (!isRecord(value) || !Array.isArray(value.external_inputs)) throw new Error("视觉资产准备冻结配置格式无效。");
+  const imageGeneration = value.image_generation;
+  if (imageGeneration === undefined || imageGeneration === null) return { externalInputs: value.external_inputs as ArtifactManifest[] };
+  if (!isRecord(imageGeneration)) throw new Error("视觉资产准备图片 Adapter 格式无效。");
+  return {
+    externalInputs: value.external_inputs as ArtifactManifest[],
+    imageGeneration: {
+      provider: requiredString(imageGeneration.provider, "视觉资产准备图片 Adapter 缺少 Provider。"),
+      adapter: requiredString(imageGeneration.adapter, "视觉资产准备图片 Adapter 缺少 Adapter。"),
+      model: requiredString(imageGeneration.model, "视觉资产准备图片 Adapter 缺少模型。"),
+      credentialRef: requiredString(imageGeneration.credential_ref, "视觉资产准备图片 Adapter 缺少外部连接。"),
+    },
+  };
+}
+
 function commission(snapshot: Record<string, unknown>): WorkerTaskPackageInput["commission"] {
   const value = snapshot.commission;
   if (value === undefined) return undefined;
@@ -266,6 +388,21 @@ function commission(snapshot: Record<string, unknown>): WorkerTaskPackageInput["
   return {
     creativeDirection: requiredString(value.creative_direction, "任务脚本委托缺少创作方向。"),
     coreContent: requiredString(value.core_content, "任务脚本委托缺少核心内容。"),
+  };
+}
+
+function promptHarness(snapshot: Record<string, unknown>): WorkerTaskPackageInput["promptHarness"] {
+  const value = snapshot.harness;
+  if (value === undefined) return undefined;
+  if (!isRecord(value) || value.adapter !== "codex" || typeof value.version !== "number" || !Number.isInteger(value.version) || value.version < 1) throw new Error("任务 Prompt Harness 格式无效。");
+  return {
+    id: requiredString(value.id, "任务 Prompt Harness 缺少标识。"),
+    version: value.version,
+    content: requiredString(value.content, "任务 Prompt Harness 缺少冻结内容。"),
+    contentHash: requiredString(value.content_hash, "任务 Prompt Harness 缺少内容哈希。"),
+    adapter: "codex",
+    model: requiredString(value.model, "任务 Prompt Harness 缺少模型。"),
+    promptVersion: requiredString(value.prompt_version, "任务 Prompt Harness 缺少版本。"),
   };
 }
 
@@ -316,7 +453,7 @@ function aRoll(snapshot: Record<string, unknown>): WorkerTaskPackageInput["aRoll
   };
 }
 
-function parseCodexOutput(output: string, actualCostCents: number): unknown {
+export function parseCodexOutput(output: string, actualCostCents: number): unknown {
   const parsed: unknown = JSON.parse(output);
   if (!isRecord(parsed)) throw new Error("Codex 必须返回一个 JSON 对象。");
   return { ...parsed, actualCostCents };
@@ -384,6 +521,49 @@ function createBlockedResult(taskId: string, actualCostCents: number, error: unk
   };
 }
 
+function createPreflightResult(taskPackage: WorkerTaskPackage, actualCostCents: number, preflight: WorkerPreflightResult): WorkerResult {
+  const failedChecks = preflight.checks.filter((check) => check.status !== "passed");
+  const retryable = failedChecks.length > 0 && failedChecks.every((check) => check.status === "retryable" && check.action === "retry");
+  const shouldRetry = retryable && taskPackage.budget.attempt + 1 < taskPackage.budget.maxAttempts;
+  const reason = failedChecks.map((check) => check.reason).join("；");
+  return {
+    version: "worker-result/v1",
+    taskId: taskPackage.task.id,
+    status: retryable ? "failed" : "blocked",
+    artifacts: [],
+    validation: {
+      passed: false,
+      checks: preflight.checks.map((check) => ({ name: `preflight:${check.check}`, passed: check.status === "passed", detail: check.reason })),
+    },
+    preflight,
+    actualCostCents,
+    blockers: failedChecks.map((check) => preflightBlocker(check)),
+    retry: { shouldRetry, reason },
+    nextStep: shouldRetry ? "Retry the task after the temporary dependency failure recovers." : "Resolve the Worker preflight blocker before retrying this task.",
+  };
+}
+
+function addPreflight(result: WorkerResult, preflight: WorkerPreflightResult | undefined): WorkerResult {
+  return preflight ? { ...result, preflight } : result;
+}
+
+function appendPreflight(preflight: WorkerPreflightResult | undefined, check: WorkerPreflightCheck): WorkerPreflightResult {
+  return { version: "worker-preflight/v1", checks: [...(preflight?.checks ?? []), check] };
+}
+
+function preflightBlocker(check: WorkerPreflightCheck): NonNullable<WorkerResult["blockers"]>[number] {
+  return {
+    code: check.check,
+    detail: check.reason,
+    capability: check.capability,
+    check: check.check,
+    phase: check.phase,
+    status: check.status,
+    action: check.action,
+    scope: check.scope,
+  };
+}
+
 function createFailedResult(taskPackage: WorkerTaskPackage, actualCostCents: number, error: unknown): WorkerResult {
   return {
     version: "worker-result/v1",
@@ -399,6 +579,44 @@ function createFailedResult(taskPackage: WorkerTaskPackage, actualCostCents: num
     },
     nextStep: "Retry only after the reported failure is understood.",
   };
+}
+
+function executionPreflightCheck(taskPackage: WorkerTaskPackage, error: unknown): WorkerPreflightCheck | undefined {
+  const detail = errorMessage(error);
+  if (taskPackage.provider === "codex" && /model|permission|access denied|does not have access|not allowed|not supported|unauthorized|forbidden|模型|权限|无权|未授权|不支持/i.test(detail)) {
+    return {
+      capability: taskPackage.capability,
+      check: "model_permission",
+      phase: "execution",
+      status: "unavailable",
+      reason: detail,
+      action: "contact_environment_admin",
+      scope: "worker",
+    };
+  }
+  if (/api[ _-]?key|credential|token|401|403|凭据|密钥|令牌/i.test(detail)) {
+    return {
+      capability: taskPackage.capability,
+      check: "credential_validity",
+      phase: "execution",
+      status: "unavailable",
+      reason: detail,
+      action: "contact_environment_admin",
+      scope: "worker",
+    };
+  }
+  if (/fetch failed|network|timeout|timed out|econnreset|econnrefused|etimedout|socket|dns|connection|连接|网络|超时/i.test(detail)) {
+    return {
+      capability: taskPackage.capability,
+      check: "network_connectivity",
+      phase: "execution",
+      status: "retryable",
+      reason: detail,
+      action: "retry",
+      scope: "worker",
+    };
+  }
+  return undefined;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

@@ -29,7 +29,8 @@ describe("系列运营视图", () => {
   it("按当前生产单阶段汇总系列，并且不显示统一完成百分比", () => {
     render(<OperationsWorkspace episodes={episodes} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={reviewPackages} series={[series]} seriesVersions={[seriesVersion]} tasks={tasks} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
 
-    expect(screen.getByRole("button", { name: /雨夜志怪/ })).toBeTruthy();
+    expect(screen.getByLabelText("运营系列筛选")).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /雨夜志怪/ })).toBeNull();
     expect(screen.getAllByText("输入与脚本").length).toBeGreaterThan(0);
     expect(screen.getAllByText("分镜与媒体").length).toBeGreaterThan(0);
     expect(screen.queryByText(/\d+%/)).toBeNull();
@@ -43,22 +44,51 @@ describe("系列运营视图", () => {
     expect(screen.getByText("1 个待审核包")).toBeTruthy();
     expect(screen.getByText("测试媒体适配器未配置。")).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "脚本待审 输入与脚本 · 审核包 v2" }));
-    await user.click(screen.getByRole("button", { name: "媒体受阻 · media_provider_unavailable 测试媒体适配器未配置。" }));
+    expect(screen.getByText("媒体供应商暂不可用")).toBeTruthy();
+    expect(screen.getByText("Worker 无法调用当前媒体供应商，通常是供应商适配器、凭据或网络状态问题。")).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "媒体受阻 media_provider_unavailable" }));
     expect(onSelectEpisode).toHaveBeenNthCalledWith(1, "episode-review");
     expect(onSelectEpisode).toHaveBeenNthCalledWith(2, "episode-blocked");
   });
 
-  it("不把已逐项批准的预渲染包计为待审核，并保留缺失系列关联的生产单", () => {
+  it("为运营页可修复的通用执行器阻塞提供蓝图入口", async () => {
+    const user = userEvent.setup();
+    const onOpenBlueprint = vi.fn();
+    const genericTask = { ...tasks[0], id: "generic-blocked-task", last_result: { blockers: [{ code: "executor_invalid", detail: "执行器 adapter 未配置。" }] } };
+
+    render(<OperationsWorkspace episodes={episodes} onOpenBlueprint={onOpenBlueprint} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={reviewPackages} series={[series]} seriesVersions={[seriesVersion]} tasks={[genericTask]} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
+
+    await user.click(screen.getByRole("button", { name: "修改配置并继续当前生产单" }));
+    expect(onOpenBlueprint).toHaveBeenCalledWith("account-1", { blocker: expect.objectContaining({ code: "executor_invalid", detail: "执行器 adapter 未配置。" }), blueprintVersionId: "blueprint-1", episodeId: "episode-blocked" });
+  });
+
+  it("不把自动审核渲染前的冻结包计为待审核，并保留缺失系列关联的生产单", () => {
     const productionEpisode = { ...episodes[1], id: "episode-production", series_version_id: "missing-series-version", stage: "production_ready" as const, title: "预渲染已审核" };
-    const productionPackage = { ...reviewPackages[0], episode_id: productionEpisode.id, id: "pre-render-package", revision_number: 1, stage: "production_ready" as const };
+    const productionPackage = { ...reviewPackages[0], context_snapshot: { approval_mode: "qc_only" }, episode_id: productionEpisode.id, id: "pre-render-package", revision_number: 1, stage: "production_ready" as const };
     const member = { artifact_id: null, audio_track_id: null, created_at: "2026-08-15T00:00:00.000Z", evidence_snapshot: {}, id: "pre-render-member", member_key: "shot:shot-01", member_kind: "shot_media", review_package_id: productionPackage.id, source_task_id: "task-media" } as Database["public"]["Tables"]["pre_render_review_members"]["Row"];
-    const decision = { actor_id: "owner-1", created_at: "2026-08-15T00:00:00.000Z", decision: "approved", inherited_from_review_package_id: null, member_key: member.member_key, reason: "已审完。", review_package_id: productionPackage.id } as Database["public"]["Tables"]["pre_render_review_member_decisions"]["Row"];
 
-    render(<OperationsWorkspace episodes={[productionEpisode]} preRenderReviewMemberDecisions={[decision]} preRenderReviewMembers={[member]} reviewPackages={[productionPackage]} series={[]} seriesVersions={[]} tasks={[]} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
+    render(<OperationsWorkspace episodes={[productionEpisode]} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[member]} reviewPackages={[productionPackage]} series={[]} seriesVersions={[]} tasks={[]} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
 
-    expect(screen.getByRole("button", { name: /关联系列不可用/ })).toBeTruthy();
-    expect(screen.getByRole("button", { name: /0 个待审核包/ })).toBeTruthy();
+    expect(screen.getByRole("option", { name: "关联系列不可用" })).toBeTruthy();
     expect(screen.getByText("0 个待审核包")).toBeTruthy();
     expect(screen.getByText("审核包 v1 已审完")).toBeTruthy();
+  });
+
+  it("对系列生产单明细使用分页", async () => {
+    const user = userEvent.setup();
+    const manyEpisodes = Array.from({ length: 21 }, (_, index) => ({ ...episodes[2], id: `episode-page-${index}`, title: `分页生产单 ${index + 1}` }));
+
+    render(<OperationsWorkspace episodes={manyEpisodes} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={[]} series={[series]} seriesVersions={[seriesVersion]} tasks={[]} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
+
+    expect(screen.getByText("第 1 / 2 页 · 共 21 条")).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "下一页" }));
+    expect(screen.getByText("分页生产单 21")).toBeTruthy();
+  });
+
+  it("默认不把已归档 Episode 纳入运营汇总", () => {
+    const archivedEpisode = { ...episodes[0], archived_at: "2026-08-16T00:00:00.000Z", id: "episode-archived-operation", title: "已归档运营" };
+    render(<OperationsWorkspace episodes={[...episodes, archivedEpisode]} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={reviewPackages} series={[series]} seriesVersions={[seriesVersion]} tasks={tasks} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
+
+    expect(screen.queryByText("已归档运营")).toBeNull();
   });
 });

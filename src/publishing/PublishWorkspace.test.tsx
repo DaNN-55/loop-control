@@ -33,10 +33,10 @@ describe("发布队列", () => {
 
   it("只在固定发布包已索引后允许 Owner 进入待发布", () => {
     const qcEpisode = { ...episode, stage: "qc_passed" as const };
-    const { rerender } = render(<PublishWorkspace accountsById={new Map()} artifacts={[]} episodes={[qcEpisode]} isPending="" onSelectEpisode={vi.fn()} onTransition={vi.fn()} selectedEpisode={qcEpisode} tasks={[]} />);
+    const { rerender } = render(<PublishWorkspace accountsById={new Map()} artifacts={[]} episodes={[qcEpisode]} isPending="" onOpenPublish={vi.fn()} onTransition={vi.fn()} publicationRecords={[]} selectedEpisode={qcEpisode} tasks={[]} />);
 
     expect(screen.getByRole("button", { name: "进入待发布" }).hasAttribute("disabled")).toBe(true);
-    rerender(<PublishWorkspace accountsById={new Map()} artifacts={[{ artifact_type: "publish_package", episode_id: "episode-1" } as Database["public"]["Tables"]["artifacts"]["Row"]]} episodes={[qcEpisode]} isPending="" onSelectEpisode={vi.fn()} onTransition={vi.fn()} selectedEpisode={qcEpisode} tasks={[{ episode_id: "episode-1", status: "completed", task_type: "verify_publish_package" } as Database["public"]["Tables"]["tasks"]["Row"]]} />);
+    rerender(<PublishWorkspace accountsById={new Map()} artifacts={[{ artifact_type: "publish_package", episode_id: "episode-1" } as Database["public"]["Tables"]["artifacts"]["Row"]]} episodes={[qcEpisode]} isPending="" onOpenPublish={vi.fn()} onTransition={vi.fn()} publicationRecords={[]} selectedEpisode={qcEpisode} tasks={[{ episode_id: "episode-1", status: "completed", task_type: "verify_publish_package" } as Database["public"]["Tables"]["tasks"]["Row"]]} />);
     expect(screen.getByRole("button", { name: "进入待发布" }).hasAttribute("disabled")).toBe(false);
   });
 
@@ -44,7 +44,7 @@ describe("发布队列", () => {
     const user = userEvent.setup();
     const onSelectEpisode = vi.fn();
 
-    render(<PublishWorkspace accountsById={new Map()} artifacts={[]} episodes={[episode]} isPending="" onSelectEpisode={onSelectEpisode} onTransition={vi.fn()} selectedEpisode={episode} tasks={[]} />);
+    render(<PublishWorkspace accountsById={new Map()} artifacts={[]} episodes={[episode]} isPending="" onOpenPublish={onSelectEpisode} onTransition={vi.fn()} publicationRecords={[]} selectedEpisode={episode} tasks={[]} />);
 
     expect(screen.queryByLabelText("发布确认理由")).toBeNull();
     await user.click(screen.getByRole("button", { name: /待确认的发布/ }));
@@ -63,6 +63,7 @@ describe("发布队列", () => {
     expect(onTransition).not.toHaveBeenCalled();
 
     await user.click(screen.getByRole("checkbox"));
+    expect(screen.getByRole("button", { name: "确认已发布" }).className).toContain("button-primary");
     await user.click(screen.getByRole("button", { name: "确认已发布" }));
 
     expect(onTransition).toHaveBeenCalledWith("episode-1", "published", "已在 TikTok Studio 发布并复核。");
