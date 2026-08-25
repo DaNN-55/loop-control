@@ -149,7 +149,7 @@ describe("账号配置工作区", () => {
     await user.click(screen.getByRole("checkbox", { name: "启用B-roll" }));
 
     expect((screen.getByRole("combobox", { name: "B-roll Adapter" }) as HTMLSelectElement).value).toBe("__unregistered__");
-    expect((screen.getByRole("combobox", { name: "B-roll 外部连接" }) as HTMLSelectElement).value).toBe("");
+    expect(screen.queryByRole("combobox", { name: "B-roll 外部连接" })).toBeNull();
     expect(screen.queryByLabelText("API Key")).toBeNull();
   });
 

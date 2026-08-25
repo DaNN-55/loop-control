@@ -169,6 +169,7 @@ async function resolveConnectionSecret(credentialRef: string | undefined, provid
     if (error) throw new Error("无法解析 Worker 外部连接秘密。");
     return typeof data === "string" && data.trim() ? data.trim() : undefined;
   }
+  if (provider === "pexels") return undefined;
   const credential = credentialEnvironmentForReference(provider, adapter, credentialRef);
   return credential ? process.env[credential]?.trim() : undefined;
 }

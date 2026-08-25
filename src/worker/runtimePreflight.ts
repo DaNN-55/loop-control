@@ -169,7 +169,6 @@ export function createRuntimePreflight(capabilities: RuntimeCapability[], enviro
 export function credentialEnvironmentForProvider(provider: string): string | undefined {
   if (provider === "openai") return "OPENAI_API_KEY";
   if (provider === "google_tts") return "GOOGLE_TTS_API_KEY";
-  if (provider === "pexels") return "PEXELS_API_KEY";
   if (provider === "freesound") return "FREESOUND_API_KEY";
   return undefined;
 }
@@ -212,6 +211,7 @@ function capabilityFromExecutor(capability: string, executor: Record<string, unk
 function configurationErrorFor(capability: RuntimeCapability): string | undefined {
   if (!capability.provider || !capability.model || !capability.promptVersion) return `能力 ${capability.capability} 缺少 Provider、模型或 Prompt 版本。`;
   if (capability.requiresAdapter && !capability.adapter) return `能力 ${capability.capability} 缺少已注册 Adapter。`;
+  if (capability.provider === "pexels" && capability.adapter === "pexels_video" && !isConnectionId(capability.credentialRef)) return "Pexels 必须选择已验证的外部连接版本。";
   if (capability.requiresPromptHarness && !capability.promptHarnessId) return `能力 ${capability.capability} 缺少 Prompt Harness。`;
   const registration = capability.adapter ? adapterRegistration(capability.provider, capability.adapter) : undefined;
   if (registration?.connections.length && !registration.connections.some((connection) => connection.credentialRef === capability.credentialRef) && !isConnectionId(capability.credentialRef)) return `能力 ${capability.capability} 缺少可用的外部连接引用。`;

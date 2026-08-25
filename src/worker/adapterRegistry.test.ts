@@ -31,9 +31,7 @@ describe("adapter registry", () => {
         configurationFields: ["max_attempts", "max_concurrency", "provider_max_concurrency"],
       }),
     ]);
-    expect(adapterRegistration("pexels", "pexels_video")?.connections).toEqual([
-      { credentialRef: "pexels-default", environmentVariable: "PEXELS_API_KEY", label: "Pexels 默认连接" },
-    ]);
+    expect(adapterRegistration("pexels", "pexels_video")?.connections).toEqual([]);
   });
 
   it("为静态视觉登记 OpenAI Images 与非秘密连接", () => {

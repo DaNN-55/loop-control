@@ -52,7 +52,7 @@ describe("runtime preflight", () => {
     expect(createRuntimePreflight([visual!]).checks).toContainEqual(expect.objectContaining({ capability: "visual_planning", check: "blueprint_configuration", status: "blocked", action: "edit_blueprint" }));
   });
 
-  it("用注册目录解析 Pexels 的非秘密连接引用", () => {
+  it("不为旧 Pexels 引用声明环境变量秘密", () => {
     const [capability] = runtimeCapabilitiesFromBlueprintPolicy({
       b_roll: {
         credential_ref: "pexels-default",
@@ -61,7 +61,8 @@ describe("runtime preflight", () => {
       },
     }).filter((candidate) => candidate.capability === "b_roll_generation");
 
-    expect(capability).toMatchObject({ adapter: "pexels_video", credentialRef: "pexels-default", credential: "PEXELS_API_KEY" });
+    expect(capability).toMatchObject({ adapter: "pexels_video", credentialRef: "pexels-default" });
+    expect(capability?.credential).toBeUndefined();
   });
 
   it("把未写 credential_ref 的 Pexels 蓝图标记为配置缺失", () => {
@@ -216,7 +217,7 @@ describe("runtime preflight", () => {
       capability: "b_roll_generation",
       provider: "pexels",
       adapter: "pexels_video",
-      credentialRef: "pexels-default",
+      credentialRef: "11111111-1111-4111-8111-111111111111",
       model: "pexels-video-v1",
       promptVersion: "b-roll-v1",
       allowedTools: ["read", "write"],

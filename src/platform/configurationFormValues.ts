@@ -190,6 +190,7 @@ function validateRegisteredMediaConnection(label: string, key: MediaAdapterKey, 
   const credentialRef = form.credentialRef.trim();
   const dynamicPexelsConnection = form.provider.trim() === "pexels" && form.adapter.trim() === "pexels_video" && isUuid(credentialRef);
   if (registration.connections.length && !registration.connections.some((connection) => connection.credentialRef === credentialRef) && !dynamicPexelsConnection) throw new Error(`${label}必须选择可用的外部连接。`);
+  if (form.provider.trim() === "pexels" && form.adapter.trim() === "pexels_video" && !dynamicPexelsConnection) throw new Error(`${label}必须选择可用的外部连接。`);
 }
 
 function isUuid(value: string): boolean {

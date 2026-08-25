@@ -61,7 +61,7 @@ const mediaCapabilities: Record<MediaCapabilityKey, MediaCapability> = {
     defaultConfiguration: { model: "pexels-video-v1", promptVersion: "b-roll-v1" },
     description: "按分镜检索或生成补充画面。当前 Worker 仍会检查是否注册了兼容的 B-roll Adapter。",
     label: "B-roll",
-    registeredAdapter: { id: "pexels_video", provider: "pexels", connectionType: "pexels_api", requiresNetwork: true, configurationFields: ["max_attempts", "max_concurrency", "provider_max_concurrency"], connections: [{ credentialRef: "pexels-default", environmentVariable: "PEXELS_API_KEY", label: "Pexels 默认连接" }] },
+    registeredAdapter: { id: "pexels_video", provider: "pexels", connectionType: "pexels_api", requiresNetwork: true, configurationFields: ["max_attempts", "max_concurrency", "provider_max_concurrency"], connections: [] },
     requiresRegisteredAdapter: true,
     workerAvailable: true,
   },

@@ -63,7 +63,7 @@ async function mediaBytes(input: {
     }) };
   }
   if (taskPackage.provider === "pexels" && taskPackage.media?.adapter === "pexels_video") {
-    if (!input.pexelsApiKey) throw new Error("PEXELS_API_KEY 未配置，无法执行冻结 B-roll 任务。");
+    if (!input.pexelsApiKey) throw new Error("Pexels 连接秘密不可用，无法执行冻结 B-roll 任务。");
     const selected = await searchPexelsVideo({
       apiKey: input.pexelsApiKey,
       fetcher: input.fetcher,

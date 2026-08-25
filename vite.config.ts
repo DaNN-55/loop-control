@@ -1261,7 +1261,7 @@ export async function runtimePreflightForPolicy(policy: unknown, seriesRules: un
   });
 }
 
-async function localWorkerSecretForCapability(capability: { credential?: string; credentialRef?: string }): Promise<string | undefined> {
+async function localWorkerSecretForCapability(capability: { credential?: string; credentialRef?: string; provider: string }): Promise<string | undefined> {
   const reference = capability.credentialRef;
   if (reference && isUuid(reference)) {
     const key = localWorkerServiceRoleKey();
@@ -1272,6 +1272,7 @@ async function localWorkerSecretForCapability(capability: { credential?: string;
     if (error || typeof data !== "string") return undefined;
     return data.trim() || undefined;
   }
+  if (capability.provider === "pexels") return undefined;
   return capability.credential ? localWorkerEnvironmentValue(capability.credential) : undefined;
 }
 
