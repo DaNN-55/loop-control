@@ -26,7 +26,7 @@ import { SystemStatusPanel, type LocalSystemStatusReport } from "./observability
 import { MarkdownPreview } from "./ui/MarkdownPreview";
 import { canonicalMaterialName, materialTypeForFile, type MaterialPurpose, type MaterialType } from "./reviews/materialImport";
 import { AccountWorkspace } from "./accounts/AccountWorkspace";
-import { ConnectionWorkspace } from "./connections/ConnectionWorkspace";
+import { ConnectionWorkspace, type ExternalConnectionInput, type ExternalConnectionVersion } from "./connections/ConnectionWorkspace";
 
 export { AccountWorkspace, SeriesSettings } from "./accounts/AccountWorkspace";
 
@@ -185,6 +185,7 @@ interface Workspace {
   blueprintChangeSuggestions: BlueprintChangeSuggestion[];
   publicationRecords: PublicationRecord[];
   externalConnections: ExternalConnection[];
+  externalConnectionVersions: ExternalConnectionVersion[];
 }
 
 export const navigation: Array<{ id: NavigationItem; label: string }> = [
@@ -374,6 +375,20 @@ function taskChangeNotice(previous: Workspace, next: Workspace, episodeId: strin
   return `Worker 任务状态已更新：${changed}${changedTasks.length > 2 ? "等" : ""}。`;
 }
 
+function connectionVersionsForBlocker(blocker: WorkerBlocker, tasks: Task[], versions: ExternalConnectionVersion[]): ExternalConnectionVersion[] {
+  const task = blocker.taskId ? tasks.find((candidate) => candidate.id === blocker.taskId) : undefined;
+  const snapshot = task?.input_snapshot;
+  if (!snapshot || Array.isArray(snapshot) || typeof snapshot !== "object") return [];
+  const snapshotRecord = snapshot as Record<string, unknown>;
+  const visualAssets = snapshotRecord.visual_assets;
+  const imageGeneration = visualAssets && typeof visualAssets === "object" && !Array.isArray(visualAssets) ? (visualAssets as Record<string, unknown>).image_generation : null;
+  const nestedRef = imageGeneration && typeof imageGeneration === "object" && !Array.isArray(imageGeneration) ? (imageGeneration as Record<string, unknown>).credential_ref : undefined;
+  const sourceRef = typeof snapshotRecord.credential_ref === "string" ? snapshotRecord.credential_ref : typeof nestedRef === "string" ? nestedRef : null;
+  if (!sourceRef) return [];
+  const sourceVersion = versions.find((version) => version.id === sourceRef);
+  return sourceVersion ? versions.filter((version) => version.connection_id === sourceVersion.connection_id) : [];
+}
+
 function episodeDeletionMessage(value: unknown): string {
   if (!value || typeof value !== "object" || Array.isArray(value)) return "Episode、本地产物和数据库记录已删除。";
   const result = value as { local?: { existed?: unknown; path?: unknown; removed?: unknown }; database?: { counts?: unknown } };
@@ -451,7 +466,7 @@ function bytesToBase64(content: Uint8Array): string {
 }
 
 async function loadWorkspace(): Promise<Workspace> {
-  const [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, promptVersionsResult, materialRevisionsResult, reviewPackagesResult, reviewAnnotationsResult, qcReviewIssuesResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, taskRunsResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult, externalConnectionsResult] = await Promise.all([
+  const [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, promptVersionsResult, materialRevisionsResult, reviewPackagesResult, reviewAnnotationsResult, qcReviewIssuesResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, taskRunsResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult, externalConnectionsResult, externalConnectionVersionsResult] = await Promise.all([
     supabase.from("accounts").select("*").order("created_at"),
     supabase.from("account_blueprint_versions").select("*").order("version", { ascending: false }),
     supabase.from("episodes").select("*").order("updated_at", { ascending: false }),
@@ -476,8 +491,9 @@ async function loadWorkspace(): Promise<Workspace> {
     supabase.from("blueprint_change_suggestions").select("*").order("created_at", { ascending: false }),
     supabase.from("publication_records").select("*").order("created_at", { ascending: false }),
     supabase.from("external_connections").select("*").order("created_at", { ascending: false }),
+    supabase.rpc("list_external_connection_versions", { p_connection_id: null }),
   ]);
-  const error = [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, promptVersionsResult, materialRevisionsResult, reviewPackagesResult, reviewAnnotationsResult, qcReviewIssuesResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, taskRunsResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult, externalConnectionsResult]
+  const error = [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, promptVersionsResult, materialRevisionsResult, reviewPackagesResult, reviewAnnotationsResult, qcReviewIssuesResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, taskRunsResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult, externalConnectionsResult, externalConnectionVersionsResult]
     .map((result) => result.error)
     .find(Boolean);
 
@@ -508,6 +524,7 @@ async function loadWorkspace(): Promise<Workspace> {
     blueprintChangeSuggestions: blueprintChangeSuggestionsResult.data ?? [],
     publicationRecords: publicationRecordsResult.data ?? [],
     externalConnections: externalConnectionsResult.data ?? [],
+    externalConnectionVersions: externalConnectionVersionsResult.data ?? [],
   };
 }
 
@@ -970,7 +987,7 @@ export function App() {
     }
   }
 
-  async function createExternalConnection(input: { name: string; provider: "pexels"; adapter: "pexels_video"; secret: string }): Promise<ExternalConnection | null> {
+  async function createExternalConnection(input: ExternalConnectionInput): Promise<ExternalConnection | null> {
     setPendingAction("external-connection");
     setErrorMessage("");
     try {
@@ -996,13 +1013,66 @@ export function App() {
       const payload: unknown = await response.json().catch(() => null);
       if (!response.ok) throw new Error(payload && typeof payload === "object" && !Array.isArray(payload) && typeof (payload as Record<string, unknown>).error === "string" ? (payload as Record<string, unknown>).error as string : "无法完成外部连接测试。");
       await refreshWorkspace();
-      setMessage("Pexels 连接测试已完成；蓝图只可选择已验证连接。");
+      const provider = payload && typeof payload === "object" && !Array.isArray(payload) && typeof (payload as { connection?: { provider?: unknown } }).connection?.provider === "string" ? (payload as { connection: { provider: string } }).connection.provider : "外部连接";
+      setMessage(`${provider} 连接测试已完成；蓝图只可选择已验证连接版本。`);
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "外部连接测试失败。");
       throw error;
     } finally {
       setPendingAction("");
     }
+  }
+
+  async function updateExternalConnection(input: { connectionId: string; name: string; description: string }): Promise<void> {
+    setPendingAction(`update-external-connection-${input.connectionId}`); setErrorMessage("");
+    try {
+      const { error } = await supabase.rpc("update_external_connection", { p_connection_id: input.connectionId, p_description: input.description, p_name: input.name });
+      if (error) throw error;
+      await refreshWorkspace(); setMessage("连接名称和说明已更新；连接版本未改变。");
+    } catch (error) { setErrorMessage(error instanceof Error ? error.message : "无法更新外部连接说明。"); }
+    finally { setPendingAction(""); }
+  }
+
+  async function rotateExternalConnection(input: { connectionId: string; provider: ExternalConnectionInput["provider"]; adapter: ExternalConnectionInput["adapter"]; secret: string }): Promise<ExternalConnection | null> {
+    setPendingAction(`rotate-external-connection-${input.connectionId}`); setErrorMessage("");
+    try {
+      const { data, error } = await supabase.rpc("rotate_external_connection", { p_adapter: input.adapter, p_connection_id: input.connectionId, p_provider: input.provider, p_secret: input.secret });
+      if (error) throw error;
+      await refreshWorkspace(); return data;
+    } catch (error) { setErrorMessage(error instanceof Error ? error.message : "无法创建外部连接新版本。"); return null; }
+    finally { setPendingAction(""); }
+  }
+
+  async function revokeExternalConnectionVersion(versionId: string): Promise<void> {
+    setPendingAction(`revoke-external-connection-${versionId}`); setErrorMessage("");
+    try {
+      const { error } = await supabase.rpc("revoke_external_connection_version", { p_version_id: versionId });
+      if (error) throw error;
+      await refreshWorkspace(); setMessage("连接版本已撤销；已有生产单不会自动切换连接。");
+    } catch (error) { setErrorMessage(error instanceof Error ? error.message : "无法撤销连接版本。"); }
+    finally { setPendingAction(""); }
+  }
+
+  async function deleteExternalConnectionVersion(versionId: string): Promise<void> {
+    setPendingAction(`delete-external-connection-${versionId}`); setErrorMessage("");
+    try {
+      const { error } = await supabase.rpc("delete_external_connection_version", { p_version_id: versionId });
+      if (error) throw error;
+      await refreshWorkspace(); setMessage("未引用的连接草稿已删除。");
+    } catch (error) { setErrorMessage(error instanceof Error ? error.message : "无法删除连接草稿。"); }
+    finally { setPendingAction(""); }
+  }
+
+  async function repairEpisodeConnection(input: { blocker: WorkerBlocker; episodeId: string; versionId: string }): Promise<void> {
+    setPendingAction(`repair-external-connection-${input.episodeId}`); setErrorMessage("");
+    try {
+      const { data, error } = await supabase.rpc("apply_external_connection_repair", { p_blocker_code: input.blocker.code, p_blocker_detail: input.blocker.detail, p_connection_version_id: input.versionId, p_episode_id: input.episodeId });
+      if (error) throw error;
+      const result = data && typeof data === "object" && !Array.isArray(data) ? data as Record<string, unknown> : {};
+      const count = typeof result.recreated_task_count === "number" ? result.recreated_task_count : 0;
+      await refreshWorkspace(); setMessage(`连接版本已应用到当前生产单；已重新排队 ${count} 个受影响任务。已完成任务、审核和审计历史保留。`);
+    } catch (error) { setErrorMessage(error instanceof Error ? error.message : "无法将新连接版本应用到当前生产单。"); }
+    finally { setPendingAction(""); }
   }
 
   async function renameAccount(accountId: string, name: string): Promise<boolean> {
@@ -1661,7 +1731,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
         {message || errorMessage ? <div className="floating-notices" aria-live="polite">{message ? <div className="notice-message" role="status">{message}<button aria-label="关闭通知" onClick={() => setMessage("")} type="button">×</button></div> : null}{errorMessage ? <div className="error-message" role="alert">{errorMessage}<button aria-label="关闭错误通知" onClick={() => setErrorMessage("")} type="button">×</button></div> : null}</div> : null}
 
         {activeNavigation === "connections" ? (
-          <ConnectionWorkspace connections={workspace.externalConnections} isPending={pendingAction === "external-connection" || pendingAction.startsWith("test-external-connection-")} onCreateConnection={createExternalConnection} onTestConnection={testExternalConnection} />
+          <ConnectionWorkspace connections={workspace.externalConnections} isPending={pendingAction.includes("external-connection")} onCreateConnection={createExternalConnection} onDeleteVersion={deleteExternalConnectionVersion} onRevokeVersion={revokeExternalConnectionVersion} onRotateConnection={rotateExternalConnection} onTestConnection={testExternalConnection} onUpdateConnection={updateExternalConnection} versions={workspace.externalConnectionVersions} />
         ) : activeNavigation === "accounts" ? (
           <AccountWorkspace
             account={selectedAccount}
@@ -1784,9 +1854,11 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             isAudioSourceModePending={pendingAction === `audio-source-${selectedEpisode.id}`}
             isStartProductionPending={pendingAction === `start-production-${selectedEpisode.id}`}
             productionPreflight={productionPreflight}
+            connectionVersions={workspace.externalConnectionVersions}
             isRefreshPending={pendingAction === "workspace-refresh"}
             isTransitionPending={pendingAction.startsWith(`transition-${selectedEpisode.id}-`) || pendingAction.startsWith("review-render-revision-") || pendingAction.startsWith(`final-render-retry-${selectedEpisode.id}`)}
             onOpenBlueprint={(blocker) => openAccountBlueprint(selectedEpisode.account_id, blocker.taskId ? { blocker, blueprintVersionId: selectedEpisode.blueprint_version_id, episodeId: selectedEpisode.id } : null)}
+            onRepairConnection={(blocker, versionId) => repairEpisodeConnection({ blocker, episodeId: selectedEpisode.id, versionId })}
             onOpenLocalDirectory={openLocalEpisodeDirectory}
             onImportMaterial={importProductionMaterial}
             onUpdateAudioSourceMode={updateEpisodeAudioSourceMode}
@@ -1988,7 +2060,7 @@ function EpisodeUtilityPopover({ artifacts, history, kind, onClose, tasks, worke
   return <div aria-label={heading} className="episode-utility-popover" role="dialog"><header><strong>{heading}</strong><button aria-label={`关闭${heading}`} className="icon-button" onClick={onClose} type="button"><X className="icon" /></button></header>{kind === "worker" ? <div className={`episode-utility-status episode-utility-status-${workerStatus.tone}`}><strong>{workerStatus.label}</strong><p>{workerStatus.detail}</p><span>{tasks.length ? `${completedTasks} / ${tasks.length} 个任务已完成` : "尚无任务记录"}</span></div> : kind === "artifacts" ? <div className="episode-utility-artifacts">{artifacts.length ? artifacts.map((artifact) => <Artifact complete key={artifact.id} label={artifact.artifact_type} name={artifact.relative_path} />) : <div className="episode-utility-summary"><strong>尚无产物</strong><p>Worker 尚未生成可查看的产物。</p></div>}</div> : timeline.length ? <ol className="timeline">{timeline.map((transition) => <li key={transition.id}><i className={`timeline-dot ${stageTone(transition.to_stage)}`} /><div><strong>{stageLabels[transition.to_stage]}</strong><span>{userFacingTransitionReason(transition.reason)}</span></div><time>{formatDate(transition.created_at)}</time></li>)}</ol> : <div className="episode-utility-summary"><strong>暂无状态变化</strong><p>生产单创建与状态变化会显示在这里。</p></div>}</div>;
 }
 
-export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, blueprint, episode, isAudioSourceModePending = false, isDirectoryOpenPending = false, isMaterialPending, isRefreshPending = false, isStartProductionPending = false, isStoryboardAnnotationPending, isTransitionPending, materialRevisions = [], onCreateAudioTrackAnnotation, onCreateQcReviewIssue = async () => {}, onOpenBlueprint, onOpenHyperframesStudio = async () => { throw new Error("当前无法打开 HyperFrames Studio。"); }, onOpenLocalDirectory = async () => {}, onCreateStoryboardAnnotation, onImportMaterial, onRegisterManualMedia = async () => {}, onRefresh = async () => {}, onRequestQcMemberRevision = async () => {}, onRequestRevision, onRetryFinalRender = async () => false, onSubmitStudioRevision = async () => { throw new Error("当前无法提交 Studio 修订。"); }, onResolveQcReviewIssue = async () => {}, onReviewPreRenderMember = async () => {}, onStartProduction = async () => {}, onTransition, onUpdateAudioSourceMode = async () => {}, ownerId = "local-owner", preRenderReviewMemberDecisions = [], preRenderReviewMembers = [], productionPreflight = null, qcReviewIssues = [], reviewAnnotations, reviewPackages, tasks, transitions }: { artifacts: Artifact[]; audioTrackAnnotations: AudioTrackAnnotation[]; audioTracks: AudioTrack[]; blueprint: Blueprint | null; episode: Episode; isAudioSourceModePending?: boolean; isDirectoryOpenPending?: boolean; isMaterialPending: boolean; isRefreshPending?: boolean; isStartProductionPending?: boolean; isStoryboardAnnotationPending: boolean; isTransitionPending: boolean; materialRevisions?: MaterialRevision[]; onCreateAudioTrackAnnotation: (input: AudioTrackAnnotationRequest) => Promise<void>; onCreateQcReviewIssue?: (input: QcReviewIssueRequest) => Promise<void>; onOpenBlueprint?: (blocker: WorkerBlocker) => void; onOpenHyperframesStudio?: (episodeId: string, projectRelativePath: string) => Promise<HyperframesStudioWorkspace>; onOpenLocalDirectory?: (episodeId: string) => Promise<void>; onCreateStoryboardAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onImportMaterial: (input: MaterialImportRequest) => Promise<void>; onRegisterManualMedia?: (input: ManualMediaBindingRequest) => Promise<void>; onRefresh?: () => Promise<void>; onRequestQcMemberRevision?: (issueId: string) => Promise<void>; onRequestRevision: (input: ReviewRevisionRequest) => Promise<ReviewRevisionOutcome>; onRetryFinalRender?: (episodeId: string, reason: string) => Promise<boolean>; onSubmitStudioRevision?: (input: Omit<StudioReviewRevisionRequest, "accessToken">) => Promise<ReviewRevisionOutcome>; onResolveQcReviewIssue?: (issueId: string, status: "accepted" | "ignored") => Promise<void>; onReviewPreRenderMember?: (input: PreRenderMemberReviewRequest) => Promise<void>; onStartProduction?: (episodeId: string) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; onUpdateAudioSourceMode?: (episodeId: string, audioSourceMode: EpisodeAudioSourceMode) => Promise<void>; ownerId?: string; preRenderReviewMemberDecisions?: PreRenderReviewMemberDecision[]; preRenderReviewMembers?: PreRenderReviewMember[]; productionPreflight?: WorkerPreflightResult | null; qcReviewIssues?: QcReviewIssue[]; reviewAnnotations: ReviewAnnotation[]; reviewPackages: ReviewPackage[]; tasks: Task[]; transitions: Transition[] }) {
+export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, blueprint, connectionVersions = [], episode, isAudioSourceModePending = false, isDirectoryOpenPending = false, isMaterialPending, isRefreshPending = false, isStartProductionPending = false, isStoryboardAnnotationPending, isTransitionPending, materialRevisions = [], onCreateAudioTrackAnnotation, onCreateQcReviewIssue = async () => {}, onOpenBlueprint, onOpenHyperframesStudio = async () => { throw new Error("当前无法打开 HyperFrames Studio。"); }, onOpenLocalDirectory = async () => {}, onCreateStoryboardAnnotation, onImportMaterial, onRegisterManualMedia = async () => {}, onRefresh = async () => {}, onRequestQcMemberRevision = async () => {}, onRequestRevision, onRepairConnection, onRetryFinalRender = async () => false, onSubmitStudioRevision = async () => { throw new Error("当前无法提交 Studio 修订。"); }, onResolveQcReviewIssue = async () => {}, onReviewPreRenderMember = async () => {}, onStartProduction = async () => {}, onTransition, onUpdateAudioSourceMode = async () => {}, ownerId = "local-owner", preRenderReviewMemberDecisions = [], preRenderReviewMembers = [], productionPreflight = null, qcReviewIssues = [], reviewAnnotations, reviewPackages, tasks, transitions }: { artifacts: Artifact[]; audioTrackAnnotations: AudioTrackAnnotation[]; audioTracks: AudioTrack[]; blueprint: Blueprint | null; connectionVersions?: ExternalConnectionVersion[]; episode: Episode; isAudioSourceModePending?: boolean; isDirectoryOpenPending?: boolean; isMaterialPending: boolean; isRefreshPending?: boolean; isStartProductionPending?: boolean; isStoryboardAnnotationPending: boolean; isTransitionPending: boolean; materialRevisions?: MaterialRevision[]; onCreateAudioTrackAnnotation: (input: AudioTrackAnnotationRequest) => Promise<void>; onCreateQcReviewIssue?: (input: QcReviewIssueRequest) => Promise<void>; onOpenBlueprint?: (blocker: WorkerBlocker) => void; onOpenHyperframesStudio?: (episodeId: string, projectRelativePath: string) => Promise<HyperframesStudioWorkspace>; onOpenLocalDirectory?: (episodeId: string) => Promise<void>; onCreateStoryboardAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onImportMaterial: (input: MaterialImportRequest) => Promise<void>; onRegisterManualMedia?: (input: ManualMediaBindingRequest) => Promise<void>; onRefresh?: () => Promise<void>; onRepairConnection?: (blocker: WorkerBlocker, versionId: string) => Promise<void>; onRequestQcMemberRevision?: (issueId: string) => Promise<void>; onRequestRevision: (input: ReviewRevisionRequest) => Promise<ReviewRevisionOutcome>; onRetryFinalRender?: (episodeId: string, reason: string) => Promise<boolean>; onSubmitStudioRevision?: (input: Omit<StudioReviewRevisionRequest, "accessToken">) => Promise<ReviewRevisionOutcome>; onResolveQcReviewIssue?: (issueId: string, status: "accepted" | "ignored") => Promise<void>; onReviewPreRenderMember?: (input: PreRenderMemberReviewRequest) => Promise<void>; onStartProduction?: (episodeId: string) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; onUpdateAudioSourceMode?: (episodeId: string, audioSourceMode: EpisodeAudioSourceMode) => Promise<void>; ownerId?: string; preRenderReviewMemberDecisions?: PreRenderReviewMemberDecision[]; preRenderReviewMembers?: PreRenderReviewMember[]; productionPreflight?: WorkerPreflightResult | null; qcReviewIssues?: QcReviewIssue[]; reviewAnnotations: ReviewAnnotation[]; reviewPackages: ReviewPackage[]; tasks: Task[]; transitions: Transition[] }) {
   void onCreateQcReviewIssue;
   void onRequestQcMemberRevision;
   void onResolveQcReviewIssue;
@@ -2047,8 +2119,8 @@ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, b
     <div aria-label="生产单操作" className="episode-detail-toolbar"><div className="episode-toolbar-actions"><button aria-label="刷新生产单状态" className="icon-button episode-toolbar-button" disabled={isRefreshPending} onClick={() => void onRefresh()} title="刷新状态" type="button"><RefreshCw className="icon" /></button><button aria-label="打开本地输入目录" className="icon-button episode-toolbar-button" disabled={isDirectoryOpenPending} onClick={() => void onOpenLocalDirectory(episode.id)} title={`打开本地输入目录：${localInputPath}`} type="button"><FolderOpen className="icon" /></button><button aria-label="复制本地输入目录路径" className="icon-button episode-toolbar-button" onClick={() => void copyLocalInputPath()} title={`复制本地输入目录路径：${localInputPath}`} type="button"><Copy className="icon" /></button><button aria-expanded={openUtilityPanel === "worker"} aria-haspopup="dialog" aria-label={`Worker 状态：${workerStatus.label}`} className="icon-button episode-toolbar-button" onClick={() => setOpenUtilityPanel((current) => current === "worker" ? null : "worker")} title={`Worker 状态：${workerStatus.label} · ${workerStatus.detail}`} type="button"><Activity className="icon" /></button><button aria-expanded={openUtilityPanel === "artifacts"} aria-haspopup="dialog" aria-label="查看产物索引" className="icon-button episode-toolbar-button" onClick={() => setOpenUtilityPanel((current) => current === "artifacts" ? null : "artifacts")} title="查看产物索引" type="button"><ClipboardList className="icon" /></button><button aria-expanded={openUtilityPanel === "timeline"} aria-haspopup="dialog" aria-label="查看审计时间线" className="icon-button episode-toolbar-button" onClick={() => setOpenUtilityPanel((current) => current === "timeline" ? null : "timeline")} title="查看审计时间线" type="button"><History className="icon" /></button></div>{directoryMessage ? <span className="episode-toolbar-status" role="status">{directoryMessage}</span> : null}{openUtilityPanel ? <EpisodeUtilityPopover artifacts={episodeArtifacts} history={history} kind={openUtilityPanel} onClose={() => setOpenUtilityPanel(null)} tasks={episodeTasks} workerStatus={workerStatus} /> : null}</div>
     <p className="review-meta">蓝图 v{blueprint?.version ?? "—"} · 创建于 {formatDate(episode.created_at)}</p>
     <section className="episode-next-step-card"><div><span>当前阶段</span><strong className={`stage stage-${stageTone(episode.stage)}`}>{stageLabels[episode.stage]}</strong></div><div><span>下一步</span><p>{nextStep}</p></div><div className={`episode-worker-status episode-worker-status-${workerStatus.tone}`}><span>Worker 状态</span><strong>{workerStatus.label}</strong><p>{workerStatus.detail}</p></div></section>
-    {blockers.length ? <details className="review-section worker-blockers detail-card-collapsible" open><summary><h3>优先处理 Worker 阻塞项（{blockers.length}）</h3></summary><div className="detail-card-body">{blockerGroups.map(({ blocker, count }) => <WorkerBlockerCard affectedTaskCount={count} blocker={blocker} onOpenBlueprint={onOpenBlueprint} key={`${blocker.code}-${blocker.detail}`} />)}</div></details> : null}
-    <details className="review-section detail-card-collapsible" open={waitingForMainScript || inputReadyToStart}><summary><h3>准备生产材料</h3></summary><div className="detail-card-body">{waitingForMainScript ? <><p className="material-import-subtitle">主脚本由外部制作后上传；确认后会作为本生产单不可变输入。</p><MaterialImportForm allowMainScript defaultMainScript episodeId={episode.id} existingMaterials={episodeMaterials} isPending={isMaterialPending} onImport={onImportMaterial} /></> : <><p className="material-import-subtitle">主脚本已确认。你可以继续添加补充材料；所有材料准备好后，点击下方按钮，Worker 才会开始制作。</p><MaterialImportForm allowMainScript={false} defaultMainScript={false} episodeId={episode.id} existingMaterials={episodeMaterials} isPending={isMaterialPending} onImport={onImportMaterial} /></>}<fieldset className="audio-source-mode"><legend>上传视频的声音</legend><label><input checked={audioSourceMode === "tts"} disabled={isAudioSourceModePending} name={`audio-source-${episode.id}`} onChange={() => void onUpdateAudioSourceMode(episode.id, "tts")} type="radio" />使用 TTS 替代原声<span>导出时静音上传视频，并按蓝图生成旁白。</span></label><label><input checked={audioSourceMode === "source"} disabled={isAudioSourceModePending || !hasUploadedVideo} name={`audio-source-${episode.id}`} onChange={() => void onUpdateAudioSourceMode(episode.id, "source")} type="radio" />保留上传视频原声<span>{hasUploadedVideo ? "跳过 TTS，并从上传视频提取原声。" : "请先上传至少一个视频素材。"}</span></label></fieldset>{inputReadyToStart ? <><div className="production-start-gate"><div><strong>材料已准备到可开始状态</strong><p>确认后将先检查本机 Worker 的真实运行态；检查通过后才推进生产单。</p></div><button className="button button-primary" disabled={isStartProductionPending || isAudioSourceModePending} onClick={() => void onStartProduction(episode.id)} type="button">{isAudioSourceModePending ? "保存声音选择中…" : isStartProductionPending ? "检查并开始中…" : "材料准备完成，开始制作"}</button></div>{productionPreflight ? <div aria-live="polite" className={`production-preflight ${productionBlockers.length ? "is-blocked" : "is-passed"}`}><strong>生产前运行态检查：{productionBlockers.length ? `未通过（${productionBlockers.length}）` : "已通过"}</strong><p>已检查当前冻结蓝图对应的 Worker 注册、工具白名单、凭据存在性、有效性、模型权限、网络连通性和媒体库；实际媒体搜索、下载和产物验证仍在任务执行阶段确认。</p>{productionBlockers.map((blocker) => <WorkerBlockerCard blocker={blocker} key={`${blocker.code}-${blocker.capability}`} onOpenBlueprint={onOpenBlueprint} />)}</div> : null}</> : null}</div></details>
+    {blockers.length ? <details className="review-section worker-blockers detail-card-collapsible" open><summary><h3>优先处理 Worker 阻塞项（{blockers.length}）</h3></summary><div className="detail-card-body">{blockerGroups.map(({ blocker, count }) => <WorkerBlockerCard affectedTaskCount={count} blocker={blocker} connectionVersions={connectionVersionsForBlocker(blocker, episodeTasks, connectionVersions)} onOpenBlueprint={onOpenBlueprint} onRepairConnection={onRepairConnection} key={`${blocker.code}-${blocker.detail}`} />)}</div></details> : null}
+    <details className="review-section detail-card-collapsible" open={waitingForMainScript || inputReadyToStart}><summary><h3>准备生产材料</h3></summary><div className="detail-card-body">{waitingForMainScript ? <><p className="material-import-subtitle">主脚本由外部制作后上传；确认后会作为本生产单不可变输入。</p><MaterialImportForm allowMainScript defaultMainScript episodeId={episode.id} existingMaterials={episodeMaterials} isPending={isMaterialPending} onImport={onImportMaterial} /></> : <><p className="material-import-subtitle">主脚本已确认。你可以继续添加补充材料；所有材料准备好后，点击下方按钮，Worker 才会开始制作。</p><MaterialImportForm allowMainScript={false} defaultMainScript={false} episodeId={episode.id} existingMaterials={episodeMaterials} isPending={isMaterialPending} onImport={onImportMaterial} /></>}<fieldset className="audio-source-mode"><legend>上传视频的声音</legend><label><input checked={audioSourceMode === "tts"} disabled={isAudioSourceModePending} name={`audio-source-${episode.id}`} onChange={() => void onUpdateAudioSourceMode(episode.id, "tts")} type="radio" />使用 TTS 替代原声<span>导出时静音上传视频，并按蓝图生成旁白。</span></label><label><input checked={audioSourceMode === "source"} disabled={isAudioSourceModePending || !hasUploadedVideo} name={`audio-source-${episode.id}`} onChange={() => void onUpdateAudioSourceMode(episode.id, "source")} type="radio" />保留上传视频原声<span>{hasUploadedVideo ? "跳过 TTS，并从上传视频提取原声。" : "请先上传至少一个视频素材。"}</span></label></fieldset>{inputReadyToStart ? <><div className="production-start-gate"><div><strong>材料已准备到可开始状态</strong><p>确认后将先检查本机 Worker 的真实运行态；检查通过后才推进生产单。</p></div><button className="button button-primary" disabled={isStartProductionPending || isAudioSourceModePending} onClick={() => void onStartProduction(episode.id)} type="button">{isAudioSourceModePending ? "保存声音选择中…" : isStartProductionPending ? "检查并开始中…" : "材料准备完成，开始制作"}</button></div>{productionPreflight ? <div aria-live="polite" className={`production-preflight ${productionBlockers.length ? "is-blocked" : "is-passed"}`}><strong>生产前运行态检查：{productionBlockers.length ? `未通过（${productionBlockers.length}）` : "已通过"}</strong><p>已检查当前冻结蓝图对应的 Worker 注册、工具白名单、凭据存在性、有效性、模型权限、网络连通性和媒体库；实际媒体搜索、下载和产物验证仍在任务执行阶段确认。</p>{productionBlockers.map((blocker) => <WorkerBlockerCard blocker={blocker} connectionVersions={connectionVersionsForBlocker(blocker, episodeTasks, connectionVersions)} key={`${blocker.code}-${blocker.capability}`} onOpenBlueprint={onOpenBlueprint} onRepairConnection={onRepairConnection} />)}</div> : null}</> : null}</div></details>
     {reviewPackage?.stage !== "visual_review" && reviewPackage?.stage !== "storyboard_review" ? <details className="review-section detail-card-collapsible"><summary><h3>产物预览</h3></summary><div className="detail-card-body"><ArtifactPreview artifacts={episodeArtifacts} /></div></details> : null}
     {reviewPackage?.stage === "production_ready" ? <PreRenderReviewPackage artifacts={episodeArtifacts} decisions={preRenderMemberDecisions} isTransitionPending={isTransitionPending} members={preRenderMembers} onReviewMember={onReviewPreRenderMember} onTransition={onTransition} reviewPackage={reviewPackage} /> : reviewPackage && reviewArtifact ? reviewPackage.stage === "qc_review" && isHyperframesReviewRender(reviewPackage.context_snapshot) ? <HyperframesReviewRenderPackage artifact={reviewArtifact} artifacts={reviewArtifacts} onOpenStudio={onOpenHyperframesStudio} onRequestRevision={onRequestRevision} onSubmitStudioRevision={onSubmitStudioRevision} reviewPackage={reviewPackage} tasks={episodeTasks} /> : reviewPackage.stage === "visual_review" ? <VisualReviewPackage artifact={reviewArtifact} artifacts={reviewArtifacts} reviewPackage={reviewPackage} /> : reviewPackage.stage === "storyboard_review" ? <StoryboardReviewPackage annotations={storyboardAnnotations} artifact={reviewArtifact} episode={episode} isAnnotationPending={isStoryboardAnnotationPending} materialRevisions={materialRevisions.filter((material) => material.episode_id === episode.id)} onCreateAnnotation={onCreateStoryboardAnnotation} onRegisterManualMedia={onRegisterManualMedia} onValidationChange={onStoryboardValidationChange} reviewPackage={reviewPackage} /> : <TextReviewPackage artifact={reviewArtifact} reviewPackage={reviewPackage} /> : null}
     <ArollTaskEvidencePanel tasks={episodeTasks} />

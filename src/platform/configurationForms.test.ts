@@ -155,9 +155,9 @@ describe("账号蓝图表单转换", () => {
       mediaAdapters: {
         static_visual: { provider: "", adapter: "", credentialRef: "", model: "", promptVersion: "", allowedTools: "", budgetCents: "", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
         a_roll: { provider: "codex", adapter: "codex", credentialRef: "", model: "video-model", promptVersion: "a-roll-v1", allowedTools: "read, write", budgetCents: "20", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "2", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
-        b_roll: { provider: "pexels", adapter: "pexels_video", credentialRef: "pexels-default", model: "pexels-video-v1", promptVersion: "b-roll-v1", allowedTools: "network, write", budgetCents: "", perShotBudgetCents: "10", totalBudgetCents: "100", maxAttempts: "2", maxConcurrency: "3", providerMaxConcurrency: "2", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
-        narration: { provider: "google_tts", adapter: "google_tts", credentialRef: "google-tts-default", model: "tts-model", promptVersion: "narration-v1", allowedTools: "network, write", budgetCents: "12", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "1", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "zh-CN", voiceName: "voice-a", voiceSpeakingRate: "0.8" },
-        soundtrack: { provider: "freesound", adapter: "freesound_preview", credentialRef: "freesound-default", model: "sound-model", promptVersion: "soundtrack-v1", allowedTools: "network, write", budgetCents: "", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
+        b_roll: { provider: "pexels", adapter: "pexels_video", credentialRef: "11111111-1111-4111-8111-111111111111", model: "pexels-video-v1", promptVersion: "b-roll-v1", allowedTools: "network, write", budgetCents: "", perShotBudgetCents: "10", totalBudgetCents: "100", maxAttempts: "2", maxConcurrency: "3", providerMaxConcurrency: "2", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
+        narration: { provider: "google_tts", adapter: "google_tts", credentialRef: "22222222-2222-4222-8222-222222222222", model: "tts-model", promptVersion: "narration-v1", allowedTools: "network, write", budgetCents: "12", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "1", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "zh-CN", voiceName: "voice-a", voiceSpeakingRate: "0.8" },
+        soundtrack: { provider: "freesound", adapter: "freesound_preview", credentialRef: "33333333-3333-4333-8333-333333333333", model: "sound-model", promptVersion: "soundtrack-v1", allowedTools: "network, write", budgetCents: "", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
       },
       advancedJson: '{"soundtrack":{"budget_cents":99}}',
     });
@@ -177,11 +177,18 @@ describe("账号蓝图表单转换", () => {
     const narration = blueprintPolicyToForm({ narration: { credential_ref: "google-tts-default", executor: { provider: "google_tts", adapter: "google_tts", model: "standard", prompt_version: "narration-v1" }, allowed_tools: ["read", "write"], budget_cents: 10, max_attempts: 1, voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 1 } } }).mediaAdapters.narration;
     const form = blueprintPolicyToForm({ soundtrack: { credential_ref: "freesound-default", executor: { provider: "freesound", adapter: "freesound_preview", model: "freesound-preview-v1", prompt_version: "soundtrack-v1" }, allowed_tools: ["read", "write"], budget_cents: 10, max_attempts: 1 } }).mediaAdapters.soundtrack;
 
-    expect(() => validateMediaAdapter("narration", narration)).not.toThrow();
+    expect(() => validateMediaAdapter("narration", narration)).toThrow("外部连接");
     expect(() => validateMediaAdapter("narration", { ...narration, credentialRef: "" })).toThrow("外部连接");
-    expect(() => validateMediaAdapter("soundtrack", form)).not.toThrow();
+    expect(() => validateMediaAdapter("soundtrack", { ...form, credentialRef: "11111111-1111-4111-8111-111111111111" })).not.toThrow();
+    expect(() => validateMediaAdapter("soundtrack", form)).toThrow("外部连接");
     expect(() => validateMediaAdapter("soundtrack", { ...form, adapter: "other" })).toThrow("已注册");
     expect(() => validateMediaAdapter("soundtrack", { ...form, credentialRef: "" })).toThrow("外部连接");
+  });
+
+  it("校验静态视觉必须使用 OpenAI 已验证连接版本引用", () => {
+    const form = blueprintPolicyToForm({ static_visual: { credential_ref: "openai-default", executor: { provider: "openai", adapter: "openai_images", model: "gpt-image-1", prompt_version: "static-visual-v1" }, allowed_tools: ["read", "write"], budget_cents: 10, max_attempts: 1 } }).mediaAdapters.static_visual;
+    expect(() => validateMediaAdapter("static_visual", form)).toThrow("外部连接");
+    expect(() => validateMediaAdapter("static_visual", { ...form, credentialRef: "44444444-4444-4444-8444-444444444444" })).not.toThrow();
   });
 });
 

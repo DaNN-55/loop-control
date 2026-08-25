@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { adapterRegistration, mediaCapabilityForKey, mediaCapabilityKeys, registeredAdaptersForCapability } from "./adapterRegistry";
+import { adapterRegistration, externalAdapterForMediaCapability, mediaCapabilityForKey, mediaCapabilityKeys, registeredAdaptersForCapability } from "./adapterRegistry";
 
 describe("adapter registry", () => {
   it("集中五项可选生产能力的标识与展示事实", () => {
@@ -39,8 +39,13 @@ describe("adapter registry", () => {
       capability: "static_visual_generation",
       connectionType: "openai_api",
       requiresNetwork: true,
-      connections: [{ credentialRef: "openai-default", environmentVariable: "OPENAI_API_KEY" }],
+      connections: [],
     });
+  });
+
+  it("只把已登记的联网 Adapter 视为外部媒体能力", () => {
+    expect(externalAdapterForMediaCapability("static_visual", "openai", "openai_images")).toBeTruthy();
+    expect(externalAdapterForMediaCapability("a_roll", "codex", "codex")).toBeUndefined();
   });
 
   it("为旁白、配乐与内部派生音频登记实际执行路径", () => {
@@ -48,13 +53,13 @@ describe("adapter registry", () => {
       capability: "narration_generation",
       connectionType: "google_tts_api",
       requiresNetwork: true,
-      connections: [{ credentialRef: "google-tts-default", environmentVariable: "GOOGLE_TTS_API_KEY" }],
+      connections: [],
     });
     expect(adapterRegistration("freesound", "freesound_preview")).toMatchObject({
       capability: "soundtrack_generation",
       connectionType: "freesound_api",
       requiresNetwork: true,
-      connections: [{ credentialRef: "freesound-default", environmentVariable: "FREESOUND_API_KEY" }],
+      connections: [],
     });
     expect(adapterRegistration("ffmpeg", "ffmpeg_extract_audio")).toMatchObject({
       capability: "embedded_audio_extraction",

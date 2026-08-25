@@ -445,7 +445,7 @@ describe("本地 Codex Worker runner", () => {
         promptVersion: "b-roll-v1",
         inputSnapshot: {
           capability: "b_roll_generation",
-          credential_ref: "pexels-default",
+          credential_ref: "11111111-1111-4111-8111-111111111111",
           media: { adapter: "pexels_video", b_roll: { query: "rainy street", target_duration_seconds: 3, shot: { id: "shot-1", scriptSegment: "rainy street", durationSeconds: 3, shotType: "b_roll", productionMethod: "Pexels", inputBasis, targetSpec: "9:16" } } },
           allowed_tools: ["read", "write"],
           output: { required_artifact_types: ["b_roll_asset"], content_type: "video/mp4", relative_path: "episodes/episode-1/b-roll/shot-1.mp4", review_stage: "production_ready" },
@@ -460,7 +460,7 @@ describe("本地 Codex Worker runner", () => {
       actualCostCents: 0,
     });
 
-    expect(preflight).toHaveBeenCalledWith(expect.objectContaining({ credentialRef: "pexels-default", media: { adapter: "pexels_video", bRoll: expect.any(Object) } }));
+    expect(preflight).toHaveBeenCalledWith(expect.objectContaining({ credentialRef: "11111111-1111-4111-8111-111111111111", media: { adapter: "pexels_video", bRoll: expect.any(Object) } }));
   });
 
   it("把 retryable preflight 报告为可自动重试的失败", async () => {
@@ -573,5 +573,17 @@ describe("本地 Codex Worker runner", () => {
       preflight: expect.objectContaining({ checks: [expect.objectContaining({ check: "model_permission", phase: "execution", status: "unavailable", action: "contact_environment_admin" })] }),
       blockers: [expect.objectContaining({ check: "model_permission", status: "unavailable", action: "contact_environment_admin" })],
     }));
+  });
+
+  it("OpenAI Images 模型拒绝要求修改蓝图，认证拒绝要求管理连接", async () => {
+    const reportResult = vi.fn().mockResolvedValue(undefined);
+    const imageTask = { ...claimedTask, inputSnapshot: { capability: "visual_planning", allowed_tools: ["read", "write"], output: { required_artifact_types: ["brief"], content_type: "text/markdown", relative_path: "episodes/episode-1/brief.md", review_stage: "visual_review" }, input_artifacts: [], visual_assets: { external_inputs: [], image_generation: { provider: "openai", adapter: "openai_images", model: "bad-model", credential_ref: "11111111-1111-4111-8111-111111111111" } } } };
+
+    await runCodexWorker({ claimNextTask: async () => imageTask, reportResult, execute: async () => { throw new Error("OpenAI Images HTTP 400: model unsupported"); }, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 });
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({ blockers: [expect.objectContaining({ capability: "static_visual_generation", check: "model_permission", action: "edit_blueprint", scope: "blueprint" })] }));
+
+    reportResult.mockClear();
+    await runCodexWorker({ claimNextTask: async () => imageTask, reportResult, execute: async () => { throw new Error("OpenAI Images HTTP 401: invalid api key"); }, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 });
+    expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({ blockers: [expect.objectContaining({ capability: "static_visual_generation", check: "credential_validity", action: "manage_connection", scope: "connection" })] }));
   });
 });

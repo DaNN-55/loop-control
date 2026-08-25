@@ -1,5 +1,5 @@
 import type { Json } from "../lib/database.types";
-import { adapterRegistration, mediaCapabilityForKey, mediaCapabilityKeys, type MediaCapabilityKey } from "../worker/adapterRegistry";
+import { adapterRegistration, isOwnerManagedConnection, mediaCapabilityForKey, mediaCapabilityKeys, type MediaCapabilityKey } from "../worker/adapterRegistry";
 
 type JsonObject = Record<string, Json | undefined>;
 type ExecutorForm = { provider: string; adapter?: string; harnessId?: string; model: string; promptVersion: string };
@@ -185,12 +185,12 @@ export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterFor
 }
 
 function validateRegisteredMediaConnection(label: string, key: MediaAdapterKey, form: MediaAdapterForm): void {
-  const registration = adapterRegistration(form.provider.trim(), form.adapter.trim(), mediaCapabilityForKey(key).capability);
+  const registration = adapterRegistration(form.provider.trim(), form.adapter.trim());
   if (!registration || registration.capability !== mediaCapabilityForKey(key).capability) throw new Error(`${label}必须选择已注册的 Adapter。`);
   const credentialRef = form.credentialRef.trim();
-  const dynamicPexelsConnection = form.provider.trim() === "pexels" && form.adapter.trim() === "pexels_video" && isUuid(credentialRef);
-  if (registration.connections.length && !registration.connections.some((connection) => connection.credentialRef === credentialRef) && !dynamicPexelsConnection) throw new Error(`${label}必须选择可用的外部连接。`);
-  if (form.provider.trim() === "pexels" && form.adapter.trim() === "pexels_video" && !dynamicPexelsConnection) throw new Error(`${label}必须选择可用的外部连接。`);
+  const dynamicConnection = isOwnerManagedConnection(form.provider.trim(), form.adapter.trim()) && isUuid(credentialRef);
+  if (registration.connections.length && !registration.connections.some((connection) => connection.credentialRef === credentialRef) && !dynamicConnection) throw new Error(`${label}必须选择可用的外部连接。`);
+  if (isOwnerManagedConnection(form.provider.trim(), form.adapter.trim()) && !dynamicConnection) throw new Error(`${label}必须选择可用的外部连接。`);
 }
 
 function isUuid(value: string): boolean {

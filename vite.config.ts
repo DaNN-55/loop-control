@@ -56,6 +56,30 @@ function isEpisodeId(value: string): boolean {
   return isUuid(value);
 }
 
+export function requiredMediaCapabilitiesFromTasks(tasks: unknown): string[] {
+  if (!Array.isArray(tasks)) return [];
+  const capabilities = new Set<string>();
+  for (const task of tasks) {
+    if (!task || typeof task !== "object" || Array.isArray(task)) continue;
+    const record = task as Record<string, unknown>;
+    if (record.status === "completed" || record.status === "superseded" || record.provider === "manual_upload") continue;
+    const taskType = record.task_type;
+    const capability = taskType === "generate_b_roll" ? "b_roll_generation"
+      : taskType === "generate_narration" ? "narration_generation"
+        : taskType === "generate_soundtrack" ? "soundtrack_generation"
+          : taskType === "generate_a_roll" ? "a_roll_generation"
+            : taskType === "generate_static_visual" ? "static_visual_generation" : null;
+    if (capability) capabilities.add(capability);
+    const snapshot = record.input_snapshot;
+    if (taskType === "prepare_visual_brief" && snapshot && typeof snapshot === "object" && !Array.isArray(snapshot)) {
+      const visualAssets = (snapshot as Record<string, unknown>).visual_assets;
+      const imageGeneration = visualAssets && typeof visualAssets === "object" && !Array.isArray(visualAssets) ? (visualAssets as Record<string, unknown>).image_generation : undefined;
+      if (imageGeneration && typeof imageGeneration === "object" && !Array.isArray(imageGeneration) && (imageGeneration as Record<string, unknown>).provider !== "manual_upload") capabilities.add("static_visual_generation");
+    }
+  }
+  return [...capabilities];
+}
+
 function isUuid(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
 }
@@ -968,7 +992,9 @@ export function serveWorkerPreflight(supabaseUrl: string | undefined, supabasePu
         return;
       }
 
-      const report = await runtimePreflightForPolicy(blueprint.policy, seriesRules);
+      const { data: tasks, error: tasksError } = await client.from("tasks").select("task_type, provider, status, input_snapshot").eq("episode_id", episodeId);
+      if (tasksError) throw tasksError;
+      const report = await runtimePreflightForPolicy(blueprint.policy, seriesRules, requiredMediaCapabilitiesFromTasks(tasks), true, episode.account_id);
       if (request.method === "POST") {
         response.setHeader("Content-Type", "application/json");
         if (report.checks.some((check) => check.status !== "passed")) {
@@ -1121,7 +1147,13 @@ export function serveEpisodePreflight(supabaseUrl: string | undefined, supabaseP
         seriesRules = seriesVersion.rules;
       }
 
-      const report = await runtimePreflightForPolicy(policy ?? blueprint.policy, seriesRules, Boolean(episodeId));
+      let requiredMediaCapabilities: string[] | undefined;
+      if (episodeId) {
+        const { data: tasks, error: tasksError } = await client.from("tasks").select("task_type, provider, status, input_snapshot").eq("episode_id", episodeId);
+        if (tasksError) throw tasksError;
+        requiredMediaCapabilities = requiredMediaCapabilitiesFromTasks(tasks);
+      }
+      const report = await runtimePreflightForPolicy(policy ?? blueprint.policy, seriesRules, requiredMediaCapabilities, Boolean(episodeId), accountId);
       response.setHeader("Content-Type", "application/json");
       if (report.checks.some((check) => check.status !== "passed")) {
         response.statusCode = 409;
@@ -1218,19 +1250,19 @@ function redactConnectionSecret(detail: string, secret: string): string {
   return secret ? detail.split(secret).join("[已隐藏]") : detail;
 }
 
-export async function runtimePreflightForPolicy(policy: unknown, seriesRules: unknown, hasExistingEpisode = false) {
-  const capabilities = runtimeCapabilitiesFromBlueprintPolicy(policy, seriesRules);
+export async function runtimePreflightForPolicy(policy: unknown, seriesRules: unknown, requiredMediaCapabilities?: readonly string[], hasExistingEpisode = false, accountId?: string) {
+  const capabilities = runtimeCapabilitiesFromBlueprintPolicy(policy, seriesRules, requiredMediaCapabilities);
   const commandNames = [...new Set(capabilities.map((capability) => capability.command).filter((command): command is string => Boolean(command)))];
   const credentialNames = [...new Set(capabilities.map((capability) => capability.credential).filter((credential): credential is string => Boolean(credential)))];
   const credentials = Object.fromEntries(credentialNames.map((credential) => [credential, Boolean(localWorkerEnvironmentValue(credential))]));
   const referenceCapabilities = capabilities.filter((capability) => capability.credentialRef);
-  const referenceEntriesPromise = Promise.all(referenceCapabilities.map(async (capability) => [capability.credentialRef!, await localWorkerSecretForCapability(capability)] as const));
+  const referenceEntriesPromise = Promise.all(referenceCapabilities.map(async (capability) => [capability.credentialRef!, await localWorkerSecretForCapability(capability, accountId)] as const));
   const commandEntriesPromise = Promise.all(commandNames.map(async (command) => [command, await dependencyStatus(command, command, runtimeCommandArguments(command))] as const));
   const providerEntriesPromise = Promise.all([...new Set(capabilities.filter((capability) => capability.credential || capability.credentialRef).map((capability) => capability.provider))].map(async (provider) => {
     const capability = capabilities.find((candidate) => candidate.provider === provider);
     const credential = capability?.credential;
     const apiKey = capability?.credentialRef && isUuid(capability.credentialRef)
-      ? await localWorkerSecretForCapability(capability)
+      ? await localWorkerSecretForCapability(capability, accountId)
       : capability?.credential ? localWorkerEnvironmentValue(capability.credential) : undefined;
     if (!apiKey) return null;
     return { provider, credential: credential ?? capability?.credentialRef, probe: await probeProviderConnection(provider, apiKey) };
@@ -1261,14 +1293,15 @@ export async function runtimePreflightForPolicy(policy: unknown, seriesRules: un
   });
 }
 
-async function localWorkerSecretForCapability(capability: { credential?: string; credentialRef?: string; provider: string }): Promise<string | undefined> {
+async function localWorkerSecretForCapability(capability: { credential?: string; credentialRef?: string; provider: string }, accountId?: string): Promise<string | undefined> {
   const reference = capability.credentialRef;
   if (reference && isUuid(reference)) {
+    if (!accountId) return undefined;
     const key = localWorkerServiceRoleKey();
     const url = localWorkerEnvironmentValue("SUPABASE_URL") ?? process.env.VITE_SUPABASE_URL;
     if (!key || !url) return undefined;
     const client = createClient(url, key, { auth: { persistSession: false } });
-    const { data, error } = await client.rpc("resolve_external_connection_secret", { p_connection_id: reference });
+    const { data, error } = await client.rpc("resolve_external_connection_secret", { p_account_id: accountId, p_connection_id: reference });
     if (error || typeof data !== "string") return undefined;
     return data.trim() || undefined;
   }

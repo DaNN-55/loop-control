@@ -155,7 +155,7 @@ describe("账号配置工作区", () => {
 
   it("只把已验证的 Pexels 连接提供给 B-roll 蓝图", async () => {
     const user = userEvent.setup();
-    const connection: ExternalConnection = { adapter: "pexels_video", created_at: "2026-08-25T00:00:00.000Z", created_by: "owner-1", id: "11111111-1111-4111-8111-111111111111", last_verification_detail: "Pexels 已接受请求。", last_verified_at: "2026-08-25T00:01:00.000Z", name: "主 Pexels", provider: "pexels", status: "verified" };
+    const connection: ExternalConnection = { adapter: "pexels_video", created_at: "2026-08-25T00:00:00.000Z", created_by: "owner-1", current_version_id: "11111111-1111-4111-8111-111111111111", id: "11111111-1111-4111-8111-111111111111", last_verification_detail: "Pexels 已接受请求。", last_verified_at: "2026-08-25T00:01:00.000Z", name: "主 Pexels", provider: "pexels", status: "verified" };
     renderWorkspace({ externalConnections: [connection] });
 
     await user.click(screen.getByRole("checkbox", { name: "启用B-roll" }));
@@ -168,7 +168,12 @@ describe("账号配置工作区", () => {
 
   it("旁白和配乐只选择登记的 Adapter 与非秘密连接", async () => {
     const user = userEvent.setup();
-    renderWorkspace();
+    const connection: ExternalConnection = { adapter: "google_tts", created_at: "2026-08-25T00:00:00.000Z", created_by: "owner-1", current_version_id: "33333333-3333-4333-8333-333333333333", id: "33333333-3333-4333-8333-333333333333", last_verification_detail: "连接已接受请求。", last_verified_at: "2026-08-25T00:01:00.000Z", name: "主 Google TTS", provider: "google_tts", status: "verified" };
+    renderWorkspace({ externalConnections: [
+      { ...connection, adapter: "pexels_video", current_version_id: "11111111-1111-4111-8111-111111111111", id: "11111111-1111-4111-8111-111111111111", name: "主 Pexels", provider: "pexels" },
+      { ...connection, adapter: "freesound_preview", current_version_id: "22222222-2222-4222-8222-222222222222", id: "22222222-2222-4222-8222-222222222222", name: "主 Freesound", provider: "freesound" },
+      connection,
+    ] });
 
     await user.click(screen.getByRole("checkbox", { name: "启用旁白" }));
     await user.click(screen.getByRole("checkbox", { name: "启用配乐 / 音效" }));
@@ -177,8 +182,8 @@ describe("账号配置工作区", () => {
 
     expect(within(screen.getByRole("combobox", { name: "语言代码" })).getByRole("option", { name: "en-US" })).toBeTruthy();
 
-    expect((screen.getByRole("combobox", { name: "旁白 外部连接" }) as HTMLSelectElement).value).toBe("google-tts-default");
-    expect((screen.getByRole("combobox", { name: "配乐 / 音效 外部连接" }) as HTMLSelectElement).value).toBe("freesound-default");
+    expect((screen.getByRole("combobox", { name: "旁白 外部连接" }) as HTMLSelectElement).value).toBe("33333333-3333-4333-8333-333333333333");
+    expect((screen.getByRole("combobox", { name: "配乐 / 音效 外部连接" }) as HTMLSelectElement).value).toBe("22222222-2222-4222-8222-222222222222");
     expect(screen.queryByLabelText("API Key")).toBeNull();
   });
 

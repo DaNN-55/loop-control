@@ -66,10 +66,10 @@ export async function probeProviderConnection(provider: string, apiKey: string, 
         credentialValidity: { available: false, status: "unavailable", detail: `${provider} 凭据被供应商拒绝：HTTP ${response.status}。` },
       };
     }
-    if (provider === "openai" && response.status === 404) {
+    if (provider === "openai" && (response.status === 400 || response.status === 404)) {
       return {
         connection: { available: true, detail: `${provider} 网络已连通，供应商已接受 Worker 请求。` },
-        modelPermission: { available: false, status: "unavailable", detail: `${provider} 模型不可用：HTTP 404。` },
+        modelPermission: { available: false, status: "unavailable", detail: `${provider} 模型不可用：HTTP ${response.status}。` },
       };
     }
     if (!response.ok) {

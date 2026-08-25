@@ -122,6 +122,8 @@ export type Database = {
           created_at: string
           created_by: string
           current_version_id: string
+          description?: string
+          endpoint?: string
           id: string
           last_verification_detail: string | null
           last_verified_at: string | null
@@ -134,6 +136,8 @@ export type Database = {
           created_at?: string
           created_by: string
           current_version_id: string
+          description?: string
+          endpoint?: string
           id?: string
           last_verification_detail?: string | null
           last_verified_at?: string | null
@@ -146,6 +150,8 @@ export type Database = {
           created_at?: string
           created_by?: string
           current_version_id?: string
+          description?: string
+          endpoint?: string
           id?: string
           last_verification_detail?: string | null
           last_verified_at?: string | null
@@ -157,23 +163,35 @@ export type Database = {
       }
       external_connection_versions: {
         Row: {
+          adapter: string
           connection_id: string
           created_at: string
+          endpoint: string
           id: string
+          provider: string
+          revoked_at: string | null
           vault_secret_id: string
           version: number
         }
         Insert: {
+          adapter: string
           connection_id: string
           created_at?: string
+          endpoint: string
           id?: string
+          provider: string
+          revoked_at?: string | null
           vault_secret_id: string
           version: number
         }
         Update: {
+          adapter?: string
           connection_id?: string
           created_at?: string
+          endpoint?: string
           id?: string
+          provider?: string
+          revoked_at?: string | null
           vault_secret_id?: string
           version?: number
         }
@@ -182,6 +200,7 @@ export type Database = {
       external_connection_verifications: {
         Row: {
           connection_id: string
+          connection_version_id: string
           created_at: string
           detail: string
           id: string
@@ -189,6 +208,7 @@ export type Database = {
         }
         Insert: {
           connection_id: string
+          connection_version_id: string
           created_at?: string
           detail: string
           id?: string
@@ -196,6 +216,7 @@ export type Database = {
         }
         Update: {
           connection_id?: string
+          connection_version_id?: string
           created_at?: string
           detail?: string
           id?: string
@@ -1204,13 +1225,53 @@ export type Database = {
         Returns: Database["public"]["Tables"]["external_connections"]["Row"]
         SetofOptions: { from: "*"; to: "external_connections"; isOneToOne: true; isSetofReturn: false }
       }
+      update_external_connection: {
+        Args: { p_connection_id: string; p_description: string; p_name: string }
+        Returns: Database["public"]["Tables"]["external_connections"]["Row"]
+        SetofOptions: { from: "*"; to: "external_connections"; isOneToOne: true; isSetofReturn: false }
+      }
+      rotate_external_connection: {
+        Args: { p_adapter: string; p_connection_id: string; p_provider: string; p_secret: string }
+        Returns: Database["public"]["Tables"]["external_connections"]["Row"]
+        SetofOptions: { from: "*"; to: "external_connections"; isOneToOne: true; isSetofReturn: false }
+      }
+      list_external_connection_versions: {
+        Args: { p_connection_id?: string | null }
+        Returns: Array<{
+          adapter: string
+          connection_id: string
+          created_at: string
+          endpoint: string
+          id: string
+          is_current: boolean
+          provider: string
+          revoked_at: string | null
+          status: "unverified" | "verified" | "invalid" | "retryable" | "revoked"
+          version: number
+        }>
+        SetofOptions: { from: "*"; to: "external_connection_versions"; isOneToOne: false; isSetofReturn: true }
+      }
+      revoke_external_connection_version: {
+        Args: { p_version_id: string }
+        Returns: Database["public"]["Tables"]["external_connection_versions"]["Row"]
+        SetofOptions: { from: "*"; to: "external_connection_versions"; isOneToOne: true; isSetofReturn: false }
+      }
+      delete_external_connection_version: {
+        Args: { p_version_id: string }
+        Returns: undefined
+      }
+      apply_external_connection_repair: {
+        Args: { p_blocker_code?: string | null; p_blocker_detail?: string | null; p_connection_version_id: string; p_episode_id: string }
+        Returns: Json
+        SetofOptions: { from: "*"; to: "Json"; isOneToOne: true; isSetofReturn: false }
+      }
       record_external_connection_verification: {
         Args: { p_connection_id: string; p_detail: string; p_status: "verified" | "invalid" | "retryable" }
         Returns: Database["public"]["Tables"]["external_connections"]["Row"]
         SetofOptions: { from: "*"; to: "external_connections"; isOneToOne: true; isSetofReturn: false }
       }
       resolve_external_connection_secret: {
-        Args: { p_connection_id: string }
+        Args: { p_account_id?: string; p_connection_id: string }
         Returns: string
       }
       create_pre_render_review_packages: {

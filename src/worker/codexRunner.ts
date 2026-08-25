@@ -13,6 +13,7 @@ import {
   type WorkerPreflightCheck,
   validateWorkerResult,
 } from "./contracts.js";
+import { isOwnerManagedConnection } from "./adapterRegistry.js";
 
 export interface ClaimedWorkerTask {
   taskId: string;
@@ -20,7 +21,7 @@ export interface ClaimedWorkerTask {
   attempt: number;
   budgetLimitCents: number;
   maxAttempts: number;
-  provider: "codex" | "google_tts" | "pexels" | "ffmpeg" | "freesound" | "hyperframes";
+  provider: "codex" | "google_tts" | "pexels" | "ffmpeg" | "freesound" | "hyperframes" | "openai";
   model: string;
   promptVersion: string;
   episodeId: string;
@@ -584,6 +585,17 @@ function createFailedResult(taskPackage: WorkerTaskPackage, actualCostCents: num
 
 function executionPreflightCheck(taskPackage: WorkerTaskPackage, error: unknown): WorkerPreflightCheck | undefined {
   const detail = errorMessage(error);
+  const imageGeneration = taskPackage.visualAssetPreparation?.imageGeneration;
+  const isOpenAiStaticVisual = (taskPackage.provider === "openai" && taskPackage.media?.adapter === "openai_images") || (imageGeneration?.provider === "openai" && imageGeneration.adapter === "openai_images");
+  const managedAdapter = taskPackage.media?.adapter ?? taskPackage.aRoll?.adapter;
+  const isManagedConnection = isOpenAiStaticVisual || isOwnerManagedConnection(taskPackage.provider, managedAdapter ?? "");
+  const capability = isOpenAiStaticVisual ? "static_visual_generation" : taskPackage.capability;
+  if (isOpenAiStaticVisual && /HTTP (400|404)/i.test(detail)) {
+    return { capability, check: "model_permission", phase: "execution", status: "unavailable", reason: detail, action: "edit_blueprint", scope: "blueprint" };
+  }
+  if (isOpenAiStaticVisual && /HTTP (401|403)|api[ _-]?key|credential|token|凭据|密钥|令牌/i.test(detail)) {
+    return { capability, check: "credential_validity", phase: "execution", status: "unavailable", reason: detail, action: "manage_connection", scope: "connection" };
+  }
   if (taskPackage.provider === "codex" && /model|permission|access denied|does not have access|not allowed|not supported|unauthorized|forbidden|模型|权限|无权|未授权|不支持/i.test(detail)) {
     return {
       capability: taskPackage.capability,
@@ -593,6 +605,17 @@ function executionPreflightCheck(taskPackage: WorkerTaskPackage, error: unknown)
       reason: detail,
       action: "contact_environment_admin",
       scope: "worker",
+    };
+  }
+  if (isManagedConnection && /api[ _-]?key|credential|token|401|403|凭据|密钥|令牌/i.test(detail)) {
+    return {
+      capability: taskPackage.capability,
+      check: "credential_validity",
+      phase: "execution",
+      status: "unavailable",
+      reason: detail,
+      action: "manage_connection",
+      scope: "connection",
     };
   }
   if (/api[ _-]?key|credential|token|401|403|凭据|密钥|令牌/i.test(detail)) {

@@ -35,4 +35,12 @@ describe("runtime probes", () => {
     const network = await probeProviderConnection("pexels", "api-key", vi.fn().mockRejectedValue(new Error("fetch failed")));
     expect(network.connection).toMatchObject({ available: false, status: "retryable" });
   });
+
+  it("把 OpenAI Images 的模型拒绝归类为模型权限问题", async () => {
+    const result = await probeProviderConnection("openai", "api-key", vi.fn().mockResolvedValue(new Response("unsupported model", { status: 400 })), "unsupported-image-model");
+    expect(result).toEqual({
+      connection: { available: true, detail: "openai 网络已连通，供应商已接受 Worker 请求。" },
+      modelPermission: { available: false, status: "unavailable", detail: "openai 模型不可用：HTTP 400。" },
+    });
+  });
 });

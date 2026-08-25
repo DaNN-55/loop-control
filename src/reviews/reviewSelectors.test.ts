@@ -50,6 +50,10 @@ describe("blockersFromResult", () => {
     }], "episode-1")).toEqual([expect.objectContaining({ code: "network_connectivity", taskId: "task-1" })]);
   });
 
+  it("保留连接管理动作的 connection 影响范围", () => {
+    expect(blockersFromResult({ blockers: [], preflight: { version: "worker-preflight/v2", checks: [{ capability: "b_roll_generation", check: "credential_validity", phase: "preflight", status: "unavailable", reason: "连接认证失败。", action: "manage_connection", scope: "connection" }] } })).toEqual([expect.objectContaining({ action: "manage_connection", scope: "connection" })]);
+  });
+
   it("不把自动审核渲染前的冻结包计为人工待审", () => {
     const reviewPackage = { context_snapshot: { approval_mode: "qc_only" }, id: "package-1", stage: "production_ready" } as unknown as Database["public"]["Tables"]["review_packages"]["Row"];
     const member = { member_key: "shot:shot-1", review_package_id: reviewPackage.id } as Database["public"]["Tables"]["pre_render_review_members"]["Row"];

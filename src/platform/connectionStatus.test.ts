@@ -25,4 +25,8 @@ describe("externalConnectionStatuses", () => {
 
     expect(statuses[0]).toMatchObject({ capability: "narration_generation", provider: "google_tts", status: "pending", action: "none" });
   });
+
+  it("人工能力留空时不显示外部连接状态", () => {
+    expect(externalConnectionStatuses({ a_roll: {}, static_visual: {} }, null)).toEqual([]);
+  });
 });

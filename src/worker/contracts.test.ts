@@ -59,13 +59,13 @@ describe("Worker 契约", () => {
       ...packageInput,
       task: { ...packageInput.task, type: "generate_b_roll", provider: "pexels", model: "pexels-video-v1", promptVersion: "b-roll-v1" },
       capability: "b_roll_generation",
-      credentialRef: "pexels-default",
+      credentialRef: "11111111-1111-4111-8111-111111111111",
       media: { adapter: "pexels_video", bRoll: { query: "rainy street", targetDurationSeconds: 3, shot: { id: "shot-1", scriptSegment: "rainy street", durationSeconds: 3, shotType: "b_roll", productionMethod: "Pexels", inputBasis, targetSpec: "9:16" } } },
       output: { requiredArtifactTypes: ["b_roll_asset"], contentType: "video/mp4", relativePath: "episodes/episode-1/b-roll/shot-1.mp4", reviewStage: "production_ready" },
       inputArtifacts: [{ artifactType: "main_script", ...inputBasis[0], fileSize: 128 }, { artifactType: "static_visual", ...inputBasis[1], fileSize: 128 }],
     });
 
-    expect(taskPackage).toMatchObject({ provider: "pexels", credentialRef: "pexels-default", media: { adapter: "pexels_video" } });
+    expect(taskPackage).toMatchObject({ provider: "pexels", credentialRef: "11111111-1111-4111-8111-111111111111", media: { adapter: "pexels_video" } });
   });
 
   it("把固定的系列基准原样放入视觉 Worker 任务包", () => {

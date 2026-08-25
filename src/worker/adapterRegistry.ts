@@ -39,7 +39,7 @@ const mediaCapabilities: Record<MediaCapabilityKey, MediaCapability> = {
     defaultConfiguration: { model: "image-model-v1", promptVersion: "static-visual-v1" },
     description: "生成或准备静态视觉资产。启用后需声明实际可用的图片生成 Adapter。",
     label: "静态视觉 / 图片生成",
-    registeredAdapter: { id: "openai_images", provider: "openai", connectionType: "openai_api", requiresNetwork: true, configurationFields: ["model", "credential_ref", "max_attempts"], connections: [{ credentialRef: "openai-default", environmentVariable: "OPENAI_API_KEY", label: "OpenAI 默认连接" }] },
+    registeredAdapter: { id: "openai_images", provider: "openai", connectionType: "openai_api", requiresNetwork: true, configurationFields: ["model", "credential_ref", "max_attempts"], connections: [] },
     requiresRegisteredAdapter: true,
     workerAvailable: true,
   },
@@ -72,7 +72,7 @@ const mediaCapabilities: Record<MediaCapabilityKey, MediaCapability> = {
     defaultConfiguration: { model: "standard", promptVersion: "narration-v1" },
     description: "根据分镜中的旁白文本生成叙述音频，需要声音和语速参数。",
     label: "旁白",
-    registeredAdapter: { id: "google_tts", provider: "google_tts", connectionType: "google_tts_api", requiresNetwork: true, configurationFields: ["credential_ref", "voice", "max_attempts"], connections: [{ credentialRef: "google-tts-default", environmentVariable: "GOOGLE_TTS_API_KEY", label: "Google TTS 默认连接" }] },
+    registeredAdapter: { id: "google_tts", provider: "google_tts", connectionType: "google_tts_api", requiresNetwork: true, configurationFields: ["credential_ref", "voice", "max_attempts"], connections: [] },
     requiresRegisteredAdapter: true,
     workerAvailable: true,
   },
@@ -83,7 +83,7 @@ const mediaCapabilities: Record<MediaCapabilityKey, MediaCapability> = {
     defaultConfiguration: { model: "freesound-preview-v1", promptVersion: "soundtrack-v1" },
     description: "根据分镜中的 BGM / SFX cue 检索配乐或音效，需要已配置的 Freesound 连接。",
     label: "配乐 / 音效",
-    registeredAdapter: { id: "freesound_preview", provider: "freesound", connectionType: "freesound_api", requiresNetwork: true, configurationFields: ["credential_ref", "max_attempts"], connections: [{ credentialRef: "freesound-default", environmentVariable: "FREESOUND_API_KEY", label: "Freesound 默认连接" }] },
+    registeredAdapter: { id: "freesound_preview", provider: "freesound", connectionType: "freesound_api", requiresNetwork: true, configurationFields: ["credential_ref", "max_attempts"], connections: [] },
     requiresRegisteredAdapter: true,
     workerAvailable: true,
   },
@@ -120,6 +120,15 @@ export function registeredAdaptersForCapability(capability: string): readonly Ad
 
 export function adapterRegistration(provider: string, adapter: string): AdapterRegistration | undefined {
   return adapterRegistry.find((registration) => registration.provider === provider && registration.id === adapter);
+}
+
+export function isOwnerManagedConnection(provider: string, adapter: string): boolean {
+  return (provider === "pexels" && adapter === "pexels_video") || (provider === "freesound" && adapter === "freesound_preview") || (provider === "openai" && adapter === "openai_images") || (provider === "google_tts" && adapter === "google_tts");
+}
+
+export function externalAdapterForMediaCapability(key: MediaCapabilityKey, provider: string, adapter: string): AdapterRegistration | undefined {
+  const registration = adapterRegistration(provider, adapter);
+  return registration?.capability === mediaCapabilities[key].capability && registration.requiresNetwork ? registration : undefined;
 }
 
 export function mediaCapabilityForKey(key: MediaCapabilityKey): MediaCapability {

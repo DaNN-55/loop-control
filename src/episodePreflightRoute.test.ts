@@ -19,7 +19,7 @@ vi.mock("./worker/runtimePreflight", () => ({
 }));
 vi.mock("./worker/runtimeProbes", () => ({ probeCodexModel: vi.fn(), probeProviderConnection: vi.fn() }));
 
-import { serveEpisodePreflight } from "../vite.config";
+import { requiredMediaCapabilitiesFromTasks, serveEpisodePreflight } from "../vite.config";
 
 const accountId = "11111111-1111-4111-8111-111111111111";
 const episodeId = "22222222-2222-4222-8222-222222222222";
@@ -32,6 +32,7 @@ function queryResult(data: unknown) {
     eq: vi.fn(() => query),
     maybeSingle: vi.fn().mockResolvedValue({ data, error: null }),
     select: vi.fn(() => query),
+    then: (resolve: (value: { data: unknown; error: null }) => unknown) => Promise.resolve(resolve({ data, error: null })),
   };
   return query;
 }
@@ -43,6 +44,7 @@ function mockSupabaseClient() {
     account_blueprint_versions: { is_active: true, policy: { asset_root: "/Volumes/database" } },
     episodes: { account_id: accountId, series_version_id: seriesVersionId },
     series_versions: { rules: { b_roll: { provider: "series-provider" } } },
+    tasks: [],
   };
   const client = {
     auth: { getUser: vi.fn().mockResolvedValue({ data: { user: { id: "owner-1" } }, error: null }) },
@@ -73,11 +75,21 @@ describe("Episode 修复 preflight 路由", () => {
       });
 
       expect(response.status).toBe(200);
-      expect(mocks.runtimeCapabilitiesFromBlueprintPolicy).toHaveBeenCalledWith(proposedPolicy, { b_roll: { provider: "series-provider" } });
+      expect(mocks.runtimeCapabilitiesFromBlueprintPolicy).toHaveBeenCalledWith(proposedPolicy, { b_roll: { provider: "series-provider" } }, []);
       expect(mocks.createRuntimePreflight).toHaveBeenCalledWith([], expect.objectContaining({ assetRoot: expect.objectContaining({ available: false }) }));
       expect(await response.json()).toEqual({ preflight: report });
     } finally {
       await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
     }
+  });
+
+  it("只为未完成的真实外部媒体任务推导连接能力", () => {
+    expect(requiredMediaCapabilitiesFromTasks([
+      { task_type: "generate_b_roll", provider: "pexels", status: "blocked" },
+      { task_type: "generate_soundtrack", provider: "manual_upload", status: "completed" },
+      { task_type: "prepare_visual_brief", provider: "codex", status: "ready", input_snapshot: { visual_assets: { image_generation: { provider: "openai" } } } },
+      { task_type: "prepare_visual_brief", provider: "codex", status: "ready", input_snapshot: { visual_assets: { image_generation: { provider: "manual_upload" } } } },
+      { task_type: "generate_narration", provider: "google_tts", status: "completed" },
+    ])).toEqual(["b_roll_generation", "static_visual_generation"]);
   });
 });

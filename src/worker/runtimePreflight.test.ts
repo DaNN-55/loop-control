@@ -25,7 +25,8 @@ describe("runtime preflight", () => {
       "final_rendering",
       "narration_generation",
     ]);
-    expect(capabilities.at(-1)).toMatchObject({ credentialRef: "google-tts-default", credential: "GOOGLE_TTS_API_KEY" });
+    expect(capabilities.at(-1)).toMatchObject({ credentialRef: "google-tts-default" });
+    expect(capabilities.at(-1)).not.toHaveProperty("credential");
   });
 
   it("分镜必须冻结已注册的 Codex Adapter 与 Prompt Harness", () => {
@@ -90,13 +91,38 @@ describe("runtime preflight", () => {
     ]));
   });
 
+  it("把未写 OpenAI 连接版本的静态视觉标记为编辑蓝图", () => {
+    const [capability] = runtimeCapabilitiesFromBlueprintPolicy({
+      static_visual: { executor: { provider: "openai", adapter: "openai_images", model: "gpt-image-1", prompt_version: "static-visual-v1" }, allowed_tools: ["read", "write"] },
+    }).filter((candidate) => candidate.capability === "static_visual_generation");
+
+    expect(createRuntimePreflight([capability!]).checks).toContainEqual(expect.objectContaining({ capability: "static_visual_generation", check: "blueprint_configuration", status: "blocked", action: "edit_blueprint", scope: "blueprint" }));
+  });
+
+  it("将 OpenAI 不支持的模型指向编辑蓝图，将认证拒绝指向管理连接", () => {
+    const capability = { capability: "static_visual_generation", provider: "openai", adapter: "openai_images", credentialRef: "22222222-2222-4222-8222-222222222222", model: "unsupported-model", promptVersion: "static-visual-v1", allowedTools: ["read", "write"] };
+    const modelResult = createRuntimePreflight([capability], { modelPermissions: { "unsupported-model": { available: false, detail: "OpenAI 不支持该模型。" } } });
+    const credentialResult = createRuntimePreflight([capability], { credentialValidity: { [capability.credentialRef]: { available: false, detail: "OpenAI 拒绝凭据。" } } });
+
+    expect(modelResult.checks).toContainEqual(expect.objectContaining({ check: "model_permission", status: "unavailable", action: "edit_blueprint", scope: "blueprint" }));
+    expect(credentialResult.checks).toContainEqual(expect.objectContaining({ check: "credential_validity", status: "unavailable", action: "manage_connection", scope: "connection" }));
+  });
+
+  it("将 OpenAI 连接引用解析失败指向管理连接", () => {
+    const result = createRuntimePreflight([{ capability: "static_visual_generation", provider: "openai", adapter: "openai_images", credentialRef: "22222222-2222-4222-8222-222222222222", model: "gpt-image-1", promptVersion: "static-visual-v1", allowedTools: ["read", "write"] }], {
+      connectionReferences: { "22222222-2222-4222-8222-222222222222": { available: false, detail: "外部连接秘密不可用。" } },
+    });
+
+    expect(result.checks).toContainEqual(expect.objectContaining({ check: "connection_reference", status: "unavailable", action: "manage_connection", scope: "connection" }));
+  });
+
   it("把真实运行态失败映射为结构化环境阻塞", () => {
     const result = createRuntimePreflight([
       {
         capability: "narration_generation",
         provider: "google_tts",
         adapter: "google_tts",
-        credentialRef: "google-tts-default",
+        credentialRef: "11111111-1111-4111-8111-111111111111",
         model: "standard",
         promptVersion: "narration-v1",
         allowedTools: ["network", "write"],
@@ -147,7 +173,7 @@ describe("runtime preflight", () => {
       capability: "narration_generation",
       provider: "google_tts",
       adapter: "google_tts",
-      credentialRef: "google-tts-default",
+      credentialRef: "22222222-2222-4222-8222-222222222222",
       model: "standard",
       promptVersion: "narration-v1",
       allowedTools: ["read", "write"],
@@ -161,7 +187,7 @@ describe("runtime preflight", () => {
     expect(result.checks).toContainEqual(expect.objectContaining({ check: "credential_validity", status: "unavailable", action: "contact_environment_admin" }));
   });
 
-  it("将已启用的五项生产能力纳入预检，并把空草稿标为可编辑阻塞", () => {
+  it("不为留空且可人工导入的媒体能力创建外部连接预检", () => {
     const capabilities = runtimeCapabilitiesFromBlueprintPolicy({
       static_visual: {},
       a_roll: {},
@@ -170,18 +196,23 @@ describe("runtime preflight", () => {
       soundtrack: {},
     });
 
-    expect(capabilities.map((capability) => capability.capability)).toEqual(expect.arrayContaining(mediaCapabilityKeys.map((key) => mediaCapabilityForKey(key).capability)));
-    expect(createRuntimePreflight(capabilities).checks).toEqual(expect.arrayContaining([
-      expect.objectContaining({ capability: "static_visual_generation", check: "blueprint_configuration", status: "blocked", action: "edit_blueprint", scope: "blueprint" }),
-      expect.objectContaining({ capability: "a_roll_generation", check: "blueprint_configuration", status: "blocked", action: "edit_blueprint", scope: "blueprint" }),
-    ]));
+    expect(capabilities.map((capability) => capability.capability)).not.toEqual(expect.arrayContaining(mediaCapabilityKeys.map((key) => mediaCapabilityForKey(key).capability)));
+    expect(createRuntimePreflight(capabilities).checks.some((check) => check.capability.endsWith("_generation"))).toBe(false);
+  });
+
+  it("仍为明确声明的外部 Adapter 执行蓝图预检", () => {
+    const capabilities = runtimeCapabilitiesFromBlueprintPolicy({
+      b_roll: { credential_ref: "pexels-default", executor: { provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", prompt_version: "b-roll-v1" }, allowed_tools: ["read", "write"] },
+    });
+
+    expect(capabilities).toEqual(expect.arrayContaining([expect.objectContaining({ capability: "b_roll_generation", credentialRef: "pexels-default" })]));
   });
 
   it("不会把 Codex 的规划 Adapter 误当成可执行的 A-roll Adapter", () => {
     const capabilities = runtimeCapabilitiesFromBlueprintPolicy({
       allowed_tools: ["read", "write"],
       a_roll: { executor: { provider: "codex", adapter: "codex", model: "video-generation-v1", prompt_version: "a-roll-v1" } },
-    });
+    }, undefined, ["a_roll_generation"]);
 
     expect(createRuntimePreflight(capabilities).checks).toContainEqual(expect.objectContaining({ capability: "a_roll_generation", check: "capability_registration", status: "unavailable" }));
   });
@@ -231,7 +262,7 @@ describe("runtime preflight", () => {
       capability: "soundtrack_generation",
       provider: "freesound",
       adapter: "freesound_preview",
-      credentialRef: "freesound-default",
+      credentialRef: "33333333-3333-4333-8333-333333333333",
       model: "freesound-preview-v1",
       promptVersion: "soundtrack-v1",
       allowedTools: ["read", "write"],
@@ -243,7 +274,7 @@ describe("runtime preflight", () => {
   it("Freesound 不会绕过账号冻结的工具白名单", () => {
     const [capability] = runtimeCapabilitiesFromBlueprintPolicy({
       soundtrack: {
-        credential_ref: "freesound-default",
+        credential_ref: "33333333-3333-4333-8333-333333333333",
         executor: { provider: "freesound", adapter: "freesound_preview", model: "freesound-preview-v1", prompt_version: "soundtrack-v1" },
         allowed_tools: ["read"],
       },

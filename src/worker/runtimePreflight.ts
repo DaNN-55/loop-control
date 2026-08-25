@@ -1,5 +1,5 @@
 import { workerPreflightVersion, type WorkerPreflightCheck, type WorkerPreflightResult, type WorkerPreflightStatus, type WorkerTaskPackage } from "./contracts.js";
-import { adapterRegistration, mediaCapabilityForCapability, mediaCapabilityForKey, mediaCapabilityKeys, registeredAdaptersForCapability } from "./adapterRegistry.js";
+import { adapterRegistration, externalAdapterForMediaCapability, isOwnerManagedConnection, mediaCapabilityForCapability, mediaCapabilityForKey, mediaCapabilityKeys, registeredAdaptersForCapability } from "./adapterRegistry.js";
 
 export interface RuntimeCapability {
   capability: string;
@@ -38,10 +38,11 @@ const legacyRegisteredAdapters = new Set([
   "hyperframes:hyperframes",
 ]);
 
-export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, _seriesRules?: unknown): RuntimeCapability[] {
+export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, _seriesRules?: unknown, requiredMediaCapabilities?: readonly string[]): RuntimeCapability[] {
   const root = record(policy);
   const executors = record(root.executors);
   const allowedTools = root.allowed_tools;
+  const required = requiredMediaCapabilities ? new Set(requiredMediaCapabilities) : undefined;
   const capabilities: RuntimeCapability[] = [
     capabilityFromExecutor("visual_planning", record(executors.visual_planning), allowedTools, "codex", { adapter: true, promptHarness: true }),
     capabilityFromExecutor("storyboard_planning", record(executors.storyboard_planning), allowedTools, "codex", { adapter: true, promptHarness: true }),
@@ -58,6 +59,7 @@ export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, _seriesR
     const provider = stringValue(executor.provider);
     const adapter = stringValue(executor.adapter);
     const credentialRef = stringValue(config.credential_ref);
+    if (required ? !required.has(mediaCapability.capability) : !externalAdapterForMediaCapability(key, provider, adapter)) continue;
     const credential = credentialEnvironmentForReference(provider, adapter, credentialRef);
     capabilities.push({
       capability: mediaCapability.capability,
@@ -140,7 +142,7 @@ export function createRuntimePreflight(capabilities: RuntimeCapability[], enviro
     }
 
     if (capability.model && environment.modelPermissions && Object.prototype.hasOwnProperty.call(environment.modelPermissions, capability.model)) {
-      checks.push(dependencyCheck(capability.capability, "model_permission", environment.modelPermissions[capability.model]));
+      checks.push(capability.provider === "openai" && capability.adapter === "openai_images" ? openAiModelPermissionCheck(capability.capability, environment.modelPermissions[capability.model]) : dependencyCheck(capability.capability, "model_permission", environment.modelPermissions[capability.model]));
     }
 
     if (environment.connections && Object.prototype.hasOwnProperty.call(environment.connections, capability.provider)) {
@@ -174,6 +176,7 @@ export function credentialEnvironmentForProvider(provider: string): string | und
 }
 
 export function credentialEnvironmentForReference(provider: string, adapter: string | undefined, credentialRef: string | undefined): string | undefined {
+  if (isConnectionId(credentialRef)) return undefined;
   const registration = adapter ? adapterRegistration(provider, adapter) : undefined;
   if (registration) return registration.connections.find((connection) => connection.credentialRef === credentialRef)?.environmentVariable;
   return credentialEnvironmentForProvider(provider);
@@ -211,7 +214,7 @@ function capabilityFromExecutor(capability: string, executor: Record<string, unk
 function configurationErrorFor(capability: RuntimeCapability): string | undefined {
   if (!capability.provider || !capability.model || !capability.promptVersion) return `能力 ${capability.capability} 缺少 Provider、模型或 Prompt 版本。`;
   if (capability.requiresAdapter && !capability.adapter) return `能力 ${capability.capability} 缺少已注册 Adapter。`;
-  if (capability.provider === "pexels" && capability.adapter === "pexels_video" && !isConnectionId(capability.credentialRef)) return "Pexels 必须选择已验证的外部连接版本。";
+  if (isOwnerManagedConnection(capability.provider, capability.adapter ?? "") && !isConnectionId(capability.credentialRef)) return `${capability.provider === "openai" ? "OpenAI Images" : capability.provider === "google_tts" ? "Google TTS" : capability.provider === "freesound" ? "Freesound" : "Pexels"} 必须选择已验证的外部连接版本。`;
   if (capability.requiresPromptHarness && !capability.promptHarnessId) return `能力 ${capability.capability} 缺少 Prompt Harness。`;
   const registration = capability.adapter ? adapterRegistration(capability.provider, capability.adapter) : undefined;
   if (registration?.connections.length && !registration.connections.some((connection) => connection.credentialRef === capability.credentialRef) && !isConnectionId(capability.credentialRef)) return `能力 ${capability.capability} 缺少可用的外部连接引用。`;
@@ -259,8 +262,8 @@ function connectionReferenceCheck(capability: string, dependency: RuntimeDepende
     phase: "preflight",
     status,
     reason: dependency.detail,
-    action: dependency.available ? "none" : status === "retryable" ? "retry" : "edit_blueprint",
-    scope: status === "retryable" ? "worker" : "blueprint",
+    action: dependency.available ? "none" : status === "retryable" ? "retry" : "manage_connection",
+    scope: "connection",
   };
 }
 
@@ -274,5 +277,18 @@ function connectionCredentialValidityCheck(capability: string, dependency: Runti
     reason: dependency.detail,
     action: dependency.available ? "none" : status === "retryable" ? "retry" : "manage_connection",
     scope: status === "retryable" ? "worker" : "connection",
+  };
+}
+
+function openAiModelPermissionCheck(capability: string, dependency: RuntimeDependencyStatus): WorkerPreflightCheck {
+  const status: WorkerPreflightStatus = dependency.available ? "passed" : dependency.status ?? "unavailable";
+  return {
+    capability,
+    check: "model_permission",
+    phase: "preflight",
+    status,
+    reason: dependency.detail,
+    action: dependency.available ? "none" : status === "retryable" ? "retry" : "edit_blueprint",
+    scope: dependency.available || status === "retryable" ? "worker" : "blueprint",
   };
 }
