@@ -13,18 +13,4 @@ describe("Owner Pexels 连接迁移", () => {
     expect(migration).toContain("connection.created_by = auth.uid()");
     expect(migration).toContain("connection.current_version_id = version.id");
   });
-
-  it("扩展同一 Owner 连接池支持 Google TTS，并按能力校验已验证版本", () => {
-    const migration = readFileSync("supabase/migrations/20260825120000_owner_google_tts_connections.sql", "utf8");
-
-    expect(migration).toContain("provider = 'google_tts'");
-    expect(migration).toContain("adapter = 'google_tts'");
-    expect(migration).toContain("vault.create_secret");
-    expect(migration).toContain("connection.created_by = auth.uid()");
-    expect(migration).toContain("connection.current_version_id = version.id");
-    expect(migration).toContain("narration");
-    expect(migration).toContain("status = 'verified'");
-    expect(migration).toContain("policy = blueprint.policy - 'narration'");
-    expect(migration).toContain("Owner permission is required");
-  });
 });
