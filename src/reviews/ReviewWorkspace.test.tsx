@@ -781,9 +781,10 @@ describe("审核台", () => {
     const manualBroll: MaterialRevision = { ...manualAroll, id: "material-b-roll-1", material_purpose: "b_roll", source_path: "cutaway.mp4", storage_path: "episodes/episode-review/materials/manual-cutaway.mp4" };
     const manualNarration: MaterialRevision = { ...manualAroll, id: "material-narration-1", material_purpose: "narration", material_type: "audio", mime_type: "audio/mpeg", source_path: "narration.mp3", storage_path: "episodes/episode-review/materials/manual-narration.mp3" };
     const manualBgm: MaterialRevision = { ...manualNarration, id: "material-bgm-1", material_purpose: "background_music", source_path: "music.mp3", storage_path: "episodes/episode-review/materials/manual-music.mp3" };
+    const manualBlueprint: Blueprint = { ...blueprint, policy: { a_roll: { execution_path: "manual" }, b_roll: { execution_path: "manual" }, narration: { execution_path: "manual" }, soundtrack: { execution_path: "manual" } } };
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [{ description: "氛围音乐", durationSeconds: 5, id: "cue-bgm-1", kind: "bgm", searchQuery: "ambient", startSeconds: 0 }], shots: [{ durationSeconds: 5, id: "shot-a-roll-1", inputBasis: [{ relativePath: "episodes/episode-review/materials/script.md", sha256: "c".repeat(64) }], productionMethod: "人工出镜", scriptSegment: "主持人出镜说明。", shotType: "a_roll", targetSpec: "9:16" }, { durationSeconds: 5, id: "shot-b-roll-1", inputBasis: [{ relativePath: "episodes/episode-review/materials/script.md", sha256: "c".repeat(64) }], productionMethod: "人工素材", scriptSegment: "环境补充画面。", shotType: "b_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } })));
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={storyboardEpisode} isTransitionPending={false} materialRevisions={[manualAroll, manualBroll, manualNarration, manualBgm]} onRegisterManualMedia={onRegisterManualMedia} onTransition={vi.fn()} reviewPackages={[{
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={manualBlueprint} episode={storyboardEpisode} isTransitionPending={false} materialRevisions={[manualAroll, manualBroll, manualNarration, manualBgm]} onRegisterManualMedia={onRegisterManualMedia} onTransition={vi.fn()} reviewPackages={[{
       artifact_id: storyboardArtifact.id,
       context_snapshot: {},
       created_at: "2026-08-23T00:00:00.000Z",
@@ -802,13 +803,13 @@ describe("审核台", () => {
     await user.click(screen.getByRole("button", { name: "冻结人工 A-roll 视频" }));
     await user.selectOptions(screen.getByLabelText("shot-b-roll-1 人工 B-roll 视频"), manualBroll.id);
     await user.click(screen.getByRole("button", { name: "冻结人工 B-roll 视频" }));
-    await user.selectOptions(screen.getByLabelText("shot-a-roll-1 人工旁白音频"), manualNarration.id);
-    await user.click(screen.getAllByRole("button", { name: "冻结人工旁白音频" })[0]);
+    await user.selectOptions(screen.getByLabelText("episode-review 人工旁白音频（Episode）"), manualNarration.id);
+    await user.click(screen.getByRole("button", { name: "冻结人工旁白音频（Episode）" }));
     await user.selectOptions(screen.getByLabelText("cue-bgm-1 人工配乐"), manualBgm.id);
     await user.click(screen.getByRole("button", { name: "冻结人工配乐" }));
     expect(onRegisterManualMedia).toHaveBeenCalledWith({ episodeId: storyboardEpisode.id, kind: "a_roll", materialRevisionId: manualAroll.id, storyboardReviewPackageId: "review-package-manual-a-roll", targetId: "shot-a-roll-1" });
     expect(onRegisterManualMedia).toHaveBeenCalledWith({ episodeId: storyboardEpisode.id, kind: "b_roll", materialRevisionId: manualBroll.id, storyboardReviewPackageId: "review-package-manual-a-roll", targetId: "shot-b-roll-1" });
-    expect(onRegisterManualMedia).toHaveBeenCalledWith({ episodeId: storyboardEpisode.id, kind: "narration", materialRevisionId: manualNarration.id, storyboardReviewPackageId: "review-package-manual-a-roll", targetId: "shot-a-roll-1" });
+    expect(onRegisterManualMedia).toHaveBeenCalledWith({ episodeId: storyboardEpisode.id, kind: "narration", materialRevisionId: manualNarration.id, storyboardReviewPackageId: "review-package-manual-a-roll", targetId: storyboardEpisode.id });
     expect(onRegisterManualMedia).toHaveBeenCalledWith({ episodeId: storyboardEpisode.id, kind: "bgm", materialRevisionId: manualBgm.id, storyboardReviewPackageId: "review-package-manual-a-roll", targetId: "cue-bgm-1" });
   });
 

@@ -1561,6 +1561,11 @@ export type Database = {
         Returns: Database["public"]["Tables"]["tasks"]["Row"]
         SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
       }
+      register_manual_episode_narration: {
+        Args: { p_episode_id: string; p_material_revision_id: string; p_storyboard_review_package_id: string }
+        Returns: Database["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
       register_manual_b_roll: {
         Args: { p_episode_id: string; p_material_revision_id: string; p_shot_id: string; p_storyboard_review_package_id: string }
         Returns: Database["public"]["Tables"]["tasks"]["Row"]

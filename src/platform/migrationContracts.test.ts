@@ -55,6 +55,9 @@ const scopedSoundtrackMigration = resolve(
 const manualPathOrchestrationMigration = resolve(
   "supabase/migrations/20260825150000_skip_manual_media_orchestration.sql",
 );
+const scopedManualPathCorrectionMigration = resolve(
+  "supabase/migrations/20260825160000_scope_manual_media_orchestration.sql",
+);
 const scopedCoreOrchestrationMigration = resolve(
   "supabase/migrations/20260823200000_add_scoped_core_task_orchestration.sql",
 );
@@ -198,6 +201,23 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("execution_path}', 'external') <> 'manual");
     expect(migration).toContain("orchestrate_soundtrack_tasks_without_manual_path");
     expect(migration).toContain("orchestrate_a_roll_tasks_without_manual_path");
+  });
+
+  it("人工 A-roll 按 Episode 隔离，旁白保留原声模式门槛", () => {
+    const migration = readFileSync(scopedManualPathCorrectionMigration, "utf8");
+
+    expect(migration).toContain("orchestrate_a_roll_tasks_for_episode");
+    expect(migration).toContain("p_episode_id is null or episode.id = p_episode_id");
+    expect(migration).toContain("episode.audio_source_mode = 'tts'");
+    expect(migration).not.toContain("if exists (\n    select 1\n    from public.episodes episode\n    join public.account_blueprint_versions blueprint");
+  });
+
+  it("人工旁白使用 Episode 级绑定入口", () => {
+    const migration = readFileSync(scopedManualPathCorrectionMigration, "utf8");
+
+    expect(migration).toContain("register_manual_episode_narration");
+    expect(migration).toContain("p_episode_id uuid");
+    expect(migration).toContain("track.cue_id = candidate.id::text");
   });
 
   it("定向调度只会创建指定生产单的视觉与分镜任务", () => {
