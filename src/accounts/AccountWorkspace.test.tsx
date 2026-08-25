@@ -193,6 +193,7 @@ describe("账号配置工作区", () => {
     const harness: PromptVersion = { ...storyboardHarness, name: "分镜规划 v2", slug: "storyboard-planning-v2", version: 2 };
     renderWorkspace({ onUpdateBlueprint, promptVersions: [harness] });
 
+    await user.click(screen.getByRole("button", { name: "修改分镜规划配置" }));
     await user.selectOptions(screen.getByRole("combobox", { name: "分镜规划 Prompt Harness" }), harness.id);
     await user.click(screen.getByRole("button", { name: "保存并检查" }));
 
@@ -211,6 +212,7 @@ describe("账号配置工作区", () => {
     await user.selectOptions(screen.getByRole("combobox", { name: "B-roll Adapter" }), "pexels_video");
     await user.selectOptions(screen.getByRole("combobox", { name: "旁白 Adapter" }), "google_tts");
     await user.selectOptions(screen.getByRole("combobox", { name: "配乐 / 音效 Adapter" }), "freesound_preview");
+    await user.click(screen.getByRole("button", { name: "修改分镜规划配置" }));
     await user.click(screen.getByText("Prompt 版本管理"));
     await user.type(screen.getByPlaceholderText("例如：脚本生成·强化冲突 v2"), "分镜规划 v2");
     await user.type(screen.getByPlaceholderText("例如：强化开头钩子和人物动机"), "保留已有能力草稿");
@@ -226,15 +228,23 @@ describe("账号配置工作区", () => {
     expect((screen.getByRole("combobox", { name: "分镜规划 Prompt Harness" }) as HTMLSelectElement).value).toBe("harness-storyboard-2");
   });
 
-  it("只暴露一套常驻展开的分镜规划配置", () => {
+  it("通过弹窗配置分镜规划", async () => {
+    const user = userEvent.setup();
     renderWorkspace({ onCreatePromptVersion: vi.fn().mockResolvedValue(null) });
 
     expect(screen.queryByRole("button", { name: "修改视觉规划配置" })).toBeNull();
-    expect(screen.queryByRole("button", { name: "修改分镜规划配置" })).toBeNull();
+    expect(screen.getByRole("button", { name: "修改分镜规划配置" })).toBeTruthy();
     expect(screen.queryByRole("dialog")).toBeNull();
     expect(screen.queryByRole("spinbutton", { name: "分镜规划 阶段预算" })).toBeNull();
-    expect(screen.getByRole("combobox", { name: "分镜规划 Prompt Harness" })).toBeTruthy();
-    expect(screen.getByRole("heading", { name: "登记新版本" })).toBeTruthy();
+    expect(screen.queryByRole("combobox", { name: "分镜规划 Prompt Harness" })).toBeNull();
+
+    await user.click(screen.getByRole("button", { name: "修改分镜规划配置" }));
+
+    const dialog = screen.getByRole("dialog");
+    expect(within(dialog).getByRole("combobox", { name: "分镜规划 Prompt Harness" })).toBeTruthy();
+    expect(within(dialog).getByRole("heading", { name: "登记新版本" })).toBeTruthy();
+    await user.click(within(dialog).getByRole("button", { name: "关闭分镜规划配置" }));
+    expect(screen.queryByRole("dialog")).toBeNull();
   });
 
   it("展示真实 Worker 就绪检查并允许重新检查", async () => {
