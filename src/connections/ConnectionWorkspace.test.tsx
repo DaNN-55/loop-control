@@ -56,8 +56,7 @@ describe("外部连接工作区", () => {
     expect(onDeleteVersion).toHaveBeenCalledWith("version-3");
   });
 
-  it("轮换后只暴露当前且已验证版本，并能把新版本保存到蓝图选择", async () => {
-    const user = userEvent.setup();
+  it("轮换后只保留当前且已验证版本，并自动绑定到蓝图", () => {
     const onSelectVersion = vi.fn();
     const versions = [
       { adapter: "openai_images", connection_id: "connection-1", created_at: "", endpoint: "https://api.openai.com/v1", id: "version-1", is_current: false, provider: "openai", revoked_at: null, status: "verified" as const, version: 1 },
@@ -65,8 +64,8 @@ describe("外部连接工作区", () => {
     ];
     render(<ExternalConnectionPicker adapter="openai_images" connections={[{ adapter: "openai_images", created_at: "", created_by: "owner", current_version_id: "version-2", description: "", endpoint: "https://api.openai.com/v1", id: "connection-1", last_verification_detail: null, last_verified_at: null, name: "主 OpenAI", provider: "openai", status: "verified" }]} onSelectVersion={onSelectVersion} provider="openai" selectedVersionId="" versions={versions} />);
 
-    expect(screen.queryByRole("option", { name: /v1/ })).toBeNull();
-    await user.selectOptions(screen.getByRole("combobox", { name: "外部连接 外部连接" }), "version-2");
+    expect(screen.queryByRole("combobox", { name: "外部连接 外部连接" })).toBeNull();
+    expect(screen.getByText("主 OpenAI · v2")).toBeTruthy();
     expect(onSelectVersion).toHaveBeenCalledWith("version-2");
   });
 });

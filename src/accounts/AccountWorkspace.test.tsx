@@ -113,20 +113,22 @@ describe("账号配置工作区", () => {
   it("始终展示默认关闭的五项生产能力", () => {
     renderWorkspace();
 
-    for (const name of ["启用静态视觉 / 图片生成", "启用A-roll", "启用B-roll", "启用旁白", "启用配乐 / 音效"]) {
+    for (const name of ["启用图片生成", "启用A-roll", "启用B-roll", "启用旁白", "启用配乐 / 音效"]) {
       const checkbox = screen.getByRole("checkbox", { name }) as HTMLInputElement;
       expect(checkbox.checked).toBe(false);
       expect(checkbox.disabled).toBe(false);
     }
   });
 
-  it("打开可用能力后显示配置卡片", async () => {
+  it("通过矩阵打开单项能力配置", async () => {
     const user = userEvent.setup();
     renderWorkspace();
     await user.click(screen.getByRole("checkbox", { name: "启用B-roll" }));
 
-    expect(screen.getByRole("heading", { name: "B-roll" })).toBeTruthy();
-    expect(screen.getByText("已启用能力的技术配置（1）", { selector: "summary" }).parentElement?.hasAttribute("open")).toBe(true);
+    expect(screen.getByRole("button", { name: "配置B-roll" })).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "配置B-roll" }));
+    const dialog = screen.getByRole("dialog", { name: "配置B-roll" });
+    expect(within(dialog).getByRole("heading", { name: "B-roll" })).toBeTruthy();
   });
 
   it("保存启用但未完成的能力草稿", async () => {
@@ -134,9 +136,8 @@ describe("账号配置工作区", () => {
     const onUpdateBlueprint = vi.fn().mockResolvedValue(blueprint);
     renderWorkspace({ onUpdateBlueprint });
 
-    await user.click(screen.getByRole("checkbox", { name: "启用静态视觉 / 图片生成" }));
-    expect(screen.getByRole("heading", { name: "静态视觉 / 图片生成" })).toBeTruthy();
-    expect(screen.getByText("未配置", { selector: ".media-adapter-status" })).toBeTruthy();
+    await user.click(screen.getByRole("checkbox", { name: "启用图片生成" }));
+    expect(screen.getByText("未配置", { selector: ".capability-matrix-status" })).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "保存并检查" }));
 
     expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ static_visual: {} }));
@@ -148,25 +149,28 @@ describe("账号配置工作区", () => {
     renderWorkspace({ onUpdateBlueprint });
 
     await user.click(screen.getByRole("checkbox", { name: "启用B-roll" }));
+    await user.click(screen.getByRole("button", { name: "配置B-roll" }));
 
-    expect((screen.getByRole("combobox", { name: "B-roll 执行路径" }) as HTMLSelectElement).value).toBe("");
-    expect(screen.queryByRole("combobox", { name: "B-roll Adapter" })).toBeNull();
-    expect(screen.queryByRole("combobox", { name: "B-roll 外部连接" })).toBeNull();
-    expect(screen.queryByLabelText("API Key")).toBeNull();
+    const dialog = screen.getByRole("dialog");
+    expect((within(dialog).getByRole("combobox", { name: "B-roll 执行路径" }) as HTMLSelectElement).value).toBe("");
+    expect(within(dialog).queryByRole("combobox", { name: "B-roll Adapter" })).toBeNull();
+    expect(within(dialog).queryByRole("combobox", { name: "B-roll 外部连接" })).toBeNull();
+    expect(within(dialog).queryByLabelText("API Key")).toBeNull();
   });
 
-  it("只把已验证的 Pexels 连接提供给 B-roll 蓝图", async () => {
+  it("把已验证的 Pexels 当前连接直接绑定到 B-roll 蓝图", async () => {
     const user = userEvent.setup();
     const connection: ExternalConnection = { adapter: "pexels_video", created_at: "2026-08-25T00:00:00.000Z", created_by: "owner-1", current_version_id: "11111111-1111-4111-8111-111111111111", id: "11111111-1111-4111-8111-111111111111", last_verification_detail: "Pexels 已接受请求。", last_verified_at: "2026-08-25T00:01:00.000Z", name: "主 Pexels", provider: "pexels", status: "verified" };
     const versions: ExternalConnectionVersion[] = [{ adapter: "pexels_video", connection_id: connection.id, created_at: connection.created_at, endpoint: "https://api.pexels.com", id: connection.current_version_id, is_current: true, provider: "pexels", revoked_at: null, status: "verified", version: 1 }];
     renderWorkspace({ connectionVersions: versions, externalConnections: [connection] });
 
     await user.click(screen.getByRole("checkbox", { name: "启用B-roll" }));
+    await user.click(screen.getByRole("button", { name: "配置B-roll" }));
     await user.selectOptions(screen.getByRole("combobox", { name: "B-roll 执行路径" }), "external");
     await user.selectOptions(screen.getByRole("combobox", { name: "B-roll Adapter" }), "pexels_video");
 
-    expect(screen.getByRole("option", { name: "主 Pexels · v1" })).toBeTruthy();
-    expect((screen.getByRole("combobox", { name: "B-roll 外部连接" }) as HTMLSelectElement).value).toBe("");
+    expect(screen.getByText("主 Pexels · v1")).toBeTruthy();
+    expect(screen.queryByRole("combobox", { name: "B-roll 外部连接" })).toBeNull();
   });
 
 
@@ -186,16 +190,23 @@ describe("账号配置工作区", () => {
 
     await user.click(screen.getByRole("checkbox", { name: "启用旁白" }));
     await user.click(screen.getByRole("checkbox", { name: "启用配乐 / 音效" }));
+    await user.click(screen.getByRole("button", { name: "配置旁白" }));
     await user.selectOptions(screen.getByRole("combobox", { name: "旁白 执行路径" }), "external");
-    await user.selectOptions(screen.getByRole("combobox", { name: "配乐 / 音效 执行路径" }), "external");
     await user.selectOptions(screen.getByRole("combobox", { name: "旁白 Adapter" }), "google_tts");
+    await user.click(screen.getByRole("button", { name: "完成" }));
+    await user.click(screen.getByRole("button", { name: "配置配乐 / 音效" }));
+    await user.selectOptions(screen.getByRole("combobox", { name: "配乐 / 音效 执行路径" }), "external");
     await user.selectOptions(screen.getByRole("combobox", { name: "配乐 / 音效 Adapter" }), "freesound_preview");
 
+    await user.click(screen.getByRole("button", { name: "完成" }));
+    await user.click(screen.getByRole("button", { name: "配置旁白" }));
     expect(within(screen.getByRole("combobox", { name: "语言代码" })).getByRole("option", { name: "en-US" })).toBeTruthy();
+    expect(screen.getByText("主 Google TTS · v1")).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "完成" }));
+    await user.click(screen.getByRole("button", { name: "配置配乐 / 音效" }));
     expect(screen.getByText("官方 Endpoint：https://freesound.org/apiv2")).toBeTruthy();
 
-    expect((screen.getByRole("combobox", { name: "旁白 外部连接" }) as HTMLSelectElement).value).toBe("");
-    expect((screen.getByRole("combobox", { name: "配乐 / 音效 外部连接" }) as HTMLSelectElement).value).toBe("");
+    expect(screen.getByText("主 Freesound · v1")).toBeTruthy();
     expect(screen.queryByLabelText("API Key")).toBeNull();
   });
 
@@ -216,32 +227,53 @@ describe("账号配置工作区", () => {
     const user = userEvent.setup();
     render(<PromptVersionRefreshWorkspace />);
 
-    await user.click(screen.getByRole("checkbox", { name: "启用静态视觉 / 图片生成" }));
+    await user.click(screen.getByRole("checkbox", { name: "启用图片生成" }));
     await user.click(screen.getByRole("checkbox", { name: "启用A-roll" }));
     await user.click(screen.getByRole("checkbox", { name: "启用B-roll" }));
     await user.click(screen.getByRole("checkbox", { name: "启用旁白" }));
     await user.click(screen.getByRole("checkbox", { name: "启用配乐 / 音效" }));
-    await user.selectOptions(screen.getByRole("combobox", { name: "静态视觉 / 图片生成 执行路径" }), "external");
+    await user.click(screen.getByRole("button", { name: "配置图片生成" }));
+    await user.selectOptions(screen.getByRole("combobox", { name: "图片生成 执行路径" }), "external");
+    await user.click(screen.getByRole("button", { name: "完成" }));
+    await user.click(screen.getByRole("button", { name: "配置A-roll" }));
     await user.selectOptions(screen.getByRole("combobox", { name: "A-roll 执行路径" }), "manual");
+    await user.click(screen.getByRole("button", { name: "完成" }));
+    await user.click(screen.getByRole("button", { name: "配置B-roll" }));
     await user.selectOptions(screen.getByRole("combobox", { name: "B-roll 执行路径" }), "external");
-    await user.selectOptions(screen.getByRole("combobox", { name: "旁白 执行路径" }), "external");
-    await user.selectOptions(screen.getByRole("combobox", { name: "配乐 / 音效 执行路径" }), "external");
     await user.selectOptions(screen.getByRole("combobox", { name: "B-roll Adapter" }), "pexels_video");
+    await user.click(screen.getByRole("button", { name: "完成" }));
+    await user.click(screen.getByRole("button", { name: "配置旁白" }));
+    await user.selectOptions(screen.getByRole("combobox", { name: "旁白 执行路径" }), "external");
     await user.selectOptions(screen.getByRole("combobox", { name: "旁白 Adapter" }), "google_tts");
+    await user.click(screen.getByRole("button", { name: "完成" }));
+    await user.click(screen.getByRole("button", { name: "配置配乐 / 音效" }));
+    await user.selectOptions(screen.getByRole("combobox", { name: "配乐 / 音效 执行路径" }), "external");
     await user.selectOptions(screen.getByRole("combobox", { name: "配乐 / 音效 Adapter" }), "freesound_preview");
+    await user.click(screen.getByRole("button", { name: "完成" }));
     await user.click(screen.getByRole("button", { name: "修改分镜规划配置" }));
-    await user.click(screen.getByText("Prompt 版本管理"));
-    await user.type(screen.getByPlaceholderText("例如：脚本生成·强化冲突 v2"), "分镜规划 v2");
-    await user.type(screen.getByPlaceholderText("例如：强化开头钩子和人物动机"), "保留已有能力草稿");
-    await user.type(screen.getByPlaceholderText("例如：开头 3 秒必须提出冲突；结尾保留审核所需的事实依据。"), "生成可审核脚本。");
-    await user.click(screen.getByRole("button", { name: "登记新版本" }));
+    await user.click(screen.getByRole("button", { name: "管理 Prompt 版本" }));
+    const manager = screen.getByRole("dialog", { name: "管理分镜规划版本" });
+    await user.click(within(manager).getByRole("button", { name: "登记新版本" }));
+    await user.type(within(manager).getByPlaceholderText("例如：脚本生成·强化冲突 v2"), "分镜规划 v2");
+    await user.type(within(manager).getByPlaceholderText("例如：强化开头钩子和人物动机"), "保留已有能力草稿");
+    await user.type(within(manager).getByPlaceholderText("例如：开头 3 秒必须提出冲突；结尾保留审核所需的事实依据。"), "生成可审核脚本。");
+    await user.click(within(manager).getByRole("button", { name: "保存新版本" }));
+    await user.click(screen.getByRole("button", { name: "返回分镜配置" }));
+    await user.click(screen.getByRole("button", { name: "关闭分镜规划配置" }));
 
-    for (const name of ["启用静态视觉 / 图片生成", "启用A-roll", "启用B-roll", "启用旁白", "启用配乐 / 音效"]) {
+    for (const name of ["启用图片生成", "启用A-roll", "启用B-roll", "启用旁白", "启用配乐 / 音效"]) {
       expect((screen.getByRole("checkbox", { name }) as HTMLInputElement).checked).toBe(true);
     }
+    await user.click(screen.getByRole("button", { name: "配置B-roll" }));
     expect((screen.getByRole("combobox", { name: "B-roll Adapter" }) as HTMLSelectElement).value).toBe("pexels_video");
+    await user.click(screen.getByRole("button", { name: "完成" }));
+    await user.click(screen.getByRole("button", { name: "配置旁白" }));
     expect((screen.getByRole("combobox", { name: "旁白 Adapter" }) as HTMLSelectElement).value).toBe("google_tts");
+    await user.click(screen.getByRole("button", { name: "完成" }));
+    await user.click(screen.getByRole("button", { name: "配置配乐 / 音效" }));
     expect((screen.getByRole("combobox", { name: "配乐 / 音效 Adapter" }) as HTMLSelectElement).value).toBe("freesound_preview");
+    await user.click(screen.getByRole("button", { name: "完成" }));
+    await user.click(screen.getByRole("button", { name: "修改分镜规划配置" }));
     expect((screen.getByRole("combobox", { name: "分镜规划 Prompt Harness" }) as HTMLSelectElement).value).toBe("harness-storyboard-2");
   });
 
@@ -259,7 +291,7 @@ describe("账号配置工作区", () => {
 
     const dialog = screen.getByRole("dialog");
     expect(within(dialog).getByRole("combobox", { name: "分镜规划 Prompt Harness" })).toBeTruthy();
-    expect(within(dialog).getByRole("heading", { name: "登记新版本" })).toBeTruthy();
+    expect(within(dialog).getByRole("button", { name: "管理 Prompt 版本" })).toBeTruthy();
     await user.click(within(dialog).getByRole("button", { name: "关闭分镜规划配置" }));
     expect(screen.queryByRole("dialog")).toBeNull();
   });

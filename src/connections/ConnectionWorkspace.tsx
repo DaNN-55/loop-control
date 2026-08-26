@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import type { Database } from "../lib/database.types";
 
@@ -43,10 +43,14 @@ export function ExternalConnectionPicker({ adapter, connections, isPending = fal
   const [rotationSecret, setRotationSecret] = useState("");
   const [error, setError] = useState("");
   const compatibleConnections = connections.filter((connection) => connection.provider === provider && connection.adapter === adapter);
-  const compatibleVersions = versions.filter((version) => version.provider === provider && version.adapter === adapter && version.is_current && version.status === "verified" && !version.revoked_at);
-  const selectedVersion = compatibleVersions.find((version) => version.id === selectedVersionId);
+  const compatibleVersions = versions.filter((version) => version.provider === provider && version.adapter === adapter && version.is_current && version.status === "verified" && !version.revoked_at).sort((left, right) => right.version - left.version);
+  const selectedVersion = compatibleVersions.find((version) => version.id === selectedVersionId) ?? compatibleVersions[0];
   const connectionNames = new Map(compatibleConnections.map((connection) => [connection.id, connection.name]));
-  const selectedConnection = selectedVersion ? compatibleConnections.find((connection) => connection.id === selectedVersion.connection_id) : undefined;
+  const selectedConnection = selectedVersion ? compatibleConnections.find((connection) => connection.id === selectedVersion.connection_id) : compatibleConnections[0];
+
+  useEffect(() => {
+    if (selectedVersion && selectedVersion.id !== selectedVersionId) onSelectVersion(selectedVersion.id);
+  }, [onSelectVersion, selectedVersion, selectedVersionId]);
 
   async function create(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -58,6 +62,7 @@ export function ExternalConnectionPicker({ adapter, connections, isPending = fal
         setName("");
         setSecret("");
         if (onTestConnection) await onTestConnection(connection.id);
+        if (connection.current_version_id) onSelectVersion(connection.current_version_id);
       }
     } catch (cause) { setError(cause instanceof Error ? cause.message : "无法创建外部连接。"); }
   }
@@ -72,11 +77,10 @@ export function ExternalConnectionPicker({ adapter, connections, isPending = fal
     } catch (cause) { setError(cause instanceof Error ? cause.message : "无法轮换外部连接版本。"); }
   }
 
-  return <div className="external-connection-picker" aria-label={`${label}连接选择`}>
-    <label><span>已验证连接版本</span><select aria-label={`${label} 外部连接`} disabled={isPending} onChange={(event) => onSelectVersion(event.target.value)} value={selectedVersionId}><option value="">请选择已验证连接</option>{compatibleVersions.map((version) => <option key={version.id} value={version.id}>{connectionNames.get(version.connection_id) ?? "Owner 连接"} · v{version.version}</option>)}</select></label>
+  return <div className="external-connection-picker" aria-label={`${label}连接`}>
+    {selectedConnection ? <section className="external-connection-current"><div><span>当前连接</span><strong>{connectionNames.get(selectedConnection.id) ?? "Owner 连接"}{selectedVersion ? ` · v${selectedVersion.version}` : " · 待验证"}</strong></div>{onTestConnection ? <button className="button button-secondary button-small" disabled={isPending} onClick={() => void onTestConnection(selectedConnection.id)} type="button">重新测试</button> : null}</section> : onCreateConnection ? <form className="external-connection-create" onSubmit={(event) => void create(event)}><p>创建并测试一条当前连接；验证通过后会直接用于此能力。</p><label>连接名称<input aria-label="新连接名称" onChange={(event) => setName(event.target.value)} required value={name} /></label><label>认证材料<input aria-label="新连接认证材料" autoComplete="off" onChange={(event) => setSecret(event.target.value)} required type="password" value={secret} /></label><button className="button button-secondary button-small" disabled={isPending || !name.trim() || !secret.trim()} type="submit">创建并测试连接</button></form> : null}
     {officialEndpoint || selectedVersion ? <p className="field-hint">官方 Endpoint：{officialEndpoint ?? selectedVersion?.endpoint}</p> : null}
-    {onCreateConnection ? <details><summary>创建并测试新连接</summary><form onSubmit={(event) => void create(event)}><label>连接名称<input aria-label="新连接名称" onChange={(event) => setName(event.target.value)} required value={name} /></label><label>认证材料<input aria-label="新连接认证材料" autoComplete="off" onChange={(event) => setSecret(event.target.value)} required type="password" value={secret} /></label><button className="button button-secondary button-small" disabled={isPending || !name.trim() || !secret.trim()} type="submit">保存并测试</button></form></details> : null}
-    {selectedConnection && onRotateConnection ? <details><summary>轮换当前连接</summary><label>新的认证材料<input aria-label="新的认证材料" autoComplete="off" onChange={(event) => setRotationSecret(event.target.value)} type="password" value={rotationSecret} /></label><button className="button button-secondary button-small" disabled={isPending || !rotationSecret.trim()} onClick={() => void rotate()} type="button">创建新版本并测试</button></details> : null}
+    {selectedConnection && onRotateConnection ? <details><summary>更新认证材料</summary><label>新的认证材料<input aria-label="新的认证材料" autoComplete="off" onChange={(event) => setRotationSecret(event.target.value)} type="password" value={rotationSecret} /></label><button className="button button-secondary button-small" disabled={isPending || !rotationSecret.trim()} onClick={() => void rotate()} type="button">创建新版本并测试</button></details> : null}
     {error ? <p className="form-error" role="alert">{error}</p> : null}
   </div>;
 }
