@@ -835,7 +835,6 @@ async function assetRootForOwnedAccountBlueprint(input: { accountId: string; aut
 }
 
 function localWorkerServiceRoleKey(): string | undefined {
-  if (process.env.SUPABASE_SERVICE_ROLE_KEY?.trim()) return process.env.SUPABASE_SERVICE_ROLE_KEY.trim();
   try {
     const workerEnv = readFileSync(resolve("n8n", "worker.env.local"), "utf8");
     return workerEnv.match(/^SUPABASE_SERVICE_ROLE_KEY=(.+)$/m)?.[1]?.trim() || undefined;
