@@ -1,5 +1,5 @@
 import { workerPreflightVersion, type WorkerPreflightCheck, type WorkerPreflightResult, type WorkerPreflightStatus, type WorkerTaskPackage } from "./contracts.js";
-import { adapterRegistration, isOwnerManagedConnection, localAdapterRegistrationsForCapability, mediaCapabilityForCapability, mediaCapabilityForKey, mediaCapabilityKeys, registeredAdaptersForCapability, type ExecutionPath } from "./adapterRegistry.js";
+import { adapterRegistration, isOwnerManagedConnection, localAdapterReadinessKey, localAdapterRegistrationsForCapability, mediaCapabilityForCapability, mediaCapabilityForKey, mediaCapabilityKeys, registeredAdaptersForCapability, type ExecutionPath, type LocalAdapterRegistration } from "./adapterRegistry.js";
 
 export interface RuntimeCapability {
   capability: string;
@@ -34,6 +34,12 @@ export interface RuntimePreflightEnvironment {
   localAdapters?: Record<string, RuntimeDependencyStatus>;
   modelPermissions?: Record<string, RuntimeDependencyStatus>;
 }
+
+export type ResolvedRuntimeCapability =
+  | { kind: "configuration_error"; capability: RuntimeCapability; error: string }
+  | { kind: "local_adapter"; capability: RuntimeCapability; registration?: LocalAdapterRegistration; readinessKey: string }
+  | { kind: "unregistered_execution"; capability: RuntimeCapability }
+  | { kind: "registered_execution"; capability: RuntimeCapability };
 
 const legacyRegisteredAdapters = new Set([
   "codex:codex",
@@ -99,34 +105,44 @@ export function runtimeCapabilityFromTask(taskPackage: WorkerTaskPackage): Runti
   };
 }
 
+export function resolveRuntimeCapability(capability: RuntimeCapability): ResolvedRuntimeCapability {
+  const configurationError = configurationErrorFor(capability);
+  if (configurationError) return { kind: "configuration_error", capability, error: configurationError };
+
+  if (capability.executionPath === "local") {
+    const registration = localAdapterRegistrationsForCapability(capability.capability).find((candidate) => candidate.provider === capability.provider && candidate.id === capability.adapter);
+    return { kind: "local_adapter", capability, registration, readinessKey: localAdapterReadinessKey(capability.provider, capability.adapter ?? "") };
+  }
+
+  const mediaCapability = mediaCapabilityForCapability(capability.capability);
+  const registered = mediaCapability?.workerAvailable === false ? false : capability.adapter
+    ? registeredAdaptersForCapability(capability.capability).some((registration) => registration.provider === capability.provider && registration.id === capability.adapter) || (!mediaCapability && legacyRegisteredAdapters.has(`${capability.provider}:${capability.adapter}`))
+    : capability.provider === "codex" || capability.provider === "hyperframes" || capability.provider === "ffmpeg";
+  return registered ? { kind: "registered_execution", capability } : { kind: "unregistered_execution", capability };
+}
+
 export function createRuntimePreflight(capabilities: RuntimeCapability[], environment: RuntimePreflightEnvironment = {}): WorkerPreflightResult {
   const checks: WorkerPreflightResult["checks"] = [];
   for (const capability of capabilities) {
-    const configurationError = configurationErrorFor(capability);
-    if (configurationError) {
-      checks.push({ capability: capability.capability, check: "blueprint_configuration", phase: "preflight", status: "blocked", reason: configurationError, action: "edit_blueprint", scope: "blueprint" });
+    const resolved = resolveRuntimeCapability(capability);
+    if (resolved.kind === "configuration_error") {
+      checks.push({ capability: capability.capability, check: "blueprint_configuration", phase: "preflight", status: "blocked", reason: resolved.error, action: "edit_blueprint", scope: "blueprint" });
       continue;
     }
 
-    const mediaCapability = mediaCapabilityForCapability(capability.capability);
-    if (capability.executionPath === "local") {
-      const localRegistration = localAdapterRegistrationsForCapability(capability.capability).find((registration) => registration.provider === capability.provider && registration.id === capability.adapter);
-      const localKey = `${capability.provider}:${capability.adapter ?? ""}`;
-      if (!localRegistration || !localRegistration.workerAvailable) {
-        checks.push({ adapter: capability.adapter, capability: capability.capability, check: "local_adapter_readiness", phase: "preflight", status: "unavailable", reason: `当前 Worker 未部署或未注册本地 ${capability.provider}/${capability.adapter ?? "Adapter"}。`, action: "contact_environment_admin", scope: "worker" });
+    if (resolved.kind === "local_adapter") {
+      if (!resolved.registration || !resolved.registration.workerAvailable) {
+        checks.push({ adapter: capability.adapter, capability: capability.capability, check: "local_adapter_readiness", phase: "preflight", provider: capability.provider, status: "unavailable", reason: `当前 Worker 未部署或未注册本地 ${capability.provider}/${capability.adapter ?? "Adapter"}。`, action: "contact_environment_admin", scope: "worker" });
         continue;
       }
-      if (environment.localAdapters && Object.prototype.hasOwnProperty.call(environment.localAdapters, localKey)) {
-        checks.push({ ...dependencyCheck(capability.capability, "local_adapter_readiness", environment.localAdapters[localKey]), adapter: capability.adapter });
+      if (environment.localAdapters && Object.prototype.hasOwnProperty.call(environment.localAdapters, resolved.readinessKey)) {
+        checks.push({ ...dependencyCheck(capability.capability, "local_adapter_readiness", environment.localAdapters[resolved.readinessKey]), adapter: capability.adapter, provider: capability.provider });
       } else {
-        checks.push({ adapter: capability.adapter, capability: capability.capability, check: "local_adapter_readiness", phase: "preflight", status: "unavailable", reason: `本地 ${localKey} 尚未完成当前 Worker 就绪探测。`, action: "contact_environment_admin", scope: "worker" });
+        checks.push({ adapter: capability.adapter, capability: capability.capability, check: "local_adapter_readiness", phase: "preflight", provider: capability.provider, status: "unavailable", reason: `本地 ${resolved.readinessKey} 尚未完成当前 Worker 就绪探测。`, action: "contact_environment_admin", scope: "worker" });
       }
       continue;
     }
-    const registrationValid = mediaCapability?.workerAvailable === false ? false : capability.adapter
-      ? registeredAdaptersForCapability(capability.capability).some((registration) => registration.provider === capability.provider && registration.id === capability.adapter) || (!mediaCapability && legacyRegisteredAdapters.has(`${capability.provider}:${capability.adapter}`))
-      : capability.provider === "codex" || capability.provider === "hyperframes" || capability.provider === "ffmpeg";
-    if (!registrationValid) {
+    if (resolved.kind === "unregistered_execution") {
       checks.push({ capability: capability.capability, check: "capability_registration", phase: "preflight", status: "unavailable", reason: `当前 Worker 未注册 ${capability.provider}/${capability.adapter ?? "default"} 执行路径。`, action: "contact_environment_admin", scope: "worker" });
       continue;
     }

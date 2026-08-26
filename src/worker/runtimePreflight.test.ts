@@ -1,8 +1,19 @@
 import { describe, expect, it } from "vitest";
 import { mediaCapabilityForKey, mediaCapabilityKeys } from "./adapterRegistry";
-import { createRuntimePreflight, runtimeCapabilitiesFromBlueprintPolicy } from "./runtimePreflight";
+import { createRuntimePreflight, resolveRuntimeCapability, runtimeCapabilitiesFromBlueprintPolicy } from "./runtimePreflight";
 
 describe("runtime preflight", () => {
+  it("先把能力收敛为单一执行计划，再由预检执行检查", () => {
+    expect(resolveRuntimeCapability({ capability: "a_roll_generation", executionPath: "local", provider: "hyperframes", adapter: "hyperframes_card_video", model: "hyperframes@0.7.109", promptVersion: "card-video-v1" })).toMatchObject({
+      kind: "local_adapter",
+      readinessKey: "hyperframes:hyperframes_card_video",
+    });
+    expect(resolveRuntimeCapability({ capability: "b_roll_generation", provider: "pexels", adapter: "pexels_video" })).toMatchObject({
+      kind: "configuration_error",
+      error: "能力 b_roll_generation 缺少 Provider、模型或 Prompt 版本。",
+    });
+  });
+
   it("按执行路径跳过人工素材，并把缺少路径指向蓝图", () => {
     const capabilities = runtimeCapabilitiesFromBlueprintPolicy({
       a_roll: { execution_path: "manual" },
@@ -178,7 +189,7 @@ describe("runtime preflight", () => {
     ]));
   });
 
-  it("把未解析的 Owner 连接引用指向蓝图，把认证失败指向连接管理", () => {
+  it("把未解析的 Owner 连接引用和认证失败都指向连接管理", () => {
     const connectionId = "11111111-1111-4111-8111-111111111111";
     const capability = {
       capability: "b_roll_generation",
@@ -191,7 +202,7 @@ describe("runtime preflight", () => {
     };
     const missing = createRuntimePreflight([capability], { connectionReferences: { [connectionId]: { available: false, detail: "连接引用不存在。" } }, credentials: { [connectionId]: false } });
     expect(missing.checks).toEqual(expect.arrayContaining([
-      expect.objectContaining({ check: "connection_reference", action: "edit_blueprint", scope: "blueprint" }),
+      expect.objectContaining({ check: "connection_reference", action: "manage_connection", scope: "connection" }),
       expect.objectContaining({ check: "credential_presence", action: "manage_connection" }),
     ]));
     const invalid = createRuntimePreflight([capability], { connectionReferences: { [connectionId]: { available: true, detail: "连接引用已解析。" } }, credentials: { [connectionId]: true }, credentialValidity: { [connectionId]: { available: false, detail: "Pexels 拒绝认证。" } } });
@@ -273,14 +284,13 @@ describe("runtime preflight", () => {
 
   it("本地 HyperFrames 卡片视频通过 A/B-roll 注册检查且不要求凭据", () => {
     const result = createRuntimePreflight(runtimeCapabilitiesFromBlueprintPolicy({
-      a_roll: { executor: { provider: "hyperframes", adapter: "hyperframes_card_video", model: "hyperframes@0.7.109", prompt_version: "card-video-v1" }, allowed_tools: ["read", "write"] },
-      b_roll: { executor: { provider: "hyperframes", adapter: "hyperframes_card_video", model: "hyperframes@0.7.109", prompt_version: "card-video-v1" }, allowed_tools: ["read", "write"] },
-    }), { commands: { hyperframes: { available: true, detail: "HyperFrames 已安装。" } } });
+      a_roll: { execution_path: "local", executor: { provider: "hyperframes", adapter: "hyperframes_card_video", model: "hyperframes@0.7.109", prompt_version: "card-video-v1" }, allowed_tools: ["read", "write"] },
+      b_roll: { execution_path: "local", executor: { provider: "hyperframes", adapter: "hyperframes_card_video", model: "hyperframes@0.7.109", prompt_version: "card-video-v1" }, allowed_tools: ["read", "write"] },
+    }), { localAdapters: { "hyperframes:hyperframes_card_video": { available: true, detail: "HyperFrames 已就绪。" } } });
 
     expect(result.checks).toEqual(expect.arrayContaining([
-      expect.objectContaining({ capability: "a_roll_generation", check: "capability_registration", status: "passed" }),
-      expect.objectContaining({ capability: "b_roll_generation", check: "capability_registration", status: "passed" }),
-      expect.objectContaining({ capability: "a_roll_generation", check: "command_availability", status: "passed" }),
+      expect.objectContaining({ capability: "a_roll_generation", check: "local_adapter_readiness", provider: "hyperframes", status: "passed" }),
+      expect.objectContaining({ capability: "b_roll_generation", check: "local_adapter_readiness", provider: "hyperframes", status: "passed" }),
     ]));
     expect(result.checks.some((check) => check.capability === "a_roll_generation" && check.check === "credential_presence")).toBe(false);
   });

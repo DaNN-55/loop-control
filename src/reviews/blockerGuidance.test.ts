@@ -38,6 +38,13 @@ describe("Worker 阻塞项指导", () => {
     expect(guidance.location).toBe("当前生产单 → 专用媒体配置");
   });
 
+  it("按结构化可修复目标指向媒体配置，不读取错误文案", () => {
+    const guidance = workerBlockerGuidance({ action: "edit_blueprint", capability: "b_roll_generation", code: "blueprint_configuration", detail: "需要更新配置。" });
+
+    expect(guidance.title).toBe("媒体适配器配置不完整");
+    expect(guidance.primaryAction).toBe("blueprint");
+  });
+
   it("不会把执行重试耗尽误导为配置修复", () => {
     const guidance = workerBlockerGuidance({ code: "a_roll_retries_exhausted", detail: "模型不支持当前账户。" });
 

@@ -1,4 +1,5 @@
 import type { WorkerBlocker } from "./reviewSelectors";
+import { repairTargetForBlocker, type RepairTarget } from "./repairTarget";
 
 export interface WorkerBlockerGuidance {
   primaryAction?: "blueprint" | "connection";
@@ -17,7 +18,7 @@ function specializedMediaBlueprintGuidance(blocker: Pick<WorkerBlocker, "detail"
     title: "媒体适配器配置不完整",
     summary: "这个媒体任务缺少 Provider、Adapter、预算或其他必填字段，需要补齐当前生产单的冻结配置。",
     resolution: [
-      "点击“修改配置并继续当前生产单”，在“媒体适配器”中找到对应的 A-roll、B-roll、旁白或配乐 / 音效卡片。",
+      "点击“修改配置并继续当前生产单”，在“媒体适配器”中找到对应的图片生成、A-roll、B-roll、旁白或配乐 / 音效卡片。",
       "按卡片提示补齐 Provider、Adapter、模型、Prompt 版本，以及该能力要求的预算、并发或声音参数。",
       "如果当前系列有同名媒体规则，先在“系列”页修正它；否则直接应用到当前生产单。已完成的工作和审核记录保留，只重建受阻任务，也不会新建蓝图版本。",
     ],
@@ -44,7 +45,7 @@ function specializedMediaUnavailableGuidance(blocker: Pick<WorkerBlocker, "detai
   };
 }
 
-function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "action" | "check" | "status">): WorkerBlockerGuidance | undefined {
+function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "action" | "check" | "status">, repairTarget: RepairTarget | null): WorkerBlockerGuidance | undefined {
   if (blocker.action === "manage_connection") {
     return {
       primaryAction: "connection",
@@ -148,6 +149,7 @@ function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "ac
     };
   }
   if (blocker.action === "edit_blueprint") {
+    if (repairTarget?.kind === "media") return specializedMediaBlueprintGuidance(blocker);
     return {
       primaryAction: "blueprint",
       title: "蓝图能力配置需要修复",
@@ -173,11 +175,12 @@ function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "ac
   return undefined;
 }
 
-export function workerBlockerGuidance(blocker: Pick<WorkerBlocker, "code" | "detail" | "action" | "check" | "status">): WorkerBlockerGuidance {
-  const structured = structuredPreflightGuidance(blocker);
+export function workerBlockerGuidance(blocker: Pick<WorkerBlocker, "capability" | "code" | "detail" | "action" | "check" | "status">): WorkerBlockerGuidance {
+  const repairTarget = repairTargetForBlocker(blocker);
+  const structured = structuredPreflightGuidance(blocker, repairTarget);
   if (structured) return structured;
   const normalized = `${blocker.code} ${blocker.detail}`.toLowerCase();
-  const isSpecializedMedia = /a[_-]?roll|b[_-]?roll|narration|soundtrack|sound.?effect/.test(normalized);
+  const isSpecializedMedia = repairTarget?.kind === "media";
 
   if (isSpecializedMedia && /retries_exhausted|重试耗尽|model.*not supported|模型.*不支持/.test(normalized)) {
     return {

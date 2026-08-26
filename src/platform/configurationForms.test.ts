@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   blueprintFormToPolicy,
   blueprintPolicyToForm,
+  mediaAdapterConfiguration,
   seriesFormToRules,
   seriesRulesToForm,
   validateMediaAdapter,
@@ -10,6 +11,12 @@ import {
 } from "./configurationFormValues";
 
 describe("账号蓝图表单转换", () => {
+  it("由平台能力配置统一决定账号可选字段和保存规则", () => {
+    expect(mediaAdapterConfiguration("b_roll")).toMatchObject({ budgetMode: "per_shot", filterFormToolsByAccount: true, filterPolicyToolsByAccount: true, useAccountToolFallback: true });
+    expect(mediaAdapterConfiguration("narration")).toMatchObject({ budgetMode: "episode", filterFormToolsByAccount: true, filterPolicyToolsByAccount: true, configurationFields: ["max_attempts", "voice", "voice_speaking_rate"] });
+    expect(mediaAdapterConfiguration("soundtrack")).toMatchObject({ budgetMode: "episode", filterFormToolsByAccount: false, filterPolicyToolsByAccount: true, useAccountToolFallback: true });
+  });
+
   it("不在运行时替旧 Pexels 配置静默选择连接", () => {
     const form = blueprintPolicyToForm({
       b_roll: {

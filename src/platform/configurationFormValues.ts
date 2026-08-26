@@ -54,6 +54,17 @@ const seriesKnownKeys = new Set(["positioning", "format", "characters", "locatio
 const executorKeys = ["script_writing", "storyboard_planning"] as const;
 const visibleToolKeys = new Set(["read", "write"]);
 const unrestrictedBudgetCents = 2147483647;
+const mediaAdapterCodecs = {
+  static_visual: { budgetMode: "episode", filterFormToolsByAccount: false, filterPolicyToolsByAccount: false, useAccountToolFallback: false },
+  a_roll: { budgetMode: "episode", filterFormToolsByAccount: false, filterPolicyToolsByAccount: false, useAccountToolFallback: false },
+  b_roll: { budgetMode: "per_shot", filterFormToolsByAccount: true, filterPolicyToolsByAccount: true, useAccountToolFallback: true },
+  narration: { budgetMode: "episode", filterFormToolsByAccount: true, filterPolicyToolsByAccount: true, useAccountToolFallback: true },
+  soundtrack: { budgetMode: "episode", filterFormToolsByAccount: false, filterPolicyToolsByAccount: true, useAccountToolFallback: true },
+} as const satisfies Record<MediaAdapterKey, { budgetMode: "episode" | "per_shot"; filterFormToolsByAccount: boolean; filterPolicyToolsByAccount: boolean; useAccountToolFallback: boolean }>;
+
+export function mediaAdapterConfiguration(key: MediaAdapterKey) {
+  return { ...mediaCapabilityForKey(key), ...mediaAdapterCodecs[key] };
+}
 
 function objectValue(value: Json | undefined): JsonObject {
   return value && typeof value === "object" && !Array.isArray(value) ? value as JsonObject : {};
@@ -118,18 +129,19 @@ function formExecutor(value: Json | undefined): ExecutorForm {
   return { provider: stringValue(executor.provider) || "codex", adapter: stringValue(executor.adapter) || "codex", harnessId: stringValue(executor.harness_id), model: stringValue(executor.model) || "gpt-5.6-codex", promptVersion: stringValue(executor.prompt_version) || "unversioned" };
 }
 
-function formMediaAdapter(value: Json | undefined, fallbackAllowedTools: readonly string[] = [], filterAllowedTools = true): MediaAdapterForm {
+function formMediaAdapter(key: MediaAdapterKey, value: Json | undefined, fallbackAllowedTools: readonly string[] = []): MediaAdapterForm {
+  const codec = mediaAdapterConfiguration(key);
   const mediaAdapter = objectValue(value);
   const executor = objectValue(mediaAdapter.executor);
   const voice = objectValue(mediaAdapter.voice);
   const allowedTools = stringArray(mediaAdapter.allowed_tools);
-  const visibleAllowedTools = filterAllowedTools ? allowedTools.filter((tool) => visibleToolKeys.has(tool)) : allowedTools;
+  const visibleAllowedTools = codec.filterFormToolsByAccount ? allowedTools.filter((tool) => visibleToolKeys.has(tool)) : allowedTools;
   const registration = adapterRegistration(stringValue(executor.provider), stringValue(executor.adapter));
   const configuredPath = stringValue(mediaAdapter.execution_path);
   const executionPath = executionPathKeys.includes(configuredPath as ExecutionPath)
     ? configuredPath as ExecutionPath
     : registration?.requiresNetwork ? "external" : "";
-  const effectiveAllowedTools = registration && fallbackAllowedTools.length ? fallbackAllowedTools : visibleAllowedTools;
+  const effectiveAllowedTools = registration && codec.useAccountToolFallback && fallbackAllowedTools.length ? fallbackAllowedTools : visibleAllowedTools;
   return {
     ...(executionPath ? { executionPath } : {}),
     provider: stringValue(executor.provider),
@@ -172,7 +184,7 @@ function positiveNumber(source: string, label: string): number {
 
 export function validateMediaAdapter(key: MediaAdapterKey, form: MediaAdapterForm, options: { availableExternalConnectionVersionIds?: readonly string[] } = {}): void {
   if (!mediaAdapterHasValues(form)) return;
-  const definition = mediaCapabilityForKey(key);
+  const definition = mediaAdapterConfiguration(key);
   const { configurationFields, label } = definition;
   if (!form.executionPath) throw new Error(`${label}适配器必须先选择执行路径。`);
   if (form.executionPath === "manual") return;
@@ -227,7 +239,8 @@ export function mediaAdapterStatus(key: MediaAdapterKey, form: MediaAdapterForm)
   }
 }
 
-function mediaAdapterToPolicy(key: MediaAdapterKey, form: MediaAdapterForm, existing: JsonObject, accountAllowedTools?: readonly string[]): JsonObject {
+function mediaAdapterToPolicy(key: MediaAdapterKey, form: MediaAdapterForm, existing: JsonObject, accountAllowedTools: readonly string[]): JsonObject {
+  const codec = mediaAdapterConfiguration(key);
   const policy: JsonObject = { ...existing };
   policy.execution_path = form.executionPath;
   if (form.executionPath === "manual") {
@@ -251,8 +264,8 @@ function mediaAdapterToPolicy(key: MediaAdapterKey, form: MediaAdapterForm, exis
   }
   if (form.allowedTools.trim()) {
     const requestedTools = commaSeparatedValues(form.allowedTools);
-    const effectiveTools = accountAllowedTools ? requestedTools.filter((tool) => accountAllowedTools.includes(tool)) : requestedTools;
-    if (accountAllowedTools && !effectiveTools.length) throw new Error("媒体能力至少需要一个账号级工具。");
+    const effectiveTools = codec.filterPolicyToolsByAccount ? requestedTools.filter((tool) => accountAllowedTools.includes(tool)) : requestedTools;
+    if (codec.filterPolicyToolsByAccount && !effectiveTools.length) throw new Error("媒体能力至少需要一个账号级工具。");
     policy.allowed_tools = effectiveTools;
   }
   if (form.credentialRef.trim()) policy.credential_ref = form.credentialRef.trim();
@@ -260,7 +273,7 @@ function mediaAdapterToPolicy(key: MediaAdapterKey, form: MediaAdapterForm, exis
   delete policy.budget_cents;
   delete policy.per_shot_budget_cents;
   delete policy.total_budget_cents;
-  if (key === "b_roll") {
+  if (codec.budgetMode === "per_shot") {
     policy.per_shot_budget_cents = unrestrictedBudgetCents;
     policy.total_budget_cents = unrestrictedBudgetCents;
   } else {
@@ -298,11 +311,11 @@ export function blueprintPolicyToForm(policy: Json): BlueprintFormValues {
       storyboard_planning: formExecutor(executors.storyboard_planning),
     },
     mediaAdapters: {
-      static_visual: formMediaAdapter(value.static_visual, [], false),
-      a_roll: formMediaAdapter(value.a_roll, [], false),
-      b_roll: formMediaAdapter(value.b_roll, fallbackMediaAdapterTools),
-      narration: formMediaAdapter(value.narration, fallbackMediaAdapterTools),
-      soundtrack: formMediaAdapter(value.soundtrack, fallbackMediaAdapterTools, false),
+      static_visual: formMediaAdapter("static_visual", value.static_visual, fallbackMediaAdapterTools),
+      a_roll: formMediaAdapter("a_roll", value.a_roll, fallbackMediaAdapterTools),
+      b_roll: formMediaAdapter("b_roll", value.b_roll, fallbackMediaAdapterTools),
+      narration: formMediaAdapter("narration", value.narration, fallbackMediaAdapterTools),
+      soundtrack: formMediaAdapter("soundtrack", value.soundtrack, fallbackMediaAdapterTools),
     },
     advancedJson: blueprintAdvancedJson(value),
   };
@@ -344,8 +357,7 @@ export function blueprintFormToPolicy(form: BlueprintFormValues): Json {
     if (!enabledMediaAdapters.includes(key)) continue;
     const mediaAdapter = form.mediaAdapters[key] ?? defaultMediaAdapterForm(key);
     const hasFormValues = mediaAdapterHasValues(mediaAdapter);
-    const accountAllowedTools = key === "b_roll" || key === "narration" || key === "soundtrack" ? form.allowedTools.filter((tool) => visibleToolKeys.has(tool)) : undefined;
-    result[key] = hasFormValues ? mediaAdapterToPolicy(key, mediaAdapter, existingMediaAdapters[key], accountAllowedTools) : existingMediaAdapters[key];
+    result[key] = hasFormValues ? mediaAdapterToPolicy(key, mediaAdapter, existingMediaAdapters[key], form.allowedTools.filter((tool) => visibleToolKeys.has(tool))) : existingMediaAdapters[key];
   }
   return result as Json;
 }

@@ -16,6 +16,7 @@ export interface WorkerPreflightCheck {
   capability: string;
   check: string;
   phase: WorkerPreflightPhase;
+  provider?: string;
   status: WorkerPreflightStatus;
   reason: string;
   action: WorkerPreflightAction;
