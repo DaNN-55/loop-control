@@ -90,8 +90,10 @@ export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, _seriesR
 export function runtimeCapabilityFromTask(taskPackage: WorkerTaskPackage): RuntimeCapability {
   const sharedPlanning = taskPackage.capability === "storyboard_planning";
   const adapter = taskPackage.aRoll?.adapter ?? taskPackage.media?.adapter ?? (sharedPlanning ? taskPackage.promptHarness?.adapter : undefined);
+  const executionPath = adapter && localAdapterRegistrationsForCapability(taskPackage.capability).some((candidate) => candidate.provider === taskPackage.provider && candidate.id === adapter) ? "local" : undefined;
   return {
     capability: taskPackage.capability,
+    ...(executionPath ? { executionPath } : {}),
     provider: taskPackage.provider,
     ...(adapter ? { adapter } : {}),
     model: taskPackage.model,

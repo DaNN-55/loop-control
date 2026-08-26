@@ -258,6 +258,14 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("grant execute on function public.orchestrate_a_roll_tasks_for_episode(uuid) to service_role;");
   });
 
+  it("按 Episode 的本地 HyperFrames A-roll 会进入 ready 队列", () => {
+    const migration = readFileSync(resolve("supabase/migrations/20260826101000_enable_scoped_local_hyperframes_a_roll.sql"), "utf8");
+
+    expect(migration).toContain("orchestrate_a_roll_tasks_for_episode_without_card_adapter");
+    expect(migration).toContain("set status = 'ready'::public.task_status");
+    expect(migration).toContain("hyperframes_card_video");
+  });
+
   it("B-roll 与 soundtrack 只调度显式 external 或 local 路径", () => {
     const migration = readFileSync(explicitMediaPathMigration, "utf8");
     const bRollPredicate = "coalesce(blueprint.policy #>> '{b_roll,execution_path}', 'external') <> 'manual'";

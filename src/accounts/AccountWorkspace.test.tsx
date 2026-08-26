@@ -229,12 +229,22 @@ describe("账号配置工作区", () => {
 
   it("在 A-roll 尚未配置时，仍使用本机 HyperFrames 状态开放本地路径", async () => {
     const user = userEvent.setup();
-    renderWorkspace({ systemStatus: { dependencies: [{ detail: "hyperframes 0.7.109", name: "HyperFrames", state: "healthy" }], mediaLibrary: { detail: "已挂载", state: "healthy" }, n8n: { detail: "未启动", lastDispatchAt: null, lastEventAt: null, lastHealthCheckAt: null, lastRunAt: null, state: "unknown" }, observedAt: "2026-08-26T00:00:00.000Z" } });
+    const onUpdateBlueprint = vi.fn().mockResolvedValue(blueprint);
+    renderWorkspace({ onUpdateBlueprint, systemStatus: { dependencies: [{ detail: "hyperframes 0.7.109", name: "HyperFrames", state: "healthy" }], mediaLibrary: { detail: "已挂载", state: "healthy" }, n8n: { detail: "未启动", lastDispatchAt: null, lastEventAt: null, lastHealthCheckAt: null, lastRunAt: null, state: "unknown" }, observedAt: "2026-08-26T00:00:00.000Z" } });
 
     await user.click(screen.getByRole("checkbox", { name: "启用A-roll" }));
     await user.click(screen.getByRole("button", { name: "配置A-roll" }));
 
     expect((within(screen.getByRole("dialog")).getByRole("option", { name: "本地" }) as HTMLOptionElement).disabled).toBe(false);
+    await user.selectOptions(screen.getByRole("combobox", { name: "A-roll 执行路径" }), "local");
+    await user.selectOptions(screen.getByRole("combobox", { name: "A-roll 本地 Adapter" }), "hyperframes_card_video");
+    await user.selectOptions(screen.getByRole("combobox", { name: "A-roll 模型" }), "hyperframes@0.7.109");
+    await user.selectOptions(screen.getByRole("combobox", { name: "A-roll 卡片预设" }), "card-video-v1");
+    await user.type(screen.getByRole("spinbutton", { name: "最大尝试次数" }), "2");
+    await user.click(screen.getByRole("button", { name: "完成" }));
+    await user.click(screen.getByRole("button", { name: "保存并检查" }));
+
+    expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ a_roll: expect.objectContaining({ allowed_tools: ["read", "write"] }) }));
   });
 
   it("选择分镜 Prompt Harness 时保存其不可变标识", async () => {

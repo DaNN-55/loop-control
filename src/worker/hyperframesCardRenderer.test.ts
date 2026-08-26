@@ -26,5 +26,7 @@ describe("HyperFrames 卡片视频", () => {
     expect(result).toMatchObject({ status: "completed", artifacts: [{ artifactType: "a_roll_video", relativePath: "episodes/episode-1/a-roll/shot-1.mp4" }] });
     expect(validateMp4).toHaveBeenCalledWith(expect.stringMatching(/episodes\/episode-1\/a-roll\/shot-1\.mp4$/), 3);
     await expect(readFile(join(run.mock.calls[0][1][1], "index.html"), "utf8")).resolves.toContain("雨落在旧街。");
+    await expect(readFile(join(run.mock.calls[0][1][1], "index.html"), "utf8")).resolves.toContain('data-composition-id="card-video-shot-1"');
+    await expect(readFile(join(run.mock.calls[0][1][1], "assets", "gsap.min.js"), "utf8")).resolves.toContain("gsap");
   });
 });

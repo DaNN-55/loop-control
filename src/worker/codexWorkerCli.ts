@@ -21,7 +21,7 @@ import { executeHyperframesReviewRender } from "./hyperframesReviewRenderer.js";
 import { executeHyperframesFinalRender } from "./hyperframesFinalRenderer.js";
 import { executeHyperframesCardVideo } from "./hyperframesCardRenderer.js";
 import { readTaskIdArgument } from "./taskClaimArguments.js";
-import { createRuntimePreflight, credentialEnvironmentForReference, runtimeCapabilityFromTask, runtimeCommandArguments, runtimeCommandForProvider } from "./runtimePreflight.js";
+import { createRuntimePreflight, credentialEnvironmentForReference, localAdapterReadinessFromCommands, runtimeCapabilityFromTask, runtimeCommandArguments, runtimeCommandForProvider } from "./runtimePreflight.js";
 import { probeCodexModel, probeProviderConnection } from "./runtimeProbes.js";
 
 const supabaseUrl = requiredEnvironment("SUPABASE_URL");
@@ -153,6 +153,7 @@ async function preflightTask(taskPackage: WorkerTaskPackage): Promise<WorkerPref
   const command = runtimeCommandForProvider(taskPackage.provider);
   const commandStatus = command ? await workerCommandStatus(command) : undefined;
   const commands = command && commandStatus ? { [command]: commandStatus } : undefined;
+  const localAdapters = commands ? localAdapterReadinessFromCommands(capabilities, commands) : undefined;
   const modelProbe = taskPackage.provider === "codex" && commandStatus?.available
     ? await probeCodexModel(taskPackage.model, (probeCommand, argumentsList, options) => runCommandWithOutput(probeCommand, argumentsList, options?.timeoutMs), tmpdir())
     : undefined;
@@ -165,6 +166,7 @@ async function preflightTask(taskPackage: WorkerTaskPackage): Promise<WorkerPref
     credentials: credential ? { [credential]: Boolean(apiKey) } : connectionRef ? { [connectionRef]: Boolean(apiKey) } : undefined,
     ...(connectionRef ? { connectionReferences: { [connectionRef]: apiKey ? { available: true, detail: "外部连接引用已解析。" } : { available: false, detail: "外部连接秘密不可用。" } } } : {}),
     commands,
+    ...(localAdapters ? { localAdapters } : {}),
     ...(Object.keys(connections).length ? { connections } : {}),
     ...(Object.keys(modelPermissions).length ? { modelPermissions } : {}),
     ...(credentialValidity ? { credentialValidity } : {}),

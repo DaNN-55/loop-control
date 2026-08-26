@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { mediaCapabilityForKey, mediaCapabilityKeys } from "./adapterRegistry";
-import { createRuntimePreflight, localAdapterReadinessFromCommands, resolveRuntimeCapability, runtimeCapabilitiesFromBlueprintPolicy } from "./runtimePreflight";
+import { createRuntimePreflight, localAdapterReadinessFromCommands, resolveRuntimeCapability, runtimeCapabilitiesFromBlueprintPolicy, runtimeCapabilityFromTask } from "./runtimePreflight";
+import type { WorkerTaskPackage } from "./contracts";
 
 describe("runtime preflight", () => {
   it("先把能力收敛为单一执行计划，再由预检执行检查", () => {
@@ -40,6 +41,14 @@ describe("runtime preflight", () => {
     expect(localAdapterReadinessFromCommands([capability], { hyperframes: { available: true, detail: "HyperFrames 已就绪。" } })).toEqual({
       "hyperframes:hyperframes_card_video": { available: true, detail: "HyperFrames 已就绪。" },
     });
+  });
+
+  it("从冻结的本地 A-roll 任务恢复本地执行路径", () => {
+    const capability = runtimeCapabilityFromTask({ capability: "a_roll_generation", provider: "hyperframes", model: "hyperframes@0.7.109", promptVersion: "card-video-v1", aRoll: { adapter: "hyperframes_card_video" } } as WorkerTaskPackage);
+    const commands = { hyperframes: { available: true, detail: "HyperFrames 已就绪。" } };
+
+    expect(capability.executionPath).toBe("local");
+    expect(createRuntimePreflight([capability], { commands, localAdapters: localAdapterReadinessFromCommands([capability], commands) }).checks).toContainEqual(expect.objectContaining({ capability: "a_roll_generation", check: "local_adapter_readiness", status: "passed" }));
   });
 
   it("从蓝图读取核心能力和已启用媒体能力", () => {
