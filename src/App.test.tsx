@@ -170,6 +170,12 @@ describe("approval console", () => {
     expect(navigationBadgeCounts([episode], [], [])).toEqual({ reviews: 1, publish: 0 });
   });
 
+  it("收起导航文字后仍保留每个入口的可访问名称", () => {
+    render(<NavigationButtons activeNavigation="accounts" onSelect={vi.fn()} />);
+    expect(screen.getByRole("button", { name: "账号" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "发布队列" })).toBeTruthy();
+  });
+
   it("按工作区状态选择首次进入页面", () => {
     expect(initialNavigationForWorkspace({ accounts: [], episodes: [] })).toBe("accounts");
     expect(initialNavigationForWorkspace({ accounts: [{} as Database["public"]["Tables"]["accounts"]["Row"]], episodes: [] })).toBe("accounts");

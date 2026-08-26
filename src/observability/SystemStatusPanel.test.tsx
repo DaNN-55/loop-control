@@ -21,16 +21,22 @@ describe("系统状态面板", () => {
     const user = userEvent.setup();
     render(<SystemStatusPanel report={report} tasks={[blockedTask]} />);
 
-    expect(screen.getByRole("button", { name: /系统状态/ }).textContent).toBe("");
-    await user.hover(screen.getByRole("button", { name: /系统状态/ }));
+    const trigger = screen.getByRole("button", { name: /系统状态/ });
+    expect(trigger.textContent).toBe("");
+    await user.hover(trigger);
     const hoverCard = screen.getByText("Supabase").closest(".system-status-hover-card");
     expect(hoverCard?.querySelectorAll(".system-status-hover-row")).toHaveLength(5);
     expect(hoverCard?.textContent).toContain("Supabase正常");
-    await user.click(screen.getByRole("button", { name: /系统状态/ }));
-    expect(screen.getByRole("dialog", { name: "系统状态详情" })).toBeTruthy();
+    await user.click(trigger);
+    const dialog = screen.getByRole("dialog", { name: "系统状态详情" });
+    expect(dialog.getAttribute("aria-modal")).toBeNull();
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "关闭系统状态详情" }));
     expect(screen.getByText(/n8n 负责编排、通知和健康检查；Worker 负责实际执行/)).toBeTruthy();
     expect(screen.getByText("最近健康检查")).toBeTruthy();
     expect(screen.getByText("1 个阻塞任务需要处理。")).toBeTruthy();
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog", { name: "系统状态详情" })).toBeNull();
+    expect(document.activeElement).toBe(trigger);
   });
 
   it("没有本地报告时显示待确认，而不把未知状态说成正常", () => {

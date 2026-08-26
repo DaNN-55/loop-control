@@ -4,6 +4,20 @@ import { describe, expect, it, vi } from "vitest";
 import { ConnectionWorkspace, ExternalConnectionPicker } from "./ConnectionWorkspace";
 
 describe("外部连接工作区", () => {
+  it("说明连接名称和认证材料应填写的内容", () => {
+    render(<ConnectionWorkspace connections={[]} onCreateConnection={vi.fn()} onTestConnection={vi.fn()} />);
+
+    expect(screen.getByText("连接名称（自定义填写）")).toBeTruthy();
+    expect(screen.getByText("Pexels API Key")).toBeTruthy();
+  });
+
+  it("在蓝图配置中说明新连接应填写的内容", () => {
+    render(<ExternalConnectionPicker adapter="pexels_video" connections={[]} onCreateConnection={vi.fn()} onSelectVersion={vi.fn()} provider="pexels" selectedVersionId="" />);
+
+    expect(screen.getByText("连接名称（自定义填写）")).toBeTruthy();
+    expect(screen.getByText("认证材料（填写对应服务的 API Key）")).toBeTruthy();
+  });
+
   it("从空连接池创建并显式测试 Pexels 连接，表单提交后清空秘密", async () => {
     const user = userEvent.setup();
     const onCreateConnection = vi.fn().mockResolvedValue({ id: "connection-1", name: "主 Pexels", provider: "pexels", adapter: "pexels_video", status: "unverified", created_at: "", created_by: "owner", last_verification_detail: null, last_verified_at: null });

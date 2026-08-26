@@ -22,6 +22,7 @@ import { parseWorkerPreflight, type StoryboardAudioCue, type StoryboardShotManif
 import { manualMaterialChecklistForStoryboard } from "./worker/manualMaterialChecklist";
 import { accountIdentityColor, accountIdentityInitials } from "./platform/accountIdentity";
 import { PaginationControls } from "./ui/PaginationControls";
+import { useDialogFocus } from "./ui/useDialogFocus";
 import { taskTypeLabel } from "./observability/TaskProgressPanel";
 import { SystemStatusPanel, type LocalSystemStatusReport } from "./observability/SystemStatusPanel";
 import { MarkdownPreview } from "./ui/MarkdownPreview";
@@ -229,7 +230,7 @@ export function navigationBadgeCounts(episodes: Episode[], artifacts: Artifact[]
 }
 
 export function NavigationButtons({ activeNavigation, badges = {}, onSelect }: { activeNavigation: NavigationItem; badges?: Partial<Record<NavigationItem, number>>; onSelect: (item: NavigationItem) => void }) {
-  return <>{navigation.map((item) => <button className={`navigation-item ${activeNavigation === item.id ? "is-active" : ""}`} key={item.id} onClick={() => onSelect(item.id)} type="button"><Icon name={item.id} /><span className="navigation-label">{item.label}</span>{badges[item.id] ? <span aria-label={`${badges[item.id]} 个待处理`} className="navigation-badge">{badges[item.id]}</span> : null}</button>)}</>;
+  return <>{navigation.map((item) => <button aria-label={item.label} className={`navigation-item ${activeNavigation === item.id ? "is-active" : ""}`} key={item.id} onClick={() => onSelect(item.id)} type="button"><Icon name={item.id} /><span className="navigation-label">{item.label}</span>{badges[item.id] ? <span aria-label={`${badges[item.id]} 个待处理`} className="navigation-badge">{badges[item.id]}</span> : null}</button>)}</>;
 }
 
 function OwnerMenu({ onOpenSettings, onSignOut }: { onOpenSettings: () => void; onSignOut: () => void }) {
@@ -2596,44 +2597,11 @@ function ArtifactPreviewMedia({ kind, label, source }: { kind: "image" | "video"
 function LocalArtifactMedia({ artifact, kind, source }: { artifact: Artifact; kind: "image" | "video" | "audio"; source: string }) {
   const { error, url: previewUrl } = useLocalArtifactBlob(source);
   const [isExpanded, setIsExpanded] = useState(false);
-  const lightboxRef = useRef<HTMLDivElement>(null);
+  const lightboxRef = useDialogFocus(isExpanded, () => setIsExpanded(false));
 
   useEffect(() => {
     setIsExpanded(false);
   }, [artifact.id]);
-
-  useEffect(() => {
-    if (!isExpanded) return;
-    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const focusableElements = () => Array.from(lightboxRef.current?.querySelectorAll<HTMLElement>("button, video") ?? []);
-    const firstFocusableElement = focusableElements()[0];
-    firstFocusableElement?.focus();
-
-    function manageLightboxFocus(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        event.preventDefault();
-        setIsExpanded(false);
-        return;
-      }
-      if (event.key !== "Tab") return;
-      const elements = focusableElements();
-      if (!elements.length) return;
-      const first = elements[0];
-      const last = elements[elements.length - 1];
-      if (!lightboxRef.current?.contains(document.activeElement) || (event.shiftKey && document.activeElement === first)) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    }
-    window.addEventListener("keydown", manageLightboxFocus);
-    return () => {
-      window.removeEventListener("keydown", manageLightboxFocus);
-      if (previousFocus?.isConnected) previousFocus.focus();
-    };
-  }, [isExpanded]);
 
   if (error) return <div className="no-media-preview"><Icon name="Play" /><strong>无法预览产物</strong><span>{error}</span></div>;
   if (!previewUrl) return <div className="no-media-preview"><LoadingIndicator label="正在加载产物预览" /><span>本机审核台正在验证 Owner 权限与产物索引。</span></div>;

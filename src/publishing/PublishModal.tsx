@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import type { Database } from "../lib/database.types";
 import { artifactPreviewKind, localArtifactUrl, useLocalArtifactBlob, useLocalArtifactText } from "../reviews/localArtifactPreview";
+import { useDialogFocus } from "../ui/useDialogFocus";
 import { createManualPublicationRecord, type PublicationRecordInput } from "./publicationRecord";
 
 type Episode = Database["public"]["Tables"]["episodes"]["Row"];
@@ -17,6 +18,7 @@ const artifactLabels: Record<string, string> = {
 };
 
 export function PublishModal({ artifacts, episode, isPending, onClose, onOpenArtifact, onRecord, publicationRecords, publishVerification }: { artifacts: Artifact[]; episode: Episode; isPending: boolean; onClose: () => void; onOpenArtifact: (artifact: Artifact) => Promise<void>; onRecord: (input: PublicationRecordInput) => Promise<boolean>; publicationRecords: PublicationRecord[]; publishVerification: boolean }) {
+  const dialogRef = useDialogFocus(true, onClose);
   const episodeArtifacts = artifacts.filter((artifact) => artifact.episode_id === episode.id);
   const metadataArtifact = episodeArtifacts.find((artifact) => artifact.artifact_type === "metadata") ?? null;
   const coverArtifact = episodeArtifacts.find((artifact) => artifact.artifact_type === "cover") ?? null;
@@ -47,7 +49,7 @@ export function PublishModal({ artifacts, episode, isPending, onClose, onOpenArt
     }
   }
 
-  return <div aria-label="发布确认" aria-modal="true" className="modal-backdrop publish-modal-backdrop" role="dialog">
+  return <div aria-label="发布确认" aria-modal="true" className="modal-backdrop publish-modal-backdrop" ref={dialogRef} role="dialog">
     <section className="modal-card publish-modal-card">
       <header><div><h2>发布确认</h2><p>{episode.title || "未命名生产单"} · {episode.id.slice(0, 8)}</p></div><button aria-label="关闭发布确认" className="icon-button" onClick={onClose} type="button">×</button></header>
       <div className="publish-modal-overview">
