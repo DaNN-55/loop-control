@@ -10,7 +10,7 @@ describe("adapter registry", () => {
       ["narration", "narration_generation"],
       ["soundtrack", "soundtrack_generation"],
     ]);
-    expect(mediaCapabilityForKey("a_roll")).toMatchObject({ requiresRegisteredAdapter: true, label: "A-roll", registeredAdapter: { id: "hyperframes_card_video" } });
+    expect(mediaCapabilityForKey("a_roll")).toMatchObject({ label: "A-roll", requiresRegisteredAdapter: false });
     expect(mediaCapabilityForKey("b_roll")).toMatchObject({ configurationFields: ["max_attempts", "max_concurrency", "provider_max_concurrency"], requiresRegisteredAdapter: true, registeredAdapter: { id: "pexels_video" } });
   });
 
@@ -21,7 +21,7 @@ describe("adapter registry", () => {
     expect(adapterRegistration("codex", "codex")?.capability).toBe("storyboard_planning");
   });
 
-  it("查询 B-roll 目录时返回 Pexels 与本地 HyperFrames 卡片执行契约", () => {
+  it("查询 B-roll 目录时分开返回 Pexels 与本地 HyperFrames 卡片执行契约", () => {
     expect(registeredAdaptersForCapability("b_roll_generation")).toEqual(expect.arrayContaining([
       expect.objectContaining({
         id: "pexels_video",
@@ -30,13 +30,17 @@ describe("adapter registry", () => {
         requiresNetwork: true,
         configurationFields: ["max_attempts", "max_concurrency", "provider_max_concurrency"],
       }),
-      expect.objectContaining({ id: "hyperframes_card_video", provider: "hyperframes", connectionType: "local", requiresNetwork: false, connections: [] }),
+    ]));
+    expect(localAdapterRegistrationsForCapability("b_roll_generation")).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: "hyperframes_card_video", provider: "hyperframes" }),
     ]));
     expect(adapterRegistration("pexels", "pexels_video")?.connections).toEqual([]);
   });
 
   it("A-roll 的本地卡片视频不需要外部连接", () => {
-    expect(adapterRegistration("hyperframes", "hyperframes_card_video")).toMatchObject({ capability: "a_roll_generation", connections: [], model: "hyperframes@0.7.109", promptVersion: "card-video-v1" });
+    expect(localAdapterRegistrationsForCapability("a_roll_generation")).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: "hyperframes_card_video", provider: "hyperframes", modelCatalog: ["hyperframes@0.7.109"], presetCatalog: ["card-video-v1"] }),
+    ]));
   });
 
   it("为静态视觉登记 OpenAI Images 与非秘密连接", () => {
@@ -83,7 +87,9 @@ describe("adapter registry", () => {
 
   it("只把已登记的本地 Adapter 暴露为本地执行路径", () => {
     expect(availableExecutionPathsForCapability("a_roll_generation")).toEqual(["manual"]);
-    expect(localAdapterRegistrationsForCapability("a_roll_generation")).toEqual([]);
+    expect(localAdapterRegistrationsForCapability("a_roll_generation")).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: "hyperframes_card_video", provider: "hyperframes" }),
+    ]));
     expect(adapterRegistration("openai", "openai_images")).toMatchObject({ modelCatalog: ["gpt-image-1"], presetCatalog: ["static-visual-v1"] });
     expect(adapterRegistration("google_tts", "google_tts")?.voiceCatalog?.["zh-CN"]).toContain("cmn-CN-Standard-A");
   });

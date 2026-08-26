@@ -96,7 +96,7 @@ describe("Episode 修复 preflight 路由", () => {
       });
 
       expect(response.status).toBe(200);
-      expect(mocks.runtimeCapabilitiesFromBlueprintPolicy).toHaveBeenCalledWith(proposedPolicy, { b_roll: { provider: "series-provider" } });
+      expect(mocks.runtimeCapabilitiesFromBlueprintPolicy).toHaveBeenCalledWith(proposedPolicy, { b_roll: { provider: "series-provider" } }, []);
       expect(mocks.createRuntimePreflight).toHaveBeenCalledWith([], expect.objectContaining({ assetRoot: expect.objectContaining({ available: false }) }));
       expect(await response.json()).toEqual({ preflight: report });
     } finally {
