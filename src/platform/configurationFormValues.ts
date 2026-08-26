@@ -229,10 +229,10 @@ export function validateMediaAdapters(mediaAdapters: Record<MediaAdapterKey, Med
   for (const key of mediaAdapterKeys) validateMediaAdapter(key, mediaAdapters[key], options);
 }
 
-export function mediaAdapterStatus(key: MediaAdapterKey, form: MediaAdapterForm): "未配置" | "待补齐" | "已配置" {
+export function mediaAdapterStatus(key: MediaAdapterKey, form: MediaAdapterForm, options: { availableExternalConnectionVersionIds?: readonly string[] } = {}): "未配置" | "待补齐" | "已配置" {
   if (!mediaAdapterHasValues(form)) return "未配置";
   try {
-    validateMediaAdapter(key, form);
+    validateMediaAdapter(key, form, options);
     return "已配置";
   } catch {
     return "待补齐";
