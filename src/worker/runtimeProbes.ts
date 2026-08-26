@@ -55,6 +55,10 @@ export async function probeCodexModel(model: string, runCommand: RuntimeProbeCom
 }
 
 export async function probeProviderConnection(provider: string, apiKey: string, fetcher: RuntimeProbeFetcher = fetch, model?: string): Promise<ProviderConnectionProbeResult> {
+  if (provider === "cloudflare" && !isCloudflareCredential(apiKey)) {
+    const status: RuntimeDependencyStatus = { available: false, status: "unavailable", detail: "cloudflare 凭据格式无效。请使用 Account ID:API Token。" };
+    return { connection: status, credentialValidity: status };
+  }
   const request = providerProbeRequest(provider, apiKey, model);
   if (!request) return { connection: { available: true, detail: `${provider} 不需要外部网络探测。` } };
 
@@ -66,7 +70,7 @@ export async function probeProviderConnection(provider: string, apiKey: string, 
         credentialValidity: { available: false, status: "unavailable", detail: `${provider} 凭据被供应商拒绝：HTTP ${response.status}。` },
       };
     }
-    if (provider === "openai" && (response.status === 400 || response.status === 404)) {
+    if ((provider === "openai" || provider === "cloudflare") && (response.status === 400 || response.status === 404)) {
       return {
         connection: { available: true, detail: `${provider} 网络已连通，供应商已接受 Worker 请求。` },
         modelPermission: { available: false, status: "unavailable", detail: `${provider} 模型不可用：HTTP ${response.status}。` },
@@ -75,7 +79,16 @@ export async function probeProviderConnection(provider: string, apiKey: string, 
     if (!response.ok) {
       return { connection: { available: false, status: response.status >= 500 || response.status === 408 || response.status === 429 ? "retryable" : "unavailable", detail: `${provider} 网络探测返回 HTTP ${response.status}。` } };
     }
-    return { connection: { available: true, detail: `${provider} 网络已连通，供应商已接受 Worker 请求。` }, ...(provider === "openai" ? { modelPermission: { available: true, detail: `${provider} 模型已通过 Worker 权限探测。` } } : {}) };
+    if (provider === "cloudflare") {
+      const payload: unknown = await response.json();
+      if (!cloudflareModelListed(payload, model || "@cf/black-forest-labs/flux-1-schnell")) {
+        return {
+          connection: { available: true, detail: "cloudflare 网络已连通，供应商已接受 Worker 请求。" },
+          modelPermission: { available: false, status: "unavailable", detail: `cloudflare 模型未在当前 Account 的可用目录中返回：${model || "@cf/black-forest-labs/flux-1-schnell"}。` },
+        };
+      }
+    }
+    return { connection: { available: true, detail: `${provider} 网络已连通，供应商已接受 Worker 请求。` }, ...((provider === "openai" || provider === "cloudflare") ? { modelPermission: { available: true, detail: `${provider} 模型已通过 Worker 权限探测。` } } : {}) };
   } catch (error) {
     const detail = errorMessage(error);
     return { connection: { available: false, status: "retryable", detail: `${provider} 网络探测失败：${detail}` } };
@@ -84,6 +97,13 @@ export async function probeProviderConnection(provider: string, apiKey: string, 
 
 function providerProbeRequest(provider: string, apiKey: string, model?: string): { url: string; init?: RequestInit } | undefined {
   if (provider === "openai") return { url: `https://api.openai.com/v1/models/${encodeURIComponent(model || "gpt-image-1")}`, init: { headers: { Authorization: `Bearer ${apiKey}` } } };
+  if (provider === "cloudflare") {
+    const [accountId, apiToken] = apiKey.split(":", 2);
+    if (!accountId?.trim() || !apiToken?.trim()) return undefined;
+    const endpoint = new URL(`https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId.trim())}/ai/models/search`);
+    endpoint.searchParams.set("search", model || "@cf/black-forest-labs/flux-1-schnell");
+    return { url: endpoint.toString(), init: { headers: { Authorization: `Bearer ${apiToken.trim()}` } } };
+  }
   if (provider === "google_tts") {
     const endpoint = new URL("https://texttospeech.googleapis.com/v1/voices");
     endpoint.searchParams.set("languageCode", "en-US");
@@ -104,6 +124,22 @@ function providerProbeRequest(provider: string, apiKey: string, model?: string):
     return { url: endpoint.toString() };
   }
   return undefined;
+}
+
+function isCloudflareCredential(apiKey: string): boolean {
+  const [accountId, apiToken] = apiKey.split(":", 2);
+  return Boolean(accountId?.trim() && apiToken?.trim());
+}
+
+function cloudflareModelListed(payload: unknown, model: string): boolean {
+  if (!payload || Array.isArray(payload) || typeof payload !== "object") return false;
+  const response = payload as Record<string, unknown>;
+  if (response.success !== true || !Array.isArray(response.result)) return false;
+  return response.result.some((item: unknown) => {
+    if (!item || Array.isArray(item) || typeof item !== "object") return false;
+    const candidate = item as Record<string, unknown>;
+    return candidate.name === model || candidate.id === model;
+  });
 }
 
 async function fetchWithTimeout(fetcher: RuntimeProbeFetcher, url: string, init?: RequestInit): Promise<Response> {

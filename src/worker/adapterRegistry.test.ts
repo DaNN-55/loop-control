@@ -46,10 +46,16 @@ describe("adapter registry", () => {
       requiresNetwork: true,
       connections: [],
     });
+    expect(adapterRegistration("cloudflare", "workers_ai_images")).toMatchObject({
+      capability: "static_visual_generation",
+      connectionType: "cloudflare_workers_ai_api",
+      modelCatalog: ["@cf/black-forest-labs/flux-1-schnell"],
+    });
   });
 
   it("只把已登记的联网 Adapter 视为外部媒体能力", () => {
     expect(externalAdapterForMediaCapability("static_visual", "openai", "openai_images")).toBeTruthy();
+    expect(externalAdapterForMediaCapability("static_visual", "cloudflare", "workers_ai_images")).toBeTruthy();
     expect(externalAdapterForMediaCapability("a_roll", "codex", "codex")).toBeUndefined();
   });
 

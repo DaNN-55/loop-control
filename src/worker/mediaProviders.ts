@@ -33,6 +33,23 @@ export async function generateOpenAiImage(input: { apiKey: string; fetcher: Medi
   return bytes;
 }
 
+export async function generateCloudflareWorkersAiImage(input: { credentials: string; fetcher: MediaFetcher; model: string; prompt: string }): Promise<Uint8Array> {
+  const [accountId, apiToken] = input.credentials.split(":", 2);
+  if (!accountId?.trim() || !apiToken?.trim() || !input.model.trim() || !input.prompt.trim()) throw new Error("Cloudflare Workers AI 认证材料或视觉提示词无效。请使用 Account ID:API Token。 ");
+  const response = await input.fetcher(`https://api.cloudflare.com/client/v4/accounts/${encodeURIComponent(accountId.trim())}/ai/run/${encodeURI(input.model.trim())}`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiToken.trim()}`, "Content-Type": "application/json" },
+    body: JSON.stringify({ prompt: input.prompt, steps: 4 }),
+  });
+  const payload: unknown = await response.json();
+  if (!response.ok) throw new Error(`Cloudflare Workers AI 请求失败：HTTP ${response.status}。`);
+  const encoded = isRecord(payload) && isRecord(payload.result) ? payload.result.image : undefined;
+  if (typeof encoded !== "string" || !encoded) throw new Error("Cloudflare Workers AI 响应缺少图片数据。");
+  const bytes = Uint8Array.from(Buffer.from(encoded, "base64"));
+  if (bytes.byteLength < 3 || !bytes.slice(0, 3).every((value, index) => value === [0xff, 0xd8, 0xff][index])) throw new Error("Cloudflare Workers AI 响应不是 JPEG 图片。");
+  return bytes;
+}
+
 export async function synthesizeGoogleTts(input: { apiKey: string; fetcher: MediaFetcher; text: string; voice: GoogleTtsVoice }): Promise<Uint8Array> {
   if (!input.apiKey.trim() || !input.text.trim() || !input.voice.languageCode.trim() || !input.voice.name.trim() || !Number.isFinite(input.voice.speakingRate) || input.voice.speakingRate <= 0) throw new Error("Google TTS 配置或旁白文本无效。");
   const response = await input.fetcher("https://texttospeech.googleapis.com/v1/text:synthesize", {

@@ -21,7 +21,7 @@ export interface ClaimedWorkerTask {
   attempt: number;
   budgetLimitCents: number;
   maxAttempts: number;
-  provider: "codex" | "google_tts" | "pexels" | "ffmpeg" | "freesound" | "hyperframes" | "openai";
+  provider: "codex" | "google_tts" | "pexels" | "ffmpeg" | "freesound" | "hyperframes" | "openai" | "cloudflare";
   model: string;
   promptVersion: string;
   episodeId: string;
@@ -608,10 +608,14 @@ function executionPreflightCheck(taskPackage: WorkerTaskPackage, error: unknown)
   const detail = errorMessage(error);
   const imageGeneration = taskPackage.visualAssetPreparation?.imageGeneration;
   const isOpenAiStaticVisual = (taskPackage.provider === "openai" && taskPackage.media?.adapter === "openai_images") || (imageGeneration?.provider === "openai" && imageGeneration.adapter === "openai_images");
+  const isCloudflareStaticVisual = (taskPackage.provider === "cloudflare" && taskPackage.media?.adapter === "workers_ai_images") || (imageGeneration?.provider === "cloudflare" && imageGeneration.adapter === "workers_ai_images");
   const managedAdapter = taskPackage.media?.adapter ?? taskPackage.aRoll?.adapter;
-  const isManagedConnection = isOpenAiStaticVisual || isOwnerManagedConnection(taskPackage.provider, managedAdapter ?? "");
-  const capability = isOpenAiStaticVisual ? "static_visual_generation" : taskPackage.capability;
+  const isManagedConnection = isOpenAiStaticVisual || isCloudflareStaticVisual || isOwnerManagedConnection(taskPackage.provider, managedAdapter ?? "");
+  const capability = isOpenAiStaticVisual || isCloudflareStaticVisual ? "static_visual_generation" : taskPackage.capability;
   if (isOpenAiStaticVisual && /HTTP (400|404)/i.test(detail)) {
+    return { capability, check: "model_permission", phase: "execution", status: "unavailable", reason: detail, action: "edit_blueprint", scope: "blueprint" };
+  }
+  if (isCloudflareStaticVisual && /HTTP (400|404)|model.+(not found|unsupported)|模型.+(不存在|不支持)/i.test(detail)) {
     return { capability, check: "model_permission", phase: "execution", status: "unavailable", reason: detail, action: "edit_blueprint", scope: "blueprint" };
   }
   if (isOpenAiStaticVisual && /HTTP (401|403)|api[ _-]?key|credential|token|凭据|密钥|令牌/i.test(detail)) {

@@ -6,8 +6,8 @@ export type ExternalConnection = Database["public"]["Tables"]["external_connecti
 
 export type ExternalConnectionInput = {
   name: string;
-  provider: "pexels" | "freesound" | "openai" | "google_tts";
-  adapter: "pexels_video" | "freesound_preview" | "openai_images" | "google_tts";
+  provider: "pexels" | "freesound" | "openai" | "cloudflare" | "google_tts";
+  adapter: "pexels_video" | "freesound_preview" | "openai_images" | "workers_ai_images" | "google_tts";
   secret: string;
 };
 
@@ -24,7 +24,7 @@ export type ExternalConnectionVersion = {
   version: number;
 };
 
-export function ExternalConnectionPicker({ adapter, connections, isPending = false, label = "外部连接", officialEndpoint, onCreateConnection, onRotateConnection, onSelectVersion, onTestConnection, provider, selectedVersionId, versions = [] }: {
+export function ExternalConnectionPicker({ adapter, connections, isPending = false, label = "外部连接", officialEndpoint, onCreateConnection, onRotateConnection, onSelectVersion, onTestConnection, onUpdateConnection, provider, selectedVersionId, versions = [] }: {
   adapter: ExternalConnectionInput["adapter"];
   connections: ExternalConnection[];
   officialEndpoint?: string;
@@ -34,6 +34,7 @@ export function ExternalConnectionPicker({ adapter, connections, isPending = fal
   onRotateConnection?: (input: { connectionId: string; provider: ExternalConnectionInput["provider"]; adapter: ExternalConnectionInput["adapter"]; secret: string }) => Promise<ExternalConnection | null>;
   onSelectVersion: (versionId: string) => void;
   onTestConnection?: (connectionId: string) => Promise<void>;
+  onUpdateConnection?: (input: { connectionId: string; name: string; description: string }) => Promise<void>;
   provider: ExternalConnectionInput["provider"];
   selectedVersionId: string;
   versions?: ExternalConnectionVersion[];
@@ -41,6 +42,7 @@ export function ExternalConnectionPicker({ adapter, connections, isPending = fal
   const [name, setName] = useState("");
   const [secret, setSecret] = useState("");
   const [rotationSecret, setRotationSecret] = useState("");
+  const [editName, setEditName] = useState("");
   const [error, setError] = useState("");
   const compatibleConnections = connections.filter((connection) => connection.provider === provider && connection.adapter === adapter);
   const compatibleVersions = versions.filter((version) => version.provider === provider && version.adapter === adapter && version.is_current && version.status === "verified" && !version.revoked_at).sort((left, right) => right.version - left.version);
@@ -51,6 +53,7 @@ export function ExternalConnectionPicker({ adapter, connections, isPending = fal
   useEffect(() => {
     if (selectedVersion && selectedVersion.id !== selectedVersionId) onSelectVersion(selectedVersion.id);
   }, [onSelectVersion, selectedVersion, selectedVersionId]);
+  useEffect(() => { setEditName(selectedConnection?.name ?? ""); }, [selectedConnection?.id, selectedConnection?.name]);
 
   async function create(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -67,20 +70,26 @@ export function ExternalConnectionPicker({ adapter, connections, isPending = fal
     } catch (cause) { setError(cause instanceof Error ? cause.message : "无法创建外部连接。"); }
   }
 
-  async function rotate() {
-    if (!onRotateConnection || !selectedConnection || !rotationSecret.trim()) return;
+  async function updateCurrentConnection() {
+    if (!selectedConnection) return;
+    const name = editName.trim();
+    const nextSecret = rotationSecret.trim();
+    if (!name) { setError("连接名称不能为空。"); return; }
     setError("");
     try {
-      const connection = await onRotateConnection({ adapter, connectionId: selectedConnection.id, provider, secret: rotationSecret });
-      if (connection && onTestConnection) await onTestConnection(connection.id);
+      if (name !== selectedConnection.name && onUpdateConnection) await onUpdateConnection({ connectionId: selectedConnection.id, description: selectedConnection.description ?? "", name });
+      if (nextSecret && onRotateConnection) {
+        const connection = await onRotateConnection({ adapter, connectionId: selectedConnection.id, provider, secret: nextSecret });
+        if (connection && onTestConnection) await onTestConnection(connection.id);
+        if (connection?.current_version_id) onSelectVersion(connection.current_version_id);
+      }
       setRotationSecret("");
-    } catch (cause) { setError(cause instanceof Error ? cause.message : "无法轮换外部连接版本。"); }
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "无法更新外部连接。"); }
   }
 
   return <div className="external-connection-picker" aria-label={`${label}连接`}>
-    {selectedConnection ? <section className="external-connection-current"><div><span>当前连接</span><strong>{connectionNames.get(selectedConnection.id) ?? "Owner 连接"}{selectedVersion ? ` · v${selectedVersion.version}` : " · 待验证"}</strong></div>{onTestConnection ? <button className="button button-secondary button-small" disabled={isPending} onClick={() => void onTestConnection(selectedConnection.id)} type="button">重新测试</button> : null}</section> : onCreateConnection ? <form className="external-connection-create" onSubmit={(event) => void create(event)}><p>创建并测试一条当前连接；验证通过后会直接用于此能力。</p><label>连接名称（自定义填写）<input aria-label="新连接名称" onChange={(event) => setName(event.target.value)} required value={name} /></label><label>认证材料（填写对应服务的 API Key）<input aria-label="新连接认证材料" autoComplete="off" onChange={(event) => setSecret(event.target.value)} required type="password" value={secret} /></label><button className="button button-secondary button-small" disabled={isPending || !name.trim() || !secret.trim()} type="submit">创建并测试连接</button></form> : null}
+    {selectedConnection ? <><section className="external-connection-current"><div><span>当前连接</span><strong>{connectionNames.get(selectedConnection.id) ?? "Owner 连接"}{selectedVersion ? ` · v${selectedVersion.version}` : " · 待验证"}</strong></div>{onTestConnection ? <button className="button button-secondary button-small" disabled={isPending} onClick={() => void onTestConnection(selectedConnection.id)} type="button">重新测试</button> : null}</section><details><summary>更新连接</summary><label>连接名称<input aria-label="编辑连接名称" disabled={!onUpdateConnection} onChange={(event) => setEditName(event.target.value)} value={editName} /></label><label>新的认证材料（可选）<input aria-label="编辑连接认证材料" autoComplete="off" onChange={(event) => setRotationSecret(event.target.value)} placeholder={provider === "cloudflare" ? "Account ID:API Token" : undefined} type="password" value={rotationSecret} /></label><p className="field-hint">只改名称不会创建新版本；填写认证材料才会创建新版本并测试。</p><button className="button button-secondary button-small" disabled={isPending || (!rotationSecret.trim() && (!onUpdateConnection || !editName.trim() || editName.trim() === selectedConnection.name))} onClick={() => void updateCurrentConnection()} type="button">保存连接更新</button></details></> : onCreateConnection ? <form className="external-connection-create" onSubmit={(event) => void create(event)}><p>{provider === "cloudflare" ? "填写 Cloudflare Account ID:Workers AI API Token；验证通过后会直接用于此能力。" : "创建并测试一条当前连接；验证通过后会直接用于此能力。"}</p><label>连接名称（自定义填写）<input aria-label="新连接名称" onChange={(event) => setName(event.target.value)} required value={name} /></label><label>认证材料（填写对应服务的 API Key）<input aria-label="新连接认证材料" autoComplete="off" onChange={(event) => setSecret(event.target.value)} placeholder={provider === "cloudflare" ? "Account ID:API Token" : undefined} required type="password" value={secret} /></label><button className="button button-secondary button-small" disabled={isPending || !name.trim() || !secret.trim()} type="submit">创建并测试连接</button></form> : null}
     {officialEndpoint || selectedVersion ? <p className="field-hint">官方 Endpoint：{officialEndpoint ?? selectedVersion?.endpoint}</p> : null}
-    {selectedConnection && onRotateConnection ? <details><summary>更新认证材料</summary><label>新的认证材料<input aria-label="新的认证材料" autoComplete="off" onChange={(event) => setRotationSecret(event.target.value)} type="password" value={rotationSecret} /></label><button className="button button-secondary button-small" disabled={isPending || !rotationSecret.trim()} onClick={() => void rotate()} type="button">创建新版本并测试</button></details> : null}
     {error ? <p className="form-error" role="alert">{error}</p> : null}
   </div>;
 }
@@ -89,6 +98,7 @@ const connectionTypes = [
   { adapter: "pexels_video", label: "Pexels B-roll", provider: "pexels", secretLabel: "Pexels API Key" },
   { adapter: "freesound_preview", label: "Freesound 配乐 / 音效", provider: "freesound", secretLabel: "Freesound API Key" },
   { adapter: "openai_images", label: "OpenAI Images", provider: "openai", secretLabel: "OpenAI API Key" },
+  { adapter: "workers_ai_images", label: "Cloudflare Workers AI 图片", provider: "cloudflare", secretLabel: "Account ID:Workers AI API Token" },
   { adapter: "google_tts", label: "Google TTS 旁白", provider: "google_tts", secretLabel: "Google TTS API Key" },
 ] as const;
 

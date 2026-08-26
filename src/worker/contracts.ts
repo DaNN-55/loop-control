@@ -13,6 +13,7 @@ export type WorkerPreflightAction = "none" | "edit_blueprint" | "manage_connecti
 export type WorkerPreflightScope = "blueprint" | "connection" | "episode" | "worker";
 
 export interface WorkerPreflightCheck {
+  adapter?: string;
   capability: string;
   check: string;
   phase: WorkerPreflightPhase;
@@ -111,7 +112,7 @@ export interface WorkerTaskPackageInput {
     attempt: number;
     budgetLimitCents: number;
     maxAttempts: number;
-    provider: "codex" | "google_tts" | "pexels" | "ffmpeg" | "freesound" | "hyperframes" | "openai";
+    provider: "codex" | "google_tts" | "pexels" | "ffmpeg" | "freesound" | "hyperframes" | "openai" | "cloudflare";
     model: string;
     promptVersion: string;
   };
@@ -193,7 +194,7 @@ export interface WorkerTaskPackageInput {
       };
     }
     | {
-      adapter: "openai_images";
+      adapter: "openai_images" | "workers_ai_images";
       staticVisual: {
         prompt: string;
       };
@@ -360,7 +361,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     if (input.capability !== "visual_planning") throw new Error("只有视觉资产准备任务可以声明视觉输入。");
     input.visualAssetPreparation.externalInputs.forEach(assertArtifactManifest);
     const imageGeneration = input.visualAssetPreparation.imageGeneration;
-    if (imageGeneration && (!isNonEmptyString(imageGeneration.provider) || !isNonEmptyString(imageGeneration.adapter) || !isNonEmptyString(imageGeneration.model) || !isNonEmptyString(imageGeneration.credentialRef))) throw new Error("图片 Adapter 配置无效。");
+    if (imageGeneration && (!isNonEmptyString(imageGeneration.provider) || !isNonEmptyString(imageGeneration.adapter) || !isNonEmptyString(imageGeneration.model) || !isConnectionId(imageGeneration.credentialRef))) throw new Error("图片 Adapter 配置无效，必须使用连接版本 ID。");
     if (input.visualAssetPreparation.externalInputs.length === 0 && (!imageGeneration || adapterRegistration(imageGeneration.provider, imageGeneration.adapter)?.capability !== "static_visual_generation")) {
       throw new Error(missingVisualAssetAdapterMessage);
     }
@@ -375,12 +376,15 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     validateStoryboardManifest({ version: "storyboard/v1", shots: [input.aRoll.shot] }, input.inputArtifacts);
   }
   if (input.capability === "narration_generation" && (!input.media || input.media.adapter !== "google_tts")) throw new Error("旁白生成必须包含冻结的 Google TTS 配置。");
+  if (input.capability === "narration_generation" && !isConnectionId(input.credentialRef)) throw new Error("旁白生成必须包含冻结的外部连接版本 ID。");
   if (input.capability === "b_roll_generation" && (!input.media || (input.media.adapter !== "pexels_video" && input.media.adapter !== "hyperframes_card_video"))) throw new Error("B-roll 生成必须包含冻结的媒体配置。");
-  if (input.capability === "b_roll_generation" && input.media?.adapter === "pexels_video" && !isNonEmptyString(input.credentialRef)) throw new Error("B-roll 生成必须包含冻结的外部连接引用。");
+  if (input.capability === "b_roll_generation" && input.media?.adapter === "pexels_video" && !isConnectionId(input.credentialRef)) throw new Error("B-roll 生成必须包含冻结的外部连接版本 ID。");
   if (input.credentialRef !== undefined && !isNonEmptyString(input.credentialRef)) throw new Error("外部连接引用格式无效。");
   if (input.capability === "embedded_audio_extraction" && (!input.media || input.media.adapter !== "ffmpeg_extract_audio")) throw new Error("派生音频提取必须包含冻结的视频输入。");
-  if (input.capability === "soundtrack_generation" && (!input.media || input.media.adapter !== "freesound_preview")) throw new Error("声轨生成必须包含冻结的 Freesound 配置。");
-  if (input.capability === "static_visual_generation" && (!input.media || input.media.adapter !== "openai_images")) throw new Error("静态视觉生成必须包含冻结的 OpenAI Images 配置。");
+  if (input.capability === "soundtrack_generation" && (input.task.provider !== "freesound" || !input.media || input.media.adapter !== "freesound_preview")) throw new Error("声轨生成必须包含冻结的 Freesound 配置。");
+  if (input.capability === "soundtrack_generation" && !isConnectionId(input.credentialRef)) throw new Error("声轨生成必须包含冻结的外部连接版本 ID。");
+  if (input.capability === "static_visual_generation" && (!input.media || (input.media.adapter !== "openai_images" && input.media.adapter !== "workers_ai_images"))) throw new Error("静态视觉生成必须包含冻结的图片 Adapter 配置。");
+  if (input.capability === "static_visual_generation" && !isConnectionId(input.credentialRef)) throw new Error("静态视觉生成必须包含冻结的外部连接版本 ID。");
   if (input.capability === "review_rendering" && !input.reviewRender) throw new Error("审核渲染必须包含冻结的合成工程。 ");
   if (input.capability !== "review_rendering" && input.reviewRender) throw new Error("只有审核渲染任务可以包含合成工程。 ");
   if (input.capability === "final_rendering" && !input.finalRender) throw new Error("最终渲染必须包含冻结的审核工程。 ");
@@ -437,7 +441,10 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     validateStoryboardAudioCue(soundtrack.cue);
   }
   if (input.media?.adapter === "openai_images") {
-    if (input.task.provider !== "openai" || !isNonEmptyString(input.credentialRef) || !isNonEmptyString(input.media.staticVisual.prompt)) throw new Error("静态视觉任务的冻结 OpenAI Images 配置无效。");
+    if (input.task.provider !== "openai" || !isConnectionId(input.credentialRef) || !isNonEmptyString(input.media.staticVisual.prompt)) throw new Error("静态视觉任务的冻结 OpenAI Images 配置无效，必须使用连接版本 ID。");
+  }
+  if (input.media?.adapter === "workers_ai_images") {
+    if (input.task.provider !== "cloudflare" || !isConnectionId(input.credentialRef) || !isNonEmptyString(input.media.staticVisual.prompt)) throw new Error("静态视觉任务的冻结 Cloudflare Workers AI 配置无效，必须使用连接版本 ID。");
   }
   if (input.allowedTools.some((tool) => !isNonEmptyString(tool))) throw new Error("allowedTools must contain non-empty names.");
   if (input.output.requiredArtifactTypes.length === 0 || input.output.requiredArtifactTypes.some((artifactType) => !isNonEmptyString(artifactType))) throw new Error("至少需要一个输出产物类型。");
@@ -650,7 +657,7 @@ export function parseWorkerPreflight(value: unknown): WorkerPreflightResult {
   if (!isRecord(value) || (value.version !== "worker-preflight/v1" && value.version !== workerPreflightVersion) || !Array.isArray(value.checks)) throw new Error("Worker preflight 格式无效。");
   return { version: workerPreflightVersion, checks: value.checks.map((check) => {
     if (!isRecord(check) || !isNonEmptyString(check.capability) || !isNonEmptyString(check.check) || !isWorkerPreflightPhase(check.phase) || !isWorkerPreflightStatus(check.status) || !isNonEmptyString(check.reason) || !isWorkerPreflightAction(check.action) || !isWorkerPreflightScope(check.scope)) throw new Error("Worker preflight 检查项格式无效。");
-    return { capability: check.capability, check: check.check, phase: check.phase, status: check.status, reason: check.reason, action: check.action, scope: check.scope };
+    return { ...(typeof check.adapter === "string" ? { adapter: check.adapter } : {}), capability: check.capability, check: check.check, phase: check.phase, status: check.status, reason: check.reason, action: check.action, scope: check.scope };
   }) };
 }
 
@@ -680,6 +687,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
+}
+
+function isConnectionId(value: string | undefined): boolean {
+  return Boolean(value && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value));
 }
 
 function isSha256(value: unknown): value is string {

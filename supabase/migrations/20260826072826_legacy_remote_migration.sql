@@ -1,0 +1,3 @@
+-- This migration had already run on the remote project before its local source
+-- file was lost. Its final schema effect is reconciled by a later recovery
+-- migration generated from the remote database.

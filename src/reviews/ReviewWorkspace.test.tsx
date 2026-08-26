@@ -372,11 +372,12 @@ describe("审核台", () => {
     expect(writeText).toHaveBeenCalledWith(localInputPath);
   });
 
-  it("材料区只提供分类文件上传", () => {
+  it("材料区提供统一文件导入", () => {
     const waitingEpisode: Episode = { ...reviewEpisode, id: "episode-file-only", stage: "waiting_input" };
     render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={waitingEpisode} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
-    expect(screen.getByRole("region", { name: "素材分类上传" })).toBeTruthy();
+    expect(screen.getByRole("region", { name: "统一材料导入" })).toBeTruthy();
+    expect(screen.queryByLabelText("上传A-shot")).toBeNull();
     expect(screen.queryByLabelText("材料来源")).toBeNull();
     expect(screen.queryByLabelText("粘贴的生产材料")).toBeNull();
     expect(screen.queryByLabelText("输入目录文件路径")).toBeNull();
@@ -391,8 +392,8 @@ describe("审核台", () => {
     expect(screen.getByText("主脚本由外部制作后上传；确认后会作为本生产单不可变输入。")).toBeTruthy();
     expect(screen.queryByRole("radio", { name: "委托生成脚本" })).toBeNull();
     expect(screen.getByRole("button", { name: "导入所选材料" })).toBeTruthy();
-    expect(screen.getByRole("region", { name: "素材分类上传" })).toBeTruthy();
-    expect((screen.getByLabelText("上传A-shot") as HTMLInputElement).multiple).toBe(true);
+    expect(screen.getByRole("region", { name: "统一材料导入" })).toBeTruthy();
+    expect((screen.getByLabelText("选择生产材料") as HTMLInputElement).multiple).toBe(true);
   });
 
   it("主脚本导入后等待 Owner 明确开始制作", async () => {
@@ -421,7 +422,7 @@ describe("审核台", () => {
     expect(screen.getByText("媒体库未挂载。")).toBeTruthy();
   });
 
-  it("通过常驻分类上传槽导入脚本、主角视觉和多个 A-shot", async () => {
+  it("通过统一入口标注用途后导入脚本、图片和多个 A-roll", async () => {
     const user = userEvent.setup();
     const onImportMaterial = vi.fn().mockResolvedValue(undefined);
     const waitingEpisode: Episode = { ...reviewEpisode, id: "episode-materials", stage: "waiting_input", title: "首次准备材料" };
@@ -432,13 +433,15 @@ describe("审核台", () => {
     const imageFile = new File(["image"], "character.png", { type: "image/png" });
     const firstShot = new File(["video"], "shot-1.mp4", { type: "video/mp4" });
     const secondShot = new File(["video"], "shot-2.mp4", { type: "video/mp4" });
-    await user.upload(screen.getByLabelText("上传脚本"), scriptFile);
-    await user.upload(screen.getByLabelText("上传主角视觉"), imageFile);
-    await user.upload(screen.getByLabelText("上传A-shot"), [firstShot, secondShot]);
+    await user.upload(screen.getByLabelText("选择生产材料"), [scriptFile, imageFile, firstShot, secondShot]);
 
-    expect(screen.getByText("已选择 4 个文件；导入时会按卡片类别固定命名。")).toBeTruthy();
+    expect(screen.getAllByText("待标注", { selector: ".material-import-status" })).toHaveLength(4);
     expect(screen.getByText("shot-1.mp4")).toBeTruthy();
     expect(screen.getByText("shot-2.mp4")).toBeTruthy();
+    await user.selectOptions(screen.getByLabelText("script.md 用途"), "main_script");
+    await user.selectOptions(screen.getByLabelText("character.png 用途"), "visual_reference");
+    await user.selectOptions(screen.getByLabelText("shot-1.mp4 用途"), "a_roll");
+    await user.selectOptions(screen.getByLabelText("shot-2.mp4 用途"), "a_roll");
     expect(screen.getByRole("checkbox", { name: "我已检查内容，明确确认这是本生产单的主脚本。" })).toBeTruthy();
     await user.click(screen.getByRole("checkbox", { name: "我已检查内容，明确确认这是本生产单的主脚本。" }));
     await user.click(screen.getByRole("button", { name: "导入所选材料" }));
@@ -448,6 +451,24 @@ describe("审核台", () => {
     expect(onImportMaterial).toHaveBeenNthCalledWith(2, expect.objectContaining({ isMainScript: false, materialPurpose: "visual_reference", materialType: "image", sourcePath: "character.png" }));
     expect(onImportMaterial).toHaveBeenNthCalledWith(3, expect.objectContaining({ materialPurpose: "a_roll", materialType: "video", logicalName: "a-shot-001.mp4", sourcePath: "shot-1.mp4" }));
     expect(onImportMaterial).toHaveBeenNthCalledWith(4, expect.objectContaining({ materialPurpose: "a_roll", materialType: "video", logicalName: "a-shot-002.mp4", sourcePath: "shot-2.mp4" }));
+  });
+
+  it("在材料列表显示已确认、已导入和已绑定镜头状态", () => {
+    const readyEpisode: Episode = { ...reviewEpisode, id: "episode-material-list", stage: "waiting_input", main_script_revision_id: "material-script" };
+    const materials: MaterialRevision[] = [
+      { created_at: "2026-08-26T00:00:00.000Z", created_by: "owner-1", episode_id: readyEpisode.id, file_size: 128, id: "material-script", is_main_script: true, material_purpose: "main_script", material_type: "script", mime_type: "text/markdown", revision_number: 1, sha256: "a".repeat(64), source_kind: "file", source_path: "script.md", storage_path: "episodes/episode-material-list/materials/script.md" },
+      { created_at: "2026-08-26T00:00:00.000Z", created_by: "owner-1", episode_id: readyEpisode.id, file_size: 2048, id: "material-b-roll", is_main_script: false, material_purpose: "b_roll", material_type: "video", mime_type: "video/mp4", revision_number: 1, sha256: "b".repeat(64), source_kind: "file", source_path: "cutaway.mp4", storage_path: "episodes/episode-material-list/materials/b-shot-001.mp4" },
+    ];
+    const boundTask: Task = { ...blockedTask, episode_id: readyEpisode.id, id: "task-bound-material", input_snapshot: { manual_source: { material_revision_id: "material-b-roll" }, shot: { id: "shot-02" } }, status: "completed" };
+
+    const failedReplacement: Task = { ...boundTask, id: "task-failed-material", input_snapshot: { manual_source: { material_revision_id: "material-b-roll" }, shot: { id: "shot-03" } }, status: "failed" };
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={readyEpisode} materialRevisions={materials} isStartProductionPending={false} isTransitionPending={false} onStartProduction={vi.fn()} onTransition={vi.fn()} tasks={[boundTask, failedReplacement]} transitions={[]} />);
+
+    const materialList = screen.getByRole("region", { name: "已上传材料" });
+    expect(materialList.textContent).toContain("script.md");
+    expect(materialList.textContent).toContain("已确认");
+    expect(materialList.textContent).toContain("cutaway.mp4");
+    expect(materialList.textContent).toContain("已绑定镜头 · shot-02");
   });
 
   it("由 Owner 明确决定上传视频保留原声或使用 TTS", async () => {

@@ -82,4 +82,25 @@ describe("外部连接工作区", () => {
     expect(screen.getByText("主 OpenAI · v2")).toBeTruthy();
     expect(onSelectVersion).toHaveBeenCalledWith("version-2");
   });
+
+  it("编辑当前连接可只改名称，或同时创建并测试认证版本", async () => {
+    const user = userEvent.setup();
+    const connection = { adapter: "openai_images", created_at: "", created_by: "owner", current_version_id: "version-2", description: "", endpoint: "https://api.openai.com/v1", id: "connection-1", last_verification_detail: null, last_verified_at: null, name: "主 OpenAI", provider: "openai", status: "verified" as const };
+    const onUpdateConnection = vi.fn().mockResolvedValue(undefined);
+    const onRotateConnection = vi.fn().mockResolvedValue(connection);
+    const onTestConnection = vi.fn().mockResolvedValue(undefined);
+    render(<ExternalConnectionPicker adapter="openai_images" connections={[connection]} onRotateConnection={onRotateConnection} onSelectVersion={vi.fn()} onTestConnection={onTestConnection} onUpdateConnection={onUpdateConnection} provider="openai" selectedVersionId="version-2" versions={[{ adapter: "openai_images", connection_id: "connection-1", created_at: "", endpoint: "https://api.openai.com/v1", id: "version-2", is_current: true, provider: "openai", revoked_at: null, status: "verified", version: 2 }]} />);
+
+    await user.click(screen.getByText("更新连接"));
+    await user.clear(screen.getByLabelText("编辑连接名称"));
+    await user.type(screen.getByLabelText("编辑连接名称"), "Cloudflare 图片");
+    await user.click(screen.getByRole("button", { name: "保存连接更新" }));
+    expect(onUpdateConnection).toHaveBeenCalledWith({ connectionId: "connection-1", description: "", name: "Cloudflare 图片" });
+    expect(onRotateConnection).not.toHaveBeenCalled();
+
+    await user.type(screen.getByLabelText("编辑连接认证材料"), "new-secret");
+    await user.click(screen.getByRole("button", { name: "保存连接更新" }));
+    expect(onRotateConnection).toHaveBeenCalledWith({ adapter: "openai_images", connectionId: "connection-1", provider: "openai", secret: "new-secret" });
+    expect(onTestConnection).toHaveBeenCalledWith("connection-1");
+  });
 });

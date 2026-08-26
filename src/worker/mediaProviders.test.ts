@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { generateOpenAiImage, searchFreesoundPreview, searchPexelsVideo, synthesizeGoogleTts } from "./mediaProviders";
+import { generateCloudflareWorkersAiImage, generateOpenAiImage, searchFreesoundPreview, searchPexelsVideo, synthesizeGoogleTts } from "./mediaProviders";
 
 describe("受控媒体供应商", () => {
   it("使用 OpenAI Images 的 base64 PNG 响应", async () => {
@@ -8,6 +8,14 @@ describe("受控媒体供应商", () => {
 
     await expect(generateOpenAiImage({ apiKey: "openai-key", fetcher, model: "gpt-image-1", prompt: "雨夜的古城门" })).resolves.toEqual(new Uint8Array(png));
     expect(fetcher).toHaveBeenCalledWith("https://api.openai.com/v1/images/generations", expect.objectContaining({ method: "POST", headers: expect.objectContaining({ Authorization: "Bearer openai-key" }) }));
+  });
+  it("使用 Cloudflare Workers AI 的 Account ID、Token 和 base64 JPEG 响应", async () => {
+    const jpeg = Buffer.from([0xff, 0xd8, 0xff, 1]);
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ result: { image: jpeg.toString("base64") }, success: true }), { status: 200 }));
+
+    await expect(generateCloudflareWorkersAiImage({ credentials: "account-id:token-value", fetcher, model: "@cf/black-forest-labs/flux-1-schnell", prompt: "雨夜的古城门" })).resolves.toEqual(new Uint8Array(jpeg));
+    expect(fetcher).toHaveBeenCalledWith("https://api.cloudflare.com/client/v4/accounts/account-id/ai/run/@cf/black-forest-labs/flux-1-schnell", expect.objectContaining({ method: "POST", headers: expect.objectContaining({ Authorization: "Bearer token-value" }) }));
+    expect(JSON.parse(fetcher.mock.calls[0][1].body)).toMatchObject({ prompt: "雨夜的古城门", steps: 4 });
   });
   it("使用冻结的旁白文本和声音向 Google TTS 请求 MP3", async () => {
     const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ audioContent: Buffer.from("audio-bytes").toString("base64") }), { status: 200 }));

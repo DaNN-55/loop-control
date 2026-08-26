@@ -15,7 +15,7 @@ import { nonNegativeIntegerEnvironment, requiredEnvironment } from "./runtimeEnv
 import { verifyReportedStoryboardArtifact } from "./storyboardArtifact.js";
 import { workerResultJsonSchema } from "./workerResultSchema.js";
 import { executeControlledMediaTask, writeSafeAssetFile } from "./controlledMediaExecutor.js";
-import { generateOpenAiImage } from "./mediaProviders.js";
+import { generateCloudflareWorkersAiImage, generateOpenAiImage } from "./mediaProviders.js";
 import { createHash } from "node:crypto";
 import { executeHyperframesReviewRender } from "./hyperframesReviewRenderer.js";
 import { executeHyperframesFinalRender } from "./hyperframesFinalRenderer.js";
@@ -51,7 +51,7 @@ async function claimNextTask(): Promise<ClaimedWorkerTask | null> {
   if (error) throw new Error(`Unable to claim a worker task: ${error.message}`);
   const row = data?.[0];
   if (!row) return null;
-  if (row.provider !== "codex" && row.provider !== "google_tts" && row.provider !== "pexels" && row.provider !== "ffmpeg" && row.provider !== "freesound" && row.provider !== "hyperframes" && row.provider !== "openai") throw new Error(`Unsupported worker provider: ${row.provider}`);
+  if (row.provider !== "codex" && row.provider !== "google_tts" && row.provider !== "pexels" && row.provider !== "ffmpeg" && row.provider !== "freesound" && row.provider !== "hyperframes" && row.provider !== "openai" && row.provider !== "cloudflare") throw new Error(`Unsupported worker provider: ${row.provider}`);
 
   return {
     taskId: row.task_id,
@@ -90,6 +90,7 @@ async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
     googleTtsApiKey: taskPackage.provider === "google_tts" ? apiKey : undefined,
     freesoundApiKey: taskPackage.provider === "freesound" ? apiKey : undefined,
     openaiApiKey: taskPackage.provider === "openai" ? apiKey : undefined,
+    cloudflareWorkersAiCredentials: taskPackage.provider === "cloudflare" ? apiKey : undefined,
     validateMp4: validateMp4Artifact,
     probeMp3: probeMp3Artifact,
     extractMp3: extractMp3Artifact,
@@ -116,13 +117,15 @@ async function generateVisualAssets(taskPackage: WorkerTaskPackage, output: stri
   if (!requests.length) return output;
   const imageGeneration = taskPackage.visualAssetPreparation?.imageGeneration;
   if (!imageGeneration) throw new Error("视觉资产存在缺失项，但没有冻结的图片 Adapter。" );
-  if (imageGeneration.provider !== "openai" || imageGeneration.adapter !== "openai_images") throw new Error("冻结的图片 Adapter 没有可用执行路径。" );
+  if ((imageGeneration.provider !== "openai" || imageGeneration.adapter !== "openai_images") && (imageGeneration.provider !== "cloudflare" || imageGeneration.adapter !== "workers_ai_images")) throw new Error("冻结的图片 Adapter 没有可用执行路径。" );
   const apiKey = await resolveConnectionSecret(imageGeneration.credentialRef, imageGeneration.provider, imageGeneration.adapter, taskPackage.accountId);
   if (!apiKey?.trim()) throw new Error("OPENAI_API_KEY 未配置，无法生成冻结视觉资产。" );
   const generated: ArtifactManifest[] = [];
   for (const request of requests) {
-    const bytes = await generateOpenAiImage({ apiKey, fetcher: fetch, model: imageGeneration.model, prompt: request.prompt });
-    const relativePath = `episodes/${taskPackage.episode.id}/visuals/${request.id}.png`;
+    const bytes = imageGeneration.provider === "cloudflare"
+      ? await generateCloudflareWorkersAiImage({ credentials: apiKey, fetcher: fetch, model: imageGeneration.model, prompt: request.prompt })
+      : await generateOpenAiImage({ apiKey, fetcher: fetch, model: imageGeneration.model, prompt: request.prompt });
+    const relativePath = `episodes/${taskPackage.episode.id}/visuals/${request.id}.${imageGeneration.provider === "cloudflare" ? "jpg" : "png"}`;
     await writeSafeAssetFile(taskPackage.assets.allowedRoot, relativePath, bytes);
     generated.push({ artifactType: "static_visual", relativePath, sha256: createHash("sha256").update(bytes).digest("hex"), fileSize: bytes.byteLength });
   }
@@ -183,7 +186,7 @@ async function resolveConnectionSecret(credentialRef: string | undefined, provid
     if (error) throw new Error("无法解析 Worker 外部连接秘密。");
     return typeof data === "string" && data.trim() ? data.trim() : undefined;
   }
-  if (provider === "pexels" || provider === "openai") return undefined;
+  if (provider === "pexels" || provider === "openai" || provider === "cloudflare") return undefined;
   const credential = credentialEnvironmentForReference(provider, adapter, credentialRef);
   return credential ? process.env[credential]?.trim() : undefined;
 }

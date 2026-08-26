@@ -4,7 +4,7 @@ import { lstat, mkdir, mkdtemp, open, realpath, rm, writeFile } from "node:fs/pr
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import type { ArtifactManifest, WorkerResult, WorkerTaskPackage } from "./contracts.js";
-import { generateOpenAiImage, searchFreesoundPreview, searchPexelsVideo, synthesizeGoogleTts, type FreesoundPreview, type MediaFetcher } from "./mediaProviders.js";
+import { generateCloudflareWorkersAiImage, generateOpenAiImage, searchFreesoundPreview, searchPexelsVideo, synthesizeGoogleTts, type FreesoundPreview, type MediaFetcher } from "./mediaProviders.js";
 
 export async function executeControlledMediaTask(input: {
   taskPackage: WorkerTaskPackage;
@@ -13,6 +13,7 @@ export async function executeControlledMediaTask(input: {
   googleTtsApiKey: string | undefined;
   freesoundApiKey?: string;
   openaiApiKey?: string;
+  cloudflareWorkersAiCredentials?: string;
   validateMp4: (path: string, minimumDurationSeconds: number) => Promise<void>;
   probeMp3: (path: string) => Promise<number>;
   extractMp3: (sourcePath: string, minimumDurationSeconds: number) => Promise<Uint8Array>;
@@ -47,6 +48,7 @@ async function mediaBytes(input: {
   googleTtsApiKey: string | undefined;
   freesoundApiKey?: string;
   openaiApiKey?: string;
+  cloudflareWorkersAiCredentials?: string;
   validateMp4: (path: string, minimumDurationSeconds: number) => Promise<void>;
   probeMp3: (path: string) => Promise<number>;
   extractMp3: (sourcePath: string, minimumDurationSeconds: number) => Promise<Uint8Array>;
@@ -103,6 +105,10 @@ async function mediaBytes(input: {
   if (taskPackage.provider === "openai" && taskPackage.media?.adapter === "openai_images") {
     if (!input.openaiApiKey) throw new Error("OPENAI_API_KEY 未配置，无法执行冻结静态视觉任务。");
     return { bytes: await generateOpenAiImage({ apiKey: input.openaiApiKey, fetcher: input.fetcher, model: taskPackage.model, prompt: taskPackage.media.staticVisual.prompt }) };
+  }
+  if (taskPackage.provider === "cloudflare" && taskPackage.media?.adapter === "workers_ai_images") {
+    if (!input.cloudflareWorkersAiCredentials) throw new Error("Cloudflare Workers AI 连接秘密不可用，无法执行冻结静态视觉任务。");
+    return { bytes: await generateCloudflareWorkersAiImage({ credentials: input.cloudflareWorkersAiCredentials, fetcher: input.fetcher, model: taskPackage.model, prompt: taskPackage.media.staticVisual.prompt }) };
   }
   throw new Error("任务 Provider 与冻结媒体适配器不匹配。");
 }

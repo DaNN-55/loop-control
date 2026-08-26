@@ -43,4 +43,23 @@ describe("runtime probes", () => {
       modelPermission: { available: false, status: "unavailable", detail: "openai 模型不可用：HTTP 400。" },
     });
   });
+
+  it("用 Cloudflare Account ID 与 Token 探测 Workers AI 图片模型", async () => {
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ success: true, result: [{ name: "@cf/black-forest-labs/flux-1-schnell" }] }), { status: 200 }));
+    const result = await probeProviderConnection("cloudflare", "account-id:token-value", fetcher, "@cf/black-forest-labs/flux-1-schnell");
+
+    expect(result).toMatchObject({ connection: { available: true }, modelPermission: { available: true } });
+    expect(fetcher.mock.calls[0][0]).toContain("/accounts/account-id/ai/models/search?");
+    expect(fetcher.mock.calls[0][1].headers).toEqual({ Authorization: "Bearer token-value" });
+  });
+
+  it("拒绝格式错误的 Cloudflare 凭据与未返回的模型", async () => {
+    const fetcher = vi.fn();
+    const malformedCredential = await probeProviderConnection("cloudflare", "token-value", fetcher, "@cf/black-forest-labs/flux-1-schnell");
+    expect(malformedCredential).toMatchObject({ connection: { available: false, status: "unavailable" }, credentialValidity: { available: false, status: "unavailable" } });
+    expect(fetcher).not.toHaveBeenCalled();
+
+    const missingModel = await probeProviderConnection("cloudflare", "account-id:token-value", vi.fn().mockResolvedValue(new Response(JSON.stringify({ success: true, result: [] }), { status: 200 })), "@cf/black-forest-labs/flux-1-schnell");
+    expect(missingModel).toMatchObject({ connection: { available: true }, modelPermission: { available: false, status: "unavailable" } });
+  });
 });

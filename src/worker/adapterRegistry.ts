@@ -124,6 +124,18 @@ const adapterRegistry: readonly AdapterRegistration[] = [
     return capability.registeredAdapter ? [{ ...capability.registeredAdapter, capability: capability.capability }] : [];
   }),
   {
+    id: "workers_ai_images",
+    capability: "static_visual_generation",
+    endpoint: "https://api.cloudflare.com/client/v4",
+    provider: "cloudflare",
+    connectionType: "cloudflare_workers_ai_api",
+    requiresNetwork: true,
+    configurationFields: ["model", "credential_ref", "max_attempts"],
+    modelCatalog: ["@cf/black-forest-labs/flux-1-schnell"],
+    presetCatalog: ["static-visual-v1"],
+    connections: [],
+  },
+  {
     id: "ffmpeg_extract_audio",
     capability: "embedded_audio_extraction",
     provider: "ffmpeg",
@@ -173,7 +185,7 @@ export function adapterRegistration(provider: string, adapter: string): AdapterR
 }
 
 export function isOwnerManagedConnection(provider: string, adapter: string): boolean {
-  return (provider === "pexels" && adapter === "pexels_video") || (provider === "freesound" && adapter === "freesound_preview") || (provider === "openai" && adapter === "openai_images") || (provider === "google_tts" && adapter === "google_tts");
+  return (provider === "pexels" && adapter === "pexels_video") || (provider === "freesound" && adapter === "freesound_preview") || (provider === "openai" && adapter === "openai_images") || (provider === "cloudflare" && adapter === "workers_ai_images") || (provider === "google_tts" && adapter === "google_tts");
 }
 
 export function externalAdapterForMediaCapability(key: MediaCapabilityKey, provider: string, adapter: string): AdapterRegistration | undefined {

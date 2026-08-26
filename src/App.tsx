@@ -26,7 +26,7 @@ import { useDialogFocus } from "./ui/useDialogFocus";
 import { taskTypeLabel } from "./observability/TaskProgressPanel";
 import { SystemStatusPanel, type LocalSystemStatusReport } from "./observability/SystemStatusPanel";
 import { MarkdownPreview } from "./ui/MarkdownPreview";
-import { canonicalMaterialName, materialTypeForFile, type MaterialPurpose, type MaterialType } from "./reviews/materialImport";
+import { canonicalMaterialName, materialPurposeLabel, materialPurposeOptions, materialTypeForFile, type MaterialPurpose, type MaterialType } from "./reviews/materialImport";
 import { AccountWorkspace } from "./accounts/AccountWorkspace";
 import type { ExternalConnectionInput, ExternalConnectionVersion } from "./connections/ConnectionWorkspace";
 
@@ -1043,6 +1043,16 @@ export function App() {
     finally { setPendingAction(""); }
   }
 
+  async function updateExternalConnection(input: { connectionId: string; name: string; description: string }): Promise<void> {
+    setPendingAction(`update-external-connection-${input.connectionId}`); setErrorMessage("");
+    try {
+      const { error } = await supabase.rpc("update_external_connection", { p_connection_id: input.connectionId, p_description: input.description, p_name: input.name });
+      if (error) throw error;
+      await refreshWorkspace(); setMessage("外部连接名称已更新；认证版本未改变。");
+    } catch (error) { const message = error instanceof Error ? error.message : "无法更新外部连接。"; setErrorMessage(message); throw new Error(message); }
+    finally { setPendingAction(""); }
+  }
+
   async function repairEpisodeConnection(input: { blocker: WorkerBlocker; episodeId: string; versionId: string }): Promise<void> {
     setPendingAction(`repair-external-connection-${input.episodeId}`); setErrorMessage("");
     try {
@@ -1748,6 +1758,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             onCreateConnection={createExternalConnection}
             onRotateConnection={rotateExternalConnection}
             onTestConnection={testExternalConnection}
+            onUpdateConnection={updateExternalConnection}
           />
         ) : activeNavigation === "reviews" ? (
           <ReviewWorkspace
@@ -2109,7 +2120,7 @@ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, b
     <p className="review-meta">蓝图 v{blueprint?.version ?? "—"} · 创建于 {formatDate(episode.created_at)}</p>
     <section className="episode-next-step-card"><div><span>当前阶段</span><strong className={`stage stage-${stageTone(episode.stage)}`}>{stageLabels[episode.stage]}</strong></div><div><span>下一步</span><p>{nextStep}</p></div><div className={`episode-worker-status episode-worker-status-${workerStatus.tone}`}><span>Worker 状态</span><strong>{workerStatus.label}</strong><p>{workerStatus.detail}</p></div></section>
     {blockers.length ? <details className="review-section worker-blockers detail-card-collapsible" open><summary><h3>优先处理 Worker 阻塞项（{blockers.length}）</h3></summary><div className="detail-card-body">{blockerGroups.map(({ blocker, count }) => <WorkerBlockerCard affectedTaskCount={count} blocker={blocker} connectionVersions={connectionVersionsForBlocker(blocker, episodeTasks, connectionVersions)} onOpenBlueprint={onOpenBlueprint} onRepairConnection={onRepairConnection} key={`${blocker.code}-${blocker.detail}`} />)}</div></details> : null}
-    <details className="review-section detail-card-collapsible" open={waitingForMainScript || inputReadyToStart}><summary><h3>准备生产材料</h3></summary><div className="detail-card-body">{waitingForMainScript ? <><p className="material-import-subtitle">主脚本由外部制作后上传；确认后会作为本生产单不可变输入。</p><MaterialImportForm allowMainScript defaultMainScript episodeId={episode.id} existingMaterials={episodeMaterials} isPending={isMaterialPending} onImport={onImportMaterial} /></> : <><p className="material-import-subtitle">主脚本已确认。你可以继续添加补充材料；所有材料准备好后，点击下方按钮，Worker 才会开始制作。</p><MaterialImportForm allowMainScript={false} defaultMainScript={false} episodeId={episode.id} existingMaterials={episodeMaterials} isPending={isMaterialPending} onImport={onImportMaterial} /></>}<fieldset className="audio-source-mode"><legend>上传视频的声音</legend><label><input checked={audioSourceMode === "tts"} disabled={isAudioSourceModePending} name={`audio-source-${episode.id}`} onChange={() => void onUpdateAudioSourceMode(episode.id, "tts")} type="radio" />使用 TTS 替代原声<span>导出时静音上传视频，并按蓝图生成旁白。</span></label><label><input checked={audioSourceMode === "source"} disabled={isAudioSourceModePending || !hasUploadedVideo} name={`audio-source-${episode.id}`} onChange={() => void onUpdateAudioSourceMode(episode.id, "source")} type="radio" />保留上传视频原声<span>{hasUploadedVideo ? "跳过 TTS，并从上传视频提取原声。" : "请先上传至少一个视频素材。"}</span></label></fieldset>{inputReadyToStart ? <><div className="production-start-gate"><div><strong>材料已准备到可开始状态</strong><p>确认后将先检查本机 Worker 的真实运行态；检查通过后才推进生产单。</p></div><button className="button button-primary" disabled={isStartProductionPending || isAudioSourceModePending} onClick={() => void onStartProduction(episode.id)} type="button">{isAudioSourceModePending ? "保存声音选择中…" : isStartProductionPending ? "检查并开始中…" : "材料准备完成，开始制作"}</button></div>{productionPreflight ? <div aria-live="polite" className={`production-preflight ${productionBlockers.length ? "is-blocked" : "is-passed"}`}><strong>生产前运行态检查：{productionBlockers.length ? `未通过（${productionBlockers.length}）` : "已通过"}</strong><p>已检查当前冻结蓝图对应的 Worker 注册、工具白名单、凭据存在性、有效性、模型权限、网络连通性和媒体库；实际媒体搜索、下载和产物验证仍在任务执行阶段确认。</p>{productionBlockers.map((blocker) => <WorkerBlockerCard blocker={blocker} connectionVersions={connectionVersionsForBlocker(blocker, episodeTasks, connectionVersions)} key={`${blocker.code}-${blocker.capability}`} onOpenBlueprint={onOpenBlueprint} onRepairConnection={onRepairConnection} />)}</div> : null}</> : null}</div></details>
+    <details className="review-section detail-card-collapsible" open={waitingForMainScript || inputReadyToStart}><summary><h3>准备生产材料</h3></summary><div className="detail-card-body">{waitingForMainScript ? <><p className="material-import-subtitle">主脚本由外部制作后上传；确认后会作为本生产单不可变输入。</p><MaterialImportForm allowMainScript bindingStatuses={materialBindingStatuses(episodeTasks)} episodeId={episode.id} existingMaterials={episodeMaterials} isPending={isMaterialPending} onImport={onImportMaterial} /></> : <><p className="material-import-subtitle">主脚本已确认。你可以继续添加补充材料；所有材料准备好后，点击下方按钮，Worker 才会开始制作。</p><MaterialImportForm allowMainScript={false} bindingStatuses={materialBindingStatuses(episodeTasks)} episodeId={episode.id} existingMaterials={episodeMaterials} isPending={isMaterialPending} onImport={onImportMaterial} /></>}<fieldset className="audio-source-mode"><legend>上传视频的声音</legend><label><input checked={audioSourceMode === "tts"} disabled={isAudioSourceModePending} name={`audio-source-${episode.id}`} onChange={() => void onUpdateAudioSourceMode(episode.id, "tts")} type="radio" />使用 TTS 替代原声<span>导出时静音上传视频，并按蓝图生成旁白。</span></label><label><input checked={audioSourceMode === "source"} disabled={isAudioSourceModePending || !hasUploadedVideo} name={`audio-source-${episode.id}`} onChange={() => void onUpdateAudioSourceMode(episode.id, "source")} type="radio" />保留上传视频原声<span>{hasUploadedVideo ? "跳过 TTS，并从上传视频提取原声。" : "请先上传至少一个视频素材。"}</span></label></fieldset>{inputReadyToStart ? <><div className="production-start-gate"><div><strong>材料已准备到可开始状态</strong><p>确认后将先检查本机 Worker 的真实运行态；检查通过后才推进生产单。</p></div><button className="button button-primary" disabled={isStartProductionPending || isAudioSourceModePending} onClick={() => void onStartProduction(episode.id)} type="button">{isAudioSourceModePending ? "保存声音选择中…" : isStartProductionPending ? "检查并开始中…" : "材料准备完成，开始制作"}</button></div>{productionPreflight ? <div aria-live="polite" className={`production-preflight ${productionBlockers.length ? "is-blocked" : "is-passed"}`}><strong>生产前运行态检查：{productionBlockers.length ? `未通过（${productionBlockers.length}）` : "已通过"}</strong><p>已检查当前冻结蓝图对应的 Worker 注册、工具白名单、凭据存在性、有效性、模型权限、网络连通性和媒体库；实际媒体搜索、下载和产物验证仍在任务执行阶段确认。</p>{productionBlockers.map((blocker) => <WorkerBlockerCard blocker={blocker} connectionVersions={connectionVersionsForBlocker(blocker, episodeTasks, connectionVersions)} key={`${blocker.code}-${blocker.capability}`} onOpenBlueprint={onOpenBlueprint} onRepairConnection={onRepairConnection} />)}</div> : null}</> : null}</div></details>
     {reviewPackage?.stage !== "visual_review" && reviewPackage?.stage !== "storyboard_review" ? <details className="review-section detail-card-collapsible"><summary><h3>产物预览</h3></summary><div className="detail-card-body"><ArtifactPreview artifacts={episodeArtifacts} /></div></details> : null}
     {reviewPackage?.stage === "production_ready" ? <PreRenderReviewPackage artifacts={episodeArtifacts} decisions={preRenderMemberDecisions} isTransitionPending={isTransitionPending} members={preRenderMembers} onReviewMember={onReviewPreRenderMember} onTransition={onTransition} reviewPackage={reviewPackage} /> : reviewPackage && reviewArtifact ? reviewPackage.stage === "qc_review" && isHyperframesReviewRender(reviewPackage.context_snapshot) ? <HyperframesReviewRenderPackage artifact={reviewArtifact} artifacts={reviewArtifacts} onOpenStudio={onOpenHyperframesStudio} onRequestRevision={onRequestRevision} onSubmitStudioRevision={onSubmitStudioRevision} reviewPackage={reviewPackage} tasks={episodeTasks} /> : reviewPackage.stage === "visual_review" ? <VisualReviewPackage artifact={reviewArtifact} artifacts={reviewArtifacts} reviewPackage={reviewPackage} /> : reviewPackage.stage === "storyboard_review" ? <StoryboardReviewPackage annotations={storyboardAnnotations} artifact={reviewArtifact} episode={episode} isAnnotationPending={isStoryboardAnnotationPending} materialRevisions={materialRevisions.filter((material) => material.episode_id === episode.id)} onCreateAnnotation={onCreateStoryboardAnnotation} onRegisterManualMedia={onRegisterManualMedia} onValidationChange={onStoryboardValidationChange} policy={blueprint?.policy} reviewPackage={reviewPackage} tasks={episodeTasks} /> : <TextReviewPackage artifact={reviewArtifact} reviewPackage={reviewPackage} /> : null}
     <ArollTaskEvidencePanel tasks={episodeTasks} />
@@ -2273,54 +2284,42 @@ interface MaterialImportDraft {
   file: File;
   id: string;
   isMainScript: boolean;
-  materialPurpose: MaterialPurpose;
+  materialPurpose: MaterialPurpose | null;
   materialType: MaterialType;
 }
 
 const supportedMaterialAccept = ".md,.markdown,.txt,.jpg,.jpeg,.png,.webp,.gif,.avif,.mp3,.wav,.m4a,.aac,.flac,.ogg,.mp4,.mov,.webm,.m4v,.avi";
 const materialTypeLabels: Record<MaterialType, string> = { script: "脚本", reference: "参考材料", image: "图片", audio: "音频", video: "视频" };
 
-interface MaterialUploadSlot {
-  accept: string;
-  description: string;
-  label: string;
-  materialPurpose: MaterialPurpose;
-  materialTypes?: readonly MaterialType[];
-  multiple: boolean;
+function materialBindingStatuses(tasks: Task[]): ReadonlyMap<string, string> {
+  const statuses = new Map<string, string>();
+  for (const task of tasks) {
+    if (task.status !== "completed") continue;
+    const input = task.input_snapshot;
+    if (!input || Array.isArray(input) || typeof input !== "object") continue;
+    const manualSource = input.manual_source;
+    if (!manualSource || Array.isArray(manualSource) || typeof manualSource !== "object" || typeof manualSource.material_revision_id !== "string") continue;
+    const shot = input.shot;
+    const shotId = shot && !Array.isArray(shot) && typeof shot === "object" && typeof shot.id === "string" ? shot.id : "";
+    statuses.set(manualSource.material_revision_id, shotId ? `已绑定镜头 · ${shotId}` : "已绑定生产目标");
+  }
+  return statuses;
 }
 
-const materialUploadSlots: readonly MaterialUploadSlot[] = [
-  { accept: ".md,.markdown,.txt", description: "一份主脚本，会固定命名为 script.md。", label: "脚本", materialPurpose: "main_script", materialTypes: ["script"], multiple: false },
-  { accept: ".jpg,.jpeg,.png,.webp,.gif,.avif", description: "主角或风格参考，会固定命名为 actor.*。", label: "主角视觉", materialPurpose: "visual_reference", materialTypes: ["image"], multiple: false },
-  { accept: ".mp4,.mov,.webm", description: "可连续添加多个镜头，命名为 a-shot-001.* 起。", label: "A-shot", materialPurpose: "a_roll", materialTypes: ["video"], multiple: true },
-  { accept: ".mp4,.mov,.webm", description: "可连续添加多个补充镜头，命名为 b-shot-001.* 起。", label: "B-shot", materialPurpose: "b_roll", materialTypes: ["video"], multiple: true },
-  { accept: ".mp3,.wav,.m4a,.aac,.flac,.ogg", description: "人工旁白或原声替代，命名为 narration-001.* 起。", label: "旁白", materialPurpose: "narration", materialTypes: ["audio"], multiple: true },
-  { accept: ".mp3,.wav,.m4a,.aac,.flac,.ogg", description: "可上传长音乐或多首组合，命名为 bgm-001.* 起。", label: "BGM", materialPurpose: "background_music", materialTypes: ["audio"], multiple: true },
-  { accept: ".mp3,.wav,.m4a,.aac,.flac,.ogg", description: "可上传多个音效，命名为 sfx-001.* 起。", label: "SFX", materialPurpose: "sound_effect", materialTypes: ["audio"], multiple: true },
-  { accept: ".jpg,.jpeg,.png,.webp,.gif,.avif", description: "发布封面优先使用；会固定命名为 cover.*。", label: "封面", materialPurpose: "cover", materialTypes: ["image"], multiple: false },
-  { accept: supportedMaterialAccept, description: "不参与固定生产槽的补充资料，保留原文件名。", label: "补充资料", materialPurpose: "general_reference", multiple: true },
-];
-
-function MaterialImportForm({ allowMainScript = true, episodeId, existingMaterials = [], isPending, onImport }: { allowMainScript?: boolean; defaultMainScript?: boolean; episodeId: string; existingMaterials?: MaterialRevision[]; isPending: boolean; onImport: (input: MaterialImportRequest) => Promise<void> }) {
+function MaterialImportForm({ allowMainScript = true, bindingStatuses = new Map(), episodeId, existingMaterials = [], isPending, onImport }: { allowMainScript?: boolean; bindingStatuses?: ReadonlyMap<string, string>; episodeId: string; existingMaterials?: MaterialRevision[]; isPending: boolean; onImport: (input: MaterialImportRequest) => Promise<void> }) {
   const [selectedFiles, setSelectedFiles] = useState<MaterialImportDraft[]>([]);
   const [confirmed, setConfirmed] = useState(false);
   const [formError, setFormError] = useState("");
   const [fileInputKey, setFileInputKey] = useState(0);
+  const nextFileId = useRef(0);
 
-  function selectSlotFiles(slot: MaterialUploadSlot, files: File[]) {
-    const unsupported = files.find((file) => slot.materialTypes && !slot.materialTypes.includes(materialTypeForFile(file)));
+  function selectFiles(files: File[]) {
+    const unsupported = files.find((file) => materialTypeForFile(file) === "reference");
     if (unsupported) {
-      setFormError(`${slot.label} 仅支持${slot.materialTypes?.map((type) => materialTypeLabels[type]).join("、")}文件。`);
+      setFormError("仅支持脚本、图片、音频和视频文件。");
       return;
     }
-    const selected = (slot.multiple ? files : files.slice(-1)).map((file, index) => ({
-      file,
-      id: `${slot.materialPurpose}-${file.name}-${file.lastModified}-${index}`,
-      isMainScript: slot.materialPurpose === "main_script",
-      materialPurpose: slot.materialPurpose,
-      materialType: slot.materialTypes?.[0] ?? materialTypeForFile(file),
-    }));
-    setSelectedFiles((current) => [...current.filter((draft) => draft.materialPurpose !== slot.materialPurpose), ...selected]);
+    setSelectedFiles((current) => [...current, ...files.map((file) => ({ file, id: `${file.name}-${file.lastModified}-${nextFileId.current++}`, isMainScript: false, materialPurpose: null, materialType: materialTypeForFile(file) }))]);
     setConfirmed(false);
     setFormError("");
   }
@@ -2331,17 +2330,24 @@ function MaterialImportForm({ allowMainScript = true, episodeId, existingMateria
     setFileInputKey((current) => current + 1);
   }
 
+  function setPurpose(id: string, materialPurpose: MaterialPurpose | null) {
+    setSelectedFiles((current) => current.map((draft) => draft.id === id ? { ...draft, isMainScript: materialPurpose === "main_script", materialPurpose } : draft));
+    setConfirmed(false);
+  }
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
       setFormError("");
+      if (!selectedFiles.length) throw new Error("请选择要导入的材料文件，可一次选择多个文件。");
+      if (selectedFiles.some((draft) => !draft.materialPurpose)) throw new Error("请先标注每个文件的用途。");
       const mainScriptSelected = selectedFiles.some((draft) => draft.isMainScript);
       if (allowMainScript && selectedFiles.filter((draft) => draft.isMainScript).length !== 1) throw new Error("请在本批材料中指定且只指定一个主脚本。");
       if (mainScriptSelected && !confirmed) throw new Error("请明确确认这份材料是主脚本。");
-      if (!selectedFiles.length) throw new Error("请选择要导入的材料文件，可一次选择多个文件。");
       for (const [index, draft] of selectedFiles.entries()) {
-        const ordinal = existingMaterials.filter((material) => material.material_purpose === draft.materialPurpose).length + selectedFiles.slice(0, index).filter((candidate) => candidate.materialPurpose === draft.materialPurpose).length + 1;
-        await onImport({ content: new Uint8Array(await new Response(draft.file).arrayBuffer()), episodeId, isMainScript: draft.isMainScript, logicalName: canonicalMaterialName(draft.materialPurpose, draft.file.name, draft.materialType, ordinal), materialPurpose: draft.materialPurpose, materialType: draft.materialType, mimeType: draft.file.type || "application/octet-stream", sourceKind: "file", sourcePath: draft.file.name });
+        const materialPurpose = draft.materialPurpose as MaterialPurpose;
+        const ordinal = existingMaterials.filter((material) => material.material_purpose === materialPurpose).length + selectedFiles.slice(0, index).filter((candidate) => candidate.materialPurpose === materialPurpose).length + 1;
+        await onImport({ content: new Uint8Array(await new Response(draft.file).arrayBuffer()), episodeId, isMainScript: draft.isMainScript, logicalName: canonicalMaterialName(materialPurpose, draft.file.name, draft.materialType, ordinal), materialPurpose, materialType: draft.materialType, mimeType: draft.file.type || "application/octet-stream", sourceKind: "file", sourcePath: draft.file.name });
         setSelectedFiles((current) => current.filter((item) => item.id !== draft.id));
       }
       setConfirmed(false);
@@ -2353,8 +2359,7 @@ function MaterialImportForm({ allowMainScript = true, episodeId, existingMateria
   }
 
   const mainScriptSelected = selectedFiles.some((draft) => draft.isMainScript);
-  const visibleSlots = materialUploadSlots.filter((slot) => allowMainScript || slot.materialPurpose !== "main_script");
-  return <form className="material-import" onSubmit={(event) => void submit(event)}><p className="material-import-subtitle">选择对应分类卡片，或把文件拖入卡片。A-shot、B-shot、旁白、BGM 和 SFX 可持续添加多个文件。</p><section aria-label="素材分类上传" className="material-upload-slots">{visibleSlots.map((slot) => { const drafts = selectedFiles.filter((draft) => draft.materialPurpose === slot.materialPurpose); return <article className={`material-upload-slot ${drafts.length ? "has-files" : ""}`} key={slot.materialPurpose}><label className="material-upload-dropzone" onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); selectSlotFiles(slot, Array.from(event.dataTransfer.files)); }}><input accept={slot.accept} aria-label={`上传${slot.label}`} className="material-slot-input" key={`${slot.materialPurpose}-${fileInputKey}`} multiple={slot.multiple} onChange={(event) => selectSlotFiles(slot, Array.from(event.target.files ?? []))} type="file" /><Upload aria-hidden="true" className="icon" /><span><strong>{slot.label}</strong><small>{slot.description}</small></span><em>{slot.multiple ? "选择或拖入多个文件" : "选择或拖入文件"}</em></label>{drafts.length ? <ul className="material-slot-files">{drafts.map((draft) => <li key={draft.id}><span>{draft.file.name}</span><button aria-label={`移除 ${draft.file.name}`} onClick={() => removeSlotFile(draft.id)} type="button">移除</button></li>)}</ul> : <p>暂未选择文件</p>}</article>; })}</section>{selectedFiles.length ? <p className="muted-copy">已选择 {selectedFiles.length} 个文件；导入时会按卡片类别固定命名。</p> : null}{mainScriptSelected ? <label className="checkbox-label confirmation"><input checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} type="checkbox" />我已检查内容，明确确认这是本生产单的主脚本。</label> : null}<button className="button button-primary" disabled={isPending} type="submit">{isPending ? "导入中…" : "导入所选材料"}</button>{formError ? <p className="form-error">{formError}</p> : null}</form>;
+  return <form className="material-import" onSubmit={(event) => void submit(event)}><p className="material-import-subtitle">一次选择多个文件；系统只识别文件类型，具体用途由你逐项确认。</p><section aria-label="统一材料导入" className="material-import-panel"><label className="material-unified-upload"><input accept={supportedMaterialAccept} aria-label="选择生产材料" className="material-slot-input" key={fileInputKey} multiple onChange={(event) => selectFiles(Array.from(event.target.files ?? []))} type="file" /><Upload aria-hidden="true" className="icon" /><span><strong>选择生产材料</strong><small>支持脚本、图片、音频和视频；可一次选择多个文件。</small></span></label>{selectedFiles.length ? <ul className="material-import-list" aria-label="待导入材料">{selectedFiles.map((draft) => <li key={draft.id}><div><strong>{draft.file.name}</strong><span>{materialTypeLabels[draft.materialType]}</span></div><label>用途<select aria-label={`${draft.file.name} 用途`} onChange={(event) => setPurpose(draft.id, event.target.value as MaterialPurpose || null)} value={draft.materialPurpose ?? ""}><option value="">待标注</option>{materialPurposeOptions(draft.materialType, allowMainScript).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></label><span className={`material-import-status ${draft.materialPurpose ? "is-classified" : ""}`}>{draft.materialPurpose ? materialPurposeLabel(draft.materialPurpose) : "待标注"}</span><button aria-label={`移除 ${draft.file.name}`} onClick={() => removeSlotFile(draft.id)} type="button">移除</button></li>)}</ul> : <p className="muted-copy">尚未选择文件。</p>}</section><section aria-label="已上传材料" className="material-import-panel material-imported-materials"><h4>已上传材料（{existingMaterials.length}）</h4>{existingMaterials.length ? <ul className="material-import-list">{existingMaterials.map((material) => <li key={material.id}><div><strong>{material.source_path}</strong><span>{materialPurposeLabel(material.material_purpose as MaterialPurpose)}</span></div><span className="material-import-status is-imported">{bindingStatuses.get(material.id) ?? (material.is_main_script ? "已确认" : "已导入")}</span></li>)}</ul> : <p className="muted-copy">导入完成后，文件名、用途和使用状态会保留在这里。</p>}</section>{mainScriptSelected ? <label className="checkbox-label confirmation"><input checked={confirmed} onChange={(event) => setConfirmed(event.target.checked)} type="checkbox" />我已检查内容，明确确认这是本生产单的主脚本。</label> : null}<button className="button button-primary" disabled={isPending} type="submit">{isPending ? "导入中…" : "导入所选材料"}</button>{formError ? <p className="form-error">{formError}</p> : null}</form>;
 }
 
 interface FrozenReviewContext {
