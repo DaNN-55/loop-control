@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import type { Database, Json } from "../lib/database.types";
 import { supabase } from "../lib/supabase";
 import { HelpTip } from "../ui/HelpTip";
 import type { LocalSystemStatusReport, SystemState } from "../observability/SystemStatusPanel";
 import type { WorkerPreflightResult } from "../worker/contracts";
-import { adapterRegistration, availableExecutionPathsForCapability, isOwnerManagedConnection, localAdapterRegistrationsForCapability, mediaCapabilityForKey, readyLocalAdapterRegistrations, registeredAdaptersForCapability, type LocalAdapterReadiness } from "../worker/adapterRegistry";
-import { ExternalConnectionPicker, type ExternalConnectionInput, type ExternalConnectionVersion } from "../connections/ConnectionWorkspace";
+import { adapterRegistration, mediaCapabilityForKey, registeredAdaptersForCapability } from "../worker/adapterRegistry";
 import { externalConnectionStatuses, type ExternalConnectionStatus } from "./connectionStatus";
 import {
   blueprintFormToPolicy,
@@ -18,7 +17,6 @@ import {
   seriesRulesToForm,
   mediaAdapterStatus,
   validateMediaAdapter,
-  validateMediaAdapters,
   validateSeriesRules,
   type BlueprintFormValues,
   type ConfigurableMediaAdapterKey,
@@ -44,13 +42,15 @@ const toolOptions = [
 ] as const;
 const executorLabels = {
   script_writing: "脚本生成",
-  visual_planning: "视觉规划",
+  visual_planning: "视觉素材准备",
   storyboard_planning: "分镜规划",
 } as const;
 const visibleExecutorKeys = ["storyboard_planning"] as const;
-const promptCapabilityOptions: Array<[PromptCapability, string]> = [
-  ["storyboard_planning", "分镜规划"],
-];
+const googleTtsVoices: Record<string, readonly string[]> = {
+  "en-US": ["en-US-Standard-A", "en-US-Standard-B", "en-US-Standard-C", "en-US-Standard-D"],
+  "zh-CN": ["cmn-CN-Standard-A", "cmn-CN-Standard-B", "cmn-CN-Standard-C", "cmn-CN-Standard-D", "cmn-CN-standard-cm"],
+  "vi-VN": ["vi-VN-Standard-A", "vi-VN-Standard-B", "vi-VN-Standard-C", "vi-VN-Standard-D"],
+};
 function FieldHint({ children }: { children: ReactNode }) {
   return <p className="field-hint">{children}</p>;
 }
@@ -59,107 +59,88 @@ function FieldLabel({ children, help }: { children: ReactNode; help?: string }) 
   return <span className="field-label">{children}{help ? <HelpTip label={typeof children === "string" ? children : "字段"}>{help}</HelpTip> : null}</span>;
 }
 
-function PromptVersionManager({ fixedCapability, isPending, onClose, onCreate, onSelect, promptVersions, selectedVersionId }: { fixedCapability?: PromptCapability; isPending: boolean; onClose: () => void; onCreate?: (input: { capability: PromptCapability; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onSelect: (version: PromptVersion) => void; promptVersions: PromptVersion[]; selectedVersionId?: string }) {
-  const [capability, setCapability] = useState<PromptCapability>(fixedCapability ?? "storyboard_planning");
+function PromptVersionManager({ capability, isPending, onCreate, onRegistered, onSelect, promptVersions }: { capability: PromptCapability; isPending: boolean; onCreate?: (input: { capability: PromptCapability; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onRegistered?: () => void; onSelect: (version: PromptVersion) => void; promptVersions: PromptVersion[] }) {
   const [name, setName] = useState("");
   const [summary, setSummary] = useState("");
   const [instructions, setInstructions] = useState("");
   const [error, setError] = useState("");
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  if (!onCreate) return null;
+  const create = onCreate;
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!onCreate) return;
     if (!name.trim() || !summary.trim() || !instructions.trim()) {
       setError("请填写版本名称、摘要和 Harness 内容。");
       return;
     }
     setError("");
-    const created = await onCreate({ capability, name: name.trim(), summary: summary.trim(), instructions: instructions.trim() });
+    const created = await create({ capability, name: name.trim(), summary: summary.trim(), instructions: instructions.trim() });
     if (!created) return;
     onSelect(created);
+    onRegistered?.();
     setName("");
     setSummary("");
     setInstructions("");
-    setIsCreateOpen(false);
   }
 
-  const visibleCapabilities = fixedCapability ? promptCapabilityOptions.filter(([key]) => key === fixedCapability) : promptCapabilityOptions;
-  const versions = promptVersions.filter((version) => visibleCapabilities.some(([key]) => key === version.capability));
-  const currentVersion = versions.find((version) => version.id === selectedVersionId) ?? versions[0];
-  const previousVersions = versions.filter((version) => version.id !== currentVersion?.id);
-  return <div aria-label={`管理${fixedCapability ? executorLabels[fixedCapability] : "Prompt"}版本`} aria-modal="true" className="stage-configuration-dialog prompt-version-dialog" role="dialog"><section><header><div><span>Prompt Harness</span><h3>管理{fixedCapability ? executorLabels[fixedCapability] : "Prompt"}版本</h3><p>版本会随 Episode 冻结而保留；这里只决定之后是否继续可选。</p></div><button aria-label={`关闭${fixedCapability ? executorLabels[fixedCapability] : "Prompt"}版本管理`} className="icon-button" onClick={onClose} type="button">×</button></header><div className="prompt-version-manager">
-    {currentVersion ? <section className="prompt-version-current"><div><span>当前选择</span><strong>{currentVersion.name}</strong><code>{currentVersion.slug}</code></div><span>v{currentVersion.version}</span></section> : <p className="summary-empty">还没有登记版本。</p>}
-    {previousVersions.length ? <details className="prompt-version-history"><summary>历史版本（{previousVersions.length}）</summary><div>{previousVersions.map((version) => <article className="prompt-version-item" key={version.id}><div><strong>{version.name}</strong><span>{version.slug}</span></div><p>{version.summary}</p></article>)}</div></details> : null}
-    {onCreate ? <section className="prompt-version-create"><button aria-expanded={isCreateOpen} className="button button-secondary button-small" onClick={() => setIsCreateOpen((open) => !open)} type="button">{isCreateOpen ? "收起新版本表单" : "登记新版本"}</button>{isCreateOpen ? <form onSubmit={(event) => void submit(event)}><h4>登记新版本</h4><p className="muted-copy">保存后自动生成下一版编号，例如 storyboard-planning-v8。</p>{fixedCapability ? <p className="muted-copy">适用阶段：{executorLabels[fixedCapability]}</p> : <label><FieldLabel help="选择这版 Prompt 服务的生成阶段。">适用阶段</FieldLabel><select onChange={(event) => setCapability(event.target.value as PromptCapability)} value={capability}>{promptCapabilityOptions.map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select></label>}<label><FieldLabel help="给运营人员看的名称，不是 Worker 识别用的 slug。">版本名称</FieldLabel><input onChange={(event) => setName(event.target.value)} placeholder="例如：脚本生成·强化冲突 v2" value={name} /></label><label><FieldLabel help="用一句话说明这一版主要改变了什么。">版本摘要</FieldLabel><input onChange={(event) => setSummary(event.target.value)} placeholder="例如：强化开头钩子和人物动机" value={summary} /></label><label><FieldLabel help="这是会冻结并实际发送给 Codex 的 Prompt Harness 内容。">Harness 内容</FieldLabel><textarea onChange={(event) => setInstructions(event.target.value)} placeholder="例如：开头 3 秒必须提出冲突；结尾保留审核所需的事实依据。" rows={3} value={instructions} /></label><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "登记中…" : "保存新版本"}</button>{error ? <p className="form-error">{error}</p> : null}</form> : null}</section> : null}
-  </div><footer><button className="button button-secondary" onClick={onClose} type="button">返回分镜配置</button></footer></section></div>;
+  const history = promptVersions.filter((version) => version.capability === capability).sort((left, right) => right.version - left.version);
+  return <form className="prompt-version-create" onSubmit={(event) => void submit(event)}>
+    <label><FieldLabel help="给运营人员看的名称，不是 Worker 识别用的 slug。">版本名称</FieldLabel><input onChange={(event) => setName(event.target.value)} placeholder="例如：脚本生成·强化冲突 v2" value={name} /></label>
+    <label><FieldLabel help="用一句话说明这一版主要改变了什么。">版本摘要</FieldLabel><input onChange={(event) => setSummary(event.target.value)} placeholder="例如：强化开头钩子和人物动机" value={summary} /></label>
+    <label><FieldLabel help="这是会冻结并实际发送给 Codex 的 Prompt Harness 内容。">Harness 内容</FieldLabel><textarea onChange={(event) => setInstructions(event.target.value)} placeholder="例如：开头 3 秒必须提出冲突；结尾保留审核所需的事实依据。" rows={3} value={instructions} /></label>
+    <button className="button button-secondary" disabled={isPending} type="submit">{isPending ? "登记中…" : "登记新版本"}</button>
+    {error ? <p className="form-error">{error}</p> : null}
+    {history.length ? <details aria-label={`${executorLabels[capability]}历史版本`} className="prompt-version-history"><summary>历史版本（{history.length}）</summary><ul>{history.map((version) => <li key={version.id}><strong>{version.slug}</strong><span>{version.name} · {version.summary}</span></li>)}</ul></details> : null}
+  </form>;
 }
 
 function ConfigurationSwitch({ ariaLabel, checked, disabled = false, label, onChange }: { ariaLabel?: string; checked: boolean; disabled?: boolean; label: string; onChange: (checked: boolean) => void }) {
   return <label className="configuration-switch"><input aria-label={ariaLabel} checked={checked} disabled={disabled} onChange={(event) => onChange(event.target.checked)} type="checkbox" /><span aria-hidden="true" className="configuration-switch-track" /><span>{label}</span></label>;
 }
 
-function StageConfigurationDialog({ executor, executorKey, inline = false, onClose, onManagePromptVersions, onSelectPromptVersion, onUpdateExecutor, promptVersions, readOnly }: { executor: BlueprintFormValues["executors"]["script_writing"]; executorKey: keyof BlueprintFormValues["executors"]; inline?: boolean; onClose: () => void; onManagePromptVersions?: () => void; onSelectPromptVersion: (version: PromptVersion) => void; onUpdateExecutor: (field: keyof BlueprintFormValues["executors"]["script_writing"], value: string) => void; promptVersions: PromptVersion[]; readOnly: boolean }) {
+function StageConfigurationDialog({ executorKey, isPending, onClose, onCreatePromptVersion, onSelectPromptVersion, promptVersions }: { executorKey: PromptCapability; isPending: boolean; onClose: () => void; onCreatePromptVersion?: (input: { capability: PromptCapability; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onSelectPromptVersion: (version: PromptVersion) => void; promptVersions: PromptVersion[] }) {
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const label = executorLabels[executorKey];
-  const usesPromptHarness = executorKey === "storyboard_planning";
-  const versions = promptVersions.filter((version) => version.capability === executorKey && version.is_active);
-  const selectedValue = usesPromptHarness ? executor.harnessId : executor.promptVersion;
-  const hasSelectedVersion = versions.some((version) => usesPromptHarness ? version.id === executor.harnessId : version.slug === executor.promptVersion);
-  return <div aria-modal={inline ? undefined : "true"} className={`stage-configuration-dialog${inline ? " is-inline" : ""}`} role={inline ? undefined : "dialog"}><section>{inline ? null : <header><div><span>阶段配置</span><h3>{label}</h3></div><button aria-label={`关闭${label}配置`} className="icon-button" onClick={onClose} type="button">×</button></header>}<div className="stage-configuration-fields"><label><FieldLabel help={usesPromptHarness ? `${label}固定使用已注册的 Codex Adapter。` : "执行服务，例如 codex。"}>Provider</FieldLabel><input aria-label={`${label} Provider`} disabled={readOnly || usesPromptHarness} onChange={(event) => onUpdateExecutor("provider", event.target.value)} value={executor.provider} /></label>{usesPromptHarness ? <label><FieldLabel help="Adapter、Harness 与模型会一同冻结到 Worker 任务中。">Adapter</FieldLabel><input aria-label={`${label} Adapter`} readOnly value="codex" /></label> : null}<label><FieldLabel help="执行时使用的模型名称。">模型</FieldLabel><input aria-label={`${label} 模型`} disabled={readOnly} onChange={(event) => onUpdateExecutor("model", event.target.value)} value={executor.model} /></label><label><FieldLabel help={usesPromptHarness ? "从已登记 Harness 中选择执行规则。" : "从已登记版本中选择执行规则。"}>{usesPromptHarness ? "Prompt Harness" : "Prompt 版本"}</FieldLabel>{versions.length ? <select aria-label={`${label} ${usesPromptHarness ? "Prompt Harness" : "Prompt 版本"}`} disabled={readOnly} onChange={(event) => { const version = versions.find((candidate) => (usesPromptHarness ? candidate.id : candidate.slug) === event.target.value); if (version) onSelectPromptVersion(version); }} value={hasSelectedVersion ? selectedValue : "__unregistered__"}>{!hasSelectedVersion ? <option value="__unregistered__">{executor.promptVersion || "当前值"}（未登记）</option> : null}{versions.map((version) => <option key={version.id} value={usesPromptHarness ? version.id : version.slug}>{version.name} · {version.slug}</option>)}</select> : <input aria-label={`${label} Prompt 版本`} disabled={readOnly} onChange={(event) => onUpdateExecutor("promptVersion", event.target.value)} value={executor.promptVersion} />}</label></div>{usesPromptHarness && !readOnly && onManagePromptVersions ? <button aria-label="管理 Prompt 版本" className="stage-configuration-manager-action" onClick={onManagePromptVersions} type="button">管理版本</button> : null}{inline ? null : <footer><button className="button button-primary" onClick={onClose} type="button">完成</button></footer>}</section></div>;
+  useEffect(() => {
+    closeButtonRef.current?.focus();
+    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") { event.preventDefault(); onClose(); } };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, []);
+  return <div className="modal-backdrop stage-configuration-backdrop" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }} role="presentation"><section aria-label={`登记${label}新版本`} aria-modal="true" className="modal-card stage-configuration-dialog" onMouseDown={(event) => event.stopPropagation()} role="dialog"><header><div><span>{label}</span><h3>登记新版本</h3></div><button aria-label={`关闭${label}配置`} className="icon-button" onClick={onClose} ref={closeButtonRef} type="button">×</button></header><PromptVersionManager capability={executorKey} isPending={isPending} onCreate={onCreatePromptVersion} onRegistered={onClose} onSelect={onSelectPromptVersion} promptVersions={promptVersions} /></section></div>;
 }
 
-function MediaAdapterCard({ adapterKey, connectionVersions = [], externalConnections = [], form, localAdapterReadiness = {}, onChange, onCreateConnection, onRotateConnection, onTestConnection, readOnly = false, showAllowedTools = true }: { adapterKey: MediaAdapterKey; connectionVersions?: ExternalConnectionVersion[]; externalConnections?: ExternalConnection[]; form: MediaAdapterForm; localAdapterReadiness?: LocalAdapterReadiness; onChange: (field: keyof MediaAdapterForm, value: string) => void; onCreateConnection?: (input: ExternalConnectionInput) => Promise<ExternalConnection | null>; onRotateConnection?: (input: { connectionId: string; provider: ExternalConnectionInput["provider"]; adapter: ExternalConnectionInput["adapter"]; secret: string }) => Promise<ExternalConnection | null>; onTestConnection?: (connectionId: string) => Promise<void>; readOnly?: boolean; showAllowedTools?: boolean }) {
+function MediaAdapterCard({ adapterKey, externalConnections = [], form, onChange, readOnly = false, showAllowedTools = true }: { adapterKey: MediaAdapterKey; externalConnections?: ExternalConnection[]; form: MediaAdapterForm; onChange: (field: keyof MediaAdapterForm, value: string) => void; readOnly?: boolean; showAllowedTools?: boolean }) {
   const definition = mediaCapabilityForKey(adapterKey);
-  const label = mediaConfigurationLabel(adapterKey);
+  const { defaultConfiguration, label, unregisteredAdapter } = definition;
   const hasConfigurationField = (field: typeof definition.configurationFields[number]) => definition.configurationFields.includes(field);
   const status = mediaAdapterStatus(adapterKey, form);
   const statusClass = status === "已配置" ? "is-configured" : status === "待补齐" ? "is-incomplete" : "is-empty";
+  const textField = (field: keyof MediaAdapterForm, title: string, help: string, fieldPlaceholder: string) => <label><FieldLabel help={help}>{title}</FieldLabel><input aria-label={title} onChange={(event) => onChange(field, event.target.value)} placeholder={fieldPlaceholder} readOnly={readOnly} value={form[field]} /></label>;
   const numberField = (field: keyof MediaAdapterForm, title: string, help: string, min = 1) => <label><FieldLabel help={help}>{title}</FieldLabel><input aria-label={title} min={min} onChange={(event) => onChange(field, event.target.value)} readOnly={readOnly} step={min < 1 ? "0.1" : "1"} type="number" value={form[field]} /></label>;
-  const selectedPath = form.executionPath ?? "";
-  const availablePaths = availableExecutionPathsForCapability(definition.capability, localAdapterReadiness);
-  const registeredAdapters = selectedPath === "external" ? registeredAdaptersForCapability(definition.capability).filter((registration) => registration.requiresNetwork) : [];
-  const localAdapters = selectedPath === "local" ? readyLocalAdapterRegistrations(localAdapterRegistrationsForCapability(definition.capability), localAdapterReadiness) : [];
-  const selectedRegisteredAdapter = selectedPath === "external" ? adapterRegistration(form.provider, form.adapter) : undefined;
-  const selectedCatalog = selectedPath === "local" ? localAdapters.find((candidate) => candidate.provider === form.provider && candidate.id === form.adapter) : selectedRegisteredAdapter;
-  const ownerManagedConnection = Boolean(selectedRegisteredAdapter && isOwnerManagedConnection(selectedRegisteredAdapter.provider, selectedRegisteredAdapter.id));
-  const connectionOptions = ownerManagedConnection ? [] : selectedRegisteredAdapter?.connections ?? [];
-  const modelCatalog = selectedCatalog?.modelCatalog ?? [];
-  const presetCatalog = selectedCatalog?.presetCatalog ?? [];
-  const voiceCatalog = selectedCatalog?.voiceCatalog ?? {};
-  const voiceNames = voiceCatalog[form.voiceLanguageCode] ?? [];
+  const registeredCapability = definition.requiresRegisteredAdapter ? definition.capability : undefined;
+  const registeredAdapters = registeredCapability ? registeredAdaptersForCapability(registeredCapability) : [];
+  const selectedRegisteredAdapter = registeredCapability ? adapterRegistration(form.provider, form.adapter, registeredCapability) : undefined;
+  const connectionOptions = selectedRegisteredAdapter?.provider === "pexels" ? externalConnections.filter((connection) => connection.provider === "pexels" && connection.adapter === "pexels_video" && connection.status === "verified").map((connection) => ({ credentialRef: connection.current_version_id, label: `${connection.name} · 已验证` })) : selectedRegisteredAdapter?.connections ?? registeredAdapters.flatMap((registration) => registration.connections);
+  const voiceNames = googleTtsVoices[form.voiceLanguageCode] ?? [];
 
   return <article className={`media-adapter-card ${statusClass}`}>
     <header><div><h4>{label}</h4><p>{definition.description}</p></div><span className="media-adapter-status">{status}</span></header><div className="media-adapter-controls">
-    <section className="media-adapter-group"><h5>执行方式</h5><div className="media-adapter-field-grid">
-      <label><FieldLabel help="首次启用不会自动选择路径；人工素材不会创建 Worker 或外部任务。">执行路径</FieldLabel><select aria-label={`${label} 执行路径`} disabled={readOnly} onChange={(event) => onChange("executionPath", event.target.value)} value={selectedPath}><option value="">请选择执行路径</option>{availablePaths.includes("external") ? <option value="external">外部</option> : null}<option disabled={!availablePaths.includes("local")} value="local">本地{availablePaths.includes("local") ? "" : "（未部署）"}</option><option value="manual">人工素材</option></select></label>
-      {selectedPath === "manual" ? <p className="field-hint">Episode 会按镜头与音频 cue 生成待补齐素材清单，不创建 Worker 或外部任务。</p> : null}
-      {selectedPath === "local" && localAdapters.length === 0 ? <p className="field-hint">当前 Worker 没有已部署的本地 {label} Adapter；请联系环境管理员。</p> : null}
-      {selectedPath === "local" && localAdapters.length ? <label><FieldLabel help="只能选择 Worker 已部署的本地 Adapter。">Adapter</FieldLabel><select aria-label={`${label} 本地 Adapter`} disabled={readOnly} onChange={(event) => { const registration = localAdapters.find((candidate) => candidate.id === event.target.value); if (!registration) return; onChange("provider", registration.provider); onChange("adapter", registration.id); onChange("credentialRef", ""); onChange("model", ""); onChange("promptVersion", ""); }} value={selectedCatalog?.id ?? ""}><option value="">请选择 Adapter</option>{localAdapters.map((registration) => <option key={registration.id} value={registration.id}>{registration.provider} · {registration.id}</option>)}</select></label> : null}
-      {selectedPath === "external" ? <>
+    <div className="media-adapter-field-grid">
+      {registeredCapability ? <>
         <label><FieldLabel help="Provider 由已注册 Adapter 声明，不能自由填写。">Provider</FieldLabel><input aria-label="Provider" readOnly value={selectedRegisteredAdapter?.provider ?? form.provider} /></label>
-        <label><FieldLabel help="只能选择 Worker 已注册的外部 Adapter。">Adapter</FieldLabel><select aria-label={`${label} Adapter`} disabled={readOnly} onChange={(event) => { const registration = registeredAdapters.find((candidate) => candidate.id === event.target.value); if (!registration) return; onChange("provider", registration.provider); onChange("adapter", registration.id); onChange("credentialRef", ""); onChange("model", ""); onChange("promptVersion", ""); onChange("allowedTools", "read, write"); }} value={selectedRegisteredAdapter?.id ?? "__unregistered__"}><option value="__unregistered__">请选择 Adapter</option>{registeredAdapters.map((registration) => <option key={registration.id} value={registration.id}>{registration.provider} · {registration.id}</option>)}</select></label>
-      </> : null}
-    </div></section>
-    {selectedPath === "external" && (connectionOptions.length || ownerManagedConnection) ? <section className="media-adapter-group media-adapter-connection-group"><h5>已验证连接</h5>{connectionOptions.length ? <label><FieldLabel help="蓝图只保存已验证连接版本 ID，不保存 API Key。">外部连接</FieldLabel><select aria-label={`${label} 外部连接`} disabled={readOnly || !selectedRegisteredAdapter} onChange={(event) => onChange("credentialRef", event.target.value)} value={connectionOptions.some((connection) => connection.credentialRef === form.credentialRef) ? form.credentialRef : ""}><option value="">请选择已验证连接</option>{connectionOptions.map((connection) => <option key={connection.credentialRef} value={connection.credentialRef}>{connection.label}</option>)}</select></label> : null}{ownerManagedConnection ? <ExternalConnectionPicker adapter={selectedRegisteredAdapter!.id as ExternalConnectionInput["adapter"]} connections={externalConnections} isPending={readOnly} label={label} officialEndpoint={selectedRegisteredAdapter?.endpoint} onCreateConnection={onCreateConnection} onRotateConnection={onRotateConnection} onSelectVersion={(versionId) => onChange("credentialRef", versionId)} onTestConnection={onTestConnection} provider={selectedRegisteredAdapter!.provider as ExternalConnectionInput["provider"]} selectedVersionId={form.credentialRef} versions={connectionVersions} /> : null}</section> : null}
-    {selectedPath === "external" || selectedPath === "local" ? <section className="media-adapter-group"><h5>输出设置</h5><div className="media-adapter-field-grid">
-        <label><FieldLabel help="只能从当前 Adapter 声明的模型目录选择。">模型</FieldLabel><select aria-label={`${label} 模型`} disabled={readOnly || !selectedCatalog} onChange={(event) => onChange("model", event.target.value)} value={modelCatalog.includes(form.model) ? form.model : ""}><option value="">请选择模型</option>{form.model && !modelCatalog.includes(form.model) ? <option value={form.model}>{form.model}（已冻结但不在当前目录）</option> : null}{modelCatalog.map((model) => <option key={model} value={model}>{model}</option>)}</select></label>
-        <label><FieldLabel help="只能从当前 Adapter 声明的预设目录选择。">卡片预设</FieldLabel><select aria-label={`${label} 卡片预设`} disabled={readOnly || !selectedCatalog} onChange={(event) => onChange("promptVersion", event.target.value)} value={presetCatalog.includes(form.promptVersion) ? form.promptVersion : ""}><option value="">请选择预设</option>{form.promptVersion && !presetCatalog.includes(form.promptVersion) ? <option value={form.promptVersion}>{form.promptVersion}（已冻结但不在当前目录）</option> : null}{presetCatalog.map((preset) => <option key={preset} value={preset}>{preset}</option>)}</select></label>
-      {showAllowedTools ? <label><FieldLabel help="任务允许使用的工具，使用英文逗号分隔。至少填写一个。">允许工具</FieldLabel><input aria-label="允许工具" onChange={(event) => onChange("allowedTools", event.target.value)} placeholder="例如：read, write" readOnly={readOnly} value={form.allowedTools} /></label> : null}
-      {definition.configurationFields.length ? <>{hasConfigurationField("max_attempts") ? numberField("maxAttempts", "最大尝试次数", "媒体任务失败后的最大执行尝试次数。") : null}{hasConfigurationField("max_concurrency") ? numberField("maxConcurrency", "最大并发数", "同一生产单同时运行的媒体任务数。") : null}{hasConfigurationField("provider_max_concurrency") ? numberField("providerMaxConcurrency", "供应商并发上限", "发给同一供应商的最大并发数。") : null}{hasConfigurationField("voice") ? <><label><FieldLabel help="只能选择当前 Adapter 声明的语言目录。">语言</FieldLabel><select aria-label="语言代码" disabled={readOnly} onChange={(event) => { onChange("voiceLanguageCode", event.target.value); onChange("voiceName", ""); }} value={form.voiceLanguageCode in voiceCatalog ? form.voiceLanguageCode : ""}><option value="">选择语言</option>{form.voiceLanguageCode && !(form.voiceLanguageCode in voiceCatalog) ? <option value={form.voiceLanguageCode}>{form.voiceLanguageCode}</option> : null}{Object.keys(voiceCatalog).map((languageCode) => <option key={languageCode} value={languageCode}>{languageCode}</option>)}</select></label><label><FieldLabel help="只能选择当前 Adapter 声明的声音目录。">声音</FieldLabel><select aria-label="声音名称" disabled={readOnly || !form.voiceLanguageCode} onChange={(event) => onChange("voiceName", event.target.value)} value={voiceNames.includes(form.voiceName) ? form.voiceName : ""}><option value="">选择声音</option>{form.voiceName && !voiceNames.includes(form.voiceName) ? <option value={form.voiceName}>{form.voiceName}</option> : null}{voiceNames.map((voiceName) => <option key={voiceName} value={voiceName}>{voiceName}</option>)}</select></label>{hasConfigurationField("voice_speaking_rate") ? numberField("voiceSpeakingRate", "语速", "旁白播放速度，通常填写 1。", 0.1) : null}</> : null}</> : null}
-    </div></section> : null}
-    {selectedPath === "" ? <p className="field-hint">请先选择执行路径。未选择前不会自动绑定连接、模型或预设。</p> : null}
+        <label><FieldLabel help="只能选择 Worker 已注册的 Adapter。">Adapter</FieldLabel><select aria-label={`${label} Adapter`} disabled={readOnly} onChange={(event) => { const registration = registeredAdapters.find((candidate) => candidate.id === event.target.value); if (!registration) return; onChange("provider", registration.provider); onChange("adapter", registration.id); onChange("credentialRef", registration.provider === "pexels" ? externalConnections.find((connection) => connection.provider === "pexels" && connection.adapter === "pexels_video" && connection.status === "verified")?.current_version_id ?? "" : registration.connections[0]?.credentialRef ?? ""); onChange("model", registration.model ?? defaultConfiguration.model); onChange("promptVersion", registration.promptVersion ?? defaultConfiguration.promptVersion); onChange("allowedTools", "read, write"); }} value={selectedRegisteredAdapter?.id ?? "__unregistered__"}>{selectedRegisteredAdapter ? null : <option value="__unregistered__">当前值（未登记）</option>}{registeredAdapters.map((registration) => <option key={registration.id} value={registration.id}>{registration.provider} · {registration.id}</option>)}</select></label>
+        {connectionOptions.length ? <label><FieldLabel help="蓝图只保存连接的非秘密引用，不保存 API Key。">外部连接</FieldLabel><select aria-label={`${label} 外部连接`} disabled={readOnly || !selectedRegisteredAdapter} onChange={(event) => onChange("credentialRef", event.target.value)} value={connectionOptions.some((connection) => connection.credentialRef === form.credentialRef) ? form.credentialRef : ""}><option value="">请选择连接</option>{connectionOptions.map((connection) => <option key={connection.credentialRef} value={connection.credentialRef}>{connection.label}</option>)}</select></label> : null}
+      </> : <>
+        {textField("provider", "Provider", "执行服务名称。这个值必须与 Worker 已注册的供应商一致。", unregisteredAdapter?.provider ?? "provider")}
+        {textField("adapter", "Adapter", "具体媒体适配器名称。它会随生产单冻结，Worker 不会自动替换。", unregisteredAdapter?.adapter ?? "adapter")}
+        {textField("model", "模型", "媒体适配器使用的模型或版本名称。", defaultConfiguration.model)}
+        {textField("promptVersion", "Prompt 版本", "媒体任务使用的提示词版本标签；先用稳定、可追溯的 slug，例如 a-roll-v1。", defaultConfiguration.promptVersion)}
+      </>}
     </div>
+    {showAllowedTools && !registeredCapability ? <label><FieldLabel help="任务允许使用的工具，使用英文逗号分隔。至少填写一个。">允许工具</FieldLabel><input aria-label="允许工具" onChange={(event) => onChange("allowedTools", event.target.value)} placeholder="例如：read, write" readOnly={readOnly} value={form.allowedTools} /></label> : null}
+    {definition.configurationFields.length ? <div className="media-adapter-field-grid">{hasConfigurationField("max_attempts") ? numberField("maxAttempts", "最大尝试次数", "媒体任务失败后的最大执行尝试次数。") : null}{hasConfigurationField("max_concurrency") ? numberField("maxConcurrency", "最大并发数", "同一生产单同时运行的媒体任务数。") : null}{hasConfigurationField("provider_max_concurrency") ? numberField("providerMaxConcurrency", "供应商并发上限", "发给同一供应商的最大并发数。") : null}{hasConfigurationField("voice") ? <><label><FieldLabel help="选择当前 Google TTS 连接支持的语言。">语言</FieldLabel><select aria-label="语言代码" disabled={readOnly} onChange={(event) => { onChange("voiceLanguageCode", event.target.value); onChange("voiceName", ""); }} value={form.voiceLanguageCode in googleTtsVoices ? form.voiceLanguageCode : ""}><option value="">选择语言</option>{form.voiceLanguageCode && !(form.voiceLanguageCode in googleTtsVoices) ? <option value={form.voiceLanguageCode}>{form.voiceLanguageCode}</option> : null}{Object.keys(googleTtsVoices).map((languageCode) => <option key={languageCode} value={languageCode}>{languageCode}</option>)}</select></label><label><FieldLabel help="选择对应语言的 Google TTS 声音；保留已有但目录中不存在的冻结值。">声音</FieldLabel><select aria-label="声音名称" disabled={readOnly || !form.voiceLanguageCode} onChange={(event) => onChange("voiceName", event.target.value)} value={voiceNames.includes(form.voiceName) ? form.voiceName : ""}><option value="">选择声音</option>{form.voiceName && !voiceNames.includes(form.voiceName) ? <option value={form.voiceName}>{form.voiceName}</option> : null}{voiceNames.map((voiceName) => <option key={voiceName} value={voiceName}>{voiceName}</option>)}</select></label>{hasConfigurationField("voice_speaking_rate") ? numberField("voiceSpeakingRate", "语速", "旁白播放速度，通常填写 1。", 0.1) : null}</> : null}</div> : null}</div>
   </article>;
-}
-
-function mediaConfigurationLabel(key: MediaAdapterKey): string {
-  return key === "static_visual" ? "图片生成" : mediaCapabilityForKey(key).label;
-}
-
-function mediaAdapterPathLabel(form: MediaAdapterForm): string {
-  if (!form.executionPath) return "未选择";
-  if (form.executionPath === "manual") return "人工素材";
-  if (form.executionPath === "local") return `本地 · ${form.adapter || "未选择 Adapter"}`;
-  return `外部 · ${form.provider ? externalConnectionProviderLabel(form.provider) : "未选择 Provider"}`;
 }
 
 function readableRuleValue(value: Json): string {
@@ -231,7 +212,7 @@ function mediaAdapterPreview(key: MediaAdapterKey, form: MediaAdapterForm): stri
     form.voiceName && `声音 ${form.voiceName}`,
     form.voiceSpeakingRate && `语速 ${form.voiceSpeakingRate}`,
   ].filter(Boolean);
-  return `${mediaConfigurationLabel(key)} · ${details.join(" · ") || "未配置"}`;
+  return `${mediaCapabilityForKey(key).label} · ${details.join(" · ") || "未配置"}`;
 }
 
 export function BlueprintEffectiveSummary({ blueprintPreflight = null, blueprintPreflightError = "", isBlueprintPreflightLoading = false, onEditTechnical, onRefreshBlueprintPreflight, policy, systemStatus = null, version }: { blueprintPreflight?: WorkerPreflightResult | null; blueprintPreflightError?: string; isBlueprintPreflightLoading?: boolean; onEditTechnical?: () => void; onRefreshBlueprintPreflight?: () => Promise<void>; policy: Json; systemStatus?: LocalSystemStatusReport | null; version?: number }) {
@@ -247,7 +228,7 @@ export function BlueprintEffectiveSummary({ blueprintPreflight = null, blueprint
       <div><dt>生效范围</dt><dd>仅影响之后新建的 Episode</dd></div>
       <div><dt>已有 Episode</dt><dd>保留创建时的冻结配置</dd></div>
       <div><dt>资产目录</dt><dd>{form.assetRoot || "未配置，生产前检查会阻塞"}</dd></div>
-      <div><dt>生产能力</dt><dd>{enabledMediaAdapters.length ? <div className="summary-chip-list">{enabledMediaAdapters.map((key) => <span className="summary-chip" key={key}>{mediaConfigurationLabel(key)} · {mediaAdapterStatus(key, form.mediaAdapters[key])}</span>)}</div> : <span className="summary-empty">暂未启用可选媒体能力</span>}</dd></div>
+      <div><dt>生产能力</dt><dd>{enabledMediaAdapters.length ? <div className="summary-chip-list">{enabledMediaAdapters.map((key) => <span className="summary-chip" key={key}>{mediaCapabilityForKey(key).label} · {mediaAdapterStatus(key, form.mediaAdapters[key])}</span>)}</div> : <span className="summary-empty">暂未启用可选媒体能力</span>}</dd></div>
       <div className="blueprint-summary-wide"><dt>分镜规划</dt><dd><div className="summary-chip-list">{visibleExecutorKeys.map((key) => <span className="summary-chip" key={key}>{executorLabels[key]} · {form.executors[key].provider} / {form.executors[key].model} / {form.executors[key].promptVersion}</span>)}</div></dd></div>
       <div className="blueprint-summary-wide"><dt>依赖状态</dt><dd>{dependencyItems.length ? <div className="summary-chip-list">{dependencyItems.map((item) => <span className="summary-chip" key={item.name}>{item.name} · {systemStateLabel(item.state)}</span>)}</div> : "尚未读取本地依赖报告"}</dd></div>
       <div className="blueprint-summary-wide"><dt>生产前状态</dt><dd>{productionStatus}。Worker 会在生产前确认注册、凭据、工具、网络和模型权限。</dd></div>
@@ -261,23 +242,24 @@ function BlueprintPolicyPreview({ form }: { form: BlueprintFormValues }) {
   return <fieldset className="technical-policy-preview"><legend>最终写入与冻结预览</legend><dl className="configuration-summary blueprint-summary-grid">
     <div><dt>资产目录</dt><dd>{form.assetRoot || "未配置"}</dd></div>
     <div><dt>允许工具</dt><dd>{form.allowedTools.join("、") || "未配置"}</dd></div>
-    <div><dt>生产能力</dt><dd>{enabledMediaAdapters.length ? enabledMediaAdapters.map((key) => `${mediaConfigurationLabel(key)} · ${mediaAdapterStatus(key, form.mediaAdapters[key])}`).join("；") : "暂未启用可选媒体能力"}</dd></div>
+    <div><dt>生产能力</dt><dd>{enabledMediaAdapters.length ? enabledMediaAdapters.map((key) => `${mediaCapabilityForKey(key).label} · ${mediaAdapterStatus(key, form.mediaAdapters[key])}`).join("；") : "暂未启用可选媒体能力"}</dd></div>
     <div className="blueprint-summary-wide"><dt>分镜规划</dt><dd><div className="summary-chip-list">{visibleExecutorKeys.map((key) => <span className="summary-chip" key={key}>{executorLabels[key]} · {form.executors[key].provider} / {form.executors[key].model} / {form.executors[key].promptVersion}</span>)}</div></dd></div>
     <div className="blueprint-summary-wide"><dt>媒体适配器</dt><dd>{enabledMediaAdapters.length ? enabledMediaAdapters.map((key) => mediaAdapterPreview(key, form.mediaAdapters[key])).join("；") : "暂未启用可选媒体能力"}</dd></div>
     <div className="blueprint-summary-wide"><dt>冻结边界</dt><dd>保存后只影响之后新建的 Episode；已有 Episode 保留创建时的规则快照。</dd></div>
   </dl><FieldHint>这里只显示会写入蓝图并在新 Episode 创建时冻结的静态声明，不包含 API Key、Token 或 Worker 运行态。</FieldHint></fieldset>;
 }
 
-export function BlueprintConfigurationForm({ accountId, connectionVersions = [], externalConnections = [], initialAssetRoot, initialPolicy, isEpisodeRepair = false, isPending, localAdapterReadiness = {}, onCancel, onCreateConnection, onCreatePromptVersion, onDirtyChange, onRotateConnection, onSave, onTestConnection, promptVersions = [], readOnly = false, systemStatus = null, technicalOnly = false }: { accountId?: string; connectionVersions?: ExternalConnectionVersion[]; externalConnections?: ExternalConnection[]; initialAssetRoot: string; initialPolicy: Json; isEpisodeRepair?: boolean; isPending: boolean; localAdapterReadiness?: LocalAdapterReadiness; onCancel: () => void; onCreateConnection?: (input: ExternalConnectionInput) => Promise<ExternalConnection | null>; onCreatePromptVersion?: (input: { capability: PromptCapability; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onDirtyChange?: (dirty: boolean) => void; onRotateConnection?: (input: { connectionId: string; provider: ExternalConnectionInput["provider"]; adapter: ExternalConnectionInput["adapter"]; secret: string }) => Promise<ExternalConnection | null>; onSave: (policy: Json, activate: boolean) => Promise<void>; onTestConnection?: (connectionId: string) => Promise<void>; promptVersions?: PromptVersion[]; readOnly?: boolean; systemStatus?: LocalSystemStatusReport | null; technicalOnly?: boolean }) {
+export function BlueprintConfigurationForm({ accountId, externalConnections = [], initialAssetRoot, initialPolicy, isEpisodeRepair = false, isPending, isPromptVersionPending = false, onCancel, onCreatePromptVersion, onDirtyChange, onSave, promptVersions = [], readOnly = false, systemStatus = null, technicalOnly = false }: { accountId?: string; externalConnections?: ExternalConnection[]; initialAssetRoot: string; initialPolicy: Json; isEpisodeRepair?: boolean; isPending: boolean; isPromptVersionPending?: boolean; onCancel: () => void; onCreatePromptVersion?: (input: { capability: PromptCapability; name: string; summary: string; instructions: string }) => Promise<PromptVersion | null>; onDirtyChange?: (dirty: boolean) => void; onSave: (policy: Json, activate: boolean) => Promise<void>; promptVersions?: PromptVersion[]; readOnly?: boolean; systemStatus?: LocalSystemStatusReport | null; technicalOnly?: boolean }) {
   const initialForm = () => blueprintPolicyToForm({ ...(initialPolicy && typeof initialPolicy === "object" && !Array.isArray(initialPolicy) ? initialPolicy : {}), asset_root: initialAssetRoot } as Json);
   const initialPolicyKey = JSON.stringify(initialPolicy);
+  const initialStoryboardHarnessId = initialForm().executors.storyboard_planning.harnessId;
   const [form, setForm] = useState<BlueprintFormValues>(initialForm);
   const [error, setError] = useState("");
-  const [assetDirectoryAction, setAssetDirectoryAction] = useState<"choose" | "open" | null>(null);
+  const [technicalConfigOpen, setTechnicalConfigOpen] = useState(readOnly || technicalOnly);
   const [storyboardConfigurationOpen, setStoryboardConfigurationOpen] = useState(false);
-  const [promptVersionManagerOpen, setPromptVersionManagerOpen] = useState(false);
-  const [mediaAdapterConfigurationKey, setMediaAdapterConfigurationKey] = useState<MediaAdapterKey | null>(null);
-  useEffect(() => { setForm(initialForm()); setStoryboardConfigurationOpen(false); setPromptVersionManagerOpen(false); setMediaAdapterConfigurationKey(null); onDirtyChange?.(false); }, [initialAssetRoot, initialPolicyKey, onDirtyChange]);
+  const [assetDirectoryAction, setAssetDirectoryAction] = useState<"choose" | "open" | null>(null);
+  useEffect(() => { setForm(initialForm()); onDirtyChange?.(false); }, [initialAssetRoot, initialPolicyKey, onDirtyChange]);
+  useEffect(() => setTechnicalConfigOpen(readOnly || technicalOnly), [readOnly, technicalOnly]);
 
   function update(next: Partial<BlueprintFormValues>) {
     onDirtyChange?.(true);
@@ -301,6 +283,7 @@ export function BlueprintConfigurationForm({ accountId, connectionVersions = [],
 
   function toggleMediaAdapter(key: ConfigurableMediaAdapterKey, enabled: boolean) {
     onDirtyChange?.(true);
+    if (enabled) setTechnicalConfigOpen(true);
     setForm((current) => {
       const enabledMediaAdapters = current.enabledMediaAdapters ?? [];
       const nextEnabled = enabled ? [...enabledMediaAdapters, key] : enabledMediaAdapters.filter((item) => item !== key);
@@ -348,8 +331,6 @@ export function BlueprintConfigurationForm({ accountId, connectionVersions = [],
         if (!executor.provider.trim() || !executor.model.trim() || !executor.promptVersion.trim()) throw new Error(`${executorLabels[key]}执行器的 Provider、模型和 Prompt 版本不能为空。`);
         if (!executor.harnessId?.trim() || !promptVersions.some((version) => version.id === executor.harnessId && version.capability === key && version.is_active)) throw new Error("分镜规划必须选择已登记且启用的 Prompt Harness。");
       }
-      const availableExternalConnectionVersionIds = connectionVersions.length ? connectionVersions.filter((version) => version.is_current && version.status === "verified" && !version.revoked_at).map((version) => version.id) : undefined;
-      validateMediaAdapters(form.mediaAdapters, { availableExternalConnectionVersionIds });
       await onSave(blueprintFormToPolicy(form), true);
       onDirtyChange?.(false);
     } catch (cause) {
@@ -359,8 +340,6 @@ export function BlueprintConfigurationForm({ accountId, connectionVersions = [],
 
   function reset() {
     setForm(initialForm());
-    setStoryboardConfigurationOpen(false);
-    setMediaAdapterConfigurationKey(null);
     setError("");
     onDirtyChange?.(false);
     onCancel();
@@ -374,11 +353,9 @@ export function BlueprintConfigurationForm({ accountId, connectionVersions = [],
     {technicalOnly ? <RuntimeDependencyStatus report={systemStatus} /> : null}
     {technicalOnly ? null : <fieldset><legend><FieldLabel help="账号级的长期方向。它会作为脚本、视觉和分镜生成的共同背景。">账号定位</FieldLabel></legend><label><textarea aria-label="账号定位" onChange={(event) => update({ positioning: event.target.value })} placeholder="例如：面向固定受众，持续制作某类短视频内容。" readOnly={readOnly} rows={3} value={form.positioning} /></label><FieldHint>描述账号面向谁、持续讲什么以及希望保持的表达方向。</FieldHint></fieldset>}
     <fieldset><legend>{technicalOnly ? "运行前置与权限声明" : "本地资产与审批"}</legend><label><FieldLabel help="建议填写一个稳定的账号目录，例如 /Volumes/素材盘/账号目录。">资产目录</FieldLabel><div className="asset-root-control"><input aria-label="资产目录" onChange={(event) => update({ assetRoot: event.target.value })} placeholder="例如：/Volumes/素材盘/账号目录" readOnly={readOnly} value={form.assetRoot} />{localDirectoryActions ? <><button className="button button-secondary button-small" disabled={assetDirectoryAction !== null} onClick={() => void chooseAssetDirectory()} type="button">{assetDirectoryAction === "choose" ? "选择中…" : "选择文件夹"}</button><button className="button button-secondary button-small" disabled={assetDirectoryAction !== null || !form.assetRoot.trim()} onClick={() => void openAssetDirectory()} type="button">{assetDirectoryAction === "open" ? "打开中…" : "打开文件夹"}</button></> : null}</div></label><p className="blueprint-readiness" role="status">{readinessMessage}</p>{technicalOnly ? <><div><span className="configuration-label"><FieldLabel help="这是账号级硬约束。没有 write 时，Worker 不能创建输出产物。">允许工具</FieldLabel></span><div className="configuration-switch-list">{toolOptions.map(([value, label]) => <ConfigurationSwitch checked={form.allowedTools.includes(value)} disabled={readOnly} key={value} label={label} onChange={(checked) => update({ allowedTools: checked ? [...form.allowedTools, value] : form.allowedTools.filter((item) => item !== value) })} />)}</div></div><FieldHint>资产目录、工具白名单和媒体能力只影响之后新建的 Episode；账号定位和审批关卡保留在蓝图主表单中。</FieldHint></> : <div className="configuration-switch-groups"><div><span className="configuration-label"><FieldLabel help="勾选后，对应阶段会保留 Owner 的人工确认节点。至少保留一个关卡。">审批关卡</FieldLabel></span><div className="configuration-switch-list approval-gate-switches">{approvalGateOptions.map(([value, label]) => <ConfigurationSwitch checked={form.approvalGates.includes(value)} disabled={readOnly || (form.approvalGates.length === 1 && form.approvalGates.includes(value))} key={value} label={label} onChange={(checked) => update({ approvalGates: checked ? [...form.approvalGates, value] : form.approvalGates.filter((item) => item !== value) })} />)}</div></div><div><span className="configuration-label"><FieldLabel help="这是账号级硬约束。没有 write 时，Worker 不能创建输出产物。">允许工具</FieldLabel></span><div className="configuration-switch-list tool-switches">{toolOptions.map(([value, label]) => <ConfigurationSwitch checked={form.allowedTools.includes(value)} disabled={readOnly} key={value} label={label} onChange={(checked) => update({ allowedTools: checked ? [...form.allowedTools, value] : form.allowedTools.filter((item) => item !== value) })} />)}</div></div></div>}</fieldset>
-    <fieldset id="account-capabilities"><legend>生产能力</legend><FieldHint>在此启用能力并比较当前路径与配置状态；点击“配置”只打开该能力。配置未完成时，生产前检查会阻止创建生产单。</FieldHint><div aria-label="生产能力配置矩阵" className="capability-matrix" role="table"><div className="capability-matrix-row capability-matrix-heading" role="row"><span role="columnheader">能力</span><span role="columnheader">启用</span><span role="columnheader">执行路径</span><span role="columnheader">状态</span><span role="columnheader">操作</span></div>{mediaAdapterKeys.map((key) => { const enabled = enabledMediaAdapters.includes(key); const adapterForm = form.mediaAdapters[key]; const status = enabled ? mediaAdapterStatus(key, adapterForm) : "未启用"; const isConfigured = status === "已配置"; const label = mediaConfigurationLabel(key); return <div className="capability-matrix-row" key={key} role="row"><strong role="cell">{label}</strong><div role="cell"><ConfigurationSwitch ariaLabel={`启用${label}`} checked={enabled} disabled={readOnly} label={label} onChange={(checked) => toggleMediaAdapter(key, checked)} /></div><span className="capability-matrix-path" role="cell">{enabled ? mediaAdapterPathLabel(adapterForm) : "—"}</span><span className={`capability-matrix-status${isConfigured ? " is-configured" : status === "未启用" ? "" : " is-incomplete"}`} role="cell">{status}</span><div role="cell">{readOnly || !enabled ? null : <button aria-label={`配置${label}`} className="button button-secondary button-small" onClick={() => setMediaAdapterConfigurationKey(key)} type="button">配置</button>}</div></div>; })}</div><FieldHint>Provider、Adapter、连接、模型、预设和调度参数只作用于之后新建的 Episode。</FieldHint></fieldset>
-    {mediaAdapterConfigurationKey ? <div aria-label={`配置${mediaConfigurationLabel(mediaAdapterConfigurationKey)}`} aria-modal="true" className="stage-configuration-dialog media-adapter-dialog" role="dialog"><section><header><div><span>生产能力配置</span><h3>配置{mediaConfigurationLabel(mediaAdapterConfigurationKey)}</h3><p>选择可用于之后新建 Episode 的执行路径；连接中的秘密不会写入蓝图。</p></div><button aria-label={`关闭${mediaConfigurationLabel(mediaAdapterConfigurationKey)}配置`} className="icon-button" onClick={() => setMediaAdapterConfigurationKey(null)} type="button">×</button></header><MediaAdapterCard adapterKey={mediaAdapterConfigurationKey} connectionVersions={connectionVersions} externalConnections={externalConnections} form={form.mediaAdapters[mediaAdapterConfigurationKey]} localAdapterReadiness={localAdapterReadiness} onChange={(field, value) => updateMediaAdapter(mediaAdapterConfigurationKey, field, value)} onCreateConnection={onCreateConnection} onRotateConnection={onRotateConnection} onTestConnection={onTestConnection} readOnly={readOnly} showAllowedTools={false} /><footer><button className="button button-primary" onClick={() => setMediaAdapterConfigurationKey(null)} type="button">完成</button></footer></section></div> : null}
-    <fieldset id="account-budget"><legend>分镜规划</legend><section className="stage-configuration-summary">{visibleExecutorKeys.map((executorKey) => { const executor = form.executors[executorKey]; return <article key={executorKey}><div className="stage-configuration-summary-title"><strong>{executorLabels[executorKey]}</strong><span>新建 Episode 时冻结此选择</span></div><dl><div><dt>运行模型</dt><dd>{executor.provider} · {executor.model}</dd></div><div><dt>提示词 Harness</dt><dd>{executor.promptVersion || "未配置 Prompt"}</dd></div></dl>{readOnly ? null : <button aria-label="修改分镜规划配置" className="button button-secondary button-small" onClick={() => setStoryboardConfigurationOpen(true)} type="button">配置</button>}</article>; })}</section></fieldset>
-    {storyboardConfigurationOpen ? <StageConfigurationDialog executor={form.executors.storyboard_planning} executorKey="storyboard_planning" onClose={() => setStoryboardConfigurationOpen(false)} onManagePromptVersions={() => { setStoryboardConfigurationOpen(false); setPromptVersionManagerOpen(true); }} onSelectPromptVersion={(version) => selectPromptVersion("storyboard_planning", version)} onUpdateExecutor={(field, value) => updateExecutor("storyboard_planning", field, value)} promptVersions={promptVersions} readOnly={readOnly} /> : null}
-    {promptVersionManagerOpen ? <PromptVersionManager fixedCapability="storyboard_planning" isPending={isPending} onClose={() => { setPromptVersionManagerOpen(false); setStoryboardConfigurationOpen(true); }} onCreate={onCreatePromptVersion} onSelect={(version) => selectPromptVersion("storyboard_planning", version)} promptVersions={promptVersions} selectedVersionId={form.executors.storyboard_planning.harnessId} /> : null}
+    <fieldset id="account-capabilities"><legend>生产能力</legend><FieldHint>启用后在下方补充技术配置；配置未完成时，生产前检查会阻止创建生产单。</FieldHint><div className="capability-grid">{mediaAdapterKeys.map((key) => <ConfigurationSwitch ariaLabel={`启用${mediaCapabilityForKey(key).label}`} checked={enabledMediaAdapters.includes(key)} disabled={readOnly} key={key} label={mediaCapabilityForKey(key).compactLabel} onChange={(checked) => toggleMediaAdapter(key, checked)} />)}</div>{enabledMediaAdapters.length ? <details className="advanced-configuration media-adapter-configuration" onToggle={(event) => setTechnicalConfigOpen(event.currentTarget.open)} open={technicalConfigOpen}><summary>已启用能力的技术配置（{enabledMediaAdapters.length}）</summary><div className="media-adapter-grid">{enabledMediaAdapters.map((key) => <MediaAdapterCard adapterKey={key} externalConnections={externalConnections} form={form.mediaAdapters[key]} key={key} onChange={(field, value) => updateMediaAdapter(key, field, value)} readOnly={readOnly} showAllowedTools={false} />)}</div><FieldHint>Provider、Adapter、模型、Prompt 和调度参数只作用于之后新建的生产单。</FieldHint></details> : null}</fieldset>
+    <fieldset id="account-budget"><legend>分镜规划</legend><p className="executor-version-summary">固定执行路径：Codex Adapter。模型与 Harness 会随新生产单冻结。</p><section className="stage-configuration-summary">{visibleExecutorKeys.map((executorKey) => { const executor = form.executors[executorKey]; return <article key={executorKey}><dl><div><dt>模型</dt><dd>{executor.model}</dd></div><div><dt>Prompt Harness</dt><dd>{executor.promptVersion || "未配置"}</dd></div></dl>{readOnly ? null : <button className="button button-secondary button-small" onClick={() => setStoryboardConfigurationOpen(true)} type="button">修改分镜规划</button>}{!readOnly && executorKey === "storyboard_planning" && executor.harnessId !== initialStoryboardHarnessId ? <p className="field-hint">已选择 {executor.promptVersion}；点击“保存并检查”后用于之后新建的生产单。</p> : null}</article>; })}</section></fieldset>
+    {storyboardConfigurationOpen ? <StageConfigurationDialog executorKey="storyboard_planning" isPending={isPromptVersionPending} onClose={() => setStoryboardConfigurationOpen(false)} onCreatePromptVersion={onCreatePromptVersion} onSelectPromptVersion={(version) => selectPromptVersion("storyboard_planning", version)} promptVersions={promptVersions} /> : null}
     {readOnly ? <ReadOnlyAdvancedRules source={form.advancedJson} /> : null}
     {error ? <p className="form-error">{error}</p> : null}
     {technicalOnly ? <BlueprintPolicyPreview form={form} /> : null}
@@ -398,7 +375,6 @@ function mediaAdapterKeyForBlocker(blocker: { code: string; detail: string }): M
 
 function executorKeyForTask(taskType?: string): keyof BlueprintFormValues["executors"] | null {
   if (taskType === "draft_script") return "script_writing";
-  if (taskType === "prepare_visual_brief") return "storyboard_planning";
   if (taskType === "draft_storyboard") return "storyboard_planning";
   return null;
 }

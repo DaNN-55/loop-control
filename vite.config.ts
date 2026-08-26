@@ -1321,7 +1321,7 @@ function retryablePreflight(error: unknown) {
   };
 }
 
-async function workerMediaLibraryStatus(policy: unknown, beforeEpisodeCreation = false): Promise<{ available: boolean; detail: string } | undefined> {
+async function workerMediaLibraryStatus(policy: unknown, requireEpisodesDirectory = false): Promise<{ available: boolean; detail: string } | undefined> {
   const assetRoot = policy && typeof policy === "object" && !Array.isArray(policy) && typeof (policy as Record<string, unknown>).asset_root === "string" ? ((policy as Record<string, unknown>).asset_root as string).trim() : "";
   if (!assetRoot) return { available: false, detail: "蓝图未配置 asset_root。" };
   if (!isAbsolute(assetRoot)) return { available: false, detail: "蓝图 asset_root 必须使用绝对路径。" };
@@ -1330,7 +1330,7 @@ async function workerMediaLibraryStatus(policy: unknown, beforeEpisodeCreation =
   const minimumFreeBytesValue = localWorkerEnvironmentValue("MEDIA_LIBRARY_MIN_FREE_BYTES");
   if (!minimumFreeBytesValue || !/^\d+$/.test(minimumFreeBytesValue) || !Number.isSafeInteger(Number(minimumFreeBytesValue))) return { available: false, detail: "MEDIA_LIBRARY_MIN_FREE_BYTES 未配置为非负整数。" };
   try {
-    const status = await verifyMediaLibrary({ assetRoot, mountPath, minimumFreeBytes: Number(minimumFreeBytesValue), requireEpisodesDirectory: !beforeEpisodeCreation });
+    const status = await verifyMediaLibrary({ assetRoot, mountPath, minimumFreeBytes: Number(minimumFreeBytesValue), requireEpisodesDirectory });
     return { available: true, detail: `媒体库已验证：${status.mountPath}，可用空间 ${status.availableBytes} 字节。` };
   } catch (error) {
     return { available: false, detail: error instanceof Error ? error.message : "媒体库无法通过运行态检查。" };

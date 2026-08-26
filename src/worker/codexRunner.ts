@@ -321,6 +321,27 @@ function media(snapshot: Record<string, unknown>): WorkerTaskPackageInput["media
       },
     };
   }
+  if (value.adapter === "hyperframes_card_video") {
+    const cardVideo = value.card_video;
+    if (!isRecord(cardVideo) || !isRecord(cardVideo.shot) || !Array.isArray(cardVideo.shot.inputBasis)) throw new Error("B-roll 卡片视频冻结配置无效。");
+    return {
+      adapter: "hyperframes_card_video",
+      cardVideo: {
+        shot: {
+          id: requiredString(cardVideo.shot.id, "B-roll 卡片视频缺少镜头 ID。"),
+          scriptSegment: requiredString(cardVideo.shot.scriptSegment, "B-roll 卡片视频缺少脚本片段。"),
+          durationSeconds: requiredPositiveNumber(cardVideo.shot.durationSeconds, "B-roll 卡片视频缺少镜头时长。"),
+          shotType: requiredShotType(cardVideo.shot.shotType),
+          productionMethod: requiredString(cardVideo.shot.productionMethod, "B-roll 卡片视频缺少制作方法。"),
+          inputBasis: cardVideo.shot.inputBasis.map((input) => {
+            if (!isRecord(input)) throw new Error("B-roll 卡片视频输入依据格式无效。");
+            return { relativePath: requiredString(input.relativePath, "B-roll 卡片视频输入依据缺少路径。"), sha256: requiredString(input.sha256, "B-roll 卡片视频输入依据缺少哈希。") };
+          }),
+          targetSpec: requiredString(cardVideo.shot.targetSpec, "B-roll 卡片视频缺少目标规格。"),
+        },
+      },
+    };
+  }
   if (value.adapter === "ffmpeg_extract_audio") {
     const embeddedAudio = value.embedded_audio;
     if (!isRecord(embeddedAudio)) throw new Error("派生音频任务冻结配置无效。");

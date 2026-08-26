@@ -26,7 +26,6 @@ describe("runtime preflight", () => {
       allowed_tools: ["read", "write"],
       executors: {
         script_writing: { provider: "codex", model: "model-1", prompt_version: "script-v1" },
-        visual_planning: { provider: "codex", model: "model-1", prompt_version: "visual-v1" },
         storyboard_planning: { provider: "codex", model: "model-1", prompt_version: "storyboard-v1" },
       },
       narration: {
@@ -38,7 +37,6 @@ describe("runtime preflight", () => {
     });
 
     expect(capabilities.map((capability) => capability.capability)).toEqual([
-      "visual_planning",
       "storyboard_planning",
       "review_rendering",
       "final_rendering",
@@ -75,13 +73,17 @@ describe("runtime preflight", () => {
     expect(createRuntimePreflight([configured!]).checks).toContainEqual(expect.objectContaining({ capability: "storyboard_planning", check: "capability_registration", status: "passed" }));
   });
 
-  it("视觉准备与分镜共用 Adapter 和 Prompt Harness 要求", () => {
-    const visual = runtimeCapabilitiesFromBlueprintPolicy({
+  it("视觉素材准备不再读取蓝图执行器配置", () => {
+    const capabilities = runtimeCapabilitiesFromBlueprintPolicy({
       allowed_tools: ["read", "write"],
-      executors: { visual_planning: { provider: "codex", model: "gpt-5.6-luna", prompt_version: "storyboard-planning-v1" } },
-    }).find((capability) => capability.capability === "visual_planning");
+      executors: {
+        visual_planning: { provider: "unknown", model: "legacy-visual", prompt_version: "legacy-visual-v1" },
+        storyboard_planning: { provider: "codex", adapter: "codex", harness_id: "harness-1", model: "gpt-5.6-luna", prompt_version: "storyboard-planning-v1" },
+      },
+    });
 
-    expect(createRuntimePreflight([visual!]).checks).toContainEqual(expect.objectContaining({ capability: "visual_planning", check: "blueprint_configuration", status: "blocked", action: "edit_blueprint" }));
+    expect(capabilities.some((capability) => capability.capability === "visual_planning")).toBe(false);
+    expect(createRuntimePreflight(capabilities).checks).not.toContainEqual(expect.objectContaining({ capability: "visual_planning", action: "edit_blueprint" }));
   });
 
   it("不为旧 Pexels 引用声明环境变量秘密", () => {
@@ -176,6 +178,26 @@ describe("runtime preflight", () => {
     ]));
   });
 
+  it("把未解析的 Owner 连接引用指向蓝图，把认证失败指向连接管理", () => {
+    const connectionId = "11111111-1111-4111-8111-111111111111";
+    const capability = {
+      capability: "b_roll_generation",
+      provider: "pexels",
+      adapter: "pexels_video",
+      credentialRef: connectionId,
+      model: "pexels-video-v1",
+      promptVersion: "b-roll-v1",
+      allowedTools: ["read", "write"],
+    };
+    const missing = createRuntimePreflight([capability], { connectionReferences: { [connectionId]: { available: false, detail: "连接引用不存在。" } }, credentials: { [connectionId]: false } });
+    expect(missing.checks).toEqual(expect.arrayContaining([
+      expect.objectContaining({ check: "connection_reference", action: "edit_blueprint", scope: "blueprint" }),
+      expect.objectContaining({ check: "credential_presence", action: "manage_connection" }),
+    ]));
+    const invalid = createRuntimePreflight([capability], { connectionReferences: { [connectionId]: { available: true, detail: "连接引用已解析。" } }, credentials: { [connectionId]: true }, credentialValidity: { [connectionId]: { available: false, detail: "Pexels 拒绝认证。" } } });
+    expect(invalid.checks).toContainEqual(expect.objectContaining({ check: "credential_validity", action: "manage_connection" }));
+  });
+
   it("把资产目录不可访问映射为独立的资产目录阻塞", () => {
     const result = createRuntimePreflight([], { assetRoot: { available: false, detail: "媒体库账号目录不可访问。" } });
 
@@ -247,6 +269,20 @@ describe("runtime preflight", () => {
     }, undefined, ["a_roll_generation"]);
 
     expect(createRuntimePreflight(capabilities).checks).toContainEqual(expect.objectContaining({ capability: "a_roll_generation", check: "capability_registration", status: "unavailable" }));
+  });
+
+  it("本地 HyperFrames 卡片视频通过 A/B-roll 注册检查且不要求凭据", () => {
+    const result = createRuntimePreflight(runtimeCapabilitiesFromBlueprintPolicy({
+      a_roll: { executor: { provider: "hyperframes", adapter: "hyperframes_card_video", model: "hyperframes@0.7.109", prompt_version: "card-video-v1" }, allowed_tools: ["read", "write"] },
+      b_roll: { executor: { provider: "hyperframes", adapter: "hyperframes_card_video", model: "hyperframes@0.7.109", prompt_version: "card-video-v1" }, allowed_tools: ["read", "write"] },
+    }), { commands: { hyperframes: { available: true, detail: "HyperFrames 已安装。" } } });
+
+    expect(result.checks).toEqual(expect.arrayContaining([
+      expect.objectContaining({ capability: "a_roll_generation", check: "capability_registration", status: "passed" }),
+      expect.objectContaining({ capability: "b_roll_generation", check: "capability_registration", status: "passed" }),
+      expect.objectContaining({ capability: "a_roll_generation", check: "command_availability", status: "passed" }),
+    ]));
+    expect(result.checks.some((check) => check.capability === "a_roll_generation" && check.check === "credential_presence")).toBe(false);
   });
 
   it("蓝图关闭时不被系列旧媒体规则重新启用", () => {

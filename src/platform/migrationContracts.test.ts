@@ -88,6 +88,9 @@ const sharedPlanningMigration = resolve(
 const reviewRevisionPreconditionsMigration = resolve(
   "supabase/migrations/20260824110000_deepen_review_revision_preconditions.sql",
 );
+const internalVisualPreparationMigration = resolve(
+  "supabase/migrations/20260824120000_internal_visual_asset_preparation.sql",
+);
 const deployedMigrations = {
   "20260822095959_guard_legacy_b_roll_history.sql": "b36e63037ca12c2785d7bbb9f2fe8596f31377de734dcf8b96cb03af23613c9b",
   "20260822100000_freeze_b_roll_adapter_connection.sql": "f38575ba3b5dcb7814f230c5a48a52c6a5ac37811868d00bdb0f7eb375b2a51d",
@@ -281,6 +284,17 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("create or replace function public.apply_episode_configuration_repair_v2");
     expect(migration).toContain("'分镜规划修复配置必须选择已启用的 Harness'");
     expect(migration).toContain("planning_task.input_snapshot - 'prompt_context'");
+  });
+
+  it("视觉素材准备改为 Worker 内部步骤，蓝图只保留静态视觉与分镜配置", () => {
+    const migration = readFileSync(internalVisualPreparationMigration, "utf8");
+
+    expect(migration).toContain("and exists (select 1 from public.episodes episode where episode.blueprint_version_id = blueprint.id)");
+    expect(migration).toContain("coalesce(blueprint.policy -> 'executors', '{}'::jsonb) - 'visual_planning'");
+    expect(migration).toContain("coalesce(blueprint.policy -> 'budgets', '{}'::jsonb) - 'visual_planning_cents'");
+    expect(migration).toContain("'visual-preparation-v1'");
+    expect(migration).toContain("'execution_mode', case when selected_harness.id is null then 'worker_default' else 'legacy_frozen' end");
+    expect(migration).toContain("drop trigger if exists freeze_shared_planning_harness_before_insert on public.tasks;");
   });
 
   it("按生产单的明确选择决定保留上传视频原声还是生成 TTS", () => {

@@ -242,10 +242,10 @@ const stageLabels: Record<EpisodeStage, string> = {
   brief_draft: "等待输入",
   script_draft: "脚本生成与审核",
   script_review: "脚本生成与审核",
-  script_approved: "分镜前准备与审核",
-  visual_draft: "分镜前准备与审核",
-  visual_review: "分镜前准备与审核",
-  visual_approved: "分镜前准备与审核",
+  script_approved: "视觉素材准备与审核",
+  visual_draft: "视觉素材准备与审核",
+  visual_review: "视觉素材准备与审核",
+  visual_approved: "视觉素材准备与审核",
   storyboard_draft: "分镜生成与审核",
   storyboard_review: "分镜生成与审核",
   storyboard_approved: "分镜生成与审核",
@@ -279,8 +279,9 @@ const taskStatusLabels: Record<Task["status"], string> = { ready: "等待领取"
 const transitionReasonLabels: Record<string, string> = {
   "Owner confirmed an imported main script revision.": "Owner 已确认导入的主脚本修订。",
   "Owner confirmed all production materials are ready; start production.": "Owner 已确认材料准备完成，开始制作。",
-  "Orchestrator froze the first visual planning task from the confirmed main script.": "编排器已根据确认的主脚本冻结首个视觉规划任务。",
-  "Worker submitted a frozen visual planning review package.": "Worker 已提交冻结的视觉规划审核包。",
+  "Orchestrator froze the first visual planning task from the confirmed main script.": "编排器已根据确认的主脚本冻结视觉素材准备任务。",
+  "Orchestrator froze visual asset preparation from the approved script.": "编排器已根据确认的主脚本冻结视觉素材准备任务。",
+  "Worker submitted a frozen visual planning review package.": "Worker 已提交冻结的视觉素材清单，等待审核。",
   "HyperFrames deterministic review render completed.": "HyperFrames 已完成确定性的审核渲染。",
 };
 
@@ -288,9 +289,9 @@ const nextStepLabels: Partial<Record<EpisodeStage, string>> = {
   waiting_input: "导入主脚本",
   script_draft: "等待 Worker 生成脚本",
   script_review: "审核生成脚本",
-  script_approved: "等待生成视觉方案",
-  visual_draft: "等待 Worker 生成视觉方案",
-  visual_review: "审核视觉方案",
+  script_approved: "等待整理视觉素材清单",
+  visual_draft: "等待 Worker 整理视觉素材清单",
+  visual_review: "审核视觉素材清单",
   visual_approved: "等待生成分镜",
   storyboard_draft: "等待 Worker 生成分镜",
   storyboard_review: "审核分镜并处理镜头批注",
@@ -605,6 +606,7 @@ export function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [pendingAction, setPendingAction] = useState("");
   const [episodeCreationStep, setEpisodeCreationStep] = useState<EpisodeCreationStep>("idle");
+  const [episodeCreationStartedAt, setEpisodeCreationStartedAt] = useState<number | null>(null);
   const [systemStatus, setSystemStatus] = useState<LocalSystemStatusReport | null>(null);
   const [isSystemStatusLoading, setIsSystemStatusLoading] = useState(false);
   const [productionPreflight, setProductionPreflight] = useState<WorkerPreflightResult | null>(null);
@@ -954,7 +956,14 @@ export function App() {
       });
       if (error) throw error;
       setMessage("Prompt 新版本已登记；请保存蓝图后让新建生产单使用它。");
-      await refreshWorkspace();
+      if (data && workspaceRef.current) {
+        const nextWorkspace = {
+          ...workspaceRef.current,
+          promptVersions: [data, ...workspaceRef.current.promptVersions.filter((version) => version.id !== data.id)],
+        };
+        workspaceRef.current = nextWorkspace;
+        setWorkspace(nextWorkspace);
+      }
       return data;
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "登记 Prompt 版本失败。");
@@ -1079,16 +1088,21 @@ export function App() {
     }
   }
 
+  function setEpisodeCreationProgress(step: EpisodeCreationStep) {
+    setEpisodeCreationStep(step);
+    setEpisodeCreationStartedAt(step === "idle" ? null : Date.now());
+  }
+
   async function createEpisode(input: { title: string; accountId: string; isTest: boolean; seriesVersionId: string | null }): Promise<WorkerPreflightResult | null> {
     const account = workspace?.accounts.find((candidate) => candidate.id === input.accountId);
     if (!account?.current_blueprint_version_id) return null;
     setPendingAction("episode");
     setErrorMessage("");
     try {
-      setEpisodeCreationStep("preflight");
+      setEpisodeCreationProgress("preflight");
       const preflight = await runEpisodePreflight({ accountId: account.id, blueprintVersionId: account.current_blueprint_version_id, seriesVersionId: input.seriesVersionId });
       if (preflight.checks.some((check) => check.status !== "passed")) return preflight;
-      setEpisodeCreationStep("create");
+      setEpisodeCreationProgress("create");
       const { data, error } = await supabase.rpc("create_episode", {
         p_account_id: account.id,
         p_blueprint_version_id: account.current_blueprint_version_id,
@@ -1103,7 +1117,7 @@ export function App() {
       if (data) {
         setSelectedEpisodeId(data.id);
         try {
-          setEpisodeCreationStep("directory");
+          setEpisodeCreationProgress("directory");
           await requestLocalEpisodeDirectory(data.id, "create");
           localDirectoryReady = true;
         } catch (directoryError) {
@@ -1111,7 +1125,7 @@ export function App() {
         }
       }
       setMessage(localDirectoryReady ? "生产单已创建，本地输入目录已准备就绪，等待导入主脚本。" : "生产单已创建，等待导入主脚本；本地输入目录可稍后从详情页重试。");
-      setEpisodeCreationStep("refresh");
+      setEpisodeCreationProgress("refresh");
       await refreshWorkspace();
       if (localDirectoryError) setErrorMessage(localDirectoryError);
       return null;
@@ -1119,7 +1133,7 @@ export function App() {
       setErrorMessage(error instanceof Error ? error.message : "创建生产单失败。");
       return null;
     } finally {
-      setEpisodeCreationStep("idle");
+      setEpisodeCreationProgress("idle");
       setPendingAction("");
     }
   }
@@ -1872,7 +1886,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
 
       <nav aria-label="移动端主导航" className="mobile-navigation"><NavigationButtons activeNavigation={activeNavigation} badges={navigationBadges} onSelect={changeNavigation} /></nav>
 
-      {showEpisodeForm ? <EpisodeForm accounts={workspace.accounts} creationStep={episodeCreationStep} isPending={pendingAction === "episode"} onClose={() => setShowEpisodeForm(false)} onOpenBlueprint={(accountId) => { setShowEpisodeForm(false); openAccountBlueprint(accountId); }} onSubmit={createEpisode} series={workspace.series} seriesVersions={workspace.seriesVersions} /> : null}
+      {showEpisodeForm ? <EpisodeForm accounts={workspace.accounts} creationStartedAt={episodeCreationStartedAt} creationStep={episodeCreationStep} isPending={pendingAction === "episode"} onClose={() => setShowEpisodeForm(false)} onOpenBlueprint={(accountId) => { setShowEpisodeForm(false); openAccountBlueprint(accountId); }} onSubmit={createEpisode} series={workspace.series} seriesVersions={workspace.seriesVersions} /> : null}
       {showAccountForm ? <AccountForm isPending={pendingAction === "account"} onClose={() => setShowAccountForm(false)} onSubmit={createAccount} /> : null}
       {showPasswordForm ? <PasswordForm onClose={() => setShowPasswordForm(false)} onSubmit={async (password) => {
         setPendingAction("password");
@@ -2696,12 +2710,13 @@ const episodeCreationSteps: Array<{ id: Exclude<EpisodeCreationStep, "idle">; la
   { id: "refresh", label: "打开生产单", note: "同步最新状态和待导入材料。" },
 ];
 
-export function EpisodeForm({ accounts, creationStep = "idle", isPending, onClose, onOpenBlueprint, onSubmit, preflight = null, series, seriesVersions }: { accounts: Account[]; creationStep?: EpisodeCreationStep; isPending: boolean; onClose: () => void; onOpenBlueprint?: (accountId: string) => void; onSubmit: (input: { title: string; accountId: string; isTest: boolean; seriesVersionId: string | null }) => Promise<WorkerPreflightResult | null>; preflight?: WorkerPreflightResult | null; series: Series[]; seriesVersions: SeriesVersion[] }) {
+export function EpisodeForm({ accounts, creationStartedAt = null, creationStep = "idle", isPending, onClose, onOpenBlueprint, onSubmit, preflight = null, series, seriesVersions }: { accounts: Account[]; creationStartedAt?: number | null; creationStep?: EpisodeCreationStep; isPending: boolean; onClose: () => void; onOpenBlueprint?: (accountId: string) => void; onSubmit: (input: { title: string; accountId: string; isTest: boolean; seriesVersionId: string | null }) => Promise<WorkerPreflightResult | null>; preflight?: WorkerPreflightResult | null; series: Series[]; seriesVersions: SeriesVersion[] }) {
   const [title, setTitle] = useState("");
   const [accountId, setAccountId] = useState(accounts[0]?.id ?? "");
   const [isTest, setIsTest] = useState(false);
   const [seriesVersionId, setSeriesVersionId] = useState("");
   const [episodePreflight, setEpisodePreflight] = useState<WorkerPreflightResult | null>(preflight);
+  const [now, setNow] = useState(Date.now());
   const seriesById = new Map(series.map((candidate) => [candidate.id, candidate]));
   const availableVersions = seriesVersions.filter((version) => version.account_id === accountId);
   const selectedAccount = accounts.find((account) => account.id === accountId);
@@ -2716,7 +2731,14 @@ export function EpisodeForm({ accounts, creationStep = "idle", isPending, onClos
   }
   const activeStepIndex = episodeCreationSteps.findIndex((step) => step.id === creationStep);
   const activeStep = episodeCreationSteps[activeStepIndex] ?? episodeCreationSteps[0];
-  return <div className="modal-backdrop" role="presentation"><form aria-label="新建生产单" className="modal-card episode-form-modal" onSubmit={(event) => void submit(event)}><header><div><h2>新建生产单</h2><p>会固定所选账号当前激活蓝图和可选系列版本。</p></div><button aria-label="关闭新建生产单" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></button></header><label>账号<select onChange={(event) => { setAccountId(event.target.value); setSeriesVersionId(""); setEpisodePreflight(null); }} value={accountId}>{accounts.map((account) => <option key={account.id} value={account.id}>{account.name}</option>)}</select></label><label>系列版本（可选）<select aria-label="系列版本" onChange={(event) => { setSeriesVersionId(event.target.value); setEpisodePreflight(null); }} value={seriesVersionId}><option value="">不关联系列</option>{availableVersions.map((version) => <option key={version.id} value={version.id}>{seriesById.get(version.series_id)?.name ?? "未知系列"} · v{version.version}</option>)}</select></label><label>工作标题（可留空）<input autoFocus onChange={(event) => setTitle(event.target.value)} placeholder="可在首次适用审核前补充" value={title} /></label><label className="checkbox-label"><input checked={isTest} onChange={(event) => setIsTest(event.target.checked)} type="checkbox" />这是测试生产单（归档后允许 Owner 永久删除）</label>{canCreateEpisode ? <p className="form-hint">标题只是管理元数据，后续修改不会使已导入内容失效。</p> : <p className="form-error">当前账号没有启用蓝图，请先激活一个蓝图版本。</p>}{isPending ? <section aria-live="polite" className="episode-creation-progress" role="status"><strong>正在创建生产单</strong><ol>{episodeCreationSteps.map((step, index) => <li className={index < activeStepIndex ? "is-complete" : index === activeStepIndex ? "is-active" : ""} key={step.id}><i aria-hidden="true">{index < activeStepIndex ? "✓" : index + 1}</i><span><b>{step.label}</b></span></li>)}</ol><p className="episode-creation-current">{activeStep.note}</p></section> : null}{episodePreflight ? <details aria-live="polite" className={`production-preflight ${blockers.length ? "is-blocked" : "is-passed"}`} role="alert"><summary><strong>创建前可生产性检查：未通过（{blockers.length}）</strong><span>展开阻塞详情</span></summary><div className="production-preflight-body"><p>本次检查未通过，因此尚未创建生产单。处理下面的原因后，点击“创建生产单”重新检查。</p>{blockers.map((blocker) => <WorkerBlockerCard blocker={blocker} key={`${blocker.code}-${blocker.capability}`} onOpenBlueprint={onOpenBlueprint ? () => onOpenBlueprint(accountId) : undefined} />)}</div></details> : null}<div className="modal-actions"><button className="button button-secondary" disabled={isPending} onClick={onClose} type="button">取消</button><button className="button button-primary" disabled={isPending || !accountId || !canCreateEpisode} type="submit">{isPending ? "正在处理…" : "创建生产单"}</button></div></form></div>;
+  useEffect(() => {
+    if (!isPending || creationStartedAt === null) return;
+    setNow(Date.now());
+    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, [creationStartedAt, isPending]);
+  const elapsedSeconds = creationStartedAt === null ? 0 : Math.max(0, Math.floor((now - creationStartedAt) / 1000));
+  return <div className="modal-backdrop" role="presentation"><form aria-label="新建生产单" className="modal-card episode-form-modal" onSubmit={(event) => void submit(event)}><header><div><h2>新建生产单</h2><p>会固定所选账号当前激活蓝图和可选系列版本。</p></div><button aria-label="关闭新建生产单" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></button></header><label>账号<select onChange={(event) => { setAccountId(event.target.value); setSeriesVersionId(""); setEpisodePreflight(null); }} value={accountId}>{accounts.map((account) => <option key={account.id} value={account.id}>{account.name}</option>)}</select></label><label>系列版本（可选）<select aria-label="系列版本" onChange={(event) => { setSeriesVersionId(event.target.value); setEpisodePreflight(null); }} value={seriesVersionId}><option value="">不关联系列</option>{availableVersions.map((version) => <option key={version.id} value={version.id}>{seriesById.get(version.series_id)?.name ?? "未知系列"} · v{version.version}</option>)}</select></label><label>工作标题（可留空）<input autoFocus onChange={(event) => setTitle(event.target.value)} placeholder="可在首次适用审核前补充" value={title} /></label><label className="checkbox-label"><input checked={isTest} onChange={(event) => setIsTest(event.target.checked)} type="checkbox" />这是测试生产单（归档后允许 Owner 永久删除）</label>{canCreateEpisode ? <p className="form-hint">标题只是管理元数据，后续修改不会使已导入内容失效。</p> : <p className="form-error">当前账号没有启用蓝图，请先激活一个蓝图版本。</p>}{isPending ? <section aria-live="polite" className="episode-creation-progress" role="status"><strong>正在创建生产单</strong><ol>{episodeCreationSteps.map((step, index) => <li className={index < activeStepIndex ? "is-complete" : index === activeStepIndex ? "is-active" : ""} key={step.id}><i aria-hidden="true">{index < activeStepIndex ? "✓" : index + 1}</i><span><b>{step.label}</b></span></li>)}</ol><p className="episode-creation-current">{activeStep.note} 本阶段已等待 {elapsedSeconds} 秒。</p></section> : null}{episodePreflight ? <details aria-live="polite" className={`production-preflight ${blockers.length ? "is-blocked" : "is-passed"}`} role="alert"><summary><strong>创建前可生产性检查：未通过（{blockers.length}）</strong><span>展开阻塞详情</span></summary><div className="production-preflight-body"><p>本次检查未通过，因此尚未创建生产单。处理下面的原因后，点击“创建生产单”重新检查。</p>{blockers.map((blocker) => <WorkerBlockerCard blocker={blocker} key={`${blocker.code}-${blocker.capability}`} onOpenBlueprint={onOpenBlueprint ? () => onOpenBlueprint(accountId) : undefined} />)}</div></details> : null}<div className="modal-actions"><button className="button button-secondary" disabled={isPending} onClick={onClose} type="button">取消</button><button className="button button-primary" disabled={isPending || !accountId || !canCreateEpisode} type="submit">{isPending ? "正在处理…" : "创建生产单"}</button></div></form></div>;
 }
 
 function AccountForm({ isPending, onClose, onSubmit }: { isPending: boolean; onClose: () => void; onSubmit: (input: { name: string; slug: string; timezone: string; policy: Json }) => Promise<void> }) {

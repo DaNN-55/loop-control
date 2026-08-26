@@ -19,6 +19,7 @@ import { generateOpenAiImage } from "./mediaProviders.js";
 import { createHash } from "node:crypto";
 import { executeHyperframesReviewRender } from "./hyperframesReviewRenderer.js";
 import { executeHyperframesFinalRender } from "./hyperframesFinalRenderer.js";
+import { executeHyperframesCardVideo } from "./hyperframesCardRenderer.js";
 import { readTaskIdArgument } from "./taskClaimArguments.js";
 import { createRuntimePreflight, credentialEnvironmentForReference, runtimeCapabilityFromTask, runtimeCommandArguments, runtimeCommandForProvider } from "./runtimePreflight.js";
 import { probeCodexModel, probeProviderConnection } from "./runtimeProbes.js";
@@ -78,6 +79,7 @@ async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
   }
   if (taskPackage.provider === "hyperframes") {
     const input = { taskPackage, run: runCommand, validateMp4: validateMp4Artifact, inspectMp4: inspectMp4Artifact };
+    if (taskPackage.aRoll?.adapter === "hyperframes_card_video" || taskPackage.media?.adapter === "hyperframes_card_video") return executeHyperframesCardVideo(input);
     return taskPackage.capability === "final_rendering" ? executeHyperframesFinalRender(input) : executeHyperframesReviewRender(input);
   }
   const apiKey = await resolveTaskSecret(taskPackage);

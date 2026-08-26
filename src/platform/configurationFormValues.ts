@@ -51,7 +51,7 @@ export interface SeriesFormValues {
 
 const blueprintKnownKeys = new Set(["positioning", "asset_root", "approval_gates", "allowed_tools", "budgets", "executors", ...mediaAdapterKeys]);
 const seriesKnownKeys = new Set(["positioning", "format", "characters", "locations", "visual_style", "narrative_structure", "restrictions"]);
-const executorKeys = ["script_writing", "visual_planning", "storyboard_planning"] as const;
+const executorKeys = ["script_writing", "storyboard_planning"] as const;
 const visibleToolKeys = new Set(["read", "write"]);
 const unrestrictedBudgetCents = 2147483647;
 
@@ -321,11 +321,7 @@ export function blueprintFormToPolicy(form: BlueprintFormValues): Json {
     asset_root: form.assetRoot.trim(),
     approval_gates: form.approvalGates,
     allowed_tools: form.allowedTools.filter((tool) => visibleToolKeys.has(tool)),
-    budgets: {
-      script_writing_cents: 0,
-      visual_planning_cents: 0,
-      storyboard_planning_cents: 0,
-    },
+    budgets: { script_writing_cents: 0, storyboard_planning_cents: 0 },
     executors: {
       ...existingExecutors,
       ...Object.fromEntries(executorKeys.map((key) => {
@@ -341,14 +337,6 @@ export function blueprintFormToPolicy(form: BlueprintFormValues): Json {
           ...(harnessId ? { harness_id: harnessId } : {}),
         }];
       })),
-    },
-  };
-  const planningExecutor = objectValue(objectValue(result.executors).storyboard_planning);
-  result.executors = {
-    ...objectValue(result.executors),
-    visual_planning: {
-      ...objectValue(existingExecutors.storyboard_planning),
-      ...planningExecutor,
     },
   };
   const enabledMediaAdapters = form.enabledMediaAdapters ?? configurableMediaAdapterKeys;

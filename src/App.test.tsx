@@ -39,11 +39,11 @@ describe("approval console", () => {
   it("创建时分步显示当前进度", () => {
     const account = { current_blueprint_version_id: "00000000-0000-0000-0000-000000000001", id: "00000000-0000-0000-0000-000000000002", name: "道工作室" } as Database["public"]["Tables"]["accounts"]["Row"];
 
-    render(<EpisodeForm accounts={[account]} creationStep="preflight" isPending onClose={vi.fn()} onSubmit={vi.fn()} series={[]} seriesVersions={[]} />);
+    render(<EpisodeForm accounts={[account]} creationStartedAt={Date.now()} creationStep="preflight" isPending onClose={vi.fn()} onSubmit={vi.fn()} series={[]} seriesVersions={[]} />);
 
     expect(screen.getByRole("status").textContent).toContain("正在创建生产单");
     expect(screen.getByText("检查生产条件")).toBeTruthy();
-    expect(screen.getByText("验证当前蓝图、Worker、模型和已启用连接。")).toBeTruthy();
+    expect(screen.getByText(/验证当前蓝图、Worker、模型和已启用连接。 本阶段已等待 0 秒。/)).toBeTruthy();
     expect(screen.getByText("创建生产单")).toBeTruthy();
     expect(screen.getByRole("button", { name: "正在处理…" }).hasAttribute("disabled")).toBe(true);
   });

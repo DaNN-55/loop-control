@@ -7,7 +7,7 @@ type TaskRun = Database["public"]["Tables"]["task_runs"]["Row"];
 const taskTypeLabels: Record<string, string> = {
   draft_brief: "脚本概要",
   draft_script: "脚本",
-  prepare_visual_brief: "视觉方案",
+  prepare_visual_brief: "视觉素材准备",
   draft_storyboard: "分镜",
   generate_a_roll: "A-roll",
   generate_b_roll: "B-roll",

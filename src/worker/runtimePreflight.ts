@@ -46,7 +46,6 @@ export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, _seriesR
   const allowedTools = root.allowed_tools;
   const required = requiredMediaCapabilities ? new Set(requiredMediaCapabilities) : undefined;
   const capabilities: RuntimeCapability[] = [
-    capabilityFromExecutor("visual_planning", record(executors.visual_planning), allowedTools, "codex", { adapter: true, promptHarness: true }),
     capabilityFromExecutor("storyboard_planning", record(executors.storyboard_planning), allowedTools, "codex", { adapter: true, promptHarness: true }),
     { capability: "review_rendering", provider: "hyperframes", model: "hyperframes@0.7.109", promptVersion: "review-render-v1", allowedTools: ["read", "write"], command: "hyperframes" },
     { capability: "final_rendering", provider: "hyperframes", model: "hyperframes@0.7.109", promptVersion: "final-render-v1", allowedTools: ["read", "write"], command: "hyperframes" },
@@ -83,7 +82,7 @@ export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, _seriesR
 }
 
 export function runtimeCapabilityFromTask(taskPackage: WorkerTaskPackage): RuntimeCapability {
-  const sharedPlanning = taskPackage.capability === "visual_planning" || taskPackage.capability === "storyboard_planning";
+  const sharedPlanning = taskPackage.capability === "storyboard_planning";
   const adapter = taskPackage.aRoll?.adapter ?? taskPackage.media?.adapter ?? (sharedPlanning ? taskPackage.promptHarness?.adapter : undefined);
   return {
     capability: taskPackage.capability,
@@ -125,7 +124,7 @@ export function createRuntimePreflight(capabilities: RuntimeCapability[], enviro
       continue;
     }
     const registrationValid = mediaCapability?.workerAvailable === false ? false : capability.adapter
-      ? registeredAdaptersForCapability(capability.capability).some((registration) => registration.provider === capability.provider && registration.id === capability.adapter) || legacyRegisteredAdapters.has(`${capability.provider}:${capability.adapter}`)
+      ? registeredAdaptersForCapability(capability.capability).some((registration) => registration.provider === capability.provider && registration.id === capability.adapter) || (!mediaCapability && legacyRegisteredAdapters.has(`${capability.provider}:${capability.adapter}`))
       : capability.provider === "codex" || capability.provider === "hyperframes" || capability.provider === "ffmpeg";
     if (!registrationValid) {
       checks.push({ capability: capability.capability, check: "capability_registration", phase: "preflight", status: "unavailable", reason: `当前 Worker 未注册 ${capability.provider}/${capability.adapter ?? "default"} 执行路径。`, action: "contact_environment_admin", scope: "worker" });

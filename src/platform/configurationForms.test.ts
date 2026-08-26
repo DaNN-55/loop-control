@@ -179,8 +179,10 @@ describe("账号蓝图表单转换", () => {
     });
 
     expect(result).toMatchObject({ positioning: "新的账号定位", asset_root: "/Volumes/Media/new", approval_gates: ["script", "publish"], allowed_tools: ["read", "write"] });
-    expect(result).toMatchObject({ budgets: { script_writing_cents: 0, visual_planning_cents: 0, storyboard_planning_cents: 0 } });
-    expect(result).toMatchObject({ executors: { script_writing: { adapter: "codex", harness_id: "harness-a", model: "model-a" }, visual_planning: { adapter: "codex", harness_id: "harness-storyboard", model: "model-c", prompt_version: "prompt-c" }, storyboard_planning: { adapter: "codex", harness_id: "harness-storyboard", model: "model-c", prompt_version: "prompt-c" } } });
+    expect(result).toMatchObject({ budgets: { script_writing_cents: 0, storyboard_planning_cents: 0 } });
+    expect(result).not.toHaveProperty("budgets.visual_planning_cents");
+    expect(result).toMatchObject({ executors: { script_writing: { adapter: "codex", harness_id: "harness-a", model: "model-a" }, storyboard_planning: { adapter: "codex", harness_id: "harness-storyboard", model: "model-c", prompt_version: "prompt-c" } } });
+    expect(result).not.toHaveProperty("executors.visual_planning");
     expect(result).toMatchObject({ a_roll: { executor: { adapter: "codex" }, budget_cents: 2147483647, max_attempts: 2 }, b_roll: { executor: { adapter: "pexels_video" }, per_shot_budget_cents: 2147483647, total_budget_cents: 2147483647 }, narration: { voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 0.8 }, budget_cents: 2147483647 }, soundtrack: { executor: { adapter: "freesound_preview" }, budget_cents: 2147483647 } });
   });
 

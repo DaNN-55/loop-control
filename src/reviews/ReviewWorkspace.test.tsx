@@ -161,7 +161,7 @@ describe("审核台", () => {
     expect(screen.queryByRole("dialog", { name: "Worker 状态" })).toBeNull();
     await user.click(screen.getByRole("button", { name: "查看审计时间线" }));
     expect(screen.getByRole("dialog", { name: "审计时间线" })).toBeTruthy();
-    expect(screen.getByText("Worker 已提交冻结的视觉规划审核包。", { exact: false })).toBeTruthy();
+    expect(screen.getByText("Worker 已提交冻结的视觉素材清单，等待审核。", { exact: false })).toBeTruthy();
     expect(screen.queryByText("后台执行结果已记录，生产单状态已更新。")).toBeNull();
   });
 
