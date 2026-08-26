@@ -1,7 +1,7 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import { createClient } from "@supabase/supabase-js";
-import { execFile } from "node:child_process";
+import { execFile, spawn } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
 import { createReadStream, promises as fs, readFileSync } from "node:fs";
 import { basename, dirname, extname, isAbsolute, join, parse, relative, resolve } from "node:path";
@@ -11,7 +11,7 @@ import { createServer as createTcpServer } from "node:net";
 import { promisify } from "node:util";
 import { loadEnv, type Plugin } from "vite";
 import { verifyMediaLibrary } from "./src/worker/mediaLibrary";
-import { createRuntimePreflight, runtimeCapabilitiesFromBlueprintPolicy, runtimeCommandArguments } from "./src/worker/runtimePreflight";
+import { createRuntimePreflight, localAdapterReadinessFromCommands, runtimeCapabilitiesFromBlueprintPolicy, runtimeCommandArguments } from "./src/worker/runtimePreflight";
 import { probeCodexModel, probeProviderConnection } from "./src/worker/runtimeProbes";
 import { isSupportedManualARollVideo, isSupportedManualAudio } from "./src/reviews/materialImport";
 import { workerPreflightVersion } from "./src/worker/contracts";
@@ -875,6 +875,25 @@ async function dependencyStatus(name: string, command: string, args: string[]): 
   }
 }
 
+function runProbeCommand(command: string, argumentsList: string[], timeoutMs?: number): Promise<{ stdout: string; stderr: string }> {
+  return new Promise((resolveCommand, rejectCommand) => {
+    const child = spawn(command, argumentsList, { stdio: ["ignore", "pipe", "pipe"] });
+    let stdout = "";
+    let stderr = "";
+    let timedOut = false;
+    const timeout = timeoutMs ? setTimeout(() => { timedOut = true; child.kill("SIGTERM"); }, timeoutMs) : undefined;
+    child.stdout.on("data", (chunk: Buffer) => { stdout += chunk.toString(); });
+    child.stderr.on("data", (chunk: Buffer) => { stderr += chunk.toString(); });
+    child.once("error", (error) => { if (timeout) clearTimeout(timeout); rejectCommand(error); });
+    child.once("close", (code) => {
+      if (timeout) clearTimeout(timeout);
+      if (code === 0) resolveCommand({ stdout, stderr });
+      else if (timedOut) rejectCommand(new Error(`${command} 执行超时。`));
+      else rejectCommand(new Error(stderr.trim() || `${command} exited with status ${code ?? "unknown"}.`));
+    });
+  });
+}
+
 export function serveSystemStatus(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
   return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
     if (request.method !== "GET") {
@@ -912,6 +931,7 @@ export function serveSystemStatus(supabaseUrl: string | undefined, supabasePubli
       const dependencies = await Promise.all([
         dependencyStatus("Codex CLI", "codex", ["--version"]),
         dependencyStatus("ffmpeg", "ffmpeg", ["-version"]),
+        dependencyStatus("HyperFrames", join(process.cwd(), "node_modules", ".bin", "hyperframes"), ["--version"]),
       ]);
       const report = {
         dependencies,
@@ -1269,11 +1289,9 @@ export async function runtimePreflightForPolicy(policy: unknown, seriesRules: un
   const assetRootPromise = workerMediaLibraryStatus(policy, hasExistingEpisode);
   const commandEntries = await commandEntriesPromise;
   const commands = Object.fromEntries(commandEntries.map(([command, status]) => [command, { available: status.state === "healthy", detail: status.detail }]));
+  const localAdapters = localAdapterReadinessFromCommands(capabilities, commands);
   const modelEntries = await Promise.all([...new Set(capabilities.filter((capability) => capability.provider === "codex" && capability.model && commands.codex?.available).map((capability) => capability.model as string))].map(async (model) => {
-    const probe = await probeCodexModel(model, async (command, argumentsList, options) => {
-      const result = await execFileAsync(command, argumentsList, { timeout: options?.timeoutMs, maxBuffer: 64 * 1024 });
-      return { stdout: String(result.stdout), stderr: String(result.stderr) };
-    }, tmpdir());
+    const probe = await probeCodexModel(model, (command, argumentsList, options) => runProbeCommand(command, argumentsList, options?.timeoutMs), tmpdir());
     return [model, probe] as const;
   }));
   const [providerEntries, referenceEntries, assetRoot] = await Promise.all([providerEntriesPromise, referenceEntriesPromise, assetRootPromise]);
@@ -1283,6 +1301,7 @@ export async function runtimePreflightForPolicy(policy: unknown, seriesRules: un
   const connectionReferences = Object.fromEntries(referenceEntries.map(([reference, secret]) => [reference, secret ? { available: true, detail: "外部连接引用已解析。" } : { available: false, detail: "外部连接引用不存在或尚未验证。" }]));
   return createRuntimePreflight(capabilities, {
     commands,
+    ...(Object.keys(localAdapters).length ? { localAdapters } : {}),
     credentials: { ...credentials, ...Object.fromEntries(referenceEntries.map(([reference, secret]) => [reference, Boolean(secret)])) },
     ...(Object.keys(connectionReferences).length ? { connectionReferences } : {}),
     ...(Object.keys(modelPermissions).length ? { modelPermissions } : {}),

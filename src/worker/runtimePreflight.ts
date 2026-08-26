@@ -227,6 +227,13 @@ export function runtimeCommandArguments(command: string): string[] {
   return command === "ffmpeg" ? ["-version"] : ["--version"];
 }
 
+export function localAdapterReadinessFromCommands(capabilities: readonly RuntimeCapability[], commands: Record<string, RuntimeDependencyStatus>): Record<string, RuntimeDependencyStatus> {
+  return Object.fromEntries(capabilities.flatMap((capability) => {
+    if (capability.executionPath !== "local" || !capability.adapter || !capability.command) return [];
+    return [[localAdapterReadinessKey(capability.provider, capability.adapter), commands[capability.command] ?? { available: false, detail: `本地 ${capability.command} 尚未完成当前 Worker 就绪探测。` }] as const];
+  }));
+}
+
 function capabilityFromExecutor(capability: string, executor: Record<string, unknown>, allowedTools: unknown, defaultProvider: string, requirements: { adapter?: boolean; promptHarness?: boolean } = {}): RuntimeCapability {
   const provider = stringValue(executor.provider) || defaultProvider;
   const adapter = stringValue(executor.adapter);

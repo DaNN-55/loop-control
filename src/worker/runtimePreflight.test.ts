@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { mediaCapabilityForKey, mediaCapabilityKeys } from "./adapterRegistry";
-import { createRuntimePreflight, resolveRuntimeCapability, runtimeCapabilitiesFromBlueprintPolicy } from "./runtimePreflight";
+import { createRuntimePreflight, localAdapterReadinessFromCommands, resolveRuntimeCapability, runtimeCapabilitiesFromBlueprintPolicy } from "./runtimePreflight";
 
 describe("runtime preflight", () => {
   it("先把能力收敛为单一执行计划，再由预检执行检查", () => {
@@ -30,6 +30,16 @@ describe("runtime preflight", () => {
     }, undefined, ["a_roll_generation"]).find((candidate) => candidate.capability === "a_roll_generation")!;
 
     expect(createRuntimePreflight([capability]).checks).toContainEqual(expect.objectContaining({ capability: "a_roll_generation", check: "local_adapter_readiness", status: "unavailable", action: "contact_environment_admin", scope: "worker" }));
+  });
+
+  it("把本机命令探测结果映射为本地 Adapter 就绪状态", () => {
+    const [capability] = runtimeCapabilitiesFromBlueprintPolicy({
+      a_roll: { execution_path: "local", executor: { provider: "hyperframes", adapter: "hyperframes_card_video", model: "hyperframes@0.7.109", prompt_version: "card-video-v1" }, allowed_tools: ["read", "write"] },
+    }).filter((candidate) => candidate.capability === "a_roll_generation");
+
+    expect(localAdapterReadinessFromCommands([capability], { hyperframes: { available: true, detail: "HyperFrames 已就绪。" } })).toEqual({
+      "hyperframes:hyperframes_card_video": { available: true, detail: "HyperFrames 已就绪。" },
+    });
   });
 
   it("从蓝图读取核心能力和已启用媒体能力", () => {

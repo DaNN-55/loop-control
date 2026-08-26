@@ -123,11 +123,14 @@ export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, b
   if (!currentBlueprint) return <div className="empty-state">该账号没有可读取的蓝图配置。</div>;
 
   const policy = currentBlueprint.policy ?? defaultBlueprintPolicy;
-  const localAdapterReadiness = Object.fromEntries((blueprintPreflight?.checks ?? []).flatMap((check) => {
+  const localAdapterReadiness = Object.fromEntries([
+    ...(systemStatus?.dependencies.some((dependency) => dependency.name === "HyperFrames" && dependency.state === "healthy") ? [["hyperframes:hyperframes_card_video", true] as const] : []),
+    ...(blueprintPreflight?.checks ?? []).flatMap((check) => {
     if (check.check !== "local_adapter_readiness" || !check.adapter) return [];
     const provider = check.provider ?? localAdapterProviderForCapability(check.capability, check.adapter);
     return provider ? [[localAdapterReadinessKey(provider, check.adapter), check.status === "passed"] as const] : [];
-  }));
+    }),
+  ]);
   function leaveConfiguration(action: () => void) {
     if (configurationDirty && !window.confirm("当前配置有未保存修改，确定放弃吗？")) return;
     setConfigurationDirty(false);

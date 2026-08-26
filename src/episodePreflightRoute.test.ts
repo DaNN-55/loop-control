@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({
   createClient: vi.fn(),
   createRuntimePreflight: vi.fn(),
+  localAdapterReadinessFromCommands: vi.fn(() => ({})),
   runtimeCapabilitiesFromBlueprintPolicy: vi.fn(),
   verifyMediaLibrary: vi.fn(),
 }));
@@ -14,6 +15,7 @@ vi.mock("@supabase/supabase-js", () => ({ createClient: mocks.createClient }));
 vi.mock("./worker/mediaLibrary", () => ({ verifyMediaLibrary: mocks.verifyMediaLibrary }));
 vi.mock("./worker/runtimePreflight", () => ({
   createRuntimePreflight: mocks.createRuntimePreflight,
+  localAdapterReadinessFromCommands: mocks.localAdapterReadinessFromCommands,
   runtimeCapabilitiesFromBlueprintPolicy: mocks.runtimeCapabilitiesFromBlueprintPolicy,
   runtimeCommandArguments: vi.fn(() => ["--version"]),
 }));

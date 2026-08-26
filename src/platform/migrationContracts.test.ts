@@ -61,6 +61,12 @@ const scopedManualPathCorrectionMigration = resolve(
 const explicitMediaPathMigration = resolve(
   "supabase/migrations/20260825170000_require_explicit_media_execution_paths.sql",
 );
+const bRollBudgetOverflowMigration = resolve(
+  "supabase/migrations/20260826093000_prevent_b_roll_budget_overflow.sql",
+);
+const unrestrictedBRollBudgetMigration = resolve(
+  "supabase/migrations/20260826094000_treat_unrestricted_b_roll_budget_as_unlimited.sql",
+);
 const scopedCoreOrchestrationMigration = resolve(
   "supabase/migrations/20260823200000_add_scoped_core_task_orchestration.sql",
 );
@@ -129,6 +135,19 @@ describe("B-roll 连接固化迁移", () => {
     expect(technicalConfig).not.toContain("series_version.rules as series_rules");
   });
 
+  it("以 bigint 累计 B-roll 预算，避免上限值在多镜头时溢出", () => {
+    const migration = readFileSync(bRollBudgetOverflowMigration, "utf8");
+
+    expect(migration).toContain("committed_budget bigint");
+    expect(migration).toContain("coalesce(sum(task.budget_limit_cents), 0)::bigint into committed_budget");
+  });
+
+  it("将默认的最大预算值按不限预算处理", () => {
+    const migration = readFileSync(unrestrictedBRollBudgetMigration, "utf8");
+
+    expect(migration).toContain("total_budget < 2147483647");
+  });
+
   it("只允许 Worker 调用内部 B-roll 编排函数", () => {
     const permissions = readFileSync(legacyOrchestrationPermissionsMigration, "utf8");
 
@@ -181,6 +200,7 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).not.toContain("credential_ref");
     expect(readFileSync(manualArollFixMigration, "utf8")).toContain("as shot(value)");
     expect(readFileSync(manualArollTakeoverMigration, "utf8")).toContain("task.status in ('ready', 'blocked', 'failed')");
+    expect(readFileSync(resolve("supabase/migrations/20260826095500_fix_manual_media_task_type_ambiguity.sql"), "utf8")).toContain("task.task_type = v_task_type");
     const reusableAroll = readFileSync(manualArollReuseMigration, "utf8");
     expect(reusableAroll).toContain("artifacts_episode_id_artifact_type_relative_path_producer_task_key");
     expect(reusableAroll).not.toContain("This A-roll material is already bound to another storyboard shot");
