@@ -97,6 +97,9 @@ const reviewRevisionPreconditionsMigration = resolve(
 const internalVisualPreparationMigration = resolve(
   "supabase/migrations/20260824120000_internal_visual_asset_preparation.sql",
 );
+const uploadedVisualDispatchMigration = resolve(
+  "supabase/migrations/20260901103000_fix_uploaded_visual_dispatch.sql",
+);
 const deployedMigrations = {
   "20260822095959_guard_legacy_b_roll_history.sql": "b36e63037ca12c2785d7bbb9f2fe8596f31377de734dcf8b96cb03af23613c9b",
   "20260822100000_freeze_b_roll_adapter_connection.sql": "f38575ba3b5dcb7814f230c5a48a52c6a5ac37811868d00bdb0f7eb375b2a51d",
@@ -323,6 +326,26 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("'visual-preparation-v1'");
     expect(migration).toContain("'execution_mode', case when selected_harness.id is null then 'worker_default' else 'legacy_frozen' end");
     expect(migration).toContain("drop trigger if exists freeze_shared_planning_harness_before_insert on public.tasks;");
+  });
+
+  it("全局视觉准备调度复用按生产单编排入口", () => {
+    const migration = readFileSync(uploadedVisualDispatchMigration, "utf8");
+
+    expect(migration).toContain("create or replace function public.orchestrate_provided_script_tasks()");
+    expect(migration).toContain("public.orchestrate_provided_script_tasks_for_episode(candidate_id)");
+    expect(migration).not.toContain("invalid visual planning budget");
+    expect(migration).not.toContain("invalid visual planning executor");
+  });
+
+  it("视觉准备冻结已批准的上传视频且不要求图片生成配置", () => {
+    const migration = readFileSync(uploadedVisualDispatchMigration, "utf8");
+
+    expect(migration).toContain("create or replace function public.orchestrate_provided_script_tasks_for_episode(p_episode_id uuid)");
+    expect(migration).toContain("join public.material_revision_approvals approval on approval.material_revision_id = material.id");
+    expect(migration).toContain("material.material_purpose in ('visual_reference', 'a_roll', 'b_roll')");
+    expect(migration).toContain("'materialPurpose', material.material_purpose");
+    expect(migration).toContain("'image_generation', image_generation");
+    expect(migration).toContain("'model', candidate.policy #>> '{static_visual,executor,model}'");
   });
 
   it("按生产单的明确选择决定保留上传视频原声还是生成 TTS", () => {
