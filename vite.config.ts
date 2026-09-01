@@ -169,7 +169,7 @@ export function hyperframesStudioPreviewArguments(workspaceRelativePath: string,
   return ["preview", workspaceRelativePath, `--port=${port}`, "--background", "--no-open"];
 }
 
-function serveLocalArtifact(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+export function serveLocalArtifact(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
   return async (request: IncomingMessage, response: ServerResponse, next: (error?: Error) => void): Promise<void> => {
   if (request.method !== "GET" && request.method !== "HEAD") {
     response.statusCode = 405;
@@ -1428,15 +1428,19 @@ async function indexedArtifactForPreview(input: { authorization: string; episode
   const supabase = createClient(input.supabaseUrl, input.supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: input.authorization } } });
 
   const { data: artifact, error: artifactError } = await supabase.from("artifacts").select("episode_id, sha256").eq("episode_id", input.episodeId).eq("relative_path", input.relativePath).maybeSingle();
-  if (artifactError || !artifact) return null;
+  if (artifactError) return null;
+  const { data: material, error: materialError } = artifact ? { data: null, error: null } : await supabase.from("production_material_revisions").select("episode_id, sha256").eq("episode_id", input.episodeId).eq("storage_path", input.relativePath).maybeSingle();
+  if (materialError) return null;
+  const indexedInput = artifact ?? material;
+  if (!indexedInput) return null;
 
-  const { data: episode, error: episodeError } = await supabase.from("episodes").select("blueprint_version_id").eq("id", artifact.episode_id).maybeSingle();
+  const { data: episode, error: episodeError } = await supabase.from("episodes").select("blueprint_version_id").eq("id", indexedInput.episode_id).maybeSingle();
   if (episodeError || !episode) return null;
 
   const { data: blueprint, error: blueprintError } = await supabase.from("account_blueprint_versions").select("policy").eq("id", episode.blueprint_version_id).maybeSingle();
   if (blueprintError || !blueprint || !blueprint.policy || Array.isArray(blueprint.policy) || typeof blueprint.policy !== "object") return null;
   const assetRoot = blueprint.policy.asset_root;
-  return typeof assetRoot === "string" && assetRoot.trim() ? { assetRoot: assetRoot.trim(), sha256: artifact.sha256 } : null;
+  return typeof assetRoot === "string" && assetRoot.trim() ? { assetRoot: assetRoot.trim(), sha256: indexedInput.sha256 } : null;
 }
 
 async function assetRootForOwnedEpisode(input: { authorization: string; episodeId: string; supabasePublishableKey: string | undefined; supabaseUrl: string | undefined }): Promise<string | null> {

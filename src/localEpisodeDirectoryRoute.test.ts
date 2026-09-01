@@ -1,12 +1,13 @@
 // @vitest-environment node
 
 import { createServer } from "node:http";
+import { createHash } from "node:crypto";
 import type { AddressInfo } from "node:net";
 import { mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, freezeHyperframesStudioWorkspace, hyperframesStudioPreviewArguments, prepareHyperframesStudioWorkspace, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveChooseLocalAssetDirectory, serveEpisodeDeletion, serveEpisodeDeletionCleanup, serveEpisodePreflight, serveFreezeHyperframesStudio, serveLocalEpisodeDirectory, serveOpenHyperframesStudio, serveOpenLocalArtifact, serveOpenLocalAssetDirectory, serveOpenLocalEpisodeDirectory, stageLocalEpisodeDirectoryForDeletion } from "../vite.config";
+import { createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, freezeHyperframesStudioWorkspace, hyperframesStudioPreviewArguments, prepareHyperframesStudioWorkspace, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveChooseLocalAssetDirectory, serveEpisodeDeletion, serveEpisodeDeletionCleanup, serveEpisodePreflight, serveFreezeHyperframesStudio, serveLocalArtifact, serveLocalEpisodeDirectory, serveOpenHyperframesStudio, serveOpenLocalArtifact, serveOpenLocalAssetDirectory, serveOpenLocalEpisodeDirectory, stageLocalEpisodeDirectoryForDeletion } from "../vite.config";
 
 const episodeId = "00000000-0000-0000-0000-000000000000";
 let server: ReturnType<typeof createServer>;
@@ -148,6 +149,43 @@ describe("本地 Episode 目录路由", () => {
       expect(wrongMethod.status).toBe(405);
     } finally {
       await new Promise<void>((resolve, reject) => openServer.close((error) => error ? reject(error) : resolve()));
+    }
+  });
+
+  it("预览已冻结的上传素材", async () => {
+    const root = await mkdtemp(join(tmpdir(), "tk-workflow-material-preview-"));
+    const content = Buffer.from("uploaded-video");
+    const sha256 = createHash("sha256").update(content).digest("hex");
+    const relativePath = `episodes/${episodeId}/materials/${sha256}-a-shot-001.mp4`;
+    await mkdir(join(root, "episodes", episodeId, "materials"), { recursive: true });
+    await writeFile(join(root, relativePath), content);
+
+    const supabaseServer = createServer((request, response) => {
+      response.setHeader("Content-Type", "application/json");
+      const pathname = new URL(request.url ?? "", "http://127.0.0.1").pathname;
+      if (pathname === "/rest/v1/artifacts") response.end("[]");
+      else if (pathname === "/rest/v1/production_material_revisions") response.end(JSON.stringify([{ episode_id: episodeId, sha256 }]));
+      else if (pathname === "/rest/v1/episodes") response.end(JSON.stringify([{ blueprint_version_id: episodeId }]));
+      else if (pathname === "/rest/v1/account_blueprint_versions") response.end(JSON.stringify([{ policy: { asset_root: root } }]));
+      else { response.statusCode = 404; response.end("{}"); }
+    });
+    await new Promise<void>((resolve) => supabaseServer.listen(0, "127.0.0.1", resolve));
+    const supabaseOrigin = `http://127.0.0.1:${(supabaseServer.address() as AddressInfo).port}`;
+    const middleware = serveLocalArtifact(supabaseOrigin, "publishable-key");
+    const previewServer = createServer((request, response) => { void middleware(request, response, () => undefined); });
+    await new Promise<void>((resolve) => previewServer.listen(0, "127.0.0.1", resolve));
+    const previewOrigin = `http://127.0.0.1:${(previewServer.address() as AddressInfo).port}`;
+
+    try {
+      const response = await fetch(`${previewOrigin}/_local-artifact?episode=${episodeId}&path=${encodeURIComponent(relativePath)}&sha256=${sha256}`, { headers: { Authorization: "Bearer owner-token" } });
+
+      expect(response.status).toBe(200);
+      expect(response.headers.get("content-type")).toBe("video/mp4");
+      expect(Buffer.from(await response.arrayBuffer())).toEqual(content);
+    } finally {
+      await new Promise<void>((resolve, reject) => previewServer.close((error) => error ? reject(error) : resolve()));
+      await new Promise<void>((resolve, reject) => supabaseServer.close((error) => error ? reject(error) : resolve()));
+      await rm(root, { force: true, recursive: true });
     }
   });
 
