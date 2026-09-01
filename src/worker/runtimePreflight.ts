@@ -229,6 +229,12 @@ export function runtimeCommandArguments(command: string): string[] {
   return command === "ffmpeg" ? ["-version"] : ["--version"];
 }
 
+export function runtimeCommandInvocation(command: string, argumentsList: string[]): { command: string; argumentsList: string[] } {
+  return command === "hyperframes"
+    ? { command: "npx", argumentsList: ["--no-install", "hyperframes", ...argumentsList] }
+    : { command, argumentsList };
+}
+
 export function localAdapterReadinessFromCommands(capabilities: readonly RuntimeCapability[], commands: Record<string, RuntimeDependencyStatus>): Record<string, RuntimeDependencyStatus> {
   return Object.fromEntries(capabilities.flatMap((capability) => {
     if (capability.executionPath !== "local" || !capability.adapter || !capability.command) return [];

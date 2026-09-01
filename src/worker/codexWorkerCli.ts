@@ -21,7 +21,7 @@ import { executeHyperframesReviewRender } from "./hyperframesReviewRenderer.js";
 import { executeHyperframesFinalRender } from "./hyperframesFinalRenderer.js";
 import { executeHyperframesCardVideo } from "./hyperframesCardRenderer.js";
 import { readTaskIdArgument } from "./taskClaimArguments.js";
-import { createRuntimePreflight, credentialEnvironmentForReference, localAdapterReadinessFromCommands, runtimeCapabilityFromTask, runtimeCommandArguments, runtimeCommandForProvider } from "./runtimePreflight.js";
+import { createRuntimePreflight, credentialEnvironmentForReference, localAdapterReadinessFromCommands, runtimeCapabilityFromTask, runtimeCommandArguments, runtimeCommandForProvider, runtimeCommandInvocation } from "./runtimePreflight.js";
 import { probeCodexModel, probeProviderConnection } from "./runtimeProbes.js";
 
 const supabaseUrl = requiredEnvironment("SUPABASE_URL");
@@ -335,7 +335,8 @@ function runCommand(command: string, argumentsList: string[], timeoutMs?: number
 
 function runCommandWithOutput(command: string, argumentsList: string[], timeoutMs?: number): Promise<{ stdout: string; stderr: string }> {
   return new Promise((resolve, reject) => {
-    const child = spawn(command, argumentsList, { stdio: ["ignore", "pipe", "pipe"] });
+    const invocation = runtimeCommandInvocation(command, argumentsList);
+    const child = spawn(invocation.command, invocation.argumentsList, { stdio: ["ignore", "pipe", "pipe"] });
     let stdout = "";
     let stderr = "";
     let settled = false;

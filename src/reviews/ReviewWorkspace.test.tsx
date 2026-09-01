@@ -820,6 +820,7 @@ describe("审核台", () => {
     }]} tasks={[]} transitions={[]} />);
 
     await screen.findByText("主持人出镜说明。");
+    expect((screen.getByLabelText("shot-a-roll-1 人工 A-roll 视频") as HTMLSelectElement).value).toBe("");
     await user.selectOptions(screen.getByLabelText("shot-a-roll-1 人工 A-roll 视频"), manualAroll.id);
     await user.click(screen.getByRole("button", { name: "冻结人工 A-roll 视频" }));
     await user.selectOptions(screen.getByLabelText("shot-b-roll-1 人工 B-roll 视频"), manualBroll.id);
@@ -832,6 +833,30 @@ describe("审核台", () => {
     expect(onRegisterManualMedia).toHaveBeenCalledWith({ episodeId: storyboardEpisode.id, kind: "b_roll", materialRevisionId: manualBroll.id, storyboardReviewPackageId: "review-package-manual-a-roll", targetId: "shot-b-roll-1" });
     expect(onRegisterManualMedia).toHaveBeenCalledWith({ episodeId: storyboardEpisode.id, kind: "narration", materialRevisionId: manualNarration.id, storyboardReviewPackageId: "review-package-manual-a-roll", targetId: storyboardEpisode.id });
     expect(onRegisterManualMedia).toHaveBeenCalledWith({ episodeId: storyboardEpisode.id, kind: "bgm", materialRevisionId: manualBgm.id, storyboardReviewPackageId: "review-package-manual-a-roll", targetId: "cue-bgm-1" });
+  });
+
+  it("已冻结的人工镜头显示具体文件且不再提供重复冻结操作", async () => {
+    const storyboardEpisode: Episode = { ...reviewEpisode, stage: "storyboard_approved" };
+    const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", id: "artifact-bound-a-roll", producer_task_id: "task-bound-a-roll", relative_path: "episodes/episode-review/storyboard-bound-a-roll.json" };
+    const manualAroll: MaterialRevision = {
+      created_at: "2026-08-23T00:00:00.000Z", created_by: "owner-1", episode_id: storyboardEpisode.id, file_size: 2048, id: "material-a-roll-bound", is_main_script: false,
+      material_purpose: "a_roll", material_type: "video", mime_type: "video/mp4", revision_number: 1, sha256: "d".repeat(64), source_kind: "file", source_path: "presenter.mp4", storage_path: "episodes/episode-review/materials/manual-presenter.mp4",
+    };
+    const reviewPackage = {
+      artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-08-23T00:00:00.000Z", episode_id: storyboardEpisode.id, id: "review-package-bound-a-roll", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-bound-a-roll", task_run_id: "task-run-bound-a-roll",
+    };
+    const boundTask: Task = { ...blockedTask, episode_id: storyboardEpisode.id, id: "manual-bound-a-roll", input_snapshot: { capability: "a_roll_manual_upload", manual_source: { material_revision_id: manualAroll.id }, shot: { id: "shot-a-roll-1" }, storyboard_review_package_id: reviewPackage.id }, provider: "manual_upload", status: "completed", task_type: "generate_a_roll" };
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [{ description: "可选氛围音乐", durationSeconds: 5, id: "cue-disabled-bgm", kind: "bgm", searchQuery: "ambient", startSeconds: 0 }], shots: [{ durationSeconds: 5, id: "shot-a-roll-1", inputBasis: [{ relativePath: manualAroll.storage_path, sha256: manualAroll.sha256 }], productionMethod: "人工出镜", scriptSegment: "主持人出镜说明。", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } })));
+
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={{ ...blueprint, policy: { a_roll: { execution_path: "manual" } } }} episode={storyboardEpisode} isTransitionPending={false} materialRevisions={[manualAroll]} onTransition={vi.fn()} reviewPackages={[reviewPackage]} tasks={[boundTask]} transitions={[]} />);
+
+    await screen.findByText("主持人出镜说明。");
+    expect(screen.getByRole("status").textContent).toBe("已冻结 · presenter.mp4");
+    expect(screen.queryByLabelText("shot-a-roll-1 人工 A-roll 视频")).toBeNull();
+    expect(screen.queryByRole("button", { name: "冻结人工 A-roll 视频" })).toBeNull();
+    expect(screen.getByRole("heading", { name: "可选声轨" })).toBeTruthy();
+    expect(screen.queryByLabelText("cue-disabled-bgm 人工配乐")).toBeNull();
+    expect(screen.queryByRole("button", { name: "冻结人工配乐" })).toBeNull();
   });
 
   it("分镜产物格式无效时不允许 Owner 批准或退回", async () => {

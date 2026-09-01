@@ -100,6 +100,9 @@ const internalVisualPreparationMigration = resolve(
 const uploadedVisualDispatchMigration = resolve(
   "supabase/migrations/20260901103000_fix_uploaded_visual_dispatch.sql",
 );
+const disabledSoundtrackCueMigration = resolve(
+  "supabase/migrations/20260901120000_ignore_disabled_soundtrack_cues.sql",
+);
 const deployedMigrations = {
   "20260822095959_guard_legacy_b_roll_history.sql": "b36e63037ca12c2785d7bbb9f2fe8596f31377de734dcf8b96cb03af23613c9b",
   "20260822100000_freeze_b_roll_adapter_connection.sql": "f38575ba3b5dcb7814f230c5a48a52c6a5ac37811868d00bdb0f7eb375b2a51d",
@@ -222,6 +225,14 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("blueprint.policy -> 'soundtrack'");
     expect(migration).toContain("p_episode_id is null or episode.id = p_episode_id");
     expect(migration).toContain("'credential_ref', frozen_credential_ref");
+  });
+
+  it("关闭声轨能力时不把可选声轨提示当成生产门槛", () => {
+    const migration = readFileSync(disabledSoundtrackCueMigration, "utf8");
+
+    expect(migration).toContain("candidate.blueprint_policy -> 'soundtrack'");
+    expect(migration).toContain("advance_production_ready_episodes");
+    expect(migration).toContain("create_pre_render_review_packages");
   });
 
   it("人工路径不进入媒体 Worker 编排", () => {

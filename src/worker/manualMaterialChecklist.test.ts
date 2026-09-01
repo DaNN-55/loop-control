@@ -19,7 +19,7 @@ describe("人工素材清单", () => {
         { id: "cue-02", kind: "sfx", description: "脚步", searchQuery: "footsteps", startSeconds: 1, durationSeconds: 1 },
       ],
     }, [{ material_purpose: "narration", material_type: "audio" }, { material_purpose: "b_roll", material_type: "video" }, { material_purpose: "background_music", material_type: "audio" }], [
-      { input_snapshot: { capability: "b_roll_manual_upload", storyboard_review_package_id: "package-current", shot: { id: "shot-02" } }, provider: "manual_upload", status: "completed" },
+      { input_snapshot: { capability: "b_roll_manual_upload", manual_source: { material_revision_id: "material-b-roll" }, storyboard_review_package_id: "package-current", shot: { id: "shot-02" } }, provider: "manual_upload", status: "completed" },
       { input_snapshot: { capability: "b_roll_manual_upload", storyboard_review_package_id: "package-old", shot: { id: "shot-03" } }, provider: "manual_upload", status: "completed" },
     ], "package-current");
 

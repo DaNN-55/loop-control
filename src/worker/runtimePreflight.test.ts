@@ -1,9 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { mediaCapabilityForKey, mediaCapabilityKeys } from "./adapterRegistry";
-import { createRuntimePreflight, localAdapterReadinessFromCommands, resolveRuntimeCapability, runtimeCapabilitiesFromBlueprintPolicy, runtimeCapabilityFromTask } from "./runtimePreflight";
+import { createRuntimePreflight, localAdapterReadinessFromCommands, resolveRuntimeCapability, runtimeCapabilitiesFromBlueprintPolicy, runtimeCapabilityFromTask, runtimeCommandInvocation } from "./runtimePreflight";
 import type { WorkerTaskPackage } from "./contracts";
 
 describe("runtime preflight", () => {
+  it("通过 npx 调用 HyperFrames CLI", () => {
+    expect(runtimeCommandInvocation("hyperframes", ["check", "/tmp/project"])).toEqual({ command: "npx", argumentsList: ["--no-install", "hyperframes", "check", "/tmp/project"] });
+    expect(runtimeCommandInvocation("ffmpeg", ["-version"])).toEqual({ command: "ffmpeg", argumentsList: ["-version"] });
+  });
+
   it("先把能力收敛为单一执行计划，再由预检执行检查", () => {
     expect(resolveRuntimeCapability({ capability: "a_roll_generation", executionPath: "local", provider: "hyperframes", adapter: "hyperframes_card_video", model: "hyperframes@0.7.109", promptVersion: "card-video-v1" })).toMatchObject({
       kind: "local_adapter",

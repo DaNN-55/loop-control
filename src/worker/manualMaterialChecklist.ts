@@ -14,20 +14,25 @@ export type MaterialAvailability = Pick<{
   material_type: string;
 }, "material_purpose" | "material_type">;
 
-export function manualMaterialChecklistForStoryboard(policy: unknown, episodeId: string, storyboard: Pick<StoryboardManifest, "shots" | "audioCues">, materials: readonly MaterialAvailability[], tasks: readonly { input_snapshot: unknown; status?: string; provider?: string }[] = [], reviewPackageId = ""): ManualMaterialChecklistItem[] {
-  const root = record(policy);
-  const items: ManualMaterialChecklistItem[] = [];
-  const isBound = (capability: ManualMaterialChecklistItem["capability"], targetId: string) => tasks.some((task) => {
-    const snapshot = record(task.input_snapshot);
+export function boundManualMaterialRevisionId(capability: ManualMaterialChecklistItem["capability"], targetId: string, tasks: readonly { input_snapshot: unknown; status?: string; provider?: string }[] = [], reviewPackageId = ""): string | null {
+  const task = tasks.find((candidate) => {
+    const snapshot = record(candidate.input_snapshot);
     const manualCapability = snapshot.capability;
     const boundCapability = manualCapability === "static_visual_manual_upload" ? "static_visual_generation" : manualCapability === "a_roll_manual_upload" ? "a_roll_generation" : manualCapability === "b_roll_manual_upload" ? "b_roll_generation" : manualCapability === "narration_manual_upload" ? "narration_generation" : manualCapability === "soundtrack_manual_upload" ? "soundtrack_generation" : "";
     const shot = record(snapshot.shot);
     const audioTrack = record(snapshot.audio_track);
-    return task.status === "completed" && task.provider === "manual_upload" && snapshot.storyboard_review_package_id === reviewPackageId && boundCapability === capability && (shot.id === targetId || audioTrack.cue_id === targetId);
+    return candidate.status === "completed" && candidate.provider === "manual_upload" && snapshot.storyboard_review_package_id === reviewPackageId && boundCapability === capability && (shot.id === targetId || audioTrack.cue_id === targetId);
   });
+  const manualSource = record(record(task?.input_snapshot).manual_source);
+  return typeof manualSource.material_revision_id === "string" ? manualSource.material_revision_id : null;
+}
+
+export function manualMaterialChecklistForStoryboard(policy: unknown, episodeId: string, storyboard: Pick<StoryboardManifest, "shots" | "audioCues">, materials: readonly MaterialAvailability[], tasks: readonly { input_snapshot: unknown; status?: string; provider?: string }[] = [], reviewPackageId = ""): ManualMaterialChecklistItem[] {
+  const root = record(policy);
+  const items: ManualMaterialChecklistItem[] = [];
   const add = (capability: ManualMaterialChecklistItem["capability"], targetId: string, label: string, materialPurpose: string, materialType: string) => {
     if (record(root[capabilityKey(capability)]).execution_path !== "manual") return;
-    const status = isBound(capability, targetId) ? "bound" : materials.some((material) => material.material_purpose === materialPurpose && material.material_type === materialType) ? "pending" : "missing";
+    const status = boundManualMaterialRevisionId(capability, targetId, tasks, reviewPackageId) ? "bound" : materials.some((material) => material.material_purpose === materialPurpose && material.material_type === materialType) ? "pending" : "missing";
     items.push({ capability, label, materialPurpose, materialType, targetId, status });
   };
 
