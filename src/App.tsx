@@ -149,6 +149,7 @@ interface ShotPreparationDraftRequest {
   audioMode: ShotPreparationDraft["audio_mode"];
   clipSegments: ShotClipSegmentRequest[];
   episodeId: string;
+  includeVideo: boolean;
   reviewPackageId: string;
   shotId: string;
   materialRevisionId: string;
@@ -1366,20 +1367,35 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
     setPendingAction(`shot-preparation-${input.episodeId}-${input.shotId}`);
     setErrorMessage("");
     try {
-      const { error } = await supabase.rpc("save_shot_workbench_draft", {
-        p_audio_mode: input.audioMode,
-        p_material_revision_id: input.materialRevisionId || "",
-        p_clip_segments: input.clipSegments as unknown as Json,
-        p_episode_id: input.episodeId,
-        p_review_package_id: input.reviewPackageId,
-        p_shot_id: input.shotId,
-        p_subtitle_text: input.subtitleText,
-        p_subtitles_enabled: input.subtitlesEnabled,
-        p_tts_speaking_rate: input.ttsSpeakingRate,
-        p_tts_text: input.ttsText,
-        p_tts_voice: input.ttsVoice,
-      });
-      if (error) throw error;
+      if (input.includeVideo) {
+        const { error } = await supabase.rpc("save_shot_workbench_draft", {
+          p_audio_mode: input.audioMode,
+          p_material_revision_id: input.materialRevisionId,
+          p_clip_segments: input.clipSegments as unknown as Json,
+          p_episode_id: input.episodeId,
+          p_review_package_id: input.reviewPackageId,
+          p_shot_id: input.shotId,
+          p_subtitle_text: input.subtitleText,
+          p_subtitles_enabled: input.subtitlesEnabled,
+          p_tts_speaking_rate: input.ttsSpeakingRate,
+          p_tts_text: input.ttsText,
+          p_tts_voice: input.ttsVoice,
+        });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.rpc("save_shot_preparation_draft", {
+          p_audio_mode: input.audioMode,
+          p_episode_id: input.episodeId,
+          p_review_package_id: input.reviewPackageId,
+          p_shot_id: input.shotId,
+          p_subtitle_text: input.subtitleText,
+          p_subtitles_enabled: input.subtitlesEnabled,
+          p_tts_speaking_rate: input.ttsSpeakingRate,
+          p_tts_text: input.ttsText,
+          p_tts_voice: input.ttsVoice,
+        });
+        if (error) throw error;
+      }
       setMessage(`${input.shotId} 的逐镜头准备草稿已保存；未创建媒体任务。`);
       await refreshWorkspace();
     } catch (error) {
@@ -3020,15 +3036,16 @@ function ShotPreparationCard({ artifacts, audioTracks, defaults, draft, episode,
   const updateSegment = (index: number, next: Partial<ClipSegmentDraft>) => setClipSegments((current) => current.map((segment, segmentIndex) => segmentIndex === index ? { ...segment, ...next } : segment));
   const selectMaterial = (id: string) => { setMaterialRevisionId(id); setSourceDuration(null); setClipSegments([{ endSeconds: shot.durationSeconds, startSeconds: 0 }]); setActiveSegmentIndex(0); };
   useEffect(() => () => { previewAudioRef.current?.pause(); if (previewAudioUrlRef.current) URL.revokeObjectURL(previewAudioUrlRef.current); }, []);
-  async function save(): Promise<boolean> {
-    if (!segmentsValid) { setError("请选择原片并完成至少一个有效片段标记。"); return false; }
+  async function save(includeVideo = true): Promise<boolean> {
+    if (includeVideo && !segmentsValid) { setError("请选择原片并完成至少一个有效片段标记。"); return false; }
     if (!subtitleText.trim()) { setError("请填写字幕正文；如不需要字幕，请关闭字幕显示。"); return false; }
     setError(""); setIsPending(true);
     try {
       const spokenText = ttsText.trim(); const rate = Number(ttsSpeakingRate);
       if (audioMode === "tts" && (!spokenText || !ttsVoice.trim() || !Number.isFinite(rate) || rate <= 0)) { setError("请填写口播内容、声音和有效语速。"); return false; }
-      await onSave({ audioMode, clipSegments: clipSegments.map((segment) => ({ end_seconds: segment.endSeconds, start_seconds: segment.startSeconds })), episodeId: episode.id, materialRevisionId, reviewPackageId: reviewPackage.id, shotId: shot.id, subtitleText: audioMode === "tts" ? spokenText : subtitleText.trim(), subtitlesEnabled, ttsSpeakingRate: Number.isFinite(rate) && rate > 0 ? rate : null, ttsText: audioMode === "tts" ? spokenText : null, ttsVoice: audioMode === "tts" ? ttsVoice.trim() : null });
-      setIsOpen(false); return true;
+      await onSave({ audioMode, clipSegments: clipSegments.map((segment) => ({ end_seconds: segment.endSeconds, start_seconds: segment.startSeconds })), episodeId: episode.id, includeVideo, materialRevisionId, reviewPackageId: reviewPackage.id, shotId: shot.id, subtitleText: audioMode === "tts" ? spokenText : subtitleText.trim(), subtitlesEnabled, ttsSpeakingRate: Number.isFinite(rate) && rate > 0 ? rate : null, ttsText: audioMode === "tts" ? spokenText : null, ttsVoice: audioMode === "tts" ? ttsVoice.trim() : null });
+      if (includeVideo) setIsOpen(false);
+      return true;
     } catch (cause) { setError(cause instanceof Error ? cause.message : "无法保存镜头准备草稿。"); return false; }
     finally { setIsPending(false); }
   }
@@ -3036,7 +3053,7 @@ function ShotPreparationCard({ artifacts, audioTracks, defaults, draft, episode,
   const ttsTasks = tasks.filter((task) => shotTtsTask(task, reviewPackage.id, shot.id)).sort((left, right) => right.created_at.localeCompare(left.created_at));
   const latestTtsTask = ttsTasks[0]; const currentVideoArtifact = artifacts.find((artifact) => artifact.id === draft?.current_video_artifact_id); const currentTask = draft?.current_tts_task_id ? tasks.find((task) => task.id === draft.current_tts_task_id) : latestTtsTask; const isCurrentText = !currentTask || taskTtsText(currentTask) === (draft?.tts_text ?? ttsText); const isGenerating = latestTtsTask?.status === "ready" || latestTtsTask?.status === "running"; const ttsError = draft?.tts_error ?? (latestTtsTask?.status === "failed" ? "口播任务失败，请重试。" : "");
   const currentTrackCandidate = audioTracks.find((track) => track.id === draft?.current_audio_track_id); const currentTrackTask = currentTrackCandidate ? tasks.find((task) => task.id === currentTrackCandidate.source_task_id) : undefined; const currentTrack = currentTrackCandidate && (audioMode !== "source" || taskSourceVideoArtifactId(currentTrackTask) === draft?.current_video_artifact_id) ? currentTrackCandidate : undefined; const clipError = draft?.video_error ?? ""; const clipStatus = frozen ? "已冻结" : draft?.video_status === "running" ? "生成中" : clipError ? "失败" : currentVideoArtifact ? "已准备" : "待保存"; const audioLabel = audioMode === "tts" ? "TTS 口播" : audioMode === "source" ? "保留原声" : "无口播"; const audioStatus = draft?.audio_status === "ready" ? "已准备" : draft?.audio_status === "running" ? "生成中" : draft?.audio_status === "failed" ? "失败" : "待准备";
-  async function generate(retry = false) { setError(""); try { if (!await save()) return; await onGenerateTts({ episodeId: episode.id, reviewPackageId: reviewPackage.id, retry, shotId: shot.id }); } catch (cause) { setError(cause instanceof Error ? cause.message : "无法创建逐镜头口播任务。"); } }
+  async function generate(retry = false) { setError(""); try { if (!await save(false)) return; await onGenerateTts({ episodeId: episode.id, reviewPackageId: reviewPackage.id, retry, shotId: shot.id }); } catch (cause) { setError(cause instanceof Error ? cause.message : "无法创建逐镜头口播任务。"); } }
   async function previewVoice() {
     setError(""); setIsVoicePreviewPending(true);
     try {

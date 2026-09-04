@@ -562,7 +562,7 @@ describe("审核台", () => {
     expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ audioMode: "tts", clipSegments: [{ end_seconds: 2, start_seconds: 0 }], episodeId: approvedEpisode.id, materialRevisionId: "material-shot-workbench-b", reviewPackageId: reviewPackage.id, shotId: "shot-2", subtitleText: "修改后的字幕", subtitlesEnabled: true }));
   });
 
-  it("逐镜头 TTS 编辑不触发任务，显式生成后才请求当前镜头", async () => {
+  it("逐镜头 TTS 可先于原片标记生成，完整保存仍要求视频", async () => {
     const user = userEvent.setup();
     const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-shot-tts", stage: "storyboard_approved" };
     const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", episode_id: approvedEpisode.id, id: "artifact-shot-tts", relative_path: "episodes/episode-shot-tts/storyboard.json" };
@@ -576,12 +576,16 @@ describe("审核台", () => {
     render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={{ ...blueprint, policy: { narration: { voice: { name: "voice-a", speaking_rate: 1.2 } } } }} episode={approvedEpisode} isTransitionPending={false} materialRevisions={[source]} onGenerateShotTts={onGenerateTts} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={[draft]} tasks={[]} transitions={[]} />);
 
     await screen.findByRole("heading", { name: "分镜工作台" });
-    await user.selectOptions(screen.getByLabelText("shot-1 当前原片"), source.id);
     await user.clear(screen.getByLabelText("shot-1 口播内容"));
     await user.type(screen.getByLabelText("shot-1 口播内容"), "新的逐字口播");
     expect(onGenerateTts).not.toHaveBeenCalled();
     await user.click(screen.getByRole("button", { name: "生成此镜头口播" }));
+    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ includeVideo: false, materialRevisionId: "" }));
     expect(onGenerateTts).toHaveBeenCalledWith({ episodeId: approvedEpisode.id, reviewPackageId: reviewPackage.id, retry: false, shotId: "shot-1" });
+    expect(screen.getByLabelText("shot-1 当前原片")).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "保存草稿" }));
+    expect(screen.getByRole("alert").textContent).toContain("请选择原片并完成至少一个有效片段标记");
+    expect(onSave).toHaveBeenCalledTimes(1);
   });
 
   it("保留原声会把原片音轨与片段标记一起交给 Studio", async () => {
