@@ -157,6 +157,9 @@ const frozenMultiSegmentShotDraftMigration = resolve(
 const deferredStudioTrimmingMigration = resolve(
   "supabase/migrations/20260904110000_defer_shot_trimming_to_studio.sql",
 );
+const shotTtsConnectionOwnershipFixMigration = resolve(
+  "supabase/migrations/20260904120000_fix_shot_tts_connection_ownership.sql",
+);
 const deployedMigrations = {
   "20260822095959_guard_legacy_b_roll_history.sql": "b36e63037ca12c2785d7bbb9f2fe8596f31377de734dcf8b96cb03af23613c9b",
   "20260822100000_freeze_b_roll_adapter_connection.sql": "f38575ba3b5dcb7814f230c5a48a52c6a5ac37811868d00bdb0f7eb375b2a51d",
@@ -643,6 +646,14 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("pending_tts_task_id");
     expect(migration).toContain("sync_shot_tts_audio_after_insert");
     expect(migration).toContain("tts_error");
+  });
+
+  it("逐镜头 TTS 使用 Owner 归属字段校验连接版本", () => {
+    const migration = readFileSync(shotTtsConnectionOwnershipFixMigration, "utf8");
+
+    expect(migration).toContain("connection.account_id = current_episode.account_id");
+    expect(migration).toContain("connection.created_by = auth.uid()");
+    expect(migration).toContain("if patched_definition = definition then");
   });
 
   it("逐镜头裁剪只在显式请求时创建幂等 Worker 任务，并保留旧片段", () => {

@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { Database } from "./lib/database.types";
-import { AccountWorkspace, App, BootstrapScreen, EpisodeDetail, EpisodeForm, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, episodeWorkerStatus, initialNavigationForWorkspace, navigation, navigationBadgeCounts, workerPreflightFailureMessage } from "./App";
+import { AccountWorkspace, App, BootstrapScreen, EpisodeDetail, EpisodeForm, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, episodeWorkerStatus, initialNavigationForWorkspace, messageFromError, navigation, navigationBadgeCounts, workerPreflightFailureMessage } from "./App";
 import { supabase } from "./lib/supabase";
 import { defaultBlueprintPolicy, parseBlueprintPolicy, withBlueprintAssetRoot } from "./platform/blueprintPolicy";
 
@@ -215,6 +215,10 @@ describe("approval console", () => {
 
   it("显示修复前真实 preflight 返回的具体检查原因", () => {
     expect(workerPreflightFailureMessage({ version: "worker-preflight/v1", checks: [{ capability: "b_roll_generation", check: "network_connectivity", phase: "preflight", status: "retryable", reason: "Pexels 网络探测超时。", action: "retry", scope: "worker" }] })).toBe("修复前真实运行态检查未通过：network_connectivity：Pexels 网络探测超时。");
+  });
+
+  it("展示 Supabase 返回的结构化错误消息", () => {
+    expect(messageFromError({ message: "column connection.account_id does not exist" }, "无法创建逐镜头口播任务。")).toBe("column connection.account_id does not exist");
   });
 
   it("Studio 的结构修改只返回分镜审核，不冻结当前 Studio 工程", async () => {

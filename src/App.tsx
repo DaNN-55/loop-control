@@ -110,6 +110,10 @@ export function TimezoneSelect({ value, onChange }: { value: string; onChange: (
   return <label>时区<select aria-label="时区" onChange={(event) => onChange(event.target.value)} value={value}>{timezoneOptions.map(([timezone, label]) => <option key={timezone} value={timezone}>{label}（{timezone}）</option>)}</select></label>;
 }
 
+export function messageFromError(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : error && typeof error === "object" && "message" in error && typeof error.message === "string" ? error.message : fallback;
+}
+
 interface ArollTaskEvidence {
   adapter: string;
   allowedTools: string[];
@@ -1399,7 +1403,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
       setMessage(`${input.shotId} 的逐镜头准备草稿已保存；未创建媒体任务。`);
       await refreshWorkspace();
     } catch (error) {
-      const message = error instanceof Error ? error.message : "无法保存逐镜头准备草稿。";
+      const message = messageFromError(error, "无法保存逐镜头准备草稿。");
       setErrorMessage(message);
       throw new Error(message);
     } finally {
@@ -1421,7 +1425,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
       setMessage(`${input.shotId} 的口播任务已${input.retry ? "重新" : "创建"}排队；Worker 将按当前冻结配置执行。`);
       await refreshWorkspace();
     } catch (error) {
-      const message = error instanceof Error ? error.message : "无法创建逐镜头口播任务。";
+      const message = messageFromError(error, "无法创建逐镜头口播任务。");
       setErrorMessage(message);
       throw new Error(message);
     } finally {
@@ -1443,7 +1447,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
       setMessage(`${input.shotId} 的原声音轨已${input.retry ? "重新" : "创建"}排队；将从当前准备片段提取。`);
       await refreshWorkspace();
     } catch (error) {
-      const message = error instanceof Error ? error.message : "无法创建逐镜头原声任务。";
+      const message = messageFromError(error, "无法创建逐镜头原声任务。");
       setErrorMessage(message);
       throw new Error(message);
     } finally {
@@ -1465,7 +1469,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
       setMessage(`${input.shotId} 的裁剪任务已${input.retry ? "重新" : "创建"}排队；新片段校验通过前保留上一版。`);
       await refreshWorkspace();
     } catch (error) {
-      const message = error instanceof Error ? error.message : "无法创建镜头裁剪任务。";
+      const message = messageFromError(error, "无法创建镜头裁剪任务。");
       setErrorMessage(message);
       throw new Error(message);
     } finally {
@@ -1488,7 +1492,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
       setMessage(`${input.shotId} 已确认；已记录当前采用版本与审计事实。`);
       await refreshWorkspace();
     } catch (error) {
-      const message = error instanceof Error ? error.message : "无法确认当前镜头。";
+      const message = messageFromError(error, "无法确认当前镜头。");
       setErrorMessage(message);
       throw new Error(message);
     } finally {
@@ -1508,7 +1512,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
       setMessage("全部镜头的原片、片段标记和音频配置已冻结；正在准备 Studio 工程。");
       await refreshWorkspace();
     } catch (error) {
-      const message = error instanceof Error ? error.message : "无法冻结镜头配置并进入 Studio。";
+      const message = messageFromError(error, "无法冻结镜头配置并进入 Studio。");
       setErrorMessage(message);
       throw new Error(message);
     } finally {
@@ -1530,7 +1534,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
       setMessage(`${input.shotId} 已跳过；其他镜头仍可继续处理。`);
       await refreshWorkspace();
     } catch (error) {
-      const message = error instanceof Error ? error.message : "无法跳过当前镜头。";
+      const message = messageFromError(error, "无法跳过当前镜头。");
       setErrorMessage(message);
       throw new Error(message);
     } finally {
