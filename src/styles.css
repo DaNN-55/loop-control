@@ -1138,9 +1138,10 @@ body { background: #f5f7fa; }
 .clip-segment-row label { color: #66748a; font-size: 10px; }
 .clip-segment-row input { margin-top: 3px; width: 100%; }
 .shot-tts-copy-field { display: grid; gap: 6px; }
-.shot-tts-copy-header { align-items: center; color: #53627a; display: flex; font-size: 11px; font-weight: 750; gap: 8px; justify-content: space-between; }
-.shot-tts-copy-header .button { flex: 0 0 auto; min-height: 28px; padding: 4px 7px; }
-.shot-tts-copy-field textarea { resize: vertical; width: 100%; }
+.shot-tts-copy-header { color: #53627a; font-size: 11px; font-weight: 750; }
+.shot-tts-copy-input { position: relative; }
+.shot-tts-copy-field textarea { padding-right: 42px; resize: vertical; width: 100%; }
+.shot-tts-copy-reset { min-height: 28px; padding: 4px; position: absolute; right: 8px; top: 8px; width: 28px; }
 .shot-tts-bottom-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .shot-structure-menu { position: relative; }
 .shot-preparation-card > .shot-structure-menu { position: absolute; right: 10px; top: 10px; z-index: 1; }

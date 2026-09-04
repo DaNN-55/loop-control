@@ -1691,25 +1691,52 @@ export function serveTtsVoicePreview(supabaseUrl: string | undefined, supabasePu
       const policy = blueprint.policy && typeof blueprint.policy === "object" && !Array.isArray(blueprint.policy) ? blueprint.policy as Record<string, unknown> : {};
       const narration = policy.narration && typeof policy.narration === "object" && !Array.isArray(policy.narration) ? policy.narration as Record<string, unknown> : {};
       const voiceConfig = narration.voice && typeof narration.voice === "object" && !Array.isArray(narration.voice) ? narration.voice as Record<string, unknown> : {};
+      const assetRoot = typeof policy.asset_root === "string" ? policy.asset_root.trim() : "";
+      if (!assetRoot) throw new Error("当前蓝图没有本地资产根目录。");
       const languageCode = typeof voiceConfig.language_code === "string" ? voiceConfig.language_code : "zh-CN";
       const configuredVoice = typeof voiceConfig.name === "string" ? voiceConfig.name : "";
       const catalog = adapterRegistration(capability.provider, capability.adapter ?? capability.provider)?.voiceCatalog?.[languageCode] ?? [];
       if (voice !== configuredVoice && !catalog.includes(voice)) throw new Error("所选音色不在当前 TTS 执行器目录中。");
       const apiKey = await localWorkerSecretForCapability(capability, episode.account_id);
       if (!apiKey) { response.statusCode = 503; response.end("当前 TTS 凭据不可用。"); return; }
-      const input = { apiKey, fetcher: fetch, text: "你好，这是当前音色的试听效果。", voice: { languageCode, name: voice, speakingRate } };
-      const audio = capability.provider === "volcengine_tts"
-        ? await synthesizeVolcengineTts({ ...input, model: capability.model ?? "seed-tts-2.0" })
-        : await synthesizeGoogleTts(input);
+      const model = capability.model ?? (capability.provider === "volcengine_tts" ? "seed-tts-2.0" : "standard");
+      const text = "你好，这是当前音色的试听效果。";
+      const preview = await cachedTtsVoicePreview(assetRoot, { languageCode, model, provider: capability.provider, speakingRate, text, voice }, async () => {
+        const input = { apiKey, fetcher: fetch, text, voice: { languageCode, name: voice, speakingRate } };
+        return capability.provider === "volcengine_tts" ? synthesizeVolcengineTts({ ...input, model }) : synthesizeGoogleTts(input);
+      });
       response.setHeader("Cache-Control", "no-store");
       response.setHeader("Content-Type", "audio/mpeg");
+      response.setHeader("X-TTS-Preview-Cache", preview.cacheStatus);
       response.statusCode = 200;
-      response.end(Buffer.from(audio));
+      response.end(preview.audio);
     } catch (error) {
       response.statusCode = 400;
       response.end(error instanceof Error ? error.message : "无法试听当前音色。");
     }
   };
+}
+
+export async function cachedTtsVoicePreview(assetRoot: string, identity: { languageCode: string; model: string; provider: string; speakingRate: number; text: string; voice: string }, synthesize: () => Promise<Uint8Array>): Promise<{ audio: Buffer; cacheStatus: "HIT" | "MISS" }> {
+  const resolvedRoot = await fs.realpath(assetRoot);
+  if (isFilesystemRoot(resolvedRoot)) throw new Error("资产根不能是文件系统根目录。");
+  const cacheRoot = await ensureDirectoryWithinRoot(resolvedRoot, resolve(resolvedRoot, ".cache"));
+  const cacheDirectory = await ensureDirectoryWithinRoot(cacheRoot, resolve(cacheRoot, "tts-previews"));
+  const cachePath = resolve(cacheDirectory, `${createHash("sha256").update(JSON.stringify(identity)).digest("hex")}.mp3`);
+  try {
+    return { audio: await fs.readFile(cachePath), cacheStatus: "HIT" };
+  } catch (error) {
+    if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) throw error;
+  }
+  const audio = Buffer.from(await synthesize());
+  if (audio.byteLength === 0) throw new Error("音色试听没有返回音频。");
+  try {
+    await fs.writeFile(cachePath, audio, { flag: "wx" });
+  } catch (error) {
+    if (!(error instanceof Error && "code" in error && error.code === "EEXIST")) throw error;
+    return { audio: await fs.readFile(cachePath), cacheStatus: "HIT" };
+  }
+  return { audio, cacheStatus: "MISS" };
 }
 
 async function indexedArtifactForPreview(input: { authorization: string; episodeId: string; expectedSha256?: string; relativePath: string; supabasePublishableKey: string | undefined; supabaseUrl: string | undefined }): Promise<{ assetRoot: string; sha256: string } | null> {

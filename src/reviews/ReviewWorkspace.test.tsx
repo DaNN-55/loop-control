@@ -539,6 +539,9 @@ describe("审核台", () => {
     expect((screen.getByLabelText("shot-1 TTS 声音") as HTMLSelectElement).options.length).toBeGreaterThan(2);
     expect(screen.getByRole("button", { name: "shot-1 试听当前音色" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "shot-1 恢复默认声音" })).toBeTruthy();
+    const restoreScriptButton = screen.getByRole("button", { name: "shot-1 恢复分镜文案" });
+    expect(restoreScriptButton.textContent).toBe("");
+    expect(restoreScriptButton.getAttribute("title")).toBe("恢复分镜文案");
     expect(screen.queryByText("恢复默认声音")).toBeNull();
     expect(screen.queryByText(/默认声音：voice-a/)).toBeNull();
     expect(screen.queryByText(/基准文案：/)).toBeNull();

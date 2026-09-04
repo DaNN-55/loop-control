@@ -75,20 +75,18 @@ describe("adapter registry", () => {
       connectionType: "volcengine_tts_api",
       modelCatalog: ["seed-tts-2.0"],
     });
-    expect(adapterRegistration("volcengine_tts", "volcengine_tts")?.voiceCatalog?.["zh-CN"]).toEqual(expect.arrayContaining([
+    expect(adapterRegistration("volcengine_tts", "volcengine_tts")?.voiceCatalog?.["zh-CN"]).toEqual([
       "zh_female_vv_uranus_bigtts",
-      "zh_male_dayi_saturn_bigtts",
-      "ICL_uranus_zh_male_paoxiaoxiaoge_tob",
-      "zh_female_qingxinnvsheng_mars_bigtts",
-      "zh_female_tianmeixiaoyuan_moon_bigtts",
-      "zh_female_mizai_uranus_bigtts",
-      "zh_male_tiancaitongsheng_mars_bigtts",
-      "zh_male_lanxiaoyang_mars_bigtts",
-      "zh_male_sunwukong_mars_bigtts",
-      "zh_male_xionger_uranus_bigtts",
-      "zh_male_baqiqingshu_uranus_bigtts",
+      "zh_male_m191_uranus_bigtts",
+      "zh_male_taocheng_uranus_bigtts",
+      "zh_female_xiaohe_uranus_bigtts",
+      "zh_female_qingxinnvsheng_uranus_bigtts",
       "zh_male_huolixiaoge_uranus_bigtts",
-    ]));
+      "zh_male_baqiqingshu_uranus_bigtts",
+      "zh_female_mizai_uranus_bigtts",
+      "ICL_uranus_zh_male_paoxiaoxiaoge_tob",
+      "zh_male_xionger_uranus_bigtts",
+    ]);
     expect(adapterRegistration("freesound", "freesound_preview")).toMatchObject({
       capability: "soundtrack_generation",
       connectionType: "freesound_api",

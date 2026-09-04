@@ -6,8 +6,8 @@ import type { AddressInfo } from "node:net";
 import { mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { confirmedStudioShotBlockers, coverImageExtension, createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, freezeHyperframesStudioWorkspace, hyperframesStudioPreviewArguments, prepareHyperframesStudioWorkspace, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveChooseLocalAssetDirectory, serveEpisodeDeletion, serveEpisodeDeletionCleanup, serveEpisodePreflight, serveFreezeHyperframesStudio, serveLocalArtifact, serveLocalEpisodeDirectory, serveOpenHyperframesStudio, serveOpenLocalArtifact, serveOpenLocalAssetDirectory, serveOpenLocalEpisodeDirectory, serveOpenPersonalHyperframesStudio, servePublishPreparation, serveTtsVoicePreview, stageLocalEpisodeDirectoryForDeletion, studioMarkerSourceRequirements } from "../vite.config";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { cachedTtsVoicePreview, confirmedStudioShotBlockers, coverImageExtension, createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, freezeHyperframesStudioWorkspace, hyperframesStudioPreviewArguments, prepareHyperframesStudioWorkspace, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveChooseLocalAssetDirectory, serveEpisodeDeletion, serveEpisodeDeletionCleanup, serveEpisodePreflight, serveFreezeHyperframesStudio, serveLocalArtifact, serveLocalEpisodeDirectory, serveOpenHyperframesStudio, serveOpenLocalArtifact, serveOpenLocalAssetDirectory, serveOpenLocalEpisodeDirectory, serveOpenPersonalHyperframesStudio, servePublishPreparation, serveTtsVoicePreview, stageLocalEpisodeDirectoryForDeletion, studioMarkerSourceRequirements } from "../vite.config";
 
 const episodeId = "00000000-0000-0000-0000-000000000000";
 let server: ReturnType<typeof createServer>;
@@ -112,6 +112,22 @@ describe("本地 Episode 目录路由", () => {
       expect(unavailable.status).toBe(503);
     } finally {
       await new Promise<void>((resolve, reject) => previewServer.close((error) => error ? reject(error) : resolve()));
+    }
+  });
+
+  it("相同音色试听只调用一次供应商并持久读取本地缓存", async () => {
+    const root = await mkdtemp(join(tmpdir(), "tts-preview-cache-"));
+    const synthesize = vi.fn().mockResolvedValue(Uint8Array.from([73, 68, 51]));
+    const identity = { languageCode: "zh-CN", model: "seed-tts-2.0", provider: "volcengine_tts", speakingRate: 1.2, text: "试听", voice: "zh_female_vv_uranus_bigtts" };
+    try {
+      const first = await cachedTtsVoicePreview(root, identity, synthesize);
+      const second = await cachedTtsVoicePreview(root, identity, synthesize);
+      expect(first.cacheStatus).toBe("MISS");
+      expect(second.cacheStatus).toBe("HIT");
+      expect([...second.audio]).toEqual([73, 68, 51]);
+      expect(synthesize).toHaveBeenCalledTimes(1);
+    } finally {
+      await rm(root, { force: true, recursive: true });
     }
   });
 
