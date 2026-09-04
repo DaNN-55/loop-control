@@ -42,6 +42,14 @@ describe("受控媒体供应商", () => {
     expect(fetcher).toHaveBeenCalledWith("https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse", expect.objectContaining({ headers: expect.objectContaining({ "X-Api-Key": "volc-key", "X-Api-Resource-Id": "seed-tts-2.0" }) }));
   });
 
+  it("为豆包语音 1.0 音色发送匹配的资源 ID", async () => {
+    const fetcher = vi.fn().mockResolvedValue(new Response(`data: ${JSON.stringify({ code: 0, data: Buffer.from("audio").toString("base64") })}`, { status: 200 }));
+
+    await synthesizeVolcengineTts({ apiKey: "volc-key", fetcher, model: "seed-tts-2.0", text: "试听。", voice: { languageCode: "zh-CN", name: "zh_male_sunwukong_mars_bigtts", speakingRate: 1 } });
+
+    expect(fetcher).toHaveBeenCalledWith("https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse", expect.objectContaining({ headers: expect.objectContaining({ "X-Api-Resource-Id": "seed-tts-1.0" }) }));
+  });
+
   it("只返回 Pexels 响应中与冻结检索词匹配的竖屏视频下载地址", async () => {
     const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({
       videos: [{

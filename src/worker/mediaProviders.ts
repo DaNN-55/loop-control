@@ -71,9 +71,10 @@ export async function synthesizeGoogleTts(input: { apiKey: string; fetcher: Medi
 
 export async function synthesizeVolcengineTts(input: { apiKey: string; fetcher: MediaFetcher; model: string; text: string; voice: GoogleTtsVoice }): Promise<Uint8Array> {
   if (!input.apiKey.trim() || !input.model.trim() || !input.text.trim() || !input.voice.name.trim() || !Number.isFinite(input.voice.speakingRate) || input.voice.speakingRate < 0.5 || input.voice.speakingRate > 2) throw new Error("豆包语音 V3 配置或旁白文本无效。");
+  const resourceId = /_(?:mars|moon)_bigtts$/.test(input.voice.name) ? "seed-tts-1.0" : /_(?:uranus|saturn)_bigtts$/.test(input.voice.name) ? "seed-tts-2.0" : input.model.trim();
   const response = await input.fetcher("https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse", {
     method: "POST",
-    headers: { "Content-Type": "application/json", "X-Api-Key": input.apiKey.trim(), "X-Api-Request-Id": randomUUID(), "X-Api-Resource-Id": input.model.trim() },
+    headers: { "Content-Type": "application/json", "X-Api-Key": input.apiKey.trim(), "X-Api-Request-Id": randomUUID(), "X-Api-Resource-Id": resourceId },
     body: JSON.stringify({
       user: { uid: "tk-workflow-worker" },
       req_params: {
