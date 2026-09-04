@@ -534,7 +534,10 @@ describe("审核台", () => {
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={{ ...blueprint, policy: { narration: { executor: { adapter: "volcengine_tts", model: "seed-tts-2.0", provider: "volcengine_tts" }, voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 1.35 } } } }} episode={approvedEpisode} isTransitionPending={false} materialRevisions={materials} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={drafts} tasks={[]} transitions={[]} />);
 
-    await screen.findByRole("heading", { name: "镜头工作台" });
+    await screen.findByRole("heading", { name: "分镜工作台" });
+    expect(screen.queryByText("Studio 前")).toBeNull();
+    expect(screen.getByRole("switch", { name: /显示字幕/ })).toBeTruthy();
+    expect(screen.queryByText(/历史音轨保留/)).toBeNull();
     expect(screen.getByRole("group", { name: "音频模式" }).compareDocumentPosition(screen.getByRole("region", { name: "shot-1 画面准备" })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect((screen.getByLabelText("shot-1 TTS 声音") as HTMLSelectElement).value).toBe("voice-a");
     expect((screen.getByLabelText("shot-1 TTS 声音") as HTMLSelectElement).options.length).toBeGreaterThan(2);
@@ -572,7 +575,7 @@ describe("审核台", () => {
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={{ ...blueprint, policy: { narration: { voice: { name: "voice-a", speaking_rate: 1.2 } } } }} episode={approvedEpisode} isTransitionPending={false} materialRevisions={[source]} onGenerateShotTts={onGenerateTts} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={[draft]} tasks={[]} transitions={[]} />);
 
-    await screen.findByRole("heading", { name: "镜头工作台" });
+    await screen.findByRole("heading", { name: "分镜工作台" });
     await user.selectOptions(screen.getByLabelText("shot-1 当前原片"), source.id);
     await user.clear(screen.getByLabelText("shot-1 口播内容"));
     await user.type(screen.getByLabelText("shot-1 口播内容"), "新的逐字口播");
@@ -596,7 +599,7 @@ describe("审核台", () => {
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact, preparedVideo]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} onGenerateShotSourceAudio={onGenerateSourceAudio} onTransition={vi.fn()} audioTracks={[sourceTrack]} reviewPackages={[reviewPackage]} shotPreparationDrafts={[draft]} tasks={[clipTask, sourceTask, sourceRetryTask]} transitions={[]} />);
 
-    await screen.findByRole("heading", { name: "镜头工作台" });
+    await screen.findByRole("heading", { name: "分镜工作台" });
     expect(screen.getByDisplayValue("原声字幕")).toBeTruthy();
     expect(screen.getByText(/原片音轨会随片段标记进入 Studio/)).toBeTruthy();
     expect(screen.queryByRole("button", { name: /提取当前原声/ })).toBeNull();
@@ -615,7 +618,7 @@ describe("审核台", () => {
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} materialRevisions={[source]} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={[draft]} tasks={[]} transitions={[]} />);
 
-    await screen.findByRole("heading", { name: "镜头工作台" });
+    await screen.findByRole("heading", { name: "分镜工作台" });
     expect(screen.getByText(/已明确静音/)).toBeTruthy();
     expect(screen.getByText(/不会创建 TTS 任务/)).toBeTruthy();
     await user.selectOptions(screen.getByLabelText("shot-1 当前原片"), source.id);
@@ -637,7 +640,7 @@ describe("审核台", () => {
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} materialRevisions={[source]} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={[draft]} tasks={[]} transitions={[]} />);
 
-    await screen.findByRole("heading", { name: "镜头工作台" });
+    await screen.findByRole("heading", { name: "分镜工作台" });
     expect(await screen.findByLabelText("shot-1 视频缩略图轨道")).toBeTruthy();
     expect(screen.getByText("片段标记")).toBeTruthy();
     expect(screen.queryByLabelText("shot-1 片段1 入点（秒）")).toBeNull();
@@ -668,7 +671,7 @@ describe("审核台", () => {
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} onImportMaterial={onImport} onTransition={vi.fn()} reviewPackages={[reviewPackage]} tasks={[]} transitions={[]} />);
 
-    await screen.findByRole("heading", { name: "镜头工作台" });
+    await screen.findByRole("heading", { name: "分镜工作台" });
     expect(screen.queryByRole("button", { name: "导入原片" })).toBeNull();
     await user.upload(screen.getByLabelText("shot-1 补充原片"), new File(["video"], "new-shot.mp4", { type: "video/mp4" }));
     await waitFor(() => expect(onImport).toHaveBeenCalledTimes(1));
@@ -685,7 +688,7 @@ describe("审核台", () => {
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} onConfirmShotPreparation={onConfirm} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={[]} tasks={[]} transitions={[]} />);
 
-    await screen.findByRole("heading", { name: "镜头工作台" });
+    await screen.findByRole("heading", { name: "分镜工作台" });
     expect(screen.getByText(/只保存原片和片段标记/)).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "冻结配置并进入 Studio" }));
     expect(onConfirm).toHaveBeenCalledWith({ episodeId: approvedEpisode.id, reviewPackageId: reviewPackage.id });

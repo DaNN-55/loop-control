@@ -1100,7 +1100,7 @@ body { background: #f5f7fa; }
 .checkbox-label { align-items: center; display: flex; gap: 8px; }
 .checkbox-label input { width: auto; }
 
-/* 镜头准备：把高频操作按「选原片 → 裁剪 → 音频 → 保存」组织。 */
+/* 分镜准备：先确定口播，再标记原片范围并保存。 */
 .episode-detail-drawer { width: min(760px, 58vw); }
 .shot-preparation-summary { align-items: stretch; gap: 18px; padding: 13px 126px 13px 14px; }
 .shot-preparation-summary > span:first-child { align-content: center; min-width: 92px; }
@@ -1222,11 +1222,15 @@ body { background: #f5f7fa; }
 /* 生产单标注收敛：摘要右对齐，细节按当前操作顺序阅读。 */
 .episode-detail-drawer { width: min(1200px, 76vw); }
 .shot-workbench { display: grid; grid-template-columns: minmax(0, 1fr) minmax(440px, 1.55fr); }
-.shot-workbench-header { display: contents; }
-.shot-workbench-header > div { align-self: start; grid-column: 1; grid-row: 1 / span 2; }
-.shot-workbench-header > span { align-self: start; grid-column: 2; grid-row: 1; justify-self: end; text-align: right; }
-.shot-workbench > .muted-copy { grid-column: 2; grid-row: 2; margin: 0; text-align: right; }
+.shot-workbench-header { align-items: start; display: grid; gap: 20px; grid-column: 1 / -1; grid-template-columns: minmax(160px, .55fr) minmax(440px, 1.45fr); }
+.shot-workbench-header > h3 { margin: 0; }
+.shot-workbench-overview { display: grid; gap: 3px; justify-items: end; text-align: right; }
+.shot-workbench-overview .muted-copy { font-size: 11px; margin: 0; }
 .shot-workbench-list { grid-column: 1 / -1; }
+.shot-preparation-statuses small { background: #edf2f7 !important; border: 0 !important; border-radius: 999px !important; min-width: 0 !important; padding: 6px 9px !important; }
+.shot-preparation-statuses .is-video { color: #41658f !important; }
+.shot-preparation-statuses .is-audio { color: #725b8c !important; }
+.shot-preparation-statuses .is-editable { color: #7e622f !important; }
 .shot-clip-editor { grid-template-columns: minmax(0, 1fr); }
 .shot-source-toolbar { align-items: end; display: grid; gap: 8px; grid-template-columns: minmax(240px, 1fr) auto; }
 .shot-source-toolbar > label { color: #53627a; display: grid; font-size: 11px; font-weight: 750; gap: 6px; min-width: 0; }
@@ -1264,16 +1268,34 @@ body { background: #f5f7fa; }
 .shot-tts-settings { align-items: end; grid-template-columns: minmax(220px, 1fr) 110px 36px 36px auto; }
 .shot-tts-settings label { color: #53627a; display: grid; font-size: 11px; font-weight: 750; gap: 6px; }
 .shot-tts-settings .button { min-height: 36px; white-space: nowrap; }
+.shot-preparation-fields > label.shot-subtitle-switch { align-items: center; border-top: 1px solid #e1e7f0; display: flex; justify-content: space-between; padding-top: 10px; }
+.shot-subtitle-switch > span { display: grid; gap: 2px; }
+.shot-subtitle-switch strong { color: #35445a; font-size: 12px; }
+.shot-subtitle-switch small { color: #718096; font-size: 10px; }
+.shot-subtitle-switch input { appearance: none; background: #c4cfdd; border: 0; border-radius: 999px; cursor: pointer; height: 22px; margin: 0; padding: 2px; position: relative; width: 38px; }
+.shot-subtitle-switch input::after { background: #fff; border-radius: 50%; box-shadow: 0 1px 3px rgba(15, 23, 36, .25); content: ""; display: block; height: 18px; transition: transform .16s ease; width: 18px; }
+.shot-subtitle-switch input:checked { background: #1457d9; }
+.shot-subtitle-switch input:checked::after { transform: translateX(16px); }
+.shot-subtitle-switch input:focus-visible { outline: 3px solid #bdd3ff; outline-offset: 2px; }
+.shot-subtitle-switch input:disabled { cursor: default; opacity: .55; }
+.shot-structure-menu > summary { align-items: center; background: #1457d9; border-radius: 7px; color: #fff; display: flex; gap: 5px; min-height: 34px; padding: 7px 11px; }
+.shot-structure-menu > summary:hover { background: #0f49bc; }
+.shot-structure-menu > summary .icon { height: 14px; width: 14px; }
 .shot-structure-revision > summary { font-weight: 700; }
 .app-shell[data-theme="dark"] .shot-source-material-slot { background: #111722; }
 .app-shell[data-theme="dark"] .clip-segment-tab { background: #111722; border-color: #43516a; }
 .app-shell[data-theme="dark"] .clip-segment-tab > button:last-child { border-color: #43516a; }
+.app-shell[data-theme="dark"] .shot-preparation-statuses small { background: #202937 !important; }
+.app-shell[data-theme="dark"] .shot-subtitle-switch { border-color: #344052; }
+.app-shell[data-theme="dark"] .shot-subtitle-switch strong { color: #d7e0ed; }
+.app-shell[data-theme="dark"] .shot-subtitle-switch small { color: #9cabbf; }
 @media (max-width: 1280px) { .episode-detail-drawer { width: min(920px, calc(100vw - 76px)); } }
 @media (max-width: 640px) {
   .episode-detail-drawer { width: auto; }
   .shot-workbench { display: grid; grid-template-columns: 1fr; }
-  .shot-workbench-header { display: contents; }
-  .shot-workbench-header > div, .shot-workbench-header > span, .shot-workbench > .muted-copy, .shot-workbench-list { grid-column: 1; grid-row: auto; justify-self: stretch; text-align: left; }
+  .shot-workbench-header { gap: 6px; grid-template-columns: 1fr; }
+  .shot-workbench-overview { justify-items: start; text-align: left; }
+  .shot-workbench-list { grid-column: 1; }
   .shot-source-toolbar { grid-template-columns: 1fr; }
   .shot-source-material-form { justify-content: flex-start; }
   .shot-workbench-freeze { align-items: flex-end; }
