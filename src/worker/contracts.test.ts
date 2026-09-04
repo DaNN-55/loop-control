@@ -68,6 +68,67 @@ describe("Worker 契约", () => {
     expect(taskPackage).toMatchObject({ provider: "pexels", credentialRef: "11111111-1111-4111-8111-111111111111", media: { adapter: "pexels_video" } });
   });
 
+  it("旁白任务接受与 Provider 匹配的火山 TTS 冻结配置", () => {
+    const narrationInput: WorkerTaskPackageInput = {
+      ...packageInput,
+      task: { ...packageInput.task, type: "generate_narration", provider: "volcengine_tts", model: "seed-tts-2.0", promptVersion: "narration-v1" },
+      capability: "narration_generation",
+      credentialRef: "11111111-1111-4111-8111-111111111111",
+      media: { adapter: "volcengine_tts", narration: { text: "冻结旁白", voice: { languageCode: "zh-CN", name: "zh_female_vv_uranus_bigtts", speakingRate: 1.35 } } },
+      output: { requiredArtifactTypes: ["narration_audio"], contentType: "audio/mpeg", relativePath: "episodes/episode-1/audio/narration.mp3", reviewStage: "production_ready" },
+      inputArtifacts: [],
+    };
+
+    expect(createWorkerTaskPackage(narrationInput)).toMatchObject({ provider: "volcengine_tts", media: { adapter: "volcengine_tts" } });
+  });
+
+  it("原声提取任务冻结当前准备片段，并要求返回实际音频时长", () => {
+    const sourceArtifact = {
+      artifactType: "prepared_shot_video",
+      relativePath: "episodes/episode-1/video/shot-1-v2.mp4",
+      sha256: "b".repeat(64),
+      fileSize: 4096,
+    };
+    const sourceInput: WorkerTaskPackageInput = {
+      ...packageInput,
+      task: { ...packageInput.task, type: "extract_embedded_audio", provider: "ffmpeg", model: "ffmpeg", promptVersion: "shot-source-audio-v1" },
+      capability: "embedded_audio_extraction",
+      media: { adapter: "ffmpeg_extract_audio", embeddedAudio: { sourceRelativePath: sourceArtifact.relativePath, durationSeconds: 3 } },
+      output: { requiredArtifactTypes: ["shot_source_audio"], contentType: "audio/mpeg", relativePath: "episodes/episode-1/audio/shot-source-shot-1-v2.mp3", reviewStage: "production_ready" },
+      inputArtifacts: [sourceArtifact],
+    };
+    const taskPackage = createWorkerTaskPackage(sourceInput);
+
+    expect(taskPackage).toMatchObject({
+      capability: "embedded_audio_extraction",
+      assets: { inputs: [sourceArtifact] },
+      media: { adapter: "ffmpeg_extract_audio", embeddedAudio: { sourceRelativePath: sourceArtifact.relativePath, durationSeconds: 3 } },
+    });
+    expect(validateWorkerResult({
+      version: "worker-result/v1",
+      taskId: "task-1",
+      status: "completed",
+      artifacts: [{ artifactType: "shot_source_audio", relativePath: sourceInput.output.relativePath, sha256: "c".repeat(64), fileSize: 1024 }],
+      validation: { passed: true, checks: [{ name: "audio", passed: true, detail: "embedded audio extracted" }] },
+      audioDurationSeconds: 2.984,
+      actualCostCents: 0,
+      blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." },
+      nextStep: "Use the current source audio track.",
+    }, taskPackage)).toMatchObject({ status: "completed", audioDurationSeconds: 2.984 });
+    expect(() => validateWorkerResult({
+      version: "worker-result/v1",
+      taskId: "task-1",
+      status: "completed",
+      artifacts: [{ artifactType: "shot_source_audio", relativePath: sourceInput.output.relativePath, sha256: "c".repeat(64), fileSize: 1024 }],
+      validation: { passed: true, checks: [{ name: "audio", passed: true, detail: "embedded audio extracted" }] },
+      actualCostCents: 0,
+      blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." },
+      nextStep: "Use the current source audio track.",
+    }, taskPackage)).toThrow("实际时长");
+  });
+
   it("声轨任务只接受 Freesound Provider 与连接版本 ID", () => {
     const soundtrackInput: WorkerTaskPackageInput = {
       ...packageInput,

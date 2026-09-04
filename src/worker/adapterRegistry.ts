@@ -9,6 +9,7 @@ export interface AdapterRegistration {
   provider: string;
   connectionType: string;
   requiresNetwork: boolean;
+  workerAvailable?: boolean;
   configurationFields: readonly string[];
   modelCatalog?: readonly string[];
   presetCatalog?: readonly string[];
@@ -124,6 +125,24 @@ const adapterRegistry: readonly AdapterRegistration[] = [
     return capability.registeredAdapter ? [{ ...capability.registeredAdapter, capability: capability.capability }] : [];
   }),
   {
+    id: "volcengine_tts",
+    capability: "narration_generation",
+    endpoint: "https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse",
+    provider: "volcengine_tts",
+    connectionType: "volcengine_tts_api",
+    requiresNetwork: true,
+    configurationFields: ["credential_ref", "voice", "max_attempts"],
+    modelCatalog: ["seed-tts-2.0"],
+    presetCatalog: ["narration-v1"],
+    voiceCatalog: {
+      "zh-CN": ["zh_female_vv_uranus_bigtts"],
+      "en-US": ["zh_female_vv_uranus_bigtts"],
+      "ja-JP": ["zh_female_vv_uranus_bigtts"],
+      "es-ES": ["zh_female_vv_uranus_bigtts"],
+    },
+    connections: [],
+  },
+  {
     id: "workers_ai_images",
     capability: "static_visual_generation",
     endpoint: "https://api.cloudflare.com/client/v4",
@@ -138,6 +157,15 @@ const adapterRegistry: readonly AdapterRegistration[] = [
   {
     id: "ffmpeg_extract_audio",
     capability: "embedded_audio_extraction",
+    provider: "ffmpeg",
+    connectionType: "internal",
+    requiresNetwork: false,
+    configurationFields: [],
+    connections: [],
+  },
+  {
+    id: "ffmpeg_trim_video",
+    capability: "shot_clip_preparation",
     provider: "ffmpeg",
     connectionType: "internal",
     requiresNetwork: false,
@@ -185,7 +213,7 @@ export function adapterRegistration(provider: string, adapter: string): AdapterR
 }
 
 export function isOwnerManagedConnection(provider: string, adapter: string): boolean {
-  return (provider === "pexels" && adapter === "pexels_video") || (provider === "freesound" && adapter === "freesound_preview") || (provider === "openai" && adapter === "openai_images") || (provider === "cloudflare" && adapter === "workers_ai_images") || (provider === "google_tts" && adapter === "google_tts");
+  return (provider === "pexels" && adapter === "pexels_video") || (provider === "freesound" && adapter === "freesound_preview") || (provider === "openai" && adapter === "openai_images") || (provider === "cloudflare" && adapter === "workers_ai_images") || (provider === "google_tts" && adapter === "google_tts") || (provider === "volcengine_tts" && adapter === "volcengine_tts");
 }
 
 export function externalAdapterForMediaCapability(key: MediaCapabilityKey, provider: string, adapter: string): AdapterRegistration | undefined {

@@ -62,4 +62,14 @@ describe("runtime probes", () => {
     const missingModel = await probeProviderConnection("cloudflare", "account-id:token-value", vi.fn().mockResolvedValue(new Response(JSON.stringify({ success: true, result: [] }), { status: 200 })), "@cf/black-forest-labs/flux-1-schnell");
     expect(missingModel).toMatchObject({ connection: { available: true }, modelPermission: { available: false, status: "unavailable" } });
   });
+
+  it("使用豆包语音 API Key 通过 V3 SSE 测试合成", async () => {
+    const fetcher = vi.fn().mockResolvedValue(new Response(`data: ${JSON.stringify({ code: 0, data: "dGVzdA==", message: "Success" })}\n`, { status: 200 }));
+    const result = await probeProviderConnection("volcengine_tts", "api-key", fetcher);
+
+    expect(result).toMatchObject({ connection: { available: true }, credentialValidity: { available: true } });
+    expect(fetcher.mock.calls[0][0]).toBe("https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse");
+    expect(fetcher.mock.calls[0][1].headers["X-Api-Key"]).toBe("api-key");
+    expect(fetcher.mock.calls[0][1].headers["X-Api-Resource-Id"]).toBe("seed-tts-2.0");
+  });
 });

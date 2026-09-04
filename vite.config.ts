@@ -15,6 +15,12 @@ import { createRuntimePreflight, localAdapterReadinessFromCommands, runtimeCapab
 import { probeCodexModel, probeProviderConnection } from "./src/worker/runtimeProbes";
 import { isSupportedManualARollVideo, isSupportedManualAudio } from "./src/reviews/materialImport";
 import { workerPreflightVersion } from "./src/worker/contracts";
+import { writeSafeAssetFile } from "./src/worker/controlledMediaExecutor";
+import { createPublishPackage, verifyPublishPackage } from "./src/publishing/publishPackage";
+import { loadPublishContext } from "./src/publishing/publishContext";
+import { coverImageExtension, coverInputPath } from "./src/publishing/coverImage";
+
+export { coverImageExtension } from "./src/publishing/coverImage";
 
 const localArtifactRoute = "/_local-artifact";
 const localEpisodeDirectoryRoute = "/_local-episode-directory";
@@ -26,9 +32,12 @@ const localProductionMaterialRoute = "/_production-material";
 const localEpisodeDeletionRoute = "/_delete-episode";
 const localEpisodeDeletionCleanupRoute = "/_finalize-episode-deletion";
 const systemStatusRoute = "/_system-status";
+const goldenProductionTestRoute = "/_golden-production-test";
 const workerPreflightRoute = "/_worker-preflight";
 const externalConnectionTestRoute = "/_external-connection-test";
+const publishPreparationRoute = "/_publish-preparation";
 const openHyperframesStudioRoute = "/_open-hyperframes-studio";
+const openPersonalHyperframesStudioRoute = "/_open-personal-hyperframes-studio";
 const freezeHyperframesStudioRoute = "/_freeze-hyperframes-studio";
 const episodePreflightRoute = "/_episode-preflight";
 const maxProductionMaterialBytes = 100 * 1024 * 1024;
@@ -54,6 +63,62 @@ function isSafeRelativeArtifactPath(value: string): boolean {
 
 function isEpisodeId(value: string): boolean {
   return isUuid(value);
+}
+
+export function confirmedStudioShotBlockers(context: unknown, drafts: readonly unknown[]): string[] {
+  const snapshot = context && typeof context === "object" && !Array.isArray(context) ? context as Record<string, unknown> : {};
+  const storyboard = snapshot.storyboard && typeof snapshot.storyboard === "object" && !Array.isArray(snapshot.storyboard) ? snapshot.storyboard as Record<string, unknown> : {};
+  const shots = Array.isArray(storyboard.shots) ? storyboard.shots : [];
+  const confirmedShots = Array.isArray(snapshot.confirmed_shots) ? snapshot.confirmed_shots : [];
+  const members = Array.isArray(snapshot.members) ? snapshot.members : [];
+  const draftByShot = new Map<string, Record<string, unknown>>();
+  const confirmedByShot = new Map<string, Record<string, unknown>>();
+  const memberByKey = new Map<string, Record<string, unknown>>();
+  for (const draft of drafts) {
+    if (draft && typeof draft === "object" && !Array.isArray(draft) && typeof (draft as Record<string, unknown>).shot_id === "string") draftByShot.set((draft as Record<string, unknown>).shot_id as string, draft as Record<string, unknown>);
+  }
+  for (const confirmedShot of confirmedShots) {
+    if (confirmedShot && typeof confirmedShot === "object" && !Array.isArray(confirmedShot) && typeof (confirmedShot as Record<string, unknown>).shot_id === "string") confirmedByShot.set((confirmedShot as Record<string, unknown>).shot_id as string, confirmedShot as Record<string, unknown>);
+  }
+  for (const member of members) {
+    if (member && typeof member === "object" && !Array.isArray(member) && typeof (member as Record<string, unknown>).member_key === "string") memberByKey.set((member as Record<string, unknown>).member_key as string, member as Record<string, unknown>);
+  }
+
+  const blockers: string[] = [];
+  for (const shot of shots) {
+    const shotId = shot && typeof shot === "object" && !Array.isArray(shot) && typeof (shot as Record<string, unknown>).id === "string" ? (shot as Record<string, unknown>).id as string : "未知镜头";
+    const confirmed = confirmedByShot.get(shotId);
+    const draft = draftByShot.get(shotId);
+    const media = memberByKey.get(`shot:${shotId}`);
+    const audio = memberByKey.get(`narration:${shotId}`);
+    const audioMode = confirmed?.audio_mode;
+    const rawSourceMatches = typeof confirmed?.source_material_revision_id === "string"
+      && draft?.selected_material_revision_id === confirmed.source_material_revision_id
+      && media?.source_material_revision_id === confirmed.source_material_revision_id
+      && JSON.stringify(draft.clip_segments) === JSON.stringify(confirmed.clip_segments)
+      && JSON.stringify(media.clip_segments) === JSON.stringify(confirmed.clip_segments);
+    const preparedClipMatches = typeof confirmed?.video_artifact_id === "string" && typeof confirmed.video_task_id === "string"
+      && draft?.current_video_artifact_id === confirmed.video_artifact_id
+      && draft?.current_video_task_id === confirmed?.video_task_id
+      && media?.artifact_id === confirmed?.video_artifact_id
+      && media?.task_id === confirmed?.video_task_id;
+    const embeddedSourceAudio = rawSourceMatches && audioMode === "source";
+    const valid = confirmed?.confirmation_status === "confirmed"
+      && draft?.confirmation_status === "confirmed"
+      && draft.input_fingerprint === confirmed.input_fingerprint
+      && (rawSourceMatches || preparedClipMatches)
+      && draft.audio_mode === audioMode
+      && draft.current_audio_track_id === confirmed.audio_track_id
+      && draft.subtitle_text === confirmed.subtitle_text
+      && draft.subtitles_enabled === confirmed.subtitles_enabled
+      && (audioMode === "none" || embeddedSourceAudio ? !audio : Boolean(audio && audio.audio_track_id === confirmed.audio_track_id))
+      && Boolean(media && media.input_fingerprint === confirmed.input_fingerprint
+        && media.audio_mode === confirmed.audio_mode
+        && media.subtitle_text === confirmed.subtitle_text
+        && media.subtitles_enabled === confirmed.subtitles_enabled);
+    if (!valid) blockers.push(shotId);
+  }
+  return [...new Set(blockers)];
 }
 
 export function requiredMediaCapabilitiesFromTasks(tasks: unknown): string[] {
@@ -106,6 +171,61 @@ function isReviewRenderProjectPath(episodeId: string, value: string): boolean {
 
 function isStudioWorkspacePath(episodeId: string, value: string, kind: "studio" | "studio-frozen"): boolean {
   return new RegExp(`^episodes/${episodeId}/${kind}/[0-9a-f-]{36}/index\\.html$`, "i").test(value);
+}
+
+function videoTagAttribute(tag: string, name: string): string | null {
+  const match = new RegExp(`\\b${name}=(?:"([^"]*)"|'([^']*)')`, "i").exec(tag);
+  return match?.[1] ?? match?.[2] ?? null;
+}
+
+export function studioMarkerSourceRequirements(originalHtml: string, editedHtml: string): Array<{ relativePath: string; minimumDurationSeconds: number }> {
+  const originalSources = new Map<string, string>();
+  for (const tag of originalHtml.match(/<video\b[^>]*>/gi) ?? []) {
+    if (videoTagAttribute(tag, "data-media-start") === null) continue;
+    const shotClass = videoTagAttribute(tag, "class")?.split(/\s+/).find((value) => /^shot-\d+$/.test(value));
+    const source = videoTagAttribute(tag, "src");
+    if (shotClass && source) originalSources.set(shotClass, source);
+  }
+  if (originalSources.size === 0) return [];
+
+  const seen = new Set<string>();
+  const requirements = new Map<string, number>();
+  for (const tag of editedHtml.match(/<video\b[^>]*>/gi) ?? []) {
+    const shotClass = videoTagAttribute(tag, "class")?.split(/\s+/).find((value) => /^shot-\d+$/.test(value));
+    if (!shotClass || !originalSources.has(shotClass)) throw new Error("Studio 不能新增或更换镜头原片；请返回镜头工作台修改。");
+    const source = videoTagAttribute(tag, "src");
+    if (source !== originalSources.get(shotClass) || !/^assets\/[^/]+$/.test(source)) throw new Error("Studio 不能更换原片；请返回镜头工作台修改。");
+    const startValue = videoTagAttribute(tag, "data-media-start");
+    const durationValue = videoTagAttribute(tag, "data-duration");
+    if (startValue === null || durationValue === null) throw new Error("Studio 片段标记无效。");
+    const start = Number(startValue);
+    const duration = Number(durationValue);
+    if (!Number.isFinite(start) || start < 0 || !Number.isFinite(duration) || duration <= 0) throw new Error("Studio 片段标记无效。");
+    seen.add(shotClass);
+    requirements.set(source, Math.max(requirements.get(source) ?? 0, start + duration));
+  }
+  if ([...originalSources.keys()].some((shotClass) => !seen.has(shotClass))) throw new Error("Studio 不能删除镜头；请提交分镜结构修订。");
+  return [...requirements].map(([relativePath, minimumDurationSeconds]) => ({ relativePath, minimumDurationSeconds }));
+}
+
+async function validateStudioMarkerWorkspace(assetRoot: string, episodeId: string, sourceRelativePath: string, workspaceRelativePath: string): Promise<void> {
+  if (!isReviewRenderProjectPath(episodeId, sourceRelativePath) || !isStudioWorkspacePath(episodeId, workspaceRelativePath, "studio")) throw new Error("HyperFrames 工程路径无效。");
+  const root = await fs.realpath(assetRoot);
+  const source = await fs.realpath(resolve(root, sourceRelativePath));
+  const workspace = await fs.realpath(resolve(root, workspaceRelativePath));
+  if (!isDescendant(root, source) || !isDescendant(root, workspace)) throw new Error("HyperFrames 工程超出资产根。");
+  const requirements = studioMarkerSourceRequirements(await fs.readFile(source, "utf8"), await fs.readFile(workspace, "utf8"));
+  for (const requirement of requirements) {
+    const sourceAsset = await fs.realpath(resolve(dirname(source), requirement.relativePath));
+    const asset = await fs.realpath(resolve(dirname(workspace), requirement.relativePath));
+    if (!isDescendant(dirname(source), sourceAsset) || !isDescendant(dirname(workspace), asset)) throw new Error("Studio 原片路径无效。");
+    const sourceHash = createHash("sha256").update(await fs.readFile(sourceAsset)).digest("hex");
+    const workspaceHash = createHash("sha256").update(await fs.readFile(asset)).digest("hex");
+    if (sourceHash !== workspaceHash) throw new Error("Studio 不能更换原片；请返回镜头工作台修改。");
+    const { stdout } = await execFileAsync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", asset]);
+    const duration = Number(stdout.trim());
+    if (!Number.isFinite(duration) || duration + 0.01 < requirement.minimumDurationSeconds) throw new Error("Studio 片段标记超出原片范围。");
+  }
 }
 
 async function assertDirectoryTreeHasNoLinks(directory: string): Promise<void> {
@@ -194,7 +314,7 @@ export function serveLocalArtifact(supabaseUrl: string | undefined, supabasePubl
   }
 
   try {
-    const indexedArtifact = await indexedArtifactForPreview({ authorization, episodeId, relativePath, supabasePublishableKey, supabaseUrl });
+    const indexedArtifact = await indexedArtifactForPreview({ authorization, episodeId, expectedSha256: expectedSha256 ?? undefined, relativePath, supabasePublishableKey, supabaseUrl });
     if (!indexedArtifact || !isAbsolute(indexedArtifact.assetRoot)) {
       response.statusCode = 404;
       response.end("未找到可预览产物。");
@@ -339,6 +459,8 @@ export function serveOpenHyperframesStudio(supabaseUrl: string | undefined, supa
       if (typeof body.projectRelativePath !== "string") throw new Error("缺少审核工程路径。");
       const assetRoot = await assetRootForOwnedEpisode({ authorization, episodeId, supabasePublishableKey, supabaseUrl });
       if (!assetRoot || !isAbsolute(assetRoot)) { response.statusCode = 404; response.end("未找到可编辑的审核工程。"); return; }
+      const studioGate = await studioEntryGateForOwnedEpisode({ authorization, episodeId, projectRelativePath: body.projectRelativePath, supabasePublishableKey, supabaseUrl });
+      if (!studioGate.allowed) { response.statusCode = 409; response.end(studioGate.message ?? "当前 Episode 尚未达到 Studio 进入条件。"); return; }
       const workspace = await prepareHyperframesStudioWorkspace(assetRoot, episodeId, body.projectRelativePath);
       const port = await availableLocalPort();
       await execFileAsync(join(process.cwd(), "node_modules", ".bin", "hyperframes"), hyperframesStudioPreviewArguments(dirname(join(assetRoot, workspace.relativePath)), port));
@@ -352,6 +474,30 @@ export function serveOpenHyperframesStudio(supabaseUrl: string | undefined, supa
   };
 }
 
+export function serveOpenPersonalHyperframesStudio(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+  return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+    if (request.method !== "POST") { response.statusCode = 405; response.end(); return; }
+    const authorization = request.headers.authorization;
+    if (!authorization?.startsWith("Bearer ")) { response.statusCode = 401; response.end("需要 Owner 登录会话。"); return; }
+    if (!supabaseUrl || !supabasePublishableKey) { response.statusCode = 503; response.end("Supabase 本地客户端未配置。"); return; }
+    const client = createClient(supabaseUrl, supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: authorization } } });
+    const { data, error } = await client.auth.getUser(authorization.slice("Bearer ".length));
+    if (error || !data.user) { response.statusCode = 401; response.end("Owner 登录会话无效。"); return; }
+    try {
+      const projectDirectory = resolve("content", "hyperframes-studio");
+      await fs.access(join(projectDirectory, "index.html"));
+      const port = await availableLocalPort();
+      await execFileAsync(join(process.cwd(), "node_modules", ".bin", "hyperframes"), hyperframesStudioPreviewArguments(projectDirectory, port));
+      response.setHeader("Content-Type", "application/json");
+      response.statusCode = 201;
+      response.end(JSON.stringify({ studioUrl: `http://127.0.0.1:${port}/#project/${encodeURIComponent(basename(projectDirectory))}` }));
+    } catch (cause) {
+      response.statusCode = 503;
+      response.end(cause instanceof Error ? cause.message : "无法打开个人 HyperFrames Studio 工程。");
+    }
+  };
+}
+
 export function serveFreezeHyperframesStudio(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
   return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
     if (request.method !== "POST") { response.statusCode = 405; response.end(); return; }
@@ -361,9 +507,12 @@ export function serveFreezeHyperframesStudio(supabaseUrl: string | undefined, su
     if (!isEpisodeId(episodeId)) { response.statusCode = 400; response.end("无效的 Episode ID。"); return; }
     try {
       const body = await readJsonBody(request);
-      if (typeof body.workspaceRelativePath !== "string") throw new Error("缺少 Studio 工作区路径。");
+      if (typeof body.workspaceRelativePath !== "string" || typeof body.sourceProjectRelativePath !== "string") throw new Error("缺少 Studio 工作区路径。");
       const assetRoot = await assetRootForOwnedEpisode({ authorization, episodeId, supabasePublishableKey, supabaseUrl });
       if (!assetRoot || !isAbsolute(assetRoot)) { response.statusCode = 404; response.end("未找到可冻结的 Studio 工程。"); return; }
+      const studioGate = await studioEntryGateForOwnedEpisode({ authorization, episodeId, projectRelativePath: body.sourceProjectRelativePath, supabasePublishableKey, supabaseUrl });
+      if (!studioGate.allowed) { response.statusCode = 409; response.end(studioGate.message ?? "当前 Episode 尚未达到 Studio 提交条件。"); return; }
+      await validateStudioMarkerWorkspace(assetRoot, episodeId, body.sourceProjectRelativePath, body.workspaceRelativePath);
       const frozenProject = await freezeHyperframesStudioWorkspace(assetRoot, episodeId, body.workspaceRelativePath);
       response.setHeader("Content-Type", "application/json");
       response.statusCode = 201;
@@ -456,7 +605,7 @@ export function serveOpenLocalArtifact(supabaseUrl: string | undefined, supabase
     }
 
     try {
-      const indexedArtifact = await indexedArtifactForPreview({ authorization, episodeId, relativePath, supabasePublishableKey, supabaseUrl });
+      const indexedArtifact = await indexedArtifactForPreview({ authorization, episodeId, expectedSha256: expectedSha256 || undefined, relativePath, supabasePublishableKey, supabaseUrl });
       if (!indexedArtifact || !isAbsolute(indexedArtifact.assetRoot)) {
         response.statusCode = 404;
         response.end("未找到可打开的本地产物。");
@@ -645,6 +794,7 @@ export async function createLocalEpisodeDirectory(assetRoot: string, episodeId: 
   const episodeDirectory = await ensureDirectoryWithinRoot(resolvedEpisodesDirectory, resolve(resolvedEpisodesDirectory, episodeId));
   await ensureDirectoryWithinRoot(episodeDirectory, resolve(episodeDirectory, "input"));
   await ensureDirectoryWithinRoot(episodeDirectory, resolve(episodeDirectory, "materials"));
+  await ensureDirectoryWithinRoot(episodeDirectory, resolve(episodeDirectory, "captions"));
   return episodeDirectory;
 }
 
@@ -875,6 +1025,16 @@ async function dependencyStatus(name: string, command: string, args: string[]): 
   }
 }
 
+async function n8nHealth(port: string): Promise<boolean> {
+  if (!/^\d+$/.test(port)) return false;
+  try {
+    const response = await fetch(`http://127.0.0.1:${port}/healthz`, { signal: AbortSignal.timeout(1_000) });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
 function runProbeCommand(command: string, argumentsList: string[], timeoutMs?: number): Promise<{ stdout: string; stderr: string }> {
   return new Promise((resolveCommand, rejectCommand) => {
     const child = spawn(command, argumentsList, { stdio: ["ignore", "pipe", "pipe"] });
@@ -926,6 +1086,8 @@ export function serveSystemStatus(supabaseUrl: string | undefined, supabasePubli
       const eventLogPaths = (await fs.readdir(runtimeDirectory).catch(() => [])).filter((entry) => entry.startsWith("n8nEventLog") && entry.endsWith(".log")).map((entry) => join(runtimeDirectory, entry));
       const lastEventAt = await latestModifiedAt(eventLogPaths);
       const runtimeExists = await fs.stat(runtimeDirectory).then((stats) => stats.isDirectory()).catch(() => false);
+      const n8nPort = localWorkerEnvironmentValue("N8N_PORT") ?? "5678";
+      const n8nRunning = await n8nHealth(n8nPort);
       const mediaRoot = localWorkerEnvironmentValue("MEDIA_LIBRARY_MOUNT_PATH");
       const mediaExists = mediaRoot ? await fs.stat(mediaRoot).then((stats) => stats.isDirectory()).catch(() => false) : false;
       const dependencies = await Promise.all([
@@ -936,7 +1098,7 @@ export function serveSystemStatus(supabaseUrl: string | undefined, supabasePubli
       const report = {
         dependencies,
         mediaLibrary: { detail: mediaRoot ? (mediaExists ? `已挂载：${mediaRoot}` : `未找到挂载目录：${mediaRoot}`) : "未配置 MEDIA_LIBRARY_MOUNT_PATH。", state: mediaExists ? "healthy" : "offline" },
-        n8n: { detail: runtimeExists ? (lastEventAt ? "已读取本地 n8n 事件日志；n8n 负责编排、通知和健康检查，不代替 Worker。" : "已发现 n8n 运行时目录，但暂无事件日志。") : "未发现本地 n8n 运行时目录。", lastDispatchAt: null, lastEventAt, lastHealthCheckAt: null, lastRunAt: null, state: lastEventAt ? "healthy" : runtimeExists ? "unknown" : "offline" },
+        n8n: { detail: n8nRunning ? `健康端点在线：127.0.0.1:${n8nPort}。` : runtimeExists ? `健康端点无响应：127.0.0.1:${n8nPort}；历史日志不代表当前在线。` : "未发现本地 n8n 运行时目录。", lastDispatchAt: null, lastEventAt, lastHealthCheckAt: n8nRunning ? new Date().toISOString() : null, lastRunAt: null, state: n8nRunning ? "healthy" : "offline" },
         observedAt: new Date().toISOString(),
       };
       response.setHeader("Content-Type", "application/json");
@@ -945,6 +1107,29 @@ export function serveSystemStatus(supabaseUrl: string | undefined, supabasePubli
     } catch (error) {
       response.statusCode = 500;
       response.end(error instanceof Error ? error.message : "无法读取系统状态。");
+    }
+  };
+}
+
+export function serveGoldenProductionTest(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+  return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+    if (request.method !== "POST") { response.statusCode = 405; response.end(); return; }
+    const authorization = request.headers.authorization;
+    if (!authorization?.startsWith("Bearer ")) { response.statusCode = 401; response.end("需要 Owner 登录会话。"); return; }
+    if (!supabaseUrl || !supabasePublishableKey) { response.statusCode = 503; response.end("Supabase 本地客户端未配置。"); return; }
+    const accessToken = authorization.slice("Bearer ".length);
+    const client = createClient(supabaseUrl, supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: authorization } } });
+    const { data, error } = await client.auth.getUser(accessToken);
+    if (error || !data.user) { response.statusCode = 401; response.end("Owner 登录会话无效。"); return; }
+    try {
+      const result = await runProbeCommand(join(process.cwd(), "n8n", "run-orchestrator.sh"), ["health"], 60_000);
+      const payload = JSON.parse(result.stdout.trim().split("\n").at(-1) ?? "{}") as { passed?: unknown; checks?: Array<{ detail?: unknown; name?: unknown; passed?: unknown }> };
+      const checks = Array.isArray(payload.checks) ? payload.checks.map((check) => ({ detail: typeof check.detail === "string" ? check.detail : check.passed === true ? "通过" : "未通过", name: typeof check.name === "string" ? check.name : "健康检查", passed: check.passed === true })) : [];
+      response.setHeader("Content-Type", "application/json"); response.statusCode = 200;
+      response.end(JSON.stringify({ checks, observedAt: new Date().toISOString(), passed: payload.passed === true }));
+    } catch (cause) {
+      response.setHeader("Content-Type", "application/json"); response.statusCode = 500;
+      response.end(JSON.stringify({ error: cause instanceof Error ? cause.message : "黄金生产链测试失败。" }));
     }
   };
 }
@@ -1265,6 +1450,63 @@ export function serveExternalConnectionTest(supabaseUrl: string | undefined, sup
   };
 }
 
+export function servePublishPreparation(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined, serviceRoleKey = localWorkerServiceRoleKey()) {
+  return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+    if (request.method !== "POST") { response.statusCode = 405; response.end(); return; }
+    const authorization = request.headers.authorization;
+    if (!authorization?.startsWith("Bearer ")) { response.statusCode = 401; response.end("需要 Owner 登录会话。"); return; }
+    if (!supabaseUrl || !supabasePublishableKey || !serviceRoleKey) { response.statusCode = 503; response.end("发布准备 Worker 未配置。"); return; }
+    try {
+      const body = await readJsonBody(request);
+      const episodeId = typeof body.episodeId === "string" ? body.episodeId : "";
+      const title = typeof body.title === "string" ? body.title.trim() : "";
+      const description = typeof body.description === "string" ? body.description.trim() : "";
+      const tags = Array.isArray(body.tags) ? body.tags.map((tag) => typeof tag === "string" ? tag.trim() : "").filter(Boolean) : [];
+      const coverBase64 = typeof body.coverBase64 === "string" ? body.coverBase64 : "";
+      if (!isEpisodeId(episodeId) || !title || title.length > 200 || description.length > 5000 || tags.length > 20 || tags.some((tag) => tag.length > 50)) throw new Error("发布标题、简介或标签无效。");
+      if (!coverBase64 || !/^[A-Za-z0-9+/]+={0,2}$/.test(coverBase64)) throw new Error("请选择有效的封面。");
+      const cover = Buffer.from(coverBase64, "base64");
+      const coverExtension = coverImageExtension(cover);
+      if (cover.byteLength > 20 * 1024 * 1024 || !coverExtension) throw new Error("封面必须是 20 MB 以内的 JPG、PNG 或 WebP 文件。");
+      const assetRoot = await assetRootForOwnedEpisode({ authorization, episodeId, supabasePublishableKey, supabaseUrl });
+      if (!assetRoot) { response.statusCode = 403; response.end("没有该生产单的 Owner 权限。"); return; }
+      const mediaLibraryMountPath = localWorkerEnvironmentValue("MEDIA_LIBRARY_MOUNT_PATH");
+      const minimumFreeBytes = Number(localWorkerEnvironmentValue("MEDIA_LIBRARY_MIN_FREE_BYTES"));
+      if (!mediaLibraryMountPath || !Number.isSafeInteger(minimumFreeBytes) || minimumFreeBytes < 0) throw new Error("本机媒体库配置无效。");
+      const serviceClient = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
+      const context = await loadPublishContext({ allowedStages: ["qc_passed"], episodeId, mediaLibraryMountPath, mediaLibraryMinimumFreeBytes: minimumFreeBytes, supabase: serviceClient });
+      if (context.artifacts.some((artifact) => artifact.artifactType === "publish_package")) throw new Error("发布包已经固定，不能覆盖发布输入。");
+      const coverPath = coverInputPath(episodeId, coverExtension);
+      const metadataPath = `episodes/${episodeId}/publish-input/metadata-v1.json`;
+      const metadata = Buffer.from(`${JSON.stringify({ title, description, tags }, null, 2)}\n`);
+      const publishInputs = [{ artifactType: "cover", relativePath: coverPath, bytes: cover }, { artifactType: "metadata", relativePath: metadataPath, bytes: metadata }];
+      for (const artifact of publishInputs) {
+        const existing = context.artifacts.find((candidate) => candidate.artifactType === artifact.artifactType);
+        const sha256 = createHash("sha256").update(artifact.bytes).digest("hex");
+        if (existing && (existing.relativePath !== artifact.relativePath || existing.sha256 !== sha256 || existing.fileSize !== artifact.bytes.byteLength)) throw new Error(`${artifact.artifactType === "cover" ? "封面" : "发布元数据"}已经固定，不能覆盖。`);
+      }
+      for (const artifact of publishInputs) {
+        await writeSafeAssetFile(assetRoot, artifact.relativePath, artifact.bytes);
+        const { error } = await serviceClient.rpc("record_publish_input", { p_episode_id: episodeId, p_artifact_type: artifact.artifactType, p_relative_path: artifact.relativePath, p_sha256: createHash("sha256").update(artifact.bytes).digest("hex"), p_file_size: artifact.bytes.byteLength });
+        if (error) throw new Error(`无法登记${artifact.artifactType === "cover" ? "封面" : "发布元数据"}：${error.message}`);
+      }
+      const registered = await loadPublishContext({ allowedStages: ["qc_passed"], episodeId, mediaLibraryMountPath, mediaLibraryMinimumFreeBytes: minimumFreeBytes, supabase: serviceClient });
+      const publishPackage = await createPublishPackage({ assetRoot, episodeId, artifacts: registered.artifacts });
+      const { error: packageError } = await serviceClient.rpc("record_publish_package", { p_episode_id: episodeId, p_relative_path: publishPackage.relativePath, p_sha256: publishPackage.sha256, p_file_size: publishPackage.fileSize });
+      if (packageError) throw new Error(`无法登记发布包：${packageError.message}`);
+      await verifyPublishPackage({ assetRoot, episodeId, publishPackage });
+      const { error: verificationError } = await serviceClient.rpc("record_publish_package_verification", { p_episode_id: episodeId, p_sha256: publishPackage.sha256, p_file_size: publishPackage.fileSize });
+      if (verificationError) throw new Error(`无法登记发布包校验：${verificationError.message}`);
+      response.setHeader("Content-Type", "application/json");
+      response.statusCode = 201;
+      response.end(JSON.stringify({ episodeId, publishPackage, status: "verified" }));
+    } catch (error) {
+      response.statusCode = 400;
+      response.end(error instanceof Error ? error.message : "无法准备发布包。");
+    }
+  };
+}
+
 function redactConnectionSecret(detail: string, secret: string): string {
   return secret ? detail.split(secret).join("[已隐藏]") : detail;
 }
@@ -1423,15 +1665,20 @@ export function serveProductionMaterial(supabaseUrl: string | undefined, supabas
   };
 }
 
-async function indexedArtifactForPreview(input: { authorization: string; episodeId: string; relativePath: string; supabasePublishableKey: string | undefined; supabaseUrl: string | undefined }): Promise<{ assetRoot: string; sha256: string } | null> {
+async function indexedArtifactForPreview(input: { authorization: string; episodeId: string; expectedSha256?: string; relativePath: string; supabasePublishableKey: string | undefined; supabaseUrl: string | undefined }): Promise<{ assetRoot: string; sha256: string } | null> {
   if (!input.supabaseUrl || !input.supabasePublishableKey) return null;
   const supabase = createClient(input.supabaseUrl, input.supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: input.authorization } } });
 
-  const { data: artifact, error: artifactError } = await supabase.from("artifacts").select("episode_id, sha256").eq("episode_id", input.episodeId).eq("relative_path", input.relativePath).maybeSingle();
+  let artifactQuery = supabase.from("artifacts").select("episode_id, sha256").eq("episode_id", input.episodeId).eq("relative_path", input.relativePath);
+  if (input.expectedSha256) artifactQuery = artifactQuery.eq("sha256", input.expectedSha256);
+  const { data: artifacts, error: artifactError } = await artifactQuery.order("created_at", { ascending: false }).limit(1);
   if (artifactError) return null;
-  const { data: material, error: materialError } = artifact ? { data: null, error: null } : await supabase.from("production_material_revisions").select("episode_id, sha256").eq("episode_id", input.episodeId).eq("storage_path", input.relativePath).maybeSingle();
+  const artifact = artifacts?.[0] ?? null;
+  let materialQuery = supabase.from("production_material_revisions").select("episode_id, sha256").eq("episode_id", input.episodeId).eq("storage_path", input.relativePath);
+  if (input.expectedSha256) materialQuery = materialQuery.eq("sha256", input.expectedSha256);
+  const { data: materials, error: materialError } = artifact ? { data: null, error: null } : await materialQuery.order("created_at", { ascending: false }).limit(1);
   if (materialError) return null;
-  const indexedInput = artifact ?? material;
+  const indexedInput = artifact ?? materials?.[0];
   if (!indexedInput) return null;
 
   const { data: episode, error: episodeError } = await supabase.from("episodes").select("blueprint_version_id").eq("id", indexedInput.episode_id).maybeSingle();
@@ -1462,6 +1709,35 @@ async function assetRootForOwnedEpisode(input: { authorization: string; episodeI
   return typeof assetRoot === "string" ? assetRoot.trim() || null : null;
 }
 
+async function studioEntryGateForOwnedEpisode(input: { authorization: string; episodeId: string; projectRelativePath: string; supabasePublishableKey: string | undefined; supabaseUrl: string | undefined }): Promise<{ allowed: boolean; message?: string }> {
+  if (!input.supabaseUrl || !input.supabasePublishableKey) return { allowed: false, message: "Supabase 本地客户端未配置。" };
+  const supabase = createClient(input.supabaseUrl, input.supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: input.authorization } } });
+  const { data: episode, error: episodeError } = await supabase.from("episodes").select("stage").eq("id", input.episodeId).maybeSingle();
+  if (episodeError || !episode) return { allowed: false, message: "未找到当前 Episode。" };
+  if (episode.stage !== "qc_review") return { allowed: false, message: "只有审核渲染完成后才能进入 Studio。" };
+
+  const { data: qcPackages, error: qcError } = await supabase.from("review_packages").select("id, context_snapshot").eq("episode_id", input.episodeId).eq("stage", "qc_review").is("invalidated_at", null).order("revision_number", { ascending: false }).limit(1);
+  const qcPackage = qcPackages?.[0];
+  if (qcError || !qcPackage) return { allowed: false, message: "未找到当前审核渲染工程。" };
+  const qcSnapshot = qcPackage.context_snapshot && typeof qcPackage.context_snapshot === "object" && !Array.isArray(qcPackage.context_snapshot) ? qcPackage.context_snapshot as Record<string, unknown> : {};
+  if (qcSnapshot.project_relative_path !== input.projectRelativePath) return { allowed: false, message: "Studio 工程不是当前审核渲染工程。" };
+
+  const preRenderPackageId = typeof qcSnapshot.pre_render_review_package_id === "string" ? qcSnapshot.pre_render_review_package_id : undefined;
+  if (!preRenderPackageId) return { allowed: true };
+  const { data: preRenderPackage, error: preRenderError } = await supabase.from("review_packages").select("context_snapshot").eq("id", preRenderPackageId).eq("episode_id", input.episodeId).eq("stage", "production_ready").is("invalidated_at", null).maybeSingle();
+  if (preRenderError || !preRenderPackage) return { allowed: false, message: "当前 Studio 输入快照不存在或已失效。" };
+  const preRenderSnapshot = preRenderPackage.context_snapshot && typeof preRenderPackage.context_snapshot === "object" && !Array.isArray(preRenderPackage.context_snapshot) ? preRenderPackage.context_snapshot as Record<string, unknown> : {};
+  if (preRenderSnapshot.confirmation_mode !== "shot_preparation") return { allowed: true };
+  const storyboardPackageId = typeof preRenderSnapshot.storyboard_review_package_id === "string" ? preRenderSnapshot.storyboard_review_package_id : undefined;
+  if (!storyboardPackageId) return { allowed: false, message: "当前 Studio 输入快照缺少分镜版本。" };
+  const { data: drafts, error: draftsError } = await supabase.from("shot_preparation_drafts").select("shot_id, confirmation_status, input_fingerprint, selected_material_revision_id, clip_segments, current_video_artifact_id, current_video_task_id, audio_mode, current_audio_track_id, subtitle_text, subtitles_enabled").eq("episode_id", input.episodeId).eq("review_package_id", storyboardPackageId);
+  if (draftsError) return { allowed: false, message: "无法确认当前镜头版本，请稍后重试。" };
+  const blockers = confirmedStudioShotBlockers(preRenderSnapshot, drafts ?? []);
+  return blockers.length === 0
+    ? { allowed: true }
+    : { allowed: false, message: `Studio 尚未就绪，请先确认镜头：${blockers.join("、")}。` };
+}
+
 async function accountIsOwned(input: { accountId: string; authorization: string; supabasePublishableKey: string | undefined; supabaseUrl: string | undefined }): Promise<boolean> {
   if (!input.supabaseUrl || !input.supabasePublishableKey) return false;
   const accessToken = input.authorization.slice("Bearer ".length);
@@ -1478,6 +1754,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
   const directoryMiddleware = serveLocalEpisodeDirectory(supabaseUrl, supabasePublishableKey);
   const openDirectoryMiddleware = serveOpenLocalEpisodeDirectory(supabaseUrl, supabasePublishableKey);
   const openHyperframesStudioMiddleware = serveOpenHyperframesStudio(supabaseUrl, supabasePublishableKey);
+  const openPersonalHyperframesStudioMiddleware = serveOpenPersonalHyperframesStudio(supabaseUrl, supabasePublishableKey);
   const freezeHyperframesStudioMiddleware = serveFreezeHyperframesStudio(supabaseUrl, supabasePublishableKey);
   const chooseAssetDirectoryMiddleware = serveChooseLocalAssetDirectory(supabaseUrl, supabasePublishableKey);
   const openAssetDirectoryMiddleware = serveOpenLocalAssetDirectory(supabaseUrl, supabasePublishableKey);
@@ -1485,8 +1762,10 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
   const deletionMiddleware = serveEpisodeDeletion(supabaseUrl, supabasePublishableKey, localWorkerServiceRoleKey());
   const deletionCleanupMiddleware = serveEpisodeDeletionCleanup(supabaseUrl, supabasePublishableKey);
   const systemStatusMiddleware = serveSystemStatus(supabaseUrl, supabasePublishableKey);
+  const goldenProductionTestMiddleware = serveGoldenProductionTest(supabaseUrl, supabasePublishableKey);
   const episodePreflightMiddleware = serveEpisodePreflight(supabaseUrl, supabasePublishableKey);
   const externalConnectionTestMiddleware = serveExternalConnectionTest(supabaseUrl, supabasePublishableKey, localWorkerServiceRoleKey());
+  const publishPreparationMiddleware = servePublishPreparation(supabaseUrl, supabasePublishableKey, localWorkerServiceRoleKey());
   const workerPreflightMiddleware = serveWorkerPreflight(supabaseUrl, supabasePublishableKey);
   return {
     name: "local-artifact-preview",
@@ -1496,6 +1775,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(localEpisodeDirectoryRoute, directoryMiddleware);
       server.middlewares.use(openLocalEpisodeDirectoryRoute, openDirectoryMiddleware);
       server.middlewares.use(openHyperframesStudioRoute, openHyperframesStudioMiddleware);
+      server.middlewares.use(openPersonalHyperframesStudioRoute, openPersonalHyperframesStudioMiddleware);
       server.middlewares.use(freezeHyperframesStudioRoute, freezeHyperframesStudioMiddleware);
       server.middlewares.use(chooseLocalAssetDirectoryRoute, chooseAssetDirectoryMiddleware);
       server.middlewares.use(openLocalAssetDirectoryRoute, openAssetDirectoryMiddleware);
@@ -1503,8 +1783,10 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(localEpisodeDeletionRoute, deletionMiddleware);
       server.middlewares.use(localEpisodeDeletionCleanupRoute, deletionCleanupMiddleware);
       server.middlewares.use(systemStatusRoute, systemStatusMiddleware);
+      server.middlewares.use(goldenProductionTestRoute, goldenProductionTestMiddleware);
       server.middlewares.use(episodePreflightRoute, episodePreflightMiddleware);
       server.middlewares.use(externalConnectionTestRoute, externalConnectionTestMiddleware);
+      server.middlewares.use(publishPreparationRoute, publishPreparationMiddleware);
       server.middlewares.use(workerPreflightRoute, workerPreflightMiddleware);
     },
     configurePreviewServer(server) {
@@ -1513,6 +1795,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(localEpisodeDirectoryRoute, directoryMiddleware);
       server.middlewares.use(openLocalEpisodeDirectoryRoute, openDirectoryMiddleware);
       server.middlewares.use(openHyperframesStudioRoute, openHyperframesStudioMiddleware);
+      server.middlewares.use(openPersonalHyperframesStudioRoute, openPersonalHyperframesStudioMiddleware);
       server.middlewares.use(freezeHyperframesStudioRoute, freezeHyperframesStudioMiddleware);
       server.middlewares.use(chooseLocalAssetDirectoryRoute, chooseAssetDirectoryMiddleware);
       server.middlewares.use(openLocalAssetDirectoryRoute, openAssetDirectoryMiddleware);
@@ -1520,8 +1803,10 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(localEpisodeDeletionRoute, deletionMiddleware);
       server.middlewares.use(localEpisodeDeletionCleanupRoute, deletionCleanupMiddleware);
       server.middlewares.use(systemStatusRoute, systemStatusMiddleware);
+      server.middlewares.use(goldenProductionTestRoute, goldenProductionTestMiddleware);
       server.middlewares.use(episodePreflightRoute, episodePreflightMiddleware);
       server.middlewares.use(externalConnectionTestRoute, externalConnectionTestMiddleware);
+      server.middlewares.use(publishPreparationRoute, publishPreparationMiddleware);
       server.middlewares.use(workerPreflightRoute, workerPreflightMiddleware);
     },
   };

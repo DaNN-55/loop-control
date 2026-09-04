@@ -28,9 +28,10 @@ describe("审核修订", () => {
       ok: true,
     }));
 
-    await submitStudioReviewRevision({ accessToken: "owner-token", episodeId: "episode-1", reviewPackageId: "review-1", reason: "调整字幕", workspaceRelativePath: "episodes/episode-1/studio/123/index.html" });
+    await submitStudioReviewRevision({ accessToken: "owner-token", episodeId: "episode-1", reviewPackageId: "review-1", reason: "调整字幕", sourceProjectRelativePath: "episodes/episode-1/review-render/v1/index.html", workspaceRelativePath: "episodes/episode-1/studio/123/index.html" });
 
     expect(fetch).toHaveBeenCalledWith("/_freeze-hyperframes-studio?episode=episode-1", expect.objectContaining({ headers: expect.objectContaining({ Authorization: "Bearer owner-token" }), method: "POST" }));
+    expect(JSON.parse(vi.mocked(fetch).mock.calls[0]?.[1]?.body as string)).toEqual({ sourceProjectRelativePath: "episodes/episode-1/review-render/v1/index.html", workspaceRelativePath: "episodes/episode-1/studio/123/index.html" });
     expect(supabase.rpc).toHaveBeenCalledWith("request_review_render_revision", expect.objectContaining({ p_composition: expect.objectContaining({ studio_project: expect.objectContaining({ relative_path: expect.stringContaining("/studio-frozen/") }) }) }));
     vi.unstubAllGlobals();
   });

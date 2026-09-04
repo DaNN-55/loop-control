@@ -14,6 +14,8 @@ import {
   validateWorkerResult,
 } from "./contracts.js";
 import { isOwnerManagedConnection } from "./adapterRegistry.js";
+import { validateStoryboardManifest } from "./contracts.js";
+import type { StoryboardStructureRevision } from "./storyboardRevision.js";
 
 export interface ClaimedWorkerTask {
   taskId: string;
@@ -21,7 +23,7 @@ export interface ClaimedWorkerTask {
   attempt: number;
   budgetLimitCents: number;
   maxAttempts: number;
-  provider: "codex" | "google_tts" | "pexels" | "ffmpeg" | "freesound" | "hyperframes" | "openai" | "cloudflare";
+  provider: "codex" | "google_tts" | "volcengine_tts" | "pexels" | "ffmpeg" | "freesound" | "hyperframes" | "openai" | "cloudflare";
   model: string;
   promptVersion: string;
   episodeId: string;
@@ -74,7 +76,7 @@ export async function runCodexWorker(dependencies: CodexWorkerDependencies): Pro
     return { status: "blocked", taskId: task.taskId };
   }
 
-  const preflight = dependencies.preflight ? await runPreflight(dependencies.preflight, taskPackage) : undefined;
+  const preflight = dependencies.preflight && !taskPackage.storyboardRevision ? await runPreflight(dependencies.preflight, taskPackage) : undefined;
   if (preflight) {
     if (preflight.checks.some((check) => check.status !== "passed")) {
       const result = createPreflightResult(taskPackage, dependencies.actualCostCents, preflight);
@@ -174,6 +176,7 @@ function createTaskPackage(task: ClaimedWorkerTask): WorkerTaskPackage {
     visualAssetPreparation: visualAssetPreparation(snapshot),
     reviewFeedback: reviewFeedback(snapshot),
     reviewAnnotations: reviewAnnotations(snapshot),
+    storyboardRevision: storyboardRevision(snapshot, inputArtifacts(snapshot)),
     aRoll: aRoll(snapshot),
     media: media(snapshot),
     reviewRender: reviewRender(snapshot),
@@ -183,6 +186,20 @@ function createTaskPackage(task: ClaimedWorkerTask): WorkerTaskPackage {
     output,
     inputArtifacts: inputArtifacts(snapshot),
   });
+}
+
+function storyboardRevision(snapshot: Record<string, unknown>, frozenInputs: ArtifactManifest[]): StoryboardStructureRevision | undefined {
+  if (snapshot.storyboard_revision === undefined) return undefined;
+  if (!isRecord(snapshot.storyboard_revision) || snapshot.storyboard_revision.version !== "storyboard-revision/v1" || typeof snapshot.storyboard_revision.base_review_package_id !== "string" || typeof snapshot.storyboard_revision.input_fingerprint !== "string" || !isRecord(snapshot.storyboard_revision.operation) || !isRecord(snapshot.storyboard_revision.storyboard)) throw new Error("分镜结构修订任务格式无效。");
+  const revision = snapshot.storyboard_revision;
+  const storyboard = validateStoryboardManifest(revision.storyboard, frozenInputs);
+  return {
+    version: "storyboard-revision/v1",
+    baseReviewPackageId: revision.base_review_package_id as string,
+    inputFingerprint: revision.input_fingerprint as string,
+    operation: revision.operation as StoryboardStructureRevision["operation"],
+    storyboard,
+  };
 }
 
 function promptContext(snapshot: Record<string, unknown>): WorkerTaskPackageInput["promptContext"] {
@@ -229,6 +246,8 @@ function reviewRender(snapshot: Record<string, unknown>): WorkerTaskPackageInput
     projectRelativePath: requiredString(value.project_relative_path, "审核渲染任务缺少工程路径。"),
     projectRevision: requiredPositiveNumber(value.project_revision, "审核渲染任务缺少工程修订。"),
     preRenderReviewPackageId: requiredString(value.pre_render_review_package_id, "审核渲染任务缺少预渲染审核包。"),
+    ...(value.confirmation_mode === undefined || value.confirmation_mode === null ? {} : { confirmationMode: requiredConfirmationMode(value.confirmation_mode) }),
+    ...(value.confirmed_shots === undefined || value.confirmed_shots === null ? {} : { confirmedShots: confirmedShots(value.confirmed_shots) }),
     ...(value.studio_project === undefined && (!isRecord(value.adjustments) || value.adjustments.studio_project === undefined) ? {} : { studioProject: studioProject(value.studio_project ?? (value.adjustments as Record<string, unknown>).studio_project) }),
     adjustments: reviewRenderAdjustments(value.adjustments),
     storyboard: storyboard as unknown as StoryboardManifest,
@@ -238,6 +257,15 @@ function reviewRender(snapshot: Record<string, unknown>): WorkerTaskPackageInput
         memberKey: requiredString(member.member_key, "审核渲染成员缺少标识。"),
         memberKind: requiredReviewRenderMemberKind(member.member_kind),
         ...(member.audio_kind === "bgm" || member.audio_kind === "sfx" ? { audioKind: member.audio_kind } : {}),
+        ...(member.task_id === undefined || member.task_id === null ? {} : { taskId: requiredString(member.task_id, "审核渲染成员缺少任务版本。") }),
+        ...(member.artifact_id === undefined || member.artifact_id === null ? {} : { artifactId: requiredString(member.artifact_id, "审核渲染成员缺少产物版本。") }),
+        ...(member.source_material_revision_id === undefined || member.source_material_revision_id === null ? {} : { sourceMaterialRevisionId: requiredString(member.source_material_revision_id, "审核渲染成员缺少原片版本。") }),
+        ...(member.clip_segments === undefined || member.clip_segments === null ? {} : { clipSegments: clipSegments(member.clip_segments) }),
+        ...(member.audio_track_id === null ? { audioTrackId: null } : member.audio_track_id === undefined ? {} : { audioTrackId: requiredString(member.audio_track_id, "审核渲染成员缺少音轨版本。") }),
+        ...(member.input_fingerprint === undefined || member.input_fingerprint === null ? {} : { inputFingerprint: requiredString(member.input_fingerprint, "审核渲染成员缺少输入版本。") }),
+        ...(member.audio_mode === undefined || member.audio_mode === null ? {} : { audioMode: requiredAudioMode(member.audio_mode) }),
+        ...(member.subtitle_text === undefined || member.subtitle_text === null ? {} : { subtitleText: requiredString(member.subtitle_text, "审核渲染成员缺少字幕文本。") }),
+        ...(member.subtitles_enabled === undefined || member.subtitles_enabled === null ? {} : { subtitlesEnabled: requiredBoolean(member.subtitles_enabled, "审核渲染成员字幕开关格式无效。") }),
         relativePath: requiredString(member.relative_path, "审核渲染成员缺少路径。"),
         sha256: requiredString(member.sha256, "审核渲染成员缺少哈希。"),
         startSeconds: requiredNonNegativeNumber(member.start_seconds, "审核渲染成员缺少起始时间。"),
@@ -245,6 +273,54 @@ function reviewRender(snapshot: Record<string, unknown>): WorkerTaskPackageInput
       };
     }),
   };
+}
+
+function confirmedShots(value: unknown): NonNullable<WorkerTaskPackageInput["reviewRender"]>["confirmedShots"] {
+  if (!Array.isArray(value)) throw new Error("逐镜头 Studio 确认快照格式无效。");
+  return value.map((shot) => {
+    if (!isRecord(shot)) throw new Error("逐镜头 Studio 确认快照格式无效。");
+    return {
+      shotId: requiredString(shot.shot_id, "确认快照缺少镜头标识。"),
+      confirmationStatus: requiredConfirmationStatus(shot.confirmation_status),
+      inputFingerprint: requiredString(shot.input_fingerprint, "确认快照缺少输入指纹。"),
+      ...(shot.video_artifact_id === undefined || shot.video_artifact_id === null ? {} : { videoArtifactId: requiredString(shot.video_artifact_id, "确认快照缺少视频版本。") }),
+      ...(shot.video_task_id === undefined || shot.video_task_id === null ? {} : { videoTaskId: requiredString(shot.video_task_id, "确认快照缺少视频任务版本。") }),
+      ...(shot.source_material_revision_id === undefined || shot.source_material_revision_id === null ? {} : { sourceMaterialRevisionId: requiredString(shot.source_material_revision_id, "确认快照缺少原片版本。") }),
+      ...(shot.clip_segments === undefined || shot.clip_segments === null ? {} : { clipSegments: clipSegments(shot.clip_segments) }),
+      audioMode: requiredAudioMode(shot.audio_mode),
+      audioTrackId: shot.audio_track_id === null ? null : requiredString(shot.audio_track_id, "确认快照缺少音轨版本。"),
+      subtitleText: requiredString(shot.subtitle_text, "确认快照缺少字幕文本。"),
+      subtitlesEnabled: requiredBoolean(shot.subtitles_enabled, "确认快照字幕开关格式无效。"),
+    };
+  });
+}
+
+function clipSegments(value: unknown): Array<{ startSeconds: number; endSeconds: number }> {
+  if (!Array.isArray(value) || value.length === 0) throw new Error("片段标记格式无效。");
+  return value.map((segment) => {
+    if (!isRecord(segment)) throw new Error("片段标记格式无效。");
+    return { startSeconds: requiredNonNegativeNumber(segment.start_seconds, "片段标记缺少入点。"), endSeconds: requiredPositiveNumber(segment.end_seconds, "片段标记缺少出点。") };
+  });
+}
+
+function requiredConfirmationMode(value: unknown): "shot_preparation" {
+  if (value === "shot_preparation") return value;
+  throw new Error("Studio 确认模式无效。");
+}
+
+function requiredConfirmationStatus(value: unknown): "confirmed" {
+  if (value === "confirmed") return value;
+  throw new Error("确认快照必须来自已确认镜头。");
+}
+
+function requiredAudioMode(value: unknown): "none" | "source" | "tts" {
+  if (value === "none" || value === "source" || value === "tts") return value;
+  throw new Error("Studio 音频模式无效。");
+}
+
+function requiredBoolean(value: unknown, message: string): boolean {
+  if (typeof value === "boolean") return value;
+  throw new Error(message);
 }
 
 function studioProject(value: unknown): NonNullable<WorkerTaskPackageInput["reviewRender"]>["studioProject"] {
@@ -283,11 +359,11 @@ function media(snapshot: Record<string, unknown>): WorkerTaskPackageInput["media
   const value = snapshot.media;
   if (value === undefined) return undefined;
   if (!isRecord(value)) throw new Error("媒体任务冻结配置格式无效。");
-  if (value.adapter === "google_tts") {
+  if (value.adapter === "google_tts" || value.adapter === "volcengine_tts") {
     const narration = value.narration;
     if (!isRecord(narration) || !isRecord(narration.voice)) throw new Error("旁白任务冻结配置无效。");
     return {
-      adapter: "google_tts",
+      adapter: value.adapter,
       narration: {
         text: requiredString(narration.text, "旁白任务缺少冻结文本。"),
         voice: {
@@ -350,6 +426,35 @@ function media(snapshot: Record<string, unknown>): WorkerTaskPackageInput["media
       embeddedAudio: {
         sourceRelativePath: requiredString(embeddedAudio.source_relative_path, "派生音频任务缺少冻结视频路径。"),
         durationSeconds: requiredPositiveNumber(embeddedAudio.duration_seconds, "派生音频任务缺少有效时长。"),
+      },
+    };
+  }
+  if (value.adapter === "ffmpeg_trim_video") {
+    const videoClip = value.video_clip;
+    const videoClips = value.video_clips;
+    if (!isRecord(videoClip) && !isRecord(videoClips)) throw new Error("镜头裁剪任务冻结配置无效。");
+    if (isRecord(videoClips)) {
+      if (!Array.isArray(videoClips.segments) || videoClips.segments.length === 0) throw new Error("镜头裁剪任务缺少冻结片段。");
+      return {
+        adapter: "ffmpeg_trim_video",
+        videoClips: {
+          sourceRelativePath: requiredString(videoClips.source_relative_path, "镜头裁剪任务缺少冻结视频路径。"),
+          segments: videoClips.segments.map((segment) => {
+            if (!isRecord(segment)) throw new Error("镜头裁剪任务片段格式无效。");
+            return { startSeconds: requiredNonNegativeNumber(segment.start_seconds, "镜头裁剪任务缺少有效入点。"), endSeconds: requiredPositiveNumber(segment.end_seconds, "镜头裁剪任务缺少有效出点。") };
+          }),
+          targetDurationSeconds: requiredPositiveNumber(videoClips.target_duration_seconds, "镜头裁剪任务缺少有效总时长。"),
+        },
+      };
+    }
+    if (!isRecord(videoClip)) throw new Error("镜头裁剪任务冻结配置无效。");
+    return {
+      adapter: "ffmpeg_trim_video",
+      videoClip: {
+        sourceRelativePath: requiredString(videoClip.source_relative_path, "镜头裁剪任务缺少冻结视频路径。"),
+        startSeconds: requiredNonNegativeNumber(videoClip.start_seconds, "镜头裁剪任务缺少有效入点。"),
+        endSeconds: requiredPositiveNumber(videoClip.end_seconds, "镜头裁剪任务缺少有效出点。"),
+        targetDurationSeconds: requiredPositiveNumber(videoClip.target_duration_seconds, "镜头裁剪任务缺少有效目标时长。"),
       },
     };
   }

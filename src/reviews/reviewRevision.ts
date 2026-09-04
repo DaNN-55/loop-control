@@ -1,5 +1,6 @@
 import type { Json } from "../lib/database.types";
 import { supabase } from "../lib/supabase";
+import type { StoryboardStructureOperation } from "../worker/storyboardRevision";
 
 export interface ReviewRenderComposition {
   aspectRatio: "9:16" | "16:9" | "1:1";
@@ -26,6 +27,13 @@ export type ReviewRevisionRequest =
   | { kind: "composition"; reviewPackageId: string; composition?: ReviewRenderComposition; reason: string; studioProject?: HyperframesStudioWorkspace }
   | { kind: "storyboard"; reviewPackageId: string; reason: string };
 
+export type ShotStructureRevisionRequest = {
+  episodeId: string;
+  operation: StoryboardStructureOperation;
+  reason: string;
+  reviewPackageId: string;
+};
+
 export type ReviewRevisionOutcome =
   | { kind: "composition"; message: "合成调整已冻结；会复用已批准媒体和音轨生成新的审核渲染。" }
   | { kind: "storyboard"; message: "分镜结构修订已提交；已返回分镜审核。" };
@@ -35,6 +43,7 @@ export type StudioReviewRevisionRequest = {
   episodeId: string;
   reviewPackageId: string;
   reason: string;
+  sourceProjectRelativePath: string;
   workspaceRelativePath: string;
   composition?: ReviewRenderComposition;
 };
@@ -67,13 +76,23 @@ export async function requestReviewRevision(input: ReviewRevisionRequest): Promi
     p_reason: input.reason,
     p_review_package_id: input.reviewPackageId,
   });
-  if (error) throw error;
+  if (error) throw new Error(error.message);
   return { kind: "composition", message: "合成调整已冻结；会复用已批准媒体和音轨生成新的审核渲染。" };
+}
+
+export async function requestShotStructureRevision(input: ShotStructureRevisionRequest): Promise<void> {
+  const { error } = await supabase.rpc("request_shot_structure_revision", {
+    p_episode_id: input.episodeId,
+    p_operation: input.operation as unknown as Json,
+    p_reason: input.reason,
+    p_review_package_id: input.reviewPackageId,
+  });
+  if (error) throw error;
 }
 
 export async function submitStudioReviewRevision(input: StudioReviewRevisionRequest): Promise<ReviewRevisionOutcome> {
   const response = await fetch(`/_freeze-hyperframes-studio?episode=${encodeURIComponent(input.episodeId)}`, {
-    body: JSON.stringify({ workspaceRelativePath: input.workspaceRelativePath }),
+    body: JSON.stringify({ sourceProjectRelativePath: input.sourceProjectRelativePath, workspaceRelativePath: input.workspaceRelativePath }),
     headers: { Authorization: `Bearer ${input.accessToken}`, "Content-Type": "application/json" },
     method: "POST",
   });

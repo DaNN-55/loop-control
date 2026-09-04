@@ -12,7 +12,8 @@ import type { ArtifactManifest, VisualAssetRequest, WorkerPreflightResult, Worke
 import type { StoryboardManifest } from "./contracts.js";
 import { verifyArtifactIndex, verifyMediaLibrary } from "./mediaLibrary.js";
 import { nonNegativeIntegerEnvironment, requiredEnvironment } from "./runtimeEnvironment.js";
-import { verifyReportedStoryboardArtifact } from "./storyboardArtifact.js";
+import { addFrozenStoryboardBasis, refreshArtifactManifest, verifyReportedStoryboardArtifact } from "./storyboardArtifact.js";
+import { applyStoryboardStructureRevision } from "./storyboardRevision.js";
 import { workerResultJsonSchema } from "./workerResultSchema.js";
 import { executeControlledMediaTask, writeSafeAssetFile } from "./controlledMediaExecutor.js";
 import { generateCloudflareWorkersAiImage, generateOpenAiImage } from "./mediaProviders.js";
@@ -51,7 +52,7 @@ async function claimNextTask(): Promise<ClaimedWorkerTask | null> {
   if (error) throw new Error(`Unable to claim a worker task: ${error.message}`);
   const row = data?.[0];
   if (!row) return null;
-  if (row.provider !== "codex" && row.provider !== "google_tts" && row.provider !== "pexels" && row.provider !== "ffmpeg" && row.provider !== "freesound" && row.provider !== "hyperframes" && row.provider !== "openai" && row.provider !== "cloudflare") throw new Error(`Unsupported worker provider: ${row.provider}`);
+  if (row.provider !== "codex" && row.provider !== "google_tts" && row.provider !== "volcengine_tts" && row.provider !== "pexels" && row.provider !== "ffmpeg" && row.provider !== "freesound" && row.provider !== "hyperframes" && row.provider !== "openai" && row.provider !== "cloudflare") throw new Error(`Unsupported worker provider: ${row.provider}`);
 
   return {
     taskId: row.task_id,
@@ -72,6 +73,7 @@ async function claimNextTask(): Promise<ClaimedWorkerTask | null> {
 }
 
 async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
+  if (taskPackage.storyboardRevision) return executeStoryboardRevision(taskPackage);
   if (taskPackage.provider === "codex") {
     const output = await executeCodex(taskPackage);
     const completedOutput = taskPackage.visualAssetPreparation?.imageGeneration ? await generateVisualAssets(taskPackage, output) : output;
@@ -88,6 +90,7 @@ async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
     fetcher: fetch,
     pexelsApiKey: taskPackage.provider === "pexels" ? apiKey : undefined,
     googleTtsApiKey: taskPackage.provider === "google_tts" ? apiKey : undefined,
+    volcengineTtsApiKey: taskPackage.provider === "volcengine_tts" ? apiKey : undefined,
     freesoundApiKey: taskPackage.provider === "freesound" ? apiKey : undefined,
     openaiApiKey: taskPackage.provider === "openai" ? apiKey : undefined,
     cloudflareWorkersAiCredentials: taskPackage.provider === "cloudflare" ? apiKey : undefined,
@@ -95,7 +98,19 @@ async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
     probeMp3: probeMp3Artifact,
     extractMp3: extractMp3Artifact,
     trimMp3: trimMp3Artifact,
+    trimMp4: trimMp4Artifact,
+    trimMp4Segments: trimMp4SegmentsArtifact,
   });
+}
+
+async function executeStoryboardRevision(taskPackage: WorkerTaskPackage): Promise<string> {
+  const revision = taskPackage.storyboardRevision;
+  if (!revision) throw new Error("缺少分镜结构修订。");
+  const storyboard = applyStoryboardStructureRevision(revision.storyboard, revision.operation);
+  const content = `${JSON.stringify(storyboard, null, 2)}\n`;
+  await writeFile(join(taskPackage.assets.allowedRoot, taskPackage.output.relativePath), content);
+  const artifact = { artifactType: taskPackage.output.requiredArtifactTypes[0] ?? "storyboard", relativePath: taskPackage.output.relativePath, sha256: createHash("sha256").update(content).digest("hex"), fileSize: Buffer.byteLength(content) };
+  return JSON.stringify({ version: "worker-result/v1", taskId: taskPackage.task.id, status: "completed", artifacts: [artifact], storyboard, validation: { passed: true, checks: [{ name: "storyboard_structure_revision", passed: true, detail: "结构操作已按冻结输入应用。" }] }, actualCostCents: 0, blockers: [], retry: { shouldRetry: false, reason: "Completed successfully." }, nextStep: "Submit the revised storyboard for Owner review." });
 }
 
 async function useWrittenStoryboard(taskPackage: WorkerTaskPackage, output: string): Promise<string> {
@@ -104,8 +119,10 @@ async function useWrittenStoryboard(taskPackage: WorkerTaskPackage, output: stri
   const result = candidate as Record<string, unknown>;
   if (result.status !== "completed") return output;
   const relativePath = taskPackage.output.relativePath;
-  const storyboard = JSON.parse(await readFile(join(taskPackage.assets.allowedRoot, relativePath), "utf8"));
-  return JSON.stringify({ ...result, storyboard });
+  const storyboard = addFrozenStoryboardBasis(JSON.parse(await readFile(join(taskPackage.assets.allowedRoot, relativePath), "utf8")), taskPackage.assets.inputs);
+  const content = `${JSON.stringify(storyboard, null, 2)}\n`;
+  await writeFile(join(taskPackage.assets.allowedRoot, relativePath), content);
+  return JSON.stringify({ ...result, artifacts: refreshArtifactManifest(result.artifacts, relativePath, content), storyboard });
 }
 
 async function generateVisualAssets(taskPackage: WorkerTaskPackage, output: string): Promise<string> {
@@ -228,6 +245,47 @@ async function trimMp3Artifact(bytes: Uint8Array, targetDurationSeconds: number)
     const duration = await probeMp3Artifact(outputPath);
     if (duration + 0.15 < targetDurationSeconds) throw new Error(`Freesound 裁剪后的音频时长不足：${duration} 秒。`);
     return new Uint8Array(await readFile(outputPath));
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+}
+
+async function trimMp4Artifact(sourcePath: string, startSeconds: number, endSeconds: number): Promise<Uint8Array> {
+  const directory = await mkdtemp(join(tmpdir(), "tk-workflow-video-"));
+  const outputPath = join(directory, "trimmed.mp4");
+  try {
+    const durationSeconds = endSeconds - startSeconds;
+    await runCommand("ffmpeg", ["-nostdin", "-v", "error", "-i", sourcePath, "-ss", String(startSeconds), "-t", String(durationSeconds), "-map", "0:v:0", "-map", "0:a?", "-c:v", "libx264", "-c:a", "aac", "-pix_fmt", "yuv420p", "-movflags", "+faststart", outputPath]);
+    const { stdout } = await runCommandWithOutput("ffprobe", ["-v", "error", "-show_entries", "format=duration:stream=codec_type", "-of", "json", outputPath]);
+    const inspected = JSON.parse(stdout) as { format?: { duration?: string }; streams?: Array<{ codec_type?: string }> };
+    const actualDuration = Number(inspected.format?.duration);
+    const hasVideo = Boolean(inspected.streams?.some((stream) => stream.codec_type === "video"));
+    const hasAudio = Boolean(inspected.streams?.some((stream) => stream.codec_type === "audio"));
+    if (!Number.isFinite(actualDuration) || Math.abs(actualDuration - durationSeconds) > 0.15 || !hasVideo) throw new Error(`裁剪视频校验失败：时长 ${actualDuration || "未知"} 秒，视频流 ${hasVideo ? "存在" : "缺失"}，音频流 ${hasAudio ? "存在" : "缺失"}。`);
+    const bytes = new Uint8Array(await readFile(outputPath));
+    if (bytes.byteLength === 0) throw new Error("裁剪视频文件为空。");
+    return bytes;
+  } finally {
+    await rm(directory, { recursive: true, force: true });
+  }
+}
+
+async function trimMp4SegmentsArtifact(sourcePath: string, segments: Array<{ startSeconds: number; endSeconds: number }>): Promise<Uint8Array> {
+  const directory = await mkdtemp(join(tmpdir(), "tk-workflow-video-segments-"));
+  const outputPath = join(directory, "combined.mp4");
+  try {
+    const segmentPaths: string[] = [];
+    for (const [index, segment] of segments.entries()) {
+      const segmentPath = join(directory, `segment-${index}.mp4`);
+      await runCommand("ffmpeg", ["-nostdin", "-v", "error", "-i", sourcePath, "-ss", String(segment.startSeconds), "-t", String(segment.endSeconds - segment.startSeconds), "-map", "0:v:0", "-map", "0:a?", "-c:v", "libx264", "-c:a", "aac", "-pix_fmt", "yuv420p", "-movflags", "+faststart", segmentPath]);
+      segmentPaths.push(segmentPath);
+    }
+    const concatPath = join(directory, "segments.txt");
+    await writeFile(concatPath, segmentPaths.map((path) => `file '${path.replaceAll("'", "'\\''")}'`).join("\n"));
+    await runCommand("ffmpeg", ["-nostdin", "-v", "error", "-f", "concat", "-safe", "0", "-i", concatPath, "-c", "copy", "-movflags", "+faststart", outputPath]);
+    const bytes = new Uint8Array(await readFile(outputPath));
+    if (bytes.byteLength === 0) throw new Error("拼接视频文件为空。");
+    return bytes;
   } finally {
     await rm(directory, { recursive: true, force: true });
   }

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
-import { Activity, BarChart3, BookOpen, ClipboardList, Copy, FolderOpen, History, LogOut, MessageSquare, Moon, PanelLeft, Pencil, Play, RefreshCw, Sun, Table2, Trash2, Upload, User, Users, X, type LucideIcon } from "lucide-react";
+import { Activity, BarChart3, BookOpen, ClipboardList, Copy, FolderOpen, History, LogOut, MessageSquare, Moon, PanelLeft, Pencil, Play, RefreshCw, Sun, Table2, Trash2, Upload, User, Users, Video, X, type LucideIcon } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 import type { Database, Json } from "./lib/database.types";
 import { supabase } from "./lib/supabase";
@@ -16,20 +16,22 @@ import { OperationsWorkspace } from "./operations/OperationsWorkspace";
 import { blockersFromResult, currentReviewPackage, type WorkerBlocker, workerBlockers } from "./reviews/reviewSelectors";
 import { workerBlockerGuidance } from "./reviews/blockerGuidance";
 import { artifactPreviewKind, localArtifactUrl, useLocalArtifactBlob } from "./reviews/localArtifactPreview";
-import { defaultReviewRenderComposition, recoverFinalReviewRender, requestReviewRevision, submitStudioReviewRevision, type HyperframesStudioWorkspace, type ReviewRevisionOutcome, type ReviewRevisionRequest, type ReviewRenderComposition, type StudioReviewRevisionRequest } from "./reviews/reviewRevision";
+import { defaultReviewRenderComposition, recoverFinalReviewRender, requestReviewRevision, requestShotStructureRevision, submitStudioReviewRevision, type HyperframesStudioWorkspace, type ReviewRevisionOutcome, type ReviewRevisionRequest, type ReviewRenderComposition, type ShotStructureRevisionRequest, type StudioReviewRevisionRequest } from "./reviews/reviewRevision";
 import { WorkerBlockerCard } from "./reviews/WorkerBlockerCard";
 import { parseWorkerPreflight, type StoryboardAudioCue, type StoryboardShotManifest, type WorkerPreflightResult } from "./worker/contracts";
-import { boundManualMaterialRevisionId, manualMaterialChecklistForStoryboard } from "./worker/manualMaterialChecklist";
+import type { StoryboardStructureOperation } from "./worker/storyboardRevision";
+import { boundManualClipSelection, boundManualMaterialRevisionId, manualMaterialChecklistForStoryboard } from "./worker/manualMaterialChecklist";
 import { accountIdentityColor, accountIdentityInitials } from "./platform/accountIdentity";
 import { PaginationControls } from "./ui/PaginationControls";
 import { useDialogFocus } from "./ui/useDialogFocus";
 import { taskTypeLabel } from "./observability/TaskProgressPanel";
-import { SystemStatusPanel, type LocalSystemStatusReport } from "./observability/SystemStatusPanel";
+import { SystemStatusPanel, type GoldenProductionTestReport, type LocalSystemStatusReport } from "./observability/SystemStatusPanel";
 import { MarkdownPreview } from "./ui/MarkdownPreview";
 import { canonicalMaterialName, materialPurposeLabel, materialPurposeOptions, materialTypeForFile, type MaterialPurpose, type MaterialType } from "./reviews/materialImport";
 import { AccountWorkspace } from "./accounts/AccountWorkspace";
 import type { ExternalConnectionInput, ExternalConnectionVersion } from "./connections/ConnectionWorkspace";
 import { blueprintPolicyToForm, mediaAdapterConfiguration, mediaAdapterStatus, type MediaAdapterKey } from "./platform/configurationFormValues";
+import { Range } from "react-range";
 
 export { AccountWorkspace, SeriesSettings } from "./accounts/AccountWorkspace";
 
@@ -43,6 +45,9 @@ type Series = Database["public"]["Tables"]["series"]["Row"];
 type SeriesVersion = Database["public"]["Tables"]["series_versions"]["Row"];
 type PromptVersion = Database["public"]["Tables"]["prompt_versions"]["Row"];
 type MaterialRevision = Database["public"]["Tables"]["production_material_revisions"]["Row"];
+type ShotPreparationDraft = Database["public"]["Tables"]["shot_preparation_drafts"]["Row"];
+type PreRenderMember = Database["public"]["Tables"]["pre_render_review_members"]["Row"];
+type PreRenderMemberDecision = Database["public"]["Tables"]["pre_render_review_member_decisions"]["Row"];
 type ReviewPackage = Database["public"]["Tables"]["review_packages"]["Row"];
 type ReviewAnnotation = Database["public"]["Tables"]["review_annotations"]["Row"];
 type QcReviewIssue = Database["public"]["Tables"]["qc_review_issues"]["Row"];
@@ -71,7 +76,6 @@ type EpisodeVisibility = "active" | "archived" | "all";
 type EpisodeAction = "rename" | "archive" | "delete" | null;
 type EpisodeCreationStep = "idle" | "preflight" | "create" | "directory" | "refresh";
 type EpisodeWithArchive = Episode & { archived_at?: string | null };
-type EpisodeAudioSourceMode = "source" | "tts";
 
 interface ReviewAction {
   approveStage: EpisodeStage;
@@ -133,6 +137,66 @@ interface StoryboardAnnotationRequest {
   reason: string;
 }
 
+interface ShotClipSegmentRequest {
+  end_seconds: number;
+  start_seconds: number;
+}
+
+interface ShotPreparationDraftRequest {
+  audioMode: ShotPreparationDraft["audio_mode"];
+  clipSegments: ShotClipSegmentRequest[];
+  episodeId: string;
+  reviewPackageId: string;
+  shotId: string;
+  materialRevisionId: string;
+  subtitleText: string;
+  subtitlesEnabled: boolean;
+  ttsSpeakingRate: number | null;
+  ttsText: string | null;
+  ttsVoice: string | null;
+}
+
+interface ShotPreparationConfirmationRequest {
+  episodeId: string;
+  reviewPackageId: string;
+}
+
+interface ShotTtsGenerationRequest {
+  episodeId: string;
+  retry?: boolean;
+  reviewPackageId: string;
+  shotId: string;
+}
+
+interface ShotSourceAudioGenerationRequest {
+  episodeId: string;
+  retry?: boolean;
+  reviewPackageId: string;
+  shotId: string;
+}
+
+interface ShotClipGenerationRequest {
+  episodeId: string;
+  retry?: boolean;
+  reviewPackageId: string;
+  shotId: string;
+}
+
+interface ShotConfirmationRequest {
+  episodeId: string;
+  reason: string;
+  reviewPackageId: string;
+  shotId: string;
+  warningAccepted: boolean;
+}
+
+interface ShotSkipRequest {
+  episodeId: string;
+  reason: string;
+  reviewPackageId: string;
+  shotId: string;
+}
+
 interface AudioTrackAnnotationRequest {
   audioTrackId: string;
   atSeconds: number;
@@ -156,9 +220,12 @@ interface QcReviewIssueRequest {
 
 type ManualMediaKind = "a_roll" | "b_roll" | "narration" | "bgm" | "sfx";
 interface ManualMediaBindingRequest {
+  clipEndSeconds?: number;
+  clipStartSeconds?: number;
   episodeId: string;
   kind: ManualMediaKind;
   materialRevisionId: string;
+  replace?: boolean;
   storyboardReviewPackageId: string;
   targetId: string;
 }
@@ -171,6 +238,7 @@ interface Workspace {
   seriesVersions: SeriesVersion[];
   promptVersions: PromptVersion[];
   materialRevisions: MaterialRevision[];
+  shotPreparationDrafts: ShotPreparationDraft[];
   reviewPackages: ReviewPackage[];
   reviewAnnotations: ReviewAnnotation[];
   qcReviewIssues: QcReviewIssue[];
@@ -231,7 +299,7 @@ export function navigationBadgeCounts(episodes: Episode[], artifacts: Artifact[]
 }
 
 export function NavigationButtons({ activeNavigation, badges = {}, onSelect }: { activeNavigation: NavigationItem; badges?: Partial<Record<NavigationItem, number>>; onSelect: (item: NavigationItem) => void }) {
-  return <>{navigation.map((item) => <button aria-label={item.label} className={`navigation-item ${activeNavigation === item.id ? "is-active" : ""}`} key={item.id} onClick={() => onSelect(item.id)} type="button"><Icon name={item.id} /><span className="navigation-label">{item.label}</span>{badges[item.id] ? <span aria-label={`${badges[item.id]} 个待处理`} className="navigation-badge">{badges[item.id]}</span> : null}</button>)}</>;
+  return <>{navigation.map((item) => <button aria-current={activeNavigation === item.id ? "page" : undefined} aria-label={item.label} className={`navigation-item ${activeNavigation === item.id ? "is-active" : ""}`} key={item.id} onClick={() => onSelect(item.id)} type="button"><Icon name={item.id} /><span className="navigation-label">{item.label}</span>{badges[item.id] ? <span aria-label={`${badges[item.id]} 个待处理`} className="navigation-badge">{badges[item.id]}</span> : null}</button>)}</>;
 }
 
 function OwnerMenu({ onOpenSettings, onSignOut }: { onOpenSettings: () => void; onSignOut: () => void }) {
@@ -250,7 +318,7 @@ const stageLabels: Record<EpisodeStage, string> = {
   visual_approved: "视觉素材准备与审核",
   storyboard_draft: "分镜生成与审核",
   storyboard_review: "分镜生成与审核",
-  storyboard_approved: "分镜生成与审核",
+  storyboard_approved: "逐镜头准备工作台",
   production_ready: "媒体生产与预渲染审核",
   render_ready: "媒体生产与预渲染审核",
   qc_review: "合成与 QC 审核",
@@ -297,7 +365,7 @@ const nextStepLabels: Partial<Record<EpisodeStage, string>> = {
   visual_approved: "等待生成分镜",
   storyboard_draft: "等待 Worker 生成分镜",
   storyboard_review: "审核分镜并处理镜头批注",
-  storyboard_approved: "等待媒体任务生成",
+  storyboard_approved: "逐镜头准备画面、口播和字幕",
   production_ready: "逐项审核预渲染成员",
   render_ready: "等待生成审核渲染",
   qc_review: "审核合成渲染与 QC 报告",
@@ -469,7 +537,7 @@ function bytesToBase64(content: Uint8Array): string {
 }
 
 async function loadWorkspace(): Promise<Workspace> {
-  const [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, promptVersionsResult, materialRevisionsResult, reviewPackagesResult, reviewAnnotationsResult, qcReviewIssuesResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, taskRunsResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult, externalConnectionsResult, externalConnectionVersionsResult] = await Promise.all([
+  const [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, promptVersionsResult, materialRevisionsResult, shotPreparationDraftsResult, reviewPackagesResult, reviewAnnotationsResult, qcReviewIssuesResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, taskRunsResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult, externalConnectionsResult, externalConnectionVersionsResult] = await Promise.all([
     supabase.from("accounts").select("*").order("created_at"),
     supabase.from("account_blueprint_versions").select("*").order("version", { ascending: false }),
     supabase.from("episodes").select("*").order("updated_at", { ascending: false }),
@@ -477,6 +545,7 @@ async function loadWorkspace(): Promise<Workspace> {
     supabase.from("series_versions").select("*").order("version", { ascending: false }),
     supabase.from("prompt_versions").select("*").order("capability").order("version", { ascending: false }),
     supabase.from("production_material_revisions").select("*").order("created_at", { ascending: false }),
+    supabase.from("shot_preparation_drafts").select("*").order("updated_at", { ascending: false }),
     supabase.from("review_packages").select("*").order("created_at", { ascending: false }),
     supabase.from("review_annotations").select("*").order("created_at"),
     supabase.from("qc_review_issues").select("*").order("created_at"),
@@ -496,7 +565,7 @@ async function loadWorkspace(): Promise<Workspace> {
     supabase.from("external_connections").select("*").order("created_at", { ascending: false }),
     supabase.rpc("list_external_connection_versions", { p_connection_id: null }),
   ]);
-  const error = [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, promptVersionsResult, materialRevisionsResult, reviewPackagesResult, reviewAnnotationsResult, qcReviewIssuesResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, taskRunsResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult, externalConnectionsResult, externalConnectionVersionsResult]
+  const error = [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult, promptVersionsResult, materialRevisionsResult, shotPreparationDraftsResult, reviewPackagesResult, reviewAnnotationsResult, qcReviewIssuesResult, artifactsResult, audioTracksResult, audioTrackAnnotationsResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult, taskRunsResult, transitionsResult, experimentsResult, learningReportsResult, metricSnapshotsResult, blueprintChangeSuggestionsResult, publicationRecordsResult, externalConnectionsResult, externalConnectionVersionsResult]
     .map((result) => result.error)
     .find(Boolean);
 
@@ -510,6 +579,7 @@ async function loadWorkspace(): Promise<Workspace> {
     seriesVersions: seriesVersionsResult.data ?? [],
     promptVersions: promptVersionsResult.data ?? [],
     materialRevisions: materialRevisionsResult.data ?? [],
+    shotPreparationDrafts: shotPreparationDraftsResult.data ?? [],
     reviewPackages: reviewPackagesResult.data ?? [],
     reviewAnnotations: reviewAnnotationsResult.data ?? [],
     qcReviewIssues: qcReviewIssuesResult.data ?? [],
@@ -539,6 +609,16 @@ async function loadSystemStatusReport(): Promise<LocalSystemStatusReport | null>
   const report: unknown = await response.json();
   if (!report || Array.isArray(report) || typeof report !== "object") return null;
   return report as LocalSystemStatusReport;
+}
+
+async function runGoldenProductionTest(): Promise<GoldenProductionTestReport> {
+  const { data, error } = await supabase.auth.getSession();
+  if (error) throw error;
+  if (!data.session) throw new Error("需要 Owner 登录会话。");
+  const response = await fetch("/_golden-production-test", { headers: { Authorization: `Bearer ${data.session.access_token}` }, method: "POST" });
+  const payload: unknown = await response.json().catch(() => null);
+  if (!response.ok) throw new Error(payload && typeof payload === "object" && !Array.isArray(payload) && typeof (payload as Record<string, unknown>).error === "string" ? (payload as Record<string, unknown>).error as string : "黄金生产链测试失败。");
+  return payload as GoldenProductionTestReport;
 }
 
 async function startProductionThroughWorkerPreflight(episodeId: string): Promise<{ episode: unknown; preflight: WorkerPreflightResult }> {
@@ -626,8 +706,10 @@ export function App() {
       setActiveNavigation("accounts");
       setIsEpisodeDetailOpen(false);
     };
+    const openPublish = (event: Event) => openPublishModal((event as CustomEvent<string>).detail);
     window.addEventListener("open-external-connections", openConnections);
-    return () => window.removeEventListener("open-external-connections", openConnections);
+    window.addEventListener("open-publish", openPublish);
+    return () => { window.removeEventListener("open-external-connections", openConnections); window.removeEventListener("open-publish", openPublish); };
   }, []);
 
   useEffect(() => {
@@ -691,6 +773,10 @@ export function App() {
     }
   }, []);
 
+  const refreshSystemStatusAndWorkspace = useCallback(async () => {
+    await Promise.all([refreshSystemStatus(), refreshWorkspace("manual")]);
+  }, [refreshSystemStatus, refreshWorkspace]);
+
   const refreshBlueprintPreflight = useCallback(async (accountId: string) => {
     const account = workspaceRef.current?.accounts.find((candidate) => candidate.id === accountId);
     if (!account?.current_blueprint_version_id) {
@@ -742,18 +828,19 @@ export function App() {
   }, [refreshWorkspace]);
 
   useEffect(() => {
-    if (session) void refreshSystemStatus();
-    else setSystemStatus(null);
+    if (!session) { setSystemStatus(null); return; }
+    void refreshSystemStatus();
+    const interval = window.setInterval(() => void refreshSystemStatus(), 15000);
+    return () => window.clearInterval(interval);
   }, [refreshSystemStatus, session]);
 
   useEffect(() => {
     if (!isEpisodeDetailOpen || !selectedEpisodeId) return;
     const interval = window.setInterval(() => {
       void refreshWorkspace("auto");
-      void refreshSystemStatus();
     }, 15000);
     return () => window.clearInterval(interval);
-  }, [isEpisodeDetailOpen, refreshSystemStatus, refreshWorkspace, selectedEpisodeId]);
+  }, [isEpisodeDetailOpen, refreshWorkspace, selectedEpisodeId]);
 
   const accountsById = useMemo(() => new Map(workspace?.accounts.map((account) => [account.id, account])), [workspace]);
   const blueprintsById = useMemo(() => new Map(workspace?.blueprints.map((blueprint) => [blueprint.id, blueprint])), [workspace]);
@@ -762,6 +849,17 @@ export function App() {
   const selectedAccount = workspace?.accounts.find((account) => account.id === selectedAccountId) ?? null;
   const selectedEpisode = workspace?.episodes.find((episode) => episode.id === selectedEpisodeId) ?? null;
   blueprintPreflightTargetRef.current = selectedAccount?.current_blueprint_version_id ? `${selectedAccount.id}:${selectedAccount.current_blueprint_version_id}` : "";
+
+  useEffect(() => {
+    if (!blueprintRepairContext || !workspace) return;
+    const blockerStillExists = workerBlockers(workspace.tasks, blueprintRepairContext.episodeId).some((blocker) => blocker.code === blueprintRepairContext.blocker.code && blocker.detail === blueprintRepairContext.blocker.detail);
+    if (blockerStillExists) return;
+    setBlueprintRepairContext(null);
+    setSelectedEpisodeId(blueprintRepairContext.episodeId);
+    setIsEpisodeDetailOpen(true);
+    setActiveNavigation("episodes");
+    setMessage("当前生产单的阻塞已解除，已返回生产单详情。");
+  }, [blueprintRepairContext, workspace]);
 
   useEffect(() => {
     if (!session || activeNavigation !== "accounts" || !selectedAccount?.current_blueprint_version_id) {
@@ -821,6 +919,12 @@ export function App() {
     setIsEpisodeDetailOpen(true);
   }
 
+  function returnToEpisodeDetail(episodeId: string) {
+    setBlueprintRepairContext(null);
+    setActiveNavigation("episodes");
+    openEpisodeDetail(episodeId);
+  }
+
   function openAccountBlueprint(accountId: string, repairContext: BlueprintRepairContext | null = null) {
     setSelectedAccountId(accountId);
     setBlueprintRepairContext(repairContext);
@@ -877,10 +981,7 @@ export function App() {
       const result = data && typeof data === "object" && !Array.isArray(data) ? data as Record<string, unknown> : {};
       const recreatedCount = typeof result.recreated_task_count === "number" ? result.recreated_task_count : 0;
       await refreshWorkspace();
-      setBlueprintRepairContext(null);
-      setSelectedEpisodeId(input.context.episodeId);
-      setIsEpisodeDetailOpen(true);
-      setActiveNavigation("episodes");
+      returnToEpisodeDetail(input.context.episodeId);
       setMessage(`配置已直接应用到当前生产单，账号蓝图未变；已重新排队 ${recreatedCount} 个受阻任务。`);
       return true;
     } catch (error) {
@@ -1254,17 +1355,161 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
     }
   }
 
-  async function updateEpisodeAudioSourceMode(episodeId: string, audioSourceMode: EpisodeAudioSourceMode) {
-    setPendingAction(`audio-source-${episodeId}`);
+  async function saveShotPreparationDraft(input: ShotPreparationDraftRequest) {
+    setPendingAction(`shot-preparation-${input.episodeId}-${input.shotId}`);
     setErrorMessage("");
     try {
-      const { error } = await supabase.rpc("set_episode_audio_source_mode", { p_audio_source_mode: audioSourceMode, p_episode_id: episodeId });
+      const { error } = await supabase.rpc("save_shot_workbench_draft", {
+        p_audio_mode: input.audioMode,
+        p_material_revision_id: input.materialRevisionId || "",
+        p_clip_segments: input.clipSegments as unknown as Json,
+        p_episode_id: input.episodeId,
+        p_review_package_id: input.reviewPackageId,
+        p_shot_id: input.shotId,
+        p_subtitle_text: input.subtitleText,
+        p_subtitles_enabled: input.subtitlesEnabled,
+        p_tts_speaking_rate: input.ttsSpeakingRate,
+        p_tts_text: input.ttsText,
+        p_tts_voice: input.ttsVoice,
+      });
       if (error) throw error;
-      setMessage(audioSourceMode === "source" ? "本生产单将保留上传视频原声，并跳过 TTS。" : "本生产单将静音上传视频原声，并使用 TTS。");
+      setMessage(`${input.shotId} 的逐镜头准备草稿已保存；未创建媒体任务。`);
       await refreshWorkspace();
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "无法更新视频声音处理方式。");
-      throw error;
+      const message = error instanceof Error ? error.message : "无法保存逐镜头准备草稿。";
+      setErrorMessage(message);
+      throw new Error(message);
+    } finally {
+      setPendingAction("");
+    }
+  }
+
+  async function generateShotTts(input: ShotTtsGenerationRequest) {
+    setPendingAction(`shot-tts-${input.episodeId}-${input.shotId}`);
+    setErrorMessage("");
+    try {
+      const { error } = await supabase.rpc("generate_shot_tts", {
+        p_episode_id: input.episodeId,
+        p_review_package_id: input.reviewPackageId,
+        p_retry: input.retry ?? false,
+        p_shot_id: input.shotId,
+      });
+      if (error) throw error;
+      setMessage(`${input.shotId} 的口播任务已${input.retry ? "重新" : "创建"}排队；Worker 将按当前冻结配置执行。`);
+      await refreshWorkspace();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "无法创建逐镜头口播任务。";
+      setErrorMessage(message);
+      throw new Error(message);
+    } finally {
+      setPendingAction("");
+    }
+  }
+
+  async function generateShotSourceAudio(input: ShotSourceAudioGenerationRequest) {
+    setPendingAction(`shot-source-audio-${input.episodeId}-${input.shotId}`);
+    setErrorMessage("");
+    try {
+      const { error } = await supabase.rpc("generate_shot_source_audio", {
+        p_episode_id: input.episodeId,
+        p_review_package_id: input.reviewPackageId,
+        p_retry: input.retry ?? false,
+        p_shot_id: input.shotId,
+      });
+      if (error) throw error;
+      setMessage(`${input.shotId} 的原声音轨已${input.retry ? "重新" : "创建"}排队；将从当前准备片段提取。`);
+      await refreshWorkspace();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "无法创建逐镜头原声任务。";
+      setErrorMessage(message);
+      throw new Error(message);
+    } finally {
+      setPendingAction("");
+    }
+  }
+
+  async function generateShotClip(input: ShotClipGenerationRequest) {
+    setPendingAction(`shot-clip-${input.episodeId}-${input.shotId}`);
+    setErrorMessage("");
+    try {
+      const { error } = await supabase.rpc("generate_shot_clip", {
+        p_episode_id: input.episodeId,
+        p_review_package_id: input.reviewPackageId,
+        p_retry: input.retry ?? false,
+        p_shot_id: input.shotId,
+      });
+      if (error) throw error;
+      setMessage(`${input.shotId} 的裁剪任务已${input.retry ? "重新" : "创建"}排队；新片段校验通过前保留上一版。`);
+      await refreshWorkspace();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "无法创建镜头裁剪任务。";
+      setErrorMessage(message);
+      throw new Error(message);
+    } finally {
+      setPendingAction("");
+    }
+  }
+
+  async function confirmShot(input: ShotConfirmationRequest) {
+    setPendingAction(`shot-confirm-${input.episodeId}-${input.shotId}`);
+    setErrorMessage("");
+    try {
+      const { error } = await supabase.rpc("confirm_shot_preparation", {
+        p_episode_id: input.episodeId,
+        p_reason: input.reason,
+        p_review_package_id: input.reviewPackageId,
+        p_shot_id: input.shotId,
+        p_warning_accepted: input.warningAccepted,
+      });
+      if (error) throw error;
+      setMessage(`${input.shotId} 已确认；已记录当前采用版本与审计事实。`);
+      await refreshWorkspace();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "无法确认当前镜头。";
+      setErrorMessage(message);
+      throw new Error(message);
+    } finally {
+      setPendingAction("");
+    }
+  }
+
+  async function confirmShotPreparation(input: ShotPreparationConfirmationRequest) {
+    setPendingAction(`shot-confirm-all-${input.episodeId}`);
+    setErrorMessage("");
+    try {
+      const { error } = await supabase.rpc("freeze_shot_preparation_batch", {
+        p_episode_id: input.episodeId,
+        p_review_package_id: input.reviewPackageId,
+      });
+      if (error) throw error;
+      setMessage("全部镜头的原片、片段标记和音频配置已冻结；正在准备 Studio 工程。");
+      await refreshWorkspace();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "无法冻结镜头配置并进入 Studio。";
+      setErrorMessage(message);
+      throw new Error(message);
+    } finally {
+      setPendingAction("");
+    }
+  }
+
+  async function skipShot(input: ShotSkipRequest) {
+    setPendingAction(`shot-skip-${input.episodeId}-${input.shotId}`);
+    setErrorMessage("");
+    try {
+      const { error } = await supabase.rpc("skip_shot_preparation", {
+        p_episode_id: input.episodeId,
+        p_reason: input.reason,
+        p_review_package_id: input.reviewPackageId,
+        p_shot_id: input.shotId,
+      });
+      if (error) throw error;
+      setMessage(`${input.shotId} 已跳过；其他镜头仍可继续处理。`);
+      await refreshWorkspace();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "无法跳过当前镜头。";
+      setErrorMessage(message);
+      throw new Error(message);
     } finally {
       setPendingAction("");
     }
@@ -1274,15 +1519,13 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
     setPendingAction(`manual-${input.kind}-${input.episodeId}`);
     setErrorMessage("");
     try {
-      const { error } = input.kind === "a_roll"
-        ? await supabase.rpc("register_manual_a_roll", { p_episode_id: input.episodeId, p_material_revision_id: input.materialRevisionId, p_shot_id: input.targetId, p_storyboard_review_package_id: input.storyboardReviewPackageId })
-        : input.kind === "b_roll"
-          ? await supabase.rpc("register_manual_b_roll", { p_episode_id: input.episodeId, p_material_revision_id: input.materialRevisionId, p_shot_id: input.targetId, p_storyboard_review_package_id: input.storyboardReviewPackageId })
+      const { error } = input.kind === "a_roll" || input.kind === "b_roll"
+        ? await supabase.rpc("save_manual_shot_clip", { p_clip_end_seconds: input.clipEndSeconds ?? 0, p_clip_start_seconds: input.clipStartSeconds ?? 0, p_episode_id: input.episodeId, p_kind: input.kind, p_material_revision_id: input.materialRevisionId, p_shot_id: input.targetId, p_storyboard_review_package_id: input.storyboardReviewPackageId })
         : input.kind === "narration" && input.targetId === input.episodeId
           ? await supabase.rpc("register_manual_episode_narration", { p_episode_id: input.episodeId, p_material_revision_id: input.materialRevisionId, p_storyboard_review_package_id: input.storyboardReviewPackageId })
           : await supabase.rpc("register_manual_audio", { p_episode_id: input.episodeId, p_material_revision_id: input.materialRevisionId, p_storyboard_review_package_id: input.storyboardReviewPackageId, p_target_id: input.targetId });
-      if (error) throw error;
-      setMessage(`人工${input.kind === "a_roll" ? " A-roll" : input.kind === "b_roll" ? " B-roll" : input.kind === "narration" ? "旁白" : input.kind === "bgm" ? "配乐" : "音效"}已冻结为生产输入；不会调用自动生成能力。`);
+      if (error) throw new Error(error.message);
+      setMessage(`人工${input.kind === "a_roll" ? " A-roll" : input.kind === "b_roll" ? " B-roll" : input.kind === "narration" ? "旁白" : input.kind === "bgm" ? "配乐" : "音效"}${input.replace ? "镜头素材已更新" : "已确认用于当前目标"}；不会调用自动生成能力。`);
       await refreshWorkspace();
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "无法绑定人工生产材料。");
@@ -1349,7 +1592,33 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
       await refreshWorkspace();
       return true;
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "无法记录发布事实。");
+      setErrorMessage(error instanceof Error ? error.message : error && typeof error === "object" && "message" in error && typeof error.message === "string" ? error.message : "无法记录发布事实。");
+      return false;
+    } finally {
+      setPendingAction("");
+    }
+  }
+
+  async function preparePublishPackage(input: { cover: File; description: string; tags: string[]; title: string }): Promise<boolean> {
+    if (!selectedEpisode) return false;
+    setPendingAction(`publish-prepare-${selectedEpisode.id}`);
+    setErrorMessage("");
+    try {
+      const accessToken = session?.access_token;
+      if (!accessToken) throw new Error("需要 Owner 登录会话。");
+      const coverBase64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = () => reject(new Error("无法读取封面文件。"));
+        reader.onload = () => resolve(String(reader.result).split(",", 2)[1] ?? "");
+        reader.readAsDataURL(input.cover);
+      });
+      const response = await fetch("/_publish-preparation", { method: "POST", headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" }, body: JSON.stringify({ coverBase64, description: input.description, episodeId: selectedEpisode.id, tags: input.tags, title: input.title }) });
+      if (!response.ok) throw new Error((await response.text()).trim() || "无法生成发布包。");
+      setMessage("发布元数据与封面已登记，发布包已生成并通过校验。");
+      await refreshWorkspace();
+      return true;
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "无法生成发布包。");
       return false;
     } finally {
       setPendingAction("");
@@ -1366,6 +1635,22 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
       return outcome;
     } catch (error) {
       const detail = error instanceof Error ? error.message : error && typeof error === "object" && "message" in error && typeof error.message === "string" ? error.message : "无法提交审核修订。";
+      setErrorMessage(detail);
+      throw new Error(detail);
+    } finally {
+      setPendingAction("");
+    }
+  }
+
+  async function submitShotStructureRevision(input: ShotStructureRevisionRequest): Promise<void> {
+    setPendingAction(`shot-structure-revision-${input.episodeId}`);
+    setErrorMessage("");
+    try {
+      await requestShotStructureRevision(input);
+      setMessage("分镜结构修订已排队；Worker 完成后会进入新的分镜审核，旧批准版本继续保留。");
+      await refreshWorkspace();
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : "无法提交分镜结构修订。";
       setErrorMessage(detail);
       throw new Error(detail);
     } finally {
@@ -1421,6 +1706,27 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
     if (studioWindow) studioWindow.location.replace(payload.studioUrl);
     else window.open(payload.studioUrl, "_blank", "noopener,noreferrer");
     return workspace;
+  }
+
+  async function openPersonalHyperframesStudio(): Promise<void> {
+    const token = session?.access_token;
+    if (!token) { setErrorMessage("需要 Owner 登录会话。"); return; }
+    const studioWindow = window.open("about:blank", "_blank");
+    setPendingAction("personal-hyperframes-studio");
+    setErrorMessage("");
+    try {
+      const response = await fetch("/_open-personal-hyperframes-studio", { headers: { Authorization: `Bearer ${token}` }, method: "POST" });
+      if (!response.ok) throw new Error((await response.text()).trim() || "无法打开 HyperFrames Studio。");
+      const payload = await response.json() as { studioUrl?: unknown };
+      if (typeof payload.studioUrl !== "string") throw new Error("HyperFrames Studio 地址无效。");
+      if (studioWindow) studioWindow.location.replace(payload.studioUrl);
+      else window.open(payload.studioUrl, "_blank", "noopener,noreferrer");
+    } catch (error) {
+      studioWindow?.close();
+      setErrorMessage(error instanceof Error ? error.message : "无法打开 HyperFrames Studio。");
+    } finally {
+      setPendingAction("");
+    }
   }
 
   async function createStoryboardAnnotation(input: StoryboardAnnotationRequest): Promise<void> {
@@ -1711,19 +2017,21 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
   if (workspace.accounts.length === 0) return <BootstrapScreen errorMessage={errorMessage} isPending={pendingAction === "bootstrap"} onSubmit={bootstrapPlatform} />;
 
   return (
-    <main className="app-shell" data-sidebar={sidebarCollapsed ? "collapsed" : "expanded"} data-theme={theme}>
+    <div className="app-shell" data-sidebar={sidebarCollapsed ? "collapsed" : "expanded"} data-theme={theme}>
+      <a className="skip-link" href="#main-content">跳到主要内容</a>
       <aside className="sidebar" aria-label="主导航">
         <div className="wordmark"><img alt="Loop 控制台" src="/brand/loop-mark.png" /><span>Loop 控制台</span></div>
         <nav className="navigation"><NavigationButtons activeNavigation={activeNavigation} badges={navigationBadges} onSelect={changeNavigation} /></nav>
-        <div className="sidebar-footer"><div className="sidebar-utilities"><SystemStatusPanel isRefreshing={isSystemStatusLoading} onRefresh={refreshSystemStatus} report={systemStatus} tasks={workspace.tasks} /><button aria-label={theme === "light" ? "切换至深色模式" : "切换至浅色模式"} className="sidebar-utility" onClick={changeTheme} title={theme === "light" ? "深色模式" : "浅色模式"} type="button"><Icon name={theme === "light" ? "Moon" : "Sun"} /></button><button aria-label={sidebarCollapsed ? "展开侧栏" : "收起侧栏"} className="sidebar-collapse-button sidebar-utility" onClick={changeSidebarCollapsed} title={sidebarCollapsed ? "展开侧栏" : "收起侧栏"} type="button"><Icon name="PanelLeft" /></button><OwnerMenu onOpenSettings={() => setShowPasswordForm(true)} onSignOut={() => void supabase.auth.signOut()} /></div></div>
+        <button aria-label="打开 HyperFrames Studio" className="sidebar-studio-shortcut" disabled={pendingAction === "personal-hyperframes-studio"} onClick={() => void openPersonalHyperframesStudio()} title="打开 HyperFrames Studio" type="button"><Icon name="Video" /><span>{pendingAction === "personal-hyperframes-studio" ? "正在打开…" : "HyperFrames Studio"}</span></button>
+        <div className="sidebar-footer"><div className="sidebar-utilities"><SystemStatusPanel episodes={workspace.episodes} isRefreshing={isSystemStatusLoading} onRefresh={refreshSystemStatusAndWorkspace} onRunGoldenTest={runGoldenProductionTest} report={systemStatus} tasks={workspace.tasks} /><button aria-label={theme === "light" ? "切换至深色模式" : "切换至浅色模式"} className="sidebar-utility" onClick={changeTheme} title={theme === "light" ? "深色模式" : "浅色模式"} type="button"><Icon name={theme === "light" ? "Moon" : "Sun"} /></button><button aria-label={sidebarCollapsed ? "展开侧栏" : "收起侧栏"} className="sidebar-collapse-button sidebar-utility" onClick={changeSidebarCollapsed} title={sidebarCollapsed ? "展开侧栏" : "收起侧栏"} type="button"><Icon name="PanelLeft" /></button><OwnerMenu onOpenSettings={() => setShowPasswordForm(true)} onSignOut={() => void supabase.auth.signOut()} /></div></div>
       </aside>
 
-      <section className="content-pane" aria-label="平台工作台">
+      <section className="content-pane" id="main-content" aria-label="平台工作台" tabIndex={-1}>
         <header className="page-header">
           <h1>{navigation.find((item) => item.id === activeNavigation)?.label}</h1>
           {activeNavigation === "accounts" ? <button className="button button-primary" onClick={() => setShowAccountForm(true)} type="button">新建账号</button> : null}
           {activeNavigation === "episodes" ? <button className="button button-primary" onClick={() => setShowEpisodeForm(true)} type="button">新建生产单</button> : null}
-          <div className="mobile-header-actions"><SystemStatusPanel isRefreshing={isSystemStatusLoading} onRefresh={refreshSystemStatus} report={systemStatus} tasks={workspace.tasks} /><OwnerMenu onOpenSettings={() => setShowPasswordForm(true)} onSignOut={() => void supabase.auth.signOut()} /></div>
+          <div className="mobile-header-actions"><SystemStatusPanel episodes={workspace.episodes} isRefreshing={isSystemStatusLoading} onRefresh={refreshSystemStatusAndWorkspace} onRunGoldenTest={runGoldenProductionTest} report={systemStatus} tasks={workspace.tasks} /><OwnerMenu onOpenSettings={() => setShowPasswordForm(true)} onSignOut={() => void supabase.auth.signOut()} /></div>
         </header>
 
         {message || errorMessage ? <div className="floating-notices" aria-live="polite">{message ? <div className="notice-message" role="status">{message}<button aria-label="关闭通知" onClick={() => setMessage("")} type="button">×</button></div> : null}{errorMessage ? <div className="error-message" role="alert">{errorMessage}<button aria-label="关闭错误通知" onClick={() => setErrorMessage("")} type="button">×</button></div> : null}</div> : null}
@@ -1735,7 +2043,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             blueprints={workspace.blueprints.filter((blueprint) => blueprint.account_id === selectedAccount?.id && !blueprint.is_snapshot)}
             blueprintRepairContext={blueprintRepairContext}
             onApplyEpisodeRepair={applyEpisodeConfigurationRepair}
-            onDismissBlueprintRepair={() => { setBlueprintRepairContext(null); setActiveNavigation("episodes"); }}
+            onDismissBlueprintRepair={() => blueprintRepairContext ? returnToEpisodeDetail(blueprintRepairContext.episodeId) : setActiveNavigation("episodes")}
             onDirtyChange={setAccountConfigurationDirty}
             isPending={pendingAction}
             onUpdateBlueprint={updateBlueprint}
@@ -1845,6 +2153,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             audioTracks={workspace.audioTracks}
             audioTrackAnnotations={workspace.audioTrackAnnotations}
             materialRevisions={workspace.materialRevisions}
+            shotPreparationDrafts={workspace.shotPreparationDrafts}
             preRenderReviewMembers={workspace.preRenderReviewMembers}
             preRenderReviewMemberDecisions={workspace.preRenderReviewMemberDecisions}
             qcReviewIssues={workspace.qcReviewIssues}
@@ -1852,7 +2161,6 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             episode={selectedEpisode}
             isDirectoryOpenPending={pendingAction === `directory-open-${selectedEpisode.id}`}
             isMaterialPending={pendingAction === `material-${selectedEpisode.id}`}
-            isAudioSourceModePending={pendingAction === `audio-source-${selectedEpisode.id}`}
             isStartProductionPending={pendingAction === `start-production-${selectedEpisode.id}`}
             productionPreflight={productionPreflight}
             connectionVersions={workspace.externalConnectionVersions}
@@ -1862,8 +2170,15 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             onRepairConnection={(blocker, versionId) => repairEpisodeConnection({ blocker, episodeId: selectedEpisode.id, versionId })}
             onOpenLocalDirectory={openLocalEpisodeDirectory}
             onImportMaterial={importProductionMaterial}
-            onUpdateAudioSourceMode={updateEpisodeAudioSourceMode}
             onRegisterManualMedia={registerManualMedia}
+            onSaveShotPreparationDraft={saveShotPreparationDraft}
+            onGenerateShotTts={generateShotTts}
+            onGenerateShotSourceAudio={generateShotSourceAudio}
+            onGenerateShotClip={generateShotClip}
+            onConfirmShotPreparation={confirmShotPreparation}
+            onConfirmShot={confirmShot}
+            onSkipShot={skipShot}
+            onRequestShotStructureRevision={submitShotStructureRevision}
             onStartProduction={startEpisodeProduction}
             onRequestRevision={submitReviewRevision}
             onRetryFinalRender={retryFinalRender}
@@ -1890,8 +2205,10 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
         artifacts={workspace.artifacts}
         episode={selectedEpisode}
         isPending={pendingAction === `publication-${selectedEpisode.id}`}
+        isPreparationPending={pendingAction === `publish-prepare-${selectedEpisode.id}`}
         onClose={() => setIsPublishModalOpen(false)}
         onOpenArtifact={openLocalArtifact}
+        onPrepare={preparePublishPackage}
         onRecord={recordManualPublication}
         publicationRecords={workspace.publicationRecords.filter((record) => record.episode_id === selectedEpisode.id)}
         publishVerification={workspace.tasks.some((task) => task.episode_id === selectedEpisode.id && task.task_type === "verify_publish_package" && task.status === "completed")}
@@ -1915,7 +2232,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
           setPendingAction("");
         }
       }} isPending={pendingAction === "password"} /> : null}
-    </main>
+    </div>
   );
 }
 
@@ -2024,7 +2341,12 @@ export function ReviewWorkspace({ accountsById, episodes, onSelectEpisode, selec
 export function PublishWorkspace({ accountsById, artifacts, episodes, isPending, onOpenPublish, onTransition, publicationRecords, selectedEpisode, tasks }: { accountsById: Map<string, Account>; artifacts: Artifact[]; episodes: Episode[]; isPending: string; onOpenPublish: (id: string) => void; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; publicationRecords: PublicationRecord[]; selectedEpisode: Episode | null; tasks: Task[] }) {
   const queue = episodes.filter((episode) => episode.stage === "qc_passed" || episode.stage === "publish_ready" || episode.stage === "publishing_review" || episode.stage === "published");
   async function advanceEpisode(episode: Episode, toStage: EpisodeStage, reason: string) { if (await onTransition(episode.id, toStage, reason)) onOpenPublish(episode.id); }
-  return <><p className="muted-copy">发布包由本机 `publish:prepare` 生成并固定索引；人工发布前请运行 `publish:verify` 复核文件。控制台不会连接或点击任何发布平台。</p><div className="publish-queue">{queue.map((episode) => { const latestPublication = publicationRecords.filter((record) => record.episode_id === episode.id).sort((left, right) => right.created_at.localeCompare(left.created_at))[0]; return <article className={`publish-card ${selectedEpisode?.id === episode.id ? "is-selected" : ""}`} key={episode.id}><button className="publish-card-summary" onClick={() => onOpenPublish(episode.id)} type="button"><strong>{episode.title}</strong><span>{accountsById.get(episode.account_id)?.name ?? "未知账号"} · {stageLabels[episode.stage]}</span><small>{latestPublication ? `已发布 · ${latestPublication.platform} · ${latestPublication.published_at ? formatDate(latestPublication.published_at) : "时间未记录"}` : artifacts.some((artifact) => artifact.episode_id === episode.id && artifact.artifact_type === "publish_package") ? "发布包已固定" : "缺少发布包索引"}</small></button>{latestPublication?.external_url ? <a className="publish-card-link" href={latestPublication.external_url} rel="noreferrer" target="_blank">打开外部链接</a> : null}{episode.stage === "qc_passed" ? <button className="button button-secondary" disabled={!artifacts.some((artifact) => artifact.episode_id === episode.id && artifact.artifact_type === "publish_package") || !tasks.some((task) => task.episode_id === episode.id && task.task_type === "verify_publish_package" && task.status === "completed") || isPending === `transition-${episode.id}-publish_ready`} onClick={() => void advanceEpisode(episode, "publish_ready", "已复核固定发布包，进入待发布。")} type="button">进入待发布</button> : episode.stage === "publish_ready" ? <button className="button button-secondary" disabled={isPending === `transition-${episode.id}-publishing_review`} onClick={() => void advanceEpisode(episode, "publishing_review", "发布包已固定，等待 Owner 的人工发布确认。")} type="button">进入发布确认</button> : episode.stage === "publishing_review" ? <button className="button button-secondary" disabled={isPending === `publication-${episode.id}`} onClick={() => onOpenPublish(episode.id)} type="button">打开发布弹窗</button> : <p className="publish-card-hint">已记录发布事实，可打开弹窗查看不可变历史。</p>}</article>; })}</div>{queue.length === 0 ? <div className="empty-state compact"><h2>没有待确认发布</h2><p>完成 QC 后，先在外置媒体库运行发布包生成；发布包被索引后才能进入待发布。</p></div> : null}</>;
+  return <><p className="muted-copy">打开生产单即可填写发布标题、简介、标签并上传 JPG、PNG 或 WebP 封面；系统会在本机生成并校验发布包。控制台不会连接或点击任何发布平台。</p><div className="publish-queue">{queue.map((episode) => {
+    const latestPublication = publicationRecords.filter((record) => record.episode_id === episode.id).sort((left, right) => right.created_at.localeCompare(left.created_at))[0];
+    const hasPublishPackage = artifacts.some((artifact) => artifact.episode_id === episode.id && artifact.artifact_type === "publish_package");
+    const hasPublishVerification = tasks.some((task) => task.episode_id === episode.id && task.task_type === "verify_publish_package" && task.status === "completed");
+    return <article className={`publish-card ${selectedEpisode?.id === episode.id ? "is-selected" : ""}`} key={episode.id}><button className="publish-card-summary" onClick={() => onOpenPublish(episode.id)} type="button"><strong>{episode.title}</strong><span>{accountsById.get(episode.account_id)?.name ?? "未知账号"} · {stageLabels[episode.stage]}</span><small>{latestPublication ? `已发布 · ${latestPublication.platform} · ${latestPublication.published_at ? formatDate(latestPublication.published_at) : "时间未记录"}` : hasPublishPackage ? "发布包已固定" : "缺少发布包索引"}</small></button>{latestPublication?.external_url ? <a className="publish-card-link" href={latestPublication.external_url} rel="noreferrer" target="_blank">外部记录 ↗</a> : null}{episode.stage === "qc_passed" ? <button className="button button-secondary" disabled={!hasPublishPackage || !hasPublishVerification || isPending === `transition-${episode.id}-publish_ready`} onClick={() => void advanceEpisode(episode, "publish_ready", "已复核固定发布包，进入待发布。")} type="button">进入待发布</button> : episode.stage === "publish_ready" ? <button className="button button-secondary" disabled={isPending === `transition-${episode.id}-publishing_review`} onClick={() => void advanceEpisode(episode, "publishing_review", "发布包已固定，等待 Owner 的人工发布确认。")} type="button">进入发布确认</button> : episode.stage === "publishing_review" ? <button className="button button-secondary" disabled={isPending === `publication-${episode.id}`} onClick={() => onOpenPublish(episode.id)} type="button">打开发布弹窗</button> : <p className="publish-card-hint">发布记录已固定</p>}</article>;
+  })}</div>{queue.length === 0 ? <div className="empty-state compact"><h2>没有待确认发布</h2><p>完成 QC 后，生产单会在这里提供发布材料登记与发布包生成入口。</p></div> : null}</>;
 }
 
 export function PublicationConfirmationForm({ episode, isPending, onConfirm, ownerId }: { episode: Episode; isPending: boolean; onConfirm: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; ownerId: string }) {
@@ -2061,8 +2383,13 @@ function EpisodeUtilityPopover({ artifacts, history, kind, onClose, tasks, worke
   return <div aria-label={heading} className="episode-utility-popover" role="dialog"><header><strong>{heading}</strong><button aria-label={`关闭${heading}`} className="icon-button" onClick={onClose} type="button"><X className="icon" /></button></header>{kind === "worker" ? <div className={`episode-utility-status episode-utility-status-${workerStatus.tone}`}><strong>{workerStatus.label}</strong><p>{workerStatus.detail}</p><span>{tasks.length ? `${completedTasks} / ${tasks.length} 个任务已完成` : "尚无任务记录"}</span></div> : kind === "artifacts" ? <div className="episode-utility-artifacts">{artifacts.length ? artifacts.map((artifact) => <Artifact complete key={artifact.id} label={artifact.artifact_type} name={artifact.relative_path} />) : <div className="episode-utility-summary"><strong>尚无产物</strong><p>Worker 尚未生成可查看的产物。</p></div>}</div> : timeline.length ? <ol className="timeline">{timeline.map((transition) => <li key={transition.id}><i className={`timeline-dot ${stageTone(transition.to_stage)}`} /><div><strong>{stageLabels[transition.to_stage]}</strong><span>{userFacingTransitionReason(transition.reason)}</span></div><time>{formatDate(transition.created_at)}</time></li>)}</ol> : <div className="episode-utility-summary"><strong>暂无状态变化</strong><p>生产单创建与状态变化会显示在这里。</p></div>}</div>;
 }
 
-export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, blueprint, connectionVersions = [], episode, isAudioSourceModePending = false, isDirectoryOpenPending = false, isMaterialPending, isRefreshPending = false, isStartProductionPending = false, isStoryboardAnnotationPending, isTransitionPending, materialRevisions = [], onCreateAudioTrackAnnotation, onCreateQcReviewIssue = async () => {}, onOpenBlueprint, onOpenHyperframesStudio = async () => { throw new Error("当前无法打开 HyperFrames Studio。"); }, onOpenLocalDirectory = async () => {}, onCreateStoryboardAnnotation, onImportMaterial, onRegisterManualMedia = async () => {}, onRefresh = async () => {}, onRequestQcMemberRevision = async () => {}, onRequestRevision, onRepairConnection, onRetryFinalRender = async () => false, onSubmitStudioRevision = async () => { throw new Error("当前无法提交 Studio 修订。"); }, onResolveQcReviewIssue = async () => {}, onReviewPreRenderMember = async () => {}, onStartProduction = async () => {}, onTransition, onUpdateAudioSourceMode = async () => {}, ownerId = "local-owner", preRenderReviewMemberDecisions = [], preRenderReviewMembers = [], productionPreflight = null, qcReviewIssues = [], reviewAnnotations, reviewPackages, tasks, transitions }: { artifacts: Artifact[]; audioTrackAnnotations: AudioTrackAnnotation[]; audioTracks: AudioTrack[]; blueprint: Blueprint | null; connectionVersions?: ExternalConnectionVersion[]; episode: Episode; isAudioSourceModePending?: boolean; isDirectoryOpenPending?: boolean; isMaterialPending: boolean; isRefreshPending?: boolean; isStartProductionPending?: boolean; isStoryboardAnnotationPending: boolean; isTransitionPending: boolean; materialRevisions?: MaterialRevision[]; onCreateAudioTrackAnnotation: (input: AudioTrackAnnotationRequest) => Promise<void>; onCreateQcReviewIssue?: (input: QcReviewIssueRequest) => Promise<void>; onOpenBlueprint?: (blocker: WorkerBlocker) => void; onOpenHyperframesStudio?: (episodeId: string, projectRelativePath: string) => Promise<HyperframesStudioWorkspace>; onOpenLocalDirectory?: (episodeId: string) => Promise<void>; onCreateStoryboardAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onImportMaterial: (input: MaterialImportRequest) => Promise<void>; onRegisterManualMedia?: (input: ManualMediaBindingRequest) => Promise<void>; onRefresh?: () => Promise<void>; onRepairConnection?: (blocker: WorkerBlocker, versionId: string) => Promise<void>; onRequestQcMemberRevision?: (issueId: string) => Promise<void>; onRequestRevision: (input: ReviewRevisionRequest) => Promise<ReviewRevisionOutcome>; onRetryFinalRender?: (episodeId: string, reason: string) => Promise<boolean>; onSubmitStudioRevision?: (input: Omit<StudioReviewRevisionRequest, "accessToken">) => Promise<ReviewRevisionOutcome>; onResolveQcReviewIssue?: (issueId: string, status: "accepted" | "ignored") => Promise<void>; onReviewPreRenderMember?: (input: PreRenderMemberReviewRequest) => Promise<void>; onStartProduction?: (episodeId: string) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; onUpdateAudioSourceMode?: (episodeId: string, audioSourceMode: EpisodeAudioSourceMode) => Promise<void>; ownerId?: string; preRenderReviewMemberDecisions?: PreRenderReviewMemberDecision[]; preRenderReviewMembers?: PreRenderReviewMember[]; productionPreflight?: WorkerPreflightResult | null; qcReviewIssues?: QcReviewIssue[]; reviewAnnotations: ReviewAnnotation[]; reviewPackages: ReviewPackage[]; tasks: Task[]; transitions: Transition[] }) {
+ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, blueprint, connectionVersions = [], episode, isDirectoryOpenPending = false, isMaterialPending, isRefreshPending = false, isStartProductionPending = false, isStoryboardAnnotationPending, isTransitionPending, materialRevisions = [], onCreateAudioTrackAnnotation, onCreateQcReviewIssue = async () => {}, onOpenBlueprint, onOpenHyperframesStudio = async () => { throw new Error("当前无法打开 HyperFrames Studio。"); }, onOpenLocalDirectory = async () => {}, onCreateStoryboardAnnotation, onImportMaterial, onRegisterManualMedia = async () => {}, onConfirmShot = async () => {}, onConfirmShotPreparation = async () => {}, onGenerateShotTts = async () => {}, onGenerateShotSourceAudio = async () => {}, onGenerateShotClip = async () => {}, onSkipShot = async () => {}, onRequestShotStructureRevision = async () => {}, onRefresh = async () => {}, onRequestQcMemberRevision = async () => {}, onRequestRevision, onRepairConnection, onRetryFinalRender = async () => false, onSaveShotPreparationDraft = async () => {}, onSaveShotClipDraft = async () => {}, onSubmitStudioRevision = async () => { throw new Error("当前无法提交 Studio 修订。"); }, onResolveQcReviewIssue = async () => {}, onReviewPreRenderMember = async () => {}, onStartProduction = async () => {}, onTransition, ownerId = "local-owner", preRenderReviewMemberDecisions = [], preRenderReviewMembers = [], productionPreflight = null, qcReviewIssues = [], reviewAnnotations, reviewPackages, shotPreparationDrafts = [], tasks, transitions }: { artifacts: Artifact[]; audioTrackAnnotations: AudioTrackAnnotation[]; audioTracks: AudioTrack[]; blueprint: Blueprint | null; connectionVersions?: ExternalConnectionVersion[]; episode: Episode; isDirectoryOpenPending?: boolean; isMaterialPending: boolean; isRefreshPending?: boolean; isStartProductionPending?: boolean; isStoryboardAnnotationPending: boolean; isTransitionPending: boolean; materialRevisions?: MaterialRevision[]; onCreateAudioTrackAnnotation: (input: AudioTrackAnnotationRequest) => Promise<void>; onConfirmShot?: (input: ShotConfirmationRequest) => Promise<void>; onConfirmShotPreparation?: (input: ShotPreparationConfirmationRequest) => Promise<void>; onCreateQcReviewIssue?: (input: QcReviewIssueRequest) => Promise<void>; onOpenBlueprint?: (blocker: WorkerBlocker) => void; onOpenHyperframesStudio?: (episodeId: string, projectRelativePath: string) => Promise<HyperframesStudioWorkspace>; onOpenLocalDirectory?: (episodeId: string) => Promise<void>; onCreateStoryboardAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onImportMaterial: (input: MaterialImportRequest) => Promise<void>; onRegisterManualMedia?: (input: ManualMediaBindingRequest) => Promise<void>; onGenerateShotTts?: (input: ShotTtsGenerationRequest) => Promise<void>; onGenerateShotSourceAudio?: (input: ShotSourceAudioGenerationRequest) => Promise<void>; onGenerateShotClip?: (input: ShotClipGenerationRequest) => Promise<void>; onSkipShot?: (input: ShotSkipRequest) => Promise<void>; onRequestShotStructureRevision?: (input: ShotStructureRevisionRequest) => Promise<void>; onRefresh?: () => Promise<void>; onRepairConnection?: (blocker: WorkerBlocker, versionId: string) => Promise<void>; onRequestRevision: (input: ReviewRevisionRequest) => Promise<ReviewRevisionOutcome>; onRequestQcMemberRevision?: (issueId: string) => Promise<void>; onRetryFinalRender?: (episodeId: string, reason: string) => Promise<boolean>; onSaveShotPreparationDraft?: (input: ShotPreparationDraftRequest) => Promise<void>; onSaveShotClipDraft?: (input: { clipEndSeconds: number | null; clipStartSeconds: number | null; episodeId: string; materialRevisionId: string | null; reviewPackageId: string; shotId: string }) => Promise<void>; onSubmitStudioRevision?: (input: Omit<StudioReviewRevisionRequest, "accessToken">) => Promise<ReviewRevisionOutcome>; onResolveQcReviewIssue?: (issueId: string, status: "accepted" | "ignored") => Promise<void>; onReviewPreRenderMember?: (input: PreRenderMemberReviewRequest) => Promise<void>; onStartProduction?: (episodeId: string) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; ownerId?: string; preRenderReviewMemberDecisions?: PreRenderMemberDecision[]; preRenderReviewMembers?: PreRenderMember[]; productionPreflight?: WorkerPreflightResult | null; qcReviewIssues?: QcReviewIssue[]; reviewAnnotations: ReviewAnnotation[]; reviewPackages: ReviewPackage[]; shotPreparationDrafts?: ShotPreparationDraft[]; tasks: Task[]; transitions: Transition[] }) {
   void onCreateQcReviewIssue;
+  void onConfirmShot;
+  void onGenerateShotClip;
+  void onGenerateShotSourceAudio;
+  void onSaveShotClipDraft;
+  void onSkipShot;
   void onRequestQcMemberRevision;
   void onResolveQcReviewIssue;
   const episodeArtifacts = artifacts.filter((artifact) => artifact.episode_id === episode.id);
@@ -2072,6 +2399,7 @@ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, b
   const productionBlockers = workerBlockersFromPreflight(productionPreflight);
   const episodeTasks = tasks.filter((task) => task.episode_id === episode.id);
   const workerStatus = episodeWorkerStatus(episode, episodeTasks);
+  const workerIsActive = episodeTasks.some((task) => task.status === "ready" || task.status === "running");
   const latestFinalRender = episodeTasks.filter((task) => task.task_type === "generate_final_render").reduce<Task | null>((latest, task) => !latest || task.created_at > latest.created_at ? task : latest, null);
   const failedFinalRender = episode.stage === "qc_passed" && latestFinalRender?.status === "failed";
   const reviewAction = reviewActionFor(episode.stage);
@@ -2084,6 +2412,7 @@ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, b
   const reviewArtifact = reviewPackage ? episodeArtifacts.find((candidate) => candidate.id === reviewPackage.artifact_id) : null;
   const reviewArtifacts = reviewPackage ? episodeArtifacts.filter((candidate) => candidate.producer_task_id === reviewPackage.task_id) : [];
   const storyboardAnnotations = reviewPackage ? reviewAnnotations.filter((annotation) => annotation.review_package_id === reviewPackage.id) : [];
+  const episodeShotPreparationDrafts = shotPreparationDrafts.filter((draft) => draft.episode_id === episode.id);
   const preRenderMembers = reviewPackage?.stage === "production_ready" ? preRenderReviewMembers.filter((member) => member.review_package_id === reviewPackage.id) : [];
   const preRenderMemberDecisions = reviewPackage?.stage === "production_ready" ? preRenderReviewMemberDecisions.filter((decision) => decision.review_package_id === reviewPackage.id) : [];
   const qcIssues = reviewPackage?.stage === "qc_review" ? qcReviewIssues.filter((issue) => issue.review_package_id === reviewPackage.id) : [];
@@ -2111,19 +2440,24 @@ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, b
   const waitingForMainScript = episode.stage === "waiting_input" && !episode.main_script_revision_id;
   const inputReadyToStart = episode.stage === "waiting_input" && Boolean(episode.main_script_revision_id);
   const episodeMaterials = materialRevisions.filter((material) => material.episode_id === episode.id);
-  const hasUploadedVideo = episodeMaterials.some((material) => material.material_type === "video");
-  const audioSourceMode: EpisodeAudioSourceMode = episode.audio_source_mode === "source" ? "source" : "tts";
-  const nextStep = blockers.length ? "先处理 Worker 阻塞项" : inputReadyToStart ? "确认材料并开始制作" : nextStepForEpisode(episode.stage);
+  const publishStage = episode.stage === "qc_passed" || episode.stage === "publish_ready" || episode.stage === "publishing_review" || episode.stage === "published";
+  const hasPublishPackage = episodeArtifacts.some((artifact) => artifact.artifact_type === "publish_package");
+  const hasPublishVerification = episodeTasks.some((task) => task.task_type === "verify_publish_package" && task.status === "completed");
+  const missingPublishInputs = [episodeArtifacts.some((artifact) => artifact.artifact_type === "cover") ? "" : "封面", episodeArtifacts.some((artifact) => artifact.artifact_type === "metadata") ? "" : "发布元数据"].filter(Boolean);
+  const publishNextStep = !hasPublishPackage ? `缺少发布包${missingPublishInputs.length ? `（先补 ${missingPublishInputs.join("、")}）` : ""}` : !hasPublishVerification ? "校验发布包" : episode.stage === "published" ? "查看发布登记" : "打开发布确认并登记实际发布";
+  const nextStep = blockers.length ? "先处理 Worker 阻塞项" : inputReadyToStart ? "确认材料并开始制作" : publishStage ? publishNextStep : nextStepForEpisode(episode.stage);
 
   return <>
     <header className="review-heading"><div className="review-heading-copy"><h2>{episode.title || "未命名生产单"}</h2><span>{episode.id.slice(0, 8)}</span></div></header>
     <div aria-label="生产单操作" className="episode-detail-toolbar"><div className="episode-toolbar-actions"><button aria-label="刷新生产单状态" className="icon-button episode-toolbar-button" disabled={isRefreshPending} onClick={() => void onRefresh()} title="刷新状态" type="button"><RefreshCw className="icon" /></button><button aria-label="打开本地输入目录" className="icon-button episode-toolbar-button" disabled={isDirectoryOpenPending} onClick={() => void onOpenLocalDirectory(episode.id)} title={`打开本地输入目录：${localInputPath}`} type="button"><FolderOpen className="icon" /></button><button aria-label="复制本地输入目录路径" className="icon-button episode-toolbar-button" onClick={() => void copyLocalInputPath()} title={`复制本地输入目录路径：${localInputPath}`} type="button"><Copy className="icon" /></button><button aria-expanded={openUtilityPanel === "worker"} aria-haspopup="dialog" aria-label={`Worker 状态：${workerStatus.label}`} className="icon-button episode-toolbar-button" onClick={() => setOpenUtilityPanel((current) => current === "worker" ? null : "worker")} title={`Worker 状态：${workerStatus.label} · ${workerStatus.detail}`} type="button"><Activity className="icon" /></button><button aria-expanded={openUtilityPanel === "artifacts"} aria-haspopup="dialog" aria-label="查看产物索引" className="icon-button episode-toolbar-button" onClick={() => setOpenUtilityPanel((current) => current === "artifacts" ? null : "artifacts")} title="查看产物索引" type="button"><ClipboardList className="icon" /></button><button aria-expanded={openUtilityPanel === "timeline"} aria-haspopup="dialog" aria-label="查看审计时间线" className="icon-button episode-toolbar-button" onClick={() => setOpenUtilityPanel((current) => current === "timeline" ? null : "timeline")} title="查看审计时间线" type="button"><History className="icon" /></button></div>{directoryMessage ? <span className="episode-toolbar-status" role="status">{directoryMessage}</span> : null}{openUtilityPanel ? <EpisodeUtilityPopover artifacts={episodeArtifacts} history={history} kind={openUtilityPanel} onClose={() => setOpenUtilityPanel(null)} tasks={episodeTasks} workerStatus={workerStatus} /> : null}</div>
     <p className="review-meta">蓝图 v{blueprint?.version ?? "—"} · 创建于 {formatDate(episode.created_at)}</p>
-    <section className="episode-next-step-card"><div><span>当前阶段</span><strong className={`stage stage-${stageTone(episode.stage)}`}>{stageLabels[episode.stage]}</strong></div><div><span>下一步</span><p>{nextStep}</p></div><div className={`episode-worker-status episode-worker-status-${workerStatus.tone}`}><span>Worker 状态</span><strong>{workerStatus.label}</strong><p>{workerStatus.detail}</p></div></section>
+    <section className="episode-next-step-card"><div><span>当前阶段</span><strong className={`stage stage-${stageTone(episode.stage)}`}>{stageLabels[episode.stage]}</strong></div><div><span>下一步</span><p>{nextStep}</p></div><div aria-live="polite" className={`episode-worker-status episode-worker-status-${workerStatus.tone}`}><span>Worker 状态</span><strong>{workerStatus.label}</strong><p>{workerStatus.detail}</p>{workerIsActive ? <small className="worker-refresh-feedback"><i aria-hidden="true" />页面每 15 秒自动刷新任务状态</small> : null}</div></section>
+    {publishStage ? <section className={`publish-readiness-card ${hasPublishPackage && hasPublishVerification ? "is-ready" : "is-missing"}`}><div><strong>{hasPublishPackage && hasPublishVerification ? "发布材料已就绪" : "发布流程尚未完成"}</strong><p>系统状态正常只表示当前 Worker 与基础设施没有阻塞；发布包、校验和人工发布登记是独立门槛。</p><span>封面 {missingPublishInputs.includes("封面") ? "缺少" : "已索引"} · 元数据 {missingPublishInputs.includes("发布元数据") ? "缺少" : "已索引"} · 发布包 {hasPublishPackage ? "已固定" : "缺少"} · 校验 {hasPublishVerification ? "通过" : "未通过"}</span></div><button className="button button-secondary" onClick={() => window.dispatchEvent(new CustomEvent("open-publish", { detail: episode.id }))} type="button">{episode.stage === "published" ? "查看发布登记" : "查看发布准备 / 登记"}</button></section> : null}
     {blockers.length ? <details className="review-section worker-blockers detail-card-collapsible" open><summary><h3>优先处理 Worker 阻塞项（{blockers.length}）</h3></summary><div className="detail-card-body">{blockerGroups.map(({ blocker, count }) => <WorkerBlockerCard affectedTaskCount={count} blocker={blocker} connectionVersions={connectionVersionsForBlocker(blocker, episodeTasks, connectionVersions)} onOpenBlueprint={onOpenBlueprint} onRepairConnection={onRepairConnection} key={`${blocker.code}-${blocker.detail}`} />)}</div></details> : null}
-    <details className="review-section detail-card-collapsible" open={waitingForMainScript || inputReadyToStart}><summary><h3>准备生产材料</h3></summary><div className="detail-card-body">{waitingForMainScript ? <><p className="material-import-subtitle">主脚本由外部制作后上传；确认后会作为本生产单不可变输入。</p><MaterialImportForm allowMainScript bindingStatuses={materialBindingStatuses(episodeTasks)} episodeId={episode.id} existingMaterials={episodeMaterials} isPending={isMaterialPending} onImport={onImportMaterial} /></> : <><p className="material-import-subtitle">主脚本已确认。你可以继续添加补充材料；所有材料准备好后，点击下方按钮，Worker 才会开始制作。</p><MaterialImportForm allowMainScript={false} bindingStatuses={materialBindingStatuses(episodeTasks)} episodeId={episode.id} existingMaterials={episodeMaterials} isPending={isMaterialPending} onImport={onImportMaterial} /></>}<fieldset className="audio-source-mode"><legend>上传视频的声音</legend><label><input checked={audioSourceMode === "tts"} disabled={isAudioSourceModePending} name={`audio-source-${episode.id}`} onChange={() => void onUpdateAudioSourceMode(episode.id, "tts")} type="radio" />使用 TTS 替代原声<span>导出时静音上传视频，并按蓝图生成旁白。</span></label><label><input checked={audioSourceMode === "source"} disabled={isAudioSourceModePending || !hasUploadedVideo} name={`audio-source-${episode.id}`} onChange={() => void onUpdateAudioSourceMode(episode.id, "source")} type="radio" />保留上传视频原声<span>{hasUploadedVideo ? "跳过 TTS，并从上传视频提取原声。" : "请先上传至少一个视频素材。"}</span></label></fieldset>{inputReadyToStart ? <><div className="production-start-gate"><div><strong>材料已准备到可开始状态</strong><p>确认后将先检查本机 Worker 的真实运行态；检查通过后才推进生产单。</p></div><button className="button button-primary" disabled={isStartProductionPending || isAudioSourceModePending} onClick={() => void onStartProduction(episode.id)} type="button">{isAudioSourceModePending ? "保存声音选择中…" : isStartProductionPending ? "检查并开始中…" : "材料准备完成，开始制作"}</button></div>{productionPreflight ? <div aria-live="polite" className={`production-preflight ${productionBlockers.length ? "is-blocked" : "is-passed"}`}><strong>生产前运行态检查：{productionBlockers.length ? `未通过（${productionBlockers.length}）` : "已通过"}</strong><p>已检查当前冻结蓝图对应的 Worker 注册、工具白名单、凭据存在性、有效性、模型权限、网络连通性和媒体库；实际媒体搜索、下载和产物验证仍在任务执行阶段确认。</p>{productionBlockers.map((blocker) => <WorkerBlockerCard blocker={blocker} connectionVersions={connectionVersionsForBlocker(blocker, episodeTasks, connectionVersions)} key={`${blocker.code}-${blocker.capability}`} onOpenBlueprint={onOpenBlueprint} onRepairConnection={onRepairConnection} />)}</div> : null}</> : null}</div></details>
+    <details className="review-section detail-card-collapsible" open={waitingForMainScript || inputReadyToStart}><summary><h3>准备生产材料</h3></summary><div className="detail-card-body">{waitingForMainScript ? <><p className="material-import-subtitle">主脚本由外部制作后上传；确认后会作为本生产单不可变输入。</p><MaterialImportForm allowMainScript bindingStatuses={materialBindingStatuses(episodeTasks)} episodeId={episode.id} existingMaterials={episodeMaterials} isPending={isMaterialPending} onImport={onImportMaterial} /></> : <><p className="material-import-subtitle">主脚本已确认。你可以继续添加补充材料；所有材料准备好后，点击下方按钮，Worker 才会开始制作。</p><MaterialImportForm allowMainScript={false} bindingStatuses={materialBindingStatuses(episodeTasks)} episodeId={episode.id} existingMaterials={episodeMaterials} isPending={isMaterialPending} onImport={onImportMaterial} /></>}{inputReadyToStart ? <><div className="production-start-gate"><div><strong>材料已准备到可开始状态</strong><p>确认后将先检查本机 Worker 的真实运行态；检查通过后才推进生产单。</p></div><button className="button button-primary" disabled={isStartProductionPending} onClick={() => void onStartProduction(episode.id)} type="button">{isStartProductionPending ? "检查并开始中…" : "材料准备完成，开始制作"}</button></div>{productionPreflight ? <div aria-live="polite" className={`production-preflight ${productionBlockers.length ? "is-blocked" : "is-passed"}`}><strong>生产前运行态检查：{productionBlockers.length ? `未通过（${productionBlockers.length}）` : "已通过"}</strong><p>已检查当前冻结蓝图对应的 Worker 注册、工具白名单、凭据存在性、有效性、模型权限、网络连通性和媒体库；实际媒体搜索、下载和产物验证仍在任务执行阶段确认。</p>{productionBlockers.map((blocker) => <WorkerBlockerCard blocker={blocker} connectionVersions={connectionVersionsForBlocker(blocker, episodeTasks, connectionVersions)} key={`${blocker.code}-${blocker.capability}`} onOpenBlueprint={onOpenBlueprint} onRepairConnection={onRepairConnection} />)}</div> : null}</> : null}</div></details>
+    {episode.stage === "storyboard_approved" && reviewPackage && reviewArtifact ? <ShotWorkbench artifacts={episodeArtifacts} artifact={reviewArtifact} audioTracks={audioTracks} blueprint={blueprint?.policy} drafts={episodeShotPreparationDrafts} episode={episode} isMaterialPending={isMaterialPending} materialRevisions={episodeMaterials} onConfirmShotPreparation={onConfirmShotPreparation} onGenerateTts={onGenerateShotTts} onImportMaterial={onImportMaterial} onSave={onSaveShotPreparationDraft} onRequestShotStructureRevision={onRequestShotStructureRevision} reviewPackage={reviewPackage} tasks={episodeTasks} /> : null}
     {reviewPackage?.stage !== "visual_review" && reviewPackage?.stage !== "storyboard_review" ? <details className="review-section detail-card-collapsible"><summary><h3>产物预览</h3></summary><div className="detail-card-body"><ArtifactPreview artifacts={episodeArtifacts} /></div></details> : null}
-    {reviewPackage?.stage === "production_ready" ? <PreRenderReviewPackage artifacts={episodeArtifacts} decisions={preRenderMemberDecisions} isTransitionPending={isTransitionPending} members={preRenderMembers} onReviewMember={onReviewPreRenderMember} onTransition={onTransition} reviewPackage={reviewPackage} /> : reviewPackage && reviewArtifact ? reviewPackage.stage === "qc_review" && isHyperframesReviewRender(reviewPackage.context_snapshot) ? <HyperframesReviewRenderPackage artifact={reviewArtifact} artifacts={reviewArtifacts} onOpenStudio={onOpenHyperframesStudio} onRequestRevision={onRequestRevision} onSubmitStudioRevision={onSubmitStudioRevision} reviewPackage={reviewPackage} tasks={episodeTasks} /> : reviewPackage.stage === "visual_review" ? <VisualReviewPackage artifact={reviewArtifact} artifacts={reviewArtifacts} reviewPackage={reviewPackage} /> : reviewPackage.stage === "storyboard_review" ? <StoryboardReviewPackage annotations={storyboardAnnotations} artifact={reviewArtifact} episode={episode} isAnnotationPending={isStoryboardAnnotationPending} materialRevisions={materialRevisions.filter((material) => material.episode_id === episode.id)} onCreateAnnotation={onCreateStoryboardAnnotation} onRegisterManualMedia={onRegisterManualMedia} onValidationChange={onStoryboardValidationChange} policy={blueprint?.policy} reviewPackage={reviewPackage} tasks={episodeTasks} /> : <TextReviewPackage artifact={reviewArtifact} reviewPackage={reviewPackage} /> : null}
+    {reviewPackage?.stage === "production_ready" ? <PreRenderReviewPackage artifacts={episodeArtifacts} decisions={preRenderMemberDecisions} isTransitionPending={isTransitionPending} members={preRenderMembers} onReviewMember={onReviewPreRenderMember} onTransition={onTransition} reviewPackage={reviewPackage} /> : reviewPackage && reviewArtifact && episode.stage !== "storyboard_approved" && !episodeShotPreparationDrafts.length ? reviewPackage.stage === "qc_review" && isHyperframesReviewRender(reviewPackage.context_snapshot) ? <HyperframesReviewRenderPackage artifact={reviewArtifact} artifacts={reviewArtifacts} onOpenStudio={onOpenHyperframesStudio} onRequestRevision={onRequestRevision} onSubmitStudioRevision={onSubmitStudioRevision} reviewPackage={reviewPackage} tasks={episodeTasks} /> : reviewPackage.stage === "visual_review" ? <VisualReviewPackage artifact={reviewArtifact} artifacts={reviewArtifacts} reviewPackage={reviewPackage} /> : reviewPackage.stage === "storyboard_review" ? <StoryboardReviewPackage annotations={storyboardAnnotations} artifact={reviewArtifact} episode={episode} isAnnotationPending={isStoryboardAnnotationPending} materialRevisions={materialRevisions.filter((material) => material.episode_id === episode.id)} onCreateAnnotation={onCreateStoryboardAnnotation} onRegisterManualMedia={onRegisterManualMedia} onValidationChange={onStoryboardValidationChange} policy={blueprint?.policy} reviewPackage={reviewPackage} tasks={episodeTasks} /> : <TextReviewPackage artifact={reviewArtifact} reviewPackage={reviewPackage} /> : null}
     <ArollTaskEvidencePanel tasks={episodeTasks} />
     <AudioTrackPanel annotations={audioTrackAnnotations.filter((annotation) => audioTracks.some((track) => track.episode_id === episode.id && track.id === annotation.audio_track_id))} onCreateAnnotation={onCreateAudioTrackAnnotation} tasks={episodeTasks} tracks={audioTracks.filter((track) => track.episode_id === episode.id)} />
     {failedFinalRender ? <FinalRenderRetryAction episodeId={episode.id} isPending={isTransitionPending} onRetry={onRetryFinalRender} /> : null}
@@ -2168,7 +2502,7 @@ function QcEditingDesk({ artifact, onOpenStudio, onRequestRevision, onSubmitStud
     setIsPending(true); setError("");
     try {
       if (submissionKind === "composition") {
-        await onSubmitStudioRevision({ composition, episodeId: artifact.episode_id, reason: reason.trim(), reviewPackageId: reviewPackage.id, workspaceRelativePath: workspace.relativePath });
+        await onSubmitStudioRevision({ composition, episodeId: artifact.episode_id, reason: reason.trim(), reviewPackageId: reviewPackage.id, sourceProjectRelativePath: projectPath, workspaceRelativePath: workspace.relativePath });
       } else {
         await onRequestRevision({ kind: "storyboard", reason: reason.trim(), reviewPackageId: reviewPackage.id });
         setSubmissionKind(null);
@@ -2179,7 +2513,7 @@ function QcEditingDesk({ artifact, onOpenStudio, onRequestRevision, onSubmitStud
       setIsPending(false);
     }
   }
-  return <section className="hyperframes-studio-launch"><h3>在 HyperFrames Studio 编辑</h3><p className="muted-copy">系统会先复制当前冻结工程；Studio 保存仅写入该副本。</p><button className="button button-primary" disabled={isPending} onClick={() => void openStudio()} type="button">在 HyperFrames Studio 中打开</button>{workspace ? <div className="studio-submit"><p>已创建可编辑副本：<code>{workspace.relativePath}</code></p><button className="button button-secondary" disabled={isPending} onClick={() => setSubmissionKind("composition")} type="button">提交 Studio 修改</button></div> : null}{submissionKind ? <div aria-label="提交 Studio 修改" aria-modal="true" className="studio-revision-dialog" role="dialog"><h4>提交 Studio 修改</h4><p className="muted-copy">请选择本次修改影响的范围。该选择只在提交时确认一次。</p><label><input checked={submissionKind === "composition"} name="studio-revision-kind" onChange={() => setSubmissionKind("composition")} type="radio" value="composition" />仅合成修订<span>保留分镜结构，冻结 Studio 工程并重新审核渲染。</span></label><label><input checked={submissionKind === "storyboard"} name="studio-revision-kind" onChange={() => setSubmissionKind("storyboard")} type="radio" value="storyboard" />分镜结构修订<span>用于删除、重排或缩短镜头；会返回分镜审核，不直接采用当前 Studio 工程。</span></label><label>本次修改说明<textarea aria-label="Studio 修改说明" onChange={(event) => setReason(event.target.value)} placeholder={submissionKind === "storyboard" ? "例如：删除 shot-02，将后续镜头前移并重算时长" : "例如：字幕改为底部居中，画面裁切为完整显示"} rows={3} value={reason} /></label><div className="review-actions"><button className="button button-secondary" disabled={isPending} onClick={() => setSubmissionKind(null)} type="button">取消</button><button className="button button-primary" disabled={isPending} onClick={() => void submitStudioRevision()} type="button">{submissionKind === "storyboard" ? "确认并返回分镜审核" : "确认并重新审核"}</button></div></div> : null}{error ? <p className="form-error">{error}</p> : null}</section>;
+  return <section className="hyperframes-studio-launch"><h3>在 HyperFrames Studio 编辑</h3><p className="muted-copy">可在同一原片内延长、缩短或移动片段标记；更换原片请返回镜头工作台。每次提交都会冻结一个新工程版本。</p><button className="button button-primary" disabled={isPending} onClick={() => void openStudio()} type="button">在 HyperFrames Studio 中打开</button>{workspace ? <div className="studio-submit"><p>已创建可编辑副本：<code>{workspace.relativePath}</code></p><button className="button button-secondary" disabled={isPending} onClick={() => setSubmissionKind("composition")} type="button">提交 Studio 修改</button></div> : null}{submissionKind ? <div aria-label="提交 Studio 修改" aria-modal="true" className="studio-revision-dialog" role="dialog"><h4>提交 Studio 修改</h4><p className="muted-copy">请选择本次修改影响的范围。该选择只在提交时确认一次。</p><label><input checked={submissionKind === "composition"} name="studio-revision-kind" onChange={() => setSubmissionKind("composition")} type="radio" value="composition" />仅合成修订<span>保留分镜结构，可调整同一原片内的片段范围并重新审核渲染。</span></label><label><input checked={submissionKind === "storyboard"} name="studio-revision-kind" onChange={() => setSubmissionKind("storyboard")} type="radio" value="storyboard" />分镜结构修订<span>用于新增、删除、重排、拆分或合并镜头；会返回分镜审核，不直接采用当前 Studio 工程。</span></label><label>本次修改说明<textarea aria-label="Studio 修改说明" onChange={(event) => setReason(event.target.value)} placeholder={submissionKind === "storyboard" ? "例如：删除 shot-02，将后续镜头前移并重算时长" : "例如：将当前片段出点延长到 5 秒"} rows={3} value={reason} /></label><div className="review-actions"><button className="button button-secondary" disabled={isPending} onClick={() => setSubmissionKind(null)} type="button">取消</button><button className="button button-primary" disabled={isPending} onClick={() => void submitStudioRevision()} type="button">{submissionKind === "storyboard" ? "确认并返回分镜审核" : "确认并重新审核"}</button></div></div> : null}{error ? <p className="form-error">{error}</p> : null}</section>;
 }
 
 function PreRenderReviewPackage({ artifacts, decisions, isTransitionPending, members, onReviewMember, onTransition, reviewPackage }: { artifacts: Artifact[]; decisions: PreRenderReviewMemberDecision[]; isTransitionPending: boolean; members: PreRenderReviewMember[]; onReviewMember: (input: PreRenderMemberReviewRequest) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; reviewPackage: ReviewPackage }) {
@@ -2478,17 +2812,33 @@ function frozenVisualInputs(reviewPackage: ReviewPackage): FrozenVisualInput[] {
 function FrozenVisualInputMedia({ episodeId, input }: { episodeId: string; input: FrozenVisualInput }) {
   const source = localArtifactUrl(episodeId, input.relativePath, input.sha256);
   const { error, url } = useLocalArtifactBlob(source);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const lightboxRef = useDialogFocus(isExpanded, () => setIsExpanded(false));
   const kind = artifactPreviewKind(input.relativePath);
+  const label = frozenVisualInputLabel(input.relativePath);
+  useEffect(() => { setIsExpanded(false); }, [input.relativePath]);
   if (error) return <p className="form-error">{error}</p>;
   if (!url || (kind !== "image" && kind !== "video")) return null;
-  return kind === "image" ? <img alt="冻结的外部视觉输入" src={url} /> : <video aria-label="冻结的外部视觉输入" controls src={url} />;
+  const expandedLabel = `${label} 放大预览`;
+  return <><ArtifactPreviewMedia kind={kind} label="冻结的外部视觉输入" source={url} /><button aria-label={`放大查看 ${label}`} className="artifact-expand-button" onClick={() => setIsExpanded(true)} type="button">放大查看</button>{isExpanded ? <div aria-label={expandedLabel} aria-modal="true" className="artifact-lightbox" onMouseDown={(event) => { if (event.target === event.currentTarget) setIsExpanded(false); }} ref={lightboxRef} role="dialog"><div className="artifact-lightbox-content"><button aria-label="关闭放大预览" className="artifact-lightbox-close" onClick={() => setIsExpanded(false)} type="button">关闭</button><ArtifactPreviewMedia kind={kind} label={expandedLabel} source={url} /></div></div> : null}</>;
+}
+
+function frozenVisualInputLabel(relativePath: string): string {
+  return (relativePath.split("/").at(-1) ?? relativePath).replace(/^[0-9a-f]{64}-/, "");
+}
+
+function FrozenVisualInputPicker({ episodeId, inputs }: { episodeId: string; inputs: FrozenVisualInput[] }) {
+  const [selectedPath, setSelectedPath] = useState(inputs[0]?.relativePath ?? "");
+  const selectedInput = inputs.find((input) => input.relativePath === selectedPath) ?? inputs[0];
+  if (!selectedInput) return null;
+  return <div className="frozen-visual-picker"><label>选择视觉输入<select aria-label="选择视觉输入" onChange={(event) => setSelectedPath(event.target.value)} value={selectedInput.relativePath}>{inputs.map((input) => <option key={`${input.relativePath}-${input.sha256}`} value={input.relativePath}>{frozenVisualInputLabel(input.relativePath)} · {(input.fileSize / 1024 / 1024).toFixed(1)} MB</option>)}</select></label><article className="frozen-visual-card"><header><strong title={selectedInput.relativePath}>{frozenVisualInputLabel(selectedInput.relativePath)}</strong><small>{(selectedInput.fileSize / 1024 / 1024).toFixed(1)} MB</small></header><div className="frozen-visual-media">{artifactPreviewKind(selectedInput.relativePath) === "image" || artifactPreviewKind(selectedInput.relativePath) === "video" ? <FrozenVisualInputMedia episodeId={episodeId} input={selectedInput} key={selectedInput.relativePath} /> : null}</div></article></div>;
 }
 
 function VisualReviewPackage({ artifact, artifacts, reviewPackage }: { artifact: Artifact; artifacts: Artifact[]; reviewPackage: ReviewPackage }) {
   if (artifact.artifact_type === "visual_asset_manifest") {
     const externalInputs = frozenVisualInputs(reviewPackage);
     const generatedVisuals = artifacts.filter((candidate) => candidate.artifact_type === "static_visual");
-    return <><TextReviewPackage artifact={artifact} reviewPackage={reviewPackage} /><section className="review-section"><h3>已冻结的外部视觉输入</h3><p className="muted-copy">以下素材是资产清单的实际依据；清单中的缺失项不会被 SVG 占位图自动补齐。</p>{externalInputs.length ? <div className="artifact-preview">{externalInputs.map((input) => <article key={`${input.relativePath}-${input.sha256}`}><strong>{input.relativePath}</strong><small>{input.sha256.slice(0, 12)}… · {input.fileSize} B</small>{artifactPreviewKind(input.relativePath) === "image" || artifactPreviewKind(input.relativePath) === "video" ? <FrozenVisualInputMedia episodeId={artifact.episode_id} input={input} /> : null}</article>)}</div> : <p className="muted-copy">本次没有导入视觉素材。</p>}</section><section className="review-section"><h3>已生成的视觉资产</h3>{generatedVisuals.length ? <ArtifactPreview artifacts={generatedVisuals} /> : <p className="muted-copy">外部素材已完整覆盖，未生成图片。</p>}</section></>;
+    return <><TextReviewPackage artifact={artifact} reviewPackage={reviewPackage} /><section className="review-section"><h3>已冻结的外部视觉输入</h3><p className="muted-copy">以下素材是资产清单的实际依据；清单中的缺失项不会被 SVG 占位图自动补齐。</p>{externalInputs.length ? <FrozenVisualInputPicker episodeId={artifact.episode_id} inputs={externalInputs} /> : <p className="muted-copy">本次没有导入视觉素材。</p>}</section><section className="review-section"><h3>已生成的视觉资产</h3>{generatedVisuals.length ? <ArtifactPreview artifacts={generatedVisuals} /> : <p className="muted-copy">外部素材已完整覆盖，未生成图片。</p>}</section></>;
   }
   const referenceGroups = artifacts.filter((candidate) => candidate.artifact_type === "visual_reference_group");
   const staticVisuals = artifacts.filter((candidate) => candidate.artifact_type === "static_visual");
@@ -2524,6 +2874,318 @@ function parseStoryboard(source: string): StoryboardReviewData | null {
   }
 }
 
+function narrationDefaults(policy?: Json): { speakingRate: number | null; voice: string } {
+  if (!policy || Array.isArray(policy) || typeof policy !== "object") return { speakingRate: null, voice: "未配置" };
+  const narration = policy.narration;
+  if (!narration || Array.isArray(narration) || typeof narration !== "object") return { speakingRate: null, voice: "未配置" };
+  const voice = narration.voice;
+  if (!voice || Array.isArray(voice) || typeof voice !== "object") return { speakingRate: null, voice: "未配置" };
+  return { speakingRate: typeof voice.speaking_rate === "number" ? voice.speaking_rate : null, voice: typeof voice.name === "string" && voice.name.trim() ? voice.name : "未配置" };
+}
+
+function shotTtsTask(task: Task, reviewPackageId: string, shotId: string): boolean {
+  const snapshot = task.input_snapshot;
+  if (!snapshot || Array.isArray(snapshot) || typeof snapshot !== "object") return false;
+  const preparation = snapshot.shot_preparation;
+  return task.task_type === "generate_narration" && preparation !== null && typeof preparation === "object" && !Array.isArray(preparation) && preparation.review_package_id === reviewPackageId && preparation.shot_id === shotId;
+}
+
+function taskSourceVideoArtifactId(task: Task | undefined): string | null {
+  const snapshot = task?.input_snapshot;
+  if (!snapshot || Array.isArray(snapshot) || typeof snapshot !== "object") return null;
+  const source = snapshot.source_video_artifact;
+  return source && !Array.isArray(source) && typeof source === "object" && typeof source.id === "string" ? source.id : null;
+}
+
+function taskTtsText(task: Task | undefined): string | null {
+  const snapshot = task?.input_snapshot;
+  if (!snapshot || Array.isArray(snapshot) || typeof snapshot !== "object") return null;
+  const media = snapshot.media;
+  if (!media || Array.isArray(media) || typeof media !== "object") return null;
+  const narration = media.narration;
+  if (!narration || Array.isArray(narration) || typeof narration !== "object") return null;
+  return typeof narration.text === "string" ? narration.text : null;
+}
+
+export function shotClipTask(task: Task, draftId: string | undefined, reviewPackageId: string, shotId: string): boolean {
+  const snapshot = task.input_snapshot;
+  if (!draftId || !snapshot || Array.isArray(snapshot) || typeof snapshot !== "object") return false;
+  const preparation = snapshot.shot_preparation;
+  return task.task_type === "generate_a_roll" || task.task_type === "generate_b_roll"
+    ? Boolean(preparation && !Array.isArray(preparation) && typeof preparation === "object" && preparation.draft_id === draftId && preparation.review_package_id === reviewPackageId && preparation.shot_id === shotId)
+    : false;
+}
+
+type ClipSegmentDraft = { endSeconds: number; startSeconds: number };
+
+function ShotMarkerPreview({ activeSegment, disabled, episodeId, material, maxDuration, onChange, onDuration, shotId }: { activeSegment: ClipSegmentDraft; disabled: boolean; episodeId: string; material: MaterialRevision; maxDuration: number; onChange: (segment: ClipSegmentDraft) => void; onDuration: (duration: number) => void; shotId: string }) {
+  const source = localArtifactUrl(episodeId, material.storage_path, material.sha256);
+  const { error, url } = useLocalArtifactBlob(source);
+  const previewRef = useRef<HTMLVideoElement>(null);
+  const seekPreview = (seconds: number) => { if (previewRef.current) previewRef.current.currentTime = seconds; };
+  return <figure className="shot-marker-preview">
+    {url ? <video aria-label={`${material.source_path} 预览`} controls onLoadedMetadata={(event) => { const duration = event.currentTarget.duration; if (Number.isFinite(duration) && duration > 0) onDuration(duration); }} preload="metadata" ref={previewRef} src={url} /> : error ? <p className="form-error">{error}</p> : <LoadingIndicator compact label="正在加载素材预览…" />}
+    <div aria-label={`${shotId} 视频缩略图轨道`} className="clip-filmstrip">
+      {url ? Array.from({ length: 8 }, (_, index) => <video aria-hidden="true" key={index} muted onLoadedMetadata={(event) => { event.currentTarget.currentTime = Math.max(0, ((index + 0.5) / 8) * event.currentTarget.duration); }} playsInline preload="metadata" src={url} />) : Array.from({ length: 8 }, (_, index) => <span aria-hidden="true" key={index} />)}
+      <Range disabled={disabled} max={maxDuration} min={0} onChange={([startSeconds, endSeconds]) => { onChange({ endSeconds, startSeconds }); seekPreview(startSeconds); }} renderThumb={({ props, index }) => { const { key, ...thumbProps } = props; return <div key={key} {...thumbProps} aria-label={`${shotId} ${index === 0 ? "入点" : "出点"}`} className="clip-range-thumb" />; }} renderTrack={({ props, children }) => <div {...props} className="clip-filmstrip-track"><div className="clip-filmstrip-selection" style={{ left: `${(activeSegment.startSeconds / maxDuration) * 100}%`, width: `${((activeSegment.endSeconds - activeSegment.startSeconds) / maxDuration) * 100}%` }} />{children}</div>} step={0.001} values={[activeSegment.startSeconds, activeSegment.endSeconds]} />
+    </div>
+    <figcaption>{material.source_path} · {(material.file_size / 1024 / 1024).toFixed(1)} MB</figcaption>
+  </figure>;
+}
+
+function draftClipSegments(draft: ShotPreparationDraft | undefined, fallbackDuration: number): ClipSegmentDraft[] {
+  const raw = (draft as (ShotPreparationDraft & { clip_segments?: Json }) | undefined)?.clip_segments;
+  if (Array.isArray(raw)) {
+    const segments = raw.filter((item): item is { end_seconds: number; start_seconds: number } => item !== null && typeof item === "object" && !Array.isArray(item) && typeof item.start_seconds === "number" && typeof item.end_seconds === "number");
+    if (segments.length) return segments.map((segment) => ({ endSeconds: segment.end_seconds, startSeconds: segment.start_seconds }));
+  }
+  if (draft?.clip_start_seconds != null && draft.clip_end_seconds != null) return [{ endSeconds: draft.clip_end_seconds, startSeconds: draft.clip_start_seconds }];
+  return [{ endSeconds: fallbackDuration, startSeconds: 0 }];
+}
+
+function shotIsFrozen(draft: ShotPreparationDraft | undefined): boolean {
+  return Boolean((draft as (ShotPreparationDraft & { frozen_at?: string | null }) | undefined)?.frozen_at);
+}
+
+function ShotWorkbench({ artifact, artifacts, audioTracks, blueprint, drafts, episode, isMaterialPending, materialRevisions, onConfirmShotPreparation, onGenerateTts, onImportMaterial, onSave, reviewPackage, tasks, onRequestShotStructureRevision }: { artifact: Artifact; artifacts: Artifact[]; audioTracks: AudioTrack[]; blueprint?: Json; drafts: ShotPreparationDraft[]; episode: Episode; isMaterialPending: boolean; materialRevisions: MaterialRevision[]; onConfirmShotPreparation: (input: ShotPreparationConfirmationRequest) => Promise<void>; onGenerateTts: (input: ShotTtsGenerationRequest) => Promise<void>; onImportMaterial: (input: MaterialImportRequest) => Promise<void>; onSave: (input: ShotPreparationDraftRequest) => Promise<void>; reviewPackage: ReviewPackage; tasks: Task[]; onRequestShotStructureRevision: (input: ShotStructureRevisionRequest) => Promise<void> }) {
+  const [isFreezePending, setIsFreezePending] = useState(false);
+  const [freezeError, setFreezeError] = useState("");
+  const source = localArtifactUrl(artifact.episode_id, artifact.relative_path, artifact.sha256);
+  const { content, error } = useTextArtifactContent(source);
+  const storyboard = content ? parseStoryboard(content) : null;
+  if (error) return <section className="review-section shot-workbench"><h3>镜头工作台</h3><p className="form-error">{error}</p></section>;
+  if (!content || !storyboard) return <section className="review-section shot-workbench"><h3>镜头工作台</h3>{content ? <p className="form-error">分镜产物格式无效，无法建立镜头准备草稿。</p> : <LoadingIndicator compact label="正在读取镜头工作台…" />}</section>;
+  const packageDrafts = drafts.filter((draft) => draft.review_package_id === reviewPackage.id);
+  const defaults = narrationDefaults(blueprint);
+  const currentPendingIndex = storyboard.shots.findIndex((shot) => !shotIsFrozen(packageDrafts.find((draft) => draft.shot_id === shot.id)));
+  const frozenCount = storyboard.shots.filter((shot) => shotIsFrozen(packageDrafts.find((draft) => draft.shot_id === shot.id))).length;
+  const runningCount = packageDrafts.filter((draft) => draft.video_status === "running" || draft.audio_status === "running").length;
+  const missingCount = storyboard.shots.filter((shot) => !packageDrafts.find((draft) => draft.shot_id === shot.id)?.selected_material_revision_id).length;
+  const currentPendingShot = currentPendingIndex >= 0 ? storyboard.shots[currentPendingIndex]?.id ?? "—" : "—";
+  async function freezeAll() {
+    setIsFreezePending(true); setFreezeError("");
+    try { await onConfirmShotPreparation({ episodeId: episode.id, reviewPackageId: reviewPackage.id }); }
+    catch (cause) { setFreezeError(cause instanceof Error ? cause.message : "无法冻结镜头配置并进入 Studio。"); }
+    finally { setIsFreezePending(false); }
+  }
+  return <section aria-label="镜头工作台" className="review-section shot-workbench"><header className="shot-workbench-header"><div><small>Studio 前</small><h3>镜头工作台</h3></div><span>{frozenCount} / {storyboard.shots.length} 已冻结 · {runningCount} 个音频生成中 · {missingCount} 个待补素材 · 当前待处理 {currentPendingShot}</span></header><p className="muted-copy">这里只保存原片和片段标记，不会提前裁剪视频；进入 Studio 后仍可延长、缩短或移动标记，最终生成前都可以继续修改。</p><div className="shot-workbench-list">{storyboard.shots.map((shot, index) => <ShotPreparationCard artifacts={artifacts} audioTracks={audioTracks} defaults={defaults} draft={packageDrafts.find((candidate) => candidate.shot_id === shot.id)} episode={episode} isInitiallyOpen={index === currentPendingIndex} isMaterialPending={isMaterialPending} key={shot.id} materialRevisions={materialRevisions} onGenerateTts={onGenerateTts} onImportMaterial={onImportMaterial} onSave={onSave} reviewPackage={reviewPackage} shot={shot} tasks={tasks} onRequestShotStructureRevision={onRequestShotStructureRevision} shots={storyboard.shots} />)}</div><div className="shot-workbench-freeze"><button className="button button-primary" disabled={isFreezePending || frozenCount === storyboard.shots.length} onClick={() => void freezeAll()} type="button">{isFreezePending ? "正在进入 Studio…" : frozenCount === storyboard.shots.length ? "配置已冻结" : "冻结配置并进入 Studio"}</button>{freezeError ? <p className="form-error" role="alert">{freezeError}</p> : null}</div></section>;
+}
+
+function ShotPreparationCard({ artifacts, audioTracks, defaults, draft, episode, isInitiallyOpen, isMaterialPending, materialRevisions, onGenerateTts, onImportMaterial, onSave, reviewPackage, shot, tasks, onRequestShotStructureRevision, shots }: { artifacts: Artifact[]; audioTracks: AudioTrack[]; defaults: { speakingRate: number | null; voice: string }; draft?: ShotPreparationDraft; episode: Episode; isInitiallyOpen: boolean; isMaterialPending: boolean; materialRevisions: MaterialRevision[]; onGenerateTts: (input: ShotTtsGenerationRequest) => Promise<void>; onImportMaterial: (input: MaterialImportRequest) => Promise<void>; onSave: (input: ShotPreparationDraftRequest) => Promise<void>; reviewPackage: ReviewPackage; shot: StoryboardShot; tasks: Task[]; onRequestShotStructureRevision: (input: ShotStructureRevisionRequest) => Promise<void>; shots: StoryboardShot[] }) {
+  const [isOpen, setIsOpen] = useState(isInitiallyOpen);
+  const [audioMode, setAudioMode] = useState<ShotPreparationDraft["audio_mode"]>(draft?.audio_mode ?? "tts");
+  const [subtitleText, setSubtitleText] = useState(draft?.subtitle_text ?? shot.scriptSegment);
+  const [ttsText, setTtsText] = useState(draft?.tts_text ?? draft?.subtitle_text ?? shot.scriptSegment);
+  const [ttsVoice, setTtsVoice] = useState(draft?.tts_voice ?? defaults.voice);
+  const [ttsSpeakingRate, setTtsSpeakingRate] = useState(String(draft?.tts_speaking_rate ?? defaults.speakingRate ?? ""));
+  const [subtitlesEnabled, setSubtitlesEnabled] = useState(draft?.subtitles_enabled ?? true);
+  const [materialRevisionId, setMaterialRevisionId] = useState(draft?.selected_material_revision_id ?? "");
+  const [clipSegments, setClipSegments] = useState<ClipSegmentDraft[]>(() => draftClipSegments(draft, shot.durationSeconds));
+  const [activeSegmentIndex, setActiveSegmentIndex] = useState(0);
+  const [sourceDuration, setSourceDuration] = useState<number | null>(null);
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState("");
+  const frozen = shotIsFrozen(draft);
+  const eligibleMaterials = materialRevisions.filter((material) => material.material_type === "video" && material.material_purpose === (shot.shotType === "a_roll" ? "a_roll" : "b_roll"));
+  const selectedMaterial = eligibleMaterials.find((material) => material.id === materialRevisionId);
+  useEffect(() => { if (isInitiallyOpen) setIsOpen(true); }, [isInitiallyOpen]);
+  useEffect(() => {
+    if (!draft) return;
+    setAudioMode(draft.audio_mode); setSubtitleText(draft.subtitle_text); setTtsText(draft.tts_text ?? draft.subtitle_text); setTtsVoice(draft.tts_voice ?? defaults.voice); setTtsSpeakingRate(String(draft.tts_speaking_rate ?? defaults.speakingRate ?? "")); setSubtitlesEnabled(draft.subtitles_enabled); setMaterialRevisionId(draft.selected_material_revision_id ?? ""); setClipSegments(draftClipSegments(draft, shot.durationSeconds));
+  }, [draft, defaults.speakingRate, defaults.voice, shot.durationSeconds]);
+  const maxDuration = sourceDuration ?? Math.max(shot.durationSeconds, ...clipSegments.map((segment) => segment.endSeconds), 1);
+  const activeSegment = clipSegments[activeSegmentIndex] ?? clipSegments[0];
+  const totalClipDuration = clipSegments.reduce((total, segment) => total + Math.max(0, segment.endSeconds - segment.startSeconds), 0);
+  const segmentsValid = Boolean(materialRevisionId) && clipSegments.length > 0 && clipSegments.every((segment) => Number.isFinite(segment.startSeconds) && Number.isFinite(segment.endSeconds) && segment.startSeconds >= 0 && segment.endSeconds > segment.startSeconds && segment.endSeconds <= maxDuration);
+  const updateSegment = (index: number, next: Partial<ClipSegmentDraft>) => setClipSegments((current) => current.map((segment, segmentIndex) => segmentIndex === index ? { ...segment, ...next } : segment));
+  async function save(): Promise<boolean> {
+    if (!segmentsValid) { setError("请选择原片并完成至少一个有效片段标记。"); return false; }
+    if (!subtitleText.trim()) { setError("请填写字幕正文；如不需要字幕，请关闭字幕显示。"); return false; }
+    setError(""); setIsPending(true);
+    try {
+      const spokenText = ttsText.trim(); const rate = Number(ttsSpeakingRate);
+      if (audioMode === "tts" && (!spokenText || !ttsVoice.trim() || !Number.isFinite(rate) || rate <= 0)) { setError("请填写口播内容、声音和有效语速。"); return false; }
+      await onSave({ audioMode, clipSegments: clipSegments.map((segment) => ({ end_seconds: segment.endSeconds, start_seconds: segment.startSeconds })), episodeId: episode.id, materialRevisionId, reviewPackageId: reviewPackage.id, shotId: shot.id, subtitleText: audioMode === "tts" ? spokenText : subtitleText.trim(), subtitlesEnabled, ttsSpeakingRate: Number.isFinite(rate) && rate > 0 ? rate : null, ttsText: audioMode === "tts" ? spokenText : null, ttsVoice: audioMode === "tts" ? ttsVoice.trim() : null });
+      setIsOpen(false); return true;
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "无法保存镜头准备草稿。"); return false; }
+    finally { setIsPending(false); }
+  }
+
+  const ttsTasks = tasks.filter((task) => shotTtsTask(task, reviewPackage.id, shot.id)).sort((left, right) => right.created_at.localeCompare(left.created_at));
+  const latestTtsTask = ttsTasks[0]; const currentVideoArtifact = artifacts.find((artifact) => artifact.id === draft?.current_video_artifact_id); const currentTask = draft?.current_tts_task_id ? tasks.find((task) => task.id === draft.current_tts_task_id) : latestTtsTask; const isCurrentText = !currentTask || taskTtsText(currentTask) === (draft?.tts_text ?? ttsText); const isGenerating = latestTtsTask?.status === "ready" || latestTtsTask?.status === "running"; const ttsError = draft?.tts_error ?? (latestTtsTask?.status === "failed" ? "口播任务失败，请重试。" : "");
+  const currentTrackCandidate = audioTracks.find((track) => track.id === draft?.current_audio_track_id); const currentTrackTask = currentTrackCandidate ? tasks.find((task) => task.id === currentTrackCandidate.source_task_id) : undefined; const currentTrack = currentTrackCandidate && (audioMode !== "source" || taskSourceVideoArtifactId(currentTrackTask) === draft?.current_video_artifact_id) ? currentTrackCandidate : undefined; const shotTracks = audioTracks.filter((track) => track.cue_id === shot.id && track.source_review_package_id === reviewPackage.id); const clipError = draft?.video_error ?? ""; const clipStatus = frozen ? "已冻结" : draft?.video_status === "running" ? "生成中" : clipError ? "失败" : currentVideoArtifact ? "已准备" : "待保存"; const audioLabel = audioMode === "tts" ? "TTS 口播" : audioMode === "source" ? "保留原声" : "无口播"; const audioStatus = draft?.audio_status === "ready" ? "已准备" : draft?.audio_status === "running" ? "生成中" : draft?.audio_status === "failed" ? "失败" : "待准备";
+  async function generate(retry = false) { setError(""); try { if (!await save()) return; await onGenerateTts({ episodeId: episode.id, reviewPackageId: reviewPackage.id, retry, shotId: shot.id }); } catch (cause) { setError(cause instanceof Error ? cause.message : "无法创建逐镜头口播任务。"); } }
+  return <article className={`shot-preparation-card${isOpen ? " is-open" : ""}${frozen ? " is-frozen" : ""}`}>
+    <button aria-expanded={isOpen} className="shot-preparation-summary" onClick={() => setIsOpen((open) => !open)} type="button"><span><strong>{shot.id}</strong><small>{shot.shotType === "a_roll" ? "A-roll" : "B-roll"} · 建议 {shot.durationSeconds} 秒</small></span><span><small>画面：{clipStatus}</small><small>音频：{audioLabel} · {audioMode === "none" ? "已明确静音" : audioStatus}</small><small>{frozen ? "已冻结" : "可编辑"}</small></span></button>
+    {isOpen ? <div className="shot-preparation-body">
+      <section aria-label={`${shot.id} 画面准备`} className="shot-clip-editor">
+        <h4>准备片段</h4>
+        <div className="shot-source-toolbar">
+          <label>当前原片<select aria-label={`${shot.id} 当前原片`} disabled={frozen} onChange={(event) => { setMaterialRevisionId(event.target.value); setSourceDuration(null); setClipSegments([{ endSeconds: shot.durationSeconds, startSeconds: 0 }]); setActiveSegmentIndex(0); }} value={materialRevisionId}><option value="">选择已上传原片</option>{eligibleMaterials.map((material) => <option key={material.id} value={material.id}>{material.source_path}</option>)}</select></label>
+          <ShotSourceMaterialForm episodeId={episode.id} existingMaterials={eligibleMaterials} isPending={isMaterialPending} onImport={onImportMaterial} shot={shot} />
+        </div>
+        <section aria-label={`${shot.id} 片段标记`} className="manual-clip-selection">
+          <header className="clip-editor-header"><strong>片段标记</strong><span>共 {totalClipDuration.toFixed(3)} 秒 · 建议 {shot.durationSeconds} 秒</span></header>
+          <div aria-label={`${shot.id} 片段列表`} className="clip-segment-tabs">{clipSegments.map((segment, index) => <div className={`clip-segment-tab${activeSegmentIndex === index ? " is-active" : ""}`} key={index}><button disabled={frozen} onClick={() => setActiveSegmentIndex(index)} type="button"><strong>片段 {index + 1}</strong><span>{segment.startSeconds.toFixed(3)}–{segment.endSeconds.toFixed(3)}s</span></button><button aria-label={`删除片段 ${index + 1}`} disabled={frozen || clipSegments.length === 1} onClick={() => { setClipSegments((current) => current.filter((_, segmentIndex) => segmentIndex !== index)); setActiveSegmentIndex((current) => Math.max(0, Math.min(current, clipSegments.length - 2))); }} type="button">×</button></div>)}<button aria-label="添加片段" className="clip-segment-add" disabled={frozen || !materialRevisionId} onClick={() => { setClipSegments((current) => [...current, { endSeconds: Math.min(maxDuration, shot.durationSeconds), startSeconds: 0 }]); setActiveSegmentIndex(clipSegments.length); }} type="button">＋ 添加片段</button></div>
+          {activeSegment && selectedMaterial ? <><ShotMarkerPreview activeSegment={activeSegment} disabled={frozen} episodeId={episode.id} material={selectedMaterial} maxDuration={maxDuration} onChange={(segment) => updateSegment(activeSegmentIndex, segment)} onDuration={(duration) => { setSourceDuration(duration); setClipSegments((current) => current.map((segment) => ({ startSeconds: Math.min(segment.startSeconds, Math.max(0, duration - 0.001)), endSeconds: Math.min(segment.endSeconds, duration) }))); }} shotId={shot.id} /><div className="clip-range-values"><label>入点<input aria-label={`${shot.id} 片段${activeSegmentIndex + 1} 入点（秒）`} disabled={frozen} min="0" onChange={(event) => updateSegment(activeSegmentIndex, { startSeconds: Number(event.target.value) })} step="0.001" type="number" value={activeSegment.startSeconds} /></label><span>→</span><label>出点<input aria-label={`${shot.id} 片段${activeSegmentIndex + 1} 出点（秒）`} disabled={frozen} min="0" onChange={(event) => updateSegment(activeSegmentIndex, { endSeconds: Number(event.target.value) })} step="0.001" type="number" value={activeSegment.endSeconds} /></label><small>本段 {(activeSegment.endSeconds - activeSegment.startSeconds).toFixed(3)} 秒</small></div></> : null}
+          <p className={segmentsValid ? "clip-duration-status is-valid" : "clip-duration-status is-invalid"}>{segmentsValid ? `当前共 ${totalClipDuration.toFixed(3)} 秒；建议 ${shot.durationSeconds} 秒，仅作参考。` : "请先选择原片并填写有效的入点和出点。"}</p>
+        </section>
+      </section>
+      <div className="shot-preparation-fields">
+        <fieldset className="shot-audio-mode" disabled={frozen}><legend>音频模式</legend><label><input checked={audioMode === "tts"} name={episode.id + "-" + shot.id + "-audio"} onChange={() => setAudioMode("tts")} type="radio" /><span>TTS 口播</span></label><label><input checked={audioMode === "source"} name={episode.id + "-" + shot.id + "-audio"} onChange={() => setAudioMode("source")} type="radio" /><span>保留原声</span></label><label><input checked={audioMode === "none"} name={episode.id + "-" + shot.id + "-audio"} onChange={() => setAudioMode("none")} type="radio" /><span>无口播</span></label></fieldset>
+        {audioMode === "tts" ? <>
+          <label className="shot-tts-copy-label">口播内容（同时作为 TTS 字幕正文）<textarea aria-label={`${shot.id} 口播内容`} disabled={frozen} onChange={(event) => { setTtsText(event.target.value); setSubtitleText(event.target.value); }} rows={3} value={ttsText} /></label>
+          <div className="shot-tts-copy-actions"><button className="button button-link" disabled={frozen || isPending || isGenerating} onClick={() => { setTtsText(shot.scriptSegment); setSubtitleText(shot.scriptSegment); }} type="button">恢复分镜文案</button></div>
+          <div className="shot-tts-settings"><label>声音<select aria-label={`${shot.id} TTS 声音`} disabled={frozen} onChange={(event) => setTtsVoice(event.target.value)} value={ttsVoice}><option value={ttsVoice}>{ttsVoice}</option>{defaults.voice !== ttsVoice ? <option value={defaults.voice}>{defaults.voice}</option> : null}</select></label><label>语速<input aria-label={`${shot.id} TTS 语速`} disabled={frozen} min="0.1" onChange={(event) => setTtsSpeakingRate(event.target.value)} step="0.01" type="number" value={ttsSpeakingRate} /></label><button className="button button-secondary" disabled={frozen || isPending || isGenerating} onClick={() => { setTtsVoice(defaults.voice); setTtsSpeakingRate(String(defaults.speakingRate ?? "")); }} type="button">恢复默认声音</button><button className="button button-primary" disabled={frozen || isPending || isGenerating} onClick={() => void generate(Boolean(latestTtsTask?.status === "failed"))} type="button">{isGenerating ? "口播生成中…" : currentTrack ? "重新生成此镜头口播" : "生成此镜头口播"}</button></div>
+          {currentTrack || draft?.tts_actual_duration_seconds || ttsError ? <div className="shot-tts-generation">{currentTrack && isCurrentText ? <TtsTrackPreview episodeId={episode.id} label={`${shot.id} 当前口播`} track={currentTrack} /> : currentTrack ? <p className="muted-copy">当前音频对应旧口播文案；保存新文案并重新生成后才会切换。</p> : null}{draft?.tts_actual_duration_seconds && isCurrentText ? <p className="shot-duration-feedback">实际音频 {draft.tts_actual_duration_seconds.toFixed(3)} 秒 · 目标镜头 {shot.durationSeconds} 秒 · 差值 {(draft.tts_actual_duration_seconds - shot.durationSeconds).toFixed(3)} 秒</p> : null}{ttsError ? <p className="form-error" role="alert">{ttsError} <button className="button-link" onClick={() => void generate(true)} type="button">安全重试</button></p> : null}</div> : null}
+        </> : audioMode === "source" ? <><label>字幕正文<textarea disabled={frozen} onChange={(event) => setSubtitleText(event.target.value)} rows={3} value={subtitleText} /></label><p className="muted-copy">原片音轨会随片段标记进入 Studio；调整标记后会同步使用对应原声。</p></> : <><label>字幕正文<textarea disabled={frozen} onChange={(event) => setSubtitleText(event.target.value)} rows={3} value={subtitleText} /></label><p className="muted-copy">保留原声和无口播模式不会创建 TTS 任务。</p></>}
+        <div className="shot-audio-history">{shotTracks.length > (currentTrack ? 1 : 0) ? <small>历史音轨保留：{shotTracks.filter((track) => track.id !== currentTrack?.id).length} 个版本</small> : null}</div><label className="checkbox-label"><input checked={subtitlesEnabled} disabled={frozen} onChange={(event) => setSubtitlesEnabled(event.target.checked)} type="checkbox" />显示字幕</label>
+      </div>
+      <div className="shot-preparation-actions"><button className="button button-primary" disabled={frozen || isPending} onClick={() => void save()} type="button">{isPending ? "保存中…" : "保存草稿"}</button>{error ? <p className="form-error" role="alert">{error}</p> : null}</div>
+    </div> : null}
+    <ShotStructureRevisionForm episodeId={episode.id} onSubmit={onRequestShotStructureRevision} reviewPackageId={reviewPackage.id} shot={shot} shots={shots} />
+  </article>;
+}
+
+function ShotStructureRevisionForm({ episodeId, onSubmit, reviewPackageId, shot, shots }: { episodeId: string; onSubmit: (input: ShotStructureRevisionRequest) => Promise<void>; reviewPackageId: string; shot: StoryboardShot; shots: StoryboardShot[] }) {
+  const [kind, setKind] = useState<StoryboardStructureOperation["kind"]>("add_after");
+  const [reason, setReason] = useState("");
+  const [scriptSegment, setScriptSegment] = useState("");
+  const [duration, setDuration] = useState(String(shot.durationSeconds));
+  const [shotType, setShotType] = useState<StoryboardShot["shotType"]>(shot.shotType);
+  const [mergeShotId, setMergeShotId] = useState(shots.find((candidate) => candidate.id !== shot.id)?.id ?? "");
+  const [reorderIds, setReorderIds] = useState(shots.map((candidate) => candidate.id).join(","));
+  const [splitScript, setSplitScript] = useState(shot.scriptSegment);
+  const [splitDuration, setSplitDuration] = useState(String((shot.durationSeconds / 2).toFixed(3)));
+  const [error, setError] = useState("");
+  const [isPending, setIsPending] = useState(false);
+  const [isStructureOpen, setIsStructureOpen] = useState(false);
+  const otherShots = shots.filter((candidate) => candidate.id !== shot.id);
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!reason.trim()) { setError("请填写结构修订原因。"); return; }
+    const seconds = Number(duration);
+    let operation: StoryboardStructureOperation;
+    if (kind === "add_after") {
+      if (!scriptSegment.trim() || !Number.isFinite(seconds) || seconds <= 0) { setError("新增镜头需要文案和有效目标时长。"); return; }
+      operation = { kind, afterShotId: shot.id, shot: { ...shot, id: `new-shot-${Date.now()}`, scriptSegment: scriptSegment.trim(), durationSeconds: seconds, shotType } };
+    } else if (kind === "delete") operation = { kind, shotId: shot.id };
+    else if (kind === "split") {
+      const first = Number(splitDuration);
+      const second = shot.durationSeconds - first;
+      if (!splitScript.trim() || !Number.isFinite(first) || first <= 0 || second <= 0) { setError("拆分镜头需要两段有效时长，并且总时长必须保持不变。"); return; }
+      operation = { kind, shotId: shot.id, parts: [{ id: `split-${Date.now()}-1`, scriptSegment: splitScript.trim(), durationSeconds: first }, { id: `split-${Date.now()}-2`, scriptSegment: splitScript.trim(), durationSeconds: second }] };
+    } else if (kind === "merge") {
+      if (!mergeShotId) { setError("请选择相邻镜头合并。"); return; }
+      operation = { kind, shotIds: [shot.id, mergeShotId], newShotId: `merge-${Date.now()}` };
+    } else if (kind === "reorder") operation = { kind, shotIds: reorderIds.split(",").map((id) => id.trim()).filter(Boolean) };
+    else if (kind === "change_type") operation = { kind, shotId: shot.id, shotType };
+    else if (!Number.isFinite(seconds) || seconds <= 0) { setError("请输入有效目标时长。"); return; }
+    else operation = { kind, shotId: shot.id, durationSeconds: seconds };
+    setError(""); setIsPending(true);
+    try { await onSubmit({ episodeId, operation, reason: reason.trim(), reviewPackageId }); setReason(""); }
+    catch (cause) { setError(cause instanceof Error ? cause.message : "无法提交分镜结构修订。"); }
+    finally { setIsPending(false); }
+  }
+  return <details className="shot-structure-menu" onToggle={(event) => setIsStructureOpen(event.currentTarget.open)}><summary>调整镜头</summary>{isStructureOpen ? <div className="shot-structure-revision-body"><form onSubmit={(event) => void submit(event)}><label>结构操作<select aria-label={`${shot.id} 结构操作`} onChange={(event) => setKind(event.target.value as StoryboardStructureOperation["kind"])} value={kind}><option value="add_after">在此镜头后新增</option><option value="delete">删除此镜头</option><option value="split">拆分此镜头</option><option value="merge">合并相邻镜头</option><option value="reorder">重排镜头</option><option value="change_type">修改镜头类型</option><option value="change_duration">修改目标时长</option></select></label>{kind === "add_after" ? <><label>新镜头文案<textarea onChange={(event) => setScriptSegment(event.target.value)} required rows={2} value={scriptSegment} /></label><label>目标时长（秒）<input min="0.1" onChange={(event) => setDuration(event.target.value)} step="0.001" type="number" value={duration} /></label><label>镜头类型<select onChange={(event) => setShotType(event.target.value as StoryboardShot["shotType"])} value={shotType}><option value="a_roll">A-roll</option><option value="b_roll">B-roll</option></select></label></> : null}{kind === "split" ? <><label>拆分后文案<textarea onChange={(event) => setSplitScript(event.target.value)} required rows={2} value={splitScript} /></label><label>第一段时长（秒）<input min="0.1" onChange={(event) => setSplitDuration(event.target.value)} step="0.001" type="number" value={splitDuration} /></label><p className="muted-copy">第二段自动保持原镜头总时长。</p></> : null}{kind === "merge" ? <label>合并对象<select onChange={(event) => setMergeShotId(event.target.value)} value={mergeShotId}><option value="">选择相邻镜头</option>{otherShots.map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.id}</option>)}</select></label> : null}{kind === "reorder" ? <label>镜头顺序（逗号分隔）<input onChange={(event) => setReorderIds(event.target.value)} value={reorderIds} /></label> : null}{kind === "change_type" ? <label>新的镜头类型<select onChange={(event) => setShotType(event.target.value as StoryboardShot["shotType"])} value={shotType}><option value="a_roll">A-roll</option><option value="b_roll">B-roll</option></select></label> : null}{kind === "change_duration" ? <label>新的目标时长（秒）<input min="0.1" onChange={(event) => setDuration(event.target.value)} step="0.001" type="number" value={duration} /></label> : null}<label>修订原因<textarea onChange={(event) => setReason(event.target.value)} required rows={2} value={reason} /></label><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "提交中…" : "提交分镜结构修订"}</button>{error ? <p className="form-error" role="alert">{error}</p> : null}</form></div> : null}</details>;
+}
+
+function TtsTrackPreview({ episodeId, label, track }: { episodeId: string; label: string; track: AudioTrack }) {
+  const source = localArtifactUrl(episodeId, track.relative_path, track.sha256);
+  const { error, url } = useLocalArtifactBlob(source);
+  return url ? <div className="shot-tts-preview"><audio aria-label={label} controls preload="metadata" src={url} /><span>版本音频 · {track.duration_seconds.toFixed(3)} 秒</span></div> : error ? <p className="muted-copy">{error}</p> : <LoadingIndicator compact label="正在加载当前口播…" />;
+}
+
+function ShotSyncPreview({ audioMode, episodeId, track, video }: { audioMode: ShotPreparationDraft["audio_mode"]; episodeId: string; track?: AudioTrack; video: Artifact }) {
+  const videoSource = localArtifactUrl(video.episode_id, video.relative_path, video.sha256);
+  const audioSource = track ? localArtifactUrl(episodeId, track.relative_path, track.sha256) : null;
+  const videoBlob = useLocalArtifactBlob(videoSource);
+  const audioBlob = useLocalArtifactBlob(audioSource);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [actualVideoDuration, setActualVideoDuration] = useState<number | null>(null);
+  async function play() {
+    if (!videoRef.current || (audioMode !== "none" && !audioRef.current)) return;
+    videoRef.current.currentTime = 0;
+    if (audioRef.current) audioRef.current.currentTime = 0;
+    try {
+      await Promise.all([videoRef.current.play(), audioRef.current?.play()]);
+      setIsPlaying(true);
+    } catch {
+      setIsPlaying(false);
+    }
+  }
+  function stop() {
+    videoRef.current?.pause();
+    audioRef.current?.pause();
+    setIsPlaying(false);
+  }
+  if (videoBlob.error || audioBlob.error) return <p className="form-error">{videoBlob.error ?? audioBlob.error}</p>;
+  if (!videoBlob.url || (audioMode !== "none" && !audioBlob.url)) return <LoadingIndicator compact label="正在加载同步预览…" />;
+  return <div className="shot-sync-preview"><div className="shot-sync-preview-actions"><button className="button button-secondary" onClick={() => (isPlaying ? stop() : void play())} type="button">{isPlaying ? "停止同步预览" : "画面＋声音同步预览"}</button><span>{audioMode === "none" ? "无口播 · 视频静音" : "从 0 秒同步播放当前采用音轨"}</span></div><video aria-label="当前采用视频同步预览" controls muted={audioMode === "none"} onEnded={stop} onLoadedMetadata={(event) => { const duration = event.currentTarget.duration; setActualVideoDuration(Number.isFinite(duration) ? duration : null); }} preload="metadata" ref={videoRef} src={videoBlob.url} />{audioMode !== "none" ? <audio aria-label="当前采用音频同步预览" preload="metadata" ref={audioRef} src={audioBlob.url} /> : null}<small>视频实际时长：{actualVideoDuration === null ? "读取中" : `${actualVideoDuration.toFixed(3)} 秒`}</small></div>;
+}
+
+export function ShotConfirmationQueue({ artifact, artifacts, audioTracks, drafts, episode, onConfirm, onSkip, reviewPackage, tasks }: { artifact: Artifact; artifacts: Artifact[]; audioTracks: AudioTrack[]; drafts: ShotPreparationDraft[]; episode: Episode; onConfirm: (input: ShotConfirmationRequest) => Promise<void>; onSkip: (input: ShotSkipRequest) => Promise<void>; reviewPackage: ReviewPackage; tasks: Task[] }) {
+  const source = localArtifactUrl(artifact.episode_id, artifact.relative_path, artifact.sha256);
+  const { content, error } = useTextArtifactContent(source);
+  const storyboard = content ? parseStoryboard(content) : null;
+  if (error || !storyboard) return null;
+  const packageDrafts = drafts.filter((draft) => draft.review_package_id === reviewPackage.id);
+  return <section aria-label="逐镜头确认" className="review-section shot-confirmation-queue"><header><div><small>确认门槛</small><h3>同步预览并逐镜头确认</h3></div><span>未确认镜头不会进入 Studio</span></header><p className="muted-copy">确认只固定当前采用的视频、音频模式、音轨和字幕决定；任何一项后续修改都会撤销该镜头确认。时长有差异时，建议重新裁剪或重新生成音频，再决定是否接受警告。</p>{storyboard.shots.map((shot) => <ShotConfirmationItem artifacts={artifacts} audioTracks={audioTracks} draft={packageDrafts.find((draft) => draft.shot_id === shot.id)} episode={episode} key={shot.id} onConfirm={onConfirm} onSkip={onSkip} reviewPackage={reviewPackage} shot={shot} tasks={tasks} />)}</section>;
+}
+
+export function ShotConfirmationItem({ artifacts, audioTracks, draft, episode, onConfirm, onSkip, reviewPackage, shot, tasks }: { artifacts: Artifact[]; audioTracks: AudioTrack[]; draft?: ShotPreparationDraft; episode: Episode; onConfirm: (input: ShotConfirmationRequest) => Promise<void>; onSkip: (input: ShotSkipRequest) => Promise<void>; reviewPackage: ReviewPackage; shot: StoryboardShot; tasks: Task[] }) {
+  const [reason, setReason] = useState("");
+  const [skipReason, setSkipReason] = useState("");
+  const [warningAccepted, setWarningAccepted] = useState(false);
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState("");
+  const currentVideo = artifacts.find((artifact) => artifact.id === draft?.current_video_artifact_id);
+  const currentTask = draft?.current_tts_task_id ? tasks.find((task) => task.id === draft.current_tts_task_id) : undefined;
+  const candidateTrack = audioTracks.find((track) => track.id === draft?.current_audio_track_id);
+  const trackTask = candidateTrack ? tasks.find((task) => task.id === candidateTrack.source_task_id) : undefined;
+  const currentTrack = candidateTrack && (draft?.audio_mode !== "source" || taskSourceVideoArtifactId(trackTask) === draft?.current_video_artifact_id) ? candidateTrack : undefined;
+  const textIsCurrent = !currentTask || taskTtsText(currentTask) === draft?.tts_text;
+  const videoDuration = draft?.video_duration_seconds ?? (draft?.clip_start_seconds != null && draft.clip_end_seconds != null ? draft.clip_end_seconds - draft.clip_start_seconds : null);
+  const audioDuration = draft?.audio_mode === "none" ? null : currentTrack && (draft?.audio_mode !== "tts" || textIsCurrent) ? currentTrack.duration_seconds : null;
+  const videoDelta = videoDuration === null ? null : videoDuration - shot.durationSeconds;
+  const audioDelta = audioDuration === null ? null : audioDuration - shot.durationSeconds;
+  const hasWarning = [videoDelta, audioDelta].some((delta) => delta !== null && Math.abs(delta) > 0.05);
+  const ready = Boolean(currentVideo) && draft?.video_status === "ready" && (draft.audio_mode === "none" || (draft.audio_status === "ready" && Boolean(currentTrack))) && Boolean(draft.subtitle_text.trim()) && (!hasWarning || warningAccepted);
+  async function confirm() {
+    if (!draft || !ready || !reason.trim()) return;
+    setIsPending(true); setError("");
+    try { await onConfirm({ episodeId: episode.id, reason: reason.trim(), reviewPackageId: reviewPackage.id, shotId: shot.id, warningAccepted }); setReason(""); setWarningAccepted(false); }
+    catch (cause) { setError(cause instanceof Error ? cause.message : "无法确认当前镜头。"); }
+    finally { setIsPending(false); }
+  }
+  async function skip() {
+    if (!skipReason.trim()) return;
+    setIsPending(true); setError("");
+    try { await onSkip({ episodeId: episode.id, reason: skipReason.trim(), reviewPackageId: reviewPackage.id, shotId: shot.id }); setSkipReason(""); }
+    catch (cause) { setError(cause instanceof Error ? cause.message : "无法跳过当前镜头。"); }
+    finally { setIsPending(false); }
+  }
+  return <article className={`shot-confirmation-item ${draft?.confirmation_status === "confirmed" ? "is-confirmed" : ""}`}><header><strong>{shot.id}</strong><span>{draft?.confirmation_status === "confirmed" ? "已确认" : draft?.confirmation_status === "skipped" ? "已跳过" : "待确认"}</span></header><dl><div><dt>视频实际 / 目标</dt><dd>{videoDuration === null ? "未取得" : `${videoDuration.toFixed(3)} / ${shot.durationSeconds.toFixed(3)} 秒`}</dd></div><div><dt>音频实际 / 目标</dt><dd>{draft?.audio_mode === "none" ? "无口播" : audioDuration === null ? "未取得" : `${audioDuration.toFixed(3)} / ${shot.durationSeconds.toFixed(3)} 秒`}</dd></div><div><dt>差值</dt><dd>{videoDelta === null ? "视频未准备" : `视频 ${videoDelta >= 0 ? "+" : ""}${videoDelta.toFixed(3)} 秒 · ${draft?.audio_mode === "none" ? "无音频" : audioDelta === null ? "音频未准备" : `音频 ${audioDelta >= 0 ? "+" : ""}${audioDelta.toFixed(3)} 秒`}`}</dd></div></dl>{currentVideo ? <ShotSyncPreview audioMode={draft?.audio_mode ?? "none"} episodeId={episode.id} track={currentTrack} video={currentVideo} /> : <p className="muted-copy">当前采用视频尚未准备完成。</p>}{draft?.confirmation_status === "confirmed" ? <p role="status">当前采用版本已确认；修改画面、音频模式、TTS、字幕或音轨后需重新确认。</p> : <div className="shot-confirmation-controls">{hasWarning ? <label className="checkbox-label"><input checked={warningAccepted} onChange={(event) => setWarningAccepted(event.target.checked)} type="checkbox" />接受时长差异警告并写入审计</label> : null}<label>确认原因<textarea aria-label={`${shot.id} 确认原因`} onChange={(event) => setReason(event.target.value)} required rows={2} value={reason} /></label><div className="shot-confirmation-actions"><button className="button button-primary" disabled={isPending || !ready || !reason.trim()} onClick={() => void confirm()} type="button">{isPending ? "处理中…" : "确认当前镜头"}</button><label>跳过原因<textarea aria-label={`${shot.id} 跳过原因`} onChange={(event) => setSkipReason(event.target.value)} rows={2} value={skipReason} /></label><button className="button button-secondary" disabled={isPending || !skipReason.trim()} onClick={() => void skip()} type="button">跳过此镜头</button></div>{!ready ? <p className="muted-copy">请先完成视频、{draft?.audio_mode === "none" ? "无口播决定" : "当前音频"}、字幕和警告处理。</p> : null}</div>}{error ? <p className="form-error" role="alert">{error}</p> : null}</article>;
+}
+
+function ShotSourceMaterialForm({ episodeId, existingMaterials, isPending, onImport, shot }: { episodeId: string; existingMaterials: MaterialRevision[]; isPending: boolean; onImport: (input: MaterialImportRequest) => Promise<void>; shot: StoryboardShot }) {
+  const [file, setFile] = useState<File | null>(null);
+  const [error, setError] = useState("");
+  const purpose = shot.shotType === "a_roll" ? "a_roll" : "b_roll";
+  async function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!file || materialTypeForFile(file) !== "video") { setError("请选择 MP4、MOV 或 WebM 视频原片。"); return; }
+    setError("");
+    try {
+      await onImport({ content: new Uint8Array(await new Response(file).arrayBuffer()), episodeId, isMainScript: false, logicalName: canonicalMaterialName(purpose, file.name, "video", existingMaterials.length + 1), materialPurpose: purpose, materialType: "video", mimeType: file.type || "application/octet-stream", sourceKind: "file", sourcePath: file.name });
+      setFile(null);
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "无法补充原片。"); }
+  }
+  return <form className="shot-source-material-form" onSubmit={(event) => void submit(event)}><label className={`shot-source-material-slot${file ? " has-file" : ""}`}><span><strong>{purpose === "a_roll" ? "A-roll" : "B-roll"} 原片</strong><small>{file ? file.name : "点击选择视频文件"}</small></span><span className="shot-source-material-slot-meta">{file ? "待导入" : "MP4 · MOV · WebM"}</span><input accept=".mp4,.mov,.webm,video/*" aria-label={`${shot.id} 补充原片`} onChange={(event) => setFile(event.target.files?.[0] ?? null)} type="file" /></label><button className="button button-secondary button-small" disabled={isPending || !file} type="submit">{isPending ? "导入中…" : "导入原片"}</button>{error ? <p className="form-error">{error}</p> : null}</form>;
+}
+
 function StoryboardReviewPackage({ annotations, artifact, episode, isAnnotationPending, materialRevisions, onCreateAnnotation, onRegisterManualMedia, onValidationChange, policy, reviewPackage, tasks = [] }: { annotations: ReviewAnnotation[]; artifact: Artifact; episode: Episode; isAnnotationPending: boolean; materialRevisions: MaterialRevision[]; onCreateAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onRegisterManualMedia: (input: ManualMediaBindingRequest) => Promise<void>; onValidationChange: (valid: boolean) => void; policy?: Json; reviewPackage: ReviewPackage; tasks?: Task[] }) {
   const source = localArtifactUrl(artifact.episode_id, artifact.relative_path, artifact.sha256);
   const { content, error } = useTextArtifactContent(source);
@@ -2535,35 +3197,63 @@ function StoryboardReviewPackage({ annotations, artifact, episode, isAnnotationP
   const manualChecklist = manualMaterialChecklistForStoryboard(policy, episode.id, storyboard, materialRevisions, tasks, reviewPackage.id);
   const manualNarration = manualChecklist.find((item) => item.capability === "narration_generation");
   const policyRecord = policy && !Array.isArray(policy) && typeof policy === "object" ? policy as Record<string, Json | undefined> : {};
-  return <section className="review-section storyboard-review-package"><h3>可审核分镜 · 修订 v{reviewPackage.revision_number}</h3>{manualChecklist.length ? <section aria-label="人工素材待补齐清单" className="manual-material-checklist"><h4>人工路径待补齐素材清单</h4><p className="muted-copy">清单按当前冻结分镜的能力目标生成；已上传但尚未绑定的素材仍显示为待在对应目标冻结，不创建 Worker 或外部任务。</p><ul>{manualChecklist.map((item) => <li key={`${item.capability}-${item.targetId}`}><strong>{item.label}</strong><span>{item.status === "bound" ? "已在对应目标冻结" : item.status === "pending" ? "待在对应目标冻结" : `待上传（用途：${item.materialPurpose}）`}</span></li>)}</ul></section> : null}{episode.stage === "storyboard_approved" ? <p className="muted-copy">已启用的人工能力可继续绑定镜头或声轨素材；已冻结项目不会重复提交。</p> : null}{episode.stage === "storyboard_approved" && manualNarration ? <ManualMediaBinding boundMaterialRevisionId={boundManualMaterialRevisionId("narration_generation", episode.id, tasks, reviewPackage.id)} episodeId={episode.id} kind="narration" label="人工旁白音频（Episode）" materials={materialRevisions} onRegister={onRegisterManualMedia} reviewPackageId={reviewPackage.id} targetId={episode.id} /> : null}{storyboard.shots.map((shot) => {
+  const isClipPreparation = episode.stage === "storyboard_approved";
+  return <section className={`review-section storyboard-review-package${isClipPreparation ? " is-clip-preparation" : ""}`}><h3>{isClipPreparation ? "镜头准备" : "可审核分镜"} · 修订 v{reviewPackage.revision_number}</h3>{isClipPreparation && manualChecklist.length ? <section aria-label="镜头准备清单" className="manual-material-checklist"><header><div><small>Studio 前</small><h4>镜头准备</h4></div><span>{manualChecklist.length} 项材料</span></header><p className="muted-copy">每个镜头选择原片并确认裁剪区间；同一个原片可以复用于多个镜头。Studio 只接收这里确认后的片段。</p><ul>{manualChecklist.map((item) => <li className={`is-${item.status}`} key={`${item.capability}-${item.targetId}`}><i aria-hidden="true" /><strong title={item.label}>{item.label}</strong><span>{item.status === "bound" ? "已准备" : item.status === "pending" ? "待准备" : `待上传 · ${item.materialPurpose}`}</span></li>)}</ul></section> : null}{isClipPreparation ? <p className="muted-copy">分镜内容已经审核完成；这里不再重复批注，只处理原片、入点和出点。</p> : null}{isClipPreparation && manualNarration ? <ManualMediaBinding boundMaterialRevisionId={boundManualMaterialRevisionId("narration_generation", episode.id, tasks, reviewPackage.id)} episodeId={episode.id} kind="narration" label="人工旁白音频（Episode）" materials={materialRevisions} onRegister={onRegisterManualMedia} reviewPackageId={reviewPackage.id} targetId={episode.id} /> : null}{storyboard.shots.map((shot) => {
     const shotAnnotations = annotations.filter((annotation) => annotation.shot_id === shot.id);
-    return <article className="storyboard-shot" key={shot.id}><h4>{shot.id} · {shot.shotType === "a_roll" ? "A-roll" : "B-roll"}</h4><dl><div><dt>脚本片段</dt><dd>{shot.scriptSegment}</dd></div><div><dt>时长</dt><dd>{shot.durationSeconds} 秒</dd></div><div><dt>制作方法</dt><dd>{shot.productionMethod}</dd></div><div><dt>冻结输入</dt><dd>{shot.inputBasis.map((input) => `${input.relativePath} · ${input.sha256.slice(0, 12)}…`).join("、")}</dd></div><div><dt>目标规格</dt><dd>{shot.targetSpec}</dd></div></dl>{episode.stage === "storyboard_approved" ? <ManualMediaBinding boundMaterialRevisionId={boundManualMaterialRevisionId(shot.shotType === "a_roll" ? "a_roll_generation" : "b_roll_generation", shot.id, tasks, reviewPackage.id)} episodeId={episode.id} kind={shot.shotType} label={`人工 ${shot.shotType === "a_roll" ? "A-roll" : "B-roll"} 视频`} materials={materialRevisions} onRegister={onRegisterManualMedia} reviewPackageId={reviewPackage.id} targetId={shot.id} /> : null}{shotAnnotations.length ? <div className="storyboard-annotations"><strong>已留批注</strong>{shotAnnotations.map((annotation) => <p key={annotation.id}>{annotation.reason}</p>)}</div> : null}<StoryboardAnnotationForm isPending={isAnnotationPending} onCreateAnnotation={onCreateAnnotation} reviewPackageId={reviewPackage.id} shotId={shot.id} /></article>;
-  })}{storyboard.audioCues.length ? <section className="storyboard-audio-cues"><h4>可选声轨</h4>{storyboard.audioCues.map((cue) => <article key={cue.id}><strong>{cue.kind.toUpperCase()} · {cue.id}</strong><span>{cue.startSeconds}s – {(cue.startSeconds + cue.durationSeconds).toFixed(3)}s · {cue.description}</span><small>Freesound 检索词：{cue.searchQuery}</small>{episode.stage === "storyboard_approved" && policyRecord.soundtrack ? <ManualMediaBinding boundMaterialRevisionId={boundManualMaterialRevisionId("soundtrack_generation", cue.id, tasks, reviewPackage.id)} episodeId={episode.id} kind={cue.kind} label={`人工${cue.kind === "bgm" ? "配乐" : "音效"}`} materials={materialRevisions} onRegister={onRegisterManualMedia} reviewPackageId={reviewPackage.id} targetId={cue.id} /> : null}</article>)}</section> : null}</section>;
+    const capability = shot.shotType === "a_roll" ? "a_roll_generation" : "b_roll_generation";
+    const requirements = <dl>{isClipPreparation ? null : <div><dt>脚本片段</dt><dd>{shot.scriptSegment}</dd></div>}<div><dt>目标时长</dt><dd>{shot.durationSeconds} 秒</dd></div><div><dt>制作方法</dt><dd>{shot.productionMethod}</dd></div><div><dt>生成依据</dt><dd>{shot.inputBasis.map((input) => `${input.relativePath} · ${input.sha256.slice(0, 12)}…`).join("、")}</dd></div><div><dt>目标规格</dt><dd>{shot.targetSpec}</dd></div></dl>;
+    return <article className="storyboard-shot" key={shot.id}><h4>{shot.id} · {shot.shotType === "a_roll" ? "A-roll" : "B-roll"}</h4>{isClipPreparation ? <><p className="shot-script-summary">{shot.scriptSegment}</p><details className="prepared-shot-requirements"><summary>查看已批准分镜要求</summary>{requirements}</details><ManualMediaBinding boundClipSelection={boundManualClipSelection(capability, shot.id, tasks, reviewPackage.id)} boundMaterialRevisionId={boundManualMaterialRevisionId(capability, shot.id, tasks, reviewPackage.id)} episodeId={episode.id} kind={shot.shotType} label={`人工 ${shot.shotType === "a_roll" ? "A-roll" : "B-roll"} 视频`} materials={materialRevisions} onRegister={onRegisterManualMedia} reviewPackageId={reviewPackage.id} targetDurationSeconds={shot.durationSeconds} targetId={shot.id} /></> : requirements}{shotAnnotations.length ? <div className="storyboard-annotations"><strong>{isClipPreparation ? "分镜审核批注" : "已留批注"}</strong>{shotAnnotations.map((annotation) => <p key={annotation.id}>{annotation.reason}</p>)}</div> : null}{isClipPreparation ? null : <StoryboardAnnotationForm isPending={isAnnotationPending} onCreateAnnotation={onCreateAnnotation} reviewPackageId={reviewPackage.id} shotId={shot.id} />}</article>;
+  })}{storyboard.audioCues.length ? <section className="storyboard-audio-cues"><h4>可选声轨</h4>{storyboard.audioCues.map((cue) => <article key={cue.id}><strong>{cue.kind.toUpperCase()} · {cue.id}</strong><span>{cue.startSeconds}s – {(cue.startSeconds + cue.durationSeconds).toFixed(3)}s · {cue.description}</span><small>Freesound 检索词：{cue.searchQuery}</small>{isClipPreparation && policyRecord.soundtrack ? <ManualMediaBinding boundMaterialRevisionId={boundManualMaterialRevisionId("soundtrack_generation", cue.id, tasks, reviewPackage.id)} episodeId={episode.id} kind={cue.kind} label={`人工${cue.kind === "bgm" ? "配乐" : "音效"}`} materials={materialRevisions} onRegister={onRegisterManualMedia} reviewPackageId={reviewPackage.id} targetId={cue.id} /> : null}</article>)}</section> : null}</section>;
 }
 
-function ManualMediaBinding({ boundMaterialRevisionId = null, episodeId, kind, label, materials, onRegister, reviewPackageId, targetId }: { boundMaterialRevisionId?: string | null; episodeId: string; kind: ManualMediaKind; label: string; materials: MaterialRevision[]; onRegister: (input: ManualMediaBindingRequest) => Promise<void>; reviewPackageId: string; targetId: string }) {
+function ManualMaterialPreview({ episodeId, material, onDuration }: { episodeId: string; material: MaterialRevision; onDuration?: (duration: number) => void }) {
+  const kind = artifactPreviewKind(material.storage_path);
+  const source = localArtifactUrl(episodeId, material.storage_path, material.sha256);
+  const { error, url } = useLocalArtifactBlob(source);
+  if (!kind) return null;
+  return <figure className="manual-material-preview">{url ? <ArtifactPreviewMedia kind={kind} label={`${material.source_path} 预览`} onDuration={onDuration} source={url} /> : error ? <p className="form-error">{error}</p> : <LoadingIndicator compact label="正在加载素材预览…" />}<figcaption>{material.source_path} · {(material.file_size / 1024 / 1024).toFixed(1)} MB</figcaption></figure>;
+}
+
+function ManualMediaBinding({ boundClipSelection = null, boundMaterialRevisionId = null, episodeId, kind, label, materials, onRegister, reviewPackageId, targetDurationSeconds, targetId }: { boundClipSelection?: { endSeconds: number; startSeconds: number } | null; boundMaterialRevisionId?: string | null; episodeId: string; kind: ManualMediaKind; label: string; materials: MaterialRevision[]; onRegister: (input: ManualMediaBindingRequest) => Promise<void>; reviewPackageId: string; targetDurationSeconds?: number; targetId: string }) {
   const purpose = kind === "bgm" ? "background_music" : kind === "sfx" ? "sound_effect" : kind;
   const type = kind === "a_roll" || kind === "b_roll" ? "video" : "audio";
   const eligibleMaterials = materials.filter((material) => material.material_type === type && material.material_purpose === purpose);
-  const [materialRevisionId, setMaterialRevisionId] = useState("");
+  const [materialRevisionId, setMaterialRevisionId] = useState(boundMaterialRevisionId ?? "");
+  const [clipStart, setClipStart] = useState(String(boundClipSelection?.startSeconds ?? 0));
+  const [clipEnd, setClipEnd] = useState(String(boundClipSelection?.endSeconds ?? targetDurationSeconds ?? 0));
   const [error, setError] = useState("");
+  const [isEditing, setIsEditing] = useState(!boundMaterialRevisionId);
   const [isPending, setIsPending] = useState(false);
   const boundMaterial = materials.find((material) => material.id === boundMaterialRevisionId);
-  if (boundMaterialRevisionId) return <p className="manual-media-bound" role="status"><strong>已冻结</strong> · {boundMaterial?.source_path ?? "已绑定文件"}</p>;
+  const selectedMaterial = eligibleMaterials.find((material) => material.id === materialRevisionId);
+  const isVideo = kind === "a_roll" || kind === "b_roll";
+  const clipStartSeconds = Number(clipStart);
+  const clipEndSeconds = Number(clipEnd);
+  const clipDurationSeconds = clipEndSeconds - clipStartSeconds;
+  const clipIsValid = !isVideo || (clipStart.trim() !== "" && clipEnd.trim() !== "" && Number.isFinite(clipStartSeconds) && Number.isFinite(clipEndSeconds) && clipStartSeconds >= 0 && clipEndSeconds > clipStartSeconds && targetDurationSeconds !== undefined && Math.abs(clipDurationSeconds - targetDurationSeconds) <= 0.05);
+  useEffect(() => {
+    setMaterialRevisionId(boundMaterialRevisionId ?? "");
+    setClipStart(String(boundClipSelection?.startSeconds ?? 0));
+    setClipEnd(String(boundClipSelection?.endSeconds ?? targetDurationSeconds ?? 0));
+    setIsEditing(!boundMaterialRevisionId);
+  }, [boundClipSelection?.endSeconds, boundClipSelection?.startSeconds, boundMaterialRevisionId, targetDurationSeconds]);
+  if (boundMaterialRevisionId && !isEditing) return <div className="manual-media-bound"><p role="status"><strong>当前镜头素材</strong> · {boundMaterial?.source_path ?? "已绑定文件"}{isVideo && boundClipSelection ? ` · 已准备 ${boundClipSelection.startSeconds}–${boundClipSelection.endSeconds} 秒` : ""}</p>{boundMaterial ? <ManualMaterialPreview episodeId={episodeId} material={boundMaterial} /> : null}{isVideo ? <button className="button button-secondary button-small" onClick={() => setIsEditing(true)} type="button">修改 {targetId} 的镜头素材</button> : null}</div>;
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!materialRevisionId) { setError(`请先上传并选择${label}。`); return; }
+    if (!clipIsValid) { setError(`裁剪片段必须与目标时长 ${targetDurationSeconds} 秒一致。`); return; }
     setError("");
     setIsPending(true);
     try {
-      await onRegister({ episodeId, kind, materialRevisionId, storyboardReviewPackageId: reviewPackageId, targetId });
+      await onRegister({ ...(isVideo ? { clipEndSeconds, clipStartSeconds } : {}), episodeId, kind, materialRevisionId, ...(boundMaterialRevisionId ? { replace: true } : {}), storyboardReviewPackageId: reviewPackageId, targetId });
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "无法冻结人工生产材料。");
     } finally {
       setIsPending(false);
     }
   }
-  return <form className="storyboard-annotation-form" onSubmit={(event) => void submit(event)}><label>{label}<select aria-label={`${targetId} ${label}`} onChange={(event) => setMaterialRevisionId(event.target.value)} value={materialRevisionId}><option value="">选择已上传文件</option>{eligibleMaterials.map((material) => <option key={material.id} value={material.id}>{material.source_path} · {Math.max(1, Math.round(material.file_size / 1024))} KB</option>)}</select></label>{eligibleMaterials.length ? <p className="muted-copy">提交后会锁定文件与当前分镜目标的对应关系。</p> : <p className="form-error">请在“准备生产材料”中上传对应文件并选择正确用途。</p>}{error ? <p className="form-error">{error}</p> : null}<button className="button button-primary" disabled={isPending || !materialRevisionId} type="submit">{isPending ? "冻结中…" : `冻结${label}`}</button></form>;
+  const clipDifference = isVideo && targetDurationSeconds !== undefined ? clipDurationSeconds - targetDurationSeconds : 0;
+  return <form className="storyboard-annotation-form manual-media-form" onSubmit={(event) => void submit(event)}><label>{label}<select aria-label={`${targetId} ${label}`} onChange={(event) => setMaterialRevisionId(event.target.value)} value={materialRevisionId}><option value="">选择已上传文件</option>{eligibleMaterials.map((material) => <option key={material.id} value={material.id}>{material.source_path} · {Math.max(1, Math.round(material.file_size / 1024))} KB</option>)}</select></label>{selectedMaterial ? <ManualMaterialPreview episodeId={episodeId} material={selectedMaterial} /> : null}{isVideo ? <fieldset className="manual-clip-selection"><legend>裁剪区间 · 目标 {targetDurationSeconds} 秒</legend><div><label>入点<input aria-label={`${targetId} 裁剪入点（秒）`} min="0" onChange={(event) => setClipStart(event.target.value)} required step="0.001" type="number" value={clipStart} /></label><label>出点<input aria-label={`${targetId} 裁剪出点（秒）`} min="0" onChange={(event) => setClipEnd(event.target.value)} required step="0.001" type="number" value={clipEnd} /></label></div><p className={clipIsValid ? "clip-duration-status is-valid" : "clip-duration-status is-invalid"}>{clipIsValid ? `片段时长与目标一致（${clipDurationSeconds.toFixed(3)} 秒）` : clipStart.trim() && clipEnd.trim() && Number.isFinite(clipDifference) ? `当前片段 ${clipDurationSeconds.toFixed(3)} 秒，${clipDifference > 0 ? `请缩短 ${clipDifference.toFixed(3)}` : `请延长 ${Math.abs(clipDifference).toFixed(3)}`} 秒。` : "请填写有效的入点和出点。"}</p></fieldset> : null}{eligibleMaterials.length ? <p className="muted-copy">{isVideo ? `确认后会保存 ${targetId} 的原片和裁剪区间；同一原片可用于其他镜头。` : `确认后会把这个不可变文件版本固定用于 ${targetId}。`}</p> : <p className="form-error">请在“准备生产材料”中上传对应文件并选择正确用途。</p>}{error ? <p className="form-error">{error}</p> : null}<div className="manual-media-actions">{boundMaterialRevisionId ? <button className="button button-secondary" disabled={isPending} onClick={() => setIsEditing(false)} type="button">取消修改</button> : null}<button className="button button-primary" disabled={isPending || !materialRevisionId || !clipIsValid} type="submit">{isPending ? "保存中…" : boundMaterialRevisionId ? "保存镜头素材修改" : isVideo ? `确认用于 ${targetId}` : `确认${label}`}</button></div></form>;
 }
 
 function StoryboardAnnotationForm({ isPending, onCreateAnnotation, reviewPackageId, shotId }: { isPending: boolean; onCreateAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; reviewPackageId: string; shotId: string }) {
@@ -2597,10 +3287,10 @@ function ArtifactPreview({ artifacts }: { artifacts: Artifact[] }) {
   return <div className="artifact-preview">{previewableArtifacts.length > 1 ? <label>预览产物<select aria-label="预览产物" onChange={(event) => setSelectedArtifactId(event.target.value)} value={artifact.id}>{previewableArtifacts.map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.artifact_type} · {candidate.relative_path}</option>)}</select></label> : null}<LocalArtifactMedia artifact={artifact} kind={kind} source={source} /></div>;
 }
 
-function ArtifactPreviewMedia({ kind, label, source }: { kind: "image" | "video" | "audio"; label: string; source: string }) {
+function ArtifactPreviewMedia({ kind, label, onDuration, source }: { kind: "image" | "video" | "audio"; label: string; onDuration?: (duration: number) => void; source: string }) {
   if (kind === "image") return <img alt={label} src={source} />;
   if (kind === "audio") return <audio aria-label={label} controls preload="metadata" src={source} />;
-  return <video aria-label={label} controls preload="metadata" src={source} />;
+  return <video aria-label={label} controls key={source} onLoadedMetadata={onDuration ? (event) => { const duration = event.currentTarget.duration; if (Number.isFinite(duration)) onDuration(duration); } : undefined} preload="auto" src={source} />;
 }
 
 function LocalArtifactMedia({ artifact, kind, source }: { artifact: Artifact; kind: "image" | "video" | "audio"; source: string }) {
@@ -2673,7 +3363,7 @@ function ReviewActions({ episode, hasOpenQcBlockers = false, isPending, onReques
 function OperationDraftNotice({ isRestored = false, onClear }: { isRestored?: boolean; onClear: () => void }) { return <div className="operation-draft-notice" role="status"><span>{isRestored ? "已恢复本地草稿" : "本地草稿已保存"}</span><button className="text-button" onClick={onClear} type="button">清除草稿</button></div>; }
 
 export function EpisodeDetailDrawer({ children, isOpen, onClose }: { children: ReactNode; isOpen: boolean; onClose: () => void }) {
-  useEffect(() => { if (!isOpen) return; function closeOnEscape(event: KeyboardEvent) { if (event.key === "Escape") onClose(); } window.addEventListener("keydown", closeOnEscape); return () => window.removeEventListener("keydown", closeOnEscape); }, [isOpen, onClose]);
+  useEffect(() => { if (!isOpen) return; function closeOnEscape(event: KeyboardEvent) { if (event.key === "Escape" && !document.querySelector('[role="dialog"][aria-modal="true"]')) onClose(); } window.addEventListener("keydown", closeOnEscape); return () => window.removeEventListener("keydown", closeOnEscape); }, [isOpen, onClose]);
   if (!isOpen) return null;
   return <><div aria-hidden="true" className="episode-detail-scrim" data-testid="episode-detail-scrim" onClick={onClose} /><aside aria-label="当前生产单详情" className="episode-detail-drawer" role="complementary"><button aria-label="关闭生产单详情" className="drawer-close icon-button" onClick={onClose} type="button"><Icon name="Close" /></button>{children}</aside></>;
 }
@@ -2763,9 +3453,9 @@ function PasswordForm({ isPending, onClose, onSubmit }: { isPending: boolean; on
   return <div className="modal-backdrop" role="presentation"><form aria-label="设置登录密码" className="modal-card" onSubmit={submit}><header><div><h2>设置登录密码</h2><p>密码只用于登录，不会显示或保存在控制台记录中。</p></div><button aria-label="关闭设置登录密码" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></button></header><label>新密码<input aria-label="新密码" autoComplete="new-password" autoFocus onChange={(event) => setPassword(event.target.value)} required type="password" value={password} /></label><label>确认密码<input aria-label="确认密码" autoComplete="new-password" onChange={(event) => setConfirmation(event.target.value)} required type="password" value={confirmation} /></label><div className="modal-actions"><button className="button button-secondary" onClick={onClose} type="button">取消</button><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "保存中…" : "保存密码"}</button></div>{formError ? <p className="form-error">{formError}</p> : null}</form></div>;
 }
 
-type IconName = NavigationItem | "Moon" | "Sun" | "Exit" | "Close" | "Play" | "PanelLeft" | "User" | "Edit" | "Delete";
+type IconName = NavigationItem | "Moon" | "Sun" | "Exit" | "Close" | "Play" | "PanelLeft" | "User" | "Edit" | "Delete" | "Video";
 
-const iconComponents: Record<IconName, LucideIcon> = { accounts: Users, episodes: Table2, operations: BarChart3, reviews: MessageSquare, publish: Upload, learning: BookOpen, Moon, Sun, Exit: LogOut, Close: X, Play, PanelLeft, User, Edit: Pencil, Delete: Trash2 };
+const iconComponents: Record<IconName, LucideIcon> = { accounts: Users, episodes: Table2, operations: BarChart3, reviews: MessageSquare, publish: Upload, learning: BookOpen, Moon, Sun, Exit: LogOut, Close: X, Play, PanelLeft, User, Edit: Pencil, Delete: Trash2, Video };
 
 function Icon({ name }: { name: IconName }) {
   const IconComponent = iconComponents[name];

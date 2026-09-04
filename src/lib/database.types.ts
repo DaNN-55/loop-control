@@ -854,6 +854,153 @@ export type Database = {
           },
         ]
       }
+      shot_preparation_drafts: {
+        Row: {
+          input_fingerprint?: string | null
+          audio_mode: "none" | "source" | "tts"
+          audio_status: "failed" | "pending" | "ready" | "running"
+          clip_end_seconds?: number | null
+          clip_segments: Json
+          clip_start_seconds?: number | null
+          confirmation_status: "confirmed" | "pending" | "skipped"
+          created_at: string
+          current_audio_track_id?: string | null
+          current_tts_task_id?: string | null
+          current_video_artifact_id?: string | null
+          current_video_task_id?: string | null
+          episode_id: string
+          frozen_at?: string | null
+          frozen_by?: string | null
+          id: string
+          pending_tts_task_id?: string | null
+          pending_source_audio_task_id?: string | null
+          pending_video_task_id?: string | null
+          review_package_id: string
+          shot_id: string
+          subtitle_text: string
+          subtitles_enabled: boolean
+          tts_actual_duration_seconds?: number | null
+          tts_error?: string | null
+          tts_language_code?: string | null
+          tts_text?: string | null
+          tts_speaking_rate: number | null
+          tts_voice: string | null
+          updated_at: string
+          video_duration_seconds?: number | null
+          warning_decision?: "accepted" | "not_required"
+          warning_reason?: string | null
+          warning_accepted_at?: string | null
+          warning_accepted_by?: string | null
+          confirmation_reason?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          skipped_at?: string | null
+          skipped_by?: string | null
+          selected_material_revision_id?: string | null
+          source_audio_duration_seconds?: number | null
+          source_audio_error?: string | null
+          video_error?: string | null
+          video_status: "failed" | "pending" | "ready" | "running"
+        }
+        Insert: {
+          input_fingerprint?: string | null
+          audio_mode?: "none" | "source" | "tts"
+          audio_status?: "failed" | "pending" | "ready" | "running"
+          clip_end_seconds?: number | null
+          clip_segments?: Json
+          clip_start_seconds?: number | null
+          confirmation_status?: "confirmed" | "pending" | "skipped"
+          created_at?: string
+          current_audio_track_id?: string | null
+          current_tts_task_id?: string | null
+          current_video_artifact_id?: string | null
+          current_video_task_id?: string | null
+          episode_id: string
+          frozen_at?: string | null
+          frozen_by?: string | null
+          id?: string
+          pending_tts_task_id?: string | null
+          pending_source_audio_task_id?: string | null
+          pending_video_task_id?: string | null
+          review_package_id: string
+          shot_id: string
+          subtitle_text: string
+          subtitles_enabled?: boolean
+          tts_actual_duration_seconds?: number | null
+          tts_error?: string | null
+          tts_language_code?: string | null
+          tts_text?: string | null
+          tts_speaking_rate?: number | null
+          tts_voice?: string | null
+          updated_at?: string
+          selected_material_revision_id?: string | null
+          source_audio_duration_seconds?: number | null
+          source_audio_error?: string | null
+          video_error?: string | null
+          video_status?: "failed" | "pending" | "ready" | "running"
+          video_duration_seconds?: number | null
+          warning_decision?: "accepted" | "not_required"
+          warning_reason?: string | null
+          warning_accepted_at?: string | null
+          warning_accepted_by?: string | null
+          confirmation_reason?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          skipped_at?: string | null
+          skipped_by?: string | null
+        }
+        Update: {
+          input_fingerprint?: string | null
+          audio_mode?: "none" | "source" | "tts"
+          audio_status?: "failed" | "pending" | "ready" | "running"
+          clip_end_seconds?: number | null
+          clip_segments?: Json
+          clip_start_seconds?: number | null
+          confirmation_status?: "confirmed" | "pending" | "skipped"
+          created_at?: string
+          current_audio_track_id?: string | null
+          current_tts_task_id?: string | null
+          current_video_artifact_id?: string | null
+          current_video_task_id?: string | null
+          episode_id?: string
+          frozen_at?: string | null
+          frozen_by?: string | null
+          id?: string
+          pending_tts_task_id?: string | null
+          pending_source_audio_task_id?: string | null
+          pending_video_task_id?: string | null
+          review_package_id?: string
+          shot_id?: string
+          subtitle_text?: string
+          subtitles_enabled?: boolean
+          tts_actual_duration_seconds?: number | null
+          tts_error?: string | null
+          tts_language_code?: string | null
+          tts_text?: string | null
+          tts_speaking_rate?: number | null
+          tts_voice?: string | null
+          updated_at?: string
+          selected_material_revision_id?: string | null
+          source_audio_duration_seconds?: number | null
+          source_audio_error?: string | null
+          video_error?: string | null
+          video_status?: "failed" | "pending" | "ready" | "running"
+          video_duration_seconds?: number | null
+          warning_decision?: "accepted" | "not_required"
+          warning_reason?: string | null
+          warning_accepted_at?: string | null
+          warning_accepted_by?: string | null
+          confirmation_reason?: string | null
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          skipped_at?: string | null
+          skipped_by?: string | null
+        }
+        Relationships: [
+          { foreignKeyName: "shot_preparation_drafts_episode_id_fkey"; columns: ["episode_id"]; isOneToOne: false; referencedRelation: "episodes"; referencedColumns: ["id"] },
+          { foreignKeyName: "shot_preparation_drafts_review_package_id_fkey"; columns: ["review_package_id"]; isOneToOne: false; referencedRelation: "review_packages"; referencedColumns: ["id"] },
+        ]
+      }
       pre_render_review_member_decisions: {
         Row: {
           actor_id: string
@@ -878,10 +1025,11 @@ export type Database = {
           member_key: string
           member_kind: string
           review_package_id: string
-          source_task_id: string
+          source_material_revision_id: string | null
+          source_task_id: string | null
         }
-        Insert: { artifact_id?: string | null; audio_track_id?: string | null; created_at?: string; evidence_snapshot: Json; id?: string; member_key: string; member_kind: string; review_package_id: string; source_task_id: string }
-        Update: { artifact_id?: string | null; audio_track_id?: string | null; created_at?: string; evidence_snapshot?: Json; id?: string; member_key?: string; member_kind?: string; review_package_id?: string; source_task_id?: string }
+        Insert: { artifact_id?: string | null; audio_track_id?: string | null; created_at?: string; evidence_snapshot: Json; id?: string; member_key: string; member_kind: string; review_package_id: string; source_material_revision_id?: string | null; source_task_id?: string | null }
+        Update: { artifact_id?: string | null; audio_track_id?: string | null; created_at?: string; evidence_snapshot?: Json; id?: string; member_key?: string; member_kind?: string; review_package_id?: string; source_material_revision_id?: string | null; source_task_id?: string | null }
         Relationships: []
       }
       review_packages: {
@@ -1570,6 +1718,66 @@ export type Database = {
         Args: { p_episode_id: string; p_material_revision_id: string; p_shot_id: string; p_storyboard_review_package_id: string }
         Returns: Database["public"]["Tables"]["tasks"]["Row"]
         SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      request_shot_structure_revision: {
+        Args: { p_episode_id: string; p_operation: Json; p_reason: string; p_review_package_id: string }
+        Returns: Database["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      replace_manual_shot_media: {
+        Args: { p_episode_id: string; p_kind: string; p_material_revision_id: string; p_shot_id: string; p_storyboard_review_package_id: string }
+        Returns: Database["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      save_manual_shot_clip: {
+        Args: { p_clip_end_seconds: number; p_clip_start_seconds: number; p_episode_id: string; p_kind: string; p_material_revision_id: string; p_shot_id: string; p_storyboard_review_package_id: string }
+        Returns: Database["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      save_shot_preparation_draft: {
+        Args: { p_audio_mode: "none" | "source" | "tts"; p_episode_id: string; p_review_package_id: string; p_shot_id: string; p_subtitle_text: string; p_subtitles_enabled: boolean; p_tts_speaking_rate: number | null; p_tts_text: string | null; p_tts_voice: string | null }
+        Returns: Database["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
+      }
+      save_shot_workbench_draft: {
+        Args: { p_audio_mode: "none" | "source" | "tts"; p_clip_segments: Json; p_episode_id: string; p_material_revision_id: string; p_review_package_id: string; p_shot_id: string; p_subtitle_text: string; p_subtitles_enabled: boolean; p_tts_speaking_rate: number | null; p_tts_text: string | null; p_tts_voice: string | null }
+        Returns: Database["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
+      }
+      freeze_shot_preparation_batch: {
+        Args: { p_episode_id: string; p_review_package_id: string }
+        Returns: Database["public"]["Tables"]["tasks"]["Row"][]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: false; isSetofReturn: true }
+      }
+      generate_shot_source_audio: {
+        Args: { p_episode_id: string; p_review_package_id: string; p_retry?: boolean; p_shot_id: string }
+        Returns: Database["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      generate_shot_tts: {
+        Args: { p_episode_id: string; p_review_package_id: string; p_retry?: boolean; p_shot_id: string }
+        Returns: Database["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      save_shot_clip_draft: {
+        Args: { p_clip_end_seconds: number | null; p_clip_start_seconds: number | null; p_episode_id: string; p_material_revision_id: string | null; p_review_package_id: string; p_shot_id: string }
+        Returns: Database["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
+      }
+      generate_shot_clip: {
+        Args: { p_episode_id: string; p_review_package_id: string; p_retry?: boolean; p_shot_id: string }
+        Returns: Database["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      confirm_shot_preparation: {
+        Args: { p_episode_id: string; p_reason: string; p_review_package_id: string; p_shot_id: string; p_warning_accepted?: boolean }
+        Returns: Database["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
+      }
+      skip_shot_preparation: {
+        Args: { p_episode_id: string; p_reason: string; p_review_package_id: string; p_shot_id: string }
+        Returns: Database["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
       }
       start_episode_production: {
         Args: { p_episode_id: string }

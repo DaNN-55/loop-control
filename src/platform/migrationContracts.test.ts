@@ -31,6 +31,9 @@ const hyperframesStudioRevisionMigration = resolve(
 const studioStructuralRevisionMigration = resolve(
   "supabase/migrations/20260824100000_request_studio_structural_revision.sql",
 );
+const studioStructuralReworkApprovalMigration = resolve(
+  "supabase/migrations/20260901141000_remove_duplicate_storyboard_rework_approval.sql",
+);
 const manualArollFixMigration = resolve(
   "supabase/migrations/20260823110000_fix_manual_a_roll_shot_lookup.sql",
 );
@@ -42,6 +45,12 @@ const manualArollReuseMigration = resolve(
 );
 const manualBrollReuseMigration = resolve(
   "supabase/migrations/20260823202000_allow_manual_b_roll_reuse.sql",
+);
+const replaceManualShotMediaMigration = resolve(
+  "supabase/migrations/20260902153000_replace_manual_shot_media.sql",
+);
+const prepareManualShotClipsMigration = resolve(
+  "supabase/migrations/20260902161000_prepare_manual_shot_clips.sql",
 );
 const scopedEmbeddedAudioMigration = resolve(
   "supabase/migrations/20260823114000_scope_embedded_audio_orchestration.sql",
@@ -73,6 +82,9 @@ const scopedCoreOrchestrationMigration = resolve(
 const episodeAudioSourceMigration = resolve(
   "supabase/migrations/20260823185000_add_episode_audio_source_mode.sql",
 );
+const volcengineTtsExecutionMigration = resolve(
+  "supabase/migrations/20260901111615_enable_volcengine_tts_execution.sql",
+);
 const blueprintSnapshotVersionMigration = resolve(
   "supabase/migrations/20260823114252_fix_current_blueprint_snapshot_version.sql",
 );
@@ -103,6 +115,48 @@ const uploadedVisualDispatchMigration = resolve(
 const disabledSoundtrackCueMigration = resolve(
   "supabase/migrations/20260901120000_ignore_disabled_soundtrack_cues.sql",
 );
+const narrationShotStartMigration = resolve(
+  "supabase/migrations/20260901130000_preserve_narration_shot_starts.sql",
+);
+const studioPreRenderInvalidationMigration = resolve(
+  "supabase/migrations/20260901150000_respect_tts_pre_render_audio.sql",
+);
+const frozenStudioProjectPathMigration = resolve(
+  "supabase/migrations/20260901151000_fix_frozen_studio_project_path.sql",
+);
+const publishCoverFormatsMigration = resolve(
+  "supabase/migrations/20260902080000_allow_publish_cover_image_formats.sql",
+);
+const manualPublicationFlowMigration = resolve(
+  "supabase/migrations/20260902004000_complete_manual_publication_flow.sql",
+);
+const shotPreparationDraftMigration = resolve(
+  "supabase/migrations/20260903090000_add_shot_preparation_drafts.sql",
+);
+const shotTtsMigration = resolve(
+  "supabase/migrations/20260903100000_add_shot_tts_generation.sql",
+);
+const shotClipMigration = resolve(
+  "supabase/migrations/20260903110000_generate_shot_clip.sql",
+);
+const shotAudioModesMigration = resolve(
+  "supabase/migrations/20260903120000_complete_shot_audio_modes.sql",
+);
+const shotConfirmationMigration = resolve(
+  "supabase/migrations/20260903130000_confirm_shot_preparation.sql",
+);
+const shotStructureRevisionMigration = resolve(
+  "supabase/migrations/20260903140000_add_storyboard_structure_revision.sql",
+);
+const confirmedStudioSnapshotMigration = resolve(
+  "supabase/migrations/20260903150000_auto_create_confirmed_studio_snapshot.sql",
+);
+const frozenMultiSegmentShotDraftMigration = resolve(
+  "supabase/migrations/20260904100000_freeze_multi_segment_shot_drafts.sql",
+);
+const deferredStudioTrimmingMigration = resolve(
+  "supabase/migrations/20260904110000_defer_shot_trimming_to_studio.sql",
+);
 const deployedMigrations = {
   "20260822095959_guard_legacy_b_roll_history.sql": "b36e63037ca12c2785d7bbb9f2fe8596f31377de734dcf8b96cb03af23613c9b",
   "20260822100000_freeze_b_roll_adapter_connection.sql": "f38575ba3b5dcb7814f230c5a48a52c6a5ac37811868d00bdb0f7eb375b2a51d",
@@ -113,6 +167,77 @@ const deployedMigrations = {
 };
 
 describe("B-roll 连接固化迁移", () => {
+  it("只在统一确认时冻结多片段草稿并创建镜头任务", () => {
+    const migration = readFileSync(frozenMultiSegmentShotDraftMigration, "utf8");
+
+    expect(migration).toContain("create function public.save_shot_workbench_draft");
+    expect(migration).toContain("clip_segments jsonb");
+    expect(migration).toContain("create function public.freeze_shot_preparation_batch");
+    expect(migration).toContain("'video_clips'");
+    expect(migration).toContain("create trigger protect_frozen_shot_preparation_inputs");
+    expect(migration).toContain("create trigger zz_queue_source_audio_after_frozen_clip");
+  });
+
+  it("冻结时把原片和标记直接交给 Studio，不提前创建裁剪任务", () => {
+    const migration = readFileSync(deferredStudioTrimmingMigration, "utf8");
+
+    expect(migration).toContain("source_material_revision_id");
+    expect(migration).toContain("create or replace function public.record_pre_render_member_dependencies");
+    expect(migration).toContain("new.source_material_revision_id");
+    expect(migration).toContain("'clip_segments', draft.clip_segments");
+    expect(migration).toContain("'source_material', jsonb_build_object");
+    expect(migration).toContain("perform public.orchestrate_review_render_tasks(p_episode_id)");
+    expect(migration).not.toContain("'ffmpeg_trim_video'");
+    expect(migration).not.toContain("'extract_embedded_audio'");
+  });
+
+  it("只从当前已确认镜头创建不可变 Studio 输入，并让生产门禁先创建快照", () => {
+    const migration = readFileSync(confirmedStudioSnapshotMigration, "utf8");
+
+    expect(migration).toContain("has_current_shot_preparation_snapshot");
+    expect(migration).toContain("draft.confirmation_status = 'confirmed'");
+    expect(migration).toContain("draft.input_fingerprint = md5(required.value::text)");
+    expect(migration).toContain("video_task.status = 'completed'");
+    expect(migration).toContain("audio_track.id = draft.current_audio_track_id");
+    expect(migration).toContain("package.context_snapshot ->> 'confirmation_mode' is distinct from 'shot_preparation'");
+    expect(migration).toContain("package.context_snapshot ->> 'storyboard_review_package_id' is distinct from p_storyboard_review_package_id::text");
+    expect(migration).toContain("if not exists (select 1 from public.create_shot_preparation_review_package(candidate.id, candidate.storyboard_review_package_id)) then continue; end if;");
+    expect(migration).toContain("'confirmation_mode', 'shot_preparation'");
+    expect(migration).toContain("'input_fingerprint', draft.input_fingerprint");
+  });
+
+  it("将镜头结构操作冻结为幂等的分镜审核修订", () => {
+    const migration = readFileSync(shotStructureRevisionMigration, "utf8");
+
+    expect(migration).toContain("request_shot_structure_revision");
+    expect(migration).toContain("structure_revision_hash");
+    expect(migration).toContain("create_storyboard_revision_review_package");
+    expect(migration).toContain("storyboard_approved', 'storyboard_review");
+    expect(migration).toContain("input_fingerprint");
+    expect(migration).toContain("draft.input_fingerprint = md5(shot::text)");
+    expect(migration).toContain("previous.current_video_artifact_id");
+    expect(migration).toContain("'id', 'shot-' || gen_random_uuid()::text");
+    expect(migration).toContain("on conflict (episode_id, review_package_id, shot_id) do nothing");
+  });
+
+  it("发布输入登记允许 JPG、PNG 和 WebP 封面", () => {
+    const migration = readFileSync(publishCoverFormatsMigration, "utf8");
+
+    expect(migration).toContain("create or replace function public.record_publish_input");
+    expect(migration).toContain("cover-v1\\.(jpg|png|webp)$");
+    expect(migration).toContain("metadata-v1.json");
+  });
+
+  it("人工发布登记从 QC 完成阶段原子推进到已发布", () => {
+    const migration = readFileSync(manualPublicationFlowMigration, "utf8");
+
+    expect(migration).toContain("create or replace function public.record_manual_publication");
+    expect(migration).toContain("current_stage = 'qc_passed'");
+    expect(migration).toContain("'publish_ready'::public.episode_stage");
+    expect(migration).toContain("'publishing_review'::public.episode_stage");
+    expect(migration).toContain("created_record := public.record_publication(");
+  });
+
   it("保存已被生产单引用的蓝图时，为旧规则分配独立快照版本", () => {
     const migration = readFileSync(blueprintSnapshotVersionMigration, "utf8");
 
@@ -218,6 +343,28 @@ describe("B-roll 连接固化迁移", () => {
     expect(manualMedia).toContain("if has_approved_video and exists");
   });
 
+  it("允许 Owner 在合成前替换已确认的人工镜头素材并保留旧任务", () => {
+    const migration = readFileSync(replaceManualShotMediaMigration, "utf8");
+
+    expect(migration).toContain("create function public.replace_manual_shot_media");
+    expect(migration).toContain("task.status = 'completed'");
+    expect(migration).toContain("task.provider = 'manual_upload'");
+    expect(migration).toContain("set status = 'superseded'");
+    expect(migration).toContain("public.register_manual_a_roll");
+    expect(migration).toContain("public.register_manual_b_roll");
+  });
+
+  it("允许镜头素材重复替换，并冻结 Studio 前的裁剪区间", () => {
+    const migration = readFileSync(prepareManualShotClipsMigration, "utf8");
+
+    expect(migration).toContain("drop index if exists public.tasks_one_a_roll_per_storyboard_shot_configuration_idx");
+    expect(migration).toContain("status <> 'superseded'::public.task_status");
+    expect(migration).toContain("create function public.save_manual_shot_clip");
+    expect(migration).toContain("p_clip_start_seconds numeric");
+    expect(migration).toContain("p_clip_end_seconds numeric");
+    expect(migration).toContain("'clip_selection'");
+  });
+
   it("声轨编排只处理已开启该能力的指定生产单", () => {
     const migration = readFileSync(scopedSoundtrackMigration, "utf8");
 
@@ -233,6 +380,29 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("candidate.blueprint_policy -> 'soundtrack'");
     expect(migration).toContain("advance_production_ready_episodes");
     expect(migration).toContain("create_pre_render_review_packages");
+  });
+
+  it("分段旁白保留冻结镜头起点，不再按实际音频长度紧密重排", () => {
+    const migration = readFileSync(narrationShotStartMigration, "utf8");
+
+    expect(migration).toContain("set start_seconds = (task.input_snapshot #>> '{audio_track,start_seconds}')::numeric");
+    expect(migration).toContain("create or replace function public.register_completed_audio_track()");
+    expect(migration).not.toContain("sum(track.duration_seconds)");
+  });
+
+  it("Studio 结构返工同时作废旧 QC 与旧预渲染清单", () => {
+    const migration = readFileSync(studioPreRenderInvalidationMigration, "utf8");
+
+    expect(migration).toContain("request_studio_storyboard_revision(uuid, text)");
+    expect(migration).toContain("where id = selected_qc_package.id");
+    expect(migration).toContain("where id = selected_pre_render_package.id");
+  });
+
+  it("冻结 Studio 工程使用可匹配实际相对路径的数据库正则", () => {
+    const migration = readFileSync(frozenStudioProjectPathMigration, "utf8");
+
+    expect(migration).toContain("/studio-frozen/[0-9a-f-]{36}/index[.]html$");
+    expect(migration).not.toContain("/index\\\\.html$");
   });
 
   it("人工路径不进入媒体 Worker 编排", () => {
@@ -369,6 +539,15 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).not.toContain("and not exists (select 1 from public.production_material_revisions material");
   });
 
+  it("让豆包语音旁白进入创建、领取与连接修复链路", () => {
+    const migration = readFileSync(volcengineTtsExecutionMigration, "utf8");
+
+    expect(migration).toContain("executor ->> 'provider' = 'volcengine_tts'");
+    expect(migration).toContain("'codex','google_tts','volcengine_tts','pexels'");
+    expect(migration).toContain("then blocked_task.provider");
+    expect(migration).toContain("blocked_task.input_snapshot #>> '{executor,adapter}'");
+  });
+
   it("自动进入审核渲染，并只在 QC 台阻塞最终批准", () => {
     const migration = readFileSync(qcEditorMigration, "utf8");
 
@@ -423,6 +602,13 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("grant execute on function public.request_studio_storyboard_revision(uuid, text) to authenticated");
   });
 
+  it("Studio 结构返工不会给已批准的分镜包重复绑定审批记录", () => {
+    const migration = readFileSync(studioStructuralReworkApprovalMigration, "utf8");
+
+    expect(migration).not.toContain("insert into public.approvals");
+    expect(migration).toContain("'studio_storyboard_revision_requested'");
+  });
+
   it("两类审核修订共享当前包与 Owner 前置条件，但保留各自编排", () => {
     const migration = readFileSync(reviewRevisionPreconditionsMigration, "utf8");
 
@@ -433,5 +619,80 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("select * into selected_package from public.current_hyperframes_review_package(p_review_package_id, true)");
     expect(migration).toContain("select * into selected_qc_package from public.current_hyperframes_review_package(p_review_package_id, false)");
     expect(migration).toContain("perform public.orchestrate_storyboard_tasks_for_episode(selected_episode.id)");
+  });
+
+  it("逐镜头准备草稿只允许 Owner 保存当前已批准分镜的镜头", () => {
+    const migration = readFileSync(shotPreparationDraftMigration, "utf8");
+
+    expect(migration).toContain("create table public.shot_preparation_drafts");
+    expect(migration).toContain("unique (episode_id, review_package_id, shot_id)");
+    expect(migration).toContain("current_episode.stage <> 'storyboard_approved'");
+    expect(migration).toContain("membership.role = 'owner'");
+    expect(migration).toContain("The shot does not belong to the approved storyboard");
+    expect(migration).toContain("on conflict (episode_id, review_package_id, shot_id) do update");
+    expect(migration).toContain("seed_shot_preparation_drafts_after_storyboard_approval");
+  });
+
+  it("逐镜头 TTS 只在显式请求时创建冻结任务，并在成功后切换版本", () => {
+    const migration = readFileSync(shotTtsMigration, "utf8");
+
+    expect(migration).toContain("create function public.generate_shot_tts");
+    expect(migration).toContain("p_retry boolean default false");
+    expect(migration).toContain("shot_preparation");
+    expect(migration).toContain("current_audio_track_id");
+    expect(migration).toContain("pending_tts_task_id");
+    expect(migration).toContain("sync_shot_tts_audio_after_insert");
+    expect(migration).toContain("tts_error");
+  });
+
+  it("逐镜头裁剪只在显式请求时创建幂等 Worker 任务，并保留旧片段", () => {
+    const migration = readFileSync(shotClipMigration, "utf8");
+
+    expect(migration).toContain("create or replace function public.save_shot_clip_draft");
+    expect(migration).toContain("create function public.generate_shot_clip");
+    expect(migration).toContain("p_retry boolean default false");
+    expect(migration).toContain("ffmpeg_trim_video");
+    expect(migration).toContain("pending_video_task_id");
+    expect(migration).toContain("current_video_artifact_id");
+    expect(migration).toContain("sync_shot_clip_task_after_update");
+    expect(migration).toContain("status in ('ready', 'running', 'completed')");
+    expect(migration).toContain("where id = draft_id and pending_video_task_id = new.id");
+  });
+
+  it("逐镜头原声与无口播模式保留可追溯版本，并在当前片段变化后失效", () => {
+    const migration = readFileSync(shotAudioModesMigration, "utf8");
+
+    expect(migration).toContain("track_kind in ('narration', 'source', 'derived', 'bgm', 'sfx')");
+    expect(migration).toContain("create function public.generate_shot_source_audio");
+    expect(migration).toContain("source_video_artifact");
+    expect(migration).toContain("shot_source_audio");
+    expect(migration).toContain("audio_mode = 'none'");
+    expect(migration).toContain("create trigger invalidate_shot_source_audio_after_clip_change");
+    expect(migration).toContain("status = 'superseded'");
+    expect(migration).toContain("source_audio_error");
+  });
+
+  it("逐镜头确认要求同步证据、显式警告接受，并在输入变化后撤销", () => {
+    const migration = readFileSync(shotConfirmationMigration, "utf8");
+
+    expect(migration).toContain("create function public.confirm_shot_preparation");
+    expect(migration).toContain("Duration mismatch must be explicitly accepted before confirmation");
+    expect(migration).toContain("shot_duration_warning_accepted");
+    expect(migration).toContain("create function public.skip_shot_preparation");
+    expect(migration).toContain("create trigger reset_shot_preparation_confirmation_after_input_change");
+    expect(migration).toContain("confirmation_status = 'confirmed'");
+    expect(migration).toContain("create_shot_preparation_review_package");
+  });
+
+  it("Studio 只冻结当前确认镜头，并把确认快照传入 HyperFrames", () => {
+    const migration = readFileSync(confirmedStudioSnapshotMigration, "utf8");
+
+    expect(migration).toContain("draft.input_fingerprint is distinct from md5(shot::text)");
+    expect(migration).toContain("Superseded by the current confirmed storyboard snapshot");
+    expect(migration).toContain("'confirmation_mode', candidate.context_snapshot -> 'confirmation_mode'");
+    expect(migration).toContain("'confirmed_shots', candidate.context_snapshot -> 'confirmed_shots'");
+    expect(migration).toContain("'artifact_id', member.artifact_id");
+    expect(migration).toContain("'audio_track_id', member.audio_track_id");
+    expect(migration).toContain("'approval_mode', 'qc_only'");
   });
 });

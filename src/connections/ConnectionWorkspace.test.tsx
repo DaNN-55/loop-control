@@ -49,6 +49,20 @@ describe("外部连接工作区", () => {
     expect(onTestConnection).toHaveBeenCalledWith("connection-2");
   });
 
+  it("可预先登记火山语音 Adapter 凭据", async () => {
+    const user = userEvent.setup();
+    const onCreateConnection = vi.fn().mockResolvedValue({ id: "connection-volc", name: "主火山语音", provider: "volcengine_tts", adapter: "volcengine_tts", status: "unverified" });
+    const onTestConnection = vi.fn().mockResolvedValue(undefined);
+    render(<ConnectionWorkspace connections={[]} onCreateConnection={onCreateConnection} onTestConnection={onTestConnection} />);
+
+    await user.selectOptions(screen.getByLabelText("连接类型"), "volcengine_tts");
+    await user.type(screen.getByLabelText("豆包语音 API Key"), "api-key");
+    await user.type(screen.getByLabelText("连接名称"), "主火山语音");
+    await user.click(screen.getByRole("button", { name: "保存并测试" }));
+
+    expect(onCreateConnection).toHaveBeenCalledWith({ adapter: "volcengine_tts", name: "主火山语音", provider: "volcengine_tts", secret: "api-key" });
+  });
+
   it("轮换版本后只测试新连接并保留版本操作边界", async () => {
     const user = userEvent.setup();
     const connection = { adapter: "openai_images", created_at: "", created_by: "owner", current_version_id: "version-2", description: "", endpoint: "https://api.openai.com/v1", id: "connection-1", last_verification_detail: null, last_verified_at: null, name: "主 OpenAI", provider: "openai", status: "verified" as const };
@@ -79,7 +93,7 @@ describe("外部连接工作区", () => {
     render(<ExternalConnectionPicker adapter="openai_images" connections={[{ adapter: "openai_images", created_at: "", created_by: "owner", current_version_id: "version-2", description: "", endpoint: "https://api.openai.com/v1", id: "connection-1", last_verification_detail: null, last_verified_at: null, name: "主 OpenAI", provider: "openai", status: "verified" }]} onSelectVersion={onSelectVersion} provider="openai" selectedVersionId="" versions={versions} />);
 
     expect(screen.queryByRole("combobox", { name: "外部连接 外部连接" })).toBeNull();
-    expect(screen.getByText("主 OpenAI · v2")).toBeTruthy();
+    expect(screen.getByText("主 OpenAI · v2 · 已验证")).toBeTruthy();
     expect(onSelectVersion).toHaveBeenCalledWith("version-2");
   });
 

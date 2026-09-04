@@ -173,7 +173,7 @@ describe("账号配置工作区", () => {
     await user.selectOptions(screen.getByRole("combobox", { name: "B-roll 执行路径" }), "external");
     await user.selectOptions(screen.getByRole("combobox", { name: "B-roll Adapter" }), "pexels_video");
 
-    expect(screen.getByText("主 Pexels · v1")).toBeTruthy();
+    expect(screen.getByText("主 Pexels · v1 · 已验证")).toBeTruthy();
     expect(screen.queryByRole("combobox", { name: "B-roll 外部连接" })).toBeNull();
   });
 
@@ -205,13 +205,29 @@ describe("账号配置工作区", () => {
     await user.click(screen.getByRole("button", { name: "完成" }));
     await user.click(screen.getByRole("button", { name: "配置旁白" }));
     expect(within(screen.getByRole("combobox", { name: "语言代码" })).getByRole("option", { name: "en-US" })).toBeTruthy();
-    expect(screen.getByText("主 Google TTS · v1")).toBeTruthy();
+    expect(screen.getByText("主 Google TTS · v1 · 已验证")).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "完成" }));
     await user.click(screen.getByRole("button", { name: "配置配乐 / 音效" }));
     expect(screen.getByText("官方 Endpoint：https://freesound.org/apiv2")).toBeTruthy();
 
-    expect(screen.getByText("主 Freesound · v1")).toBeTruthy();
+    expect(screen.getByText("主 Freesound · v1 · 已验证")).toBeTruthy();
     expect(screen.queryByLabelText("API Key")).toBeNull();
+  });
+
+  it("火山旁白使用同一个声音输入选择常用声音或填写 speaker ID", async () => {
+    const user = userEvent.setup();
+    const volcengineBlueprint = { ...blueprint, policy: { ...(blueprint.policy as Record<string, Json>), narration: { execution_path: "external", credential_ref: "44444444-4444-4444-8444-444444444444", executor: { provider: "volcengine_tts", adapter: "volcengine_tts", model: "seed-tts-2.0", prompt_version: "narration-v1" }, allowed_tools: ["read", "write"], max_attempts: 1, voice: { language_code: "zh-CN", name: "zh_female_custom", speaking_rate: 1 } } } };
+    renderWorkspace({ blueprints: [volcengineBlueprint] });
+
+    await user.click(screen.getByRole("button", { name: "配置旁白" }));
+    const voiceInput = screen.getByLabelText("声音名称") as HTMLInputElement;
+    expect(voiceInput.value).toBe("zh_female_custom");
+    expect(voiceInput.getAttribute("list")).toBe("volcengine-tts-voice-options");
+    expect(document.querySelector('#volcengine-tts-voice-options option[value="zh_female_vv_uranus_bigtts"]')).toBeTruthy();
+    expect(screen.queryByLabelText("自定义声音 ID")).toBeNull();
+    await user.clear(voiceInput);
+    await user.type(voiceInput, "zh_female_vv_uranus_bigtts");
+    expect(voiceInput.value).toBe("zh_female_vv_uranus_bigtts");
   });
 
   it("用本地 Adapter 的完整身份识别就绪状态，并兼容旧检查", async () => {

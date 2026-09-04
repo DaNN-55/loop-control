@@ -1,5 +1,7 @@
+import { randomUUID } from "node:crypto";
+
 export interface MediaFetcher {
-  (input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
+  (input: string | URL, init?: RequestInit): Promise<Response>;
 }
 
 export interface GoogleTtsVoice {
@@ -65,6 +67,38 @@ export async function synthesizeGoogleTts(input: { apiKey: string; fetcher: Medi
   if (!response.ok) throw new Error(`Google TTS 请求失败：HTTP ${response.status}。`);
   if (!isRecord(payload) || typeof payload.audioContent !== "string" || !payload.audioContent) throw new Error("Google TTS 响应缺少音频内容。");
   return Uint8Array.from(Buffer.from(payload.audioContent, "base64"));
+}
+
+export async function synthesizeVolcengineTts(input: { apiKey: string; fetcher: MediaFetcher; model: string; text: string; voice: GoogleTtsVoice }): Promise<Uint8Array> {
+  if (!input.apiKey.trim() || !input.model.trim() || !input.text.trim() || !input.voice.name.trim() || !Number.isFinite(input.voice.speakingRate) || input.voice.speakingRate < 0.5 || input.voice.speakingRate > 2) throw new Error("豆包语音 V3 配置或旁白文本无效。");
+  const response = await input.fetcher("https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Api-Key": input.apiKey.trim(), "X-Api-Request-Id": randomUUID(), "X-Api-Resource-Id": input.model.trim() },
+    body: JSON.stringify({
+      user: { uid: "tk-workflow-worker" },
+      req_params: {
+        text: input.text.trim(),
+        speaker: input.voice.name.trim(),
+        sample_rate: 24000,
+        audio_params: { format: "mp3", speech_rate: Math.round((input.voice.speakingRate - 1) * 100), loudness_rate: 0, bit_rate: 64000 },
+        additions: JSON.stringify({ disable_markdown_filter: false }),
+      },
+    }),
+  });
+  const contents = await response.text();
+  if (!response.ok) throw new Error(`豆包语音 V3 请求失败：HTTP ${response.status}。`);
+  const chunks: Uint8Array[] = [];
+  for (const line of contents.split(/\r?\n/)) {
+    if (!line.startsWith("data:")) continue;
+    let payload: unknown;
+    try { payload = JSON.parse(line.slice(5).trim()); } catch { continue; }
+    if (!isRecord(payload)) continue;
+    const code = payload.code;
+    if (code !== 0 && code !== 20000000) throw new Error(`豆包语音 V3 合成失败：${typeof payload.message === "string" ? payload.message : `code ${String(code)}`}。`);
+    if (typeof payload.data === "string" && payload.data) chunks.push(Uint8Array.from(Buffer.from(payload.data, "base64")));
+  }
+  if (!chunks.length) throw new Error("豆包语音 V3 响应缺少 MP3 音频数据。");
+  return Uint8Array.from(Buffer.concat(chunks.map((chunk) => Buffer.from(chunk))));
 }
 
 export async function searchPexelsVideo(input: { apiKey: string; fetcher: MediaFetcher; query: string; targetDurationSeconds: number }): Promise<{ id: number; durationSeconds: number; downloadUrl: string }> {

@@ -20,6 +20,12 @@ describe("runtime preflight", () => {
     });
   });
 
+  it("火山语音已登记为可执行的旁白能力", () => {
+    const capability = { capability: "narration_generation", executionPath: "external" as const, provider: "volcengine_tts", adapter: "volcengine_tts", credentialRef: "11111111-1111-4111-8111-111111111111", model: "seed-tts-2.0", promptVersion: "narration-v1", allowedTools: ["read", "write"] };
+    expect(resolveRuntimeCapability(capability)).toMatchObject({ kind: "registered_execution" });
+    expect(createRuntimePreflight([capability], { connectionReferences: { "11111111-1111-4111-8111-111111111111": { available: true, detail: "已验证。" } }, connections: { volcengine_tts: { available: true, detail: "已连通。" } } }).checks).toContainEqual(expect.objectContaining({ check: "capability_registration", status: "passed" }));
+  });
+
   it("按执行路径跳过人工素材，并把缺少路径指向蓝图", () => {
     const capabilities = runtimeCapabilitiesFromBlueprintPolicy({
       a_roll: { execution_path: "manual" },

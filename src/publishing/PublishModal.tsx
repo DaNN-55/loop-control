@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
+import { Upload } from "lucide-react";
 import type { Database } from "../lib/database.types";
 import { artifactPreviewKind, localArtifactUrl, useLocalArtifactBlob, useLocalArtifactText } from "../reviews/localArtifactPreview";
 import { useDialogFocus } from "../ui/useDialogFocus";
@@ -17,14 +18,16 @@ const artifactLabels: Record<string, string> = {
   publish_package: "发布包",
 };
 
-export function PublishModal({ artifacts, episode, isPending, onClose, onOpenArtifact, onRecord, publicationRecords, publishVerification }: { artifacts: Artifact[]; episode: Episode; isPending: boolean; onClose: () => void; onOpenArtifact: (artifact: Artifact) => Promise<void>; onRecord: (input: PublicationRecordInput) => Promise<boolean>; publicationRecords: PublicationRecord[]; publishVerification: boolean }) {
+export function PublishModal({ artifacts, episode, isPending, isPreparationPending, onClose, onOpenArtifact, onPrepare, onRecord, publicationRecords, publishVerification }: { artifacts: Artifact[]; episode: Episode; isPending: boolean; isPreparationPending: boolean; onClose: () => void; onOpenArtifact: (artifact: Artifact) => Promise<void>; onPrepare: (input: { cover: File; description: string; tags: string[]; title: string }) => Promise<boolean>; onRecord: (input: PublicationRecordInput) => Promise<boolean>; publicationRecords: PublicationRecord[]; publishVerification: boolean }) {
   const dialogRef = useDialogFocus(true, onClose);
   const episodeArtifacts = artifacts.filter((artifact) => artifact.episode_id === episode.id);
   const metadataArtifact = episodeArtifacts.find((artifact) => artifact.artifact_type === "metadata") ?? null;
   const coverArtifact = episodeArtifacts.find((artifact) => artifact.artifact_type === "cover") ?? null;
   const videoArtifact = episodeArtifacts.find((artifact) => artifact.artifact_type === "final_render") ?? null;
+  const publishPackageArtifact = episodeArtifacts.find((artifact) => artifact.artifact_type === "publish_package") ?? null;
+  const isPublishPackageReady = Boolean(publishPackageArtifact && metadataArtifact && coverArtifact);
   const extraArtifacts = [
-    episodeArtifacts.find((artifact) => artifact.artifact_type === "publish_package"),
+    publishPackageArtifact,
     episodeArtifacts.find((artifact) => artifact.artifact_type === "final_qc_report"),
   ].filter((artifact): artifact is Artifact => Boolean(artifact));
   const [acknowledged, setAcknowledged] = useState(false);
@@ -35,6 +38,33 @@ export function PublishModal({ artifacts, episode, isPending, onClose, onOpenArt
   const [publishedAt, setPublishedAt] = useState(() => new Date().toISOString().slice(0, 16));
   const [notes, setNotes] = useState("");
   const [formError, setFormError] = useState("");
+  const [cover, setCover] = useState<File | null>(null);
+  const [coverPreview, setCoverPreview] = useState("");
+  const [publishTitle, setPublishTitle] = useState(episode.title || "");
+  const [publishDescription, setPublishDescription] = useState("");
+  const [publishTags, setPublishTags] = useState("");
+  const [preparationError, setPreparationError] = useState("");
+
+  useEffect(() => {
+    if (!cover) { setCoverPreview(""); return; }
+    const reader = new FileReader();
+    reader.addEventListener("load", () => setCoverPreview(typeof reader.result === "string" ? reader.result : ""));
+    reader.readAsDataURL(cover);
+    return () => { if (reader.readyState === FileReader.LOADING) reader.abort(); };
+  }, [cover]);
+
+  async function prepare(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    try {
+      setPreparationError("");
+      if (!cover) throw new Error("请选择封面。");
+      if (!(["image/jpeg", "image/png", "image/webp"].includes(cover.type) || /\.(jpe?g|png|webp)$/i.test(cover.name))) throw new Error("封面仅支持 JPG、PNG 或 WebP。");
+      if (cover.size > 20 * 1024 * 1024) throw new Error("封面不能超过 20 MB。");
+      await onPrepare({ cover, description: publishDescription, tags: publishTags.split(/[，,\n]+/).map((tag) => tag.trim()).filter(Boolean), title: publishTitle.trim() });
+    } catch (error) {
+      setPreparationError(error instanceof Error ? error.message : "无法生成发布包。");
+    }
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -54,10 +84,11 @@ export function PublishModal({ artifacts, episode, isPending, onClose, onOpenArt
       <header><div><h2>发布确认</h2><p>{episode.title || "未命名生产单"} · {episode.id.slice(0, 8)}</p></div><button aria-label="关闭发布确认" className="icon-button" onClick={onClose} type="button">×</button></header>
       <div className="publish-modal-overview">
         <div><span>本地 Episode 目录</span><code>episodes/{episode.id}</code></div>
-        <div><span>发布包</span><strong>{episodeArtifacts.some((artifact) => artifact.artifact_type === "publish_package") ? "发布包已固定" : "缺少发布包"}</strong></div>
+        <div><span>发布包</span><strong>{publishPackageArtifact ? "发布包已固定" : "缺少发布包"}</strong></div>
         <div><span>发布包校验</span><strong className={publishVerification ? "publish-verification-passed" : "publish-verification-failed"}>{publishVerification ? "校验已通过" : "尚未通过"}</strong></div>
       </div>
-      <section className="publish-materials"><header><div><h3>发布材料</h3><p>先核对元数据，再查看封面和视频；技术文件按需打开。</p></div></header><PublishMetadataSummary artifact={metadataArtifact} onOpenArtifact={onOpenArtifact} /><div className="publish-visual-material-grid"><PublishVisualMaterialCard artifact={coverArtifact} label="封面" onOpenArtifact={onOpenArtifact} /><PublishVisualMaterialCard artifact={videoArtifact} label="视频" onOpenArtifact={onOpenArtifact} /></div>{extraArtifacts.length ? <details className="publish-extra-materials"><summary>更多材料 <span>QC 报告 · 发布包</span></summary><div className="publish-extra-material-list">{extraArtifacts.map((artifact) => <PublishStructuredMaterialCard artifact={artifact} key={artifact.id} label={artifactLabels[artifact.artifact_type] ?? artifact.artifact_type} onOpenArtifact={onOpenArtifact} />)}</div></details> : null}</section>
+      {!isPublishPackageReady ? <section className="publish-preparation-warning"><strong>发布材料未齐，当前还不能登记发布</strong><p>填写发布信息并选择封面，系统会一次完成材料登记、发布包生成和校验。</p><div className="publish-preparation-layout"><form className="publish-preparation-form" onSubmit={(event) => void prepare(event)}><label>发布标题<input aria-label="发布标题" maxLength={200} onChange={(event) => setPublishTitle(event.target.value)} required value={publishTitle} /></label><label>发布标签<input aria-label="发布标签" onChange={(event) => setPublishTags(event.target.value)} placeholder="用逗号分隔，最多 20 个" value={publishTags} /></label><label className="publish-preparation-description">发布简介<textarea aria-label="发布简介" maxLength={5000} onChange={(event) => setPublishDescription(event.target.value)} rows={3} value={publishDescription} /></label><div className={`publish-preparation-cover${coverPreview ? " has-preview" : ""}`}><label className="material-unified-upload"><input accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" aria-label="选择封面" className="material-slot-input" onChange={(event) => setCover(event.target.files?.[0] ?? null)} required type="file" /><Upload aria-hidden="true" className="icon" /><span><strong>封面（JPG、PNG、WebP）</strong><small>{cover ? `${cover.name} · ${(cover.size / 1024 / 1024).toFixed(1)} MB` : "点击选择封面，最大 20 MB"}</small></span></label>{coverPreview ? <figure className="publish-selected-cover-preview"><img alt="所选封面预览" src={coverPreview} /><figcaption>封面预览</figcaption></figure> : null}</div>{preparationError ? <p className="form-error">{preparationError}</p> : null}<button className="button button-primary" disabled={isPreparationPending || !cover || !publishTitle.trim()} type="submit">{isPreparationPending ? "生成中…" : "保存并生成发布包"}</button></form><div className="publish-preparation-video"><PublishVisualMaterialCard artifact={videoArtifact} label="最终视频" onOpenArtifact={onOpenArtifact} /></div></div></section> : null}
+      {isPublishPackageReady ? <section className="publish-materials"><header><div><h3>发布材料</h3><p>先核对元数据，再查看封面和视频；技术文件按需打开。</p></div></header><PublishMetadataSummary artifact={metadataArtifact} onOpenArtifact={onOpenArtifact} /><div className="publish-visual-material-grid"><PublishVisualMaterialCard artifact={coverArtifact} label="封面" onOpenArtifact={onOpenArtifact} /><PublishVisualMaterialCard artifact={videoArtifact} label="视频" onOpenArtifact={onOpenArtifact} /></div>{extraArtifacts.length ? <details className="publish-extra-materials"><summary>更多材料 <span>QC 报告 · 发布包</span></summary><div className="publish-extra-material-list">{extraArtifacts.map((artifact) => <PublishStructuredMaterialCard artifact={artifact} key={artifact.id} label={artifactLabels[artifact.artifact_type] ?? artifact.artifact_type} onOpenArtifact={onOpenArtifact} />)}</div></details> : null}</section> : null}
       {publicationRecords.length ? <section className="publication-history"><h3>已记录发布历史</h3><div>{publicationRecords.map((record) => <article key={record.id}><strong>{record.platform} · {record.publishing_account}</strong><span>{record.status === "published" ? "已发布" : record.status} · {record.published_at ? formatPublicationDate(record.published_at) : "未记录时间"}</span>{record.external_url ? <a href={record.external_url} rel="noreferrer" target="_blank">{record.external_url}</a> : record.external_content_id ? <code>内容 ID：{record.external_content_id}</code> : null}</article>)}</div><p>支持多平台：每个平台分别记录一次，历史记录会追加保存。</p></section> : null}
       <details className="publication-record-form"><summary>确认材料无误后，展开填写发布信息</summary><form onSubmit={(event) => void submit(event)}>
           <label className="checkbox-label"><input checked={acknowledged} onChange={(event) => setAcknowledged(event.target.checked)} type="checkbox" />我已在目标平台手工发布，并核对发布包内容。</label>

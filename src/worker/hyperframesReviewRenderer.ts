@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { readFile, realpath, stat } from "node:fs/promises";
 import { basename, dirname, extname, isAbsolute, relative, resolve } from "node:path";
-import type { ArtifactManifest, StoryboardShotManifest, WorkerResult, WorkerTaskPackage } from "./contracts.js";
+import type { ArtifactManifest, WorkerResult, WorkerTaskPackage } from "./contracts.js";
 import { safeAssetOutputPath, writeSafeAssetFile } from "./controlledMediaExecutor.js";
 
 export async function executeHyperframesReviewRender(input: {
@@ -15,16 +15,17 @@ export async function executeHyperframesReviewRender(input: {
   const projectPath = await safeAssetOutputPath(input.taskPackage.assets.allowedRoot, render.projectRelativePath);
   const outputPath = await safeAssetOutputPath(input.taskPackage.assets.allowedRoot, input.taskPackage.output.relativePath);
   if (render.studioProject) await materializeStudioProject(input.taskPackage);
-  await copyFrozenProjectAssets(input.taskPackage);
+  await copyFrozenProjectAssets(input.taskPackage, input.run);
   await materializeBgmLoops(input.taskPackage, input.run);
   if (!render.studioProject) await writeSafeAssetFile(input.taskPackage.assets.allowedRoot, render.projectRelativePath, projectHtml(input.taskPackage));
   const projectDirectory = dirname(projectPath);
   await input.run("hyperframes", ["check", projectDirectory]);
   await input.run("hyperframes", ["render", projectDirectory, "--quality", "standard", "--strict", "--no-best-effort", "--output", outputPath]);
-  await input.validateMp4(outputPath, totalDuration(render));
+  const projectContents = await readFile(projectPath, "utf8");
+  await input.validateMp4(outputPath, projectDuration(projectContents, totalDuration(render)));
   const qcReportPath = `${dirname(render.projectRelativePath)}/qc-report.json`;
   const inspection = await input.inspectMp4(outputPath);
-  const report = buildQcReport({ taskPackage: input.taskPackage, projectContents: await readFile(projectPath, "utf8"), inspection, outputRelativePath: input.taskPackage.output.relativePath, projectRelativePath: render.projectRelativePath });
+  const report = buildQcReport({ taskPackage: input.taskPackage, projectContents, inspection, outputRelativePath: input.taskPackage.output.relativePath, projectRelativePath: render.projectRelativePath });
   if (!report.passed) throw new Error("审核渲染未通过 QC 校验。");
   await writeSafeAssetFile(input.taskPackage.assets.allowedRoot, qcReportPath, JSON.stringify(report, null, 2) + "\n");
   const runtimePath = `${dirname(render.projectRelativePath)}/assets/gsap.min.js`;
@@ -70,10 +71,14 @@ export interface QcReport { version: "qc-report/v1"; passed: boolean; output: { 
 export function buildQcReport(input: { taskPackage: WorkerTaskPackage; projectContents: string; inspection: QcInspection; outputRelativePath: string; projectRelativePath: string }): QcReport {
   const render = input.taskPackage.reviewRender ?? input.taskPackage.finalRender?.reviewRender;
   if (!render) throw new Error("QC 报告缺少冻结合成工程。");
-  const expectedDuration = totalDuration(render);
-  const captionsPresent = render.storyboard.shots.every((shot) => input.projectContents.includes(escapeHtml(shot.scriptSegment)));
+  const expectedDuration = projectDuration(input.projectContents, totalDuration(render));
+  const members = new Map(render.members.map((member) => [member.memberKey, member]));
+  const captionsPresent = render.storyboard.shots.every((shot) => {
+    const member = members.get(`shot:${shot.id}`);
+    return member?.subtitlesEnabled === false || input.projectContents.includes(escapeHtml(member?.subtitleText ?? shot.scriptSegment));
+  });
   const checks = [
-    { name: "duration_coverage", passed: Math.abs(input.inspection.durationSeconds - expectedDuration) <= 0.15, detail: `时长 ${input.inspection.durationSeconds.toFixed(3)}s，冻结分镜 ${expectedDuration.toFixed(3)}s。` },
+    { name: "duration_coverage", passed: Math.abs(input.inspection.durationSeconds - expectedDuration) <= 0.15, detail: `时长 ${input.inspection.durationSeconds.toFixed(3)}s，Studio 工程 ${expectedDuration.toFixed(3)}s。` },
     { name: "resolution", passed: input.inspection.width === render.adjustments.width && input.inspection.height === render.adjustments.height, detail: `分辨率 ${input.inspection.width}×${input.inspection.height}，冻结配置 ${render.adjustments.width}×${render.adjustments.height}。` },
     { name: "audio", passed: input.inspection.hasAudio, detail: input.inspection.hasAudio ? "检测到音频流。" : "缺少音频流。" },
     { name: "black_frames", passed: input.inspection.blackFrameCount === 0, detail: `检测到 ${input.inspection.blackFrameCount} 段黑帧。` },
@@ -95,10 +100,22 @@ export function projectHtml(taskPackage: WorkerTaskPackage): string {
   const fadeScene = adjustments.transition === "fade";
   const mediaFor = (path: string) => escapeHtml(`assets/${assetFilename(path)}`);
   const members = new Map(render.members.map((member) => [member.memberKey, member]));
+  const shotDurations = render.storyboard.shots.map((shot) => members.get(`shot:${shot.id}`)?.durationSeconds ?? shot.durationSeconds);
   const shots = render.storyboard.shots.map((shot, index) => {
     const member = members.get(`shot:${shot.id}`);
     if (!member) throw new Error(`冻结审核渲染缺少镜头 ${shot.id} 的媒体。`);
-    return `<video id="shot-${index}" class="clip shot shot-${index}" data-start="${timelineStart(render.storyboard.shots, index)}" data-duration="${shot.durationSeconds}" data-track-index="0" muted playsinline preload="auto" src="${mediaFor(member.relativePath)}"></video>${adjustments.captionsEnabled ? `<div id="caption-${index}" class="clip caption ${captionClass}" data-start="${timelineStart(render.storyboard.shots, index)}" data-duration="${shot.durationSeconds}" data-track-index="1"><span>${escapeHtml(shot.scriptSegment)}</span></div>` : ""}`;
+    const captionsEnabled = adjustments.captionsEnabled && member.subtitlesEnabled !== false;
+    const start = timelineStart(shotDurations, index);
+    const rawSource = Boolean(member.clipSegments);
+    const segments = member.clipSegments ?? [{ startSeconds: member.startSeconds, endSeconds: member.startSeconds + member.durationSeconds }];
+    let segmentOffset = 0;
+    const video = segments.map((segment, segmentIndex) => {
+      const duration = segment.endSeconds - segment.startSeconds;
+      const html = `<video id="shot-${index}-${segmentIndex}" class="clip shot shot-${index}" data-start="${start + segmentOffset}" data-duration="${duration}"${rawSource ? ` data-media-start="${segment.startSeconds}"` : ""}${member.audioMode === "source" ? ' data-has-audio="true"' : ""} data-track-index="0"${member.audioMode === "source" ? "" : " muted"} playsinline preload="auto" src="assets/${preparedAssetFilename(member)}"></video>`;
+      segmentOffset += duration;
+      return html;
+    }).join("\n");
+    return `${video}${captionsEnabled ? `<div id="caption-${index}" class="clip caption ${captionClass}" data-start="${start}" data-duration="${member.durationSeconds}" data-track-index="1"><span>${escapeHtml(member.subtitleText ?? shot.scriptSegment)}</span></div>` : ""}`;
   }).join("\n");
   const audio = render.members.filter((member) => member.memberKind !== "shot_media").map((member, index) => `<audio id="audio-${index}" class="clip" data-start="${member.startSeconds}" data-duration="${member.durationSeconds}" data-track-index="${2 + index}" data-volume="${dbToGain(member.memberKind === "narration" ? adjustments.narrationGainDb : member.audioKind === "sfx" ? adjustments.sfxGainDb : adjustments.bgmGainDb)}" preload="auto" src="${mediaFor(member.audioKind === "bgm" ? loopedBgmAssetPath(member.relativePath) : member.relativePath)}"></audio>`).join("\n");
   return `<!doctype html>
@@ -107,12 +124,13 @@ export function projectHtml(taskPackage: WorkerTaskPackage): string {
 </style></head><body><div id="root" data-composition-id="review-render-v${render.projectRevision}" data-composition-adjustments="${escapeHtml(JSON.stringify(adjustments))}" data-start="0" data-duration="${totalDuration(render)}" data-width="${adjustments.width}" data-height="${adjustments.height}">${shots}<div id="vignette" class="clip vignette" data-start="0" data-duration="${totalDuration(render)}" data-track-index="99"></div>${audio}</div><script>window.__timelines=window.__timelines||{};const tl=gsap.timeline({paused:true});document.querySelectorAll('.caption').forEach((node)=>tl.from(node,{opacity:0,y:${entranceOffset},duration:${entranceDuration}},Number(node.dataset.start)));document.querySelectorAll('.shot').forEach((node)=>{const start=Number(node.dataset.start),duration=Number(node.dataset.duration);tl.to(node,{scale:${shotMotionScale},duration},start);${fadeScene ? "tl.from(node,{opacity:0,duration:.35},start).to(node,{opacity:0,duration:.35},start+duration-.35);" : ""}});window.__timelines['review-render-v${render.projectRevision}']=tl;</script></body></html>`;
 }
 
-function timelineStart(shots: StoryboardShotManifest[], index: number): number {
-  return shots.slice(0, index).reduce((total, shot) => total + shot.durationSeconds, 0);
+function timelineStart(durations: number[], index: number): number {
+  return durations.slice(0, index).reduce((total, duration) => total + duration, 0);
 }
 
 function totalDuration(render: NonNullable<WorkerTaskPackage["reviewRender"]>): number {
-  return render.storyboard.shots.reduce((total, shot) => total + shot.durationSeconds, 0);
+  const members = new Map(render.members.map((member) => [member.memberKey, member]));
+  return render.storyboard.shots.reduce((total, shot) => total + (members.get(`shot:${shot.id}`)?.durationSeconds ?? shot.durationSeconds), 0);
 }
 
 async function artifact(artifactType: string, relativePath: string, path: string): Promise<ArtifactManifest> {
@@ -120,16 +138,26 @@ async function artifact(artifactType: string, relativePath: string, path: string
   return { artifactType, relativePath, sha256: createHash("sha256").update(bytes).digest("hex"), fileSize: bytes.byteLength };
 }
 
-export async function copyFrozenProjectAssets(taskPackage: WorkerTaskPackage, render = taskPackage.reviewRender): Promise<void> {
+export async function copyFrozenProjectAssets(taskPackage: WorkerTaskPackage, run: (command: string, args: string[]) => Promise<void>, render = taskPackage.reviewRender): Promise<void> {
   if (!render) throw new Error("冻结工程缺失。");
   const assetRoot = await realpath(resolve(taskPackage.assets.allowedRoot));
   for (const member of render.members) {
     const source = resolve(assetRoot, member.relativePath);
     const fromRoot = relative(assetRoot, source);
     if (isAbsolute(fromRoot) || fromRoot.startsWith("..")) throw new Error("冻结媒体输入越出资产根目录。");
-    await writeSafeAssetFile(taskPackage.assets.allowedRoot, `${dirname(render.projectRelativePath)}/assets/${assetFilename(member.relativePath)}`, await readFile(source));
+    const destinationRelativePath = `${dirname(render.projectRelativePath)}/assets/${preparedAssetFilename(member)}`;
+    if (member.memberKind === "shot_media" && !member.clipSegments) {
+      const destination = await safeAssetOutputPath(taskPackage.assets.allowedRoot, destinationRelativePath);
+      await run("ffmpeg", clipVideoArguments(source, destination, member.startSeconds, member.durationSeconds));
+    } else {
+      await writeSafeAssetFile(taskPackage.assets.allowedRoot, destinationRelativePath, await readFile(source));
+    }
   }
   await writeSafeAssetFile(taskPackage.assets.allowedRoot, `${dirname(render.projectRelativePath)}/assets/gsap.min.js`, await readFile(resolve(process.cwd(), "node_modules", "gsap", "dist", "gsap.min.js")));
+}
+
+export function clipVideoArguments(source: string, destination: string, startSeconds: number, durationSeconds: number): string[] {
+  return ["-nostdin", "-v", "error", "-ss", String(startSeconds), "-i", source, "-t", String(durationSeconds), "-map", "0:v:0", "-an", "-c:v", "libx264", "-pix_fmt", "yuv420p", "-movflags", "+faststart", destination];
 }
 
 export async function materializeBgmLoops(taskPackage: WorkerTaskPackage, run: (command: string, args: string[]) => Promise<void>, render = taskPackage.reviewRender): Promise<void> {
@@ -144,6 +172,17 @@ export async function materializeBgmLoops(taskPackage: WorkerTaskPackage, run: (
 function loopedBgmAssetPath(relativePath: string): string { const extension = extname(relativePath); return `${relativePath.slice(0, -extension.length)}.looped${extension}`; }
 
 function assetFilename(relativePath: string): string { return `${createHash("sha256").update(relativePath).digest("hex")}${extname(basename(relativePath))}`; }
+
+function preparedAssetFilename(member: NonNullable<WorkerTaskPackage["reviewRender"]>["members"][number]): string {
+  if (member.memberKind !== "shot_media" || member.clipSegments) return assetFilename(member.relativePath);
+  return `${createHash("sha256").update(`${member.relativePath}:${member.memberKey}:${member.startSeconds}:${member.durationSeconds}`).digest("hex")}.mp4`;
+}
+
+export function projectDuration(projectContents: string, fallback: number): number {
+  const value = /id="root"[^>]*data-duration="([0-9]+(?:\.[0-9]+)?)"/.exec(projectContents)?.[1];
+  const duration = Number(value);
+  return Number.isFinite(duration) && duration > 0 ? duration : fallback;
+}
 
 function dbToGain(value: number): string { return Math.pow(10, value / 20).toFixed(6); }
 

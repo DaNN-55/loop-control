@@ -33,6 +33,62 @@ describe("本地 Codex Worker runner", () => {
     expect(reportResult).not.toHaveBeenCalled();
   });
 
+  it("将冻结裁剪配置解析为 Worker 的 ffmpeg 视频输入", async () => {
+    const execute = vi.fn().mockResolvedValue(JSON.stringify({
+      version: "worker-result/v1",
+      taskId: "task-clip",
+      status: "completed",
+      artifacts: [{ artifactType: "a_roll_video", relativePath: "episodes/episode-1/shot-clips/shot-1.mp4", sha256: "a".repeat(64), fileSize: 128 }],
+      validation: { passed: true, checks: [] },
+      actualCostCents: 0,
+      blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." },
+      nextStep: "Await the next controlled production step.",
+    }));
+
+    await runCodexWorker({
+      claimNextTask: async () => ({
+        ...claimedTask,
+        taskId: "task-clip",
+        taskType: "generate_a_roll",
+        provider: "ffmpeg",
+        model: "ffmpeg",
+        promptVersion: "shot-clip-v1",
+        inputSnapshot: {
+          capability: "shot_clip_preparation",
+          allowed_tools: ["read", "write"],
+          media: { adapter: "ffmpeg_trim_video", video_clip: { source_relative_path: "episodes/episode-1/materials/source.mp4", start_seconds: 1, end_seconds: 4, target_duration_seconds: 3 } },
+          output: { required_artifact_types: ["a_roll_video"], content_type: "video/mp4", relative_path: "episodes/episode-1/shot-clips/shot-1.mp4", review_stage: "production_ready" },
+          input_artifacts: [{ artifactType: "source_video", relativePath: "episodes/episode-1/materials/source.mp4", sha256: "b".repeat(64), fileSize: 10 }],
+        },
+      }),
+      reportResult: vi.fn().mockResolvedValue(undefined),
+      execute,
+      verifyAssetRoot: async () => undefined,
+      verifyArtifacts: async () => undefined,
+      actualCostCents: 0,
+    });
+
+    expect(execute).toHaveBeenCalledWith(expect.objectContaining({ provider: "ffmpeg", media: { adapter: "ffmpeg_trim_video", videoClip: { sourceRelativePath: "episodes/episode-1/materials/source.mp4", startSeconds: 1, endSeconds: 4, targetDurationSeconds: 3 } } }));
+  });
+
+  it("将多段裁剪配置按原顺序交给 Worker", async () => {
+    const execute = vi.fn().mockResolvedValue(JSON.stringify({
+      version: "worker-result/v1", taskId: "task-multi-clip", status: "completed", artifacts: [],
+      validation: { passed: true, checks: [] }, actualCostCents: 0, blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." }, nextStep: "Done.",
+    }));
+    await runCodexWorker({
+      claimNextTask: async () => ({ ...claimedTask, taskId: "task-multi-clip", taskType: "generate_a_roll", provider: "ffmpeg", model: "ffmpeg", promptVersion: "shot-clip-v2", inputSnapshot: {
+        capability: "shot_clip_preparation", allowed_tools: ["read", "write"],
+        media: { adapter: "ffmpeg_trim_video", video_clips: { source_relative_path: "episodes/episode-1/materials/source.mp4", segments: [{ start_seconds: 1, end_seconds: 2 }, { start_seconds: 4, end_seconds: 6 }], target_duration_seconds: 3 } },
+        output: { required_artifact_types: ["a_roll_video"], content_type: "video/mp4", relative_path: "episodes/episode-1/shot-clips/shot-1.mp4", review_stage: "production_ready" },
+        input_artifacts: [{ artifactType: "source_video", relativePath: "episodes/episode-1/materials/source.mp4", sha256: "b".repeat(64), fileSize: 10 }],
+      } }), reportResult: vi.fn(), execute, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0,
+    });
+    expect(execute).toHaveBeenCalledWith(expect.objectContaining({ media: { adapter: "ffmpeg_trim_video", videoClips: { sourceRelativePath: "episodes/episode-1/materials/source.mp4", segments: [{ startSeconds: 1, endSeconds: 2 }, { startSeconds: 4, endSeconds: 6 }], targetDurationSeconds: 3 } } }));
+  });
+
   it("将通过校验的 Codex 结果回写给同一个任务", async () => {
     const reportResult = vi.fn().mockResolvedValue(undefined);
     const preflight = vi.fn().mockResolvedValue({

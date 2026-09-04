@@ -70,6 +70,11 @@ describe("adapter registry", () => {
       requiresNetwork: true,
       connections: [],
     });
+    expect(adapterRegistration("volcengine_tts", "volcengine_tts")).toMatchObject({
+      capability: "narration_generation",
+      connectionType: "volcengine_tts_api",
+      modelCatalog: ["seed-tts-2.0"],
+    });
     expect(adapterRegistration("freesound", "freesound_preview")).toMatchObject({
       capability: "soundtrack_generation",
       connectionType: "freesound_api",
@@ -79,6 +84,12 @@ describe("adapter registry", () => {
     });
     expect(adapterRegistration("ffmpeg", "ffmpeg_extract_audio")).toMatchObject({
       capability: "embedded_audio_extraction",
+      connectionType: "internal",
+      requiresNetwork: false,
+      connections: [],
+    });
+    expect(adapterRegistration("ffmpeg", "ffmpeg_trim_video")).toMatchObject({
+      capability: "shot_clip_preparation",
       connectionType: "internal",
       requiresNetwork: false,
       connections: [],

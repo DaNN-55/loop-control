@@ -1,5 +1,6 @@
 import { tmpdir } from "node:os";
 import type { RuntimeDependencyStatus } from "./runtimePreflight.js";
+import { synthesizeVolcengineTts } from "./mediaProviders.js";
 
 export interface RuntimeProbeCommandResult {
   stdout: string;
@@ -58,6 +59,20 @@ export async function probeProviderConnection(provider: string, apiKey: string, 
   if (provider === "cloudflare" && !isCloudflareCredential(apiKey)) {
     const status: RuntimeDependencyStatus = { available: false, status: "unavailable", detail: "cloudflare 凭据格式无效。请使用 Account ID:API Token。" };
     return { connection: status, credentialValidity: status };
+  }
+  if (provider === "volcengine_tts" && !apiKey.trim()) {
+    const status: RuntimeDependencyStatus = { available: false, status: "unavailable", detail: "豆包语音 API Key 不能为空。" };
+    return { connection: status, credentialValidity: status };
+  }
+  if (provider === "volcengine_tts") {
+    try {
+      await synthesizeVolcengineTts({ apiKey, fetcher: (input, init) => fetchWithTimeout(fetcher, input, init), model: model || "seed-tts-2.0", text: "测试", voice: { languageCode: "zh-CN", name: "zh_female_vv_uranus_bigtts", speakingRate: 1 } });
+      return { connection: { available: true, detail: "豆包语音 V3 网络已连通。" }, credentialValidity: { available: true, detail: "豆包语音 V3 测试合成成功。" } };
+    } catch (error) {
+      const detail = errorMessage(error);
+      const retryable = isNetworkFailure(detail) || /HTTP (408|429|5\d\d)/.test(detail);
+      return { connection: { available: !retryable, status: retryable ? "retryable" : "unavailable", detail: `豆包语音 V3 测试失败：${detail}` }, credentialValidity: { available: false, status: retryable ? "retryable" : "unavailable", detail } };
+    }
   }
   const request = providerProbeRequest(provider, apiKey, model);
   if (!request) return { connection: { available: true, detail: `${provider} 不需要外部网络探测。` } };
@@ -131,6 +146,7 @@ function isCloudflareCredential(apiKey: string): boolean {
   return Boolean(accountId?.trim() && apiToken?.trim());
 }
 
+
 function cloudflareModelListed(payload: unknown, model: string): boolean {
   if (!payload || Array.isArray(payload) || typeof payload !== "object") return false;
   const response = payload as Record<string, unknown>;
@@ -142,7 +158,7 @@ function cloudflareModelListed(payload: unknown, model: string): boolean {
   });
 }
 
-async function fetchWithTimeout(fetcher: RuntimeProbeFetcher, url: string, init?: RequestInit): Promise<Response> {
+async function fetchWithTimeout(fetcher: RuntimeProbeFetcher, url: string | URL, init?: RequestInit): Promise<Response> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 10_000);
   try {

@@ -4,13 +4,14 @@ import { lstat, mkdir, mkdtemp, open, realpath, rm, writeFile } from "node:fs/pr
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import type { ArtifactManifest, WorkerResult, WorkerTaskPackage } from "./contracts.js";
-import { generateCloudflareWorkersAiImage, generateOpenAiImage, searchFreesoundPreview, searchPexelsVideo, synthesizeGoogleTts, type FreesoundPreview, type MediaFetcher } from "./mediaProviders.js";
+import { generateCloudflareWorkersAiImage, generateOpenAiImage, searchFreesoundPreview, searchPexelsVideo, synthesizeGoogleTts, synthesizeVolcengineTts, type FreesoundPreview, type MediaFetcher } from "./mediaProviders.js";
 
 export async function executeControlledMediaTask(input: {
   taskPackage: WorkerTaskPackage;
   fetcher: MediaFetcher;
   pexelsApiKey: string | undefined;
   googleTtsApiKey: string | undefined;
+  volcengineTtsApiKey?: string;
   freesoundApiKey?: string;
   openaiApiKey?: string;
   cloudflareWorkersAiCredentials?: string;
@@ -18,6 +19,8 @@ export async function executeControlledMediaTask(input: {
   probeMp3: (path: string) => Promise<number>;
   extractMp3: (sourcePath: string, minimumDurationSeconds: number) => Promise<Uint8Array>;
   trimMp3: (bytes: Uint8Array, targetDurationSeconds: number) => Promise<Uint8Array>;
+  trimMp4?: (sourcePath: string, startSeconds: number, endSeconds: number) => Promise<Uint8Array>;
+  trimMp4Segments?: (sourcePath: string, segments: Array<{ startSeconds: number; endSeconds: number }>) => Promise<Uint8Array>;
 }): Promise<string> {
   const media = await mediaBytes(input);
   const audioDurationSeconds = await validateTemporaryMedia(input, media.bytes);
@@ -46,6 +49,7 @@ async function mediaBytes(input: {
   fetcher: MediaFetcher;
   pexelsApiKey: string | undefined;
   googleTtsApiKey: string | undefined;
+  volcengineTtsApiKey?: string;
   freesoundApiKey?: string;
   openaiApiKey?: string;
   cloudflareWorkersAiCredentials?: string;
@@ -53,6 +57,8 @@ async function mediaBytes(input: {
   probeMp3: (path: string) => Promise<number>;
   extractMp3: (sourcePath: string, minimumDurationSeconds: number) => Promise<Uint8Array>;
   trimMp3: (bytes: Uint8Array, targetDurationSeconds: number) => Promise<Uint8Array>;
+  trimMp4?: (sourcePath: string, startSeconds: number, endSeconds: number) => Promise<Uint8Array>;
+  trimMp4Segments?: (sourcePath: string, segments: Array<{ startSeconds: number; endSeconds: number }>) => Promise<Uint8Array>;
 }): Promise<{ bytes: Uint8Array; source?: FreesoundPreview }> {
   const { taskPackage } = input;
   if (taskPackage.provider === "google_tts" && taskPackage.media?.adapter === "google_tts") {
@@ -63,6 +69,10 @@ async function mediaBytes(input: {
       text: taskPackage.media.narration.text,
       voice: taskPackage.media.narration.voice,
     }) };
+  }
+  if (taskPackage.provider === "volcengine_tts" && taskPackage.media?.adapter === "volcengine_tts") {
+    if (!input.volcengineTtsApiKey) throw new Error("豆包语音连接秘密不可用，无法执行冻结旁白任务。");
+    return { bytes: await synthesizeVolcengineTts({ apiKey: input.volcengineTtsApiKey, fetcher: input.fetcher, model: taskPackage.model, text: taskPackage.media.narration.text, voice: taskPackage.media.narration.voice }) };
   }
   if (taskPackage.provider === "pexels" && taskPackage.media?.adapter === "pexels_video") {
     if (!input.pexelsApiKey) throw new Error("Pexels 连接秘密不可用，无法执行冻结 B-roll 任务。");
@@ -85,6 +95,19 @@ async function mediaBytes(input: {
     const fromRoot = relative(resolve(taskPackage.assets.allowedRoot), sourcePath);
     if (isAbsolute(fromRoot) || fromRoot.startsWith("..")) throw new Error("冻结视频输入路径超出资产根目录。");
     return { bytes: await input.extractMp3(sourcePath, taskPackage.media.embeddedAudio.durationSeconds) };
+  }
+  if (taskPackage.provider === "ffmpeg" && taskPackage.media?.adapter === "ffmpeg_trim_video") {
+    const clip = taskPackage.media.videoClips ?? taskPackage.media.videoClip;
+    if (!clip) throw new Error("冻结视频裁剪输入缺失。");
+    const sourcePath = resolve(taskPackage.assets.allowedRoot, clip.sourceRelativePath);
+    const fromRoot = relative(resolve(taskPackage.assets.allowedRoot), sourcePath);
+    if (isAbsolute(fromRoot) || fromRoot.startsWith("..")) throw new Error("冻结视频输入路径超出资产根目录。");
+    if (taskPackage.media.videoClips) {
+      if (!input.trimMp4Segments) throw new Error("Worker 未配置多片段裁剪执行器。");
+      return { bytes: await input.trimMp4Segments(sourcePath, taskPackage.media.videoClips.segments) };
+    }
+    if (!input.trimMp4) throw new Error("Worker 未配置视频裁剪执行器。");
+    return { bytes: await input.trimMp4(sourcePath, taskPackage.media.videoClip!.startSeconds, taskPackage.media.videoClip!.endSeconds) };
   }
   if (taskPackage.provider === "freesound" && taskPackage.media?.adapter === "freesound_preview") {
     if (!input.freesoundApiKey) throw new Error("FREESOUND_API_KEY 未配置，无法执行冻结声轨任务。");
@@ -147,7 +170,11 @@ async function validateTemporaryMedia(input: Parameters<typeof executeControlled
       await input.validateMp4(path, input.taskPackage.media.bRoll.targetDurationSeconds);
       return undefined;
     }
-    if (input.taskPackage.provider === "google_tts" || input.taskPackage.provider === "ffmpeg" || input.taskPackage.provider === "freesound") return await input.probeMp3(path);
+    if (input.taskPackage.provider === "ffmpeg" && input.taskPackage.media?.adapter === "ffmpeg_trim_video") {
+      await input.validateMp4(path, (input.taskPackage.media.videoClips ?? input.taskPackage.media.videoClip)!.targetDurationSeconds);
+      return undefined;
+    }
+    if (input.taskPackage.provider === "google_tts" || input.taskPackage.provider === "volcengine_tts" || input.taskPackage.provider === "ffmpeg" || input.taskPackage.provider === "freesound") return await input.probeMp3(path);
     return undefined;
   } finally {
     await rm(directory, { recursive: true, force: true });

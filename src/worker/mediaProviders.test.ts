@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { generateCloudflareWorkersAiImage, generateOpenAiImage, searchFreesoundPreview, searchPexelsVideo, synthesizeGoogleTts } from "./mediaProviders";
+import { generateCloudflareWorkersAiImage, generateOpenAiImage, searchFreesoundPreview, searchPexelsVideo, synthesizeGoogleTts, synthesizeVolcengineTts } from "./mediaProviders";
 
 describe("受控媒体供应商", () => {
   it("使用 OpenAI Images 的 base64 PNG 响应", async () => {
@@ -30,6 +30,16 @@ describe("受控媒体供应商", () => {
       voice: { languageCode: "cmn-CN", name: "cmn-CN-Standard-A" },
       audioConfig: { audioEncoding: "MP3", speakingRate: 1 },
     });
+  });
+
+  it("使用豆包语音 V3 SSE 合并 MP3 音频分片", async () => {
+    const fetcher = vi.fn().mockResolvedValue(new Response([
+      `data: ${JSON.stringify({ code: 0, data: Buffer.from("audio-").toString("base64") })}`,
+      `data: ${JSON.stringify({ code: 20000000, data: Buffer.from("bytes").toString("base64") })}`,
+    ].join("\n"), { status: 200 }));
+
+    await expect(synthesizeVolcengineTts({ apiKey: "volc-key", fetcher, model: "seed-tts-2.0", text: "冻结旁白。", voice: { languageCode: "zh-CN", name: "zh_female_vv_uranus_bigtts", speakingRate: 1 } })).resolves.toEqual(new Uint8Array(Buffer.from("audio-bytes")));
+    expect(fetcher).toHaveBeenCalledWith("https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse", expect.objectContaining({ headers: expect.objectContaining({ "X-Api-Key": "volc-key", "X-Api-Resource-Id": "seed-tts-2.0" }) }));
   });
 
   it("只返回 Pexels 响应中与冻结检索词匹配的竖屏视频下载地址", async () => {

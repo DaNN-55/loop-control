@@ -17,6 +17,7 @@ type Artifact = Database["public"]["Tables"]["artifacts"]["Row"];
 type Blueprint = Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
 type Episode = Database["public"]["Tables"]["episodes"]["Row"];
 type MaterialRevision = Database["public"]["Tables"]["production_material_revisions"]["Row"];
+type ShotPreparationDraft = Database["public"]["Tables"]["shot_preparation_drafts"]["Row"];
 type PreRenderReviewMember = Database["public"]["Tables"]["pre_render_review_members"]["Row"];
 type Task = Database["public"]["Tables"]["tasks"]["Row"];
 const originalClipboard = Object.getOwnPropertyDescriptor(navigator, "clipboard");
@@ -138,6 +139,15 @@ describe("审核台", () => {
     expect(onClose).toHaveBeenCalledTimes(2);
   });
 
+  it("放大预览打开时按 Escape 不关闭生产单详情", async () => {
+    const user = userEvent.setup();
+    const onClose = vi.fn();
+    render(<EpisodeDetailDrawer isOpen onClose={onClose}><div aria-modal="true" role="dialog">放大预览</div></EpisodeDetailDrawer>);
+
+    await user.keyboard("{Escape}");
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
   it("在详情顶部显示当前阶段和下一步，并默认收起技术索引", () => {
     render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
@@ -146,6 +156,25 @@ describe("审核台", () => {
     expect(screen.queryByRole("heading", { name: "生产单管理" })).toBeNull();
     expect(screen.getByRole("button", { name: "查看产物索引" }).getAttribute("aria-expanded")).toBe("false");
     expect(screen.queryByRole("heading", { name: "产物索引" })).toBeNull();
+  });
+
+  it("Worker 排队或运行时显示持续刷新反馈", () => {
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={{ ...reviewEpisode, stage: "visual_draft" }} isTransitionPending={false} onTransition={vi.fn()} tasks={[{ ...blockedTask, claimed_at: null, completed_at: null, last_result: null, status: "ready" }]} transitions={[]} />);
+
+    expect(screen.getByText("页面每 15 秒自动刷新任务状态")).toBeTruthy();
+  });
+
+  it("QC 通过但缺少发布材料时明确提示，不把 Worker 正常误写成已可发布", async () => {
+    const user = userEvent.setup();
+    const openPublish = vi.fn();
+    window.addEventListener("open-publish", openPublish);
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={{ ...reviewEpisode, stage: "qc_passed" }} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
+
+    expect(screen.getByText("发布流程尚未完成")).toBeTruthy();
+    expect(screen.getByText(/封面 缺少 · 元数据 缺少 · 发布包 缺少/)).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "查看发布准备 / 登记" }));
+    expect(openPublish).toHaveBeenCalledOnce();
+    window.removeEventListener("open-publish", openPublish);
   });
 
   it("通过顶部图标按需打开 Worker、产物索引和审计时间线", async () => {
@@ -471,20 +500,156 @@ describe("审核台", () => {
     expect(materialList.textContent).toContain("已绑定镜头 · shot-02");
   });
 
-  it("由 Owner 明确决定上传视频保留原声或使用 TTS", async () => {
-    const user = userEvent.setup();
-    const onUpdateAudioSourceMode = vi.fn().mockResolvedValue(undefined);
+  it("新 Episode 的上传阶段不要求整期声音选择", () => {
     const readyEpisode: Episode = { ...reviewEpisode, id: "episode-audio-source", stage: "waiting_input", main_script_revision_id: "revision-script-1" };
     const uploadedVideo: MaterialRevision = {
       created_at: "2026-08-23T00:00:00.000Z", created_by: "owner-1", episode_id: readyEpisode.id, file_size: 2048, id: "material-source-video", is_main_script: false,
       material_purpose: "a_roll", material_type: "video", mime_type: "video/mp4", revision_number: 1, sha256: "d".repeat(64), source_kind: "file", source_path: "presenter.mp4", storage_path: "episodes/episode-audio-source/materials/a-shot-001.mp4",
     };
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={readyEpisode} isStartProductionPending={false} materialRevisions={[uploadedVideo]} onStartProduction={vi.fn()} onTransition={vi.fn()} onUpdateAudioSourceMode={onUpdateAudioSourceMode} isTransitionPending={false} tasks={[]} transitions={[]} />);
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={readyEpisode} isStartProductionPending={false} materialRevisions={[uploadedVideo]} onStartProduction={vi.fn()} onTransition={vi.fn()} isTransitionPending={false} tasks={[]} transitions={[]} />);
 
-    expect((screen.getByRole("radio", { name: /使用 TTS 替代原声/ }) as HTMLInputElement).checked).toBe(true);
-    await user.click(screen.getByRole("radio", { name: /保留上传视频原声/ }));
-    expect(onUpdateAudioSourceMode).toHaveBeenCalledWith(readyEpisode.id, "source");
+    expect(screen.queryByText("上传视频的声音")).toBeNull();
+    expect(screen.queryByRole("radio", { name: /使用 TTS 替代原声/ })).toBeNull();
+    expect(screen.queryByRole("radio", { name: /保留上传视频原声/ })).toBeNull();
+  });
+
+  it("分镜批准后显示逐镜头准备草稿，并只保存音频模式与字幕", async () => {
+    const user = userEvent.setup();
+    const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-shot-workbench", stage: "storyboard_approved" };
+    const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", episode_id: approvedEpisode.id, id: "artifact-shot-workbench", relative_path: "episodes/episode-shot-workbench/storyboard.json" };
+    const reviewPackage = { artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "review-package-shot-workbench", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-shot-workbench", task_run_id: "run-shot-workbench" };
+    const drafts: ShotPreparationDraft[] = [{ clip_segments: [], audio_mode: "tts", audio_status: "pending", confirmation_status: "pending", created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "draft-shot-1", review_package_id: reviewPackage.id, shot_id: "shot-1", subtitle_text: "第一镜字幕", subtitles_enabled: true, tts_speaking_rate: 1.35, tts_voice: "voice-a", updated_at: "2026-09-03T00:00:00.000Z", video_status: "pending" }, { ...({} as ShotPreparationDraft), audio_mode: "tts", audio_status: "pending", confirmation_status: "pending", created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "draft-shot-2", review_package_id: reviewPackage.id, shot_id: "shot-2", subtitle_text: "第二镜字幕", subtitles_enabled: true, tts_speaking_rate: 1.35, tts_voice: "voice-a", updated_at: "2026-09-03T00:00:00.000Z", video_status: "pending" }];
+    const onSave = vi.fn().mockResolvedValue(undefined);
+    const materials: MaterialRevision[] = [
+      { created_at: "2026-09-03T00:00:00.000Z", created_by: "owner-1", episode_id: approvedEpisode.id, file_size: 2048, id: "material-shot-workbench-a", is_main_script: false, material_purpose: "a_roll", material_type: "video", mime_type: "video/mp4", revision_number: 1, sha256: "b".repeat(64), source_kind: "file", source_path: "presenter.mp4", storage_path: "episodes/episode-shot-workbench/materials/presenter.mp4" },
+      { created_at: "2026-09-03T00:00:00.000Z", created_by: "owner-1", episode_id: approvedEpisode.id, file_size: 2048, id: "material-shot-workbench-b", is_main_script: false, material_purpose: "b_roll", material_type: "video", mime_type: "video/mp4", revision_number: 1, sha256: "c".repeat(64), source_kind: "file", source_path: "cutaway.mp4", storage_path: "episodes/episode-shot-workbench/materials/cutaway.mp4" },
+    ];
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜口播", shotType: "a_roll", targetSpec: "9:16" }, { durationSeconds: 2, id: "shot-2", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "素材", scriptSegment: "第二镜口播", shotType: "b_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } })));
+
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={{ ...blueprint, policy: { narration: { voice: { name: "voice-a", speaking_rate: 1.35 } } } }} episode={approvedEpisode} isTransitionPending={false} materialRevisions={materials} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={drafts} tasks={[]} transitions={[]} />);
+
+    await screen.findByRole("heading", { name: "镜头工作台" });
+    expect((screen.getByLabelText("shot-1 TTS 声音") as HTMLSelectElement).value).toBe("voice-a");
+    expect(screen.queryByText(/默认声音：voice-a/)).toBeNull();
+    expect(screen.queryByText(/基准文案：/)).toBeNull();
+    expect(screen.queryByText("上传视频的声音")).toBeNull();
+    await user.click(screen.getByRole("button", { name: /shot-2/ }));
+    await user.selectOptions(screen.getByLabelText("shot-2 当前原片"), "material-shot-workbench-b");
+    const subtitleFields = screen.getAllByRole("textbox");
+    await user.clear(subtitleFields[1]);
+    await user.type(subtitleFields[1], "修改后的字幕");
+    await user.click(screen.getAllByRole("button", { name: "保存草稿" })[1]);
+    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ audioMode: "tts", clipSegments: [{ end_seconds: 2, start_seconds: 0 }], episodeId: approvedEpisode.id, materialRevisionId: "material-shot-workbench-b", reviewPackageId: reviewPackage.id, shotId: "shot-2", subtitleText: "修改后的字幕", subtitlesEnabled: true }));
+  });
+
+  it("逐镜头 TTS 编辑不触发任务，显式生成后才请求当前镜头", async () => {
+    const user = userEvent.setup();
+    const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-shot-tts", stage: "storyboard_approved" };
+    const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", episode_id: approvedEpisode.id, id: "artifact-shot-tts", relative_path: "episodes/episode-shot-tts/storyboard.json" };
+    const reviewPackage = { artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "review-package-shot-tts", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-shot-tts", task_run_id: "run-shot-tts" };
+    const draft: ShotPreparationDraft = { clip_segments: [], audio_mode: "tts", audio_status: "pending", confirmation_status: "pending", created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "draft-shot-tts", review_package_id: reviewPackage.id, shot_id: "shot-1", subtitle_text: "原始口播", subtitles_enabled: true, tts_speaking_rate: 1.2, tts_voice: "voice-a", updated_at: "2026-09-03T00:00:00.000Z", video_status: "pending" };
+    const source: MaterialRevision = { created_at: "2026-09-03T00:00:00.000Z", created_by: "owner-1", episode_id: approvedEpisode.id, file_size: 2048, id: "material-shot-tts", is_main_script: false, material_purpose: "a_roll", material_type: "video", mime_type: "video/mp4", revision_number: 1, sha256: "b".repeat(64), source_kind: "file", source_path: "presenter.mp4", storage_path: "episodes/episode-shot-tts/materials/presenter.mp4" };
+    const onSave = vi.fn().mockResolvedValue(undefined);
+    const onGenerateTts = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "分镜口播", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } })));
+
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={{ ...blueprint, policy: { narration: { voice: { name: "voice-a", speaking_rate: 1.2 } } } }} episode={approvedEpisode} isTransitionPending={false} materialRevisions={[source]} onGenerateShotTts={onGenerateTts} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={[draft]} tasks={[]} transitions={[]} />);
+
+    await screen.findByRole("heading", { name: "镜头工作台" });
+    await user.selectOptions(screen.getByLabelText("shot-1 当前原片"), source.id);
+    await user.clear(screen.getByLabelText("shot-1 口播内容"));
+    await user.type(screen.getByLabelText("shot-1 口播内容"), "新的逐字口播");
+    expect(onGenerateTts).not.toHaveBeenCalled();
+    await user.click(screen.getByRole("button", { name: "生成此镜头口播" }));
+    expect(onGenerateTts).toHaveBeenCalledWith({ episodeId: approvedEpisode.id, reviewPackageId: reviewPackage.id, retry: false, shotId: "shot-1" });
+  });
+
+  it("保留原声会把原片音轨与片段标记一起交给 Studio", async () => {
+    const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-shot-source", stage: "storyboard_approved" };
+    const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", episode_id: approvedEpisode.id, id: "artifact-shot-source", relative_path: "episodes/episode-shot-source/storyboard.json" };
+    const preparedVideo: Artifact = { ...previewArtifact, artifact_type: "shot_video", episode_id: approvedEpisode.id, id: "artifact-prepared-source", file_size: 4096, relative_path: "episodes/episode-shot-source/video/shot-1-v2.mp4" };
+    const reviewPackage = { artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "review-package-shot-source", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-shot-source", task_run_id: "run-shot-source" };
+    const sourceTask: Task = { ...blockedTask, completed_at: "2026-09-03T00:02:00.000Z", created_at: "2026-09-03T00:01:00.000Z", episode_id: approvedEpisode.id, id: "task-source-audio", input_snapshot: { shot_preparation: { review_package_id: reviewPackage.id, shot_id: "shot-1" }, source_video_artifact: { id: preparedVideo.id } }, last_result: null, model: "ffmpeg", prompt_version: "shot-source-audio-v1", provider: "ffmpeg", status: "completed", task_type: "extract_embedded_audio" };
+    const sourceRetryTask: Task = { ...sourceTask, created_at: "2026-09-03T00:04:00.000Z", id: "task-source-audio-failed", last_result: { blockers: [{ code: "ffmpeg_failed", detail: "源片段没有可提取音轨。" }] }, status: "failed" };
+    const clipTask: Task = { ...sourceTask, id: "task-prepared-video", input_snapshot: {}, task_type: "generate_b_roll" };
+    const sourceTrack = { created_at: "2026-09-03T00:03:00.000Z", cue_id: "shot-1", duration_seconds: 2.984, episode_id: approvedEpisode.id, file_size: 1024, id: "track-source-v2", relative_path: "episodes/episode-shot-source/audio/shot-source.mp3", sha256: "c".repeat(64), source_artifact_id: "artifact-source-audio", source_material_revision_id: null, source_review_package_id: reviewPackage.id, source_task_id: sourceTask.id, start_seconds: 0, track_kind: "source" };
+    const draft: ShotPreparationDraft = { clip_segments: [], audio_mode: "source", audio_status: "failed", confirmation_status: "pending", created_at: "2026-09-03T00:00:00.000Z", current_audio_track_id: sourceTrack.id, current_video_artifact_id: preparedVideo.id, current_video_task_id: clipTask.id, episode_id: approvedEpisode.id, id: "draft-shot-source", review_package_id: reviewPackage.id, selected_material_revision_id: null, shot_id: "shot-1", source_audio_duration_seconds: 2.984, source_audio_error: "源片段没有可提取音轨。", subtitle_text: "原声字幕", subtitles_enabled: true, tts_speaking_rate: null, tts_voice: null, updated_at: "2026-09-03T00:04:00.000Z", video_status: "ready" };
+    const onGenerateSourceAudio = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("fetch", vi.fn(() => Promise.resolve(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜口播", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } }))));
+
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact, preparedVideo]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} onGenerateShotSourceAudio={onGenerateSourceAudio} onTransition={vi.fn()} audioTracks={[sourceTrack]} reviewPackages={[reviewPackage]} shotPreparationDrafts={[draft]} tasks={[clipTask, sourceTask, sourceRetryTask]} transitions={[]} />);
+
+    await screen.findByRole("heading", { name: "镜头工作台" });
+    expect(screen.getByDisplayValue("原声字幕")).toBeTruthy();
+    expect(screen.getByText(/原片音轨会随片段标记进入 Studio/)).toBeTruthy();
+    expect(screen.queryByRole("button", { name: /提取当前原声/ })).toBeNull();
+    expect(onGenerateSourceAudio).not.toHaveBeenCalled();
+  });
+
+  it("无口播显示为明确静音，并仍可保存字幕开关", async () => {
+    const user = userEvent.setup();
+    const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-shot-none", stage: "storyboard_approved" };
+    const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", episode_id: approvedEpisode.id, id: "artifact-shot-none", relative_path: "episodes/episode-shot-none/storyboard.json" };
+    const reviewPackage = { artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "review-package-shot-none", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-shot-none", task_run_id: "run-shot-none" };
+    const draft: ShotPreparationDraft = { clip_segments: [], audio_mode: "none", audio_status: "ready", confirmation_status: "pending", created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "draft-shot-none", review_package_id: reviewPackage.id, shot_id: "shot-1", subtitle_text: "无口播字幕", subtitles_enabled: false, tts_speaking_rate: null, tts_voice: null, updated_at: "2026-09-03T00:00:00.000Z", video_status: "pending" };
+    const source: MaterialRevision = { created_at: "2026-09-03T00:00:00.000Z", created_by: "owner-1", episode_id: approvedEpisode.id, file_size: 2048, id: "material-shot-none", is_main_script: false, material_purpose: "a_roll", material_type: "video", mime_type: "video/mp4", revision_number: 1, sha256: "b".repeat(64), source_kind: "file", source_path: "presenter.mp4", storage_path: "episodes/episode-shot-none/materials/presenter.mp4" };
+    const onSave = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜口播", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } })));
+
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} materialRevisions={[source]} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={[draft]} tasks={[]} transitions={[]} />);
+
+    await screen.findByRole("heading", { name: "镜头工作台" });
+    expect(screen.getByText(/已明确静音/)).toBeTruthy();
+    expect(screen.getByText(/不会创建 TTS 任务/)).toBeTruthy();
+    await user.selectOptions(screen.getByLabelText("shot-1 当前原片"), source.id);
+    await user.click(screen.getByRole("button", { name: "保存草稿" }));
+    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ audioMode: "none", episodeId: approvedEpisode.id, reviewPackageId: reviewPackage.id, shotId: "shot-1", subtitleText: "无口播字幕", subtitlesEnabled: false }));
+  });
+
+  it("同一原片支持多段裁剪并随镜头草稿一起保存", async () => {
+    const user = userEvent.setup();
+    const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-shot-clip", stage: "storyboard_approved" };
+    const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", episode_id: approvedEpisode.id, id: "artifact-shot-clip", relative_path: "episodes/episode-shot-clip/storyboard.json" };
+    const reviewPackage = { artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "review-package-shot-clip", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-shot-clip", task_run_id: "run-shot-clip" };
+    const draft: ShotPreparationDraft = { clip_segments: [], audio_mode: "none", audio_status: "pending", confirmation_status: "pending", created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "draft-shot-clip", review_package_id: reviewPackage.id, shot_id: "shot-1", subtitle_text: "第一镜", subtitles_enabled: false, tts_speaking_rate: null, tts_voice: null, updated_at: "2026-09-03T00:00:00.000Z", video_status: "pending" };
+    const source: MaterialRevision = { created_at: "2026-09-03T00:00:00.000Z", created_by: "owner-1", episode_id: approvedEpisode.id, file_size: 2048, id: "material-shot-clip", is_main_script: false, material_purpose: "a_roll", material_type: "video", mime_type: "video/mp4", revision_number: 1, sha256: "b".repeat(64), source_kind: "file", source_path: "presenter.mp4", storage_path: "episodes/episode-shot-clip/materials/presenter.mp4" };
+    const onSave = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜口播", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } })));
+
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} materialRevisions={[source]} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={[draft]} tasks={[]} transitions={[]} />);
+
+    await screen.findByRole("heading", { name: "镜头工作台" });
+    await user.selectOptions(screen.getByLabelText("shot-1 当前原片"), source.id);
+    expect(await screen.findByLabelText("shot-1 视频缩略图轨道")).toBeTruthy();
+    expect(screen.getByText("片段标记")).toBeTruthy();
+    await user.clear(screen.getByLabelText("shot-1 片段1 入点（秒）"));
+    await user.type(screen.getByLabelText("shot-1 片段1 入点（秒）"), "1");
+    await user.clear(screen.getByLabelText("shot-1 片段1 出点（秒）"));
+    await user.type(screen.getByLabelText("shot-1 片段1 出点（秒）"), "2");
+    await user.click(screen.getByRole("button", { name: "添加片段" }));
+    await user.clear(screen.getByLabelText("shot-1 片段2 入点（秒）"));
+    await user.type(screen.getByLabelText("shot-1 片段2 入点（秒）"), "2.2");
+    await user.clear(screen.getByLabelText("shot-1 片段2 出点（秒）"));
+    await user.type(screen.getByLabelText("shot-1 片段2 出点（秒）"), "3");
+    await user.click(screen.getByRole("button", { name: "保存草稿" }));
+    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ clipSegments: [{ end_seconds: 2, start_seconds: 1 }, { end_seconds: 3, start_seconds: 2.2 }], episodeId: approvedEpisode.id, materialRevisionId: source.id, reviewPackageId: reviewPackage.id, shotId: "shot-1" }));
+  });
+
+  it("在工作台底部冻结标记配置并进入 Studio", async () => {
+    const user = userEvent.setup();
+    const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-shot-confirm", stage: "storyboard_approved" };
+    const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", episode_id: approvedEpisode.id, id: "artifact-shot-confirm", relative_path: "episodes/episode-shot-confirm/storyboard.json" };
+    const reviewPackage = { artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "review-package-shot-confirm", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-shot-confirm", task_run_id: "run-shot-confirm" };
+    const onConfirm = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜口播", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } })));
+
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} onConfirmShotPreparation={onConfirm} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={[]} tasks={[]} transitions={[]} />);
+
+    await screen.findByRole("heading", { name: "镜头工作台" });
+    expect(screen.getByText(/只保存原片和片段标记/)).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "冻结配置并进入 Studio" }));
+    expect(onConfirm).toHaveBeenCalledWith({ episodeId: approvedEpisode.id, reviewPackageId: reviewPackage.id });
   });
 
   it("展示委托脚本的冻结输入，并让 Owner 完成审核或要求重写", async () => {
@@ -605,6 +770,7 @@ describe("审核台", () => {
   });
 
   it("将冻结的外部视觉输入连同视觉资产清单交给 Owner 审核", async () => {
+    const user = userEvent.setup();
     const visualEpisode: Episode = { ...reviewEpisode, stage: "visual_review" };
     const manifest: Artifact = {
       ...previewArtifact,
@@ -613,7 +779,7 @@ describe("审核台", () => {
       producer_task_id: "task-visual-assets",
       relative_path: "episodes/episode-review/visual-assets-v1.md",
     };
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response("# 视觉资产清单\n\n- 已提供：林砚角色参考。", { status: 200, headers: { "Content-Type": "text/markdown" } })));
+    vi.stubGlobal("fetch", vi.fn().mockImplementation(() => Promise.resolve(new Response("# 视觉资产清单\n\n- 已提供：林砚角色参考。", { status: 200, headers: { "Content-Type": "text/markdown" } }))));
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[manifest]} blueprint={blueprint} episode={visualEpisode} isTransitionPending={false} onTransition={vi.fn()} reviewPackages={[{
       artifact_id: manifest.id,
@@ -626,7 +792,10 @@ describe("审核台", () => {
         output: { content_type: "text/markdown", required_artifact_types: ["visual_asset_manifest"] },
         script_revision: { sha256: "c".repeat(64) },
         visual_assets: {
-          external_inputs: [{ artifactType: "external_visual_input", relativePath: "episodes/episode-review/materials/character.png", sha256: "b".repeat(64), fileSize: 128 }],
+          external_inputs: [
+            { artifactType: "external_visual_input", relativePath: "episodes/episode-review/materials/character.png", sha256: "b".repeat(64), fileSize: 128 },
+            { artifactType: "external_visual_input", relativePath: "episodes/episode-review/materials/a-shot-002.mp4", sha256: "d".repeat(64), fileSize: 2048 },
+          ],
         },
       },
       created_at: "2026-08-22T00:00:00.000Z",
@@ -642,7 +811,18 @@ describe("审核台", () => {
 
     expect(await screen.findByText("视觉资产清单", { exact: false })).toBeTruthy();
     expect(screen.getByText("已冻结的外部视觉输入")).toBeTruthy();
-    expect(screen.getByText("episodes/episode-review/materials/character.png")).toBeTruthy();
+    const selector = screen.getByLabelText("选择视觉输入") as HTMLSelectElement;
+    expect(selector.options).toHaveLength(2);
+    expect(screen.getByText("character.png").getAttribute("title")).toBe("episodes/episode-review/materials/character.png");
+    expect(screen.queryByText("episodes/episode-review/materials/character.png")).toBeNull();
+    await user.selectOptions(selector, "episodes/episode-review/materials/a-shot-002.mp4");
+    expect(screen.getByTitle("episodes/episode-review/materials/a-shot-002.mp4")).toBeTruthy();
+    expect(screen.queryByTitle("episodes/episode-review/materials/character.png")).toBeNull();
+    await user.click(await screen.findByRole("button", { name: "放大查看 a-shot-002.mp4" }));
+    const dialog = screen.getByRole("dialog", { name: "a-shot-002.mp4 放大预览" });
+    expect(dialog.querySelector('video[aria-label="a-shot-002.mp4 放大预览"]')).toBeTruthy();
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("dialog", { name: "a-shot-002.mp4 放大预览" })).toBeNull();
     expect(screen.queryByText("视觉审核包缺少参考组。")).toBeNull();
   });
 
@@ -667,7 +847,7 @@ describe("审核台", () => {
     await user.click(screen.getByRole("button", { name: "提交 Studio 修改" }));
     await user.type(screen.getByLabelText("Studio 修改说明"), "字幕需要更醒目。");
     await user.click(screen.getByRole("button", { name: "确认并重新审核" }));
-    expect(onSubmitStudioRevision).toHaveBeenCalledWith(expect.objectContaining({ episodeId: qcEpisode.id, reason: "字幕需要更醒目。", reviewPackageId: qcPackage.id, workspaceRelativePath: expect.stringContaining("/studio/") }));
+    expect(onSubmitStudioRevision).toHaveBeenCalledWith(expect.objectContaining({ episodeId: qcEpisode.id, reason: "字幕需要更醒目。", reviewPackageId: qcPackage.id, sourceProjectRelativePath: "episodes/episode-qc/review-render/v2/index.html", workspaceRelativePath: expect.stringContaining("/studio/") }));
   });
 
   it("在审核渲染中只提供官方 Studio 入口", async () => {
@@ -778,9 +958,9 @@ describe("审核台", () => {
     expect(onTransition).toHaveBeenLastCalledWith(storyboardEpisode.id, "storyboard_draft", "镜头拆分、规格与输入均可执行。");
   });
 
-  it("在自动能力关闭后仍可将人工媒体冻结到已批准分镜", async () => {
+  it("人工媒体可在镜头工作台选择原片并保存草稿", async () => {
     const user = userEvent.setup();
-    const onRegisterManualMedia = vi.fn().mockResolvedValue(undefined);
+    const onSave = vi.fn().mockResolvedValue(undefined);
     const storyboardEpisode: Episode = { ...reviewEpisode, stage: "storyboard_approved" };
     const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", id: "artifact-manual-a-roll", producer_task_id: "task-manual-a-roll", relative_path: "episodes/episode-review/storyboard-manual-a-roll.json" };
     const manualAroll: MaterialRevision = {
@@ -800,12 +980,10 @@ describe("审核台", () => {
       storage_path: "episodes/episode-review/materials/manual-presenter.mp4",
     };
     const manualBroll: MaterialRevision = { ...manualAroll, id: "material-b-roll-1", material_purpose: "b_roll", source_path: "cutaway.mp4", storage_path: "episodes/episode-review/materials/manual-cutaway.mp4" };
-    const manualNarration: MaterialRevision = { ...manualAroll, id: "material-narration-1", material_purpose: "narration", material_type: "audio", mime_type: "audio/mpeg", source_path: "narration.mp3", storage_path: "episodes/episode-review/materials/manual-narration.mp3" };
-    const manualBgm: MaterialRevision = { ...manualNarration, id: "material-bgm-1", material_purpose: "background_music", source_path: "music.mp3", storage_path: "episodes/episode-review/materials/manual-music.mp3" };
-    const manualBlueprint: Blueprint = { ...blueprint, policy: { a_roll: { execution_path: "manual" }, b_roll: { execution_path: "manual" }, narration: { execution_path: "manual" }, soundtrack: { execution_path: "manual" } } };
+    const manualBlueprint: Blueprint = { ...blueprint, policy: { a_roll: { execution_path: "manual" }, b_roll: { execution_path: "manual" } } };
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [{ description: "氛围音乐", durationSeconds: 5, id: "cue-bgm-1", kind: "bgm", searchQuery: "ambient", startSeconds: 0 }], shots: [{ durationSeconds: 5, id: "shot-a-roll-1", inputBasis: [{ relativePath: "episodes/episode-review/materials/script.md", sha256: "c".repeat(64) }], productionMethod: "人工出镜", scriptSegment: "主持人出镜说明。", shotType: "a_roll", targetSpec: "9:16" }, { durationSeconds: 5, id: "shot-b-roll-1", inputBasis: [{ relativePath: "episodes/episode-review/materials/script.md", sha256: "c".repeat(64) }], productionMethod: "人工素材", scriptSegment: "环境补充画面。", shotType: "b_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } })));
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={manualBlueprint} episode={storyboardEpisode} isTransitionPending={false} materialRevisions={[manualAroll, manualBroll, manualNarration, manualBgm]} onRegisterManualMedia={onRegisterManualMedia} onTransition={vi.fn()} reviewPackages={[{
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={manualBlueprint} episode={storyboardEpisode} isTransitionPending={false} materialRevisions={[manualAroll, manualBroll]} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[{
       artifact_id: storyboardArtifact.id,
       context_snapshot: {},
       created_at: "2026-08-23T00:00:00.000Z",
@@ -820,43 +998,45 @@ describe("审核台", () => {
     }]} tasks={[]} transitions={[]} />);
 
     await screen.findByText("主持人出镜说明。");
-    expect((screen.getByLabelText("shot-a-roll-1 人工 A-roll 视频") as HTMLSelectElement).value).toBe("");
-    await user.selectOptions(screen.getByLabelText("shot-a-roll-1 人工 A-roll 视频"), manualAroll.id);
-    await user.click(screen.getByRole("button", { name: "冻结人工 A-roll 视频" }));
-    await user.selectOptions(screen.getByLabelText("shot-b-roll-1 人工 B-roll 视频"), manualBroll.id);
-    await user.click(screen.getByRole("button", { name: "冻结人工 B-roll 视频" }));
-    await user.selectOptions(screen.getByLabelText("episode-review 人工旁白音频（Episode）"), manualNarration.id);
-    await user.click(screen.getByRole("button", { name: "冻结人工旁白音频（Episode）" }));
-    await user.selectOptions(screen.getByLabelText("cue-bgm-1 人工配乐"), manualBgm.id);
-    await user.click(screen.getByRole("button", { name: "冻结人工配乐" }));
-    expect(onRegisterManualMedia).toHaveBeenCalledWith({ episodeId: storyboardEpisode.id, kind: "a_roll", materialRevisionId: manualAroll.id, storyboardReviewPackageId: "review-package-manual-a-roll", targetId: "shot-a-roll-1" });
-    expect(onRegisterManualMedia).toHaveBeenCalledWith({ episodeId: storyboardEpisode.id, kind: "b_roll", materialRevisionId: manualBroll.id, storyboardReviewPackageId: "review-package-manual-a-roll", targetId: "shot-b-roll-1" });
-    expect(onRegisterManualMedia).toHaveBeenCalledWith({ episodeId: storyboardEpisode.id, kind: "narration", materialRevisionId: manualNarration.id, storyboardReviewPackageId: "review-package-manual-a-roll", targetId: storyboardEpisode.id });
-    expect(onRegisterManualMedia).toHaveBeenCalledWith({ episodeId: storyboardEpisode.id, kind: "bgm", materialRevisionId: manualBgm.id, storyboardReviewPackageId: "review-package-manual-a-roll", targetId: "cue-bgm-1" });
+    await user.selectOptions(screen.getByLabelText("shot-a-roll-1 当前原片"), manualAroll.id);
+    await user.click(screen.getByRole("radio", { name: "无口播" }));
+    await user.click(screen.getByRole("button", { name: "保存草稿" }));
+    await user.click(screen.getByRole("button", { name: /shot-b-roll-1/ }));
+    await user.selectOptions(screen.getByLabelText("shot-b-roll-1 当前原片"), manualBroll.id);
+    await user.click(screen.getByRole("radio", { name: "无口播" }));
+    await user.click(screen.getByRole("button", { name: "保存草稿" }));
+    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ clipSegments: [{ end_seconds: 5, start_seconds: 0 }], episodeId: storyboardEpisode.id, materialRevisionId: manualAroll.id, reviewPackageId: "review-package-manual-a-roll", shotId: "shot-a-roll-1" }));
+    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ clipSegments: [{ end_seconds: 5, start_seconds: 0 }], episodeId: storyboardEpisode.id, materialRevisionId: manualBroll.id, reviewPackageId: "review-package-manual-a-roll", shotId: "shot-b-roll-1" }));
   });
 
-  it("已冻结的人工镜头显示具体文件且不再提供重复冻结操作", async () => {
+  it("已保存原片可预览并在冻结前替换", async () => {
+    const user = userEvent.setup();
+    const onSave = vi.fn().mockResolvedValue(undefined);
     const storyboardEpisode: Episode = { ...reviewEpisode, stage: "storyboard_approved" };
     const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", id: "artifact-bound-a-roll", producer_task_id: "task-bound-a-roll", relative_path: "episodes/episode-review/storyboard-bound-a-roll.json" };
     const manualAroll: MaterialRevision = {
       created_at: "2026-08-23T00:00:00.000Z", created_by: "owner-1", episode_id: storyboardEpisode.id, file_size: 2048, id: "material-a-roll-bound", is_main_script: false,
       material_purpose: "a_roll", material_type: "video", mime_type: "video/mp4", revision_number: 1, sha256: "d".repeat(64), source_kind: "file", source_path: "presenter.mp4", storage_path: "episodes/episode-review/materials/manual-presenter.mp4",
     };
+    const replacementAroll: MaterialRevision = { ...manualAroll, id: "material-a-roll-replacement", source_path: "presenter-2.mp4", storage_path: "episodes/episode-review/materials/manual-presenter-2.mp4", sha256: "e".repeat(64) };
     const reviewPackage = {
       artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-08-23T00:00:00.000Z", episode_id: storyboardEpisode.id, id: "review-package-bound-a-roll", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-bound-a-roll", task_run_id: "task-run-bound-a-roll",
     };
-    const boundTask: Task = { ...blockedTask, episode_id: storyboardEpisode.id, id: "manual-bound-a-roll", input_snapshot: { capability: "a_roll_manual_upload", manual_source: { material_revision_id: manualAroll.id }, shot: { id: "shot-a-roll-1" }, storyboard_review_package_id: reviewPackage.id }, provider: "manual_upload", status: "completed", task_type: "generate_a_roll" };
-    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [{ description: "可选氛围音乐", durationSeconds: 5, id: "cue-disabled-bgm", kind: "bgm", searchQuery: "ambient", startSeconds: 0 }], shots: [{ durationSeconds: 5, id: "shot-a-roll-1", inputBasis: [{ relativePath: manualAroll.storage_path, sha256: manualAroll.sha256 }], productionMethod: "人工出镜", scriptSegment: "主持人出镜说明。", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } })));
+    const draft: ShotPreparationDraft = { audio_mode: "none", audio_status: "ready", clip_segments: [{ start_seconds: 0, end_seconds: 5 }], confirmation_status: "pending", created_at: "2026-08-23T00:00:00.000Z", episode_id: storyboardEpisode.id, id: "draft-bound-a-roll", review_package_id: reviewPackage.id, selected_material_revision_id: manualAroll.id, shot_id: "shot-a-roll-1", subtitle_text: "主持人出镜说明。", subtitles_enabled: true, tts_speaking_rate: null, tts_text: null, tts_voice: null, updated_at: "2026-08-23T00:00:00.000Z", video_status: "pending" };
+    vi.stubGlobal("fetch", vi.fn().mockImplementation(() => Promise.resolve(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [{ description: "可选氛围音乐", durationSeconds: 5, id: "cue-disabled-bgm", kind: "bgm", searchQuery: "ambient", startSeconds: 0 }], shots: [{ durationSeconds: 5, id: "shot-a-roll-1", inputBasis: [{ relativePath: manualAroll.storage_path, sha256: manualAroll.sha256 }], productionMethod: "人工出镜", scriptSegment: "主持人出镜说明。", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } }))));
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={{ ...blueprint, policy: { a_roll: { execution_path: "manual" } } }} episode={storyboardEpisode} isTransitionPending={false} materialRevisions={[manualAroll]} onTransition={vi.fn()} reviewPackages={[reviewPackage]} tasks={[boundTask]} transitions={[]} />);
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={{ ...blueprint, policy: { a_roll: { execution_path: "manual" } } }} episode={storyboardEpisode} isTransitionPending={false} materialRevisions={[manualAroll, replacementAroll]} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={[draft]} tasks={[]} transitions={[]} />);
 
     await screen.findByText("主持人出镜说明。");
-    expect(screen.getByRole("status").textContent).toBe("已冻结 · presenter.mp4");
-    expect(screen.queryByLabelText("shot-a-roll-1 人工 A-roll 视频")).toBeNull();
-    expect(screen.queryByRole("button", { name: "冻结人工 A-roll 视频" })).toBeNull();
-    expect(screen.getByRole("heading", { name: "可选声轨" })).toBeTruthy();
-    expect(screen.queryByLabelText("cue-disabled-bgm 人工配乐")).toBeNull();
-    expect(screen.queryByRole("button", { name: "冻结人工配乐" })).toBeNull();
+    expect(await screen.findByLabelText("presenter.mp4 预览")).toBeTruthy();
+    await user.selectOptions(screen.getByLabelText("shot-a-roll-1 当前原片"), replacementAroll.id);
+    await user.clear(screen.getByLabelText("shot-a-roll-1 片段1 入点（秒）"));
+    await user.type(screen.getByLabelText("shot-a-roll-1 片段1 入点（秒）"), "10");
+    await user.clear(screen.getByLabelText("shot-a-roll-1 片段1 出点（秒）"));
+    await user.type(screen.getByLabelText("shot-a-roll-1 片段1 出点（秒）"), "15");
+    expect(await screen.findByLabelText("presenter-2.mp4 预览")).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "保存草稿" }));
+    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ clipSegments: [{ end_seconds: 15, start_seconds: 10 }], episodeId: storyboardEpisode.id, materialRevisionId: replacementAroll.id, reviewPackageId: reviewPackage.id, shotId: "shot-a-roll-1" }));
   });
 
   it("分镜产物格式无效时不允许 Owner 批准或退回", async () => {
@@ -912,6 +1092,7 @@ describe("审核台", () => {
       member_key: "shot:shot-02",
       member_kind: "shot_media",
       review_package_id: preRenderPackage.id,
+      source_material_revision_id: null,
       source_task_id: "task-b-roll-1",
     };
 

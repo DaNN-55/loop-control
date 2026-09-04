@@ -7,7 +7,7 @@ import { mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } from "node:fs/
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, freezeHyperframesStudioWorkspace, hyperframesStudioPreviewArguments, prepareHyperframesStudioWorkspace, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveChooseLocalAssetDirectory, serveEpisodeDeletion, serveEpisodeDeletionCleanup, serveEpisodePreflight, serveFreezeHyperframesStudio, serveLocalArtifact, serveLocalEpisodeDirectory, serveOpenHyperframesStudio, serveOpenLocalArtifact, serveOpenLocalAssetDirectory, serveOpenLocalEpisodeDirectory, stageLocalEpisodeDirectoryForDeletion } from "../vite.config";
+import { confirmedStudioShotBlockers, coverImageExtension, createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, freezeHyperframesStudioWorkspace, hyperframesStudioPreviewArguments, prepareHyperframesStudioWorkspace, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveChooseLocalAssetDirectory, serveEpisodeDeletion, serveEpisodeDeletionCleanup, serveEpisodePreflight, serveFreezeHyperframesStudio, serveLocalArtifact, serveLocalEpisodeDirectory, serveOpenHyperframesStudio, serveOpenLocalArtifact, serveOpenLocalAssetDirectory, serveOpenLocalEpisodeDirectory, serveOpenPersonalHyperframesStudio, servePublishPreparation, stageLocalEpisodeDirectoryForDeletion, studioMarkerSourceRequirements } from "../vite.config";
 
 const episodeId = "00000000-0000-0000-0000-000000000000";
 let server: ReturnType<typeof createServer>;
@@ -27,6 +27,41 @@ afterAll(async () => {
 });
 
 describe("本地 Episode 目录路由", () => {
+  it("只允许当前确认版本进入 Studio，并指出发生变化的镜头", () => {
+    const context = {
+      confirmation_mode: "shot_preparation",
+      storyboard: { shots: [{ id: "shot-1" }] },
+      confirmed_shots: [{ shot_id: "shot-1", confirmation_status: "confirmed", input_fingerprint: "a".repeat(32), video_artifact_id: "artifact-1", video_task_id: "task-1", audio_mode: "none", audio_track_id: null, subtitle_text: "字幕", subtitles_enabled: true }],
+      members: [{ member_key: "shot:shot-1", artifact_id: "artifact-1", task_id: "task-1", input_fingerprint: "a".repeat(32), audio_mode: "none", subtitle_text: "字幕", subtitles_enabled: true }],
+    };
+    const currentDraft = { shot_id: "shot-1", confirmation_status: "confirmed", input_fingerprint: "b".repeat(32), current_video_artifact_id: "artifact-1", current_video_task_id: "task-1", audio_mode: "none", current_audio_track_id: null, subtitle_text: "字幕", subtitles_enabled: true };
+    expect(confirmedStudioShotBlockers(context, [currentDraft])).toEqual(["shot-1"]);
+    expect(confirmedStudioShotBlockers(context, [{ ...currentDraft, input_fingerprint: "a".repeat(32) }])).toEqual([]);
+
+    const markerContext = {
+      confirmation_mode: "shot_preparation",
+      storyboard: { shots: [{ id: "shot-1" }] },
+      confirmed_shots: [{ shot_id: "shot-1", confirmation_status: "confirmed", input_fingerprint: "a".repeat(32), source_material_revision_id: "material-1", clip_segments: [{ start_seconds: 1, end_seconds: 5 }], audio_mode: "source", audio_track_id: null, subtitle_text: "原声字幕", subtitles_enabled: true }],
+      members: [{ member_key: "shot:shot-1", source_material_revision_id: "material-1", clip_segments: [{ start_seconds: 1, end_seconds: 5 }], input_fingerprint: "a".repeat(32), audio_mode: "source", subtitle_text: "原声字幕", subtitles_enabled: true }],
+    };
+    const markerDraft = { shot_id: "shot-1", confirmation_status: "confirmed", input_fingerprint: "a".repeat(32), selected_material_revision_id: "material-1", clip_segments: [{ start_seconds: 1, end_seconds: 5 }], audio_mode: "source", current_audio_track_id: null, subtitle_text: "原声字幕", subtitles_enabled: true };
+    expect(confirmedStudioShotBlockers(markerContext, [markerDraft])).toEqual([]);
+  });
+
+  it("按文件内容识别发布封面的 JPG、PNG 和 WebP 格式", () => {
+    expect(coverImageExtension(Uint8Array.from([0xff, 0xd8, 0xff]))).toBe("jpg");
+    expect(coverImageExtension(Uint8Array.from([137, 80, 78, 71, 13, 10, 26, 10]))).toBe("png");
+    expect(coverImageExtension(Uint8Array.from([82, 73, 70, 70, 0, 0, 0, 0, 87, 69, 66, 80]))).toBe("webp");
+    expect(coverImageExtension(Uint8Array.from([71, 73, 70, 56, 57, 97]))).toBeNull();
+  });
+
+  it("Studio 只允许在原片范围内修改片段标记，不允许替换镜头原片", () => {
+    const original = '<video class="clip shot shot-0" data-media-start="1" data-duration="2.8" src="assets/source.mp4"></video>';
+    const edited = '<video class="clip shot shot-0" data-media-start="1" data-duration="4" src="assets/source.mp4"></video>';
+    expect(studioMarkerSourceRequirements(original, edited)).toEqual([{ relativePath: "assets/source.mp4", minimumDurationSeconds: 5 }]);
+    expect(() => studioMarkerSourceRequirements(original, edited.replace("source.mp4", "other.mp4"))).toThrow("更换原片");
+    expect(() => studioMarkerSourceRequirements(original, edited.replace('data-duration="4"', ""))).toThrow("标记无效");
+  });
   it("拒绝未登录、非法 ID 和非 POST 请求", async () => {
     const [unauthorized, invalidId, wrongMethod] = await Promise.all([
       fetch(`${origin}/_local-episode-directory?episode=${episodeId}`, { method: "POST" }),
@@ -58,6 +93,25 @@ describe("本地 Episode 目录路由", () => {
       expect(unavailable.status).toBe(503);
     } finally {
       await new Promise<void>((resolve, reject) => preflightServer.close((error) => error ? reject(error) : resolve()));
+    }
+  });
+
+  it("发布准备路由在写入文件前拒绝未登录、错误方法和未配置服务", async () => {
+    const middleware = servePublishPreparation(undefined, undefined, "");
+    const publishServer = createServer((request, response) => { void middleware(request, response); });
+    await new Promise<void>((resolve) => publishServer.listen(0, "127.0.0.1", resolve));
+    const publishOrigin = `http://127.0.0.1:${(publishServer.address() as AddressInfo).port}`;
+    try {
+      const [unauthorized, wrongMethod, unavailable] = await Promise.all([
+        fetch(`${publishOrigin}/_publish-preparation`, { body: "{}", method: "POST" }),
+        fetch(`${publishOrigin}/_publish-preparation`, { headers: { Authorization: "Bearer invalid" } }),
+        fetch(`${publishOrigin}/_publish-preparation`, { body: "{}", headers: { Authorization: "Bearer invalid", "Content-Type": "application/json" }, method: "POST" }),
+      ]);
+      expect(unauthorized.status).toBe(401);
+      expect(wrongMethod.status).toBe(405);
+      expect(unavailable.status).toBe(503);
+    } finally {
+      await new Promise<void>((resolve, reject) => publishServer.close((error) => error ? reject(error) : resolve()));
     }
   });
 
@@ -101,6 +155,25 @@ describe("本地 Episode 目录路由", () => {
       } finally {
         await new Promise<void>((resolve, reject) => studioServer.close((error) => error ? reject(error) : resolve()));
       }
+    }
+  });
+
+  it("个人 Studio 入口在启动本机工程前拒绝未登录、错误方法和缺失配置", async () => {
+    const middleware = serveOpenPersonalHyperframesStudio(undefined, undefined);
+    const studioServer = createServer((request, response) => { void middleware(request, response); });
+    await new Promise<void>((resolve) => studioServer.listen(0, "127.0.0.1", resolve));
+    const studioOrigin = `http://127.0.0.1:${(studioServer.address() as AddressInfo).port}`;
+    try {
+      const [unauthorized, wrongMethod, unavailable] = await Promise.all([
+        fetch(`${studioOrigin}/studio`, { method: "POST" }),
+        fetch(`${studioOrigin}/studio`, { headers: { Authorization: "Bearer invalid" } }),
+        fetch(`${studioOrigin}/studio`, { headers: { Authorization: "Bearer invalid" }, method: "POST" }),
+      ]);
+      expect(unauthorized.status).toBe(401);
+      expect(wrongMethod.status).toBe(405);
+      expect(unavailable.status).toBe(503);
+    } finally {
+      await new Promise<void>((resolve, reject) => studioServer.close((error) => error ? reject(error) : resolve()));
     }
   });
 
@@ -163,7 +236,10 @@ describe("本地 Episode 目录路由", () => {
     const supabaseServer = createServer((request, response) => {
       response.setHeader("Content-Type", "application/json");
       const pathname = new URL(request.url ?? "", "http://127.0.0.1").pathname;
-      if (pathname === "/rest/v1/artifacts") response.end("[]");
+      if (pathname === "/rest/v1/artifacts") {
+        const shaFilter = new URL(request.url ?? "", "http://127.0.0.1").searchParams.get("sha256");
+        response.end(shaFilter === `eq.${sha256}` ? JSON.stringify([{ episode_id: episodeId, sha256 }]) : JSON.stringify([{ episode_id: episodeId, sha256 }, { episode_id: episodeId, sha256: "0".repeat(64) }]));
+      }
       else if (pathname === "/rest/v1/production_material_revisions") response.end(JSON.stringify([{ episode_id: episodeId, sha256 }]));
       else if (pathname === "/rest/v1/episodes") response.end(JSON.stringify([{ blueprint_version_id: episodeId }]));
       else if (pathname === "/rest/v1/account_blueprint_versions") response.end(JSON.stringify([{ policy: { asset_root: root } }]));
@@ -243,6 +319,7 @@ describe("本地 Episode 目录路由", () => {
 
       expect(results[0]).toBe(results[1]);
       expect((await stat(results[0])).isDirectory()).toBe(true);
+      expect((await stat(join(results[0], "captions"))).isDirectory()).toBe(true);
     } finally {
       await rm(root, { force: true, recursive: true });
     }

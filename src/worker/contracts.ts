@@ -1,4 +1,5 @@
 import { adapterRegistration } from "./adapterRegistry.js";
+import type { StoryboardStructureRevision } from "./storyboardRevision.js";
 
 export const workerTaskPackageVersion = "worker-task/v1" as const;
 export const workerResultVersion = "worker-result/v1" as const;
@@ -112,7 +113,7 @@ export interface WorkerTaskPackageInput {
     attempt: number;
     budgetLimitCents: number;
     maxAttempts: number;
-    provider: "codex" | "google_tts" | "pexels" | "ffmpeg" | "freesound" | "hyperframes" | "openai" | "cloudflare";
+    provider: "codex" | "google_tts" | "volcengine_tts" | "pexels" | "ffmpeg" | "freesound" | "hyperframes" | "openai" | "cloudflare";
     model: string;
     promptVersion: string;
   };
@@ -152,13 +153,14 @@ export interface WorkerTaskPackageInput {
     shotId: string;
     reason: string;
   }>;
+  storyboardRevision?: StoryboardStructureRevision;
   aRoll?: {
     adapter: string;
     shot: StoryboardShotManifest;
   };
   media?:
     | {
-      adapter: "google_tts";
+      adapter: "google_tts" | "volcengine_tts";
       narration: {
         text: string;
         voice: GoogleTtsVoice;
@@ -186,6 +188,20 @@ export interface WorkerTaskPackageInput {
       };
     }
     | {
+      adapter: "ffmpeg_trim_video";
+      videoClip?: {
+        sourceRelativePath: string;
+        startSeconds: number;
+        endSeconds: number;
+        targetDurationSeconds: number;
+      };
+      videoClips?: {
+        sourceRelativePath: string;
+        segments: Array<{ startSeconds: number; endSeconds: number }>;
+        targetDurationSeconds: number;
+      };
+    }
+    | {
       adapter: "freesound_preview";
       soundtrack: {
         query: string;
@@ -203,6 +219,20 @@ export interface WorkerTaskPackageInput {
     projectRelativePath: string;
     projectRevision: number;
     preRenderReviewPackageId: string;
+    confirmationMode?: "shot_preparation";
+    confirmedShots?: Array<{
+      shotId: string;
+      confirmationStatus: "confirmed";
+      inputFingerprint: string;
+      videoArtifactId?: string;
+      videoTaskId?: string;
+      sourceMaterialRevisionId?: string;
+      clipSegments?: Array<{ startSeconds: number; endSeconds: number }>;
+      audioMode: "none" | "source" | "tts";
+      audioTrackId: string | null;
+      subtitleText: string;
+      subtitlesEnabled: boolean;
+    }>;
     studioProject?: {
       relativePath: string;
       sha256: string;
@@ -214,6 +244,15 @@ export interface WorkerTaskPackageInput {
       memberKey: string;
       memberKind: "shot_media" | "narration" | "soundtrack";
       audioKind?: "bgm" | "sfx";
+      taskId?: string;
+      artifactId?: string;
+      sourceMaterialRevisionId?: string;
+      clipSegments?: Array<{ startSeconds: number; endSeconds: number }>;
+      audioTrackId?: string | null;
+      inputFingerprint?: string;
+      audioMode?: "none" | "source" | "tts";
+      subtitleText?: string;
+      subtitlesEnabled?: boolean;
       relativePath: string;
       sha256: string;
       startSeconds: number;
@@ -267,6 +306,7 @@ export interface WorkerTaskPackage {
     shotId: string;
     reason: string;
   }>;
+  storyboardRevision?: StoryboardStructureRevision;
   aRoll?: {
     adapter: string;
     shot: StoryboardShotManifest;
@@ -375,12 +415,13 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     if (input.aRoll.adapter === "hyperframes_card_video" && input.task.provider !== "hyperframes") throw new Error("A-roll 卡片视频任务 Provider 必须是 HyperFrames。");
     validateStoryboardManifest({ version: "storyboard/v1", shots: [input.aRoll.shot] }, input.inputArtifacts);
   }
-  if (input.capability === "narration_generation" && (!input.media || input.media.adapter !== "google_tts")) throw new Error("旁白生成必须包含冻结的 Google TTS 配置。");
+  if (input.capability === "narration_generation" && (!input.media || (input.media.adapter !== "google_tts" && input.media.adapter !== "volcengine_tts"))) throw new Error("旁白生成必须包含冻结的 TTS 配置。");
   if (input.capability === "narration_generation" && !isConnectionId(input.credentialRef)) throw new Error("旁白生成必须包含冻结的外部连接版本 ID。");
   if (input.capability === "b_roll_generation" && (!input.media || (input.media.adapter !== "pexels_video" && input.media.adapter !== "hyperframes_card_video"))) throw new Error("B-roll 生成必须包含冻结的媒体配置。");
   if (input.capability === "b_roll_generation" && input.media?.adapter === "pexels_video" && !isConnectionId(input.credentialRef)) throw new Error("B-roll 生成必须包含冻结的外部连接版本 ID。");
   if (input.credentialRef !== undefined && !isNonEmptyString(input.credentialRef)) throw new Error("外部连接引用格式无效。");
   if (input.capability === "embedded_audio_extraction" && (!input.media || input.media.adapter !== "ffmpeg_extract_audio")) throw new Error("派生音频提取必须包含冻结的视频输入。");
+  if (input.capability === "shot_clip_preparation" && (!input.media || input.media.adapter !== "ffmpeg_trim_video")) throw new Error("镜头裁剪任务必须包含冻结的视频输入。");
   if (input.capability === "soundtrack_generation" && (input.task.provider !== "freesound" || !input.media || input.media.adapter !== "freesound_preview")) throw new Error("声轨生成必须包含冻结的 Freesound 配置。");
   if (input.capability === "soundtrack_generation" && !isConnectionId(input.credentialRef)) throw new Error("声轨生成必须包含冻结的外部连接版本 ID。");
   if (input.capability === "static_visual_generation" && (!input.media || (input.media.adapter !== "openai_images" && input.media.adapter !== "workers_ai_images"))) throw new Error("静态视觉生成必须包含冻结的图片 Adapter 配置。");
@@ -397,8 +438,9 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     validateReviewRenderStoryboard(render.storyboard);
     if (!isReviewRenderAdjustments(render.adjustments)) throw new Error("冻结审核渲染合成配置无效。 ");
     for (const member of render.members) {
-      if (!isNonEmptyString(member.memberKey) || (member.memberKind !== "shot_media" && member.memberKind !== "narration" && member.memberKind !== "soundtrack") || (member.audioKind !== undefined && member.audioKind !== "bgm" && member.audioKind !== "sfx") || !isSafeRelativePath(member.relativePath) || !isSha256(member.sha256) || !isNonNegativeNumber(member.startSeconds) || !isPositiveFiniteNumber(member.durationSeconds) || !input.inputArtifacts.some((artifact) => artifact.relativePath === member.relativePath && artifact.sha256 === member.sha256)) throw new Error("冻结审核渲染成员格式无效。 ");
+      if (!isNonEmptyString(member.memberKey) || (member.memberKind !== "shot_media" && member.memberKind !== "narration" && member.memberKind !== "soundtrack") || (member.audioKind !== undefined && member.audioKind !== "bgm" && member.audioKind !== "sfx") || (member.taskId !== undefined && !isNonEmptyString(member.taskId)) || (member.artifactId !== undefined && !isNonEmptyString(member.artifactId)) || (member.audioTrackId !== undefined && member.audioTrackId !== null && !isNonEmptyString(member.audioTrackId)) || (member.audioMode !== undefined && member.audioMode !== "none" && member.audioMode !== "source" && member.audioMode !== "tts") || (member.subtitleText !== undefined && typeof member.subtitleText !== "string") || (member.subtitlesEnabled !== undefined && typeof member.subtitlesEnabled !== "boolean") || !isSafeRelativePath(member.relativePath) || !isSha256(member.sha256) || !isNonNegativeNumber(member.startSeconds) || !isPositiveFiniteNumber(member.durationSeconds) || !input.inputArtifacts.some((artifact) => artifact.relativePath === member.relativePath && artifact.sha256 === member.sha256)) throw new Error("冻结审核渲染成员格式无效。 ");
     }
+    if (render.confirmationMode === "shot_preparation") validateConfirmedShotPreparationRender(render);
   }
   if (input.finalRender) {
     const finalRender = input.finalRender;
@@ -413,8 +455,8 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     const source = finalRender.reviewRender;
     if (source.projectRelativePath !== finalRender.sourceProject.relativePath || source.projectRevision !== finalRender.projectRevision || !isNonEmptyString(source.preRenderReviewPackageId) || source.members.length === 0) throw new Error("最终渲染冻结工程不一致。 ");
   }
-  if (input.media?.adapter === "google_tts") {
-    if (input.task.provider !== "google_tts") throw new Error("旁白任务 Provider 必须与冻结 Google TTS 适配器匹配。");
+  if (input.media?.adapter === "google_tts" || input.media?.adapter === "volcengine_tts") {
+    if (input.task.provider !== input.media.adapter) throw new Error("旁白任务 Provider 必须与冻结 TTS 适配器匹配。");
     const { narration } = input.media;
     if (!isNonEmptyString(narration.text) || !isNonEmptyString(narration.voice.languageCode) || !isNonEmptyString(narration.voice.name) || !isPositiveFiniteNumber(narration.voice.speakingRate)) throw new Error("旁白任务的冻结文本或声音无效。");
   }
@@ -433,6 +475,16 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     const embeddedAudio = input.media.embeddedAudio;
     if (!isSafeRelativePath(embeddedAudio.sourceRelativePath) || !isPositiveFiniteNumber(embeddedAudio.durationSeconds)) throw new Error("派生音频任务的冻结视频输入或时长无效。");
     if (!input.inputArtifacts.some((artifact) => artifact.relativePath === embeddedAudio.sourceRelativePath)) throw new Error("派生音频任务的视频输入未冻结。");
+  }
+  if (input.media?.adapter === "ffmpeg_trim_video") {
+    if (input.task.provider !== "ffmpeg") throw new Error("镜头裁剪任务 Provider 必须与冻结 ffmpeg 适配器匹配。");
+    const sources = [input.media.videoClip?.sourceRelativePath, input.media.videoClips?.sourceRelativePath].filter((value): value is string => Boolean(value));
+    const clip = input.media.videoClip;
+    const segments = input.media.videoClips?.segments;
+    if (sources.length !== 1 || !isSafeRelativePath(sources[0]) || !input.inputArtifacts.some((artifact) => artifact.relativePath === sources[0])) throw new Error("镜头裁剪任务的视频输入未冻结。");
+    if (clip && (!isNonNegativeNumber(clip.startSeconds) || !isPositiveFiniteNumber(clip.endSeconds) || clip.endSeconds <= clip.startSeconds || !isPositiveFiniteNumber(clip.targetDurationSeconds))) throw new Error("镜头裁剪任务的冻结区间无效。");
+    if (segments && (segments.length === 0 || segments.some((segment) => !isNonNegativeNumber(segment.startSeconds) || !isPositiveFiniteNumber(segment.endSeconds) || segment.endSeconds <= segment.startSeconds))) throw new Error("镜头裁剪任务的冻结区间无效。");
+    if (input.media.videoClips && !isPositiveFiniteNumber(input.media.videoClips.targetDurationSeconds)) throw new Error("镜头裁剪任务的冻结总时长无效。");
   }
   if (input.media?.adapter === "freesound_preview") {
     if (input.task.provider !== "freesound") throw new Error("声轨任务 Provider 必须与冻结 Freesound 适配器匹配。");
@@ -466,6 +518,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     ...(input.visualAssetPreparation ? { visualAssetPreparation: { externalInputs: input.visualAssetPreparation.externalInputs.map((artifact) => ({ ...artifact })), ...(input.visualAssetPreparation.imageGeneration ? { imageGeneration: { ...input.visualAssetPreparation.imageGeneration } } : {}) } } : {}),
     ...(input.reviewFeedback ? { reviewFeedback: { reviewPackageId: input.reviewFeedback.reviewPackageId, reason: input.reviewFeedback.reason } } : {}),
     ...(input.reviewAnnotations?.length ? { reviewAnnotations: input.reviewAnnotations.map((annotation) => ({ shotId: annotation.shotId, reason: annotation.reason })) } : {}),
+    ...(input.storyboardRevision ? { storyboardRevision: input.storyboardRevision } : {}),
     ...(input.aRoll ? { aRoll: { adapter: input.aRoll.adapter, shot: input.aRoll.shot } } : {}),
     ...(input.media ? { media: input.media } : {}),
     ...(input.reviewRender ? { reviewRender: { ...input.reviewRender, ...(input.reviewRender.studioProject ? { studioProject: { ...input.reviewRender.studioProject } } : {}), members: input.reviewRender.members.map((member) => ({ ...member })) } } : {}),
@@ -625,6 +678,38 @@ function validateStoryboardAudioCue(value: unknown): asserts value is Storyboard
 
 function validateReviewRenderStoryboard(value: StoryboardManifest): void {
   if (value.version !== "storyboard/v1" || value.shots.length === 0 || value.shots.some((shot) => !isNonEmptyString(shot.id) || !isNonEmptyString(shot.scriptSegment) || !isPositiveFiniteNumber(shot.durationSeconds))) throw new Error("冻结审核渲染分镜格式无效。 ");
+}
+
+function validateConfirmedShotPreparationRender(render: NonNullable<WorkerTaskPackageInput["reviewRender"]>): void {
+  if (!render.confirmedShots || render.confirmedShots.length !== render.storyboard.shots.length) throw new Error("逐镜头 Studio 工程缺少完整确认快照。 ");
+  const confirmed = new Map(render.confirmedShots.map((shot) => [shot.shotId, shot]));
+  if (confirmed.size !== render.confirmedShots.length || render.storyboard.shots.some((shot) => !confirmed.has(shot.id))) throw new Error("逐镜头 Studio 工程的确认版本与分镜不一致。 ");
+  if (render.confirmedShots.some((shot) => {
+    const usesRawSource = isNonEmptyString(shot.sourceMaterialRevisionId) && validClipSegments(shot.clipSegments);
+    const usesPreparedClip = isNonEmptyString(shot.videoArtifactId) && isNonEmptyString(shot.videoTaskId);
+    const audioValid = shot.audioMode === "none" || (usesRawSource && shot.audioMode === "source") ? shot.audioTrackId === null : isNonEmptyString(shot.audioTrackId);
+    return shot.confirmationStatus !== "confirmed" || !isNonEmptyString(shot.inputFingerprint) || !/^[0-9a-f]{32}$/i.test(shot.inputFingerprint) || (!usesRawSource && !usesPreparedClip) || !isNonEmptyString(shot.subtitleText) || (shot.audioMode !== "none" && shot.audioMode !== "source" && shot.audioMode !== "tts") || typeof shot.subtitlesEnabled !== "boolean" || !audioValid;
+  })) throw new Error("逐镜头 Studio 确认快照格式无效。 ");
+  const shotMembers = render.members.filter((member) => member.memberKind === "shot_media");
+  if (shotMembers.length !== render.storyboard.shots.length || new Set(shotMembers.map((member) => member.memberKey)).size !== shotMembers.length) throw new Error("逐镜头 Studio 工程缺少唯一镜头媒体成员。 ");
+  const narrationMembers = render.members.filter((member) => member.memberKind === "narration");
+  if (new Set(narrationMembers.map((member) => member.memberKey)).size !== narrationMembers.length) throw new Error("逐镜头 Studio 工程包含重复音频成员。 ");
+  for (const shot of render.storyboard.shots) {
+    const snapshot = confirmed.get(shot.id)!;
+    const member = shotMembers.find((candidate) => candidate.memberKey === `shot:${shot.id}`);
+    const rawSourceMatches = snapshot.sourceMaterialRevisionId !== undefined && member?.sourceMaterialRevisionId === snapshot.sourceMaterialRevisionId && JSON.stringify(member.clipSegments) === JSON.stringify(snapshot.clipSegments);
+    const preparedClipMatches = snapshot.videoTaskId !== undefined && member?.taskId === snapshot.videoTaskId && member.artifactId === snapshot.videoArtifactId;
+    if (!member || (!rawSourceMatches && !preparedClipMatches) || member.inputFingerprint !== snapshot.inputFingerprint || member.audioMode !== snapshot.audioMode || member.subtitleText !== snapshot.subtitleText || member.subtitlesEnabled !== snapshot.subtitlesEnabled || (member.clipSegments && Math.abs(member.durationSeconds - member.clipSegments.reduce((total, segment) => total + segment.endSeconds - segment.startSeconds, 0)) > 0.001)) throw new Error("逐镜头 Studio 工程存在未确认或版本不一致的镜头成员。 ");
+    const narration = render.members.find((candidate) => candidate.memberKey === `narration:${shot.id}`);
+    const embeddedSourceAudio = snapshot.sourceMaterialRevisionId !== undefined && snapshot.audioMode === "source";
+    if (snapshot.audioMode === "none" || embeddedSourceAudio ? narration !== undefined || snapshot.audioTrackId !== null : !narration || narration.audioTrackId !== snapshot.audioTrackId || narration.audioMode !== snapshot.audioMode) throw new Error("逐镜头 Studio 工程的音频版本与确认快照不一致。 ");
+    if (narration && (!narration.taskId || !narration.audioTrackId)) throw new Error("逐镜头 Studio 工程的音频成员缺少冻结版本。 ");
+  }
+  if (render.members.some((member) => member.memberKind === "shot_media" && !render.storyboard.shots.some((shot) => member.memberKey === `shot:${shot.id}`)) || render.members.some((member) => member.memberKind === "narration" && !render.storyboard.shots.some((shot) => member.memberKey === `narration:${shot.id}`))) throw new Error("逐镜头 Studio 工程包含未确认镜头成员。 ");
+}
+
+function validClipSegments(value: unknown): value is Array<{ startSeconds: number; endSeconds: number }> {
+  return Array.isArray(value) && value.length > 0 && value.every((segment) => isRecord(segment) && isNonNegativeNumber(segment.startSeconds) && isPositiveFiniteNumber(segment.endSeconds) && segment.endSeconds > segment.startSeconds);
 }
 
 function parseMediaSource(value: unknown): NonNullable<WorkerResult["mediaSource"]> {

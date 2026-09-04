@@ -118,7 +118,7 @@ export function resolveRuntimeCapability(capability: RuntimeCapability): Resolve
 
   const mediaCapability = mediaCapabilityForCapability(capability.capability);
   const registered = mediaCapability?.workerAvailable === false ? false : capability.adapter
-    ? registeredAdaptersForCapability(capability.capability).some((registration) => registration.provider === capability.provider && registration.id === capability.adapter) || (!mediaCapability && legacyRegisteredAdapters.has(`${capability.provider}:${capability.adapter}`))
+    ? registeredAdaptersForCapability(capability.capability).some((registration) => registration.provider === capability.provider && registration.id === capability.adapter && registration.workerAvailable !== false) || (!mediaCapability && legacyRegisteredAdapters.has(`${capability.provider}:${capability.adapter}`))
     : capability.provider === "codex" || capability.provider === "hyperframes" || capability.provider === "ffmpeg";
   return registered ? { kind: "registered_execution", capability } : { kind: "unregistered_execution", capability };
 }
@@ -264,7 +264,7 @@ function configurationErrorFor(capability: RuntimeCapability): string | undefine
   if (mediaCapabilityForCapability(capability.capability) && capability.executionPath === "") return `能力 ${capability.capability} 缺少执行路径。`;
   if (!capability.provider || !capability.model || !capability.promptVersion) return `能力 ${capability.capability} 缺少 Provider、模型或 Prompt 版本。`;
   if (capability.requiresAdapter && !capability.adapter) return `能力 ${capability.capability} 缺少已注册 Adapter。`;
-  if (isOwnerManagedConnection(capability.provider, capability.adapter ?? "") && !isConnectionId(capability.credentialRef)) return `${capability.provider === "openai" ? "OpenAI Images" : capability.provider === "cloudflare" ? "Cloudflare Workers AI" : capability.provider === "google_tts" ? "Google TTS" : capability.provider === "freesound" ? "Freesound" : "Pexels"} 必须选择已验证的外部连接版本。`;
+  if (isOwnerManagedConnection(capability.provider, capability.adapter ?? "") && !isConnectionId(capability.credentialRef)) return `${capability.provider === "openai" ? "OpenAI Images" : capability.provider === "cloudflare" ? "Cloudflare Workers AI" : capability.provider === "google_tts" ? "Google TTS" : capability.provider === "volcengine_tts" ? "豆包语音" : capability.provider === "freesound" ? "Freesound" : "Pexels"} 必须选择已验证的外部连接版本。`;
   if (capability.requiresPromptHarness && !capability.promptHarnessId) return `能力 ${capability.capability} 缺少 Prompt Harness。`;
   const registration = capability.adapter ? adapterRegistration(capability.provider, capability.adapter) : undefined;
   if (registration?.connections.length && !registration.connections.some((connection) => connection.credentialRef === capability.credentialRef) && !isConnectionId(capability.credentialRef)) return `能力 ${capability.capability} 缺少可用的外部连接引用。`;

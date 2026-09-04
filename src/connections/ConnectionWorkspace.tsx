@@ -6,8 +6,8 @@ export type ExternalConnection = Database["public"]["Tables"]["external_connecti
 
 export type ExternalConnectionInput = {
   name: string;
-  provider: "pexels" | "freesound" | "openai" | "cloudflare" | "google_tts";
-  adapter: "pexels_video" | "freesound_preview" | "openai_images" | "workers_ai_images" | "google_tts";
+  provider: "pexels" | "freesound" | "openai" | "cloudflare" | "google_tts" | "volcengine_tts";
+  adapter: "pexels_video" | "freesound_preview" | "openai_images" | "workers_ai_images" | "google_tts" | "volcengine_tts";
   secret: string;
 };
 
@@ -22,6 +22,10 @@ export type ExternalConnectionVersion = {
   revoked_at: string | null;
   status: "unverified" | "verified" | "invalid" | "retryable" | "revoked";
   version: number;
+};
+
+const statusLabels: Record<ExternalConnection["status"] | ExternalConnectionVersion["status"], string> = {
+  unverified: "未测试", verified: "已验证", invalid: "认证失败", retryable: "暂时失败", revoked: "已撤销",
 };
 
 export function ExternalConnectionPicker({ adapter, connections, isPending = false, label = "外部连接", officialEndpoint, onCreateConnection, onRotateConnection, onSelectVersion, onTestConnection, onUpdateConnection, provider, selectedVersionId, versions = [] }: {
@@ -45,10 +49,11 @@ export function ExternalConnectionPicker({ adapter, connections, isPending = fal
   const [editName, setEditName] = useState("");
   const [error, setError] = useState("");
   const compatibleConnections = connections.filter((connection) => connection.provider === provider && connection.adapter === adapter);
+  const currentVersion = versions.find((version) => version.provider === provider && version.adapter === adapter && version.is_current && !version.revoked_at);
   const compatibleVersions = versions.filter((version) => version.provider === provider && version.adapter === adapter && version.is_current && version.status === "verified" && !version.revoked_at).sort((left, right) => right.version - left.version);
   const selectedVersion = compatibleVersions.find((version) => version.id === selectedVersionId) ?? compatibleVersions[0];
   const connectionNames = new Map(compatibleConnections.map((connection) => [connection.id, connection.name]));
-  const selectedConnection = selectedVersion ? compatibleConnections.find((connection) => connection.id === selectedVersion.connection_id) : compatibleConnections[0];
+  const selectedConnection = compatibleConnections.find((connection) => connection.id === (currentVersion?.connection_id ?? selectedVersion?.connection_id)) ?? compatibleConnections[0];
 
   useEffect(() => {
     if (selectedVersion && selectedVersion.id !== selectedVersionId) onSelectVersion(selectedVersion.id);
@@ -88,7 +93,7 @@ export function ExternalConnectionPicker({ adapter, connections, isPending = fal
   }
 
   return <div className="external-connection-picker" aria-label={`${label}连接`}>
-    {selectedConnection ? <><section className="external-connection-current"><div><span>当前连接</span><strong>{connectionNames.get(selectedConnection.id) ?? "Owner 连接"}{selectedVersion ? ` · v${selectedVersion.version}` : " · 待验证"}</strong></div>{onTestConnection ? <button className="button button-secondary button-small" disabled={isPending} onClick={() => void onTestConnection(selectedConnection.id)} type="button">重新测试</button> : null}</section><details><summary>更新连接</summary><label>连接名称<input aria-label="编辑连接名称" disabled={!onUpdateConnection} onChange={(event) => setEditName(event.target.value)} value={editName} /></label><label>新的认证材料（可选）<input aria-label="编辑连接认证材料" autoComplete="off" onChange={(event) => setRotationSecret(event.target.value)} placeholder={provider === "cloudflare" ? "Account ID:API Token" : undefined} type="password" value={rotationSecret} /></label><p className="field-hint">只改名称不会创建新版本；填写认证材料才会创建新版本并测试。</p><button className="button button-secondary button-small" disabled={isPending || (!rotationSecret.trim() && (!onUpdateConnection || !editName.trim() || editName.trim() === selectedConnection.name))} onClick={() => void updateCurrentConnection()} type="button">保存连接更新</button></details></> : onCreateConnection ? <form className="external-connection-create" onSubmit={(event) => void create(event)}><p>{provider === "cloudflare" ? "填写 Cloudflare Account ID:Workers AI API Token；验证通过后会直接用于此能力。" : "创建并测试一条当前连接；验证通过后会直接用于此能力。"}</p><label>连接名称（自定义填写）<input aria-label="新连接名称" onChange={(event) => setName(event.target.value)} required value={name} /></label><label>认证材料（填写对应服务的 API Key）<input aria-label="新连接认证材料" autoComplete="off" onChange={(event) => setSecret(event.target.value)} placeholder={provider === "cloudflare" ? "Account ID:API Token" : undefined} required type="password" value={secret} /></label><button className="button button-secondary button-small" disabled={isPending || !name.trim() || !secret.trim()} type="submit">创建并测试连接</button></form> : null}
+    {selectedConnection ? <><section className="external-connection-current"><div><span>当前连接</span><strong>{connectionNames.get(selectedConnection.id) ?? "Owner 连接"}{currentVersion ? ` · v${currentVersion.version} · ${statusLabels[currentVersion.status]}` : " · 未测试"}</strong>{selectedConnection.last_verification_detail ? <small>{selectedConnection.last_verification_detail}</small> : null}</div>{onTestConnection ? <button className="button button-secondary button-small" disabled={isPending} onClick={() => void onTestConnection(selectedConnection.id)} type="button">重新测试</button> : null}</section><details><summary>更新连接</summary><label>连接名称<input aria-label="编辑连接名称" disabled={!onUpdateConnection} onChange={(event) => setEditName(event.target.value)} value={editName} /></label><label>新的认证材料（可选）<input aria-label="编辑连接认证材料" autoComplete="off" onChange={(event) => setRotationSecret(event.target.value)} placeholder={provider === "cloudflare" ? "Account ID:API Token" : provider === "volcengine_tts" ? "豆包语音 API Key" : undefined} type="password" value={rotationSecret} /></label><p className="field-hint">只改名称不会创建新版本；填写认证材料才会创建新版本并测试。</p><button className="button button-secondary button-small" disabled={isPending || (!rotationSecret.trim() && (!onUpdateConnection || !editName.trim() || editName.trim() === selectedConnection.name))} onClick={() => void updateCurrentConnection()} type="button">保存连接更新</button></details></> : onCreateConnection ? <form className="external-connection-create" onSubmit={(event) => void create(event)}><p>{provider === "cloudflare" ? "填写 Cloudflare Account ID:Workers AI API Token；验证通过后会直接用于此能力。" : provider === "volcengine_tts" ? "填写新版豆包语音控制台生成的 API Key；测试与正式合成使用同一 V3 接口。" : "创建并测试一条当前连接；验证通过后会直接用于此能力。"}</p><label>连接名称（自定义填写）<input aria-label="新连接名称" onChange={(event) => setName(event.target.value)} required value={name} /></label><label>认证材料（填写对应服务的 API Key）<input aria-label="新连接认证材料" autoComplete="off" onChange={(event) => setSecret(event.target.value)} placeholder={provider === "cloudflare" ? "Account ID:API Token" : provider === "volcengine_tts" ? "豆包语音 API Key" : undefined} required type="password" value={secret} /></label><button className="button button-secondary button-small" disabled={isPending || !name.trim() || !secret.trim()} type="submit">创建并测试连接</button></form> : null}
     {officialEndpoint || selectedVersion ? <p className="field-hint">官方 Endpoint：{officialEndpoint ?? selectedVersion?.endpoint}</p> : null}
     {error ? <p className="form-error" role="alert">{error}</p> : null}
   </div>;
@@ -100,11 +105,8 @@ const connectionTypes = [
   { adapter: "openai_images", label: "OpenAI Images", provider: "openai", secretLabel: "OpenAI API Key" },
   { adapter: "workers_ai_images", label: "Cloudflare Workers AI 图片", provider: "cloudflare", secretLabel: "Account ID:Workers AI API Token" },
   { adapter: "google_tts", label: "Google TTS 旁白", provider: "google_tts", secretLabel: "Google TTS API Key" },
+  { adapter: "volcengine_tts", label: "豆包语音 V3", provider: "volcengine_tts", secretLabel: "豆包语音 API Key" },
 ] as const;
-
-const statusLabels: Record<ExternalConnection["status"] | ExternalConnectionVersion["status"], string> = {
-  unverified: "未测试", verified: "已验证", invalid: "认证失败", retryable: "暂时失败", revoked: "已撤销",
-};
 
 export function ConnectionWorkspace({ connections, isPending = false, onCreateConnection, onDeleteVersion, onRevokeVersion, onRotateConnection, onTestConnection, onUpdateConnection, versions = [] }: {
   connections: ExternalConnection[];
