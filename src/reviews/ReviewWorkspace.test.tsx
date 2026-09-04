@@ -535,6 +535,7 @@ describe("审核台", () => {
     render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={{ ...blueprint, policy: { narration: { executor: { adapter: "volcengine_tts", model: "seed-tts-2.0", provider: "volcengine_tts" }, voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 1.35 } } } }} episode={approvedEpisode} isTransitionPending={false} materialRevisions={materials} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={drafts} tasks={[]} transitions={[]} />);
 
     await screen.findByRole("heading", { name: "镜头工作台" });
+    expect(screen.getByRole("group", { name: "音频模式" }).compareDocumentPosition(screen.getByRole("region", { name: "shot-1 画面准备" })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect((screen.getByLabelText("shot-1 TTS 声音") as HTMLSelectElement).value).toBe("voice-a");
     expect((screen.getByLabelText("shot-1 TTS 声音") as HTMLSelectElement).options.length).toBeGreaterThan(2);
     expect(screen.getByRole("button", { name: "shot-1 试听当前音色" })).toBeTruthy();
