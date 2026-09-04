@@ -135,7 +135,17 @@ const adapterRegistry: readonly AdapterRegistration[] = [
     modelCatalog: ["seed-tts-2.0"],
     presetCatalog: ["narration-v1"],
     voiceCatalog: {
-      "zh-CN": ["zh_female_vv_uranus_bigtts"],
+      "zh-CN": [
+        "zh_female_vv_uranus_bigtts",
+        "zh_male_dayi_saturn_bigtts",
+        "zh_female_mizai_saturn_bigtts",
+        "zh_female_jitangnv_saturn_bigtts",
+        "zh_female_meilinvyou_saturn_bigtts",
+        "zh_female_santongyongns_saturn_bigtts",
+        "zh_male_ruyayichen_saturn_bigtts",
+        "ICL_zh_female_keainvsheng_tob",
+        "ICL_zh_female_tiaopigongzhu_tob",
+      ],
       "en-US": ["zh_female_vv_uranus_bigtts"],
       "ja-JP": ["zh_female_vv_uranus_bigtts"],
       "es-ES": ["zh_female_vv_uranus_bigtts"],

@@ -19,6 +19,8 @@ import { writeSafeAssetFile } from "./src/worker/controlledMediaExecutor";
 import { createPublishPackage, verifyPublishPackage } from "./src/publishing/publishPackage";
 import { loadPublishContext } from "./src/publishing/publishContext";
 import { coverImageExtension, coverInputPath } from "./src/publishing/coverImage";
+import { adapterRegistration } from "./src/worker/adapterRegistry";
+import { synthesizeGoogleTts, synthesizeVolcengineTts } from "./src/worker/mediaProviders";
 
 export { coverImageExtension } from "./src/publishing/coverImage";
 
@@ -40,6 +42,7 @@ const openHyperframesStudioRoute = "/_open-hyperframes-studio";
 const openPersonalHyperframesStudioRoute = "/_open-personal-hyperframes-studio";
 const freezeHyperframesStudioRoute = "/_freeze-hyperframes-studio";
 const episodePreflightRoute = "/_episode-preflight";
+const ttsVoicePreviewRoute = "/_tts-voice-preview";
 const maxProductionMaterialBytes = 100 * 1024 * 1024;
 const maxEncodedMaterialRequestBytes = 140 * 1024 * 1024;
 const execFileAsync = promisify(execFile);
@@ -1665,6 +1668,50 @@ export function serveProductionMaterial(supabaseUrl: string | undefined, supabas
   };
 }
 
+export function serveTtsVoicePreview(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+  return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+    if (request.method !== "POST") { response.statusCode = 405; response.end(); return; }
+    const authorization = request.headers.authorization;
+    if (!authorization?.startsWith("Bearer ")) { response.statusCode = 401; response.end("需要 Owner 登录会话。"); return; }
+    const episodeId = new URL(request.url ?? "", "http://127.0.0.1").searchParams.get("episode") ?? "";
+    if (!isEpisodeId(episodeId)) { response.statusCode = 400; response.end("无效的 Episode ID。"); return; }
+    if (!supabaseUrl || !supabasePublishableKey) { response.statusCode = 503; response.end("Supabase 连接未配置。"); return; }
+    try {
+      const body = await readJsonBody(request);
+      const voice = typeof body.voice === "string" ? body.voice.trim() : "";
+      const speakingRate = body.speakingRate;
+      if (!voice || voice.length > 128 || typeof speakingRate !== "number" || !Number.isFinite(speakingRate) || speakingRate < 0.5 || speakingRate > 2) throw new Error("音色或语速无效。");
+      const client = createClient(supabaseUrl, supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: authorization } } });
+      const { data: episode, error: episodeError } = await client.from("episodes").select("account_id, blueprint_version_id").eq("id", episodeId).maybeSingle();
+      if (episodeError || !episode || !await accountIsOwned({ accountId: episode.account_id, authorization, supabasePublishableKey, supabaseUrl })) { response.statusCode = 403; response.end("没有该生产单的 Owner 权限。"); return; }
+      const { data: blueprint, error: blueprintError } = await client.from("account_blueprint_versions").select("policy").eq("id", episode.blueprint_version_id).eq("account_id", episode.account_id).maybeSingle();
+      if (blueprintError || !blueprint) throw new Error("未找到当前蓝图。");
+      const capability = runtimeCapabilitiesFromBlueprintPolicy(blueprint.policy, undefined, ["narration_generation"]).find((candidate) => candidate.capability === "narration_generation");
+      if (!capability || (capability.provider !== "google_tts" && capability.provider !== "volcengine_tts")) throw new Error("当前蓝图没有可试听的 TTS 执行器。");
+      const policy = blueprint.policy && typeof blueprint.policy === "object" && !Array.isArray(blueprint.policy) ? blueprint.policy as Record<string, unknown> : {};
+      const narration = policy.narration && typeof policy.narration === "object" && !Array.isArray(policy.narration) ? policy.narration as Record<string, unknown> : {};
+      const voiceConfig = narration.voice && typeof narration.voice === "object" && !Array.isArray(narration.voice) ? narration.voice as Record<string, unknown> : {};
+      const languageCode = typeof voiceConfig.language_code === "string" ? voiceConfig.language_code : "zh-CN";
+      const configuredVoice = typeof voiceConfig.name === "string" ? voiceConfig.name : "";
+      const catalog = adapterRegistration(capability.provider, capability.adapter ?? capability.provider)?.voiceCatalog?.[languageCode] ?? [];
+      if (voice !== configuredVoice && !catalog.includes(voice)) throw new Error("所选音色不在当前 TTS 执行器目录中。");
+      const apiKey = await localWorkerSecretForCapability(capability, episode.account_id);
+      if (!apiKey) { response.statusCode = 503; response.end("当前 TTS 凭据不可用。"); return; }
+      const input = { apiKey, fetcher: fetch, text: "你好，这是当前音色的试听效果。", voice: { languageCode, name: voice, speakingRate } };
+      const audio = capability.provider === "volcengine_tts"
+        ? await synthesizeVolcengineTts({ ...input, model: capability.model ?? "seed-tts-2.0" })
+        : await synthesizeGoogleTts(input);
+      response.setHeader("Cache-Control", "no-store");
+      response.setHeader("Content-Type", "audio/mpeg");
+      response.statusCode = 200;
+      response.end(Buffer.from(audio));
+    } catch (error) {
+      response.statusCode = 400;
+      response.end(error instanceof Error ? error.message : "无法试听当前音色。");
+    }
+  };
+}
+
 async function indexedArtifactForPreview(input: { authorization: string; episodeId: string; expectedSha256?: string; relativePath: string; supabasePublishableKey: string | undefined; supabaseUrl: string | undefined }): Promise<{ assetRoot: string; sha256: string } | null> {
   if (!input.supabaseUrl || !input.supabasePublishableKey) return null;
   const supabase = createClient(input.supabaseUrl, input.supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: input.authorization } } });
@@ -1759,6 +1806,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
   const chooseAssetDirectoryMiddleware = serveChooseLocalAssetDirectory(supabaseUrl, supabasePublishableKey);
   const openAssetDirectoryMiddleware = serveOpenLocalAssetDirectory(supabaseUrl, supabasePublishableKey);
   const productionMaterialMiddleware = serveProductionMaterial(supabaseUrl, supabasePublishableKey);
+  const ttsVoicePreviewMiddleware = serveTtsVoicePreview(supabaseUrl, supabasePublishableKey);
   const deletionMiddleware = serveEpisodeDeletion(supabaseUrl, supabasePublishableKey, localWorkerServiceRoleKey());
   const deletionCleanupMiddleware = serveEpisodeDeletionCleanup(supabaseUrl, supabasePublishableKey);
   const systemStatusMiddleware = serveSystemStatus(supabaseUrl, supabasePublishableKey);
@@ -1780,6 +1828,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(chooseLocalAssetDirectoryRoute, chooseAssetDirectoryMiddleware);
       server.middlewares.use(openLocalAssetDirectoryRoute, openAssetDirectoryMiddleware);
       server.middlewares.use(localProductionMaterialRoute, productionMaterialMiddleware);
+      server.middlewares.use(ttsVoicePreviewRoute, ttsVoicePreviewMiddleware);
       server.middlewares.use(localEpisodeDeletionRoute, deletionMiddleware);
       server.middlewares.use(localEpisodeDeletionCleanupRoute, deletionCleanupMiddleware);
       server.middlewares.use(systemStatusRoute, systemStatusMiddleware);
@@ -1800,6 +1849,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(chooseLocalAssetDirectoryRoute, chooseAssetDirectoryMiddleware);
       server.middlewares.use(openLocalAssetDirectoryRoute, openAssetDirectoryMiddleware);
       server.middlewares.use(localProductionMaterialRoute, productionMaterialMiddleware);
+      server.middlewares.use(ttsVoicePreviewRoute, ttsVoicePreviewMiddleware);
       server.middlewares.use(localEpisodeDeletionRoute, deletionMiddleware);
       server.middlewares.use(localEpisodeDeletionCleanupRoute, deletionCleanupMiddleware);
       server.middlewares.use(systemStatusRoute, systemStatusMiddleware);

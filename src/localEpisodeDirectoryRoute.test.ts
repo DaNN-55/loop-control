@@ -7,7 +7,7 @@ import { mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } from "node:fs/
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { confirmedStudioShotBlockers, coverImageExtension, createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, freezeHyperframesStudioWorkspace, hyperframesStudioPreviewArguments, prepareHyperframesStudioWorkspace, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveChooseLocalAssetDirectory, serveEpisodeDeletion, serveEpisodeDeletionCleanup, serveEpisodePreflight, serveFreezeHyperframesStudio, serveLocalArtifact, serveLocalEpisodeDirectory, serveOpenHyperframesStudio, serveOpenLocalArtifact, serveOpenLocalAssetDirectory, serveOpenLocalEpisodeDirectory, serveOpenPersonalHyperframesStudio, servePublishPreparation, stageLocalEpisodeDirectoryForDeletion, studioMarkerSourceRequirements } from "../vite.config";
+import { confirmedStudioShotBlockers, coverImageExtension, createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, freezeHyperframesStudioWorkspace, hyperframesStudioPreviewArguments, prepareHyperframesStudioWorkspace, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveChooseLocalAssetDirectory, serveEpisodeDeletion, serveEpisodeDeletionCleanup, serveEpisodePreflight, serveFreezeHyperframesStudio, serveLocalArtifact, serveLocalEpisodeDirectory, serveOpenHyperframesStudio, serveOpenLocalArtifact, serveOpenLocalAssetDirectory, serveOpenLocalEpisodeDirectory, serveOpenPersonalHyperframesStudio, servePublishPreparation, serveTtsVoicePreview, stageLocalEpisodeDirectoryForDeletion, studioMarkerSourceRequirements } from "../vite.config";
 
 const episodeId = "00000000-0000-0000-0000-000000000000";
 let server: ReturnType<typeof createServer>;
@@ -93,6 +93,25 @@ describe("本地 Episode 目录路由", () => {
       expect(unavailable.status).toBe(503);
     } finally {
       await new Promise<void>((resolve, reject) => preflightServer.close((error) => error ? reject(error) : resolve()));
+    }
+  });
+
+  it("音色试听在调用供应商前拒绝未登录、错误方法和未配置服务", async () => {
+    const middleware = serveTtsVoicePreview(undefined, undefined);
+    const previewServer = createServer((request, response) => { void middleware(request, response); });
+    await new Promise<void>((resolve) => previewServer.listen(0, "127.0.0.1", resolve));
+    const previewOrigin = `http://127.0.0.1:${(previewServer.address() as AddressInfo).port}`;
+    try {
+      const [unauthorized, wrongMethod, unavailable] = await Promise.all([
+        fetch(`${previewOrigin}/_tts-voice-preview?episode=${episodeId}`, { body: "{}", method: "POST" }),
+        fetch(`${previewOrigin}/_tts-voice-preview?episode=${episodeId}`, { headers: { Authorization: "Bearer invalid" } }),
+        fetch(`${previewOrigin}/_tts-voice-preview?episode=${episodeId}`, { body: JSON.stringify({ speakingRate: 1, voice: "voice-a" }), headers: { Authorization: "Bearer invalid", "Content-Type": "application/json" }, method: "POST" }),
+      ]);
+      expect(unauthorized.status).toBe(401);
+      expect(wrongMethod.status).toBe(405);
+      expect(unavailable.status).toBe(503);
+    } finally {
+      await new Promise<void>((resolve, reject) => previewServer.close((error) => error ? reject(error) : resolve()));
     }
   });
 

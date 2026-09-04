@@ -1064,10 +1064,7 @@ body { background: #f5f7fa; }
 .shot-source-material-slot strong { color: #35445a; font-size: 11px; }
 .shot-source-material-slot small { color: #748197; font-size: 10px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .shot-source-material-slot-meta { color: #6f7e95; flex: 0 0 auto; font-size: 10px; }
-.shot-source-material-slot.has-file { border-style: solid; border-color: #a9c5ed; }
-.shot-source-material-slot.has-file .shot-source-material-slot-meta { color: #347450; font-weight: 700; }
 .shot-source-material-slot input { cursor: pointer; height: 1px; inset: 0; opacity: 0; padding: 0; position: absolute; width: 1px; }
-.shot-source-material-form > .button { justify-self: start; }
 .shot-preparation-actions { align-items: center; display: flex; gap: 12px; }
 .shot-preparation-actions .form-error { margin: 0; }
 .shot-tts-settings { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr) minmax(110px, .4fr); }
@@ -1099,8 +1096,6 @@ body { background: #f5f7fa; }
 .app-shell[data-theme="dark"] .shot-source-material-slot:hover { background: #182233; border-color: #6f96ce; }
 .app-shell[data-theme="dark"] .shot-source-material-slot strong { color: #d7e0ed; }
 .app-shell[data-theme="dark"] .shot-source-material-slot small, .app-shell[data-theme="dark"] .shot-source-material-slot-meta { color: #aab7c8; }
-.app-shell[data-theme="dark"] .shot-source-material-slot.has-file { border-color: #5d86c2; }
-.app-shell[data-theme="dark"] .shot-source-material-slot.has-file .shot-source-material-slot-meta { color: #91ddb0; }
 .shot-duration-feedback { color: #35624d; font-size: 12px; font-weight: 700; }
 .checkbox-label { align-items: center; display: flex; gap: 8px; }
 .checkbox-label input { width: auto; }
@@ -1184,9 +1179,9 @@ body { background: #f5f7fa; }
 @media (max-width: 1280px) { .episode-detail-drawer { width: min(680px, 62vw); } }
 @media (max-width: 640px) {
   .episode-detail-drawer { width: auto; }
-  .shot-preparation-summary { display: grid; gap: 10px; }
-  .shot-preparation-summary > span:last-child { justify-content: stretch; }
-  .shot-preparation-summary > span:last-child small { flex: 1; min-width: 0; }
+  .shot-preparation-summary { display: grid; gap: 10px; padding-right: 80px; }
+  .shot-preparation-summary > span:last-child { display: grid; grid-template-columns: 1fr; justify-content: stretch; }
+  .shot-preparation-summary > span:last-child small { justify-content: flex-start; min-width: 0; }
   .shot-preparation-fields > fieldset:first-child { grid-template-columns: 1fr; }
   .shot-preparation-fields > fieldset:first-child legend { grid-column: auto; }
 }
@@ -1238,7 +1233,6 @@ body { background: #f5f7fa; }
 .shot-source-material-slot strong { font-size: 10px; }
 .shot-source-material-slot small { max-width: 140px; }
 .shot-source-material-slot-meta { display: none; }
-.shot-source-material-form > .button { min-height: 36px; }
 .shot-audio-mode label { cursor: pointer; justify-content: center !important; position: relative; }
 .shot-audio-mode input { opacity: 0; pointer-events: none; position: absolute; }
 .shot-audio-mode label:has(input:focus-visible) { outline: 3px solid #bdd3ff; outline-offset: 2px; }
@@ -1246,7 +1240,6 @@ body { background: #f5f7fa; }
 .manual-clip-selection::before, .manual-clip-selection::after { content: none; }
 .clip-editor-header { align-items: baseline; display: flex !important; justify-content: space-between; }
 .clip-editor-header strong { color: #35445a; font-size: 12px; }
-.clip-editor-header span { color: #64748b; font-size: 11px; font-variant-numeric: tabular-nums; }
 .clip-segment-tabs { display: flex !important; flex-wrap: wrap; gap: 6px !important; }
 .clip-segment-tab { align-items: stretch; background: #fff; border: 1px solid #d7e0ec; border-radius: 7px; display: flex !important; gap: 0 !important; overflow: hidden; }
 .clip-segment-tab.is-active { background: #eef5ff; border-color: #8fb1df; }
@@ -1263,15 +1256,11 @@ body { background: #f5f7fa; }
 .clip-filmstrip > video, .clip-filmstrip > span { background: #c8d0dc; height: 72px; object-fit: cover; width: 100%; }
 .clip-filmstrip-track { inset: 0; padding: 0; position: absolute; }
 .clip-filmstrip-selection { background: rgba(255, 196, 0, .12); border: 4px solid #ffc400; bottom: 0; pointer-events: none; position: absolute; top: 0; }
+.clip-filmstrip-playhead { background: #fff; bottom: 4px; box-shadow: 0 0 0 1px rgba(15, 23, 36, .35); pointer-events: none; position: absolute; top: 4px; transform: translateX(-1px); width: 2px; z-index: 2; }
 .clip-range-thumb { background: #fff; border: 1px solid #aeb8c7; border-radius: 4px; box-shadow: 0 1px 5px rgba(15, 23, 36, .28); height: 62px; top: 5px; width: 8px; }
-.clip-range-values { align-items: end; display: flex !important; gap: 8px !important; }
-.clip-range-values label { color: #66748a; display: grid; font-size: 10px; gap: 3px; width: 112px; }
-.clip-range-values input { width: 100%; }
-.clip-range-values > span { color: #8b98aa; padding-bottom: 9px; }
-.clip-range-values small { color: #53627a; margin-left: auto; padding-bottom: 9px; }
 .shot-tts-copy-label { display: grid; }
 .shot-tts-copy-actions { display: flex; justify-content: flex-end; margin-top: -5px; }
-.shot-tts-settings { align-items: end; grid-template-columns: minmax(220px, 1fr) 110px auto auto; }
+.shot-tts-settings { align-items: end; grid-template-columns: minmax(220px, 1fr) 110px 36px 36px auto; }
 .shot-tts-settings label { color: #53627a; display: grid; font-size: 11px; font-weight: 750; gap: 6px; }
 .shot-tts-settings .button { min-height: 36px; white-space: nowrap; }
 .shot-structure-revision > summary { font-weight: 700; }
@@ -1287,8 +1276,8 @@ body { background: #f5f7fa; }
   .shot-source-toolbar { grid-template-columns: 1fr; }
   .shot-source-material-form { justify-content: flex-start; }
   .shot-workbench-freeze { align-items: flex-end; }
-  .clip-range-values { align-items: stretch; flex-wrap: wrap; }
-  .clip-range-values small { margin-left: 0; padding-bottom: 0; width: 100%; }
-  .shot-tts-settings { grid-template-columns: 1fr 100px; }
+  .shot-tts-settings { grid-template-columns: minmax(0, 1fr) 36px 36px; }
+  .shot-tts-settings label:first-child { grid-column: 1 / -1; }
+  .shot-tts-settings .button-primary { grid-column: 1 / -1; }
   .shot-source-material-slot small { max-width: 180px; }
 }

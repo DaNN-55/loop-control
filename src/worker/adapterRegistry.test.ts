@@ -75,6 +75,7 @@ describe("adapter registry", () => {
       connectionType: "volcengine_tts_api",
       modelCatalog: ["seed-tts-2.0"],
     });
+    expect(adapterRegistration("volcengine_tts", "volcengine_tts")?.voiceCatalog?.["zh-CN"]).toEqual(expect.arrayContaining(["zh_female_vv_uranus_bigtts", "zh_male_dayi_saturn_bigtts"]));
     expect(adapterRegistration("freesound", "freesound_preview")).toMatchObject({
       capability: "soundtrack_generation",
       connectionType: "freesound_api",
