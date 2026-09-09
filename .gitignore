@@ -6,4 +6,5 @@ n8n/runtime/
 n8n/node24/node_modules/
 n8n/worker.env.local
 *.tsbuildinfo
+.loop-control/
 docs/运行手册.md

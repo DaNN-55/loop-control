@@ -3,6 +3,7 @@ import { spawn, spawnSync } from "node:child_process";
 import { createServer } from "node:net";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
+import { removeServiceRecordIfOwned, writeServiceRecord } from "./local-service-record.mjs";
 
 const projectRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const consoleHealthPath = "/loop-control-health.txt";
@@ -79,10 +80,11 @@ async function main() {
 
   const children = [];
   try {
-    const n8n = n8nPort.reused ? null : startService(join(projectRoot, "n8n", "start-local.sh"), [], "n8n", { ...process.env, N8N_PORT: n8nPort.port });
-    const consoleService = !(await httpAvailable(consoleUrl)) ? startService(process.execPath, [join(projectRoot, "node_modules", "vite", "bin", "vite.js"), "--host", "127.0.0.1", "--port", new URL(consoleUrl).port, "--strictPort"], "控制台") : null;
+    const n8n = n8nPort.reused ? null : startService(join(projectRoot, "n8n", "start-local.sh"), [], "n8n", { env: { ...process.env, N8N_PORT: n8nPort.port }, port: n8nPort.port, commandIdentity: "n8n/bin/n8n" });
+    const consoleService = !(await httpAvailable(consoleUrl)) ? startService(process.execPath, [join(projectRoot, "node_modules", "vite", "bin", "vite.js"), "--host", "127.0.0.1", "--port", new URL(consoleUrl).port, "--strictPort"], "控制台", { port: consolePort.port, commandIdentity: join("node_modules", "vite", "bin", "vite.js") }) : null;
     if (n8n) children.push(n8n);
     if (consoleService) children.push(consoleService);
+    if (children.length) writeServiceRecord(children.map(({ child, commandIdentity, name, port }) => ({ name, pid: child.pid, port, commandIdentity })));
     await Promise.all([waitForHttp(consoleHealthUrl(consolePort.port), "控制台", consoleService, (url) => responseContains(url, consoleHealthMarker)), waitForHttp(n8nHealthUrl(n8nPort.port), "n8n", n8n)]);
 
     const mediaLibraryPath = process.env.MEDIA_LIBRARY_MOUNT_PATH?.trim() || "";
@@ -94,6 +96,7 @@ async function main() {
     if (children.length) await Promise.race(children.map(({ child }) => new Promise((resolve) => child.once("exit", resolve))));
   } finally {
     children.forEach(({ child }) => child.kill("SIGTERM"));
+    removeServiceRecordIfOwned(children.map(({ child }) => child.pid));
   }
 }
 
@@ -101,14 +104,14 @@ function commandAvailable(command, args) { return Boolean(command && existsSync(
 function mediaLibraryAvailable(path) { try { if (!path || !statSync(path).isDirectory()) return false; accessSync(path, constants.R_OK | constants.W_OK); return true; } catch { return false; } }
 function requiredEnvironmentValue(source, name) { return new RegExp(`^${name}=(.+)$`, "m").exec(source)?.[1].trim().replace(/^(['"])(.*)\1$/, "$2") || ""; }
 
-function startService(command, args, name, env = process.env) {
+function startService(command, args, name, { env = process.env, port, commandIdentity = command } = {}) {
   const logs = [];
   const child = spawn(command, args, { cwd: projectRoot, env, stdio: ["ignore", "pipe", "pipe"] });
   child.stdout.on("data", (chunk) => logs.push(String(chunk)));
   child.stderr.on("data", (chunk) => logs.push(String(chunk)));
   let startupError;
   child.once("error", (error) => { startupError = error; });
-  return { child, logs, name, startupError: () => startupError };
+  return { child, commandIdentity, logs, name, port, startupError: () => startupError };
 }
 
 export function missingRequiredWorkflowIds(activeWorkflowIds) {
