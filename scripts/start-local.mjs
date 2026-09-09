@@ -74,8 +74,7 @@ async function main() {
   const n8nPort = await resolveLocalServicePort({ preferredPort: requestedN8nPort, projectHealthy: (port) => httpAvailable(n8nHealthUrl(port)) });
   const consoleUrl = consoleUrlForPort(consolePort.port);
   const n8nUrl = n8nUrlForPort(n8nPort.port);
-  const openChatCutAvailable = commandAvailable(process.env.OPENCHATCUT_NODE, [join(projectRoot, "scripts", "openchatcut-render.mjs"), "--version"]) && existsSync(join(process.env.OPENCHATCUT_ROOT || "", "node_modules", "vite", "bin", "vite.js"));
-  if (!openChatCutAvailable) throw new Error("OpenChatCut 不可用，请检查 OPENCHATCUT_ROOT、OPENCHATCUT_NODE 和依赖安装。");
+  const openChatCutAvailable = assertOpenChatCutAvailable(process.env.OPENCHATCUT_NODE);
   assertActiveWorkflows();
 
   const children = [];
@@ -100,7 +99,18 @@ async function main() {
   }
 }
 
-function commandAvailable(command, args) { return Boolean(command && existsSync(command) && spawnSync(command, args, { cwd: projectRoot, stdio: "ignore" }).status === 0); }
+export function assertOpenChatCutAvailable(nodePath, run = spawnSync) {
+  const configuredNode = typeof nodePath === "string" ? nodePath.trim() : "";
+  if (!configuredNode) throw new Error("OpenChatCut 不可用：缺少 OPENCHATCUT_NODE（必须指向 Node 24）。");
+  if (!existsSync(configuredNode)) throw new Error(`OpenChatCut 不可用：OPENCHATCUT_NODE 不存在：${configuredNode}。`);
+  const result = run(configuredNode, [join(projectRoot, "scripts", "openchatcut-render.mjs"), "--version"], { cwd: projectRoot, encoding: "utf8" });
+  if (result.error) throw new Error(`OpenChatCut 不可用：无法执行 OPENCHATCUT_NODE（${configuredNode}）：${result.error.message}`);
+  if (result.status !== 0) {
+    const details = [result.stderr, result.stdout].filter(Boolean).join("\n").trim();
+    throw new Error(`OpenChatCut 不可用：${details || `OPENCHATCUT_NODE 退出码为 ${result.status}。`}`);
+  }
+  return true;
+}
 function mediaLibraryAvailable(path) { try { if (!path || !statSync(path).isDirectory()) return false; accessSync(path, constants.R_OK | constants.W_OK); return true; } catch { return false; } }
 function requiredEnvironmentValue(source, name) { return new RegExp(`^${name}=(.+)$`, "m").exec(source)?.[1].trim().replace(/^(['"])(.*)\1$/, "$2") || ""; }
 

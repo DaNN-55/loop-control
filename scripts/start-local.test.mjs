@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { assertPublicEnvironment, assertSupabaseConnection, consoleHealthUrl, localStartupReport, missingRequiredWorkflowIds, n8nHealthUrl, resolveLocalServicePort, startupEnvironment } from "./start-local.mjs";
+import { assertOpenChatCutAvailable, assertPublicEnvironment, assertSupabaseConnection, consoleHealthUrl, localStartupReport, missingRequiredWorkflowIds, n8nHealthUrl, resolveLocalServicePort, startupEnvironment } from "./start-local.mjs";
 
 describe("本地启动", () => {
   it("只读取非秘密运行变量，并拒绝把 Worker 密钥放进前端环境", () => {
@@ -41,5 +41,11 @@ describe("本地启动", () => {
     await expect(assertSupabaseConnection(environment, request)).resolves.toBeUndefined();
     expect(request).toHaveBeenCalledWith("https://example.supabase.co/auth/v1/settings", expect.objectContaining({ headers: { apikey: "public" } }));
     await expect(assertSupabaseConnection(environment, vi.fn().mockResolvedValue(new Response("", { status: 401 })))).rejects.toThrow("公开配置验证失败（HTTP 401）");
+  });
+
+  it("保留 OpenChatCut 真实校验的具体缺项，而非归并为通用可用状态", () => {
+    const run = vi.fn().mockReturnValue({ status: 1, stderr: "OpenChatCut 不可用：\n- 缺少渲染 HTML 入口 index.html。", stdout: "" });
+    expect(() => assertOpenChatCutAvailable(process.execPath, run)).toThrow("缺少渲染 HTML 入口 index.html");
+    expect(run).toHaveBeenCalledWith(process.execPath, expect.arrayContaining(["--version"]), expect.objectContaining({ encoding: "utf8" }));
   });
 });
