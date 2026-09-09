@@ -12,7 +12,7 @@ afterEach(async () => {
 
 describe("外置媒体库", () => {
   it("拒绝将系统根目录作为媒体库挂载点", async () => {
-    const assetRoot = await mkdtemp(join(tmpdir(), "tk-workflow-media-mount-"));
+    const assetRoot = await mkdtemp(join(tmpdir(), "loop-control-media-mount-"));
     directories.push(assetRoot);
     await mkdir(join(assetRoot, "episodes"), { recursive: true });
 
@@ -20,7 +20,7 @@ describe("外置媒体库", () => {
   });
 
   it("只接受当前 Episode 目录中的产物索引，并核对文件大小与 SHA-256", async () => {
-    const assetRoot = await mkdtemp(join(tmpdir(), "tk-workflow-media-library-"));
+    const assetRoot = await mkdtemp(join(tmpdir(), "loop-control-media-library-"));
     directories.push(assetRoot);
     const relativePath = "episodes/episode-1/brief.md";
     await mkdir(join(assetRoot, "episodes", "episode-1"), { recursive: true });
@@ -39,7 +39,7 @@ describe("外置媒体库", () => {
   });
 
   it("空输入产物不要求预先创建 Episode 目录", async () => {
-    const assetRoot = await mkdtemp(join(tmpdir(), "tk-workflow-media-library-"));
+    const assetRoot = await mkdtemp(join(tmpdir(), "loop-control-media-library-"));
     directories.push(assetRoot);
     await mkdir(join(assetRoot, "episodes"));
 
@@ -47,7 +47,7 @@ describe("外置媒体库", () => {
   });
 
   it("在挂载点缺失时阻止 Worker 使用媒体库", async () => {
-    const assetRoot = await mkdtemp(join(tmpdir(), "tk-workflow-media-library-"));
+    const assetRoot = await mkdtemp(join(tmpdir(), "loop-control-media-library-"));
     directories.push(assetRoot);
     await mkdir(join(assetRoot, "episodes"));
 
@@ -59,7 +59,7 @@ describe("外置媒体库", () => {
   });
 
   it("拒绝把普通目录伪装成外置硬盘挂载点", async () => {
-    const assetRoot = await mkdtemp(join(tmpdir(), "tk-workflow-media-library-"));
+    const assetRoot = await mkdtemp(join(tmpdir(), "loop-control-media-library-"));
     directories.push(assetRoot);
     await mkdir(join(assetRoot, "episodes"));
 
@@ -71,7 +71,7 @@ describe("外置媒体库", () => {
   });
 
   it("拒绝篡改后的产物哈希和其他 Episode 的文件", async () => {
-    const assetRoot = await mkdtemp(join(tmpdir(), "tk-workflow-media-library-"));
+    const assetRoot = await mkdtemp(join(tmpdir(), "loop-control-media-library-"));
     directories.push(assetRoot);
     await mkdir(join(assetRoot, "episodes", "episode-1"), { recursive: true });
     await mkdir(join(assetRoot, "episodes", "episode-2"), { recursive: true });
@@ -91,8 +91,8 @@ describe("外置媒体库", () => {
   });
 
   it("拒绝以符号链接引用媒体库外的文件", async () => {
-    const assetRoot = await mkdtemp(join(tmpdir(), "tk-workflow-media-library-"));
-    const outsideDirectory = await mkdtemp(join(tmpdir(), "tk-workflow-media-outside-"));
+    const assetRoot = await mkdtemp(join(tmpdir(), "loop-control-media-library-"));
+    const outsideDirectory = await mkdtemp(join(tmpdir(), "loop-control-media-outside-"));
     directories.push(assetRoot, outsideDirectory);
     await mkdir(join(assetRoot, "episodes", "episode-1"), { recursive: true });
     await writeFile(join(outsideDirectory, "brief.md"), "brief");

@@ -28,7 +28,7 @@ describe("分镜产物一致性", () => {
   afterEach(async () => { if (assetRoot) await rm(assetRoot, { recursive: true, force: true }); assetRoot = ""; });
 
   it("拒绝与 Worker 回报不同的分镜文件", async () => {
-    assetRoot = await mkdtemp(join(tmpdir(), "tk-workflow-storyboard-"));
+    assetRoot = await mkdtemp(join(tmpdir(), "loop-control-storyboard-"));
     const relativePath = "episodes/episode-1/storyboard-v1.json";
     const path = join(assetRoot, relativePath);
     await mkdir(dirname(path), { recursive: true });

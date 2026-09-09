@@ -14,7 +14,7 @@ const claimedTask = {
   accountId: "account-1",
   blueprintVersionId: "blueprint-1",
   title: "一个可验证的选题",
-  allowedAssetRoot: "/Volumes/Media/tk-workflow/account-1",
+  allowedAssetRoot: "/Volumes/Media/loop-control/account-1",
   inputSnapshot: {
     capability: "visual_planning",
     allowed_tools: ["read", "write"],
@@ -31,6 +31,31 @@ describe("本地 Codex Worker runner", () => {
     await expect(runCodexWorker({ claimNextTask: async () => null, reportResult, execute, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 })).resolves.toEqual({ status: "idle" });
     expect(execute).not.toHaveBeenCalled();
     expect(reportResult).not.toHaveBeenCalled();
+  });
+
+  it("关闭字幕时接受空字幕正文并进入审核渲染执行", async () => {
+    const execute = vi.fn().mockRejectedValue(new Error("stop after package validation"));
+    const reportResult = vi.fn();
+    const relativePath = "episodes/episode-1/materials/shot.mp4";
+    const sha256 = "a".repeat(64);
+
+    await expect(runCodexWorker({
+      claimNextTask: async () => ({ ...claimedTask, taskId: "review-render-disabled-subtitle", taskType: "generate_review_render", provider: "openchatcut", model: "openchatcut@0.2.14", promptVersion: "review-render-v1", inputSnapshot: {
+        capability: "review_rendering", allowed_tools: ["read", "write"],
+        output: { required_artifact_types: ["render", "review_render_project", "review_qc_report"], content_type: "video/mp4", relative_path: "episodes/episode-1/review-render/v1/review-render.mp4", review_stage: "qc_review" },
+        input_artifacts: [{ artifactType: "source_video", relativePath, sha256, fileSize: 10 }],
+        review_render: {
+          project_relative_path: "episodes/episode-1/review-render/v1/index.html", project_revision: 1, pre_render_review_package_id: "package-1", confirmation_mode: "shot_preparation",
+          confirmed_shots: [{ shot_id: "shot-1", confirmation_status: "confirmed", input_fingerprint: "1".repeat(32), source_material_revision_id: "material-1", clip_segments: [{ start_seconds: 0, end_seconds: 2 }], audio_mode: "none", audio_track_id: null, subtitle_text: "", subtitles_enabled: false }],
+          adjustments: { aspect_ratio: "9:16", width: 1080, height: 1920, captions_enabled: true, caption_style: "minimal", pacing: "standard", crop: "cover", transition: "cut", layout: "lower_third", narration_gain_db: 0, bgm_gain_db: -12, sfx_gain_db: -6, reason: "生成审核视频。" },
+          storyboard: { version: "storyboard/v1", audioCues: [], shots: [{ id: "shot-1", scriptSegment: "等待转场", durationSeconds: 2, shotType: "b_roll", productionMethod: "素材", inputBasis: [{ relativePath, sha256 }], targetSpec: "9:16" }] },
+          members: [{ member_key: "shot:shot-1", member_kind: "shot_media", source_material_revision_id: "material-1", clip_segments: [{ start_seconds: 0, end_seconds: 2 }], input_fingerprint: "1".repeat(32), audio_mode: "none", audio_track_id: null, subtitle_text: "", subtitles_enabled: false, relative_path: relativePath, sha256, start_seconds: 0, duration_seconds: 2 }],
+        },
+      } }),
+      reportResult, execute, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0,
+    })).resolves.toEqual({ status: "failed", taskId: "review-render-disabled-subtitle" });
+
+    expect(execute).toHaveBeenCalledOnce();
   });
 
   it("将冻结裁剪配置解析为 Worker 的 ffmpeg 视频输入", async () => {
@@ -185,6 +210,25 @@ describe("本地 Codex Worker runner", () => {
     expect(execute).toHaveBeenCalledWith(expect.objectContaining({
       seriesBaseline: { versionId: "series-version-3", version: 3, rules: { visual_style: "写实雨夜" } },
     }));
+  });
+
+  it("没有系列基准时省略可选字段", async () => {
+    const execute = vi.fn().mockResolvedValue(JSON.stringify({
+      version: "worker-result/v1", taskId: "task-1", status: "completed", artifacts: [],
+      validation: { passed: true, checks: [] }, actualCostCents: 0, blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." }, nextStep: "Done.",
+    }));
+
+    await runCodexWorker({
+      claimNextTask: async () => ({ ...claimedTask, inputSnapshot: { ...claimedTask.inputSnapshot, series_baseline: null } }),
+      reportResult: vi.fn().mockResolvedValue(undefined),
+      execute,
+      verifyAssetRoot: async () => undefined,
+      verifyArtifacts: async () => undefined,
+      actualCostCents: 0,
+    });
+
+    expect(execute.mock.calls[0]?.[0]).not.toHaveProperty("seriesBaseline");
   });
 
   it("把冻结的外部视觉输入交给视觉资产准备，不调用 SVG 占位路径", async () => {

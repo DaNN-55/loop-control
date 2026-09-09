@@ -1,5 +1,6 @@
 import { workerPreflightVersion, type WorkerPreflightCheck, type WorkerPreflightResult, type WorkerPreflightStatus, type WorkerTaskPackage } from "./contracts.js";
 import { adapterRegistration, isOwnerManagedConnection, localAdapterReadinessKey, localAdapterRegistrationsForCapability, mediaCapabilityForCapability, mediaCapabilityForKey, mediaCapabilityKeys, registeredAdaptersForCapability, type ExecutionPath, type LocalAdapterRegistration } from "./adapterRegistry.js";
+import { workerRequiredTools } from "./runtimeConstraints.js";
 
 export interface RuntimeCapability {
   capability: string;
@@ -43,18 +44,17 @@ export type ResolvedRuntimeCapability =
 
 const legacyRegisteredAdapters = new Set([
   "codex:codex",
-  "hyperframes:hyperframes",
+  "openchatcut:openchatcut",
 ]);
 
 export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, _seriesRules?: unknown, requiredMediaCapabilities?: readonly string[]): RuntimeCapability[] {
   const root = record(policy);
   const executors = record(root.executors);
-  const allowedTools = root.allowed_tools;
   const required = requiredMediaCapabilities ? new Set(requiredMediaCapabilities) : undefined;
   const capabilities: RuntimeCapability[] = [
-    capabilityFromExecutor("storyboard_planning", record(executors.storyboard_planning), allowedTools, "codex", { adapter: true, promptHarness: true }),
-    { capability: "review_rendering", provider: "hyperframes", model: "hyperframes@0.7.109", promptVersion: "review-render-v1", allowedTools: ["read", "write"], command: "hyperframes" },
-    { capability: "final_rendering", provider: "hyperframes", model: "hyperframes@0.7.109", promptVersion: "final-render-v1", allowedTools: ["read", "write"], command: "hyperframes" },
+    capabilityFromExecutor("storyboard_planning", record(executors.storyboard_planning), "codex", { adapter: true, promptHarness: true }),
+    { capability: "review_rendering", provider: "openchatcut", model: "openchatcut@0.2.14", promptVersion: "review-render-v1", allowedTools: ["read", "write"], command: "openchatcut" },
+    { capability: "final_rendering", provider: "openchatcut", model: "openchatcut@0.2.14", promptVersion: "final-render-v1", allowedTools: ["read", "write"], command: "openchatcut" },
   ];
 
   for (const key of mediaCapabilityKeys) {
@@ -77,7 +77,7 @@ export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, _seriesR
       adapter,
       model: stringValue(executor.model),
       promptVersion: stringValue(executor.prompt_version),
-      allowedTools: config.allowed_tools,
+      allowedTools: requiredTools(),
       ...(credentialRef ? { credentialRef } : {}),
       ...(credential ? { credential } : {}),
       command: runtimeCommandForProvider(provider),
@@ -119,7 +119,7 @@ export function resolveRuntimeCapability(capability: RuntimeCapability): Resolve
   const mediaCapability = mediaCapabilityForCapability(capability.capability);
   const registered = mediaCapability?.workerAvailable === false ? false : capability.adapter
     ? registeredAdaptersForCapability(capability.capability).some((registration) => registration.provider === capability.provider && registration.id === capability.adapter && registration.workerAvailable !== false) || (!mediaCapability && legacyRegisteredAdapters.has(`${capability.provider}:${capability.adapter}`))
-    : capability.provider === "codex" || capability.provider === "hyperframes" || capability.provider === "ffmpeg";
+    : capability.provider === "codex" || capability.provider === "openchatcut" || capability.provider === "ffmpeg";
   return registered ? { kind: "registered_execution", capability } : { kind: "unregistered_execution", capability };
 }
 
@@ -153,9 +153,9 @@ export function createRuntimePreflight(capabilities: RuntimeCapability[], enviro
     const allowedTools = stringArray(capability.allowedTools);
     const missingTools = requiredTools().filter((tool) => !allowedTools.includes(tool));
     if (missingTools.length) {
-      checks.push({ capability: capability.capability, check: "tool_permission", phase: "preflight", status: "blocked", reason: `冻结工具白名单缺少 ${missingTools.join("、")}。`, action: "edit_blueprint", scope: "blueprint" });
+      checks.push({ capability: capability.capability, check: "tool_permission", phase: "preflight", status: "blocked", reason: `Worker 运行权限缺少 ${missingTools.join("、")}；请为当前 Worker 声明并授予对应文件能力。`, action: "contact_environment_admin", scope: "worker" });
     } else {
-      checks.push({ capability: capability.capability, check: "tool_permission", phase: "preflight", status: "passed", reason: `冻结工具白名单包含 ${requiredTools().join(" 和 ")}。`, action: "none", scope: "blueprint" });
+      checks.push({ capability: capability.capability, check: "tool_permission", phase: "preflight", status: "passed", reason: `Worker 运行权限包含 ${requiredTools().join(" 和 ")}。`, action: "none", scope: "worker" });
     }
 
     if (capability.credential && environment.credentials && Object.prototype.hasOwnProperty.call(environment.credentials, capability.credential)) {
@@ -221,7 +221,7 @@ export function credentialEnvironmentForReference(provider: string, adapter: str
 export function runtimeCommandForProvider(provider: string): string | undefined {
   if (provider === "codex") return "codex";
   if (provider === "ffmpeg") return "ffmpeg";
-  if (provider === "hyperframes") return "hyperframes";
+  if (provider === "openchatcut") return "openchatcut";
   return undefined;
 }
 
@@ -230,9 +230,8 @@ export function runtimeCommandArguments(command: string): string[] {
 }
 
 export function runtimeCommandInvocation(command: string, argumentsList: string[]): { command: string; argumentsList: string[] } {
-  return command === "hyperframes"
-    ? { command: "npx", argumentsList: ["--no-install", "hyperframes", ...argumentsList] }
-    : { command, argumentsList };
+  if (command === "openchatcut") return { command: process.env.OPENCHATCUT_NODE ?? process.execPath, argumentsList: ["scripts/openchatcut-render.mjs", ...argumentsList] };
+  return { command, argumentsList };
 }
 
 export function localAdapterReadinessFromCommands(capabilities: readonly RuntimeCapability[], commands: Record<string, RuntimeDependencyStatus>): Record<string, RuntimeDependencyStatus> {
@@ -242,7 +241,7 @@ export function localAdapterReadinessFromCommands(capabilities: readonly Runtime
   }));
 }
 
-function capabilityFromExecutor(capability: string, executor: Record<string, unknown>, allowedTools: unknown, defaultProvider: string, requirements: { adapter?: boolean; promptHarness?: boolean } = {}): RuntimeCapability {
+function capabilityFromExecutor(capability: string, executor: Record<string, unknown>, defaultProvider: string, requirements: { adapter?: boolean; promptHarness?: boolean } = {}): RuntimeCapability {
   const provider = stringValue(executor.provider) || defaultProvider;
   const adapter = stringValue(executor.adapter);
   const promptHarnessId = stringValue(executor.harness_id);
@@ -255,7 +254,7 @@ function capabilityFromExecutor(capability: string, executor: Record<string, unk
     ...(promptHarnessId ? { promptHarnessId } : {}),
     ...(requirements.adapter ? { requiresAdapter: true } : {}),
     ...(requirements.promptHarness ? { requiresPromptHarness: true } : {}),
-    allowedTools,
+    allowedTools: requiredTools(),
     command: runtimeCommandForProvider(provider),
   };
 }
@@ -283,8 +282,8 @@ function stringValue(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
-function requiredTools(): string[] {
-  return ["read", "write"];
+function requiredTools(): readonly string[] {
+  return workerRequiredTools;
 }
 
 function isConnectionId(value: string | undefined): boolean {

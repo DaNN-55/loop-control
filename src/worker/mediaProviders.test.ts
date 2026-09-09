@@ -40,6 +40,9 @@ describe("受控媒体供应商", () => {
 
     await expect(synthesizeVolcengineTts({ apiKey: "volc-key", fetcher, model: "seed-tts-2.0", text: "冻结旁白。", voice: { languageCode: "zh-CN", name: "zh_female_vv_uranus_bigtts", speakingRate: 1 } })).resolves.toEqual(new Uint8Array(Buffer.from("audio-bytes")));
     expect(fetcher).toHaveBeenCalledWith("https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse", expect.objectContaining({ headers: expect.objectContaining({ "X-Api-Key": "volc-key", "X-Api-Resource-Id": "seed-tts-2.0" }) }));
+    expect(JSON.parse(fetcher.mock.calls[0][1].body)).toMatchObject({
+      req_params: { text: "冻结旁白。", speaker: "zh_female_vv_uranus_bigtts", audio_params: { speech_rate: 0 } },
+    });
   });
 
   it("为豆包语音 1.0 音色发送匹配的资源 ID", async () => {

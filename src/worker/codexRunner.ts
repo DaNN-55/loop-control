@@ -16,6 +16,7 @@ import {
 import { isOwnerManagedConnection } from "./adapterRegistry.js";
 import { validateStoryboardManifest } from "./contracts.js";
 import type { StoryboardStructureRevision } from "./storyboardRevision.js";
+import { defaultAllowedDurationFrames, defaultDurationFrameRate, shotDurationDecisionFromJson } from "./durationDecision.js";
 
 export interface ClaimedWorkerTask {
   taskId: string;
@@ -23,7 +24,7 @@ export interface ClaimedWorkerTask {
   attempt: number;
   budgetLimitCents: number;
   maxAttempts: number;
-  provider: "codex" | "google_tts" | "volcengine_tts" | "pexels" | "ffmpeg" | "freesound" | "hyperframes" | "openai" | "cloudflare";
+  provider: "codex" | "google_tts" | "volcengine_tts" | "pexels" | "ffmpeg" | "freesound" | "openchatcut" | "openai" | "cloudflare";
   model: string;
   promptVersion: string;
   episodeId: string;
@@ -179,7 +180,7 @@ function createTaskPackage(task: ClaimedWorkerTask): WorkerTaskPackage {
     storyboardRevision: storyboardRevision(snapshot, inputArtifacts(snapshot)),
     aRoll: aRoll(snapshot),
     media: media(snapshot),
-    reviewRender: reviewRender(snapshot),
+    reviewRender: reviewRenderFromSnapshot(snapshot),
     finalRender: finalRender(snapshot),
     allowedTools: stringArray(snapshot.allowed_tools, "任务允许工具清单格式无效。"),
     allowedAssetRoot: task.allowedAssetRoot,
@@ -226,7 +227,7 @@ function finalRender(snapshot: Record<string, unknown>): WorkerTaskPackageInput[
   const sourceProject = artifactManifest(value.source_project, "最终渲染任务缺少审核工程证据。");
   const sourceRuntime = artifactManifest(value.source_runtime, "最终渲染任务缺少审核运行时证据。");
   const sourceQcReport = artifactManifest(value.source_qc_report, "最终渲染任务缺少 QC 报告证据。");
-  const review = reviewRender({ capability: "review_rendering", review_render: value.review_render });
+  const review = reviewRenderFromSnapshot({ capability: "review_rendering", review_render: value.review_render });
   if (!review) throw new Error("最终渲染任务缺少审核工程。");
   return { sourceReviewPackageId: requiredString(value.source_review_package_id, "最终渲染任务缺少审核包。"), sourceProject, sourceRuntime, sourceQcReport, projectRelativePath: requiredString(value.project_relative_path, "最终渲染任务缺少工程路径。"), projectRevision: requiredPositiveNumber(value.project_revision, "最终渲染任务缺少工程修订。"), reviewRender: review };
 }
@@ -236,7 +237,7 @@ function artifactManifest(value: unknown, message: string) {
   return { artifactType: requiredString(value.artifact_type, message), relativePath: requiredString(value.relative_path, message), sha256: requiredString(value.sha256, message), fileSize: requiredNonNegativeNumber(value.file_size, message) };
 }
 
-function reviewRender(snapshot: Record<string, unknown>): WorkerTaskPackageInput["reviewRender"] {
+export function reviewRenderFromSnapshot(snapshot: Record<string, unknown>): WorkerTaskPackageInput["reviewRender"] {
   if (snapshot.capability !== "review_rendering") return undefined;
   const value = snapshot.review_render;
   if (!isRecord(value) || !isRecord(value.storyboard) || !Array.isArray(value.members)) throw new Error("审核渲染任务冻结工程格式无效。");
@@ -249,10 +250,12 @@ function reviewRender(snapshot: Record<string, unknown>): WorkerTaskPackageInput
     ...(value.confirmation_mode === undefined || value.confirmation_mode === null ? {} : { confirmationMode: requiredConfirmationMode(value.confirmation_mode) }),
     ...(value.confirmed_shots === undefined || value.confirmed_shots === null ? {} : { confirmedShots: confirmedShots(value.confirmed_shots) }),
     ...(value.studio_project === undefined && (!isRecord(value.adjustments) || value.adjustments.studio_project === undefined) ? {} : { studioProject: studioProject(value.studio_project ?? (value.adjustments as Record<string, unknown>).studio_project) }),
+    ...(value.studio_project_revision === undefined && (!isRecord(value.adjustments) || value.adjustments.studio_project_revision === undefined) ? {} : { studioProjectRevision: requiredString(value.studio_project_revision ?? (value.adjustments as Record<string, unknown>).studio_project_revision, "Studio 冻结工程缺少修订号。") }),
     adjustments: reviewRenderAdjustments(value.adjustments),
     storyboard: storyboard as unknown as StoryboardManifest,
     members: value.members.map((member) => {
       if (!isRecord(member)) throw new Error("审核渲染任务成员格式无效。");
+      const subtitlesEnabled = member.subtitles_enabled === undefined || member.subtitles_enabled === null ? undefined : requiredBoolean(member.subtitles_enabled, "审核渲染成员字幕开关格式无效。");
       return {
         memberKey: requiredString(member.member_key, "审核渲染成员缺少标识。"),
         memberKind: requiredReviewRenderMemberKind(member.member_kind),
@@ -264,8 +267,9 @@ function reviewRender(snapshot: Record<string, unknown>): WorkerTaskPackageInput
         ...(member.audio_track_id === null ? { audioTrackId: null } : member.audio_track_id === undefined ? {} : { audioTrackId: requiredString(member.audio_track_id, "审核渲染成员缺少音轨版本。") }),
         ...(member.input_fingerprint === undefined || member.input_fingerprint === null ? {} : { inputFingerprint: requiredString(member.input_fingerprint, "审核渲染成员缺少输入版本。") }),
         ...(member.audio_mode === undefined || member.audio_mode === null ? {} : { audioMode: requiredAudioMode(member.audio_mode) }),
-        ...(member.subtitle_text === undefined || member.subtitle_text === null ? {} : { subtitleText: requiredString(member.subtitle_text, "审核渲染成员缺少字幕文本。") }),
-        ...(member.subtitles_enabled === undefined || member.subtitles_enabled === null ? {} : { subtitlesEnabled: requiredBoolean(member.subtitles_enabled, "审核渲染成员字幕开关格式无效。") }),
+        ...(member.subtitle_text === undefined || member.subtitle_text === null ? {} : { subtitleText: requiredSubtitleText(member.subtitle_text, subtitlesEnabled !== false, "审核渲染成员缺少字幕文本。") }),
+        ...(subtitlesEnabled === undefined ? {} : { subtitlesEnabled }),
+        ...(member.duration_decision === undefined || member.duration_decision === null ? {} : { durationDecision: shotDurationDecisionFromJson(member.duration_decision) }),
         relativePath: requiredString(member.relative_path, "审核渲染成员缺少路径。"),
         sha256: requiredString(member.sha256, "审核渲染成员缺少哈希。"),
         startSeconds: requiredNonNegativeNumber(member.start_seconds, "审核渲染成员缺少起始时间。"),
@@ -279,6 +283,7 @@ function confirmedShots(value: unknown): NonNullable<WorkerTaskPackageInput["rev
   if (!Array.isArray(value)) throw new Error("逐镜头 Studio 确认快照格式无效。");
   return value.map((shot) => {
     if (!isRecord(shot)) throw new Error("逐镜头 Studio 确认快照格式无效。");
+    const subtitlesEnabled = requiredBoolean(shot.subtitles_enabled, "确认快照字幕开关格式无效。");
     return {
       shotId: requiredString(shot.shot_id, "确认快照缺少镜头标识。"),
       confirmationStatus: requiredConfirmationStatus(shot.confirmation_status),
@@ -289,8 +294,9 @@ function confirmedShots(value: unknown): NonNullable<WorkerTaskPackageInput["rev
       ...(shot.clip_segments === undefined || shot.clip_segments === null ? {} : { clipSegments: clipSegments(shot.clip_segments) }),
       audioMode: requiredAudioMode(shot.audio_mode),
       audioTrackId: shot.audio_track_id === null ? null : requiredString(shot.audio_track_id, "确认快照缺少音轨版本。"),
-      subtitleText: requiredString(shot.subtitle_text, "确认快照缺少字幕文本。"),
-      subtitlesEnabled: requiredBoolean(shot.subtitles_enabled, "确认快照字幕开关格式无效。"),
+      subtitleText: requiredSubtitleText(shot.subtitle_text, subtitlesEnabled, "确认快照缺少字幕文本。"),
+      subtitlesEnabled,
+      ...(shot.duration_decision === undefined || shot.duration_decision === null ? {} : { durationDecision: shotDurationDecisionFromJson(shot.duration_decision) }),
     };
   });
 }
@@ -328,7 +334,7 @@ function studioProject(value: unknown): NonNullable<WorkerTaskPackageInput["revi
   const relativePath = requiredString(value.relative_path, "Studio 冻结工程缺少路径。");
   const sha256 = requiredString(value.sha256, "Studio 冻结工程缺少哈希。");
   const fileSize = requiredPositiveNumber(value.file_size, "Studio 冻结工程缺少文件大小。");
-  if (!/^episodes\/[0-9a-f-]{36}\/studio-frozen\/[0-9a-f-]{36}\/index\.html$/i.test(relativePath) || !/^[0-9a-f]{64}$/i.test(sha256)) throw new Error("Studio 冻结工程格式无效。");
+  if (!(/^(?:episodes\/[0-9a-f-]{36}\/studio-frozen\/[0-9a-f-]{36}\/index\.html|episodes\/[0-9a-f-]{36}\/openchatcut-frozen\/[0-9a-f-]{36}\/project\.json)$/i.test(relativePath)) || !/^[0-9a-f]{64}$/i.test(sha256)) throw new Error("Studio 冻结工程格式无效。");
   return { relativePath, sha256, fileSize };
 }
 
@@ -346,8 +352,10 @@ function reviewRenderAdjustments(value: unknown): ReviewRenderAdjustments {
   const narrationGainDb = value.narration_gain_db;
   const bgmGainDb = value.bgm_gain_db;
   const sfxGainDb = value.sfx_gain_db;
-  if ((aspectRatio !== "9:16" && aspectRatio !== "16:9" && aspectRatio !== "1:1") || typeof width !== "number" || typeof height !== "number" || !Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1 || (aspectRatio === "9:16" && width * 16 !== height * 9) || (aspectRatio === "16:9" && width * 9 !== height * 16) || (aspectRatio === "1:1" && width !== height) || typeof captionsEnabled !== "boolean" || (captionStyle !== "cinematic" && captionStyle !== "minimal") || (pacing !== "gentle" && pacing !== "standard" && pacing !== "compact") || (crop !== "cover" && crop !== "contain") || (transition !== "fade" && transition !== "cut") || (layout !== "lower_third" && layout !== "center") || typeof narrationGainDb !== "number" || typeof bgmGainDb !== "number" || typeof sfxGainDb !== "number" || !Number.isFinite(narrationGainDb) || !Number.isFinite(bgmGainDb) || !Number.isFinite(sfxGainDb)) throw new Error("审核渲染任务冻结合成配置无效。");
-  return { aspectRatio, width, height, captionsEnabled, captionStyle, pacing, crop, transition, layout, narrationGainDb, bgmGainDb, sfxGainDb, reason: requiredString(value.reason, "审核渲染任务缺少调整理由。") };
+  const frameRate = value.frame_rate === undefined ? defaultDurationFrameRate : value.frame_rate;
+  const allowedFrames = value.allowed_frames === undefined ? defaultAllowedDurationFrames : value.allowed_frames;
+  if ((aspectRatio !== "9:16" && aspectRatio !== "16:9" && aspectRatio !== "1:1") || typeof width !== "number" || typeof height !== "number" || !Number.isInteger(width) || !Number.isInteger(height) || width < 1 || height < 1 || (aspectRatio === "9:16" && width * 16 !== height * 9) || (aspectRatio === "16:9" && width * 9 !== height * 16) || (aspectRatio === "1:1" && width !== height) || typeof captionsEnabled !== "boolean" || (captionStyle !== "cinematic" && captionStyle !== "minimal") || (pacing !== "gentle" && pacing !== "standard" && pacing !== "compact") || (crop !== "cover" && crop !== "contain") || (transition !== "fade" && transition !== "cut") || (layout !== "lower_third" && layout !== "center") || typeof narrationGainDb !== "number" || typeof bgmGainDb !== "number" || typeof sfxGainDb !== "number" || !Number.isFinite(narrationGainDb) || !Number.isFinite(bgmGainDb) || !Number.isFinite(sfxGainDb) || typeof frameRate !== "number" || !Number.isFinite(frameRate) || frameRate <= 0 || typeof allowedFrames !== "number" || !Number.isInteger(allowedFrames) || allowedFrames < 0) throw new Error("审核渲染任务冻结合成配置无效。");
+  return { aspectRatio, width, height, captionsEnabled, captionStyle, pacing, crop, transition, layout, narrationGainDb, bgmGainDb, sfxGainDb, frameRate, allowedFrames, reason: requiredString(value.reason, "审核渲染任务缺少调整理由。") };
 }
 
 function requiredReviewRenderMemberKind(value: unknown): "shot_media" | "narration" | "soundtrack" {
@@ -397,11 +405,11 @@ function media(snapshot: Record<string, unknown>): WorkerTaskPackageInput["media
       },
     };
   }
-  if (value.adapter === "hyperframes_card_video") {
+  if (value.adapter === "openchatcut_card_video") {
     const cardVideo = value.card_video;
     if (!isRecord(cardVideo) || !isRecord(cardVideo.shot) || !Array.isArray(cardVideo.shot.inputBasis)) throw new Error("B-roll 卡片视频冻结配置无效。");
     return {
-      adapter: "hyperframes_card_video",
+      adapter: "openchatcut_card_video",
       cardVideo: {
         shot: {
           id: requiredString(cardVideo.shot.id, "B-roll 卡片视频缺少镜头 ID。"),
@@ -482,7 +490,7 @@ function media(snapshot: Record<string, unknown>): WorkerTaskPackageInput["media
 
 function seriesBaseline(snapshot: Record<string, unknown>): WorkerTaskPackageInput["seriesBaseline"] {
   const value = snapshot.series_baseline;
-  if (value === undefined) return undefined;
+  if (value === undefined || value === null) return undefined;
   if (!isRecord(value) || !isRecord(value.rules) || typeof value.version !== "number" || !Number.isInteger(value.version) || value.version < 1) throw new Error("任务系列基准格式无效。");
   return {
     versionId: requiredString(value.version_id, "任务系列基准缺少版本。"),
@@ -607,6 +615,11 @@ function inputArtifacts(snapshot: Record<string, unknown>): ArtifactManifest[] {
 
 function requiredString(value: unknown, message: string): string {
   if (typeof value !== "string" || !value.trim()) throw new Error(message);
+  return value;
+}
+
+function requiredSubtitleText(value: unknown, enabled: boolean, message: string): string {
+  if (typeof value !== "string" || (enabled && !value.trim())) throw new Error(message);
   return value;
 }
 

@@ -28,5 +28,6 @@ describe("applyStoryboardStructureRevision", () => {
   it("rejects non-adjacent merges", () => {
     const three = { ...base, shots: [shot("s1"), shot("s2"), shot("s3")] };
     expect(() => applyStoryboardStructureRevision(three, { kind: "merge", shotIds: ["s1", "s3"], newShotId: "s13" })).toThrow("相邻");
+    expect(() => applyStoryboardStructureRevision(three, { kind: "merge", shotIds: ["s2", "s1"], newShotId: "s21" })).toThrow("原顺序");
   });
 });

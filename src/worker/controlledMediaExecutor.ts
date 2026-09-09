@@ -162,7 +162,7 @@ export async function writeSafeAssetFile(allowedRoot: string, relativePath: stri
 }
 
 async function validateTemporaryMedia(input: Parameters<typeof executeControlledMediaTask>[0], bytes: Uint8Array): Promise<number | undefined> {
-  const directory = await mkdtemp(join(tmpdir(), "tk-workflow-media-"));
+  const directory = await mkdtemp(join(tmpdir(), "loop-control-media-"));
   const path = join(directory, input.taskPackage.output.relativePath.split("/").at(-1) ?? "output");
   try {
     await writeFile(path, bytes);

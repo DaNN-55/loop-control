@@ -41,7 +41,7 @@ export function applyStoryboardStructureRevision(base: StoryboardManifest, opera
     const ordered = selected as StoryboardShotManifest[];
     const indexes = operation.shotIds.map(indexOf);
     const firstIndex = Math.min(...indexes);
-    if (new Set(operation.shotIds).size !== operation.shotIds.length || Math.max(...indexes) - firstIndex + 1 !== indexes.length) throw new Error("只能合并相邻镜头。");
+    if (new Set(operation.shotIds).size !== operation.shotIds.length || Math.max(...indexes) - firstIndex + 1 !== indexes.length || indexes.some((index, position) => index !== firstIndex + position)) throw new Error("只能按原顺序合并相邻镜头。");
     const selectedIds = new Set(operation.shotIds);
     shots.splice(firstIndex, shots.filter((shot) => selectedIds.has(shot.id)).length, {
       ...ordered[0],

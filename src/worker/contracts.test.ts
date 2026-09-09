@@ -21,7 +21,7 @@ const packageInput: WorkerTaskPackageInput = {
   },
   capability: "visual_planning",
   allowedTools: ["read", "write"],
-  allowedAssetRoot: "/Volumes/Media/tk-workflow/account-1",
+  allowedAssetRoot: "/Volumes/Media/loop-control/account-1",
   output: { requiredArtifactTypes: ["brief"], contentType: "text/markdown", relativePath: "episodes/episode-1/brief.md", reviewStage: "visual_review" },
   inputArtifacts: [
     {
@@ -44,7 +44,7 @@ describe("Worker 契约", () => {
       accountId: "account-1",
       episode: { id: "episode-1", blueprintVersionId: "blueprint-3" },
       budget: { limitCents: 0, maxAttempts: 2, attempt: 0 },
-      assets: { allowedRoot: "/Volumes/Media/tk-workflow/account-1" },
+      assets: { allowedRoot: "/Volumes/Media/loop-control/account-1" },
       output: { requiredArtifactTypes: ["brief"], contentType: "text/markdown", relativePath: "episodes/episode-1/brief.md", reviewStage: "visual_review" },
       forbiddenActions: ["approve", "publish", "change_blueprint", "change_episode_stage"],
     });

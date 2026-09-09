@@ -37,7 +37,7 @@ export const mediaCapabilityKeys = ["static_visual", "a_roll", "b_roll", "narrat
 
 export type MediaCapabilityKey = typeof mediaCapabilityKeys[number];
 
-export type MediaCapabilityConfigurationField = "max_attempts" | "max_concurrency" | "provider_max_concurrency" | "voice" | "voice_speaking_rate";
+export type MediaCapabilityConfigurationField = "max_attempts";
 
 export interface MediaCapability {
   capability: string;
@@ -78,22 +78,22 @@ const mediaCapabilities: Record<MediaCapabilityKey, MediaCapability> = {
   b_roll: {
     capability: "b_roll_generation",
     compactLabel: "B-roll",
-    configurationFields: ["max_attempts", "max_concurrency", "provider_max_concurrency"],
+    configurationFields: ["max_attempts"],
     defaultConfiguration: { model: "pexels-video-v1", promptVersion: "b-roll-v1" },
     description: "按分镜检索或生成补充画面。当前 Worker 仍会检查是否注册了兼容的 B-roll Adapter。",
     label: "B-roll",
-    registeredAdapter: { id: "pexels_video", provider: "pexels", connectionType: "pexels_api", requiresNetwork: true, configurationFields: ["max_attempts", "max_concurrency", "provider_max_concurrency"], modelCatalog: ["pexels-video-v1"], presetCatalog: ["b-roll-v1"], connections: [] },
+    registeredAdapter: { id: "pexels_video", provider: "pexels", connectionType: "pexels_api", requiresNetwork: true, configurationFields: ["max_attempts"], modelCatalog: ["pexels-video-v1"], presetCatalog: ["b-roll-v1"], connections: [] },
     requiresRegisteredAdapter: true,
     workerAvailable: true,
   },
   narration: {
     capability: "narration_generation",
     compactLabel: "旁白",
-    configurationFields: ["max_attempts", "voice", "voice_speaking_rate"],
+    configurationFields: ["max_attempts"],
     defaultConfiguration: { model: "standard", promptVersion: "narration-v1" },
-    description: "根据分镜中的旁白文本生成叙述音频，需要声音和语速参数。",
+    description: "根据本期 TTS 设置和分镜旁白文本生成叙述音频。",
     label: "旁白",
-    registeredAdapter: { id: "google_tts", provider: "google_tts", connectionType: "google_tts_api", requiresNetwork: true, configurationFields: ["credential_ref", "voice", "max_attempts"], modelCatalog: ["standard"], presetCatalog: ["narration-v1"], voiceCatalog: { "en-US": ["en-US-Standard-A", "en-US-Standard-B", "en-US-Standard-C", "en-US-Standard-D"], "zh-CN": ["cmn-CN-Standard-A", "cmn-CN-Standard-B", "cmn-CN-Standard-C", "cmn-CN-Standard-D", "cmn-CN-standard-cm"], "vi-VN": ["vi-VN-Standard-A", "vi-VN-Standard-B", "vi-VN-Standard-C", "vi-VN-Standard-D"] }, connections: [] },
+    registeredAdapter: { id: "google_tts", provider: "google_tts", connectionType: "google_tts_api", requiresNetwork: true, configurationFields: ["credential_ref", "max_attempts"], modelCatalog: ["standard"], presetCatalog: ["narration-v1"], voiceCatalog: { "en-US": ["en-US-Standard-A", "en-US-Standard-B", "en-US-Standard-C", "en-US-Standard-D"], "zh-CN": ["cmn-CN-Standard-A", "cmn-CN-Standard-B", "cmn-CN-Standard-C", "cmn-CN-Standard-D", "cmn-CN-standard-cm"], "vi-VN": ["vi-VN-Standard-A", "vi-VN-Standard-B", "vi-VN-Standard-C", "vi-VN-Standard-D"] }, connections: [] },
     requiresRegisteredAdapter: true,
     workerAvailable: true,
   },
@@ -131,7 +131,7 @@ const adapterRegistry: readonly AdapterRegistration[] = [
     provider: "volcengine_tts",
     connectionType: "volcengine_tts_api",
     requiresNetwork: true,
-    configurationFields: ["credential_ref", "voice", "max_attempts"],
+    configurationFields: ["credential_ref", "max_attempts"],
     modelCatalog: ["seed-tts-2.0"],
     presetCatalog: ["narration-v1"],
     voiceCatalog: {
@@ -186,8 +186,8 @@ const adapterRegistry: readonly AdapterRegistration[] = [
 ];
 
 const localAdapterRegistry: readonly LocalAdapterRegistration[] = [
-  { id: "hyperframes_card_video", capability: "a_roll_generation", provider: "hyperframes", workerAvailable: true, modelCatalog: ["hyperframes@0.7.109"], presetCatalog: ["card-video-v1"] },
-  { id: "hyperframes_card_video", capability: "b_roll_generation", provider: "hyperframes", workerAvailable: true, modelCatalog: ["hyperframes@0.7.109"], presetCatalog: ["card-video-v1"] },
+  { id: "openchatcut_card_video", capability: "a_roll_generation", provider: "openchatcut", workerAvailable: true, modelCatalog: ["openchatcut@0.2.14"], presetCatalog: ["card-video-v1"] },
+  { id: "openchatcut_card_video", capability: "b_roll_generation", provider: "openchatcut", workerAvailable: true, modelCatalog: ["openchatcut@0.2.14"], presetCatalog: ["card-video-v1"] },
 ];
 
 export function registeredAdaptersForCapability(capability: string): readonly AdapterRegistration[] {

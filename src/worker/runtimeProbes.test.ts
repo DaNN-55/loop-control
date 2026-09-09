@@ -63,13 +63,19 @@ describe("runtime probes", () => {
     expect(missingModel).toMatchObject({ connection: { available: true }, modelPermission: { available: false, status: "unavailable" } });
   });
 
-  it("使用豆包语音 API Key 通过 V3 SSE 测试合成", async () => {
-    const fetcher = vi.fn().mockResolvedValue(new Response(`data: ${JSON.stringify({ code: 0, data: "dGVzdA==", message: "Success" })}\n`, { status: 200 }));
+  it("豆包语音预检只校验非空 Key，不调用测试合成", async () => {
+    const fetcher = vi.fn();
     const result = await probeProviderConnection("volcengine_tts", "api-key", fetcher);
 
-    expect(result).toMatchObject({ connection: { available: true }, credentialValidity: { available: true } });
-    expect(fetcher.mock.calls[0][0]).toBe("https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse");
-    expect(fetcher.mock.calls[0][1].headers["X-Api-Key"]).toBe("api-key");
-    expect(fetcher.mock.calls[0][1].headers["X-Api-Resource-Id"]).toBe("seed-tts-2.0");
+    expect(result).toEqual({
+      connection: { available: true, detail: "豆包语音 API Key 已配置；网络和凭据最终由正式任务请求验证。" },
+      credentialValidity: { available: true, detail: "豆包语音 API Key 已配置；最终有效性由正式任务请求验证。" },
+    });
+    expect(fetcher).not.toHaveBeenCalled();
+    expect(JSON.stringify(result)).not.toContain("测试合成成功");
+
+    const empty = await probeProviderConnection("volcengine_tts", " ", fetcher);
+    expect(empty).toMatchObject({ connection: { available: false, status: "unavailable" }, credentialValidity: { available: false, status: "unavailable" } });
+    expect(fetcher).not.toHaveBeenCalled();
   });
 });

@@ -76,7 +76,7 @@ export async function synthesizeVolcengineTts(input: { apiKey: string; fetcher: 
     method: "POST",
     headers: { "Content-Type": "application/json", "X-Api-Key": input.apiKey.trim(), "X-Api-Request-Id": randomUUID(), "X-Api-Resource-Id": resourceId },
     body: JSON.stringify({
-      user: { uid: "tk-workflow-worker" },
+      user: { uid: "loop-control-worker" },
       req_params: {
         text: input.text.trim(),
         speaker: input.voice.name.trim(),

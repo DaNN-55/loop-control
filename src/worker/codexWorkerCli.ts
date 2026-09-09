@@ -18,9 +18,8 @@ import { workerResultJsonSchema } from "./workerResultSchema.js";
 import { executeControlledMediaTask, writeSafeAssetFile } from "./controlledMediaExecutor.js";
 import { generateCloudflareWorkersAiImage, generateOpenAiImage } from "./mediaProviders.js";
 import { createHash } from "node:crypto";
-import { executeHyperframesReviewRender } from "./hyperframesReviewRenderer.js";
-import { executeHyperframesFinalRender } from "./hyperframesFinalRenderer.js";
-import { executeHyperframesCardVideo } from "./hyperframesCardRenderer.js";
+import { executeOpenChatCutRender } from "./openchatcutRenderer.js";
+import { durationToleranceSeconds } from "./durationDecision.js";
 import { readTaskIdArgument } from "./taskClaimArguments.js";
 import { createRuntimePreflight, credentialEnvironmentForReference, localAdapterReadinessFromCommands, runtimeCapabilityFromTask, runtimeCommandArguments, runtimeCommandForProvider, runtimeCommandInvocation } from "./runtimePreflight.js";
 import { probeCodexModel, probeProviderConnection } from "./runtimeProbes.js";
@@ -30,10 +29,14 @@ const serviceRoleKey = requiredEnvironment("SUPABASE_SERVICE_ROLE_KEY");
 const actualCostCents = nonNegativeIntegerEnvironment("CODEX_WORKER_ACTUAL_COST_CENTS");
 const mediaLibraryMountPath = requiredEnvironment("MEDIA_LIBRARY_MOUNT_PATH");
 const mediaLibraryMinimumFreeBytes = nonNegativeIntegerEnvironment("MEDIA_LIBRARY_MIN_FREE_BYTES");
+const workerCapacity = Number(process.env.CODEX_WORKER_CAPACITY ?? "2");
+if (!Number.isSafeInteger(workerCapacity) || workerCapacity <= 0) throw new Error("CODEX_WORKER_CAPACITY must be a positive integer.");
 const codexExecutionTimeoutMs = Number(process.env.CODEX_WORKER_EXECUTION_TIMEOUT_MS ?? "300000");
 if (!Number.isSafeInteger(codexExecutionTimeoutMs) || codexExecutionTimeoutMs <= 0) throw new Error("CODEX_WORKER_EXECUTION_TIMEOUT_MS must be a positive integer.");
 const requestedTaskId = readTaskIdArgument(process.argv.slice(2));
 const supabase = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
+const workerLeaseHeartbeatMs = 5 * 60 * 1000;
+let leaseHeartbeat: ReturnType<typeof setInterval> | undefined;
 
 const result = await runCodexWorker({
   claimNextTask: claimNextTask,
@@ -48,11 +51,12 @@ const result = await runCodexWorker({
 process.stdout.write(`${JSON.stringify(result)}\n`);
 
 async function claimNextTask(): Promise<ClaimedWorkerTask | null> {
-  const { data, error } = await supabase.rpc("claim_next_worker_task", requestedTaskId ? { p_task_id: requestedTaskId } : {});
+  const { data, error } = await supabase.rpc("claim_next_worker_task", { p_worker_capacity: workerCapacity, ...(requestedTaskId ? { p_task_id: requestedTaskId } : {}) });
   if (error) throw new Error(`Unable to claim a worker task: ${error.message}`);
   const row = data?.[0];
   if (!row) return null;
-  if (row.provider !== "codex" && row.provider !== "google_tts" && row.provider !== "volcengine_tts" && row.provider !== "pexels" && row.provider !== "ffmpeg" && row.provider !== "freesound" && row.provider !== "hyperframes" && row.provider !== "openai" && row.provider !== "cloudflare") throw new Error(`Unsupported worker provider: ${row.provider}`);
+  if (row.provider !== "codex" && row.provider !== "google_tts" && row.provider !== "volcengine_tts" && row.provider !== "pexels" && row.provider !== "ffmpeg" && row.provider !== "freesound" && row.provider !== "openchatcut" && row.provider !== "openai" && row.provider !== "cloudflare") throw new Error(`Unsupported worker provider: ${row.provider}`);
+  startLeaseHeartbeat(row.task_id, row.attempt);
 
   return {
     taskId: row.task_id,
@@ -79,10 +83,9 @@ async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
     const completedOutput = taskPackage.visualAssetPreparation?.imageGeneration ? await generateVisualAssets(taskPackage, output) : output;
     return taskPackage.capability === "storyboard_planning" ? useWrittenStoryboard(taskPackage, completedOutput) : completedOutput;
   }
-  if (taskPackage.provider === "hyperframes") {
+  if (taskPackage.provider === "openchatcut") {
     const input = { taskPackage, run: runCommand, validateMp4: validateMp4Artifact, inspectMp4: inspectMp4Artifact };
-    if (taskPackage.aRoll?.adapter === "hyperframes_card_video" || taskPackage.media?.adapter === "hyperframes_card_video") return executeHyperframesCardVideo(input);
-    return taskPackage.capability === "final_rendering" ? executeHyperframesFinalRender(input) : executeHyperframesReviewRender(input);
+    return executeOpenChatCutRender(input);
   }
   const apiKey = await resolveTaskSecret(taskPackage);
   return executeControlledMediaTask({
@@ -222,7 +225,7 @@ async function workerCommandStatus(command: string): Promise<{ available: boolea
 }
 
 async function extractMp3Artifact(sourcePath: string, minimumDurationSeconds: number): Promise<Uint8Array> {
-  const directory = await mkdtemp(join(tmpdir(), "tk-workflow-audio-"));
+  const directory = await mkdtemp(join(tmpdir(), "loop-control-audio-"));
   const outputPath = join(directory, "derived.mp3");
   try {
     await runCommand("ffmpeg", ["-nostdin", "-v", "error", "-i", sourcePath, "-vn", "-codec:a", "libmp3lame", "-q:a", "2", outputPath]);
@@ -236,14 +239,14 @@ async function extractMp3Artifact(sourcePath: string, minimumDurationSeconds: nu
 }
 
 async function trimMp3Artifact(bytes: Uint8Array, targetDurationSeconds: number): Promise<Uint8Array> {
-  const directory = await mkdtemp(join(tmpdir(), "tk-workflow-soundtrack-"));
+  const directory = await mkdtemp(join(tmpdir(), "loop-control-soundtrack-"));
   const inputPath = join(directory, "source.mp3");
   const outputPath = join(directory, "trimmed.mp3");
   try {
     await writeFile(inputPath, bytes);
     await runCommand("ffmpeg", ["-nostdin", "-v", "error", "-i", inputPath, "-t", String(targetDurationSeconds), "-codec:a", "libmp3lame", "-q:a", "2", outputPath]);
     const duration = await probeMp3Artifact(outputPath);
-    if (duration + 0.15 < targetDurationSeconds) throw new Error(`Freesound 裁剪后的音频时长不足：${duration} 秒。`);
+    if (duration + durationToleranceSeconds() < targetDurationSeconds) throw new Error(`Freesound 裁剪后的音频时长不足：${duration} 秒。`);
     return new Uint8Array(await readFile(outputPath));
   } finally {
     await rm(directory, { recursive: true, force: true });
@@ -251,17 +254,17 @@ async function trimMp3Artifact(bytes: Uint8Array, targetDurationSeconds: number)
 }
 
 async function trimMp4Artifact(sourcePath: string, startSeconds: number, endSeconds: number): Promise<Uint8Array> {
-  const directory = await mkdtemp(join(tmpdir(), "tk-workflow-video-"));
+  const directory = await mkdtemp(join(tmpdir(), "loop-control-video-"));
   const outputPath = join(directory, "trimmed.mp4");
   try {
     const durationSeconds = endSeconds - startSeconds;
-    await runCommand("ffmpeg", ["-nostdin", "-v", "error", "-i", sourcePath, "-ss", String(startSeconds), "-t", String(durationSeconds), "-map", "0:v:0", "-map", "0:a?", "-c:v", "libx264", "-c:a", "aac", "-pix_fmt", "yuv420p", "-movflags", "+faststart", outputPath]);
+    await runCommand("ffmpeg", ["-nostdin", "-v", "error", "-i", sourcePath, "-ss", String(startSeconds), "-t", String(durationSeconds), "-map", "0:v:0", "-map", "0:a:0?", "-c:v", "libx264", "-c:a", "aac", "-pix_fmt", "yuv420p", "-movflags", "+faststart", outputPath]);
     const { stdout } = await runCommandWithOutput("ffprobe", ["-v", "error", "-show_entries", "format=duration:stream=codec_type", "-of", "json", outputPath]);
     const inspected = JSON.parse(stdout) as { format?: { duration?: string }; streams?: Array<{ codec_type?: string }> };
     const actualDuration = Number(inspected.format?.duration);
     const hasVideo = Boolean(inspected.streams?.some((stream) => stream.codec_type === "video"));
     const hasAudio = Boolean(inspected.streams?.some((stream) => stream.codec_type === "audio"));
-    if (!Number.isFinite(actualDuration) || Math.abs(actualDuration - durationSeconds) > 0.15 || !hasVideo) throw new Error(`裁剪视频校验失败：时长 ${actualDuration || "未知"} 秒，视频流 ${hasVideo ? "存在" : "缺失"}，音频流 ${hasAudio ? "存在" : "缺失"}。`);
+    if (!Number.isFinite(actualDuration) || Math.abs(actualDuration - durationSeconds) > durationToleranceSeconds() || !hasVideo) throw new Error(`裁剪视频校验失败：时长 ${actualDuration || "未知"} 秒，视频流 ${hasVideo ? "存在" : "缺失"}，音频流 ${hasAudio ? "存在" : "缺失"}。`);
     const bytes = new Uint8Array(await readFile(outputPath));
     if (bytes.byteLength === 0) throw new Error("裁剪视频文件为空。");
     return bytes;
@@ -271,13 +274,13 @@ async function trimMp4Artifact(sourcePath: string, startSeconds: number, endSeco
 }
 
 async function trimMp4SegmentsArtifact(sourcePath: string, segments: Array<{ startSeconds: number; endSeconds: number }>): Promise<Uint8Array> {
-  const directory = await mkdtemp(join(tmpdir(), "tk-workflow-video-segments-"));
+  const directory = await mkdtemp(join(tmpdir(), "loop-control-video-segments-"));
   const outputPath = join(directory, "combined.mp4");
   try {
     const segmentPaths: string[] = [];
     for (const [index, segment] of segments.entries()) {
       const segmentPath = join(directory, `segment-${index}.mp4`);
-      await runCommand("ffmpeg", ["-nostdin", "-v", "error", "-i", sourcePath, "-ss", String(segment.startSeconds), "-t", String(segment.endSeconds - segment.startSeconds), "-map", "0:v:0", "-map", "0:a?", "-c:v", "libx264", "-c:a", "aac", "-pix_fmt", "yuv420p", "-movflags", "+faststart", segmentPath]);
+      await runCommand("ffmpeg", ["-nostdin", "-v", "error", "-i", sourcePath, "-ss", String(segment.startSeconds), "-t", String(segment.endSeconds - segment.startSeconds), "-map", "0:v:0", "-map", "0:a:0?", "-c:v", "libx264", "-c:a", "aac", "-pix_fmt", "yuv420p", "-movflags", "+faststart", segmentPath]);
       segmentPaths.push(segmentPath);
     }
     const concatPath = join(directory, "segments.txt");
@@ -319,12 +322,37 @@ async function inspectMp4Artifact(path: string): Promise<{ durationSeconds: numb
 }
 
 async function reportResult(taskId: string, attempt: number, workerResult: unknown): Promise<void> {
-  const { error } = await supabase.rpc("report_worker_result", {
-    p_task_id: taskId,
-    p_attempt: attempt,
-    p_result: workerResult,
-  });
-  if (error) throw new Error(`Unable to report the worker result: ${error.message}`);
+  try {
+    const { error } = await supabase.rpc("report_worker_result", {
+      p_task_id: taskId,
+      p_attempt: attempt,
+      p_result: workerResult,
+    });
+    if (error) throw new Error(`Unable to report the worker result: ${error.message}`);
+  } finally {
+    stopLeaseHeartbeat();
+  }
+}
+
+function startLeaseHeartbeat(taskId: string, attempt: number): void {
+  stopLeaseHeartbeat();
+  leaseHeartbeat = setInterval(() => {
+    void (async () => {
+      try {
+        const { error } = await supabase.rpc("refresh_worker_task_lease", { p_task_id: taskId, p_attempt: attempt });
+        if (error) process.stderr.write(`Unable to refresh the worker lease: ${error.message}\n`);
+      } catch (error) {
+        process.stderr.write(`Unable to refresh the worker lease: ${error instanceof Error ? error.message : String(error)}\n`);
+      }
+    })();
+  }, workerLeaseHeartbeatMs);
+  leaseHeartbeat.unref?.();
+}
+
+function stopLeaseHeartbeat(): void {
+  if (!leaseHeartbeat) return;
+  clearInterval(leaseHeartbeat);
+  leaseHeartbeat = undefined;
 }
 
 async function verifyAssetRoot(allowedAssetRoot: string): Promise<void> {
@@ -346,7 +374,7 @@ async function verifyArtifacts(taskPackage: WorkerTaskPackage, artifacts: Artifa
 }
 
 async function executeCodex(taskPackage: WorkerTaskPackage): Promise<string> {
-  const directory = await mkdtemp(join(tmpdir(), "tk-workflow-codex-"));
+  const directory = await mkdtemp(join(tmpdir(), "loop-control-codex-"));
   const schemaPath = join(directory, "worker-result.schema.json");
   const resultPath = join(directory, "result.json");
   try {

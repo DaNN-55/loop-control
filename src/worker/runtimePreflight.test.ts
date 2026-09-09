@@ -4,15 +4,15 @@ import { createRuntimePreflight, localAdapterReadinessFromCommands, resolveRunti
 import type { WorkerTaskPackage } from "./contracts";
 
 describe("runtime preflight", () => {
-  it("通过 npx 调用 HyperFrames CLI", () => {
-    expect(runtimeCommandInvocation("hyperframes", ["check", "/tmp/project"])).toEqual({ command: "npx", argumentsList: ["--no-install", "hyperframes", "check", "/tmp/project"] });
+  it("通过固定 Node 调用 OpenChatCut 渲染入口", () => {
+    expect(runtimeCommandInvocation("openchatcut", ["--version"])).toEqual({ command: process.env.OPENCHATCUT_NODE ?? process.execPath, argumentsList: ["scripts/openchatcut-render.mjs", "--version"] });
     expect(runtimeCommandInvocation("ffmpeg", ["-version"])).toEqual({ command: "ffmpeg", argumentsList: ["-version"] });
   });
 
   it("先把能力收敛为单一执行计划，再由预检执行检查", () => {
-    expect(resolveRuntimeCapability({ capability: "a_roll_generation", executionPath: "local", provider: "hyperframes", adapter: "hyperframes_card_video", model: "hyperframes@0.7.109", promptVersion: "card-video-v1" })).toMatchObject({
+    expect(resolveRuntimeCapability({ capability: "a_roll_generation", executionPath: "local", provider: "openchatcut", adapter: "openchatcut_card_video", model: "openchatcut@0.2.14", promptVersion: "card-video-v1" })).toMatchObject({
       kind: "local_adapter",
-      readinessKey: "hyperframes:hyperframes_card_video",
+      readinessKey: "openchatcut:openchatcut_card_video",
     });
     expect(resolveRuntimeCapability({ capability: "b_roll_generation", provider: "pexels", adapter: "pexels_video" })).toMatchObject({
       kind: "configuration_error",
@@ -38,7 +38,7 @@ describe("runtime preflight", () => {
 
   it("未部署的本地 Adapter 指向环境管理员", () => {
     const capability = runtimeCapabilitiesFromBlueprintPolicy({
-      a_roll: { execution_path: "local", executor: { provider: "hyperframes", adapter: "hyperframes_card_video", model: "hyperframes@0.7.109", prompt_version: "a-roll-v1" } },
+      a_roll: { execution_path: "local", executor: { provider: "openchatcut", adapter: "openchatcut_card_video", model: "openchatcut@0.2.14", prompt_version: "a-roll-v1" } },
     }, undefined, ["a_roll_generation"]).find((candidate) => candidate.capability === "a_roll_generation")!;
 
     expect(createRuntimePreflight([capability]).checks).toContainEqual(expect.objectContaining({ capability: "a_roll_generation", check: "local_adapter_readiness", status: "unavailable", action: "contact_environment_admin", scope: "worker" }));
@@ -46,17 +46,17 @@ describe("runtime preflight", () => {
 
   it("把本机命令探测结果映射为本地 Adapter 就绪状态", () => {
     const [capability] = runtimeCapabilitiesFromBlueprintPolicy({
-      a_roll: { execution_path: "local", executor: { provider: "hyperframes", adapter: "hyperframes_card_video", model: "hyperframes@0.7.109", prompt_version: "card-video-v1" }, allowed_tools: ["read", "write"] },
+      a_roll: { execution_path: "local", executor: { provider: "openchatcut", adapter: "openchatcut_card_video", model: "openchatcut@0.2.14", prompt_version: "card-video-v1" }, allowed_tools: ["read", "write"] },
     }).filter((candidate) => candidate.capability === "a_roll_generation");
 
-    expect(localAdapterReadinessFromCommands([capability], { hyperframes: { available: true, detail: "HyperFrames 已就绪。" } })).toEqual({
-      "hyperframes:hyperframes_card_video": { available: true, detail: "HyperFrames 已就绪。" },
+    expect(localAdapterReadinessFromCommands([capability], { openchatcut: { available: true, detail: "OpenChatCut 已就绪。" } })).toEqual({
+      "openchatcut:openchatcut_card_video": { available: true, detail: "OpenChatCut 已就绪。" },
     });
   });
 
   it("从冻结的本地 A-roll 任务恢复本地执行路径", () => {
-    const capability = runtimeCapabilityFromTask({ capability: "a_roll_generation", provider: "hyperframes", model: "hyperframes@0.7.109", promptVersion: "card-video-v1", aRoll: { adapter: "hyperframes_card_video" } } as WorkerTaskPackage);
-    const commands = { hyperframes: { available: true, detail: "HyperFrames 已就绪。" } };
+    const capability = runtimeCapabilityFromTask({ capability: "a_roll_generation", provider: "openchatcut", model: "openchatcut@0.2.14", promptVersion: "card-video-v1", aRoll: { adapter: "openchatcut_card_video" } } as WorkerTaskPackage);
+    const commands = { openchatcut: { available: true, detail: "OpenChatCut 已就绪。" } };
 
     expect(capability.executionPath).toBe("local");
     expect(createRuntimePreflight([capability], { commands, localAdapters: localAdapterReadinessFromCommands([capability], commands) }).checks).toContainEqual(expect.objectContaining({ capability: "a_roll_generation", check: "local_adapter_readiness", status: "passed" }));
@@ -312,15 +312,15 @@ describe("runtime preflight", () => {
     expect(createRuntimePreflight(capabilities).checks).toContainEqual(expect.objectContaining({ capability: "a_roll_generation", check: "capability_registration", status: "unavailable" }));
   });
 
-  it("本地 HyperFrames 卡片视频通过 A/B-roll 注册检查且不要求凭据", () => {
+  it("本地 OpenChatCut 卡片视频通过 A/B-roll 注册检查且不要求凭据", () => {
     const result = createRuntimePreflight(runtimeCapabilitiesFromBlueprintPolicy({
-      a_roll: { execution_path: "local", executor: { provider: "hyperframes", adapter: "hyperframes_card_video", model: "hyperframes@0.7.109", prompt_version: "card-video-v1" }, allowed_tools: ["read", "write"] },
-      b_roll: { execution_path: "local", executor: { provider: "hyperframes", adapter: "hyperframes_card_video", model: "hyperframes@0.7.109", prompt_version: "card-video-v1" }, allowed_tools: ["read", "write"] },
-    }), { localAdapters: { "hyperframes:hyperframes_card_video": { available: true, detail: "HyperFrames 已就绪。" } } });
+      a_roll: { execution_path: "local", executor: { provider: "openchatcut", adapter: "openchatcut_card_video", model: "openchatcut@0.2.14", prompt_version: "card-video-v1" }, allowed_tools: ["read", "write"] },
+      b_roll: { execution_path: "local", executor: { provider: "openchatcut", adapter: "openchatcut_card_video", model: "openchatcut@0.2.14", prompt_version: "card-video-v1" }, allowed_tools: ["read", "write"] },
+    }), { localAdapters: { "openchatcut:openchatcut_card_video": { available: true, detail: "OpenChatCut 已就绪。" } } });
 
     expect(result.checks).toEqual(expect.arrayContaining([
-      expect.objectContaining({ capability: "a_roll_generation", check: "local_adapter_readiness", provider: "hyperframes", status: "passed" }),
-      expect.objectContaining({ capability: "b_roll_generation", check: "local_adapter_readiness", provider: "hyperframes", status: "passed" }),
+      expect.objectContaining({ capability: "a_roll_generation", check: "local_adapter_readiness", provider: "openchatcut", status: "passed" }),
+      expect.objectContaining({ capability: "b_roll_generation", check: "local_adapter_readiness", provider: "openchatcut", status: "passed" }),
     ]));
     expect(result.checks.some((check) => check.capability === "a_roll_generation" && check.check === "credential_presence")).toBe(false);
   });
@@ -379,7 +379,7 @@ describe("runtime preflight", () => {
     expect(result.checks).toContainEqual(expect.objectContaining({ capability: "soundtrack_generation", check: "tool_permission", status: "passed" }));
   });
 
-  it("Freesound 不会绕过账号冻结的工具白名单", () => {
+  it("蓝图中的历史工具字段不会覆盖平台声明", () => {
     const [capability] = runtimeCapabilitiesFromBlueprintPolicy({
       soundtrack: {
         execution_path: "external",
@@ -389,7 +389,12 @@ describe("runtime preflight", () => {
       },
     }).filter((candidate) => candidate.capability === "soundtrack_generation");
 
-    expect(createRuntimePreflight([capability]).checks).toContainEqual(expect.objectContaining({ capability: "soundtrack_generation", check: "tool_permission", status: "blocked", action: "edit_blueprint" }));
+    expect(capability.allowedTools).toEqual(["read", "write"]);
+    expect(createRuntimePreflight([capability]).checks).toContainEqual(expect.objectContaining({ capability: "soundtrack_generation", check: "tool_permission", status: "passed", scope: "worker" }));
+  });
+
+  it("真实缺少 Worker 文件权限时阻止执行并指向环境管理员", () => {
+    expect(createRuntimePreflight([{ capability: "custom_worker", provider: "codex", model: "model", promptVersion: "v1", allowedTools: ["read"] }]).checks).toContainEqual(expect.objectContaining({ check: "tool_permission", status: "blocked", action: "contact_environment_admin", scope: "worker" }));
   });
 
   it("不把未注册的 provider 当作可用运行路径", () => {

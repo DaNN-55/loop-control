@@ -1,6 +1,5 @@
 import { tmpdir } from "node:os";
 import type { RuntimeDependencyStatus } from "./runtimePreflight.js";
-import { synthesizeVolcengineTts } from "./mediaProviders.js";
 
 export interface RuntimeProbeCommandResult {
   stdout: string;
@@ -65,14 +64,10 @@ export async function probeProviderConnection(provider: string, apiKey: string, 
     return { connection: status, credentialValidity: status };
   }
   if (provider === "volcengine_tts") {
-    try {
-      await synthesizeVolcengineTts({ apiKey, fetcher: (input, init) => fetchWithTimeout(fetcher, input, init), model: model || "seed-tts-2.0", text: "测试", voice: { languageCode: "zh-CN", name: "zh_female_vv_uranus_bigtts", speakingRate: 1 } });
-      return { connection: { available: true, detail: "豆包语音 V3 网络已连通。" }, credentialValidity: { available: true, detail: "豆包语音 V3 测试合成成功。" } };
-    } catch (error) {
-      const detail = errorMessage(error);
-      const retryable = isNetworkFailure(detail) || /HTTP (408|429|5\d\d)/.test(detail);
-      return { connection: { available: !retryable, status: retryable ? "retryable" : "unavailable", detail: `豆包语音 V3 测试失败：${detail}` }, credentialValidity: { available: false, status: retryable ? "retryable" : "unavailable", detail } };
-    }
+    return {
+      connection: { available: true, detail: "豆包语音 API Key 已配置；网络和凭据最终由正式任务请求验证。" },
+      credentialValidity: { available: true, detail: "豆包语音 API Key 已配置；最终有效性由正式任务请求验证。" },
+    };
   }
   const request = providerProbeRequest(provider, apiKey, model);
   if (!request) return { connection: { available: true, detail: `${provider} 不需要外部网络探测。` } };
