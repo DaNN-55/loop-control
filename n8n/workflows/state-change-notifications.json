@@ -3,7 +3,9 @@
   "name": "Loop Control — 状态变更提醒",
   "nodes": [
     {
-      "parameters": {},
+      "parameters": {
+        "inputSource": "passthrough"
+      },
       "id": "85014878-8cf6-4b73-9c42-a1c06de10d5e",
       "name": "接收事件提醒任务",
       "type": "n8n-nodes-base.executeWorkflowTrigger",

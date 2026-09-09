@@ -29,6 +29,10 @@
           "value": "BxXyfBbkS49QMTEv",
           "mode": "list",
           "cachedResultName": "Loop Control — 状态变更提醒"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {}
         }
       },
       "id": "d4e582b1-536b-4813-8db0-6b57947cccb0",

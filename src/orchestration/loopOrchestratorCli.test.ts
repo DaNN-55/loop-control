@@ -31,6 +31,8 @@ describe("定向生产单调度", () => {
     expect(approvalWorkflow.nodes.some((node: { type: string }) => node.type === "n8n-nodes-base.executeWorkflow")).toBe(true);
     expect(stateWorkflow.nodes.some((node: { type: string }) => node.type === "n8n-nodes-base.executeWorkflowTrigger")).toBe(true);
     expect(stateWorkflow.nodes.some((node: { parameters?: { command?: string } }) => node.parameters?.command?.endsWith(" notify"))).toBe(true);
+    expect(approvalWorkflow.nodes.find((node: { type: string }) => node.type === "n8n-nodes-base.executeWorkflow")?.parameters.workflowInputs).toEqual({ mappingMode: "defineBelow", value: {} });
+    expect(stateWorkflow.nodes.find((node: { type: string }) => node.type === "n8n-nodes-base.executeWorkflowTrigger")?.parameters.inputSource).toBe("passthrough");
   });
 
   it("派发和提醒使用保守默认值，并在导入时读取本机间隔配置", () => {
