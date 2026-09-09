@@ -11,6 +11,13 @@ import {
 } from "./configurationFormValues";
 
 describe("账号蓝图表单转换", () => {
+  it("保留明确关闭的全部人工审批关卡", () => {
+    const form = blueprintPolicyToForm({ approval_gates: [] });
+
+    expect(form.approvalGates).toEqual([]);
+    expect(blueprintFormToPolicy(form)).toMatchObject({ approval_gates: [] });
+  });
+
   it("由平台能力配置统一决定账号可选字段和保存规则", () => {
     expect(mediaAdapterConfiguration("b_roll")).toMatchObject({ configurationFields: ["max_attempts"] });
     expect(mediaAdapterConfiguration("narration")).toMatchObject({ configurationFields: ["max_attempts"] });
@@ -205,6 +212,13 @@ describe("账号蓝图表单转换", () => {
   it("拒绝未完成的媒体适配器配置", () => {
     const form = blueprintPolicyToForm({ a_roll: { executor: { provider: "codex" } } });
     expect(() => validateMediaAdapters(form.mediaAdapters)).toThrow("A-roll适配器");
+  });
+
+  it("保存时只校验本轮已开启的媒体能力", () => {
+    const form = blueprintPolicyToForm({ a_roll: { executor: { provider: "codex" } }, b_roll: { execution_path: "manual" } });
+
+    expect(() => validateMediaAdapters(form.mediaAdapters, { enabledKeys: ["b_roll"] })).not.toThrow();
+    expect(() => validateMediaAdapters(form.mediaAdapters, { enabledKeys: ["a_roll"] })).toThrow("A-roll适配器");
   });
 
   it("校验旁白和配乐必须选择已登记的外部连接", () => {

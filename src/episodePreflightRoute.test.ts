@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   createRuntimePreflight: vi.fn(),
   localAdapterReadinessFromCommands: vi.fn(() => ({})),
   runtimeCapabilitiesFromBlueprintPolicy: vi.fn(),
+  runtimeCommandInvocation: vi.fn(() => ({ command: process.execPath, argumentsList: ["--version"] })),
   verifyMediaLibrary: vi.fn(),
 }));
 
@@ -18,6 +19,7 @@ vi.mock("./worker/runtimePreflight", () => ({
   localAdapterReadinessFromCommands: mocks.localAdapterReadinessFromCommands,
   runtimeCapabilitiesFromBlueprintPolicy: mocks.runtimeCapabilitiesFromBlueprintPolicy,
   runtimeCommandArguments: vi.fn(() => ["--version"]),
+  runtimeCommandInvocation: mocks.runtimeCommandInvocation,
 }));
 vi.mock("./worker/runtimeProbes", () => ({ probeCodexModel: vi.fn(), probeProviderConnection: vi.fn() }));
 
@@ -56,6 +58,22 @@ function mockSupabaseClient() {
 
 describe("Episode 修复 preflight 路由", () => {
   afterEach(() => vi.clearAllMocks());
+
+  it("蓝图预检复用 Worker 命令入口而不是直接 spawn OpenChatCut", async () => {
+    mocks.runtimeCapabilitiesFromBlueprintPolicy.mockReturnValue([
+      { capability: "review_rendering", command: "openchatcut", provider: "openchatcut" },
+      { capability: "final_rendering", command: "openchatcut", provider: "openchatcut" },
+    ]);
+    mocks.createRuntimePreflight.mockReturnValue({ checks: [], version: "worker-preflight/v2" });
+
+    await runtimePreflightForPolicy({}, null);
+
+    expect(mocks.runtimeCommandInvocation).toHaveBeenCalledOnce();
+    expect(mocks.runtimeCommandInvocation).toHaveBeenCalledWith("openchatcut", ["--version"], expect.any(Object));
+    expect(mocks.createRuntimePreflight).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({
+      commands: { openchatcut: expect.objectContaining({ available: true }) },
+    }));
+  });
 
   it("创建生产单前不要求预先存在 episodes 目录", async () => {
     const originalMountPath = process.env.MEDIA_LIBRARY_MOUNT_PATH;

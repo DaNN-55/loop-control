@@ -520,6 +520,12 @@ function episodeIsArchived(episode: Episode): boolean {
   return Boolean((episode as EpisodeWithArchive).archived_at);
 }
 
+function blueprintApprovalGateEnabled(blueprint: Blueprint | undefined, gate: string): boolean {
+  if (!blueprint?.policy || Array.isArray(blueprint.policy) || typeof blueprint.policy !== "object") return true;
+  const gates = blueprint.policy.approval_gates;
+  return Array.isArray(gates) ? gates.includes(gate) : true;
+}
+
 function reviewActionFor(stage: EpisodeStage): ReviewAction | null {
   return reviewActions[stage] ?? null;
 }
@@ -1390,6 +1396,23 @@ export function App() {
     }
   }
 
+  async function setAccountArchived(accountId: string, archived: boolean): Promise<boolean> {
+    setPendingAction(`archive-account-${accountId}`);
+    setErrorMessage("");
+    try {
+      const { error } = await supabase.rpc("set_account_archived", { p_account_id: accountId, p_archived: archived });
+      if (error) throw error;
+      setMessage(archived ? "账号已归档；历史生产单和配置仍然保留。" : "账号已恢复，可以继续新建生产单。");
+      await refreshWorkspace();
+      return true;
+    } catch (error) {
+      setErrorMessage(error instanceof Error ? error.message : "无法更新账号归档状态。");
+      return false;
+    } finally {
+      setPendingAction("");
+    }
+  }
+
   function setEpisodeCreationProgress(step: EpisodeCreationStep) {
     setEpisodeCreationStep(step);
     setEpisodeCreationStartedAt(step === "idle" ? null : Date.now());
@@ -1397,7 +1420,7 @@ export function App() {
 
   async function createEpisode(input: { title: string; accountId: string; isTest: boolean; seriesVersionId: string | null }): Promise<WorkerPreflightResult | null> {
     const account = workspace?.accounts.find((candidate) => candidate.id === input.accountId);
-    if (!account?.current_blueprint_version_id) return null;
+    if (!account?.current_blueprint_version_id || account.archived_at) return null;
     setPendingAction("episode");
     setErrorMessage("");
     try {
@@ -2207,6 +2230,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             onCreateSeriesVersion={createSeriesVersion}
             onDeleteAccount={deleteAccount}
             onRenameAccount={renameAccount}
+            onSetAccountArchived={setAccountArchived}
             onSelectAccount={(accountId) => { setBlueprintRepairContext(null); setSelectedAccountId(accountId); }}
             accountEpisodeCount={workspace.episodes.filter((episode) => episode.account_id === selectedAccount?.id).length}
             promptVersions={workspace.promptVersions.filter((version) => version.account_id === selectedAccount?.id)}
@@ -2248,6 +2272,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
           <PublishWorkspace
             accountsById={accountsById}
             artifacts={workspace.artifacts}
+            blueprintsById={blueprintsById}
             onOpenPublish={openPublishModal}
             publicationRecords={workspace.publicationRecords}
             tasks={workspace.tasks}
@@ -2373,7 +2398,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
 
       <nav aria-label="移动端主导航" className="mobile-navigation"><NavigationButtons activeNavigation={activeNavigation} badges={navigationBadges} onSelect={changeNavigation} /></nav>
 
-      {showEpisodeForm ? <EpisodeForm accounts={workspace.accounts} blueprints={workspace.blueprints} connectionVersions={workspace.externalConnectionVersions} creationStartedAt={episodeCreationStartedAt} creationStep={episodeCreationStep} isPending={pendingAction === "episode"} onClose={() => setShowEpisodeForm(false)} onOpenBlueprint={(accountId) => { setShowEpisodeForm(false); openAccountBlueprint(accountId); }} onSubmit={createEpisode} series={workspace.series} seriesVersions={workspace.seriesVersions} /> : null}
+      {showEpisodeForm ? <EpisodeForm accounts={workspace.accounts.filter((account) => !account.archived_at)} blueprints={workspace.blueprints} connectionVersions={workspace.externalConnectionVersions} creationStartedAt={episodeCreationStartedAt} creationStep={episodeCreationStep} isPending={pendingAction === "episode"} onClose={() => setShowEpisodeForm(false)} onOpenBlueprint={(accountId) => { setShowEpisodeForm(false); openAccountBlueprint(accountId); }} onSubmit={createEpisode} series={workspace.series} seriesVersions={workspace.seriesVersions} /> : null}
       {showAccountForm ? <AccountForm isPending={pendingAction === "account"} onClose={() => setShowAccountForm(false)} onSubmit={createAccount} /> : null}
       {showPasswordForm ? <PasswordForm onClose={() => setShowPasswordForm(false)} onSubmit={async (password) => {
         setPendingAction("password");
@@ -2495,14 +2520,15 @@ export function ReviewWorkspace({ accountsById, episodes, onSelectEpisode, selec
   return <><p className="muted-copy">审核决定会通过受控状态迁移写入审批与审计记录；Worker 的阻塞项会显示在右侧 Episode 详情中。</p><section className="review-queue" aria-label="待审核 Episode"><h2>待审核 Episode</h2>{reviewEpisodes.length ? <><div className="review-queue-list">{pageItems.map((episode) => <button className={`review-queue-item ${selectedEpisode?.id === episode.id ? "is-selected" : ""}`} key={episode.id} onClick={() => onSelectEpisode(episode.id)} type="button"><strong>{episode.title}</strong><span>{accountsById.get(episode.account_id)?.name ?? "未知账号"} · {stageLabels[episode.stage]}</span></button>)}</div><PaginationControls page={safePage} pageSize={pageSize} total={reviewEpisodes.length} onPageChange={setPage} /></> : <div className="empty-state compact"><h2>没有待审核 Episode</h2><p>Worker 将产物推进到审核阶段后，会在这里显示。</p></div>}</section></>;
 }
 
-export function PublishWorkspace({ accountsById, artifacts, episodes, isPending, onOpenPublish, onTransition, publicationRecords, selectedEpisode, tasks }: { accountsById: Map<string, Account>; artifacts: Artifact[]; episodes: Episode[]; isPending: string; onOpenPublish: (id: string) => void; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; publicationRecords: PublicationRecord[]; selectedEpisode: Episode | null; tasks: Task[] }) {
+export function PublishWorkspace({ accountsById, artifacts, blueprintsById = new Map(), episodes, isPending, onOpenPublish, onTransition, publicationRecords, selectedEpisode, tasks }: { accountsById: Map<string, Account>; artifacts: Artifact[]; blueprintsById?: Map<string, Blueprint>; episodes: Episode[]; isPending: string; onOpenPublish: (id: string) => void; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; publicationRecords: PublicationRecord[]; selectedEpisode: Episode | null; tasks: Task[] }) {
   const queue = episodes.filter((episode) => episode.stage === "qc_passed" || episode.stage === "publish_ready" || episode.stage === "publishing_review" || episode.stage === "published");
   async function advanceEpisode(episode: Episode, toStage: EpisodeStage, reason: string) { if (await onTransition(episode.id, toStage, reason)) onOpenPublish(episode.id); }
   return <><p className="muted-copy">打开生产单即可填写发布标题、简介、标签并上传 JPG、PNG 或 WebP 封面；系统会在本机生成并校验发布包。控制台不会连接或点击任何发布平台。</p><div className="publish-queue">{queue.map((episode) => {
     const latestPublication = publicationRecords.filter((record) => record.episode_id === episode.id).sort((left, right) => right.created_at.localeCompare(left.created_at))[0];
     const hasPublishPackage = artifacts.some((artifact) => artifact.episode_id === episode.id && artifact.artifact_type === "publish_package");
     const hasPublishVerification = tasks.some((task) => task.episode_id === episode.id && task.task_type === "verify_publish_package" && task.status === "completed");
-    return <article className={`publish-card ${selectedEpisode?.id === episode.id ? "is-selected" : ""}`} key={episode.id}><button className="publish-card-summary" onClick={() => onOpenPublish(episode.id)} type="button"><strong>{episode.title}</strong><span>{accountsById.get(episode.account_id)?.name ?? "未知账号"} · {stageLabels[episode.stage]}</span><small>{latestPublication ? `已发布 · ${latestPublication.platform} · ${latestPublication.published_at ? formatDate(latestPublication.published_at) : "时间未记录"}` : hasPublishPackage ? "发布包已固定" : "缺少发布包索引"}</small></button>{latestPublication?.external_url ? <a className="publish-card-link" href={latestPublication.external_url} rel="noreferrer" target="_blank">外部记录 ↗</a> : null}{episode.stage === "qc_passed" ? <button className="button button-secondary" disabled={!hasPublishPackage || !hasPublishVerification || isPending === `transition-${episode.id}-publish_ready`} onClick={() => void advanceEpisode(episode, "publish_ready", "已复核固定发布包，进入待发布。")} type="button">进入待发布</button> : episode.stage === "publish_ready" ? <button className="button button-secondary" disabled={isPending === `transition-${episode.id}-publishing_review`} onClick={() => void advanceEpisode(episode, "publishing_review", "发布包已固定，等待 Owner 的人工发布确认。")} type="button">进入发布确认</button> : episode.stage === "publishing_review" ? <button className="button button-secondary" disabled={isPending === `publication-${episode.id}`} onClick={() => onOpenPublish(episode.id)} type="button">打开发布弹窗</button> : <p className="publish-card-hint">发布记录已固定</p>}</article>;
+    const publishGateEnabled = blueprintApprovalGateEnabled(blueprintsById.get(episode.blueprint_version_id), "publish");
+    return <article className={`publish-card ${selectedEpisode?.id === episode.id ? "is-selected" : ""}`} key={episode.id}><button className="publish-card-summary" onClick={() => onOpenPublish(episode.id)} type="button"><strong>{episode.title}</strong><span>{accountsById.get(episode.account_id)?.name ?? "未知账号"} · {stageLabels[episode.stage]}</span><small>{latestPublication ? `已发布 · ${latestPublication.platform} · ${latestPublication.published_at ? formatDate(latestPublication.published_at) : "时间未记录"}` : hasPublishPackage ? "发布包已固定" : "缺少发布包索引"}</small></button>{latestPublication?.external_url ? <a className="publish-card-link" href={latestPublication.external_url} rel="noreferrer" target="_blank">外部记录 ↗</a> : null}{episode.stage === "qc_passed" ? <button className="button button-secondary" disabled={!hasPublishPackage || !hasPublishVerification || isPending === `transition-${episode.id}-publish_ready`} onClick={() => void advanceEpisode(episode, "publish_ready", "已复核固定发布包，进入待发布。")} type="button">进入待发布</button> : episode.stage === "publish_ready" && publishGateEnabled ? <button className="button button-secondary" disabled={isPending === `transition-${episode.id}-publishing_review`} onClick={() => void advanceEpisode(episode, "publishing_review", "发布包已固定，等待 Owner 的人工发布确认。")} type="button">进入发布确认</button> : episode.stage === "publish_ready" ? <button className="button button-secondary" disabled={isPending === `publication-${episode.id}`} onClick={() => onOpenPublish(episode.id)} type="button">登记外部发布</button> : episode.stage === "publishing_review" ? <button className="button button-secondary" disabled={isPending === `publication-${episode.id}`} onClick={() => onOpenPublish(episode.id)} type="button">打开发布弹窗</button> : <p className="publish-card-hint">发布记录已固定</p>}</article>;
   })}</div>{queue.length === 0 ? <div className="empty-state compact"><h2>没有待确认发布</h2><p>完成 QC 后，生产单会在这里提供发布材料登记与发布包生成入口。</p></div> : null}</>;
 }
 

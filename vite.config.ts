@@ -6,11 +6,12 @@ import { createHash, randomUUID } from "node:crypto";
 import { createReadStream, promises as fs, readFileSync } from "node:fs";
 import { basename, extname, isAbsolute, join, parse, relative, resolve } from "node:path";
 import { tmpdir } from "node:os";
+import { DatabaseSync } from "node:sqlite";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { promisify } from "node:util";
 import { loadEnv, type Plugin } from "vite";
 import { verifyMediaLibrary } from "./src/worker/mediaLibrary";
-import { createRuntimePreflight, localAdapterReadinessFromCommands, runtimeCapabilitiesFromBlueprintPolicy, runtimeCommandArguments } from "./src/worker/runtimePreflight";
+import { createRuntimePreflight, localAdapterReadinessFromCommands, runtimeCapabilitiesFromBlueprintPolicy, runtimeCommandArguments, runtimeCommandInvocation } from "./src/worker/runtimePreflight";
 import { probeCodexModel, probeProviderConnection } from "./src/worker/runtimeProbes";
 import { isSupportedManualARollVideo, isSupportedManualAudio } from "./src/reviews/materialImport";
 import { workerPreflightVersion } from "./src/worker/contracts";
@@ -23,6 +24,7 @@ import { synthesizeGoogleTts, synthesizeVolcengineTts } from "./src/worker/media
 import { reviewRenderFromSnapshot } from "./src/worker/codexRunner";
 import { freezeOpenChatCutStudio, openOpenChatCutStudio } from "./src/worker/openchatcutStudio";
 import type { StoryboardManifest, WorkerTaskPackage } from "./src/worker/contracts";
+import { ExpiringProbeCache, summarizeN8nExecutions, supabaseControlDataEvidence, type N8nExecutionEvidence, type N8nExecutionEvidenceRow } from "./src/observability/systemStatusEvidence";
 
 export { coverImageExtension } from "./src/publishing/coverImage";
 const localArtifactRoute = "/_local-artifact";
@@ -1128,15 +1130,35 @@ function localWorkerEnvironmentValue(name: string): string | undefined {
   }
 }
 
-async function latestModifiedAt(paths: string[]): Promise<string | null> {
-  const entries = await Promise.all(paths.map(async (path) => {
-    try {
-      return (await fs.stat(path)).mtime.toISOString();
-    } catch {
-      return null;
-    }
-  }));
-  return entries.filter((entry): entry is string => Boolean(entry)).sort().at(-1) ?? null;
+function readN8nExecutionEvidence(databasePath: string): N8nExecutionEvidence | null {
+  let database: DatabaseSync | undefined;
+  try {
+    database = new DatabaseSync(databasePath, { readOnly: true });
+    const columns = `select e.id, e."startedAt" as startedAt, e.status, w.name as workflowName, d.data
+      from execution_entity e
+      join workflow_entity w on w.id = e."workflowId"
+      left join execution_data d on d."executionId" = e.id`;
+    const schedule = database.prepare(`${columns} where w.name = ? order by e."startedAt" desc, e.id desc limit 1`).all("Loop Control — 任务派发");
+    const workerDispatch = database.prepare(`${columns} where w.name = ? and e.status = 'success' and d.data like ? order by e."startedAt" desc, e.id desc limit 1`).all("Loop Control — 任务派发", '%\\"workers\\":[{%');
+    const notification = database.prepare(`${columns} where w.name in (?, ?) order by e."startedAt" desc, e.id desc limit 1`).all("Loop Control — 审核提醒", "Loop Control — 状态变更提醒");
+    return summarizeN8nExecutions([...schedule, ...workerDispatch, ...notification] as unknown as N8nExecutionEvidenceRow[]);
+  } catch {
+    return null;
+  } finally {
+    database?.close();
+  }
+}
+
+function safeStatusDetail(error: unknown): string {
+  const source = error instanceof Error ? error.message : typeof error === "object" && error && "message" in error ? String(error.message) : String(error);
+  return source
+    .replace(/\u001b\[[0-?]*[ -\/]*[@-~]/g, "")
+    .replace(/\bbearer\s+\S+/gi, "Bearer [已隐藏]")
+    .replace(/(authorization|bearer|token|password|secret|api[_-]?key)\s*[:=]\s*\S+/gi, "$1=[已隐藏]")
+    .replace(/:\/\/[^\s/@:]+:[^\s/@]+@/g, "://[已隐藏]@")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 500);
 }
 
 async function dependencyStatus(name: string, command: string, args: string[]): Promise<{ detail: string; name: string; state: "healthy" | "offline" }> {
@@ -1178,6 +1200,9 @@ function runProbeCommand(command: string, argumentsList: string[], timeoutMs?: n
 }
 
 export function serveSystemStatus(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+  const expensiveProbeTtlMs = 5 * 60_000;
+  const migrationCache = new ExpiringProbeCache<{ detail: string; state: "consistent" | "inconsistent" | "unknown" }>(expensiveProbeTtlMs);
+  const codexModelCache = new ExpiringProbeCache<Awaited<ReturnType<typeof probeCodexModel>>>(expensiveProbeTtlMs);
   return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
     if (request.method !== "GET") {
       response.statusCode = 405;
@@ -1206,23 +1231,86 @@ export function serveSystemStatus(supabaseUrl: string | undefined, supabasePubli
       }
 
       const runtimeDirectory = resolve("n8n", "runtime", ".n8n");
-      const eventLogPaths = (await fs.readdir(runtimeDirectory).catch(() => [])).filter((entry) => entry.startsWith("n8nEventLog") && entry.endsWith(".log")).map((entry) => join(runtimeDirectory, entry));
-      const lastEventAt = await latestModifiedAt(eventLogPaths);
       const runtimeExists = await fs.stat(runtimeDirectory).then((stats) => stats.isDirectory()).catch(() => false);
       const n8nPort = localWorkerEnvironmentValue("N8N_PORT") ?? "5678";
       const n8nRunning = await n8nHealth(n8nPort);
+      const n8nEvidence = readN8nExecutionEvidence(join(runtimeDirectory, "database.sqlite"));
       const mediaRoot = localWorkerEnvironmentValue("MEDIA_LIBRARY_MOUNT_PATH");
       const mediaExists = mediaRoot ? await fs.stat(mediaRoot).then((stats) => stats.isDirectory()).catch(() => false) : false;
-      const dependencies = await Promise.all([
+      const localDependencies = await Promise.all([
         dependencyStatus("Codex CLI", "codex", ["--version"]),
         dependencyStatus("ffmpeg", "ffmpeg", ["-version"]),
         dependencyStatus("OpenChatCut", localWorkerEnvironmentValue("OPENCHATCUT_NODE") || process.execPath, ["scripts/openchatcut-render.mjs", "--version"]),
       ]);
+      const migration = migrationCache.read("remote-history", { detail: "Supabase 迁移正在后台探测；当前无法确认。", state: "unknown" }, async () => {
+        try {
+          const result = await runProbeCommand(process.execPath, ["scripts/supabase-migrations.mjs", "--status-json"], 65_000);
+          const payload = JSON.parse(result.stdout.trim().split("\n").at(-1) ?? "{}") as { detail?: unknown; state?: unknown };
+          if (typeof payload.detail === "string" && ["consistent", "inconsistent", "unknown"].includes(String(payload.state))) return payload as { detail: string; state: "consistent" | "inconsistent" | "unknown" };
+          return { detail: "无法确认 Supabase 迁移：探测输出无效。", state: "unknown" };
+        } catch (error) {
+          return { detail: `无法确认 Supabase 迁移：${safeStatusDetail(error)}`, state: "unknown" };
+        }
+      });
+      const [ownerMembershipResult, activeBlueprintResult] = await Promise.all([
+        (async () => {
+          try { return await client.from("account_memberships").select("account_id").eq("user_id", data.user.id).eq("role", "owner").limit(1); }
+          catch (error) { return { data: null, error }; }
+        })(),
+        (async () => {
+          try { return await client.from("account_blueprint_versions").select("policy").eq("is_active", true).is("archived_at", null); }
+          catch (error) { return { data: null, error }; }
+        })(),
+      ]);
+      const { data: activeBlueprints, error: activeBlueprintsError } = activeBlueprintResult;
+      const supabase = supabaseControlDataEvidence({
+        activeBlueprintsReadable: !activeBlueprintsError,
+        hasOwnerMembership: Boolean(ownerMembershipResult.data?.length),
+        ownerMembershipsReadable: !ownerMembershipResult.error,
+      });
+      const codexModels = activeBlueprintsError ? [] : [...new Set((activeBlueprints ?? []).flatMap(({ policy }) => runtimeCapabilitiesFromBlueprintPolicy(policy, undefined).filter((capability) => capability.provider === "codex" && capability.model).map((capability) => capability.model as string)))];
+      const codexCliAvailable = localDependencies[0]?.state === "healthy";
+      const codexModelDependencies = activeBlueprintsError
+        ? [{ detail: `无法读取当前激活蓝图的 Codex 模型：${safeStatusDetail(activeBlueprintsError)}`, name: "Codex 模型", state: "unknown" as const }]
+        : codexModels.length === 0
+          ? [{ detail: "当前激活蓝图未配置 Codex 模型。", name: "Codex 模型", state: "unknown" as const }]
+          : codexModels.map((model) => {
+              if (!codexCliAvailable) return { detail: `模型 ${model} 未探测：Codex CLI 不可用。`, name: `Codex 模型 · ${model}`, state: "offline" as const };
+              const probe = codexModelCache.read(model, {
+                connection: { available: false, status: "retryable", detail: "Codex 模型服务正在后台探测。" },
+                modelPermission: { available: false, status: "retryable", detail: `模型 ${model} 权限正在后台探测。` },
+              }, () => probeCodexModel(model, (command, argumentsList, options) => runProbeCommand(command, argumentsList, options?.timeoutMs), tmpdir()));
+              return { detail: probe.modelPermission.detail, name: `Codex 模型 · ${model}`, state: probe.modelPermission.available ? "healthy" as const : probe.modelPermission.status === "retryable" ? "unknown" as const : "attention" as const };
+            });
+      const notificationFailed = n8nEvidence?.lastNotification?.state === "failure";
+      const n8nDetail = !runtimeExists
+        ? "未发现本地 n8n 运行时目录。"
+        : !n8nRunning
+          ? `健康端点无响应：127.0.0.1:${n8nPort}；历史执行记录不代表当前在线。`
+          : !n8nEvidence
+            ? `健康端点在线：127.0.0.1:${n8nPort}；执行数据库无法读取，调度与通知状态待确认。`
+          : `${n8nEvidence?.lastScheduleCheckAt ? "已读取最近调度执行" : "尚无调度执行记录"}；${n8nEvidence?.lastNotification ? `通知链最近${notificationFailed ? "失败" : "成功"}（${n8nEvidence.lastNotification.workflowName}）` : "通知链尚无执行记录"}。`;
+      const dependencies = [
+        ...localDependencies,
+        { detail: migration.detail, name: "Supabase 迁移", state: migration.state === "consistent" ? "healthy" as const : migration.state === "inconsistent" ? "attention" as const : "unknown" as const },
+        ...codexModelDependencies,
+      ];
       const report = {
         dependencies,
         mediaLibrary: { detail: mediaRoot ? (mediaExists ? `已挂载：${mediaRoot}` : `未找到挂载目录：${mediaRoot}`) : "未配置 MEDIA_LIBRARY_MOUNT_PATH。", state: mediaExists ? "healthy" : "offline" },
-        n8n: { detail: n8nRunning ? `健康端点在线：127.0.0.1:${n8nPort}。` : runtimeExists ? `健康端点无响应：127.0.0.1:${n8nPort}；历史日志不代表当前在线。` : "未发现本地 n8n 运行时目录。", lastDispatchAt: null, lastEventAt, lastHealthCheckAt: n8nRunning ? new Date().toISOString() : null, lastRunAt: null, state: n8nRunning ? "healthy" : "offline" },
+        n8n: {
+          detail: n8nDetail,
+          lastDispatchAt: n8nEvidence?.lastWorkerDispatchAt ?? null,
+          lastEventAt: n8nEvidence?.lastScheduleCheckAt ?? null,
+          lastHealthCheckAt: n8nRunning ? new Date().toISOString() : null,
+          lastNotification: n8nEvidence?.lastNotification ?? null,
+          lastRunAt: n8nEvidence?.lastWorkerDispatchAt ?? null,
+          lastScheduleCheckAt: n8nEvidence?.lastScheduleCheckAt ?? null,
+          lastWorkerDispatchAt: n8nEvidence?.lastWorkerDispatchAt ?? null,
+          state: n8nRunning ? (!n8nEvidence ? "unknown" : notificationFailed ? "attention" : "healthy") : "offline",
+        },
         observedAt: new Date().toISOString(),
+        supabase,
       };
       response.setHeader("Content-Type", "application/json");
       response.statusCode = 200;
@@ -1641,7 +1729,10 @@ export async function runtimePreflightForPolicy(policy: unknown, seriesRules: un
   const credentials = Object.fromEntries(credentialNames.map((credential) => [credential, Boolean(localWorkerEnvironmentValue(credential))]));
   const referenceCapabilities = capabilities.filter((capability) => capability.credentialRef);
   const referenceEntriesPromise = Promise.all(referenceCapabilities.map(async (capability) => [capability.credentialRef!, await localWorkerSecretForCapability(capability, accountId)] as const));
-  const commandEntriesPromise = Promise.all(commandNames.map(async (command) => [command, await dependencyStatus(command, command, runtimeCommandArguments(command))] as const));
+  const commandEntriesPromise = Promise.all(commandNames.map(async (command) => {
+    const invocation = runtimeCommandInvocation(command, runtimeCommandArguments(command), { openChatCutNode: localWorkerEnvironmentValue("OPENCHATCUT_NODE") });
+    return [command, await dependencyStatus(command, invocation.command, invocation.argumentsList)] as const;
+  }));
   const providerEntriesPromise = Promise.all([...new Set(capabilities.filter((capability) => capability.credential || capability.credentialRef).map((capability) => capability.provider))].map(async (provider) => {
     const capability = capabilities.find((candidate) => candidate.provider === provider);
     const credential = capability?.credential;

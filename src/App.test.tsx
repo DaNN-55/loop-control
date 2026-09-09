@@ -191,11 +191,12 @@ describe("approval console", () => {
     fireEvent.change(screen.getByRole("textbox", { name: "系列名称" }), { target: { value: "越南道士" } });
     fireEvent.change(screen.getByRole("textbox", { name: "系列定位" }), { target: { value: "雨夜民俗" } });
     fireEvent.click(screen.getByRole("button", { name: "创建系列" }));
+    fireEvent.click(screen.getByRole("button", { name: "确认创建系列" }));
 
     await waitFor(() => expect(onCreate).toHaveBeenCalledWith({ name: "越南道士", rules: { positioning: "雨夜民俗" } }));
   });
 
-  it("系列设置只展示当前配置，不暴露内部版本", () => {
+  it("系列设置展示当前版本和历史版本", () => {
     const series = { account_id: "account-1", created_at: "2026-08-15T00:00:00.000Z", id: "series-1", name: "越南道士" } as Database["public"]["Tables"]["series"]["Row"];
     const seriesVersions = [
       { account_id: "account-1", created_at: "2026-08-17T00:00:00.000Z", id: "series-version-2", rules: {}, series_id: series.id, version: 2 },
@@ -204,10 +205,10 @@ describe("approval console", () => {
 
     render(<SeriesSettings isPending={false} onCreate={vi.fn()} series={[series]} seriesVersions={seriesVersions} />);
 
-    expect(screen.getByRole("heading", { name: "越南道士" })).toBeTruthy();
-    expect(screen.getByText("当前配置")).toBeTruthy();
-    expect(screen.queryByText("历史版本")).toBeNull();
-    expect(screen.getByRole("button", { name: "保存系列配置" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "越南道士 · 当前 v2" })).toBeTruthy();
+    expect(screen.getByText("当前 v2")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "版本历史" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "保存为 v3" })).toBeTruthy();
   });
 
   it("通过结构化表单编辑蓝图并保留高级规则", async () => {
@@ -222,6 +223,7 @@ describe("approval console", () => {
     await user.clear(screen.getByLabelText("账号定位"));
     await user.type(screen.getByLabelText("账号定位"), "新定位");
     await user.click(screen.getByRole("button", { name: /保存蓝图|保存并检查/ }));
+    await user.click(screen.getByRole("button", { name: "确认保存并检查" }));
 
     await waitFor(() => expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ positioning: "新定位", soundtrack: expect.objectContaining({ executor: expect.objectContaining({ adapter: "freesound_preview" }) }) })));
   });

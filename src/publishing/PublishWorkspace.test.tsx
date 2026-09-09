@@ -51,6 +51,16 @@ describe("发布队列", () => {
     expect(onSelectEpisode).toHaveBeenCalledWith(episode.id);
   });
 
+  it("关闭发布关卡后从待发布直接登记，仍不自动操作外部平台", () => {
+    const readyEpisode = { ...episode, stage: "publish_ready" as const };
+    const blueprint = { account_id: "account-1", created_at: "2026-08-13T00:00:00.000Z", id: "blueprint-1", is_active: true, policy: { approval_gates: ["script", "visual", "storyboard", "qc"] }, version: 1 } satisfies Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
+
+    render(<PublishWorkspace accountsById={new Map()} artifacts={[]} blueprintsById={new Map([[blueprint.id, blueprint]])} episodes={[readyEpisode]} isPending="" onOpenPublish={vi.fn()} onTransition={vi.fn()} publicationRecords={[]} selectedEpisode={readyEpisode} tasks={[]} />);
+
+    expect(screen.getByRole("button", { name: "登记外部发布" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "进入发布确认" })).toBeNull();
+  });
+
   it("要求 Owner 勾选手工发布声明并填写理由后才记录 published", async () => {
     const user = userEvent.setup();
     const onTransition = vi.fn().mockResolvedValue(undefined);

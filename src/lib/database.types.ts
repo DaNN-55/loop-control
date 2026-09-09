@@ -83,6 +83,7 @@ export type Database = {
       }
       accounts: {
         Row: {
+          archived_at: string | null
           created_at: string
           current_blueprint_version_id: string | null
           id: string
@@ -91,6 +92,7 @@ export type Database = {
           timezone: string
         }
         Insert: {
+          archived_at?: string | null
           created_at?: string
           current_blueprint_version_id?: string | null
           id?: string
@@ -99,6 +101,7 @@ export type Database = {
           timezone: string
         }
         Update: {
+          archived_at?: string | null
           created_at?: string
           current_blueprint_version_id?: string | null
           id?: string
@@ -1602,6 +1605,24 @@ export type Database = {
       rename_account: {
         Args: { p_account_id: string; p_account_name: string }
         Returns: {
+          created_at: string
+          current_blueprint_version_id: string | null
+          id: string
+          name: string
+          slug: string
+          timezone: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "accounts"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      set_account_archived: {
+        Args: { p_account_id: string; p_archived: boolean }
+        Returns: {
+          archived_at: string | null
           created_at: string
           current_blueprint_version_id: string | null
           id: string

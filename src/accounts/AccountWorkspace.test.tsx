@@ -17,7 +17,7 @@ type SeriesVersion = Database["public"]["Tables"]["series_versions"]["Row"];
 type PromptVersion = Database["public"]["Tables"]["prompt_versions"]["Row"];
 type ExternalConnection = Database["public"]["Tables"]["external_connections"]["Row"];
 
-const account: Account = { created_at: "2026-08-14T00:00:00.000Z", current_blueprint_version_id: "blueprint-3", id: "account-1", name: "道工作室", slug: "dao-studio", timezone: "Asia/Shanghai" };
+const account: Account = { archived_at: null, created_at: "2026-08-14T00:00:00.000Z", current_blueprint_version_id: "blueprint-3", id: "account-1", name: "道工作室", slug: "dao-studio", timezone: "Asia/Shanghai" };
 const storyboardHarness: PromptVersion = { account_id: account.id, capability: "storyboard_planning", content_hash: "a".repeat(64), created_at: "2026-08-22T00:00:00.000Z", created_by: "owner-1", id: "harness-storyboard-1", instructions: "先写可执行镜头。", is_active: true, name: "分镜规划 v1", slug: "storyboard-planning-v1", summary: "为审核准备可执行分镜。", version: 1 };
 const blueprint: Blueprint = { account_id: account.id, archived_at: null, created_at: "2026-08-14T00:00:00.000Z", id: "blueprint-3", is_active: true, is_snapshot: false, policy: { approval_gates: ["script", "qc"], asset_root: "/Volumes/dao", executors: { storyboard_planning: { adapter: "codex", harness_id: storyboardHarness.id, model: "gpt-5.6-luna", prompt_version: storyboardHarness.slug }, visual_planning: { adapter: "codex", harness_id: storyboardHarness.id, model: "gpt-5.6-luna", prompt_version: storyboardHarness.slug } }, positioning: "越南民间信仰" }, version: 3 };
 const series: Series = { account_id: account.id, created_at: "2026-08-14T00:00:00.000Z", id: "series-1", name: "越南民间传说" };
@@ -48,9 +48,26 @@ describe("账号配置工作区", () => {
     expect(screen.getByLabelText("当前账号")).toBeTruthy();
     expect(screen.queryByRole("heading", { name: "蓝图配置" })).toBeNull();
     expect(screen.getByRole("navigation", { name: "蓝图配置分区" })).toBeTruthy();
-    expect(screen.getByRole("complementary", { name: "生产就绪检查" })).toBeTruthy();
+    expect(screen.getByRole("complementary", { name: "账号默认配置检查" })).toBeTruthy();
     expect(screen.queryByText("蓝图版本")).toBeNull();
     expect(screen.queryByRole("button", { name: /激活|归档|停用/ })).toBeNull();
+  });
+
+  it("在账号操作菜单集中展示信息并支持归档", async () => {
+    const user = userEvent.setup();
+    const onSetAccountArchived = vi.fn().mockResolvedValue(true);
+    renderWorkspace({ accountEpisodeCount: 7, onSetAccountArchived });
+
+    await user.click(screen.getByRole("button", { name: "账号操作" }));
+    const menu = screen.getByRole("menu", { name: "账号操作" });
+    expect(within(menu).getByText("dao-studio")).toBeTruthy();
+    expect(within(menu).getByText("Asia/Shanghai")).toBeTruthy();
+    expect(within(menu).getByText("7 个")).toBeTruthy();
+    await user.click(within(menu).getByRole("menuitem", { name: "归档账号" }));
+    const dialog = screen.getByRole("dialog", { name: "归档账号" });
+    expect(within(dialog).getByText(/已有生产单、系列和历史配置都会保留/)).toBeTruthy();
+    await user.click(within(dialog).getByRole("button", { name: "确认归档账号" }));
+    expect(onSetAccountArchived).toHaveBeenCalledWith(account.id, true);
   });
 
   it("直接编辑并保存当前蓝图", async () => {
@@ -61,6 +78,9 @@ describe("账号配置工作区", () => {
     await user.clear(screen.getByLabelText("账号定位"));
     await user.type(screen.getByLabelText("账号定位"), "新定位");
     await user.click(screen.getByRole("button", { name: "保存并检查" }));
+    const dialog = screen.getByRole("dialog", { name: "确认保存蓝图" });
+    expect(within(dialog).getByRole("region", { name: "本次保存影响" })).toBeTruthy();
+    await user.click(within(dialog).getByRole("button", { name: "确认保存并检查" }));
 
     expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ positioning: "新定位" }));
   });
@@ -143,6 +163,7 @@ describe("账号配置工作区", () => {
     await user.click(screen.getByRole("checkbox", { name: "启用图片生成" }));
     expect(screen.getByText("未配置", { selector: ".capability-matrix-status" })).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "保存并检查" }));
+    await user.click(screen.getByRole("button", { name: "确认保存并检查" }));
 
     expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ static_visual: {} }));
   });
@@ -255,6 +276,7 @@ describe("账号配置工作区", () => {
     await user.type(screen.getByRole("spinbutton", { name: "最大尝试次数" }), "2");
     await user.click(screen.getByRole("button", { name: "完成" }));
     await user.click(screen.getByRole("button", { name: "保存并检查" }));
+    await user.click(screen.getByRole("button", { name: "确认保存并检查" }));
 
     expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ a_roll: expect.objectContaining({ execution_path: "local", executor: expect.objectContaining({ adapter: "openchatcut_card_video" }) }) }));
     expect(onUpdateBlueprint.mock.calls[0][0].a_roll).not.toHaveProperty("allowed_tools");
@@ -269,6 +291,7 @@ describe("账号配置工作区", () => {
     await user.click(screen.getByRole("button", { name: "修改分镜规划配置" }));
     await user.selectOptions(screen.getByRole("combobox", { name: "分镜规划 Prompt Harness" }), harness.id);
     await user.click(screen.getByRole("button", { name: "保存并检查" }));
+    await user.click(screen.getByRole("button", { name: "确认保存并检查" }));
 
     expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ executors: expect.objectContaining({ storyboard_planning: expect.objectContaining({ adapter: "codex", harness_id: harness.id, prompt_version: harness.slug }) }) }));
   });
@@ -352,12 +375,30 @@ describe("账号配置工作区", () => {
     const preflight: WorkerPreflightResult = { version: "worker-preflight/v1", checks: [{ action: "contact_environment_admin", capability: "b_roll_generation", check: "credential_presence", phase: "preflight", reason: "缺少 PEXELS_API_KEY", scope: "worker", status: "unavailable" }] };
     renderWorkspace({ blueprintPreflight: preflight, onRefreshBlueprintPreflight });
 
-    const rail = screen.getByRole("complementary", { name: "生产就绪检查" });
+    const rail = screen.getByRole("complementary", { name: "账号默认配置检查" });
     expect(within(rail).getByText("1 项需要处理")).toBeTruthy();
     expect(within(rail).getByText("缺少外部连接凭据")).toBeTruthy();
     expect(within(rail).getByText("缺少 PEXELS_API_KEY")).toBeTruthy();
     await user.click(within(rail).getByRole("button", { name: "重新检查" }));
     expect(onRefreshBlueprintPreflight).toHaveBeenCalledOnce();
+  });
+
+  it("合并影响审核渲染和最终渲染的同一 OpenChatCut 环境故障", () => {
+    const preflight: WorkerPreflightResult = {
+      version: "worker-preflight/v2",
+      checks: [
+        { action: "contact_environment_admin", capability: "review_rendering", check: "command_availability", phase: "preflight", reason: "spawn openchatcut ENOENT", scope: "worker", status: "unavailable" },
+        { action: "contact_environment_admin", capability: "final_rendering", check: "command_availability", phase: "preflight", reason: "spawn openchatcut ENOENT", scope: "worker", status: "unavailable" },
+      ],
+    };
+
+    renderWorkspace({ blueprintPreflight: preflight });
+
+    const rail = screen.getByRole("complementary", { name: "账号默认配置检查" });
+    expect(within(rail).getByText("1 项需要处理")).toBeTruthy();
+    expect(within(rail).getByText("OpenChatCut 未就绪")).toBeTruthy();
+    expect(within(rail).getByText("影响阶段：审核渲染、最终渲染")).toBeTruthy();
+    expect(within(rail).getAllByText("spawn openchatcut ENOENT")).toHaveLength(1);
   });
 
   it("不在第一屏展示冗长的运行命令错误", () => {
@@ -376,16 +417,19 @@ describe("账号配置工作区", () => {
     expect(screen.queryByText(error)).toBeNull();
   });
 
-  it("系列页只展示当前配置并通过内部快照保存", async () => {
+  it("系列页展示版本历史并通过新版本保存", async () => {
     const user = userEvent.setup();
     const onCreateSeriesVersion = vi.fn().mockResolvedValue(undefined);
     renderWorkspace({ onCreateSeriesVersion, series: [series], seriesVersions });
 
     await user.click(screen.getByRole("tab", { name: "系列" }));
-    expect(screen.getByRole("heading", { name: series.name })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: `${series.name} · 当前 v2` })).toBeTruthy();
     expect((screen.getByLabelText("系列定位") as HTMLTextAreaElement).value).toBe("当前系列定位");
-    expect(screen.queryByText("历史版本")).toBeNull();
-    await user.click(screen.getByRole("button", { name: "保存系列配置" }));
+    expect(screen.getByRole("heading", { name: "版本历史" })).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "保存为 v3" }));
+    const dialog = screen.getByRole("dialog", { name: "确认保存系列版本" });
+    expect(within(dialog).getByText(/创建系列 v3/)).toBeTruthy();
+    await user.click(within(dialog).getByRole("button", { name: "确认保存为 v3" }));
     expect(onCreateSeriesVersion).toHaveBeenCalledWith({ seriesId: series.id, rules: expect.objectContaining({ positioning: "当前系列定位" }) });
   });
 
@@ -422,7 +466,8 @@ describe("账号配置工作区", () => {
     const user = userEvent.setup();
     const onRenameAccount = vi.fn().mockResolvedValue(true);
     renderWorkspace({ onRenameAccount });
-    await user.click(screen.getByRole("button", { name: "重命名账号" }));
+    await user.click(screen.getByRole("button", { name: "账号操作" }));
+    await user.click(screen.getByRole("menuitem", { name: "重命名" }));
     await user.clear(screen.getByRole("textbox", { name: "账号显示名称" }));
     await user.type(screen.getByRole("textbox", { name: "账号显示名称" }), "新名称");
     await user.click(screen.getByRole("button", { name: "保存名称" }));
@@ -432,16 +477,32 @@ describe("账号配置工作区", () => {
   it("有生产单时阻止删除账号", async () => {
     const user = userEvent.setup();
     renderWorkspace({ accountEpisodeCount: 1 });
-    await user.click(screen.getByRole("button", { name: "删除账号" }));
-    expect(screen.getByText("该账号有 1 个生产单，当前不能删除。")).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "账号操作" }));
+    await user.click(screen.getByRole("menuitem", { name: "删除账号" }));
+    expect(screen.getByText(/该账号有 1 个生产单，当前不能删除/)).toBeTruthy();
     expect((screen.getByRole("button", { name: "确认删除账号" }) as HTMLButtonElement).disabled).toBe(true);
+  });
+
+  it("无生产单时要求输入账号名后才删除", async () => {
+    const user = userEvent.setup();
+    const onDeleteAccount = vi.fn().mockResolvedValue(true);
+    renderWorkspace({ accountEpisodeCount: 0, onDeleteAccount });
+    await user.click(screen.getByRole("button", { name: "账号操作" }));
+    await user.click(screen.getByRole("menuitem", { name: "删除账号" }));
+    const dialog = screen.getByRole("dialog", { name: "删除账号" });
+    const confirm = within(dialog).getByRole("button", { name: "确认删除账号" }) as HTMLButtonElement;
+    expect(confirm.disabled).toBe(true);
+    await user.type(within(dialog).getByLabelText("删除账号确认文本"), account.name);
+    expect(confirm.disabled).toBe(false);
+    await user.click(confirm);
+    expect(onDeleteAccount).toHaveBeenCalledWith(account.id, account.name);
   });
 
   it("从生产单进入时只显示定向修复表单", () => {
     renderWorkspace({ blueprintRepairContext: { blocker: { code: "b_roll_executor_unavailable", detail: "B-roll 缺少适配器", taskType: "prepare_visual_brief" }, blueprintVersionId: blueprint.id, episodeId: "episode-1" } });
     expect(screen.getByRole("heading", { name: "修复当前生产单的 B-roll" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "保存并继续当前生产单" })).toBeTruthy();
-    expect(screen.queryByRole("complementary", { name: "生产就绪检查" })).toBeNull();
+    expect(screen.queryByRole("complementary", { name: "账号默认配置检查" })).toBeNull();
   });
 
   it("按 Worker 的可修复目标打开对应配置，不读取错误文案", () => {

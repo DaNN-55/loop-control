@@ -4,6 +4,8 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const migrationNames = readdirSync(resolve("supabase/migrations"));
+const accountArchivingMigration = resolve("supabase/migrations/20260909191919_add_account_archiving.sql");
+const approvalGatesMigration = resolve("supabase/migrations/20260909203000_enforce_blueprint_approval_gates.sql");
 const stopLegacyNarrationMigration = resolve(
   "supabase/migrations/20260907170000_stop_legacy_narration_orchestration.sql",
 );
@@ -1731,5 +1733,30 @@ describe("B-roll 连接固化迁移", () => {
       "revoke all on function public.current_openchatcut_review_package(uuid, boolean)",
     );
     expect(migration).toContain("from public, anon, authenticated;");
+  });
+
+  it("账号归档可恢复、受 Owner 权限保护并阻止新建生产单", () => {
+    const migration = readFileSync(accountArchivingMigration, "utf8");
+
+    expect(migration).toContain("add column archived_at timestamptz");
+    expect(migration).toContain("membership_role is distinct from 'owner'");
+    expect(migration).toContain("create trigger prevent_episode_for_archived_account_before_insert");
+    expect(migration).toContain("where id = new.account_id and archived_at is not null");
+    expect(migration).toContain("revoke execute on function public.set_account_archived(uuid, boolean) from public, anon;");
+    expect(migration).toContain("grant execute on function public.set_account_archived(uuid, boolean) to authenticated;");
+  });
+
+  it("按生产单冻结蓝图执行五个审批关卡", () => {
+    const migration = readFileSync(approvalGatesMigration, "utf8");
+
+    expect(migration).toContain("join public.account_blueprint_versions blueprint on blueprint.id = episode.blueprint_version_id");
+    expect(migration).toContain("('draft_script', 'script', 'script_review'::public.episode_stage, 'script_approved'::public.episode_stage)");
+    expect(migration).toContain("('prepare_visual_brief', 'visual', 'visual_review'::public.episode_stage, 'visual_approved'::public.episode_stage)");
+    expect(migration).toContain("('draft_storyboard_revision', 'storyboard', 'storyboard_review'::public.episode_stage, 'storyboard_approved'::public.episode_stage)");
+    expect(migration).toContain("('generate_review_render', 'qc', 'qc_review'::public.episode_stage, 'qc_passed'::public.episode_stage)");
+    expect(migration).toContain("new.task_type = 'verify_publish_package'");
+    expect(migration).toContain("issue.severity = 'blocking'");
+    expect(migration).toContain("zz_auto_advance_disabled_approval_gate_after_task");
+    expect(migration).toContain("'approval_gate_auto_advanced'");
   });
 });

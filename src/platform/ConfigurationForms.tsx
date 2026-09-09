@@ -3,6 +3,7 @@ import type { FormEvent, ReactNode } from "react";
 import type { Database, Json } from "../lib/database.types";
 import { supabase } from "../lib/supabase";
 import { HelpTip } from "../ui/HelpTip";
+import { ConfirmationModal } from "../ui/ConfirmationModal";
 import { useDialogFocus } from "../ui/useDialogFocus";
 import type { LocalSystemStatusReport, SystemState } from "../observability/SystemStatusPanel";
 import type { WorkerPreflightResult } from "../worker/contracts";
@@ -42,6 +43,13 @@ const approvalGateOptions = [
   ["qc", "QC 审核"],
   ["publish", "发布确认"],
 ] as const;
+const approvalGateHelp: Record<(typeof approvalGateOptions)[number][0], string> = {
+  script: "AI 生成或修改脚本后暂停，等待 Owner 审核。自行上传的脚本仍需确认为主脚本，但不会因此触发 AI 脚本审核。",
+  visual: "产生新的视觉方案或视觉素材后暂停。素材来自上传还是外部 API，不改变是否需要审核。",
+  storyboard: "生成或修改分镜 JSON 后暂停，等待 Owner 审核镜头结构与制作要求。",
+  qc: "审核视频生成并通过自动校验后暂停。关闭后仅在没有阻塞问题时自动继续。",
+  publish: "发布包校验完成后保留人工发布确认。关闭只跳过额外停顿，不会自动连接或操作外部发布平台。",
+};
 const executorLabels = {
   script_writing: "脚本生成",
   visual_planning: "视觉规划",
@@ -95,8 +103,8 @@ function PromptVersionManager({ fixedCapability, isPending, onClose, onCreate, o
   </div><footer><button className="button button-secondary" onClick={onClose} type="button">返回分镜配置</button></footer></section></div>;
 }
 
-function ConfigurationSwitch({ ariaLabel, checked, disabled = false, label, onChange }: { ariaLabel?: string; checked: boolean; disabled?: boolean; label: string; onChange: (checked: boolean) => void }) {
-  return <label className="configuration-switch"><input aria-label={ariaLabel} checked={checked} disabled={disabled} onChange={(event) => onChange(event.target.checked)} type="checkbox" /><span aria-hidden="true" className="configuration-switch-track" /><span>{label}</span></label>;
+function ConfigurationSwitch({ ariaLabel, checked, disabled = false, help, label, onChange }: { ariaLabel?: string; checked: boolean; disabled?: boolean; help?: string; label: string; onChange: (checked: boolean) => void }) {
+  return <label className="configuration-switch"><input aria-label={ariaLabel} checked={checked} disabled={disabled} onChange={(event) => onChange(event.target.checked)} type="checkbox" /><span aria-hidden="true" className="configuration-switch-track" /><span>{label}{help ? <HelpTip label={label}>{help}</HelpTip> : null}</span></label>;
 }
 
 function StageConfigurationDialog({ executor, executorKey, inline = false, onClose, onManagePromptVersions, onSelectPromptVersion, onUpdateExecutor, promptVersions, readOnly }: { executor: BlueprintFormValues["executors"]["script_writing"]; executorKey: keyof BlueprintFormValues["executors"]; inline?: boolean; onClose: () => void; onManagePromptVersions?: () => void; onSelectPromptVersion: (version: PromptVersion) => void; onUpdateExecutor: (field: keyof BlueprintFormValues["executors"]["script_writing"], value: string) => void; promptVersions: PromptVersion[]; readOnly: boolean }) {
@@ -106,7 +114,7 @@ function StageConfigurationDialog({ executor, executorKey, inline = false, onClo
   const selectedValue = usesPromptHarness ? executor.harnessId : executor.promptVersion;
   const hasSelectedVersion = versions.some((version) => usesPromptHarness ? version.id === executor.harnessId : version.slug === executor.promptVersion);
   const dialogRef = useDialogFocus(!inline, onClose);
-  return <div aria-label={inline ? undefined : `${label}配置`} aria-modal={inline ? undefined : "true"} className={`stage-configuration-dialog${inline ? " is-inline" : ""}`} ref={dialogRef} role={inline ? undefined : "dialog"}><section>{inline ? null : <header><div><span>阶段配置</span><h3>{label}</h3></div><button aria-label={`关闭${label}配置`} className="icon-button" onClick={onClose} type="button">×</button></header>}<div className="stage-configuration-fields"><label><FieldLabel help={usesPromptHarness ? `${label}固定使用已注册的 Codex Adapter。` : "执行服务，例如 codex。"}>Provider</FieldLabel><input aria-label={`${label} Provider`} disabled={readOnly || usesPromptHarness} onChange={(event) => onUpdateExecutor("provider", event.target.value)} value={executor.provider} /></label>{usesPromptHarness ? <label><FieldLabel help="Adapter、Harness 与模型会一同冻结到 Worker 任务中。">Adapter</FieldLabel><input aria-label={`${label} Adapter`} readOnly value="codex" /></label> : null}<label><FieldLabel help="执行时使用的模型名称。">模型</FieldLabel><input aria-label={`${label} 模型`} disabled={readOnly} onChange={(event) => onUpdateExecutor("model", event.target.value)} value={executor.model} /></label><label><FieldLabel help={usesPromptHarness ? "从已登记 Harness 中选择执行规则。" : "从已登记版本中选择执行规则。"}>{usesPromptHarness ? "Prompt Harness" : "Prompt 版本"}</FieldLabel>{versions.length ? <select aria-label={`${label} ${usesPromptHarness ? "Prompt Harness" : "Prompt 版本"}`} disabled={readOnly} onChange={(event) => { const version = versions.find((candidate) => (usesPromptHarness ? candidate.id : candidate.slug) === event.target.value); if (version) onSelectPromptVersion(version); }} value={hasSelectedVersion ? selectedValue : "__unregistered__"}>{!hasSelectedVersion ? <option value="__unregistered__">{executor.promptVersion || "当前值"}（未登记）</option> : null}{versions.map((version) => <option key={version.id} value={usesPromptHarness ? version.id : version.slug}>{version.name} · {version.slug}</option>)}</select> : <input aria-label={`${label} Prompt 版本`} disabled={readOnly} onChange={(event) => onUpdateExecutor("promptVersion", event.target.value)} value={executor.promptVersion} />}</label></div>{usesPromptHarness && !readOnly && onManagePromptVersions ? <button aria-label="管理 Prompt 版本" className="stage-configuration-manager-action" onClick={onManagePromptVersions} type="button">管理版本</button> : null}{inline ? null : <footer><button className="button button-primary" onClick={onClose} type="button">完成</button></footer>}</section></div>;
+  return <div aria-label={inline ? undefined : `${label}配置`} aria-modal={inline ? undefined : "true"} className={`stage-configuration-dialog${inline ? " is-inline" : ""}`} ref={dialogRef} role={inline ? undefined : "dialog"}><section>{inline ? null : <header><div><span>阶段配置</span><h3>{label}</h3></div><button aria-label={`关闭${label}配置`} className="icon-button" onClick={onClose} type="button">×</button></header>}<div className="stage-configuration-fields"><label><FieldLabel help={usesPromptHarness ? `${label}固定使用已注册的 Codex Adapter。` : "执行服务，例如 codex。"}>Provider</FieldLabel><input aria-label={`${label} Provider`} disabled={readOnly || usesPromptHarness} onChange={(event) => onUpdateExecutor("provider", event.target.value)} value={executor.provider} /></label>{usesPromptHarness ? <label><FieldLabel help="Adapter、Harness 与模型会一同冻结到 Worker 任务中。">Adapter</FieldLabel><input aria-label={`${label} Adapter`} readOnly value="codex" /></label> : null}<label><FieldLabel help="执行时使用的模型名称。">模型</FieldLabel><input aria-label={`${label} 模型`} disabled={readOnly} onChange={(event) => onUpdateExecutor("model", event.target.value)} value={executor.model} /></label><label><FieldLabel help={usesPromptHarness ? "所选 Harness 会作为分镜生成 Prompt 的执行上下文，并在新生产单中冻结；以后切换版本不会改动已有生产单。" : "从已登记版本中选择执行规则。"}>{usesPromptHarness ? "Prompt Harness" : "Prompt 版本"}</FieldLabel>{versions.length ? <select aria-label={`${label} ${usesPromptHarness ? "Prompt Harness" : "Prompt 版本"}`} disabled={readOnly} onChange={(event) => { const version = versions.find((candidate) => (usesPromptHarness ? candidate.id : candidate.slug) === event.target.value); if (version) onSelectPromptVersion(version); }} value={hasSelectedVersion ? selectedValue : "__unregistered__"}>{!hasSelectedVersion ? <option value="__unregistered__">{executor.promptVersion || "当前值"}（未登记）</option> : null}{versions.map((version) => <option key={version.id} value={usesPromptHarness ? version.id : version.slug}>{version.name} · {version.slug}</option>)}</select> : <input aria-label={`${label} Prompt 版本`} disabled={readOnly} onChange={(event) => onUpdateExecutor("promptVersion", event.target.value)} value={executor.promptVersion} />}</label></div>{usesPromptHarness && !readOnly && onManagePromptVersions ? <button aria-label="管理 Prompt 版本" className="stage-configuration-manager-action" onClick={onManagePromptVersions} type="button">管理版本</button> : null}{inline ? null : <footer><button className="button button-primary" onClick={onClose} type="button">完成</button></footer>}</section></div>;
 }
 
 function MediaAdapterCard({ adapterKey, connectionVersions = [], externalConnections = [], form, localAdapterReadiness = {}, onChange, onCreateConnection, onRotateConnection, onTestConnection, onUpdateConnection, readOnly = false }: { adapterKey: MediaAdapterKey; connectionVersions?: ExternalConnectionVersion[]; externalConnections?: ExternalConnection[]; form: MediaAdapterForm; localAdapterReadiness?: LocalAdapterReadiness; onChange: (field: keyof MediaAdapterForm, value: string) => void; onCreateConnection?: (input: ExternalConnectionInput) => Promise<ExternalConnection | null>; onRotateConnection?: (input: { connectionId: string; provider: ExternalConnectionInput["provider"]; adapter: ExternalConnectionInput["adapter"]; secret: string }) => Promise<ExternalConnection | null>; onTestConnection?: (connectionId: string) => Promise<void>; onUpdateConnection?: (input: { connectionId: string; name: string; description: string }) => Promise<void>; readOnly?: boolean }) {
@@ -273,8 +281,9 @@ export function BlueprintConfigurationForm({ accountId, connectionVersions = [],
   const [storyboardConfigurationOpen, setStoryboardConfigurationOpen] = useState(false);
   const [promptVersionManagerOpen, setPromptVersionManagerOpen] = useState(false);
   const [mediaAdapterConfigurationKey, setMediaAdapterConfigurationKey] = useState<MediaAdapterKey | null>(null);
+  const [saveConfirmationOpen, setSaveConfirmationOpen] = useState(false);
   const mediaAdapterDialogRef = useDialogFocus(mediaAdapterConfigurationKey !== null, () => setMediaAdapterConfigurationKey(null));
-  useEffect(() => { setForm(initialForm()); setStoryboardConfigurationOpen(false); setPromptVersionManagerOpen(false); setMediaAdapterConfigurationKey(null); onDirtyChange?.(false); }, [initialAssetRoot, initialPolicyKey, onDirtyChange]);
+  useEffect(() => { setForm(initialForm()); setStoryboardConfigurationOpen(false); setPromptVersionManagerOpen(false); setMediaAdapterConfigurationKey(null); setSaveConfirmationOpen(false); onDirtyChange?.(false); }, [initialAssetRoot, initialPolicyKey, onDirtyChange]);
 
   function update(next: Partial<BlueprintFormValues>) {
     onDirtyChange?.(true);
@@ -335,19 +344,28 @@ export function BlueprintConfigurationForm({ accountId, connectionVersions = [],
     try { await requestLocalAssetDirectory("open"); } catch (cause) { setError(cause instanceof Error ? cause.message : "无法打开本地文件夹。"); } finally { setAssetDirectoryAction(null); }
   }
 
-  async function submit() {
+  function requestSubmit() {
     try {
       setError("");
-      if (!form.approvalGates.length) throw new Error("至少保留一个审批关卡。");
       for (const key of visibleExecutorKeys) {
         const executor = form.executors[key];
         if (!executor.provider.trim() || !executor.model.trim() || !executor.promptVersion.trim()) throw new Error(`${executorLabels[key]}执行器的 Provider、模型和 Prompt 版本不能为空。`);
         if (!executor.harnessId?.trim() || !promptVersions.some((version) => version.id === executor.harnessId && version.capability === key && version.is_active)) throw new Error("分镜规划必须选择已登记且启用的 Prompt Harness。");
       }
       const availableExternalConnectionVersionIds = connectionVersions.length ? connectionVersions.filter((version) => version.is_current && version.status === "verified" && !version.revoked_at).map((version) => version.id) : undefined;
-      validateMediaAdapters(form.mediaAdapters, { availableExternalConnectionVersionIds });
+      validateMediaAdapters(form.mediaAdapters, { availableExternalConnectionVersionIds, enabledKeys: form.enabledMediaAdapters });
+      setSaveConfirmationOpen(true);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "蓝图规则无法保存。");
+    }
+  }
+
+  async function confirmSubmit() {
+    try {
+      setError("");
       await onSave(blueprintFormToPolicy(form), true);
       onDirtyChange?.(false);
+      setSaveConfirmationOpen(false);
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "蓝图规则无法保存。");
     }
@@ -368,8 +386,8 @@ export function BlueprintConfigurationForm({ accountId, connectionVersions = [],
   return <section className="configuration-form blueprint-configuration-form">
     <p className="blueprint-editor-note">{readOnly ? "以下按表单结构显示此蓝图版本当前保存的规则。" : isEpisodeRepair ? "只修改当前生产单需要的冻结配置；已完成工作和审核记录会保留。" : technicalOnly ? "这里编辑当前蓝图的技术与运行前置声明；保存后只影响之后新建的 Episode，已有 Episode 继续使用冻结配置。" : "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。"}</p>
     {technicalOnly ? <RuntimeDependencyStatus report={systemStatus} /> : null}
-    {technicalOnly ? null : <fieldset><legend><FieldLabel help="账号级的长期方向。它会作为脚本、视觉和分镜生成的共同背景。">账号定位</FieldLabel></legend><label><textarea aria-label="账号定位" onChange={(event) => update({ positioning: event.target.value })} placeholder="例如：面向固定受众，持续制作某类短视频内容。" readOnly={readOnly} rows={3} value={form.positioning} /></label><FieldHint>描述账号面向谁、持续讲什么以及希望保持的表达方向。</FieldHint></fieldset>}
-    <fieldset><legend>{technicalOnly ? "运行前置与权限声明" : "本地资产与审批"}</legend><label><FieldLabel help="建议填写一个稳定的账号目录，例如 /Volumes/素材盘/账号目录。">资产目录</FieldLabel><div className="asset-root-control"><input aria-label="资产目录" onChange={(event) => update({ assetRoot: event.target.value })} placeholder="例如：/Volumes/素材盘/账号目录" readOnly={readOnly} value={form.assetRoot} />{localDirectoryActions ? <><button className="button button-secondary button-small" disabled={assetDirectoryAction !== null} onClick={() => void chooseAssetDirectory()} type="button">{assetDirectoryAction === "choose" ? "选择中…" : "选择文件夹"}</button><button className="button button-secondary button-small" disabled={assetDirectoryAction !== null || !form.assetRoot.trim()} onClick={() => void openAssetDirectory()} type="button">{assetDirectoryAction === "open" ? "打开中…" : "打开文件夹"}</button></> : null}</div></label><p className="blueprint-readiness" role="status">{readinessMessage}</p>{technicalOnly ? <FieldHint>Worker 所需的文件读写能力由平台按生产能力声明；资产目录只影响运行时访问范围。</FieldHint> : <div className="configuration-switch-groups"><div><span className="configuration-label"><FieldLabel help="勾选后，对应阶段会保留 Owner 的人工确认节点。至少保留一个关卡。">审批关卡</FieldLabel></span><div className="configuration-switch-list approval-gate-switches">{approvalGateOptions.map(([value, label]) => <ConfigurationSwitch checked={form.approvalGates.includes(value)} disabled={readOnly || (form.approvalGates.length === 1 && form.approvalGates.includes(value))} key={value} label={label} onChange={(checked) => update({ approvalGates: checked ? [...form.approvalGates, value] : form.approvalGates.filter((item) => item !== value) })} />)}</div></div></div>}</fieldset>
+    {technicalOnly ? null : <fieldset><legend><FieldLabel help="账号级长期创作基线，会进入视觉准备与分镜生成的 Prompt 上下文。当前主脚本由 Owner 提供，因此不会依据此字段自动生成脚本。只填写跨系列长期稳定的受众、主题和表达方向。">账号定位</FieldLabel></legend><label><textarea aria-label="账号定位" onChange={(event) => update({ positioning: event.target.value })} placeholder="例如：面向固定受众，持续制作某类短视频内容。" readOnly={readOnly} rows={3} value={form.positioning} /></label><FieldHint>描述账号面向谁、持续讲什么以及希望保持的表达方向。</FieldHint></fieldset>}
+    <fieldset><legend>{technicalOnly ? "运行前置与权限声明" : "本地资产与审批"}</legend><label><FieldLabel help="建议填写一个稳定的账号目录，例如 /Volumes/素材盘/账号目录。">资产目录</FieldLabel><div className="asset-root-control"><input aria-label="资产目录" onChange={(event) => update({ assetRoot: event.target.value })} placeholder="例如：/Volumes/素材盘/账号目录" readOnly={readOnly} value={form.assetRoot} />{localDirectoryActions ? <><button className="button button-secondary button-small" disabled={assetDirectoryAction !== null} onClick={() => void chooseAssetDirectory()} type="button">{assetDirectoryAction === "choose" ? "选择中…" : "选择文件夹"}</button><button className="button button-secondary button-small" disabled={assetDirectoryAction !== null || !form.assetRoot.trim()} onClick={() => void openAssetDirectory()} type="button">{assetDirectoryAction === "open" ? "打开中…" : "打开文件夹"}</button></> : null}</div></label><p className="blueprint-readiness" role="status">{readinessMessage}</p>{technicalOnly ? <FieldHint>Worker 所需的文件读写能力由平台按生产能力声明；资产目录只影响运行时访问范围。</FieldHint> : <div className="configuration-switch-groups"><div><span className="configuration-label"><FieldLabel help="开启后，新产物完成时会停下来等待 Owner；关闭后，校验通过便自动推进。素材来源和能力开关不会改变这里的设置。">审批关卡</FieldLabel></span><div className="configuration-switch-list approval-gate-switches">{approvalGateOptions.map(([value, label]) => <ConfigurationSwitch checked={form.approvalGates.includes(value)} disabled={readOnly} help={approvalGateHelp[value]} key={value} label={label} onChange={(checked) => update({ approvalGates: checked ? [...form.approvalGates, value] : form.approvalGates.filter((item) => item !== value) })} />)}</div></div></div>}</fieldset>
     <fieldset id="account-capabilities"><legend>生产能力</legend><FieldHint>在此启用能力并比较当前路径与配置状态；点击“配置”只打开该能力。配置未完成时，生产前检查会阻止创建生产单。</FieldHint><div aria-label="生产能力配置矩阵" className="capability-matrix" role="table"><div className="capability-matrix-row capability-matrix-heading" role="row"><span role="columnheader">能力</span><span role="columnheader">启用</span><span role="columnheader">执行路径</span><span role="columnheader">状态</span><span role="columnheader">操作</span></div>{mediaAdapterKeys.map((key) => { const enabled = enabledMediaAdapters.includes(key); const adapterForm = form.mediaAdapters[key]; const status = enabled ? mediaAdapterStatus(key, adapterForm) : "未启用"; const isConfigured = status === "已配置"; const label = mediaConfigurationLabel(key); return <div className="capability-matrix-row" key={key} role="row"><strong role="cell">{label}</strong><div role="cell"><ConfigurationSwitch ariaLabel={`启用${label}`} checked={enabled} disabled={readOnly} label={label} onChange={(checked) => toggleMediaAdapter(key, checked)} /></div><span className="capability-matrix-path" role="cell">{enabled ? mediaAdapterPathLabel(adapterForm) : "—"}</span><span className={`capability-matrix-status${isConfigured ? " is-configured" : status === "未启用" ? "" : " is-incomplete"}`} role="cell">{status}</span><div role="cell">{readOnly || !enabled ? null : <button aria-label={`配置${label}`} className="button button-secondary button-small" onClick={() => setMediaAdapterConfigurationKey(key)} type="button">配置</button>}</div></div>; })}</div><FieldHint>Provider、Adapter、连接、模型、预设和调度参数只作用于之后新建的 Episode。</FieldHint></fieldset>
     {mediaAdapterConfigurationKey ? <div aria-label={`配置${mediaConfigurationLabel(mediaAdapterConfigurationKey)}`} aria-modal="true" className="stage-configuration-dialog media-adapter-dialog" ref={mediaAdapterDialogRef} role="dialog"><section><header><div><span>生产能力配置</span><h3>配置{mediaConfigurationLabel(mediaAdapterConfigurationKey)}</h3><p>选择可用于之后新建 Episode 的执行路径；连接中的秘密不会写入蓝图。</p></div><button aria-label={`关闭${mediaConfigurationLabel(mediaAdapterConfigurationKey)}配置`} className="icon-button" onClick={() => setMediaAdapterConfigurationKey(null)} type="button">×</button></header><MediaAdapterCard adapterKey={mediaAdapterConfigurationKey} connectionVersions={connectionVersions} externalConnections={externalConnections} form={form.mediaAdapters[mediaAdapterConfigurationKey]} localAdapterReadiness={localAdapterReadiness} onChange={(field, value) => updateMediaAdapter(mediaAdapterConfigurationKey, field, value)} onCreateConnection={onCreateConnection} onRotateConnection={onRotateConnection} onTestConnection={onTestConnection} onUpdateConnection={onUpdateConnection} readOnly={readOnly} /><footer><button className="button button-primary" onClick={() => setMediaAdapterConfigurationKey(null)} type="button">完成</button></footer></section></div> : null}
     <fieldset id="account-budget"><legend>分镜规划</legend><section className="stage-configuration-summary">{visibleExecutorKeys.map((executorKey) => { const executor = form.executors[executorKey]; return <article key={executorKey}><div className="stage-configuration-summary-title"><strong>{executorLabels[executorKey]}</strong><span>新建 Episode 时冻结此选择</span></div><dl><div><dt>运行模型</dt><dd>{executor.provider} · {executor.model}</dd></div><div><dt>提示词 Harness</dt><dd>{executor.promptVersion || "未配置 Prompt"}</dd></div></dl>{readOnly ? null : <button aria-label="修改分镜规划配置" className="button button-secondary button-small" onClick={() => setStoryboardConfigurationOpen(true)} type="button">配置</button>}</article>; })}</section></fieldset>
@@ -378,7 +396,8 @@ export function BlueprintConfigurationForm({ accountId, connectionVersions = [],
     {readOnly ? <ReadOnlyAdvancedRules source={form.advancedJson} /> : null}
     {error ? <p className="form-error">{error}</p> : null}
     {technicalOnly ? <BlueprintPolicyPreview form={form} /> : null}
-    {readOnly ? null : <div className="configuration-actions"><button className="button button-secondary" disabled={isPending} onClick={reset} type="button">{technicalOnly ? "取消技术配置" : "取消编辑"}</button><button className="button button-primary" disabled={isPending} onClick={() => void submit()} type="button">{isPending ? "保存中…" : technicalOnly ? "保存技术配置" : "保存并检查"}</button></div>}
+    {readOnly ? null : <div className="configuration-actions"><button className="button button-secondary" disabled={isPending} onClick={reset} type="button">{technicalOnly ? "取消技术配置" : "取消编辑"}</button><button className="button button-primary" disabled={isPending} onClick={requestSubmit} type="button">{isPending ? "保存中…" : technicalOnly ? "保存技术配置" : "保存并检查"}</button></div>}
+    {saveConfirmationOpen ? <ConfirmationModal confirmLabel={technicalOnly ? "确认保存技术配置" : "确认保存并检查"} isPending={isPending} onCancel={() => setSaveConfirmationOpen(false)} onConfirm={confirmSubmit} pendingLabel="保存中…" title={technicalOnly ? "确认保存技术配置" : "确认保存蓝图"}><section aria-label="本次保存影响" className="configuration-impact"><strong>本次保存将影响</strong><p>{technicalOnly ? "之后新建的生产单会使用更新后的技术配置；已有生产单继续使用冻结配置。保存后只校验已开启的能力。" : `之后新建的生产单会使用当前账号定位、已开启的 ${enabledMediaAdapters.length} 项媒体能力和分镜配置；已有生产单与系列规则保持不变。保存后只校验已开启的能力。`}</p></section></ConfirmationModal> : null}
   </section>;
 }
 
@@ -441,22 +460,33 @@ export function EpisodeConfigurationRepairForm({ blocker, initialPolicy, isPendi
   </form>;
 }
 
-export function SeriesConfigurationForm({ initialName, initialRules, isEditing, isPending, onCancel, onDirtyChange, onSave }: { initialName: string; initialRules: Json; isEditing: boolean; isPending: boolean; onCancel: () => void; onDirtyChange?: (dirty: boolean) => void; onSave: (name: string, rules: Json) => Promise<void> }) {
+export function SeriesConfigurationForm({ currentVersion = 0, initialName, initialRules, isEditing, isPending, onCancel, onDirtyChange, onSave }: { currentVersion?: number; initialName: string; initialRules: Json; isEditing: boolean; isPending: boolean; onCancel: () => void; onDirtyChange?: (dirty: boolean) => void; onSave: (name: string, rules: Json) => Promise<void> }) {
   const [name, setName] = useState(initialName);
   const [form, setForm] = useState<SeriesFormValues>(() => seriesRulesToForm(initialRules));
   const [error, setError] = useState("");
-  useEffect(() => { setName(initialName); setForm(seriesRulesToForm(initialRules)); onDirtyChange?.(false); }, [initialName, initialRules, onDirtyChange]);
+  const [saveConfirmationOpen, setSaveConfirmationOpen] = useState(false);
+  useEffect(() => { setName(initialName); setForm(seriesRulesToForm(initialRules)); setSaveConfirmationOpen(false); onDirtyChange?.(false); }, [initialName, initialRules, onDirtyChange]);
 
-  async function submit(event: FormEvent<HTMLFormElement>) {
+  function requestSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     try {
       setError("");
       if (!name.trim()) throw new Error("请填写系列名称。");
-      if (isEditing && name.trim() !== initialName) throw new Error("系列版本编辑不能修改系列名称；请保留原名称后再保存规则。 ");
       const rules = seriesFormToRules(form);
       validateSeriesRules(rules);
+      setSaveConfirmationOpen(true);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "系列规则无法保存。");
+    }
+  }
+
+  async function confirmSubmit() {
+    try {
+      setError("");
+      const rules = seriesFormToRules(form);
       await onSave(name.trim(), rules);
       onDirtyChange?.(false);
+      setSaveConfirmationOpen(false);
       if (!isEditing) { setName(""); setForm(seriesRulesToForm({})); }
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "系列规则无法保存。");
@@ -471,22 +501,23 @@ export function SeriesConfigurationForm({ initialName, initialRules, isEditing, 
     onCancel();
   }
 
-  return <form className="configuration-form series-configuration-form" onChangeCapture={() => onDirtyChange?.(true)} onSubmit={(event) => void submit(event)}>
-    <header><div><h2>{isEditing ? initialName : "新建系列"}</h2><p>{isEditing ? "保存当前系列配置；已有生产单继续使用创建时的内部快照。" : "创建系列后，可以在新建生产单时固定系列基线。"}</p></div></header>
-    <label><FieldLabel help="系列名称用于生产单筛选和运营识别。">系列名称</FieldLabel><input aria-label="系列名称" onChange={(event) => setName(event.target.value)} placeholder="例如：城市观察短片" required value={name} /></label>
-    <fieldset><legend><FieldLabel help="系列规则会作为固定基线传给脚本、视觉和分镜任务；新建生产单会冻结当前系列版本。">系列基线</FieldLabel></legend>
-      <label><FieldLabel help="这个系列具体讲什么，与账号定位相比更聚焦。">系列定位</FieldLabel><textarea aria-label="系列定位" onChange={(event) => setForm((current) => ({ ...current, positioning: event.target.value }))} placeholder="例如：围绕固定主题制作短视频内容。" rows={2} value={form.positioning} /></label>
-      <label><FieldLabel help="固定画幅、语言、旁白等制作格式；每集时长由当次分镜决定。">内容格式</FieldLabel><input aria-label="内容格式" onChange={(event) => setForm((current) => ({ ...current, format: event.target.value }))} placeholder="例如：9:16 竖屏，目标语言旁白" value={form.format} /></label>
+  return <form className="configuration-form series-configuration-form" onChangeCapture={() => onDirtyChange?.(true)} onSubmit={requestSubmit}>
+    <header><div><h2>{isEditing ? `${initialName} · 当前 v${currentVersion}` : "新建系列"}</h2><p>{isEditing ? `保存会创建 v${currentVersion + 1}；已有生产单继续使用创建时冻结的系列版本。` : "创建系列后，可以在新建生产单时固定系列基线。"}</p></div></header>
+    <label><FieldLabel help={isEditing ? "系列名称是稳定标识，创建后不能在版本编辑中修改；当前只更新规则版本。" : "系列名称用于生产单筛选和运营识别，创建后不能在版本编辑中修改。"}>系列名称{isEditing ? "（创建后固定）" : ""}</FieldLabel><input aria-label="系列名称" onChange={(event) => setName(event.target.value)} placeholder="例如：城市观察短片" readOnly={isEditing} required value={name} /></label>
+    <fieldset><legend><FieldLabel help="系列规则会作为固定基线传给视觉准备和分镜任务；新建生产单会冻结当前系列版本。当前主脚本由 Owner 提供，不会依据这些字段自动生成。">系列基线</FieldLabel></legend>
+      <label><FieldLabel help="这个系列具体讲什么，与账号定位相比更聚焦。没有系列级额外要求时保持为空，不要填写“没有具体要求”；空值不会向下游增加约束。">系列定位</FieldLabel><textarea aria-label="系列定位" onChange={(event) => setForm((current) => ({ ...current, positioning: event.target.value }))} placeholder="例如：围绕固定主题制作短视频内容。" rows={2} value={form.positioning} /></label>
+      <label><FieldLabel help="固定画幅、语言、旁白等制作格式；每集时长由当次分镜决定。没有额外要求时保持为空，不要填写“没有具体要求”。">内容格式</FieldLabel><input aria-label="内容格式" onChange={(event) => setForm((current) => ({ ...current, format: event.target.value }))} placeholder="例如：9:16 竖屏，目标语言旁白" value={form.format} /></label>
       <div className="series-baseline-grid">
-        <label><FieldLabel help="主要角色、身份、性格、关系和不能随意改变的设定。">角色设定</FieldLabel><textarea aria-label="角色设定" onChange={(event) => setForm((current) => ({ ...current, characters: event.target.value }))} placeholder="例如：主持人的身份、性格和固定道具。" rows={3} value={form.characters} /></label>
-        <label><FieldLabel help="固定出现的国家、城市、建筑、自然环境或时代背景。">地点设定</FieldLabel><textarea aria-label="地点设定" onChange={(event) => setForm((current) => ({ ...current, locations: event.target.value }))} placeholder="例如：城市街区、室内工作台和夜间环境。" rows={3} value={form.locations} /></label>
-        <label><FieldLabel help="画面质感、色彩、镜头语言和视觉禁忌。">视觉风格</FieldLabel><textarea aria-label="视觉风格" onChange={(event) => setForm((current) => ({ ...current, visualStyle: event.target.value }))} placeholder="例如：写实纪实、低饱和、潮湿夜景、手持镜头感。" rows={3} value={form.visualStyle} /></label>
-        <label><FieldLabel help="每集故事的推荐展开顺序，会影响脚本和分镜结构。">叙事结构</FieldLabel><textarea aria-label="叙事结构" onChange={(event) => setForm((current) => ({ ...current, narrativeStructure: event.target.value }))} placeholder="例如：3秒钩子 → 地点背景 → 异常事件 → 人物选择 → 留白结尾。" rows={3} value={form.narrativeStructure} /></label>
+        <label><FieldLabel help="主要角色、身份、性格、关系和不能随意改变的设定。没有额外要求时保持为空，不要填写“没有具体要求”。">角色设定</FieldLabel><textarea aria-label="角色设定" onChange={(event) => setForm((current) => ({ ...current, characters: event.target.value }))} placeholder="例如：主持人的身份、性格和固定道具。" rows={3} value={form.characters} /></label>
+        <label><FieldLabel help="固定出现的国家、城市、建筑、自然环境或时代背景。没有额外要求时保持为空，不要填写“没有具体要求”。">地点设定</FieldLabel><textarea aria-label="地点设定" onChange={(event) => setForm((current) => ({ ...current, locations: event.target.value }))} placeholder="例如：城市街区、室内工作台和夜间环境。" rows={3} value={form.locations} /></label>
+        <label><FieldLabel help="画面质感、色彩、镜头语言和视觉禁忌。没有额外要求时保持为空，不要填写“没有具体要求”。">视觉风格</FieldLabel><textarea aria-label="视觉风格" onChange={(event) => setForm((current) => ({ ...current, visualStyle: event.target.value }))} placeholder="例如：写实纪实、低饱和、潮湿夜景、手持镜头感。" rows={3} value={form.visualStyle} /></label>
+        <label><FieldLabel help="每集故事的推荐展开顺序，会影响视觉准备和分镜结构。没有额外要求时保持为空，不要填写“没有具体要求”。">叙事结构</FieldLabel><textarea aria-label="叙事结构" onChange={(event) => setForm((current) => ({ ...current, narrativeStructure: event.target.value }))} placeholder="例如：3秒钩子 → 地点背景 → 异常事件 → 人物选择 → 留白结尾。" rows={3} value={form.narrativeStructure} /></label>
       </div>
-      <label><FieldLabel help="明确不能出现的事实、表达、人物、素材或画面。">限制与禁用内容</FieldLabel><textarea aria-label="限制与禁用内容" onChange={(event) => setForm((current) => ({ ...current, restrictions: event.target.value }))} placeholder="例如：不虚构真实新闻；不使用儿童受害情节；不出现现代品牌标识。" rows={3} value={form.restrictions} /></label>
-      <FieldHint>这些内容会影响后续脚本、视觉规划和分镜生成；只填写这个系列稳定、可复用的规则。</FieldHint>
+      <label><FieldLabel help="明确不能出现的事实、表达、人物、素材或画面。没有额外限制时保持为空，不要填写“没有具体要求”。">限制与禁用内容</FieldLabel><textarea aria-label="限制与禁用内容" onChange={(event) => setForm((current) => ({ ...current, restrictions: event.target.value }))} placeholder="例如：不虚构真实新闻；不使用儿童受害情节；不出现现代品牌标识。" rows={3} value={form.restrictions} /></label>
+      <FieldHint>保存的非空字段会进入后续视觉准备和分镜上下文，并随生产单冻结。空字段表示不增加系列级约束；当前主脚本仍由 Owner 提供。</FieldHint>
     </fieldset>
     {error ? <p className="form-error">{error}</p> : null}
-    <div className="configuration-actions"><button className="button button-secondary" onClick={reset} type="button">{isEditing ? "取消编辑" : "取消"}</button><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "保存中…" : isEditing ? "保存系列配置" : "创建系列"}</button></div>
+    <div className="configuration-actions"><button className="button button-secondary" onClick={reset} type="button">{isEditing ? "取消编辑" : "取消"}</button><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "保存中…" : isEditing ? `保存为 v${currentVersion + 1}` : "创建系列"}</button></div>
+    {saveConfirmationOpen ? <ConfirmationModal confirmLabel={isEditing ? `确认保存为 v${currentVersion + 1}` : "确认创建系列"} isPending={isPending} onCancel={() => setSaveConfirmationOpen(false)} onConfirm={confirmSubmit} pendingLabel="保存中…" title={isEditing ? "确认保存系列版本" : "确认创建系列"}><section aria-label="本次保存影响" className="configuration-impact"><strong>本次保存将影响</strong><p>{isEditing ? `创建系列 v${currentVersion + 1}，供之后新建生产单选择；已有生产单继续使用冻结版本。` : "创建系列 v1，之后可在新建生产单时选择；不会改动已有生产单。"}</p></section></ConfirmationModal> : null}
   </form>;
 }

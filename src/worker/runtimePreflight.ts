@@ -229,8 +229,8 @@ export function runtimeCommandArguments(command: string): string[] {
   return command === "ffmpeg" ? ["-version"] : ["--version"];
 }
 
-export function runtimeCommandInvocation(command: string, argumentsList: string[]): { command: string; argumentsList: string[] } {
-  if (command === "openchatcut") return { command: process.env.OPENCHATCUT_NODE ?? process.execPath, argumentsList: ["scripts/openchatcut-render.mjs", ...argumentsList] };
+export function runtimeCommandInvocation(command: string, argumentsList: string[], options: { openChatCutNode?: string } = {}): { command: string; argumentsList: string[] } {
+  if (command === "openchatcut") return { command: options.openChatCutNode ?? process.env.OPENCHATCUT_NODE ?? process.execPath, argumentsList: ["scripts/openchatcut-render.mjs", ...argumentsList] };
   return { command, argumentsList };
 }
 

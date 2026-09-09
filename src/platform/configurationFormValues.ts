@@ -195,8 +195,8 @@ function isUuid(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
 }
 
-export function validateMediaAdapters(mediaAdapters: Record<MediaAdapterKey, MediaAdapterForm>, options: { availableExternalConnectionVersionIds?: readonly string[] } = {}): void {
-  for (const key of mediaAdapterKeys) validateMediaAdapter(key, mediaAdapters[key], options);
+export function validateMediaAdapters(mediaAdapters: Record<MediaAdapterKey, MediaAdapterForm>, options: { availableExternalConnectionVersionIds?: readonly string[]; enabledKeys?: readonly MediaAdapterKey[] } = {}): void {
+  for (const key of options.enabledKeys ?? mediaAdapterKeys) validateMediaAdapter(key, mediaAdapters[key], options);
 }
 
 export function mediaAdapterStatus(key: MediaAdapterKey, form: MediaAdapterForm, options: { availableExternalConnectionVersionIds?: readonly string[] } = {}): "未配置" | "待补齐" | "已配置" {
@@ -253,7 +253,7 @@ export function blueprintPolicyToForm(policy: Json): BlueprintFormValues {
   return {
     positioning: stringValue(value.positioning),
     assetRoot: stringValue(value.asset_root),
-    approvalGates: stringArray(value.approval_gates).length ? stringArray(value.approval_gates) : ["script", "visual", "storyboard", "qc", "publish"],
+    approvalGates: Array.isArray(value.approval_gates) ? stringArray(value.approval_gates) : ["script", "visual", "storyboard", "qc", "publish"],
     allowedTools: fallbackMediaAdapterTools,
     enabledMediaAdapters,
     budgets: { scriptWritingCents: "0", visualPlanningCents: "0", storyboardPlanningCents: "0" },
