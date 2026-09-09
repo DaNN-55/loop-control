@@ -1,5 +1,6 @@
 {
-  "name": "Loop — 任务派发",
+  "id": "Cy50xRCgT2cj4WT4",
+  "name": "Loop Control — 任务派发",
   "nodes": [
     {
       "parameters": {
@@ -7,13 +8,13 @@
           "interval": [
             {
               "field": "minutes",
-              "minutesInterval": 5
+              "minutesInterval": 15
             }
           ]
         }
       },
       "id": "3e07fc52-a02c-45d0-b5c0-b6e4bf32e893",
-      "name": "每 5 分钟检查任务",
+      "name": "定时检查任务",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
@@ -36,7 +37,7 @@
     }
   ],
   "connections": {
-    "每 5 分钟检查任务": {
+    "定时检查任务": {
       "main": [
         [
           {

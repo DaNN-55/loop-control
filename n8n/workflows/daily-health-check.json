@@ -1,12 +1,14 @@
 {
-  "name": "Loop — 每日健康检查",
+  "id": "BhEqokY531BBg64d",
+  "name": "Loop Control — 每日健康检查",
   "nodes": [
     {
       "parameters": {
         "rule": {
           "interval": [
             {
-              "field": "hours",
+              "field": "days",
+              "daysInterval": 1,
               "triggerAtHour": 9,
               "triggerAtMinute": 0
             }

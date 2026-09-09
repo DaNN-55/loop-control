@@ -1,21 +1,13 @@
 {
-  "name": "Loop — 状态变更提醒",
+  "id": "BxXyfBbkS49QMTEv",
+  "name": "Loop Control — 状态变更提醒",
   "nodes": [
     {
-      "parameters": {
-        "rule": {
-          "interval": [
-            {
-              "field": "minutes",
-              "minutesInterval": 5
-            }
-          ]
-        }
-      },
+      "parameters": {},
       "id": "85014878-8cf6-4b73-9c42-a1c06de10d5e",
-      "name": "每 5 分钟检查状态",
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.2,
+      "name": "接收事件提醒任务",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
       "position": [
         0,
         0
@@ -23,7 +15,7 @@
     },
     {
       "parameters": {
-        "command": "\"$LOOP_PROJECT_ROOT/n8n/run-orchestrator.sh\" notify-state-changes"
+        "command": "\"$LOOP_PROJECT_ROOT/n8n/run-orchestrator.sh\" notify"
       },
       "id": "a3a10df4-1572-4b8f-91ce-7dc307154b6c",
       "name": "发送状态变更提醒",
@@ -36,7 +28,7 @@
     }
   ],
   "connections": {
-    "每 5 分钟检查状态": {
+    "接收事件提醒任务": {
       "main": [
         [
           {

@@ -1,5 +1,6 @@
 {
-  "name": "Loop — 审核提醒",
+  "id": "fFvOzmKS4OAMTcjd",
+  "name": "Loop Control — 审核提醒",
   "nodes": [
     {
       "parameters": {
@@ -7,13 +8,13 @@
           "interval": [
             {
               "field": "minutes",
-              "minutesInterval": 5
+              "minutesInterval": 30
             }
           ]
         }
       },
       "id": "29d9f563-ef47-4f81-acd1-139dc1ea1a5c",
-      "name": "每 5 分钟检查审核",
+      "name": "定时检查事件",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
@@ -23,12 +24,17 @@
     },
     {
       "parameters": {
-        "command": "\"$LOOP_PROJECT_ROOT/n8n/run-orchestrator.sh\" notify-approvals"
+        "workflowId": {
+          "__rl": true,
+          "value": "BxXyfBbkS49QMTEv",
+          "mode": "list",
+          "cachedResultName": "Loop Control — 状态变更提醒"
+        }
       },
       "id": "d4e582b1-536b-4813-8db0-6b57947cccb0",
-      "name": "发送审核提醒",
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
+      "name": "转交统一事件提醒",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
       "position": [
         260,
         0
@@ -36,11 +42,11 @@
     }
   ],
   "connections": {
-    "每 5 分钟检查审核": {
+    "定时检查事件": {
       "main": [
         [
           {
-            "node": "发送审核提醒",
+            "node": "转交统一事件提醒",
             "type": "main",
             "index": 0
           }

@@ -4,7 +4,7 @@ import { chmod, mkdir, readFile, rename, stat, writeFile } from "node:fs/promise
 import { join } from "node:path";
 import { formatSnapshotFilename, snapshotTables, type SnapshotTable } from "./backupPolicy.js";
 import { collectNotifications, type AuditEvent, type NotificationCursor } from "./notificationPolicy.js";
-import { dispatchProvidedScriptWork } from "./providedScriptDispatch.js";
+import { dispatchProvidedScriptWork, runWithConcurrency } from "./providedScriptDispatch.js";
 
 const execFileAsync = promisify(execFile);
 const projectRoot = requiredEnvironment("LOOP_PROJECT_ROOT");
@@ -12,23 +12,23 @@ const stateDirectory = process.env.LOOP_N8N_STATE_DIR ?? join(projectRoot, "n8n"
 const backupDirectory = join(projectRoot, "n8n", "runtime", "backups");
 const mode = process.argv[2];
 const scopedEpisodeId = readEpisodeIdArgument(process.argv.slice(3));
+const workerConcurrency = positiveIntegerEnvironment("LOOP_WORKER_CONCURRENCY", process.env.CODEX_WORKER_CAPACITY ?? "2");
 
 try {
   switch (mode) {
     case "dispatch":
       await dispatchTask();
       break;
+    case "notify":
     case "notify-approvals":
-      await notifyFor("approval");
-      break;
     case "notify-state-changes":
-      await notifyFor("state");
+      await notify();
       break;
     case "health":
       await runHealthCheck();
       break;
     default:
-      throw new Error("用法：orchestrator:run <dispatch|notify-approvals|notify-state-changes|health>");
+      throw new Error("用法：orchestrator:run <dispatch|notify|health>");
   }
 } catch (error) {
   process.stderr.write(`${errorMessage(error)}\n`);
@@ -38,27 +38,83 @@ try {
 async function dispatchTask(): Promise<void> {
   if (scopedEpisodeId) {
     const plannedTasks = await planScopedMediaTasks(scopedEpisodeId);
-    const workers: unknown[] = [];
-    for (const plannedTask of plannedTasks) {
-      const workerResult = await runCommand("npm", ["run", "worker:run", "--", "--task-id", plannedTask.id], projectRoot);
-      workers.push(parseLastJsonLine(workerResult.stdout));
-    }
+    const workers = await runPlannedWorkers(plannedTasks);
     const productionReadyEpisodes = await orchestrateTasks("advance_production_ready_episodes", { p_episode_id: scopedEpisodeId });
     const preRenderPackages = await orchestrateTasks("create_pre_render_review_packages_for_episode", { p_episode_id: scopedEpisodeId });
     process.stdout.write(`${JSON.stringify({ mode: "dispatch", episodeId: scopedEpisodeId, plannedTasks: plannedTasks.length, workers, productionReadyEpisodes: productionReadyEpisodes.length, preRenderReviewPackages: preRenderPackages.length })}\n`);
     return;
   }
 
+  const pendingWork = await findPendingGlobalDispatchWork();
+  if (!pendingWork.hasWork) {
+    process.stdout.write(JSON.stringify({ mode: "dispatch", skipped: "idle" }) + "\n");
+    return;
+  }
+  if (pendingWork.qcFinalRenderOnly) {
+    const plannedTasks = await orchestrateTasks("orchestrate_final_render_tasks");
+    const workers = await runPlannedWorkers(plannedTasks);
+    process.stdout.write(JSON.stringify({ mode: "dispatch", plannedTasks: plannedTasks.length, workers, ...(plannedTasks.length === 0 ? { skipped: "idle" } : {}) }) + "\n");
+    return;
+  }
+
   const result = await dispatchProvidedScriptWork({
     planTasks: planWorkerTasks,
-    runWorker: async () => {
-      const workerResult = await runCommand("npm", ["run", "worker:run"], projectRoot);
+    concurrency: workerConcurrency,
+    prepareWorkers: async () => { await runCommand("npm", ["run", "worker:build"], projectRoot); },
+    ...(pendingWork.hasClaimableTask ? { runExistingWorker: async () => {
+      const workerResult = await runCommand("npm", ["run", "worker:execute"], projectRoot);
+      return parseLastJsonLine(workerResult.stdout);
+    } } : {}),
+    runWorker: async (plannedTask) => {
+      const workerResult = await runCommand("npm", ["run", "worker:execute", "--", "--task-id", plannedTask.id], projectRoot);
       return parseLastJsonLine(workerResult.stdout);
     },
   });
   const productionReadyEpisodes = await orchestrateTasks("advance_production_ready_episodes");
   const preRenderPackages = await orchestrateTasks("create_pre_render_review_packages");
   process.stdout.write(JSON.stringify({ mode: "dispatch", ...result, productionReadyEpisodes: productionReadyEpisodes.length, preRenderReviewPackages: preRenderPackages.length }) + "\n");
+}
+
+async function findPendingGlobalDispatchWork(): Promise<{ hasWork: boolean; hasClaimableTask: boolean; qcFinalRenderOnly: boolean }> {
+  if (await hasSupabaseRows("tasks", {
+    status: "eq.ready",
+  })) return { hasWork: true, hasClaimableTask: true, qcFinalRenderOnly: false };
+
+  // Keep the 30-minute boundary and null behavior aligned with claim_next_worker_task.
+  if (await hasSupabaseRows("tasks", {
+    status: "eq.running",
+    claimed_at: `lt.${new Date(Date.now() - 30 * 60 * 1000).toISOString()}`,
+  })) return { hasWork: true, hasClaimableTask: true, qcFinalRenderOnly: false };
+
+  if (await hasSupabaseRows("episodes", {
+    stage: "in.(script_approved,visual_approved,storyboard_approved,production_ready,render_ready)",
+  })) return { hasWork: true, hasClaimableTask: false, qcFinalRenderOnly: false };
+
+  if (await hasSupabaseRows("episodes", { stage: "eq.qc_passed" })) return { hasWork: true, hasClaimableTask: false, qcFinalRenderOnly: true };
+
+  return { hasWork: false, hasClaimableTask: false, qcFinalRenderOnly: false };
+}
+
+async function hasSupabaseRows(table: "episodes" | "tasks", filters: Record<string, string>): Promise<boolean> {
+  const { url, serviceRoleKey } = supabaseCredentials();
+  const endpoint = new URL(`/rest/v1/${table}`, url);
+  endpoint.searchParams.set("select", "id");
+  endpoint.searchParams.set("limit", "1");
+  for (const [key, value] of Object.entries(filters)) endpoint.searchParams.set(key, value);
+  const response = await fetch(endpoint, { headers: { apikey: serviceRoleKey, Authorization: `Bearer ${serviceRoleKey}` } });
+  if (!response.ok) throw new Error(`检查待派发任务失败：Supabase 返回 HTTP ${response.status}`);
+  const payload: unknown = await response.json();
+  if (!Array.isArray(payload)) throw new Error("检查待派发任务失败：Supabase 返回格式无效。");
+  return payload.length > 0;
+}
+
+async function runPlannedWorkers(plannedTasks: Array<{ id: string }>): Promise<unknown[]> {
+  if (plannedTasks.length === 0) return [];
+  await runCommand("npm", ["run", "worker:build"], projectRoot);
+  return runWithConcurrency(plannedTasks, workerConcurrency, async (task) => {
+    const workerResult = await runCommand("npm", ["run", "worker:execute", "--", "--task-id", task.id], projectRoot);
+    return parseLastJsonLine(workerResult.stdout);
+  });
 }
 
 async function planScopedMediaTasks(episodeId: string): Promise<Array<{ id: string }>> {
@@ -113,22 +169,21 @@ function readEpisodeIdArgument(args: string[]): string | null {
   return args[1].toLowerCase();
 }
 
-async function notifyFor(kind: "approval" | "state"): Promise<void> {
-  const cursorFile = join(stateDirectory, `${kind}-cursor.json`);
+async function notify(): Promise<void> {
+  const cursorFile = join(stateDirectory, "notifications-cursor.json");
   const cursor = await readCursor(cursorFile);
   const events = await fetchAuditEvents(cursor);
   const selection = collectNotifications(events, cursor);
-  const notifications = kind === "approval"
-    ? selection.approvalStages.map((stage) => ({ title: "需要人工审批", body: `有 Episode 进入 ${stage}，请在控制台处理。` }))
-    : [
-      ...selection.stateStages.map((stage) => ({ title: "Episode 状态已变更", body: `有 Episode 进入 ${stage}，请在控制台查看。` })),
-      ...selection.blockerDetails.map((detail) => ({ title: "媒体任务已阻塞", body: detail })),
-    ];
+  const notifications = [
+    ...selection.approvalStages.map((stage) => ({ title: "需要人工审批", body: `有 Episode 进入 ${stage}，请在控制台处理。` })),
+    ...selection.stateStages.map((stage) => ({ title: "Episode 状态已变更", body: `有 Episode 进入 ${stage}，请在控制台查看。` })),
+    ...selection.blockerDetails.map((detail) => ({ title: "媒体任务已阻塞", body: detail })),
+  ];
 
   for (const notification of notifications) await showNotification(notification.title, notification.body);
 
   if (selection.nextCursor) await writeCursor(cursorFile, selection.nextCursor);
-  process.stdout.write(JSON.stringify({ mode: `notify-${kind}`, notifications: notifications.length, cursor: selection.nextCursor }) + "\n");
+  process.stdout.write(JSON.stringify({ mode: "notify", notifications: notifications.length, cursor: selection.nextCursor }) + "\n");
 }
 
 async function runHealthCheck(): Promise<void> {
@@ -287,6 +342,12 @@ function parseLastJsonLine(output: string): unknown {
 function requiredEnvironment(name: string): string {
   const value = process.env[name]?.trim();
   if (!value) throw new Error(`${name} 未配置。`);
+  return value;
+}
+
+function positiveIntegerEnvironment(name: string, fallback: string): number {
+  const value = Number(process.env[name] ?? fallback);
+  if (!Number.isSafeInteger(value) || value <= 0) throw new Error(`${name} must be a positive integer.`);
   return value;
 }
 
