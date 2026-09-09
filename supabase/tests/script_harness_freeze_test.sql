@@ -2,9 +2,9 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
-select plan(12);
+select plan(13);
 
-\ir ../migrations/20260822130625_freeze_script_harness.sql
+select has_function('public', 'freeze_prompt_harness', array[]::text[], 'the current migrated Prompt Harness function exists');
 
 insert into auth.users (id, email)
 values ('53000000-0000-4000-8000-000000000001', 'issue-53-harness@test.invalid');

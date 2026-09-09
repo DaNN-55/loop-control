@@ -80,7 +80,7 @@ select throws_ok(
       true
     )$$,
   '22023',
-  'B-roll blueprint must reference this Owner’s verified Pexels connection version',
+  'b_roll blueprint must reference this Owner’s current verified pexels connection version',
   'another Owner cannot select the first Owner’s connection version'
 );
 

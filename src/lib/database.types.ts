@@ -515,6 +515,9 @@ export type Database = {
         Row: {
           archived_at?: string | null
           audio_source_mode?: "source" | "tts"
+          tts_language_code?: string | null
+          tts_speaking_rate?: number | null
+          tts_voice?: string | null
           account_id: string
           blueprint_version_id: string
           created_at: string
@@ -530,6 +533,9 @@ export type Database = {
         Insert: {
           archived_at?: string | null
           audio_source_mode?: "source" | "tts"
+          tts_language_code?: string | null
+          tts_speaking_rate?: number | null
+          tts_voice?: string | null
           account_id: string
           blueprint_version_id: string
           created_at?: string
@@ -545,6 +551,9 @@ export type Database = {
         Update: {
           archived_at?: string | null
           audio_source_mode?: "source" | "tts"
+          tts_language_code?: string | null
+          tts_speaking_rate?: number | null
+          tts_voice?: string | null
           account_id?: string
           blueprint_version_id?: string
           created_at?: string
@@ -882,7 +891,12 @@ export type Database = {
           tts_actual_duration_seconds?: number | null
           tts_error?: string | null
           tts_language_code?: string | null
+          tts_override_speaking_rate?: number | null
+          tts_override_voice?: string | null
           tts_text?: string | null
+          tts_text_confirmation_fingerprint?: string | null
+          tts_text_confirmed_at?: string | null
+          tts_text_confirmed_by?: string | null
           tts_speaking_rate: number | null
           tts_voice: string | null
           updated_at: string
@@ -929,7 +943,12 @@ export type Database = {
           tts_actual_duration_seconds?: number | null
           tts_error?: string | null
           tts_language_code?: string | null
+          tts_override_speaking_rate?: number | null
+          tts_override_voice?: string | null
           tts_text?: string | null
+          tts_text_confirmation_fingerprint?: string | null
+          tts_text_confirmed_at?: string | null
+          tts_text_confirmed_by?: string | null
           tts_speaking_rate?: number | null
           tts_voice?: string | null
           updated_at?: string
@@ -976,7 +995,12 @@ export type Database = {
           tts_actual_duration_seconds?: number | null
           tts_error?: string | null
           tts_language_code?: string | null
+          tts_override_speaking_rate?: number | null
+          tts_override_voice?: string | null
           tts_text?: string | null
+          tts_text_confirmation_fingerprint?: string | null
+          tts_text_confirmed_at?: string | null
+          tts_text_confirmed_by?: string | null
           tts_speaking_rate?: number | null
           tts_voice?: string | null
           updated_at?: string
@@ -1739,6 +1763,11 @@ export type Database = {
         Returns: Database["public"]["Tables"]["shot_preparation_drafts"]["Row"]
         SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
       }
+      save_episode_tts_settings: {
+        Args: { p_episode_id: string; p_tts_language_code: string; p_tts_speaking_rate: number; p_tts_voice: string }
+        Returns: Database["public"]["Tables"]["episodes"]["Row"]
+        SetofOptions: { from: "*"; to: "episodes"; isOneToOne: true; isSetofReturn: false }
+      }
       save_shot_workbench_draft: {
         Args: { p_audio_mode: "none" | "source" | "tts"; p_clip_segments: Json; p_episode_id: string; p_material_revision_id: string; p_review_package_id: string; p_shot_id: string; p_subtitle_text: string; p_subtitles_enabled: boolean; p_tts_speaking_rate: number | null; p_tts_text: string | null; p_tts_voice: string | null }
         Returns: Database["public"]["Tables"]["shot_preparation_drafts"]["Row"]
@@ -1746,6 +1775,11 @@ export type Database = {
       }
       freeze_shot_preparation_batch: {
         Args: { p_episode_id: string; p_review_package_id: string }
+        Returns: Database["public"]["Tables"]["tasks"]["Row"][]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: false; isSetofReturn: true }
+      }
+      generate_shot_review_video: {
+        Args: { p_accept_duration_risk?: boolean; p_episode_id: string; p_review_package_id: string; p_risk_reason?: string | null; p_studio_project: Json }
         Returns: Database["public"]["Tables"]["tasks"]["Row"][]
         SetofOptions: { from: "*"; to: "tasks"; isOneToOne: false; isSetofReturn: true }
       }
@@ -1758,6 +1792,21 @@ export type Database = {
         Args: { p_episode_id: string; p_review_package_id: string; p_retry?: boolean; p_shot_id: string }
         Returns: Database["public"]["Tables"]["tasks"]["Row"]
         SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
+      generate_confirmed_shot_tts_batch: {
+        Args: { p_episode_id: string; p_review_package_id: string }
+        Returns: Json
+        SetofOptions: { from: "*"; to: "Json"; isOneToOne: true; isSetofReturn: false }
+      }
+      set_shot_tts_confirmation: {
+        Args: { p_confirmed: boolean; p_episode_id: string; p_review_package_id: string; p_shot_id: string }
+        Returns: Database["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
+      }
+      save_shot_tts_override: {
+        Args: { p_episode_id: string; p_review_package_id: string; p_shot_id: string; p_tts_speaking_rate: number | null; p_tts_voice: string | null }
+        Returns: Database["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
       }
       save_shot_clip_draft: {
         Args: { p_clip_end_seconds: number | null; p_clip_start_seconds: number | null; p_episode_id: string; p_material_revision_id: string | null; p_review_package_id: string; p_shot_id: string }

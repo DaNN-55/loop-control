@@ -4,6 +4,10 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const migrationNames = readdirSync(resolve("supabase/migrations"));
+const stopLegacyNarrationMigration = resolve(
+  "supabase/migrations/20260907170000_stop_legacy_narration_orchestration.sql",
+);
+const replaceHyperframesMigration = resolve("supabase/migrations/20260908090000_replace_hyperframes_with_openchatcut.sql");
 const technicalConfigMigration = resolve(
   "supabase/migrations/20260822121000_use_blueprint_b_roll_technical_config.sql",
 );
@@ -151,6 +155,9 @@ const shotStructureRevisionMigration = resolve(
 const confirmedStudioSnapshotMigration = resolve(
   "supabase/migrations/20260903150000_auto_create_confirmed_studio_snapshot.sql",
 );
+const visualManifestApprovalRestoreMigration = resolve(
+  "supabase/migrations/20260906142420_restore_visual_asset_manifest_approval.sql",
+);
 const frozenMultiSegmentShotDraftMigration = resolve(
   "supabase/migrations/20260904100000_freeze_multi_segment_shot_drafts.sql",
 );
@@ -163,6 +170,99 @@ const shotTtsConnectionOwnershipFixMigration = resolve(
 const shotTtsVariableConflictFixMigration = resolve(
   "supabase/migrations/20260904130000_fix_shot_tts_variable_conflict.sql",
 );
+const shotTtsTrackSyncHardeningMigration = resolve(
+  "supabase/migrations/20260904150000_harden_shot_tts_track_sync.sql",
+);
+const shotTtsEpisodeSettingsMigration = resolve(
+  "supabase/migrations/20260904160000_move_tts_settings_to_episode.sql",
+);
+const shotTtsConfirmationMigration = resolve(
+  "supabase/migrations/20260904170000_simplify_shot_tts_confirmation.sql",
+);
+const perShotTtsGenerationMigration = resolve(
+  "supabase/migrations/20260907190000_simplify_per_shot_tts_generation.sql",
+);
+const batchShotTtsMigration = resolve(
+  "supabase/migrations/20260904180000_batch_confirmed_shot_tts.sql",
+);
+const batchShotTtsConnectionOwnershipFixMigration = resolve(
+  "supabase/migrations/20260905190000_fix_batch_tts_connection_ownership.sql",
+);
+const completedShotClipReplacementMigration = resolve(
+  "supabase/migrations/20260905200000_fix_completed_shot_clip_replacement.sql",
+);
+const shotWorkbenchInputFingerprintMigration = resolve(
+  "supabase/migrations/20260905210000_fix_shot_workbench_input_fingerprint.sql",
+);
+const shotReviewDraftUpdateAliasMigration = resolve(
+  "supabase/migrations/20260905220000_fix_shot_review_draft_update_alias.sql",
+);
+const workerLeaseHeartbeatMigration = resolve(
+  "supabase/migrations/20260905280000_refresh_worker_task_lease.sql",
+);
+const frozenStudioCompositionMigration = resolve(
+  "supabase/migrations/20260905300000_freeze_studio_composition_adjustments.sql",
+);
+const reviewRenderSeriesBaselineVersionMigration = resolve(
+  "supabase/migrations/20260905230000_fix_review_render_series_baseline_version.sql",
+);
+const reviewRenderSeriesBaselineNullMigration = resolve(
+  "supabase/migrations/20260905240000_allow_review_render_without_series_baseline.sql",
+);
+const malformedReviewRenderRecoveryMigration = resolve(
+  "supabase/migrations/20260905250000_recover_malformed_review_render_task.sql",
+);
+const durationDecisionReviewRenderRecoveryMigration = resolve(
+  "supabase/migrations/20260905260000_recover_duration_decision_review_render_task.sql",
+);
+const assetRootReviewRenderRecoveryMigration = resolve(
+  "supabase/migrations/20260905270000_requeue_asset_root_review_render_task.sql",
+);
+const storyboardRevisionHardeningMigration = resolve(
+  "supabase/migrations/20260905140000_harden_storyboard_structure_revision.sql",
+);
+const storyboardRevisionAudioTrackIdempotencyMigration = resolve(
+  "supabase/migrations/20260905170000_fix_storyboard_revision_audio_track_idempotency.sql",
+);
+const workbenchStructureRevisionMigration = resolve(
+  "supabase/migrations/20260907162000_keep_structure_revisions_in_workbench.sql",
+);
+const editableShotClipGenerationMigration = resolve(
+  "supabase/migrations/20260905160000_restore_editable_shot_clip_generation.sql",
+);
+const episodeTtsOwnershipMigration = resolve(
+  "supabase/migrations/20260905150000_finalize_episode_tts_ownership.sql",
+);
+const durationDecisionMigration = resolve(
+  "supabase/migrations/20260905100000_unify_shot_duration_decision.sql",
+);
+const durationSearchPathMigration = resolve(
+  "supabase/migrations/20260905180000_fix_shot_duration_search_path.sql",
+);
+const editableShotWorkbenchMigration = resolve(
+  "supabase/migrations/20260905110000_restore_editable_shot_workbench.sql",
+);
+const shotReviewVideoMigration = resolve(
+  "supabase/migrations/20260905120000_generate_shot_review_video.sql",
+);
+const shotReviewVideoActionMigration = resolve(
+  "supabase/migrations/20260907180000_enable_shot_review_video_action.sql",
+);
+const disabledSubtitleReviewVideoMigration = resolve(
+  "supabase/migrations/20260907200000_allow_disabled_subtitles_in_review_video.sql",
+);
+const disabledSubtitleShotSnapshotMigration = resolve(
+  "supabase/migrations/20260907210000_allow_disabled_subtitles_in_shot_snapshot.sql",
+);
+const disabledSubtitleReviewRenderRetryMigration = resolve(
+  "supabase/migrations/20260907220000_retry_disabled_subtitle_review_render.sql",
+);
+const enforcedShotAudioModesMigration = resolve(
+  "supabase/migrations/20260905130000_enforce_shot_audio_modes.sql",
+);
+const workerRuntimeConstraintsMigration = resolve(
+  "supabase/migrations/20260904140000_platform_worker_runtime_constraints.sql",
+);
 const deployedMigrations = {
   "20260822095959_guard_legacy_b_roll_history.sql": "b36e63037ca12c2785d7bbb9f2fe8596f31377de734dcf8b96cb03af23613c9b",
   "20260822100000_freeze_b_roll_adapter_connection.sql": "f38575ba3b5dcb7814f230c5a48a52c6a5ac37811868d00bdb0f7eb375b2a51d",
@@ -172,7 +272,341 @@ const deployedMigrations = {
   "20260822223500_normalize_audio_tool_permissions.sql": "f258ccb1126c76083ffce532f022b8123476eb31a2392a7bd75de220bf27352b",
 };
 
+type RequiredMigrationPatch = {
+  signature: string;
+  source: string;
+  replacement: string;
+  label: string;
+};
+
+const extractFunctionDefinition = (sql: string, functionName: string) => {
+  const marker = new RegExp(`create(?: or replace)? function public\\.${functionName}\\b`, "g");
+  const matches = [...sql.matchAll(marker)];
+  const start = matches.at(-1)?.index;
+  if (start == null) throw new Error(`Function definition not found: ${functionName}`);
+  const bodyStart = sql.indexOf("as $$", start);
+  const bodyEnd = sql.indexOf("$$;", bodyStart);
+  if (bodyStart < 0 || bodyEnd < 0) throw new Error(`Function body not found: ${functionName}`);
+  return sql.slice(start, bodyEnd + 3);
+};
+
+const splitSqlArguments = (value: string) => {
+  const args: string[] = [];
+  let start = 0;
+  let depth = 0;
+  let inString = false;
+  for (let index = 0; index < value.length; index += 1) {
+    const character = value[index];
+    if (inString) {
+      if (character === "'" && value[index + 1] === "'") index += 1;
+      else if (character === "'") inString = false;
+      continue;
+    }
+    if (character === "'") {
+      inString = true;
+    } else if (character === "(") {
+      depth += 1;
+    } else if (character === ")") {
+      if (depth === 0) {
+        args.push(value.slice(start, index).trim());
+        return args;
+      }
+      depth -= 1;
+    } else if (character === "," && depth === 0) {
+      args.push(value.slice(start, index).trim());
+      start = index + 1;
+    }
+  }
+  throw new Error("Unclosed SQL function call");
+};
+
+type ShotGenerationReplayState = {
+  drafts: Array<{ id: string; frozen: boolean; sourceMaterialRevisionId: string; clipSegments: Array<{ startSeconds: number; endSeconds: number }> }>;
+  packages: Array<{ id: string; studioProject: Record<string, unknown> }>;
+  tasks: Array<{ id: string; studioProject: Record<string, unknown> }>;
+  revisions: Array<{ revision: number; studioProject: Record<string, unknown> }>;
+};
+
+function replayShotGeneration(state: ShotGenerationReplayState, input: { acceptDurationRisk: boolean; isOwner: boolean; riskCount: number; riskReason: string; studioProject: Record<string, unknown> }): ShotGenerationReplayState {
+  if (!input.isOwner) throw new Error("Owner membership is required");
+  if (!input.studioProject.relative_path || !input.studioProject.sha256 || Number(input.studioProject.file_size) < 1) throw new Error("Invalid frozen Studio project");
+  if ((input.riskCount > 0) !== input.acceptDurationRisk || (input.acceptDurationRisk && !input.riskReason.trim()) || (input.riskCount === 0 && input.acceptDurationRisk)) throw new Error("Invalid duration risk decision");
+  return {
+    drafts: state.drafts.map((draft) => ({ ...draft, frozen: true })),
+    packages: [...state.packages, { id: `package-${state.packages.length + 1}`, studioProject: structuredClone(input.studioProject) }],
+    tasks: [...state.tasks, { id: `task-${state.tasks.length + 1}`, studioProject: structuredClone(input.studioProject) }],
+    revisions: [...state.revisions, { revision: state.revisions.length + 1, studioProject: structuredClone(input.studioProject) }],
+  };
+}
+
+const decodeSqlTextExpression = (expression: string) => {
+  let value = "";
+  for (let index = 0; index < expression.length;) {
+    if (/\s/.test(expression[index])) {
+      index += 1;
+      continue;
+    }
+    if (expression.startsWith("||", index)) {
+      index += 2;
+      continue;
+    }
+    if (expression.startsWith("chr(10)", index)) {
+      value += "\n";
+      index += "chr(10)".length;
+      continue;
+    }
+    if (expression[index] !== "'") throw new Error(`Unsupported SQL text expression: ${expression}`);
+    index += 1;
+    while (index < expression.length) {
+      if (expression[index] === "'" && expression[index + 1] === "'") {
+        value += "'";
+        index += 2;
+      } else if (expression[index] === "'") {
+        index += 1;
+        break;
+      } else {
+        value += expression[index];
+        index += 1;
+      }
+    }
+  }
+  return value;
+};
+
+const extractRequiredMigrationPatches = (migration: string): RequiredMigrationPatch[] => {
+  const start = migration.indexOf("do $$");
+  const end = migration.indexOf("\ndrop function public._required_text_replace", start);
+  const body = migration.slice(start, end < 0 ? migration.length : end);
+  const patches: RequiredMigrationPatch[] = [];
+  let cursor = 0;
+  while (true) {
+    const callMarker = "public._required_text_replace(definition,";
+    const markerIndex = body.indexOf(callMarker, cursor);
+    if (markerIndex < 0) break;
+    const callStart = body.indexOf("(", markerIndex);
+    const args = splitSqlArguments(body.slice(callStart + 1));
+    const selector = [...body.slice(0, markerIndex).matchAll(/pg_get_functiondef\('public\.([^']+)'::regprocedure\)/g)].at(-1);
+    if (!selector) throw new Error("Patch target selector not found");
+    patches.push({
+      signature: selector[1],
+      source: decodeSqlTextExpression(args[1]),
+      replacement: decodeSqlTextExpression(args[2]),
+      label: decodeSqlTextExpression(args[3]),
+    });
+    cursor = markerIndex + callMarker.length;
+  }
+  return patches;
+};
+
+const extractLiteralReplacePatches = (migration: string, signature: string): RequiredMigrationPatch[] => {
+  const start = migration.indexOf(`pg_get_functiondef('public.${signature}'::regprocedure)`);
+  const end = migration.indexOf("if patched = definition", start);
+  if (start < 0 || end < 0) throw new Error(`Literal patch block not found: ${signature}`);
+  const body = migration.slice(start, end);
+  const patches: RequiredMigrationPatch[] = [];
+  let cursor = 0;
+  while (true) {
+    const markerIndex = body.indexOf("replace(", cursor);
+    if (markerIndex < 0) break;
+    const args = splitSqlArguments(body.slice(markerIndex + "replace(".length));
+    if (args.length === 3 && args[1].trim().startsWith("'") && args[2].trim().startsWith("'")) {
+      patches.push({ signature, source: decodeSqlTextExpression(args[1]), replacement: decodeSqlTextExpression(args[2]), label: `${signature} literal replace` });
+    }
+    cursor = markerIndex + "replace(".length;
+  }
+  return patches;
+};
+
+const extractDollarReplacePatches = (migration: string, signature: string, endMarker = "if patched_definition = definition"): RequiredMigrationPatch[] => {
+  const start = migration.indexOf(`pg_get_functiondef('public.${signature}'::regprocedure)`);
+  const end = migration.indexOf(endMarker, start);
+  if (start < 0 || end < 0) throw new Error(`Dollar patch block not found: ${signature}`);
+  const body = migration.slice(start, end);
+  return [...body.matchAll(/replace\(\w+,\s*\$old\$([\s\S]*?)\$old\$,\s*\$new\$([\s\S]*?)\$new\$\)/g)].map((match) => ({ signature, source: match[1], replacement: match[2], label: `${signature} dollar replace` }));
+};
+
+const applyMigrationPatches = (definition: string, patches: RequiredMigrationPatch[]) => patches.reduce((current, patch) => {
+  expect(current, patch.label).toContain(patch.source);
+  return current.replace(patch.source, patch.replacement);
+}, definition);
+
+const applyMigrationPatchesExactly = (definition: string, patches: RequiredMigrationPatch[]) => patches.reduce((current, patch) => {
+  const matches = current.split(patch.source).length - 1;
+  expect(matches, patch.label).toBe(1);
+  return current.replace(patch.source, patch.replacement);
+}, definition);
+
+const updateSetBlock = (definition: string) => {
+  const updateStart = [...definition.matchAll(/update public\.shot_preparation_drafts\s+set/g)].at(-1)?.index ?? -1;
+  const start = Math.max(definition.lastIndexOf("do update set"), updateStart);
+  return definition.slice(start, definition.indexOf("returning *", start));
+};
+
+const assignmentCount = (definition: string, column: string) => (updateSetBlock(definition).match(new RegExp(`\\n\\s*${column}\\s*=`, "g")) ?? []).length;
+
 describe("B-roll 连接固化迁移", () => {
+  it("修复审核渲染任务冻结系列基准缺少版本并安全重放", () => {
+    const migration = readFileSync(reviewRenderSeriesBaselineVersionMigration, "utf8");
+    const previous = extractFunctionDefinition(readFileSync(shotReviewVideoMigration, "utf8"), "generate_shot_review_video");
+    const oldDeclaration = "  series_rules jsonb;";
+    const newDeclaration = "  series_rules jsonb;\n  series_version_number integer;";
+    const oldSelect = "  select coalesce(version.rules, '{}'::jsonb) into series_rules\n  from public.series_versions version\n  where version.id = current_episode.series_version_id\n    and version.account_id = current_episode.account_id;";
+    const newSelect = "  select version.version, coalesce(version.rules, '{}'::jsonb) into series_version_number, series_rules\n  from public.series_versions version\n  where version.id = current_episode.series_version_id\n    and version.account_id = current_episode.account_id;";
+    const oldBaseline = "    'series_baseline', jsonb_build_object('version_id', current_episode.series_version_id, 'rules', series_rules),";
+    const newBaseline = "    'series_baseline', jsonb_build_object('version_id', current_episode.series_version_id, 'version', series_version_number, 'rules', series_rules),";
+
+    expect(migration).toContain("review render series baseline version patch has unknown or partial state");
+    expect(migration).toContain("review render series baseline version patch produced an invalid state");
+    expect(previous).toContain(oldDeclaration);
+    expect(previous).toContain(oldSelect);
+    expect(previous).toContain(oldBaseline);
+
+    const patched = previous.replace(oldDeclaration, newDeclaration).replace(oldSelect, newSelect).replace(oldBaseline, newBaseline);
+    expect(patched).toContain(newDeclaration);
+    expect(patched).toContain(newSelect);
+    expect(patched).toContain(newBaseline);
+    expect(patched).not.toContain(oldSelect);
+    expect(patched).not.toContain(oldBaseline);
+  });
+
+  it("无系列版本时把审核渲染系列基准写成可选 null", () => {
+    const migration = readFileSync(reviewRenderSeriesBaselineNullMigration, "utf8");
+    expect(migration).toContain("current_episode.series_version_id is null then null");
+    expect(migration).toContain("review render null series baseline patch has unknown or partial state");
+    expect(migration).toContain("review render null series baseline patch produced an invalid state");
+  });
+
+  it("只恢复缺少系列版本的 blocked 审核渲染任务并保留旧证据", () => {
+    const migration = readFileSync(malformedReviewRenderRecoveryMigration, "utf8");
+    expect(migration).toContain("task.task_type = 'generate_review_render'");
+    expect(migration).toContain("task.status = 'blocked'");
+    expect(migration).toContain("not (task.input_snapshot -> 'series_baseline' ? 'version')");
+    expect(migration).toContain("blocker ->> 'code' = 'task_package_invalid'");
+    expect(migration).toContain("recovered_from_task_id");
+    expect(migration).toContain("'version', series_row.version");
+    expect(migration).toContain("'composition_revision_id', new_composition.id");
+    expect(migration).toContain("'project_revision', next_revision");
+    expect(migration).toContain("'relative_path', render_path");
+    expect(migration).toContain("malformed review render task has an unexpected series version");
+    expect(migration).toContain("malformed review render task has no matching composition revision");
+    expect(migration).not.toContain("update public.tasks");
+  });
+
+  it("只恢复精确时长判定 blocker 的有效系列审核渲染任务", () => {
+    const migration = readFileSync(durationDecisionReviewRenderRecoveryMigration, "utf8");
+    expect(migration).toContain("jsonb_typeof(task.input_snapshot #> '{series_baseline,version}') = 'number'");
+    expect(migration).toContain("blocker ->> 'code' = 'task_package_invalid'");
+    expect(migration).toContain("blocker ->> 'detail' = '镜头时长判定格式无效。'");
+    expect(migration).toContain("jsonb_typeof(task.last_result -> 'blockers') = 'array'");
+    expect(migration).toContain("jsonb_typeof(task.input_snapshot #> '{review_render,project_revision}') = 'number'");
+    expect(migration).toContain("source_composition.revision_number <> (source_task.input_snapshot #>> '{review_render,project_revision}')::integer");
+    expect(migration).toContain("duration-invalid review render task has inconsistent frozen paths");
+    expect(migration).toContain("recovered_from_task_id");
+    expect(migration).toContain("duration-invalid review render task has an unexpected series version");
+    expect(migration).toContain("create or replace function public.recover_duration_decision_review_render_tasks()");
+    expect(migration).toContain("revoke all on function public.recover_duration_decision_review_render_tasks() from public, anon, authenticated");
+    expect(migration).not.toContain("update public.tasks");
+  });
+
+  it("只把有匹配 blocked task_run 的 asset root 预检任务重新排队", () => {
+    const migration = readFileSync(assetRootReviewRenderRecoveryMigration, "utf8");
+    expect(migration).toContain("task.task_type = 'generate_review_render'");
+    expect(migration).toContain("task.status = 'blocked'::public.task_status");
+    expect(migration).toContain("task.invalidated_at is null");
+    expect(migration).toContain("episode.stage = 'render_ready'::public.episode_stage");
+    expect(migration).toContain("jsonb_typeof(task.last_result -> 'blockers') = 'array'");
+    expect(migration).toContain("blocker ->> 'code' = 'asset_root_unavailable'");
+    expect(migration).toContain("blocker ->> 'check' = 'asset_root'");
+    expect(migration).toContain("blocker ->> 'phase' = 'preflight'");
+    expect(migration).toContain("task_run.task_id = task.id");
+    expect(migration).toContain("task_run.attempt = task.attempt - 1");
+    expect(migration).toContain("task_run.status = 'blocked'::public.task_status");
+    expect(migration).toContain("status = 'ready'::public.task_status");
+    expect(migration).toContain("max_attempts = task.max_attempts + 1");
+    expect(migration).toContain("claimed_at = null");
+    expect(migration).toContain("completed_at = null");
+    expect(migration).not.toContain("set attempt =");
+    expect(migration).not.toContain("task_run.attempt = task.attempt\n");
+    expect(migration).not.toContain("update public.task_runs");
+    expect(migration).not.toContain("input_snapshot =");
+    expect(migration).not.toContain("last_result =");
+  });
+
+  it("修复审核视频冻结更新的 PL/pgSQL 变量别名冲突并安全重放", () => {
+    const migration = readFileSync(shotReviewDraftUpdateAliasMigration, "utf8");
+    const source = "update public.shot_preparation_drafts draft\n  set frozen_at = now(),";
+    const replacement = "update public.shot_preparation_drafts as target\n  set frozen_at = now(),";
+    const previous = extractFunctionDefinition(readFileSync(shotReviewVideoMigration, "utf8"), "generate_shot_review_video");
+
+    expect(migration).toContain("pg_get_functiondef('public.generate_shot_review_video(uuid, uuid, jsonb, boolean, text)'::regprocedure)");
+    expect(migration).toContain("draft update alias patch target has unknown state");
+    expect(migration).toContain("has_old_update := position(old_update_block in definition) > 0;");
+    expect(migration).toContain("has_old_where := position(old_where_block in definition) > 0;");
+    expect(migration).toContain("if has_old_update = has_new_update or has_old_where = has_new_where then");
+    expect(migration).toContain("draft update alias patch target has partial state");
+    expect(migration).toContain("draft update alias patch produced an invalid state");
+    expect(previous).toContain(source);
+    const patched = previous.replace(source, replacement).replace(
+      "  where draft.episode_id = p_episode_id\n    and draft.review_package_id = p_review_package_id;",
+      "  where target.episode_id = p_episode_id\n    and target.review_package_id = p_review_package_id;",
+    );
+    expect(patched).toContain(replacement);
+    expect(patched).toContain("where target.episode_id = p_episode_id");
+    expect(patched).not.toContain("where draft.episode_id = p_episode_id");
+    expect(migration).toContain("elsif not has_old_update and not has_old_where and has_new_update and has_new_where then");
+
+    const patchDecision = (oldUpdate: boolean, newUpdate: boolean, oldWhere: boolean, newWhere: boolean) => {
+      if (oldUpdate === newUpdate || oldWhere === newWhere) return "unknown";
+      if (oldUpdate && oldWhere) return "patch";
+      if (!oldUpdate && !oldWhere && newUpdate && newWhere) return "skip";
+      return "partial";
+    };
+    expect(patchDecision(true, false, true, false)).toBe("patch");
+    expect(patchDecision(false, true, false, true)).toBe("skip");
+    expect(patchDecision(true, false, false, true)).toBe("partial");
+  });
+
+  it("补齐镜头工作台输入指纹并安全重放函数补丁", () => {
+    const migration = readFileSync(shotWorkbenchInputFingerprintMigration, "utf8");
+    const source = "set selected_material_revision_id = p_material_revision_id,\n      clip_segments = p_clip_segments,";
+    const replacement = "set input_fingerprint = md5(selected_shot::text),\n      selected_material_revision_id = p_material_revision_id,\n      clip_segments = p_clip_segments,";
+
+    expect(migration).toContain("set input_fingerprint = md5(shot.value::text)");
+    expect(migration).toContain("draft.input_fingerprint is null");
+    expect(migration).toContain("if position('set selected_material_revision_id = p_material_revision_id,");
+    expect(migration).toContain("elsif position('set input_fingerprint = md5(selected_shot::text),");
+    expect(migration).toContain("input fingerprint patch target has unknown state");
+    const previous = extractFunctionDefinition(readFileSync(frozenMultiSegmentShotDraftMigration, "utf8"), "save_shot_workbench_draft");
+    expect(previous).toContain(source);
+    const patched = previous.replace(source, replacement);
+    expect(patched).toContain(replacement);
+    expect(patched).not.toContain(source);
+    expect(migration).not.toContain("if patched = definition then");
+  });
+
+  it("保留历史冻结记录，同时允许当前分镜工作台继续编辑", () => {
+    const migration = readFileSync(editableShotWorkbenchMigration, "utf8");
+
+    expect(migration).toContain("current_stage is distinct from 'storyboard_approved'");
+    expect(migration).toContain("save_shot_workbench_draft");
+    expect(migration).toContain("save_shot_tts_override");
+    expect(migration).toContain("episode.stage = ''storyboard_approved''");
+    expect(migration).not.toContain("drop table");
+  });
+
+  it("可重放历史 TTS 覆盖函数的可编辑守卫补丁", () => {
+    const previous = extractFunctionDefinition(readFileSync(shotTtsConfirmationMigration, "utf8"), "save_shot_tts_override");
+    const restore = readFileSync(editableShotWorkbenchMigration, "utf8");
+    const frozenGuard = "if draft.frozen_at is not null then raise exception 'Frozen shot drafts cannot be edited' using errcode = '22023'; end if;";
+    const editableGuard = "if draft.frozen_at is not null and not exists (select 1 from public.episodes episode where episode.id = p_episode_id and episode.stage = 'storyboard_approved') then raise exception 'Frozen shot drafts cannot be edited' using errcode = '22023'; end if;";
+    const replayed = previous.replace(frozenGuard, editableGuard);
+
+    expect(previous).toContain(frozenGuard);
+    expect(restore).toContain("pg_get_functiondef('public.save_shot_tts_override(uuid, uuid, text, text, numeric)'::regprocedure)");
+    expect(replayed).toContain(editableGuard);
+    expect(replayed).not.toContain(frozenGuard);
+  });
+
   it("只在统一确认时冻结多片段草稿并创建镜头任务", () => {
     const migration = readFileSync(frozenMultiSegmentShotDraftMigration, "utf8");
 
@@ -212,6 +646,15 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("'input_fingerprint', draft.input_fingerprint");
   });
 
+  it("视觉审核允许冻结后的资产清单通过，同时保留后续生产门禁", () => {
+    const migration = readFileSync(visualManifestApprovalRestoreMigration, "utf8");
+
+    expect(migration).toContain("artifact_type in ('visual_brief', 'visual_asset_manifest')");
+    expect(migration).toContain("when 'production_ready'::public.episode_stage then exists");
+    expect(migration).toContain("public.has_current_shot_preparation_snapshot");
+    expect(migration).toContain("security definer set search_path = ''");
+  });
+
   it("将镜头结构操作冻结为幂等的分镜审核修订", () => {
     const migration = readFileSync(shotStructureRevisionMigration, "utf8");
 
@@ -224,6 +667,49 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("previous.current_video_artifact_id");
     expect(migration).toContain("'id', 'shot-' || gen_random_uuid()::text");
     expect(migration).toContain("on conflict (episode_id, review_package_id, shot_id) do nothing");
+  });
+
+  it("为分镜结构修订规范化幂等键并只复用有效历史", () => {
+    const migration = readFileSync(storyboardRevisionHardeningMigration, "utf8");
+
+    expect(migration).toContain("canonical_storyboard_structure_revision_operation");
+    expect(migration).toContain("The storyboard review package is stale");
+    expect(migration).toContain("substr(md5(request_hash || ':split:' || ordinality::text), 1, 24)");
+    expect(migration).toContain("indexes[1] + position - 1");
+    expect(migration).toContain("task.status = 'completed'");
+    expect(migration).toContain("task.invalidated_at is null");
+    expect(migration).toContain("frozen_at = null");
+    expect(migration).toContain("zz_reuse_shot_preparation_history_after_storyboard_approval");
+  });
+
+  it("不依赖已移除的跨审核包音轨唯一约束", () => {
+    const migration = readFileSync(storyboardRevisionAudioTrackIdempotencyMigration, "utf8");
+
+    expect(migration).toContain("create or replace function public.seed_shot_preparation_drafts_after_storyboard_approval()");
+    expect(migration).toContain("public.reuse_shot_preparation_history_after_storyboard_approval()");
+    expect(migration).toContain("and existing.source_review_package_id = package_record.id");
+    expect(migration).toContain("select episode_record.id, old_track.source_task_id");
+    expect(migration).toContain("position(new_audio_insert in definition) = 0");
+    expect(migration).toContain("if patched <> definition then execute patched");
+  });
+
+  it("确定性结构修订留在分镜工作台，并只复用安全的镜头配置", () => {
+    const migration = readFileSync(workbenchStructureRevisionMigration, "utf8");
+
+    expect(migration).toContain("A storyboard structure revision is already running");
+    expect(migration).toContain("Storyboard structure revision base package is stale");
+    expect(migration).toContain("Owner applied a deterministic storyboard structure revision.");
+    expect(migration).toContain("storyboard_structure_revision_applied");
+    expect(migration).not.toContain("update public.episodes set stage = 'storyboard_review'");
+    expect(migration).toContain("preserve_duration_inputs := operation_kind = 'change_duration'");
+    expect(migration).toContain("preserve_type_inputs := operation_kind = 'change_type'");
+    expect(migration).toContain("confirmation_status = case when preserve_duration_inputs or preserve_type_inputs then 'pending'");
+    expect(migration).toContain("where (not preserve_type_inputs or previous.audio_mode = 'tts')");
+    expect(migration).toContain("warning_decision = case when preserve_duration_inputs or preserve_type_inputs then 'not_required'");
+    expect(migration).toContain("selected_material_revision_id = case when preserve_type_inputs then null");
+    expect(migration).toContain("storyboard_structure_revision_backfilled");
+    expect(migration).toContain("episode.id = '92b3067d-ced9-4e85-bc44-1968fa83695a'::uuid");
+    expect(migration).toContain("Recovered completed deterministic storyboard structure revision in the workbench.");
   });
 
   it("发布输入登记允许 JPG、PNG 和 WebP 封面", () => {
@@ -666,6 +1152,49 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("pg_get_functiondef('public.generate_shot_tts(uuid,uuid,text,boolean)'::regprocedure)");
   });
 
+  it("逐镜头 TTS 只接受已完成且匹配当前镜头的音轨", () => {
+    const migration = readFileSync(shotTtsTrackSyncHardeningMigration, "utf8");
+
+    expect(migration).toContain("if not found then return new; end if;");
+    expect(migration).toContain("source_task.status <> 'completed'");
+    expect(migration).toContain("new.track_kind <> 'narration'");
+    expect(migration).toContain("and episode_id = source_task.episode_id");
+    expect(migration).toContain("and audio_mode = 'tts'");
+    expect(migration).toContain("new.source_review_package_id is not distinct from review_package_id");
+    expect(migration).toContain("new.cue_id is not distinct from shot_id");
+  });
+
+  it("逐镜头 TTS 以已确认正文驱动生成，并保留历史音轨与单镜头覆盖", () => {
+    const migration = readFileSync(shotTtsConfirmationMigration, "utf8");
+
+    expect(migration).toContain("tts_text_confirmation_fingerprint");
+    expect(migration).toContain("tts_text_confirmed_by");
+    expect(migration).toContain("set_shot_tts_confirmation");
+    expect(migration).toContain("save_shot_tts_override");
+    expect(migration).toContain("tts_override_voice");
+    expect(migration).toContain("reset_shot_tts_confirmation_after_text_change");
+    expect(migration).toContain("Episode TTS settings must preserve shot overrides");
+    expect(migration).toContain("create or replace function public.assert_current_storyboard_shot");
+    expect(migration).toContain("package.episode_id = p_episode_id");
+    expect(migration).toContain("package.stage = 'storyboard_review'");
+    expect(migration).toContain("package.invalidated_at is null");
+    expect(migration).toContain("approval.stage = 'storyboard_approved'");
+    expect(migration).toContain("approval.decision = 'approved'");
+    expect(migration).toContain("The shot does not belong to the approved storyboard");
+    expect(migration.match(/perform public\.assert_current_storyboard_shot\(/g)).toHaveLength(2);
+    expect(migration).toContain("口播内容必须先保存并确认");
+    expect(migration).toContain("current_audio_track_id = null");
+    expect(migration).toContain("Shot TTS override changed.");
+  });
+
+  it("逐镜头 TTS 可直接使用已保存正文生成，同时保留原有输入校验", () => {
+    const migration = readFileSync(perShotTtsGenerationMigration, "utf8");
+
+    expect(migration).toContain("pg_get_functiondef('public.generate_shot_tts(uuid,uuid,text,boolean)'::regprocedure)");
+    expect(migration).toContain("tts_text_confirmation_fingerprint");
+    expect(migration).toContain("replace(definition, confirmation_guard, '')");
+  });
+
   it("逐镜头裁剪只在显式请求时创建幂等 Worker 任务，并保留旧片段", () => {
     const migration = readFileSync(shotClipMigration, "utf8");
 
@@ -680,6 +1209,20 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("where id = draft_id and pending_video_task_id = new.id");
   });
 
+  it("裁剪生成允许计划时长差异，并完整替代旧的单段生成定义", () => {
+    const migration = readFileSync(editableShotClipGenerationMigration, "utf8");
+    const segments = [{ start_seconds: 0, end_seconds: 5.8 }];
+    const totalDuration = segments.reduce((total, segment) => total + segment.end_seconds - segment.start_seconds, 0);
+
+    expect(totalDuration).toBe(5.8);
+    expect(Math.abs(totalDuration - 5)).toBeGreaterThan(0.05);
+    expect(migration).toContain("create or replace function public.generate_shot_clip");
+    expect(migration).toContain("jsonb_array_elements(draft.clip_segments)");
+    expect(migration).toContain("'target_duration_seconds', total_duration");
+    expect(migration).not.toContain("abs(total_duration - (selected_shot ->> 'durationSeconds')::numeric) > 0.05");
+    expect(migration).not.toContain("Clip duration must match the approved storyboard duration");
+  });
+
   it("逐镜头原声与无口播模式保留可追溯版本，并在当前片段变化后失效", () => {
     const migration = readFileSync(shotAudioModesMigration, "utf8");
 
@@ -691,6 +1234,63 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("create trigger invalidate_shot_source_audio_after_clip_change");
     expect(migration).toContain("status = 'superseded'");
     expect(migration).toContain("source_audio_error");
+  });
+
+  it("最新镜头音频模式不创建原声任务，并清除旧音频引用", () => {
+    const migration = readFileSync(enforcedShotAudioModesMigration, "utf8");
+
+    expect(migration).toContain("p_audio_mode in (''none'', ''source'') then ''ready''");
+    expect(migration).toContain("excluded.audio_mode in (''none'', ''source'')");
+    expect(migration).toContain("audio_mode in (''none'', ''source'') then ''ready''");
+    expect(migration).toContain("source_audio_duration_seconds = null");
+    expect(migration).toContain("pending_source_audio_task_id = null");
+    expect(migration).toContain("source_audio_error = null");
+    expect(migration).not.toContain("update public.shot_preparation_drafts");
+    expect(migration).not.toContain("delete from public.audio_tracks");
+    expect(migration).not.toContain("delete from public.tasks");
+    expect(migration).toContain("revoke all on function public.generate_shot_source_audio");
+  });
+
+  it("source 模式的三端时长判定都只使用当前片段时长", () => {
+    const migration = readFileSync(enforcedShotAudioModesMigration, "utf8");
+    const durationMigration = readFileSync(durationDecisionMigration, "utf8");
+    const reviewVideoMigration = readFileSync(shotReviewVideoMigration, "utf8");
+    const app = readFileSync(resolve("src/App.tsx"), "utf8");
+
+    expect(migration).toContain("draft.audio_mode = ''source'' then draft.video_duration_seconds");
+    expect(migration).toContain("elsif draft.audio_mode = ''source'' then");
+    expect(migration).toContain("audio_duration := video_duration;");
+    expect(durationMigration).toContain("draft.audio_mode = ''source'' then coalesce(draft.source_audio_duration_seconds, draft.video_duration_seconds)");
+    expect(reviewVideoMigration).toContain("draft.audio_mode = 'source' then coalesce(draft.source_audio_duration_seconds, draft.video_duration_seconds)");
+    expect(app).toContain('draft.audio_mode === "source" ? draft.video_duration_seconds ?? null');
+    expect(app).toContain('audioMode === "source" ? (segmentsValid ? totalClipDuration : null)');
+  });
+
+  it("051300 回放后每个 current/source 字段只保留一个 UPDATE 赋值", () => {
+    const enforcedMigration = readFileSync(enforcedShotAudioModesMigration, "utf8");
+    const shotAudioModes = readFileSync(shotAudioModesMigration, "utf8");
+    const ttsSettings = readFileSync(shotTtsEpisodeSettingsMigration, "utf8");
+    const ttsConfirmation = readFileSync(shotTtsConfirmationMigration, "utf8");
+    const editableWorkbench = readFileSync(editableShotWorkbenchMigration, "utf8");
+
+    let saveDefinition = extractFunctionDefinition(shotAudioModes, "save_shot_preparation_draft");
+    const saveSignature = "save_shot_preparation_draft(uuid,uuid,text,text,text,boolean,text,text,numeric)";
+    saveDefinition = applyMigrationPatches(saveDefinition, extractDollarReplacePatches(ttsSettings, saveSignature));
+    saveDefinition = applyMigrationPatches(saveDefinition, extractLiteralReplacePatches(ttsConfirmation, saveSignature));
+    saveDefinition = applyMigrationPatches(saveDefinition, extractLiteralReplacePatches(enforcedMigration, saveSignature));
+    for (const column of ["current_audio_track_id", "pending_source_audio_task_id", "source_audio_duration_seconds", "source_audio_error"]) {
+      expect(assignmentCount(saveDefinition, column), column).toBe(1);
+    }
+    expect(saveDefinition).toContain("existing_draft.tts_override_voice");
+    expect(ttsConfirmation).toContain("tts_text_confirmation_fingerprint");
+
+    let workbenchDefinition = extractFunctionDefinition(readFileSync(frozenMultiSegmentShotDraftMigration, "utf8"), "save_shot_workbench_draft");
+    const workbenchSignature = "save_shot_workbench_draft(uuid, uuid, text, uuid, jsonb, text, text, boolean, text, text, numeric)";
+    workbenchDefinition = applyMigrationPatches(workbenchDefinition, extractLiteralReplacePatches(editableWorkbench, workbenchSignature));
+    workbenchDefinition = applyMigrationPatches(workbenchDefinition, extractLiteralReplacePatches(enforcedMigration, "save_shot_workbench_draft(uuid,uuid,text,uuid,jsonb,text,text,boolean,text,text,numeric)"));
+    for (const column of ["current_audio_track_id", "pending_source_audio_task_id", "source_audio_duration_seconds", "source_audio_error"]) {
+      expect(assignmentCount(workbenchDefinition, column), column).toBe(1);
+    }
   });
 
   it("逐镜头确认要求同步证据、显式警告接受，并在输入变化后撤销", () => {
@@ -715,5 +1315,364 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("'artifact_id', member.artifact_id");
     expect(migration).toContain("'audio_track_id', member.audio_track_id");
     expect(migration).toContain("'approval_mode', 'qc_only'");
+  });
+
+  it("Worker 由平台计算并发、声明文件能力，并持续记录实际成本", () => {
+    const migration = readFileSync(workerRuntimeConstraintsMigration, "utf8");
+
+    expect(migration).toContain("create or replace function public.worker_runtime_constraints");
+    expect(migration).toContain("least(coalesce(provider_limit, adapter_limit), adapter_limit, worker_limit)");
+    expect(migration).toContain("pg_advisory_xact_lock");
+    expect(migration).toContain("drop trigger if exists guard_b_roll_task_claim_before_running on public.tasks");
+    expect(migration).toContain("worker_required_tools");
+    expect(migration).toContain("p_worker_capacity");
+    expect(migration).toContain("Actual cost is recorded after execution");
+    expect(migration).not.toContain("budget_limit_cents = 2147483647");
+  });
+
+  it("Episode 拥有本期 TTS 设置，并以完整指纹判定当前音轨", () => {
+    const migration = readFileSync(resolve("supabase/migrations/20260904160000_move_tts_settings_to_episode.sql"), "utf8");
+
+    expect(migration).toContain("add column if not exists tts_language_code text");
+    expect(migration).toContain("create or replace function public.save_episode_tts_settings");
+    expect(migration).toContain("Episode TTS settings changed.");
+    expect(migration).toContain("create or replace function public.shot_tts_configuration_hash");
+    expect(migration).toContain("configuration_hash' = public.shot_tts_configuration_hash(p_episode_id, draft.id)");
+    expect(migration).toContain("grant execute on function public.save_episode_tts_settings");
+  });
+
+  it("批量 TTS 只读取持久化草稿，并逐项幂等归类", () => {
+    const migration = readFileSync(batchShotTtsMigration, "utf8");
+
+    expect(migration).toContain("create function public.generate_confirmed_shot_tts_batch");
+    expect(migration).toContain("join public.account_memberships membership");
+    expect(migration).toContain("draft.tts_text_confirmation_fingerprint");
+    expect(migration).toContain("public.shot_tts_configuration_hash");
+    expect(migration).toContain("draft.tts_speaking_rate <= 0");
+    expect(migration).toContain("credential_ref !~");
+    expect(migration).toContain("version.id::text = credential_ref");
+    expect(migration).not.toContain("or case when credential_ref ~");
+    expect(migration).toContain("order by task.created_at desc\n    limit 1\n    for update;");
+    expect(migration).toContain("status in ('ready', 'running', 'completed')");
+    expect(migration).toContain("public.generate_shot_tts");
+    expect(migration).toContain("exception when others");
+    expect(migration).toContain("shot_tts_batch_generation_requested");
+    expect(migration).toContain("grant execute on function public.generate_confirmed_shot_tts_batch");
+  });
+
+  it("批量 TTS 前向迁移只接受旧态或已修复态，并按 Owner 归属连接", () => {
+    const migration = readFileSync(batchShotTtsConnectionOwnershipFixMigration, "utf8");
+
+    expect(migration).toContain("pg_get_functiondef('public.generate_confirmed_shot_tts_batch(uuid,uuid)'::regprocedure)");
+    expect(migration).toContain("ownership_state := 'new';");
+    expect(migration).toContain("elsif position(old_block in definition) > 0 then");
+    expect(migration).toContain("join public.account_memberships connection_owner");
+    expect(migration).toContain("connection_owner.user_id = connection.created_by");
+    expect(migration).toContain("connection_owner.role = 'owner'");
+    expect(migration).toContain("old_variable_block text := E'AS $function$\\ndeclare';");
+    expect(migration).toContain("new_variable_block text := E'AS $function$\\n#variable_conflict use_variable\\ndeclare';");
+    expect(migration).toContain("variable_conflict_state := 'new';");
+    expect(migration).toContain("elsif position(old_variable_block in definition) > 0 then");
+    expect(migration).toContain("if ownership_state = 'old' then patched := replace(patched, old_block, new_block); end if;");
+    expect(migration).toContain("if variable_conflict_state = 'old' then patched := replace(patched, old_variable_block, new_variable_block); end if;");
+    expect(migration).toContain("if patched = definition then");
+    expect(migration).toContain("and connection.account_id = current_episode.account_id");
+    expect(migration).toContain("connection ownership clauses were neither the old nor new form");
+    expect(migration).toContain("variable conflict declaration was neither the old nor new form");
+    expect(migration.match(/\bexecute patched;/g)).toHaveLength(1);
+  });
+
+  it("准备片段前向迁移允许替换已完成的旧 A-roll 任务", () => {
+    const migration = readFileSync(completedShotClipReplacementMigration, "utf8");
+
+    expect(migration).toContain("pg_get_functiondef('public.generate_shot_clip(uuid,uuid,text,boolean)'::regprocedure)");
+    expect(migration).toContain("old_block text := $old$");
+    expect(migration).toContain("new_block text := $new$");
+    expect(migration).toContain("and task.input_snapshot ->> 'storyboard_review_package_id' = p_review_package_id::text");
+    expect(migration).toContain("and task.input_snapshot #>> '{shot,id}' = draft.shot_id");
+    expect(migration).toContain("and coalesce(task.input_snapshot ->> 'pre_render_revision', '') = ''");
+    expect(migration).toContain("old_running_block text := $old_running$");
+    expect(migration).toContain("and task.status <> 'superseded';$new$");
+    expect(migration).toContain("if position(new_block in definition) > 0 then return; end if;");
+    expect(migration).toContain("if position(old_block in definition) = 0 and position(old_running_block in definition) = 0 then");
+    expect(migration).toContain("patched := replace(definition, old_block, new_block);");
+    expect(migration).toContain("patched := replace(definition, old_running_block, new_block);");
+    expect(migration).toContain("if patched = definition then");
+    expect(migration.match(/\bexecute patched;/g)).toHaveLength(1);
+  });
+
+  it("历史 Episode 固化旧声音兼容值，新 Episode 不再从蓝图读取声音默认", () => {
+    const migration = readFileSync(episodeTtsOwnershipMigration, "utf8");
+    const app = readFileSync(resolve("src/App.tsx"), "utf8");
+
+    expect(migration).toContain("update public.episodes episode");
+    expect(migration).toContain("Episode TTS settings must preserve shot confirmation");
+    expect(migration).toContain("existing_draft.tts_override_voice");
+    expect(migration).toContain("New Episode TTS defaults must not read blueprint voice fields");
+    expect(app).toContain('voice: episode.tts_voice ?? ""');
+    expect(app).toContain('speakingRate: episode.tts_speaking_rate == null ? ""');
+    expect(app).not.toContain("legacyNarrationSettings");
+  });
+
+  it("按 041600→041700→051100→051300→051500 逐项重放 TTS 动态补丁", () => {
+    const ttsSettings = readFileSync(shotTtsEpisodeSettingsMigration, "utf8");
+    const ttsConfirmation = readFileSync(shotTtsConfirmationMigration, "utf8");
+    const editableWorkbench = readFileSync(editableShotWorkbenchMigration, "utf8");
+    const enforcedAudioModes = readFileSync(enforcedShotAudioModesMigration, "utf8");
+    const ownership = readFileSync(episodeTtsOwnershipMigration, "utf8");
+
+    const episodeSignature = "save_episode_tts_settings(uuid,text,text,numeric)";
+    let episodeDefinition = extractFunctionDefinition(ttsSettings, "save_episode_tts_settings");
+    episodeDefinition = applyMigrationPatchesExactly(episodeDefinition, extractLiteralReplacePatches(ttsConfirmation, episodeSignature));
+    episodeDefinition = applyMigrationPatchesExactly(episodeDefinition, extractDollarReplacePatches(ownership, episodeSignature, "if patched = definition"));
+    expect(episodeDefinition).toContain("update public.tasks task");
+    expect(episodeDefinition).toContain("status = 'superseded'");
+    expect(episodeDefinition).toContain("current_audio_track_id = null");
+    expect(episodeDefinition).toContain("current_tts_task_id = null");
+    expect(episodeDefinition).toContain("pending_tts_task_id = null");
+    expect(episodeDefinition).not.toContain("confirmation_status = 'pending'");
+    expect(episodeDefinition).not.toContain("confirmed_at = null");
+    expect(episodeDefinition).not.toContain("confirmed_by = null");
+
+    const shotSignature = "save_shot_preparation_draft(uuid,uuid,text,text,text,boolean,text,text,numeric)";
+    let shotDefinition = extractFunctionDefinition(readFileSync(shotAudioModesMigration, "utf8"), "save_shot_preparation_draft");
+    shotDefinition = applyMigrationPatchesExactly(shotDefinition, extractDollarReplacePatches(ttsSettings, shotSignature, "if patched_definition = definition"));
+    shotDefinition = applyMigrationPatchesExactly(shotDefinition, extractLiteralReplacePatches(ttsConfirmation, shotSignature));
+    shotDefinition = applyMigrationPatchesExactly(shotDefinition, extractLiteralReplacePatches(enforcedAudioModes, shotSignature));
+    shotDefinition = applyMigrationPatchesExactly(shotDefinition, extractDollarReplacePatches(ownership, shotSignature, "if patched = definition"));
+    expect(shotDefinition).toContain("next_tts_voice := coalesce(existing_draft.tts_override_voice, current_episode.tts_voice, nullif(btrim(p_tts_voice), ''), existing_draft.tts_voice);");
+    expect(shotDefinition).toContain("next_tts_rate := coalesce(existing_draft.tts_override_speaking_rate, current_episode.tts_speaking_rate, p_tts_speaking_rate, existing_draft.tts_speaking_rate);");
+    expect(shotDefinition).toContain("next_language_code := coalesce(current_episode.tts_language_code, existing_draft.tts_language_code, 'zh-CN');");
+    expect(shotDefinition).not.toContain("blueprint_policy #>> '{narration,voice");
+
+    const overrideSignature = "save_shot_tts_override(uuid, uuid, text, text, numeric)";
+    let overrideDefinition = extractFunctionDefinition(ttsConfirmation, "save_shot_tts_override");
+    overrideDefinition = applyMigrationPatchesExactly(overrideDefinition, extractLiteralReplacePatches(editableWorkbench, overrideSignature));
+    overrideDefinition = applyMigrationPatchesExactly(overrideDefinition, extractDollarReplacePatches(ownership, "save_shot_tts_override(uuid,uuid,text,text,numeric)", "if patched = definition"));
+    expect(overrideDefinition).toContain("default_voice := current_episode.tts_voice;");
+    expect(overrideDefinition).toContain("default_rate := current_episode.tts_speaking_rate;");
+    expect(overrideDefinition).not.toContain("blueprint_policy #>> '{narration,voice");
+
+    let hashDefinition = extractFunctionDefinition(ttsSettings, "shot_tts_configuration_hash");
+    hashDefinition = applyMigrationPatchesExactly(hashDefinition, extractDollarReplacePatches(ownership, "shot_tts_configuration_hash(uuid,uuid)", "if patched = definition"));
+    expect(hashDefinition).toContain("'provider', provider");
+    expect(hashDefinition).toContain("'adapter', adapter");
+    expect(hashDefinition).toContain("'model', model");
+    expect(hashDefinition).toContain("'prompt_version', prompt_version");
+    expect(hashDefinition).toContain("'connection_version_id', credential_ref");
+    expect(hashDefinition).not.toContain("narration_config #>> '{voice");
+  });
+
+  it("镜头时长迁移使用系列合成设置并拒绝静默替换", () => {
+    const migration = readFileSync(durationDecisionMigration, "utf8");
+
+    expect(migration).toContain("create or replace function public.shot_duration_settings");
+    expect(migration).toContain("create or replace function public.shot_duration_decision");
+    expect(migration).toContain("public._required_text_replace");
+    expect(migration).toContain("request_review_render_revision");
+    expect(migration).toContain("Studio duration settings must match the frozen shot duration settings");
+    expect(migration).not.toContain("shot_duration_frame_rate");
+  });
+
+  it("时长函数固定空 search_path", () => {
+    const migration = readFileSync(durationSearchPathMigration, "utf8");
+
+    expect(migration).toContain("alter function public.shot_duration_settings(uuid)\nset search_path = '';");
+    expect(migration).toContain("alter function public.shot_duration_decision(text, numeric, numeric, numeric, numeric, integer, numeric)\nset search_path = '';");
+  });
+
+  it("按迁移顺序重放时长补丁，并保留最终函数与 TTS 指纹门禁", () => {
+    const migration = readFileSync(durationDecisionMigration, "utf8");
+    const definitions = new Map<string, string>([
+      [
+        "request_review_render_revision(uuid, jsonb, text)",
+        extractFunctionDefinition(readFileSync(frozenStudioProjectPathMigration, "utf8"), "request_review_render_revision"),
+      ],
+      [
+        "create_shot_preparation_review_package(uuid, uuid)",
+        extractFunctionDefinition(readFileSync(deferredStudioTrimmingMigration, "utf8"), "create_shot_preparation_review_package"),
+      ],
+      [
+        "freeze_shot_preparation_batch(uuid, uuid)",
+        extractFunctionDefinition(readFileSync(deferredStudioTrimmingMigration, "utf8"), "freeze_shot_preparation_batch"),
+      ],
+      [
+        "confirm_shot_preparation(uuid, uuid, text, text, boolean)",
+        extractFunctionDefinition(readFileSync(shotConfirmationMigration, "utf8"), "confirm_shot_preparation"),
+      ],
+      [
+        "orchestrate_review_render_tasks(uuid)",
+        extractFunctionDefinition(readFileSync(deferredStudioTrimmingMigration, "utf8"), "orchestrate_review_render_tasks"),
+      ],
+    ]);
+
+    const ttsGuardSource = "and task.input_snapshot #>> '{media,narration,text}' = draft.tts_text";
+    const ttsGuardReplacement = `${ttsGuardSource}\n        and task.input_snapshot ->> 'configuration_hash' = public.shot_tts_configuration_hash(p_episode_id, draft.id)`;
+    const freezeDefinition = definitions.get("freeze_shot_preparation_batch(uuid, uuid)");
+    expect(freezeDefinition).toContain(ttsGuardSource);
+    definitions.set("freeze_shot_preparation_batch(uuid, uuid)", freezeDefinition!.replace(ttsGuardSource, ttsGuardReplacement));
+
+    const patches = extractRequiredMigrationPatches(migration);
+    expect(patches).not.toHaveLength(0);
+    for (const patch of patches) {
+      const definition = definitions.get(patch.signature);
+      expect(definition, patch.label).toBeDefined();
+      expect(definition, patch.label).toContain(patch.source);
+      definitions.set(patch.signature, definition!.replace(patch.source, patch.replacement));
+    }
+
+    expect(definitions.get("request_review_render_revision(uuid, jsonb, text)")).toContain("'studio_project'");
+    expect(definitions.get("freeze_shot_preparation_batch(uuid, uuid)")).toContain("configuration_hash' = public.shot_tts_configuration_hash");
+    expect(definitions.get("create_shot_preparation_review_package(uuid, uuid)")).toContain("'duration_decision', duration_decision");
+    expect(definitions.get("confirm_shot_preparation(uuid, uuid, text, text, boolean)")).toContain("audio_video_delta_seconds");
+    expect(definitions.get("orchestrate_review_render_tasks(uuid)")).toContain("'duration_decision', member.evidence_snapshot -> 'duration_decision'");
+  });
+
+  it("审核视频只在显式 Owner 操作时冻结整单，并把不可变输入交给 Worker", () => {
+    const migration = readFileSync(shotReviewVideoMigration, "utf8");
+    const editableWorkbench = readFileSync(editableShotWorkbenchMigration, "utf8");
+    const definition = extractFunctionDefinition(migration, "generate_shot_review_video");
+    const packageDefinition = extractFunctionDefinition(readFileSync(deferredStudioTrimmingMigration, "utf8"), "create_shot_preparation_review_package");
+    const orchestrationDefinition = extractFunctionDefinition(readFileSync(deferredStudioTrimmingMigration, "utf8"), "orchestrate_review_render_tasks");
+
+    expect(definition).toContain("p_studio_project jsonb");
+    expect(definition).toContain("membership.role = 'owner'");
+    expect(definition).toContain("for update of episode");
+    expect(definition).toContain("tts_text_confirmation_fingerprint");
+    expect(definition).toContain("public.shot_tts_configuration_hash(p_episode_id, draft.id)");
+    expect(definition).toContain("public.shot_duration_decision");
+    expect(definition).toContain("p_accept_duration_risk");
+    expect(definition).toContain("p_risk_reason");
+    expect(definition).toContain("p_studio_project ->> 'relative_path'");
+    expect(definition).toContain("public.create_shot_preparation_review_package");
+    expect(definition).toContain("public.review_render_composition_revisions");
+    expect(definition).toContain("public.orchestrate_review_render_tasks");
+    expect(definition).toContain("effective_runtime_constraints");
+    expect(definition).toContain("blueprint_version_id");
+    expect(definition).toContain("series_version_id");
+    expect(definition).toContain("studio_project_revision");
+    expect(definition).toContain("default_composition || coalesce(series_rules -> 'hyperframes_composition'");
+    expect(definition).toContain("'frame_rate', (duration_settings ->> 'frame_rate')::numeric");
+    expect(packageDefinition).toContain("'source_material_revision_id'");
+    expect(packageDefinition).toContain("'clip_segments'");
+    expect(orchestrationDefinition).toContain("'source_material_revision_id'");
+    expect(orchestrationDefinition).toContain("'clip_segments'");
+    expect(definition.indexOf("if risk_count = 0 and p_accept_duration_risk")).toBeLessThan(definition.indexOf("update public.shot_preparation_drafts"));
+    expect(definition.indexOf("insert into public.review_render_composition_revisions")).toBeLessThan(definition.indexOf("public.orchestrate_review_render_tasks"));
+    expect(migration).toContain("revoke all on function public.freeze_shot_preparation_batch(uuid, uuid) from authenticated");
+    expect(editableWorkbench).not.toContain("freeze_shot_preparation_batch");
+  });
+
+  it("生成审核视频复用已就绪口播，不再重复要求逐镜确认", () => {
+    const migration = readFileSync(shotReviewVideoActionMigration, "utf8");
+    expect(migration).toContain("pg_get_functiondef('public.generate_shot_review_video(uuid, uuid, jsonb, boolean, text)'::regprocedure)");
+    expect(migration).toContain("if coalesce(btrim(draft.tts_text), '''') = '''' then");
+    expect(migration).not.toContain("new_guard constant text := '      if coalesce(btrim(draft.tts_text), '''') = ''''\n        or draft.tts_text_confirmation_fingerprint");
+  });
+
+  it("生成审核视频只在字幕开启时要求字幕正文", () => {
+    const migration = readFileSync(disabledSubtitleReviewVideoMigration, "utf8");
+    expect(migration).toContain("pg_get_functiondef('public.generate_shot_review_video(uuid, uuid, jsonb, boolean, text)'::regprocedure)");
+    expect(migration).toContain("or coalesce(btrim(draft.subtitle_text), '''') = ''''");
+    expect(migration).toContain("or (draft.subtitles_enabled and coalesce(btrim(draft.subtitle_text), '''') = '''')");
+  });
+
+  it("不可变镜头快照只在字幕开启时要求字幕正文", () => {
+    const migration = readFileSync(disabledSubtitleShotSnapshotMigration, "utf8");
+    expect(migration).toContain("pg_get_functiondef('public.has_current_shot_preparation_snapshot(uuid, uuid)'::regprocedure)");
+    expect(migration).toContain("and draft.input_fingerprint = md5(required.value::text) and draft.subtitle_text <> ''");
+    expect(migration).toContain("and draft.input_fingerprint = md5(required.value::text) and (not draft.subtitles_enabled or coalesce(btrim(draft.subtitle_text), '''') <> '''')");
+  });
+
+  it("只重新排队因旧字幕契约阻塞的审核渲染任务", () => {
+    const migration = readFileSync(disabledSubtitleReviewRenderRetryMigration, "utf8");
+    expect(migration).toContain("task.task_type = 'generate_review_render'");
+    expect(migration).toContain("blocker ->> 'detail' = '确认快照缺少字幕文本。'");
+    expect(migration).toContain("shot -> 'subtitles_enabled' = 'false'::jsonb");
+    expect(migration).toContain("max_attempts = greatest(task.max_attempts, task.attempt + 1)");
+  });
+
+  it("事务模型回放会拒绝非 Owner、无风险却接受风险，并保留每次 Studio 证据", () => {
+    const studioV1 = { file_size: 10, relative_path: "episodes/episode-1/studio-frozen/v1/index.html", sha256: "a".repeat(64) };
+    const studioV2 = { file_size: 20, relative_path: "episodes/episode-1/studio-frozen/v2/index.html", sha256: "b".repeat(64) };
+    const initial: ShotGenerationReplayState = { drafts: [{ id: "draft-1", frozen: false, sourceMaterialRevisionId: "material-1", clipSegments: [{ startSeconds: 1, endSeconds: 3 }] }], packages: [], revisions: [], tasks: [] };
+    expect(() => replayShotGeneration(initial, { acceptDurationRisk: false, isOwner: false, riskCount: 0, riskReason: "", studioProject: studioV1 })).toThrow("Owner");
+    expect(() => replayShotGeneration(initial, { acceptDurationRisk: true, isOwner: true, riskCount: 0, riskReason: "误点", studioProject: studioV1 })).toThrow("duration risk");
+    expect(initial).toEqual({ drafts: [{ id: "draft-1", frozen: false, sourceMaterialRevisionId: "material-1", clipSegments: [{ startSeconds: 1, endSeconds: 3 }] }], packages: [], revisions: [], tasks: [] });
+
+    const first = replayShotGeneration(initial, { acceptDurationRisk: false, isOwner: true, riskCount: 0, riskReason: "", studioProject: studioV1 });
+    const second = replayShotGeneration(first, { acceptDurationRisk: true, isOwner: true, riskCount: 1, riskReason: "保留表演停顿", studioProject: studioV2 });
+    expect(second.drafts[0]).toMatchObject({ frozen: true, sourceMaterialRevisionId: "material-1", clipSegments: [{ startSeconds: 1, endSeconds: 3 }] });
+    expect(second.revisions).toEqual([{ revision: 1, studioProject: studioV1 }, { revision: 2, studioProject: studioV2 }]);
+    expect(second.packages[0].studioProject).toEqual(studioV1);
+    expect(second.tasks[1].studioProject).toEqual(studioV2);
+  });
+
+  it("迁移回放只给最新 QC 完成函数补 Studio 字段，不丢失 QC 门禁和证据", () => {
+    const latest = extractFunctionDefinition(readFileSync(resolve("supabase/migrations/20260815213000_add_qc_final_render.sql"), "utf8"), "register_completed_review_render");
+    const migration = readFileSync(shotReviewVideoMigration, "utf8");
+    const source = "'frozen_input_artifacts',new.input_snapshot -> 'input_artifacts'";
+    const replacement = "'studio_project',new.input_snapshot #> '{review_render,adjustments,studio_project}',\n    'studio_project_revision',new.input_snapshot #>> '{review_render,adjustments,studio_project_revision}',\n    'frozen_input_artifacts',new.input_snapshot -> 'input_artifacts'";
+    const replayed = latest.replace(source, replacement);
+    expect(migration).toContain("pg_get_functiondef('public.register_completed_review_render()'::regprocedure)");
+    expect(migration).not.toContain("create or replace function public.register_completed_review_render()");
+    expect(replayed).toContain("select * into qc_artifact");
+    expect(replayed).toContain("qc_artifact.id is null");
+    expect(replayed).toContain("'composition_revision_id'");
+    expect(replayed).toContain("'composition_adjustments'");
+    expect(replayed).toContain("'qc_report'");
+    expect(replayed).toContain("'studio_project'");
+    expect(replayed).toContain("'studio_project_revision'");
+    expect(replayed).toContain("'relative_path',qc_artifact.relative_path");
+  });
+
+  it("为长 Worker 任务提供同一尝试的租约心跳", () => {
+    const migration = readFileSync(workerLeaseHeartbeatMigration, "utf8");
+
+    expect(migration).toContain("create or replace function public.refresh_worker_task_lease(p_task_id uuid, p_attempt integer)");
+    expect(migration).toContain("status = 'running'");
+    expect(migration).toContain("attempt = p_attempt + 1");
+    expect(migration).toContain("set claimed_at = now()");
+    expect(migration).toContain("grant execute on function public.refresh_worker_task_lease(uuid, integer) to service_role;");
+  });
+
+  it("Studio 修订使用冻结 HTML 提供的合成配置", () => {
+    const migration = readFileSync(frozenStudioCompositionMigration, "utf8");
+
+    expect(migration).toContain("canonical_composition jsonb;");
+    expect(migration).toContain("p_composition -> 'studio_project' -> 'composition'");
+    expect(migration).toContain("canonical_composition ->> 'transition'");
+    expect(migration).toContain("canonical_composition ->> 'caption_style'");
+    expect(migration).toContain("grant execute on function public.request_review_render_revision(uuid, jsonb, text) to authenticated;");
+  });
+
+  it("关闭字幕时允许保存空字幕正文", () => {
+    const rpcMigration = readFileSync(resolve("supabase/migrations/20260907144500_allow_empty_disabled_subtitles.sql"), "utf8");
+    const constraintMigration = readFileSync(resolve("supabase/migrations/20260907151000_align_disabled_subtitle_constraint.sql"), "utf8");
+
+    expect(rpcMigration).toContain("or (p_subtitles_enabled and coalesce(btrim(p_subtitle_text)");
+    expect(constraintMigration).toContain("drop constraint if exists shot_preparation_drafts_subtitle_text_check");
+    expect(constraintMigration).toContain("check (not subtitles_enabled or char_length(btrim(subtitle_text)) > 0)");
+  });
+
+  it("旧旁白编排不再自动建任务，历史阻塞会失效", () => {
+    const migration = readFileSync(stopLegacyNarrationMigration, "utf8");
+
+    expect(migration).toContain("create or replace function public.orchestrate_narration_tasks(p_episode_id uuid default null)");
+    expect(migration).toContain("returns setof public.tasks");
+    expect(migration).not.toContain("orchestrate_narration_tasks_configured");
+    expect(migration).toContain("invalidate_superseded_storyboard_narration_tasks_after_approval");
+    expect(migration).toContain("task.invalidated_at is null");
+    expect(migration).toContain("task.status in ('blocked', 'failed')");
+    expect(migration).toContain("task.input_snapshot ->> 'storyboard_review_package_id' <> new.review_package_id::text");
+    expect(migration).toContain("task.input_snapshot #>> '{shot_preparation,draft_id}' is null");
+  });
+
+  it("把现行 HyperFrames 路径迁移为 OpenChatCut", () => {
+    const migration = readFileSync(replaceHyperframesMigration, "utf8");
+    expect(migration).toContain("'hyperframes_card_video', 'openchatcut_card_video'");
+    expect(migration).toContain("'hyperframes@0.7.109', 'openchatcut@0.2.14'");
+    expect(migration).toContain("'hyperframes_review_render', 'openchatcut_review_render'");
+    expect(migration).toContain("where provider = 'hyperframes'");
   });
 });

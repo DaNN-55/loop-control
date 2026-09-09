@@ -26,12 +26,18 @@ select set_config('request.jwt.claim.role', 'authenticated', true);
 
 select lives_ok($$insert into public.account_blueprint_versions (account_id, version, policy, is_active) values ('64000000-0000-4000-8000-000000000011', 1, jsonb_build_object(
   'soundtrack', jsonb_build_object('credential_ref', (select current_version_id from public.external_connections where provider = 'freesound')),
-  'static_visual', jsonb_build_object('credential_ref', (select current_version_id from public.external_connections where provider = 'openai')),
-  'narration', jsonb_build_object('credential_ref', (select current_version_id from public.external_connections where provider = 'google_tts'))
+  'static_visual', jsonb_build_object(
+    'credential_ref', (select current_version_id from public.external_connections where provider = 'openai'),
+    'executor', jsonb_build_object('provider', 'openai', 'adapter', 'openai_images')
+  ),
+  'narration', jsonb_build_object(
+    'credential_ref', (select current_version_id from public.external_connections where provider = 'google_tts'),
+    'executor', jsonb_build_object('provider', 'google_tts', 'adapter', 'google_tts', 'model', 'standard', 'prompt_version', 'narration-v1')
+  )
 ), true)$$, 'blueprint may select all three compatible verified versions');
 select ok(not exists (select 1 from public.account_blueprint_versions where policy::text like '%endpoint%'), 'blueprint snapshot contains no endpoint');
-select ok(has_function('public', 'apply_external_connection_repair', array['uuid', 'uuid', 'text', 'text']), 'current Episode repair RPC exists');
-select ok(has_function('public', 'normalize_manual_media_task', array['uuid', 'jsonb']), 'manual media boundary exists');
+select has_function('public', 'apply_external_connection_repair', array['uuid', 'uuid', 'text', 'text'], 'current Episode repair RPC exists');
+select has_function('public', 'normalize_manual_media_task', array['uuid', 'jsonb'], 'manual media boundary exists');
 select ok((select count(*) from public.external_connection_versions where vault_secret_id::text not like '%secret%') = 3, 'connection versions store Vault references rather than plaintext secrets');
 
 select * from finish();

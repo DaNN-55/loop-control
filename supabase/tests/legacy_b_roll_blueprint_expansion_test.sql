@@ -4,12 +4,6 @@ create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
 select plan(15);
 
-drop function public.orchestrate_b_roll_tasks_configured(uuid);
-alter function public.orchestrate_b_roll_tasks_without_connection_ref(uuid)
-rename to orchestrate_b_roll_tasks_configured;
-
-\ir ../migrations/20260822095959_guard_legacy_b_roll_history.sql
-
 insert into auth.users (id, email)
 values ('52000000-0000-4000-8000-000000000001', 'issue-52-migration@test.invalid');
 
@@ -30,6 +24,40 @@ values (
 
 update public.accounts
 set current_blueprint_version_id = '52000000-0000-4000-8000-000000000003'
+where id = '52000000-0000-4000-8000-000000000002';
+
+select set_config('request.jwt.claim.sub', '52000000-0000-4000-8000-000000000001', true);
+select set_config('request.jwt.claim.role', 'authenticated', true);
+select public.create_external_connection('pexels', 'pexels_video', 'Issue 52 Pexels', 'issue-52-pexels-secret');
+select set_config('request.jwt.claim.role', 'service_role', true);
+select public.record_external_connection_verification(
+  (select current_version_id from public.external_connections where created_by = '52000000-0000-4000-8000-000000000001'),
+  'verified',
+  'Issue 52 test connection verified.'
+);
+select set_config('request.jwt.claim.role', 'authenticated', true);
+create temporary table legacy_b_roll_fixture (connection_ref text) on commit drop;
+insert into legacy_b_roll_fixture
+select current_version_id::text
+from public.external_connections
+where created_by = '52000000-0000-4000-8000-000000000001';
+
+insert into public.account_blueprint_versions (id, account_id, version, policy, is_active)
+select
+  '52000000-0000-4000-8000-000000000008',
+  account_id,
+  2,
+  jsonb_set(policy, '{b_roll,credential_ref}', to_jsonb((select connection_ref from legacy_b_roll_fixture)), true),
+  true
+from public.account_blueprint_versions
+where id = '52000000-0000-4000-8000-000000000003';
+
+update public.account_blueprint_versions
+set is_active = false
+where id = '52000000-0000-4000-8000-000000000003';
+
+update public.accounts
+set current_blueprint_version_id = '52000000-0000-4000-8000-000000000008'
 where id = '52000000-0000-4000-8000-000000000002';
 
 insert into public.series (id, account_id, name)
@@ -56,12 +84,6 @@ values (
   true
 );
 
-\ir ../migrations/20260822100000_freeze_b_roll_adapter_connection.sql
-\ir ../migrations/20260822104421_expand_legacy_b_roll_blueprints.sql
-\ir ../migrations/20260822112024_remove_legacy_b_roll_history_guard.sql
-\ir ../migrations/20260822121000_use_blueprint_b_roll_technical_config.sql
-\ir ../migrations/20260822121948_restrict_b_roll_legacy_orchestration.sql
-
 select is(
   (select policy from public.account_blueprint_versions where id = '52000000-0000-4000-8000-000000000003'),
   '{"positioning":"legacy","b_roll":{"executor":{"provider":"pexels","adapter":"pexels_video","model":"pexels-video-v1","prompt_version":"b-roll-v1"},"allowed_tools":["read","write"],"per_shot_budget_cents":20,"total_budget_cents":100,"max_attempts":3,"max_concurrency":1,"provider_max_concurrency":1}}'::jsonb,
@@ -84,8 +106,8 @@ select isnt(
 );
 select is(
   (select policy #>> '{b_roll,credential_ref}' from public.account_blueprint_versions where id = (select current_blueprint_version_id from public.accounts where id = '52000000-0000-4000-8000-000000000002')),
-  'pexels-default',
-  'the expanded blueprint freezes the legacy connection reference'
+  (select connection_ref from legacy_b_roll_fixture),
+  'the expanded blueprint freezes the Owner-verified connection reference'
 );
 select is(
   (select version from public.account_blueprint_versions where id = (select current_blueprint_version_id from public.accounts where id = '52000000-0000-4000-8000-000000000002')),
@@ -109,8 +131,8 @@ select is(
    from public.episodes episode
    join public.account_blueprint_versions blueprint on blueprint.id = episode.blueprint_version_id
    where episode.title = 'New episode'),
-  'pexels-default',
-  'the new episode freezes the explicit connection reference'
+  (select connection_ref from legacy_b_roll_fixture),
+  'the new episode freezes the explicit Owner-verified connection reference'
 );
 
 update public.episodes
@@ -142,7 +164,7 @@ select is(
 );
 select is(
   (select input_snapshot #>> '{credential_ref}' from public.tasks where episode_id = (select id from public.episodes where title = 'New episode') and task_type = 'generate_b_roll'),
-  'pexels-default',
+  (select connection_ref from legacy_b_roll_fixture),
   'the B-roll task freezes the expanded blueprint connection reference'
 );
 update public.tasks
