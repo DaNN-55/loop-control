@@ -13,7 +13,7 @@ afterEach(async () => {
 
 describe("发布包", () => {
   it("固定视频、封面、元数据和通过的 QC 报告，并生成可校验清单", async () => {
-    const assetRoot = await mkdtemp(join(tmpdir(), "tk-workflow-publish-package-"));
+    const assetRoot = await mkdtemp(join(tmpdir(), "loop-control-publish-package-"));
     directories.push(assetRoot);
     const episodeId = "episode-1";
     const episodeDirectory = join(assetRoot, "episodes", episodeId);
@@ -41,7 +41,7 @@ describe("发布包", () => {
   });
 
   it("拒绝 QC 未通过的发布包，以及生成后被篡改的产物", async () => {
-    const assetRoot = await mkdtemp(join(tmpdir(), "tk-workflow-publish-package-"));
+    const assetRoot = await mkdtemp(join(tmpdir(), "loop-control-publish-package-"));
     directories.push(assetRoot);
     const episodeId = "episode-1";
     const episodeDirectory = join(assetRoot, "episodes", episodeId);

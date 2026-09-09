@@ -59,9 +59,9 @@ function structuredFields(record: Record<string, unknown>): Pick<WorkerBlocker, 
   return fields;
 }
 
-export function workerBlockers(tasks: Array<Pick<Task, "episode_id" | "status" | "last_result" | "id" | "task_type">>, episodeId: string): WorkerBlocker[] {
+export function workerBlockers(tasks: Array<Pick<Task, "episode_id" | "status" | "last_result" | "id" | "task_type"> & { invalidated_at?: string | null }>, episodeId: string): WorkerBlocker[] {
   return tasks
-    .filter((task) => task.episode_id === episodeId && (task.status === "blocked" || task.status === "failed"))
+    .filter((task) => task.episode_id === episodeId && !task.invalidated_at && (task.status === "blocked" || task.status === "failed"))
     .flatMap((task) => blockersFromResult(task.last_result).map((blocker) => ({ ...blocker, taskId: task.id, taskType: task.task_type })));
 }
 

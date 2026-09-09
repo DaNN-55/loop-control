@@ -1,8 +1,9 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Database } from "../lib/database.types";
 import { EpisodeDetail, EpisodeDetailDrawer, ReviewWorkspace } from "../App";
+import { clearLocalArtifactCache } from "./localArtifactPreview";
 
 vi.mock("../lib/supabase", () => ({
   supabase: {
@@ -22,6 +23,10 @@ type PreRenderReviewMember = Database["public"]["Tables"]["pre_render_review_mem
 type Task = Database["public"]["Tables"]["tasks"]["Row"];
 const originalClipboard = Object.getOwnPropertyDescriptor(navigator, "clipboard");
 
+async function openVisualStep(user: ReturnType<typeof userEvent.setup>, shotId: string) {
+  await user.click(within(screen.getByRole("navigation", { name: `${shotId} 准备步骤` })).getByRole("button", { name: "2 画面与标记" }));
+}
+
 const account: Account = {
   created_at: "2026-08-14T00:00:00.000Z",
   current_blueprint_version_id: "blueprint-1",
@@ -38,7 +43,7 @@ const blueprint: Blueprint = {
   id: "blueprint-1",
   is_active: true,
   is_snapshot: false,
-  policy: { asset_root: "/Volumes/素材盘/tk-workflow/dao" },
+  policy: { asset_root: "/Volumes/素材盘/loop-control/dao" },
   version: 1,
 };
 
@@ -108,8 +113,11 @@ const materialInputProps = {
   onUpdateTitle: vi.fn().mockResolvedValue(undefined),
 };
 
+const localArtifactTicketResponse = () => Response.json({ url: "/_local-artifact?ticket=preview" });
+
 describe("审核台", () => {
   beforeEach(() => {
+    clearLocalArtifactCache();
     const storage = new Map<string, string>();
     vi.stubGlobal("localStorage", {
       clear: () => storage.clear(),
@@ -117,12 +125,17 @@ describe("审核台", () => {
       removeItem: (key: string) => storage.delete(key),
       setItem: (key: string, value: string) => storage.set(key, value),
     });
-    vi.stubGlobal("fetch", vi.fn().mockImplementation(() => Promise.resolve(new Response(new Blob(["preview"], { type: "image/png" }), { status: 200 }))));
+    vi.stubGlobal("fetch", vi.fn().mockImplementation((input: RequestInfo | URL, init?: RequestInit) => Promise.resolve(
+      init?.method === "POST" && String(input).startsWith("/_local-artifact")
+        ? localArtifactTicketResponse()
+        : new Response(new Blob(["preview"], { type: "image/png" }), { status: 200 }),
+    )));
     vi.stubGlobal("URL", { createObjectURL: vi.fn().mockReturnValue("blob:local-preview"), revokeObjectURL: vi.fn() });
   });
 
   afterEach(() => {
     cleanup();
+    window.history.replaceState(null, "", window.location.pathname + window.location.search);
     vi.unstubAllGlobals();
     if (originalClipboard) Object.defineProperty(navigator, "clipboard", originalClipboard);
     else delete (navigator as { clipboard?: Clipboard }).clipboard;
@@ -242,14 +255,14 @@ describe("审核台", () => {
 
     const { rerender } = render(<EpisodeDetail {...materialInputProps} artifacts={[previewArtifact, videoArtifact]} blueprint={blueprint} episode={reviewEpisode} isTransitionPending={false} onTransition={onTransition} tasks={[blockedTask]} transitions={[]} />);
 
-    expect((await screen.findByAltText("cover 产物预览")).getAttribute("src")).toBe("blob:local-preview");
-    expect(fetch).toHaveBeenCalledWith("/_local-artifact?episode=episode-review&path=episodes%2Fepisode-review%2Fcover.png", { headers: { Authorization: "Bearer owner-token" } });
+    expect((await screen.findByAltText("cover 产物预览")).getAttribute("src")).toBe("/_local-artifact?ticket=preview");
+    expect(fetch).toHaveBeenCalledWith("/_local-artifact?episode=episode-review&path=episodes%2Fepisode-review%2Fcover.png", { headers: { Authorization: "Bearer owner-token" }, method: "POST" });
     expect(screen.getByText("MISSING_ASSET")).toBeTruthy();
     expect(screen.getByText("缺少已批准的脚本产物。")).toBeTruthy();
 
     await user.selectOptions(screen.getByLabelText("预览产物"), videoArtifact.id);
-    expect((await screen.findByLabelText("render 产物预览")).getAttribute("src")).toBe("blob:local-preview");
-    expect(fetch).toHaveBeenLastCalledWith("/_local-artifact?episode=episode-review&path=episodes%2Fepisode-review%2Frender.mp4", { headers: { Authorization: "Bearer owner-token" } });
+    expect((await screen.findByLabelText("render 产物预览")).getAttribute("src")).toBe("/_local-artifact?ticket=preview");
+    expect(fetch).toHaveBeenLastCalledWith("/_local-artifact?episode=episode-review&path=episodes%2Fepisode-review%2Frender.mp4", { headers: { Authorization: "Bearer owner-token" }, method: "POST" });
 
     await user.click(screen.getByRole("button", { name: "批准" }));
     expect(screen.getByText("请填写审批理由。")).toBeTruthy();
@@ -268,16 +281,17 @@ describe("审核台", () => {
     expect(onTransition).toHaveBeenCalledTimes(2);
   });
 
-  it("展示可试听的旁白音轨并将时间批注交给受控 RPC", async () => {
+  it("只在整片音轨中展示可试听的 BGM，并将时间批注交给受控 RPC", async () => {
     const user = userEvent.setup();
     const onCreateAudioTrackAnnotation = vi.fn().mockResolvedValue(undefined);
     render(<EpisodeDetail {...materialInputProps} artifacts={[]} audioTracks={[{
-      id: "audio-1", episode_id: reviewEpisode.id, source_task_id: "task-audio", source_artifact_id: "artifact-audio", source_material_revision_id: null, source_review_package_id: "package-1", track_kind: "narration", cue_id: "shot-02", relative_path: "episodes/episode-review/audio/narration.mp3", sha256: "a".repeat(64), file_size: 10, start_seconds: 2, duration_seconds: 8, created_at: "2026-08-15T00:00:00.000Z",
+      id: "audio-1", episode_id: reviewEpisode.id, source_task_id: "task-audio", source_artifact_id: "artifact-audio", source_material_revision_id: null, source_review_package_id: "package-1", track_kind: "bgm", cue_id: "opening", relative_path: "episodes/episode-review/audio/opening.mp3", sha256: "a".repeat(64), file_size: 10, start_seconds: 2, duration_seconds: 8, created_at: "2026-08-15T00:00:00.000Z",
     }]} audioTrackAnnotations={[]} blueprint={blueprint} episode={reviewEpisode} isTransitionPending={false} onCreateAudioTrackAnnotation={onCreateAudioTrackAnnotation} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
 
-    expect(await screen.findByLabelText("narration 音轨")).toBeTruthy();
-    expect(fetch).toHaveBeenCalledWith(`/_local-artifact?episode=episode-review&path=episodes%2Fepisode-review%2Faudio%2Fnarration.mp3&sha256=${"a".repeat(64)}`, { headers: { Authorization: "Bearer owner-token" } });
-    expect(screen.getByLabelText("narration 音轨").closest(".audio-track-card")).toBeTruthy();
+    expect(await screen.findByLabelText("bgm 音轨")).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "整片音轨" })).toBeTruthy();
+    expect(fetch).toHaveBeenCalledWith(`/_local-artifact?episode=episode-review&path=episodes%2Fepisode-review%2Faudio%2Fopening.mp3&sha256=${"a".repeat(64)}`, { headers: { Authorization: "Bearer owner-token" }, method: "POST" });
+    expect(screen.getByLabelText("bgm 音轨").closest(".audio-track-card")).toBeTruthy();
     expect(screen.getByRole("button", { name: "添加音轨批注" }).className).toContain("button-primary");
     expect(screen.getByLabelText("音轨时间点").getAttribute("min")).toBe("2");
     expect(screen.getByLabelText("音轨时间点").getAttribute("max")).toBe("10");
@@ -363,7 +377,7 @@ describe("审核台", () => {
 
     await user.click(screen.getByRole("button", { name: "放大查看 cover 产物" }));
     expect(screen.getByRole("dialog", { name: "cover 产物放大预览" })).toBeTruthy();
-    expect(screen.getByRole("img", { name: "cover 产物放大预览" }).getAttribute("src")).toBe("blob:local-preview");
+    expect(screen.getByRole("img", { name: "cover 产物放大预览" }).getAttribute("src")).toBe("/_local-artifact?ticket=preview");
     expect(document.activeElement).toBe(screen.getByRole("button", { name: "关闭放大预览" }));
 
     await user.keyboard("{Tab}");
@@ -383,7 +397,7 @@ describe("审核台", () => {
     const onOpenLocalDirectory = vi.fn().mockResolvedValue(undefined);
     const onRefresh = vi.fn().mockResolvedValue(undefined);
     const writeText = vi.fn().mockResolvedValue(undefined);
-    const localInputPath = "/Volumes/素材盘/tk-workflow/dao/episodes/episode-review/input";
+    const localInputPath = "/Volumes/素材盘/loop-control/dao/episodes/episode-review/input";
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isDirectoryOpenPending={false} onOpenLocalDirectory={onOpenLocalDirectory} onRefresh={onRefresh} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
@@ -420,7 +434,7 @@ describe("审核台", () => {
     expect(screen.getByRole("heading", { name: "准备生产材料" }).closest("details")?.className).toContain("detail-card-collapsible");
     expect(screen.getByText("主脚本由外部制作后上传；确认后会作为本生产单不可变输入。")).toBeTruthy();
     expect(screen.queryByRole("radio", { name: "委托生成脚本" })).toBeNull();
-    expect(screen.getByRole("button", { name: "导入所选材料" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "导入所选材料" })).toBeNull();
     expect(screen.getByRole("region", { name: "统一材料导入" })).toBeTruthy();
     expect((screen.getByLabelText("选择生产材料") as HTMLInputElement).multiple).toBe(true);
   });
@@ -436,7 +450,7 @@ describe("审核台", () => {
     expect(screen.getByText("材料已导入，等待 Owner 确认开始制作。")).toBeTruthy();
     expect(screen.queryByText("将此修订设为主脚本")).toBeNull();
     expect(screen.getByText("主脚本已确认。你可以继续添加补充材料；所有材料准备好后，点击下方按钮，Worker 才会开始制作。")).toBeTruthy();
-    expect(screen.getByRole("button", { name: "导入所选材料" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "导入所选材料" })).toBeNull();
     expect(screen.getByRole("button", { name: "材料准备完成，开始制作" })).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "材料准备完成，开始制作" }));
     expect(onStartProduction).toHaveBeenCalledWith(readyEpisode.id);
@@ -451,7 +465,7 @@ describe("审核台", () => {
     expect(screen.getByText("媒体库未挂载。")).toBeTruthy();
   });
 
-  it("通过统一入口标注用途后导入脚本、图片和多个 A-roll", async () => {
+  it("通过统一入口标注用途后按顺序导入脚本、图片、A-roll 和 B-roll", async () => {
     const user = userEvent.setup();
     const onImportMaterial = vi.fn().mockResolvedValue(undefined);
     const waitingEpisode: Episode = { ...reviewEpisode, id: "episode-materials", stage: "waiting_input", title: "首次准备材料" };
@@ -462,24 +476,57 @@ describe("审核台", () => {
     const imageFile = new File(["image"], "character.png", { type: "image/png" });
     const firstShot = new File(["video"], "shot-1.mp4", { type: "video/mp4" });
     const secondShot = new File(["video"], "shot-2.mp4", { type: "video/mp4" });
-    await user.upload(screen.getByLabelText("选择生产材料"), [scriptFile, imageFile, firstShot, secondShot]);
+    const firstBroll = new File(["video"], "cutaway-1.mp4", { type: "video/mp4" });
+    const secondBroll = new File(["video"], "cutaway-2.mp4", { type: "video/mp4" });
+    await user.upload(screen.getByLabelText("选择生产材料"), [scriptFile, imageFile, firstShot, secondShot, firstBroll, secondBroll]);
 
-    expect(screen.getAllByText("待标注", { selector: ".material-import-status" })).toHaveLength(4);
+    expect(screen.getAllByText("待标注", { selector: ".material-import-status" })).toHaveLength(6);
     expect(screen.getByText("shot-1.mp4")).toBeTruthy();
     expect(screen.getByText("shot-2.mp4")).toBeTruthy();
     await user.selectOptions(screen.getByLabelText("script.md 用途"), "main_script");
     await user.selectOptions(screen.getByLabelText("character.png 用途"), "visual_reference");
     await user.selectOptions(screen.getByLabelText("shot-1.mp4 用途"), "a_roll");
     await user.selectOptions(screen.getByLabelText("shot-2.mp4 用途"), "a_roll");
-    expect(screen.getByRole("checkbox", { name: "我已检查内容，明确确认这是本生产单的主脚本。" })).toBeTruthy();
-    await user.click(screen.getByRole("checkbox", { name: "我已检查内容，明确确认这是本生产单的主脚本。" }));
+    await user.selectOptions(screen.getByLabelText("cutaway-1.mp4 用途"), "b_roll");
+    await user.selectOptions(screen.getByLabelText("cutaway-2.mp4 用途"), "b_roll");
+    expect(Array.from(screen.getByRole("list", { name: "材料导入状态" }).querySelectorAll(".material-import-group-heading strong")).map((heading) => heading.textContent)).toEqual(["主脚本", "A-roll", "B-roll", "视觉参考"]);
+    await user.click(screen.getByRole("button", { name: "下移 shot-1.mp4" }));
+    await user.click(screen.getByRole("button", { name: "下移 cutaway-1.mp4" }));
+    const confirmation = screen.getByRole("button", { name: "主脚本待确认：script.md" });
+    expect(confirmation.closest("li")?.textContent).toContain("script.md");
+    expect(confirmation.closest(".material-import-actions")?.children[1]).toBe(confirmation);
+    expect(confirmation.getAttribute("data-tooltip")).toBe("确认这是本生产单的主脚本后，才能导入材料。");
+    await user.click(confirmation);
     await user.click(screen.getByRole("button", { name: "导入所选材料" }));
 
-    await waitFor(() => expect(onImportMaterial).toHaveBeenCalledTimes(4));
+    await waitFor(() => expect(onImportMaterial).toHaveBeenCalledTimes(6));
     expect(onImportMaterial).toHaveBeenNthCalledWith(1, expect.objectContaining({ isMainScript: true, materialPurpose: "main_script", materialType: "script", sourcePath: "script.md" }));
     expect(onImportMaterial).toHaveBeenNthCalledWith(2, expect.objectContaining({ isMainScript: false, materialPurpose: "visual_reference", materialType: "image", sourcePath: "character.png" }));
-    expect(onImportMaterial).toHaveBeenNthCalledWith(3, expect.objectContaining({ materialPurpose: "a_roll", materialType: "video", logicalName: "a-shot-001.mp4", sourcePath: "shot-1.mp4" }));
-    expect(onImportMaterial).toHaveBeenNthCalledWith(4, expect.objectContaining({ materialPurpose: "a_roll", materialType: "video", logicalName: "a-shot-002.mp4", sourcePath: "shot-2.mp4" }));
+    expect(onImportMaterial).toHaveBeenNthCalledWith(3, expect.objectContaining({ materialPurpose: "a_roll", materialType: "video", logicalName: "a-shot-001.mp4", sourcePath: "shot-2.mp4" }));
+    expect(onImportMaterial).toHaveBeenNthCalledWith(4, expect.objectContaining({ materialPurpose: "a_roll", materialType: "video", logicalName: "a-shot-002.mp4", sourcePath: "shot-1.mp4" }));
+    expect(onImportMaterial).toHaveBeenNthCalledWith(5, expect.objectContaining({ materialPurpose: "b_roll", materialType: "video", logicalName: "b-shot-001.mp4", sourcePath: "cutaway-2.mp4" }));
+    expect(onImportMaterial).toHaveBeenNthCalledWith(6, expect.objectContaining({ materialPurpose: "b_roll", materialType: "video", logicalName: "b-shot-002.mp4", sourcePath: "cutaway-1.mp4" }));
+    expect(screen.queryByRole("list", { name: "材料导入状态" })).toBeNull();
+  });
+
+  it("最多并发导入三个材料并在完成后立即补位", async () => {
+    const user = userEvent.setup();
+    const resolvers: Array<() => void> = [];
+    const onImportMaterial = vi.fn(() => new Promise<void>((resolve) => resolvers.push(resolve)));
+    const waitingEpisode: Episode = { ...reviewEpisode, id: "episode-concurrent-materials", stage: "waiting_input", main_script_revision_id: "revision-script-1" };
+
+    render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={waitingEpisode} isStartProductionPending={false} onImportMaterial={onImportMaterial} onStartProduction={vi.fn()} isTransitionPending={false} onTransition={vi.fn()} tasks={[]} transitions={[]} />);
+
+    const files = [1, 2, 3, 4].map((index) => new File(["video"], `clip-${index}.mp4`, { type: "video/mp4" }));
+    await user.upload(screen.getByLabelText("选择生产材料"), files);
+    for (const file of files) await user.selectOptions(screen.getByLabelText(`${file.name} 用途`), "b_roll");
+    await user.click(screen.getByRole("button", { name: "导入所选材料" }));
+
+    await waitFor(() => expect(onImportMaterial).toHaveBeenCalledTimes(3));
+    act(() => resolvers.shift()?.());
+    await waitFor(() => expect(onImportMaterial).toHaveBeenCalledTimes(4));
+    act(() => resolvers.splice(0).forEach((resolve) => resolve()));
+    await waitFor(() => expect(screen.queryByRole("list", { name: "材料导入状态" })).toBeNull());
   });
 
   it("在材料列表显示已确认、已导入和已绑定镜头状态", () => {
@@ -493,7 +540,7 @@ describe("审核台", () => {
     const failedReplacement: Task = { ...boundTask, id: "task-failed-material", input_snapshot: { manual_source: { material_revision_id: "material-b-roll" }, shot: { id: "shot-03" } }, status: "failed" };
     render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={readyEpisode} materialRevisions={materials} isStartProductionPending={false} isTransitionPending={false} onStartProduction={vi.fn()} onTransition={vi.fn()} tasks={[boundTask, failedReplacement]} transitions={[]} />);
 
-    const materialList = screen.getByRole("region", { name: "已上传材料" });
+    const materialList = screen.getByRole("list", { name: "材料导入状态" });
     expect(materialList.textContent).toContain("script.md");
     expect(materialList.textContent).toContain("已确认");
     expect(materialList.textContent).toContain("cutaway.mp4");
@@ -516,7 +563,7 @@ describe("审核台", () => {
 
   it("分镜批准后显示逐镜头准备草稿，并只保存音频模式与字幕", async () => {
     const user = userEvent.setup();
-    const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-shot-workbench", stage: "storyboard_approved" };
+    const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-shot-workbench", stage: "storyboard_approved", tts_language_code: "zh-CN", tts_speaking_rate: 1.35, tts_voice: "episode-voice" };
     const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", episode_id: approvedEpisode.id, id: "artifact-shot-workbench", relative_path: "episodes/episode-shot-workbench/storyboard.json" };
     const reviewPackage = { artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "review-package-shot-workbench", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-shot-workbench", task_run_id: "run-shot-workbench" };
     const drafts: ShotPreparationDraft[] = [{ clip_segments: [], audio_mode: "tts", audio_status: "pending", confirmation_status: "pending", created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "draft-shot-1", review_package_id: reviewPackage.id, shot_id: "shot-1", subtitle_text: "第一镜字幕", subtitles_enabled: true, tts_speaking_rate: 1.35, tts_voice: "voice-a", updated_at: "2026-09-03T00:00:00.000Z", video_status: "pending" }, { ...({} as ShotPreparationDraft), audio_mode: "tts", audio_status: "pending", confirmation_status: "pending", created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "draft-shot-2", review_package_id: reviewPackage.id, shot_id: "shot-2", subtitle_text: "第二镜字幕", subtitles_enabled: true, tts_speaking_rate: 1.35, tts_voice: "voice-a", updated_at: "2026-09-03T00:00:00.000Z", video_status: "pending" }];
@@ -525,24 +572,26 @@ describe("审核台", () => {
       { created_at: "2026-09-03T00:00:00.000Z", created_by: "owner-1", episode_id: approvedEpisode.id, file_size: 2048, id: "material-shot-workbench-a", is_main_script: false, material_purpose: "a_roll", material_type: "video", mime_type: "video/mp4", revision_number: 1, sha256: "b".repeat(64), source_kind: "file", source_path: "presenter.mp4", storage_path: "episodes/episode-shot-workbench/materials/presenter.mp4" },
       { created_at: "2026-09-03T00:00:00.000Z", created_by: "owner-1", episode_id: approvedEpisode.id, file_size: 2048, id: "material-shot-workbench-b", is_main_script: false, material_purpose: "b_roll", material_type: "video", mime_type: "video/mp4", revision_number: 1, sha256: "c".repeat(64), source_kind: "file", source_path: "cutaway.mp4", storage_path: "episodes/episode-shot-workbench/materials/cutaway.mp4" },
     ];
-    const previewPlay = vi.fn().mockResolvedValue(undefined);
-    const fetcher = vi.fn((input: RequestInfo | URL) => Promise.resolve(String(input).startsWith("/_tts-voice-preview")
-      ? new Response(new Blob(["audio"], { type: "audio/mpeg" }), { status: 200 })
-      : new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜口播", shotType: "a_roll", targetSpec: "9:16" }, { durationSeconds: 2, id: "shot-2", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "素材", scriptSegment: "第二镜口播", shotType: "b_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } })));
+    const fetcher = vi.fn().mockImplementation(() => Promise.resolve(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜口播", shotType: "a_roll", targetSpec: "9:16" }, { durationSeconds: 2, id: "shot-2", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "素材", scriptSegment: "第二镜口播", shotType: "b_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } })));
     vi.stubGlobal("fetch", fetcher);
-    vi.stubGlobal("Audio", vi.fn(() => ({ addEventListener: vi.fn(), pause: vi.fn(), play: previewPlay })));
+    const onSaveEpisodeTtsSettings = vi.fn().mockResolvedValue(undefined);
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={{ ...blueprint, policy: { narration: { executor: { adapter: "volcengine_tts", model: "seed-tts-2.0", provider: "volcengine_tts" }, voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 1.35 } } } }} episode={approvedEpisode} isTransitionPending={false} materialRevisions={materials} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={drafts} tasks={[]} transitions={[]} />);
+    const view = render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={{ ...blueprint, policy: { narration: { executor: { adapter: "volcengine_tts", model: "seed-tts-2.0", provider: "volcengine_tts" }, voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 1.35 } } } }} episode={approvedEpisode} isTransitionPending={false} materialRevisions={materials} onSaveEpisodeTtsSettings={onSaveEpisodeTtsSettings} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={drafts} tasks={[]} transitions={[]} />);
 
     await screen.findByRole("heading", { name: "分镜工作台" });
+    expect(screen.getByRole("button", { name: "提交并生成审核视频" })).toBeTruthy();
+    expect(screen.getByText("提交当前已保存的镜头配置，由 Worker 生成可播放的整片审核视频；完成后进入审核阶段。")).toBeTruthy();
+    expect(screen.queryByRole("region", { name: "批量 TTS" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "生成准备片段" })).toBeNull();
     expect(screen.queryByText("Studio 前")).toBeNull();
     expect(screen.getByRole("switch", { name: /显示字幕/ })).toBeTruthy();
     expect(screen.queryByText(/历史音轨保留/)).toBeNull();
-    expect(screen.getByRole("group", { name: "音频模式" }).compareDocumentPosition(screen.getByRole("region", { name: "shot-1 画面准备" })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect((screen.getByLabelText("shot-1 TTS 声音") as HTMLSelectElement).value).toBe("voice-a");
-    expect((screen.getByLabelText("shot-1 TTS 声音") as HTMLSelectElement).options.length).toBeGreaterThan(2);
-    expect(screen.getByRole("button", { name: "shot-1 试听当前音色" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "shot-1 恢复默认声音" })).toBeTruthy();
+    expect((screen.getByLabelText("本期 TTS 声音") as HTMLSelectElement).value).toBe("episode-voice");
+    expect((screen.getByLabelText("本期 TTS 语速") as HTMLInputElement).value).toBe("1.35");
+    expect(screen.getByText("只影响当前 Episode；修改后旧音轨保留为历史，需要重新生成当前口播。")).toBeTruthy();
+    expect(screen.queryByLabelText("shot-1 TTS 声音")).toBeNull();
+    expect(screen.queryByRole("button", { name: "shot-1 试听当前音色" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "shot-1 恢复默认声音" })).toBeNull();
     const restoreScriptButton = screen.getByRole("button", { name: "shot-1 恢复分镜文案" });
     expect(restoreScriptButton.textContent).toBe("");
     expect(restoreScriptButton.getAttribute("title")).toBe("恢复分镜文案");
@@ -550,16 +599,172 @@ describe("审核台", () => {
     expect(screen.queryByText(/默认声音：voice-a/)).toBeNull();
     expect(screen.queryByText(/基准文案：/)).toBeNull();
     expect(screen.queryByText("上传视频的声音")).toBeNull();
-    await user.click(screen.getByRole("button", { name: "shot-1 试听当前音色" }));
-    await waitFor(() => expect(previewPlay).toHaveBeenCalledTimes(1));
-    expect(fetcher).toHaveBeenCalledWith(`/_tts-voice-preview?episode=${approvedEpisode.id}`, expect.objectContaining({ method: "POST" }));
-    await user.click(screen.getByRole("button", { name: /shot-2/ }));
+    await openVisualStep(user, "shot-1");
+    expect(screen.getByRole("region", { name: "shot-1 画面准备" })).toBeTruthy();
+    await user.selectOptions(screen.getByLabelText("shot-1 当前原片"), "material-shot-workbench-a");
+    await user.click(screen.getByRole("button", { name: "保存镜头设置" }));
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /^shot-1 A-roll/ }).getAttribute("aria-expanded")).toBe("false");
+      expect(screen.getByRole("button", { name: /^shot-2 B-roll/ }).getAttribute("aria-expanded")).toBe("true");
+    });
+    expect(within(screen.getByRole("button", { name: /^shot-1 A-roll/ })).getByText("已保存")).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "保存本期设置" }));
+    expect(onSaveEpisodeTtsSettings).toHaveBeenCalledWith({ episodeId: approvedEpisode.id, languageCode: "zh-CN", speakingRate: 1.35, voice: "episode-voice" });
+    const subtitleField = screen.getByLabelText("shot-2 字幕正文");
+    await user.clear(subtitleField);
+    await user.type(subtitleField, "修改后的字幕");
+    expect(within(screen.getByRole("button", { name: /^shot-2 B-roll/ })).getByText("有未保存修改")).toBeTruthy();
+    await openVisualStep(user, "shot-2");
     await user.selectOptions(screen.getByLabelText("shot-2 当前原片"), "material-shot-workbench-b");
-    const subtitleFields = screen.getAllByRole("textbox");
-    await user.clear(subtitleFields[1]);
-    await user.type(subtitleFields[1], "修改后的字幕");
-    await user.click(screen.getAllByRole("button", { name: "保存草稿" })[1]);
-    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ audioMode: "tts", clipSegments: [{ end_seconds: 2, start_seconds: 0 }], episodeId: approvedEpisode.id, materialRevisionId: "material-shot-workbench-b", reviewPackageId: reviewPackage.id, shotId: "shot-2", subtitleText: "修改后的字幕", subtitlesEnabled: true }));
+    await user.click(screen.getByRole("button", { name: "保存镜头设置" }));
+    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ audioMode: "tts", clipSegments: [{ end_seconds: 2, start_seconds: 0 }], episodeId: approvedEpisode.id, materialRevisionId: "material-shot-workbench-b", reviewPackageId: reviewPackage.id, shotId: "shot-2", subtitleText: "修改后的字幕", subtitlesEnabled: true, ttsText: "第二镜字幕" }));
+    expect(window.location.hash).toBe(`#storyboard-shot-${reviewPackage.id}-shot-2`);
+
+    view.unmount();
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={{ ...blueprint, policy: { narration: { executor: { adapter: "volcengine_tts", model: "seed-tts-2.0", provider: "volcengine_tts" }, voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 1.35 } } } }} episode={approvedEpisode} isTransitionPending={false} materialRevisions={materials} onSaveEpisodeTtsSettings={onSaveEpisodeTtsSettings} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={drafts} tasks={[]} transitions={[]} />);
+    await screen.findByRole("heading", { name: "分镜工作台" });
+    expect(screen.getByRole("button", { name: /^shot-1 A-roll/ }).getAttribute("aria-expanded")).toBe("false");
+    expect(screen.getByRole("button", { name: /^shot-2 B-roll/ }).getAttribute("aria-expanded")).toBe("true");
+  });
+
+  it("结构修订留在工作台后台应用，并在应用期间阻止重复提交", async () => {
+    const user = userEvent.setup();
+    const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-shot-structure-ui", stage: "storyboard_approved" };
+    const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", episode_id: approvedEpisode.id, id: "artifact-shot-structure-ui", relative_path: "episodes/episode-shot-structure-ui/storyboard.json" };
+    const reviewPackage = { artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "review-package-shot-structure-ui", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-shot-structure-ui", task_run_id: "run-shot-structure-ui" };
+    const onRequestShotStructureRevision = vi.fn().mockResolvedValue(undefined);
+    const shots = ["shot-1", "shot-2", "shot-3"].map((id, index) => ({ durationSeconds: 3, id, inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: `第${index + 1}镜口播`, shotType: "a_roll" as const, targetSpec: "9:16" }));
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots }), { status: 200, headers: { "Content-Type": "application/json" } })));
+
+    const view = render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} onRequestShotStructureRevision={onRequestShotStructureRevision} onTransition={vi.fn()} reviewPackages={[reviewPackage]} tasks={[]} transitions={[]} />);
+
+    await screen.findByRole("heading", { name: "分镜工作台" });
+    const openOperation = async (shotId: string, label: string) => {
+      await user.click(screen.getByLabelText(`${shotId} 更多操作`));
+      const tree = screen.getByRole("tree", { name: `${shotId} 镜头设置` });
+      await user.click(within(tree).getByRole("treeitem", { name: /调整镜头/ }));
+      await user.click(within(tree).getByRole("button", { name: label }));
+      return screen.getByRole("dialog", { name: `${shotId} ${label}` });
+    };
+    const firstDialog = await openOperation("shot-1", "合并镜头");
+    const firstMergeTarget = screen.getByLabelText("合并对象") as HTMLSelectElement;
+    expect([...firstMergeTarget.options].map((option) => option.value)).toEqual(["", "shot-2"]);
+    await user.click(within(firstDialog).getByRole("button", { name: "关闭镜头设置" }));
+
+    for (const label of ["新增镜头", "删除镜头", "拆分镜头", "调整顺序", "修改镜头类型", "修改目标时长"]) {
+      const dialog = await openOperation("shot-2", label);
+      await user.click(within(dialog).getByRole("button", { name: "关闭镜头设置" }));
+    }
+
+    const middleDialog = await openOperation("shot-2", "合并镜头");
+    const middleMergeTarget = screen.getByLabelText("合并对象") as HTMLSelectElement;
+    expect([...middleMergeTarget.options].map((option) => option.value)).toEqual(["", "shot-1", "shot-3"]);
+    await user.selectOptions(middleMergeTarget, "shot-1");
+    await user.type(within(middleDialog).getByLabelText("修订原因"), "合并相邻镜头。");
+    await user.click(within(middleDialog).getByRole("button", { name: "提交分镜结构修订" }));
+    await waitFor(() => expect(onRequestShotStructureRevision).toHaveBeenCalledWith(expect.objectContaining({ operation: expect.objectContaining({ kind: "merge", shotIds: ["shot-1", "shot-2"] }) })));
+    expect(screen.getByText("正在后台应用“合并镜头”；完成后会在此处切换到新版分镜。")).toBeTruthy();
+    expect((within(screen.getByRole("tree", { name: "shot-2 镜头设置" })).getByRole("treeitem", { name: /调整镜头/ }) as HTMLButtonElement).disabled).toBe(true);
+    expect(screen.queryByRole("dialog", { name: "shot-2 合并镜头" })).toBeNull();
+    const oldFailedTask: Task = { ...blockedTask, created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "task-old-failed-structure", input_snapshot: { storyboard_revision: { base_review_package_id: reviewPackage.id } }, status: "failed", task_type: "draft_storyboard_revision" };
+    const newerRunningTask: Task = { ...oldFailedTask, created_at: "2026-09-03T00:01:00.000Z", id: "task-new-running-structure", status: "running" };
+    view.rerender(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} onRequestShotStructureRevision={onRequestShotStructureRevision} onTransition={vi.fn()} reviewPackages={[reviewPackage]} tasks={[oldFailedTask, newerRunningTask]} transitions={[]} />);
+    expect(screen.getByText("正在后台应用“合并镜头”；完成后会在此处切换到新版分镜。")).toBeTruthy();
+    expect(screen.queryByText("结构修改未能应用；旧版分镜和已保存配置保持不变。")).toBeNull();
+  });
+
+  it("删除镜头后在工作台切换新版，并打开下一镜", async () => {
+    const user = userEvent.setup();
+    const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-shot-structure-switch", stage: "storyboard_approved" };
+    const storyboardArtifact = { ...previewArtifact, artifact_type: "storyboard" as const, episode_id: approvedEpisode.id, id: "artifact-shot-structure-switch", relative_path: "episodes/episode-shot-structure-switch/storyboard.json" };
+    const revisedArtifact = { ...storyboardArtifact, id: "artifact-shot-structure-switch-v2", relative_path: "episodes/episode-shot-structure-switch/storyboard-v2.json", sha256: "b".repeat(64) };
+    const reviewPackage = { artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "review-package-shot-structure-switch", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-shot-structure-switch", task_run_id: "run-shot-structure-switch" };
+    const revisedPackage = { ...reviewPackage, artifact_id: revisedArtifact.id, id: "review-package-shot-structure-switch-v2", revision_number: 2, task_id: "task-shot-structure-switch-v2" };
+    const shots = ["shot-1", "shot-2", "shot-3"].map((id) => ({ durationSeconds: 3, id, inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: `${id} 文案`, shotType: "a_roll" as const, targetSpec: "9:16" }));
+    vi.stubGlobal("fetch", vi.fn().mockImplementation((source: string) => Promise.resolve(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: source.includes("storyboard-v2") ? shots.filter((shot) => shot.id !== "shot-2") : shots }), { status: 200, headers: { "Content-Type": "application/json" } }))));
+    const onRequestShotStructureRevision = vi.fn().mockResolvedValue(undefined);
+    const view = render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} onRequestShotStructureRevision={onRequestShotStructureRevision} onTransition={vi.fn()} reviewPackages={[reviewPackage]} tasks={[]} transitions={[]} />);
+
+    await screen.findByRole("heading", { name: "分镜工作台" });
+    await user.click(screen.getByLabelText("shot-2 更多操作"));
+    const tree = screen.getByRole("tree", { name: "shot-2 镜头设置" });
+    await user.click(within(tree).getByRole("treeitem", { name: /调整镜头/ }));
+    await user.click(within(tree).getByRole("button", { name: "删除镜头" }));
+    const dialog = screen.getByRole("dialog", { name: "shot-2 删除镜头" });
+    await user.type(within(dialog).getByLabelText("修订原因"), "删除多余镜头。");
+    await user.click(within(dialog).getByRole("button", { name: "提交分镜结构修订" }));
+    await waitFor(() => expect(onRequestShotStructureRevision).toHaveBeenCalledWith(expect.objectContaining({ operation: { kind: "delete", shotId: "shot-2" } })));
+    expect(screen.getByText("正在后台应用“删除镜头”；完成后会在此处切换到新版分镜。")).toBeTruthy();
+
+    view.rerender(<EpisodeDetail {...materialInputProps} artifacts={[revisedArtifact]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} onRequestShotStructureRevision={onRequestShotStructureRevision} onTransition={vi.fn()} reviewPackages={[revisedPackage]} tasks={[]} transitions={[]} />);
+    await waitFor(() => expect(window.location.hash).toBe(`#storyboard-shot-${revisedPackage.id}-shot-3`));
+    expect(screen.getByRole("button", { name: /^shot-3 A-roll/ }).getAttribute("aria-expanded")).toBe("true");
+    window.history.replaceState(null, "", "#");
+  });
+
+  it("刷新后从运行中的结构任务恢复工作台，并在完成后打开删除镜头的下一镜", async () => {
+    const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-shot-structure-resume", stage: "storyboard_approved" };
+    const storyboardArtifact = { ...previewArtifact, artifact_type: "storyboard" as const, episode_id: approvedEpisode.id, id: "artifact-shot-structure-resume", relative_path: "episodes/episode-shot-structure-resume/storyboard.json" };
+    const revisedArtifact = { ...storyboardArtifact, id: "artifact-shot-structure-resume-v2", relative_path: "episodes/episode-shot-structure-resume/storyboard-v2.json", sha256: "b".repeat(64) };
+    const reviewPackage = { artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "review-package-shot-structure-resume", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-shot-structure-resume", task_run_id: "run-shot-structure-resume" };
+    const revisedPackage = { ...reviewPackage, artifact_id: revisedArtifact.id, id: "review-package-shot-structure-resume-v2", revision_number: 2, task_id: "task-shot-structure-resume-v2" };
+    const shots = ["shot-1", "shot-2", "shot-3"].map((id) => ({ durationSeconds: 3, id, inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: `${id} 文案`, shotType: "a_roll" as const, targetSpec: "9:16" }));
+    const revisionTask: Task = { ...blockedTask, created_at: "2026-09-03T00:01:00.000Z", episode_id: approvedEpisode.id, id: "task-running-structure", input_snapshot: { storyboard_revision: { base_review_package_id: reviewPackage.id, operation: { kind: "delete", shotId: "shot-2" } } }, status: "running", task_type: "draft_storyboard_revision" };
+    vi.stubGlobal("fetch", vi.fn().mockImplementation((source: string) => Promise.resolve(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: source.includes("storyboard-v2") ? shots.filter((shot) => shot.id !== "shot-2") : shots }), { status: 200, headers: { "Content-Type": "application/json" } }))));
+    window.history.replaceState(null, "", `#storyboard-shot-${reviewPackage.id}-shot-2`);
+    const view = render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} onTransition={vi.fn()} reviewPackages={[reviewPackage]} tasks={[revisionTask]} transitions={[]} />);
+
+    await screen.findByText("正在后台应用“删除镜头”；完成后会在此处切换到新版分镜。");
+    view.rerender(<EpisodeDetail {...materialInputProps} artifacts={[revisedArtifact]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} onTransition={vi.fn()} reviewPackages={[revisedPackage]} tasks={[{ ...revisionTask, status: "completed" }]} transitions={[]} />);
+    await waitFor(() => expect(window.location.hash).toBe(`#storyboard-shot-${revisedPackage.id}-shot-3`));
+    expect(screen.getByRole("button", { name: /^shot-3 A-roll/ }).getAttribute("aria-expanded")).toBe("true");
+  });
+
+  it("新版分镜保留旧版本 hash 中仍存在的镜头", async () => {
+    const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-shot-hash-remap", stage: "storyboard_approved" };
+    const storyboardArtifact = { ...previewArtifact, artifact_type: "storyboard" as const, episode_id: approvedEpisode.id, id: "artifact-shot-hash-remap-v2", relative_path: "episodes/episode-shot-hash-remap/storyboard-v2.json", sha256: "b".repeat(64) };
+    const reviewPackage = { artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "review-package-shot-hash-remap-v2", invalidated_at: null, invalidated_reason: null, revision_number: 2, stage: "storyboard_review" as const, task_id: "task-shot-hash-remap-v2", task_run_id: "run-shot-hash-remap-v2" };
+    const shots = ["shot-1", "shot-2"].map((id) => ({ durationSeconds: 3, id, inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: `${id} 文案`, shotType: "a_roll" as const, targetSpec: "9:16" }));
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots }), { status: 200, headers: { "Content-Type": "application/json" } })));
+    window.history.replaceState(null, "", "#storyboard-shot-old-package-shot-2");
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} onTransition={vi.fn()} reviewPackages={[reviewPackage]} tasks={[]} transitions={[]} />);
+
+    await waitFor(() => expect(window.location.hash).toBe(`#storyboard-shot-${reviewPackage.id}-shot-2`));
+    await waitFor(() => expect(screen.getByRole("button", { name: /^shot-2 A-roll/ }).getAttribute("aria-expanded")).toBe("true"));
+  });
+
+  it("本期 TTS 试听只在点击后读取当前表单，不保存或创建任务", async () => {
+    const user = userEvent.setup();
+    const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-tts-preview", stage: "storyboard_approved", tts_language_code: "zh-CN", tts_speaking_rate: 1.35, tts_voice: "voice-a" };
+    const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", episode_id: approvedEpisode.id, id: "artifact-tts-preview", relative_path: "episodes/episode-tts-preview/storyboard.json" };
+    const reviewPackage = { artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "review-package-tts-preview", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-tts-preview", task_run_id: "run-tts-preview" };
+    const fetcher = vi.fn().mockImplementation((input: string) => input.includes("_tts-voice-preview")
+      ? Promise.resolve(new Response(new Blob(["audio"], { type: "audio/mpeg" }), { status: 200 }))
+      : Promise.resolve(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "分镜口播", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } })));
+    vi.stubGlobal("fetch", fetcher);
+    vi.stubGlobal("Audio", vi.fn().mockImplementation(() => ({ addEventListener: vi.fn(), pause: vi.fn(), play: vi.fn().mockResolvedValue(undefined) })));
+    const onSave = vi.fn().mockResolvedValue(undefined);
+    const onGenerateTts = vi.fn().mockResolvedValue(undefined);
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={{ ...blueprint, policy: { narration: { executor: { adapter: "volcengine_tts", model: "seed-tts-2.0", provider: "volcengine_tts" }, voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 1.35 } } } }} episode={approvedEpisode} isTransitionPending={false} onGenerateShotTts={onGenerateTts} onSaveEpisodeTtsSettings={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} tasks={[]} transitions={[]} />);
+
+    await screen.findByRole("heading", { name: "分镜工作台" });
+    const fetchCallsBeforeEdit = fetcher.mock.calls.length;
+    await user.selectOptions(screen.getByLabelText("本期 TTS 语言"), "en-US");
+    await user.selectOptions(screen.getByLabelText("本期 TTS 声音"), "zh_female_vv_uranus_bigtts");
+    await user.clear(screen.getByLabelText("本期 TTS 语速"));
+    await user.type(screen.getByLabelText("本期 TTS 语速"), "1.5");
+    await user.click(screen.getByRole("button", { expanded: true }));
+    expect(fetcher).toHaveBeenCalledTimes(fetchCallsBeforeEdit);
+    await user.click(screen.getByRole("button", { name: "保存本期设置" }));
+    expect(onSave).toHaveBeenCalledWith({ episodeId: approvedEpisode.id, languageCode: "en-US", speakingRate: 1.5, voice: "zh_female_vv_uranus_bigtts" });
+    expect(fetcher).toHaveBeenCalledTimes(fetchCallsBeforeEdit);
+    await user.click(screen.getByRole("button", { name: "试听本期 TTS" }));
+    await waitFor(() => expect(fetcher).toHaveBeenCalledTimes(fetchCallsBeforeEdit + 1));
+    const previewCall = fetcher.mock.calls.at(-1);
+    expect(String(previewCall?.[0])).toContain("/_tts-voice-preview?episode=episode-tts-preview");
+    expect(previewCall?.[1]).toEqual(expect.objectContaining({ body: JSON.stringify({ languageCode: "en-US", speakingRate: 1.5, voice: "zh_female_vv_uranus_bigtts" }), method: "POST" }));
+    expect(onSave).toHaveBeenCalledTimes(1);
+    expect(onGenerateTts).not.toHaveBeenCalled();
   });
 
   it("逐镜头 TTS 可先于原片标记生成，完整保存仍要求视频", async () => {
@@ -579,13 +784,43 @@ describe("审核台", () => {
     await user.clear(screen.getByLabelText("shot-1 口播内容"));
     await user.type(screen.getByLabelText("shot-1 口播内容"), "新的逐字口播");
     expect(onGenerateTts).not.toHaveBeenCalled();
-    await user.click(screen.getByRole("button", { name: "生成此镜头口播" }));
+    await user.click(screen.getByRole("button", { name: "保存口播设置" }));
+    await user.click(screen.getByRole("button", { name: "生成口播" }));
     expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ includeVideo: false, materialRevisionId: "" }));
     expect(onGenerateTts).toHaveBeenCalledWith({ episodeId: approvedEpisode.id, reviewPackageId: reviewPackage.id, retry: false, shotId: "shot-1" });
+    await openVisualStep(user, "shot-1");
     expect(screen.getByLabelText("shot-1 当前原片")).toBeTruthy();
-    await user.click(screen.getByRole("button", { name: "保存草稿" }));
+    await user.click(screen.getByRole("button", { name: "保存镜头设置" }));
     expect(screen.getByRole("alert").textContent).toContain("请选择原片并完成至少一个有效片段标记");
-    expect(onSave).toHaveBeenCalledTimes(1);
+    expect(onSave).toHaveBeenCalledTimes(2);
+  });
+
+  it("逐镜头口播无需确认即可保存，并可保存单镜头覆盖", async () => {
+    const user = userEvent.setup();
+    const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-shot-confirmation", stage: "storyboard_approved", tts_language_code: "zh-CN", tts_speaking_rate: 1.2, tts_voice: "voice-a" };
+    const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", episode_id: approvedEpisode.id, id: "artifact-shot-confirmation", relative_path: "episodes/episode-shot-confirmation/storyboard.json" };
+    const reviewPackage = { artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "review-package-shot-confirmation", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-shot-confirmation", task_run_id: "run-shot-confirmation" };
+    const draft: ShotPreparationDraft = { clip_segments: [], audio_mode: "tts", audio_status: "ready", confirmation_status: "confirmed", created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "draft-shot-confirmation", review_package_id: reviewPackage.id, shot_id: "shot-1", subtitle_text: "已确认口播", subtitles_enabled: true, tts_speaking_rate: 1.2, tts_text: "已确认口播", tts_text_confirmation_fingerprint: "fingerprint", tts_voice: "voice-a", updated_at: "2026-09-03T00:00:00.000Z", video_status: "pending" };
+    const onSave = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜口播", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } })));
+
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={[draft]} tasks={[]} transitions={[]} />);
+
+    await screen.findByRole("heading", { name: "分镜工作台" });
+    expect(screen.queryByRole("checkbox", { name: /口播内容已确认/ })).toBeNull();
+    await user.clear(screen.getByLabelText("shot-1 口播内容"));
+    await user.type(screen.getByLabelText("shot-1 口播内容"), "修改后的口播");
+    await user.click(screen.getByLabelText("shot-1 更多操作"));
+    await user.click(screen.getByRole("treeitem", { name: /声音设置/ }));
+    await user.type(screen.getByLabelText("shot-1 单独设置声音"), "voice-b");
+    await user.clear(screen.getByLabelText("shot-1 单独设置语速"));
+    await user.type(screen.getByLabelText("shot-1 单独设置语速"), "1.5");
+    await user.click(screen.getByRole("button", { name: "保存此镜头设置" }));
+    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ ttsOverride: { speakingRate: 1.5, voice: "voice-b" } }));
+    await user.click(screen.getByLabelText("shot-1 更多操作"));
+    await user.click(screen.getByRole("treeitem", { name: /声音设置/ }));
+    await user.click(screen.getByRole("button", { name: "恢复本期设置" }));
+    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ ttsOverride: { speakingRate: null, voice: null } }));
   });
 
   it("后台刷新时保留未保存的原片与片段标记", async () => {
@@ -600,6 +835,7 @@ describe("审核台", () => {
     const view = render(<EpisodeDetail {...props} shotPreparationDrafts={[draft]} />);
 
     await screen.findByRole("heading", { name: "分镜工作台" });
+    await openVisualStep(user, "shot-1");
     await user.selectOptions(screen.getByLabelText("shot-1 当前原片"), source.id);
     await user.click(screen.getByRole("button", { name: "添加片段" }));
     view.rerender(<EpisodeDetail {...props} shotPreparationDrafts={[{ ...draft, updated_at: "2026-09-03T00:00:15.000Z" }]} />);
@@ -617,17 +853,19 @@ describe("审核台", () => {
     const sourceRetryTask: Task = { ...sourceTask, created_at: "2026-09-03T00:04:00.000Z", id: "task-source-audio-failed", last_result: { blockers: [{ code: "ffmpeg_failed", detail: "源片段没有可提取音轨。" }] }, status: "failed" };
     const clipTask: Task = { ...sourceTask, id: "task-prepared-video", input_snapshot: {}, task_type: "generate_b_roll" };
     const sourceTrack = { created_at: "2026-09-03T00:03:00.000Z", cue_id: "shot-1", duration_seconds: 2.984, episode_id: approvedEpisode.id, file_size: 1024, id: "track-source-v2", relative_path: "episodes/episode-shot-source/audio/shot-source.mp3", sha256: "c".repeat(64), source_artifact_id: "artifact-source-audio", source_material_revision_id: null, source_review_package_id: reviewPackage.id, source_task_id: sourceTask.id, start_seconds: 0, track_kind: "source" };
-    const draft: ShotPreparationDraft = { clip_segments: [], audio_mode: "source", audio_status: "failed", confirmation_status: "pending", created_at: "2026-09-03T00:00:00.000Z", current_audio_track_id: sourceTrack.id, current_video_artifact_id: preparedVideo.id, current_video_task_id: clipTask.id, episode_id: approvedEpisode.id, id: "draft-shot-source", review_package_id: reviewPackage.id, selected_material_revision_id: null, shot_id: "shot-1", source_audio_duration_seconds: 2.984, source_audio_error: "源片段没有可提取音轨。", subtitle_text: "原声字幕", subtitles_enabled: true, tts_speaking_rate: null, tts_voice: null, updated_at: "2026-09-03T00:04:00.000Z", video_status: "ready" };
-    const onGenerateSourceAudio = vi.fn().mockResolvedValue(undefined);
-    vi.stubGlobal("fetch", vi.fn(() => Promise.resolve(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜口播", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } }))));
+    const draft: ShotPreparationDraft = { clip_segments: [], audio_mode: "source", audio_status: "failed", confirmation_status: "pending", created_at: "2026-09-03T00:00:00.000Z", current_video_artifact_id: preparedVideo.id, current_video_task_id: clipTask.id, episode_id: approvedEpisode.id, id: "draft-shot-source", review_package_id: reviewPackage.id, selected_material_revision_id: null, shot_id: "shot-1", source_audio_duration_seconds: 2.984, source_audio_error: "源片段没有可提取音轨。", subtitle_text: "原声字幕", subtitles_enabled: true, tts_speaking_rate: null, tts_voice: null, updated_at: "2026-09-03T00:04:00.000Z", video_status: "ready" };
+    vi.stubGlobal("fetch", vi.fn((_input: RequestInfo | URL, init?: RequestInit) => Promise.resolve(init?.method === "POST" ? localArtifactTicketResponse() : new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜口播", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } }))));
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact, preparedVideo]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} onGenerateShotSourceAudio={onGenerateSourceAudio} onTransition={vi.fn()} audioTracks={[sourceTrack]} reviewPackages={[reviewPackage]} shotPreparationDrafts={[draft]} tasks={[clipTask, sourceTask, sourceRetryTask]} transitions={[]} />);
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact, preparedVideo]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} onTransition={vi.fn()} audioTracks={[sourceTrack]} reviewPackages={[reviewPackage]} shotPreparationDrafts={[draft]} tasks={[clipTask, sourceTask, sourceRetryTask]} transitions={[]} />);
 
     await screen.findByRole("heading", { name: "分镜工作台" });
     expect(screen.getByDisplayValue("原声字幕")).toBeTruthy();
-    expect(screen.getByText(/原片音轨会随片段标记进入 Studio/)).toBeTruthy();
+    expect(screen.getByText(/使用片段对应的原片声音，不创建 TTS 任务/)).toBeTruthy();
     expect(screen.queryByRole("button", { name: /提取当前原声/ })).toBeNull();
-    expect(onGenerateSourceAudio).not.toHaveBeenCalled();
+    expect(await screen.findByLabelText("source 音轨")).toBeTruthy();
+    expect(screen.getByText("0s – 2.984s")).toBeTruthy();
+    expect(screen.getByText(reviewPackage.id.slice(0, 8))).toBeTruthy();
+    expect(screen.queryByRole("heading", { name: "音轨" })).toBeNull();
   });
 
   it("无口播显示为明确静音，并仍可保存字幕开关", async () => {
@@ -644,10 +882,12 @@ describe("审核台", () => {
 
     await screen.findByRole("heading", { name: "分镜工作台" });
     expect(screen.getByText(/已明确静音/)).toBeTruthy();
-    expect(screen.getByText(/不会创建 TTS 任务/)).toBeTruthy();
+    expect(screen.getByText(/该镜头不生成口播音轨/)).toBeTruthy();
+    await user.clear(screen.getByLabelText("shot-1 字幕正文"));
+    await openVisualStep(user, "shot-1");
     await user.selectOptions(screen.getByLabelText("shot-1 当前原片"), source.id);
-    await user.click(screen.getByRole("button", { name: "保存草稿" }));
-    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ audioMode: "none", episodeId: approvedEpisode.id, reviewPackageId: reviewPackage.id, shotId: "shot-1", subtitleText: "无口播字幕", subtitlesEnabled: false }));
+    await user.click(screen.getByRole("button", { name: "保存镜头设置" }));
+    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ audioMode: "none", episodeId: approvedEpisode.id, reviewPackageId: reviewPackage.id, shotId: "shot-1", subtitleText: "", subtitlesEnabled: false }));
   });
 
   it("同一原片支持多段裁剪并随镜头草稿一起保存", async () => {
@@ -655,20 +895,25 @@ describe("审核台", () => {
     const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-shot-clip", stage: "storyboard_approved" };
     const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", episode_id: approvedEpisode.id, id: "artifact-shot-clip", relative_path: "episodes/episode-shot-clip/storyboard.json" };
     const reviewPackage = { artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "review-package-shot-clip", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-shot-clip", task_run_id: "run-shot-clip" };
-    const draft: ShotPreparationDraft = { clip_segments: [{ start_seconds: 1, end_seconds: 3 }], audio_mode: "none", audio_status: "pending", confirmation_status: "pending", created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "draft-shot-clip", review_package_id: reviewPackage.id, selected_material_revision_id: "material-shot-clip", shot_id: "shot-1", subtitle_text: "第一镜", subtitles_enabled: false, tts_speaking_rate: null, tts_voice: null, updated_at: "2026-09-03T00:00:00.000Z", video_status: "pending" };
+    const draft: ShotPreparationDraft = { clip_segments: [{ start_seconds: 1, end_seconds: 3 }], audio_mode: "tts", audio_status: "ready", confirmation_status: "pending", created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "draft-shot-clip", review_package_id: reviewPackage.id, selected_material_revision_id: "material-shot-clip", shot_id: "shot-1", subtitle_text: "第一镜口播", subtitles_enabled: false, tts_actual_duration_seconds: 5.8, tts_speaking_rate: null, tts_text: "第一镜口播", tts_voice: null, updated_at: "2026-09-03T00:00:00.000Z", video_status: "pending" };
     const source: MaterialRevision = { created_at: "2026-09-03T00:00:00.000Z", created_by: "owner-1", episode_id: approvedEpisode.id, file_size: 2048, id: "material-shot-clip", is_main_script: false, material_purpose: "a_roll", material_type: "video", mime_type: "video/mp4", revision_number: 1, sha256: "b".repeat(64), source_kind: "file", source_path: "presenter.mp4", storage_path: "episodes/episode-shot-clip/materials/presenter.mp4" };
     const onSave = vi.fn().mockResolvedValue(undefined);
-    vi.stubGlobal("fetch", vi.fn((input: RequestInfo | URL) => Promise.resolve(String(input).includes("storyboard")
-      ? new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜口播", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } })
-      : new Response(new Blob(["video"], { type: "video/mp4" }), { status: 200 }))));
+    const onGenerateTts = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal("fetch", vi.fn((input: RequestInfo | URL, init?: RequestInit) => Promise.resolve(init?.method === "POST"
+      ? localArtifactTicketResponse()
+      : String(input).includes("storyboard")
+        ? new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜口播", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } })
+        : new Response(new Blob(["video"], { type: "video/mp4" }), { status: 200 }))));
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} materialRevisions={[source]} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={[draft]} tasks={[]} transitions={[]} />);
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} materialRevisions={[source]} onGenerateShotTts={onGenerateTts} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={[draft]} tasks={[]} transitions={[]} />);
 
     await screen.findByRole("heading", { name: "分镜工作台" });
+    await openVisualStep(user, "shot-1");
     expect(await screen.findByLabelText("shot-1 视频缩略图轨道")).toBeTruthy();
     expect(screen.getByText("片段标记")).toBeTruthy();
     expect(screen.queryByLabelText("shot-1 片段1 入点（秒）")).toBeNull();
-    expect(screen.getByText("A-roll · 2.000s / 建议 3s")).toBeTruthy();
+    expect(screen.getByText("A-roll · 当前片段 2.000s / 计划 3s")).toBeTruthy();
+    expect(screen.getByLabelText("镜头时长判定").textContent).toContain("口播 5.800s");
     const preview = await screen.findByLabelText("presenter.mp4 预览") as HTMLVideoElement;
     const pause = vi.spyOn(preview, "pause").mockImplementation(() => undefined);
     preview.currentTime = 2;
@@ -680,9 +925,16 @@ describe("审核台", () => {
     preview.currentTime = 2;
     fireEvent.play(preview);
     expect(preview.currentTime).toBe(1);
+    Object.defineProperty(preview, "duration", { configurable: true, value: 10 });
+    fireEvent.loadedMetadata(preview);
+    await user.click(screen.getByRole("button", { name: "按口播时长调整" }));
+    expect(screen.getByLabelText("镜头时长判定").textContent).toContain("音画时长一致");
     await user.click(screen.getByRole("button", { name: "添加片段" }));
-    await user.click(screen.getByRole("button", { name: "保存草稿" }));
-    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ clipSegments: [{ end_seconds: 3, start_seconds: 1 }, { end_seconds: 3, start_seconds: 0 }], episodeId: approvedEpisode.id, materialRevisionId: source.id, reviewPackageId: reviewPackage.id, shotId: "shot-1" }));
+    expect(onGenerateTts).not.toHaveBeenCalled();
+    expect(screen.queryByRole("button", { name: "按口播时长调整" })).toBeNull();
+    expect(screen.getByLabelText("镜头时长判定").textContent).toContain("多片段仅提示总量：请减少 3.000s");
+    await user.click(screen.getByRole("button", { name: "保存镜头设置" }));
+    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ clipSegments: [{ end_seconds: 6.8, start_seconds: 1 }, { end_seconds: 3, start_seconds: 0 }], episodeId: approvedEpisode.id, materialRevisionId: source.id, reviewPackageId: reviewPackage.id, shotId: "shot-1" }));
   });
 
   it("选择镜头原片文件后立即导入，不再要求二次确认", async () => {
@@ -697,25 +949,22 @@ describe("审核台", () => {
 
     await screen.findByRole("heading", { name: "分镜工作台" });
     expect(screen.queryByRole("button", { name: "导入原片" })).toBeNull();
+    await openVisualStep(user, "shot-1");
     await user.upload(screen.getByLabelText("shot-1 补充原片"), new File(["video"], "new-shot.mp4", { type: "video/mp4" }));
     await waitFor(() => expect(onImport).toHaveBeenCalledTimes(1));
     expect(onImport).toHaveBeenCalledWith(expect.objectContaining({ logicalName: "a-shot-001.mp4", sourcePath: "new-shot.mp4" }));
   });
 
-  it("在工作台底部冻结标记配置并进入 Studio", async () => {
-    const user = userEvent.setup();
+  it("分镜准备阶段不提供 Studio 入口", async () => {
     const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-shot-confirm", stage: "storyboard_approved" };
     const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", episode_id: approvedEpisode.id, id: "artifact-shot-confirm", relative_path: "episodes/episode-shot-confirm/storyboard.json" };
     const reviewPackage = { artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "review-package-shot-confirm", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-shot-confirm", task_run_id: "run-shot-confirm" };
-    const onConfirm = vi.fn().mockResolvedValue(undefined);
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜口播", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } })));
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} onConfirmShotPreparation={onConfirm} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={[]} tasks={[]} transitions={[]} />);
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={approvedEpisode} isTransitionPending={false} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={[]} tasks={[]} transitions={[]} />);
 
     await screen.findByRole("heading", { name: "分镜工作台" });
-    expect(screen.getByText(/只保存原片和片段标记/)).toBeTruthy();
-    await user.click(screen.getByRole("button", { name: "冻结配置并进入 Studio" }));
-    expect(onConfirm).toHaveBeenCalledWith({ episodeId: approvedEpisode.id, reviewPackageId: reviewPackage.id });
+    expect(screen.queryByRole("button", { name: "在 OpenChatCut 中打开" })).toBeNull();
   });
 
   it("展示委托脚本的冻结输入，并让 Owner 完成审核或要求重写", async () => {
@@ -786,7 +1035,7 @@ describe("审核台", () => {
       id: "artifact-static-visual",
       relative_path: "episodes/episode-review/visuals/lin-yan.svg",
     };
-    vi.stubGlobal("fetch", vi.fn().mockImplementation((source: string) => Promise.resolve(new Response(source.includes("visual-references") ? "# 角色\n\n林砚：雨夜深色雨衣。" : "# 视觉方案\n\n第一镜：雨夜古宅。", { status: 200, headers: { "Content-Type": "text/markdown" } }))));
+    vi.stubGlobal("fetch", vi.fn().mockImplementation((source: string, init?: RequestInit) => Promise.resolve(init?.method === "POST" ? localArtifactTicketResponse() : new Response(source.includes("visual-references") ? "# 角色\n\n林砚：雨夜深色雨衣。" : "# 视觉方案\n\n第一镜：雨夜古宅。", { status: 200, headers: { "Content-Type": "text/markdown" } }))));
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[visualBrief, referenceGroup, staticVisual]} blueprint={blueprint} episode={visualEpisode} isTransitionPending={false} onTransition={onTransition} reviewPackages={[{
       artifact_id: visualBrief.id,
@@ -823,10 +1072,11 @@ describe("审核台", () => {
     expect(screen.getByText("角色 / 地点 / 关键道具参考组")).toBeTruthy();
     expect(await screen.findByText("林砚：雨夜深色雨衣。", { exact: false })).toBeTruthy();
     expect(screen.getByText("所需静态视觉")).toBeTruthy();
-    const frozenContext = screen.getByText("冻结审核上下文").closest("details");
-    expect(frozenContext?.open).toBe(true);
-    await user.click(screen.getByText("冻结审核上下文"));
-    expect(frozenContext?.open).toBe(false);
+    const frozenContext = screen.getByText("审核与冻结依据").closest(".review-checklist-row");
+    const contextToggle = within(frozenContext as HTMLElement).getByRole("button", { name: "查看" });
+    expect(contextToggle.getAttribute("aria-expanded")).toBe("false");
+    await user.click(contextToggle);
+    expect(contextToggle.getAttribute("aria-expanded")).toBe("true");
 
     await user.type(screen.getByLabelText("审批理由"), "视觉方向清晰，符合主脚本。");
     await user.click(screen.getByRole("button", { name: "批准" }));
@@ -845,7 +1095,7 @@ describe("审核台", () => {
       producer_task_id: "task-visual-assets",
       relative_path: "episodes/episode-review/visual-assets-v1.md",
     };
-    vi.stubGlobal("fetch", vi.fn().mockImplementation(() => Promise.resolve(new Response("# 视觉资产清单\n\n- 已提供：林砚角色参考。", { status: 200, headers: { "Content-Type": "text/markdown" } }))));
+    vi.stubGlobal("fetch", vi.fn().mockImplementation((_source: string, init?: RequestInit) => Promise.resolve(init?.method === "POST" ? localArtifactTicketResponse() : new Response("# 视觉资产清单\n\n- 已提供：林砚角色参考。", { status: 200, headers: { "Content-Type": "text/markdown" } }))));
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[manifest]} blueprint={blueprint} episode={visualEpisode} isTransitionPending={false} onTransition={vi.fn()} reviewPackages={[{
       artifact_id: manifest.id,
@@ -876,6 +1126,11 @@ describe("审核台", () => {
     }]} tasks={[]} transitions={[]} />);
 
     expect(await screen.findByText("视觉资产清单", { exact: false })).toBeTruthy();
+    const contentRow = screen.getByText("完整资产清单").closest(".review-checklist-row");
+    const contentToggle = within(contentRow as HTMLElement).getByRole("button", { name: "查看" });
+    expect(contentToggle.getAttribute("aria-expanded")).toBe("false");
+    await user.click(contentToggle);
+    expect(contentToggle.getAttribute("aria-expanded")).toBe("true");
     expect(screen.getByText("已冻结的外部视觉输入")).toBeTruthy();
     const selector = screen.getByLabelText("选择视觉输入") as HTMLSelectElement;
     expect(selector.options).toHaveLength(2);
@@ -890,6 +1145,19 @@ describe("审核台", () => {
     await user.keyboard("{Escape}");
     expect(screen.queryByRole("dialog", { name: "a-shot-002.mp4 放大预览" })).toBeNull();
     expect(screen.queryByText("视觉审核包缺少参考组。")).toBeNull();
+    expect(screen.queryByRole("heading", { name: "已生成的视觉资产" })).toBeNull();
+    expect(screen.queryByRole("heading", { name: "音轨" })).toBeNull();
+  });
+
+  it("仅在视觉审核包包含静态视觉时显示生成视觉资产", () => {
+    const visualEpisode: Episode = { ...reviewEpisode, stage: "visual_review" };
+    const manifest: Artifact = { ...previewArtifact, artifact_type: "visual_asset_manifest", id: "artifact-visual-assets-generated", relative_path: "episodes/episode-review/visual-assets-v1.md" };
+    const staticVisual: Artifact = { ...manifest, artifact_type: "static_visual", id: "artifact-static-visual-generated", producer_task_id: "task-visual-assets", relative_path: "episodes/episode-review/visuals/cover.png" };
+    const reviewPackage = { artifact_id: manifest.id, context_snapshot: {}, created_at: "2026-08-22T00:00:00.000Z", episode_id: visualEpisode.id, id: "review-package-visual-assets-generated", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "visual_review" as const, task_id: "task-visual-assets", task_run_id: "task-run-visual-assets" };
+
+    render(<EpisodeDetail {...materialInputProps} artifacts={[manifest, staticVisual]} blueprint={blueprint} episode={visualEpisode} isTransitionPending={false} onTransition={vi.fn()} reviewPackages={[reviewPackage]} tasks={[]} transitions={[]} />);
+
+    expect(screen.getByRole("heading", { name: "已生成的视觉资产" })).toBeTruthy();
   });
 
   it("在 Studio 提交一次合成修订并重新审核", async () => {
@@ -899,19 +1167,19 @@ describe("审核台", () => {
     const renderArtifact: Artifact = { ...previewArtifact, episode_id: qcEpisode.id, artifact_type: "render", id: "artifact-qc-render", producer_task_id: "task-qc-render", relative_path: "episodes/episode-qc/review-render/v2/review-render.mp4" };
     const qcPackage = {
       artifact_id: renderArtifact.id,
-      context_snapshot: { review_kind: "hyperframes_review_render", pre_render_review_package_id: "pre-render-package", project_revision: "2", project_relative_path: "episodes/episode-qc/review-render/v2/index.html", composition_adjustments: { caption_style: "minimal", pacing: "gentle", crop: "contain", transition: "cut", layout: "center" }, technical_evidence: { checks: [] } },
+      context_snapshot: { review_kind: "openchatcut_review_render", pre_render_review_package_id: "pre-render-package", project_revision: "2", project_relative_path: "episodes/episode-qc/review-render/v2/index.html", composition_adjustments: { caption_style: "minimal", pacing: "gentle", crop: "contain", transition: "cut", layout: "center" }, technical_evidence: { checks: [] } },
       created_at: "2026-08-15T00:00:00.000Z", episode_id: qcEpisode.id, id: "review-package-qc-2", invalidated_at: null, invalidated_reason: null, revision_number: 2, stage: "qc_review" as const, task_id: "task-qc-render", task_run_id: "task-run-qc-render",
     };
     const renderTask = { ...blockedTask, id: qcPackage.task_id, episode_id: qcEpisode.id, input_snapshot: { review_render: { adjustments: { aspect_ratio: "9:16", width: 1080, height: 1920, captions_enabled: true, caption_style: "minimal", crop: "contain", pacing: "gentle", transition: "cut", layout: "center", narration_gain_db: 0, bgm_gain_db: -12, sfx_gain_db: -6 } } } } as unknown as Task;
-    const onOpenHyperframesStudio = vi.fn().mockResolvedValue({ fileSize: 24, relativePath: "episodes/episode-qc/studio/00000000-0000-0000-0000-000000000001/index.html", sha256: "a".repeat(64) });
-    const props = { ...materialInputProps, artifacts: [renderArtifact], blueprint, episode: qcEpisode, isTransitionPending: false, onOpenHyperframesStudio, onSubmitStudioRevision, onTransition: vi.fn(), reviewPackages: [qcPackage], tasks: [renderTask], transitions: [] };
+    const onOpenStudio = vi.fn().mockResolvedValue({ fileSize: 24, relativePath: "episodes/episode-qc/studio/00000000-0000-0000-0000-000000000001/index.html", sha256: "a".repeat(64) });
+    const props = { ...materialInputProps, artifacts: [renderArtifact], blueprint, episode: qcEpisode, isTransitionPending: false, onOpenStudio, onSubmitStudioRevision, onTransition: vi.fn(), reviewPackages: [qcPackage], tasks: [renderTask], transitions: [] };
     render(<EpisodeDetail {...props} />);
 
-    expect(screen.getByRole("heading", { name: "在 HyperFrames Studio 编辑" })).toBeTruthy();
-    await user.click(screen.getByRole("button", { name: "在 HyperFrames Studio 中打开" }));
-    expect(onOpenHyperframesStudio).toHaveBeenCalledWith(qcEpisode.id, "episodes/episode-qc/review-render/v2/index.html");
-    await user.click(screen.getByRole("button", { name: "提交 Studio 修改" }));
-    await user.type(screen.getByLabelText("Studio 修改说明"), "字幕需要更醒目。");
+    expect(screen.getByRole("heading", { name: "在 OpenChatCut 编辑" })).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "在 OpenChatCut 中打开" }));
+    expect(onOpenStudio).toHaveBeenCalledWith(qcEpisode.id, "episodes/episode-qc/review-render/v2/index.html");
+    await user.click(screen.getByRole("button", { name: "提交 OpenChatCut 修改" }));
+    await user.type(screen.getByLabelText("OpenChatCut 修改说明"), "字幕需要更醒目。");
     await user.click(screen.getByRole("button", { name: "确认并重新审核" }));
     expect(onSubmitStudioRevision).toHaveBeenCalledWith(expect.objectContaining({ episodeId: qcEpisode.id, reason: "字幕需要更醒目。", reviewPackageId: qcPackage.id, sourceProjectRelativePath: "episodes/episode-qc/review-render/v2/index.html", workspaceRelativePath: expect.stringContaining("/studio/") }));
   });
@@ -922,7 +1190,7 @@ describe("审核台", () => {
     const renderArtifact: Artifact = { ...previewArtifact, episode_id: qcEpisode.id, artifact_type: "render", id: "artifact-qc-desk", producer_task_id: "task-qc-desk", relative_path: "episodes/episode-qc-desk/review-render/v1/review-render.mp4" };
     const qcPackage = {
       artifact_id: renderArtifact.id,
-      context_snapshot: { review_kind: "hyperframes_review_render", pre_render_review_package_id: "pre-render-qc-desk", project_revision: "1", project_relative_path: "episodes/episode-qc-desk/review-render/v1/index.html", technical_evidence: { checks: [{ name: "duration_coverage", detail: "时长匹配。" }] } },
+      context_snapshot: { review_kind: "openchatcut_review_render", pre_render_review_package_id: "pre-render-qc-desk", project_revision: "1", project_relative_path: "episodes/episode-qc-desk/review-render/v1/index.html", technical_evidence: { checks: [{ name: "duration_coverage", detail: "时长匹配。" }] } },
       created_at: "2026-08-23T00:00:00.000Z", episode_id: qcEpisode.id, id: "review-package-qc-desk", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "qc_review" as const, task_id: "task-qc-desk", task_run_id: "task-run-qc-desk",
     };
     const storyboardTask = { id: qcPackage.task_id, episode_id: qcEpisode.id, input_snapshot: { review_render: { storyboard: { version: "storyboard/v1", shots: [{ durationSeconds: 3, id: "shot-first", inputBasis: [{ relativePath: "episodes/episode-qc-desk/materials/script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜", shotType: "a_roll", targetSpec: "9:16" }, { durationSeconds: 2, id: "shot-second", inputBasis: [{ relativePath: "episodes/episode-qc-desk/materials/script.md", sha256: "a".repeat(64) }], productionMethod: "生成", scriptSegment: "第二镜", shotType: "b_roll", targetSpec: "9:16" }], audioCues: [] } } } } as unknown as Task;
@@ -933,8 +1201,8 @@ describe("审核台", () => {
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[renderArtifact]} blueprint={blueprint} episode={qcEpisode} isTransitionPending={false} onCreateQcReviewIssue={onCreateQcReviewIssue} onTransition={vi.fn()} preRenderReviewMembers={members} reviewPackages={[qcPackage]} tasks={[storyboardTask]} transitions={[]} />);
 
-    expect(screen.getByRole("heading", { name: "在 HyperFrames Studio 编辑" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "在 HyperFrames Studio 中打开" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "在 OpenChatCut 编辑" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "在 OpenChatCut 中打开" })).toBeTruthy();
     expect(screen.queryByText("QC 问题")).toBeNull();
   });
 
@@ -967,6 +1235,16 @@ describe("审核台", () => {
         inputBasis: [
           { relativePath: "episodes/episode-review/generated-script-v1.md", sha256: "b".repeat(64) },
           { relativePath: "episodes/episode-review/visual-brief-v1.md", sha256: "c".repeat(64) },
+        ],
+        targetSpec: "9:16，1080×1920，24fps",
+      }, {
+        id: "shot-03",
+        scriptSegment: "雨幕里只留下脚步声。",
+        durationSeconds: 3,
+        shotType: "a_roll",
+        productionMethod: "演员近景 + 现场收音",
+        inputBasis: [
+          { relativePath: "episodes/episode-review/generated-script-v1.md", sha256: "b".repeat(64) },
         ],
         targetSpec: "9:16，1080×1920，24fps",
       }],
@@ -1008,12 +1286,22 @@ describe("审核台", () => {
     expect(await screen.findByText("铜铃声切入，林砚回头。")).toBeTruthy();
     expect(screen.getByRole("heading", { name: "可审核分镜 · 修订 v2" })).toBeTruthy();
     expect(screen.getByRole("heading", { name: "shot-02 · B-roll" })).toBeTruthy();
+    expect(screen.getByText("本阶段确认镜头顺序、内容与时长；实际片段和裁剪范围将在镜头准备阶段确定。")).toBeTruthy();
+    expect(screen.getByRole("navigation", { name: "分镜时间轴" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "选择 shot-02，4.5 秒，B-roll" }).getAttribute("aria-pressed")).toBe("true");
     expect(screen.getByText("4.5 秒")).toBeTruthy();
     expect(screen.getByText("素材库特写 + 环境音")).toBeTruthy();
     expect(screen.getByText("9:16，1080×1920，24fps")).toBeTruthy();
     expect(screen.getByText("先确认铜铃的音效节奏。")).toBeTruthy();
+    expect(screen.getByText("第 1 / 2 镜")).toBeTruthy();
 
     await user.type(screen.getByLabelText("shot-02 镜头批注"), "铜铃特写需要延长。");
+    await user.click(screen.getByRole("button", { name: "选择 shot-03，3 秒，A-roll" }));
+    expect(screen.getByRole("heading", { name: "shot-03 · A-roll" })).toBeTruthy();
+    expect(screen.queryByRole("heading", { name: "shot-02 · B-roll" })).toBeNull();
+    expect(screen.getByText("第 2 / 2 镜")).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "上一镜" }));
+    expect((screen.getByLabelText("shot-02 镜头批注") as HTMLTextAreaElement).value).toBe("铜铃特写需要延长。");
     await user.click(screen.getByRole("button", { name: "添加镜头批注" }));
     expect(onCreateStoryboardAnnotation).toHaveBeenCalledWith({ reviewPackageId: "review-package-storyboard-1", reason: "铜铃特写需要延长。", shotId: "shot-02" });
 
@@ -1024,7 +1312,7 @@ describe("审核台", () => {
     expect(onTransition).toHaveBeenLastCalledWith(storyboardEpisode.id, "storyboard_draft", "镜头拆分、规格与输入均可执行。");
   });
 
-  it("人工媒体可在镜头工作台选择原片并保存草稿", async () => {
+  it("人工媒体可在镜头工作台选择原片并保存镜头设置", async () => {
     const user = userEvent.setup();
     const onSave = vi.fn().mockResolvedValue(undefined);
     const storyboardEpisode: Episode = { ...reviewEpisode, stage: "storyboard_approved" };
@@ -1063,14 +1351,16 @@ describe("审核台", () => {
       task_run_id: "task-run-manual-a-roll",
     }]} tasks={[]} transitions={[]} />);
 
-    await screen.findByText("主持人出镜说明。");
+    await screen.findByLabelText("shot-a-roll-1 字幕正文");
+    await user.click(screen.getByRole("radio", { name: "无口播" }));
+    await openVisualStep(user, "shot-a-roll-1");
     await user.selectOptions(screen.getByLabelText("shot-a-roll-1 当前原片"), manualAroll.id);
+    await user.click(screen.getByRole("button", { name: "保存镜头设置" }));
+    await waitFor(() => expect(screen.getByRole("button", { name: /^shot-b-roll-1 B-roll/ }).getAttribute("aria-expanded")).toBe("true"));
     await user.click(screen.getByRole("radio", { name: "无口播" }));
-    await user.click(screen.getByRole("button", { name: "保存草稿" }));
-    await user.click(screen.getByRole("button", { name: /shot-b-roll-1/ }));
+    await openVisualStep(user, "shot-b-roll-1");
     await user.selectOptions(screen.getByLabelText("shot-b-roll-1 当前原片"), manualBroll.id);
-    await user.click(screen.getByRole("radio", { name: "无口播" }));
-    await user.click(screen.getByRole("button", { name: "保存草稿" }));
+    await user.click(screen.getByRole("button", { name: "保存镜头设置" }));
     expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ clipSegments: [{ end_seconds: 5, start_seconds: 0 }], episodeId: storyboardEpisode.id, materialRevisionId: manualAroll.id, reviewPackageId: "review-package-manual-a-roll", shotId: "shot-a-roll-1" }));
     expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ clipSegments: [{ end_seconds: 5, start_seconds: 0 }], episodeId: storyboardEpisode.id, materialRevisionId: manualBroll.id, reviewPackageId: "review-package-manual-a-roll", shotId: "shot-b-roll-1" }));
   });
@@ -1089,17 +1379,20 @@ describe("审核台", () => {
       artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-08-23T00:00:00.000Z", episode_id: storyboardEpisode.id, id: "review-package-bound-a-roll", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-bound-a-roll", task_run_id: "task-run-bound-a-roll",
     };
     const draft: ShotPreparationDraft = { audio_mode: "none", audio_status: "ready", clip_segments: [{ start_seconds: 0, end_seconds: 5 }], confirmation_status: "pending", created_at: "2026-08-23T00:00:00.000Z", episode_id: storyboardEpisode.id, id: "draft-bound-a-roll", review_package_id: reviewPackage.id, selected_material_revision_id: manualAroll.id, shot_id: "shot-a-roll-1", subtitle_text: "主持人出镜说明。", subtitles_enabled: true, tts_speaking_rate: null, tts_text: null, tts_voice: null, updated_at: "2026-08-23T00:00:00.000Z", video_status: "pending" };
-    vi.stubGlobal("fetch", vi.fn((input: RequestInfo | URL) => Promise.resolve(String(input).includes("storyboard")
-      ? new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [{ description: "可选氛围音乐", durationSeconds: 5, id: "cue-disabled-bgm", kind: "bgm", searchQuery: "ambient", startSeconds: 0 }], shots: [{ durationSeconds: 5, id: "shot-a-roll-1", inputBasis: [{ relativePath: manualAroll.storage_path, sha256: manualAroll.sha256 }], productionMethod: "人工出镜", scriptSegment: "主持人出镜说明。", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } })
-      : new Response(new Blob(["video"], { type: "video/mp4" }), { status: 200 }))));
+    vi.stubGlobal("fetch", vi.fn((input: RequestInfo | URL, init?: RequestInit) => Promise.resolve(init?.method === "POST"
+      ? localArtifactTicketResponse()
+      : String(input).includes("storyboard")
+        ? new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [{ description: "可选氛围音乐", durationSeconds: 5, id: "cue-disabled-bgm", kind: "bgm", searchQuery: "ambient", startSeconds: 0 }], shots: [{ durationSeconds: 5, id: "shot-a-roll-1", inputBasis: [{ relativePath: manualAroll.storage_path, sha256: manualAroll.sha256 }], productionMethod: "人工出镜", scriptSegment: "主持人出镜说明。", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } })
+        : new Response(new Blob(["video"], { type: "video/mp4" }), { status: 200 }))));
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={{ ...blueprint, policy: { a_roll: { execution_path: "manual" } } }} episode={storyboardEpisode} isTransitionPending={false} materialRevisions={[manualAroll, replacementAroll]} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={[draft]} tasks={[]} transitions={[]} />);
 
     await screen.findByText("主持人出镜说明。");
+    await openVisualStep(user, "shot-a-roll-1");
     expect(await screen.findByLabelText("presenter.mp4 预览")).toBeTruthy();
     await user.selectOptions(screen.getByLabelText("shot-a-roll-1 当前原片"), replacementAroll.id);
     expect(await screen.findByLabelText("presenter-2.mp4 预览")).toBeTruthy();
-    await user.click(screen.getByRole("button", { name: "保存草稿" }));
+    await user.click(screen.getByRole("button", { name: "保存镜头设置" }));
     expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ clipSegments: [{ end_seconds: 5, start_seconds: 0 }], episodeId: storyboardEpisode.id, materialRevisionId: replacementAroll.id, reviewPackageId: reviewPackage.id, shotId: "shot-a-roll-1" }));
   });
 

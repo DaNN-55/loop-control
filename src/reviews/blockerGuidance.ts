@@ -182,6 +182,18 @@ export function workerBlockerGuidance(blocker: Pick<WorkerBlocker, "capability" 
   const normalized = `${blocker.code} ${blocker.detail}`.toLowerCase();
   const isSpecializedMedia = repairTarget?.kind === "media";
 
+  if (blocker.code === "task_package_invalid" && /字幕/.test(blocker.detail)) {
+    return {
+      title: "Worker 字幕校验版本不一致",
+      summary: "审核快照已经创建，但当前 Worker 仍按旧规则校验已关闭的字幕。",
+      resolution: ["更新当前 Worker。", "更新完成后重新执行同一份冻结审核任务。"],
+      retryLabel: "更新 Worker 后重新执行",
+      location: "Worker 运行环境 / 版本更新",
+      locationNote: "不需要重新上传素材或填写已关闭的字幕。",
+      technicalDetail: blocker.detail,
+    };
+  }
+
   if (isSpecializedMedia && /retries_exhausted|重试耗尽|model.*not supported|模型.*不支持/.test(normalized)) {
     return {
       title: "媒体任务执行已重试耗尽",

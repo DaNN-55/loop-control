@@ -125,7 +125,7 @@ export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, b
 
   const policy = currentBlueprint.policy ?? defaultBlueprintPolicy;
   const localAdapterReadiness = Object.fromEntries([
-    ...(systemStatus?.dependencies.some((dependency) => dependency.name === "HyperFrames" && dependency.state === "healthy") ? [["hyperframes:hyperframes_card_video", true] as const] : []),
+    ...(systemStatus?.dependencies.some((dependency) => dependency.name === "OpenChatCut" && dependency.state === "healthy") ? [["openchatcut:openchatcut_card_video", true] as const] : []),
     ...(blueprintPreflight?.checks ?? []).flatMap((check) => {
     if (check.check !== "local_adapter_readiness" || !check.adapter) return [];
     const provider = check.provider ?? localAdapterProviderForCapability(check.capability, check.adapter);

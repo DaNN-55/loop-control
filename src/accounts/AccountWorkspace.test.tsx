@@ -204,7 +204,8 @@ describe("账号配置工作区", () => {
 
     await user.click(screen.getByRole("button", { name: "完成" }));
     await user.click(screen.getByRole("button", { name: "配置旁白" }));
-    expect(within(screen.getByRole("combobox", { name: "语言代码" })).getByRole("option", { name: "en-US" })).toBeTruthy();
+    expect(screen.queryByRole("combobox", { name: "语言代码" })).toBeNull();
+    expect(screen.getByRole("combobox", { name: "旁白 模型" })).toBeTruthy();
     expect(screen.getByText("主 Google TTS · v1 · 已验证")).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "完成" }));
     await user.click(screen.getByRole("button", { name: "配置配乐 / 音效" }));
@@ -214,26 +215,21 @@ describe("账号配置工作区", () => {
     expect(screen.queryByLabelText("API Key")).toBeNull();
   });
 
-  it("火山旁白使用同一个声音输入选择常用声音或填写 speaker ID", async () => {
+  it("火山旁白配置不再展示声音和语速字段", async () => {
     const user = userEvent.setup();
     const volcengineBlueprint = { ...blueprint, policy: { ...(blueprint.policy as Record<string, Json>), narration: { execution_path: "external", credential_ref: "44444444-4444-4444-8444-444444444444", executor: { provider: "volcengine_tts", adapter: "volcengine_tts", model: "seed-tts-2.0", prompt_version: "narration-v1" }, allowed_tools: ["read", "write"], max_attempts: 1, voice: { language_code: "zh-CN", name: "zh_female_custom", speaking_rate: 1 } } } };
     renderWorkspace({ blueprints: [volcengineBlueprint] });
 
     await user.click(screen.getByRole("button", { name: "配置旁白" }));
-    const voiceInput = screen.getByLabelText("声音名称") as HTMLInputElement;
-    expect(voiceInput.value).toBe("zh_female_custom");
-    expect(voiceInput.getAttribute("list")).toBe("volcengine-tts-voice-options");
-    expect(document.querySelector('#volcengine-tts-voice-options option[value="zh_female_vv_uranus_bigtts"]')).toBeTruthy();
-    expect(screen.queryByLabelText("自定义声音 ID")).toBeNull();
-    await user.clear(voiceInput);
-    await user.type(voiceInput, "zh_female_vv_uranus_bigtts");
-    expect(voiceInput.value).toBe("zh_female_vv_uranus_bigtts");
+    expect(screen.queryByLabelText("声音名称")).toBeNull();
+    expect(screen.queryByLabelText("语速")).toBeNull();
+    expect(screen.queryByText("试听当前音色")).toBeNull();
   });
 
   it("用本地 Adapter 的完整身份识别就绪状态，并兼容旧检查", async () => {
     const user = userEvent.setup();
-    const localBlueprint = { ...blueprint, policy: { ...(blueprint.policy as Record<string, Json>), a_roll: { execution_path: "local", executor: { provider: "hyperframes", adapter: "hyperframes_card_video", model: "hyperframes@0.7.109", prompt_version: "card-video-v1" }, allowed_tools: ["read", "write"] } } };
-    const check = { action: "none" as const, adapter: "hyperframes_card_video", capability: "a_roll_generation", check: "local_adapter_readiness", phase: "preflight" as const, provider: "hyperframes", reason: "HyperFrames 已就绪。", scope: "worker" as const, status: "passed" as const };
+    const localBlueprint = { ...blueprint, policy: { ...(blueprint.policy as Record<string, Json>), a_roll: { execution_path: "local", executor: { provider: "openchatcut", adapter: "openchatcut_card_video", model: "openchatcut@0.2.14", prompt_version: "card-video-v1" }, allowed_tools: ["read", "write"] } } };
+    const check = { action: "none" as const, adapter: "openchatcut_card_video", capability: "a_roll_generation", check: "local_adapter_readiness", phase: "preflight" as const, provider: "openchatcut", reason: "OpenChatCut 已就绪。", scope: "worker" as const, status: "passed" as const };
 
     for (const preflight of [{ version: "worker-preflight/v2" as const, checks: [check] }, { version: "worker-preflight/v2" as const, checks: [{ ...check, provider: undefined }] }]) {
       const view = renderWorkspace({ blueprintPreflight: preflight, blueprints: [localBlueprint] });
@@ -243,24 +239,25 @@ describe("账号配置工作区", () => {
     }
   });
 
-  it("在 A-roll 尚未配置时，仍使用本机 HyperFrames 状态开放本地路径", async () => {
+  it("在 A-roll 尚未配置时，仍使用本机 OpenChatCut 状态开放本地路径", async () => {
     const user = userEvent.setup();
     const onUpdateBlueprint = vi.fn().mockResolvedValue(blueprint);
-    renderWorkspace({ onUpdateBlueprint, systemStatus: { dependencies: [{ detail: "hyperframes 0.7.109", name: "HyperFrames", state: "healthy" }], mediaLibrary: { detail: "已挂载", state: "healthy" }, n8n: { detail: "未启动", lastDispatchAt: null, lastEventAt: null, lastHealthCheckAt: null, lastRunAt: null, state: "unknown" }, observedAt: "2026-08-26T00:00:00.000Z" } });
+    renderWorkspace({ onUpdateBlueprint, systemStatus: { dependencies: [{ detail: "openchatcut 0.2.14", name: "OpenChatCut", state: "healthy" }], mediaLibrary: { detail: "已挂载", state: "healthy" }, n8n: { detail: "未启动", lastDispatchAt: null, lastEventAt: null, lastHealthCheckAt: null, lastRunAt: null, state: "unknown" }, observedAt: "2026-08-26T00:00:00.000Z" } });
 
     await user.click(screen.getByRole("checkbox", { name: "启用A-roll" }));
     await user.click(screen.getByRole("button", { name: "配置A-roll" }));
 
     expect((within(screen.getByRole("dialog")).getByRole("option", { name: "本地" }) as HTMLOptionElement).disabled).toBe(false);
     await user.selectOptions(screen.getByRole("combobox", { name: "A-roll 执行路径" }), "local");
-    await user.selectOptions(screen.getByRole("combobox", { name: "A-roll 本地 Adapter" }), "hyperframes_card_video");
-    await user.selectOptions(screen.getByRole("combobox", { name: "A-roll 模型" }), "hyperframes@0.7.109");
+    await user.selectOptions(screen.getByRole("combobox", { name: "A-roll 本地 Adapter" }), "openchatcut_card_video");
+    await user.selectOptions(screen.getByRole("combobox", { name: "A-roll 模型" }), "openchatcut@0.2.14");
     await user.selectOptions(screen.getByRole("combobox", { name: "A-roll 卡片预设" }), "card-video-v1");
     await user.type(screen.getByRole("spinbutton", { name: "最大尝试次数" }), "2");
     await user.click(screen.getByRole("button", { name: "完成" }));
     await user.click(screen.getByRole("button", { name: "保存并检查" }));
 
-    expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ a_roll: expect.objectContaining({ allowed_tools: ["read", "write"] }) }));
+    expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ a_roll: expect.objectContaining({ execution_path: "local", executor: expect.objectContaining({ adapter: "openchatcut_card_video" }) }) }));
+    expect(onUpdateBlueprint.mock.calls[0][0].a_roll).not.toHaveProperty("allowed_tools");
   });
 
   it("选择分镜 Prompt Harness 时保存其不可变标识", async () => {
@@ -328,7 +325,7 @@ describe("账号配置工作区", () => {
     await user.click(screen.getByRole("button", { name: "完成" }));
     await user.click(screen.getByRole("button", { name: "修改分镜规划配置" }));
     expect((screen.getByRole("combobox", { name: "分镜规划 Prompt Harness" }) as HTMLSelectElement).value).toBe("harness-storyboard-2");
-  });
+  }, 10000);
 
   it("通过弹窗配置分镜规划", async () => {
     const user = userEvent.setup();

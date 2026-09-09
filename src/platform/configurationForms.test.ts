@@ -12,9 +12,9 @@ import {
 
 describe("账号蓝图表单转换", () => {
   it("由平台能力配置统一决定账号可选字段和保存规则", () => {
-    expect(mediaAdapterConfiguration("b_roll")).toMatchObject({ budgetMode: "per_shot", filterFormToolsByAccount: true, filterPolicyToolsByAccount: true, useAccountToolFallback: true });
-    expect(mediaAdapterConfiguration("narration")).toMatchObject({ budgetMode: "episode", filterFormToolsByAccount: true, filterPolicyToolsByAccount: true, configurationFields: ["max_attempts", "voice", "voice_speaking_rate"] });
-    expect(mediaAdapterConfiguration("soundtrack")).toMatchObject({ budgetMode: "episode", filterFormToolsByAccount: false, filterPolicyToolsByAccount: true, useAccountToolFallback: true });
+    expect(mediaAdapterConfiguration("b_roll")).toMatchObject({ configurationFields: ["max_attempts"] });
+    expect(mediaAdapterConfiguration("narration")).toMatchObject({ configurationFields: ["max_attempts"] });
+    expect(mediaAdapterConfiguration("soundtrack")).toMatchObject({ configurationFields: ["max_attempts"] });
   });
 
   it("不在运行时替旧 Pexels 配置静默选择连接", () => {
@@ -42,7 +42,7 @@ describe("账号蓝图表单转换", () => {
     const result = blueprintFormToPolicy({
       ...form,
       enabledMediaAdapters: ["static_visual", "a_roll", "b_roll", "narration", "soundtrack"],
-    });
+    }) as Record<string, unknown>;
 
     expect(result).toMatchObject({ static_visual: {}, a_roll: {}, b_roll: {}, narration: {}, soundtrack: {} });
   });
@@ -62,7 +62,7 @@ describe("账号蓝图表单转换", () => {
     const result = blueprintFormToPolicy(form) as Record<string, unknown>;
 
     expect(result.a_roll).toEqual(expect.objectContaining({ executor: { provider: "codex", adapter: "codex" } }));
-    expect(result.soundtrack).toEqual(expect.objectContaining({ budget_cents: 2147483647 }));
+    expect(result.soundtrack).not.toHaveProperty("budget_cents");
   });
 
   it("保留只含未表单化字段的媒体旧规则", () => {
@@ -73,20 +73,22 @@ describe("账号蓝图表单转换", () => {
     expect(result.soundtrack).toEqual({ cue_source: "legacy" });
   });
 
-  it("不允许配乐配置继续保存虚假的 network 工具", () => {
+  it("不再从媒体配置保存工具权限字段", () => {
     const form = blueprintPolicyToForm({ a_roll: { allowed_tools: ["network"] }, soundtrack: { allowed_tools: ["network"] } });
 
-    expect(() => blueprintFormToPolicy(form)).toThrow("账号级工具");
+    const result = blueprintFormToPolicy(form) as Record<string, unknown>;
+    expect(result.a_roll).not.toHaveProperty("allowed_tools");
+    expect(result.soundtrack).not.toHaveProperty("allowed_tools");
   });
 
-  it("媒体能力工具不能超过账号级工具白名单", () => {
+  it("历史媒体工具字段可读但不会重新写入蓝图", () => {
     const form = blueprintPolicyToForm({ allowed_tools: ["read"], b_roll: { allowed_tools: ["read", "write"] } });
     const result = blueprintFormToPolicy(form) as Record<string, unknown>;
 
-    expect(result.b_roll).toMatchObject({ allowed_tools: ["read"] });
+    expect(result.b_roll).not.toHaveProperty("allowed_tools");
   });
 
-  it("配乐同样受账号级工具白名单限制", () => {
+  it("配乐历史工具字段不影响保存", () => {
     const form = blueprintPolicyToForm({
       allowed_tools: ["read"],
       soundtrack: { credential_ref: "freesound-default", executor: { provider: "freesound", adapter: "freesound_preview", model: "freesound-preview-v1", prompt_version: "soundtrack-v1" }, allowed_tools: ["network", "write"], budget_cents: 10, max_attempts: 1 },
@@ -94,10 +96,10 @@ describe("账号蓝图表单转换", () => {
     const result = blueprintFormToPolicy(form) as Record<string, unknown>;
 
     expect(form.mediaAdapters.soundtrack.allowedTools).toBe("read");
-    expect(result.soundtrack).toMatchObject({ allowed_tools: ["read"] });
+    expect(result.soundtrack).not.toHaveProperty("allowed_tools");
   });
 
-  it("把旧媒体工具归一化到账号级白名单", () => {
+  it("旧媒体工具不会被归一化成新的账号级规则", () => {
     const form = blueprintPolicyToForm({
       allowed_tools: ["read"],
       b_roll: { allowed_tools: ["network"], executor: { provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", prompt_version: "b-roll-v1" }, per_shot_budget_cents: 10, total_budget_cents: 100, max_attempts: 1, max_concurrency: 1, provider_max_concurrency: 1 },
@@ -105,10 +107,10 @@ describe("账号蓝图表单转换", () => {
     const result = blueprintFormToPolicy(form) as Record<string, unknown>;
 
     expect(form.mediaAdapters.b_roll.allowedTools).toBe("read");
-    expect(result.b_roll).toMatchObject({ allowed_tools: ["read"] });
+    expect(result.b_roll).not.toHaveProperty("allowed_tools");
   });
 
-  it("拒绝媒体工具与账号白名单没有交集的直接提交", () => {
+  it("媒体工具字段不再参与直接提交校验", () => {
     const form = blueprintPolicyToForm({});
     expect(() => blueprintFormToPolicy({
       ...form,
@@ -118,7 +120,7 @@ describe("账号蓝图表单转换", () => {
         ...form.mediaAdapters,
         b_roll: { ...form.mediaAdapters.b_roll, provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", promptVersion: "b-roll-v1", allowedTools: "network", perShotBudgetCents: "10", totalBudgetCents: "100", maxAttempts: "1", maxConcurrency: "1", providerMaxConcurrency: "1" },
       },
-    })).toThrow("账号级工具");
+    })).not.toThrow();
   });
 
   it("轮换后拒绝仍冻结的旧外部连接版本", () => {
@@ -158,7 +160,7 @@ describe("账号蓝图表单转换", () => {
 
     expect(form.mediaAdapters.a_roll.adapter).toBe("codex");
     expect(form.mediaAdapters.a_roll.allowedTools).toBe("read, write");
-    expect(form.mediaAdapters.narration.voiceName).toBe("voice-a");
+    expect(form.mediaAdapters.narration.voiceName).toBe("");
     expect(form.advancedJson).not.toContain("a_roll");
     expect(form.advancedJson).not.toContain("narration");
   });
@@ -183,14 +185,21 @@ describe("账号蓝图表单转换", () => {
         soundtrack: { provider: "freesound", adapter: "freesound_preview", credentialRef: "33333333-3333-4333-8333-333333333333", model: "sound-model", promptVersion: "soundtrack-v1", allowedTools: "network, write", budgetCents: "", perShotBudgetCents: "", totalBudgetCents: "", maxAttempts: "", maxConcurrency: "", providerMaxConcurrency: "", voiceLanguageCode: "", voiceName: "", voiceSpeakingRate: "" },
       },
       advancedJson: '{"soundtrack":{"budget_cents":99}}',
-    });
+    }) as Record<string, unknown>;
 
-    expect(result).toMatchObject({ positioning: "新的账号定位", asset_root: "/Volumes/Media/new", approval_gates: ["script", "publish"], allowed_tools: ["read", "write"] });
+    expect(result).toMatchObject({ positioning: "新的账号定位", asset_root: "/Volumes/Media/new", approval_gates: ["script", "publish"] });
+    expect(result).not.toHaveProperty("allowed_tools");
     expect(result).toMatchObject({ budgets: { script_writing_cents: 0, storyboard_planning_cents: 0 } });
     expect(result).not.toHaveProperty("budgets.visual_planning_cents");
     expect(result).toMatchObject({ executors: { script_writing: { adapter: "codex", harness_id: "harness-a", model: "model-a" }, storyboard_planning: { adapter: "codex", harness_id: "harness-storyboard", model: "model-c", prompt_version: "prompt-c" } } });
     expect(result).not.toHaveProperty("executors.visual_planning");
-    expect(result).toMatchObject({ a_roll: { executor: { adapter: "codex" }, budget_cents: 2147483647, max_attempts: 2 }, b_roll: { executor: { adapter: "pexels_video" }, per_shot_budget_cents: 2147483647, total_budget_cents: 2147483647 }, narration: { voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 0.8 }, budget_cents: 2147483647 }, soundtrack: { executor: { adapter: "freesound_preview" }, budget_cents: 2147483647 } });
+    expect(result).toMatchObject({ a_roll: { executor: { adapter: "codex" }, max_attempts: 2 }, b_roll: { executor: { adapter: "pexels_video" } }, narration: { executor: { adapter: "google_tts" }, max_attempts: 1 }, soundtrack: { executor: { adapter: "freesound_preview" } } });
+    expect(result.narration).not.toHaveProperty("voice");
+    expect(result.a_roll).not.toHaveProperty("budget_cents");
+    expect(result.b_roll).not.toHaveProperty("per_shot_budget_cents");
+    expect(result.b_roll).not.toHaveProperty("max_concurrency");
+    expect(result.narration).not.toHaveProperty("budget_cents");
+    expect(result.soundtrack).not.toHaveProperty("budget_cents");
   });
 
   it("拒绝未完成的媒体适配器配置", () => {

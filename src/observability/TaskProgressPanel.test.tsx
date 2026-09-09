@@ -15,7 +15,7 @@ const baseTask: Task = {
   created_at: "2026-08-18T00:00:00.000Z",
   episode_id: "episode-1",
   id: "task-running-1",
-  input_snapshot: {},
+  input_snapshot: { runtime_constraints: { effective_concurrency: 3 } },
   last_result: null,
   max_attempts: 2,
   model: "model-a",
@@ -52,6 +52,8 @@ describe("Worker 任务进度", () => {
     expect(screen.getByText("尝试 2 / 2")).toBeTruthy();
     expect(screen.getByText("NO_MEDIA：没有可用媒体")).toBeTruthy();
     expect(screen.getByText("最近运行")).toBeTruthy();
+    expect(screen.getAllByText("有效并发")).toHaveLength(3);
+    expect(screen.getAllByText("3（平台计算）")).toHaveLength(3);
   });
 
   it("没有任务时明确显示无记录，而不是显示虚假进度", () => {

@@ -5,7 +5,6 @@ export const defaultBlueprintPolicy = {
   positioning: "",
   approval_gates: ["script", "visual", "storyboard", "qc", "publish"],
   asset_root: "",
-  allowed_tools: ["read", "write"],
   budgets: { script_writing_cents: 0, storyboard_planning_cents: 0 },
   executors: {
     script_writing: {

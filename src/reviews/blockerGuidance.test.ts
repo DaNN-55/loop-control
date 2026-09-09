@@ -98,6 +98,13 @@ describe("Worker 阻塞项指导", () => {
     expect(workerBlockerGuidance({ code: "model_permission", check: "model_permission", detail: "模型权限探测未完成：网络超时。", status: "retryable", action: "retry" }).title).toBe("模型权限探测暂时失败");
   });
 
+  it("不会把审核快照字幕契约错误误报为缺少前置产物", () => {
+    const guidance = workerBlockerGuidance({ code: "task_package_invalid", detail: "确认快照缺少字幕文本。" });
+
+    expect(guidance.title).toBe("Worker 字幕校验版本不一致");
+    expect(guidance.location).toBe("Worker 运行环境 / 版本更新");
+  });
+
   it("未知 code 也给出明确的人工处理路径，并保留技术原因", () => {
     const guidance = workerBlockerGuidance({ code: "unknown_blocker", detail: "内部错误" });
 

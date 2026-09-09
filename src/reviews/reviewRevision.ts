@@ -1,30 +1,23 @@
 import type { Json } from "../lib/database.types";
 import { supabase } from "../lib/supabase";
 import type { StoryboardStructureOperation } from "../worker/storyboardRevision";
+import { defaultAllowedDurationFrames, defaultDurationFrameRate } from "../worker/durationDecision";
+import { defaultReviewRenderComposition, reviewRenderCompositionFromJson, reviewRenderCompositionToJson, type ReviewRenderComposition } from "./reviewComposition";
+export { defaultReviewRenderComposition, reviewRenderCompositionFromJson } from "./reviewComposition";
+export type { ReviewRenderComposition } from "./reviewComposition";
 
-export interface ReviewRenderComposition {
-  aspectRatio: "9:16" | "16:9" | "1:1";
-  width: number;
-  height: number;
-  captionsEnabled: boolean;
-  captionStyle: "cinematic" | "minimal";
-  pacing: "gentle" | "standard" | "compact";
-  crop: "cover" | "contain";
-  transition: "fade" | "cut";
-  layout: "lower_third" | "center";
-  narrationGainDb: number;
-  bgmGainDb: number;
-  sfxGainDb: number;
-}
+export interface ReviewRenderDurationSettings { frameRate: number; allowedFrames: number; }
 
-export interface HyperframesStudioWorkspace {
+export interface OpenChatCutStudioWorkspace {
   relativePath: string;
   sha256: string;
   fileSize: number;
+  composition?: ReviewRenderComposition;
+  projectId?: string;
 }
 
 export type ReviewRevisionRequest =
-  | { kind: "composition"; reviewPackageId: string; composition?: ReviewRenderComposition; reason: string; studioProject?: HyperframesStudioWorkspace }
+  | { kind: "composition"; reviewPackageId: string; composition?: ReviewRenderComposition; reason: string; studioProject?: OpenChatCutStudioWorkspace }
   | { kind: "storyboard"; reviewPackageId: string; reason: string };
 
 export type ShotStructureRevisionRequest = {
@@ -48,20 +41,19 @@ export type StudioReviewRevisionRequest = {
   composition?: ReviewRenderComposition;
 };
 
-export const defaultReviewRenderComposition: ReviewRenderComposition = {
-  aspectRatio: "9:16",
-  width: 1080,
-  height: 1920,
-  captionsEnabled: true,
-  captionStyle: "cinematic",
-  pacing: "standard",
-  crop: "cover",
-  transition: "fade",
-  layout: "lower_third",
-  narrationGainDb: 0,
-  bgmGainDb: -12,
-  sfxGainDb: -6,
-};
+export const defaultReviewRenderDurationSettings: ReviewRenderDurationSettings = { frameRate: defaultDurationFrameRate, allowedFrames: defaultAllowedDurationFrames };
+
+export function reviewRenderDurationSettingsFromRules(rules?: Json): ReviewRenderDurationSettings {
+  const root = rules && !Array.isArray(rules) && typeof rules === "object" ? rules as Record<string, Json | undefined> : {};
+  const candidate = root.openchatcut_composition;
+  const composition = candidate && !Array.isArray(candidate) && typeof candidate === "object" ? candidate as Record<string, Json | undefined> : {};
+  const frameRate = composition.frame_rate;
+  const allowedFrames = composition.allowed_frames;
+  return {
+    frameRate: typeof frameRate === "number" && Number.isFinite(frameRate) && frameRate > 0 ? frameRate : defaultReviewRenderDurationSettings.frameRate,
+    allowedFrames: typeof allowedFrames === "number" && Number.isInteger(allowedFrames) && allowedFrames >= 0 ? allowedFrames : defaultReviewRenderDurationSettings.allowedFrames,
+  };
+}
 
 export async function requestReviewRevision(input: ReviewRevisionRequest): Promise<ReviewRevisionOutcome> {
   if (input.kind === "storyboard") {
@@ -70,9 +62,10 @@ export async function requestReviewRevision(input: ReviewRevisionRequest): Promi
     return { kind: "storyboard", message: "分镜结构修订已提交；已返回分镜审核。" };
   }
 
-  const composition = reviewRenderCompositionToJson(input.composition ?? defaultReviewRenderComposition) as Record<string, Json>;
+  if (input.studioProject && !input.studioProject.composition) throw new Error("Studio 冻结工程缺少有效合成配置。");
+  const composition = reviewRenderCompositionToJson(input.studioProject?.composition ?? input.composition ?? defaultReviewRenderComposition) as Record<string, Json>;
   const { error } = await supabase.rpc("request_review_render_revision", {
-    p_composition: input.studioProject ? { ...composition, studio_project: { relative_path: input.studioProject.relativePath, sha256: input.studioProject.sha256, file_size: input.studioProject.fileSize } } : composition,
+    p_composition: input.studioProject ? { ...composition, studio_project: { relative_path: input.studioProject.relativePath, sha256: input.studioProject.sha256, file_size: input.studioProject.fileSize, composition } } : composition,
     p_reason: input.reason,
     p_review_package_id: input.reviewPackageId,
   });
@@ -91,7 +84,7 @@ export async function requestShotStructureRevision(input: ShotStructureRevisionR
 }
 
 export async function submitStudioReviewRevision(input: StudioReviewRevisionRequest): Promise<ReviewRevisionOutcome> {
-  const response = await fetch(`/_freeze-hyperframes-studio?episode=${encodeURIComponent(input.episodeId)}`, {
+  const response = await fetch(`/_freeze-openchatcut-studio?episode=${encodeURIComponent(input.episodeId)}`, {
     body: JSON.stringify({ sourceProjectRelativePath: input.sourceProjectRelativePath, workspaceRelativePath: input.workspaceRelativePath }),
     headers: { Authorization: `Bearer ${input.accessToken}`, "Content-Type": "application/json" },
     method: "POST",
@@ -99,7 +92,7 @@ export async function submitStudioReviewRevision(input: StudioReviewRevisionRequ
   const payload: unknown = await response.json().catch(() => null);
   if (!response.ok || !payload || typeof payload !== "object" || Array.isArray(payload) || !("frozenProject" in payload)) throw new Error("无法冻结 Studio 修改。");
   const studioProject = studioWorkspaceFromPayload(payload.frozenProject);
-  return requestReviewRevision({ kind: "composition", reviewPackageId: input.reviewPackageId, reason: input.reason, composition: input.composition, studioProject });
+  return requestReviewRevision({ kind: "composition", reviewPackageId: input.reviewPackageId, reason: input.reason, composition: studioProject.composition, studioProject });
 }
 
 export async function recoverFinalReviewRender(episodeId: string, reason: string): Promise<"最终渲染已重新排队；会复用已批准的审核工程。"> {
@@ -108,13 +101,11 @@ export async function recoverFinalReviewRender(episodeId: string, reason: string
   return "最终渲染已重新排队；会复用已批准的审核工程。";
 }
 
-function reviewRenderCompositionToJson(composition: ReviewRenderComposition): Json {
-  return { aspect_ratio: composition.aspectRatio, width: composition.width, height: composition.height, captions_enabled: composition.captionsEnabled, caption_style: composition.captionStyle, pacing: composition.pacing, crop: composition.crop, transition: composition.transition, layout: composition.layout, narration_gain_db: composition.narrationGainDb, bgm_gain_db: composition.bgmGainDb, sfx_gain_db: composition.sfxGainDb };
-}
-
-function studioWorkspaceFromPayload(value: unknown): HyperframesStudioWorkspace {
+function studioWorkspaceFromPayload(value: unknown): OpenChatCutStudioWorkspace {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Studio 工作区响应无效。");
   const workspace = value as Record<string, unknown>;
   if (typeof workspace.relativePath !== "string" || typeof workspace.sha256 !== "string" || typeof workspace.fileSize !== "number") throw new Error("Studio 工作区响应无效。");
-  return { relativePath: workspace.relativePath, sha256: workspace.sha256, fileSize: workspace.fileSize };
+  const composition = reviewRenderCompositionFromJson(workspace.composition);
+  if (!composition) throw new Error("Studio 冻结工程缺少有效合成配置。");
+  return { relativePath: workspace.relativePath, sha256: workspace.sha256, fileSize: workspace.fileSize, composition, ...(typeof workspace.projectId === "string" ? { projectId: workspace.projectId } : {}) };
 }

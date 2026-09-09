@@ -50,6 +50,17 @@ describe("blockersFromResult", () => {
     }], "episode-1")).toEqual([expect.objectContaining({ code: "network_connectivity", taskId: "task-1" })]);
   });
 
+  it("不把已失效的历史任务呈现为 Worker 阻塞项", () => {
+    expect(workerBlockers([{
+      id: "task-stale",
+      episode_id: "episode-1",
+      task_type: "generate_narration",
+      status: "blocked",
+      invalidated_at: "2026-09-07T08:00:00.000Z",
+      last_result: { blockers: [{ code: "narration_voice_invalid", detail: "Voice is missing." }] },
+    }], "episode-1")).toEqual([]);
+  });
+
   it("保留连接管理动作的 connection 影响范围", () => {
     expect(blockersFromResult({ blockers: [], preflight: { version: "worker-preflight/v2", checks: [{ capability: "b_roll_generation", check: "credential_validity", phase: "preflight", status: "unavailable", reason: "连接认证失败。", action: "manage_connection", scope: "connection" }] } })).toEqual([expect.objectContaining({ action: "manage_connection", scope: "connection" })]);
   });

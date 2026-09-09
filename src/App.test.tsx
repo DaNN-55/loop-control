@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { Database } from "./lib/database.types";
-import { AccountWorkspace, App, BootstrapScreen, EpisodeDetail, EpisodeForm, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, episodeWorkerStatus, initialNavigationForWorkspace, messageFromError, navigation, navigationBadgeCounts, workerPreflightFailureMessage } from "./App";
+import { AccountWorkspace, App, BootstrapScreen, EpisodeDetail, EpisodeForm, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, abbreviatePath, episodeTaskRunStatusChanged, episodeTaskStatusChanged, episodeWorkerStatus, initialNavigationForWorkspace, loadWorkspaceSummary, mergeEpisodeTaskStatus, messageFromError, navigation, navigationBadgeCounts, workerPreflightFailureMessage } from "./App";
 import { supabase } from "./lib/supabase";
 import { defaultBlueprintPolicy, parseBlueprintPolicy, withBlueprintAssetRoot } from "./platform/blueprintPolicy";
 
@@ -17,6 +17,71 @@ vi.mock("./lib/supabase", () => ({
 }));
 
 describe("approval console", () => {
+  it("登录后只加载首个运营页面所需数据，不在后台读取完整工作区", async () => {
+    const user = userEvent.setup();
+    const account = { id: "account-1", name: "道工作室", slug: "dao-studio" } as Database["public"]["Tables"]["accounts"]["Row"];
+    const episode = { account_id: account.id, blueprint_version_id: "blueprint-1", id: "episode-1", stage: "waiting_input", title: "首个生产单" } as Database["public"]["Tables"]["episodes"]["Row"];
+    const from = vi.fn((table: string) => {
+      const order = vi.fn().mockResolvedValue({ data: table === "accounts" ? [account] : table === "episodes" ? [episode] : [], error: null });
+      return { select: vi.fn().mockReturnValue(table === "prompt_versions" ? { order: vi.fn().mockReturnValue({ order }) } : { order }) };
+    });
+    Object.assign(supabase, { from });
+    vi.mocked(supabase.auth.getSession).mockResolvedValueOnce({ data: { session: { user: { id: "owner-1" } } }, error: null } as never);
+
+    render(<App />);
+
+    await waitFor(() => expect(from.mock.calls.map(([table]) => table)).toEqual([
+      "accounts", "account_blueprint_versions", "episodes", "series", "series_versions",
+      "review_packages", "pre_render_review_members", "pre_render_review_member_decisions", "tasks",
+    ]));
+
+    await user.click(screen.getAllByRole("button", { name: "账号" })[0]);
+
+    await waitFor(() => expect(from.mock.calls.map(([table]) => table)).toEqual([
+      "accounts", "account_blueprint_versions", "episodes", "series", "series_versions",
+      "review_packages", "pre_render_review_members", "pre_render_review_member_decisions", "tasks",
+      "prompt_versions", "external_connections",
+    ]));
+  });
+
+  it("首次进入只读取页面骨架所需的五张表", async () => {
+    const order = vi.fn().mockResolvedValue({ data: [], error: null });
+    const from = vi.fn().mockReturnValue({ select: vi.fn().mockReturnValue({ order }) });
+    Object.assign(supabase, { from });
+
+    const workspace = await loadWorkspaceSummary();
+
+    expect(from.mock.calls.map(([table]) => table)).toEqual(["accounts", "account_blueprint_versions", "episodes", "series", "series_versions"]);
+    expect(workspace.artifacts).toEqual([]);
+  });
+
+  it("轮询只替换当前生产单的任务和运行记录", () => {
+    const task = { id: "task-a", episode_id: "episode-a" } as Database["public"]["Tables"]["tasks"]["Row"];
+    const otherTask = { id: "task-b", episode_id: "episode-b" } as Database["public"]["Tables"]["tasks"]["Row"];
+    const oldRun = { task_id: "task-a" } as Database["public"]["Tables"]["task_runs"]["Row"];
+    const otherRun = { task_id: "task-b" } as Database["public"]["Tables"]["task_runs"]["Row"];
+    const nextTask = { id: "task-c", episode_id: "episode-a" } as Database["public"]["Tables"]["tasks"]["Row"];
+    const nextRun = { task_id: "task-c" } as Database["public"]["Tables"]["task_runs"]["Row"];
+
+    expect(mergeEpisodeTaskStatus({ tasks: [task, otherTask], taskRuns: [oldRun, otherRun] }, "episode-a", [nextTask], [nextRun])).toEqual({ tasks: [otherTask, nextTask], taskRuns: [otherRun, nextRun] });
+  });
+
+  it("只在任务实际状态变化时拉取详情，不受租约心跳影响", () => {
+    const task = { attempt: 1, completed_at: null, episode_id: "episode-a", id: "task-a", status: "running" } as Database["public"]["Tables"]["tasks"]["Row"];
+
+    expect(episodeTaskStatusChanged([task], [{ ...task }], "episode-a")).toBe(false);
+    expect(episodeTaskStatusChanged([task], [{ ...task, completed_at: "2026-09-08T00:00:00.000Z", status: "completed" }], "episode-a")).toBe(true);
+    expect(episodeTaskStatusChanged([task], [{ ...task, id: "task-b" }], "episode-a")).toBe(true);
+  });
+
+  it("任务运行记录独立变化时仍会更新轻量状态", () => {
+    const run = { attempt: 1, completed_at: null, id: "run-a", started_at: "2026-09-08T00:00:00.000Z", status: "running", task_id: "task-a" } as Database["public"]["Tables"]["task_runs"]["Row"];
+
+    expect(episodeTaskRunStatusChanged([run], [{ ...run }], new Set(["task-a"]))).toBe(false);
+    expect(episodeTaskRunStatusChanged([run], [{ ...run, completed_at: "2026-09-08T00:01:00.000Z", status: "completed" }], new Set(["task-a"]))).toBe(true);
+    expect(episodeTaskRunStatusChanged([run], [{ ...run, id: "run-b" }], new Set(["task-a"]))).toBe(true);
+  });
+
   it("创建生产单前展示阻塞原因并保持生产单未创建", async () => {
     const user = userEvent.setup();
     const account = { current_blueprint_version_id: "00000000-0000-0000-0000-000000000001", id: "00000000-0000-0000-0000-000000000002", name: "道工作室" } as Database["public"]["Tables"]["accounts"]["Row"];
@@ -50,11 +115,11 @@ describe("approval console", () => {
 
   it("创建前明确展示本次会冻结的媒体能力", () => {
     const account = { current_blueprint_version_id: "blueprint-1", id: "account-1", name: "道工作室" } as Database["public"]["Tables"]["accounts"]["Row"];
-    const blueprint = { account_id: account.id, created_at: "2026-08-26T00:00:00.000Z", id: "blueprint-1", is_active: true, policy: { a_roll: { execution_path: "local", executor: { provider: "hyperframes", adapter: "hyperframes_card_video", model: "hyperframes@0.7.109", prompt_version: "card-video-v1" }, allowed_tools: ["read", "write"], max_attempts: 1 }, b_roll: { execution_path: "external", executor: { provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", prompt_version: "b-roll-v1" }, credential_ref: "11111111-1111-4111-8111-111111111111", allowed_tools: ["read", "write"], max_attempts: 1, max_concurrency: 1, provider_max_concurrency: 1 } }, version: 1 } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
+    const blueprint = { account_id: account.id, created_at: "2026-08-26T00:00:00.000Z", id: "blueprint-1", is_active: true, policy: { a_roll: { execution_path: "local", executor: { provider: "openchatcut", adapter: "openchatcut_card_video", model: "openchatcut@0.2.14", prompt_version: "card-video-v1" }, allowed_tools: ["read", "write"], max_attempts: 1 }, b_roll: { execution_path: "external", executor: { provider: "pexels", adapter: "pexels_video", model: "pexels-video-v1", prompt_version: "b-roll-v1" }, credential_ref: "11111111-1111-4111-8111-111111111111", allowed_tools: ["read", "write"], max_attempts: 1, max_concurrency: 1, provider_max_concurrency: 1 } }, version: 1 } as Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
 
     render(<EpisodeForm accounts={[account]} blueprints={[blueprint]} connectionVersions={[{ adapter: "pexels_video", connection_id: "11111111-1111-4111-8111-111111111111", created_at: "2026-08-26T00:00:00.000Z", endpoint: "https://api.pexels.com", id: "11111111-1111-4111-8111-111111111111", is_current: true, provider: "pexels", revoked_at: null, status: "verified", version: 1 }]} isPending={false} onClose={vi.fn()} onSubmit={vi.fn()} series={[]} seriesVersions={[]} />);
 
-    expect(screen.getByText("本次会冻结的生产能力")).toBeTruthy();
+    expect(screen.getByText("本单将冻结的生产能力")).toBeTruthy();
     expect(screen.getByText("A-roll · 本地")).toBeTruthy();
     expect(screen.getByText("B-roll · 外部")).toBeTruthy();
     expect(screen.getByText(/只会冻结以下已启用且完整配置的能力/)).toBeTruthy();
@@ -95,9 +160,9 @@ describe("approval console", () => {
   });
 
   it("updates only the asset root in a blueprint policy", () => {
-    expect(withBlueprintAssetRoot(defaultBlueprintPolicy, "/Volumes/Content Disk/tk-workflow/dao")).toEqual({
+    expect(withBlueprintAssetRoot(defaultBlueprintPolicy, "/Volumes/Content Disk/loop-control/dao")).toEqual({
       ...defaultBlueprintPolicy,
-      asset_root: "/Volumes/Content Disk/tk-workflow/dao",
+      asset_root: "/Volumes/Content Disk/loop-control/dao",
     });
   });
 
@@ -210,6 +275,8 @@ describe("approval console", () => {
     expect(episodeWorkerStatus({ stage: "visual_review" }, [{ status: "completed", task_type: "prepare_visual_brief" }])).toMatchObject({ label: "等待审核", tone: "review" });
     expect(episodeWorkerStatus({ stage: "qc_review" }, [{ created_at: "2026-08-24T01:00:00.000Z", status: "failed", task_type: "generate_review_render" }, { created_at: "2026-08-24T02:00:00.000Z", status: "completed", task_type: "generate_review_render" }])).toMatchObject({ label: "等待审核", tone: "review" });
     expect(episodeWorkerStatus({ stage: "qc_passed" }, [{ created_at: "2026-08-24T01:00:00.000Z", status: "failed", task_type: "generate_review_render" }, { created_at: "2026-08-24T02:00:00.000Z", status: "completed", task_type: "generate_review_render" }])).toMatchObject({ label: "已完成", tone: "completed" });
+    expect(episodeWorkerStatus({ stage: "render_ready" }, [{ created_at: "2026-08-24T02:00:00.000Z", status: "failed", task_type: "generate_final_render" }])).toMatchObject({ label: "等待 Worker", tone: "waiting" });
+    expect(episodeWorkerStatus({ stage: "render_ready" }, [{ created_at: "2026-08-24T02:00:00.000Z", status: "failed", task_type: "generate_review_render" }])).toMatchObject({ label: "失败", tone: "blocked" });
     expect(episodeWorkerStatus({ stage: "storyboard_approved" }, [{ status: "completed", task_type: "draft_storyboard" }])).toMatchObject({ label: "已完成", tone: "completed" });
   });
 
@@ -221,22 +288,26 @@ describe("approval console", () => {
     expect(messageFromError({ message: "column connection.account_id does not exist" }, "无法创建逐镜头口播任务。")).toBe("column connection.account_id does not exist");
   });
 
+  it("省略生成依据路径中的长段并保留开头和结尾", () => {
+    expect(abbreviatePath("episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/materials/599e8fe43ff0b10144eab597567da6da78d5ec6218b74de5fbb7cf3df04e628a-script.md")).toBe("episodes/92b3067d…83695a/materials/599e8fe4…-script.md");
+  });
+
   it("Studio 的结构修改只返回分镜审核，不冻结当前 Studio 工程", async () => {
     const user = userEvent.setup();
     const episode = { account_id: "account-1", blueprint_version_id: "blueprint-1", created_at: "2026-08-24T00:00:00.000Z", id: "episode-1", stage: "qc_review", title: "审核渲染", updated_at: "2026-08-24T00:00:00.000Z" } as Database["public"]["Tables"]["episodes"]["Row"];
-    const reviewPackage = { artifact_id: "artifact-1", context_snapshot: { pre_render_review_package_id: "pre-render-1", project_relative_path: "episodes/episode-1/studio/index.html", review_kind: "hyperframes_review_render" }, episode_id: episode.id, id: "review-1", invalidated_at: null, revision_number: 1, stage: "qc_review", task_id: "task-1" } as unknown as Database["public"]["Tables"]["review_packages"]["Row"];
+    const reviewPackage = { artifact_id: "artifact-1", context_snapshot: { pre_render_review_package_id: "pre-render-1", project_relative_path: "episodes/episode-1/studio/index.html", review_kind: "openchatcut_review_render" }, episode_id: episode.id, id: "review-1", invalidated_at: null, revision_number: 1, stage: "qc_review", task_id: "task-1" } as unknown as Database["public"]["Tables"]["review_packages"]["Row"];
     const artifact = { artifact_type: "review_render", episode_id: episode.id, id: "artifact-1", producer_task_id: "task-1", relative_path: "episodes/episode-1/review.mp4" } as Database["public"]["Tables"]["artifacts"]["Row"];
     const task = { episode_id: episode.id, id: "task-1", input_snapshot: null, status: "completed", task_type: "generate_review_render" } as Database["public"]["Tables"]["tasks"]["Row"];
     const onOpen = vi.fn().mockResolvedValue({ fileSize: 1, relativePath: "episodes/episode-1/studio-edits/index.html", sha256: "draft" });
     const onRequestRevision = vi.fn().mockResolvedValue({ kind: "storyboard" });
     vi.mocked(supabase.rpc).mockClear();
 
-    render(<EpisodeDetail artifacts={[artifact]} audioTrackAnnotations={[]} audioTracks={[]} blueprint={null} episode={episode} isMaterialPending={false} isStoryboardAnnotationPending={false} isTransitionPending={false} onCreateAudioTrackAnnotation={vi.fn()} onCreateStoryboardAnnotation={vi.fn()} onImportMaterial={vi.fn()} onOpenHyperframesStudio={onOpen} onRequestRevision={onRequestRevision} onTransition={vi.fn().mockResolvedValue(true)} reviewAnnotations={[]} reviewPackages={[reviewPackage]} tasks={[task]} transitions={[]} />);
+    render(<EpisodeDetail artifacts={[artifact]} audioTrackAnnotations={[]} audioTracks={[]} blueprint={null} episode={episode} isMaterialPending={false} isStoryboardAnnotationPending={false} isTransitionPending={false} onCreateAudioTrackAnnotation={vi.fn()} onCreateStoryboardAnnotation={vi.fn()} onImportMaterial={vi.fn()} onOpenStudio={onOpen} onRequestRevision={onRequestRevision} onTransition={vi.fn().mockResolvedValue(true)} reviewAnnotations={[]} reviewPackages={[reviewPackage]} tasks={[task]} transitions={[]} />);
 
-    await user.click(screen.getByRole("button", { name: "在 HyperFrames Studio 中打开" }));
-    await user.click(await screen.findByRole("button", { name: "提交 Studio 修改" }));
+    await user.click(screen.getByRole("button", { name: "在 OpenChatCut 中打开" }));
+    await user.click(await screen.findByRole("button", { name: "提交 OpenChatCut 修改" }));
     await user.click(screen.getByRole("radio", { name: /分镜结构修订/ }));
-    await user.type(screen.getByLabelText("Studio 修改说明"), "删除 shot-02，并将后续镜头前移。");
+    await user.type(screen.getByLabelText("OpenChatCut 修改说明"), "删除 shot-02，并将后续镜头前移。");
     await user.click(screen.getByRole("button", { name: "确认并返回分镜审核" }));
 
     await waitFor(() => expect(onRequestRevision).toHaveBeenCalledWith({ kind: "storyboard", reason: "删除 shot-02，并将后续镜头前移。", reviewPackageId: reviewPackage.id }));
