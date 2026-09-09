@@ -95,7 +95,7 @@ Supabase 探针只验证 API 可达和公开配置；进入控制台后的数据
 Loop Control 已启动
 运行时：Loop Control、OpenChatCut、n8n 统一使用 Homebrew Node 24。
 控制台：http://127.0.0.1:5173/
-n8n：http://127.0.0.1:5678/loop-control-n8n/
+n8n：http://127.0.0.1:5678/
   任务派发工作流已启用
   审核提醒工作流已启用
   状态变更提醒工作流已启用

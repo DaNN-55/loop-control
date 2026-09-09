@@ -8,7 +8,6 @@ import { removeServiceRecordIfOwned, verifiedRecordedService, writeServiceRecord
 const projectRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const consoleHealthPath = "/loop-control-health.txt";
 const consoleHealthMarker = "loop-control-console-v1";
-const n8nBasePath = "/loop-control-n8n";
 const requiredWorkflows = [
   { id: "Cy50xRCgT2cj4WT4", label: "任务派发" },
   { id: "fFvOzmKS4OAMTcjd", label: "审核提醒" },
@@ -30,7 +29,7 @@ export function localStartupReport({ consoleUrl = consoleUrlForPort("5173"), med
 }
 
 export function consoleUrlForPort(port) { return `http://127.0.0.1:${port}/`; }
-export function n8nUrlForPort(port) { return `http://127.0.0.1:${port}${n8nBasePath}/`; }
+export function n8nUrlForPort(port) { return `http://127.0.0.1:${port}/`; }
 export function consoleHealthUrl(port) { return `${consoleUrlForPort(port).replace(/\/$/, "")}${consoleHealthPath}`; }
 export function n8nHealthUrl(port) { return `http://127.0.0.1:${port}/healthz`; }
 

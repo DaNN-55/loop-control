@@ -9,8 +9,8 @@ describe("本地启动", () => {
   });
 
   it("启动完成后只输出实际入口和关键依赖结论", () => {
-    expect(localStartupReport({ mediaLibraryMounted: true, mediaLibraryPath: "/Volumes/Media", n8nUrl: "http://127.0.0.1:5678/loop-control-n8n/", openChatCutAvailable: true })).toEqual(["Loop Control 已启动", "运行时：Loop Control、OpenChatCut、n8n 统一使用 Homebrew Node 24。", "控制台：http://127.0.0.1:5173/", "n8n：http://127.0.0.1:5678/loop-control-n8n/", "  任务派发工作流已启用", "  审核提醒工作流已启用", "  状态变更提醒工作流已启用", "  每日健康检查工作流已启用", "Supabase：API 可达，前端公开配置有效；数据权限在登录后由会话/RLS 验证", "OpenChatCut：可用", "媒体库：已挂载（/Volumes/Media）"]);
-    expect(localStartupReport({ mediaLibraryMounted: false, mediaLibraryPath: "/Volumes/Missing", n8nUrl: "http://127.0.0.1:5678/loop-control-n8n/", openChatCutAvailable: true })).toContain("媒体库：不可用");
+    expect(localStartupReport({ mediaLibraryMounted: true, mediaLibraryPath: "/Volumes/Media", n8nUrl: "http://127.0.0.1:5678/", openChatCutAvailable: true })).toEqual(["Loop Control 已启动", "运行时：Loop Control、OpenChatCut、n8n 统一使用 Homebrew Node 24。", "控制台：http://127.0.0.1:5173/", "n8n：http://127.0.0.1:5678/", "  任务派发工作流已启用", "  审核提醒工作流已启用", "  状态变更提醒工作流已启用", "  每日健康检查工作流已启用", "Supabase：API 可达，前端公开配置有效；数据权限在登录后由会话/RLS 验证", "OpenChatCut：可用", "媒体库：已挂载（/Volumes/Media）"]);
+    expect(localStartupReport({ mediaLibraryMounted: false, mediaLibraryPath: "/Volumes/Missing", n8nUrl: "http://127.0.0.1:5678/", openChatCutAvailable: true })).toContain("媒体库：不可用");
   });
 
   it("默认端口由本项目健康标识占用时复用", async () => {

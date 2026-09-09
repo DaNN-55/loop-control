@@ -26,9 +26,10 @@ describe("STARTUP-03D 生命周期验收", () => {
     expect(scripts["start:all"]).toBeUndefined();
   });
 
-  it("n8n 子路径保留尾部斜杠，避免静态资源和健康地址拼接错误", () => {
+  it("n8n 直连根路径，避免子路径与静态资源挂载不一致", () => {
     const source = readFileSync(join(process.cwd(), "n8n", "start-local.sh"), "utf8");
-    expect(source).toContain('export N8N_PATH="/loop-control-n8n/"');
+    expect(source).not.toMatch(/^export N8N_PATH=/m);
+    expect(n8nUrlForPort("6178")).toBe("http://127.0.0.1:6178/");
   });
 
   it("空闲端口启动与被占用时自动换用隔离端口", async () => {
@@ -73,7 +74,7 @@ describe("STARTUP-03D 生命周期验收", () => {
     });
     expect(report).toContain("Loop Control 已启动");
     expect(report).toContain("控制台：http://127.0.0.1:6137/");
-    expect(report).toContain("n8n：http://127.0.0.1:6178/loop-control-n8n/");
+    expect(report).toContain("n8n：http://127.0.0.1:6178/");
     expect(report).toContain("媒体库：不可用");
   });
 
