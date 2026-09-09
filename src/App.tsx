@@ -191,6 +191,7 @@ interface ShotReviewVideoRequest {
   reviewPackageId: string;
   riskReason: string | null;
   storyboardRelativePath: string;
+  workspaceRelativePath: string;
 }
 
 interface AudioTrackAnnotationRequest {
@@ -1866,11 +1867,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
     setPendingAction(`shot-review-video-${input.episodeId}`);
     setErrorMessage("");
     try {
-      const prepareResponse = await fetch(`/_open-openchatcut-studio?episode=${encodeURIComponent(input.episodeId)}`, { body: JSON.stringify({ allowedFrames: input.allowedFrames, frameRate: input.frameRate, openPreview: false, projectRelativePath: input.storyboardRelativePath }), headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, method: "POST" });
-      const preparePayload: unknown = await prepareResponse.json().catch(() => null);
-      if (!prepareResponse.ok || !preparePayload || typeof preparePayload !== "object" || Array.isArray(preparePayload) || !("workspace" in preparePayload)) throw new Error(typeof preparePayload === "object" && preparePayload && "message" in preparePayload && typeof preparePayload.message === "string" ? preparePayload.message : "无法准备审核视频工程。");
-      const workspace = studioWorkspaceFromPayload(preparePayload.workspace);
-      const freezeResponse = await fetch(`/_freeze-openchatcut-studio?episode=${encodeURIComponent(input.episodeId)}`, { body: JSON.stringify({ sourceProjectRelativePath: input.storyboardRelativePath, workspaceRelativePath: workspace.relativePath }), headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, method: "POST" });
+      const freezeResponse = await fetch(`/_freeze-openchatcut-studio?episode=${encodeURIComponent(input.episodeId)}`, { body: JSON.stringify({ sourceProjectRelativePath: input.storyboardRelativePath, workspaceRelativePath: input.workspaceRelativePath }), headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" }, method: "POST" });
       const freezePayload: unknown = await freezeResponse.json().catch(() => null);
       if (!freezeResponse.ok || !freezePayload || typeof freezePayload !== "object" || Array.isArray(freezePayload) || !("frozenProject" in freezePayload)) throw new Error(typeof freezePayload === "object" && freezePayload && "message" in freezePayload && typeof freezePayload.message === "string" ? freezePayload.message : "无法冻结审核视频工程。");
       const frozenProject = studioWorkspaceFromPayload(freezePayload.frozenProject);
@@ -2617,7 +2614,7 @@ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, b
     {blockers.length ? <details className="review-section worker-blockers detail-card-collapsible" open><summary><h3>优先处理 Worker 阻塞项（{blockers.length}）</h3></summary><div className="detail-card-body">{blockerGroups.map(({ blocker, count }) => <WorkerBlockerCard affectedTaskCount={count} blocker={blocker} connectionVersions={connectionVersionsForBlocker(blocker, episodeTasks, connectionVersions)} onOpenBlueprint={onOpenBlueprint} onRepairConnection={onRepairConnection} key={`${blocker.code}-${blocker.detail}`} />)}</div></details> : null}
     <details className="review-section detail-card-collapsible" open={waitingForMainScript || inputReadyToStart}><summary><h3>准备生产材料</h3></summary><div className="detail-card-body">{waitingForMainScript ? <><p className="material-import-subtitle">主脚本由外部制作后上传；确认后会作为本生产单不可变输入。</p><MaterialImportForm allowMainScript bindingStatuses={materialBindingStatuses(episodeTasks)} episodeId={episode.id} existingMaterials={episodeMaterials} isPending={isMaterialPending} onBatchComplete={onRefresh} onImport={onImportMaterial} /></> : <><p className="material-import-subtitle">主脚本已确认。你可以继续添加补充材料；所有材料准备好后，点击下方按钮，Worker 才会开始制作。</p><MaterialImportForm allowMainScript={false} bindingStatuses={materialBindingStatuses(episodeTasks)} episodeId={episode.id} existingMaterials={episodeMaterials} isPending={isMaterialPending} onBatchComplete={onRefresh} onImport={onImportMaterial} /></>}{inputReadyToStart ? <><div className="production-start-gate"><div><strong>材料已准备到可开始状态</strong><p>确认后将先检查本机 Worker 的真实运行态；检查通过后才推进生产单。</p></div><button className="button button-primary" disabled={isStartProductionPending} onClick={() => void onStartProduction(episode.id)} type="button">{isStartProductionPending ? "检查并开始中…" : "材料准备完成，开始制作"}</button></div>{productionPreflight ? <div aria-live="polite" className={`production-preflight ${productionBlockers.length ? "is-blocked" : "is-passed"}`}><strong>生产前运行态检查：{productionBlockers.length ? `未通过（${productionBlockers.length}）` : "已通过"}</strong><p>已检查当前冻结蓝图对应的 Worker 注册、工具白名单、凭据存在性、有效性、模型权限、网络连通性和媒体库；实际媒体搜索、下载和产物验证仍在任务执行阶段确认。</p>{productionBlockers.map((blocker) => <WorkerBlockerCard blocker={blocker} connectionVersions={connectionVersionsForBlocker(blocker, episodeTasks, connectionVersions)} key={`${blocker.code}-${blocker.capability}`} onOpenBlueprint={onOpenBlueprint} onRepairConnection={onRepairConnection} />)}</div> : null}</> : null}</div></details>
     {canReturnToShotWorkbench ? <section className="review-section shot-workbench-return"><div><h3>镜头工作台</h3><p className="muted-copy">当前审核证据保持不变；返回后可修改基础素材并生成新的冻结审核快照。</p></div><button aria-expanded={showShotWorkbench} className="button button-secondary" onClick={() => setShowShotWorkbench((current) => !current)} type="button">{showShotWorkbench ? "收起镜头工作台" : "返回镜头工作台修改"}</button></section> : null}
-    {showShotWorkbench && storyboardPackage && storyboardArtifact ? <ShotWorkbench artifact={storyboardArtifact} audioTracks={episodeAudioTracks} blueprint={blueprint?.policy} durationSettings={durationSettings} drafts={episodeShotPreparationDrafts} episode={episode} isMaterialPending={isMaterialPending} isReviewVideoPending={isShotReviewVideoPending} isTtsSettingsPending={isShotTtsSettingsPending} materialRevisions={episodeMaterials} onGenerateTts={onGenerateShotTts} onGenerateReviewVideo={onGenerateShotReviewVideo} onImportMaterial={onImportMaterial} onSave={onSaveShotPreparationDraft} onSaveEpisodeTtsSettings={onSaveEpisodeTtsSettings} onRequestShotStructureRevision={onRequestShotStructureRevision} reviewPackage={storyboardPackage} tasks={episodeTasks} /> : null}
+    {showShotWorkbench && storyboardPackage && storyboardArtifact ? <ShotWorkbench artifact={storyboardArtifact} audioTracks={episodeAudioTracks} blueprint={blueprint?.policy} durationSettings={durationSettings} drafts={episodeShotPreparationDrafts} episode={episode} isMaterialPending={isMaterialPending} isReviewVideoPending={isShotReviewVideoPending} isTtsSettingsPending={isShotTtsSettingsPending} materialRevisions={episodeMaterials} onGenerateTts={onGenerateShotTts} onGenerateReviewVideo={onGenerateShotReviewVideo} onImportMaterial={onImportMaterial} onOpenStudio={onOpenStudio} onSave={onSaveShotPreparationDraft} onSaveEpisodeTtsSettings={onSaveEpisodeTtsSettings} onRequestShotStructureRevision={onRequestShotStructureRevision} reviewPackage={storyboardPackage} tasks={episodeTasks} /> : null}
     {reviewPackage?.stage !== "visual_review" && reviewPackage?.stage !== "storyboard_review" ? <details className="review-section detail-card-collapsible"><summary><h3>产物预览</h3></summary><div className="detail-card-body"><ArtifactPreview artifacts={episodeArtifacts} /></div></details> : null}
     {reviewPackage?.stage === "production_ready" ? <PreRenderReviewPackage artifacts={episodeArtifacts} decisions={preRenderMemberDecisions} isTransitionPending={isTransitionPending} members={preRenderMembers} onReviewMember={onReviewPreRenderMember} onTransition={onTransition} reviewPackage={reviewPackage} /> : reviewPackage && reviewArtifact && episode.stage !== "storyboard_approved" ? reviewPackage.stage === "qc_review" && isEditorReviewRender(reviewPackage.context_snapshot) ? <OpenChatCutReviewRenderPackage artifact={reviewArtifact} artifacts={reviewArtifacts} onOpenStudio={onOpenStudio} onRequestRevision={onRequestRevision} onSubmitStudioRevision={onSubmitStudioRevision} reviewPackage={reviewPackage} tasks={episodeTasks} /> : reviewPackage.stage === "visual_review" ? <VisualReviewPackage artifact={reviewArtifact} artifacts={reviewArtifacts} reviewPackage={reviewPackage} /> : reviewPackage.stage === "storyboard_review" ? <StoryboardReviewPackage annotations={storyboardAnnotations} artifact={reviewArtifact} episode={episode} isAnnotationPending={isStoryboardAnnotationPending} materialRevisions={materialRevisions.filter((material) => material.episode_id === episode.id)} onCreateAnnotation={onCreateStoryboardAnnotation} onRegisterManualMedia={onRegisterManualMedia} onValidationChange={onStoryboardValidationChange} policy={blueprint?.policy} reviewPackage={reviewPackage} tasks={episodeTasks} /> : <TextReviewPackage artifact={reviewArtifact} reviewPackage={reviewPackage} /> : null}
     <ArollTaskEvidencePanel tasks={episodeTasks} />
@@ -3234,15 +3231,19 @@ function structureRevisionPendingFromTask(task: Task, shots: StoryboardShot[]): 
   return { baseReviewPackageId, label: storyboardStructureOperationLabels[kind as StoryboardStructureOperationKind], targetShotId };
 }
 
-function ShotWorkbench({ artifact, audioTracks, blueprint, durationSettings, drafts, episode, isMaterialPending, isReviewVideoPending, isTtsSettingsPending, materialRevisions, onGenerateTts, onGenerateReviewVideo, onImportMaterial, onSave, onSaveEpisodeTtsSettings, reviewPackage, tasks, onRequestShotStructureRevision }: { artifact: Artifact; audioTracks: AudioTrack[]; blueprint?: Json; durationSettings: ReviewRenderDurationSettings; drafts: ShotPreparationDraft[]; episode: Episode; isMaterialPending: boolean; isReviewVideoPending: boolean; isTtsSettingsPending: boolean; materialRevisions: MaterialRevision[]; onGenerateTts: (input: ShotTtsGenerationRequest) => Promise<void>; onGenerateReviewVideo: (input: ShotReviewVideoRequest) => Promise<void>; onImportMaterial: MaterialImportHandler; onSave: (input: ShotPreparationDraftRequest) => Promise<void>; onSaveEpisodeTtsSettings: (input: { episodeId: string; languageCode: string; speakingRate: number; voice: string }) => Promise<void>; reviewPackage: ReviewPackage; tasks: Task[]; onRequestShotStructureRevision: (input: ShotStructureRevisionRequest) => Promise<void> }) {
+function ShotWorkbench({ artifact, audioTracks, blueprint, durationSettings, drafts, episode, isMaterialPending, isReviewVideoPending, isTtsSettingsPending, materialRevisions, onGenerateTts, onGenerateReviewVideo, onImportMaterial, onOpenStudio, onSave, onSaveEpisodeTtsSettings, reviewPackage, tasks, onRequestShotStructureRevision }: { artifact: Artifact; audioTracks: AudioTrack[]; blueprint?: Json; durationSettings: ReviewRenderDurationSettings; drafts: ShotPreparationDraft[]; episode: Episode; isMaterialPending: boolean; isReviewVideoPending: boolean; isTtsSettingsPending: boolean; materialRevisions: MaterialRevision[]; onGenerateTts: (input: ShotTtsGenerationRequest) => Promise<void>; onGenerateReviewVideo: (input: ShotReviewVideoRequest) => Promise<void>; onImportMaterial: MaterialImportHandler; onOpenStudio: (episodeId: string, projectRelativePath: string) => Promise<OpenChatCutStudioWorkspace>; onSave: (input: ShotPreparationDraftRequest) => Promise<void>; onSaveEpisodeTtsSettings: (input: { episodeId: string; languageCode: string; speakingRate: number; voice: string }) => Promise<void>; reviewPackage: ReviewPackage; tasks: Task[]; onRequestShotStructureRevision: (input: ShotStructureRevisionRequest) => Promise<void> }) {
   const [advancedShotId, setAdvancedShotId] = useState("");
   const [structureRevisionPending, setStructureRevisionPending] = useState<{ baseReviewPackageId: string; label: string; targetShotId: string } | null>(null);
   const [structureRevisionError, setStructureRevisionError] = useState("");
   const [acceptDurationRisk, setAcceptDurationRisk] = useState(false);
+  const [studioWorkspace, setStudioWorkspace] = useState<OpenChatCutStudioWorkspace | null>(null);
+  const [studioError, setStudioError] = useState("");
+  const [isStudioPending, setIsStudioPending] = useState(false);
   const source = localArtifactUrl(artifact.episode_id, artifact.relative_path, artifact.sha256);
   const { content, error } = useLocalArtifactText(source);
   const storyboard = content ? parseStoryboard(content) : null;
   const storyboardShotIds = storyboard?.shots.map((shot) => shot.id).join("\u0000") ?? "";
+  const draftRevisionKey = drafts.map((draft) => `${draft.id}:${draft.updated_at}`).sort().join("\u0000");
   useEffect(() => {
     if (!structureRevisionPending || structureRevisionPending.baseReviewPackageId === reviewPackage.id || !storyboard?.shots.length) return;
     const targetShotId = storyboard.shots.some((shot) => shot.id === structureRevisionPending.targetShotId) ? structureRevisionPending.targetShotId : storyboard.shots[0].id;
@@ -3272,6 +3273,7 @@ function ShotWorkbench({ artifact, audioTracks, blueprint, durationSettings, dra
       setStructureRevisionError("结构修改未能应用；旧版分镜和已保存配置保持不变。");
     }
   }, [structureRevisionPending, tasks]);
+  useEffect(() => { setStudioWorkspace(null); setStudioError(""); }, [artifact.id, draftRevisionKey, reviewPackage.id]);
   if (error) return <section className="review-section shot-workbench"><h3>分镜工作台</h3><p className="form-error">{error}</p></section>;
   if (!content || !storyboard) return <section className="review-section shot-workbench"><h3>分镜工作台</h3>{content ? <p className="form-error">分镜产物格式无效，无法建立镜头准备草稿。</p> : <LoadingIndicator compact label="正在读取分镜工作台…" />}</section>;
   const workbenchShots = storyboard.shots;
@@ -3309,6 +3311,18 @@ function ShotWorkbench({ artifact, audioTracks, blueprint, durationSettings, dra
       throw cause;
     }
   }
+  async function openStudioWorkspace() {
+    setStudioError("");
+    setIsStudioPending(true);
+    try {
+      const openWithDurationSettings = onOpenStudio as (episodeId: string, projectRelativePath: string, settings?: ReviewRenderDurationSettings) => Promise<OpenChatCutStudioWorkspace>;
+      setStudioWorkspace(await openWithDurationSettings(episode.id, artifact.relative_path, durationSettings));
+    } catch (cause) {
+      setStudioError(cause instanceof Error ? cause.message : "无法打开 OpenChatCut。");
+    } finally {
+      setIsStudioPending(false);
+    }
+  }
   return <section aria-label="分镜工作台" className="review-section shot-workbench">
     <header className="shot-workbench-header">
       <h3>分镜工作台</h3>
@@ -3323,11 +3337,13 @@ function ShotWorkbench({ artifact, audioTracks, blueprint, durationSettings, dra
     <div className="shot-workbench-list">
       {storyboard.shots.map((shot, index) => <ShotPreparationCard audioTracks={audioTracks} defaults={defaults} durationSettings={durationSettings} draft={packageDrafts.find((candidate) => candidate.shot_id === shot.id)} episode={episode} isInitiallyOpen={selectedShotId ? shot.id === selectedShotId : index === currentPendingIndex} isMaterialPending={isMaterialPending} isStructureRevisionPending={Boolean(structureRevisionPending)} key={shot.id} materialRevisions={materialRevisions} onAdvance={storyboard.shots[index + 1] ? () => selectShot(storyboard.shots[index + 1].id) : undefined} onGenerateTts={onGenerateTts} onImportMaterial={onImportMaterial} onSave={onSave} onSelect={() => selectShot(shot.id)} reviewPackage={reviewPackage} shot={shot} tasks={tasks} onRequestShotStructureRevision={submitStructureRevision} shots={storyboard.shots} voiceOptions={voiceOptions} />)}
     </div>
-    <section aria-label="提交并生成审核视频" className="shot-workbench-completion">
-      <div><h4>提交并生成审核视频</h4><p className="muted-copy">提交当前已保存的镜头配置，由 Worker 生成可播放的整片审核视频；完成后进入审核阶段。</p></div>
+    <section aria-label="OpenChatCut 审核视频" className="shot-workbench-completion">
+      <div><h4>在 OpenChatCut 编辑并生成审核视频</h4><p className="muted-copy">先打开可编辑工作版本并完成剪辑；只有点击“生成审核视频”才会冻结当前版本并提交 Worker。</p></div>
       <span>镜头已保存 {savedCount}/{storyboard.shots.length} · 口播已就绪 {readyTtsCount}/{ttsShotCount}</span>
       {durationRiskCount ? <label><input checked={acceptDurationRisk} onChange={(event) => setAcceptDurationRisk(event.target.checked)} type="checkbox" />已核对并接受 {durationRiskCount} 个镜头的音画时长差异</label> : null}
-      <button className="button button-primary" disabled={isReviewVideoPending || !reviewVideoReady} onClick={() => void onGenerateReviewVideo({ acceptDurationRisk, allowedFrames: durationSettings.allowedFrames, episodeId: episode.id, frameRate: durationSettings.frameRate, reviewPackageId: reviewPackage.id, riskReason: acceptDurationRisk ? "已在分镜工作台核对并接受当前音画时长差异。" : null, storyboardRelativePath: artifact.relative_path })} type="button">{isReviewVideoPending ? "正在提交…" : "提交并生成审核视频"}</button>
+      <div className="shot-workbench-completion-actions"><button className="button button-secondary" disabled={isStudioPending || isReviewVideoPending || !reviewVideoReady} onClick={() => void openStudioWorkspace()} type="button">{isStudioPending ? "正在打开…" : studioWorkspace ? "重新打开 OpenChatCut 编辑" : "在 OpenChatCut 中编辑"}</button>{studioWorkspace ? <button className="button button-primary" disabled={isReviewVideoPending} onClick={() => void onGenerateReviewVideo({ acceptDurationRisk, allowedFrames: durationSettings.allowedFrames, episodeId: episode.id, frameRate: durationSettings.frameRate, reviewPackageId: reviewPackage.id, riskReason: acceptDurationRisk ? "已在分镜工作台核对并接受当前音画时长差异。" : null, storyboardRelativePath: artifact.relative_path, workspaceRelativePath: studioWorkspace.relativePath })} type="button">{isReviewVideoPending ? "正在生成…" : "生成审核视频"}</button> : null}</div>
+      {studioWorkspace ? <small className="shot-workbench-studio-path">当前可编辑工作版本：{studioWorkspace.relativePath}</small> : null}
+      {studioError ? <p className="form-error" role="alert">{studioError}</p> : null}
     </section>
   </section>;
 }

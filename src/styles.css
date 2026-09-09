@@ -1341,6 +1341,9 @@ body { background: #f5f7fa; }
 .shot-workbench-completion h4, .shot-workbench-completion p { margin: 0; }
 .shot-workbench-completion > span, .shot-workbench-completion > label { color: #53627a; font-size: 12px; font-weight: 700; }
 .shot-workbench-completion > label { align-items: center; display: flex; gap: 7px; }
+.shot-workbench-completion-actions { align-items: center; display: flex; flex-wrap: wrap; gap: 8px; }
+.shot-workbench-studio-path { color: #53627a; grid-column: 1 / -1; overflow-wrap: anywhere; }
+.shot-workbench-completion > .form-error { grid-column: 1 / -1; }
 .app-shell[data-theme="dark"] .shot-workbench-completion { background: #18263a; border-color: #36577f; }
 .shot-preparation-statuses small { background: #edf2f7 !important; border: 0 !important; border-radius: 999px !important; min-width: 0 !important; padding: 6px 9px !important; }
 .shot-preparation-statuses .is-video { color: #41658f !important; }
