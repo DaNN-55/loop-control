@@ -84,7 +84,7 @@ npm start
 1. 使用 Homebrew Node 24 启动 Loop Control，并确认 OpenChatCut 使用同一 Node。
 2. 检查前端公开 Supabase 配置、Worker 密钥隔离，并用该公开配置完成只读 API 探针。
 3. 检查 OpenChatCut 安装及当前本机 n8n 实例中四条工作流的启用状态。
-4. 启动 n8n 和 Vite 控制台；已运行的服务会直接复用。
+4. 启动 n8n 和 Vite 控制台；只有带有本项目服务记录且身份与健康响应都匹配的实例才会复用。
 5. 等待两个服务可访问，打印实际地址并自动打开控制台。
 
 Supabase 探针只验证 API 可达和公开配置；进入控制台后的数据读取由 Owner 会话与 RLS 验证。未经登录的 REST 401 不能用来判断 publishable key 无效。
@@ -95,7 +95,7 @@ Supabase 探针只验证 API 可达和公开配置；进入控制台后的数据
 Loop Control 已启动
 运行时：Loop Control、OpenChatCut、n8n 统一使用 Homebrew Node 24。
 控制台：http://127.0.0.1:5173/
-n8n：http://127.0.0.1:5678/
+n8n：http://127.0.0.1:5678/loop-control-n8n/
   任务派发工作流已启用
   审核提醒工作流已启用
   状态变更提醒工作流已启用
