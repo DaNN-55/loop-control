@@ -19,7 +19,7 @@ import { executeControlledMediaTask, writeSafeAssetFile } from "./controlledMedi
 import { generateCloudflareWorkersAiImage, generateOpenAiImage } from "./mediaProviders.js";
 import { createHash } from "node:crypto";
 import { executeOpenChatCutRender } from "./openchatcutRenderer.js";
-import { durationToleranceSeconds } from "./durationDecision.js";
+import { durationToleranceSeconds, videoDurationMeetsMinimum } from "./durationDecision.js";
 import { readTaskIdArgument } from "./taskClaimArguments.js";
 import { createRuntimePreflight, credentialEnvironmentForReference, localAdapterReadinessFromCommands, runtimeCapabilityFromTask, runtimeCommandArguments, runtimeCommandForProvider, runtimeCommandInvocation } from "./runtimePreflight.js";
 import { probeCodexModel, probeProviderConnection } from "./runtimeProbes.js";
@@ -301,13 +301,13 @@ async function probeMp3Artifact(path: string): Promise<number> {
   return duration;
 }
 
-async function validateMp4Artifact(path: string, minimumDurationSeconds: number): Promise<void> {
+async function validateMp4Artifact(path: string, minimumDurationSeconds: number, frameRate?: number, allowedFrames?: number): Promise<void> {
   const { stdout } = await runCommandWithOutput("ffprobe", [
     "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", path,
   ]);
   const duration = Number(stdout.trim());
-  if (!Number.isFinite(duration) || duration < minimumDurationSeconds) {
-    throw new Error(`Pexels 视频不可播放或时长不足：${duration || "未知"} 秒。`);
+  if (!videoDurationMeetsMinimum(duration, minimumDurationSeconds, frameRate, allowedFrames)) {
+    throw new Error(`视频不可播放或时长不足：${duration || "未知"} 秒。`);
   }
 }
 

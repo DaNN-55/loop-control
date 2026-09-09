@@ -1,8 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { reviewRenderDurationSettingsFromRules } from "../reviews/reviewRevision";
-import { createShotDurationDecision, durationToleranceSeconds, isShotDurationDecision, shotDurationDecisionFromJson } from "./durationDecision";
+import { createShotDurationDecision, durationToleranceSeconds, isShotDurationDecision, shotDurationDecisionFromJson, videoDurationMeetsMinimum } from "./durationDecision";
 
 describe("shot duration decision", () => {
+  it("uses the frozen frame rate and allowed frames for encoded video tail deltas", () => {
+    expect(videoDurationMeetsMinimum(9.96, 10, 24, 1)).toBe(true);
+    expect(videoDurationMeetsMinimum(9.95, 10, 24, 1)).toBe(false);
+    expect(videoDurationMeetsMinimum(9.999, 10, 30, 0)).toBe(false);
+    expect(videoDurationMeetsMinimum(10, 10, 30, 0)).toBe(true);
+  });
+
   it("keeps synced audio separate from plan drift", () => {
     const decision = createShotDurationDecision({ audioMode: "tts", actualAudioDurationSeconds: 5.8, clipDurationSeconds: 5.8, plannedDurationSeconds: 5 });
     expect(decision.audioVideoDeltaSeconds).toBe(0);

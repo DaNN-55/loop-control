@@ -1957,23 +1957,37 @@ function shotWorkbenchDurationSettingsFromRules(rules: unknown): { frameRate: nu
   return { frameRate, allowedFrames };
 }
 
+const editableShotWorkbenchStages = new Set(["storyboard_approved", "production_ready", "render_ready", "qc_review"]);
+
+export function studioEntryModeForPaths(stage: string, requestedPath: string, storyboardPath?: string): "shot_workbench" | "review_render" | "storyboard_mismatch" {
+  if (editableShotWorkbenchStages.has(stage) && storyboardPath === requestedPath) return "shot_workbench";
+  return stage === "storyboard_approved" ? "storyboard_mismatch" : "review_render";
+}
+
 async function studioEntryGateForOwnedEpisode(input: { assetRoot: string; authorization: string; episodeId: string; projectRelativePath: string; supabasePublishableKey: string | undefined; supabaseUrl: string | undefined }): Promise<{ allowed: boolean; mode?: "review_render" | "shot_workbench"; message?: string; storyboardPackageId?: string; reviewRenderTaskId?: string; durationSettings?: { frameRate: number; allowedFrames: number } }> {
   if (!input.supabaseUrl || !input.supabasePublishableKey) return { allowed: false, message: "Supabase 本地客户端未配置。" };
   const supabase = createClient(input.supabaseUrl, input.supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: input.authorization } } });
   const { data: episode, error: episodeError } = await supabase.from("episodes").select("stage, account_id, series_version_id").eq("id", input.episodeId).maybeSingle();
   if (episodeError || !episode) return { allowed: false, message: "未找到当前 Episode。" };
-  if (episode.stage === "storyboard_approved") {
+  let storyboardPackage: { id: string; artifact_id: string } | undefined;
+  let storyboardArtifactPath: string | undefined;
+  if (editableShotWorkbenchStages.has(episode.stage)) {
+    const { data: packages, error: packageError } = await supabase.from("review_packages").select("id, artifact_id").eq("episode_id", input.episodeId).eq("stage", "storyboard_review").is("invalidated_at", null).order("revision_number", { ascending: false }).limit(1);
+    storyboardPackage = packages?.[0];
+    if (!packageError && storyboardPackage) {
+      const { data: artifact, error: artifactError } = await supabase.from("artifacts").select("relative_path").eq("id", storyboardPackage.artifact_id).maybeSingle();
+      if (!artifactError) storyboardArtifactPath = artifact?.relative_path;
+    }
+  }
+  const entryMode = studioEntryModeForPaths(episode.stage, input.projectRelativePath, storyboardArtifactPath);
+  if (entryMode === "storyboard_mismatch") return { allowed: false, message: "Studio 工程不是当前分镜版本。" };
+  if (entryMode === "shot_workbench" && storyboardPackage) {
     let durationSettings = { frameRate: 30, allowedFrames: 2 };
     if (episode.series_version_id) {
       const { data: seriesVersion, error: seriesVersionError } = await supabase.from("series_versions").select("rules").eq("id", episode.series_version_id).eq("account_id", episode.account_id).maybeSingle();
       if (seriesVersionError) return { allowed: false, message: "无法读取当前 Episode 的镜头时长规则。" };
       durationSettings = shotWorkbenchDurationSettingsFromRules(seriesVersion?.rules);
     }
-    const { data: packages, error: packageError } = await supabase.from("review_packages").select("id, artifact_id").eq("episode_id", input.episodeId).eq("stage", "storyboard_review").is("invalidated_at", null).order("revision_number", { ascending: false }).limit(1);
-    const storyboardPackage = packages?.[0];
-    if (packageError || !storyboardPackage) return { allowed: false, message: "未找到当前分镜版本。" };
-    const { data: artifact, error: artifactError } = await supabase.from("artifacts").select("relative_path").eq("id", storyboardPackage.artifact_id).maybeSingle();
-    if (artifactError || !artifact || artifact.relative_path !== input.projectRelativePath) return { allowed: false, message: "Studio 工程不是当前分镜版本。" };
     const root = await fs.realpath(input.assetRoot);
     const storyboardPath = await fs.realpath(resolve(root, input.projectRelativePath));
     if (!isDescendant(root, storyboardPath)) return { allowed: false, message: "Studio 工程超出资产根。" };

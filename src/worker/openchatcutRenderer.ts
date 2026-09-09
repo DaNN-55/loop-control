@@ -9,7 +9,7 @@ import { activeOpenChatCutState, buildOpenChatCutCardProject, buildOpenChatCutPr
 export async function executeOpenChatCutRender(input: {
   taskPackage: WorkerTaskPackage;
   run(command: string, args: string[]): Promise<void>;
-  validateMp4(path: string, minimumDurationSeconds: number): Promise<void>;
+  validateMp4(path: string, minimumDurationSeconds: number, frameRate?: number, allowedFrames?: number): Promise<void>;
   inspectMp4(path: string): Promise<{ durationSeconds: number; width: number; height: number; hasAudio: boolean; blackFrameCount: number }>;
 }): Promise<string> {
   const cardShot = input.taskPackage.aRoll?.adapter === "openchatcut_card_video"
@@ -26,7 +26,12 @@ export async function executeOpenChatCutRender(input: {
   const projectPath = await safeAssetOutputPath(input.taskPackage.assets.allowedRoot, projectRelativePath);
   await writeSafeAssetFile(input.taskPackage.assets.allowedRoot, projectRelativePath, JSON.stringify(project, null, 2) + "\n");
   await renderProject(input, project, outputPath, render.members.map((member) => ({ relativePath: member.relativePath })));
-  await input.validateMp4(outputPath, render.storyboard.shots.reduce((total, shot) => total + shot.durationSeconds, 0));
+  await input.validateMp4(
+    outputPath,
+    render.storyboard.shots.reduce((total, shot) => total + shot.durationSeconds, 0),
+    render.adjustments.frameRate,
+    render.adjustments.allowedFrames,
+  );
   const inspection = await input.inspectMp4(outputPath);
   if (inspection.width !== render.adjustments.width || inspection.height !== render.adjustments.height || inspection.blackFrameCount > 0) throw new Error("OpenChatCut 渲染未通过画幅或黑帧检查。");
   const qcRelativePath = `${dirname(projectRelativePath)}/${input.taskPackage.finalRender ? "final-qc-report.json" : "qc-report.json"}`;

@@ -39,4 +39,11 @@ describe("Codex Worker 执行边界", () => {
     expect(source.split('"0:a:0?"').length - 1).toBe(2);
     expect(source).not.toContain('"-map", "0:a?"');
   });
+
+  it("视频时长校验使用可配置的帧级尾差", () => {
+    const source = readFileSync(resolve("src/worker/codexWorkerCli.ts"), "utf8");
+
+    expect(source).toContain("videoDurationMeetsMinimum(duration, minimumDurationSeconds, frameRate, allowedFrames)");
+    expect(source).toContain("视频不可播放或时长不足");
+  });
 });

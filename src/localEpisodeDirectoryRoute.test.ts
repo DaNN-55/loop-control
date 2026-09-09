@@ -9,7 +9,7 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { promisify } from "node:util";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
-import { cachedStoryboardVideoThumbnail, cachedTtsVoicePreview, confirmedStudioShotBlockers, coverImageExtension, createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, parseShotWorkbenchClipSegments, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveChooseLocalAssetDirectory, serveEpisodeDeletion, serveEpisodeDeletionCleanup, serveEpisodePreflight, serveFreezeOpenChatCutStudio, serveLocalArtifact, serveLocalEpisodeDirectory, serveOpenLocalArtifact, serveOpenLocalAssetDirectory, serveOpenLocalEpisodeDirectory, serveOpenOpenChatCutStudio, servePublishPreparation, serveTtsVoicePreview, shotWorkbenchReviewRender, stageLocalEpisodeDirectoryForDeletion } from "../vite.config";
+import { cachedStoryboardVideoThumbnail, cachedTtsVoicePreview, confirmedStudioShotBlockers, coverImageExtension, createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, parseShotWorkbenchClipSegments, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveChooseLocalAssetDirectory, serveEpisodeDeletion, serveEpisodeDeletionCleanup, serveEpisodePreflight, serveFreezeOpenChatCutStudio, serveLocalArtifact, serveLocalEpisodeDirectory, serveOpenLocalArtifact, serveOpenLocalAssetDirectory, serveOpenLocalEpisodeDirectory, serveOpenOpenChatCutStudio, servePublishPreparation, serveTtsVoicePreview, shotWorkbenchReviewRender, stageLocalEpisodeDirectoryForDeletion, studioEntryModeForPaths } from "../vite.config";
 
 const episodeId = "00000000-0000-0000-0000-000000000000";
 const execFileAsync = promisify(execFile);
@@ -31,6 +31,13 @@ afterAll(async () => {
 });
 
 describe("本地 Episode 目录路由", () => {
+  it("审核阶段可按当前分镜路径返回镜头工作台，同时保留审核工程入口", () => {
+    const storyboardPath = "episodes/episode-1/storyboard.json";
+    expect(studioEntryModeForPaths("qc_review", storyboardPath, storyboardPath)).toBe("shot_workbench");
+    expect(studioEntryModeForPaths("qc_review", "episodes/episode-1/openchatcut-frozen/revision/project.json", storyboardPath)).toBe("review_render");
+    expect(studioEntryModeForPaths("storyboard_approved", "episodes/episode-1/old-storyboard.json", storyboardPath)).toBe("storyboard_mismatch");
+  });
+
   it("只允许当前确认版本进入 Studio，并指出发生变化的镜头", () => {
     const context = {
       confirmation_mode: "shot_preparation",

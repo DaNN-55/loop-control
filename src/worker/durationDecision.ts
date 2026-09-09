@@ -29,6 +29,12 @@ export function durationWithinFrameTolerance(deltaSeconds: number, frameRate = d
   return Math.abs(deltaSeconds) <= durationToleranceSeconds(frameRate, allowedFrames) + 1e-9;
 }
 
+export function videoDurationMeetsMinimum(actualSeconds: number, minimumSeconds: number, frameRate = defaultDurationFrameRate, allowedFrames = defaultAllowedDurationFrames): boolean {
+  return Number.isFinite(actualSeconds)
+    && Number.isFinite(minimumSeconds)
+    && actualSeconds + durationToleranceSeconds(frameRate, allowedFrames) + 1e-9 >= minimumSeconds;
+}
+
 export function createShotDurationDecision(input: {
   audioMode: ShotAudioMode;
   actualAudioDurationSeconds: number | null;
