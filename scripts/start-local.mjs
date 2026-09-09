@@ -3,7 +3,7 @@ import { spawn, spawnSync } from "node:child_process";
 import { createServer } from "node:net";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { removeServiceRecordIfOwned, writeServiceRecord } from "./local-service-record.mjs";
+import { removeServiceRecordIfOwned, verifiedRecordedService, writeServiceRecord } from "./local-service-record.mjs";
 
 const projectRoot = join(dirname(fileURLToPath(import.meta.url)), "..");
 const consoleHealthPath = "/loop-control-health.txt";
@@ -32,12 +32,25 @@ export function localStartupReport({ consoleUrl = consoleUrlForPort("5173"), med
 export function consoleUrlForPort(port) { return `http://127.0.0.1:${port}/`; }
 export function n8nUrlForPort(port) { return `http://127.0.0.1:${port}${n8nBasePath}/`; }
 export function consoleHealthUrl(port) { return `${consoleUrlForPort(port).replace(/\/$/, "")}${consoleHealthPath}`; }
-export function n8nHealthUrl(port) { return `${n8nUrlForPort(port)}healthz`; }
+export function n8nHealthUrl(port) { return `http://127.0.0.1:${port}/healthz`; }
 
-export async function resolveLocalServicePort({ preferredPort, projectHealthy, portAvailable = canListen, findAvailablePort = findOpenPort }) {
-  if (await projectHealthy(preferredPort)) return { port: String(preferredPort), reused: true };
-  if (await portAvailable(preferredPort)) return { port: String(preferredPort), reused: false };
-  return { port: String(await findAvailablePort(Number(preferredPort) + 1)), reused: false };
+export async function resolveLocalServicePort({ preferredPort, projectHealthy, portAvailable = canListen, findAvailablePort = findOpenPort, excludedPorts = [] }) {
+  const excluded = new Set(excludedPorts.map(String));
+  if (!excluded.has(String(preferredPort))) {
+    if (await projectHealthy(preferredPort)) return { port: String(preferredPort), reused: true };
+    if (await portAvailable(preferredPort)) return { port: String(preferredPort), reused: false };
+  }
+  let candidate = Number(preferredPort) + 1;
+  while (candidate <= 65535) {
+    const port = String(await findAvailablePort(candidate));
+    if (!excluded.has(port)) return { port, reused: false };
+    candidate = Number(port) + 1;
+  }
+  throw new Error("未找到可用本机端口。");
+}
+
+export async function recordedProjectServiceHealthy({ name, port, commandIdentity, healthCheck, findRecordedService = verifiedRecordedService }) {
+  return Boolean(findRecordedService({ name, port: String(port), commandIdentity }) && await healthCheck(port));
 }
 
 export function assertPublicEnvironment(source) {
@@ -70,8 +83,17 @@ async function main() {
 
   const requestedConsolePort = process.env.VITE_PORT || "5173";
   const requestedN8nPort = process.env.N8N_PORT || "5678";
-  const consolePort = await resolveLocalServicePort({ preferredPort: requestedConsolePort, projectHealthy: (port) => responseContains(consoleHealthUrl(port), consoleHealthMarker) });
-  const n8nPort = await resolveLocalServicePort({ preferredPort: requestedN8nPort, projectHealthy: (port) => httpAvailable(n8nHealthUrl(port)) });
+  const consoleIdentity = join("node_modules", "vite", "bin", "vite.js");
+  const n8nIdentity = "n8n/bin/n8n";
+  const consolePort = await resolveLocalServicePort({
+    preferredPort: requestedConsolePort,
+    projectHealthy: (port) => recordedProjectServiceHealthy({ name: "控制台", port, commandIdentity: consoleIdentity, healthCheck: (candidate) => responseContains(consoleHealthUrl(candidate), consoleHealthMarker) }),
+  });
+  const n8nPort = await resolveLocalServicePort({
+    preferredPort: requestedN8nPort,
+    projectHealthy: (port) => recordedProjectServiceHealthy({ name: "n8n", port, commandIdentity: n8nIdentity, healthCheck: (candidate) => n8nHealthy(n8nHealthUrl(candidate)) }),
+    excludedPorts: [consolePort.port],
+  });
   const consoleUrl = consoleUrlForPort(consolePort.port);
   const n8nUrl = n8nUrlForPort(n8nPort.port);
   const openChatCutAvailable = assertOpenChatCutAvailable(process.env.OPENCHATCUT_NODE);
@@ -79,12 +101,18 @@ async function main() {
 
   const children = [];
   try {
-    const n8n = n8nPort.reused ? null : startService(join(projectRoot, "n8n", "start-local.sh"), [], "n8n", { env: { ...process.env, N8N_PORT: n8nPort.port }, port: n8nPort.port, commandIdentity: "n8n/bin/n8n" });
-    const consoleService = !(await httpAvailable(consoleUrl)) ? startService(process.execPath, [join(projectRoot, "node_modules", "vite", "bin", "vite.js"), "--host", "127.0.0.1", "--port", new URL(consoleUrl).port, "--strictPort"], "控制台", { port: consolePort.port, commandIdentity: join("node_modules", "vite", "bin", "vite.js") }) : null;
+    const n8n = n8nPort.reused ? null : startService(join(projectRoot, "n8n", "start-local.sh"), [], "n8n", { env: { ...process.env, N8N_PORT: n8nPort.port }, port: n8nPort.port, commandIdentity: n8nIdentity });
+    const consoleService = consolePort.reused ? null : startService(process.execPath, [join(projectRoot, "node_modules", "vite", "bin", "vite.js"), "--host", "127.0.0.1", "--port", new URL(consoleUrl).port, "--strictPort"], "控制台", { port: consolePort.port, commandIdentity: consoleIdentity });
     if (n8n) children.push(n8n);
     if (consoleService) children.push(consoleService);
-    if (children.length) writeServiceRecord(children.map(({ child, commandIdentity, name, port }) => ({ name, pid: child.pid, port, commandIdentity })));
-    await Promise.all([waitForHttp(consoleHealthUrl(consolePort.port), "控制台", consoleService, (url) => responseContains(url, consoleHealthMarker)), waitForHttp(n8nHealthUrl(n8nPort.port), "n8n", n8n)]);
+    if (children.length) {
+      const reusedServices = [
+        consolePort.reused ? verifiedRecordedService({ name: "控制台", port: consolePort.port, commandIdentity: consoleIdentity }) : null,
+        n8nPort.reused ? verifiedRecordedService({ name: "n8n", port: n8nPort.port, commandIdentity: n8nIdentity }) : null,
+      ].filter(Boolean);
+      writeServiceRecord([...reusedServices, ...children.map(({ child, commandIdentity, name, port }) => ({ name, pid: child.pid, port, commandIdentity }))]);
+    }
+    await Promise.all([waitForHttp(consoleHealthUrl(consolePort.port), "控制台", consoleService, (url) => responseContains(url, consoleHealthMarker)), waitForHttp(n8nHealthUrl(n8nPort.port), "n8n", n8n, n8nHealthy)]);
 
     const mediaLibraryPath = process.env.MEDIA_LIBRARY_MOUNT_PATH?.trim() || "";
     console.log("\n" + localStartupReport({ consoleUrl, mediaLibraryMounted: mediaLibraryAvailable(mediaLibraryPath), mediaLibraryPath, n8nUrl, openChatCutAvailable }).join("\n") + "\n");
@@ -139,6 +167,16 @@ function assertActiveWorkflows() {
 
 async function httpAvailable(url) { try { return (await fetch(url, { signal: AbortSignal.timeout(1000) })).ok; } catch { return false; } }
 async function responseContains(url, expected) { try { const response = await fetch(url, { signal: AbortSignal.timeout(1000) }); return response.ok && (await response.text()).trim() === expected; } catch { return false; } }
+export async function n8nHealthy(url, request = fetch) {
+  try {
+    const response = await request(url, { signal: AbortSignal.timeout(1000) });
+    if (!response.ok) return false;
+    const body = await response.json();
+    return body?.status === "ok";
+  } catch {
+    return false;
+  }
+}
 async function canListen(port) {
   return new Promise((resolve) => {
     const server = createServer();

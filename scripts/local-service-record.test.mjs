@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { spawn } from "node:child_process";
 import { createConnection, createServer } from "node:net";
 import { afterEach, describe, expect, it } from "vitest";
-import { projectRoot, stopRecordedServices, writeServiceRecord } from "./local-service-record.mjs";
+import { projectRoot, readServiceRecord, removeServiceRecordIfOwned, stopRecordedServices, verifiedRecordedService, writeServiceRecord } from "./local-service-record.mjs";
 
 const children = [];
 afterEach(async () => {
@@ -19,6 +19,21 @@ describe("本地服务安全停止", () => {
     const { scripts } = JSON.parse(readFileSync(join(projectRoot, "package.json"), "utf8"));
     expect(scripts.stop).toBe("./scripts/stop-all.sh");
     expect(scripts["stop:all"]).toBe(scripts.stop);
+  });
+
+  it("只复用记录中身份匹配的服务，并在部分服务退出时保留其余记录", () => {
+    const directory = mkdtempSync(join(tmpdir(), "loop-control-record-merge-"));
+    const recordPath = join(directory, "services.json");
+    const n8n = { name: "n8n", pid: 11111, port: "5678", commandIdentity: "n8n/bin/n8n" };
+    const consoleService = { name: "控制台", pid: 22222, port: "5173", commandIdentity: "node_modules/vite/bin/vite.js" };
+    writeServiceRecord([n8n, consoleService], recordPath);
+
+    expect(verifiedRecordedService({ name: "n8n", port: "5678", commandIdentity: "n8n/bin/n8n" }, recordPath, () => ({ valid: true }))).toEqual(n8n);
+    expect(verifiedRecordedService({ name: "n8n", port: "5678", commandIdentity: "foreign" }, recordPath, () => ({ valid: true }))).toBeNull();
+
+    removeServiceRecordIfOwned([consoleService.pid], recordPath);
+    expect(readServiceRecord(recordPath)?.services).toEqual([n8n]);
+    rmSync(directory, { recursive: true, force: true });
   });
 
   it("未知进程即使占用记录端口也不会被关闭", async () => {

@@ -32,8 +32,17 @@ export function removeServiceRecord(recordPath = serviceRecordPath) {
 
 export function removeServiceRecordIfOwned(pids, recordPath = serviceRecordPath) {
   const record = readServiceRecord(recordPath);
+  if (!record) return;
   const owned = new Set(pids);
-  if (record && record.services.every(({ pid }) => owned.has(pid))) removeServiceRecord(recordPath);
+  const remaining = record.services.filter(({ pid }) => !owned.has(pid));
+  if (remaining.length) writeServiceRecord(remaining, recordPath);
+  else removeServiceRecord(recordPath);
+}
+
+export function verifiedRecordedService({ name, port, commandIdentity }, recordPath = serviceRecordPath, inspect = inspectRecordedService) {
+  const record = readServiceRecord(recordPath);
+  const service = record?.services.find((candidate) => candidate.name === name && candidate.port === String(port) && candidate.commandIdentity === commandIdentity);
+  return service && inspect(service, record.projectRoot).valid ? service : null;
 }
 
 export function inspectRecordedService(service, root = projectRoot) {
@@ -74,18 +83,20 @@ function processExists(pid) {
 }
 
 function commandForPid(pid) {
-  return spawnSync("ps", ["-o", "command=", "-p", String(pid)], { encoding: "utf8" }).stdout.trim();
+  const result = spawnSync("ps", ["-o", "command=", "-p", String(pid)], { encoding: "utf8" });
+  return result.status === 0 && typeof result.stdout === "string" ? result.stdout.trim() : "";
 }
 
 function cwdForPid(pid) {
-  const output = spawnSync("lsof", ["-a", "-p", String(pid), "-d", "cwd", "-Fn"], { encoding: "utf8" }).stdout;
+  const result = spawnSync("lsof", ["-a", "-p", String(pid), "-d", "cwd", "-Fn"], { encoding: "utf8" });
+  const output = result.status === 0 && typeof result.stdout === "string" ? result.stdout : "";
   const path = output.split(/\r?\n/).find((line) => line.startsWith("n"))?.slice(1);
   try { return path ? realpathSync(path) : ""; } catch { return ""; }
 }
 
 function pidListensOnPort(pid, port) {
   const result = spawnSync("lsof", ["-nP", "-a", "-p", String(pid), `-iTCP:${port}`, "-sTCP:LISTEN", "-t"], { encoding: "utf8" });
-  return result.status === 0 && result.stdout.trim().split(/\s+/).includes(String(pid));
+  return result.status === 0 && typeof result.stdout === "string" && result.stdout.trim().split(/\s+/).includes(String(pid));
 }
 
 function safeSignal(signal, pid, name) {

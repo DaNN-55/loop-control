@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { spawn } from "node:child_process";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
@@ -19,6 +19,18 @@ afterEach(async () => {
 });
 
 describe("STARTUP-03D 生命周期验收", () => {
+  it("只暴露 npm start 作为正式启动入口", () => {
+    const { scripts } = JSON.parse(readFileSync(join(process.cwd(), "package.json"), "utf8"));
+    expect(scripts.start).toBe("node scripts/start-local.mjs");
+    expect(scripts["start:local"]).toBeUndefined();
+    expect(scripts["start:all"]).toBeUndefined();
+  });
+
+  it("n8n 子路径保留尾部斜杠，避免静态资源和健康地址拼接错误", () => {
+    const source = readFileSync(join(process.cwd(), "n8n", "start-local.sh"), "utf8");
+    expect(source).toContain('export N8N_PATH="/loop-control-n8n/"');
+  });
+
   it("空闲端口启动与被占用时自动换用隔离端口", async () => {
     const { port: occupied, server } = await listeningPort();
     const preferred = await freePort();

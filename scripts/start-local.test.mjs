@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { assertOpenChatCutAvailable, assertPublicEnvironment, assertSupabaseConnection, consoleHealthUrl, localStartupReport, missingRequiredWorkflowIds, n8nHealthUrl, resolveLocalServicePort, startupEnvironment } from "./start-local.mjs";
+import { assertOpenChatCutAvailable, assertPublicEnvironment, assertSupabaseConnection, consoleHealthUrl, localStartupReport, missingRequiredWorkflowIds, n8nHealthUrl, n8nHealthy, recordedProjectServiceHealthy, resolveLocalServicePort, startupEnvironment } from "./start-local.mjs";
 
 describe("本地启动", () => {
   it("只读取非秘密运行变量，并拒绝把 Worker 密钥放进前端环境", () => {
@@ -19,7 +19,7 @@ describe("本地启动", () => {
     await expect(resolveLocalServicePort({ preferredPort: "5173", projectHealthy, portAvailable })).resolves.toEqual({ port: "5173", reused: true });
     expect(portAvailable).not.toHaveBeenCalled();
     expect(consoleHealthUrl("5173")).toBe("http://127.0.0.1:5173/loop-control-health.txt");
-    expect(n8nHealthUrl("5678")).toBe("http://127.0.0.1:5678/loop-control-n8n/healthz");
+    expect(n8nHealthUrl("5678")).toBe("http://127.0.0.1:5678/healthz");
   });
 
   it("默认端口被其他进程占用时改用空闲端口", async () => {
@@ -28,6 +28,22 @@ describe("本地启动", () => {
     const findAvailablePort = vi.fn().mockResolvedValue(5174);
     await expect(resolveLocalServicePort({ preferredPort: "5173", projectHealthy, portAvailable, findAvailablePort })).resolves.toEqual({ port: "5174", reused: false });
     expect(findAvailablePort).toHaveBeenCalledWith(5174);
+  });
+
+  it("只把有本项目服务记录且健康响应正确的 n8n 视为可复用实例", async () => {
+    const healthCheck = vi.fn().mockResolvedValue(true);
+    await expect(recordedProjectServiceHealthy({ name: "n8n", port: "5678", commandIdentity: "n8n/bin/n8n", healthCheck, findRecordedService: vi.fn().mockReturnValue(null) })).resolves.toBe(false);
+    expect(healthCheck).not.toHaveBeenCalled();
+    await expect(recordedProjectServiceHealthy({ name: "n8n", port: "5678", commandIdentity: "n8n/bin/n8n", healthCheck, findRecordedService: vi.fn().mockReturnValue({ pid: 123 }) })).resolves.toBe(true);
+    await expect(n8nHealthy("http://example.test/healthz", vi.fn().mockResolvedValue(new Response(JSON.stringify({ status: "ok" }), { status: 200, headers: { "content-type": "application/json" } })))).resolves.toBe(true);
+    await expect(n8nHealthy("http://example.test/healthz", vi.fn().mockResolvedValue(new Response("<html>n8n editor</html>", { status: 200, headers: { "content-type": "text/html" } })))).resolves.toBe(false);
+  });
+
+  it("为第二个服务排除第一个服务已经选择的端口", async () => {
+    const findAvailablePort = vi.fn().mockResolvedValueOnce(5174).mockResolvedValueOnce(5175);
+    await expect(resolveLocalServicePort({ preferredPort: "5173", projectHealthy: vi.fn(), portAvailable: vi.fn(), findAvailablePort, excludedPorts: ["5173", "5174"] })).resolves.toEqual({ port: "5175", reused: false });
+    expect(findAvailablePort).toHaveBeenNthCalledWith(1, 5174);
+    expect(findAvailablePort).toHaveBeenNthCalledWith(2, 5175);
   });
 
   it("只把运行实例中启用的四条必需工作流当作启动前提", () => {
