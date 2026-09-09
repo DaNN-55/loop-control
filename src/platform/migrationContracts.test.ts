@@ -8,6 +8,9 @@ const stopLegacyNarrationMigration = resolve(
   "supabase/migrations/20260907170000_stop_legacy_narration_orchestration.sql",
 );
 const replaceHyperframesMigration = resolve("supabase/migrations/20260908090000_replace_hyperframes_with_openchatcut.sql");
+const restrictOpenChatCutReviewHelperMigration = resolve(
+  "supabase/migrations/20260909042941_restrict_openchatcut_review_helper.sql",
+);
 const technicalConfigMigration = resolve(
   "supabase/migrations/20260822121000_use_blueprint_b_roll_technical_config.sql",
 );
@@ -1674,5 +1677,14 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("'hyperframes@0.7.109', 'openchatcut@0.2.14'");
     expect(migration).toContain("'hyperframes_review_render', 'openchatcut_review_render'");
     expect(migration).toContain("where provider = 'hyperframes'");
+  });
+
+  it("OpenChatCut 内部审核 helper 不向 API 角色暴露 SECURITY DEFINER 权限", () => {
+    const migration = readFileSync(restrictOpenChatCutReviewHelperMigration, "utf8");
+
+    expect(migration).toContain(
+      "revoke all on function public.current_openchatcut_review_package(uuid, boolean)",
+    );
+    expect(migration).toContain("from public, anon, authenticated;");
   });
 });
