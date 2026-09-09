@@ -89,9 +89,10 @@ export async function openOpenChatCutStudio(assetRoot: string, episodeId: string
   }
 }
 
-export async function freezeOpenChatCutStudio(assetRoot: string, episodeId: string): Promise<OpenChatCutStudioSnapshot> {
+export async function freezeOpenChatCutStudio(assetRoot: string, episodeId: string, expectedWorkspaceRelativePath: string): Promise<OpenChatCutStudioSnapshot> {
   const session = sessions.get(episodeId);
   if (!session) throw new Error("OpenChatCut 编辑器会话已失效，请重新打开生产单预览。");
+  if (session.workspace.relativePath !== expectedWorkspaceRelativePath) throw new Error("OpenChatCut 工作版本与当前编辑器会话不一致，请重新打开后再生成。");
   const response = await fetch(`${session.baseUrl}/api/project-store/entry?key=${encodeURIComponent(`project:${session.projectId}`)}`, { headers: { "Sec-Fetch-Site": "none" } });
   if (!response.ok) throw new Error(`无法读取 OpenChatCut 项目（HTTP ${response.status}）。`);
   const payload = await response.json() as { found?: boolean; value?: unknown };

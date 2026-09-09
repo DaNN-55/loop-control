@@ -254,6 +254,9 @@ const openChatCutFrozenPathMigration = resolve(
 const editableSubmittedWorkbenchMigration = resolve(
   "supabase/migrations/20260909044856_keep_shot_workbench_editable_after_review_submission.sql",
 );
+const editablePreRenderWorkbenchMigration = resolve(
+  "supabase/migrations/20260909051800_keep_shot_workbench_editable_during_pre_render_review.sql",
+);
 const shotReviewVideoActionMigration = resolve(
   "supabase/migrations/20260907180000_enable_shot_review_video_action.sql",
 );
@@ -1596,6 +1599,16 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("replace(patched, old_draft_update, '')");
     expect(migration).toContain("current shot snapshot editable-draft patch");
     expect(migration).not.toContain("update public.shot_preparation_drafts set frozen_at = now()");
+  });
+
+  it("预渲染审核期间继续允许修改镜头工作版本", () => {
+    const migration = readFileSync(editablePreRenderWorkbenchMigration, "utf8");
+
+    expect(migration).toContain("(''storyboard_approved'', ''production_ready'', ''render_ready'', ''qc_review'')");
+    expect(migration).toContain("public.generate_shot_review_video(uuid, uuid, jsonb, boolean, text)");
+    expect(migration).toContain("public.protect_frozen_shot_preparation_inputs()");
+    expect(migration).toContain("pre-render editable-stage patch has unknown or partial state");
+    expect(migration).toContain("pre-render editable-stage patch produced an invalid state");
   });
 
   it("生成审核视频复用已就绪口播，不再重复要求逐镜确认", () => {

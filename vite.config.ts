@@ -636,7 +636,7 @@ export function serveFreezeOpenChatCutStudio(supabaseUrl: string | undefined, su
       if (!assetRoot || !isAbsolute(assetRoot)) { response.statusCode = 404; response.end("未找到可冻结的生产单工程。"); return; }
       const gate = await studioEntryGateForOwnedEpisode({ assetRoot, authorization, episodeId, projectRelativePath: body.sourceProjectRelativePath, supabasePublishableKey, supabaseUrl });
       if (!gate.allowed) { response.statusCode = 409; response.end(gate.message ?? "当前生产单还没有可冻结的审核工程。"); return; }
-      const frozenProject = await freezeOpenChatCutStudio(assetRoot, episodeId);
+      const frozenProject = await freezeOpenChatCutStudio(assetRoot, episodeId, body.workspaceRelativePath);
       response.setHeader("Content-Type", "application/json");
       response.statusCode = 201;
       response.end(JSON.stringify({ frozenProject }));

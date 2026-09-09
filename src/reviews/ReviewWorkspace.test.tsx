@@ -645,7 +645,7 @@ describe("审核台", () => {
       return Promise.resolve(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜口播", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } }));
     }));
 
-    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact, qcArtifact]} blueprint={blueprint} episode={qcEpisode} isTransitionPending={false} materialRevisions={[material]} onGenerateShotReviewVideo={onGenerateShotReviewVideo} onOpenStudio={onOpenStudio} onTransition={vi.fn()} reviewPackages={[storyboardPackage, qcPackage]} shotPreparationDrafts={[draft]} tasks={[]} transitions={[]} />);
+    const view = render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact, qcArtifact]} blueprint={blueprint} episode={qcEpisode} isTransitionPending={false} materialRevisions={[material]} onGenerateShotReviewVideo={onGenerateShotReviewVideo} onOpenStudio={onOpenStudio} onTransition={vi.fn()} reviewPackages={[storyboardPackage, qcPackage]} shotPreparationDrafts={[draft]} tasks={[]} transitions={[]} />);
 
     expect(screen.getByRole("heading", { name: /OpenChatCut 审核渲染/ })).toBeTruthy();
     expect(screen.queryByRole("region", { name: "分镜工作台" })).toBeNull();
@@ -661,6 +661,17 @@ describe("审核台", () => {
     expect(screen.getByText("当前可编辑工作版本：episodes/episode-return-workbench/openchatcut/session-1/project.json")).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "生成审核视频" }));
     expect(onGenerateShotReviewVideo).toHaveBeenCalledWith(expect.objectContaining({ episodeId: qcEpisode.id, storyboardRelativePath: storyboardArtifact.relative_path, workspaceRelativePath: "episodes/episode-return-workbench/openchatcut/session-1/project.json" }));
+
+    const unreadyDraft = { ...draft, selected_material_revision_id: null, updated_at: "2026-09-09T00:02:00.000Z" };
+    view.rerender(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact, qcArtifact]} blueprint={blueprint} episode={qcEpisode} isTransitionPending={false} materialRevisions={[material]} onGenerateShotReviewVideo={onGenerateShotReviewVideo} onOpenStudio={onOpenStudio} onTransition={vi.fn()} reviewPackages={[storyboardPackage, qcPackage]} shotPreparationDrafts={[unreadyDraft]} tasks={[]} transitions={[]} />);
+    await waitFor(() => expect(screen.queryByRole("button", { name: "生成审核视频" })).toBeNull());
+
+    view.unmount();
+    const productionEpisode = { ...qcEpisode, stage: "production_ready" as const };
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={productionEpisode} isTransitionPending={false} materialRevisions={[material]} onOpenStudio={onOpenStudio} onTransition={vi.fn()} reviewPackages={[storyboardPackage]} shotPreparationDrafts={[draft]} tasks={[]} transitions={[]} />);
+    await user.click(screen.getByRole("button", { name: "返回镜头工作台修改" }));
+    await screen.findByRole("region", { name: "分镜工作台" });
+    expect((screen.getByLabelText("shot-1 字幕正文") as HTMLTextAreaElement).disabled).toBe(false);
   });
 
   it("结构修订留在工作台后台应用，并在应用期间阻止重复提交", async () => {

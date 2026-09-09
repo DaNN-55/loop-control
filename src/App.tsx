@@ -2568,7 +2568,7 @@ export function EpisodeDetail({ artifacts, audioTrackAnnotations, audioTracks, b
   const storyboardAnnotations = reviewPackage ? reviewAnnotations.filter((annotation) => annotation.review_package_id === reviewPackage.id) : [];
   const episodeShotPreparationDrafts = shotPreparationDrafts.filter((draft) => draft.episode_id === episode.id);
   const storyboardArtifact = storyboardPackage ? episodeArtifacts.find((candidate) => candidate.id === storyboardPackage.artifact_id) : null;
-  const canReturnToShotWorkbench = (episode.stage === "render_ready" || episode.stage === "qc_review") && Boolean(storyboardPackage && storyboardArtifact);
+  const canReturnToShotWorkbench = (episode.stage === "production_ready" || episode.stage === "render_ready" || episode.stage === "qc_review") && Boolean(storyboardPackage && storyboardArtifact);
   const preRenderMembers = reviewPackage?.stage === "production_ready" ? preRenderReviewMembers.filter((member) => member.review_package_id === reviewPackage.id) : [];
   const preRenderMemberDecisions = reviewPackage?.stage === "production_ready" ? preRenderReviewMemberDecisions.filter((decision) => decision.review_package_id === reviewPackage.id) : [];
   const qcIssues = reviewPackage?.stage === "qc_review" ? qcReviewIssues.filter((issue) => issue.review_package_id === reviewPackage.id) : [];
@@ -3341,7 +3341,7 @@ function ShotWorkbench({ artifact, audioTracks, blueprint, durationSettings, dra
       <div><h4>在 OpenChatCut 编辑并生成审核视频</h4><p className="muted-copy">先打开可编辑工作版本并完成剪辑；只有点击“生成审核视频”才会冻结当前版本并提交 Worker。</p></div>
       <span>镜头已保存 {savedCount}/{storyboard.shots.length} · 口播已就绪 {readyTtsCount}/{ttsShotCount}</span>
       {durationRiskCount ? <label><input checked={acceptDurationRisk} onChange={(event) => setAcceptDurationRisk(event.target.checked)} type="checkbox" />已核对并接受 {durationRiskCount} 个镜头的音画时长差异</label> : null}
-      <div className="shot-workbench-completion-actions"><button className="button button-secondary" disabled={isStudioPending || isReviewVideoPending || !reviewVideoReady} onClick={() => void openStudioWorkspace()} type="button">{isStudioPending ? "正在打开…" : studioWorkspace ? "重新打开 OpenChatCut 编辑" : "在 OpenChatCut 中编辑"}</button>{studioWorkspace ? <button className="button button-primary" disabled={isReviewVideoPending} onClick={() => void onGenerateReviewVideo({ acceptDurationRisk, allowedFrames: durationSettings.allowedFrames, episodeId: episode.id, frameRate: durationSettings.frameRate, reviewPackageId: reviewPackage.id, riskReason: acceptDurationRisk ? "已在分镜工作台核对并接受当前音画时长差异。" : null, storyboardRelativePath: artifact.relative_path, workspaceRelativePath: studioWorkspace.relativePath })} type="button">{isReviewVideoPending ? "正在生成…" : "生成审核视频"}</button> : null}</div>
+      <div className="shot-workbench-completion-actions"><button className="button button-secondary" disabled={isStudioPending || isReviewVideoPending || !reviewVideoReady} onClick={() => void openStudioWorkspace()} type="button">{isStudioPending ? "正在打开…" : studioWorkspace ? "重新打开 OpenChatCut 编辑" : "在 OpenChatCut 中编辑"}</button>{studioWorkspace ? <button className="button button-primary" disabled={isReviewVideoPending || !reviewVideoReady} onClick={() => void onGenerateReviewVideo({ acceptDurationRisk, allowedFrames: durationSettings.allowedFrames, episodeId: episode.id, frameRate: durationSettings.frameRate, reviewPackageId: reviewPackage.id, riskReason: acceptDurationRisk ? "已在分镜工作台核对并接受当前音画时长差异。" : null, storyboardRelativePath: artifact.relative_path, workspaceRelativePath: studioWorkspace.relativePath })} type="button">{isReviewVideoPending ? "正在生成…" : "生成审核视频"}</button> : null}</div>
       {studioWorkspace ? <small className="shot-workbench-studio-path">当前可编辑工作版本：{studioWorkspace.relativePath}</small> : null}
       {studioError ? <p className="form-error" role="alert">{studioError}</p> : null}
     </section>
@@ -3390,7 +3390,7 @@ function ShotPreparationCard({ audioTracks, defaults, draft, durationSettings, e
   const autoBoundMaterialIdRef = useRef<string | null>(null);
   const structureChangesDisabled = isStructureRevisionPending || episode.stage !== "storyboard_approved";
   useEffect(() => () => { voicePreviewAudioRef.current?.pause(); if (voicePreviewUrlRef.current) URL.revokeObjectURL(voicePreviewUrlRef.current); }, []);
-  const frozen = Boolean(draft?.frozen_at) && !["storyboard_approved", "render_ready", "qc_review"].includes(episode.stage);
+  const frozen = Boolean(draft?.frozen_at) && !["storyboard_approved", "production_ready", "render_ready", "qc_review"].includes(episode.stage);
   const eligibleMaterials = materialRevisions.filter((material) => material.material_type === "video" && material.material_purpose === (shot.shotType === "a_roll" ? "a_roll" : "b_roll"));
   const automaticallyMatchedMaterials = eligibleMaterials.filter((material) => shot.inputBasis.some((input) => input.sha256 === material.sha256 && input.relativePath === material.storage_path));
   const automaticallyMatchedMaterial = automaticallyMatchedMaterials.length === 1 ? automaticallyMatchedMaterials[0] : undefined;
