@@ -2,7 +2,7 @@
 
 ### Issue tracker
 
-Issues live in GitHub Issues for `DaNN-55/tk-workflow`. See `docs/agents/issue-tracker.md`.
+Issues live in GitHub Issues for `DaNN-55/loop-control`. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 

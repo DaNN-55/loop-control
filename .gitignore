@@ -8,3 +8,32 @@ n8n/worker.env.local
 *.tsbuildinfo
 .loop-control/
 docs/运行手册.md
+
+# Local OS and runtime files
+.DS_Store
+/.playwright-cli/
+/outputs/
+/tmp/
+/supabase/.branches/
+/supabase/.temp/
+
+# Local production media; keep HTML, JSON and Markdown project sources tracked
+content/**/*.gif
+content/**/*.heic
+content/**/*.HEIC
+content/**/*.jpeg
+content/**/*.jpg
+content/**/*.mov
+content/**/*.MOV
+content/**/*.mp3
+content/**/*.mp4
+content/**/*.pdf
+content/**/*.png
+content/**/*.wav
+content/**/*.webp
+content/**/*.xls
+content/**/*.xlsx
+
+# Local agent handoff notes
+/docs/HANDOFF.md
+docs/handoff/
