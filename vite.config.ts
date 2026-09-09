@@ -4,10 +4,9 @@ import { createClient } from "@supabase/supabase-js";
 import { execFile, spawn } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
 import { createReadStream, promises as fs, readFileSync } from "node:fs";
-import { basename, dirname, extname, isAbsolute, join, parse, relative, resolve } from "node:path";
+import { basename, extname, isAbsolute, join, parse, relative, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { createServer as createTcpServer } from "node:net";
 import { promisify } from "node:util";
 import { loadEnv, type Plugin } from "vite";
 import { verifyMediaLibrary } from "./src/worker/mediaLibrary";
@@ -21,9 +20,11 @@ import { loadPublishContext } from "./src/publishing/publishContext";
 import { coverImageExtension, coverInputPath } from "./src/publishing/coverImage";
 import { adapterRegistration } from "./src/worker/adapterRegistry";
 import { synthesizeGoogleTts, synthesizeVolcengineTts } from "./src/worker/mediaProviders";
+import { reviewRenderFromSnapshot } from "./src/worker/codexRunner";
+import { freezeOpenChatCutStudio, openOpenChatCutStudio } from "./src/worker/openchatcutStudio";
+import type { StoryboardManifest, WorkerTaskPackage } from "./src/worker/contracts";
 
 export { coverImageExtension } from "./src/publishing/coverImage";
-
 const localArtifactRoute = "/_local-artifact";
 const localEpisodeDirectoryRoute = "/_local-episode-directory";
 const openLocalEpisodeDirectoryRoute = "/_open-local-episode-directory";
@@ -38,14 +39,16 @@ const goldenProductionTestRoute = "/_golden-production-test";
 const workerPreflightRoute = "/_worker-preflight";
 const externalConnectionTestRoute = "/_external-connection-test";
 const publishPreparationRoute = "/_publish-preparation";
-const openHyperframesStudioRoute = "/_open-hyperframes-studio";
-const openPersonalHyperframesStudioRoute = "/_open-personal-hyperframes-studio";
-const freezeHyperframesStudioRoute = "/_freeze-hyperframes-studio";
+const openOpenChatCutStudioRoute = "/_open-openchatcut-studio";
+const freezeOpenChatCutStudioRoute = "/_freeze-openchatcut-studio";
 const episodePreflightRoute = "/_episode-preflight";
 const ttsVoicePreviewRoute = "/_tts-voice-preview";
 const maxProductionMaterialBytes = 100 * 1024 * 1024;
 const maxEncodedMaterialRequestBytes = 140 * 1024 * 1024;
 const execFileAsync = promisify(execFile);
+const storyboardThumbnailInFlight = new Map<string, Promise<LocalArtifactFile>>();
+
+type LocalArtifactFile = { modifiedAt: number; path: string; size: number };
 
 const mediaTypes: Record<string, string> = {
   ".avif": "image/avif",
@@ -162,148 +165,229 @@ function isFilesystemRoot(path: string): boolean {
   return parse(resolvedPath).root === resolvedPath;
 }
 
-export interface StudioProjectSnapshot {
-  relativePath: string;
-  sha256: string;
-  fileSize: number;
+export interface ShotWorkbenchStudioInput {
+  allowedFrames: number;
+  audioTracks: Array<{ id?: string; cueId: string; relativePath: string; sha256: string; startSeconds: number; durationSeconds: number }>;
+  drafts: Array<{ audioMode: "none" | "source" | "tts"; clipSegments: Array<{ startSeconds: number; endSeconds: number }>; materialRevisionId: string | null; shotId: string; subtitleText: string; subtitlesEnabled: boolean; ttsText: string | null }>;
+  frameRate: number;
+  materials: Array<{ id: string; relativePath: string; sha256: string }>;
+  storyboard: StoryboardManifest;
 }
 
-function isReviewRenderProjectPath(episodeId: string, value: string): boolean {
-  return new RegExp(`^episodes/${episodeId}/review-render/v[1-9][0-9]*/index\\.html$`).test(value);
-}
-
-function isStudioWorkspacePath(episodeId: string, value: string, kind: "studio" | "studio-frozen"): boolean {
-  return new RegExp(`^episodes/${episodeId}/${kind}/[0-9a-f-]{36}/index\\.html$`, "i").test(value);
-}
-
-function videoTagAttribute(tag: string, name: string): string | null {
-  const match = new RegExp(`\\b${name}=(?:"([^"]*)"|'([^']*)')`, "i").exec(tag);
-  return match?.[1] ?? match?.[2] ?? null;
-}
-
-export function studioMarkerSourceRequirements(originalHtml: string, editedHtml: string): Array<{ relativePath: string; minimumDurationSeconds: number }> {
-  const originalSources = new Map<string, string>();
-  for (const tag of originalHtml.match(/<video\b[^>]*>/gi) ?? []) {
-    if (videoTagAttribute(tag, "data-media-start") === null) continue;
-    const shotClass = videoTagAttribute(tag, "class")?.split(/\s+/).find((value) => /^shot-\d+$/.test(value));
-    const source = videoTagAttribute(tag, "src");
-    if (shotClass && source) originalSources.set(shotClass, source);
-  }
-  if (originalSources.size === 0) return [];
-
-  const seen = new Set<string>();
-  const requirements = new Map<string, number>();
-  for (const tag of editedHtml.match(/<video\b[^>]*>/gi) ?? []) {
-    const shotClass = videoTagAttribute(tag, "class")?.split(/\s+/).find((value) => /^shot-\d+$/.test(value));
-    if (!shotClass || !originalSources.has(shotClass)) throw new Error("Studio 不能新增或更换镜头原片；请返回镜头工作台修改。");
-    const source = videoTagAttribute(tag, "src");
-    if (source !== originalSources.get(shotClass) || !/^assets\/[^/]+$/.test(source)) throw new Error("Studio 不能更换原片；请返回镜头工作台修改。");
-    const startValue = videoTagAttribute(tag, "data-media-start");
-    const durationValue = videoTagAttribute(tag, "data-duration");
-    if (startValue === null || durationValue === null) throw new Error("Studio 片段标记无效。");
-    const start = Number(startValue);
-    const duration = Number(durationValue);
-    if (!Number.isFinite(start) || start < 0 || !Number.isFinite(duration) || duration <= 0) throw new Error("Studio 片段标记无效。");
-    seen.add(shotClass);
-    requirements.set(source, Math.max(requirements.get(source) ?? 0, start + duration));
-  }
-  if ([...originalSources.keys()].some((shotClass) => !seen.has(shotClass))) throw new Error("Studio 不能删除镜头；请提交分镜结构修订。");
-  return [...requirements].map(([relativePath, minimumDurationSeconds]) => ({ relativePath, minimumDurationSeconds }));
-}
-
-async function validateStudioMarkerWorkspace(assetRoot: string, episodeId: string, sourceRelativePath: string, workspaceRelativePath: string): Promise<void> {
-  if (!isReviewRenderProjectPath(episodeId, sourceRelativePath) || !isStudioWorkspacePath(episodeId, workspaceRelativePath, "studio")) throw new Error("HyperFrames 工程路径无效。");
-  const root = await fs.realpath(assetRoot);
-  const source = await fs.realpath(resolve(root, sourceRelativePath));
-  const workspace = await fs.realpath(resolve(root, workspaceRelativePath));
-  if (!isDescendant(root, source) || !isDescendant(root, workspace)) throw new Error("HyperFrames 工程超出资产根。");
-  const requirements = studioMarkerSourceRequirements(await fs.readFile(source, "utf8"), await fs.readFile(workspace, "utf8"));
-  for (const requirement of requirements) {
-    const sourceAsset = await fs.realpath(resolve(dirname(source), requirement.relativePath));
-    const asset = await fs.realpath(resolve(dirname(workspace), requirement.relativePath));
-    if (!isDescendant(dirname(source), sourceAsset) || !isDescendant(dirname(workspace), asset)) throw new Error("Studio 原片路径无效。");
-    const sourceHash = createHash("sha256").update(await fs.readFile(sourceAsset)).digest("hex");
-    const workspaceHash = createHash("sha256").update(await fs.readFile(asset)).digest("hex");
-    if (sourceHash !== workspaceHash) throw new Error("Studio 不能更换原片；请返回镜头工作台修改。");
-    const { stdout } = await execFileAsync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", asset]);
-    const duration = Number(stdout.trim());
-    if (!Number.isFinite(duration) || duration + 0.01 < requirement.minimumDurationSeconds) throw new Error("Studio 片段标记超出原片范围。");
-  }
-}
-
-async function assertDirectoryTreeHasNoLinks(directory: string): Promise<void> {
-  const details = await fs.lstat(directory);
-  if (details.isSymbolicLink() || !details.isDirectory()) throw new Error("HyperFrames 工程目录不安全。");
-  for (const entry of await fs.readdir(directory)) {
-    const path = join(directory, entry);
-    const child = await fs.lstat(path);
-    if (child.isSymbolicLink()) throw new Error("HyperFrames 工程不能包含符号链接。");
-    if (child.isDirectory()) await assertDirectoryTreeHasNoLinks(path);
-  }
-}
-
-async function copyStudioProject(assetRoot: string, episodeId: string, sourceRelativePath: string, targetKind: "studio" | "studio-frozen"): Promise<StudioProjectSnapshot> {
-  if (!isEpisodeId(episodeId)) throw new Error("无效的 Episode ID。");
-  const isExpectedSource = targetKind === "studio" ? isReviewRenderProjectPath(episodeId, sourceRelativePath) : isStudioWorkspacePath(episodeId, sourceRelativePath, "studio");
-  if (!isExpectedSource) throw new Error("HyperFrames 工程路径无效。");
-  const root = await fs.realpath(assetRoot);
-  if (isFilesystemRoot(root)) throw new Error("资产根不能是文件系统根目录。");
-  const source = await fs.realpath(resolve(root, sourceRelativePath));
-  if (!isDescendant(root, source) || basename(source) !== "index.html") throw new Error("HyperFrames 工程超出资产根。");
-  const sourceDirectory = dirname(source);
-  await assertDirectoryTreeHasNoLinks(sourceDirectory);
-
-  const relativePath = `episodes/${episodeId}/${targetKind}/${randomUUID()}/index.html`;
-  const targetDirectory = resolve(root, dirname(relativePath));
-  const targetParent = await ensureDirectoryWithinRoot(root, dirname(targetDirectory));
-  if (!isDescendant(root, targetDirectory) || targetParent !== dirname(targetDirectory)) throw new Error("HyperFrames 工程目标路径无效。");
-  const projectPath = join(targetDirectory, "index.html");
-  if (targetKind === "studio-frozen") {
-    await fs.mkdir(targetDirectory);
-    await fs.copyFile(source, projectPath);
-  } else {
-    await fs.cp(sourceDirectory, targetDirectory, { errorOnExist: true, force: false, recursive: true, verbatimSymlinks: true });
-  }
-  const content = await fs.readFile(projectPath);
-  return { relativePath, sha256: createHash("sha256").update(content).digest("hex"), fileSize: content.byteLength };
-}
-
-export async function prepareHyperframesStudioWorkspace(assetRoot: string, episodeId: string, sourceRelativePath: string): Promise<StudioProjectSnapshot> {
-  return copyStudioProject(assetRoot, episodeId, sourceRelativePath, "studio");
-}
-
-export async function freezeHyperframesStudioWorkspace(assetRoot: string, episodeId: string, workspaceRelativePath: string): Promise<StudioProjectSnapshot> {
-  return copyStudioProject(assetRoot, episodeId, workspaceRelativePath, "studio-frozen");
-}
-
-async function availableLocalPort(): Promise<number> {
-  const server = createTcpServer();
-  await new Promise<void>((resolvePort, reject) => {
-    server.once("error", reject);
-    server.listen(0, "127.0.0.1", resolvePort);
+export function parseShotWorkbenchClipSegments(value: unknown): Array<{ startSeconds: number; endSeconds: number }> {
+  if (!Array.isArray(value)) return [];
+  return value.map((segment) => {
+    if (!segment || typeof segment !== "object" || Array.isArray(segment)) throw new Error("Studio 片段标记无效。");
+    const record = segment as Record<string, unknown>;
+    const startSeconds = record.start_seconds;
+    const endSeconds = record.end_seconds;
+    if (typeof startSeconds !== "number" || !Number.isFinite(startSeconds) || startSeconds < 0 || typeof endSeconds !== "number" || !Number.isFinite(endSeconds) || endSeconds <= startSeconds) throw new Error("Studio 片段标记无效。");
+    return { startSeconds, endSeconds };
   });
-  const address = server.address();
-  await new Promise<void>((resolveClose, reject) => server.close((error) => error ? reject(error) : resolveClose()));
-  if (!address || typeof address === "string") throw new Error("无法分配 HyperFrames Studio 端口。");
-  return address.port;
 }
 
-export function hyperframesStudioPreviewArguments(workspaceRelativePath: string, port: number): string[] {
-  return ["preview", workspaceRelativePath, `--port=${port}`, "--background", "--no-open"];
+export function shotWorkbenchReviewRender(episodeId: string, projectRelativePath: string, input: ShotWorkbenchStudioInput): NonNullable<WorkerTaskPackage["reviewRender"]> {
+  if (!isEpisodeId(episodeId)) throw new Error("无效的 Episode ID。");
+  const materialById = new Map(input.materials.map((material) => [material.id, material]));
+  const trackByCueId = new Map(input.audioTracks.map((track) => [track.cueId, track]));
+  const members: NonNullable<WorkerTaskPackage["reviewRender"]>["members"] = [];
+  let timelineStartSeconds = 0;
+  for (const shot of input.storyboard.shots) {
+    const draft = input.drafts.find((candidate) => candidate.shotId === shot.id);
+    const material = draft?.materialRevisionId ? materialById.get(draft.materialRevisionId) : undefined;
+    const segments = draft?.clipSegments?.length ? draft.clipSegments : [{ startSeconds: 0, endSeconds: shot.durationSeconds }];
+    const durationSeconds = segments.reduce((total, segment) => total + segment.endSeconds - segment.startSeconds, 0);
+    members.push({
+      memberKey: `shot:${shot.id}`,
+      memberKind: "shot_media",
+      mediaMissing: !material,
+      sourceMaterialRevisionId: material?.id,
+      clipSegments: segments,
+      audioMode: draft?.audioMode ?? "none",
+      relativePath: material?.relativePath ?? `episodes/${episodeId}/studio-work/missing-${members.length}.mp4`,
+      sha256: material?.sha256 ?? "0".repeat(64),
+      subtitleText: draft?.subtitlesEnabled === false ? "" : draft?.subtitleText ?? shot.scriptSegment,
+      subtitlesEnabled: draft?.subtitlesEnabled !== false,
+      startSeconds: timelineStartSeconds,
+      durationSeconds,
+    });
+    const track = trackByCueId.get(shot.id);
+    if (draft?.audioMode === "tts" && track) {
+      members.push({
+        memberKey: `narration:${shot.id}`,
+        memberKind: "narration",
+        audioTrackId: track.id ?? track.cueId,
+        audioMode: "tts",
+        relativePath: track.relativePath,
+        sha256: track.sha256,
+        startSeconds: timelineStartSeconds + track.startSeconds,
+        durationSeconds: track.durationSeconds,
+      });
+    }
+    timelineStartSeconds += durationSeconds;
+  }
+  return {
+    compositionId: "shot-workbench",
+    projectRelativePath,
+    projectRevision: 1,
+    preRenderReviewPackageId: "shot-workbench",
+    adjustments: {
+      aspectRatio: "9:16",
+      width: 1080,
+      height: 1920,
+      captionsEnabled: true,
+      captionStyle: "minimal",
+      pacing: "standard",
+      crop: "cover",
+      transition: "cut",
+      layout: "lower_third",
+      narrationGainDb: 0,
+      bgmGainDb: -12,
+      sfxGainDb: -6,
+      frameRate: input.frameRate,
+      allowedFrames: input.allowedFrames,
+      reason: "镜头工作版本",
+    },
+    storyboard: input.storyboard,
+    members,
+  };
+}
+
+function isStoryboardThumbnailVideo(path: string): boolean {
+  return [".mov", ".mp4", ".webm"].includes(extname(path).toLowerCase());
+}
+
+async function renderStoryboardVideoThumbnail(sourcePath: string, destinationPath: string): Promise<void> {
+  let timestamp = 0;
+  try {
+    const { stdout } = await execFileAsync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", sourcePath]);
+    const duration = Number(stdout.trim());
+    if (Number.isFinite(duration) && duration > 0) timestamp = Math.min(Math.max(duration * 0.1, 0.5), Math.max(duration - 0.05, 0));
+  } catch {
+    // The first decoded frame remains a usable fallback for malformed duration metadata.
+  }
+  await execFileAsync("ffmpeg", ["-nostdin", "-v", "error", "-ss", String(timestamp), "-i", sourcePath, "-map", "0:v:0", "-frames:v", "1", "-vf", "scale=320:-2", "-an", "-pix_fmt", "yuvj420p", "-q:v", "4", "-y", destinationPath]);
+}
+
+export async function cachedStoryboardVideoThumbnail(assetRoot: string, sourcePath: string, identity: { modifiedAt: number; sha256: string }, render: (sourcePath: string, destinationPath: string) => Promise<void> = renderStoryboardVideoThumbnail): Promise<LocalArtifactFile> {
+  const resolvedRoot = await fs.realpath(assetRoot);
+  if (isFilesystemRoot(resolvedRoot)) throw new Error("资产根不能是文件系统根目录。");
+  const cacheRoot = await ensureDirectoryWithinRoot(resolvedRoot, resolve(resolvedRoot, ".cache"));
+  const cacheDirectory = await ensureDirectoryWithinRoot(cacheRoot, resolve(cacheRoot, "storyboard-thumbnails"));
+  const cacheKey = createHash("sha256").update(JSON.stringify({ version: "storyboard-keyframe/v1", ...identity })).digest("hex");
+  const cachePath = resolve(cacheDirectory, `${cacheKey}.jpg`);
+  try {
+    const cached = await fs.stat(cachePath);
+    if (cached.isFile() && cached.size > 0) return { modifiedAt: cached.mtimeMs, path: cachePath, size: cached.size };
+  } catch (error) {
+    if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) throw error;
+  }
+  const inFlight = storyboardThumbnailInFlight.get(cachePath);
+  if (inFlight) return inFlight;
+  const pending = (async () => {
+    const temporaryPath = resolve(cacheDirectory, `.${cacheKey}.${randomUUID()}.jpg`);
+    try {
+      await render(sourcePath, temporaryPath);
+      const temporary = await fs.stat(temporaryPath);
+      if (!temporary.isFile() || temporary.size === 0) throw new Error("视频关键帧缩略图为空。");
+      try {
+        await fs.link(temporaryPath, cachePath);
+      } catch (error) {
+        if (!(error instanceof Error && "code" in error && error.code === "EEXIST")) throw error;
+      }
+      const cached = await fs.stat(cachePath);
+      return { modifiedAt: cached.mtimeMs, path: cachePath, size: cached.size };
+    } finally {
+      await fs.rm(temporaryPath, { force: true });
+    }
+  })();
+  storyboardThumbnailInFlight.set(cachePath, pending);
+  try {
+    return await pending;
+  } finally {
+    if (storyboardThumbnailInFlight.get(cachePath) === pending) storyboardThumbnailInFlight.delete(cachePath);
+  }
 }
 
 export function serveLocalArtifact(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+  const verifiedArtifacts = new Map<string, { assetRoot: string; expiresAt: number; modifiedAt: number; path: string; sha256: string; size: number }>();
+  const previewTickets = new Map<string, { expiresAt: number; modifiedAt: number; path: string; size: number }>();
+
+  function sendArtifact(request: IncomingMessage, response: ServerResponse, next: (error?: Error) => void, artifact: { path: string; size: number }): void {
+    const rangeHeader = request.headers.range;
+    let start = 0;
+    let end = artifact.size - 1;
+    if (rangeHeader) {
+      const match = /^bytes=(\d*)-(\d*)$/.exec(rangeHeader);
+      if (!match || (!match[1] && !match[2])) {
+        response.statusCode = 416;
+        response.setHeader("Content-Range", `bytes */${artifact.size}`);
+        response.end();
+        return;
+      }
+      if (match[1]) {
+        start = Number(match[1]);
+        end = match[2] ? Math.min(Number(match[2]), artifact.size - 1) : artifact.size - 1;
+      } else {
+        const suffixLength = Number(match[2]);
+        start = Math.max(artifact.size - suffixLength, 0);
+      }
+      if (!Number.isSafeInteger(start) || !Number.isSafeInteger(end) || start < 0 || start > end || start >= artifact.size) {
+        response.statusCode = 416;
+        response.setHeader("Content-Range", `bytes */${artifact.size}`);
+        response.end();
+        return;
+      }
+      response.statusCode = 206;
+      response.setHeader("Content-Range", `bytes ${start}-${end}/${artifact.size}`);
+    }
+    response.setHeader("Accept-Ranges", "bytes");
+    response.setHeader("Content-Type", mediaTypes[extname(artifact.path).toLowerCase()] ?? "application/octet-stream");
+    response.setHeader("Content-Length", end - start + 1);
+    if (request.method === "HEAD") response.end();
+    else createReadStream(artifact.path, rangeHeader ? { end, start } : undefined).on("error", next).pipe(response);
+  }
+
+  function issueTicket(response: ServerResponse, artifact: { modifiedAt: number; path: string; size: number }): void {
+    // ponytail: in-memory 100-ticket/30-minute grant; use signed URLs only if preview moves beyond this local process.
+    if (previewTickets.size >= 100) previewTickets.delete(previewTickets.keys().next().value!);
+    const ticket = randomUUID();
+    previewTickets.set(ticket, { ...artifact, expiresAt: Date.now() + 30 * 60_000 });
+    response.setHeader("Content-Type", "application/json");
+    response.end(JSON.stringify({ url: `${localArtifactRoute}?ticket=${encodeURIComponent(ticket)}` }));
+  }
+
   return async (request: IncomingMessage, response: ServerResponse, next: (error?: Error) => void): Promise<void> => {
-  if (request.method !== "GET" && request.method !== "HEAD") {
+  if (request.method !== "GET" && request.method !== "HEAD" && request.method !== "POST") {
     response.statusCode = 405;
     response.end();
     return;
   }
 
   const url = new URL(request.url ?? "", "http://127.0.0.1");
+  const ticket = url.searchParams.get("ticket");
+  if (ticket && (request.method === "GET" || request.method === "HEAD")) {
+    const granted = previewTickets.get(ticket);
+    if (granted && granted.expiresAt > Date.now()) {
+      try {
+        const artifact = await fs.stat(granted.path);
+        if (artifact.isFile() && artifact.size === granted.size && artifact.mtimeMs === granted.modifiedAt) {
+          sendArtifact(request, response, next, granted);
+          return;
+        }
+      } catch {
+        // Fall through to the same opaque not-found response used for expired grants.
+      }
+    }
+    previewTickets.delete(ticket);
+    response.statusCode = 404;
+    response.end("未找到可预览产物。");
+    return;
+  }
   const episodeId = url.searchParams.get("episode") ?? "";
   const relativePath = url.searchParams.get("path") ?? "";
   const expectedSha256 = url.searchParams.get("sha256");
+  const thumbnail = url.searchParams.get("thumbnail");
   const authorization = request.headers.authorization;
   if (!authorization?.startsWith("Bearer ")) {
     response.statusCode = 401;
@@ -314,6 +398,36 @@ export function serveLocalArtifact(supabaseUrl: string | undefined, supabasePubl
     response.statusCode = 400;
     response.end("无效的本地产物路径。");
     return;
+  }
+  if (thumbnail && thumbnail !== "keyframe") {
+    response.statusCode = 400;
+    response.end("不支持的缩略图类型。");
+    return;
+  }
+  if (thumbnail === "keyframe" && !isStoryboardThumbnailVideo(relativePath)) {
+    response.statusCode = 400;
+    response.end("仅视频素材支持关键帧缩略图。");
+    return;
+  }
+  const cacheKey = createHash("sha256").update(`${authorization}\n${episodeId}\n${relativePath}\n${expectedSha256 ?? ""}`).digest("hex");
+  const cached = verifiedArtifacts.get(cacheKey);
+  if (cached && cached.expiresAt > Date.now()) {
+    try {
+      const artifact = await fs.stat(cached.path);
+      if (artifact.isFile() && artifact.size === cached.size && artifact.mtimeMs === cached.modifiedAt) {
+        if (thumbnail === "keyframe") {
+          const preview = await cachedStoryboardVideoThumbnail(cached.assetRoot, cached.path, { modifiedAt: cached.modifiedAt, sha256: cached.sha256 });
+          if (request.method === "POST") issueTicket(response, preview);
+          else sendArtifact(request, response, next, preview);
+        }
+        else if (request.method === "POST") issueTicket(response, cached);
+        else sendArtifact(request, response, next, cached);
+        return;
+      }
+    } catch {
+      // The normal validation path below returns the existing not-found response.
+    }
+    verifiedArtifacts.delete(cacheKey);
   }
 
   try {
@@ -351,14 +465,17 @@ export function serveLocalArtifact(supabaseUrl: string | undefined, supabasePubl
       }
     }
 
-    response.setHeader("Content-Type", mediaTypes[extname(resolvedArtifact).toLowerCase()] ?? "application/octet-stream");
-    response.setHeader("Content-Length", artifact.size);
-    if (request.method === "HEAD") {
-      response.statusCode = 200;
-      response.end();
-      return;
+    // ponytail: per-process 50-entry/30-second cache; use a shared cache only when preview servers multiply.
+    if (verifiedArtifacts.size >= 50) verifiedArtifacts.delete(verifiedArtifacts.keys().next().value!);
+    const verified = { assetRoot: resolvedRoot, expiresAt: Date.now() + 30_000, modifiedAt: artifact.mtimeMs, path: resolvedArtifact, sha256: indexedArtifact.sha256, size: artifact.size };
+    verifiedArtifacts.set(cacheKey, verified);
+    if (thumbnail === "keyframe") {
+      const preview = await cachedStoryboardVideoThumbnail(resolvedRoot, resolvedArtifact, { modifiedAt: artifact.mtimeMs, sha256: indexedArtifact.sha256 });
+      if (request.method === "POST") issueTicket(response, preview);
+      else sendArtifact(request, response, next, preview);
     }
-    createReadStream(resolvedArtifact).on("error", next).pipe(response);
+    else if (request.method === "POST") issueTicket(response, verified);
+    else sendArtifact(request, response, next, verified);
   } catch {
     response.statusCode = 404;
     response.end("未找到可预览产物。");
@@ -450,7 +567,7 @@ export function serveOpenLocalEpisodeDirectory(supabaseUrl: string | undefined, 
   };
 }
 
-export function serveOpenHyperframesStudio(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+export function serveOpenOpenChatCutStudio(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
   return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
     if (request.method !== "POST") { response.statusCode = 405; response.end(); return; }
     const authorization = request.headers.authorization;
@@ -461,47 +578,51 @@ export function serveOpenHyperframesStudio(supabaseUrl: string | undefined, supa
       const body = await readJsonBody(request);
       if (typeof body.projectRelativePath !== "string") throw new Error("缺少审核工程路径。");
       const assetRoot = await assetRootForOwnedEpisode({ authorization, episodeId, supabasePublishableKey, supabaseUrl });
-      if (!assetRoot || !isAbsolute(assetRoot)) { response.statusCode = 404; response.end("未找到可编辑的审核工程。"); return; }
-      const studioGate = await studioEntryGateForOwnedEpisode({ authorization, episodeId, projectRelativePath: body.projectRelativePath, supabasePublishableKey, supabaseUrl });
-      if (!studioGate.allowed) { response.statusCode = 409; response.end(studioGate.message ?? "当前 Episode 尚未达到 Studio 进入条件。"); return; }
-      const workspace = await prepareHyperframesStudioWorkspace(assetRoot, episodeId, body.projectRelativePath);
-      const port = await availableLocalPort();
-      await execFileAsync(join(process.cwd(), "node_modules", ".bin", "hyperframes"), hyperframesStudioPreviewArguments(dirname(join(assetRoot, workspace.relativePath)), port));
+      if (!assetRoot || !isAbsolute(assetRoot)) { response.statusCode = 404; response.end("未找到可编辑的生产单。"); return; }
+      const gate = await studioEntryGateForOwnedEpisode({ assetRoot, authorization, episodeId, projectRelativePath: body.projectRelativePath, supabasePublishableKey, supabaseUrl });
+      if (!gate.allowed) { response.statusCode = 409; response.end(gate.message ?? "当前生产单还没有可编辑的审核工程。"); return; }
+      const client = createClient(supabaseUrl!, supabasePublishableKey!, { auth: { persistSession: false }, global: { headers: { Authorization: authorization } } });
+      let render: NonNullable<WorkerTaskPackage["reviewRender"]> | null = null;
+      if (gate.mode === "review_render" && gate.reviewRenderTaskId) {
+        const { data: task, error } = await client.from("tasks").select("input_snapshot").eq("id", gate.reviewRenderTaskId).eq("episode_id", episodeId).eq("task_type", "generate_review_render").maybeSingle();
+        if (error || !task?.input_snapshot || Array.isArray(task.input_snapshot) || typeof task.input_snapshot !== "object") throw new Error("无法读取生产单的冻结审核输入。");
+        render = reviewRenderFromSnapshot(task.input_snapshot as Record<string, unknown>) ?? null;
+      } else if (gate.mode === "shot_workbench" && gate.storyboardPackageId) {
+        const root = await fs.realpath(assetRoot);
+        if (!isSafeRelativeArtifactPath(body.projectRelativePath)) throw new Error("分镜工程路径无效。");
+        const storyboardPath = await fs.realpath(resolve(root, body.projectRelativePath));
+        if (!isDescendant(root, storyboardPath)) throw new Error("分镜工程超出资产根。");
+        const storyboard = JSON.parse(await fs.readFile(storyboardPath, "utf8")) as StoryboardManifest;
+        const { data: drafts, error: draftsError } = await client.from("shot_preparation_drafts").select("shot_id, selected_material_revision_id, clip_segments, audio_mode, subtitle_text, subtitles_enabled, tts_text, current_audio_track_id").eq("episode_id", episodeId).eq("review_package_id", gate.storyboardPackageId);
+        if (draftsError) throw draftsError;
+        const materialIds = (drafts ?? []).map((draft) => draft.selected_material_revision_id).filter((id): id is string => typeof id === "string");
+        const trackIds = (drafts ?? []).map((draft) => draft.current_audio_track_id).filter((id): id is string => typeof id === "string");
+        const materials = materialIds.length ? await client.from("production_material_revisions").select("id, storage_path, sha256").eq("episode_id", episodeId).in("id", materialIds) : { data: [], error: null };
+        const tracks = trackIds.length ? await client.from("audio_tracks").select("id, relative_path, sha256, cue_id, start_seconds, duration_seconds").eq("episode_id", episodeId).in("id", trackIds) : { data: [], error: null };
+        if (materials.error) throw materials.error;
+        if (tracks.error) throw tracks.error;
+        render = shotWorkbenchReviewRender(episodeId, body.projectRelativePath, {
+          allowedFrames: gate.durationSettings?.allowedFrames ?? 2,
+          audioTracks: (tracks.data ?? []).map((track) => ({ id: track.id, cueId: track.cue_id ?? "", relativePath: track.relative_path, sha256: track.sha256, startSeconds: track.start_seconds ?? 0, durationSeconds: track.duration_seconds ?? 0 })),
+          drafts: (drafts ?? []).map((draft) => ({ audioMode: draft.audio_mode, clipSegments: parseShotWorkbenchClipSegments(draft.clip_segments), materialRevisionId: draft.selected_material_revision_id, shotId: draft.shot_id, subtitleText: draft.subtitle_text, subtitlesEnabled: draft.subtitles_enabled, ttsText: draft.tts_text })),
+          frameRate: gate.durationSettings?.frameRate ?? 30,
+          materials: (materials.data ?? []).map((material) => ({ id: material.id, relativePath: material.storage_path, sha256: material.sha256 })),
+          storyboard,
+        });
+      }
+      if (!render || render.projectRelativePath !== body.projectRelativePath) throw new Error("生产单的审核工程与当前版本不一致。");
+      const opened = await openOpenChatCutStudio(assetRoot, episodeId, render, { nodePath: localWorkerEnvironmentValue("OPENCHATCUT_NODE"), root: localWorkerEnvironmentValue("OPENCHATCUT_ROOT") });
       response.setHeader("Content-Type", "application/json");
       response.statusCode = 201;
-      response.end(JSON.stringify({ studioUrl: `http://127.0.0.1:${port}/`, workspace }));
+      response.end(JSON.stringify(opened));
     } catch (error) {
       response.statusCode = 400;
-      response.end(error instanceof Error ? error.message : "无法打开 HyperFrames Studio。");
+      response.end(error instanceof Error ? error.message : "无法打开 OpenChatCut。");
     }
   };
 }
 
-export function serveOpenPersonalHyperframesStudio(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
-  return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
-    if (request.method !== "POST") { response.statusCode = 405; response.end(); return; }
-    const authorization = request.headers.authorization;
-    if (!authorization?.startsWith("Bearer ")) { response.statusCode = 401; response.end("需要 Owner 登录会话。"); return; }
-    if (!supabaseUrl || !supabasePublishableKey) { response.statusCode = 503; response.end("Supabase 本地客户端未配置。"); return; }
-    const client = createClient(supabaseUrl, supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: authorization } } });
-    const { data, error } = await client.auth.getUser(authorization.slice("Bearer ".length));
-    if (error || !data.user) { response.statusCode = 401; response.end("Owner 登录会话无效。"); return; }
-    try {
-      const projectDirectory = resolve("content", "hyperframes-studio");
-      await fs.access(join(projectDirectory, "index.html"));
-      const port = await availableLocalPort();
-      await execFileAsync(join(process.cwd(), "node_modules", ".bin", "hyperframes"), hyperframesStudioPreviewArguments(projectDirectory, port));
-      response.setHeader("Content-Type", "application/json");
-      response.statusCode = 201;
-      response.end(JSON.stringify({ studioUrl: `http://127.0.0.1:${port}/#project/${encodeURIComponent(basename(projectDirectory))}` }));
-    } catch (cause) {
-      response.statusCode = 503;
-      response.end(cause instanceof Error ? cause.message : "无法打开个人 HyperFrames Studio 工程。");
-    }
-  };
-}
-
-export function serveFreezeHyperframesStudio(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+export function serveFreezeOpenChatCutStudio(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
   return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
     if (request.method !== "POST") { response.statusCode = 405; response.end(); return; }
     const authorization = request.headers.authorization;
@@ -510,19 +631,18 @@ export function serveFreezeHyperframesStudio(supabaseUrl: string | undefined, su
     if (!isEpisodeId(episodeId)) { response.statusCode = 400; response.end("无效的 Episode ID。"); return; }
     try {
       const body = await readJsonBody(request);
-      if (typeof body.workspaceRelativePath !== "string" || typeof body.sourceProjectRelativePath !== "string") throw new Error("缺少 Studio 工作区路径。");
+      if (typeof body.sourceProjectRelativePath !== "string" || typeof body.workspaceRelativePath !== "string") throw new Error("缺少 OpenChatCut 工作区路径。");
       const assetRoot = await assetRootForOwnedEpisode({ authorization, episodeId, supabasePublishableKey, supabaseUrl });
-      if (!assetRoot || !isAbsolute(assetRoot)) { response.statusCode = 404; response.end("未找到可冻结的 Studio 工程。"); return; }
-      const studioGate = await studioEntryGateForOwnedEpisode({ authorization, episodeId, projectRelativePath: body.sourceProjectRelativePath, supabasePublishableKey, supabaseUrl });
-      if (!studioGate.allowed) { response.statusCode = 409; response.end(studioGate.message ?? "当前 Episode 尚未达到 Studio 提交条件。"); return; }
-      await validateStudioMarkerWorkspace(assetRoot, episodeId, body.sourceProjectRelativePath, body.workspaceRelativePath);
-      const frozenProject = await freezeHyperframesStudioWorkspace(assetRoot, episodeId, body.workspaceRelativePath);
+      if (!assetRoot || !isAbsolute(assetRoot)) { response.statusCode = 404; response.end("未找到可冻结的生产单工程。"); return; }
+      const gate = await studioEntryGateForOwnedEpisode({ assetRoot, authorization, episodeId, projectRelativePath: body.sourceProjectRelativePath, supabasePublishableKey, supabaseUrl });
+      if (!gate.allowed) { response.statusCode = 409; response.end(gate.message ?? "当前生产单还没有可冻结的审核工程。"); return; }
+      const frozenProject = await freezeOpenChatCutStudio(assetRoot, episodeId);
       response.setHeader("Content-Type", "application/json");
       response.statusCode = 201;
       response.end(JSON.stringify({ frozenProject }));
     } catch (error) {
       response.statusCode = 400;
-      response.end(error instanceof Error ? error.message : "无法冻结 HyperFrames Studio 工程。");
+      response.end(error instanceof Error ? error.message : "无法冻结 OpenChatCut 工程。");
     }
   };
 }
@@ -1096,7 +1216,7 @@ export function serveSystemStatus(supabaseUrl: string | undefined, supabasePubli
       const dependencies = await Promise.all([
         dependencyStatus("Codex CLI", "codex", ["--version"]),
         dependencyStatus("ffmpeg", "ffmpeg", ["-version"]),
-        dependencyStatus("HyperFrames", join(process.cwd(), "node_modules", ".bin", "hyperframes"), ["--version"]),
+        dependencyStatus("OpenChatCut", localWorkerEnvironmentValue("OPENCHATCUT_NODE") || process.execPath, ["scripts/openchatcut-render.mjs", "--version"]),
       ]);
       const report = {
         dependencies,
@@ -1678,9 +1798,10 @@ export function serveTtsVoicePreview(supabaseUrl: string | undefined, supabasePu
     if (!supabaseUrl || !supabasePublishableKey) { response.statusCode = 503; response.end("Supabase 连接未配置。"); return; }
     try {
       const body = await readJsonBody(request);
+      const languageCode = typeof body.languageCode === "string" ? body.languageCode.trim() : "";
       const voice = typeof body.voice === "string" ? body.voice.trim() : "";
       const speakingRate = body.speakingRate;
-      if (!voice || voice.length > 128 || typeof speakingRate !== "number" || !Number.isFinite(speakingRate) || speakingRate < 0.5 || speakingRate > 2) throw new Error("音色或语速无效。");
+      if (!languageCode || languageCode.length > 32 || !voice || voice.length > 128 || typeof speakingRate !== "number" || !Number.isFinite(speakingRate) || speakingRate < 0.5 || speakingRate > 2) throw new Error("语言、音色或语速无效。");
       const client = createClient(supabaseUrl, supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: authorization } } });
       const { data: episode, error: episodeError } = await client.from("episodes").select("account_id, blueprint_version_id").eq("id", episodeId).maybeSingle();
       if (episodeError || !episode || !await accountIsOwned({ accountId: episode.account_id, authorization, supabasePublishableKey, supabaseUrl })) { response.statusCode = 403; response.end("没有该生产单的 Owner 权限。"); return; }
@@ -1690,18 +1811,18 @@ export function serveTtsVoicePreview(supabaseUrl: string | undefined, supabasePu
       if (!capability || (capability.provider !== "google_tts" && capability.provider !== "volcengine_tts")) throw new Error("当前蓝图没有可试听的 TTS 执行器。");
       const policy = blueprint.policy && typeof blueprint.policy === "object" && !Array.isArray(blueprint.policy) ? blueprint.policy as Record<string, unknown> : {};
       const narration = policy.narration && typeof policy.narration === "object" && !Array.isArray(policy.narration) ? policy.narration as Record<string, unknown> : {};
-      const voiceConfig = narration.voice && typeof narration.voice === "object" && !Array.isArray(narration.voice) ? narration.voice as Record<string, unknown> : {};
       const assetRoot = typeof policy.asset_root === "string" ? policy.asset_root.trim() : "";
       if (!assetRoot) throw new Error("当前蓝图没有本地资产根目录。");
-      const languageCode = typeof voiceConfig.language_code === "string" ? voiceConfig.language_code : "zh-CN";
-      const configuredVoice = typeof voiceConfig.name === "string" ? voiceConfig.name : "";
-      const catalog = adapterRegistration(capability.provider, capability.adapter ?? capability.provider)?.voiceCatalog?.[languageCode] ?? [];
-      if (voice !== configuredVoice && !catalog.includes(voice)) throw new Error("所选音色不在当前 TTS 执行器目录中。");
+      const registration = adapterRegistration(capability.provider, capability.adapter ?? capability.provider);
+      const catalog = registration?.voiceCatalog?.[languageCode];
+      if (!catalog || !catalog.includes(voice)) throw new Error("所选语言或音色不在当前 TTS 执行器目录中。");
       const apiKey = await localWorkerSecretForCapability(capability, episode.account_id);
       if (!apiKey) { response.statusCode = 503; response.end("当前 TTS 凭据不可用。"); return; }
       const model = capability.model ?? (capability.provider === "volcengine_tts" ? "seed-tts-2.0" : "standard");
       const text = "你好，这是当前音色的试听效果。";
-      const preview = await cachedTtsVoicePreview(assetRoot, { languageCode, model, provider: capability.provider, speakingRate, text, voice }, async () => {
+      const adapter = capability.adapter ?? capability.provider;
+      const connectionVersionId = typeof narration.credential_ref === "string" ? narration.credential_ref.trim() : "";
+      const preview = await cachedTtsVoicePreview(assetRoot, { adapter, connectionVersionId, languageCode, model, provider: capability.provider, speakingRate, text, textVersion: "tts-voice-preview/v1", voice }, async () => {
         const input = { apiKey, fetcher: fetch, text, voice: { languageCode, name: voice, speakingRate } };
         return capability.provider === "volcengine_tts" ? synthesizeVolcengineTts({ ...input, model }) : synthesizeGoogleTts(input);
       });
@@ -1717,7 +1838,34 @@ export function serveTtsVoicePreview(supabaseUrl: string | undefined, supabasePu
   };
 }
 
-export async function cachedTtsVoicePreview(assetRoot: string, identity: { languageCode: string; model: string; provider: string; speakingRate: number; text: string; voice: string }, synthesize: () => Promise<Uint8Array>): Promise<{ audio: Buffer; cacheStatus: "HIT" | "MISS" }> {
+export interface TtsVoicePreviewIdentity {
+  adapter: string;
+  connectionVersionId: string;
+  languageCode: string;
+  model: string;
+  provider: string;
+  speakingRate: number;
+  text: string;
+  textVersion: string;
+  voice: string;
+}
+
+const ttsVoicePreviewInFlight = new Map<string, Promise<{ audio: Buffer; cacheStatus: "HIT" | "MISS" }>>();
+
+async function validateTtsVoicePreviewAudio(bytes: Uint8Array): Promise<void> {
+  const directory = await fs.mkdtemp(join(tmpdir(), "loop-control-tts-preview-"));
+  const path = join(directory, "preview.mp3");
+  try {
+    await fs.writeFile(path, bytes);
+    const { stdout } = await execFileAsync("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", path]);
+    const duration = Number(stdout.trim());
+    if (!Number.isFinite(duration) || duration <= 0) throw new Error("音色试听音频无法播放。");
+  } finally {
+    await fs.rm(directory, { force: true, recursive: true });
+  }
+}
+
+export async function cachedTtsVoicePreview(assetRoot: string, identity: TtsVoicePreviewIdentity, synthesize: () => Promise<Uint8Array>, validateAudio: (bytes: Uint8Array) => Promise<void> = validateTtsVoicePreviewAudio): Promise<{ audio: Buffer; cacheStatus: "HIT" | "MISS" }> {
   const resolvedRoot = await fs.realpath(assetRoot);
   if (isFilesystemRoot(resolvedRoot)) throw new Error("资产根不能是文件系统根目录。");
   const cacheRoot = await ensureDirectoryWithinRoot(resolvedRoot, resolve(resolvedRoot, ".cache"));
@@ -1728,15 +1876,32 @@ export async function cachedTtsVoicePreview(assetRoot: string, identity: { langu
   } catch (error) {
     if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) throw error;
   }
-  const audio = Buffer.from(await synthesize());
-  if (audio.byteLength === 0) throw new Error("音色试听没有返回音频。");
+  const inFlight = ttsVoicePreviewInFlight.get(cachePath);
+  if (inFlight) return inFlight;
+  const pending = (async () => {
+    const audio = Buffer.from(await synthesize());
+    if (audio.byteLength === 0) throw new Error("音色试听没有返回音频。");
+    await validateAudio(audio);
+    const temporaryPath = resolve(cacheDirectory, `.${basename(cachePath)}.${randomUUID()}.tmp`);
+    try {
+      await fs.writeFile(temporaryPath, audio, { flag: "wx" });
+      try {
+        await fs.link(temporaryPath, cachePath);
+        return { audio, cacheStatus: "MISS" as const };
+      } catch (error) {
+        if (!(error instanceof Error && "code" in error && error.code === "EEXIST")) throw error;
+        return { audio: await fs.readFile(cachePath), cacheStatus: "HIT" as const };
+      }
+    } finally {
+      await fs.rm(temporaryPath, { force: true });
+    }
+  })();
+  ttsVoicePreviewInFlight.set(cachePath, pending);
   try {
-    await fs.writeFile(cachePath, audio, { flag: "wx" });
-  } catch (error) {
-    if (!(error instanceof Error && "code" in error && error.code === "EEXIST")) throw error;
-    return { audio: await fs.readFile(cachePath), cacheStatus: "HIT" };
+    return await pending;
+  } finally {
+    if (ttsVoicePreviewInFlight.get(cachePath) === pending) ttsVoicePreviewInFlight.delete(cachePath);
   }
-  return { audio, cacheStatus: "MISS" };
 }
 
 async function indexedArtifactForPreview(input: { authorization: string; episodeId: string; expectedSha256?: string; relativePath: string; supabasePublishableKey: string | undefined; supabaseUrl: string | undefined }): Promise<{ assetRoot: string; sha256: string } | null> {
@@ -1783,33 +1948,55 @@ async function assetRootForOwnedEpisode(input: { authorization: string; episodeI
   return typeof assetRoot === "string" ? assetRoot.trim() || null : null;
 }
 
-async function studioEntryGateForOwnedEpisode(input: { authorization: string; episodeId: string; projectRelativePath: string; supabasePublishableKey: string | undefined; supabaseUrl: string | undefined }): Promise<{ allowed: boolean; message?: string }> {
+function shotWorkbenchDurationSettingsFromRules(rules: unknown): { frameRate: number; allowedFrames: number } {
+  const root = rules && typeof rules === "object" && !Array.isArray(rules) ? rules as Record<string, unknown> : {};
+  const composition = root.openchatcut_composition;
+  const values = composition && typeof composition === "object" && !Array.isArray(composition) ? composition as Record<string, unknown> : {};
+  const frameRate = typeof values.frame_rate === "number" && Number.isFinite(values.frame_rate) && values.frame_rate > 0 ? values.frame_rate : 30;
+  const allowedFrames = typeof values.allowed_frames === "number" && Number.isInteger(values.allowed_frames) && values.allowed_frames >= 0 ? values.allowed_frames : 2;
+  return { frameRate, allowedFrames };
+}
+
+async function studioEntryGateForOwnedEpisode(input: { assetRoot: string; authorization: string; episodeId: string; projectRelativePath: string; supabasePublishableKey: string | undefined; supabaseUrl: string | undefined }): Promise<{ allowed: boolean; mode?: "review_render" | "shot_workbench"; message?: string; storyboardPackageId?: string; reviewRenderTaskId?: string; durationSettings?: { frameRate: number; allowedFrames: number } }> {
   if (!input.supabaseUrl || !input.supabasePublishableKey) return { allowed: false, message: "Supabase 本地客户端未配置。" };
   const supabase = createClient(input.supabaseUrl, input.supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: input.authorization } } });
-  const { data: episode, error: episodeError } = await supabase.from("episodes").select("stage").eq("id", input.episodeId).maybeSingle();
+  const { data: episode, error: episodeError } = await supabase.from("episodes").select("stage, account_id, series_version_id").eq("id", input.episodeId).maybeSingle();
   if (episodeError || !episode) return { allowed: false, message: "未找到当前 Episode。" };
-  if (episode.stage !== "qc_review") return { allowed: false, message: "只有审核渲染完成后才能进入 Studio。" };
-
-  const { data: qcPackages, error: qcError } = await supabase.from("review_packages").select("id, context_snapshot").eq("episode_id", input.episodeId).eq("stage", "qc_review").is("invalidated_at", null).order("revision_number", { ascending: false }).limit(1);
+  if (episode.stage === "storyboard_approved") {
+    let durationSettings = { frameRate: 30, allowedFrames: 2 };
+    if (episode.series_version_id) {
+      const { data: seriesVersion, error: seriesVersionError } = await supabase.from("series_versions").select("rules").eq("id", episode.series_version_id).eq("account_id", episode.account_id).maybeSingle();
+      if (seriesVersionError) return { allowed: false, message: "无法读取当前 Episode 的镜头时长规则。" };
+      durationSettings = shotWorkbenchDurationSettingsFromRules(seriesVersion?.rules);
+    }
+    const { data: packages, error: packageError } = await supabase.from("review_packages").select("id, artifact_id").eq("episode_id", input.episodeId).eq("stage", "storyboard_review").is("invalidated_at", null).order("revision_number", { ascending: false }).limit(1);
+    const storyboardPackage = packages?.[0];
+    if (packageError || !storyboardPackage) return { allowed: false, message: "未找到当前分镜版本。" };
+    const { data: artifact, error: artifactError } = await supabase.from("artifacts").select("relative_path").eq("id", storyboardPackage.artifact_id).maybeSingle();
+    if (artifactError || !artifact || artifact.relative_path !== input.projectRelativePath) return { allowed: false, message: "Studio 工程不是当前分镜版本。" };
+    const root = await fs.realpath(input.assetRoot);
+    const storyboardPath = await fs.realpath(resolve(root, input.projectRelativePath));
+    if (!isDescendant(root, storyboardPath)) return { allowed: false, message: "Studio 工程超出资产根。" };
+    let storyboard: StoryboardManifest;
+    try { storyboard = JSON.parse(await fs.readFile(storyboardPath, "utf8")) as StoryboardManifest; } catch { return { allowed: false, message: "当前分镜版本无效。" }; }
+    const { data: drafts, error: draftsError } = await supabase.from("shot_preparation_drafts").select("shot_id, selected_material_revision_id").eq("episode_id", input.episodeId).eq("review_package_id", storyboardPackage.id);
+    if (draftsError) return { allowed: false, message: "无法确认当前镜头版本，请稍后重试。" };
+    const draftByShot = new Map((drafts ?? []).map((draft) => [draft.shot_id, draft.selected_material_revision_id]));
+    const missingShotIds = storyboard.shots.filter((shot) => typeof draftByShot.get(shot.id) !== "string" || !draftByShot.get(shot.id)).map((shot) => shot.id);
+    if (missingShotIds.length) return { allowed: false, message: `Studio 尚未就绪，请先补齐镜头素材：${missingShotIds.join("、")}。` };
+    return { allowed: true, mode: "shot_workbench", storyboardPackageId: storyboardPackage.id, durationSettings };
+  }
+  const { data: qcPackages, error: qcError } = await supabase.from("review_packages").select("id, task_id, context_snapshot").eq("episode_id", input.episodeId).eq("stage", "qc_review").is("invalidated_at", null).order("revision_number", { ascending: false }).limit(1);
   const qcPackage = qcPackages?.[0];
   if (qcError || !qcPackage) return { allowed: false, message: "未找到当前审核渲染工程。" };
   const qcSnapshot = qcPackage.context_snapshot && typeof qcPackage.context_snapshot === "object" && !Array.isArray(qcPackage.context_snapshot) ? qcPackage.context_snapshot as Record<string, unknown> : {};
   if (qcSnapshot.project_relative_path !== input.projectRelativePath) return { allowed: false, message: "Studio 工程不是当前审核渲染工程。" };
 
   const preRenderPackageId = typeof qcSnapshot.pre_render_review_package_id === "string" ? qcSnapshot.pre_render_review_package_id : undefined;
-  if (!preRenderPackageId) return { allowed: true };
-  const { data: preRenderPackage, error: preRenderError } = await supabase.from("review_packages").select("context_snapshot").eq("id", preRenderPackageId).eq("episode_id", input.episodeId).eq("stage", "production_ready").is("invalidated_at", null).maybeSingle();
+  if (!preRenderPackageId) return { allowed: true, mode: "review_render", reviewRenderTaskId: qcPackage.task_id };
+  const { data: preRenderPackage, error: preRenderError } = await supabase.from("review_packages").select("id").eq("id", preRenderPackageId).eq("episode_id", input.episodeId).eq("stage", "production_ready").is("invalidated_at", null).maybeSingle();
   if (preRenderError || !preRenderPackage) return { allowed: false, message: "当前 Studio 输入快照不存在或已失效。" };
-  const preRenderSnapshot = preRenderPackage.context_snapshot && typeof preRenderPackage.context_snapshot === "object" && !Array.isArray(preRenderPackage.context_snapshot) ? preRenderPackage.context_snapshot as Record<string, unknown> : {};
-  if (preRenderSnapshot.confirmation_mode !== "shot_preparation") return { allowed: true };
-  const storyboardPackageId = typeof preRenderSnapshot.storyboard_review_package_id === "string" ? preRenderSnapshot.storyboard_review_package_id : undefined;
-  if (!storyboardPackageId) return { allowed: false, message: "当前 Studio 输入快照缺少分镜版本。" };
-  const { data: drafts, error: draftsError } = await supabase.from("shot_preparation_drafts").select("shot_id, confirmation_status, input_fingerprint, selected_material_revision_id, clip_segments, current_video_artifact_id, current_video_task_id, audio_mode, current_audio_track_id, subtitle_text, subtitles_enabled").eq("episode_id", input.episodeId).eq("review_package_id", storyboardPackageId);
-  if (draftsError) return { allowed: false, message: "无法确认当前镜头版本，请稍后重试。" };
-  const blockers = confirmedStudioShotBlockers(preRenderSnapshot, drafts ?? []);
-  return blockers.length === 0
-    ? { allowed: true }
-    : { allowed: false, message: `Studio 尚未就绪，请先确认镜头：${blockers.join("、")}。` };
+  return { allowed: true, mode: "review_render", reviewRenderTaskId: qcPackage.task_id };
 }
 
 async function accountIsOwned(input: { accountId: string; authorization: string; supabasePublishableKey: string | undefined; supabaseUrl: string | undefined }): Promise<boolean> {
@@ -1827,9 +2014,8 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
   const openArtifactMiddleware = serveOpenLocalArtifact(supabaseUrl, supabasePublishableKey);
   const directoryMiddleware = serveLocalEpisodeDirectory(supabaseUrl, supabasePublishableKey);
   const openDirectoryMiddleware = serveOpenLocalEpisodeDirectory(supabaseUrl, supabasePublishableKey);
-  const openHyperframesStudioMiddleware = serveOpenHyperframesStudio(supabaseUrl, supabasePublishableKey);
-  const openPersonalHyperframesStudioMiddleware = serveOpenPersonalHyperframesStudio(supabaseUrl, supabasePublishableKey);
-  const freezeHyperframesStudioMiddleware = serveFreezeHyperframesStudio(supabaseUrl, supabasePublishableKey);
+  const openOpenChatCutStudioMiddleware = serveOpenOpenChatCutStudio(supabaseUrl, supabasePublishableKey);
+  const freezeOpenChatCutStudioMiddleware = serveFreezeOpenChatCutStudio(supabaseUrl, supabasePublishableKey);
   const chooseAssetDirectoryMiddleware = serveChooseLocalAssetDirectory(supabaseUrl, supabasePublishableKey);
   const openAssetDirectoryMiddleware = serveOpenLocalAssetDirectory(supabaseUrl, supabasePublishableKey);
   const productionMaterialMiddleware = serveProductionMaterial(supabaseUrl, supabasePublishableKey);
@@ -1849,9 +2035,8 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(openLocalArtifactRoute, openArtifactMiddleware);
       server.middlewares.use(localEpisodeDirectoryRoute, directoryMiddleware);
       server.middlewares.use(openLocalEpisodeDirectoryRoute, openDirectoryMiddleware);
-      server.middlewares.use(openHyperframesStudioRoute, openHyperframesStudioMiddleware);
-      server.middlewares.use(openPersonalHyperframesStudioRoute, openPersonalHyperframesStudioMiddleware);
-      server.middlewares.use(freezeHyperframesStudioRoute, freezeHyperframesStudioMiddleware);
+      server.middlewares.use(openOpenChatCutStudioRoute, openOpenChatCutStudioMiddleware);
+      server.middlewares.use(freezeOpenChatCutStudioRoute, freezeOpenChatCutStudioMiddleware);
       server.middlewares.use(chooseLocalAssetDirectoryRoute, chooseAssetDirectoryMiddleware);
       server.middlewares.use(openLocalAssetDirectoryRoute, openAssetDirectoryMiddleware);
       server.middlewares.use(localProductionMaterialRoute, productionMaterialMiddleware);
@@ -1870,9 +2055,8 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(openLocalArtifactRoute, openArtifactMiddleware);
       server.middlewares.use(localEpisodeDirectoryRoute, directoryMiddleware);
       server.middlewares.use(openLocalEpisodeDirectoryRoute, openDirectoryMiddleware);
-      server.middlewares.use(openHyperframesStudioRoute, openHyperframesStudioMiddleware);
-      server.middlewares.use(openPersonalHyperframesStudioRoute, openPersonalHyperframesStudioMiddleware);
-      server.middlewares.use(freezeHyperframesStudioRoute, freezeHyperframesStudioMiddleware);
+      server.middlewares.use(openOpenChatCutStudioRoute, openOpenChatCutStudioMiddleware);
+      server.middlewares.use(freezeOpenChatCutStudioRoute, freezeOpenChatCutStudioMiddleware);
       server.middlewares.use(chooseLocalAssetDirectoryRoute, chooseAssetDirectoryMiddleware);
       server.middlewares.use(openLocalAssetDirectoryRoute, openAssetDirectoryMiddleware);
       server.middlewares.use(localProductionMaterialRoute, productionMaterialMiddleware);
@@ -1893,6 +2077,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   return {
     plugins: [react(), localArtifactPreviewPlugin(env.VITE_SUPABASE_URL, env.VITE_SUPABASE_PUBLISHABLE_KEY)],
+    server: { watch: { ignored: ["**/n8n/runtime/**", "**/outputs/**"] } },
     test: {
       environment: "jsdom",
       globals: true,

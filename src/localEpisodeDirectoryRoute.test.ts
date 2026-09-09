@@ -1,15 +1,19 @@
 // @vitest-environment node
 
+import { execFile } from "node:child_process";
 import { createServer } from "node:http";
 import { createHash } from "node:crypto";
 import type { AddressInfo } from "node:net";
-import { mkdir, mkdtemp, readFile, rm, stat, symlink, writeFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile, readdir, rm, stat, symlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
+import { promisify } from "node:util";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
-import { cachedTtsVoicePreview, confirmedStudioShotBlockers, coverImageExtension, createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, freezeHyperframesStudioWorkspace, hyperframesStudioPreviewArguments, prepareHyperframesStudioWorkspace, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveChooseLocalAssetDirectory, serveEpisodeDeletion, serveEpisodeDeletionCleanup, serveEpisodePreflight, serveFreezeHyperframesStudio, serveLocalArtifact, serveLocalEpisodeDirectory, serveOpenHyperframesStudio, serveOpenLocalArtifact, serveOpenLocalAssetDirectory, serveOpenLocalEpisodeDirectory, serveOpenPersonalHyperframesStudio, servePublishPreparation, serveTtsVoicePreview, stageLocalEpisodeDirectoryForDeletion, studioMarkerSourceRequirements } from "../vite.config";
+import { cachedStoryboardVideoThumbnail, cachedTtsVoicePreview, confirmedStudioShotBlockers, coverImageExtension, createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, parseShotWorkbenchClipSegments, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveChooseLocalAssetDirectory, serveEpisodeDeletion, serveEpisodeDeletionCleanup, serveEpisodePreflight, serveFreezeOpenChatCutStudio, serveLocalArtifact, serveLocalEpisodeDirectory, serveOpenLocalArtifact, serveOpenLocalAssetDirectory, serveOpenLocalEpisodeDirectory, serveOpenOpenChatCutStudio, servePublishPreparation, serveTtsVoicePreview, shotWorkbenchReviewRender, stageLocalEpisodeDirectoryForDeletion } from "../vite.config";
 
 const episodeId = "00000000-0000-0000-0000-000000000000";
+const execFileAsync = promisify(execFile);
+const ffmpegAvailable = await execFileAsync("ffmpeg", ["-version"]).then(() => true).catch(() => false);
 let server: ReturnType<typeof createServer>;
 let origin = "";
 
@@ -55,13 +59,6 @@ describe("本地 Episode 目录路由", () => {
     expect(coverImageExtension(Uint8Array.from([71, 73, 70, 56, 57, 97]))).toBeNull();
   });
 
-  it("Studio 只允许在原片范围内修改片段标记，不允许替换镜头原片", () => {
-    const original = '<video class="clip shot shot-0" data-media-start="1" data-duration="2.8" src="assets/source.mp4"></video>';
-    const edited = '<video class="clip shot shot-0" data-media-start="1" data-duration="4" src="assets/source.mp4"></video>';
-    expect(studioMarkerSourceRequirements(original, edited)).toEqual([{ relativePath: "assets/source.mp4", minimumDurationSeconds: 5 }]);
-    expect(() => studioMarkerSourceRequirements(original, edited.replace("source.mp4", "other.mp4"))).toThrow("更换原片");
-    expect(() => studioMarkerSourceRequirements(original, edited.replace('data-duration="4"', ""))).toThrow("标记无效");
-  });
   it("拒绝未登录、非法 ID 和非 POST 请求", async () => {
     const [unauthorized, invalidId, wrongMethod] = await Promise.all([
       fetch(`${origin}/_local-episode-directory?episode=${episodeId}`, { method: "POST" }),
@@ -118,14 +115,80 @@ describe("本地 Episode 目录路由", () => {
   it("相同音色试听只调用一次供应商并持久读取本地缓存", async () => {
     const root = await mkdtemp(join(tmpdir(), "tts-preview-cache-"));
     const synthesize = vi.fn().mockResolvedValue(Uint8Array.from([73, 68, 51]));
-    const identity = { languageCode: "zh-CN", model: "seed-tts-2.0", provider: "volcengine_tts", speakingRate: 1.2, text: "试听", voice: "zh_female_vv_uranus_bigtts" };
+    const identity = { adapter: "volcengine_tts", connectionVersionId: "connection-v1", languageCode: "zh-CN", model: "seed-tts-2.0", provider: "volcengine_tts", speakingRate: 1.2, text: "试听", textVersion: "tts-voice-preview/v1", voice: "zh_female_vv_uranus_bigtts" };
     try {
-      const first = await cachedTtsVoicePreview(root, identity, synthesize);
-      const second = await cachedTtsVoicePreview(root, identity, synthesize);
+      const first = await cachedTtsVoicePreview(root, identity, synthesize, async () => undefined);
+      const second = await cachedTtsVoicePreview(root, identity, synthesize, async () => undefined);
       expect(first.cacheStatus).toBe("MISS");
       expect(second.cacheStatus).toBe("HIT");
       expect([...second.audio]).toEqual([73, 68, 51]);
       expect(synthesize).toHaveBeenCalledTimes(1);
+    } finally {
+      await rm(root, { force: true, recursive: true });
+    }
+  });
+
+  it("缓存键区分 Adapter、连接版本和样例文本版本，并发 miss 只合成一次", async () => {
+    const root = await mkdtemp(join(tmpdir(), "tts-preview-cache-"));
+    const synthesize = vi.fn(async () => { await new Promise((resolve) => setTimeout(resolve, 10)); return Uint8Array.from([73, 68, 51]); });
+    const identity = { adapter: "volcengine_tts", connectionVersionId: "connection-v1", languageCode: "zh-CN", model: "seed-tts-2.0", provider: "volcengine_tts", speakingRate: 1.2, text: "试听", textVersion: "tts-voice-preview/v1", voice: "voice-a" };
+    try {
+      const [first, second] = await Promise.all([
+        cachedTtsVoicePreview(root, identity, synthesize, async () => undefined),
+        cachedTtsVoicePreview(root, identity, synthesize, async () => undefined),
+      ]);
+      expect(first.cacheStatus).toBe("MISS");
+      expect(second.cacheStatus).toBe("MISS");
+      expect(synthesize).toHaveBeenCalledTimes(1);
+      const variants = [
+        { ...identity, provider: "google_tts" },
+        { ...identity, adapter: "google_tts" },
+        { ...identity, model: "seed-tts-1.0" },
+        { ...identity, connectionVersionId: "connection-v2" },
+        { ...identity, languageCode: "en-US" },
+        { ...identity, voice: "voice-b" },
+        { ...identity, speakingRate: 1.3 },
+        { ...identity, text: "另一个试听" },
+        { ...identity, textVersion: "tts-voice-preview/v2" },
+      ];
+      for (const variant of variants) await cachedTtsVoicePreview(root, variant, synthesize, async () => undefined);
+      expect(synthesize).toHaveBeenCalledTimes(1 + variants.length);
+    } finally {
+      await rm(root, { force: true, recursive: true });
+    }
+  });
+
+  it("分镜视频关键帧按素材修订缓存，并合并并发生成", async () => {
+    const root = await mkdtemp(join(tmpdir(), "storyboard-thumbnail-cache-"));
+    const sourcePath = join(root, "source.mp4");
+    const render = vi.fn(async (_source: string, destination: string) => { await writeFile(destination, Uint8Array.from([0xff, 0xd8, 0xff])); });
+    try {
+      await writeFile(sourcePath, "video");
+      const identity = { modifiedAt: 123, sha256: "a".repeat(64) };
+      const [first, concurrent] = await Promise.all([
+        cachedStoryboardVideoThumbnail(root, sourcePath, identity, render),
+        cachedStoryboardVideoThumbnail(root, sourcePath, identity, render),
+      ]);
+      const cached = await cachedStoryboardVideoThumbnail(root, sourcePath, identity, render);
+      expect(render).toHaveBeenCalledTimes(1);
+      expect(first.path).toBe(concurrent.path);
+      expect(cached.path).toBe(first.path);
+      expect(await readFile(cached.path)).toEqual(Buffer.from([0xff, 0xd8, 0xff]));
+    } finally {
+      await rm(root, { force: true, recursive: true });
+    }
+  });
+
+  it("音频校验失败不写入可命中的残片，并允许重试", async () => {
+    const root = await mkdtemp(join(tmpdir(), "tts-preview-cache-"));
+    const identity = { adapter: "google_tts", connectionVersionId: "connection-v1", languageCode: "zh-CN", model: "standard", provider: "google_tts", speakingRate: 1, text: "试听", textVersion: "tts-voice-preview/v1", voice: "voice-a" };
+    const synthesize = vi.fn().mockResolvedValue(Uint8Array.from([1, 2, 3]));
+    try {
+      await expect(cachedTtsVoicePreview(root, identity, synthesize, async () => { throw new Error("无法播放"); })).rejects.toThrow("无法播放");
+      expect(await readdir(join(root, ".cache", "tts-previews"))).toEqual([]);
+      const retry = await cachedTtsVoicePreview(root, identity, synthesize, async () => undefined);
+      expect(retry.cacheStatus).toBe("MISS");
+      expect(synthesize).toHaveBeenCalledTimes(2);
     } finally {
       await rm(root, { force: true, recursive: true });
     }
@@ -172,8 +235,8 @@ describe("本地 Episode 目录路由", () => {
     }
   });
 
-  it("Studio 路由在访问本机工程前拒绝未登录、非法 ID 和错误方法", async () => {
-    const cases = [serveOpenHyperframesStudio(undefined, undefined), serveFreezeHyperframesStudio(undefined, undefined)];
+  it("OpenChatCut 路由在访问本机工程前拒绝未登录、非法 ID 和错误方法", async () => {
+    const cases = [serveOpenOpenChatCutStudio(undefined, undefined), serveFreezeOpenChatCutStudio(undefined, undefined)];
     for (const middleware of cases) {
       const studioServer = createServer((request, response) => { void middleware(request, response); });
       await new Promise<void>((resolve) => studioServer.listen(0, "127.0.0.1", resolve));
@@ -190,25 +253,6 @@ describe("本地 Episode 目录路由", () => {
       } finally {
         await new Promise<void>((resolve, reject) => studioServer.close((error) => error ? reject(error) : resolve()));
       }
-    }
-  });
-
-  it("个人 Studio 入口在启动本机工程前拒绝未登录、错误方法和缺失配置", async () => {
-    const middleware = serveOpenPersonalHyperframesStudio(undefined, undefined);
-    const studioServer = createServer((request, response) => { void middleware(request, response); });
-    await new Promise<void>((resolve) => studioServer.listen(0, "127.0.0.1", resolve));
-    const studioOrigin = `http://127.0.0.1:${(studioServer.address() as AddressInfo).port}`;
-    try {
-      const [unauthorized, wrongMethod, unavailable] = await Promise.all([
-        fetch(`${studioOrigin}/studio`, { method: "POST" }),
-        fetch(`${studioOrigin}/studio`, { headers: { Authorization: "Bearer invalid" } }),
-        fetch(`${studioOrigin}/studio`, { headers: { Authorization: "Bearer invalid" }, method: "POST" }),
-      ]);
-      expect(unauthorized.status).toBe(401);
-      expect(wrongMethod.status).toBe(405);
-      expect(unavailable.status).toBe(503);
-    } finally {
-      await new Promise<void>((resolve, reject) => studioServer.close((error) => error ? reject(error) : resolve()));
     }
   });
 
@@ -261,7 +305,7 @@ describe("本地 Episode 目录路由", () => {
   });
 
   it("预览已冻结的上传素材", async () => {
-    const root = await mkdtemp(join(tmpdir(), "tk-workflow-material-preview-"));
+    const root = await mkdtemp(join(tmpdir(), "loop-control-material-preview-"));
     const content = Buffer.from("uploaded-video");
     const sha256 = createHash("sha256").update(content).digest("hex");
     const relativePath = `episodes/${episodeId}/materials/${sha256}-a-shot-001.mp4`;
@@ -288,11 +332,97 @@ describe("本地 Episode 目录路由", () => {
     const previewOrigin = `http://127.0.0.1:${(previewServer.address() as AddressInfo).port}`;
 
     try {
-      const response = await fetch(`${previewOrigin}/_local-artifact?episode=${episodeId}&path=${encodeURIComponent(relativePath)}&sha256=${sha256}`, { headers: { Authorization: "Bearer owner-token" } });
+      const previewUrl = `${previewOrigin}/_local-artifact?episode=${episodeId}&path=${encodeURIComponent(relativePath)}&sha256=${sha256}`;
+      const response = await fetch(previewUrl, { headers: { Authorization: "Bearer owner-token" } });
 
       expect(response.status).toBe(200);
       expect(response.headers.get("content-type")).toBe("video/mp4");
       expect(Buffer.from(await response.arrayBuffer())).toEqual(content);
+
+      const ticketResponse = await fetch(previewUrl, { headers: { Authorization: "Bearer owner-token" }, method: "POST" });
+      const ticket = await ticketResponse.json() as { url: string };
+      const partial = await fetch(`${previewOrigin}${ticket.url}`, { headers: { Range: "bytes=2-7" } });
+      expect(ticketResponse.status).toBe(200);
+      expect(partial.status).toBe(206);
+      expect(partial.headers.get("accept-ranges")).toBe("bytes");
+      expect(partial.headers.get("content-range")).toBe(`bytes 2-7/${content.length}`);
+      expect(Buffer.from(await partial.arrayBuffer())).toEqual(content.subarray(2, 8));
+    } finally {
+      await new Promise<void>((resolve, reject) => previewServer.close((error) => error ? reject(error) : resolve()));
+      await new Promise<void>((resolve, reject) => supabaseServer.close((error) => error ? reject(error) : resolve()));
+      await rm(root, { force: true, recursive: true });
+    }
+  });
+
+  it.skipIf(!ffmpegAvailable)("为视频素材发放缓存关键帧缩略图 ticket", async () => {
+    const root = await mkdtemp(join(tmpdir(), "loop-control-storyboard-thumbnail-route-"));
+    const relativePath = `episodes/${episodeId}/materials/a-shot-001.mp4`;
+    const sourcePath = join(root, relativePath);
+    await mkdir(join(root, "episodes", episodeId, "materials"), { recursive: true });
+    await execFileAsync("ffmpeg", ["-nostdin", "-v", "error", "-f", "lavfi", "-i", "color=c=red:size=80x60:rate=24", "-t", "1", "-c:v", "libx264", "-pix_fmt", "yuv420p", sourcePath]);
+    const sha256 = createHash("sha256").update(await readFile(sourcePath)).digest("hex");
+    const supabaseServer = createServer((request, response) => {
+      response.setHeader("Content-Type", "application/json");
+      const pathname = new URL(request.url ?? "", "http://127.0.0.1").pathname;
+      if (pathname === "/rest/v1/artifacts") response.end(JSON.stringify([{ episode_id: episodeId, sha256 }]));
+      else if (pathname === "/rest/v1/production_material_revisions") response.end(JSON.stringify([]));
+      else if (pathname === "/rest/v1/episodes") response.end(JSON.stringify([{ blueprint_version_id: episodeId }]));
+      else if (pathname === "/rest/v1/account_blueprint_versions") response.end(JSON.stringify([{ policy: { asset_root: root } }]));
+      else { response.statusCode = 404; response.end("{}"); }
+    });
+    await new Promise<void>((resolve) => supabaseServer.listen(0, "127.0.0.1", resolve));
+    const supabaseOrigin = `http://127.0.0.1:${(supabaseServer.address() as AddressInfo).port}`;
+    const middleware = serveLocalArtifact(supabaseOrigin, "publishable-key");
+    const previewServer = createServer((request, response) => { void middleware(request, response, () => undefined); });
+    await new Promise<void>((resolve) => previewServer.listen(0, "127.0.0.1", resolve));
+    const previewOrigin = `http://127.0.0.1:${(previewServer.address() as AddressInfo).port}`;
+
+    try {
+      const thumbnailRequest = `${previewOrigin}/_local-artifact?episode=${episodeId}&path=${encodeURIComponent(relativePath)}&sha256=${sha256}&thumbnail=keyframe`;
+      const ticketResponse = await fetch(thumbnailRequest, { headers: { Authorization: "Bearer owner-token" }, method: "POST" });
+      const ticket = await ticketResponse.json() as { url: string };
+      const preview = await fetch(`${previewOrigin}${ticket.url}`);
+      expect(ticketResponse.status).toBe(200);
+      expect(preview.headers.get("content-type")).toBe("image/jpeg");
+      expect(Buffer.from(await preview.arrayBuffer()).subarray(0, 3)).toEqual(Buffer.from([0xff, 0xd8, 0xff]));
+      expect((await readdir(join(root, ".cache", "storyboard-thumbnails"))).filter((name) => name.endsWith(".jpg"))).toHaveLength(1);
+    } finally {
+      await new Promise<void>((resolve, reject) => previewServer.close((error) => error ? reject(error) : resolve()));
+      await new Promise<void>((resolve, reject) => supabaseServer.close((error) => error ? reject(error) : resolve()));
+      await rm(root, { force: true, recursive: true });
+    }
+  });
+
+  it("复用短时已验证的产物索引，避免重复查询和哈希", async () => {
+    const root = await mkdtemp(join(tmpdir(), "loop-control-preview-cache-"));
+    const content = Buffer.from("cached-video");
+    const sha256 = createHash("sha256").update(content).digest("hex");
+    const relativePath = `episodes/${episodeId}/materials/${sha256}-a-shot-001.mp4`;
+    await mkdir(join(root, "episodes", episodeId, "materials"), { recursive: true });
+    await writeFile(join(root, relativePath), content);
+    let queryCount = 0;
+    const supabaseServer = createServer((request, response) => {
+      response.setHeader("Content-Type", "application/json");
+      const pathname = new URL(request.url ?? "", "http://127.0.0.1").pathname;
+      if (["/rest/v1/artifacts", "/rest/v1/episodes", "/rest/v1/account_blueprint_versions"].includes(pathname)) queryCount += 1;
+      if (pathname === "/rest/v1/artifacts") response.end(JSON.stringify([{ episode_id: episodeId, sha256 }]));
+      else if (pathname === "/rest/v1/production_material_revisions") response.end(JSON.stringify([]));
+      else if (pathname === "/rest/v1/episodes") response.end(JSON.stringify([{ blueprint_version_id: episodeId }]));
+      else if (pathname === "/rest/v1/account_blueprint_versions") response.end(JSON.stringify([{ policy: { asset_root: root } }]));
+      else { response.statusCode = 404; response.end("{}"); }
+    });
+    await new Promise<void>((resolve) => supabaseServer.listen(0, "127.0.0.1", resolve));
+    const supabaseOrigin = `http://127.0.0.1:${(supabaseServer.address() as AddressInfo).port}`;
+    const middleware = serveLocalArtifact(supabaseOrigin, "publishable-key");
+    const previewServer = createServer((request, response) => { void middleware(request, response, () => undefined); });
+    await new Promise<void>((resolve) => previewServer.listen(0, "127.0.0.1", resolve));
+    const previewUrl = `http://127.0.0.1:${(previewServer.address() as AddressInfo).port}/_local-artifact?episode=${episodeId}&path=${encodeURIComponent(relativePath)}&sha256=${sha256}`;
+
+    try {
+      await fetch(previewUrl, { headers: { Authorization: "Bearer owner-token" } });
+      await fetch(previewUrl, { headers: { Authorization: "Bearer owner-token" } });
+
+      expect(queryCount).toBe(3);
     } finally {
       await new Promise<void>((resolve, reject) => previewServer.close((error) => error ? reject(error) : resolve()));
       await new Promise<void>((resolve, reject) => supabaseServer.close((error) => error ? reject(error) : resolve()));
@@ -345,7 +475,7 @@ describe("本地 Episode 目录路由", () => {
   });
 
   it("只在资产根的 episodes 目录下创建，并发创建保持幂等", async () => {
-    const root = await mkdtemp(join(tmpdir(), "tk-workflow-directory-"));
+    const root = await mkdtemp(join(tmpdir(), "loop-control-directory-"));
     try {
       const results = await Promise.all([
         createLocalEpisodeDirectory(root, episodeId),
@@ -360,52 +490,53 @@ describe("本地 Episode 目录路由", () => {
     }
   });
 
-  it("为 Studio 创建可编辑副本，并只冻结可校验的工程入口", async () => {
-    const root = await mkdtemp(join(tmpdir(), "tk-workflow-studio-"));
-    try {
-      const sourceDirectory = join(root, "episodes", episodeId, "review-render", "v1");
-      await mkdir(join(sourceDirectory, "assets"), { recursive: true });
-      await writeFile(join(sourceDirectory, "index.html"), "<main>review v1</main>");
-      await writeFile(join(sourceDirectory, "assets", "theme.css"), "main { color: red; }");
-
-      const workspace = await prepareHyperframesStudioWorkspace(root, episodeId, `episodes/${episodeId}/review-render/v1/index.html`);
-      expect(workspace.relativePath).toMatch(new RegExp(`^episodes/${episodeId}/studio/[0-9a-f-]{36}/index\\.html$`));
-      await writeFile(join(root, workspace.relativePath), "<main>edited in Studio</main>");
-      const frozen = await freezeHyperframesStudioWorkspace(root, episodeId, workspace.relativePath);
-
-      expect(frozen.relativePath).toMatch(new RegExp(`^episodes/${episodeId}/studio-frozen/[0-9a-f-]{36}/index\\.html$`));
-      expect(await readFile(join(root, frozen.relativePath), "utf8")).toBe("<main>edited in Studio</main>");
-      await expect(readFile(join(root, frozen.relativePath, "..", "assets", "theme.css"), "utf8")).rejects.toMatchObject({ code: "ENOENT" });
-      expect(await readFile(join(root, "episodes", episodeId, "review-render", "v1", "index.html"), "utf8")).toBe("<main>review v1</main>");
-    } finally {
-      await rm(root, { force: true, recursive: true });
-    }
+  it("根据当前保存草稿构造 OpenChatCut 工作版本", () => {
+    const input = {
+      allowedFrames: 2,
+      audioTracks: [],
+      drafts: [{ audioMode: "none" as const, clipSegments: [{ endSeconds: 3, startSeconds: 1 }], materialRevisionId: "material-1", shotId: "shot-1", subtitleText: "新字幕", subtitlesEnabled: true, ttsText: null }],
+      frameRate: 24,
+      materials: [{ id: "material-1", relativePath: `episodes/${episodeId}/materials/shot.mp4`, sha256: createHash("sha256").update("video").digest("hex") }],
+      storyboard: { version: "storyboard/v1" as const, audioCues: [], shots: [{ durationSeconds: 2, id: "shot-1", inputBasis: [], productionMethod: "人工", scriptSegment: "分镜文案", shotType: "a_roll" as const, targetSpec: "9:16" }] },
+    };
+    const render = shotWorkbenchReviewRender(episodeId, `episodes/${episodeId}/storyboard.json`, input);
+    expect(render.adjustments).toMatchObject({ frameRate: 24, allowedFrames: 2 });
+    expect(render.members[0]).toMatchObject({ subtitleText: "新字幕", clipSegments: [{ startSeconds: 1, endSeconds: 3 }], durationSeconds: 2 });
   });
 
-  it("使用独立端口的官方 HyperFrames preview 子命令启动 Studio", () => {
-    expect(hyperframesStudioPreviewArguments(`/tmp/episodes/${episodeId}/studio/project`, 3123)).toEqual(["preview", `/tmp/episodes/${episodeId}/studio/project`, "--port=3123", "--background", "--no-open"]);
-  });
-
-  it("拒绝把 Studio 工作区指向资产根外或符号链接", async () => {
-    const root = await mkdtemp(join(tmpdir(), "tk-workflow-studio-"));
-    const outside = await mkdtemp(join(tmpdir(), "tk-workflow-studio-outside-"));
-    try {
-      const sourceDirectory = join(root, "episodes", episodeId, "review-render", "v1");
-      await mkdir(sourceDirectory, { recursive: true });
-      await writeFile(join(sourceDirectory, "index.html"), "<main>review v1</main>");
-      await expect(prepareHyperframesStudioWorkspace(root, episodeId, `episodes/${episodeId}/review-render/v0/index.html`)).rejects.toThrow("HyperFrames 工程路径无效");
-      await symlink(outside, join(sourceDirectory, "unsafe"));
-      await expect(prepareHyperframesStudioWorkspace(root, episodeId, `episodes/${episodeId}/review-render/v1/index.html`)).rejects.toThrow("符号链接");
-    } finally {
-      await Promise.all([rm(root, { force: true, recursive: true }), rm(outside, { force: true, recursive: true })]);
-    }
+  it("为所有音频模式保留片段顺序和轨道起点", () => {
+    const materialPath = `episodes/${episodeId}/materials/shot.mp4`;
+    const audioPath = `episodes/${episodeId}/materials/voice.mp3`;
+    const render = shotWorkbenchReviewRender(episodeId, `episodes/${episodeId}/storyboard.json`, {
+      allowedFrames: 1,
+      audioTracks: [{ cueId: "shot-tts", relativePath: audioPath, sha256: "tts-audio", startSeconds: 2.5, durationSeconds: 3 }],
+      drafts: [
+        { audioMode: "source" as const, clipSegments: [{ endSeconds: 2, startSeconds: 0 }, { endSeconds: 5, startSeconds: 3 }], materialRevisionId: "material-1", shotId: "shot-source", subtitleText: "原声字幕", subtitlesEnabled: true, ttsText: null },
+        { audioMode: "tts" as const, clipSegments: [{ endSeconds: 2, startSeconds: 0 }], materialRevisionId: "material-1", shotId: "shot-tts", subtitleText: "TTS字幕", subtitlesEnabled: true, ttsText: "TTS" },
+        { audioMode: "none" as const, clipSegments: [{ endSeconds: 2, startSeconds: 0 }], materialRevisionId: "material-1", shotId: "shot-none", subtitleText: "无声字幕", subtitlesEnabled: true, ttsText: null },
+      ],
+      frameRate: 24,
+      materials: [{ id: "material-1", relativePath: materialPath, sha256: "video" }],
+      storyboard: { version: "storyboard/v1" as const, audioCues: [], shots: [
+        { durationSeconds: 5, id: "shot-source", inputBasis: [], productionMethod: "人工", scriptSegment: "原声", shotType: "a_roll" as const, targetSpec: "9:16" },
+        { durationSeconds: 2, id: "shot-tts", inputBasis: [], productionMethod: "人工", scriptSegment: "TTS", shotType: "a_roll" as const, targetSpec: "9:16" },
+        { durationSeconds: 2, id: "shot-none", inputBasis: [], productionMethod: "人工", scriptSegment: "无声", shotType: "a_roll" as const, targetSpec: "9:16" },
+      ] },
+    });
+    expect(parseShotWorkbenchClipSegments([{ start_seconds: 1, end_seconds: 2 }])).toEqual([{ startSeconds: 1, endSeconds: 2 }]);
+    expect(render.members.filter((member) => member.memberKind === "shot_media")).toEqual(expect.arrayContaining([
+      expect.objectContaining({ memberKey: "shot:shot-source", clipSegments: [{ startSeconds: 0, endSeconds: 2 }, { startSeconds: 3, endSeconds: 5 }], startSeconds: 0, durationSeconds: 4, audioMode: "source" }),
+      expect.objectContaining({ memberKey: "shot:shot-tts", startSeconds: 4, durationSeconds: 2, audioMode: "tts" }),
+      expect.objectContaining({ memberKey: "shot:shot-none", startSeconds: 6, durationSeconds: 2, audioMode: "none" }),
+    ]));
+    expect(render.members).toContainEqual(expect.objectContaining({ memberKey: "narration:shot-tts", startSeconds: 6.5, durationSeconds: 3 }));
   });
 
   it("拒绝作为资产根的文件系统根目录和 episodes 符号链接", async () => {
     await expect(createLocalEpisodeDirectory("/", episodeId)).rejects.toThrow("资产根不能是文件系统根目录。");
 
-    const root = await mkdtemp(join(tmpdir(), "tk-workflow-directory-"));
-    const outside = await mkdtemp(join(tmpdir(), "tk-workflow-outside-"));
+    const root = await mkdtemp(join(tmpdir(), "loop-control-directory-"));
+    const outside = await mkdtemp(join(tmpdir(), "loop-control-outside-"));
     try {
       await symlink(outside, join(root, "episodes"));
       await expect(createLocalEpisodeDirectory(root, episodeId)).rejects.toThrow("目录不是安全目录。");
@@ -416,7 +547,7 @@ describe("本地 Episode 目录路由", () => {
   });
 
   it("把目录文件固定为内容寻址的生产材料副本", async () => {
-    const root = await mkdtemp(join(tmpdir(), "tk-workflow-material-"));
+    const root = await mkdtemp(join(tmpdir(), "loop-control-material-"));
     try {
       const episodeDirectory = await createLocalEpisodeDirectory(root, episodeId);
       await writeFile(join(episodeDirectory, "input", "script.txt"), "First script");
@@ -441,7 +572,7 @@ describe("本地 Episode 目录路由", () => {
   });
 
   it("拒绝从 Episode 输入目录之外导入文件", async () => {
-    const root = await mkdtemp(join(tmpdir(), "tk-workflow-material-"));
+    const root = await mkdtemp(join(tmpdir(), "loop-control-material-"));
     try {
       await createLocalEpisodeDirectory(root, episodeId);
       await expect(saveProductionMaterialSnapshot(root, episodeId, { sourceKind: "directory", sourcePath: "../secret.txt" })).rejects.toThrow("输入文件路径无效");
@@ -451,8 +582,8 @@ describe("本地 Episode 目录路由", () => {
   });
 
   it("拒绝删除符号链接形式的 Episode 目录", async () => {
-    const root = await mkdtemp(join(tmpdir(), "tk-workflow-delete-"));
-    const outside = await mkdtemp(join(tmpdir(), "tk-workflow-delete-outside-"));
+    const root = await mkdtemp(join(tmpdir(), "loop-control-delete-"));
+    const outside = await mkdtemp(join(tmpdir(), "loop-control-delete-outside-"));
     try {
       await mkdir(join(root, "episodes"), { recursive: true });
       await symlink(outside, join(root, "episodes", episodeId));
@@ -464,7 +595,7 @@ describe("本地 Episode 目录路由", () => {
   });
 
   it("数据库删除失败时可以恢复暂存目录，成功时再永久清理", async () => {
-    const root = await mkdtemp(join(tmpdir(), "tk-workflow-delete-"));
+    const root = await mkdtemp(join(tmpdir(), "loop-control-delete-"));
     try {
       const episodeDirectory = await createLocalEpisodeDirectory(root, episodeId);
       await writeFile(join(episodeDirectory, "render.mp4"), "video");
