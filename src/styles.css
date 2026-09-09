@@ -1082,6 +1082,8 @@ body { background: #f5f7fa; }
 .technical-policy-preview > header span { color: #61738b; font-size: 10px; font-weight: 700; }
 
 .shot-workbench { gap: 14px; }
+.shot-workbench-return { align-items: center; display: flex; justify-content: space-between; }
+.shot-workbench-return h3, .shot-workbench-return p { margin: 0; }
 .shot-workbench-header { align-items: end; display: flex; justify-content: space-between; }
 .shot-workbench-header h3 { margin: 3px 0 0; }
 .shot-workbench-header span { color: #64748b; font-size: 12px; font-weight: 750; }

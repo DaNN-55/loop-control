@@ -627,6 +627,32 @@ describe("审核台", () => {
     expect(screen.getByRole("button", { name: /^shot-2 B-roll/ }).getAttribute("aria-expanded")).toBe("true");
   });
 
+  it("审核阶段可返回可编辑镜头工作台，且保留当前 QC 证据", async () => {
+    const user = userEvent.setup();
+    const qcEpisode: Episode = { ...reviewEpisode, id: "episode-return-workbench", stage: "qc_review", tts_language_code: "zh-CN", tts_speaking_rate: 1.2, tts_voice: "voice-a" };
+    const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", episode_id: qcEpisode.id, id: "artifact-return-storyboard", relative_path: "episodes/episode-return-workbench/storyboard.json" };
+    const qcArtifact: Artifact = { ...videoArtifact, episode_id: qcEpisode.id, id: "artifact-return-qc", relative_path: "episodes/episode-return-workbench/review-render/v2/video.mp4" };
+    const storyboardPackage = { artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-09-09T00:00:00.000Z", episode_id: qcEpisode.id, id: "review-return-storyboard", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-return-storyboard", task_run_id: "run-return-storyboard" };
+    const qcPackage = { ...storyboardPackage, artifact_id: qcArtifact.id, context_snapshot: { pre_render_review_package_id: "review-return-snapshot", project_relative_path: "episodes/episode-return-workbench/openchatcut-frozen/revision-2/project.json", project_revision: "revision-2", review_kind: "openchatcut_review_render", technical_evidence: { checks: [{ detail: "视频可解码", name: "decode" }] } }, id: "review-return-qc", revision_number: 2, stage: "qc_review" as const, task_id: "task-return-qc", task_run_id: "run-return-qc" };
+    const draft = { audio_mode: "none", audio_status: "ready", clip_segments: [{ end_seconds: 3, start_seconds: 0 }], confirmation_status: "confirmed", created_at: "2026-09-09T00:00:00.000Z", episode_id: qcEpisode.id, frozen_at: "2026-09-09T00:01:00.000Z", id: "draft-return-shot", input_fingerprint: "fingerprint", review_package_id: storyboardPackage.id, selected_material_revision_id: "material-return", shot_id: "shot-1", subtitle_text: "可继续修改的字幕", subtitles_enabled: true, updated_at: "2026-09-09T00:01:00.000Z", video_duration_seconds: 3, video_status: "ready" } as unknown as ShotPreparationDraft;
+    const material = { created_at: "2026-09-09T00:00:00.000Z", created_by: "owner-1", episode_id: qcEpisode.id, file_size: 2048, id: "material-return", is_main_script: false, material_purpose: "a_roll", material_type: "video", mime_type: "video/mp4", revision_number: 1, sha256: "b".repeat(64), source_kind: "file", source_path: "presenter.mp4", storage_path: "episodes/episode-return-workbench/materials/presenter.mp4" } as MaterialRevision;
+    vi.stubGlobal("fetch", vi.fn().mockImplementation((input: string | URL | Request) => {
+      const url = String(input);
+      if (url.includes("_local-artifact-ticket")) return Promise.resolve(Response.json({ url: "/_local-artifact?ticket=return-qc" }));
+      return Promise.resolve(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜口播", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } }));
+    }));
+
+    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact, qcArtifact]} blueprint={blueprint} episode={qcEpisode} isTransitionPending={false} materialRevisions={[material]} onTransition={vi.fn()} reviewPackages={[storyboardPackage, qcPackage]} shotPreparationDrafts={[draft]} tasks={[]} transitions={[]} />);
+
+    expect(screen.getByRole("heading", { name: /OpenChatCut 审核渲染/ })).toBeTruthy();
+    expect(screen.queryByRole("region", { name: "分镜工作台" })).toBeNull();
+    await user.click(screen.getByRole("button", { name: "返回镜头工作台修改" }));
+    await screen.findByRole("region", { name: "分镜工作台" });
+    expect((screen.getByLabelText("shot-1 字幕正文") as HTMLTextAreaElement).disabled).toBe(false);
+    expect(screen.getByRole("heading", { name: /OpenChatCut 审核渲染/ })).toBeTruthy();
+    expect((screen.getByRole("treeitem", { name: /调整镜头/ }) as HTMLButtonElement).disabled).toBe(true);
+  });
+
   it("结构修订留在工作台后台应用，并在应用期间阻止重复提交", async () => {
     const user = userEvent.setup();
     const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-shot-structure-ui", stage: "storyboard_approved" };

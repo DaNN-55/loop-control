@@ -8,8 +8,8 @@ describe("审核修订", () => {
   it("按动作分流，并返回明确结果", async () => {
     vi.mocked(supabase.rpc).mockResolvedValue({ error: null } as never);
 
-    await expect(requestReviewRevision({ kind: "composition", reviewPackageId: "review-1", reason: "调整字幕", studioProject: { relativePath: "episodes/episode-1/studio-frozen/123/index.html", sha256: "a".repeat(64), fileSize: 1, composition: defaultReviewRenderComposition } })).resolves.toMatchObject({ kind: "composition" });
-    expect(supabase.rpc).toHaveBeenCalledWith("request_review_render_revision", expect.objectContaining({ p_reason: "调整字幕", p_review_package_id: "review-1", p_composition: expect.objectContaining({ studio_project: expect.objectContaining({ relative_path: "episodes/episode-1/studio-frozen/123/index.html", sha256: "a".repeat(64), file_size: 1, composition: expect.objectContaining({ transition: "fade" }) }) }) }));
+    await expect(requestReviewRevision({ kind: "composition", reviewPackageId: "review-1", reason: "调整字幕", studioProject: { relativePath: "episodes/episode-1/openchatcut-frozen/123/project.json", sha256: "a".repeat(64), fileSize: 1, composition: defaultReviewRenderComposition } })).resolves.toMatchObject({ kind: "composition" });
+    expect(supabase.rpc).toHaveBeenCalledWith("request_review_render_revision", expect.objectContaining({ p_reason: "调整字幕", p_review_package_id: "review-1", p_composition: expect.objectContaining({ studio_project: expect.objectContaining({ relative_path: "episodes/episode-1/openchatcut-frozen/123/project.json", sha256: "a".repeat(64), file_size: 1, composition: expect.objectContaining({ transition: "fade" }) }) }) }));
 
     await expect(requestReviewRevision({ kind: "storyboard", reviewPackageId: "review-2", reason: "删除镜头" })).resolves.toMatchObject({ kind: "storyboard" });
     expect(supabase.rpc).toHaveBeenLastCalledWith("request_studio_storyboard_revision", { p_reason: "删除镜头", p_review_package_id: "review-2" });
@@ -24,7 +24,7 @@ describe("审核修订", () => {
   it("冻结 Studio 工程后才提交合成修订", async () => {
     vi.mocked(supabase.rpc).mockResolvedValue({ error: null } as never);
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue({
-      json: async () => ({ frozenProject: { fileSize: 1, relativePath: "episodes/episode-1/studio-frozen/123e4567-e89b-12d3-a456-426614174000/index.html", sha256: "a".repeat(64), composition: { aspect_ratio: "9:16", width: 1080, height: 1920, captions_enabled: true, caption_style: "cinematic", pacing: "standard", crop: "cover", transition: "cut", layout: "lower_third", narration_gain_db: 0, bgm_gain_db: -12, sfx_gain_db: -6, frame_rate: 30, allowed_frames: 2 } } }),
+      json: async () => ({ frozenProject: { fileSize: 1, relativePath: "episodes/episode-1/openchatcut-frozen/123e4567-e89b-12d3-a456-426614174000/project.json", sha256: "a".repeat(64), composition: { aspect_ratio: "9:16", width: 1080, height: 1920, captions_enabled: true, caption_style: "cinematic", pacing: "standard", crop: "cover", transition: "cut", layout: "lower_third", narration_gain_db: 0, bgm_gain_db: -12, sfx_gain_db: -6, frame_rate: 30, allowed_frames: 2 } } }),
       ok: true,
     }));
 
@@ -32,7 +32,7 @@ describe("审核修订", () => {
 
     expect(fetch).toHaveBeenCalledWith("/_freeze-openchatcut-studio?episode=episode-1", expect.objectContaining({ headers: expect.objectContaining({ Authorization: "Bearer owner-token" }), method: "POST" }));
     expect(JSON.parse(vi.mocked(fetch).mock.calls[0]?.[1]?.body as string)).toEqual({ sourceProjectRelativePath: "episodes/episode-1/review-render/v1/index.html", workspaceRelativePath: "episodes/episode-1/studio/123/index.html" });
-    expect(supabase.rpc).toHaveBeenCalledWith("request_review_render_revision", expect.objectContaining({ p_composition: expect.objectContaining({ transition: "cut", studio_project: expect.objectContaining({ composition: expect.objectContaining({ transition: "cut" }), relative_path: expect.stringContaining("/studio-frozen/") }) }) }));
+    expect(supabase.rpc).toHaveBeenCalledWith("request_review_render_revision", expect.objectContaining({ p_composition: expect.objectContaining({ transition: "cut", studio_project: expect.objectContaining({ composition: expect.objectContaining({ transition: "cut" }), relative_path: expect.stringContaining("/openchatcut-frozen/") }) }) }));
     vi.unstubAllGlobals();
   });
 

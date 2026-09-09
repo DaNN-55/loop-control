@@ -248,6 +248,12 @@ const editableShotWorkbenchMigration = resolve(
 const shotReviewVideoMigration = resolve(
   "supabase/migrations/20260905120000_generate_shot_review_video.sql",
 );
+const openChatCutFrozenPathMigration = resolve(
+  "supabase/migrations/20260909044114_align_openchatcut_frozen_project_path.sql",
+);
+const editableSubmittedWorkbenchMigration = resolve(
+  "supabase/migrations/20260909044856_keep_shot_workbench_editable_after_review_submission.sql",
+);
 const shotReviewVideoActionMigration = resolve(
   "supabase/migrations/20260907180000_enable_shot_review_video_action.sql",
 );
@@ -335,7 +341,7 @@ function replayShotGeneration(state: ShotGenerationReplayState, input: { acceptD
   if (!input.studioProject.relative_path || !input.studioProject.sha256 || Number(input.studioProject.file_size) < 1) throw new Error("Invalid frozen Studio project");
   if ((input.riskCount > 0) !== input.acceptDurationRisk || (input.acceptDurationRisk && !input.riskReason.trim()) || (input.riskCount === 0 && input.acceptDurationRisk)) throw new Error("Invalid duration risk decision");
   return {
-    drafts: state.drafts.map((draft) => ({ ...draft, frozen: true })),
+    drafts: state.drafts.map((draft) => ({ ...draft })),
     packages: [...state.packages, { id: `package-${state.packages.length + 1}`, studioProject: structuredClone(input.studioProject) }],
     tasks: [...state.tasks, { id: `task-${state.tasks.length + 1}`, studioProject: structuredClone(input.studioProject) }],
     revisions: [...state.revisions, { revision: state.revisions.length + 1, studioProject: structuredClone(input.studioProject) }],
@@ -1566,6 +1572,32 @@ describe("B-roll 连接固化迁移", () => {
     expect(editableWorkbench).not.toContain("freeze_shot_preparation_batch");
   });
 
+  it("审核视频和修订同时接受 OpenChatCut JSON 与历史 Studio HTML 冻结工程", () => {
+    const migration = readFileSync(openChatCutFrozenPathMigration, "utf8");
+
+    expect(migration).toContain("pg_get_functiondef('public.generate_shot_review_video(uuid, uuid, jsonb, boolean, text)'::regprocedure)");
+    expect(migration).toContain("pg_get_functiondef('public.request_review_render_revision(uuid, jsonb, text)'::regprocedure)");
+    expect(migration).toContain("studio-frozen/[0-9a-f-]{36}/index[.]html|openchatcut-frozen/[0-9a-f-]{36}/project[.]json");
+    expect(migration).toContain("/openchatcut-frozen/([^/]+)/project[.]json$");
+    expect(migration).toContain("OpenChatCut path patch has unknown or partial state");
+    expect(migration).toContain("OpenChatCut path patch produced an invalid state");
+  });
+
+  it("审核提交后保留可编辑草稿，并从当前保存输入创建下一版冻结快照", () => {
+    const migration = readFileSync(editableSubmittedWorkbenchMigration, "utf8");
+
+    expect(migration).toContain("current_episode.stage not in (''storyboard_approved'', ''render_ready'', ''qc_review'')");
+    expect(migration).toContain("episode.stage in (''storyboard_approved'', ''render_ready'', ''qc_review'')");
+    expect(migration).toContain("current_stage not in (''storyboard_approved'', ''render_ready'', ''qc_review'')");
+    expect(migration).toContain("task.status in (''ready'', ''running'')");
+    expect(migration).toContain("A review render is already queued or running for this Episode");
+    expect(migration).toContain("values (p_episode_id, current_episode.stage, ''production_ready''");
+    expect(migration).toContain("old_draft_update");
+    expect(migration).toContain("replace(patched, old_draft_update, '')");
+    expect(migration).toContain("current shot snapshot editable-draft patch");
+    expect(migration).not.toContain("update public.shot_preparation_drafts set frozen_at = now()");
+  });
+
   it("生成审核视频复用已就绪口播，不再重复要求逐镜确认", () => {
     const migration = readFileSync(shotReviewVideoActionMigration, "utf8");
     expect(migration).toContain("pg_get_functiondef('public.generate_shot_review_video(uuid, uuid, jsonb, boolean, text)'::regprocedure)");
@@ -1605,7 +1637,7 @@ describe("B-roll 连接固化迁移", () => {
 
     const first = replayShotGeneration(initial, { acceptDurationRisk: false, isOwner: true, riskCount: 0, riskReason: "", studioProject: studioV1 });
     const second = replayShotGeneration(first, { acceptDurationRisk: true, isOwner: true, riskCount: 1, riskReason: "保留表演停顿", studioProject: studioV2 });
-    expect(second.drafts[0]).toMatchObject({ frozen: true, sourceMaterialRevisionId: "material-1", clipSegments: [{ startSeconds: 1, endSeconds: 3 }] });
+    expect(second.drafts[0]).toMatchObject({ frozen: false, sourceMaterialRevisionId: "material-1", clipSegments: [{ startSeconds: 1, endSeconds: 3 }] });
     expect(second.revisions).toEqual([{ revision: 1, studioProject: studioV1 }, { revision: 2, studioProject: studioV2 }]);
     expect(second.packages[0].studioProject).toEqual(studioV1);
     expect(second.tasks[1].studioProject).toEqual(studioV2);
