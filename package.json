@@ -8,6 +8,7 @@
     "dev:local": "vite --port 5173 --strictPort",
     "start:local": "node scripts/start-local.mjs",
     "start:all": "./scripts/start-all.sh",
+    "stop": "./scripts/stop-all.sh",
     "stop:all": "./scripts/stop-all.sh",
     "build": "tsc -b && vite build",
     "check": "tsc -b --pretty false",

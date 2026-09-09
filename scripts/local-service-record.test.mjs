@@ -1,4 +1,4 @@
-import { existsSync, mkdtempSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { spawn } from "node:child_process";
@@ -15,6 +15,12 @@ afterEach(async () => {
 });
 
 describe("本地服务安全停止", () => {
+  it("npm stop 与兼容别名都进入安全停止脚本", () => {
+    const { scripts } = JSON.parse(readFileSync(join(projectRoot, "package.json"), "utf8"));
+    expect(scripts.stop).toBe("./scripts/stop-all.sh");
+    expect(scripts["stop:all"]).toBe(scripts.stop);
+  });
+
   it("未知进程即使占用记录端口也不会被关闭", async () => {
     const directory = mkdtempSync(join(tmpdir(), "loop-control-foreign-"));
     const recordPath = join(directory, "services.json");
