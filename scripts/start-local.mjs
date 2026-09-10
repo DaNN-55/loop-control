@@ -19,7 +19,7 @@ const startupRuntime = "运行时：Loop Control、OpenChatCut、n8n 统一使�
 
 export function startupEnvironment(source) {
   return Object.fromEntries(source.split(/\r?\n/).flatMap((line) => {
-    const match = /^(MEDIA_LIBRARY_MOUNT_PATH|N8N_PORT|OPENCHATCUT_ROOT|OPENCHATCUT_NODE)=(.*)$/.exec(line.trim());
+    const match = /^(MEDIA_LIBRARY_MOUNT_PATH|N8N_PORT|N8N_RUNNERS_BROKER_PORT|OPENCHATCUT_ROOT|OPENCHATCUT_NODE)=(.*)$/.exec(line.trim());
     return match ? [[match[1], match[2].trim().replace(/^(['"])(.*)\1$/, "$2")]] : [];
   }));
 }
@@ -46,6 +46,54 @@ export async function resolveLocalServicePort({ preferredPort, projectHealthy, p
     candidate = Number(port) + 1;
   }
   throw new Error("未找到可用本机端口。");
+}
+
+export async function resolveStartupPorts({ requestedConsolePort, requestedN8nPort, taskBrokerPort, consoleProjectHealthy, n8nProjectHealthy, portAvailable = canListen, findAvailablePort = findOpenPort }) {
+  const consolePort = await resolveLocalServicePort({
+    preferredPort: requestedConsolePort,
+    projectHealthy: consoleProjectHealthy,
+    portAvailable,
+    findAvailablePort,
+    excludedPorts: [taskBrokerPort],
+  });
+  const n8nPort = await resolveLocalServicePort({
+    preferredPort: requestedN8nPort,
+    projectHealthy: n8nProjectHealthy,
+    portAvailable,
+    findAvailablePort,
+    excludedPorts: [consolePort.port, taskBrokerPort],
+  });
+  return { consolePort, n8nPort };
+}
+
+function childIsRunning(child) {
+  return child.exitCode === null && child.signalCode === null;
+}
+
+function waitForChildExit(child, timeoutMs) {
+  if (!childIsRunning(child)) return Promise.resolve(true);
+  return new Promise((resolve) => {
+    let timer;
+    const finish = (exited) => {
+      child.off("exit", onExit);
+      if (timer) clearTimeout(timer);
+      resolve(exited);
+    };
+    const onExit = () => finish(true);
+    child.once("exit", onExit);
+    if (!childIsRunning(child)) return finish(true);
+    timer = setTimeout(() => finish(false), timeoutMs);
+  });
+}
+
+export async function shutdownOwnedServices(services, { gracePeriodMs = 2_000, removeRecord = removeServiceRecordIfOwned } = {}) {
+  const children = services.map(({ child }) => child);
+  for (const child of children) if (childIsRunning(child)) child.kill("SIGTERM");
+  await Promise.all(children.map((child) => waitForChildExit(child, gracePeriodMs)));
+  for (const child of children) if (childIsRunning(child)) child.kill("SIGKILL");
+  const stopped = await Promise.all(children.map((child) => waitForChildExit(child, gracePeriodMs)));
+  if (stopped.some((exited) => !exited)) throw new Error("本次启动的本机服务未能停止，已保留服务记录以便再次执行 npm stop。");
+  removeRecord(children.map(({ pid }) => pid));
 }
 
 export async function recordedProjectServiceHealthy({ name, port, commandIdentity, healthCheck, findRecordedService = verifiedRecordedService }) {
@@ -82,16 +130,15 @@ async function main() {
 
   const requestedConsolePort = process.env.VITE_PORT || "5173";
   const requestedN8nPort = process.env.N8N_PORT || "5678";
+  const taskBrokerPort = process.env.N8N_RUNNERS_BROKER_PORT || "5679";
   const consoleIdentity = join("node_modules", "vite", "bin", "vite.js");
   const n8nIdentity = "n8n/bin/n8n";
-  const consolePort = await resolveLocalServicePort({
-    preferredPort: requestedConsolePort,
-    projectHealthy: (port) => recordedProjectServiceHealthy({ name: "控制台", port, commandIdentity: consoleIdentity, healthCheck: (candidate) => responseContains(consoleHealthUrl(candidate), consoleHealthMarker) }),
-  });
-  const n8nPort = await resolveLocalServicePort({
-    preferredPort: requestedN8nPort,
-    projectHealthy: (port) => recordedProjectServiceHealthy({ name: "n8n", port, commandIdentity: n8nIdentity, healthCheck: (candidate) => n8nHealthy(n8nHealthUrl(candidate)) }),
-    excludedPorts: [consolePort.port],
+  const { consolePort, n8nPort } = await resolveStartupPorts({
+    requestedConsolePort,
+    requestedN8nPort,
+    taskBrokerPort,
+    consoleProjectHealthy: (port) => recordedProjectServiceHealthy({ name: "控制台", port, commandIdentity: consoleIdentity, healthCheck: (candidate) => responseContains(consoleHealthUrl(candidate), consoleHealthMarker) }),
+    n8nProjectHealthy: (port) => recordedProjectServiceHealthy({ name: "n8n", port, commandIdentity: n8nIdentity, healthCheck: (candidate) => n8nHealthy(n8nHealthUrl(candidate)) }),
   });
   const consoleUrl = consoleUrlForPort(consolePort.port);
   const n8nUrl = n8nUrlForPort(n8nPort.port);
@@ -99,6 +146,14 @@ async function main() {
   assertActiveWorkflows();
 
   const children = [];
+  let requestStop;
+  let stopRequested = false;
+  const stopSignal = new Promise((resolve) => {
+    requestStop = () => {
+      stopRequested = true;
+      resolve();
+    };
+  });
   try {
     const n8n = n8nPort.reused ? null : startService(join(projectRoot, "n8n", "start-local.sh"), [], "n8n", { env: { ...process.env, N8N_PORT: n8nPort.port }, port: n8nPort.port, commandIdentity: n8nIdentity });
     const consoleService = consolePort.reused ? null : startService(process.execPath, [join(projectRoot, "node_modules", "vite", "bin", "vite.js"), "--host", "127.0.0.1", "--port", new URL(consoleUrl).port, "--strictPort"], "控制台", { port: consolePort.port, commandIdentity: consoleIdentity });
@@ -111,18 +166,22 @@ async function main() {
       ].filter(Boolean);
       writeServiceRecord([...reusedServices, ...children.map(({ child, commandIdentity, name, port }) => ({ name, pid: child.pid, port, commandIdentity }))]);
     }
-    await Promise.all([waitForHttp(consoleHealthUrl(consolePort.port), "控制台", consoleService, (url) => responseContains(url, consoleHealthMarker)), waitForHttp(n8nHealthUrl(n8nPort.port), "n8n", n8n, n8nHealthy)]);
+    process.once("SIGINT", requestStop);
+    process.once("SIGTERM", requestStop);
+    await Promise.race([
+      Promise.all([waitForHttp(consoleHealthUrl(consolePort.port), "控制台", consoleService, (url) => responseContains(url, consoleHealthMarker)), waitForHttp(n8nHealthUrl(n8nPort.port), "n8n", n8n, n8nHealthy)]),
+      stopSignal,
+    ]);
+    if (stopRequested) return;
 
     const mediaLibraryPath = process.env.MEDIA_LIBRARY_MOUNT_PATH?.trim() || "";
     console.log("\n" + localStartupReport({ consoleUrl, mediaLibraryMounted: mediaLibraryAvailable(mediaLibraryPath), mediaLibraryPath, n8nUrl, openChatCutAvailable }).join("\n") + "\n");
     spawn("open", [consoleUrl], { detached: true, stdio: "ignore" }).unref();
-    const stop = () => children.forEach(({ child }) => child.kill("SIGTERM"));
-    process.once("SIGINT", stop);
-    process.once("SIGTERM", stop);
-    if (children.length) await Promise.race(children.map(({ child }) => new Promise((resolve) => child.once("exit", resolve))));
+    if (children.length) await Promise.race([stopSignal, ...children.map(({ child }) => new Promise((resolve) => child.once("exit", resolve)))]);
   } finally {
-    children.forEach(({ child }) => child.kill("SIGTERM"));
-    removeServiceRecordIfOwned(children.map(({ child }) => child.pid));
+    process.off("SIGINT", requestStop);
+    process.off("SIGTERM", requestStop);
+    await shutdownOwnedServices(children);
   }
 }
 

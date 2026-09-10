@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
-import { assertOpenChatCutAvailable, assertPublicEnvironment, assertSupabaseConnection, consoleHealthUrl, localStartupReport, missingRequiredWorkflowIds, n8nHealthUrl, n8nHealthy, recordedProjectServiceHealthy, resolveLocalServicePort, startupEnvironment } from "./start-local.mjs";
+import { assertOpenChatCutAvailable, assertPublicEnvironment, assertSupabaseConnection, consoleHealthUrl, localStartupReport, missingRequiredWorkflowIds, n8nHealthUrl, n8nHealthy, recordedProjectServiceHealthy, resolveLocalServicePort, resolveStartupPorts, startupEnvironment } from "./start-local.mjs";
 
 describe("本地启动", () => {
   it("只读取非秘密运行变量，并拒绝把 Worker 密钥放进前端环境", () => {
-    expect(startupEnvironment("MEDIA_LIBRARY_MOUNT_PATH='/Volumes/Media'\nN8N_PORT=5678\nOPENCHATCUT_ROOT='/opt/OpenChatCut'\nOPENCHATCUT_NODE='/opt/node24'\nSUPABASE_SERVICE_ROLE_KEY=secret")).toEqual({ MEDIA_LIBRARY_MOUNT_PATH: "/Volumes/Media", N8N_PORT: "5678", OPENCHATCUT_ROOT: "/opt/OpenChatCut", OPENCHATCUT_NODE: "/opt/node24" });
+    expect(startupEnvironment("MEDIA_LIBRARY_MOUNT_PATH='/Volumes/Media'\nN8N_PORT=5678\nN8N_RUNNERS_BROKER_PORT=5679\nOPENCHATCUT_ROOT='/opt/OpenChatCut'\nOPENCHATCUT_NODE='/opt/node24'\nSUPABASE_SERVICE_ROLE_KEY=secret")).toEqual({ MEDIA_LIBRARY_MOUNT_PATH: "/Volumes/Media", N8N_PORT: "5678", N8N_RUNNERS_BROKER_PORT: "5679", OPENCHATCUT_ROOT: "/opt/OpenChatCut", OPENCHATCUT_NODE: "/opt/node24" });
     expect(() => assertPublicEnvironment("VITE_SUPABASE_URL=https://example.supabase.co\nVITE_SUPABASE_PUBLISHABLE_KEY=public\nSUPABASE_SERVICE_ROLE_KEY=secret")).toThrow("Worker 密钥");
     expect(() => assertPublicEnvironment("VITE_SUPABASE_URL=https://example.supabase.co\nVITE_SUPABASE_PUBLISHABLE_KEY=public\nVITE_SUPABASE_SERVICE_ROLE_KEY=secret")).toThrow("Worker 密钥");
   });
@@ -44,6 +44,24 @@ describe("本地启动", () => {
     await expect(resolveLocalServicePort({ preferredPort: "5173", projectHealthy: vi.fn(), portAvailable: vi.fn(), findAvailablePort, excludedPorts: ["5173", "5174"] })).resolves.toEqual({ port: "5175", reused: false });
     expect(findAvailablePort).toHaveBeenNthCalledWith(1, 5174);
     expect(findAvailablePort).toHaveBeenNthCalledWith(2, 5175);
+  });
+
+  it("控制台和 n8n 的备用端口都避开 n8n Task Broker 端口", async () => {
+    const findAvailablePort = vi.fn(async (port) => port);
+    await expect(resolveStartupPorts({
+      requestedConsolePort: "5173",
+      requestedN8nPort: "5678",
+      taskBrokerPort: "5679",
+      consoleProjectHealthy: vi.fn().mockResolvedValue(false),
+      n8nProjectHealthy: vi.fn().mockResolvedValue(false),
+      portAvailable: vi.fn().mockResolvedValue(false),
+      findAvailablePort,
+    })).resolves.toEqual({
+      consolePort: { port: "5174", reused: false },
+      n8nPort: { port: "5680", reused: false },
+    });
+    expect(findAvailablePort).toHaveBeenCalledWith(5679);
+    expect(findAvailablePort).toHaveBeenCalledWith(5680);
   });
 
   it("只把运行实例中启用的四条必需工作流当作启动前提", () => {

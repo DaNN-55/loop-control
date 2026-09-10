@@ -4,7 +4,7 @@ import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-import { assertOpenChatCutAvailable, consoleUrlForPort, localStartupReport, n8nUrlForPort, resolveLocalServicePort } from "./start-local.mjs";
+import { assertOpenChatCutAvailable, consoleUrlForPort, localStartupReport, n8nUrlForPort, resolveLocalServicePort, shutdownOwnedServices } from "./start-local.mjs";
 import { stopRecordedServices, writeServiceRecord } from "./local-service-record.mjs";
 
 const fixtures = [];
@@ -62,6 +62,19 @@ describe("STARTUP-03D 生命周期验收", () => {
     expect(result.stopped).toEqual([]);
     expect(result.skipped).toHaveLength(1);
     expect(existsSync(recordPath)).toBe(false);
+  });
+
+  it("子进程确认退出后才删除本次启动记录", async () => {
+    const child = spawn(process.execPath, ["-e", "process.on('SIGTERM', () => setTimeout(() => process.exit(0), 50)); process.stdout.write('ready\\n'); setInterval(() => {}, 1000);"], { cwd: process.cwd(), stdio: ["ignore", "pipe", "ignore"] });
+    children.push(child);
+    await new Promise((resolve) => child.stdout.once("data", resolve));
+    let runningWhenRecordRemoved = true;
+    await shutdownOwnedServices([{ child }], {
+      gracePeriodMs: 500,
+      removeRecord: () => { runningWhenRecordRemoved = child.exitCode === null && child.signalCode === null; },
+    });
+    expect(runningWhenRecordRemoved).toBe(false);
+    expect(child.exitCode).toBe(0);
   });
 
   it("媒体库未挂载仍报告启动成功，并输出实际控制台与 n8n 地址", () => {

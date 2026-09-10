@@ -23,7 +23,7 @@ vi.mock("./worker/runtimePreflight", () => ({
 }));
 vi.mock("./worker/runtimeProbes", () => ({ probeCodexModel: vi.fn(), probeProviderConnection: vi.fn() }));
 
-import { runtimePreflightForPolicy, serveEpisodePreflight } from "../vite.config";
+import { assertWorkerDispatchEnvironment, beginEpisodeDispatch, beginTaskDispatch, runtimePreflightForPolicy, serveEpisodeDispatch, serveEpisodePreflight, taskDispatchInvocation } from "../vite.config";
 
 const accountId = "11111111-1111-4111-8111-111111111111";
 const episodeId = "22222222-2222-4222-8222-222222222222";
@@ -34,6 +34,7 @@ const proposedPolicy = { asset_root: "/Volumes/repair", executors: { script_writ
 function queryResult(data: unknown) {
   const query = {
     eq: vi.fn(() => query),
+    in: vi.fn(() => query),
     maybeSingle: vi.fn().mockResolvedValue({ data, error: null }),
     select: vi.fn(() => query),
   };
@@ -120,5 +121,91 @@ describe("Episode 修复 preflight 路由", () => {
     } finally {
       await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
     }
+  });
+});
+
+describe("开始制作后的即时派发", () => {
+  it("立即启动指定生产单，并在同一次派发未结束时去重", async () => {
+    let finish: (() => void) | undefined;
+    const run = vi.fn(() => new Promise<void>((resolve) => { finish = resolve; }));
+
+    expect(beginEpisodeDispatch(episodeId, run)).toBe("started");
+    expect(beginEpisodeDispatch(episodeId, run)).toBe("already_running");
+    expect(run).toHaveBeenCalledWith(episodeId);
+    finish?.();
+    await Promise.resolve();
+    await Promise.resolve();
+  });
+
+  it("允许 Owner 为已创建的单镜任务立即唤醒当前生产单 Worker", async () => {
+    mockSupabaseClient();
+    const taskId = "55555555-5555-4555-8555-555555555555";
+    const dispatch = vi.fn(() => "started" as const);
+    const client = mockSupabaseClient();
+    client.from.mockImplementation((table: string) => queryResult(table === "tasks" ? { id: taskId } : table === "episodes" ? { account_id: accountId } : table === "account_memberships" ? { role: "owner" } : null));
+    const server = createServer(serveEpisodeDispatch("https://supabase.test", "publishable", dispatch));
+    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+    const address = server.address();
+    if (!address || typeof address === "string") throw new Error("测试服务器未监听端口。");
+
+    try {
+      const response = await fetch(`http://127.0.0.1:${address.port}/_episode-dispatch?episode=${episodeId}&task=${taskId}`, {
+        headers: { Authorization: "Bearer owner-token" },
+        method: "POST",
+      });
+
+      expect(response.status).toBe(202);
+      expect(await response.json()).toEqual({ status: "started" });
+      expect(dispatch).toHaveBeenCalledWith(taskId);
+    } finally {
+      await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+    }
+  });
+
+  it("Worker 启动校验失败时不返回 202 假启动", async () => {
+    const taskId = "55555555-5555-4555-8555-555555555555";
+    const client = mockSupabaseClient();
+    client.from.mockImplementation((table: string) => queryResult(table === "tasks" ? { id: taskId } : table === "episodes" ? { account_id: accountId } : table === "account_memberships" ? { role: "owner" } : null));
+    const dispatch = vi.fn(() => { throw new Error("Worker 即时派发配置不完整：SUPABASE_URL"); });
+    const server = createServer(serveEpisodeDispatch("https://supabase.test", "publishable", dispatch));
+    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+    const address = server.address();
+    if (!address || typeof address === "string") throw new Error("测试服务器未监听端口。");
+
+    try {
+      const response = await fetch(`http://127.0.0.1:${address.port}/_episode-dispatch?episode=${episodeId}&task=${taskId}`, {
+        headers: { Authorization: "Bearer owner-token" },
+        method: "POST",
+      });
+
+      expect(response.status).toBe(500);
+      expect(await response.text()).toBe("Worker 即时派发配置不完整：SUPABASE_URL");
+    } finally {
+      await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+    }
+  });
+
+  it("单任务即时派发只执行指定 Task，并在同一任务未结束时去重", async () => {
+    let finish: (() => void) | undefined;
+    const taskId = "55555555-5555-4555-8555-555555555555";
+    const run = vi.fn(() => new Promise<void>((resolve) => { finish = resolve; }));
+    expect(beginTaskDispatch(taskId, run)).toBe("started");
+    expect(beginTaskDispatch(taskId, run)).toBe("already_running");
+    expect(run).toHaveBeenCalledWith(taskId);
+    finish?.();
+    await Promise.resolve();
+    await Promise.resolve();
+  });
+
+  it("单任务即时派发复用会加载 worker.env.local 的统一入口", () => {
+    expect(taskDispatchInvocation("/project", "55555555-5555-4555-8555-555555555555")).toEqual({
+      argumentsList: ["--task-id", "55555555-5555-4555-8555-555555555555"],
+      command: "/project/n8n/run-worker.sh",
+    });
+  });
+
+  it("即时派发在缺少必需 Worker 配置时同步失败而不是返回假启动", () => {
+    expect(() => assertWorkerDispatchEnvironment("SUPABASE_URL=https://example.test\nSUPABASE_SERVICE_ROLE_KEY=\n"))
+      .toThrow("Worker 即时派发配置不完整：SUPABASE_SERVICE_ROLE_KEY、CODEX_WORKER_ACTUAL_COST_CENTS、MEDIA_LIBRARY_MOUNT_PATH、MEDIA_LIBRARY_MIN_FREE_BYTES");
   });
 });

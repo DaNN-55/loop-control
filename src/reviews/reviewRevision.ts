@@ -1,4 +1,4 @@
-import type { Json } from "../lib/database.types";
+import type { Database, Json } from "../lib/database.types";
 import { supabase } from "../lib/supabase";
 import type { StoryboardStructureOperation } from "../worker/storyboardRevision";
 import { defaultAllowedDurationFrames, defaultDurationFrameRate } from "../worker/durationDecision";
@@ -73,14 +73,15 @@ export async function requestReviewRevision(input: ReviewRevisionRequest): Promi
   return { kind: "composition", message: "合成调整已冻结；会复用已批准媒体和音轨生成新的审核渲染。" };
 }
 
-export async function requestShotStructureRevision(input: ShotStructureRevisionRequest): Promise<void> {
-  const { error } = await supabase.rpc("request_shot_structure_revision", {
+export async function requestShotStructureRevision(input: ShotStructureRevisionRequest): Promise<Database["public"]["Tables"]["tasks"]["Row"]> {
+  const { data, error } = await supabase.rpc("request_shot_structure_revision", {
     p_episode_id: input.episodeId,
     p_operation: input.operation as unknown as Json,
     p_reason: input.reason,
     p_review_package_id: input.reviewPackageId,
   });
   if (error) throw error;
+  return data;
 }
 
 export async function submitStudioReviewRevision(input: StudioReviewRevisionRequest): Promise<ReviewRevisionOutcome> {

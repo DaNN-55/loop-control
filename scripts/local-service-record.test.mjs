@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { spawn } from "node:child_process";
 import { createConnection, createServer } from "node:net";
 import { afterEach, describe, expect, it } from "vitest";
-import { projectRoot, readServiceRecord, removeServiceRecordIfOwned, stopRecordedServices, verifiedRecordedService, writeServiceRecord } from "./local-service-record.mjs";
+import { discoverProjectServices, projectRoot, readServiceRecord, removeServiceRecordIfOwned, stopRecordedServices, verifiedRecordedService, writeServiceRecord } from "./local-service-record.mjs";
 
 const children = [];
 afterEach(async () => {
@@ -64,6 +64,37 @@ describe("本地服务安全停止", () => {
     expect(processIsAlive(child.pid)).toBe(false);
     expect(existsSync(recordPath)).toBe(false);
     rmSync(directory, { recursive: true, force: true });
+  });
+
+  it("服务记录丢失后仍发现并关闭本项目的孤儿进程", async () => {
+    const directory = mkdtempSync(join(tmpdir(), "loop-control-orphan-"));
+    const recordPath = join(directory, "missing-services.json");
+    const identity = "loop-control-orphan-fixture";
+    const { child, port } = await startListeningProcess(projectRoot, identity);
+    const discover = () => discoverProjectServices({
+      definitions: [{ commandIdentity: identity, name: "n8n" }],
+      listeningPortsForPid: () => [port],
+      processes: [{ command: `${process.execPath} fixture ${identity}`, pid: child.pid }],
+      workingDirectoryForPid: () => projectRoot,
+    });
+
+    const result = await stopRecordedServices({ discover, recordPath });
+
+    expect(result.stopped).toEqual([expect.objectContaining({ name: "n8n", pid: child.pid, port, reason: "discovered-project-process" })]);
+    await waitForExit(child);
+    expect(processIsAlive(child.pid)).toBe(false);
+    rmSync(directory, { recursive: true, force: true });
+  });
+
+  it("自动发现同时要求项目命令身份和项目工作目录匹配", () => {
+    const identity = "loop-control-safe-discovery";
+    const definitions = [{ commandIdentity: identity, name: "控制台" }];
+    const processes = [{ command: `node ${identity}`, pid: 111 }, { command: "node unrelated", pid: 222 }];
+
+    expect(discoverProjectServices({ definitions, processes, workingDirectoryForPid: () => "/tmp/other-project" })).toEqual([]);
+    expect(discoverProjectServices({ definitions, listeningPortsForPid: () => ["6173"], processes, workingDirectoryForPid: () => projectRoot })).toEqual([
+      { commandIdentity: identity, name: "控制台", pid: 111, port: "6173", ports: ["6173"], reason: "discovered-project-process" },
+    ]);
   });
 });
 

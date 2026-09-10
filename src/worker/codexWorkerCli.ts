@@ -7,6 +7,7 @@ import {
   runCodexWorker,
   parseCodexOutput,
   type ClaimedWorkerTask,
+  type WorkerProgress,
 } from "./codexRunner.js";
 import type { ArtifactManifest, VisualAssetRequest, WorkerPreflightResult, WorkerTaskPackage } from "./contracts.js";
 import type { StoryboardManifest } from "./contracts.js";
@@ -44,6 +45,7 @@ const result = await runCodexWorker({
   verifyAssetRoot,
   verifyArtifacts,
   preflight: preflightTask,
+  reportProgress,
   execute: executeTask,
   actualCostCents,
 });
@@ -332,6 +334,14 @@ async function reportResult(taskId: string, attempt: number, workerResult: unkno
   } finally {
     stopLeaseHeartbeat();
   }
+}
+
+async function reportProgress(taskId: string, attempt: number, progress: WorkerProgress): Promise<void> {
+  const value = { version: "worker-progress/v1", progress };
+  const { error: taskError } = await supabase.from("tasks").update({ last_result: value }).eq("id", taskId).eq("attempt", attempt).eq("status", "running");
+  if (taskError) throw new Error(`Unable to report Worker progress: ${taskError.message}`);
+  const { error: runError } = await supabase.from("task_runs").update({ result: value }).eq("task_id", taskId).eq("attempt", attempt).eq("status", "running");
+  if (runError) throw new Error(`Unable to report Worker run progress: ${runError.message}`);
 }
 
 function startLeaseHeartbeat(taskId: string, attempt: number): void {

@@ -62,4 +62,19 @@ describe("Worker 任务进度", () => {
     expect(screen.getByText("当前生产单还没有 Worker 任务记录。")).toBeTruthy();
     expect(screen.queryByText(/完成 \d+ \/ \d+/)).toBeNull();
   });
+
+  it("即时派发后即使任务尚未创建也显示真实等待步骤", () => {
+    render(<TaskProgressPanel dispatchRequested taskRuns={[]} tasks={[]} />);
+    expect(screen.getByText("已提交即时派发，正在等待编排器创建任务记录。")).toBeTruthy();
+  });
+
+  it("显示 Worker 回写的内部执行步骤而不是估算百分比", () => {
+    const running = { ...baseTask, last_result: { version: "worker-progress/v1", progress: { version: "worker-progress/v1", step: "provider_execution", detail: "正在由 codex 执行视觉素材准备。", observedAt: "2026-08-18T00:02:30.000Z" } } } as Task;
+    render(<TaskProgressPanel taskRuns={[taskRun]} tasks={[running]} />);
+
+    expect(screen.getByText("正在由 codex 执行视觉素材准备。")).toBeTruthy();
+    expect(screen.getByRole("list", { name: "Worker 内部执行步骤" })).toBeTruthy();
+    expect(screen.getByText("执行任务").closest("li")?.getAttribute("aria-current")).toBe("step");
+    expect(screen.queryByText(/%/)).toBeNull();
+  });
 });

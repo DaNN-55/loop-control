@@ -38,7 +38,14 @@ describe("系统状态面板", () => {
     const dialog = screen.getByRole("dialog", { name: "系统状态详情" });
     expect(dialog.getAttribute("aria-modal")).toBeNull();
     expect(document.activeElement).toBe(screen.getByRole("button", { name: "关闭系统状态详情" }));
-    expect(screen.getByText(/n8n 负责编排、通知和健康检查；Worker 负责实际执行/)).toBeTruthy();
+    expect(screen.getByText(/生产执行链展示服务是否可用；任务执行展示当前是否正在工作/)).toBeTruthy();
+    const pipeline = screen.getByText("生产执行链").closest("article");
+    expect(pipeline?.textContent).toContain("n8n 编排");
+    expect(pipeline?.textContent).toContain("Worker 环境");
+    const pipelineRows = pipeline?.querySelectorAll(".system-status-detail-rows > div");
+    expect(pipelineRows).toHaveLength(2);
+    expect(pipelineRows?.[0]?.textContent).toContain("Worker 环境");
+    expect(pipelineRows?.[1]?.textContent).toContain("n8n 编排");
     expect(screen.getByText("最近调度检查")).toBeTruthy();
     expect(screen.getByText("最近 Worker 派发")).toBeTruthy();
     expect(screen.getByText("最近通知执行")).toBeTruthy();
@@ -52,15 +59,15 @@ describe("系统状态面板", () => {
     render(<SystemStatusPanel episodes={[currentEpisode]} report={null} tasks={[]} />);
 
     expect(screen.getByRole("button", { name: "系统状态：待确认" })).toBeTruthy();
-    expect(screen.getByTitle(/n8n 编排：待确认/)).toBeTruthy();
+    expect(screen.getByTitle(/生产执行链：待确认/)).toBeTruthy();
   });
 
   it("n8n 不可用时即使 Worker 最近已完成也必须降级系统状态", () => {
     render(<SystemStatusPanel episodes={[currentEpisode]} report={{ ...report, n8n: { ...report.n8n, detail: "n8n 健康端点无响应", lastEventAt: null, state: "offline" } }} tasks={[completedTask]} />);
 
     expect(screen.getByRole("button", { name: "系统状态：需处理" })).toBeTruthy();
-    expect(screen.getByTitle(/Worker：正常/)).toBeTruthy();
-    expect(screen.getByTitle(/n8n 编排：不可用/)).toBeTruthy();
+    expect(screen.getByTitle(/生产执行链：需处理/)).toBeTruthy();
+    expect(screen.getByTitle(/任务执行：正常/)).toBeTruthy();
   });
 
   it("空调度检查不显示为 Worker 派发", async () => {
@@ -163,7 +170,8 @@ describe("系统状态面板", () => {
     render(<SystemStatusPanel episodes={[currentEpisode, archivedEpisode]} report={report} tasks={[completedTask, archivedBlockedTask]} />);
 
     expect(screen.getByRole("button", { name: "系统状态：正常" })).toBeTruthy();
-    expect(screen.getByTitle(/Worker：正常/)).toBeTruthy();
+    expect(screen.getByTitle(/生产执行链：正常/)).toBeTruthy();
+    expect(screen.getByTitle(/任务执行：正常/)).toBeTruthy();
   });
 
   it.each(["generate_review_render", "generate_final_render"])("后续成功的 %s 不让历史失败继续显示为需处理", async (taskType) => {

@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { Database } from "./lib/database.types";
-import { AccountWorkspace, App, BootstrapScreen, EpisodeDetail, EpisodeForm, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, abbreviatePath, episodeTaskRunStatusChanged, episodeTaskStatusChanged, episodeWorkerStatus, initialNavigationForWorkspace, loadWorkspaceSummary, mergeEpisodeTaskStatus, messageFromError, navigation, navigationBadgeCounts, workerPreflightFailureMessage } from "./App";
+import { AccountWorkspace, App, BootstrapScreen, EpisodeDetail, EpisodeForm, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, abbreviatePath, episodeNeedsTaskPolling, episodeTaskRunStatusChanged, episodeTaskStatusChanged, episodeWorkerStatus, initialNavigationForWorkspace, loadWorkspaceSummary, mergeEpisodeTaskStatus, messageFromError, navigation, navigationBadgeCounts, workerPreflightFailureMessage } from "./App";
 import { supabase } from "./lib/supabase";
 import { defaultBlueprintPolicy, parseBlueprintPolicy, withBlueprintAssetRoot } from "./platform/blueprintPolicy";
 
@@ -17,6 +17,12 @@ vi.mock("./lib/supabase", () => ({
 }));
 
 describe("approval console", () => {
+  it("开始制作后即使任务尚未创建也继续轮询", () => {
+    expect(episodeNeedsTaskPolling({ detailOpen: true, dispatchRequested: true, hasActiveTask: false, pageVisible: true })).toBe(true);
+    expect(episodeNeedsTaskPolling({ detailOpen: true, dispatchRequested: false, hasActiveTask: false, pageVisible: true })).toBe(false);
+    expect(episodeNeedsTaskPolling({ detailOpen: true, dispatchRequested: true, hasActiveTask: false, pageVisible: false })).toBe(false);
+  });
+
   it("登录后只加载首个运营页面所需数据，不在后台读取完整工作区", async () => {
     const user = userEvent.setup();
     const account = { id: "account-1", name: "道工作室", slug: "dao-studio" } as Database["public"]["Tables"]["accounts"]["Row"];

@@ -41,8 +41,18 @@ export interface CodexWorkerDependencies {
   verifyArtifacts(taskPackage: WorkerTaskPackage, artifacts: ArtifactManifest[], storyboard?: WorkerResult["storyboard"]): Promise<void>;
   execute(taskPackage: WorkerTaskPackage): Promise<string>;
   preflight?(taskPackage: WorkerTaskPackage): Promise<WorkerPreflightResult>;
+  reportProgress?(taskId: string, attempt: number, progress: WorkerProgress): Promise<void>;
   reportResult(taskId: string, attempt: number, result: WorkerResult): Promise<void>;
   actualCostCents: number;
+}
+
+export type WorkerProgressStep = "preflight" | "input_validation" | "provider_execution" | "output_validation";
+
+export interface WorkerProgress {
+  version: "worker-progress/v1";
+  step: WorkerProgressStep;
+  detail: string;
+  observedAt: string;
 }
 
 export type CodexWorkerRunResult =
@@ -77,6 +87,7 @@ export async function runCodexWorker(dependencies: CodexWorkerDependencies): Pro
     return { status: "blocked", taskId: task.taskId };
   }
 
+  await reportProgress(dependencies, task, "preflight", "正在检查执行器、模型、连接和本机依赖。");
   const preflight = dependencies.preflight && !taskPackage.storyboardRevision ? await runPreflight(dependencies.preflight, taskPackage) : undefined;
   if (preflight) {
     if (preflight.checks.some((check) => check.status !== "passed")) {
@@ -86,6 +97,7 @@ export async function runCodexWorker(dependencies: CodexWorkerDependencies): Pro
     }
   }
 
+  await reportProgress(dependencies, task, "input_validation", "正在验证媒体库与冻结输入。");
   try {
     await dependencies.verifyAssetRoot(taskPackage.assets.allowedRoot);
   } catch (error) {
@@ -112,11 +124,13 @@ export async function runCodexWorker(dependencies: CodexWorkerDependencies): Pro
     return { status: "blocked", taskId: task.taskId };
   }
 
+  await reportProgress(dependencies, task, "provider_execution", `正在由 ${task.provider} 执行 ${task.taskType}。`);
   try {
     const output = await dependencies.execute(taskPackage);
     const candidate = parseCodexOutput(output, dependencies.actualCostCents);
     const result = validateWorkerResult(candidate, taskPackage);
     if (preflight) result.preflight = preflight;
+    await reportProgress(dependencies, task, "output_validation", "执行已返回，正在校验并登记产物。");
     await dependencies.verifyArtifacts(taskPackage, result.artifacts, result.storyboard);
     await dependencies.reportResult(task.taskId, task.attempt, result);
     return { status: result.status, taskId: task.taskId };
@@ -126,6 +140,15 @@ export async function runCodexWorker(dependencies: CodexWorkerDependencies): Pro
     if (executionCheck) result.blockers = [preflightBlocker(executionCheck)];
     await dependencies.reportResult(task.taskId, task.attempt, addPreflight(result, executionCheck ? appendPreflight(preflight, executionCheck) : preflight));
     return { status: "failed", taskId: task.taskId };
+  }
+}
+
+async function reportProgress(dependencies: CodexWorkerDependencies, task: ClaimedWorkerTask, step: WorkerProgressStep, detail: string): Promise<void> {
+  if (!dependencies.reportProgress) return;
+  try {
+    await dependencies.reportProgress(task.taskId, task.attempt, { version: "worker-progress/v1", step, detail, observedAt: new Date().toISOString() });
+  } catch {
+    // Progress is observability evidence; a transient reporting failure must not fail the production task itself.
   }
 }
 

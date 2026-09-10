@@ -44,11 +44,14 @@ const publishPreparationRoute = "/_publish-preparation";
 const openOpenChatCutStudioRoute = "/_open-openchatcut-studio";
 const freezeOpenChatCutStudioRoute = "/_freeze-openchatcut-studio";
 const episodePreflightRoute = "/_episode-preflight";
+const episodeDispatchRoute = "/_episode-dispatch";
 const ttsVoicePreviewRoute = "/_tts-voice-preview";
 const maxProductionMaterialBytes = 100 * 1024 * 1024;
 const maxEncodedMaterialRequestBytes = 140 * 1024 * 1024;
 const execFileAsync = promisify(execFile);
 const storyboardThumbnailInFlight = new Map<string, Promise<LocalArtifactFile>>();
+const episodeDispatchInFlight = new Map<string, Promise<void>>();
+const taskDispatchInFlight = new Map<string, Promise<void>>();
 
 type LocalArtifactFile = { modifiedAt: number; path: string; size: number };
 
@@ -71,6 +74,98 @@ function isSafeRelativeArtifactPath(value: string): boolean {
 
 function isEpisodeId(value: string): boolean {
   return isUuid(value);
+}
+
+export function beginEpisodeDispatch(episodeId: string, run: (episodeId: string) => Promise<unknown> = async (id) => runProbeCommand(join(process.cwd(), "n8n", "run-orchestrator.sh"), ["dispatch", "--episode", id], 30 * 60 * 1000)): "started" | "already_running" {
+  if (episodeDispatchInFlight.has(episodeId)) return "already_running";
+  const operation = run(episodeId).then(() => undefined).catch((error) => {
+    console.error(`Episode ${episodeId} 即时派发失败：`, error);
+  }).finally(() => {
+    if (episodeDispatchInFlight.get(episodeId) === operation) episodeDispatchInFlight.delete(episodeId);
+  });
+  episodeDispatchInFlight.set(episodeId, operation);
+  return "started";
+}
+
+const requiredWorkerDispatchEnvironment = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "CODEX_WORKER_ACTUAL_COST_CENTS", "MEDIA_LIBRARY_MOUNT_PATH", "MEDIA_LIBRARY_MIN_FREE_BYTES"] as const;
+
+export function assertWorkerDispatchEnvironment(contents: string): void {
+  const values = new Map<string, string>();
+  for (const sourceLine of contents.split(/\r?\n/)) {
+    const line = sourceLine.trim();
+    if (!line || line.startsWith("#")) continue;
+    const match = line.match(/^(?:export\s+)?([A-Z][A-Z0-9_]*)\s*=\s*(.*)$/);
+    if (!match) continue;
+    const rawValue = match[2].trim();
+    const value = rawValue.length >= 2 && ((rawValue.startsWith('"') && rawValue.endsWith('"')) || (rawValue.startsWith("'") && rawValue.endsWith("'"))) ? rawValue.slice(1, -1).trim() : rawValue;
+    values.set(match[1], value);
+  }
+  const missing = requiredWorkerDispatchEnvironment.filter((name) => !values.get(name));
+  if (missing.length) throw new Error(`Worker 即时派发配置不完整：${missing.join("、")}`);
+}
+
+export function taskDispatchInvocation(projectRoot: string, taskId: string): { argumentsList: string[]; command: string } {
+  return { argumentsList: ["--task-id", taskId], command: join(projectRoot, "n8n", "run-worker.sh") };
+}
+
+export function beginTaskDispatch(taskId: string, run?: (taskId: string) => Promise<unknown>): "started" | "already_running" {
+  if (taskDispatchInFlight.has(taskId)) return "already_running";
+  let execute = run;
+  if (!execute) {
+    const projectRoot = process.cwd();
+    const workerEnvironmentPath = join(projectRoot, "n8n", "worker.env.local");
+    let workerEnvironment = "";
+    try { workerEnvironment = readFileSync(workerEnvironmentPath, "utf8"); }
+    catch { throw new Error("Worker 即时派发尚未配置：缺少 n8n/worker.env.local。"); }
+    assertWorkerDispatchEnvironment(workerEnvironment);
+    execute = async (id) => {
+      const invocation = taskDispatchInvocation(projectRoot, id);
+      return runProbeCommand(invocation.command, invocation.argumentsList, 30 * 60 * 1000);
+    };
+  }
+  const operation = execute(taskId).then(() => undefined).catch((error) => {
+    console.error(`Task ${taskId} 即时派发失败：`, error);
+  }).finally(() => {
+    if (taskDispatchInFlight.get(taskId) === operation) taskDispatchInFlight.delete(taskId);
+  });
+  taskDispatchInFlight.set(taskId, operation);
+  return "started";
+}
+
+export function serveEpisodeDispatch(
+  supabaseUrl: string | undefined,
+  supabasePublishableKey: string | undefined,
+  dispatch: (taskId: string) => "started" | "already_running" = beginTaskDispatch,
+) {
+  return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+    if (request.method !== "POST") { response.statusCode = 405; response.end(); return; }
+    const authorization = request.headers.authorization ?? "";
+    const episodeId = new URL(request.url ?? "", "http://localhost").searchParams.get("episode") ?? "";
+    const taskId = new URL(request.url ?? "", "http://localhost").searchParams.get("task") ?? "";
+    if (!authorization.startsWith("Bearer ") || !isEpisodeId(episodeId) || !isUuid(taskId)) { response.statusCode = 400; response.end("缺少有效的 Owner 会话、Episode ID 或 Task ID。"); return; }
+    if (!supabaseUrl || !supabasePublishableKey) { response.statusCode = 503; response.end("Supabase 本地客户端未配置。"); return; }
+    try {
+      const accessToken = authorization.slice("Bearer ".length);
+      const client = createClient(supabaseUrl, supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: authorization } } });
+      const { data: userData, error: userError } = await client.auth.getUser(accessToken);
+      if (userError || !userData.user) { response.statusCode = 401; response.end("Owner 登录会话无效。"); return; }
+      const { data: episode, error: episodeError } = await client.from("episodes").select("account_id").eq("id", episodeId).maybeSingle();
+      if (episodeError) throw episodeError;
+      if (!episode) { response.statusCode = 404; response.end("未找到当前 Episode。"); return; }
+      const { data: membership, error: membershipError } = await client.from("account_memberships").select("role").eq("account_id", episode.account_id).eq("user_id", userData.user.id).eq("role", "owner").maybeSingle();
+      if (membershipError) throw membershipError;
+      if (!membership) { response.statusCode = 403; response.end("Owner 权限不足。"); return; }
+      const { data: task, error: taskError } = await client.from("tasks").select("id").eq("id", taskId).eq("episode_id", episodeId).in("status", ["ready", "running"]).maybeSingle();
+      if (taskError) throw taskError;
+      if (!task) { response.statusCode = 404; response.end("未找到可派发的当前任务。"); return; }
+      response.setHeader("Content-Type", "application/json");
+      response.statusCode = 202;
+      response.end(JSON.stringify({ status: dispatch(taskId) }));
+    } catch (error) {
+      response.statusCode = 500;
+      response.end(error instanceof Error ? error.message : "无法即时派发当前生产单。");
+    }
+  };
 }
 
 export function confirmedStudioShotBlockers(context: unknown, drafts: readonly unknown[]): string[] {
@@ -1436,8 +1531,9 @@ export function serveWorkerPreflight(supabaseUrl: string | undefined, supabasePu
           response.end(JSON.stringify({ error: startError.message, preflight: report }));
           return;
         }
+        const dispatchStatus = beginEpisodeDispatch(episodeId);
         response.statusCode = 200;
-        response.end(JSON.stringify({ episode: startedEpisode, preflight: report }));
+        response.end(JSON.stringify({ dispatch: { status: dispatchStatus }, episode: startedEpisode, preflight: report }));
         return;
       }
       response.setHeader("Content-Type", "application/json");
@@ -2130,6 +2226,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
   const systemStatusMiddleware = serveSystemStatus(supabaseUrl, supabasePublishableKey);
   const goldenProductionTestMiddleware = serveGoldenProductionTest(supabaseUrl, supabasePublishableKey);
   const episodePreflightMiddleware = serveEpisodePreflight(supabaseUrl, supabasePublishableKey);
+  const episodeDispatchMiddleware = serveEpisodeDispatch(supabaseUrl, supabasePublishableKey);
   const externalConnectionTestMiddleware = serveExternalConnectionTest(supabaseUrl, supabasePublishableKey, localWorkerServiceRoleKey());
   const publishPreparationMiddleware = servePublishPreparation(supabaseUrl, supabasePublishableKey, localWorkerServiceRoleKey());
   const workerPreflightMiddleware = serveWorkerPreflight(supabaseUrl, supabasePublishableKey);
@@ -2151,6 +2248,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(systemStatusRoute, systemStatusMiddleware);
       server.middlewares.use(goldenProductionTestRoute, goldenProductionTestMiddleware);
       server.middlewares.use(episodePreflightRoute, episodePreflightMiddleware);
+      server.middlewares.use(episodeDispatchRoute, episodeDispatchMiddleware);
       server.middlewares.use(externalConnectionTestRoute, externalConnectionTestMiddleware);
       server.middlewares.use(publishPreparationRoute, publishPreparationMiddleware);
       server.middlewares.use(workerPreflightRoute, workerPreflightMiddleware);
@@ -2171,6 +2269,7 @@ function localArtifactPreviewPlugin(supabaseUrl: string | undefined, supabasePub
       server.middlewares.use(systemStatusRoute, systemStatusMiddleware);
       server.middlewares.use(goldenProductionTestRoute, goldenProductionTestMiddleware);
       server.middlewares.use(episodePreflightRoute, episodePreflightMiddleware);
+      server.middlewares.use(episodeDispatchRoute, episodeDispatchMiddleware);
       server.middlewares.use(externalConnectionTestRoute, externalConnectionTestMiddleware);
       server.middlewares.use(publishPreparationRoute, publishPreparationMiddleware);
       server.middlewares.use(workerPreflightRoute, workerPreflightMiddleware);

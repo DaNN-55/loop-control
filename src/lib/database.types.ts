@@ -1028,6 +1028,52 @@ export type Database = {
           { foreignKeyName: "shot_preparation_drafts_review_package_id_fkey"; columns: ["review_package_id"]; isOneToOne: false; referencedRelation: "review_packages"; referencedColumns: ["id"] },
         ]
       }
+      storyboard_audio_selections: {
+        Row: {
+          audio_kind: "bgm" | "sfx"
+          created_at: string
+          created_by: string
+          cue_id: string | null
+          episode_id: string
+          id: string
+          material_revision_id: string | null
+          review_package_id: string
+          target_id: string
+          target_kind: "episode" | "shot"
+          updated_at: string
+        }
+        Insert: {
+          audio_kind: "bgm" | "sfx"
+          created_at?: string
+          created_by: string
+          cue_id?: string | null
+          episode_id: string
+          id?: string
+          material_revision_id?: string | null
+          review_package_id: string
+          target_id: string
+          target_kind: "episode" | "shot"
+          updated_at?: string
+        }
+        Update: {
+          audio_kind?: "bgm" | "sfx"
+          created_at?: string
+          created_by?: string
+          cue_id?: string | null
+          episode_id?: string
+          id?: string
+          material_revision_id?: string | null
+          review_package_id?: string
+          target_id?: string
+          target_kind?: "episode" | "shot"
+          updated_at?: string
+        }
+        Relationships: [
+          { foreignKeyName: "storyboard_audio_selections_episode_id_fkey"; columns: ["episode_id"]; isOneToOne: false; referencedRelation: "episodes"; referencedColumns: ["id"] },
+          { foreignKeyName: "storyboard_audio_selections_material_revision_id_fkey"; columns: ["material_revision_id"]; isOneToOne: false; referencedRelation: "production_material_revisions"; referencedColumns: ["id"] },
+          { foreignKeyName: "storyboard_audio_selections_review_package_id_fkey"; columns: ["review_package_id"]; isOneToOne: false; referencedRelation: "review_packages"; referencedColumns: ["id"] },
+        ]
+      }
       pre_render_review_member_decisions: {
         Row: {
           actor_id: string
@@ -1783,6 +1829,11 @@ export type Database = {
         Args: { p_audio_mode: "none" | "source" | "tts"; p_episode_id: string; p_review_package_id: string; p_shot_id: string; p_subtitle_text: string; p_subtitles_enabled: boolean; p_tts_speaking_rate: number | null; p_tts_text: string | null; p_tts_voice: string | null }
         Returns: Database["public"]["Tables"]["shot_preparation_drafts"]["Row"]
         SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
+      }
+      save_storyboard_audio_selection: {
+        Args: { p_audio_kind: "bgm" | "sfx"; p_cue_id: string | null; p_episode_id: string; p_material_revision_id?: string | null; p_review_package_id: string; p_target_id: string; p_target_kind: "episode" | "shot" }
+        Returns: Database["public"]["Tables"]["storyboard_audio_selections"]["Row"]
+        SetofOptions: { from: "*"; to: "storyboard_audio_selections"; isOneToOne: true; isSetofReturn: false }
       }
       save_episode_tts_settings: {
         Args: { p_episode_id: string; p_tts_language_code: string; p_tts_speaking_rate: number; p_tts_voice: string }

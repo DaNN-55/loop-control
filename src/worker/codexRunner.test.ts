@@ -24,6 +24,21 @@ const claimedTask = {
 };
 
 describe("本地 Codex Worker runner", () => {
+  it("把真实内部执行阶段依次回写给控制台", async () => {
+    const reportProgress = vi.fn().mockResolvedValue(undefined);
+    const execute = vi.fn().mockResolvedValue(JSON.stringify({
+      version: "worker-result/v1", taskId: "task-1", status: "completed",
+      artifacts: [{ artifactType: "brief", relativePath: "episodes/episode-1/brief.md", sha256: "a".repeat(64), fileSize: 128 }],
+      validation: { passed: true, checks: [] }, actualCostCents: 0, blockers: [],
+      retry: { shouldRetry: false, reason: "Completed successfully." }, nextStep: "Done.",
+    }));
+
+    await runCodexWorker({ claimNextTask: async () => claimedTask, reportProgress, reportResult: vi.fn(), execute, preflight: vi.fn().mockResolvedValue({ version: "worker-preflight/v1", checks: [] }), verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 });
+
+    expect(reportProgress.mock.calls.map((call) => call[2].step)).toEqual(["preflight", "input_validation", "provider_execution", "output_validation"]);
+    expect(reportProgress.mock.calls.every((call) => call[2].version === "worker-progress/v1" && call[2].detail)).toBe(true);
+  });
+
   it("没有 ready 任务时保持空闲，不调用 Codex", async () => {
     const execute = vi.fn();
     const reportResult = vi.fn();

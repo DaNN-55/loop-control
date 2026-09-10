@@ -5,6 +5,10 @@ import { fileURLToPath } from "node:url";
 
 export const projectRoot = realpathSync(join(dirname(fileURLToPath(import.meta.url)), ".."));
 export const serviceRecordPath = process.env.LOOP_CONTROL_SERVICE_RECORD || join(projectRoot, ".loop-control", "local-services.json");
+const projectServiceDefinitions = [
+  { commandIdentity: join(projectRoot, "n8n", "node24", "node_modules", "n8n", "bin", "n8n"), name: "n8n" },
+  { commandIdentity: join(projectRoot, "node_modules", "vite", "bin", "vite.js"), name: "控制台" },
+];
 
 export function writeServiceRecord(services, recordPath = serviceRecordPath) {
   if (!services.length) return removeServiceRecord(recordPath);
@@ -54,20 +58,29 @@ export function inspectRecordedService(service, root = projectRoot) {
   return { valid, reason: valid ? "verified" : "identity-mismatch", command, cwd, ownsPort };
 }
 
-export async function stopRecordedServices({ dryRun = false, recordPath = serviceRecordPath, inspect = inspectRecordedService, signal = process.kill } = {}) {
-  const record = readServiceRecord(recordPath);
-  if (!record) {
-    removeServiceRecord(recordPath);
-    return { stopped: [], skipped: [], missing: true };
-  }
+export function discoverProjectServices({ definitions = projectServiceDefinitions, listeningPortsForPid: readPorts = listeningPortsForPid, processes = runningProcesses(), workingDirectoryForPid = cwdForPid } = {}) {
+  return processes.flatMap(({ command, pid }) => {
+    const definition = definitions.find(({ commandIdentity }) => command.includes(commandIdentity));
+    if (!definition || workingDirectoryForPid(pid) !== projectRoot) return [];
+    const ports = readPorts(pid);
+    return [{ ...definition, pid, port: ports.join(",") || "未知", ports, reason: "discovered-project-process" }];
+  });
+}
 
+export async function stopRecordedServices(options = {}) {
+  const { dryRun = false, recordPath = serviceRecordPath, inspect = inspectRecordedService, signal = process.kill } = options;
+  const discover = options.discover ?? (recordPath === serviceRecordPath ? discoverProjectServices : () => []);
+  const record = readServiceRecord(recordPath);
   const verified = [];
   const skipped = [];
-  for (const service of record.services) {
+  for (const service of record?.services ?? []) {
     const result = inspect(service, record.projectRoot);
     (result.valid ? verified : skipped).push({ ...service, reason: result.reason });
   }
-  if (dryRun) return { stopped: verified, skipped, missing: false };
+  for (const service of discover()) if (!verified.some(({ pid }) => pid === service.pid)) verified.push(service);
+  const verifiedPids = new Set(verified.map(({ pid }) => pid));
+  const safelySkipped = skipped.filter(({ pid }) => !verifiedPids.has(pid));
+  if (dryRun) return { stopped: verified, skipped: safelySkipped, missing: !record };
 
   for (const service of verified) safeSignal(signal, service.pid, "SIGTERM");
   for (let attempt = 0; attempt < 20 && verified.some(({ pid }) => processExists(pid)); attempt += 1) {
@@ -75,7 +88,7 @@ export async function stopRecordedServices({ dryRun = false, recordPath = servic
   }
   for (const service of verified) if (processExists(service.pid)) safeSignal(signal, service.pid, "SIGKILL");
   removeServiceRecord(recordPath);
-  return { stopped: verified, skipped, missing: false };
+  return { stopped: verified, skipped: safelySkipped, missing: !record };
 }
 
 function processExists(pid) {
@@ -92,6 +105,24 @@ function cwdForPid(pid) {
   const output = result.status === 0 && typeof result.stdout === "string" ? result.stdout : "";
   const path = output.split(/\r?\n/).find((line) => line.startsWith("n"))?.slice(1);
   try { return path ? realpathSync(path) : ""; } catch { return ""; }
+}
+
+function runningProcesses() {
+  const result = spawnSync("ps", ["-axo", "pid=,command="], { encoding: "utf8" });
+  if (result.status !== 0 || typeof result.stdout !== "string") return [];
+  return result.stdout.split(/\r?\n/).flatMap((line) => {
+    const match = /^\s*(\d+)\s+(.+)$/.exec(line);
+    return match ? [{ command: match[2], pid: Number(match[1]) }] : [];
+  });
+}
+
+function listeningPortsForPid(pid) {
+  const result = spawnSync("lsof", ["-nP", "-a", "-p", String(pid), "-iTCP", "-sTCP:LISTEN", "-Fn"], { encoding: "utf8" });
+  if (result.status !== 0 || typeof result.stdout !== "string") return [];
+  return [...new Set(result.stdout.split(/\r?\n/).flatMap((line) => {
+    const match = /^n.*:(\d+)$/.exec(line);
+    return match ? [match[1]] : [];
+  }))].sort((left, right) => Number(left) - Number(right));
 }
 
 function pidListensOnPort(pid, port) {
