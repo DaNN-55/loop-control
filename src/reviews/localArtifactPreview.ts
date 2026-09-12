@@ -81,7 +81,7 @@ export function useLocalArtifactBlob(source: string | null) {
   useEffect(() => {
     let isCurrent = true;
     async function load() {
-      if (!source) throw new Error("本地产物路径无效。");
+      if (!source) return;
       const previewUrl = await loadLocalArtifactPreview(source);
       if (isCurrent) setUrl(previewUrl);
     }

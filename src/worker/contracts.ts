@@ -1,6 +1,10 @@
 import { adapterRegistration } from "./adapterRegistry.js";
 import type { StoryboardStructureRevision } from "./storyboardRevision.js";
 import { isShotDurationDecision, type ShotDurationDecision } from "./durationDecision.js";
+import { isValidShotComposition, normalizeShotComposition, shotCompositionTiming, shotTransitionModes, type ShotComposition, type ShotTransitionMode } from "../shotComposition.js";
+import { isValidShotCaptionContract, type ShotCaptionContract } from "../shotCaptions.js";
+import { isValidShotAudioMix, type ShotAudioMixContract } from "../shotAudioMix.js";
+import { isValidAcousticAlignmentResult, type AcousticAlignmentResult } from "./acousticAlignmentContract.js";
 
 export const workerTaskPackageVersion = "worker-task/v1" as const;
 export const workerResultVersion = "worker-result/v1" as const;
@@ -109,6 +113,22 @@ export interface ReviewRenderAdjustments {
   reason: string;
 }
 
+export interface ShotPreparationContract {
+  version: "shot-preparation/v1";
+  storyboardFingerprint: string;
+  sourceMaterialRevisionId: string | null;
+  clipSegments: Array<{ startSeconds: number; endSeconds: number }>;
+  composition: ShotComposition;
+  transitionMode: ShotTransitionMode;
+  audioMode: "none" | "source" | "tts";
+  ttsText: string | null;
+  ttsVoice: string | null;
+  ttsSpeakingRate: number | null;
+  audioMix: ShotAudioMixContract;
+  captions: ShotCaptionContract;
+  inputFingerprint: string;
+}
+
 export interface WorkerTaskPackageInput {
   task: {
     id: string;
@@ -116,7 +136,7 @@ export interface WorkerTaskPackageInput {
     attempt: number;
     budgetLimitCents: number;
     maxAttempts: number;
-    provider: "codex" | "google_tts" | "volcengine_tts" | "pexels" | "ffmpeg" | "freesound" | "openchatcut" | "openai" | "cloudflare";
+    provider: "codex" | "google_tts" | "volcengine_tts" | "pexels" | "ffmpeg" | "freesound" | "openchatcut" | "openai" | "cloudflare" | "whisperx";
     model: string;
     promptVersion: string;
   };
@@ -128,6 +148,16 @@ export interface WorkerTaskPackageInput {
   };
   capability: string;
   credentialRef?: string;
+  acousticAlignment?: {
+    confirmedText: string;
+    textFingerprint: string;
+    audioRelativePath?: string;
+    audioSha256?: string;
+    inputVersion?: string;
+    speakingRate?: number;
+    strategy?: "auto" | "local";
+    voice?: string;
+  };
   promptContext?: PromptContextSnapshot;
   promptHarness?: PromptHarnessSnapshot;
   commission?: {
@@ -223,8 +253,8 @@ export interface WorkerTaskPackageInput {
     projectRevision: number;
     compositionId?: string;
     preRenderReviewPackageId: string;
-    confirmationMode?: "shot_preparation";
-    confirmedShots?: Array<{
+    confirmationMode: "shot_preparation";
+    confirmedShots: Array<{
       shotId: string;
       confirmationStatus: "confirmed";
       inputFingerprint: string;
@@ -232,6 +262,8 @@ export interface WorkerTaskPackageInput {
       videoTaskId?: string;
       sourceMaterialRevisionId?: string;
       clipSegments?: Array<{ startSeconds: number; endSeconds: number }>;
+      composition?: ShotComposition;
+      preparationContract: ShotPreparationContract;
       audioMode: "none" | "source" | "tts";
       audioTrackId: string | null;
       subtitleText: string;
@@ -255,6 +287,8 @@ export interface WorkerTaskPackageInput {
       artifactId?: string;
       sourceMaterialRevisionId?: string;
       clipSegments?: Array<{ startSeconds: number; endSeconds: number }>;
+      composition?: ShotComposition;
+      preparationContract?: ShotPreparationContract;
       audioTrackId?: string | null;
       inputFingerprint?: string;
       audioMode?: "none" | "source" | "tts";
@@ -294,6 +328,7 @@ export interface WorkerTaskPackage {
   promptVersion: string;
   capability: string;
   credentialRef?: string;
+  acousticAlignment?: WorkerTaskPackageInput["acousticAlignment"];
   promptContext?: PromptContextSnapshot;
   promptHarness?: PromptHarnessSnapshot;
   commission?: {
@@ -364,6 +399,7 @@ export interface WorkerResult {
   preflight?: WorkerPreflightResult;
   actualCostCents: number;
   audioDurationSeconds?: number;
+  acousticAlignment?: AcousticAlignmentResult;
   mediaSource?: {
     provider: "freesound";
     sourceId: number;
@@ -425,6 +461,14 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
   }
   if (input.capability === "narration_generation" && (!input.media || (input.media.adapter !== "google_tts" && input.media.adapter !== "volcengine_tts"))) throw new Error("旁白生成必须包含冻结的 TTS 配置。");
   if (input.capability === "narration_generation" && !isConnectionId(input.credentialRef)) throw new Error("旁白生成必须包含冻结的外部连接版本 ID。");
+  if (input.acousticAlignment && (!isNonEmptyString(input.acousticAlignment.confirmedText) || !isSha256(input.acousticAlignment.textFingerprint))) throw new Error("声学对齐必须冻结 Owner 字幕正文及其版本。");
+  if (input.acousticAlignment?.audioRelativePath && !isSafeRelativePath(input.acousticAlignment.audioRelativePath)) throw new Error("声学对齐音频路径必须位于资产根目录内。");
+  if (input.acousticAlignment?.audioSha256 !== undefined && !isSha256(input.acousticAlignment.audioSha256)) throw new Error("声学对齐音频哈希无效。");
+  if (input.acousticAlignment?.inputVersion !== undefined && !isSha256(input.acousticAlignment.inputVersion)) throw new Error("声学对齐输入版本无效。");
+  if (input.acousticAlignment?.speakingRate !== undefined && !isPositiveFiniteNumber(input.acousticAlignment.speakingRate)) throw new Error("声学对齐语速无效。");
+  if (input.capability !== "narration_generation" && input.capability !== "acoustic_alignment" && input.acousticAlignment) throw new Error("只有旁白生成或独立字幕对齐任务可以冻结声学对齐输入。");
+  if (input.capability === "acoustic_alignment" && (!input.acousticAlignment?.audioRelativePath || !isSha256(input.acousticAlignment.audioSha256) || !isSha256(input.acousticAlignment.inputVersion))) throw new Error("独立字幕对齐任务必须冻结音频路径、哈希与输入版本。");
+  if (input.capability === "acoustic_alignment" && input.task.provider !== "whisperx") throw new Error("独立字幕对齐任务必须使用本地 WhisperX Provider。");
   if (input.capability === "b_roll_generation" && (!input.media || (input.media.adapter !== "pexels_video" && input.media.adapter !== "openchatcut_card_video"))) throw new Error("B-roll 生成必须包含冻结的媒体配置。");
   if (input.capability === "b_roll_generation" && input.media?.adapter === "pexels_video" && !isConnectionId(input.credentialRef)) throw new Error("B-roll 生成必须包含冻结的外部连接版本 ID。");
   if (input.credentialRef !== undefined && !isNonEmptyString(input.credentialRef)) throw new Error("外部连接引用格式无效。");
@@ -446,9 +490,10 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     validateReviewRenderStoryboard(render.storyboard);
     if (!isReviewRenderAdjustments(render.adjustments)) throw new Error("冻结审核渲染合成配置无效。 ");
     for (const member of render.members) {
-      if (!isNonEmptyString(member.memberKey) || (member.memberKind !== "shot_media" && member.memberKind !== "narration" && member.memberKind !== "soundtrack") || (member.audioKind !== undefined && member.audioKind !== "bgm" && member.audioKind !== "sfx") || (member.taskId !== undefined && !isNonEmptyString(member.taskId)) || (member.artifactId !== undefined && !isNonEmptyString(member.artifactId)) || (member.audioTrackId !== undefined && member.audioTrackId !== null && !isNonEmptyString(member.audioTrackId)) || (member.audioMode !== undefined && member.audioMode !== "none" && member.audioMode !== "source" && member.audioMode !== "tts") || (member.subtitleText !== undefined && typeof member.subtitleText !== "string") || (member.subtitlesEnabled !== undefined && typeof member.subtitlesEnabled !== "boolean") || !isSafeRelativePath(member.relativePath) || !isSha256(member.sha256) || !isNonNegativeNumber(member.startSeconds) || !isPositiveFiniteNumber(member.durationSeconds) || !input.inputArtifacts.some((artifact) => artifact.relativePath === member.relativePath && artifact.sha256 === member.sha256)) throw new Error("冻结审核渲染成员格式无效。 ");
+      if (!isNonEmptyString(member.memberKey) || (member.memberKind !== "shot_media" && member.memberKind !== "narration" && member.memberKind !== "soundtrack") || (member.audioKind !== undefined && member.audioKind !== "bgm" && member.audioKind !== "sfx") || (member.taskId !== undefined && !isNonEmptyString(member.taskId)) || (member.artifactId !== undefined && !isNonEmptyString(member.artifactId)) || (member.audioTrackId !== undefined && member.audioTrackId !== null && !isNonEmptyString(member.audioTrackId)) || (member.audioMode !== undefined && member.audioMode !== "none" && member.audioMode !== "source" && member.audioMode !== "tts") || (member.subtitleText !== undefined && typeof member.subtitleText !== "string") || (member.subtitlesEnabled !== undefined && typeof member.subtitlesEnabled !== "boolean") || (member.composition !== undefined && !isValidShotComposition(member.composition, Math.max(1, member.clipSegments?.length ?? 1))) || (member.preparationContract !== undefined && !isValidShotPreparationContract(member.preparationContract)) || !isSafeRelativePath(member.relativePath) || !isSha256(member.sha256) || !isNonNegativeNumber(member.startSeconds) || !isPositiveFiniteNumber(member.durationSeconds) || !input.inputArtifacts.some((artifact) => artifact.relativePath === member.relativePath && artifact.sha256 === member.sha256)) throw new Error("冻结审核渲染成员格式无效。 ");
     }
-    if (render.confirmationMode === "shot_preparation") validateConfirmedShotPreparationRender(render);
+    if (render.confirmationMode !== "shot_preparation") throw new Error("OpenChatCut 新工程只接受版本化镜头准备契约。 ");
+    validateConfirmedShotPreparationRender(render);
   }
   if (input.finalRender) {
     const finalRender = input.finalRender;
@@ -462,6 +507,8 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
       || !input.inputArtifacts.some((artifact) => artifact.relativePath === finalRender.sourceQcReport.relativePath && artifact.sha256 === finalRender.sourceQcReport.sha256)) throw new Error("最终渲染引用未冻结的审核证据。 ");
     const source = finalRender.reviewRender;
     if (source.projectRelativePath !== finalRender.sourceProject.relativePath || source.projectRevision !== finalRender.projectRevision || !isNonEmptyString(source.preRenderReviewPackageId) || source.members.length === 0) throw new Error("最终渲染冻结工程不一致。 ");
+    if (source.confirmationMode !== "shot_preparation") throw new Error("OpenChatCut 最终渲染只接受版本化镜头准备契约。 ");
+    validateConfirmedShotPreparationRender(source);
   }
   if (input.media?.adapter === "google_tts" || input.media?.adapter === "volcengine_tts") {
     if (input.task.provider !== input.media.adapter) throw new Error("旁白任务 Provider 必须与冻结 TTS 适配器匹配。");
@@ -519,6 +566,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     promptVersion: input.task.promptVersion,
     capability: input.capability,
     ...(input.credentialRef ? { credentialRef: input.credentialRef } : {}),
+    ...(input.acousticAlignment ? { acousticAlignment: { ...input.acousticAlignment } } : {}),
     ...(input.promptContext ? { promptContext: { ...input.promptContext } } : {}),
     ...(input.promptHarness ? { promptHarness: { ...input.promptHarness } } : {}),
     ...(input.commission ? { commission: { creativeDirection: input.commission.creativeDirection, coreContent: input.commission.coreContent } } : {}),
@@ -571,10 +619,14 @@ export function validateWorkerResult(value: unknown, taskPackage: WorkerTaskPack
   if (audioDurationSeconds !== undefined && !isPositiveFiniteNumber(audioDurationSeconds)) throw new Error("音频实际时长必须是正数。");
   const preflight = value.preflight === undefined ? undefined : parseWorkerPreflight(value.preflight);
   const mediaSource = value.mediaSource === undefined ? undefined : parseMediaSource(value.mediaSource);
+  const acousticAlignment = value.acousticAlignment === undefined ? undefined : value.acousticAlignment;
+  if (acousticAlignment !== undefined && !isValidAcousticAlignmentResult(acousticAlignment)) throw new Error("声学对齐结果格式无效。");
   const visualAssetRequests = value.visualAssetRequests === undefined ? undefined : parseVisualAssetRequests(value.visualAssetRequests, taskPackage.assets.inputs);
   if (taskPackage.provider === "freesound" && value.status === "completed" && mediaSource === undefined) throw new Error("Freesound 任务必须返回媒体来源记录。");
   if (taskPackage.provider !== "freesound" && mediaSource !== undefined) throw new Error("非 Freesound 任务不能返回媒体来源记录。");
   if ((taskPackage.capability === "narration_generation" || taskPackage.capability === "embedded_audio_extraction" || taskPackage.capability === "soundtrack_generation") && value.status === "completed" && audioDurationSeconds === undefined) throw new Error("已完成音频任务必须返回实际时长。");
+  if (taskPackage.capability === "acoustic_alignment" && value.status === "completed" && acousticAlignment === undefined) throw new Error("声学对齐任务必须返回对齐结果或明确的失败状态。");
+  if (taskPackage.capability !== "narration_generation" && taskPackage.capability !== "acoustic_alignment" && acousticAlignment !== undefined) throw new Error("非旁白或字幕对齐任务不能返回声学对齐结果。");
   if (value.taskId !== taskPackage.task.id) throw new Error("Worker 结果不属于当前任务。");
   value.artifacts.forEach(assertArtifactManifest);
   const artifacts = value.artifacts as ArtifactManifest[];
@@ -622,6 +674,7 @@ export function validateWorkerResult(value: unknown, taskPackage: WorkerTaskPack
     ...(preflight ? { preflight } : {}),
     actualCostCents,
     ...(audioDurationSeconds !== undefined ? { audioDurationSeconds } : {}),
+    ...(acousticAlignment ? { acousticAlignment } : {}),
     ...(mediaSource ? { mediaSource: { provider: "freesound", sourceId: mediaSource.sourceId, title: mediaSource.title, creator: mediaSource.creator, license: mediaSource.license, sourceUrl: mediaSource.sourceUrl, previewUrl: mediaSource.previewUrl } } : {}),
     blockers: value.blockers as WorkerResult["blockers"],
     retry: value.retry as WorkerResult["retry"],
@@ -698,7 +751,7 @@ function validateConfirmedShotPreparationRender(render: NonNullable<WorkerTaskPa
     const usesRawSource = isNonEmptyString(shot.sourceMaterialRevisionId) && validClipSegments(shot.clipSegments);
     const usesPreparedClip = isNonEmptyString(shot.videoArtifactId) && isNonEmptyString(shot.videoTaskId);
     const audioValid = shot.audioMode === "none" || (usesRawSource && shot.audioMode === "source") ? shot.audioTrackId === null : isNonEmptyString(shot.audioTrackId);
-    return shot.confirmationStatus !== "confirmed" || !isNonEmptyString(shot.inputFingerprint) || !/^[0-9a-f]{32}$/i.test(shot.inputFingerprint) || (!usesRawSource && !usesPreparedClip) || typeof shot.subtitleText !== "string" || (shot.subtitlesEnabled && !shot.subtitleText.trim()) || (shot.audioMode !== "none" && shot.audioMode !== "source" && shot.audioMode !== "tts") || typeof shot.subtitlesEnabled !== "boolean" || !audioValid;
+    return shot.confirmationStatus !== "confirmed" || !isNonEmptyString(shot.inputFingerprint) || !/^[0-9a-f]{32}$/i.test(shot.inputFingerprint) || (!usesRawSource && !usesPreparedClip) || typeof shot.subtitleText !== "string" || (shot.subtitlesEnabled && !shot.subtitleText.trim()) || (shot.audioMode !== "none" && shot.audioMode !== "source" && shot.audioMode !== "tts") || typeof shot.subtitlesEnabled !== "boolean" || !isValidShotComposition(shot.composition ?? normalizeShotComposition(undefined), Math.max(1, shot.clipSegments?.length ?? 1)) || !isValidShotPreparationContract(shot.preparationContract) || shot.preparationContract.inputFingerprint !== shot.inputFingerprint || !audioValid;
     }) || render.confirmedShots.some((shot) => shot.durationDecision !== undefined && !isShotDurationDecision(shot.durationDecision))) throw new Error("逐镜头 Studio 确认快照格式无效。 ");
   const shotMembers = render.members.filter((member) => member.memberKind === "shot_media");
   if (shotMembers.length !== render.storyboard.shots.length || new Set(shotMembers.map((member) => member.memberKey)).size !== shotMembers.length) throw new Error("逐镜头 Studio 工程缺少唯一镜头媒体成员。 ");
@@ -709,13 +762,19 @@ function validateConfirmedShotPreparationRender(render: NonNullable<WorkerTaskPa
     const member = shotMembers.find((candidate) => candidate.memberKey === `shot:${shot.id}`);
     const rawSourceMatches = snapshot.sourceMaterialRevisionId !== undefined && member?.sourceMaterialRevisionId === snapshot.sourceMaterialRevisionId && JSON.stringify(member.clipSegments) === JSON.stringify(snapshot.clipSegments);
     const preparedClipMatches = snapshot.videoTaskId !== undefined && member?.taskId === snapshot.videoTaskId && member.artifactId === snapshot.videoArtifactId;
-    if (!member || (!rawSourceMatches && !preparedClipMatches) || member.inputFingerprint !== snapshot.inputFingerprint || member.audioMode !== snapshot.audioMode || member.subtitleText !== snapshot.subtitleText || member.subtitlesEnabled !== snapshot.subtitlesEnabled || (member.clipSegments && Math.abs(member.durationSeconds - member.clipSegments.reduce((total, segment) => total + segment.endSeconds - segment.startSeconds, 0)) > 0.001) || (snapshot.durationDecision !== undefined && JSON.stringify(member.durationDecision) !== JSON.stringify(snapshot.durationDecision))) throw new Error("逐镜头 Studio 工程存在未确认或版本不一致的镜头成员。 ");
+    if (!member || (!rawSourceMatches && !preparedClipMatches) || member.inputFingerprint !== snapshot.inputFingerprint || member.audioMode !== snapshot.audioMode || member.subtitleText !== snapshot.subtitleText || member.subtitlesEnabled !== snapshot.subtitlesEnabled || JSON.stringify(member.composition ?? normalizeShotComposition(undefined)) !== JSON.stringify(snapshot.composition ?? normalizeShotComposition(undefined)) || JSON.stringify(member.preparationContract) !== JSON.stringify(snapshot.preparationContract) || (member.clipSegments && Math.abs(member.durationSeconds - shotCompositionTiming(member.clipSegments, member.composition).playbackDurationSeconds) > 0.001) || (snapshot.durationDecision !== undefined && JSON.stringify(member.durationDecision) !== JSON.stringify(snapshot.durationDecision))) throw new Error("逐镜头 Studio 工程存在未确认或版本不一致的镜头成员。 ");
     const narration = render.members.find((candidate) => candidate.memberKey === `narration:${shot.id}`);
     const embeddedSourceAudio = snapshot.sourceMaterialRevisionId !== undefined && snapshot.audioMode === "source";
     if (snapshot.audioMode === "none" || embeddedSourceAudio ? narration !== undefined || snapshot.audioTrackId !== null : !narration || narration.audioTrackId !== snapshot.audioTrackId || narration.audioMode !== snapshot.audioMode) throw new Error("逐镜头 Studio 工程的音频版本与确认快照不一致。 ");
     if (narration && (!narration.taskId || !narration.audioTrackId)) throw new Error("逐镜头 Studio 工程的音频成员缺少冻结版本。 ");
   }
   if (render.members.some((member) => member.memberKind === "shot_media" && !render.storyboard.shots.some((shot) => member.memberKey === `shot:${shot.id}`)) || render.members.some((member) => member.memberKind === "narration" && !render.storyboard.shots.some((shot) => member.memberKey === `narration:${shot.id}`))) throw new Error("逐镜头 Studio 工程包含未确认镜头成员。 ");
+}
+
+function isValidShotPreparationContract(value: unknown): value is ShotPreparationContract {
+  if (!isRecord(value) || value.version !== "shot-preparation/v1" || !/^[0-9a-f]{32}$/i.test(String(value.storyboardFingerprint)) || !/^[0-9a-f]{32}$/i.test(String(value.inputFingerprint)) || (value.sourceMaterialRevisionId !== null && !isNonEmptyString(value.sourceMaterialRevisionId)) || !validClipSegments(value.clipSegments) || !isValidShotComposition(value.composition, value.clipSegments.length) || !shotTransitionModes.includes(value.transitionMode as ShotTransitionMode) || (value.audioMode !== "none" && value.audioMode !== "source" && value.audioMode !== "tts") || (value.ttsText !== null && typeof value.ttsText !== "string") || (value.ttsVoice !== null && typeof value.ttsVoice !== "string") || (value.ttsSpeakingRate !== null && !isPositiveFiniteNumber(value.ttsSpeakingRate)) || !isValidShotAudioMix(value.audioMix) || value.audioMix.mainVoice.mode !== value.audioMode || !isValidShotCaptionContract(value.captions)) return false;
+  if (value.captions.contentMode === "follow_tts" && (value.audioMode !== "tts" || value.captions.text !== value.ttsText)) return false;
+  return true;
 }
 
 function validClipSegments(value: unknown): value is Array<{ startSeconds: number; endSeconds: number }> {

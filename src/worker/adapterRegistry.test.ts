@@ -67,13 +67,16 @@ describe("adapter registry", () => {
     expect(adapterRegistration("google_tts", "google_tts")).toMatchObject({
       capability: "narration_generation",
       connectionType: "google_tts_api",
+      endpoint: "https://texttospeech.googleapis.com/v1",
       requiresNetwork: true,
+      acousticAlignment: { nativeTimestamps: { support: "unsupported" }, existingTextAudioAlignment: { support: "unsupported" } },
       connections: [],
     });
     expect(adapterRegistration("volcengine_tts", "volcengine_tts")).toMatchObject({
       capability: "narration_generation",
       connectionType: "volcengine_tts_api",
       modelCatalog: ["seed-tts-2.0"],
+      acousticAlignment: { nativeTimestamps: { support: "unsupported" }, existingTextAudioAlignment: { support: "unsupported" } },
     });
     expect(adapterRegistration("volcengine_tts", "volcengine_tts")?.voiceCatalog?.["zh-CN"]).toEqual([
       "zh_female_vv_uranus_bigtts",

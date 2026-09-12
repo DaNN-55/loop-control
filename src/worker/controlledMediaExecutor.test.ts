@@ -1,10 +1,11 @@
 import { execFile } from "node:child_process";
+import { createHash } from "node:crypto";
 import { mkdir, mkdtemp, readFile, rm, symlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { promisify } from "node:util";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createWorkerTaskPackage, type WorkerTaskPackageInput } from "./contracts";
+import { createWorkerTaskPackage, validateWorkerResult, type WorkerTaskPackageInput } from "./contracts";
 import { executeControlledMediaTask } from "./controlledMediaExecutor";
 
 const directories: string[] = [];
@@ -88,6 +89,18 @@ describe("受控媒体执行器", () => {
     const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: "google-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(2), extractMp3: vi.fn(), trimMp3: vi.fn() }));
     expect(result.status).toBe("completed");
     await expect(readFile(join(taskPackage.assets.allowedRoot, taskPackage.output.relativePath), "utf8")).resolves.toBe("mp3-data");
+  });
+
+  it("口播音频生成完成后不等待本地 WhisperX", async () => {
+    const confirmedText = "冻结旁白";
+    const fixedAudioSample = Buffer.from([0x52,0x49,0x46,0x46,0x24,0,0,0,0x57,0x41,0x56,0x45,0x66,0x6d,0x74,0x20,0x10,0,0,0,1,0,1,0,0x40,0x1f,0,0,0x40,0x1f,0,0,1,0,8,0,0x64,0x61,0x74,0x61,0,0,0,0]);
+    const taskPackage = await packageFor({ acousticAlignment: { confirmedText, textFingerprint: createHash("sha256").update(confirmedText).digest("hex") } });
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ audioContent: fixedAudioSample.toString("base64") }), { status: 200 }));
+    const executeWhisperX = vi.fn().mockRejectedValue(new Error("口播任务不应执行声学对齐"));
+    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: "google-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(2), extractMp3: vi.fn(), trimMp3: vi.fn(), executeWhisperX }));
+    expect(result).not.toHaveProperty("acousticAlignment");
+    expect(validateWorkerResult(result, taskPackage).status).toBe("completed");
+    expect(executeWhisperX).not.toHaveBeenCalled();
   });
 
   it("Google TTS 产物无法探测为音频时不上报成功", async () => {

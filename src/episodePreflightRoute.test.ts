@@ -23,7 +23,7 @@ vi.mock("./worker/runtimePreflight", () => ({
 }));
 vi.mock("./worker/runtimeProbes", () => ({ probeCodexModel: vi.fn(), probeProviderConnection: vi.fn() }));
 
-import { assertWorkerDispatchEnvironment, beginEpisodeDispatch, beginTaskDispatch, runtimePreflightForPolicy, serveEpisodeDispatch, serveEpisodePreflight, taskDispatchInvocation } from "../vite.config";
+import { assertWorkerDispatchEnvironment, beginEpisodeDispatch, beginTaskDispatch, runtimePreflightForPolicy, serveEpisodeDispatch, serveEpisodePreflight, taskDispatchInvocation, taskDispatchStatus } from "../vite.config";
 
 const accountId = "11111111-1111-4111-8111-111111111111";
 const episodeId = "22222222-2222-4222-8222-222222222222";
@@ -195,6 +195,37 @@ describe("开始制作后的即时派发", () => {
     finish?.();
     await Promise.resolve();
     await Promise.resolve();
+  });
+
+  it("单任务进程失败后保留可查询的派发错误", async () => {
+    const taskId = "66666666-6666-4666-8666-666666666666";
+
+    expect(beginTaskDispatch(taskId, async () => { throw new Error("Supabase 返回 HTTP 504"); })).toBe("started");
+    await Promise.resolve();
+    await Promise.resolve();
+
+    expect(taskDispatchStatus(taskId)).toEqual(expect.objectContaining({ detail: "Supabase 返回 HTTP 504", status: "failed" }));
+  });
+
+  it("Owner 可以查询指定任务的即时派发状态", async () => {
+    const taskId = "77777777-7777-4777-8777-777777777777";
+    const client = mockSupabaseClient();
+    client.from.mockImplementation((table: string) => queryResult(table === "tasks" ? { id: taskId } : table === "episodes" ? { account_id: accountId } : table === "account_memberships" ? { role: "owner" } : null));
+    const readStatus = vi.fn(() => ({ detail: "Worker 启动失败。", status: "failed" as const, updatedAt: "2026-09-12T00:00:00.000Z" }));
+    const server = createServer(serveEpisodeDispatch("https://supabase.test", "publishable", vi.fn(() => "started" as const), readStatus));
+    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+    const address = server.address();
+    if (!address || typeof address === "string") throw new Error("测试服务器未监听端口。");
+
+    try {
+      const response = await fetch(`http://127.0.0.1:${address.port}/_episode-dispatch?episode=${episodeId}&task=${taskId}`, { headers: { Authorization: "Bearer owner-token" } });
+
+      expect(response.status).toBe(200);
+      expect(await response.json()).toEqual({ detail: "Worker 启动失败。", status: "failed", updatedAt: "2026-09-12T00:00:00.000Z" });
+      expect(readStatus).toHaveBeenCalledWith(taskId);
+    } finally {
+      await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+    }
   });
 
   it("单任务即时派发复用会加载 worker.env.local 的统一入口", () => {

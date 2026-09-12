@@ -363,83 +363,6 @@ export type Database = {
           { foreignKeyName: "audio_tracks_source_task_id_fkey"; columns: ["source_task_id"]; isOneToOne: true; referencedRelation: "tasks"; referencedColumns: ["id"] },
         ]
       }
-      blueprint_change_suggestions: {
-        Row: {
-          account_id: string
-          created_at: string
-          created_by: string
-          decision_reason: string | null
-          id: string
-          learning_report_id: string
-          proposed_blueprint_version_id: string | null
-          proposed_policy: Json
-          rationale: string
-          reviewed_at: string | null
-          reviewed_by: string | null
-          source_blueprint_version_id: string
-          status: "pending" | "approved" | "rejected"
-        }
-        Insert: {
-          account_id: string
-          created_at?: string
-          created_by: string
-          decision_reason?: string | null
-          id?: string
-          learning_report_id: string
-          proposed_blueprint_version_id?: string | null
-          proposed_policy: Json
-          rationale: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          source_blueprint_version_id: string
-          status?: "pending" | "approved" | "rejected"
-        }
-        Update: {
-          account_id?: string
-          created_at?: string
-          created_by?: string
-          decision_reason?: string | null
-          id?: string
-          learning_report_id?: string
-          proposed_blueprint_version_id?: string | null
-          proposed_policy?: Json
-          rationale?: string
-          reviewed_at?: string | null
-          reviewed_by?: string | null
-          source_blueprint_version_id?: string
-          status?: "pending" | "approved" | "rejected"
-        }
-        Relationships: [
-          {
-            foreignKeyName: "blueprint_change_suggestions_account_id_fkey"
-            columns: ["account_id"]
-            isOneToOne: false
-            referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "blueprint_change_suggestions_learning_report_id_fkey"
-            columns: ["learning_report_id"]
-            isOneToOne: false
-            referencedRelation: "learning_reports"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "blueprint_change_suggestions_proposed_blueprint_version_id_fkey"
-            columns: ["proposed_blueprint_version_id"]
-            isOneToOne: false
-            referencedRelation: "account_blueprint_versions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "blueprint_change_suggestions_source_blueprint_version_id_fkey"
-            columns: ["source_blueprint_version_id"]
-            isOneToOne: false
-            referencedRelation: "account_blueprint_versions"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       asset_locks: {
         Row: {
           episode_id: string
@@ -593,44 +516,6 @@ export type Database = {
           },
         ]
       }
-      experiments: {
-        Row: {
-          created_at: string
-          episode_id: string
-          guardrail_metrics: string[]
-          hypothesis: string
-          id: string
-          primary_metric: string
-          primary_variable: string
-        }
-        Insert: {
-          created_at?: string
-          episode_id: string
-          guardrail_metrics?: string[]
-          hypothesis: string
-          id?: string
-          primary_metric: string
-          primary_variable: string
-        }
-        Update: {
-          created_at?: string
-          episode_id?: string
-          guardrail_metrics?: string[]
-          hypothesis?: string
-          id?: string
-          primary_metric?: string
-          primary_variable?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "experiments_episode_id_fkey"
-            columns: ["episode_id"]
-            isOneToOne: true
-            referencedRelation: "episodes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       prompt_versions: {
         Row: {
           account_id: string
@@ -680,129 +565,6 @@ export type Database = {
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "accounts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      metric_snapshots: {
-        Row: {
-          captured_at: string
-          captured_by: string
-          episode_id: string
-          id: string
-          metrics: Json
-        }
-        Insert: {
-          captured_at: string
-          captured_by: string
-          episode_id: string
-          id?: string
-          metrics: Json
-        }
-        Update: {
-          captured_at?: string
-          captured_by?: string
-          episode_id?: string
-          id?: string
-          metrics?: Json
-        }
-        Relationships: [
-          {
-            foreignKeyName: "metric_snapshots_episode_id_fkey"
-            columns: ["episode_id"]
-            isOneToOne: false
-            referencedRelation: "episodes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      learning_reports: {
-        Row: {
-          created_at: string
-          created_by: string
-          episode_id: string
-          id: string
-          recommendation: "keep" | "change" | "kill" | "insufficient_data"
-          summary: string
-        }
-        Insert: {
-          created_at?: string
-          created_by: string
-          episode_id: string
-          id?: string
-          recommendation: "keep" | "change" | "kill" | "insufficient_data"
-          summary: string
-        }
-        Update: {
-          created_at?: string
-          created_by?: string
-          episode_id?: string
-          id?: string
-          recommendation?: "keep" | "change" | "kill" | "insufficient_data"
-          summary?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "learning_reports_episode_id_fkey"
-            columns: ["episode_id"]
-            isOneToOne: true
-            referencedRelation: "episodes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      publication_records: {
-        Row: {
-          adapter: string | null
-          created_at: string
-          created_by: string | null
-          episode_id: string
-          external_content_id: string | null
-          external_url: string | null
-          id: string
-          notes: string
-          platform: string
-          published_at: string | null
-          publishing_account: string
-          source: Database["public"]["Enums"]["publication_source"]
-          status: Database["public"]["Enums"]["publication_status"]
-        }
-        Insert: {
-          adapter?: string | null
-          created_at?: string
-          created_by?: string | null
-          episode_id: string
-          external_content_id?: string | null
-          external_url?: string | null
-          id?: string
-          notes?: string
-          platform: string
-          published_at?: string | null
-          publishing_account: string
-          source?: Database["public"]["Enums"]["publication_source"]
-          status: Database["public"]["Enums"]["publication_status"]
-        }
-        Update: {
-          adapter?: string | null
-          created_at?: string
-          created_by?: string | null
-          episode_id?: string
-          external_content_id?: string | null
-          external_url?: string | null
-          id?: string
-          notes?: string
-          platform?: string
-          published_at?: string | null
-          publishing_account?: string
-          source?: Database["public"]["Enums"]["publication_source"]
-          status?: Database["public"]["Enums"]["publication_status"]
-        }
-        Relationships: [
-          {
-            foreignKeyName: "publication_records_episode_id_fkey"
-            columns: ["episode_id"]
-            isOneToOne: false
-            referencedRelation: "episodes"
             referencedColumns: ["id"]
           },
         ]
@@ -868,7 +630,22 @@ export type Database = {
       }
       shot_preparation_drafts: {
         Row: {
+          acoustic_alignment?: Json | null
+          caption_contract?: Json
+          composition?: Json
           input_fingerprint?: string | null
+          preparation_contract?: Json
+          preparation_contract_status?: "current" | "needs_upgrade"
+          preparation_input_fingerprint?: string
+          transition_mode?: "cut" | "fade" | "studio"
+          preview_status?: "failed" | "pending" | "ready" | "running"
+          current_preview_artifact_id?: string | null
+          current_preview_project_artifact_id?: string | null
+          current_preview_task_id?: string | null
+          current_preview_input_fingerprint?: string | null
+          pending_preview_task_id?: string | null
+          preview_error?: string | null
+          bgm_ducking_level?: "off" | "light" | "medium" | "strong"
           audio_mode: "none" | "source" | "tts"
           audio_status: "failed" | "pending" | "ready" | "running"
           clip_end_seconds?: number | null
@@ -885,6 +662,7 @@ export type Database = {
           frozen_by?: string | null
           id: string
           pending_tts_task_id?: string | null
+          pending_alignment_task_id?: string | null
           pending_source_audio_task_id?: string | null
           pending_video_task_id?: string | null
           review_package_id: string
@@ -916,11 +694,27 @@ export type Database = {
           selected_material_revision_id?: string | null
           source_audio_duration_seconds?: number | null
           source_audio_error?: string | null
+          source_video_duration_seconds?: number | null
           video_error?: string | null
           video_status: "failed" | "pending" | "ready" | "running"
         }
         Insert: {
+          acoustic_alignment?: Json | null
+          caption_contract?: Json
+          composition?: Json
           input_fingerprint?: string | null
+          preparation_contract?: Json
+          preparation_contract_status?: "current" | "needs_upgrade"
+          preparation_input_fingerprint?: string
+          transition_mode?: "cut" | "fade" | "studio"
+          preview_status?: "failed" | "pending" | "ready" | "running"
+          current_preview_artifact_id?: string | null
+          current_preview_project_artifact_id?: string | null
+          current_preview_task_id?: string | null
+          current_preview_input_fingerprint?: string | null
+          pending_preview_task_id?: string | null
+          preview_error?: string | null
+          bgm_ducking_level?: "off" | "light" | "medium" | "strong"
           audio_mode?: "none" | "source" | "tts"
           audio_status?: "failed" | "pending" | "ready" | "running"
           clip_end_seconds?: number | null
@@ -937,6 +731,7 @@ export type Database = {
           frozen_by?: string | null
           id?: string
           pending_tts_task_id?: string | null
+          pending_alignment_task_id?: string | null
           pending_source_audio_task_id?: string | null
           pending_video_task_id?: string | null
           review_package_id: string
@@ -958,6 +753,7 @@ export type Database = {
           selected_material_revision_id?: string | null
           source_audio_duration_seconds?: number | null
           source_audio_error?: string | null
+          source_video_duration_seconds?: number | null
           video_error?: string | null
           video_status?: "failed" | "pending" | "ready" | "running"
           video_duration_seconds?: number | null
@@ -972,7 +768,22 @@ export type Database = {
           skipped_by?: string | null
         }
         Update: {
+          acoustic_alignment?: Json | null
+          caption_contract?: Json
+          composition?: Json
           input_fingerprint?: string | null
+          preparation_contract?: Json
+          preparation_contract_status?: "current" | "needs_upgrade"
+          preparation_input_fingerprint?: string
+          transition_mode?: "cut" | "fade" | "studio"
+          preview_status?: "failed" | "pending" | "ready" | "running"
+          current_preview_artifact_id?: string | null
+          current_preview_project_artifact_id?: string | null
+          current_preview_task_id?: string | null
+          current_preview_input_fingerprint?: string | null
+          pending_preview_task_id?: string | null
+          preview_error?: string | null
+          bgm_ducking_level?: "off" | "light" | "medium" | "strong"
           audio_mode?: "none" | "source" | "tts"
           audio_status?: "failed" | "pending" | "ready" | "running"
           clip_end_seconds?: number | null
@@ -989,6 +800,7 @@ export type Database = {
           frozen_by?: string | null
           id?: string
           pending_tts_task_id?: string | null
+          pending_alignment_task_id?: string | null
           pending_source_audio_task_id?: string | null
           pending_video_task_id?: string | null
           review_package_id?: string
@@ -1010,6 +822,7 @@ export type Database = {
           selected_material_revision_id?: string | null
           source_audio_duration_seconds?: number | null
           source_audio_error?: string | null
+          source_video_duration_seconds?: number | null
           video_error?: string | null
           video_status?: "failed" | "pending" | "ready" | "running"
           video_duration_seconds?: number | null
@@ -1815,6 +1628,11 @@ export type Database = {
         Returns: Database["public"]["Tables"]["tasks"]["Row"]
         SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
       }
+      request_shot_acoustic_alignment: {
+        Args: { p_episode_id: string; p_local_only?: boolean; p_review_package_id: string; p_shot_id: string }
+        Returns: Database["public"]["Tables"]["tasks"]["Row"]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
+      }
       replace_manual_shot_media: {
         Args: { p_episode_id: string; p_kind: string; p_material_revision_id: string; p_shot_id: string; p_storyboard_review_package_id: string }
         Returns: Database["public"]["Tables"]["tasks"]["Row"]
@@ -1825,8 +1643,27 @@ export type Database = {
         Returns: Database["public"]["Tables"]["tasks"]["Row"]
         SetofOptions: { from: "*"; to: "tasks"; isOneToOne: true; isSetofReturn: false }
       }
+      save_shot_manual_alignment: {
+        Args: { p_cues: Json; p_episode_id: string; p_review_package_id: string; p_shot_id: string }
+        Returns: undefined
+      }
       save_shot_preparation_draft: {
         Args: { p_audio_mode: "none" | "source" | "tts"; p_episode_id: string; p_review_package_id: string; p_shot_id: string; p_subtitle_text: string; p_subtitles_enabled: boolean; p_tts_speaking_rate: number | null; p_tts_text: string | null; p_tts_voice: string | null }
+        Returns: Database["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
+      }
+      save_shot_caption_contract: {
+        Args: { p_caption_contract: Json; p_episode_id: string; p_review_package_id: string; p_shot_id: string }
+        Returns: Database["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
+      }
+      save_shot_audio_mix: {
+        Args: { p_bgm_ducking_level: "off" | "light" | "medium" | "strong"; p_episode_id: string; p_review_package_id: string; p_shot_id: string }
+        Returns: Database["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
+      }
+      save_shot_transition_mode: {
+        Args: { p_episode_id: string; p_review_package_id: string; p_shot_id: string; p_transition_mode: "cut" | "fade" | "studio" }
         Returns: Database["public"]["Tables"]["shot_preparation_drafts"]["Row"]
         SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
       }
@@ -1845,6 +1682,11 @@ export type Database = {
         Returns: Database["public"]["Tables"]["shot_preparation_drafts"]["Row"]
         SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
       }
+      save_shot_workbench_composition_draft: {
+        Args: { p_audio_mode: "none" | "source" | "tts"; p_clip_segments: Json; p_composition: Json; p_episode_id: string; p_material_revision_id: string; p_review_package_id: string; p_shot_id: string; p_source_video_duration_seconds: number; p_subtitle_text: string; p_subtitles_enabled: boolean; p_tts_speaking_rate: number | null; p_tts_text: string | null; p_tts_voice: string | null }
+        Returns: Database["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
+      }
       freeze_shot_preparation_batch: {
         Args: { p_episode_id: string; p_review_package_id: string }
         Returns: Database["public"]["Tables"]["tasks"]["Row"][]
@@ -1854,6 +1696,16 @@ export type Database = {
         Args: { p_accept_duration_risk?: boolean; p_episode_id: string; p_review_package_id: string; p_risk_reason?: string | null; p_studio_project: Json }
         Returns: Database["public"]["Tables"]["tasks"]["Row"][]
         SetofOptions: { from: "*"; to: "tasks"; isOneToOne: false; isSetofReturn: true }
+      }
+      generate_shot_sync_preview: {
+        Args: { p_episode_id: string; p_review_package_id: string; p_shot_id: string }
+        Returns: Database["public"]["Tables"]["tasks"]["Row"][]
+        SetofOptions: { from: "*"; to: "tasks"; isOneToOne: false; isSetofReturn: true }
+      }
+      confirm_shot_sync_preview: {
+        Args: { p_confirmation_reason: string; p_deviation_resolution: string; p_episode_id: string; p_review_package_id: string; p_shot_id: string }
+        Returns: Database["public"]["Tables"]["shot_preparation_drafts"]["Row"]
+        SetofOptions: { from: "*"; to: "shot_preparation_drafts"; isOneToOne: true; isSetofReturn: false }
       }
       generate_shot_source_audio: {
         Args: { p_episode_id: string; p_review_package_id: string; p_retry?: boolean; p_shot_id: string }
@@ -1958,48 +1810,6 @@ export type Database = {
         Args: { p_actor_id: string; p_episode_id: string }
         Returns: Json
       }
-      create_blueprint_change_suggestion: {
-        Args: { p_learning_report_id: string; p_proposed_policy: Json; p_rationale: string }
-        Returns: {
-          account_id: string
-          created_at: string
-          created_by: string
-          decision_reason: string | null
-          id: string
-          learning_report_id: string
-          proposed_blueprint_version_id: string | null
-          proposed_policy: Json
-          rationale: string
-          reviewed_at: string | null
-          reviewed_by: string | null
-          source_blueprint_version_id: string
-          status: "pending" | "approved" | "rejected"
-        }
-        SetofOptions: { from: "*"; to: "blueprint_change_suggestions"; isOneToOne: true; isSetofReturn: false }
-      }
-      define_experiment: {
-        Args: {
-          p_episode_id: string
-          p_guardrail_metrics: string[]
-          p_hypothesis: string
-          p_primary_metric: string
-          p_primary_variable: string
-        }
-        Returns: {
-          created_at: string
-          episode_id: string
-          guardrail_metrics: string[]
-          hypothesis: string
-          id: string
-          primary_metric: string
-          primary_variable: string
-        }
-        SetofOptions: { from: "*"; to: "experiments"; isOneToOne: true; isSetofReturn: false }
-      }
-      ensure_learning_demo_data: {
-        Args: Record<PropertyKey, never>
-        Returns: Json
-      }
       has_required_artifacts: {
         Args: {
           p_episode_id: string
@@ -2041,77 +1851,6 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
-      }
-      record_publication: {
-        Args: {
-          p_adapter?: string | null
-          p_episode_id: string
-          p_external_content_id?: string | null
-          p_external_url?: string | null
-          p_notes?: string
-          p_platform: string
-          p_published_at?: string | null
-          p_publishing_account: string
-          p_source?: Database["public"]["Enums"]["publication_source"]
-          p_status?: Database["public"]["Enums"]["publication_status"]
-        }
-        Returns: Database["public"]["Tables"]["publication_records"]["Row"]
-        SetofOptions: { from: "*"; to: "publication_records"; isOneToOne: true; isSetofReturn: false }
-      }
-      record_manual_publication: {
-        Args: {
-          p_episode_id: string
-          p_external_content_id?: string | null
-          p_external_url?: string | null
-          p_notes?: string
-          p_platform: string
-          p_published_at?: string | null
-          p_publishing_account: string
-        }
-        Returns: Database["public"]["Tables"]["publication_records"]["Row"]
-        SetofOptions: { from: "*"; to: "publication_records"; isOneToOne: true; isSetofReturn: false }
-      }
-      record_learning_report: {
-        Args: { p_episode_id: string; p_recommendation: "keep" | "change" | "kill" | "insufficient_data"; p_summary: string }
-        Returns: {
-          created_at: string
-          created_by: string
-          episode_id: string
-          id: string
-          recommendation: "keep" | "change" | "kill" | "insufficient_data"
-          summary: string
-        }
-        SetofOptions: { from: "*"; to: "learning_reports"; isOneToOne: true; isSetofReturn: false }
-      }
-      record_weekly_metric_snapshot: {
-        Args: { p_captured_at: string; p_episode_id: string; p_metrics: Json }
-        Returns: {
-          captured_at: string
-          captured_by: string
-          episode_id: string
-          id: string
-          metrics: Json
-        }
-        SetofOptions: { from: "*"; to: "metric_snapshots"; isOneToOne: true; isSetofReturn: false }
-      }
-      review_blueprint_change_suggestion: {
-        Args: { p_decision: "approved" | "rejected"; p_decision_reason: string; p_suggestion_id: string }
-        Returns: {
-          account_id: string
-          created_at: string
-          created_by: string
-          decision_reason: string | null
-          id: string
-          learning_report_id: string
-          proposed_blueprint_version_id: string | null
-          proposed_policy: Json
-          rationale: string
-          reviewed_at: string | null
-          reviewed_by: string | null
-          source_blueprint_version_id: string
-          status: "pending" | "approved" | "rejected"
-        }
-        SetofOptions: { from: "*"; to: "blueprint_change_suggestions"; isOneToOne: true; isSetofReturn: false }
       }
       record_publish_package_verification: {
         Args: { p_episode_id: string; p_file_size: number; p_sha256: string }
@@ -2241,14 +1980,8 @@ export type Database = {
         | "render_ready"
         | "qc_review"
         | "qc_passed"
-        | "publish_ready"
-        | "publishing_review"
-        | "published"
-        | "metrics_collecting"
-        | "learning_recorded"
+        | "production_completed"
       member_role: "owner" | "worker"
-      publication_source: "manual" | "automated"
-      publication_status: "pending" | "published" | "failed"
       task_status: "ready" | "running" | "completed" | "blocked" | "failed" | "superseded"
     }
     CompositeTypes: {
@@ -2393,15 +2126,9 @@ export const Constants = {
         "render_ready",
         "qc_review",
         "qc_passed",
-        "publish_ready",
-        "publishing_review",
-        "published",
-        "metrics_collecting",
-        "learning_recorded",
+        "production_completed",
       ],
       member_role: ["owner", "worker"],
-      publication_source: ["manual", "automated"],
-      publication_status: ["pending", "published", "failed"],
       task_status: ["ready", "running", "completed", "blocked", "failed", "superseded"],
     },
   },

@@ -11,12 +11,16 @@ import {
   type PromptContextSnapshot,
   type WorkerPreflightResult,
   type WorkerPreflightCheck,
+  type ShotPreparationContract,
   validateWorkerResult,
 } from "./contracts.js";
 import { isOwnerManagedConnection } from "./adapterRegistry.js";
 import { validateStoryboardManifest } from "./contracts.js";
 import type { StoryboardStructureRevision } from "./storyboardRevision.js";
 import { defaultAllowedDurationFrames, defaultDurationFrameRate, shotDurationDecisionFromJson } from "./durationDecision.js";
+import { isValidShotComposition, normalizeShotComposition, shotTransitionModes, type ShotComposition, type ShotTransitionMode } from "../shotComposition.js";
+import { isValidShotCaptionContract, normalizeShotCaptionContract, type ShotCaptionContract } from "../shotCaptions.js";
+import { isValidShotAudioMix, normalizeShotAudioMix } from "../shotAudioMix.js";
 
 export interface ClaimedWorkerTask {
   taskId: string;
@@ -24,7 +28,7 @@ export interface ClaimedWorkerTask {
   attempt: number;
   budgetLimitCents: number;
   maxAttempts: number;
-  provider: "codex" | "google_tts" | "volcengine_tts" | "pexels" | "ffmpeg" | "freesound" | "openchatcut" | "openai" | "cloudflare";
+  provider: "codex" | "google_tts" | "volcengine_tts" | "pexels" | "ffmpeg" | "freesound" | "openchatcut" | "openai" | "cloudflare" | "whisperx";
   model: string;
   promptVersion: string;
   episodeId: string;
@@ -193,6 +197,7 @@ function createTaskPackage(task: ClaimedWorkerTask): WorkerTaskPackage {
     },
     capability: requiredString(snapshot.capability, "任务缺少能力声明。"),
     ...(typeof snapshot.credential_ref === "string" ? { credentialRef: snapshot.credential_ref } : {}),
+    acousticAlignment: acousticAlignmentInput(snapshot),
     promptContext: promptContext(snapshot),
     promptHarness: promptHarness(snapshot),
     commission: commission(snapshot),
@@ -210,6 +215,22 @@ function createTaskPackage(task: ClaimedWorkerTask): WorkerTaskPackage {
     output,
     inputArtifacts: inputArtifacts(snapshot),
   });
+}
+
+function acousticAlignmentInput(snapshot: Record<string, unknown>): WorkerTaskPackageInput["acousticAlignment"] {
+  if (snapshot.acoustic_alignment === undefined) return undefined;
+  if (!isRecord(snapshot.acoustic_alignment)) throw new Error("声学对齐冻结输入格式无效。");
+  const value = snapshot.acoustic_alignment;
+  return {
+    confirmedText: requiredString(value.confirmed_text, "声学对齐缺少 Owner 字幕正文。"),
+    textFingerprint: requiredString(value.text_fingerprint, "声学对齐缺少字幕正文版本。"),
+    ...(typeof value.audio_relative_path === "string" ? { audioRelativePath: value.audio_relative_path } : {}),
+    ...(typeof value.audio_sha256 === "string" ? { audioSha256: value.audio_sha256 } : {}),
+    ...(typeof value.input_version === "string" ? { inputVersion: value.input_version } : {}),
+    ...(typeof value.speaking_rate === "number" ? { speakingRate: value.speaking_rate } : {}),
+    ...(value.strategy === "auto" || value.strategy === "local" ? { strategy: value.strategy } : {}),
+    ...(typeof value.voice === "string" ? { voice: value.voice } : {}),
+  };
 }
 
 function storyboardRevision(snapshot: Record<string, unknown>, frozenInputs: ArtifactManifest[]): StoryboardStructureRevision | undefined {
@@ -266,12 +287,13 @@ export function reviewRenderFromSnapshot(snapshot: Record<string, unknown>): Wor
   if (!isRecord(value) || !isRecord(value.storyboard) || !Array.isArray(value.members)) throw new Error("审核渲染任务冻结工程格式无效。");
   const storyboard = value.storyboard;
   if (storyboard.version !== "storyboard/v1" || !Array.isArray(storyboard.shots) || !Array.isArray(storyboard.audioCues)) throw new Error("审核渲染任务缺少冻结分镜。");
+  if (value.confirmation_mode !== "shot_preparation" || !Array.isArray(value.confirmed_shots)) throw new Error("OpenChatCut 新工程缺少版本化镜头准备契约。");
   return {
     projectRelativePath: requiredString(value.project_relative_path, "审核渲染任务缺少工程路径。"),
     projectRevision: requiredPositiveNumber(value.project_revision, "审核渲染任务缺少工程修订。"),
     preRenderReviewPackageId: requiredString(value.pre_render_review_package_id, "审核渲染任务缺少预渲染审核包。"),
-    ...(value.confirmation_mode === undefined || value.confirmation_mode === null ? {} : { confirmationMode: requiredConfirmationMode(value.confirmation_mode) }),
-    ...(value.confirmed_shots === undefined || value.confirmed_shots === null ? {} : { confirmedShots: confirmedShots(value.confirmed_shots) }),
+    confirmationMode: requiredConfirmationMode(value.confirmation_mode),
+    confirmedShots: confirmedShots(value.confirmed_shots),
     ...(value.studio_project === undefined && (!isRecord(value.adjustments) || value.adjustments.studio_project === undefined) ? {} : { studioProject: studioProject(value.studio_project ?? (value.adjustments as Record<string, unknown>).studio_project) }),
     ...(value.studio_project_revision === undefined && (!isRecord(value.adjustments) || value.adjustments.studio_project_revision === undefined) ? {} : { studioProjectRevision: requiredString(value.studio_project_revision ?? (value.adjustments as Record<string, unknown>).studio_project_revision, "Studio 冻结工程缺少修订号。") }),
     adjustments: reviewRenderAdjustments(value.adjustments),
@@ -287,6 +309,8 @@ export function reviewRenderFromSnapshot(snapshot: Record<string, unknown>): Wor
         ...(member.artifact_id === undefined || member.artifact_id === null ? {} : { artifactId: requiredString(member.artifact_id, "审核渲染成员缺少产物版本。") }),
         ...(member.source_material_revision_id === undefined || member.source_material_revision_id === null ? {} : { sourceMaterialRevisionId: requiredString(member.source_material_revision_id, "审核渲染成员缺少原片版本。") }),
         ...(member.clip_segments === undefined || member.clip_segments === null ? {} : { clipSegments: clipSegments(member.clip_segments) }),
+        ...(member.composition === undefined || member.composition === null ? {} : { composition: shotComposition(member.composition, Array.isArray(member.clip_segments) ? member.clip_segments.length : 1) }),
+        ...(member.preparation_contract === undefined || member.preparation_contract === null ? {} : { preparationContract: shotPreparationContract(member.preparation_contract) }),
         ...(member.audio_track_id === null ? { audioTrackId: null } : member.audio_track_id === undefined ? {} : { audioTrackId: requiredString(member.audio_track_id, "审核渲染成员缺少音轨版本。") }),
         ...(member.input_fingerprint === undefined || member.input_fingerprint === null ? {} : { inputFingerprint: requiredString(member.input_fingerprint, "审核渲染成员缺少输入版本。") }),
         ...(member.audio_mode === undefined || member.audio_mode === null ? {} : { audioMode: requiredAudioMode(member.audio_mode) }),
@@ -307,6 +331,7 @@ function confirmedShots(value: unknown): NonNullable<WorkerTaskPackageInput["rev
   return value.map((shot) => {
     if (!isRecord(shot)) throw new Error("逐镜头 Studio 确认快照格式无效。");
     const subtitlesEnabled = requiredBoolean(shot.subtitles_enabled, "确认快照字幕开关格式无效。");
+    const segments = shot.clip_segments === undefined || shot.clip_segments === null ? undefined : clipSegments(shot.clip_segments);
     return {
       shotId: requiredString(shot.shot_id, "确认快照缺少镜头标识。"),
       confirmationStatus: requiredConfirmationStatus(shot.confirmation_status),
@@ -314,7 +339,9 @@ function confirmedShots(value: unknown): NonNullable<WorkerTaskPackageInput["rev
       ...(shot.video_artifact_id === undefined || shot.video_artifact_id === null ? {} : { videoArtifactId: requiredString(shot.video_artifact_id, "确认快照缺少视频版本。") }),
       ...(shot.video_task_id === undefined || shot.video_task_id === null ? {} : { videoTaskId: requiredString(shot.video_task_id, "确认快照缺少视频任务版本。") }),
       ...(shot.source_material_revision_id === undefined || shot.source_material_revision_id === null ? {} : { sourceMaterialRevisionId: requiredString(shot.source_material_revision_id, "确认快照缺少原片版本。") }),
-      ...(shot.clip_segments === undefined || shot.clip_segments === null ? {} : { clipSegments: clipSegments(shot.clip_segments) }),
+      ...(segments === undefined ? {} : { clipSegments: segments }),
+      composition: shotComposition(shot.composition, segments?.length ?? 1),
+      preparationContract: shotPreparationContract(shot.preparation_contract),
       audioMode: requiredAudioMode(shot.audio_mode),
       audioTrackId: shot.audio_track_id === null ? null : requiredString(shot.audio_track_id, "确认快照缺少音轨版本。"),
       subtitleText: requiredSubtitleText(shot.subtitle_text, subtitlesEnabled, "确认快照缺少字幕文本。"),
@@ -322,6 +349,75 @@ function confirmedShots(value: unknown): NonNullable<WorkerTaskPackageInput["rev
       ...(shot.duration_decision === undefined || shot.duration_decision === null ? {} : { durationDecision: shotDurationDecisionFromJson(shot.duration_decision) }),
     };
   });
+}
+
+function shotPreparationContract(value: unknown): ShotPreparationContract {
+  if (!isRecord(value) || value.version !== "shot-preparation/v1") throw new Error("镜头准备契约格式无效。");
+  const segments = clipSegments(value.clip_segments);
+  const captions = shotCaptionContract(value.captions);
+  const audioMode = requiredAudioMode(value.audio_mode);
+  const audioMixCandidate = jsonKeysToCamel(value.audio_mix);
+  const audioMix = normalizeShotAudioMix(audioMixCandidate, { audioMode, audioTrackId: value.audio_track_id === null ? null : typeof value.audio_track_id === "string" ? value.audio_track_id : null });
+  if (!isValidShotAudioMix(audioMixCandidate) || audioMix.mainVoice.mode !== audioMode) throw new Error("镜头主声音与混音契约不一致。");
+  return {
+    version: "shot-preparation/v1",
+    storyboardFingerprint: requiredString(value.storyboard_fingerprint, "镜头准备契约缺少分镜版本。"),
+    sourceMaterialRevisionId: value.source_material_revision_id === null ? null : requiredString(value.source_material_revision_id, "镜头准备契约缺少原片版本。"),
+    clipSegments: segments,
+    composition: shotComposition(value.composition, segments.length),
+    transitionMode: value.transition_mode === undefined ? "cut" : requiredShotTransitionMode(value.transition_mode),
+    audioMode,
+    ttsText: value.tts_text === null ? null : requiredString(value.tts_text, "镜头准备契约 TTS 正文格式无效。"),
+    ttsVoice: value.tts_voice === null ? null : requiredString(value.tts_voice, "镜头准备契约 TTS 声音格式无效。"),
+    ttsSpeakingRate: value.tts_speaking_rate === null ? null : requiredPositiveNumber(value.tts_speaking_rate, "镜头准备契约 TTS 语速格式无效。"),
+    audioMix,
+    captions,
+    inputFingerprint: requiredString(value.input_fingerprint, "镜头准备契约缺少输入指纹。"),
+  };
+}
+
+export function shotPreparationContractFromSnapshot(value: unknown): ShotPreparationContract {
+  return shotPreparationContract(value);
+}
+
+function requiredShotTransitionMode(value: unknown): ShotTransitionMode {
+  if (typeof value !== "string" || !shotTransitionModes.includes(value as ShotTransitionMode)) throw new Error("镜头准备契约衔接方式无效。");
+  return value as ShotTransitionMode;
+}
+
+function jsonKeysToCamel(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(jsonKeysToCamel);
+  if (!isRecord(value)) return value;
+  return Object.fromEntries(Object.entries(value).map(([key, entry]) => [key.replace(/_([a-z])/g, (_, character: string) => character.toUpperCase()), jsonKeysToCamel(entry)]));
+}
+
+function shotCaptionContract(value: unknown): ShotCaptionContract {
+  if (!isRecord(value) || !isRecord(value.spatial) || !Array.isArray(value.cues)) throw new Error("镜头字幕契约格式无效。");
+  const candidate = {
+    version: value.version,
+    enabled: value.enabled,
+    contentMode: value.content_mode,
+    text: value.text,
+    cues: value.cues.map((cue) => isRecord(cue) ? { id: cue.id, text: cue.text, startMs: cue.start_ms, endMs: cue.end_ms } : cue),
+    spatial: {
+      version: value.spatial.version,
+      anchor: value.spatial.anchor,
+      safeArea: value.spatial.safe_area,
+      ...(value.spatial.aspect_ratio === undefined ? {} : { aspectRatio: value.spatial.aspect_ratio }),
+      ...(value.spatial.insets === undefined ? {} : { insets: value.spatial.insets }),
+      maxLines: value.spatial.max_lines,
+      maxCharactersPerLine: value.spatial.max_characters_per_line,
+    },
+  };
+  const normalized = normalizeShotCaptionContract(candidate, { enabled: Boolean(value.enabled), text: typeof value.text === "string" ? value.text : "" });
+  if (!isValidShotCaptionContract(normalized)) throw new Error("镜头字幕契约格式无效。");
+  return normalized;
+}
+
+function shotComposition(value: unknown, clipSegmentCount: number): ShotComposition {
+  if (value === undefined || value === null) return normalizeShotComposition(undefined, clipSegmentCount);
+  if (!isValidShotComposition(value, Math.max(1, clipSegmentCount))) throw new Error("镜头结构化构图格式无效。");
+  return value;
 }
 
 function clipSegments(value: unknown): Array<{ startSeconds: number; endSeconds: number }> {

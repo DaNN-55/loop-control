@@ -26,12 +26,8 @@ const allowedTransitions: Readonly<Record<EpisodeStage, readonly EpisodeStage[]>
   production_ready: ["render_ready"],
   render_ready: ["qc_review"],
   qc_review: ["render_ready", "qc_passed"],
-  qc_passed: ["publish_ready"],
-  publish_ready: ["publishing_review"],
-  publishing_review: ["publish_ready", "published"],
-  published: ["metrics_collecting"],
-  metrics_collecting: ["learning_recorded"],
-  learning_recorded: [],
+  qc_passed: ["production_completed"],
+  production_completed: [],
 };
 
 const ownerOnlyStages = new Set<EpisodeStage>([
@@ -39,8 +35,7 @@ const ownerOnlyStages = new Set<EpisodeStage>([
   "visual_approved",
   "storyboard_approved",
   "qc_passed",
-  "publish_ready",
-  "published",
+  "production_completed",
 ]);
 
 export class InvalidTransitionError extends Error {

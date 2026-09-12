@@ -62,8 +62,19 @@ describe("已提供脚本调度", () => {
       planTasks: async () => [{ id: "new-task" }],
       runWorker: async (task) => { events.push(task.id); return task.id; },
       runExistingWorker: async () => { events.push("existing-task"); return "existing-task"; },
-    })).resolves.toEqual({ plannedTasks: 1, workers: ["new-task", "existing-task"] });
-    expect(events).toEqual(["new-task", "existing-task"]);
+    })).resolves.toEqual({ plannedTasks: 1, workers: ["existing-task", "new-task"] });
+    expect(events).toEqual(["existing-task", "new-task"]);
+  });
+
+  it("新任务规划失败时也先领取已有 ready 任务", async () => {
+    const runExistingWorker = vi.fn(async () => "existing-task");
+
+    await expect(dispatchProvidedScriptWork({
+      planTasks: async () => { throw new Error("Supabase 返回 HTTP 504"); },
+      runWorker: async () => "unused",
+      runExistingWorker,
+    })).rejects.toThrow("Supabase 返回 HTTP 504");
+    expect(runExistingWorker).toHaveBeenCalledOnce();
   });
 
   it("没有待领取任务时不准备或启动 Worker", async () => {

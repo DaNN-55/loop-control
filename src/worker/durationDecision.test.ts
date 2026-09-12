@@ -38,7 +38,7 @@ describe("shot duration decision", () => {
   it("uses the frozen series composition duration settings", () => {
     const settings = reviewRenderDurationSettingsFromRules({ openchatcut_composition: { frame_rate: 24, allowed_frames: 1 } });
     const decision = createShotDurationDecision({ audioMode: "tts", actualAudioDurationSeconds: 5 + 1 / 24, clipDurationSeconds: 5, plannedDurationSeconds: 5, ...settings });
-    expect(settings).toEqual({ frameRate: 24, allowedFrames: 1 });
+    expect(settings).toEqual({ frameRate: 24, allowedFrames: 1, aspectRatio: "9:16" });
     expect(decision.frameToleranceSeconds).toBeCloseTo(1 / 24);
     expect(decision.status).toBe("synchronized");
   });

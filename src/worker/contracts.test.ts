@@ -82,6 +82,18 @@ describe("Worker 契约", () => {
     expect(createWorkerTaskPackage(narrationInput)).toMatchObject({ provider: "volcengine_tts", media: { adapter: "volcengine_tts" } });
   });
 
+  it("独立本地对齐任务冻结音频、Owner 正文和零成本输出", () => {
+    const taskPackage = createWorkerTaskPackage({
+      ...packageInput,
+      task: { ...packageInput.task, type: "align_shot_captions", provider: "whisperx", model: "large-v3", promptVersion: "whisperx-alignment-v1" },
+      capability: "acoustic_alignment",
+      acousticAlignment: { confirmedText: "Owner 正文", textFingerprint: "b".repeat(64), audioRelativePath: "episodes/episode-1/audio/shot-1.mp3", audioSha256: "c".repeat(64), inputVersion: "d".repeat(64), speakingRate: 1, strategy: "local", voice: "voice-a" },
+      output: { requiredArtifactTypes: ["acoustic_alignment_evidence"], contentType: "application/json", relativePath: "episodes/episode-1/alignment/shot-1.json", reviewStage: "production_ready" },
+      inputArtifacts: [{ artifactType: "audio_track", relativePath: "episodes/episode-1/audio/shot-1.mp3", sha256: "c".repeat(64), fileSize: 4096 }],
+    });
+    expect(taskPackage).toMatchObject({ provider: "whisperx", capability: "acoustic_alignment", acousticAlignment: { confirmedText: "Owner 正文", strategy: "local" }, budget: { limitCents: 0 } });
+  });
+
   it("原声提取任务冻结当前准备片段，并要求返回实际音频时长", () => {
     const sourceArtifact = {
       artifactType: "prepared_shot_video",

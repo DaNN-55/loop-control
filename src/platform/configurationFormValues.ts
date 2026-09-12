@@ -253,7 +253,7 @@ export function blueprintPolicyToForm(policy: Json): BlueprintFormValues {
   return {
     positioning: stringValue(value.positioning),
     assetRoot: stringValue(value.asset_root),
-    approvalGates: Array.isArray(value.approval_gates) ? stringArray(value.approval_gates) : ["script", "visual", "storyboard", "qc", "publish"],
+    approvalGates: Array.isArray(value.approval_gates) ? stringArray(value.approval_gates).filter((gate) => gate !== "publish") : ["script", "visual", "storyboard", "qc"],
     allowedTools: fallbackMediaAdapterTools,
     enabledMediaAdapters,
     budgets: { scriptWritingCents: "0", visualPlanningCents: "0", storyboardPlanningCents: "0" },

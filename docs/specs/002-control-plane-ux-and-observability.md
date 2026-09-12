@@ -2,13 +2,13 @@
 
 ## Problem Statement
 
-当前 Loop 控制台已经覆盖账号配置、Episode 生产、审核、发布准备和复盘，但控制面仍然偏向开发者使用：蓝图与系列规则依赖 JSON，生产单详情抽屉过长，列表缺少分页和待办角标，阻塞项使用技术错误描述，发布页复用通用 Episode 抽屉，Owner 也无法直观看到 Worker、n8n、Supabase 和本地媒体库是否正常。
+当前 Loop 控制台覆盖账号配置、Episode 生产、审核和最终交付包，但控制面仍然偏向开发者使用：蓝图与系列规则依赖 JSON，生产单详情抽屉过长，列表缺少分页和待办角标，阻塞项使用技术错误描述，Owner 也无法直观看到 Worker、n8n、Supabase 和本地媒体库是否正常。
 
 这些问题会让 Owner 难以判断下一步该做什么，也会让生产状态、发布事实和后台执行状态分散在不同地方。v2 的目标是让控制台成为一个清晰的 Owner 工作台，同时保持既有受控状态迁移、不可变输入、产物索引和审计边界。
 
 ## Solution
 
-将控制台调整为以日常待办为中心的工作台：系列运营作为默认入口，账号作为低频配置入口；蓝图和系列规则提供结构化表单；Episode 详情使用分组折叠的覆盖式抽屉；发布队列使用专用宽版弹窗和独立发布记录；审核和发布显示待处理角标；Worker 通过真实任务状态、尝试次数和 `n/m` 任务进度反馈执行情况；系统状态图标提供 Supabase、Worker、n8n、媒体库和运行依赖的快速健康检查。
+将控制台调整为以日常生产待办为中心的工作台：系列运营作为默认入口，账号作为低频配置入口；蓝图和系列规则提供结构化表单；Episode 详情使用分组折叠的覆盖式抽屉；审核显示待处理角标；Worker 通过真实任务状态、尝试次数和 `n/m` 任务进度反馈执行情况；系统状态图标提供 Supabase、Worker、n8n、媒体库和运行依赖的快速健康检查；发布包校验通过后直接结束生产。
 
 账号和系列配置在生产任务中通过版本化 Prompt 上下文参与生成。优先级为：账号硬约束、系列规则、本期输入、审核反馈。技术执行参数，例如模型、预算、工具权限和输出路径，作为任务控制元数据保存，不作为创作语义混入 Prompt。
 
@@ -17,7 +17,6 @@
 1. As an Owner, I want 系列运营成为默认入口, so that I can first understand the overall production situation.
 2. As an Owner, I want 账号入口位于导航末尾, so that low-frequency configuration does not compete with daily production work.
 3. As an Owner, I want 待审核数量显示在审核导航上, so that I can immediately see how many decisions require my attention.
-4. As an Owner, I want 待发布数量显示在发布队列导航上, so that publishing work is visible without opening the page.
 5. As an Owner, I want zero-count badges hidden, so that navigation remains quiet when there is no pending work.
 6. As an Owner, I want account identity colors to remain stable across sorting and filtering, so that I can recognize the account reliably.
 7. As an Owner, I want the bottom control to be labeled as Owner settings, so that it is not confused with a content account.
@@ -61,11 +60,6 @@
 45. As an Owner, I want review queue entries to open the same coherent Episode drawer, so that review context and production history are available together.
 46. As an Owner, I want the publish queue to open a dedicated publish modal instead of the general Episode drawer, so that publishing is a focused transaction.
 47. As an Owner, I want the publish modal to show the video, cover, publish package status, local project path, and verification result, so that I can verify the material before publishing.
-48. As an Owner, I want to enter the target platform, publishing account, external URL, external content ID, publication time, and notes, so that the publication can be traced later.
-49. As an Owner, I want to confirm that I published manually on the external platform, so that the control plane does not pretend to have performed an action it did not perform.
-50. As an Owner, I want one Episode to have multiple publication records, so that the same content can be published to multiple platforms or republished.
-51. As an Owner, I want old publication records to remain immutable, so that later republishing does not erase historical facts.
-52. As an Owner, I want the publication model to support an automated publishing adapter later, so that a future automation rollout does not require a second data model.
 53. As an Owner, I want the learning page to show an isolated demo account and demo Episodes, so that I can explore the learning workflow without contaminating real accounts.
 54. As an Owner, I want one demo Episode with an experiment and weekly metrics, so that I can test recording a learning report.
 55. As an Owner, I want a second demo Episode with a completed report and pending blueprint suggestion, so that I can test the approval side of the learning loop.
@@ -77,15 +71,13 @@
 61. As an Owner, I want running tasks to refresh automatically while I inspect an Episode, so that I do not need to reload the page repeatedly.
 62. As an Owner, I want completed, failed, and blocked tasks to produce a clear visible update, so that I know when manual intervention is required.
 63. As an Owner, I want n8n to be described as orchestration, notification, and health-check infrastructure, so that I understand it is not the Worker itself.
-64. As an Owner, I want future automated publishing to use the same publication record flow, so that manual and automated results remain comparable.
 
 ## Implementation Decisions
 
 - Navigation order is series operations, Episodes, reviews, publish queue, learning, and accounts.
 - Episode details remain a shared inspection surface for the production, review, and operations pages, but become an overlay drawer with a scrim, Escape handling, section groups, and a prioritized summary.
 - The publish queue uses a dedicated wide centered modal rather than the shared Episode drawer.
-- Publication facts are modeled as multiple records associated with an Episode. A record stores platform, publishing account or channel, external URL, external content ID, actual publication time, status, and notes. Records are append-oriented and remain available for history.
-- The first publishing implementation remains manual. The Owner confirms external publication; the data model leaves room for an automated publishing adapter to write the same record shape later.
+- The final package and its verification are the last in-platform facts. A successful verification advances the Episode to `production_completed`; external publishing is outside this product.
 - Active and archived Episodes are distinct presentation states. Archiving hides an Episode from default worklists without deleting its records or local assets. Permanent deletion is Owner-only, destructive, requires a second confirmation, and reports cleanup results.
 - Account colors are derived from stable account identity rather than table row position.
 - Blueprint and series configuration use structured forms for normal operations. Advanced fields remain available in a clearly separated advanced section to preserve compatibility with uncommon rules.
@@ -107,11 +99,11 @@
 
 - Tests should verify observable behavior and domain outcomes rather than CSS selectors, internal helper names, or implementation-specific component structure.
 - Existing Workspace component tests are the preferred seam for navigation, badges, form visibility, drawer behavior, pagination presentation, blocker copy, and publish modal behavior.
-- Existing platform service and RPC-facing tests are the preferred seam for blueprint versioning, series versioning, Episode rename/archive/delete rules, publication record validation, and state transition authorization.
+- Existing platform service and RPC-facing tests are the preferred seam for blueprint versioning, series versioning, Episode rename/archive/delete rules, package verification, and state transition authorization.
 - Existing Worker contract tests are the preferred seam for Prompt context versioning, context hashes, task progress fields, allowed tools, output contracts, and result lifecycle states.
-- Existing publishing package tests are the preferred seam for publication package metadata, package verification, and the boundary between manual confirmation and future automated publishing.
+- Existing publishing package tests are the preferred seam for publication package metadata, package verification, and the `production_completed` terminal transition.
 - Existing learning workspace tests are the preferred seam for demo learning data presentation, weekly metrics, report locking, and blueprint suggestion approval.
-- Add one end-to-end smoke path only if the existing component and RPC seams cannot verify the interaction: create or select a demo Episode, open the publish modal, record a publication, and confirm the queue feedback.
+- Add one end-to-end smoke path only if the existing component and RPC seams cannot verify the interaction: create or select a demo Episode, generate and verify its package, and confirm the production-completed feedback.
 - Verify the collapsed sidebar at desktop, narrow desktop, and mobile breakpoints, including the Owner settings control and status icon.
 - Verify destructive deletion with a disposable demo Episode and confirm both the local cleanup report and database state.
 - Verify that changing a blueprint or series version does not mutate already frozen Episode task contexts.
@@ -131,4 +123,4 @@
 
 ## Further Notes
 
-The existing domain decisions are recorded in the project glossary and ADRs for Episode cleanup, multiple publication records, manual-first publishing, and Prompt context precedence. The next implementation should begin with the UI-only batch, then introduce schema-backed forms and lifecycle changes, and only then add publication records, Worker progress, and demo data. Remote issue publication is pending Issue Tracker setup and the required `ready-for-agent` label vocabulary.
+The existing domain decisions are recorded in the project glossary and ADRs for Episode cleanup and Prompt context precedence. The next implementation should begin with the UI-only batch, then introduce schema-backed forms and lifecycle changes, and only then add Worker progress and representative production data. Remote issue publication is pending Issue Tracker setup and the required `ready-for-agent` label vocabulary.

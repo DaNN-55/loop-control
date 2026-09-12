@@ -7,7 +7,7 @@ const episodeId = requiredArgument(process.argv[2], "episode ID");
 const supabase = createClient(requiredEnvironment("SUPABASE_URL"), requiredEnvironment("SUPABASE_SERVICE_ROLE_KEY"), { auth: { persistSession: false } });
 const mediaLibraryMountPath = requiredEnvironment("MEDIA_LIBRARY_MOUNT_PATH");
 const mediaLibraryMinimumFreeBytes = nonNegativeIntegerEnvironment("MEDIA_LIBRARY_MIN_FREE_BYTES");
-const context = await loadPublishContext({ allowedStages: ["qc_passed", "publish_ready", "publishing_review"], episodeId, mediaLibraryMountPath, mediaLibraryMinimumFreeBytes, supabase });
+const context = await loadPublishContext({ allowedStages: ["qc_passed", "production_completed"], episodeId, mediaLibraryMountPath, mediaLibraryMinimumFreeBytes, supabase });
 const publishPackage = context.artifacts.find((artifact) => artifact.artifactType === "publish_package");
 if (!publishPackage) throw new Error("生产单缺少固定发布包索引。");
 await verifyPublishPackage({ assetRoot: context.assetRoot, episodeId: context.episodeId, publishPackage });

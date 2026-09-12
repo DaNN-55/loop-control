@@ -94,6 +94,12 @@ const episodeAudioSourceMigration = resolve(
 const volcengineTtsExecutionMigration = resolve(
   "supabase/migrations/20260901111615_enable_volcengine_tts_execution.sql",
 );
+const decoupledTtsAlignmentMigration = resolve(
+  "supabase/migrations/20260912162500_decouple_tts_and_acoustic_alignment.sql",
+);
+const captionSafeAreaV2Migration = resolve(
+  "supabase/migrations/20260912200000_caption_safe_area_v2.sql",
+);
 const blueprintSnapshotVersionMigration = resolve(
   "supabase/migrations/20260823114252_fix_current_blueprint_snapshot_version.sql",
 );
@@ -136,14 +142,23 @@ const frozenStudioProjectPathMigration = resolve(
 const publishCoverFormatsMigration = resolve(
   "supabase/migrations/20260902080000_allow_publish_cover_image_formats.sql",
 );
-const manualPublicationFlowMigration = resolve(
-  "supabase/migrations/20260902004000_complete_manual_publication_flow.sql",
+const productionCompletionEnumMigration = resolve(
+  "supabase/migrations/20260912210000_add_production_completed_stage.sql",
+);
+const productionCompletionMigration = resolve(
+  "supabase/migrations/20260912210100_remove_publication_learning_flow.sql",
+);
+const qcApprovalArtifactGateMigration = resolve(
+  "supabase/migrations/20260912210300_fix_qc_approval_artifact_gate.sql",
 );
 const shotPreparationDraftMigration = resolve(
   "supabase/migrations/20260903090000_add_shot_preparation_drafts.sql",
 );
 const shotTtsMigration = resolve(
   "supabase/migrations/20260903100000_add_shot_tts_generation.sql",
+);
+const reusedShotTtsTrackMigration = resolve(
+  "supabase/migrations/20260911071624_restore_reused_shot_tts_track.sql",
 );
 const shotClipMigration = resolve(
   "supabase/migrations/20260903110000_generate_shot_clip.sql",
@@ -249,6 +264,24 @@ const editableShotWorkbenchMigration = resolve(
 );
 const shotReviewVideoMigration = resolve(
   "supabase/migrations/20260905120000_generate_shot_review_video.sql",
+);
+const shotSyncPreviewMigration = resolve(
+  "supabase/migrations/20260911032918_shot_sync_preview.sql",
+);
+const clipIntervalUnionDurationMigration = resolve(
+  "supabase/migrations/20260911104219_use_clip_interval_union_duration.sql",
+);
+const compositionAwareClipDurationMigration = resolve(
+  "supabase/migrations/20260911112639_use_composition_aware_clip_duration.sql",
+);
+const sourceAndPlaybackDurationMigration = resolve(
+  "supabase/migrations/20260911124701_separate_source_and_playback_duration.sql",
+);
+const embeddedSourceAudioPreviewMigration = resolve(
+  "supabase/migrations/20260912180135_use_embedded_source_audio_for_shot_preview.sql",
+);
+const preserveNestedShotAudioMixNullsMigration = resolve(
+  "supabase/migrations/20260912210200_preserve_nested_shot_audio_mix_nulls.sql",
 );
 const openChatCutFrozenPathMigration = resolve(
   "supabase/migrations/20260909044114_align_openchatcut_frozen_project_path.sql",
@@ -734,14 +767,39 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("metadata-v1.json");
   });
 
-  it("人工发布登记从 QC 完成阶段原子推进到已发布", () => {
-    const migration = readFileSync(manualPublicationFlowMigration, "utf8");
+  it("发布包校验通过后进入生产完成终态，并移除发布及复盘数据结构", () => {
+    const enumMigration = readFileSync(productionCompletionEnumMigration, "utf8");
+    const migration = readFileSync(productionCompletionMigration, "utf8");
 
-    expect(migration).toContain("create or replace function public.record_manual_publication");
-    expect(migration).toContain("current_stage = 'qc_passed'");
-    expect(migration).toContain("'publish_ready'::public.episode_stage");
-    expect(migration).toContain("'publishing_review'::public.episode_stage");
-    expect(migration).toContain("created_record := public.record_publication(");
+    expect(enumMigration).toContain("add value if not exists 'production_completed'");
+    expect(migration).toContain("stage = 'production_completed'");
+    expect(migration).toContain("create or replace function public.record_publish_package_verification");
+    expect(migration).toContain("drop table if exists public.publication_records");
+    expect(migration).toContain("drop table if exists public.learning_reports");
+    expect(migration).toContain("drop table if exists public.metric_snapshots");
+    expect(migration).toContain("drop table if exists public.experiments");
+  });
+
+  it("QC 批准只接受当前审核包对应成功任务的完整审核证据", () => {
+    const migration = readFileSync(qcApprovalArtifactGateMigration, "utf8");
+    const qcClause = migration.slice(
+      migration.indexOf("when 'qc_passed'"),
+      migration.indexOf("when 'production_completed'"),
+    );
+
+    expect(qcClause).toContain("package.stage = 'qc_review'");
+    expect(qcClause).toContain("package.invalidated_at is null");
+    expect(qcClause).toContain("order by current_package.revision_number desc, current_package.created_at desc");
+    expect(qcClause).toContain("task.task_type = 'generate_review_render'");
+    expect(qcClause).toContain("task.status = 'completed'");
+    expect(qcClause).toContain("artifact.producer_task_id = task.id");
+    expect(qcClause).toContain("select count(distinct artifact.artifact_type) = 4");
+    expect(qcClause).toContain("'render'");
+    expect(qcClause).toContain("'review_render_project'");
+    expect(qcClause).toContain("'review_render_runtime'");
+    expect(qcClause).toContain("'review_qc_report'");
+    expect(qcClause).not.toContain("'final_render'");
+    expect(migration.slice(migration.indexOf("when 'production_completed'"))).toContain("'final_render'");
   });
 
   it("保存已被生产单引用的蓝图时，为旧规则分配独立快照版本", () => {
@@ -1054,6 +1112,16 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("blocked_task.input_snapshot #>> '{executor,adapter}'");
   });
 
+  it("口播音频完成后立即可用，并把声学对齐排为独立后台任务", () => {
+    const migration = readFileSync(decoupledTtsAlignmentMigration, "utf8");
+
+    expect(migration).toContain("new.status <> 'completed'");
+    expect(migration).toContain("audio.source_task_id = new.id");
+    expect(migration).toContain("'align_shot_captions', 'ready'");
+    expect(migration).toContain("口播音频已可试听；声学对齐正在后台排队。");
+    expect(migration).not.toContain("new.last_result -> 'acousticAlignment'");
+  });
+
   it("自动进入审核渲染，并只在 QC 台阻塞最终批准", () => {
     const migration = readFileSync(qcEditorMigration, "utf8");
 
@@ -1149,6 +1217,23 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("pending_tts_task_id");
     expect(migration).toContain("sync_shot_tts_audio_after_insert");
     expect(migration).toContain("tts_error");
+  });
+
+  it("逐镜头 TTS 复用已完成任务时恢复当前音轨，否则创建新任务", () => {
+    const migration = readFileSync(reusedShotTtsTrackMigration, "utf8");
+
+    expect(migration).toContain("create or replace function public.restore_completed_shot_tts_track");
+    expect(migration).toContain("candidate.episode_id = draft.episode_id");
+    expect(migration).toContain("candidate.source_review_package_id = draft.review_package_id");
+    expect(migration).toContain("candidate.cue_id = draft.shot_id");
+    expect(migration).toContain("candidate.source_task_id = p_task_id");
+    expect(migration).toContain("current_audio_track_id = track.id");
+    expect(migration).toContain("pending_tts_task_id = null");
+    expect(migration).toContain("audio_status = 'ready'");
+    expect(migration).toContain("existing_task.status in (''ready'', ''running'')");
+    expect(migration).toContain("existing_task.status = ''completed'' and public.restore_completed_shot_tts_track");
+    expect(migration).toContain("shot_tts_completed_track_reused");
+    expect(migration).toContain("revoke all on function public.restore_completed_shot_tts_track(uuid,uuid) from public,anon,authenticated");
   });
 
   it("逐镜头 TTS 使用 Owner 归属字段校验连接版本", () => {
@@ -1735,6 +1820,69 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("from public, anon, authenticated;");
   });
 
+  it("逐镜头同步预览以同一输入指纹登记真实代理和可编辑工程，并保留失败前代理", () => {
+    const migration = readFileSync(shotSyncPreviewMigration, "utf8");
+    expect(migration).toContain("'generate_review_render','generate_shot_sync_preview','generate_final_render'");
+    expect(migration).toContain("create function public.generate_shot_sync_preview(");
+    expect(migration).toContain("'preview_input_fingerprint', draft.preparation_input_fingerprint");
+    expect(migration).toContain("jsonb_build_array('shot_preview_proxy', 'shot_editable_project', 'shot_preview_runtime', 'shot_preview_qc_report')");
+    expect(migration).toContain("current_preview_input_fingerprint is distinct from draft.preparation_input_fingerprint");
+    expect(migration).toContain("preview_error = coalesce(new.last_result");
+    expect(migration).not.toContain("set current_preview_artifact_id = null");
+    expect(migration).toContain("coalesce((audio_member #>> '{audio_track,start_seconds}')::numeric, 0) - shot_offset_seconds");
+    expect(migration).toContain("replace(definition, 'order by ordinal', 'order by ordinality')");
+  });
+
+  it("保留原声直接使用视频内嵌音轨，不再等待独立提取任务", () => {
+    const migration = readFileSync(embeddedSourceAudioPreviewMigration, "utf8");
+
+    expect(migration).toContain("pg_get_functiondef('public.generate_shot_sync_preview(uuid,uuid,text)'::regprocedure)");
+    expect(migration).toContain("pg_get_functiondef('public.confirm_shot_sync_preview(uuid,uuid,text,text,text)'::regprocedure)");
+    expect(migration).toContain("The source-audio shot needs its current extracted audio evidence");
+    expect(migration).toContain("draft.audio_mode = \\'tts\\' and not exists");
+    expect(migration).toContain("when draft.audio_mode = \\'source\\' then duration_seconds");
+    expect(migration).toContain("from public, anon;");
+    expect(migration).toContain("to authenticated;");
+  });
+
+  it("审核渲染组包保留镜头准备契约中的显式空音频字段", () => {
+    const migration = readFileSync(preserveNestedShotAudioMixNullsMigration, "utf8");
+
+    expect(migration).toContain("pg_get_functiondef('public.orchestrate_review_render_tasks(uuid)'::regprocedure)");
+    expect(migration).toContain("jsonb_build_object('preparation_contract', member.evidence_snapshot -> 'preparation_contract')");
+    expect(migration).toContain("when member.evidence_snapshot -> 'preparation_contract' is null then '{}'::jsonb");
+    expect(migration).toContain("if patched = definition or position(replacement in patched) = 0 then");
+  });
+
+  it("重叠片段的时长在保存、生成和确认链路都按区间并集计算", () => {
+    const migration = readFileSync(clipIntervalUnionDurationMigration, "utf8");
+    expect(migration).toContain("create or replace function public.clip_segment_union_duration(p_clip_segments jsonb)");
+    expect(migration).toContain("segment_start <= current_end");
+    expect(migration).toContain("pg_get_functiondef('public.save_shot_workbench_draft(uuid,uuid,text,uuid,jsonb,text,text,boolean,text,text,numeric)'::regprocedure)");
+    expect(migration).toContain("pg_get_functiondef('public.generate_shot_sync_preview(uuid,uuid,text)'::regprocedure)");
+    expect(migration).toContain("pg_get_functiondef('public.confirm_shot_sync_preview(uuid,uuid,text,text,text)'::regprocedure)");
+    expect(migration).toContain("from public, anon, authenticated;");
+  });
+
+  it("按全屏顺序与分屏并行两种构图语义计算镜头播放时长", () => {
+    const migration = readFileSync(compositionAwareClipDurationMigration, "utf8");
+    expect(migration).toContain("create or replace function public.shot_composition_playback_duration(p_clip_segments jsonb, p_composition jsonb)");
+    expect(migration).toContain("coalesce(p_composition ->> 'layout', 'full') = 'full'");
+    expect(migration).toContain("least(playback_duration, segment_duration)");
+    expect(migration).toContain("public.shot_composition_playback_duration(draft.clip_segments, draft.composition)");
+    expect(migration).toContain("video_duration_seconds = public.shot_composition_playback_duration(p_clip_segments, p_composition)");
+    expect(migration).toContain("from public, anon, authenticated;");
+  });
+
+  it("源素材范围与镜头播放时长分别保存并分别校验", () => {
+    const migration = readFileSync(sourceAndPlaybackDurationMigration, "utf8");
+    expect(migration).toContain("add column source_video_duration_seconds numeric");
+    expect(migration).toContain("p_source_video_duration_seconds numeric");
+    expect(migration).toContain("source_video_duration_seconds = p_source_video_duration_seconds");
+    expect(migration).toContain("(segment ->> ''end_seconds'')::numeric > draft.source_video_duration_seconds");
+    expect(migration).toContain("source duration presence");
+  });
+
   it("账号归档可恢复、受 Owner 权限保护并阻止新建生产单", () => {
     const migration = readFileSync(accountArchivingMigration, "utf8");
 
@@ -1744,6 +1892,16 @@ describe("B-roll 连接固化迁移", () => {
     expect(migration).toContain("where id = new.account_id and archived_at is not null");
     expect(migration).toContain("revoke execute on function public.set_account_archived(uuid, boolean) from public, anon;");
     expect(migration).toContain("grant execute on function public.set_account_archived(uuid, boolean) to authenticated;");
+  });
+
+  it("字幕安全区 v2 校验画布比例与四边边距，同时兼容 v1 快照", () => {
+    const migration = readFileSync(captionSafeAreaV2Migration, "utf8");
+    expect(migration).toContain("shot-caption-space/v1");
+    expect(migration).toContain("shot-caption-space/v2");
+    expect(migration).toContain("('9:16', '16:9', '1:1')");
+    expect(migration).toContain("array['top', 'right', 'bottom', 'left']");
+    expect(migration).toContain("not between 0 and 0.4");
+    expect(migration).toContain("revoke all on function public.is_valid_shot_caption_contract(jsonb) from public, anon, authenticated");
   });
 
   it("按生产单冻结蓝图执行五个审批关卡", () => {

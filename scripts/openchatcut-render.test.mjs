@@ -4,7 +4,7 @@ import { spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { assertOpenChatCutRuntime } from "./openchatcut-render.mjs";
+import { assertOpenChatCutRuntime, openChatCutRenderEnvironment, openChatCutViteArguments } from "./openchatcut-render.mjs";
 
 const scriptPath = join(dirname(fileURLToPath(import.meta.url)), "openchatcut-render.mjs");
 const temporaryRoots = [];
@@ -17,6 +17,13 @@ async function openChatCutFixture({ name = "openchatcut", includeEntry = true, i
     await mkdir(join(root, "src"), { recursive: true });
     await writeFile(join(root, "index.html"), "<div id=\"root\"></div>");
     await writeFile(join(root, "src", "main.tsx"), "export {};\n");
+    await mkdir(join(root, "src", "persist"), { recursive: true });
+    await mkdir(join(root, "src", "editor"), { recursive: true });
+    await mkdir(join(root, "src", "captions"), { recursive: true });
+    await writeFile(join(root, "src", "persist", "projectStore.ts"), "export {};\n");
+    await writeFile(join(root, "src", "editor", "types.ts"), "export {};\n");
+    await writeFile(join(root, "src", "captions", "resolve.ts"), "export {};\n");
+    await writeFile(join(root, "src", "captions", "manualCaptions.ts"), "export {};\n");
   }
   if (includeConfig) {
     await mkdir(join(root, "config"), { recursive: true });
@@ -24,9 +31,11 @@ async function openChatCutFixture({ name = "openchatcut", includeEntry = true, i
   }
   if (includeDependencies) {
     await mkdir(join(root, "node_modules", "vite", "bin"), { recursive: true });
+    await mkdir(join(root, "node_modules", "tsx", "dist"), { recursive: true });
     await mkdir(join(root, "node_modules", "@vitejs", "plugin-react"), { recursive: true });
     await mkdir(join(root, "node_modules", "dotenv"), { recursive: true });
     await writeFile(join(root, "node_modules", "vite", "bin", "vite.js"), "console.log('vite/7.0.0');\n");
+    await writeFile(join(root, "node_modules", "tsx", "dist", "loader.mjs"), "export {};\n");
     await writeFile(join(root, "node_modules", "@vitejs", "plugin-react", "package.json"), "{}");
     await writeFile(join(root, "node_modules", "dotenv", "package.json"), "{}");
   }
@@ -38,6 +47,15 @@ afterEach(async () => {
 });
 
 describe("OpenChatCut 渲染运行时", () => {
+  it("starts the background renderer without opening a browser window", () => {
+    expect(openChatCutViteArguments("/tmp/openchatcut", 5179).some((argument) => argument.startsWith("--open"))).toBe(false);
+    expect(openChatCutRenderEnvironment({ BROWSER: "Google Chrome" }, "/tmp/openchatcut-data", "profile-1")).toMatchObject({
+      BROWSER: "none",
+      OPENCHATCUT_DATA_DIR: "/tmp/openchatcut-data",
+      OPENCHATCUT_DEV_PROFILE_ID: "profile-1",
+    });
+  });
+
   it("--version 走真实前置检查，而非硬编码成功", () => {
     const result = spawnSync(process.execPath, [scriptPath, "--version"], { encoding: "utf8", env: { PATH: process.env.PATH || "" } });
     expect(result.status).toBe(1);
@@ -53,8 +71,12 @@ describe("OpenChatCut 渲染运行时", () => {
     } catch (error) {
       expect(error.message).toContain("渲染 HTML 入口 index.html");
       expect(error.message).toContain("渲染应用入口 src/main.tsx");
+      expect(error.message).toContain("项目迁移入口 src/persist/projectStore.ts");
+      expect(error.message).toContain("字幕解析器 src/captions/resolve.ts");
+      expect(error.message).toContain("字幕编辑器 src/captions/manualCaptions.ts");
       expect(error.message).toContain("Vite 配置 config/vite.config.ts");
       expect(error.message).toContain("已安装的 Vite 可执行文件");
+      expect(error.message).toContain("已安装的 tsx loader");
       expect(error.message).toContain("已安装的 @vitejs/plugin-react 依赖");
       expect(error.message).toContain("已安装的 dotenv 依赖");
     }

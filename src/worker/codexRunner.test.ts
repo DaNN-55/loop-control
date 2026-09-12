@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { runCodexWorker } from "./codexRunner";
+import { runCodexWorker, shotPreparationContractFromSnapshot } from "./codexRunner";
 
 const claimedTask = {
   taskId: "task-1",
@@ -24,6 +24,24 @@ const claimedTask = {
 };
 
 describe("本地 Codex Worker runner", () => {
+  it("接受 PostgreSQL JSONB 重排后的有效镜头混音契约", () => {
+    expect(() => shotPreparationContractFromSnapshot({
+      version: "shot-preparation/v1",
+      storyboard_fingerprint: "2".repeat(32),
+      source_material_revision_id: "material-1",
+      clip_segments: [{ start_seconds: 0, end_seconds: 2 }],
+      composition: { version: "shot-composition/v1", layout: "full", slots: [{ id: "full", clipSegmentIndex: 0, fit: "cover", focalPoint: { x: 0.5, y: 0.5 } }] },
+      audio_mode: "tts",
+      audio_track_id: "track-1",
+      tts_text: "测试口播",
+      tts_voice: "voice-1",
+      tts_speaking_rate: 1,
+      audio_mix: { bgm: null, sfx: null, version: "shot-audio-mix/v1", main_voice: { mode: "tts", role: "anchor", gain_db: 0, track_id: "track-1" } },
+      captions: { version: "shot-captions/v1", enabled: false, content_mode: "independent", text: "", cues: [], spatial: { version: "shot-caption-space/v1", anchor: "bottom-center", safe_area: "title-safe", max_lines: 2, max_characters_per_line: 16 } },
+      input_fingerprint: "1".repeat(32),
+    })).not.toThrow();
+  });
+
   it("把真实内部执行阶段依次回写给控制台", async () => {
     const reportProgress = vi.fn().mockResolvedValue(undefined);
     const execute = vi.fn().mockResolvedValue(JSON.stringify({
@@ -53,6 +71,20 @@ describe("本地 Codex Worker runner", () => {
     const reportResult = vi.fn();
     const relativePath = "episodes/episode-1/materials/shot.mp4";
     const sha256 = "a".repeat(64);
+    const preparationContract = {
+      version: "shot-preparation/v1",
+      storyboard_fingerprint: "2".repeat(32),
+      source_material_revision_id: "material-1",
+      clip_segments: [{ start_seconds: 0, end_seconds: 2 }],
+      composition: { version: "shot-composition/v1", layout: "full", slots: [{ id: "full", clipSegmentIndex: 0, fit: "cover", focalPoint: { x: 0.5, y: 0.5 } }] },
+      audio_mode: "none",
+      tts_text: null,
+      tts_voice: null,
+      tts_speaking_rate: null,
+      audio_mix: { version: "shot-audio-mix/v1", main_voice: { mode: "none", track_id: null, gain_db: 0, role: "none" }, bgm: null, sfx: null },
+      captions: { version: "shot-captions/v1", enabled: false, content_mode: "independent", text: "", cues: [], spatial: { version: "shot-caption-space/v1", anchor: "bottom-center", safe_area: "title-safe", max_lines: 2, max_characters_per_line: 16 } },
+      input_fingerprint: "1".repeat(32),
+    };
 
     await expect(runCodexWorker({
       claimNextTask: async () => ({ ...claimedTask, taskId: "review-render-disabled-subtitle", taskType: "generate_review_render", provider: "openchatcut", model: "openchatcut@0.2.14", promptVersion: "review-render-v1", inputSnapshot: {
@@ -61,10 +93,10 @@ describe("本地 Codex Worker runner", () => {
         input_artifacts: [{ artifactType: "source_video", relativePath, sha256, fileSize: 10 }],
         review_render: {
           project_relative_path: "episodes/episode-1/review-render/v1/index.html", project_revision: 1, pre_render_review_package_id: "package-1", confirmation_mode: "shot_preparation",
-          confirmed_shots: [{ shot_id: "shot-1", confirmation_status: "confirmed", input_fingerprint: "1".repeat(32), source_material_revision_id: "material-1", clip_segments: [{ start_seconds: 0, end_seconds: 2 }], audio_mode: "none", audio_track_id: null, subtitle_text: "", subtitles_enabled: false }],
+          confirmed_shots: [{ shot_id: "shot-1", confirmation_status: "confirmed", input_fingerprint: "1".repeat(32), source_material_revision_id: "material-1", clip_segments: [{ start_seconds: 0, end_seconds: 2 }], preparation_contract: preparationContract, audio_mode: "none", audio_track_id: null, subtitle_text: "", subtitles_enabled: false }],
           adjustments: { aspect_ratio: "9:16", width: 1080, height: 1920, captions_enabled: true, caption_style: "minimal", pacing: "standard", crop: "cover", transition: "cut", layout: "lower_third", narration_gain_db: 0, bgm_gain_db: -12, sfx_gain_db: -6, reason: "生成审核视频。" },
           storyboard: { version: "storyboard/v1", audioCues: [], shots: [{ id: "shot-1", scriptSegment: "等待转场", durationSeconds: 2, shotType: "b_roll", productionMethod: "素材", inputBasis: [{ relativePath, sha256 }], targetSpec: "9:16" }] },
-          members: [{ member_key: "shot:shot-1", member_kind: "shot_media", source_material_revision_id: "material-1", clip_segments: [{ start_seconds: 0, end_seconds: 2 }], input_fingerprint: "1".repeat(32), audio_mode: "none", audio_track_id: null, subtitle_text: "", subtitles_enabled: false, relative_path: relativePath, sha256, start_seconds: 0, duration_seconds: 2 }],
+          members: [{ member_key: "shot:shot-1", member_kind: "shot_media", source_material_revision_id: "material-1", clip_segments: [{ start_seconds: 0, end_seconds: 2 }], preparation_contract: preparationContract, input_fingerprint: "1".repeat(32), audio_mode: "none", audio_track_id: null, subtitle_text: "", subtitles_enabled: false, relative_path: relativePath, sha256, start_seconds: 0, duration_seconds: 2 }],
         },
       } }),
       reportResult, execute, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0,

@@ -14,11 +14,7 @@ export const episodeStages = [
   "render_ready",
   "qc_review",
   "qc_passed",
-  "publish_ready",
-  "publishing_review",
-  "published",
-  "metrics_collecting",
-  "learning_recorded",
+  "production_completed",
 ] as const;
 
 export type EpisodeStage = (typeof episodeStages)[number];

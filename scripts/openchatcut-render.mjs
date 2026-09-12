@@ -48,14 +48,9 @@ try {
   }
   rewriteSources(state, copied);
   const port = await availablePort();
-  const child = spawn(nodePath, [join(root, "node_modules/vite/bin/vite.js"), root, "--config", join(root, "config/vite.config.ts"), "--host", "127.0.0.1", `--port=${port}`], {
+  const child = spawn(nodePath, openChatCutViteArguments(root, port), {
     cwd: root,
-    env: {
-      ...process.env,
-      OPENCHATCUT_DATA_DIR: dataDir,
-      OPENCHATCUT_DEV_PROFILE_ID: randomUUID(),
-      OPENCHATCUT_DISABLE_HARDWARE_ENCODING: process.env.OPENCHATCUT_DISABLE_HARDWARE_ENCODING || "1",
-    },
+    env: openChatCutRenderEnvironment(process.env, dataDir, randomUUID()),
     stdio: ["ignore", "pipe", "pipe"],
   });
   child.stdout?.on("data", (chunk) => logs.push(String(chunk)));
@@ -83,6 +78,20 @@ try {
 } finally {
   await rm(dataDir, { recursive: true, force: true });
 }
+}
+
+export function openChatCutViteArguments(root, port) {
+  return [join(root, "node_modules/vite/bin/vite.js"), root, "--config", join(root, "config/vite.config.ts"), "--host", "127.0.0.1", `--port=${port}`];
+}
+
+export function openChatCutRenderEnvironment(environment, dataDir, profileId) {
+  return {
+    ...environment,
+    BROWSER: "none",
+    OPENCHATCUT_DATA_DIR: dataDir,
+    OPENCHATCUT_DEV_PROFILE_ID: profileId,
+    OPENCHATCUT_DISABLE_HARDWARE_ENCODING: environment.OPENCHATCUT_DISABLE_HARDWARE_ENCODING || "1",
+  };
 }
 
 function rewriteSources(value, map) {
@@ -143,8 +152,13 @@ export function assertOpenChatCutRuntime({ root, nodeVersion, exists = existsSyn
     const requiredPaths = [
       ["渲染 HTML 入口 index.html", join(configuredRoot, "index.html")],
       ["渲染应用入口 src/main.tsx", join(configuredRoot, "src", "main.tsx")],
+      ["项目迁移入口 src/persist/projectStore.ts", join(configuredRoot, "src", "persist", "projectStore.ts")],
+      ["时间线读取入口 src/editor/types.ts", join(configuredRoot, "src", "editor", "types.ts")],
+      ["字幕解析器 src/captions/resolve.ts", join(configuredRoot, "src", "captions", "resolve.ts")],
+      ["字幕编辑器 src/captions/manualCaptions.ts", join(configuredRoot, "src", "captions", "manualCaptions.ts")],
       ["Vite 配置 config/vite.config.ts", join(configuredRoot, "config", "vite.config.ts")],
       ["已安装的 Vite 可执行文件 node_modules/vite/bin/vite.js", join(configuredRoot, "node_modules", "vite", "bin", "vite.js")],
+      ["已安装的 tsx loader node_modules/tsx/dist/loader.mjs", join(configuredRoot, "node_modules", "tsx", "dist", "loader.mjs")],
       ["已安装的 @vitejs/plugin-react 依赖", join(configuredRoot, "node_modules", "@vitejs", "plugin-react", "package.json")],
       ["已安装的 dotenv 依赖", join(configuredRoot, "node_modules", "dotenv", "package.json")],
     ];

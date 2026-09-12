@@ -18,7 +18,7 @@ const stageGroups: Array<{ id: string; label: string; stages: EpisodeStage[] }> 
   { id: "visual", label: "视觉准备", stages: ["visual_draft", "visual_review", "visual_approved"] },
   { id: "storyboard", label: "分镜与媒体", stages: ["storyboard_draft", "storyboard_review", "storyboard_approved", "production_ready"] },
   { id: "render", label: "合成与 QC", stages: ["render_ready", "qc_review", "qc_passed"] },
-  { id: "publish", label: "发布与复盘", stages: ["publish_ready", "publishing_review", "published", "metrics_collecting", "learning_recorded"] },
+  { id: "completed", label: "生产完成", stages: ["production_completed"] },
 ];
 
 function operationalStageLabel(stage: EpisodeStage): string {

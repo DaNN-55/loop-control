@@ -21,9 +21,9 @@ import { loadPublishContext } from "./src/publishing/publishContext";
 import { coverImageExtension, coverInputPath } from "./src/publishing/coverImage";
 import { adapterRegistration } from "./src/worker/adapterRegistry";
 import { synthesizeGoogleTts, synthesizeVolcengineTts } from "./src/worker/mediaProviders";
-import { reviewRenderFromSnapshot } from "./src/worker/codexRunner";
+import { reviewRenderFromSnapshot, shotPreparationContractFromSnapshot } from "./src/worker/codexRunner";
 import { freezeOpenChatCutStudio, openOpenChatCutStudio } from "./src/worker/openchatcutStudio";
-import type { StoryboardManifest, WorkerTaskPackage } from "./src/worker/contracts";
+import type { ShotPreparationContract, StoryboardManifest, WorkerTaskPackage } from "./src/worker/contracts";
 import { ExpiringProbeCache, summarizeN8nExecutions, supabaseControlDataEvidence, type N8nExecutionEvidence, type N8nExecutionEvidenceRow } from "./src/observability/systemStatusEvidence";
 
 export { coverImageExtension } from "./src/publishing/coverImage";
@@ -52,6 +52,8 @@ const execFileAsync = promisify(execFile);
 const storyboardThumbnailInFlight = new Map<string, Promise<LocalArtifactFile>>();
 const episodeDispatchInFlight = new Map<string, Promise<void>>();
 const taskDispatchInFlight = new Map<string, Promise<void>>();
+export type TaskDispatchStatus = { detail: string; status: "failed" | "starting" | "succeeded" | "unknown"; updatedAt: string | null };
+const taskDispatchStatuses = new Map<string, TaskDispatchStatus>();
 
 type LocalArtifactFile = { modifiedAt: number; path: string; size: number };
 
@@ -123,7 +125,12 @@ export function beginTaskDispatch(taskId: string, run?: (taskId: string) => Prom
       return runProbeCommand(invocation.command, invocation.argumentsList, 30 * 60 * 1000);
     };
   }
-  const operation = execute(taskId).then(() => undefined).catch((error) => {
+  taskDispatchStatuses.set(taskId, { detail: "Worker 进程正在启动。", status: "starting", updatedAt: new Date().toISOString() });
+  const operation = execute(taskId).then(() => {
+    taskDispatchStatuses.set(taskId, { detail: "Worker 进程已结束，任务结果已写回。", status: "succeeded", updatedAt: new Date().toISOString() });
+  }).catch((error) => {
+    const detail = error instanceof Error ? error.message : "Worker 进程启动或执行失败。";
+    taskDispatchStatuses.set(taskId, { detail, status: "failed", updatedAt: new Date().toISOString() });
     console.error(`Task ${taskId} 即时派发失败：`, error);
   }).finally(() => {
     if (taskDispatchInFlight.get(taskId) === operation) taskDispatchInFlight.delete(taskId);
@@ -132,13 +139,18 @@ export function beginTaskDispatch(taskId: string, run?: (taskId: string) => Prom
   return "started";
 }
 
+export function taskDispatchStatus(taskId: string): TaskDispatchStatus {
+  return taskDispatchStatuses.get(taskId) ?? { detail: "当前服务没有这次即时派发记录。", status: "unknown", updatedAt: null };
+}
+
 export function serveEpisodeDispatch(
   supabaseUrl: string | undefined,
   supabasePublishableKey: string | undefined,
   dispatch: (taskId: string) => "started" | "already_running" = beginTaskDispatch,
+  readStatus: (taskId: string) => TaskDispatchStatus = taskDispatchStatus,
 ) {
   return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
-    if (request.method !== "POST") { response.statusCode = 405; response.end(); return; }
+    if (request.method !== "POST" && request.method !== "GET") { response.statusCode = 405; response.end(); return; }
     const authorization = request.headers.authorization ?? "";
     const episodeId = new URL(request.url ?? "", "http://localhost").searchParams.get("episode") ?? "";
     const taskId = new URL(request.url ?? "", "http://localhost").searchParams.get("task") ?? "";
@@ -159,6 +171,11 @@ export function serveEpisodeDispatch(
       if (taskError) throw taskError;
       if (!task) { response.statusCode = 404; response.end("未找到可派发的当前任务。"); return; }
       response.setHeader("Content-Type", "application/json");
+      if (request.method === "GET") {
+        response.statusCode = 200;
+        response.end(JSON.stringify(readStatus(taskId)));
+        return;
+      }
       response.statusCode = 202;
       response.end(JSON.stringify({ status: dispatch(taskId) }));
     } catch (error) {
@@ -265,7 +282,7 @@ function isFilesystemRoot(path: string): boolean {
 export interface ShotWorkbenchStudioInput {
   allowedFrames: number;
   audioTracks: Array<{ id?: string; cueId: string; relativePath: string; sha256: string; startSeconds: number; durationSeconds: number }>;
-  drafts: Array<{ audioMode: "none" | "source" | "tts"; clipSegments: Array<{ startSeconds: number; endSeconds: number }>; materialRevisionId: string | null; shotId: string; subtitleText: string; subtitlesEnabled: boolean; ttsText: string | null }>;
+  drafts: Array<{ audioMode: "none" | "source" | "tts"; audioTrackId: string | null; clipSegments: Array<{ startSeconds: number; endSeconds: number }>; composition: ShotPreparationContract["composition"]; confirmationStatus: "confirmed"; inputFingerprint: string; materialRevisionId: string | null; preparationContract: ShotPreparationContract; shotId: string; subtitleText: string; subtitlesEnabled: boolean; ttsText: string | null; videoArtifactId: string | null; videoTaskId: string | null }>;
   frameRate: number;
   materials: Array<{ id: string; relativePath: string; sha256: string }>;
   storyboard: StoryboardManifest;
@@ -300,6 +317,10 @@ export function shotWorkbenchReviewRender(episodeId: string, projectRelativePath
       mediaMissing: !material,
       sourceMaterialRevisionId: material?.id,
       clipSegments: segments,
+      composition: draft?.composition,
+      preparationContract: draft?.preparationContract,
+      inputFingerprint: draft?.inputFingerprint,
+      audioTrackId: draft?.audioTrackId,
       audioMode: draft?.audioMode ?? "none",
       relativePath: material?.relativePath ?? `episodes/${episodeId}/studio-work/missing-${members.length}.mp4`,
       sha256: material?.sha256 ?? "0".repeat(64),
@@ -328,6 +349,25 @@ export function shotWorkbenchReviewRender(episodeId: string, projectRelativePath
     projectRelativePath,
     projectRevision: 1,
     preRenderReviewPackageId: "shot-workbench",
+    confirmationMode: "shot_preparation",
+    confirmedShots: input.storyboard.shots.map((shot) => {
+      const draft = input.drafts.find((candidate) => candidate.shotId === shot.id);
+      if (!draft) throw new Error(`镜头 ${shot.id} 缺少当前版本化准备契约。`);
+      return {
+        shotId: shot.id,
+        confirmationStatus: draft.confirmationStatus,
+        inputFingerprint: draft.inputFingerprint,
+        ...(draft.videoArtifactId ? { videoArtifactId: draft.videoArtifactId } : {}),
+        ...(draft.videoTaskId ? { videoTaskId: draft.videoTaskId } : {}),
+        ...(draft.materialRevisionId ? { sourceMaterialRevisionId: draft.materialRevisionId, clipSegments: draft.clipSegments } : {}),
+        composition: draft.composition,
+        preparationContract: draft.preparationContract,
+        audioMode: draft.audioMode,
+        audioTrackId: draft.audioTrackId,
+        subtitleText: draft.subtitleText,
+        subtitlesEnabled: draft.subtitlesEnabled,
+      };
+    }),
     adjustments: {
       aspectRatio: "9:16",
       width: 1080,
@@ -690,7 +730,7 @@ export function serveOpenOpenChatCutStudio(supabaseUrl: string | undefined, supa
         const storyboardPath = await fs.realpath(resolve(root, body.projectRelativePath));
         if (!isDescendant(root, storyboardPath)) throw new Error("分镜工程超出资产根。");
         const storyboard = JSON.parse(await fs.readFile(storyboardPath, "utf8")) as StoryboardManifest;
-        const { data: drafts, error: draftsError } = await client.from("shot_preparation_drafts").select("shot_id, selected_material_revision_id, clip_segments, audio_mode, subtitle_text, subtitles_enabled, tts_text, current_audio_track_id").eq("episode_id", episodeId).eq("review_package_id", gate.storyboardPackageId);
+        const { data: drafts, error: draftsError } = await client.from("shot_preparation_drafts").select("shot_id, selected_material_revision_id, clip_segments, composition, audio_mode, subtitle_text, subtitles_enabled, tts_text, current_audio_track_id, current_video_artifact_id, current_video_task_id, confirmation_status, preparation_contract, preparation_input_fingerprint").eq("episode_id", episodeId).eq("review_package_id", gate.storyboardPackageId);
         if (draftsError) throw draftsError;
         const materialIds = (drafts ?? []).map((draft) => draft.selected_material_revision_id).filter((id): id is string => typeof id === "string");
         const trackIds = (drafts ?? []).map((draft) => draft.current_audio_track_id).filter((id): id is string => typeof id === "string");
@@ -701,16 +741,26 @@ export function serveOpenOpenChatCutStudio(supabaseUrl: string | undefined, supa
         render = shotWorkbenchReviewRender(episodeId, body.projectRelativePath, {
           allowedFrames: gate.durationSettings?.allowedFrames ?? 2,
           audioTracks: (tracks.data ?? []).map((track) => ({ id: track.id, cueId: track.cue_id ?? "", relativePath: track.relative_path, sha256: track.sha256, startSeconds: track.start_seconds ?? 0, durationSeconds: track.duration_seconds ?? 0 })),
-          drafts: (drafts ?? []).map((draft) => ({ audioMode: draft.audio_mode, clipSegments: parseShotWorkbenchClipSegments(draft.clip_segments), materialRevisionId: draft.selected_material_revision_id, shotId: draft.shot_id, subtitleText: draft.subtitle_text, subtitlesEnabled: draft.subtitles_enabled, ttsText: draft.tts_text })),
+          drafts: (drafts ?? []).map((draft) => {
+            if (draft.confirmation_status !== "confirmed" || !draft.preparation_input_fingerprint) throw new Error(`镜头 ${draft.shot_id} 尚未按当前镜头准备契约确认。`);
+            const preparationContract = shotPreparationContractFromSnapshot(draft.preparation_contract);
+            return { audioMode: draft.audio_mode, audioTrackId: draft.current_audio_track_id, clipSegments: parseShotWorkbenchClipSegments(draft.clip_segments), composition: preparationContract.composition, confirmationStatus: draft.confirmation_status, inputFingerprint: draft.preparation_input_fingerprint, materialRevisionId: draft.selected_material_revision_id, preparationContract, shotId: draft.shot_id, subtitleText: draft.subtitle_text, subtitlesEnabled: draft.subtitles_enabled, ttsText: draft.tts_text, videoArtifactId: draft.current_video_artifact_id, videoTaskId: draft.current_video_task_id };
+          }),
           frameRate: gate.durationSettings?.frameRate ?? 30,
           materials: (materials.data ?? []).map((material) => ({ id: material.id, relativePath: material.storage_path, sha256: material.sha256 })),
           storyboard,
         });
       }
       if (!render || render.projectRelativePath !== body.projectRelativePath) throw new Error("生产单的审核工程与当前版本不一致。");
-      const opened = await openOpenChatCutStudio(assetRoot, episodeId, render, { nodePath: localWorkerEnvironmentValue("OPENCHATCUT_NODE"), root: localWorkerEnvironmentValue("OPENCHATCUT_ROOT") });
+      const opened = await openOpenChatCutStudio(
+        assetRoot,
+        episodeId,
+        render,
+        { nodePath: localWorkerEnvironmentValue("OPENCHATCUT_NODE"), root: localWorkerEnvironmentValue("OPENCHATCUT_ROOT") },
+        { replaceWorkspace: body.replaceWorkspace === true },
+      );
       response.setHeader("Content-Type", "application/json");
-      response.statusCode = 201;
+      response.statusCode = opened.replacementWarning ? 200 : 201;
       response.end(JSON.stringify(opened));
     } catch (error) {
       response.statusCode = 400;

@@ -4,7 +4,7 @@
 
 ## 先说结论
 
-Loop Control 的核心不是让模型“从主题一键出片”，而是为多账号生产单保留可追溯的人工控制：脚本与分镜结构审核、逐镜头裁剪/音频/字幕确认、只接收已确认输入的 Studio、成片 QC、发布包和 Owner 的外部人工发布确认。
+Loop Control 的核心不是让模型“从主题一键出片”，而是为多账号生产单保留可追溯的人工控制：脚本与分镜结构审核、逐镜头裁剪/音频/字幕确认、只接收已确认输入的 Studio、成片 QC，以及最终发布包校验。
 
 因此最值得看的是 **VidForge 的有状态任务与质量反馈**、**VideoLingo 的文本/配音/字幕时间线对齐**、**video-autopilot-kit 与 book-video-factory 的证据和人工门禁**；MoneyPrinterTurbo、ViMax、StoryMind 更适合研究“自动生成链怎样拆任务”，不能拿来替换 Owner 审批或发布边界。
 
@@ -59,7 +59,7 @@ Owner 脚本输入与分镜审核
 - **Stars / license**：101 ★；MIT。[README](https://github.com/jaxxchen003/book-video-factory/blob/main/README.md)；[LICENSE](https://github.com/jaxxchen003/book-video-factory/blob/main/LICENSE)。
 - **技术与流程**：可安装的 Codex skill；面向中文书评短视频，把受权素材、生成来源、人工审批、成本和发布决定保留为可审计记录。README 还把技术 QC 和故事、视觉隐喻、BGM、版权、母语文案、发布等人工审核拆开，并按哈希和 release-scoped approval 计算 fail-closed 的发布状态。
 - **值得借鉴**：
-  1. “技术 QC 通过”与“可发布”是两个事实，正好支持本项目的 QC / 发布确认分离；
+  1. “技术 QC 通过”与“最终交付包完整”是两个事实，正好支持本项目的 QC / 生产完成分离；
   2. 发布门禁绑定具体哈希而不是模糊的“这一版差不多”；
   3. 成本账本宁可标未知，也不猜测 Provider 用量。
 - **不可照搬**：它是特定书评内容 Skill，含风格和资产合同；只应借鉴审批事件、哈希和账本模型，不能把书评模板、素材要求或自动化脚本迁入通用 Episode。
@@ -92,7 +92,7 @@ Owner 脚本输入与分镜审核
   1. shot plan 中明确镜头语言和角色连续性，能提升现有 storyboard 的可执行性；
   2. “生成镜头 / 检索真实素材 / 编辑自有 A-roll”三条画面路径并列，和蓝图能力模型相容；
   3. 先有结构再消耗生成额度，符合分镜审核先于镜头准备。
-- **不可照搬**：AGPL-3.0 及各外部模型/素材的单独条款需要法务评估；项目默认自动生成，不包含本项目所需逐镜头确认、变更审计与人工发布记录。
+- **不可照搬**：AGPL-3.0 及各外部模型/素材的单独条款需要法务评估；项目默认自动生成，不包含本项目所需逐镜头确认与变更审计。
 
 ### 8. [CutAgent](https://github.com/rishidandu/cutagent) — 短广告的镜头预算与变体参考
 
@@ -158,7 +158,7 @@ Owner 脚本输入与分镜审核
 1. 先读 VidForge 的 workflow、composition 和 quality 实现，确认本项目任务/产物模型还缺哪些局部失败与质量证据字段。
 2. 再读 VideoLingo 的字幕切分与配音对齐，把“逐镜头字幕正文 + 时间码 + 实际音频时长”落实为可审核产物。
 3. 读 video-autopilot-kit 与 book-video-factory 的 receipt、hash-bound gate 和成本账本，只摘取审计/审批模型。
-4. 最后把 Remotion 当作 Studio 候选渲染器单独评估许可与接入成本；它不能替代当前 Worker、审核台或发布确认。
+4. 最后把 Remotion 当作 Studio 候选渲染器单独评估许可与接入成本；它不能替代当前 Worker、审核台或最终交付包校验。
 
 ## 明确排除的方向
 

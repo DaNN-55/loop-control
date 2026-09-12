@@ -2,6 +2,19 @@ export const executionPathKeys = ["external", "local", "manual"] as const;
 
 export type ExecutionPath = typeof executionPathKeys[number];
 
+export interface AcousticAlignmentCapabilities {
+  nativeTimestamps: {
+    support: "supported" | "unsupported";
+    granularity?: "character" | "word" | "phrase";
+    detail: string;
+  };
+  existingTextAudioAlignment: {
+    support: "supported" | "unsupported";
+    granularity?: "character" | "word" | "phrase";
+    detail: string;
+  };
+}
+
 export interface AdapterRegistration {
   id: string;
   capability: string;
@@ -14,6 +27,7 @@ export interface AdapterRegistration {
   modelCatalog?: readonly string[];
   presetCatalog?: readonly string[];
   voiceCatalog?: Readonly<Record<string, readonly string[]>>;
+  acousticAlignment?: AcousticAlignmentCapabilities;
   connections: ReadonlyArray<{
     credentialRef: string;
     environmentVariable: string;
@@ -93,7 +107,7 @@ const mediaCapabilities: Record<MediaCapabilityKey, MediaCapability> = {
     defaultConfiguration: { model: "standard", promptVersion: "narration-v1" },
     description: "根据本期 TTS 设置和分镜旁白文本生成叙述音频。",
     label: "旁白",
-    registeredAdapter: { id: "google_tts", provider: "google_tts", connectionType: "google_tts_api", requiresNetwork: true, configurationFields: ["credential_ref", "max_attempts"], modelCatalog: ["standard"], presetCatalog: ["narration-v1"], voiceCatalog: { "en-US": ["en-US-Standard-A", "en-US-Standard-B", "en-US-Standard-C", "en-US-Standard-D"], "zh-CN": ["cmn-CN-Standard-A", "cmn-CN-Standard-B", "cmn-CN-Standard-C", "cmn-CN-Standard-D", "cmn-CN-standard-cm"], "vi-VN": ["vi-VN-Standard-A", "vi-VN-Standard-B", "vi-VN-Standard-C", "vi-VN-Standard-D"] }, connections: [] },
+    registeredAdapter: { id: "google_tts", endpoint: "https://texttospeech.googleapis.com/v1", provider: "google_tts", connectionType: "google_tts_api", requiresNetwork: true, configurationFields: ["credential_ref", "max_attempts"], modelCatalog: ["standard"], presetCatalog: ["narration-v1"], voiceCatalog: { "en-US": ["en-US-Standard-A", "en-US-Standard-B", "en-US-Standard-C", "en-US-Standard-D"], "zh-CN": ["cmn-CN-Standard-A", "cmn-CN-Standard-B", "cmn-CN-Standard-C", "cmn-CN-Standard-D", "cmn-CN-standard-cm"], "vi-VN": ["vi-VN-Standard-A", "vi-VN-Standard-B", "vi-VN-Standard-C", "vi-VN-Standard-D"] }, acousticAlignment: { nativeTimestamps: { support: "unsupported", detail: "当前冻结的 Google TTS v1 synthesize 接口只返回音频；尚未迁移并验证 v1beta1 SSML_MARK。" }, existingTextAudioAlignment: { support: "unsupported", detail: "当前 Google TTS Adapter 未注册已有文本与音频的强制打轴接口。" } }, connections: [] },
     requiresRegisteredAdapter: true,
     workerAvailable: true,
   },
@@ -151,6 +165,10 @@ const adapterRegistry: readonly AdapterRegistration[] = [
       "ja-JP": ["zh_female_vv_uranus_bigtts"],
       "es-ES": ["zh_female_vv_uranus_bigtts"],
     },
+    acousticAlignment: {
+      nativeTimestamps: { support: "unsupported", detail: "当前豆包 V3 SSE 实现只请求并解析音频数据，尚未验证时间戳响应字段。" },
+      existingTextAudioAlignment: { support: "unsupported", detail: "自动字幕打轴是独立服务与授权，当前冻结的豆包 TTS 连接版本未声明兼容。" },
+    },
     connections: [],
   },
   {
@@ -186,6 +204,7 @@ const adapterRegistry: readonly AdapterRegistration[] = [
 ];
 
 const localAdapterRegistry: readonly LocalAdapterRegistration[] = [
+  { id: "whisperx_local", capability: "acoustic_alignment", provider: "whisperx", workerAvailable: true, modelCatalog: ["large-v3"], presetCatalog: ["whisperx-alignment-v1"] },
   { id: "openchatcut_card_video", capability: "a_roll_generation", provider: "openchatcut", workerAvailable: true, modelCatalog: ["openchatcut@0.2.14"], presetCatalog: ["card-video-v1"] },
   { id: "openchatcut_card_video", capability: "b_roll_generation", provider: "openchatcut", workerAvailable: true, modelCatalog: ["openchatcut@0.2.14"], presetCatalog: ["card-video-v1"] },
 ];

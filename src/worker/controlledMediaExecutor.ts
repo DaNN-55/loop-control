@@ -5,6 +5,7 @@ import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import type { ArtifactManifest, WorkerResult, WorkerTaskPackage } from "./contracts.js";
 import { generateCloudflareWorkersAiImage, generateOpenAiImage, searchFreesoundPreview, searchPexelsVideo, synthesizeGoogleTts, synthesizeVolcengineTts, type FreesoundPreview, type MediaFetcher } from "./mediaProviders.js";
+import type { WhisperXExecution } from "./whisperxAlignment.js";
 
 export async function executeControlledMediaTask(input: {
   taskPackage: WorkerTaskPackage;
@@ -21,6 +22,8 @@ export async function executeControlledMediaTask(input: {
   trimMp3: (bytes: Uint8Array, targetDurationSeconds: number) => Promise<Uint8Array>;
   trimMp4?: (sourcePath: string, startSeconds: number, endSeconds: number) => Promise<Uint8Array>;
   trimMp4Segments?: (sourcePath: string, segments: Array<{ startSeconds: number; endSeconds: number }>) => Promise<Uint8Array>;
+  whisperXCacheDirectory?: string;
+  executeWhisperX?: (input: { audioPath: string; cacheDirectory: string; model: string }) => Promise<WhisperXExecution>;
 }): Promise<string> {
   const media = await mediaBytes(input);
   const audioDurationSeconds = await validateTemporaryMedia(input, media.bytes);

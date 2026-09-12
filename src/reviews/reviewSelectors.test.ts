@@ -61,6 +61,46 @@ describe("blockersFromResult", () => {
     }], "episode-1")).toEqual([]);
   });
 
+  it("同一镜头的新任务成功后不再呈现旧失败阻塞", () => {
+    expect(workerBlockers([{
+      id: "alignment-failed",
+      episode_id: "episode-1",
+      task_type: "align_shot_captions",
+      status: "failed",
+      created_at: "2026-09-11T07:27:00.000Z",
+      input_snapshot: { shot_preparation: { draft_id: "draft-1", shot_id: "shot-1" } },
+      last_result: { blockers: [{ code: "credential_validity", detail: "旧运行环境失败。" }] },
+    }, {
+      id: "alignment-completed",
+      episode_id: "episode-1",
+      task_type: "align_shot_captions",
+      status: "completed",
+      created_at: "2026-09-11T07:48:00.000Z",
+      input_snapshot: { shot_preparation: { draft_id: "draft-1", shot_id: "shot-1" } },
+      last_result: { blockers: [] },
+    }], "episode-1")).toEqual([]);
+  });
+
+  it("新的审核渲染成功后不再呈现旧修订的阻塞", () => {
+    expect(workerBlockers([{
+      id: "review-render-v2",
+      episode_id: "episode-1",
+      task_type: "generate_review_render",
+      status: "blocked",
+      created_at: "2026-09-12T13:42:40.000Z",
+      input_snapshot: { output: { relative_path: "episodes/episode-1/review-render/v2/review-render.mp4" } },
+      last_result: { blockers: [{ code: "task_package_invalid", detail: "镜头主声音与混音契约不一致。" }] },
+    }, {
+      id: "review-render-v3",
+      episode_id: "episode-1",
+      task_type: "generate_review_render",
+      status: "completed",
+      created_at: "2026-09-12T14:59:54.000Z",
+      input_snapshot: { output: { relative_path: "episodes/episode-1/review-render/v3/review-render.mp4" } },
+      last_result: { blockers: [] },
+    }], "episode-1")).toEqual([]);
+  });
+
   it("保留连接管理动作的 connection 影响范围", () => {
     expect(blockersFromResult({ blockers: [], preflight: { version: "worker-preflight/v2", checks: [{ capability: "b_roll_generation", check: "credential_validity", phase: "preflight", status: "unavailable", reason: "连接认证失败。", action: "manage_connection", scope: "connection" }] } })).toEqual([expect.objectContaining({ action: "manage_connection", scope: "connection" })]);
   });

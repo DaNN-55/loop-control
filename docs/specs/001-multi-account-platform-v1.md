@@ -19,7 +19,7 @@
 - 审批台仅在本机访问。
 - 媒体资产长期保存在外置硬盘；平台保存相对路径、哈希和元数据。
 - Codex 是 v1 唯一的通用 Agent Worker；接口预留 provider、model、prompt_version 字段。
-- Owner 是 v1 唯一审批人和发布确认人。
+- Owner 是 v1 唯一审批人。
 - 每次付费 Worker 调用必须记录预算、实际成本和最大重试次数。
 
 ## 核心状态机
@@ -30,11 +30,10 @@ brief_draft
 → visual_draft → visual_review → visual_approved
 → storyboard_draft → storyboard_review → storyboard_approved
 → production_ready → render_ready → qc_review → qc_passed
-→ publish_ready → publishing_review → published
-→ metrics_collecting → learning_recorded
+→ production_completed
 ```
 
-只有 Owner 能写入：`*_approved`、`qc_passed`、`publish_ready`、`published`，以及例外和账号蓝图激活状态。
+只有 Owner 能写入：`*_approved`、`qc_passed`，以及例外和账号蓝图激活状态。发布包校验通过后由受控服务写入 `production_completed`。
 
 ## 核心实体
 
@@ -45,7 +44,6 @@ brief_draft
 - `tasks`：可领取的角色任务、输入快照、预算和重试信息。
 - `artifacts`：产物索引、哈希、相对路径和来源关系。
 - `approvals`、`exceptions`、`state_transitions`、`audit_events`：审批和审计。
-- `experiments`、`metric_snapshots`：实验与复盘数据。
 - `asset_locks`：对渲染器、浏览器会话和可识别素材的互斥锁。
 
 ## 角色边界
@@ -56,7 +54,6 @@ brief_draft
 - Production Worker：生成音频、素材组合、渲染候选；不得越过已批准分镜。
 - QC Worker：输出检查报告和通过建议；不得写入 `qc_passed`。
 - Publish-prep Worker：准备发布包和核对清单；不得点击发布。
-- Learning Worker：依据指标提出保留、修改、停止建议；不得自动改蓝图。
 
 ## Worker 契约
 
@@ -64,15 +61,11 @@ brief_draft
 
 Worker 必须输出：产物清单、验证结果、实际成本、阻塞项和下一步建议。发现缺失的前置产物、工具、权限或规则时，必须返回 `blocked`，不得静默降级或自行替换供应商。
 
-## 审批与发布
+## 审批与生产完成
 
 审批动作只能通过一个状态迁移接口执行；该接口校验当前状态、必需产物、审批权限和审计字段。前端、n8n 和 Worker 均不得直接修改 Episode 状态。
 
-发布前必须生成不可临时拼装的发布包。平台只能准备发布，最终发布始终等待 Owner 的显式确认。
-
-## 学习闭环
-
-每个 Episode 至多关联一个主要实验变量，并记录一个主指标和最多两个护栏指标。每周由 Owner 手工录入指标；Learning Worker 只输出 `keep`、`change`、`kill` 或 `insufficient_data` 建议。Owner 批准后，蓝图规则才以新版本生效，并且只影响新建 Episode。
+最终必须生成不可临时拼装的发布包。发布包完成完整性校验后，Episode 进入 `production_completed`；平台不记录外部发布与后续复盘。
 
 ## 已知风险与后续演进
 

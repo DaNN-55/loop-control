@@ -9,13 +9,26 @@ import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { promisify } from "node:util";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
-import { cachedStoryboardVideoThumbnail, cachedTtsVoicePreview, confirmedStudioShotBlockers, coverImageExtension, createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, parseShotWorkbenchClipSegments, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveChooseLocalAssetDirectory, serveEpisodeDeletion, serveEpisodeDeletionCleanup, serveEpisodePreflight, serveFreezeOpenChatCutStudio, serveLocalArtifact, serveLocalEpisodeDirectory, serveOpenLocalArtifact, serveOpenLocalAssetDirectory, serveOpenLocalEpisodeDirectory, serveOpenOpenChatCutStudio, servePublishPreparation, serveTtsVoicePreview, shotWorkbenchReviewRender, stageLocalEpisodeDirectoryForDeletion, studioEntryModeForPaths } from "../vite.config";
+import { cachedStoryboardVideoThumbnail, cachedTtsVoicePreview, confirmedStudioShotBlockers, coverImageExtension, createLocalEpisodeDirectory, finalizeStagedLocalEpisodeDirectory, parseShotWorkbenchClipSegments, restoreStagedLocalEpisodeDirectory, saveProductionMaterialSnapshot, serveChooseLocalAssetDirectory, serveEpisodeDeletion, serveEpisodeDeletionCleanup, serveEpisodePreflight, serveFreezeOpenChatCutStudio, serveLocalArtifact, serveLocalEpisodeDirectory, serveOpenLocalArtifact, serveOpenLocalAssetDirectory, serveOpenLocalEpisodeDirectory, serveOpenOpenChatCutStudio, servePublishPreparation, serveTtsVoicePreview, shotWorkbenchReviewRender, stageLocalEpisodeDirectoryForDeletion, studioEntryModeForPaths, type ShotWorkbenchStudioInput } from "../vite.config";
+import { defaultShotComposition } from "./shotComposition";
+import { defaultShotCaptionContract } from "./shotCaptions";
+import { normalizeShotAudioMix } from "./shotAudioMix";
 
 const episodeId = "00000000-0000-0000-0000-000000000000";
 const execFileAsync = promisify(execFile);
 const ffmpegAvailable = await execFileAsync("ffmpeg", ["-version"]).then(() => true).catch(() => false);
 let server: ReturnType<typeof createServer>;
 let origin = "";
+
+function studioDraft(input: { audioMode: "none" | "source" | "tts"; clipSegments: Array<{ startSeconds: number; endSeconds: number }>; materialRevisionId: string | null; shotId: string; subtitleText: string; subtitlesEnabled: boolean; ttsText: string | null; audioTrackId?: string | null }): ShotWorkbenchStudioInput["drafts"][number] {
+  const composition = defaultShotComposition("full", input.clipSegments.length);
+  const durationMs = Math.round(input.clipSegments.reduce((total, segment) => total + segment.endSeconds - segment.startSeconds, 0) * 1000);
+  const captions = { ...defaultShotCaptionContract(input.subtitleText, input.audioMode === "tts" ? "follow_tts" : "independent", input.subtitlesEnabled), cues: input.subtitlesEnabled ? [{ id: `cue-${input.shotId}`, text: input.subtitleText, startMs: 0, endMs: durationMs }] : [] };
+  const audioTrackId = input.audioMode === "none" ? null : input.audioTrackId ?? `${input.shotId}-audio`;
+  const inputFingerprint = createHash("md5").update(input.shotId).digest("hex");
+  const preparationContract = { version: "shot-preparation/v1" as const, storyboardFingerprint: createHash("md5").update(`storyboard:${input.shotId}`).digest("hex"), sourceMaterialRevisionId: input.materialRevisionId, clipSegments: input.clipSegments, composition, transitionMode: "cut" as const, audioMode: input.audioMode, ttsText: input.ttsText, ttsVoice: input.audioMode === "tts" ? "voice-a" : null, ttsSpeakingRate: input.audioMode === "tts" ? 1 : null, audioMix: normalizeShotAudioMix(undefined, { audioMode: input.audioMode, audioTrackId }), captions, inputFingerprint };
+  return { ...input, audioTrackId, composition, confirmationStatus: "confirmed", inputFingerprint, preparationContract, videoArtifactId: null, videoTaskId: null };
+}
 
 beforeAll(async () => {
   const middleware = serveLocalEpisodeDirectory(undefined, undefined);
@@ -501,7 +514,7 @@ describe("本地 Episode 目录路由", () => {
     const input = {
       allowedFrames: 2,
       audioTracks: [],
-      drafts: [{ audioMode: "none" as const, clipSegments: [{ endSeconds: 3, startSeconds: 1 }], materialRevisionId: "material-1", shotId: "shot-1", subtitleText: "新字幕", subtitlesEnabled: true, ttsText: null }],
+      drafts: [studioDraft({ audioMode: "none", clipSegments: [{ endSeconds: 3, startSeconds: 1 }], materialRevisionId: "material-1", shotId: "shot-1", subtitleText: "新字幕", subtitlesEnabled: true, ttsText: null })],
       frameRate: 24,
       materials: [{ id: "material-1", relativePath: `episodes/${episodeId}/materials/shot.mp4`, sha256: createHash("sha256").update("video").digest("hex") }],
       storyboard: { version: "storyboard/v1" as const, audioCues: [], shots: [{ durationSeconds: 2, id: "shot-1", inputBasis: [], productionMethod: "人工", scriptSegment: "分镜文案", shotType: "a_roll" as const, targetSpec: "9:16" }] },
@@ -518,9 +531,9 @@ describe("本地 Episode 目录路由", () => {
       allowedFrames: 1,
       audioTracks: [{ cueId: "shot-tts", relativePath: audioPath, sha256: "tts-audio", startSeconds: 2.5, durationSeconds: 3 }],
       drafts: [
-        { audioMode: "source" as const, clipSegments: [{ endSeconds: 2, startSeconds: 0 }, { endSeconds: 5, startSeconds: 3 }], materialRevisionId: "material-1", shotId: "shot-source", subtitleText: "原声字幕", subtitlesEnabled: true, ttsText: null },
-        { audioMode: "tts" as const, clipSegments: [{ endSeconds: 2, startSeconds: 0 }], materialRevisionId: "material-1", shotId: "shot-tts", subtitleText: "TTS字幕", subtitlesEnabled: true, ttsText: "TTS" },
-        { audioMode: "none" as const, clipSegments: [{ endSeconds: 2, startSeconds: 0 }], materialRevisionId: "material-1", shotId: "shot-none", subtitleText: "无声字幕", subtitlesEnabled: true, ttsText: null },
+        studioDraft({ audioMode: "source", clipSegments: [{ endSeconds: 2, startSeconds: 0 }, { endSeconds: 5, startSeconds: 3 }], materialRevisionId: "material-1", shotId: "shot-source", subtitleText: "原声字幕", subtitlesEnabled: true, ttsText: null }),
+        studioDraft({ audioMode: "tts", audioTrackId: "shot-tts", clipSegments: [{ endSeconds: 2, startSeconds: 0 }], materialRevisionId: "material-1", shotId: "shot-tts", subtitleText: "TTS字幕", subtitlesEnabled: true, ttsText: "TTS" }),
+        studioDraft({ audioMode: "none", clipSegments: [{ endSeconds: 2, startSeconds: 0 }], materialRevisionId: "material-1", shotId: "shot-none", subtitleText: "无声字幕", subtitlesEnabled: true, ttsText: null }),
       ],
       frameRate: 24,
       materials: [{ id: "material-1", relativePath: materialPath, sha256: "video" }],

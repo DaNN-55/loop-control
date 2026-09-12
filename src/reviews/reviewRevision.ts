@@ -6,7 +6,7 @@ import { defaultReviewRenderComposition, reviewRenderCompositionFromJson, review
 export { defaultReviewRenderComposition, reviewRenderCompositionFromJson } from "./reviewComposition";
 export type { ReviewRenderComposition } from "./reviewComposition";
 
-export interface ReviewRenderDurationSettings { frameRate: number; allowedFrames: number; }
+export interface ReviewRenderDurationSettings { frameRate: number; allowedFrames: number; aspectRatio: "9:16" | "16:9" | "1:1"; }
 
 export interface OpenChatCutStudioWorkspace {
   relativePath: string;
@@ -14,7 +14,14 @@ export interface OpenChatCutStudioWorkspace {
   fileSize: number;
   composition?: ReviewRenderComposition;
   projectId?: string;
+  replacementWarning?: {
+    code: "openchatcut_workspace_replacement";
+    modifiedScopes: string[];
+    studioHasChanges: boolean;
+  };
 }
+
+export interface OpenChatCutStudioOpenOptions { durationSettings?: ReviewRenderDurationSettings; replaceWorkspace?: boolean; }
 
 export type ReviewRevisionRequest =
   | { kind: "composition"; reviewPackageId: string; composition?: ReviewRenderComposition; reason: string; studioProject?: OpenChatCutStudioWorkspace }
@@ -41,7 +48,7 @@ export type StudioReviewRevisionRequest = {
   composition?: ReviewRenderComposition;
 };
 
-export const defaultReviewRenderDurationSettings: ReviewRenderDurationSettings = { frameRate: defaultDurationFrameRate, allowedFrames: defaultAllowedDurationFrames };
+export const defaultReviewRenderDurationSettings: ReviewRenderDurationSettings = { frameRate: defaultDurationFrameRate, allowedFrames: defaultAllowedDurationFrames, aspectRatio: "9:16" };
 
 export function reviewRenderDurationSettingsFromRules(rules?: Json): ReviewRenderDurationSettings {
   const root = rules && !Array.isArray(rules) && typeof rules === "object" ? rules as Record<string, Json | undefined> : {};
@@ -49,9 +56,11 @@ export function reviewRenderDurationSettingsFromRules(rules?: Json): ReviewRende
   const composition = candidate && !Array.isArray(candidate) && typeof candidate === "object" ? candidate as Record<string, Json | undefined> : {};
   const frameRate = composition.frame_rate;
   const allowedFrames = composition.allowed_frames;
+  const aspectRatio = composition.aspect_ratio;
   return {
     frameRate: typeof frameRate === "number" && Number.isFinite(frameRate) && frameRate > 0 ? frameRate : defaultReviewRenderDurationSettings.frameRate,
     allowedFrames: typeof allowedFrames === "number" && Number.isInteger(allowedFrames) && allowedFrames >= 0 ? allowedFrames : defaultReviewRenderDurationSettings.allowedFrames,
+    aspectRatio: aspectRatio === "16:9" || aspectRatio === "1:1" ? aspectRatio : "9:16",
   };
 }
 

@@ -1,6 +1,6 @@
 const storagePrefix = "loop-control.operation-draft.v1";
 
-export type OperationDraftKind = "publication-confirmation" | "review-decision";
+export type OperationDraftKind = "review-decision";
 
 function storageKey(ownerId: string, episodeId: string, kind: OperationDraftKind) {
   return `${storagePrefix}:${ownerId}:${episodeId}:${kind}`;

@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { Database } from "./lib/database.types";
-import { AccountWorkspace, App, BootstrapScreen, EpisodeDetail, EpisodeForm, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, abbreviatePath, episodeNeedsTaskPolling, episodeTaskRunStatusChanged, episodeTaskStatusChanged, episodeWorkerStatus, initialNavigationForWorkspace, loadWorkspaceSummary, mergeEpisodeTaskStatus, messageFromError, navigation, navigationBadgeCounts, workerPreflightFailureMessage } from "./App";
+import { AccountWorkspace, App, BootstrapScreen, EpisodeDetail, EpisodeForm, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, abbreviatePath, dispatchCreatedWorkerTask, episodeNeedsTaskPolling, episodeTaskRunStatusChanged, episodeTaskStatusChanged, episodeWorkerStatus, initialNavigationForWorkspace, loadWorkspaceSummary, mergeEpisodeTaskStatus, messageFromError, navigation, navigationBadgeCounts, shotPreparationSaveErrorMessage, splitPreviewArtifacts, workerPreflightFailureMessage } from "./App";
 import { supabase } from "./lib/supabase";
 import { defaultBlueprintPolicy, parseBlueprintPolicy, withBlueprintAssetRoot } from "./platform/blueprintPolicy";
 
@@ -17,6 +17,26 @@ vi.mock("./lib/supabase", () => ({
 }));
 
 describe("approval console", () => {
+  it("默认预览只保留当前产物，其余版本进入历史", () => {
+    const base = { artifact_type: "shot_preview_proxy", episode_id: "episode-1", file_size: 10, producer_task_id: "task-1", relative_path: "episodes/episode-1/shot-previews/shot-1/current/proxy.mp4", sha256: "a".repeat(64) };
+    const current = { ...base, created_at: "2026-09-12T01:00:00.000Z", id: "artifact-current" } as Database["public"]["Tables"]["artifacts"]["Row"];
+    const history = { ...base, created_at: "2026-09-11T01:00:00.000Z", id: "artifact-history", relative_path: "episodes/episode-1/shot-previews/shot-1/history/proxy.mp4" } as Database["public"]["Tables"]["artifacts"]["Row"];
+
+    expect(splitPreviewArtifacts([history, current], new Set([current.id]))).toEqual({ current: [current], history: [history] });
+  });
+
+  it("创建审核渲染任务后立即按 Task ID 派发", async () => {
+    const dispatch = vi.fn().mockResolvedValue({ accepted: true, reason: "" });
+
+    await expect(dispatchCreatedWorkerTask("episode-1", { id: "task-review-render" }, dispatch)).resolves.toEqual({ accepted: true, reason: "" });
+    expect(dispatch).toHaveBeenCalledWith("episode-1", "task-review-render");
+    await expect(dispatchCreatedWorkerTask("episode-1", null, dispatch)).resolves.toEqual({ accepted: false, reason: "任务记录缺少 ID" });
+  });
+
+  it("将字幕合约校验错误解释为数据库版本未更新", () => {
+    expect(shotPreparationSaveErrorMessage({ message: "Shot caption contract is invalid" })).toBe("字幕配置未通过数据库校验。当前数据库尚未支持新版安全区设置，请先完成数据库迁移后重试。");
+  });
+
   it("开始制作后即使任务尚未创建也继续轮询", () => {
     expect(episodeNeedsTaskPolling({ detailOpen: true, dispatchRequested: true, hasActiveTask: false, pageVisible: true })).toBe(true);
     expect(episodeNeedsTaskPolling({ detailOpen: true, dispatchRequested: false, hasActiveTask: false, pageVisible: true })).toBe(false);
@@ -259,16 +279,16 @@ describe("approval console", () => {
     })));
   });
 
-  it("按日常工作流顺序显示导航，并为审核和发布显示待办数量", () => {
-    expect(navigation.map((item) => item.label)).toEqual(["系列运营", "生产单", "审核", "发布队列", "复盘", "账号"]);
+  it("按生产工作流顺序显示导航，并为审核显示待办数量", () => {
+    expect(navigation.map((item) => item.label)).toEqual(["系列运营", "生产单", "审核", "账号"]);
     const episode = { account_id: "account-1", blueprint_version_id: "blueprint-1", created_at: "2026-08-15T00:00:00.000Z", id: "episode-1", stage: "script_review", title: "待审核", updated_at: "2026-08-15T00:00:00.000Z" } as Database["public"]["Tables"]["episodes"]["Row"];
-    expect(navigationBadgeCounts([episode], [], [])).toEqual({ reviews: 1, publish: 0 });
+    expect(navigationBadgeCounts([episode])).toEqual({ reviews: 1 });
   });
 
   it("收起导航文字后仍保留每个入口的可访问名称", () => {
     render(<NavigationButtons activeNavigation="accounts" onSelect={vi.fn()} />);
     expect(screen.getByRole("button", { name: "账号" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "发布队列" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "审核" })).toBeTruthy();
   });
 
   it("按工作区状态选择首次进入页面", () => {
@@ -286,6 +306,14 @@ describe("approval console", () => {
     expect(episodeWorkerStatus({ stage: "render_ready" }, [{ created_at: "2026-08-24T02:00:00.000Z", status: "failed", task_type: "generate_final_render" }])).toMatchObject({ label: "等待 Worker", tone: "waiting" });
     expect(episodeWorkerStatus({ stage: "render_ready" }, [{ created_at: "2026-08-24T02:00:00.000Z", status: "failed", task_type: "generate_review_render" }])).toMatchObject({ label: "失败", tone: "blocked" });
     expect(episodeWorkerStatus({ stage: "storyboard_approved" }, [{ status: "completed", task_type: "draft_storyboard" }])).toMatchObject({ label: "已完成", tone: "completed" });
+  });
+
+  it("同一镜头的新任务完成后不再把旧任务显示为当前阻塞", () => {
+    const shotPreparation = { draft_id: "draft-shot-001", shot_id: "shot-001" };
+    expect(episodeWorkerStatus({ stage: "qc_review" }, [
+      { created_at: "2026-09-11T09:27:39.000Z", id: "blocked-preview", input_snapshot: { shot_preparation: shotPreparation }, status: "blocked", task_type: "generate_shot_sync_preview" },
+      { created_at: "2026-09-11T10:31:37.000Z", id: "completed-preview", input_snapshot: { shot_preparation: shotPreparation }, status: "completed", task_type: "generate_shot_sync_preview" },
+    ])).toMatchObject({ label: "等待审核", tone: "review" });
   });
 
   it("显示修复前真实 preflight 返回的具体检查原因", () => {
@@ -322,11 +350,10 @@ describe("approval console", () => {
     expect(onRequestRevision).toHaveBeenCalledOnce();
   });
 
-  it("收起态导航仍保留审核和发布角标节点", () => {
-    render(<NavigationButtons activeNavigation="reviews" badges={{ reviews: 2, publish: 1 }} onSelect={vi.fn()} />);
+  it("收起态导航仍保留审核角标节点", () => {
+    render(<NavigationButtons activeNavigation="reviews" badges={{ reviews: 2 }} onSelect={vi.fn()} />);
 
     expect(screen.getByLabelText("2 个待处理")).toBeTruthy();
-    expect(screen.getByLabelText("1 个待处理")).toBeTruthy();
   });
 
   it("只显示当前筛选的生产单，并用分页控制长列表", async () => {
@@ -336,7 +363,7 @@ describe("approval console", () => {
     const episodes = Array.from({ length: 21 }, (_, index) => ({ account_id: account.id, blueprint_version_id: blueprint.id, created_at: "2026-08-15T00:00:00.000Z", id: `episode-${index}`, stage: "waiting_input" as const, title: `生产单 ${index + 1}`, updated_at: "2026-08-15T00:00:00.000Z" }));
     const archivedEpisode = { ...episodes[0], archived_at: "2026-08-16T00:00:00.000Z", id: "episode-archived", title: "已归档生产单" };
 
-    render(<EpisodeWorkspace accounts={[account]} accountsById={new Map([[account.id, account]])} artifacts={[]} blueprintsById={new Map([[blueprint.id, blueprint]])} currentNavigation="episodes" episodeVisibility="active" episodes={[...episodes, archivedEpisode]} filter="全部账号" onEpisodeVisibilityChange={vi.fn()} onFilter={vi.fn()} onSeriesFilter={vi.fn()} onSelectEpisode={vi.fn()} series={[]} seriesById={new Map()} seriesFilter="全部系列" seriesVersionsById={new Map()} selectedEpisode={null} />);
+    render(<EpisodeWorkspace accounts={[account]} accountsById={new Map([[account.id, account]])} artifacts={[]} blueprintsById={new Map([[blueprint.id, blueprint]])} episodeVisibility="active" episodes={[...episodes, archivedEpisode]} filter="全部账号" onEpisodeVisibilityChange={vi.fn()} onFilter={vi.fn()} onSeriesFilter={vi.fn()} onSelectEpisode={vi.fn()} series={[]} seriesById={new Map()} seriesFilter="全部系列" seriesVersionsById={new Map()} selectedEpisode={null} />);
 
     expect(screen.getByText("第 1 / 2 页 · 共 21 条")).toBeTruthy();
     expect(screen.queryByText("已归档生产单")).toBeNull();
@@ -353,7 +380,7 @@ describe("approval console", () => {
     const onSetArchived = vi.fn().mockResolvedValue(undefined);
     const onDelete = vi.fn().mockResolvedValue(undefined);
 
-    render(<EpisodeWorkspace accounts={[account]} accountsById={new Map([[account.id, account]])} artifacts={[]} blueprintsById={new Map([[blueprint.id, blueprint]])} currentNavigation="episodes" episodeVisibility="active" episodes={[episode]} filter="全部账号" onDelete={onDelete} onEpisodeVisibilityChange={vi.fn()} onFilter={vi.fn()} onSetArchived={onSetArchived} onSeriesFilter={vi.fn()} onSelectEpisode={vi.fn()} onUpdateTitle={onUpdateTitle} series={[]} seriesById={new Map()} seriesFilter="全部系列" seriesVersionsById={new Map()} selectedEpisode={null} />);
+    render(<EpisodeWorkspace accounts={[account]} accountsById={new Map([[account.id, account]])} artifacts={[]} blueprintsById={new Map([[blueprint.id, blueprint]])} episodeVisibility="active" episodes={[episode]} filter="全部账号" onDelete={onDelete} onEpisodeVisibilityChange={vi.fn()} onFilter={vi.fn()} onSetArchived={onSetArchived} onSeriesFilter={vi.fn()} onSelectEpisode={vi.fn()} onUpdateTitle={onUpdateTitle} series={[]} seriesById={new Map()} seriesFilter="全部系列" seriesVersionsById={new Map()} selectedEpisode={null} />);
 
     await user.click(screen.getByRole("button", { name: "生产单操作：测试生产单" }));
     expect(screen.getByRole("menuitem", { name: "重命名" })).toBeTruthy();

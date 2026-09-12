@@ -59,10 +59,41 @@ function structuredFields(record: Record<string, unknown>): Pick<WorkerBlocker, 
   return fields;
 }
 
-export function workerBlockers(tasks: Array<Pick<Task, "episode_id" | "status" | "last_result" | "id" | "task_type"> & { invalidated_at?: string | null }>, episodeId: string): WorkerBlocker[] {
-  return tasks
-    .filter((task) => task.episode_id === episodeId && !task.invalidated_at && (task.status === "blocked" || task.status === "failed"))
+type ScopedWorkerTask = Pick<Task, "task_type"> & Partial<Pick<Task, "created_at" | "id" | "input_snapshot">>;
+type WorkerBlockerTask = Pick<Task, "episode_id" | "status" | "last_result" | "id" | "task_type"> & Partial<Pick<Task, "created_at" | "input_snapshot">> & { invalidated_at?: string | null };
+
+export function latestWorkerTasksByScope<T extends ScopedWorkerTask>(tasks: T[]): T[] {
+  const latestByScope = new Map<string, T>();
+  for (const task of tasks) {
+    const scope = workerTaskScope(task);
+    const latest = latestByScope.get(scope);
+    if (!latest || (task.created_at ?? "").localeCompare(latest.created_at ?? "") > 0) latestByScope.set(scope, task);
+  }
+  return [...latestByScope.values()];
+}
+
+export function workerBlockers(tasks: WorkerBlockerTask[], episodeId: string): WorkerBlocker[] {
+  const episodeTasks = tasks.filter((task) => task.episode_id === episodeId && !task.invalidated_at);
+  return latestWorkerTasksByScope(episodeTasks)
+    .filter((task) => task.status === "blocked" || task.status === "failed")
     .flatMap((task) => blockersFromResult(task.last_result).map((blocker) => ({ ...blocker, taskId: task.id, taskType: task.task_type })));
+}
+
+function workerTaskScope(task: ScopedWorkerTask): string {
+  // Review-render revisions replace one another for the same Episode. Their
+  // versioned output paths are artifacts, not independent blocker scopes.
+  if (task.task_type === "generate_review_render") return task.task_type;
+  const snapshot = task.input_snapshot;
+  if (!snapshot || Array.isArray(snapshot) || typeof snapshot !== "object") return `${task.task_type}:task:${task.id}`;
+  const preparation = "shot_preparation" in snapshot ? snapshot.shot_preparation : null;
+  if (preparation && !Array.isArray(preparation) && typeof preparation === "object") {
+    const draftId = "draft_id" in preparation && typeof preparation.draft_id === "string" ? preparation.draft_id : null;
+    const shotId = "shot_id" in preparation && typeof preparation.shot_id === "string" ? preparation.shot_id : null;
+    if (draftId || shotId) return `${task.task_type}:shot:${draftId ?? shotId}`;
+  }
+  const output = "output" in snapshot ? snapshot.output : null;
+  if (output && !Array.isArray(output) && typeof output === "object" && "relative_path" in output && typeof output.relative_path === "string") return `${task.task_type}:output:${output.relative_path}`;
+  return `${task.task_type}:task:${task.id ?? task.task_type}`;
 }
 
 export function isReviewPackagePending(reviewPackage: ReviewPackage, members: PreRenderReviewMember[], decisions: PreRenderReviewMemberDecision[]): boolean {

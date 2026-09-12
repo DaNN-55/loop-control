@@ -24,6 +24,7 @@ import { durationToleranceSeconds, videoDurationMeetsMinimum } from "./durationD
 import { readTaskIdArgument } from "./taskClaimArguments.js";
 import { createRuntimePreflight, credentialEnvironmentForReference, localAdapterReadinessFromCommands, runtimeCapabilityFromTask, runtimeCommandArguments, runtimeCommandForProvider, runtimeCommandInvocation } from "./runtimePreflight.js";
 import { probeCodexModel, probeProviderConnection } from "./runtimeProbes.js";
+import { runLocalWhisperXAlignment } from "./whisperxAlignment.js";
 
 const supabaseUrl = requiredEnvironment("SUPABASE_URL");
 const serviceRoleKey = requiredEnvironment("SUPABASE_SERVICE_ROLE_KEY");
@@ -57,7 +58,7 @@ async function claimNextTask(): Promise<ClaimedWorkerTask | null> {
   if (error) throw new Error(`Unable to claim a worker task: ${error.message}`);
   const row = data?.[0];
   if (!row) return null;
-  if (row.provider !== "codex" && row.provider !== "google_tts" && row.provider !== "volcengine_tts" && row.provider !== "pexels" && row.provider !== "ffmpeg" && row.provider !== "freesound" && row.provider !== "openchatcut" && row.provider !== "openai" && row.provider !== "cloudflare") throw new Error(`Unsupported worker provider: ${row.provider}`);
+  if (row.provider !== "codex" && row.provider !== "google_tts" && row.provider !== "volcengine_tts" && row.provider !== "pexels" && row.provider !== "ffmpeg" && row.provider !== "freesound" && row.provider !== "openchatcut" && row.provider !== "openai" && row.provider !== "cloudflare" && row.provider !== "whisperx") throw new Error(`Unsupported worker provider: ${row.provider}`);
   startLeaseHeartbeat(row.task_id, row.attempt);
 
   return {
@@ -89,6 +90,7 @@ async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
     const input = { taskPackage, run: runCommand, validateMp4: validateMp4Artifact, inspectMp4: inspectMp4Artifact };
     return executeOpenChatCutRender(input);
   }
+  if (taskPackage.provider === "whisperx") return executeWhisperXTask(taskPackage);
   const apiKey = await resolveTaskSecret(taskPackage);
   return executeControlledMediaTask({
     taskPackage,
@@ -105,7 +107,26 @@ async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
     trimMp3: trimMp3Artifact,
     trimMp4: trimMp4Artifact,
     trimMp4Segments: trimMp4SegmentsArtifact,
+    whisperXCacheDirectory: process.env.WHISPERX_MODEL_CACHE?.trim() || join(mediaLibraryMountPath, ".cache", "whisperx"),
   });
+}
+
+async function executeWhisperXTask(taskPackage: WorkerTaskPackage): Promise<string> {
+  const alignment = taskPackage.acousticAlignment;
+  if (taskPackage.capability !== "acoustic_alignment" || !alignment?.audioRelativePath || !alignment.audioSha256 || !alignment.inputVersion) throw new Error("本地 WhisperX 任务缺少冻结对齐输入。");
+  const result = await runLocalWhisperXAlignment({
+    audioPath: join(taskPackage.assets.allowedRoot, alignment.audioRelativePath),
+    audioSha256: alignment.audioSha256,
+    cacheDirectory: process.env.WHISPERX_MODEL_CACHE?.trim() || join(mediaLibraryMountPath, ".cache", "whisperx"),
+    confirmedText: alignment.confirmedText,
+    model: taskPackage.model,
+    speakingRate: alignment.speakingRate ?? 1,
+    voice: alignment.voice ?? "",
+  });
+  const content = new TextEncoder().encode(`${JSON.stringify(result, null, 2)}\n`);
+  await writeSafeAssetFile(taskPackage.assets.allowedRoot, taskPackage.output.relativePath, content);
+  const artifact = { artifactType: taskPackage.output.requiredArtifactTypes[0] ?? "acoustic_alignment_evidence", relativePath: taskPackage.output.relativePath, sha256: createHash("sha256").update(content).digest("hex"), fileSize: content.byteLength };
+  return JSON.stringify({ version: "worker-result/v1", taskId: taskPackage.task.id, status: "completed", artifacts: [artifact], acousticAlignment: result, validation: { passed: true, checks: [{ name: "whisperx_alignment_output", passed: true, detail: result.status === "completed" ? "本地 WhisperX 时序与 Owner 正文已完整匹配。" : "本地 WhisperX 已返回候选时序和人工检查区间。" }] }, actualCostCents: 0, blockers: [], retry: { shouldRetry: false, reason: "Local alignment completed." }, nextStep: result.status === "completed" ? "Review the current shot timing." : "Owner must review unmatched or low-confidence intervals." });
 }
 
 async function executeStoryboardRevision(taskPackage: WorkerTaskPackage): Promise<string> {

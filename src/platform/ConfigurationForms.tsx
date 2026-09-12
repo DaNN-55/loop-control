@@ -41,14 +41,12 @@ const approvalGateOptions = [
   ["visual", "视觉审核"],
   ["storyboard", "分镜审核"],
   ["qc", "QC 审核"],
-  ["publish", "发布确认"],
 ] as const;
 const approvalGateHelp: Record<(typeof approvalGateOptions)[number][0], string> = {
   script: "AI 生成或修改脚本后暂停，等待 Owner 审核。自行上传的脚本仍需确认为主脚本，但不会因此触发 AI 脚本审核。",
   visual: "产生新的视觉方案或视觉素材后暂停。素材来自上传还是外部 API，不改变是否需要审核。",
   storyboard: "生成或修改分镜 JSON 后暂停，等待 Owner 审核镜头结构与制作要求。",
   qc: "审核视频生成并通过自动校验后暂停。关闭后仅在没有阻塞问题时自动继续。",
-  publish: "发布包校验完成后保留人工发布确认。关闭只跳过额外停顿，不会自动连接或操作外部发布平台。",
 };
 const executorLabels = {
   script_writing: "脚本生成",

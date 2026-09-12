@@ -7,10 +7,16 @@ export interface ProvidedScriptDispatchDependencies<TTask, TWorkerResult> {
 }
 
 export async function dispatchProvidedScriptWork<TTask, TWorkerResult>(dependencies: ProvidedScriptDispatchDependencies<TTask, TWorkerResult>): Promise<{ plannedTasks: number; workers: TWorkerResult[] }> {
+  const workers: TWorkerResult[] = [];
+  let prepared = false;
+  if (dependencies.runExistingWorker) {
+    await dependencies.prepareWorkers?.();
+    prepared = true;
+    workers.push(await dependencies.runExistingWorker());
+  }
   const tasks = await dependencies.planTasks();
-  if (tasks.length > 0 || dependencies.runExistingWorker) await dependencies.prepareWorkers?.();
-  const workers = await runWithConcurrency(tasks, dependencies.concurrency ?? 1, dependencies.runWorker);
-  if (dependencies.runExistingWorker) workers.push(await dependencies.runExistingWorker());
+  if (tasks.length > 0 && !prepared) await dependencies.prepareWorkers?.();
+  workers.push(...await runWithConcurrency(tasks, dependencies.concurrency ?? 1, dependencies.runWorker));
   return { plannedTasks: tasks.length, workers };
 }
 

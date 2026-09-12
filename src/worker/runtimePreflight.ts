@@ -89,7 +89,7 @@ export function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, _seriesR
 
 export function runtimeCapabilityFromTask(taskPackage: WorkerTaskPackage): RuntimeCapability {
   const sharedPlanning = taskPackage.capability === "storyboard_planning";
-  const adapter = taskPackage.aRoll?.adapter ?? taskPackage.media?.adapter ?? (sharedPlanning ? taskPackage.promptHarness?.adapter : undefined);
+  const adapter = taskPackage.capability === "acoustic_alignment" ? "whisperx_local" : taskPackage.aRoll?.adapter ?? taskPackage.media?.adapter ?? (sharedPlanning ? taskPackage.promptHarness?.adapter : undefined);
   const executionPath = adapter && localAdapterRegistrationsForCapability(taskPackage.capability).some((candidate) => candidate.provider === taskPackage.provider && candidate.id === adapter) ? "local" : undefined;
   return {
     capability: taskPackage.capability,
@@ -222,10 +222,12 @@ export function runtimeCommandForProvider(provider: string): string | undefined 
   if (provider === "codex") return "codex";
   if (provider === "ffmpeg") return "ffmpeg";
   if (provider === "openchatcut") return "openchatcut";
+  if (provider === "whisperx") return process.env.WHISPERX_PYTHON?.trim() || "python3";
   return undefined;
 }
 
 export function runtimeCommandArguments(command: string): string[] {
+  if (command === (process.env.WHISPERX_PYTHON?.trim() || "python3")) return ["-c", "import whisperx, torch; print('whisperx local runtime available')"];
   return command === "ffmpeg" ? ["-version"] : ["--version"];
 }
 

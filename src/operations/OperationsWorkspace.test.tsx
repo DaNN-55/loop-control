@@ -14,7 +14,7 @@ const seriesVersion = { account_id: "account-1", created_at: "2026-08-15T00:00:0
 const episodes: Episode[] = [
   { account_id: "account-1", blueprint_version_id: "blueprint-1", created_at: "2026-08-15T00:00:00.000Z", id: "episode-review", series_version_id: seriesVersion.id, stage: "script_review", title: "脚本待审", updated_at: "2026-08-15T00:00:00.000Z" },
   { account_id: "account-1", blueprint_version_id: "blueprint-1", created_at: "2026-08-15T00:00:00.000Z", id: "episode-blocked", series_version_id: seriesVersion.id, stage: "production_ready", title: "媒体受阻", updated_at: "2026-08-15T00:00:00.000Z" },
-  { account_id: "account-1", blueprint_version_id: "blueprint-1", created_at: "2026-08-15T00:00:00.000Z", id: "episode-unassigned", series_version_id: null, stage: "published", title: "无系列生产单", updated_at: "2026-08-15T00:00:00.000Z" },
+  { account_id: "account-1", blueprint_version_id: "blueprint-1", created_at: "2026-08-15T00:00:00.000Z", id: "episode-unassigned", series_version_id: null, stage: "production_completed", title: "无系列生产单", updated_at: "2026-08-15T00:00:00.000Z" },
 ];
 
 const reviewPackages: ReviewPackage[] = [
