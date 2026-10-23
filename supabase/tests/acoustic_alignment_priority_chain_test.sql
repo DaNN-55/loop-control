@@ -35,9 +35,11 @@ select ok(
 );
 
 select ok(
-  position('jsonb_set(caption_contract, ''{cues}''' in pg_get_functiondef('public.sync_shot_acoustic_alignment_after_task_update()'::regprocedure)) > 0
-  and position('subtitle_text =' in pg_get_functiondef('public.sync_shot_acoustic_alignment_after_task_update()'::regprocedure)) = 0,
-  'worker timing updates cues without overwriting Owner subtitle body'
+  pg_get_functiondef('public.sync_local_whisperx_alignment_after_task_update()'::regprocedure)
+    ~* 'jsonb_set\s*\(\s*caption_contract\s*,\s*''\{cues\}'''
+  and pg_get_functiondef('public.sync_local_whisperx_alignment_after_task_update()'::regprocedure)
+    !~* '\msubtitle_text\s*=',
+  'alignment task timing updates cues without overwriting Owner subtitle body'
 );
 
 select ok(

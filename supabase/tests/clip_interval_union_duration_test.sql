@@ -19,9 +19,9 @@ select ok(
   'draft persistence uses interval-union duration'
 );
 select ok(
-  position('clip_segment_union_duration(draft.clip_segments)' in pg_get_functiondef('public.generate_shot_sync_preview(uuid,uuid,text)'::regprocedure)) > 0
-    and position('clip_segment_union_duration(draft.clip_segments)' in pg_get_functiondef('public.confirm_shot_sync_preview(uuid,uuid,text,text,text)'::regprocedure)) > 0,
-  'preview generation and confirmation use interval-union duration'
+  position('shot_composition_playback_duration(draft.clip_segments, draft.composition)' in pg_get_functiondef('public.generate_shot_sync_preview(uuid,uuid,text)'::regprocedure)) > 0
+    and position('shot_composition_playback_duration(draft.clip_segments, draft.composition)' in pg_get_functiondef('public.confirm_shot_sync_preview(uuid,uuid,text,text,text)'::regprocedure)) > 0,
+  'preview generation and confirmation use composition playback duration'
 );
 select ok(
   not has_function_privilege('authenticated', 'public.clip_segment_union_duration(jsonb)', 'execute')
