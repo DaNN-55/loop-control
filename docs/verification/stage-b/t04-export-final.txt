@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 isolated:stage-b
+> node scripts/isolation/stage-b.mjs export
+
+{"mode":"export","passed":true,"consistency":"best_effort","restorableBackup":false,"snapshotPath":"/Users/dan/.codex/worktrees/local-first-optimization/loop-control/n8n/runtime/backups/supabase-snapshot-2026-10-23T10-41-19-634Z.json","tables":{"accounts":1,"account_blueprint_versions":1,"account_memberships":1,"episodes":11,"tasks":17,"task_runs":16,"artifacts":16,"review_packages":1,"approvals":1,"state_transitions":1,"audit_events":16,"audio_track_annotations":0,"audio_tracks":0,"external_connections":2,"external_connection_versions":2,"external_connection_verifications":1,"material_revision_approvals":0,"pre_render_review_member_decisions":0,"pre_render_review_members":0,"production_dependencies":0,"production_invalidations":0,"production_material_revisions":0,"prompt_versions":3,"qc_review_issues":0,"review_annotations":0,"review_render_composition_revisions":0,"series":0,"series_versions":0,"shot_preparation_drafts":0,"storyboard_audio_selections":0,"storyboard_review_shots":0,"asset_locks":0}}

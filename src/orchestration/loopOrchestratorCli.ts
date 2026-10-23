@@ -24,11 +24,14 @@ try {
     case "notify-state-changes":
       await notify();
       break;
+    case "export":
+      await exportSupabaseSnapshot();
+      break;
     case "health":
       await runHealthCheck();
       break;
     default:
-      throw new Error("用法：orchestrator:run <dispatch|notify|health>");
+      throw new Error("用法：orchestrator:run <dispatch|notify|health|export>");
   }
 } catch (error) {
   process.stderr.write(`${errorMessage(error)}\n`);
@@ -191,7 +194,6 @@ async function runHealthCheck(): Promise<void> {
     check("项目目录", async () => { await stat(projectRoot); }),
     check("Codex CLI", async () => { await execFileAsync("codex", ["--version"]); }),
     check("Supabase 服务", checkSupabase),
-    check("Supabase 数据快照", exportSupabaseSnapshot),
   ]);
   const passed = checks.every((checkResult) => checkResult.passed);
   if (!passed) {
@@ -248,6 +250,7 @@ async function exportSupabaseSnapshot(): Promise<void> {
   await writeFile(temporaryPath, `${JSON.stringify(snapshot)}\n`, { encoding: "utf8", mode: 0o600 });
   await chmod(temporaryPath, 0o600);
   await rename(temporaryPath, snapshotPath);
+  process.stdout.write(JSON.stringify({ mode: "export", passed: true, consistency: "best_effort", restorableBackup: false, snapshotPath, tables: Object.fromEntries(Object.entries(tables).map(([name, rows]) => [name, rows.length])) }) + "\n");
 }
 
 async function fetchTableRows(url: string, serviceRoleKey: string, table: SnapshotTable, snapshotStartedAt: Date): Promise<unknown[]> {

@@ -1,0 +1,8 @@
+
+> loop-control@0.1.0 isolated:stage-b
+> node scripts/isolation/stage-b.mjs cli --workdir .loop-control/stage-b/verified/stack db advisors --local --type security --level warn --fail-on none
+
+Connecting to local database...
+No issues found
+A new version of Supabase CLI is available: v2.121.0 (currently installed v2.117.0)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli

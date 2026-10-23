@@ -2,7 +2,8 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
-select plan(25);
+select plan(27);
+select set_config('request.jwt.claim.role','service_role',true);
 
 insert into public.accounts (id, slug, name, timezone)
 values ('81000000-0000-4000-8000-000000000001', 'issue-81-runtime', 'Issue 81 runtime', 'Asia/Shanghai');
@@ -49,23 +50,26 @@ select
   'b-roll-v1'
 from generate_series(1, 4) as task_number;
 
+create temporary table claimed_leases as select * from public.claim_next_worker_task('81000000-0000-4000-8001-000000000001',8);
 select is(
-  (select count(*) from public.claim_next_worker_task(null, 8)),
+  (select count(*) from claimed_leases),
   1::bigint,
   'the first task in the trusted concurrency group is claimed'
 );
+insert into claimed_leases select * from public.claim_next_worker_task('81000000-0000-4000-8001-000000000002',8);
 select is(
-  (select count(*) from public.claim_next_worker_task(null, 8)),
+  (select count(*) from claimed_leases where task_id='81000000-0000-4000-8001-000000000002'),
   1::bigint,
   'the second task in the trusted concurrency group is claimed'
 );
+insert into claimed_leases select * from public.claim_next_worker_task('81000000-0000-4000-8001-000000000003',8);
 select is(
-  (select count(*) from public.claim_next_worker_task(null, 8)),
+  (select count(*) from claimed_leases where task_id='81000000-0000-4000-8001-000000000003'),
   1::bigint,
   'the third task in the trusted concurrency group is claimed'
 );
 select is(
-  (select count(*) from public.claim_next_worker_task(null, 8)),
+  (select count(*) from public.claim_next_worker_task('81000000-0000-4000-8001-000000000004',8)),
   0::bigint,
   'the fourth task is held when the effective limit is three'
 );
@@ -95,7 +99,7 @@ select is(
   'legacy scheduling facts remain unchanged'
 );
 select ok(
-  (select input_snapshot #>> '{runtime_constraints,source,provider_or_connection_limit}' from public.tasks where status = 'running' limit 1) <> '5',
+  (select input_snapshot #>> '{runtime_constraints,source,provider_or_connection_limit}' from public.tasks where episode_id='81000000-0000-4000-8000-000000000003' and status = 'running' limit 1) <> '5',
   'legacy capability limit five cannot raise the platform limit'
 );
 
@@ -124,36 +128,28 @@ select is(
 );
 
 select ok(
-  position('pg_advisory_xact_lock' in pg_get_functiondef('public.claim_next_worker_task(uuid,integer)'::regprocedure)) > 0,
-  'claiming serializes each runtime concurrency group'
+  (select bool_and(t.lease_token is not null and t.lease_token=r.lease_token) from public.tasks t join public.task_runs r on r.task_id=t.id and r.attempt=t.attempt-1 where t.episode_id='81000000-0000-4000-8000-000000000003' and t.status='running'),
+  'each active task and run share the token returned by atomic claim'
 );
-
-select ok(
-  position('budget_limit_cents = 2147483647' in pg_get_functiondef('public.report_worker_result(uuid,integer,jsonb)'::regprocedure)) = 0,
-  'result reporting does not write an unlimited budget sentinel'
-);
+select ok(not has_function_privilege('service_role','public.report_worker_result_base(uuid,integer,jsonb)','EXECUTE'),'the Worker cannot bypass fenced result reporting');
 
 update public.tasks
-set claimed_at = timestamptz '2000-01-01 00:00:00+00'
+set claimed_at = clock_timestamp()-interval '5 minutes'
 where id = '81000000-0000-4000-8001-000000000001';
 select is(
-  public.refresh_worker_task_lease('81000000-0000-4000-8001-000000000001', 0),
+  public.refresh_worker_task_lease('81000000-0000-4000-8001-000000000001', 0,(select lease_token from claimed_leases where task_id='81000000-0000-4000-8001-000000000001')),
   true,
   'a matching running task lease is refreshed'
 );
 select ok(
-  (select claimed_at from public.tasks where id = '81000000-0000-4000-8001-000000000001') > timestamptz '2000-01-01 00:00:00+00',
+  (select claimed_at from public.tasks where id = '81000000-0000-4000-8001-000000000001') > clock_timestamp()-interval '1 minute',
   'a matching running task receives a newer claimed_at'
 );
 
 update public.tasks
 set status = 'blocked', claimed_at = timestamptz '2000-01-01 00:00:00+00'
 where id = '81000000-0000-4000-8001-000000000004';
-select is(
-  public.refresh_worker_task_lease('81000000-0000-4000-8001-000000000004', 0),
-  false,
-  'a non-running task lease is not refreshed'
-);
+select throws_ok($$select public.refresh_worker_task_lease('81000000-0000-4000-8001-000000000004',0,null::uuid)$$,'42501','Worker lease is expired or belongs to another attempt','a non-running task lease is not refreshed');
 select is(
   (select claimed_at from public.tasks where id = '81000000-0000-4000-8001-000000000004'),
   timestamptz '2000-01-01 00:00:00+00',
@@ -163,11 +159,7 @@ select is(
 update public.tasks
 set claimed_at = timestamptz '2000-01-01 00:00:00+00'
 where id = '81000000-0000-4000-8001-000000000001';
-select is(
-  public.refresh_worker_task_lease('81000000-0000-4000-8001-000000000001', 1),
-  false,
-  'a mismatched task attempt lease is not refreshed'
-);
+select throws_ok(format('select public.refresh_worker_task_lease(%L,1,%L::uuid)','81000000-0000-4000-8001-000000000001',(select lease_token from claimed_leases where task_id='81000000-0000-4000-8001-000000000001')),'42501','Worker lease is expired or belongs to another attempt','a mismatched task attempt lease is not refreshed');
 select is(
   (select claimed_at from public.tasks where id = '81000000-0000-4000-8001-000000000001'),
   timestamptz '2000-01-01 00:00:00+00',
@@ -175,17 +167,19 @@ select is(
 );
 
 select ok(
-  not has_function_privilege('anon', 'public.refresh_worker_task_lease(uuid,integer)', 'EXECUTE'),
+  not has_function_privilege('anon', 'public.refresh_worker_task_lease(uuid,integer,uuid)', 'EXECUTE'),
   'anonymous callers cannot refresh Worker leases'
 );
 select ok(
-  not has_function_privilege('authenticated', 'public.refresh_worker_task_lease(uuid,integer)', 'EXECUTE'),
+  not has_function_privilege('authenticated', 'public.refresh_worker_task_lease(uuid,integer,uuid)', 'EXECUTE'),
   'signed-in callers cannot refresh Worker leases'
 );
 select ok(
-  has_function_privilege('service_role', 'public.refresh_worker_task_lease(uuid,integer)', 'EXECUTE'),
+  has_function_privilege('service_role', 'public.refresh_worker_task_lease(uuid,integer,uuid)', 'EXECUTE'),
   'the Worker service role can refresh Worker leases'
 );
 
+select throws_ok($$select public.refresh_worker_task_lease('81000000-0000-4000-8001-000000000001',0)$$,'42501','Lease token is required; upgrade Worker','the unfenced legacy heartbeat is rejected');
+select throws_ok(format('select public.refresh_worker_task_lease(%L,0,%L::uuid)','81000000-0000-4000-8001-000000000001',(select lease_token from claimed_leases where task_id='81000000-0000-4000-8001-000000000001')),'42501','Worker lease is expired or belongs to another attempt','even a matching token cannot revive an expired lease');
 select * from finish();
 rollback;

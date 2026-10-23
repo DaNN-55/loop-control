@@ -40,6 +40,7 @@ const requestedTaskId = readTaskIdArgument(process.argv.slice(2));
 const supabase = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
 const workerLeaseHeartbeatMs = 5 * 60 * 1000;
 let leaseHeartbeat: ReturnType<typeof setInterval> | undefined;
+let activeLease: { taskId: string; attempt: number; token: string } | undefined;
 
 const result = await runCodexWorker({
   claimNextTask: claimNextTask,
@@ -60,6 +61,8 @@ async function claimNextTask(): Promise<ClaimedWorkerTask | null> {
   const row = data?.[0];
   if (!row) return null;
   if (row.provider !== "codex" && row.provider !== "google_tts" && row.provider !== "volcengine_tts" && row.provider !== "pexels" && row.provider !== "ffmpeg" && row.provider !== "freesound" && row.provider !== "openchatcut" && row.provider !== "openai" && row.provider !== "cloudflare" && row.provider !== "whisperx") throw new Error(`Unsupported worker provider: ${row.provider}`);
+  if (typeof row.lease_token !== "string" || !/^[0-9a-f-]{36}$/i.test(row.lease_token)) throw new Error("Claimed task has no valid lease token; upgrade the database.");
+  activeLease = { taskId: row.task_id, attempt: row.attempt, token: row.lease_token };
   startLeaseHeartbeat(row.task_id, row.attempt);
 
   return {
@@ -388,6 +391,7 @@ async function reportResult(taskId: string, attempt: number, workerResult: unkno
       p_task_id: taskId,
       p_attempt: attempt,
       p_result: workerResult,
+      p_lease_token: leaseToken(taskId, attempt),
     });
     if (error) throw new Error(`Unable to report the worker result: ${error.message}`);
   } finally {
@@ -397,10 +401,15 @@ async function reportResult(taskId: string, attempt: number, workerResult: unkno
 
 async function reportProgress(taskId: string, attempt: number, progress: WorkerProgress): Promise<void> {
   const value = { version: "worker-progress/v1", progress };
-  const { error: taskError } = await supabase.from("tasks").update({ last_result: value }).eq("id", taskId).eq("attempt", attempt).eq("status", "running");
-  if (taskError) throw new Error(`Unable to report Worker progress: ${taskError.message}`);
-  const { error: runError } = await supabase.from("task_runs").update({ result: value }).eq("task_id", taskId).eq("attempt", attempt).eq("status", "running");
-  if (runError) throw new Error(`Unable to report Worker run progress: ${runError.message}`);
+  const { error } = await supabase.rpc("report_worker_progress", {
+    p_task_id: taskId, p_attempt: attempt, p_lease_token: leaseToken(taskId, attempt), p_progress: value,
+  });
+  if (error) throw new Error(`Unable to report Worker progress: ${error.message}`);
+}
+
+function leaseToken(taskId: string, attempt: number): string {
+  if (!activeLease || activeLease.taskId !== taskId || activeLease.attempt !== attempt) throw new Error("Worker lease does not match this attempt.");
+  return activeLease.token;
 }
 
 function startLeaseHeartbeat(taskId: string, attempt: number): void {
@@ -408,7 +417,7 @@ function startLeaseHeartbeat(taskId: string, attempt: number): void {
   leaseHeartbeat = setInterval(() => {
     void (async () => {
       try {
-        const { error } = await supabase.rpc("refresh_worker_task_lease", { p_task_id: taskId, p_attempt: attempt });
+        const { error } = await supabase.rpc("refresh_worker_task_lease", { p_task_id: taskId, p_attempt: attempt, p_lease_token: leaseToken(taskId, attempt) });
         if (error) process.stderr.write(`Unable to refresh the worker lease: ${error.message}\n`);
       } catch (error) {
         process.stderr.write(`Unable to refresh the worker lease: ${error instanceof Error ? error.message : String(error)}\n`);

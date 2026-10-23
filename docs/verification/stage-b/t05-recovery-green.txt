@@ -1,0 +1,19 @@
+
+> loop-control@0.1.0 isolated:leases
+> node scripts/isolation/leases.mjs recovery-green
+
+{
+  "checkedAt": "2026-10-23T10:34:48.784Z",
+  "target": "loop-control-stage-b-restore",
+  "mode": "recovery-green",
+  "outcomes": [
+    {
+      "name": "only expired running is recovered without a ready candidate",
+      "passed": true
+    },
+    {
+      "name": "expired same-group occupant releases capacity before candidate selection",
+      "passed": true
+    }
+  ]
+}

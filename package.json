@@ -35,7 +35,16 @@
     "isolated:database": "node scripts/isolation/database.mjs",
     "isolated:smoke": "node scripts/isolation/smoke.mjs",
     "isolated:baseline": "npm run worker:build && node scripts/isolation/baseline.mjs",
-    "isolated:test": "node scripts/isolation/run.mjs test"
+    "isolated:test": "node scripts/isolation/run.mjs test",
+    "isolated:stage-b": "node scripts/isolation/stage-b.mjs",
+    "isolated:backup": "node scripts/isolation/backup.mjs",
+    "isolated:restore": "node scripts/isolation/restore.mjs",
+    "isolated:restore-fixture": "node scripts/isolation/restore-fixture.mjs",
+    "isolated:restore-verify": "node scripts/isolation/restore-verify.mjs",
+    "isolated:leases": "node scripts/isolation/leases.mjs",
+    "isolated:worker-recovery": "node scripts/isolation/worker-recovery.mjs",
+    "isolated:stage-b-audit": "node scripts/isolation/stage-b-audit.mjs",
+    "isolated:sql-tests": "node scripts/isolation/sql-tests.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.0",

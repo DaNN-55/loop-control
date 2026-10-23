@@ -1,0 +1,39 @@
+
+> loop-control@0.1.0 isolated:restore-verify
+> node scripts/isolation/restore-verify.mjs --browser-login
+
+{
+  "checkedAt": "2026-10-23T10:31:05.684Z",
+  "target": "loop-control-stage-b-restore",
+  "episodeId": "d96d613d-34f0-426d-8057-2ecaefea58ca",
+  "httpEpisodeReadable": true,
+  "reviewSnapshotPreserved": true,
+  "approvalPreserved": true,
+  "mediaSha256": "52ee826ea305bfd0e4e82e357905efdbc6ee3c2297313d22f66341e6012f911c",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_type": "video",
+        "width": 640,
+        "height": 360
+      },
+      {
+        "codec_type": "audio"
+      }
+    ],
+    "format": {
+      "duration": "2.000000"
+    }
+  },
+  "unboundSecretBlocked": true,
+  "explicitNewVersionRebound": true,
+  "oldVersionStillBlocked": true,
+  "noPlainSecretsInArchive": true,
+  "nonemptyRestoreRejected": true,
+  "archiveCorruptionRejected": true,
+  "mediaCorruptionRejected": true,
+  "foreignKeysValidated": true,
+  "localExecutionDisabled": true
+}

@@ -1,0 +1,28 @@
+
+> loop-control@0.1.0 isolated:sql-tests
+> node scripts/isolation/sql-tests.mjs --affected --replay
+
+{
+  "target": "loop-control-stage-b-replay",
+  "results": [
+    {
+      "file": "local_whisperx_alignment_test.sql",
+      "passed": false,
+      "checks": 10,
+      "failures": [
+        "not ok 5 - platform worker can claim local WhisperX tasks"
+      ],
+      "sqlError": false,
+      "planProblem": true
+    },
+    {
+      "file": "worker_runtime_constraints_test.sql",
+      "passed": false,
+      "checks": 0,
+      "failures": [],
+      "sqlError": true,
+      "planProblem": false
+    }
+  ],
+  "checks": 10
+}
