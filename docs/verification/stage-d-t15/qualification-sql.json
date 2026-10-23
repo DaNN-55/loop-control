@@ -1,0 +1,17 @@
+{
+  "ticket": 121,
+  "at": "2026-10-23T18:22:37.342Z",
+  "database": "loop_empty",
+  "fixture": "SQL-only metadata, one transaction rolled back",
+  "nativeKeychainOperations": 0,
+  "providerCalls": 0,
+  "liveMode": "database state-machine branch only, not real authentication or Provider evidence",
+  "assertions": 9,
+  "verifiedRetainedAfterRetryable": true,
+  "invalidClears": true,
+  "rebindClears": true,
+  "rotationDoesNotTransfer": true,
+  "revokedBlocks": true,
+  "allFixtureRowsRolledBack": true,
+  "passed": true
+}

@@ -48,13 +48,16 @@ export class LocalConnections {
    const connections=(await client.query('SELECT * FROM public.external_connections WHERE created_by=$1 ORDER BY created_at,id',[ownerId])).rows;
    const versions=(await client.query('SELECT * FROM public.list_external_connection_versions(NULL)')).rows;
    const bindings=(await client.query('SELECT version_id,store_mode FROM local_identity.connection_bindings WHERE owner_id=$1',[ownerId])).rows;
+   const qualifications=(await client.query('SELECT version_id,qualified FROM local_identity.connection_qualifications WHERE owner_id=$1',[ownerId])).rows;
+   const latest=(await client.query('SELECT DISTINCT ON(connection_version_id) connection_version_id,status FROM public.external_connection_verifications ORDER BY connection_version_id,created_at DESC,id DESC')).rows;
    const pending=(await client.query('SELECT idempotency_key,metadata,created_at FROM local_identity.connection_intents WHERE owner_id=$1 AND applied_at IS NULL ORDER BY created_at',[ownerId])).rows;
    const externalReady=this.store.mode==='keychain'&&this.probe.mode==='live';
-   const localVersions=versions.map(v=>{const binding=bindings.find(b=>b.version_id===v.id);return {...v,historicalStatus:v.status,status:v.revoked_at?'revoked':!externalReady||!binding||binding.store_mode!=='keychain'?'retryable':v.status,secretState:binding?'bound-unchecked':'unbound'};});
+   const localVersions=versions.map(v=>{const binding=bindings.find(b=>b.version_id===v.id),qualified=qualifications.some(q=>q.version_id===v.id&&q.qualified);return {...v,historicalStatus:v.status,status:v.revoked_at?'revoked':!externalReady||!binding||binding.store_mode!=='keychain'?'retryable':qualified?'verified':v.status==='verified'?'retryable':v.status,secretState:binding?'bound-unchecked':'unbound'};});
    // Historical provider text is never used as a diagnostic response channel;
    // an imported verified flag cannot stand in for a usable native binding.
    for(const c of connections){const current=localVersions.find(v=>v.id===c.current_version_id);if(current?.status==='revoked')c.status='invalid';else if(current)c.status=current.status;
-    c.last_verification_detail=current?.secretState==='unbound'?'本机秘密未绑定，请显式重新录入。':!externalReady?'真实Keychain及在线验证尚未启用。':c.status==='verified'?'已验证；运行时仍检查秘密可用性。':'需要在本机重新验证。';}
+    const last=latest.find(p=>p.connection_version_id===c.current_version_id);
+    c.last_verification_detail=current?.secretState==='unbound'?'本机秘密未绑定，请显式重新录入。':!externalReady?'真实Keychain及在线验证尚未启用。':last?.status==='retryable'&&c.status==='verified'?'本次测试暂不可用；上次有效验证资格保留，生产前仍须检查。':c.status==='verified'?'已验证；运行时仍检查秘密可用性。':'需要在本机重新验证。';}
    return {connections,versions:localVersions,pending,capabilities:{secrets:this.store.mode,verification:this.probe.mode,externalReady}};
   });
  }

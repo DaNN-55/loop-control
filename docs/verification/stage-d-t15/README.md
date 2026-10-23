@@ -4,11 +4,13 @@
 
 ## 已实现的边界
 
-本地Owner会话、精确Host/Origin和CSRF保护的`GET/POST /api/local/connections`，仅create/rotate/rebind/update/revoke/verify白名单，拒绝任意字段和任意SQL。私有迁移007只保存操作意图、UUID绑定和验证模式/结果；有限SECURITY DEFINER函数检查Owner，应用仍没有原始业务表UPDATE权限。原三张外部连接业务表、版本号、官方Provider/adapter/endpoint白名单、撤销与验证历史保留。历史`vault_secret_id`字段对新行仅含UUID；本地解析只读明确的`connection_bindings`，不会回退Vault或环境变量。
+本地Owner会话、精确Host/Origin和CSRF保护的`GET/POST /api/local/connections`，仅create/rotate/rebind/update/revoke/verify白名单，拒绝任意字段和任意SQL。私有迁移007/008只保存操作意图、UUID绑定、验证模式/结果及资格；有限SECURITY DEFINER函数检查Owner，应用仍没有原始业务表UPDATE权限。原三张外部连接业务表、版本号、官方Provider/adapter/endpoint白名单、撤销与验证历史保留。历史`vault_secret_id`字段对新行仅含UUID；本地解析只读明确的`connection_bindings`，不会回退Vault或环境变量。
+
+ADR0007要求区分本次结果与持久资格。008独立记录qualification：live verified授予、invalid清除、retryable保留原值但不授予新资格；显式rebind清除，轮换不传递，撤销/非当前版本拒绝。每次探测仍追加保留，模拟不授予资格。未更改已应用007的内容；旧apply实现撤回应用执行权，由新有限包装确保重绑清资格。
 
 秘密字段在进入SQL前移除，没有保存明文或秘密哈希。先持久化不含秘密的意图和随机引用，再调用存储端口，最后同事务提交业务版本与回执；helper已写入但PG提交中断时，原意图/引用可重试，不能新建第二份秘密。不可变put遇到重复引用只接受完全相同的字节；更改秘密应新建轮换版本。已完成意图返回`replayed:true`，不再执行秘密写入；即使新输入不同也明确提示“原操作已经完成，未再次写入”，不能当成更新成功。元数据不同复用key409。未完成意图通过Owner目录显示，需重输原材料显式重试。
 
-客户端sessionStorage只保存在**不含secret的元数据hash**下的随机操作UUID，不保存明文或低熵秘密指纹；认证草稿只在password输入框/内存。复用原`ConnectionWorkspace`，新增明确的缺失绑定重录和原操作重试。导入的历史verified字段不等于本机可用：无绑定、模拟或端口未启用时，DTO明确显示不可用/待真实验证，保留历史状态字段，数据库原记录不改。连接页和账号蓝图页使用同一Owner版本列表。
+客户端sessionStorage只保存在**不含secret的元数据hash**下的随机操作UUID，不保存明文或低熵秘密指纹；认证草稿只在password输入框/内存。创建/验证/轮换/选择从原账号蓝图相应能力入口进行；同页“蓝图连接恢复与版本维护”内联区复用`ConnectionWorkspace`处理缺失绑定、撤销与原操作重试，没有新增独立连接页面。共享动作hook保留保存成功/读取失败区分。导入的历史verified字段不等于本机可用：无绑定、模拟或端口未启用时，DTO明确显示不可用/待真实验证，保留历史状态字段，数据库原记录不改。
 
 蓝图引用保存只在服务端同时配置keychain存储和live验证端口时开放；按稳定顺序锁定连接，再以新语句核对Owner/当前/未撤销版本、原业务verified与本地live验证证据，并实际解析该精确引用检查可用性。解析字节不进入SQL或HTTP。默认门禁仍409；模拟验证不会开放选择。既有SQL触发器继续校验Provider/adapter匹配。此真实分支只有边界mock测试，未假装已跑真实Keychain验收。
 
@@ -27,9 +29,12 @@
 - [真实HTTP/PG + 模拟端口](http-simulated.json)：8并发创建仅1连接/1秘密写入；6并发轮换仅1新版本，旧引用保持；已完成key重放不覆盖；存储成功后模拟中断，原意图恢复无重复；仅本轮新版本删除绑定模拟恢复缺失后显式重绑；撤销拒绝，不自动切换；恶意Provider异常文本脱敏；模拟结果只在私有证据记outcome，公共验证仍retryable、ready=false，蓝图409，生产Worker拒绝。匿名401、CSRF403、跨Owner命令404、无会员创建403，且拒绝前不写秘密。真实PG dump含public及local_identity，HTTP、dump及应用日志均不含本轮合成秘密。此处存储为内存Map，Provider为纯函数，没有真实Keychain/Provider调用或费用。
 - [本机协议](protocol.json)：候选编译但从未执行；只执行`LOOP_KEYCHAIN_PROTOCOL_ONLY`预处理剔除Security代码的版本，nm断言无SecItem/SecKeychain导入。20项真实子进程协议/IPC检查通过。先以未实现协议返回not_implemented失败，再实现通过；后续审查修复Node socketpair误拒绝，共享检查现被协议测试覆盖。构建/模块缓存只在私有运行目录，不提交二进制。
 - 单元测试：原组件网络故障、连接页password草稿及仅UUID存储；native适配器的子进程/文件系统边界均mock，覆盖默认禁用、参数/环境无秘密、不可变引用、stderr丢弃及hash拒绝；蓝图门禁的真实分支仅用边界mock验证，不创建live验证数据库夹具。
+- [SQL资格状态转换](qualification-sql.json)：仅`loop_empty`内一笔最终ROLLBACK的事务、元数据UUID夹具，9断言验证verified→retryable保留、invalid清除、无资格retryable不授予、rebind清除、rotation不传递、revoke拒绝。只走SQL函数的live-mode状态机分支，不存在实际秘密/认证/Provider，不提交任何live验证夹具，D应用从不连接该库。最初夹具缺既有Owner membership，被原create_account前置条件拒绝；补齐回滚夹具，没有放宽业务检查。
 - [完整回归](checks.txt)及[历史保留](original-history.json)记录最终结果。完整回归采用默认5000ms，排除运行目录保存的历史源码副本；Node既有原生n8n校验跳过保留。初次定向测试builtin mock缺default导出而失败，修正mock边界后通过，未改弱运行代码或断言。新增会员校验曾使跨Owner动作提前403，调整先核验资源归属后重测404，未放宽预期。失败留下的本轮合成连接/版本仅作诊断，原C记录未改。
 
 API依据：[Apple SecItemAdd](https://developer.apple.com/documentation/security/secitemadd(_:_:))、[SecItemCopyMatching](https://developer.apple.com/documentation/security/secitemcopymatching(_:_:))及本机SDK的显式Keychain/IPC约束。源码、编译、mock、模拟Provider通过均不证明真实Keychain行为或在线服务通过。
+
+接口初审另发现并修复：模拟outcome曾公开为verified，现HTTP与公共业务记录均retryable，真实模拟outcome只进私有证据；首个接口提交遗漏已测试的蓝图门禁文件，`7c6439c`补齐并重新核验提交状态；临时retryable错误撤销已验证资格，以008及上述SQL回归修复。没有将这些初审缺陷隐藏为最终通过。
 
 ## 精确待确认及未完成
 

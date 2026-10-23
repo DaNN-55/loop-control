@@ -1,5 +1,5 @@
 {
-  "at": "2026-10-23T18:16:04.669Z",
+  "at": "2026-10-23T18:25:18.768Z",
   "sourceCreatedAt": "2026-10-23T16:42:53.747Z",
   "originalRows": 20379,
   "tables": {
@@ -60,17 +60,17 @@
     },
     "external_connection_verifications": {
       "original": 4,
-      "current": 29,
+      "current": 44,
       "allOriginalRecordsPreserved": true
     },
     "external_connection_versions": {
       "original": 3,
-      "current": 18,
+      "current": 27,
       "allOriginalRecordsPreserved": true
     },
     "external_connections": {
       "original": 2,
-      "current": 7,
+      "current": 10,
       "allOriginalRecordsPreserved": true
     },
     "material_revision_approvals": {
