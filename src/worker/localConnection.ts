@@ -16,7 +16,7 @@ export async function verifyLocalConnection(client:PoolClient,store:SecretStore,
   outcome=['verified','invalid','retryable'].includes(result)?result:'retryable';
  }catch{outcome='retryable';} // Never propagate provider/helper diagnostics.
  await client.query('SELECT local_identity.record_connection_probe($1,$2,$3)',[version.id,probe.mode,outcome]);
- return {versionId:version.id,mode:probe.mode,outcome,ready:probe.mode==='live'&&outcome==='verified'};
+ return {versionId:version.id,mode:probe.mode,outcome:probe.mode==='simulated'?'retryable':outcome,ready:probe.mode==='live'&&outcome==='verified'};
 }
 export async function resolveLocalWorkerCredential(client:PoolClient,store:SecretStore,input:{versionId:string;accountId:string;provider:string;adapter:string}):Promise<string>{
  const version=await ownedConnectionVersion(client,input.versionId);

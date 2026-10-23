@@ -34,7 +34,8 @@ try{
  assert.equal(Number(sql(`select count(*) from public.external_connections where id='${connection.id}'`)),1);
  await call(base,identity,'create',{...create,name:name+' conflict'},key,409);
  const replay=await call(base,identity,'create',{...create,secret:newSecrets[1]},key);assert.equal(replay.replayed,true);assert.equal(writes,1,'completed intent never overwrites a secret');
- const checked=await call(base,identity,'verify',{connectionId:connection.id});assert.equal(checked.mode,'simulated');assert.equal(checked.ready,false);assert.equal(checked.outcome,'verified');
+ const checked=await call(base,identity,'verify',{connectionId:connection.id});assert.equal(checked.mode,'simulated');assert.equal(checked.ready,false);assert.equal(checked.outcome,'retryable');
+ assert.equal(sql(`select outcome from local_identity.connection_probe_evidence where version_id='${firstVersion}' order by created_at desc limit 1`),'verified');
  assert.equal(sql(`select status from public.external_connections where id='${connection.id}'`),'retryable');
  assert.equal(sql(`select public.connection_version_is_verified('${firstVersion}')`),'f');
  const firstRef=sql(`select secret_ref from local_identity.connection_bindings where version_id='${firstVersion}'`);assert.equal(secrets.get(firstRef),newSecrets[0]);
