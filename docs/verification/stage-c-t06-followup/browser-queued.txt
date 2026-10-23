@@ -1,0 +1,525 @@
+- generic [ref=e1] clickable [onclick]
+  - link "跳到主要内容" [ref=e2]
+  - complementary "主导航"
+    - StaticText "L"
+    - StaticText "oo"
+    - StaticText "p"
+    - StaticText "C"
+    - StaticText "ontrol"
+    - navigation
+      - button "系列运营" [ref=e8]
+        - StaticText "系列运营"
+      - button "生产单" [ref=e9]
+        - StaticText "生产单"
+      - button "审核" [ref=e10]
+        - StaticText "审核"
+        - StaticText "1"
+      - button "账号" [ref=e11]
+        - StaticText "账号"
+    - button "OpenChatCut 仅从有审核渲染的生产单打开" [disabled, ref=e4]
+      - StaticText "OpenChatCut"
+    - button "系统状态：需处理" [expanded=false, ref=e26]
+    - button "切换至深色模式" [ref=e12]
+    - button "收起侧栏" [ref=e13]
+    - button "所有者设置" [expanded=false, ref=e27]
+  - region "平台工作台" [ref=e3]
+    - sectionheader
+      - heading "系列运营" [level=1, ref=e14]
+    - region "系列运营概览" [ref=e5]
+      - sectionheader
+        - heading "系列运营概览" [level=2, ref=e28]
+        - paragraph
+          - StaticText "按生产单的当前阶段、待审包和 Worker 阻塞项汇总。这里不折算统一完成百分比。"
+        - LabelText
+          - StaticText "系列"
+          - combobox "运营系列筛选" [expanded=false, ref=e56]: 全部系列
+            - MenuListPopup
+              - option "全部系列" [selected, ref=e88]
+              - option "未归属系列" [ref=e89]
+      - generic "阶段分布"
+        - article
+          - StaticText "输入与脚本"
+          - strong
+            - StaticText "14"
+          - StaticText "个生产单"
+        - article
+          - StaticText "视觉准备"
+          - strong
+            - StaticText "0"
+          - StaticText "个生产单"
+        - article
+          - StaticText "分镜与媒体"
+          - strong
+            - StaticText "1"
+          - StaticText "个生产单"
+        - article
+          - StaticText "合成与 QC"
+          - strong
+            - StaticText "1"
+          - StaticText "个生产单"
+        - article
+          - StaticText "生产完成"
+          - strong
+            - StaticText "0"
+          - StaticText "个生产单"
+      - generic
+        - sectionheader
+          - heading "待审核" [level=3, ref=e57]
+          - StaticText "1"
+          - StaticText " 个待审核包"
+        - list
+          - listitem [level=1]
+            - button "Stage B restore checkpoint 合成与 QC · 审核包 v1" [ref=e77]
+              - strong
+                - StaticText "Stage B restore checkpoint"
+              - StaticText "合成与 QC"
+              - StaticText " · 审核包 v"
+              - StaticText "1"
+      - generic
+        - sectionheader
+          - heading "阻塞项" [level=3, ref=e58]
+          - StaticText "0"
+          - StaticText " 个阻塞项"
+        - paragraph
+          - StaticText "当前筛选范围没有 Worker 阻塞项。"
+      - region "系列生产单" [ref=e15]
+        - sectionheader
+          - heading "生产单明细" [level=3, ref=e59]
+          - StaticText "16"
+          - StaticText " 个生产单"
+        - button "T06 browser submit and refresh followup 6dd2ba66 分镜与媒体 无待审包 无阻塞" [ref=e29]
+          - strong
+            - StaticText "T06 browser submit and refresh followup"
+          - StaticText "6dd2ba66"
+          - StaticText "分镜与媒体"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "Stage C T06 unified durable queue d8d3844d 输入与脚本 无待审包 无阻塞" [ref=e30]
+          - strong
+            - StaticText "Stage C T06 unified durable queue"
+          - StaticText "d8d3844d"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "Stage C T06 unified durable queue 93c53c77 输入与脚本 无待审包 无阻塞" [ref=e31]
+          - strong
+            - StaticText "Stage C T06 unified durable queue"
+          - StaticText "93c53c77"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "Stage C T06 unified durable queue 846de823 输入与脚本 无待审包 无阻塞" [ref=e32]
+          - strong
+            - StaticText "Stage C T06 unified durable queue"
+          - StaticText "846de823"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "Stage B interrupted Worker recovery 4a7e8f67 输入与脚本 无待审包 无阻塞" [ref=e33]
+          - strong
+            - StaticText "Stage B interrupted Worker recovery"
+          - StaticText "4a7e8f67"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "Stage B restore checkpoint d96d613d 合成与 QC 待审 v1 无阻塞" [ref=e34]
+          - strong
+            - StaticText "Stage B restore checkpoint"
+          - StaticText "d96d613d"
+          - StaticText "合成与 QC"
+          - StaticText "待审 v1"
+          - StaticText "无阻塞"
+        - button "Stage A fixed 3-shot 13029a1c 输入与脚本 无待审包 无阻塞" [ref=e35]
+          - strong
+            - StaticText "Stage A fixed 3-shot"
+          - StaticText "13029a1c"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "Stage A fixed 1-shot 4d8120a8 输入与脚本 无待审包 无阻塞" [ref=e36]
+          - strong
+            - StaticText "Stage A fixed 1-shot"
+          - StaticText "4d8120a8"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "Stage A fixed 1-shot 02cbdcdd 输入与脚本 无待审包 无阻塞" [ref=e37]
+          - strong
+            - StaticText "Stage A fixed 1-shot"
+          - StaticText "02cbdcdd"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "Stage A fixed 3-shot cc008085 输入与脚本 无待审包 无阻塞" [ref=e38]
+          - strong
+            - StaticText "Stage A fixed 3-shot"
+          - StaticText "cc008085"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "Stage A fixed 1-shot fd24296d 输入与脚本 无待审包 无阻塞" [ref=e39]
+          - strong
+            - StaticText "Stage A fixed 1-shot"
+          - StaticText "fd24296d"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "Stage A fixed 3-shot 4ee28bf3 输入与脚本 无待审包 无阻塞" [ref=e40]
+          - strong
+            - StaticText "Stage A fixed 3-shot"
+          - StaticText "4ee28bf3"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "Stage A fixed 1-shot a6f530bd 输入与脚本 无待审包 无阻塞" [ref=e41]
+          - strong
+            - StaticText "Stage A fixed 1-shot"
+          - StaticText "a6f530bd"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "Stage A fixed 1-shot f5277d3d 输入与脚本 无待审包 无阻塞" [ref=e42]
+          - strong
+            - StaticText "Stage A fixed 1-shot"
+          - StaticText "f5277d3d"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "Stage A fixed 1-shot 8f8b14f1 输入与脚本 无待审包 无阻塞" [ref=e43]
+          - strong
+            - StaticText "Stage A fixed 1-shot"
+          - StaticText "8f8b14f1"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "Stage A synthetic smoke Episode a0000000 输入与脚本 无待审包 无阻塞" [ref=e44]
+          - strong
+            - StaticText "Stage A synthetic smoke Episode"
+          - StaticText "a0000000"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+  - complementary "当前生产单详情"
+    - button "关闭生产单详情" [ref=e6]
+    - sectionheader
+      - heading "T06 browser submit and refresh followup" [level=2, ref=e16]
+      - StaticText "6dd2ba66"
+    - button "刷新生产单状态" [ref=e17]
+    - button "打开本地输入目录" [ref=e18]
+    - button "复制本地输入目录路径" [ref=e19]
+    - button "查看产物索引" [expanded=false, ref=e20]
+    - button "查看执行与审计时间线" [expanded=false, ref=e21]
+    - paragraph
+      - StaticText "蓝图 v1 · 创建于 2026年10月23日 20:48"
+    - generic
+      - StaticText "当前阶段"
+      - strong
+        - StaticText "逐镜头准备工作台"
+      - StaticText "下一步"
+      - paragraph
+        - StaticText "逐镜头准备画面、口播和字幕"
+      - generic
+        - StaticText "当前任务"
+        - strong
+          - StaticText "等待 Worker"
+        - paragraph
+          - StaticText "draft_storyboard_revision 已排队，等待 Worker 领取。"
+        - StaticText "页面每 10 秒自动刷新任务状态"
+    - region "分镜工作台" [ref=e7]
+      - sectionheader
+        - heading "分镜工作台" [level=3, ref=e45]
+        - StaticText "2"
+        - StaticText " 个镜头 · 当前待处理 "
+        - StaticText "s1"
+        - paragraph
+          - StaticText "在这里设置口播、绑定原片并保存片段标记；第三工作区会用同一份冻结输入生成真实代理视频与可编辑工程。"
+        - status
+          - StaticText "正在后台应用“删除镜头”；完成后会在此处切换到新版分镜。"
+      - navigation "镜头确认概览" [ref=e22]
+        - sectionheader
+          - strong
+            - StaticText "已确认 0 / 2 个镜头"
+          - StaticText "0"
+          - StaticText "/"
+          - StaticText "2"
+          - StaticText " 配置已保存（不代表完成）"
+        - progressbar "已确认 0 / 2 个镜头": 0
+        - generic
+          - button "! 2 个待补素材" [ref=e60]
+            - StaticText "! 2 个待补素材"
+          - StaticText "! "
+          - StaticText "2"
+          - StaticText " 个待对齐"
+          - StaticText "! "
+          - StaticText "2"
+          - StaticText " 个预览过期"
+      - region "整期 BGM" [ref=e23]
+        - sectionheader
+          - heading "整期 BGM" [level=4, ref=e61]
+          - paragraph
+            - StaticText "为整期审核视频配置背景音乐。"
+          - LabelText
+            - StaticText "使用 BGM"
+            - switch "使用 BGM" [checked=false, ref=e78]
+        - paragraph
+          - StaticText "本期不配置 BGM。"
+      - region "本期 TTS 设置" [ref=e24]
+        - sectionheader
+          - heading "本期 TTS 设置" [level=4, ref=e62]
+          - paragraph
+            - StaticText "逐镜头口播共用这套语言、声音和语速。"
+          - StaticText "尚未配置"
+        - status
+          - StaticText "请先保存本期 TTS 设置，再生成任一镜头的口播。"
+        - LabelText
+          - StaticText "语言"
+          - combobox "本期 TTS 语言" [expanded=false, ref=e63]: zh-CN
+            - MenuListPopup
+              - option "zh-CN" [selected, ref=e90]
+        - LabelText
+          - StaticText "声音"
+          - textbox "本期 TTS 声音" [ref=e64]
+        - LabelText
+          - StaticText "语速"
+          - spinbutton "本期 TTS 语速" [ref=e65]
+        - button "试听本期 TTS" [ref=e46]
+        - button "保存本期设置" [disabled, ref=e47]
+      - article
+        - button "s1 A-roll · 当前画面 1.000s s1 准备状态：画面 待补素材；音频 待生成；字幕 待对齐；同步预览 待生成；确认 待确认" [expanded=true, ref=e48]
+          - strong
+            - StaticText "s1"
+          - generic
+            - StaticText "A-roll · 当前画面 1.000s"
+          - generic "s1 准备状态：画面 待补素材；音频 待生成；字幕 待对齐；同步预览 待生成；确认 待确认"
+            - StaticText "画面待处理"
+            - StaticText "另 "
+            - StaticText "4"
+            - StaticText " 项"
+        - tablist "s1 镜头工作区"
+          - tab "1 文本与声音" [selected, ref=e66]
+            - StaticText "1"
+            - StaticText "文本与声音"
+          - tab "2 画面与构图" [ref=e67]
+            - StaticText "2"
+            - StaticText "画面与构图"
+          - tab "3 同步预览与确认" [ref=e68]
+            - StaticText "3"
+            - StaticText "同步预览与确认"
+        - tabpanel "1 文本与声音"
+          - region "s1 声音" [ref=e69]
+            - sectionheader
+              - heading "主声音" [level=4, ref=e91]
+              - paragraph
+                - StaticText "TTS 成为唯一主声音；素材原声静音，字幕可跟随口播。"
+              - LabelText
+                - strong
+                  - StaticText "静音"
+                - switch "s1 静音" [checked=false, ref=e105]
+            - LabelText
+              - StaticText "声音模式"
+              - combobox "s1 主声音" [expanded=false, ref=e92]: TTS 口播
+                - MenuListPopup
+                  - option "TTS 口播" [selected, ref=e113]
+                  - option "保留原声" [ref=e114]
+            - LabelText
+              - StaticText "镜头音效"
+              - combobox "s1 镜头音效" [expanded=false, disabled, ref=e93]: 不配置
+                - MenuListPopup
+                  - option "不配置" [disabled, ref=e115]
+            - button "s1 试听镜头音效" [disabled, ref=e79]
+            - StaticText "口播内容"
+            - textbox "s1 口播内容" [ref=e94]: 保留镜头
+              - StaticText "保留镜头"
+            - status
+              - StaticText "请先保存上方“本期 TTS 设置”，再生成口播。"
+            - sectionfooter
+              - button "s1 恢复分镜文案" [disabled, ref=e95]
+                - StaticText "恢复分镜文案"
+              - button "生成口播" [disabled, ref=e96]
+          - region "s1 字幕" [ref=e70]
+            - sectionheader
+              - heading "字幕" [level=4, ref=e97]
+              - LabelText
+                - strong
+                  - StaticText "显示字幕"
+                - switch "显示字幕" [checked=true, ref=e106]
+            - LabelText
+              - StaticText "字幕正文模式"
+              - combobox "s1 字幕正文模式" [expanded=false, ref=e98]: 跟随最终 TTS 正文
+                - MenuListPopup
+                  - option "跟随最终 TTS 正文" [selected, ref=e116]
+                  - option "独立字幕" [ref=e117]
+            - LabelText
+              - StaticText "字幕正文"
+              - textbox "s1 字幕正文" [disabled, ref=e99]: 保留镜头
+                - StaticText "保留镜头"
+            - paragraph
+              - StaticText "正文直接引用当前最终口播；请在上方编辑口播内容。"
+          - region "s1 声学对齐" [ref=e71]
+            - sectionheader
+              - heading "声学对齐" [level=4, ref=e100]
+              - paragraph
+                - StaticText "等待当前音频后按原生时间戳、外部打轴、本地 WhisperX 的顺序对齐。"
+              - status "等待音频后开始声学对齐"
+            - DescriptionList
+              - term "方法"
+              - definition
+                - StaticText "未采用"
+              - term "粒度"
+              - definition
+                - StaticText "无"
+              - term "输入版本"
+              - definition
+                - StaticText "待生成"
+              - term "短语数量"
+              - definition
+                - StaticText "0"
+            - button "安全重试对齐" [disabled, ref=e80]
+            - button "使用本地 WhisperX" [disabled, ref=e81]
+            - button "手动设置时序" [expanded=false, disabled, ref=e82]
+        - button "保存草稿" [ref=e49]
+        - group
+          - DisclosureTriangle "s1 更多操作" [expanded=false]
+      - article
+        - button "s2 B-roll · 当前画面 1.000s s2 准备状态：画面 待补素材；音频 待生成；字幕 待对齐；同步预览 待生成；确认 待确认" [expanded=true, ref=e50]
+          - strong
+            - StaticText "s2"
+          - generic
+            - StaticText "B-roll · 当前画面 1.000s"
+          - generic "s2 准备状态：画面 待补素材；音频 待生成；字幕 待对齐；同步预览 待生成；确认 待确认"
+            - StaticText "画面待处理"
+            - StaticText "另 "
+            - StaticText "4"
+            - StaticText " 项"
+        - tablist "s2 镜头工作区"
+          - tab "1 文本与声音" [ref=e72]
+            - StaticText "1"
+            - StaticText "文本与声音"
+          - tab "2 画面与构图" [selected, ref=e73]
+            - StaticText "2"
+            - StaticText "画面与构图"
+          - tab "3 同步预览与确认" [ref=e74]
+            - StaticText "3"
+            - StaticText "同步预览与确认"
+        - tabpanel "2 画面与构图"
+          - region "s2 画面准备" [ref=e75]
+            - heading "原片与片段标记" [level=4, ref=e83]
+            - LabelText
+              - StaticText "当前原片"
+              - combobox "s2 当前原片" [expanded=false, ref=e101]: 请选择原片
+                - MenuListPopup
+                  - option "请选择原片" [selected, ref=e118]
+            - LabelText [ref=e84] clickable [cursor:pointer]
+              - strong
+                - StaticText "B-roll 原片"
+              - StaticText "点击选择视频文件"
+              - button "s2 补充原片" [ref=e102]: 未选择任何文件
+            - region "s2 片段标记" [ref=e85]
+              - sectionheader
+                - strong
+                  - StaticText "片段标记"
+              - generic "s2 片段列表"
+                - button "片段 1，1.000s，无独立目标时长" [ref=e107]
+                  - strong
+                    - StaticText "片段 1"
+                  - StaticText "1.000"
+                  - StaticText "s"
+                - button "删除片段 1" [disabled, ref=e108]
+                  - StaticText "×"
+                - button "添加片段" [disabled, ref=e109]
+                  - StaticText "＋ 添加片段"
+              - paragraph
+                - StaticText "请先选择原片并填写有效的入点和出点。"
+          - region "s2 结构化构图" [ref=e76]
+            - sectionheader
+              - heading "结构化构图" [level=4, ref=e103]
+              - paragraph
+                - StaticText "槽位只引用上方已准备片段；同一片段可重复使用，不会复制素材资产。"
+              - LabelText
+                - StaticText "布局"
+                - combobox "s2 构图布局" [expanded=false, ref=e110]: 全屏
+                  - MenuListPopup
+                    - option "全屏" [selected, ref=e119]
+                    - option "左右双屏" [ref=e120]
+                    - option "上下双屏" [ref=e121]
+                    - option "画中画" [ref=e122]
+                    - option "四宫格" [ref=e123]
+            - figure "s2 构图示意"
+              - Figcaption
+                - strong
+                  - StaticText "构图示意"
+                - StaticText "非最终同步预览"
+              - generic
+                - strong
+                  - StaticText "主画面"
+                - StaticText "片段 "
+                - StaticText "1"
+                - generic
+                  - StaticText "覆盖 · 焦点 50% / 50%"
+            - region "s2 槽位与裁切" [ref=e86]
+              - sectionheader
+                - heading "槽位与裁切" [level=4, ref=e111]
+                - paragraph
+                  - StaticText "需要指定片段、保留完整画面或避免主体被裁掉时再调整。"
+              - group "主画面"
+                - Legend
+                  - StaticText "主画面"
+                - LabelText
+                  - StaticText "已准备片段"
+                  - combobox "s2 主画面片段" [expanded=false, ref=e124]: 片段 1 · 1.000s
+                    - MenuListPopup
+                      - option "片段 1 · 1.000s" [selected, ref=e130]
+                - LabelText
+                  - StaticText "填充方式"
+                  - combobox "s2 主画面填充方式" [expanded=false, ref=e125]: 覆盖槽位
+                    - MenuListPopup
+                      - option "覆盖槽位" [selected, ref=e131]
+                      - option "完整显示" [ref=e132]
+                - LabelText
+                  - StaticText "主体焦点"
+                  - combobox "s2 主画面主体焦点" [expanded=false, ref=e126]: 中央
+                    - MenuListPopup
+                      - option "左上" [ref=e133]
+                      - option "上方" [ref=e134]
+                      - option "右上" [ref=e135]
+                      - option "左侧" [ref=e136]
+                      - option "中央" [selected, ref=e137]
+                      - option "右侧" [ref=e138]
+                      - option "左下" [ref=e139]
+                      - option "下方" [ref=e140]
+                      - option "右下" [ref=e141]
+            - region "s2 基础衔接" [ref=e87]
+              - heading "基础衔接" [level=4, ref=e104]
+              - LabelText
+                - StaticText "衔接方式"
+                - combobox "s2 衔接方式" [expanded=false, ref=e112]: 硬切
+                  - MenuListPopup
+                    - option "硬切" [selected, ref=e127]
+                    - option "基础淡化" [ref=e128]
+                    - option "交给 Studio" [ref=e129]
+          - group
+            - DisclosureTriangle "字幕空间约束 标题安全区 · 9:16 · 字幕下方 展开" [expanded=false]
+              - strong
+                - StaticText "字幕空间约束"
+              - generic
+                - StaticText "标题安全区 · 9:16 · 字幕下方"
+              - StaticText "展开"
+        - button "返回文本与声音" [ref=e51]
+        - button "保存草稿" [ref=e52]
+        - group
+          - DisclosureTriangle "s2 更多操作" [expanded=false]
+      - region "OpenChatCut 审核视频" [ref=e25]
+        - heading "在 OpenChatCut 编辑并生成审核视频" [level=4, ref=e53]
+        - StaticText "镜头已保存 "
+        - StaticText "0"
+        - StaticText "/"
+        - StaticText "2"
+        - StaticText " · 口播已就绪 "
+        - StaticText "0"
+        - StaticText "/"
+        - StaticText "2"
+        - button "在 OpenChatCut 中编辑" [disabled, ref=e54]
+    - group
+      - DisclosureTriangle "准备生产材料 ＋" [expanded=false]
+        - heading "准备生产材料" [level=3, ref=e55]
+        - StaticText "＋"

@@ -1,0 +1,180 @@
+{
+  "startedAt": "2026-10-23T12:39:12.633Z",
+  "versions": {
+    "B": "474b0d3aa20d6bacf1f34cd16661da56552a1957",
+    "T06": "8da46edf31236a6e4dd7a06d2a6220bb64c3e405"
+  },
+  "snapshotPurpose": "read-only source archive fixture, not a Git worktree or branch; current checkout unchanged",
+  "cwd": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t06-followup/comparison-snapshot",
+  "command": [
+    "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+    "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t06-followup/comparison-snapshot/node_modules/vitest/vitest.mjs",
+    "run",
+    "--maxWorkers=1",
+    "--exclude",
+    "n8n/import-workflows.test.mjs",
+    "--exclude",
+    "**/*.integration.test.ts"
+  ],
+  "maxWorkers": 1,
+  "testTimeoutOverride": null,
+  "defaultTestTimeoutMs": 5000,
+  "node": "v24.20.0",
+  "vitest": "3.2.7",
+  "host": {
+    "platform": "darwin",
+    "release": "27.0.0",
+    "cpuModel": "Apple M4",
+    "logicalCpus": 10,
+    "totalMemoryBytes": 17179869184
+  },
+  "environmentSha256": "c22d855bb6ab638440c12433f88114dd6fe03ceb54355fea67167d1735cf7bb1",
+  "dependencyLockSha256": "2ba0916dd3642c9d9269bff7bfe5f3e6a0c4abf45e0edabe6e8701edf6ef540f",
+  "runs": [
+    {
+      "index": 1,
+      "name": "B",
+      "revision": "474b0d3aa20d6bacf1f34cd16661da56552a1957",
+      "startedAt": "2026-10-23T12:39:13.227Z",
+      "loadBefore": [
+        10.04248046875,
+        9.033203125,
+        9.091796875
+      ],
+      "configSha256": "e29eab42f9796699c8dadd9b6c1a3e89c40476c7992426b86b9651df40973c38",
+      "packageSha256": "c3f0c62a34a1888de4cfcdc9437986b761b386b344eae33cf2c9f879d17216ca",
+      "lockSha256": "2ba0916dd3642c9d9269bff7bfe5f3e6a0c4abf45e0edabe6e8701edf6ef540f",
+      "sourceArchiveSha256": "49320b3b44325ab21d12ad747facbe564e0a7ccc38f5d62f583e7de40928eea8",
+      "rawLog": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t06-followup/comparison/1-B.txt",
+      "exitCode": 1,
+      "signal": null,
+      "elapsedMs": 173958.380917,
+      "loadAfter": [
+        10.1279296875,
+        9.4921875,
+        9.27490234375
+      ],
+      "summaries": [
+        "Test Files  1 failed | 69 passed (70)",
+        "Tests  1 failed | 674 passed (675)",
+        "Duration  172.17s (transform 7.66s, setup 0ms, collect 18.37s, tests 61.76s, environment 54.98s, prepare 9.90s)"
+      ],
+      "failedTests": [
+        "FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择"
+      ],
+      "targetTest": [
+        "× 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择 5232ms"
+      ],
+      "rawLogSha256": "e088ca3ceb97735d83872d74848c9acb7a183c5246dd59b794a0df1f70f296fc"
+    },
+    {
+      "index": 2,
+      "name": "T06",
+      "revision": "8da46edf31236a6e4dd7a06d2a6220bb64c3e405",
+      "startedAt": "2026-10-23T12:42:07.982Z",
+      "loadBefore": [
+        10.1279296875,
+        9.4921875,
+        9.27490234375
+      ],
+      "configSha256": "e29eab42f9796699c8dadd9b6c1a3e89c40476c7992426b86b9651df40973c38",
+      "packageSha256": "c3f0c62a34a1888de4cfcdc9437986b761b386b344eae33cf2c9f879d17216ca",
+      "lockSha256": "2ba0916dd3642c9d9269bff7bfe5f3e6a0c4abf45e0edabe6e8701edf6ef540f",
+      "sourceArchiveSha256": "70f487109ccb4fa58b6af5a5bc7b54ef7cc6a8760707f43d53da92ab99f15f52",
+      "rawLog": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t06-followup/comparison/2-T06.txt",
+      "exitCode": 1,
+      "signal": null,
+      "elapsedMs": 143159.79245900002,
+      "loadAfter": [
+        6.8759765625,
+        8.48779296875,
+        8.90283203125
+      ],
+      "summaries": [
+        "Test Files  1 failed | 69 passed (70)",
+        "Tests  1 failed | 673 passed (674)",
+        "Duration  141.98s (transform 5.68s, setup 0ms, collect 13.73s, tests 53.29s, environment 44.03s, prepare 8.28s)"
+      ],
+      "failedTests": [
+        "FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择"
+      ],
+      "targetTest": [
+        "× 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择 5065ms"
+      ],
+      "rawLogSha256": "3146f6005a01141f931455ee000461d10635475344028a363785a50021f75be6"
+    },
+    {
+      "index": 3,
+      "name": "T06",
+      "revision": "8da46edf31236a6e4dd7a06d2a6220bb64c3e405",
+      "startedAt": "2026-10-23T12:44:31.717Z",
+      "loadBefore": [
+        6.8759765625,
+        8.48779296875,
+        8.90283203125
+      ],
+      "configSha256": "e29eab42f9796699c8dadd9b6c1a3e89c40476c7992426b86b9651df40973c38",
+      "packageSha256": "c3f0c62a34a1888de4cfcdc9437986b761b386b344eae33cf2c9f879d17216ca",
+      "lockSha256": "2ba0916dd3642c9d9269bff7bfe5f3e6a0c4abf45e0edabe6e8701edf6ef540f",
+      "sourceArchiveSha256": "70f487109ccb4fa58b6af5a5bc7b54ef7cc6a8760707f43d53da92ab99f15f52",
+      "rawLog": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t06-followup/comparison/3-T06.txt",
+      "exitCode": 1,
+      "signal": null,
+      "elapsedMs": 121754.34141699999,
+      "loadAfter": [
+        7.48291015625,
+        8.29638671875,
+        8.775390625
+      ],
+      "summaries": [
+        "Test Files  1 failed | 69 passed (70)",
+        "Tests  1 failed | 673 passed (674)",
+        "Duration  120.69s (transform 3.89s, setup 0ms, collect 11.32s, tests 45.99s, environment 37.48s, prepare 7.45s)"
+      ],
+      "failedTests": [
+        "FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择"
+      ],
+      "targetTest": [
+        "× 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择 5088ms"
+      ],
+      "rawLogSha256": "bee1ea913be676bd7d4de7a9cd8b7ebad61574d92555b8e61a3f6ac43e8f9304"
+    },
+    {
+      "index": 4,
+      "name": "B",
+      "revision": "474b0d3aa20d6bacf1f34cd16661da56552a1957",
+      "startedAt": "2026-10-23T12:46:34.042Z",
+      "loadBefore": [
+        7.60400390625,
+        8.3076171875,
+        8.7763671875
+      ],
+      "configSha256": "e29eab42f9796699c8dadd9b6c1a3e89c40476c7992426b86b9651df40973c38",
+      "packageSha256": "c3f0c62a34a1888de4cfcdc9437986b761b386b344eae33cf2c9f879d17216ca",
+      "lockSha256": "2ba0916dd3642c9d9269bff7bfe5f3e6a0c4abf45e0edabe6e8701edf6ef540f",
+      "sourceArchiveSha256": "49320b3b44325ab21d12ad747facbe564e0a7ccc38f5d62f583e7de40928eea8",
+      "rawLog": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t06-followup/comparison/4-B.txt",
+      "exitCode": 1,
+      "signal": null,
+      "elapsedMs": 117999.90766600001,
+      "loadAfter": [
+        5.94482421875,
+        7.5419921875,
+        8.41650390625
+      ],
+      "summaries": [
+        "Test Files  1 failed | 69 passed (70)",
+        "Tests  1 failed | 674 passed (675)",
+        "Duration  116.96s (transform 4.33s, setup 0ms, collect 11.20s, tests 43.98s, environment 36.38s, prepare 6.90s)"
+      ],
+      "failedTests": [
+        "FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择"
+      ],
+      "targetTest": [
+        "× 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择 5045ms"
+      ],
+      "rawLogSha256": "e3c484ae8b01b7697f873aed511ba91a66e6af8cf024ccc295cd44e72cc2ece4"
+    }
+  ],
+  "completedAt": "2026-10-23T12:48:32.054Z"
+}

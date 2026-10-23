@@ -1,0 +1,233 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "console": "http://127.0.0.1:55176",
+  "browser": "Real headed Google Chrome via isolated agent-browser session t06-verified-followup",
+  "fixture": {
+    "createdAt": "2026-10-23T12:48:48.402Z",
+    "target": "loop-control-stage-b-verified",
+    "episodeId": "6dd2ba66-a0a5-47b9-9d8b-1017cd707f81",
+    "baseTaskId": "5a7e04e8-667c-48cc-aeca-4988550ff6df",
+    "reviewPackageId": "12122b36-f189-4d5d-87cd-9d4c71e1aa0d",
+    "storyboardPath": "episodes/6dd2ba66-a0a5-47b9-9d8b-1017cd707f81/storyboard.json",
+    "initialShotIds": [
+      "s1",
+      "s2"
+    ],
+    "fixtureBoundary": "synthetic approved fixture; actual UI submission and subsequent Worker execution are real; no online Provider"
+  },
+  "queued": [
+    {
+      "id": "76f57578-c0e0-44b4-a66c-0c5c39ba57b4",
+      "type": "draft_storyboard_revision",
+      "status": "ready",
+      "attempt": 0
+    },
+    {
+      "id": "5a7e04e8-667c-48cc-aeca-4988550ff6df",
+      "type": "draft_storyboard",
+      "status": "completed",
+      "attempt": 1
+    }
+  ],
+  "tasks": [
+    {
+      "id": "76f57578-c0e0-44b4-a66c-0c5c39ba57b4",
+      "status": "completed",
+      "attempt": 1,
+      "createdAt": "2026-10-23T12:54:49.197506+00:00",
+      "completedAt": "2026-10-23T12:56:31.60857+00:00",
+      "runs": [
+        {
+          "id": "02dd79af-51a0-44ca-8b51-8b8f7b7973a1",
+          "attempt": 0,
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "id": "adc0bba0-0add-4619-a84a-a34a8c9dccfe",
+      "status": "completed",
+      "attempt": 1,
+      "createdAt": "2026-10-23T12:57:05.414462+00:00",
+      "completedAt": "2026-10-23T12:57:10.387566+00:00",
+      "runs": [
+        {
+          "id": "cc96f591-2d24-4ef0-8196-f8b78cedb939",
+          "attempt": 0,
+          "status": "completed"
+        }
+      ]
+    }
+  ],
+  "versions": [
+    {
+      "id": "12122b36-f189-4d5d-87cd-9d4c71e1aa0d",
+      "revision": 1,
+      "shots": [
+        {
+          "id": "s1",
+          "shotType": "a_roll"
+        },
+        {
+          "id": "s2",
+          "shotType": "b_roll"
+        }
+      ]
+    },
+    {
+      "id": "6d3281d7-4493-461b-8d0e-8e35f138347f",
+      "revision": 2,
+      "shots": [
+        {
+          "id": "s1",
+          "shotType": "a_roll"
+        }
+      ]
+    },
+    {
+      "id": "c1abd249-e6b4-4094-b1cb-c37e53b41d00",
+      "revision": 3,
+      "shots": [
+        {
+          "id": "s1",
+          "shotType": "b_roll"
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "taskId": "5a7e04e8-667c-48cc-aeca-4988550ff6df",
+      "relativePath": "episodes/6dd2ba66-a0a5-47b9-9d8b-1017cd707f81/storyboard.json",
+      "bytes": 1326,
+      "sha256": "2d63ad6072666b12ad71f3bf351154a6cf40c043a10e1189d665c604740623cb",
+      "diskHashMatches": true
+    },
+    {
+      "taskId": "76f57578-c0e0-44b4-a66c-0c5c39ba57b4",
+      "relativePath": "episodes/6dd2ba66-a0a5-47b9-9d8b-1017cd707f81/storyboard-revision-2.json",
+      "bytes": 687,
+      "sha256": "22f1d4c35c65ee8393e8ebac28c1ec2d825946ff68c76bf66a6d2ecb7558067d",
+      "diskHashMatches": true
+    },
+    {
+      "taskId": "adc0bba0-0add-4619-a84a-a34a8c9dccfe",
+      "relativePath": "episodes/6dd2ba66-a0a5-47b9-9d8b-1017cd707f81/storyboard-revision-3.json",
+      "bytes": 687,
+      "sha256": "2a3547793238ea79d73b8ad6f71c5c1d357f7052e0a438d4de130f55725c1119",
+      "diskHashMatches": true
+    }
+  ],
+  "oldTasks": {
+    "at": "2026-10-23T12:58:17.870Z",
+    "target": "loop-control-stage-b-verified",
+    "episodeId": "6dd2ba66-a0a5-47b9-9d8b-1017cd707f81",
+    "oldTasksUnchanged": true,
+    "beforeSha256": "8fb1c7b0dc41e09b1bb1d3dae0e3af3a638eb7c8d0dbbdad3f980c1e57ba8faa",
+    "afterSha256": "8fb1c7b0dc41e09b1bb1d3dae0e3af3a638eb7c8d0dbbdad3f980c1e57ba8faa"
+  },
+  "network": [
+    {
+      "at": "2026-10-23T12:54:48.363853824Z",
+      "method": "OPTIONS",
+      "url": "http://127.0.0.1:55461/rest/v1/rpc/request_shot_structure_revision",
+      "status": 200,
+      "recordedOrigin": "http://127.0.0.1:55176",
+      "referer": null,
+      "operation": null,
+      "taskId": null,
+      "taskStatus": null
+    },
+    {
+      "at": "2026-10-23T12:54:48.359150848Z",
+      "method": "POST",
+      "url": "http://127.0.0.1:55461/rest/v1/rpc/request_shot_structure_revision",
+      "status": 200,
+      "recordedOrigin": null,
+      "referer": "http://127.0.0.1:55176/",
+      "operation": {
+        "kind": "delete",
+        "shotId": "s2"
+      },
+      "taskId": "76f57578-c0e0-44b4-a66c-0c5c39ba57b4",
+      "taskStatus": "ready"
+    },
+    {
+      "at": "2026-10-23T12:54:48.78330496Z",
+      "method": "POST",
+      "url": "http://127.0.0.1:55176/_episode-dispatch?episode=6dd2ba66-a0a5-47b9-9d8b-1017cd707f81&task=76f57578-c0e0-44b4-a66c-0c5c39ba57b4",
+      "status": 202,
+      "recordedOrigin": null,
+      "referer": "http://127.0.0.1:55176/",
+      "operation": null,
+      "taskId": "76f57578-c0e0-44b4-a66c-0c5c39ba57b4",
+      "taskStatus": "ready",
+      "response": {
+        "taskId": "76f57578-c0e0-44b4-a66c-0c5c39ba57b4",
+        "taskStatus": "ready",
+        "status": "queued",
+        "detail": "任务已排队，等待可用执行容量。",
+        "updatedAt": "2026-10-23T12:54:49.197506+00:00",
+        "statusUrl": "/_episode-dispatch?episode=6dd2ba66-a0a5-47b9-9d8b-1017cd707f81&task=76f57578-c0e0-44b4-a66c-0c5c39ba57b4"
+      }
+    },
+    {
+      "at": "2026-10-23T12:57:05.378237952Z",
+      "method": "OPTIONS",
+      "url": "http://127.0.0.1:55461/rest/v1/rpc/request_shot_structure_revision",
+      "status": 200,
+      "recordedOrigin": "http://127.0.0.1:55176",
+      "referer": null,
+      "operation": null,
+      "taskId": null,
+      "taskStatus": null
+    },
+    {
+      "at": "2026-10-23T12:57:05.374579968Z",
+      "method": "POST",
+      "url": "http://127.0.0.1:55461/rest/v1/rpc/request_shot_structure_revision",
+      "status": 200,
+      "recordedOrigin": null,
+      "referer": "http://127.0.0.1:55176/",
+      "operation": {
+        "kind": "change_type",
+        "shotId": "s1",
+        "shotType": "b_roll"
+      },
+      "taskId": "adc0bba0-0add-4619-a84a-a34a8c9dccfe",
+      "taskStatus": "ready"
+    },
+    {
+      "at": "2026-10-23T12:57:05.530540032Z",
+      "method": "POST",
+      "url": "http://127.0.0.1:55176/_episode-dispatch?episode=6dd2ba66-a0a5-47b9-9d8b-1017cd707f81&task=adc0bba0-0add-4619-a84a-a34a8c9dccfe",
+      "status": 202,
+      "recordedOrigin": null,
+      "referer": "http://127.0.0.1:55176/",
+      "operation": null,
+      "taskId": "adc0bba0-0add-4619-a84a-a34a8c9dccfe",
+      "taskStatus": "ready",
+      "response": {
+        "taskId": "adc0bba0-0add-4619-a84a-a34a8c9dccfe",
+        "taskStatus": "ready",
+        "status": "queued",
+        "detail": "任务已排队，等待可用执行容量。",
+        "updatedAt": "2026-10-23T12:57:05.414462+00:00",
+        "statusUrl": "/_episode-dispatch?episode=6dd2ba66-a0a5-47b9-9d8b-1017cd707f81&task=adc0bba0-0add-4619-a84a-a34a8c9dccfe"
+      }
+    }
+  ],
+  "originEvidenceLimitation": "HAR captures same-origin Referer but omits Origin on POST; both real POST202 passed final unchanged server strict Origin check. Do not present inferred Origin as recorded header.",
+  "originalConsoleRestored": {
+    "phase": "original-console-restored",
+    "record": {
+      "pid": 32431,
+      "port": 55176,
+      "projectRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control",
+      "workerEnabled": true
+    }
+  },
+  "browserGapClosed": true,
+  "default5SecondGreenGateClosed": false,
+  "newT06FailureAttributionGapClosed": true
+}
