@@ -5,5 +5,9 @@
   "realDatabase": true,
   "populatedSeries": true,
   "seriesVersionPreserved": true,
-  "otherOwnerSeesNoAccounts": true
+  "otherOwnerSeesNoAccounts": true,
+  "concurrentHttpRequests": 12,
+  "independentTransactionOwners": true,
+  "repeatableReadSnapshot": true,
+  "rowLockCompetitorTimedOut": true
 }
