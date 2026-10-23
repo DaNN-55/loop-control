@@ -1,0 +1,27 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":0,"workers":[],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":0,"workers":[],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"notify","notifications":0,"skipped":0}
+ ✓ src/orchestration/loopOrchestratorCli.test.ts (11 tests) 228ms
+ ✓ src/observability/SystemStatusPanel.test.tsx (18 tests) 466ms
+ ✓ src/orchestration/providedScriptDispatch.test.ts (6 tests) 104ms
+ ✓ scripts/isolation/environment.test.mjs (14 tests) 28ms
+ ✓ src/orchestration/notificationConsumer.test.ts (3 tests) 8ms
+ ✓ src/orchestration/notificationPolicy.test.ts (5 tests) 7ms
+ ✓ src/orchestration/operationsEvidence.test.ts (1 test) 14ms
+ ✓ src/orchestration/backupPolicy.test.ts (2 tests) 1ms
+ ✓ src/orchestration/workerScheduler.test.ts (2 tests) 228ms
+ ✓ src/orchestration/runtimeBuild.test.ts (1 test) 50ms
+
+ Test Files  10 passed (10)
+      Tests  63 passed (63)
+   Start at  23:28:57
+   Duration  8.68s (transform 240ms, setup 0ms, collect 2.12s, tests 1.13s, environment 2.52s, prepare 1.71s)
+

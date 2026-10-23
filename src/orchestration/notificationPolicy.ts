@@ -56,7 +56,13 @@ function isAfterCursor(event: AuditEvent, cursor: NotificationCursor): boolean {
 }
 
 function comparePositions(left: NotificationCursor, right: NotificationCursor): number {
-  return left.createdAt.localeCompare(right.createdAt) || left.id.localeCompare(right.id);
+  const instant = (source: string) => {
+    const parsed = Date.parse(source);
+    if (!Number.isFinite(parsed)) throw Error("提醒事件时间无效。");
+    const fraction = source.match(/\.(\d+)/)?.[1] ?? "";
+    return `${new Date(parsed).toISOString().slice(0,-1)}${(fraction.slice(3) + "000").slice(0,3)}Z`;
+  };
+  return instant(left.createdAt).localeCompare(instant(right.createdAt)) || left.id.localeCompare(right.id);
 }
 
 function toCursor(event: AuditEvent | undefined): NotificationCursor | null {

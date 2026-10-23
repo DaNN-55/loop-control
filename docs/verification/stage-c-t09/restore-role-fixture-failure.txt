@@ -1,0 +1,23 @@
+node:internal/errors:986
+  const err = new Error(message);
+              ^
+
+Error: Command failed: docker exec -i supabase_db_loop-control-stage-b-verified psql -XqAt -U postgres -d loop_t09_restore_1792769837913 -v ON_ERROR_STOP=1
+ERROR:  must be able to SET ROLE "supabase_admin"
+
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:942:11)
+    at execFileSync (node:child_process:978:15)
+    at exec (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/isolation/notification-restore.mjs:16:26)
+    at query (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/isolation/notification-restore.mjs:17:26)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/isolation/notification-restore.mjs:21:1 {
+  status: 3,
+  signal: null,
+  output: [ null, '\n', 'ERROR:  must be able to SET ROLE "supabase_admin"\n' ],
+  pid: 66087,
+  stdout: '\n',
+  stderr: 'ERROR:  must be able to SET ROLE "supabase_admin"\n'
+}
+
+Node.js v24.20.0

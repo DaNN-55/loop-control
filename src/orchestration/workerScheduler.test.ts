@@ -1,8 +1,13 @@
 // @vitest-environment node
+import {mkdtemp,rm} from "node:fs/promises";
+import {join} from "node:path";
+import {tmpdir} from "node:os";
 import { afterEach, expect, it, vi } from "vitest";
 import { startWorkerScheduler } from "./workerScheduler";
 
-afterEach(() => vi.unstubAllGlobals());
+const roots:string[]=[];
+afterEach(async() => {vi.unstubAllGlobals();await Promise.all(roots.splice(0).map(path=>rm(path,{recursive:true,force:true})));});
+async function isolatedEvidence(){const directory=await mkdtemp(join(tmpdir(),"loop-scheduler-evidence-"));roots.push(directory);return{LOOP_N8N_STATE_DIR:directory};}
 
 it("规划RPC尚未返回时，即时唤醒仍可领取空槽", async () => {
   let releasePlan!: () => void, planStarted=false;
@@ -14,7 +19,7 @@ it("规划RPC尚未返回时，即时唤醒仍可领取空槽", async () => {
     const result=name.includes("/episodes?")?[{id:"episode"}]:name.includes("claim_next_worker_task")&&queue.length?[{task_id:queue.shift(),attempt:0,lease_token:"token"}]:[];
     return{ok:true,json:async()=>result};
   });
-  const scheduler=await startWorkerScheduler({projectRoot:"/controlled",supabaseUrl:"http://127.0.0.1:1",serviceRoleKey:"test",concurrency:1},{prepare:async()=>undefined,execute:async task=>{started.push(task.task_id);return{status:"completed"};}});
+  const scheduler=await startWorkerScheduler({projectRoot:"/controlled",environment:await isolatedEvidence(),supabaseUrl:"http://127.0.0.1:1",serviceRoleKey:"test",concurrency:1},{prepare:async()=>undefined,execute:async task=>{started.push(task.task_id);return{status:"completed"};}});
   try{
     await vi.waitFor(()=>expect(planStarted).toBe(true));
     queue.push("new");scheduler.wake({taskId:"new"});
@@ -36,7 +41,7 @@ it("长任务执行时继续短扫描，重复唤醒合并且关闭后不再扫�
     else if(String(url).includes("/tasks?") && queue.length)result=[{id:queue[0]}];
     if(claim)claimsInFlight--;return {ok:true,json:async()=>result};
   });
-  const scheduler=await startWorkerScheduler({projectRoot:"/controlled",supabaseUrl:"http://127.0.0.1:1",serviceRoleKey:"test",concurrency:2}, {
+  const scheduler=await startWorkerScheduler({projectRoot:"/controlled",environment:await isolatedEvidence(),supabaseUrl:"http://127.0.0.1:1",serviceRoleKey:"test",concurrency:2}, {
     prepare:async()=>undefined,
     execute:async task=>{started.push(task.task_id);await new Promise<void>(resolve=>releases.push(resolve));return {status:"completed"};},
   });

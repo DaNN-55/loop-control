@@ -1,0 +1,22 @@
+[
+  {
+    "name": "full-default-5000",
+    "exit": 0,
+    "signal": null
+  },
+  {
+    "name": "types-final",
+    "exit": 0,
+    "signal": null
+  },
+  {
+    "name": "runtime-final",
+    "exit": 0,
+    "signal": null
+  },
+  {
+    "name": "advisors",
+    "exit": 0,
+    "signal": null
+  }
+]

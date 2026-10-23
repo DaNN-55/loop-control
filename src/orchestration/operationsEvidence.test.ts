@@ -1,0 +1,22 @@
+import { mkdtemp, rm, stat } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { afterEach, expect, it } from "vitest";
+import { readOperationsEvidence, recordOperation } from "./operationsEvidence";
+const roots:string[]=[];
+afterEach(async()=>{await Promise.all(roots.splice(0).map(root=>rm(root,{recursive:true,force:true})));});
+it("通知失败不覆盖健康和备份，成功后仍可查看最近失败，空闲成功不反复写入",async()=>{
+ const directory=await mkdtemp(join(tmpdir(),"loop-operations-"));roots.push(directory);
+ await recordOperation(directory,"health",{passed:true,detail:"健康检查通过"});
+ await recordOperation(directory,"backup",{passed:false,detail:"备份失败"});
+ await recordOperation(directory,"notification",{passed:false,detail:"投递失败"});
+ await recordOperation(directory,"notification",{passed:true,detail:"无新事件",idle:true});
+ const before=await stat(join(directory,"notification-result.json"));
+ await recordOperation(directory,"notification",{passed:true,detail:"无新事件",idle:true});
+ const report=await readOperationsEvidence(directory);
+ expect(report.health?.latest.passed).toBe(true);
+ expect(report.backup?.latest.passed).toBe(false);
+ expect(report.notification?.lastFailure?.detail).toBe("投递失败");
+ expect(report.notification?.latest.passed).toBe(true);
+ expect((await stat(join(directory,"notification-result.json"))).mtimeMs).toBe(before.mtimeMs);
+});

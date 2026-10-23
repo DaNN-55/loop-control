@@ -1,3 +1,4 @@
+import type { OperationsEvidence } from "../orchestration/operationsEvidence";
 import { useMemo, useState } from "react";
 import type { Database, Json } from "../lib/database.types";
 import { useDialogFocus } from "../ui/useDialogFocus";
@@ -7,6 +8,7 @@ type Episode = Database["public"]["Tables"]["episodes"]["Row"];
 export type SystemState = "healthy" | "attention" | "unknown" | "offline";
 
 export interface LocalSystemStatusReport {
+  operations?: OperationsEvidence;
   dependencies: Array<{ detail: string; name: string; state: SystemState }>;
   mediaLibrary: { detail: string; state: SystemState };
   n8n: {
@@ -190,6 +192,17 @@ export function SystemStatusPanel({ episodes, isRefreshing = false, onRefresh = 
     { id: "task-execution", label: "任务执行", state: taskExecution, detail: `${actionableTasks.filter((task) => task.status === "running").length} 执行中 · ${blockedCount} 阻塞 · ${failedCount} 失败${latest?.status === "completed" ? " · 最近任务已完成" : ""}。` },
     { id: "media", label: "媒体库", state: report?.mediaLibrary.state ?? "unknown", detail: report?.mediaLibrary.detail ?? "尚未读取媒体库挂载状态。" },
     { id: "codex-cli", label: `依赖 · Codex CLI${codexCliVersion ? ` · ${codexCliVersion}` : ""}`, state: codexState, detail: codexCliVersion ? "" : codexCli?.detail ?? "尚未读取 Codex CLI 状态。", detailRows: codexModelDependencies.map((dependency) => ({ label: "模型", state: dependency.state, value: dependency.name.replace(/^Codex 模型(?: · )?/, "") || "未配置" })) },
+    ...(report?.operations ? (["schedule","notification","health","backup","snapshot"] as const).map(operation => {
+      const evidence=report.operations?.[operation];
+      return ({
+      id: `operation-${operation}`, label: ({schedule:"调度检查",notification:"事件提醒",health:"每日健康检查",backup:"完整备份",snapshot:"部分快照"} as Record<string,string>)[operation],
+      state: !evidence ? "unknown" as const : evidence.latest.passed ? "healthy" as const : "attention" as const, detail: evidence?.latest.detail ?? "尚无独立执行记录。",
+      detailRows: evidence ? [
+        {label:"最近结果",value:formatDate(evidence.latest.at)},
+        ...(evidence.lastSuccess ? [{label:"最近成功",value:formatDate(evidence.lastSuccess.at)}] : []),
+        ...(evidence.lastFailure ? [{label:"最近失败",value:`${formatDate(evidence.lastFailure.at)} · ${evidence.lastFailure.detail}`,state:"attention" as const}] : []),
+      ] : [],
+    }); }) : []),
     ...otherDependencies.map((dependency, index) => ({ id: `dependency-${index}`, label: `依赖 · ${dependency.name}`, state: dependency.state, detail: dependency.detail })),
     ];
   }, [actionableTasks, blockedCount, failedCount, n8n, report, taskExecution]);

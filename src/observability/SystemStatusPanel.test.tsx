@@ -228,3 +228,22 @@ describe("系统状态面板", () => {
     expect(screen.getByRole("button", { name: "系统状态：需处理" })).toBeTruthy();
   });
 });
+
+ it("分别展示健康、备份与通知结果，并保留最近失败", async () => {
+   const user=userEvent.setup();
+   render(<SystemStatusPanel episodes={[]} report={{...report, operations: {
+     health: { latest:{at:"2026-10-23T00:00:00Z",passed:true,detail:"独立日检通过"},lastSuccess:null,lastFailure:null },
+     backup: { latest:{at:"2026-10-23T00:00:00Z",passed:false,detail:"备份快照失败"},lastSuccess:null,lastFailure:null },
+     notification: { latest:{at:"2026-10-23T00:00:00Z",passed:true,detail:"无新事件"},lastSuccess:null,lastFailure:{at:"2026-10-22T00:00:00Z",passed:false,detail:"投递结果未知"} }
+   }}} tasks={[]} />);
+   await user.click(screen.getByRole("button",{name:/系统状态：/}));
+   expect(screen.getByText("独立日检通过")).toBeTruthy();
+   expect(screen.getByText("备份快照失败")).toBeTruthy();
+   expect(screen.getByText(/投递结果未知/)).toBeTruthy();
+ });
+
+it("未执行的独立健康与备份记录仍显示待确认", async()=>{
+ const user=userEvent.setup();render(<SystemStatusPanel episodes={[]} report={{...report,operations:{}}} tasks={[]}/>);
+ await user.click(screen.getByRole("button",{name:/系统状态：/}));
+ for(const name of ["每日健康检查","完整备份","部分快照","事件提醒","调度检查"])expect(screen.getByText(name).closest("article")?.textContent).toContain("待确认");
+});

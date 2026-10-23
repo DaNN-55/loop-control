@@ -1,3 +1,4 @@
+import { readOperationsEvidence } from "../../orchestration/operationsEvidence";
 import { createClient } from "@supabase/supabase-js";
 import { execFile, spawn } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
@@ -1386,7 +1387,10 @@ export function serveSystemStatus(supabaseUrl: string | undefined, supabasePubli
               }, () => probeCodexModel(model, (command, argumentsList, options) => runProbeCommand(command, argumentsList, options?.timeoutMs), tmpdir()));
               return { detail: probe.modelPermission.detail, name: `Codex 模型 · ${model}`, state: probe.modelPermission.available ? "healthy" as const : probe.modelPermission.status === "retryable" ? "unknown" as const : "attention" as const };
             });
-      const notificationFailed = n8nEvidence?.lastNotification?.state === "failure";
+      const operations = await readOperationsEvidence(localWorkerEnvironmentValue("LOOP_N8N_STATE_DIR") ?? resolve("n8n", "runtime", "orchestration"));
+      const currentNotification = operations.notification?.latest;
+      if (currentNotification && n8nEvidence) n8nEvidence.lastNotification = {at:currentNotification.at,state:currentNotification.passed ? "success" : "failure",workflowName:"统一事件提醒"};
+      const notificationFailed = currentNotification ? !currentNotification.passed : n8nEvidence?.lastNotification?.state === "failure";
       const n8nDetail = !runtimeExists
         ? "未发现本地 n8n 运行时目录。"
         : !n8nRunning
@@ -1400,13 +1404,14 @@ export function serveSystemStatus(supabaseUrl: string | undefined, supabasePubli
         ...codexModelDependencies,
       ];
       const report = {
+        operations,
         dependencies,
         mediaLibrary: { detail: mediaRoot ? (mediaExists ? `已挂载：${mediaRoot}` : `未找到挂载目录：${mediaRoot}`) : "未配置 MEDIA_LIBRARY_MOUNT_PATH。", state: mediaExists ? "healthy" : "offline" },
         n8n: {
           detail: n8nDetail,
           lastDispatchAt: n8nEvidence?.lastWorkerDispatchAt ?? null,
           lastEventAt: n8nEvidence?.lastScheduleCheckAt ?? null,
-          lastHealthCheckAt: n8nRunning ? new Date().toISOString() : null,
+          lastHealthCheckAt: operations.health?.latest.at ?? null,
           lastNotification: n8nEvidence?.lastNotification ?? null,
           lastRunAt: n8nEvidence?.lastWorkerDispatchAt ?? null,
           lastScheduleCheckAt: n8nEvidence?.lastScheduleCheckAt ?? null,

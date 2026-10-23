@@ -59,7 +59,9 @@
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "all"
   },
   "active": false,
   "versionId": "21a4d632-a2c2-42ce-af7d-3ee91b48d758",

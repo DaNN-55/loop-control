@@ -65,7 +65,7 @@ export function cleanEnvironment(config) {
     const renderer = join(config.runtimeRoot, 'OpenChatCut');
     if (existsSync(renderer) && (!inside(config.runtimeRoot, renderer) || realpathSync(renderer) !== renderer))
         throw new Error('渲染运行时必须是隔离副本。');
-    return { ...env, TMPDIR: tmp, ...(existsSync(renderer) ? { OPENCHATCUT_ROOT: renderer, OPENCHATCUT_NODE: process.execPath } : {}), DOCKER_HOST: config.dockerHost, VITE_SUPABASE_URL: config.apiUrl, VITE_SUPABASE_PUBLISHABLE_KEY: config.anonKey, SUPABASE_URL: config.apiUrl, SUPABASE_SERVICE_ROLE_KEY: config.serviceRoleKey, MEDIA_LIBRARY_MOUNT_PATH: config.mediaRoot, MEDIA_LIBRARY_MIN_FREE_BYTES: '0', CODEX_WORKER_ACTUAL_COST_CENTS: '0', LOOP_CONTROL_ISOLATED_MEDIA_ROOT: config.mediaRoot, LOOP_CONTROL_SERVICE_RECORD: join(config.stateRoot, 'services.json'), N8N_PORT: '55437', N8N_RUNNERS_BROKER_PORT: '55436' };
+    return { ...env, LOOP_N8N_STATE_DIR: join(config.stateRoot, 'orchestration'), LOOP_N8N_BACKUP_DIR: join(config.runtimeRoot, 'backups'), TMPDIR: tmp, ...(existsSync(renderer) ? { OPENCHATCUT_ROOT: renderer, OPENCHATCUT_NODE: process.execPath } : {}), DOCKER_HOST: config.dockerHost, VITE_SUPABASE_URL: config.apiUrl, VITE_SUPABASE_PUBLISHABLE_KEY: config.anonKey, SUPABASE_URL: config.apiUrl, SUPABASE_SERVICE_ROLE_KEY: config.serviceRoleKey, MEDIA_LIBRARY_MOUNT_PATH: config.mediaRoot, MEDIA_LIBRARY_MIN_FREE_BYTES: '0', CODEX_WORKER_ACTUAL_COST_CENTS: '0', LOOP_CONTROL_ISOLATED_MEDIA_ROOT: config.mediaRoot, LOOP_CONTROL_SERVICE_RECORD: join(config.stateRoot, 'services.json'), N8N_PORT: '55437', N8N_RUNNERS_BROKER_PORT: '55436' };
 }
 export function initializeConfiguration() {
     if (projectRoot === primaryRoot())

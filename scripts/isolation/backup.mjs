@@ -4,7 +4,7 @@ import { spawn, execFileSync } from 'node:child_process';
 import { once } from 'node:events';
 import { createInterface } from 'node:readline';
 import { createHash, randomUUID } from 'node:crypto';
-import { readFileSync, readdirSync, lstatSync, copyFileSync, existsSync, chmodSync } from 'node:fs';
+import { readFileSync, readdirSync, lstatSync, copyFileSync, existsSync, chmodSync, renameSync } from 'node:fs';
 import { join, relative, resolve } from 'node:path';
 import { securityInventorySql } from './security-inventory.mjs';
 import { readConfiguration, toolEnvironment, projectRoot, ensurePrivateDirectory, writePrivateFile, assertPrivatePath } from './environment.mjs';
@@ -39,7 +39,23 @@ function files(root, base = root) {
     return info.isDirectory() ? files(path, base) : [{ path: relative(base, path), size: info.size, sha256: digest(readFileSync(path)) }];
   });
 }
-export async function createBackup() {
+export async function createBackup(selectedConfig = config) {
+  const stateDirectory = join(selectedConfig.stateRoot,'orchestration');
+  ensurePrivateDirectory(stateDirectory);
+  function record(passed, detail) {
+    const outcome={at:new Date().toISOString(),passed,detail};
+    for(const name of ['backup-result.json',`backup-last-${passed?'success':'failure'}.json`]){
+      const path=join(stateDirectory,name),temporary=`${path}.${randomUUID()}.next`;
+      writePrivateFile(temporary,JSON.stringify(outcome)+'\n',{exclusive:true});renameSync(temporary,path);
+    }
+  }
+  try {const result=await performBackup(selectedConfig);record(true,`完整 v2 备份成功：${result.tables} 张表、${result.rows} 行、${result.mediaFiles} 个媒体文件。`);return result;}
+  catch(error){record(false,'完整备份失败，未生成可恢复成功结论；请检查本机日志。');throw error;}
+}
+async function performBackup(config) {
+  if(!['loop-control-stage-a','loop-control-stage-b-verified'].includes(config.projectId))throw Error('备份只接受已批准的隔离目标');
+  const sourceContainer=`supabase_db_${config.projectId}`;
+  const runSql=text=>sql(text,sourceContainer);
   assertContainer(sourceContainer, config.projectId);
   const root = join(config.runtimeRoot, 'backups', randomUUID());
   ensurePrivateDirectory(root);
@@ -51,13 +67,13 @@ export async function createBackup() {
     holder.stdin.write('begin isolation level repeatable read read only; select pg_export_snapshot();\n');
     [snapshot] = await Promise.race([ready, once(holder, 'exit').then(() => { throw new Error('数据库快照会话失败'); })]);
     if (!/^[0-9A-F]+-[0-9A-F]+-[0-9]+$/.test(snapshot)) throw new Error('快照标识无效');
-    const inventory = JSON.parse(sql(inventorySql(snapshot)));
-    const schemaSecurity = JSON.parse(sql(securityInventorySql(snapshot)));
+    const inventory = JSON.parse(runSql(inventorySql(snapshot)));
+    const schemaSecurity = JSON.parse(runSql(securityInventorySql(snapshot)));
     // Only ordinary business schemas: never dump Auth passwords/tokens or Vault secrets.
-    const archive = execFileSync('docker', ['exec',sourceContainer,'pg_dump','-U','postgres','-d','postgres','-Fc','--schema=public','--schema=supabase_migrations',`--snapshot=${snapshot}`], { env, maxBuffer: 128 * 1024 * 1024, stdio: ['ignore','pipe','pipe'] });
+    const archive = execFileSync('docker', ['exec',sourceContainer,'pg_dump','-U','postgres','-d','postgres','-Fc','--schema=public','--schema=loop_internal','--schema=supabase_migrations',`--snapshot=${snapshot}`], { env, maxBuffer: 128 * 1024 * 1024, stdio: ['ignore','pipe','pipe'] });
     writePrivateFile(join(root,'business.dump'),archive,{exclusive:true});
-    const users = JSON.parse(sql(`begin isolation level repeatable read read only; set transaction snapshot ${quote(snapshot)}; select coalesce(json_agg(json_build_object('id',id,'email',email)), '[]') from auth.users; commit;`));
-    const references = JSON.parse(sql(`begin isolation level repeatable read read only; set transaction snapshot ${quote(snapshot)};
+    const users = JSON.parse(runSql(`begin isolation level repeatable read read only; set transaction snapshot ${quote(snapshot)}; select coalesce(json_agg(json_build_object('id',id,'email',email)), '[]') from auth.users; commit;`));
+    const references = JSON.parse(runSql(`begin isolation level repeatable read read only; set transaction snapshot ${quote(snapshot)};
       select coalesce(json_agg(r),'[]') from (
         select b.policy->>'asset_root' as root,a.relative_path,a.sha256,a.file_size from public.artifacts a join public.episodes e on e.id=a.episode_id join public.account_blueprint_versions b on b.id=e.blueprint_version_id
         union all select b.policy->>'asset_root',a.relative_path,a.sha256,a.file_size from public.audio_tracks a join public.episodes e on e.id=a.episode_id join public.account_blueprint_versions b on b.id=e.blueprint_version_id
@@ -82,7 +98,8 @@ export async function createBackup() {
     return { root, tables:Object.keys(inventory).length, rows:Object.values(inventory).reduce((n,t)=>n+t.count,0), mediaFiles:media.length, archiveSha256:manifest.archiveSha256 };
   } finally { if(holder.exitCode===null && holder.signalCode===null){ const done=once(holder,'exit').catch(()=>{});holder.stdin.end('rollback;\n');await done; } }
 }
-export function readBackup(root) {
+export function readBackup(root, selectedConfig = config) {
+  const config=selectedConfig;
   assertPrivatePath(root);
   if (!resolve(root).startsWith(join(config.runtimeRoot,'backups')+'/')) throw new Error('只接受本树生成的隔离备份');
   const manifestPath = join(root,'manifest.json'); assertPrivatePath(manifestPath);
@@ -97,6 +114,6 @@ export function readBackup(root) {
   return m;
 }
 if (process.argv[1] === new URL(import.meta.url).pathname) {
-  try { console.log(JSON.stringify({ mode:'backup',passed:true,...await createBackup() })); }
+  try { console.log(JSON.stringify({ mode:'backup',passed:true,...await createBackup(process.argv.includes('--verified')?(await import('./restore.mjs')).targetConfiguration():config) })); }
   catch { console.error(JSON.stringify({mode:'backup',passed:false,detail:'一致性备份未完成；保留诊断目录，无有效 manifest 不可恢复。'})); process.exitCode=1; }
 }

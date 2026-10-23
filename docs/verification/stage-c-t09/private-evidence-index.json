@@ -1,0 +1,127 @@
+[
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/advisors.txt",
+    "bytes": 3182,
+    "sha256": "df611e9fced280279418dd2370eb64b2dddda1802dff569667e50e5ef74649f9"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/advisors.txt.first",
+    "bytes": 260,
+    "sha256": "c8a3bd9184216c15691a3a8b2c404567b9f30aeacb44ad74b16f2a73a378c174"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/backup-last-success.json",
+    "bytes": 130,
+    "sha256": "3f2c5aa509b9d288cc55cc16fd819163c445203c6212e1cee0f6315e0e17e005"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/backup-result.json",
+    "bytes": 130,
+    "sha256": "3f2c5aa509b9d288cc55cc16fd819163c445203c6212e1cee0f6315e0e17e005"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/checks.json",
+    "bytes": 539,
+    "sha256": "e20600cd91c75758cd304c7de79b609c6f4f63bd9f23fa739e398942c60cd407"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/checks.json.first",
+    "bytes": 539,
+    "sha256": "e20600cd91c75758cd304c7de79b609c6f4f63bd9f23fa739e398942c60cd407"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/consumer.mjs",
+    "bytes": 1051,
+    "sha256": "19d5193ff31cb4d4a3a1184c9ca6d3588205c7525756ee2001fc9bbbc673cceb"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/controlled-accepted.jsonl",
+    "bytes": 51459,
+    "sha256": "175ce1e2bdc901253862dc6ca905ad07eb580665d0f405bed4e1179b13bd1b5b"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/final-checks.json",
+    "bytes": 288,
+    "sha256": "e4a6e35e58c46a50f922ee18ec55b1b49234e77affe4a9dc2d1137adee4097b7"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/full-default-5000.txt",
+    "bytes": 8005,
+    "sha256": "abaf49f9e4cc9adb23ed9b16695846b318d6d4415fbf016e2e033624a7ab63f9"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/full-default-5000.txt.first",
+    "bytes": 7945,
+    "sha256": "741b54ccd115f11deb181980740ee5db4864e567ca8d5cf28afb651424afa56f"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/health-last-success.json",
+    "bytes": 87,
+    "sha256": "b6213560b0cc2989c948ac0525a56f8320c276601165bb100ca8e641e1de6f4b"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/health-result.json",
+    "bytes": 87,
+    "sha256": "b6213560b0cc2989c948ac0525a56f8320c276601165bb100ca8e641e1de6f4b"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/http-summary.json",
+    "bytes": 1813,
+    "sha256": "e070de614985e144884301b01a0553fcf9c81d3a7aefdd30d1200c095b9fb2c9"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/node-tests.txt",
+    "bytes": 343,
+    "sha256": "9e57bbe3da006c0e3dba7a40f7ffdb8297a478d202f364af706d23a5de9af904"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/notification-last-failure.json",
+    "bytes": 172,
+    "sha256": "143652a56585aeb5e71c427537bdb5a6e9ec3e6b266b4a80be022aac48ab716f"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/notification-result.json",
+    "bytes": 172,
+    "sha256": "143652a56585aeb5e71c427537bdb5a6e9ec3e6b266b4a80be022aac48ab716f"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/restore/managed-schema.sql",
+    "bytes": 339948,
+    "sha256": "09d14de0c8ba1e1111c8e3e0752b0b6e49b4dc2de466def5add86693bf3c3d58"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/restore/result.json",
+    "bytes": 835,
+    "sha256": "6999e7ebe37c7daf2c904ca312ba86a43b406bda63c1c106f759c8270b4d6493"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/result.json",
+    "bytes": 1227,
+    "sha256": "8e636737f80ec6e8e07a75bcabf67b8f339a875d800c8d98adc282eecf8de274"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/runtime-final.txt",
+    "bytes": 289,
+    "sha256": "768dc1671d7d51e3935acba9fa5bc6215a38594e6db7ca7c6ce106bd10bebb56"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/snapshot-last-success.json",
+    "bytes": 133,
+    "sha256": "92f15e42ab4f87d438a8fc6aaf432fc26992dea9db1708938f080db849f087cb"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/snapshot-result.json",
+    "bytes": 133,
+    "sha256": "92f15e42ab4f87d438a8fc6aaf432fc26992dea9db1708938f080db849f087cb"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/sql-final.txt",
+    "bytes": 4878,
+    "sha256": "e6d52170c9e2c733d91abdb34c98196be3a99470479bfd8b43ad59344afc8bbd"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t09/1792769620439/types-final.txt",
+    "bytes": 53,
+    "sha256": "928dd2453fd01e81e22aeb4106e166671312b96a2a55a28c6841f24d1af4c1b0"
+  }
+]

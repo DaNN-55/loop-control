@@ -1,6 +1,6 @@
 import { EventEmitter } from "node:events";
 import { readFileSync } from "node:fs";
-import { mkdir, mkdtemp, writeFile, rm } from "node:fs/promises";
+import { mkdir, mkdtemp, writeFile, rm, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { prepareRuntime } from "./runtimeBuild";
@@ -14,12 +14,16 @@ vi.mock("node:child_process", () => ({ ...childProcess, default: childProcess })
 const originalArgv = process.argv;
 const originalWorkerCapacity = process.env.CODEX_WORKER_CAPACITY;
 const originalProjectRoot = process.env.LOOP_PROJECT_ROOT;
+const originalStateDirectory = process.env.LOOP_N8N_STATE_DIR;
+const originalExitCode = process.exitCode;
 const originalSupabaseUrl = process.env.SUPABASE_URL;
 const originalServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 afterEach(async () => {
   await Promise.all(fixtureRoots.splice(0).map(root=>rm(root,{recursive:true,force:true})));
   process.argv = originalArgv;
+  process.exitCode = originalExitCode;
+  restoreEnvironment("LOOP_N8N_STATE_DIR",originalStateDirectory);
   restoreEnvironment("CODEX_WORKER_CAPACITY", originalWorkerCapacity);
   restoreEnvironment("LOOP_PROJECT_ROOT", originalProjectRoot);
   restoreEnvironment("SUPABASE_URL", originalSupabaseUrl);
@@ -57,6 +61,9 @@ describe("定向生产单调度", () => {
   it("每日健康检查每天 09:00 只运行一次", () => {
     const workflow = JSON.parse(readFileSync(resolve("n8n/workflows/daily-health-check.json"), "utf8"));
 
+    expect(workflow.settings.timezone).toBe("Asia/Shanghai");
+    expect(workflow.settings.saveDataSuccessExecution).toBe("none");
+    expect(workflow.settings.saveDataErrorExecution).toBe("all");
     expect(workflow.nodes[0].parameters.rule.interval).toEqual([{ daysInterval: 1, field: "days", triggerAtHour: 9, triggerAtMinute: 0 }]);
   });
 
@@ -113,8 +120,8 @@ describe("定向生产单调度", () => {
     expect(childProcess.spawn).not.toHaveBeenCalled();
   });
 
-  it("一次提醒轮次只读取一次增量 audit_events", async () => {
-    const fetchMock = vi.fn(async () => ({ ok: true, json: async () => [] }));
+  it("一次提醒轮次通过原子领取消费事件，不再按时间重扫 audit_events", async () => {
+    const fetchMock = vi.fn(async () => ({ ok: true, headers:new Headers({"content-range":"*/0"}), json: async () => [] }));
     process.argv = ["node", "loopOrchestratorCli.ts", "notify"];
     process.env.LOOP_PROJECT_ROOT = await preparedFixture();
     process.env.SUPABASE_URL = "https://example.supabase.co";
@@ -122,8 +129,22 @@ describe("定向生产单调度", () => {
     vi.stubGlobal("fetch", fetchMock);
     await import("./loopOrchestratorCli.js");
 
-    expect(fetchCalls(fetchMock)).toEqual([expect.stringContaining("/rest/v1/audit_events")]);
+    expect(fetchCalls(fetchMock)).toEqual([
+      expect.stringContaining("/rpc/initialize_notification_delivery"),
+      expect.stringContaining("/rpc/claim_notification_event"),
+      expect.stringContaining("/notification_delivery_events"),
+    ]);
   });
+  it("部分快照失败归入快照结果，不误报为调度失败", async()=>{
+    process.argv=["node","loopOrchestratorCli.ts","export"];
+    const root=await preparedFixture();process.env.LOOP_PROJECT_ROOT=root;
+    process.env.SUPABASE_URL="https://example.supabase.co";process.env.SUPABASE_SERVICE_ROLE_KEY="test-key";
+    vi.stubGlobal("fetch",vi.fn(async()=>({ok:false,status:503})));
+    await import("./loopOrchestratorCli.js");
+    const outcome=JSON.parse(await readFile(join(root,"state","snapshot-result.json"),"utf8"));
+    expect(outcome.passed).toBe(false);expect(outcome.detail).toContain("部分快照");
+  });
+
 
 
 });
@@ -140,6 +161,7 @@ async function runDispatch(fetchMock: ReturnType<typeof vi.fn>, args: string[] =
 
 async function preparedFixture() {
   const root=await mkdtemp(join(tmpdir(),"loop-cli-")); fixtureRoots.push(root);
+  process.env.LOOP_N8N_STATE_DIR=join(root,"state");
   for(const dir of ["src", "dist/worker/worker", "dist/orchestration/orchestration"])await mkdir(join(root,dir),{recursive:true});
   for(const name of ["package.json","package-lock.json","tsconfig.worker.json","tsconfig.orchestrator.json"])await writeFile(join(root,name),"{}");
   await prepareRuntime(root,async()=>{

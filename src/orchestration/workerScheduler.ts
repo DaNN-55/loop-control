@@ -1,8 +1,12 @@
+import { join } from "node:path";
+import { recordOperation } from "./operationsEvidence.js";
 import { createWorkerTaskConsumer, type DispatchScope, type WorkerDispatchExecutor, type WorkerDispatchOptions } from "./workerDispatch.js";
 import { assertPreparedRuntime } from "./runtimeBuild.js";
 
 export async function startWorkerScheduler(options: WorkerDispatchOptions, executor?: WorkerDispatchExecutor) {
   if (!executor) await assertPreparedRuntime(options.projectRoot);
+  const evidenceDirectory = options.environment?.LOOP_N8N_STATE_DIR ?? process.env.LOOP_N8N_STATE_DIR ?? join(options.projectRoot, "n8n", "runtime", "orchestration");
+  const recordScan = (passed: boolean) => recordOperation(evidenceDirectory, "schedule", {passed, idle: passed && consumer.activeCount() === 0, detail: passed ? "常驻调度检查完成；空闲结果仅在变化时保存。" : "常驻调度或规划失败，请检查本机日志。"}).catch(() => undefined);
   const controller = new AbortController();
   const signal = options.signal ? AbortSignal.any([options.signal, controller.signal]) : controller.signal;
   let stopped = false, fast = false, global = false, scans = 0;
@@ -31,9 +35,9 @@ export async function startWorkerScheduler(options: WorkerDispatchOptions, execu
       scans++; lastScanAt = new Date().toISOString();
       try {
         if (!scope.taskId) startPlanning(scope);
-        await consumer.scan({ taskId: "wake" }); lastError = null;
+        await consumer.scan({ taskId: "wake" }); lastError = null; await recordScan(!planningError);
       }
-      catch (error) { if(stopped || signal.aborted)continue; const message = error instanceof Error ? error.message : "Worker scan failed"; if(lastError!==message)console.error(`Worker调度扫描失败：${message}`); lastError = message; }
+      catch (error) { if(stopped || signal.aborted)continue; const message = error instanceof Error ? error.message : "Worker scan failed"; if(lastError!==message)console.error(`Worker调度扫描失败：${message}`); lastError = message; await recordScan(false); }
     }
   }
   // Planning may wait on a business transaction. It is separately serialized,

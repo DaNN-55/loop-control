@@ -80,3 +80,15 @@ describe("n8n 通知策略", () => {
     });
   });
 });
+it("不同 UTC 表示的同一游标不重复，保留微秒顺序",()=>{
+ const cursor={createdAt:"2026-10-23T10:00:00.123400Z",id:"event-z"};
+ expect(collectNotifications([
+  {id:"event-z",createdAt:"2026-10-23T10:00:00.1234+00:00",eventType:"stage_transition",payload:{to_stage:"script_review"}},
+  {id:"event-a",createdAt:"2026-10-23T10:00:00.123401+00:00",eventType:"stage_transition",payload:{to_stage:"production_ready"}},
+ ],cursor).stateStages).toEqual(["production_ready"]);
+});
+
+it("相同时间的 UTC 格式变化不绕过去重",()=>{
+ const cursor={createdAt:"2026-10-23T10:00:00.1234+00:00",id:"event-z"};
+ expect(collectNotifications([{...cursor,createdAt:"2026-10-23T10:00:00.123400Z",eventType:"stage_transition",payload:{to_stage:"script_review"}}],cursor).approvalStages).toEqual([]);
+});
