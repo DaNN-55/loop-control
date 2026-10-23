@@ -1,0 +1,35 @@
+{
+  "baseline": "e62dce818d58c827c778dad25f8d363250269168",
+  "target": "loop-control-stage-b-verified",
+  "ports": {
+    "console": 55176,
+    "api": 55461,
+    "database": 55462
+  },
+  "migrations": 232,
+  "newMigrations": false,
+  "scanIntervalMs": 4000,
+  "healthyReadyToClaimBudgetMs": 5000,
+  "defaultTestTimeoutOverride": null,
+  "defaultBudgetThisRun": {
+    "files": 72,
+    "tests": 681,
+    "passed": true
+  },
+  "priorDefaultFiveSecondGateFailureRetained": true,
+  "priorTimingInstabilityRootCauseFixed": false,
+  "productionOperations": false,
+  "onlineProviderCalls": false,
+  "fullOwnerApprovalChain": false,
+  "newBrowserSession": false,
+  "noHotCompilationVerifiedByContentAndMtime": true,
+  "controlledSlowFfmpegShutdownSeparatelyLabelled": true,
+  "oldTasksPreservedPerScenario": true,
+  "verifiedConsoleStoppedAfterValidation": true,
+  "committed": true,
+  "pushed": false,
+  "merged": false,
+  "T09Started": false,
+  "unpreparedProductionStartPreservesEpisodeAndPreflightRecord": true,
+  "ownerAcceptedLocalVerification": true
+}

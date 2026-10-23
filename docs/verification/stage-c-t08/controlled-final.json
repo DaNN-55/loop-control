@@ -1,0 +1,110 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "mode": "controlled",
+  "boundary": "real DB queue/result + controlled executor; not online generation",
+  "evidence": [
+    {
+      "name": "five-second fallback with long executor active; no wake or browser",
+      "passed": true,
+      "beforeFallback": {
+        "stopped": false,
+        "scans": 3,
+        "lastScanAt": "2026-10-23T14:37:46.039Z",
+        "lastError": null,
+        "scanning": false,
+        "planning": false,
+        "activeWorkers": 1
+      },
+      "afterFallback": {
+        "stopped": false,
+        "scans": 4,
+        "lastScanAt": "2026-10-23T14:37:49.955Z",
+        "lastError": null,
+        "scanning": false,
+        "planning": true,
+        "activeWorkers": 2
+      },
+      "task": "2b735151-5362-4224-91ff-223f716e242e",
+      "attempt": 1,
+      "readyAt": "2026-10-23T14:37:46.102466+00:00",
+      "claimedAt": "2026-10-23T14:37:49.998893+00:00",
+      "readyToClaimMs": 3896.427
+    },
+    {
+      "name": "immediate wake coalescing",
+      "passed": true,
+      "task": "3e0936e7-e33a-490f-999b-b57ab15ab8ac",
+      "attempt": 1,
+      "readyAt": "2026-10-23T14:37:50.068253+00:00",
+      "claimedAt": "2026-10-23T14:37:50.071787+00:00",
+      "readyToClaimMs": 3.534
+    },
+    {
+      "name": "saturated sample excluded from free-slot SLA, completion refills",
+      "passed": true,
+      "wasReadyAtCapacity": true,
+      "task": "eede8915-5bf1-4e66-adc7-d5526ca39301",
+      "attempt": 1,
+      "readyAt": "2026-10-23T14:37:50.175755+00:00",
+      "claimedAt": "2026-10-23T14:37:50.409714+00:00",
+      "readyToClaimMs": 233.959
+    },
+    {
+      "name": "real DB controlled execution",
+      "passed": true,
+      "peak": 2,
+      "prepares": 1,
+      "started": [
+        "8321c930-be2a-4768-aec5-cc1eeb709952",
+        "2b735151-5362-4224-91ff-223f716e242e",
+        "3e0936e7-e33a-490f-999b-b57ab15ab8ac",
+        "f3ce7166-42cb-4f71-8e6d-f76b1dec3c7e",
+        "eede8915-5bf1-4e66-adc7-d5526ca39301"
+      ]
+    },
+    {
+      "name": "stop clears timer and scan activity",
+      "passed": true,
+      "status": {
+        "stopped": true,
+        "scans": 17,
+        "lastScanAt": "2026-10-23T14:37:50.473Z",
+        "lastError": null,
+        "scanning": false,
+        "planning": false,
+        "activeWorkers": 0
+      }
+    },
+    {
+      "name": "unavailable DB excluded from healthy SLA",
+      "passed": true,
+      "status": {
+        "stopped": false,
+        "scans": 2,
+        "lastScanAt": "2026-10-23T14:37:50.676Z",
+        "lastError": "fetch failed",
+        "scanning": false,
+        "planning": false,
+        "activeWorkers": 0
+      }
+    }
+  ],
+  "episodes": [
+    "9a72b4f4-f134-4a28-82ff-1961b37f221a",
+    "cb4e98f1-9b4a-4c74-a7a1-11cdf72927eb",
+    "9a788b23-d8e5-405b-85f1-1d766a5a9a08",
+    "94068e8a-e3de-48fa-a112-8f9526f281dd",
+    "65b0a045-92b2-4839-88aa-9c74f642d21f"
+  ],
+  "tasks": [
+    "8321c930-be2a-4768-aec5-cc1eeb709952",
+    "2b735151-5362-4224-91ff-223f716e242e",
+    "3e0936e7-e33a-490f-999b-b57ab15ab8ac",
+    "f3ce7166-42cb-4f71-8e6d-f76b1dec3c7e",
+    "eede8915-5bf1-4e66-adc7-d5526ca39301"
+  ],
+  "production": false,
+  "providerCalls": false,
+  "priorDefaultFiveSecondFailureRetained": true,
+  "priorRootCauseFixed": false
+}

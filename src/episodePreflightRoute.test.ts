@@ -71,6 +71,24 @@ describe("Episode 修复 preflight 路由", () => {
   });
   afterEach(() => vi.clearAllMocks());
 
+  it("程序未准备时启动请求返回503，且不记录预检或迁移Episode状态", async () => {
+    const originalKey=process.env.SUPABASE_SERVICE_ROLE_KEY;
+    process.env.SUPABASE_SERVICE_ROLE_KEY="controlled-key";
+    const client=Object.assign(mockSupabaseClient(),{rpc:vi.fn().mockResolvedValue({data:{stage:"script_ready"},error:null})});
+    const server=createControlPlaneServer();
+    await new Promise<void>(resolve=>server.listen(0,"127.0.0.1",resolve));
+    try{
+      const address=server.address();if(!address||typeof address==="string")throw Error("Missing test listener");
+      const response=await fetch(`http://127.0.0.1:${address.port}/_worker-preflight?episode=${episodeId}`,{method:"POST",headers:{authorization:"Bearer test"}});
+      expect(response.status).toBe(503);
+      expect(await response.text()).toContain("runtime:prepare");
+      expect(client.rpc).not.toHaveBeenCalled();
+    }finally{
+      await new Promise<void>(resolve=>server.close(()=>resolve()));
+      if(originalKey===undefined)delete process.env.SUPABASE_SERVICE_ROLE_KEY;else process.env.SUPABASE_SERVICE_ROLE_KEY=originalKey;
+    }
+  });
+
   it("蓝图预检只向运行前置条件模块提交业务 subject", async () => {
     const report = { checks: [], version: "worker-preflight/v2" };
     mocks.inspectPreflight.mockResolvedValue({ passed: true, issues: [], report });

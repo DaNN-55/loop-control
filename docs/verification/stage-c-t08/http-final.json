@@ -1,0 +1,86 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "mode": "http",
+  "noHotCompilation": true,
+  "boundary": "ordinary HTTP + resident service + actual Worker/FFmpeg + real DB",
+  "evidence": [
+    {
+      "name": "immediate",
+      "passed": true,
+      "task": "2f824a1d-6a93-4726-a7d9-6a1e77873d63",
+      "attempt": 1,
+      "readyAt": "2026-10-23T14:44:35.419528+00:00",
+      "claimedAt": "2026-10-23T14:44:35.549865+00:00",
+      "readyToClaimMs": 130.337,
+      "runs": [
+        {
+          "attempt": 0,
+          "status": "completed"
+        }
+      ],
+      "artifact": {
+        "relative_path": "episodes/37988460-a46f-4be2-9146-0196dd67552c/result.mp4",
+        "sha256": "52ee826ea305bfd0e4e82e357905efdbc6ee3c2297313d22f66341e6012f911c",
+        "file_size": 23297
+      }
+    },
+    {
+      "name": "no-browser-no-wake",
+      "passed": true,
+      "task": "cbe02d8e-a101-4f90-a4f9-cdc20a8b21c7",
+      "attempt": 1,
+      "readyAt": "2026-10-23T14:44:35.815087+00:00",
+      "claimedAt": "2026-10-23T14:44:39.47825+00:00",
+      "readyToClaimMs": 3663.163,
+      "runs": [
+        {
+          "attempt": 0,
+          "status": "completed"
+        }
+      ],
+      "artifact": {
+        "relative_path": "episodes/256d6155-fa82-4c5c-9412-fa99d7d5e3a9/result.mp4",
+        "sha256": "52ee826ea305bfd0e4e82e357905efdbc6ee3c2297313d22f66341e6012f911c",
+        "file_size": 23297
+      }
+    },
+    {
+      "name": "restart-ready",
+      "passed": true,
+      "task": "fc5671c4-bc1d-48c9-a73c-8ec575fdb65e",
+      "attempt": 1,
+      "readyAt": "2026-10-23T14:44:39.775461+00:00",
+      "claimedAt": "2026-10-23T14:44:40.071501+00:00",
+      "readyToClaimMs": 296.04,
+      "runs": [
+        {
+          "attempt": 0,
+          "status": "completed"
+        }
+      ],
+      "artifact": {
+        "relative_path": "episodes/8603750c-b205-4f20-a0c5-2f89851803fb/result.mp4",
+        "sha256": "52ee826ea305bfd0e4e82e357905efdbc6ee3c2297313d22f66341e6012f911c",
+        "file_size": 23297
+      }
+    },
+    {
+      "name": "restart GET preserves persistent completed state",
+      "passed": true
+    }
+  ],
+  "episodes": [
+    "37988460-a46f-4be2-9146-0196dd67552c",
+    "256d6155-fa82-4c5c-9412-fa99d7d5e3a9",
+    "8603750c-b205-4f20-a0c5-2f89851803fb"
+  ],
+  "tasks": [
+    "2f824a1d-6a93-4726-a7d9-6a1e77873d63",
+    "cbe02d8e-a101-4f90-a4f9-cdc20a8b21c7",
+    "fc5671c4-bc1d-48c9-a73c-8ec575fdb65e"
+  ],
+  "production": false,
+  "providerCalls": false,
+  "priorDefaultFiveSecondFailureRetained": true,
+  "priorRootCauseFixed": false
+}

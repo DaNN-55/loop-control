@@ -1,3 +1,4 @@
+import { assertPreparedRuntime } from "../orchestration/runtimeBuild.js";
 import { spawn } from "node:child_process";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -43,6 +44,7 @@ const workerLeaseHeartbeatMs = 5 * 60 * 1000;
 let leaseHeartbeat: ReturnType<typeof setInterval> | undefined;
 let activeLease: { taskId: string; attempt: number; token: string } | undefined;
 
+await assertPreparedRuntime(process.env.LOOP_PROJECT_ROOT ?? process.cwd());
 const result = await runCodexWorker({
   claimNextTask: claimNextTask,
   reportResult,

@@ -1,0 +1,50 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "mode": "shutdown",
+  "noHotCompilation": true,
+  "boundary": "real service/Worker/process shutdown with controlled slow FFmpeg wrapper; restart uses actual FFmpeg",
+  "evidence": [
+    {
+      "name": "actual service shutdown terminates its leased Worker and controlled slow FFmpeg descendant; fenced retry released",
+      "passed": true,
+      "processes": {
+        "pid": 56651,
+        "parent": 56635
+      },
+      "stopMs": 71,
+      "status": "ready",
+      "attempt": 1,
+      "availableAt": "2026-10-23T14:42:55.008153+00:00"
+    },
+    {
+      "name": "restart uses original FFmpeg, durable retry completes once after interrupted attempt",
+      "passed": true,
+      "runs": [
+        {
+          "attempt": 0,
+          "status": "failed"
+        },
+        {
+          "attempt": 1,
+          "status": "completed"
+        }
+      ],
+      "artifact": {
+        "relative_path": "episodes/4f6a71f5-63dd-45af-9d1f-da3b9ed5789b/result.mp4",
+        "sha256": "52ee826ea305bfd0e4e82e357905efdbc6ee3c2297313d22f66341e6012f911c",
+        "file_size": 23297
+      },
+      "healthyFiveSecondSample": false
+    }
+  ],
+  "episodes": [
+    "4f6a71f5-63dd-45af-9d1f-da3b9ed5789b"
+  ],
+  "tasks": [
+    "1e9c31b6-ea95-4ea6-aa60-ca67a507a108"
+  ],
+  "production": false,
+  "providerCalls": false,
+  "priorDefaultFiveSecondFailureRetained": true,
+  "priorRootCauseFixed": false
+}

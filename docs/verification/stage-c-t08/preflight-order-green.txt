@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/episodePreflightRoute.test.ts (15 tests) 268ms
+
+ Test Files  1 passed (1)
+      Tests  15 passed (15)
+   Start at  22:50:29
+   Duration  1.23s (transform 396ms, setup 0ms, collect 673ms, tests 268ms, environment 0ms, prepare 49ms)
+

@@ -1,6 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import {
-  beginTaskDispatch,
   localWorkerServiceRoleKey,
   serveChooseLocalAssetDirectory,
   serveEpisodeDeletion,
@@ -34,7 +33,7 @@ type RouteHandler = (request: IncomingMessage, response: ServerResponse, next: N
 type Route = readonly [path: string, handler: RouteHandler];
 
 export interface LocalControlPlaneDependencies {
-  dispatchTask?: (taskId: string) => "started" | "already_running";
+  dispatchTask?: (taskId: string) => "started" | "already_running" | Promise<"started" | "already_running">;
   serviceRoleKey?: string;
 }
 
@@ -78,7 +77,7 @@ function operationRoutes({ dependencies, serviceRoleKey, supabasePublishableKey,
     ["/_episode-dispatch", serveEpisodeDispatch(
       supabaseUrl,
       supabasePublishableKey,
-      dependencies.dispatchTask ?? ((id) => beginTaskDispatch(id, undefined, supabaseUrl)),
+      dependencies.dispatchTask,
     )],
     ["/_publish-preparation", servePublishPreparation(supabaseUrl, supabasePublishableKey, serviceRoleKey)],
   ];

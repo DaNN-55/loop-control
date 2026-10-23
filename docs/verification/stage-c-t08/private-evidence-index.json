@@ -1,0 +1,442 @@
+[
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/console-snapshot-final.txt",
+    "bytes": 5267,
+    "sha256": "cbb207ee016362d7a1c02dcdd6dde4ab1f409632374ff4b4603ca9f82490b46f"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/console-snapshot.txt",
+    "bytes": 4893,
+    "sha256": "5608af815fff32c096d90a20d12326139a70e47cbda5086db23782770d7680f2"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/controlled-1792766215581.json",
+    "bytes": 2719,
+    "sha256": "9ce7b3d246d734c34a99b44b404222312160701c785e8116652da06ff6814c77"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/controlled-1792766264038.json",
+    "bytes": 3283,
+    "sha256": "f8f9296091607d4a40dedaaa216b7dce45a4977dd8c475356b98036af87b9831"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/controlled-driver-1.txt",
+    "bytes": 696,
+    "sha256": "391c7f613122875c387f23ee1b442ba40ce54875c8621fd97afd8b1a55ba0f98"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/controlled-driver-2.txt",
+    "bytes": 2773,
+    "sha256": "40ff10a4a7b1a68e077fc3c3f4fae8db2faa66d4bed6c2ee1aa27a83b32834ec"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/controlled-driver-3.txt",
+    "bytes": 3323,
+    "sha256": "700fd0874c6e9d0dddd43bdee6531c07b4c6c3730f07e477914b1b1f827d7d18"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/full-default-5000-1.txt",
+    "bytes": 7188,
+    "sha256": "d54364fb3c4f39c28dbf4b8ce8735e5ab0bb937c26a3390c34ece5a98ec4af5d"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/full-default-5000-final.txt",
+    "bytes": 7102,
+    "sha256": "e579913614b81823fdbf20562441bb376f9c52f65905c0ec41b5f9f6aeaf63c7"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/hot-path-green.txt",
+    "bytes": 1404,
+    "sha256": "00f18a9ae5c687292d0306d223bf93de05ceb95d9a37fd917246f3a9111def80"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/hot-path-red.txt",
+    "bytes": 3298,
+    "sha256": "5fc2435f5b48583da288c36f0b599ceb81f42d28ef02d633eb866aaf75f15146"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/http-1792766281004.json",
+    "bytes": 2526,
+    "sha256": "0d7a6a60857077c4323aa22807188c61ad101392be32e94091d300fe115633ad"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/http-1792766674912.json",
+    "bytes": 2552,
+    "sha256": "045e164ef612055ecaabe6960fc2a2fbebd1bafb21eeba8a8d0ec8a42f51ddee"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/http-driver-1.txt",
+    "bytes": 2526,
+    "sha256": "0d7a6a60857077c4323aa22807188c61ad101392be32e94091d300fe115633ad"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/http-driver-final.txt",
+    "bytes": 2552,
+    "sha256": "045e164ef612055ecaabe6960fc2a2fbebd1bafb21eeba8a8d0ec8a42f51ddee"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/node-tests.txt",
+    "bytes": 342,
+    "sha256": "a484cf672375e67c1dbbdd3f9804c99f06fa1b202f45fe4d1aaf0aa4fbcc9954"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/original-worker-1792766439927.js",
+    "bytes": 36149,
+    "sha256": "c6d7ada641a5e48619877ddf4ea39e3c796dd93c7f961ad008ded79690e5c19b"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/original-worker-1792766450826.js",
+    "bytes": 36149,
+    "sha256": "c6d7ada641a5e48619877ddf4ea39e3c796dd93c7f961ad008ded79690e5c19b"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/original-worker-1792767058232.js",
+    "bytes": 36149,
+    "sha256": "c6d7ada641a5e48619877ddf4ea39e3c796dd93c7f961ad008ded79690e5c19b"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/pre-runtime-task-snapshot.json",
+    "bytes": 319438,
+    "sha256": "5ab748d0deba0181765aafea83a9fb348113e2ac792cb6f3e447f86a2ec58138"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/preflight-order-green.txt",
+    "bytes": 322,
+    "sha256": "c868c7baac99a3b7b3a841d0f13101f1cd8d14a6f42e3648470ea27b8374ee7d"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/preflight-order-red.txt",
+    "bytes": 2628,
+    "sha256": "f089c50eb0821288ba849b44a4d254e1373d804e8e4ffe8c3c9cb927ca3b4b53"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/preparation-1792766450826.json",
+    "bytes": 1484,
+    "sha256": "8bead979ee494d153d6f086821c316ca38bd9a16a957cb496ba4ac8ca1776724"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/preparation-1792767058232.json",
+    "bytes": 1691,
+    "sha256": "6c9de8c2177bd713bf3b57ef4b5c9db4d093527389e480533ad83697ea1250e8"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/preparation-build-1792766439994.txt",
+    "bytes": 71,
+    "sha256": "ef5c5bb03824c276a9a20c5f062429bfc1957a01af5b0e72254100dbef07de3d"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/preparation-build-1792766440821.txt",
+    "bytes": 71,
+    "sha256": "ef5c5bb03824c276a9a20c5f062429bfc1957a01af5b0e72254100dbef07de3d"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/preparation-build-1792766450893.txt",
+    "bytes": 71,
+    "sha256": "ef5c5bb03824c276a9a20c5f062429bfc1957a01af5b0e72254100dbef07de3d"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/preparation-build-1792766453339.txt",
+    "bytes": 215,
+    "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/preparation-build-1792766455254.txt",
+    "bytes": 215,
+    "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/preparation-build-1792767058304.txt",
+    "bytes": 71,
+    "sha256": "ef5c5bb03824c276a9a20c5f062429bfc1957a01af5b0e72254100dbef07de3d"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/preparation-build-1792767061124.txt",
+    "bytes": 215,
+    "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/preparation-build-1792767063093.txt",
+    "bytes": 215,
+    "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/preparation-driver-1.txt",
+    "bytes": 2288,
+    "sha256": "baa73a443d9ffb7cad019f3d2248b268d9c1912ee58b27a88f50c99ac2ec06cc"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/preparation-driver-2.txt",
+    "bytes": 1484,
+    "sha256": "8bead979ee494d153d6f086821c316ca38bd9a16a957cb496ba4ac8ca1776724"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/preparation-driver-final.txt",
+    "bytes": 1691,
+    "sha256": "6c9de8c2177bd713bf3b57ef4b5c9db4d093527389e480533ad83697ea1250e8"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/preparation-first.txt",
+    "bytes": 71,
+    "sha256": "ef5c5bb03824c276a9a20c5f062429bfc1957a01af5b0e72254100dbef07de3d"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/preparation-second.txt",
+    "bytes": 215,
+    "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/prepare-controlled-1792766156746.txt",
+    "bytes": 215,
+    "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/prepare-controlled-1792766215581.txt",
+    "bytes": 71,
+    "sha256": "ef5c5bb03824c276a9a20c5f062429bfc1957a01af5b0e72254100dbef07de3d"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/prepare-controlled-1792766264038.txt",
+    "bytes": 215,
+    "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/prepare-http-1792766281004.txt",
+    "bytes": 71,
+    "sha256": "ef5c5bb03824c276a9a20c5f062429bfc1957a01af5b0e72254100dbef07de3d"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/prepare-http-1792766674912.txt",
+    "bytes": 71,
+    "sha256": "ef5c5bb03824c276a9a20c5f062429bfc1957a01af5b0e72254100dbef07de3d"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/prepare-shutdown-1792766532441.txt",
+    "bytes": 71,
+    "sha256": "ef5c5bb03824c276a9a20c5f062429bfc1957a01af5b0e72254100dbef07de3d"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/prepare-shutdown-1792766572464.txt",
+    "bytes": 71,
+    "sha256": "ef5c5bb03824c276a9a20c5f062429bfc1957a01af5b0e72254100dbef07de3d"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-corrupt-direct-1792766450826.txt",
+    "bytes": 114,
+    "sha256": "289ecafd51971ff59128f6d38d685dabe3e334efc7a7002d732c6bc813d82632"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-corrupt-direct-1792767058232.txt",
+    "bytes": 114,
+    "sha256": "289ecafd51971ff59128f6d38d685dabe3e334efc7a7002d732c6bc813d82632"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-corrupt-orchestrator-1792766450826.txt",
+    "bytes": 655,
+    "sha256": "2d41d7c4e42a2dacd128ef52adb0a4a2bb264bb8b5007b0929f0da03b3b3992f"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-corrupt-orchestrator-1792767058232.txt",
+    "bytes": 655,
+    "sha256": "2d41d7c4e42a2dacd128ef52adb0a4a2bb264bb8b5007b0929f0da03b3b3992f"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-corrupt-worker-1792766450826.txt",
+    "bytes": 655,
+    "sha256": "2d41d7c4e42a2dacd128ef52adb0a4a2bb264bb8b5007b0929f0da03b3b3992f"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-corrupt-worker-1792767058232.txt",
+    "bytes": 655,
+    "sha256": "2d41d7c4e42a2dacd128ef52adb0a4a2bb264bb8b5007b0929f0da03b3b3992f"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-missing-direct-1792766450826.txt",
+    "bytes": 114,
+    "sha256": "289ecafd51971ff59128f6d38d685dabe3e334efc7a7002d732c6bc813d82632"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-missing-direct-1792767058232.txt",
+    "bytes": 114,
+    "sha256": "289ecafd51971ff59128f6d38d685dabe3e334efc7a7002d732c6bc813d82632"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-missing-orchestrator-1792766439927.txt",
+    "bytes": 655,
+    "sha256": "2d41d7c4e42a2dacd128ef52adb0a4a2bb264bb8b5007b0929f0da03b3b3992f"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-missing-orchestrator-1792766450826.txt",
+    "bytes": 655,
+    "sha256": "2d41d7c4e42a2dacd128ef52adb0a4a2bb264bb8b5007b0929f0da03b3b3992f"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-missing-orchestrator-1792767058232.txt",
+    "bytes": 655,
+    "sha256": "2d41d7c4e42a2dacd128ef52adb0a4a2bb264bb8b5007b0929f0da03b3b3992f"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-missing-worker-1792766439927.txt",
+    "bytes": 655,
+    "sha256": "2d41d7c4e42a2dacd128ef52adb0a4a2bb264bb8b5007b0929f0da03b3b3992f"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-missing-worker-1792766450826.txt",
+    "bytes": 655,
+    "sha256": "2d41d7c4e42a2dacd128ef52adb0a4a2bb264bb8b5007b0929f0da03b3b3992f"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-missing-worker-1792767058232.txt",
+    "bytes": 655,
+    "sha256": "2d41d7c4e42a2dacd128ef52adb0a4a2bb264bb8b5007b0929f0da03b3b3992f"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-source-changed-direct-1792766450826.txt",
+    "bytes": 114,
+    "sha256": "289ecafd51971ff59128f6d38d685dabe3e334efc7a7002d732c6bc813d82632"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-source-changed-direct-1792767058232.txt",
+    "bytes": 114,
+    "sha256": "289ecafd51971ff59128f6d38d685dabe3e334efc7a7002d732c6bc813d82632"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-source-changed-orchestrator-1792766450826.txt",
+    "bytes": 655,
+    "sha256": "2d41d7c4e42a2dacd128ef52adb0a4a2bb264bb8b5007b0929f0da03b3b3992f"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-source-changed-orchestrator-1792767058232.txt",
+    "bytes": 655,
+    "sha256": "2d41d7c4e42a2dacd128ef52adb0a4a2bb264bb8b5007b0929f0da03b3b3992f"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-source-changed-worker-1792766450826.txt",
+    "bytes": 655,
+    "sha256": "2d41d7c4e42a2dacd128ef52adb0a4a2bb264bb8b5007b0929f0da03b3b3992f"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/rejected-source-changed-worker-1792767058232.txt",
+    "bytes": 655,
+    "sha256": "2d41d7c4e42a2dacd128ef52adb0a4a2bb264bb8b5007b0929f0da03b3b3992f"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/runtime-green.txt",
+    "bytes": 319,
+    "sha256": "3ee8996ffb3ebe3de85e7d67690d6df52e828f639fcb994ed88134690fb94a79"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/runtime-red.txt",
+    "bytes": 1226,
+    "sha256": "10118de9120e310a3a7a28983b0e0f12296a319b8fe617122f701a2833485df8"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/scheduler-green.txt",
+    "bytes": 324,
+    "sha256": "92d6d79eb33c5701cca44265fa83a63bc591e4afcefa8a65bcf84a55756066de"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/scheduler-red.txt",
+    "bytes": 1246,
+    "sha256": "16b5d6b06e5393b88d73259bafff0da505e80f6013276c8516bd49e8dcb2ad66"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/shutdown-1792766572464.json",
+    "bytes": 1432,
+    "sha256": "bcd8076f201ef49eb5fc3b2c6b49a43938e2a4ade0027658cadc61201bc7942b"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/shutdown-bin-1792766532441/ffmpeg",
+    "bytes": 552,
+    "sha256": "4550b7be16059f25bcc2db82d1d5e2ac33947398f4ab00e68e6f46aa8d69870b"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/shutdown-bin-1792766572464/ffmpeg",
+    "bytes": 546,
+    "sha256": "fd89d3772391117afac992ec7b4bcda2286017acf8b8cb4f83332b32f5272e25"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/shutdown-driver-1.txt",
+    "bytes": 694,
+    "sha256": "118b5421204b6352f5cedc31978ba908d996e15210f544c3b309c1cf5f8c51a8"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/shutdown-driver-2.txt",
+    "bytes": 1432,
+    "sha256": "bcd8076f201ef49eb5fc3b2c6b49a43938e2a4ade0027658cadc61201bc7942b"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/shutdown-process-1792766572464.json",
+    "bytes": 28,
+    "sha256": "91eee4ec6fe93d6ea57a93394c66863dc1e2d6f65df3da02bf059b586a122213"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/sql-final-stderr.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/sql-final.json",
+    "bytes": 4678,
+    "sha256": "d15c1c581105980b2b562b44009f5446ef932a36763ce24571588c3312528b76"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/targeted-final.txt",
+    "bytes": 1517,
+    "sha256": "e46cd48a936d2e913aea2239a826c334d92b2c5ea495240cb4b73b20da06037b"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/targeted-first.txt",
+    "bytes": 1844,
+    "sha256": "f25298bbc96c03d06f11d390b7f2c8b14d1d85c9d8b1494650b5623a697a99c8"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/targeted-second.txt",
+    "bytes": 1518,
+    "sha256": "6480f24efa5693a8a2afb7f06af8e37f716c4c4b98b710eec8e6a0e4c6f0a0a7"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/targeted-third.txt",
+    "bytes": 1410,
+    "sha256": "31751e6cb67075ac15662e1ed92ac0eac03ef1b1f590dfea35c09ec223aeebd9"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/ticket-114.json",
+    "bytes": 1420,
+    "sha256": "fea77f9ba03cfc3febeec0320255e1cde55aee2b5a5776e79b830a02c13d5bfb"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/ticket-dependencies.json",
+    "bytes": 168,
+    "sha256": "cf8db11778ff560f7570cf60007bec35095d946624860feca56a19bf02ba9c22"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/types-complete.txt",
+    "bytes": 53,
+    "sha256": "928dd2453fd01e81e22aeb4106e166671312b96a2a55a28c6841f24d1af4c1b0"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/types-final.txt",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/types-first.txt",
+    "bytes": 169,
+    "sha256": "694d6429daa5f7fb0466dfad0e58442744fe8f7a1b79d68dec8305ddbbd65b42"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/types-fourth.txt",
+    "bytes": 53,
+    "sha256": "928dd2453fd01e81e22aeb4106e166671312b96a2a55a28c6841f24d1af4c1b0"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/types-second.txt",
+    "bytes": 53,
+    "sha256": "928dd2453fd01e81e22aeb4106e166671312b96a2a55a28c6841f24d1af4c1b0"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t08/types-third.txt",
+    "bytes": 53,
+    "sha256": "928dd2453fd01e81e22aeb4106e166671312b96a2a55a28c6841f24d1af4c1b0"
+  }
+]

@@ -1,5 +1,10 @@
 import { EventEmitter } from "node:events";
 import { readFileSync } from "node:fs";
+import { mkdir, mkdtemp, writeFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { prepareRuntime } from "./runtimeBuild";
+const fixtureRoots: string[] = [];
 import { resolve } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -12,7 +17,8 @@ const originalProjectRoot = process.env.LOOP_PROJECT_ROOT;
 const originalSupabaseUrl = process.env.SUPABASE_URL;
 const originalServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-afterEach(() => {
+afterEach(async () => {
+  await Promise.all(fixtureRoots.splice(0).map(root=>rm(root,{recursive:true,force:true})));
   process.argv = originalArgv;
   restoreEnvironment("CODEX_WORKER_CAPACITY", originalWorkerCapacity);
   restoreEnvironment("LOOP_PROJECT_ROOT", originalProjectRoot);
@@ -94,6 +100,13 @@ describe("定向生产单调度", () => {
     expect(requests.every(([,init])=>JSON.parse(String(init?.body)).p_worker_capacity===1)).toBe(true);
   });
 
+  it("已准备的任务热路径只执行产物，不调用npm或编译器", async () => {
+    const fetchMock=claimedQueue();
+    childProcess.spawn.mockImplementation(()=>fakeChild('{"status":"completed"}\n'));
+    await runDispatch(fetchMock);
+    expect(childProcess.spawn.mock.calls.every(([command])=>command===process.execPath)).toBe(true);
+  });
+
   it("空队列不构建或启动Worker", async () => {
     const fetchMock = vi.fn(async () => ({ ok: true, json: async () => [] }));
     await runDispatch(fetchMock);
@@ -103,7 +116,7 @@ describe("定向生产单调度", () => {
   it("一次提醒轮次只读取一次增量 audit_events", async () => {
     const fetchMock = vi.fn(async () => ({ ok: true, json: async () => [] }));
     process.argv = ["node", "loopOrchestratorCli.ts", "notify"];
-    process.env.LOOP_PROJECT_ROOT = "/tmp/loop";
+    process.env.LOOP_PROJECT_ROOT = await preparedFixture();
     process.env.SUPABASE_URL = "https://example.supabase.co";
     process.env.SUPABASE_SERVICE_ROLE_KEY = "test-key";
     vi.stubGlobal("fetch", fetchMock);
@@ -117,11 +130,23 @@ describe("定向生产单调度", () => {
 
 async function runDispatch(fetchMock: ReturnType<typeof vi.fn>, args: string[] = []): Promise<void> {
   process.argv = ["node", "loopOrchestratorCli.ts", "dispatch", ...args];
-  process.env.LOOP_PROJECT_ROOT = "/tmp/loop";
+  const root=await preparedFixture();
+  process.env.LOOP_PROJECT_ROOT = root;
   process.env.SUPABASE_URL = "https://example.supabase.co";
   process.env.SUPABASE_SERVICE_ROLE_KEY = "test-key";
   vi.stubGlobal("fetch", fetchMock);
   await import("./loopOrchestratorCli.js");
+}
+
+async function preparedFixture() {
+  const root=await mkdtemp(join(tmpdir(),"loop-cli-")); fixtureRoots.push(root);
+  for(const dir of ["src", "dist/worker/worker", "dist/orchestration/orchestration"])await mkdir(join(root,dir),{recursive:true});
+  for(const name of ["package.json","package-lock.json","tsconfig.worker.json","tsconfig.orchestrator.json"])await writeFile(join(root,name),"{}");
+  await prepareRuntime(root,async()=>{
+    await writeFile(join(root,"dist/worker/worker/codexWorkerCli.js"),"// prepared worker");
+    await writeFile(join(root,"dist/orchestration/orchestration/loopOrchestratorCli.js"),"// prepared dispatcher");
+  });
+  return root;
 }
 
 function fetchCalls(fetchMock: ReturnType<typeof vi.fn>): string[] {

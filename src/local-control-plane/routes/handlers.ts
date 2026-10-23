@@ -6,8 +6,10 @@ import { basename, extname, isAbsolute, join, parse, relative, resolve } from "n
 import { tmpdir } from "node:os";
 import { DatabaseSync } from "node:sqlite";
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { promisify, parseEnv } from "node:util";
-import { dispatchWorkerTasks, type DispatchScope, type WorkerDispatchOptions } from "../../orchestration/workerDispatch";
+import { promisify } from "node:util";
+import type { DispatchScope } from "../../orchestration/workerDispatch";
+import { assertLocalWorkerServiceReady, wakeLocalWorkerService } from "../workerService";
+export { assertWorkerDispatchEnvironment } from "../workerService";
 import { verifyMediaLibrary } from "../../worker/mediaLibrary";
 import { createRuntimePreflight, type RuntimeEvidenceAdapter, type RuntimeEvidenceDemand, type RuntimeEvidenceFact } from "../../worker/runtimePreflight";
 import { runtimeCommandArguments, runtimeCommandInvocation } from "../../worker/runtimeEvidence";
@@ -70,37 +72,8 @@ export function beginEpisodeDispatch(episodeId: string, run?: (episodeId: string
   return "started";
 }
 
-const requiredWorkerDispatchEnvironment = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "CODEX_WORKER_ACTUAL_COST_CENTS", "MEDIA_LIBRARY_MOUNT_PATH", "MEDIA_LIBRARY_MIN_FREE_BYTES"] as const;
-
-export function assertWorkerDispatchEnvironment(contents: string): void {
-  const values = new Map<string, string>();
-  for (const sourceLine of contents.split(/\r?\n/)) {
-    const line = sourceLine.trim();
-    if (!line || line.startsWith("#")) continue;
-    const match = line.match(/^(?:export\s+)?([A-Z][A-Z0-9_]*)\s*=\s*(.*)$/);
-    if (!match) continue;
-    const rawValue = match[2].trim();
-    const value = rawValue.length >= 2 && ((rawValue.startsWith('"') && rawValue.endsWith('"')) || (rawValue.startsWith("'") && rawValue.endsWith("'"))) ? rawValue.slice(1, -1).trim() : rawValue;
-    values.set(match[1], value);
-  }
-  const missing = requiredWorkerDispatchEnvironment.filter((name) => !values.get(name));
-  if (missing.length) throw new Error(`Worker 即时派发配置不完整：${missing.join("、")}`);
-}
-
 function localDispatchExecutor(supabaseUrl: string | undefined, scope: (id: string) => DispatchScope) {
-  // Explicit process configuration (e.g. verified) wins over the shell's A file.
-  // Fail closed if this service and its Worker would reach different databases.
-  const environment = process.env.SUPABASE_URL ? { ...process.env } : {
-    ...process.env, ...parseEnv(readFileSync(join(process.cwd(), "n8n/worker.env.local"), "utf8")),
-  };
-  if (!supabaseUrl || environment.SUPABASE_URL !== supabaseUrl) throw new Error("Worker 与 HTTP 服务的数据库绑定不一致，拒绝派发。");
-  assertWorkerDispatchEnvironment(Object.entries(environment).map(([key, value]) => `${key}=${value ?? ""}`).join("\n"));
-  const options: WorkerDispatchOptions = {
-    projectRoot: process.cwd(), supabaseUrl, serviceRoleKey: environment.SUPABASE_SERVICE_ROLE_KEY!, environment,
-    concurrency: Number(environment.LOOP_WORKER_CONCURRENCY ?? environment.CODEX_WORKER_CAPACITY ?? "2"),
-  };
-  if (!Number.isSafeInteger(options.concurrency) || options.concurrency <= 0) throw new Error("Worker concurrency must be a positive integer.");
-  return (id: string) => dispatchWorkerTasks(options, scope(id));
+  return async (id: string) => wakeLocalWorkerService(supabaseUrl, scope(id));
 }
 
 export function beginTaskDispatch(taskId: string, run?: (taskId: string) => Promise<unknown>, supabaseUrl?: string): "started" | "already_running" {
@@ -124,7 +97,7 @@ function persistentTaskDispatchStatus(task: { id: string; status: string; create
 export function serveEpisodeDispatch(
   supabaseUrl: string | undefined,
   supabasePublishableKey: string | undefined,
-  dispatch: (taskId: string) => "started" | "already_running" = (id) => beginTaskDispatch(id, undefined, supabaseUrl),
+  dispatch: (taskId: string) => "started" | "already_running" | Promise<"started" | "already_running"> = async (id) => { await assertLocalWorkerServiceReady(supabaseUrl); return beginTaskDispatch(id, undefined, supabaseUrl); },
 ) {
   return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
     if (request.method !== "POST" && request.method !== "GET") { response.statusCode = 405; response.end(); return; }
@@ -161,11 +134,11 @@ export function serveEpisodeDispatch(
       }
       // The existing task ID and frozen input are the durable submission. A wake
       // can be lost or repeated: the timer scans the same rows and claims atomically.
-      if (task.status === "ready") dispatch(taskId);
+      if (task.status === "ready") await dispatch(taskId);
       response.statusCode = ["ready", "running"].includes(task.status) ? 202 : 200;
       response.end(JSON.stringify({ ...persistentTaskDispatchStatus(task), statusUrl: `/_episode-dispatch?episode=${episodeId}&task=${taskId}` }));
     } catch (error) {
-      response.statusCode = 500;
+      response.statusCode = error instanceof Error && /runtime:prepare/.test(error.message) ? 503 : 500;
       response.end(error instanceof Error ? error.message : "无法即时派发当前生产单。");
     }
   };
@@ -1524,6 +1497,8 @@ export function serveWorkerPreflight(supabaseUrl: string | undefined, supabasePu
         response.end("Owner 权限不足。");
         return;
       }
+      // Check executable readiness before probing or writing any production state.
+      if (request.method === "POST") await assertLocalWorkerServiceReady(supabaseUrl);
       let seriesRules: unknown;
       if (episode.series_version_id) {
         const { data: seriesVersion, error: seriesVersionError } = await client.from("series_versions").select("rules").eq("id", episode.series_version_id).eq("account_id", episode.account_id).maybeSingle();
@@ -1576,7 +1551,7 @@ export function serveWorkerPreflight(supabaseUrl: string | undefined, supabasePu
       response.statusCode = 200;
       response.end(JSON.stringify(report));
     } catch (error) {
-      response.statusCode = 500;
+      response.statusCode = error instanceof Error && /runtime:prepare/.test(error.message) ? 503 : 500;
       response.end(error instanceof Error ? error.message : "无法读取 Worker 运行态检查。");
     }
   };

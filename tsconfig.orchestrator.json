@@ -13,6 +13,7 @@
   },
   "include": [
     "src/orchestration/backupPolicy.ts",
+    "src/orchestration/workerScheduler.ts",
     "src/orchestration/notificationPolicy.ts",
     "src/orchestration/loopOrchestratorCli.ts"
   ]

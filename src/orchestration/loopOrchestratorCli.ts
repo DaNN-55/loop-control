@@ -1,3 +1,4 @@
+import { assertPreparedRuntime } from "./runtimeBuild.js";
 import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { chmod, mkdir, readFile, rename, stat, writeFile } from "node:fs/promises";
@@ -15,6 +16,7 @@ const dispatchScope = readDispatchScope(process.argv.slice(3));
 const workerConcurrency = positiveIntegerEnvironment("LOOP_WORKER_CONCURRENCY", process.env.CODEX_WORKER_CAPACITY ?? "2");
 
 try {
+  await assertPreparedRuntime(projectRoot);
   switch (mode) {
     case "dispatch":
       process.stdout.write(`${JSON.stringify({ mode: "dispatch", ...await dispatchWorkerTasks({ projectRoot, supabaseUrl: supabaseCredentials().url, serviceRoleKey: supabaseCredentials().serviceRoleKey, concurrency: workerConcurrency }, dispatchScope) })}\n`);
