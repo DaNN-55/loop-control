@@ -17,10 +17,11 @@ const adapted=adaptBusinessSchema(baseline);
 const identity=readFileSync(join(projectRoot,'db/local/identity.sql'),'utf8');
 const access=readFileSync(join(projectRoot,'db/local/read-access.sql'),'utf8');
 ensurePrivateDirectory(join(root,'state'));
-const verifyExisting=process.argv.includes('--verify-existing');
+const audit=process.argv.includes('--audit');
+const verifyExisting=process.argv.includes('--verify-existing')||audit;
 for(const database of (verifyExisting?['loop_imported']:['loop_empty','loop_imported'])){
- const record=join(root,`state/${database}-import.json`);
- if(existsSync(record))throw Error('Recorded database retained; refusing to overwrite');
+ const record=join(root,`state/${database}-${audit?'audit':'import'}.json`);
+ if(!audit&&existsSync(record))throw Error('Recorded database retained; refusing to overwrite');
  if(!verifyExisting && sql(`select count(*) from pg_database where datname=${quote(database)}`,'postgres')!=='0')throw Error('Unrecorded target exists; inspect before retry');
  if(!verifyExisting){
  sql(`create database ${database} template template0`,'postgres');
@@ -50,10 +51,10 @@ for(const database of (verifyExisting?['loop_imported']:['loop_empty','loop_impo
    execute format('select exists(select 1 from %s a where %s and not exists(select 1 from %s b where %s))',f.child,(select string_agg(format('a.%I is not null',attname),' and ' order by i) from unnest(f.conkey) with ordinality k(a,i) join pg_attribute on attrelid=f.child and attnum=k.a),f.parent,(select string_agg(format('a.%I=b.%I',x.attname,y.attname),' and ' order by k.i) from unnest(f.conkey,f.confkey) with ordinality k(a,b,i) join pg_attribute x on x.attrelid=f.child and x.attnum=k.a join pg_attribute y on y.attrelid=f.parent and y.attnum=k.b)) into bad;
    if bad then raise exception 'Orphaned FK on %',f.child; end if;
   end loop;end $$;`,database);
-  sql(`insert into local_identity.import_record(imported_at,source_created_at,archive_sha256) values(now(),${quote(manifest.createdAt)},${quote(manifest.archiveSha256)})`,database);
+  if(!audit)sql(`insert into local_identity.import_record(imported_at,source_created_at,archive_sha256) values(now(),${quote(manifest.createdAt)},${quote(manifest.archiveSha256)})`,database);
  }
  const inventory=JSON.parse(sql(inventorySql(),database));
  const result={database,nativePostgres:true,sourceCreatedAt:manifest.createdAt,archiveSha256:manifest.archiveSha256,schemaSha256:digest(baseline),platformAdaptation:adapted.dependencies,tables:inventory,rows:Object.values(inventory).reduce((n,t)=>n+t.count,0),emptySchemaVerified:!verifyExisting || existsSync(join(root,'state/loop_empty-import.json')),copyFingerprints,localeDigestDifferences};
- writePrivateFile(record,JSON.stringify(result,null,2)+'\n',{exclusive:true});
+ writePrivateFile(record,JSON.stringify(result,null,2)+'\n',{exclusive:!audit});
  console.log(JSON.stringify({database,tables:Object.keys(inventory).length,rows:result.rows,emptySchemaVerified:true}));
 }
