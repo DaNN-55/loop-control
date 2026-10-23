@@ -1,0 +1,32 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/worker/renderReuse.test.ts [ src/worker/renderReuse.test.ts ]
+Error: Failed to resolve import "./renderReuse" from "src/worker/renderReuse.test.ts". Does the file exist?
+  Plugin: vite:import-analysis
+  File: /Users/dan/.codex/worktrees/local-first-optimization/loop-control/src/worker/renderReuse.test.ts:8:49
+  6  |  import { buildOpenChatCutProject } from "./openchatcutProject";
+  7  |  import { confirmedTtsRender } from "./openchatcutProject.fixture";
+  8  |  import { renderInputFingerprint, tryReuseRender } from "./renderReuse";
+     |                                                          ^
+  9  |  it("工程、素材、音轨、字幕、导出参数任一变化均使复用指纹失效", () => {
+  10 |    const render = confirmedTtsRender(), project = buildOpenChatCutProject(render);
+ ❯ TransformPluginContext._formatLog node_modules/vite/dist/node/chunks/config.js:29079:43
+ ❯ TransformPluginContext.error node_modules/vite/dist/node/chunks/config.js:29076:14
+ ❯ normalizeUrl node_modules/vite/dist/node/chunks/config.js:27199:18
+ ❯ node_modules/vite/dist/node/chunks/config.js:27257:32
+ ❯ TransformPluginContext.transform node_modules/vite/dist/node/chunks/config.js:27225:4
+ ❯ EnvironmentPluginContainer.transform node_modules/vite/dist/node/chunks/config.js:28877:14
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:22746:26
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  00:25:26
+   Duration  418ms (transform 8ms, setup 0ms, collect 0ms, tests 0ms, environment 164ms, prepare 42ms)
+

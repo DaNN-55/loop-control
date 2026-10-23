@@ -1,0 +1,25 @@
+{
+  "stage": "C-final",
+  "revisionTriggerRestored": true,
+  "finalReuseBrowserDenied": true,
+  "target": "loop-control-stage-b-verified",
+  "database": "loop_c_restore_1792773914692",
+  "backupRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/backups/1c6a94b1-6cd8-4497-8f15-545f2b889bff",
+  "archiveSha256": "25e75bc66a2b7e16d294752606a121317982b84543b6296bfe927663c384b436",
+  "emptyPublicBeforeRestore": true,
+  "inventoryMatched": true,
+  "tables": 38,
+  "rows": 20379,
+  "schemaSecurity": {
+    "md5": "92233ba40de32247c4b5ed3a597d528b",
+    "count": 268
+  },
+  "internalTriggerRestored": true,
+  "restoredAcceptedEventsNotReplayed": true,
+  "authenticatedClaimDenied": true,
+  "managedSchemas": "real source schema-only; no managed data or secrets",
+  "authIdentityOnly": true,
+  "authLoginTested": false,
+  "mediaFilesVerified": 282,
+  "databaseRetained": true
+}

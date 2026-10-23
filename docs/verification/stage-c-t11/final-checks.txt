@@ -1,0 +1,159 @@
+CHECK ["node_modules/vitest/vitest.mjs","run","--exclude","n8n/import-workflows.test.mjs","--exclude","**/*.integration.test.ts","--exclude","**/.loop-control/**"]
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+ ✓ scripts/openchatcut-render.test.mjs (5 tests) 277ms
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":0,"workers":[],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":0,"workers":[],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"notify","notifications":0,"skipped":0}
+导出 accounts 失败：Supabase 返回 HTTP 503
+ ✓ src/orchestration/loopOrchestratorCli.test.ts (12 tests) 444ms
+ ✓ scripts/local-service-record.test.mjs (6 tests) 530ms
+ ✓ src/observability/SystemStatusPanel.test.tsx (19 tests) 452ms
+ ✓ src/worker/controlledMediaExecutor.test.ts (12 tests) 538ms
+   ✓ 受控媒体执行器 > 使用真实 ffmpeg 裁剪带原声视频并提取当前片段原声  470ms
+ ✓ src/connections/ConnectionWorkspace.test.tsx (8 tests) 676ms
+ ✓ scripts/startup-lifecycle.acceptance.test.mjs (7 tests) 152ms
+ ✓ src/operations/OperationsWorkspace.test.tsx (6 tests) 354ms
+ ✓ src/episodes/EpisodeProductionContainer.test.tsx (3 tests) 46ms
+ ✓ src/orchestration/providedScriptDispatch.test.ts (6 tests) 115ms
+ ✓ src/observability/systemStatusEvidence.test.ts (4 tests) 104ms
+ ✓ src/ui/PaginationControls.test.tsx (2 tests) 108ms
+ ✓ src/reviews/WorkerBlockerCard.test.tsx (2 tests) 265ms
+ ✓ src/reviews/localArtifactPreview.test.tsx (3 tests) 30ms
+ ✓ src/observability/TaskProgressPanel.test.tsx (4 tests) 155ms
+ ✓ src/App.test.tsx (34 tests) 1056ms
+ ✓ src/ui/MarkdownPreview.test.tsx (1 test) 87ms
+ ✓ src/platform/migrationContracts.test.ts (112 tests) 39ms
+ ✓ src/publishing/ProductionCompletionModal.test.tsx (1 test) 76ms
+ ✓ scripts/isolation/environment.test.mjs (14 tests) 25ms
+ ✓ src/worker/mediaProviders.test.ts (9 tests) 21ms
+ ✓ src/reviews/reviewSelectors.test.ts (7 tests) 14ms
+ ✓ scripts/start-local.test.mjs (10 tests) 24ms
+ ✓ src/publishing/publishPackage.test.ts (2 tests) 154ms
+ ✓ src/worker/mediaLibrary.test.ts (7 tests) 129ms
+ ✓ src/worker/openchatcutProject.test.ts (26 tests) 16ms
+ ✓ src/worker/runtimeProbes.test.ts (7 tests) 12ms
+ ✓ src/platform/configurationForms.test.ts (23 tests) 9ms
+ ✓ src/worker/whisperxAlignment.test.ts (9 tests) 25ms
+ ✓ src/worker/codexRunner.test.ts (27 tests) 53ms
+ ✓ src/worker/contracts.test.ts (17 tests) 11ms
+ ✓ src/worker/renderReuse.test.ts (2 tests) 36ms
+ ✓ src/orchestration/operationsEvidence.test.ts (2 tests) 15ms
+ ✓ src/worker/openchatcutRenderer.test.ts (3 tests) 26ms
+ ✓ src/worker/storyboardArtifact.test.ts (4 tests) 16ms
+ ✓ src/orchestration/notificationPolicy.test.ts (5 tests) 7ms
+ ✓ src/worker/durationDecision.test.ts (13 tests) 5ms
+ ✓ src/orchestration/notificationConsumer.test.ts (3 tests) 15ms
+ ✓ src/platform/platformService.test.ts (7 tests) 7ms
+ ✓ scripts/supabase-migrations.test.mjs (3 tests) 7ms
+ ✓ src/reviews/blockerGuidance.test.ts (17 tests) 7ms
+ ✓ src/worker/registeredAdapters.test.ts (6 tests) 6ms
+ ✓ src/worker/acousticAlignment.test.ts (7 tests) 6ms
+ ✓ src/reviews/reviewRevision.test.ts (4 tests) 5ms
+ ✓ src/worker/productionCapabilities.test.ts (1 test) 1ms
+ ✓ src/worker/storyboardRevision.test.ts (3 tests) 7ms
+ ✓ src/worker/workerResultSchema.test.ts (3 tests) 5ms
+ ✓ src/platform/connectionStatus.test.ts (3 tests) 5ms
+ ✓ src/lib/pagedRead.test.ts (3 tests) 7ms
+ ✓ src/shotCaptions.test.ts (3 tests) 9ms
+ ✓ src/episodes/episodeReadService.test.ts (3 tests) 6ms
+ ✓ src/reviews/materialImport.test.ts (3 tests) 5ms
+ ✓ src/shotComposition.test.ts (2 tests) 4ms
+ ✓ src/worker/runtimeConstraints.test.ts (2 tests) 5ms
+ ✓ src/worker/codexWorkerCli.test.ts (6 tests) 4ms
+ ✓ src/manualArollVideo.test.ts (2 tests) 3ms
+ ✓ src/worker/manualMaterialChecklist.test.ts (1 test) 2ms
+ ✓ src/reviews/repairTarget.test.ts (3 tests) 4ms
+ ✓ src/worker/runtimePreflight.test.ts (4 tests) 7ms
+ ✓ src/platform/externalConnections.test.ts (1 test) 1ms
+ ✓ src/orchestration/backupPolicy.test.ts (2 tests) 4ms
+ ✓ src/worker/legacyPexelsReference.test.ts (2 tests) 5ms
+ ✓ src/platform/accountIdentity.test.ts (2 tests) 2ms
+ ✓ src/clipTiming.test.ts (3 tests) 7ms
+ ✓ src/worker/taskClaimArguments.test.ts (2 tests) 4ms
+ ✓ src/shotAcceptance.test.ts (3 tests) 3ms
+ ✓ src/orchestration/runtimeBuild.test.ts (1 test) 36ms
+ ✓ scripts/isolation/regressions.test.mjs (10 tests) 118ms
+ ✓ scripts/isolation/database.test.mjs (5 tests) 18ms
+ ✓ src/orchestration/workerScheduler.test.ts (2 tests) 232ms
+ ✓ src/externalConnectionRoute.test.ts (1 test) 27ms
+ ✓ src/localControlPlane.test.ts (2 tests) 57ms
+ ✓ src/episodePreflightRoute.test.ts (15 tests) 74ms
+ ✓ src/accounts/AccountWorkspace.test.tsx (32 tests) 4716ms
+   ✓ 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非秘密连接  502ms
+   ✓ 账号配置工作区 > 在 A-roll 尚未配置时，仍使用本机 OpenChatCut 状态开放本地路径  306ms
+   ✓ 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿  1552ms
+ ✓ scripts/isolation/http-credentials.test.mjs (1 test) 7ms
+ ✓ src/localEpisodeDirectoryRoute.test.ts (28 tests) 3379ms
+   ✓ 本地 Episode 目录路由 > 复用短时已验证的产物索引，避免重复查询和哈希  3010ms
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/reviews/ReviewWorkspace.test.tsx (64 tests) 9904ms
+   ✓ 审核台 > 通过统一入口标注用途后按顺序导入脚本、图片、A-roll 和 B-roll  374ms
+   ✓ 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择  2957ms
+   ✓ 审核台 > 审核阶段可返回可编辑镜头工作台，且保留当前 QC 证据  837ms
+   ✓ 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交  410ms
+   ✓ 审核台 > 逐镜头口播无需确认即可保存，并可保存单镜头覆盖  504ms
+   ✓ 审核台 > 同一原片支持多段裁剪并随镜头草稿一起保存  405ms
+   ✓ 审核台 > 人工媒体可在镜头工作台选择原片并保存镜头设置  536ms
+
+ Test Files  77 passed (77)
+      Tests  699 passed (699)
+   Start at  00:40:30
+   Duration  11.52s (transform 2.32s, setup 0ms, collect 8.51s, tests 24.82s, environment 17.69s, prepare 3.22s)
+
+EXIT 0
+CHECK ["--test","n8n/import-workflows.test.mjs"]
+✔ 导入脚本先创建可覆盖的 n8n runtime，再在其中暂存工作流 (2.271333ms)
+✔ 提醒工作流声明零字段透传契约 (0.870666ms)
+﹣ 提醒工作流通过本机 n8n 节点配置校验 (0.0675ms) # SKIP
+ℹ tests 3
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 1
+ℹ todo 0
+ℹ duration_ms 49.249666
+EXIT 0
+CHECK ["run","check"]
+
+> loop-control@0.1.0 check
+> tsc -b --pretty false
+
+EXIT 0
+CHECK ["run","runtime:prepare"]
+
+> loop-control@0.1.0 runtime:prepare
+> node scripts/prepare-runtime.mjs
+
+Worker/编排程序已准备并通过源码与产物完整性检查。
+EXIT 0

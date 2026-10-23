@@ -1,0 +1,36 @@
+{
+  "version": "qc-report/v1",
+  "renderFingerprint": "efc411b7580ecc385681dfd0801593e2b455a47a076f5c1e9a4d4ecb87027fee",
+  "reuse": {
+    "reused": true,
+    "sourceReviewPackageId": "a69221e6-6fcb-43ca-b933-f43cc837e49e",
+    "sourceVideo": {
+      "sha256": "072a7695acfdedfbe316d9187d47ac197cfa9ad1b21d6285bd55b70733e8e143",
+      "fileSize": 227674,
+      "artifactType": "render",
+      "relativePath": "episodes/132c8432-d7cc-4850-a5cf-56333ff38b20/review-render/v1/review.mp4"
+    }
+  },
+  "passed": true,
+  "inputFingerprint": "11111111111111111111111111111111",
+  "output": {
+    "relativePath": "episodes/132c8432-d7cc-4850-a5cf-56333ff38b20/final-render/v1/final-render.mp4",
+    "durationSeconds": 2.048,
+    "width": 360,
+    "height": 640,
+    "hasAudio": true,
+    "blackFrameCount": 0
+  },
+  "checks": [
+    {
+      "name": "openchatcut_project",
+      "passed": true,
+      "detail": "OpenChatCut 项目已冻结：episodes/132c8432-d7cc-4850-a5cf-56333ff38b20/final-render/v1/project.json"
+    },
+    {
+      "name": "openchatcut_render",
+      "passed": true,
+      "detail": "输出包含音频。"
+    }
+  ]
+}

@@ -104,7 +104,12 @@ async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
     return taskPackage.capability === "storyboard_planning" ? useWrittenStoryboard(taskPackage, completedOutput) : completedOutput;
   }
   if (taskPackage.provider === "openchatcut") {
-    const input = { taskPackage, run: runCommand, validateMp4: validateMp4Artifact, inspectMp4: inspectMp4Artifact };
+    const input = { taskPackage, run: runCommand, validateMp4: validateMp4Artifact, inspectMp4: inspectMp4Artifact,
+      ...(taskPackage.finalRender?{getApprovedReuseSource:async()=>{
+        const {data,error}=await supabase.rpc("final_render_reuse_source",{p_task_id:taskPackage.task.id,p_attempt:taskPackage.budget.attempt,p_lease_token:leaseToken(taskPackage.task.id,taskPackage.budget.attempt)});
+        if(error||!data||data.reviewPackageId!==taskPackage.finalRender?.sourceReviewPackageId)throw Error("最终成片来源审核已失效或无法核验，停止执行。");
+        return data;
+      }}:{}) };
     return executeOpenChatCutRender(input);
   }
   if (taskPackage.provider === "whisperx") return executeWhisperXTask(taskPackage);

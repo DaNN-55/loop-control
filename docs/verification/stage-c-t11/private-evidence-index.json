@@ -1,0 +1,142 @@
+[
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773544903/fixture.json",
+    "bytes": 439,
+    "sha256": "4d16c0b92b22346c1db845ea2e234c27fbfd4963e50eb712f1c497439bbc7d2c"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773544903/reuse-task.json",
+    "bytes": 15927,
+    "sha256": "d24b8a99cbaa2c252a2db919bc839e1a3f4a892ca18b9f00374086ba62c080e0"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773544903/review-task.json",
+    "bytes": 13675,
+    "sha256": "81ce73983c91b65ac0c9b2764f62bec0cdb8e4aa823399716ed58c5d737f4b41"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773544903/result.json",
+    "bytes": 4203,
+    "sha256": "ed5a74faf468e4072ee1d1f58c943041c865de9723c0dc2919d13533caa24bb1"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773544903/worker-6e5f77d5-f0e7-4b9d-91d6-5de32032de52.log",
+    "bytes": 71,
+    "sha256": "00cfe2c0e627a6f5b69d875534f36db72ac897fd5a1f6c1074d5a2a0785aadb3"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773544903/source-approved-video.mp4",
+    "bytes": 227674,
+    "sha256": "072a7695acfdedfbe316d9187d47ac197cfa9ad1b21d6285bd55b70733e8e143"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773544903/worker-73a67fa1-71ed-4f99-890e-52832eaafadc.log",
+    "bytes": 71,
+    "sha256": "1bf32256700402a41b385e24b05cbee5f9e9600e49e4331528ca19d1085b6bc1"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773153786/fixture.json",
+    "bytes": 439,
+    "sha256": "22b74f7bcf3edf7e6807e7de9dc29808cdf5eedb60ae1a05a08f0ec41060acda"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773153786/review-task.json",
+    "bytes": 12950,
+    "sha256": "a176b8fe9759e082acaa4f9b4349291e7cc8bf99a9b55605ad6802f5a5175e2c"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773153786/worker-75d580f7-e4ed-432a-94e2-50509af30292.log",
+    "bytes": 69,
+    "sha256": "2ae6e0db75ad4c0c0cf4d73b19dce292b7524f11b72b178a9244f4c9a1a52a24"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773552287/worker-c1e33bf3-3535-49f2-9de6-d7cc446fa30a.log",
+    "bytes": 71,
+    "sha256": "0cac477a51047339a336e3fa6f0a6a0e59354ddc1d0ebf6f8651f8d3834808bc"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773552287/fixture.json",
+    "bytes": 439,
+    "sha256": "231c383dc086ff666ec91548aa021ed61ee4218a5b985e492ecd80d5727717ba"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773552287/review-task.json",
+    "bytes": 13675,
+    "sha256": "4a5535cfd73db3b0eb30ec888081d1aca1f8d16cf8a3e7f319c54bf72ce4835a"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773552287/result.json",
+    "bytes": 4230,
+    "sha256": "bbd117fc5b9657fb499af4fc2755bdd6cb3635b608d0ad6578bb11009f9b56a9"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773552287/worker-21101d69-cbe9-46f9-b6b4-f275223c8dcb.log",
+    "bytes": 71,
+    "sha256": "a41ef0ce4c09a568b0982edb36d56a488905d79c83f09e69cf843595eb11bfcf"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773552287/corrupt-rerender-task.json",
+    "bytes": 15864,
+    "sha256": "e852d6eeed7a129698b08a96bcd6712e23e53067ac031bfd972ff0fa23573992"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773552287/source-approved-video.mp4",
+    "bytes": 227674,
+    "sha256": "072a7695acfdedfbe316d9187d47ac197cfa9ad1b21d6285bd55b70733e8e143"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773319106/fixture.json",
+    "bytes": 439,
+    "sha256": "aa7d1c8b57207ec984dd7cd7bf43dbf3aa2d1ac91038d2ac7ed6a8bfb1a49d29"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773319106/worker-dbe8ef71-8c37-48f6-b5c1-b535588f30f9.log",
+    "bytes": 692,
+    "sha256": "2c971607a3d101c919aef4ae57d714b61c71d3538202cabdb3c9d2701aa6c387"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773319106/review-task.json",
+    "bytes": 10482,
+    "sha256": "95cf2bf49b9720748fea61c2d4db44cb0b43088ae86124d0c142360303b36425"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773442249/fixture.json",
+    "bytes": 439,
+    "sha256": "08f42d68a1f0dcc112ac77f57ed87d0c6fab23fd75b771715bcb21e3ee101891"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773442249/reuse-task.json",
+    "bytes": 15926,
+    "sha256": "fca4713b2b9cc8d3898d40cc8f176f485b1e7c93358380ef353aab0b12d15738"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773442249/review-task.json",
+    "bytes": 13676,
+    "sha256": "f3d6f35204a5da5630466a9ba06dceabbcd6264a5b2df3b66f237ec19bc184ee"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773442249/worker-14d738f0-46f6-452c-bc2f-0ebfd13dd384.log",
+    "bytes": 71,
+    "sha256": "ba417c7dbe0f68917ff961ec0d775cdf8e90ff3103957b2da2d7dba76bc0bb2f"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773442249/worker-90d1029f-e814-44b8-a349-5e11e0e4d5cb.log",
+    "bytes": 71,
+    "sha256": "e3299ec4550d3fc8d4ab5f1d4365e094bf046708b8de2474b412e6a7138ebf87"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t11/1792773442249/source-approved-video.mp4",
+    "bytes": 227674,
+    "sha256": "072a7695acfdedfbe316d9187d47ac197cfa9ad1b21d6285bd55b70733e8e143"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/stage-c-restore/1792773914692/result.json",
+    "bytes": 926,
+    "sha256": "a930006eba5bd233c72a93628ea0a7c97ff9d485e6cd55acf3ec6dcad01ddf50"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/stage-c-restore/1792773914692/managed-schema.sql",
+    "bytes": 339948,
+    "sha256": "a5daaa7d7a4144bea06e089ec599b490ca5d9a5e96614923dc7307c729abe7af"
+  }
+]

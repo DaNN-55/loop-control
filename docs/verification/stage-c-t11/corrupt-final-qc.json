@@ -1,0 +1,29 @@
+{
+  "version": "qc-report/v1",
+  "renderFingerprint": "9d173aba4a230eeb5e20977ff6b58d6aa1d9e5d5d76c3f6ca84e4c95ce636fcf",
+  "reuse": {
+    "reused": false
+  },
+  "passed": true,
+  "inputFingerprint": "11111111111111111111111111111111",
+  "output": {
+    "relativePath": "episodes/2f332b69-fcae-4266-b652-1b24c991b1f6/final-render/v1/final-render.mp4",
+    "durationSeconds": 2.048,
+    "width": 360,
+    "height": 640,
+    "hasAudio": true,
+    "blackFrameCount": 0
+  },
+  "checks": [
+    {
+      "name": "openchatcut_project",
+      "passed": true,
+      "detail": "OpenChatCut 项目已冻结：episodes/2f332b69-fcae-4266-b652-1b24c991b1f6/final-render/v1/project.json"
+    },
+    {
+      "name": "openchatcut_render",
+      "passed": true,
+      "detail": "输出包含音频。"
+    }
+  ]
+}

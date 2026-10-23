@@ -1,0 +1,21 @@
+
+> loop-control@0.1.0 runtime:prepare
+> node scripts/prepare-runtime.mjs
+
+
+> loop-control@0.1.0 worker:build
+> tsc -p tsconfig.worker.json
+
+src/worker/codexWorkerCli.ts(109,133): error TS2339: Property 'attempt' does not exist on type 'Pick<{ id: string; type: string; attempt: number; budgetLimitCents: number; maxAttempts: number; provider: "codex" | "ffmpeg" | "openchatcut" | "whisperx" | "openai" | "cloudflare" | "pexels" | "google_tts" | "volcengine_tts" | "freesound"; model: string; promptVersion: string; }, "type" | "id">'.
+src/worker/codexWorkerCli.ts(109,203): error TS2339: Property 'attempt' does not exist on type 'Pick<{ id: string; type: string; attempt: number; budgetLimitCents: number; maxAttempts: number; provider: "codex" | "ffmpeg" | "openchatcut" | "whisperx" | "openai" | "cloudflare" | "pexels" | "google_tts" | "volcengine_tts" | "freesound"; model: string; promptVersion: string; }, "type" | "id">'.
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/prepare-runtime.mjs:9
+    child.once('error',reject);child.once('exit',code=>code===0?resolve():reject(Error(`${script} failed (${code})`)));
+                                                                                 ^
+
+Error: worker:build failed (2)
+    at ChildProcess.<anonymous> (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/prepare-runtime.mjs:9:82)
+    at ChildProcess.wrapper (node:events:639:12)
+    at ChildProcess.emit (node:events:514:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:295:12)
+
+Node.js v24.20.0

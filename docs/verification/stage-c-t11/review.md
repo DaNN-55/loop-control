@@ -1,0 +1,5 @@
+# T11 两轴终审
+
+基线da20fc7。Standards与Spec独立复审，三项finding均修复：来源RPC绑定实际attempt/token及task_run；只取审核包artifact_id指向的视频；复用后二次检查输入一致性及完整视频身份。两轴终审无剩余实现阻塞。Spec独立复核两组14件实际产物，大小与SHA-256全部匹配。
+
+C最终恢复脚本追加Standards复审发现旧pending可造成触发器测试假通过。已改为新事件明确UUID入账断言、领取ID原pending集合检查、历史非pending结果不变；真实新空库再次通过，finding关闭。当前38表20379行、268项权限对象及282份媒体指纹匹配；Auth登录仍未测。
