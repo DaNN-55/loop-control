@@ -1,0 +1,1 @@
+{"compilerOptions":{"target":"ES2022","module":"NodeNext","moduleResolution":"NodeNext","strict":true,"esModuleInterop":true,"skipLibCheck":true,"outDir":"./dist/local-app","rootDir":"./src","types":["node"]},"include":["src/local-app/catalog.ts","src/local-app/catalogRoute.ts"]}

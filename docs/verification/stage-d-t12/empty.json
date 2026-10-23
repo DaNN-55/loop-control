@@ -1,0 +1,174 @@
+{
+  "database": "loop_empty",
+  "nativePostgres": true,
+  "sourceCreatedAt": "2026-10-23T16:42:53.747Z",
+  "archiveSha256": "25e75bc66a2b7e16d294752606a121317982b84543b6296bfe927663c384b436",
+  "schemaSha256": "d8c35a0afe36a41fc763632bcba56a52623a37f3ce5ae4dd23491e5a27ea873a",
+  "platformAdaptation": {
+    "identityForeignKeys": 21,
+    "ownerCalls": 185,
+    "vaultDisabled": [
+      "public.create_external_connection(p_provider text, p_adapter text, p_name text, p_secret text) RETURNS public.external_connections",
+      "public.delete_external_connection_version(p_version_id uuid) RETURNS void",
+      "public.resolve_external_connection_secret(p_connection_id uuid) RETURNS text",
+      "public.resolve_external_connection_secret(p_connection_id uuid, p_account_id uuid) RETURNS text",
+      "public.rotate_external_connection(p_connection_id uuid, p_provider text, p_adapter text, p_secret text) RETURNS public.external_connections"
+    ]
+  },
+  "tables": {
+    "tasks": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "series": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "accounts": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "episodes": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "approvals": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "artifacts": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "task_runs": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "asset_locks": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "audio_tracks": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "audit_events": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "prompt_versions": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "review_packages": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "series_versions": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "qc_review_issues": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "state_transitions": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "review_annotations": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "account_memberships": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "external_connections": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "worker_episode_turns": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "episode_read_revisions": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "audio_track_annotations": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "production_dependencies": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "shot_preparation_drafts": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "storyboard_review_shots": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "production_invalidations": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "worker_resource_ceilings": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "pre_render_review_members": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "worker_scheduler_settings": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "account_blueprint_versions": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "material_revision_approvals": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "notification_delivery_state": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "storyboard_audio_selections": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "external_connection_versions": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "notification_delivery_events": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "production_material_revisions": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "external_connection_verifications": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "pre_render_review_member_decisions": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "review_render_composition_revisions": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    }
+  },
+  "rows": 0,
+  "emptySchemaVerified": true
+}

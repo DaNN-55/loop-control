@@ -1,0 +1,55 @@
+{
+  "ticket": 118,
+  "passed": true,
+  "at": "2026-10-23T17:02:55.673Z",
+  "nativePostgres": true,
+  "sourceCreatedAt": "2026-10-23T16:42:53.747Z",
+  "importedAt": "2026-10-23T16:59:44.604Z",
+  "samples": {
+    "accounts": {
+      "count": 12,
+      "sampleIds": [
+        "0fc7c09e-970c-4360-b3e4-d535e7cc451f",
+        "1d369d88-6cda-49be-9905-ae69df5ab12d",
+        "232446d2-e659-48f9-b39e-685fe3df471a"
+      ]
+    },
+    "blueprints": {
+      "count": 12,
+      "sampleIds": [
+        "1632aa68-f728-4823-8902-58a39d39ee27",
+        "7510084a-11f1-4cdb-9a19-2149bb71f2f4",
+        "774da715-be23-4084-bbd8-0e785a9bbd32"
+      ]
+    },
+    "episodes": {
+      "count": 6174,
+      "sampleIds": [
+        "002557fd-1287-4785-9daf-945ca9ce4fda",
+        "002c11f1-9958-4d07-b6f1-a6ea99e0c38e",
+        "00362660-9bbc-44da-927e-25bd1cd8d5e4"
+      ]
+    },
+    "series": {
+      "count": 0,
+      "sampleIds": []
+    },
+    "seriesVersions": {
+      "count": 0,
+      "sampleIds": []
+    }
+  },
+  "http": {
+    "anonymous": 401,
+    "crossOrigin": 403,
+    "write": 405,
+    "unmigratedCommand": 404,
+    "catalog": 200
+  },
+  "leastPrivilege": true,
+  "transactionIdentityCleared": true,
+  "authVaultSchemasAbsent": true,
+  "identityForeignKeys": 21,
+  "identityBridge": "verified isolated Supabase Auth only; T13 removes this dependency",
+  "allBusinessReads": "native PostgreSQL; no fallback"
+}

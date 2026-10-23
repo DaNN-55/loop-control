@@ -45,11 +45,17 @@
     "isolated:leases": "node scripts/isolation/leases.mjs",
     "isolated:worker-recovery": "node scripts/isolation/worker-recovery.mjs",
     "isolated:stage-b-audit": "node scripts/isolation/stage-b-audit.mjs",
-    "isolated:sql-tests": "node scripts/isolation/sql-tests.mjs"
+    "isolated:sql-tests": "node scripts/isolation/sql-tests.mjs",
+    "local:prepare": "node scripts/local/prepare.mjs",
+    "local:import": "node scripts/local/restore.mjs --verified",
+    "local:start": "node scripts/local/start.mjs",
+    "local:stop": "node scripts/local/stop.mjs",
+    "local:check": "node scripts/local/check.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.0",
     "lucide-react": "^1.31.0",
+    "pg": "8.23.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-range": "^1.10.0"
@@ -58,6 +64,7 @@
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
     "@types/node": "^24.3.0",
+    "@types/pg": "8.23.1",
     "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.2",

@@ -1,0 +1,9 @@
+{
+  "ticket": 118,
+  "syntheticAuth": true,
+  "realHttp": true,
+  "realDatabase": true,
+  "populatedSeries": true,
+  "seriesVersionPreserved": true,
+  "otherOwnerSeesNoAccounts": true
+}
