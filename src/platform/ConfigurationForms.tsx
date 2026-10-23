@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import type { Database, Json } from "../lib/database.types";
-import { supabase } from "../lib/supabase";
+import { backend } from "../lib/backend";
 import { HelpTip } from "../ui/HelpTip";
 import { ConfirmationModal } from "../ui/ConfirmationModal";
 import { useDialogFocus } from "../ui/useDialogFocus";
@@ -317,6 +317,8 @@ export function BlueprintConfigurationForm({ accountId, connectionVersions = [],
 
   async function requestLocalAssetDirectory(action: "choose" | "open") {
     if (!accountId) throw new Error("当前账号不可用，无法操作本地目录。");
+    if (backend === "local") throw new Error("本地文件夹选择尚不可用；可填写已授权的素材目录。");
+    const { supabase } = await import("../lib/supabase");
     const { data, error: sessionError } = await supabase.auth.getSession();
     if (sessionError) throw sessionError;
     if (!data.session) throw new Error("需要 Owner 登录会话。");

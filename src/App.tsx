@@ -1,3 +1,5 @@
+import { AccountForm, TimezoneSelect } from "./accounts/AccountForm";
+export { TimezoneSelect, timezoneOptions } from "./accounts/AccountForm";
 import { readAllPages } from "./lib/pagedRead";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent } from "react";
@@ -71,30 +73,6 @@ interface ReviewAction {
 }
 
 
-export const timezoneOptions = [
-  ["Asia/Shanghai", "中国大陆 · 上海"],
-  ["Asia/Ho_Chi_Minh", "越南 · 胡志明市"],
-  ["Asia/Tokyo", "日本 · 东京"],
-  ["Asia/Seoul", "韩国 · 首尔"],
-  ["Asia/Singapore", "新加坡"],
-  ["Asia/Kolkata", "印度 · 加尔各答"],
-  ["Asia/Dubai", "阿联酋 · 迪拜"],
-  ["Europe/London", "英国 · 伦敦"],
-  ["Europe/Berlin", "德国 · 柏林"],
-  ["Europe/Paris", "法国 · 巴黎"],
-  ["America/New_York", "美国东部 · 纽约"],
-  ["America/Chicago", "美国中部 · 芝加哥"],
-  ["America/Denver", "美国山地 · 丹佛"],
-  ["America/Los_Angeles", "美国西部 · 洛杉矶"],
-  ["America/Toronto", "加拿大 · 多伦多"],
-  ["Australia/Sydney", "澳大利亚 · 悉尼"],
-  ["Pacific/Auckland", "新西兰 · 奥克兰"],
-  ["UTC", "协调世界时 · UTC"],
-] as const;
-
-export function TimezoneSelect({ value, onChange }: { value: string; onChange: (value: string) => void }) {
-  return <label>时区<select aria-label="时区" onChange={(event) => onChange(event.target.value)} value={value}>{timezoneOptions.map(([timezone, label]) => <option key={timezone} value={timezone}>{label}（{timezone}）</option>)}</select></label>;
-}
 
 interface Workspace {
   accounts: Account[];
@@ -1497,18 +1475,6 @@ export function EpisodeForm({ accounts, blueprints = [], connectionVersions = []
   return <div className="modal-backdrop" role="presentation"><form aria-label="新建生产单" className="modal-card episode-form-modal" onSubmit={(event) => void submit(event)}><header><div><h2>新建生产单</h2><p>会固定所选账号当前激活蓝图和可选系列版本。</p></div><button aria-label="关闭新建生产单" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></button></header><label>账号<select onChange={(event) => { setAccountId(event.target.value); setSeriesVersionId(""); setEpisodePreflight(null); }} value={accountId}>{accounts.map((account) => <option key={account.id} value={account.id}>{account.name}</option>)}</select></label><label>系列版本（可选）<select aria-label="系列版本" onChange={(event) => { setSeriesVersionId(event.target.value); setEpisodePreflight(null); }} value={seriesVersionId}><option value="">不关联系列</option>{availableVersions.map((version) => <option key={version.id} value={version.id}>{seriesById.get(version.series_id)?.name ?? "未知系列"} · v{version.version}</option>)}</select></label><label>工作标题（可留空）<input autoFocus onChange={(event) => setTitle(event.target.value)} placeholder="可在首次适用审核前补充" value={title} /></label>{canCreateEpisode ? <><section className="technical-policy-preview"><header><strong>本单将冻结的生产能力</strong><span>{frozenMediaCapabilities.length} 项</span></header>{frozenMediaCapabilities.length ? <div className="summary-chip-list">{visibleFrozenMediaCapabilities.map(({ key, path }) => <span className="summary-chip" key={key}>{mediaCapabilityLabel(key)} · {path === "local" ? "本地" : path === "manual" ? "人工素材" : "外部"}</span>)}{hiddenFrozenMediaCapabilities.length ? <span className="summary-chip summary-chip-overflow" title={hiddenFrozenMediaCapabilities.map(({ key, path }) => `${mediaCapabilityLabel(key)} · ${path === "local" ? "本地" : path === "manual" ? "人工素材" : "外部"}`).join("\n")}>+{hiddenFrozenMediaCapabilities.length} 项</span> : null}</div> : <span className="summary-empty">当前蓝图没有已完整配置的可选媒体能力。</span>}<p className="field-hint">只会冻结以下已启用且完整配置的能力；分镜没有声明需求时不会创建对应任务。</p></section><p className="form-hint">标题只是管理元数据，后续修改不会使已导入内容失效。</p></> : <p className="form-error">当前账号没有启用蓝图，请先激活一个蓝图版本。</p>}{isPending ? <section aria-live="polite" className="episode-creation-progress" role="status"><strong>正在创建生产单</strong><ol>{episodeCreationSteps.map((step, index) => <li className={index < activeStepIndex ? "is-complete" : index === activeStepIndex ? "is-active" : ""} key={step.id}><i aria-hidden="true">{index < activeStepIndex ? "✓" : index + 1}</i><span><b>{step.label}</b></span></li>)}</ol><p className="episode-creation-current">{activeStep.note} 本阶段已等待 {elapsedSeconds} 秒。</p></section> : null}{episodePreflight ? <details aria-live="polite" className={`production-preflight ${blockers.length ? "is-blocked" : "is-passed"}`} role="alert"><summary><strong>创建前可生产性检查：未通过（{blockers.length}）</strong><span>展开阻塞详情</span></summary><div className="production-preflight-body"><p>本次检查未通过，因此尚未创建生产单。处理下面的原因后，点击“创建生产单”重新检查。</p>{blockers.map((blocker) => <WorkerBlockerCard blocker={blocker} key={`${blocker.code}-${blocker.capability}`} onOpenBlueprint={onOpenBlueprint ? () => onOpenBlueprint(accountId) : undefined} />)}</div></details> : null}<div className="modal-actions"><button className="button button-secondary" disabled={isPending} onClick={onClose} type="button">取消</button><button className="button button-primary" disabled={isPending || !accountId || !canCreateEpisode} type="submit">{isPending ? "正在处理…" : "创建生产单"}</button></div></form></div>;
 }
 
-function AccountForm({ isPending, onClose, onSubmit }: { isPending: boolean; onClose: () => void; onSubmit: (input: { name: string; slug: string; timezone: string; policy: Json }) => Promise<void> }) {
-  const [name, setName] = useState("");
-  const [slug, setSlug] = useState("");
-  const [timezone, setTimezone] = useState("Asia/Shanghai");
-
-  async function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    await onSubmit({ name, slug, timezone, policy: defaultBlueprintPolicy });
-  }
-
-  return <div className="modal-backdrop" role="presentation"><form aria-label="新建账号" className="modal-card" onSubmit={submit}><header><div><h2>新建账号</h2></div><button aria-label="关闭新建账号" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></button></header><label>账号名称<input autoFocus onChange={(event) => setName(event.target.value)} placeholder="例如：内容工作室" required value={name} /></label><label>账号标识<input onChange={(event) => setSlug(event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))} pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="content-studio" required value={slug} /></label><TimezoneSelect onChange={setTimezone} value={timezone} /><p className="form-hint">选择账号日常运营和任务时间所使用的时区。</p><div className="modal-actions"><button className="button button-secondary" onClick={onClose} type="button">取消</button><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "创建中…" : "创建账号"}</button></div></form></div>;
-}
 
 function PasswordForm({ isPending, onClose, onSubmit }: { isPending: boolean; onClose: () => void; onSubmit: (password: string) => Promise<void> }) {
   const [password, setPassword] = useState("");

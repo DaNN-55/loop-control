@@ -7,7 +7,9 @@ import type {ServerResponse} from 'node:http';
 interface ArtifactFile {relative_path:string;sha256:string;file_size:string|number;source_asset_root:string;source_media_root:string}
 export async function serveOwnedArtifact(root:string,artifact:ArtifactFile,response:ServerResponse){
  if(!artifact.source_media_root||!isAbsolute(artifact.source_asset_root))throw Error('Missing deployment mapping');
- const accountRelative=relative(artifact.source_media_root,artifact.source_asset_root);
+ const localRelative=relative(root,artifact.source_asset_root);
+ const alreadyLocal=!localRelative.startsWith('..')&&!isAbsolute(localRelative);
+ const accountRelative=alreadyLocal?localRelative:relative(artifact.source_media_root,artifact.source_asset_root);
  if(accountRelative.startsWith('..')||isAbsolute(accountRelative))throw Error('Source asset root outside import');
  const accountRoot=resolve(root,accountRelative);
  const path=resolve(accountRoot,artifact.relative_path),rel=relative(accountRoot,path);

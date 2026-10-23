@@ -1,3 +1,4 @@
+import {executeConfiguration,ConfigurationError} from './configurationCommands.js';
 import {timingSafeEqual} from 'node:crypto';
 import type {IncomingMessage,ServerResponse} from 'node:http';
 import type {Pool} from 'pg';
@@ -7,9 +8,9 @@ import {readLocalEpisode,findOwnedArtifact} from './episodeReads.js';
 import {serveOwnedArtifact} from './artifactRoute.js';
 interface LocalOptions {pool:Pool;origin:string;mediaRoot:string}
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-async function readBody(request:IncomingMessage):Promise<Record<string,unknown>>{
+async function readBody(request:IncomingMessage,limit=8192):Promise<Record<string,unknown>>{
  if(request.headers['content-type']?.split(';')[0]!=='application/json')throw Error('JSON required');
- let text='';for await(const chunk of request){text+=chunk;if(Buffer.byteLength(text)>8192)throw Error('Body too large');}
+ let text='';for await(const chunk of request){text+=chunk;if(Buffer.byteLength(text)>limit)throw Error('Body too large');}
  const parsed:unknown=JSON.parse(text);if(!parsed||typeof parsed!=='object'||Array.isArray(parsed))throw Error('Object required');return parsed as Record<string,unknown>;
 }
 export function createLocalHandler(options:LocalOptions){
@@ -38,6 +39,10 @@ export function createLocalHandler(options:LocalOptions){
    if(url.pathname==='/api/local/logout'&&request.method==='POST'){
     await revokeSession(options.pool,session.token);response.setHeader('Set-Cookie',cookieHeader(''));send(200,{loggedOut:true});return;
    }
+   if(url.pathname==='/api/local/configuration'&&request.method==='POST'){
+    let body;try{body=await readBody(request,256*1024);}catch{send(400,{error:'配置请求格式无效。'});return;}
+    send(200,await executeConfiguration(options.pool,session,body,options.mediaRoot));return;
+   }
    if(request.method!=='GET'){send(405,{error:'该本地命令尚未开放。'});return;}
    if(url.pathname==='/api/local/session'){send(200,{owner:{id:session.id,email:session.email},csrfToken:csrfFor(session.token)});return;}
    if(url.pathname==='/api/local/catalog'){send(200,await readLocalCatalog(options.pool,session.id));return;}
@@ -51,6 +56,8 @@ export function createLocalHandler(options:LocalOptions){
     try{await serveOwnedArtifact(options.mediaRoot,record,response);}catch{if(response.headersSent)response.destroy();else send(409,{error:'产物路径或指纹校验失败。'});}return;
    }
    send(404,{error:'本地路径尚未迁移。'});
-  }catch{if(response.headersSent)response.destroy();else send(503,{error:'本机服务暂不可用，请检查本机状态。'});}
+  }catch(error){if(error instanceof ConfigurationError){send(error.status,{error:error.message});return;}
+   const code=(error as {code?:string})?.code;if(code==='42501'){send(403,{error:'所有者权限不足。'});return;}if(code==='23505'||code==='23503'){send(409,{error:'配置冲突或仍被引用。'});return;}if(code==='23514'||code?.startsWith('22')){send(400,{error:'配置校验未通过。'});return;}
+   if(response.headersSent)response.destroy();else send(503,{error:'本机服务暂不可用，请检查本机状态。'});}
  };
 }
