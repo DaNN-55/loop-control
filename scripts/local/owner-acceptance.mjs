@@ -2,10 +2,10 @@ import assert from 'node:assert/strict';
 import {request as httpRequest} from 'node:http';
 import {readFileSync,existsSync} from 'node:fs';
 import {symlink,unlink} from 'node:fs/promises';
-import {join} from 'node:path';
+import {join,resolve,relative} from 'node:path';
 import {randomUUID,createHash} from 'node:crypto';
 import {execFileSync} from 'node:child_process';
-import {root,projectRoot,appPort,sql,env,writePrivateFile} from './environment.mjs';
+import {root,projectRoot,appPort,sql,env,writePrivateFile,ensurePrivateDirectory} from './environment.mjs';
 import {tokenHash} from '../../dist/local-app/local-app/sessions.js';
 const owner=JSON.parse(readFileSync(join(root,'state/t13-owner.json'))),base=`http://127.0.0.1:${appPort}`;
 const api=(path,options={})=>fetch(base+'/api/local/'+path,options);
@@ -36,10 +36,19 @@ if(foreignArtifact)assert.equal((await api('artifacts/'+foreignArtifact,{headers
 // artifact rows are never rewritten. Only these new probe rows are cleaned up.
 const fixture=randomUUID(),badArtifact=randomUUID(),symlinkArtifact=randomUUID();
 const blueprint=catalog.accounts[0].current_blueprint_version_id,account=catalog.accounts[0].id;
-sql(`begin;insert into public.episodes(id,account_id,blueprint_version_id,title,is_test) values('${fixture}','${account}','${blueprint}','T13 unsafe file probes',true);insert into public.artifacts(id,episode_id,artifact_type,relative_path,sha256,file_size) values('${badArtifact}','${fixture}','test','../state/t13-owner.json','${'0'.repeat(64)}',0),('${symlinkArtifact}','${fixture}','test','t13-unsafe-link','${'0'.repeat(64)}',0);commit;`);
+const policy=catalog.blueprints.find(b=>b.id===blueprint).policy;
+const sourceRoot=sql('select source_media_root from local_identity.import_record');
+const accountRoot=resolve(root,'media',relative(sourceRoot,policy.asset_root));
+assert.ok(!relative(join(root,'media'),accountRoot).startsWith('..'));ensurePrivateDirectory(accountRoot);
+const probeText='T13 nonsecret file boundary probe',probeHash=createHash('sha256').update(probeText).digest('hex');
+const outside=join(root,`state/t13-outside-${fixture}.txt`),link=join(accountRoot,`t13-link-${fixture}.txt`);
+writePrivateFile(outside,probeText,{exclusive:true});writePrivateFile(link,probeText,{exclusive:true});
+const badRelative=relative(accountRoot,outside),linkRelative=relative(accountRoot,link);
+sql(`begin;insert into public.episodes(id,account_id,blueprint_version_id,title,is_test) values('${fixture}','${account}','${blueprint}','T13 unsafe file probes',true);insert into public.artifacts(id,episode_id,artifact_type,relative_path,sha256,file_size) values('${badArtifact}','${fixture}','test','${badRelative}','${probeHash}',${Buffer.byteLength(probeText)}),('${symlinkArtifact}','${fixture}','test','${linkRelative}','${probeHash}',${Buffer.byteLength(probeText)});commit;`);
 assert.equal((await api('artifacts/'+badArtifact,{headers:{Cookie:cookie}})).status,409);
-const link=join(root,'media/t13-unsafe-link');await symlink(join(root,'state/t13-owner.json'),link);
-try{assert.equal((await api('artifacts/'+symlinkArtifact,{headers:{Cookie:cookie}})).status,409);}finally{await unlink(link);}
+const ordinary=await api('artifacts/'+symlinkArtifact,{headers:{Cookie:cookie}});assert.equal(ordinary.status,200);assert.equal(await ordinary.text(),probeText);
+await unlink(link);await symlink(outside,link);
+try{assert.equal((await api('artifacts/'+symlinkArtifact,{headers:{Cookie:cookie}})).status,409);}finally{await unlink(link);await unlink(outside);}
 assert.equal((await api('logout',{method:'POST',headers:{Origin:base,Cookie:cookie}})).status,403);
 assert.equal((await api('logout',{method:'POST',headers:{Origin:base,Cookie:cookie,'X-CSRF-Token':csrf}})).status,200);
 assert.equal((await api('catalog',{headers:{Cookie:cookie}})).status,401);
@@ -55,5 +64,5 @@ assert.equal((await api('catalog',{headers:{Cookie:nextCookie}})).status,401);
 assert.equal((await fetch(base+`/@fs/${projectRoot}/.loop-control/stage-d/config.json`)).status,403);
 const service=JSON.parse(readFileSync(join(root,'state/app.json')));assert.equal(service.offlineGuard,true);
 sql(`begin;delete from public.artifacts where id in ('${badArtifact}','${symlinkArtifact}') and episode_id='${fixture}';delete from public.episodes where id='${fixture}' and is_test and title='T13 unsafe file probes';commit;`);
-const result={ticket:119,passed:true,at:new Date().toISOString(),ownerIdPreserved:true,passwordScrypt:true,plaintextSessionNotPersisted:true,httpOnlyStrictCookie:true,csrfMissingRejected:403,crossOriginRejected:403,hostRejected:403,metadataIgnored:true,legacyBearerRejected:401,localCatalogAccounts:12,episodeSections:Object.keys(workspace.hashes).filter(k=>!k.includes('/')).length,crossAccountDetail:404,ownedArtifactHashMatched:true,crossAccountArtifact:foreignArtifact?404:'no foreign fixture artifact',traversalRejected:409,symlinkRejected:409,logoutRevokes:true,reloginRotates:true,restartRetainsSession:true,expiredSessionRejected:401,offlineProcessGuard:true,offlineScope:'App outbound HTTP denied; sockets allow native DB only. Host network unchanged.',fixtureEpisode:fixture,fixtureArtifacts:[badArtifact,symlinkArtifact],unsafeFixturesDeleted:true,privateConfigHttp:403};
+const result={ticket:119,passed:true,at:new Date().toISOString(),ownerIdPreserved:true,passwordScrypt:true,plaintextSessionNotPersisted:true,httpOnlyStrictCookie:true,csrfMissingRejected:403,crossOriginRejected:403,hostRejected:403,metadataIgnored:true,legacyBearerRejected:401,localCatalogAccounts:12,episodeSections:Object.keys(workspace.hashes).filter(k=>!k.includes('/')).length,crossAccountDetail:404,ownedArtifactHashMatched:true,crossAccountArtifact:foreignArtifact?404:'no foreign fixture artifact',traversalRejected:409,symlinkRejected:409,ordinaryProbeReadBeforeSymlink:true,probeInMappedAccountRoot:true,logoutRevokes:true,reloginRotates:true,restartRetainsSession:true,expiredSessionRejected:401,offlineProcessGuard:true,offlineScope:'App outbound HTTP denied; sockets allow native DB only. Host network unchanged.',fixtureEpisode:fixture,fixtureArtifacts:[badArtifact,symlinkArtifact],unsafeFixturesDeleted:true,privateConfigHttp:403};
 writePrivateFile(join(root,'state/t13-http.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result,null,2));

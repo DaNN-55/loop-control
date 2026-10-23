@@ -1,7 +1,7 @@
 {
   "ticket": 119,
   "passed": true,
-  "at": "2026-10-23T17:18:07.763Z",
+  "at": "2026-10-23T17:20:56.497Z",
   "ownerIdPreserved": true,
   "passwordScrypt": true,
   "plaintextSessionNotPersisted": true,
@@ -18,16 +18,18 @@
   "crossAccountArtifact": "no foreign fixture artifact",
   "traversalRejected": 409,
   "symlinkRejected": 409,
+  "ordinaryProbeReadBeforeSymlink": true,
+  "probeInMappedAccountRoot": true,
   "logoutRevokes": true,
   "reloginRotates": true,
   "restartRetainsSession": true,
   "expiredSessionRejected": 401,
   "offlineProcessGuard": true,
   "offlineScope": "App outbound HTTP denied; sockets allow native DB only. Host network unchanged.",
-  "fixtureEpisode": "c090bb96-08f2-45df-adc0-df51bfe5294c",
+  "fixtureEpisode": "a4d6baa7-bb71-4612-a07d-bf800f1f9aaa",
   "fixtureArtifacts": [
-    "fd02b9ba-2aa9-469e-b962-7ce2322bcb3e",
-    "836a6d09-52a0-465b-a703-585488fad207"
+    "1c0089a4-87aa-4edc-b3d5-b07a484fd8ed",
+    "2ff17798-893d-46ef-906d-6f6342172103"
   ],
   "unsafeFixturesDeleted": true,
   "privateConfigHttp": 403
