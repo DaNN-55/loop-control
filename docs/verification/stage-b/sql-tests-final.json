@@ -1,0 +1,196 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "baseline": null,
+  "results": [
+    {
+      "file": "acoustic_alignment_priority_chain_test.sql",
+      "passed": true,
+      "checks": 9,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "batch_shot_tts_connection_ownership_test.sql",
+      "passed": true,
+      "checks": 5,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "clip_interval_union_duration_test.sql",
+      "passed": true,
+      "checks": 5,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "composition_aware_clip_duration_test.sql",
+      "passed": true,
+      "checks": 4,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "external_connection_security_test.sql",
+      "passed": true,
+      "checks": 9,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "global_owner_connection_integration_test.sql",
+      "passed": true,
+      "checks": 9,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "legacy_b_roll_blueprint_expansion_test.sql",
+      "passed": true,
+      "checks": 15,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "local_whisperx_alignment_test.sql",
+      "passed": true,
+      "checks": 10,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "review_render_duration_recovery_test.sql",
+      "passed": true,
+      "checks": 13,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "script_harness_freeze_test.sql",
+      "passed": true,
+      "checks": 13,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "shot_acceptance_gate_test.sql",
+      "passed": true,
+      "checks": 16,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "shot_audio_mix_contract_test.sql",
+      "passed": true,
+      "checks": 9,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "shot_caption_contract_test.sql",
+      "passed": true,
+      "checks": 13,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "shot_clip_completed_task_replacement_test.sql",
+      "passed": true,
+      "checks": 12,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "shot_composition_contract_test.sql",
+      "passed": true,
+      "checks": 11,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "shot_preparation_contract_cutover_test.sql",
+      "passed": true,
+      "checks": 9,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "shot_sync_preview_test.sql",
+      "passed": true,
+      "checks": 11,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "shot_workbench_input_fingerprint_test.sql",
+      "passed": true,
+      "checks": 5,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "storyboard_structure_revision_audio_track_test.sql",
+      "passed": true,
+      "checks": 3,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "storyboard_structure_revision_test.sql",
+      "passed": true,
+      "checks": 16,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    },
+    {
+      "file": "worker_runtime_constraints_test.sql",
+      "passed": true,
+      "checks": 27,
+      "failures": [],
+      "sqlError": false,
+      "sqlState": null,
+      "planProblem": false
+    }
+  ],
+  "checks": 224
+}

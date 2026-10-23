@@ -1,23 +1,23 @@
-import { execFile, spawn } from "node:child_process";
+import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 import { chmod, mkdir, readFile, rename, stat, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { formatSnapshotFilename, snapshotTables, type SnapshotTable } from "./backupPolicy.js";
 import { collectNotifications, type AuditEvent, type NotificationCursor } from "./notificationPolicy.js";
-import { dispatchProvidedScriptWork, runWithConcurrency } from "./providedScriptDispatch.js";
+import { dispatchWorkerTasks, type DispatchScope } from "./workerDispatch.js";
 
 const execFileAsync = promisify(execFile);
 const projectRoot = requiredEnvironment("LOOP_PROJECT_ROOT");
 const stateDirectory = process.env.LOOP_N8N_STATE_DIR ?? join(projectRoot, "n8n", "runtime", "orchestration");
 const backupDirectory = join(projectRoot, "n8n", "runtime", "backups");
 const mode = process.argv[2];
-const scopedEpisodeId = readEpisodeIdArgument(process.argv.slice(3));
+const dispatchScope = readDispatchScope(process.argv.slice(3));
 const workerConcurrency = positiveIntegerEnvironment("LOOP_WORKER_CONCURRENCY", process.env.CODEX_WORKER_CAPACITY ?? "2");
 
 try {
   switch (mode) {
     case "dispatch":
-      await dispatchTask();
+      process.stdout.write(`${JSON.stringify({ mode: "dispatch", ...await dispatchWorkerTasks({ projectRoot, supabaseUrl: supabaseCredentials().url, serviceRoleKey: supabaseCredentials().serviceRoleKey, concurrency: workerConcurrency }, dispatchScope) })}\n`);
       break;
     case "notify":
     case "notify-approvals":
@@ -36,140 +36,6 @@ try {
 } catch (error) {
   process.stderr.write(`${errorMessage(error)}\n`);
   process.exitCode = 1;
-}
-
-async function dispatchTask(): Promise<void> {
-  if (scopedEpisodeId) {
-    const plannedTasks = await planScopedMediaTasks(scopedEpisodeId);
-    const workers = await runPlannedWorkers(plannedTasks);
-    const productionReadyEpisodes = await orchestrateTasks("advance_production_ready_episodes", { p_episode_id: scopedEpisodeId });
-    const preRenderPackages = await orchestrateTasks("create_pre_render_review_packages_for_episode", { p_episode_id: scopedEpisodeId });
-    process.stdout.write(`${JSON.stringify({ mode: "dispatch", episodeId: scopedEpisodeId, plannedTasks: plannedTasks.length, workers, productionReadyEpisodes: productionReadyEpisodes.length, preRenderReviewPackages: preRenderPackages.length })}\n`);
-    return;
-  }
-
-  const pendingWork = await findPendingGlobalDispatchWork();
-  if (!pendingWork.hasWork) {
-    process.stdout.write(JSON.stringify({ mode: "dispatch", skipped: "idle" }) + "\n");
-    return;
-  }
-  if (pendingWork.qcFinalRenderOnly) {
-    const plannedTasks = await orchestrateTasks("orchestrate_final_render_tasks");
-    const workers = await runPlannedWorkers(plannedTasks);
-    process.stdout.write(JSON.stringify({ mode: "dispatch", plannedTasks: plannedTasks.length, workers, ...(plannedTasks.length === 0 ? { skipped: "idle" } : {}) }) + "\n");
-    return;
-  }
-
-  const result = await dispatchProvidedScriptWork({
-    planTasks: planWorkerTasks,
-    concurrency: workerConcurrency,
-    prepareWorkers: async () => { await runCommand("npm", ["run", "worker:build"], projectRoot); },
-    ...(pendingWork.hasClaimableTask ? { runExistingWorker: async () => {
-      const workerResult = await runCommand("npm", ["run", "worker:execute"], projectRoot);
-      return parseLastJsonLine(workerResult.stdout);
-    } } : {}),
-    runWorker: async (plannedTask) => {
-      const workerResult = await runCommand("npm", ["run", "worker:execute", "--", "--task-id", plannedTask.id], projectRoot);
-      return parseLastJsonLine(workerResult.stdout);
-    },
-  });
-  const productionReadyEpisodes = await orchestrateTasks("advance_production_ready_episodes");
-  const preRenderPackages = await orchestrateTasks("create_pre_render_review_packages");
-  process.stdout.write(JSON.stringify({ mode: "dispatch", ...result, productionReadyEpisodes: productionReadyEpisodes.length, preRenderReviewPackages: preRenderPackages.length }) + "\n");
-}
-
-async function findPendingGlobalDispatchWork(): Promise<{ hasWork: boolean; hasClaimableTask: boolean; qcFinalRenderOnly: boolean }> {
-  if (await hasSupabaseRows("tasks", {
-    status: "eq.ready",
-  })) return { hasWork: true, hasClaimableTask: true, qcFinalRenderOnly: false };
-
-  // Keep the 30-minute boundary and null behavior aligned with claim_next_worker_task.
-  if (await hasSupabaseRows("tasks", {
-    status: "eq.running",
-    claimed_at: `lt.${new Date(Date.now() - 30 * 60 * 1000).toISOString()}`,
-  })) return { hasWork: true, hasClaimableTask: true, qcFinalRenderOnly: false };
-
-  if (await hasSupabaseRows("episodes", {
-    stage: "in.(script_approved,visual_approved,storyboard_approved,production_ready,render_ready)",
-  })) return { hasWork: true, hasClaimableTask: false, qcFinalRenderOnly: false };
-
-  if (await hasSupabaseRows("episodes", { stage: "eq.qc_passed" })) return { hasWork: true, hasClaimableTask: false, qcFinalRenderOnly: true };
-
-  return { hasWork: false, hasClaimableTask: false, qcFinalRenderOnly: false };
-}
-
-async function hasSupabaseRows(table: "episodes" | "tasks", filters: Record<string, string>): Promise<boolean> {
-  const { url, serviceRoleKey } = supabaseCredentials();
-  const endpoint = new URL(`/rest/v1/${table}`, url);
-  endpoint.searchParams.set("select", "id");
-  endpoint.searchParams.set("limit", "1");
-  for (const [key, value] of Object.entries(filters)) endpoint.searchParams.set(key, value);
-  const response = await fetch(endpoint, { headers: { apikey: serviceRoleKey, Authorization: `Bearer ${serviceRoleKey}` } });
-  if (!response.ok) throw new Error(`检查待派发任务失败：Supabase 返回 HTTP ${response.status}`);
-  const payload: unknown = await response.json();
-  if (!Array.isArray(payload)) throw new Error("检查待派发任务失败：Supabase 返回格式无效。");
-  return payload.length > 0;
-}
-
-async function runPlannedWorkers(plannedTasks: Array<{ id: string }>): Promise<unknown[]> {
-  if (plannedTasks.length === 0) return [];
-  await runCommand("npm", ["run", "worker:build"], projectRoot);
-  return runWithConcurrency(plannedTasks, workerConcurrency, async (task) => {
-    const workerResult = await runCommand("npm", ["run", "worker:execute", "--", "--task-id", task.id], projectRoot);
-    return parseLastJsonLine(workerResult.stdout);
-  });
-}
-
-async function planScopedMediaTasks(episodeId: string): Promise<Array<{ id: string }>> {
-  const [visualTasks, storyboardTasks] = await Promise.all([
-    orchestrateTasks("orchestrate_provided_script_tasks_for_episode", { p_episode_id: episodeId }),
-    orchestrateTasks("orchestrate_storyboard_tasks_for_episode", { p_episode_id: episodeId }),
-  ]);
-  const bRollTasks = await orchestrateTasks("orchestrate_b_roll_tasks", { p_episode_id: episodeId });
-  const aRollTasks = await orchestrateTasks("orchestrate_a_roll_tasks_for_episode", { p_episode_id: episodeId });
-  const narrationTasks = await orchestrateTasks("orchestrate_narration_tasks", { p_episode_id: episodeId });
-  const soundtrackTasks = await orchestrateTasks("orchestrate_soundtrack_tasks", { p_episode_id: episodeId });
-  const derivedAudioTasks = await orchestrateTasks("orchestrate_embedded_audio_tasks", { p_episode_id: episodeId });
-  const reviewRenderTasks = await orchestrateTasks("orchestrate_review_render_tasks", { p_episode_id: episodeId });
-  const finalRenderTasks = await orchestrateTasks("orchestrate_final_render_tasks", { p_episode_id: episodeId });
-  return [...visualTasks, ...storyboardTasks, ...bRollTasks, ...aRollTasks, ...narrationTasks, ...soundtrackTasks, ...derivedAudioTasks, ...reviewRenderTasks, ...finalRenderTasks];
-}
-
-async function planWorkerTasks(): Promise<Array<{ id: string }>> {
-  const [visualTasks, storyboardTasks] = await Promise.all([
-    orchestrateTasks("orchestrate_provided_script_tasks"),
-    orchestrateTasks("orchestrate_storyboard_tasks"),
-  ]);
-  const bRollTasks = await orchestrateTasks("orchestrate_b_roll_tasks");
-  const aRollTasks = await orchestrateTasks("orchestrate_a_roll_tasks");
-  const narrationTasks = await orchestrateTasks("orchestrate_narration_tasks");
-  const soundtrackTasks = await orchestrateTasks("orchestrate_soundtrack_tasks");
-  const derivedAudioTasks = await orchestrateTasks("orchestrate_embedded_audio_tasks");
-  const reviewRenderTasks = await orchestrateTasks("orchestrate_review_render_tasks");
-  const finalRenderTasks = await orchestrateTasks("orchestrate_final_render_tasks");
-  return [...visualTasks, ...storyboardTasks, ...bRollTasks, ...aRollTasks, ...narrationTasks, ...soundtrackTasks, ...derivedAudioTasks, ...reviewRenderTasks, ...finalRenderTasks];
-}
-
-async function orchestrateTasks(functionName: string, args: Record<string, string> = {}): Promise<Array<{ id: string }>> {
-  const { url, serviceRoleKey } = supabaseCredentials();
-  const endpoint = new URL(`/rest/v1/rpc/${functionName}`, url);
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers: { apikey: serviceRoleKey, Authorization: `Bearer ${serviceRoleKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify(args),
-  });
-  if (!response.ok) throw new Error(`创建 Worker 任务失败：Supabase 返回 HTTP ${response.status}`);
-  const payload: unknown = await response.json();
-  if (!Array.isArray(payload) || payload.some((task) => !isRecord(task) || typeof task.id !== "string")) throw new Error("创建 Worker 任务失败：Supabase 返回格式无效。");
-  return payload as Array<{ id: string }>;
-}
-
-function readEpisodeIdArgument(args: string[]): string | null {
-  if (args.length === 0) return null;
-  if (args.length !== 2 || args[0] !== "--episode" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(args[1])) {
-    throw new Error("用法：orchestrator:run dispatch [--episode <UUID>]");
-  }
-  return args[1].toLowerCase();
 }
 
 async function notify(): Promise<void> {
@@ -317,31 +183,6 @@ async function check(name: string, action: () => Promise<void>): Promise<{ name:
   }
 }
 
-function runCommand(command: string, argumentsList: string[], cwd: string): Promise<{ stdout: string; stderr: string }> {
-  return new Promise((resolve, reject) => {
-    const child = spawn(command, argumentsList, { cwd, stdio: ["ignore", "pipe", "pipe"] });
-    let stdout = "";
-    let stderr = "";
-    child.stdout.on("data", (chunk: Buffer) => { stdout += chunk.toString(); });
-    child.stderr.on("data", (chunk: Buffer) => { stderr += chunk.toString(); });
-    child.once("error", reject);
-    child.once("close", (code) => {
-      if (code === 0) resolve({ stdout, stderr });
-      else reject(new Error(stderr.trim() || `命令退出状态为 ${code ?? "unknown"}。`));
-    });
-  });
-}
-
-function parseLastJsonLine(output: string): unknown {
-  const line = output.trim().split("\n").at(-1);
-  if (!line) throw new Error("Worker 没有输出结果。");
-  try {
-    return JSON.parse(line);
-  } catch {
-    throw new Error("Worker 输出不是预期的 JSON 结果。");
-  }
-}
-
 function requiredEnvironment(name: string): string {
   const value = process.env[name]?.trim();
   if (!value) throw new Error(`${name} 未配置。`);
@@ -364,4 +205,10 @@ function errorMessage(error: unknown): string {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function readDispatchScope(args: string[]): DispatchScope {
+  if (!args.length) return {};
+  if (args.length !== 2 || !["--episode", "--task-id"].includes(args[0]) || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(args[1])) throw new Error("用法：orchestrator:run dispatch [--episode <UUID>|--task-id <UUID>]");
+  return args[0] === "--episode" ? { episodeId: args[1].toLowerCase() } : { taskId: args[1].toLowerCase() };
 }

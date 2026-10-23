@@ -11,7 +11,7 @@ import { cleanEnvironment,writePrivateFile,ensurePrivateDirectory,projectRoot } 
 const c=targetConfiguration(),admin=createClient(c.apiUrl,c.serviceRoleKey,{auth:{persistSession:false}}),client=createClient(c.apiUrl,c.anonKey,{auth:{persistSession:false}});
 const sourceOwner=JSON.parse(readFileSync(join(config.stateRoot,'owner.json'))),owner=JSON.parse(readFileSync(join(c.stateRoot,`owner-${sourceOwner.id}.json`)));
 const unwrap=async p=>{const {data,error}=await p;if(error)throw new Error(`worker recovery: ${error.code}`);return data;};
-const login=await unwrap(client.auth.signInWithPassword(owner)),headers={authorization:`Bearer ${login.session.access_token}`};
+const login=await unwrap(client.auth.signInWithPassword(owner)),headers={authorization:`Bearer ${login.session.access_token}`,origin:`http://127.0.0.1:${c.ports.console}`};
 const episode=randomUUID(),task=randomUUID(),assetRoot=join(c.mediaRoot,'smoke');ensurePrivateDirectory(join(assetRoot,'episodes',episode));
 const bytes=readFileSync(join(assetRoot,'episodes/13029a1c-8dff-49eb-a2d4-e04e36126f6d/source-0.mp4')),source=`episodes/${episode}/source.mp4`;writePrivateFile(join(assetRoot,source),bytes,{exclusive:true});
 const output=`episodes/${episode}/recovered.mp4`;

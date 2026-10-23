@@ -22,7 +22,7 @@ vi.mock("./worker/runtimeEvidence", () => ({
 }));
 vi.mock("./worker/runtimeProbes", () => ({ probeCodexModel: vi.fn(), probeProviderConnection: vi.fn() }));
 
-import { assertWorkerDispatchEnvironment, beginEpisodeDispatch, beginTaskDispatch, createLocalControlPlaneMiddleware, runtimePreflightForPolicy, taskDispatchInvocation, taskDispatchStatus, type LocalControlPlaneDependencies } from "./local-control-plane/testing";
+import { createLocalControlPlaneMiddleware, runtimePreflightForPolicy, type LocalControlPlaneDependencies } from "./local-control-plane/testing";
 
 const accountId = "11111111-1111-4111-8111-111111111111";
 const episodeId = "22222222-2222-4222-8222-222222222222";
@@ -130,119 +130,66 @@ describe("Episode 修复 preflight 路由", () => {
   });
 });
 
-describe("开始制作后的即时派发", () => {
-  it("立即启动指定生产单，并在同一次派发未结束时去重", async () => {
-    let finish: (() => void) | undefined;
-    const run = vi.fn(() => new Promise<void>((resolve) => { finish = resolve; }));
+describe("持久任务派发状态", () => {
+  afterEach(() => vi.clearAllMocks());
 
-    expect(beginEpisodeDispatch(episodeId, run)).toBe("started");
-    expect(beginEpisodeDispatch(episodeId, run)).toBe("already_running");
-    expect(run).toHaveBeenCalledWith(episodeId);
-    finish?.();
-    await Promise.resolve();
-    await Promise.resolve();
+  it("重复提交返回可查询的排队状态，执行器退出不能改写持久状态", async () => {
+    const taskId = "55555555-5555-4555-8555-555555555555";
+    const client = mockSupabaseClient();
+    client.from.mockImplementation((table: string) => queryResult(table === "tasks" ? { id: taskId, status: "ready", created_at: "2026-10-23T10:00:00Z" } : table === "episodes" ? { account_id: accountId } : { role: "owner" }));
+    const server = createControlPlaneServer({ dispatchTask: () => "started" });
+    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+    const address = server.address();
+    if (!address || typeof address === "string") throw new Error("测试服务器未监听端口。");
+    const url = `http://127.0.0.1:${address.port}/_episode-dispatch?episode=${episodeId}&task=${taskId}`;
+    try {
+      for (let i = 0; i < 2; i++) {
+        const response = await fetch(url, { method: "POST", headers: { Authorization: "Bearer owner-token", Origin: new URL(url).origin } });
+        expect(response.status).toBe(202);
+        expect(await response.json()).toEqual(expect.objectContaining({ status: "queued", taskId, taskStatus: "ready", statusUrl: `/_episode-dispatch?episode=${episodeId}&task=${taskId}` }));
+      }
+      const status = await fetch(url, { headers: { Authorization: "Bearer owner-token" } });
+      expect(await status.json()).toEqual(expect.objectContaining({ status: "queued", taskStatus: "ready" }));
+    } finally { await new Promise<void>((resolve) => server.close(() => resolve())); }
   });
 
-  it("允许 Owner 为已创建的单镜任务立即唤醒当前生产单 Worker", async () => {
-    mockSupabaseClient();
+  it.each([
+    ["foreign origin", "owner", "ready", 403],
+    ["missing origin", "owner", "ready", 403],
+    ["forged host and origin", "owner", "ready", 403],
+    ["viewer", "viewer", "ready", 403],
+    ["completed duplicate", "owner", "completed", 200],
+    ["launch failure", "owner", "ready", 500],
+  ])("%s 不启动额外执行", async (scenario, role, taskStatus, expectedStatus) => {
     const taskId = "55555555-5555-4555-8555-555555555555";
-    const dispatch = vi.fn(() => "started" as const);
     const client = mockSupabaseClient();
-    client.from.mockImplementation((table: string) => queryResult(table === "tasks" ? { id: taskId } : table === "episodes" ? { account_id: accountId } : table === "account_memberships" ? { role: "owner" } : null));
+    client.from.mockImplementation((table: string) => queryResult(table === "tasks" ? { id: taskId, status: taskStatus, created_at: "2026-10-23T10:00:00Z" } : table === "episodes" ? { account_id: accountId } : role === "owner" ? { role } : null));
+    const dispatch = vi.fn(() => { if (scenario === "launch failure") throw Error("Worker 配置不完整"); return "started" as const; });
     const server = createControlPlaneServer({ dispatchTask: dispatch });
     await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
     const address = server.address();
-    if (!address || typeof address === "string") throw new Error("测试服务器未监听端口。");
-
+    if (!address || typeof address === "string") throw Error("测试服务器未监听端口。");
     try {
-      const response = await fetch(`http://127.0.0.1:${address.port}/_episode-dispatch?episode=${episodeId}&task=${taskId}`, {
-        headers: { Authorization: "Bearer owner-token" },
-        method: "POST",
-      });
-
-      expect(response.status).toBe(202);
-      expect(await response.json()).toEqual({ status: "started" });
-      expect(dispatch).toHaveBeenCalledWith(taskId);
-    } finally {
-      await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
-    }
+      const response = await fetch(`http://127.0.0.1:${address.port}/_episode-dispatch?episode=${episodeId}&task=${taskId}`, { method: "POST", headers: { Authorization: "Bearer owner-token", ...(scenario === "missing origin" ? {} : scenario === "foreign origin" ? { Origin: "https://other.test" } : scenario === "forged host and origin" ? { Origin: "http://other.test", Host: "other.test" } : { Origin: `http://127.0.0.1:${address.port}` }) } });
+      expect(response.status).toBe(expectedStatus);
+      if (scenario !== "launch failure") expect(dispatch).not.toHaveBeenCalled();
+    } finally { await new Promise<void>(resolve => server.close(() => resolve())); }
   });
 
-  it("Worker 启动校验失败时不返回 202 假启动", async () => {
+  it.each([
+    ["ready", "queued"], ["running", "starting"], ["completed", "succeeded"], ["blocked", "failed"],
+  ])("重建 HTTP 服务后仍可查询 %s 任务", async (taskStatus, status) => {
     const taskId = "55555555-5555-4555-8555-555555555555";
     const client = mockSupabaseClient();
-    client.from.mockImplementation((table: string) => queryResult(table === "tasks" ? { id: taskId } : table === "episodes" ? { account_id: accountId } : table === "account_memberships" ? { role: "owner" } : null));
-    const dispatch = vi.fn(() => { throw new Error("Worker 即时派发配置不完整：SUPABASE_URL"); });
-    const server = createControlPlaneServer({ dispatchTask: dispatch });
+    client.from.mockImplementation((table: string) => queryResult(table === "tasks" ? { id: taskId, status: taskStatus, created_at: "2026-10-23T10:00:00Z", completed_at: taskStatus === "completed" ? "2026-10-23T10:01:00Z" : null } : table === "episodes" ? { account_id: accountId } : { role: "owner" }));
+    const server = createControlPlaneServer();
     await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
     const address = server.address();
     if (!address || typeof address === "string") throw new Error("测试服务器未监听端口。");
-
-    try {
-      const response = await fetch(`http://127.0.0.1:${address.port}/_episode-dispatch?episode=${episodeId}&task=${taskId}`, {
-        headers: { Authorization: "Bearer owner-token" },
-        method: "POST",
-      });
-
-      expect(response.status).toBe(500);
-      expect(await response.text()).toBe("Worker 即时派发配置不完整：SUPABASE_URL");
-    } finally {
-      await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
-    }
-  });
-
-  it("单任务即时派发只执行指定 Task，并在同一任务未结束时去重", async () => {
-    let finish: (() => void) | undefined;
-    const taskId = "55555555-5555-4555-8555-555555555555";
-    const run = vi.fn(() => new Promise<void>((resolve) => { finish = resolve; }));
-    expect(beginTaskDispatch(taskId, run)).toBe("started");
-    expect(beginTaskDispatch(taskId, run)).toBe("already_running");
-    expect(run).toHaveBeenCalledWith(taskId);
-    finish?.();
-    await Promise.resolve();
-    await Promise.resolve();
-  });
-
-  it("单任务进程失败后保留可查询的派发错误", async () => {
-    const taskId = "66666666-6666-4666-8666-666666666666";
-
-    expect(beginTaskDispatch(taskId, async () => { throw new Error("Supabase 返回 HTTP 504"); })).toBe("started");
-    await Promise.resolve();
-    await Promise.resolve();
-
-    expect(taskDispatchStatus(taskId)).toEqual(expect.objectContaining({ detail: "Supabase 返回 HTTP 504", status: "failed" }));
-  });
-
-  it("Owner 可以查询指定任务的即时派发状态", async () => {
-    const taskId = "77777777-7777-4777-8777-777777777777";
-    const client = mockSupabaseClient();
-    client.from.mockImplementation((table: string) => queryResult(table === "tasks" ? { id: taskId } : table === "episodes" ? { account_id: accountId } : table === "account_memberships" ? { role: "owner" } : null));
-    const readStatus = vi.fn(() => ({ detail: "Worker 启动失败。", status: "failed" as const, updatedAt: "2026-09-12T00:00:00.000Z" }));
-    const server = createControlPlaneServer({ dispatchTask: vi.fn(() => "started" as const), readTaskDispatchStatus: readStatus });
-    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
-    const address = server.address();
-    if (!address || typeof address === "string") throw new Error("测试服务器未监听端口。");
-
     try {
       const response = await fetch(`http://127.0.0.1:${address.port}/_episode-dispatch?episode=${episodeId}&task=${taskId}`, { headers: { Authorization: "Bearer owner-token" } });
-
       expect(response.status).toBe(200);
-      expect(await response.json()).toEqual({ detail: "Worker 启动失败。", status: "failed", updatedAt: "2026-09-12T00:00:00.000Z" });
-      expect(readStatus).toHaveBeenCalledWith(taskId);
-    } finally {
-      await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
-    }
-  });
-
-  it("单任务即时派发复用会加载 worker.env.local 的统一入口", () => {
-    expect(taskDispatchInvocation("/project", "55555555-5555-4555-8555-555555555555")).toEqual({
-      argumentsList: ["--task-id", "55555555-5555-4555-8555-555555555555"],
-      command: "/project/n8n/run-worker.sh",
-    });
-  });
-
-  it("即时派发在缺少必需 Worker 配置时同步失败而不是返回假启动", () => {
-    expect(() => assertWorkerDispatchEnvironment("SUPABASE_URL=https://example.test\nSUPABASE_SERVICE_ROLE_KEY=\n"))
-      .toThrow("Worker 即时派发配置不完整：SUPABASE_SERVICE_ROLE_KEY、CODEX_WORKER_ACTUAL_COST_CENTS、MEDIA_LIBRARY_MOUNT_PATH、MEDIA_LIBRARY_MIN_FREE_BYTES");
+      expect(await response.json()).toEqual(expect.objectContaining({ taskId, taskStatus, status }));
+    } finally { await new Promise<void>((resolve) => server.close(() => resolve())); }
   });
 });

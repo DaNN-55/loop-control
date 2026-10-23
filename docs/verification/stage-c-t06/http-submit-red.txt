@@ -1,0 +1,46 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/episodePreflightRoute.test.ts (8 tests | 1 failed) 155ms
+   ✓ Episode 修复 preflight 路由 > 蓝图预检只向运行前置条件模块提交业务 subject 9ms
+   ✓ Episode 修复 preflight 路由 > 创建生产单前不要求预先存在 episodes 目录 3ms
+   ✓ Episode 修复 preflight 路由 > 使用提交中的修复策略、Episode 的系列快照，并执行资产目录检查 72ms
+   × 持久任务派发状态 > 重复提交返回可查询的排队状态，执行器退出不能改写持久状态 34ms
+     → expected { status: 'started' } to deeply equal ObjectContaining{…}
+   ✓ 持久任务派发状态 > 重建 HTTP 服务后仍可查询 ready 任务 9ms
+   ✓ 持久任务派发状态 > 重建 HTTP 服务后仍可查询 running 任务 10ms
+   ✓ 持久任务派发状态 > 重建 HTTP 服务后仍可查询 completed 任务 8ms
+   ✓ 持久任务派发状态 > 重建 HTTP 服务后仍可查询 blocked 任务 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/episodePreflightRoute.test.ts > 持久任务派发状态 > 重复提交返回可查询的排队状态，执行器退出不能改写持久状态
+AssertionError: expected { status: 'started' } to deeply equal ObjectContaining{…}
+
+- Expected
++ Received
+
+- ObjectContaining {
+-   "status": "queued",
+-   "statusUrl": "/_episode-dispatch?episode=22222222-2222-4222-8222-222222222222&task=55555555-5555-4555-8555-555555555555",
+-   "taskId": "55555555-5555-4555-8555-555555555555",
+-   "taskStatus": "ready",
++ {
++   "status": "started",
+  }
+
+ ❯ src/episodePreflightRoute.test.ts:149:39
+    147|         const response = await fetch(url, { method: "POST", headers: {…
+    148|         expect(response.status).toBe(202);
+    149|         expect(await response.json()).toEqual(expect.objectContaining(…
+       |                                       ^
+    150|       }
+    151|       const status = await fetch(url, { headers: { Authorization: "Bea…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  20:03:32
+   Duration  1.75s (transform 476ms, setup 0ms, collect 624ms, tests 155ms, environment 0ms, prepare 171ms)

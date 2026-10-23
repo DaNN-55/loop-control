@@ -1,6 +1,6 @@
 # B 阶段：完整恢复与 Worker 租约
 
-2026-10-23（Asia/Shanghai）。基线 `19f1607`，分支 `codex/local-first-stage-a`。Owner已批准A、Accepted ADR-0008及B本地提交；不推送、合并、切换生产或关闭Issue。已用gh读取 #110 / #111 全文及全部评论（均无评论）。最终验收以 **v2备份与 `loop-control-stage-b-verified`** 为准；早期restore/replay证据保留为历史。
+2026-10-23（Asia/Shanghai）。基线 `19f1607`，分支 `codex/local-first-stage-a`。Owner已认可B最终验收，并批准A、Accepted ADR-0008及B本地提交；不推送、合并、切换生产或关闭Issue。已用gh读取 #110 / #111 全文及全部评论（均无评论）。最终验收以 **v2备份与 `loop-control-stage-b-verified`** 为准；早期restore/replay证据保留为历史。
 
 ## T04 / #110
 
@@ -20,11 +20,11 @@
 - 真实Worker进程组领取后SIGKILL，仅终止自己新建组；通过DB控制时间模拟租约超过30分钟，经既有 `/_episode-dispatch` HTTP handler → 预构建真实Worker CLI → FFmpeg → 文件/DB回写，得到 `0 failed → 1 completed`，SHA-256一致，旧进程结果拒绝（`t05-verified-worker.txt`）。没有等待真实30分钟。
 - 隔离HTTP harness用既有middleware测试依赖入口注入verified配置，绕过A shell/worker.env.local。55176只开放此受Owner校验的本机派发测试入口，其余本机工具503；不替代生产启动链或C的持久入口。
 
-## 验证与现有失败
+## 最终验证与历史失败
 
 末次应用回归于19:08（Asia/Shanghai）完成：70文件/675项通过，Node2通过/1项原生n8n检查跳过；类型、Worker与orchestrator构建、11个B脚本语法及diff检查通过。`tests.txt`为所有代码修复后的末次日志，最终库advisors为No issues found（`advisors.txt`）。Standards/Spec两轴只读复审及增量确认见 `review.md`。
 
-全SQL在最终verified库执行21文件/223条已运行断言：16文件通过，剩余5文件与未应用B的A基线失败项逐一相同，**不能称全SQL通过**；B相关37条通过。原始结果见 `sql-tests-verified.txt`、`sql-tests-baseline.txt`，逐项对照见 `sql-baseline-comparison.json`。未扩大修复以下既有失败：
+**历史快照（修正前）**：全SQL在最终verified库执行21文件/223条已运行断言：16文件通过，剩余5文件与未应用B的A基线失败项逐一相同，**不能称全SQL通过**；B相关37条通过。原始结果见 `sql-tests-verified.txt`、`sql-tests-baseline.txt`，逐项对照见 `sql-baseline-comparison.json`。当时尚未修复以下失败：
 
 - `acoustic_alignment_priority_chain_test.sql`：1项Worker时序源码断言。
 - `clip_interval_union_duration_test.sql`：1项时长源码断言。
@@ -44,4 +44,8 @@ A：55173 / 55431 / 55432；最终verified：55176 / 55461 / 55462，媒体独�
 
 备份仍依赖兼容Supabase的实际Auth/Vault/角色环境，不是D的纯PostgreSQL交付；文件600，尚无加密和大规模流式传输。DB fencing不取消已发出的外部请求，也不是同UID文件沙箱；实际中断演练在重试前结束旧进程组，未验证仍存活执行器对同一路径任意写文件的对抗行为。
 
-本次仅本地提交B文件；既有未跟踪总体规格、backlog、T04–T25票单/索引不混入提交。C/D未开始，E/F继续搁置。
+B 已本地提交：实现 `60b5af9`，仅五份 SQL 测试修正 `474b0d3`，均未推送/合并。Owner 已认可 B 并授权开始 C 的 T06；T07/D 未开始，E/F 搁置。既有未跟踪规划按票显式暂存。
+
+## B 验收后补记（2026-10-23）
+
+五份旧 SQL 已分析为 3 份断言过时、2 份 fixture 隔离问题；`474b0d3` 仅修正这五份测试，随后在最终 verified 库完整 SQL **21 文件/224 条断言全通过**。最终结果见 [sql-tests-final.json](sql-tests-final.json)。上文 223 条/5 文件失败以及原日志保留为修正前证据；不再代表当前门禁。Owner 已认可上述 B 最终结论。审核 checkpoint 仍仅证明内容/关联，秘密仍需显式重绑；没有在线 Provider 调用或完整 Owner 审批链证明。

@@ -1,0 +1,34 @@
+{
+  "checkedAt": "2026-10-23T12:20:42.319Z",
+  "target": "loop-control-stage-b-verified",
+  "episodeId": "d8d3844d-9438-4e8f-a2ce-6ca85648a89a",
+  "execution": "ordinary T06 HTTP middleware and shared dispatcher; real Worker CLI, DB and FFmpeg",
+  "tasks": [
+    {
+      "path": "HTTP duplicates + real global scheduled CLI",
+      "responseMs": 270.80375000000004,
+      "capacityWaitPreserved": true,
+      "concurrentClaimsObserved": true,
+      "taskId": "327d5486-4862-469a-924d-3baaeef90971",
+      "attempts": 1,
+      "artifact": {
+        "relativePath": "episodes/d8d3844d-9438-4e8f-a2ce-6ca85648a89a/http-and-timer.mp4",
+        "sha256": "52ee826ea305bfd0e4e82e357905efdbc6ee3c2297313d22f66341e6012f911c",
+        "fileSize": 23297
+      }
+    },
+    {
+      "path": "Episode entry consumes existing task with empty planner result",
+      "taskId": "352a4c6f-be4d-42ec-9795-8ec087f026cd",
+      "attempts": 1,
+      "artifact": {
+        "relativePath": "episodes/d8d3844d-9438-4e8f-a2ce-6ca85648a89a/episode-entry.mp4",
+        "sha256": "52ee826ea305bfd0e4e82e357905efdbc6ee3c2297313d22f66341e6012f911c",
+        "fileSize": 23297
+      }
+    }
+  ],
+  "serviceRestartStatusPersisted": true,
+  "existingTasksUnchanged": true,
+  "providerCalls": false
+}

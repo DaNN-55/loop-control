@@ -20,7 +20,7 @@ const client = createClient(config.apiUrl, config.anonKey, { auth: { persistSess
 const { data: login, error: loginError } = await client.auth.signInWithPassword(owner);
 if (loginError)
     throw loginError;
-const headers = { authorization: `Bearer ${login.session.access_token}` };
+const headers = { authorization: `Bearer ${login.session.access_token}`, origin: `http://127.0.0.1:${ports.console}` };
 const accountId = 'a0000000-0000-4000-8000-000000000001', blueprintId = 'a0000000-0000-4000-8000-000000000002';
 const assetRoot = join(config.mediaRoot, 'smoke');
 const consoleRecord = JSON.parse(await readFile(join(config.stateRoot, 'console.json'), 'utf8'));

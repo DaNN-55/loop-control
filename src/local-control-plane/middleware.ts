@@ -21,8 +21,6 @@ import {
   serveSystemStatus,
   serveTtsVoicePreview,
   serveWorkerPreflight,
-  taskDispatchStatus,
-  type TaskDispatchStatus,
 } from "./routes/handlers";
 
 export interface LocalControlPlaneOptions {
@@ -37,7 +35,6 @@ type Route = readonly [path: string, handler: RouteHandler];
 
 export interface LocalControlPlaneDependencies {
   dispatchTask?: (taskId: string) => "started" | "already_running";
-  readTaskDispatchStatus?: (taskId: string) => TaskDispatchStatus;
   serviceRoleKey?: string;
 }
 
@@ -81,8 +78,7 @@ function operationRoutes({ dependencies, serviceRoleKey, supabasePublishableKey,
     ["/_episode-dispatch", serveEpisodeDispatch(
       supabaseUrl,
       supabasePublishableKey,
-      dependencies.dispatchTask ?? beginTaskDispatch,
-      dependencies.readTaskDispatchStatus ?? taskDispatchStatus,
+      dependencies.dispatchTask ?? ((id) => beginTaskDispatch(id, undefined, supabaseUrl)),
     )],
     ["/_publish-preparation", servePublishPreparation(supabaseUrl, supabasePublishableKey, serviceRoleKey)],
   ];
