@@ -1,0 +1,25 @@
+{"target":"loop-control-stage-b-verified","boundary":"real DB claim RPC; transaction rolled back","expected":[1,1,0],"observed":[1,1,1]}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Global capacity 2 must limit distinct resource groups
++ actual - expected
+
+  [
+    1,
+    1,
++   1
+-   0
+  ]
+
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/isolation/capacity.mjs:51:8 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: [ 1, 1, 1 ],
+  expected: [ 1, 1, 0 ],
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

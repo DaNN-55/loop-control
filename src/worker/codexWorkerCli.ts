@@ -36,7 +36,8 @@ const workerCapacity = Number(process.env.CODEX_WORKER_CAPACITY ?? "2");
 if (!Number.isSafeInteger(workerCapacity) || workerCapacity <= 0) throw new Error("CODEX_WORKER_CAPACITY must be a positive integer.");
 const codexExecutionTimeoutMs = Number(process.env.CODEX_WORKER_EXECUTION_TIMEOUT_MS ?? "300000");
 if (!Number.isSafeInteger(codexExecutionTimeoutMs) || codexExecutionTimeoutMs <= 0) throw new Error("CODEX_WORKER_EXECUTION_TIMEOUT_MS must be a positive integer.");
-const requestedTaskId = readTaskIdArgument(process.argv.slice(2));
+const fromDispatcher = process.argv.length === 3 && process.argv[2] === "--claimed-task";
+const requestedTaskId = fromDispatcher ? null : readTaskIdArgument(process.argv.slice(2));
 const supabase = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
 const workerLeaseHeartbeatMs = 5 * 60 * 1000;
 let leaseHeartbeat: ReturnType<typeof setInterval> | undefined;
@@ -56,9 +57,19 @@ const result = await runCodexWorker({
 process.stdout.write(`${JSON.stringify(result)}\n`);
 
 async function claimNextTask(): Promise<ClaimedWorkerTask | null> {
+  let row;
+  if (fromDispatcher) {
+    let input = "";
+    for await (const chunk of process.stdin) { input += chunk.toString(); if (Buffer.byteLength(input) > 10 * 1024 * 1024) throw new Error("Claimed task package is too large."); }
+    row = JSON.parse(input);
+    // Validate the actual attempt/token before running an already reserved task.
+    const { error } = await supabase.rpc("refresh_worker_task_lease", { p_task_id: row.task_id, p_attempt: row.attempt, p_lease_token: row.lease_token });
+    if (error) throw new Error(`Unable to validate dispatched Worker lease: ${error.message}`);
+  } else {
   const { data, error } = await supabase.rpc("claim_next_worker_task", { p_worker_capacity: workerCapacity, ...(requestedTaskId ? { p_task_id: requestedTaskId } : {}) });
   if (error) throw new Error(`Unable to claim a worker task: ${error.message}`);
-  const row = data?.[0];
+  row = data?.[0];
+  }
   if (!row) return null;
   if (row.provider !== "codex" && row.provider !== "google_tts" && row.provider !== "volcengine_tts" && row.provider !== "pexels" && row.provider !== "ffmpeg" && row.provider !== "freesound" && row.provider !== "openchatcut" && row.provider !== "openai" && row.provider !== "cloudflare" && row.provider !== "whisperx") throw new Error(`Unsupported worker provider: ${row.provider}`);
   if (typeof row.lease_token !== "string" || !/^[0-9a-f-]{36}$/i.test(row.lease_token)) throw new Error("Claimed task has no valid lease token; upgrade the database.");

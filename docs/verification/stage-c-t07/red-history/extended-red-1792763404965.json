@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Episode rotation uses durable turns rather than task creation order",
+    "passed": true,
+    "observed": [
+      "9a62566f-134b-492f-a3da-2f873e6fdd3d",
+      "7286dc6a-12ac-4050-b992-5f83d5a104c0",
+      "be353792-146a-4284-9314-ce7b207dd1c2",
+      "9a62566f-134b-492f-a3da-2f873e6fdd3d",
+      "9a62566f-134b-492f-a3da-2f873e6fdd3d"
+    ]
+  },
+  {
+    "name": "Provider and Adapter limits span distinct credential references",
+    "passed": true,
+    "observed": [
+      1,
+      1,
+      0
+    ]
+  },
+  {
+    "name": "Trusted connection ceiling one lowers Provider and Adapter ceiling two",
+    "passed": false,
+    "expected": [
+      1,
+      0
+    ],
+    "observed": [
+      1,
+      1
+    ]
+  },
+  {
+    "name": "Failed retry releases capacity but cannot be reclaimed in a hot loop",
+    "passed": true,
+    "observed": [
+      "ready",
+      0
+    ]
+  }
+]

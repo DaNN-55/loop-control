@@ -1,0 +1,524 @@
+{
+  "at": "2026-10-23T13:57:50.489Z",
+  "target": "loop-control-stage-b-verified",
+  "boundary": "real DB claims/results + controlled executor + ordinary authenticated HTTP status; no online Provider",
+  "evidence": [
+    {
+      "name": "continuous fair refill, late arrival, distinct HTTP queued/running and no executor at capacity",
+      "passed": true,
+      "peak": 2,
+      "prepared": 1,
+      "starts": [
+        {
+          "id": "a9b8a6f6-4cbf-4242-be0e-f2e2f54691e3",
+          "episode": "d0533f37-5da1-42ea-8e60-f385dca6328d",
+          "at": 1792763867604
+        },
+        {
+          "id": "a90a63bf-3e9b-4b15-b124-8d6e1e506a14",
+          "episode": "d3022292-2c2e-4b6b-a74a-0a42babd0290",
+          "at": 1792763867614
+        },
+        {
+          "id": "2c58381b-ddc7-4a28-9864-d0a75a906fee",
+          "episode": "c5afb6c9-3eda-4628-85ef-f3913744a17d",
+          "at": 1792763867811
+        },
+        {
+          "id": "e136baf0-407c-4baa-af0b-23183a757d6a",
+          "episode": "e7b6eaac-9f52-4ac7-bf2c-672d958a4807",
+          "at": 1792763867822
+        },
+        {
+          "id": "fd8e4b60-f971-4895-aec7-ef4fa390d54d",
+          "episode": "d3022292-2c2e-4b6b-a74a-0a42babd0290",
+          "at": 1792763867834
+        },
+        {
+          "id": "c370354d-c3d1-49eb-95ca-41bc383ca9ea",
+          "episode": "d0533f37-5da1-42ea-8e60-f385dca6328d",
+          "at": 1792763867842
+        },
+        {
+          "id": "0b3203d3-5704-4837-a5e9-5c8ca60bd396",
+          "episode": "d0533f37-5da1-42ea-8e60-f385dca6328d",
+          "at": 1792763867850
+        }
+      ],
+      "fullStarts": 0,
+      "taskCount": 7
+    },
+    {
+      "name": "independent process restart retains fair queue position",
+      "passed": true,
+      "first": {
+        "claimed": [
+          {
+            "id": "f5eeb993-c624-4d19-b4c4-f21e1ded52a6",
+            "episode": "046dccb8-9023-4819-ac99-ddf5f62ed6a6"
+          }
+        ]
+      },
+      "second": {
+        "claimed": [
+          {
+            "id": "61f8923a-b806-41cb-bbde-bcc4060d7aee",
+            "episode": "bf8b1145-bbcd-4f7e-ab3a-9d2a4eb15c3b"
+          },
+          {
+            "id": "b0909196-33eb-4253-afea-34ce46cfd83b",
+            "episode": "046dccb8-9023-4819-ac99-ddf5f62ed6a6"
+          }
+        ]
+      }
+    },
+    {
+      "name": "process failure releases slot, other Episode advances, durable bounded retry succeeds",
+      "passed": true,
+      "retryStarts": [
+        {
+          "id": "82225183-7a52-4e7e-adf8-2db27d990d43",
+          "attempt": 0,
+          "at": 1792763868145
+        },
+        {
+          "id": "9544dcb2-ea5d-4cca-8b07-3b2ccb9e29da",
+          "attempt": 0,
+          "at": 1792763868153
+        },
+        {
+          "id": "82225183-7a52-4e7e-adf8-2db27d990d43",
+          "attempt": 1,
+          "at": 1792763869157
+        }
+      ]
+    },
+    {
+      "name": "actual Owner TTS settings RPC cancels obsolete narration, releases capacity and fences old lease",
+      "passed": true,
+      "cancelled": "8c2e7789-6ae9-4d9c-9ab7-d2560703d0e6",
+      "afterCancel": "3a6f3261-db2e-4e92-bd06-d911fdbbf20c"
+    },
+    {
+      "name": "independent concurrent RPCs cannot exceed durable global capacity even with caller limit eight",
+      "passed": true,
+      "claimCounts": [
+        1,
+        0,
+        1
+      ],
+      "configuredCapacity": 2
+    },
+    {
+      "name": "concurrent same-connection quota one and independent connection share Provider quota two",
+      "passed": true,
+      "claimCounts": [
+        1,
+        0,
+        1
+      ]
+    },
+    {
+      "name": "fresh dispatcher recovers interrupted expired lease after durable backoff and rejects old attempt",
+      "passed": true,
+      "taskId": "99274aaf-1d78-4066-a128-3e9c4de69bbb",
+      "attempts": 2
+    },
+    {
+      "name": "invalidated, unsupported or attempt-exhausted future rows do not keep an idle consumer waiting",
+      "passed": true,
+      "ineligible": [
+        "30c4bafc-3bd7-44f4-a893-04f47c8ec2d1",
+        "a2a42957-8d53-4b58-9573-0005723eaf6a",
+        "80c5591e-97fc-4d76-b840-86244845be66"
+      ],
+      "executorStarts": 0
+    }
+  ],
+  "tasks": [
+    {
+      "id": "a90a63bf-3e9b-4b15-b124-8d6e1e506a14",
+      "status": "completed",
+      "attempt": 1,
+      "available_at": "-infinity"
+    },
+    {
+      "id": "2c58381b-ddc7-4a28-9864-d0a75a906fee",
+      "status": "completed",
+      "attempt": 1,
+      "available_at": "-infinity"
+    },
+    {
+      "id": "e136baf0-407c-4baa-af0b-23183a757d6a",
+      "status": "completed",
+      "attempt": 1,
+      "available_at": "-infinity"
+    },
+    {
+      "id": "fd8e4b60-f971-4895-aec7-ef4fa390d54d",
+      "status": "completed",
+      "attempt": 1,
+      "available_at": "-infinity"
+    },
+    {
+      "id": "c370354d-c3d1-49eb-95ca-41bc383ca9ea",
+      "status": "completed",
+      "attempt": 1,
+      "available_at": "-infinity"
+    },
+    {
+      "id": "0b3203d3-5704-4837-a5e9-5c8ca60bd396",
+      "status": "completed",
+      "attempt": 1,
+      "available_at": "-infinity"
+    },
+    {
+      "id": "a2a42957-8d53-4b58-9573-0005723eaf6a",
+      "status": "superseded",
+      "attempt": 0,
+      "available_at": "2026-10-23T13:58:50.46+00:00"
+    },
+    {
+      "id": "80c5591e-97fc-4d76-b840-86244845be66",
+      "status": "superseded",
+      "attempt": 0,
+      "available_at": "2026-10-23T13:58:50.468+00:00"
+    },
+    {
+      "id": "a9b8a6f6-4cbf-4242-be0e-f2e2f54691e3",
+      "status": "completed",
+      "attempt": 1,
+      "available_at": "-infinity"
+    },
+    {
+      "id": "f5eeb993-c624-4d19-b4c4-f21e1ded52a6",
+      "status": "completed",
+      "attempt": 1,
+      "available_at": "-infinity"
+    },
+    {
+      "id": "61f8923a-b806-41cb-bbde-bcc4060d7aee",
+      "status": "completed",
+      "attempt": 1,
+      "available_at": "-infinity"
+    },
+    {
+      "id": "30c4bafc-3bd7-44f4-a893-04f47c8ec2d1",
+      "status": "superseded",
+      "attempt": 2,
+      "available_at": "2026-10-23T13:58:50.452+00:00"
+    },
+    {
+      "id": "b0909196-33eb-4253-afea-34ce46cfd83b",
+      "status": "completed",
+      "attempt": 1,
+      "available_at": "-infinity"
+    },
+    {
+      "id": "9544dcb2-ea5d-4cca-8b07-3b2ccb9e29da",
+      "status": "completed",
+      "attempt": 1,
+      "available_at": "-infinity"
+    },
+    {
+      "id": "82225183-7a52-4e7e-adf8-2db27d990d43",
+      "status": "completed",
+      "attempt": 2,
+      "available_at": "2026-10-23T13:57:49.176589+00:00"
+    },
+    {
+      "id": "8c2e7789-6ae9-4d9c-9ab7-d2560703d0e6",
+      "status": "superseded",
+      "attempt": 1,
+      "available_at": "-infinity"
+    },
+    {
+      "id": "3a6f3261-db2e-4e92-bd06-d911fdbbf20c",
+      "status": "completed",
+      "attempt": 1,
+      "available_at": "-infinity"
+    },
+    {
+      "id": "3892d434-0a03-4bd9-b970-ce059d71d95b",
+      "status": "completed",
+      "attempt": 1,
+      "available_at": "-infinity"
+    },
+    {
+      "id": "28124554-cdb4-4279-9af7-2bccefcbaaf6",
+      "status": "completed",
+      "attempt": 1,
+      "available_at": "-infinity"
+    },
+    {
+      "id": "b5f304d3-c8aa-434b-b82a-5c9e4e8aec21",
+      "status": "completed",
+      "attempt": 1,
+      "available_at": "-infinity"
+    },
+    {
+      "id": "0457c8a0-8e60-4a10-8623-6149dc6b95b1",
+      "status": "completed",
+      "attempt": 1,
+      "available_at": "-infinity"
+    },
+    {
+      "id": "41a10563-8260-40a6-8963-5979581c211e",
+      "status": "completed",
+      "attempt": 1,
+      "available_at": "-infinity"
+    },
+    {
+      "id": "7c7e14e9-a0f3-49a2-b54c-ddcb30b1ea07",
+      "status": "completed",
+      "attempt": 1,
+      "available_at": "-infinity"
+    },
+    {
+      "id": "99274aaf-1d78-4066-a128-3e9c4de69bbb",
+      "status": "completed",
+      "attempt": 2,
+      "available_at": "2026-10-23T13:57:50.449323+00:00"
+    }
+  ],
+  "runs": [
+    {
+      "task_id": "a90a63bf-3e9b-4b15-b124-8d6e1e506a14",
+      "attempt": 0,
+      "status": "completed"
+    },
+    {
+      "task_id": "2c58381b-ddc7-4a28-9864-d0a75a906fee",
+      "attempt": 0,
+      "status": "completed"
+    },
+    {
+      "task_id": "e136baf0-407c-4baa-af0b-23183a757d6a",
+      "attempt": 0,
+      "status": "completed"
+    },
+    {
+      "task_id": "fd8e4b60-f971-4895-aec7-ef4fa390d54d",
+      "attempt": 0,
+      "status": "completed"
+    },
+    {
+      "task_id": "c370354d-c3d1-49eb-95ca-41bc383ca9ea",
+      "attempt": 0,
+      "status": "completed"
+    },
+    {
+      "task_id": "0b3203d3-5704-4837-a5e9-5c8ca60bd396",
+      "attempt": 0,
+      "status": "completed"
+    },
+    {
+      "task_id": "a9b8a6f6-4cbf-4242-be0e-f2e2f54691e3",
+      "attempt": 0,
+      "status": "completed"
+    },
+    {
+      "task_id": "f5eeb993-c624-4d19-b4c4-f21e1ded52a6",
+      "attempt": 0,
+      "status": "completed"
+    },
+    {
+      "task_id": "61f8923a-b806-41cb-bbde-bcc4060d7aee",
+      "attempt": 0,
+      "status": "completed"
+    },
+    {
+      "task_id": "b0909196-33eb-4253-afea-34ce46cfd83b",
+      "attempt": 0,
+      "status": "completed"
+    },
+    {
+      "task_id": "82225183-7a52-4e7e-adf8-2db27d990d43",
+      "attempt": 0,
+      "status": "failed"
+    },
+    {
+      "task_id": "9544dcb2-ea5d-4cca-8b07-3b2ccb9e29da",
+      "attempt": 0,
+      "status": "completed"
+    },
+    {
+      "task_id": "82225183-7a52-4e7e-adf8-2db27d990d43",
+      "attempt": 1,
+      "status": "completed"
+    },
+    {
+      "task_id": "8c2e7789-6ae9-4d9c-9ab7-d2560703d0e6",
+      "attempt": 0,
+      "status": "running"
+    },
+    {
+      "task_id": "3a6f3261-db2e-4e92-bd06-d911fdbbf20c",
+      "attempt": 0,
+      "status": "completed"
+    },
+    {
+      "task_id": "28124554-cdb4-4279-9af7-2bccefcbaaf6",
+      "attempt": 0,
+      "status": "completed"
+    },
+    {
+      "task_id": "3892d434-0a03-4bd9-b970-ce059d71d95b",
+      "attempt": 0,
+      "status": "completed"
+    },
+    {
+      "task_id": "b5f304d3-c8aa-434b-b82a-5c9e4e8aec21",
+      "attempt": 0,
+      "status": "completed"
+    },
+    {
+      "task_id": "0457c8a0-8e60-4a10-8623-6149dc6b95b1",
+      "attempt": 0,
+      "status": "completed"
+    },
+    {
+      "task_id": "41a10563-8260-40a6-8963-5979581c211e",
+      "attempt": 0,
+      "status": "completed"
+    },
+    {
+      "task_id": "7c7e14e9-a0f3-49a2-b54c-ddcb30b1ea07",
+      "attempt": 0,
+      "status": "completed"
+    },
+    {
+      "task_id": "99274aaf-1d78-4066-a128-3e9c4de69bbb",
+      "attempt": 0,
+      "status": "failed"
+    },
+    {
+      "task_id": "99274aaf-1d78-4066-a128-3e9c4de69bbb",
+      "attempt": 1,
+      "status": "completed"
+    }
+  ],
+  "artifacts": [
+    {
+      "producer_task_id": "a90a63bf-3e9b-4b15-b124-8d6e1e506a14",
+      "relative_path": "episodes/d3022292-2c2e-4b6b-a74a-0a42babd0290/t07-a90a63bf-3e9b-4b15-b124-8d6e1e506a14-0.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    },
+    {
+      "producer_task_id": "fd8e4b60-f971-4895-aec7-ef4fa390d54d",
+      "relative_path": "episodes/d3022292-2c2e-4b6b-a74a-0a42babd0290/t07-fd8e4b60-f971-4895-aec7-ef4fa390d54d-0.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    },
+    {
+      "producer_task_id": "2c58381b-ddc7-4a28-9864-d0a75a906fee",
+      "relative_path": "episodes/c5afb6c9-3eda-4628-85ef-f3913744a17d/t07-2c58381b-ddc7-4a28-9864-d0a75a906fee-0.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    },
+    {
+      "producer_task_id": "c370354d-c3d1-49eb-95ca-41bc383ca9ea",
+      "relative_path": "episodes/d0533f37-5da1-42ea-8e60-f385dca6328d/t07-c370354d-c3d1-49eb-95ca-41bc383ca9ea-0.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    },
+    {
+      "producer_task_id": "b0909196-33eb-4253-afea-34ce46cfd83b",
+      "relative_path": "episodes/046dccb8-9023-4819-ac99-ddf5f62ed6a6/t07-b0909196-33eb-4253-afea-34ce46cfd83b-0.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    },
+    {
+      "producer_task_id": "3a6f3261-db2e-4e92-bd06-d911fdbbf20c",
+      "relative_path": "episodes/7eadca32-71c6-46b7-892a-9d5828941887/t07-3a6f3261-db2e-4e92-bd06-d911fdbbf20c-0.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    },
+    {
+      "producer_task_id": "28124554-cdb4-4279-9af7-2bccefcbaaf6",
+      "relative_path": "episodes/88c4db80-46dd-4607-8012-5032cf668e62/t07-28124554-cdb4-4279-9af7-2bccefcbaaf6-0.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    },
+    {
+      "producer_task_id": "0457c8a0-8e60-4a10-8623-6149dc6b95b1",
+      "relative_path": "episodes/5be4420c-4074-4b62-9c1b-d16682483ff1/t07-0457c8a0-8e60-4a10-8623-6149dc6b95b1-0.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    },
+    {
+      "producer_task_id": "99274aaf-1d78-4066-a128-3e9c4de69bbb",
+      "relative_path": "episodes/7d45a84f-badb-45df-be44-a1b554630a25/t07-99274aaf-1d78-4066-a128-3e9c4de69bbb-1.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    },
+    {
+      "producer_task_id": "e136baf0-407c-4baa-af0b-23183a757d6a",
+      "relative_path": "episodes/e7b6eaac-9f52-4ac7-bf2c-672d958a4807/t07-e136baf0-407c-4baa-af0b-23183a757d6a-0.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    },
+    {
+      "producer_task_id": "0b3203d3-5704-4837-a5e9-5c8ca60bd396",
+      "relative_path": "episodes/d0533f37-5da1-42ea-8e60-f385dca6328d/t07-0b3203d3-5704-4837-a5e9-5c8ca60bd396-0.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    },
+    {
+      "producer_task_id": "a9b8a6f6-4cbf-4242-be0e-f2e2f54691e3",
+      "relative_path": "episodes/d0533f37-5da1-42ea-8e60-f385dca6328d/t07-a9b8a6f6-4cbf-4242-be0e-f2e2f54691e3-0.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    },
+    {
+      "producer_task_id": "f5eeb993-c624-4d19-b4c4-f21e1ded52a6",
+      "relative_path": "episodes/046dccb8-9023-4819-ac99-ddf5f62ed6a6/t07-f5eeb993-c624-4d19-b4c4-f21e1ded52a6-0.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    },
+    {
+      "producer_task_id": "82225183-7a52-4e7e-adf8-2db27d990d43",
+      "relative_path": "episodes/19403138-6d5a-4390-8062-a3ae6f4aa254/t07-82225183-7a52-4e7e-adf8-2db27d990d43-1.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    },
+    {
+      "producer_task_id": "7c7e14e9-a0f3-49a2-b54c-ddcb30b1ea07",
+      "relative_path": "episodes/786af5d6-fe68-4354-89eb-c375f9502f05/t07-7c7e14e9-a0f3-49a2-b54c-ddcb30b1ea07-0.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    },
+    {
+      "producer_task_id": "61f8923a-b806-41cb-bbde-bcc4060d7aee",
+      "relative_path": "episodes/bf8b1145-bbcd-4f7e-ab3a-9d2a4eb15c3b/t07-61f8923a-b806-41cb-bbde-bcc4060d7aee-0.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    },
+    {
+      "producer_task_id": "9544dcb2-ea5d-4cca-8b07-3b2ccb9e29da",
+      "relative_path": "episodes/f1c4bb9a-8f67-4cda-97f4-2c4b1465dc1e/t07-9544dcb2-ea5d-4cca-8b07-3b2ccb9e29da-0.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    },
+    {
+      "producer_task_id": "3892d434-0a03-4bd9-b970-ce059d71d95b",
+      "relative_path": "episodes/da757cbf-132e-4194-87fe-deba5c844276/t07-3892d434-0a03-4bd9-b970-ce059d71d95b-0.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    },
+    {
+      "producer_task_id": "b5f304d3-c8aa-434b-b82a-5c9e4e8aec21",
+      "relative_path": "episodes/b84eca8c-6bc3-462d-8c95-dc1f098f40dc/t07-b5f304d3-c8aa-434b-b82a-5c9e4e8aec21-0.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    },
+    {
+      "producer_task_id": "41a10563-8260-40a6-8963-5979581c211e",
+      "relative_path": "episodes/4bdf5cc5-cd5f-440d-be6c-69c1d9153f06/t07-41a10563-8260-40a6-8963-5979581c211e-0.txt",
+      "sha256": "5fe78ad24bfb70669ce34531078ac2b399204391c653375e9d7ceef25af646dd",
+      "file_size": 39
+    }
+  ],
+  "existingTasksUnchanged": true
+}

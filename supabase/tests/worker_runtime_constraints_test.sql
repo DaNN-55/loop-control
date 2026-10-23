@@ -4,6 +4,8 @@ create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
 select plan(27);
 select set_config('request.jwt.claim.role','service_role',true);
+-- This test isolates the Provider limit of three from the new host default of two.
+update public.worker_scheduler_settings set capacity=8 where singleton;
 
 insert into public.accounts (id, slug, name, timezone)
 values ('81000000-0000-4000-8000-000000000001', 'issue-81-runtime', 'Issue 81 runtime', 'Asia/Shanghai');

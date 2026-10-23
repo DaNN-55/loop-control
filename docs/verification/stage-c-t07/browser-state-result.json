@@ -1,0 +1,38 @@
+{
+  "fixture": [
+    {
+      "label": "running",
+      "episodeId": "ce7b7c25-7f33-43f5-91ef-097ab429c7d7",
+      "taskId": "1c8c4c42-7765-4e4a-98d5-c532feda787b"
+    },
+    {
+      "label": "queued",
+      "episodeId": "3dadf8cd-af4d-43d5-bf9d-df66af9b6f13",
+      "taskId": "4e17548f-b147-4414-8c0a-73d1c4f6f2dd"
+    }
+  ],
+  "starts": [
+    {
+      "id": "1c8c4c42-7765-4e4a-98d5-c532feda787b",
+      "episodeId": "ce7b7c25-7f33-43f5-91ef-097ab429c7d7"
+    },
+    {
+      "id": "4e17548f-b147-4414-8c0a-73d1c4f6f2dd",
+      "episodeId": "3dadf8cd-af4d-43d5-bf9d-df66af9b6f13"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "4e17548f-b147-4414-8c0a-73d1c4f6f2dd",
+      "status": "completed",
+      "attempt": 1
+    },
+    {
+      "id": "1c8c4c42-7765-4e4a-98d5-c532feda787b",
+      "status": "completed",
+      "attempt": 1
+    }
+  ],
+  "oldTasksUnchanged": true,
+  "execution": "real DB with gated controlled executor, real Chrome UI"
+}

@@ -1,6 +1,5 @@
 import { spawn } from "node:child_process";
 import { join } from "node:path";
-import { runWithConcurrency } from "./providedScriptDispatch.js";
 
 export type DispatchScope = { taskId?: string; episodeId?: string };
 export interface WorkerDispatchOptions {
@@ -9,55 +8,118 @@ export interface WorkerDispatchOptions {
   serviceRoleKey: string;
   environment?: NodeJS.ProcessEnv;
   concurrency: number;
+  signal?: AbortSignal;
+}
+
+export interface ClaimedTaskRow {
+  task_id: string;
+  attempt: number;
+  lease_token: string;
+  [key: string]: unknown;
+}
+
+// The executor is a process boundary. Real-DB verification may supply a
+// controlled executor without replacing queue/claim/result behavior.
+export interface WorkerDispatchExecutor {
+  prepare(): Promise<void>;
+  execute(task: ClaimedTaskRow): Promise<unknown>;
 }
 
 // tasks is the durable queue: its ID identifies a frozen input. All entry points
 // scan the same rows, then let the fenced DB claim decide capacity and ownership.
 // A process-local wake is only a latency hint, never an execution/status record.
-export async function dispatchWorkerTasks(options: WorkerDispatchOptions, scope: DispatchScope = {}) {
+export async function dispatchWorkerTasks(options: WorkerDispatchOptions, scope: DispatchScope = {}, executor?: WorkerDispatchExecutor) {
   if (!Number.isSafeInteger(options.concurrency) || options.concurrency <= 0) throw new Error("Worker concurrency must be a positive integer.");
   const expiredBefore = new Date(Date.now() - 30 * 60 * 1000).toISOString();
   // Preserve the light idle path. The DB still decides lease validity at claim.
   if (!scope.taskId && !scope.episodeId && !await hasPendingWork()) return { plannedTasks: 0, queuedTasks: 0, workers: [], productionReadyEpisodes: 0, preRenderReviewPackages: 0, skipped: "idle" };
   const planned = scope.taskId ? [] : await planTasks(scope.episodeId);
-  const candidates: Array<{ id: string }> = [];
-  for (let offset = 0; ; offset += 1000) {
-    const endpoint = new URL("/rest/v1/tasks", options.supabaseUrl);
-    endpoint.searchParams.set("select", "id");
-    endpoint.searchParams.set("or", `(status.eq.ready,and(status.eq.running,or(claimed_at.is.null,claimed_at.lte.${expiredBefore})))`);
-    endpoint.searchParams.set("order", "created_at.asc,id.asc");
-    endpoint.searchParams.set("limit", "1000");
-    endpoint.searchParams.set("offset", String(offset));
-    if (scope.taskId) endpoint.searchParams.set("id", `eq.${scope.taskId}`);
-    if (scope.episodeId) endpoint.searchParams.set("episode_id", `eq.${scope.episodeId}`);
-    const response = await fetch(endpoint, { headers: headers() });
-    if (!response.ok) throw new Error(`读取持久任务队列失败：Supabase 返回 HTTP ${response.status}`);
-    const rows: unknown = await response.json();
-    if (!Array.isArray(rows) || rows.some(row => !isRecord(row) || typeof row.id !== "string")) throw new Error("持久任务队列格式无效。");
-    candidates.push(...rows as Array<{ id: string }>);
-    if (rows.length < 1000) break;
+  const workers: unknown[] = [];
+  const active = new Set<Promise<void>>();
+  let prepared = false, claimedTasks = 0;
+  const capacity = Number((options.environment ?? process.env).CODEX_WORKER_CAPACITY ?? "2");
+  if (!Number.isSafeInteger(capacity) || capacity <= 0) throw new Error("Worker capacity must be a positive integer.");
+  // Scopes limit planning, never create a private queue that defeats Episode
+  // rotation. Capacity is reserved in the DB before any executor process starts.
+  while (!options.signal?.aborted) {
+    let noClaim = false;
+    while (active.size < options.concurrency && !options.signal?.aborted) {
+      const rows = await rpc("claim_next_worker_task", { p_worker_capacity: capacity });
+      if (!rows.length) { noClaim = true; break; }
+      const task = rows[0] as ClaimedTaskRow;
+      if (typeof task.task_id !== "string" || typeof task.lease_token !== "string" || !Number.isSafeInteger(task.attempt)) throw new Error("领取的任务缺少有效租约。");
+      claimedTasks++;
+      try {
+        if (!prepared) {
+          if (executor) await executor.prepare();
+          else await runCommand("npm", ["run", "worker:build"]);
+          prepared = true;
+        }
+      } catch (error) {
+        await reportLaunchFailure(task, error);
+        throw error;
+      }
+      const operation = (async () => {
+        try {
+          const result = executor ? await executor.execute(task) : JSON.parse((await runCommand(process.execPath, [join(options.projectRoot, "dist/worker/worker/codexWorkerCli.js"), "--claimed-task"], JSON.stringify(task))).stdout.trim().split("\n").at(-1) ?? "null");
+          workers.push(result);
+        } catch (error) {
+          await reportLaunchFailure(task, error);
+          workers.push({ status: "failed", taskId: task.task_id, detail: "Worker process failed; inspect the task attempt." });
+        }
+      })();
+      active.add(operation);
+      // Keep the rejection handled while another claim is in flight.
+      void operation.then(() => active.delete(operation), () => active.delete(operation));
+    }
+    if (active.size) { await Promise.race(active); continue; }
+    if (!noClaim) continue;
+    // Retry delays are durable. Wait with a bounded interval, without launching
+    // idle processes. Capacity held by a different dispatcher remains queued;
+    // that active dispatcher continues consuming when its own executor finishes.
+    const [delay] = await rpc("worker_retry_delay_ms", {});
+    if (typeof delay !== "number" || delay <= 0) break;
+    await new Promise<void>(resolve => {
+      const done = () => { clearTimeout(timer); options.signal?.removeEventListener("abort", done); resolve(); };
+      const timer = setTimeout(done, Math.max(50, Math.min(1000, delay)));
+      options.signal?.addEventListener("abort", done, { once: true });
+    });
   }
-  if (candidates.length) await runCommand("npm", ["run", "worker:build"]);
-  const workers = await runWithConcurrency(candidates, options.concurrency, async task => {
-    const result = await runCommand(process.execPath, [join(options.projectRoot, "dist/worker/worker/codexWorkerCli.js"), "--task-id", task.id]);
-    const line = result.stdout.trim().split("\n").at(-1);
-    if (!line) throw new Error("Worker 没有输出结果。");
-    return JSON.parse(line) as unknown;
-  });
+  await Promise.all(active);
   const productionReadyEpisodes = scope.taskId ? [] : await orchestrateTasks("advance_production_ready_episodes", scope.episodeId ? { p_episode_id: scope.episodeId } : {});
   const preRenderPackages = scope.taskId ? [] : await orchestrateTasks(scope.episodeId ? "create_pre_render_review_packages_for_episode" : "create_pre_render_review_packages", scope.episodeId ? { p_episode_id: scope.episodeId } : {});
-  return { plannedTasks: planned.length, queuedTasks: candidates.length, workers, productionReadyEpisodes: productionReadyEpisodes.length, preRenderReviewPackages: preRenderPackages.length };
+  return { plannedTasks: planned.length, queuedTasks: claimedTasks, workers, productionReadyEpisodes: productionReadyEpisodes.length, preRenderReviewPackages: preRenderPackages.length };
 
   function headers() { return { apikey: options.serviceRoleKey, Authorization: `Bearer ${options.serviceRoleKey}` }; }
-  function runCommand(command: string, argumentsList: string[]): Promise<{ stdout: string }> {
+  function runCommand(command: string, argumentsList: string[], input?: string): Promise<{ stdout: string }> {
     return new Promise((resolve, reject) => {
-      const child = spawn(command, argumentsList, { cwd: options.projectRoot, env: options.environment ?? process.env, stdio: ["ignore", "pipe", "pipe"] });
+      const child = spawn(command, argumentsList, { cwd: options.projectRoot, env: options.environment ?? process.env, stdio: [input === undefined ? "ignore" : "pipe", "pipe", "pipe"] });
+      if (input !== undefined) { child.stdin?.on("error", () => undefined); child.stdin?.end(input); }
       let stdout = "", stderr = "";
-      child.stdout.on("data", (chunk: Buffer) => { stdout += chunk.toString(); });
-      child.stderr.on("data", (chunk: Buffer) => { stderr += chunk.toString(); });
+      child.stdout!.on("data", (chunk: Buffer) => { stdout += chunk.toString(); });
+      child.stderr!.on("data", (chunk: Buffer) => { stderr += chunk.toString(); });
       child.once("error", reject);
       child.once("close", code => code === 0 ? resolve({ stdout }) : reject(new Error(stderr.trim() || `Worker 命令退出状态 ${code ?? "unknown"}。`)));
     });
+  }
+  async function rpc(name: string, args: Record<string, unknown>): Promise<unknown[]> {
+    const response = await fetch(new URL(`/rest/v1/rpc/${name}`, options.supabaseUrl), {
+      method: "POST", headers: { ...headers(), "Content-Type": "application/json" }, body: JSON.stringify(args),
+    });
+    if (!response.ok) throw new Error(`Worker RPC ${name} 返回 HTTP ${response.status}`);
+    const rows: unknown = await response.json();
+    return Array.isArray(rows) ? rows : [rows];
+  }
+  async function reportLaunchFailure(task: ClaimedTaskRow, error: unknown) {
+    // A stale/cancelled lease must not report into a new attempt. The fenced
+    // result RPC is authoritative; process exit alone never frees a DB lease.
+    const result = { version: "worker-result/v1", taskId: task.task_id, status: "failed", artifacts: [], validation: { passed: false, checks: [] }, actualCostCents: 0, blockers: [], retry: { shouldRetry: true, reason: "Worker process exited before completion." }, nextStep: "Retry after the local Worker is available." };
+    try { await rpc("report_worker_result", { p_task_id: task.task_id, p_attempt: task.attempt, p_lease_token: task.lease_token, p_result: result }); }
+    catch {
+      // Cancellation, completed result or a reclaimed lease can win this race.
+      // Preserve its authoritative state and rely on lease recovery if needed.
+      void error;
+    }
   }
   async function hasPendingWork(): Promise<boolean> {
     for (const [table, filters] of [
