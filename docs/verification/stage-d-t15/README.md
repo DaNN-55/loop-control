@@ -1,25 +1,40 @@
-# T15 / #121：部分实现，验收未完成
+# T15 / #121：接口及模拟验收完成，真实验收未完成
 
-前置T14本地验收及双审查在`3ce95e7`通过。实际GitHub Issue于本轮读取；保持OPEN不作为未完成的独立判断依据。这里的未完成来自缺少真实Keychain和Worker路径验收。
+前置T14在`3ce95e7`通过本地验收及双审查。实际GitHub Issue已读取，保持OPEN；本票三项原验收均仍未标完成。父任务要求继续不依赖Keychain授权的实现后，新增下列代码与测试，没有执行真实Keychain、ACL、登录钥匙串状态操作或在线Provider调用。
 
-## 已安全完成
+## 已实现的边界
 
-`native/keychain-helper.m`是隔离D环境的候选Security.framework helper，系统clang实际编译通过。固定service为`com.loop-control.stage-d.connections.v1`，仅接受规范UUID引用和put/get/remove白名单；秘密只在受控stdin JSON和get的Worker stdout管道中传递，不接受秘密命令行参数或环境变量。限制输入64KiB、秘密16KiB；put使用SecItemAdd，重复引用不覆盖，没有SecItemUpdate、列举、ACL扩大、同步或明文文件回退。
+本地Owner会话、精确Host/Origin和CSRF保护的`GET/POST /api/local/connections`，仅create/rotate/rebind/update/revoke/verify白名单，拒绝任意字段和任意SQL。私有迁移007只保存操作意图、UUID绑定和验证模式/结果；有限SECURITY DEFINER函数检查Owner，应用仍没有原始业务表UPDATE权限。原三张外部连接业务表、版本号、官方Provider/adapter/endpoint白名单、撤销与验证历史保留。历史`vault_secret_id`字段对新行仅含UUID；本地解析只读明确的`connection_bindings`，不会回退Vault或环境变量。
 
-候选源码禁用可选系统交互，锁定/拒绝、缺失、重复、未知错误返回固定代码，未把系统错误描述或秘密回显到错误日志。真实操作默认disabled，需显式`--keychain`且stdin/stdout均为FIFO或已连接AF_UNIX stream socket；普通文件/终端/网络socket拒绝。该开关是未来受控调用边界，不能替代Owner授权。默认macOS文件型Keychain的交互禁止兼容调用是系统已废弃API；保留局部编译标注，未隐瞒此兼容成本。未创建access group、entitlement、证书或永久ACL。
+秘密字段在进入SQL前移除，没有保存明文或秘密哈希。先持久化不含秘密的意图和随机引用，再调用存储端口，最后同事务提交业务版本与回执；helper已写入但PG提交中断时，原意图/引用可重试，不能新建第二份秘密。不可变put遇到重复引用只接受完全相同的字节；更改秘密应新建轮换版本。已完成意图返回`replayed:true`，不再执行秘密写入；即使新输入不同也明确提示“原操作已经完成，未再次写入”，不能当成更新成功。元数据不同复用key409。未完成意图通过Owner目录显示，需重输原材料显式重试。
 
-`node scripts/local/keychain-helper-check.mjs`编译两个二进制，只执行以`LOOP_KEYCHAIN_PROTOCOL_ONLY`编译的协议测试版本。该版本在预处理时剔除所有Security调用，`nm -u`再次断言无SecItem/SecKeychain导入。20个真实本机子进程检查通过，含合法操作、无效JSON/字段/UUID/类型/空值/大小、默认禁用、试图开启真实操作被禁用及普通文件stdin/stdout拒绝。生产候选与协议版本共享同一IPC校验，真实Node stdio管道成功。秘密只使用内存合成文本且输出不包含该文本。测试先以未实现协议返回not_implemented失败，再以实现通过。[记录](protocol.json)明确候选编译但从未执行、真实Keychain操作0、Provider调用0。构建产物和模块缓存仅在私有`.loop-control/stage-d/native`，不提交二进制。
+客户端sessionStorage只保存在**不含secret的元数据hash**下的随机操作UUID，不保存明文或低熵秘密指纹；认证草稿只在password输入框/内存。复用原`ConnectionWorkspace`，新增明确的缺失绑定重录和原操作重试。导入的历史verified字段不等于本机可用：无绑定、模拟或端口未启用时，DTO明确显示不可用/待真实验证，保留历史状态字段，数据库原记录不改。连接页和账号蓝图页使用同一Owner版本列表。
 
-部分交付审查发现并修复了IPC兼容问题：Node24的stdio:'pipe'由libuv socketpair实现，原候选仅S_ISFIFO会误拒绝。现在共享检查接受FIFO和经本地/对端地址、socket类型检查的已连接AF_UNIX stream，协议版本同样执行该检查，不能在安全测试中绕过边界。没有为修复执行候选或Keychain调用。
+蓝图引用保存只在服务端同时配置keychain存储和live验证端口时开放；按稳定顺序锁定连接，再以新语句核对Owner/当前/未撤销版本、原业务verified与本地live验证证据，并实际解析该精确引用检查可用性。解析字节不进入SQL或HTTP。默认门禁仍409；模拟验证不会开放选择。既有SQL触发器继续校验Provider/adapter匹配。此真实分支只有边界mock测试，未假装已跑真实Keychain验收。
 
-API依据：[Apple SecItemAdd](https://developer.apple.com/documentation/security/secitemadd(_:_:))、[SecItemCopyMatching](https://developer.apple.com/documentation/security/secitemcopymatching(_:_:))及本机SDK的SecItem.h/SecKeychain.h交互约束。源码/协议通过不证明真实Keychain行为通过。
+`worker/localConnection.ts`提供受控Worker接口：HTTP验证传入不可变版本，Worker端口自行解析秘密；Provider返回文本/异常永不直接进入HTTP、数据库或日志，只记录固定状态和固定脱敏详情。生产凭据解析要求当前/未撤销/同Owner账号关系、真实keychain绑定和live验证证据，精确版本失败即阻塞，不换用最新版本或其他后端。当前测试只调用此Worker模块接口，**不是完整任务Worker CLI/Provider子进程闭环**，后者仍属T16及后续真实验证。
 
-## 精确阻塞与未完成
+## 原生 helper 与默认禁用
 
-状态：**待Owner明确授权，未尝试、未被工具拒绝、没有未知结果**。遵守本轮用户限制“涉及真实Keychain/新认证权限等超出当前授权的步骤须报告具体要求”。没有读取、写入、删除、解锁或枚举用户Keychain，没有访问现有生产凭据。
+`native/keychain-helper.m`候选用系统clang实际编译；固定service为`com.loop-control.stage-d.connections.v1`，仅规范UUID及put/get/remove。秘密经受控stdin JSON，get只回受控Worker stdout；不接受秘密参数或环境变量，无列举、更新覆盖、ACL扩大、同步或明文回退。输入64KiB/秘密16KiB有界。共享IPC检查接受FIFO和已连接AF_UNIX stream，拒绝普通文件/终端/网络socket。
 
-下一步需要Owner允许：仅以本轮新建、无外部权限的合成秘密，在固定D service下执行候选helper的新增/解析/删除，验证不可变旧引用、轮换新引用、缺失恢复绑定；在Owner控制的独立测试Keychain或明确许可的锁定/拒绝情景中检查失败行为。任何系统认证提示、应用访问授权或Keychain选择必须另行明确处理；不得自动解锁、扩大现有条目ACL或读取生产连接。不可为测试随意锁定Owner登录Keychain。当前未创建测试Keychain。
+候选现只允许编译时固定的`.loop-control/stage-d/keychain/t15-synthetic.keychain-db`：必须显式路径、规范路径一致，add指定该Keychain，查询/删除限定其搜索列表，**不再使用默认登录Keychain或默认搜索列表**。无创建/锁定/解锁/ACL修改实现。可选系统交互被禁止，锁定/拒绝/缺失等仅固定代码。文件型Keychain的兼容调用是系统已废弃API，局部编译标注保留，真实兼容性尚未验证。
 
-仍未实现/验收：HTTP连接创建/轮换/撤销/验证记录到本地PG的接管、复用连接界面、蓝图版本选择解除门禁、受控Worker按引用解析及脱敏验证、导入缺失秘密重新绑定，以及实际数据库/页面/日志/备份的秘密不泄漏检查。真实Provider凭据和在线验证另需合适的显式授权与可用服务；本轮未调用。候选helper尚未接入运行中的应用，不能通过它创建可用外部连接，T14的外部配置409门禁保留。
+`configuredKeychainStore`是部署层候选适配器：默认approved=false不读文件也不启动进程；未来明确启用时检查私有路径/所有者/权限/非symlink和helper SHA，再用无继承凭据环境、有限管道/超时调用。重复秘密只在内存恒时比对，不持久化哈希。**运行中的D应用没有启用此适配器**，只实例化disabled秘密/验证端口；HTTP或UI不能更改该配置。配置布尔值不是人类授权的替代。
 
-T15三项原验收均未标完成，不以协议测试替代真实存储/轮换/Worker验证。根据实际依赖，#122直接依赖#121；#123–#129、#130（亦直接依赖#121）、#131均仍被后续链条阻塞，未跳过门禁推进。无生产切换、推送、合并、部署、关闭Issue或凭据传输。
+## 验证及失败保留
+
+- [真实HTTP/PG + 模拟端口](http-simulated.json)：8并发创建仅1连接/1秘密写入；6并发轮换仅1新版本，旧引用保持；已完成key重放不覆盖；存储成功后模拟中断，原意图恢复无重复；仅本轮新版本删除绑定模拟恢复缺失后显式重绑；撤销拒绝，不自动切换；恶意Provider异常文本脱敏；模拟结果只在私有证据记outcome，公共验证仍retryable、ready=false，蓝图409，生产Worker拒绝。匿名401、CSRF403、跨Owner命令404、无会员创建403，且拒绝前不写秘密。真实PG dump含public及local_identity，HTTP、dump及应用日志均不含本轮合成秘密。此处存储为内存Map，Provider为纯函数，没有真实Keychain/Provider调用或费用。
+- [本机协议](protocol.json)：候选编译但从未执行；只执行`LOOP_KEYCHAIN_PROTOCOL_ONLY`预处理剔除Security代码的版本，nm断言无SecItem/SecKeychain导入。20项真实子进程协议/IPC检查通过。先以未实现协议返回not_implemented失败，再实现通过；后续审查修复Node socketpair误拒绝，共享检查现被协议测试覆盖。构建/模块缓存只在私有运行目录，不提交二进制。
+- 单元测试：原组件网络故障、连接页password草稿及仅UUID存储；native适配器的子进程/文件系统边界均mock，覆盖默认禁用、参数/环境无秘密、不可变引用、stderr丢弃及hash拒绝；蓝图门禁的真实分支仅用边界mock验证，不创建live验证数据库夹具。
+- [完整回归](checks.txt)及[历史保留](original-history.json)记录最终结果。完整回归采用默认5000ms，排除运行目录保存的历史源码副本；Node既有原生n8n校验跳过保留。初次定向测试builtin mock缺default导出而失败，修正mock边界后通过，未改弱运行代码或断言。新增会员校验曾使跨Owner动作提前403，调整先核验资源归属后重测404，未放宽预期。失败留下的本轮合成连接/版本仅作诊断，原C记录未改。
+
+API依据：[Apple SecItemAdd](https://developer.apple.com/documentation/security/secitemadd(_:_:))、[SecItemCopyMatching](https://developer.apple.com/documentation/security/secitemcopymatching(_:_:))及本机SDK的显式Keychain/IPC约束。源码、编译、mock、模拟Provider通过均不证明真实Keychain行为或在线服务通过。
+
+## 精确待确认及未完成
+
+[可供Owner确认的独立测试钥匙串方案](keychain-test-proposal.md)明确目标路径、service、仅本轮可重建合成条目、测试库专属锁定/解锁/删除范围、不动登录库或已有ACL、可能的测试库搜索列表项副作用及零Provider费用。**状态为待Owner明确授权、未尝试，没有工具拒绝或未知结果。**没有创建/打开/读取/写入/删除/解锁/锁定任何真实Keychain，没有系统认证提示或新持久权限。
+
+仍须获准并实测真实Keychain存取、锁定/拒绝、不可变版本轮换、撤销和恢复缺失；通过真实helper的HTTP→Worker脱敏及日志/备份检查；显式可用Provider的真实验证及真实蓝图版本选择。完整任务Worker迁移未完成；D完整备份恢复含本地私有绑定/意图的接管仍是T24，当前dump仅验证没有合成秘密，不冒称完整恢复。T15三项原验收仍未完成；#122–#131不越过依赖门禁。
+
+C历史五秒不稳定、3条既有advisor WARN、n8n原生校验既有跳过、真人审批链和在线Provider未测保留。无生产切换、推送、合并、部署、关闭Issue或凭据传输。

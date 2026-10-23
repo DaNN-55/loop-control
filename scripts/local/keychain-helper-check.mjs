@@ -11,7 +11,8 @@ const env={PATH:'/usr/bin:/bin:/usr/sbin:/sbin',TMPDIR:process.env.TMPDIR??'/tmp
 function run(command,args,input){const result=spawnSync(command,args,{env,input,encoding:'utf8',timeout:30000,maxBuffer:131072});if(result.error)throw Error('Local helper tool failed');return result;}
 const source=join(project,'native/keychain-helper.m'),candidate=join(build,'keychain-helper'),protocol=join(build,'keychain-protocol-only');
 for(const [target,flags] of [[candidate,[]],[protocol,['-DLOOP_KEYCHAIN_PROTOCOL_ONLY=1']]]){
- const result=run('/usr/bin/xcrun',['clang','-fobjc-arc','-Wall','-Wextra','-Werror',...flags,source,'-framework','Foundation','-framework','Security','-o',target]);
+ const keychain=join(project,'.loop-control/stage-d/keychain/t15-synthetic.keychain-db');
+ const result=run('/usr/bin/xcrun',['clang','-fobjc-arc','-Wall','-Wextra','-Werror','-DLOOP_KEYCHAIN_PATH='+JSON.stringify(keychain),...flags,source,'-framework','Foundation','-framework','Security','-o',target]);
  assert.equal(result.status,0,result.stderr);chmodSync(target,0o700);
 }
 const symbols=run('/usr/bin/nm',['-u',protocol]);assert.equal(symbols.status,0);assert.doesNotMatch(symbols.stdout,/SecItem|SecKeychain|LAContext/,'executed protocol binary must have no Keychain API imports');

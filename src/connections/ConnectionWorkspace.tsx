@@ -22,6 +22,7 @@ export type ExternalConnectionVersion = {
   revoked_at: string | null;
   status: "unverified" | "verified" | "invalid" | "retryable" | "revoked";
   version: number;
+  secretState?:'unbound'|'bound-unchecked';
 };
 
 const statusLabels: Record<ExternalConnection["status"] | ExternalConnectionVersion["status"], string> = {
@@ -108,7 +109,7 @@ const connectionTypes = [
   { adapter: "volcengine_tts", label: "豆包语音 V3", provider: "volcengine_tts", secretLabel: "豆包语音 API Key" },
 ] as const;
 
-export function ConnectionWorkspace({ connections, isPending = false, onCreateConnection, onDeleteVersion, onRevokeVersion, onRotateConnection, onTestConnection, onUpdateConnection, versions = [] }: {
+export function ConnectionWorkspace({ connections, isPending = false, onCreateConnection, onDeleteVersion, onRevokeVersion, onRotateConnection, onTestConnection, onUpdateConnection, onRebindVersion, secretStorage='Vault', versions = [] }: {
   connections: ExternalConnection[];
   isPending?: boolean;
   onCreateConnection: (input: ExternalConnectionInput) => Promise<ExternalConnection | null>;
@@ -117,12 +118,15 @@ export function ConnectionWorkspace({ connections, isPending = false, onCreateCo
   onRotateConnection?: (input: { connectionId: string; provider: ExternalConnectionInput["provider"]; adapter: ExternalConnectionInput["adapter"]; secret: string }) => Promise<ExternalConnection | null>;
   onTestConnection: (connectionId: string) => Promise<void>;
   onUpdateConnection?: (input: { connectionId: string; name: string; description: string }) => Promise<void>;
+  onRebindVersion?: (versionId:string,secret:string) => Promise<void>;
+  secretStorage?:string;
   versions?: ExternalConnectionVersion[];
 }) {
   const [name, setName] = useState("");
   const [secret, setSecret] = useState("");
   const [adapter, setAdapter] = useState<ExternalConnectionInput["adapter"]>("pexels_video");
   const [rotationSecrets, setRotationSecrets] = useState<Record<string, string>>({});
+  const [rebindSecrets,setRebindSecrets]=useState<Record<string,string>>({});
   const [names, setNames] = useState<Record<string, string>>({});
   const [descriptions, setDescriptions] = useState<Record<string, string>>({});
   const [error, setError] = useState("");
@@ -152,9 +156,14 @@ export function ConnectionWorkspace({ connections, isPending = false, onCreateCo
     if (!onUpdateConnection) return;
     await onUpdateConnection({ connectionId: connection.id, description: descriptions[connection.id] ?? connection.description ?? "", name: names[connection.id]?.trim() || connection.name });
   }
+  async function rebind(version:ExternalConnectionVersion){
+    const value=rebindSecrets[version.id];if(!value||!onRebindVersion)return;
+    if(!window.confirm(`重新绑定 v${version.version} 的缺失秘密？现有秘密不能覆盖，需重新验证；更换认证材料应创建新版本。`))return;
+    try{setError('');await onRebindVersion(version.id,value);setRebindSecrets(current=>({...current,[version.id]:''}));}catch{setError('重新绑定失败，请检查缺失状态或使用版本轮换。');}
+  }
 
   return <section className="configuration-form connection-workspace" aria-label="外部连接管理">
-    <header><div><span className="effective-config-eyebrow">Owner 连接池</span><h2>外部连接</h2><p>秘密只提交给 Vault 和 Worker 测试；蓝图、Episode、任务和普通日志只保存连接版本 ID。连接撤销后不会自动切换。</p></div></header>
+    <header><div><span className="effective-config-eyebrow">Owner 连接池</span><h2>外部连接</h2><p>秘密只提交给 {secretStorage} 和 Worker 测试；蓝图、Episode、任务和普通日志只保存连接版本 ID。连接撤销后不会自动切换。</p></div></header>
     <form onSubmit={(event) => void submit(event)}><fieldset><legend>添加 {connectionType.label} 连接</legend>
       <label><span>连接类型</span><select aria-label="连接类型" onChange={(event) => { setAdapter(event.target.value as ExternalConnectionInput["adapter"]); setSecret(""); }} value={adapter}>{connectionTypes.map((candidate) => <option key={candidate.adapter} value={candidate.adapter}>{candidate.label}</option>)}</select></label>
       <label>连接名称（自定义填写）<input aria-label="连接名称" onChange={(event) => setName(event.target.value)} required value={name} /></label>
@@ -170,7 +179,7 @@ export function ConnectionWorkspace({ connections, isPending = false, onCreateCo
         {connection.last_verification_detail ? <p>{connection.last_verification_detail}</p> : null}
         <div className="configuration-actions"><button className="button button-secondary button-small" disabled={isPending} onClick={() => void onTestConnection(connection.id)} type="button">重新测试</button>{onUpdateConnection ? <button className="button button-secondary button-small" disabled={isPending} onClick={() => void saveMetadata(connection)} type="button">保存说明</button> : null}</div>
         {onRotateConnection ? <details><summary>轮换认证版本</summary><label>新的认证材料<input aria-label={`${connection.name} 新的认证材料`} autoComplete="off" onChange={(event) => setRotationSecrets((current) => ({ ...current, [connection.id]: event.target.value }))} type="password" value={rotationSecrets[connection.id] ?? ""} /></label><button className="button button-primary button-small" disabled={isPending || !rotationSecrets[connection.id]?.trim()} onClick={() => void rotate(connection)} type="button">创建新版本并测试</button></details> : null}
-        <details><summary>连接版本（{connectionVersions.length}）</summary><ul>{connectionVersions.map((version) => <li key={version.id}><span>v{version.version} · {statusLabels[version.status]}{version.is_current ? " · 当前" : ""}</span>{version.revoked_at ? <small>已撤销</small> : onRevokeVersion ? <button className="button button-danger-soft button-small" disabled={isPending} onClick={() => { if (window.confirm("撤销此连接版本？引用它的生产单不会自动切换。")) void onRevokeVersion(version.id); }} type="button">撤销版本</button> : null}{version.status === "unverified" && !version.is_current && onDeleteVersion ? <button className="button button-secondary button-small" disabled={isPending} onClick={() => { if (window.confirm("删除这个未引用的连接草稿？删除后不可恢复。")) void onDeleteVersion(version.id); }} type="button">删除草稿</button> : null}</li>)}</ul></details>
+        <details><summary>连接版本（{connectionVersions.length}）</summary><ul>{connectionVersions.map((version) => <li key={version.id}><span>v{version.version} · {statusLabels[version.status]}{version.is_current ? " · 当前" : ""}</span>{onRebindVersion&&!version.revoked_at?<details><summary>恢复缺失的秘密绑定</summary><p>此版本不会自动使用其他版本的认证材料。</p><input aria-label={`v${version.version} 恢复认证材料`} type="password" autoComplete="off" value={rebindSecrets[version.id]??""} onChange={event=>setRebindSecrets(current=>({...current,[version.id]:event.target.value}))}/><button type="button" disabled={isPending||!rebindSecrets[version.id]} onClick={()=>void rebind(version)}>重新绑定此版本</button></details>:null}{version.revoked_at ? <small>已撤销</small> : onRevokeVersion ? <button className="button button-danger-soft button-small" disabled={isPending} onClick={() => { if (window.confirm("撤销此连接版本？引用它的生产单不会自动切换。")) void onRevokeVersion(version.id); }} type="button">撤销版本</button> : null}{version.status === "unverified" && !version.is_current && onDeleteVersion ? <button className="button button-secondary button-small" disabled={isPending} onClick={() => { if (window.confirm("删除这个未引用的连接草稿？删除后不可恢复。")) void onDeleteVersion(version.id); }} type="button">删除草稿</button> : null}</li>)}</ul></details>
       </li>;
     })}</ul> : <p className="summary-empty">连接池为空。先添加一条经过显式验证的外部连接。</p>}</section>
   </section>;

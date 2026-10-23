@@ -4,6 +4,10 @@
 #import <sys/stat.h>
 #import <sys/socket.h>
 #import <unistd.h>
+#import <limits.h>
+#ifndef LOOP_KEYCHAIN_PATH
+#define LOOP_KEYCHAIN_PATH ""
+#endif
 #ifndef LOOP_KEYCHAIN_PROTOCOL_ONLY
 #import <Security/Security.h>
 #endif
@@ -63,13 +67,17 @@ static BOOL isControlledIPC(int fd) {
 }
 
 #ifndef LOOP_KEYCHAIN_PROTOCOL_ONLY
-static int performKeychainRequest(NSDictionary *request) {
+static int performKeychainRequest(NSDictionary *request, const char *path) {
     // The file-based macOS keychain can otherwise display ACL UI even with a
     // query authentication hint. This process never allows optional UI.
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
     OSStatus interaction = SecKeychainSetUserInteractionAllowed(false);
     if (interaction != errSecSuccess) return respond(NO, @"unavailable", nil);
+    SecKeychainRef keychain = NULL;
+    OSStatus opened = SecKeychainOpen(path, &keychain);
+    if (opened != errSecSuccess || !keychain) return respond(NO, @"unavailable", nil);
+    id scopedKeychain = CFBridgingRelease(keychain);
     NSMutableDictionary *query = [@{
         (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
         (__bridge id)kSecAttrService: @"com.loop-control.stage-d.connections.v1",
@@ -81,14 +89,17 @@ static int performKeychainRequest(NSDictionary *request) {
     NSString *operation = request[@"operation"];
     OSStatus status; CFTypeRef result = NULL;
     if ([operation isEqualToString:@"put"]) {
+        query[(__bridge id)kSecUseKeychain] = scopedKeychain;
         query[(__bridge id)kSecValueData] = [request[@"secret"] dataUsingEncoding:NSUTF8StringEncoding];
         // Immutable reference: duplicates fail; never silently update/rotate.
         status = SecItemAdd((__bridge CFDictionaryRef)query, NULL);
     } else if ([operation isEqualToString:@"get"]) {
+        query[(__bridge id)kSecMatchSearchList] = @[scopedKeychain];
         query[(__bridge id)kSecReturnData] = @YES;
         query[(__bridge id)kSecMatchLimit] = (__bridge id)kSecMatchLimitOne;
         status = SecItemCopyMatching((__bridge CFDictionaryRef)query, &result);
     } else {
+        query[(__bridge id)kSecMatchSearchList] = @[scopedKeychain];
         status = SecItemDelete((__bridge CFDictionaryRef)query);
     }
     NSData *data = CFBridgingRelease(result);
@@ -110,8 +121,13 @@ int main(int argc, const char *argv[]) {
     @autoreleasepool {
         BOOL validate = argc == 2 && strcmp(argv[1], "--validate-only") == 0;
 #ifndef LOOP_KEYCHAIN_PROTOCOL_ONLY
-        BOOL execute = argc == 2 && strcmp(argv[1], "--keychain") == 0;
+        BOOL execute = argc == 3 && strcmp(argv[1], "--keychain") == 0;
         if (!validate && !execute) return respond(NO, @"disabled", nil);
+        if (execute) {
+            char canonical[PATH_MAX];
+            if (strlen(LOOP_KEYCHAIN_PATH) == 0 || strcmp(argv[2], LOOP_KEYCHAIN_PATH) != 0 ||
+                !realpath(argv[2], canonical) || strcmp(canonical, LOOP_KEYCHAIN_PATH) != 0) return respond(NO, @"keychain_scope_required", nil);
+        }
 #else
         if (!validate) return respond(NO, @"disabled", nil);
 #endif
@@ -120,7 +136,7 @@ int main(int argc, const char *argv[]) {
         if (!request) return respond(NO, @"invalid_request", nil);
         if (validate) return respond(YES, @"validated", nil);
 #ifndef LOOP_KEYCHAIN_PROTOCOL_ONLY
-        return performKeychainRequest(request);
+        return performKeychainRequest(request, argv[2]);
 #else
         return respond(NO, @"disabled", nil);
 #endif

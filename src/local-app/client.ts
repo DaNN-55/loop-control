@@ -14,3 +14,14 @@ export async function localCommand<T>(command:string,data:unknown,expectedRevisi
  const request=localRequest('configuration',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify({...body,idempotencyKey})}).then(value=>{sessionStorage.removeItem(key);return value;}).finally(()=>inFlight.delete(digest));
  inFlight.set(digest,request);return request as Promise<T>;
 }
+export async function localConnectionCommand<T>(command:string,data:Record<string,unknown>,resumeKey?:string):Promise<T>{
+ // Persist only a random intent ID under NONSECRET metadata. Neither plaintext
+ // nor a low-entropy secret hash belongs in browser storage.
+ const metadata={command,data:Object.fromEntries(Object.entries(data).filter(([key])=>key!=='secret'))};
+ const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(metadata))))).map(x=>x.toString(16).padStart(2,'0')).join('');
+ const storageKey='loop.local.connection.'+digest;
+ const active=inFlight.get(storageKey);if(active)return active as Promise<T>;
+ let idempotencyKey=resumeKey??sessionStorage.getItem(storageKey);if(!idempotencyKey)idempotencyKey=crypto.randomUUID();sessionStorage.setItem(storageKey,idempotencyKey);
+ const request=localRequest('connections',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify({command,data,idempotencyKey})}).then(value=>{sessionStorage.removeItem(storageKey);return value;}).finally(()=>inFlight.delete(storageKey));
+ inFlight.set(storageKey,request);return request as Promise<T>;
+}

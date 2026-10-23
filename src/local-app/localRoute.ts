@@ -6,7 +6,9 @@ import {readLocalCatalog} from './catalog.js';
 import {lookupSession,readSessionToken,establishSession,revokeSession,cookieHeader,csrfFor} from './sessions.js';
 import {readLocalEpisode,findOwnedArtifact} from './episodeReads.js';
 import {serveOwnedArtifact} from './artifactRoute.js';
-interface LocalOptions {pool:Pool;origin:string;mediaRoot:string}
+import {LocalConnections} from './connections.js';
+import {SecretStoreError} from './connectionPorts.js';
+interface LocalOptions {pool:Pool;origin:string;mediaRoot:string;connections?:LocalConnections}
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 async function readBody(request:IncomingMessage,limit=8192):Promise<Record<string,unknown>>{
  if(request.headers['content-type']?.split(';')[0]!=='application/json')throw Error('JSON required');
@@ -15,6 +17,7 @@ async function readBody(request:IncomingMessage,limit=8192):Promise<Record<strin
 }
 export function createLocalHandler(options:LocalOptions){
  const host=new URL(options.origin).host;
+ const connections=options.connections??new LocalConnections(options.pool);
  return async(request:IncomingMessage,response:ServerResponse)=>{
   response.setHeader('Cache-Control','no-store');response.setHeader('X-Content-Type-Options','nosniff');
   const send=(status:number,value:unknown)=>{response.writeHead(status,{'Content-Type':'application/json; charset=utf-8'});response.end(JSON.stringify(value));};
@@ -41,7 +44,14 @@ export function createLocalHandler(options:LocalOptions){
    }
    if(url.pathname==='/api/local/configuration'&&request.method==='POST'){
     let body;try{body=await readBody(request,256*1024);}catch{send(400,{error:'配置请求格式无效。'});return;}
-    send(200,await executeConfiguration(options.pool,session,body,options.mediaRoot));return;
+    send(200,await executeConfiguration(options.pool,session,body,options.mediaRoot,connections.externalReady?(client,refs)=>connections.assertBlueprintReferences(client,refs):undefined));return;
+   }
+   if(url.pathname==='/api/local/connections'){
+    if(request.method==='GET'){send(200,await connections.read(session.id));return;}
+    if(request.method==='POST'){
+     let body;try{body=await readBody(request,32768);}catch{send(400,{error:'连接请求格式无效。'});return;}
+     send(200,await connections.command(session,body));return;
+    }
    }
    if(request.method!=='GET'){send(405,{error:'该本地命令尚未开放。'});return;}
    if(url.pathname==='/api/local/session'){send(200,{owner:{id:session.id,email:session.email},csrfToken:csrfFor(session.token)});return;}
@@ -57,6 +67,9 @@ export function createLocalHandler(options:LocalOptions){
    }
    send(404,{error:'本地路径尚未迁移。'});
   }catch(error){if(error instanceof ConfigurationError){send(error.status,{error:error.message});return;}
+   if(error instanceof SecretStoreError){send(error.code==='conflict'?409:503,{error:error.code==='conflict'?'旧秘密引用不能覆盖；请显式创建新版本。':'秘密存储或验证未就绪；请检查授权、绑定和本机状态。'});return;}
+   if((error as {status?:number})?.status===401){send(401,{error:'会话已失效。'});return;}
+   if((error as {code?:string})?.code==='P0002'){send(404,{error:'连接或版本不可见。'});return;}
    const code=(error as {code?:string})?.code;if(code==='42501'){send(403,{error:'所有者权限不足。'});return;}if(code==='23505'||code==='23503'){send(409,{error:'配置冲突或仍被引用。'});return;}if(code==='23514'||code?.startsWith('22')){send(400,{error:'配置校验未通过。'});return;}
    if(response.headersSent)response.destroy();else send(503,{error:'本机服务暂不可用，请检查本机状态。'});}
  };
