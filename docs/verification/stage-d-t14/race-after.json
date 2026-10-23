@@ -1,0 +1,10 @@
+{
+  "ticket": 120,
+  "at": "2026-10-23T17:46:45.005Z",
+  "bothWaitedBeforeRelease": true,
+  "statuses": [
+    200,
+    409
+  ],
+  "passed": true
+}

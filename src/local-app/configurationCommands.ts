@@ -55,7 +55,9 @@ export async function executeConfiguration(pool:Pool,session:OwnerSession,body:R
   if(receipt.rowCount){if(receipt.rows[0].payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');return receipt.rows[0].result;}
   let currentPolicy:Record<string,unknown>|undefined;
   if(data.accountId){
-   const account=await client.query('SELECT * FROM local_identity.lock_owned_account($1)',[data.accountId]);
+   const locked=await client.query('SELECT local_identity.lock_owned_account_row($1) owned',[data.accountId]);
+   if(!locked.rows[0].owned)throw new ConfigurationError(404,'账号不可见。');
+   const account=await client.query('SELECT a.current_blueprint_version_id,b.policy,md5(b.policy::text) revision FROM public.accounts a LEFT JOIN public.account_blueprint_versions b ON b.id=a.current_blueprint_version_id WHERE a.id=$1',[data.accountId]);
    if(!account.rowCount)throw new ConfigurationError(404,'账号不可见。');currentPolicy=account.rows[0].policy;
    if(command==='updateBlueprint'&&body.expectedRevision!==account.rows[0].revision)throw new ConfigurationError(409,'蓝图已变化，请刷新后重试。');
   }
@@ -65,6 +67,7 @@ export async function executeConfiguration(pool:Pool,session:OwnerSession,body:R
   }
   if(data.policy){
    const policy=data.policy as Record<string,unknown>,asset=policy.asset_root;
+   if(asset!==undefined&&typeof asset!=='string')throw new ConfigurationError(400,'素材目录无效。');
    if(typeof asset==='string'&&asset.trim()&&asset!==currentPolicy?.asset_root){
     const path=resolve(asset),rel=relative(mediaRoot,path);
     if(!isAbsolute(asset)||rel.startsWith('..')||isAbsolute(rel)||await realpath(path).catch(()=>null)!==path)throw new ConfigurationError(400,'素材目录必须是已存在的本地授权目录。');
