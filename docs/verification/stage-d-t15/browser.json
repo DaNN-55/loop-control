@@ -1,0 +1,13 @@
+{
+  "ticket": 121,
+  "at": "2026-10-23T18:30:11.583Z",
+  "independentBrowser": true,
+  "originalBlueprintInlineRecovery": true,
+  "unboundAndDisabledStatusVisible": true,
+  "onlyLocalBusinessRequests": true,
+  "readOnlyNoSecretEntered": true,
+  "initialAnonymous401Expected": true,
+  "nativeKeychainOperations": 0,
+  "providerCalls": 0,
+  "passed": true
+}

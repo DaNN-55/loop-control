@@ -1,0 +1,36 @@
+### Result
+33. [GET] http://127.0.0.1:55177/api/local/session => [401] Unauthorized
+34. [GET] http://127.0.0.1:55177/api/local/session => [401] Unauthorized
+67. [GET] http://127.0.0.1:55177/api/local/session => [200] OK
+68. [GET] http://127.0.0.1:55177/api/local/session => [200] OK
+69. [GET] http://127.0.0.1:55177/api/local/catalog => [200] OK
+70. [GET] http://127.0.0.1:55177/api/local/catalog => [200] OK
+71. [GET] http://127.0.0.1:55177/api/local/connections => [200] OK
+72. [GET] http://127.0.0.1:55177/api/local/connections => [200] OK
+73. [GET] blob:http://127.0.0.1:55177/07259315-aeac-4658-b7fd-407859720171
+106. [GET] http://127.0.0.1:55177/api/local/session => [200] OK
+107. [GET] http://127.0.0.1:55177/api/local/session => [200] OK
+108. [GET] http://127.0.0.1:55177/api/local/catalog => [200] OK
+109. [GET] http://127.0.0.1:55177/api/local/catalog => [200] OK
+110. [GET] http://127.0.0.1:55177/api/local/connections => [200] OK
+111. [GET] http://127.0.0.1:55177/api/local/connections => [200] OK
+115. [GET] http://127.0.0.1:55177/api/local/session => [200] OK
+116. [GET] http://127.0.0.1:55177/api/local/catalog => [200] OK
+117. [GET] http://127.0.0.1:55177/api/local/session => [200] OK
+118. [GET] http://127.0.0.1:55177/api/local/session => [200] OK
+119. [GET] http://127.0.0.1:55177/api/local/catalog => [200] OK
+120. [GET] http://127.0.0.1:55177/api/local/catalog => [200] OK
+121. [GET] http://127.0.0.1:55177/api/local/connections => [200] OK
+123. [GET] http://127.0.0.1:55177/api/local/connections => [200] OK
+124. [GET] http://127.0.0.1:55177/api/local/connections => [200] OK
+125. [GET] blob:http://127.0.0.1:55177/48ff294f-4308-42ba-b48c-c4e019cb044c
+159. [GET] http://127.0.0.1:55177/api/local/session => [200] OK
+160. [GET] http://127.0.0.1:55177/api/local/session => [200] OK
+161. [GET] http://127.0.0.1:55177/api/local/catalog => [200] OK
+162. [GET] http://127.0.0.1:55177/api/local/catalog => [200] OK
+163. [GET] http://127.0.0.1:55177/api/local/connections => [200] OK
+164. [GET] http://127.0.0.1:55177/api/local/connections => [200] OK
+165. [GET] http://127.0.0.1:55177/api/local/connections => [200] OK
+166. [GET] http://127.0.0.1:55177/api/local/connections => [200] OK
+
+Note: 133 static requests not shown, run with --static option to see them.
