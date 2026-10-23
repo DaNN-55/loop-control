@@ -1,7 +1,7 @@
 // Only the protocol-only binary is executed. It cannot link to Security APIs.
 import assert from 'node:assert/strict';
 import {spawnSync} from 'node:child_process';
-import {readFileSync,writeFileSync,chmodSync,mkdirSync} from 'node:fs';
+import {readFileSync,writeFileSync,chmodSync,mkdirSync,openSync,closeSync,rmSync} from 'node:fs';
 import {join} from 'node:path';
 import {createHash,randomUUID} from 'node:crypto';
 import {fileURLToPath} from 'node:url';
@@ -26,5 +26,13 @@ for(const input of ['', 'null','[]','{',JSON.stringify({operation:'get',referenc
 check({operation:'get',reference},[],'disabled');
 check({operation:'get',reference},['--keychain'],'disabled');
 check({operation:'get',reference},['--validate-only','unexpected'],'disabled');
-const evidence={ticket:121,at:new Date().toISOString(),candidateCompiled:true,candidateExecuted:false,protocolCases:checked,protocolBinaryHasNoKeychainImports:true,realKeychainOperations:0,providerCalls:0,sha256:createHash('sha256').update(readFileSync(candidate)).digest('hex'),passed:true};
+// Ordinary files must be rejected at the exact IPC seam also used by the
+// candidate. These files contain only a nonsecret get request/error response.
+const inputPath=join(build,'protocol-input.json'),outputPath=join(build,'protocol-output.json');
+writeFileSync(inputPath,JSON.stringify({operation:'get',reference}),{mode:0o600});
+let fd=openSync(inputPath,'r');
+try{const result=spawnSync(protocol,['--validate-only'],{env,encoding:'utf8',stdio:[fd,'pipe','pipe'],timeout:10000});assert.equal(result.status,1);assert.equal(JSON.parse(result.stdout).code,'pipe_required');assert.equal(result.stderr,'');checked++;}finally{closeSync(fd);rmSync(inputPath);}
+fd=openSync(outputPath,'w',0o600);
+try{const result=spawnSync(protocol,['--validate-only'],{env,input:JSON.stringify({operation:'get',reference}),stdio:['pipe',fd,'pipe'],timeout:10000});assert.equal(result.status,1);assert.equal(JSON.parse(readFileSync(outputPath,'utf8')).code,'pipe_required');assert.equal(String(result.stderr),'');checked++;}finally{closeSync(fd);rmSync(outputPath);}
+const evidence={ticket:121,at:new Date().toISOString(),candidateCompiled:true,candidateExecuted:false,protocolCases:checked,nodeStdioPipeAccepted:true,regularInputAndOutputFilesRejected:true,protocolBinaryHasNoKeychainImports:true,realKeychainOperations:0,providerCalls:0,sha256:createHash('sha256').update(readFileSync(candidate)).digest('hex'),passed:true};
 writeFileSync(join(project,'docs/verification/stage-d-t15/protocol.json'),JSON.stringify(evidence,null,2)+'\n');console.log(JSON.stringify(evidence));

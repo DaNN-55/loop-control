@@ -6,9 +6,11 @@
 
 `native/keychain-helper.m`是隔离D环境的候选Security.framework helper，系统clang实际编译通过。固定service为`com.loop-control.stage-d.connections.v1`，仅接受规范UUID引用和put/get/remove白名单；秘密只在受控stdin JSON和get的Worker stdout管道中传递，不接受秘密命令行参数或环境变量。限制输入64KiB、秘密16KiB；put使用SecItemAdd，重复引用不覆盖，没有SecItemUpdate、列举、ACL扩大、同步或明文文件回退。
 
-候选源码禁用可选系统交互，锁定/拒绝、缺失、重复、未知错误返回固定代码，未把系统错误描述或秘密回显到错误日志。真实操作默认disabled，需显式`--keychain`且stdin/stdout均为管道。该开关是未来受控调用边界，不能替代Owner授权。默认macOS文件型Keychain的交互禁止兼容调用是系统已废弃API；保留局部编译标注，未隐瞒此兼容成本。未创建access group、entitlement、证书或永久ACL。
+候选源码禁用可选系统交互，锁定/拒绝、缺失、重复、未知错误返回固定代码，未把系统错误描述或秘密回显到错误日志。真实操作默认disabled，需显式`--keychain`且stdin/stdout均为FIFO或已连接AF_UNIX stream socket；普通文件/终端/网络socket拒绝。该开关是未来受控调用边界，不能替代Owner授权。默认macOS文件型Keychain的交互禁止兼容调用是系统已废弃API；保留局部编译标注，未隐瞒此兼容成本。未创建access group、entitlement、证书或永久ACL。
 
-`node scripts/local/keychain-helper-check.mjs`编译两个二进制，只执行以`LOOP_KEYCHAIN_PROTOCOL_ONLY`编译的协议测试版本。该版本在预处理时剔除所有Security调用，`nm -u`再次断言无SecItem/SecKeychain导入。18个真实本机子进程协议检查通过，含合法操作、无效JSON/字段/UUID/类型/空值/大小、默认禁用及试图开启真实操作被禁用。秘密只使用内存合成文本且输出不包含该文本。测试先以未实现协议返回not_implemented失败，再以实现通过。[记录](protocol.json)明确候选编译但从未执行、真实Keychain操作0、Provider调用0。构建产物和模块缓存仅在私有`.loop-control/stage-d/native`，不提交二进制。
+`node scripts/local/keychain-helper-check.mjs`编译两个二进制，只执行以`LOOP_KEYCHAIN_PROTOCOL_ONLY`编译的协议测试版本。该版本在预处理时剔除所有Security调用，`nm -u`再次断言无SecItem/SecKeychain导入。20个真实本机子进程检查通过，含合法操作、无效JSON/字段/UUID/类型/空值/大小、默认禁用、试图开启真实操作被禁用及普通文件stdin/stdout拒绝。生产候选与协议版本共享同一IPC校验，真实Node stdio管道成功。秘密只使用内存合成文本且输出不包含该文本。测试先以未实现协议返回not_implemented失败，再以实现通过。[记录](protocol.json)明确候选编译但从未执行、真实Keychain操作0、Provider调用0。构建产物和模块缓存仅在私有`.loop-control/stage-d/native`，不提交二进制。
+
+部分交付审查发现并修复了IPC兼容问题：Node24的stdio:'pipe'由libuv socketpair实现，原候选仅S_ISFIFO会误拒绝。现在共享检查接受FIFO和经本地/对端地址、socket类型检查的已连接AF_UNIX stream，协议版本同样执行该检查，不能在安全测试中绕过边界。没有为修复执行候选或Keychain调用。
 
 API依据：[Apple SecItemAdd](https://developer.apple.com/documentation/security/secitemadd(_:_:))、[SecItemCopyMatching](https://developer.apple.com/documentation/security/secitemcopymatching(_:_:))及本机SDK的SecItem.h/SecKeychain.h交互约束。源码/协议通过不证明真实Keychain行为通过。
 
