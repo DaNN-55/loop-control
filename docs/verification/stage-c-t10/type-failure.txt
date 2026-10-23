@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 check
+> tsc -b --pretty false
+
+src/lib/pagedRead.test.ts(14,39): error TS6133: 'to' is declared but its value is never read.

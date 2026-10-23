@@ -8,7 +8,7 @@ import { defaultBlueprintPolicy, parseBlueprintPolicy, withBlueprintAssetRoot } 
 
 vi.mock("./lib/supabase", () => ({
   supabase: {
-    rpc: vi.fn().mockResolvedValue({ error: null }),
+    rpc: vi.fn().mockImplementation(()=>Object.assign(Promise.resolve({data:[],error:null}),{range:vi.fn().mockResolvedValue({data:[],error:null,count:0})})),
     auth: {
       getSession: vi.fn().mockResolvedValue({ data: { session: null }, error: null }),
       onAuthStateChange: vi.fn().mockReturnValue({ data: { subscription: { unsubscribe: vi.fn() } } }),
@@ -48,8 +48,9 @@ describe("approval console", () => {
     const account = { id: "account-1", name: "道工作室", slug: "dao-studio" } as Database["public"]["Tables"]["accounts"]["Row"];
     const episode = { account_id: account.id, blueprint_version_id: "blueprint-1", id: "episode-1", stage: "waiting_input", title: "首个生产单" } as Database["public"]["Tables"]["episodes"]["Row"];
     const from = vi.fn((table: string) => {
-      const order = vi.fn().mockResolvedValue({ data: table === "accounts" ? [account] : table === "episodes" ? [episode] : [], error: null });
-      return { select: vi.fn().mockReturnValue(table === "prompt_versions" ? { order: vi.fn().mockReturnValue({ order }) } : { order }) };
+      const result={data:table === "accounts" ? [account] : table === "episodes" ? [episode] : [],error:null};
+      const query:{order:ReturnType<typeof vi.fn>;range:ReturnType<typeof vi.fn>}={order:vi.fn(),range:vi.fn().mockResolvedValue(result)};query.order.mockReturnValue(query);
+      return {select:vi.fn().mockReturnValue(query)};
     });
     Object.assign(supabase, { from });
     vi.mocked(supabase.auth.getSession).mockResolvedValueOnce({ data: { session: { user: { id: "owner-1" } } }, error: null } as never);
@@ -71,8 +72,8 @@ describe("approval console", () => {
   });
 
   it("首次进入只读取页面骨架所需的五张表", async () => {
-    const order = vi.fn().mockResolvedValue({ data: [], error: null });
-    const from = vi.fn().mockReturnValue({ select: vi.fn().mockReturnValue({ order }) });
+    const query:{order:ReturnType<typeof vi.fn>;range:ReturnType<typeof vi.fn>}={order:vi.fn(),range:vi.fn().mockResolvedValue({data:[],error:null,count:0})};query.order.mockReturnValue(query);
+    const from=vi.fn().mockReturnValue({select:vi.fn().mockReturnValue(query)});
     Object.assign(supabase, { from });
 
     const workspace = await loadWorkspaceSummary();

@@ -1,3 +1,4 @@
+import { readAllPages } from "./lib/pagedRead";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { BarChart3, LogOut, MessageSquare, Moon, PanelLeft, Pencil, Play, Sun, Table2, Trash2, User, Users, Video, X, type LucideIcon } from "lucide-react";
@@ -306,11 +307,11 @@ function LoadingIndicator({ compact = false, label }: { compact?: boolean; label
 
 export async function loadWorkspaceSummary(): Promise<Workspace> {
   const [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult] = await Promise.all([
-    supabase.from("accounts").select("*").order("created_at"),
-    supabase.from("account_blueprint_versions").select("*").order("version", { ascending: false }),
-    supabase.from("episodes").select("*").order("updated_at", { ascending: false }),
-    supabase.from("series").select("*").order("name"),
-    supabase.from("series_versions").select("*").order("version", { ascending: false }),
+    readAllPages((from,to)=>supabase.from("accounts").select("*",{count:"exact"}).order("created_at").order("id").range(from,to)),
+    readAllPages((from,to)=>supabase.from("account_blueprint_versions").select("*",{count:"exact"}).order("version", { ascending: false }).order("id").range(from,to)),
+    readAllPages((from,to)=>supabase.from("episodes").select("*",{count:"exact"}).order("updated_at", { ascending: false }).order("id").range(from,to)),
+    readAllPages((from,to)=>supabase.from("series").select("*",{count:"exact"}).order("name").order("id").range(from,to)),
+    readAllPages((from,to)=>supabase.from("series_versions").select("*",{count:"exact"}).order("version", { ascending: false }).order("id").range(from,to)),
   ]);
   const error = [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult].map((result) => result.error).find(Boolean);
   if (error) throw error;
@@ -325,24 +326,24 @@ function throwResultError(results: Array<{ error: unknown }>) {
 async function loadWorkspaceSection(navigation: NavigationItem): Promise<Partial<Workspace>> {
   if (navigation === "reviews") return {};
   if (navigation === "episodes") {
-    const artifactsResult = await supabase.from("artifacts").select("*").order("created_at", { ascending: false });
+    const artifactsResult = await readAllPages((from,to)=>supabase.from("artifacts").select("*",{count:"exact"}).order("created_at", { ascending: false }).order("id").range(from,to));
     throwResultError([artifactsResult]);
     return { artifacts: artifactsResult.data ?? [] };
   }
   if (navigation === "operations") {
     const [reviewPackagesResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult] = await Promise.all([
-      supabase.from("review_packages").select("*").order("created_at", { ascending: false }),
-      supabase.from("pre_render_review_members").select("*").order("created_at"),
-      supabase.from("pre_render_review_member_decisions").select("*").order("created_at"),
-      supabase.from("tasks").select("*").order("created_at", { ascending: false }),
+      readAllPages((from,to)=>supabase.from("review_packages").select("*",{count:"exact"}).order("created_at", { ascending: false }).order("id").range(from,to)),
+      readAllPages((from,to)=>supabase.from("pre_render_review_members").select("*",{count:"exact"}).order("created_at").order("id").range(from,to)),
+      readAllPages((from,to)=>supabase.from("pre_render_review_member_decisions").select("*",{count:"exact"}).order("created_at").order("review_package_id").order("member_key").range(from,to),row=>`${row.review_package_id}:${row.member_key}`),
+      readAllPages((from,to)=>supabase.from("tasks").select("*",{count:"exact"}).order("created_at", { ascending: false }).order("id").range(from,to)),
     ]);
     throwResultError([reviewPackagesResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult]);
     return { preRenderReviewMemberDecisions: preRenderReviewMemberDecisionsResult.data ?? [], preRenderReviewMembers: preRenderReviewMembersResult.data ?? [], reviewPackages: reviewPackagesResult.data ?? [], tasks: tasksResult.data ?? [] };
   }
   const [promptVersionsResult, externalConnectionsResult, externalConnectionVersionsResult] = await Promise.all([
-    supabase.from("prompt_versions").select("*").order("capability").order("version", { ascending: false }),
-    supabase.from("external_connections").select("*").order("created_at", { ascending: false }),
-    supabase.rpc("list_external_connection_versions", { p_connection_id: null }),
+    readAllPages((from,to)=>supabase.from("prompt_versions").select("*",{count:"exact"}).order("capability").order("version", { ascending: false }).order("id").range(from,to)),
+    readAllPages((from,to)=>supabase.from("external_connections").select("*",{count:"exact"}).order("created_at", { ascending: false }).order("id").range(from,to)),
+    readAllPages((from,to)=>supabase.rpc("list_external_connection_versions", { p_connection_id: null },{count:"exact"}).range(from,to)),
   ]);
   throwResultError([promptVersionsResult, externalConnectionsResult, externalConnectionVersionsResult]);
   return { externalConnectionVersions: externalConnectionVersionsResult.data ?? [], externalConnections: externalConnectionsResult.data ?? [], promptVersions: promptVersionsResult.data ?? [] };
