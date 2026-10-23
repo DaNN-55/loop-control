@@ -1,0 +1,3697 @@
+{
+  "version": "stage-a-baseline/v1",
+  "began": "2026-10-23T08:14:58.112Z",
+  "completedAt": "2026-10-23T08:15:23.644Z",
+  "gitHead": "cf450d9e91696fd071f4b2476c81a72dda8da14e",
+  "environment": {
+    "node": "v24.20.0",
+    "os": "27.0.0",
+    "arch": "arm64",
+    "hostCpuCount": 10,
+    "hostMemoryBytes": 17179869184,
+    "vm": {
+      "cpu": 2,
+      "memoryGiB": 4,
+      "diskGiB": 20
+    },
+    "consolePort": 55173,
+    "apiPort": 55431,
+    "worker": "current HTTP -> shell -> per-task tsc -> real claim/execute/report",
+    "resourceProbe": "500ms ps lifetime %CPU and RSS sum for harness+console+descendants; excludes VM/Chrome; raw samples retained; not instantaneous CPU or capacity"
+  },
+  "samples": [
+    {
+      "sample": "1-shot",
+      "episodeId": "a6f530bd-045d-4cbf-9c74-6e720da674d3",
+      "input": "synthetic color+sine, 640x360/30fps, 2 seconds per shot; fixed seed-free inputs",
+      "shotCount": 1,
+      "taskCount": 1,
+      "pageBefore": {
+        "boundary": "Episode detail HTTP workload; same tables, extra task-ID lookup recorded; not browser navigation",
+        "elapsedMs": 44.23158299999977,
+        "requestCount": 13,
+        "responseBodyBytes": 2495,
+        "requests": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/episodes",
+            "status": 200,
+            "bodyBytes": 547,
+            "elapsedMs": 16.011540999999852
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/audio_tracks",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 10.63308300000017
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/state_transitions",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 10.707707999999911
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/storyboard_audio_selections",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 11.503208000000086
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/artifacts",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 13.438499999999749
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/review_packages",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 13.791499999999814
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/rpc/list_external_connection_versions",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 14.469083999999839
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/tasks",
+            "status": 200,
+            "bodyBytes": 1541,
+            "elapsedMs": 13.796875
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/account_blueprint_versions",
+            "status": 200,
+            "bodyBytes": 342,
+            "elapsedMs": 15.206708000000162
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/production_material_revisions",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 18.04995800000006
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/shot_preparation_drafts",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 20.435042000000067
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/tasks",
+            "status": 200,
+            "bodyBytes": 47,
+            "elapsedMs": 3.1862080000000788
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/task_runs",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 3.159625000000233
+          }
+        ]
+      },
+      "pageAfter": {
+        "boundary": "Episode detail HTTP workload; same tables, extra task-ID lookup recorded; not browser navigation",
+        "elapsedMs": 30.789499999998952,
+        "requestCount": 13,
+        "responseBodyBytes": 4562,
+        "requests": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/episodes",
+            "status": 200,
+            "bodyBytes": 547,
+            "elapsedMs": 7.302499999997963
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/state_transitions",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 10.000292000000627
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/tasks",
+            "status": 200,
+            "bodyBytes": 2982,
+            "elapsedMs": 10.820958000000246
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/production_material_revisions",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 11.786291000000347
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/audio_tracks",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 13.983707999999751
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/account_blueprint_versions",
+            "status": 200,
+            "bodyBytes": 342,
+            "elapsedMs": 15.19195899999977
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/shot_preparation_drafts",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 15.169624999998632
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/artifacts",
+            "status": 200,
+            "bodyBytes": 404,
+            "elapsedMs": 15.137457999997423
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/review_packages",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 15.296125000000757
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/storyboard_audio_selections",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 15.578417000000627
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/rpc/list_external_connection_versions",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 15.947165999998106
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/tasks",
+            "status": 200,
+            "bodyBytes": 47,
+            "elapsedMs": 3.1965000000018335
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/task_runs",
+            "status": 200,
+            "bodyBytes": 226,
+            "elapsedMs": 3.620542000000569
+          }
+        ]
+      },
+      "timings": [
+        {
+          "taskId": "0ef45210-8e01-4e24-bd29-c18cd44a8aae",
+          "execution": "real-worker-cli-ffmpeg",
+          "submittedAt": "2026-10-23T08:15:00.403Z",
+          "claimedAt": "2026-10-23T08:15:01.742598+00:00",
+          "completedAt": "2026-10-23T08:15:01.92963+00:00",
+          "submitToClaimMs": 1339,
+          "executionAndReportMs": 187,
+          "totalMs": 1526,
+          "observedTotalMs": 1580.5064580000003,
+          "readyBeforeSubmitMs": -55,
+          "dispatchBody": {
+            "status": "started"
+          },
+          "artifact": {
+            "artifactType": "a_roll_video",
+            "relativePath": "episodes/a6f530bd-045d-4cbf-9c74-6e720da674d3/shot-0.mp4",
+            "sha256": "52ee826ea305bfd0e4e82e357905efdbc6ee3c2297313d22f66341e6012f911c",
+            "fileSize": 23297
+          },
+          "probe": {
+            "durationSeconds": 2,
+            "width": 640,
+            "height": 360,
+            "hasAudio": true,
+            "blackFrameCount": 0
+          }
+        }
+      ],
+      "render": {
+        "execution": "real-OpenChatCut-direct; current worker render module, outside DB render orchestration",
+        "elapsedMs": 12609.721916,
+        "probe": {
+          "durationSeconds": 2.048,
+          "width": 360,
+          "height": 640,
+          "hasAudio": true,
+          "blackFrameCount": 0
+        },
+        "artifacts": [
+          {
+            "artifactType": "review_render_video",
+            "relativePath": "episodes/a6f530bd-045d-4cbf-9c74-6e720da674d3/review-render/v1/review.mp4",
+            "sha256": "6cfcfe3d57906079f57f2f7644a9cad6345314a151b7ad707a4e029b6cba650f",
+            "fileSize": 87414
+          },
+          {
+            "artifactType": "review_render_project",
+            "relativePath": "episodes/a6f530bd-045d-4cbf-9c74-6e720da674d3/review-render/v1/project.json",
+            "sha256": "8711f7c4a397a691233f3d3f94e5154c6b50b8a4372813be1ed60a63e8b09c84",
+            "fileSize": 3419
+          },
+          {
+            "artifactType": "review_render_runtime",
+            "relativePath": "episodes/a6f530bd-045d-4cbf-9c74-6e720da674d3/review-render/v1/openchatcut-runtime.json",
+            "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+            "fileSize": 42
+          },
+          {
+            "artifactType": "review_qc_report",
+            "relativePath": "episodes/a6f530bd-045d-4cbf-9c74-6e720da674d3/review-render/v1/qc-report.json",
+            "sha256": "8c043c9d9f24897355e6e6023893a6154e14fd967ce4090839583c41dc70fa44",
+            "fileSize": 663
+          }
+        ]
+      },
+      "diskBytes": 138058
+    },
+    {
+      "sample": "3-shot",
+      "episodeId": "4ee28bf3-a3fc-486f-97fb-b60d21777c6d",
+      "input": "synthetic color+sine, 640x360/30fps, 2 seconds per shot; fixed seed-free inputs",
+      "shotCount": 3,
+      "taskCount": 3,
+      "pageBefore": {
+        "boundary": "Episode detail HTTP workload; same tables, extra task-ID lookup recorded; not browser navigation",
+        "elapsedMs": 20.548917000000074,
+        "requestCount": 13,
+        "responseBodyBytes": 5679,
+        "requests": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/episodes",
+            "status": 200,
+            "bodyBytes": 547,
+            "elapsedMs": 3.663416999999754
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/audio_tracks",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 5.069541000000754
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/production_material_revisions",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 6.503916999998182
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/state_transitions",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 6.553458999998838
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/shot_preparation_drafts",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 6.861625000001368
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/artifacts",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 7.660041999999521
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/account_blueprint_versions",
+            "status": 200,
+            "bodyBytes": 342,
+            "elapsedMs": 8.304457999998704
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/review_packages",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 8.302708999999595
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/storyboard_audio_selections",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 9.016417000002548
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/rpc/list_external_connection_versions",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 9.370375000002241
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/tasks",
+            "status": 200,
+            "bodyBytes": 4627,
+            "elapsedMs": 9.301415999998426
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/tasks",
+            "status": 200,
+            "bodyBytes": 145,
+            "elapsedMs": 3.043499999999767
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/task_runs",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 3.4908749999995052
+          }
+        ]
+      },
+      "pageAfter": {
+        "boundary": "Episode detail HTTP workload; same tables, extra task-ID lookup recorded; not browser navigation",
+        "elapsedMs": 14.976041000001715,
+        "requestCount": 13,
+        "responseBodyBytes": 11903,
+        "requests": [
+          {
+            "method": "GET",
+            "path": "/rest/v1/episodes",
+            "status": 200,
+            "bodyBytes": 547,
+            "elapsedMs": 2.709415999997873
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/account_blueprint_versions",
+            "status": 200,
+            "bodyBytes": 342,
+            "elapsedMs": 3.2553750000006403
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/production_material_revisions",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 3.8329999999987194
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/audio_tracks",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 3.7591670000001614
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/review_packages",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 3.909166000001278
+          },
+          {
+            "method": "POST",
+            "path": "/rest/v1/rpc/list_external_connection_versions",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 5.364667000001646
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/artifacts",
+            "status": 200,
+            "bodyBytes": 1219,
+            "elapsedMs": 5.3521250000012515
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/tasks",
+            "status": 200,
+            "bodyBytes": 8952,
+            "elapsedMs": 5.541208999999071
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/state_transitions",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 5.663333000000421
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/storyboard_audio_selections",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 5.900957999998354
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/shot_preparation_drafts",
+            "status": 200,
+            "bodyBytes": 2,
+            "elapsedMs": 6.036832999998296
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/tasks",
+            "status": 200,
+            "bodyBytes": 145,
+            "elapsedMs": 2.748666999999841
+          },
+          {
+            "method": "GET",
+            "path": "/rest/v1/task_runs",
+            "status": 200,
+            "bodyBytes": 684,
+            "elapsedMs": 2.8748340000020107
+          }
+        ]
+      },
+      "timings": [
+        {
+          "taskId": "2e472491-a74e-4695-9eb7-8dd30ea1f2d8",
+          "execution": "real-worker-cli-ffmpeg",
+          "submittedAt": "2026-10-23T08:15:14.864Z",
+          "claimedAt": "2026-10-23T08:15:16.022203+00:00",
+          "completedAt": "2026-10-23T08:15:16.191572+00:00",
+          "submitToClaimMs": 1158,
+          "executionAndReportMs": 169,
+          "totalMs": 1327,
+          "observedTotalMs": 1317.2640409999985,
+          "readyBeforeSubmitMs": 135,
+          "dispatchBody": {
+            "status": "started"
+          },
+          "artifact": {
+            "artifactType": "a_roll_video",
+            "relativePath": "episodes/4ee28bf3-a3fc-486f-97fb-b60d21777c6d/shot-0.mp4",
+            "sha256": "52ee826ea305bfd0e4e82e357905efdbc6ee3c2297313d22f66341e6012f911c",
+            "fileSize": 23297
+          },
+          "probe": {
+            "durationSeconds": 2,
+            "width": 640,
+            "height": 360,
+            "hasAudio": true,
+            "blackFrameCount": 0
+          }
+        },
+        {
+          "taskId": "0cd41deb-0d7b-4da0-944a-a3f1da79aac3",
+          "execution": "real-worker-cli-ffmpeg",
+          "submittedAt": "2026-10-23T08:15:16.230Z",
+          "claimedAt": "2026-10-23T08:15:17.306922+00:00",
+          "completedAt": "2026-10-23T08:15:17.472036+00:00",
+          "submitToClaimMs": 1076,
+          "executionAndReportMs": 166,
+          "totalMs": 1242,
+          "observedTotalMs": 1319.070582999997,
+          "readyBeforeSubmitMs": 1442,
+          "dispatchBody": {
+            "status": "started"
+          },
+          "artifact": {
+            "artifactType": "a_roll_video",
+            "relativePath": "episodes/4ee28bf3-a3fc-486f-97fb-b60d21777c6d/shot-1.mp4",
+            "sha256": "fa789bd9683d3785654e6b37b4c08ad34f2a1f6b616225536be598646338fc81",
+            "fileSize": 23316
+          },
+          "probe": {
+            "durationSeconds": 2,
+            "width": 640,
+            "height": 360,
+            "hasAudio": true,
+            "blackFrameCount": 0
+          }
+        },
+        {
+          "taskId": "2419947f-4e9e-4587-ab79-867d8e1de3cf",
+          "execution": "real-worker-cli-ffmpeg",
+          "submittedAt": "2026-10-23T08:15:17.609Z",
+          "claimedAt": "2026-10-23T08:15:18.69051+00:00",
+          "completedAt": "2026-10-23T08:15:18.858285+00:00",
+          "submitToClaimMs": 1081,
+          "executionAndReportMs": 168,
+          "totalMs": 1249,
+          "observedTotalMs": 1313.893415999999,
+          "readyBeforeSubmitMs": 2759,
+          "dispatchBody": {
+            "status": "started"
+          },
+          "artifact": {
+            "artifactType": "a_roll_video",
+            "relativePath": "episodes/4ee28bf3-a3fc-486f-97fb-b60d21777c6d/shot-2.mp4",
+            "sha256": "852356313c121fb771ce3ba012aabaec0bd91da2317cb05c4fb5b93006c4a51d",
+            "fileSize": 23272
+          },
+          "probe": {
+            "durationSeconds": 2,
+            "width": 640,
+            "height": 360,
+            "hasAudio": true,
+            "blackFrameCount": 0
+          }
+        }
+      ],
+      "render": {
+        "execution": "real-OpenChatCut-direct; current worker render module, outside DB render orchestration",
+        "elapsedMs": 4648.701417,
+        "probe": {
+          "durationSeconds": 6.058667,
+          "width": 360,
+          "height": 640,
+          "hasAudio": true,
+          "blackFrameCount": 0
+        },
+        "artifacts": [
+          {
+            "artifactType": "review_render_video",
+            "relativePath": "episodes/4ee28bf3-a3fc-486f-97fb-b60d21777c6d/review-render/v1/review.mp4",
+            "sha256": "9e093a4d1fc584892d5c9ff3b9bbc3205fa38efbe7583ba7bf3ff5c9e12060eb",
+            "fileSize": 258314
+          },
+          {
+            "artifactType": "review_render_project",
+            "relativePath": "episodes/4ee28bf3-a3fc-486f-97fb-b60d21777c6d/review-render/v1/project.json",
+            "sha256": "9d8d1a2c77a825566efa37f7d898d12f096c82a2b0db2967be4da6773a40c8e1",
+            "fileSize": 7354
+          },
+          {
+            "artifactType": "review_render_runtime",
+            "relativePath": "episodes/4ee28bf3-a3fc-486f-97fb-b60d21777c6d/review-render/v1/openchatcut-runtime.json",
+            "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+            "fileSize": 42
+          },
+          {
+            "artifactType": "review_qc_report",
+            "relativePath": "episodes/4ee28bf3-a3fc-486f-97fb-b60d21777c6d/review-render/v1/qc-report.json",
+            "sha256": "f55beee89f432064ca8b9c80d21752c1c48a8918bb0ad9bb10db8aa8fed9616b",
+            "fileSize": 608
+          }
+        ]
+      },
+      "diskBytes": 406022
+    }
+  ],
+  "resources": [
+    {
+      "at": "2026-10-23T08:14:58.127Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0,
+          "rssKiB": 94784
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 14176
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 14.9,
+          "rssKiB": 89312
+        },
+        {
+          "pid": 34920,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1728
+        }
+      ],
+      "rssKiB": 200000,
+      "cpuPercent": 14.9
+    },
+    {
+      "at": "2026-10-23T08:14:58.661Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0,
+          "rssKiB": 94928
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 14176
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 6.2,
+          "rssKiB": 100864
+        },
+        {
+          "pid": 34930,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1728
+        }
+      ],
+      "rssKiB": 211696,
+      "cpuPercent": 6.2
+    },
+    {
+      "at": "2026-10-23T08:14:59.187Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0,
+          "rssKiB": 94928
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 14176
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.8,
+          "rssKiB": 101104
+        },
+        {
+          "pid": 34940,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1728
+        }
+      ],
+      "rssKiB": 211936,
+      "cpuPercent": 0.8
+    },
+    {
+      "at": "2026-10-23T08:14:59.725Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0,
+          "rssKiB": 94928
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 14192
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 1.9,
+          "rssKiB": 103232
+        },
+        {
+          "pid": 34949,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1728
+        }
+      ],
+      "rssKiB": 214080,
+      "cpuPercent": 1.9
+    },
+    {
+      "at": "2026-10-23T08:15:00.254Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0,
+          "rssKiB": 94928
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 14192
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.4,
+          "rssKiB": 103264
+        },
+        {
+          "pid": 34958,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1728
+        }
+      ],
+      "rssKiB": 214112,
+      "cpuPercent": 0.4
+    },
+    {
+      "at": "2026-10-23T08:15:00.776Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0.7,
+          "rssKiB": 95664
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 14192
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 2.7,
+          "rssKiB": 94192
+        },
+        {
+          "pid": 34962,
+          "ppid": 33634,
+          "cpuPercent": 15.6,
+          "rssKiB": 66288
+        },
+        {
+          "pid": 34987,
+          "ppid": 34962,
+          "cpuPercent": 0.8,
+          "rssKiB": 2288
+        },
+        {
+          "pid": 34988,
+          "ppid": 34987,
+          "cpuPercent": 21.5,
+          "rssKiB": 67056
+        },
+        {
+          "pid": 35021,
+          "ppid": 34988,
+          "cpuPercent": 10.3,
+          "rssKiB": 132864
+        },
+        {
+          "pid": 35030,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 474288,
+      "cpuPercent": 51.599999999999994
+    },
+    {
+      "at": "2026-10-23T08:15:01.282Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0,
+          "rssKiB": 94480
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 13696
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.6,
+          "rssKiB": 94336
+        },
+        {
+          "pid": 34962,
+          "ppid": 33634,
+          "cpuPercent": 2.3,
+          "rssKiB": 66288
+        },
+        {
+          "pid": 34987,
+          "ppid": 34962,
+          "cpuPercent": 0.1,
+          "rssKiB": 2288
+        },
+        {
+          "pid": 34988,
+          "ppid": 34987,
+          "cpuPercent": 2.9,
+          "rssKiB": 67056
+        },
+        {
+          "pid": 35021,
+          "ppid": 34988,
+          "cpuPercent": 204.8,
+          "rssKiB": 351984
+        },
+        {
+          "pid": 35041,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 691872,
+      "cpuPercent": 210.70000000000002
+    },
+    {
+      "at": "2026-10-23T08:15:01.772Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0,
+          "rssKiB": 94352
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 13680
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.4,
+          "rssKiB": 77456
+        },
+        {
+          "pid": 34962,
+          "ppid": 33634,
+          "cpuPercent": 0.3,
+          "rssKiB": 66288
+        },
+        {
+          "pid": 34987,
+          "ppid": 34962,
+          "cpuPercent": 0,
+          "rssKiB": 2304
+        },
+        {
+          "pid": 35042,
+          "ppid": 34987,
+          "cpuPercent": 19.9,
+          "rssKiB": 66864
+        },
+        {
+          "pid": 35075,
+          "ppid": 35042,
+          "cpuPercent": 30.1,
+          "rssKiB": 101232
+        },
+        {
+          "pid": 35130,
+          "ppid": 35075,
+          "cpuPercent": 0,
+          "rssKiB": 0
+        },
+        {
+          "pid": 35139,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 423920,
+      "cpuPercent": 50.7
+    },
+    {
+      "at": "2026-10-23T08:15:02.273Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0.3,
+          "rssKiB": 95184
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 13680
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 2.3,
+          "rssKiB": 79088
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 56224
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 0,
+          "rssKiB": 2144
+        },
+        {
+          "pid": 35212,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1728
+        }
+      ],
+      "rssKiB": 248048,
+      "cpuPercent": 2.5999999999999996
+    },
+    {
+      "at": "2026-10-23T08:15:02.779Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0.1,
+          "rssKiB": 92272
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 13504
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.5,
+          "rssKiB": 70016
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 3.3,
+          "rssKiB": 56688
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 90.2,
+          "rssKiB": 441824
+        },
+        {
+          "pid": 35221,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1728
+        }
+      ],
+      "rssKiB": 676032,
+      "cpuPercent": 94.10000000000001
+    },
+    {
+      "at": "2026-10-23T08:15:03.297Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0,
+          "rssKiB": 91104
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 13456
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 1,
+          "rssKiB": 70336
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 1.2,
+          "rssKiB": 56864
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 19.9,
+          "rssKiB": 481840
+        },
+        {
+          "pid": 35230,
+          "ppid": 34898,
+          "cpuPercent": 1.3,
+          "rssKiB": 1728
+        }
+      ],
+      "rssKiB": 715328,
+      "cpuPercent": 23.4
+    },
+    {
+      "at": "2026-10-23T08:15:03.800Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0,
+          "rssKiB": 91168
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 13472
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 1.4,
+          "rssKiB": 70768
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 1.1,
+          "rssKiB": 57056
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 2.5,
+          "rssKiB": 481840
+        },
+        {
+          "pid": 35240,
+          "ppid": 34898,
+          "cpuPercent": 1.2,
+          "rssKiB": 1728
+        }
+      ],
+      "rssKiB": 716032,
+      "cpuPercent": 6.2
+    },
+    {
+      "at": "2026-10-23T08:15:04.293Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0,
+          "rssKiB": 90656
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 13472
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.4,
+          "rssKiB": 71296
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0.9,
+          "rssKiB": 57248
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 0.6,
+          "rssKiB": 481840
+        },
+        {
+          "pid": 35305,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 716256,
+      "cpuPercent": 1.9
+    },
+    {
+      "at": "2026-10-23T08:15:04.784Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0,
+          "rssKiB": 90128
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 13440
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.8,
+          "rssKiB": 72672
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0.3,
+          "rssKiB": 55968
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 0,
+          "rssKiB": 264768
+        },
+        {
+          "pid": 35315,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 498720,
+      "cpuPercent": 1.1
+    },
+    {
+      "at": "2026-10-23T08:15:05.286Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0.3,
+          "rssKiB": 91376
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 13440
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 72672
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0.2,
+          "rssKiB": 56176
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 117.9,
+          "rssKiB": 449056
+        },
+        {
+          "pid": 35324,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 684464,
+      "cpuPercent": 118.5
+    },
+    {
+      "at": "2026-10-23T08:15:05.796Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0,
+          "rssKiB": 85248
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 13440
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 70448
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0.5,
+          "rssKiB": 54432
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 208.7,
+          "rssKiB": 686112
+        },
+        {
+          "pid": 35333,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 911424,
+      "cpuPercent": 209.29999999999998
+    },
+    {
+      "at": "2026-10-23T08:15:06.301Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0,
+          "rssKiB": 82880
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 8608
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 69744
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 52016
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 260.6,
+          "rssKiB": 963296
+        },
+        {
+          "pid": 35334,
+          "ppid": 35203,
+          "cpuPercent": 3.8,
+          "rssKiB": 16160
+        },
+        {
+          "pid": 35343,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1760
+        }
+      ],
+      "rssKiB": 1194464,
+      "cpuPercent": 264.50000000000006
+    },
+    {
+      "at": "2026-10-23T08:15:06.795Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0.5,
+          "rssKiB": 78240
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 8544
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 69616
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 52288
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 269,
+          "rssKiB": 1282352
+        },
+        {
+          "pid": 35334,
+          "ppid": 35203,
+          "cpuPercent": 3.6,
+          "rssKiB": 21648
+        },
+        {
+          "pid": 35353,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 1514432,
+      "cpuPercent": 273.20000000000005
+    },
+    {
+      "at": "2026-10-23T08:15:07.297Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0,
+          "rssKiB": 63616
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 8352
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 70320
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 52096
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 199.3,
+          "rssKiB": 1514144
+        },
+        {
+          "pid": 35334,
+          "ppid": 35203,
+          "cpuPercent": 11.5,
+          "rssKiB": 25312
+        },
+        {
+          "pid": 35365,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 1735584,
+      "cpuPercent": 210.9
+    },
+    {
+      "at": "2026-10-23T08:15:07.798Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0,
+          "rssKiB": 62224
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 8368
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 69616
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 52096
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 203.4,
+          "rssKiB": 1719088
+        },
+        {
+          "pid": 35334,
+          "ppid": 35203,
+          "cpuPercent": 1,
+          "rssKiB": 24288
+        },
+        {
+          "pid": 35374,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 1937424,
+      "cpuPercent": 204.5
+    },
+    {
+      "at": "2026-10-23T08:15:08.309Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 1,
+          "rssKiB": 70576
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 8304
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 69632
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 52096
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 136.1,
+          "rssKiB": 1790224
+        },
+        {
+          "pid": 35334,
+          "ppid": 35203,
+          "cpuPercent": 0,
+          "rssKiB": 22656
+        },
+        {
+          "pid": 35408,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 2015232,
+      "cpuPercent": 137.2
+    },
+    {
+      "at": "2026-10-23T08:15:08.808Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0.9,
+          "rssKiB": 77200
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7632
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 69728
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 52832
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 179.9,
+          "rssKiB": 2009152
+        },
+        {
+          "pid": 35334,
+          "ppid": 35203,
+          "cpuPercent": 0,
+          "rssKiB": 22656
+        },
+        {
+          "pid": 35418,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 2240944,
+      "cpuPercent": 180.9
+    },
+    {
+      "at": "2026-10-23T08:15:09.303Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 5,
+          "rssKiB": 102368
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7632
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 69712
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 52832
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 85.9,
+          "rssKiB": 1995056
+        },
+        {
+          "pid": 35334,
+          "ppid": 35203,
+          "cpuPercent": 0,
+          "rssKiB": 22656
+        },
+        {
+          "pid": 35427,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 2252000,
+      "cpuPercent": 91
+    },
+    {
+      "at": "2026-10-23T08:15:09.821Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 8.4,
+          "rssKiB": 177968
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7456
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 70416
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 52832
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 27.9,
+          "rssKiB": 1994880
+        },
+        {
+          "pid": 35334,
+          "ppid": 35203,
+          "cpuPercent": 0,
+          "rssKiB": 22656
+        },
+        {
+          "pid": 35429,
+          "ppid": 35203,
+          "cpuPercent": 0,
+          "rssKiB": 32
+        },
+        {
+          "pid": 35438,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 2327984,
+      "cpuPercent": 36.4
+    },
+    {
+      "at": "2026-10-23T08:15:10.321Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 1,
+          "rssKiB": 176528
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7376
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.2,
+          "rssKiB": 57104
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 52304
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 3.9,
+          "rssKiB": 1990624
+        },
+        {
+          "pid": 35334,
+          "ppid": 35203,
+          "cpuPercent": 0,
+          "rssKiB": 22656
+        },
+        {
+          "pid": 35429,
+          "ppid": 35203,
+          "cpuPercent": 0,
+          "rssKiB": 32
+        },
+        {
+          "pid": 35448,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 2308368,
+      "cpuPercent": 5.1
+    },
+    {
+      "at": "2026-10-23T08:15:10.811Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0.1,
+          "rssKiB": 175296
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7424
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 55248
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 52224
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 0.2,
+          "rssKiB": 1975568
+        },
+        {
+          "pid": 35334,
+          "ppid": 35203,
+          "cpuPercent": 0,
+          "rssKiB": 22672
+        },
+        {
+          "pid": 35429,
+          "ppid": 35203,
+          "cpuPercent": 0,
+          "rssKiB": 32
+        },
+        {
+          "pid": 35457,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 2290208,
+      "cpuPercent": 0.4
+    },
+    {
+      "at": "2026-10-23T08:15:11.312Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0,
+          "rssKiB": 176912
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7408
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 56384
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 52224
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 0.2,
+          "rssKiB": 1945584
+        },
+        {
+          "pid": 35334,
+          "ppid": 35203,
+          "cpuPercent": 0,
+          "rssKiB": 22672
+        },
+        {
+          "pid": 35429,
+          "ppid": 35203,
+          "cpuPercent": 22.8,
+          "rssKiB": 58944
+        },
+        {
+          "pid": 35458,
+          "ppid": 35429,
+          "cpuPercent": 4.3,
+          "rssKiB": 26032
+        },
+        {
+          "pid": 35459,
+          "ppid": 35429,
+          "cpuPercent": 0.2,
+          "rssKiB": 31024
+        },
+        {
+          "pid": 35468,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1792
+        }
+      ],
+      "rssKiB": 2378976,
+      "cpuPercent": 27.6
+    },
+    {
+      "at": "2026-10-23T08:15:11.838Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0.5,
+          "rssKiB": 166912
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7472
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0,
+          "rssKiB": 55808
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 45904
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 16,
+          "rssKiB": 1789536
+        },
+        {
+          "pid": 35334,
+          "ppid": 35203,
+          "cpuPercent": 0,
+          "rssKiB": 22672
+        },
+        {
+          "pid": 35429,
+          "ppid": 35203,
+          "cpuPercent": 7,
+          "rssKiB": 83920
+        },
+        {
+          "pid": 35458,
+          "ppid": 35429,
+          "cpuPercent": 0.6,
+          "rssKiB": 26032
+        },
+        {
+          "pid": 35459,
+          "ppid": 35429,
+          "cpuPercent": 1.8,
+          "rssKiB": 42880
+        },
+        {
+          "pid": 35469,
+          "ppid": 35429,
+          "cpuPercent": 2.5,
+          "rssKiB": 64512
+        },
+        {
+          "pid": 35470,
+          "ppid": 35429,
+          "cpuPercent": 12.2,
+          "rssKiB": 119520
+        },
+        {
+          "pid": 35471,
+          "ppid": 35203,
+          "cpuPercent": 0,
+          "rssKiB": 32
+        },
+        {
+          "pid": 35480,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 2426944,
+      "cpuPercent": 40.6
+    },
+    {
+      "at": "2026-10-23T08:15:12.315Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 1.1,
+          "rssKiB": 113280
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7440
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.3,
+          "rssKiB": 56000
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 45760
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 20.1,
+          "rssKiB": 1742016
+        },
+        {
+          "pid": 35334,
+          "ppid": 35203,
+          "cpuPercent": 0,
+          "rssKiB": 22672
+        },
+        {
+          "pid": 35429,
+          "ppid": 35203,
+          "cpuPercent": 23.2,
+          "rssKiB": 92544
+        },
+        {
+          "pid": 35458,
+          "ppid": 35429,
+          "cpuPercent": 21,
+          "rssKiB": 58128
+        },
+        {
+          "pid": 35459,
+          "ppid": 35429,
+          "cpuPercent": 5.7,
+          "rssKiB": 48256
+        },
+        {
+          "pid": 35469,
+          "ppid": 35429,
+          "cpuPercent": 1,
+          "rssKiB": 68304
+        },
+        {
+          "pid": 35471,
+          "ppid": 35203,
+          "cpuPercent": 0.3,
+          "rssKiB": 176
+        },
+        {
+          "pid": 35483,
+          "ppid": 35203,
+          "cpuPercent": 0.3,
+          "rssKiB": 176
+        },
+        {
+          "pid": 35485,
+          "ppid": 35429,
+          "cpuPercent": 20.7,
+          "rssKiB": 94640
+        },
+        {
+          "pid": 35486,
+          "ppid": 35429,
+          "cpuPercent": 18.5,
+          "rssKiB": 91456
+        },
+        {
+          "pid": 35487,
+          "ppid": 35429,
+          "cpuPercent": 14.7,
+          "rssKiB": 81840
+        },
+        {
+          "pid": 35488,
+          "ppid": 35429,
+          "cpuPercent": 18.4,
+          "rssKiB": 91232
+        },
+        {
+          "pid": 35489,
+          "ppid": 35429,
+          "cpuPercent": 12.8,
+          "rssKiB": 81648
+        },
+        {
+          "pid": 35490,
+          "ppid": 35429,
+          "cpuPercent": 14.8,
+          "rssKiB": 86416
+        },
+        {
+          "pid": 35499,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 2783728,
+      "cpuPercent": 172.90000000000003
+    },
+    {
+      "at": "2026-10-23T08:15:12.854Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 19.6,
+          "rssKiB": 195520
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7440
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 53056
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 39984
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 111.8,
+          "rssKiB": 1384128
+        },
+        {
+          "pid": 35334,
+          "ppid": 35203,
+          "cpuPercent": 0,
+          "rssKiB": 22656
+        },
+        {
+          "pid": 35429,
+          "ppid": 35203,
+          "cpuPercent": 27.7,
+          "rssKiB": 93584
+        },
+        {
+          "pid": 35458,
+          "ppid": 35429,
+          "cpuPercent": 7.9,
+          "rssKiB": 72384
+        },
+        {
+          "pid": 35459,
+          "ppid": 35429,
+          "cpuPercent": 48.2,
+          "rssKiB": 64816
+        },
+        {
+          "pid": 35469,
+          "ppid": 35429,
+          "cpuPercent": 0,
+          "rssKiB": 68304
+        },
+        {
+          "pid": 35471,
+          "ppid": 35203,
+          "cpuPercent": 0.2,
+          "rssKiB": 240
+        },
+        {
+          "pid": 35483,
+          "ppid": 35203,
+          "cpuPercent": 0.3,
+          "rssKiB": 240
+        },
+        {
+          "pid": 35485,
+          "ppid": 35429,
+          "cpuPercent": 65.3,
+          "rssKiB": 153392
+        },
+        {
+          "pid": 35486,
+          "ppid": 35429,
+          "cpuPercent": 54,
+          "rssKiB": 151248
+        },
+        {
+          "pid": 35487,
+          "ppid": 35429,
+          "cpuPercent": 29,
+          "rssKiB": 127920
+        },
+        {
+          "pid": 35488,
+          "ppid": 35429,
+          "cpuPercent": 28.3,
+          "rssKiB": 132016
+        },
+        {
+          "pid": 35489,
+          "ppid": 35429,
+          "cpuPercent": 24.9,
+          "rssKiB": 124896
+        },
+        {
+          "pid": 35490,
+          "ppid": 35429,
+          "cpuPercent": 27.3,
+          "rssKiB": 127440
+        },
+        {
+          "pid": 35516,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1760
+        }
+      ],
+      "rssKiB": 2821024,
+      "cpuPercent": 444.6
+    },
+    {
+      "at": "2026-10-23T08:15:13.319Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 11.2,
+          "rssKiB": 195920
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7376
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 54448
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 39984
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 51.2,
+          "rssKiB": 1230784
+        },
+        {
+          "pid": 35334,
+          "ppid": 35203,
+          "cpuPercent": 0,
+          "rssKiB": 22656
+        },
+        {
+          "pid": 35429,
+          "ppid": 35203,
+          "cpuPercent": 18.4,
+          "rssKiB": 88800
+        },
+        {
+          "pid": 35458,
+          "ppid": 35429,
+          "cpuPercent": 16.1,
+          "rssKiB": 85600
+        },
+        {
+          "pid": 35459,
+          "ppid": 35429,
+          "cpuPercent": 37.3,
+          "rssKiB": 63120
+        },
+        {
+          "pid": 35469,
+          "ppid": 35429,
+          "cpuPercent": 0,
+          "rssKiB": 61488
+        },
+        {
+          "pid": 35471,
+          "ppid": 35203,
+          "cpuPercent": 0.1,
+          "rssKiB": 272
+        },
+        {
+          "pid": 35483,
+          "ppid": 35203,
+          "cpuPercent": 0.1,
+          "rssKiB": 272
+        },
+        {
+          "pid": 35485,
+          "ppid": 35429,
+          "cpuPercent": 14.1,
+          "rssKiB": 157104
+        },
+        {
+          "pid": 35486,
+          "ppid": 35429,
+          "cpuPercent": 12.9,
+          "rssKiB": 151152
+        },
+        {
+          "pid": 35487,
+          "ppid": 35429,
+          "cpuPercent": 25.5,
+          "rssKiB": 150688
+        },
+        {
+          "pid": 35488,
+          "ppid": 35429,
+          "cpuPercent": 15.9,
+          "rssKiB": 148592
+        },
+        {
+          "pid": 35489,
+          "ppid": 35429,
+          "cpuPercent": 28.9,
+          "rssKiB": 150784
+        },
+        {
+          "pid": 35490,
+          "ppid": 35429,
+          "cpuPercent": 24.8,
+          "rssKiB": 149328
+        },
+        {
+          "pid": 35527,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 2760112,
+      "cpuPercent": 256.6
+    },
+    {
+      "at": "2026-10-23T08:15:13.823Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 1.4,
+          "rssKiB": 158944
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7328
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 55568
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 39984
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 19.1,
+          "rssKiB": 1155008
+        },
+        {
+          "pid": 35334,
+          "ppid": 35203,
+          "cpuPercent": 0,
+          "rssKiB": 20352
+        },
+        {
+          "pid": 35429,
+          "ppid": 35203,
+          "cpuPercent": 19.6,
+          "rssKiB": 90816
+        },
+        {
+          "pid": 35458,
+          "ppid": 35429,
+          "cpuPercent": 27,
+          "rssKiB": 104800
+        },
+        {
+          "pid": 35459,
+          "ppid": 35429,
+          "cpuPercent": 5.3,
+          "rssKiB": 54208
+        },
+        {
+          "pid": 35469,
+          "ppid": 35429,
+          "cpuPercent": 0,
+          "rssKiB": 61488
+        },
+        {
+          "pid": 35483,
+          "ppid": 35203,
+          "cpuPercent": 0.9,
+          "rssKiB": 8496
+        },
+        {
+          "pid": 35485,
+          "ppid": 35429,
+          "cpuPercent": 12.4,
+          "rssKiB": 135888
+        },
+        {
+          "pid": 35486,
+          "ppid": 35429,
+          "cpuPercent": 9.4,
+          "rssKiB": 154784
+        },
+        {
+          "pid": 35487,
+          "ppid": 35429,
+          "cpuPercent": 10.3,
+          "rssKiB": 169120
+        },
+        {
+          "pid": 35488,
+          "ppid": 35429,
+          "cpuPercent": 9.3,
+          "rssKiB": 169504
+        },
+        {
+          "pid": 35489,
+          "ppid": 35429,
+          "cpuPercent": 11.3,
+          "rssKiB": 170480
+        },
+        {
+          "pid": 35490,
+          "ppid": 35429,
+          "cpuPercent": 10.8,
+          "rssKiB": 167376
+        },
+        {
+          "pid": 35529,
+          "ppid": 35203,
+          "cpuPercent": 0,
+          "rssKiB": 288
+        },
+        {
+          "pid": 35538,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 2726176,
+      "cpuPercent": 136.9
+    },
+    {
+      "at": "2026-10-23T08:15:14.330Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0.4,
+          "rssKiB": 159808
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7296
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 54176
+        },
+        {
+          "pid": 35201,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 39984
+        },
+        {
+          "pid": 35203,
+          "ppid": 35201,
+          "cpuPercent": 9.7,
+          "rssKiB": 1066112
+        },
+        {
+          "pid": 35334,
+          "ppid": 35203,
+          "cpuPercent": 0,
+          "rssKiB": 19328
+        },
+        {
+          "pid": 35429,
+          "ppid": 35203,
+          "cpuPercent": 14.5,
+          "rssKiB": 90080
+        },
+        {
+          "pid": 35458,
+          "ppid": 35429,
+          "cpuPercent": 17.9,
+          "rssKiB": 96912
+        },
+        {
+          "pid": 35459,
+          "ppid": 35429,
+          "cpuPercent": 0.8,
+          "rssKiB": 53584
+        },
+        {
+          "pid": 35469,
+          "ppid": 35429,
+          "cpuPercent": 0,
+          "rssKiB": 61488
+        },
+        {
+          "pid": 35483,
+          "ppid": 35203,
+          "cpuPercent": 0.1,
+          "rssKiB": 8544
+        },
+        {
+          "pid": 35539,
+          "ppid": 35203,
+          "cpuPercent": 0,
+          "rssKiB": 5856
+        },
+        {
+          "pid": 35548,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 1664912,
+      "cpuPercent": 43.49999999999999
+    },
+    {
+      "at": "2026-10-23T08:15:14.822Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0.9,
+          "rssKiB": 164000
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7408
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 4.1,
+          "rssKiB": 66016
+        },
+        {
+          "pid": 35578,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 36192
+        },
+        {
+          "pid": 35587,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1728
+        }
+      ],
+      "rssKiB": 275344,
+      "cpuPercent": 5
+    },
+    {
+      "at": "2026-10-23T08:15:15.322Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0.4,
+          "rssKiB": 166752
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7408
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 2.2,
+          "rssKiB": 71680
+        },
+        {
+          "pid": 35590,
+          "ppid": 33634,
+          "cpuPercent": 8.5,
+          "rssKiB": 66400
+        },
+        {
+          "pid": 35615,
+          "ppid": 35590,
+          "cpuPercent": 0.1,
+          "rssKiB": 2288
+        },
+        {
+          "pid": 35616,
+          "ppid": 35615,
+          "cpuPercent": 11.1,
+          "rssKiB": 66976
+        },
+        {
+          "pid": 35649,
+          "ppid": 35616,
+          "cpuPercent": 106.3,
+          "rssKiB": 179376
+        },
+        {
+          "pid": 35658,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 562624,
+      "cpuPercent": 128.6
+    },
+    {
+      "at": "2026-10-23T08:15:15.824Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0,
+          "rssKiB": 166752
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7552
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.6,
+          "rssKiB": 71840
+        },
+        {
+          "pid": 35590,
+          "ppid": 33634,
+          "cpuPercent": 1.2,
+          "rssKiB": 66400
+        },
+        {
+          "pid": 35615,
+          "ppid": 35590,
+          "cpuPercent": 0,
+          "rssKiB": 2288
+        },
+        {
+          "pid": 35616,
+          "ppid": 35615,
+          "cpuPercent": 1.5,
+          "rssKiB": 66976
+        },
+        {
+          "pid": 35649,
+          "ppid": 35616,
+          "cpuPercent": 235.3,
+          "rssKiB": 376640
+        },
+        {
+          "pid": 35667,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 760192,
+      "cpuPercent": 238.60000000000002
+    },
+    {
+      "at": "2026-10-23T08:15:16.327Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 1,
+          "rssKiB": 167408
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7552
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 1.2,
+          "rssKiB": 73072
+        },
+        {
+          "pid": 35816,
+          "ppid": 33634,
+          "cpuPercent": 6.2,
+          "rssKiB": 61648
+        },
+        {
+          "pid": 35825,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1728
+        }
+      ],
+      "rssKiB": 311408,
+      "cpuPercent": 8.4
+    },
+    {
+      "at": "2026-10-23T08:15:16.829Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0.1,
+          "rssKiB": 167408
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7552
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.5,
+          "rssKiB": 74400
+        },
+        {
+          "pid": 35816,
+          "ppid": 33634,
+          "cpuPercent": 4.5,
+          "rssKiB": 66384
+        },
+        {
+          "pid": 35850,
+          "ppid": 35816,
+          "cpuPercent": 0,
+          "rssKiB": 2288
+        },
+        {
+          "pid": 35851,
+          "ppid": 35850,
+          "cpuPercent": 4.6,
+          "rssKiB": 66896
+        },
+        {
+          "pid": 35884,
+          "ppid": 35851,
+          "cpuPercent": 185.8,
+          "rssKiB": 334096
+        },
+        {
+          "pid": 35893,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 720768,
+      "cpuPercent": 195.5
+    },
+    {
+      "at": "2026-10-23T08:15:17.330Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0,
+          "rssKiB": 167568
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7552
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.3,
+          "rssKiB": 74416
+        },
+        {
+          "pid": 35816,
+          "ppid": 33634,
+          "cpuPercent": 0.6,
+          "rssKiB": 66384
+        },
+        {
+          "pid": 35850,
+          "ppid": 35816,
+          "cpuPercent": 0,
+          "rssKiB": 2304
+        },
+        {
+          "pid": 35894,
+          "ppid": 35850,
+          "cpuPercent": 16.9,
+          "rssKiB": 67008
+        },
+        {
+          "pid": 35927,
+          "ppid": 35894,
+          "cpuPercent": 29.7,
+          "rssKiB": 100816
+        },
+        {
+          "pid": 35981,
+          "ppid": 35927,
+          "cpuPercent": 0,
+          "rssKiB": 1648
+        },
+        {
+          "pid": 35990,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 489440,
+      "cpuPercent": 47.5
+    },
+    {
+      "at": "2026-10-23T08:15:17.831Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0.7,
+          "rssKiB": 168304
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7568
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 1,
+          "rssKiB": 74832
+        },
+        {
+          "pid": 36051,
+          "ppid": 33634,
+          "cpuPercent": 18.5,
+          "rssKiB": 66656
+        },
+        {
+          "pid": 36076,
+          "ppid": 36051,
+          "cpuPercent": 0.3,
+          "rssKiB": 2288
+        },
+        {
+          "pid": 36077,
+          "ppid": 36076,
+          "cpuPercent": 21.1,
+          "rssKiB": 66752
+        },
+        {
+          "pid": 36110,
+          "ppid": 36077,
+          "cpuPercent": 2.6,
+          "rssKiB": 77664
+        },
+        {
+          "pid": 36119,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 465808,
+      "cpuPercent": 44.2
+    },
+    {
+      "at": "2026-10-23T08:15:18.336Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0.1,
+          "rssKiB": 168304
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7568
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.4,
+          "rssKiB": 76352
+        },
+        {
+          "pid": 36051,
+          "ppid": 33634,
+          "cpuPercent": 2.5,
+          "rssKiB": 66672
+        },
+        {
+          "pid": 36076,
+          "ppid": 36051,
+          "cpuPercent": 0,
+          "rssKiB": 2288
+        },
+        {
+          "pid": 36077,
+          "ppid": 36076,
+          "cpuPercent": 2.8,
+          "rssKiB": 66752
+        },
+        {
+          "pid": 36110,
+          "ppid": 36077,
+          "cpuPercent": 219,
+          "rssKiB": 357904
+        },
+        {
+          "pid": 36130,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 747584,
+      "cpuPercent": 224.8
+    },
+    {
+      "at": "2026-10-23T08:15:18.836Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0.1,
+          "rssKiB": 168560
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7568
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.3,
+          "rssKiB": 77744
+        },
+        {
+          "pid": 36283,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1728
+        }
+      ],
+      "rssKiB": 255600,
+      "cpuPercent": 0.4
+    },
+    {
+      "at": "2026-10-23T08:15:19.338Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0.4,
+          "rssKiB": 169264
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7568
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.9,
+          "rssKiB": 78048
+        },
+        {
+          "pid": 36291,
+          "ppid": 34898,
+          "cpuPercent": 10.8,
+          "rssKiB": 56112
+        },
+        {
+          "pid": 36293,
+          "ppid": 36291,
+          "cpuPercent": 66.1,
+          "rssKiB": 264944
+        },
+        {
+          "pid": 36302,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1728
+        }
+      ],
+      "rssKiB": 577664,
+      "cpuPercent": 78.19999999999999
+    },
+    {
+      "at": "2026-10-23T08:15:19.840Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 0,
+          "rssKiB": 169280
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7568
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 78048
+        },
+        {
+          "pid": 36291,
+          "ppid": 34898,
+          "cpuPercent": 1.8,
+          "rssKiB": 56400
+        },
+        {
+          "pid": 36293,
+          "ppid": 36291,
+          "cpuPercent": 87.7,
+          "rssKiB": 547136
+        },
+        {
+          "pid": 36311,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1728
+        }
+      ],
+      "rssKiB": 860160,
+      "cpuPercent": 89.60000000000001
+    },
+    {
+      "at": "2026-10-23T08:15:20.342Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 16.6,
+          "rssKiB": 103984
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7568
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 78048
+        },
+        {
+          "pid": 36291,
+          "ppid": 34898,
+          "cpuPercent": 1,
+          "rssKiB": 58592
+        },
+        {
+          "pid": 36293,
+          "ppid": 36291,
+          "cpuPercent": 142.8,
+          "rssKiB": 896880
+        },
+        {
+          "pid": 36320,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1728
+        }
+      ],
+      "rssKiB": 1146800,
+      "cpuPercent": 160.5
+    },
+    {
+      "at": "2026-10-23T08:15:20.844Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 10.5,
+          "rssKiB": 111712
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7600
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 78432
+        },
+        {
+          "pid": 36291,
+          "ppid": 34898,
+          "cpuPercent": 0.1,
+          "rssKiB": 58608
+        },
+        {
+          "pid": 36293,
+          "ppid": 36291,
+          "cpuPercent": 149.6,
+          "rssKiB": 973088
+        },
+        {
+          "pid": 36329,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1728
+        }
+      ],
+      "rssKiB": 1231168,
+      "cpuPercent": 160.29999999999998
+    },
+    {
+      "at": "2026-10-23T08:15:21.370Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 9.6,
+          "rssKiB": 111984
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7600
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 78432
+        },
+        {
+          "pid": 36291,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 58624
+        },
+        {
+          "pid": 36293,
+          "ppid": 36291,
+          "cpuPercent": 60.3,
+          "rssKiB": 1046112
+        },
+        {
+          "pid": 36331,
+          "ppid": 36293,
+          "cpuPercent": 26.1,
+          "rssKiB": 94912
+        },
+        {
+          "pid": 36332,
+          "ppid": 36331,
+          "cpuPercent": 14.6,
+          "rssKiB": 58192
+        },
+        {
+          "pid": 36333,
+          "ppid": 36331,
+          "cpuPercent": 13.3,
+          "rssKiB": 69104
+        },
+        {
+          "pid": 36334,
+          "ppid": 36331,
+          "cpuPercent": 3.1,
+          "rssKiB": 68496
+        },
+        {
+          "pid": 36338,
+          "ppid": 36293,
+          "cpuPercent": 1.4,
+          "rssKiB": 8496
+        },
+        {
+          "pid": 36340,
+          "ppid": 36331,
+          "cpuPercent": 42.1,
+          "rssKiB": 127184
+        },
+        {
+          "pid": 36341,
+          "ppid": 36331,
+          "cpuPercent": 39.3,
+          "rssKiB": 120384
+        },
+        {
+          "pid": 36342,
+          "ppid": 36331,
+          "cpuPercent": 38.4,
+          "rssKiB": 128496
+        },
+        {
+          "pid": 36343,
+          "ppid": 36331,
+          "cpuPercent": 41,
+          "rssKiB": 127936
+        },
+        {
+          "pid": 36344,
+          "ppid": 36331,
+          "cpuPercent": 40.1,
+          "rssKiB": 128160
+        },
+        {
+          "pid": 36345,
+          "ppid": 36331,
+          "cpuPercent": 39.3,
+          "rssKiB": 127472
+        },
+        {
+          "pid": 36354,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1760
+        }
+      ],
+      "rssKiB": 2363344,
+      "cpuPercent": 368.7
+    },
+    {
+      "at": "2026-10-23T08:15:21.861Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 19.7,
+          "rssKiB": 119264
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7616
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 78432
+        },
+        {
+          "pid": 36291,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 58624
+        },
+        {
+          "pid": 36293,
+          "ppid": 36291,
+          "cpuPercent": 75.1,
+          "rssKiB": 1048912
+        },
+        {
+          "pid": 36331,
+          "ppid": 36293,
+          "cpuPercent": 31.1,
+          "rssKiB": 98048
+        },
+        {
+          "pid": 36332,
+          "ppid": 36331,
+          "cpuPercent": 20.5,
+          "rssKiB": 102592
+        },
+        {
+          "pid": 36333,
+          "ppid": 36331,
+          "cpuPercent": 48.3,
+          "rssKiB": 74208
+        },
+        {
+          "pid": 36334,
+          "ppid": 36331,
+          "cpuPercent": 0.4,
+          "rssKiB": 68496
+        },
+        {
+          "pid": 36338,
+          "ppid": 36293,
+          "cpuPercent": 0.1,
+          "rssKiB": 8496
+        },
+        {
+          "pid": 36340,
+          "ppid": 36331,
+          "cpuPercent": 27.1,
+          "rssKiB": 172720
+        },
+        {
+          "pid": 36341,
+          "ppid": 36331,
+          "cpuPercent": 35.6,
+          "rssKiB": 169392
+        },
+        {
+          "pid": 36342,
+          "ppid": 36331,
+          "cpuPercent": 33.8,
+          "rssKiB": 171712
+        },
+        {
+          "pid": 36343,
+          "ppid": 36331,
+          "cpuPercent": 26.3,
+          "rssKiB": 167392
+        },
+        {
+          "pid": 36344,
+          "ppid": 36331,
+          "cpuPercent": 28.1,
+          "rssKiB": 172160
+        },
+        {
+          "pid": 36345,
+          "ppid": 36331,
+          "cpuPercent": 28,
+          "rssKiB": 170048
+        },
+        {
+          "pid": 36366,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 2689856,
+      "cpuPercent": 374.20000000000005
+    },
+    {
+      "at": "2026-10-23T08:15:22.351Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 2.8,
+          "rssKiB": 119264
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7616
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 78432
+        },
+        {
+          "pid": 36291,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 58624
+        },
+        {
+          "pid": 36293,
+          "ppid": 36291,
+          "cpuPercent": 32.7,
+          "rssKiB": 1049264
+        },
+        {
+          "pid": 36331,
+          "ppid": 36293,
+          "cpuPercent": 34.8,
+          "rssKiB": 98304
+        },
+        {
+          "pid": 36332,
+          "ppid": 36331,
+          "cpuPercent": 47.1,
+          "rssKiB": 110112
+        },
+        {
+          "pid": 36333,
+          "ppid": 36331,
+          "cpuPercent": 7.5,
+          "rssKiB": 74480
+        },
+        {
+          "pid": 36334,
+          "ppid": 36331,
+          "cpuPercent": 0,
+          "rssKiB": 68512
+        },
+        {
+          "pid": 36338,
+          "ppid": 36293,
+          "cpuPercent": 0,
+          "rssKiB": 8496
+        },
+        {
+          "pid": 36340,
+          "ppid": 36331,
+          "cpuPercent": 27.8,
+          "rssKiB": 181168
+        },
+        {
+          "pid": 36341,
+          "ppid": 36331,
+          "cpuPercent": 17.8,
+          "rssKiB": 227552
+        },
+        {
+          "pid": 36342,
+          "ppid": 36331,
+          "cpuPercent": 19.7,
+          "rssKiB": 222272
+        },
+        {
+          "pid": 36343,
+          "ppid": 36331,
+          "cpuPercent": 19.3,
+          "rssKiB": 211392
+        },
+        {
+          "pid": 36344,
+          "ppid": 36331,
+          "cpuPercent": 16.5,
+          "rssKiB": 227264
+        },
+        {
+          "pid": 36345,
+          "ppid": 36331,
+          "cpuPercent": 17.1,
+          "rssKiB": 217792
+        },
+        {
+          "pid": 36376,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 2962288,
+      "cpuPercent": 243.20000000000002
+    },
+    {
+      "at": "2026-10-23T08:15:22.853Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 1.3,
+          "rssKiB": 119264
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7648
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 78432
+        },
+        {
+          "pid": 36291,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 58624
+        },
+        {
+          "pid": 36293,
+          "ppid": 36291,
+          "cpuPercent": 22.1,
+          "rssKiB": 1049696
+        },
+        {
+          "pid": 36331,
+          "ppid": 36293,
+          "cpuPercent": 32.6,
+          "rssKiB": 98352
+        },
+        {
+          "pid": 36332,
+          "ppid": 36331,
+          "cpuPercent": 44.1,
+          "rssKiB": 112560
+        },
+        {
+          "pid": 36333,
+          "ppid": 36331,
+          "cpuPercent": 1.2,
+          "rssKiB": 74480
+        },
+        {
+          "pid": 36334,
+          "ppid": 36331,
+          "cpuPercent": 0,
+          "rssKiB": 68512
+        },
+        {
+          "pid": 36338,
+          "ppid": 36293,
+          "cpuPercent": 0,
+          "rssKiB": 8496
+        },
+        {
+          "pid": 36340,
+          "ppid": 36331,
+          "cpuPercent": 25,
+          "rssKiB": 183328
+        },
+        {
+          "pid": 36341,
+          "ppid": 36331,
+          "cpuPercent": 14.3,
+          "rssKiB": 229840
+        },
+        {
+          "pid": 36342,
+          "ppid": 36331,
+          "cpuPercent": 13.9,
+          "rssKiB": 224368
+        },
+        {
+          "pid": 36343,
+          "ppid": 36331,
+          "cpuPercent": 12.6,
+          "rssKiB": 214464
+        },
+        {
+          "pid": 36344,
+          "ppid": 36331,
+          "cpuPercent": 11,
+          "rssKiB": 229584
+        },
+        {
+          "pid": 36345,
+          "ppid": 36331,
+          "cpuPercent": 13.5,
+          "rssKiB": 220304
+        },
+        {
+          "pid": 36386,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 2979696,
+      "cpuPercent": 191.70000000000002
+    },
+    {
+      "at": "2026-10-23T08:15:23.353Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 1.8,
+          "rssKiB": 119376
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7648
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.1,
+          "rssKiB": 78656
+        },
+        {
+          "pid": 36291,
+          "ppid": 34898,
+          "cpuPercent": 0.1,
+          "rssKiB": 58912
+        },
+        {
+          "pid": 36293,
+          "ppid": 36291,
+          "cpuPercent": 20.4,
+          "rssKiB": 1050256
+        },
+        {
+          "pid": 36331,
+          "ppid": 36293,
+          "cpuPercent": 30,
+          "rssKiB": 96464
+        },
+        {
+          "pid": 36332,
+          "ppid": 36331,
+          "cpuPercent": 39.3,
+          "rssKiB": 104720
+        },
+        {
+          "pid": 36333,
+          "ppid": 36331,
+          "cpuPercent": 0.7,
+          "rssKiB": 73808
+        },
+        {
+          "pid": 36334,
+          "ppid": 36331,
+          "cpuPercent": 0,
+          "rssKiB": 68512
+        },
+        {
+          "pid": 36338,
+          "ppid": 36293,
+          "cpuPercent": 0,
+          "rssKiB": 8544
+        },
+        {
+          "pid": 36416,
+          "ppid": 36293,
+          "cpuPercent": 0,
+          "rssKiB": 12576
+        },
+        {
+          "pid": 36425,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1744
+        }
+      ],
+      "rssKiB": 1681216,
+      "cpuPercent": 92.39999999999999
+    },
+    {
+      "at": "2026-10-23T08:15:23.644Z",
+      "processes": [
+        {
+          "pid": 33634,
+          "ppid": 1,
+          "cpuPercent": 4,
+          "rssKiB": 119440
+        },
+        {
+          "pid": 33635,
+          "ppid": 33634,
+          "cpuPercent": 0,
+          "rssKiB": 7664
+        },
+        {
+          "pid": 34898,
+          "ppid": 486,
+          "cpuPercent": 0.9,
+          "rssKiB": 78832
+        },
+        {
+          "pid": 36453,
+          "ppid": 34898,
+          "cpuPercent": 0,
+          "rssKiB": 1728
+        }
+      ],
+      "rssKiB": 207664,
+      "cpuPercent": 4.9
+    }
+  ],
+  "disk": {
+    "beforeBytes": 96495,
+    "afterBytes": 640575
+  },
+  "limitations": [
+    "one run per sample, no statistically meaningful p50/p95 or production capacity",
+    "online model/TTS/download not executed",
+    "OpenChatCut direct module render is real; not a DB render workflow or an Owner approval",
+    "fixture setup is outside task submit timings; per-task compile remains included",
+    "HTTP detail workload matches table set with explicit extra task-ID lookup; browser metrics recorded separately"
+  ]
+}

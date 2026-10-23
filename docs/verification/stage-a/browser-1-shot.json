@@ -1,0 +1,174 @@
+{
+  "sample": "1-shot",
+  "capturedAt": "2026-10-23T08:18:40.695Z",
+  "requests": [
+    {
+      "path": "/rest/v1/episodes",
+      "status": 200,
+      "bytes": 547,
+      "elapsedMs": 9.900000005960464,
+      "startedMs": 21.400000005960464
+    },
+    {
+      "path": "/rest/v1/review_packages",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 18.69999998807907,
+      "startedMs": 31.900000005960464
+    },
+    {
+      "path": "/rest/v1/episodes",
+      "status": 200,
+      "bytes": 547,
+      "elapsedMs": 35.099999994039536,
+      "startedMs": 21.30000001192093
+    },
+    {
+      "path": "/rest/v1/storyboard_audio_selections",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 28.30000001192093,
+      "startedMs": 31.900000005960464
+    },
+    {
+      "path": "/rest/v1/audio_tracks",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 28.400000005960464,
+      "startedMs": 31.900000005960464
+    },
+    {
+      "path": "/rest/v1/production_material_revisions",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 31.799999982118607,
+      "startedMs": 31.80000001192093
+    },
+    {
+      "path": "/rest/v1/state_transitions",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 35.19999998807907,
+      "startedMs": 31.900000005960464
+    },
+    {
+      "path": "/rest/v1/account_blueprint_versions",
+      "status": 200,
+      "bytes": 342,
+      "elapsedMs": 35.599999994039536,
+      "startedMs": 31.5
+    },
+    {
+      "path": "/rest/v1/rpc/list_external_connection_versions",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 35.69999998807907,
+      "startedMs": 31.700000017881393
+    },
+    {
+      "path": "/rest/v1/artifacts",
+      "status": 200,
+      "bytes": 404,
+      "elapsedMs": 36.400000005960464,
+      "startedMs": 31.900000005960464
+    },
+    {
+      "path": "/rest/v1/tasks",
+      "status": 200,
+      "bytes": 2982,
+      "elapsedMs": 38,
+      "startedMs": 31.900000005960464
+    },
+    {
+      "path": "/rest/v1/rpc/list_external_connection_versions",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 14.5,
+      "startedMs": 56.80000001192093
+    },
+    {
+      "path": "/rest/v1/review_packages",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 14.400000005960464,
+      "startedMs": 57
+    },
+    {
+      "path": "/rest/v1/audio_tracks",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 15.300000011920929,
+      "startedMs": 57
+    },
+    {
+      "path": "/rest/v1/storyboard_audio_selections",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 17,
+      "startedMs": 56.900000005960464
+    },
+    {
+      "path": "/rest/v1/account_blueprint_versions",
+      "status": 200,
+      "bytes": 342,
+      "elapsedMs": 18,
+      "startedMs": 56.599999994039536
+    },
+    {
+      "path": "/rest/v1/shot_preparation_drafts",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 43.099999994039536,
+      "startedMs": 31.80000001192093
+    },
+    {
+      "path": "/rest/v1/artifacts",
+      "status": 200,
+      "bytes": 404,
+      "elapsedMs": 18.400000005960464,
+      "startedMs": 57
+    },
+    {
+      "path": "/rest/v1/production_material_revisions",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 18.900000005960464,
+      "startedMs": 56.80000001192093
+    },
+    {
+      "path": "/rest/v1/state_transitions",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 20.400000005960464,
+      "startedMs": 57.099999994039536
+    },
+    {
+      "path": "/rest/v1/tasks",
+      "status": 200,
+      "bytes": 2982,
+      "elapsedMs": 20.5,
+      "startedMs": 57.099999994039536
+    },
+    {
+      "path": "/rest/v1/shot_preparation_drafts",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 22.400000005960464,
+      "startedMs": 56.80000001192093
+    },
+    {
+      "path": "/rest/v1/task_runs",
+      "status": 200,
+      "bytes": 226,
+      "elapsedMs": 4.600000023841858,
+      "startedMs": 75.09999999403954
+    },
+    {
+      "path": "/rest/v1/task_runs",
+      "status": 200,
+      "bytes": 226,
+      "elapsedMs": 6,
+      "startedMs": 79.30000001192093
+    }
+  ]
+}

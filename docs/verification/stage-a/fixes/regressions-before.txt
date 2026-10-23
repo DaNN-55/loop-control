@@ -1,0 +1,120 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ scripts/isolation/database.test.mjs (1 test | 1 failed) 6ms
+   × stop cleans the owned tunnel even when Docker inspect fails 6ms
+     → Expected values to be strictly equal:
+
+0 !== 1
+
+ ❯ scripts/isolation/regressions.test.mjs (7 tests | 7 failed) 11ms
+   × generated service key remains a bare JWT for the existing HTTP reader and shell 4ms
+     → Expected values to be strictly equal:
++ actual - expected
+
++ "'test.service-role.test'"
+- 'test.service-role.test'
+
+   × application and worker redirect HOME and inherited config locations before spawning 1ms
+     → Expected values to be strictly equal:
++ actual - expected
+
++ '/Users/dan'
+- '/private/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-regressions-CeYvam/runtime/state/home'
+
+   × reject dangling leaf console.log before any write 1ms
+     → Missing expected exception.
+   × reject dangling leaf console.json before any write 1ms
+     → Missing expected exception.
+   × reject dangling leaf worker.env.local before any write 1ms
+     → Missing expected exception.
+   × reject dangling leaf tunnel.log before any write 1ms
+     → Missing expected exception.
+   × reject dangling leaf tunnel.json before any write 1ms
+     → Missing expected exception.
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  scripts/isolation/database.test.mjs > stop cleans the owned tunnel even when Docker inspect fails
+AssertionError: Expected values to be strictly equal:
+
+0 !== 1
+
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ scripts/isolation/database.test.mjs:14:12
+     12|     mocks.inspect.mockImplementation(() => { throw new Error('No such …
+     13|     await import('./database.mjs').catch(() => {});
+     14|     assert.equal(mocks.stop.mock.calls.length, 1);
+       |            ^
+     15|     assert.equal(mocks.run.mock.calls.length, 0);
+     16| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  scripts/isolation/regressions.test.mjs > generated service key remains a bare JWT for the existing HTTP reader and shell
+AssertionError: Expected values to be strictly equal:
++ actual - expected
+
++ "'test.service-role.test'"
+- 'test.service-role.test'
+
+
+Expected: "test.service-role.test"
+Received: "'test.service-role.test'"
+
+ ❯ scripts/isolation/regressions.test.mjs:20:12
+     18|     const { config } = fixture(), contents = workerEnvironment(config);
+     19|     // Exact reader contract in localWorkerServiceRoleKey(), plus the …
+     20|     assert.equal(contents.match(/^SUPABASE_SERVICE_ROLE_KEY=(.+)$/m)?.…
+       |            ^
+     21|     const shell = execFileSync('/bin/zsh', ['-f', '-c', 'source /dev/s…
+     22|     assert.equal(shell, config.serviceRoleKey);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  scripts/isolation/regressions.test.mjs > application and worker redirect HOME and inherited config locations before spawning
+AssertionError: Expected values to be strictly equal:
++ actual - expected
+
++ '/Users/dan'
+- '/private/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-regressions-CeYvam/runtime/state/home'
+
+
+Expected: "/private/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-regressions-CeYvam/runtime/state/home"
+Received: "/Users/dan"
+
+ ❯ scripts/isolation/regressions.test.mjs:31:16
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  scripts/isolation/regressions.test.mjs > reject dangling leaf console.log before any write
+ FAIL  scripts/isolation/regressions.test.mjs > reject dangling leaf console.json before any write
+ FAIL  scripts/isolation/regressions.test.mjs > reject dangling leaf worker.env.local before any write
+ FAIL  scripts/isolation/regressions.test.mjs > reject dangling leaf tunnel.log before any write
+ FAIL  scripts/isolation/regressions.test.mjs > reject dangling leaf tunnel.json before any write
+AssertionError: Missing expected exception.
+
+simple
+
+ ❯ scripts/isolation/regressions.test.mjs:41:12
+     39|     const { root } = fixture(), foreign = join(root, 'foreign-target')…
+     40|     symlinkSync(foreign, leaf);
+     41|     assert.throws(() => { assertPrivatePath(leaf, root); writeFileSync…
+       |            ^
+     42|     assert.equal(existsSync(foreign), false);
+     43| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  8 failed (8)
+   Start at  17:50:23
+   Duration  239ms (transform 30ms, setup 0ms, collect 34ms, tests 18ms, environment 0ms, prepare 87ms)

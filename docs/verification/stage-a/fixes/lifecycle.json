@@ -1,0 +1,15 @@
+{
+  "checkedAt": "2026-10-23T09:59:08.158Z",
+  "consoleStops": true,
+  "consoleRestarts": true,
+  "foreignPidSkipped": true,
+  "productionPidsBefore": [
+    "28387",
+    "28388"
+  ],
+  "productionPidsAfter": [
+    "28387",
+    "28388"
+  ],
+  "note": "foreign PID is our own sentinel, never a production process; original production listeners only read"
+}

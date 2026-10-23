@@ -1,0 +1,15 @@
+{
+  "checkedAt": "2026-10-23T10:08:27.435Z",
+  "branch": "codex/local-first-stage-a",
+  "head": "cf450d9e91696fd071f4b2476c81a72dda8da14e",
+  "productionGit": "?? docs/architecture-map/\n",
+  "productionBranch": "codex/project-architecture-map",
+  "isolationStatus": {
+    "running": true,
+    "consolePort": 55173,
+    "projectRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control"
+  },
+  "consoleHealth": "loop-control-console-v1\n",
+  "productionGitUnchanged": true,
+  "noNewCommit": true
+}

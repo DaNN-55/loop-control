@@ -725,7 +725,20 @@ function ArollTaskEvidencePanel({ tasks }: { tasks: Task[] }) {
     const evidence = aRollTaskEvidence(task);
     const blocker = blockersFromResult(task.last_result)[0];
     const guidance = blocker ? workerBlockerGuidance(blocker) : null;
-    return <article className={`worker-blocker ${task.status === "blocked" ? "a-roll-blocked-task" : ""}`} key={task.id}><strong>{evidence?.shotId ?? "A-roll 任务"} · {taskStatusLabels[task.status]}</strong>{task.status === "blocked" ? <div className="a-roll-blocker-copy"><strong>{guidance?.title ?? "A-roll 任务已阻塞"}</strong><p>{guidance?.summary ?? "A-roll 任务缺少可执行条件，请先处理下方阻塞项。"}</p><span>{guidance?.retryLabel ?? "处理阻塞项后重新创建任务"}。</span></div> : evidence ? <dl><div><dt>执行器</dt><dd>{evidence.provider} · {evidence.model} · {evidence.promptVersion}</dd></div><div><dt>适配器</dt><dd>{evidence.adapter}</dd></div><div><dt>允许工具</dt><dd>{evidence.allowedTools.join("、")}</dd></div><div><dt>冻结输入哈希</dt><dd>{evidence.inputHashes.map((hash) => `${hash.slice(0, 12)}…`).join("、")}</dd></div></dl> : <p className="muted-copy">执行证据尚未生成。</p>}<dl><div><dt>运行尝试</dt><dd>{task.attempt} / {task.max_attempts}</dd></div><div><dt>实际成本</dt><dd>{task.actual_cost_cents ?? 0} 分</dd></div></dl>{task.last_result ? <p className="muted-copy">最新结果：{taskStatusLabels[task.status]}</p> : null}</article>;
+    return <article className="a-roll-task" data-status={task.status} key={task.id}>
+      <strong className="a-roll-task-heading">{evidence?.shotId ?? "A-roll 任务"} · {taskStatusLabels[task.status]}</strong>
+      {task.status === "blocked" ? <div className="a-roll-blocker-copy"><strong>{guidance?.title ?? "A-roll 任务已阻塞"}</strong><p>{guidance?.summary ?? "A-roll 任务缺少可执行条件，请先处理下方阻塞项。"}</p><span>{guidance?.retryLabel ?? "处理阻塞项后重新创建任务"}。</span></div> : evidence ? <dl className="a-roll-task-evidence">
+        <div><dt>执行器</dt><dd>{evidence.provider} · {evidence.model} · {evidence.promptVersion}</dd></div>
+        <div><dt>适配器</dt><dd>{evidence.adapter}</dd></div>
+        <div><dt>允许工具</dt><dd>{evidence.allowedTools.join("、")}</dd></div>
+        <div><dt>冻结输入哈希</dt><dd>{evidence.inputHashes.map((hash) => `${hash.slice(0, 12)}…`).join("、")}</dd></div>
+      </dl> : <p className="muted-copy">执行证据尚未生成。</p>}
+      <dl className="a-roll-task-metrics">
+        <div><dt>运行尝试</dt><dd>{task.attempt} / {task.max_attempts}</dd></div>
+        <div><dt>实际成本</dt><dd>{task.actual_cost_cents ?? 0} 分</dd></div>
+      </dl>
+      {task.last_result ? <p className="muted-copy">最新结果：{taskStatusLabels[task.status]}</p> : null}
+    </article>;
   })}</div></details>;
 }
 

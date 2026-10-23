@@ -1,0 +1,87 @@
+{
+  "checkedAt": "2026-10-23T10:02:37.261Z",
+  "kind": "DOM-only styling probe; no database mutation",
+  "results": [
+    {
+      "background": "rgb(255, 255, 255)",
+      "border": "rgb(226, 231, 239)",
+      "scrollWidth": 700,
+      "status": "completed",
+      "theme": "light",
+      "titleColor": "rgb(38, 115, 77)",
+      "width": 700
+    },
+    {
+      "background": "rgb(255, 255, 255)",
+      "border": "rgb(226, 231, 239)",
+      "scrollWidth": 700,
+      "status": "running",
+      "theme": "light",
+      "titleColor": "rgb(36, 91, 168)",
+      "width": 700
+    },
+    {
+      "background": "rgb(255, 255, 255)",
+      "border": "rgb(228, 194, 197)",
+      "scrollWidth": 700,
+      "status": "failed",
+      "theme": "light",
+      "titleColor": "rgb(167, 45, 55)",
+      "width": 700
+    },
+    {
+      "background": "rgb(255, 255, 255)",
+      "border": "rgb(228, 194, 197)",
+      "scrollWidth": 700,
+      "status": "blocked",
+      "theme": "light",
+      "titleColor": "rgb(167, 45, 55)",
+      "width": 700
+    },
+    {
+      "background": "rgb(23, 28, 37)",
+      "border": "rgb(52, 64, 82)",
+      "scrollWidth": 700,
+      "status": "completed",
+      "theme": "dark",
+      "titleColor": "rgb(141, 212, 173)",
+      "width": 700
+    },
+    {
+      "background": "rgb(23, 28, 37)",
+      "border": "rgb(52, 64, 82)",
+      "scrollWidth": 700,
+      "status": "running",
+      "theme": "dark",
+      "titleColor": "rgb(169, 199, 255)",
+      "width": 700
+    },
+    {
+      "background": "rgb(23, 28, 37)",
+      "border": "rgb(136, 83, 91)",
+      "scrollWidth": 700,
+      "status": "failed",
+      "theme": "dark",
+      "titleColor": "rgb(255, 173, 180)",
+      "width": 700
+    },
+    {
+      "background": "rgb(23, 28, 37)",
+      "border": "rgb(136, 83, 91)",
+      "scrollWidth": 700,
+      "status": "blocked",
+      "theme": "dark",
+      "titleColor": "rgb(255, 173, 180)",
+      "width": 700
+    }
+  ],
+  "desktopViewport": [
+    1280,
+    1000
+  ],
+  "mobileViewport": [
+    390,
+    844
+  ],
+  "mobileOverflowObserved": false
+}

@@ -1,0 +1,48 @@
+{
+  "checkedAt": "2026-10-23T09:56:39.931Z",
+  "leafChecks": [
+    {
+      "path": ".loop-control/stage-a/logs/console.log",
+      "rejected": true,
+      "foreignTargetUnchanged": true
+    },
+    {
+      "path": ".loop-control/stage-a/state/console.json",
+      "rejected": true,
+      "foreignTargetUnchanged": true
+    },
+    {
+      "path": "n8n/worker.env.local",
+      "rejected": true,
+      "foreignTargetUnchanged": true
+    },
+    {
+      "path": ".loop-control/stack/tunnel.log",
+      "rejected": true,
+      "foreignTargetUnchanged": true
+    },
+    {
+      "path": ".loop-control/stack/tunnel.json",
+      "rejected": true,
+      "foreignTargetUnchanged": true
+    }
+  ],
+  "inspectFailure": {
+    "reportedFailure": true,
+    "tunnelRecordRemoved": true,
+    "listenersRemoved": true,
+    "containerMutationAttempted": false
+  },
+  "serviceKey": {
+    "currentGeneratedReaderStatus": 200,
+    "bareValueMatches": true
+  },
+  "consoleEnvironment": {
+    "HOME": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-a/state/home",
+    "CODEX_HOME": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-a/state/home/.codex",
+    "XDG_CONFIG_HOME": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-a/state/home/.config",
+    "NPM_CONFIG_USERCONFIG": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-a/state/home/.npmrc",
+    "GIT_CONFIG_GLOBAL": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-a/state/home/.gitconfig"
+  },
+  "defaultAuthAbsent": true
+}

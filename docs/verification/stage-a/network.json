@@ -1,0 +1,16 @@
+{
+  "checkedAt": "2026-10-23T08:37:54.607Z",
+  "vmProfile": "loop-stage-a",
+  "automaticForwarding": false,
+  "hostListeners": [
+    "COMMAND   PID USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME",
+    "ssh     42367  dan    4u  IPv4 0xd6497efae54346fa      0t0  TCP 127.0.0.1:55431 (LISTEN)",
+    "ssh     42367  dan    5u  IPv4 0x79e456659ccbd717      0t0  TCP 127.0.0.1:55432 (LISTEN)",
+    "node    42595  dan   16u  IPv4  0xd4e28b465c67b11      0t0  TCP 127.0.0.1:55173 (LISTEN)"
+  ],
+  "testUrls": [
+    "http://127.0.0.1:55173",
+    "http://127.0.0.1:55431"
+  ],
+  "note": "VM containers use internal Supabase binding; host API/DB only through own loopback SSH tunnel; verified before shutdown"
+}

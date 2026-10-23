@@ -1,0 +1,29 @@
+{
+  "readAt": "2026-10-23T10:04:50.609Z",
+  "issues": [
+    {
+      "body": "<!-- loop-control-local-first:T01 -->\n\n## Stage\n\nA。按 A → B → C → D 推进；技术依赖满足后仍遵守阶段顺序。E、F 搁置，A–D 全部完成后再讨论。\n\n## What to build\n\n在优化环境启动控制台并读取一条独立测试 Episode，启停与演练均不接触当前生产。\n\n## Acceptance criteria\n\n- [ ] 使用独立配置、端口、数据库、媒体、运行状态和日志；配置缺失或指向生产资源时拒绝执行。\n- [ ] 准备与现有SQL依赖兼容的测试数据库；不用纯PostgreSQL盲跑含Auth/Vault依赖的历史迁移。\n- [ ] 通过现有HTTP入口完成一次测试Episode读取并验证启停只作用于优化服务；不复制生产凭据作为默认值。\n\n## Blocked by\n\nNone (can start immediately within Stage A).\n\n## Execution boundary\n\n仅在优化工作树及隔离环境修改和验证；保留当前生产服务、数据库、媒体和凭据，暂不合并或切换生产。\n\n使用已认可的本机控制面 HTTP 主边界、真实数据库和真实产物验证；每票必要验证照常完成，不因 F 阶段搁置而省略。模拟与真实运行分别报告。\n",
+      "comments": [],
+      "number": 107,
+      "state": "OPEN",
+      "title": "[A][T01] 隔离环境启动与最小生产单演练",
+      "updatedAt": "2026-10-23T07:19:51Z"
+    },
+    {
+      "body": "<!-- loop-control-local-first:T02 -->\n\n## Stage\n\nA。按 A → B → C → D 推进；技术依赖满足后仍遵守阶段顺序。E、F 搁置，A–D 全部完成后再讨论。\n\n## What to build\n\n提供可重复的页面读取、任务派发与本地产物演练，后续可用同样本比较优化结果。\n\n## Acceptance criteria\n\n- [ ] 覆盖一个最小样本与一个多镜头样本，记录数据规模、环境和执行条件。\n- [ ] 分别记录请求数、载荷、排队、执行与总耗时，以及CPU、内存和磁盘；小样本保留原始计时。\n- [ ] 模拟执行与真实执行分开标记；未执行的在线生成或渲染明确列出，不宣称正式产能。\n\n## Blocked by\n\n- #107 — T01: [A][T01] 隔离环境启动与最小生产单演练\n\n## Execution boundary\n\n仅在优化工作树及隔离环境修改和验证；保留当前生产服务、数据库、媒体和凭据，暂不合并或切换生产。\n\n使用已认可的本机控制面 HTTP 主边界、真实数据库和真实产物验证；每票必要验证照常完成，不因 F 阶段搁置而省略。模拟与真实运行分别报告。\n",
+      "comments": [],
+      "number": 108,
+      "state": "OPEN",
+      "title": "[A][T02] 固定样本与性能资源基线",
+      "updatedAt": "2026-10-23T07:19:58Z"
+    },
+    {
+      "body": "<!-- loop-control-local-first:T03 -->\n\n## Stage\n\nA。按 A → B → C → D 推进；技术依赖满足后仍遵守阶段顺序。E、F 搁置，A–D 全部完成后再讨论。\n\n## What to build\n\n以现有Episode提交、领取和结果回写演练为依据，形成可供后续小票实现的服务、事务及迁移契约。\n\n## Acceptance criteria\n\n- [ ] 记录统一服务边界、全机/资源容量、租约、结果串代防护和恢复流程的ADR，保留现有业务语义。\n- [ ] 明确PostgreSQL、本地Owner会话、Keychain、常驻调度器和逐段迁移方案，以及必要依赖与运行方式。\n- [ ] 按已认可的HTTP主边界、真实数据库及真实产物边界列出代表请求与可观察结果；不在本票重写系统。\n\n## Blocked by\n\n- #108 — T02: [A][T02] 固定样本与性能资源基线\n\n## Execution boundary\n\n仅在优化工作树及隔离环境修改和验证；保留当前生产服务、数据库、媒体和凭据，暂不合并或切换生产。\n\n使用已认可的本机控制面 HTTP 主边界、真实数据库和真实产物验证；每票必要验证照常完成，不因 F 阶段搁置而省略。模拟与真实运行分别报告。\n",
+      "comments": [],
+      "number": 109,
+      "state": "OPEN",
+      "title": "[A][T03] 用最小生产路径固定调度及本地化契约",
+      "updatedAt": "2026-10-23T07:20:07Z"
+    }
+  ]
+}

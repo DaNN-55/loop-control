@@ -1,0 +1,4 @@
+COMMAND   PID USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
+ssh     48025  dan    4u  IPv4 0xd29f2d965a250cef      0t0  TCP 127.0.0.1:55431 (LISTEN)
+ssh     48025  dan    5u  IPv4 0xdf70e5523c86206e      0t0  TCP 127.0.0.1:55432 (LISTEN)
+node    50831  dan   16u  IPv4 0xb90d721cbeca0493      0t0  TCP 127.0.0.1:55173 (LISTEN)

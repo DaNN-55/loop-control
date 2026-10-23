@@ -1,0 +1,30 @@
+{
+  "version": "stage-a-smoke/v1",
+  "checkedAt": "2026-10-23T10:09:12.385Z",
+  "ids": {
+    "account": "a0000000-0000-4000-8000-000000000001",
+    "blueprint": "a0000000-0000-4000-8000-000000000002",
+    "episode": "a0000000-0000-4000-8000-000000000003",
+    "task": "a0000000-0000-4000-8000-000000000004"
+  },
+  "apiPort": 55431,
+  "consolePort": 55173,
+  "httpRead": {
+    "status": 200,
+    "elapsedMs": 36.3595,
+    "body": {
+      "detail": "当前服务没有这次即时派发记录。",
+      "status": "unknown",
+      "updatedAt": null
+    }
+  },
+  "unauthenticatedStatus": 400,
+  "anonymousVisibleEpisodes": 0,
+  "anonymousError": "42501",
+  "episode": {
+    "id": "a0000000-0000-4000-8000-000000000003",
+    "title": "Stage A synthetic smoke Episode",
+    "is_test": true
+  },
+  "note": "真实Auth/PostgREST/RLS/本机HTTP读取；独立合成数据，未执行模型。"
+}
