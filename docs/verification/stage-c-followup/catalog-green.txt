@@ -1,0 +1,15 @@
+1..12
+644f8c5a-b668-48a3-8a25-94c4e502fa04
+ok 1 - only current page sent
+ok 2 - total exceeds REST ceiling
+ok 3 - tail page complete
+ok 4 - deleted/invalid high page clamped
+ok 5 - same timestamp stable unique sort
+ok 6 - adjacent pages disjoint
+ok 7 - archive filter on server
+ok 8 - review stage filter on server
+ok 9 - missing account empty
+ok 10 - account total not page size
+11610000-0000-4000-8000-000000000099
+ok 11 - other Owner cannot read counts or rows
+ok 12 - anonymous forbidden

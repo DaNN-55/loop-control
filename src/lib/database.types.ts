@@ -1254,6 +1254,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      read_episode_catalog: {
+        Args: { p_view?: string; p_page?: number; p_account_id?: string | null; p_series_id?: string; p_visibility?: string; p_pending_page?: number; p_blocked_page?: number }
+        Returns: Json
+      }
+
       create_external_connection: {
         Args: { p_adapter: string; p_name: string; p_provider: string; p_secret: string }
         Returns: Database["public"]["Tables"]["external_connections"]["Row"]

@@ -1,0 +1,32 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "globalStageTotal": 47,
+  "pending": 23,
+  "blocked": 23,
+  "first": {
+    "blocked": 20,
+    "episodes": 20,
+    "pending": 20,
+    "stages": [
+      24,
+      23,
+      0,
+      0,
+      0
+    ]
+  },
+  "second": {
+    "blocked": 3,
+    "episodes": 20,
+    "pending": 3,
+    "stages": [
+      24,
+      23,
+      0,
+      0,
+      0
+    ]
+  },
+  "independentPages": true,
+  "log": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/c-followup/browser-actions-1792804377983.jsonl"
+}

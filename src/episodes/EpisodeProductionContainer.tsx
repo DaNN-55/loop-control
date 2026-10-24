@@ -76,7 +76,7 @@ export interface EpisodeProductionProps {
   episodeId: string;
   onClose: () => void;
   onOpenAccountWorkspace: (request: AccountWorkspaceRequest) => void;
-  onSummaryChanged: () => Promise<void> | void;
+  onSummaryChanged: (snapshot?: EpisodeProductionSnapshot) => Promise<void> | void;
   ownerId: string;
 }
 
@@ -223,32 +223,32 @@ export function EpisodeProduction({ episodeId, onClose, onOpenAccountWorkspace, 
   const [productionTrackingEpisodeIds, setProductionTrackingEpisodeIds] = useState<Set<string>>(() => new Set());
   const [taskDispatchFailures, setTaskDispatchFailures] = useState<Record<string, string>>({});
   const requestRef = useRef(0);
+  const summaryCallbackRef = useRef(onSummaryChanged);
+  summaryCallbackRef.current = onSummaryChanged;
   const refresh = useCallback(async (silent = false, fresh = true) => {
     const requestId = ++requestRef.current;
     if (!silent) setPendingAction("workspace-refresh");
     try {
       const next = await runtime.load(episodeId,fresh);
-      if (requestId === requestRef.current) setSnapshot(next);
+      if (requestId === requestRef.current) {
+        setSnapshot(next);
+        await summaryCallbackRef.current(next);
+      }
     } catch (error) {
       if (requestId === requestRef.current) setErrorMessage(messageFromError(error, "无法读取当前生产单详情。"));
     } finally {
       if (!silent && requestId === requestRef.current) setPendingAction("");
     }
   }, [episodeId, runtime, ownerId]);
-  const refreshWorkspace = useCallback(async () => {
-    await refresh(true);
-    try {
-      await onSummaryChanged();
-    } catch (error) {
-      setErrorMessage(messageFromError(error, "生产单已更新，但列表摘要刷新失败。"));
-    }
-  }, [onSummaryChanged, refresh]);
+  const refreshWorkspace = useCallback(async () => { await refresh(true); }, [refresh]);
   const refreshEpisodeDetail = useCallback(async (_episodeId?: string, _silent?: boolean) => { await refresh(true); }, [refresh]);
   useEffect(() => { void runtime.getSession().then(setSession).catch(() => setSession(null)); void refresh(); return () => { requestRef.current += 1; }; }, [refresh, runtime]);
   useEffect(() => {
     if (!snapshot?.tasks.some((task) => task.status === "ready" || task.status === "running") && !productionTrackingEpisodeIds.has(episodeId)) return;
     const interval = window.setInterval(() => { if (document.visibilityState !== "hidden") void refresh(true,false); }, 10000);
-    return () => window.clearInterval(interval);
+    const resume = () => { if (document.visibilityState !== "hidden") void refresh(true, false); };
+    document.addEventListener("visibilitychange", resume);
+    return () => { window.clearInterval(interval); document.removeEventListener("visibilitychange", resume); };
   }, [episodeId, productionTrackingEpisodeIds, refresh, snapshot?.tasks]);
   useEffect(() => {
     if (!message) return;

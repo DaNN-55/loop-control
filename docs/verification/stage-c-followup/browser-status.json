@@ -1,0 +1,36 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "source": "Existing real T09 operation evidence, not synthetic successful results",
+  "before": [
+    {
+      "label": "调度检查",
+      "state": "待确认",
+      "text": "调度检查\n待确认\n\n尚无独立执行记录。"
+    },
+    {
+      "label": "事件提醒",
+      "state": "需处理",
+      "text": "事件提醒\n需处理\n\n有 4 条提醒正在投递或结果未知；不会自动重复投递，请核对控制台队列。\n\n最近结果\n2026年10月23日 23:35\n最近失败\n2026年10月23日 23:35 · 有 4 条提醒正在投递或结果未知；不会自动重复投递，请核对控制台队列。\n需处理"
+    },
+    {
+      "label": "每日健康检查",
+      "state": "正常",
+      "text": "每日健康检查\n正常\n\n独立健康检查通过。\n\n最近结果\n2026年10月23日 23:35\n最近成功\n2026年10月23日 23:35"
+    },
+    {
+      "label": "完整备份",
+      "state": "正常",
+      "text": "完整备份\n正常\n\n完整 v2 备份成功：37 张表、5083 行、242 个媒体文件。\n\n最近结果\n2026年10月23日 23:35\n最近成功\n2026年10月23日 23:35"
+    },
+    {
+      "label": "部分快照",
+      "state": "正常",
+      "text": "部分快照\n正常\n\nREST 部分快照已导出；best_effort，不是完整可恢复备份。\n\n最近结果\n2026年10月23日 23:35\n最近成功\n2026年10月23日 23:35"
+    }
+  ],
+  "refreshedEqual": true,
+  "reloadEqual": true,
+  "notificationNotDeliveryReceipt": true,
+  "noOperationsInvoked": true,
+  "log": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/c-followup/browser-actions-1792804629339.jsonl"
+}

@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 check
+> tsc -b --pretty false
+
+src/App.tsx(15,56): error TS6133: 'workerBlockers' is declared but its value is never read.

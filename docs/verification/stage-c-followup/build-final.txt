@@ -1,0 +1,17 @@
+
+> loop-control@0.1.0 build
+> tsc -b && vite build
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 1911 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                            0.86 kB │ gzip:   0.47 kB
+dist/assets/index-Z6v57pk3.css           244.22 kB │ gzip:  41.22 kB
+dist/assets/LocalCatalogApp-CIdk9NjO.js    9.51 kB │ gzip:   3.61 kB
+dist/assets/AccountForm-4N8PsETr.js       91.56 kB │ gzip:  27.25 kB
+dist/assets/index-CrEldN_V.js            194.96 kB │ gzip:  61.48 kB
+dist/assets/supabase-DeJ4kqra.js         217.16 kB │ gzip:  57.33 kB
+dist/assets/App-CZA5a33t.js              372.42 kB │ gzip: 109.04 kB
+✓ built in 1.71s

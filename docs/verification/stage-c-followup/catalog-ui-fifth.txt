@@ -1,0 +1,395 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/episodes/episodeCatalog.test.tsx (2 tests | 1 failed) 324ms
+   × server catalog in the real console > 筛选重置到第一页，慢旧页不能覆盖新筛选结果 185ms
+     → Unable to find an element with the text: 归档结果. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+      [33mdata-sidebar[39m=[32m"expanded"[39m
+      [33mdata-theme[39m=[32m"light"[39m
+    [36m>[39m
+      [36m<a[39m
+        [33mclass[39m=[32m"skip-link"[39m
+        [33mhref[39m=[32m"#main-content"[39m
+      [36m>[39m
+        [0m跳到主要内容[0m
+      [36m</a>[39m
+      [36m<aside[39m
+        [33maria-label[39m=[32m"主导航"[39m
+        [33mclass[39m=[32m"sidebar"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"wordmark"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"wordmark-text"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wordmark-letter-cyan"[39m
+              [36m>[39m
+                [0mL[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wordmark-letter-blue"[39m
+              [36m>[39m
+                [0moo[0m
+              [36m</span>[39m
+              [0mp[0m
+            [36m</span>[39m
+            [36m<span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wordmark-letter-pink"[39m
+              [36m>[39m
+                [0mC[0m
+              [36m</span>[39m
+              [0montrol[0m
+            [36m</span>[39m
+          [36m</span>[39m
+          [36m<img[39m
+            [33malt[39m=[32m"Loop Control"[39m
+            [33mclass[39m=[32m"wordmark-mark"[39m
+            [33msrc[39m=[32m"/brand/loop-mark.svg"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<nav[39m
+          [33mclass[39m=[32m"navigation"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"系列运营"[39m
+            [33mclass[39m=[32m"navigation-item "[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chart-column icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 3v16a2 2 0 0 0 2 2h16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M18 17V9"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M13 17V5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 17v-3"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"navigation-label"[39m
+            [36m>[39m
+              [0m系列运营[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-current[39m=[32m"page"[39m
+            [33maria-label[39m=[32m"生产单"[39m
+            [33mclass[39m=[32m"navigation-item is-active"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-table2 lucide-table-2 icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"navigation-label"[39m
+            [36m>[39m
+              [0m生产单[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"审核"[39m
+            [33mclass[39m=[32m"navigation-item "[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-message-square icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"navigation-label"[39m
+            [36m>[39m
+              [0m审核[0m
+            [36m</span>[39m
+            [36m<span[39m
+              [33maria-label[39m=[32m"36 个待处理"[39m
+              [33mclass[39m=[32m"navigation-badge"[39m
+            [36m>[39m
+              [0m36[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"账号"[39m
+            [33mclass[39m=[32m"navigation-item "[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-users icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://ww...
+   ✓ server catalog in the real console > 退出登录后拒绝在途列表及旧会话的回填 138ms
+ ✓ src/App.test.tsx (34 tests) 637ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/episodes/EpisodeProductionContainer.test.tsx [ src/episodes/EpisodeProductionContainer.test.tsx ]
+Error: 缺少 Supabase 本地客户端配置。
+ ❯ src/lib/supabase.ts:11:9
+      9| 
+     10| if (!supabaseUrl || !supabasePublishableKey) {
+     11|   throw new Error("缺少 Supabase 本地客户端配置。");
+       |         ^
+     12| }
+     13| 
+ ❯ src/episodes/EpisodeProductionContainer.tsx:5:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/episodes/episodeCatalog.test.tsx > server catalog in the real console > 筛选重置到第一页，慢旧页不能覆盖新筛选结果
+TestingLibraryElementError: Unable to find an element with the text: 归档结果. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+      [33mdata-sidebar[39m=[32m"expanded"[39m
+      [33mdata-theme[39m=[32m"light"[39m
+    [36m>[39m
+      [36m<a[39m
+        [33mclass[39m=[32m"skip-link"[39m
+        [33mhref[39m=[32m"#main-content"[39m
+      [36m>[39m
+        [0m跳到主要内容[0m
+      [36m</a>[39m
+      [36m<aside[39m
+        [33maria-label[39m=[32m"主导航"[39m
+        [33mclass[39m=[32m"sidebar"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"wordmark"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"wordmark-text"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wordmark-letter-cyan"[39m
+              [36m>[39m
+                [0mL[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wordmark-letter-blue"[39m
+              [36m>[39m
+                [0moo[0m
+              [36m</span>[39m
+              [0mp[0m
+            [36m</span>[39m
+            [36m<span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wordmark-letter-pink"[39m
+              [36m>[39m
+                [0mC[0m
+              [36m</span>[39m
+              [0montrol[0m
+            [36m</span>[39m
+          [36m</span>[39m
+          [36m<img[39m
+            [33malt[39m=[32m"Loop Control"[39m
+            [33mclass[39m=[32m"wordmark-mark"[39m
+            [33msrc[39m=[32m"/brand/loop-mark.svg"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<nav[39m
+          [33mclass[39m=[32m"navigation"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"系列运营"[39m
+            [33mclass[39m=[32m"navigation-item "[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chart-column icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 3v16a2 2 0 0 0 2 2h16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M18 17V9"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M13 17V5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 17v-3"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"navigation-label"[39m
+            [36m>[39m
+              [0m系列运营[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-current[39m=[32m"page"[39m
+            [33maria-label[39m=[32m"生产单"[39m
+            [33mclass[39m=[32m"navigation-item is-active"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-table2 lucide-table-2 icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"navigation-label"[39m
+            [36m>[39m
+              [0m生产单[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"审核"[39m
+            [33mclass[39m=[32m"navigation-item "[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-message-square icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"navigation-label"[39m
+            [36m>[39m
+              [0m审核[0m
+            [36m</span>[39m
+            [36m<span[39m
+              [33maria-label[39m=[32m"36 个待处理"[39m
+              [33mclass[39m=[32m"navigation-badge"[39m
+            [36m>[39m
+              [0m36[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"账号"[39m
+            [33mclass[39m=[32m"navigation-item "[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-users icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://ww...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/episodes/episodeCatalog.test.tsx:53:19
+     51|     await answer(4, page('归档结果', 1, 1));
+     52|     await answer(3, page('过期账号结果'));
+     53|     expect(screen.getByText('归档结果')).toBeTruthy();
+       |                   ^
+     54|     expect(screen.queryByText('过期账号结果')).toBeNull();
+     55|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  1 failed | 35 passed (36)
+   Start at  08:54:13
+   Duration  1.65s (transform 422ms, setup 0ms, collect 1.15s, tests 960ms, environment 800ms, prepare 118ms)
+
