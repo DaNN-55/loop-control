@@ -1,0 +1,56 @@
+{
+  "passed": true,
+  "calls": [
+    {
+      "command": "saveTtsDraft",
+      "status": 200
+    },
+    {
+      "command": "generateSourceAudio",
+      "status": 200
+    },
+    {
+      "command": "generateSourceAudio",
+      "status": 200
+    },
+    {
+      "command": "generateSourceAudio",
+      "status": 200
+    },
+    {
+      "command": "requestAlignment",
+      "status": 200
+    },
+    {
+      "command": "saveManualAlignment",
+      "status": 400
+    },
+    {
+      "command": "saveManualAlignment",
+      "status": 200
+    },
+    {
+      "command": "generateSyncPreview",
+      "status": 200
+    },
+    {
+      "command": "confirmSyncPreview",
+      "status": 200
+    },
+    {
+      "command": "generateSyncPreview",
+      "status": 200
+    }
+  ],
+  "episodeId": "ab08ff5b-7dfa-40bf-96d4-90674c65523a",
+  "sourceAudioTask": "664c5604-9879-4613-8b6f-19fbc715b51f",
+  "missingModelTask": "30749451-348c-4bd2-8e0d-110921b52195",
+  "previewTask": "947eb7ce-38ab-4207-9490-333789550909",
+  "realHttp": true,
+  "realNativePg": true,
+  "realWorkerCli": true,
+  "manualCueConfirmed": true,
+  "allArtifactResponsesMatch": true,
+  "providerRequests": 0,
+  "realWhisperXInference": false
+}

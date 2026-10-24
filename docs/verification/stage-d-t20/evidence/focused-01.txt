@@ -1,0 +1,19 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ .loop-control/stage-d/state/t19-timeout-comparison-20261024/frozen-baseline/src/worker/whisperxAlignment.test.ts (9 tests) 13ms
+ ✓ .loop-control/stage-d/state/t19-timeout-comparison-20261024/checkout/src/worker/whisperxAlignment.test.ts (9 tests) 13ms
+ ✓ .loop-control/stage-d/state/t19-timeout-comparison-20261024/frozen-current/src/worker/whisperxAlignment.test.ts (9 tests) 13ms
+ ✓ src/worker/whisperxAlignment.test.ts (10 tests) 61ms
+ ✓ .loop-control/stage-b/verified/state/t06-followup/comparison-snapshot/src/worker/whisperxAlignment.test.ts (9 tests) 8ms
+ ↓ .loop-control/stage-b/verified/state/t06-followup/comparison-snapshot/src/reviews/ReviewWorkspace.test.tsx (64 tests | 64 skipped)
+ ↓ .loop-control/stage-d/state/t19-timeout-comparison-20261024/frozen-baseline/src/reviews/ReviewWorkspace.test.tsx (64 tests | 64 skipped)
+ ↓ .loop-control/stage-d/state/t19-timeout-comparison-20261024/frozen-current/src/reviews/ReviewWorkspace.test.tsx (64 tests | 64 skipped)
+ ↓ .loop-control/stage-d/state/t19-timeout-comparison-20261024/checkout/src/reviews/ReviewWorkspace.test.tsx (64 tests | 64 skipped)
+ ✓ src/reviews/ReviewWorkspace.test.tsx (65 tests | 64 skipped) 284ms
+
+ Test Files  6 passed | 4 skipped (10)
+      Tests  47 passed | 320 skipped (367)
+   Start at  18:01:54
+   Duration  2.30s (transform 4.59s, setup 0ms, collect 8.91s, tests 391ms, environment 2.94s, prepare 444ms)
+

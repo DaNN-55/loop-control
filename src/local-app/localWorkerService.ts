@@ -1,3 +1,4 @@
+import{assertAlignmentConfigured,type NativeAlignmentConfiguration}from'./alignmentWorker.js';
 import {assertMediaReady,type NativeMediaConfiguration} from './mediaWorker.js';
 import {spawn} from 'node:child_process';
 import {access} from 'node:fs/promises';
@@ -17,6 +18,7 @@ export interface NativeWorkerConfiguration {
  actualCostCents:number;
  narration?:NativeNarrationConfiguration;
  media?:NativeMediaConfiguration;
+ alignment?:NativeAlignmentConfiguration;shotPreview?:boolean;
  record?:(event:{name:string;taskId:string;pid?:number;step?:string})=>void;
 }
 export async function startNativeWorkerService(config:NativeWorkerConfiguration){
@@ -40,9 +42,9 @@ export async function startNativeWorkerService(config:NativeWorkerConfiguration)
    const kill=(signal:NodeJS.Signals)=>{if(child.pid)try{process.kill(process.platform==='win32'?child.pid:-child.pid,signal);}catch{/* Exited. */}};
    const stop=()=>{kill('SIGTERM');killTimer=setTimeout(()=>kill('SIGKILL'),2000);killTimer.unref();};controller.signal.addEventListener('abort',stop,{once:true});
    if(controller.signal.aborted)stop();
-   const {projectRoot,database,mediaRoot,mountPath,minimumFreeBytes,visualCommand,actualCostCents,narration,media}=config;
+   const {projectRoot,database,mediaRoot,mountPath,minimumFreeBytes,visualCommand,actualCostCents,narration,media,alignment,shotPreview}=config;
    const applicationDatabase={host:config.applicationDatabase.host,port:config.applicationDatabase.port,database:config.applicationDatabase.database};
-   child.stdin.on('error',()=>{});child.stdin.end(JSON.stringify({task,config:{projectRoot,database,applicationDatabase,mediaRoot,mountPath,minimumFreeBytes,visualCommand,actualCostCents,narration,media}}));
+   child.stdin.on('error',()=>{});child.stdin.end(JSON.stringify({task,config:{projectRoot,database,applicationDatabase,mediaRoot,mountPath,minimumFreeBytes,visualCommand,actualCostCents,narration,media,alignment,shotPreview}}));
    child.stdout.on('data',b=>{output+=String(b);if(Buffer.byteLength(output)>65536){overflow=true;stop();}});
    child.stderr.on('data',()=>{}); // Raw process/database diagnostics never become a response channel.
    child.once('error',reject);child.once('close',code=>{controller.signal.removeEventListener('abort',stop);if(killTimer)clearTimeout(killTimer);try{if(code!==0||overflow)throw Error();for(const line of output.trim().split('\n')){const value=JSON.parse(line);if(value.event==='progress')config.record?.({name:'worker-progress',taskId:task.task_id,step:String(value.step)});}resolve(JSON.parse(output.trim().split('\n').at(-1)!));}catch{reject(Error('本地Worker执行未完成。'));}});
@@ -50,5 +52,5 @@ export async function startNativeWorkerService(config:NativeWorkerConfiguration)
  }
  const scheduler=await startWorkerScheduler({projectRoot:config.projectRoot,database,environment:config.environment,concurrency:config.concurrency,signal:controller.signal},{prepare:ready,execute});
  let stopping:Promise<void>|undefined;
- return {ready,mediaReady:async(policy:Record<string,unknown>)=>{await ready();await assertMediaReady(config.media,policy,config.environment);},narrationReady:async()=>{await ready();await assertNarrationReady(config.narration);},wake:(episodeId:string)=>scheduler.wake({episodeId}),status:scheduler.status,stop(){return stopping??= (async()=>{controller.abort();await scheduler.stop();await pool.end();})();}};
+ return {ready,postReady:async(kind:'source'|'alignment'|'preview')=>{await ready();if(kind==='alignment'){await assertAlignmentConfigured(config.projectRoot,config.mediaRoot,config.alignment);}else{if(kind==='preview'&&!config.shotPreview)throw Error('同步预览尚未配置。');await assertMediaReady(config.media,kind==='preview'?{a_roll:{execution_path:'local',executor:{provider:'openchatcut'}}}:{},config.environment);}},mediaReady:async(policy:Record<string,unknown>)=>{await ready();await assertMediaReady(config.media,policy,config.environment);},narrationReady:async()=>{await ready();await assertNarrationReady(config.narration);},wake:(episodeId:string)=>scheduler.wake({episodeId}),status:scheduler.status,stop(){return stopping??= (async()=>{controller.abort();await scheduler.stop();await pool.end();})();}};
 }

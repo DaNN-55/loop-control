@@ -99,7 +99,7 @@ const manifest: readonly RegisteredAdapterDefinition[] = [
     { capability: "shot_clip_preparation", configurationFields: [], modelCatalog: [], presetCatalog: [] },
   ] },
   { provider: "whisperx", adapter: "whisperx_local", executionPath: "local", connection: { kind: "none" }, execution: { kind: "whisperx", safetyLimit: 1 }, capabilities: [
-    { capability: "acoustic_alignment", configurationFields: [], modelCatalog: ["large-v3"], presetCatalog: ["whisperx-alignment-v1"] },
+    { capability: "acoustic_alignment", configurationFields: [], modelCatalog: ["large-v3", "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn"], presetCatalog: ["whisperx-alignment-v1"] },
   ] },
   { provider: "openchatcut", adapter: "openchatcut_card_video", executionPath: "local", connection: { kind: "none" }, execution: { kind: "openchatcut", safetyLimit: 1 }, capabilities: [
     { capability: "a_roll_generation", configurationFields: ["max_attempts"], modelCatalog: ["openchatcut@0.2.14"], presetCatalog: ["card-video-v1"] },

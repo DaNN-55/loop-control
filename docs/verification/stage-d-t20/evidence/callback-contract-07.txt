@@ -1,0 +1,3 @@
+644f8c5a-b668-48a3-8a25-94c4e502fa04
+
+{"passed": true, "rolledBack": true, "realModelInference": false, "sourceCompletionBinds": true, "wrongModelCannotComplete": true, "staleAlignmentCannotOverwrite": true, "syntheticCallbackContractOnly": true, "changedTextChangesInputIdentity": true, "automaticTtsCanonicalModelAndExplicitReuse": true, "sourcePendingRetainedAcrossTextAndWorkbenchSave": true}

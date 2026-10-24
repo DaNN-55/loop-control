@@ -64,7 +64,7 @@ describe("OpenChatCut production-order conversion", () => {
     const project = buildOpenChatCutProject(render);
     expect(project.timelines[0].tracks.C1.captions?.sourceEntries[0].words).toEqual([{ id: "cue-shot-1", text: render.confirmedShots[0].subtitleText, start: 0, end: 2000 }]);
     expect(project.timelines[0].items).not.toEqual(expect.arrayContaining([expect.objectContaining({ kind: "text", track: "C1" })]));
-    expect(project.timelines[0].tracks.C1.captions).toMatchObject({ layoutPolicy: { mode: "manual-slots", slots: [{ anchor: "bottom-center", offsetXRatio: 0, offsetYRatio: -0.18, widthRatio: 0.84, heightRatio: 0.74 }] }, perSource: { "lane-shot-1": { maxLines: 2, maxCharactersPerLine: 16 } } });
+    expect(project.timelines[0].tracks.C1.captions).toMatchObject({ layoutPolicy: { mode: "manual-slots", slots: [{ anchor: "bottom-center", offsetXRatio: 0, offsetYRatio: 0.1, widthRatio: 0.84, heightRatio: 0.74 }] }, perSource: { "lane-shot-1": { maxLines: 2, maxCharactersPerLine: 16 } } });
   });
 
   it("writes custom caption margins as editable OpenChatCut slot geometry", () => {
@@ -72,7 +72,7 @@ describe("OpenChatCut production-order conversion", () => {
     render.confirmedShots[0].preparationContract.captions.spatial = { version: "shot-caption-space/v2", anchor: "bottom-center", safeArea: "custom", aspectRatio: "16:9", insets: { top: 0.08, right: 0.12, bottom: 0.16, left: 0.06 }, maxLines: 2, maxCharactersPerLine: 16 };
     render.members[0].preparationContract = render.confirmedShots[0].preparationContract;
     const slot = buildOpenChatCutProject(render).timelines[0].tracks.C1.captions?.layoutPolicy.slots[0];
-    expect(slot).toMatchObject({ anchor: "bottom-center", offsetXRatio: -0.03, offsetYRatio: -0.16, widthRatio: 0.82, heightRatio: 0.76 });
+    expect(slot).toMatchObject({ anchor: "bottom-center", offsetXRatio: -0.03, offsetYRatio: 0.08, widthRatio: 0.82, heightRatio: 0.76 });
   });
 
   it.each(["cut", "fade", "studio"] as const)("keeps the %s transition and input fingerprint in the same editable project", (transitionMode) => {

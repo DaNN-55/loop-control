@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "realHttp": true,
+  "fullFingerprintStillRequired": true,
+  "unauthenticatedRange": 401,
+  "unsatisfiableRange": 416,
+  "results": [
+    {
+      "endpoint": "/_local-artifact",
+      "range": "bytes=0-1023",
+      "status": 206,
+      "bytes": 1024
+    },
+    {
+      "endpoint": "/_local-artifact",
+      "range": "bytes=-512",
+      "status": 206,
+      "bytes": 512
+    },
+    {
+      "endpoint": "/_local-artifact",
+      "range": "bytes=1024-",
+      "status": 206,
+      "bytes": 191633
+    },
+    {
+      "endpoint": "/api/local/artifacts/d9d5df99-9e35-4757-8530-79a159110c06",
+      "range": "bytes=0-1023",
+      "status": 206,
+      "bytes": 1024
+    },
+    {
+      "endpoint": "/api/local/artifacts/d9d5df99-9e35-4757-8530-79a159110c06",
+      "range": "bytes=-512",
+      "status": 206,
+      "bytes": 512
+    },
+    {
+      "endpoint": "/api/local/artifacts/d9d5df99-9e35-4757-8530-79a159110c06",
+      "range": "bytes=1024-",
+      "status": 206,
+      "bytes": 191633
+    }
+  ],
+  "providerRequests": 0
+}

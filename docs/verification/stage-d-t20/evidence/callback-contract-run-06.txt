@@ -1,0 +1,39 @@
+node:internal/errors:986
+  const err = new Error(message);
+              ^
+
+Error: Command failed: docker exec -i loop-control-stage-d-postgres psql -XqAt -U postgres -d loop_imported -v ON_ERROR_STOP=1
+ERROR:  Completed audio task is missing its probed duration
+CONTEXT:  PL/pgSQL function public.register_completed_audio_track() line 7 at RAISE
+SQL statement "UPDATE public.tasks SET status='completed' WHERE id=narration.id"
+PL/pgSQL function pg_temp_50.t20_callback_contract() line 50 at SQL statement
+
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:942:11)
+    at execFileSync (node:child_process:978:15)
+    at docker (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/environment.mjs:11:43)
+    at sql (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/environment.mjs:13:76)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/alignment-fence-acceptance.mjs:72:14
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  status: 3,
+  signal: null,
+  output: [
+    null,
+    '644f8c5a-b668-48a3-8a25-94c4e502fa04\n',
+    'ERROR:  Completed audio task is missing its probed duration\n' +
+      'CONTEXT:  PL/pgSQL function public.register_completed_audio_track() line 7 at RAISE\n' +
+      `SQL statement "UPDATE public.tasks SET status='completed' WHERE id=narration.id"\n` +
+      'PL/pgSQL function pg_temp_50.t20_callback_contract() line 50 at SQL statement\n'
+  ],
+  pid: 19453,
+  stdout: '644f8c5a-b668-48a3-8a25-94c4e502fa04\n',
+  stderr: 'ERROR:  Completed audio task is missing its probed duration\n' +
+    'CONTEXT:  PL/pgSQL function public.register_completed_audio_track() line 7 at RAISE\n' +
+    `SQL statement "UPDATE public.tasks SET status='completed' WHERE id=narration.id"\n` +
+    'PL/pgSQL function pg_temp_50.t20_callback_contract() line 50 at SQL statement\n'
+}
+
+Node.js v24.20.0

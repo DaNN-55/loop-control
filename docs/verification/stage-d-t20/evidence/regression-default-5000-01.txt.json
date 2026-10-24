@@ -1,0 +1,16 @@
+{
+  "command": [
+    "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--exclude",
+    "n8n/import-workflows.test.mjs",
+    "--exclude",
+    "**/*.integration.test.ts",
+    "--exclude",
+    "**/.loop-control/**"
+  ],
+  "timeoutOverride": false,
+  "exitCode": 0,
+  "at": "2026-10-24T10:03:45.838Z"
+}

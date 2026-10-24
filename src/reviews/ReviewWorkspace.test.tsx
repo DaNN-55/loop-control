@@ -904,6 +904,47 @@ describe("审核台", () => {
     expect(startInput.value).toBe("272");
   });
 
+  it("本地人工时序编辑跨音轨轮询保留并只提交本地回调", async () => {
+    const user = userEvent.setup();
+    const episode: Episode = { ...reviewEpisode, id: "episode-alignment-view", stage: "storyboard_approved", tts_language_code: "zh-CN", tts_speaking_rate: 1, tts_voice: "voice-a" };
+    const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", episode_id: episode.id, id: "artifact-alignment-view", relative_path: "episodes/episode-alignment-view/storyboard.json" };
+    const reviewPackage = { artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-09-11T00:00:00.000Z", episode_id: episode.id, id: "review-alignment-view", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-storyboard", task_run_id: "run-storyboard" };
+    const cue = { id: "phrase-1", text: "第一批把电脑交给豆包的人，", startMs: 272, endMs: 2380, confidence: 0.91 };
+    const track: AudioTrack = { created_at: "2026-09-11T00:00:00.000Z", cue_id: "shot-1", duration_seconds: 3.84, episode_id: episode.id, file_size: 1024, id: "track-alignment-view", relative_path: "episodes/episode-alignment-view/audio/shot-1.mp3", sha256: "b".repeat(64), source_artifact_id: "artifact-narration", source_material_revision_id: null, source_review_package_id: reviewPackage.id, source_task_id: "task-narration", start_seconds: 0, track_kind: "narration" };
+    const draft = { acoustic_alignment: { version: "acoustic-alignment/v1", status: "completed", method: "local_whisperx", granularity: "phrase", inputVersion: "a".repeat(64), audioSha256: track.sha256, textFingerprint: "c".repeat(64), provider: "whisperx", model: "large-v3", connectionVersionId: null, wordCount: 1, cues: [cue], attempts: [], detail: "本地 WhisperX 对齐已完成。", generatedAt: "2026-09-11T00:00:00.000Z" }, audio_mode: "tts", audio_status: "ready", caption_contract: { version: "shot-captions/v1", enabled: true, contentMode: "independent", text: cue.text, cues: [cue], spatial: { version: "shot-caption-space/v1", anchor: "bottom-center", safeArea: "title-safe", maxLines: 2, maxCharactersPerLine: 18 } }, clip_segments: [], confirmation_status: "pending", created_at: "2026-09-11T00:00:00.000Z", current_audio_track_id: track.id, episode_id: episode.id, id: "draft-alignment-view", review_package_id: reviewPackage.id, shot_id: "shot-1", subtitle_text: cue.text, subtitles_enabled: true, tts_speaking_rate: 1, tts_text: cue.text, tts_voice: "voice-a", updated_at: "2026-09-11T00:00:00.000Z", video_status: "pending" } as unknown as ShotPreparationDraft;
+    vi.stubGlobal("fetch", vi.fn((_input: RequestInfo | URL, init?: RequestInit) => Promise.resolve(init?.method === "POST"
+      ? localArtifactTicketResponse()
+      : new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3.84, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: cue.text, shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } }))));
+
+    const onSaveShotManualAlignment = vi.fn().mockResolvedValue(undefined);
+    const onRequestShotAlignment = vi.fn().mockRejectedValue(new Error("本地模型不可用"));
+    const props = { ...materialInputProps, artifacts: [storyboardArtifact], audioTracks: [track], blueprint, episode, isTransitionPending: false, onTransition: vi.fn(), reviewPackages: [reviewPackage], shotPreparationDrafts: [draft], tasks: [], transitions: [], onSaveShotManualAlignment, onRequestShotAlignment };
+    const view = render(<EpisodeDetail {...props} />);
+
+    const alignment = await screen.findByRole("region", { name: "shot-1 声学对齐" });
+    const viewTiming = within(alignment).getByRole("button", { name: "查看时序" });
+    expect(viewTiming.getAttribute("aria-expanded")).toBe("false");
+    await user.click(viewTiming);
+    expect(viewTiming.getAttribute("aria-expanded")).toBe("true");
+    const timing = within(alignment).getByRole("region", { name: "shot-1 字幕时序" });
+    const startInput = within(timing).getByLabelText("开始 ms") as HTMLInputElement;
+    expect(startInput.readOnly).toBe(true);
+    expect(startInput.value).toBe("272");
+    expect(within(timing).queryByRole("button", { name: "保存时序调整" })).toBeNull();
+    await user.click(within(timing).getByRole("button", { name: "调整时序" }));
+    expect(startInput.readOnly).toBe(false);
+    await user.clear(startInput);
+    await user.type(startInput, "120");
+    view.rerender(<EpisodeDetail {...props} audioTracks={[{ ...track }]} />);
+    expect((within(timing).getByLabelText("开始 ms") as HTMLInputElement).value).toBe("120");
+    expect((within(timing).getByLabelText("开始 ms") as HTMLInputElement).readOnly).toBe(false);
+    await user.click(within(timing).getByRole("button", { name: "保存时序调整" }));
+    expect(onSaveShotManualAlignment).toHaveBeenCalledWith({ episodeId: episode.id, reviewPackageId: reviewPackage.id, shotId: "shot-1", cues: [{ id: cue.id, text: cue.text, start_ms: 120, end_ms: cue.endMs }] });
+    await user.click(within(alignment).getByRole("button", { name: "使用本地 WhisperX" }));
+    expect(onRequestShotAlignment).toHaveBeenCalledWith({ episodeId: episode.id, reviewPackageId: reviewPackage.id, shotId: "shot-1", localOnly: true });
+    expect(await screen.findByText("本地模型不可用")).toBeTruthy();
+  });
+
   it("审核阶段可返回可编辑镜头工作台，且保留当前 QC 证据", async () => {
     const user = userEvent.setup();
     const qcEpisode: Episode = { ...reviewEpisode, id: "episode-return-workbench", stage: "qc_review", tts_language_code: "zh-CN", tts_speaking_rate: 1.2, tts_voice: "voice-a" };

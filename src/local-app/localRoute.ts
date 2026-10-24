@@ -67,7 +67,7 @@ export function createLocalHandler(options:LocalOptions){
     if(!uuid.test(id)){send(400,{error:'产物引用无效。'});return;}
     const file=await findOwnedInputFile(options.pool,session.id,id,path);if(!file){send(404,{error:'产物不可见。'});return;}
     if(hash&&hash!==file.sha256){send(409,{error:'产物指纹已变化。'});return;}
-    try{await serveOwnedArtifact(options.mediaRoot,file,response);}catch{if(response.headersSent)response.destroy();else send(409,{error:'产物路径或指纹校验失败。'});}return;
+    try{await serveOwnedArtifact(options.mediaRoot,file,response,request.headers.range);}catch{if(response.headersSent)response.destroy();else send(409,{error:'产物路径或指纹校验失败。'});}return;
    }
    const episode=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)$/);
    if(episode&&uuid.test(episode[1])){
@@ -77,7 +77,7 @@ export function createLocalHandler(options:LocalOptions){
    const artifact=url.pathname.match(/^\/api\/local\/artifacts\/([^/]+)$/);
    if(artifact&&uuid.test(artifact[1])){
     const record=await findOwnedArtifact(options.pool,session.id,artifact[1]);if(!record){send(404,{error:'产物不可见。'});return;}
-    try{await serveOwnedArtifact(options.mediaRoot,record,response);}catch{if(response.headersSent)response.destroy();else send(409,{error:'产物路径或指纹校验失败。'});}return;
+    try{await serveOwnedArtifact(options.mediaRoot,record,response,request.headers.range);}catch{if(response.headersSent)response.destroy();else send(409,{error:'产物路径或指纹校验失败。'});}return;
    }
    send(404,{error:'本地路径尚未迁移。'});
   }catch(error){if(error instanceof ConfigurationError){send(error.status,{error:error.message,...(error.preflight?{preflight:error.preflight}:{})});return;}

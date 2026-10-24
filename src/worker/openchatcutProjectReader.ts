@@ -4,8 +4,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import type { WorkerTaskPackage } from "./contracts.js";
 import { normalizeShotComposition, shotCompositionRect } from "../shotComposition.js";
-import { openChatCutSlotTransform } from "./openchatcutProject.js";
-import { shotCaptionSafeAreaGeometry } from "../shotCaptions.js";
+import { openChatCutSlotTransform, openChatCutCaptionGeometry } from "./openchatcutProject.js";
 
 type ReviewRender = NonNullable<WorkerTaskPackage["reviewRender"]>;
 
@@ -57,7 +56,7 @@ export function assertConfirmedShotCaptionsReadable(
     const cues = track?.cues.filter((cue) => cue.id === `cue-${shot.shotId}` || cue.id?.startsWith(`cue-${shot.shotId}-`)) ?? [];
     const constraint = track?.constraints?.find((candidate) => candidate.sourceId === `lane-${shot.shotId}`);
     const spatial = shot.preparationContract.captions.spatial;
-    const safeArea = shotCaptionSafeAreaGeometry(spatial);
+    const safeArea = openChatCutCaptionGeometry(spatial);
     return cues.length === 0
       || (options.requireConfirmedText === false ? !cues.some((cue) => cue.text.trim()) : cues.map((cue) => cue.text).join("") !== shot.subtitleText)
       || cues.some((cue) => !Number.isFinite(cue.start) || !Number.isFinite(cue.end) || cue.start < 0 || cue.end <= cue.start)

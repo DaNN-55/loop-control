@@ -1,0 +1,373 @@
+{
+  "passed": true,
+  "at": "2026-10-24T10:28:04.775Z",
+  "allPreT20PublicRowsPreserved": true,
+  "originalRows": 25258,
+  "tables": {
+    "account_blueprint_versions": {
+      "originalRows": 45,
+      "allPreserved": true
+    },
+    "accounts": {
+      "originalRows": 34,
+      "allPreserved": true
+    },
+    "account_memberships": {
+      "originalRows": 28,
+      "allPreserved": true
+    },
+    "series": {
+      "originalRows": 3,
+      "allPreserved": true
+    },
+    "series_versions": {
+      "originalRows": 13,
+      "allPreserved": true
+    },
+    "episodes": {
+      "originalRows": 6252,
+      "allPreserved": true
+    },
+    "tasks": {
+      "originalRows": 5418,
+      "allPreserved": true
+    },
+    "artifacts": {
+      "originalRows": 371,
+      "allPreserved": true
+    },
+    "task_runs": {
+      "originalRows": 381,
+      "allPreserved": true
+    },
+    "review_packages": {
+      "originalRows": 121,
+      "allPreserved": true
+    },
+    "approvals": {
+      "originalRows": 107,
+      "allPreserved": true
+    },
+    "asset_locks": {
+      "originalRows": 0,
+      "allPreserved": true
+    },
+    "production_material_revisions": {
+      "originalRows": 158,
+      "allPreserved": true
+    },
+    "audio_tracks": {
+      "originalRows": 33,
+      "allPreserved": true
+    },
+    "audio_track_annotations": {
+      "originalRows": 0,
+      "allPreserved": true
+    },
+    "audit_events": {
+      "originalRows": 3197,
+      "allPreserved": true
+    },
+    "episode_read_revisions": {
+      "originalRows": 5408,
+      "allPreserved": true
+    },
+    "external_connections": {
+      "originalRows": 18,
+      "allPreserved": true
+    },
+    "external_connection_versions": {
+      "originalRows": 38,
+      "allPreserved": true
+    },
+    "external_connection_verifications": {
+      "originalRows": 60,
+      "allPreserved": true
+    },
+    "material_revision_approvals": {
+      "originalRows": 158,
+      "allPreserved": true
+    },
+    "notification_delivery_events": {
+      "originalRows": 2122,
+      "allPreserved": true
+    },
+    "notification_delivery_state": {
+      "originalRows": 1,
+      "allPreserved": true
+    },
+    "pre_render_review_member_decisions": {
+      "originalRows": 0,
+      "allPreserved": true
+    },
+    "pre_render_review_members": {
+      "originalRows": 0,
+      "allPreserved": true
+    },
+    "production_dependencies": {
+      "originalRows": 408,
+      "allPreserved": true
+    },
+    "production_invalidations": {
+      "originalRows": 0,
+      "allPreserved": true
+    },
+    "prompt_versions": {
+      "originalRows": 104,
+      "allPreserved": true
+    },
+    "qc_review_issues": {
+      "originalRows": 0,
+      "allPreserved": true
+    },
+    "review_annotations": {
+      "originalRows": 5,
+      "allPreserved": true
+    },
+    "review_render_composition_revisions": {
+      "originalRows": 0,
+      "allPreserved": true
+    },
+    "shot_preparation_drafts": {
+      "originalRows": 96,
+      "allPreserved": true
+    },
+    "state_transitions": {
+      "originalRows": 384,
+      "allPreserved": true
+    },
+    "storyboard_audio_selections": {
+      "originalRows": 8,
+      "allPreserved": true
+    },
+    "storyboard_review_shots": {
+      "originalRows": 102,
+      "allPreserved": true
+    },
+    "worker_episode_turns": {
+      "originalRows": 184,
+      "allPreserved": true
+    },
+    "worker_resource_ceilings": {
+      "originalRows": 0,
+      "allPreserved": true
+    },
+    "worker_scheduler_settings": {
+      "originalRows": 1,
+      "allPreserved": true
+    }
+  },
+  "migrations": {
+    "loop_imported": [
+      {
+        "sha256": "7acb335e4322806f59143396f43cc2df482567f355eb0378a13591b01c7476c5",
+        "version": "019-alignment-preview.sql"
+      },
+      {
+        "sha256": "db1b06f9956759685aa240d5728f02f17f76e412e993e7de96fc3ee64ef7a11b",
+        "version": "020-source-audio-reuse.sql"
+      },
+      {
+        "sha256": "c05acb30247341d15b15a4a66e0f2d9d86d6d45384bf19f57de6c5d1d907bf2d",
+        "version": "021-alignment-fences.sql"
+      },
+      {
+        "sha256": "9268972010cf4cc2a9696de74544a32f0ccda09ad8b4234a25c2b5c542a9a5c0",
+        "version": "022-source-workbench-fence.sql"
+      },
+      {
+        "sha256": "c93733424c28dc5118d13abd8298166f7de12373e152cecbf111b8a7c55b1fc5",
+        "version": "023-source-retry-readiness.sql"
+      },
+      {
+        "sha256": "667de9bd4bde31548fc7b3651ff2fd2bb6b4f0eb363d7624a162fbed1588f6cf",
+        "version": "024-auto-alignment-model.sql"
+      }
+    ],
+    "loop_empty": [
+      {
+        "sha256": "7acb335e4322806f59143396f43cc2df482567f355eb0378a13591b01c7476c5",
+        "version": "019-alignment-preview.sql"
+      },
+      {
+        "sha256": "db1b06f9956759685aa240d5728f02f17f76e412e993e7de96fc3ee64ef7a11b",
+        "version": "020-source-audio-reuse.sql"
+      },
+      {
+        "sha256": "c05acb30247341d15b15a4a66e0f2d9d86d6d45384bf19f57de6c5d1d907bf2d",
+        "version": "021-alignment-fences.sql"
+      },
+      {
+        "sha256": "9268972010cf4cc2a9696de74544a32f0ccda09ad8b4234a25c2b5c542a9a5c0",
+        "version": "022-source-workbench-fence.sql"
+      },
+      {
+        "sha256": "c93733424c28dc5118d13abd8298166f7de12373e152cecbf111b8a7c55b1fc5",
+        "version": "023-source-retry-readiness.sql"
+      },
+      {
+        "sha256": "667de9bd4bde31548fc7b3651ff2fd2bb6b4f0eb363d7624a162fbed1588f6cf",
+        "version": "024-auto-alignment-model.sql"
+      }
+    ]
+  },
+  "artifactCount": 21,
+  "artifacts": [
+    {
+      "id": "0085bbf5-9a07-457b-a3ae-72388a0db1b2",
+      "type": "shot_preview_proxy",
+      "sha256": "6562b347dfd05c21f217b02c9d86e084704753fbea7a034e4265952170577fe2",
+      "fileSize": 176667,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/db5c96de-7351-4662-a989-834bcf69824f/proxy.mp4"
+    },
+    {
+      "id": "0506536c-7e9c-451d-bbba-5684eb1ac41b",
+      "type": "shot_preview_runtime",
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+      "fileSize": 42,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/ec1fe453-1cda-4a5e-af24-bbb710499fff/openchatcut-runtime.json"
+    },
+    {
+      "id": "28ac0581-0248-4f86-a5e3-16c0a053e07b",
+      "type": "a_roll_video",
+      "sha256": "ed658eb27494f2b5e818efd7c60320fca0cb24e17ec7048224a352f7a2c87c82",
+      "fileSize": 23662,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/shot-clips/shot-1-f35e813e1a36ee846980c3976538b3f2.mp4"
+    },
+    {
+      "id": "2b8c5791-9764-49d4-808f-27d3a4b5e9b7",
+      "type": "shot_preview_runtime",
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+      "fileSize": 42,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/65ee1c0b-e498-4b2c-8258-83bd172e83e3/openchatcut-runtime.json"
+    },
+    {
+      "id": "3aed6e03-eb59-4ce8-a67b-70ce19253283",
+      "type": "shot_preview_proxy",
+      "sha256": "6562b347dfd05c21f217b02c9d86e084704753fbea7a034e4265952170577fe2",
+      "fileSize": 176667,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/65ee1c0b-e498-4b2c-8258-83bd172e83e3/proxy.mp4"
+    },
+    {
+      "id": "464de425-bb6b-4255-9710-e45274b6468d",
+      "type": "shot_editable_project",
+      "sha256": "410b6a2fe871aa515e85ed559baf519bbbc05686a24ba08602fcc5753494935e",
+      "fileSize": 3757,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/65ee1c0b-e498-4b2c-8258-83bd172e83e3/project.json"
+    },
+    {
+      "id": "4f27259b-d8ae-49ce-8856-3285f6484fab",
+      "type": "shot_editable_project",
+      "sha256": "ecc6dacd7add8d54a0c5603b5a238261dbe2d40f61c7e230a25e33bd9c2cf244",
+      "fileSize": 3757,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/947eb7ce-38ab-4207-9490-333789550909/project.json"
+    },
+    {
+      "id": "529aae7c-fc1f-411b-9c24-137d353e6128",
+      "type": "shot_source_audio",
+      "sha256": "26f49a501b9185e6f6a2f1b0e52c561a56717d361c7bf05e8f399593de7c74f3",
+      "fileSize": 18730,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/664c5604-9879-4613-8b6f-19fbc715b51f/source.mp3"
+    },
+    {
+      "id": "665772a5-653d-4cb9-bc5d-11662ec57a83",
+      "type": "shot_editable_project",
+      "sha256": "770ba326e4ae0ca67beabd5a6adfa49dcce6e1840836d502693d96a975b710bd",
+      "fileSize": 3755,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/ec1fe453-1cda-4a5e-af24-bbb710499fff/project.json"
+    },
+    {
+      "id": "66eea96c-99a2-4bae-80d0-22c36682cba5",
+      "type": "shot_preview_runtime",
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+      "fileSize": 42,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/947eb7ce-38ab-4207-9490-333789550909/openchatcut-runtime.json"
+    },
+    {
+      "id": "718dc5dd-5603-4d57-b70a-9fae7ac247e8",
+      "type": "shot_preview_qc_report",
+      "sha256": "375e08e7b7df742ab766aea0e26539c8c0ac358b82e725397da47b3b1d6b8067",
+      "fileSize": 868,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/947eb7ce-38ab-4207-9490-333789550909/qc-report.json"
+    },
+    {
+      "id": "7b9212ae-3456-40fe-88f0-ca9f8f09e36c",
+      "type": "shot_preview_runtime",
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+      "fileSize": 42,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/db5c96de-7351-4662-a989-834bcf69824f/openchatcut-runtime.json"
+    },
+    {
+      "id": "8278dad1-d237-424a-ab08-a0f66439a883",
+      "type": "visual_asset_manifest",
+      "sha256": "4dafca217d46f521ec4376856e2d6e62cfb091569e72760b1ee3f47bde3d6077",
+      "fileSize": 464,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/visual-assets-v1.md"
+    },
+    {
+      "id": "88443da2-a1a8-44ba-b17d-22f82f1f9852",
+      "type": "derived_audio",
+      "sha256": "3bb4a9c0c01aa61afa1725f26e14f85bc85e5094645be39f5e9204fb864a3fde",
+      "fileSize": 22815,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/audio/derived-material-v1.mp3"
+    },
+    {
+      "id": "884598b0-79a6-4717-979a-28f2ceb55bcf",
+      "type": "shot_preview_qc_report",
+      "sha256": "b6010170d0ead279167dc9d8c74b0f739c16d7fda4e02599b30a6c7f217371f1",
+      "fileSize": 868,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/db5c96de-7351-4662-a989-834bcf69824f/qc-report.json"
+    },
+    {
+      "id": "8de55039-d388-4392-a05b-03cc0a1b2605",
+      "type": "shot_preview_qc_report",
+      "sha256": "bf22b2a1b392848bf4d6369849b1c291f6658646c9beb1b87c08ec00de3e234b",
+      "fileSize": 868,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/65ee1c0b-e498-4b2c-8258-83bd172e83e3/qc-report.json"
+    },
+    {
+      "id": "9aad65c6-44c0-4047-88ba-e2887ca7f2b9",
+      "type": "shot_editable_project",
+      "sha256": "b6bdbcc4561a4a78d92732826d5b1c71a67f5c0843ab5eff534f0e31b1b05831",
+      "fileSize": 3757,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/db5c96de-7351-4662-a989-834bcf69824f/project.json"
+    },
+    {
+      "id": "d9d5df99-9e35-4757-8530-79a159110c06",
+      "type": "shot_preview_proxy",
+      "sha256": "468e454b8fc2c19c90456171858e3f2193eb19df0d1e55d0cbca0c4aeaa49b94",
+      "fileSize": 192657,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/ec1fe453-1cda-4a5e-af24-bbb710499fff/proxy.mp4"
+    },
+    {
+      "id": "e1c5240c-e1cf-4083-88ed-b3fd44a02a55",
+      "type": "storyboard",
+      "sha256": "4bc4946647ea37e66612a28302749c20f4267d8f6b1ce623274acc7d8d3cdaa6",
+      "fileSize": 2480,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/storyboard-v1.json"
+    },
+    {
+      "id": "e24e7299-bf98-4261-9500-6c9dfb8451ed",
+      "type": "shot_preview_proxy",
+      "sha256": "6562b347dfd05c21f217b02c9d86e084704753fbea7a034e4265952170577fe2",
+      "fileSize": 176667,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/947eb7ce-38ab-4207-9490-333789550909/proxy.mp4"
+    },
+    {
+      "id": "fea64122-a0b9-47bb-b792-b5a3e919ea2a",
+      "type": "shot_preview_qc_report",
+      "sha256": "a7cdefe968c61ed7b37be748c34a6baca4e43a8b5efbc1139c3cb55fe0d2536b",
+      "fileSize": 868,
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/ec1fe453-1cda-4a5e-af24-bbb710499fff/qc-report.json"
+    }
+  ],
+  "privateFunction": {
+    "owner": true,
+    "worker": false,
+    "anonymous": false,
+    "safeSearchPath": "{\"search_path=\\\"\\\"\"}"
+  },
+  "rootPlanUnchanged": true,
+  "providerRequests": 0,
+  "realWhisperXInference": false
+}

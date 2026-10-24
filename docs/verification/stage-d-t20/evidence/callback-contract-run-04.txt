@@ -1,0 +1,18 @@
+node:fs:622
+  return binding.open(
+                 ^
+
+Error: EEXIST: file already exists, open '/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t20-20261024/callback-contract-03.txt'
+    at Object.openSync (node:fs:622:18)
+    at writeFileSync (node:fs:2497:35)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/alignment-fence-acceptance.mjs:54:25
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  errno: -17,
+  code: 'EEXIST',
+  syscall: 'open',
+  path: '/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t20-20261024/callback-contract-03.txt'
+}
+
+Node.js v24.20.0
