@@ -1,0 +1,14 @@
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 1917 modules transformed.
+rendering chunks...
+computing gzip size...
+.loop-control/stage-d/state/t24-20261024/frontend/index.html                            0.94 kB │ gzip:   0.49 kB
+.loop-control/stage-d/state/t24-20261024/frontend/assets/index-Z6v57pk3.css           244.22 kB │ gzip:  41.22 kB
+.loop-control/stage-d/state/t24-20261024/frontend/assets/backend-Bpocpeh5.js            0.06 kB │ gzip:   0.08 kB
+.loop-control/stage-d/state/t24-20261024/frontend/assets/LocalCatalogApp-BJVzdUYh.js   28.99 kB │ gzip:   9.51 kB
+.loop-control/stage-d/state/t24-20261024/frontend/assets/App-BeTVdDWM.js              103.63 kB │ gzip:  30.53 kB
+.loop-control/stage-d/state/t24-20261024/frontend/assets/index-BnfGVK62.js            194.99 kB │ gzip:  61.49 kB
+.loop-control/stage-d/state/t24-20261024/frontend/assets/supabase-KgOWO5_T.js         217.16 kB │ gzip:  57.34 kB
+.loop-control/stage-d/state/t24-20261024/frontend/assets/AccountForm-Y6Qy-Qds.js      362.49 kB │ gzip: 107.08 kB
+✓ built in 1.04s

@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "database": "loop_t24_restore_v1",
+  "sourceManifest": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/backups/loop_t23/18e97f08-8216-428a-bedb-fb202eef6e7e/manifest.json",
+  "archiveSha256": "0216da2a706ea1f53655119f3541c557e820128183ab8ebfb3d621912c91352e",
+  "tables": 50,
+  "rows": 28156,
+  "mediaFiles": 848,
+  "mediaReferences": 738,
+  "allCopyRowsAndSequencesVerified": true,
+  "foreignKeysVerified": true,
+  "credentialsAndSessionsAbsent": true,
+  "applied038AfterRawAudit": true,
+  "publicationFence": true,
+  "securityManifestAvailable": false,
+  "securityComparisonLimitation": "v1 has no full security fingerprint; packaged extension and baseline ACL reconstructed, no source ACL hash claim"
+}

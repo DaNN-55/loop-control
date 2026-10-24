@@ -1,3 +1,4 @@
+import{readMediaDeployment}from'./mediaDeployment.js';
 import{assertAlignmentConfigured,type NativeAlignmentConfiguration}from'./alignmentWorker.js';
 import {assertMediaReady,type NativeMediaConfiguration} from './mediaWorker.js';
 import {spawn} from 'node:child_process';
@@ -26,6 +27,7 @@ export async function startNativeWorkerService(config:NativeWorkerConfiguration)
  const pool=createWorkerDatabase(config.database),port=nativeWorkerPort(pool),controller=new AbortController();
  const ready=async()=>{
   await assertPreparedRuntime(config.projectRoot);
+  await readMediaDeployment(pool,config.mediaRoot);
   await access(join(config.projectRoot,'dist/worker/local-app/localWorkerCli.js'));
   if(!Number.isSafeInteger(config.actualCostCents)||config.actualCostCents<0)throw Error('Worker成本配置无效。');
   if(!config.visualCommand.length)throw Error('本地视觉执行器未配置。');await access(config.visualCommand[0],constants.X_OK);

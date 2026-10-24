@@ -1,0 +1,141 @@
+{
+  "passed": true,
+  "headUnchanged": "20e93bd8f80c8de8774806a666ba616a3b133e88",
+  "branch": "codex/local-first-stage-a",
+  "indexEmpty": true,
+  "noCommit": true,
+  "noPush": true,
+  "noMerge": true,
+  "unrelatedFilesUnchanged": 43,
+  "rootPlanUnchanged": true,
+  "originalPublic": {
+    "tables": 38,
+    "rows": 26552,
+    "allCopyMultisetsUnchanged": true
+  },
+  "originalMediaFilesVerified": 848,
+  "sourceOwnInputFiles": 2,
+  "sourceTaskStillReadyAttempt0": true,
+  "restoredTaskCompletedAttempt1": true,
+  "frozenBusinessSnapshotUnchanged": true,
+  "claimOnlyAddsExistingRuntimeLimits": true,
+  "currentRestoredIndexedMediaReferences": 743,
+  "connectionVersionAndSecretReferenceUnchanged": true,
+  "allRestoredQualificationsFalse": true,
+  "restoredNotificationDeliveries": 3,
+  "duplicateOrAlreadyConsumedSourceLedgerReplay": 0,
+  "backedUpPendingNotificationsConsumed": 1,
+  "unknownNotificationsRetained": 6,
+  "acl": {
+    "loop_app": {
+      "call": true,
+      "read": false,
+      "write": false
+    },
+    "loop_owner": {
+      "call": true,
+      "read": false,
+      "write": false
+    },
+    "loop_worker": {
+      "call": true,
+      "read": false,
+      "write": false
+    },
+    "loop_anonymous": {
+      "call": false,
+      "read": false,
+      "write": false
+    }
+  },
+  "migrations": [
+    {
+      "database": "loop_empty",
+      "files": 37,
+      "shaVerified": true
+    },
+    {
+      "database": "loop_imported",
+      "files": 37,
+      "shaVerified": true
+    },
+    {
+      "database": "loop_t24_source",
+      "files": 37,
+      "shaVerified": true
+    },
+    {
+      "database": "loop_t24_restored2",
+      "files": 37,
+      "shaVerified": true
+    },
+    {
+      "database": "loop_t24_restore_v1",
+      "files": 37,
+      "shaVerified": true
+    },
+    {
+      "database": "loop_t24_restore_roundtrip",
+      "files": 37,
+      "shaVerified": true
+    }
+  ],
+  "oldT23SchemaNotMigrated": true,
+  "backupManifests": [
+    {
+      "path": ".loop-control/stage-d/backups/loop_t24_source/c6b2186d-e752-4812-80ff-c21a9901f2a6/manifest.json",
+      "sha256": "6f7f18cb3c119633ab606c41da7b34fa0b2702353b163c9c805c379f0076b683",
+      "archiveSha256": "5a47efb12246fbc60570fb1afcebca66c6a633e1fb08872589e13d4745a99e0e",
+      "tables": 51,
+      "mediaFiles": 850,
+      "authRowsExcluded": true,
+      "knownPlaintextSecretScanClear": true
+    },
+    {
+      "path": ".loop-control/stage-d/backups/loop_t24_source/a2313549-ada8-4617-aa5c-d8ca181c56e3/manifest.json",
+      "sha256": "80e5c75da46a4b9363ed54b618c7b24cb9799e1a4d25dee00ab6c1217ef31e3f",
+      "archiveSha256": "85a89d61ca9e54b2e3edb9f2e0b42b223d16effd63d2297a3eecb35acba1e482",
+      "tables": 51,
+      "mediaFiles": 850,
+      "authRowsExcluded": true,
+      "knownPlaintextSecretScanClear": true
+    },
+    {
+      "path": ".loop-control/stage-d/backups/loop_t24_restored2/7e867bb4-519d-4895-ba78-d3d4e0180fa1/manifest.json",
+      "sha256": "348dc0e58fb94cec74de6ae0c7316db3c3c391346e6225577cb952d6135cac73",
+      "archiveSha256": "477cfef92255d91f8699860c57a8bdc3e328e490ce165caf6dd08c852c102b3b",
+      "tables": 51,
+      "mediaFiles": 853,
+      "authRowsExcluded": true,
+      "knownPlaintextSecretScanClear": true
+    }
+  ],
+  "restorePublicationStates": {
+    "loop_t24_restored": "failed",
+    "loop_t24_restore_missing_ref": "pending",
+    "loop_t24_restore_v1": "ready",
+    "loop_t24_restore_roundtrip": "ready"
+  },
+  "successfulPrimaryRestorePredatesFenceButUsesBoundRestoreRecord": true,
+  "localConnectionsAfterShutdown": 0,
+  "ownPortsClosed": true,
+  "keychainOnlyOwnedSyntheticRemoved": true,
+  "stageRootModeRestored": true,
+  "onlineProviderRequests": 0,
+  "productionOperations": 0,
+  "existingHistoricalEvidenceUnchanged": true,
+  "defaultGate": {
+    "currentPassed": 749,
+    "failed": 0,
+    "timeoutMs": 5000,
+    "override": false,
+    "t21AndHistoricalFailuresRetained": true,
+    "rootCauseUnresolved": true
+  },
+  "workerLease": {
+    "minutes": 30,
+    "changed": false,
+    "immediateFailoverProven": false
+  },
+  "acceptedScope": "T24 controlled offline restore on existing approved isolated cluster and reused roles; not default/new-host production deployment or F-stage release"
+}

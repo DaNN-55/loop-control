@@ -1,3 +1,4 @@
+import{resolveLocalAssetRoot}from'./mediaDeployment.js';
 import{NativeDeliveryCommands}from'./deliveryCommands.js';
 import {NativeStudioCommands} from './studioCommands.js';
 import type {OpenChatCutRuntimeConfig} from '../worker/openchatcutStudio.js';
@@ -7,7 +8,7 @@ import type {Pool,PoolClient} from 'pg';
 import type {OwnerSession} from './sessions.js';
 import {sessionTransaction} from './ownerTransaction.js';
 import {ConfigurationError,validateConfigurationPolicy,canonical} from './configurationCommands.js';
-import {ensureInputDirectories,nativeAssetRoot,snapshotInput,verifyNativeFile} from './localFiles.js';
+import {ensureInputDirectories,snapshotInput,verifyNativeFile} from './localFiles.js';
 import {verifyMediaLibrary} from '../worker/mediaLibrary.js';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
@@ -45,12 +46,12 @@ export class LocalEpisodeCommands {
     if(!a)throw new ConfigurationError(404,'账号不可见。');if(typeof data.title!=='string'||data.title.length>200)throw new ConfigurationError(400,'标题无效。');
     await this.preflight(c,a.id,a.policy,false);
     value=(await c.query('SELECT to_jsonb(public.create_episode($1,$2,$3,$4,$5)) result',[a.id,a.current_blueprint_version_id,data.seriesVersionId??null,data.title.trim(),data.isTest===true])).rows[0].result;
-    await ensureInputDirectories(a.policy.asset_root,value.id);
+    await ensureInputDirectories(await resolveLocalAssetRoot(c,this.mediaRoot,a.policy.asset_root),value.id);
     await c.query('INSERT INTO local_identity.input_episodes(episode_id,owner_id) VALUES($1,$2)',[value.id,session.id]);
    }else{
     if(!(await c.query('SELECT local_identity.lock_owned_input_episode($1) owned',[data.episodeId])).rows[0].owned)throw new ConfigurationError(404,'本地生产单不可见。');
     const e=(await c.query('SELECT e.*,b.policy,i.storyboard_enabled FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN local_identity.input_episodes i ON i.episode_id=e.id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\' AND i.owner_id=$2',[data.episodeId,session.id])).rows[0];
-    if(!e)throw new ConfigurationError(404,'本地生产单不可见。');const root=await nativeAssetRoot(this.mediaRoot,e.policy.asset_root);
+    if(!e)throw new ConfigurationError(404,'本地生产单不可见。');const root=await resolveLocalAssetRoot(c,this.mediaRoot,e.policy.asset_root);
     if(['createQcIssue','resolveQcIssue','approveQc','retryFinalRender','preparePublishPackage'].includes(String(body.command))){value=await this.delivery.execute(c,e,root,this.runtime,String(body.command),data);
     }else if(['openStudio','generateReviewVideo','submitStudioRevision','requestStudioCompositionRevision','requestStudioStoryboardRevision'].includes(String(body.command))){
      try{value=await this.studios.execute(c,e,root,this.runtime,String(body.command),data);}catch(error){if(error instanceof ConfigurationError||error&&typeof error==='object'&&'code'in error)throw error;throw new ConfigurationError(409,'Studio 工作版本或编辑器会话不可用，请重新打开当前工程后重试。');}
@@ -210,7 +211,7 @@ export class LocalEpisodeCommands {
   const failure=(reason:string,check:string,scope:WorkerPreflightCheck['scope'],action:WorkerPreflightCheck['action'],status=409)=>new ConfigurationError(status,reason,{version:workerPreflightVersion,checks:[{capability:'worker_runtime',check,phase:'preflight',status:scope==='worker'?'unavailable':'blocked',reason,action,scope}]});
   try{await this.runtime.ready();}catch(e){throw failure(e instanceof Error?e.message:'本地Worker未准备。','command_availability','worker','contact_environment_admin',503);}
   let root:string;
-  try{root=await nativeAssetRoot(this.mediaRoot,policy.asset_root);await verifyMediaLibrary({assetRoot:root,mountPath:this.runtime.mountPath,minimumFreeBytes:this.runtime.minimumFreeBytes,requireEpisodesDirectory:existing});}catch(e){throw failure(e instanceof Error?e.message:'素材目录不可用。','asset_root','blueprint','edit_blueprint');}
+  try{root=await resolveLocalAssetRoot(c,this.mediaRoot,policy.asset_root);await verifyMediaLibrary({assetRoot:root,mountPath:this.runtime.mountPath,minimumFreeBytes:this.runtime.minimumFreeBytes,requireEpisodesDirectory:existing});}catch(e){throw failure(e instanceof Error?e.message:'素材目录不可用。','asset_root','blueprint','edit_blueprint');}
   const refs=validateConfigurationPolicy(policy,true);if(refs.length)try{await this.runtime.checkReferences(c,refs);}catch{throw failure('连接版本未就绪，请检查本机绑定与验证资格。','credential_presence','connection','manage_connection');}
   const errors=blueprintSelectionErrors(policy);if(errors.length)throw failure(errors.join(' '),'blueprint_configuration','blueprint','edit_blueprint');
   const planner=(policy.executors as {storyboard_planning:{harness_id:string}}).storyboard_planning;

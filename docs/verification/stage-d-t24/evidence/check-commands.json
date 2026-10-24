@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "nodeMajor": "24",
+  "checks": [
+    {
+      "command": "node node_modules/typescript/bin/tsc -p tsconfig.local-app.json",
+      "log": "local-types-07.txt",
+      "status": 0
+    },
+    {
+      "command": "node scripts/prepare-runtime.mjs",
+      "log": "runtime-prepare-05.txt",
+      "status": 0
+    },
+    {
+      "command": "node node_modules/typescript/bin/tsc -b --pretty false",
+      "log": "types-04.txt",
+      "status": 0
+    },
+    {
+      "command": "node --check scripts/local/{native-restore,native-backup-format,backup,recovery-acceptance,owner}.mjs (five separate invocations)",
+      "log": "syntax-01.txt",
+      "status": 0
+    }
+  ],
+  "fullRegression": "default-5s-01-result.json",
+  "nodeWorkflow": "node-final-01-result.json",
+  "frontend": "frontend-final-01-result.json",
+  "businessImplementationUnchangedAfterFinalRegression": true
+}

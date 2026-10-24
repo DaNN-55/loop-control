@@ -1,16 +1,16 @@
+import{mappedAssetPath}from'./mediaPaths.js';
 import {mkdir,realpath,lstat,readFile} from 'node:fs/promises';
-import {resolve,relative,isAbsolute,join,basename} from 'node:path';
+import {resolve,isAbsolute,join,basename} from 'node:path';
 import {createHash} from 'node:crypto';
 import {writeSafeAssetFile} from '../worker/controlledMediaExecutor.js';
 import {ConfigurationError} from './configurationCommands.js';
 import {isValidMainScript,mainScriptFormatError} from '../reviews/mainScript.js';
 const uuid=/^[0-9a-f-]{36}$/;
 export function safeRelative(path:string){return !!path&&!isAbsolute(path)&&!path.split(/[\\/]/).some(p=>!p||p==='.'||p==='..');}
-export async function nativeAssetRoot(mediaRoot:string,value:unknown){
- if(typeof value!=='string'||!isAbsolute(value))throw new ConfigurationError(400,'资产目录必须是已授权的绝对路径。');
- const rel=relative(mediaRoot,value);
- if(!rel||rel.startsWith('..')||isAbsolute(rel)||await realpath(value).catch(()=>null)!==value)throw new ConfigurationError(400,'资产目录超出本机授权范围。');
- const stat=await lstat(value);if(!stat.isDirectory()||stat.isSymbolicLink())throw new ConfigurationError(400,'资产目录不可用。');return value;
+export async function nativeAssetRoot(mediaRoot:string,value:unknown,sourceRoots:readonly string[]=[]){
+ let path:string;try{path=mappedAssetPath(mediaRoot,value,sourceRoots);}catch{throw new ConfigurationError(400,'资产目录超出本机授权范围。');}
+ if(await realpath(path).catch(()=>null)!==path)throw new ConfigurationError(400,'资产目录不可用。');
+ const stat=await lstat(path);if(!stat.isDirectory()||stat.isSymbolicLink())throw new ConfigurationError(400,'资产目录不可用。');return path;
 }
 export async function ensureInputDirectories(root:string,episodeId:string){
  if(!uuid.test(episodeId))throw new ConfigurationError(400,'Episode ID无效。');

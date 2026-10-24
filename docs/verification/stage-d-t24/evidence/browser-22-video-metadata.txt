@@ -1,0 +1,7 @@
+{
+  "duration": null,
+  "height": 0,
+  "readyState": 0,
+  "tag": "VIDEO",
+  "width": 0
+}

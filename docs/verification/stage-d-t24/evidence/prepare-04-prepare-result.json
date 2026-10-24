@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "realOwnerHttp": true,
+  "sourceWorkersDeliberatelyPaused": true,
+  "pendingTask": {
+    "id": "cb2a9abf-737a-49f8-bdb8-8ffe0a814cf8",
+    "status": "ready",
+    "attempt": 0,
+    "snapshotSha": "e7585ff9b03fce34ad25f7e9457d4584094d03a8535a25c7861f5eb740e5c0f5"
+  },
+  "sourceConnectionKeychain": true,
+  "providerProbe": "simulated; no live qualification or online call",
+  "existingReviewSaved": true
+}

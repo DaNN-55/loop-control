@@ -4,7 +4,7 @@ import type{Pool,PoolClient}from'pg';
 import{canonical,ConfigurationError}from'./configurationCommands.js';
 import{ownerTransaction,sessionTransaction}from'./ownerTransaction.js';
 import type{OwnerSession}from'./sessions.js';
-import{nativeAssetRoot}from'./localFiles.js';
+import{resolveLocalAssetRoot}from'./mediaDeployment.js';
 import{stageLocalEpisodeDirectoryForDeletion,restoreStagedLocalEpisodeDirectory,finalizeStagedLocalEpisodeDirectory}from'../worker/episodeDeletion.js';
 const uuid=/^[0-9a-f-]{36}$/;
 const fingerprint=(v:unknown)=>createHash('sha256').update(JSON.stringify(canonical(v))).digest('hex');
@@ -16,7 +16,7 @@ export class LocalEpisodeLifecycle{
  private async episode(c:PoolClient,id:unknown){
   if(typeof id!=='string'||!uuid.test(id))throw new ConfigurationError(400,'生产单标识无效。');
   if(!(await c.query('SELECT local_identity.lock_owned_input_episode($1) owned',[id])).rows[0]?.owned)throw new ConfigurationError(404,'本地生产单不可见。');
-  const e=(await c.query('SELECT e.*,b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1',[id])).rows[0];const root=await nativeAssetRoot(this.mediaRoot,e.policy.asset_root);return{e,root};
+  const e=(await c.query('SELECT e.*,b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1',[id])).rows[0];const root=await resolveLocalAssetRoot(c,this.mediaRoot,e.policy.asset_root);return{e,root};
  }
  private async plan(c:PoolClient,id:unknown){const{e,root}=await this.episode(c,id);const path=join(root,'episodes',e.id),stagingPath=join(root,'episodes','.deletion-staging',e.id);return{e,root,visible:{episodeId:e.id,title:e.title,path,stagingPath,confirmation:e.title.trim()||'DELETE',archived:Boolean(e.archived_at),isTest:e.is_test,revision:fingerprint({id:e.id,title:e.title,archivedAt:e.archived_at?new Date(e.archived_at).toISOString():null,updatedAt:new Date(e.updated_at).toISOString(),stage:e.stage,root})}};}
  async execute(session:OwnerSession,body:Record<string,unknown>){
@@ -54,7 +54,7 @@ export class LocalEpisodeLifecycle{
   return sessionTransaction(this.pool,session,async c=>{
    await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[session.id+':'+key]);const row=(await c.query('SELECT result FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[session.id,key])).rows[0];const r=row?.result as DeletionResult|undefined;
    if(!r?.cleanupRoot||r.cleanupKey!==key)throw new ConfigurationError(404,'删除清理记录不可见。');if(!r.cleanupPending)return this.publicResult(r);
-   try{const root=await nativeAssetRoot(this.mediaRoot,r.cleanupRoot);await finalizeStagedLocalEpisodeDirectory(root,r.episodeId);r.cleanupPending=false;r.localRemoved=true;await c.query('SELECT local_identity.complete_owned_deletion_cleanup($1)',[key]);}catch{return{...this.publicResult(r),cleanupPending:true,message:'数据库删除已完成；文件清理或完成登记尚未确认，可重试。'};}
+   try{const root=await resolveLocalAssetRoot(c,this.mediaRoot,r.cleanupRoot);await finalizeStagedLocalEpisodeDirectory(root,r.episodeId);r.cleanupPending=false;r.localRemoved=true;await c.query('SELECT local_identity.complete_owned_deletion_cleanup($1)',[key]);}catch{return{...this.publicResult(r),cleanupPending:true,message:'数据库删除已完成；文件清理或完成登记尚未确认，可重试。'};}
    return this.publicResult(r);
   });
  }

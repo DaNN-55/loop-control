@@ -1,3 +1,4 @@
+import{readMediaDeployment}from'./mediaDeployment.js';
 import type{NativeAutomation}from'./nativeAutomation.js';
 import{LocalEpisodeLifecycle}from'./episodeLifecycle.js';
 import {executeConfiguration,ConfigurationError} from './configurationCommands.js';
@@ -46,6 +47,8 @@ export function createLocalHandler(options:LocalOptions){
    if(url.pathname==='/api/local/logout'&&request.method==='POST'){
     await revokeSession(options.pool,session.token);response.setHeader('Set-Cookie',cookieHeader(''));send(200,{loggedOut:true});return;
    }
+   if(url.pathname==='/api/local/session'&&request.method==='GET'){send(200,{owner:{id:session.id,email:session.email},csrfToken:csrfFor(session.token)});return;}
+   await readMediaDeployment(options.pool,options.mediaRoot);
    if(url.pathname==='/api/local/configuration'&&request.method==='POST'){
     let body;try{body=await readBody(request,256*1024);}catch{send(400,{error:'配置请求格式无效。'});return;}
     send(200,await executeConfiguration(options.pool,session,body,options.mediaRoot,connections.externalReady?(client,refs)=>connections.assertBlueprintReferences(client,refs):undefined));return;
@@ -65,7 +68,6 @@ export function createLocalHandler(options:LocalOptions){
     }
    }
    if(request.method!=='GET'){send(405,{error:'该本地命令尚未开放。'});return;}
-   if(url.pathname==='/api/local/session'){send(200,{owner:{id:session.id,email:session.email},csrfToken:csrfFor(session.token)});return;}
    if(url.pathname==='/api/local/system-status'){if(!options.automation){send(503,{error:'本地自动化服务尚未配置。'});return;}send(200,await options.automation.status());return;}
    if(url.pathname==='/api/local/catalog'){send(200,await readLocalCatalog(options.pool,session.id));return;}
    if(url.pathname==='/_local-artifact'){
@@ -78,7 +80,7 @@ export function createLocalHandler(options:LocalOptions){
    const episode=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)$/);
    if(episode&&uuid.test(episode[1])){
     let known:Record<string,string>={};try{const value=JSON.parse(url.searchParams.get('known')??'{}');if(!value||Array.isArray(value)||Object.values(value).some(v=>typeof v!=='string'))throw Error();known=value;}catch{send(400,{error:'读取版本无效。'});return;}
-    const result=await readLocalEpisode(options.pool,session.id,episode[1],known);send(result?200:404,result??{error:'生产单不可见。'});return;
+    const result=await readLocalEpisode(options.pool,session.id,episode[1],known,options.mediaRoot);send(result?200:404,result??{error:'生产单不可见。'});return;
    }
    const artifact=url.pathname.match(/^\/api\/local\/artifacts\/([^/]+)$/);
    if(artifact&&uuid.test(artifact[1])){
