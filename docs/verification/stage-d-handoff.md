@@ -1,5 +1,7 @@
 # D 阶段本地交接（2026-10-23）
 
+> 2026-10-24补记：[T15真实Keychain补验](stage-d-t15-keychain/README.md)已在Owner授权的专用库/合成秘密范围通过，并修复异步Node管道误拒绝；专用库已清理、现有D服务仍默认disabled。在线Provider、live资格/真实蓝图选择及完整任务Worker CLI未验，T15整体与下游门禁仍未关闭，未开始T16。默认5秒历史失败及根因未解决保留。Owner已认可并授权本次修复/证据在当前分支本地归档，不推送或合并；下文为原始交接时点记录，不把旧“Keychain操作数0/待授权”当当前状态。
+
 工作树`/Users/dan/.codex/worktrees/local-first-optimization/loop-control`，分支`codex/local-first-stage-a`；起点`61ee01d9af38c9ab1f7db7717efab1126c88ba4c`。没有推送、合并、部署、关闭Issue、生产切换或凭据传输。GitHub OPEN状态刻意保留，不据此推断技术工作是否完成。
 
 ## 当前结果

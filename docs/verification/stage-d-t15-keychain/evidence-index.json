@@ -1,0 +1,537 @@
+{
+  "ticket": 121,
+  "createdAt": "2026-10-24T01:49:22.067126+00:00",
+  "branch": "codex/local-first-stage-a",
+  "default5000msHistoricalFailureAndRootCauseUnresolved": true,
+  "onlineProviderCalls": 0,
+  "privateNotice": "Private dump contains local identity/session metadata; never copy credentials, private raw dumps, binaries or HAR into public evidence",
+  "deletedSensitiveResources": [
+    "dedicated t15-synthetic.keychain-db",
+    "recovery-private.json password files, no password or password fingerprint retained"
+  ],
+  "files": [
+    {
+      "path": "docs/verification/stage-d-t15-keychain/README.md",
+      "kind": "public",
+      "bytes": 10078,
+      "sha256": "b7ace3cfc8fc3be6ef045a7b7d10955a9e5b6f95d13ff8bac20b66c7d767e6f6"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/application-final.txt",
+      "kind": "public",
+      "bytes": 9243,
+      "sha256": "92b32060d2e3466752a9a63afe857d014de093f710c6e65f9235d42c13377fb5"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/application-types.txt",
+      "kind": "public",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/boundaries.json",
+      "kind": "public",
+      "bytes": 310,
+      "sha256": "41435e9741b623ff708c628b509993d8bb2db7e9914be95bbfaccfea877236f0"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/cleanup-run.txt",
+      "kind": "public",
+      "bytes": 170,
+      "sha256": "bfa5ad8ecc0e936c181ff79a625bcbb01a9f0060d3cccbf274fa53fbcb095274"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/cleanup.json",
+      "kind": "public",
+      "bytes": 315,
+      "sha256": "065f466c1130e85651c2c1bfa44858849d28b082d4f5f7438077cd794778582d"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/credential-scan.json",
+      "kind": "public",
+      "bytes": 475,
+      "sha256": "663821da66ee20a2b77d66f222b52699aa91d66057d765474de4266017017aea"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/events.jsonl",
+      "kind": "public",
+      "bytes": 20298,
+      "sha256": "b850a30c8e49899f73ca706d658175febfd36d194f5eecb59fef34fa1f5931bf"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/http-result.json",
+      "kind": "public",
+      "bytes": 1205,
+      "sha256": "46236e242101f16f6496f22e0e5df3c88512705bc22a06e7ca2b03061fff054c"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/http-run.txt",
+      "kind": "public",
+      "bytes": 167,
+      "sha256": "a9ed5984874bc0c6fc63e1d182e763920a611ade38e4dfc120f9b395d9bbd865"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/ipc-debug-before.json",
+      "kind": "public",
+      "bytes": 253,
+      "sha256": "36db7ee443f82aaa2370324bb03391ce2740e5fb125df43ea1916da459452ab1"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/ipc-debug-errno.json",
+      "kind": "public",
+      "bytes": 164,
+      "sha256": "b01af859d474ebce2a13c39befc1ebb854bdcee7a7955c92475262892e0a7333"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/ipc-green.txt",
+      "kind": "public",
+      "bytes": 151,
+      "sha256": "0619cce343c49d8f6c0b0305ed424157fc225db3aa6d1d544b2ec2e5ad0abd46"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/ipc-metadata.txt",
+      "kind": "public",
+      "bytes": 763,
+      "sha256": "b48bf23c51bf0693895b4af39c166619d78dae478c6aa4e93eed44974027ccfb"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/ipc-red.txt",
+      "kind": "public",
+      "bytes": 767,
+      "sha256": "0a51cb2d12ff9d14c8095ec64cd6f9a0e64f9d2724090c20cab666df7c794932"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/local-types.txt",
+      "kind": "public",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/native-result.json",
+      "kind": "public",
+      "bytes": 654,
+      "sha256": "aed0a064a0ee3187d206244f44d6fe51f7e3f2467577568c228fe5d649816455"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/node-final.txt",
+      "kind": "public",
+      "bytes": 342,
+      "sha256": "f3c97275d8ebb5f78ca118a383170fbd5a97efe75399dc57e826a2eed4ac61e0"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/original-history.json",
+      "kind": "public",
+      "bytes": 4867,
+      "sha256": "cb760f985c1f849e03566c3bc1f29d85bc5858d80df1413c32b13aa1b298f777"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/protocol-green.txt",
+      "kind": "public",
+      "bytes": 402,
+      "sha256": "4406ce0cf7f969897614454bfc73c68a42f0a7876f08e11ac59365853a083e4b"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/protocol-ipc-red.txt",
+      "kind": "public",
+      "bytes": 423,
+      "sha256": "a801a181983e300f6f2aece080515cd823bf3d89e649a2733859918c0bafdc86"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/protocol-result.json",
+      "kind": "public",
+      "bytes": 455,
+      "sha256": "479fbbb264f63f8b12308e929f2976a08fa96815cfd9df60d288910f73dad707"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-keychain/regression-results.json",
+      "kind": "public",
+      "bytes": 1269,
+      "sha256": "c32a6da1103da003d40eb9eb594f8dc49feea57155967f425d42a51bf5b83e8c"
+    },
+    {
+      "path": "native/keychain-helper.m",
+      "kind": "source",
+      "bytes": 7840,
+      "sha256": "e31b6b8dd7656c1140ad157ca59f08c172a0e463a67acf2adc6f8828b77e055b"
+    },
+    {
+      "path": "scripts/local/keychain-helper-check.mjs",
+      "kind": "source",
+      "bytes": 7339,
+      "sha256": "4b7da2bbe36bed35e3e25416db0f2886126becfe68d4082c10985864b262c278"
+    },
+    {
+      "path": "scripts/local/keychain-test-control.m",
+      "kind": "source",
+      "bytes": 5670,
+      "sha256": "243d847bbe285a7f4fc37f3e1a45ebb534d0a2ae5eacae732f47199b2854e39c"
+    },
+    {
+      "path": "scripts/local/keychain-real-acceptance.mjs",
+      "kind": "source",
+      "bytes": 20073,
+      "sha256": "fee472b77ceece6057e36338f00da641e794270146420023ee1c589aa7b3e3a0"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/PLAN.md",
+      "kind": "private",
+      "bytes": 3698,
+      "sha256": "ba12ef2f4d1465612202dbfac7b3baddd505e1cf64d4bff286128c64efb86057"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/application-final.txt",
+      "kind": "private",
+      "bytes": 9243,
+      "sha256": "92b32060d2e3466752a9a63afe857d014de093f710c6e65f9235d42c13377fb5"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/application-types.txt",
+      "kind": "private",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/baseline.json",
+      "kind": "private",
+      "bytes": 1590,
+      "sha256": "208951a3c3b118fb272a7acbccc92fe258a6368201880e331131bfe202652682"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/candidate-before-ipc-fix",
+      "kind": "private",
+      "bytes": 54928,
+      "sha256": "cbd891c04d4069f88635415b09ac143236a4d43a8e21aeeec2b6df9ca91b0898"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/cleanup-final.txt",
+      "kind": "private",
+      "bytes": 170,
+      "sha256": "bfa5ad8ecc0e936c181ff79a625bcbb01a9f0060d3cccbf274fa53fbcb095274"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/cleanup-result-attempt1.json",
+      "kind": "private",
+      "bytes": 206,
+      "sha256": "cb53c9e6a25cfae25c33d231ca3b84a6ce64084880808033965c7032da66cec4"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/cleanup-result.json",
+      "kind": "private",
+      "bytes": 315,
+      "sha256": "065f466c1130e85651c2c1bfa44858849d28b082d4f5f7438077cd794778582d"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/control-build.txt",
+      "kind": "private",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/database-private.dump.sql",
+      "kind": "private",
+      "bytes": 12143375,
+      "sha256": "22df93d389560b7f9633e6ae1d379fefabcaf8ba070e4f6a6cb829bef23acff3"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/diagnostic-build.txt",
+      "kind": "private",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/final-boundaries.json",
+      "kind": "private",
+      "bytes": 310,
+      "sha256": "41435e9741b623ff708c628b509993d8bb2db7e9914be95bbfaccfea877236f0"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/fresh-protocol",
+      "kind": "private",
+      "bytes": 53200,
+      "sha256": "446d9e3c40cf0e846b54d08e97dd6ee4ef8ecef3606138059d0f5eb2deb7d717"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/fresh-protocol-build.txt",
+      "kind": "private",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/fresh-protocol-result.json",
+      "kind": "private",
+      "bytes": 71,
+      "sha256": "32eb8195922baf6c3c60e1a53b51c6e62cec5ade78fa752a76b038b880f5c0e8"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/helper-build.json",
+      "kind": "private",
+      "bytes": 455,
+      "sha256": "479fbbb264f63f8b12308e929f2976a08fa96815cfd9df60d288910f73dad707"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/history-check.mjs",
+      "kind": "private",
+      "bytes": 2124,
+      "sha256": "a6a02faba092327e0f2c549243a11efc5f620a8a02d9eae65b8e95ea3e96c330"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/history-check.txt",
+      "kind": "private",
+      "bytes": 70,
+      "sha256": "a0b7d467bdf4e786f291070d72030dd68ff09a9dd7fb9714460d1f4e568d9261"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/http-attempt1.txt",
+      "kind": "private",
+      "bytes": 167,
+      "sha256": "a9ed5984874bc0c6fc63e1d182e763920a611ade38e4dfc120f9b395d9bbd865"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/http-fixture.json",
+      "kind": "private",
+      "bytes": 266,
+      "sha256": "cc5deea7f63df7eb7eb58b4999eefc7622427ba6823c9e5c0a1055fd64ec10ff"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/http-result.json",
+      "kind": "private",
+      "bytes": 1205,
+      "sha256": "46236e242101f16f6496f22e0e5df3c88512705bc22a06e7ca2b03061fff054c"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/ipc-green.txt",
+      "kind": "private",
+      "bytes": 151,
+      "sha256": "0619cce343c49d8f6c0b0305ed424157fc225db3aa6d1d544b2ec2e5ad0abd46"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/ipc-metadata",
+      "kind": "private",
+      "bytes": 33904,
+      "sha256": "842142c8d47c28c0eb9b1a7095ab4417d333afba0d8f075826317940197e1747"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/ipc-metadata.c",
+      "kind": "private",
+      "bytes": 802,
+      "sha256": "089f8ebea7862c8e002b18f9e4c754d5cede7a8124056971af402a842f4cd89f"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/ipc-metadata.txt",
+      "kind": "private",
+      "bytes": 763,
+      "sha256": "b48bf23c51bf0693895b4af39c166619d78dae478c6aa4e93eed44974027ccfb"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/ipc-red.txt",
+      "kind": "private",
+      "bytes": 767,
+      "sha256": "0a51cb2d12ff9d14c8095ec64cd6f9a0e64f9d2724090c20cab666df7c794932"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/ipc-repro.mjs",
+      "kind": "private",
+      "bytes": 967,
+      "sha256": "0ce51d2549ca088a9c33246715514b035943d15f6e263155f6c4c6e20181a28b"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/keychain-helper-diagnostic",
+      "kind": "private",
+      "bytes": 54984,
+      "sha256": "019673b56730818d71dbaeeae84144b0a506717ed38d50ff137f99013648c887"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/keychain-helper-diagnostic.m",
+      "kind": "private",
+      "bytes": 7471,
+      "sha256": "4c83fc9a9efe6e176c2292e9d55246fdb807f416ab5ac03d3fe553c864dbff3d"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/local-types-final.txt",
+      "kind": "private",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/local-types.txt",
+      "kind": "private",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/native-result.json",
+      "kind": "private",
+      "bytes": 654,
+      "sha256": "aed0a064a0ee3187d206244f44d6fe51f7e3f2467577568c228fe5d649816455"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/node-final.txt",
+      "kind": "private",
+      "bytes": 342,
+      "sha256": "f3c97275d8ebb5f78ca118a383170fbd5a97efe75399dc57e826a2eed4ac61e0"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/original-history.json",
+      "kind": "private",
+      "bytes": 4867,
+      "sha256": "cb760f985c1f849e03566c3bc1f29d85bc5858d80df1413c32b13aa1b298f777"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/ownership-attempt1.json",
+      "kind": "private",
+      "bytes": 496,
+      "sha256": "5480989320c0057ef38be158212e76c5fb1a75bb7c56f3e14687e5c9d4ff2cc2"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/ownership.json",
+      "kind": "private",
+      "bytes": 585,
+      "sha256": "83c85ca037988d557178f5e65774ed9aa32be7dd31c75060b910e9c4e669c5d7"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/protocol-debug",
+      "kind": "private",
+      "bytes": 53296,
+      "sha256": "175345a5879d55f2fb4915b6f40a13f04c085cbebfc77f6f1dc730e41f3e4e2d"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/protocol-debug-build.txt",
+      "kind": "private",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/protocol-debug-result.json",
+      "kind": "private",
+      "bytes": 253,
+      "sha256": "36db7ee443f82aaa2370324bb03391ce2740e5fb125df43ea1916da459452ab1"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/protocol-debug.m",
+      "kind": "private",
+      "bytes": 7935,
+      "sha256": "f1b90cc78b36007ae3fc00e6cb0e65bfc0da0e5b2144ffd5c1b49052e78b9d59"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/protocol-debug2",
+      "kind": "private",
+      "bytes": 53376,
+      "sha256": "6ee1b8bed259bb1ab6141125360d270f9d5623b625480d66126e36735f096b9e"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/protocol-debug2-result.json",
+      "kind": "private",
+      "bytes": 164,
+      "sha256": "b01af859d474ebce2a13c39befc1ebb854bdcee7a7955c92475262892e0a7333"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/protocol-debug2.m",
+      "kind": "private",
+      "bytes": 8009,
+      "sha256": "7604d15080e0ceb61682436028d47c3395df5bdf238e79774854711a19369ddc"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/protocol-green.txt",
+      "kind": "private",
+      "bytes": 402,
+      "sha256": "4406ce0cf7f969897614454bfc73c68a42f0a7876f08e11ac59365853a083e4b"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/protocol-ipc-attempt1-red.txt",
+      "kind": "private",
+      "bytes": 423,
+      "sha256": "a801a181983e300f6f2aece080515cd823bf3d89e649a2733859918c0bafdc86"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/raw-events.jsonl",
+      "kind": "private",
+      "bytes": 20298,
+      "sha256": "b850a30c8e49899f73ca706d658175febfd36d194f5eecb59fef34fa1f5931bf"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/regression-results.json",
+      "kind": "private",
+      "bytes": 1269,
+      "sha256": "c32a6da1103da003d40eb9eb594f8dc49feea57155967f425d42a51bf5b83e8c"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/search-before-attempt1.json",
+      "kind": "private",
+      "bytes": 219,
+      "sha256": "43ee617897eaf2c87cea416514bbc3e204e49239566b030a582e14943098cf1e"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/search-before.json",
+      "kind": "private",
+      "bytes": 219,
+      "sha256": "43ee617897eaf2c87cea416514bbc3e204e49239566b030a582e14943098cf1e"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/search-cleaned-attempt1.json",
+      "kind": "private",
+      "bytes": 219,
+      "sha256": "43ee617897eaf2c87cea416514bbc3e204e49239566b030a582e14943098cf1e"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/search-cleaned.json",
+      "kind": "private",
+      "bytes": 219,
+      "sha256": "43ee617897eaf2c87cea416514bbc3e204e49239566b030a582e14943098cf1e"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/search-created-attempt1.json",
+      "kind": "private",
+      "bytes": 219,
+      "sha256": "43ee617897eaf2c87cea416514bbc3e204e49239566b030a582e14943098cf1e"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/search-created.json",
+      "kind": "private",
+      "bytes": 219,
+      "sha256": "43ee617897eaf2c87cea416514bbc3e204e49239566b030a582e14943098cf1e"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/native/keychain-helper",
+      "kind": "private",
+      "bytes": 55008,
+      "sha256": "70474b933bed605620e18998d299907215b21d7c91b5d757063718a5d8fddc73"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/native/keychain-protocol-only",
+      "kind": "private",
+      "bytes": 53288,
+      "sha256": "ee8d018487e85fb992a31d65724eea609a1bf5ae636562f45931dfb4680d43a5"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/native/t15-test-control",
+      "kind": "private",
+      "bytes": 54432,
+      "sha256": "dfcfb96edc4748b022fa89c75106e35c2dbc21c96b93e9dedd4ef15268feab60"
+    },
+    {
+      "path": "docs/verification/stage-d-handoff.md",
+      "kind": "context",
+      "bytes": 7168,
+      "sha256": "203e67d83b63b3ba1265f332d4f6727db322301a757fd965d018460651ecdc36"
+    },
+    {
+      "path": "docs/verification/stage-d-t15/README.md",
+      "kind": "context",
+      "bytes": 10815,
+      "sha256": "3f281fa9e2b35e326d1a7371f4c78d3e595cf62b8a7c8d0641128e43dfd47b6d"
+    }
+  ],
+  "acceptanceHead": "d0810773468070ef8348ed9d8cf3d49c774ac7e9",
+  "committedAtAcceptance": false,
+  "archiveAuthorization": {
+    "ownerApproved": true,
+    "mode": "current branch local Git commit only",
+    "commitIdSource": "Git history of this file",
+    "exclude": "unrelated planning files and credential-bearing private evidence",
+    "limitations": [
+      "online Provider, live qualification and real blueprint selection not accepted",
+      "historical default 5000ms gate failure and unresolved root cause remain"
+    ],
+    "noPushMergeProductionOrT16": true
+  }
+}

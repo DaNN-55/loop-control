@@ -1,0 +1,23 @@
+{"mode":"sync","status":0,"response":{"ok":true,"code":"validated"}}
+{"mode":"async","status":1,"body":{"ok":false,"code":"pipe_required"},"stderrBytes":0}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Actual asynchronous Node IPC must be accepted
++ actual - expected
+
++ 'pipe_required'
+- 'validated'
+
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-real-keychain-20261024/ipc-repro.mjs:8:57
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'pipe_required',
+  expected: 'validated',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

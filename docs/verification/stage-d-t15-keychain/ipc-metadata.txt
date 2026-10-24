@@ -1,0 +1,6 @@
+sync
+[DEBUG-t15-ipc] fd=0 fstat=0 isFifo=0 isSocket=1 local=0 localErr=0 localFamily=1 localLength=16 peer=0 peerErr=0 peerFamily=1 peerLength=16 typeResult=0 typeErr=0 type=1 STREAM=1 DGRAM=2
+[DEBUG-t15-ipc] fd=1 fstat=0 isFifo=0 isSocket=1 local=0 localErr=0 localFamily=1 localLength=16 peer=0 peerErr=0 peerFamily=1 peerLength=16 typeResult=0 typeErr=0 type=1 STREAM=1 DGRAM=2
+async
+[DEBUG-t15-ipc] fd=0 fstat=0 isFifo=0 isSocket=1 local=0 localErr=0 localFamily=1 localLength=16 peer=0 peerErr=0 peerFamily=1 peerLength=16 typeResult=0 typeErr=0 type=1 STREAM=1 DGRAM=2
+[DEBUG-t15-ipc] fd=1 fstat=0 isFifo=0 isSocket=1 local=0 localErr=0 localFamily=1 localLength=16 peer=0 peerErr=0 peerFamily=1 peerLength=16 typeResult=0 typeErr=0 type=1 STREAM=1 DGRAM=2

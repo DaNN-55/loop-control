@@ -5,6 +5,7 @@
 #import <sys/socket.h>
 #import <unistd.h>
 #import <limits.h>
+#import <errno.h>
 #ifndef LOOP_KEYCHAIN_PATH
 #define LOOP_KEYCHAIN_PATH ""
 #endif
@@ -54,16 +55,22 @@ static BOOL isControlledIPC(int fd) {
     struct stat info;
     if (fstat(fd, &info) != 0) return NO;
     if (S_ISFIFO(info.st_mode)) return YES;
-    // libuv uses connected Unix socketpairs for Node stdio:'pipe'. Require
-    // both ends to be local-domain streams; never accept a network socket.
+    // libuv uses Unix socketpairs for Node stdio:'pipe'. An asynchronous
+    // parent may close stdin's peer after buffering the entire request.
     if (!S_ISSOCK(info.st_mode)) return NO;
     struct sockaddr_storage local, peer;
     socklen_t localSize = sizeof(local), peerSize = sizeof(peer), typeSize = sizeof(int);
     int type = 0;
-    return getsockname(fd, (struct sockaddr *)&local, &localSize) == 0 &&
-        getpeername(fd, (struct sockaddr *)&peer, &peerSize) == 0 &&
-        getsockopt(fd, SOL_SOCKET, SO_TYPE, &type, &typeSize) == 0 &&
-        local.ss_family == AF_UNIX && peer.ss_family == AF_UNIX && type == SOCK_STREAM;
+    if (getsockname(fd, (struct sockaddr *)&local, &localSize) != 0 ||
+        getsockopt(fd, SOL_SOCKET, SO_TYPE, &type, &typeSize) != 0 ||
+        local.ss_family != AF_UNIX || type != SOCK_STREAM) return NO;
+    if (getpeername(fd, (struct sockaddr *)&peer, &peerSize) == 0) return peer.ss_family == AF_UNIX;
+    // Darwin can return EINVAL after the peer closes, Linux ENOTCONN.
+    if (fd != STDIN_FILENO || (errno != ENOTCONN && errno != EINVAL)) return NO;
+    // Only a formerly connected input stream has buffered data or EOF here.
+    // An unconnected/listening socket fails recv; never relax stdout's peer.
+    uint8_t byte;
+    return recv(fd, &byte, 1, MSG_PEEK | MSG_DONTWAIT) >= 0;
 }
 
 #ifndef LOOP_KEYCHAIN_PROTOCOL_ONLY
