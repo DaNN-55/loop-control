@@ -1,0 +1,29 @@
+error: narration blueprint must reference this Owner’s current verified google_tts connection version
+    at /Users/dan/.codex/worktrees/local-first-optimization/loop-control/node_modules/pg/lib/client.js:694:17
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/dist/local-app/local-app/configurationCommands.js:135:33
+    at async ownerTransaction (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/dist/local-app/local-app/ownerTransaction.js:7:24)
+    at async Object.prepare (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/narration-acceptance.mjs:30:17)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/narration-acceptance.mjs:63:55 {
+  length: 496,
+  severity: 'ERROR',
+  code: '22023',
+  detail: undefined,
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: 'PL/pgSQL function public.validate_blueprint_external_connections() line 25 at RAISE\n' +
+    'SQL statement "insert into public.account_blueprint_versions (account_id, version, policy, is_active)\n' +
+    '  values (created_account.id, 1, p_policy, true)\n' +
+    '  returning *"\n' +
+    'PL/pgSQL function public.create_account(text,text,text,jsonb) line 22 at SQL statement',
+  schema: undefined,
+  table: undefined,
+  column: undefined,
+  dataType: undefined,
+  constraint: undefined,
+  file: 'pl_exec.c',
+  line: '3911',
+  routine: 'exec_stmt_raise'
+}

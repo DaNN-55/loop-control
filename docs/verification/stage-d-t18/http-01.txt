@@ -1,0 +1,15 @@
+AssertionError [ERR_ASSERTION]: {"error":"配置冲突或仍被引用。"}
+
+409 !== 200
+
+    at post (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/narration-acceptance.mjs:47:262)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Object.test (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/narration-acceptance.mjs:56:421)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/narration-acceptance.mjs:63:55 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 409,
+  expected: 200,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
