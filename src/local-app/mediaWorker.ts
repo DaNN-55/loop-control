@@ -18,7 +18,7 @@ export async function assertMediaReady(config:NativeMediaConfiguration|undefined
  const selected=['static_visual','a_roll','b_roll','soundtrack'].map(k=>policy[k] as {execution_path?:string}|undefined);
  if(selected.some(c=>c?.execution_path==='external'))await narrationPorts(config);
 }
-export function nativeMediaTask(type:string,provider:string){return (['generate_shot_sync_preview','generate_review_render'].includes(type)&&provider==='openchatcut')||(['generate_a_roll','generate_b_roll'].includes(type)&&['openchatcut','ffmpeg','pexels'].includes(provider))||(type==='generate_soundtrack'&&provider==='freesound')||(type==='extract_embedded_audio'&&provider==='ffmpeg');}
+export function nativeMediaTask(type:string,provider:string){return (['generate_shot_sync_preview','generate_review_render','generate_final_render'].includes(type)&&provider==='openchatcut')||(['generate_a_roll','generate_b_roll'].includes(type)&&['openchatcut','ffmpeg','pexels'].includes(provider))||(type==='generate_soundtrack'&&provider==='freesound')||(type==='extract_embedded_audio'&&provider==='ffmpeg');}
 export async function executeNativeMedia(pool:Pool,config:NativeMediaConfiguration|undefined,p:WorkerTaskPackage,fence:{p_task_id:string;p_attempt:number;p_lease_token:string},visualOutput?:string){
  await assertMediaReady(config);
  const external=Boolean(p.credentialRef||p.visualAssetPreparation?.imageGeneration);
@@ -31,8 +31,8 @@ export async function executeNativeMedia(pool:Pool,config:NativeMediaConfigurati
   let output:string;
   if(visualOutput!==undefined){if(!ports)throw new SecretStoreError('unavailable');output=await generateVisualAssets(p,visualOutput,resolve,ports.fetcher);}
   else if(p.provider==='openchatcut'){
-   if(!['generate_shot_sync_preview','generate_review_render'].includes(p.task.type)&&p.aRoll?.adapter!=='openchatcut_card_video'&&p.media?.adapter!=='openchatcut_card_video')throw Error();
-   output=await executeOpenChatCutRender({taskPackage:p,validateMp4:validateMp4Artifact,inspectMp4:inspectMp4Artifact,async run(command,args){const invocation=runtimeCommandInvocation(command,args);await promisify(execFile)(invocation.command,invocation.argumentsList,{timeout:300000,maxBuffer:4*1024*1024});}});
+   if(!['generate_shot_sync_preview','generate_review_render','generate_final_render'].includes(p.task.type)&&p.aRoll?.adapter!=='openchatcut_card_video'&&p.media?.adapter!=='openchatcut_card_video')throw Error();
+   output=await executeOpenChatCutRender({taskPackage:p,...(p.finalRender?{getApprovedReuseSource:async()=>{const result=(await pool.query('SELECT local_identity.input_final_reuse_source($1,$2,$3) result',[fence.p_task_id,fence.p_attempt,fence.p_lease_token])).rows[0]?.result;if(!result)throw Error('Final approval or lease unavailable');return result;}}:{}),validateMp4:validateMp4Artifact,inspectMp4:inspectMp4Artifact,async run(command,args){const invocation=runtimeCommandInvocation(command,args);await promisify(execFile)(invocation.command,invocation.argumentsList,{timeout:300000,maxBuffer:4*1024*1024});}});
   }else{
    const secret=external?await resolve(p.credentialRef,p.provider,p.media!.adapter):undefined;
    const denied=async():Promise<never>=>{throw Error('External media not configured');};

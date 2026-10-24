@@ -447,3 +447,15 @@ describe("Worker 契约", () => {
     expect(() => validateWorkerResult({ ...result, storyboard: { ...result.storyboard, shots: [result.storyboard.shots[0], result.storyboard.shots[0]] } }, taskPackage)).toThrow("不能重复");
   });
 });
+
+it('最终工程校验统一审核入口别名，同时拒绝不同冻结文件或修订',async()=>{
+ const{confirmedTtsRender}=await import('./openchatcutProject.fixture');const render=confirmedTtsRender();
+ const sourceProject={artifactType:'review_render_project',relativePath:'episodes/e/review-render/v1/project.json',sha256:'c'.repeat(64),fileSize:100};
+ const sourceRuntime={artifactType:'review_render_runtime',relativePath:'episodes/e/review-render/v1/runtime.json',sha256:'d'.repeat(64),fileSize:50};
+ const sourceQcReport={artifactType:'review_qc_report',relativePath:'episodes/e/review-render/v1/qc.json',sha256:'e'.repeat(64),fileSize:100};
+ const input:WorkerTaskPackageInput={...packageInput,episode:{...packageInput.episode,id:'e'},task:{...packageInput.task,type:'generate_final_render',provider:'openchatcut',model:'openchatcut@0.2.14'},capability:'final_rendering',inputArtifacts:[...render.members.map(m=>({artifactType:m.memberKind,relativePath:m.relativePath,sha256:m.sha256,fileSize:1})),sourceProject,sourceRuntime,sourceQcReport],output:{requiredArtifactTypes:['final_render','final_render_project','final_qc_report'],relativePath:'episodes/e/final-render/task/final.mp4',contentType:'video/mp4',reviewStage:'qc_passed'},finalRender:{sourceReviewPackageId:'qc',sourceProject,sourceRuntime,sourceQcReport,projectRelativePath:'episodes/e/final-render/task/index.html',projectRevision:render.projectRevision,reviewRender:render}};
+ expect(()=>createWorkerTaskPackage(input)).not.toThrow();
+ const canonical=structuredClone(input);canonical.finalRender!.reviewRender.projectRelativePath=sourceProject.relativePath;expect(()=>createWorkerTaskPackage(canonical)).not.toThrow();
+ const other=structuredClone(input);other.finalRender!.sourceProject.relativePath='episodes/e/other/project.json';other.inputArtifacts.push(other.finalRender!.sourceProject);expect(()=>createWorkerTaskPackage(other)).toThrow('最终渲染冻结工程不一致');
+ const revision=structuredClone(input);revision.finalRender!.projectRevision++;expect(()=>createWorkerTaskPackage(revision)).toThrow('最终渲染冻结工程不一致');
+});

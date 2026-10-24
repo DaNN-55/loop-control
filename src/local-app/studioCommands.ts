@@ -21,6 +21,7 @@ const identity=(value:unknown)=>createHash('sha256').update(JSON.stringify(value
 
 export class NativeStudioCommands {
  private bindings=new Map<string,Binding>();
+ async closeEpisode(id:string){await closeOpenChatCutStudio(id);this.bindings.delete(id);}
  async close(){await Promise.all([...this.bindings.keys()].map(id=>closeOpenChatCutStudio(id)));this.bindings.clear();}
  async execute(c:PoolClient,e:Episode,root:string,runtime:StudioRuntime,command:string,data:Record<string,unknown>):Promise<unknown>{
   if(!e.storyboard_enabled||!editableStages.includes(e.stage))throw new ConfigurationError(409,'当前阶段不能编辑或冻结 Studio 工程。');

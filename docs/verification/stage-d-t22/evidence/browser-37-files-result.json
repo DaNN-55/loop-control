@@ -1,0 +1,208 @@
+{
+  "passed": true,
+  "episodeId": "1664828c-d21e-47d6-902b-31595d40cf34",
+  "stage": "production_completed",
+  "finalTask": "d68f9b5c-e295-4158-a186-2644ad39da74",
+  "finalReuse": true,
+  "finalVideo": {
+    "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/final-render/d68f9b5c-e295-4158-a186-2644ad39da74/final-render.mp4",
+    "sha256": "b6395adf0a4e49b53a129e1f8076e1e1655f5ec47064beb46e1efbaabd75f96c",
+    "bytes": 382215
+  },
+  "packageVerified": true,
+  "artifacts": [
+    {
+      "id": "0b6e851a-8bd8-4533-9bfb-66aef35815bf",
+      "type": "publish_package",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/publish-package/manifest.json",
+      "sha256": "7e486d77d2dac15ac793aac249a9dec2de5f9b4599a1bae902d62c070ad655ba",
+      "bytes": 1217
+    },
+    {
+      "id": "990f5b76-2855-4065-91de-3a6bcb1c0b67",
+      "type": "metadata",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/publish-input/metadata-v1.json",
+      "sha256": "70dab8594b799786b7cbd0373bfe9490262a95ea4b610bab374572ff444eb9ee",
+      "bytes": 129
+    },
+    {
+      "id": "b738fe50-ae6b-46c5-b3e2-b97d4d3a8d59",
+      "type": "cover",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/publish-input/cover-v1.png",
+      "sha256": "9d99ae1cf906c42157f6e7ef3ac39c4c3389621c3055b1b3f359dfed99a30e5f",
+      "bytes": 68
+    },
+    {
+      "id": "1e75cd8c-1e4b-4e60-a171-e1e07e3dee14",
+      "type": "final_render",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/final-render/d68f9b5c-e295-4158-a186-2644ad39da74/final-render.mp4",
+      "sha256": "b6395adf0a4e49b53a129e1f8076e1e1655f5ec47064beb46e1efbaabd75f96c",
+      "bytes": 382215
+    },
+    {
+      "id": "2f77dfa5-32a1-40b9-b00e-1ed9e844d040",
+      "type": "final_render_project",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/final-render/d68f9b5c-e295-4158-a186-2644ad39da74/project.json",
+      "sha256": "ffb350d7e8dcfd381581e677bf35c21b7ef098739cd88d11511fc0e084788466",
+      "bytes": 10893
+    },
+    {
+      "id": "7dcebe6e-b2d7-420f-80ae-abf8a74bb594",
+      "type": "final_qc_report",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/final-render/d68f9b5c-e295-4158-a186-2644ad39da74/final-qc-report.json",
+      "sha256": "b78a5fe59c5ba24910e590969f20361239c5a1b5d05044c9d9470ddcad207856",
+      "bytes": 1188
+    },
+    {
+      "id": "47e55190-4858-4535-bfdb-bbdc14c20618",
+      "type": "render",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/review-render/3593f223-e7ac-48f0-b2d5-6448d23b7779/review-render.mp4",
+      "sha256": "b6395adf0a4e49b53a129e1f8076e1e1655f5ec47064beb46e1efbaabd75f96c",
+      "bytes": 382215
+    },
+    {
+      "id": "71069724-f31b-46fa-a99b-e867c5729033",
+      "type": "review_render_project",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/review-render/3593f223-e7ac-48f0-b2d5-6448d23b7779/project.json",
+      "sha256": "ffb350d7e8dcfd381581e677bf35c21b7ef098739cd88d11511fc0e084788466",
+      "bytes": 10893
+    },
+    {
+      "id": "c15678ae-c915-4e03-a352-4a37c66425e9",
+      "type": "review_qc_report",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/review-render/3593f223-e7ac-48f0-b2d5-6448d23b7779/qc-report.json",
+      "sha256": "a103a6467da8ef395f1a7c9379684c08b2c4e3dc297d255224818f89c29c4e18",
+      "bytes": 814
+    },
+    {
+      "id": "f96c01e6-bd00-4849-9b99-d5561da0d5e2",
+      "type": "review_render_runtime",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/review-render/3593f223-e7ac-48f0-b2d5-6448d23b7779/openchatcut-runtime.json",
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+      "bytes": 42
+    },
+    {
+      "id": "7550c47f-9a96-41a0-ae21-97866d5c6194",
+      "type": "studio_frozen_project",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/openchatcut-frozen/a9bc0a24-5782-48a9-8a69-db4e5be5b533/project.json",
+      "sha256": "ffb350d7e8dcfd381581e677bf35c21b7ef098739cd88d11511fc0e084788466",
+      "bytes": 10893
+    },
+    {
+      "id": "6161e727-b28b-495c-b765-3f346d561f87",
+      "type": "shot_preview_proxy",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/post-production/53484aaf-32c3-4851-bf91-ada3768730e9/proxy.mp4",
+      "sha256": "143e9255da4262022d13797729194707d5b96b05c0a206fb67b568c41b6b8112",
+      "bytes": 192657
+    },
+    {
+      "id": "8349c9d8-4884-4e15-b426-b3ffd3defec3",
+      "type": "shot_preview_qc_report",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/post-production/53484aaf-32c3-4851-bf91-ada3768730e9/qc-report.json",
+      "sha256": "a1536f8c979b10eaf4a356a2216eeb3fdfb2890e0458198f3d5a861afe5147fe",
+      "bytes": 868
+    },
+    {
+      "id": "84b0f7e8-1b1e-403f-accf-e18362814272",
+      "type": "shot_preview_runtime",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/post-production/53484aaf-32c3-4851-bf91-ada3768730e9/openchatcut-runtime.json",
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+      "bytes": 42
+    },
+    {
+      "id": "ba9b7e5b-8be7-4540-9e19-8b4753bd5824",
+      "type": "shot_editable_project",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/post-production/53484aaf-32c3-4851-bf91-ada3768730e9/project.json",
+      "sha256": "49adfc109fce8bf4af4e441b963a9bdd2c7ee53d0a4888eff99dbabda39d563a",
+      "bytes": 4811
+    },
+    {
+      "id": "063867b0-fe12-4d39-a807-c74c4ecf85e7",
+      "type": "shot_source_audio",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/post-production/03a57de1-4317-4e84-b340-30753c2664d5/source.mp3",
+      "sha256": "26f49a501b9185e6f6a2f1b0e52c561a56717d361c7bf05e8f399593de7c74f3",
+      "bytes": 18730
+    },
+    {
+      "id": "a7700bf8-120d-4f09-bf09-eb68866d1ee9",
+      "type": "b_roll_asset",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/shot-clips/shot-2-63f061237251e2a32bc99bb5a8cc3d8f.mp4",
+      "sha256": "ed658eb27494f2b5e818efd7c60320fca0cb24e17ec7048224a352f7a2c87c82",
+      "bytes": 23662
+    },
+    {
+      "id": "1b263f48-1029-45de-bf86-890a44bebd94",
+      "type": "shot_preview_runtime",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/post-production/8e67b17f-551d-41b9-a5c5-1cda856bb1ad/openchatcut-runtime.json",
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+      "bytes": 42
+    },
+    {
+      "id": "22fd1af1-cb97-4a71-9c29-cbeab5af67e0",
+      "type": "shot_preview_proxy",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/post-production/8e67b17f-551d-41b9-a5c5-1cda856bb1ad/proxy.mp4",
+      "sha256": "143e9255da4262022d13797729194707d5b96b05c0a206fb67b568c41b6b8112",
+      "bytes": 192657
+    },
+    {
+      "id": "87f05975-9349-4e8f-a9ea-8abbb1c5a994",
+      "type": "shot_editable_project",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/post-production/8e67b17f-551d-41b9-a5c5-1cda856bb1ad/project.json",
+      "sha256": "34b5bbba03f6ced4c07a9abb70ff612cca41f2de79ee66ea0b361abc8de7b06f",
+      "bytes": 4811
+    },
+    {
+      "id": "e538fd5b-c101-435b-9e9c-d2311cdea1cb",
+      "type": "shot_preview_qc_report",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/post-production/8e67b17f-551d-41b9-a5c5-1cda856bb1ad/qc-report.json",
+      "sha256": "fd4bb884aa85c789084d757eb560996ecf34d9a0f967864bc232b117607263e2",
+      "bytes": 868
+    },
+    {
+      "id": "58430747-cff7-490e-aa96-3ea12e9e85c2",
+      "type": "shot_source_audio",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/post-production/1a918bee-878b-4043-8573-978d598004e5/source.mp3",
+      "sha256": "26f49a501b9185e6f6a2f1b0e52c561a56717d361c7bf05e8f399593de7c74f3",
+      "bytes": 18730
+    },
+    {
+      "id": "2ba4ba34-34c7-421c-870a-b1a4208da83c",
+      "type": "derived_audio",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/audio/derived-material-v2.mp3",
+      "sha256": "3bb4a9c0c01aa61afa1725f26e14f85bc85e5094645be39f5e9204fb864a3fde",
+      "bytes": 22815
+    },
+    {
+      "id": "d0d07a42-5d47-406b-97cf-c819757080c3",
+      "type": "a_roll_video",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/shot-clips/shot-1-5fba95fdc441ba44de981531c96cf7e6.mp4",
+      "sha256": "ed658eb27494f2b5e818efd7c60320fca0cb24e17ec7048224a352f7a2c87c82",
+      "bytes": 23662
+    },
+    {
+      "id": "c754ce78-eef6-4edb-a51c-96dc4abbb820",
+      "type": "derived_audio",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/audio/derived-material-v1.mp3",
+      "sha256": "3bb4a9c0c01aa61afa1725f26e14f85bc85e5094645be39f5e9204fb864a3fde",
+      "bytes": 22815
+    },
+    {
+      "id": "da321427-a97f-44ab-9fbc-aa6894efee3b",
+      "type": "storyboard",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/storyboard-v1.json",
+      "sha256": "a8e8624e82dfc71c9aebbfcd5c193c4e1ff571ce3ed57812d01881989be6888a",
+      "bytes": 2480
+    },
+    {
+      "id": "1be4d3d7-fa4f-429e-ac6d-de3ab3a2c510",
+      "type": "visual_asset_manifest",
+      "path": "episodes/1664828c-d21e-47d6-902b-31595d40cf34/visual-assets-v1.md",
+      "sha256": "df0fe427d8ce1221168970cff428b2e8cbdeff19e4546f89d26813fde0fd2c30",
+      "bytes": 464
+    }
+  ],
+  "backupFiles": 61,
+  "allBackupBytesVerified": true,
+  "noExternalPublishing": true,
+  "providerRequests": 0
+}

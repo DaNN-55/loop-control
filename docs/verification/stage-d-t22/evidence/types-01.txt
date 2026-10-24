@@ -1,0 +1,1 @@
+src/local-app/LocalDeliveryPanel.tsx(24,403): error TS1005: '}' expected.

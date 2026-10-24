@@ -1,3 +1,4 @@
+import{LocalEpisodeLifecycle}from'./episodeLifecycle.js';
 import {executeConfiguration,ConfigurationError} from './configurationCommands.js';
 import {timingSafeEqual} from 'node:crypto';
 import type {IncomingMessage,ServerResponse} from 'node:http';
@@ -18,6 +19,7 @@ async function readBody(request:IncomingMessage,limit=8192):Promise<Record<strin
 }
 export function createLocalHandler(options:LocalOptions){
  const host=new URL(options.origin).host;
+ const lifecycle=new LocalEpisodeLifecycle(options.pool,options.mediaRoot,id=>options.episodes?.closeStudio(id)??Promise.resolve());
  const connections=options.connections??new LocalConnections(options.pool);
  return async(request:IncomingMessage,response:ServerResponse)=>{
   response.setHeader('Cache-Control','no-store');response.setHeader('X-Content-Type-Options','nosniff');
@@ -52,6 +54,8 @@ export function createLocalHandler(options:LocalOptions){
     let body;try{body=await readBody(request,140*1024*1024);}catch{send(400,{error:'Episode请求格式无效。'});return;}
     send(200,await options.episodes.execute(session,body));return;
    }
+   if(url.pathname==='/api/local/episode-lifecycle'&&request.method==='POST'){let body;try{body=await readBody(request,16384);}catch{send(400,{error:'生命周期请求格式无效。'});return;}send(200,await lifecycle.execute(session,body));return;}
+   if(url.pathname==='/api/local/deletion-cleanups'&&request.method==='GET'){send(200,await lifecycle.pending(session));return;}
    if(url.pathname==='/api/local/connections'){
     if(request.method==='GET'){send(200,await connections.read(session.id));return;}
     if(request.method==='POST'){

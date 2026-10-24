@@ -368,6 +368,4 @@ export function activeOpenChatCutState(project: OpenChatCutProject): Record<stri
   return { ...timeline, assets: project.assets };
 }
 
-export function openChatCutProjectPath(path: string): string {
-  return path.endsWith("/index.html") ? `${path.slice(0, -"/index.html".length)}/project.json` : path.endsWith(".json") ? path : `${path}/project.json`;
-}
+export {openChatCutProjectPath} from "./openchatcutPaths.js";
