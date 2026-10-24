@@ -1,0 +1,247 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t21-20261024/t20-baseline
+
+ ❯ src/reviews/ReviewWorkspace.test.tsx (65 tests | 1 failed) 23634ms
+   ✓ 审核台 > 点击抽屉外遮罩或按 Escape 可以关闭生产单详情 135ms
+   ✓ 审核台 > 放大预览打开时按 Escape 不关闭生产单详情 11ms
+   ✓ 审核台 > 在详情顶部显示当前阶段和下一步，并默认收起技术索引 109ms
+   ✓ 审核台 > Worker 排队或运行时显示持续刷新反馈 16ms
+   ✓ 审核台 > QC 通过但缺少最终材料时明确提示，并可进入生产完成流程 42ms
+   ✓ 审核台 > 通过顶部图标按需打开产物索引及包含任务进度的审计时间线 153ms
+   ✓ 审核台 > 审计时间线只显示中文原因，不展示技术原文 62ms
+   ✓ 审核台 > 只列出需要 Owner 审核的 Episode，并允许选择其中一项 87ms
+   ✓ 审核台 > 对待审核 Episode 使用分页 70ms
+   ✓ 审核台 > 显示可预览产物和 Worker 阻塞项，并以理由执行批准或要求修改  325ms
+   ✓ 审核台 > 即时派发失败时在当前任务区域持续显示原因 17ms
+   ✓ 审核台 > 生成媒体预览默认展示当前镜头代理并折叠历史版本 35ms
+   ✓ 审核台 > 只在整片音轨中展示可试听的 BGM，并将时间批注交给受控 RPC 190ms
+   ✓ 审核台 > 展示 A-roll 的冻结执行证据和运行状态 31ms
+   ✓ 审核台 > 按真实状态展示 A-roll 任务卡片：completed 15ms
+   ✓ 审核台 > 按真实状态展示 A-roll 任务卡片：running 15ms
+   ✓ 审核台 > 按真实状态展示 A-roll 任务卡片：failed 22ms
+   ✓ 审核台 > 按真实状态展示 A-roll 任务卡片：blocked 20ms
+   ✓ 审核台 > 在冻结执行器缺失时仍展示 A-roll 阻塞状态 47ms
+   ✓ 审核台 > 合并重复阻塞任务并提供蓝图修改入口 59ms
+   ✓ 审核台 > 以纵向缩略图展示产物，并允许 Owner 放大后关闭预览 126ms
+   ✓ 审核台 > 在详情头部以图标提供刷新、打开和复制本地目录 83ms
+   ✓ 审核台 > 材料区提供统一文件导入 18ms
+   ✓ 审核台 > 等待输入时仅允许上传外部制作的主脚本 29ms
+   ✓ 审核台 > 主脚本导入后等待 Owner 明确开始制作 46ms
+   ✓ 审核台 > 显示生产开始前的真实运行态阻塞 22ms
+   ✓ 审核台 > 通过统一入口标注用途后按顺序导入脚本、图片、A-roll 和 B-roll  549ms
+   ✓ 审核台 > 将主脚本和补充脚本归入同一个脚本分组 99ms
+   ✓ 审核台 > 最多并发导入三个材料并在完成后立即补位 248ms
+   ✓ 审核台 > 导入成功后保留材料卡，直到冻结材料刷新完成 108ms
+   ✓ 审核台 > 可打开脚本模板，并点击材料名称预览 153ms
+   ✓ 审核台 > 使用浏览器文件地址预览待导入视频 92ms
+   ✓ 审核台 > 在材料列表显示已确认、已导入和已绑定镜头状态 32ms
+   ✓ 审核台 > 新 Episode 的上传阶段不要求整期声音选择 17ms
+   × 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择 5042ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ 审核台 > 已生成字幕时序先只读查看，明确调整后才开放编辑  508ms
+   ✓ 审核台 > 本地人工时序编辑跨音轨轮询保留并只提交本地回调  667ms
+   ✓ 审核台 > 审核阶段可返回可编辑镜头工作台，且保留当前 QC 证据  3001ms
+   ✓ 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交  1404ms
+   ✓ 审核台 > 删除镜头后在工作台切换新版，并打开下一镜  564ms
+   ✓ 审核台 > 刷新后从运行中的结构任务恢复工作台，并在完成后打开删除镜头的下一镜  380ms
+   ✓ 审核台 > 新版分镜保留旧版本 hash 中仍存在的镜头  332ms
+   ✓ 审核台 > 本期 TTS 试听只在点击后读取当前表单，不保存或创建任务  302ms
+   ✓ 审核台 > 本期 TTS 未保存时明确阻止逐镜头生成，并标记表单修改状态 274ms
+   ✓ 审核台 > 逐镜头 TTS 可先于原片标记生成，完整保存仍要求视频  793ms
+   ✓ 审核台 > 重新生成口播时隐藏旧音轨，完成后可从右上角筛选历史口播 256ms
+   ✓ 审核台 > 逐镜头口播无需确认即可保存，并可保存单镜头覆盖  1395ms
+   ✓ 审核台 > 后台刷新时保留未保存的原片与片段标记  439ms
+   ✓ 审核台 > 保留原声直接使用视频内嵌音轨并允许生成同步预览  339ms
+   ✓ 审核台 > 无口播显示为明确静音，并仍可保存字幕开关  417ms
+   ✓ 审核台 > 同一原片支持多段裁剪并随镜头草稿一起保存  1066ms
+   ✓ 审核台 > 选择镜头原片文件后立即导入，不再要求二次确认 271ms
+   ✓ 审核台 > 分镜准备阶段不提供 Studio 入口 118ms
+   ✓ 审核台 > 展示委托脚本的冻结输入，并让 Owner 完成审核或要求重写 141ms
+   ✓ 审核台 > 读取分镜前文本产物及其冻结审核上下文 184ms
+   ✓ 审核台 > 将冻结的外部视觉输入连同视觉资产清单交给 Owner 审核 140ms
+   ✓ 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产 23ms
+   ✓ 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览 22ms
+   ✓ 审核台 > 在 Studio 提交一次合成修订并重新审核 239ms
+   ✓ 审核台 > 在审核渲染中只提供官方 Studio 入口 33ms
+   ✓ 审核台 > 按镜头审核冻结分镜、保存批注，并执行批准或返工  346ms
+   ✓ 审核台 > 人工媒体可在镜头工作台选择原片并保存镜头设置  1419ms
+   ✓ 审核台 > 已保存原片可预览并在冻结前替换  377ms
+   ✓ 审核台 > 分镜产物格式无效时不允许 Owner 批准或退回 35ms
+   ✓ 审核台 > 将预渲染成员作为审计证据，并自动进入审核渲染 21ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 64 passed (65)
+   Start at  19:56:12
+   Duration  27.53s (transform 1.57s, setup 0ms, collect 2.37s, tests 23.63s, environment 605ms, prepare 156ms)
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 已生成字幕时序先只读查看，明确调整后才开放编辑
+An update to ShotPreparationCard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ShotPreparationCard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ShotPreparationCard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ShotPreparationCard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ShotPreparationCard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ShotPreparationCard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ShotPreparationCard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ShotPreparationCard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ShotPreparationCard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ShotPreparationCard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ShotPreparationCard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ShotPreparationCard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ShotPreparationCard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ShotPreparationCard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 已生成字幕时序先只读查看，明确调整后才开放编辑
+An update to AudioTrackCard inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/reviews/ReviewWorkspace.test.tsx:684:3
+    682|   });
+    683| 
+    684|   it("分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择", async () => {
+       |   ^
+    685|     const user = userEvent.setup();
+    686|     const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

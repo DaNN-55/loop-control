@@ -1,6 +1,7 @@
+import {safeAssetOutputPath} from "./controlledMediaExecutor.js";
 import { createHash, randomUUID } from "node:crypto";
-import { copyFile, mkdir, readFile, writeFile } from "node:fs/promises";
-import { spawn, type ChildProcess } from "node:child_process";
+import { copyFile, mkdir, readFile, writeFile, lstat } from "node:fs/promises";
+import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { createServer as createTcpServer, type Server } from "node:net";
 import { dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
 import type { WorkerTaskPackage } from "./contracts.js";
@@ -51,7 +52,8 @@ interface Session {
   inputFingerprint: string;
 }
 
-interface OpenChatCutRuntimeConfig {
+export interface OpenChatCutRuntimeConfig {
+  environment?: NodeJS.ProcessEnv;
   nodePath?: string;
   root?: string;
 }
@@ -73,8 +75,16 @@ export async function openOpenChatCutStudio(assetRoot: string, episodeId: string
   const existing = sessions.get(episodeId);
   const root = resolve(assetRoot);
   const projectId = `loop-control-${episodeId}`;
-  const project = buildOpenChatCutProject(render, projectId);
-  if (render.confirmationMode === "shot_preparation") await verifyOpenChatCutProject(render, project, runtimeConfig);
+  await assertStudioWorkspace(root, episodeId, projectId);
+  let project = buildOpenChatCutProject(render, projectId);
+  if (render.studioProject) {
+    const path = resolve(root, render.studioProject.relativePath);
+    if (!isDescendant(root, path)) throw new Error("Studio 冻结输入超出资产根。");
+    const bytes = await readFile(path);
+    if (bytes.length !== render.studioProject.fileSize || createHash("sha256").update(bytes).digest("hex") !== render.studioProject.sha256) throw new Error("Studio 冻结输入指纹已变化。");
+    project = JSON.parse(bytes.toString("utf8")) as OpenChatCutProject;
+  }
+  if (render.confirmationMode === "shot_preparation") await verifyOpenChatCutProject(render, project, runtimeConfig, { requireConfirmedText: !render.studioProject, allowStudioEdits: Boolean(render.studioProject) });
   const inputFingerprint = reviewRenderInputFingerprint(render, project);
   if (existing) {
     if (existing.inputFingerprint === inputFingerprint) {
@@ -109,7 +119,10 @@ export async function openOpenChatCutStudio(assetRoot: string, episodeId: string
     const source = resolve(root, sourceRelativePath);
     if (!isDescendant(root, source)) throw new Error("OpenChatCut 素材路径超出生产单资产根。");
     const targetName = `${createHash("sha256").update(sourceRelativePath).digest("hex").slice(0, 20)}${extname(sourceRelativePath).toLowerCase()}`;
-    await copyFile(source, join(uploadDir, targetName));
+    const destination = await safeAssetOutputPath(root, relative(root, join(uploadDir, targetName)));
+    try { if ((await lstat(destination)).nlink !== 1) throw new Error("Studio 素材副本不是安全普通文件。"); }
+    catch (error) { if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) throw error; }
+    await copyFile(source, destination);
     reverseSources.set(`/media/uploads/${targetName}`, sourceRelativePath);
   }
   rewriteSources(copiedProject, new Map([...reverseSources].map(([remote, original]) => [original, remote])));
@@ -127,12 +140,12 @@ export async function openOpenChatCutStudio(assetRoot: string, episodeId: string
   const port = await availablePort();
   const child = spawn(nodePath, [join(openchatcutRoot, "node_modules/vite/bin/vite.js"), openchatcutRoot, "--config", join(openchatcutRoot, "config/vite.config.ts"), "--host", "127.0.0.1", `--port=${port}`], {
     cwd: openchatcutRoot,
-    env: { ...process.env, OPENCHATCUT_ROOT: openchatcutRoot, OPENCHATCUT_DATA_DIR: dataDir, OPENCHATCUT_DEV_PROFILE_ID: randomUUID(), OPENCHATCUT_DISABLE_HARDWARE_ENCODING: "1" },
+    env: { ...(runtimeConfig.environment ?? process.env), OPENCHATCUT_ROOT: openchatcutRoot, OPENCHATCUT_DATA_DIR: dataDir, OPENCHATCUT_DEV_PROFILE_ID: randomUUID(), OPENCHATCUT_DISABLE_HARDWARE_ENCODING: "1" },
     stdio: ["ignore", "pipe", "pipe"],
   });
   const logs: string[] = [];
-  child.stdout?.on("data", (chunk) => logs.push(String(chunk)));
-  child.stderr?.on("data", (chunk) => logs.push(String(chunk)));
+  child.stdout?.on("data", (chunk) => { logs.push(String(chunk).slice(-4000)); if (logs.length > 8) logs.shift(); });
+  child.stderr?.on("data", (chunk) => { logs.push(String(chunk).slice(-4000)); if (logs.length > 8) logs.shift(); });
   try {
     await waitForServer(`http://127.0.0.1:${port}`, child, logs);
     const activeStoredProject = await readStoredProject(join(dataDir, "project-store-v1.json"), projectId) ?? copiedProject;
@@ -149,25 +162,36 @@ export async function openOpenChatCutStudio(assetRoot: string, episodeId: string
   }
 }
 
-export async function freezeOpenChatCutStudio(assetRoot: string, episodeId: string, expectedWorkspaceRelativePath: string): Promise<OpenChatCutStudioSnapshot> {
+export async function snapshotOpenChatCutStudio(assetRoot: string, episodeId: string, expectedWorkspaceRelativePath: string): Promise<OpenChatCutStudioSnapshot> {
   const session = sessions.get(episodeId);
   if (!session) throw new Error("OpenChatCut 编辑器会话已失效，请重新打开生产单预览。");
   if (session.workspace.relativePath !== expectedWorkspaceRelativePath) throw new Error("OpenChatCut 工作版本与当前编辑器会话不一致，请重新打开后再生成。");
-  const response = await fetch(`${session.baseUrl}/api/project-store/entry?key=${encodeURIComponent(`project:${session.projectId}`)}`, { headers: { "Sec-Fetch-Site": "none" } });
-  if (!response.ok) throw new Error(`无法读取 OpenChatCut 项目（HTTP ${response.status}）。`);
-  const payload = await response.json() as { found?: boolean; value?: unknown };
-  if (!payload.found || !payload.value || typeof payload.value !== "object" || Array.isArray(payload.value)) throw new Error("OpenChatCut 项目内容无效。");
-  const project = structuredClone(payload.value) as OpenChatCutProject;
-  rewriteSources(project, session.reverseSources);
+  await assertStudioWorkspace(resolve(assetRoot), episodeId, session.projectId);
+  const project = await currentSessionProject(session);
   session.workspace = await persistProject(resolve(assetRoot), session.workspace.relativePath, project, session.workspace.composition, session.projectId);
   if (session.render.confirmationMode === "shot_preparation") await verifyOpenChatCutProject(session.render, project, session.runtimeConfig, { requireConfirmedText: false, allowStudioEdits: true });
+  return session.workspace;
+}
+
+export async function freezeOpenChatCutStudio(assetRoot: string, episodeId: string, expectedWorkspaceRelativePath: string, expectedSha256?: string): Promise<OpenChatCutStudioSnapshot> {
+  const workspace = await snapshotOpenChatCutStudio(assetRoot, episodeId, expectedWorkspaceRelativePath);
+  if (expectedSha256 && workspace.sha256 !== expectedSha256) throw new Error("工作版本在提交期间发生变化，请保存后重试。");
+  const content = await readFile(resolve(assetRoot, workspace.relativePath));
+  if (content.length !== workspace.fileSize || createHash("sha256").update(content).digest("hex") !== workspace.sha256) throw new Error("工作版本文件在冻结期间发生变化。");
   const relativePath = `episodes/${episodeId}/openchatcut-frozen/${randomUUID()}/project.json`;
-  const path = resolve(assetRoot, relativePath);
-  if (!isDescendant(resolve(assetRoot), path)) throw new Error("OpenChatCut 冻结工程路径无效。");
-  await mkdir(dirname(path), { recursive: true });
-  const content = Buffer.from(JSON.stringify(project, null, 2) + "\n");
-  await writeFile(path, content);
-  return { relativePath, sha256: createHash("sha256").update(content).digest("hex"), fileSize: content.byteLength, composition: session.workspace.composition, projectId: session.projectId };
+  const path = await safeAssetOutputPath(assetRoot, relativePath);
+  await writeFile(path, content, { flag: "wx", mode: 0o600 });
+  return { ...workspace, relativePath };
+}
+
+async function assertStudioWorkspace(root: string, episodeId: string, projectId: string) {
+  if (!/^[0-9a-f-]{36}$/i.test(episodeId)) throw new Error("Studio Episode 标识无效。");
+  const prefix = `episodes/${episodeId}/openchatcut-work/current`;
+  for (const suffix of ["project.json", "workspace.json", "generated-project.json", "runtime/project-store-v1.json", `runtime/project-store-v1/${encodeURIComponent(`project:${projectId}`)}.json`, "runtime/project-store-v1/.ready", "runtime/media/uploads/.probe"]) {
+    const path = await safeAssetOutputPath(root, `${prefix}/${suffix}`);
+    try { const stat = await lstat(path); if (!stat.isFile() || stat.nlink !== 1) throw new Error("Studio 工作文件不是安全普通文件。"); }
+    catch (error) { if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) throw error; }
+  }
 }
 
 export function openChatCutModifiedScopes(baseProject: OpenChatCutProject, currentProject: OpenChatCutProject): string[] {
@@ -283,7 +307,7 @@ function isDescendant(root: string, candidate: string): boolean {
 }
 
 function nodeVersion(nodePath: string): number {
-  return nodePath === process.execPath ? Number(process.versions.node.split(".")[0]) : 24;
+  return nodePath === process.execPath ? Number(process.versions.node.split(".")[0]) : Number(String(spawnSync(nodePath, ["--version"], {encoding:"utf8",timeout:3000}).stdout ?? "").trim().replace(/^v/, "").split(".")[0]);
 }
 
 async function availablePort(): Promise<number> {

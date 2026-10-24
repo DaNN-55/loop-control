@@ -1,0 +1,113 @@
+Loop Control · 本地
+内容工作台
+账号配置生产单目录新建账号刷新退出登录
+生产单（2）
+新建生产单
+返回生产单目录
+T21 browser Studio 离线验收
+1abcd883
+产物索引
+✓
+render
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/review-render/11d2fabf-a387-4469-a9d3-23ec2e2f3f0c/review-render.mp4
+✓
+review_render_project
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/review-render/11d2fabf-a387-4469-a9d3-23ec2e2f3f0c/project.json
+✓
+review_render_runtime
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/review-render/11d2fabf-a387-4469-a9d3-23ec2e2f3f0c/openchatcut-runtime.json
+✓
+review_qc_report
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/review-render/11d2fabf-a387-4469-a9d3-23ec2e2f3f0c/qc-report.json
+✓
+studio_frozen_project
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/openchatcut-frozen/5e21baa1-8b73-4dfe-8b49-9dc24aa92eab/project.json
+✓
+shot_preview_proxy
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/a85ec092-e680-4d49-94e5-2d6f1a6e33c5/proxy.mp4
+✓
+shot_preview_runtime
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/a85ec092-e680-4d49-94e5-2d6f1a6e33c5/openchatcut-runtime.json
+✓
+shot_editable_project
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/a85ec092-e680-4d49-94e5-2d6f1a6e33c5/project.json
+✓
+shot_preview_qc_report
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/a85ec092-e680-4d49-94e5-2d6f1a6e33c5/qc-report.json
+✓
+shot_source_audio
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/55c0cd9b-15e1-4756-a1e7-bc85d5ab6dce/source.mp3
+✓
+b_roll_asset
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/shot-clips/shot-2-212a0daaacf84e52daf19f7351a5b093.mp4
+✓
+shot_preview_qc_report
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/edd69af6-9114-48e9-ac48-f615b4a00949/qc-report.json
+✓
+shot_editable_project
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/edd69af6-9114-48e9-ac48-f615b4a00949/project.json
+✓
+shot_preview_runtime
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/edd69af6-9114-48e9-ac48-f615b4a00949/openchatcut-runtime.json
+✓
+shot_preview_proxy
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/edd69af6-9114-48e9-ac48-f615b4a00949/proxy.mp4
+✓
+shot_source_audio
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/977e920f-035f-4a20-9b6b-d171efc2618a/source.mp3
+✓
+derived_audio
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/audio/derived-material-v1.mp3
+✓
+a_roll_video
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/shot-clips/shot-1-0ef64e220b4a71afdd421cf53763faf8.mp4
+✓
+derived_audio
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/audio/derived-material-v2.mp3
+✓
+storyboard
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/storyboard-v1.json
+✓
+visual_asset_manifest
+episodes/1abcd883-6a6d-4276-8152-b80dbc281139/visual-assets-v1.md
+
+蓝图 v1 · 创建于 2026年10月24日 19:14
+
+当前阶段
+合成与 QC 审核
+下一步
+
+审核合成渲染与 QC 报告
+
+当前审核
+QC 审核
+
+需要你审核
+
+当前任务
+等待审核
+
+审核包已就绪，等待 Owner 决定。
+
+镜头工作台
+
+当前审核证据保持不变；返回后可修改基础素材并生成新的冻结审核快照。
+
+返回镜头工作台修改
+视觉清单
+准备生产材料
+生成媒体预览
+OpenChatCut 审核渲染 · 工程 v2
+在 OpenChatCut 编辑
+
+可在同一原片内延长、缩短或移动片段标记；更换原片请返回分镜工作台。每次提交都会冻结一个新工程版本。
+
+在 OpenChatCut 中打开
+工程与 QC 技术信息
+A-roll 生成运行
+Owner 审批
+
+合成调整请在上方 OpenChatCut 完成；这里仅确认 QC 审核结果。
+
+审批理由
+批准

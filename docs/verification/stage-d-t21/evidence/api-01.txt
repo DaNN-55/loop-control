@@ -1,0 +1,15 @@
+AssertionError [ERR_ASSERTION]: {"error":"project document writes require authoritative ownership"}
+
+400 !== 200
+
+    at editCaption (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/studio-acceptance.mjs:98:226)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Object.exercise (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/studio-acceptance.mjs:106:16)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/studio-acceptance.mjs:80:78 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 400,
+  expected: 200,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
