@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "realServiceRestart": true,
+  "realOwnerHttpEnqueuedBeforeCrash": true,
+  "noPostRestartCommandOrWake": true,
+  "oneTaskOneRun": true,
+  "realNativeWorkerCli": true,
+  "offlinePlannerFixture": true,
+  "artifactShaVerified": true,
+  "noLeaseExpiryModification": true,
+  "controlledEightSecondAvailability": true
+}

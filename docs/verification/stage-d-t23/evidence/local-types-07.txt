@@ -1,0 +1,3 @@
+src/local-app/nativeAutomation.ts(19,48): error TS2769: No overload matches this call.
+  The last overload gave the following error.
+    Object literal may only specify known properties, and 'query_timeout' does not exist in type 'QueryConfig<any[]>'.

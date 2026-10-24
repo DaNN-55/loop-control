@@ -1,0 +1,335 @@
+{
+  "passed": true,
+  "at": "2026-10-24T14:59:30.860Z",
+  "originalDatabase": "loop_imported",
+  "originalPublicRows": 26552,
+  "originalTables": {
+    "account_blueprint_versions": {
+      "rows": 48,
+      "sha256": "c88f1fea1fea6b04d5d8035156dd418e4ad9102b4ed78e12958e773772297787",
+      "unchanged": true
+    },
+    "accounts": {
+      "rows": 37,
+      "sha256": "6bb38dce978eda877f490dc1d74111c71427a43ff719ab307d086e1c4ffabd2c",
+      "unchanged": true
+    },
+    "account_memberships": {
+      "rows": 31,
+      "sha256": "b64022230f7b4e2cc40bd1173d93b48d4c5bfac2537a2738614c3ef5c86f3a03",
+      "unchanged": true
+    },
+    "series": {
+      "rows": 3,
+      "sha256": "71d964f7139efd80e6ce6f38f7b64410158cc354ab7690e724576ba7802cbce3",
+      "unchanged": true
+    },
+    "series_versions": {
+      "rows": 13,
+      "sha256": "23efbbf07e41b6b1852153dded22f4bf353afb85771c8bebcb34c44b28a4b83d",
+      "unchanged": true
+    },
+    "episodes": {
+      "rows": 6261,
+      "sha256": "0e95cfc69f4a932c2d12941433dc02b9a1e17927392af6da078d0691ea6ac610",
+      "unchanged": true
+    },
+    "tasks": {
+      "rows": 5489,
+      "sha256": "a9483fcf1d89c878b9c85e26cef541bc7a62f9c7e277155f469baa19d4fc27a1",
+      "unchanged": true
+    },
+    "artifacts": {
+      "rows": 498,
+      "sha256": "8651373908e7fe869c48c2e59b9f3f31d4d7bdab82c7714c81d23f079cbc710d",
+      "unchanged": true
+    },
+    "task_runs": {
+      "rows": 445,
+      "sha256": "846a87935b20470aae693ba0bf22e3158c62922687162d266916a37034b3e400",
+      "unchanged": true
+    },
+    "review_packages": {
+      "rows": 141,
+      "sha256": "559af669c5af145f0c7efb456597608bef48c1b86ab641443f1e394d48654858",
+      "unchanged": true
+    },
+    "approvals": {
+      "rows": 119,
+      "sha256": "d17d6a1d0534398a28a22a15154e05affedaf3c2d4c2734250d803466709023c",
+      "unchanged": true
+    },
+    "asset_locks": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    "production_material_revisions": {
+      "rows": 183,
+      "sha256": "4030c65af316b070a1b793e7a9ca2147543f35e8ad410862db385afc8222d0da",
+      "unchanged": true
+    },
+    "audio_tracks": {
+      "rows": 51,
+      "sha256": "cb0c7b4dab480c812e9b237462a3b4092179915088ae1ac02714158fe200b09c",
+      "unchanged": true
+    },
+    "audio_track_annotations": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    "audit_events": {
+      "rows": 3450,
+      "sha256": "fcb819e14991aa162e650c5e3dd2971782a5f77932dd084b403bb0172cf7294a",
+      "unchanged": true
+    },
+    "episode_read_revisions": {
+      "rows": 5820,
+      "sha256": "1fb45ed37f7963ea95be4d1c7f5f78fa149cfad24b1c0ef3017419cb8f3c39b2",
+      "unchanged": true
+    },
+    "external_connections": {
+      "rows": 18,
+      "sha256": "7c1879a6c7b6485c674e8402d2fe4dac46ac29188b226a591ab97114e0f86e7e",
+      "unchanged": true
+    },
+    "external_connection_versions": {
+      "rows": 38,
+      "sha256": "e75d3882fbaf3fe205bc355b041654a09152b4dedb09baf1c68259fe42ad6304",
+      "unchanged": true
+    },
+    "external_connection_verifications": {
+      "rows": 60,
+      "sha256": "66e06211e9b3744c75de4739fc23200814b9695267161423a0ed57f3fed12219",
+      "unchanged": true
+    },
+    "material_revision_approvals": {
+      "rows": 183,
+      "sha256": "e38a757afb71c3caa655dc44f7f804f1f586a9e5ca49ee3685f2121ef1b01bd7",
+      "unchanged": true
+    },
+    "notification_delivery_events": {
+      "rows": 2134,
+      "sha256": "3dab379982e29cf57eb5e879d073470d7ae2252e519f0b8f1816de11ac51b9dd",
+      "unchanged": true
+    },
+    "notification_delivery_state": {
+      "rows": 1,
+      "sha256": "fe0bb2129443913823e1f8cf74cd5ffa406e490573c49024fe4e93599c17faae",
+      "unchanged": true
+    },
+    "pre_render_review_member_decisions": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    "pre_render_review_members": {
+      "rows": 12,
+      "sha256": "a140cf8c6e3ddaffc12b2665cb1994c7cee876b8a103e2ae83ba5b3fd9d783f1",
+      "unchanged": true
+    },
+    "production_dependencies": {
+      "rows": 525,
+      "sha256": "999385b473fe391186e6264406b994ef3d1ada5422d6b57130ab4b7341157c9c",
+      "unchanged": true
+    },
+    "production_invalidations": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    "prompt_versions": {
+      "rows": 113,
+      "sha256": "354c0d407752e140fe054a40327e9f6e4f7897457e2c997c80a63d80cfdbae8d",
+      "unchanged": true
+    },
+    "qc_review_issues": {
+      "rows": 1,
+      "sha256": "3a9162ad65550a938e900a50cf2baf40a1d5cc3595ae8dbe2ba6ac65049edd07",
+      "unchanged": true
+    },
+    "review_annotations": {
+      "rows": 5,
+      "sha256": "00ddebe53c7faebbc735ee69dd18fc0671bbc015e1c967b4b5872bc579859cfa",
+      "unchanged": true
+    },
+    "review_render_composition_revisions": {
+      "rows": 10,
+      "sha256": "15fdcdcdb22bee3e70917cf18925152cd29bd9b5ec89f443ee71379104c8ff9a",
+      "unchanged": true
+    },
+    "shot_preparation_drafts": {
+      "rows": 106,
+      "sha256": "70fae6b2a84cbfe2e73217117be3185d58164fe6887670d75830b4af42246ccc",
+      "unchanged": true
+    },
+    "state_transitions": {
+      "rows": 443,
+      "sha256": "c4896c2cbc9a9bbd8e3298e51a79ccd4ca1f89c592aeebbb71803cf91eb349a2",
+      "unchanged": true
+    },
+    "storyboard_audio_selections": {
+      "rows": 12,
+      "sha256": "2ce960f6d4e582b37c4d06c3870843e726fabca4e89146ac7e8c7419c0aaf3c6",
+      "unchanged": true
+    },
+    "storyboard_review_shots": {
+      "rows": 112,
+      "sha256": "74638f80683de85d67c5559da91de6df1ad751a6ebc8a7ce6433040751c097ba",
+      "unchanged": true
+    },
+    "worker_episode_turns": {
+      "rows": 189,
+      "sha256": "6cbae77fb2a344ed257f600350080a1b4b056a402fc6f00ee7300e367c29e987",
+      "unchanged": true
+    },
+    "worker_resource_ceilings": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    "worker_scheduler_settings": {
+      "rows": 1,
+      "sha256": "8468b00b755f1061d6a0148331af3df8915b566d0d5ea336b0ff4246fa33da17",
+      "unchanged": true
+    }
+  },
+  "originalPublicDataByteEquivalent": true,
+  "originalUnrelatedFiles": 43,
+  "rootPlanUnchanged": true,
+  "migrations": {
+    "loop_imported": {
+      "versions": 36,
+      "latest": "037-automation-attempts.sql",
+      "shaVerified": true
+    },
+    "loop_empty": {
+      "versions": 36,
+      "latest": "037-automation-attempts.sql",
+      "shaVerified": true
+    },
+    "loop_t23": {
+      "versions": 36,
+      "latest": "037-automation-attempts.sql",
+      "shaVerified": true
+    }
+  },
+  "acl": {
+    "loop_app": {
+      "claim": true,
+      "plans": true,
+      "attempts": true
+    },
+    "loop_owner": {
+      "claim": false,
+      "plans": false,
+      "attempts": false
+    },
+    "loop_worker": {
+      "claim": false,
+      "plans": false,
+      "attempts": false
+    },
+    "loop_anonymous": {
+      "claim": false,
+      "plans": false,
+      "attempts": false
+    }
+  },
+  "backups": [
+    {
+      "jobId": "18e97f08-8216-428a-bedb-fb202eef6e7e",
+      "archiveSha256": "0216da2a706ea1f53655119f3541c557e820128183ab8ebfb3d621912c91352e",
+      "mediaFiles": 848,
+      "allFingerprintsVerified": true,
+      "ownerCredentialAndSessionDataExcluded": true,
+      "restoreTestNotPerformed": true
+    },
+    {
+      "jobId": "41cbcaee-4c6e-4404-92ae-bc7dc79d4455",
+      "archiveSha256": "9f216889e1e95f4455b1fb4cc9b14f3d3e1e108ac230e2393ec1d1398c0b7ea7",
+      "mediaFiles": 848,
+      "allFingerprintsVerified": true,
+      "ownerCredentialAndSessionDataExcluded": true,
+      "restoreTestNotPerformed": true
+    },
+    {
+      "jobId": "4e986e18-3c69-45df-9a0c-ad11124d0c9f",
+      "archiveSha256": "0b7336c6b20ad28039f22ad40e60b8564f7ff66f9b721b983cce3ea88543abb0",
+      "mediaFiles": 848,
+      "allFingerprintsVerified": true,
+      "ownerCredentialAndSessionDataExcluded": true,
+      "restoreTestNotPerformed": true
+    },
+    {
+      "jobId": "532a8aab-c072-4f27-8a1e-2c57f5754f29",
+      "archiveSha256": "f7abb6b8266425b63ebd772b3ea4fbb705d5e6c775b33090e5bb636e73db8a94",
+      "mediaFiles": 842,
+      "allFingerprintsVerified": true,
+      "ownerCredentialAndSessionDataExcluded": true,
+      "restoreTestNotPerformed": true
+    },
+    {
+      "jobId": "5ce285bb-387a-4101-9e5a-c5af4db1dbd9",
+      "archiveSha256": "4651ba239566c82df2e5100190b771d2f666b471376c849f9d4ec8430c77df44",
+      "mediaFiles": 848,
+      "allFingerprintsVerified": true,
+      "ownerCredentialAndSessionDataExcluded": true,
+      "restoreTestNotPerformed": true
+    },
+    {
+      "jobId": "63f25b69-9606-4dba-8f80-b18599539cda",
+      "archiveSha256": "8d2a276a7eb33c74de96913cd77599840e5567ae47e512803fe02751e4631b7c",
+      "mediaFiles": 848,
+      "allFingerprintsVerified": true,
+      "ownerCredentialAndSessionDataExcluded": true,
+      "restoreTestNotPerformed": true
+    },
+    {
+      "jobId": "8c5b486d-9e18-4a2e-a431-c20790bb906b",
+      "archiveSha256": "8ff5595367e03b3dcc5c79f6c412f81c2db4e247ef56c97bb084e57d13aabbb2",
+      "mediaFiles": 848,
+      "allFingerprintsVerified": true,
+      "ownerCredentialAndSessionDataExcluded": true,
+      "restoreTestNotPerformed": true
+    },
+    {
+      "jobId": "a77bf602-6f8f-4c5a-93ad-bf07cdbc813a",
+      "archiveSha256": "d5c67abddd12b0ed81932b7eb3ae1eb737acb71ec6710807ac0175f84609f05a",
+      "mediaFiles": 848,
+      "allFingerprintsVerified": true,
+      "ownerCredentialAndSessionDataExcluded": true,
+      "restoreTestNotPerformed": true
+    },
+    {
+      "jobId": "f86dd95f-b5cc-4587-a035-e0044ffd5a80",
+      "archiveSha256": "af679a0f74a5dff4f9aa6bcdaaaaf558f926d67dd6141177ea0d50ed384a0f30",
+      "mediaFiles": 848,
+      "allFingerprintsVerified": true,
+      "ownerCredentialAndSessionDataExcluded": true,
+      "restoreTestNotPerformed": true
+    },
+    {
+      "jobId": "f9a75111-907e-495c-bfda-b943136b4cd5",
+      "archiveSha256": "75162949e1d0e2be033700778b46bdb4595f00a4a2ae14e6b0bdf6c24ad0ad7d",
+      "mediaFiles": 848,
+      "allFingerprintsVerified": true,
+      "ownerCredentialAndSessionDataExcluded": true,
+      "restoreTestNotPerformed": true
+    }
+  ],
+  "backupCount": 10,
+  "privateBackupFilesVerified": 8474,
+  "runtimeFingerprintMatches": true,
+  "ownDatabaseConnectionsClosed": true,
+  "legacyN8nSourceAndEntrypointsUnchanged": true,
+  "productionServicesNotInspectedOrOperated": true,
+  "headUnchanged": true,
+  "indexEmpty": true,
+  "noCommit": true,
+  "noPush": true,
+  "noMerge": true,
+  "noOnlineRequests": true,
+  "noT24": true
+}

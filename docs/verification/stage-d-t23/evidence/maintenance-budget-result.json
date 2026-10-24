@@ -1,0 +1,6 @@
+{
+  "passed": true,
+  "maxAttempts": 3,
+  "noFourthAttemptAfterBackoff": true,
+  "failedAttemptsRetained": true
+}

@@ -1,3 +1,4 @@
+import type{NativeAutomation}from'./nativeAutomation.js';
 import{LocalEpisodeLifecycle}from'./episodeLifecycle.js';
 import {executeConfiguration,ConfigurationError} from './configurationCommands.js';
 import {timingSafeEqual} from 'node:crypto';
@@ -10,7 +11,7 @@ import {serveOwnedArtifact} from './artifactRoute.js';
 import {LocalConnections} from './connections.js';
 import {SecretStoreError} from './connectionPorts.js';
 import type {LocalEpisodeCommands} from './episodeCommands.js';
-interface LocalOptions {pool:Pool;origin:string;mediaRoot:string;connections?:LocalConnections;episodes?:LocalEpisodeCommands}
+interface LocalOptions {pool:Pool;origin:string;mediaRoot:string;connections?:LocalConnections;episodes?:LocalEpisodeCommands;automation?:NativeAutomation}
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 async function readBody(request:IncomingMessage,limit=8192):Promise<Record<string,unknown>>{
  if(request.headers['content-type']?.split(';')[0]!=='application/json')throw Error('JSON required');
@@ -65,6 +66,7 @@ export function createLocalHandler(options:LocalOptions){
    }
    if(request.method!=='GET'){send(405,{error:'该本地命令尚未开放。'});return;}
    if(url.pathname==='/api/local/session'){send(200,{owner:{id:session.id,email:session.email},csrfToken:csrfFor(session.token)});return;}
+   if(url.pathname==='/api/local/system-status'){if(!options.automation){send(503,{error:'本地自动化服务尚未配置。'});return;}send(200,await options.automation.status());return;}
    if(url.pathname==='/api/local/catalog'){send(200,await readLocalCatalog(options.pool,session.id));return;}
    if(url.pathname==='/_local-artifact'){
     const id=url.searchParams.get('episode')??'',path=url.searchParams.get('path')??'',hash=url.searchParams.get('sha256');

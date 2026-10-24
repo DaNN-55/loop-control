@@ -1,0 +1,196 @@
+{
+  "passed": true,
+  "independentHealthAndBackupFailure": true,
+  "boundedRetryAfterOneMinute": true,
+  "successAndFailureRetained": true,
+  "plans": [
+    {
+      "kind": "backup",
+      "timezone": "Asia/Shanghai",
+      "next_due_at": "2026-10-27T01:00:00.000Z"
+    },
+    {
+      "kind": "health",
+      "timezone": "Asia/Shanghai",
+      "next_due_at": "2026-10-27T01:00:00.000Z"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "4e986e18-3c69-45df-9a0c-ad11124d0c9f",
+      "kind": "backup",
+      "due_at": "2026-10-26T01:00:00.000Z",
+      "status": "completed",
+      "attempt": 2,
+      "completed_at": "2026-10-26T01:01:00.000Z",
+      "passed": true,
+      "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。"
+    },
+    {
+      "id": "eab83bb4-9cbf-4d26-bc23-ceb70af93b4d",
+      "kind": "health",
+      "due_at": "2026-10-26T01:00:00.000Z",
+      "status": "completed",
+      "attempt": 1,
+      "completed_at": "2026-10-26T01:00:00.000Z",
+      "passed": true,
+      "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。"
+    },
+    {
+      "id": "5ce285bb-387a-4101-9e5a-c5af4db1dbd9",
+      "kind": "backup",
+      "due_at": "2026-10-25T01:00:00.000Z",
+      "status": "completed",
+      "attempt": 1,
+      "completed_at": "2026-10-25T01:00:00.000Z",
+      "passed": true,
+      "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。"
+    },
+    {
+      "id": "20194f9c-70a6-40a1-8eb3-9b77fbff46eb",
+      "kind": "health",
+      "due_at": "2026-10-25T01:00:00.000Z",
+      "status": "completed",
+      "attempt": 2,
+      "completed_at": "2026-10-25T01:01:00.000Z",
+      "passed": true,
+      "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。"
+    },
+    {
+      "id": "532a8aab-c072-4f27-8a1e-2c57f5754f29",
+      "kind": "backup",
+      "due_at": "2026-10-24T01:00:00.000Z",
+      "status": "completed",
+      "attempt": 1,
+      "completed_at": "2026-10-24T01:00:00.000Z",
+      "passed": true,
+      "detail": "本地完整备份已生成并校验：49 张表、842 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。"
+    },
+    {
+      "id": "1d19185d-6759-4b2e-bc77-2543c0fdf9fa",
+      "kind": "health",
+      "due_at": "2026-10-24T01:00:00.000Z",
+      "status": "completed",
+      "attempt": 1,
+      "completed_at": "2026-10-24T01:00:00.000Z",
+      "passed": true,
+      "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。"
+    }
+  ],
+  "operations": {
+    "schedule": {
+      "latest": {
+        "passed": true,
+        "idle": true,
+        "detail": "常驻调度检查完成；空闲结果仅在变化时保存。",
+        "at": "2026-10-24T14:33:01.086Z"
+      },
+      "lastSuccess": {
+        "passed": true,
+        "idle": true,
+        "detail": "常驻调度检查完成；空闲结果仅在变化时保存。",
+        "at": "2026-10-24T14:33:01.086Z"
+      },
+      "lastFailure": null
+    },
+    "notification": {
+      "latest": {
+        "passed": false,
+        "idle": true,
+        "detail": "有 6 条提醒正在投递或结果未知；不会自动重发，请核对控制台队列。",
+        "at": "2026-10-24T14:33:01.084Z"
+      },
+      "lastSuccess": null,
+      "lastFailure": {
+        "passed": false,
+        "idle": true,
+        "detail": "有 6 条提醒正在投递或结果未知；不会自动重发，请核对控制台队列。",
+        "at": "2026-10-24T14:33:01.084Z"
+      }
+    },
+    "health": {
+      "latest": {
+        "passed": true,
+        "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。",
+        "at": "2026-10-26T01:00:00.000Z"
+      },
+      "lastSuccess": {
+        "passed": true,
+        "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。",
+        "at": "2026-10-26T01:00:00.000Z"
+      },
+      "lastFailure": {
+        "passed": false,
+        "detail": "T23 controlled health failure; independent result.",
+        "at": "2026-10-25T01:00:00.000Z"
+      }
+    },
+    "backup": {
+      "latest": {
+        "passed": true,
+        "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+        "at": "2026-10-26T01:01:00.000Z"
+      },
+      "lastSuccess": {
+        "passed": true,
+        "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+        "at": "2026-10-26T01:01:00.000Z"
+      },
+      "lastFailure": {
+        "passed": false,
+        "detail": "本地完整备份未完成；没有成功结论。",
+        "at": "2026-10-26T01:00:00.000Z"
+      }
+    }
+  },
+  "attempts": [
+    {
+      "kind": "backup",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1
+    },
+    {
+      "kind": "health",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1
+    },
+    {
+      "kind": "backup",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1
+    },
+    {
+      "kind": "health",
+      "passed": false,
+      "status": "failed",
+      "attempt": 1
+    },
+    {
+      "kind": "health",
+      "passed": true,
+      "status": "completed",
+      "attempt": 2
+    },
+    {
+      "kind": "backup",
+      "passed": false,
+      "status": "failed",
+      "attempt": 1
+    },
+    {
+      "kind": "health",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1
+    },
+    {
+      "kind": "backup",
+      "passed": true,
+      "status": "completed",
+      "attempt": 2
+    }
+  ]
+}
