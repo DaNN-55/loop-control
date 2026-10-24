@@ -15,7 +15,7 @@ import type { StoryboardManifest } from "./contracts.js";
 import { verifyArtifactIndex, verifyMediaLibrary } from "./mediaLibrary.js";
 import { nonNegativeIntegerEnvironment, requiredEnvironment } from "./runtimeEnvironment.js";
 import { addFrozenStoryboardBasis, refreshArtifactManifest, verifyReportedStoryboardArtifact } from "./storyboardArtifact.js";
-import { applyStoryboardStructureRevision } from "./storyboardRevision.js";
+import { executeStoryboardRevision } from "./storyboardRevisionExecutor.js";
 import { workerResultJsonSchema } from "./workerResultSchema.js";
 import { executeControlledMediaTask, writeSafeAssetFile } from "./controlledMediaExecutor.js";
 import { generateCloudflareWorkersAiImage, generateOpenAiImage } from "./mediaProviders.js";
@@ -151,15 +151,6 @@ async function executeWhisperXTask(taskPackage: WorkerTaskPackage): Promise<stri
   return JSON.stringify({ version: "worker-result/v1", taskId: taskPackage.task.id, status: "completed", artifacts: [artifact], acousticAlignment: result, validation: { passed: true, checks: [{ name: "whisperx_alignment_output", passed: true, detail: result.status === "completed" ? "本地 WhisperX 时序与 Owner 正文已完整匹配。" : "本地 WhisperX 已返回候选时序和人工检查区间。" }] }, actualCostCents: 0, blockers: [], retry: { shouldRetry: false, reason: "Local alignment completed." }, nextStep: result.status === "completed" ? "Review the current shot timing." : "Owner must review unmatched or low-confidence intervals." });
 }
 
-async function executeStoryboardRevision(taskPackage: WorkerTaskPackage): Promise<string> {
-  const revision = taskPackage.storyboardRevision;
-  if (!revision) throw new Error("缺少分镜结构修订。");
-  const storyboard = applyStoryboardStructureRevision(revision.storyboard, revision.operation);
-  const content = `${JSON.stringify(storyboard, null, 2)}\n`;
-  await writeFile(join(taskPackage.assets.allowedRoot, taskPackage.output.relativePath), content);
-  const artifact = { artifactType: taskPackage.output.requiredArtifactTypes[0] ?? "storyboard", relativePath: taskPackage.output.relativePath, sha256: createHash("sha256").update(content).digest("hex"), fileSize: Buffer.byteLength(content) };
-  return JSON.stringify({ version: "worker-result/v1", taskId: taskPackage.task.id, status: "completed", artifacts: [artifact], storyboard, validation: { passed: true, checks: [{ name: "storyboard_structure_revision", passed: true, detail: "结构操作已按冻结输入应用。" }] }, actualCostCents: 0, blockers: [], retry: { shouldRetry: false, reason: "Completed successfully." }, nextStep: "Submit the revised storyboard for Owner review." });
-}
 
 async function useWrittenStoryboard(taskPackage: WorkerTaskPackage, output: string): Promise<string> {
   const candidate = parseCodexOutput(output, 0);

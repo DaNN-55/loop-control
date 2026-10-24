@@ -1,0 +1,417 @@
+{
+  "version": 1,
+  "at": "2026-10-24T05:37:32.509Z",
+  "baseline": "b82546e4006a08f5e8e09010c71431ac9458de9e",
+  "commits": [],
+  "scope": "T17 explicitly opted-in, isolated, controlled offline storyboard chain; no online requests",
+  "entries": [
+    {
+      "path": "scripts/local/migrate.mjs",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 1455,
+      "sha256": "191e8c36e152f49b39585e2871945aaf81c1a68a08675f91d599e1c4ee6073c3"
+    },
+    {
+      "path": "src/local-app/LocalEpisodeDetail.tsx",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 4181,
+      "sha256": "ffdd2ca6bbef0a4d8e4cb1f5d695d09b62e37c0f5cae0803a5eb5b5fa63f730d"
+    },
+    {
+      "path": "src/local-app/episodeCommands.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 13004,
+      "sha256": "b222da16947e65e02f495080e48dbfe77dc750511751d4db01e0aba761f6924c"
+    },
+    {
+      "path": "src/local-app/localWorkerCli.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 4831,
+      "sha256": "a4819c7439b5dd657f2fd9d948ecec863ff15839fae407b2401bb6e20181d685"
+    },
+    {
+      "path": "src/worker/codexWorkerCli.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 35716,
+      "sha256": "02c7389361ccbb7bfb7610bcd33a800c29e1391676faf2908fa816e965ab760d"
+    },
+    {
+      "path": "db/local/013-storyboard.sql",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 9521,
+      "sha256": "7d6d3c2e61e91183d846516a5c44d41a17a277d3c3cea30db3ab5577b67571a2"
+    },
+    {
+      "path": "src/worker/storyboardRevisionExecutor.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 1395,
+      "sha256": "99a6e40952cc13332d0c2b51ab3838836ea1fead44f3eb94496a6dd657784d83"
+    },
+    {
+      "path": "scripts/local/storyboard-acceptance.mjs",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 15825,
+      "sha256": "3a9a097c3aa3cce40b3d95835a47beacaa1621835d6d1d4a0e96119df2ebe316"
+    },
+    {
+      "path": "scripts/local/storyboard-boundaries.mjs",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 5485,
+      "sha256": "8d2bf5f57199b5b8a2462147546528bebabfa5beeaf0197e9fd73488e826ea82"
+    },
+    {
+      "path": "scripts/local/storyboard-offline-fixture.mjs",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 1731,
+      "sha256": "ec130db1c8258bbb0edabb4d9253c39a8e80617100881910309c9ba6b8581962"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/README.md",
+      "kind": "public-report-or-evidence",
+      "bytes": 10464,
+      "sha256": "78da3c0e354c766de87aeb0178d3d3778a58c9f35d91bbfaaef544d1fc8cafab"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/application-final.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 7599,
+      "sha256": "372eb9cd033cf6af236e339dd0cddc561aba5d49f13f6cf423b614a59f3a9ceb"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/application-types.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/before-stage-key-regression.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 1613,
+      "sha256": "f0ed573d7c8c152e656a5cc94140b0a676ddc291a9d7796f8322d2e2e571230c"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/boundaries-first.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 17,
+      "sha256": "4da170ba15fc04eb66f0c7c5e74edd5b4f973f3a79fa499177a2b68216f90197"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/boundaries.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 1100,
+      "sha256": "2e2ae91e56f16d694e17371deefc89c016c51490c2870988ae3c4ff840c0c867"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/boundary-result.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 413,
+      "sha256": "14842079d6b9fb7f9d736a052baa9be5840dfc249b3afa7678146fa23bd05148"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-after-reload-audit.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 2760,
+      "sha256": "8b37201ccf94a557b0e8b7ebf3f6ab34e5e121fe420c46720dcd7ed71336578a"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-after-reload.png",
+      "kind": "public-report-or-evidence",
+      "bytes": 83445,
+      "sha256": "e84077df6fc23eb0fdaad904b5db95fa5f28dc933090421de6b7c6453335090a"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-after-reload.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 10818,
+      "sha256": "9deac8c7bd7650a24def098dd723f476146a1406ec3ed27eecd90d1e954d303c"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-annotation.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 4435,
+      "sha256": "fd18404f1c6888e689e23a0ed207f97cf37b989ff856e9e2299d2b1fbe201f57"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-auto-workbench-fixed.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 10818,
+      "sha256": "f98f6829f6752831a1d3a52038d7bd513fa1a1e245e64e3c257de1ce8df06973"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-final-audit.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 1749,
+      "sha256": "d546674d4000688180d42a767419b0ebb9d28a363b58d8f6b6506a81c4394646"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-final-current.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 3923,
+      "sha256": "90fec48504e9042e562d22c5afe29b8951d8f633036c9517d3ec98e077208572"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-final-requests.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 51828,
+      "sha256": "613d4942c59fb14147f4c40a6c24b50e6e3ab5b3b0ca939b4d70ce4c625c7149"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-final-shot2.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 10830,
+      "sha256": "078ca5e2ca8570613aab672e19f1cce2495dca48d3152eb9d436aa67676f60b7"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-normal.png",
+      "kind": "public-report-or-evidence",
+      "bytes": 68415,
+      "sha256": "ca4f3248e655f6880f9523748353653510cd25b40a15431e377936b2909bbaa1"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-normal.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 4264,
+      "sha256": "d6bf472f143cf9134dd7bb35ca692ea3d1df66b0df8185fedf8d38b2baeb15f4"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-plan-pending.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 3301,
+      "sha256": "a8ec40813d3370fdf421220fc1ebb812da4df2f643de2c7c36ed090a728d28dd"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-prepare.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 61,
+      "sha256": "f18d48f5379ae3c5a4fa36421769d4ba6f175907e7e92e495a02a79d2de8ad7c"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-requests.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 296091,
+      "sha256": "90e3bc316aa11a3c5745091d20e2e3ff5308c1e17912c82217b0dd18f4ee4d79"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-revised-shot.png",
+      "kind": "public-report-or-evidence",
+      "bytes": 83532,
+      "sha256": "88ba1a2f83fb5346c68a28f8ac2f8ef57e88ddcfb708b68a3aa942d966e4036c"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-rework-pending.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 4715,
+      "sha256": "94f7db15a4a7f8b2f0e0df834f7a8ba1128f74b8e5a8caddef0dba18895e522a"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-rework-v2.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 4264,
+      "sha256": "be640697d73b7b666d090d48d87652efad00a598c97ed005feaf2b538e3f0be3"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-shot2-form.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 5852,
+      "sha256": "6c2069de9c3d5de851d3f70b269e8819b154825b54a5c6da0a94ed2aeeefb867"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-shot2-menu.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 5918,
+      "sha256": "88e4c1e0096f38e3855322e6421a2a6e1c7f9ebbd9e61e984d12c5e10c8ce9bf"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-structure-pending.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 12010,
+      "sha256": "abf7501d40d46a4fadd56ccbbeae0e277f870507924af33200d9dc11601748a7"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-structure-submit.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 11851,
+      "sha256": "50e209d2a80ce6124cdd6419832838e3ba0d43d5ab43415c759bb15ddaee11ec"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/browser-workbench-after-manual-reload.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 10876,
+      "sha256": "a9b98a6796ac969e822199107b881b45b4c1aa57f2f0aa29974bb0374738aedf"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/credential-scan.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 558,
+      "sha256": "8bb0bf92e040d4e02d2e0b0c3502c8853b756f71619e168c8dd90141c2277a16"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/events.jsonl",
+      "kind": "public-report-or-evidence",
+      "bytes": 20363,
+      "sha256": "5956381aa3afbc97a0291a46fb2e15aad6c1d51a47eb48abacd82ebdc8e1eb9e"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/frontend-build.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 1142,
+      "sha256": "5c85e1d7199683d426aa3f2e9c51e9e23d03ec002525800f0c00c22865f4e035"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/http-first.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 5946,
+      "sha256": "399342737a9b14b26ecb99b092701e3dd9f07ab41c956516ae0ae77a55e14839"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/http-result.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 3559,
+      "sha256": "71e419142c842b3006c95bcfd8936e6dbf08589be6f13520c14965fd24113de4"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/http-second.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 139,
+      "sha256": "94cda9781fba9135b998c65a916a7f655e8f8bdaaec634769e3122b87e5dc721"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/local-types.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/migrate-second.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 1499,
+      "sha256": "c59ecdbf34442ca617e1dbe0de84231a87141ea00de755ad9bd73f94916d345b"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/migrate-third.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 87,
+      "sha256": "5d6416117be4b330cf777e0556deb704fc338adb4e57ba927c95c847019dc184"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/migrate.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 1521,
+      "sha256": "1593667fbf703dfcf99f2641e4be092564fddac82aa1d90ab821bee4c2f68605"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/native-security.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 910,
+      "sha256": "d6bc605f2331b235581ccec20058c91d4d46d80eec6b0976ce5639071099a91b"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/network-guard.mjs",
+      "kind": "public-report-or-evidence",
+      "bytes": 890,
+      "sha256": "5cc8a31c54b0ba264b0dfa72e268daaaef8c4374b1e925c94026ef09dfb7e5e5"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/node-final.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 341,
+      "sha256": "21b34e095d70ac04ff7723069056203fbd9ef63e2aac00f3ae2f4d74a320f875"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/original-history.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 4877,
+      "sha256": "e917d9d61c4271c9d640f0931f6662c7708050c36971177765918693c74eb241"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/pre-t17-history.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 4060,
+      "sha256": "e0296759a606a66d815c5d873af3465975464bf34a570ed8b96fcb3a3c75fa3b"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/regression-results.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 1800,
+      "sha256": "8c3e16bbaedf8e4010730e8983fe474697329634b4e2ac0663aa1352cbccd8b9"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/review.md",
+      "kind": "public-report-or-evidence",
+      "bytes": 1433,
+      "sha256": "781cd718401d517f576c18084ae9b12df856601ac0f914d45eb2d48e54edc157"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/runtime-final.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 215,
+      "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/runtime-first.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 859,
+      "sha256": "e63c70c9d8c6d99600ac414a9f7e8ddbfb4cd4a9674b5bd48b9ce6a5a193972b"
+    },
+    {
+      "path": "docs/verification/stage-d-t17/runtime-second.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 215,
+      "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4"
+    }
+  ],
+  "privateRetained": [
+    {
+      "path": ".loop-control/stage-d/state/t17-20261024/baseline.json",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t17-20261024/PLAN.md",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t17-20261024/change-scope.json",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t17-20261024/fixture.json",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t17-20261024/business-before-private.sql",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t17-20261024/post-t17-private.sql",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t17-20261024/normal-snapshot.json",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t17-20261024/feedback-snapshot.json",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t17-20261024/server-private.log",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    }
+  ],
+  "excluded": [
+    "Root PLAN.md, unrelated docs/backlog/docs/specs/output",
+    "Owner/app/Worker credentials; not indexed",
+    "Raw credentials, sessions, leases, dumps and raw server logs",
+    "Raw HAR: not captured"
+  ],
+  "intermediateEvidenceLimitation": "An intermediate passing regression used the same output filenames as the final run; only its command/exit-code manifest retained. Final raw logs and all failed attempts retained.",
+  "self": "Excluded from its own fingerprint list.",
+  "archiveAuthorization": {
+    "status": "Owner approved local commit of this exact T17 scope",
+    "acceptanceSnapshot": "commits empty and noCommit/HEAD/index fields in raw evidence describe pre-archive acceptance",
+    "limitationsRetained": "Historical default 5-second gate failure and unresolved root cause; default deployment, online generation, other Providers and full multi-capability Worker unaccepted; intermediate passing regression raw logs overwritten as documented",
+    "excluded": "Unrelated planning and credential-bearing private evidence",
+    "boundaries": "No production operations, push, merge or T18",
+    "commitIdentity": "See Git history; acceptance baseline unchanged"
+  }
+}

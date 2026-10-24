@@ -11,13 +11,15 @@ import {join} from 'node:path';
 import {blueprintSelectionErrors} from '../worker/runtimePreflight.js';
 import {mediaCapabilityKeys} from '../worker/productionCapabilities.js';
 import {workerPreflightVersion,type WorkerPreflightCheck} from '../worker/contracts.js';
+import {verifyReportedStoryboardArtifact} from '../worker/storyboardArtifact.js';
 export interface InputRuntime {ready():Promise<void>;wake(episodeId:string):void;mountPath:string;minimumFreeBytes:number;checkReferences(client:PoolClient,refs:string[]):Promise<void>}
 export class LocalEpisodeCommands {
  constructor(private pool:Pool,private mediaRoot:string,private runtime:InputRuntime){}
  async execute(session:OwnerSession,body:Record<string,unknown>){
-  if(typeof body.command!=='string'||!['create','importMaterial','start','review','openDirectory'].includes(body.command)||typeof body.idempotencyKey!=='string'||!/^[0-9a-f-]{36}$/.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data)||Object.keys(body).some(k=>!['command','idempotencyKey','data'].includes(k)))throw new ConfigurationError(400,'Episode命令无效。');
+  if(typeof body.command!=='string'||!['create','importMaterial','start','review','openDirectory','planStoryboard','annotateStoryboard','requestStructureRevision'].includes(body.command)||typeof body.idempotencyKey!=='string'||!/^[0-9a-f-]{36}$/.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data)||Object.keys(body).some(k=>!['command','idempotencyKey','data'].includes(k)))throw new ConfigurationError(400,'Episode命令无效。');
   const data=body.data as Record<string,unknown>,hash=createHash('sha256').update(JSON.stringify(canonical(body))).digest('hex');
   const allowed:Record<string,string[]>={create:['accountId','title','seriesVersionId','isTest'],importMaterial:['episodeId','sourceKind','sourcePath','logicalName','materialType','materialPurpose','mimeType','isMainScript','contentBase64','deferRefresh'],start:['episodeId'],review:['episodeId','toStage','reason','reviewPackageId'],openDirectory:['episodeId']};
+  allowed.planStoryboard=['episodeId'];allowed.annotateStoryboard=['episodeId','reviewPackageId','shotId','reason'];allowed.requestStructureRevision=['episodeId','reviewPackageId','operation','reason'];
   if(Object.keys(data).some(k=>!allowed[body.command as string].includes(k)))throw new ConfigurationError(400,'Episode字段无效。');
   const result=await sessionTransaction(this.pool,session,async c=>{
    await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[session.id+':'+body.idempotencyKey]);
@@ -34,7 +36,7 @@ export class LocalEpisodeCommands {
     await c.query('INSERT INTO local_identity.input_episodes(episode_id,owner_id) VALUES($1,$2)',[value.id,session.id]);
    }else{
     if(!(await c.query('SELECT local_identity.lock_owned_input_episode($1) owned',[data.episodeId])).rows[0].owned)throw new ConfigurationError(404,'本地生产单不可见。');
-    const e=(await c.query('SELECT e.*,b.policy FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN local_identity.input_episodes i ON i.episode_id=e.id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\' AND i.owner_id=$2',[data.episodeId,session.id])).rows[0];
+    const e=(await c.query('SELECT e.*,b.policy,i.storyboard_enabled FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN local_identity.input_episodes i ON i.episode_id=e.id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\' AND i.owner_id=$2',[data.episodeId,session.id])).rows[0];
     if(!e)throw new ConfigurationError(404,'本地生产单不可见。');const root=await nativeAssetRoot(this.mediaRoot,e.policy.asset_root);
     if(body.command==='importMaterial'){
      if(data.isMainScript&&(e.stage!=='waiting_input'||e.main_script_revision_id))throw new ConfigurationError(409,'主脚本已确认或制作已开始，不能替换。');
@@ -52,20 +54,38 @@ export class LocalEpisodeCommands {
      await c.query('SELECT public.record_episode_worker_preflight($1,$2)',[e.id,session.id]);
      value=(await c.query('SELECT to_jsonb(public.start_episode_production($1)) result',[e.id])).rows[0].result;
      await c.query('UPDATE local_identity.input_episodes SET enabled=true WHERE episode_id=$1',[e.id]);
+    }else if(body.command==='planStoryboard'){
+     if(e.stage!=='visual_approved')throw new ConfigurationError(409,'请先批准视觉清单。');
+     await this.preflight(c,e.account_id,e.policy,true);
+     const budget=e.policy.budgets?.storyboard_planning_cents;
+     if(!Number.isSafeInteger(budget)||budget<0)throw new ConfigurationError(409,'蓝图分镜预算无效。');
+     await c.query('UPDATE local_identity.input_episodes SET storyboard_enabled=true WHERE episode_id=$1',[e.id]);value={id:e.id,queued:true};
     }else if(body.command==='openDirectory'){
      await ensureInputDirectories(root,e.id);await promisify(execFile)('/usr/bin/open',[join(root,'episodes',e.id,'input')],{env:{PATH:'/usr/bin:/bin'},timeout:5000});value={opened:true};
     }else{
-     if(typeof data.reason!=='string'||!data.reason.trim()||data.reason.length>5000||!['visual_approved','visual_draft'].includes(String(data.toStage)))throw new ConfigurationError(400,'视觉审批内容无效。');
-     const p=(await c.query("SELECT id,artifact_id FROM public.review_packages WHERE episode_id=$1 AND stage='visual_review' AND invalidated_at IS NULL ORDER BY revision_number DESC LIMIT 1",[e.id])).rows[0];
-     if(e.stage!=='visual_review'||!p||p.id!==data.reviewPackageId)throw new ConfigurationError(409,'审核包已变化，请刷新后重新审核。');
+     if(typeof data.reason!=='string'||!data.reason.trim()||data.reason.length>5000)throw new ConfigurationError(400,'审核内容无效。');
+     const storyboard=body.command!=='review'||String(data.toStage).startsWith('storyboard_');
+     const stage=storyboard?'storyboard_review':'visual_review';
+     const p=(await c.query('SELECT * FROM public.review_packages WHERE episode_id=$1 AND stage=$2 AND invalidated_at IS NULL ORDER BY revision_number DESC LIMIT 1',[e.id,stage])).rows[0];
+     if(!p||p.id!==data.reviewPackageId||storyboard&&!e.storyboard_enabled||e.stage!==(body.command==='requestStructureRevision'?'storyboard_approved':stage))throw new ConfigurationError(409,'审核包已变化，请刷新后重新审核。');
      const files=(await c.query('SELECT * FROM public.artifacts WHERE episode_id=$1 AND id=$2',[e.id,p.artifact_id])).rows;
      if(!files.length)throw new ConfigurationError(409,'审核产物缺失。');for(const f of files)await verifyNativeFile(root,f.relative_path,f.sha256,Number(f.file_size));
-     value=(await c.query('SELECT to_jsonb(public.transition_episode($1,$2,$3)) result',[e.id,data.toStage,data.reason.trim()])).rows[0].result;
+     if(storyboard)try{await verifyReportedStoryboardArtifact({assetRoot:root,relativePath:files[0].relative_path,frozenInputs:p.context_snapshot.input_artifacts??[],storyboard:p.context_snapshot.worker_result?.storyboard});}catch{throw new ConfigurationError(409,'分镜产物与冻结审核依据不一致。');}
+     if(body.command==='annotateStoryboard'){
+      if(typeof data.shotId!=='string'||!data.shotId.trim())throw new ConfigurationError(400,'镜头标识无效。');
+      value=(await c.query('SELECT to_jsonb(public.create_storyboard_annotation($1,$2,$3)) result',[p.id,data.shotId,data.reason.trim()])).rows[0].result;
+     }else if(body.command==='requestStructureRevision'){
+      await this.preflight(c,e.account_id,e.policy,true);
+      value=(await c.query('SELECT to_jsonb(public.request_shot_structure_revision($1,$2,$3,$4)) result',[e.id,p.id,data.operation,data.reason.trim()])).rows[0].result;
+     }else{
+      if(!['visual_approved','visual_draft','storyboard_approved','storyboard_draft'].includes(String(data.toStage)))throw new ConfigurationError(400,'审核目标无效。');
+      value=(await c.query('SELECT to_jsonb(public.transition_episode($1,$2,$3)) result',[e.id,data.toStage,data.reason.trim()])).rows[0].result;
+     }
     }
    }
    await c.query('INSERT INTO local_identity.command_receipts(owner_id,idempotency_key,payload_hash,result) VALUES($1,$2,$3,$4)',[session.id,body.idempotencyKey,hash,value]);return value;
   });
-  if(body.command==='start')this.runtime.wake(result.id);return result;
+  if(['start','planStoryboard','requestStructureRevision','review'].includes(body.command))this.runtime.wake(String(data.episodeId??result.id));return result;
  }
  private async preflight(c:PoolClient,accountId:string,policy:Record<string,unknown>,existing:boolean){
   const failure=(reason:string,check:string,scope:WorkerPreflightCheck['scope'],action:WorkerPreflightCheck['action'],status=409)=>new ConfigurationError(status,reason,{version:workerPreflightVersion,checks:[{capability:'worker_runtime',check,phase:'preflight',status:scope==='worker'?'unavailable':'blocked',reason,action,scope}]});

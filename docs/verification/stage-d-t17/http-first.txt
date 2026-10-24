@@ -1,0 +1,107 @@
+AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
++ actual - expected
+
+  '{\n' +
++   '  "version": "storyboard/v1",\n' +
++   '  "audioCues": [],\n' +
+    '  "shots": [\n' +
+    '    {\n' +
+    '      "id": "shot-1",\n' +
++   '      "scriptSegment": "介绍本轮合成脚本。",\n' +
++   '      "durationSeconds": 4,\n' +
+    '      "shotType": "a_roll",\n' +
++   '      "productionMethod": "人工素材",\n' +
+    '      "inputBasis": [\n' +
+    '        {\n' +
++   '          "relativePath": "episodes/4ac27823-6bab-49aa-be7e-c51b1402e97c/materials/13a029dd19b011de2b44fd9b335acde828dc5cf8d26ff486d52c2a73d2f900ec-script.md",\n' +
++   '          "sha256": "13a029dd19b011de2b44fd9b335acde828dc5cf8d26ff486d52c2a73d2f900ec"\n' +
+-   '          "sha256": "13a029dd19b011de2b44fd9b335acde828dc5cf8d26ff486d52c2a73d2f900ec",\n' +
+-   '          "relativePath": "episodes/4ac27823-6bab-49aa-be7e-c51b1402e97c/materials/13a029dd19b011de2b44fd9b335acde828dc5cf8d26ff486d52c2a73d2f900ec-script.md"\n' +
+    '        },\n' +
+    '        {\n' +
++   '          "relativePath": "episodes/4ac27823-6bab-49aa-be7e-c51b1402e97c/visual-assets-v1.md",\n' +
++   '          "sha256": "0ca6cc66030a9de73315aa921ca457de9fe91b963bbee15e1a4203efea3eae42"\n' +
+-   '          "sha256": "0ca6cc66030a9de73315aa921ca457de9fe91b963bbee15e1a4203efea3eae42",\n' +
+-   '          "relativePath": "episodes/4ac27823-6bab-49aa-be7e-c51b1402e97c/visual-assets-v1.md"\n' +
+    '        },\n' +
+    '        {\n' +
++   '          "relativePath": "episodes/4ac27823-6bab-49aa-be7e-c51b1402e97c/materials/9d99ae1cf906c42157f6e7ef3ac39c4c3389621c3055b1b3f359dfed99a30e5f-actor.png",\n' +
++   '          "sha256": "9d99ae1cf906c42157f6e7ef3ac39c4c3389621c3055b1b3f359dfed99a30e5f"\n' +
+-   '          "sha256": "9d99ae1cf906c42157f6e7ef3ac39c4c3389621c3055b1b3f359dfed99a30e5f",\n' +
+-   '          "relativePath": "episodes/4ac27823-6bab-49aa-be7e-c51b1402e97c/materials/9d99ae1cf906c42157f6e7ef3ac39c4c3389621c3055b1b3f359dfed99a30e5f-actor.png"\n' +
+    '        }\n' +
+    '      ],\n' +
++   '      "targetSpec": "9:16，1080×1920，24fps"\n' +
+-   '      "targetSpec": "9:16，1080×1920，24fps",\n' +
+-   '      "scriptSegment": "介绍本轮合成脚本。",\n' +
+-   '      "durationSeconds": 4,\n' +
+-   '      "productionMethod": "人工素材"\n' +
+    '    },\n' +
+    '    {\n' +
+    '      "id": "shot-2",\n' +
++   '      "scriptSegment": "展示自供参考并收束。",\n' +
++   '      "durationSeconds": 4,\n' +
+    '      "shotType": "b_roll",\n' +
++   '      "productionMethod": "人工素材",\n' +
+    '      "inputBasis": [\n' +
+    '        {\n' +
++   '          "relativePath": "episodes/4ac27823-6bab-49aa-be7e-c51b1402e97c/materials/13a029dd19b011de2b44fd9b335acde828dc5cf8d26ff486d52c2a73d2f900ec-script.md",\n' +
++   '          "sha256": "13a029dd19b011de2b44fd9b335acde828dc5cf8d26ff486d52c2a73d2f900ec"\n' +
+-   '          "sha256": "13a029dd19b011de2b44fd9b335acde828dc5cf8d26ff486d52c2a73d2f900ec",\n' +
+-   '          "relativePath": "episodes/4ac27823-6bab-49aa-be7e-c51b1402e97c/materials/13a029dd19b011de2b44fd9b335acde828dc5cf8d26ff486d52c2a73d2f900ec-script.md"\n' +
+    '        },\n' +
+    '        {\n' +
++   '          "relativePath": "episodes/4ac27823-6bab-49aa-be7e-c51b1402e97c/visual-assets-v1.md",\n' +
++   '          "sha256": "0ca6cc66030a9de73315aa921ca457de9fe91b963bbee15e1a4203efea3eae42"\n' +
+-   '          "sha256": "0ca6cc66030a9de73315aa921ca457de9fe91b963bbee15e1a4203efea3eae42",\n' +
+-   '          "relativePath": "episodes/4ac27823-6bab-49aa-be7e-c51b1402e97c/visual-assets-v1.md"\n' +
+    '        },\n' +
+    '        {\n' +
++   '          "relativePath": "episodes/4ac27823-6bab-49aa-be7e-c51b1402e97c/materials/9d99ae1cf906c42157f6e7ef3ac39c4c3389621c3055b1b3f359dfed99a30e5f-actor.png",\n' +
++   '          "sha256": "9d99ae1cf906c42157f6e7ef3ac39c4c3389621c3055b1b3f359dfed99a30e5f"\n' +
+-   '          "sha256": "9d99ae1cf906c42157f6e7ef3ac39c4c3389621c3055b1b3f359dfed99a30e5f",\n' +
+-   '          "relativePath": "episodes/4ac27823-6bab-49aa-be7e-c51b1402e97c/materials/9d99ae1cf906c42157f6e7ef3ac39c4c3389621c3055b1b3f359dfed99a30e5f-actor.png"\n' +
+    '        }\n' +
+    '      ],\n' +
++   '      "targetSpec": "9:16，1080×1920，24fps"\n' +
+-   '      "targetSpec": "9:16，1080×1920，24fps",\n' +
+-   '      "scriptSegment": "展示自供参考并收束。",\n' +
+-   '      "durationSeconds": 4,\n' +
+-   '      "productionMethod": "人工素材"\n' +
+    '    }\n' +
++   '  ]\n' +
+-   '  ],\n' +
+-   '  "version": "storyboard/v1",\n' +
+-   '  "audioCues": []\n' +
+    '}\n'
+
+    at Object.test (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/storyboard-acceptance.mjs:60:632)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/storyboard-acceptance.mjs:64:55 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: '{\n' +
+    '  "version": "storyboard/v1",\n' +
+    '  "audioCues": [],\n' +
+    '  "shots": [\n' +
+    '    {\n' +
+    '      "id": "shot-1",\n' +
+    '      "scriptSegment": "介绍本轮合成脚本。",\n' +
+    '      "durationSeconds": 4,\n' +
+    '      "shotType": "a_roll",\n' +
+    '      "productionMethod": "人工素材",\n' +
+    '...',
+  expected: '{\n' +
+    '  "shots": [\n' +
+    '    {\n' +
+    '      "id": "shot-1",\n' +
+    '      "shotType": "a_roll",\n' +
+    '      "inputBasis": [\n' +
+    '        {\n' +
+    '          "sha256": "13a029dd19b011de2b44fd9b335acde828dc5cf8d26ff486d52c2a73d2f900ec",\n' +
+    '          "relativePath": "episodes/4ac27823-6bab-49aa-be7e-c51b1402e97c/materials/13a029dd19b011de2b44fd9b335acde828dc5cf8d26ff486d52c2a73d2f900ec-script.md"\n' +
+    '        },\n' +
+    '...',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
