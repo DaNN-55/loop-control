@@ -1,0 +1,33 @@
+{
+  "at": "2026-10-24T05:05:38.271Z",
+  "head": "aeaf25c25a229573b35c5a3a7daa9bb62c10c918",
+  "branch": "codex/local-first-stage-a",
+  "rootPlanShaUnchanged": true,
+  "indexEmpty": true,
+  "noCommit": true,
+  "noPush": true,
+  "noMerge": true,
+  "noProductionOperations": true,
+  "nextTicketNotStarted": "T17",
+  "ownAcceptancePort55179Closed": true,
+  "ownBrowserClosed": true,
+  "ownRunningTasks": 0,
+  "priorDApp55177": "already absent at resume; not restarted or signalled",
+  "nativeDb55472": "same container and data; missing SSH tunnel restored only after dead-PID check",
+  "mediaVolume": "dedicated test sparseimage retained mounted to preserve artifact retrieval; no production volume changed",
+  "t15OnlineBudget": {
+    "max": 2,
+    "used": 2,
+    "phase": "hold",
+    "phaseSpent": true,
+    "halted": false
+  },
+  "priorTestKeychainAbsent": true,
+  "newOnlineProviderRequests": 0,
+  "browserExternalHttpRequests": 0,
+  "browserHttpRecordsChecked": 461,
+  "defaultWorkerDeploymentNotEnabled": true,
+  "priorDefault5000msFailureAndRootCauseUnresolved": true,
+  "otherProvidersNotAccepted": true,
+  "fullMultiCapabilityWorkerNotAccepted": true
+}

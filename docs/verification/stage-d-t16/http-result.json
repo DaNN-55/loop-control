@@ -1,0 +1,109 @@
+{
+  "at": "2026-10-24T05:03:11.749Z",
+  "realHttp": true,
+  "realNativePostgres": true,
+  "realWorkerCliSubprocess": true,
+  "visualPlanner": "controlled offline fixture, not online AI",
+  "providerRequests": 0,
+  "created4OneEpisode": true,
+  "upload3OneRevision": true,
+  "start3OneTask": true,
+  "review2OneDecision": true,
+  "blueprintAndSeriesFrozen": true,
+  "materialsApproved": true,
+  "lateSupplementAllowedWithFrozenTask": true,
+  "confirmedMainReplacement409": true,
+  "currentPreflightVersion": "worker-preflight/v2",
+  "artifactVerified": {
+    "id": "34e218ee-18fa-4e7c-b259-2df1e5443c68",
+    "sha256": "5f18b5f08d2b4815bee0c360210011e886ccc18c6bc86317e17e8662f8e1698e",
+    "bytes": 528
+  },
+  "finalStage": "visual_approved",
+  "episodeId": "06f14c50-90c9-485c-9121-4dce4ae6ba1d",
+  "taskId": "af0f6536-ee93-422d-873f-64838a1308a0",
+  "reviewPackageId": "f8faddb1-4a32-49a9-a8c1-032518427e06",
+  "calls": [
+    {
+      "command": "create",
+      "status": 404
+    },
+    {
+      "command": "create",
+      "status": 200
+    },
+    {
+      "command": "create",
+      "status": 200
+    },
+    {
+      "command": "create",
+      "status": 200
+    },
+    {
+      "command": "create",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 400
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "updateBlueprint",
+      "status": 200
+    },
+    {
+      "command": "createSeriesVersion",
+      "status": 200
+    },
+    {
+      "command": "start",
+      "status": 200
+    },
+    {
+      "command": "start",
+      "status": 200
+    },
+    {
+      "command": "start",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 409
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 409
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    }
+  ],
+  "passed": true
+}

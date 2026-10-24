@@ -4,11 +4,12 @@ import type {IncomingMessage,ServerResponse} from 'node:http';
 import type {Pool} from 'pg';
 import {readLocalCatalog} from './catalog.js';
 import {lookupSession,readSessionToken,establishSession,revokeSession,cookieHeader,csrfFor} from './sessions.js';
-import {readLocalEpisode,findOwnedArtifact} from './episodeReads.js';
+import {readLocalEpisode,findOwnedArtifact,findOwnedInputFile} from './episodeReads.js';
 import {serveOwnedArtifact} from './artifactRoute.js';
 import {LocalConnections} from './connections.js';
 import {SecretStoreError} from './connectionPorts.js';
-interface LocalOptions {pool:Pool;origin:string;mediaRoot:string;connections?:LocalConnections}
+import type {LocalEpisodeCommands} from './episodeCommands.js';
+interface LocalOptions {pool:Pool;origin:string;mediaRoot:string;connections?:LocalConnections;episodes?:LocalEpisodeCommands}
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 async function readBody(request:IncomingMessage,limit=8192):Promise<Record<string,unknown>>{
  if(request.headers['content-type']?.split(';')[0]!=='application/json')throw Error('JSON required');
@@ -46,6 +47,11 @@ export function createLocalHandler(options:LocalOptions){
     let body;try{body=await readBody(request,256*1024);}catch{send(400,{error:'配置请求格式无效。'});return;}
     send(200,await executeConfiguration(options.pool,session,body,options.mediaRoot,connections.externalReady?(client,refs)=>connections.assertBlueprintReferences(client,refs):undefined));return;
    }
+   if(url.pathname==='/api/local/episode-commands'&&request.method==='POST'){
+    if(!options.episodes){send(503,{error:'本地Episode执行服务尚未配置。'});return;}
+    let body;try{body=await readBody(request,140*1024*1024);}catch{send(400,{error:'Episode请求格式无效。'});return;}
+    send(200,await options.episodes.execute(session,body));return;
+   }
    if(url.pathname==='/api/local/connections'){
     if(request.method==='GET'){send(200,await connections.read(session.id));return;}
     if(request.method==='POST'){
@@ -56,9 +62,17 @@ export function createLocalHandler(options:LocalOptions){
    if(request.method!=='GET'){send(405,{error:'该本地命令尚未开放。'});return;}
    if(url.pathname==='/api/local/session'){send(200,{owner:{id:session.id,email:session.email},csrfToken:csrfFor(session.token)});return;}
    if(url.pathname==='/api/local/catalog'){send(200,await readLocalCatalog(options.pool,session.id));return;}
+   if(url.pathname==='/_local-artifact'){
+    const id=url.searchParams.get('episode')??'',path=url.searchParams.get('path')??'',hash=url.searchParams.get('sha256');
+    if(!uuid.test(id)){send(400,{error:'产物引用无效。'});return;}
+    const file=await findOwnedInputFile(options.pool,session.id,id,path);if(!file){send(404,{error:'产物不可见。'});return;}
+    if(hash&&hash!==file.sha256){send(409,{error:'产物指纹已变化。'});return;}
+    try{await serveOwnedArtifact(options.mediaRoot,file,response);}catch{if(response.headersSent)response.destroy();else send(409,{error:'产物路径或指纹校验失败。'});}return;
+   }
    const episode=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)$/);
    if(episode&&uuid.test(episode[1])){
-    const result=await readLocalEpisode(options.pool,session.id,episode[1]);send(result?200:404,result??{error:'生产单不可见。'});return;
+    let known:Record<string,string>={};try{const value=JSON.parse(url.searchParams.get('known')??'{}');if(!value||Array.isArray(value)||Object.values(value).some(v=>typeof v!=='string'))throw Error();known=value;}catch{send(400,{error:'读取版本无效。'});return;}
+    const result=await readLocalEpisode(options.pool,session.id,episode[1],known);send(result?200:404,result??{error:'生产单不可见。'});return;
    }
    const artifact=url.pathname.match(/^\/api\/local\/artifacts\/([^/]+)$/);
    if(artifact&&uuid.test(artifact[1])){
@@ -66,7 +80,7 @@ export function createLocalHandler(options:LocalOptions){
     try{await serveOwnedArtifact(options.mediaRoot,record,response);}catch{if(response.headersSent)response.destroy();else send(409,{error:'产物路径或指纹校验失败。'});}return;
    }
    send(404,{error:'本地路径尚未迁移。'});
-  }catch(error){if(error instanceof ConfigurationError){send(error.status,{error:error.message});return;}
+  }catch(error){if(error instanceof ConfigurationError){send(error.status,{error:error.message,...(error.preflight?{preflight:error.preflight}:{})});return;}
    if(error instanceof SecretStoreError){send(error.code==='conflict'?409:503,{error:error.code==='conflict'?'旧秘密引用不能覆盖；请显式创建新版本。':'秘密存储或验证未就绪；请检查授权、绑定和本机状态。'});return;}
    if((error as {status?:number})?.status===401){send(401,{error:'会话已失效。'});return;}
    if((error as {code?:string})?.code==='P0002'){send(404,{error:'连接或版本不可见。'});return;}

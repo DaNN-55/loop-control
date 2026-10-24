@@ -4,7 +4,8 @@ import {realpath} from 'node:fs/promises';
 import type {Pool,PoolClient} from 'pg';
 import {ownerTransaction} from './ownerTransaction.js';
 import {tokenHash,type OwnerSession} from './sessions.js';
-export class ConfigurationError extends Error {constructor(public status:number,message:string){super(message);}}
+import type {WorkerPreflightResult} from '../worker/contracts.js';
+export class ConfigurationError extends Error {constructor(public status:number,message:string,public preflight?:WorkerPreflightResult){super(message);}}
 export function validateConfigurationPolicy(value:unknown,allowExternal=false):string[]{
  const refs=new Set<string>();
  if(!value||typeof value!=='object'||Array.isArray(value))throw new ConfigurationError(400,'蓝图规则必须是对象。');
@@ -20,7 +21,7 @@ export function validateConfigurationPolicy(value:unknown,allowExternal=false):s
  visit(value);
  return [...refs];
 }
-function canonical(value:unknown):unknown{return Array.isArray(value)?value.map(canonical):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).sort().map(([k,v])=>[k,canonical(v)])):value;}
+export function canonical(value:unknown):unknown{return Array.isArray(value)?value.map(canonical):value&&typeof value==='object'?Object.fromEntries(Object.entries(value).sort().map(([k,v])=>[k,canonical(v)])):value;}
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const commands={
  createAccount:{sql:'select to_jsonb(public.create_account($1,$2,$3,$4)) result',fields:['name','slug','timezone','policy']},

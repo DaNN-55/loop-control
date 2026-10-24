@@ -1,0 +1,51 @@
+{
+  "at": "2026-10-24T05:04:07.614Z",
+  "fallback": {
+    "episodeId": "a726aa6a-a02a-43c4-a3a3-0c590a30beec",
+    "oneTask": true,
+    "attempt": 1,
+    "conservativeStartTransactionToClaimMs": 4022.597,
+    "noExplicitWake": true,
+    "noBrowserRequired": true
+  },
+  "restart": {
+    "episodeId": "9fafd783-9d44-4f98-b9ff-2316800a1cdf",
+    "pendingWithoutTaskBeforeRestart": true,
+    "oneTask": true,
+    "attempt": 1,
+    "restartDbClockToClaimMs": 247.676
+  },
+  "shutdown": {
+    "episodeId": "cd428fc0-a010-4e97-9865-05977f6447ea",
+    "taskId": "575e39d6-9004-4b9e-81f6-89031890fb66",
+    "workerPid": 48834,
+    "plannerPid": 48835,
+    "realWorkerAndPlannerKilled": true,
+    "readyAfterStop": true,
+    "attempts": [
+      {
+        "status": "failed",
+        "attempt": 0
+      },
+      {
+        "status": "completed",
+        "attempt": 1
+      }
+    ],
+    "completedAfterRestart": true
+  },
+  "programBefore": {
+    "sha256": "f7bc99a4519899d25979fd8707772af744188b8499406a0502415b1fde7cc606",
+    "mtimeMs": 1792818137660.87,
+    "manifest": "b721fb18bc97f992dfbb69a0d7657a902fb199edabfa7d60afc8bd7e2f2f38b1"
+  },
+  "programAfter": {
+    "sha256": "f7bc99a4519899d25979fd8707772af744188b8499406a0502415b1fde7cc606",
+    "mtimeMs": 1792818137660.87,
+    "manifest": "b721fb18bc97f992dfbb69a0d7657a902fb199edabfa7d60afc8bd7e2f2f38b1"
+  },
+  "hotPathDidNotCompile": true,
+  "providerRequests": 0,
+  "visualPlanner": "controlled offline executable; real CLI/PG/files",
+  "passed": true
+}

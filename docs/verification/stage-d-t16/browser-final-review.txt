@@ -1,0 +1,90 @@
+- generic [ref=e1] clickable [onclick]
+  - main
+    - sectionheader
+      - StaticText "Loop Control · 本地"
+      - heading "内容工作台" [level=1, ref=e2]
+    - navigation
+      - button "账号配置" [ref=e3]
+      - button "生产单目录" [ref=e4]
+      - button "新建账号" [ref=e5]
+      - button "刷新" [ref=e6]
+      - button "退出登录" [ref=e7]
+    - generic
+      - heading "生产单（19）" [level=2, ref=e8]
+        - StaticText "生产单（19）"
+      - button "新建生产单" [ref=e9]
+      - generic
+        - button "返回生产单目录" [ref=e10]
+        - sectionheader
+          - heading "T16 最终源码浏览器验收" [level=2, ref=e15]
+          - StaticText "5ccc756b"
+        - button "刷新生产单状态" [ref=e16]
+        - button "打开本地输入目录" [ref=e17]
+        - button "复制本地输入目录路径" [ref=e18]
+        - button "查看产物索引" [expanded=false, ref=e19]
+        - button "查看执行与审计时间线" [expanded=false, ref=e20]
+        - paragraph
+          - StaticText "蓝图 v1 · 创建于 2026年10月24日 12:56"
+        - generic
+          - StaticText "当前阶段"
+          - strong
+            - StaticText "视觉素材准备与审核"
+          - StaticText "下一步"
+          - paragraph
+            - StaticText "审核视觉素材清单"
+          - generic
+            - StaticText "当前审核"
+            - strong
+              - StaticText "视觉审核"
+            - paragraph
+              - StaticText "需要你审核"
+          - generic
+            - StaticText "当前任务"
+            - strong
+              - StaticText "等待审核"
+            - paragraph
+              - StaticText "审核包已就绪，等待 Owner 决定。"
+        - group
+          - DisclosureTriangle "准备生产材料" [expanded=false]
+            - ListMarker "▸"
+            - heading "准备生产材料" [level=3, ref=e25]
+        - heading "审核与冻结依据" [level=4, ref=e11]
+        - paragraph
+          - StaticText "脚本哈希、系列基准、执行器与预算"
+        - button "查看" [expanded=false, ref=e12]
+        - heading "完整资产清单" [level=4, ref=e13]
+        - paragraph
+          - StaticText "已冻结外部输入 1 项；已生成视觉资产 0 项。"
+        - button "收起" [expanded=true, ref=e14]
+        - article
+          - heading "T16 controlled offline visual manifest" [level=1, ref=e26]
+          - paragraph
+            - StaticText "Supplied input: episodes/5ccc756b-91de-4079-af78-e4e011d84d4b/materials/ff572a28c8afe806c34afb9e8950bd24b069d6558c652b346cc33ed4d3acf98a-script.md SHA256 ff572a28c8afe806c34afb9e8950bd24b069d6558c652b346cc33ed4d3acf98a"
+          - paragraph
+            - StaticText "Supplied input: episodes/5ccc756b-91de-4079-af78-e4e011d84d4b/materials/9d99ae1cf906c42157f6e7ef3ac39c4c3389621c3055b1b3f359dfed99a30e5f-actor.png SHA256 9d99ae1cf906c42157f6e7ef3ac39c4c3389621c3055b1b3f359dfed99a30e5f"
+          - paragraph
+            - StaticText "No missing assets. Synthetic acceptance only."
+        - generic
+          - heading "已冻结的外部视觉输入" [level=3, ref=e21]
+          - LabelText
+            - StaticText "选择视觉输入"
+            - combobox "选择视觉输入" [expanded=false, ref=e27]: actor.png · 0.0 MB
+              - MenuListPopup
+                - option "actor.png · 0.0 MB" [selected, ref=e30]
+          - article
+            - sectionheader
+              - strong
+                - StaticText "actor.png"
+              - generic
+                - StaticText "0.0 MB"
+            - generic
+              - image "冻结的外部视觉输入"
+              - button "放大查看 actor.png" [ref=e29]
+                - StaticText "放大查看"
+        - generic
+          - heading "Owner 审批" [level=3, ref=e22]
+          - LabelText
+            - StaticText "审批理由"
+            - textbox "审批理由" [ref=e28]
+          - button "批准" [ref=e23]
+          - button "要求修改" [ref=e24]

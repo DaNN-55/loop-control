@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-24T04:23:47.605Z",
+  "database": "loop_empty",
+  "actualDomainFunctions": true,
+  "metadataOnly": true,
+  "providerCalls": 0,
+  "keychainOperations": 0,
+  "noSecretMaterial": true,
+  "qualification": "rollback SQL metadata only; real authentication remains T15 evidence",
+  "blueprintPolicyFrozen": true,
+  "seriesVersionFrozen": true,
+  "opaqueConnectionVersionUuidFrozen": true,
+  "secretReferenceNotCopiedToBlueprint": true,
+  "allFixtureRowsRolledBack": true,
+  "passed": true
+}

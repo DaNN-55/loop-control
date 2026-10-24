@@ -1,8 +1,8 @@
+import {isValidMainScript,mainScriptFormatError} from "../reviews/mainScript";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { ClipboardList, Copy, Download, Ellipsis, FileText, Film, FolderOpen, GripVertical, History, ImageIcon, Play, RefreshCw, ShieldAlert, ShieldCheck, Trash2, Upload, Volume2, X, type LucideIcon } from "lucide-react";
 import type { Database, Json } from "../lib/database.types";
-import { supabase } from "../lib/supabase";
 import { blueprintAssetRoot } from "../platform/blueprintPolicy";
 import type { EpisodeStage } from "../platform/types";
 import { clearOperationDraft, readOperationDraft, writeOperationDraft } from "../operationDraft";
@@ -383,6 +383,7 @@ function workerBlockersFromPreflight(preflight: WorkerPreflightResult | null): W
 }
 
 async function requestImmediateTaskDispatch(episodeId: string, taskId: string): Promise<{ accepted: boolean; reason: string }> {
+  const { supabase } = await import("../lib/supabase");
   const { data, error } = await supabase.auth.getSession();
   if (error || !data.session) return { accepted: false, reason: "Owner 登录会话不可用" };
   const response = await fetch(`/_episode-dispatch?${new URLSearchParams({ episode: episodeId, task: taskId }).toString()}`, {
@@ -883,7 +884,7 @@ function MaterialImportForm({ allowMainScript = true, bindingStatuses = new Map(
       const mainScript = pendingFiles.find((draft) => draft.isMainScript);
       if (mainScript) {
         const script = await readFileText(mainScript.file);
-        if (!/^#\s+\S+/m.test(script) || !/^##\s+正文\s*$/m.test(script) || !script.split(/^##\s+正文\s*$/m)[1]?.trim()) throw new Error("主脚本需包含“# 本期标题”和非空的“## 正文”；可先查看脚本模板。");
+        if (!isValidMainScript(script)) throw new Error(mainScriptFormatError);
       }
       setIsImporting(true);
       let failedCount = 0;
@@ -1207,6 +1208,7 @@ function EpisodeTtsSettingsPanel({ blueprint, episode, isPending, onSave }: { bl
     if (!languageCode.trim() || !voice.trim() || !Number.isFinite(rate) || rate <= 0) { setError("请填写语言、声音和有效语速。"); return; }
     setError(""); setIsPreviewPending(true);
     try {
+      const { supabase } = await import("../lib/supabase");
       const { data, error: sessionError } = await supabase.auth.getSession();
       if (sessionError) throw sessionError;
       if (!data.session) throw new Error("需要 Owner 登录会话。");
@@ -1735,6 +1737,7 @@ function ShotPreparationCard({ artifacts, audioTracks, bgmSelected, defaults, dr
     setError(""); setIsAlignmentPending(true);
     try {
       if (isDirtyRef.current && !await save(false)) return;
+      const { supabase } = await import("../lib/supabase");
       const { data: task, error: requestError } = await supabase.rpc("request_shot_acoustic_alignment", { p_episode_id: episode.id, p_local_only: localOnly, p_review_package_id: reviewPackage.id, p_shot_id: shot.id });
       if (requestError) throw requestError;
       const dispatch = task?.id ? await requestImmediateTaskDispatch(episode.id, task.id) : { accepted: false, reason: "任务记录缺少 ID" };
@@ -1747,6 +1750,7 @@ function ShotPreparationCard({ artifacts, audioTracks, bgmSelected, defaults, dr
     if (!manualTimingCues.length) { setError("请先添加至少一个人工字幕时序区间。"); return; }
     setError(""); setIsAlignmentPending(true);
     try {
+      const { supabase } = await import("../lib/supabase");
       const { error: saveError } = await supabase.rpc("save_shot_manual_alignment", { p_cues: manualTimingCues.map((cue) => ({ id: cue.id, text: cue.text, start_ms: cue.startMs, end_ms: cue.endMs })) as unknown as Json, p_episode_id: episode.id, p_review_package_id: reviewPackage.id, p_shot_id: shot.id });
       if (saveError) throw saveError;
       setSubtitleCues(manualTimingCues);
@@ -1761,6 +1765,7 @@ function ShotPreparationCard({ artifacts, audioTracks, bgmSelected, defaults, dr
     if (!voice || !Number.isFinite(rate) || rate <= 0) { setError("请选择声音并填写有效语速。"); return; }
     setError(""); setIsVoicePreviewPending(true);
     try {
+      const { supabase } = await import("../lib/supabase");
       const { data, error: sessionError } = await supabase.auth.getSession();
       if (sessionError) throw sessionError;
       if (!data.session) throw new Error("需要 Owner 登录会话。");

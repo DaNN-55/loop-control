@@ -11,6 +11,7 @@ const path=join(root,'state/app.json'),identity=join(projectRoot,'node_modules/v
 const valid=r=>inspectRecordedService({pid:r.pid,port:String(appPort),commandIdentity:identity},projectRoot).valid;
 if(existsSync(path)){if(!valid(JSON.parse(readFileSync(path)))||Boolean(JSON.parse(readFileSync(path)).offlineGuard)!==offlineGuard)throw Error('Native app service identity mismatch');console.log('Native app already running');}
 else{
+ if(existsSync(join(root,'native-worker.json')))execFileSync(process.execPath,[join(projectRoot,'scripts/prepare-runtime.mjs')],{cwd:projectRoot,env,stdio:'pipe'});
  execFileSync(process.execPath,[join(projectRoot,'node_modules/typescript/bin/tsc'),'-p','tsconfig.local-app.json'],{cwd:projectRoot,env,stdio:'pipe'});
  const log=openPrivateFile(join(root,'logs/app.log'),{append:true});
  const child=spawn(process.execPath,[...(offlineGuard?['--import',join(projectRoot,'scripts/local/offline-guard.mjs')]:[]),identity,'--config','scripts/local/vite.config.mjs'],{cwd:projectRoot,env:{...env,HOME:join(root,'home')},detached:true,stdio:['ignore',log,log]});await once(child,'spawn');closeSync(log);

@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-24T04:58:01.213Z",
+  "appAndWorkerIdleDisconnectRecovered": true,
+  "missingPlannerPrivilegeStartupAndCreateStart503": true,
+  "actualNativePostgresBadPassword": true,
+  "startupRejected": true,
+  "bindingRejectedBeforePoolCreation": true,
+  "create503": true,
+  "start503": true,
+  "currentPreflightVersion": "worker-preflight/v2",
+  "actionableWorkerScope": true,
+  "episodeAndActivationUnchanged": true,
+  "noEpisodeCreated": true,
+  "noWake": true,
+  "noOnlineRequests": true,
+  "passed": true
+}

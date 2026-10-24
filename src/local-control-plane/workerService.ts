@@ -15,7 +15,7 @@ export function assertWorkerDispatchEnvironment(contents: string): void {
   if (missing.length) throw Error(`Worker 即时派发配置不完整：${missing.join("、")}`);
 }
 
-export function workerDispatchOptions(supabaseUrl: string | undefined): WorkerDispatchOptions {
+export function workerDispatchOptions(supabaseUrl: string | undefined): WorkerDispatchOptions & {supabaseUrl:string;serviceRoleKey:string} {
   const environment = process.env.SUPABASE_URL ? { ...process.env } : {
     ...process.env, ...parseEnv(readFileSync(join(process.cwd(), "n8n/worker.env.local"), "utf8")),
   };

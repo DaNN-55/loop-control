@@ -1,0 +1,85 @@
+- generic [ref=e1] clickable [onclick]
+  - main
+    - sectionheader
+      - StaticText "Loop Control · 本地"
+      - heading "内容工作台" [level=1, ref=e2]
+    - navigation
+      - button "账号配置" [ref=e3]
+      - button "生产单目录" [ref=e4]
+      - button "新建账号" [ref=e5]
+      - button "刷新" [ref=e6]
+      - button "退出登录" [ref=e7]
+    - generic
+      - heading "生产单（19）" [level=2, ref=e8]
+        - StaticText "生产单（19）"
+      - button "新建生产单" [ref=e9]
+      - generic
+        - button "返回生产单目录" [ref=e10]
+        - sectionheader
+          - heading "T16 最终源码浏览器验收" [level=2, ref=e11]
+          - StaticText "5ccc756b"
+        - button "刷新生产单状态" [ref=e12]
+        - button "打开本地输入目录" [ref=e13]
+        - button "复制本地输入目录路径" [ref=e14]
+        - button "查看产物索引" [expanded=false, ref=e15]
+        - button "查看执行与审计时间线" [expanded=false, ref=e16]
+        - paragraph
+          - StaticText "蓝图 v1 · 创建于 2026年10月24日 12:56"
+        - generic
+          - StaticText "当前阶段"
+          - strong
+            - StaticText "等待输入"
+          - StaticText "下一步"
+          - paragraph
+            - StaticText "确认材料并开始制作"
+          - generic
+            - StaticText "当前任务"
+            - strong
+              - StaticText "待开始制作"
+            - paragraph
+              - StaticText "材料已导入，等待 Owner 确认开始制作。"
+        - group
+          - DisclosureTriangle "准备生产材料" [expanded=true]
+            - ListMarker "▾"
+            - heading "准备生产材料" [level=3, ref=e18]
+          - paragraph
+            - StaticText "主脚本已确认。你可以继续添加补充材料；所有材料准备好后，点击下方按钮，Worker 才会开始制作。"
+          - form
+            - paragraph
+              - StaticText "一次选择多个文件；系统只识别文件类型，具体用途由你逐项确认。"
+            - region "统一材料导入" [ref=e19]
+              - LabelText [ref=e20] clickable [cursor:pointer]
+                - button "选择生产材料" [ref=e21]: 未选择任何文件
+                - strong
+                  - StaticText "选择生产材料"
+                - StaticText "支持脚本、图片、音频和视频；可一次选择多个文件。"
+              - list "材料导入状态"
+                - listitem [level=1]
+                  - strong
+                    - StaticText "脚本"
+                  - StaticText "1"
+                  - StaticText " 项"
+                  - list
+                    - listitem [level=2]
+                      - button "预览 script.md" [ref=e22]
+                        - strong
+                          - StaticText "script.md"
+                        - StaticText "主脚本"
+                      - StaticText "已确认"
+                - listitem [level=1]
+                  - strong
+                    - StaticText "视觉参考"
+                  - StaticText "1"
+                  - StaticText " 项"
+                  - list
+                    - listitem [level=2]
+                      - button "预览 actor.png" [ref=e23]
+                        - strong
+                          - StaticText "actor.png"
+                        - StaticText "视觉参考"
+                      - StaticText "已导入"
+          - strong
+            - StaticText "材料已准备到可开始状态"
+          - paragraph
+            - StaticText "确认后将先检查本机 Worker 的真实运行态；检查通过后才推进生产单。"
+          - button "材料准备完成，开始制作" [ref=e17]

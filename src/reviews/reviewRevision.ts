@@ -1,5 +1,4 @@
 import type { Database, Json } from "../lib/database.types";
-import { supabase } from "../lib/supabase";
 import type { StoryboardStructureOperation } from "../worker/storyboardRevision";
 import { defaultAllowedDurationFrames, defaultDurationFrameRate } from "../worker/durationDecision";
 import { defaultReviewRenderComposition, reviewRenderCompositionFromJson, reviewRenderCompositionToJson, type ReviewRenderComposition } from "./reviewComposition";
@@ -66,6 +65,7 @@ export function reviewRenderDurationSettingsFromRules(rules?: Json): ReviewRende
 
 export async function requestReviewRevision(input: ReviewRevisionRequest): Promise<ReviewRevisionOutcome> {
   if (input.kind === "storyboard") {
+    const { supabase } = await import("../lib/supabase");
     const { error } = await supabase.rpc("request_studio_storyboard_revision", { p_reason: input.reason, p_review_package_id: input.reviewPackageId });
     if (error) throw error;
     return { kind: "storyboard", message: "分镜结构修订已提交；已返回分镜审核。" };
@@ -73,6 +73,7 @@ export async function requestReviewRevision(input: ReviewRevisionRequest): Promi
 
   if (input.studioProject && !input.studioProject.composition) throw new Error("Studio 冻结工程缺少有效合成配置。");
   const composition = reviewRenderCompositionToJson(input.studioProject?.composition ?? input.composition ?? defaultReviewRenderComposition) as Record<string, Json>;
+  const { supabase } = await import("../lib/supabase");
   const { error } = await supabase.rpc("request_review_render_revision", {
     p_composition: input.studioProject ? { ...composition, studio_project: { relative_path: input.studioProject.relativePath, sha256: input.studioProject.sha256, file_size: input.studioProject.fileSize, composition } } : composition,
     p_reason: input.reason,
@@ -83,6 +84,7 @@ export async function requestReviewRevision(input: ReviewRevisionRequest): Promi
 }
 
 export async function requestShotStructureRevision(input: ShotStructureRevisionRequest): Promise<Database["public"]["Tables"]["tasks"]["Row"]> {
+  const { supabase } = await import("../lib/supabase");
   const { data, error } = await supabase.rpc("request_shot_structure_revision", {
     p_episode_id: input.episodeId,
     p_operation: input.operation as unknown as Json,
@@ -106,6 +108,7 @@ export async function submitStudioReviewRevision(input: StudioReviewRevisionRequ
 }
 
 export async function recoverFinalReviewRender(episodeId: string, reason: string): Promise<"最终渲染已重新排队；会复用已批准的审核工程。"> {
+  const { supabase } = await import("../lib/supabase");
   const { error } = await supabase.rpc("retry_failed_final_render", { p_episode_id: episodeId, p_reason: reason });
   if (error) throw error;
   return "最终渲染已重新排队；会复用已批准的审核工程。";

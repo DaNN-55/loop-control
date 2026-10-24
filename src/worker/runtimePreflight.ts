@@ -209,6 +209,15 @@ function runtimeCapabilitiesFromBlueprintPolicy(policy: unknown, requiredMediaCa
   return capabilities;
 }
 
+// Native staged commands reuse the same static selection checks without
+// fabricating online evidence for capabilities outside the migrated path.
+export function blueprintSelectionErrors(policy:unknown):string[]{
+ return runtimeCapabilitiesFromBlueprintPolicy(policy).flatMap(capability=>{
+  const resolved=resolveRuntimeCapability(capability);
+  return resolved.kind==='configuration_error'?[resolved.error]:resolved.kind==='unregistered_execution'?[`能力 ${capability.capability} 的执行器尚未注册。`]:[];
+ });
+}
+
 function runtimeCapabilityFromTask(taskPackage: WorkerTaskPackage): RuntimeCapability {
   const sharedPlanning = taskPackage.capability === "storyboard_planning";
   const adapter = taskPackage.capability === "acoustic_alignment" ? "whisperx_local" : taskPackage.aRoll?.adapter ?? taskPackage.media?.adapter ?? (taskPackage.provider === "codex" && (taskPackage.capability === "script_writing" || taskPackage.capability === "visual_planning") ? "codex" : sharedPlanning ? taskPackage.promptHarness?.adapter : undefined);

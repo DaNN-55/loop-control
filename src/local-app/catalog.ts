@@ -17,7 +17,11 @@ export function createLocalDatabase(config:PoolConfig){
  if(config.host!=='127.0.0.1' || config.user!=='loop_app')throw Error('Local database requires loopback and least-privilege app role');
  if(Object.keys(config).some(k=>!['host','port','user','database','password'].includes(k)))throw Error('Unsupported local database option');
  if(!Number.isInteger(config.port)||(config.port??0)<1||(config.port??0)>65535||typeof config.password!=='string'||!config.password||typeof config.database!=='string')throw Error('Incomplete local database configuration');
- return new Pool({host:config.host,port:config.port,user:config.user,database:config.database,password:config.password,max:4,connectionTimeoutMillis:3000,idleTimeoutMillis:10000});
+ const pool=new Pool({host:config.host,port:config.port,user:config.user,database:config.database,password:config.password,max:4,connectionTimeoutMillis:3000,idleTimeoutMillis:10000});
+ // Idle connection failures are removed by pg; request queries retain their
+ // normal error path, without an unhandled event dumping a private pg client.
+ pool.on('error',()=>{});
+ return pool;
 }
 export async function readLocalCatalog(pool:Pool,ownerId:string):Promise<LocalCatalog>{
  return ownerTransaction(pool,ownerId,true,async client=>{

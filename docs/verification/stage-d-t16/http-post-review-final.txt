@@ -1,0 +1,5 @@
+{
+  passed: true,
+  episodeId: '06f14c50-90c9-485c-9121-4dce4ae6ba1d',
+  taskId: 'af0f6536-ee93-422d-873f-64838a1308a0'
+}
