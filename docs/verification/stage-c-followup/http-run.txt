@@ -1,0 +1,26 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
++ actual - expected
+
+  {
+    blocked: 14,
+    failed: 28,
++   latestCompleted: true,
+-   latestCompleted: false,
+    running: 0
+  }
+
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/isolation/catalog-verification.mjs:37:8
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: { running: 0, blocked: 14, failed: 28, latestCompleted: true },
+  expected: { running: 0, blocked: 14, failed: 28, latestCompleted: false },
+  operator: 'deepStrictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

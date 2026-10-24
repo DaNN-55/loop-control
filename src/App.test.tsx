@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 import type { Database } from "./lib/database.types";
 import { AccountWorkspace, App, BootstrapScreen, EpisodeDetail, EpisodeForm, EpisodeWorkspace, NavigationButtons, SeriesSettings, TimezoneSelect, abbreviatePath, dispatchCreatedWorkerTask, episodeNeedsTaskPolling, episodeTaskRunStatusChanged, episodeTaskStatusChanged, episodeWorkerStatus, initialNavigationForWorkspace, loadWorkspaceSummary, mergeEpisodeTaskStatus, messageFromError, navigation, navigationBadgeCounts, shotPreparationSaveErrorMessage, splitPreviewArtifacts, workerPreflightFailureMessage } from "./App";
 import { supabase } from "./lib/supabase";
+import type { EpisodeCatalog } from "./episodes/episodeCatalog";
 import { defaultBlueprintPolicy, parseBlueprintPolicy, withBlueprintAssetRoot } from "./platform/blueprintPolicy";
 
 vi.mock("./lib/supabase", () => ({
@@ -43,42 +44,37 @@ describe("approval console", () => {
     expect(episodeNeedsTaskPolling({ detailOpen: true, dispatchRequested: true, hasActiveTask: false, pageVisible: false })).toBe(false);
   });
 
-  it("登录后只加载首个运营页面所需数据，不在后台读取完整工作区", async () => {
+  it("登录后仅获取当前页，翻页向服务端取数而不是加载全部历史", async () => {
     const user = userEvent.setup();
     const account = { id: "account-1", name: "道工作室", slug: "dao-studio" } as Database["public"]["Tables"]["accounts"]["Row"];
-    const episode = { account_id: account.id, blueprint_version_id: "blueprint-1", id: "episode-1", stage: "waiting_input", title: "首个生产单" } as Database["public"]["Tables"]["episodes"]["Row"];
     const from = vi.fn((table: string) => {
-      const result={data:table === "accounts" ? [account] : table === "episodes" ? [episode] : [],error:null};
-      const query:{order:ReturnType<typeof vi.fn>;range:ReturnType<typeof vi.fn>}={order:vi.fn(),range:vi.fn().mockResolvedValue(result)};query.order.mockReturnValue(query);
-      return {select:vi.fn().mockReturnValue(query)};
+      const query = { order: vi.fn(), range: vi.fn().mockResolvedValue({ data: table === "accounts" ? [account] : [], error: null }) };
+      query.order.mockReturnValue(query);
+      return { select: vi.fn().mockReturnValue(query) };
     });
+    const page = (number: number) => ({ episodes: Array.from({ length: 20 }, (_, index) => ({ account_id: account.id, blueprint_version_id: "blueprint-1", id: `episode-${number}-${index}`, stage: "waiting_input", title: `第${number}页记录${index}` })), page: number, pageSize: 20, total: 1005, episodeCount: 1005, accountCounts: { [account.id]: 1005 }, reviewCount: 42, stages: { waiting_input: 1005 }, artifactCounts: {}, pending: { items: [], page: 1, total: 0 }, blocked: { items: [], page: 1, total: 0 }, worker: { running: 0, blocked: 0, failed: 0, latestCompleted: false }, operationRows: [] }) as unknown as EpisodeCatalog;
     Object.assign(supabase, { from });
-    vi.mocked(supabase.auth.getSession).mockResolvedValueOnce({ data: { session: { user: { id: "owner-1" } } }, error: null } as never);
-
+    const rpc = vi.mocked(supabase.rpc);
+    rpc.mockImplementation(((_name: string, args: { p_page: number }) => ({ setHeader: () => Promise.resolve({ data: page(args.p_page), error: null }) })) as never);
+    vi.mocked(supabase.auth.getSession).mockResolvedValueOnce({ data: { session: { user: { id: "owner-1" }, access_token: "own-session" } }, error: null } as never);
     render(<App />);
-
-    await waitFor(() => expect(from.mock.calls.map(([table]) => table)).toEqual([
-      "accounts", "account_blueprint_versions", "episodes", "series", "series_versions",
-      "review_packages", "pre_render_review_members", "pre_render_review_member_decisions", "tasks",
-    ]));
-
-    await user.click(screen.getAllByRole("button", { name: "账号" })[0]);
-
-    await waitFor(() => expect(from.mock.calls.map(([table]) => table)).toEqual([
-      "accounts", "account_blueprint_versions", "episodes", "series", "series_versions",
-      "review_packages", "pre_render_review_members", "pre_render_review_member_decisions", "tasks",
-      "prompt_versions", "external_connections",
-    ]));
+    expect(await screen.findByText("第1页记录0")).toBeTruthy();
+    expect(screen.getByText("1005 个生产单")).toBeTruthy();
+    expect(from.mock.calls.map(([table]) => table)).toEqual(["accounts", "account_blueprint_versions", "series", "series_versions"]);
+    await user.click(screen.getAllByRole("button", { name: "下一页" })[0]);
+    expect(await screen.findByText("第2页记录0")).toBeTruthy();
+    expect(screen.queryByText("第1页记录0")).toBeNull();
+    expect(rpc.mock.calls.some(([name, args]) => name === "read_episode_catalog" && (args as { p_page: number }).p_page === 2)).toBe(true);
+    rpc.mockImplementation(() => Object.assign(Promise.resolve({ data: [], error: null }), { range: vi.fn().mockResolvedValue({ data: [], error: null, count: 0 }) }) as never);
   });
 
-  it("首次进入只读取页面骨架所需的五张表", async () => {
-    const query:{order:ReturnType<typeof vi.fn>;range:ReturnType<typeof vi.fn>}={order:vi.fn(),range:vi.fn().mockResolvedValue({data:[],error:null,count:0})};query.order.mockReturnValue(query);
-    const from=vi.fn().mockReturnValue({select:vi.fn().mockReturnValue(query)});
+  it("页面骨架不查询生产单历史和详情表", async () => {
+    const query = { order: vi.fn(), range: vi.fn().mockResolvedValue({ data: [], error: null, count: 0 }) }; query.order.mockReturnValue(query);
+    const from = vi.fn().mockReturnValue({ select: vi.fn().mockReturnValue(query) });
     Object.assign(supabase, { from });
-
     const workspace = await loadWorkspaceSummary();
-
-    expect(from.mock.calls.map(([table]) => table)).toEqual(["accounts", "account_blueprint_versions", "episodes", "series", "series_versions"]);
+    expect(from.mock.calls.map(([table]) => table)).toEqual(["accounts", "account_blueprint_versions", "series", "series_versions"]);
+    expect(workspace.episodes).toEqual([]);
     expect(workspace.artifacts).toEqual([]);
   });
 

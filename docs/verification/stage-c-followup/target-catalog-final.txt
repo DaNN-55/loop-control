@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/episodes/episodeCatalogChanges.test.ts (4 tests) 1ms
+ ✓ src/episodes/EpisodeProductionContainer.test.tsx (4 tests) 75ms
+ ✓ src/episodes/episodeCatalog.test.tsx (3 tests) 428ms
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  09:06:04
+   Duration  1.57s (transform 439ms, setup 0ms, collect 999ms, tests 505ms, environment 1.04s, prepare 184ms)
+

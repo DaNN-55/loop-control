@@ -1,3 +1,4 @@
+import { episodeCatalogChanged, readEpisodeCatalog, type CatalogQuery, type EpisodeCatalog, type ServerPage } from "./episodes/episodeCatalog";
 import { AccountForm, TimezoneSelect } from "./accounts/AccountForm";
 export { TimezoneSelect, timezoneOptions } from "./accounts/AccountForm";
 import { readAllPages } from "./lib/pagedRead";
@@ -11,7 +12,7 @@ import { blueprintAssetRoot, defaultBlueprintPolicy } from "./platform/blueprint
 import type { EpisodeStage } from "./platform/types";
 import { ProductionCompletionModal } from "./publishing/ProductionCompletionModal";
 import { OperationsWorkspace } from "./operations/OperationsWorkspace";
-import { latestWorkerTasksByScope, type WorkerBlocker, workerBlockers } from "./reviews/reviewSelectors";
+import { latestWorkerTasksByScope, type WorkerBlocker } from "./reviews/reviewSelectors";
 import { clearLocalArtifactCache } from "./reviews/localArtifactPreview";
 import { reviewRenderDurationSettingsFromRules, type OpenChatCutStudioWorkspace, type ReviewRenderDurationSettings } from "./reviews/reviewRevision";
 import { WorkerBlockerCard } from "./reviews/WorkerBlockerCard";
@@ -20,7 +21,7 @@ import { accountIdentityColor, accountIdentityInitials } from "./platform/accoun
 import { PaginationControls } from "./ui/PaginationControls";
 import { taskTypeLabel } from "./observability/TaskProgressPanel";
 import { SystemStatusPanel, type GoldenProductionTestReport, type LocalSystemStatusReport } from "./observability/SystemStatusPanel";
-import { EpisodeProduction } from "./episodes/EpisodeProductionContainer";
+import { EpisodeProduction, type EpisodeProductionSnapshot } from "./episodes/EpisodeProductionContainer";
 
 import { AccountWorkspace } from "./accounts/AccountWorkspace";
 import type { ExternalConnectionInput, ExternalConnectionVersion } from "./connections/ConnectionWorkspace";
@@ -284,16 +285,15 @@ function LoadingIndicator({ compact = false, label }: { compact?: boolean; label
 }
 
 export async function loadWorkspaceSummary(): Promise<Workspace> {
-  const [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult] = await Promise.all([
+  const [accountsResult, blueprintsResult, seriesResult, seriesVersionsResult] = await Promise.all([
     readAllPages((from,to)=>supabase.from("accounts").select("*",{count:"exact"}).order("created_at").order("id").range(from,to)),
     readAllPages((from,to)=>supabase.from("account_blueprint_versions").select("*",{count:"exact"}).order("version", { ascending: false }).order("id").range(from,to)),
-    readAllPages((from,to)=>supabase.from("episodes").select("*",{count:"exact"}).order("updated_at", { ascending: false }).order("id").range(from,to)),
     readAllPages((from,to)=>supabase.from("series").select("*",{count:"exact"}).order("name").order("id").range(from,to)),
     readAllPages((from,to)=>supabase.from("series_versions").select("*",{count:"exact"}).order("version", { ascending: false }).order("id").range(from,to)),
   ]);
-  const error = [accountsResult, blueprintsResult, episodesResult, seriesResult, seriesVersionsResult].map((result) => result.error).find(Boolean);
+  const error = [accountsResult, blueprintsResult, seriesResult, seriesVersionsResult].map((result) => result.error).find(Boolean);
   if (error) throw error;
-  return { accounts: accountsResult.data ?? [], blueprints: blueprintsResult.data ?? [], episodes: episodesResult.data ?? [], series: seriesResult.data ?? [], seriesVersions: seriesVersionsResult.data ?? [], promptVersions: [], materialRevisions: [], shotPreparationDrafts: [], storyboardAudioSelections: [], reviewPackages: [], reviewAnnotations: [], qcReviewIssues: [], artifacts: [], audioTracks: [], audioTrackAnnotations: [], preRenderReviewMembers: [], preRenderReviewMemberDecisions: [], tasks: [], taskRuns: [], transitions: [], externalConnections: [], externalConnectionVersions: [] };
+  return { accounts: accountsResult.data ?? [], blueprints: blueprintsResult.data ?? [], episodes: [], series: seriesResult.data ?? [], seriesVersions: seriesVersionsResult.data ?? [], promptVersions: [], materialRevisions: [], shotPreparationDrafts: [], storyboardAudioSelections: [], reviewPackages: [], reviewAnnotations: [], qcReviewIssues: [], artifacts: [], audioTracks: [], audioTrackAnnotations: [], preRenderReviewMembers: [], preRenderReviewMemberDecisions: [], tasks: [], taskRuns: [], transitions: [], externalConnections: [], externalConnectionVersions: [] };
 }
 
 function throwResultError(results: Array<{ error: unknown }>) {
@@ -302,22 +302,7 @@ function throwResultError(results: Array<{ error: unknown }>) {
 }
 
 async function loadWorkspaceSection(navigation: NavigationItem): Promise<Partial<Workspace>> {
-  if (navigation === "reviews") return {};
-  if (navigation === "episodes") {
-    const artifactsResult = await readAllPages((from,to)=>supabase.from("artifacts").select("*",{count:"exact"}).order("created_at", { ascending: false }).order("id").range(from,to));
-    throwResultError([artifactsResult]);
-    return { artifacts: artifactsResult.data ?? [] };
-  }
-  if (navigation === "operations") {
-    const [reviewPackagesResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult] = await Promise.all([
-      readAllPages((from,to)=>supabase.from("review_packages").select("*",{count:"exact"}).order("created_at", { ascending: false }).order("id").range(from,to)),
-      readAllPages((from,to)=>supabase.from("pre_render_review_members").select("*",{count:"exact"}).order("created_at").order("id").range(from,to)),
-      readAllPages((from,to)=>supabase.from("pre_render_review_member_decisions").select("*",{count:"exact"}).order("created_at").order("review_package_id").order("member_key").range(from,to),row=>`${row.review_package_id}:${row.member_key}`),
-      readAllPages((from,to)=>supabase.from("tasks").select("*",{count:"exact"}).order("created_at", { ascending: false }).order("id").range(from,to)),
-    ]);
-    throwResultError([reviewPackagesResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, tasksResult]);
-    return { preRenderReviewMemberDecisions: preRenderReviewMemberDecisionsResult.data ?? [], preRenderReviewMembers: preRenderReviewMembersResult.data ?? [], reviewPackages: reviewPackagesResult.data ?? [], tasks: tasksResult.data ?? [] };
-  }
+  if (navigation !== "accounts") return {};
   const [promptVersionsResult, externalConnectionsResult, externalConnectionVersionsResult] = await Promise.all([
     readAllPages((from,to)=>supabase.from("prompt_versions").select("*",{count:"exact"}).order("capability").order("version", { ascending: false }).order("id").range(from,to)),
     readAllPages((from,to)=>supabase.from("external_connections").select("*",{count:"exact"}).order("created_at", { ascending: false }).order("id").range(from,to)),
@@ -409,6 +394,13 @@ export function App() {
   const [workspace, setWorkspace] = useState<Workspace | null>(null);
   const [selectedAccountId, setSelectedAccountId] = useState("");
   const [selectedEpisodeId, setSelectedEpisodeId] = useState("");
+  const [catalog, setCatalog] = useState<EpisodeCatalog | null>(null);
+  const [catalogPage, setCatalogPage] = useState(1);
+  const [catalogRefreshVersion, setCatalogRefreshVersion] = useState(0);
+  const [pendingPage, setPendingPage] = useState(1);
+  const [blockedPage, setBlockedPage] = useState(1);
+  const [operationSeries, setOperationSeries] = useState("all");
+  const [detailEpisode, setDetailEpisode] = useState<Episode | null>(null);
   const [accountFilter, setAccountFilter] = useState("全部账号");
   const [seriesFilter, setSeriesFilter] = useState("全部系列");
   const [episodeVisibility, setEpisodeVisibility] = useState<EpisodeVisibility>("active");
@@ -435,9 +427,23 @@ export function App() {
   const blueprintPreflightRequestRef = useRef(0);
   const blueprintPreflightTargetRef = useRef("");
   const sectionLoadRequestRef = useRef(0);
+  const sessionRef = useRef<Session | null>(null);
+  const summaryRequestRef = useRef(0);
+  const catalogRequestRef = useRef(0);
+  const catalogLoadedKeyRef = useRef("");
+  const catalogQuery: CatalogQuery = {
+    view: activeNavigation, page: catalogPage,
+    accountId: activeNavigation === "episodes" && accountFilter !== "全部账号" ? accountFilter : "",
+    seriesId: activeNavigation === "operations" ? operationSeries : activeNavigation === "episodes" && seriesFilter !== "全部系列" ? seriesFilter : "all",
+    visibility: activeNavigation === "episodes" ? episodeVisibility : "active", pendingPage, blockedPage,
+  };
+  const catalogQueryKey = JSON.stringify(catalogQuery);
+  const catalogQueryRef = useRef(catalogQuery);
+  catalogQueryRef.current = catalogQuery;
   const workspaceRef = useRef<Workspace | null>(null);
   const activeNavigationRef = useRef(activeNavigation);
   const hasInitializedNavigationRef = useRef(false);
+  const selectedSnapshotRef = useRef<EpisodeProductionSnapshot | null>(null);
 
   useEffect(() => {
     const openConnections = () => {
@@ -476,7 +482,9 @@ export function App() {
     const requestId = ++sectionLoadRequestRef.current;
     setIsSectionLoading(true);
     try {
+      const currentSession = sessionRef.current;
       const patch = await loadWorkspaceSection(navigation);
+      if (currentSession !== sessionRef.current) return;
       if (requestId !== sectionLoadRequestRef.current || !workspaceRef.current) return;
       const nextWorkspace = { ...workspaceRef.current, ...patch };
       workspaceRef.current = nextWorkspace;
@@ -489,41 +497,95 @@ export function App() {
     }
   }, []);
 
-  const refreshWorkspaceSummary = useCallback(async () => {
-    const summary = await loadWorkspaceSummary();
-    const previousWorkspace = workspaceRef.current;
-    const nextWorkspace = previousWorkspace ? { ...previousWorkspace, accounts: summary.accounts, blueprints: summary.blueprints, episodes: summary.episodes, series: summary.series, seriesVersions: summary.seriesVersions } : summary;
-    workspaceRef.current = nextWorkspace;
-    setWorkspace(nextWorkspace);
-    if (!hasInitializedNavigationRef.current) {
-      setActiveNavigation(initialNavigationForWorkspace(nextWorkspace));
-      hasInitializedNavigationRef.current = true;
+  const refreshCatalog = useCallback(async () => {
+    const currentSession = sessionRef.current;
+    if (!currentSession) return;
+    const requestId = ++catalogRequestRef.current;
+    const query = catalogQueryRef.current;
+    const key = JSON.stringify(query);
+    setIsSectionLoading(true);
+    try {
+      const next = await readEpisodeCatalog(query, currentSession.access_token);
+      if (requestId !== catalogRequestRef.current || currentSession !== sessionRef.current || key !== JSON.stringify(catalogQueryRef.current) || !workspaceRef.current) return;
+      catalogLoadedKeyRef.current = key;
+      setCatalog(next);
+      const nextWorkspace = { ...workspaceRef.current, episodes: next.episodes };
+      workspaceRef.current = nextWorkspace;
+      setWorkspace(nextWorkspace);
+      setLoadedSections((current) => current.includes(query.view) ? current : [...current, query.view]);
+      setCatalogPage(next.page);
+      setPendingPage(next.pending.page);
+      setBlockedPage(next.blocked.page);
+    } catch (error) {
+      if (requestId === catalogRequestRef.current && currentSession === sessionRef.current && key === JSON.stringify(catalogQueryRef.current)) setErrorMessage(error instanceof Error ? error.message : "无法读取生产单列表。");
+    } finally {
+      if (requestId === catalogRequestRef.current) setIsSectionLoading(false);
     }
-    setSelectedAccountId((current) => current && nextWorkspace.accounts.some((account) => account.id === current) ? current : nextWorkspace.accounts[0]?.id ?? "");
-    setSelectedEpisodeId((current) => current && nextWorkspace.episodes.some((episode) => episode.id === current) ? current : nextWorkspace.episodes[0]?.id ?? "");
   }, []);
 
+  const acceptEpisodeSnapshot = useCallback(async (snapshot?: EpisodeProductionSnapshot) => {
+    if (!snapshot || !workspaceRef.current || !sessionRef.current) return;
+    const previous = selectedSnapshotRef.current;
+    selectedSnapshotRef.current = snapshot;
+    setDetailEpisode(snapshot.episode);
+    const next = { ...workspaceRef.current,
+      episodes: workspaceRef.current.episodes.map((episode) => episode.id === snapshot.episode.id ? snapshot.episode : episode),
+      artifacts: snapshot.artifacts, tasks: snapshot.tasks, reviewPackages: snapshot.reviewPackages,
+    };
+    workspaceRef.current = next; setWorkspace(next);
+    if (episodeCatalogChanged(previous, snapshot)) await refreshCatalog();
+  }, [refreshCatalog]);
+
+  const refreshWorkspaceSummary = useCallback(async () => {
+    const currentSession = sessionRef.current;
+    const requestId = ++summaryRequestRef.current;
+    const summary = await loadWorkspaceSummary();
+    if (requestId !== summaryRequestRef.current || !currentSession || currentSession !== sessionRef.current) return;
+    const previousWorkspace = workspaceRef.current;
+    const nextWorkspace = previousWorkspace ? { ...previousWorkspace, accounts: summary.accounts, blueprints: summary.blueprints, series: summary.series, seriesVersions: summary.seriesVersions } : summary;
+    if (!hasInitializedNavigationRef.current) {
+      hasInitializedNavigationRef.current = true;
+      // The first bounded page decides the existing initial-navigation rule.
+      const first = await readEpisodeCatalog({ view: "operations", page: 1, accountId: "", seriesId: "all", visibility: "active", pendingPage: 1, blockedPage: 1 }, currentSession.access_token);
+      if (currentSession !== sessionRef.current || requestId !== summaryRequestRef.current) return;
+      setActiveNavigation(nextWorkspace.accounts.length && first.episodeCount ? "operations" : "accounts");
+      catalogLoadedKeyRef.current = JSON.stringify({ view: "operations", page: 1, accountId: "", seriesId: "all", visibility: "active", pendingPage: 1, blockedPage: 1 });
+      setCatalog(first);
+      const withEpisodes = { ...nextWorkspace, episodes: first.episodes };
+      workspaceRef.current = withEpisodes;
+      setWorkspace(withEpisodes);
+    } else {
+      workspaceRef.current = nextWorkspace; setWorkspace(nextWorkspace);
+      await refreshCatalog();
+    }
+    setSelectedAccountId((current) => current && nextWorkspace.accounts.some((account) => account.id === current) ? current : nextWorkspace.accounts[0]?.id ?? "");
+  }, [refreshCatalog]);
+
   const refreshWorkspace = useCallback(async (source: "initial" | "manual" | "action" = "action") => {
+    const currentSession = sessionRef.current;
     setIsLoading(true);
     setErrorMessage("");
     try {
       await refreshWorkspaceSummary();
-      if (source !== "initial") {
+      if (currentSession !== sessionRef.current) return;
+      if (source !== "initial" && activeNavigationRef.current === "accounts") {
         await refreshWorkspaceSection(activeNavigationRef.current);
       }
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "无法读取控制数据。");
+      if (currentSession === sessionRef.current) setErrorMessage(error instanceof Error ? error.message : "无法读取控制数据。");
     } finally {
-      setIsLoading(false);
+      if (currentSession === sessionRef.current) setIsLoading(false);
     }
   }, [refreshWorkspaceSection, refreshWorkspaceSummary]);
 
   const refreshSystemStatus = useCallback(async () => {
+    const currentSession = sessionRef.current;
     setIsSystemStatusLoading(true);
     try {
-      setSystemStatus(await loadSystemStatusReport());
+      const report = await loadSystemStatusReport();
+      if (currentSession === sessionRef.current) setSystemStatus(report);
     } finally {
-      setIsSystemStatusLoading(false);
+      if (currentSession === sessionRef.current) setIsSystemStatusLoading(false);
     }
   }, []);
 
@@ -561,6 +623,7 @@ export function App() {
       const { data, error } = await supabase.auth.getSession();
       if (!isMounted) return;
       if (error) setErrorMessage(error.message);
+      sessionRef.current = data.session;
       setSession(data.session);
       if (data.session) await refreshWorkspace("initial");
       else setIsLoading(false);
@@ -569,27 +632,47 @@ export function App() {
     const { data: listener } = supabase.auth.onAuthStateChange((event, nextSession) => {
       if (event === "INITIAL_SESSION") return;
       clearLocalArtifactCache();
+      const changedOwner = nextSession?.user.id !== sessionRef.current?.user.id;
+      sessionRef.current = nextSession;
+      catalogRequestRef.current += 1;
+      summaryRequestRef.current += 1;
+      sectionLoadRequestRef.current += 1;
+      if (changedOwner || !nextSession) {
+        workspaceRef.current = null;
+        setWorkspace(null);
+        setCatalog(null);
+        catalogLoadedKeyRef.current = "";
+        setSystemStatus(null);
+        setDetailEpisode(null);
+        selectedSnapshotRef.current = null;
+        setBlueprintRepairContext(null);
+        setIsProductionCompletionOpen(false);
+        setSelectedEpisodeId("");
+        setIsEpisodeDetailOpen(false);
+        setLoadedSections([]);
+        setCatalogPage(1); setPendingPage(1); setBlockedPage(1);
+        setAccountFilter("全部账号"); setSeriesFilter("全部系列"); setOperationSeries("all"); setEpisodeVisibility("active");
+        hasInitializedNavigationRef.current = false;
+      }
       setSession(nextSession);
       if (nextSession) void refreshWorkspace("initial");
-      else {
-        workspaceRef.current = null;
-        sectionLoadRequestRef.current += 1;
-        setWorkspace(null);
-        setLoadedSections([]);
-        hasInitializedNavigationRef.current = false;
-        setIsLoading(false);
-      }
+      else setIsLoading(false);
     });
     return () => {
       isMounted = false;
+      summaryRequestRef.current += 1; catalogRequestRef.current += 1; sectionLoadRequestRef.current += 1;
+      sessionRef.current = null;
       listener.subscription.unsubscribe();
     };
   }, [refreshWorkspace]);
 
   useEffect(() => {
-    if (!session || !workspaceRef.current || !hasInitializedNavigationRef.current) return;
-    void refreshWorkspaceSection(activeNavigation);
-  }, [activeNavigation, refreshWorkspaceSection, session]);
+    if (!session || !workspace || !hasInitializedNavigationRef.current) return;
+    if (activeNavigation === "accounts") void refreshWorkspaceSection(activeNavigation);
+    else if (catalogLoadedKeyRef.current !== catalogQueryKey) void refreshCatalog();
+    // workspace is intentionally not a dependency: successful reads update it.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeNavigation, catalogQueryKey, catalogRefreshVersion, refreshCatalog, refreshWorkspaceSection, session, Boolean(workspace)]);
 
   useEffect(() => {
     if (!session) { setSystemStatus(null); return; }
@@ -604,20 +687,19 @@ export function App() {
   const seriesById = useMemo(() => new Map(workspace?.series.map((series) => [series.id, series])), [workspace]);
   const seriesVersionsById = useMemo(() => new Map(workspace?.seriesVersions.map((version) => [version.id, version])), [workspace]);
   const selectedAccount = workspace?.accounts.find((account) => account.id === selectedAccountId) ?? null;
-  const selectedEpisode = workspace?.episodes.find((episode) => episode.id === selectedEpisodeId) ?? null;
+  const selectedEpisode = workspace?.episodes.find((episode) => episode.id === selectedEpisodeId) ?? (detailEpisode?.id === selectedEpisodeId ? detailEpisode : null);
+  useEffect(() => {
+    if (!selectedEpisodeId || !session || workspace?.episodes.some((episode) => episode.id === selectedEpisodeId) || detailEpisode?.id === selectedEpisodeId) return;
+    let active = true;
+    const token = session.access_token;
+    void supabase.from("episodes").select("*").eq("id", selectedEpisodeId).maybeSingle().setHeader("Authorization", `Bearer ${token}`).then(({ data }) => {
+      if (active && token === sessionRef.current?.access_token) setDetailEpisode(data);
+    });
+    return () => { active = false; };
+  }, [selectedEpisodeId, session, workspace?.episodes, detailEpisode?.id]);
   const selectedEpisodeOpenChatCutProjectPath = openChatCutProjectPathForEpisode(workspace?.reviewPackages ?? [], selectedEpisode);
   blueprintPreflightTargetRef.current = selectedAccount?.current_blueprint_version_id ? `${selectedAccount.id}:${selectedAccount.current_blueprint_version_id}` : "";
 
-  useEffect(() => {
-    if (!blueprintRepairContext || !workspace) return;
-    const blockerStillExists = workerBlockers(workspace.tasks, blueprintRepairContext.episodeId).some((blocker) => blocker.code === blueprintRepairContext.blocker.code && blocker.detail === blueprintRepairContext.blocker.detail);
-    if (blockerStillExists) return;
-    setBlueprintRepairContext(null);
-    setSelectedEpisodeId(blueprintRepairContext.episodeId);
-    setIsEpisodeDetailOpen(true);
-    setActiveNavigation("episodes");
-    setMessage("当前生产单的阻塞已解除，已返回生产单详情。");
-  }, [blueprintRepairContext, workspace]);
 
   useEffect(() => {
     if (!session || activeNavigation !== "accounts" || !selectedAccount?.current_blueprint_version_id) {
@@ -642,7 +724,10 @@ export function App() {
     }),
     [accountVisibleEpisodes, episodeVisibility, seriesFilter, seriesVersionsById],
   );
-  const navigationBadges = useMemo(() => navigationBadgeCounts(workspace?.episodes ?? []), [workspace?.episodes]);
+  const navigationBadges = { reviews: catalog?.reviewCount ?? 0 };
+  const serverPage: ServerPage | undefined = catalog ? { page: catalog.page, pageSize: catalog.pageSize, total: catalog.total, onPageChange: setCatalogPage } : undefined;
+  function resetCatalogPage() { catalogLoadedKeyRef.current = ""; setCatalogRefreshVersion(version => version + 1); setCatalogPage(1); setPendingPage(1); setBlockedPage(1); catalogRequestRef.current += 1; }
+
 
   function changeTheme() {
     setTheme((current) => {
@@ -665,6 +750,7 @@ export function App() {
       if (!window.confirm("当前配置有未保存修改，确定放弃吗？")) return;
       setAccountConfigurationDirty(false);
     }
+    resetCatalogPage();
     setActiveNavigation(nextNavigation);
     setIsProductionCompletionOpen(false);
     if (nextNavigation === "accounts") {
@@ -673,6 +759,7 @@ export function App() {
   }
 
   function openEpisodeDetail(episodeId: string) {
+    setDetailEpisode(workspaceRef.current?.episodes.find((episode) => episode.id === episodeId) ?? catalog?.pending.items.find((episode) => episode.id === episodeId) ?? catalog?.blocked.items.find((item) => item.episode.id === episodeId)?.episode ?? null);
     setSelectedEpisodeId(episodeId);
     setIsEpisodeDetailOpen(true);
   }
@@ -686,6 +773,10 @@ export function App() {
   function openAccountBlueprint(accountId: string, repairContext: BlueprintRepairContext | null = null) {
     setSelectedAccountId(accountId);
     setBlueprintRepairContext(repairContext);
+    if (repairContext) {
+      const episode = catalog?.blocked.items.find((item) => item.episode.id === repairContext.episodeId)?.episode;
+      if (episode) { setDetailEpisode(episode); setSelectedEpisodeId(episode.id); }
+    }
     changeNavigation("accounts");
     setMessage(repairContext ? "已打开当前生产单的配置修复；保存后会直接继续生产，不会创建蓝图版本。" : "已打开对应账号的蓝图配置。");
   }
@@ -721,7 +812,7 @@ export function App() {
     setPendingAction(`apply-episode-repair-${input.context.episodeId}`);
     setErrorMessage("");
     try {
-      const episode = workspace?.episodes.find((candidate) => candidate.id === input.context.episodeId);
+      const episode = workspace?.episodes.find((candidate) => candidate.id === input.context.episodeId) ?? (detailEpisode?.id === input.context.episodeId ? detailEpisode : null);
       const account = episode ? workspace?.accounts.find((candidate) => candidate.id === episode.account_id) : null;
       if (!episode || !account?.current_blueprint_version_id) throw new Error("当前生产单或账号蓝图已变化，请刷新后重试。");
       const preflight = await runEpisodePreflight({ accountId: account.id, blueprintVersionId: account.current_blueprint_version_id, episodeId: episode.id, policy: input.policy, seriesVersionId: episode.series_version_id ?? null });
@@ -1187,7 +1278,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
         <div className="wordmark"><span className="wordmark-text"><span><span className="wordmark-letter-cyan">L</span><span className="wordmark-letter-blue">oo</span>p</span><span><span className="wordmark-letter-pink">C</span>ontrol</span></span><img alt="Loop Control" className="wordmark-mark" src="/brand/loop-mark.svg" /></div>
         <nav className="navigation"><NavigationButtons activeNavigation={activeNavigation} badges={navigationBadges} onSelect={changeNavigation} /></nav>
         <button aria-label={selectedEpisodeOpenChatCutProjectPath ? `打开${selectedEpisode?.title ?? "当前生产单"}的 OpenChatCut` : "OpenChatCut 仅从有审核渲染的生产单打开"} className="sidebar-studio-shortcut" disabled={!selectedEpisodeOpenChatCutProjectPath || pendingAction === `openchatcut-studio-${selectedEpisode?.id ?? ""}`} onClick={() => void openSelectedOpenChatCutStudio()} title={selectedEpisodeOpenChatCutProjectPath ? `打开${selectedEpisode?.title ?? "当前生产单"}的 OpenChatCut` : "请选择有审核渲染的生产单"} type="button"><Icon name="Video" /><span>{pendingAction === `openchatcut-studio-${selectedEpisode?.id ?? ""}` ? "正在打开…" : "OpenChatCut"}</span></button>
-        <div className="sidebar-footer"><div className="sidebar-utilities"><SystemStatusPanel episodes={workspace.episodes} isRefreshing={isSystemStatusLoading} onRefresh={refreshSystemStatusAndWorkspace} onRunGoldenTest={runGoldenProductionTest} report={systemStatus} tasks={workspace.tasks} /><button aria-label={theme === "light" ? "切换至深色模式" : "切换至浅色模式"} className="sidebar-utility" onClick={changeTheme} title={theme === "light" ? "深色模式" : "浅色模式"} type="button"><Icon name={theme === "light" ? "Moon" : "Sun"} /></button><button aria-label={sidebarCollapsed ? "展开侧栏" : "收起侧栏"} className="sidebar-collapse-button sidebar-utility" onClick={changeSidebarCollapsed} title={sidebarCollapsed ? "展开侧栏" : "收起侧栏"} type="button"><Icon name="PanelLeft" /></button><OwnerMenu onOpenSettings={() => setShowPasswordForm(true)} onSignOut={() => void supabase.auth.signOut()} /></div></div>
+        <div className="sidebar-footer"><div className="sidebar-utilities"><SystemStatusPanel workerSummary={catalog?.worker} episodes={workspace.episodes} isRefreshing={isSystemStatusLoading} onRefresh={refreshSystemStatusAndWorkspace} onRunGoldenTest={runGoldenProductionTest} report={systemStatus} tasks={workspace.tasks} /><button aria-label={theme === "light" ? "切换至深色模式" : "切换至浅色模式"} className="sidebar-utility" onClick={changeTheme} title={theme === "light" ? "深色模式" : "浅色模式"} type="button"><Icon name={theme === "light" ? "Moon" : "Sun"} /></button><button aria-label={sidebarCollapsed ? "展开侧栏" : "收起侧栏"} className="sidebar-collapse-button sidebar-utility" onClick={changeSidebarCollapsed} title={sidebarCollapsed ? "展开侧栏" : "收起侧栏"} type="button"><Icon name="PanelLeft" /></button><OwnerMenu onOpenSettings={() => setShowPasswordForm(true)} onSignOut={() => void supabase.auth.signOut()} /></div></div>
       </aside>
 
       <section className="content-pane" id="main-content" aria-label="平台工作台" tabIndex={-1}>
@@ -1195,7 +1286,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
           <h1>{navigation.find((item) => item.id === activeNavigation)?.label}</h1>
           {activeNavigation === "accounts" ? <button className="button button-primary" onClick={() => setShowAccountForm(true)} type="button">新建账号</button> : null}
           {activeNavigation === "episodes" ? <button className="button button-primary" onClick={() => setShowEpisodeForm(true)} type="button">新建生产单</button> : null}
-          <div className="mobile-header-actions"><SystemStatusPanel episodes={workspace.episodes} isRefreshing={isSystemStatusLoading} onRefresh={refreshSystemStatusAndWorkspace} onRunGoldenTest={runGoldenProductionTest} report={systemStatus} tasks={workspace.tasks} /><OwnerMenu onOpenSettings={() => setShowPasswordForm(true)} onSignOut={() => void supabase.auth.signOut()} /></div>
+          <div className="mobile-header-actions"><SystemStatusPanel workerSummary={catalog?.worker} episodes={workspace.episodes} isRefreshing={isSystemStatusLoading} onRefresh={refreshSystemStatusAndWorkspace} onRunGoldenTest={runGoldenProductionTest} report={systemStatus} tasks={workspace.tasks} /><OwnerMenu onOpenSettings={() => setShowPasswordForm(true)} onSignOut={() => void supabase.auth.signOut()} /></div>
         </header>
 
         {message || errorMessage ? <div className="floating-notices" aria-live="polite">{message ? <div className="notice-message" role="status">{message}<button aria-label="关闭通知" onClick={() => setMessage("")} type="button">×</button></div> : null}{errorMessage ? <div className="error-message" role="alert">{errorMessage}<button aria-label="关闭错误通知" onClick={() => setErrorMessage("")} type="button">×</button></div> : null}</div> : null}
@@ -1220,7 +1311,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             onRenameAccount={renameAccount}
             onSetAccountArchived={setAccountArchived}
             onSelectAccount={(accountId) => { setBlueprintRepairContext(null); setSelectedAccountId(accountId); }}
-            accountEpisodeCount={workspace.episodes.filter((episode) => episode.account_id === selectedAccount?.id).length}
+            accountEpisodeCount={catalog?.accountCounts[selectedAccount?.id ?? ""] ?? 0}
             promptVersions={workspace.promptVersions.filter((version) => version.account_id === selectedAccount?.id)}
             series={workspace.series.filter((candidate) => candidate.account_id === selectedAccount?.id)}
             seriesVersions={workspace.seriesVersions.filter((version) => version.account_id === selectedAccount?.id)}
@@ -1237,14 +1328,14 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             onUpdateConnection={updateExternalConnection}
           />
         ) : activeNavigation === "reviews" ? (
-          <ReviewWorkspace
+          <ReviewWorkspace serverPage={serverPage}
             accountsById={accountsById}
             episodes={workspace.episodes.filter((episode) => !episodeIsArchived(episode))}
             onSelectEpisode={openEpisodeDetail}
             selectedEpisode={selectedEpisode}
           />
         ) : activeNavigation === "operations" ? (
-          <OperationsWorkspace
+          <OperationsWorkspace remote={catalog ? { catalog, onPageChange: setCatalogPage, onPendingPageChange: setPendingPage, onBlockedPageChange: setBlockedPage, seriesId: operationSeries, onSeriesChange: (id) => { resetCatalogPage(); setOperationSeries(id); } } : undefined}
             episodes={workspace.episodes.filter((episode) => !episodeIsArchived(episode))}
             onOpenBlueprint={openAccountBlueprint}
             onSelectEpisode={openEpisodeDetail}
@@ -1257,7 +1348,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             tasks={workspace.tasks}
           />
         ) : (
-          <EpisodeWorkspace
+          <EpisodeWorkspace isPageLoading={isSectionLoading} serverPage={serverPage} artifactCounts={catalog?.artifactCounts}
             accounts={workspace.accounts}
             accountsById={accountsById}
             artifacts={workspace.artifacts}
@@ -1268,11 +1359,11 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
             isDeletePending={(episodeId) => pendingAction === `delete-${episodeId}`}
             isTitlePending={(episodeId) => pendingAction === `title-${episodeId}`}
             onDelete={deleteEpisode}
-            onFilter={setAccountFilter}
+            onFilter={(value) => { resetCatalogPage(); setAccountFilter(value); }}
             episodeVisibility={episodeVisibility}
-            onEpisodeVisibilityChange={setEpisodeVisibility}
+            onEpisodeVisibilityChange={(value) => { resetCatalogPage(); setEpisodeVisibility(value); }}
             onSetArchived={setEpisodeArchived}
-            onSeriesFilter={setSeriesFilter}
+            onSeriesFilter={(value) => { resetCatalogPage(); setSeriesFilter(value); }}
             onSelectEpisode={openEpisodeDetail}
             onUpdateTitle={updateEpisodeTitle}
             series={workspace.series}
@@ -1285,11 +1376,11 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
         </>}
       </section>
 
-      {isEpisodeDetailOpen && selectedEpisode ? <EpisodeProduction
-        episodeId={selectedEpisode.id}
+      {isEpisodeDetailOpen && selectedEpisodeId ? <EpisodeProduction
+        episodeId={selectedEpisodeId}
         onClose={() => setIsEpisodeDetailOpen(false)}
         onOpenAccountWorkspace={({ accountId, repair }) => openAccountBlueprint(accountId, repair ?? null)}
-        onSummaryChanged={refreshWorkspaceSummary}
+        onSummaryChanged={acceptEpisodeSnapshot}
         ownerId={session.user.id}
       /> : null}
 
@@ -1403,27 +1494,28 @@ function EpisodeDeleteModal({ assetRoot, episode, isPending, onClose, onDelete }
   return <div className="modal-backdrop" role="presentation"><form aria-label="永久删除生产单" className="modal-card modal-card-danger" onSubmit={(event) => void submit(event)}><header><div><h2>永久删除生产单</h2><p>此操作不可恢复，并会同时清理本地产物和数据库关联记录。</p></div><button aria-label="关闭永久删除生产单" className="icon-button" onClick={onClose} type="button"><Icon name="Close" /></button></header><p>本地 Episode 目录：</p><code>{localEpisodePath}</code><label>输入确认文本：<input aria-label="永久删除确认文本" autoFocus onChange={(event) => setConfirmation(event.target.value)} placeholder={confirmationTarget} value={confirmation} /></label><div className="modal-actions"><button className="button button-secondary" onClick={onClose} type="button">取消</button><button className="button button-danger" disabled={isPending || confirmation !== confirmationTarget} type="submit">{isPending ? "删除中…" : "确认永久删除"}</button></div></form></div>;
 }
 
-export function EpisodeWorkspace({ accounts, accountsById, artifacts, blueprintsById, episodeVisibility, episodes, filter, onDelete = async () => {}, onEpisodeVisibilityChange, onFilter, onSetArchived = async () => {}, onSeriesFilter, onSelectEpisode, onUpdateTitle = async () => {}, series, seriesById, seriesFilter, seriesVersionsById, selectedEpisode, isArchivePending = () => false, isDeletePending = () => false, isTitlePending = () => false }: { accounts: Account[]; accountsById: Map<string, Account>; artifacts: Artifact[]; blueprintsById: Map<string, Blueprint>; episodeVisibility: EpisodeVisibility; episodes: Episode[]; filter: string; isArchivePending?: (episodeId: string) => boolean; isDeletePending?: (episodeId: string) => boolean; isTitlePending?: (episodeId: string) => boolean; onDelete?: (episodeId: string, confirmation: string) => Promise<void>; onEpisodeVisibilityChange: (value: EpisodeVisibility) => void; onFilter: (value: string) => void; onSetArchived?: (episodeId: string, archived: boolean) => Promise<void>; onSeriesFilter: (value: string) => void; onSelectEpisode: (id: string) => void; onUpdateTitle?: (episodeId: string, title: string) => Promise<void>; series: Series[]; seriesById: Map<string, Series>; seriesFilter: string; seriesVersionsById: Map<string, SeriesVersion>; selectedEpisode: Episode | null }) {
+export function EpisodeWorkspace({ isPageLoading = false, serverPage, artifactCounts, accounts, accountsById, artifacts, blueprintsById, episodeVisibility, episodes, filter, onDelete = async () => {}, onEpisodeVisibilityChange, onFilter, onSetArchived = async () => {}, onSeriesFilter, onSelectEpisode, onUpdateTitle = async () => {}, series, seriesById, seriesFilter, seriesVersionsById, selectedEpisode, isArchivePending = () => false, isDeletePending = () => false, isTitlePending = () => false }: { isPageLoading?: boolean; serverPage?: ServerPage; artifactCounts?: Record<string, number>; accounts: Account[]; accountsById: Map<string, Account>; artifacts: Artifact[]; blueprintsById: Map<string, Blueprint>; episodeVisibility: EpisodeVisibility; episodes: Episode[]; filter: string; isArchivePending?: (episodeId: string) => boolean; isDeletePending?: (episodeId: string) => boolean; isTitlePending?: (episodeId: string) => boolean; onDelete?: (episodeId: string, confirmation: string) => Promise<void>; onEpisodeVisibilityChange: (value: EpisodeVisibility) => void; onFilter: (value: string) => void; onSetArchived?: (episodeId: string, archived: boolean) => Promise<void>; onSeriesFilter: (value: string) => void; onSelectEpisode: (id: string) => void; onUpdateTitle?: (episodeId: string, title: string) => Promise<void>; series: Series[]; seriesById: Map<string, Series>; seriesFilter: string; seriesVersionsById: Map<string, SeriesVersion>; selectedEpisode: Episode | null }) {
   const [page, setPage] = useState(1);
   const pageSize = 20;
   const filteredEpisodes = episodes.filter((episode) => episodeVisibility === "all" || (episodeVisibility === "archived" ? episodeIsArchived(episode) : !episodeIsArchived(episode)));
   const pageCount = Math.max(1, Math.ceil(filteredEpisodes.length / pageSize));
-  const safePage = Math.min(page, pageCount);
-  const pageItems = filteredEpisodes.slice((safePage - 1) * pageSize, safePage * pageSize);
+  const safePage = serverPage?.page ?? Math.min(page, pageCount);
+  const total = serverPage?.total ?? filteredEpisodes.length;
+  const pageItems = isPageLoading ? [] : serverPage ? filteredEpisodes : filteredEpisodes.slice((safePage - 1) * pageSize, safePage * pageSize);
   useEffect(() => setPage(1), [episodeVisibility, filter, seriesFilter]);
   useEffect(() => setPage((current) => Math.min(current, pageCount)), [pageCount]);
-  return <><div className="filters"><label><span>账号</span><select onChange={(event) => onFilter(event.target.value)} value={filter}><option value="全部账号">全部账号</option>{accounts.map((account) => <option key={account.id} value={account.id}>{account.name}</option>)}</select></label><label><span>系列</span><select onChange={(event) => onSeriesFilter(event.target.value)} value={seriesFilter}><option value="全部系列">全部系列</option>{series.map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.name}</option>)}</select></label><label><span>生产单状态</span><select aria-label="生产单状态" onChange={(event) => onEpisodeVisibilityChange(event.target.value as EpisodeVisibility)} value={episodeVisibility}><option value="active">进行中</option><option value="archived">已归档</option><option value="all">全部</option></select></label><span className="summary-count">{filteredEpisodes.length} 个生产单</span></div><div className="episode-table" role="table" aria-label="生产单"><div className="table-row table-header" role="row"><span>生产单</span><span>账号</span><span>系列</span><span>蓝图</span><span>当前阶段</span><span>产物数</span><span>更新时间</span><span>操作</span></div>{pageItems.map((episode) => { const seriesVersion = episode.series_version_id ? seriesVersionsById.get(episode.series_version_id) : null; const account = accountsById.get(episode.account_id); const accountSlug = account?.slug ?? ""; return <div className={`table-row episode-row ${selectedEpisode?.id === episode.id ? "is-selected" : ""}`} key={episode.id} onClick={() => onSelectEpisode(episode.id)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onSelectEpisode(episode.id); } }} role="row" tabIndex={0}><span className="episode-name"><strong>{episode.title || "未命名生产单"}</strong><small>{episode.id.slice(0, 8)}</small></span><span className="account-name"><i aria-hidden="true" className={`account-avatar account-avatar-${accountIdentityColor(accountSlug)}`} title={account?.name ?? "未知账号"}>{accountIdentityInitials(accountSlug)}</i>{account?.name ?? "未知账号"}</span><span>{seriesVersion ? `${seriesById.get(seriesVersion.series_id)?.name ?? "未知系列"} v${seriesVersion.version}` : "—"}</span><span>v{blueprintsById.get(episode.blueprint_version_id)?.version ?? "—"}</span><span className={`stage stage-${stageTone(episode.stage)}`}>{stageLabels[episode.stage]}</span><span>{artifacts.filter((artifact) => artifact.episode_id === episode.id).length}</span><span>{formatDate(episode.updated_at)}</span><EpisodeActionsMenu blueprint={blueprintsById.get(episode.blueprint_version_id)} episode={episode} isArchivePending={isArchivePending(episode.id)} isDeletePending={isDeletePending(episode.id)} isTitlePending={isTitlePending(episode.id)} onDelete={onDelete} onSetArchived={onSetArchived} onUpdateTitle={onUpdateTitle} /></div>; })}</div>{filteredEpisodes.length === 0 ? <div className="empty-state compact"><h2>{episodeVisibility === "archived" ? "还没有已归档的生产单" : "还没有符合条件的生产单"}</h2><p>调整筛选条件，或点击右上角“新建生产单”。</p></div> : null}<PaginationControls page={safePage} pageSize={pageSize} total={filteredEpisodes.length} onPageChange={setPage} /><div className="status-legend"><span><i className="legend-approved" />已通过</span><span><i className="legend-review" />待审核</span><span><i className="legend-muted" />草稿 / 制作</span></div></>;
+  return <><div className="filters"><label><span>账号</span><select onChange={(event) => onFilter(event.target.value)} value={filter}><option value="全部账号">全部账号</option>{accounts.map((account) => <option key={account.id} value={account.id}>{account.name}</option>)}</select></label><label><span>系列</span><select onChange={(event) => onSeriesFilter(event.target.value)} value={seriesFilter}><option value="全部系列">全部系列</option>{series.map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.name}</option>)}</select></label><label><span>生产单状态</span><select aria-label="生产单状态" onChange={(event) => onEpisodeVisibilityChange(event.target.value as EpisodeVisibility)} value={episodeVisibility}><option value="active">进行中</option><option value="archived">已归档</option><option value="all">全部</option></select></label><span className="summary-count">{total} 个生产单</span></div><div className="episode-table" role="table" aria-label="生产单"><div className="table-row table-header" role="row"><span>生产单</span><span>账号</span><span>系列</span><span>蓝图</span><span>当前阶段</span><span>产物数</span><span>更新时间</span><span>操作</span></div>{pageItems.map((episode) => { const seriesVersion = episode.series_version_id ? seriesVersionsById.get(episode.series_version_id) : null; const account = accountsById.get(episode.account_id); const accountSlug = account?.slug ?? ""; return <div className={`table-row episode-row ${selectedEpisode?.id === episode.id ? "is-selected" : ""}`} key={episode.id} onClick={() => onSelectEpisode(episode.id)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onSelectEpisode(episode.id); } }} role="row" tabIndex={0}><span className="episode-name"><strong>{episode.title || "未命名生产单"}</strong><small>{episode.id.slice(0, 8)}</small></span><span className="account-name"><i aria-hidden="true" className={`account-avatar account-avatar-${accountIdentityColor(accountSlug)}`} title={account?.name ?? "未知账号"}>{accountIdentityInitials(accountSlug)}</i>{account?.name ?? "未知账号"}</span><span>{seriesVersion ? `${seriesById.get(seriesVersion.series_id)?.name ?? "未知系列"} v${seriesVersion.version}` : "—"}</span><span>v{blueprintsById.get(episode.blueprint_version_id)?.version ?? "—"}</span><span className={`stage stage-${stageTone(episode.stage)}`}>{stageLabels[episode.stage]}</span><span>{artifactCounts?.[episode.id] ?? artifacts.filter((artifact) => artifact.episode_id === episode.id).length}</span><span>{formatDate(episode.updated_at)}</span><EpisodeActionsMenu blueprint={blueprintsById.get(episode.blueprint_version_id)} episode={episode} isArchivePending={isArchivePending(episode.id)} isDeletePending={isDeletePending(episode.id)} isTitlePending={isTitlePending(episode.id)} onDelete={onDelete} onSetArchived={onSetArchived} onUpdateTitle={onUpdateTitle} /></div>; })}</div>{filteredEpisodes.length === 0 ? <div className="empty-state compact"><h2>{episodeVisibility === "archived" ? "还没有已归档的生产单" : "还没有符合条件的生产单"}</h2><p>调整筛选条件，或点击右上角“新建生产单”。</p></div> : null}{isPageLoading ? null : <PaginationControls page={safePage} pageSize={pageSize} total={total} onPageChange={serverPage?.onPageChange ?? setPage} />}<div className="status-legend"><span><i className="legend-approved" />已通过</span><span><i className="legend-review" />待审核</span><span><i className="legend-muted" />草稿 / 制作</span></div></>;
 }
 
-export function ReviewWorkspace({ accountsById, episodes, onSelectEpisode, selectedEpisode }: { accountsById: Map<string, Account>; episodes: Episode[]; onSelectEpisode: (id: string) => void; selectedEpisode: Episode | null }) {
+export function ReviewWorkspace({ serverPage, accountsById, episodes, onSelectEpisode, selectedEpisode }: { serverPage?: ServerPage; accountsById: Map<string, Account>; episodes: Episode[]; onSelectEpisode: (id: string) => void; selectedEpisode: Episode | null }) {
   const reviewEpisodes = episodes.filter((episode) => !episode.archived_at && (reviewActionFor(episode.stage) || episode.stage === "production_ready"));
   const [page, setPage] = useState(1);
   const pageSize = 20;
   const pageCount = Math.max(1, Math.ceil(reviewEpisodes.length / pageSize));
-  const safePage = Math.min(page, pageCount);
-  const pageItems = reviewEpisodes.slice((safePage - 1) * pageSize, safePage * pageSize);
+  const safePage = serverPage?.page ?? Math.min(page, pageCount);
+  const pageItems = serverPage ? reviewEpisodes : reviewEpisodes.slice((safePage - 1) * pageSize, safePage * pageSize);
   useEffect(() => setPage((current) => Math.min(current, pageCount)), [pageCount]);
-  return <><p className="muted-copy">审核决定会通过受控状态迁移写入审批与审计记录；Worker 的阻塞项会显示在右侧 Episode 详情中。</p><section className="review-queue" aria-label="待审核 Episode"><h2>待审核 Episode</h2>{reviewEpisodes.length ? <><div className="review-queue-list">{pageItems.map((episode) => <button className={`review-queue-item ${selectedEpisode?.id === episode.id ? "is-selected" : ""}`} key={episode.id} onClick={() => onSelectEpisode(episode.id)} type="button"><strong>{episode.title}</strong><span>{accountsById.get(episode.account_id)?.name ?? "未知账号"} · {stageLabels[episode.stage]}</span></button>)}</div><PaginationControls page={safePage} pageSize={pageSize} total={reviewEpisodes.length} onPageChange={setPage} /></> : <div className="empty-state compact"><h2>没有待审核 Episode</h2><p>Worker 将产物推进到审核阶段后，会在这里显示。</p></div>}</section></>;
+  return <><p className="muted-copy">审核决定会通过受控状态迁移写入审批与审计记录；Worker 的阻塞项会显示在右侧 Episode 详情中。</p><section className="review-queue" aria-label="待审核 Episode"><h2>待审核 Episode</h2>{reviewEpisodes.length ? <><div className="review-queue-list">{pageItems.map((episode) => <button className={`review-queue-item ${selectedEpisode?.id === episode.id ? "is-selected" : ""}`} key={episode.id} onClick={() => onSelectEpisode(episode.id)} type="button"><strong>{episode.title}</strong><span>{accountsById.get(episode.account_id)?.name ?? "未知账号"} · {stageLabels[episode.stage]}</span></button>)}</div><PaginationControls page={safePage} pageSize={pageSize} total={serverPage?.total ?? reviewEpisodes.length} onPageChange={serverPage?.onPageChange ?? setPage} /></> : <div className="empty-state compact"><h2>没有待审核 Episode</h2><p>Worker 将产物推进到审核阶段后，会在这里显示。</p></div>}</section></>;
 }
 
 const episodeCreationSteps: Array<{ id: Exclude<EpisodeCreationStep, "idle">; label: string; note: string }> = [

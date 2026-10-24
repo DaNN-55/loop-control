@@ -1,0 +1,6 @@
+1..12
+644f8c5a-b668-48a3-8a25-94c4e502fa04
+ERROR:  function read_episode_catalog(p_account_id => unknown) does not exist
+LINE 1: create temp table first_page as select read_episode_catalog(...
+                                               ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.

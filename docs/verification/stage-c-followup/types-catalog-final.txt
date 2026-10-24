@@ -1,0 +1,8 @@
+
+> loop-control@0.1.0 check
+> tsc -b --pretty false
+
+src/episodes/episodeCatalog.ts(44,166): error TS2339: Property 'invalidated_at' does not exist on type '{ actual_cost_cents: number | null; attempt: number; budget_limit_cents: number; claimed_at: string | null; completed_at: string | null; created_at: string; episode_id: string; id: string; ... 7 more ...; task_type: string; }'.
+src/episodes/episodeCatalog.ts(44,187): error TS2339: Property 'invalidated_at' does not exist on type '{ actual_cost_cents: number | null; attempt: number; budget_limit_cents: number; claimed_at: string | null; completed_at: string | null; created_at: string; episode_id: string; id: string; ... 7 more ...; task_type: string; }'.
+src/episodes/episodeCatalogChanges.test.ts(10,43): error TS2739: Type '{ id: string; stage: string; }' is missing the following properties from type '{ archived_at?: string | null | undefined; audio_source_mode?: "source" | "tts" | undefined; tts_language_code?: string | null | undefined; tts_speaking_rate?: number | null | undefined; ... 11 more ...; updated_at: string; }': account_id, blueprint_version_id, created_at, title, updated_at
+src/episodes/episodeCatalogChanges.test.ts(11,19): error TS2339: Property 'lease_expires_at' does not exist on type '{ actual_cost_cents: number | null; attempt: number; budget_limit_cents: number; claimed_at: string | null; completed_at: string | null; created_at: string; episode_id: string; id: string; ... 7 more ...; task_type: string; }'.

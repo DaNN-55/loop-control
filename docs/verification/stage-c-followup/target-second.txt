@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/operations/OperationsWorkspace.test.tsx (6 tests) 156ms
+ ✓ src/observability/SystemStatusPanel.test.tsx (19 tests) 305ms
+ ✓ src/App.test.tsx (34 tests) 673ms
+
+ Test Files  3 passed (3)
+      Tests  59 passed (59)
+   Start at  08:47:05
+   Duration  1.94s (transform 579ms, setup 0ms, collect 1.27s, tests 1.13s, environment 892ms, prepare 159ms)
+

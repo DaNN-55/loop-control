@@ -1,0 +1,22 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "cwd": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control",
+  "branch": "codex/local-first-stage-a",
+  "head": "53844292238114ab4779ae4e747541afe4eeafa5",
+  "ports": {
+    "api": 55461,
+    "database": 55462,
+    "console": 55176
+  },
+  "oldTasksUnchanged": true,
+  "oldTasksSha256": "3c2d7ac03702c1fb58410540738db3dacbc4feb291aeebcc89abd19d9cdcb020",
+  "newFixturesAccount": "41040f75-0569-449d-b32f-932a7f88460e",
+  "ownTaskFinalStatus": "completed",
+  "recordedMigrationMatchesFile": true,
+  "migrationSha256": "69ad2e42acd1a0eaf357885dd36bec9639da066ec9bb5d46a415175555f57cad",
+  "migrationListExit": 0,
+  "productionOperations": false,
+  "pushed": false,
+  "merged": false,
+  "continuedD": false
+}

@@ -1,0 +1,972 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/episodes/EpisodeProductionContainer.test.tsx (4 tests) 55ms
+ ❯ src/episodes/episodeCatalog.test.tsx (3 tests | 1 failed) 448ms
+   ✓ server catalog in the real console > 筛选重置到第一页，慢旧页不能覆盖新筛选结果 185ms
+   × server catalog in the real console > 远端阻塞项打开蓝图修复后保留上下文，不把未加载的任务当作解除阻塞 147ms
+     → Unable to find an accessible element with the role "button" and name "保存并继续当前生产单"
+
+Here are the accessible roles:
+
+  link:
+
+  Name "跳到主要内容":
+  [36m<a[39m
+    [33mclass[39m=[32m"skip-link"[39m
+    [33mhref[39m=[32m"#main-content"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  complementary:
+
+  Name "主导航":
+  [36m<aside[39m
+    [33maria-label[39m=[32m"主导航"[39m
+    [33mclass[39m=[32m"sidebar"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  img:
+
+  Name "Loop Control":
+  [36m<img[39m
+    [33malt[39m=[32m"Loop Control"[39m
+    [33mclass[39m=[32m"wordmark-mark"[39m
+    [33msrc[39m=[32m"/brand/loop-mark.svg"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  navigation:
+
+  Name "":
+  [36m<nav[39m
+    [33mclass[39m=[32m"navigation"[39m
+  [36m/>[39m
+
+  Name "移动端主导航":
+  [36m<nav[39m
+    [33maria-label[39m=[32m"移动端主导航"[39m
+    [33mclass[39m=[32m"mobile-navigation"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "系列运营":
+  [36m<button[39m
+    [33maria-label[39m=[32m"系列运营"[39m
+    [33mclass[39m=[32m"navigation-item "[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "生产单":
+  [36m<button[39m
+    [33maria-label[39m=[32m"生产单"[39m
+    [33mclass[39m=[32m"navigation-item "[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "审核":
+  [36m<button[39m
+    [33maria-label[39m=[32m"审核"[39m
+    [33mclass[39m=[32m"navigation-item "[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "账号":
+  [36m<button[39m
+    [33maria-current[39m=[32m"page"[39m
+    [33maria-label[39m=[32m"账号"[39m
+    [33mclass[39m=[32m"navigation-item is-active"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "OpenChatCut 仅从有审核渲染的生产单打开":
+  [36m<button[39m
+    [33maria-label[39m=[32m"OpenChatCut 仅从有审核渲染的生产单打开"[39m
+    [33mclass[39m=[32m"sidebar-studio-shortcut"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtitle[39m=[32m"请选择有审核渲染的生产单"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "系统状态：待确认":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"dialog"[39m
+    [33maria-label[39m=[32m"系统状态：待确认"[39m
+    [33mclass[39m=[32m"system-status-trigger system-status-unknown"[39m
+    [33mtitle[39m=[32m"Supabase：待确认 · 生产执行链：待确认 · 任务执行：待确认 · 媒体库：待确认 · 依赖 · Codex CLI：待确认"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "切换至深色模式":
+  [36m<button[39m
+    [33maria-label[39m=[32m"切换至深色模式"[39m
+    [33mclass[39m=[32m"sidebar-utility"[39m
+    [33mtitle[39m=[32m"深色模式"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "收起侧栏":
+  [36m<button[39m
+    [33maria-label[39m=[32m"收起侧栏"[39m
+    [33mclass[39m=[32m"sidebar-collapse-button sidebar-utility"[39m
+    [33mtitle[39m=[32m"收起侧栏"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "所有者设置":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"所有者设置"[39m
+    [33mclass[39m=[32m"owner-menu-trigger"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "新建账号":
+  [36m<button[39m
+    [33mclass[39m=[32m"button button-primary"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "系统状态：待确认":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"dialog"[39m
+    [33maria-label[39m=[32m"系统状态：待确认"[39m
+    [33mclass[39m=[32m"system-status-trigger system-status-unknown"[39m
+    [33mtitle[39m=[32m"Supabase：待确认 · 生产执行链：待确认 · 任务执行：待确认 · 媒体库：待确认 · 依赖 · Codex CLI：待确认"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "所有者设置":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"所有者设置"[39m
+    [33mclass[39m=[32m"owner-menu-trigger"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "关闭通知":
+  [36m<button[39m
+    [33maria-label[39m=[32m"关闭通知"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "账号操作":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"账号操作"[39m
+    [33mclass[39m=[32m"icon-button account-actions-trigger"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "返回生产单":
+  [36m<button[39m
+    [33mclass[39m=[32m"button button-secondary"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "系列运营":
+  [36m<button[39m
+    [33maria-label[39m=[32m"系列运营"[39m
+    [33mclass[39m=[32m"navigation-item "[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "生产单":
+  [36m<button[39m
+    [33maria-label[39m=[32m"生产单"[39m
+    [33mclass[39m=[32m"navigation-item "[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "审核":
+  [36m<button[39m
+    [33maria-label[39m=[32m"审核"[39m
+    [33mclass[39m=[32m"navigation-item "[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "账号":
+  [36m<button[39m
+    [33maria-current[39m=[32m"page"[39m
+    [33maria-label[39m=[32m"账号"[39m
+    [33mclass[39m=[32m"navigation-item is-active"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  region:
+
+  Name "平台工作台":
+  [36m<section[39m
+    [33maria-label[39m=[32m"平台工作台"[39m
+    [33mclass[39m=[32m"content-pane"[39m
+    [33mid[39m=[32m"main-content"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"page-header"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"account-configuration-heading"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "账号":
+  [36m<h1 />[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"notice-message"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  combobox:
+
+  Name "当前账号":
+  [36m<select[39m
+    [33maria-label[39m=[32m"当前账号"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  group:
+
+  Name "使用中":
+  [36m<optgroup[39m
+    [33mlabel[39m=[32m"使用中"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  option:
+
+  Name "测试账号":
+  [36m<option[39m
+    [33mvalue[39m=[32m"account-one"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tablist:
+
+  Name "账号设置导航":
+  [36m<nav[39m
+    [33maria-label[39m=[32m"账号设置导航"[39m
+    [33mclass[39m=[32m"account-tabs"[39m
+    [33mrole[39m=[32m"tablist"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tab:
+
+  Name "蓝图":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mclass[39m=[32m"account-tab is-active"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "系列":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m"account-tab "[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"form-error"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+      [33mdata-sidebar[39m=[32m"expanded"[39m
+      [33mdata-theme[39m=[32m"light"[39m
+    [36m>[39m
+      [36m<a[39m
+        [33mclass[39m=[32m"skip-link"[39m
+        [33mhref[39m=[32m"#main-content"[39m
+      [36m>[39m
+        [0m跳到主要内容[0m
+      [36m</a>[39m
+      [36m<aside[39m
+        [33maria-label[39m=[32m"主导航"[39m
+        [33mclass[39m=[32m"sidebar"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"wordmark"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"wordmark-text"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wordmark-letter-cyan"[39m
+              [36m>[39m
+                [0mL[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wordmark-letter-blue"[39m
+              [36m>[39m
+                [0moo[0m
+              [36m</span>[39m
+              [0mp[0m
+            [36m</span>[39m
+            [36m<span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wordmark-letter-pink"[39m
+              [36m>[39m
+                [0mC[0m
+              [36m</span>[39m
+              [0montrol[0m
+            [36m</span>[39m
+          [36m</span>[39m
+          [36m<img[39m
+            [33malt[39m=[32m"Loop Control"[39m
+            [33mclass[39m=[32m"wordmark-mark"[39m
+            [33msrc[39m=[32m"/brand/loop-mark.svg"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<nav[39m
+          [33mclass[39m=[32m"navigation"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"系列运营"[39m
+            [33mclass[39m=[32m"navigation-item "[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chart-column icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 3v16a2 2 0 0 0 2 2h16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M18 17V9"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M13 17V5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 17v-3"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"navigation-label"[39m
+            [36m>[39m
+              [0m系列运营[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"生产单"[39m
+            [33mclass[39m=[32m"navigation-item "[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-table2 lucide-table-2 icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"navigation-label"[39m
+            [36m>[39m
+              [0m生产单[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"审核"[39m
+            [33mclass[39m=[32m"navigation-item "[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-message-square icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"navigation-label"[39m
+            [36m>[39m
+              [0m审核[0m
+            [36m</span>[39m
+            [36m<span[39m
+              [33maria-label[39m=[32m"36 个待处理"[39m
+              [33mclass[39m=[32m"navigation-badge"[39m
+            [36m>[39m
+              [0m36[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-current[39m=[32m"page"[39m
+            [33maria-label[39m=[32m"账号"[39m
+            [33mclass[39m=[32m"navigation-item is-active"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-users icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://ww...
+   ✓ server catalog in the real console > 退出登录后拒绝在途列表及旧会话的回填 115ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 6 passed (7)
+   Start at  08:58:19
+   Duration  1.47s (transform 483ms, setup 0ms, collect 959ms, tests 503ms, environment 613ms, prepare 74ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/episodes/episodeCatalog.test.tsx > server catalog in the real console > 远端阻塞项打开蓝图修复后保留上下文，不把未加载的任务当作解除阻塞
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "保存并继续当前生产单"
+
+Here are the accessible roles:
+
+  link:
+
+  Name "跳到主要内容":
+  [36m<a[39m
+    [33mclass[39m=[32m"skip-link"[39m
+    [33mhref[39m=[32m"#main-content"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  complementary:
+
+  Name "主导航":
+  [36m<aside[39m
+    [33maria-label[39m=[32m"主导航"[39m
+    [33mclass[39m=[32m"sidebar"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  img:
+
+  Name "Loop Control":
+  [36m<img[39m
+    [33malt[39m=[32m"Loop Control"[39m
+    [33mclass[39m=[32m"wordmark-mark"[39m
+    [33msrc[39m=[32m"/brand/loop-mark.svg"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  navigation:
+
+  Name "":
+  [36m<nav[39m
+    [33mclass[39m=[32m"navigation"[39m
+  [36m/>[39m
+
+  Name "移动端主导航":
+  [36m<nav[39m
+    [33maria-label[39m=[32m"移动端主导航"[39m
+    [33mclass[39m=[32m"mobile-navigation"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "系列运营":
+  [36m<button[39m
+    [33maria-label[39m=[32m"系列运营"[39m
+    [33mclass[39m=[32m"navigation-item "[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "生产单":
+  [36m<button[39m
+    [33maria-label[39m=[32m"生产单"[39m
+    [33mclass[39m=[32m"navigation-item "[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "审核":
+  [36m<button[39m
+    [33maria-label[39m=[32m"审核"[39m
+    [33mclass[39m=[32m"navigation-item "[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "账号":
+  [36m<button[39m
+    [33maria-current[39m=[32m"page"[39m
+    [33maria-label[39m=[32m"账号"[39m
+    [33mclass[39m=[32m"navigation-item is-active"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "OpenChatCut 仅从有审核渲染的生产单打开":
+  [36m<button[39m
+    [33maria-label[39m=[32m"OpenChatCut 仅从有审核渲染的生产单打开"[39m
+    [33mclass[39m=[32m"sidebar-studio-shortcut"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtitle[39m=[32m"请选择有审核渲染的生产单"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "系统状态：待确认":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"dialog"[39m
+    [33maria-label[39m=[32m"系统状态：待确认"[39m
+    [33mclass[39m=[32m"system-status-trigger system-status-unknown"[39m
+    [33mtitle[39m=[32m"Supabase：待确认 · 生产执行链：待确认 · 任务执行：待确认 · 媒体库：待确认 · 依赖 · Codex CLI：待确认"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "切换至深色模式":
+  [36m<button[39m
+    [33maria-label[39m=[32m"切换至深色模式"[39m
+    [33mclass[39m=[32m"sidebar-utility"[39m
+    [33mtitle[39m=[32m"深色模式"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "收起侧栏":
+  [36m<button[39m
+    [33maria-label[39m=[32m"收起侧栏"[39m
+    [33mclass[39m=[32m"sidebar-collapse-button sidebar-utility"[39m
+    [33mtitle[39m=[32m"收起侧栏"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "所有者设置":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"所有者设置"[39m
+    [33mclass[39m=[32m"owner-menu-trigger"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "新建账号":
+  [36m<button[39m
+    [33mclass[39m=[32m"button button-primary"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "系统状态：待确认":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"dialog"[39m
+    [33maria-label[39m=[32m"系统状态：待确认"[39m
+    [33mclass[39m=[32m"system-status-trigger system-status-unknown"[39m
+    [33mtitle[39m=[32m"Supabase：待确认 · 生产执行链：待确认 · 任务执行：待确认 · 媒体库：待确认 · 依赖 · Codex CLI：待确认"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "所有者设置":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"所有者设置"[39m
+    [33mclass[39m=[32m"owner-menu-trigger"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "关闭通知":
+  [36m<button[39m
+    [33maria-label[39m=[32m"关闭通知"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "账号操作":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33maria-haspopup[39m=[32m"menu"[39m
+    [33maria-label[39m=[32m"账号操作"[39m
+    [33mclass[39m=[32m"icon-button account-actions-trigger"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "返回生产单":
+  [36m<button[39m
+    [33mclass[39m=[32m"button button-secondary"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "系列运营":
+  [36m<button[39m
+    [33maria-label[39m=[32m"系列运营"[39m
+    [33mclass[39m=[32m"navigation-item "[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "生产单":
+  [36m<button[39m
+    [33maria-label[39m=[32m"生产单"[39m
+    [33mclass[39m=[32m"navigation-item "[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "审核":
+  [36m<button[39m
+    [33maria-label[39m=[32m"审核"[39m
+    [33mclass[39m=[32m"navigation-item "[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "账号":
+  [36m<button[39m
+    [33maria-current[39m=[32m"page"[39m
+    [33maria-label[39m=[32m"账号"[39m
+    [33mclass[39m=[32m"navigation-item is-active"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  region:
+
+  Name "平台工作台":
+  [36m<section[39m
+    [33maria-label[39m=[32m"平台工作台"[39m
+    [33mclass[39m=[32m"content-pane"[39m
+    [33mid[39m=[32m"main-content"[39m
+    [33mtabindex[39m=[32m"-1"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  banner:
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"page-header"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"account-configuration-heading"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "账号":
+  [36m<h1 />[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "":
+  [36m<div[39m
+    [33mclass[39m=[32m"notice-message"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  combobox:
+
+  Name "当前账号":
+  [36m<select[39m
+    [33maria-label[39m=[32m"当前账号"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  group:
+
+  Name "使用中":
+  [36m<optgroup[39m
+    [33mlabel[39m=[32m"使用中"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  option:
+
+  Name "测试账号":
+  [36m<option[39m
+    [33mvalue[39m=[32m"account-one"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tablist:
+
+  Name "账号设置导航":
+  [36m<nav[39m
+    [33maria-label[39m=[32m"账号设置导航"[39m
+    [33mclass[39m=[32m"account-tabs"[39m
+    [33mrole[39m=[32m"tablist"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  tab:
+
+  Name "蓝图":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"true"[39m
+    [33mclass[39m=[32m"account-tab is-active"[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "系列":
+  [36m<button[39m
+    [33maria-selected[39m=[32m"false"[39m
+    [33mclass[39m=[32m"account-tab "[39m
+    [33mrole[39m=[32m"tab"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"form-error"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+      [33mdata-sidebar[39m=[32m"expanded"[39m
+      [33mdata-theme[39m=[32m"light"[39m
+    [36m>[39m
+      [36m<a[39m
+        [33mclass[39m=[32m"skip-link"[39m
+        [33mhref[39m=[32m"#main-content"[39m
+      [36m>[39m
+        [0m跳到主要内容[0m
+      [36m</a>[39m
+      [36m<aside[39m
+        [33maria-label[39m=[32m"主导航"[39m
+        [33mclass[39m=[32m"sidebar"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"wordmark"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"wordmark-text"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wordmark-letter-cyan"[39m
+              [36m>[39m
+                [0mL[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wordmark-letter-blue"[39m
+              [36m>[39m
+                [0moo[0m
+              [36m</span>[39m
+              [0mp[0m
+            [36m</span>[39m
+            [36m<span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wordmark-letter-pink"[39m
+              [36m>[39m
+                [0mC[0m
+              [36m</span>[39m
+              [0montrol[0m
+            [36m</span>[39m
+          [36m</span>[39m
+          [36m<img[39m
+            [33malt[39m=[32m"Loop Control"[39m
+            [33mclass[39m=[32m"wordmark-mark"[39m
+            [33msrc[39m=[32m"/brand/loop-mark.svg"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<nav[39m
+          [33mclass[39m=[32m"navigation"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"系列运营"[39m
+            [33mclass[39m=[32m"navigation-item "[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chart-column icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 3v16a2 2 0 0 0 2 2h16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M18 17V9"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M13 17V5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 17v-3"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"navigation-label"[39m
+            [36m>[39m
+              [0m系列运营[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"生产单"[39m
+            [33mclass[39m=[32m"navigation-item "[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-table2 lucide-table-2 icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"navigation-label"[39m
+            [36m>[39m
+              [0m生产单[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"审核"[39m
+            [33mclass[39m=[32m"navigation-item "[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-message-square icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"navigation-label"[39m
+            [36m>[39m
+              [0m审核[0m
+            [36m</span>[39m
+            [36m<span[39m
+              [33maria-label[39m=[32m"36 个待处理"[39m
+              [33mclass[39m=[32m"navigation-badge"[39m
+            [36m>[39m
+              [0m36[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-current[39m=[32m"page"[39m
+            [33maria-label[39m=[32m"账号"[39m
+            [33mclass[39m=[32m"navigation-item is-active"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-users icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://ww...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/episodes/episodeCatalog.test.tsx:64:19
+     62|     fireEvent.click(await screen.findByRole('button', { name: '修改配置并继续…
+     63|     await waitFor(() => expect(screen.queryByText('当前生产单的阻塞已解除，已返回生产单详…
+     64|     expect(screen.getByRole('button', { name: '保存并继续当前生产单' })).toBeTru…
+       |                   ^
+     65|     expect(screen.queryByRole('dialog', { name: '生产单详情' })).toBeNull();
+     66|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

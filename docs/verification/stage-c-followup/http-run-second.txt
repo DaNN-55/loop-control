@@ -1,0 +1,46 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "allPages": 51,
+  "uniqueActiveEpisodes": 1005,
+  "tailRows": 5,
+  "archiveRows": 2,
+  "seriesRows": 47,
+  "emptySeriesRows": 0,
+  "reviewRows": 23,
+  "pendingPackages": 23,
+  "blockers": 23,
+  "independentHighlightPages": true,
+  "globalWorkerMatchesOriginalSelectors": true,
+  "globalCountsNotPageCounts": true,
+  "stableOrdering": true,
+  "unauthorizedCountsAndRowsEmpty": true,
+  "anonymousStatus": 401,
+  "oldTasksUnchanged": true,
+  "samples": [
+    {
+      "name": "old-all-active-1005",
+      "requests": 3,
+      "requestBytes": 0,
+      "responseBytes": 540274,
+      "ms": 95.40325000000001
+    },
+    {
+      "name": "new-active-page1",
+      "requests": 1,
+      "requestBytes": 55,
+      "responseBytes": 14835,
+      "ms": 203.48570899999999
+    },
+    {
+      "name": "new-active-page51",
+      "requests": 1,
+      "requestBytes": 67,
+      "responseBytes": 4501,
+      "ms": 148.84987499999988
+    }
+  ],
+  "limitations": [
+    "Page requests are independent snapshots; changes to ordering between clicks can move records.",
+    "Historical default 5000ms gate failure and root cause remain unresolved."
+  ]
+}

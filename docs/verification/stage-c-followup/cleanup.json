@@ -1,0 +1,10 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "ownBrowserSessionClosed": true,
+  "observationConsoleStopped": true,
+  "consolePortFree": true,
+  "databaseAndMediaRetained": true,
+  "workerOrSchedulerNotStarted": true,
+  "indexClean": true,
+  "head": "5384429"
+}
