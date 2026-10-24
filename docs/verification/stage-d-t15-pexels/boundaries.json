@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-24T03:34:44.579Z",
+  "headUnchanged": "0f86d22ff26e7831c4570fe2f9eb59551eca1fc4",
+  "branch": "codex/local-first-stage-a",
+  "rootPlanSha256Unchanged": true,
+  "noStagedChanges": true,
+  "existingDServicePid8140OfflineGuardUnchanged": true,
+  "acceptancePort55178Closed": true,
+  "browserClosedAndOwnSessionsLoggedOut": true,
+  "dedicatedKeychainDeleted": true,
+  "recoveryPasswordFileDeleted": true,
+  "runtimeModeRestored": "0o755",
+  "providerRequests": 2,
+  "estimatedProviderCostUsd": 0,
+  "productionAccessed": false,
+  "pushed": false,
+  "merged": false,
+  "committed": false,
+  "t16Started": false,
+  "default5000msHistoricalFailureAndRootCauseUnresolved": true
+}

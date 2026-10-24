@@ -1,0 +1,43 @@
+{"at":"2026-10-24T03:20:22.894Z","name":"prepared","accountId":"7e70f241-ca81-4699-afb5-871172200bda","providerRequests":0}
+{"at":"2026-10-24T03:20:30.565Z","name":"listening","origin":"http://127.0.0.1:55178","scope":"only new test account and connection; real database rows filtered, not mocked"}
+{"at":"2026-10-24T03:22:37.608Z","name":"keychain-write","reference":"d30c8041-2c6f-4ecf-82db-b6c17450da9d"}
+{"at":"2026-10-24T03:22:37.619Z","name":"connection-command","command":"create","versionId":"54a49f01-5c96-4b8e-86d6-b6ad128d50ef"}
+{"at":"2026-10-24T03:22:37.651Z","name":"provider-request-reserved","number":1,"phase":"positive","method":"GET","url":"https://api.pexels.com/v1/videos/search?query=nature&per_page=1"}
+{"at":"2026-10-24T03:22:39.523Z","name":"provider-result","code":"response","status":200,"bytes":3119,"outcome":"verified","videoId":10395606}
+{"at":"2026-10-24T03:22:39.535Z","name":"connection-command","command":"verify","versionId":"54a49f01-5c96-4b8e-86d6-b6ad128d50ef","outcome":"verified","ready":true}
+{"at":"2026-10-24T03:24:43.824Z","name":"audit-failed","code":"audit_assertion_or_database_failure"}
+{"at":"2026-10-24T03:28:59.232Z","name":"failure","phase":"serve","code":"denied"}
+{"at":"2026-10-24T03:29:24.419Z","name":"listening","origin":"http://127.0.0.1:55178","scope":"only new test account and connection; real database rows filtered, not mocked"}
+{"at":"2026-10-24T03:29:31.062Z","name":"http-command","path":"/api/local/login","status":200}
+{"at":"2026-10-24T03:29:31.077Z","name":"http-command","path":"/api/local/configuration","status":200}
+{"at":"2026-10-24T03:29:31.081Z","name":"http-command","path":"/api/local/logout","status":200}
+{"at":"2026-10-24T03:29:57.811Z","name":"http-command","path":"/api/local/configuration","status":200}
+{"at":"2026-10-24T03:29:58.118Z","name":"audit-complete","versions":1,"workerExactVersionResolvable":true}
+{"at":"2026-10-24T03:30:08.420Z","name":"listening","origin":"http://127.0.0.1:55178","scope":"only new test account and connection; real database rows filtered, not mocked"}
+{"at":"2026-10-24T03:30:39.245Z","name":"audit-complete","versions":1,"workerExactVersionResolvable":true}
+{"at":"2026-10-24T03:30:57.922Z","name":"network-blocked","phase":"fault","used":1,"reason":"injected-local-network-policy"}
+{"at":"2026-10-24T03:30:57.922Z","name":"provider-result","code":"network_blocked","outcome":"retryable"}
+{"at":"2026-10-24T03:30:57.927Z","name":"connection-command","command":"verify","versionId":"54a49f01-5c96-4b8e-86d6-b6ad128d50ef","outcome":"retryable","ready":false}
+{"at":"2026-10-24T03:30:57.928Z","name":"http-command","path":"/api/local/connections","status":200}
+{"at":"2026-10-24T03:30:58.211Z","name":"audit-complete","versions":1,"workerExactVersionResolvable":true}
+{"at":"2026-10-24T03:31:15.265Z","name":"http-command","path":"/api/local/login","status":200}
+{"at":"2026-10-24T03:31:15.301Z","name":"keychain-write","reference":"44e6b42e-757d-4122-9e6b-b029a6da1f13"}
+{"at":"2026-10-24T03:31:15.305Z","name":"connection-command","command":"rotate","versionId":"77c390c3-2bf3-4302-8c62-fa71ee136ff4"}
+{"at":"2026-10-24T03:31:15.305Z","name":"http-command","path":"/api/local/connections","status":200}
+{"at":"2026-10-24T03:31:15.329Z","name":"provider-request-reserved","number":2,"phase":"negative","method":"GET","url":"https://api.pexels.com/v1/videos/search?query=nature&per_page=1"}
+{"at":"2026-10-24T03:31:17.280Z","name":"provider-result","code":"response","status":401,"bytes":64,"outcome":"invalid"}
+{"at":"2026-10-24T03:31:17.287Z","name":"connection-command","command":"verify","versionId":"77c390c3-2bf3-4302-8c62-fa71ee136ff4","outcome":"invalid","ready":false}
+{"at":"2026-10-24T03:31:17.288Z","name":"http-command","path":"/api/local/connections","status":200}
+{"at":"2026-10-24T03:31:17.294Z","name":"http-command","path":"/api/local/logout","status":200}
+{"at":"2026-10-24T03:31:17.538Z","name":"audit-complete","versions":2,"workerExactVersionResolvable":false}
+{"at":"2026-10-24T03:31:29.728Z","name":"http-command","path":"/api/local/configuration","status":409}
+{"at":"2026-10-24T03:32:32.569Z","name":"http-command","path":"/api/local/login","status":200}
+{"at":"2026-10-24T03:32:32.714Z","name":"http-command","path":"/api/local/configuration","status":200}
+{"at":"2026-10-24T03:32:32.723Z","name":"connection-command","command":"revoke","versionId":"54a49f01-5c96-4b8e-86d6-b6ad128d50ef"}
+{"at":"2026-10-24T03:32:32.723Z","name":"http-command","path":"/api/local/connections","status":200}
+{"at":"2026-10-24T03:32:32.730Z","name":"connection-command","command":"revoke","versionId":"77c390c3-2bf3-4302-8c62-fa71ee136ff4"}
+{"at":"2026-10-24T03:32:32.731Z","name":"http-command","path":"/api/local/connections","status":200}
+{"at":"2026-10-24T03:32:32.737Z","name":"http-command","path":"/api/local/configuration","status":200}
+{"at":"2026-10-24T03:32:32.740Z","name":"http-command","path":"/api/local/logout","status":200}
+{"at":"2026-10-24T03:32:32.955Z","name":"audit-complete","versions":2,"workerExactVersionResolvable":false}
+{"at":"2026-10-24T03:32:54.754Z","name":"http-command","path":"/api/local/logout","status":200}

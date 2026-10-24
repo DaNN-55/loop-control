@@ -1,0 +1,39 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/local-app/pexelsLiveProbe.test.ts (11 tests | 1 failed) 6ms
+   ✓ refuses unsupported adapters and a closed deployment budget before touching the network 1ms
+   ✓ uses exactly one pinned authenticated GET and grants success only for video metadata 1ms
+   ✓ handles HTTP 401 without retries, redirects or reflected Provider diagnostics 0ms
+   ✓ handles HTTP 403 without retries, redirects or reflected Provider diagnostics 0ms
+   ✓ handles HTTP 429 without retries, redirects or reflected Provider diagnostics 0ms
+   ✓ handles HTTP 500 without retries, redirects or reflected Provider diagnostics 0ms
+   ✓ handles HTTP 302 without retries, redirects or reflected Provider diagnostics 0ms
+   ✓ rejects malformed or empty JSON metadata 0ms
+   ✓ rejects malformed or empty JSON metadata 0ms
+   ✓ rejects non-JSON content type even if its body resembles metadata 0ms
+   × bounds response size and drops transport error text 3ms
+     → synthetic-unit-only
+ ✓ src/local-app/connections.test.ts (3 tests) 4ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx (1 test) 121ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 14 passed (15)
+   Start at  11:16:06
+   Duration  1.08s (transform 246ms, setup 0ms, collect 458ms, tests 132ms, environment 945ms, prepare 139ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/pexelsLiveProbe.test.ts > bounds response size and drops transport error text
+Error: synthetic-unit-only
+ ❯ src/local-app/pexelsLiveProbe.test.ts:40:40
+     38|  respond(200,'x'.repeat(262145));const events:PexelsProbeEvent[]=[];
+     39|  expect(await createPexelsLiveProbe({reserveRequest:()=>true,record:e=…
+     40|  request.mockImplementation(()=>{throw Error(input.secret);});
+       |                                        ^
+     41|  expect(await createPexelsLiveProbe({reserveRequest:()=>true,record:e=…
+     42| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
