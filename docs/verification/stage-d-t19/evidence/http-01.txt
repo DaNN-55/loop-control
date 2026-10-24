@@ -1,0 +1,15 @@
+AssertionError [ERR_ASSERTION]: {"error":"Adapter openai/openai_images 不支持预设 static_visual-v1。","preflight":{"version":"worker-preflight/v2","checks":[{"capability":"worker_runtime","check":"blueprint_configuration","phase":"preflight","status":"blocked","reason":"Adapter openai/openai_images 不支持预设 static_visual-v1。","action":"edit_blueprint","scope":"blueprint"}]}}
+
+409 !== 200
+
+    at post (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/media-acceptance.mjs:57:262)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Object.test (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/media-acceptance.mjs:62:10)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/media-acceptance.mjs:91:55 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 409,
+  expected: 200,
+  operator: 'strictEqual',
+  diff: 'simple'
+}

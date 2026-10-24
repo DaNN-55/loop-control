@@ -1,0 +1,17 @@
+{
+  "at": "2026-10-24T08:50:14.211Z",
+  "sourceAndEvidenceScannedBeforeThisRecord": 148,
+  "credentialAndLeaseMatches": 0,
+  "linksAndWhitespacePassed": true,
+  "rootPlanPreserved": true,
+  "indexEmpty": true,
+  "headUnchanged": "af4856a8683d0a61f2f01911ccfe00077b4c9cc1",
+  "functionalAcceptance": "controlled offline passed",
+  "fullDefault5000msGate": "failed;739/740;root unresolved",
+  "noCommit": true,
+  "noPush": true,
+  "noMerge": true,
+  "noProduction": true,
+  "noOnlineProviderRequests": true,
+  "noT20": true
+}

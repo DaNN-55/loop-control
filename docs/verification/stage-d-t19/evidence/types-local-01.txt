@@ -1,0 +1,1 @@
+src/local-app/workerDatabase.ts(16,537): error TS1005: ',' expected.

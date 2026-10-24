@@ -1,0 +1,17 @@
+AssertionError [ERR_ASSERTION]: [{"type":"prepare_visual_brief","status":"failed","result":{"retry":{"reason":"视觉执行器未返回有效结果。","shouldRetry":false},"status":"failed","taskId":"059bd3ba-6cc8-4706-8302-4e92f3e469bb","version":"worker-result/v1","blockers":[],"nextStep":"Retry only after the reported failure is understood.","artifacts":[],"preflight":{"checks":[{"check":"command_availability","phase":"preflight","scope":"worker","action":"none","reason":"本地受控规划执行路径；不自动调用在线Provider。","status":"passed","capability":"visual_planning"}],"version":"worker-preflight/v2"},"validation":{"checks":[{"name":"codex_execution","detail":"视觉执行器未返回有效结果。","passed":false}],"passed":false},"actualCostCents":0}}]
++ actual - expected
+
++ 'visual_draft'
+- 'visual_review'
+          ^
+
+    at Object.test (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/media-acceptance.mjs:64:320)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/media-acceptance.mjs:91:55 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'visual_draft',
+  expected: 'visual_review',
+  operator: 'strictEqual',
+  diff: 'simple'
+}

@@ -1,0 +1,388 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "provider": "openai",
+      "episodeId": "bfcaf69d-8ee5-4e9b-a25f-93b829d6f3a4",
+      "media": []
+    },
+    {
+      "provider": "cloudflare",
+      "episodeId": "da799b9d-511c-47ee-8d7a-83dc86676bfa",
+      "media": []
+    },
+    {
+      "provider": "pexels",
+      "episodeId": "f9749842-d075-4ff6-8fa5-b055429c0aee",
+      "media": [
+        {
+          "id": "f07271eb-bbac-47d8-a194-b74bffc8018d",
+          "type": "generate_b_roll",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "provider": "freesound",
+      "episodeId": "29dfac4c-29cb-4fb5-bc69-91f96380a705",
+      "media": [
+        {
+          "id": "3372145e-9646-4e0c-8711-7a7a76ff61de",
+          "type": "generate_soundtrack",
+          "status": "completed"
+        },
+        {
+          "id": "5abcbcfb-4beb-4ad5-a0f9-a414a216d0d9",
+          "type": "generate_soundtrack",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "provider": "manual",
+      "episodeId": "8619dca0-6289-48d3-8f82-bdcb4ae648c2",
+      "duplicateOneTask": true,
+      "replacementTaskId": "044a7199-b105-4e81-8f76-25d6d5b45bbb",
+      "oldTaskPreserved": true,
+      "existingTrackBound": true
+    },
+    {
+      "provider": "local",
+      "episodeId": "ad62fde0-b35c-4e67-b4bf-64a1ccc8e3a2",
+      "media": [
+        {
+          "id": "dc37c947-8ffe-44f0-bb7b-9a452c160aa1",
+          "type": "generate_b_roll",
+          "status": "completed"
+        },
+        {
+          "id": "ecab4f75-aba9-4634-8639-b70990866df1",
+          "type": "generate_a_roll",
+          "status": "completed"
+        }
+      ]
+    },
+    {
+      "provider": "disabled",
+      "episodeId": "c1390925-6b92-4e38-bc6e-4941e6ae99f4",
+      "media": []
+    }
+  ],
+  "calls": [
+    {
+      "command": "create",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "start",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "planStoryboard",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "planMedia",
+      "status": 200
+    },
+    {
+      "command": "planMedia",
+      "status": 200
+    },
+    {
+      "command": "create",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "start",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "planStoryboard",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "planMedia",
+      "status": 200
+    },
+    {
+      "command": "planMedia",
+      "status": 200
+    },
+    {
+      "command": "create",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "start",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "planStoryboard",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "planMedia",
+      "status": 200
+    },
+    {
+      "command": "planMedia",
+      "status": 200
+    },
+    {
+      "command": "create",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "start",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "planStoryboard",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "planMedia",
+      "status": 200
+    },
+    {
+      "command": "planMedia",
+      "status": 200
+    },
+    {
+      "command": "create",
+      "status": 200
+    },
+    {
+      "command": "setAudioSourceMode",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "start",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "planStoryboard",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "registerManualMedia",
+      "status": 200
+    },
+    {
+      "command": "registerManualMedia",
+      "status": 200
+    },
+    {
+      "command": "registerManualMedia",
+      "status": 200
+    },
+    {
+      "command": "registerManualMedia",
+      "status": 200
+    },
+    {
+      "command": "registerManualMedia",
+      "status": 200
+    },
+    {
+      "command": "registerManualMedia",
+      "status": 200
+    },
+    {
+      "command": "registerManualMedia",
+      "status": 200
+    },
+    {
+      "command": "saveAudioSelection",
+      "status": 200
+    },
+    {
+      "command": "saveAudioSelection",
+      "status": 200
+    },
+    {
+      "command": "planMedia",
+      "status": 200
+    },
+    {
+      "command": "create",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "start",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "planStoryboard",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "planMedia",
+      "status": 200
+    },
+    {
+      "command": "planMedia",
+      "status": 200
+    },
+    {
+      "command": "create",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "start",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "planStoryboard",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "planMedia",
+      "status": 200
+    },
+    {
+      "command": "planMedia",
+      "status": 200
+    }
+  ],
+  "realHttp": true,
+  "realNativePg": true,
+  "realWorkerCli": true,
+  "allIndexedFilesAndPreviewResponsesMatch": true,
+  "providerRequests": 0,
+  "controlledQualifications": true,
+  "secretStore": "substitute, not real Keychain"
+}

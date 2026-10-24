@@ -1,0 +1,207 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t19-timeout-comparison-20261024/checkout
+
+ ✓ src/platform/migrationContracts.test.ts (112 tests) 25ms
+ ✓ src/worker/contracts.test.ts (17 tests) 8ms
+ ✓ src/worker/codexRunner.test.ts (27 tests) 25ms
+ ✓ src/worker/openchatcutProject.test.ts (26 tests) 21ms
+ ✓ src/platform/configurationForms.test.ts (23 tests) 14ms
+ ✓ src/worker/controlledMediaExecutor.test.ts (12 tests) 648ms
+   ✓ 受控媒体执行器 > 使用真实 ffmpeg 裁剪带原声视频并提取当前片段原声  591ms
+ ✓ src/observability/SystemStatusPanel.test.tsx (19 tests) 556ms
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":0,"workers":[],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":0,"workers":[],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"notify","notifications":0,"skipped":0}
+导出 accounts 失败：Supabase 返回 HTTP 503
+ ✓ src/orchestration/loopOrchestratorCli.test.ts (12 tests) 517ms
+ ✓ src/worker/mediaProviders.test.ts (9 tests) 76ms
+ ✓ src/operations/OperationsWorkspace.test.tsx (6 tests) 428ms
+ ✓ src/worker/runtimePreflight.test.ts (4 tests) 8ms
+ ✓ scripts/start-local.test.mjs (10 tests) 15ms
+ ✓ src/connections/ConnectionWorkspace.test.tsx (8 tests) 999ms
+ ✓ src/worker/durationDecision.test.ts (13 tests) 6ms
+ ✓ src/reviews/blockerGuidance.test.ts (17 tests) 5ms
+ ✓ src/platform/platformService.test.ts (7 tests) 12ms
+ ✓ src/App.test.tsx (34 tests) 1685ms
+   ✓ approval console > 登录后仅获取当前页，翻页向服务端取数而不是加载全部历史  393ms
+   ✓ approval console > 通过结构化表单编辑蓝图并保留高级规则  368ms
+ ✓ scripts/local-service-record.test.mjs (6 tests) 716ms
+ ✓ scripts/openchatcut-render.test.mjs (5 tests) 244ms
+ ✓ src/worker/openchatcutRenderer.test.ts (3 tests) 32ms
+ ✓ src/worker/whisperxAlignment.test.ts (9 tests) 37ms
+ ✓ scripts/startup-lifecycle.acceptance.test.mjs (7 tests) 227ms
+ ✓ src/reviews/reviewSelectors.test.ts (7 tests) 14ms
+ ✓ src/worker/runtimeProbes.test.ts (7 tests) 17ms
+ ✓ src/worker/mediaLibrary.test.ts (7 tests) 45ms
+ ✓ src/reviews/reviewRevision.test.ts (4 tests) 8ms
+ ✓ src/episodes/episodeCatalog.test.tsx (5 tests) 1208ms
+   ✓ server catalog in the real console > 筛选重置到第一页，慢旧页不能覆盖新筛选结果  368ms
+ ✓ scripts/isolation/environment.test.mjs (14 tests) 40ms
+ ✓ src/worker/acousticAlignment.test.ts (7 tests) 6ms
+ ✓ src/publishing/publishPackage.test.ts (2 tests) 72ms
+ ✓ src/episodes/EpisodeProductionContainer.test.tsx (4 tests) 163ms
+ ✓ src/local-app/keychainStore.test.ts (5 tests) 5ms
+ ✓ src/orchestration/providedScriptDispatch.test.ts (6 tests) 110ms
+ ✓ src/orchestration/notificationPolicy.test.ts (5 tests) 14ms
+ ✓ src/local-app/pexelsLiveProbe.test.ts (11 tests) 72ms
+ ✓ src/worker/renderReuse.test.ts (2 tests) 53ms
+ ✓ src/observability/TaskProgressPanel.test.tsx (4 tests) 417ms
+   ✓ Worker 任务进度 > 显示真实状态、尝试次数、时间和按任务类型的 n/m 完成进度  348ms
+ ✓ src/observability/systemStatusEvidence.test.ts (4 tests) 110ms
+ ✓ src/worker/storyboardArtifact.test.ts (4 tests) 9ms
+ ✓ src/shotCaptions.test.ts (3 tests) 3ms
+ ✓ src/worker/manualMaterialChecklist.test.ts (1 test) 6ms
+ ✓ src/worker/registeredAdapters.test.ts (6 tests) 5ms
+ ✓ src/reviews/localArtifactPreview.test.tsx (3 tests) 52ms
+ ✓ src/worker/storyboardRevision.test.ts (3 tests) 39ms
+ ✓ src/local-app/connections.test.ts (3 tests) 5ms
+ ✓ src/reviews/materialImport.test.ts (3 tests) 5ms
+ ✓ src/orchestration/operationsEvidence.test.ts (2 tests) 41ms
+ ✓ src/worker/codexWorkerCli.test.ts (6 tests) 5ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx (1 test) 505ms
+   ✓ keeps a committed series save successful when its follow-up read fails  504ms
+ ✓ src/episodes/episodeReadService.test.ts (3 tests) 3ms
+ ✓ src/orchestration/notificationConsumer.test.ts (3 tests) 18ms
+ ✓ src/episodes/episodeCatalogChanges.test.ts (4 tests) 4ms
+ ✓ src/platform/connectionStatus.test.ts (3 tests) 6ms
+ ✓ scripts/supabase-migrations.test.mjs (3 tests) 9ms
+ ✓ src/publishing/ProductionCompletionModal.test.tsx (1 test) 195ms
+ ✓ src/worker/legacyPexelsReference.test.ts (2 tests) 13ms
+ ✓ src/local-app/LocalConnectionsPanel.test.tsx (1 test) 378ms
+   ✓ keeps unconfirmed material in a password draft and persists only a random operation ID  377ms
+ ✓ src/clipTiming.test.ts (3 tests) 5ms
+ ✓ src/shotComposition.test.ts (2 tests) 3ms
+ ✓ src/reviews/WorkerBlockerCard.test.tsx (2 tests) 248ms
+ ✓ src/lib/pagedRead.test.ts (3 tests) 40ms
+ ✓ src/worker/workerResultSchema.test.ts (3 tests) 47ms
+ ✓ src/accounts/AccountWorkspace.test.tsx (32 tests) 7141ms
+   ✓ 账号配置工作区 > 有未保存修改时确认后才切换到系列  373ms
+   ✓ 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非秘密连接  653ms
+   ✓ 账号配置工作区 > 在 A-roll 尚未配置时，仍使用本机 OpenChatCut 状态开放本地路径  355ms
+   ✓ 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿  2311ms
+ ✓ src/worker/runtimeConstraints.test.ts (2 tests) 3ms
+ ✓ src/ui/PaginationControls.test.tsx (2 tests) 214ms
+ ✓ src/reviews/repairTarget.test.ts (3 tests) 3ms
+ ✓ src/platform/externalConnections.test.ts (1 test) 1ms
+ ✓ src/ui/MarkdownPreview.test.tsx (1 test) 71ms
+ ✓ src/shotAcceptance.test.ts (3 tests) 5ms
+ ✓ src/manualArollVideo.test.ts (2 tests) 1ms
+ ✓ src/orchestration/backupPolicy.test.ts (2 tests) 3ms
+ ✓ src/worker/productionCapabilities.test.ts (1 test) 4ms
+ ✓ scripts/local/import.test.mjs (1 test) 18ms
+ ✓ src/worker/taskClaimArguments.test.ts (2 tests) 6ms
+ ✓ src/platform/accountIdentity.test.ts (2 tests) 2ms
+ ✓ scripts/isolation/regressions.test.mjs (10 tests) 439ms
+ ✓ src/lib/backend.test.ts (1 test) 3ms
+ ✓ scripts/isolation/database.test.mjs (5 tests) 34ms
+ ✓ src/orchestration/workerScheduler.test.ts (2 tests) 249ms
+ ✓ src/orchestration/runtimeBuild.test.ts (1 test) 120ms
+ ✓ src/externalConnectionRoute.test.ts (1 test) 40ms
+ ✓ src/episodePreflightRoute.test.ts (15 tests) 88ms
+ ✓ src/local-app/localFiles.test.ts (1 test) 27ms
+ ✓ src/localControlPlane.test.ts (2 tests) 44ms
+ ✓ src/local-app/localRoute.test.ts (1 test) 34ms
+ ✓ src/local-app/inputPreflight.test.ts (1 test) 3ms
+ ✓ scripts/isolation/http-credentials.test.mjs (1 test) 55ms
+ ✓ src/local-app/catalogRoute.test.ts (1 test) 155ms
+ ✓ src/local-app/workerDatabase.test.ts (1 test) 4ms
+ ✓ src/local-app/configurationCommands.test.ts (1 test) 4ms
+ ✓ src/local-app/databaseConfig.test.ts (1 test) 48ms
+ ✓ src/local-app/password.test.ts (1 test) 705ms
+   ✓ uses distinct salted password digests and rejects wrong passwords  704ms
+ ✓ src/localEpisodeDirectoryRoute.test.ts (28 tests) 3669ms
+   ✓ 本地 Episode 目录路由 > 复用短时已验证的产物索引，避免重复查询和哈希  3074ms
+ ❯ src/reviews/ReviewWorkspace.test.tsx (64 tests | 1 failed) 13795ms
+   ✓ 审核台 > 点击抽屉外遮罩或按 Escape 可以关闭生产单详情 103ms
+   ✓ 审核台 > 放大预览打开时按 Escape 不关闭生产单详情 9ms
+   ✓ 审核台 > 在详情顶部显示当前阶段和下一步，并默认收起技术索引 136ms
+   ✓ 审核台 > Worker 排队或运行时显示持续刷新反馈 15ms
+   ✓ 审核台 > QC 通过但缺少最终材料时明确提示，并可进入生产完成流程 26ms
+   ✓ 审核台 > 通过顶部图标按需打开产物索引及包含任务进度的审计时间线 137ms
+   ✓ 审核台 > 审计时间线只显示中文原因，不展示技术原文 46ms
+   ✓ 审核台 > 只列出需要 Owner 审核的 Episode，并允许选择其中一项 64ms
+   ✓ 审核台 > 对待审核 Episode 使用分页 76ms
+   ✓ 审核台 > 显示可预览产物和 Worker 阻塞项，并以理由执行批准或要求修改 195ms
+   ✓ 审核台 > 即时派发失败时在当前任务区域持续显示原因 16ms
+   ✓ 审核台 > 生成媒体预览默认展示当前镜头代理并折叠历史版本 60ms
+   ✓ 审核台 > 只在整片音轨中展示可试听的 BGM，并将时间批注交给受控 RPC  371ms
+   ✓ 审核台 > 展示 A-roll 的冻结执行证据和运行状态 18ms
+   ✓ 审核台 > 按真实状态展示 A-roll 任务卡片：completed 22ms
+   ✓ 审核台 > 按真实状态展示 A-roll 任务卡片：running 8ms
+   ✓ 审核台 > 按真实状态展示 A-roll 任务卡片：failed 11ms
+   ✓ 审核台 > 按真实状态展示 A-roll 任务卡片：blocked 6ms
+   ✓ 审核台 > 在冻结执行器缺失时仍展示 A-roll 阻塞状态 45ms
+   ✓ 审核台 > 合并重复阻塞任务并提供蓝图修改入口 25ms
+   ✓ 审核台 > 以纵向缩略图展示产物，并允许 Owner 放大后关闭预览 73ms
+   ✓ 审核台 > 在详情头部以图标提供刷新、打开和复制本地目录 65ms
+   ✓ 审核台 > 材料区提供统一文件导入 11ms
+   ✓ 审核台 > 等待输入时仅允许上传外部制作的主脚本 20ms
+   ✓ 审核台 > 主脚本导入后等待 Owner 明确开始制作 31ms
+   ✓ 审核台 > 显示生产开始前的真实运行态阻塞 10ms
+   ✓ 审核台 > 通过统一入口标注用途后按顺序导入脚本、图片、A-roll 和 B-roll  406ms
+   ✓ 审核台 > 将主脚本和补充脚本归入同一个脚本分组 73ms
+   ✓ 审核台 > 最多并发导入三个材料并在完成后立即补位 273ms
+   ✓ 审核台 > 导入成功后保留材料卡，直到冻结材料刷新完成 170ms
+   ✓ 审核台 > 可打开脚本模板，并点击材料名称预览 105ms
+   ✓ 审核台 > 使用浏览器文件地址预览待导入视频 73ms
+   ✓ 审核台 > 在材料列表显示已确认、已导入和已绑定镜头状态 16ms
+   ✓ 审核台 > 新 Episode 的上传阶段不要求整期声音选择 10ms
+   × 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择 5019ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ 审核台 > 已生成字幕时序先只读查看，明确调整后才开放编辑  503ms
+   ✓ 审核台 > 审核阶段可返回可编辑镜头工作台，且保留当前 QC 证据  2325ms
+   ✓ 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交  436ms
+   ✓ 审核台 > 删除镜头后在工作台切换新版，并打开下一镜 152ms
+   ✓ 审核台 > 刷新后从运行中的结构任务恢复工作台，并在完成后打开删除镜头的下一镜 95ms
+   ✓ 审核台 > 新版分镜保留旧版本 hash 中仍存在的镜头 63ms
+   ✓ 审核台 > 本期 TTS 试听只在点击后读取当前表单，不保存或创建任务 112ms
+   ✓ 审核台 > 本期 TTS 未保存时明确阻止逐镜头生成，并标记表单修改状态 70ms
+   ✓ 审核台 > 逐镜头 TTS 可先于原片标记生成，完整保存仍要求视频 262ms
+   ✓ 审核台 > 重新生成口播时隐藏旧音轨，完成后可从右上角筛选历史口播 55ms
+   ✓ 审核台 > 逐镜头口播无需确认即可保存，并可保存单镜头覆盖 218ms
+   ✓ 审核台 > 后台刷新时保留未保存的原片与片段标记 165ms
+   ✓ 审核台 > 保留原声直接使用视频内嵌音轨并允许生成同步预览 94ms
+   ✓ 审核台 > 无口播显示为明确静音，并仍可保存字幕开关 122ms
+   ✓ 审核台 > 同一原片支持多段裁剪并随镜头草稿一起保存  339ms
+   ✓ 审核台 > 选择镜头原片文件后立即导入，不再要求二次确认 81ms
+   ✓ 审核台 > 分镜准备阶段不提供 Studio 入口 14ms
+   ✓ 审核台 > 展示委托脚本的冻结输入，并让 Owner 完成审核或要求重写 41ms
+   ✓ 审核台 > 读取分镜前文本产物及其冻结审核上下文 58ms
+   ✓ 审核台 > 将冻结的外部视觉输入连同视觉资产清单交给 Owner 审核 41ms
+   ✓ 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产 3ms
+   ✓ 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览 4ms
+   ✓ 审核台 > 在 Studio 提交一次合成修订并重新审核 74ms
+   ✓ 审核台 > 在审核渲染中只提供官方 Studio 入口 7ms
+   ✓ 审核台 > 按镜头审核冻结分镜、保存批注，并执行批准或返工 110ms
+   ✓ 审核台 > 人工媒体可在镜头工作台选择原片并保存镜头设置  492ms
+   ✓ 审核台 > 已保存原片可预览并在冻结前替换 101ms
+   ✓ 审核台 > 分镜产物格式无效时不允许 Owner 批准或退回 8ms
+   ✓ 审核台 > 将预渲染成员作为审计证据，并自动进入审核渲染 4ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/reviews/ReviewWorkspace.test.tsx:684:3
+    682|   });
+    683| 
+    684|   it("分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择", async () => {
+       |   ^
+    685|     const user = userEvent.setup();
+    686|     const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 93 passed (94)
+      Tests  1 failed | 739 passed (740)
+   Start at  17:01:29
+   Duration  15.80s (transform 3.28s, setup 0ms, collect 13.95s, tests 37.29s, environment 34.35s, prepare 7.46s)
+

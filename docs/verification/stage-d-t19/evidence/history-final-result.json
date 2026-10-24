@@ -1,0 +1,159 @@
+{
+  "passed": true,
+  "allPreT19PublicRowsPreserved": true,
+  "tables": {
+    "account_blueprint_versions": {
+      "rows": 38,
+      "allPreserved": true
+    },
+    "accounts": {
+      "rows": 27,
+      "allPreserved": true
+    },
+    "account_memberships": {
+      "rows": 21,
+      "allPreserved": true
+    },
+    "series": {
+      "rows": 3,
+      "allPreserved": true
+    },
+    "series_versions": {
+      "rows": 13,
+      "allPreserved": true
+    },
+    "episodes": {
+      "rows": 6216,
+      "allPreserved": true
+    },
+    "tasks": {
+      "rows": 5288,
+      "allPreserved": true
+    },
+    "artifacts": {
+      "rows": 234,
+      "allPreserved": true
+    },
+    "task_runs": {
+      "rows": 272,
+      "allPreserved": true
+    },
+    "review_packages": {
+      "rows": 51,
+      "allPreserved": true
+    },
+    "approvals": {
+      "rows": 37,
+      "allPreserved": true
+    },
+    "asset_locks": {
+      "rows": 0,
+      "allPreserved": true
+    },
+    "production_material_revisions": {
+      "rows": 65,
+      "allPreserved": true
+    },
+    "audio_tracks": {
+      "rows": 7,
+      "allPreserved": true
+    },
+    "audio_track_annotations": {
+      "rows": 0,
+      "allPreserved": true
+    },
+    "audit_events": {
+      "rows": 2627,
+      "allPreserved": true
+    },
+    "episode_read_revisions": {
+      "rows": 4518,
+      "allPreserved": true
+    },
+    "external_connections": {
+      "rows": 14,
+      "allPreserved": true
+    },
+    "external_connection_versions": {
+      "rows": 34,
+      "allPreserved": true
+    },
+    "external_connection_verifications": {
+      "rows": 56,
+      "allPreserved": true
+    },
+    "material_revision_approvals": {
+      "rows": 65,
+      "allPreserved": true
+    },
+    "notification_delivery_events": {
+      "rows": 2044,
+      "allPreserved": true
+    },
+    "notification_delivery_state": {
+      "rows": 1,
+      "allPreserved": true
+    },
+    "pre_render_review_member_decisions": {
+      "rows": 0,
+      "allPreserved": true
+    },
+    "pre_render_review_members": {
+      "rows": 0,
+      "allPreserved": true
+    },
+    "production_dependencies": {
+      "rows": 124,
+      "allPreserved": true
+    },
+    "production_invalidations": {
+      "rows": 0,
+      "allPreserved": true
+    },
+    "prompt_versions": {
+      "rows": 83,
+      "allPreserved": true
+    },
+    "qc_review_issues": {
+      "rows": 0,
+      "allPreserved": true
+    },
+    "review_annotations": {
+      "rows": 5,
+      "allPreserved": true
+    },
+    "review_render_composition_revisions": {
+      "rows": 0,
+      "allPreserved": true
+    },
+    "shot_preparation_drafts": {
+      "rows": 26,
+      "allPreserved": true
+    },
+    "state_transitions": {
+      "rows": 137,
+      "allPreserved": true
+    },
+    "storyboard_audio_selections": {
+      "rows": 0,
+      "allPreserved": true
+    },
+    "storyboard_review_shots": {
+      "rows": 32,
+      "allPreserved": true
+    },
+    "worker_episode_turns": {
+      "rows": 148,
+      "allPreserved": true
+    },
+    "worker_resource_ceilings": {
+      "rows": 0,
+      "allPreserved": true
+    },
+    "worker_scheduler_settings": {
+      "rows": 1,
+      "allPreserved": true
+    }
+  },
+  "originalRows": 22187
+}

@@ -1,0 +1,16 @@
+AssertionError [ERR_ASSERTION]: {"id":"28997ef9-7ad7-4a8c-80b2-0bab76b27e96","result":null}
++ actual - expected
+
++ 'running'
+- 'completed'
+
+    at Object.test (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/media-acceptance.mjs:81:302)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/media-acceptance.mjs:91:55 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'running',
+  expected: 'completed',
+  operator: 'strictEqual',
+  diff: 'simple'
+}

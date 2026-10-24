@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "allowlistFilesChecked": 145,
+  "realTestCredentialAndLeaseMatches": 0,
+  "containsNoPrivateDumpsConfigOrHar": true,
+  "rawServerLogsExcluded": true,
+  "defaultsNotChanged": true
+}

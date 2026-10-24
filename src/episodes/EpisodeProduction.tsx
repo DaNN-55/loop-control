@@ -2252,7 +2252,7 @@ export function splitPreviewArtifacts(artifacts: Artifact[], currentArtifactIds:
   };
 }
 
-function ArtifactPreview({ artifacts, historyArtifacts = [] }: { artifacts: Artifact[]; historyArtifacts?: Artifact[] }) {
+export function ArtifactPreview({ artifacts, historyArtifacts = [] }: { artifacts: Artifact[]; historyArtifacts?: Artifact[] }) {
   const previewableArtifacts = artifacts.filter((candidate) => artifactPreviewKind(candidate.relative_path));
   const [selectedArtifactId, setSelectedArtifactId] = useState(previewableArtifacts[0]?.id ?? "");
   const artifact = previewableArtifacts.find((candidate) => candidate.id === selectedArtifactId) ?? previewableArtifacts[0];

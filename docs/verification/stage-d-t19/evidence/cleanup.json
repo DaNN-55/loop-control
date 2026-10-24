@@ -1,0 +1,13 @@
+{
+  "ownAcceptanceServerStopped": true,
+  "ownChromeClosed": true,
+  "nativePgAndMediaMountRetained": true,
+  "defaultDeploymentStillAbsent": true,
+  "syntheticConnectionVersionsRevoked": 4,
+  "noProduction": true,
+  "noOnlineProviderRequests": true,
+  "noCommit": true,
+  "noPush": true,
+  "noMerge": true,
+  "noT20": true
+}

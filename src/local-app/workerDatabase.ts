@@ -11,9 +11,9 @@ export function createWorkerDatabase(config:PoolConfig){
  pool.on('error',()=>{});
  return pool;
 }
-export async function assertNativeWorkerDatabase(pool:Pool,database:string,narration=false){
+export async function assertNativeWorkerDatabase(pool:Pool,database:string,narration=false,media=false){
  const narrationPrivilege=narration?" AND has_function_privilege(current_user,'local_identity.input_task_connection(uuid,integer,uuid)','EXECUTE')":"";
- const {rows:[row]}=await pool.query("SELECT session_user='loop_worker' AND current_database()=$1 AND NOT EXISTS(SELECT 1 FROM pg_roles WHERE rolname=current_user AND (rolsuper OR rolbypassrls OR rolcreatedb OR rolcreaterole)) AND has_function_privilege(current_user,'local_identity.plan_input_tasks(uuid)','EXECUTE') AND has_function_privilege(current_user,'local_identity.claim_input_task(uuid,integer)','EXECUTE') AND has_function_privilege(current_user,'local_identity.input_worker_call(text,jsonb)','EXECUTE')"+narrationPrivilege+" ready",[database]);
+ const {rows:[row]}=await pool.query("SELECT session_user='loop_worker' AND current_database()=$1 AND NOT EXISTS(SELECT 1 FROM pg_roles WHERE rolname=current_user AND (rolsuper OR rolbypassrls OR rolcreatedb OR rolcreaterole)) AND has_function_privilege(current_user,'local_identity.plan_input_tasks(uuid)','EXECUTE') AND has_function_privilege(current_user,'local_identity.claim_input_task(uuid,integer)','EXECUTE') AND has_function_privilege(current_user,'local_identity.input_worker_call(text,jsonb)','EXECUTE')"+narrationPrivilege+(media?" AND has_function_privilege(current_user,'local_identity.input_media_connection(uuid,integer,uuid,uuid)','EXECUTE')":"")+" ready",[database]);
  if(!row?.ready)throw Error('Native Worker database identity or permissions differ');
 }
 export function nativeWorkerPort(pool:Pool):WorkerDatabasePort{

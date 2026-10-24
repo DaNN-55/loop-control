@@ -43,8 +43,10 @@ describe("OpenChatCut Worker render", () => {
         inputArtifacts: [{ artifactType: "main_script", relativePath: "episodes/episode-1/script.md", sha256: "a".repeat(64), fileSize: 1 }, { artifactType: "static_visual", relativePath: "episodes/episode-1/visual.png", sha256: "b".repeat(64), fileSize: 1 }],
       });
       const run = vi.fn(async (_command: string, args: string[]) => {
-        const spec = JSON.parse(await readFile(args[0], "utf8")) as { outputPath: string; state: { items: Array<{ props?: { text?: string } }> } };
+        const spec = JSON.parse(await readFile(args[0], "utf8")) as { outputPath: string; state: { tracks: Record<string, {kind:string}>; items: Array<{track:string; props?: { text?: string } }> } };
         expect(spec.state.items[0]?.props?.text).toContain("雨落在旧街。");
+        // Text clips on caption tracks are silently omitted by OpenChatCut.
+        expect(spec.state.tracks[spec.state.items[0].track].kind).toBe("video");
         await writeFile(spec.outputPath, "mp4");
       });
       const validateMp4 = vi.fn();

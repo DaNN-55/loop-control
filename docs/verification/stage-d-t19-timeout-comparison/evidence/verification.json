@@ -1,0 +1,73 @@
+{
+  "at": "2026-10-24T09:08:43.906Z",
+  "sameMachine": true,
+  "sameNodeAndInstalledDependencies": true,
+  "sameCommandAllRuns": true,
+  "sameCwdAllRuns": true,
+  "sameEnvironmentAllRuns": true,
+  "sameViteConfigAndTargetTest": true,
+  "allRunsSourceUnchanged": true,
+  "worktreeSourceAndRootPlanUnchanged": true,
+  "originalT19ReportAndIndexUnchanged": true,
+  "indexUnchanged": true,
+  "headUnchanged": "af4856a8683d0a61f2f01911ccfe00077b4c9cc1",
+  "defaultTimeoutUnchanged": 5000,
+  "gatePassed": false,
+  "rootCauseResolved": false,
+  "noCommit": true,
+  "noPush": true,
+  "noMerge": true,
+  "noT20": true,
+  "networkGuard": {
+    "passed": true,
+    "allEightRunsGuarded": [
+      {
+        "run": "01-baseline",
+        "guardInstalledProcesses": 110,
+        "deniedRequestsDuringTests": 0
+      },
+      {
+        "run": "02-current",
+        "guardInstalledProcesses": 110,
+        "deniedRequestsDuringTests": 0
+      },
+      {
+        "run": "03-current",
+        "guardInstalledProcesses": 110,
+        "deniedRequestsDuringTests": 0
+      },
+      {
+        "run": "04-baseline",
+        "guardInstalledProcesses": 110,
+        "deniedRequestsDuringTests": 0
+      },
+      {
+        "run": "05-baseline",
+        "guardInstalledProcesses": 110,
+        "deniedRequestsDuringTests": 0
+      },
+      {
+        "run": "06-current",
+        "guardInstalledProcesses": 110,
+        "deniedRequestsDuringTests": 0
+      },
+      {
+        "run": "07-current",
+        "guardInstalledProcesses": 110,
+        "deniedRequestsDuringTests": 0
+      },
+      {
+        "run": "08-baseline",
+        "guardInstalledProcesses": 110,
+        "deniedRequestsDuringTests": 0
+      }
+    ],
+    "actualNonLoopbackDenialsDuringTests": 0,
+    "selfcheck": {
+      "httpRejectedBeforeNativeFetch": true,
+      "socketRejectedBeforeNativeConnect": true,
+      "noPacketsOrDnsRequired": true
+    },
+    "productionOrOnlineActions": false
+  }
+}

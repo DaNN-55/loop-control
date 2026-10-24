@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "rows": [
+    {
+      "provider": "openai",
+      "revoked": true,
+      "frozenVersion409NoFallback": true
+    },
+    {
+      "provider": "cloudflare",
+      "revoked": true,
+      "frozenVersion409NoFallback": true
+    },
+    {
+      "provider": "pexels",
+      "revoked": true,
+      "frozenVersion409NoFallback": true
+    },
+    {
+      "provider": "freesound",
+      "revoked": true,
+      "frozenVersion409NoFallback": true
+    }
+  ],
+  "providerRequests": 0,
+  "syntheticQualificationsOnly": true
+}

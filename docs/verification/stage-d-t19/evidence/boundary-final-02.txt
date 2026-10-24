@@ -1,0 +1,14 @@
+{
+  passed: true,
+  staleReview409: true,
+  sourceModeFrozenAfterStart: true,
+  unknownSecretField400: true,
+  csrf403: true,
+  idempotencyConflict409: true,
+  changedFile409: true,
+  rangeBeyondActualFile409: true,
+  foreignOwner404: true,
+  roleAndStaleFenceDenied: true,
+  retryFailureAndSuccessPreserveOldTasksAndFrozenVersion: true,
+  newOutputPathAndRepeatedRetrySameTask: true
+}

@@ -1,0 +1,12 @@
+import{execFileSync}from'node:child_process';import{readFileSync,writeFileSync}from'node:fs';
+const run=new URL('.',import.meta.url).pathname,cases=JSON.parse(readFileSync(run+'browser-preview-cases-final.json')),rows=[];
+const ab=(...args)=>execFileSync('agent-browser',['--session','t19-local-media',...args],{encoding:'utf8',maxBuffer:4*1024*1024});
+for(const c of cases){
+ ab('open','http://127.0.0.1:55182/?episode='+c.episodeId);ab('tab','t1');ab('wait','--text','生成媒体预览');ab('find','text','生成媒体预览','click');
+ const count=Number(ab('get','count','select[aria-label="预览产物"]'));if(count>0)ab('select','select[aria-label="预览产物"]',c.id);
+ const script=`(async()=>{for(let i=0;i<70;i++){const el=[...document.querySelectorAll('figure.local-artifact-preview img,figure.local-artifact-preview video,figure.local-artifact-preview audio')].find(e=>e.src.includes(${JSON.stringify(encodeURIComponent(c.path))}));if(el?.tagName==='IMG'&&el.naturalWidth>0)return {kind:'image',loaded:true,width:el.naturalWidth,height:el.naturalHeight,src:el.src};if(el&&el.tagName!=='IMG'&&el.readyState>=2){const before=el.currentTime;await el.play();await new Promise(r=>setTimeout(r,250));el.pause();return {kind:el.tagName.toLowerCase(),loaded:true,duration:el.duration,readyState:el.readyState,played:el.currentTime>before,error:el.error?.code??null,src:el.src};}await new Promise(r=>setTimeout(r,100));}return {loaded:false};})()`;
+ const raw=execFileSync('agent-browser',['--session','t19-local-media','eval','--stdin'],{input:script,encoding:'utf8'}),r=JSON.parse(raw);rows.push({...c,browser:r});if(!r.loaded)throw Error('Product preview did not load');
+ ab('scrollintoview','figure.local-artifact-preview');if(c.provider==='local'&&c.type==='a_roll_video')ab('screenshot',run+'browser-local-card-preview-final-01.png');if(c.provider==='openai')ab('screenshot',run+'browser-static-preview-final-01.png');
+ ab('snapshot','-i');
+}
+writeFileSync(run+'browser-product-previews-final-result.json',JSON.stringify({passed:true,productComponent:true,rows},null,2)+'\n',{flag:'wx',mode:0o600});console.log({passed:true,count:rows.length});ab('open','http://127.0.0.1:55182/?episode=d6245b3f-d85e-4cd5-9241-9b3da58d9493');
