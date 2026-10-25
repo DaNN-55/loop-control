@@ -19,19 +19,36 @@ Loop Control 用于管理多个内容账号和系列的短视频生产。每个 
 - **版本化生产配置：** 按账号维护蓝图、系列规则、生产能力、Adapter 和外部连接；既有 Episode 保留创建时的配置快照。
 - **受控素材与本地产物：** Owner 上传主脚本和人工素材，产物只在蓝图指定的媒体库边界内读取、冻结和预览。
 - **可追溯生产与审核：** 从脚本输入、视觉准备、分镜和逐镜头制作推进到审核渲染与 QC，保留任务、审核包和状态迁移证据。
-- **本机生产协作：** n8n 负责定时派发与提醒，本机 Worker 执行媒体任务，OpenChatCut 提供可编辑工程和渲染能力。
+- **本机生产协作：** 本机应用负责持久派发与提醒，本机 Worker 执行媒体任务（旧版 n8n 路径显式保留），OpenChatCut 提供可编辑工程和渲染能力。
 - **可校验交付：** QC 通过后生成视频、封面、发布元数据和发布包清单，并在完整性校验通过后结束本期生产。
 
 ## 典型流程
 
 1. 创建账号，配置版本化蓝图、系列规则和所需生产能力。
 2. 创建 Episode，上传并确认主脚本及本期人工素材。
-3. 运行生产前检查；通过后由 n8n 派发任务，本机 Worker 执行对应步骤。
+3. 运行生产前检查；通过后由本机应用派发任务，本机 Worker 执行对应步骤。
 4. Owner 依次审核视觉、分镜和镜头输入，并按需在 OpenChatCut 中调整可编辑工程。
 5. 生成审核视频，完成 QC，补齐封面和发布元数据。
 6. 系统固定并校验发布包，将 Episode 标记为“生产完成”；外部发布由 Owner 在目标平台完成。
 
-## 首次准备
+## 当前分支：原生本地运行
+
+T25 后，默认 `npm start` / `npm stop` 使用原生 PostgreSQL 应用及其常驻 Worker/运维，不要求 Supabase Auth/REST/Vault 或 n8n。默认构建不包含 Supabase SDK；该 SDK 仅作为旧路径编译和回归的开发依赖保留。历史迁移和旧生产环境不变。
+
+已有批准的本地数据库、媒体目录和私有部署配置后：
+
+```zsh
+npm start
+npm stop
+```
+
+当前默认配置沿用 `.loop-control/stage-d/config.json`、可选 `native-worker.json` 及 `worker-database.json`，由已有隔离准备/导入或恢复流程生成；不要在聊天、Git 或前端环境中录入数据库密码。`npm run build` 不需要这些数据库配置，也不读取旧 `.env.local`。缺少本地配置会明确失败，不回落远端。独立 Worker 由应用通过 stdin 提供冻结任务包；本地交付包通过 Owner 控制台操作，旧独立发布 CLI 不自动进入远端路径。
+
+本分支完成的是 A–D 的受控本地路径及断网数据操作，尚不是通用新主机/默认生产部署或 E/F 发布验收。T21 当次及历史默认 5 秒失败、根因未解决、既有30分钟租约和其他未验收项继续保留；详见 [T25 验收与范围](docs/verification/stage-d-t25/README.md)。
+
+以下为旧版兼容栈说明：仅在明确需要旧部署时使用 `npm run legacy:start` / `npm run legacy:stop`，旧 Worker/编排和发布 CLI 使用 `legacy:` 命令；不作为新版启动前提。
+
+## 旧版兼容环境准备
 
 项目固定使用 Node.js 24。安装仓库依赖：
 
@@ -86,12 +103,12 @@ n8n/import-workflows.sh
 
 导入脚本会更新并发布四条工作流：任务派发、审核提醒、状态变更提醒和每日健康检查。
 
-## 启动
+## 旧版兼容启动
 
 日常只有一个入口：
 
 ```zsh
-npm start
+npm run legacy:start
 ```
 
 该命令会依次完成：
@@ -127,12 +144,12 @@ OpenChatCut：可用
 停止本项目服务：
 
 ```zsh
-npm stop
+npm run legacy:stop
 ```
 
 停止时会先核验本项目服务记录，再补充发现命令路径和工作目录都属于本仓库的 n8n、Vite 遗留进程；即使旧服务记录被后续启动覆盖，也会一并关闭。不会仅凭端口号停止其他项目的进程。
 
-## 本机运行结构
+## 旧版本机运行结构
 
 - **浏览器控制台：** 展示账号、Episode、审核、任务和系统状态；远端数据访问使用 Owner 会话并受 Supabase RLS 约束。
 - **本机控制面：** 由 Vite 的开发和预览运行时装载，在验证 Owner 身份后连接浏览器与本机文件、Worker、OpenChatCut 和运行证据。它不是独立部署的公开服务。
@@ -157,16 +174,16 @@ npm run test:openchatcut-integration
 ## 技术栈
 
 - React 19、TypeScript 5 和 Vite 7
-- Supabase Auth、PostgreSQL 与 RLS
+- 原生 PostgreSQL、Owner 会话与本地权限边界；Supabase Auth/RLS 仅为旧版兼容路径
 - Node.js 24 本机 Worker
-- n8n 2.34.5
+- 应用内持久调度/提醒/备份；n8n 2.34.5 仅为旧版兼容路径
 - OpenChatCut 0.2.14 与 FFmpeg
 - Vitest
 
 ## 当前边界
 
-- 控制台、本机控制面、n8n 和 OpenChatCut 都只监听本机地址，不是面向公网部署的一体化 SaaS。
+- 控制台、本机控制面、OpenChatCut 和旧版兼容 n8n 都只监听本机地址，不是面向公网部署的一体化 SaaS。
 - 本地产物必须位于账号蓝图配置的外置媒体库内，并写入产物索引后才能预览。
-- `SUPABASE_SERVICE_ROLE_KEY` 只保存在 `n8n/worker.env.local`，不能进入前端环境或 Git。
+- 旧版兼容配置的 `SUPABASE_SERVICE_ROLE_KEY` 只保存在 `n8n/worker.env.local`，不能进入前端环境或 Git。
 - 当前主流程要求 Owner 提供并确认主脚本；平台不自动生成主脚本。
 - “生产完成”只表示发布包已生成并通过校验，不表示内容已经发布到 TikTok 等第三方平台。

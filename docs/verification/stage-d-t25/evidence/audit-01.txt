@@ -1,0 +1,3 @@
+(node:83291) [DEP0187] DeprecationWarning: Passing invalid argument types to fs.existsSync is deprecated
+(Use `node --trace-deprecation ...` to show where the warning was created)
+T25 original data/media, runtime retirement, guard, backup, scope and shutdown audit passed

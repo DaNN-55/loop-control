@@ -1,0 +1,68 @@
+{
+  "passed": true,
+  "anonymous401": true,
+  "badOrigin403": true,
+  "badCsrf403": true,
+  "originalNativeSessionStillValidAfterRestarts": true,
+  "approvedStoryboardStillReadable": true,
+  "n8nRequired": false,
+  "authAndVaultSchemas": 0,
+  "sharedLegacyCallbackFailsBeforeNetwork": true,
+  "defaultCliCommandsRefuseRemoteFallback": [
+    {
+      "args": [
+        "scripts/run-prepared.mjs",
+        "worker"
+      ],
+      "status": 1,
+      "rejected": true
+    },
+    {
+      "args": [
+        "scripts/run-prepared.mjs",
+        "orchestrator"
+      ],
+      "status": 1,
+      "rejected": true
+    },
+    {
+      "args": [
+        "scripts/local/retired-command.mjs",
+        "publish:prepare"
+      ],
+      "status": 1,
+      "rejected": true
+    },
+    {
+      "args": [
+        "scripts/local/retired-command.mjs",
+        "publish:register-input"
+      ],
+      "status": 1,
+      "rejected": true
+    },
+    {
+      "args": [
+        "scripts/local/retired-command.mjs",
+        "publish:verify"
+      ],
+      "status": 1,
+      "rejected": true
+    }
+  ],
+  "providerKeyRead": false,
+  "productionOperations": 0,
+  "onlineRequests": 0,
+  "guard": {
+    "sockets": 1,
+    "http": 2,
+    "modules": 1,
+    "files": 1,
+    "onlyNativeLoopbackAllowed": true,
+    "legacySdkAndEnvironmentDenied": true,
+    "hostNetworkUnchanged": true,
+    "deniedFilePaths": [
+      "readFileSync:/.env.local"
+    ]
+  }
+}

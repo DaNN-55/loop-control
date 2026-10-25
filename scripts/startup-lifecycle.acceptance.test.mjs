@@ -19,9 +19,10 @@ afterEach(async () => {
 });
 
 describe("STARTUP-03D 生命周期验收", () => {
-  it("只暴露 npm start 作为正式启动入口", () => {
+  it("npm start 默认原生启动，旧完整栈须显式选择", () => {
     const { scripts } = JSON.parse(readFileSync(join(process.cwd(), "package.json"), "utf8"));
-    expect(scripts.start).toBe("node scripts/start-local.mjs");
+    expect(scripts.start).toBe("node scripts/local/start.mjs");
+    expect(scripts["legacy:start"]).toBe("LOOP_LEGACY_RUNTIME=1 node scripts/start-local.mjs");
     expect(scripts["start:local"]).toBeUndefined();
     expect(scripts["start:all"]).toBeUndefined();
   });

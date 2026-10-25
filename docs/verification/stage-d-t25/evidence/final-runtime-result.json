@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "rootViteServeConfigLoadedFromActualTemporaryBundle": true,
+  "nativePluginsSelected": true,
+  "oldEnvFileLoadingDisabled": true,
+  "concurrentCloseHooksReturnSameAwaitedPromise": true,
+  "actualPoolAndAutomationClosed": true,
+  "finalDefaultCliStartupAndOwnerRead": true,
+  "approvedStateRetained": true,
+  "providerCalls": 0,
+  "noSupabaseSdkLoaded": true,
+  "guard": {
+    "sockets": 1,
+    "http": 2,
+    "modules": 1,
+    "files": 1,
+    "onlyNativeLoopbackAllowed": true,
+    "legacySdkAndEnvironmentDenied": true,
+    "hostNetworkUnchanged": true,
+    "deniedFilePaths": [
+      "readFileSync:/.env.local"
+    ]
+  }
+}

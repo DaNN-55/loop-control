@@ -17,6 +17,7 @@ import{verifyReportedStoryboardArtifact}from'../worker/storyboardArtifact.js';
 import{executeStoryboardRevision}from'../worker/storyboardRevisionExecutor.js';
 import{executeNativeNarration,assertNarrationReady}from'./narrationWorker.js';
 let input='';for await(const chunk of process.stdin){input+=String(chunk);if(Buffer.byteLength(input)>10*1024*1024)throw Error('Task input too large');}
+if(!input.trim())throw Error('本地Worker需要常驻调度器通过stdin提供任务包；请使用 npm start。');
 const {task,config}=JSON.parse(input) as {task:ClaimedTaskRow;config:NativeWorkerConfiguration};input='';
 await assertPreparedRuntime(config.projectRoot);
 assertWorkerDatabaseBinding(config.database,config.applicationDatabase);

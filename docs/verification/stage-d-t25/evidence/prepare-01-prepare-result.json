@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "realNativeOwnerHttp": true,
+  "accountAndBlueprintEdited": true,
+  "scriptAndImageImported": true,
+  "queueTask": {
+    "id": "b62a3409-ba1d-4e0d-bce7-b4de6ad07887",
+    "status": "ready",
+    "attempt": 0,
+    "inputSha": "95dc9353aa7fb2bd3907f19556ea967c08f6c1beea5998f8ede386ebfa0b64a7",
+    "availableAt": "2026-10-24T23:47:27.546514+00:00"
+  },
+  "controlledAvailableDelaySeconds": 20,
+  "workerLeaseChanged": false,
+  "onlineRequests": 0
+}

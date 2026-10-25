@@ -1,8 +1,9 @@
 import {readFileSync,existsSync,unlinkSync} from 'node:fs';
 import {join} from 'node:path';
-import {root,projectRoot,appPort} from './environment.mjs';
+import {projectRoot} from './environment.mjs';
 import {inspectRecordedService} from '../local-service-record.mjs';
-const path=join(root,'state/app.json');
+const {readDeployment}=await import('./deployment.mjs');const d=readDeployment(),appPort=d.port;
+const path=d.recordPath;
 if(existsSync(path)){
  const r=JSON.parse(readFileSync(path));
  const valid=()=>inspectRecordedService({pid:r.pid,port:String(appPort),commandIdentity:join(projectRoot,'node_modules/vite/bin/vite.js')},projectRoot).valid;

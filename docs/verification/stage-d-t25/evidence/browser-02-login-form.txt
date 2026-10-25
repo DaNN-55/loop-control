@@ -1,0 +1,6 @@
+- generic "Loop Control · 本地内容工作台所有者登录邮箱密码使用密码登录" [ref=e1] clickable [onclick]
+  - heading "内容工作台" [level=1, ref=e2]
+  - heading "所有者登录" [level=2, ref=e3]
+  - textbox "邮箱" [required, ref=e5]
+  - textbox "密码" [required, ref=e6]
+  - button "使用密码登录" [ref=e4]

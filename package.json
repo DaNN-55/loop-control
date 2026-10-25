@@ -7,11 +7,11 @@
     "node": "24.x"
   },
   "scripts": {
-    "start": "node scripts/start-local.mjs",
-    "dev": "vite",
-    "dev:local": "vite --port 5173 --strictPort",
-    "stop": "./scripts/stop-all.sh",
-    "stop:all": "./scripts/stop-all.sh",
+    "start": "node scripts/local/start.mjs",
+    "dev": "node scripts/local/start.mjs",
+    "dev:local": "node scripts/local/start.mjs",
+    "stop": "node scripts/local/stop.mjs",
+    "stop:all": "node scripts/local/stop.mjs",
     "build": "tsc -b && vite build",
     "check": "tsc -b --pretty false",
     "test": "vitest run --exclude n8n/import-workflows.test.mjs --exclude '**/*.integration.test.ts' && node --test n8n/import-workflows.test.mjs",
@@ -21,9 +21,9 @@
     "worker:execute": "node scripts/run-prepared.mjs worker",
     "worker:run": "npm run worker:execute --",
     "runtime:prepare": "node scripts/prepare-runtime.mjs",
-    "publish:prepare": "npm run worker:build && node dist/worker/publishing/publishPackageCli.js",
-    "publish:register-input": "npm run worker:build && node dist/worker/publishing/publishInputCli.js",
-    "publish:verify": "npm run worker:build && node dist/worker/publishing/publishPackageVerifyCli.js",
+    "publish:prepare": "node scripts/local/retired-command.mjs publish:prepare",
+    "publish:register-input": "node scripts/local/retired-command.mjs publish:register-input",
+    "publish:verify": "node scripts/local/retired-command.mjs publish:verify",
     "orchestrator:build": "tsc -p tsconfig.orchestrator.json",
     "orchestrator:run": "node scripts/run-prepared.mjs orchestrator",
     "db:migrations:check": "node scripts/supabase-migrations.mjs",
@@ -50,10 +50,17 @@
     "local:import": "node scripts/local/restore.mjs --verified",
     "local:start": "node scripts/local/start.mjs",
     "local:stop": "node scripts/local/stop.mjs",
-    "local:check": "node scripts/local/check.mjs"
+    "local:check": "node scripts/local/check.mjs",
+    "legacy:start": "LOOP_LEGACY_RUNTIME=1 node scripts/start-local.mjs",
+    "legacy:dev": "vite --mode legacy",
+    "legacy:stop": "./scripts/stop-all.sh",
+    "legacy:worker": "node scripts/run-prepared.mjs legacy-worker",
+    "legacy:orchestrator": "node scripts/run-prepared.mjs legacy-orchestrator",
+    "legacy:publish:prepare": "npm run worker:build && node dist/worker/publishing/publishPackageCli.js",
+    "legacy:publish:register-input": "npm run worker:build && node dist/worker/publishing/publishInputCli.js",
+    "legacy:publish:verify": "npm run worker:build && node dist/worker/publishing/publishPackageVerifyCli.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.57.0",
     "lucide-react": "^1.31.0",
     "pg": "8.23.1",
     "react": "^19.1.1",
@@ -72,6 +79,7 @@
     "supabase": "^2.117.0",
     "typescript": "^5.9.2",
     "vite": "^7.1.7",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.4",
+    "@supabase/supabase-js": "^2.57.0"
   }
 }

@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "realChrome": true,
+  "ownSession": "t25-native-offline",
+  "loginWithoutSupabase": true,
+  "actualStoryboardApprovalSubmitted": true,
+  "manualRefresh": true,
+  "sessionAndApprovedStateSurviveRealServerRestartAndReload": true,
+  "manualMaterialWorkstationVisible": true,
+  "networkRequests": 727,
+  "allObservedTargetsLoopback55189": true,
+  "rawNetworkPrivate": true,
+  "noHar": true,
+  "onlineProviderUiNotAccepted": true,
+  "notes": [
+    "Waiting for the cloned online task blocker on the legacy T19 view timed out; task status is verified through real CLI and database, not claimed visible in this UI.",
+    "The old T19 generate-media button correctly rejected at the earlier current-storyboard approval gate; no online command executed."
+  ]
+}
