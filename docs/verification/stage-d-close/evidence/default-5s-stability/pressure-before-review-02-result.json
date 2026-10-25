@@ -1,0 +1,19 @@
+{
+  "started": "2026-10-25T02:43:24.763Z",
+  "finished": "2026-10-25T02:43:33.389Z",
+  "command": [
+    "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+    "--import",
+    "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/default-5s-stability-20261025/tests-offline-guard.mjs",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/reviews/ReviewWorkspace.test.tsx",
+    "--exclude",
+    "**/.loop-control/**"
+  ],
+  "status": 0,
+  "signal": null,
+  "defaultTimeoutMs": 5000,
+  "timeoutOverride": false,
+  "passed": true
+}

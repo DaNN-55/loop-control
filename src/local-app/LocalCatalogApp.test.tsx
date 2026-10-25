@@ -18,7 +18,8 @@ it('keeps a committed series save successful when its follow-up read fails',asyn
   if(saved&&!readFailure){readFailure=true;return json({error:'induced catalog read failure'},503);}
   return json(saved?{...catalog,seriesVersions:[{...version,id:'10000000-0000-4000-8000-000000000006',version:2,rules:{positioning:'saved'}},version]}:catalog);
  }));
- render(<LocalCatalogApp/>);
+ // Finish asynchronous session/catalog initialization before switching account tabs.
+ await act(async()=>{render(<LocalCatalogApp/>);});
  fireEvent.click(await screen.findByRole('tab',{name:'系列'}));
  fireEvent.change(screen.getByRole('textbox',{name:'系列定位'}),{target:{value:'saved'}});
  fireEvent.click(screen.getByRole('button',{name:'保存为 v2'}));

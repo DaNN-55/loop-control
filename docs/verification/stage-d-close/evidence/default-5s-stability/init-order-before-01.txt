@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+stdout | src/local-app/LocalCatalogApp.test.tsx > keeps a committed series save successful when its follow-up read fails
+[DEBUG-default5s] account-reset 10000000-0000-4000-8000-000000000001 678.331167
+
+stdout | src/local-app/LocalCatalogApp.test.tsx > keeps a committed series save successful when its follow-up read fails
+[DEBUG-default5s] tab-action blueprints 679.975625
+
+ ✓ src/local-app/LocalCatalogApp.test.tsx (11 tests | 10 skipped) 120ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 10 skipped (11)
+   Start at  10:54:07
+   Duration  786ms (transform 264ms, setup 0ms, collect 422ms, tests 120ms, environment 122ms, prepare 25ms)
+

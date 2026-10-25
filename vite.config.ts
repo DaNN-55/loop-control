@@ -10,7 +10,8 @@ export default defineConfig(async environment=>{
   if(!legacy)throw Error('Legacy configuration unavailable.');return{...legacy.config,define:{...legacy.config.define,'import.meta.env.VITE_LOOP_BACKEND':JSON.stringify('supabase')}};
  }
  // Existing legacy UI regression fixtures keep their explicit transport.
- if(mode==='test')return{envFile:false,plugins:[react()],define:{'import.meta.env.VITE_LOOP_BACKEND':JSON.stringify('supabase')},test:{environment:'jsdom',globals:true}};
+ // Reserve CPU headroom for jsdom; keep Vitest's default per-test timeout.
+ if(mode==='test')return{envFile:false,plugins:[react()],define:{'import.meta.env.VITE_LOOP_BACKEND':JSON.stringify('supabase')},test:{environment:'jsdom',globals:true,maxWorkers:'50%'}};
  if(command==='serve'){
   const configPath=pathToFileURL(resolve('scripts/local/vite.config.mjs')).href;
   return(await import(/* @vite-ignore */configPath)).default;

@@ -1,0 +1,23 @@
+{
+  "started": "2026-10-25T02:45:31.469Z",
+  "finished": "2026-10-25T02:45:34.262Z",
+  "command": [
+    "node",
+    "--import",
+    "./.loop-control/stage-d/state/default-5s-stability-20261025/tests-offline-guard.mjs",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--config",
+    ".loop-control/stage-d/state/default-5s-stability-20261025/profile.config.mts",
+    "src/reviews/ReviewWorkspace.test.tsx",
+    "-t",
+    "分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择",
+    "--exclude",
+    "**/.loop-control/**"
+  ],
+  "status": 0,
+  "signal": null,
+  "defaultTimeoutMs": 5000,
+  "timeoutOverride": false,
+  "passed": true
+}

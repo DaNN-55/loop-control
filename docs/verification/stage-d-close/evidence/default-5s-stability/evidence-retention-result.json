@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "previousPublic": 442,
+  "previousPrivate": 577,
+  "previousPublicOriginalPathsByteUnchangedExceptTwoLiveReports": 440,
+  "previousPrivateOriginalPathsByteUnchanged": 577,
+  "allHistoricalVerificationFilesPreservedExceptThreeLiveRecords": 1762,
+  "previousIndexPrivateSnapshot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/default-5s-stability-20261025/evidence-index-before-stability.json",
+  "previousIndexSha256": "8b7c255a38eb92b4e3336fb583684bdcbee5872f1902fdc46bffaca262867f50",
+  "updatedLiveReports": [
+    {
+      "path": "README.md",
+      "publicArchive": "README-before-default-5s.md",
+      "privateSnapshot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/default-5s-stability-20261025/README-before.md",
+      "previousSha256": "941d5a345756387e16db5bfa797d8f66186e9b70bf1794364fd841cbbb672022"
+    },
+    {
+      "path": "review.md",
+      "publicArchive": "review-before-default-5s.md",
+      "privateSnapshot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/default-5s-stability-20261025/review-before.md",
+      "previousSha256": "bd7356b3dba625291552b58aabda610d71336265e6af2b1b0dd88d53b9bd9466"
+    }
+  ],
+  "historicalFailedRunsReclassifiedAsPassed": false,
+  "otherUnverifiedGatesClosed": false
+}

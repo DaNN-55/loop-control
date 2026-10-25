@@ -1,0 +1,1 @@
+{"passed":true,"environment":"jsdom","maxWorkers":"50%","availableParallelism":10,"previousVitestDefaultForks":9,"currentWorkerLimit":5,"testTimeoutOverride":false,"hookTimeoutOverride":false,"fileParallelismNotDisabled":true,"defaultBudgetMs":5000}
