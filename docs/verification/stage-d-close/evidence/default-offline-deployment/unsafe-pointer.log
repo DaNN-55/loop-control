@@ -1,0 +1,20 @@
+
+> loop-control@0.1.0 start
+> node scripts/local/start.mjs
+
+node:fs:2848
+      const stats = binding.lstat(base, true, undefined, true /* throwIfNoEntry */);
+                            ^
+
+Error: ENOENT: no such file or directory, lstat '/outside'
+    at realpathSync (node:fs:2848:29)
+    at readDeployment (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/deployment.mjs:35:24)
+    at readDeployment (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/deployment.mjs:29:14)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/start.mjs:9:44 {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'lstat',
+  path: '/outside'
+}
+
+Node.js v24.20.0

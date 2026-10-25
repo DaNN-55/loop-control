@@ -7,6 +7,7 @@ import {inspectRecordedService} from '../local-service-record.mjs';
 import {openPrivateFile} from '../isolation/environment.mjs';
 const {readDeployment,deploymentFile}=await import('./deployment.mjs');
 const selected=deploymentFile(),deployment=readDeployment(selected),appPort=deployment.port;
+if(deployment.offlinePreparationRequired)await(await import('./offline-preparation.mjs')).assertOfflinePrepared(deployment);
 const childEnvironment={...env,HOME:deployment.home,...(selected?{LOOP_LOCAL_DEPLOYMENT:selected}:{})};
 const offlineGuard=process.argv.includes('--offline-test');
 const path=deployment.recordPath,identity=join(projectRoot,'node_modules/vite/bin/vite.js');

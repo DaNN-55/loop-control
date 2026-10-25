@@ -1,0 +1,19 @@
+{
+  "started": "2026-10-25T05:22:51.591Z",
+  "finished": "2026-10-25T05:24:05.686Z",
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--exclude",
+    "n8n/import-workflows.test.mjs",
+    "--exclude",
+    "**/*.integration.test.ts",
+    "--exclude",
+    "**/.loop-control/**"
+  ],
+  "status": 1,
+  "passed": false,
+  "defaultTestTimeoutMs": 5000,
+  "timeoutOverride": false
+}

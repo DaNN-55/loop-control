@@ -13,6 +13,26 @@ npm stop -- --deployment /absolute/private/deployment.json
 
 部署文件必须是本 worktree 的 `.loop-control/stage-d/state/t24-*/` 或 `t25-*/` 直属私有文件；应用 55189、PG `127.0.0.1:55472`，应用角色 `loop_app`，Worker 为同库的 `loop_worker`。T25 仍限 `loop_t25`；恢复目标限 `loop_t24_restore*`，并核对实际恢复回执和数据库媒体绑定。默认无 `--deployment` 时仍使用原 `loop_imported` 的既有安全配置（未提供 Worker 时相关执行明确不可用）；未创建默认 `native-worker.json`。
 
+可以通过可选的 `.loop-control/stage-d/default-deployment.json` 将无参入口指向一个已批准的独立部署。没有该文件时保留上段行为；有文件时每次重新执行完整的部署/恢复回执校验，错误指针明确失败，不回落旧库。指针和目标均私有，不进入 Git。停止服务后才能首次设置；历史已死亡的服务记录保留，不因记录文件存在就当作活服务。
+
+## 本地已有资产的离线准备
+
+先按目标平台准备 Node 24、完整 lockfile 依赖（启动仍需要 Vite/TypeScript）、数据库与角色/媒体、FFmpeg/FFprobe、OpenChatCut，以及专用 Python/WhisperX 和指定中文模型。此命令不安装依赖、不下载文件，也不代替新主机安装器。Python 应使用限制出网的执行封套；HF offline 标志不能代替 OS 网络限制。
+
+在目标部署文件旁放置私有 `offline-assets.json`：`version:1`、`python` 精确版本、`model` 为 `jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn`、`packages` 为 `{name,version}` 数组、`files` 为 `{path,bytes,sha256}` 数组。文件必须在本 worktree 内且不经符号链接。清单覆盖模型实际加载的配置/权重及缓存引用、NLTK 分句数据、Python 包元数据与执行封套；HF 快照可准备为实体文件。模型 revision 与来源摘要另行保存，包元数据摘要不等于全部 wheel 内容锁定。
+
+```sh
+npm run local:prepare-offline -- --deployment /absolute/private/state/t24-TARGET/deployment.json --set-default
+npm start -- --offline-test
+npm stop
+```
+
+准备命令核对本地文件 SHA、编译运行程序，显式初始化 Python 依赖（120 秒安全上限，仅导入模块，不加载模型），然后调用实际 Worker 的原 **30 秒**模型 probe。两段耗时分别记录在私有 `offline-preparation.json`；失败不发布 ready 回执或新默认指针。已有指针不自动覆盖；对同一目标重新准备时省略 `--set-default`。
+
+选中的默认部署或标记 `offlinePreparationRequired:true` 的显式部署，在正式启动监听前核对准备回执、文件 SHA、部署/脚本身份和 Node 版本；失效时要求重新准备。该检查不重新加载模型，实际任务仍保留原 30 秒 preflight。缺少 Python 包、模型或冷初始化未完成都不能由“页面已监听”推定可用。验收仍须覆盖正式入口的真实任务与产物。
+
+本命令不改变宿主网络。`--offline-test` 对本轮 Node 进程树施加现有本机端口 guard；渲染需要临时 loopback 端口时可在单独阶段用 OS loopback 策略验证，模型进程继续需要独立全断网策略。不得把测试封套当作通用主机防火墙。
+
 部署配置可显式提供以下非秘密能力字段。数据库密码只在既有私有配置中，不复制到文档。
 
 - `connections.keychain`：`approved`、本 worktree 的 stage-d `runtimeRoot`、已固定 helper 的 `helperSha256`。仅限现有专用合成测试 Keychain；没有配置时禁用，不访问登录/系统 Keychain。

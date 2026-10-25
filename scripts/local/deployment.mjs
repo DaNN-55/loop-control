@@ -22,6 +22,12 @@ function databaseBinding(c,database){
 }
 export function readDeployment(file=deploymentFile()){
  if(!file){
+  const pointer=join(root,'default-deployment.json');
+  if(existsSync(pointer)){
+   assertPrivatePath(pointer);const selected=JSON.parse(readFileSync(pointer));
+   if(selected.version!==1||Object.keys(selected).some(k=>!['version','deploymentFile'].includes(k))||typeof selected.deploymentFile!=='string'||!isAbsolute(selected.deploymentFile))throw Error('Invalid default deployment pointer');
+   return{...readDeployment(selected.deploymentFile),offlinePreparationRequired:true};
+  }
   const c=configuration(),workerFile=join(root,'native-worker.json'),worker=existsSync(workerFile)?JSON.parse(readFileSync(workerFile)):undefined,workerDatabase=worker?JSON.parse(readFileSync(join(root,'worker-database.json'))):undefined;
   if(worker)databaseBinding({database:c.database,worker,workerDatabase},c.database.database);
   return{projectRoot,port:appPort,database:c.database,mediaRoot:join(root,'media'),stateDirectory:join(root,'state/orchestration'),recordPath:join(root,'state/app.json'),logPath:join(root,'logs/app.log'),home:join(root,'home'),worker,workerDatabase,controlledNotifications:false,...capabilities(c)};

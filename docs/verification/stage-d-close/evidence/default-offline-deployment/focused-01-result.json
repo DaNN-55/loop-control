@@ -1,0 +1,15 @@
+{
+  "started": "2026-10-25T05:17:43.981Z",
+  "finished": "2026-10-25T05:17:44.782Z",
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "scripts/local/deployment.test.mjs",
+    "scripts/local/offline-preparation.test.mjs"
+  ],
+  "status": 0,
+  "passed": true,
+  "defaultTestTimeoutMs": 5000,
+  "timeoutOverride": false
+}

@@ -1,0 +1,12 @@
+
+> loop-control@0.1.0 start
+> node scripts/local/start.mjs
+
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/start.mjs:23
+ if(!valid(r)){child.kill();throw Error('Native app did not listen');}
+                                  ^
+
+Error: Native app did not listen
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/start.mjs:23:35
+
+Node.js v24.20.0

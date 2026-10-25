@@ -1,0 +1,1 @@
+{"passed":false,"reason":"Unsafe-pointer fixture referenced a nonexistent path; startup correctly rejected ENOENT before the expected namespace message","assetAndDatabaseCasesRejected":true,"filesRestoredInFinally":true,"correction":"Use an existing private out-of-namespace file, preserving exact rejection assertion"}

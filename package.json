@@ -47,6 +47,7 @@
     "isolated:stage-b-audit": "node scripts/isolation/stage-b-audit.mjs",
     "isolated:sql-tests": "node scripts/isolation/sql-tests.mjs",
     "local:prepare": "node scripts/local/prepare.mjs",
+    "local:prepare-offline": "node scripts/local/prepare-offline.mjs",
     "local:import": "node scripts/local/restore.mjs --verified",
     "local:start": "node scripts/local/start.mjs",
     "local:stop": "node scripts/local/stop.mjs",

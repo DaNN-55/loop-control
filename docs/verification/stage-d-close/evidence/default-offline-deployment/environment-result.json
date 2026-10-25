@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "scope": "Existing macOS arm64 host with previously installed Node/Python/OpenChatCut and pinned model reused",
+  "machine": "arm64",
+  "system": "Darwin",
+  "freshHost": false,
+  "newSeparateRestoredDatabase": true,
+  "newSeparateApfsMedia": true,
+  "downloads": 0,
+  "sourceDefaultConfigOverwritten": false
+}

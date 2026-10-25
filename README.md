@@ -44,6 +44,8 @@ npm stop
 
 当前默认配置沿用 `.loop-control/stage-d/config.json`、可选 `native-worker.json` 及 `worker-database.json`，由已有隔离准备/导入或恢复流程生成；不要在聊天、Git 或前端环境中录入数据库密码。`npm run build` 不需要这些数据库配置，也不读取旧 `.env.local`。缺少本地配置会明确失败，不回落远端。独立 Worker 由应用通过 stdin 提供冻结任务包；本地交付包通过 Owner 控制台操作，旧独立发布 CLI 不自动进入远端路径。
 
+也可由 `local:prepare-offline -- --deployment … --set-default` 校验已准备的本地依赖/模型并选择独立默认部署；后续无参 `npm start/stop` 使用该目标。此流程不下载、不覆盖旧默认配置，仍限定批准的隔离路径和恢复回执；见[离线准备说明](docs/local-native-deployment.md)。它不代表通用新主机安装已经通过。
+
 本分支完成的是 A–D 的受控本地路径及断网数据操作，尚不是通用新主机/默认生产部署或 E/F 发布验收。T21 当次及历史默认 5 秒失败、根因未解决、既有30分钟租约和其他未验收项继续保留；详见 [T25 验收与范围](docs/verification/stage-d-t25/README.md)。
 
 以下为旧版兼容栈说明：仅在明确需要旧部署时使用 `npm run legacy:start` / `npm run legacy:stop`，旧 Worker/编排和发布 CLI 使用 `legacy:` 命令；不作为新版启动前提。

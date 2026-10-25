@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "scope": "Formal default and explicit npm entrypoints on the existing macOS arm64 host with reused dependencies only",
+  "defaultSelectionConfigured": true,
+  "optionalPointerPreservesOriginalConfig": true,
+  "formalNpmStartStopAndRestart": true,
+  "realWhisperXAndLateResultFence": true,
+  "realLocalPreviewAndBrowserPlaybackSeek": true,
+  "httpAndBrowserSessionSurviveRestart": true,
+  "offlinePreparationDownloads": 0,
+  "modelProbeTimeoutMs": 30000,
+  "historicalColdProbeFailurePreserved": true,
+  "coldNewHostGateClosed": false,
+  "newHostInstallVerified": false,
+  "arbitraryMismatchDetectionProven": false,
+  "fullRegression": {
+    "files": 103,
+    "tests": 769,
+    "defaultTimeoutMs": 5000,
+    "passed": true
+  },
+  "initialSandboxListenFailuresPreserved": true,
+  "otherUnverifiedGatesClosed": false,
+  "sqlConsistencySuggestionDeferred": true,
+  "commit": false,
+  "push": false,
+  "EF": false
+}

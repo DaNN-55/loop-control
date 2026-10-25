@@ -10,6 +10,11 @@ const database={host:'127.0.0.1',port:55472,database:'loop_t24_restore_new',user
 function config(){return{projectRoot,port:55189,database,worker:{},workerDatabase:{...database,user:'loop_worker'},mediaRoot,home:base+'/home',stateDirectory:base+'/state'};}
 beforeEach(()=>{fixture.files.clear();fixture.files.set(file,config());fixture.files.set(receiptFile,{passed:true,publicationFence:true,connectionQualificationsCleared:true,database:database.database,mediaRoot});});
 it('selects a restored deployment using the same strict normal startup reader',()=>{expect(readDeployment(file)).toMatchObject({database,mediaRoot,deploymentFile:file});});
+it('selects an optional default pointer and still rejects a changed restore binding',()=>{
+ fixture.files.set(root+'/default-deployment.json',{version:1,deploymentFile:file});
+ expect(readDeployment()).toMatchObject({database,mediaRoot,deploymentFile:file,offlinePreparationRequired:true});
+ fixture.files.set(receiptFile,{passed:false});expect(()=>readDeployment()).toThrow();
+});
 it('rejects mismatched restore receipt, worker database, production paths and online policy',()=>{
  for(const change of[c=>{c.workerDatabase.database='loop_imported';},c=>{c.database.database='postgres';},c=>{c.mediaRoot='/Users/dan/Programs/loop-control/media';},c=>{c.connections={verification:'pexels-live'};}]){const c=config();change(c);fixture.files.set(file,c);expect(()=>readDeployment(file)).toThrow();}
  fixture.files.set(file,config());fixture.files.set(receiptFile,{passed:true,database:database.database,mediaRoot});expect(()=>readDeployment(file)).toThrow();
