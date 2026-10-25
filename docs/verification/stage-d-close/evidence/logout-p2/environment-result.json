@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "container": "/loop-control-stage-d-postgres",
+  "image": "postgres@sha256:00bc86618629af00d2937fdc5a5d63db3ff8450acf52f0636ec813c7f4902929",
+  "labels": {
+    "com.loop-control.isolation": "loop-control-stage-d-native"
+  },
+  "state": "running",
+  "ports": {
+    "5432/tcp": [
+      {
+        "HostIp": "127.0.0.1",
+        "HostPort": "55472"
+      }
+    ]
+  },
+  "database": "loop_t24_restore_dclose02",
+  "mediaRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-dclose-restored-20261025/volume/restored/media",
+  "port": 55189,
+  "ownDatabaseConnections": 0,
+  "keychainExists": false,
+  "productionRead": false
+}

@@ -1,8 +1,11 @@
+import{localCatalogSql}from'./catalogQuery.js';
+import{ConfigurationError}from'./configurationCommands.js';
+import type{EpisodeCatalog,CatalogQuery}from'../episodes/episodeCatalogTypes.js';
 import {ownerTransaction} from './ownerTransaction.js';
 import {Pool, type PoolConfig} from 'pg';
 import type {Database} from '../lib/database.types.js';
 type Row<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
-export interface LocalCatalog {
+export interface LocalCatalog extends EpisodeCatalog {
  accounts: Row<'accounts'>[];
  blueprints: Row<'account_blueprint_versions'>[];
  episodes: Row<'episodes'>[];
@@ -23,18 +26,26 @@ export function createLocalDatabase(config:PoolConfig){
  pool.on('error',()=>{});
  return pool;
 }
-export async function readLocalCatalog(pool:Pool,ownerId:string):Promise<LocalCatalog>{
+export function parseCatalogQuery(search:URLSearchParams):CatalogQuery{
+ const value=(key:string,fallback:string)=>search.get(key)??fallback;
+ const page=(key:string)=>{const text=value(key,'1');if(!/^[1-9][0-9]{0,8}$/.test(text))throw new ConfigurationError(400,'目录页码无效。');return Number(text);};
+ const view=value('view','episodes'),visibility=value('visibility','active'),accountId=value('accountId',''),seriesId=value('seriesId','all');
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+ if(!['accounts','episodes','reviews','operations'].includes(view)||!['active','archived','all'].includes(visibility)||accountId&&!uuid.test(accountId)||!['all','unassigned','unavailable'].includes(seriesId)&&!uuid.test(seriesId)||[...search.keys()].some(k=>!['view','page','accountId','seriesId','visibility','pendingPage','blockedPage'].includes(k))||[...search.keys()].some(k=>search.getAll(k).length!==1))throw new ConfigurationError(400,'目录筛选无效。');
+ return {view:view as CatalogQuery['view'],visibility:visibility as CatalogQuery['visibility'],accountId,seriesId,page:page('page'),pendingPage:page('pendingPage'),blockedPage:page('blockedPage')};
+}
+export async function readLocalCatalog(pool:Pool,ownerId:string,query:CatalogQuery=parseCatalogQuery(new URLSearchParams())):Promise<LocalCatalog>{
  return ownerTransaction(pool,ownerId,true,async client=>{
   const accounts=(await client.query(`SELECT a.* FROM public.accounts a JOIN public.account_memberships m ON m.account_id=a.id WHERE m.user_id=$1 AND m.role='owner' ORDER BY a.created_at,a.id`,[ownerId])).rows;
   const ids=accounts.map(a=>a.id);
   const blueprints=(await client.query('SELECT * FROM public.account_blueprint_versions WHERE account_id=ANY($1::uuid[]) ORDER BY version DESC,id',[ids])).rows;
-  const episodes=(await client.query('SELECT *,tts_speaking_rate::double precision AS tts_speaking_rate FROM public.episodes WHERE account_id=ANY($1::uuid[]) ORDER BY updated_at DESC,id',[ids])).rows;
+  const {rows:[{catalog}]}=await client.query(localCatalogSql,[ownerId,query.view,query.page,query.accountId||null,query.seriesId,query.visibility,query.pendingPage,query.blockedPage]);
   const series=(await client.query('SELECT * FROM public.series WHERE account_id=ANY($1::uuid[]) ORDER BY name,id',[ids])).rows;
   const seriesVersions=(await client.query('SELECT * FROM public.series_versions WHERE account_id=ANY($1::uuid[]) ORDER BY version DESC,id',[ids])).rows;
   const promptVersions=(await client.query('SELECT * FROM public.prompt_versions WHERE account_id=ANY($1::uuid[]) ORDER BY capability,version DESC,id',[ids])).rows;
   const revisions=(await client.query('SELECT id,md5(policy::text) revision FROM public.account_blueprint_versions WHERE account_id=ANY($1::uuid[])',[ids])).rows;
   const {rows:[record]}=await client.query('SELECT imported_at,source_created_at FROM local_identity.import_record');
   if(!record)throw Error('Local import is not verified');
-  return {accounts,blueprints,episodes,series,seriesVersions,promptVersions,blueprintRevisions:Object.fromEntries(revisions.map(r=>[r.id,r.revision])),importedAt:record.imported_at.toISOString(),sourceCreatedAt:record.source_created_at.toISOString()};
+  return {...catalog,accounts,blueprints,series,seriesVersions,promptVersions,blueprintRevisions:Object.fromEntries(revisions.map(r=>[r.id,r.revision])),importedAt:record.imported_at.toISOString(),sourceCreatedAt:record.source_created_at.toISOString()};
  });
 }

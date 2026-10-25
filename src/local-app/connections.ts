@@ -29,7 +29,7 @@ export function parseConnectionCommand(body:Record<string,unknown>){
 async function lockIntent(client:PoolClient,ownerId:string,key:string){await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',['connection:'+ownerId+':'+key]);}
 export class LocalConnections {
  constructor(private pool:Pool,private store:SecretStore=disabledSecretStore,private probe:ConnectionProbe=disabledConnectionProbe){}
- get externalReady(){return this.store.mode==='keychain'&&this.probe.mode==='live';}
+ get externalReady(){return this.store.mode==='keychain'&&this.probe.mode==='live'&&this.probe.networkAvailable!==false;}
  async assertBlueprintReferences(client:PoolClient,refs:string[]){
   if(!this.externalReady)throw new ConfigurationError(409,'真实Keychain及在线验证尚未就绪。');
   const owners=await Promise.all(refs.map(id=>ownedConnectionVersion(client,id)));
@@ -51,7 +51,7 @@ export class LocalConnections {
    const qualifications=(await client.query('SELECT version_id,qualified FROM local_identity.connection_qualifications WHERE owner_id=$1',[ownerId])).rows;
    const latest=(await client.query('SELECT DISTINCT ON(connection_version_id) connection_version_id,status FROM public.external_connection_verifications ORDER BY connection_version_id,created_at DESC,id DESC')).rows;
    const pending=(await client.query('SELECT idempotency_key,metadata,created_at FROM local_identity.connection_intents WHERE owner_id=$1 AND applied_at IS NULL ORDER BY created_at',[ownerId])).rows;
-   const externalReady=this.store.mode==='keychain'&&this.probe.mode==='live';
+   const externalReady=this.store.mode==='keychain'&&this.probe.mode==='live'&&this.probe.networkAvailable!==false;
    const localVersions=versions.map(v=>{const binding=bindings.find(b=>b.version_id===v.id),qualified=qualifications.some(q=>q.version_id===v.id&&q.qualified);return {...v,historicalStatus:v.status,status:v.revoked_at?'revoked':!externalReady||!binding||binding.store_mode!=='keychain'?'retryable':qualified?'verified':v.status==='verified'?'retryable':v.status,secretState:binding?'bound-unchecked':'unbound'};});
    // Historical provider text is never used as a diagnostic response channel;
    // an imported verified flag cannot stand in for a usable native binding.

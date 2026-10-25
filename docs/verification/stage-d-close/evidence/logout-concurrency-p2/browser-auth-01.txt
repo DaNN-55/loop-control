@@ -1,0 +1,1 @@
+Existing synthetic isolated Owner submitted through stdin-backed auth vault

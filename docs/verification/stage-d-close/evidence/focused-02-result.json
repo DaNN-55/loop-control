@@ -1,0 +1,15 @@
+{
+  "started": "2026-10-25T00:44:32.261Z",
+  "finished": "2026-10-25T00:44:33.883Z",
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "scripts/local/application.test.mjs",
+    "src/local-app/LocalCatalogApp.test.tsx",
+    "--exclude",
+    "**/.loop-control/**"
+  ],
+  "status": 0,
+  "passed": true
+}

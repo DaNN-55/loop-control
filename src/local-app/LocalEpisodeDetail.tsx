@@ -1,7 +1,8 @@
+import{episodeCatalogChanged}from'../episodes/episodeCatalogChanged';
 import{LocalDeliveryPanel}from'./LocalDeliveryPanel';
 import type {OpenChatCutStudioWorkspace,ReviewRenderDurationSettings} from '../reviews/reviewRevision';
 import {reviewRenderDurationSettingsFromRules} from '../reviews/reviewRevision';
-import {useEffect,useMemo,useState} from 'react';
+import {useEffect,useMemo,useRef,useState} from 'react';
 import {EpisodeProductionView,ArtifactPreview,splitPreviewArtifacts} from '../episodes/EpisodeProduction';
 import type {EpisodeProductionSnapshot} from '../episodes/EpisodeProductionContainer';
 import {createEpisodeReader} from '../episodes/episodeReadService';
@@ -12,9 +13,10 @@ type LocalEpisodeSnapshot=EpisodeProductionSnapshot&{localAssetRoot?:string};
 export function LocalEpisodeDetail({episodeId,onClose,onChanged}:{episodeId:string;onClose:()=>void;onChanged:()=>Promise<void>}){
  const [snapshot,setSnapshot]=useState<LocalEpisodeSnapshot|null>(null),[error,setError]=useState(''),[pending,setPending]=useState('');
  const [preflight,setPreflight]=useState<WorkerPreflightResult|null>(null);
+ const previous=useRef<LocalEpisodeSnapshot|null>(null),changed=useRef(onChanged);changed.current=onChanged;
  const reader=useMemo(()=>createEpisodeReader<LocalEpisodeSnapshot>(async(id,known)=>localRequest(`episodes/${id}?known=${encodeURIComponent(JSON.stringify(known))}`)),[episodeId]);
  async function refresh(){const next=await reader(episodeId);setSnapshot(next);}
- useEffect(()=>{let current=true,busy=false;async function poll(){if(busy||document.hidden)return;busy=true;try{const s=await reader(episodeId);if(current)setSnapshot(s);}catch(e){if(current)setError(e instanceof Error?e.message:String(e));}finally{busy=false;}}void poll();const timer=setInterval(()=>void poll(),2000);document.addEventListener('visibilitychange',poll);return()=>{current=false;clearInterval(timer);document.removeEventListener('visibilitychange',poll);};},[episodeId,reader]);
+ useEffect(()=>{let current=true,busy=false;async function poll(){if(busy||document.hidden)return;busy=true;try{const s=await reader(episodeId);if(current){const changedCatalog=episodeCatalogChanged(previous.current,s);previous.current=s;setSnapshot(s);if(changedCatalog)void changed.current().catch(()=>{});}}catch(e){if(current)setError(e instanceof Error?e.message:String(e));}finally{busy=false;}}void poll();const timer=setInterval(()=>void poll(),2000);document.addEventListener('visibilitychange',poll);return()=>{current=false;clearInterval(timer);document.removeEventListener('visibilitychange',poll);};},[episodeId,reader]);
  async function command(name:string,data:unknown){setPending(name);setError('');setPreflight(null);try{const result=await localCommand(name,data,undefined,'episode-commands');await refresh();await onChanged();return result;}catch(e){setError(e instanceof Error?e.message:String(e));if(e&&typeof e==='object'&&'preflight'in e)setPreflight(e.preflight as WorkerPreflightResult);throw e;}finally{setPending('');}}
  const producers=new Set(snapshot?.tasks.filter(t=>t.status==='completed').map(t=>t.id));
  const previews=snapshot?splitPreviewArtifacts(snapshot.artifacts,new Set(snapshot.artifacts.filter(a=>a.producer_task_id&&producers.has(a.producer_task_id)).map(a=>a.id))):{current:[],history:[]};

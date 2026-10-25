@@ -1,0 +1,4 @@
+src/reviews/reviewSelectors.ts(1,37): error TS2307: Cannot find module '../lib/database.types' or its corresponding type declarations.
+src/reviews/reviewSelectors.ts(2,111): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../worker/contracts.js'?
+src/reviews/reviewSelectors.ts(32,32): error TS7006: Parameter 'blocker' implicitly has an 'any' type.
+src/reviews/reviewSelectors.ts(36,43): error TS7006: Parameter 'check' implicitly has an 'any' type.

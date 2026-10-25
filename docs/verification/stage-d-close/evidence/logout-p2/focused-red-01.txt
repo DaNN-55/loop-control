@@ -1,0 +1,1514 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/local-app/LocalCatalogApp.test.tsx (7 tests | 2 failed) 2254ms
+   ✓ keeps a committed series save successful when its follow-up read fails 157ms
+   ✓ requests server pages and discards a late response from an earlier filter 27ms
+   ✓ does not restore an old catalog after Owner logout 14ms
+   ✓ refreshes the current page on becoming visible and does not fetch while hidden 6ms
+   ✓ does not start a new catalog read while logout is pending 12ms
+   × returns to login after network logout failure without accepting old reads, then restores writable CSRF on login 1019ms
+     → Unable to find role="button" and name "使用密码登录"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<main[39m
+      [33mclass[39m=[32m"local-workspace"[39m
+      [33mstyle[39m=[32m"max-width: 1400px; margin: 2rem auto; padding: 24px;"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"wordmark"[39m
+        [36m>[39m
+          [0mLoop Control · 本地[0m
+        [36m</div>[39m
+        [36m<h1>[39m
+          [0m内容工作台[0m
+        [36m</h1>[39m
+      [36m</header>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"form-error"[39m
+        [33mrole[39m=[32m"alert"[39m
+      [36m>[39m
+        [0mTypeError: Controlled local transport failure[0m
+      [36m</p>[39m
+      [36m<nav>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m账号配置[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m生产单目录[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m新建账号[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m刷新[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m退出登录[0m
+        [36m</button>[39m
+      [36m</nav>[39m
+      [36m<details>[39m
+        [36m<summary>[39m
+          [0m系统状态[0m
+        [36m</summary>[39m
+      [36m</details>[39m
+      [36m<section>[39m
+        [36m<h2>[39m
+          [0m生产单（[0m
+          [0m60[0m
+          [0m）[0m
+        [36m</h2>[39m
+        [36m<label>[39m
+          [0m账号[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"目录账号"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m全部账号[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m系列[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"目录系列"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0m全部系列[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"unassigned"[39m
+            [36m>[39m
+              [0m无系列[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"unavailable"[39m
+            [36m>[39m
+              [0m系列不可用[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m归档状态[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"归档状态"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"active"[39m
+            [36m>[39m
+              [0m未归档[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"archived"[39m
+            [36m>[39m
+              [0m已归档[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0m全部[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m审核状态[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"审核状态"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"episodes"[39m
+            [36m>[39m
+              [0m全部阶段[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"reviews"[39m
+            [36m>[39m
+              [0m待审核[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button button-primary"[39m
+        [36m>[39m
+          [0m新建生产单[0m
+        [36m</button>[39m
+        [36m<p>[39m
+          [0m导入来源时间：[0m
+          [0m2026-10-25[0m
+        [36m</p>[39m
+        [36m<ul>[39m
+          [36m<li>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"button"[39m
+            [36m>[39m
+              [0mbefore-logout[0m
+              [0m · [0m
+              [0mwaiting_input[0m
+            [36m</button>[39m
+          [36m</li>[39m
+        [36m</ul>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"生产单分页"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"button"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m上一页[0m
+          [36m</button>[39m
+          [36m<span>[39m
+            [0m第 [0m
+            [0m1[0m
+            [0m / [0m
+            [0m3[0m
+            [0m 页 · 共 [0m
+            [0m60[0m
+            [0m 条[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"button"[39m
+          [36m>[39m
+            [0m下一页[0m
+          [36m</button>[39m
+        [36m</nav>[39m
+      [36m</section>[39m
+    [36m</main>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<main[39m
+      [33mclass[39m=[32m"local-workspace"[39m
+      [33mstyle[39m=[32m"max-width: 1400px; margin: 2rem auto; padding: 24px;"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"wordmark"[39m
+        [36m>[39m
+          [0mLoop Control · 本地[0m
+        [36m</div>[39m
+        [36m<h1>[39m
+          [0m内容工作台[0m
+        [36m</h1>[39m
+      [36m</header>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"form-error"[39m
+        [33mrole[39m=[32m"alert"[39m
+      [36m>[39m
+        [0mTypeError: Controlled local transport failure[0m
+      [36m</p>[39m
+      [36m<nav>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m账号配置[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m生产单目录[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m新建账号[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m刷新[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m退出登录[0m
+        [36m</button>[39m
+      [36m</nav>[39m
+      [36m<details>[39m
+        [36m<summary>[39m
+          [0m系统状态[0m
+        [36m</summary>[39m
+      [36m</details>[39m
+      [36m<section>[39m
+        [36m<h2>[39m
+          [0m生产单（[0m
+          [0m60[0m
+          [0m）[0m
+        [36m</h2>[39m
+        [36m<label>[39m
+          [0m账号[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"目录账号"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m全部账号[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m系列[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"目录系列"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0m全部系列[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"unassigned"[39m
+            [36m>[39m
+              [0m无系列[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"unavailable"[39m
+            [36m>[39m
+              [0m系列不可用[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m归档状态[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"归档状态"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"active"[39m
+            [36m>[39m
+              [0m未归档[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"archived"[39m
+            [36m>[39m
+              [0m已归档[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0m全部[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m审核状态[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"审核状态"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"episodes"[39m
+            [36m>[39m
+              [0m全部阶段[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"reviews"[39m
+            [36m>[39m
+              [0m待审核[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button button-primary"[39m
+        [36m>[39m
+          [0m新建生产单[0m
+        [36m</button>[39m
+        [36m<p>[39m
+          [0m导入来源时间：[0m
+          [0m2026-10-25[0m
+        [36m</p>[39m
+        [36m<ul>[39m
+          [36m<li>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"button"[39m
+            [36m>[39m
+              [0mbefore-logout[0m
+              [0m · [0m
+              [0mwaiting_input[0m
+            [36m</button>[39m
+          [36m</li>[39m
+        [36m</ul>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"生产单分页"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"button"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m上一页[0m
+          [36m</button>[39m
+          [36m<span>[39m
+            [0m第 [0m
+            [0m1[0m
+            [0m / [0m
+            [0m3[0m
+            [0m 页 · 共 [0m
+            [0m60[0m
+            [0m 条[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"button"[39m
+          [36m>[39m
+            [0m下一页[0m
+          [36m</button>[39m
+        [36m</nav>[39m
+      [36m</section>[39m
+    [36m</main>[39m
+  [36m</div>[39m
+[36m</body>[39m
+   × returns to login after 503 logout failure without accepting old reads, then restores writable CSRF on login 1017ms
+     → Unable to find role="button" and name "使用密码登录"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<main[39m
+      [33mclass[39m=[32m"local-workspace"[39m
+      [33mstyle[39m=[32m"max-width: 1400px; margin: 2rem auto; padding: 24px;"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"wordmark"[39m
+        [36m>[39m
+          [0mLoop Control · 本地[0m
+        [36m</div>[39m
+        [36m<h1>[39m
+          [0m内容工作台[0m
+        [36m</h1>[39m
+      [36m</header>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"form-error"[39m
+        [33mrole[39m=[32m"alert"[39m
+      [36m>[39m
+        [0mError: Controlled local service error[0m
+      [36m</p>[39m
+      [36m<nav>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m账号配置[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m生产单目录[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m新建账号[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m刷新[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m退出登录[0m
+        [36m</button>[39m
+      [36m</nav>[39m
+      [36m<details>[39m
+        [36m<summary>[39m
+          [0m系统状态[0m
+        [36m</summary>[39m
+      [36m</details>[39m
+      [36m<section>[39m
+        [36m<h2>[39m
+          [0m生产单（[0m
+          [0m60[0m
+          [0m）[0m
+        [36m</h2>[39m
+        [36m<label>[39m
+          [0m账号[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"目录账号"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m全部账号[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m系列[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"目录系列"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0m全部系列[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"unassigned"[39m
+            [36m>[39m
+              [0m无系列[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"unavailable"[39m
+            [36m>[39m
+              [0m系列不可用[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m归档状态[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"归档状态"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"active"[39m
+            [36m>[39m
+              [0m未归档[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"archived"[39m
+            [36m>[39m
+              [0m已归档[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0m全部[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m审核状态[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"审核状态"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"episodes"[39m
+            [36m>[39m
+              [0m全部阶段[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"reviews"[39m
+            [36m>[39m
+              [0m待审核[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button button-primary"[39m
+        [36m>[39m
+          [0m新建生产单[0m
+        [36m</button>[39m
+        [36m<p>[39m
+          [0m导入来源时间：[0m
+          [0m2026-10-25[0m
+        [36m</p>[39m
+        [36m<ul>[39m
+          [36m<li>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"button"[39m
+            [36m>[39m
+              [0mbefore-logout[0m
+              [0m · [0m
+              [0mwaiting_input[0m
+            [36m</button>[39m
+          [36m</li>[39m
+        [36m</ul>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"生产单分页"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"button"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m上一页[0m
+          [36m</button>[39m
+          [36m<span>[39m
+            [0m第 [0m
+            [0m1[0m
+            [0m / [0m
+            [0m3[0m
+            [0m 页 · 共 [0m
+            [0m60[0m
+            [0m 条[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"button"[39m
+          [36m>[39m
+            [0m下一页[0m
+          [36m</button>[39m
+        [36m</nav>[39m
+      [36m</section>[39m
+    [36m</main>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<main[39m
+      [33mclass[39m=[32m"local-workspace"[39m
+      [33mstyle[39m=[32m"max-width: 1400px; margin: 2rem auto; padding: 24px;"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"wordmark"[39m
+        [36m>[39m
+          [0mLoop Control · 本地[0m
+        [36m</div>[39m
+        [36m<h1>[39m
+          [0m内容工作台[0m
+        [36m</h1>[39m
+      [36m</header>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"form-error"[39m
+        [33mrole[39m=[32m"alert"[39m
+      [36m>[39m
+        [0mError: Controlled local service error[0m
+      [36m</p>[39m
+      [36m<nav>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m账号配置[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m生产单目录[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m新建账号[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m刷新[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m退出登录[0m
+        [36m</button>[39m
+      [36m</nav>[39m
+      [36m<details>[39m
+        [36m<summary>[39m
+          [0m系统状态[0m
+        [36m</summary>[39m
+      [36m</details>[39m
+      [36m<section>[39m
+        [36m<h2>[39m
+          [0m生产单（[0m
+          [0m60[0m
+          [0m）[0m
+        [36m</h2>[39m
+        [36m<label>[39m
+          [0m账号[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"目录账号"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m全部账号[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m系列[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"目录系列"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0m全部系列[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"unassigned"[39m
+            [36m>[39m
+              [0m无系列[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"unavailable"[39m
+            [36m>[39m
+              [0m系列不可用[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m归档状态[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"归档状态"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"active"[39m
+            [36m>[39m
+              [0m未归档[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"archived"[39m
+            [36m>[39m
+              [0m已归档[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0m全部[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m审核状态[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"审核状态"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"episodes"[39m
+            [36m>[39m
+              [0m全部阶段[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"reviews"[39m
+            [36m>[39m
+              [0m待审核[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button button-primary"[39m
+        [36m>[39m
+          [0m新建生产单[0m
+        [36m</button>[39m
+        [36m<p>[39m
+          [0m导入来源时间：[0m
+          [0m2026-10-25[0m
+        [36m</p>[39m
+        [36m<ul>[39m
+          [36m<li>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"button"[39m
+            [36m>[39m
+              [0mbefore-logout[0m
+              [0m · [0m
+              [0mwaiting_input[0m
+            [36m</button>[39m
+          [36m</li>[39m
+        [36m</ul>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"生产单分页"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"button"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m上一页[0m
+          [36m</button>[39m
+          [36m<span>[39m
+            [0m第 [0m
+            [0m1[0m
+            [0m / [0m
+            [0m3[0m
+            [0m 页 · 共 [0m
+            [0m60[0m
+            [0m 条[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"button"[39m
+          [36m>[39m
+            [0m下一页[0m
+          [36m</button>[39m
+        [36m</nav>[39m
+      [36m</section>[39m
+    [36m</main>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 5 passed (7)
+   Start at  09:28:02
+   Duration  3.54s (transform 348ms, setup 0ms, collect 592ms, tests 2.25s, environment 319ms, prepare 56ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/LocalCatalogApp.test.tsx > returns to login after network logout failure without accepting old reads, then restores writable CSRF on login
+TestingLibraryElementError: Unable to find role="button" and name "使用密码登录"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<main[39m
+      [33mclass[39m=[32m"local-workspace"[39m
+      [33mstyle[39m=[32m"max-width: 1400px; margin: 2rem auto; padding: 24px;"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"wordmark"[39m
+        [36m>[39m
+          [0mLoop Control · 本地[0m
+        [36m</div>[39m
+        [36m<h1>[39m
+          [0m内容工作台[0m
+        [36m</h1>[39m
+      [36m</header>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"form-error"[39m
+        [33mrole[39m=[32m"alert"[39m
+      [36m>[39m
+        [0mTypeError: Controlled local transport failure[0m
+      [36m</p>[39m
+      [36m<nav>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m账号配置[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m生产单目录[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m新建账号[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m刷新[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m退出登录[0m
+        [36m</button>[39m
+      [36m</nav>[39m
+      [36m<details>[39m
+        [36m<summary>[39m
+          [0m系统状态[0m
+        [36m</summary>[39m
+      [36m</details>[39m
+      [36m<section>[39m
+        [36m<h2>[39m
+          [0m生产单（[0m
+          [0m60[0m
+          [0m）[0m
+        [36m</h2>[39m
+        [36m<label>[39m
+          [0m账号[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"目录账号"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m全部账号[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m系列[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"目录系列"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0m全部系列[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"unassigned"[39m
+            [36m>[39m
+              [0m无系列[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"unavailable"[39m
+            [36m>[39m
+              [0m系列不可用[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m归档状态[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"归档状态"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"active"[39m
+            [36m>[39m
+              [0m未归档[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"archived"[39m
+            [36m>[39m
+              [0m已归档[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0m全部[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m审核状态[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"审核状态"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"episodes"[39m
+            [36m>[39m
+              [0m全部阶段[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"reviews"[39m
+            [36m>[39m
+              [0m待审核[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button button-primary"[39m
+        [36m>[39m
+          [0m新建生产单[0m
+        [36m</button>[39m
+        [36m<p>[39m
+          [0m导入来源时间：[0m
+          [0m2026-10-25[0m
+        [36m</p>[39m
+        [36m<ul>[39m
+          [36m<li>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"button"[39m
+            [36m>[39m
+              [0mbefore-logout[0m
+              [0m · [0m
+              [0mwaiting_input[0m
+            [36m</button>[39m
+          [36m</li>[39m
+        [36m</ul>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"生产单分页"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"button"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m上一页[0m
+          [36m</button>[39m
+          [36m<span>[39m
+            [0m第 [0m
+            [0m1[0m
+            [0m / [0m
+            [0m3[0m
+            [0m 页 · 共 [0m
+            [0m60[0m
+            [0m 条[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"button"[39m
+          [36m>[39m
+            [0m下一页[0m
+          [36m</button>[39m
+        [36m</nav>[39m
+      [36m</section>[39m
+    [36m</main>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<main[39m
+      [33mclass[39m=[32m"local-workspace"[39m
+      [33mstyle[39m=[32m"max-width: 1400px; margin: 2rem auto; padding: 24px;"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"wordmark"[39m
+        [36m>[39m
+          [0mLoop Control · 本地[0m
+        [36m</div>[39m
+        [36m<h1>[39m
+          [0m内容工作台[0m
+        [36m</h1>[39m
+      [36m</header>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"form-error"[39m
+        [33mrole[39m=[32m"alert"[39m
+      [36m>[39m
+        [0mTypeError: Controlled local transport failure[0m
+      [36m</p>[39m
+      [36m<nav>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m账号配置[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m生产单目录[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m新建账号[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m刷新[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m退出登录[0m
+        [36m</button>[39m
+      [36m</nav>[39m
+      [36m<details>[39m
+        [36m<summary>[39m
+          [0m系统状态[0m
+        [36m</summary>[39m
+      [36m</details>[39m
+      [36m<section>[39m
+        [36m<h2>[39m
+          [0m生产单（[0m
+          [0m60[0m
+          [0m）[0m
+        [36m</h2>[39m
+        [36m<label>[39m
+          [0m账号[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"目录账号"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m全部账号[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m系列[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"目录系列"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0m全部系列[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"unassigned"[39m
+            [36m>[39m
+              [0m无系列[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"unavailable"[39m
+            [36m>[39m
+              [0m系列不可用[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m归档状态[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"归档状态"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"active"[39m
+            [36m>[39m
+              [0m未归档[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"archived"[39m
+            [36m>[39m
+              [0m已归档[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0m全部[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m审核状态[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"审核状态"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"episodes"[39m
+            [36m>[39m
+              [0m全部阶段[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"reviews"[39m
+            [36m>[39m
+              [0m待审核[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button button-primary"[39m
+        [36m>[39m
+          [0m新建生产单[0m
+        [36m</button>[39m
+        [36m<p>[39m
+          [0m导入来源时间：[0m
+          [0m2026-10-25[0m
+        [36m</p>[39m
+        [36m<ul>[39m
+          [36m<li>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"button"[39m
+            [36m>[39m
+              [0mbefore-logout[0m
+              [0m · [0m
+              [0mwaiting_input[0m
+            [36m</button>[39m
+          [36m</li>[39m
+        [36m</ul>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"生产单分页"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"button"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m上一页[0m
+          [36m</button>[39m
+          [36m<span>[39m
+            [0m第 [0m
+            [0m1[0m
+            [0m / [0m
+            [0m3[0m
+            [0m 页 · 共 [0m
+            [0m60[0m
+            [0m 条[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"button"[39m
+          [36m>[39m
+            [0m下一页[0m
+          [36m</button>[39m
+        [36m</nav>[39m
+      [36m</section>[39m
+    [36m</main>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/local-app/LocalCatalogApp.test.tsx:79:22
+     77|  const before=reads;fireEvent.click(screen.getByRole('button',{name:/^…
+     78|  await act(async()=>{failLogout();});
+     79|  expect(await screen.findByRole('button',{name:'使用密码登录'})).toBeTruthy(…
+       |                      ^
+     80|  expect(screen.getByRole('alert').textContent).toContain('未能确认退出，请重新登录…
+     81|  expect(screen.queryByRole('button',{name:'生产单目录'})).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/LocalCatalogApp.test.tsx > returns to login after 503 logout failure without accepting old reads, then restores writable CSRF on login
+TestingLibraryElementError: Unable to find role="button" and name "使用密码登录"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<main[39m
+      [33mclass[39m=[32m"local-workspace"[39m
+      [33mstyle[39m=[32m"max-width: 1400px; margin: 2rem auto; padding: 24px;"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"wordmark"[39m
+        [36m>[39m
+          [0mLoop Control · 本地[0m
+        [36m</div>[39m
+        [36m<h1>[39m
+          [0m内容工作台[0m
+        [36m</h1>[39m
+      [36m</header>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"form-error"[39m
+        [33mrole[39m=[32m"alert"[39m
+      [36m>[39m
+        [0mError: Controlled local service error[0m
+      [36m</p>[39m
+      [36m<nav>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m账号配置[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m生产单目录[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m新建账号[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m刷新[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m退出登录[0m
+        [36m</button>[39m
+      [36m</nav>[39m
+      [36m<details>[39m
+        [36m<summary>[39m
+          [0m系统状态[0m
+        [36m</summary>[39m
+      [36m</details>[39m
+      [36m<section>[39m
+        [36m<h2>[39m
+          [0m生产单（[0m
+          [0m60[0m
+          [0m）[0m
+        [36m</h2>[39m
+        [36m<label>[39m
+          [0m账号[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"目录账号"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m全部账号[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m系列[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"目录系列"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0m全部系列[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"unassigned"[39m
+            [36m>[39m
+              [0m无系列[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"unavailable"[39m
+            [36m>[39m
+              [0m系列不可用[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m归档状态[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"归档状态"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"active"[39m
+            [36m>[39m
+              [0m未归档[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"archived"[39m
+            [36m>[39m
+              [0m已归档[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0m全部[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m审核状态[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"审核状态"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"episodes"[39m
+            [36m>[39m
+              [0m全部阶段[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"reviews"[39m
+            [36m>[39m
+              [0m待审核[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button button-primary"[39m
+        [36m>[39m
+          [0m新建生产单[0m
+        [36m</button>[39m
+        [36m<p>[39m
+          [0m导入来源时间：[0m
+          [0m2026-10-25[0m
+        [36m</p>[39m
+        [36m<ul>[39m
+          [36m<li>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"button"[39m
+            [36m>[39m
+              [0mbefore-logout[0m
+              [0m · [0m
+              [0mwaiting_input[0m
+            [36m</button>[39m
+          [36m</li>[39m
+        [36m</ul>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"生产单分页"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"button"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m上一页[0m
+          [36m</button>[39m
+          [36m<span>[39m
+            [0m第 [0m
+            [0m1[0m
+            [0m / [0m
+            [0m3[0m
+            [0m 页 · 共 [0m
+            [0m60[0m
+            [0m 条[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"button"[39m
+          [36m>[39m
+            [0m下一页[0m
+          [36m</button>[39m
+        [36m</nav>[39m
+      [36m</section>[39m
+    [36m</main>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<main[39m
+      [33mclass[39m=[32m"local-workspace"[39m
+      [33mstyle[39m=[32m"max-width: 1400px; margin: 2rem auto; padding: 24px;"[39m
+    [36m>[39m
+      [36m<header>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"wordmark"[39m
+        [36m>[39m
+          [0mLoop Control · 本地[0m
+        [36m</div>[39m
+        [36m<h1>[39m
+          [0m内容工作台[0m
+        [36m</h1>[39m
+      [36m</header>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"form-error"[39m
+        [33mrole[39m=[32m"alert"[39m
+      [36m>[39m
+        [0mError: Controlled local service error[0m
+      [36m</p>[39m
+      [36m<nav>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m账号配置[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m生产单目录[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m新建账号[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m刷新[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button"[39m
+        [36m>[39m
+          [0m退出登录[0m
+        [36m</button>[39m
+      [36m</nav>[39m
+      [36m<details>[39m
+        [36m<summary>[39m
+          [0m系统状态[0m
+        [36m</summary>[39m
+      [36m</details>[39m
+      [36m<section>[39m
+        [36m<h2>[39m
+          [0m生产单（[0m
+          [0m60[0m
+          [0m）[0m
+        [36m</h2>[39m
+        [36m<label>[39m
+          [0m账号[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"目录账号"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0m全部账号[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m系列[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"目录系列"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0m全部系列[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"unassigned"[39m
+            [36m>[39m
+              [0m无系列[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"unavailable"[39m
+            [36m>[39m
+              [0m系列不可用[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m归档状态[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"归档状态"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"active"[39m
+            [36m>[39m
+              [0m未归档[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"archived"[39m
+            [36m>[39m
+              [0m已归档[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"all"[39m
+            [36m>[39m
+              [0m全部[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<label>[39m
+          [0m审核状态[0m
+          [36m<select[39m
+            [33maria-label[39m=[32m"审核状态"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"episodes"[39m
+            [36m>[39m
+              [0m全部阶段[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"reviews"[39m
+            [36m>[39m
+              [0m待审核[0m
+            [36m</option>[39m
+          [36m</select>[39m
+        [36m</label>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"button button-primary"[39m
+        [36m>[39m
+          [0m新建生产单[0m
+        [36m</button>[39m
+        [36m<p>[39m
+          [0m导入来源时间：[0m
+          [0m2026-10-25[0m
+        [36m</p>[39m
+        [36m<ul>[39m
+          [36m<li>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"button"[39m
+            [36m>[39m
+              [0mbefore-logout[0m
+              [0m · [0m
+              [0mwaiting_input[0m
+            [36m</button>[39m
+          [36m</li>[39m
+        [36m</ul>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"生产单分页"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"button"[39m
+            [33mdisabled[39m=[32m""[39m
+          [36m>[39m
+            [0m上一页[0m
+          [36m</button>[39m
+          [36m<span>[39m
+            [0m第 [0m
+            [0m1[0m
+            [0m / [0m
+            [0m3[0m
+            [0m 页 · 共 [0m
+            [0m60[0m
+            [0m 条[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"button"[39m
+          [36m>[39m
+            [0m下一页[0m
+          [36m</button>[39m
+        [36m</nav>[39m
+      [36m</section>[39m
+    [36m</main>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/local-app/LocalCatalogApp.test.tsx:79:22
+     77|  const before=reads;fireEvent.click(screen.getByRole('button',{name:/^…
+     78|  await act(async()=>{failLogout();});
+     79|  expect(await screen.findByRole('button',{name:'使用密码登录'})).toBeTruthy(…
+       |                      ^
+     80|  expect(screen.getByRole('alert').textContent).toContain('未能确认退出，请重新登录…
+     81|  expect(screen.queryByRole('button',{name:'生产单目录'})).toBeNull();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

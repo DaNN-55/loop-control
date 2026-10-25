@@ -1,9 +1,11 @@
 const inFlight=new Map<string,Promise<unknown>>();
-let csrf='';
+let csrf='',sessionGeneration=0;
 export async function localRequest(path:string,init?:RequestInit){
+ if(path==='login'||path==='logout'){sessionGeneration++;csrf='';inFlight.clear();}
+ const session=sessionGeneration;
  const response=await fetch('/api/local/'+path,init);const value=await response.json();
  if(!response.ok)throw Object.assign(new Error(value.error??'本机请求失败。'),value.preflight?{preflight:value.preflight}:{});
- if(typeof value.csrfToken==='string')csrf=value.csrfToken;return value;
+ if(session===sessionGeneration&&typeof value.csrfToken==='string')csrf=value.csrfToken;return value;
 }
 export async function localCommand<T>(command:string,data:unknown,expectedRevision?:string,endpoint='configuration'):Promise<T>{
  const body={command,data,...(expectedRevision?{expectedRevision}:{})};

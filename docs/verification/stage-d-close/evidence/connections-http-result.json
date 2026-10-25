@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "normalFactoryRealDedicatedKeychain": true,
+  "verificationMode": "live",
+  "verificationOutcome": "retryable",
+  "ready": false,
+  "externalReady": false,
+  "noLiveQualification": true,
+  "onlineRequests": 0
+}

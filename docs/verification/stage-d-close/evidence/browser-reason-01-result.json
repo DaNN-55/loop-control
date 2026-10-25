@@ -1,0 +1,16 @@
+{
+  "started": "2026-10-25T00:52:21.778Z",
+  "finished": "2026-10-25T00:52:21.791Z",
+  "command": [
+    "agent-browser",
+    "--session",
+    "d-close-20261025",
+    "find",
+    "label",
+    "审批理由",
+    "fill",
+    "D 阶段正常入口离线验收：批准当前分镜。"
+  ],
+  "status": 0,
+  "passed": true
+}

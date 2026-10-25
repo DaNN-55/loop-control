@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "requestUrlParsingOnly": true,
+  "httpOriginsLoopbackOnly": true,
+  "httpRequestCounts": {
+    "login": 2,
+    "logout": 1,
+    "configuration": 0
+  },
+  "dataUrlNamespacesNotTreatedAsRequests": true
+}

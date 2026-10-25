@@ -1,0 +1,11 @@
+{
+  "started": "2026-10-25T01:06:14.931Z",
+  "finished": "2026-10-25T01:06:17.972Z",
+  "command": [
+    "node",
+    ".loop-control/stage-d/state/d-close-20261025/preservation.mjs",
+    "after"
+  ],
+  "status": 0,
+  "passed": true
+}

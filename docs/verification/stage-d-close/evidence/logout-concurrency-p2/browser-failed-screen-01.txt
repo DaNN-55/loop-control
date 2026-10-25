@@ -1,0 +1,1 @@
+✓ Screenshot saved to /Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/d-close-logout-concurrency-p2-20261025/newer-failure-login.png

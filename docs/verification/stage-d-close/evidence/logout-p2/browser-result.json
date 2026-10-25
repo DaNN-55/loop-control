@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "realNormalApplication": true,
+  "realIsolatedPostgres": true,
+  "actualChrome": true,
+  "logoutFault": "Only Chrome /api/local/logout route aborted; server unchanged; HTTP503 separately covered by component/client test",
+  "failedLogoutShowsLogin": true,
+  "explicitUnconfirmedLogoutMessage": true,
+  "realOwnerReloginWithoutPageReload": true,
+  "actualClientCsrfAcceptedByServer": true,
+  "exactlyOneConfigurationPost200": true,
+  "businessNameUnchanged": true,
+  "latestOwnerReceipt": {
+    "resultId": "25999933-d146-478a-b0c6-4106133c023f",
+    "createdAt": "2026-10-25T01:32:47.717429+00:00",
+    "resultName": "D CLOSE offline"
+  },
+  "pendingAndStaleReadFences": "actual component/client tests",
+  "earlyDriverWaitFailureRetained": true,
+  "prematureDialogCountFailureRetained": true,
+  "noWriteResubmission": true,
+  "newOnlineRequests": 0
+}

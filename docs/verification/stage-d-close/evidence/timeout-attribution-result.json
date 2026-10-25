@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "current": {
+    "file": "final-default-5s-04.txt",
+    "files": 102,
+    "passed": 758,
+    "failed": 1,
+    "timeoutMs": 5000,
+    "observedMs": 5031
+  },
+  "historicalBaseline": {
+    "file": "docs/verification/stage-d-t21/evidence/baseline-workspace-default-5s-01.txt",
+    "sameTest": true,
+    "timeoutMs": 5000,
+    "observedMs": 5042
+  },
+  "lastT25": {
+    "file": "docs/verification/stage-d-t25/evidence/default-5s-04.txt",
+    "sameTestMs": 3164
+  },
+  "codeComparison": [
+    {
+      "file": "src/App.tsx",
+      "sourceIdentical": true,
+      "emittedJavaScriptIdentical": true,
+      "baselineHead": "49e25388a65687a93ec14d864345b194a73607fa"
+    },
+    {
+      "file": "src/reviews/ReviewWorkspace.test.tsx",
+      "sourceIdentical": true,
+      "emittedJavaScriptIdentical": true,
+      "baselineHead": "49e25388a65687a93ec14d864345b194a73607fa"
+    },
+    {
+      "file": "src/reviews/reviewSelectors.ts",
+      "sourceIdentical": false,
+      "emittedJavaScriptIdentical": true,
+      "baselineHead": "49e25388a65687a93ec14d864345b194a73607fa"
+    }
+  ],
+  "conclusion": "Same pre-existing five-second timing symptom; exact root cause remains unresolved. Source equivalence and prior red/green do not prove timing causality. No timeout/assertion change or rerun to obtain green.",
+  "limits": "Full run overlapped frontend build and browser work; resource contention is a hypothesis, not a proven root cause."
+}

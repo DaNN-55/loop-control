@@ -1,0 +1,31 @@
+fatal: path 'src/reviews/ReviewWorkspace.tsx' does not exist in 'HEAD'
+node:internal/errors:986
+  const err = new Error(message);
+              ^
+
+Error: Command failed: git show HEAD:src/reviews/ReviewWorkspace.tsx
+fatal: path 'src/reviews/ReviewWorkspace.tsx' does not exist in 'HEAD'
+
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:942:11)
+    at execFileSync (node:child_process:978:15)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/d-close-20261025/timeout-attribution.mjs:2:164
+    at Array.map (<anonymous>)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/d-close-20261025/timeout-attribution.mjs:2:138
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  status: 128,
+  signal: null,
+  output: [
+    null,
+    '',
+    "fatal: path 'src/reviews/ReviewWorkspace.tsx' does not exist in 'HEAD'\n"
+  ],
+  pid: 1402,
+  stdout: '',
+  stderr: "fatal: path 'src/reviews/ReviewWorkspace.tsx' does not exist in 'HEAD'\n"
+}
+
+Node.js v24.20.0

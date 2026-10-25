@@ -1,0 +1,1 @@
+Backup restored with exact snapshot, independent APFS media, normal deployment writer and fresh Owner; pending fence set only for negative startup check

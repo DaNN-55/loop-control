@@ -9,20 +9,21 @@ import {extractMp3Artifact,trimMp3Artifact,trimMp4Artifact,trimMp4SegmentsArtifa
 import type {WorkerTaskPackage} from '../worker/contracts.js';
 import {narrationPorts,type NativeNarrationConfiguration} from './narrationWorker.js';
 import {SecretStoreError} from './connectionPorts.js';
-export type NativeMediaConfiguration=NativeNarrationConfiguration;
-export async function assertMediaReady(config:NativeMediaConfiguration|undefined,policy:Record<string,unknown>={},environment:NodeJS.ProcessEnv=process.env){
+export type NativeMediaConfiguration=NativeNarrationConfiguration|{mode:'local'};
+export async function assertMediaReady(config:NativeMediaConfiguration|undefined,policy:Record<string,unknown>={},environment:NodeJS.ProcessEnv=process.env,requiresExternal=false){
  if(!config)throw Error('本地媒体执行尚未配置。');
+ const external=requiresExternal||['static_visual','a_roll','b_roll','soundtrack'].some(k=>(policy[k] as {execution_path?:string}|undefined)?.execution_path==='external');
+ if(external&&config.mode==='local')throw Error('在线媒体执行尚未配置；当前部署仅允许本机媒体。');
  await promisify(execFile)('ffmpeg',['-version'],{env:environment,timeout:3000,maxBuffer:65536});
  await promisify(execFile)('ffprobe',['-version'],{env:environment,timeout:3000,maxBuffer:65536});
  for(const c of Object.values(policy) as Array<{execution_path?:string;executor?:{provider?:string}}>)if(c?.execution_path==='local'&&c.executor?.provider==='openchatcut'){const i=runtimeCommandInvocation('openchatcut',['--version']);await promisify(execFile)(i.command,i.argumentsList,{env:environment,timeout:5000,maxBuffer:65536});}
- const selected=['static_visual','a_roll','b_roll','soundtrack'].map(k=>policy[k] as {execution_path?:string}|undefined);
- if(selected.some(c=>c?.execution_path==='external'))await narrationPorts(config);
+ if(external){const ports=await narrationPorts(config.mode==='local'?undefined:config);if(ports.store.mode!=='keychain')throw Error('在线媒体秘密存储尚未配置。');}
 }
 export function nativeMediaTask(type:string,provider:string){return (['generate_shot_sync_preview','generate_review_render','generate_final_render'].includes(type)&&provider==='openchatcut')||(['generate_a_roll','generate_b_roll'].includes(type)&&['openchatcut','ffmpeg','pexels'].includes(provider))||(type==='generate_soundtrack'&&provider==='freesound')||(type==='extract_embedded_audio'&&provider==='ffmpeg');}
 export async function executeNativeMedia(pool:Pool,config:NativeMediaConfiguration|undefined,p:WorkerTaskPackage,fence:{p_task_id:string;p_attempt:number;p_lease_token:string},visualOutput?:string){
- await assertMediaReady(config);
  const external=Boolean(p.credentialRef||p.visualAssetPreparation?.imageGeneration);
- const ports=external?await narrationPorts(config):undefined;
+ await assertMediaReady(config,{},process.env,external);
+ const ports=external?await narrationPorts(config?.mode==='local'?undefined:config):undefined;
  const resolve=async(ref:string|undefined,provider:string,adapter:string)=>{
   if(!ports||!ref)throw new SecretStoreError('unavailable');
   try{const r=(await pool.query('SELECT * FROM local_identity.input_media_connection($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,ref])).rows[0];if(!r||r.provider!==provider||r.adapter!==adapter)throw Error();return await ports.store.get(r.secret_ref);}catch{throw new SecretStoreError('unavailable');}

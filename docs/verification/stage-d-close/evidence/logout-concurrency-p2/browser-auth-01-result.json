@@ -1,0 +1,12 @@
+{
+  "started": "2026-10-25T01:49:59.946Z",
+  "finished": "2026-10-25T01:50:12.118Z",
+  "command": [
+    "node",
+    ".loop-control/stage-d/state/d-close-logout-concurrency-p2-20261025/browser-auth.mjs"
+  ],
+  "status": 0,
+  "defaultTimeoutMs": 5000,
+  "timeoutOverride": false,
+  "passed": true
+}

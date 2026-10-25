@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "ready": true,
+  "attempt": 0,
+  "claimedAt": null,
+  "availableDelaySeconds": 30,
+  "workerLeaseChanged": false,
+  "taskId": "4cd3baef-89fd-4d4a-b4e5-dd50d3127d18",
+  "onlineRequests": 0
+}

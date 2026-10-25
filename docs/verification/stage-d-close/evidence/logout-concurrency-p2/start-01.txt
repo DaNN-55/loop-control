@@ -1,0 +1,13 @@
+
+> loop-control@0.1.0 start
+> node scripts/local/start.mjs --deployment .loop-control/stage-d/state/t24-dclose-restored-20261025/deployment.json --offline-test
+
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/deployment.mjs:5
+export function deploymentFile(args=process.argv.slice(2)){const index=args.indexOf('--deployment');if(index<0)return process.env.LOOP_LOCAL_DEPLOYMENT;const file=args[index+1];if(!file||!isAbsolute(file))throw Error('Deployment requires an absolute private file path');return file;}
+                                                                                                                                                                                                                   ^
+
+Error: Deployment requires an absolute private file path
+    at deploymentFile (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/deployment.mjs:5:212)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/start.mjs:9:16
+
+Node.js v24.20.0

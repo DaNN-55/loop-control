@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "base": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-dclose-20261025",
+  "database": "loop_t24_restore_dclose01",
+  "mediaRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-dclose-20261025/volume/source/media",
+  "realArchiveRestored": true,
+  "tables": 51,
+  "mediaFiles": 857,
+  "originalSourcesUntouched": true,
+  "onlineRequests": 0
+}

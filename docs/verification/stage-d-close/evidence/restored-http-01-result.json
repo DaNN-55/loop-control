@@ -1,0 +1,12 @@
+{
+  "started": "2026-10-25T01:02:35.449Z",
+  "finished": "2026-10-25T01:02:36.894Z",
+  "command": [
+    "node",
+    "--import",
+    "./scripts/local/offline-guard.mjs",
+    ".loop-control/stage-d/state/d-close-20261025/restore-http.mjs"
+  ],
+  "status": 0,
+  "passed": true
+}

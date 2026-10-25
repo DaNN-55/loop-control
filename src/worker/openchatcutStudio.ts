@@ -56,6 +56,7 @@ export interface OpenChatCutRuntimeConfig {
   environment?: NodeJS.ProcessEnv;
   nodePath?: string;
   root?: string;
+  port?: number;
 }
 
 const sessions = new Map<string, Session>();
@@ -137,7 +138,7 @@ export async function openOpenChatCutStudio(assetRoot: string, episodeId: string
   if (Number(nodeVersion(nodePath)) !== 24) throw new Error("OpenChatCut 需要 Node 24，请配置 OPENCHATCUT_NODE。");
   const openchatcutRoot = runtimeConfig.root?.trim() || process.env.OPENCHATCUT_ROOT?.trim();
   if (!openchatcutRoot) throw new Error("未配置 OPENCHATCUT_ROOT，无法打开 OpenChatCut 编辑器。");
-  const port = await availablePort();
+  const port = await availablePort(runtimeConfig.port);
   const child = spawn(nodePath, [join(openchatcutRoot, "node_modules/vite/bin/vite.js"), openchatcutRoot, "--config", join(openchatcutRoot, "config/vite.config.ts"), "--host", "127.0.0.1", `--port=${port}`], {
     cwd: openchatcutRoot,
     env: { ...(runtimeConfig.environment ?? process.env), OPENCHATCUT_ROOT: openchatcutRoot, OPENCHATCUT_DATA_DIR: dataDir, OPENCHATCUT_DEV_PROFILE_ID: randomUUID(), OPENCHATCUT_DISABLE_HARDWARE_ENCODING: "1" },
@@ -310,8 +311,9 @@ function nodeVersion(nodePath: string): number {
   return nodePath === process.execPath ? Number(process.versions.node.split(".")[0]) : Number(String(spawnSync(nodePath, ["--version"], {encoding:"utf8",timeout:3000}).stdout ?? "").trim().replace(/^v/, "").split(".")[0]);
 }
 
-async function availablePort(): Promise<number> {
-  const server = await new Promise<Server>((resolveServer, reject) => { const server = createTcpServer(); server.once("error", reject); server.listen(0, "127.0.0.1", () => resolveServer(server)); });
+async function availablePort(port = 0): Promise<number> {
+  if (!Number.isInteger(port) || port < 0 || port > 65535) throw new Error("Studio 端口无效。");
+  const server = await new Promise<Server>((resolveServer, reject) => { const server = createTcpServer(); server.once("error", reject); server.listen(port, "127.0.0.1", () => resolveServer(server)); });
   const address = server.address();
   await new Promise<void>((resolveClose, reject) => server.close((error) => error ? reject(error) : resolveClose()));
   if (!address || typeof address === "string") throw new Error("无法分配 OpenChatCut 端口。");

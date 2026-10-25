@@ -1,0 +1,14 @@
+{
+  "started": "2026-10-25T00:56:19.654Z",
+  "finished": "2026-10-25T00:56:19.670Z",
+  "command": [
+    "agent-browser",
+    "--session",
+    "d-close-20261025",
+    "fill",
+    "textarea[aria-label=\"账号定位\"]",
+    "D close Chrome saved configuration"
+  ],
+  "status": 0,
+  "passed": true
+}

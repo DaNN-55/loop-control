@@ -1,0 +1,15 @@
+{
+  "started": "2026-10-25T01:11:10.556Z",
+  "finished": "2026-10-25T01:11:12.427Z",
+  "command": [
+    "agent-browser",
+    "--session",
+    "d-close-20261025",
+    "--allowed-domains",
+    "127.0.0.1",
+    "open",
+    "http://127.0.0.1:55189"
+  ],
+  "status": 0,
+  "passed": true
+}

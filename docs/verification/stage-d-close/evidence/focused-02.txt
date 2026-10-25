@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ scripts/local/application.test.mjs (2 tests) 3ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx (1 test) 163ms
+
+ Test Files  2 passed (2)
+      Tests  3 passed (3)
+   Start at  08:44:32
+   Duration  1.32s (transform 336ms, setup 0ms, collect 558ms, tests 165ms, environment 291ms, prepare 117ms)
+

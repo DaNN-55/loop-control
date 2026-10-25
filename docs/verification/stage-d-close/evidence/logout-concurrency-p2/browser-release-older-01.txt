@@ -1,0 +1,5 @@
+{
+  "realLogins": 1,
+  "released": "older failure after real relogin",
+  "sameDocument": true
+}

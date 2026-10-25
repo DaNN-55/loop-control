@@ -1,0 +1,13 @@
+{
+  "started": "2026-10-25T00:44:33.922Z",
+  "finished": "2026-10-25T00:44:38.928Z",
+  "command": [
+    "node",
+    "node_modules/typescript/bin/tsc",
+    "-b",
+    "--pretty",
+    "false"
+  ],
+  "status": 2,
+  "passed": false
+}

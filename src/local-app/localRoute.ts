@@ -5,7 +5,7 @@ import {executeConfiguration,ConfigurationError} from './configurationCommands.j
 import {timingSafeEqual} from 'node:crypto';
 import type {IncomingMessage,ServerResponse} from 'node:http';
 import type {Pool} from 'pg';
-import {readLocalCatalog} from './catalog.js';
+import {readLocalCatalog,parseCatalogQuery} from './catalog.js';
 import {lookupSession,readSessionToken,establishSession,revokeSession,cookieHeader,csrfFor} from './sessions.js';
 import {readLocalEpisode,findOwnedArtifact,findOwnedInputFile} from './episodeReads.js';
 import {serveOwnedArtifact} from './artifactRoute.js';
@@ -69,7 +69,7 @@ export function createLocalHandler(options:LocalOptions){
    }
    if(request.method!=='GET'){send(405,{error:'该本地命令尚未开放。'});return;}
    if(url.pathname==='/api/local/system-status'){if(!options.automation){send(503,{error:'本地自动化服务尚未配置。'});return;}send(200,await options.automation.status());return;}
-   if(url.pathname==='/api/local/catalog'){send(200,await readLocalCatalog(options.pool,session.id));return;}
+   if(url.pathname==='/api/local/catalog'){send(200,await readLocalCatalog(options.pool,session.id,parseCatalogQuery(url.searchParams)));return;}
    if(url.pathname==='/_local-artifact'){
     const id=url.searchParams.get('episode')??'',path=url.searchParams.get('path')??'',hash=url.searchParams.get('sha256');
     if(!uuid.test(id)){send(400,{error:'产物引用无效。'});return;}

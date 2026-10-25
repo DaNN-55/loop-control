@@ -12,6 +12,7 @@ export const disabledSecretStore:SecretStore={mode:'disabled',async putImmutable
 export type ProbeOutcome='verified'|'invalid'|'retryable';
 export interface ConnectionProbe {
  readonly mode:'disabled'|'simulated'|'live';
+ readonly networkAvailable?:boolean;
  verify(input:{provider:string;adapter:string;endpoint:string;secret:string}):Promise<ProbeOutcome>;
 }
 export const disabledConnectionProbe:ConnectionProbe={mode:'disabled',async verify(){return 'retryable';}};

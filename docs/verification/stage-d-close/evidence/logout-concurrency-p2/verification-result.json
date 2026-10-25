@@ -1,0 +1,48 @@
+{
+  "passed": true,
+  "scope": "P2 concurrent logout and stale failure callback only",
+  "strategy": "Bind each logout to component session generation; only current generation may set error or clear workspace",
+  "duplicateRequests": "Latest generation owns UI cleanup; no request cancellation or deduplication added",
+  "red": {
+    "passed": 7,
+    "failed": 4,
+    "log": "focused-red-01.txt"
+  },
+  "focused": {
+    "passed": 11,
+    "failed": 0,
+    "log": "focused-green-02.txt"
+  },
+  "defaultRegression": {
+    "files": 102,
+    "passed": 766,
+    "failed": 0,
+    "defaultTimeoutMs": 5000,
+    "timeoutOverride": false,
+    "log": "full-default-5s-02.txt"
+  },
+  "firstFullGreenWithNewActWarningsRetained": "full-default-5s-01.txt",
+  "finalNewTestActWarnings": 0,
+  "existingReviewActWarningsRetained": true,
+  "typescriptAndBuildPassed": true,
+  "largeChunkWarningKb": 586.67,
+  "actualChromeConcurrentRejectedFetchCallbacksAndRealSameDocumentLogin": true,
+  "realFinalLogoutAcceptedFreshComponentCsrf": true,
+  "newConfigurationWrites": 0,
+  "initialRelativeDeploymentStartFailureRetained": "start-01.txt",
+  "browserDriverFailuresRetained": [
+    "browser-pending-01.txt",
+    "browser-pending-audit-01.txt",
+    "browser-release-newer-01.txt"
+  ],
+  "sqlConsistencySuggestionDeferred": true,
+  "newOnlineRequests": 0,
+  "historicalFiveSecondGateClosed": false,
+  "workerLeaseMinutes": 30,
+  "immediateFailoverProven": false,
+  "otherUnverifiedCapabilitiesClosed": false,
+  "commitPushMerge": false,
+  "EF": false,
+  "networkAuditDriverFailureRetained": "browser-network-audit-01-result.json",
+  "finalTypeCheckPassed": "check-01-result.json"
+}

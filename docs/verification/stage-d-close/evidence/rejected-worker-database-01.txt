@@ -1,0 +1,10 @@
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/deployment.mjs:20
+  if(!d||d.database!==database||d.user!==user||d.host!=='127.0.0.1'||d.port!==databasePort||typeof d.password!=='string'||!d.password||Object.keys(d).some(k=>!['host','port','user','database','password'].includes(k)))throw Error('Isolated native database binding mismatch');
+                                                                                                                                                                                                                               ^
+
+Error: Isolated native database binding mismatch
+    at databaseBinding (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/deployment.mjs:20:224)
+    at readDeployment (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/deployment.mjs:37:2)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/start.mjs:9:44
+
+Node.js v24.20.0

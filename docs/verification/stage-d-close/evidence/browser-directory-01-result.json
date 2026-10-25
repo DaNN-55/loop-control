@@ -1,0 +1,17 @@
+{
+  "started": "2026-10-25T00:50:36.389Z",
+  "finished": "2026-10-25T00:50:36.421Z",
+  "command": [
+    "agent-browser",
+    "--session",
+    "d-close-20261025",
+    "find",
+    "role",
+    "button",
+    "click",
+    "--name",
+    "生产单目录"
+  ],
+  "status": 0,
+  "passed": true
+}

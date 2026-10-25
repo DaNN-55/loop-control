@@ -1,0 +1,12 @@
+{
+  "started": "2026-10-25T00:42:49.315Z",
+  "finished": "2026-10-25T00:42:50.331Z",
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "scripts/local/application.test.mjs"
+  ],
+  "status": 1,
+  "passed": false
+}
