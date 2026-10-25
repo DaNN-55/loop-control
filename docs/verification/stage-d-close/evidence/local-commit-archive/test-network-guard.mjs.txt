@@ -1,0 +1,9 @@
+import net from 'node:net';
+import {syncBuiltinESMExports} from 'node:module';
+import http from 'node:http';import https from 'node:https';
+const local=h=>['localhost','127.0.0.1','::1','[::1]'].includes(String(h));
+const original=net.Socket.prototype.connect;
+net.Socket.prototype.connect=function(...args){let a=args[0];if(Array.isArray(a))a=a[0];const host=typeof a==='object'?a?.host:typeof args[1]==='string'?args[1]:undefined;if(host&&!local(host))throw Error('Validation rejects external network');return original.apply(this,args);};
+for(const transport of [http,https])for(const name of ['request','get']){const old=transport[name];transport[name]=function(...args){const a=args[0];let host;if(typeof a==='string'||a instanceof URL)host=new URL(a).hostname;else host=a?.hostname??a?.host;if(host&&!local(host))throw Error('Validation rejects external HTTP');return old.apply(this,args);};}
+const fetch=globalThis.fetch;globalThis.fetch=(input,init)=>{const host=new URL(typeof input==='string'||input instanceof URL?input:input.url).hostname;if(!local(host))return Promise.reject(Error('Validation rejects external fetch'));return fetch(input,init);};
+syncBuiltinESMExports();

@@ -73,17 +73,19 @@ node scripts/local/owner.mjs OWNER_UUID --initialize-restored loop_t24_restore_T
 
 本轮私密录入部署不装配Worker，不改变原默认指针。正式启动后，Owner进入“蓝图连接恢复与版本维护”中的外部连接，使用password字段和“仅保存凭据”；关闭策略下保存/轮换不自动verify，保存后密码清空。秘密仅进入专用Keychain，DB记录引用，不创建.env。不要把真实Key发到聊天、命令参数、截图、HAR或公开证据。OpenAI没有Key就留空，不能用模拟响应追认在线通过。
 
-当前策略enabled=false、金额上限0、五家拟17次/OpenAI0、总硬上限20；收费前还需模型、实际定价、币种/总额及批准摘要的新授权，另建有期限的执行策略。失败/超时/重定向/异常响应会停账本；孤锁不自动接管，已预留不退款。声明的费用预留不等于Provider实际账单，定价核对是启用前门禁。详细模型、≤20次清单、历史失败与收尾见[离线准备报告](verification/stage-d-close/provider-offline-preparation.md)。
+离线准备阶段创建的录入策略为 enabled=false、金额上限 0、五家拟 17 次/OpenAI 0、总硬上限 20；它与后续另行授权且已封存的 17 次/2 元在线执行账本分开。新调用仍需模型、定价、币种、总额及批准摘要的新授权，不能直接复用旧剩余额度。失败/超时/重定向/异常响应会停账本；孤锁不自动接管，已预留不退款。声明的费用预留不等于Provider实际账单，定价核对是启用前门禁。详细模型、≤20次清单、历史失败与收尾见[离线准备报告](verification/stage-d-close/provider-offline-preparation.md)。
 
 
-## 有限在线验收后的当前状态
+## 有限在线验收的历史阶段（累计 2 次）
 
 用户另批准的独立在线账本上限17请求/2元，实际Pexels资格成功1次、Freesound401失败1次后停止，账本保留used2/haltedtrue。原录入配置和零账本未重置，当前已恢复闭网入口；保存凭据不会自动验证。Google/豆包未执行，Cloudflare材料组合不兼容与OpenAI缺Key均0请求跳过。完整在线任务仍未验收，后续不得直接复用剩余次数重试。Pexels当前实现已对齐 `/v1/videos/search`。详见[本轮证据](verification/stage-d-close/provider-online-acceptance.md)。
 
 
-## 单家止损续验后的状态
+## 单家止损续验的历史阶段（累计 9 次）
 
 按新授权逐家串行承接累计计数，旧2次停止账本不变；最终累计9/17请求、费用预留0.03/2元（非实际账单），各阶段均停止封存。Pexels与豆包仅指定样本通过，Google403不重试，Freesound/Cloudflare/OpenAI继续跳过。85个旧原生样本开关恢复、原5503任务行不变，新样本退出调度，当前仍为原闭网录入服务。详见[续验报告](verification/stage-d-close/provider-continuation.md)。
 
 
-Google TTS 单次诊断（2026-10-25）：正式音色目录请求403，原因码 `BILLING_DISABLED`；未合成、未改云端计费或Key，Google仍未验收。继承旧账本后累计10/17次、费用预留0.03/2元（非实际账单），诊断已停止封存，当前为原闭网录入服务。全部旧失败与未验收门禁保留，无提交/推送/E/F，SQL暂缓。[诊断报告](verification/stage-d-close/google-tts-diagnostic.md)。
+Google TTS 单次诊断（2026-10-25）：正式音色目录请求403，原因码 `BILLING_DISABLED`；未合成、未改云端计费或Key，Google仍未验收。继承旧账本后累计10/17次、费用预留0.03/2元（非实际账单），诊断已停止封存，当前为原闭网录入服务。全部旧失败与未验收门禁保留；诊断当次未提交，后续六组已本地归档，未推送或进入 E/F，SQL 建议仍暂缓。[诊断报告](verification/stage-d-close/google-tts-diagnostic.md)。
+
+当前累计口径以单次 Google 诊断后的 **10/17 次、费用预留 0.03/2 元**为准；预留不是实际账单。上述 2 次、9 次是独立封存的历史阶段，不重置或覆盖账本。六组本地归档不包含账号新功能，范围见[归档说明](verification/stage-d-close/local-commit-archive.md)。

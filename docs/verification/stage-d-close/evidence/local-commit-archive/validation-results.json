@@ -1,0 +1,70 @@
+[
+  {
+    "label": "types",
+    "command": [
+      "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+      "node_modules/typescript/bin/tsc",
+      "-b",
+      "--pretty",
+      "false"
+    ],
+    "started": "2026-10-25T10:13:11.724Z",
+    "finished": "2026-10-25T10:13:37.988Z",
+    "status": 0
+  },
+  {
+    "label": "local-types",
+    "command": [
+      "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+      "node_modules/typescript/bin/tsc",
+      "-p",
+      "tsconfig.local-app.json"
+    ],
+    "started": "2026-10-25T10:13:37.999Z",
+    "finished": "2026-10-25T10:13:42.110Z",
+    "status": 0
+  },
+  {
+    "label": "build",
+    "command": [
+      "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+      "node_modules/vite/bin/vite.js",
+      "build",
+      "--outDir",
+      "/private/tmp/loop-d-local-commits-20261025/frontend-build"
+    ],
+    "started": "2026-10-25T10:13:42.113Z",
+    "finished": "2026-10-25T10:13:45.159Z",
+    "status": 0
+  },
+  {
+    "label": "full",
+    "command": [
+      "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+      "node_modules/vitest/vitest.mjs",
+      "run",
+      "--exclude",
+      "n8n/import-workflows.test.mjs",
+      "--exclude",
+      "**/*.integration.test.ts",
+      "--exclude",
+      "**/.loop-control/**",
+      "--exclude",
+      "docs/verification/**/source/**"
+    ],
+    "started": "2026-10-25T10:13:45.159Z",
+    "finished": "2026-10-25T10:14:03.517Z",
+    "status": 0
+  },
+  {
+    "label": "node",
+    "command": [
+      "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+      "--test",
+      "n8n/import-workflows.test.mjs"
+    ],
+    "started": "2026-10-25T10:14:03.517Z",
+    "finished": "2026-10-25T10:14:03.617Z",
+    "status": 0
+  }
+]
