@@ -16,6 +16,8 @@ import {workerPreflightVersion} from '../worker/contracts.js';
 import{verifyReportedStoryboardArtifact}from'../worker/storyboardArtifact.js';
 import{executeStoryboardRevision}from'../worker/storyboardRevisionExecutor.js';
 import{executeNativeNarration,assertNarrationReady}from'./narrationWorker.js';
+// A detached Worker may outlive its parent; a closed log pipe must not strand its live lease.
+process.stdout.on('error',(error:NodeJS.ErrnoException)=>{if(error.code!=='EPIPE')throw error;});
 let input='';for await(const chunk of process.stdin){input+=String(chunk);if(Buffer.byteLength(input)>10*1024*1024)throw Error('Task input too large');}
 if(!input.trim())throw Error('本地Worker需要常驻调度器通过stdin提供任务包；请使用 npm start。');
 const {task,config}=JSON.parse(input) as {task:ClaimedTaskRow;config:NativeWorkerConfiguration};input='';

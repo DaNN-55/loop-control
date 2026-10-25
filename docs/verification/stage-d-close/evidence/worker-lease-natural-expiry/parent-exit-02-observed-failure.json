@@ -1,0 +1,11 @@
+{
+  "passed": false,
+  "parentKilled": true,
+  "workerInitiallySurvived": true,
+  "workerDiedAfterParentPipeClosed": true,
+  "taskStatus": "running",
+  "attempt": 1,
+  "oldRunStillRunning": true,
+  "claimedAt": "2026-10-25T03:35:13.577081+00:00",
+  "noTimestampEdit": true
+}

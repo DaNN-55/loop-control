@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "normalStopKilledOwnedWorkerGroup": true,
+  "readyAfterStop": true,
+  "failedAttemptRetained": true,
+  "attempts": [
+    {
+      "attempt": 0,
+      "status": "failed"
+    },
+    {
+      "attempt": 1,
+      "status": "completed"
+    }
+  ],
+  "httpArtifactShaVerified": true,
+  "claimedAtNeverManuallyChanged": true
+}

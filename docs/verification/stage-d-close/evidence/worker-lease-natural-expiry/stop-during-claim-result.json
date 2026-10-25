@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "actualDatabaseWaiters": 1,
+  "normalStopWhileClaimAwaited": true,
+  "serviceWasWaiting": true,
+  "readyAfterStop": true,
+  "noLiveLeaseStranded": true,
+  "attemptAtStop": 1,
+  "finalAttempt": 2,
+  "history": [
+    {
+      "attempt": 0,
+      "status": "failed"
+    },
+    {
+      "attempt": 1,
+      "status": "completed"
+    }
+  ],
+  "httpArtifactShaVerified": true,
+  "noTimestampOrLeaseChange": true
+}

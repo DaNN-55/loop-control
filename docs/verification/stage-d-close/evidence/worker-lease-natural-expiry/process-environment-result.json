@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "separateDatabase": "loop_t24_restore_lease_process20261025",
+  "separateMediaRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/lease-natural-20261025/volume/process-media",
+  "port": 55177,
+  "naturalLeaseUntouched": true,
+  "plansDeferredInClone": true
+}

@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "services": [
+    {
+      "database": "loop_t24_restore_lease20261025",
+      "port": 55189,
+      "serviceStopped": true
+    },
+    {
+      "database": "loop_t24_restore_lease_process20261025",
+      "port": 55177,
+      "serviceStopped": true
+    }
+  ],
+  "liveOwnedWorkersOrExecutors": 0,
+  "connections": [
+    {
+      "database": "loop_t24_restore_lease20261025",
+      "businessConnections": 0
+    },
+    {
+      "database": "loop_t24_restore_lease_process20261025",
+      "businessConnections": 0
+    },
+    {
+      "database": "loop_t24_restore_lease_race20261025",
+      "businessConnections": 0
+    }
+  ],
+  "temporaryOwnerSessionsRevokedOnlyInOwnClones": true,
+  "threeDatabasesRetained": true,
+  "apfsMediaAndSparseimageRetained": true,
+  "historicalEvidencePreserved": true,
+  "noCommit": true,
+  "onlineRequests": 0,
+  "EF": false
+}

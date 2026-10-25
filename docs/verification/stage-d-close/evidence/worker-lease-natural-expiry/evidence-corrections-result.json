@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "intermediateCompetitionSummaryNotAcceptanceEvidence": true,
+  "intermediateClaimCountsWereHardCoded": true,
+  "finalCompetitionCountsAreActual": [
+    1,
+    0
+  ],
+  "rawNaturalNoPostRestartHttpWakeFlagRejected": true,
+  "correctedClaim": "No resubmission or targeted wake of original task; two unrelated early HTTP starts are disclosed; expiry consumed via normal periodic scan",
+  "rawFilesPreserved": true
+}

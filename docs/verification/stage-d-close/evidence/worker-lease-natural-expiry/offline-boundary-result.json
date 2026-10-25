@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "nativeDatabase": "127.0.0.1:55472",
+  "httpPorts": [
+    55189,
+    55177
+  ],
+  "appAndWorkerOfficialOfflineGuard": true,
+  "fixtureChecksGuardPresence": true,
+  "testWorkerGuardInstalls": 107,
+  "syntheticSuppliedInputsOnly": true,
+  "noKeychainConfigured": true,
+  "providerCallsRequired": 0,
+  "newOnlineRequests": 0,
+  "guardIsProcessLevelNotHostFirewall": true,
+  "productionConfigurationNotRead": true
+}
