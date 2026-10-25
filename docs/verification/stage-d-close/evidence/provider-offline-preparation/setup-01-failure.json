@@ -1,0 +1,1 @@
+{"passed":false,"reason":"Existing private tmp created by test runner caused fixture mkdir EEXIST before image/database/Keychain operations","correction":"Resume only the own empty directories; require image absence and keep original failed setup"}

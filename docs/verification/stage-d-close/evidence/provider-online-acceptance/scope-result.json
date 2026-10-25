@@ -1,0 +1,73 @@
+{
+  "passed": true,
+  "sourceFiles": [
+    {
+      "path": "src/local-app/providerProbe.ts",
+      "sha256": "8684eb2ad0cb750e8dff6b044df8b603c503b0f0d31eb293f58baaf46914ba66",
+      "bytes": 4363,
+      "evidencePath": "evidence/provider-online-acceptance/source/src/local-app/providerProbe.ts.txt"
+    },
+    {
+      "path": "src/local-app/providerProbe.test.ts",
+      "sha256": "de426afa17762ce8c30724bafb8a26208adf7583f39ea97e67c87c475cabfcf9",
+      "bytes": 5228,
+      "evidencePath": "evidence/provider-online-acceptance/source/src/local-app/providerProbe.test.ts.txt"
+    },
+    {
+      "path": "src/local-app/providerNetwork.ts",
+      "sha256": "f99e4ae92be581864bc4e1a3b0defeefc0b89aeb6830f7462c9ae724448d7508",
+      "bytes": 10114,
+      "evidencePath": "evidence/provider-online-acceptance/source/src/local-app/providerNetwork.ts.txt"
+    },
+    {
+      "path": "src/local-app/providerNetwork.test.ts",
+      "sha256": "bd4999c0403846abf83196741b0650faccd126bf671966cd3b141a1381d42f9a",
+      "bytes": 4190,
+      "evidencePath": "evidence/provider-online-acceptance/source/src/local-app/providerNetwork.test.ts.txt"
+    },
+    {
+      "path": "src/worker/mediaProviders.ts",
+      "sha256": "9b6a6d21706d7da10469a6aa207cdae65d6b819ce8e09d2ba47de2ad2e080578",
+      "bytes": 11002,
+      "evidencePath": "evidence/provider-online-acceptance/source/src/worker/mediaProviders.ts.txt"
+    },
+    {
+      "path": "src/worker/mediaProviders.test.ts",
+      "sha256": "7e0d89c2ba20df9f432227915e28997537193997c5b63cfee2aea4b6cc06844d",
+      "bytes": 7933,
+      "evidencePath": "evidence/provider-online-acceptance/source/src/worker/mediaProviders.test.ts.txt"
+    },
+    {
+      "path": "src/worker/runtimeProbes.ts",
+      "sha256": "327603371ba7de53f7d6151aa7966e9eebd5edc30507f29332a743d5f426f2c8",
+      "bytes": 9176,
+      "evidencePath": "evidence/provider-online-acceptance/source/src/worker/runtimeProbes.ts.txt"
+    }
+  ],
+  "changedSinceTaskStart": [
+    "README.md",
+    "docs/local-native-deployment.md",
+    "docs/verification/stage-d-close/README.md",
+    "docs/verification/stage-d-close/evidence-index.json",
+    "docs/verification/stage-d-close/review.md",
+    "src/worker/mediaProviders.test.ts",
+    "src/worker/mediaProviders.ts",
+    "src/worker/runtimeProbes.ts",
+    "src/local-app/providerNetwork.ts",
+    "src/local-app/providerNetwork.test.ts",
+    "src/local-app/providerProbe.ts",
+    "src/local-app/providerProbe.test.ts"
+  ],
+  "unrelatedFilesUnchanged": 43,
+  "rootPlanUnchanged": true,
+  "headUnchanged": true,
+  "stagingEmpty": true,
+  "sqlSourceChanged": false,
+  "defaultTimeoutMs": 5000,
+  "modelProbeTimeoutMs": 30000,
+  "actualProductTestFiles": 105,
+  "actualProductTests": 807,
+  "archiveSourcesExcludedExplicitly": true,
+  "bareNpmTestArchiveDiscoveryIssueResolved": false,
+  "noCommitPushEF": true
+}

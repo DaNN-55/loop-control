@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ scripts/local/application.test.mjs (2 tests) 3ms
+ ✓ scripts/local/deployment.test.mjs (3 tests) 2ms
+ ✓ src/local-app/LocalConnectionsPanel.test.tsx (2 tests) 74ms
+ ✓ src/worker/mediaProviders.test.ts (9 tests) 8ms
+ ✓ src/local-app/providerProbe.test.ts (24 tests) 361ms
+ ✓ src/local-app/providerNetwork.test.ts (9 tests) 1182ms
+   ✓ halts and keeps the consumed reservation on timeout  1026ms
+
+ Test Files  6 passed (6)
+      Tests  49 passed (49)
+   Start at  15:16:01
+   Duration  1.35s (transform 121ms, setup 0ms, collect 239ms, tests 1.63s, environment 290ms, prepare 179ms)
+

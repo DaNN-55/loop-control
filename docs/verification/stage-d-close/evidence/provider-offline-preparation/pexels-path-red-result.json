@@ -1,0 +1,16 @@
+{
+  "started": "2026-10-25T07:26:35.751Z",
+  "finished": "2026-10-25T07:26:36.844Z",
+  "command": [
+    "npx",
+    "vitest",
+    "run",
+    "src/local-app/providerProbe.test.ts",
+    "--exclude",
+    "**/.loop-control/**"
+  ],
+  "status": 1,
+  "passed": false,
+  "defaultTestTimeoutMs": 5000,
+  "timeoutOverride": false
+}

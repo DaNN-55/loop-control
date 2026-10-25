@@ -1,0 +1,23 @@
+import assert from 'node:assert/strict';
+import {mkdirSync,writeFileSync,readFileSync} from 'node:fs';
+import {createHash} from 'node:crypto';
+import {sanitizeError,readSanitizedError} from './sanitize-error.mjs';
+import {prepareDiagnostic} from './diagnostic-policy.mjs';
+import {createProviderProbe} from '../../../../dist/local-app/local-app/providerProbe.js';
+import {createProviderFetcher} from '../../../../dist/local-app/local-app/providerNetwork.js';
+const run=new URL('.',import.meta.url).pathname,save=(p,v)=>writeFileSync(p,JSON.stringify(v,null,2)+'\n',{flag:'wx',mode:0o600}),read=p=>JSON.parse(readFileSync(p)),sha=p=>createHash('sha256').update(readFileSync(p)).digest('hex');
+for(const reason of ['SERVICE_DISABLED','BILLING_DISABLED','API_KEY_SERVICE_BLOCKED','API_KEY_HTTP_REFERRER_BLOCKED']){
+ const body={error:{code:403,status:'PERMISSION_DENIED',message:'synthetic-private-key project123',details:[{'@type':'type.googleapis.com/google.rpc.ErrorInfo',reason,domain:'googleapis.com',metadata:{service:'texttospeech.googleapis.com',consumer:'projects/123',api_key:'synthetic-private-key'}},{'@type':'type.googleapis.com/google.rpc.Help',links:[{url:'https://example.invalid/key=synthetic-private-key'}]}]}};
+ const safe=await readSanitizedError(Response.json(body,{status:403}));assert.equal(safe.errorInfo[0].reason,reason);assert(!JSON.stringify(safe).includes('synthetic-private-key'));assert(!JSON.stringify(safe).includes('123'));
+}
+const unknown=sanitizeError({error:{status:'synthetic-private-key',details:[{'@type':'type.googleapis.com/google.rpc.ErrorInfo',reason:'synthetic-private-key',domain:'googleapis.com'}]}},403);assert.equal(unknown.unrecognizedErrorInfoCount,1);assert(!JSON.stringify(unknown).includes('synthetic-private-key'));
+const oversized=await readSanitizedError(new Response('x'.repeat(65537),{status:403}));assert.equal(oversized.diagnosticBodyLimitExceeded,true);
+const fixture=run+'offline-fixture';mkdirSync(fixture,{mode:0o700});const parent=fixture+'/parent';mkdirSync(parent,{mode:0o700});
+const policy={version:1,runId:'synthetic-diagnostic-parent',enabled:true,expiresAt:'2099-01-01',maxRequests:17,currency:'CNY',maxCostMicrounits:2000000,priceEvidenceSha256:'a'.repeat(64),approvalSha256:'b'.repeat(64),providers:['google_tts'],operations:{'pexels.verify':{maxRequests:16,maxBytes:2048,timeoutMs:5000,costMicrounits:0},'google_tts.verify':{maxRequests:2,maxBytes:2048,timeoutMs:5000,costMicrounits:0},'google_tts.generate':{maxRequests:1,maxBytes:2048,timeoutMs:5000,costMicrounits:10000}}};save(parent+'/policy.json',policy);
+const events=Array.from({length:16},()=>[{operation:'pexels.verify',outcome:'reserved'},{operation:'pexels.verify',outcome:'completed',status:200,bytes:1}]).flat();save(parent+'/state.json',{version:1,policySha256:sha(parent+'/policy.json'),used:16,costMicrounits:30000,byOperation:{'pexels.verify':16},halted:true,events});const before=sha(parent+'/state.json');
+save(fixture+'/approval.txt',{synthetic:true});const c=prepareDiagnostic(parent,fixture+'/child',fixture+'/approval.txt');let calls=0,capture;
+const transport=async()=>{calls++;const response=Response.json({error:{status:'PERMISSION_DENIED',details:[{'@type':'type.googleapis.com/google.rpc.ErrorInfo',reason:'SERVICE_DISABLED',domain:'googleapis.com',metadata:{service:'texttospeech.googleapis.com'}}]}},{status:403});capture=await readSanitizedError(response);return response;};
+const probe=createProviderProbe(c,transport),input={provider:'google_tts',adapter:'google_tts',endpoint:'https://texttospeech.googleapis.com/v1',secret:'synthetic-private-key'};
+assert.equal(await probe.verify(input),'invalid');assert.equal(calls,1);assert.equal(capture.errorInfo[0].reason,'SERVICE_DISABLED');assert.equal(read(c.directory+'/state.json').used,17);assert.deepEqual(read(c.directory+'/state.json').events.slice(0,32),events);assert.equal(await probe.verify(input),'retryable');assert.equal(calls,1);
+await assert.rejects(createProviderFetcher(c,'google_tts','execute',transport)('https://texttospeech.googleapis.com/v1/text:synthesize',{method:'POST',body:JSON.stringify({input:{text:'测试'},voice:{languageCode:'zh-CN',name:'cmn-CN-Standard-A'},audioConfig:{audioEncoding:'MP3'}})}));assert.equal(calls,1);assert.equal(sha(parent+'/state.json'),before);
+const result={passed:true,syntheticOnly:true,realProviderRequests:0,knownReasonsCapturedWithoutMessageOrProject:true,unknownFieldsDropped:true,bodyLimit65536Enforced:true,actualProductionProbe403ClassifiedInvalid:true,inherited16AllowsOnly17:true,noEighteenthTransportCall:true,synthesisDenied:true,parentStateUnchanged:true};save(run+'offline-check-result.json',result);console.log(JSON.stringify(result));

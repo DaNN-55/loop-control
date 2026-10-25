@@ -46,6 +46,8 @@ npm stop
 
 也可由 `local:prepare-offline -- --deployment … --set-default` 校验已准备的本地依赖/模型并选择独立默认部署；后续无参 `npm start/stop` 使用该目标。此流程不下载、不覆盖旧默认配置，仍限定批准的隔离路径和恢复回执；见[离线准备说明](docs/local-native-deployment.md)。它不代表通用新主机安装已经通过。
 
+六适配器的正式探针、共享持久预算和页面→专用Keychain私密录入已完成离线准备；录入策略保持关闭；有限在线验收累计9次，Pexels与豆包固定样本通过，Freesound401、Google403、Cloudflare材料组合及OpenAI缺Key仍未闭环。见[离线准备与待确认清单](docs/verification/stage-d-close/provider-offline-preparation.md)。
+
 本分支完成的是 A–D 的受控本地路径及断网数据操作，尚不是通用新主机/默认生产部署或 E/F 发布验收。T21 当次及历史默认 5 秒失败、根因未解决、既有30分钟租约和其他未验收项继续保留；详见 [T25 验收与范围](docs/verification/stage-d-t25/README.md)。
 
 以下为旧版兼容栈说明：仅在明确需要旧部署时使用 `npm run legacy:start` / `npm run legacy:stop`，旧 Worker/编排和发布 CLI 使用 `legacy:` 命令；不作为新版启动前提。
@@ -189,3 +191,10 @@ npm run test:openchatcut-integration
 - 旧版兼容配置的 `SUPABASE_SERVICE_ROLE_KEY` 只保存在 `n8n/worker.env.local`，不能进入前端环境或 Git。
 - 当前主流程要求 Owner 提供并确认主脚本；平台不自动生成主脚本。
 - “生产完成”只表示发布包已生成并通过校验，不表示内容已经发布到 TikTok 等第三方平台。
+
+本轮Pexels v1路径资格通过，Freesound401后按失败即停结束；完整在线任务尚未验收。见[有限在线验收记录](docs/verification/stage-d-close/provider-online-acceptance.md)。
+
+用户按单家止损继续后的最新结果见[续验记录](docs/verification/stage-d-close/provider-continuation.md)；旧2次停止账本未重置，当前恢复闭网录入。
+
+
+Google TTS 单次诊断（2026-10-25）：正式音色目录请求403，原因码 `BILLING_DISABLED`；未合成、未改云端计费或Key，Google仍未验收。继承旧账本后累计10/17次、费用预留0.03/2元（非实际账单），诊断已停止封存，当前为原闭网录入服务。全部旧失败与未验收门禁保留，无提交/推送/E/F，SQL暂缓。[诊断报告](docs/verification/stage-d-close/google-tts-diagnostic.md)。

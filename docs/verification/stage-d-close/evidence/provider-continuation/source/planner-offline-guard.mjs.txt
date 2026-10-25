@@ -1,0 +1,1 @@
+import{Socket}from'node:net';import{syncBuiltinESMExports}from'node:module';Socket.prototype.connect=function(){throw Error('Fixed-input planner: all network denied');};globalThis.fetch=async()=>{throw Error('Fixed-input planner: all HTTP denied');};syncBuiltinESMExports();

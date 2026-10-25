@@ -20,6 +20,7 @@
     "src/local-app/localRoute.ts",
     "src/local-app/keychainStore.ts",
     "src/local-app/pexelsLiveProbe.ts",
+    "src/local-app/providerProbe.ts",
     "src/local-app/localWorkerService.ts",
     "src/local-app/nativeBackup.ts"
   ]

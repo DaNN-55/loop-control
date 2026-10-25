@@ -6,9 +6,15 @@ export function deploymentFile(args=process.argv.slice(2)){const index=args.inde
 function capabilities(c){
  const connections=c.connections;
  if(connections){
-  if(Object.keys(connections).some(k=>!['keychain','verification'].includes(k))||!['disabled','pexels-offline',undefined].includes(connections.verification))throw Error('Online connection policy is not approved');
+  if(Object.keys(connections).some(k=>!['keychain','verification','network'].includes(k))||!['disabled','pexels-offline','providers-budgeted',undefined].includes(connections.verification))throw Error('Online connection policy is not approved');
   const k=connections.keychain;
   if(k&&(Object.keys(k).some(p=>!['approved','runtimeRoot','helperSha256'].includes(p))||typeof k.approved!=='boolean'||k.runtimeRoot!==root||!/^[0-9a-f]{64}$/.test(k.helperSha256)))throw Error('Unapproved dedicated Keychain configuration');
+  if(connections.verification==='providers-budgeted'){
+   const n=connections.network;if(!k?.approved||!n||Object.keys(n).some(p=>!['directory','policySha256'].includes(p))||n.directory!==join(c.stateDirectory??'','provider-network')||!n.policySha256?.match(/^[a-f0-9]{64}$/))throw Error('Invalid private Provider budget binding');assertPrivatePath(n.directory);if(realpathSync(n.directory)!==n.directory)throw Error('Invalid Provider budget directory');
+  }else if(connections.network)throw Error('Provider budget requires explicit verification configuration');
+ }
+ for(const port of[c.worker?.media,c.worker?.narration])if(port?.mode==='live'){
+  if(connections?.verification!=='providers-budgeted'||JSON.stringify(port.network)!==JSON.stringify(connections.network)||JSON.stringify(port.keychain)!==JSON.stringify(connections.keychain))throw Error('Provider ports must share the approved budget and Keychain');
  }
  const o=c.openChatCut;
  if(o&&(Object.keys(o).some(k=>!['root','node','port'].includes(k))||o.port!==55190||o.root!==join(projectRoot,'.loop-control/stage-b/verified/OpenChatCut')||realpathSync(o.root)!==o.root||o.node!==realpathSync(process.execPath)))throw Error('Unapproved isolated Studio runtime');

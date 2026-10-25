@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync,mkdirSync} from 'node:fs';
+import {q,load,d as intake} from '../provider-offline-prep-20261025/control.mjs';
+import {prepareDiagnostic} from './diagnostic-policy.mjs';
+import {hash,json,save} from '../provider-continue-20261025/carry.mjs';
+const run=new URL('.',import.meta.url).pathname,old=json(new URL('../provider-continue-20261025/phase.json',import.meta.url)),parent=old.directory;
+assert.equal(json(parent+'/state.json').used,9);assert.equal(json(parent+'/state.json').halted,true);assert.equal(json(parent+'/state.json').costMicrounits,30000);
+const approved='允许追加1次Google音色列表诊断请求，只保存脱敏错误原因，不调用语音合成；继承旧账本，累计不超过17次、费用上限2元，失败即停。更新报告和证据索引，保留历史失败与未验收门禁，不提交、不推送、不进入E/F，SQL建议继续暂缓。\n';writeFileSync(run+'approval.txt',approved,{flag:'wx',mode:0o600});
+save(run+'parent-proof.json',{directory:parent,policySha256:hash(parent+'/policy.json'),stateSha256:hash(parent+'/state.json'),used:9,costMicrounits:30000});
+const loc=load('deployment-location.json'),stateDirectory=loc.base+'/orchestration-google-diagnostic-20261025';mkdirSync(stateDirectory,{mode:0o700});
+const network=prepareDiagnostic(parent,stateDirectory+'/provider-network',run+'approval.txt');
+const deployment={...intake,stateDirectory,connections:{...intake.connections,network}};delete deployment.worker;delete deployment.workerDatabase;
+const deploymentFile=loc.base+'/deployment-google-diagnostic-20261025.json';save(deploymentFile,deployment);save(run+'phase.json',{provider:'google_tts',directory:network.directory,base:loc.base,stateDirectory,deploymentFile,inheritedUsed:9});
+const pin=json(new URL('../provider-continue-20261025/connections-private.json',import.meta.url)).find(x=>x.provider==='google_tts');
+assert.equal(q(`BEGIN READ ONLY; SELECT current_version_id FROM public.external_connections WHERE id='${pin.connectionId}'; COMMIT;`),pin.versionId);save(run+'connection-private.json',pin);
+save(run+'tasks-before-private.json',JSON.parse(q("BEGIN READ ONLY; SELECT coalesce(json_agg(json_build_object('id',id,'hash',md5(to_jsonb(t)::text))),'[]') FROM public.tasks t; COMMIT;")));
+save(run+'inputs-before-private.json',JSON.parse(q("BEGIN READ ONLY; SELECT coalesce(json_agg(json_build_object('episodeId',episode_id,'enabled',enabled)),'[]') FROM local_identity.input_episodes; COMMIT;")));
+save(run+'setup-result.json',{passed:true,inheritedRequests:9,inheritedCostReservedCny:0.03,additionalGoogleVerifyCap:1,otherOperationCapsAtAlreadyUsed:true,noWorkerConfigured:true,oldLedgerUnchanged:hash(parent+'/state.json')===json(run+'parent-proof.json').stateSha256,newProviderRequests:0});console.log('Diagnostic prepared: inherits9/0.03; only one Google verify; no Worker.');

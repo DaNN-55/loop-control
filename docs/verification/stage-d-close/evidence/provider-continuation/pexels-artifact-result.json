@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "provider": "pexels",
+  "realTaskPassed": true,
+  "artifact": {
+    "sha256": "c7807f99dfd931fc952202ff476fa45155e7d0b4498d2eed2182f70ae5fdcb16",
+    "bytes": 1290222
+  },
+  "durationSeconds": 20,
+  "streams": [
+    {
+      "codec_type": "video",
+      "width": 360,
+      "height": 640
+    }
+  ],
+  "taskRequestDelta": 2,
+  "httpArtifactMatches": true,
+  "actualDecodePassed": true,
+  "taskClaimCount": 1
+}

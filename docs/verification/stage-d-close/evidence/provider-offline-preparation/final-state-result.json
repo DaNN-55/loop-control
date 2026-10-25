@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "enabled": false,
+  "requestsUsed": 0,
+  "events": 0,
+  "liveQualifications": 0,
+  "sixKnownHelperReferencesMissing": true,
+  "keychainFileMode": "0600",
+  "privateRootMode": "0700",
+  "businessDatabaseConnections": 0,
+  "formalStopPassed": true,
+  "browserClosed": true,
+  "browserAuthDeleted": true,
+  "openaiMissingCredentials": true,
+  "userCredentialsReceived": 0,
+  "noDotenvCreated": true
+}

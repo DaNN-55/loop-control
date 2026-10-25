@@ -4,14 +4,19 @@ import{execFile}from'node:child_process';
 import{promisify}from'node:util';
 import{configuredKeychainStore}from'./keychainStore.js';
 import{SecretStoreError,type SecretStore}from'./connectionPorts.js';
+import{createProviderFetcher,type ProviderNetworkConfiguration,type OnlineProvider}from'./providerNetwork.js';
 import{executeControlledMediaTask}from'../worker/controlledMediaExecutor.js';
 import type{WorkerTaskPackage}from'../worker/contracts.js';
 import type{MediaFetcher}from'../worker/mediaProviders.js';
-export type NativeNarrationConfiguration={mode:'live';keychain:{approved:boolean;runtimeRoot:string;helperSha256:string}}|{mode:'controlled';modulePath:string};
+export type NativeNarrationConfiguration={mode:'live';keychain:{approved:boolean;runtimeRoot:string;helperSha256:string};network:ProviderNetworkConfiguration}|{mode:'controlled';modulePath:string};
 interface Ports{mode:'controlled'|'live';store:SecretStore;fetcher:MediaFetcher}
 export async function narrationPorts(config?:NativeNarrationConfiguration):Promise<Ports>{
  if(!config)throw new SecretStoreError('disabled');
- if(config.mode==='live')return{mode:'live',store:configuredKeychainStore(config.keychain),fetcher:fetch};
+ if(config.mode==='live'){
+  if(!config.network)throw new SecretStoreError('unavailable');
+  const providerFor=(url:string|URL):OnlineProvider=>{const h=new URL(url).hostname;if(h==='api.openai.com')return'openai';if(h==='api.cloudflare.com')return'cloudflare';if(h==='texttospeech.googleapis.com')return'google_tts';if(h==='openspeech.bytedance.com')return'volcengine_tts';if(['api.pexels.com','videos.pexels.com','images.pexels.com'].includes(h))return'pexels';if(['freesound.org','cdn.freesound.org'].includes(h))return'freesound';throw new SecretStoreError('unavailable');};
+  return{mode:'live',store:configuredKeychainStore(config.keychain),fetcher:(url,init)=>createProviderFetcher(config.network,providerFor(url),'execute')(url,init)};
+ }
  if(config.mode!=='controlled'||!config.modulePath.startsWith('/'))throw new SecretStoreError('unavailable');
  // Deployment-only test substitute; no browser command can choose this module.
  const p=await(await import(pathToFileURL(config.modulePath).href)).createNarrationPorts() as Ports;

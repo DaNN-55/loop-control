@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {writeFileSync,readFileSync} from 'node:fs';
+import {login,origin} from '../provider-offline-prep-20261025/control.mjs';
+const run=new URL('.',import.meta.url).pathname,read=p=>JSON.parse(readFileSync(p)),phase=read(run+'phase.json'),pin=read(run+'connection-private.json');
+writeFileSync(run+'driver-once-private.json',JSON.stringify({started:true})+'\n',{flag:'wx',mode:0o600});
+assert.equal(read(phase.directory+'/state.json').used,9);
+const headers=await login();let response;
+try{
+ const r=await fetch(origin+'/api/local/connections',{method:'POST',headers,body:JSON.stringify({command:'verify',data:{connectionId:pin.connectionId},idempotencyKey:crypto.randomUUID()})});
+ const v=await r.json();response={ownerHttpStatus:r.status,mode:['live','disabled','simulated'].includes(v.mode)?v.mode:'NOT_RECORDED',outcome:['verified','invalid','retryable'].includes(v.outcome)?v.outcome:'NOT_RECORDED',ready:v.ready===true};
+}catch{response={ownerHttpRequestFailed:true};}
+const state=read(phase.directory+'/state.json');
+const result={diagnosticCompleted:state.used===10,...response,additionalRequests:state.used-9,cumulativeRequests:state.used,cumulativeCostReservedCny:state.costMicrounits/1e6,maxRequests:17,feeAuthorizationCny:2,actualBillQueried:false,synthesisCalled:false,automaticRetry:false};
+writeFileSync(run+'diagnostic-result.json',JSON.stringify(result,null,2)+'\n',{flag:'wx',mode:0o600});
+assert.equal(state.used,10,'Sole diagnostic request count mismatch; do not retry');assert.equal(state.byOperation['google_tts.verify'],2);assert.equal(state.byOperation['google_tts.generate']??0,0);
+console.log(JSON.stringify(result));

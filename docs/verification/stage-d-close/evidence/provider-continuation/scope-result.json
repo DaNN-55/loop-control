@@ -1,0 +1,33 @@
+{
+  "passed": true,
+  "productSourceChanged": false,
+  "sqlSourceChanged": false,
+  "changedSinceTaskStart": [
+    "README.md",
+    "docs/local-native-deployment.md",
+    "docs/verification/stage-d-close/README.md",
+    "docs/verification/stage-d-close/evidence-index.json",
+    "docs/verification/stage-d-close/review.md"
+  ],
+  "newPrivateAcceptanceHelpers": [
+    "carry.mjs",
+    "carry-offline-check.mjs",
+    "sample.mjs",
+    "advance.mjs",
+    "online-guard.mjs",
+    "planner.mjs",
+    "planner-offline-guard.mjs",
+    "setup.mjs"
+  ],
+  "existingRegressionReused": {
+    "files": 105,
+    "tests": 807,
+    "reason": "All product source and test bytes unchanged from prior validated baseline",
+    "rerunThisTurn": false
+  },
+  "newOfflineCarryCheckPassed": true,
+  "unrelated43AndRootPlanPreserved": true,
+  "headUnchanged": true,
+  "stagingEmpty": true,
+  "noCommitPushEF": true
+}

@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/local-app/providerProbe.test.ts (26 tests) 333ms
+
+ Test Files  1 passed (1)
+      Tests  26 passed (26)
+   Start at  15:30:38
+   Duration  546ms (transform 43ms, setup 0ms, collect 56ms, tests 333ms, environment 0ms, prepare 36ms)
+

@@ -15,6 +15,10 @@ it('selects an optional default pointer and still rejects a changed restore bind
  expect(readDeployment()).toMatchObject({database,mediaRoot,deploymentFile:file,offlinePreparationRequired:true});
  fixture.files.set(receiptFile,{passed:false});expect(()=>readDeployment()).toThrow();
 });
+it('requires the probe and live Worker to share the same approved network budget',()=>{
+ const c=config(),network={directory:c.stateDirectory+'/provider-network',policySha256:'a'.repeat(64)},keychain={approved:true,runtimeRoot:root,helperSha256:'b'.repeat(64)};c.connections={verification:'providers-budgeted',network,keychain};c.worker={media:{mode:'live',network,keychain}};fixture.files.set(file,c);expect(readDeployment(file).connections.network).toEqual(network);
+ c.worker.media.network={...network,policySha256:'c'.repeat(64)};expect(()=>readDeployment(file)).toThrow('share the approved budget');
+});
 it('rejects mismatched restore receipt, worker database, production paths and online policy',()=>{
  for(const change of[c=>{c.workerDatabase.database='loop_imported';},c=>{c.database.database='postgres';},c=>{c.mediaRoot='/Users/dan/Programs/loop-control/media';},c=>{c.connections={verification:'pexels-live'};}]){const c=config();change(c);fixture.files.set(file,c);expect(()=>readDeployment(file)).toThrow();}
  fixture.files.set(file,config());fixture.files.set(receiptFile,{passed:true,database:database.database,mediaRoot});expect(()=>readDeployment(file)).toThrow();

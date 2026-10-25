@@ -1,0 +1,43 @@
+{
+  "passed": false,
+  "results": [
+    {
+      "provider": "pexels",
+      "passed": true,
+      "httpStatus": 200,
+      "mode": "live",
+      "outcome": "verified",
+      "ready": true,
+      "requestCountDelta": 1,
+      "requestCountUsed": 1,
+      "providerHttpStatus": 200,
+      "responseBytes": 3119,
+      "budgetHalted": false,
+      "costReservedCny": 0,
+      "notActualBilledCost": true
+    },
+    {
+      "provider": "freesound",
+      "passed": false,
+      "httpStatus": 200,
+      "mode": "live",
+      "outcome": "invalid",
+      "ready": false,
+      "requestCountDelta": 1,
+      "requestCountUsed": 2,
+      "providerHttpStatus": 401,
+      "responseBytes": 26,
+      "budgetHalted": true,
+      "costReservedCny": 0,
+      "notActualBilledCost": true
+    }
+  ],
+  "stoppedOnFirstFailure": true,
+  "noRetry": true,
+  "used": 2,
+  "costReservedCny": 0,
+  "notActualBilledCost": true,
+  "cloudflareSkippedOffline": true,
+  "openaiSkipped": true,
+  "otherTasksStarted": false
+}

@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "syntheticOnly": true,
+  "realProviderRequests": 0,
+  "knownReasonsCapturedWithoutMessageOrProject": true,
+  "unknownFieldsDropped": true,
+  "bodyLimit65536Enforced": true,
+  "actualProductionProbe403ClassifiedInvalid": true,
+  "inherited16AllowsOnly17": true,
+  "noEighteenthTransportCall": true,
+  "synthesisDenied": true,
+  "parentStateUnchanged": true
+}

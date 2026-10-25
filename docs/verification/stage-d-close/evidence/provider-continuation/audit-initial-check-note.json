@@ -1,0 +1,27 @@
+{
+  "initialAuditPassed": false,
+  "failedCheck": "Assumed every historical Keychain binding resolves; helper returned nonzero for one binding",
+  "adjustment": "Enumerate all references, scan every available value; require all six unique saved real values and all three tested pinned versions to remain resolvable. Preserve count of unresolved bindings. No Provider request or product change.",
+  "failurePreserved": true,
+  "newProviderRequests": 0,
+  "additionalAuditHelperFailure": {
+    "check": "New untracked path scope",
+    "cause": "43 unrelated preexisting files were stored separately from baseline.files; scope enumeration omitted their baseline paths",
+    "adjustment": "Union baseline.files and baseline.unrelatedFiles; all 43 still require original SHA identity; no newly allowed product path",
+    "failurePreserved": true,
+    "newProviderRequests": 0
+  },
+  "secondScopeHelperFailure": {
+    "check": "New untracked path scope",
+    "cause": "Four preexisting untracked deployment helpers also omitted from 2510-item baseline.files; prior indexed source snapshots exist",
+    "adjustment": "Pause after two consecutive scope failures; inspect baseline and prior source index; require exact earlier indexed SHA for four explicit paths. No generic allowance for new product files.",
+    "paths": [
+      "scripts/local/initialize-whisperx.py",
+      "scripts/local/offline-preparation.mjs",
+      "scripts/local/offline-preparation.test.mjs",
+      "scripts/local/prepare-offline.mjs"
+    ],
+    "failurePreserved": true,
+    "newProviderRequests": 0
+  }
+}

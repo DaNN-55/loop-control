@@ -1,0 +1,14 @@
+{
+  "started": "2026-10-25T07:58:04.207Z",
+  "finished": "2026-10-25T07:58:05.183Z",
+  "command": [
+    "node",
+    "node_modules/typescript/bin/tsc",
+    "-p",
+    "tsconfig.local-app.json"
+  ],
+  "status": 0,
+  "passed": true,
+  "defaultTestTimeoutMs": 5000,
+  "timeoutOverride": false
+}

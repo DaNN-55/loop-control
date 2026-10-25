@@ -1,0 +1,118 @@
+{
+  "passed": true,
+  "headUnchanged": true,
+  "indexEmpty": true,
+  "unrelatedFilesUnchanged": 43,
+  "rootPlanUnchanged": true,
+  "changedSinceTaskStart": [
+    "README.md",
+    "docs/local-native-deployment.md",
+    "docs/verification/stage-d-close/README.md",
+    "docs/verification/stage-d-close/evidence-index.json",
+    "docs/verification/stage-d-close/review.md",
+    "package.json",
+    "scripts/local/application.mjs",
+    "scripts/local/application.test.mjs",
+    "scripts/local/deployment.mjs",
+    "scripts/local/deployment.test.mjs",
+    "src/connections/ConnectionWorkspace.tsx",
+    "src/local-app/LocalConnectionsPanel.test.tsx",
+    "src/local-app/LocalConnectionsPanel.tsx",
+    "src/local-app/connections.ts",
+    "src/local-app/narrationWorker.ts",
+    "src/worker/mediaProviders.ts",
+    "tsconfig.local-app.json"
+  ],
+  "sourceFiles": [
+    {
+      "path": "package.json",
+      "sha256": "813d6c01963bab68099b992faa781cc84a5f4aa4ff3e85b0a95c126a966093fe",
+      "bytes": 4408
+    },
+    {
+      "path": "tsconfig.local-app.json",
+      "sha256": "b7abff6165287f318fa4fb00b32459923bb3cd5beeaec5ffe88b4ac927aff607",
+      "bytes": 669
+    },
+    {
+      "path": "scripts/local/application.mjs",
+      "sha256": "f3206274c9a9c3ef4381878e52fd4d6cf5868fb74a8cdd118b96619dbd9f21d4",
+      "bytes": 3155
+    },
+    {
+      "path": "scripts/local/application.test.mjs",
+      "sha256": "e340bdebcc464888badf6538a73debd7ab2057d6074c9ecf10c6e9edffa82c6a",
+      "bytes": 4055
+    },
+    {
+      "path": "scripts/local/deployment.mjs",
+      "sha256": "41048201d27bbf584d37342a1d059dc5347c3398c01b47fc5472e90ec462cb55",
+      "bytes": 5410
+    },
+    {
+      "path": "scripts/local/deployment.test.mjs",
+      "sha256": "8c57c4728fd709c76f079dfeea55336b209994c25780940b117101d4d28b4d8a",
+      "bytes": 3094
+    },
+    {
+      "path": "scripts/local/provider-network-prepare.mjs",
+      "sha256": "2d17d48137346dcea5ad1bafee67ade78d3f92ccba732350d07a3564d38f36f5",
+      "bytes": 1985
+    },
+    {
+      "path": "src/connections/ConnectionWorkspace.tsx",
+      "sha256": "ed22a3e691217b5c5035d3008540088e372cb03227674d7a9e965e4b0c5d0f50",
+      "bytes": 18210
+    },
+    {
+      "path": "src/local-app/LocalConnectionsPanel.tsx",
+      "sha256": "6736f66de401bc166afe22c8ad504cedfb3134115c485cd3d42e2b8f1925c2ff",
+      "bytes": 3490
+    },
+    {
+      "path": "src/local-app/LocalConnectionsPanel.test.tsx",
+      "sha256": "fd5a2663354b6e39ad1581ffe952fe3c3eabaf9fe22cad3f0ae8326eb3db4e1f",
+      "bytes": 3031
+    },
+    {
+      "path": "src/local-app/connections.ts",
+      "sha256": "5231b5f7d89e7ecfa5b1f3c602380c21d912483933990f878d743701c4e4297e",
+      "bytes": 12367
+    },
+    {
+      "path": "src/local-app/narrationWorker.ts",
+      "sha256": "2b6a1d627845149f2fd0b44725d944c9be629ef77fe62fbe639d2da503dcc80d",
+      "bytes": 4478
+    },
+    {
+      "path": "src/local-app/providerNetwork.ts",
+      "sha256": "0a115161b61c5914dfe55ff19b665a16461c9b3e66f4da280456e084ce9ee350",
+      "bytes": 10108
+    },
+    {
+      "path": "src/local-app/providerNetwork.test.ts",
+      "sha256": "85bf901e2d42189712b8e9ada9e17a5c20702f77037070da51460cf91d5e52dc",
+      "bytes": 4169
+    },
+    {
+      "path": "src/local-app/providerProbe.ts",
+      "sha256": "f6b1bcd6d0355a7ddf16b481005be6ec731eca1cce33aca493beb23f8b549f48",
+      "bytes": 4360
+    },
+    {
+      "path": "src/local-app/providerProbe.test.ts",
+      "sha256": "2e890466616b2fd73c4391506d9395168a0fab151ddb04199639342119f48301",
+      "bytes": 5229
+    },
+    {
+      "path": "src/worker/mediaProviders.ts",
+      "sha256": "678fd0037b64154bd3932562be15c836067e32713dd7284aaa0b3acf33419afd",
+      "bytes": 10999
+    }
+  ],
+  "sqlSourceChanged": false,
+  "credentialsAndRawPrivateEvidenceExcluded": true,
+  "commit": false,
+  "push": false,
+  "EF": false
+}

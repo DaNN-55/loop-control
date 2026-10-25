@@ -3,6 +3,10 @@ import {render,screen,fireEvent,cleanup,waitFor} from '@testing-library/react';
 import {webcrypto} from 'node:crypto';
 import {LocalConnectionsPanel} from './LocalConnectionsPanel';
 afterEach(()=>{cleanup();vi.unstubAllGlobals();sessionStorage.clear();});
+it('saves a closed-network credential without issuing a verify command and clears the password',async()=>{
+ vi.stubGlobal('crypto',webcrypto);const commands:string[]=[];vi.stubGlobal('fetch',vi.fn(async(_path:string,init?:RequestInit)=>{if(init?.method==='POST'){commands.push(JSON.parse(String(init.body)).command);return Response.json({connection:{id:'synthetic-connection',name:'Test',provider:'pexels',adapter:'pexels_video',status:'retryable'}});}return Response.json({connections:[],versions:[],pending:[],capabilities:{secrets:'keychain',verification:'live',externalReady:false,networkAvailable:false}});}));
+ render(<LocalConnectionsPanel/>);await screen.findByRole('heading',{name:'外部连接'});fireEvent.change(screen.getByRole('textbox',{name:'连接名称'}),{target:{value:'Test'}});const field=screen.getByLabelText('Pexels API Key') as HTMLInputElement;fireEvent.change(field,{target:{value:'synthetic-private-entry'}});fireEvent.click(screen.getByRole('button',{name:'仅保存凭据'}));await waitFor(()=>expect(field.value).toBe(''));expect(commands).toEqual(['create']);expect(screen.getByRole('status').textContent).toContain('在线验证已锁定');expect(document.body.textContent).not.toContain('synthetic-private-entry');
+});
 it('keeps unconfirmed material in a password draft and persists only a random operation ID',async()=>{
  const secret='synthetic-ui-only-secret';let postBody='';
  vi.stubGlobal('crypto',webcrypto);

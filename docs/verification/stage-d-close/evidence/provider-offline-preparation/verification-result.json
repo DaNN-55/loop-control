@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "scope": "Six formal probes, shared process-safe request budget and private intake OFFLINE PREPARATION ONLY",
+  "formalFactoryAndStartStop": true,
+  "actualHttpPostgresKeychain": true,
+  "actualBrowserSaveOnlyAndCleared": true,
+  "requestBudgetCrossProcessTest": true,
+  "processCrashReservationRetained": true,
+  "providerRequests": 0,
+  "userProviderCredentials": 0,
+  "liveQualifications": 0,
+  "openaiMissingKey": true,
+  "policyEnabled": false,
+  "currency": "UNCONFIRMED",
+  "maxCostMicrounits": 0,
+  "globalMaxRequests": 20,
+  "fiveProviderPlannedRequests": 17,
+  "unallocatedRequests": 3,
+  "fullRegression": {
+    "files": 105,
+    "passed": 807,
+    "failed": 0,
+    "defaultTimeoutMs": 5000,
+    "privateHistoricalCopiesExcludedAsBefore": true
+  },
+  "finalProbeFocusedPassed": 26,
+  "types": "types-05 passed; earlier failures retained",
+  "build": "build-02 passed",
+  "node": {
+    "passed": 2,
+    "skipped": 1
+  },
+  "historicalFailuresPreserved": true,
+  "otherUnverifiedGatesClosed": false,
+  "modelProbeTimeoutMs": 30000,
+  "sqlConsistencySuggestionDeferred": true,
+  "commit": false,
+  "push": false,
+  "EF": false
+}

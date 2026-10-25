@@ -1,0 +1,69 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/local-app/providerProbe.test.ts (26 tests | 1 failed) 332ms
+   × uses the officially migrated Pexels v1 video search path 27ms
+     → expected 'https://api.pexels.com/videos/search?…' to be 'https://api.pexels.com/v1/videos/sear…' // Object.is equality
+   ✓ classifies a compatible openai response with one reserved request 16ms
+   ✓ classifies a compatible cloudflare response with one reserved request 17ms
+   ✓ classifies a compatible pexels response with one reserved request 16ms
+   ✓ classifies a compatible freesound response with one reserved request 16ms
+   ✓ classifies a compatible google_tts response with one reserved request 17ms
+   ✓ classifies a compatible volcengine_tts response with one reserved request 15ms
+   ✓ keeps openai closed without touching transport 1ms
+   ✓ keeps cloudflare closed without touching transport 1ms
+   ✓ keeps pexels closed without touching transport 1ms
+   ✓ keeps freesound closed without touching transport 1ms
+   ✓ keeps google_tts closed without touching transport 1ms
+   ✓ keeps volcengine_tts closed without touching transport 1ms
+   ✓ classifies actual transport status 401 as invalid for openai 16ms
+   ✓ classifies actual transport status 401 as invalid for cloudflare 16ms
+   ✓ classifies actual transport status 401 as invalid for pexels 12ms
+   ✓ classifies actual transport status 401 as invalid for freesound 16ms
+   ✓ classifies actual transport status 401 as invalid for google_tts 17ms
+   ✓ classifies actual transport status 401 as invalid for volcengine_tts 17ms
+   ✓ does not grant openai on an unrelated 200 response 16ms
+   ✓ does not grant cloudflare on an unrelated 200 response 16ms
+   ✓ does not grant pexels on an unrelated 200 response 14ms
+   ✓ does not grant freesound on an unrelated 200 response 15ms
+   ✓ does not grant google_tts on an unrelated 200 response 16ms
+   ✓ does not grant volcengine_tts on an unrelated 200 response 17ms
+   ✓ shares the probe reservation with the actual live Worker fetch port 17ms
+
+ Test Files  2 failed (2)
+      Tests  1 failed | 25 passed (26)
+   Start at  15:52:36
+   Duration  554ms (transform 90ms, setup 0ms, collect 64ms, tests 332ms, environment 0ms, prepare 84ms)
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  docs/verification/stage-d-close/evidence/provider-offline-preparation/source/src/local-app/providerProbe.test.ts [ docs/verification/stage-d-close/evidence/provider-offline-preparation/source/src/local-app/providerProbe.test.ts ]
+Error: Cannot find module './keychainStore.js' imported from '/Users/dan/.codex/worktrees/local-first-optimization/loop-control/docs/verification/stage-d-close/evidence/provider-offline-preparation/source/src/local-app/narrationWorker.ts'
+ ❯ docs/verification/stage-d-close/evidence/provider-offline-preparation/source/src/local-app/narrationWorker.ts:5:1
+      3| import{execFile}from'node:child_process';
+      4| import{promisify}from'node:util';
+      5| import{configuredKeychainStore}from'./keychainStore.js';
+       | ^
+      6| import{SecretStoreError,type SecretStore}from'./connectionPorts.js';
+      7| import{createProviderFetcher,type ProviderNetworkConfiguration,type On…
+
+Caused by: Error: Failed to load url ./keychainStore.js (resolved id: ./keychainStore.js) in /Users/dan/.codex/worktrees/local-first-optimization/loop-control/docs/verification/stage-d-close/evidence/provider-offline-preparation/source/src/local-app/narrationWorker.ts. Does the file exist?
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:22739:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/providerProbe.test.ts > uses the officially migrated Pexels v1 video search path
+AssertionError: expected 'https://api.pexels.com/videos/search?…' to be 'https://api.pexels.com/v1/videos/sear…' // Object.is equality
+
+Expected: "https://api.pexels.com/v1/videos/search?query=nature&per_page=1"
+Received: "https://api.pexels.com/videos/search?query=nature&per_page=1"
+
+ ❯ src/local-app/providerProbe.test.ts:8:379
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

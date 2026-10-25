@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "processes": 8,
+  "realTransportReplacedByMemoryResponse": true,
+  "reserved": 3,
+  "transportCalls": 3,
+  "limit": 3,
+  "noOnlineRequests": true
+}

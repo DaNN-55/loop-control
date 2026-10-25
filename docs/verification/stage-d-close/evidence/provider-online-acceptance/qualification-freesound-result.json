@@ -1,0 +1,15 @@
+{
+  "provider": "freesound",
+  "passed": false,
+  "httpStatus": 200,
+  "mode": "live",
+  "outcome": "invalid",
+  "ready": false,
+  "requestCountDelta": 1,
+  "requestCountUsed": 2,
+  "providerHttpStatus": 401,
+  "responseBytes": 26,
+  "budgetHalted": true,
+  "costReservedCny": 0,
+  "notActualBilledCost": true
+}

@@ -1,0 +1,27 @@
+import {appendFileSync,writeFileSync} from 'node:fs';
+import childProcess from 'node:child_process';
+import {syncBuiltinESMExports} from 'node:module';
+import {fileURLToPath} from 'node:url';
+import {readSanitizedError} from './sanitize-error.mjs';
+const run=new URL('.',import.meta.url).pathname,guard=fileURLToPath(import.meta.url),original=globalThis.fetch;
+globalThis.fetch=async(input,options={})=>{
+ const u=new URL(typeof input==='string'||input instanceof URL?input:input.url),method=(options.method??'GET').toUpperCase();
+ if(u.protocol==='http:'&&u.hostname==='127.0.0.1'&&u.port==='55189')return original(input,options);
+ if(u.protocol!=='https:'||u.hostname!=='texttospeech.googleapis.com'||u.port||u.pathname!=='/v1/voices'||u.search!=='?languageCode=zh-CN'||method!=='GET')throw Error('Diagnostic request is outside approved operation');
+ const attempt={host:u.hostname,method,pid:process.pid,noHeadersQueryOrBodyRecorded:true};
+ // Shared exclusive marker supplements the production cross-process budget.
+ writeFileSync(run+'network-attempt-private.json',JSON.stringify(attempt)+'\n',{flag:'wx',mode:0o600});
+ const response=await original(input,options);
+ const safe=await readSanitizedError(response);
+ writeFileSync(run+'google-error-result.json',JSON.stringify(safe,null,2)+'\n',{flag:'wx',mode:0o600});
+ return response;
+};
+const spawn=childProcess.spawn;
+childProcess.spawn=function(command,args=[],options){
+ if(args.some(a=>String(a).endsWith('/local-app/localWorkerCli.js')))throw Error('No Worker authorized for diagnostic');
+ if(args.some(a=>String(a).endsWith('/node_modules/vite/bin/vite.js'))&&!args.includes(guard)){
+  const child=Reflect.apply(spawn,this,[command,['--import',guard,...args],options]);
+  appendFileSync(run+'processes-private.jsonl',JSON.stringify({pid:child.pid,event:'diagnostic-app-spawned'})+'\n',{mode:0o600});return child;
+ }
+ return Reflect.apply(spawn,this,[command,args,options]);
+};syncBuiltinESMExports();

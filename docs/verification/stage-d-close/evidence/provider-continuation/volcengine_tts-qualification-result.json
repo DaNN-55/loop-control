@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "mode": "live",
+  "outcome": "verified",
+  "ready": true,
+  "requestCountDelta": 1,
+  "cumulativeUsed": 7,
+  "providerHttpStatus": 200
+}

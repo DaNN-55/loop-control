@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {readFileSync,existsSync,copyFileSync} from 'node:fs';
+import {spawnSync} from 'node:child_process';
+import {seal,hash,json,save} from '../provider-continue-20261025/carry.mjs';
+const run=new URL('.',import.meta.url).pathname,phase=json(run+'phase.json'),proof=json(run+'parent-proof.json');
+assert(!existsSync(phase.base+'/app.json'));
+for(const e of readFileSync(run+'processes-private.jsonl','utf8').trim().split('\n').map(x=>JSON.parse(x))){const p=spawnSync('ps',['-p',String(e.pid),'-o','stat='],{encoding:'utf8'});const status=(p.stdout??'').trim();assert(!status||status.startsWith('Z'),'Diagnostic process still running');}
+const state=json(phase.directory+'/state.json');assert.equal(state.used,10);assert.equal(state.halted,true);assert.equal(state.events.at(-1).status,403);
+assert.equal(hash(proof.directory+'/state.json'),proof.stateSha256);assert.equal(json(proof.directory+'/state.json').used,9);
+copyFileSync(phase.directory+'/state.json',run+'state-before-seal-private.json');
+const s=seal(phase.directory,'Sole diagnostic failed with Google BILLING_DISABLED; no retry, no synthesis');
+save(run+'seal-result.json',{passed:true,cumulativeRequests:s.used,additionalRequests:1,cumulativeCostReservedCny:s.costMicrounits/1e6,oldNineRequestLedgerUnchanged:true,diagnosticProcessesStopped:true,diagnosticLedgerSealed:true,googleAcceptancePassed:false,noRetry:true,noSynthesis:true});console.log('Diagnostic sealed at10; old9 and all older ledgers unchanged.');

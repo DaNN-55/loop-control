@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "oldInputEpisodesPaused": 0,
+  "oldTaskStatesUnchangedAtSetup": true,
+  "actualParentUsedInherited": 2,
+  "oldParentHaltedAndUnchanged": true,
+  "credentialsNotCopiedAsPlaintext": true,
+  "workerDbSameIsolatedClone": true,
+  "providerRequests": 0
+}

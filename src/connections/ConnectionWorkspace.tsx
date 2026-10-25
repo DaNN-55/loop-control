@@ -109,7 +109,7 @@ const connectionTypes = [
   { adapter: "volcengine_tts", label: "豆包语音 V3", provider: "volcengine_tts", secretLabel: "豆包语音 API Key" },
 ] as const;
 
-export function ConnectionWorkspace({ connections, isPending = false, onCreateConnection, onDeleteVersion, onRevokeVersion, onRotateConnection, onTestConnection, onUpdateConnection, onRebindVersion, secretStorage='Vault', versions = [] }: {
+export function ConnectionWorkspace({ connections, isPending = false, onCreateConnection, onDeleteVersion, onRevokeVersion, onRotateConnection, onTestConnection, onUpdateConnection, onRebindVersion, secretStorage='Vault', verificationEnabled=true, versions = [] }: {
   connections: ExternalConnection[];
   isPending?: boolean;
   onCreateConnection: (input: ExternalConnectionInput) => Promise<ExternalConnection | null>;
@@ -120,6 +120,7 @@ export function ConnectionWorkspace({ connections, isPending = false, onCreateCo
   onUpdateConnection?: (input: { connectionId: string; name: string; description: string }) => Promise<void>;
   onRebindVersion?: (versionId:string,secret:string) => Promise<void>;
   secretStorage?:string;
+  verificationEnabled?:boolean;
   versions?: ExternalConnectionVersion[];
 }) {
   const [name, setName] = useState("");
@@ -137,7 +138,7 @@ export function ConnectionWorkspace({ connections, isPending = false, onCreateCo
     try {
       const connection = await onCreateConnection({ adapter: connectionType.adapter, name: name.trim(), provider: connectionType.provider, secret });
       if (!connection) return;
-      setName(""); setSecret(""); await onTestConnection(connection.id);
+      setName(""); setSecret(""); if(verificationEnabled)await onTestConnection(connection.id);
     } catch (cause) { setError(cause instanceof Error ? cause.message : "无法创建外部连接。"); }
   }
 
@@ -148,7 +149,7 @@ export function ConnectionWorkspace({ connections, isPending = false, onCreateCo
     try {
       const rotated = await onRotateConnection({ adapter: connection.adapter as ExternalConnectionInput["adapter"], connectionId: connection.id, provider: connection.provider as ExternalConnectionInput["provider"], secret: nextSecret });
       if (!rotated) return;
-      setRotationSecrets((current) => ({ ...current, [connection.id]: "" })); await onTestConnection(rotated.id);
+      setRotationSecrets((current) => ({ ...current, [connection.id]: "" })); if(verificationEnabled)await onTestConnection(rotated.id);
     } catch (cause) { setError(cause instanceof Error ? cause.message : "无法轮换外部连接版本。"); }
   }
 
@@ -168,7 +169,7 @@ export function ConnectionWorkspace({ connections, isPending = false, onCreateCo
       <label><span>连接类型</span><select aria-label="连接类型" onChange={(event) => { setAdapter(event.target.value as ExternalConnectionInput["adapter"]); setSecret(""); }} value={adapter}>{connectionTypes.map((candidate) => <option key={candidate.adapter} value={candidate.adapter}>{candidate.label}</option>)}</select></label>
       <label>连接名称（自定义填写）<input aria-label="连接名称" onChange={(event) => setName(event.target.value)} required value={name} /></label>
       <label>{connectionType.secretLabel}<input aria-label={connectionType.secretLabel} autoComplete="off" onChange={(event) => setSecret(event.target.value)} required type="password" value={secret} /></label>
-      <div className="configuration-actions"><button className="button button-primary" disabled={isPending || !name.trim() || !secret.trim()} type="submit">{isPending ? "保存并测试中…" : "保存并测试"}</button></div>
+      <div className="configuration-actions"><button className="button button-primary" disabled={isPending || !name.trim() || !secret.trim()} type="submit">{isPending ? "保存中…" : verificationEnabled ? "保存并测试" : "仅保存凭据"}</button></div>
     </fieldset></form>
     {error ? <p className="form-error">{error}</p> : null}
     <section aria-label="连接列表"><h3>已登记连接（{connections.length}）</h3>{connections.length ? <ul>{connections.map((connection) => {
@@ -177,7 +178,7 @@ export function ConnectionWorkspace({ connections, isPending = false, onCreateCo
         <label>连接名称<input aria-label={`${connection.name} 连接名称`} onChange={(event) => setNames((current) => ({ ...current, [connection.id]: event.target.value }))} value={names[connection.id] ?? connection.name} /></label>
         <label>连接说明<textarea aria-label={`${connection.name} 连接说明`} onChange={(event) => setDescriptions((current) => ({ ...current, [connection.id]: event.target.value }))} value={descriptions[connection.id] ?? connection.description ?? ""} /></label>
         {connection.last_verification_detail ? <p>{connection.last_verification_detail}</p> : null}
-        <div className="configuration-actions"><button className="button button-secondary button-small" disabled={isPending} onClick={() => void onTestConnection(connection.id)} type="button">重新测试</button>{onUpdateConnection ? <button className="button button-secondary button-small" disabled={isPending} onClick={() => void saveMetadata(connection)} type="button">保存说明</button> : null}</div>
+        <div className="configuration-actions"><button className="button button-secondary button-small" disabled={isPending||!verificationEnabled} onClick={() => void onTestConnection(connection.id)} type="button">重新测试</button>{onUpdateConnection ? <button className="button button-secondary button-small" disabled={isPending} onClick={() => void saveMetadata(connection)} type="button">保存说明</button> : null}</div>
         {onRotateConnection ? <details><summary>轮换认证版本</summary><label>新的认证材料<input aria-label={`${connection.name} 新的认证材料`} autoComplete="off" onChange={(event) => setRotationSecrets((current) => ({ ...current, [connection.id]: event.target.value }))} type="password" value={rotationSecrets[connection.id] ?? ""} /></label><button className="button button-primary button-small" disabled={isPending || !rotationSecrets[connection.id]?.trim()} onClick={() => void rotate(connection)} type="button">创建新版本并测试</button></details> : null}
         <details><summary>连接版本（{connectionVersions.length}）</summary><ul>{connectionVersions.map((version) => <li key={version.id}><span>v{version.version} · {statusLabels[version.status]}{version.is_current ? " · 当前" : ""}</span>{onRebindVersion&&!version.revoked_at?<details><summary>恢复缺失的秘密绑定</summary><p>此版本不会自动使用其他版本的认证材料。</p><input aria-label={`v${version.version} 恢复认证材料`} type="password" autoComplete="off" value={rebindSecrets[version.id]??""} onChange={event=>setRebindSecrets(current=>({...current,[version.id]:event.target.value}))}/><button type="button" disabled={isPending||!rebindSecrets[version.id]} onClick={()=>void rebind(version)}>重新绑定此版本</button></details>:null}{version.revoked_at ? <small>已撤销</small> : onRevokeVersion ? <button className="button button-danger-soft button-small" disabled={isPending} onClick={() => { if (window.confirm("撤销此连接版本？引用它的生产单不会自动切换。")) void onRevokeVersion(version.id); }} type="button">撤销版本</button> : null}{version.status === "unverified" && !version.is_current && onDeleteVersion ? <button className="button button-secondary button-small" disabled={isPending} onClick={() => { if (window.confirm("删除这个未引用的连接草稿？删除后不可恢复。")) void onDeleteVersion(version.id); }} type="button">删除草稿</button> : null}</li>)}</ul></details>
       </li>;

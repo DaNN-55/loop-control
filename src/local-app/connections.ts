@@ -58,7 +58,7 @@ export class LocalConnections {
    for(const c of connections){const current=localVersions.find(v=>v.id===c.current_version_id);if(current?.status==='revoked')c.status='invalid';else if(current)c.status=current.status;
     const last=latest.find(p=>p.connection_version_id===c.current_version_id);
     c.last_verification_detail=current?.secretState==='unbound'?'本机秘密未绑定，请显式重新录入。':!externalReady?'真实Keychain及在线验证尚未启用。':last?.status==='retryable'&&c.status==='verified'?'本次测试暂不可用；上次有效验证资格保留，生产前仍须检查。':c.status==='verified'?'已验证；运行时仍检查秘密可用性。':'需要在本机重新验证。';}
-   return {connections,versions:localVersions,pending,capabilities:{secrets:this.store.mode,verification:this.probe.mode,externalReady}};
+   return {connections,versions:localVersions,pending,capabilities:{secrets:this.store.mode,verification:this.probe.mode,externalReady,networkAvailable:this.probe.mode==='live'&&this.probe.networkAvailable!==false}};
   });
  }
  async command(session:OwnerSession,body:Record<string,unknown>){
