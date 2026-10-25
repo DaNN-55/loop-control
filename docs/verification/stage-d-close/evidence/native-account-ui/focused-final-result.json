@@ -1,0 +1,22 @@
+{
+  "started": "2026-10-25T09:06:18.015Z",
+  "finished": "2026-10-25T09:06:21.223Z",
+  "command": [
+    "npx",
+    "--no-install",
+    "vitest",
+    "run",
+    "src/platform/ConfigurationForms.local.test.tsx",
+    "src/local-app/LocalCatalogApp.account.test.tsx",
+    "src/local-app/LocalCatalogApp.test.tsx",
+    "src/local-app/inputPreflight.test.ts",
+    "--exclude",
+    "**/.loop-control/**",
+    "--exclude",
+    "docs/verification/**/source/**"
+  ],
+  "status": 0,
+  "passed": true,
+  "defaultTestTimeoutMs": 5000,
+  "timeoutOverride": false
+}

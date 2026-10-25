@@ -10,6 +10,7 @@ import {LocalConnectionsPanel} from './LocalConnectionsPanel';
 import {useConnectionActions} from './useConnectionActions';
 import type {ExternalConnection,ExternalConnectionVersion} from '../connections/ConnectionWorkspace';
 import type {Json} from '../lib/database.types';
+import type {WorkerPreflightResult} from '../worker/contracts';
 import type {LocalCatalog} from './catalog';
 import {localRequest,localCommand} from './client';
 type Blueprint=LocalCatalog['blueprints'][number];
@@ -21,7 +22,8 @@ export function LocalCatalogApp(){
  const [catalog,setCatalog]=useState<LocalCatalog|null>(null),[error,setError]=useState(''),[pending,setPending]=useState(''),[csrf,setCsrf]=useState('');
  const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[selectedId,setSelectedId]=useState(''),[newAccount,setNewAccount]=useState(false),[view,setView]=useState<'accounts'|'episodes'>(()=>new URLSearchParams(location.search).has('episode')?'episodes':'accounts'),[recoveryOpen,setRecoveryOpen]=useState(false);
  const [connections,setConnections]=useState<ExternalConnection[]>([]),[connectionVersions,setConnectionVersions]=useState<ExternalConnectionVersion[]>([]);
- const [externalReady,setExternalReady]=useState(false);
+ const [blueprintPreflight,setBlueprintPreflight]=useState<WorkerPreflightResult|null>(null),[blueprintPreflightError,setBlueprintPreflightError]=useState(''),[preflightLoading,setPreflightLoading]=useState(false);
+ const preflightRequest=useRef(0),preflightTarget=useRef('');
  const [newEpisode,setNewEpisode]=useState(false),[episodeId,setEpisodeId]=useState(()=>new URLSearchParams(location.search).get('episode')??'');
  useEffect(()=>{const url=new URL(location.href);if(view==='episodes'&&episodeId)url.searchParams.set('episode',episodeId);else url.searchParams.delete('episode');history.replaceState(history.state,'',url);},[view,episodeId]);
  async function refresh(){
@@ -33,7 +35,7 @@ export function LocalCatalogApp(){
   if(request!==requestGeneration.current||session!==sessionGeneration.current||key!==queryRef.current)return;
   const choices=await localRequest('connections');
   if(request!==requestGeneration.current||session!==sessionGeneration.current||key!==queryRef.current)return;
-  setConnections(Array.isArray(choices.connections)?choices.connections:[]);setConnectionVersions(Array.isArray(choices.versions)?choices.versions:[]);setExternalReady(choices.capabilities?.externalReady===true);setCatalog(next);setSelectedId(id=>next.accounts.some(a=>a.id===id)?id:next.accounts[0]?.id??'');
+  setConnections(Array.isArray(choices.connections)?choices.connections:[]);setConnectionVersions(Array.isArray(choices.versions)?choices.versions:[]);setCatalog(next);setSelectedId(id=>next.accounts.some(a=>a.id===id)?id:next.accounts[0]?.id??'');
   }catch(error){if(request===requestGeneration.current&&session===sessionGeneration.current&&key===queryRef.current)throw error;}
  }
  const refreshRef=useRef(refresh);refreshRef.current=refresh;
@@ -50,7 +52,17 @@ export function LocalCatalogApp(){
  }
  async function command<T>(label:string,name:string,data:unknown,revision?:string):Promise<T>{setPending(label);setError('');try{const result=await localCommand<T>(name,data,revision);try{await refresh();}catch{setError('配置已保存；目录刷新失败，请点击刷新重新读取。');}return result;}catch(e){setError(e instanceof Error?e.message:String(e));throw e;}finally{setPending('');}}
  const account=catalog?.accounts.find(a=>a.id===selectedId)??null;
- return <main className="local-workspace" style={{maxWidth:1400,margin:'2rem auto',padding:24}}><header><div className="wordmark">Loop Control · 本地</div><h1>内容工作台</h1></header>{(error||connectionActions.error)&&<p role="alert" className="form-error">{error||connectionActions.error}</p>}{!catalog?<form className="access-card" onSubmit={login}><h2>所有者登录</h2><label>邮箱<input aria-label="邮箱" autoComplete="username" type="email" required value={email} onChange={e=>setEmail(e.target.value)}/></label><label>密码<input aria-label="密码" autoComplete="current-password" type="password" required value={password} onChange={e=>setPassword(e.target.value)}/></label><button className="button button-primary" disabled={!!pending}>使用密码登录</button></form>:<><nav><button className="button" onClick={()=>setView('accounts')}>账号配置</button><button className="button" onClick={()=>setView('episodes')}>生产单目录</button><button className="button" onClick={()=>setNewAccount(true)}>新建账号</button><button className="button" onClick={()=>void refresh().catch(e=>setError(String(e)))}>刷新</button><button className="button" onClick={()=>void logout()}>退出登录</button></nav><LocalSystemStatus/><LocalDeletionRecovery revision={catalog}/>{view==='accounts'?<><AccountWorkspace externalConnections={connections} connectionVersions={connectionVersions} account={account} accountEpisodeCount={catalog.accountCounts[account?.id??'']??0} accounts={catalog.accounts} blueprints={catalog.blueprints} blueprintPreflightError={externalReady?"连接以逐版本验证为准；本地生产前检查尚未接管。":"本地外部连接尚未就绪；相关选择暂时阻塞。生产能力仍需后续运行前检查。"} isPending={connectionActions.pending?'connection':pending} onSelectAccount={setSelectedId} promptVersions={catalog.promptVersions.filter(p=>p.account_id===account?.id)} series={catalog.series.filter(s=>s.account_id===account?.id)} seriesVersions={catalog.seriesVersions.filter(s=>s.account_id===account?.id)}
+ const blueprintTarget=account?`${account.id}:${account.current_blueprint_version_id}:${catalog?.blueprintRevisions[account.current_blueprint_version_id??'']??''}`:'';preflightTarget.current=blueprintTarget;
+ useEffect(()=>{preflightRequest.current++;setBlueprintPreflight(null);setBlueprintPreflightError('');setPreflightLoading(false);},[blueprintTarget]);
+ async function checkBlueprint(){
+  if(!authenticated.current||!account?.current_blueprint_version_id||!catalog)return;
+  const target=preflightTarget.current,session=sessionGeneration.current,request=++preflightRequest.current;
+  const current=()=>authenticated.current&&session===sessionGeneration.current&&target===preflightTarget.current&&request===preflightRequest.current;
+  setPreflightLoading(true);setBlueprintPreflight(null);setBlueprintPreflightError('');
+  try{const result=await localCommand<WorkerPreflightResult>('checkBlueprint',{accountId:account.id,blueprintVersionId:account.current_blueprint_version_id,expectedRevision:catalog.blueprintRevisions[account.current_blueprint_version_id]},undefined,'account-commands');if(current())setBlueprintPreflight(result);}
+  catch(error){if(current())setBlueprintPreflightError(error instanceof Error?error.message:'本机检查暂不可用。');}finally{if(current())setPreflightLoading(false);}
+ }
+ return <main className="local-workspace" style={{maxWidth:1400,margin:'2rem auto',padding:24}}><header><div className="wordmark">Loop Control · 本地</div><h1>内容工作台</h1></header>{(error||connectionActions.error)&&<p role="alert" className="form-error">{error||connectionActions.error}</p>}{!catalog?<form className="access-card" onSubmit={login}><h2>所有者登录</h2><label>邮箱<input aria-label="邮箱" autoComplete="username" type="email" required value={email} onChange={e=>setEmail(e.target.value)}/></label><label>密码<input aria-label="密码" autoComplete="current-password" type="password" required value={password} onChange={e=>setPassword(e.target.value)}/></label><button className="button button-primary" disabled={!!pending}>使用密码登录</button></form>:<><nav><button className="button" onClick={()=>setView('accounts')}>账号配置</button><button className="button" onClick={()=>setView('episodes')}>生产单目录</button><button className="button" onClick={()=>setNewAccount(true)}>新建账号</button><button className="button" onClick={()=>void refresh().catch(e=>setError(String(e)))}>刷新</button><button className="button" onClick={()=>void logout()}>退出登录</button></nav><LocalSystemStatus/><LocalDeletionRecovery revision={catalog}/>{view==='accounts'?<><AccountWorkspace externalConnections={connections} connectionVersions={connectionVersions} account={account} accountEpisodeCount={catalog.accountCounts[account?.id??'']??0} accounts={catalog.accounts} blueprints={catalog.blueprints} blueprintPreflight={blueprintPreflight} blueprintPreflightError={blueprintPreflightError} isBlueprintPreflightLoading={preflightLoading} onRefreshBlueprintPreflight={checkBlueprint} isPending={connectionActions.pending?'connection':pending} onSelectAccount={setSelectedId} promptVersions={catalog.promptVersions.filter(p=>p.account_id===account?.id)} series={catalog.series.filter(s=>s.account_id===account?.id)} seriesVersions={catalog.seriesVersions.filter(s=>s.account_id===account?.id)}
  onCreateConnection={async input=>{try{return (await connectionActions.command<{connection:ExternalConnection}>('create',input)).connection;}catch{return null;}}}
  onRotateConnection={async input=>{try{return (await connectionActions.command<{connection:ExternalConnection}>('rotate',input)).connection;}catch{return null;}}}
  onTestConnection={async connectionId=>{try{await connectionActions.command('verify',{connectionId});}catch{/* Visible connection error. */}}}

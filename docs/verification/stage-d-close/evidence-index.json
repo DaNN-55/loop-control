@@ -7764,17 +7764,17 @@
       "kind": "per-provider continuation result, report or non-executable helper .txt snapshot"
     },
     {
-      "path": "README.md",
+      "path": "README-before-native-account-ui.md",
       "privacy": "public",
-      "bytes": 21032,
-      "sha256": "dec1f817abc3430a04d3aca5024f2e9d0a5970c21509aca03689a7584d7e8691",
+      "bytes": 20431,
+      "sha256": "b2dbde1a16d49b4096728f0c162f42ab26be55d44752bbc93dd7cf81ce9e4aa1",
       "kind": "single Google diagnostic sanitized result, report or non-executable source snapshot"
     },
     {
-      "path": "review.md",
+      "path": "review-before-native-account-ui.md",
       "privacy": "public",
-      "bytes": 15426,
-      "sha256": "140f650d0251d23e31ebb532a0b431fea794901844af5156bad841c25339b754",
+      "bytes": 14825,
+      "sha256": "0211d2b9b157fd1bee19ee1114831f17b37364b4e1de44a3147c57a393a2c772",
       "kind": "single Google diagnostic sanitized result, report or non-executable source snapshot"
     },
     {
@@ -7937,6 +7937,552 @@
       "bytes": 853,
       "sha256": "cda0ec7c7713fc6e793372c38b92ebd47146e5b1d4ed9537aee3b3cbcfeb0a9d",
       "kind": "single Google diagnostic sanitized result, report or non-executable source snapshot"
+    },
+    {
+      "path": "README.md",
+      "privacy": "public",
+      "bytes": 22978,
+      "sha256": "485afd101bec8e9e2cde25c1c01a45a60eb7173aa469f3aeb65886823ca65d01",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "review.md",
+      "privacy": "public",
+      "bytes": 17413,
+      "sha256": "481c92d8db06b856ae839174060f67cb98972c3127570c14fb7a48ad2605cc1a",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "native-account-ui.md",
+      "privacy": "public",
+      "bytes": 8752,
+      "sha256": "43594d52e56d6e002ace80b8be68f05716f5f29d42cb1a1db34bad0d36b2c8e0",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/browser-cancel-result.json",
+      "privacy": "public",
+      "bytes": 171,
+      "sha256": "a5900dc380c21371d2b48d09c41688d00b26020249faa4ba66e23b0cab80a1d1",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/browser-choice-result.json",
+      "privacy": "public",
+      "bytes": 285,
+      "sha256": "2248c97885bcf39d1e39de9b80fe22a81d58b60151b9229a207bbc8fe407afe0",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/browser-final-result.json",
+      "privacy": "public",
+      "bytes": 699,
+      "sha256": "8a482581608026c4d7d363ba1b2fa04b6754e5e97dbb8e039b671a5344863c2f",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/browser-final.png",
+      "privacy": "public",
+      "bytes": 162395,
+      "sha256": "53004af8f1dbcdcaaa14ea8a1c3c6ce5f1e1776b4087561f033d4b02756ae271",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/build-final-result.json",
+      "privacy": "public",
+      "bytes": 233,
+      "sha256": "65dc544a78dde5ae72e709c20b330c094b50e8a269525389056e1eef3879d1ef",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/build-final.log",
+      "privacy": "public",
+      "bytes": 925,
+      "sha256": "a71391cb6c41ed559cda511403bc0877c173644f1ebfd552e055b12b4167f16c",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/build-result.json",
+      "privacy": "public",
+      "bytes": 233,
+      "sha256": "6be81f19c955b7c62404a435b4066ac99372d8c3a4604aaa781a29abf73f7750",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/closed-final-result.json",
+      "privacy": "public",
+      "bytes": 401,
+      "sha256": "1fc80ada862615def6a2a954ef228222bf5902b8c73c304ac370d77a6b834f05",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/closed-formal-start-result.json",
+      "privacy": "public",
+      "bytes": 208,
+      "sha256": "6d23342f44bfde005a00a1b29fec96f5bdddb1c24c07d6211e8549d7a5cde621",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/desktop-harness-failure-note.json",
+      "privacy": "public",
+      "bytes": 1334,
+      "sha256": "add2e5fb7cf6daa34e3a8946b28b4e75a1cd8d10e7c8ed1eb95f8d95b34623d5",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/directory-green-result.json",
+      "privacy": "public",
+      "bytes": 407,
+      "sha256": "07b71f7007b9b6a0adcf752107e02d2ef941ea704268100ec4a4a9d736fd446a",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/directory-green.log",
+      "privacy": "public",
+      "bytes": 331,
+      "sha256": "ca2b7ff37d2c5fa1b4a7322549db8d0bd93760e4f3f1597fa4250d3daccaaf20",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/directory-preflight-green-result.json",
+      "privacy": "public",
+      "bytes": 461,
+      "sha256": "5821db56af0c2ba2bd9c4e4b0cb6a64c0f95f5ac69bca099e54872bb69d9826e",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/directory-preflight-green.log",
+      "privacy": "public",
+      "bytes": 400,
+      "sha256": "70fa204519e2ef588d5eabc8a875d3feed70f66251155f20a91d0158e13dc6a2",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/directory-red-result.json",
+      "privacy": "public",
+      "bytes": 408,
+      "sha256": "94467b9b1330fcdf03783b733efb7e9cbeb4b650ebf2246f3fdf6f3363464948",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/directory-red.log",
+      "privacy": "public",
+      "bytes": 16583,
+      "sha256": "724f349028fea3a1ec8a7c9704b82367ea5575e98c1562a03080005e095d92c0",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/factory-fixture-failure-note.json",
+      "privacy": "public",
+      "bytes": 594,
+      "sha256": "fcbc5ecd2f87fbec4e4c77e9287b6dfac8c2665d9400e6d927257d09a7732170",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/final-audit-sandbox-note.json",
+      "privacy": "public",
+      "bytes": 405,
+      "sha256": "fea60e31835bfc291137fe7d43b09c08e121abcd1f08a167573d641334b44d75",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/focused-final-result.json",
+      "privacy": "public",
+      "bytes": 551,
+      "sha256": "77b8b9dc9e5d80e40852dbef1aca6df50da62d7840750fba20d2a6bd3ef46dc0",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/focused-final.log",
+      "privacy": "public",
+      "bytes": 521,
+      "sha256": "f76b6f58b3de88fc3bba0d44f5ad25ec6c44b074c228bc363d0ecc9d8ed7b891",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/full-default-complete-result.json",
+      "privacy": "public",
+      "bytes": 456,
+      "sha256": "3ce7b971d2b08fb78421ef92d1b19c692b7b7eb7ab47c2d8bc9a6f80c50bcf4b",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/full-default-complete.log",
+      "privacy": "public",
+      "bytes": 9701,
+      "sha256": "c1fd0ab13cc0a6e1b6c37b269d5b30fb8894034da1f4b5ef0e7575201a536ba6",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/full-default-final-result.json",
+      "privacy": "public",
+      "bytes": 456,
+      "sha256": "ddf849165c502a15fb1348598a37db69022c201162c51963d44df41528768f79",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/full-default-final.log",
+      "privacy": "public",
+      "bytes": 9902,
+      "sha256": "ea55fa479406cec0f4638a5fb358ca053abc0ae5056ed389efcc4a841dccb6b7",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/full-default-lifecycle-final-result.json",
+      "privacy": "public",
+      "bytes": 457,
+      "sha256": "33a11f6efa78a1568d80f53865180d6bc379ae653697e15e29b352e38e4bc8b4",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/full-default-lifecycle-final.log",
+      "privacy": "public",
+      "bytes": 10443,
+      "sha256": "5217bc60cd0b1db9ab04479b2f9e7741158a4bd1a06d3e2dbe7e4213edc01478",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/full-default-result.json",
+      "privacy": "public",
+      "bytes": 456,
+      "sha256": "1557e964f3e4b86c7ae2a5d76d3cc1b25fdd3bc570398fdcd8d53580b49b1600",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/full-default.log",
+      "privacy": "public",
+      "bytes": 9675,
+      "sha256": "da3862d94b174984c279a7829941677d4f0350c4a8157513522cb51a36a4d908",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/history-preservation-result.json",
+      "privacy": "public",
+      "bytes": 224,
+      "sha256": "22980dee637aaf10ea55a9792747f52529416fa5c344876e343be66e378d0123",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/http-before-result.json",
+      "privacy": "public",
+      "bytes": 134,
+      "sha256": "8802ae5b3b9fcd239471db5a88bb4c6d9df1959ca8a51deb96d4bee605207df1",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/http-final-result.json",
+      "privacy": "public",
+      "bytes": 1514,
+      "sha256": "7e283b075ee5382d1a7bc799c784ed396d046e0a17648ebb3c39c8d2559bd6ef",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/http-result.json",
+      "privacy": "public",
+      "bytes": 1514,
+      "sha256": "7e283b075ee5382d1a7bc799c784ed396d046e0a17648ebb3c39c8d2559bd6ef",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/intake-restore-failure-note.json",
+      "privacy": "public",
+      "bytes": 339,
+      "sha256": "a87197a0d035283e5fed9feeeeb44a37875cf1ce9e0cd7d92522a83b1a020e71",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/intake-stop-result.json",
+      "privacy": "public",
+      "bytes": 321,
+      "sha256": "adbc9945310628f0edf954e548fdac12c2a3abf91105d2261816864099b0a297",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/native-types-final-result.json",
+      "privacy": "public",
+      "bytes": 310,
+      "sha256": "1ce5da0332f4c6950bf9347428215a1087a055ce1503659885209bf64e307864",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/native-types-final.log",
+      "privacy": "public",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/native-types-result.json",
+      "privacy": "public",
+      "bytes": 310,
+      "sha256": "7114956d8cddd94e157b40fb83360c3fea5af63997615d06fab7693b415695b4",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/node-final-result.json",
+      "privacy": "public",
+      "bytes": 261,
+      "sha256": "61fc9d75b8926d63a386a5b8c6a187882ae7fc6a3b6f963ae267a2fdd53df257",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/node-final.log",
+      "privacy": "public",
+      "bytes": 342,
+      "sha256": "0d4494278695ce824c073fc7fcdb045e098336b5e9ec1851d1663b1d50e38880",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/own-picker-cleanup-result.json",
+      "privacy": "public",
+      "bytes": 240,
+      "sha256": "f9a03d8194a547b9728683e91cfe30dfd8aa24468d8efe6216ba2610369ff65f",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/owner-acceptance.json",
+      "privacy": "public",
+      "bytes": 354,
+      "sha256": "548b36ce86b6461c6fa8763f42451cc84b525e7e09a6c90e42aaa9c1061556d9",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/package-verification-result.json",
+      "privacy": "public",
+      "bytes": 1405,
+      "sha256": "40b4b5ee18ad623ab991dd8a26c04465815a36dd57dea5771629558b90b75b52",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/picker-lifecycle-result.json",
+      "privacy": "public",
+      "bytes": 350,
+      "sha256": "4d2d69c7861ae9016e9e3fd3440c8e9cc95dc4323b946d65d5b3596c524ffb0a",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/picker-shutdown-red-note.json",
+      "privacy": "public",
+      "bytes": 442,
+      "sha256": "50f92969b034ce724790524bad2b3e9d66e9e9f85ff8eb87076d3d8809ce7c9a",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/preflight-and-late-directory-red-result.json",
+      "privacy": "public",
+      "bytes": 462,
+      "sha256": "71f86947d941e3f5733f5320e8c5a0a06b342cdee2f8d83599748b87f573a971",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/preflight-and-late-directory-red.log",
+      "privacy": "public",
+      "bytes": 8360,
+      "sha256": "54a70fa1b4e8abb5cd3d73ba5e7aecf6c950a835d939039cb2b5bfd62c1c4f17",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/setup-result.json",
+      "privacy": "public",
+      "bytes": 227,
+      "sha256": "d0ed8f5e8366d35c5c398549dd0b784a7b84557fbe8db3c7abf24de1cfcb0640",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/source/acceptance/browser-final.mjs.txt",
+      "privacy": "public",
+      "bytes": 2336,
+      "sha256": "bd64748136d4e6f4f3f1ccf2b4b0d830b414225385984f2b0eb6a55804646605",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/source/acceptance/closed-check.mjs.txt",
+      "privacy": "public",
+      "bytes": 2123,
+      "sha256": "a776012177c70326a976f83efb49f17c09da8dafe0680ea28046f80ed6e4ba8c",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/source/acceptance/http-check-02.mjs.txt",
+      "privacy": "public",
+      "bytes": 3800,
+      "sha256": "badddc105243d56d99990a07387a4cf700ce365922bc8dc1ffdfdb912b538f57",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/source/acceptance/http-check.mjs.txt",
+      "privacy": "public",
+      "bytes": 3794,
+      "sha256": "a1c8f6a4970713caf85054916990e1a2feb942d1d05620ac12532c497d31058a",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/source/acceptance/picker-lifecycle-check.mjs.txt",
+      "privacy": "public",
+      "bytes": 2760,
+      "sha256": "3d808c0338df6511c99ee63e6c04946841725a3e30f743fe772baf142e5de616",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/source/acceptance/restore-state.mjs.txt",
+      "privacy": "public",
+      "bytes": 1738,
+      "sha256": "e8315ff407326a711226d8b90daaef3f36a3c0c4ca01ac962116946fa8701143",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/source/scripts/local/application.mjs.txt",
+      "privacy": "public",
+      "bytes": 3339,
+      "sha256": "8a2cc05a2c549d99d3dd4f452a80b0014d0c8b8f6476c9dd87fda9531b60a06e",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/source/scripts/local/application.test.mjs.txt",
+      "privacy": "public",
+      "bytes": 4655,
+      "sha256": "8cd47bc53aef38abcce40cf08c52e0b4f8af18022138d5e369a0b405ba5066b8",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/source/src/local-app/LocalCatalogApp.account.test.tsx.txt",
+      "privacy": "public",
+      "bytes": 5032,
+      "sha256": "e1c7a1a56582897b96dca4303c37bc824201f8ad8edeed54f6beaaaadb3d28d3",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/source/src/local-app/LocalCatalogApp.tsx.txt",
+      "privacy": "public",
+      "bytes": 14477,
+      "sha256": "419d35634c7fcf286263781e315911eae6e9e89a8a69090dfae3550f0f266eff",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/source/src/local-app/accountCommands.ts.txt",
+      "privacy": "public",
+      "bytes": 5994,
+      "sha256": "4669924597d9c0c0ceb1c20492fbbf4dacec2aabb59d9a651621d73b050d3d46",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/source/src/local-app/episodeCommands.ts.txt",
+      "privacy": "public",
+      "bytes": 37678,
+      "sha256": "927c5a3227ed564838c3b11f5c48cd3601b4f71a18c09b5b0545171075025530",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/source/src/local-app/localRoute.ts.txt",
+      "privacy": "public",
+      "bytes": 9780,
+      "sha256": "6c48600dd7c671a16038c20469e9fc51f706ddb31d0ba00bff6b6b4eb7e6be79",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/source/src/platform/ConfigurationForms.local.test.tsx.txt",
+      "privacy": "public",
+      "bytes": 4510,
+      "sha256": "72a4931a803649a60805db697e54b0df0740d948df68098744a87e3581e303bd",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/source/src/platform/ConfigurationForms.tsx.txt",
+      "privacy": "public",
+      "bytes": 67749,
+      "sha256": "81abb7336d3703144d00e8d6051136c23c6952340f6fec3c777ca2cb08c1a7e8",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/startup-configuration-failure-note.json",
+      "privacy": "public",
+      "bytes": 455,
+      "sha256": "9b95cc9764598ab3d9b5323f5962ff62126ed7bffe3291870dc45b98b0c5671a",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/types-final-result.json",
+      "privacy": "public",
+      "bytes": 279,
+      "sha256": "a25166d6691ffc1e6049cc86d991d46c41968551cfaecc6612c5e99cb2583a56",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/types-final.log",
+      "privacy": "public",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/types-result.json",
+      "privacy": "public",
+      "bytes": 279,
+      "sha256": "1b784c3f68d44aa9907867e4d7e1cf61ccf5668737b9a86378c0fa74edf944e7",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/ui-formal-start-02-result.json",
+      "privacy": "public",
+      "bytes": 228,
+      "sha256": "dc0e137fe912cbb44611282e0b6a03dbe78dc13b8d19e67eb00251d59bce8b24",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/ui-formal-start-03-result.json",
+      "privacy": "public",
+      "bytes": 228,
+      "sha256": "dc0e137fe912cbb44611282e0b6a03dbe78dc13b8d19e67eb00251d59bce8b24",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/ui-formal-start-04-result.json",
+      "privacy": "public",
+      "bytes": 228,
+      "sha256": "dc0e137fe912cbb44611282e0b6a03dbe78dc13b8d19e67eb00251d59bce8b24",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/ui-formal-start-05-result.json",
+      "privacy": "public",
+      "bytes": 228,
+      "sha256": "dc0e137fe912cbb44611282e0b6a03dbe78dc13b8d19e67eb00251d59bce8b24",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/ui-formal-start-result.json",
+      "privacy": "public",
+      "bytes": 238,
+      "sha256": "497d39151c3811965f6a909f3d74d977de7262503608e848d523e63e97935dc0",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/ui-stop-02-result.json",
+      "privacy": "public",
+      "bytes": 346,
+      "sha256": "52521c10523fb50e843e4821d139e10c010f910a94b8b506b9335523fdbfba7e",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/ui-stop-03-result.json",
+      "privacy": "public",
+      "bytes": 346,
+      "sha256": "c377fc96fc9bb5e38a1da9f9eec3f1b6e48aefdc7afcd31a772825092d69da21",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/ui-stop-04-result.json",
+      "privacy": "public",
+      "bytes": 346,
+      "sha256": "7871e7315080ca58a8e0f64402bee41f6bf1d2d9a70daf5beb70c184f917e460",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
+    },
+    {
+      "path": "evidence/native-account-ui/verification-result.json",
+      "privacy": "public",
+      "bytes": 3688,
+      "sha256": "88efa7491c0ceda501270991c37f82354613e37da52ac96f4506707eb6d70c97",
+      "kind": "native account UI result, report, original test log, screenshot or non-executable source snapshot"
     },
     {
       "path": "local-commit-archive.md",
@@ -20756,6 +21302,937 @@
       "bytes": 2444,
       "sha256": "2a4eaae6fba47417f2b1169f68f76f96eb40b6a957f3bb73365441888e1d397c",
       "kind": "single diagnostic private policy, inherited ledger, driver, runtime snapshot or scope baseline"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/PLAN.md",
+      "privacy": "private",
+      "bytes": 2824,
+      "sha256": "8871549c6ca924c34e79912a926dd5161b2f91a8c5ab6b4f15e2dc238f777496",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/README.md.before",
+      "privacy": "private",
+      "bytes": 10908,
+      "sha256": "bb3de2f2767f780955c13d4c7b7643fd10d0e0524f6e609f58542247d0e64c02",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/audit-package.mjs",
+      "privacy": "private",
+      "bytes": 11021,
+      "sha256": "5692990e5a362347386be14bed5e0f91973b8d35b7a26cf162d29340c9048078",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/baseline-private.json",
+      "privacy": "private",
+      "bytes": 582698,
+      "sha256": "b7a1dff416878bf7f709d631e14545836f313689fddaf1cd0810432f6db7fc40",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/browser-cancel-result.json",
+      "privacy": "private",
+      "bytes": 171,
+      "sha256": "a5900dc380c21371d2b48d09c41688d00b26020249faa4ba66e23b0cab80a1d1",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/browser-choice-result.json",
+      "privacy": "private",
+      "bytes": 285,
+      "sha256": "2248c97885bcf39d1e39de9b80fe22a81d58b60151b9229a207bbc8fe407afe0",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/browser-doctor-private.log",
+      "privacy": "private",
+      "bytes": 1383,
+      "sha256": "f8cbf9b7efcdac8ef6dc259c4c9d536b8f7c085c4800a348880b9c9025d59740",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/browser-final-ax-private.txt",
+      "privacy": "private",
+      "bytes": 6178,
+      "sha256": "795902414ba3579be6167ee40ccbd7c81b603843f5d8de7752dd8a1d8ab1bfeb",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/browser-final-result.json",
+      "privacy": "private",
+      "bytes": 699,
+      "sha256": "8a482581608026c4d7d363ba1b2fa04b6754e5e97dbb8e039b671a5344863c2f",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/browser-final.mjs",
+      "privacy": "private",
+      "bytes": 2336,
+      "sha256": "bd64748136d4e6f4f3f1ccf2b4b0d830b414225385984f2b0eb6a55804646605",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/browser-final.png",
+      "privacy": "private",
+      "bytes": 162395,
+      "sha256": "53004af8f1dbcdcaaa14ea8a1c3c6ce5f1e1776b4087561f033d4b02756ae271",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/build-final-result.json",
+      "privacy": "private",
+      "bytes": 233,
+      "sha256": "65dc544a78dde5ae72e709c20b330c094b50e8a269525389056e1eef3879d1ef",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/build-final.log",
+      "privacy": "private",
+      "bytes": 925,
+      "sha256": "a71391cb6c41ed559cda511403bc0877c173644f1ebfd552e055b12b4167f16c",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/build-result.json",
+      "privacy": "private",
+      "bytes": 233,
+      "sha256": "6be81f19c955b7c62404a435b4066ac99372d8c3a4604aaa781a29abf73f7750",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/build.log",
+      "privacy": "private",
+      "bytes": 925,
+      "sha256": "4f80742fca23120adccdd306ccb1f09a1e0f294a73f0ff47aa38bf8cb3511f18",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/closed-check.mjs",
+      "privacy": "private",
+      "bytes": 2123,
+      "sha256": "a776012177c70326a976f83efb49f17c09da8dafe0680ea28046f80ed6e4ba8c",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/closed-final-result.json",
+      "privacy": "private",
+      "bytes": 401,
+      "sha256": "1fc80ada862615def6a2a954ef228222bf5902b8c73c304ac370d77a6b834f05",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/closed-formal-start-private.log",
+      "privacy": "private",
+      "bytes": 918,
+      "sha256": "36786d32d315babe8fb7ed2b93906b0568d65b5660b3fbe336eb7a81acdd65db",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/closed-formal-start-result.json",
+      "privacy": "private",
+      "bytes": 208,
+      "sha256": "6d23342f44bfde005a00a1b29fec96f5bdddb1c24c07d6211e8549d7a5cde621",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/closed-service-at-final-private.log",
+      "privacy": "private",
+      "bytes": 1223,
+      "sha256": "896c316a4ea760e15d764eecdead019ddacc3fbfd3155249100f90925a311863",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/closed-service-os-guard.mjs",
+      "privacy": "private",
+      "bytes": 866,
+      "sha256": "446d10236aa35b841aae90f799698171b4f9929f48fc0a61e25796c602c17587",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/deployment-before-closed-port-fix-private.json",
+      "privacy": "private",
+      "bytes": 2346,
+      "sha256": "57864251ea46b8568104fa2f8d85ec0b7171182050ac6d40c5a15e63161e5f3d",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/deployment-location.json",
+      "privacy": "private",
+      "bytes": 505,
+      "sha256": "5e95be22e80a14e136b4c60cbdfd8b0981e82a5a85d0aea44b1d3eb1a55ad32f",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/desktop-harness-failure-note.json",
+      "privacy": "private",
+      "bytes": 1334,
+      "sha256": "add2e5fb7cf6daa34e3a8946b28b4e75a1cd8d10e7c8ed1eb95f8d95b34623d5",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/directory-green-result.json",
+      "privacy": "private",
+      "bytes": 407,
+      "sha256": "07b71f7007b9b6a0adcf752107e02d2ef941ea704268100ec4a4a9d736fd446a",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/directory-green.log",
+      "privacy": "private",
+      "bytes": 331,
+      "sha256": "ca2b7ff37d2c5fa1b4a7322549db8d0bd93760e4f3f1597fa4250d3daccaaf20",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/directory-preflight-green-result.json",
+      "privacy": "private",
+      "bytes": 461,
+      "sha256": "5821db56af0c2ba2bd9c4e4b0cb6a64c0f95f5ac69bca099e54872bb69d9826e",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/directory-preflight-green.log",
+      "privacy": "private",
+      "bytes": 400,
+      "sha256": "70fa204519e2ef588d5eabc8a875d3feed70f66251155f20a91d0158e13dc6a2",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/directory-red-result.json",
+      "privacy": "private",
+      "bytes": 408,
+      "sha256": "94467b9b1330fcdf03783b733efb7e9cbeb4b650ebf2246f3fdf6f3363464948",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/directory-red.log",
+      "privacy": "private",
+      "bytes": 16583,
+      "sha256": "724f349028fea3a1ec8a7c9704b82367ea5575e98c1562a03080005e095d92c0",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/docs__local-native-deployment.md.before",
+      "privacy": "private",
+      "bytes": 10235,
+      "sha256": "805255f5d7147e36a9e0ba04a473d6dee853e927f468a8a157a274fd214d76a7",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/docs__verification__stage-d-close__README.md.before",
+      "privacy": "private",
+      "bytes": 20431,
+      "sha256": "b2dbde1a16d49b4096728f0c162f42ab26be55d44752bbc93dd7cf81ce9e4aa1",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/docs__verification__stage-d-close__evidence-index.json.before",
+      "privacy": "private",
+      "bytes": 1051003,
+      "sha256": "0b680f7683b07543f842e089c1016b668aaf829c6847665e69545ddb5adf57a7",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/docs__verification__stage-d-close__review.md.before",
+      "privacy": "private",
+      "bytes": 14825,
+      "sha256": "0211d2b9b157fd1bee19ee1114831f17b37364b4e1de44a3147c57a393a2c772",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/evidence-index.json.before",
+      "privacy": "private",
+      "bytes": 1051003,
+      "sha256": "0b680f7683b07543f842e089c1016b668aaf829c6847665e69545ddb5adf57a7",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/external-untracked-observed-private.json",
+      "privacy": "private",
+      "bytes": 3240,
+      "sha256": "767d71fbb84c4e57c283876c93a3b9a1ed2706dfc9b4d663359442464372e4f4",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/factory-fixture-failure-note.json",
+      "privacy": "private",
+      "bytes": 594,
+      "sha256": "fcbc5ecd2f87fbec4e4c77e9287b6dfac8c2665d9400e6d927257d09a7732170",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/final-audit-sandbox-note.json",
+      "privacy": "private",
+      "bytes": 405,
+      "sha256": "fea60e31835bfc291137fe7d43b09c08e121abcd1f08a167573d641334b44d75",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/fixture-private.json",
+      "privacy": "private",
+      "bytes": 473,
+      "sha256": "240470686c192cb79ab44b5e2db96d3186e0f38d081eecef9931830ed540488d",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/focused-final-result.json",
+      "privacy": "private",
+      "bytes": 551,
+      "sha256": "77b8b9dc9e5d80e40852dbef1aca6df50da62d7840750fba20d2a6bd3ef46dc0",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/focused-final.log",
+      "privacy": "private",
+      "bytes": 521,
+      "sha256": "f76b6f58b3de88fc3bba0d44f5ad25ec6c44b074c228bc363d0ecc9d8ed7b891",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/formal-cli.mjs",
+      "privacy": "private",
+      "bytes": 970,
+      "sha256": "102edc96dc3a770ad44b91432da79b2a27563e78d73747a800c245fab5b01537",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/full-default-complete-result.json",
+      "privacy": "private",
+      "bytes": 456,
+      "sha256": "3ce7b971d2b08fb78421ef92d1b19c692b7b7eb7ab47c2d8bc9a6f80c50bcf4b",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/full-default-complete.log",
+      "privacy": "private",
+      "bytes": 9701,
+      "sha256": "c1fd0ab13cc0a6e1b6c37b269d5b30fb8894034da1f4b5ef0e7575201a536ba6",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/full-default-final-result.json",
+      "privacy": "private",
+      "bytes": 456,
+      "sha256": "ddf849165c502a15fb1348598a37db69022c201162c51963d44df41528768f79",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/full-default-final.log",
+      "privacy": "private",
+      "bytes": 9902,
+      "sha256": "ea55fa479406cec0f4638a5fb358ca053abc0ae5056ed389efcc4a841dccb6b7",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/full-default-lifecycle-final-result.json",
+      "privacy": "private",
+      "bytes": 457,
+      "sha256": "33a11f6efa78a1568d80f53865180d6bc379ae653697e15e29b352e38e4bc8b4",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/full-default-lifecycle-final.log",
+      "privacy": "private",
+      "bytes": 10443,
+      "sha256": "5217bc60cd0b1db9ab04479b2f9e7741158a4bd1a06d3e2dbe7e4213edc01478",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/full-default-result.json",
+      "privacy": "private",
+      "bytes": 456,
+      "sha256": "1557e964f3e4b86c7ae2a5d76d3cc1b25fdd3bc570398fdcd8d53580b49b1600",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/full-default.log",
+      "privacy": "private",
+      "bytes": 9675,
+      "sha256": "da3862d94b174984c279a7829941677d4f0350c4a8157513522cb51a36a4d908",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/history-preservation-result.json",
+      "privacy": "private",
+      "bytes": 224,
+      "sha256": "22980dee637aaf10ea55a9792747f52529416fa5c344876e343be66e378d0123",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/http-before-result.json",
+      "privacy": "private",
+      "bytes": 134,
+      "sha256": "8802ae5b3b9fcd239471db5a88bb4c6d9df1959ca8a51deb96d4bee605207df1",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/http-check-02.mjs",
+      "privacy": "private",
+      "bytes": 3800,
+      "sha256": "badddc105243d56d99990a07387a4cf700ce365922bc8dc1ffdfdb912b538f57",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/http-check.mjs",
+      "privacy": "private",
+      "bytes": 3794,
+      "sha256": "a1c8f6a4970713caf85054916990e1a2feb942d1d05620ac12532c497d31058a",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/http-final-result.json",
+      "privacy": "private",
+      "bytes": 1514,
+      "sha256": "7e283b075ee5382d1a7bc799c784ed396d046e0a17648ebb3c39c8d2559bd6ef",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/http-result.json",
+      "privacy": "private",
+      "bytes": 1514,
+      "sha256": "7e283b075ee5382d1a7bc799c784ed396d046e0a17648ebb3c39c8d2559bd6ef",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/indexed-app-log-before-closed-private.log",
+      "privacy": "private",
+      "bytes": 754,
+      "sha256": "152236f2c7762425d0a70d6398ecfe51ee11240965538322ce30bae8c45ee69f",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/indexed-app-log-before-intake-final-private.log",
+      "privacy": "private",
+      "bytes": 754,
+      "sha256": "152236f2c7762425d0a70d6398ecfe51ee11240965538322ce30bae8c45ee69f",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/indexed-app-log-before-ui-02-private.log",
+      "privacy": "private",
+      "bytes": 754,
+      "sha256": "152236f2c7762425d0a70d6398ecfe51ee11240965538322ce30bae8c45ee69f",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/indexed-app-log-before-ui-03-private.log",
+      "privacy": "private",
+      "bytes": 754,
+      "sha256": "152236f2c7762425d0a70d6398ecfe51ee11240965538322ce30bae8c45ee69f",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/indexed-app-log-before-ui-04-private.log",
+      "privacy": "private",
+      "bytes": 754,
+      "sha256": "152236f2c7762425d0a70d6398ecfe51ee11240965538322ce30bae8c45ee69f",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/indexed-app-log-before-ui-05-private.log",
+      "privacy": "private",
+      "bytes": 754,
+      "sha256": "152236f2c7762425d0a70d6398ecfe51ee11240965538322ce30bae8c45ee69f",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/input-flags-before-private.json",
+      "privacy": "private",
+      "bytes": 7572,
+      "sha256": "166458bb2c997883065cd6cee13b84b4f73f13925451492d4289f727af4e1d26",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/intake-restore-failure-note.json",
+      "privacy": "private",
+      "bytes": 339,
+      "sha256": "a87197a0d035283e5fed9feeeeb44a37875cf1ce9e0cd7d92522a83b1a020e71",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/intake-stop-private.log",
+      "privacy": "private",
+      "bytes": 236,
+      "sha256": "b4c3407697395ab06f2eca541a9786f3d7e4123648afc5319967545ab7bcc9dd",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/intake-stop-result.json",
+      "privacy": "private",
+      "bytes": 378,
+      "sha256": "3c7a91d453db7ed56dc4151dd46757858837f125a91eb40f872d402812d9c212",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/loopback-only.sb",
+      "privacy": "private",
+      "bytes": 223,
+      "sha256": "4d4be1f6ffe280443ac845db78b6668fa56a013aa55974a8812050279dabd742",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/native-types-final-result.json",
+      "privacy": "private",
+      "bytes": 310,
+      "sha256": "1ce5da0332f4c6950bf9347428215a1087a055ce1503659885209bf64e307864",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/native-types-final.log",
+      "privacy": "private",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/native-types-result.json",
+      "privacy": "private",
+      "bytes": 310,
+      "sha256": "7114956d8cddd94e157b40fb83360c3fea5af63997615d06fab7693b415695b4",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/native-types.log",
+      "privacy": "private",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/network-install-private.jsonl",
+      "privacy": "private",
+      "bytes": 76226,
+      "sha256": "c027ed1e4e4eeb2f3fa11ce6a4085d907959484b5193118f9d31728de7547675",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/node-final-result.json",
+      "privacy": "private",
+      "bytes": 261,
+      "sha256": "61fc9d75b8926d63a386a5b8c6a187882ae7fc6a3b6f963ae267a2fdd53df257",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/node-final.log",
+      "privacy": "private",
+      "bytes": 342,
+      "sha256": "0d4494278695ce824c073fc7fcdb045e098336b5e9ec1851d1663b1d50e38880",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/own-picker-cleanup-result.json",
+      "privacy": "private",
+      "bytes": 240,
+      "sha256": "f9a03d8194a547b9728683e91cfe30dfd8aa24468d8efe6216ba2610369ff65f",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/owner-acceptance.json",
+      "privacy": "private",
+      "bytes": 354,
+      "sha256": "548b36ce86b6461c6fa8763f42451cc84b525e7e09a6c90e42aaa9c1061556d9",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/package-evidence.py",
+      "privacy": "private",
+      "bytes": 7323,
+      "sha256": "581c5fa5e37f7d315fa701ba26dcb96fc76d3d3a03ccdab49c96ff543766ff3c",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/package-verification-result.json",
+      "privacy": "private",
+      "bytes": 1405,
+      "sha256": "40b4b5ee18ad623ab991dd8a26c04465815a36dd57dea5771629558b90b75b52",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/picker-lifecycle-check.mjs",
+      "privacy": "private",
+      "bytes": 2760,
+      "sha256": "3d808c0338df6511c99ee63e6c04946841725a3e30f743fe772baf142e5de616",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/picker-lifecycle-result.json",
+      "privacy": "private",
+      "bytes": 350,
+      "sha256": "4d2d69c7861ae9016e9e3fd3440c8e9cc95dc4323b946d65d5b3596c524ffb0a",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/picker-lifecycle-stop-private.log",
+      "privacy": "private",
+      "bytes": 261,
+      "sha256": "8aaf0ea8c1635eaea0227c80db05b2bf0fb2b61a0992b18cb707be8807633f5e",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/picker-shutdown-red-note.json",
+      "privacy": "private",
+      "bytes": 442,
+      "sha256": "50f92969b034ce724790524bad2b3e9d66e9e9f85ff8eb87076d3d8809ce7c9a",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/planner-offline-guard.mjs",
+      "privacy": "private",
+      "bytes": 275,
+      "sha256": "2a98b8c16173e3b6a64ea242b0a073ebb7bca0a8bc457b0bf4fe9693434fc6ee",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/planner.mjs",
+      "privacy": "private",
+      "bytes": 1718,
+      "sha256": "44fb29a0ba0ca0b39a5cadd83c8fc24cf8607a2740501f7336caee5ad5d13207",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/preflight-and-late-directory-red-result.json",
+      "privacy": "private",
+      "bytes": 462,
+      "sha256": "71f86947d941e3f5733f5320e8c5a0a06b342cdee2f8d83599748b87f573a971",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/preflight-and-late-directory-red.log",
+      "privacy": "private",
+      "bytes": 8360,
+      "sha256": "54a70fa1b4e8abb5cd3d73ba5e7aecf6c950a835d939039cb2b5bfd62c1c4f17",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/restore-state.mjs",
+      "privacy": "private",
+      "bytes": 1738,
+      "sha256": "e8315ff407326a711226d8b90daaef3f36a3c0c4ca01ac962116946fa8701143",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/run-check.mjs",
+      "privacy": "private",
+      "bytes": 1064,
+      "sha256": "62b8452fec2891c7cbb24636319b4503a85b7930a43614e4f8adfdf88c35c9b5",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/scripts__local__application.mjs.before",
+      "privacy": "private",
+      "bytes": 3155,
+      "sha256": "f3206274c9a9c3ef4381878e52fd4d6cf5868fb74a8cdd118b96619dbd9f21d4",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/scripts__local__application.test.mjs.before",
+      "privacy": "private",
+      "bytes": 4055,
+      "sha256": "e340bdebcc464888badf6538a73debd7ab2057d6074c9ecf10c6e9edffa82c6a",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/service-os-guard-private.jsonl",
+      "privacy": "private",
+      "bytes": 796,
+      "sha256": "4fe8af46b94f4075b93c90b356ac5608c2534ed4695acf6086bde57642298bb1",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/setup-fixture.mjs",
+      "privacy": "private",
+      "bytes": 3979,
+      "sha256": "ac78410e07ec2f19f7f34cc5662b59833ecd21fd2378a7341be1f56008aaf414",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/setup-result.json",
+      "privacy": "private",
+      "bytes": 227,
+      "sha256": "d0ed8f5e8366d35c5c398549dd0b784a7b84557fbe8db3c7abf24de1cfcb0640",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/src__local-app__LocalCatalogApp.tsx.before",
+      "privacy": "private",
+      "bytes": 12972,
+      "sha256": "5578a2588f76e4be1273d79e70680d299f7b412bdb527e0afa0551a90041c4dd",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/src__local-app__episodeCommands.ts.before",
+      "privacy": "private",
+      "bytes": 36871,
+      "sha256": "f8b53d09bc4e5f11a3e020bad905004874811741eb013643e66370aaa543e09f",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/src__local-app__localRoute.ts.before",
+      "privacy": "private",
+      "bytes": 9024,
+      "sha256": "9b1c7fb428c1a54b7af5866f3119a5be2c5233fe8601e8d17e9adfe5669aa15b",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/src__platform__ConfigurationForms.tsx.before",
+      "privacy": "private",
+      "bytes": 66830,
+      "sha256": "134f7eda636340604dce4e0879504d7f5687f824d7d4c9985eee6d2b6ed61d8b",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/start-closed-final.mjs",
+      "privacy": "private",
+      "bytes": 2217,
+      "sha256": "28ebaa63966fc230013de2bd11421a1ddc0510fc024c0911080fe7b4609db336",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/start-closed.mjs",
+      "privacy": "private",
+      "bytes": 2211,
+      "sha256": "c4ef1c4afd0b310516274d7662ccc07491721f280b57514ec65136d1809a68d9",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/start-ui-02.mjs",
+      "privacy": "private",
+      "bytes": 2192,
+      "sha256": "a4726f85b530c1e2b7b57d5ac012d58e83434422f04e407090ff91d21c62afcf",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/start-ui-03.mjs",
+      "privacy": "private",
+      "bytes": 2148,
+      "sha256": "fe110a3d45748326e82eff060f1abc434c8b5a12c6b21d181cb6b5157eec3ac8",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/start-ui-04.mjs",
+      "privacy": "private",
+      "bytes": 2148,
+      "sha256": "2b2cc4cc1bad93c86a9a65eab1395d4fa84cffefe23257c390d17f75239d3c65",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/start-ui-05.mjs",
+      "privacy": "private",
+      "bytes": 2148,
+      "sha256": "15459590b26d62d777ab0999e853fca78bbd065aee65fc2ee5b424add57755d7",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/start-ui.mjs",
+      "privacy": "private",
+      "bytes": 2193,
+      "sha256": "5f928bb08f5cc6a1d383ab0d224452dfa247395f8af21bd9cf7354aba9575682",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/startup-configuration-failure-note.json",
+      "privacy": "private",
+      "bytes": 455,
+      "sha256": "9b95cc9764598ab3d9b5323f5962ff62126ed7bffe3291870dc45b98b0c5671a",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/tasks-before-private.json",
+      "privacy": "private",
+      "bytes": 584063,
+      "sha256": "e665008754ddcc4bd056718516bec888209eaf7fbf83aab1868e6a7bb2664b7e",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/tests-offline-guard.mjs",
+      "privacy": "private",
+      "bytes": 1199,
+      "sha256": "3489a3576b453358f26c02d909834ad14a53a300f68e887dfc5a68308ef0dc1b",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/types-final-result.json",
+      "privacy": "private",
+      "bytes": 279,
+      "sha256": "a25166d6691ffc1e6049cc86d991d46c41968551cfaecc6612c5e99cb2583a56",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/types-final.log",
+      "privacy": "private",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/types-result.json",
+      "privacy": "private",
+      "bytes": 279,
+      "sha256": "1b784c3f68d44aa9907867e4d7e1cf61ccf5668737b9a86378c0fa74edf944e7",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/types.log",
+      "privacy": "private",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-formal-start-02-private.log",
+      "privacy": "private",
+      "bytes": 943,
+      "sha256": "e73e78257671640b5fa42b9cb94573cdc5f8a56b3b93b7f8fb2cb00a3552f3bf",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-formal-start-02-result.json",
+      "privacy": "private",
+      "bytes": 228,
+      "sha256": "dc0e137fe912cbb44611282e0b6a03dbe78dc13b8d19e67eb00251d59bce8b24",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-formal-start-03-private.log",
+      "privacy": "private",
+      "bytes": 943,
+      "sha256": "e73e78257671640b5fa42b9cb94573cdc5f8a56b3b93b7f8fb2cb00a3552f3bf",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-formal-start-03-result.json",
+      "privacy": "private",
+      "bytes": 228,
+      "sha256": "dc0e137fe912cbb44611282e0b6a03dbe78dc13b8d19e67eb00251d59bce8b24",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-formal-start-04-private.log",
+      "privacy": "private",
+      "bytes": 943,
+      "sha256": "e73e78257671640b5fa42b9cb94573cdc5f8a56b3b93b7f8fb2cb00a3552f3bf",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-formal-start-04-result.json",
+      "privacy": "private",
+      "bytes": 228,
+      "sha256": "dc0e137fe912cbb44611282e0b6a03dbe78dc13b8d19e67eb00251d59bce8b24",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-formal-start-05-private.log",
+      "privacy": "private",
+      "bytes": 943,
+      "sha256": "e73e78257671640b5fa42b9cb94573cdc5f8a56b3b93b7f8fb2cb00a3552f3bf",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-formal-start-05-result.json",
+      "privacy": "private",
+      "bytes": 228,
+      "sha256": "dc0e137fe912cbb44611282e0b6a03dbe78dc13b8d19e67eb00251d59bce8b24",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-formal-start-private.log",
+      "privacy": "private",
+      "bytes": 2082,
+      "sha256": "0f27a7897636b3cd4425ab15283d95633832a43b3c82b49106b7eefcafaf498e",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-formal-start-result.json",
+      "privacy": "private",
+      "bytes": 238,
+      "sha256": "497d39151c3811965f6a909f3d74d977de7262503608e848d523e63e97935dc0",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-service-02-private.log",
+      "privacy": "private",
+      "bytes": 1601,
+      "sha256": "4f19a7363346fa7abe0c7274354a7e594329627f0fee82437168c928dae7dee1",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-service-03-private.log",
+      "privacy": "private",
+      "bytes": 1601,
+      "sha256": "d2fcde21384f78c5dd4002a14ac370c4a2d910722ffecaaa0a8c47cb2519484b",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-service-04-private.log",
+      "privacy": "private",
+      "bytes": 1851,
+      "sha256": "4c9202261d43433f15903c6f240bd306c811dad52a5de8d85543e1bbaba1961e",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-service-05-private.log",
+      "privacy": "private",
+      "bytes": 1460,
+      "sha256": "5006f6803ab4061bd4779a76d41ca321d5bfd161451a1a3515d5800a91e1d8f4",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-service-private.log",
+      "privacy": "private",
+      "bytes": 754,
+      "sha256": "152236f2c7762425d0a70d6398ecfe51ee11240965538322ce30bae8c45ee69f",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-stop-02-private.log",
+      "privacy": "private",
+      "bytes": 261,
+      "sha256": "8aaf0ea8c1635eaea0227c80db05b2bf0fb2b61a0992b18cb707be8807633f5e",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-stop-02-result.json",
+      "privacy": "private",
+      "bytes": 403,
+      "sha256": "e2c0a9c0628a75b88f1d04d9f419d1f3e56c0c29bacadc9629a3dbf10a514d3b",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-stop-03-private.log",
+      "privacy": "private",
+      "bytes": 261,
+      "sha256": "8aaf0ea8c1635eaea0227c80db05b2bf0fb2b61a0992b18cb707be8807633f5e",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-stop-03-result.json",
+      "privacy": "private",
+      "bytes": 403,
+      "sha256": "3b676c104d630724682e90531cc04e7c2b086c8c647baa9791a51d91666325be",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-stop-04-private.log",
+      "privacy": "private",
+      "bytes": 261,
+      "sha256": "8aaf0ea8c1635eaea0227c80db05b2bf0fb2b61a0992b18cb707be8807633f5e",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/ui-stop-04-result.json",
+      "privacy": "private",
+      "bytes": 403,
+      "sha256": "42636fd51ef74784e1e3aebe7b4ccfded3057a5a29ae968570fe9bb925683971",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-provider-prep-20261025/deployment-native-ui-tails-20261025.json",
+      "privacy": "private",
+      "bytes": 1744,
+      "sha256": "017e67f7a5d972ad04ae003c068c17ee9607cf6806dc81b2ac37192fea47c619",
+      "kind": "native UI private acceptance driver, scope baseline, runtime log or fixture metadata"
     }
   ],
   "excludedFromPublic": [
@@ -20770,7 +22247,7 @@
   ],
   "noNewOnlineRequests": false,
   "historicalFiveSecondGateClosed": true,
-  "updatedAt": "2026-10-25T08:57:46.264577+00:00",
+  "updatedAt": "2026-10-25T09:51:09.279961+00:00",
   "followups": [
     {
       "scope": "P2 logout failure recovery only",
@@ -21258,6 +22735,70 @@
       "push": false,
       "EF": false,
       "sqlSuggestionDeferred": true
+    },
+    {
+      "scope": "Native account directory operations and current saved blueprint preflight after Owner signoff of Provider stage",
+      "report": "native-account-ui.md",
+      "previousIndexPrivateSnapshot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/evidence-index.json.before",
+      "previousIndexSha256": "0b680f7683b07543f842e089c1016b668aaf829c6847665e69545ddb5adf57a7",
+      "publicAdded": 78,
+      "privateAdded": 133,
+      "sourceFiles": [
+        {
+          "path": "scripts/local/application.mjs",
+          "sha256": "8a2cc05a2c549d99d3dd4f452a80b0014d0c8b8f6476c9dd87fda9531b60a06e",
+          "evidencePath": "evidence/native-account-ui/source/scripts/local/application.mjs.txt"
+        },
+        {
+          "path": "scripts/local/application.test.mjs",
+          "sha256": "8cd47bc53aef38abcce40cf08c52e0b4f8af18022138d5e369a0b405ba5066b8",
+          "evidencePath": "evidence/native-account-ui/source/scripts/local/application.test.mjs.txt"
+        },
+        {
+          "path": "src/local-app/accountCommands.ts",
+          "sha256": "4669924597d9c0c0ceb1c20492fbbf4dacec2aabb59d9a651621d73b050d3d46",
+          "evidencePath": "evidence/native-account-ui/source/src/local-app/accountCommands.ts.txt"
+        },
+        {
+          "path": "src/local-app/localRoute.ts",
+          "sha256": "6c48600dd7c671a16038c20469e9fc51f706ddb31d0ba00bff6b6b4eb7e6be79",
+          "evidencePath": "evidence/native-account-ui/source/src/local-app/localRoute.ts.txt"
+        },
+        {
+          "path": "src/local-app/episodeCommands.ts",
+          "sha256": "927c5a3227ed564838c3b11f5c48cd3601b4f71a18c09b5b0545171075025530",
+          "evidencePath": "evidence/native-account-ui/source/src/local-app/episodeCommands.ts.txt"
+        },
+        {
+          "path": "src/local-app/LocalCatalogApp.tsx",
+          "sha256": "419d35634c7fcf286263781e315911eae6e9e89a8a69090dfae3550f0f266eff",
+          "evidencePath": "evidence/native-account-ui/source/src/local-app/LocalCatalogApp.tsx.txt"
+        },
+        {
+          "path": "src/local-app/LocalCatalogApp.account.test.tsx",
+          "sha256": "e1c7a1a56582897b96dca4303c37bc824201f8ad8edeed54f6beaaaadb3d28d3",
+          "evidencePath": "evidence/native-account-ui/source/src/local-app/LocalCatalogApp.account.test.tsx.txt"
+        },
+        {
+          "path": "src/platform/ConfigurationForms.tsx",
+          "sha256": "81abb7336d3703144d00e8d6051136c23c6952340f6fec3c777ca2cb08c1a7e8",
+          "evidencePath": "evidence/native-account-ui/source/src/platform/ConfigurationForms.tsx.txt"
+        },
+        {
+          "path": "src/platform/ConfigurationForms.local.test.tsx",
+          "sha256": "72a4931a803649a60805db697e54b0df0740d948df68098744a87e3581e303bd",
+          "evidencePath": "evidence/native-account-ui/source/src/platform/ConfigurationForms.local.test.tsx.txt"
+        }
+      ],
+      "ownerProviderStageAccepted": true,
+      "providerRequests": 0,
+      "cumulativeRequests": 10,
+      "historicalFailuresPreserved": true,
+      "otherUnverifiedGatesClosed": false,
+      "sqlSuggestionDeferred": true,
+      "commit": false,
+      "push": false,
+      "EF": false
     }
   ],
   "defaultFiveSecondStability": {
@@ -21544,6 +23085,41 @@
     "snapshot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/google-diagnostic-20261025/closed-service-at-final-private.log",
     "reason": "Active closed intake service log may append; raw Google response and credentials were never persisted."
   },
+  "ownerProviderStageAcceptance": {
+    "accepted": true,
+    "scope": "Owner signs off current Provider/Keychain stage with previously reported failures/skips retained",
+    "sourceUserText": "明白了。那就通过吧。这阶段通过了。继续处理下一个问题吧",
+    "cumulativeRequestsAtSignoff": 10,
+    "allSixProvidersTechnicallyPassed": false,
+    "googleBillingDisabledRetained": true,
+    "freesound401Retained": true,
+    "cloudflareOpenaiSkipped": true,
+    "additionalRequestsAuthorized": false,
+    "EF": false,
+    "evidence": "evidence/native-account-ui/owner-acceptance.json"
+  },
+  "nativeAccountUi": {
+    "closed": true,
+    "scope": "Enumerated macOS directories/current saved blueprint preflight/picker disconnect and shutdown only",
+    "report": "native-account-ui.md",
+    "evidence": "evidence/native-account-ui/verification-result.json",
+    "providerRequests": 0,
+    "cumulativeRequests": 10,
+    "fullTests": 815,
+    "defaultTimeoutMs": 5000,
+    "oldFailuresPreserved": true,
+    "otherUnverifiedGatesClosed": false
+  },
+  "nativeAccountUiPrivateRuntimeExclusions": {
+    "root": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025",
+    "excluded": [
+      "tmp/",
+      "closed-service-private.log"
+    ],
+    "closedLogSnapshot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/native-ui-tails-20261025/closed-service-at-final-private.log",
+    "externalWorkExcluded": ".scratch/",
+    "reason": "Active closed intake log and temporary browser/test runtime; external concurrent work untouched. No credentials or Keychain binary published."
+  },
   "localCommitArchive": {
     "scope": "Owner-approved D1-D6 local archive; native-account followup excluded from commits",
     "baselineHead": "bca697bbc1e12626771d1283ec87a17bf85f02fe",
@@ -21594,5 +23170,30 @@
     "push": false,
     "merge": false,
     "report": "local-commit-archive.md"
+  },
+  "nativeAccountLocalArchive": {
+    "status": "locally_committed",
+    "archiveDate": "2026-10-25",
+    "baselineHead": "2722c2b1b9b32353c3a0543d5c06525e9f9959e8",
+    "commitIdentity": "The commit containing this nativeAccountLocalArchive metadata",
+    "approvedFiles": 92,
+    "sourceFiles": 9,
+    "publicReportsAndEvidence": 78,
+    "activeSummariesAndIndex": 5,
+    "excludedWorkingFilesPreserved": 93,
+    "sourceAcceptanceSnapshotsMatched": true,
+    "historicalRegression": {
+      "files": 107,
+      "passed": 815,
+      "defaultTimeoutMs": 5000,
+      "rerunDuringArchive": false
+    },
+    "originalAcceptanceReportsAndRawEvidenceModified": false,
+    "earlierCommitFalseFlagsAreHistoricalSnapshots": true,
+    "providerRequestsDuringArchive": 0,
+    "issueWrites": false,
+    "push": false,
+    "merge": false,
+    "scope": "Enumerated macOS directory operations, current saved blueprint preflight and picker cleanup only; other unverified gates retained"
   }
 }

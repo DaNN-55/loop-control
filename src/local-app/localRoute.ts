@@ -1,4 +1,5 @@
 import{readMediaDeployment}from'./mediaDeployment.js';
+import {LocalAccountCommands} from './accountCommands.js';
 import type{NativeAutomation}from'./nativeAutomation.js';
 import{LocalEpisodeLifecycle}from'./episodeLifecycle.js';
 import {executeConfiguration,ConfigurationError} from './configurationCommands.js';
@@ -12,7 +13,7 @@ import {serveOwnedArtifact} from './artifactRoute.js';
 import {LocalConnections} from './connections.js';
 import {SecretStoreError} from './connectionPorts.js';
 import type {LocalEpisodeCommands} from './episodeCommands.js';
-interface LocalOptions {pool:Pool;origin:string;mediaRoot:string;connections?:LocalConnections;episodes?:LocalEpisodeCommands;automation?:NativeAutomation}
+interface LocalOptions {pool:Pool;origin:string;mediaRoot:string;connections?:LocalConnections;episodes?:LocalEpisodeCommands;automation?:NativeAutomation;accounts?:LocalAccountCommands}
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 async function readBody(request:IncomingMessage,limit=8192):Promise<Record<string,unknown>>{
  if(request.headers['content-type']?.split(';')[0]!=='application/json')throw Error('JSON required');
@@ -23,6 +24,7 @@ export function createLocalHandler(options:LocalOptions){
  const host=new URL(options.origin).host;
  const lifecycle=new LocalEpisodeLifecycle(options.pool,options.mediaRoot,id=>options.episodes?.closeStudio(id)??Promise.resolve());
  const connections=options.connections??new LocalConnections(options.pool);
+ const accounts=options.accounts??new LocalAccountCommands(options.pool,options.mediaRoot,options.episodes);
  return async(request:IncomingMessage,response:ServerResponse)=>{
   response.setHeader('Cache-Control','no-store');response.setHeader('X-Content-Type-Options','nosniff');
   const send=(status:number,value:unknown)=>{response.writeHead(status,{'Content-Type':'application/json; charset=utf-8'});response.end(JSON.stringify(value));};
@@ -49,6 +51,11 @@ export function createLocalHandler(options:LocalOptions){
    }
    if(url.pathname==='/api/local/session'&&request.method==='GET'){send(200,{owner:{id:session.id,email:session.email},csrfToken:csrfFor(session.token)});return;}
    await readMediaDeployment(options.pool,options.mediaRoot);
+   if(url.pathname==='/api/local/account-commands'&&request.method==='POST'){
+    let body;try{body=await readBody(request,16384);}catch{send(400,{error:'账号本机操作请求格式无效。'});return;}
+    const controller=new AbortController(),closed=()=>{if(!response.writableEnded)controller.abort();};response.once('close',closed);
+    try{const result=await accounts.execute(session,body,controller.signal);if(!response.destroyed)send(200,result);}catch(error){if(!response.destroyed)throw error;}finally{response.off('close',closed);}return;
+   }
    if(url.pathname==='/api/local/configuration'&&request.method==='POST'){
     let body;try{body=await readBody(request,256*1024);}catch{send(400,{error:'配置请求格式无效。'});return;}
     send(200,await executeConfiguration(options.pool,session,body,options.mediaRoot,connections.externalReady?(client,refs)=>connections.assertBlueprintReferences(client,refs):undefined));return;

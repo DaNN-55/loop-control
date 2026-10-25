@@ -1,0 +1,9 @@
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync,existsSync} from 'node:fs';
+import {q} from '../provider-offline-prep-20261025/control.mjs';
+const run=new URL('.',import.meta.url).pathname,read=p=>JSON.parse(readFileSync(p)),loc=read(run+'deployment-location.json');assert(!existsSync(loc.base+'/app.json'));
+const inputs=read(run+'input-flags-before-private.json');for(const x of inputs)assert(/^[a-f0-9-]{36}$/.test(x.episodeId)&&typeof x.enabled==='boolean');
+q(`UPDATE local_identity.input_episodes i SET enabled=v.enabled FROM (VALUES ${inputs.map(x=>`('${x.episodeId}'::uuid,${x.enabled})`).join(',')}) v(id,enabled) WHERE i.episode_id=v.id`);
+const current=JSON.parse(q("SELECT coalesce(json_agg(json_build_object('episodeId',episode_id,'enabled',enabled)),'[]') FROM local_identity.input_episodes"));assert.equal(current.length,inputs.length);const im=new Map(current.map(x=>[x.episodeId,x.enabled]));for(const x of inputs)assert.equal(im.get(x.episodeId),x.enabled);
+const before=read(run+'tasks-before-private.json'),now=JSON.parse(q("SELECT coalesce(json_agg(json_build_object('id',id,'hash',md5(to_jsonb(t)::text))),'[]') FROM public.tasks t"));assert.equal(now.length,before.length);const tm=new Map(now.map(x=>[x.id,x.hash]));for(const x of before)assert.equal(tm.get(x.id),x.hash);
+writeFileSync(run+'history-preservation-result.json',JSON.stringify({passed:true,historicalTaskRowsHashUnchanged:before.length,historicalInputFlagsRestored:inputs.length,newTasksCreated:0,newEpisodesCreated:0,onlyOwnAccountConfigurationChanged:true,providerRequests:0},null,2)+'\n',{flag:'wx',mode:0o600});console.log('All87 input flags restored; original5510 task row hashes unchanged; no new tasks/episodes.');

@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "newAccountCreatedViaOwnerHttp": true,
+  "oldInputSchedulingPaused": true,
+  "oldTaskRowsUnchanged": true,
+  "connectionsClosed": true,
+  "providerRequests": 0,
+  "realWorkerOnlyForLocalPreflight": true
+}

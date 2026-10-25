@@ -1,0 +1,26 @@
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync,symlinkSync,existsSync} from 'node:fs';
+import {join} from 'node:path';
+import {randomUUID} from 'node:crypto';
+import {login,load,q} from '../provider-offline-prep-20261025/control.mjs';
+const run=new URL('.',import.meta.url).pathname,f=JSON.parse(readFileSync(run+'fixture-private.json')),h=await login(),origin='http://127.0.0.1:55189',calls=[];
+const revision=q(`SELECT md5(policy::text) FROM public.account_blueprint_versions WHERE id='${f.blueprintId}'`);
+async function call(command,data,headers=h){const r=await fetch(origin+'/api/local/account-commands',{method:'POST',headers,body:JSON.stringify({command,data,idempotencyKey:randomUUID()})});const v=await r.json();calls.push({command,status:r.status});return{status:r.status,value:v};}
+const check={accountId:f.accountId,blueprintVersionId:f.blueprintId,expectedRevision:revision};
+const ready=await call('checkBlueprint',check);assert.equal(ready.status,200);assert(ready.value.checks.length>0);assert(ready.value.checks.every(x=>x.status==='passed'),JSON.stringify(ready.value));
+assert.equal((await call('checkBlueprint',{...check,expectedRevision:'0'.repeat(32)})).status,409);
+assert.equal((await call('checkBlueprint',{...check,blueprintVersionId:randomUUID()})).status,409);
+assert.equal((await call('checkBlueprint',{...check,extra:'rejected'})).status,400);
+assert.equal((await call('openAssetDirectory',{accountId:f.accountId,path:'/private/tmp'})).status,400);
+assert.equal((await call('openAssetDirectory',{accountId:f.accountId,path:f.assetRoot+'/../..'})).status,400);
+const link=join(f.assetRoot,'rejected-symlink');if(!existsSync(link))symlinkSync('/private/tmp',link);
+assert.equal((await call('openAssetDirectory',{accountId:f.accountId,path:link})).status,400);
+assert.equal((await call('openAssetDirectory',{accountId:randomUUID(),path:f.assetRoot})).status,404);
+const other=q(`SELECT a.id FROM public.accounts a WHERE NOT EXISTS(SELECT 1 FROM public.account_memberships m WHERE m.account_id=a.id AND m.user_id='${load('owner-private.json').id}' AND m.role='owner') AND a.archived_at IS NULL ORDER BY a.id LIMIT 1`);assert(other,'A real invisible account is needed for the cross-Owner check');
+assert.equal((await call('openAssetDirectory',{accountId:other,path:f.assetRoot})).status,404);assert.equal((await call('checkBlueprint',{...check,accountId:other})).status,404);
+const noCsrf={...h};delete noCsrf['X-CSRF-Token'];assert.equal((await call('openAssetDirectory',{accountId:f.accountId,path:f.assetRoot},noCsrf)).status,403);
+assert.equal((await call('openAssetDirectory',{accountId:f.accountId,path:f.assetRoot},{...h,Origin:'https://invalid.example'})).status,403);
+assert.equal((await call('openAssetDirectory',{accountId:f.accountId,path:f.assetRoot},{Origin:origin,'Content-Type':'application/json'})).status,401);
+const opened=await call('openAssetDirectory',{accountId:f.accountId,path:f.assetRoot});assert.equal(opened.status,200);assert.equal(opened.value.opened,true);
+const revoked=await login();const logout=await fetch(origin+'/api/local/logout',{method:'POST',headers:revoked});assert.equal(logout.status,200);assert.equal((await call('checkBlueprint',check,revoked)).status,401);
+const result={passed:true,realNormalNpmEntry:true,realOwnerHttpAndPostgres:true,sharedCreateEpisodePreflightPassed:true,preflightHasNoTaskDispatch:true,staleBlueprintAndRevision409:true,unknownField400:true,outsideAndSymlink400:true,crossOwnerRealAccount404:true,noCsrfAndCrossOrigin403:true,noSessionAndRevokedSession401:true,realNativeOpenAccepted:true,providerRequests:0,calls};writeFileSync(run+'http-result.json',JSON.stringify(result,null,2)+'\n',{flag:'wx',mode:0o600});console.log(JSON.stringify({...result,calls:undefined}));

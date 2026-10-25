@@ -1,0 +1,163 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/connections/ConnectionWorkspace.test.tsx (8 tests) 552ms
+ ✓ src/episodes/episodeCatalog.test.tsx (5 tests) 910ms
+   ✓ server catalog in the real console > 筛选重置到第一页，慢旧页不能覆盖新筛选结果  382ms
+ ✓ src/App.test.tsx (34 tests) 980ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx (11 tests) 740ms
+ ✓ src/observability/SystemStatusPanel.test.tsx (19 tests) 411ms
+ ✓ src/worker/controlledMediaExecutor.test.ts (12 tests) 465ms
+   ✓ 受控媒体执行器 > 使用真实 ffmpeg 裁剪带原声视频并提取当前片段原声  416ms
+ ✓ scripts/local-service-record.test.mjs (6 tests) 537ms
+ ✓ src/operations/OperationsWorkspace.test.tsx (6 tests) 200ms
+ ✓ src/platform/ConfigurationForms.local.test.tsx (4 tests) 277ms
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+ ✓ scripts/openchatcut-render.test.mjs (5 tests) 211ms
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":0,"workers":[],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":0,"workers":[],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"notify","notifications":0,"skipped":0}
+ ✓ src/accounts/AccountWorkspace.test.tsx (32 tests) 3197ms
+   ✓ 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非秘密连接  337ms
+   ✓ 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿  883ms
+ ✓ src/orchestration/loopOrchestratorCli.test.ts (12 tests) 189ms
+ ✓ src/local-app/LocalCatalogApp.account.test.tsx (3 tests) 293ms
+ ✓ scripts/startup-lifecycle.acceptance.test.mjs (7 tests) 162ms
+ ✓ src/worker/whisperxAlignment.test.ts (11 tests) 139ms
+ ✓ src/local-app/LocalConnectionsPanel.test.tsx (2 tests) 116ms
+ ✓ src/orchestration/providedScriptDispatch.test.ts (6 tests) 109ms
+ ✓ src/observability/systemStatusEvidence.test.ts (4 tests) 106ms
+ ✓ src/reviews/WorkerBlockerCard.test.tsx (2 tests) 80ms
+ ✓ src/observability/TaskProgressPanel.test.tsx (4 tests) 85ms
+ ✓ src/ui/PaginationControls.test.tsx (2 tests) 68ms
+ ✓ src/ui/MarkdownPreview.test.tsx (1 test) 44ms
+ ✓ src/episodes/EpisodeProductionContainer.test.tsx (4 tests) 64ms
+ ✓ src/platform/migrationContracts.test.ts (112 tests) 39ms
+ ✓ src/publishing/ProductionCompletionModal.test.tsx (1 test) 60ms
+ ✓ scripts/isolation/environment.test.mjs (14 tests) 24ms
+ ✓ src/worker/renderReuse.test.ts (2 tests) 28ms
+ ✓ src/reviews/localArtifactPreview.test.tsx (3 tests) 33ms
+ ✓ src/publishing/publishPackage.test.ts (2 tests) 26ms
+ ✓ src/worker/openchatcutRenderer.test.ts (3 tests) 18ms
+ ✓ src/worker/mediaLibrary.test.ts (7 tests) 16ms
+ ✓ src/worker/openchatcutProject.test.ts (26 tests) 15ms
+ ✓ src/worker/codexRunner.test.ts (27 tests) 16ms
+ ✓ src/worker/storyboardArtifact.test.ts (4 tests) 8ms
+ ✓ scripts/local/import.test.mjs (1 test) 13ms
+ ✓ scripts/start-local.test.mjs (10 tests) 14ms
+ ✓ src/orchestration/notificationConsumer.test.ts (3 tests) 9ms
+ ✓ src/worker/mediaProviders.test.ts (9 tests) 9ms
+ ✓ src/worker/episodeDeletion.test.ts (1 test) 10ms
+ ✓ src/reviews/reviewSelectors.test.ts (7 tests) 12ms
+ ✓ src/platform/configurationForms.test.ts (23 tests) 7ms
+ ✓ src/worker/contracts.test.ts (18 tests) 9ms
+ ✓ src/orchestration/operationsEvidence.test.ts (2 tests) 10ms
+ ✓ src/orchestration/notificationPolicy.test.ts (5 tests) 8ms
+ ✓ src/worker/runtimeProbes.test.ts (7 tests) 9ms
+ ✓ src/worker/acousticAlignment.test.ts (7 tests) 5ms
+ ✓ src/platform/platformService.test.ts (7 tests) 4ms
+ ✓ src/reviews/blockerGuidance.test.ts (17 tests) 4ms
+ ✓ src/worker/runtimePreflight.test.ts (4 tests) 4ms
+ ✓ src/worker/codexWorkerCli.test.ts (6 tests) 2ms
+ ✓ src/worker/registeredAdapters.test.ts (6 tests) 2ms
+ ✓ src/worker/storyboardRevision.test.ts (3 tests) 2ms
+ ✓ src/local-app/keychainStore.test.ts (5 tests) 6ms
+ ✓ src/reviews/reviewRevision.test.ts (4 tests) 6ms
+ ✓ src/local-app/pexelsLiveProbe.test.ts (11 tests) 5ms
+ ✓ src/local-app/connections.test.ts (3 tests) 4ms
+ ✓ src/shotComposition.test.ts (2 tests) 2ms
+ ✓ src/worker/taskClaimArguments.test.ts (2 tests) 1ms
+ ✓ src/reviews/materialImport.test.ts (3 tests) 3ms
+ ✓ scripts/supabase-migrations.test.mjs (3 tests) 3ms
+ ✓ src/lib/pagedRead.test.ts (3 tests) 4ms
+ ✓ src/worker/legacyPexelsReference.test.ts (2 tests) 3ms
+ ✓ src/worker/durationDecision.test.ts (13 tests) 5ms
+ ✓ src/worker/manualMaterialChecklist.test.ts (1 test) 3ms
+ ✓ src/worker/workerResultSchema.test.ts (3 tests) 3ms
+ ✓ src/platform/connectionStatus.test.ts (3 tests) 3ms
+ ✓ src/worker/shotWorkbenchStudio.test.ts (1 test) 5ms
+ ✓ src/platform/externalConnections.test.ts (1 test) 2ms
+ ✓ src/episodes/episodeReadService.test.ts (3 tests) 2ms
+ ✓ src/shotCaptions.test.ts (3 tests) 2ms
+ ✓ src/worker/runtimeConstraints.test.ts (2 tests) 2ms
+ ✓ src/orchestration/backupPolicy.test.ts (2 tests) 1ms
+ ✓ src/clipTiming.test.ts (3 tests) 1ms
+ ✓ src/local-app/mediaPaths.test.ts (2 tests) 2ms
+ ✓ src/worker/productionCapabilities.test.ts (1 test) 2ms
+ ✓ src/reviews/repairTarget.test.ts (3 tests) 2ms
+ ✓ src/lib/backend.test.ts (1 test) 1ms
+ ✓ src/episodes/episodeCatalogChanges.test.ts (4 tests) 1ms
+ ✓ src/platform/accountIdentity.test.ts (2 tests) 1ms
+ ✓ src/manualArollVideo.test.ts (2 tests) 2ms
+ ✓ src/shotAcceptance.test.ts (3 tests) 1ms
+ ✓ src/orchestration/workerScheduler.test.ts (2 tests) 228ms
+ ✓ src/local-app/providerProbe.test.ts (26 tests) 354ms
+ ✓ src/local-app/password.test.ts (1 test) 232ms
+ ✓ scripts/isolation/regressions.test.mjs (10 tests) 105ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx (65 tests) 11012ms
+   ✓ 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择  2449ms
+   ✓ 审核台 > 本地人工时序编辑跨音轨轮询保留并只提交本地回调  333ms
+   ✓ 审核台 > 审核阶段可返回可编辑镜头工作台，且保留当前 QC 证据  1323ms
+   ✓ 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交  645ms
+   ✓ 审核台 > 逐镜头 TTS 可先于原片标记生成，完整保存仍要求视频  345ms
+   ✓ 审核台 > 逐镜头口播无需确认即可保存，并可保存单镜头覆盖  689ms
+   ✓ 审核台 > 同一原片支持多段裁剪并随镜头草稿一起保存  602ms
+   ✓ 审核台 > 人工媒体可在镜头工作台选择原片并保存镜头设置  545ms
+ ✓ src/local-app/artifactRoute.test.ts (1 test) 52ms
+ ✓ src/episodePreflightRoute.test.ts (15 tests) 51ms
+ ✓ src/localControlPlane.test.ts (2 tests) 32ms
+ ✓ src/local-app/localFiles.test.ts (1 test) 13ms
+ ✓ src/local-app/localRoute.test.ts (1 test) 22ms
+ ✓ src/local-app/providerNetwork.test.ts (9 tests) 1125ms
+   ✓ halts and keeps the consumed reservation on timeout  1027ms
+ ✓ src/local-app/catalogRoute.test.ts (1 test) 19ms
+ ✓ src/externalConnectionRoute.test.ts (1 test) 25ms
+ ✓ src/orchestration/runtimeBuild.test.ts (1 test) 28ms
+ ✓ scripts/isolation/database.test.mjs (5 tests) 10ms
+ ✓ scripts/local/offline-preparation.test.mjs (2 tests) 9ms
+ ✓ scripts/local/deployment.test.mjs (4 tests) 3ms
+ ✓ src/local-app/inputPreflight.test.ts (1 test) 3ms
+ ✓ scripts/isolation/http-credentials.test.mjs (1 test) 5ms
+ ✓ src/local-app/catalogQuery.test.ts (1 test) 4ms
+ ✓ scripts/local/application.test.mjs (3 tests) 3ms
+ ✓ src/local-app/databaseConfig.test.ts (1 test) 2ms
+ ✓ src/local-app/workerDatabase.test.ts (1 test) 3ms
+ ✓ src/local-app/configurationCommands.test.ts (1 test) 1ms
+ ✓ src/local-app/mediaWorker.test.ts (2 tests) 2ms
+ ✓ src/localEpisodeDirectoryRoute.test.ts (28 tests) 3407ms
+   ✓ 本地 Episode 目录路由 > 复用短时已验证的产物索引，避免重复查询和哈希  3013ms
+
+ Test Files  107 passed (107)
+      Tests  814 passed (814)
+   Start at  17:32:16
+   Duration  15.36s (transform 1.78s, setup 0ms, collect 7.52s, tests 27.18s, environment 17.81s, prepare 4.27s)
+
+导出 accounts 失败：Supabase 返回 HTTP 503
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+

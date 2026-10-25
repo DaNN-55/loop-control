@@ -1,0 +1,367 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/platform/ConfigurationForms.local.test.tsx (1 test | 1 failed) 1290ms
+   × chooses an account directory through the local Owner command and only updates the unsaved draft 1290ms
+     → expected <input aria-label="资产目录" …(2)></input> to have property "value" with value '/authorized/chosen'
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"configuration-form blueprint-configuration-form"[39m
+      [36m>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"blueprint-editor-note"[39m
+        [36m>[39m
+          [0m保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。[0m
+        [36m</p>[39m
+        [36m<fieldset>[39m
+          [36m<legend>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"field-label"[39m
+            [36m>[39m
+              [0m账号定位[0m
+              [36m<span[39m
+                [33maria-label[39m=[32m"账号定位说明"[39m
+                [33mclass[39m=[32m"help-tip"[39m
+                [33mtabindex[39m=[32m"0"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-info help-tip-icon"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"1.8"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"12"[39m
+                    [33mcy[39m=[32m"12"[39m
+                    [33mr[39m=[32m"10"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 16v-4"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 8h.01"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"help-tip-popover"[39m
+                  [33mrole[39m=[32m"tooltip"[39m
+                [36m>[39m
+                  [0m账号级长期创作基线，会进入视觉准备与分镜生成的 Prompt 上下文。当前主脚本由 Owner 提供，因此不会依据此字段自动生成脚本。只填写跨系列长期稳定的受众、主题和表达方向。[0m
+                [36m</span>[39m
+              [36m</span>[39m
+            [36m</span>[39m
+          [36m</legend>[39m
+          [36m<label>[39m
+            [36m<textarea[39m
+              [33maria-label[39m=[32m"账号定位"[39m
+              [33mplaceholder[39m=[32m"例如：面向固定受众，持续制作某类短视频内容。"[39m
+              [33mrows[39m=[32m"3"[39m
+            [36m/>[39m
+          [36m</label>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"field-hint"[39m
+          [36m>[39m
+            [0m描述账号面向谁、持续讲什么以及希望保持的表达方向。[0m
+          [36m</p>[39m
+        [36m</fieldset>[39m
+        [36m<fieldset>[39m
+          [36m<legend>[39m
+            [0m本地资产与审批[0m
+          [36m</legend>[39m
+          [36m<label>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"field-label"[39m
+            [36m>[39m
+              [0m资产目录[0m
+              [36m<span[39m
+                [33maria-label[39m=[32m"资产目录说明"[39m
+                [33mclass[39m=[32m"help-tip"[39m
+                [33mtabindex[39m=[32m"0"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-info help-tip-icon"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"1.8"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"12"[39m
+                    [33mcy[39m=[32m"12"[39m
+                    [33mr[39m=[32m"10"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 16v-4"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 8h.01"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"help-tip-popover"[39m
+                  [33mrole[39m=[32m"tooltip"[39m
+                [36m>[39m
+                  [0m建议填写一个稳定的账号目录，例如 /Volumes/素材盘/账号目录。[0m
+                [36m</span>[39m
+              [36m</span>[39m
+            [36m</span>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"asset-root-control"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33maria-label[39m=[32m"资产目录"[39m
+                [33mplaceholder[39m=[32m"例如：/Volumes/素材盘/账号目录"[39m
+                [33mvalue[39m=[32m"/authorized/original"[39m
+              [36m/>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"button button-secondary button-small"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m选择文件夹[0m
+              [36m</button>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"button button-secondary button-small"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m打开文件夹[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</label>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"blueprint-readiness"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0m资产目录已填写；保存后仍需 Worker 验证目录可读写。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"configuration-switch-groups"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"configuration-label"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"field-label"[39m
+                [36m>[39m
+                  [0m审批关卡[0m
+                  [36m<span[39m
+                    [33maria-label[39m=[32m"审批关卡说明"[39m
+                    [33mclass[39m=[32m"help-tip"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"lucide lucide-info help-tip-icon"[39m
+                      [33mfill[39m=[32m"none"[39m
+                      [33mheight[39m=[32m"24"[39m
+  ...
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  17:03:13
+   Duration  2.16s (transform 119ms, setup 0ms, collect 289ms, tests 1.29s, environment 413ms, prepare 39ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/platform/ConfigurationForms.local.test.tsx > chooses an account directory through the local Owner command and only updates the unsaved draft
+AssertionError: expected <input aria-label="资产目录" …(2)></input> to have property "value" with value '/authorized/chosen'
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<section[39m
+        [33mclass[39m=[32m"configuration-form blueprint-configuration-form"[39m
+      [36m>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"blueprint-editor-note"[39m
+        [36m>[39m
+          [0m保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。[0m
+        [36m</p>[39m
+        [36m<fieldset>[39m
+          [36m<legend>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"field-label"[39m
+            [36m>[39m
+              [0m账号定位[0m
+              [36m<span[39m
+                [33maria-label[39m=[32m"账号定位说明"[39m
+                [33mclass[39m=[32m"help-tip"[39m
+                [33mtabindex[39m=[32m"0"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-info help-tip-icon"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"1.8"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"12"[39m
+                    [33mcy[39m=[32m"12"[39m
+                    [33mr[39m=[32m"10"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 16v-4"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 8h.01"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"help-tip-popover"[39m
+                  [33mrole[39m=[32m"tooltip"[39m
+                [36m>[39m
+                  [0m账号级长期创作基线，会进入视觉准备与分镜生成的 Prompt 上下文。当前主脚本由 Owner 提供，因此不会依据此字段自动生成脚本。只填写跨系列长期稳定的受众、主题和表达方向。[0m
+                [36m</span>[39m
+              [36m</span>[39m
+            [36m</span>[39m
+          [36m</legend>[39m
+          [36m<label>[39m
+            [36m<textarea[39m
+              [33maria-label[39m=[32m"账号定位"[39m
+              [33mplaceholder[39m=[32m"例如：面向固定受众，持续制作某类短视频内容。"[39m
+              [33mrows[39m=[32m"3"[39m
+            [36m/>[39m
+          [36m</label>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"field-hint"[39m
+          [36m>[39m
+            [0m描述账号面向谁、持续讲什么以及希望保持的表达方向。[0m
+          [36m</p>[39m
+        [36m</fieldset>[39m
+        [36m<fieldset>[39m
+          [36m<legend>[39m
+            [0m本地资产与审批[0m
+          [36m</legend>[39m
+          [36m<label>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"field-label"[39m
+            [36m>[39m
+              [0m资产目录[0m
+              [36m<span[39m
+                [33maria-label[39m=[32m"资产目录说明"[39m
+                [33mclass[39m=[32m"help-tip"[39m
+                [33mtabindex[39m=[32m"0"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-info help-tip-icon"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"24"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"1.8"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"24"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"12"[39m
+                    [33mcy[39m=[32m"12"[39m
+                    [33mr[39m=[32m"10"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 16v-4"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 8h.01"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"help-tip-popover"[39m
+                  [33mrole[39m=[32m"tooltip"[39m
+                [36m>[39m
+                  [0m建议填写一个稳定的账号目录，例如 /Volumes/素材盘/账号目录。[0m
+                [36m</span>[39m
+              [36m</span>[39m
+            [36m</span>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"asset-root-control"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33maria-label[39m=[32m"资产目录"[39m
+                [33mplaceholder[39m=[32m"例如：/Volumes/素材盘/账号目录"[39m
+                [33mvalue[39m=[32m"/authorized/original"[39m
+              [36m/>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"button button-secondary button-small"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m选择文件夹[0m
+              [36m</button>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"button button-secondary button-small"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [0m打开文件夹[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</label>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"blueprint-readiness"[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0m资产目录已填写；保存后仍需 Worker 验证目录可读写。[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"configuration-switch-groups"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"configuration-label"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"field-label"[39m
+                [36m>[39m
+                  [0m审批关卡[0m
+                  [36m<span[39m
+                    [33maria-label[39m=[32m"审批关卡说明"[39m
+                    [33mclass[39m=[32m"help-tip"[39m
+                    [33mtabindex[39m=[32m"0"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"lucide lucide-info help-tip-icon"[39m
+                      [33mfill[39m=[32m"none"[39m
+                      [33mheight[39m=[32m"24"[39m
+  ...
+
+Expected: "/authorized/chosen"
+Received: "/authorized/original"
+
+ ❯ src/platform/ConfigurationForms.local.test.tsx:19:70
+
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

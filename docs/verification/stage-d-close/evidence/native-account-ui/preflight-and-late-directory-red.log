@@ -1,0 +1,295 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/platform/ConfigurationForms.local.test.tsx (2 tests | 1 failed) 168ms
+   ✓ chooses an account directory through the local Owner command and only updates the unsaved draft 80ms
+   × discards a directory selection returned after switching to a different account 88ms
+     → expected <input aria-label="资产目录" …(2)></input> to have property "value" with value '/authorized/second'
+ ❯ src/local-app/LocalCatalogApp.account.test.tsx (1 test | 1 failed) 74ms
+   × checks the exact current blueprint through the local Owner command and displays its real blocker 73ms
+     → Unable to find an accessible element with the role "button" and name "重新检查"
+
+Here are the accessible roles:
+
+  heading:
+
+  Name "检查暂不可用":
+  [36m<h2 />[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"form-error"[39m
+  [36m/>[39m
+
+  --------------------------------------------------heading:
+
+  Name "配置范围":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  term:
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  --------------------------------------------------
+  definition:
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<aside[39m
+  [33maria-label[39m=[32m"账号默认配置检查"[39m
+  [33mclass[39m=[32m"account-status-rail"[39m
+[36m>[39m
+  [36m<section[39m
+    [33mclass[39m=[32m"is-blocked"[39m
+  [36m>[39m
+    [36m<span[39m
+      [33mclass[39m=[32m"account-status-eyebrow"[39m
+    [36m>[39m
+      [0m账号默认配置检查[0m
+    [36m</span>[39m
+    [36m<h2>[39m
+      [0m检查暂不可用[0m
+    [36m</h2>[39m
+    [36m<p>[39m
+      [0m只检查当前账号蓝图，不包含具体系列；新建生产单选择系列后会再次检查并冻结配置。[0m
+    [36m</p>[39m
+    [36m<p[39m
+      [33mclass[39m=[32m"form-error"[39m
+    [36m>[39m
+      [0m本地外部连接尚未就绪；相关选择暂时阻塞。生产能力仍需后续运行前检查。[0m
+    [36m</p>[39m
+  [36m</section>[39m
+  [36m<section>[39m
+    [36m<h3>[39m
+      [0m配置范围[0m
+    [36m</h3>[39m
+    [36m<dl>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m生效对象[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m新生产单[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m已有生产单[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m保持冻结配置[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m当前开启[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m0[0m
+          [0m 项能力[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m本机依赖[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m待检查[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+    [36m</dl>[39m
+  [36m</section>[39m
+[36m</aside>[39m
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 1 passed (3)
+   Start at  17:05:06
+   Duration  1.12s (transform 426ms, setup 0ms, collect 865ms, tests 242ms, environment 613ms, prepare 73ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/LocalCatalogApp.account.test.tsx > checks the exact current blueprint through the local Owner command and displays its real blocker
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "重新检查"
+
+Here are the accessible roles:
+
+  heading:
+
+  Name "检查暂不可用":
+  [36m<h2 />[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"form-error"[39m
+  [36m/>[39m
+
+  --------------------------------------------------heading:
+
+  Name "配置范围":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  term:
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  --------------------------------------------------
+  definition:
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<aside[39m
+  [33maria-label[39m=[32m"账号默认配置检查"[39m
+  [33mclass[39m=[32m"account-status-rail"[39m
+[36m>[39m
+  [36m<section[39m
+    [33mclass[39m=[32m"is-blocked"[39m
+  [36m>[39m
+    [36m<span[39m
+      [33mclass[39m=[32m"account-status-eyebrow"[39m
+    [36m>[39m
+      [0m账号默认配置检查[0m
+    [36m</span>[39m
+    [36m<h2>[39m
+      [0m检查暂不可用[0m
+    [36m</h2>[39m
+    [36m<p>[39m
+      [0m只检查当前账号蓝图，不包含具体系列；新建生产单选择系列后会再次检查并冻结配置。[0m
+    [36m</p>[39m
+    [36m<p[39m
+      [33mclass[39m=[32m"form-error"[39m
+    [36m>[39m
+      [0m本地外部连接尚未就绪；相关选择暂时阻塞。生产能力仍需后续运行前检查。[0m
+    [36m</p>[39m
+  [36m</section>[39m
+  [36m<section>[39m
+    [36m<h3>[39m
+      [0m配置范围[0m
+    [36m</h3>[39m
+    [36m<dl>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m生效对象[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m新生产单[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m已有生产单[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m保持冻结配置[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m当前开启[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m0[0m
+          [0m 项能力[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m本机依赖[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m待检查[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+    [36m</dl>[39m
+  [36m</section>[39m
+[36m</aside>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/local-app/LocalCatalogApp.account.test.tsx:21:76
+     19|  }));
+     20|  await act(async()=>{render(<LocalCatalogApp/>);});
+     21|  const rail=screen.getByLabelText('账号默认配置检查');fireEvent.click(within(r…
+       |                                                                            ^
+     22|  await waitFor(()=>expect(rail.textContent).toContain('Native Worker u…
+     23|  expect(within(rail).getByRole('heading',{name:'1 项需要处理'})).toBeTruthy…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/platform/ConfigurationForms.local.test.tsx > discards a directory selection returned after switching to a different account
+AssertionError: expected <input aria-label="资产目录" …(2)></input> to have property "value" with value '/authorized/second'
+
+Expected: "/authorized/second"
+Received: "/authorized/old-selection"
+
+ ❯ src/platform/ConfigurationForms.local.test.tsx:31:52
+     29|  view.rerender(<BlueprintConfigurationForm {...props} accountId="10000…
+     30|  await act(async()=>{finish(Response.json({assetRoot:'/authorized/old-…
+     31|  expect(screen.getByRole('textbox',{name:'资产目录'})).toHaveProperty('val…
+       |                                                    ^
+     32| });
+     33| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

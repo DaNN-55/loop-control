@@ -1,0 +1,95 @@
+{
+  "passed": true,
+  "scope": "Enumerated native account directory operations/current saved blueprint preflight/picker shutdown only",
+  "ownerAcceptedPreviousProviderStage": true,
+  "allSixProvidersTechnicallyPassed": false,
+  "sourceFiles": [
+    {
+      "path": "scripts/local/application.mjs",
+      "sha256": "8a2cc05a2c549d99d3dd4f452a80b0014d0c8b8f6476c9dd87fda9531b60a06e",
+      "evidencePath": "evidence/native-account-ui/source/scripts/local/application.mjs.txt"
+    },
+    {
+      "path": "scripts/local/application.test.mjs",
+      "sha256": "8cd47bc53aef38abcce40cf08c52e0b4f8af18022138d5e369a0b405ba5066b8",
+      "evidencePath": "evidence/native-account-ui/source/scripts/local/application.test.mjs.txt"
+    },
+    {
+      "path": "src/local-app/accountCommands.ts",
+      "sha256": "4669924597d9c0c0ceb1c20492fbbf4dacec2aabb59d9a651621d73b050d3d46",
+      "evidencePath": "evidence/native-account-ui/source/src/local-app/accountCommands.ts.txt"
+    },
+    {
+      "path": "src/local-app/localRoute.ts",
+      "sha256": "6c48600dd7c671a16038c20469e9fc51f706ddb31d0ba00bff6b6b4eb7e6be79",
+      "evidencePath": "evidence/native-account-ui/source/src/local-app/localRoute.ts.txt"
+    },
+    {
+      "path": "src/local-app/episodeCommands.ts",
+      "sha256": "927c5a3227ed564838c3b11f5c48cd3601b4f71a18c09b5b0545171075025530",
+      "evidencePath": "evidence/native-account-ui/source/src/local-app/episodeCommands.ts.txt"
+    },
+    {
+      "path": "src/local-app/LocalCatalogApp.tsx",
+      "sha256": "419d35634c7fcf286263781e315911eae6e9e89a8a69090dfae3550f0f266eff",
+      "evidencePath": "evidence/native-account-ui/source/src/local-app/LocalCatalogApp.tsx.txt"
+    },
+    {
+      "path": "src/local-app/LocalCatalogApp.account.test.tsx",
+      "sha256": "e1c7a1a56582897b96dca4303c37bc824201f8ad8edeed54f6beaaaadb3d28d3",
+      "evidencePath": "evidence/native-account-ui/source/src/local-app/LocalCatalogApp.account.test.tsx.txt"
+    },
+    {
+      "path": "src/platform/ConfigurationForms.tsx",
+      "sha256": "81abb7336d3703144d00e8d6051136c23c6952340f6fec3c777ca2cb08c1a7e8",
+      "evidencePath": "evidence/native-account-ui/source/src/platform/ConfigurationForms.tsx.txt"
+    },
+    {
+      "path": "src/platform/ConfigurationForms.local.test.tsx",
+      "sha256": "72a4931a803649a60805db697e54b0df0740d948df68098744a87e3581e303bd",
+      "evidencePath": "evidence/native-account-ui/source/src/platform/ConfigurationForms.local.test.tsx.txt"
+    }
+  ],
+  "normalFactoryAndStartStop": true,
+  "realOwnerHttpAndPostgres": true,
+  "realChrome": true,
+  "nativePickerUserAssisted": true,
+  "chosenPathSavedAndReloaded": true,
+  "cancelPreservesDraft": true,
+  "staleAccountAndBlueprintResultFences": true,
+  "originalLogoutTestBytesUnchanged": true,
+  "clientDisconnectAndApplicationStopPickerCleanup": true,
+  "historicalTasksUnchanged": 5510,
+  "historicalInputFlagsRestored": 87,
+  "newTasks": 0,
+  "newEpisodes": 0,
+  "fullRegression": {
+    "files": 107,
+    "passed": 815,
+    "failed": 0,
+    "defaultTimeoutMs": 5000,
+    "scopeNotReduced": true
+  },
+  "node": {
+    "passed": 2,
+    "skipped": 1
+  },
+  "typesAndBuildPassed": true,
+  "modelProbeTimeoutUnchanged": true,
+  "providerRequests": 0,
+  "cumulativeProviderRequests": 10,
+  "costReservedCny": 0.03,
+  "feeCapCny": 2,
+  "actualBillQueried": false,
+  "oldLedgersUnchanged": true,
+  "originalClosedIntakeRestored": true,
+  "currentIntakeNoWorkerReportsUnavailable": true,
+  "historicalFailuresPreserved": true,
+  "otherUnverifiedGatesClosed": false,
+  "externalScratchNotTouched": true,
+  "sqlFilesChanged": false,
+  "sqlSuggestionDeferred": true,
+  "commit": false,
+  "push": false,
+  "EF": false
+}

@@ -89,3 +89,14 @@ node scripts/local/owner.mjs OWNER_UUID --initialize-restored loop_t24_restore_T
 Google TTS 单次诊断（2026-10-25）：正式音色目录请求403，原因码 `BILLING_DISABLED`；未合成、未改云端计费或Key，Google仍未验收。继承旧账本后累计10/17次、费用预留0.03/2元（非实际账单），诊断已停止封存，当前为原闭网录入服务。全部旧失败与未验收门禁保留；诊断当次未提交，后续六组已本地归档，未推送或进入 E/F，SQL 建议仍暂缓。[诊断报告](verification/stage-d-close/google-tts-diagnostic.md)。
 
 当前累计口径以单次 Google 诊断后的 **10/17 次、费用预留 0.03/2 元**为准；预留不是实际账单。上述 2 次、9 次是独立封存的历史阶段，不重置或覆盖账本。六组本地归档不包含账号新功能，范围见[归档说明](verification/stage-d-close/local-commit-archive.md)。
+
+
+## 原生账号目录与蓝图检查
+
+账号页「选择文件夹」「打开文件夹」现经正常Owner/CSRF保护的 `POST /api/local/account-commands`。系统选择器仅在macOS验证，默认定位批准媒体根，返回后再次核对会话/归属及规范目录；选中只改草稿，需显式确认保存，取消不改草稿。打开操作验证已授权目录与恢复映射，不扩大媒体根。请求断开或服务退出会中止自己的等待选择器。
+
+账号页「重新检查」检查当前已保存蓝图，通过同一端口的 `checkBlueprint` 命令携带 `accountId / blueprintVersionId / expectedRevision`；旧目标409。复用创建/启动生产单的前置检查，不派任务、不做在线探针。HTTP200可能携带unavailable/blocked，须读 `worker-preflight/v2` 检查项，不能只看状态码。保存改变修订后清除旧结果，重新检查取得新结果；原无Worker闭网录入profile会如实报告Worker未配置。
+
+本轮Provider新增0、累计10/17次、预留0.03/2元（未查实际账单）；Owner签收不将原Google计费失败或其他跳过改判为技术通过。历史失败和其他未验收门禁不变。见[验收与证据](verification/stage-d-close/native-account-ui.md)。
+
+本节账号功能已在前六组归档之后，按 Owner 认可的 92 文件范围完成独立本地归档。验收报告仍保留原基线和当时“未提交”的说明；本次只更新当前归档状态及索引 SHA，没有修改功能源码、原始日志或历史快照，也没有新的 Provider 请求、Issue 操作、推送或合并。

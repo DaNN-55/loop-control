@@ -14,7 +14,7 @@ import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {join} from 'node:path';
 import {blueprintSelectionErrors} from '../worker/runtimePreflight.js';
-import {mediaCapabilityKeys} from '../worker/productionCapabilities.js';
+import {mediaCapabilityKeys,mediaCapabilityForKey} from '../worker/productionCapabilities.js';
 import {workerPreflightVersion,type WorkerPreflightCheck} from '../worker/contracts.js';
 import {verifyReportedStoryboardArtifact} from '../worker/storyboardArtifact.js';
 export interface InputRuntime {deliveryReady?():Promise<void>;studioRuntime?():Promise<OpenChatCutRuntimeConfig>;ready():Promise<void>;narrationReady?():Promise<void>;mediaReady?(policy:Record<string,unknown>):Promise<void>;postReady?(kind:'source'|'alignment'|'preview'):Promise<void>;wake(episodeId:string):void;mountPath:string;minimumFreeBytes:number;checkReferences(client:PoolClient,refs:string[]):Promise<void>}
@@ -24,6 +24,12 @@ export class LocalEpisodeCommands {
  closeStudio(episodeId:string){return this.studios.closeEpisode(episodeId);}
  close(){return this.studios.close();}
  constructor(private pool:Pool,private mediaRoot:string,private runtime:InputRuntime){}
+ async blueprintPreflight(c:PoolClient,accountId:string,policy:Record<string,unknown>){
+  try{await this.preflight(c,accountId,policy,false);}
+  catch(error){if(error instanceof ConfigurationError&&error.preflight)return error.preflight;throw error;}
+  const capabilities=['worker_runtime','storyboard_planning',...mediaCapabilityKeys.filter(key=>policy[key]&&Object.keys(policy[key] as object).length).map(key=>mediaCapabilityForKey(key).capability)];
+  return{version:workerPreflightVersion,checks:capabilities.map(capability=>({capability,check:'local_adapter_readiness',phase:'preflight' as const,status:'passed' as const,reason:'本机运行前置条件已检查；实际 Provider 接受与产物仍由任务执行验证。',scope:'worker' as const,action:'none' as const}))};
+ }
  async execute(session:OwnerSession,body:Record<string,unknown>){
   if(typeof body.command!=='string'||!['create','importMaterial','start','review','openDirectory','planStoryboard','annotateStoryboard','requestStructureRevision','saveTtsSettings','saveTtsDraft','generateTts','registerManualMedia','saveAudioSelection','planMedia','retryMedia','saveMediaDraft','generateClip','setAudioSourceMode','generateSourceAudio','requestAlignment','saveManualAlignment','generateSyncPreview','confirmSyncPreview','openStudio','generateReviewVideo','submitStudioRevision','requestStudioCompositionRevision','requestStudioStoryboardRevision','createQcIssue','resolveQcIssue','approveQc','retryFinalRender','preparePublishPackage'].includes(body.command)||typeof body.idempotencyKey!=='string'||!/^[0-9a-f-]{36}$/.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data)||Object.keys(body).some(k=>!['command','idempotencyKey','data'].includes(k)))throw new ConfigurationError(400,'Episode命令无效。');
   const data=body.data as Record<string,unknown>,hash=createHash('sha256').update(JSON.stringify(canonical(body))).digest('hex');

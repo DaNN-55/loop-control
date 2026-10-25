@@ -1,0 +1,15 @@
+{
+  "passed": false,
+  "retainedLog": "full-default-lifecycle-final.log",
+  "actualResult": {
+    "filesPassed": 106,
+    "filesFailedToLoad": 1,
+    "testsPassed": 811
+  },
+  "reason": "Existing application factory test stubs all compiled ports; new account port was not stubbed, so an import failed after dist was cleaned by build",
+  "fix": "Add equivalent stub for newly owned account-dialog port and a close-once regression; retain all prior assertions and full scope",
+  "productRuntimeHttpPassed": true,
+  "timeoutRaised": false,
+  "assertionsWeakened": false,
+  "providerRequests": 0
+}
