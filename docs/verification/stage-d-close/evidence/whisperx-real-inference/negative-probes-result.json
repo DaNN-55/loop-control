@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "probes": [
+    {
+      "case": "missing-model",
+      "exitCode": 1,
+      "noTimeoutOverride": true,
+      "noDownloadFallback": true
+    },
+    {
+      "case": "wrong-model",
+      "exitCode": 1,
+      "noTimeoutOverride": true,
+      "noDownloadFallback": true
+    }
+  ],
+  "silentAudioActuallyInferred": true,
+  "confirmedText": "这是本地字幕验收。",
+  "arbitraryTextMismatchDetectionNotProven": true,
+  "status": "needs_review",
+  "reviewIssues": [
+    {
+      "id": "low-confidence-1",
+      "kind": "low_confidence",
+      "text": "这是本地字幕验收。",
+      "cueIds": [
+        "phrase-1"
+      ],
+      "detail": "平均置信度 0.12，低于 0.72。"
+    }
+  ],
+  "confidenceThresholdUnchanged": 0.72,
+  "notAcceptedAsCompleted": true,
+  "osNetworkSandbox": true,
+  "providerRequests": 0
+}

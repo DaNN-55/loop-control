@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "publicEntriesVerified": 831,
+  "privateEntriesVerified": 1178,
+  "priorPublicPreserved": 756,
+  "priorPrivatePrefixUnchanged": 1001,
+  "oldActiveReportsArchivedVerbatim": true,
+  "oldFollowupsAndGateObjectsUnchanged": true,
+  "historyReclassifiedAsPassed": false,
+  "unrelatedFilesUnchanged": 43,
+  "rootPlanAndProductSourceUnchanged": true,
+  "trackedFilesChangedThisTask": [
+    "docs/verification/stage-d-close/README.md",
+    "docs/verification/stage-d-close/evidence-index.json",
+    "docs/verification/stage-d-close/review.md"
+  ],
+  "knownSecretValuesScanned": 14,
+  "publicFilesScanned": 77,
+  "credentialLeaks": [],
+  "defaultRegressionWorkerGuardInstallations": 107,
+  "privateRuntimeGitIgnored": true,
+  "headUnchanged": true,
+  "stagedFiles": 0,
+  "gitDiffCheckPassed": true,
+  "commit": false,
+  "push": false,
+  "EF": false
+}

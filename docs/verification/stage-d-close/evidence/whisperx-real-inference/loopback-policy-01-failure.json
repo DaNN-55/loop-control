@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "exitCode": 65,
+  "reason": "macOS sandbox requires localhost rather than numeric loopback in ip predicate",
+  "policyNeverAppliedToApplication": true,
+  "correction": "Use OS-supported localhost matcher"
+}

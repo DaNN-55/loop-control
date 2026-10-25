@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "files": [
+    {
+      "path": "scripts/whisperx-align.py",
+      "sha256": "eeaa65e96de8289382b7e794fbb86d20c6cc05bd63d112f2a621506f8e5693d7",
+      "unchangedSinceTaskBaseline": true
+    },
+    {
+      "path": "src/local-app/alignmentWorker.ts",
+      "sha256": "e1180163cedf2739b64c955f116316b5bcc9752bf4b1ecb532a925f8f35e5e6c",
+      "unchangedSinceTaskBaseline": true
+    },
+    {
+      "path": "src/worker/whisperxAlignment.ts",
+      "sha256": "19d7e643311c9a75704d6f888dec7db7a7ebaae4776b59c1c0921c54343daa7f",
+      "unchangedSinceTaskBaseline": true
+    },
+    {
+      "path": "src/worker/whisperxAlignment.test.ts",
+      "sha256": "c8b6402a2f08722be4fbeb10d900cc60ea8410f4c6560a7fe4cc5c613dadcc55",
+      "unchangedSinceTaskBaseline": true
+    },
+    {
+      "path": "package.json",
+      "sha256": "672dadc586a9e9abe32e6bcb3da8cec638162a617e73af848fa73f2bd9f70ae9",
+      "unchangedSinceTaskBaseline": true
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "2b706d7824a557913d32bdc0f9bb5625678769bcda2040bdbd9e5ff15e67e797",
+      "unchangedSinceTaskBaseline": true
+    },
+    {
+      "path": "vite.config.ts",
+      "sha256": "852cc5bbae321271e15fb9eaa04e9f9f6efcc32da358c738bf5a9f691c515de6",
+      "unchangedSinceTaskBaseline": true
+    },
+    {
+      "path": "src/local-app/LocalCatalogApp.test.tsx",
+      "sha256": "87a78bf88544c859fbc54fcaa9ad67326d83911f55706926aede04f2215c6b95",
+      "unchangedSinceTaskBaseline": true
+    },
+    {
+      "path": "src/local-app/localWorkerCli.ts",
+      "sha256": "371514715607fad062e6de157dddd3c72ec4e7eff6cc4173e8b20c81f4599d79",
+      "unchangedSinceTaskBaseline": true
+    },
+    {
+      "path": "PLAN.md",
+      "sha256": "20980bef081217c78cf14b7f91d07462c9533d10060dd09d180e78019bbc24eb",
+      "unchangedSinceTaskBaseline": true
+    }
+  ],
+  "taskProductSourceChanges": 0,
+  "taskSqlSourceChanges": 0,
+  "rootPlanUnchanged": true,
+  "unrelatedFilesUnchanged": 43,
+  "timeoutsChanged": false,
+  "confidenceThresholdChanged": false,
+  "testAssertionsWeakened": false,
+  "testScopeReduced": false
+}

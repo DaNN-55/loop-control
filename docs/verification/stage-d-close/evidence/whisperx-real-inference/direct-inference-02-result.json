@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+  "elapsedMs": 5416.0978749999995,
+  "status": "completed",
+  "cues": [
+    {
+      "id": "phrase-1",
+      "text": "这是本地字幕验收。",
+      "startMs": 60,
+      "endMs": 4006,
+      "confidence": 0.982125
+    }
+  ],
+  "reviewIssues": 0,
+  "audioSha256": "26f49a501b9185e6f6a2f1b0e52c561a56717d361c7bf05e8f399593de7c74f3",
+  "realOriginalWhisperXFunctions": true,
+  "noUniformFallbackAccepted": true,
+  "osNetworkSandbox": true,
+  "providerRequests": 0
+}

@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "onlyOwnServiceStopped": true,
+  "recordedOwnServiceAndWorkerPidsStopped": 9,
+  "ownSessionsRevoked": true,
+  "browserSessionClosed": true,
+  "onlyOwnSyntheticBrowserAuthDeleted": true,
+  "cloneBusinessConnections": 0,
+  "privateDatabaseMediaModelVenvRetained": true,
+  "productionServicesUntouched": true
+}

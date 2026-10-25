@@ -1,0 +1,513 @@
+{"ready": true, "offline": true, "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn"}
+Timeout (0:00:08)!
+Thread 0x00000001f4d7ff80 (most recent call first):
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 1233 in create_module
+  File "<frozen importlib._bootstrap>", line 573 in module_from_spec
+  File "<frozen importlib._bootstrap>", line 676 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/scipy/spatial/__init__.py", line 113 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/scipy/stats/_stats_py.py", line 40 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/scipy/stats/__init__.py", line 628 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/utils/fixes.py", line 16 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/utils/_array_api.py", line 23 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/utils/validation.py", line 24 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/utils/_param_validation.py", line 17 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/utils/_chunking.py", line 11 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/utils/__init__.py", line 9 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1126 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/base.py", line 20 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/__init__.py", line 70 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1126 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/generation/candidate_generator.py", line 29 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/generation/utils.py", line 55 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1204 in _gcd_import
+  File "/Users/dan/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/importlib/__init__.py", line 126 in import_module
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/utils/import_utils.py", line 2345 in _get_module
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/utils/import_utils.py", line 2317 in __getattr__
+  File "<frozen importlib._bootstrap>", line 1229 in _handle_fromlist
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/models/auto/auto_factory.py", line 43 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  ...
+Timeout (0:00:08)!
+Thread 0x00000001f4d7ff80 (most recent call first):
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 1233 in create_module
+  File "<frozen importlib._bootstrap>", line 573 in module_from_spec
+  File "<frozen importlib._bootstrap>", line 676 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/scipy/interpolate/_interpolate.py", line 18 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/scipy/interpolate/__init__.py", line 192 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/scipy/stats/_continuous_distns.py", line 13 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1232 in _handle_fromlist
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/scipy/stats/distributions.py", line 10 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1232 in _handle_fromlist
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/scipy/stats/_stats_py.py", line 49 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/scipy/stats/__init__.py", line 628 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/utils/fixes.py", line 16 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/utils/_array_api.py", line 23 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/utils/validation.py", line 24 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/utils/_param_validation.py", line 17 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/utils/_chunking.py", line 11 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/utils/__init__.py", line 9 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1126 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/base.py", line 20 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/__init__.py", line 70 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1126 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  ...
+Timeout (0:00:08)!
+Thread 0x00000001f4d7ff80 (most recent call first):
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 1233 in create_module
+  File "<frozen importlib._bootstrap>", line 573 in module_from_spec
+  File "<frozen importlib._bootstrap>", line 676 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/metrics/_pairwise_distances_reduction/_dispatcher.py", line 13 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/metrics/_pairwise_distances_reduction/__init__.py", line 94 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/metrics/pairwise.py", line 19 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/metrics/cluster/_unsupervised.py", line 13 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/metrics/cluster/__init__.py", line 28 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1232 in _handle_fromlist
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/sklearn/metrics/__init__.py", line 6 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/generation/candidate_generator.py", line 29 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/generation/utils.py", line 55 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1204 in _gcd_import
+  File "/Users/dan/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/importlib/__init__.py", line 126 in import_module
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/utils/import_utils.py", line 2345 in _get_module
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/utils/import_utils.py", line 2317 in __getattr__
+  File "<frozen importlib._bootstrap>", line 1229 in _handle_fromlist
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/models/auto/auto_factory.py", line 43 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/models/auto/modeling_auto.py", line 23 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1204 in _gcd_import
+  File "/Users/dan/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/importlib/__init__.py", line 126 in import_module
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/utils/import_utils.py", line 2345 in _get_module
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/utils/import_utils.py", line 2317 in __getattr__
+  File "<frozen importlib._bootstrap>", line 1229 in _handle_fromlist
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/modeling_layers.py", line 27 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/models/wav2vec2/modeling_wav2vec2.py", line 36 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1204 in _gcd_import
+  File "/Users/dan/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/importlib/__init__.py", line 126 in import_module
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/utils/import_utils.py", line 2345 in _get_module
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/utils/import_utils.py", line 2317 in __getattr__
+  File "<frozen importlib._bootstrap>", line 1229 in _handle_fromlist
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/whisperx/alignment.py", line 12 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  ...
+Timeout (0:00:08)!
+Thread 0x00000001f4d7ff80 (most recent call first):
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 1233 in create_module
+  File "<frozen importlib._bootstrap>", line 573 in module_from_spec
+  File "<frozen importlib._bootstrap>", line 676 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/av/__init__.py", line 3 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/torchvision/io/video.py", line 17 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/torchvision/io/__init__.py", line 35 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1126 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/torchvision/datasets/_optical_flow.py", line 12 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/torchvision/datasets/__init__.py", line 1 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1232 in _handle_fromlist
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/torchvision/__init__.py", line 10 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1126 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/image_utils.py", line 55 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/processing_utils.py", line 37 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/modeling_layers.py", line 28 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/models/wav2vec2/modeling_wav2vec2.py", line 36 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1204 in _gcd_import
+  File "/Users/dan/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/importlib/__init__.py", line 126 in import_module
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/utils/import_utils.py", line 2345 in _get_module
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/utils/import_utils.py", line 2317 in __getattr__
+  File "<frozen importlib._bootstrap>", line 1229 in _handle_fromlist
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/whisperx/alignment.py", line 12 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1204 in _gcd_import
+  File "/Users/dan/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/lib/python3.11/importlib/__init__.py", line 126 in import_module
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/whisperx/__init__.py", line 5 in _lazy_import
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/whisperx/__init__.py", line 10 in load_align_model
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/offline-entry.py", line 23 in load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/whisperx-align.py", line 63 in main
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/whisperx-align.py", line 92 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 98 in _run_module_code
+  File "<frozen runpy>", line 291 in run_path
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/offline-entry.py", line 38 in <module>
+Timeout (0:00:08)!
+Thread 0x00000001f4d7ff80 (most recent call first):
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 1233 in create_module
+  File "<frozen importlib._bootstrap>", line 573 in module_from_spec
+  File "<frozen importlib._bootstrap>", line 676 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/av/video/__init__.py", line 2 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1126 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 1241 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 1241 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/av/codec/__init__.py", line 1 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1126 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 1241 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 1241 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/av/audio/__init__.py", line 1 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1126 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/av/__init__.py", line 10 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/torchvision/io/video.py", line 17 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/torchvision/io/__init__.py", line 35 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1126 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/torchvision/datasets/_optical_flow.py", line 12 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/torchvision/datasets/__init__.py", line 1 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1232 in _handle_fromlist
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/torchvision/__init__.py", line 10 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  File "<frozen importlib._bootstrap>", line 690 in _load_unlocked
+  File "<frozen importlib._bootstrap>", line 1147 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap>", line 1126 in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 1176 in _find_and_load
+  File "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/image_utils.py", line 55 in <module>
+  File "<frozen importlib._bootstrap>", line 241 in _call_with_frames_removed
+  File "<frozen importlib._bootstrap_external>", line 940 in exec_module
+  ...
+/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/venv/lib/python3.11/site-packages/transformers/configuration_utils.py:335: UserWarning: Passing `gradient_checkpointing` to a config initialization is deprecated and will be removed in v5 Transformers. Using `model.gradient_checkpointing_enable()` instead, or if you are using the `Trainer` API, pass `gradient_checkpointing=True` in your `TrainingArguments`.
+  warnings.warn(

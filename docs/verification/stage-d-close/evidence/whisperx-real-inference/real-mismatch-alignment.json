@@ -1,0 +1,32 @@
+{
+  "version": "acoustic-alignment/v1",
+  "status": "completed",
+  "method": "local_whisperx",
+  "granularity": "phrase",
+  "audioSha256": "26f49a501b9185e6f6a2f1b0e52c561a56717d361c7bf05e8f399593de7c74f3",
+  "textFingerprint": "05a2cce9f8cc5c5a76fff84e9e52e39c95571b37c2724c9018ead69f8229e204",
+  "inputVersion": "81c2679867c289ae25ca7d8dd4c474710befdfc1bfc4aa639a6766c3d0baea22",
+  "provider": "whisperx",
+  "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+  "connectionVersionId": null,
+  "wordCount": 1,
+  "cues": [
+    {
+      "id": "phrase-1",
+      "text": "紫色的火车正在海底跳舞。",
+      "startMs": 60,
+      "endMs": 4006,
+      "confidence": 0.8380909090909092
+    }
+  ],
+  "reviewIssues": [],
+  "attempts": [
+    {
+      "method": "local_whisperx",
+      "status": "completed",
+      "detail": "本地 WhisperX 已生成短语 cues。"
+    }
+  ],
+  "detail": "本地 WhisperX 对齐已完成。",
+  "generatedAt": "2026-10-25T04:40:40.325Z"
+}

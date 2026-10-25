@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "httpStatus": 409,
+  "reason": "Imported Episode approved but storyboard_enabled opt-in was disabled in source clone",
+  "correction": "Enable only this cloned Episode storyboard/alignment scope; keep actual approval and model unchanged",
+  "alsoCorrectedClientPatchReading": "Current detail response uses patches.tasks.rows and patches.taskRuns.rows"
+}

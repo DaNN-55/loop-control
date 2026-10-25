@@ -1,0 +1,46 @@
+{
+  "passed": true,
+  "phase": "preparation-downloads-only",
+  "repo": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+  "revision": "99ccb2737be22b8bb50dcfcc39ad4d567fb90cfd",
+  "cacheDirectory": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/whisperx-real-20261025/volume/media/whisperx-models",
+  "files": [
+    {
+      "file": "config.json",
+      "bytes": 1567,
+      "sha256": "9af98614e322a5300c75605227d93c98af0c8f78754aba1dfc279166688afddd",
+      "expectedLfsSha256": null,
+      "canonicalSource": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn/resolve/99ccb2737be22b8bb50dcfcc39ad4d567fb90cfd/config.json"
+    },
+    {
+      "file": "preprocessor_config.json",
+      "bytes": 158,
+      "sha256": "c403ce09975b90dff0dd8302c42d422e9de1f166cd7772df23490069893cb0cf",
+      "expectedLfsSha256": null,
+      "canonicalSource": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn/resolve/99ccb2737be22b8bb50dcfcc39ad4d567fb90cfd/preprocessor_config.json"
+    },
+    {
+      "file": "special_tokens_map.json",
+      "bytes": 85,
+      "sha256": "bb7068de1150661a10b55f9e4b12a0e77af8bf91f5e45e1b58afaf1d0e17f675",
+      "expectedLfsSha256": null,
+      "canonicalSource": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn/resolve/99ccb2737be22b8bb50dcfcc39ad4d567fb90cfd/special_tokens_map.json"
+    },
+    {
+      "file": "vocab.json",
+      "bytes": 44357,
+      "sha256": "33fea3444869c2cd2433f59da079b04ce91515f946d21fe1b0ff3825398bcec7",
+      "expectedLfsSha256": null,
+      "canonicalSource": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn/resolve/99ccb2737be22b8bb50dcfcc39ad4d567fb90cfd/vocab.json"
+    },
+    {
+      "file": "pytorch_model.bin",
+      "bytes": 1276296151,
+      "sha256": "de031fd4b29e0c0667e5346450fadfe1326c89936b888b59c4ede608db763ee4",
+      "expectedLfsSha256": "de031fd4b29e0c0667e5346450fadfe1326c89936b888b59c4ede608db763ee4",
+      "canonicalSource": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn/resolve/99ccb2737be22b8bb50dcfcc39ad4d567fb90cfd/pytorch_model.bin"
+    }
+  ],
+  "noOtherModelsDownloaded": true,
+  "inferenceNotRun": true
+}

@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "status": 0,
+  "signal": null,
+  "elapsedMs": 6543.696834,
+  "timeoutMs": 30000,
+  "timeoutOverride": false,
+  "osNetworkSandbox": true
+}

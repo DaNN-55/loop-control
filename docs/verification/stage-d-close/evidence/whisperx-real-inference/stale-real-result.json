@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "controlledPauseAfterRealAlignment": true,
+  "pausedPythonPid": 47763,
+  "oldRealResultCannotOverwriteCurrentTextOrTiming": true,
+  "oldTaskStatus": "completed",
+  "changedTextIsPunctuationOnly": true,
+  "threeDistinctFrozenInputVersions": true,
+  "currentRealTaskCompleted": true,
+  "currentText": "这是本地字幕验收？",
+  "currentCues": [
+    {
+      "id": "phrase-1",
+      "text": "这是本地字幕验收？",
+      "endMs": 4006,
+      "startMs": 60,
+      "confidence": 0.982125
+    }
+  ],
+  "reviewIssues": 0,
+  "firstSuccessfulArtifactShaStillMatches": true,
+  "noTaskTimestampOrLeaseMutation": true,
+  "noResultSubstitution": true,
+  "providerRequests": 0
+}

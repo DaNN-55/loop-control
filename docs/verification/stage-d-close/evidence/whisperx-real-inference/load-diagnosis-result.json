@@ -1,0 +1,14 @@
+{
+  "diagnosticOnly": true,
+  "firstFormalProbeTimedOutAtSeconds": 30,
+  "diagnosticLoadSeconds": 46.66609166696435,
+  "stackLocations": [
+    "scipy native-module import",
+    "transformers lazy import",
+    "torchvision native-module import"
+  ],
+  "cpuThreads": 4,
+  "networkDeniedAttempts": 0,
+  "noAcceptanceTimeoutChange": true,
+  "nextStep": "Verify same 30s budget in a new process after explicit offline dependency initialization; do not claim cold/new-host startup accepted"
+}
