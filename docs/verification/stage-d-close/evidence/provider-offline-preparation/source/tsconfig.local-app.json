@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "outDir": "./dist/local-app",
+    "rootDir": "./src",
+    "types": [
+      "node"
+    ]
+  },
+  "include": [
+    "src/local-app/catalog.ts",
+    "src/local-app/catalogRoute.ts",
+    "src/local-app/password.ts",
+    "src/local-app/sessions.ts",
+    "src/local-app/localRoute.ts",
+    "src/local-app/keychainStore.ts",
+    "src/local-app/pexelsLiveProbe.ts",
+    "src/local-app/providerProbe.ts",
+    "src/local-app/localWorkerService.ts",
+    "src/local-app/nativeBackup.ts"
+  ]
+}

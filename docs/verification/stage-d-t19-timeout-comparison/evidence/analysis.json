@@ -1,0 +1,134 @@
+{
+  "at": "2026-10-24T09:06:01.148Z",
+  "baseline": "af4856a8683d0a61f2f01911ccfe00077b4c9cc1",
+  "current": "22 source-file frozen T19 snapshot",
+  "verdict": "The exact timeout already reproduces before T19; not a failure first introduced by T19. Both variants remain intermittent at unchanged5000ms. No evidence here of increased incidence;4 runs/version cannot establish performance equivalence or root cause.",
+  "gatePassed": false,
+  "rootCauseResolved": false,
+  "summary": {
+    "baseline": {
+      "runs": 4,
+      "targetTimeouts": 1,
+      "allPassedRuns": 3,
+      "passingTargetDurationMs": [
+        3285,
+        3317,
+        3774
+      ]
+    },
+    "current": {
+      "runs": 4,
+      "targetTimeouts": 1,
+      "allPassedRuns": 3,
+      "passingTargetDurationMs": [
+        3458,
+        3815,
+        3126
+      ]
+    }
+  },
+  "rows": [
+    {
+      "run": "01-baseline",
+      "variant": "baseline",
+      "exitCode": 1,
+      "targetTimedOut": true,
+      "targetReportedDurationMs": 5019,
+      "fullSuite": "93/94 files;739/740 tests",
+      "exactFailureBlock": [
+        " FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择",
+        "Error: Test timed out in 5000ms.",
+        "If this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".",
+        " ❯ src/reviews/ReviewWorkspace.test.tsx:684:3",
+        "    682|   });",
+        "    683| ",
+        "    684|   it(\"分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择\", async () => {",
+        "       |   ^",
+        "    685|     const user = userEvent.setup();"
+      ],
+      "stdoutSha256": "43dbacbc5943bd1fdfafe76cd96faf00deac72737178bec92ebf72aa200d943b"
+    },
+    {
+      "run": "02-current",
+      "variant": "current",
+      "exitCode": 0,
+      "targetTimedOut": false,
+      "targetReportedDurationMs": 3458,
+      "fullSuite": "94/94 files;740/740 tests",
+      "exactFailureBlock": [],
+      "stdoutSha256": "9eed902ce0ae55d20c62a0c2bcd75520f5312f328d2bb19cad6c1b7dd7001848"
+    },
+    {
+      "run": "03-current",
+      "variant": "current",
+      "exitCode": 1,
+      "targetTimedOut": true,
+      "targetReportedDurationMs": 5032,
+      "fullSuite": "93/94 files;739/740 tests",
+      "exactFailureBlock": [
+        " FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择",
+        "Error: Test timed out in 5000ms.",
+        "If this is a long-running test, pass a timeout value as the last argument or configure it globally with \"testTimeout\".",
+        " ❯ src/reviews/ReviewWorkspace.test.tsx:684:3",
+        "    682|   });",
+        "    683| ",
+        "    684|   it(\"分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择\", async () => {",
+        "       |   ^",
+        "    685|     const user = userEvent.setup();"
+      ],
+      "stdoutSha256": "fdec00dd2cb56f016731387f3cc4d8ab7e85704ce14ff5896b26a0c3774ee20a"
+    },
+    {
+      "run": "04-baseline",
+      "variant": "baseline",
+      "exitCode": 0,
+      "targetTimedOut": false,
+      "targetReportedDurationMs": 3285,
+      "fullSuite": "94/94 files;740/740 tests",
+      "exactFailureBlock": [],
+      "stdoutSha256": "3e649c47ac7c2dc898ca42db0514a8a84b33234fa0713756c7dbfe86ec3ea236"
+    },
+    {
+      "run": "05-baseline",
+      "variant": "baseline",
+      "exitCode": 0,
+      "targetTimedOut": false,
+      "targetReportedDurationMs": 3317,
+      "fullSuite": "94/94 files;740/740 tests",
+      "exactFailureBlock": [],
+      "stdoutSha256": "6a751d52b0828ecbecf18c0f6058e9e272ea2caf62c9479afdfba86b4ca4d89a"
+    },
+    {
+      "run": "06-current",
+      "variant": "current",
+      "exitCode": 0,
+      "targetTimedOut": false,
+      "targetReportedDurationMs": 3815,
+      "fullSuite": "94/94 files;740/740 tests",
+      "exactFailureBlock": [],
+      "stdoutSha256": "82cad62062753698d6a8960c3dceeb941951a5bc3e58742cdf5f9f544a7aba3b"
+    },
+    {
+      "run": "07-current",
+      "variant": "current",
+      "exitCode": 0,
+      "targetTimedOut": false,
+      "targetReportedDurationMs": 3126,
+      "fullSuite": "94/94 files;740/740 tests",
+      "exactFailureBlock": [],
+      "stdoutSha256": "a11cc67068493bb7da6cbffc5dc060c988561c8986118f07cd5424c605b98914"
+    },
+    {
+      "run": "08-baseline",
+      "variant": "baseline",
+      "exitCode": 0,
+      "targetTimedOut": false,
+      "targetReportedDurationMs": 3774,
+      "fullSuite": "94/94 files;740/740 tests",
+      "exactFailureBlock": [],
+      "stdoutSha256": "2cb7a995b8667b4ef4d12935d874fe6664d036e46b0fb6bab08b02f8a73f83aa"
+    }
+  ],
+  "parserCorrection": "Original driver targetTimedOut boolean used an incorrectly escaped RegExp string and is false in raw metadata. This analysis matches the exact raw FAIL line and following Error: Test timed out in 5000ms. Raw logs/metadata are unchanged; no test rerun or timeout change used for correction.",
+  "methodSha256": "eca80128cea0eb6e9113bca93b30fb2afdd3d37414c99d600043e03c7c7cd56d"
+}

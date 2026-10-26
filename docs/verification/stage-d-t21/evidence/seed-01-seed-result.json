@@ -1,0 +1,204 @@
+{
+  "passed": true,
+  "episodes": {
+    "api": "4aa1db3e-5c21-495c-9005-3f91249571ec",
+    "browser": "1abcd883-6a6d-4276-8152-b80dbc281139"
+  },
+  "calls": [
+    {
+      "command": "create",
+      "status": 200
+    },
+    {
+      "command": "setAudioSourceMode",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "start",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "planStoryboard",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "saveAudioSelection",
+      "status": 200
+    },
+    {
+      "command": "saveMediaDraft",
+      "status": 200
+    },
+    {
+      "command": "generateClip",
+      "status": 200
+    },
+    {
+      "command": "generateSourceAudio",
+      "status": 200
+    },
+    {
+      "command": "saveManualAlignment",
+      "status": 200
+    },
+    {
+      "command": "generateSyncPreview",
+      "status": 200
+    },
+    {
+      "command": "confirmSyncPreview",
+      "status": 200
+    },
+    {
+      "command": "saveMediaDraft",
+      "status": 200
+    },
+    {
+      "command": "generateClip",
+      "status": 200
+    },
+    {
+      "command": "generateSourceAudio",
+      "status": 200
+    },
+    {
+      "command": "saveManualAlignment",
+      "status": 200
+    },
+    {
+      "command": "generateSyncPreview",
+      "status": 200
+    },
+    {
+      "command": "confirmSyncPreview",
+      "status": 200
+    },
+    {
+      "command": "create",
+      "status": 200
+    },
+    {
+      "command": "setAudioSourceMode",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "start",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "planStoryboard",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "saveAudioSelection",
+      "status": 200
+    },
+    {
+      "command": "saveMediaDraft",
+      "status": 200
+    },
+    {
+      "command": "generateClip",
+      "status": 200
+    },
+    {
+      "command": "generateSourceAudio",
+      "status": 200
+    },
+    {
+      "command": "saveManualAlignment",
+      "status": 200
+    },
+    {
+      "command": "generateSyncPreview",
+      "status": 200
+    },
+    {
+      "command": "confirmSyncPreview",
+      "status": 200
+    },
+    {
+      "command": "saveMediaDraft",
+      "status": 200
+    },
+    {
+      "command": "generateClip",
+      "status": 200
+    },
+    {
+      "command": "generateSourceAudio",
+      "status": 200
+    },
+    {
+      "command": "saveManualAlignment",
+      "status": 200
+    },
+    {
+      "command": "generateSyncPreview",
+      "status": 200
+    },
+    {
+      "command": "confirmSyncPreview",
+      "status": 200
+    }
+  ],
+  "reviewRenderNotCreatedBeforeExplicitAction": true,
+  "providerRequests": 0,
+  "realWhisperXInference": false
+}

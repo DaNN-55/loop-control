@@ -1,0 +1,10 @@
+{
+  "startedAt": "2026-10-26T07:32:09.132Z",
+  "finishedAt": "2026-10-26T07:32:26.708Z",
+  "jobId": "f553ebeb-91c3-4d03-ad4a-9132280718f4",
+  "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/backups/loop_control/f553ebeb-91c3-4d03-ad4a-9132280718f4",
+  "passed": true,
+  "detail": "本地完整备份已生成并校验：51 张表、1085 个文件；不包含密码、会话或 Keychain，恢复能力尚未验收。",
+  "archiveSha256": "e90823e6bc9466121c7581b114ba2c34d09cafaee147112a6831034e423ec991",
+  "mediaFiles": 1085
+}

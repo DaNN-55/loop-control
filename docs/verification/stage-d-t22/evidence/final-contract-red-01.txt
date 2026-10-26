@@ -1,0 +1,46 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/worker/contracts.test.ts (18 tests | 1 failed | 17 skipped) 9ms
+   ↓ Worker 契约 > 构建包含固定账号、蓝图、预算和禁止事项的任务包
+   ↓ Worker 契约 > 在 B-roll Worker 任务包中冻结非秘密连接引用
+   ↓ Worker 契约 > 旁白任务接受与 Provider 匹配的火山 TTS 冻结配置
+   ↓ Worker 契约 > 独立本地对齐任务冻结音频、Owner 正文和零成本输出
+   ↓ Worker 契约 > 原声提取任务冻结当前准备片段，并要求返回实际音频时长
+   ↓ Worker 契约 > 声轨任务只接受 Freesound Provider 与连接版本 ID
+   ↓ Worker 契约 > 把固定的系列基准原样放入视觉 Worker 任务包
+   ↓ Worker 契约 > 没有导入视觉素材且没有已登记图片 Adapter 时阻塞视觉资产准备
+   ↓ Worker 契约 > 把冻结的分层 Prompt 上下文原样交给 Worker
+   ↓ Worker 契约 > 拒绝缺少资产根目录或预算已耗尽的任务包
+   ↓ Worker 契约 > 记录实际成本但不以预算阻塞完整 Worker 结果
+   ↓ Worker 契约 > 要求 blocked 结果明确说明阻塞原因
+   ↓ Worker 契约 > 只允许未达最大尝试次数的失败任务重试
+   ↓ Worker 契约 > 允许分镜任务在阻塞时返回空分镜内容
+   ↓ Worker 契约 > 要求结果匹配任务输出类型，并使用资产根目录下的相对路径
+   ↓ Worker 契约 > 要求静态视觉产物使用可预览图片路径
+   ↓ Worker 契约 > 只接受可追溯到冻结脚本和视觉依据的唯一分镜镜头
+   × 最终工程校验统一审核入口别名，同时拒绝不同冻结文件或修订 9ms
+     → expected [Function] to not throw an error but 'Error: 最终渲染冻结工程不一致。 ' was thrown
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 17 skipped (18)
+   Start at  20:45:16
+   Duration  573ms (transform 56ms, setup 0ms, collect 63ms, tests 9ms, environment 277ms, prepare 51ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/worker/contracts.test.ts > 最终工程校验统一审核入口别名，同时拒绝不同冻结文件或修订
+AssertionError: expected [Function] to not throw an error but 'Error: 最终渲染冻结工程不一致。 ' was thrown
+
+[32m- Expected:[39m 
+undefined
+
+[31m+ Received:[39m 
+"Error: 最终渲染冻结工程不一致。 "
+
+ ❯ src/worker/contracts.test.ts:457:49
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

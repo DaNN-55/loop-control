@@ -1,0 +1,11 @@
+{
+  "ticket": 120,
+  "realBrowser": true,
+  "reusedOriginalAccountForm": true,
+  "reusedOriginalAccountWorkspace": true,
+  "browserCreatedAccount": true,
+  "blueprintSavedThenReloaded": true,
+  "seriesVersion3SavedThenReloaded": true,
+  "nonstaticRequestsOnlyLocal": true,
+  "anonymousInitialSession401Expected": true
+}

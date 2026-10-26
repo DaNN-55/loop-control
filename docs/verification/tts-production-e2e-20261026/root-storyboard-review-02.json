@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "episodeId": "86f722d2-3675-4732-a8cd-d4276af51e7c",
+  "artifactSha256": "011c7a30ba9d9cafacc622b5ae2f5468f87e40e4983b230bf4064475189a560d",
+  "shotCount": 3,
+  "characters": [
+    70,
+    75,
+    76
+  ],
+  "scenes": [
+    "forest",
+    "river",
+    "mountains"
+  ],
+  "sourceSnapshot": "afc8a44b2413eedbe695fa4162a821a0792949a402254dd970db89058ddcbc00",
+  "totalCliCalls": 4,
+  "chargedElapsedMs": 251588.087375,
+  "newRunActualCalls": 2,
+  "checkedBy": "agent",
+  "humanViewingClaim": false
+}

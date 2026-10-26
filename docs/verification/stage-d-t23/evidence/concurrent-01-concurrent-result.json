@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "concurrentProcesses": 2,
+  "uniqueAccepted": 120,
+  "primary": 87,
+  "secondary": 33,
+  "lateCommitOldTimestampAccepted": true,
+  "wrongTokenRejected": true,
+  "duplicateDailyJobs": true
+}

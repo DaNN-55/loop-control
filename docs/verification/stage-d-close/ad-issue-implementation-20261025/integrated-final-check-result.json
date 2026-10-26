@@ -1,0 +1,12 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "check"
+  ],
+  "startedAt": "2026-10-25T12:15:49.000900+00:00",
+  "finishedAt": "2026-10-25T12:15:53.758749+00:00",
+  "passed": true,
+  "exitCode": 0,
+  "providerRequests": 0
+}

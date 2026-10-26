@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "passed": true,
+  "preparedAt": "2026-10-25T05:18:48.787Z",
+  "identity": {
+    "deploymentSha256": "258c53efbc1e9c8e58bc4eb9ff569c063053e29754d479b47e9a354ea2d0e3fe",
+    "manifestSha256": "a75a69beaa0a9b27eea935975f7689f07a27a685c7cdeebfe030628c08b0667e",
+    "runnerSha256": "eeaa65e96de8289382b7e794fbb86d20c6cc05bd63d112f2a621506f8e5693d7",
+    "initializerSha256": "377c73e6b76db0e56cf14d8a141ce99157e67fe84a623dff758a03d91631ebdc",
+    "node": "v24.20.0"
+  },
+  "initializationMs": 5944.511458000001,
+  "initializationSafetyLimitMs": 120000,
+  "modelProbeMs": 5328.3179580000005,
+  "modelProbeTimeoutMs": 30000,
+  "downloads": 0,
+  "onlineProviderRequests": 0
+}

@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-26T09:49:22.379Z",
+  "scope": "Source account and episode values immediately before append-only migration",
+  "checks": [
+    {
+      "table": "accounts",
+      "rows": 3,
+      "unchanged": true
+    },
+    {
+      "table": "episodes",
+      "rows": 11,
+      "unchanged": true
+    }
+  ]
+}

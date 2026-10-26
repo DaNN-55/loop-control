@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "error": "AssertionError: broad http substring scan treated an SVG data URL namespace as an external request",
+  "actualHttpRequestCounts": {
+    "login": 2,
+    "logout": 1,
+    "configuration": 0
+  },
+  "productFailure": false
+}

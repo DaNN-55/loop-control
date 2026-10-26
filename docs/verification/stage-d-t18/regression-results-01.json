@@ -1,0 +1,69 @@
+{
+  "at": "2026-10-24T07:33:54.924Z",
+  "defaultTestTimeoutMs": 5000,
+  "environment": "cleanEnvironment(verifiedSource()); VITE_LOOP_BACKEND=local only for frontend build",
+  "logsNotOverwritten": true,
+  "results": [
+    {
+      "name": "application-types-final-01",
+      "log": "application-types-final-01.txt",
+      "command": [
+        "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-b",
+        "--pretty",
+        "false"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "local-types-final-01",
+      "log": "local-types-final-01.txt",
+      "command": [
+        "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.local-app.json"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "application-final-01",
+      "log": "application-final-01.txt",
+      "command": [
+        "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--exclude",
+        "n8n/import-workflows.test.mjs",
+        "--exclude",
+        "**/*.integration.test.ts",
+        "--exclude",
+        "**/.loop-control/**"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "node-final-01",
+      "log": "node-final-01.txt",
+      "command": [
+        "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+        "--test",
+        "n8n/import-workflows.test.mjs"
+      ],
+      "exitCode": 0
+    },
+    {
+      "name": "frontend-build-final-01",
+      "log": "frontend-build-final-01.txt",
+      "command": [
+        "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+        "node_modules/vite/bin/vite.js",
+        "build",
+        "--outDir",
+        "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t18-20261024/frontend-build-final-01"
+      ],
+      "exitCode": 0
+    }
+  ]
+}

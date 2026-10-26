@@ -1,0 +1,316 @@
+{
+  "at": "2026-10-26T11:44:12.107Z",
+  "accounts": [
+    {
+      "id": "194e137d-7bb0-4788-a413-f8b9726891d8",
+      "name": "豆包推广",
+      "expectedEpisodes": 6,
+      "visibleEpisodes": 6,
+      "total": 6,
+      "archived": 6
+    },
+    {
+      "id": "9179a633-a946-4442-9877-6293507672e6",
+      "name": "日照金山样片",
+      "expectedEpisodes": 1,
+      "visibleEpisodes": 1,
+      "total": 1,
+      "archived": 0
+    },
+    {
+      "id": "96b01bba-db16-4447-a289-283d1a03e9c9",
+      "name": "测试账号",
+      "expectedEpisodes": 4,
+      "visibleEpisodes": 4,
+      "total": 4,
+      "archived": 4
+    }
+  ],
+  "episodes": [
+    {
+      "id": "265dcee5-32c8-4066-b3ad-58803d195e01",
+      "title": "操作电脑-v4",
+      "stage": "qc_passed",
+      "archived": true,
+      "opened": true
+    },
+    {
+      "id": "3bf59fde-cf0b-47e1-990e-d7034cfbcfb3",
+      "title": "操作电脑-v2",
+      "stage": "visual_review",
+      "archived": true,
+      "opened": true
+    },
+    {
+      "id": "4bf30683-7a28-4f7f-ac2f-2a263b90bfff",
+      "title": "",
+      "stage": "storyboard_review",
+      "archived": true,
+      "opened": true
+    },
+    {
+      "id": "603a1588-a786-4ded-a4dd-a660d48ee617",
+      "title": "操作电脑",
+      "stage": "qc_review",
+      "archived": true,
+      "opened": true
+    },
+    {
+      "id": "92b3067d-ced9-4e85-bc44-1968fa83695a",
+      "title": "操作电脑-v3",
+      "stage": "qc_passed",
+      "archived": true,
+      "opened": true
+    },
+    {
+      "id": "e8700b8e-e95f-48a9-9f2e-ac3259a61ed4",
+      "title": "电脑体检打假",
+      "stage": "production_completed",
+      "archived": true,
+      "opened": true
+    },
+    {
+      "id": "bbea3b57-061b-4341-9ba1-3bf65d28899f",
+      "title": "日照金山样片 · 原稿 v1",
+      "stage": "qc_review",
+      "archived": false,
+      "opened": true
+    },
+    {
+      "id": "07328b9c-9d33-4355-bebc-998329191c56",
+      "title": "E2E 2026-08-26 · 手工视觉素材",
+      "stage": "production_completed",
+      "archived": true,
+      "opened": true
+    },
+    {
+      "id": "b4164d65-494e-4321-b5d7-e2bc7e929434",
+      "title": "E2E 2026-08-26 · HyperFrames A-roll",
+      "stage": "qc_review",
+      "archived": true,
+      "opened": true
+    },
+    {
+      "id": "b865e3dc-1c0b-40f7-8b70-7c8d1273adaa",
+      "title": "E2E 2026-08-26 · 本地 HyperFrames 与上传",
+      "stage": "storyboard_draft",
+      "archived": true,
+      "opened": true
+    },
+    {
+      "id": "da8677ae-3c4d-4815-92d5-e1fef8bc7164",
+      "title": "测试",
+      "stage": "waiting_input",
+      "archived": true,
+      "opened": true
+    }
+  ],
+  "artifactChecks": [
+    {
+      "id": "4506353a-dd26-49d6-ad3b-ac12e6974263",
+      "status": 409,
+      "knownHistoricalFailure": true,
+      "shaVerified": false
+    },
+    {
+      "id": "3589b4b2-5dab-4225-b2bc-47c02d57b924",
+      "status": 409,
+      "knownHistoricalFailure": true,
+      "shaVerified": false
+    },
+    {
+      "id": "a1dd648f-bc65-4ea5-99ae-24b612257aad",
+      "status": 409,
+      "knownHistoricalFailure": true,
+      "shaVerified": false
+    },
+    {
+      "id": "bc9550e5-dba8-4cb8-83be-166e0acc551f",
+      "status": 409,
+      "knownHistoricalFailure": true,
+      "shaVerified": false
+    },
+    {
+      "id": "d35d9201-51f8-45f8-9720-959127e65ebf",
+      "status": 409,
+      "knownHistoricalFailure": true,
+      "shaVerified": false
+    },
+    {
+      "id": "c5211b67-6dcb-464a-b1ad-532608160571",
+      "status": 409,
+      "knownHistoricalFailure": true,
+      "shaVerified": false
+    },
+    {
+      "id": "a28d03ca-febd-4cc8-801b-b94e31812777",
+      "status": 409,
+      "knownHistoricalFailure": true,
+      "shaVerified": false
+    },
+    {
+      "id": "e255c1cf-ae9f-461d-9903-bf09453b086e",
+      "status": 409,
+      "knownHistoricalFailure": true,
+      "shaVerified": false
+    },
+    {
+      "id": "45ccf6ff-4794-450d-be62-e5ba595480db",
+      "status": 200,
+      "knownHistoricalFailure": false,
+      "shaVerified": true
+    },
+    {
+      "id": "0dfd9e8a-9671-4b99-b370-21c5cf428640",
+      "status": 200,
+      "knownHistoricalFailure": false,
+      "shaVerified": true
+    },
+    {
+      "id": "363f71d2-3501-4149-b0b6-7e44f7ab668a",
+      "status": 200,
+      "knownHistoricalFailure": false,
+      "shaVerified": true
+    },
+    {
+      "id": "818dfef7-aeea-437d-9e68-0e680d199b31",
+      "status": 200,
+      "knownHistoricalFailure": false,
+      "shaVerified": true
+    },
+    {
+      "id": "23929cc1-1562-41a7-8474-bf07fd944ffd",
+      "status": 200,
+      "knownHistoricalFailure": false,
+      "shaVerified": true
+    },
+    {
+      "id": "12ef2657-eac8-427b-96c2-248004cca328",
+      "status": 200,
+      "knownHistoricalFailure": false,
+      "shaVerified": true
+    },
+    {
+      "id": "740c7844-f202-4411-b046-325d1eee80ee",
+      "status": 200,
+      "knownHistoricalFailure": false,
+      "shaVerified": true
+    },
+    {
+      "id": "414c83af-d97e-4587-85ae-cf2b45ba8a25",
+      "status": 200,
+      "knownHistoricalFailure": false,
+      "shaVerified": true
+    },
+    {
+      "id": "0ca21c4a-6040-46e5-b3b2-0c496957c0c7",
+      "status": 200,
+      "knownHistoricalFailure": false,
+      "shaVerified": true
+    },
+    {
+      "id": "14e39788-3b7f-41c2-8f6f-ea125955755e",
+      "status": 200,
+      "knownHistoricalFailure": false,
+      "shaVerified": true
+    }
+  ],
+  "systemStatus": {
+    "observedAt": "2026-10-26T11:44:12.654Z",
+    "operations": {
+      "schedule": {
+        "latest": {
+          "passed": true,
+          "idle": true,
+          "detail": "常驻调度检查完成；空闲结果仅在变化时保存。",
+          "at": "2026-10-26T11:35:06.979Z"
+        },
+        "lastSuccess": {
+          "passed": true,
+          "idle": true,
+          "detail": "常驻调度检查完成；空闲结果仅在变化时保存。",
+          "at": "2026-10-26T11:35:06.979Z"
+        },
+        "lastFailure": {
+          "passed": false,
+          "idle": false,
+          "detail": "常驻调度或规划失败，请检查本机日志。",
+          "at": "2026-10-26T11:34:59.632Z"
+        }
+      },
+      "notification": {
+        "latest": {
+          "passed": true,
+          "idle": true,
+          "detail": "没有新提醒；历史消费位置保留。",
+          "at": "2026-10-26T11:36:02.980Z"
+        },
+        "lastSuccess": {
+          "passed": true,
+          "idle": true,
+          "detail": "没有新提醒；历史消费位置保留。",
+          "at": "2026-10-26T11:36:02.980Z"
+        },
+        "lastFailure": {
+          "passed": false,
+          "idle": true,
+          "detail": "有 6 条提醒正在投递或结果未知；不会自动重发，请核对控制台队列。",
+          "at": "2026-10-26T11:35:58.966Z"
+        }
+      },
+      "health": {
+        "latest": {
+          "passed": true,
+          "detail": "数据库、媒体目录和本地运行程序检查通过。",
+          "at": "2026-10-26T04:47:10.060Z"
+        },
+        "lastSuccess": {
+          "passed": true,
+          "detail": "数据库、媒体目录和本地运行程序检查通过。",
+          "at": "2026-10-26T04:47:10.060Z"
+        },
+        "lastFailure": {
+          "passed": false,
+          "detail": "T23 controlled health failure; independent result.",
+          "at": "2026-10-25T01:00:00.000Z"
+        }
+      },
+      "backup": {
+        "latest": {
+          "passed": true,
+          "detail": "本地完整备份已生成并校验：51 张表、975 个文件；不包含密码、会话或 Keychain，恢复能力尚未验收。",
+          "at": "2026-10-26T04:47:25.564Z"
+        },
+        "lastSuccess": {
+          "passed": true,
+          "detail": "本地完整备份已生成并校验：51 张表、975 个文件；不包含密码、会话或 Keychain，恢复能力尚未验收。",
+          "at": "2026-10-26T04:47:25.564Z"
+        },
+        "lastFailure": {
+          "passed": false,
+          "detail": "本地完整备份未完成；没有成功结论。",
+          "at": "2026-10-26T01:00:00.000Z"
+        }
+      }
+    },
+    "plans": [
+      {
+        "kind": "backup",
+        "timezone": "Asia/Shanghai",
+        "next_due_at": "2026-10-27T01:00:00.000Z"
+      },
+      {
+        "kind": "health",
+        "timezone": "Asia/Shanghai",
+        "next_due_at": "2026-10-27T01:00:00.000Z"
+      }
+    ]
+  },
+  "allOriginalStatesPreserved": true,
+  "externalRequestsAdded": 0,
+  "historyExecutionScope": {
+    "inputEpisodes": 0,
+    "readyOrRunning": 0
+  },
+  "passed": true
+}

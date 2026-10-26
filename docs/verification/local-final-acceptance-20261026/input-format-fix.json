@@ -1,0 +1,9 @@
+{
+  "at": "2026-10-26T05:27:39.277Z",
+  "failure": "Original plain text rejected by existing main-script format validation before DB/API task creation",
+  "fix": "Only added H1 title and H2 正文 wrapper; no application validation changed",
+  "approvedBodyIdentical": true,
+  "originalBodySha256": "08cba70046ceda0f39343a24d351c95bab7402534d6d7b366b6784d47a294518",
+  "formattedFileSha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+  "formattedFile": ".loop-control/local/state/final-acceptance-20261026/main-script.md"
+}

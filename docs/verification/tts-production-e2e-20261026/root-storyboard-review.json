@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "episodeId": "c98880ae-f6ce-4025-9c72-a6843841ef55",
+  "artifactSha256": "0ddb364641cec9f12f51f64103cc46a5258b8ea201568cc0e0453a21623fe464",
+  "artifactBytes": 3908,
+  "shotCount": 3,
+  "shots": [
+    {
+      "id": "shot-1",
+      "text": "清晨走进森林，先把脚步放慢。阳光穿过层层树叶，在小路上留下细碎的光影。仔细听，鸟鸣和风声一直都在，只是平时忙着赶路，我们很少真正停下来感受。",
+      "characters": 70,
+      "durationSeconds": 16,
+      "productionMethod": "forest",
+      "frozenInputs": 3
+    },
+    {
+      "id": "shot-2",
+      "text": "沿着河流继续向前，水面映出天空，也映出两岸安静的树木。河水绕过石头，仍然朝远方流去。遇到暂时的阻碍，不必急着和自己较劲，换一个方向，也能找到新的出口。",
+      "characters": 75,
+      "durationSeconds": 16,
+      "productionMethod": "river",
+      "frozenInputs": 3
+    },
+    {
+      "id": "shot-3",
+      "text": "当山峦出现在眼前，视野忽然变得开阔。远处的峰顶并不催促谁，路却始终在那里。把注意力放回眼前这一步，认真走过今天能走的一段，日积月累，就会看见自己的变化。",
+      "characters": 76,
+      "durationSeconds": 16,
+      "productionMethod": "mountains",
+      "frozenInputs": 3
+    }
+  ],
+  "checkedBy": "agent",
+  "humanViewingClaim": false
+}

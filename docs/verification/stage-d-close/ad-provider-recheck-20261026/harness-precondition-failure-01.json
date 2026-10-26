@@ -1,0 +1,17 @@
+{
+  "kind": "Private acceptance harness precondition failure; not Provider response",
+  "reason": "Prior nine-value fingerprint set does not establish identity for this Provider secret; verification stopped before dispatch. Retry will pin the original registered version/reference and add newly read secret fingerprints privately, without changing credentials.",
+  "priorFingerprintLengths": [
+    36,
+    56,
+    61,
+    64,
+    65,
+    83
+  ],
+  "providerRequests": 0,
+  "keychainRestored": true,
+  "businessSourceChanged": false,
+  "originalToolErrorRetainedInConversation": true,
+  "rawProcessLogFileWasNotCaptured": true
+}

@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/reviews/ReviewWorkspace.test.tsx (65 tests | 64 skipped) 1537ms
+   ✓ 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择  1536ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 64 skipped (65)
+   Start at  10:49:22
+   Duration  2.34s (transform 380ms, setup 0ms, collect 558ms, tests 1.54s, environment 127ms, prepare 26ms)
+

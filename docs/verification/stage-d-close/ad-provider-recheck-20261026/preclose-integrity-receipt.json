@@ -1,0 +1,44 @@
+{
+  "phase": "Preclose issue149 validation",
+  "passed": true,
+  "indexSha256": "a84b00effe88e64e0b4ebf86f49d7f3ef4d64d8a2aca76cedf0ff5a2d3b01e3b",
+  "indexSnapshotRetainedPrivately": true,
+  "history": {
+    "passed": true,
+    "historicalPublicPreserved": 1400,
+    "historicalPrivatePreserved": 4442,
+    "allCurrentPublicVerified": 1428,
+    "allCurrentPrivateVerified": 4588,
+    "allOriginalGateMetadataUnchanged": true,
+    "sourceFilesUnchanged": 46,
+    "unrelatedHashesVerified": 20,
+    "headUnchanged": true,
+    "stagedFiles": [],
+    "errors": []
+  },
+  "credentialScan": {
+    "passed": true,
+    "method": "Every byte-window of each private value length compared by SHA256; no raw secrets loaded by scanner",
+    "privateFingerprintRecords": 14,
+    "distinctPrivateValues": 13,
+    "filesChecked": 75,
+    "indexIncluded": true,
+    "rawSecretsLoaded": false,
+    "hits": []
+  },
+  "providerExceptionsClosedNotPassed": [
+    137,
+    138,
+    139,
+    140
+  ],
+  "actualProviderRequests": 2,
+  "newAuthorizationsDisabled": true,
+  "keychainRestoredLocked": true,
+  "sourceAggregateSha256": "056d325ff85ba9b06cb28ef2a1f1ba12eb4459d98a2c530b4777ca1f07ca72a7",
+  "currentBusinessSourceChanges": 0,
+  "commit": false,
+  "push": false,
+  "enterEF": false,
+  "receiptExcludedFromItemizedIndex": true
+}

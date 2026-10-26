@@ -1,0 +1,11 @@
+{
+  "started": "2026-10-25T01:11:12.468Z",
+  "finished": "2026-10-25T01:11:24.662Z",
+  "command": [
+    "node",
+    ".loop-control/stage-d/state/d-close-20261025/browser-auth.mjs",
+    "restored-owner-private.json"
+  ],
+  "status": 0,
+  "passed": true
+}

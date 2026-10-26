@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "ports": {
+    "55189": "closed",
+    "55190": "closed"
+  },
+  "applicationRecordsRemoved": true,
+  "ownPgConnections": 0,
+  "postgresIdentityPreserved": true,
+  "unrelatedFilesUnchanged": 43,
+  "rootPlanUnchanged": true,
+  "indexEmpty": true,
+  "headUnchanged": true,
+  "originalDatabasesAndMedia": "separate fingerprint audit",
+  "privateDatabasesMediaArchivesAndEvidenceRetained": true,
+  "noProductionOperations": true,
+  "noCommitPushMerge": true,
+  "noEF": true
+}

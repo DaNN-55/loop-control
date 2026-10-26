@@ -1,0 +1,13 @@
+{
+  "started": "2026-10-25T00:57:10.298Z",
+  "finished": "2026-10-25T00:57:12.562Z",
+  "command": [
+    "node",
+    "--import",
+    "./scripts/local/offline-guard.mjs",
+    ".loop-control/stage-d/state/d-close-20261025/studio-browser.mjs",
+    "studio"
+  ],
+  "status": 0,
+  "passed": true
+}

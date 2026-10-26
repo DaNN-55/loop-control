@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "browser": "Google Chrome",
+  "mainOrigin": "http://127.0.0.1:5174",
+  "navigation": [
+    "系列运营",
+    "生产单",
+    "审核",
+    "账号"
+  ],
+  "themeAndSidebarPersistence": true,
+  "settingsNestedForms": 0,
+  "settingsIndependentForms": 2,
+  "finalVideoPlayback": {
+    "durationSeconds": 46.848,
+    "width": 1080,
+    "height": 1920,
+    "readyState": 4,
+    "advancedToSeconds": 24.386154,
+    "muted": true,
+    "humanListening": false
+  },
+  "viewport390": {
+    "documentScrollWidth": 375,
+    "mobileNavigationHeight": 66
+  },
+  "sessionRestoredAfterReloadAndRestart": true,
+  "studioRuntime": {
+    "passed": true,
+    "directWorkingCopySmoke": true,
+    "normalOwnerOpenNotClaimed": true,
+    "reason": "Existing completed Episode is not editable; older QC fixture requires current caption text confirmation.",
+    "databaseStateChanged": false,
+    "ownerApprovalsCreated": false,
+    "providerRequests": 0,
+    "sourceEpisodeId": "86f722d2-3675-4732-a8cd-d4276af51e7c",
+    "workingCopyId": "268196b6-cd1a-429e-9a10-3ee054ea2786",
+    "studioResourceRoot": ".loop-control/local/OpenChatCut",
+    "timelineCount": 1,
+    "itemKinds": {
+      "video": 3,
+      "audio": 3
+    },
+    "assets": 6,
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "stoppedAfterInspection": true
+  },
+  "requestCount": 1433,
+  "observedOrigins": {
+    "http://127.0.0.1:5174": 195,
+    "null": 11,
+    "http://127.0.0.1:5175": 1227
+  },
+  "supabaseOrN8nOrigins": [],
+  "onlyLocalHttpOrigins": true,
+  "observedProtocols": {
+    "http:": 1421,
+    "data:": 11,
+    "blob:": 1
+  }
+}

@@ -1,0 +1,868 @@
+{
+  "sourceCount": 356,
+  "targetCount": 320,
+  "changed": [
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.armor(bytea)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.armor(bytea, text[], text[])"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.crypt(text, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.dearmor(text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.decrypt(bytea, bytea, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.decrypt_iv(bytea, bytea, bytea, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.digest(bytea, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.digest(text, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.encrypt(bytea, bytea, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.encrypt_iv(bytea, bytea, bytea, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.gen_random_bytes(integer)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.gen_random_uuid()"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.gen_salt(text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.gen_salt(text, integer)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.hmac(bytea, bytea, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.hmac(text, text, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_armor_headers(text, OUT key text, OUT value text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_key_id(bytea)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_pub_decrypt(bytea, bytea)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_pub_decrypt(bytea, bytea, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_pub_decrypt(bytea, bytea, text, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_pub_decrypt_bytea(bytea, bytea)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_pub_decrypt_bytea(bytea, bytea, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_pub_decrypt_bytea(bytea, bytea, text, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_pub_encrypt(text, bytea)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_pub_encrypt(text, bytea, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_pub_encrypt_bytea(bytea, bytea)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_pub_encrypt_bytea(bytea, bytea, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_sym_decrypt(bytea, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_sym_decrypt(bytea, text, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_sym_decrypt_bytea(bytea, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_sym_decrypt_bytea(bytea, text, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_sym_encrypt(text, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_sym_encrypt(text, text, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_sym_encrypt_bytea(bytea, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "function",
+        "owner": "postgres",
+        "grants": [
+          {
+            "grantee": "postgres",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "postgres",
+            "grantable": false,
+            "privilege": "EXECUTE"
+          }
+        ],
+        "identity": "extensions.pgp_sym_encrypt_bytea(bytea, text, text)"
+      },
+      "restored": null
+    },
+    {
+      "source": {
+        "kind": "schema",
+        "owner": "pg_database_owner",
+        "grants": [
+          {
+            "grantee": "loop_owner",
+            "grantor": "pg_database_owner",
+            "grantable": false,
+            "privilege": "USAGE"
+          },
+          {
+            "grantee": "loop_worker",
+            "grantor": "pg_database_owner",
+            "grantable": false,
+            "privilege": "USAGE"
+          },
+          {
+            "grantee": "pg_database_owner",
+            "grantor": "pg_database_owner",
+            "grantable": false,
+            "privilege": "CREATE"
+          },
+          {
+            "grantee": "pg_database_owner",
+            "grantor": "pg_database_owner",
+            "grantable": false,
+            "privilege": "USAGE"
+          },
+          {
+            "grantee": "PUBLIC",
+            "grantor": "pg_database_owner",
+            "grantable": false,
+            "privilege": "USAGE"
+          }
+        ],
+        "identity": "public"
+      },
+      "restored": {
+        "kind": "schema",
+        "owner": "pg_database_owner",
+        "grants": [
+          {
+            "grantee": "loop_owner",
+            "grantor": "pg_database_owner",
+            "grantable": false,
+            "privilege": "USAGE"
+          },
+          {
+            "grantee": "loop_worker",
+            "grantor": "pg_database_owner",
+            "grantable": false,
+            "privilege": "USAGE"
+          },
+          {
+            "grantee": "pg_database_owner",
+            "grantor": "pg_database_owner",
+            "grantable": false,
+            "privilege": "CREATE"
+          },
+          {
+            "grantee": "pg_database_owner",
+            "grantor": "pg_database_owner",
+            "grantable": false,
+            "privilege": "USAGE"
+          }
+        ],
+        "identity": "public"
+      }
+    }
+  ]
+}

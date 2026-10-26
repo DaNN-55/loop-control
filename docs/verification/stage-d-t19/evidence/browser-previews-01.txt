@@ -1,0 +1,29 @@
+✗ CDP error (Runtime.evaluate): Inspected target navigated or closed
+node:internal/errors:986
+  const err = new Error(message);
+              ^
+
+Error: Command failed: agent-browser --session t19-local-media eval --stdin
+✗ CDP error (Runtime.evaluate): Inspected target navigated or closed
+
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:942:11)
+    at execFileSync (node:child_process:978:15)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t19-20261024/browser-previews.mjs:4:667
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  status: 1,
+  signal: null,
+  output: [
+    null,
+    '',
+    '✗ CDP error (Runtime.evaluate): Inspected target navigated or closed\n'
+  ],
+  pid: 81440,
+  stdout: '',
+  stderr: '✗ CDP error (Runtime.evaluate): Inspected target navigated or closed\n'
+}
+
+Node.js v24.20.0

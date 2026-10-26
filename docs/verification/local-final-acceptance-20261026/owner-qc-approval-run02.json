@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-26T07:18:41.475Z",
+  "source": "Direct human reply call_0b9c44b0e3ef48fda4a92ec92bca4e45",
+  "answer": "批准 QC，继续本地最终交付",
+  "episodeId": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+  "reviewPackageId": "16079a78-4ace-499e-a352-9bd91f33e7b0",
+  "artifactId": "64137fb3-5c5c-4c91-a95c-4ad220c8ca1f",
+  "sha256": "0e381fafd73fac4c747fc90f5a59aaf53f7812484ae568d0850f355f28b59a51",
+  "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/156ddca0-86ab-49f7-b328-f6e850f814f8/review-render.mp4",
+  "scope": "Current full review render QC; accepts manual second-shot timing, explicit third-shot river-valley deviation and present source clarity; local final render/package only; no external publication or new providers"
+}

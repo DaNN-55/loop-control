@@ -1,0 +1,166 @@
+{
+  "results": [
+    {
+      "provider": "google_tts",
+      "configurationUnchanged": true,
+      "configuredCandidates": 1,
+      "localChecks": [
+        {
+          "secretResolved": true,
+          "formatCompatible": true,
+          "existingImmutableReferenceUsed": true,
+          "credentialBytesComparedAgainstHistoricalFingerprint": false
+        }
+      ],
+      "outcome": "invalid",
+      "ready": false,
+      "reason": "BILLING_DISABLED",
+      "httpStatus": 403,
+      "diagnostic": {
+        "httpStatus": 403,
+        "errorStatus": "PERMISSION_DENIED",
+        "errorInfo": [
+          {
+            "reason": "BILLING_DISABLED",
+            "domain": "googleapis.com",
+            "service": "texttospeech.googleapis.com"
+          }
+        ],
+        "unrecognizedErrorInfoCount": 0,
+        "rawMessageStored": false,
+        "projectIdentifiersStored": false,
+        "headersOrCredentialsStored": false,
+        "onlyAllowlistedFieldsStored": true
+      },
+      "actualRequests": 1,
+      "transportDispatches": 1,
+      "synthesisCalls": 0,
+      "generationCalls": 0,
+      "downloads": 0,
+      "automaticRetry": false,
+      "actualBillQueried": false,
+      "costReservedCny": 0,
+      "verificationOnly": true,
+      "fullMediaAcceptancePassed": false,
+      "transportEvents": [
+        {
+          "host": "texttospeech.googleapis.com",
+          "path": "/v1/voices",
+          "method": "GET",
+          "queryHeadersAndBodyNotRecorded": true
+        }
+      ]
+    },
+    {
+      "provider": "freesound",
+      "configurationUnchanged": true,
+      "configuredCandidates": 1,
+      "localChecks": [
+        {
+          "secretResolved": true,
+          "formatCompatible": true,
+          "existingImmutableReferenceUsed": true,
+          "credentialBytesComparedAgainstHistoricalFingerprint": false
+        }
+      ],
+      "outcome": "invalid",
+      "ready": false,
+      "reason": "HTTP_401_UNAUTHORIZED",
+      "httpStatus": 401,
+      "diagnostic": {
+        "httpStatus": 401,
+        "reason": "HTTP_401_UNAUTHORIZED",
+        "rawMessageStored": false
+      },
+      "actualRequests": 1,
+      "transportDispatches": 1,
+      "synthesisCalls": 0,
+      "generationCalls": 0,
+      "downloads": 0,
+      "automaticRetry": false,
+      "actualBillQueried": false,
+      "costReservedCny": 0,
+      "verificationOnly": true,
+      "fullMediaAcceptancePassed": false,
+      "transportEvents": [
+        {
+          "host": "freesound.org",
+          "path": "/apiv2/search/",
+          "method": "GET",
+          "queryHeadersAndBodyNotRecorded": true
+        }
+      ]
+    },
+    {
+      "provider": "cloudflare",
+      "configurationUnchanged": true,
+      "configuredCandidates": 3,
+      "localChecks": [
+        {
+          "secretResolved": true,
+          "formatCompatible": false,
+          "existingImmutableReferenceUsed": true,
+          "credentialBytesComparedAgainstHistoricalFingerprint": false
+        },
+        {
+          "secretResolved": true,
+          "formatCompatible": false,
+          "existingImmutableReferenceUsed": true,
+          "credentialBytesComparedAgainstHistoricalFingerprint": false
+        },
+        {
+          "secretResolved": true,
+          "formatCompatible": false,
+          "existingImmutableReferenceUsed": true,
+          "credentialBytesComparedAgainstHistoricalFingerprint": false
+        }
+      ],
+      "outcome": "not_dispatched",
+      "ready": false,
+      "reason": "EXISTING_COMBINED_CREDENTIAL_FORMAT_INVALID",
+      "httpStatus": null,
+      "diagnostic": null,
+      "actualRequests": 0,
+      "transportDispatches": 0,
+      "synthesisCalls": 0,
+      "generationCalls": 0,
+      "downloads": 0,
+      "automaticRetry": false,
+      "actualBillQueried": false,
+      "costReservedCny": 0,
+      "verificationOnly": true,
+      "fullMediaAcceptancePassed": false,
+      "transportEvents": []
+    },
+    {
+      "provider": "openai",
+      "configurationUnchanged": true,
+      "configuredCandidates": 0,
+      "localChecks": [],
+      "outcome": "not_dispatched",
+      "ready": false,
+      "reason": "NO_EXISTING_TEST_CONNECTION",
+      "httpStatus": null,
+      "diagnostic": null,
+      "actualRequests": 0,
+      "transportDispatches": 0,
+      "synthesisCalls": 0,
+      "generationCalls": 0,
+      "downloads": 0,
+      "automaticRetry": false,
+      "actualBillQueried": false,
+      "costReservedCny": 0,
+      "verificationOnly": true,
+      "fullMediaAcceptancePassed": false,
+      "transportEvents": []
+    }
+  ],
+  "actualProviderRequests": 2,
+  "allStillUnavailable": true,
+  "businessCodeChanged": false,
+  "connectionConfigurationChanged": false,
+  "oldBudgetsReusedOrReset": false,
+  "scope": "Actual qualification retry or current local preflight only; never a complete media acceptance",
+  "normalizedPublicProjection": true,
+  "privateFullReceiptRetained": true
+}

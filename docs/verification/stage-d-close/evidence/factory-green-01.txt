@@ -1,0 +1,78 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ scripts/local/application.test.mjs (2 tests) 5ms
+
+ Test Files  5 failed | 1 passed (6)
+      Tests  2 passed (2)
+   Start at  08:44:05
+   Duration  1.91s (transform 2.28s, setup 0ms, collect 35ms, tests 5ms, environment 1.64s, prepare 372ms)
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/LocalCatalogApp.test.tsx [ src/local-app/LocalCatalogApp.test.tsx ]
+Error: 缺少 Supabase 本地客户端配置。
+ ❯ src/lib/supabase.ts:11:9
+      9| 
+     10| if (!supabaseUrl || !supabasePublishableKey) {
+     11|   throw new Error("缺少 Supabase 本地客户端配置。");
+       |         ^
+     12| }
+     13| 
+ ❯ src/reviews/localArtifactPreview.ts:6:52
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  .loop-control/stage-d/state/t19-timeout-comparison-20261024/frozen-baseline/src/local-app/LocalCatalogApp.test.tsx [ .loop-control/stage-d/state/t19-timeout-comparison-20261024/frozen-baseline/src/local-app/LocalCatalogApp.test.tsx ]
+Error: 缺少 Supabase 本地客户端配置。
+ ❯ .loop-control/stage-d/state/t19-timeout-comparison-20261024/frozen-baseline/src/lib/supabase.ts:11:9
+      9| 
+     10| if (!supabaseUrl || !supabasePublishableKey) {
+     11|   throw new Error("缺少 Supabase 本地客户端配置。");
+       |         ^
+     12| }
+     13| 
+ ❯ .loop-control/stage-d/state/t19-timeout-comparison-20261024/frozen-baseline/src/reviews/localArtifactPreview.ts:6:52
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  .loop-control/stage-d/state/t19-timeout-comparison-20261024/checkout/src/local-app/LocalCatalogApp.test.tsx [ .loop-control/stage-d/state/t19-timeout-comparison-20261024/checkout/src/local-app/LocalCatalogApp.test.tsx ]
+Error: 缺少 Supabase 本地客户端配置。
+ ❯ .loop-control/stage-d/state/t19-timeout-comparison-20261024/checkout/src/lib/supabase.ts:11:9
+      9| 
+     10| if (!supabaseUrl || !supabasePublishableKey) {
+     11|   throw new Error("缺少 Supabase 本地客户端配置。");
+       |         ^
+     12| }
+     13| 
+ ❯ .loop-control/stage-d/state/t19-timeout-comparison-20261024/checkout/src/reviews/localArtifactPreview.ts:6:52
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  .loop-control/stage-d/state/t19-timeout-comparison-20261024/frozen-current/src/local-app/LocalCatalogApp.test.tsx [ .loop-control/stage-d/state/t19-timeout-comparison-20261024/frozen-current/src/local-app/LocalCatalogApp.test.tsx ]
+Error: 缺少 Supabase 本地客户端配置。
+ ❯ .loop-control/stage-d/state/t19-timeout-comparison-20261024/frozen-current/src/lib/supabase.ts:11:9
+      9| 
+     10| if (!supabaseUrl || !supabasePublishableKey) {
+     11|   throw new Error("缺少 Supabase 本地客户端配置。");
+       |         ^
+     12| }
+     13| 
+ ❯ .loop-control/stage-d/state/t19-timeout-comparison-20261024/frozen-current/src/reviews/localArtifactPreview.ts:6:52
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  .loop-control/stage-d/state/t21-20261024/t20-baseline/src/local-app/LocalCatalogApp.test.tsx [ .loop-control/stage-d/state/t21-20261024/t20-baseline/src/local-app/LocalCatalogApp.test.tsx ]
+Error: 缺少 Supabase 本地客户端配置。
+ ❯ .loop-control/stage-d/state/t21-20261024/t20-baseline/src/lib/supabase.ts:11:9
+      9| 
+     10| if (!supabaseUrl || !supabasePublishableKey) {
+     11|   throw new Error("缺少 Supabase 本地客户端配置。");
+       |         ^
+     12| }
+     13| 
+ ❯ .loop-control/stage-d/state/t21-20261024/t20-baseline/src/reviews/localArtifactPreview.ts:6:52
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+

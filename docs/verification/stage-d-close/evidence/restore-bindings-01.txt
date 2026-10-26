@@ -1,0 +1,1 @@
+Normal startup rejected real mismatched Worker database and media receipt, without touching the running restored app

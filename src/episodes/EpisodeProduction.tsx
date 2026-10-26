@@ -1,8 +1,8 @@
+import {isValidMainScript,mainScriptFormatError} from "../reviews/mainScript";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { ClipboardList, Copy, Download, Ellipsis, FileText, Film, FolderOpen, GripVertical, History, ImageIcon, Play, RefreshCw, ShieldAlert, ShieldCheck, Trash2, Upload, Volume2, X, type LucideIcon } from "lucide-react";
 import type { Database, Json } from "../lib/database.types";
-import { supabase } from "../lib/supabase";
 import { blueprintAssetRoot } from "../platform/blueprintPolicy";
 import type { EpisodeStage } from "../platform/types";
 import { clearOperationDraft, readOperationDraft, writeOperationDraft } from "../operationDraft";
@@ -175,6 +175,9 @@ export interface ShotReviewVideoRequest {
   workspaceRelativePath: string;
 }
 
+export interface ShotAlignmentRequest { episodeId: string; reviewPackageId: string; shotId: string; localOnly: boolean }
+export interface ShotCaptionTextConfirmationRequest { episodeId: string; reviewPackageId: string; shotId: string; audioTrackId: string; audioSha256: string; textFingerprint: string; alignmentInputVersion: string }
+export interface ShotManualAlignmentRequest { episodeId: string; reviewPackageId: string; shotId: string; cues: Array<{ id: string; text: string; start_ms: number; end_ms: number }> }
 export interface ShotSyncPreviewRequest {
   deviationResolution?: "confirmation_reason" | "episode_exception" | "none";
   episodeId: string;
@@ -383,6 +386,7 @@ function workerBlockersFromPreflight(preflight: WorkerPreflightResult | null): W
 }
 
 async function requestImmediateTaskDispatch(episodeId: string, taskId: string): Promise<{ accepted: boolean; reason: string }> {
+  const { supabase } = await import("../lib/supabase");
   const { data, error } = await supabase.auth.getSession();
   if (error || !data.session) return { accepted: false, reason: "Owner 登录会话不可用" };
   const response = await fetch(`/_episode-dispatch?${new URLSearchParams({ episode: episodeId, task: taskId }).toString()}`, {
@@ -451,7 +455,7 @@ function EpisodeUtilityPopover({ artifacts, dispatchRequested, history, kind, on
   return <div aria-label={heading} className={`episode-utility-popover episode-utility-popover-${kind}`} role="dialog"><header><strong>{heading}</strong><button aria-label={`关闭${heading}`} className="icon-button" onClick={onClose} type="button"><X className="icon" /></button></header>{kind === "artifacts" ? <div className="episode-utility-artifacts">{artifacts.length ? artifacts.map((artifact) => <Artifact complete key={artifact.id} label={artifact.artifact_type} name={artifact.relative_path} />) : <div className="episode-utility-summary"><strong>尚无产物</strong><p>Worker 尚未生成可查看的产物。</p></div>}</div> : <section aria-labelledby="episode-state-history-heading" className="episode-state-history"><h3 id="episode-state-history-heading">状态变化与任务执行</h3>{dispatchRequested && !tasks.length ? <p aria-live="polite" className="timeline-dispatch-status">已提交即时派发，正在等待编排器创建任务记录。</p> : null}{timeline.length ? <ol className="timeline">{timeline.map((transition) => { const attachedTasks = transitionTasks.get(transition.id) ?? []; return <li key={transition.id}><i className={`timeline-dot ${stageTone(transition.to_stage)}`} /><div className="timeline-entry"><strong>{stageLabels[transition.to_stage]}</strong><span>{userFacingTransitionReason(transition.reason)}</span>{attachedTasks.length ? <div aria-label={`${stageLabels[transition.to_stage]}任务记录`} className="timeline-task-details">{attachedTasks.map((task) => <TaskTimelineDetail key={task.id} task={task} taskRuns={taskRuns} />)}</div> : null}</div><time>{formatDate(transition.created_at)}</time></li>; })}</ol> : <div className="episode-utility-summary"><strong>暂无状态变化</strong><p>生产单创建、任务执行和状态变化会显示在这里。</p></div>}</section>}</div>;
 }
 
-export function EpisodeProductionView({ artifacts, audioTrackAnnotations, audioTracks, blueprint, connectionVersions = [], dispatchFailure, durationSettings = defaultReviewRenderDurationSettings, episode, isDirectoryOpenPending = false, isMaterialPending, isProductionTracking = false, isRefreshPending = false, isShotReviewVideoPending = false, isShotTtsSettingsPending = false, isStartProductionPending = false, isStoryboardAnnotationPending, isTransitionPending, materialRevisions = [], onCreateAudioTrackAnnotation, onCreateQcReviewIssue = async () => {}, onOpenBlueprint, onOpenStudio = async () => { throw new Error("当前无法打开 OpenChatCut。"); }, onOpenLocalDirectory = async () => {}, onNotify = () => {}, onCreateStoryboardAnnotation, onImportMaterial, onRegisterManualMedia = async () => {}, onGenerateShotTts = async () => {}, onGenerateShotReviewVideo = async () => {}, onGenerateShotSyncPreview = async () => {}, onConfirmShotSyncPreview = async () => {}, onRequestShotStructureRevision = async () => {}, onRefresh = async () => {}, onRequestQcMemberRevision = async () => {}, onRequestRevision, onRepairConnection, onRetryFinalRender = async () => false, onSaveShotPreparationDraft = async () => {}, onSaveEpisodeTtsSettings = async () => {}, onSaveStoryboardAudioSelection = async () => {}, onSubmitStudioRevision = async () => { throw new Error("当前无法提交 Studio 修订。"); }, onResolveQcReviewIssue = async () => {}, onReviewPreRenderMember = async () => {}, onStartProduction = async () => {}, onTransition, ownerId = "local-owner", preRenderReviewMemberDecisions = [], preRenderReviewMembers = [], productionPreflight = null, qcReviewIssues = [], reviewAnnotations, reviewPackages, shotPreparationDrafts = [], storyboardAudioSelections = [], taskRuns = [], tasks, transitions }: { artifacts: Artifact[]; audioTrackAnnotations: AudioTrackAnnotation[]; audioTracks: AudioTrack[]; blueprint: Blueprint | null; connectionVersions?: ExternalConnectionVersion[]; dispatchFailure?: { detail: string; taskId: string }; durationSettings?: ReviewRenderDurationSettings; episode: Episode; isDirectoryOpenPending?: boolean; isMaterialPending: boolean; isProductionTracking?: boolean; isRefreshPending?: boolean; isShotReviewVideoPending?: boolean; isShotTtsSettingsPending?: boolean; isStartProductionPending?: boolean; isStoryboardAnnotationPending: boolean; isTransitionPending: boolean; materialRevisions?: MaterialRevision[]; onCreateAudioTrackAnnotation: (input: AudioTrackAnnotationRequest) => Promise<void>; onCreateQcReviewIssue?: (input: QcReviewIssueRequest) => Promise<void>; onOpenBlueprint?: (blocker: WorkerBlocker) => void; onOpenStudio?: (episodeId: string, projectRelativePath: string) => Promise<OpenChatCutStudioWorkspace>; onOpenLocalDirectory?: (episodeId: string) => Promise<void>; onNotify?: (message: string) => void; onCreateStoryboardAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onImportMaterial: MaterialImportHandler; onRegisterManualMedia?: (input: ManualMediaBindingRequest) => Promise<void>; onGenerateShotTts?: (input: ShotTtsGenerationRequest) => Promise<void>; onGenerateShotReviewVideo?: (input: ShotReviewVideoRequest) => Promise<void>; onGenerateShotSyncPreview?: (input: ShotSyncPreviewRequest) => Promise<void>; onConfirmShotSyncPreview?: (input: ShotSyncPreviewRequest) => Promise<void>; onRequestShotStructureRevision?: (input: ShotStructureRevisionRequest) => Promise<void>; onRefresh?: () => Promise<void>; onRepairConnection?: (blocker: WorkerBlocker, versionId: string) => Promise<void>; onRequestRevision: (input: ReviewRevisionRequest) => Promise<ReviewRevisionOutcome>; onRequestQcMemberRevision?: (issueId: string) => Promise<void>; onRetryFinalRender?: (episodeId: string, reason: string) => Promise<boolean>; onSaveShotPreparationDraft?: (input: ShotPreparationDraftRequest) => Promise<void>; onSaveEpisodeTtsSettings?: (input: { episodeId: string; languageCode: string; speakingRate: number; voice: string }) => Promise<void>; onSaveStoryboardAudioSelection?: (input: StoryboardAudioSelectionRequest) => Promise<void>; onSubmitStudioRevision?: (input: Omit<StudioReviewRevisionRequest, "accessToken">) => Promise<ReviewRevisionOutcome>; onResolveQcReviewIssue?: (issueId: string, status: "accepted" | "ignored") => Promise<void>; onReviewPreRenderMember?: (input: PreRenderMemberReviewRequest) => Promise<void>; onStartProduction?: (episodeId: string) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; ownerId?: string; preRenderReviewMemberDecisions?: PreRenderMemberDecision[]; preRenderReviewMembers?: PreRenderReviewMember[]; productionPreflight?: WorkerPreflightResult | null; qcReviewIssues?: QcReviewIssues[]; reviewAnnotations: ReviewAnnotation[]; reviewPackages: ReviewPackage[]; shotPreparationDrafts?: ShotPreparationDraft[]; storyboardAudioSelections?: StoryboardAudioSelection[]; taskRuns?: TaskRun[]; tasks: Task[]; transitions: Transition[] }) {
+export function EpisodeProductionView({ artifacts, audioTrackAnnotations, audioTracks, blueprint, localAssetRoot, connectionVersions = [], dispatchFailure, durationSettings = defaultReviewRenderDurationSettings, episode, isDirectoryOpenPending = false, isMaterialPending, isProductionTracking = false, isRefreshPending = false, isShotReviewVideoPending = false, isShotTtsSettingsPending = false, isStartProductionPending = false, isStoryboardAnnotationPending, isTransitionPending, materialRevisions = [], onCreateAudioTrackAnnotation, onCreateQcReviewIssue = async () => {}, onOpenBlueprint, onOpenStudio = async () => { throw new Error("当前无法打开 OpenChatCut。"); }, onOpenLocalDirectory = async () => {}, onNotify = () => {}, onCreateStoryboardAnnotation, onImportMaterial, onRegisterManualMedia = async () => {}, onGenerateShotTts = async () => {}, onGenerateShotReviewVideo = async () => {}, onRequestShotAlignment, onSaveShotManualAlignment, onConfirmShotCaptionText, onGenerateShotSyncPreview = async () => {}, onConfirmShotSyncPreview = async () => {}, onRequestShotStructureRevision = async () => {}, onRefresh = async () => {}, onRequestQcMemberRevision = async () => {}, onRequestRevision, onRepairConnection, onRetryFinalRender = async () => false, onSaveShotPreparationDraft = async () => {}, onSaveEpisodeTtsSettings = async () => {}, onSaveStoryboardAudioSelection = async () => {}, onSubmitStudioRevision = async () => { throw new Error("当前无法提交 Studio 修订。"); }, onResolveQcReviewIssue = async () => {}, onReviewPreRenderMember = async () => {}, onStartProduction = async () => {}, onTransition, ownerId = "local-owner", preRenderReviewMemberDecisions = [], preRenderReviewMembers = [], productionPreflight = null, qcReviewIssues = [], reviewAnnotations, reviewPackages, shotPreparationDrafts = [], storyboardAudioSelections = [], taskRuns = [], tasks, transitions }: { artifacts: Artifact[]; audioTrackAnnotations: AudioTrackAnnotation[]; audioTracks: AudioTrack[]; blueprint: Blueprint | null; localAssetRoot?: string; connectionVersions?: ExternalConnectionVersion[]; dispatchFailure?: { detail: string; taskId: string }; durationSettings?: ReviewRenderDurationSettings; episode: Episode; isDirectoryOpenPending?: boolean; isMaterialPending: boolean; isProductionTracking?: boolean; isRefreshPending?: boolean; isShotReviewVideoPending?: boolean; isShotTtsSettingsPending?: boolean; isStartProductionPending?: boolean; isStoryboardAnnotationPending: boolean; isTransitionPending: boolean; materialRevisions?: MaterialRevision[]; onCreateAudioTrackAnnotation: (input: AudioTrackAnnotationRequest) => Promise<void>; onCreateQcReviewIssue?: (input: QcReviewIssueRequest) => Promise<void>; onOpenBlueprint?: (blocker: WorkerBlocker) => void; onOpenStudio?: (episodeId: string, projectRelativePath: string) => Promise<OpenChatCutStudioWorkspace>; onOpenLocalDirectory?: (episodeId: string) => Promise<void>; onNotify?: (message: string) => void; onCreateStoryboardAnnotation: (input: StoryboardAnnotationRequest) => Promise<void>; onImportMaterial: MaterialImportHandler; onRegisterManualMedia?: (input: ManualMediaBindingRequest) => Promise<void>; onGenerateShotTts?: (input: ShotTtsGenerationRequest) => Promise<void>; onGenerateShotReviewVideo?: (input: ShotReviewVideoRequest) => Promise<void>; onRequestShotAlignment?: (input: ShotAlignmentRequest) => Promise<void>; onSaveShotManualAlignment?: (input: ShotManualAlignmentRequest) => Promise<void>; onConfirmShotCaptionText?: (input: ShotCaptionTextConfirmationRequest) => Promise<void>; onGenerateShotSyncPreview?: (input: ShotSyncPreviewRequest) => Promise<void>; onConfirmShotSyncPreview?: (input: ShotSyncPreviewRequest) => Promise<void>; onRequestShotStructureRevision?: (input: ShotStructureRevisionRequest) => Promise<void>; onRefresh?: () => Promise<void>; onRepairConnection?: (blocker: WorkerBlocker, versionId: string) => Promise<void>; onRequestRevision: (input: ReviewRevisionRequest) => Promise<ReviewRevisionOutcome>; onRequestQcMemberRevision?: (issueId: string) => Promise<void>; onRetryFinalRender?: (episodeId: string, reason: string) => Promise<boolean>; onSaveShotPreparationDraft?: (input: ShotPreparationDraftRequest) => Promise<void>; onSaveEpisodeTtsSettings?: (input: { episodeId: string; languageCode: string; speakingRate: number; voice: string }) => Promise<void>; onSaveStoryboardAudioSelection?: (input: StoryboardAudioSelectionRequest) => Promise<void>; onSubmitStudioRevision?: (input: Omit<StudioReviewRevisionRequest, "accessToken">) => Promise<ReviewRevisionOutcome>; onResolveQcReviewIssue?: (issueId: string, status: "accepted" | "ignored") => Promise<void>; onReviewPreRenderMember?: (input: PreRenderMemberReviewRequest) => Promise<void>; onStartProduction?: (episodeId: string) => Promise<void>; onTransition: (episodeId: string, toStage: EpisodeStage, reason: string) => Promise<boolean>; ownerId?: string; preRenderReviewMemberDecisions?: PreRenderMemberDecision[]; preRenderReviewMembers?: PreRenderReviewMember[]; productionPreflight?: WorkerPreflightResult | null; qcReviewIssues?: QcReviewIssues[]; reviewAnnotations: ReviewAnnotation[]; reviewPackages: ReviewPackage[]; shotPreparationDrafts?: ShotPreparationDraft[]; storyboardAudioSelections?: StoryboardAudioSelection[]; taskRuns?: TaskRun[]; tasks: Task[]; transitions: Transition[] }) {
   void onCreateQcReviewIssue;
   void onRequestQcMemberRevision;
   void onResolveQcReviewIssue;
@@ -497,7 +501,7 @@ export function EpisodeProductionView({ artifacts, audioTrackAnnotations, audioT
     if (!reviewPackage) return;
     setStoryboardValidation((current) => current.packageId === reviewPackage.id && current.valid === valid ? current : { packageId: reviewPackage.id, valid });
   }, [reviewPackage]);
-  const assetRoot = blueprint ? blueprintAssetRoot(blueprint.policy).replace(/[\\/]+$/, "") : "";
+  const assetRoot = (localAssetRoot ?? (blueprint ? blueprintAssetRoot(blueprint.policy) : "")).replace(/[\\/]+$/, "");
   const localInputPath = assetRoot ? `${assetRoot}/episodes/${episode.id}/input` : `episodes/${episode.id}/input`;
   const [directoryMessage, setDirectoryMessage] = useState("");
   const [openUtilityPanel, setOpenUtilityPanel] = useState<UtilityPanelKind | null>(null);
@@ -554,7 +558,7 @@ export function EpisodeProductionView({ artifacts, audioTrackAnnotations, audioT
     {blockers.length ? <details className="review-section worker-blockers detail-card-collapsible" open><summary><h3>优先处理 Worker 阻塞项（{blockers.length}）</h3></summary><div className="detail-card-body">{blockerGroups.map(({ blocker, count }) => <WorkerBlockerCard affectedTaskCount={count} blocker={blocker} connectionVersions={connectionVersionsForBlocker(blocker, episodeTasks, connectionVersions)} onOpenBlueprint={onOpenBlueprint} onRepairConnection={onRepairConnection} key={`${blocker.code}-${blocker.detail}`} />)}</div></details> : null}
     {episode.stage === "waiting_input" ? materialsSection : null}
     {canReturnToShotWorkbench ? <section className="review-section shot-workbench-return"><div><h3>镜头工作台</h3><p className="muted-copy">当前审核证据保持不变；返回后可修改基础素材并生成新的冻结审核快照。</p></div><button aria-expanded={showShotWorkbench} className="button button-secondary" onClick={() => setShowShotWorkbench((current) => !current)} type="button">{showShotWorkbench ? "收起镜头工作台" : "返回镜头工作台修改"}</button></section> : null}
-    {showShotWorkbench && storyboardPackage && storyboardArtifact ? <ShotWorkbench artifact={storyboardArtifact} artifacts={episodeArtifacts} audioSelections={storyboardAudioSelections.filter((selection) => selection.review_package_id === storyboardPackage.id)} audioTracks={episodeAudioTracks} blueprint={blueprint?.policy} durationSettings={durationSettings} drafts={episodeShotPreparationDrafts} episode={episode} isMaterialPending={isMaterialPending} isReviewVideoPending={isShotReviewVideoPending} isTtsSettingsPending={isShotTtsSettingsPending} materialRevisions={episodeMaterials} onConfirmPreview={onConfirmShotSyncPreview} onGeneratePreview={onGenerateShotSyncPreview} onGenerateTts={onGenerateShotTts} onGenerateReviewVideo={onGenerateShotReviewVideo} onImportMaterial={onImportMaterial} onOpenStudio={onOpenStudio} onRefresh={onRefresh} onSave={onSaveShotPreparationDraft} onSaveEpisodeTtsSettings={onSaveEpisodeTtsSettings} onSaveStoryboardAudioSelection={onSaveStoryboardAudioSelection} onRequestShotStructureRevision={onRequestShotStructureRevision} reviewPackage={storyboardPackage} tasks={episodeTasks} /> : null}
+    {showShotWorkbench && storyboardPackage && storyboardArtifact ? <ShotWorkbench onConfirmCaptionText={onConfirmShotCaptionText} artifact={storyboardArtifact} artifacts={episodeArtifacts} audioSelections={storyboardAudioSelections.filter((selection) => selection.review_package_id === storyboardPackage.id)} audioTracks={episodeAudioTracks} blueprint={blueprint?.policy} durationSettings={durationSettings} drafts={episodeShotPreparationDrafts} episode={episode} isMaterialPending={isMaterialPending} isReviewVideoPending={isShotReviewVideoPending} isTtsSettingsPending={isShotTtsSettingsPending} materialRevisions={episodeMaterials} onRequestAlignment={onRequestShotAlignment} onSaveManualAlignment={onSaveShotManualAlignment} onConfirmPreview={onConfirmShotSyncPreview} onGeneratePreview={onGenerateShotSyncPreview} onGenerateTts={onGenerateShotTts} onGenerateReviewVideo={onGenerateShotReviewVideo} onImportMaterial={onImportMaterial} onOpenStudio={onOpenStudio} onRefresh={onRefresh} onSave={onSaveShotPreparationDraft} onSaveEpisodeTtsSettings={onSaveEpisodeTtsSettings} onSaveStoryboardAudioSelection={onSaveStoryboardAudioSelection} onRequestShotStructureRevision={onRequestShotStructureRevision} reviewPackage={storyboardPackage} tasks={episodeTasks} /> : null}
     {latestVisualPackage && visualChecklistArtifact && reviewPackage?.stage !== "visual_review" ? <details className="review-section detail-card-collapsible visual-checklist-card" open={episode.stage === "visual_approved"}><summary><h3>视觉清单</h3></summary><div className="detail-card-body"><p className="muted-copy">这是 Worker 根据已确认脚本、系列规则和冻结素材整理的制作依据；它不是生成图片或视频的预览。</p><VisualReviewPackage artifact={visualChecklistArtifact} artifacts={episodeArtifacts.filter((candidate) => candidate.producer_task_id === latestVisualPackage.task_id)} reviewPackage={latestVisualPackage} /></div></details> : null}
     {episode.stage !== "waiting_input" ? materialsSection : null}
     {episode.stage !== "waiting_input" && reviewPackage?.stage !== "visual_review" && reviewPackage?.stage !== "storyboard_review" && episodeArtifacts.some((candidate) => artifactPreviewKind(candidate.relative_path)) ? <details className="review-section detail-card-collapsible"><summary><h3>生成媒体预览</h3></summary><div className="detail-card-body"><p className="muted-copy">默认展示当前生产输入对应的媒体；旧输入生成的版本收在“历史预览产物”中。</p><ArtifactPreview artifacts={episodePreviewArtifacts.current} historyArtifacts={episodePreviewArtifacts.history} /></div></details> : null}
@@ -883,7 +887,7 @@ function MaterialImportForm({ allowMainScript = true, bindingStatuses = new Map(
       const mainScript = pendingFiles.find((draft) => draft.isMainScript);
       if (mainScript) {
         const script = await readFileText(mainScript.file);
-        if (!/^#\s+\S+/m.test(script) || !/^##\s+正文\s*$/m.test(script) || !script.split(/^##\s+正文\s*$/m)[1]?.trim()) throw new Error("主脚本需包含“# 本期标题”和非空的“## 正文”；可先查看脚本模板。");
+        if (!isValidMainScript(script)) throw new Error(mainScriptFormatError);
       }
       setIsImporting(true);
       let failedCount = 0;
@@ -1207,6 +1211,7 @@ function EpisodeTtsSettingsPanel({ blueprint, episode, isPending, onSave }: { bl
     if (!languageCode.trim() || !voice.trim() || !Number.isFinite(rate) || rate <= 0) { setError("请填写语言、声音和有效语速。"); return; }
     setError(""); setIsPreviewPending(true);
     try {
+      const { supabase } = await import("../lib/supabase");
       const { data, error: sessionError } = await supabase.auth.getSession();
       if (sessionError) throw sessionError;
       if (!data.session) throw new Error("需要 Owner 登录会话。");
@@ -1329,6 +1334,17 @@ function draftClipSegments(draft: ShotPreparationDraft | undefined, fallbackDura
   return [{ endSeconds: fallbackDuration, startSeconds: 0 }];
 }
 
+function captionTextConfirmationIsCurrent(draft: ShotPreparationDraft | undefined, track: AudioTrack | undefined, text = draft?.subtitle_text): boolean {
+  const confirmation = draft?.caption_text_confirmation;
+  const alignment = acousticAlignmentFromJson(draft?.acoustic_alignment);
+  return Boolean(confirmation && typeof confirmation === "object" && !Array.isArray(confirmation)
+    && confirmation.version === "caption-text-confirmation/v1" && typeof confirmation.confirmedBy === "string" && confirmation.confirmedBy.length > 0
+    && typeof confirmation.confirmedAt === "string" && Number.isFinite(Date.parse(confirmation.confirmedAt))
+    && track && alignment && alignment.audioSha256 === track.sha256 && confirmation.audioTrackId === track.id && confirmation.audioSha256 === track.sha256
+    && confirmation.confirmedText === text && text === draft?.subtitle_text
+    && confirmation.textFingerprint === alignment.textFingerprint && confirmation.alignmentInputVersion === alignment.inputVersion);
+}
+
 const acousticAlignmentMethodLabels: Record<AcousticAlignmentMethod, string> = { none: "未采用", tts_native: "TTS 原生时间戳", external_text_audio: "已有文本 + 音频外部打轴", local_whisperx: "本地 WhisperX", manual: "Owner 人工时序" };
 const acousticAlignmentGranularityLabels: Record<AcousticAlignmentGranularity, string> = { none: "无", character: "字级", word: "词级", phrase: "短语级" };
 
@@ -1388,7 +1404,7 @@ function structureRevisionPendingFromTask(task: Task, shots: StoryboardShot[]): 
   return { baseReviewPackageId, label: storyboardStructureOperationLabels[kind as StoryboardStructureOperationKind], targetShotId };
 }
 
-function ShotWorkbench({ artifact, artifacts, audioSelections, audioTracks, blueprint, durationSettings, drafts, episode, isMaterialPending, isReviewVideoPending, isTtsSettingsPending, materialRevisions, onConfirmPreview, onGeneratePreview, onGenerateTts, onGenerateReviewVideo, onImportMaterial, onOpenStudio, onRefresh, onSave, onSaveEpisodeTtsSettings, onSaveStoryboardAudioSelection, reviewPackage, tasks, onRequestShotStructureRevision }: { artifact: Artifact; artifacts: Artifact[]; audioSelections: StoryboardAudioSelection[]; audioTracks: AudioTrack[]; blueprint?: Json; durationSettings: ReviewRenderDurationSettings; drafts: ShotPreparationDraft[]; episode: Episode; isMaterialPending: boolean; isReviewVideoPending: boolean; isTtsSettingsPending: boolean; materialRevisions: MaterialRevision[]; onConfirmPreview: (input: ShotSyncPreviewRequest) => Promise<void>; onGeneratePreview: (input: ShotSyncPreviewRequest) => Promise<void>; onGenerateTts: (input: ShotTtsGenerationRequest) => Promise<void>; onGenerateReviewVideo: (input: ShotReviewVideoRequest) => Promise<void>; onImportMaterial: MaterialImportHandler; onOpenStudio: (episodeId: string, projectRelativePath: string) => Promise<OpenChatCutStudioWorkspace>; onRefresh: () => Promise<void>; onSave: (input: ShotPreparationDraftRequest) => Promise<void>; onSaveEpisodeTtsSettings: (input: { episodeId: string; languageCode: string; speakingRate: number; voice: string }) => Promise<void>; onSaveStoryboardAudioSelection: (input: StoryboardAudioSelectionRequest) => Promise<void>; reviewPackage: ReviewPackage; tasks: Task[]; onRequestShotStructureRevision: (input: ShotStructureRevisionRequest) => Promise<void> }) {
+function ShotWorkbench({ onRequestAlignment, onSaveManualAlignment, onConfirmCaptionText, artifact, artifacts, audioSelections, audioTracks, blueprint, durationSettings, drafts, episode, isMaterialPending, isReviewVideoPending, isTtsSettingsPending, materialRevisions, onConfirmPreview, onGeneratePreview, onGenerateTts, onGenerateReviewVideo, onImportMaterial, onOpenStudio, onRefresh, onSave, onSaveEpisodeTtsSettings, onSaveStoryboardAudioSelection, reviewPackage, tasks, onRequestShotStructureRevision }: { onRequestAlignment?: (input: ShotAlignmentRequest) => Promise<void>; onSaveManualAlignment?: (input: ShotManualAlignmentRequest) => Promise<void>; onConfirmCaptionText?: (input: ShotCaptionTextConfirmationRequest) => Promise<void>; artifact: Artifact; artifacts: Artifact[]; audioSelections: StoryboardAudioSelection[]; audioTracks: AudioTrack[]; blueprint?: Json; durationSettings: ReviewRenderDurationSettings; drafts: ShotPreparationDraft[]; episode: Episode; isMaterialPending: boolean; isReviewVideoPending: boolean; isTtsSettingsPending: boolean; materialRevisions: MaterialRevision[]; onConfirmPreview: (input: ShotSyncPreviewRequest) => Promise<void>; onGeneratePreview: (input: ShotSyncPreviewRequest) => Promise<void>; onGenerateTts: (input: ShotTtsGenerationRequest) => Promise<void>; onGenerateReviewVideo: (input: ShotReviewVideoRequest) => Promise<void>; onImportMaterial: MaterialImportHandler; onOpenStudio: (episodeId: string, projectRelativePath: string) => Promise<OpenChatCutStudioWorkspace>; onRefresh: () => Promise<void>; onSave: (input: ShotPreparationDraftRequest) => Promise<void>; onSaveEpisodeTtsSettings: (input: { episodeId: string; languageCode: string; speakingRate: number; voice: string }) => Promise<void>; onSaveStoryboardAudioSelection: (input: StoryboardAudioSelectionRequest) => Promise<void>; reviewPackage: ReviewPackage; tasks: Task[]; onRequestShotStructureRevision: (input: ShotStructureRevisionRequest) => Promise<void> }) {
   const [advancedShotId, setAdvancedShotId] = useState("");
   const [structureRevisionPending, setStructureRevisionPending] = useState<{ baseReviewPackageId: string; label: string; targetShotId: string } | null>(null);
   const [structureRevisionError, setStructureRevisionError] = useState("");
@@ -1454,6 +1470,8 @@ function ShotWorkbench({ artifact, artifacts, audioSelections, audioTracks, blue
     return null;
   };
   const isDraftCurrentConfirmed = (draft: ShotPreparationDraft | undefined): boolean => Boolean(
+    (!onConfirmCaptionText || !draft?.subtitles_enabled || draft.audio_mode === "none" || captionTextConfirmationIsCurrent(draft, audioTracks.find((track) => track.id === draft.current_audio_track_id)))
+    &&
     draft?.preparation_contract_status === "current"
     && draft.confirmation_status === "confirmed"
     && draft.preview_status === "ready"
@@ -1544,7 +1562,7 @@ function ShotWorkbench({ artifact, artifacts, audioSelections, audioTracks, blue
     <div className="shot-workbench-list">
       {storyboard.shots.map((shot, index) => {
         const nextUnconfirmedId = nextUnconfirmedShotId(storyboard.shots.map((candidate) => candidate.id), shot.id, new Set(packageDrafts.filter(isDraftCurrentConfirmed).map((draft) => draft.shot_id)));
-        return <ShotPreparationCard artifacts={artifacts} audioTracks={audioTracks} bgmSelected={audioSelections.some((selection) => selection.target_kind === "episode" && selection.audio_kind === "bgm" && selection.target_id === episode.id && Boolean(selection.cue_id || selection.material_revision_id))} defaults={defaults} durationSettings={durationSettings} draft={packageDrafts.find((candidate) => candidate.shot_id === shot.id)} episode={episode} isInitiallyOpen={selectedShotId ? shot.id === selectedShotId : index === currentPendingIndex} isMaterialPending={isMaterialPending} isStructureRevisionPending={Boolean(structureRevisionPending)} key={shot.id} materialRevisions={materialRevisions} onConfirmAdvance={nextUnconfirmedId ? () => selectShot(nextUnconfirmedId) : undefined} onConfirmPreview={onConfirmPreview} onDirtyChange={(dirty) => setDirtyShotIds((current) => { if (dirty === current.has(shot.id)) return current; const next = new Set(current); if (dirty) next.add(shot.id); else next.delete(shot.id); return next; })} onGeneratePreview={onGeneratePreview} onGenerateTts={onGenerateTts} onImportMaterial={onImportMaterial} onOpenStudio={onOpenStudio} onRefresh={onRefresh} onSave={onSave} onSaveStoryboardAudioSelection={onSaveStoryboardAudioSelection} onSelect={() => selectShot(shot.id)} reviewPackage={reviewPackage} sfxCues={sfxCuesByShot.get(shot.id) ?? []} sfxSelection={audioSelections.find((selection) => selection.target_kind === "shot" && selection.audio_kind === "sfx" && selection.target_id === shot.id)} shot={shot} tasks={tasks} onRequestShotStructureRevision={submitStructureRevision} shots={storyboard.shots} voiceOptions={voiceOptions} />;
+        return <ShotPreparationCard onConfirmCaptionText={onConfirmCaptionText} onRequestAlignment={onRequestAlignment} onSaveManualAlignment={onSaveManualAlignment} artifacts={artifacts} audioTracks={audioTracks} bgmSelected={audioSelections.some((selection) => selection.target_kind === "episode" && selection.audio_kind === "bgm" && selection.target_id === episode.id && Boolean(selection.cue_id || selection.material_revision_id))} defaults={defaults} durationSettings={durationSettings} draft={packageDrafts.find((candidate) => candidate.shot_id === shot.id)} episode={episode} isInitiallyOpen={selectedShotId ? shot.id === selectedShotId : index === currentPendingIndex} isMaterialPending={isMaterialPending} isStructureRevisionPending={Boolean(structureRevisionPending)} key={shot.id} materialRevisions={materialRevisions} onConfirmAdvance={nextUnconfirmedId ? () => selectShot(nextUnconfirmedId) : undefined} onConfirmPreview={onConfirmPreview} onDirtyChange={(dirty) => setDirtyShotIds((current) => { if (dirty === current.has(shot.id)) return current; const next = new Set(current); if (dirty) next.add(shot.id); else next.delete(shot.id); return next; })} onGeneratePreview={onGeneratePreview} onGenerateTts={onGenerateTts} onImportMaterial={onImportMaterial} onOpenStudio={onOpenStudio} onRefresh={onRefresh} onSave={onSave} onSaveStoryboardAudioSelection={onSaveStoryboardAudioSelection} onSelect={() => selectShot(shot.id)} reviewPackage={reviewPackage} sfxCues={sfxCuesByShot.get(shot.id) ?? []} sfxSelection={audioSelections.find((selection) => selection.target_kind === "shot" && selection.audio_kind === "sfx" && selection.target_id === shot.id)} shot={shot} tasks={tasks} onRequestShotStructureRevision={submitStructureRevision} shots={storyboard.shots} voiceOptions={voiceOptions} />;
       })}
     </div>
     <section aria-label="OpenChatCut 审核视频" className="shot-workbench-completion">
@@ -1557,7 +1575,7 @@ function ShotWorkbench({ artifact, artifacts, audioSelections, audioTracks, blue
   </section>;
 }
 
-function ShotPreparationCard({ artifacts, audioTracks, bgmSelected, defaults, draft, durationSettings, episode, isInitiallyOpen, isMaterialPending, isStructureRevisionPending, materialRevisions, onConfirmAdvance, onConfirmPreview, onDirtyChange, onGeneratePreview, onGenerateTts, onImportMaterial, onOpenStudio, onRefresh, onSave, onSaveStoryboardAudioSelection, onSelect, reviewPackage, sfxCues, sfxSelection, shot, tasks, onRequestShotStructureRevision, shots, voiceOptions }: { artifacts: Artifact[]; audioTracks: AudioTrack[]; bgmSelected: boolean; defaults: EpisodeTtsSettings; draft?: ShotPreparationDraft; durationSettings: ReviewRenderDurationSettings; episode: Episode; isInitiallyOpen: boolean; isMaterialPending: boolean; isStructureRevisionPending: boolean; materialRevisions: MaterialRevision[]; onConfirmAdvance?: () => void; onConfirmPreview: (input: ShotSyncPreviewRequest) => Promise<void>; onDirtyChange: (dirty: boolean) => void; onGeneratePreview: (input: ShotSyncPreviewRequest) => Promise<void>; onGenerateTts: (input: ShotTtsGenerationRequest) => Promise<void>; onImportMaterial: MaterialImportHandler; onOpenStudio: (episodeId: string, projectRelativePath: string) => Promise<OpenChatCutStudioWorkspace>; onRefresh: () => Promise<void>; onSave: (input: ShotPreparationDraftRequest) => Promise<void>; onSaveStoryboardAudioSelection: (input: StoryboardAudioSelectionRequest) => Promise<void>; onSelect: () => void; reviewPackage: ReviewPackage; sfxCues: StoryboardAudioCue[]; sfxSelection?: StoryboardAudioSelection; shot: StoryboardShot; tasks: Task[]; onRequestShotStructureRevision: (input: ShotStructureRevisionRequest) => Promise<void>; shots: StoryboardShot[]; voiceOptions: string[] }) {
+function ShotPreparationCard({ onRequestAlignment, onSaveManualAlignment, onConfirmCaptionText, artifacts, audioTracks, bgmSelected, defaults, draft, durationSettings, episode, isInitiallyOpen, isMaterialPending, isStructureRevisionPending, materialRevisions, onConfirmAdvance, onConfirmPreview, onDirtyChange, onGeneratePreview, onGenerateTts, onImportMaterial, onOpenStudio, onRefresh, onSave, onSaveStoryboardAudioSelection, onSelect, reviewPackage, sfxCues, sfxSelection, shot, tasks, onRequestShotStructureRevision, shots, voiceOptions }: { onRequestAlignment?: (input: ShotAlignmentRequest) => Promise<void>; onSaveManualAlignment?: (input: ShotManualAlignmentRequest) => Promise<void>; onConfirmCaptionText?: (input: ShotCaptionTextConfirmationRequest) => Promise<void>; artifacts: Artifact[]; audioTracks: AudioTrack[]; bgmSelected: boolean; defaults: EpisodeTtsSettings; draft?: ShotPreparationDraft; durationSettings: ReviewRenderDurationSettings; episode: Episode; isInitiallyOpen: boolean; isMaterialPending: boolean; isStructureRevisionPending: boolean; materialRevisions: MaterialRevision[]; onConfirmAdvance?: () => void; onConfirmPreview: (input: ShotSyncPreviewRequest) => Promise<void>; onDirtyChange: (dirty: boolean) => void; onGeneratePreview: (input: ShotSyncPreviewRequest) => Promise<void>; onGenerateTts: (input: ShotTtsGenerationRequest) => Promise<void>; onImportMaterial: MaterialImportHandler; onOpenStudio: (episodeId: string, projectRelativePath: string) => Promise<OpenChatCutStudioWorkspace>; onRefresh: () => Promise<void>; onSave: (input: ShotPreparationDraftRequest) => Promise<void>; onSaveStoryboardAudioSelection: (input: StoryboardAudioSelectionRequest) => Promise<void>; onSelect: () => void; reviewPackage: ReviewPackage; sfxCues: StoryboardAudioCue[]; sfxSelection?: StoryboardAudioSelection; shot: StoryboardShot; tasks: Task[]; onRequestShotStructureRevision: (input: ShotStructureRevisionRequest) => Promise<void>; shots: StoryboardShot[]; voiceOptions: string[] }) {
   const [isOpen, setIsOpen] = useState(isInitiallyOpen);
   const draftHasSavedSettings = Boolean(draft?.selected_material_revision_id && Array.isArray(draft.clip_segments) && draft.clip_segments.length);
   const [hasSavedSettings, setHasSavedSettings] = useState(draftHasSavedSettings);
@@ -1598,6 +1616,7 @@ function ShotPreparationCard({ artifacts, audioTracks, bgmSelected, defaults, dr
   const [sourceDuration, setSourceDuration] = useState<number | null>(draft?.source_video_duration_seconds ?? null);
   const [isPending, setIsPending] = useState(false);
   const [isAlignmentPending, setIsAlignmentPending] = useState(false);
+  const [isCaptionTextPending, setIsCaptionTextPending] = useState(false);
   const [isPreviewPending, setIsPreviewPending] = useState(false);
   const [isConfirmPending, setIsConfirmPending] = useState(false);
   const [isPreviewStudioPending, setIsPreviewStudioPending] = useState(false);
@@ -1622,12 +1641,12 @@ function ShotPreparationCard({ artifacts, audioTracks, bgmSelected, defaults, dr
   useEffect(() => { if (isInitiallyOpen) { setIsOpen(true); if (!wasInitiallyOpenRef.current) cardRef.current?.scrollIntoView?.({ behavior: "smooth", block: "start" }); } wasInitiallyOpenRef.current = isInitiallyOpen; }, [isInitiallyOpen]);
   useEffect(() => { setHasSavedSettings(draftHasSavedSettings); }, [draftHasSavedSettings, reviewPackage.id]);
   useEffect(() => {
-    if (!draft || isDirtyRef.current) return;
+    if (!draft || isDirtyRef.current || manualTimingEditing) return;
     const refreshedTtsTrackDuration = draft.audio_mode === "tts" && draft.current_audio_track_id ? audioTracks.find((track) => track.id === draft.current_audio_track_id)?.duration_seconds ?? null : null;
     const savedSegments = draftClipSegments(draft, refreshedTtsTrackDuration ?? (draft.audio_mode === "tts" ? draft.tts_actual_duration_seconds : null) ?? 1);
     const savedCaptions = normalizeShotCaptionContract(draft.caption_contract, { audioMode: draft.audio_mode, enabled: draft.subtitles_enabled, text: draft.subtitle_text });
     setAudioMode(draft.audio_mode); if (draft.audio_mode !== "none") lastAudibleModeRef.current = draft.audio_mode; setBgmDuckingLevel(draft.bgm_ducking_level ?? "off"); setSubtitleText(savedCaptions.text); setSubtitleContentMode(savedCaptions.contentMode); setSubtitleCues(savedCaptions.cues); setManualTimingCues(savedCaptions.cues); setManualTimingEditing(false); setSubtitleSpatial(savedCaptions.spatial); setTtsText(draft.tts_text ?? draft.subtitle_text); setSubtitlesEnabled(savedCaptions.enabled); setMaterialRevisionId(draft.selected_material_revision_id ?? ""); setClipSegments(savedSegments); setComposition(normalizeShotComposition(draft.composition, savedSegments.length)); setTransitionMode(draft.transition_mode ?? "cut"); setSourceDuration(draft.source_video_duration_seconds ?? null); setOverrideVoice(draft.tts_override_voice ?? (draft.tts_voice && draft.tts_voice !== defaults.voice ? draft.tts_voice : "")); setOverrideRate(draft.tts_override_speaking_rate == null ? (draft.tts_speaking_rate != null && String(draft.tts_speaking_rate) !== defaults.speakingRate ? String(draft.tts_speaking_rate) : "") : String(draft.tts_override_speaking_rate)); setDeviationResolution(draft.warning_decision === "accepted" ? "confirmation_reason" : "none");
-  }, [audioTracks, defaults.speakingRate, defaults.voice, draft?.id, draft?.updated_at]);
+  }, [audioTracks, defaults.speakingRate, defaults.voice, draft?.id, draft?.updated_at, manualTimingEditing]);
   const ttsTasks = tasks.filter((task) => shotTtsTask(task, reviewPackage.id, shot.id)).sort((left, right) => right.created_at.localeCompare(left.created_at));
   const latestTtsTask = ttsTasks[0];
   const currentTask = draft?.current_tts_task_id ? tasks.find((task) => task.id === draft.current_tts_task_id) : latestTtsTask;
@@ -1735,10 +1754,15 @@ function ShotPreparationCard({ artifacts, audioTracks, bgmSelected, defaults, dr
     setError(""); setIsAlignmentPending(true);
     try {
       if (isDirtyRef.current && !await save(false)) return;
+      if (onRequestAlignment) {
+        await onRequestAlignment({ episodeId: episode.id, reviewPackageId: reviewPackage.id, shotId: shot.id, localOnly });
+      } else {
+      const { supabase } = await import("../lib/supabase");
       const { data: task, error: requestError } = await supabase.rpc("request_shot_acoustic_alignment", { p_episode_id: episode.id, p_local_only: localOnly, p_review_package_id: reviewPackage.id, p_shot_id: shot.id });
       if (requestError) throw requestError;
       const dispatch = task?.id ? await requestImmediateTaskDispatch(episode.id, task.id) : { accepted: false, reason: "任务记录缺少 ID" };
       if (!dispatch.accepted) throw new Error(`对齐任务已保留，但 Worker 未启动：${dispatch.reason}`);
+      }
       await onRefresh();
     } catch (cause) { setError(cause instanceof Error ? cause.message : "无法创建字幕对齐任务。"); }
     finally { setIsAlignmentPending(false); }
@@ -1747,8 +1771,14 @@ function ShotPreparationCard({ artifacts, audioTracks, bgmSelected, defaults, dr
     if (!manualTimingCues.length) { setError("请先添加至少一个人工字幕时序区间。"); return; }
     setError(""); setIsAlignmentPending(true);
     try {
-      const { error: saveError } = await supabase.rpc("save_shot_manual_alignment", { p_cues: manualTimingCues.map((cue) => ({ id: cue.id, text: cue.text, start_ms: cue.startMs, end_ms: cue.endMs })) as unknown as Json, p_episode_id: episode.id, p_review_package_id: reviewPackage.id, p_shot_id: shot.id });
-      if (saveError) throw saveError;
+      const cues = manualTimingCues.map((cue) => ({ id: cue.id, text: cue.text, start_ms: cue.startMs, end_ms: cue.endMs }));
+      if (onSaveManualAlignment) {
+        await onSaveManualAlignment({ episodeId: episode.id, reviewPackageId: reviewPackage.id, shotId: shot.id, cues });
+      } else {
+        const { supabase } = await import("../lib/supabase");
+        const { error: saveError } = await supabase.rpc("save_shot_manual_alignment", { p_cues: cues as unknown as Json, p_episode_id: episode.id, p_review_package_id: reviewPackage.id, p_shot_id: shot.id });
+        if (saveError) throw saveError;
+      }
       setSubtitleCues(manualTimingCues);
       setManualTimingEditing(false);
       await onRefresh();
@@ -1761,6 +1791,7 @@ function ShotPreparationCard({ artifacts, audioTracks, bgmSelected, defaults, dr
     if (!voice || !Number.isFinite(rate) || rate <= 0) { setError("请选择声音并填写有效语速。"); return; }
     setError(""); setIsVoicePreviewPending(true);
     try {
+      const { supabase } = await import("../lib/supabase");
       const { data, error: sessionError } = await supabase.auth.getSession();
       if (sessionError) throw sessionError;
       if (!data.session) throw new Error("需要 Owner 登录会话。");
@@ -1840,13 +1871,14 @@ function ShotPreparationCard({ artifacts, audioTracks, bgmSelected, defaults, dr
           : { label: isDirty ? "配置已修改，待保存" : "待配置", tone: "pending" };
   const savedAlignment = acousticAlignmentFromJson(draft?.acoustic_alignment);
   const activeAlignmentTask = draft?.pending_alignment_task_id ? tasks.find((task) => task.id === draft.pending_alignment_task_id) : undefined;
-  const alignmentIsRunning = activeAlignmentTask?.status === "ready" || activeAlignmentTask?.status === "running";
+  const alignmentIsRunning = activeAlignmentTask?.status === "running";
   const contractNeedsUpgrade = draft?.preparation_contract_status === "needs_upgrade";
   const alignmentInputsDirty = draft !== undefined && (
     effectiveSubtitleText !== draft?.subtitle_text
     || audioMode !== draft?.audio_mode
     || (audioMode === "tts" && ((overrideVoice || defaults.voice).trim() !== draft?.tts_voice || Number(overrideRate || defaults.speakingRate) !== draft?.tts_speaking_rate))
   );
+  const captionTextConfirmed = !onConfirmCaptionText || (!isDirty && captionTextConfirmationIsCurrent(draft, currentTrack, effectiveSubtitleText));
   const alignmentStatus: AcousticAlignmentStatus | null = alignmentIsRunning ? "aligning" : alignmentInputsDirty && savedAlignment ? "stale" : savedAlignment?.status ?? null;
   const audioReady = audioMode === "none"
     || audioMode === "source" && segmentsValid
@@ -1908,7 +1940,7 @@ function ShotPreparationCard({ artifacts, audioTracks, bgmSelected, defaults, dr
     && !isDirty
     && segmentsValid
     && audioReady
-    && (!subtitlesEnabled || alignmentStatus === "completed"),
+    && (!subtitlesEnabled || (alignmentStatus === "completed" && captionTextConfirmed)),
   );
   const previewFact = previewTaskRunning || isPreviewPending
     ? { label: "生成中", tone: "working" }
@@ -1923,11 +1955,11 @@ function ShotPreparationCard({ artifacts, audioTracks, bgmSelected, defaults, dr
     ? { label: "输入已修改，待重新确认", tone: "pending" }
     : contractNeedsUpgrade
       ? { label: "旧版记录，待升级", tone: "history" }
-    : draft?.confirmation_status === "confirmed" && previewIsCurrent
+    : draft?.confirmation_status === "confirmed" && previewIsCurrent && captionTextConfirmed
       ? { label: "Owner 已确认", tone: "ready" }
       : draft?.confirmation_status === "skipped"
         ? { label: "Owner 已跳过", tone: "history" }
-        : { label: "待确认", tone: "pending" };
+        : { label: onConfirmCaptionText && subtitlesEnabled && audioMode !== "none" && !captionTextConfirmed ? "正文待核对" : "待确认", tone: "pending" };
   const deviationFact = durationNeedsAttention
     ? draft?.warning_decision === "accepted" ? "存在偏离 · Owner 已接受" : "存在偏离 · 待处理"
     : "未发现时长偏离";
@@ -1937,12 +1969,22 @@ function ShotPreparationCard({ artifacts, audioTracks, bgmSelected, defaults, dr
     && hasSavedSettings
     && !isDirty
     && effectiveComposition.slots.length > 0
-    && (!subtitlesEnabled || (effectiveSubtitleText.trim() && subtitleCues.length > 0 && alignmentStatus === "completed"))
+    && (!subtitlesEnabled || (effectiveSubtitleText.trim() && subtitleCues.length > 0 && alignmentStatus === "completed" && captionTextConfirmed))
     && audioReady
     && deviationReady
     && previewIsCurrent
     && previewOpenChatCutCompatible,
   );
+  async function confirmCaptionText() {
+    if (!onConfirmCaptionText || !currentTrack || !savedAlignment || alignmentInputsDirty || isDirty) return;
+    setIsCaptionTextPending(true); setError("");
+    try {
+      await onConfirmCaptionText({ episodeId: episode.id, reviewPackageId: reviewPackage.id, shotId: shot.id,
+        audioTrackId: currentTrack.id, audioSha256: currentTrack.sha256, textFingerprint: savedAlignment.textFingerprint,
+        alignmentInputVersion: savedAlignment.inputVersion });
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "正文核对未保存，请刷新后重试。"); }
+    finally { setIsCaptionTextPending(false); }
+  }
   async function generatePreview() {
     setPreviewActionError("");
     if (!previewPrerequisitesReady) { setPreviewActionError(isDirty ? "请先保存当前步骤草稿，再生成同步预览。" : "画面、主声音和字幕时序全部就绪后才能生成同步预览。"); return; }
@@ -1989,6 +2031,11 @@ function ShotPreparationCard({ artifacts, audioTracks, bgmSelected, defaults, dr
           </> : <p className="shot-muted-copy" role="status">当前镜头主声音已静音；关闭开关可继续配置 TTS 或保留原声。</p>}
         </section>
         <section aria-label={`${shot.id} 字幕`} className="shot-content-section shot-subtitle-section"><header><h4>字幕</h4><label className="shot-subtitle-switch"><span><strong>显示字幕</strong></span><input checked={subtitlesEnabled} disabled={frozen} onChange={(event) => { markDirty(); setError(""); setSubtitlesEnabled(event.target.checked); }} role="switch" type="checkbox" /></label></header>{subtitlesEnabled ? <><label>字幕正文模式<select aria-label={`${shot.id} 字幕正文模式`} disabled={frozen || audioMode !== "tts"} onChange={(event) => { const nextMode = event.target.value as ShotCaptionContentMode; markDirty(); setSubtitleCues([]); if (nextMode === "independent" && subtitleContentMode === "follow_tts") setSubtitleText(ttsText); setSubtitleContentMode(nextMode); }} value={effectiveSubtitleContentMode}><option value="follow_tts">跟随最终 TTS 正文</option><option value="independent">独立字幕</option></select></label>{audioMode !== "tts" ? <p className="muted-copy">当前镜头没有 TTS 正文，字幕使用独立模式。</p> : null}<label>字幕正文<textarea aria-label={`${shot.id} 字幕正文`} disabled={frozen || effectiveSubtitleContentMode === "follow_tts"} onChange={(event) => { markDirty(); setSubtitleCues([]); setSubtitleText(event.target.value); }} readOnly={effectiveSubtitleContentMode === "follow_tts"} rows={3} value={effectiveSubtitleText} /></label>{effectiveSubtitleContentMode === "follow_tts" ? <p className="muted-copy">正文直接引用当前最终口播；请在上方编辑口播内容。</p> : <p className="muted-copy">系统会原样保存独立字幕，不会替你改写正文。</p>}{audioMode === "tts" && effectiveSubtitleContentMode === "independent" && subtitleText !== ttsText ? <p className="shot-subtitle-divergence" role="status">独立字幕与当前 TTS 正文不同，请在确认前核对两种表达。</p> : null}</> : <p className="muted-copy">字幕已关闭，审核视频中不会显示字幕正文。</p>}</section>
+        {onConfirmCaptionText && subtitlesEnabled && audioMode !== "none" ? <section aria-label={`${shot.id} 正文核对`} className="shot-content-section">
+          <h4>正文核对</h4><p>时序对齐不验证正文。请试听当前音频，逐句核对上方正文；对齐完成或高分不能代替人工核对。</p>
+          <p role="status">{captionTextConfirmed ? "Owner 已核对当前音频正文" : "正文待人工核对"}</p>
+          <button className="button button-secondary" disabled={frozen || isCaptionTextPending || !currentTrack || !savedAlignment || alignmentInputsDirty || isDirty || captionTextConfirmed} onClick={() => void confirmCaptionText()} type="button">{isCaptionTextPending ? "正在保存核对…" : "我已核对当前音频正文"}</button>
+        </section> : null}
         {subtitlesEnabled && audioMode !== "none" && Boolean(effectiveSubtitleText.trim()) ? <AcousticAlignmentPanel alignment={savedAlignment} canAlign={Boolean(currentTrack) && !alignmentInputsDirty} cues={manualTimingCues} disabled={frozen || isAlignmentPending || alignmentIsRunning} manualEditing={manualTimingEditing} manualOpen={manualTimingOpen} onCancelManualEdit={() => { setManualTimingCues(subtitleCues); setManualTimingEditing(false); if (subtitleCues.length === 0) setManualTimingOpen(false); }} onChangeCues={setManualTimingCues} onRequest={(localOnly) => void requestAlignment(localOnly)} onSaveManual={() => void saveManualAlignment()} onToggleManual={() => { if (manualTimingOpen) { setManualTimingOpen(false); setManualTimingEditing(false); setManualTimingCues(subtitleCues); return; } if (manualTimingCues.length === 0 && effectiveSubtitleText.trim()) { setManualTimingCues([{ id: "manual-1", text: effectiveSubtitleText, startMs: 0, endMs: Math.max(1, Math.round((actualAudioDuration ?? totalClipDuration) * 1000)) }]); setManualTimingEditing(true); } setManualTimingOpen(true); }} onToggleManualEdit={() => setManualTimingEditing(true)} requestPending={isAlignmentPending || alignmentIsRunning} shotId={shot.id} status={alignmentStatus} /> : null}
       </div>
       <div aria-labelledby={`${stepIds.visual}-tab`} className="shot-visual-workspace" hidden={activeStep !== "visual"} id={`${stepIds.visual}-panel`} role="tabpanel">
@@ -2247,7 +2294,7 @@ export function splitPreviewArtifacts(artifacts: Artifact[], currentArtifactIds:
   };
 }
 
-function ArtifactPreview({ artifacts, historyArtifacts = [] }: { artifacts: Artifact[]; historyArtifacts?: Artifact[] }) {
+export function ArtifactPreview({ artifacts, historyArtifacts = [] }: { artifacts: Artifact[]; historyArtifacts?: Artifact[] }) {
   const previewableArtifacts = artifacts.filter((candidate) => artifactPreviewKind(candidate.relative_path));
   const [selectedArtifactId, setSelectedArtifactId] = useState(previewableArtifacts[0]?.id ?? "");
   const artifact = previewableArtifacts.find((candidate) => candidate.id === selectedArtifactId) ?? previewableArtifacts[0];

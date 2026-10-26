@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "formalApplicationFactory": true,
+  "realPostgresAndKeychain": true,
+  "providers": [
+    {
+      "provider": "openai",
+      "realKeychainRoundtrip": true,
+      "ready": false
+    },
+    {
+      "provider": "cloudflare",
+      "realKeychainRoundtrip": true,
+      "ready": false
+    },
+    {
+      "provider": "pexels",
+      "realKeychainRoundtrip": true,
+      "ready": false
+    },
+    {
+      "provider": "freesound",
+      "realKeychainRoundtrip": true,
+      "ready": false
+    },
+    {
+      "provider": "google_tts",
+      "realKeychainRoundtrip": true,
+      "ready": false
+    },
+    {
+      "provider": "volcengine_tts",
+      "realKeychainRoundtrip": true,
+      "ready": false
+    }
+  ],
+  "closedBudgetUsed": 0,
+  "liveQualifications": 0,
+  "noUserKeysUsed": true,
+  "openaiOnlySyntheticFixture": true,
+  "noOnlineRequests": true
+}

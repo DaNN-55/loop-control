@@ -1,0 +1,41 @@
+{
+  "at": "2026-10-26T05:43:05.915Z",
+  "before": {
+    "exit": 0,
+    "signal": null,
+    "response": {
+      "ok": true,
+      "status": 0,
+      "unlocked": false
+    },
+    "stderrPresent": false
+  },
+  "unlock": {
+    "exit": 1,
+    "signal": null,
+    "response": {
+      "ok": false,
+      "status": -25293,
+      "unlocked": false
+    },
+    "stderrPresent": false
+  },
+  "after": {
+    "exit": 0,
+    "signal": null,
+    "response": {
+      "ok": true,
+      "status": 0,
+      "unlocked": false
+    },
+    "stderrPresent": false
+  },
+  "passwordFile": {
+    "mode": "600",
+    "mtime": "2026-10-26T03:55:03.813Z"
+  },
+  "keychainFile": {
+    "mode": "600",
+    "mtime": "2026-10-26T05:16:14.183Z"
+  }
+}

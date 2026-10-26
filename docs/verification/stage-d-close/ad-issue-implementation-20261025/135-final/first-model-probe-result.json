@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "exitCode": 0,
+  "error": null,
+  "elapsedSeconds": 6.113884583000072,
+  "timeoutMs": 30000,
+  "timeoutOverride": false,
+  "priorModelLoads": 0,
+  "freshVenv": true,
+  "oldVenvBorrowed": false,
+  "oldCacheBorrowed": false,
+  "providerRequests": 0
+}

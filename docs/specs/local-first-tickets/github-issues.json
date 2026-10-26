@@ -1,0 +1,428 @@
+{
+  "repository": "DaNN-55/loop-control",
+  "approved_on": "2026-10-23",
+  "tickets": [
+    {
+      "ticket": "T01",
+      "stage": "A",
+      "number": 107,
+      "url": "https://github.com/DaNN-55/loop-control/issues/107",
+      "title": "[A][T01] 隔离环境启动与最小生产单演练",
+      "blocked_by": [],
+      "source": "01-isolated-run.md",
+      "id": 5993669596,
+      "native_blocked_by": [],
+      "published": true
+    },
+    {
+      "ticket": "T02",
+      "stage": "A",
+      "number": 108,
+      "url": "https://github.com/DaNN-55/loop-control/issues/108",
+      "title": "[A][T02] 固定样本与性能资源基线",
+      "blocked_by": [
+        "T01"
+      ],
+      "source": "02-baseline.md",
+      "id": 5993670985,
+      "native_blocked_by": [
+        107
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T03",
+      "stage": "A",
+      "number": 109,
+      "url": "https://github.com/DaNN-55/loop-control/issues/109",
+      "title": "[A][T03] 用最小生产路径固定调度及本地化契约",
+      "blocked_by": [
+        "T02"
+      ],
+      "source": "03-architecture.md",
+      "id": 5993672754,
+      "native_blocked_by": [
+        108
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T04",
+      "stage": "B",
+      "number": 110,
+      "url": "https://github.com/DaNN-55/loop-control/issues/110",
+      "title": "[B][T04] 完整备份与空库恢复演练",
+      "blocked_by": [
+        "T03"
+      ],
+      "source": "04-restore.md",
+      "id": 5993675215,
+      "native_blocked_by": [
+        109
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T05",
+      "stage": "B",
+      "number": 111,
+      "url": "https://github.com/DaNN-55/loop-control/issues/111",
+      "title": "[B][T05] Worker中断后的租约回收和安全重试",
+      "blocked_by": [
+        "T04"
+      ],
+      "source": "05-lease.md",
+      "id": 5993677340,
+      "native_blocked_by": [
+        110
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T06",
+      "stage": "C",
+      "number": 112,
+      "url": "https://github.com/DaNN-55/loop-control/issues/112",
+      "title": "[C][T06] 即时与定时派发共用一条持久执行路径",
+      "blocked_by": [
+        "T05"
+      ],
+      "source": "06-queue-entry.md",
+      "id": 5993679776,
+      "native_blocked_by": [
+        111
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T07",
+      "stage": "C",
+      "number": 113,
+      "url": "https://github.com/DaNN-55/loop-control/issues/113",
+      "title": "[C][T07] 多Episode持续消费、容量限制与公平调度",
+      "blocked_by": [
+        "T06"
+      ],
+      "source": "07-capacity.md",
+      "id": 5993681615,
+      "native_blocked_by": [
+        112
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T08",
+      "stage": "C",
+      "number": 114,
+      "url": "https://github.com/DaNN-55/loop-control/issues/114",
+      "title": "[C][T08] 预构建运行与即时唤醒加五秒兜底",
+      "blocked_by": [
+        "T07"
+      ],
+      "source": "08-fast-dispatch.md",
+      "id": 5993683534,
+      "native_blocked_by": [
+        113
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T09",
+      "stage": "C",
+      "number": 115,
+      "url": "https://github.com/DaNN-55/loop-control/issues/115",
+      "title": "[C][T09] 新事件提醒、健康与备份状态独立展示",
+      "blocked_by": [
+        "T06"
+      ],
+      "source": "09-notification.md",
+      "id": 5993685943,
+      "native_blocked_by": [
+        112
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T10",
+      "stage": "C",
+      "number": 116,
+      "url": "https://github.com/DaNN-55/loop-control/issues/116",
+      "title": "[C][T10] 生产单详情聚合读取与列表完整分页",
+      "blocked_by": [
+        "T06"
+      ],
+      "source": "10-reads.md",
+      "id": 5993687729,
+      "native_blocked_by": [
+        112
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T11",
+      "stage": "C",
+      "number": 117,
+      "url": "https://github.com/DaNN-55/loop-control/issues/117",
+      "title": "[C][T11] 复用已审核且输入一致的最终成片",
+      "blocked_by": [
+        "T04"
+      ],
+      "source": "11-render-reuse.md",
+      "id": 5993714878,
+      "native_blocked_by": [
+        110
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T12",
+      "stage": "D",
+      "number": 118,
+      "url": "https://github.com/DaNN-55/loop-control/issues/118",
+      "title": "[D][T12] 本地PostgreSQL导入与目录只读贯通",
+      "blocked_by": [
+        "T04",
+        "T10"
+      ],
+      "source": "12-local-read.md",
+      "id": 5993716788,
+      "native_blocked_by": [
+        110,
+        116
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T13",
+      "stage": "D",
+      "number": 119,
+      "url": "https://github.com/DaNN-55/loop-control/issues/119",
+      "title": "[D][T13] 本地Owner登录与账号数据隔离",
+      "blocked_by": [
+        "T12"
+      ],
+      "source": "13-local-owner.md",
+      "id": 5993718967,
+      "native_blocked_by": [
+        118
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T14",
+      "stage": "D",
+      "number": 120,
+      "url": "https://github.com/DaNN-55/loop-control/issues/120",
+      "title": "[D][T14] 本地账号、蓝图和系列配置闭环",
+      "blocked_by": [
+        "T13"
+      ],
+      "source": "14-local-config.md",
+      "id": 5993720987,
+      "native_blocked_by": [
+        119
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T15",
+      "stage": "D",
+      "number": 121,
+      "url": "https://github.com/DaNN-55/loop-control/issues/121",
+      "title": "[D][T15] Keychain连接创建、验证与版本选择",
+      "blocked_by": [
+        "T14"
+      ],
+      "source": "15-local-secrets.md",
+      "id": 5993722670,
+      "native_blocked_by": [
+        120
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T16",
+      "stage": "D",
+      "number": 122,
+      "url": "https://github.com/DaNN-55/loop-control/issues/122",
+      "title": "[D][T16] Episode脚本、视觉准备与Worker回写本地闭环",
+      "blocked_by": [
+        "T08",
+        "T14",
+        "T15"
+      ],
+      "source": "16-local-input.md",
+      "id": 5993724590,
+      "native_blocked_by": [
+        114,
+        120,
+        121
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T17",
+      "stage": "D",
+      "number": 123,
+      "url": "https://github.com/DaNN-55/loop-control/issues/123",
+      "title": "[D][T17] 本地分镜规划、审核与修订闭环",
+      "blocked_by": [
+        "T16"
+      ],
+      "source": "17-local-storyboard.md",
+      "id": 5993734997,
+      "native_blocked_by": [
+        122
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T18",
+      "stage": "D",
+      "number": 124,
+      "url": "https://github.com/DaNN-55/loop-control/issues/124",
+      "title": "[D][T18] 本地镜头口播生成和音轨复用",
+      "blocked_by": [
+        "T17"
+      ],
+      "source": "18-local-narration.md",
+      "id": 5993736587,
+      "native_blocked_by": [
+        123
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T19",
+      "stage": "D",
+      "number": 125,
+      "url": "https://github.com/DaNN-55/loop-control/issues/125",
+      "title": "[D][T19] 本地人工素材与图片、A-roll、B-roll、配乐任务",
+      "blocked_by": [
+        "T17"
+      ],
+      "source": "19-local-media.md",
+      "id": 5993739199,
+      "native_blocked_by": [
+        123
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T20",
+      "stage": "D",
+      "number": 126,
+      "url": "https://github.com/DaNN-55/loop-control/issues/126",
+      "title": "[D][T20] 本地音频提取、字幕对齐与同步预览",
+      "blocked_by": [
+        "T18",
+        "T19"
+      ],
+      "source": "20-local-alignment.md",
+      "id": 5993740978,
+      "native_blocked_by": [
+        124,
+        125
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T21",
+      "stage": "D",
+      "number": 127,
+      "url": "https://github.com/DaNN-55/loop-control/issues/127",
+      "title": "[D][T21] 本地Studio编辑、冻结与审核视频",
+      "blocked_by": [
+        "T20"
+      ],
+      "source": "21-local-studio.md",
+      "id": 5993743527,
+      "native_blocked_by": [
+        126
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T22",
+      "stage": "D",
+      "number": 128,
+      "url": "https://github.com/DaNN-55/loop-control/issues/128",
+      "title": "[D][T22] 本地QC、发布包与Episode生命周期",
+      "blocked_by": [
+        "T21",
+        "T11"
+      ],
+      "source": "22-local-delivery.md",
+      "id": 5993745616,
+      "native_blocked_by": [
+        127,
+        117
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T23",
+      "stage": "D",
+      "number": 129,
+      "url": "https://github.com/DaNN-55/loop-control/issues/129",
+      "title": "[D][T23] 本地接管提醒、健康和备份触发并退出n8n",
+      "blocked_by": [
+        "T09",
+        "T08",
+        "T22"
+      ],
+      "source": "23-local-automation.md",
+      "id": 5993748319,
+      "native_blocked_by": [
+        115,
+        114,
+        128
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T24",
+      "stage": "D",
+      "number": 130,
+      "url": "https://github.com/DaNN-55/loop-control/issues/130",
+      "title": "[D][T24] 本地数据库、密钥绑定及媒体恢复闭环",
+      "blocked_by": [
+        "T22",
+        "T15"
+      ],
+      "source": "24-local-restore.md",
+      "id": 5993751513,
+      "native_blocked_by": [
+        128,
+        121
+      ],
+      "published": true
+    },
+    {
+      "ticket": "T25",
+      "stage": "D",
+      "number": 131,
+      "url": "https://github.com/DaNN-55/loop-control/issues/131",
+      "title": "[D][T25] 移除Supabase运行依赖并验证断网数据操作",
+      "blocked_by": [
+        "T23",
+        "T24"
+      ],
+      "source": "25-local-contract.md",
+      "id": 5993753790,
+      "native_blocked_by": [
+        129,
+        130
+      ],
+      "published": true
+    }
+  ],
+  "status": "published_verified",
+  "verification": {
+    "issues": 25,
+    "acceptance_items": 75,
+    "native_blocking_edges": 33,
+    "labels": "ready-for-agent",
+    "scope": "A-D; E/F deferred; no implementation or production changes"
+  }
+}

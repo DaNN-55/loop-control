@@ -1,0 +1,70 @@
+{
+  "namespace042": {
+    "sourceFile": "042-after-green-result.json",
+    "sourceSha256": "15552503fd2ede9b7e5f3812a92327af7228d993b581bc9c7506c26859108601",
+    "safeScalarResults": {
+      "passed": true,
+      "realPostgres": true,
+      "allTwelveNativeTypes": true,
+      "autoAlignmentAndFirstTtsOwnedBeforeCapability": true,
+      "actualClaimRejectedWhenCapabilityDisabled": true,
+      "actualClaimAfterExplicitEnable": true,
+      "claimedOutputImmutable": true,
+      "sameTypeTwoTasksSeparateNamespace": true,
+      "disabledUnmanagedLegacyNotRewritten": true,
+      "creationUpdateAndIdentityGuardPreserved": true,
+      "allBusinessRowsAndMigrationRecordsRolledBack": true,
+      "dispatchFunctionsByteIdentityUnchanged": true,
+      "providerLedgerUnchanged": true,
+      "migrationNotPersistentlyApplied": true,
+      "providerRequests": 0,
+      "executorRuns": 0,
+      "businessWorkflowAcceptance": false,
+      "failure": null
+    }
+  },
+  "ttsMain042": {
+    "sourceFile": "05-main-042-green-result.json",
+    "sourceSha256": "1c7f7eed944c7bf714543a10b874fa7006c3c76ce8604bf8a468589139387a2f",
+    "safeScalarResults": {
+      "passed": true,
+      "mainSourceRealOwnerHttp": true,
+      "realPostgres": true,
+      "real042NamespaceTrigger": true,
+      "passedTests": 2,
+      "defaultTimeoutMs": 5000,
+      "outerTransactionAndSavepointsRolledBack": true,
+      "bothProviderLedgersUnchanged": true,
+      "readinessAndWakeSubstituted": true,
+      "providerRequests": 0,
+      "cliCalls": 0,
+      "keychainOperations": 0,
+      "servicesStarted": 0,
+      "committed": false
+    }
+  },
+  "localClipClaim": {
+    "sourceFile": "clip-scope-result.json",
+    "sourceSha256": "54e91c8cfc9e1caef8b2deb7f9ce4ea93e91ef196f217e99db3420878630c722",
+    "safeScalarResults": {
+      "passed": true,
+      "realOwnerHttpAndPostgres": true,
+      "actualNativeWorkerPlannerAndClaim": true,
+      "tests": 3,
+      "outerTransactionRollback": true,
+      "falseMediaOptInExpiredPolicyHttp409": true,
+      "unplannedExternalShotAndReadyExternalTaskFixture": true,
+      "actualPlannerCreatedTasks": 0,
+      "actualExternalClaimRows": 0,
+      "secretReads": 0,
+      "providerTransportCalls": 0,
+      "previouslyEnabledLocalClipHttp200": true,
+      "inputEpisodeRowUnchanged": true,
+      "oldRowsAndNetworkLedgerPreserved": true,
+      "runtimeLocalUnixSocketAdminOnly": true,
+      "noPasswordReadOrHbaChange": true,
+      "typeScriptNoEmitPassed": true,
+      "finalSourceAudioBranchByteEquivalent": true
+    }
+  }
+}

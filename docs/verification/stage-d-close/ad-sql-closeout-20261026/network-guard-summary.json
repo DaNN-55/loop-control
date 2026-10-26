@@ -1,0 +1,9 @@
+{
+  "guardInstalledProcesses": 128,
+  "guardInstalledTestWorkers": 118,
+  "exitRecords": 7,
+  "rawSecretsLoaded": false,
+  "oldGuardAndTraceUnmodified": true,
+  "blockedRemoteSocketAttemptsReportedByExitRecords": 0,
+  "limitation": "Only 7 processes emitted exit records; zero is the sum of those reports, not a complete attempt count for 128 processes. The installed guard rejects non-loopback sockets before connecting."
+}

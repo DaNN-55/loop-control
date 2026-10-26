@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "intakeProfileClosed": true,
+  "noWorkerConfigured": true,
+  "allProviderVerificationDisabled": true,
+  "closedIntakeLedgerUnchangedAtZero": true,
+  "cumulativeRequests": 10,
+  "cumulativeCostReservedCny": 0.03,
+  "actualBillQueried": false,
+  "googleQualified": false,
+  "googleKeyReferenceUnchanged": true,
+  "historicalTaskRowsHashUnchanged": 5510,
+  "historicalInputFlagsUnchanged": 87,
+  "noNewTaskCreated": true,
+  "oldNineRequestLedgerUnchanged": true,
+  "newProviderRequestsDuringCheck": 0
+}

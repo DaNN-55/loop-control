@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "realFailureReproduced": true,
+  "boundary": "Own normal npm UI service stop while osascript folder picker pending",
+  "ownPickerPid": 93345,
+  "formerAppPid": 93083,
+  "afterStopParentPid": 1,
+  "pickerSurvivedServiceStop": true,
+  "manualOwnProcessCleanupRecorded": true,
+  "neededFix": "Abort native picker on request disconnect and application shutdown; enforce bounded hard termination",
+  "providerRequests": 0
+}

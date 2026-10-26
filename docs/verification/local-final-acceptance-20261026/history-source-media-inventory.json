@@ -1,0 +1,27 @@
+{
+  "at": "2026-10-26T07:29:26.895Z",
+  "scope": "Read-only inventory of actual configured source media roots",
+  "roots": [
+    {
+      "root": "/Volumes/Ebuget 1T/Media/accounts/test-account",
+      "exists": true,
+      "files": 84,
+      "bytes": 424241002,
+      "symlinks": 1
+    },
+    {
+      "root": "/Volumes/Ebuget 1T/Media/accounts/doubao",
+      "exists": true,
+      "files": 1682,
+      "bytes": 24544675401,
+      "symlinks": 9
+    },
+    {
+      "root": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan",
+      "exists": true,
+      "files": 148,
+      "bytes": 251238672,
+      "symlinks": 0
+    }
+  ]
+}

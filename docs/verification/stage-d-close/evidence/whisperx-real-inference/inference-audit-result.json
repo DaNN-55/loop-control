@@ -1,0 +1,249 @@
+{
+  "passed": true,
+  "preparationSealedAt": "2026-10-25T04:24:53.975724+00:00",
+  "modelAndTokenizerHashesUnchanged": true,
+  "upstreamWhisperXCodeHashesUnchanged": true,
+  "modelCalls": [
+    {
+      "event": "load-align-model-end",
+      "pid": 47385,
+      "at": 1792902436.689367,
+      "seconds": 46.66609166696435,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 47426,
+      "at": 1792902556.994192,
+      "seconds": 5.15939458302455,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 47427,
+      "at": 1792902562.478637,
+      "seconds": 4.15162383398274,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "align-end",
+      "pid": 47427,
+      "at": 1792902562.776403,
+      "seconds": 0.29733658296754584,
+      "chars": 9,
+      "timedChars": 9,
+      "minScore": 0.911,
+      "meanScore": 0.9814444444444445,
+      "rawSha256": "9acc380243d47d42b4d5dc763e2f08e58c4aa746734a0daeb3c0f8e4d1b18ced",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 47523,
+      "at": 1792902688.802976,
+      "seconds": 5.6899189169635065,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 47524,
+      "at": 1792902694.420981,
+      "seconds": 4.252795541018713,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "align-end",
+      "pid": 47524,
+      "at": 1792902694.73652,
+      "seconds": 0.3153834579861723,
+      "chars": 9,
+      "timedChars": 9,
+      "minScore": 0.911,
+      "meanScore": 0.9814444444444445,
+      "rawSha256": "9acc380243d47d42b4d5dc763e2f08e58c4aa746734a0daeb3c0f8e4d1b18ced",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 47762,
+      "at": 1792903152.052109,
+      "seconds": 5.695567832968663,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 47763,
+      "at": 1792903157.463994,
+      "seconds": 4.088340250018518,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "align-end",
+      "pid": 47763,
+      "at": 1792903157.7757509,
+      "seconds": 0.31085591594455764,
+      "chars": 9,
+      "timedChars": 9,
+      "minScore": 0.911,
+      "meanScore": 0.9814444444444445,
+      "rawSha256": "93e4dd58496c0c9e723d9a2f1703f6c5324f069355841ac468d0b108425a304e",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 47766,
+      "at": 1792903163.921592,
+      "seconds": 4.151379291026387,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 47767,
+      "at": 1792903169.3884008,
+      "seconds": 4.217423250025604,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "align-end",
+      "pid": 47767,
+      "at": 1792903169.677301,
+      "seconds": 0.28876224998384714,
+      "chars": 9,
+      "timedChars": 9,
+      "minScore": 0.911,
+      "meanScore": 0.9814444444444445,
+      "rawSha256": "ffe96045a70b31cd0aab6ed30eaac5b306c1bb7e55c9c4c850e239980e1befa6",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 47780,
+      "at": 1792903240.018566,
+      "seconds": 4.170586374995764,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "align-end",
+      "pid": 47780,
+      "at": 1792903240.307355,
+      "seconds": 0.28866379195824265,
+      "chars": 12,
+      "timedChars": 12,
+      "minScore": 0.5,
+      "meanScore": 0.8495833333333334,
+      "rawSha256": "5fdebb5cbcd9095747982ccc25ef82fdede34ab624b5a741867f58543f9b1d19",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 47799,
+      "at": 1792903367.474873,
+      "seconds": 4.1925316249835305,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "align-end",
+      "pid": 47799,
+      "at": 1792903367.75482,
+      "seconds": 0.2797871249495074,
+      "chars": 9,
+      "timedChars": 9,
+      "minScore": 0.0,
+      "meanScore": 0.22155555555555556,
+      "rawSha256": "55701694797d3635f301ebfff310b38096536bb91bcc9d5d968be92fa51f7e33",
+      "networkDenied": 0
+    }
+  ],
+  "rawAlignments": [
+    {
+      "pid": 47427,
+      "file": "alignment-47427.json",
+      "sha256": "3915ab773a75109e07fc627af972db82340b152c0f79312594f1138ed87a0eda"
+    },
+    {
+      "pid": 47524,
+      "file": "alignment-47524.json",
+      "sha256": "3915ab773a75109e07fc627af972db82340b152c0f79312594f1138ed87a0eda"
+    },
+    {
+      "pid": 47763,
+      "file": "alignment-47763.json",
+      "sha256": "b01d0f93b302809ca5cc25729664525e3c8367a0d5569020d78651ced52a1248"
+    },
+    {
+      "pid": 47767,
+      "file": "alignment-47767.json",
+      "sha256": "2caea74ac80501bd6b1f93f11d60bf231efb0f564de6334ae05d93f9c1624c2e"
+    },
+    {
+      "pid": 47780,
+      "file": "alignment-47780.json",
+      "sha256": "9b19d4b4c91cb0555cbcac115f96d65cc72404d7eb0c86e8217dabe6c97ae1df"
+    },
+    {
+      "pid": 47799,
+      "file": "alignment-47799.json",
+      "sha256": "eb22368e8839b98c76a9afe03be580951286f129c2ad3cbb94ae7d80ec38f2d7"
+    }
+  ],
+  "allPythonCallsAfterSeal": true,
+  "pythonNetworkAttempts": 0,
+  "resultsNotSubstituted": true,
+  "oldEvidenceVerifiedBeforeDocumentation": [
+    {
+      "privacy": "public",
+      "verified": 756
+    },
+    {
+      "privacy": "private",
+      "verified": 1001
+    }
+  ],
+  "trackedFilesChangedBeforeDocumentation": [],
+  "unrelatedFilesUnchanged": 43,
+  "productSourceChanges": 0
+}

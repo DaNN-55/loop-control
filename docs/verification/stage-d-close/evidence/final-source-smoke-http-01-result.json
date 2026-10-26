@@ -1,0 +1,12 @@
+{
+  "started": "2026-10-25T01:11:02.438Z",
+  "finished": "2026-10-25T01:11:03.807Z",
+  "command": [
+    "node",
+    "--import",
+    "./scripts/local/offline-guard.mjs",
+    ".loop-control/stage-d/state/d-close-20261025/final-smoke.mjs"
+  ],
+  "status": 0,
+  "passed": true
+}

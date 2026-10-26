@@ -1,0 +1,719 @@
+{
+  "ticket": 121,
+  "createdAt": "2026-10-24T03:37:23.256Z",
+  "branch": "codex/local-first-stage-a",
+  "head": "0f86d22ff26e7831c4570fe2f9eb59551eca1fc4",
+  "providerRequests": 2,
+  "requestBudgetMax": 2,
+  "expectedProviderCostUsd": 0,
+  "default5000msHistoricalFailureAndRootCauseUnresolved": true,
+  "acceptedScope": "Pexels representative live qualification and browser blueprint selection; actual Keychain, HTTP and controlled Worker module; no full task CLI",
+  "privateNotice": "Private dumps contain identity/session metadata. No raw HAR, Authorization, Provider request body, Key value or Key fingerprint is published. Private hashes describe evidence files, never secret material.",
+  "deletedSensitiveResources": [
+    "dedicated t15-synthetic.keychain-db",
+    "recovery-private.json (test Keychain password, no password fingerprint retained)"
+  ],
+  "originalEvidenceUnchanged": true,
+  "files": [
+    {
+      "path": "docs/verification/stage-d-t15-pexels/README.md",
+      "kind": "public",
+      "bytes": 11926,
+      "sha256": "3689d0b2a94e98d1bfe4a833b482a7f35407b2ba7dd5a36bb4f817fae6c2a862"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/application-final.txt",
+      "kind": "public",
+      "bytes": 9167,
+      "sha256": "8081cc0ff17882fe2f6434a26c52dd1b8179d1acc0b67600e59739d9dc362e90"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/application-types.txt",
+      "kind": "public",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/audit-after-cleanup.json",
+      "kind": "public",
+      "bytes": 1643,
+      "sha256": "cf3f26a8b72289a583ec5ad9d68ca963f354390e5d3ebb61b6aac9740ef69a73"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/audit-local-fault.json",
+      "kind": "public",
+      "bytes": 1701,
+      "sha256": "e8ad30618893bcf4aa26c869930bad43e8a1d5cfe9238f1bc2eed6af26b12c40"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/audit-negative.json",
+      "kind": "public",
+      "bytes": 1914,
+      "sha256": "992003895c222aa320db2d7dbef1181f76f1381a781f26a11e19de4deb10d5dc"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/audit-positive-after-restart.json",
+      "kind": "public",
+      "bytes": 1699,
+      "sha256": "8e3b8a6e07df304f72c9e3772bd2c7b1c25f7775bb8532d2828898a824dae944"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/audit-positive-before-restart.json",
+      "kind": "public",
+      "bytes": 1699,
+      "sha256": "29b4e86fcb52f5449ad1ccb2468300f3d31724f11a971b327c3ef02bdbbffd9e"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/blueprint-after-reload.txt",
+      "kind": "public",
+      "bytes": 2654,
+      "sha256": "896fcb7e64ee81722779c0ec6751952458cc1b631f98e7941efe769726674d7a"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/blueprint-after-restart.png",
+      "kind": "public",
+      "bytes": 164944,
+      "sha256": "d86002d99bac3376f261626f89defba83fe44f058ccc2ccd80c6f6e0ddc2ebec"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/blueprint-after-restart.txt",
+      "kind": "public",
+      "bytes": 9513,
+      "sha256": "cda596031b4b3c3e10e0f5b7c6f1bc6cbe5d135386f06b4683cee1ddb4398da5"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/blueprint-save.txt",
+      "kind": "public",
+      "bytes": 3670,
+      "sha256": "d4e32f7b240063b51b989cb1a33fd9425646d7ce41b32e4927a34ab6907ede29"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/blueprint-selection-after-restart.txt",
+      "kind": "public",
+      "bytes": 10323,
+      "sha256": "733f0f680c4cbdf2e7a8a7572ee24bf7913490973a52e39ace47832d061bf1ed"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/boundaries.json",
+      "kind": "public",
+      "bytes": 691,
+      "sha256": "be06e1eec8d38f327be0a0095e6f862a57285372022fe86e8ea3fa487244f63b"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/connection-live-verified.png",
+      "kind": "public",
+      "bytes": 91480,
+      "sha256": "c2f9eeeb6e76d6d7020a6cdea7fcfda93cbacce5ef70af13409f832882eafd17"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/credential-scan.json",
+      "kind": "public",
+      "bytes": 557,
+      "sha256": "36d0e52646505789a89eac5d99c7f2cca5cbd56098c5d00240c7453646abcdfe"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/events.jsonl",
+      "kind": "public",
+      "bytes": 5172,
+      "sha256": "41e012b091e391b4589aab2f6df82bbd4518d03e75af83da0939a1bb8949fe4d"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/fixture-cleanup-http.json",
+      "kind": "public",
+      "bytes": 461,
+      "sha256": "604aa09f67918733ece77a94b3313c8129c96a66e888f72e8ad8b3bb89eee74d"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/initial-environment-application-final.txt",
+      "kind": "public",
+      "bytes": 10565,
+      "sha256": "74bc9b246c79d21b18b9b2089b43d03951b9de6aada3c3dfe1a2d8ccc3b093aa"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/initial-environment-regression-results.json",
+      "kind": "public",
+      "bytes": 959,
+      "sha256": "2fd3488b38032cd7a96ccb488505cd74c21f1b7e60a7e404815b0a72aecaf1b5"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/keychain-cleanup.json",
+      "kind": "public",
+      "bytes": 177,
+      "sha256": "440d37af9c350e269cdd661c26fba6360451a4d9c1f44890822fd6f93ab164b5"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/local-types.txt",
+      "kind": "public",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/negative-http.json",
+      "kind": "public",
+      "bytes": 350,
+      "sha256": "5ba6c4da79a0a7843043bfec610682cb63233f0ceca093cb1bfaac75e5815439"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/network-budget.json",
+      "kind": "public",
+      "bytes": 88,
+      "sha256": "f2b6af453487551102ab92540b4dcf6f258c17cf0463d69da7e029efc7af01bb"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/network-fault-ui.txt",
+      "kind": "public",
+      "bytes": 10431,
+      "sha256": "003e67b22219504f5dfc8eeebf6d536799adc6992e4e114545d3ba3be08ec04d"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/node-final.txt",
+      "kind": "public",
+      "bytes": 342,
+      "sha256": "44e0aa2be890c513a73fe34d22bbc7d09604b94a98d5e9305db448998d22cb84"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/original-history.json",
+      "kind": "public",
+      "bytes": 4867,
+      "sha256": "8d58111bf928f0464a930f9378812c5bbccb1402484c55e192e0e531acbc90a6"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/regression-results.json",
+      "kind": "public",
+      "bytes": 1051,
+      "sha256": "c0e46aeda49034e32fc1117f049955c6d9bf4775044595fc235e558afb3172cb"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/restart-keychain-state.json",
+      "kind": "public",
+      "bytes": 98,
+      "sha256": "c771dda4001536b6e171068680f9dea9b17c9e24706de7beb2e4c4cbe857fd46"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/rotation-after-reload.png",
+      "kind": "public",
+      "bytes": 162345,
+      "sha256": "58f447e76536cff84a6bf057f78c8c3e39f07f892f81156ed4e48263a4b08dbe"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/rotation-after-reload.txt",
+      "kind": "public",
+      "bytes": 10110,
+      "sha256": "47a5ea5fd3bbddccc78ee06b8533067c97ee4e9f1d51d5cb9879323b3f2aab07"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/server.log",
+      "kind": "public",
+      "bytes": 136,
+      "sha256": "86ad47c465c545e4abd923a23a7e2ae9f2541e0a5f7b5ea58ab058ed8c52a122"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/stale-blueprint-rejected.png",
+      "kind": "public",
+      "bytes": 189649,
+      "sha256": "f55ce4410985cc48f44c278650676fca4c293d7820c6b2b943cde28e0eece8a9"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/stale-blueprint-rejected.txt",
+      "kind": "public",
+      "bytes": 10289,
+      "sha256": "ae704b415a7f119ca46368f4594412fd46d48d2784a50662825cf9ab44405d39"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/unit-final.txt",
+      "kind": "public",
+      "bytes": 2082,
+      "sha256": "979b730a0422f9b2454d0d11857b4a2e909e9790990e913035ec58ca1d7c4109"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/unit-initial.txt",
+      "kind": "public",
+      "bytes": 1389,
+      "sha256": "9831dd5cf9f2b28a30912f30b8969a0a7a2e4d7c14b86c4efcd3f4494f1e77c1"
+    },
+    {
+      "path": "docs/verification/stage-d-t15-pexels/unit-second.txt",
+      "kind": "public",
+      "bytes": 322,
+      "sha256": "a4e97b3264fb1f5e3ecaecdc6b064417fc0f7b1512cb11217153b1b31c1a919d"
+    },
+    {
+      "path": "src/local-app/pexelsLiveProbe.ts",
+      "kind": "source",
+      "bytes": 2855,
+      "sha256": "25cd2d2a1d86e37c24ec8d0b69e5c34c618c2afd95430ae8b9ad8094d5dfeb45"
+    },
+    {
+      "path": "src/local-app/pexelsLiveProbe.test.ts",
+      "kind": "source",
+      "bytes": 3538,
+      "sha256": "bb0f72cad70d4d2cca96d974b7a7f843425f0c2a712c53bb48649322b0bf2c8f"
+    },
+    {
+      "path": "src/local-app/LocalCatalogApp.tsx",
+      "kind": "source",
+      "bytes": 7467,
+      "sha256": "a51a2da53b4b939cc404b87eab8ff6247c9244abb4e00d56aee75cec635a269d"
+    },
+    {
+      "path": "tsconfig.local-app.json",
+      "kind": "source",
+      "bytes": 551,
+      "sha256": "b96325aa51da300aa2cd321a9372d45fc9e2343b3b9c6f4fe08ffd72605b9ba5"
+    },
+    {
+      "path": "scripts/local/pexels-live-acceptance.mjs",
+      "kind": "source",
+      "bytes": 13590,
+      "sha256": "7f27fa18090759cc7501240e940c39c3e80b72518dd3815d9fc6ee42ed636410"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/PLAN.md",
+      "kind": "private",
+      "bytes": 1748,
+      "sha256": "f60821294be8ebf7f678a3d735b7610c0b0e10b128dd48af1e7d8d749cd0fe16"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/application-final.txt",
+      "kind": "private",
+      "bytes": 9167,
+      "sha256": "8081cc0ff17882fe2f6434a26c52dd1b8179d1acc0b67600e59739d9dc362e90"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/application-types.txt",
+      "kind": "private",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/audit-1792812598118.json",
+      "kind": "private",
+      "bytes": 1699,
+      "sha256": "29b4e86fcb52f5449ad1ccb2468300f3d31724f11a971b327c3ef02bdbbffd9e"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/audit-1792812639245.json",
+      "kind": "private",
+      "bytes": 1699,
+      "sha256": "8e3b8a6e07df304f72c9e3772bd2c7b1c25f7775bb8532d2828898a824dae944"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/audit-1792812658211.json",
+      "kind": "private",
+      "bytes": 1701,
+      "sha256": "e8ad30618893bcf4aa26c869930bad43e8a1d5cfe9238f1bc2eed6af26b12c40"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/audit-1792812677538.json",
+      "kind": "private",
+      "bytes": 1914,
+      "sha256": "992003895c222aa320db2d7dbef1181f76f1381a781f26a11e19de4deb10d5dc"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/audit-1792812752955.json",
+      "kind": "private",
+      "bytes": 1643,
+      "sha256": "cf3f26a8b72289a583ec5ad9d68ca963f354390e5d3ebb61b6aac9740ef69a73"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/audit-latest.json",
+      "kind": "private",
+      "bytes": 1643,
+      "sha256": "cf3f26a8b72289a583ec5ad9d68ca963f354390e5d3ebb61b6aac9740ef69a73"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/audit-local-fault.json",
+      "kind": "private",
+      "bytes": 1701,
+      "sha256": "e8ad30618893bcf4aa26c869930bad43e8a1d5cfe9238f1bc2eed6af26b12c40"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/audit-negative.json",
+      "kind": "private",
+      "bytes": 1914,
+      "sha256": "992003895c222aa320db2d7dbef1181f76f1381a781f26a11e19de4deb10d5dc"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/audit-positive-after-restart.json",
+      "kind": "private",
+      "bytes": 1699,
+      "sha256": "8e3b8a6e07df304f72c9e3772bd2c7b1c25f7775bb8532d2828898a824dae944"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/audit-positive-before-restart.json",
+      "kind": "private",
+      "bytes": 1699,
+      "sha256": "29b4e86fcb52f5449ad1ccb2468300f3d31724f11a971b327c3ef02bdbbffd9e"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/baseline.json",
+      "kind": "private",
+      "bytes": 1463,
+      "sha256": "4304f6594f6fc54cd59abe08e9e96f441c75610b26544bf1d5fa5dd428f4b851"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/blueprint-after-reload.txt",
+      "kind": "private",
+      "bytes": 2654,
+      "sha256": "896fcb7e64ee81722779c0ec6751952458cc1b631f98e7941efe769726674d7a"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/blueprint-after-restart.png",
+      "kind": "private",
+      "bytes": 164944,
+      "sha256": "d86002d99bac3376f261626f89defba83fe44f058ccc2ccd80c6f6e0ddc2ebec"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/blueprint-after-restart.txt",
+      "kind": "private",
+      "bytes": 9513,
+      "sha256": "cda596031b4b3c3e10e0f5b7c6f1bc6cbe5d135386f06b4683cee1ddb4398da5"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/blueprint-config-open.txt",
+      "kind": "private",
+      "bytes": 7219,
+      "sha256": "b8d73f86c1dd38759afc8e26a406ea22dd0443a699df0024916f7004dee7e921"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/blueprint-live-options.txt",
+      "kind": "private",
+      "bytes": 4922,
+      "sha256": "b311950cf4304c5578b7f3d4e8e9557217580b09b8da3fac705bb0da4b504a4d"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/blueprint-model-selected.txt",
+      "kind": "private",
+      "bytes": 7382,
+      "sha256": "085cebf89cc31f1576ec134bac01724a21896ef8b5af50ae7560784ad8094060"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/blueprint-persisted.txt",
+      "kind": "private",
+      "bytes": 10140,
+      "sha256": "c631e37865e05a251424f631de3e5f487362863f7ae753d3f8c5b14e74f18919"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/blueprint-save.txt",
+      "kind": "private",
+      "bytes": 3670,
+      "sha256": "d4e32f7b240063b51b989cb1a33fd9425646d7ce41b32e4927a34ab6907ede29"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/blueprint-selection-after-restart.txt",
+      "kind": "private",
+      "bytes": 10323,
+      "sha256": "733f0f680c4cbdf2e7a8a7572ee24bf7913490973a52e39ace47832d061bf1ed"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/blueprint-version-selected.txt",
+      "kind": "private",
+      "bytes": 7382,
+      "sha256": "a9393574ab675f495149fd25857908ab7910fad87b0bd51d497ee11cfd79b3ea"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/boundaries.json",
+      "kind": "private",
+      "bytes": 691,
+      "sha256": "be06e1eec8d38f327be0a0095e6f862a57285372022fe86e8ea3fa487244f63b"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/browser-login.txt",
+      "kind": "private",
+      "bytes": 25,
+      "sha256": "2dbdca7f821df9bb73527c34934608da881e0397b9ced4c1bd99defbfae8b85f"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/connection-live-verified.png",
+      "kind": "private",
+      "bytes": 91480,
+      "sha256": "c2f9eeeb6e76d6d7020a6cdea7fcfda93cbacce5ef70af13409f832882eafd17"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/credential-scan.json",
+      "kind": "private",
+      "bytes": 557,
+      "sha256": "36d0e52646505789a89eac5d99c7f2cca5cbd56098c5d00240c7453646abcdfe"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/database-private-1792812598096.sql",
+      "kind": "private",
+      "bytes": 12152520,
+      "sha256": "2a06f6c33a9e578f62955f2417e1e41331f11b475821b7b90acea3e67cbf28b9"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/database-private-1792812639223.sql",
+      "kind": "private",
+      "bytes": 12152520,
+      "sha256": "c12cc6cc42a1646dbbf6f48927bc6ab3a54fa7e717e7492d8e2276c9e4c2939d"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/database-private-1792812658189.sql",
+      "kind": "private",
+      "bytes": 12153212,
+      "sha256": "7b6e932c3a4f2f3819657c8f7eda8ae0a11ca4164c0b1bbc0f86107ee1b9316d"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/database-private-1792812677515.sql",
+      "kind": "private",
+      "bytes": 12155228,
+      "sha256": "5f358d14e247e47a62e6b4af9182106aeaeeedf69b98b568e0d96541cc6d4601"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/database-private-1792812752933.sql",
+      "kind": "private",
+      "bytes": 12157808,
+      "sha256": "6f82af6661dd031141041c4f8999adf487357fbc4ba3e6d8c094de1bc5c741ad"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/database-private-final.sql",
+      "kind": "private",
+      "bytes": 12157808,
+      "sha256": "a653a57532915f45dd33fe7f1e58bd71140a64d4b38d4081e96cdf58488f5ab3"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/events.jsonl",
+      "kind": "private",
+      "bytes": 5172,
+      "sha256": "41e012b091e391b4589aab2f6df82bbd4518d03e75af83da0939a1bb8949fe4d"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/fixture-cleanup-http.json",
+      "kind": "private",
+      "bytes": 461,
+      "sha256": "604aa09f67918733ece77a94b3313c8129c96a66e888f72e8ad8b3bb89eee74d"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/fixture.json",
+      "kind": "private",
+      "bytes": 556,
+      "sha256": "af2d402232f5d15f141911f768008faa57c0a1fadae6c27bc3da045cf0e8ed9c"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/harness-fixture.json",
+      "kind": "private",
+      "bytes": 91,
+      "sha256": "9ef2edbb7d412caf928b4f890d6d072845618e75798be9d98dece748a976830d"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/history-check-source.mjs",
+      "kind": "private",
+      "bytes": 1818,
+      "sha256": "afb9725ddfac87f294c92c8db872943843ea4d2cafcf7dc0e97ab5c1098eb3c9"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/initial-environment-application-final.txt",
+      "kind": "private",
+      "bytes": 10565,
+      "sha256": "74bc9b246c79d21b18b9b2089b43d03951b9de6aada3c3dfe1a2d8ccc3b093aa"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/initial-environment-application-types.txt",
+      "kind": "private",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/initial-environment-local-types.txt",
+      "kind": "private",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/initial-environment-node-final.txt",
+      "kind": "private",
+      "bytes": 340,
+      "sha256": "7d11aeaf99f766a61d4122209f6ba0b1b3c1d0a158cb4955877574a94d5c57e6"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/initial-environment-regression-results.json",
+      "kind": "private",
+      "bytes": 959,
+      "sha256": "2fd3488b38032cd7a96ccb488505cd74c21f1b7e60a7e404815b0a72aecaf1b5"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/key-entry-ready.png",
+      "kind": "private",
+      "bytes": 126470,
+      "sha256": "a0aefd89bed824bb25757b7a026203420b939a324694d05ea5fa7602769ac1ff"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/keychain-cleanup.json",
+      "kind": "private",
+      "bytes": 177,
+      "sha256": "440d37af9c350e269cdd661c26fba6360451a4d9c1f44890822fd6f93ab164b5"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/launch.json",
+      "kind": "private",
+      "bytes": 109,
+      "sha256": "72ff2789f53d3eecbdc0f34b8a8661f41466facbd47d5e7c572aca3605069408"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/local-types.txt",
+      "kind": "private",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/negative-http.json",
+      "kind": "private",
+      "bytes": 350,
+      "sha256": "5ba6c4da79a0a7843043bfec610682cb63233f0ceca093cb1bfaac75e5815439"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/network-budget.json",
+      "kind": "private",
+      "bytes": 88,
+      "sha256": "f2b6af453487551102ab92540b4dcf6f258c17cf0463d69da7e029efc7af01bb"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/network-fault-ui.txt",
+      "kind": "private",
+      "bytes": 10431,
+      "sha256": "003e67b22219504f5dfc8eeebf6d536799adc6992e4e114545d3ba3be08ec04d"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/node-final.txt",
+      "kind": "private",
+      "bytes": 342,
+      "sha256": "44e0aa2be890c513a73fe34d22bbc7d09604b94a98d5e9305db448998d22cb84"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/original-history.json",
+      "kind": "private",
+      "bytes": 4867,
+      "sha256": "8d58111bf928f0464a930f9378812c5bbccb1402484c55e192e0e531acbc90a6"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/ownership.json",
+      "kind": "private",
+      "bytes": 298,
+      "sha256": "9fd5139c5cce4cc3dc853dbf9a459a81f242e38c11a92f1cc1c8fc2020d502b3"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/public-evidence-selection.json",
+      "kind": "private",
+      "bytes": 1189,
+      "sha256": "5ef5e84f02c316285e0df6e7106159390ee357b61a5b0cc1a3436b317b222003"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/regression-results.json",
+      "kind": "private",
+      "bytes": 1051,
+      "sha256": "c0e46aeda49034e32fc1117f049955c6d9bf4775044595fc235e558afb3172cb"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/restart-keychain-state.json",
+      "kind": "private",
+      "bytes": 98,
+      "sha256": "c771dda4001536b6e171068680f9dea9b17c9e24706de7beb2e4c4cbe857fd46"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/rotation-after-reload.png",
+      "kind": "private",
+      "bytes": 162345,
+      "sha256": "58f447e76536cff84a6bf057f78c8c3e39f07f892f81156ed4e48263a4b08dbe"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/rotation-after-reload.txt",
+      "kind": "private",
+      "bytes": 10110,
+      "sha256": "47a5ea5fd3bbddccc78ee06b8533067c97ee4e9f1d51d5cb9879323b3f2aab07"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/runtime.json",
+      "kind": "private",
+      "bytes": 223,
+      "sha256": "c1d1ce5ab996b0b67077b5979e9f93ddbabb2cdba1687f2c3a97f5f8c857a6d6"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/search-before.json",
+      "kind": "private",
+      "bytes": 219,
+      "sha256": "43ee617897eaf2c87cea416514bbc3e204e49239566b030a582e14943098cf1e"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/search-cleaned.json",
+      "kind": "private",
+      "bytes": 219,
+      "sha256": "43ee617897eaf2c87cea416514bbc3e204e49239566b030a582e14943098cf1e"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/search-created.json",
+      "kind": "private",
+      "bytes": 219,
+      "sha256": "43ee617897eaf2c87cea416514bbc3e204e49239566b030a582e14943098cf1e"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/server-stop-request.json",
+      "kind": "private",
+      "bytes": 33,
+      "sha256": "1ec17e31e9785eb9fad488bbc03e53da1b034364e02ef3d57b602da8641f7057"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/server.log",
+      "kind": "private",
+      "bytes": 136,
+      "sha256": "86ad47c465c545e4abd923a23a7e2ae9f2541e0a5f7b5ea58ab058ed8c52a122"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/stale-blueprint-rejected.png",
+      "kind": "private",
+      "bytes": 189649,
+      "sha256": "f55ce4410985cc48f44c278650676fca4c293d7820c6b2b943cde28e0eece8a9"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/stale-blueprint-rejected.txt",
+      "kind": "private",
+      "bytes": 10289,
+      "sha256": "ae704b415a7f119ca46368f4594412fd46d48d2784a50662825cf9ab44405d39"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/types-initial.txt",
+      "kind": "private",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/types-ready.txt",
+      "kind": "private",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/unit-final.txt",
+      "kind": "private",
+      "bytes": 2082,
+      "sha256": "979b730a0422f9b2454d0d11857b4a2e909e9790990e913035ec58ca1d7c4109"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/unit-initial.txt",
+      "kind": "private",
+      "bytes": 1389,
+      "sha256": "9831dd5cf9f2b28a30912f30b8969a0a7a2e4d7c14b86c4efcd3f4494f1e77c1"
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t15-pexels-live-20261024/unit-second.txt",
+      "kind": "private",
+      "bytes": 322,
+      "sha256": "a4e97b3264fb1f5e3ecaecdc6b064417fc0f7b1512cb11217153b1b31c1a919d"
+    }
+  ],
+  "archiveAuthorization": {
+    "date": "2026-10-24",
+    "scope": "Owner-approved local commit of this implementation, acceptance report, regression logs and evidence index only",
+    "evidenceHeadIsPreArchiveBaseline": true,
+    "limitsRetained": [
+      "Default 5000ms gate historical failure and root cause unresolved",
+      "Other Providers not accepted",
+      "Full task Worker CLI not accepted"
+    ],
+    "noPrivateCredentialEvidence": true,
+    "noUnrelatedPlanningFiles": true,
+    "noProduction": true,
+    "noPushOrMerge": true,
+    "noT16": true,
+    "rawLogWhitespacePreserved": true
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "platform": "Darwin",
+  "architecture": "arm64",
+  "cpuCount": 10,
+  "loadAverage": [
+    4.86767578125,
+    3.892578125,
+    4.04638671875
+  ],
+  "node": "v24.20.0"
+}

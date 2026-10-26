@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "previousPublic": 379,
+  "previousPrivate": 488,
+  "previousPublicUnchangedAtOriginalPaths": 377,
+  "previousPrivateUnchangedAtOriginalPaths": 488,
+  "originalDPublic331Private397Unchanged": true,
+  "previousIndexPrivateSnapshot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/d-close-logout-concurrency-p2-20261025/evidence-index-before-concurrency.json",
+  "previousIndexSha256": "7f084f62efd0a090549db19c3699e7ebc14ee674179f3f57d9b500351caa04c3",
+  "updatedLiveReportHistory": [
+    {
+      "path": "README.md",
+      "publicArchive": "README-before-concurrency-p2.md",
+      "privateSnapshot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/d-close-logout-concurrency-p2-20261025/report-before.md",
+      "previousSha256": "e86b94d8409272ee1877db9f9c01714c61a4405a2fa1da8104cc99538f9b9d11"
+    },
+    {
+      "path": "review.md",
+      "publicArchive": "review-before-concurrency-p2.md",
+      "privateSnapshot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/d-close-logout-concurrency-p2-20261025/review-before.md",
+      "previousSha256": "343b6f549c73bc5aac9c0bba5d2d04eae7a706a8c6371b49864492aa9914f80f"
+    }
+  ],
+  "historicalFailuresPreserved": true,
+  "historicalFiveSecondGateClosed": false
+}

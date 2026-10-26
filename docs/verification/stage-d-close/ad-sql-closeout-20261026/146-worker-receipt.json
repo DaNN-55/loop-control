@@ -1,0 +1,48 @@
+{
+  "issue": 146,
+  "status": "passed",
+  "changedFiles": [
+    {
+      "path": "src/local-app/catalogContract.integration.test.ts",
+      "bytes": 14988,
+      "sha256": "dd664d573ba29227dbebfb67f87960d44b31dcfc50a115bfc142aba3498445d5"
+    }
+  ],
+  "productionSqlChanged": false,
+  "migrationAdded": false,
+  "prior43FilesUnchanged": true,
+  "tests": {
+    "files": 1,
+    "passed": 4,
+    "failed": 0,
+    "log": "146-final-green.log"
+  },
+  "mutation": {
+    "change": "native page limit 20 to 19, restored byte-for-byte after run",
+    "failed": 2,
+    "passed": 2,
+    "log": "146-pagination-mutation-red.log"
+  },
+  "fixtureFailure": {
+    "log": "146-first-run.log",
+    "reason": "member_role accepts owner/worker; invalid editor fixture corrected to worker; setup rolled back"
+  },
+  "typecheck": {
+    "passed": true,
+    "log": "146-typecheck.log"
+  },
+  "scope": {
+    "database": "loop_t24_restore_sql20261026",
+    "realHttpLogin": true,
+    "realAppRole": "loop_app",
+    "retainedRpc": "historical SQL loaded to dedicated test schema; only auth.uid identity call replaced with local_identity.owner_id",
+    "originalNativePublicRpcAbsent": true,
+    "providerRequests": 0,
+    "limitations": [
+      "No deployed Supabase Auth/PostgREST validation",
+      "Native-only metadata excluded from contract projection",
+      "Independent static fixture snapshots, no concurrent mutation between compared requests",
+      "Test fixture rows and per-run schemas retained only in disposable clone"
+    ]
+  }
+}

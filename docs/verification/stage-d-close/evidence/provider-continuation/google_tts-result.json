@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "provider": "google_tts",
+  "failedStep": "qualification",
+  "reason": "Online qualification did not pass",
+  "inheritedUsed": 5,
+  "cumulativeUsed": 6,
+  "phaseRequests": 1,
+  "budgetHalted": true,
+  "costReservedCny": 0,
+  "noRetry": true
+}

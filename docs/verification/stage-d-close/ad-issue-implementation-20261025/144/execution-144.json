@@ -1,0 +1,50 @@
+{
+  "primaryFormalNpmStart": {
+    "startedAt": "2026-10-25T11:35:41.950179+00:00",
+    "finishedAt": "2026-10-25T11:35:46.616372+00:00",
+    "passed": true,
+    "exitCode": 0,
+    "providerRequests": 0
+  },
+  "supplementalConsumer": {
+    "usesSameNativeApplicationFactory": true,
+    "isolatedLoopbackPort": 55191,
+    "secondFormalNpmStart": false
+  },
+  "oldWorkerParentOnly": {
+    "temporarilyStoppedForHeartbeatAndDeadline": true,
+    "oldExecutorChildRemainedAlive": true,
+    "resumedAfterActualLateOutput": true
+  },
+  "normalNpmStop": {
+    "startedAt": "2026-10-25T12:12:24.472365+00:00",
+    "finishedAt": "2026-10-25T12:12:24.713968+00:00",
+    "passed": true,
+    "exitCode": 0,
+    "providerRequests": 0
+  },
+  "readOnlyProcessExitAudit": {
+    "observedAtUtc": "2026-10-25T12:19:56.619389+00:00",
+    "oldChildPresent": false,
+    "oldParentPresent": false,
+    "afterPrimaryNpmStop": true,
+    "doesNotInferExactExitTimeBeforeStop": true
+  },
+  "privateExecutionEvidence": {
+    "natural-144-private.json": "1b6467a28286a020810d206de4105cf29419f0d3f72d29e12eb7b1f1a8a15f63",
+    "natural-144-new-accepted-private.json": "516bc39dd041a291a85c14754598a3f0861c7512e32359100facb8165aa9cfe6",
+    "natural-144-observations-private.jsonl": "4cee2963152e7378d758f419cba20c7ce2cf42467d895c4955249df501212bbc",
+    "natural-144-watch-private.log": "46b3d8cfb5257b51f212168340da5d71e610c801c130c447d3ea054919f5dd32",
+    "old-executor-ready-private.json": "dbc6a239930baf5a9c14a9b7f263d2260b01606424a2643f26396d36a3b5117a",
+    "start-natural-144.mjs": "e236a45ed41b0ceff26ca89dfda69d4657b3834de9b8a8e638b990b3e0317c7d",
+    "watch-natural-144.mjs": "203207f1986172bb56bed2775b75b9ac14803420ac4f97faedcfe7154001cd91",
+    "watch-natural-144-resume.mjs": "bdb6f9953de2d30b04d8787c49daf3fd9c03287d20f0c733c57f0e9fc92a4c11",
+    "factory-http-144.mjs": "aa6615fac818e1e40aa64dc6bbf8237746e4805de03d567dd2d9bb432fb4365f",
+    "planner.mjs": "9a17c81bbf5578f8faeb354a588e9f36c5b2579131c98ac1af95e1439558c583"
+  },
+  "providerRequests": 0,
+  "SQLSuggestionDeferred": true,
+  "commit": false,
+  "push": false,
+  "EF": false
+}

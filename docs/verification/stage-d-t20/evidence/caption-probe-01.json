@@ -1,0 +1,116 @@
+{
+  "pages": [
+    {
+      "id": "page2:lane-shot-1:cw2.%5B%22lane%22%2C%22lane-shot-1%22%2C%22manual%22%2C%22cue-shot-1%22%5D",
+      "laneId": "lane-shot-1",
+      "laneOrder": 0,
+      "entry": {
+        "id": "lane-shot-1",
+        "itemId": "manual:lane-shot-1",
+        "label": "shot-1 字幕",
+        "slotId": "caption-slot-shot-1",
+        "widthRatio": 0.84,
+        "heightRatio": 0.74,
+        "maxCharactersPerLine": 16,
+        "words": [
+          {
+            "id": "cue-shot-1",
+            "text": "这是本地字幕验收。",
+            "start": 100,
+            "end": 3500
+          }
+        ]
+      },
+      "page": {
+        "words": [
+          {
+            "id": "cue-shot-1",
+            "text": "这是本地字幕验收。",
+            "start": 100,
+            "end": 3500
+          }
+        ],
+        "start": 100,
+        "end": 3500
+      },
+      "srcIdxs": [
+        0
+      ],
+      "wordRefs": [
+        "cw2.%5B%22lane%22%2C%22lane-shot-1%22%2C%22manual%22%2C%22cue-shot-1%22%5D"
+      ],
+      "manual": true
+    }
+  ],
+  "groups": [
+    {
+      "anchor": "bottom-center",
+      "offsetXRatio": 0,
+      "offsetYRatio": -0.18,
+      "placementSources": [
+        {
+          "kind": "slot",
+          "slotId": "caption-slot-shot-1"
+        }
+      ],
+      "lanes": [
+        {
+          "entry": {
+            "id": "lane-shot-1",
+            "itemId": "manual:lane-shot-1",
+            "label": "shot-1 字幕",
+            "slotId": "caption-slot-shot-1",
+            "widthRatio": 0.84,
+            "heightRatio": 0.74,
+            "maxCharactersPerLine": 16,
+            "words": [
+              {
+                "id": "cue-shot-1",
+                "text": "这是本地字幕验收。",
+                "start": 100,
+                "end": 3500
+              }
+            ]
+          },
+          "page": {
+            "words": [
+              {
+                "id": "cue-shot-1",
+                "text": "这是本地字幕验收。",
+                "start": 100,
+                "end": 3500
+              }
+            ],
+            "start": 100,
+            "end": 3500
+          },
+          "pageId": "page2:lane-shot-1:cw2.%5B%22lane%22%2C%22lane-shot-1%22%2C%22manual%22%2C%22cue-shot-1%22%5D",
+          "curIdx": 0
+        }
+      ]
+    }
+  ],
+  "style": {
+    "position": "absolute",
+    "left": 0,
+    "right": 0,
+    "display": "flex",
+    "flexDirection": "column",
+    "gap": "0.1em",
+    "padding": "0 10%",
+    "fontFamily": "Noto Sans SC, system-ui, sans-serif",
+    "fontSize": 76.8,
+    "fontWeight": 700,
+    "fontStyle": "normal",
+    "textAlign": "center",
+    "textDecorationLine": "none",
+    "letterSpacing": 0,
+    "lineHeight": 1.25,
+    "textTransform": "none",
+    "alignItems": "center",
+    "opacity": 1,
+    "transformOrigin": "center",
+    "bottom": 153.6,
+    "transform": "translate(0px, 345.59999999999997px) rotate(0deg) scale(1)"
+  }
+}

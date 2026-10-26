@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "actualServiceRecordPathRemoved": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t25-20261025/app.json",
+  "serviceRecordAbsent": true,
+  "nativeDbConnections": 0,
+  "note": "Initial audit used raw deployment JSON without derived recordPath, causing existsSync(undefined) warning. Explicit actual-path followup verifies removal; original port/DB checks independently passed. Private audit helper corrected; original stdout retained.",
+  "finalRuntimeCheckPassed": true,
+  "inventoryIncludesCastRpcCalls": true,
+  "inventoryCalls": 202,
+  "noFurtherBusinessChanges": true
+}

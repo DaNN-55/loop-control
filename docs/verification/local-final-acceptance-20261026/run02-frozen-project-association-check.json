@@ -1,0 +1,132 @@
+{
+  "at": "2026-10-26T07:19:10.303Z",
+  "timeline": {
+    "fps": 30,
+    "width": 1080,
+    "height": 1920,
+    "captionsHidden": false,
+    "tracks": [
+      "V1",
+      "A1",
+      "C1"
+    ],
+    "items": [
+      {
+        "id": "shot-shot-1-full",
+        "track": "V1",
+        "kind": "video",
+        "startFrame": 0,
+        "durationInFrames": 560,
+        "volume": 0,
+        "src": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/ca2c027a7b9c936f1db0273f094bb037825791e23395a13f473ac4329e240927-b-shot-001.mp4"
+      },
+      {
+        "id": "shot-shot-2-full",
+        "track": "V1",
+        "kind": "video",
+        "startFrame": 560,
+        "durationInFrames": 573,
+        "volume": 0,
+        "src": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/ed6548914d5d26772bd3141f7539fef5a242cd4707f7b24a0338b285a5ba92ca-b-shot-002.mp4"
+      },
+      {
+        "id": "shot-shot-3-full",
+        "track": "V1",
+        "kind": "video",
+        "startFrame": 1133,
+        "durationInFrames": 598,
+        "volume": 0,
+        "src": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/f23edb4febd578cf30f006c5ed84c2b17fd8122a73b204d0d383239ecc420eff-b-shot-003.mp4"
+      },
+      {
+        "id": "main-tts-narration-shot-1",
+        "track": "A1",
+        "kind": "audio",
+        "startFrame": 0,
+        "durationInFrames": 560,
+        "volume": 1,
+        "src": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/57a27d39-4150-4725-a60c-c7c8f166ec66/shot-narration-shot-1-514626e0429da061dc85aeaa64c9745c.mp3"
+      },
+      {
+        "id": "main-tts-narration-shot-2",
+        "track": "A1",
+        "kind": "audio",
+        "startFrame": 560,
+        "durationInFrames": 573,
+        "volume": 1,
+        "src": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/12a6fe77-3f0f-4234-bee2-3811c8c04e80/shot-narration-shot-2-8b1856649c911ce7165af56072ae13e8.mp3"
+      },
+      {
+        "id": "main-tts-narration-shot-3",
+        "track": "A1",
+        "kind": "audio",
+        "startFrame": 1133,
+        "durationInFrames": 598,
+        "volume": 1,
+        "src": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/4af14d72-e7af-4b5f-8416-b4f0c9079634/shot-narration-shot-3-b68253aa5ac5596afb4da5c2dafebbf4.mp3"
+      }
+    ]
+  },
+  "checks": [
+    {
+      "id": "asset-1",
+      "path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/ca2c027a7b9c936f1db0273f094bb037825791e23395a13f473ac4329e240927-b-shot-001.mp4",
+      "belongsToCurrentEpisode": true,
+      "approvedReference": true,
+      "shaMatched": true
+    },
+    {
+      "id": "asset-2",
+      "path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/ed6548914d5d26772bd3141f7539fef5a242cd4707f7b24a0338b285a5ba92ca-b-shot-002.mp4",
+      "belongsToCurrentEpisode": true,
+      "approvedReference": true,
+      "shaMatched": true
+    },
+    {
+      "id": "asset-3",
+      "path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/f23edb4febd578cf30f006c5ed84c2b17fd8122a73b204d0d383239ecc420eff-b-shot-003.mp4",
+      "belongsToCurrentEpisode": true,
+      "approvedReference": true,
+      "shaMatched": true
+    },
+    {
+      "id": "asset-4",
+      "path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/57a27d39-4150-4725-a60c-c7c8f166ec66/shot-narration-shot-1-514626e0429da061dc85aeaa64c9745c.mp3",
+      "belongsToCurrentEpisode": true,
+      "approvedReference": true,
+      "shaMatched": true
+    },
+    {
+      "id": "asset-5",
+      "path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/12a6fe77-3f0f-4234-bee2-3811c8c04e80/shot-narration-shot-2-8b1856649c911ce7165af56072ae13e8.mp3",
+      "belongsToCurrentEpisode": true,
+      "approvedReference": true,
+      "shaMatched": true
+    },
+    {
+      "id": "asset-6",
+      "path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/4af14d72-e7af-4b5f-8416-b4f0c9079634/shot-narration-shot-3-b68253aa5ac5596afb4da5c2dafebbf4.mp3",
+      "belongsToCurrentEpisode": true,
+      "approvedReference": true,
+      "shaMatched": true
+    },
+    {
+      "shot": "shot-1",
+      "cueCount": 9,
+      "textMatchesApproved": true,
+      "orderedNonOverlapping": true
+    },
+    {
+      "shot": "shot-2",
+      "cueCount": 11,
+      "textMatchesApproved": true,
+      "orderedNonOverlapping": true
+    },
+    {
+      "shot": "shot-3",
+      "cueCount": 11,
+      "textMatchesApproved": true,
+      "orderedNonOverlapping": true
+    }
+  ]
+}

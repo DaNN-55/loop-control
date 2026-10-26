@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "realServiceRestart": true,
+  "interruptedHealthResumed": true,
+  "priorBackupAttemptStillOne": true,
+  "pre0900DidNotTrigger": true,
+  "history": [
+    {
+      "kind": "backup",
+      "status": "completed",
+      "attempt": 1
+    },
+    {
+      "kind": "health",
+      "status": "interrupted",
+      "attempt": 1
+    },
+    {
+      "kind": "health",
+      "status": "completed",
+      "attempt": 2
+    }
+  ]
+}

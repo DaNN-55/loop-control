@@ -1,0 +1,13 @@
+{
+  "command": [
+    "npm",
+    "test"
+  ],
+  "startedAt": "2026-10-25T15:07:32.867324+00:00",
+  "finishedAt": "2026-10-25T15:07:46.466313+00:00",
+  "exitCode": 0,
+  "passed": true,
+  "defaultTestTimeoutMs": 5000,
+  "testTimeoutOverride": false,
+  "providerRequests": 0
+}

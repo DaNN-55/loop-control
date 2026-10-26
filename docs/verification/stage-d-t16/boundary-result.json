@@ -1,0 +1,60 @@
+{
+  "at": "2026-10-24T05:04:53.609Z",
+  "canonicalPropertyOrderIdempotency": true,
+  "workerCannotUseGlobalClaim": true,
+  "importedTaskNotClaimedOrMutated": true,
+  "blankTitlePreservesExistingContract": true,
+  "invalidMainScript400NoRevision": true,
+  "unexpectedCredentialField400": true,
+  "corruptFile409NoPreflightOrStageWrite": true,
+  "directorySymlink400": true,
+  "foreignSeries400": true,
+  "missingProgram503NoEpisode": true,
+  "foreignOwnerCreateAndStart404": true,
+  "foreignOwnerArtifact404": true,
+  "ownerCannotClaim": true,
+  "workerCannotApprove": true,
+  "staleLeaseRejected": true,
+  "staleLeaseNoMutation": true,
+  "providerRequests": 0,
+  "episodeId": "7f85811f-8d20-4ab6-9c89-f7b1e70eb166",
+  "calls": [
+    {
+      "command": "importMaterial",
+      "status": 400
+    },
+    {
+      "command": "importMaterial",
+      "status": 400
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "start",
+      "status": 409
+    },
+    {
+      "command": "importMaterial",
+      "status": 400
+    },
+    {
+      "command": "create",
+      "status": 400
+    },
+    {
+      "command": "create",
+      "status": 503
+    },
+    {
+      "command": "start",
+      "status": 404
+    },
+    {
+      "command": "create",
+      "status": 404
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,1 @@
+{"passed":false,"reason":"Summary harness counted inline data URLs as network origins","actualHttpRequests":177,"actualInlineDataResources":11,"productFailure":false,"originalScriptPreserved":true}

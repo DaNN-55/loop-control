@@ -1,0 +1,15 @@
+AssertionError [ERR_ASSERTION]: {"error":"本机服务暂不可用，请检查本机状态。"}
+
+503 !== 200
+
+    at Object.post (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/delivery-acceptance.mjs:52:305)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Object.exercise (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/delivery-acceptance.mjs:122:277)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/delivery-acceptance.mjs:136:80 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 503,
+  expected: 200,
+  operator: 'strictEqual',
+  diff: 'simple'
+}

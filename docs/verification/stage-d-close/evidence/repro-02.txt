@@ -1,0 +1,25 @@
+CATALOG RED: Expected values to be strictly equal:
+
+undefined !== 2
+
+RESTORE RED: Unapproved isolated deployment file
+APPLICATION RED: normal deployment has no connections ports/openChatCut; covered by factory regression next
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: confirmed missing pagination and normal restored deployment selection
+
+2 !== 0
+
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/d-close-20261025/reproduce.mjs:5:131
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 2,
+  expected: 0,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

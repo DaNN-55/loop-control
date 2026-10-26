@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import {spawnSync} from 'node:child_process';
+import {readFileSync,writeFileSync} from 'node:fs';
+import {q} from '../provider-offline-prep-20261025/control.mjs';
+const run=new URL('.',import.meta.url).pathname,f=JSON.parse(readFileSync(run+'fixture-private.json'));
+function browser(args){const r=spawnSync('agent-browser',['--session','native-ui-437166911c13',...args],{encoding:'utf8',timeout:30000,maxBuffer:1048576});assert.equal(r.status,0,'Browser verification command failed: '+args[0]);return r.stdout;}
+browser(['reload']);browser(['wait','--text','账号配置']);browser(['select','[aria-label="当前账号"]',f.accountId]);browser(['find','role','button','click','--name','重新检查']);browser(['wait','--text','已具备生产条件']);
+const state=JSON.parse(browser(['eval','({assetRoot:document.querySelector(\'[aria-label="资产目录"]\').value,rail:document.querySelector(".account-status-rail").innerText,errors:[...document.querySelectorAll(".form-error")].map(e=>e.innerText),modal:!!document.querySelector("[role=dialog]")})']));
+assert.equal(state.assetRoot,f.chosen);assert(state.rail.includes('已具备生产条件'));assert.deepEqual(state.errors,[]);assert.equal(state.modal,false);
+assert.equal(q(`SELECT policy->>'asset_root' FROM public.account_blueprint_versions WHERE id='${f.blueprintId}'`),f.chosen);
+writeFileSync(run+'browser-final-ax-private.txt',browser(['snapshot','-i']),{flag:'wx',mode:0o600});browser(['screenshot','--full',run+'browser-final.png']);
+writeFileSync(run+'browser-final-result.json',JSON.stringify({passed:true,actualChrome:true,userAssistedNativePickerAndCancel:true,sourceUsesSystemPickerNotNewPagePicker:true,localOwnerSessionImportedViaMemoryStdin:true,noCredentialFileOrCommandArgument:true,explicitSaveVerifiedInDatabase:true,chosenPathRetainedAfterFullReload:true,oldPreflightClearedAfterSavedRevision:true,currentSavedBlueprintRechecked:true,localRuntimePreflightPassed:true,noVisibleErrors:true,noProductionTasksCreated:true,providerRequests:0,browserGuard:'local-domain allowlist; not an OS network sandbox',applicationGuard:'standard offline-test Node guard plus disabled Provider ports'},null,2)+'\n',{flag:'wx',mode:0o600});console.log('Real Chrome selection/cancel/save/reload/current-preflight evidence captured.');

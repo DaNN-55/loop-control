@@ -1,0 +1,114 @@
+{
+  "passed": true,
+  "episodeId": "ab08ff5b-7dfa-40bf-96d4-90674c65523a",
+  "sourceTrackId": "1dbf3b6f-2152-4745-bd5a-635e54450b7e",
+  "sourceAudio": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "mp3",
+        "codec_type": "audio",
+        "sample_rate": "22050",
+        "channels": 1
+      }
+    ],
+    "format": {
+      "duration": "4.046440"
+    }
+  },
+  "proxy": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1080,
+        "height": 1920,
+        "side_data_list": [
+          {}
+        ]
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "48000",
+        "channels": 2
+      }
+    ],
+    "format": {
+      "duration": "4.053333"
+    }
+  },
+  "captionCues": [
+    {
+      "id": "cue-shot-1",
+      "text": "这是本地字幕验收。",
+      "start": 100,
+      "end": 3450
+    }
+  ],
+  "captionSlots": [
+    {
+      "id": "caption-slot-shot-1",
+      "anchor": "bottom-center",
+      "offsetXRatio": 0,
+      "offsetYRatio": 0.1,
+      "widthRatio": 0.84,
+      "heightRatio": 0.74
+    }
+  ],
+  "mainVoice": [
+    {
+      "id": "main-source-shot-1",
+      "track": "A1",
+      "startFrame": 0,
+      "durationInFrames": 120,
+      "kind": "audio",
+      "name": "shot-1 · 权威原声",
+      "src": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/materials/6467f114b9d6b4956bb63a20eaf300fb1546afb3d7506ca5fb99c051d89e7236-a_roll-source.mp4",
+      "sourceAssetId": "asset-1",
+      "srcInFrame": 0,
+      "volume": 1
+    }
+  ],
+  "videoVolumes": [
+    {
+      "id": "shot-shot-1-full",
+      "volume": 0
+    }
+  ],
+  "qc": {
+    "version": "qc-report/v1",
+    "renderFingerprint": "ed45b0fd7161f67170330cb80a4832b3b68bf7266b752a1c356a46b23b86f080",
+    "reuse": {
+      "reused": false
+    },
+    "passed": true,
+    "inputFingerprint": "1a92e90f81d8829d35cf90f82f957f80",
+    "output": {
+      "relativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/ec1fe453-1cda-4a5e-af24-bbb710499fff/proxy.mp4",
+      "durationSeconds": 4.053333,
+      "width": 1080,
+      "height": 1920,
+      "hasAudio": true,
+      "blackFrameCount": 0
+    },
+    "checks": [
+      {
+        "name": "openchatcut_project",
+        "passed": true,
+        "detail": "OpenChatCut 项目已冻结：episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/ec1fe453-1cda-4a5e-af24-bbb710499fff/project.json"
+      },
+      {
+        "name": "openchatcut_render",
+        "passed": true,
+        "detail": "输出包含音频。"
+      }
+    ]
+  },
+  "realMacOSInstalledVoiceFixture": true,
+  "realWhisperXInference": false,
+  "providerRequests": 0
+}

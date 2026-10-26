@@ -1,0 +1,146 @@
+[
+  {
+    "number": 132,
+    "title": "[A\u2013D \u6536\u53e3 C01] \u88f8 npm test \u53ea\u9a8c\u8bc1\u5f53\u524d\u6e90\u7801\u5e76\u4fdd\u6301\u9ed8\u8ba4\u8d85\u65f6",
+    "state": "CLOSED",
+    "stateReason": "completed",
+    "url": "https://github.com/DaNN-55/loop-control/issues/132",
+    "updatedAt": "2026-10-25T13:26:02Z"
+  },
+  {
+    "number": 133,
+    "title": "[A\u2013D \u6536\u53e3 C02] \u8d26\u53f7\u8d44\u4ea7\u76ee\u5f55\u9009\u62e9\u4e0e\u6253\u5f00\u7684\u539f\u751f\u95ed\u73af",
+    "state": "CLOSED",
+    "stateReason": "completed",
+    "url": "https://github.com/DaNN-55/loop-control/issues/133",
+    "updatedAt": "2026-10-25T10:13:12Z"
+  },
+  {
+    "number": 134,
+    "title": "[A\u2013D \u6536\u53e3 C03] \u5f53\u524d\u84dd\u56fe\u751f\u4ea7\u524d\u68c0\u67e5\u4e0e\u8fdf\u5230\u7ed3\u679c\u9694\u79bb",
+    "state": "CLOSED",
+    "stateReason": "completed",
+    "url": "https://github.com/DaNN-55/loop-control/issues/134",
+    "updatedAt": "2026-10-25T13:26:11Z"
+  },
+  {
+    "number": 135,
+    "title": "[A\u2013D \u6536\u53e3 C04] \u51b7\u73af\u5883\u51c6\u5907\u540e\u7ecf\u6b63\u5f0f\u5165\u53e3\u8fd0\u884c\u771f\u5b9e\u5bf9\u9f50",
+    "state": "CLOSED",
+    "stateReason": "completed",
+    "url": "https://github.com/DaNN-55/loop-control/issues/135",
+    "updatedAt": "2026-10-25T15:33:04Z"
+  },
+  {
+    "number": 136,
+    "title": "[A\u2013D \u6536\u53e3 C05] \u5bf9\u9f50\u9ad8\u5206\u4e0d\u4ee3\u8868\u6b63\u6587\u6b63\u786e\u7684\u4eba\u5de5\u786e\u8ba4\u95ed\u73af",
+    "state": "CLOSED",
+    "stateReason": "completed",
+    "url": "https://github.com/DaNN-55/loop-control/issues/136",
+    "updatedAt": "2026-10-25T13:26:21Z"
+  },
+  {
+    "number": 137,
+    "title": "[A\u2013D \u6536\u53e3 C06] Google TTS \u8ba1\u8d39\u6062\u590d\u540e\u7684\u771f\u5b9e\u8bed\u97f3\u95ed\u73af",
+    "state": "CLOSED",
+    "stateReason": "not_planned",
+    "url": "https://github.com/DaNN-55/loop-control/issues/137",
+    "updatedAt": "2026-10-26T00:50:33Z"
+  },
+  {
+    "number": 138,
+    "title": "[A\u2013D \u6536\u53e3 C07] Freesound \u8ba4\u8bc1\u6062\u590d\u540e\u7684\u771f\u5b9e\u97f3\u9891\u95ed\u73af",
+    "state": "CLOSED",
+    "stateReason": "not_planned",
+    "url": "https://github.com/DaNN-55/loop-control/issues/138",
+    "updatedAt": "2026-10-26T00:50:38Z"
+  },
+  {
+    "number": 139,
+    "title": "[A\u2013D \u6536\u53e3 C08] Cloudflare \u7ec4\u5408\u51ed\u636e\u4e0e\u771f\u5b9e\u56fe\u7247\u95ed\u73af",
+    "state": "CLOSED",
+    "stateReason": "not_planned",
+    "url": "https://github.com/DaNN-55/loop-control/issues/139",
+    "updatedAt": "2026-10-26T00:50:44Z"
+  },
+  {
+    "number": 140,
+    "title": "[A\u2013D \u6536\u53e3 C09] OpenAI \u6d4b\u8bd5\u8fde\u63a5\u4e0e\u771f\u5b9e\u56fe\u7247\u95ed\u73af",
+    "state": "CLOSED",
+    "stateReason": "not_planned",
+    "url": "https://github.com/DaNN-55/loop-control/issues/140",
+    "updatedAt": "2026-10-26T00:51:32Z"
+  },
+  {
+    "number": 141,
+    "title": "[A\u2013D \u6536\u53e3 C10] \u771f\u5b9e\u811a\u672c\u5206\u6790\u4e0e\u5206\u955c\u89c4\u5212\u56de\u5199",
+    "state": "CLOSED",
+    "stateReason": "completed",
+    "url": "https://github.com/DaNN-55/loop-control/issues/141",
+    "updatedAt": "2026-10-25T23:55:17Z"
+  },
+  {
+    "number": 142,
+    "title": "[A\u2013D \u6536\u53e3 C11] \u540c\u4e00\u751f\u4ea7\u5355\u7684\u771f\u5b9e\u591a\u80fd\u529b\u5ba1\u6279\u4e0e\u4ea4\u4ed8\u95ed\u73af",
+    "state": "CLOSED",
+    "stateReason": "completed",
+    "url": "https://github.com/DaNN-55/loop-control/issues/142",
+    "updatedAt": "2026-10-25T23:55:22Z"
+  },
+  {
+    "number": 143,
+    "title": "[A\u2013D \u6536\u53e3 C12] \u7cfb\u7edf\u901a\u77e5\u771f\u5b9e\u53ef\u89c1\u4e0e\u672a\u77e5\u6295\u9012\u72b6\u6001",
+    "state": "CLOSED",
+    "stateReason": "completed",
+    "url": "https://github.com/DaNN-55/loop-control/issues/143",
+    "updatedAt": "2026-10-25T15:29:19Z"
+  },
+  {
+    "number": 144,
+    "title": "[A\u2013D \u6536\u53e3 C13] \u5b58\u6d3b\u4f46\u79df\u7ea6\u8fc7\u671f\u7684\u6267\u884c\u5668\u8f93\u51fa\u9694\u79bb",
+    "state": "CLOSED",
+    "stateReason": "completed",
+    "url": "https://github.com/DaNN-55/loop-control/issues/144",
+    "updatedAt": "2026-10-25T23:55:28Z"
+  },
+  {
+    "number": 145,
+    "title": "[A\u2013D \u6536\u53e3 C14] \u5728\u7ebf\u4efb\u52a1\u4e2d\u65ad\u540e\u7684\u53d6\u6d88\u4e0e\u526f\u4f5c\u7528\u72b6\u6001",
+    "state": "CLOSED",
+    "stateReason": "completed",
+    "url": "https://github.com/DaNN-55/loop-control/issues/145",
+    "updatedAt": "2026-10-25T15:41:14Z"
+  },
+  {
+    "number": 146,
+    "title": "[A\u2013D \u6536\u53e3 C15] \u539f\u751f\u76ee\u5f55\u4e0e\u4fdd\u7559\u67e5\u8be2\u7684\u5408\u540c\u4e00\u81f4\u6027",
+    "state": "CLOSED",
+    "stateReason": "completed",
+    "url": "https://github.com/DaNN-55/loop-control/issues/146",
+    "updatedAt": "2026-10-26T00:31:40Z"
+  },
+  {
+    "number": 147,
+    "title": "[A\u2013D \u6536\u53e3 C16] \u4e09\u6761\u5386\u53f2 RLS \u544a\u8b66\u7684\u9002\u7528\u6027\u4e0e\u9a8c\u8bc1",
+    "state": "CLOSED",
+    "stateReason": "completed",
+    "url": "https://github.com/DaNN-55/loop-control/issues/147",
+    "updatedAt": "2026-10-26T00:31:44Z"
+  },
+  {
+    "number": 148,
+    "title": "[A\u2013D \u6536\u53e3 C17] \u9501\u7f51\u51ed\u636e\u8f6e\u6362\u63d0\u793a\u4e0e\u5b9e\u9645\u884c\u4e3a\u4e00\u81f4",
+    "state": "CLOSED",
+    "stateReason": "completed",
+    "url": "https://github.com/DaNN-55/loop-control/issues/148",
+    "updatedAt": "2026-10-25T13:26:28Z"
+  },
+  {
+    "number": 149,
+    "title": "[A\u2013D \u6536\u53e3 C18] A\u2013D \u68c0\u67e5\u53e3\u5f84\u4e0e\u96f6\u9057\u7559\u9000\u51fa\u9a8c\u6536",
+    "state": "OPEN",
+    "stateReason": null,
+    "url": "https://github.com/DaNN-55/loop-control/issues/149",
+    "updatedAt": "2026-10-26T00:31:46Z"
+  }
+]

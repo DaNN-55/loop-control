@@ -1,0 +1,190 @@
+### Page
+- Page URL: http://127.0.0.1:55177/
+- Page Title: Loop Control
+### Snapshot
+```yaml
+- main [ref=f2e4]:
+  - generic [ref=f2e5]:
+    - generic [ref=f2e6]: Loop Control · 本地
+    - heading "内容工作台" [level=1] [ref=f2e7]
+  - navigation [ref=f2e8]:
+    - button "账号配置" [ref=f2e9] [cursor=pointer]
+    - button "生产单目录" [ref=f2e10] [cursor=pointer]
+    - button "新建账号" [ref=f2e11] [cursor=pointer]
+    - button "刷新" [ref=f2e12] [cursor=pointer]
+    - button "退出登录" [ref=f2e13] [cursor=pointer]
+  - generic [ref=f2e15]:
+    - generic [ref=f2e16]:
+      - text: 当前账号
+      - combobox "当前账号" [ref=f2e17]:
+        - option "A阶段隔离测试"
+        - option "T10 synthetic pagination"
+        - option "T10 synthetic pagination"
+        - option "T10 synthetic pagination"
+        - option "T10 synthetic pagination"
+        - option "T10 synthetic pagination"
+        - option "T10 synthetic pagination"
+        - option "T11 synthetic reuse"
+        - option "T11 synthetic reuse"
+        - option "T11 synthetic reuse"
+        - option "T11 synthetic reuse"
+        - option "T11 synthetic reuse"
+        - option "T14 config bddd9f25"
+        - option "T14 config f4bb4d13 renamed"
+        - option "T14 config d0576f7a renamed" [selected]
+    - button "账号操作" [ref=f2e19] [cursor=pointer]: …
+  - tablist "账号设置导航" [ref=f2e20]:
+    - tab "蓝图" [selected] [ref=f2e21] [cursor=pointer]
+    - tab "系列" [ref=f2e22] [cursor=pointer]
+  - tabpanel [ref=f2e23]:
+    - navigation "蓝图配置分区" [ref=f2e24]:
+      - link "账号基础规则" [ref=f2e25] [cursor=pointer]:
+        - /url: "#account-rules"
+        - generic [aria-hidden] [ref=f2e26]: "1"
+        - text: 账号基础规则
+      - link "生产能力" [ref=f2e27] [cursor=pointer]:
+        - /url: "#account-capabilities"
+        - generic [aria-hidden] [ref=f2e28]: "2"
+        - text: 生产能力
+      - link "分镜规划" [ref=f2e29] [cursor=pointer]:
+        - /url: "#account-budget"
+        - generic [aria-hidden] [ref=f2e30]: "3"
+        - text: 分镜规划
+    - main [ref=f2e31]:
+      - generic [ref=f2e32]:
+        - paragraph [ref=f2e33]: 保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。
+        - group [ref=f2e34]:
+          - generic [ref=f2e36]:
+            - text: 账号定位
+            - generic "账号定位说明" [ref=f2e37]:
+              - tooltip "账号级长期创作基线，会进入视觉准备与分镜生成的 Prompt 上下文。当前主脚本由 Owner 提供，因此不会依据此字段自动生成脚本。只填写跨系列长期稳定的受众、主题和表达方向。"
+          - textbox "账号定位" [ref=f2e41]:
+            - /placeholder: 例如：面向固定受众，持续制作某类短视频内容。
+            - text: T14 browser saved positioning
+          - paragraph [ref=f2e42]: 描述账号面向谁、持续讲什么以及希望保持的表达方向。
+        - group "本地资产与审批" [ref=f2e43]:
+          - generic [ref=f2e45]:
+            - generic [ref=f2e46]:
+              - text: 资产目录
+              - generic "资产目录说明" [ref=f2e47]:
+                - tooltip "建议填写一个稳定的账号目录，例如 /Volumes/素材盘/账号目录。"
+            - generic [ref=f2e50]:
+              - textbox "资产目录" [ref=f2e51]:
+                - /placeholder: 例如：/Volumes/素材盘/账号目录
+                - text: /Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/media/t14-d0576f7a-36f8-4819-b889-298a0c446120
+              - button "选择文件夹" [ref=f2e52] [cursor=pointer]
+              - button "打开文件夹" [ref=f2e53] [cursor=pointer]
+          - status [ref=f2e54]: 资产目录已填写；保存后仍需 Worker 验证目录可读写。
+          - generic [ref=f2e56]:
+            - generic [ref=f2e58]:
+              - text: 审批关卡
+              - generic "审批关卡说明" [ref=f2e59]:
+                - tooltip "开启后，新产物完成时会停下来等待 Owner；关闭后，校验通过便自动推进。素材来源和能力开关不会改变这里的设置。"
+            - generic [ref=f2e62]:
+              - generic [ref=f2e63] [cursor=pointer]:
+                - checkbox "脚本审核 脚本审核说明" [checked] [ref=f2e64]
+                - generic [ref=f2e66]:
+                  - text: 脚本审核
+                  - generic "脚本审核说明" [ref=f2e67]:
+                    - tooltip "AI 生成或修改脚本后暂停，等待 Owner 审核。自行上传的脚本仍需确认为主脚本，但不会因此触发 AI 脚本审核。"
+              - generic [ref=f2e70] [cursor=pointer]:
+                - checkbox "视觉审核 视觉审核说明" [ref=f2e71]
+                - generic [ref=f2e73]:
+                  - text: 视觉审核
+                  - generic "视觉审核说明" [ref=f2e74]:
+                    - tooltip "产生新的视觉方案或视觉素材后暂停。素材来自上传还是外部 API，不改变是否需要审核。"
+              - generic [ref=f2e77] [cursor=pointer]:
+                - checkbox "分镜审核 分镜审核说明" [checked] [ref=f2e78]
+                - generic [ref=f2e80]:
+                  - text: 分镜审核
+                  - generic "分镜审核说明" [ref=f2e81]:
+                    - tooltip "生成或修改分镜 JSON 后暂停，等待 Owner 审核镜头结构与制作要求。"
+              - generic [ref=f2e84] [cursor=pointer]:
+                - checkbox "QC 审核 QC 审核说明" [checked] [ref=f2e85]
+                - generic [ref=f2e87]:
+                  - text: QC 审核
+                  - generic "QC 审核说明" [ref=f2e88]:
+                    - tooltip "审核视频生成并通过自动校验后暂停。关闭后仅在没有阻塞问题时自动继续。"
+        - group "生产能力" [ref=f2e91]:
+          - paragraph [ref=f2e93]: 在此启用能力并比较当前路径与配置状态；点击“配置”只打开该能力。配置未完成时，生产前检查会阻止创建生产单。
+          - table "生产能力配置矩阵" [ref=f2e94]:
+            - row [ref=f2e95]:
+              - columnheader "能力" [ref=f2e96]
+              - columnheader "启用" [ref=f2e97]
+              - columnheader "执行路径" [ref=f2e98]
+              - columnheader "状态" [ref=f2e99]
+              - columnheader "操作" [ref=f2e100]
+            - row [ref=f2e101]:
+              - cell "图片生成" [ref=f2e102]
+              - cell [ref=f2e103]:
+                - checkbox "启用图片生成" [ref=f2e105]
+              - cell "—" [ref=f2e107]
+              - cell "未启用" [ref=f2e108]
+              - cell
+            - row [ref=f2e109]:
+              - cell "A-roll" [ref=f2e110]
+              - cell [ref=f2e111]:
+                - checkbox "启用A-roll" [ref=f2e113]
+              - cell "—" [ref=f2e115]
+              - cell "未启用" [ref=f2e116]
+              - cell
+            - row [ref=f2e117]:
+              - cell "B-roll" [ref=f2e118]
+              - cell [ref=f2e119]:
+                - checkbox "启用B-roll" [ref=f2e121]
+              - cell "—" [ref=f2e123]
+              - cell "未启用" [ref=f2e124]
+              - cell
+            - row [ref=f2e125]:
+              - cell "旁白" [ref=f2e126]
+              - cell [ref=f2e127]:
+                - checkbox "启用旁白" [ref=f2e129]
+              - cell "—" [ref=f2e131]
+              - cell "未启用" [ref=f2e132]
+              - cell
+            - row [ref=f2e133]:
+              - cell "配乐 / 音效" [ref=f2e134]
+              - cell [ref=f2e135]:
+                - checkbox "启用配乐 / 音效" [ref=f2e137]
+              - cell "—" [ref=f2e139]
+              - cell "未启用" [ref=f2e140]
+              - cell
+          - paragraph [ref=f2e141]: Provider、Adapter、连接、模型、预设和调度参数只作用于之后新建的 Episode。
+        - group "分镜规划" [ref=f2e142]:
+          - article [ref=f2e145]:
+            - generic [ref=f2e146]:
+              - strong [ref=f2e147]: 分镜规划
+              - generic [ref=f2e148]: 新建 Episode 时冻结此选择
+            - generic [ref=f2e149]:
+              - generic [ref=f2e150]:
+                - term [ref=f2e151]: 运行模型
+                - definition [ref=f2e152]: codex · gpt-5.6-codex
+              - generic [ref=f2e153]:
+                - term [ref=f2e154]: 提示词 Harness
+                - definition [ref=f2e155]: storyboard-planning-v2
+            - button "修改分镜规划配置" [ref=f2e156] [cursor=pointer]: 配置
+        - generic [ref=f2e157]:
+          - button "取消编辑" [ref=f2e158] [cursor=pointer]
+          - button "保存并检查" [ref=f2e159] [cursor=pointer]
+    - complementary "账号默认配置检查" [ref=f2e160]:
+      - generic [ref=f2e161]:
+        - text: 账号默认配置检查
+        - heading "检查暂不可用" [level=2] [ref=f2e162]
+        - paragraph [ref=f2e163]: 只检查当前账号蓝图，不包含具体系列；新建生产单选择系列后会再次检查并冻结配置。
+        - paragraph [ref=f2e164]: 本地外部连接尚未就绪；相关选择暂时阻塞。生产能力仍需后续运行前检查。
+      - generic [ref=f2e165]:
+        - heading "配置范围" [level=3] [ref=f2e166]
+        - generic [ref=f2e167]:
+          - generic [ref=f2e168]:
+            - term [ref=f2e169]: 生效对象
+            - definition [ref=f2e170]: 新生产单
+          - generic [ref=f2e171]:
+            - term [ref=f2e172]: 已有生产单
+            - definition [ref=f2e173]: 保持冻结配置
+          - generic [ref=f2e174]:
+            - term [ref=f2e175]: 当前开启
+            - definition [ref=f2e176]: 0 项能力
+          - generic [ref=f2e177]:
+            - term [ref=f2e178]: 本机依赖
+            - definition [ref=f2e179]: 待检查
+```

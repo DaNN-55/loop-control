@@ -1,0 +1,1 @@
+{"label":"current","args":["node_modules/vitest/vitest.mjs","run","src/reviews/ReviewWorkspace.test.tsx","--exclude","**/.loop-control/**"],"cwd":"/Users/dan/.codex/worktrees/local-first-optimization/loop-control","status":0,"timeoutOverride":false}

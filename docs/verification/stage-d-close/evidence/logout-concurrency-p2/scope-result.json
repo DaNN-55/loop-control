@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "head": "49e25388a65687a93ec14d864345b194a73607fa",
+  "branch": "codex/local-first-stage-a",
+  "sourceChangedThisP2": [
+    "src/local-app/LocalCatalogApp.test.tsx",
+    "src/local-app/LocalCatalogApp.tsx"
+  ],
+  "clientUnchanged": true,
+  "sqlAndOtherPriorImplementationUnchanged": true,
+  "previousPublicUnchangedExceptTwoLiveReports": 377,
+  "previousPrivateUnchanged": 488,
+  "previousLiveReportsPreservedAsSnapshots": [
+    {
+      "path": "README.md",
+      "snapshot": "report-before.md",
+      "sha256": "e86b94d8409272ee1877db9f9c01714c61a4405a2fa1da8104cc99538f9b9d11"
+    },
+    {
+      "path": "review.md",
+      "snapshot": "review-before.md",
+      "sha256": "343b6f549c73bc5aac9c0bba5d2d04eae7a706a8c6371b49864492aa9914f80f"
+    }
+  ],
+  "originalD331Public397PrivateUnchanged": true,
+  "rootPlanAnd43UnrelatedFilesUnchanged": true,
+  "previousPrivatePlansUnchanged": true,
+  "currentRuntimeFingerprintMatched": true,
+  "normalServiceStopped": true,
+  "ownPortsClosed": [
+    55189,
+    55190
+  ],
+  "ownPgConnections": 0,
+  "syntheticKeychainAbsent": true,
+  "indexEmpty": true,
+  "noCommitPushMerge": true,
+  "newOnlineRequests": 0,
+  "newConfigurationWrites": 0,
+  "noProduction": true,
+  "noEF": true,
+  "historicalGateClosed": false
+}

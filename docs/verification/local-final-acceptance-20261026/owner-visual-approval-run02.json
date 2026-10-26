@@ -1,0 +1,15 @@
+{
+  "kind": "visual-review",
+  "confirmedBy": "human-owner",
+  "confirmed": true,
+  "confirmedAt": "2026-10-26T06:07:07.903Z",
+  "sourceUserMessage": "Direct human reply to request_user_input_async call_4c3d67a9c418415389072d7c9db6d164 item 0: 批准视觉清单，继续分镜规划",
+  "episodeId": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+  "reviewPackageId": "c6080d2a-f1c4-4735-ac0a-2fc35bc4ad3f",
+  "artifactId": "26f9528e-72e5-4828-88c7-f9ce7a5f678d",
+  "artifactSha256": "7de96897a75645d9c018a95156b94065718a90b18d2d5b38bc26c463c5f26591",
+  "doesNotApprove": [
+    "storyboard_review",
+    "qc_review"
+  ]
+}

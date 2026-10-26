@@ -1,0 +1,5 @@
+{
+  "command": "npm test",
+  "exitCode": 1,
+  "log": ".loop-control/stage-d/state/ad-sql-closeout-20261026/final-npm-test.log"
+}

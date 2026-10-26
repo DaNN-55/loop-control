@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "hashes": {
+    "loop_empty": {
+      "016-media.sql": "36f63f01f68a12034743fbd0998e2f97353f18c69f8788968b38a6f48013606c",
+      "017-media-fences.sql": "e360a89be558527fee95f58cca5928988e0928787e07d7ebe5838a90136d75b4",
+      "018-media-source-mode.sql": "5174ce81cac117bc7cff795c58cb412d822d50e7da62fd6f7841277028b5a3be"
+    },
+    "loop_imported": {
+      "016-media.sql": "36f63f01f68a12034743fbd0998e2f97353f18c69f8788968b38a6f48013606c",
+      "017-media-fences.sql": "e360a89be558527fee95f58cca5928988e0928787e07d7ebe5838a90136d75b4",
+      "018-media-source-mode.sql": "5174ce81cac117bc7cff795c58cb412d822d50e7da62fd6f7841277028b5a3be"
+    }
+  },
+  "functions": [
+    {
+      "name": "input_media_connection",
+      "securityDefiner": true,
+      "fixedSearchPath": true,
+      "publicExecute": false
+    },
+    {
+      "name": "input_task_allowed",
+      "securityDefiner": true,
+      "fixedSearchPath": true,
+      "publicExecute": false
+    },
+    {
+      "name": "plan_input_tasks",
+      "securityDefiner": true,
+      "fixedSearchPath": true,
+      "publicExecute": false
+    },
+    {
+      "name": "retry_input_media",
+      "securityDefiner": true,
+      "fixedSearchPath": true,
+      "publicExecute": false
+    }
+  ],
+  "priorAdvisorWarningsRetained": 3,
+  "cloudAdvisorNotRunForNativePg": true
+}

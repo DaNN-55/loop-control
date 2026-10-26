@@ -1,0 +1,67 @@
+{
+  "passed": true,
+  "currentMaterialFiles": 12,
+  "allMaterialHashesMatch": true,
+  "deletedArtifactBackupCount": 27,
+  "allDeletedIndexedArtifactsPreservedInPrivateBackup": true,
+  "ownerOnlyFunctions": [
+    {
+      "function": "queue_owned_final_render(uuid)",
+      "owner": true,
+      "worker": false,
+      "anonymous": false
+    },
+    {
+      "function": "current_owned_final_render(uuid,uuid)",
+      "owner": true,
+      "worker": false,
+      "anonymous": false
+    },
+    {
+      "function": "complete_owned_publish(uuid,jsonb,jsonb,jsonb)",
+      "owner": true,
+      "worker": false,
+      "anonymous": false
+    },
+    {
+      "function": "retry_owned_final_render(uuid,text)",
+      "owner": true,
+      "worker": false,
+      "anonymous": false
+    },
+    {
+      "function": "lock_owned_episode_deletion(uuid)",
+      "owner": true,
+      "worker": false,
+      "anonymous": false
+    },
+    {
+      "function": "delete_owned_input_episode(uuid)",
+      "owner": true,
+      "worker": false,
+      "anonymous": false
+    },
+    {
+      "function": "archive_owned_input_episode(uuid,boolean)",
+      "owner": true,
+      "worker": false,
+      "anonymous": false
+    },
+    {
+      "function": "complete_owned_deletion_cleanup(uuid)",
+      "owner": true,
+      "worker": false,
+      "anonymous": false
+    }
+  ],
+  "sourceAcl": {
+    "owner": false,
+    "worker": true,
+    "anonymous": false,
+    "approvalTableRead": false,
+    "receiptResultUpdate": false
+  },
+  "productionMarkerRows": 0,
+  "nativeDefaultWorkerConfigAbsent": true,
+  "providerRequests": 0
+}

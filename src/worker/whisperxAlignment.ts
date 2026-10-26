@@ -102,16 +102,17 @@ function comparableText(value: string): string {
   return value.normalize("NFKC").toLocaleLowerCase("zh-CN").replace(/[\p{P}\p{Z}\s]/gu, "");
 }
 
-async function executeWhisperX(input: { audioPath: string; cacheDirectory: string; confirmedText: string; model: string }): Promise<WhisperXExecution> {
-  const script = process.env.WHISPERX_RUNNER_PATH?.trim() || join(process.cwd(), "scripts", "whisperx-align.py");
-  const python = process.env.WHISPERX_PYTHON?.trim() || "python3";
+export async function executeWhisperX(input: { audioPath: string; cacheDirectory: string; confirmedText: string; model: string }, runtime?:{python:string;runnerPath:string;environment:NodeJS.ProcessEnv}): Promise<WhisperXExecution> {
+  const script = runtime?.runnerPath || process.env.WHISPERX_RUNNER_PATH?.trim() || join(process.cwd(), "scripts", "whisperx-align.py");
+  const python = runtime?.python || process.env.WHISPERX_PYTHON?.trim() || "python3";
   const output = await new Promise<string>((resolve, reject) => {
-    const child = spawn(python, [script, "--audio", input.audioPath, "--cache-dir", input.cacheDirectory, "--model", input.model, "--confirmed-text-stdin"], { stdio: ["pipe", "pipe", "pipe"] });
+    const child = spawn(python, [script, "--audio", input.audioPath, "--cache-dir", input.cacheDirectory, "--model", input.model, "--confirmed-text-stdin"], { env:runtime?.environment??process.env, stdio: ["pipe", "pipe", "pipe"] });
     let stdout = ""; let stderr = "";
+    const timer=setTimeout(()=>child.kill("SIGKILL"),300000);
     child.stdout.setEncoding("utf8"); child.stderr.setEncoding("utf8");
-    child.stdout.on("data", (chunk) => { stdout += chunk; }); child.stderr.on("data", (chunk) => { stderr += chunk; });
-    child.once("error", reject);
-    child.once("close", (code) => code === 0 ? resolve(stdout) : reject(new Error(stderr.trim() || `WhisperX runner 退出码 ${code ?? "unknown"}。`)));
+    child.stdout.on("data", (chunk) => { stdout += chunk;if(Buffer.byteLength(stdout)>2*1024*1024)child.kill("SIGKILL"); }); child.stderr.on("data", (chunk) => { stderr += chunk;if(Buffer.byteLength(stderr)>262144)child.kill("SIGKILL"); });
+    child.once("error", e=>{clearTimeout(timer);reject(e);});
+    child.once("close", (code) => {clearTimeout(timer);code === 0 ? resolve(stdout) : reject(new Error(stderr.trim() || `WhisperX runner 退出码 ${code ?? "unknown"}。`));});
     child.stdin.end(input.confirmedText, "utf8");
   });
   return parseWhisperXExecutionOutput(output, input.model);

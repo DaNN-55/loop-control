@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "expectedMissingEntryReproduced": true,
+  "status": 405,
+  "realOwnerHttp": true,
+  "newProviderRequests": 0
+}

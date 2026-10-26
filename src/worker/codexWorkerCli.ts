@@ -1,3 +1,7 @@
+import{buildCodexPrompt}from'./codexPrompt.js';
+export{buildCodexPrompt}from'./codexPrompt.js';
+import {generateVisualAssets} from './visualAssetExecutor.js';
+import {extractMp3Artifact,trimMp3Artifact,trimMp4Artifact,trimMp4SegmentsArtifact,probeMp3Artifact,validateMp4Artifact,inspectMp4Artifact} from './mediaTools.js';
 import { assertPreparedRuntime } from "../orchestration/runtimeBuild.js";
 import { spawn } from "node:child_process";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
@@ -10,18 +14,16 @@ import {
   type ClaimedWorkerTask,
   type WorkerProgress,
 } from "./codexRunner.js";
-import type { ArtifactManifest, VisualAssetRequest, WorkerPreflightResult, WorkerTaskPackage } from "./contracts.js";
+import type { ArtifactManifest, WorkerPreflightResult, WorkerTaskPackage } from "./contracts.js";
 import type { StoryboardManifest } from "./contracts.js";
 import { verifyArtifactIndex, verifyMediaLibrary } from "./mediaLibrary.js";
 import { nonNegativeIntegerEnvironment, requiredEnvironment } from "./runtimeEnvironment.js";
 import { addFrozenStoryboardBasis, refreshArtifactManifest, verifyReportedStoryboardArtifact } from "./storyboardArtifact.js";
-import { applyStoryboardStructureRevision } from "./storyboardRevision.js";
+import { executeStoryboardRevision } from "./storyboardRevisionExecutor.js";
 import { workerResultJsonSchema } from "./workerResultSchema.js";
 import { executeControlledMediaTask, writeSafeAssetFile } from "./controlledMediaExecutor.js";
-import { generateCloudflareWorkersAiImage, generateOpenAiImage } from "./mediaProviders.js";
 import { createHash } from "node:crypto";
 import { executeOpenChatCutRender } from "./openchatcutRenderer.js";
-import { durationToleranceSeconds, videoDurationMeetsMinimum } from "./durationDecision.js";
 import { readTaskIdArgument } from "./taskClaimArguments.js";
 import { createRuntimePreflight, type RuntimeEvidenceAdapter, type RuntimeEvidenceDemand, type RuntimeEvidenceFact } from "./runtimePreflight.js";
 import { credentialEnvironmentForReference, runtimeCommandArguments, runtimeCommandInvocation } from "./runtimeEvidence.js";
@@ -100,7 +102,7 @@ async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
   if (taskPackage.storyboardRevision) return executeStoryboardRevision(taskPackage);
   if (taskPackage.provider === "codex") {
     const output = await executeCodex(taskPackage);
-    const completedOutput = taskPackage.visualAssetPreparation?.imageGeneration ? await generateVisualAssets(taskPackage, output) : output;
+    const completedOutput = taskPackage.visualAssetPreparation?.imageGeneration ? await generateVisualAssets(taskPackage, output, resolveConnectionSecret, fetch) : output;
     return taskPackage.capability === "storyboard_planning" ? useWrittenStoryboard(taskPackage, completedOutput) : completedOutput;
   }
   if (taskPackage.provider === "openchatcut") {
@@ -151,15 +153,6 @@ async function executeWhisperXTask(taskPackage: WorkerTaskPackage): Promise<stri
   return JSON.stringify({ version: "worker-result/v1", taskId: taskPackage.task.id, status: "completed", artifacts: [artifact], acousticAlignment: result, validation: { passed: true, checks: [{ name: "whisperx_alignment_output", passed: true, detail: result.status === "completed" ? "本地 WhisperX 时序与 Owner 正文已完整匹配。" : "本地 WhisperX 已返回候选时序和人工检查区间。" }] }, actualCostCents: 0, blockers: [], retry: { shouldRetry: false, reason: "Local alignment completed." }, nextStep: result.status === "completed" ? "Review the current shot timing." : "Owner must review unmatched or low-confidence intervals." });
 }
 
-async function executeStoryboardRevision(taskPackage: WorkerTaskPackage): Promise<string> {
-  const revision = taskPackage.storyboardRevision;
-  if (!revision) throw new Error("缺少分镜结构修订。");
-  const storyboard = applyStoryboardStructureRevision(revision.storyboard, revision.operation);
-  const content = `${JSON.stringify(storyboard, null, 2)}\n`;
-  await writeFile(join(taskPackage.assets.allowedRoot, taskPackage.output.relativePath), content);
-  const artifact = { artifactType: taskPackage.output.requiredArtifactTypes[0] ?? "storyboard", relativePath: taskPackage.output.relativePath, sha256: createHash("sha256").update(content).digest("hex"), fileSize: Buffer.byteLength(content) };
-  return JSON.stringify({ version: "worker-result/v1", taskId: taskPackage.task.id, status: "completed", artifacts: [artifact], storyboard, validation: { passed: true, checks: [{ name: "storyboard_structure_revision", passed: true, detail: "结构操作已按冻结输入应用。" }] }, actualCostCents: 0, blockers: [], retry: { shouldRetry: false, reason: "Completed successfully." }, nextStep: "Submit the revised storyboard for Owner review." });
-}
 
 async function useWrittenStoryboard(taskPackage: WorkerTaskPackage, output: string): Promise<string> {
   const candidate = parseCodexOutput(output, 0);
@@ -171,42 +164,6 @@ async function useWrittenStoryboard(taskPackage: WorkerTaskPackage, output: stri
   const content = `${JSON.stringify(storyboard, null, 2)}\n`;
   await writeFile(join(taskPackage.assets.allowedRoot, relativePath), content);
   return JSON.stringify({ ...result, artifacts: refreshArtifactManifest(result.artifacts, relativePath, content), storyboard });
-}
-
-async function generateVisualAssets(taskPackage: WorkerTaskPackage, output: string): Promise<string> {
-  const candidate = parseCodexOutput(output, 0);
-  if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) throw new Error("视觉资产准备结果格式无效。");
-  const result = candidate as Record<string, unknown>;
-  if (result.status !== "completed") return output;
-  const requests = visualAssetRequests(result.visualAssetRequests);
-  if (!requests.length) return output;
-  const imageGeneration = taskPackage.visualAssetPreparation?.imageGeneration;
-  if (!imageGeneration) throw new Error("视觉资产存在缺失项，但没有冻结的图片 Adapter。" );
-  if ((imageGeneration.provider !== "openai" || imageGeneration.adapter !== "openai_images") && (imageGeneration.provider !== "cloudflare" || imageGeneration.adapter !== "workers_ai_images")) throw new Error("冻结的图片 Adapter 没有可用执行路径。" );
-  const apiKey = await resolveConnectionSecret(imageGeneration.credentialRef, imageGeneration.provider, imageGeneration.adapter, taskPackage.accountId);
-  if (!apiKey?.trim()) throw new Error("OPENAI_API_KEY 未配置，无法生成冻结视觉资产。" );
-  const generated: ArtifactManifest[] = [];
-  for (const request of requests) {
-    const bytes = imageGeneration.provider === "cloudflare"
-      ? await generateCloudflareWorkersAiImage({ credentials: apiKey, fetcher: fetch, model: imageGeneration.model, prompt: request.prompt })
-      : await generateOpenAiImage({ apiKey, fetcher: fetch, model: imageGeneration.model, prompt: request.prompt });
-    const relativePath = `episodes/${taskPackage.episode.id}/visuals/${request.id}.${imageGeneration.provider === "cloudflare" ? "jpg" : "png"}`;
-    await writeSafeAssetFile(taskPackage.assets.allowedRoot, relativePath, bytes);
-    generated.push({ artifactType: "static_visual", relativePath, sha256: createHash("sha256").update(bytes).digest("hex"), fileSize: bytes.byteLength });
-  }
-  if (!Array.isArray(result.artifacts)) throw new Error("视觉资产准备结果缺少产物清单。" );
-  result.artifacts = [...result.artifacts, ...generated];
-  return JSON.stringify(result);
-}
-
-function visualAssetRequests(value: unknown): VisualAssetRequest[] {
-  if (!Array.isArray(value)) throw new Error("视觉资产准备缺少图片生成需求。" );
-  return value.map((request) => {
-    if (!request || typeof request !== "object" || Array.isArray(request)) throw new Error("视觉图片生成需求格式无效。" );
-    const value = request as Record<string, unknown>;
-    if (typeof value.id !== "string" || !/^[a-z0-9][a-z0-9-]{0,63}$/.test(value.id) || typeof value.prompt !== "string" || !value.prompt.trim()) throw new Error("视觉图片生成需求格式无效。" );
-    return { id: value.id, prompt: value.prompt, inputBasis: [] };
-  });
 }
 
 async function preflightTask(taskPackage: WorkerTaskPackage): Promise<WorkerPreflightResult> {
@@ -306,103 +263,6 @@ async function workerCommandStatus(command: string): Promise<{ available: boolea
   }
 }
 
-async function extractMp3Artifact(sourcePath: string, minimumDurationSeconds: number): Promise<Uint8Array> {
-  const directory = await mkdtemp(join(tmpdir(), "loop-control-audio-"));
-  const outputPath = join(directory, "derived.mp3");
-  try {
-    await runCommand("ffmpeg", ["-nostdin", "-v", "error", "-i", sourcePath, "-vn", "-codec:a", "libmp3lame", "-q:a", "2", outputPath]);
-    const { stdout } = await runCommandWithOutput("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", outputPath]);
-    const duration = Number(stdout.trim());
-    if (!Number.isFinite(duration) || duration < minimumDurationSeconds) throw new Error(`派生音频不可播放或时长不足：${duration || "未知"} 秒。`);
-    return new Uint8Array(await readFile(outputPath));
-  } finally {
-    await rm(directory, { recursive: true, force: true });
-  }
-}
-
-async function trimMp3Artifact(bytes: Uint8Array, targetDurationSeconds: number): Promise<Uint8Array> {
-  const directory = await mkdtemp(join(tmpdir(), "loop-control-soundtrack-"));
-  const inputPath = join(directory, "source.mp3");
-  const outputPath = join(directory, "trimmed.mp3");
-  try {
-    await writeFile(inputPath, bytes);
-    await runCommand("ffmpeg", ["-nostdin", "-v", "error", "-i", inputPath, "-t", String(targetDurationSeconds), "-codec:a", "libmp3lame", "-q:a", "2", outputPath]);
-    const duration = await probeMp3Artifact(outputPath);
-    if (duration + durationToleranceSeconds() < targetDurationSeconds) throw new Error(`Freesound 裁剪后的音频时长不足：${duration} 秒。`);
-    return new Uint8Array(await readFile(outputPath));
-  } finally {
-    await rm(directory, { recursive: true, force: true });
-  }
-}
-
-async function trimMp4Artifact(sourcePath: string, startSeconds: number, endSeconds: number): Promise<Uint8Array> {
-  const directory = await mkdtemp(join(tmpdir(), "loop-control-video-"));
-  const outputPath = join(directory, "trimmed.mp4");
-  try {
-    const durationSeconds = endSeconds - startSeconds;
-    await runCommand("ffmpeg", ["-nostdin", "-v", "error", "-i", sourcePath, "-ss", String(startSeconds), "-t", String(durationSeconds), "-map", "0:v:0", "-map", "0:a:0?", "-c:v", "libx264", "-c:a", "aac", "-pix_fmt", "yuv420p", "-movflags", "+faststart", outputPath]);
-    const { stdout } = await runCommandWithOutput("ffprobe", ["-v", "error", "-show_entries", "format=duration:stream=codec_type", "-of", "json", outputPath]);
-    const inspected = JSON.parse(stdout) as { format?: { duration?: string }; streams?: Array<{ codec_type?: string }> };
-    const actualDuration = Number(inspected.format?.duration);
-    const hasVideo = Boolean(inspected.streams?.some((stream) => stream.codec_type === "video"));
-    const hasAudio = Boolean(inspected.streams?.some((stream) => stream.codec_type === "audio"));
-    if (!Number.isFinite(actualDuration) || Math.abs(actualDuration - durationSeconds) > durationToleranceSeconds() || !hasVideo) throw new Error(`裁剪视频校验失败：时长 ${actualDuration || "未知"} 秒，视频流 ${hasVideo ? "存在" : "缺失"}，音频流 ${hasAudio ? "存在" : "缺失"}。`);
-    const bytes = new Uint8Array(await readFile(outputPath));
-    if (bytes.byteLength === 0) throw new Error("裁剪视频文件为空。");
-    return bytes;
-  } finally {
-    await rm(directory, { recursive: true, force: true });
-  }
-}
-
-async function trimMp4SegmentsArtifact(sourcePath: string, segments: Array<{ startSeconds: number; endSeconds: number }>): Promise<Uint8Array> {
-  const directory = await mkdtemp(join(tmpdir(), "loop-control-video-segments-"));
-  const outputPath = join(directory, "combined.mp4");
-  try {
-    const segmentPaths: string[] = [];
-    for (const [index, segment] of segments.entries()) {
-      const segmentPath = join(directory, `segment-${index}.mp4`);
-      await runCommand("ffmpeg", ["-nostdin", "-v", "error", "-i", sourcePath, "-ss", String(segment.startSeconds), "-t", String(segment.endSeconds - segment.startSeconds), "-map", "0:v:0", "-map", "0:a:0?", "-c:v", "libx264", "-c:a", "aac", "-pix_fmt", "yuv420p", "-movflags", "+faststart", segmentPath]);
-      segmentPaths.push(segmentPath);
-    }
-    const concatPath = join(directory, "segments.txt");
-    await writeFile(concatPath, segmentPaths.map((path) => `file '${path.replaceAll("'", "'\\''")}'`).join("\n"));
-    await runCommand("ffmpeg", ["-nostdin", "-v", "error", "-f", "concat", "-safe", "0", "-i", concatPath, "-c", "copy", "-movflags", "+faststart", outputPath]);
-    const bytes = new Uint8Array(await readFile(outputPath));
-    if (bytes.byteLength === 0) throw new Error("拼接视频文件为空。");
-    return bytes;
-  } finally {
-    await rm(directory, { recursive: true, force: true });
-  }
-}
-
-async function probeMp3Artifact(path: string): Promise<number> {
-  const { stdout } = await runCommandWithOutput("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", path]);
-  const duration = Number(stdout.trim());
-  if (!Number.isFinite(duration) || duration <= 0) throw new Error("音频不可播放或缺少有效时长。");
-  return duration;
-}
-
-async function validateMp4Artifact(path: string, minimumDurationSeconds: number, frameRate?: number, allowedFrames?: number): Promise<void> {
-  const { stdout } = await runCommandWithOutput("ffprobe", [
-    "-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", path,
-  ]);
-  const duration = Number(stdout.trim());
-  if (!videoDurationMeetsMinimum(duration, minimumDurationSeconds, frameRate, allowedFrames)) {
-    throw new Error(`视频不可播放或时长不足：${duration || "未知"} 秒。`);
-  }
-}
-
-async function inspectMp4Artifact(path: string): Promise<{ durationSeconds: number; width: number; height: number; hasAudio: boolean; blackFrameCount: number }> {
-  const { stdout } = await runCommandWithOutput("ffprobe", ["-v", "error", "-show_entries", "format=duration:stream=codec_type,width,height", "-of", "json", path]);
-  const inspected = JSON.parse(stdout) as { format?: { duration?: string }; streams?: Array<{ codec_type?: string; width?: number; height?: number }> };
-  const durationSeconds = Number(inspected.format?.duration);
-  const video = inspected.streams?.find((stream) => stream.codec_type === "video");
-  if (!Number.isFinite(durationSeconds) || !video || !Number.isInteger(video.width) || !Number.isInteger(video.height)) throw new Error("最终视频缺少有效的时长或视频流。");
-  const black = await runCommandWithOutput("ffmpeg", ["-nostdin", "-v", "info", "-i", path, "-vf", "blackdetect=d=0.1:pix_th=0.02", "-an", "-f", "null", "-"]);
-  return { durationSeconds, width: Number(video.width), height: Number(video.height), hasAudio: Boolean(inspected.streams?.some((stream) => stream.codec_type === "audio")), blackFrameCount: (black.stderr.match(/black_start:/g) ?? []).length };
-}
-
 async function reportResult(taskId: string, attempt: number, workerResult: unknown): Promise<void> {
   try {
     const { error } = await supabase.rpc("report_worker_result", {
@@ -492,24 +352,6 @@ async function executeCodex(taskPackage: WorkerTaskPackage): Promise<string> {
   }
 }
 
-export function buildCodexPrompt(taskPackage: WorkerTaskPackage): string {
-  return [
-    "You are the Codex Content Worker for a controlled production platform.",
-    "Work only inside assets.allowedRoot. Do not inspect, modify, or transmit files outside that directory.",
-    "Use only the tools listed in allowedTools. If the task cannot be completed with them, return blocked instead of substituting another tool.",
-    "allowedTools is a capability policy, not a list of Codex tool names. When it includes read and write, use your normal workspace filesystem tools only to read and write within assets.allowedRoot.",
-    "When task package includes seriesBaseline, it is an approved, frozen reusable base. For visual planning, do not regenerate covered characters, voices, or visual references; create only additions or explicit deviations. When visualAssetPreparation is present, write the required visual_asset_manifest as Markdown: list every frozen external visual input by its role, list only the missing character, location, prop, or key-frame needs, and cite the frozen input paths that justify each item. Also return visualAssetRequests: [] when external assets fully cover the need; otherwise return one request per missing item, each with a lowercase kebab-case id, an explicit image prompt, and inputBasis paths/hashes drawn only from frozen inputs. Do not create SVGs, placeholder images, or a static_visual artifact yourself. The registered image Adapter will create only the returned missing requests; without one, return blocked rather than claiming completion.",
-    "For a completed storyboard_planning task, write the primary artifact as valid JSON and also return the identical object in result.storyboard. It must have version storyboard/v1, a non-empty shots array, and an audioCues array (empty when no BGM/SFX is needed). Every shot needs id, scriptSegment, durationSeconds, shotType (a_roll or b_roll), productionMethod, inputBasis (objects containing each frozen input's relativePath and sha256), and targetSpec. Each optional audio cue needs id, kind (bgm or sfx), description, searchQuery, startSeconds, and durationSeconds. description is the Owner-facing display text; searchQuery is a concise English Freesound search phrase of at most 100 characters. Each shot must include the frozen main script and at least one approved visual input. For a blocked or failed storyboard_planning task, set result.storyboard to null. Do not generate or queue A-roll, B-roll, or audio media; this task is only the reviewable storyboard. When reviewAnnotations are present, revise the matching shot IDs to address their reasons.",
-    "For a_roll_generation, create only the frozen shot in aRoll with its declared aRoll.adapter. Do not replace the adapter, add other shots, scan for newer inputs, or advance an Episode stage. Use only aRoll.shot.inputBasis and produce the frozen video output contract; if the declared adapter cannot produce that output, return blocked with an explicit blocker.",
-    "Do not approve, publish, change any blueprint, call platform APIs, or change an Episode stage.",
-    "If any required input, tool, permission, or rule is missing, return status blocked with explicit blockers; do not silently substitute a provider.",
-    ...(taskPackage.promptHarness ? ["Frozen Prompt Harness (follow it unless it conflicts with the fixed safety rules above):", taskPackage.promptHarness.content] : []),
-    `Create the required artifact at output.relativePath inside episodes/${taskPackage.episode.id}/ and return a JSON result that matches the provided schema. Use paths relative to assets.allowedRoot and SHA-256 hashes in lowercase hexadecimal.`,
-    "The retry reason must always be non-empty. For a completed result, set retry.shouldRetry to false and retry.reason to Completed successfully.",
-    "Task package:",
-    JSON.stringify(taskPackage),
-  ].join("\n\n");
-}
 
 function runCommand(command: string, argumentsList: string[], timeoutMs?: number): Promise<void> {
   return runCommandWithOutput(command, argumentsList, timeoutMs).then(() => undefined);

@@ -1,0 +1,17 @@
+{"event":"run-started","label":"01-baseline","at":"2026-10-24T09:01:28.611Z"}
+{"event":"run-finished","label":"01-baseline","exitCode":1,"targetTimedOut":false,"targetReportedDurationMs":5019,"summary":[" Test Files  1 failed | 93 passed (94)","      Tests  1 failed | 739 passed (740)","   Start at  17:01:29","   Duration  15.80s (transform 3.28s, setup 0ms, collect 13.95s, tests 37.29s, environment 34.35s, prepare 7.46s)"]}
+{"event":"run-started","label":"02-current","at":"2026-10-24T09:01:45.544Z"}
+{"event":"run-finished","label":"02-current","exitCode":0,"targetTimedOut":false,"targetReportedDurationMs":3458,"summary":[" Test Files  94 passed (94)","      Tests  740 passed (740)","   Start at  17:01:45","   Duration  10.99s (transform 2.55s, setup 0ms, collect 9.63s, tests 23.34s, environment 19.43s, prepare 4.16s)"]}
+{"event":"run-started","label":"03-current","at":"2026-10-24T09:01:57.146Z"}
+{"event":"run-finished","label":"03-current","exitCode":1,"targetTimedOut":false,"targetReportedDurationMs":5032,"summary":[" Test Files  1 failed | 93 passed (94)","      Tests  1 failed | 739 passed (740)","   Start at  17:01:57","   Duration  14.07s (transform 3.58s, setup 0ms, collect 13.94s, tests 33.08s, environment 29.60s, prepare 6.15s)"]}
+{"event":"run-started","label":"04-baseline","at":"2026-10-24T09:02:12.111Z"}
+{"event":"run-finished","label":"04-baseline","exitCode":0,"targetTimedOut":false,"targetReportedDurationMs":3285,"summary":[" Test Files  94 passed (94)","      Tests  740 passed (740)","   Start at  17:02:12","   Duration  10.56s (transform 2.50s, setup 0ms, collect 9.08s, tests 24.66s, environment 17.65s, prepare 4.10s)"]}
+{"event":"run-started","label":"05-baseline","at":"2026-10-24T09:02:23.251Z"}
+{"event":"run-finished","label":"05-baseline","exitCode":0,"targetTimedOut":false,"targetReportedDurationMs":3317,"summary":[" Test Files  94 passed (94)","      Tests  740 passed (740)","   Start at  17:02:23","   Duration  10.89s (transform 2.51s, setup 0ms, collect 9.27s, tests 26.14s, environment 18.84s, prepare 4.14s)"]}
+{"event":"run-started","label":"06-current","at":"2026-10-24T09:02:34.844Z"}
+{"event":"run-finished","label":"06-current","exitCode":0,"targetTimedOut":false,"targetReportedDurationMs":3815,"summary":[" Test Files  94 passed (94)","      Tests  740 passed (740)","   Start at  17:02:35","   Duration  12.16s (transform 3.29s, setup 0ms, collect 13.08s, tests 29.24s, environment 20.74s, prepare 4.63s)"]}
+{"event":"run-started","label":"07-current","at":"2026-10-24T09:02:47.742Z"}
+{"event":"run-finished","label":"07-current","exitCode":0,"targetTimedOut":false,"targetReportedDurationMs":3126,"summary":[" Test Files  94 passed (94)","      Tests  740 passed (740)","   Start at  17:02:47","   Duration  10.48s (transform 2.62s, setup 0ms, collect 8.96s, tests 21.98s, environment 17.32s, prepare 4.05s)"]}
+{"event":"run-started","label":"08-baseline","at":"2026-10-24T09:02:58.914Z"}
+{"event":"run-finished","label":"08-baseline","exitCode":0,"targetTimedOut":false,"targetReportedDurationMs":3774,"summary":[" Test Files  94 passed (94)","      Tests  740 passed (740)","   Start at  17:02:59","   Duration  10.62s (transform 2.35s, setup 0ms, collect 9.11s, tests 25.77s, environment 18.76s, prepare 3.78s)"]}
+{"event":"comparison-finished","runs":8,"baselineTimeouts":0,"currentTimeouts":0}

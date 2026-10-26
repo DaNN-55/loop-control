@@ -1,0 +1,14 @@
+{
+  "started": "2026-10-25T00:55:37.508Z",
+  "finished": "2026-10-25T00:55:38.087Z",
+  "command": [
+    "node",
+    "--import",
+    "./scripts/local/offline-guard.mjs",
+    ".loop-control/stage-d/state/d-close-20261025/queue.mjs",
+    "prepare",
+    "source-restart"
+  ],
+  "status": 0,
+  "passed": true
+}

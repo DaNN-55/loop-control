@@ -1,0 +1,11 @@
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 1874 modules transformed.
+rendering chunks...
+✗ Build failed in 1.06s
+error during build:
+[native-runtime-boundary] Legacy dependency entered native bundle.
+    at Object.generateBundle (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/node_modules/.vite-temp/vite.config.ts.timestamp-1792885385409-c97874fca8a1a8.mjs:18:149)
+    at Object.handler (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/node_modules/vite/dist/node/chunks/config.js:33823:13)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/node_modules/rollup/dist/es/shared/node-entry.js:22787:40
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)

@@ -1,0 +1,91 @@
+{
+  "checkedBy": "agent",
+  "humanListeningClaim": false,
+  "episodeId": "86f722d2-3675-4732-a8cd-d4276af51e7c",
+  "shotId": "shot-3",
+  "retainedAutomaticStatus": "needs_review",
+  "retainedReviewIssues": [
+    {
+      "id": "low-confidence-2",
+      "kind": "low_confidence",
+      "text": "视野忽然变得开阔。",
+      "cueIds": [
+        "phrase-2"
+      ],
+      "detail": "平均置信度 0.68，低于 0.72。"
+    }
+  ],
+  "audioSha256": "96bb253eaf01b33f1c0b14bda9374147cac9f8f6e35638e22ab155126d155469",
+  "textMatchesRequestedTts": true,
+  "sourceShaVerified": true,
+  "cueTextComplete": true,
+  "cueTimingWithinAudio": true,
+  "cueEnergyChecks": [
+    {
+      "id": "phrase-1",
+      "text": "当山峦出现在眼前，",
+      "startMs": 80,
+      "endMs": 1663,
+      "rms": 0.09451527447521456,
+      "nonSilent": true
+    },
+    {
+      "id": "phrase-2",
+      "text": "视野忽然变得开阔。",
+      "startMs": 1963,
+      "endMs": 3385,
+      "rms": 0.08684098862268437,
+      "nonSilent": true
+    },
+    {
+      "id": "phrase-3",
+      "text": "远处的峰顶并不催促谁，",
+      "startMs": 3886,
+      "endMs": 5789,
+      "rms": 0.08696607683439729,
+      "nonSilent": true
+    },
+    {
+      "id": "phrase-4",
+      "text": "路却始终在那里。",
+      "startMs": 6090,
+      "endMs": 7191,
+      "rms": 0.09857360910174162,
+      "nonSilent": true
+    },
+    {
+      "id": "phrase-5",
+      "text": "把注意力放回眼前这一步，",
+      "startMs": 7792,
+      "endMs": 9755,
+      "rms": 0.09468396730203558,
+      "nonSilent": true
+    },
+    {
+      "id": "phrase-6",
+      "text": "认真走过今天能走的一段，",
+      "startMs": 10076,
+      "endMs": 12019,
+      "rms": 0.08988184727885443,
+      "nonSilent": true
+    },
+    {
+      "id": "phrase-7",
+      "text": "日积月累，",
+      "startMs": 12420,
+      "endMs": 13401,
+      "rms": 0.08840003906804625,
+      "nonSilent": true
+    },
+    {
+      "id": "phrase-8",
+      "text": "就会看见自己的变化。",
+      "startMs": 13421,
+      "endMs": 14923,
+      "rms": 0.08146000252275039,
+      "nonSilent": true
+    }
+  ],
+  "action": "Review and explicitly save the same phrase timings through normal test-Owner manual-alignment command; do not change automatic model scores or erase original evidence",
+  "doesNotClaimSpeechRecognitionOrHumanListening": true
+}

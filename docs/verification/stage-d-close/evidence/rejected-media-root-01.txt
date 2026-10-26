@@ -1,0 +1,9 @@
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/deployment.mjs:35
+  if(r.passed!==true||r.publicationFence!==true||r.connectionQualificationsCleared!==true||r.database!==restored||r.mediaRoot!==c.mediaRoot)throw Error('Restore deployment receipt mismatch');
+                                                                                                                                                  ^
+
+Error: Restore deployment receipt mismatch
+    at readDeployment (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/deployment.mjs:35:147)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/start.mjs:9:44
+
+Node.js v24.20.0

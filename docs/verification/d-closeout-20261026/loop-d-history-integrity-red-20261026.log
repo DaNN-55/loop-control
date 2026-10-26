@@ -1,0 +1,37 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/merge-stage-abc/loop-control
+
+ ❯ scripts/storage/reference-integrity.test.mjs (10 tests | 1 failed) 4ms
+   × backs up a declared historical failure without changing the reference 2ms
+     → Referenced media missing or changed
+   ✓ accepts matching files normally and rejects missing files 0ms
+   ✓ rejects a changed reference reference_id even with an approved historical exception 0ms
+   ✓ rejects a changed reference episode_id even with an approved historical exception 0ms
+   ✓ rejects a changed reference reference_table even with an approved historical exception 0ms
+   ✓ rejects a changed reference source_asset_root even with an approved historical exception 0ms
+   ✓ rejects a changed reference relative_path even with an approved historical exception 0ms
+   ✓ rejects a changed reference sha256 even with an approved historical exception 0ms
+   ✓ rejects a changed reference file_size even with an approved historical exception 0ms
+   ✓ rejects unapproved history, changed physical bytes and unlisted exceptions 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  scripts/storage/reference-integrity.test.mjs > backs up a declared historical failure without changing the reference
+Error: Referenced media missing or changed
+ ❯ assertReferenceIntegrity scripts/storage/reference-integrity.mjs:3:91
+      1| import{resolve}from'node:path';
+      2| export function assertReferenceIntegrity(reference,file,history=null){
+      3|  if(!file||file.sha256!==reference.sha256||file.bytes!==Number(referen…
+       |                                                                                           ^
+      4|  return false;
+      5| }
+ ❯ scripts/storage/reference-integrity.test.mjs:10:72
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  19:26:59
+   Duration  169ms (transform 14ms, setup 0ms, collect 10ms, tests 4ms, environment 0ms, prepare 40ms)
+

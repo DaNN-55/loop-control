@@ -1,0 +1,259 @@
+{
+  "startedAt": "2026-10-26T05:01:37.190Z",
+  "database": "loop_t24_restore_dailyfinal20261026",
+  "mediaRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/restore-check-20261026/media",
+  "archiveRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/imports/daily-final-f088e9d70e41ea30c95421ef1d481240b0af23f60ee42b500965287eb672428f",
+  "source": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/backups/loop_control/93b82876-03a4-4dc8-8478-4db57fbd48b4",
+  "currentDatabaseUnchanged": true,
+  "workerAttached": false,
+  "passed": true,
+  "receipt": {
+    "passed": true,
+    "database": "loop_t24_restore_dailyfinal20261026",
+    "mediaRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/restore-check-20261026/media",
+    "archiveVersion": "loop-native-backup/v2",
+    "archiveSha256": "f088e9d70e41ea30c95421ef1d481240b0af23f60ee42b500965287eb672428f",
+    "atRestRows": 29099,
+    "tables": {
+      "local_identity.automation_attempts": {
+        "rows": 27,
+        "sha256": "596c945bbf468909762a9e92ec7915720ee73d123a5ad79c645a89f5910cd4a6"
+      },
+      "local_identity.automation_jobs": {
+        "rows": 20,
+        "sha256": "2dbde63db3c6e93cc40b4b89ffad7211ac4a25b3448a17522bb4c575e2c37b6a"
+      },
+      "local_identity.automation_plans": {
+        "rows": 2,
+        "sha256": "2bbd4db6dd5e807a06029c9b7f11b73d2323e0bb50779de645a799534d62a77f"
+      },
+      "local_identity.command_receipts": {
+        "rows": 1058,
+        "sha256": "1a7888a8991719652b934fb84956d9bb6eceb9ff9fc464f8a56bad55b2090466"
+      },
+      "local_identity.connection_bindings": {
+        "rows": 39,
+        "sha256": "57fb0f70b345de77045ef1f9db588889a5ea174bca79acda9b7e89c22475b4ca"
+      },
+      "local_identity.connection_intents": {
+        "rows": 50,
+        "sha256": "ee202bdaf8e3157af054b6c8e5ade56a0a1bf09f9969ed4bf7366cea212c2d3b"
+      },
+      "local_identity.connection_probe_evidence": {
+        "rows": 51,
+        "sha256": "f3e9853d1a315fb61b89470d0a3ee37b62f2110ba99f79f7ba037913b174dbb2"
+      },
+      "local_identity.connection_qualifications": {
+        "rows": 15,
+        "sha256": "908044102f9a78ddea8498acbcbb69109d13dd8e4e687d4aeb93a9ad3498992d"
+      },
+      "local_identity.import_record": {
+        "rows": 1,
+        "sha256": "0a80fd8b860f13760609c2c5aad8f9cfe84317d0310343fe7158d42b012d41c5"
+      },
+      "local_identity.input_episodes": {
+        "rows": 87,
+        "sha256": "c5735d9f0a29757728ec950297c042b232277dfd6dd95fe1f8f3684b08192e67"
+      },
+      "local_identity.owners": {
+        "rows": 10,
+        "sha256": "934a99557ece70e0b3574600b2cadbce5a8702a1053c528cde72744e7d78c4ac"
+      },
+      "local_identity.restore_record": {
+        "rows": 1,
+        "sha256": "a34284ba60490ecff256b3425cfdff416aff55bd5a6a535b2a799911cec3f8fa"
+      },
+      "local_identity.schema_migrations": {
+        "rows": 46,
+        "sha256": "722267c2dba882260277e78c4c3b742cf2f91117019b53eb454b000b79e622c6"
+      },
+      "public.account_blueprint_versions": {
+        "rows": 56,
+        "sha256": "bfc9224c2a5eb4f5afd80c785b2a199ae1a972e24c2ff58f6e493d08ba763103"
+      },
+      "public.account_memberships": {
+        "rows": 37,
+        "sha256": "369a487718b89db20aaff4824dcee9a09336d309101a05de9167f9e38196c14d"
+      },
+      "public.accounts": {
+        "rows": 43,
+        "sha256": "91131fb06c60773c8964a0dbf325ef467d20096d5600bf7281be24e45d95a5be"
+      },
+      "public.approvals": {
+        "rows": 128,
+        "sha256": "0c53cd9592a231b4c463575f2d008eabf429ac84eaaa354b9d8b269383167f2a"
+      },
+      "public.artifacts": {
+        "rows": 555,
+        "sha256": "f52493474eee6f8d97bd7af7d8ad2107847ecc68b076fe064f6b4f711156141c"
+      },
+      "public.asset_locks": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "public.audio_track_annotations": {
+        "rows": 1,
+        "sha256": "8e3225e19a1083ec56d3be0ae709dc1c74239ef6c3916b43692deacbd226a65d"
+      },
+      "public.audio_tracks": {
+        "rows": 54,
+        "sha256": "81572055b431810425b81195850a7e6e3bc3e078d8e7326a8ce81399bf4119b7"
+      },
+      "public.audit_events": {
+        "rows": 3773,
+        "sha256": "4ac23daade1e9be94e8f1adf162f751f601305c4f487b7a2837802cae15b74d9"
+      },
+      "public.episode_read_revisions": {
+        "rows": 6059,
+        "sha256": "f52715ee537f3a652f505ea7212676193e565e71d8c1aa2e461e0567aec98626"
+      },
+      "public.episodes": {
+        "rows": 6270,
+        "sha256": "7b02fb8d5a9a153921f6583c0332e76e4d6e2c3d0690b5845b2dc79319edbeb5"
+      },
+      "public.external_connection_verifications": {
+        "rows": 66,
+        "sha256": "0020cb2deee31dc546c64932ad587772703f5f7554652d49f14b25b071ebe1d8"
+      },
+      "public.external_connection_versions": {
+        "rows": 42,
+        "sha256": "3dd8db17f0876ccded250ee9c4d00a86db5598541714bf3ae2d8211af854f8cd"
+      },
+      "public.external_connections": {
+        "rows": 22,
+        "sha256": "15118f9b7105b9eed2994798945e59e6091eb06238a30c237ed27ee066d6f9cf"
+      },
+      "public.material_revision_approvals": {
+        "rows": 203,
+        "sha256": "27ce9645b2a7ed1a125270cb1c99329348d5abf1bf428b0b8dd48c842175e51a"
+      },
+      "public.notification_delivery_events": {
+        "rows": 2294,
+        "sha256": "ec0489eeb1e553eb07362b1b7c4ec3c8f98ebcf24b720ec0d9d891d43700385a"
+      },
+      "public.notification_delivery_state": {
+        "rows": 1,
+        "sha256": "fe0bb2129443913823e1f8cf74cd5ffa406e490573c49024fe4e93599c17faae"
+      },
+      "public.pre_render_review_member_decisions": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "public.pre_render_review_members": {
+        "rows": 18,
+        "sha256": "8fd6e1ec0b2b51e2e313379d020d1c3c12ecf6b4be2ac71d909c7a2039477edd"
+      },
+      "public.production_dependencies": {
+        "rows": 592,
+        "sha256": "e339f51486a609bc6d528eccd537278e7942c7923901a9e05081ae2a64892c55"
+      },
+      "public.production_invalidations": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "public.production_material_revisions": {
+        "rows": 203,
+        "sha256": "3ae8aef6ceeba537f921f9fdc8ff6ab0f45e75883a21b9cc11552d063e0f0c4b"
+      },
+      "public.prompt_versions": {
+        "rows": 133,
+        "sha256": "7e12ebeda8beb7f46ab9a3d1aeb8ed31ce91fd08919808965e2e118610a43d7e"
+      },
+      "public.qc_review_issues": {
+        "rows": 1,
+        "sha256": "3a9162ad65550a938e900a50cf2baf40a1d5cc3595ae8dbe2ba6ac65049edd07"
+      },
+      "public.review_annotations": {
+        "rows": 5,
+        "sha256": "00ddebe53c7faebbc735ee69dd18fc0671bbc015e1c967b4b5872bc579859cfa"
+      },
+      "public.review_packages": {
+        "rows": 155,
+        "sha256": "fa15fa8d5d5b14a01f16c2c579c6638877f84c35e1d92b7bf9b2f81ce68f3884"
+      },
+      "public.review_render_composition_revisions": {
+        "rows": 12,
+        "sha256": "a3b3f7ab700573364770bee20a0511c3f5343e9e097588bcd89fea825e28b13e"
+      },
+      "public.series": {
+        "rows": 3,
+        "sha256": "71d964f7139efd80e6ce6f38f7b64410158cc354ab7690e724576ba7802cbce3"
+      },
+      "public.series_versions": {
+        "rows": 13,
+        "sha256": "23efbbf07e41b6b1852153dded22f4bf353afb85771c8bebcb34c44b28a4b83d"
+      },
+      "public.shot_preparation_drafts": {
+        "rows": 113,
+        "sha256": "cda6697f881a856dd09a7d39786befeaa116b82316f502641eaa4d77d0c8458f"
+      },
+      "public.state_transitions": {
+        "rows": 490,
+        "sha256": "fd7acc0523f494a179439d8a35a278db0bdec77cd32e3cd303eeb7fdd529f735"
+      },
+      "public.storyboard_audio_selections": {
+        "rows": 12,
+        "sha256": "2ce960f6d4e582b37c4d06c3870843e726fabca4e89146ac7e8c7419c0aaf3c6"
+      },
+      "public.storyboard_review_shots": {
+        "rows": 123,
+        "sha256": "d1760f52fe79e24180b52efb28cf3afa4f9c89b64673918d3f51eb4c67f51f16"
+      },
+      "public.task_runs": {
+        "rows": 485,
+        "sha256": "8075ef5e9994a8c4f9aa47bf380bd0f9bba7447e476884c60240a4f4495cfaa8"
+      },
+      "public.tasks": {
+        "rows": 5533,
+        "sha256": "7c76a4af59ca89ffa6ce3e05dc1dcad8f968359af2c7756ca852652af1c703ac"
+      },
+      "public.worker_episode_turns": {
+        "rows": 196,
+        "sha256": "5292b3cd552742989e74868a93257f33ca0bd2c60baaee44da5324075ac7c65d"
+      },
+      "public.worker_resource_ceilings": {
+        "rows": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "public.worker_scheduler_settings": {
+        "rows": 1,
+        "sha256": "8468b00b755f1061d6a0148331af3df8915b566d0d5ea336b0ff4246fa33da17"
+      }
+    },
+    "sequences": [
+      {
+        "name": "local_identity.input_dispatch_turn",
+        "value": "452",
+        "isCalled": true
+      }
+    ],
+    "security": {
+      "md5": "9b61a88d2dcb77b673babe2d87e396a9",
+      "count": 362
+    },
+    "securityMatchedManifest": true,
+    "foreignKeysVerified": true,
+    "publicationFence": true,
+    "mediaFiles": 975,
+    "mediaReferences": 812,
+    "mediaFingerprintsVerified": true,
+    "ownerCredentialRows": 0,
+    "sessionRows": 0,
+    "connectionQualificationsCleared": true,
+    "frozenBusinessRowsNotRewritten": true,
+    "mediaSourceRoots": [
+      "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media",
+      "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/media",
+      "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-tts-production-20261026-02/volume/media",
+      "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-default-20261025/volume/restored/media",
+      "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-dclose-20261025/volume/source/media",
+      "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t25-20261025/volume/media",
+      "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/media",
+      "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-20261024/restore-volume/restore2/media"
+    ],
+    "requiresOwnerPasswordBootstrap": true,
+    "requiresKeychainReentryAndFreshOnlineVerification": true
+  },
+  "completedAt": "2026-10-26T05:01:55.805Z",
+  "elapsedMs": 18615
+}

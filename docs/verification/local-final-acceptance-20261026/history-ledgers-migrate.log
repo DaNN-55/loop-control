@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 runtime:migrate
+> node scripts/runtime/migrate.mjs
+
+{"passed":true,"applied":["049-historical-generation-ledgers.sql"],"database":"loop_control","oldMigrationsUnchanged":true}

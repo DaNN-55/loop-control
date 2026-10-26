@@ -1,0 +1,18 @@
+{"offlineProcessGuard":true,"selfChecks":5,"allowed":"127.0.0.1:55472,55177,55189","supabaseAndN8nDenied":true}
+{"offlineGuardFinal":{"sockets":1,"http":2,"modules":1,"files":1,"onlyNativeLoopbackAllowed":true,"legacySdkAndEnvironmentDenied":true,"hostNetworkUnchanged":true,"deniedFilePaths":["readFileSync:/.env.local"]}}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+[TypeError: fetch failed] {
+  [cause]: Error: connect ECONNREFUSED 127.0.0.1:55189
+      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:2017:16) {
+    errno: -61,
+    code: 'ECONNREFUSED',
+    syscall: 'connect',
+    address: '127.0.0.1',
+    port: 55189
+  }
+}
+
+Node.js v24.20.0

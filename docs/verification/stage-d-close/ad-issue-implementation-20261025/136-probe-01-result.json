@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "exitCode": 0,
+  "elapsedMs": 10418.491,
+  "timeoutMs": 30000,
+  "timeoutOverride": false,
+  "newDownloads": 0,
+  "newProviderRequests": 0,
+  "existingPreparedVenvReused": true
+}

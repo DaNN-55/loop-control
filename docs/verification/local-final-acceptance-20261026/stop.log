@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 stop
+> node scripts/stop.mjs
+
+Daily application stopped; PostgreSQL, media and evidence retained.

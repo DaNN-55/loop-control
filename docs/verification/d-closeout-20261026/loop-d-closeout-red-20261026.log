@@ -1,0 +1,70 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/merge-stage-abc/loop-control
+
+ ❯ src/reviews/blockerGuidance.test.ts (19 tests | 1 failed) 7ms
+   ✓ Worker 阻塞项指导 > 把资产目录工具问题翻译成可执行步骤 1ms
+   ✓ Worker 阻塞项指导 > 把媒体供应商不可用说明为凭据或网络问题 0ms
+   ✓ Worker 阻塞项指导 > 把可通过蓝图修正的专用媒体配置指向媒体适配器区域 0ms
+   ✓ Worker 阻塞项指导 > 按结构化可修复目标指向媒体配置，不读取错误文案 0ms
+   ✓ Worker 阻塞项指导 > 不会把执行重试耗尽误导为配置修复 0ms
+   ✓ Worker 阻塞项指导 > 把确实尚未注册的媒体能力保留为系统阻塞 0ms
+   ✓ Worker 阻塞项指导 > 不会把专用媒体供应商不可用误导为配置修复 0ms
+   ✓ Worker 阻塞项指导 > 把 B-roll 供应商配置不匹配指向蓝图媒体适配器 0ms
+   × Worker 阻塞项指导 > 将部署策略关闭与真实网络失败分开 3ms
+     → expected 'Worker 运行环境暂不可用' to be '在线调用未启用' // Object.is equality
+   ✓ Worker 阻塞项指导 > 尊重结构化 preflight 的重试动作 0ms
+   ✓ Worker 阻塞项指导 > 按结构化检查码显示 capability_registration 0ms
+   ✓ Worker 阻塞项指导 > 按结构化检查码显示 credential_presence 0ms
+   ✓ Worker 阻塞项指导 > 按结构化检查码显示 credential_validity 0ms
+   ✓ Worker 阻塞项指导 > 按结构化检查码显示 model_permission 0ms
+   ✓ Worker 阻塞项指导 > 按结构化检查码显示 asset_root 0ms
+   ✓ Worker 阻塞项指导 > 不把网络导致的模型探测未完成误报为权限已拒绝 0ms
+   ✓ Worker 阻塞项指导 > 不会把审核快照字幕契约错误误报为缺少前置产物 0ms
+   ✓ Worker 阻塞项指导 > 未知 code 也给出明确的人工处理路径，并保留技术原因 0ms
+   ✓ tells Owner to reconcile an unknown sent request before deciding to send again 0ms
+ ❯ src/orchestration/operationsEvidence.test.ts (3 tests | 1 failed) 12ms
+   × 保留未来运维记录但不用它替代当前检查结果 8ms
+     → expected '历史未来日期备份' to be '本次备份失败' // Object.is equality
+   ✓ 通知失败不覆盖健康和备份，成功后仍可查看最近失败，空闲成功不反复写入 3ms
+   ✓ 同毫秒并发成功和失败保持保守显示失败 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/orchestration/operationsEvidence.test.ts > 保留未来运维记录但不用它替代当前检查结果
+AssertionError: expected '历史未来日期备份' to be '本次备份失败' // Object.is equality
+
+Expected: "本次备份失败"
+Received: "历史未来日期备份"
+
+ ❯ src/orchestration/operationsEvidence.test.ts:15:39
+     13|  await writeFile(join(directory,"backup-last-failure.json"),JSON.strin…
+     14|  const report=await readOperationsEvidence(directory);
+     15|  expect(report.backup?.latest.detail).toBe("本次备份失败");
+       |                                       ^
+     16|  expect(report.backup?.lastSuccess).toBeNull();
+     17|  expect(await readFile(join(directory,"backup-result.json"),"utf8")).t…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/reviews/blockerGuidance.test.ts > Worker 阻塞项指导 > 将部署策略关闭与真实网络失败分开
+AssertionError: expected 'Worker 运行环境暂不可用' to be '在线调用未启用' // Object.is equality
+
+Expected: "在线调用未启用"
+Received: "Worker 运行环境暂不可用"
+
+ ❯ src/reviews/blockerGuidance.test.ts:81:28
+     79|   it("将部署策略关闭与真实网络失败分开", () => {
+     80|     const guidance = workerBlockerGuidance({ code: "provider_network_p…
+     81|     expect(guidance.title).toBe("在线调用未启用");
+       |                            ^
+     82|     expect(guidance.summary).not.toContain("已执行真实网络探测");
+     83|     expect(guidance.summary).toContain("尚未发起网络请求");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 20 passed (22)
+   Start at  19:15:34
+   Duration  485ms (transform 49ms, setup 0ms, collect 72ms, tests 19ms, environment 541ms, prepare 94ms)
+

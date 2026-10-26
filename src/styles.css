@@ -1850,3 +1850,7 @@ body { background: #f5f7fa; }
 .app-shell[data-theme="dark"] .a-roll-task dt, .app-shell[data-theme="dark"] .a-roll-task .muted-copy { color: #9aa7ba; }
 .app-shell[data-theme="dark"] .a-roll-task-metrics { border-color: #344052; }
 @media (max-width: 480px) { .a-roll-task { padding: 12px; }.a-roll-task-evidence > div { gap: 2px; grid-template-columns: minmax(0, 1fr); } }
+
+/* Shared Owner settings keep connection forms outside the password form. */
+.owner-password-form { display: grid; gap: 17px; }
+.owner-settings-card { max-width: 900px; }

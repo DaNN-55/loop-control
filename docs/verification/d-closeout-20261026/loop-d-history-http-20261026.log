@@ -1,0 +1,9 @@
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.scratch/d-closeout-20261026/http-check.mjs:9
+ for(const e of episodes){const snapshot=await get('/api/local/episodes/'+e.id);const actual=snapshot.episode??snapshot;if(actual.stage!==e.stage||actual.archived_at!==e.archived_at)throw Error('Historical state changed');result.episodes.push({id:e.id,title:e.title,stage:actual.stage,archived:Boolean(actual.archived_at),opened:true});}
+                                                                                                                                                                                            ^
+
+Error: Historical state changed
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.scratch/d-closeout-20261026/http-check.mjs:9:189
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+Node.js v24.20.0

@@ -1,0 +1,225 @@
+- generic [ref=e1] clickable [onclick]
+  - main
+    - sectionheader
+      - StaticText "Loop Control · 本地"
+      - heading "内容工作台" [level=1, ref=e2]
+    - navigation
+      - button "账号配置" [ref=e3]
+      - button "生产单目录" [ref=e4]
+      - button "新建账号" [ref=e5]
+      - button "刷新" [ref=e6]
+      - button "退出登录" [ref=e7]
+    - generic
+      - heading "生产单（5）" [level=2, ref=e8]
+        - StaticText "生产单（5）"
+      - button "新建生产单" [ref=e9]
+      - generic
+        - button "返回生产单目录" [ref=e10]
+        - sectionheader
+          - heading "T17 feedback rework HTTP" [level=2, ref=e12]
+          - StaticText "fe16d614"
+        - button "刷新生产单状态" [ref=e13]
+        - button "打开本地输入目录" [ref=e14]
+        - button "复制本地输入目录路径" [ref=e15]
+        - button "查看产物索引" [expanded=false, ref=e16]
+        - button "查看执行与审计时间线" [expanded=false, ref=e17]
+        - paragraph
+          - StaticText "蓝图 v1 · 创建于 2026年10月24日 13:22"
+        - generic
+          - StaticText "当前阶段"
+          - strong
+            - StaticText "逐镜头准备工作台"
+          - StaticText "下一步"
+          - paragraph
+            - StaticText "逐镜头准备画面、口播和字幕"
+          - generic
+            - StaticText "当前任务"
+            - strong
+              - StaticText "已完成"
+            - paragraph
+              - StaticText "最近一次 Worker 任务已完成。"
+        - region "分镜工作台" [ref=e11]
+          - sectionheader
+            - heading "分镜工作台" [level=3, ref=e22]
+            - StaticText "2"
+            - StaticText " 个镜头 · 当前待处理 "
+            - StaticText "shot-1"
+            - paragraph
+              - StaticText "在这里设置口播、绑定原片并保存片段标记；第三工作区会用同一份冻结输入生成真实代理视频与可编辑工程。"
+          - navigation "镜头确认概览" [ref=e18]
+            - sectionheader
+              - strong
+                - StaticText "已确认 0 / 2 个镜头"
+              - StaticText "0"
+              - StaticText "/"
+              - StaticText "2"
+              - StaticText " 配置已保存（不代表完成）"
+            - progressbar "已确认 0 / 2 个镜头": 0
+            - generic
+              - button "! 2 个待补素材" [ref=e32]
+                - StaticText "! 2 个待补素材"
+              - StaticText "! "
+              - StaticText "2"
+              - StaticText " 个待对齐"
+              - StaticText "! "
+              - StaticText "2"
+              - StaticText " 个预览过期"
+          - region "整期 BGM" [ref=e19]
+            - sectionheader
+              - heading "整期 BGM" [level=4, ref=e33]
+              - paragraph
+                - StaticText "为整期审核视频配置背景音乐。"
+              - LabelText
+                - StaticText "使用 BGM"
+                - switch "使用 BGM" [checked=false, ref=e44]
+            - paragraph
+              - StaticText "本期不配置 BGM。"
+          - region "本期 TTS 设置" [ref=e20]
+            - sectionheader
+              - heading "本期 TTS 设置" [level=4, ref=e34]
+              - paragraph
+                - StaticText "逐镜头口播共用这套语言、声音和语速。"
+              - StaticText "尚未配置"
+            - status
+              - StaticText "请先保存本期 TTS 设置，再生成任一镜头的口播。"
+            - LabelText
+              - StaticText "语言"
+              - combobox "本期 TTS 语言" [expanded=false, ref=e35]: zh-CN
+                - MenuListPopup
+                  - option "zh-CN" [selected, ref=e49]
+            - LabelText
+              - StaticText "声音"
+              - textbox "本期 TTS 声音" [ref=e36]
+            - LabelText
+              - StaticText "语速"
+              - spinbutton "本期 TTS 语速" [ref=e37]
+            - button "试听本期 TTS" [ref=e23]
+            - button "保存本期设置" [disabled, ref=e24]
+          - article
+            - button "shot-1 A-roll · 当前画面 1.000s shot-1 准备状态：画面 待补素材；音频 待生成；字幕 待对齐；同步预览 待生成；确认 待确认" [expanded=true, ref=e25]
+              - strong
+                - StaticText "shot-1"
+              - generic
+                - StaticText "A-roll · 当前画面 1.000s"
+              - generic "shot-1 准备状态：画面 待补素材；音频 待生成；字幕 待对齐；同步预览 待生成；确认 待确认"
+                - StaticText "画面待处理"
+                - StaticText "另 "
+                - StaticText "4"
+                - StaticText " 项"
+            - tablist "shot-1 镜头工作区"
+              - tab "1 文本与声音" [selected, ref=e38]
+                - StaticText "1"
+                - StaticText "文本与声音"
+              - tab "2 画面与构图" [ref=e39]
+                - StaticText "2"
+                - StaticText "画面与构图"
+              - tab "3 同步预览与确认" [ref=e40]
+                - StaticText "3"
+                - StaticText "同步预览与确认"
+            - tabpanel "1 文本与声音"
+              - region "shot-1 声音" [ref=e41]
+                - sectionheader
+                  - heading "主声音" [level=4, ref=e50]
+                  - paragraph
+                    - StaticText "TTS 成为唯一主声音；素材原声静音，字幕可跟随口播。"
+                  - LabelText
+                    - strong
+                      - StaticText "静音"
+                    - switch "shot-1 静音" [checked=false, ref=e60]
+                - LabelText
+                  - StaticText "声音模式"
+                  - combobox "shot-1 主声音" [expanded=false, ref=e51]: TTS 口播
+                    - MenuListPopup
+                      - option "TTS 口播" [selected, ref=e62]
+                      - option "保留原声" [ref=e63]
+                - LabelText
+                  - StaticText "镜头音效"
+                  - combobox "shot-1 镜头音效" [expanded=false, disabled, ref=e52]: 不配置
+                    - MenuListPopup
+                      - option "不配置" [disabled, ref=e64]
+                - button "shot-1 试听镜头音效" [disabled, ref=e45]
+                - StaticText "口播内容"
+                - textbox "shot-1 口播内容" [ref=e53]: 介绍本轮合成脚本。
+                  - StaticText "介绍本轮合成脚本。"
+                - status
+                  - StaticText "请先保存上方“本期 TTS 设置”，再生成口播。"
+                - sectionfooter
+                  - button "shot-1 恢复分镜文案" [disabled, ref=e54]
+                    - StaticText "恢复分镜文案"
+                  - button "生成口播" [disabled, ref=e55]
+              - region "shot-1 字幕" [ref=e42]
+                - sectionheader
+                  - heading "字幕" [level=4, ref=e56]
+                  - LabelText
+                    - strong
+                      - StaticText "显示字幕"
+                    - switch "显示字幕" [checked=true, ref=e61]
+                - LabelText
+                  - StaticText "字幕正文模式"
+                  - combobox "shot-1 字幕正文模式" [expanded=false, ref=e57]: 跟随最终 TTS 正文
+                    - MenuListPopup
+                      - option "跟随最终 TTS 正文" [selected, ref=e65]
+                      - option "独立字幕" [ref=e66]
+                - LabelText
+                  - StaticText "字幕正文"
+                  - textbox "shot-1 字幕正文" [disabled, ref=e58]: 介绍本轮合成脚本。
+                    - StaticText "介绍本轮合成脚本。"
+                - paragraph
+                  - StaticText "正文直接引用当前最终口播；请在上方编辑口播内容。"
+              - region "shot-1 声学对齐" [ref=e43]
+                - sectionheader
+                  - heading "声学对齐" [level=4, ref=e59]
+                  - paragraph
+                    - StaticText "等待当前音频后按原生时间戳、外部打轴、本地 WhisperX 的顺序对齐。"
+                  - status "等待音频后开始声学对齐"
+                - DescriptionList
+                  - term "方法"
+                  - definition
+                    - StaticText "未采用"
+                  - term "粒度"
+                  - definition
+                    - StaticText "无"
+                  - term "输入版本"
+                  - definition
+                    - StaticText "待生成"
+                  - term "短语数量"
+                  - definition
+                    - StaticText "0"
+                - button "安全重试对齐" [disabled, ref=e46]
+                - button "使用本地 WhisperX" [disabled, ref=e47]
+                - button "手动设置时序" [expanded=false, disabled, ref=e48]
+            - button "保存草稿" [ref=e26]
+            - group
+              - DisclosureTriangle "shot-1 更多操作" [expanded=false]
+          - article
+            - button "shot-2 B-roll · 当前画面 1.000s shot-2 准备状态：画面 待补素材；音频 待生成；字幕 待对齐；同步预览 待生成；确认 待确认" [expanded=false, ref=e27]
+              - strong
+                - StaticText "shot-2"
+              - generic
+                - StaticText "B-roll · 当前画面 1.000s"
+              - generic "shot-2 准备状态：画面 待补素材；音频 待生成；字幕 待对齐；同步预览 待生成；确认 待确认"
+                - StaticText "画面待处理"
+                - StaticText "另 "
+                - StaticText "4"
+                - StaticText " 项"
+            - group
+              - DisclosureTriangle "shot-2 更多操作" [expanded=false]
+          - region "OpenChatCut 审核视频" [ref=e21]
+            - heading "在 OpenChatCut 编辑并生成审核视频" [level=4, ref=e28]
+            - StaticText "镜头已保存 "
+            - StaticText "0"
+            - StaticText "/"
+            - StaticText "2"
+            - StaticText " · 口播已就绪 "
+            - StaticText "0"
+            - StaticText "/"
+            - StaticText "2"
+            - button "在 OpenChatCut 中编辑" [disabled, ref=e29]
+        - group
+          - DisclosureTriangle "视觉清单" [expanded=false]
+            - ListMarker "▸"
+            - heading "视觉清单" [level=3, ref=e30]
+        - group
+          - DisclosureTriangle "准备生产材料" [expanded=false]
+            - ListMarker "▸"
+            - heading "准备生产材料" [level=3, ref=e31]

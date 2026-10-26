@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "nativeDatabaseIdentityVerified": true,
+  "appPort": 55189,
+  "database": "loop_t24_restore_dclose02",
+  "existingDeploymentAndMedia": true,
+  "ownPortsWereClosed": true,
+  "ownPgConnections": 0,
+  "syntheticKeychainAbsent": true,
+  "newDatabaseOrMedia": false
+}

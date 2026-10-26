@@ -1,0 +1,30 @@
+{
+  "defaultTimeoutMs": 5000,
+  "timeoutOverride": false,
+  "latest": {
+    "file": "final-default-5s-05.txt",
+    "files": 102,
+    "passed": 760,
+    "failed": 0
+  },
+  "previousFinalBeforeLogoutRace": {
+    "file": "final-default-5s-04.txt",
+    "files": 102,
+    "passed": 758,
+    "failed": 1,
+    "reason": "historical BGM/TTS five-second timeout reproduced; unresolved; not overwritten"
+  },
+  "finalRerunReason": "New reproduced logout-pending catalog read race fixed with a new test; not a rerun to obtain green",
+  "build": "final-build-03.txt",
+  "buildPassed": true,
+  "largeChunkWarningKb": 586.59,
+  "node": {
+    "passed": 2,
+    "skipped": 1
+  },
+  "historicalFiveSecondGateClosed": false,
+  "workerLeaseMinutes": 30,
+  "immediateFailoverProven": false,
+  "onlineRequests": 0,
+  "noEF": true
+}

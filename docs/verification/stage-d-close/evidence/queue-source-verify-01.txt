@@ -1,0 +1,3 @@
+Queue verify source-restart passed
+{"offlineProcessGuard":true,"selfChecks":5,"allowed":"127.0.0.1:55472,55177,55189,55190","supabaseAndN8nDenied":true}
+{"offlineGuardFinal":{"sockets":1,"http":2,"modules":1,"files":1,"onlyNativeLoopbackAllowed":true,"legacySdkAndEnvironmentDenied":true,"hostNetworkUnchanged":true,"deniedFilePaths":["readFileSync:/.env.local"]}}

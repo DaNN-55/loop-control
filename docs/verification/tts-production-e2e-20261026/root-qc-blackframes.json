@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "minimumDurationSeconds": 0.1,
+  "pixelThreshold": 0.05,
+  "blackPictureFractionThreshold": 0.98,
+  "blackIntervals": []
+}

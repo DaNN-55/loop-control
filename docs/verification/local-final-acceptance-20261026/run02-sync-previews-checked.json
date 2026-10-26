@@ -1,0 +1,206 @@
+{
+  "at": "2026-10-26T06:53:53.635Z",
+  "previews": [
+    {
+      "shot": "shot-1",
+      "taskId": "75d6f769-76c1-483e-8bbe-1b98d13aa82e",
+      "artifactId": "32b225dd-d4d5-41d1-9267-37c9fc9f6d8a",
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/75d6f769-76c1-483e-8bbe-1b98d13aa82e/proxy.mp4",
+      "sha256": "98ed8ca7bdffe79c6fac897d2225aab0ecaccf0924186bd6bf34720867e2e36c",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 1080,
+            "height": 1920,
+            "r_frame_rate": "30/1",
+            "side_data_list": [
+              {}
+            ]
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "48000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "18.709333",
+          "size": "38067263"
+        }
+      },
+      "decode": {
+        "ok": true
+      },
+      "frame": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/docs/verification/local-final-acceptance-20261026/media-run02/shot-1-sync-cue.jpg",
+      "qc": {
+        "version": "qc-report/v1",
+        "renderFingerprint": "b1e12cac01a2f988d89d36734aa5ae1978797a6181f553edb20f12e55e20dde2",
+        "reuse": {
+          "reused": false
+        },
+        "passed": true,
+        "inputFingerprint": "386c1f4955d22e87ffec9f28550a38cd",
+        "output": {
+          "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/75d6f769-76c1-483e-8bbe-1b98d13aa82e/proxy.mp4",
+          "durationSeconds": 18.709333,
+          "width": 1080,
+          "height": 1920,
+          "hasAudio": true,
+          "blackFrameCount": 0
+        },
+        "checks": [
+          {
+            "name": "openchatcut_project",
+            "passed": true,
+            "detail": "OpenChatCut 项目已冻结：episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/75d6f769-76c1-483e-8bbe-1b98d13aa82e/project.json"
+          },
+          {
+            "name": "openchatcut_render",
+            "passed": true,
+            "detail": "输出包含音频。"
+          }
+        ]
+      }
+    },
+    {
+      "shot": "shot-3",
+      "taskId": "cfa473aa-d73a-470f-bbed-8c1235a77c93",
+      "artifactId": "70722fec-c62c-46f1-ab75-fd627a6e94e2",
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/cfa473aa-d73a-470f-bbed-8c1235a77c93/proxy.mp4",
+      "sha256": "26f0bae644302cc2fcbc10747a377cb04fea6cabb2b16f1e4fdc0bf686b13ff1",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 1080,
+            "height": 1920,
+            "r_frame_rate": "30/1",
+            "side_data_list": [
+              {}
+            ]
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "48000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "19.989333",
+          "size": "20360462"
+        }
+      },
+      "decode": {
+        "ok": true
+      },
+      "frame": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/docs/verification/local-final-acceptance-20261026/media-run02/shot-3-sync-cue.jpg",
+      "qc": {
+        "version": "qc-report/v1",
+        "renderFingerprint": "93e913d7963471b91360e1a96e56be5bfb72098fbd5479569fc54971d89e82cc",
+        "reuse": {
+          "reused": false
+        },
+        "passed": true,
+        "inputFingerprint": "8a67e4aeb54f3da467aa370a81f42e2c",
+        "output": {
+          "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/cfa473aa-d73a-470f-bbed-8c1235a77c93/proxy.mp4",
+          "durationSeconds": 19.989333,
+          "width": 1080,
+          "height": 1920,
+          "hasAudio": true,
+          "blackFrameCount": 0
+        },
+        "checks": [
+          {
+            "name": "openchatcut_project",
+            "passed": true,
+            "detail": "OpenChatCut 项目已冻结：episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/cfa473aa-d73a-470f-bbed-8c1235a77c93/project.json"
+          },
+          {
+            "name": "openchatcut_render",
+            "passed": true,
+            "detail": "输出包含音频。"
+          }
+        ]
+      }
+    },
+    {
+      "shot": "shot-2",
+      "taskId": "4b94da48-a946-4220-bbe4-ff132f0003a7",
+      "artifactId": "a53353c3-a515-4d2c-b476-2bb5aff45b00",
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/4b94da48-a946-4220-bbe4-ff132f0003a7/proxy.mp4",
+      "sha256": "dfbad43b66bbc1d5c2590763c7f7192f786bf970745db0dc245fedabe066004e",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 1080,
+            "height": 1920,
+            "r_frame_rate": "30/1",
+            "side_data_list": [
+              {}
+            ]
+          },
+          {
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "48000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "19.157333",
+          "size": "59397190"
+        }
+      },
+      "decode": {
+        "ok": true
+      },
+      "frame": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/docs/verification/local-final-acceptance-20261026/media-run02/shot-2-sync-cue.jpg",
+      "qc": {
+        "version": "qc-report/v1",
+        "renderFingerprint": "8e2699506f478721e8d7b17035867f6435b39e887c611d0200b07e479b5ca0f9",
+        "reuse": {
+          "reused": false
+        },
+        "passed": true,
+        "inputFingerprint": "1fd070b3f3d58cd31015de8c179c0eb2",
+        "output": {
+          "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/4b94da48-a946-4220-bbe4-ff132f0003a7/proxy.mp4",
+          "durationSeconds": 19.157333,
+          "width": 1080,
+          "height": 1920,
+          "hasAudio": true,
+          "blackFrameCount": 0
+        },
+        "checks": [
+          {
+            "name": "openchatcut_project",
+            "passed": true,
+            "detail": "OpenChatCut 项目已冻结：episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/4b94da48-a946-4220-bbe4-ff132f0003a7/project.json"
+          },
+          {
+            "name": "openchatcut_render",
+            "passed": true,
+            "detail": "输出包含音频。"
+          }
+        ]
+      }
+    }
+  ]
+}

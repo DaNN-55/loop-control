@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "runtimeFingerprintMatches": true,
+  "unrelatedFilesUnchanged": 43,
+  "rootPlanUnchanged": true,
+  "headUnchanged": true,
+  "indexEmpty": true,
+  "ownPort55185Closed": true,
+  "defaultNativeWorkerConfigAbsent": true,
+  "currentDefaultFiveSecond": {
+    "passed": 747,
+    "failed": 0,
+    "timeoutOverride": false
+  },
+  "t21AndHistoricalFiveSecondFailuresRetained": true,
+  "rootCauseUnresolved": true,
+  "noCommit": true,
+  "noPush": true,
+  "noMerge": true,
+  "noOnlineRequests": true,
+  "noProduction": true,
+  "noT23": true
+}

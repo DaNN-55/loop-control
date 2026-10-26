@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "projectRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control",
+  "database": "loop_t25",
+  "sourceDatabase": "loop_t24_restored2",
+  "port": 55189,
+  "nativeDatabasePort": 55472,
+  "mediaRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t25-20261025/volume/media",
+  "independentApfsMediaCopied": true,
+  "oldInputConsumersDisabledOnlyInClone": true,
+  "oldSourceDatabasesAndMediaReadOnly": true,
+  "providerCredentialsRead": false,
+  "onlineRequests": 0
+}

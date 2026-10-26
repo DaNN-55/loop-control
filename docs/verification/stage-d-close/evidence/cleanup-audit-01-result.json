@@ -1,0 +1,10 @@
+{
+  "started": "2026-10-25T01:05:49.130Z",
+  "finished": "2026-10-25T01:05:49.388Z",
+  "command": [
+    "node",
+    ".loop-control/stage-d/state/d-close-20261025/cleanup-audit.mjs"
+  ],
+  "status": 0,
+  "passed": true
+}

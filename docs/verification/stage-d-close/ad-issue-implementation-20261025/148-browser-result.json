@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "realChromeNormalOwnerHttpAndKeychain": true,
+  "closedRotationLabelCorrect": true,
+  "verifyButtonsDisabled": true,
+  "createAndRotateClearPasswords": true,
+  "doubleClickOnlyOneInitialHttpPost": true,
+  "actualCommittedRotationResponseDeliberatelyLost": true,
+  "unconfirmedFailurePreservedPassword": true,
+  "retryUsedSameOperationIdAndServerReplay": true,
+  "verifyCommands": 0,
+  "providerRequests": 0,
+  "missingBindingRebindStillPending": false,
+  "actualLockedKeychain503RecoveredUsingOriginalOperation": true,
+  "driverUnicodeSelectorFailureRetained": true,
+  "realMissingSecretExplicitlyReboundSameVersion": true,
+  "rebindClearedSecret": true,
+  "databaseKeychainProof": "browser-148-database-keychain-result.json"
+}

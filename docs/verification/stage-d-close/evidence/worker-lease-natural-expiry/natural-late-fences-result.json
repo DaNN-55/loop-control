@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "oldAttempt": 0,
+  "newAttempt": 1,
+  "replayedAfterNewCompletion": true,
+  "outcomes": [
+    {
+      "operation": "refresh_worker_task_lease",
+      "sqlstate": "42501"
+    },
+    {
+      "operation": "report_worker_progress",
+      "sqlstate": "42501"
+    },
+    {
+      "operation": "report_worker_result",
+      "sqlstate": "42501"
+    },
+    {
+      "operation": "report_worker_result",
+      "sqlstate": "42501"
+    }
+  ],
+  "taskRunsAndArtifactIndexByteUnchanged": true,
+  "stateSha256": "abc24f95e6923ee9cd1c18fbc2d3f4fa2203448c61d0f515b722360fe41d85cf",
+  "oldExecutorWasKilled": true,
+  "notLiveExpiredExecutorFileIsolationEvidence": true,
+  "onlineRequests": 0
+}

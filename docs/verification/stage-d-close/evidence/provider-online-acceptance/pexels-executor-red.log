@@ -1,0 +1,66 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/worker/mediaProviders.test.ts (9 tests | 1 failed) 12ms
+   ✓ 受控媒体供应商 > 使用 OpenAI Images 的 base64 PNG 响应 3ms
+   ✓ 受控媒体供应商 > 使用 Cloudflare Workers AI 的 Account ID、Token 和 base64 JPEG 响应 1ms
+   ✓ 受控媒体供应商 > 使用冻结的旁白文本和声音向 Google TTS 请求 MP3 0ms
+   ✓ 受控媒体供应商 > 使用豆包语音 V3 SSE 合并 MP3 音频分片 1ms
+   ✓ 受控媒体供应商 > 为豆包语音 1.0 音色发送匹配的资源 ID 0ms
+   × 受控媒体供应商 > 只返回 Pexels 响应中与冻结检索词匹配的竖屏视频下载地址 4ms
+     → expected "spy" to be called with arguments: [ …(2) ]
+
+Received: 
+
+  1st spy call:
+
+@@ -1,7 +1,7 @@
+  [
+-   "https://api.pexels.com/v1/videos/search?query=%E9%9B%A8%E5%A4%9C%E9%93%9C%E9%93%83&orientation=portrait&per_page=15",
++   "https://api.pexels.com/videos/search?query=%E9%9B%A8%E5%A4%9C%E9%93%9C%E9%93%83&orientation=portrait&per_page=15",
+    {
+      "headers": {
+        "Authorization": "pexels-key",
+      },
+    },
+
+
+Number of calls: 1
+
+   ✓ 受控媒体供应商 > 在 Pexels 请求边界将冻结检索词的换行规范为空格 1ms
+   ✓ 受控媒体供应商 > 仅返回满足冻结时长的 Freesound MP3 预览，并保留来源元数据 1ms
+   ✓ 受控媒体供应商 > 拒绝缺失的音频内容和无法使用的 Pexels 视频 1ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  15:53:37
+   Duration  432ms (transform 21ms, setup 0ms, collect 21ms, tests 12ms, environment 272ms, prepare 31ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/worker/mediaProviders.test.ts > 受控媒体供应商 > 只返回 Pexels 响应中与冻结检索词匹配的竖屏视频下载地址
+AssertionError: expected "spy" to be called with arguments: [ …(2) ]
+
+Received: 
+
+  1st spy call:
+
+@@ -1,7 +1,7 @@
+  [
+-   "https://api.pexels.com/v1/videos/search?query=%E9%9B%A8%E5%A4%9C%E9%93%9C%E9%93%83&orientation=portrait&per_page=15",
++   "https://api.pexels.com/videos/search?query=%E9%9B%A8%E5%A4%9C%E9%93%9C%E9%93%83&orientation=portrait&per_page=15",
+    {
+      "headers": {
+        "Authorization": "pexels-key",
+      },
+    },
+
+
+Number of calls: 1
+
+ ❯ src/worker/mediaProviders.test.ts:69:21
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

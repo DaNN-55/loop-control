@@ -1,0 +1,20 @@
+{
+  "events": [
+    {
+      "at": "2026-10-26T06:52:17.397Z",
+      "id": "75d6f769-76c1-483e-8bbe-1b98d13aa82e",
+      "status": "completed",
+      "attempt": 1,
+      "maxAttempts": 1,
+      "claimedAt": "2026-10-26T06:51:34.34138+00:00",
+      "completedAt": "2026-10-26T06:51:34.339184+00:00",
+      "actualCostCents": 0,
+      "resultStatus": "completed",
+      "retry": {
+        "reason": "Completed successfully.",
+        "shouldRetry": false
+      }
+    }
+  ],
+  "elapsedMs": 271
+}

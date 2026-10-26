@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "normalNpmEntry": true,
+  "normalOwnerAPI": true,
+  "actualPexelsVerification": true,
+  "actualPexelsSearchStatus200": true,
+  "actualWorkerInterruptedByRoot": true,
+  "persistedReservationPreserved": true,
+  "databaseTaskBlocked": true,
+  "automaticRetryDisabled": true,
+  "explicitRetryDenied409": true,
+  "noNewTaskOnExplicitRetry": true,
+  "sameLedgerAcrossRestart": true,
+  "thirdAuthorizedRequestUnused": true,
+  "requestsUsed": 2,
+  "byOperation": {
+    "pexels.verify": 1,
+    "pexels.search": 1
+  },
+  "finalStateSha256": "412fff1ffb3ba2476072bfc2724ce8fdf6c96b037c5b8abf7da1734534635752",
+  "remoteCancellationConfirmed": false,
+  "remoteExactlyOnceConfirmed": false,
+  "externalFinalCostConfirmed": false,
+  "planningEvidence": "fixed offline fixture only; no model-quality proof",
+  "noSQLOrLeaseEdits": true,
+  "normalFinalStop": true,
+  "keychainInitialStateRestored": true
+}

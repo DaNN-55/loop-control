@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 stop
+> node scripts/local/stop.mjs --deployment /Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-dclose-20261025/deployment.json
+
+Stopped only recorded D app

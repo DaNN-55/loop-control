@@ -1,0 +1,130 @@
+# 已批准隔离范围的原生部署入口
+
+本页保留历史验收入口；当前无参 `npm start/stop` 已使用日常运行配置，见[日常运行说明](local-daily-runtime.md)。本页的默认验收指针仅由 `local:start/local:stop` 或历史显式部署入口读取，不再是日常主程序默认值。
+
+本说明适用于优化 worktree 的 stage-d 隔离 PostgreSQL，不是生产部署或新主机安装指南。应用默认不启用 Worker、Keychain、在线验证或 Studio；缺配置不读取旧环境文件，也不回落远端。
+
+## 正常启动与能力配置
+
+使用同一私有部署文件启动、停止：
+
+```sh
+npm start -- --deployment /absolute/private/deployment.json --offline-test
+npm stop -- --deployment /absolute/private/deployment.json
+```
+
+部署文件必须是本 worktree 的 `.loop-control/stage-d/state/t24-*/` 或 `t25-*/` 直属私有文件；应用 55189、PG `127.0.0.1:55472`，应用角色 `loop_app`，Worker 为同库的 `loop_worker`。T25 仍限 `loop_t25`；恢复目标限 `loop_t24_restore*`，并核对实际恢复回执和数据库媒体绑定。默认无 `--deployment` 时仍使用原 `loop_imported` 的既有安全配置（未提供 Worker 时相关执行明确不可用）；未创建默认 `native-worker.json`。
+
+可以通过可选的 `.loop-control/stage-d/default-deployment.json` 将无参入口指向一个已批准的独立部署。没有该文件时保留上段行为；有文件时每次重新执行完整的部署/恢复回执校验，错误指针明确失败，不回落旧库。指针和目标均私有，不进入 Git。停止服务后才能首次设置；历史已死亡的服务记录保留，不因记录文件存在就当作活服务。
+
+## 本地已有资产的离线准备
+
+先按目标平台准备 Node 24、完整 lockfile 依赖（启动仍需要 Vite/TypeScript）、数据库与角色/媒体、FFmpeg/FFprobe、OpenChatCut，以及专用 Python/WhisperX 和指定中文模型。此命令不安装依赖、不下载文件，也不代替新主机安装器。Python 应使用限制出网的执行封套；HF offline 标志不能代替 OS 网络限制。
+
+在目标部署文件旁放置私有 `offline-assets.json`：`version:1`、`python` 精确版本、`model` 为 `jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn`、`packages` 为 `{name,version}` 数组、`files` 为 `{path,bytes,sha256}` 数组。文件必须在本 worktree 内且不经符号链接。清单覆盖模型实际加载的配置/权重及缓存引用、NLTK 分句数据、Python 包元数据与执行封套；HF 快照可准备为实体文件。模型 revision 与来源摘要另行保存，包元数据摘要不等于全部 wheel 内容锁定。
+
+```sh
+npm run local:prepare-offline -- --deployment /absolute/private/state/t24-TARGET/deployment.json --set-default
+npm start -- --offline-test
+npm stop
+```
+
+准备命令核对本地文件 SHA、编译运行程序，显式初始化 Python 依赖（120 秒安全上限，仅导入模块，不加载模型），然后调用实际 Worker 的原 **30 秒**模型 probe。两段耗时分别记录在私有 `offline-preparation.json`；失败不发布 ready 回执或新默认指针。已有指针不自动覆盖；对同一目标重新准备时省略 `--set-default`。
+
+选中的默认部署或标记 `offlinePreparationRequired:true` 的显式部署，在正式启动监听前核对准备回执、文件 SHA、部署/脚本身份和 Node 版本；失效时要求重新准备。该检查不重新加载模型，实际任务仍保留原 30 秒 preflight。缺少 Python 包、模型或冷初始化未完成都不能由“页面已监听”推定可用。验收仍须覆盖正式入口的真实任务与产物。
+
+本命令不改变宿主网络。`--offline-test` 对本轮 Node 进程树施加现有本机端口 guard；渲染需要临时 loopback 端口时可在单独阶段用 OS loopback 策略验证，模型进程继续需要独立全断网策略。不得把测试封套当作通用主机防火墙。
+
+部署配置可显式提供以下非秘密能力字段。数据库密码只在既有私有配置中，不复制到文档。
+
+- `connections.keychain`：`approved`、本 worktree 的 stage-d `runtimeRoot`、已固定 helper 的 `helperSha256`。仅限现有专用合成测试 Keychain；没有配置时禁用，不访问登录/系统 Keychain。
+- `connections.verification`：省略或 `disabled` 时禁用；`pexels-offline` 装配实际 probe，但请求预留恒为 false，返回可重试结果，`externalReady:false`，不能产生 live verified 资格。该旧模式没有在线预算开关；另见下方显式 providers-budgeted 装配。
+- `openChatCut`：`root` 固定为本 worktree 的 `.loop-control/stage-b/verified/OpenChatCut`，`node` 必须是当前 Node 的规范路径，`port:55190`。同时需明确的 `worker.studio:true` 和本机媒体配置 `worker.media:{"mode":"local"}`。该模式允许本机媒体工具和 Studio，冻结任务需要外部连接时在 CLI 前置检查中阻塞。
+- `notifications`：显式隔离部署省略此字段或设为 `controlled` 时，只记录受控提醒；设为 `desktop` 时，正常应用消费新事件后调用本机桌面通知。该选择不修改系统通知权限；接口接受不代表可见或已读，仍需单独完成实际可见验收。
+- Worker 的执行命令、媒体挂载点和运行约束继续显式提供。正常启动负责准备与核对 runtime；前端构建会清理 `dist`，构建完成后应重新正常启动，不在构建过程中验收 Worker。
+
+55190 是本次隔离部署的单 Studio 端口。不能据单工程打开证明并行编辑器容量、完整渲染或通用部署能力。
+
+## 从恢复回执生成正常配置
+
+先使用现有 `scripts/local/native-restore.mjs` 恢复到新批准库及独立媒体。该命令拒绝覆盖已有目标；原始对账、权限及媒体检查成功才发布 ready 回执。失败目标保留。
+
+将下面四个绝对路径写入一个私有输入 JSON：`sourceFile` 为已批准的源部署文件，`receiptFile` 为目标媒体旁的 `restore-receipt.json`，`outputFile` 位于目标 `state/t24-*/` 私有目录，`mountPath` 为同目录内包含该媒体的独立挂载点。
+
+```sh
+node scripts/local/deployment-restore.mjs < /absolute/private/restore-deployment-input.json
+```
+
+工具只继承同一隔离实例的应用/Worker 配置，将二者同时绑定到回执的新库，并生成新的 home、运维状态和服务记录位置；不改变默认部署、不接受任意库/目录。随后使用保留的 Owner UUID：
+
+```sh
+node scripts/local/owner.mjs OWNER_UUID --initialize-restored loop_t24_restore_TARGET
+```
+
+密码只经 stdin 输入。仅允许对尚未初始化的恢复库设置新密码；原密码、原会话不会导入，账号成员关系和业务 ID 不重建。
+
+使用新部署文件正常启动后，Owner 必须对缺失秘密引用显式 `rebind`。资格在恢复时全部清零，旧验证历史保留，不能用备份里的 verified 标记、模拟结果或离线 probe 恢复在线资格。HTTP 与 Worker 均保留 pending/failed 和媒体根绑定围栏；ready 队列可以续跑，有效的 30 分钟 Worker 租约不因此立即转移。
+
+本次完整证据及未关闭门禁见 [D 收尾报告](verification/stage-d-close/README.md)。
+
+
+## 六适配器凭据录入与关闭预算
+
+`connections.verification:"providers-budgeted"` 必须同时提供批准的专用Keychain和 `connections.network:{directory,policySha256}`。directory只能为同部署stateDirectory下的provider-network私有规范目录。live narration/media Worker必须绑定完全相同的Keychain和network，不能用不同账本绕过总数。没有配置时继续拒绝，不自动启用网络。
+
+`npm run local:prepare-providers < /absolute/private/provider-input.json` 接收 `{ "deploymentFile": "/absolute/private/state/t24-TARGET/deployment.json" }`，只在不存在的provider-network目录创建关闭策略和零账本（目录0700/文件0600），不覆盖、重置或启用已有预算。操作者随后将输出的目录/策略SHA绑定到同一私有部署。该命令不下载、不验证Key、不替代金额/模型/请求清单批准。
+
+本轮私密录入部署不装配Worker，不改变原默认指针。正式启动后，Owner进入“蓝图连接恢复与版本维护”中的外部连接，使用password字段和“仅保存凭据”；关闭策略下保存/轮换不自动verify，保存后密码清空。秘密仅进入专用Keychain，DB记录引用，不创建.env。不要把真实Key发到聊天、命令参数、截图、HAR或公开证据。OpenAI没有Key就留空，不能用模拟响应追认在线通过。
+
+离线准备阶段创建的录入策略为 enabled=false、金额上限 0、五家拟 17 次/OpenAI 0、总硬上限 20；它与后续另行授权且已封存的 17 次/2 元在线执行账本分开。新调用仍需模型、定价、币种、总额及批准摘要的新授权，不能直接复用旧剩余额度。失败/超时/重定向/异常响应会停账本；孤锁不自动接管，已预留不退款。声明的费用预留不等于Provider实际账单，定价核对是启用前门禁。详细模型、≤20次清单、历史失败与收尾见[离线准备报告](verification/stage-d-close/provider-offline-preparation.md)。
+
+
+## 有限在线验收的历史阶段（累计 2 次）
+
+用户另批准的独立在线账本上限17请求/2元，实际Pexels资格成功1次、Freesound401失败1次后停止，账本保留used2/haltedtrue。原录入配置和零账本未重置，当前已恢复闭网入口；保存凭据不会自动验证。Google/豆包未执行，Cloudflare材料组合不兼容与OpenAI缺Key均0请求跳过。完整在线任务仍未验收，后续不得直接复用剩余次数重试。Pexels当前实现已对齐 `/v1/videos/search`。详见[本轮证据](verification/stage-d-close/provider-online-acceptance.md)。
+
+
+## 单家止损续验的历史阶段（累计 9 次）
+
+按新授权逐家串行承接累计计数，旧2次停止账本不变；最终累计9/17请求、费用预留0.03/2元（非实际账单），各阶段均停止封存。Pexels与豆包仅指定样本通过，Google403不重试，Freesound/Cloudflare/OpenAI继续跳过。85个旧原生样本开关恢复、原5503任务行不变，新样本退出调度，当前仍为原闭网录入服务。详见[续验报告](verification/stage-d-close/provider-continuation.md)。
+
+
+Google TTS 单次诊断（2026-10-25）：正式音色目录请求403，原因码 `BILLING_DISABLED`；未合成、未改云端计费或Key，Google仍未验收。继承旧账本后累计10/17次、费用预留0.03/2元（非实际账单），诊断已停止封存，当前为原闭网录入服务。全部旧失败与未验收门禁保留；诊断当次未提交，后续六组已本地归档，未推送或进入 E/F，SQL 建议仍暂缓。[诊断报告](verification/stage-d-close/google-tts-diagnostic.md)。
+
+当前累计口径以单次 Google 诊断后的 **10/17 次、费用预留 0.03/2 元**为准；预留不是实际账单。上述 2 次、9 次是独立封存的历史阶段，不重置或覆盖账本。六组本地归档不包含账号新功能，范围见[归档说明](verification/stage-d-close/local-commit-archive.md)。
+
+
+## 原生账号目录与蓝图检查
+
+账号页「选择文件夹」「打开文件夹」现经正常Owner/CSRF保护的 `POST /api/local/account-commands`。系统选择器仅在macOS验证，默认定位批准媒体根，返回后再次核对会话/归属及规范目录；选中只改草稿，需显式确认保存，取消不改草稿。打开操作验证已授权目录与恢复映射，不扩大媒体根。请求断开或服务退出会中止自己的等待选择器。
+
+账号页「重新检查」检查当前已保存蓝图，通过同一端口的 `checkBlueprint` 命令携带 `accountId / blueprintVersionId / expectedRevision`；旧目标409。复用创建/启动生产单的前置检查，不派任务、不做在线探针。HTTP200可能携带unavailable/blocked，须读 `worker-preflight/v2` 检查项，不能只看状态码。保存改变修订后清除旧结果，重新检查取得新结果；原无Worker闭网录入profile会如实报告Worker未配置。
+
+本轮Provider新增0、累计10/17次、预留0.03/2元（未查实际账单）；Owner签收不将原Google计费失败或其他跳过改判为技术通过。历史失败和其他未验收门禁不变。见[验收与证据](verification/stage-d-close/native-account-ui.md)。
+
+本节账号功能已在前六组归档之后，按 Owner 认可的 92 文件范围完成独立本地归档。验收报告仍保留原基线和当时“未提交”的说明；本次只更新当前归档状态及索引 SHA，没有修改功能源码、原始日志或历史快照，也没有新的 Provider 请求、Issue 操作、推送或合并。
+
+
+## 普通长度 TTS 的批准策略（2026-10-26）
+
+现有 `provider-network` 策略和账本不变。未配置 `tts` 的语音操作仍使用原验收保护：最多 10 字及原固定音色。普通生产在新批准策略的 `operations.google_tts.generate` 或 `operations.volcengine_tts.generate` 中添加 `tts`，按本次实际任务选择限制，不通过重置旧账本启用。
+
+豆包示例（仅策略结构，不是网络授权）：
+
+```json
+{
+  "maxRequests": 3,
+  "maxBytes": 3145728,
+  "timeoutMs": 60000,
+  "costMicrounits": 150000,
+  "tts": {
+    "maxCharacters": 500,
+    "voices": ["zh_female_vv_uranus_bigtts"],
+    "resourceIds": ["seed-tts-2.0"]
+  }
+}
+```
+
+`maxCharacters` 按 Unicode 字符计数，范围为 1–5000；现有请求正文 16 KiB 边界同时生效。`voices` 为允许的音色列表，不再由代码固定一个值；音色与语言/资源列表各自为许可集合，集合内组合均可使用，本轮豆包只批准一个资源 ID。Google 使用 `languageCodes`，豆包使用 `resourceIds`；两者不能混用，资格探针不接受生产 `tts` 覆盖。每次费用预留应覆盖该操作最大文本的声明费用，仍由批准摘要、价格证据和总额共同约束；示例金额不代表实际账单。
+
+文本超限、未批准音色/语言/资源 ID、策略关闭或过期时，在请求发送和预算预留前拒绝。HTTP/传输失败、结果未知与持久账本停用机制沿用原规则，不自动退款或重试。`local:prepare-providers` 仍只生成关闭策略。四家 Provider 的既有豁免不因本次 TTS 代码修复变为在线验收通过。

@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "localCatalogBusinessAssertionStatementsUnchanged": 30,
+  "reviewWorkspaceEntireTestFileByteIdentical": true,
+  "accountWorkspaceProductionByteIdentical": true,
+  "localCatalogProductionByteIdentical": true,
+  "localCatalogTestChange": "Await actual asynchronous render initialization in first test only",
+  "noTimeoutOrExpectedValueChanges": true
+}

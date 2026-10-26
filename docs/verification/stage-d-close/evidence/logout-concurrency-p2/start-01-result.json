@@ -1,0 +1,16 @@
+{
+  "started": "2026-10-25T01:49:44.044Z",
+  "finished": "2026-10-25T01:49:44.200Z",
+  "command": [
+    "npm",
+    "start",
+    "--",
+    "--deployment",
+    ".loop-control/stage-d/state/t24-dclose-restored-20261025/deployment.json",
+    "--offline-test"
+  ],
+  "status": 1,
+  "defaultTimeoutMs": 5000,
+  "timeoutOverride": false,
+  "passed": false
+}

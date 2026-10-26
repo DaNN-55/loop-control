@@ -1,0 +1,23 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ .loop-control/stage-b/verified/state/t06-followup/comparison-snapshot/src/reviews/localArtifactPreview.test.tsx (3 tests) 23ms
+ ✓ src/reviews/localArtifactPreview.test.tsx (3 tests) 22ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx (64 tests) 5890ms
+   ✓ 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择  1366ms
+   ✓ 审核台 > 审核阶段可返回可编辑镜头工作台，且保留当前 QC 证据  566ms
+   ✓ 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交  366ms
+   ✓ 审核台 > 逐镜头口播无需确认即可保存，并可保存单镜头覆盖  339ms
+   ✓ 审核台 > 人工媒体可在镜头工作台选择原片并保存镜头设置  444ms
+ ✓ .loop-control/stage-b/verified/state/t06-followup/comparison-snapshot/src/reviews/ReviewWorkspace.test.tsx (64 tests) 5918ms
+   ✓ 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择  1380ms
+   ✓ 审核台 > 审核阶段可返回可编辑镜头工作台，且保留当前 QC 证据  568ms
+   ✓ 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交  366ms
+   ✓ 审核台 > 逐镜头口播无需确认即可保存，并可保存单镜头覆盖  340ms
+   ✓ 审核台 > 人工媒体可在镜头工作台选择原片并保存镜头设置  446ms
+
+ Test Files  4 passed (4)
+      Tests  134 passed (134)
+   Start at  13:01:55
+   Duration  6.93s (transform 967ms, setup 0ms, collect 1.80s, tests 11.85s, environment 544ms, prepare 120ms)
+

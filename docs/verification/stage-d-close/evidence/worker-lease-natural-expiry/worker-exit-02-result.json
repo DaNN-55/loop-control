@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "realWorkerGroupKilled": true,
+  "parentSurvived": true,
+  "failedAttemptRetained": true,
+  "attempts": [
+    {
+      "attempt": 0,
+      "status": "failed"
+    },
+    {
+      "attempt": 1,
+      "status": "completed"
+    }
+  ],
+  "fencedFailureReleasedLease": true,
+  "noLeaseTimestampEdit": true,
+  "httpArtifactShaVerified": true
+}

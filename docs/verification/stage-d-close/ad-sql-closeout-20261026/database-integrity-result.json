@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "sourceDatabase": "loop_t24_restore_adclose20261025",
+  "sourceLogicalDumpUnchanged": true,
+  "sourceSha256": "2378e5303ef73ed9263f6c05cec2f8800744c74d20f11d1a9b436a8129bf4dac",
+  "targetDatabase": "loop_t24_restore_sql20261026",
+  "appliedMigration": {
+    "sha256": "361ff9ae7f716aa3e97fe4372d168adab3ab8642b4f431c9f99da1044ca3fd09",
+    "version": "043-owner-policy-initplans.sql"
+  },
+  "productionDatabaseTouched": false
+}

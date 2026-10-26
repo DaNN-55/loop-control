@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "normalOwnerImportClipAndExtract": true,
+  "syntheticSilentVideoSha256": "15d4c5448f1cfede1b47a9bc153cc37f2232ffdba48beb355c125877727bbb1a",
+  "actualAudioTrackChanged": true,
+  "oldOwnerTupleRejected409": true,
+  "captionTextConfirmationAbsent": true,
+  "newProviderRequests": 0
+}

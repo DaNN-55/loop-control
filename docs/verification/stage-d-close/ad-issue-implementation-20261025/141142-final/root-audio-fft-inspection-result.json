@@ -1,0 +1,9 @@
+{
+  "method": "Full FFT cross-correlation; all integer offsets within +/-100ms",
+  "normalizedCorrelation": 0.9904020319713188,
+  "bestOffsetSamples16k": 683,
+  "bestOffsetSeconds": 0.0426875,
+  "unchangedThreshold": 0.95,
+  "passed": true,
+  "initialCoarseSearchFailurePreserved": true
+}

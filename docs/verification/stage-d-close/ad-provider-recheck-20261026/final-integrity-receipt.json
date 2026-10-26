@@ -1,0 +1,57 @@
+{
+  "phase": "Final C18 audit and Owner-exception provider closure",
+  "passed": true,
+  "indexSha256": "ce2c2dd33d81083cd49806bdf1472a26256b603a8154cfe89e810739369d253b",
+  "publicItems": 1431,
+  "privateItems": 4592,
+  "historyAndSource": {
+    "passed": true,
+    "historicalPublicPreserved": 1400,
+    "historicalPrivatePreserved": 4442,
+    "allCurrentPublicVerified": 1431,
+    "allCurrentPrivateVerified": 4592,
+    "allOriginalGateMetadataUnchanged": true,
+    "sourceFilesUnchanged": 46,
+    "unrelatedHashesVerified": 20,
+    "headUnchanged": true,
+    "stagedFiles": [],
+    "errors": []
+  },
+  "credentialScan": {
+    "passed": true,
+    "method": "Every byte-window of each private value length compared by SHA256; no raw secrets loaded by scanner",
+    "privateFingerprintRecords": 14,
+    "distinctPrivateValues": 13,
+    "filesChecked": 79,
+    "indexIncluded": true,
+    "rawSecretsLoaded": false,
+    "hits": []
+  },
+  "batchClosed": 18,
+  "completed": 14,
+  "ownerExceptionsNotPassed": [
+    137,
+    138,
+    139,
+    140
+  ],
+  "issue149ClosedCompleted": true,
+  "actualProviderRequests": {
+    "google_tts": 1,
+    "freesound": 1,
+    "cloudflare": 0,
+    "openai": 0
+  },
+  "oldBudgetsUntouched": true,
+  "newAuthorizationsDisabled": true,
+  "keychainRestoredLocked": true,
+  "currentBusinessSourceChanges": 0,
+  "allFunctionalCapabilitiesPassed": false,
+  "headUnchanged": true,
+  "stagedFiles": 0,
+  "commit": false,
+  "push": false,
+  "enterEF": false,
+  "receiptExcludedFromItemizedIndex": true,
+  "selfCheck": "Final receipt receives a further independent fingerprint scan; private result is excluded to avoid circular hashing"
+}

@@ -1,0 +1,557 @@
+{
+  "profiles": 10,
+  "activeWorker": {
+    "profile": "CPU.20261025.104531.26529.0.001.cpuprofile",
+    "sampledMs": 2465.8,
+    "inclusiveCategoriesMs": {
+      "idle": 548.7,
+      "jsdomStyles": 203.8,
+      "reactRender": 712.2,
+      "accessibleNames": 258.6,
+      "roleQueries": 336.1,
+      "cssSelectors": 231.8,
+      "userEvent": 513.5
+    },
+    "topSelf": [
+      {
+        "function": "(idle)",
+        "source": "",
+        "ms": 548.7
+      },
+      {
+        "function": "process.env.NODE_ENV.exports.jsxDEV",
+        "source": "react/cjs/react-jsx-dev-runtime.development.js",
+        "ms": 76.0
+      },
+      {
+        "function": "process.env.NODE_ENV.exports.jsxDEV",
+        "source": "react/cjs/react-jsx-dev-runtime.development.js",
+        "ms": 64.9
+      },
+      {
+        "function": "_update",
+        "source": "jsdom/lib/jsdom/living/nodes/NodeList-impl.js",
+        "ms": 61.6
+      },
+      {
+        "function": "process.env.NODE_ENV.exports.jsxDEV",
+        "source": "react/cjs/react-jsx-dev-runtime.development.js",
+        "ms": 49.2
+      },
+      {
+        "function": "process.env.NODE_ENV.exports.jsxDEV",
+        "source": "react/cjs/react-jsx-dev-runtime.development.js",
+        "ms": 45.8
+      },
+      {
+        "function": "query",
+        "source": "jsdom/lib/jsdom/living/helpers/form-controls.js",
+        "ms": 33.5
+      },
+      {
+        "function": "(garbage collector)",
+        "source": "",
+        "ms": 33.2
+      }
+    ]
+  },
+  "categoriesOverlap": true,
+  "profileIncludesImportAndSetup": true,
+  "otherWorkersAreNotCountedAsTargetIdleWait": true,
+  "allProfiles": [
+    {
+      "profile": "CPU.20261025.104531.26529.0.001.cpuprofile",
+      "sampledMs": 2465.8,
+      "inclusiveCategoriesMs": {
+        "idle": 548.7,
+        "jsdomStyles": 203.8,
+        "reactRender": 712.2,
+        "accessibleNames": 258.6,
+        "roleQueries": 336.1,
+        "cssSelectors": 231.8,
+        "userEvent": 513.5
+      },
+      "topSelf": [
+        {
+          "function": "(idle)",
+          "source": "",
+          "ms": 548.7
+        },
+        {
+          "function": "process.env.NODE_ENV.exports.jsxDEV",
+          "source": "react/cjs/react-jsx-dev-runtime.development.js",
+          "ms": 76.0
+        },
+        {
+          "function": "process.env.NODE_ENV.exports.jsxDEV",
+          "source": "react/cjs/react-jsx-dev-runtime.development.js",
+          "ms": 64.9
+        },
+        {
+          "function": "_update",
+          "source": "jsdom/lib/jsdom/living/nodes/NodeList-impl.js",
+          "ms": 61.6
+        },
+        {
+          "function": "process.env.NODE_ENV.exports.jsxDEV",
+          "source": "react/cjs/react-jsx-dev-runtime.development.js",
+          "ms": 49.2
+        },
+        {
+          "function": "process.env.NODE_ENV.exports.jsxDEV",
+          "source": "react/cjs/react-jsx-dev-runtime.development.js",
+          "ms": 45.8
+        },
+        {
+          "function": "query",
+          "source": "jsdom/lib/jsdom/living/helpers/form-controls.js",
+          "ms": 33.5
+        },
+        {
+          "function": "(garbage collector)",
+          "source": "",
+          "ms": 33.2
+        }
+      ]
+    },
+    {
+      "profile": "CPU.20261025.104531.26530.0.001.cpuprofile",
+      "sampledMs": 2492.2,
+      "inclusiveCategoriesMs": {
+        "idle": 2410.7
+      },
+      "topSelf": [
+        {
+          "function": "(idle)",
+          "source": "",
+          "ms": 2410.7
+        },
+        {
+          "function": "spawnSync",
+          "source": "node:internal/child_process",
+          "ms": 10.3
+        },
+        {
+          "function": "(program)",
+          "source": "",
+          "ms": 9.8
+        },
+        {
+          "function": "readPackageJSON",
+          "source": "",
+          "ms": 4.8
+        },
+        {
+          "function": "setProcessTitle",
+          "source": "vitest/dist/chunks/utils.XdZDrNZV.js",
+          "ms": 3.9
+        },
+        {
+          "function": "defaultLoadSync",
+          "source": "node:internal/modules/esm/load",
+          "ms": 3.7
+        },
+        {
+          "function": "defaultLoadSync",
+          "source": "node:internal/modules/esm/load",
+          "ms": 3.4
+        },
+        {
+          "function": "compileSourceTextModule",
+          "source": "node:internal/modules/esm/utils",
+          "ms": 3.4
+        }
+      ]
+    },
+    {
+      "profile": "CPU.20261025.104531.26531.0.001.cpuprofile",
+      "sampledMs": 2484.1,
+      "inclusiveCategoriesMs": {
+        "idle": 2398.2
+      },
+      "topSelf": [
+        {
+          "function": "(idle)",
+          "source": "",
+          "ms": 2398.2
+        },
+        {
+          "function": "(program)",
+          "source": "",
+          "ms": 10.9
+        },
+        {
+          "function": "spawnSync",
+          "source": "node:internal/child_process",
+          "ms": 7.6
+        },
+        {
+          "function": "compileSourceTextModule",
+          "source": "node:internal/modules/esm/utils",
+          "ms": 5.6
+        },
+        {
+          "function": "compileSourceTextModule",
+          "source": "node:internal/modules/esm/utils",
+          "ms": 4.9
+        },
+        {
+          "function": "(garbage collector)",
+          "source": "",
+          "ms": 4.6
+        },
+        {
+          "function": "setProcessTitle",
+          "source": "vitest/dist/chunks/utils.XdZDrNZV.js",
+          "ms": 3.8
+        },
+        {
+          "function": "init",
+          "source": "node:internal/util/debuglog",
+          "ms": 2.8
+        }
+      ]
+    },
+    {
+      "profile": "CPU.20261025.104531.26532.0.001.cpuprofile",
+      "sampledMs": 2494.3,
+      "inclusiveCategoriesMs": {
+        "idle": 2411.8
+      },
+      "topSelf": [
+        {
+          "function": "(idle)",
+          "source": "",
+          "ms": 2411.8
+        },
+        {
+          "function": "spawnSync",
+          "source": "node:internal/child_process",
+          "ms": 15.4
+        },
+        {
+          "function": "(program)",
+          "source": "",
+          "ms": 10.0
+        },
+        {
+          "function": "compileSourceTextModule",
+          "source": "node:internal/modules/esm/utils",
+          "ms": 7.0
+        },
+        {
+          "function": "setProcessTitle",
+          "source": "vitest/dist/chunks/utils.XdZDrNZV.js",
+          "ms": 6.6
+        },
+        {
+          "function": "detectModuleFormat",
+          "source": "node:internal/modules/esm/get_format",
+          "ms": 5.9
+        },
+        {
+          "function": "(garbage collector)",
+          "source": "",
+          "ms": 3.7
+        },
+        {
+          "function": "requireBuiltin",
+          "source": "node:internal/bootstrap/realm",
+          "ms": 3.0
+        }
+      ]
+    },
+    {
+      "profile": "CPU.20261025.104531.26533.0.001.cpuprofile",
+      "sampledMs": 2490.2,
+      "inclusiveCategoriesMs": {
+        "idle": 2404.5
+      },
+      "topSelf": [
+        {
+          "function": "(idle)",
+          "source": "",
+          "ms": 2404.5
+        },
+        {
+          "function": "spawnSync",
+          "source": "node:internal/child_process",
+          "ms": 10.3
+        },
+        {
+          "function": "(program)",
+          "source": "",
+          "ms": 8.2
+        },
+        {
+          "function": "setProcessTitle",
+          "source": "vitest/dist/chunks/utils.XdZDrNZV.js",
+          "ms": 6.1
+        },
+        {
+          "function": "isInt32",
+          "source": "node:internal/validators",
+          "ms": 5.1
+        },
+        {
+          "function": "get",
+          "source": "node:internal/modules/package_json_reader",
+          "ms": 5.0
+        },
+        {
+          "function": "compileSourceTextModule",
+          "source": "node:internal/modules/esm/utils",
+          "ms": 4.5
+        },
+        {
+          "function": "(garbage collector)",
+          "source": "",
+          "ms": 4.3
+        }
+      ]
+    },
+    {
+      "profile": "CPU.20261025.104531.26534.0.001.cpuprofile",
+      "sampledMs": 2493.2,
+      "inclusiveCategoriesMs": {
+        "idle": 2419.4
+      },
+      "topSelf": [
+        {
+          "function": "(idle)",
+          "source": "",
+          "ms": 2419.4
+        },
+        {
+          "function": "(program)",
+          "source": "",
+          "ms": 12.0
+        },
+        {
+          "function": "spawnSync",
+          "source": "node:internal/child_process",
+          "ms": 11.1
+        },
+        {
+          "function": "setProcessTitle",
+          "source": "vitest/dist/chunks/utils.XdZDrNZV.js",
+          "ms": 5.2
+        },
+        {
+          "function": "getNearestParentPackageJSONType",
+          "source": "",
+          "ms": 4.8
+        },
+        {
+          "function": "normalizeString",
+          "source": "node:path",
+          "ms": 3.9
+        },
+        {
+          "function": "(garbage collector)",
+          "source": "",
+          "ms": 3.5
+        },
+        {
+          "function": "compileForInternalLoader",
+          "source": "node:internal/bootstrap/realm",
+          "ms": 3.0
+        }
+      ]
+    },
+    {
+      "profile": "CPU.20261025.104531.26535.0.001.cpuprofile",
+      "sampledMs": 2494.2,
+      "inclusiveCategoriesMs": {
+        "idle": 2418.3
+      },
+      "topSelf": [
+        {
+          "function": "(idle)",
+          "source": "",
+          "ms": 2418.3
+        },
+        {
+          "function": "(program)",
+          "source": "",
+          "ms": 10.9
+        },
+        {
+          "function": "spawnSync",
+          "source": "node:internal/child_process",
+          "ms": 10.8
+        },
+        {
+          "function": "compileSourceTextModule",
+          "source": "node:internal/modules/esm/utils",
+          "ms": 5.9
+        },
+        {
+          "function": "setProcessTitle",
+          "source": "vitest/dist/chunks/utils.XdZDrNZV.js",
+          "ms": 5.4
+        },
+        {
+          "function": "compileForInternalLoader",
+          "source": "node:internal/bootstrap/realm",
+          "ms": 4.7
+        },
+        {
+          "function": "isURL",
+          "source": "node:internal/url",
+          "ms": 3.2
+        },
+        {
+          "function": "lib/llhttp/constants.js",
+          "source": "node:internal/deps/undici/undici",
+          "ms": 2.9
+        }
+      ]
+    },
+    {
+      "profile": "CPU.20261025.104531.26536.0.001.cpuprofile",
+      "sampledMs": 2495.0,
+      "inclusiveCategoriesMs": {
+        "idle": 2405.7
+      },
+      "topSelf": [
+        {
+          "function": "(idle)",
+          "source": "",
+          "ms": 2405.7
+        },
+        {
+          "function": "(program)",
+          "source": "",
+          "ms": 10.7
+        },
+        {
+          "function": "spawnSync",
+          "source": "node:internal/child_process",
+          "ms": 10.2
+        },
+        {
+          "function": "setProcessTitle",
+          "source": "vitest/dist/chunks/utils.XdZDrNZV.js",
+          "ms": 4.9
+        },
+        {
+          "function": "compileForInternalLoader",
+          "source": "node:internal/bootstrap/realm",
+          "ms": 4.7
+        },
+        {
+          "function": "(garbage collector)",
+          "source": "",
+          "ms": 4.5
+        },
+        {
+          "function": "instantiate",
+          "source": "",
+          "ms": 4.4
+        },
+        {
+          "function": "#getOrCreateModuleJobAfterResolve",
+          "source": "node:internal/modules/esm/loader",
+          "ms": 3.3
+        }
+      ]
+    },
+    {
+      "profile": "CPU.20261025.104531.26537.0.001.cpuprofile",
+      "sampledMs": 2483.9,
+      "inclusiveCategoriesMs": {
+        "idle": 2400.7
+      },
+      "topSelf": [
+        {
+          "function": "(idle)",
+          "source": "",
+          "ms": 2400.7
+        },
+        {
+          "function": "(program)",
+          "source": "",
+          "ms": 13.0
+        },
+        {
+          "function": "spawnSync",
+          "source": "node:internal/child_process",
+          "ms": 11.5
+        },
+        {
+          "function": "(garbage collector)",
+          "source": "",
+          "ms": 7.0
+        },
+        {
+          "function": "setProcessTitle",
+          "source": "vitest/dist/chunks/utils.XdZDrNZV.js",
+          "ms": 3.8
+        },
+        {
+          "function": "compileForInternalLoader",
+          "source": "node:internal/bootstrap/realm",
+          "ms": 3.5
+        },
+        {
+          "function": "Socket",
+          "source": "node:net",
+          "ms": 3.2
+        },
+        {
+          "function": "moduleResolve",
+          "source": "node:internal/modules/esm/resolve",
+          "ms": 3.2
+        }
+      ]
+    },
+    {
+      "profile": "CPU.20261025.104534.26550.0.001.cpuprofile",
+      "sampledMs": 43.3,
+      "inclusiveCategoriesMs": {},
+      "topSelf": [
+        {
+          "function": "(program)",
+          "source": "",
+          "ms": 5.7
+        },
+        {
+          "function": "spawnSync",
+          "source": "node:internal/child_process",
+          "ms": 3.8
+        },
+        {
+          "function": "setProcessTitle",
+          "source": "vitest/dist/chunks/utils.XdZDrNZV.js",
+          "ms": 3.7
+        },
+        {
+          "function": "compileSourceTextModule",
+          "source": "node:internal/modules/esm/utils",
+          "ms": 2.5
+        },
+        {
+          "function": "compileForInternalLoader",
+          "source": "node:internal/bootstrap/realm",
+          "ms": 2.5
+        },
+        {
+          "function": "(garbage collector)",
+          "source": "",
+          "ms": 1.8
+        },
+        {
+          "function": "compileForInternalLoader",
+          "source": "node:internal/bootstrap/realm",
+          "ms": 1.3
+        },
+        {
+          "function": "moduleResolve",
+          "source": "node:internal/modules/esm/resolve",
+          "ms": 1.3
+        }
+      ]
+    }
+  ]
+}

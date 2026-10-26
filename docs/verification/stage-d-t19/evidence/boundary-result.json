@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-24T08:33:32.290Z",
+  "staleReview409": true,
+  "sourceModeFrozenAfterStart": true,
+  "unknownSecretField400": true,
+  "csrf403": true,
+  "idempotencyConflict409": true,
+  "changedFile409": true,
+  "rangeBeyondActualFile409": true,
+  "foreignOwner404": true,
+  "roleAndStaleFenceDenied": true,
+  "retryFailureAndSuccessPreserveOldTasksAndFrozenVersion": true,
+  "newOutputPathAndRepeatedRetrySameTask": true,
+  "providerRequests": 0,
+  "passed": true
+}

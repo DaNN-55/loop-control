@@ -1,0 +1,84 @@
+- generic [ref=e1] clickable [onclick]
+  - main
+    - sectionheader
+      - StaticText "Loop Control · 本地"
+      - heading "内容工作台" [level=1, ref=e2]
+    - navigation
+      - button "账号配置" [ref=e3]
+      - button "生产单目录" [ref=e4]
+      - button "新建账号" [ref=e5]
+      - button "刷新" [ref=e6]
+      - button "退出登录" [ref=e7]
+    - generic
+      - heading "生产单（19）" [level=2, ref=e8]
+        - StaticText "生产单（19）"
+      - button "新建生产单" [ref=e9]
+      - generic
+        - button "返回生产单目录" [ref=e10]
+        - sectionheader
+          - heading "T16 最终源码浏览器验收" [level=2, ref=e11]
+          - StaticText "5ccc756b"
+        - generic "生产单操作"
+          - button "刷新生产单状态" [ref=e12]
+          - button "打开本地输入目录" [disabled, ref=e13]
+          - button "复制本地输入目录路径" [ref=e14]
+          - button "查看产物索引" [expanded=true, ref=e15]
+          - button "查看执行与审计时间线" [expanded=false, ref=e16]
+          - dialog "产物索引"
+            - sectionheader
+              - strong
+                - StaticText "产物索引"
+              - button "关闭产物索引" [ref=e24]
+            - StaticText "✓"
+            - StaticText "visual_asset_manifest"
+            - StaticText "episodes/5ccc756b-91de-4079-af78-e4e011d84d4b/visual-assets-v1.md"
+        - paragraph
+          - StaticText "蓝图 v1 · 创建于 2026年10月24日 12:56"
+        - generic
+          - StaticText "当前阶段"
+          - strong
+            - StaticText "视觉素材准备与审核"
+          - StaticText "下一步"
+          - paragraph
+            - StaticText "等待生成分镜"
+          - generic
+            - StaticText "当前任务"
+            - strong
+              - StaticText "已完成"
+            - paragraph
+              - StaticText "最近一次 Worker 任务已完成。"
+        - group
+          - DisclosureTriangle "视觉清单" [expanded=true]
+            - ListMarker "▾"
+            - heading "视觉清单" [level=3, ref=e21]
+          - paragraph
+            - StaticText "这是 Worker 根据已确认脚本、系列规则和冻结素材整理的制作依据；它不是生成图片或视频的预览。"
+          - heading "审核与冻结依据" [level=4, ref=e17]
+          - paragraph
+            - StaticText "脚本哈希、系列基准、执行器与预算"
+          - button "查看" [expanded=false, ref=e18]
+          - heading "完整资产清单" [level=4, ref=e19]
+          - paragraph
+            - StaticText "已冻结外部输入 1 项；已生成视觉资产 0 项。"
+          - button "查看" [expanded=false, ref=e20]
+          - generic
+            - heading "已冻结的外部视觉输入" [level=3, ref=e22]
+            - LabelText
+              - StaticText "选择视觉输入"
+              - combobox "选择视觉输入" [expanded=false, ref=e25]: actor.png · 0.0 MB
+                - MenuListPopup
+                  - option "actor.png · 0.0 MB" [selected, ref=e27]
+            - article
+              - sectionheader
+                - strong
+                  - StaticText "actor.png"
+                - generic
+                  - StaticText "0.0 MB"
+              - generic
+                - image "冻结的外部视觉输入"
+                - button "放大查看 actor.png" [ref=e26]
+                  - StaticText "放大查看"
+        - group
+          - DisclosureTriangle "准备生产材料" [expanded=false]
+            - ListMarker "▸"
+            - heading "准备生产材料" [level=3, ref=e23]

@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "baselineHead": "bca697bbc1e12626771d1283ec87a17bf85f02fe",
+  "protectedWorkingFilesUnchanged": 896,
+  "accountSourceAndEvidenceIncluded": false,
+  "unrelatedPlanScratchOutputUntouched": true,
+  "originalEvidence": {
+    "publicAtStart": 1211,
+    "privateAtStart": 1954,
+    "activeReportsUpdated": 2,
+    "rawEvidenceModified": false
+  },
+  "stagedByExactFileAndBlobWhitelist": true,
+  "providerRequestsThisTurn": 0,
+  "noIssueWritesPushMerge": true
+}

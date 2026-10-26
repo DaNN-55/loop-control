@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "status": 1,
+  "command": [
+    "npm",
+    "start"
+  ],
+  "modelPhase": false,
+  "osLoopbackTree": true,
+  "noDeploymentArgument": true,
+  "started": "2026-10-25T05:22:51.148Z"
+}

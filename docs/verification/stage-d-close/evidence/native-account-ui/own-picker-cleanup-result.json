@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "ownedOrphanPickerPid": 93345,
+  "identityCheckedBeforeKill": true,
+  "unrelatedProcessesTouched": false,
+  "reason": "Old test picker survived service stop and was awaiting GUI interaction",
+  "providerRequests": 0
+}

@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "realSigkillDuringControlledHealthPort": true,
+  "durableRunningJob": {
+    "id": "2cc0a6a6-211f-46cd-be5d-c9c52a4727f5",
+    "due": "2026-10-30T01:00:00+00:00",
+    "kind": "health",
+    "status": "running",
+    "attempt": 1
+  }
+}

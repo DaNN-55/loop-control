@@ -1,0 +1,32 @@
+{
+  "version": "acoustic-alignment/v1",
+  "status": "completed",
+  "method": "local_whisperx",
+  "granularity": "phrase",
+  "audioSha256": "26f49a501b9185e6f6a2f1b0e52c561a56717d361c7bf05e8f399593de7c74f3",
+  "textFingerprint": "ccacb472427af8c2b007c511033470b0fd3efee4cf04f60737e5ea202f26b0bf",
+  "inputVersion": "9fefc9be063a466dd93e42434087fd9fdd70817a64f0ad3e58a84f18d5a10413",
+  "provider": "whisperx",
+  "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+  "connectionVersionId": null,
+  "wordCount": 1,
+  "cues": [
+    {
+      "id": "phrase-1",
+      "text": "这是本地字幕验收。",
+      "startMs": 60,
+      "endMs": 4006,
+      "confidence": 0.982125
+    }
+  ],
+  "reviewIssues": [],
+  "attempts": [
+    {
+      "method": "local_whisperx",
+      "status": "completed",
+      "detail": "本地 WhisperX 已生成短语 cues。"
+    }
+  ],
+  "detail": "本地 WhisperX 对齐已完成。",
+  "generatedAt": "2026-10-25T04:29:22.796Z"
+}

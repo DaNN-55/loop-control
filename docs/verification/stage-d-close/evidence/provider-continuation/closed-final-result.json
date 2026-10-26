@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "intakeProfileClosed": true,
+  "allOnlineVerificationDisabled": true,
+  "finalLiveLedgerSealed": true,
+  "cumulativeRequests": 9,
+  "cumulativeReservedCny": 0.03,
+  "actualBillQueried": false,
+  "qualified": [
+    {
+      "provider": "pexels",
+      "qualified": true
+    },
+    {
+      "provider": "google_tts",
+      "qualified": false
+    },
+    {
+      "provider": "volcengine_tts",
+      "qualified": true
+    }
+  ],
+  "realCredentialsRetained": true,
+  "skippedProvidersNotRetested": true
+}

@@ -1,0 +1,37 @@
+{
+  "at": "2026-10-24T01:41:39.092Z",
+  "realPostgres": true,
+  "realHttp": true,
+  "realKeychainStore": true,
+  "realNativeHelper": true,
+  "workerBoundary": "actual verifyLocalConnection module, same process; no full task Worker CLI",
+  "provider": "simulated, network denied",
+  "onlineProviderCalls": 0,
+  "concurrentCreate8SingleConnection": true,
+  "concurrentRotate6SingleVersion": true,
+  "oldSecretPreserved": true,
+  "oldWorkerVersionBlocked": true,
+  "lockedKeychainHttpPathBlockedBeforeProvider": true,
+  "providerExceptionRedacted": true,
+  "revokedVerificationRejected": true,
+  "missingKeychainEntryRebound": true,
+  "missingDatabaseBindingRebound": true,
+  "productionWorkerStillBlocked": true,
+  "blueprintSelection409": true,
+  "anonymous401": true,
+  "csrf403": true,
+  "externalReady": false,
+  "secretAbsentFromHttpDatabaseBackupAndLogs": true,
+  "networkSelfChecks": {
+    "blockedFetches": 1,
+    "blockedSockets": 1
+  },
+  "fixtureRevokedAtEnd": true,
+  "connectionId": "53d7afc1-1b28-40e4-b241-84ec70d5a948",
+  "versions": [
+    "80027138-9094-437c-b128-8a71d31a2205",
+    "b79e9659-cf88-44b0-b789-536ea6bfb7ab",
+    "6590efc9-8efd-4af4-87fb-8774be2a4f7e"
+  ],
+  "passed": true
+}

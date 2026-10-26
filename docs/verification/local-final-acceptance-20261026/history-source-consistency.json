@@ -1,0 +1,254 @@
+{
+  "at": "2026-10-26T07:42:51.283Z",
+  "projectRef": "gdvbfnajcjbvywngvppn",
+  "firstWindow": {
+    "start": "2026-10-26T07:28:32.787Z",
+    "end": "2026-10-26T07:29:48.475Z"
+  },
+  "secondWindow": {
+    "start": "2026-10-26T07:38:46.496Z",
+    "end": "2026-10-26T07:39:43.171Z"
+  },
+  "sourceRowValuesMatchedAcrossBothWindows": true,
+  "consistency": "Two matching complete read-only exports; not a single frozen PostgreSQL transaction",
+  "tables": [
+    {
+      "table": "account_blueprint_versions",
+      "rows": 9,
+      "confirmedRows": 9,
+      "sha256": "ec510aaae1e611a4eb1f2b4c5101be290ab63ed45198f72ed1c14c1009bda96c",
+      "confirmedSha256": "ec510aaae1e611a4eb1f2b4c5101be290ab63ed45198f72ed1c14c1009bda96c"
+    },
+    {
+      "table": "account_memberships",
+      "rows": 3,
+      "confirmedRows": 3,
+      "sha256": "6fea7e240519528a4260769987151bb796a549d9d46a5894bb01a6c52694fe29",
+      "confirmedSha256": "6fea7e240519528a4260769987151bb796a549d9d46a5894bb01a6c52694fe29"
+    },
+    {
+      "table": "accounts",
+      "rows": 3,
+      "confirmedRows": 3,
+      "sha256": "d90672025251ffaa7107592f311e31f0347b6a3b3c38e5c548acc3df95d47265",
+      "confirmedSha256": "d90672025251ffaa7107592f311e31f0347b6a3b3c38e5c548acc3df95d47265"
+    },
+    {
+      "table": "approvals",
+      "rows": 27,
+      "confirmedRows": 27,
+      "sha256": "e2371516681bea64290b3d5e00b7c72c935d3e9ce2f2b50e37248c26bb628394",
+      "confirmedSha256": "e2371516681bea64290b3d5e00b7c72c935d3e9ce2f2b50e37248c26bb628394"
+    },
+    {
+      "table": "artifacts",
+      "rows": 270,
+      "confirmedRows": 270,
+      "sha256": "fc56d9c6bef60cd0a8aaa25832c1d646fe239d6197c4789b25551bab62f5111f",
+      "confirmedSha256": "fc56d9c6bef60cd0a8aaa25832c1d646fe239d6197c4789b25551bab62f5111f"
+    },
+    {
+      "table": "asset_locks",
+      "rows": 0,
+      "confirmedRows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "confirmedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "audio_track_annotations",
+      "rows": 0,
+      "confirmedRows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "confirmedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "audio_tracks",
+      "rows": 69,
+      "confirmedRows": 69,
+      "sha256": "c9c63734ce889e42c23d3079a159c0259b57de0e95bf70b89c27893e5fdb0ed6",
+      "confirmedSha256": "c9c63734ce889e42c23d3079a159c0259b57de0e95bf70b89c27893e5fdb0ed6"
+    },
+    {
+      "table": "audit_events",
+      "rows": 862,
+      "confirmedRows": 862,
+      "sha256": "8bb84fca3afd2565d126b2435c5529a29259f9ab733f4578f004ac3e2faa3dc2",
+      "confirmedSha256": "8bb84fca3afd2565d126b2435c5529a29259f9ab733f4578f004ac3e2faa3dc2"
+    },
+    {
+      "table": "episodes",
+      "rows": 11,
+      "confirmedRows": 11,
+      "sha256": "36568d589c7ba1f1b78e3e84de4b1f61742af58ea224810df8bb8d6914fd74c4",
+      "confirmedSha256": "36568d589c7ba1f1b78e3e84de4b1f61742af58ea224810df8bb8d6914fd74c4"
+    },
+    {
+      "table": "external_connection_verifications",
+      "rows": 16,
+      "confirmedRows": 16,
+      "sha256": "fdbfb47de99151d42d0512d725a89876bc95c334496e8db1daf46f8b981f7ecb",
+      "confirmedSha256": "fdbfb47de99151d42d0512d725a89876bc95c334496e8db1daf46f8b981f7ecb"
+    },
+    {
+      "table": "external_connection_versions",
+      "rows": 8,
+      "confirmedRows": 8,
+      "sha256": "8916909f5070d09ddfb7c9986393b33f474f7d4e8ed573013b2d016c9e83e5bf",
+      "confirmedSha256": "8916909f5070d09ddfb7c9986393b33f474f7d4e8ed573013b2d016c9e83e5bf"
+    },
+    {
+      "table": "external_connections",
+      "rows": 6,
+      "confirmedRows": 6,
+      "sha256": "31dd363b94a541ffb06f24e9f9fc290246934b425e8d68175b8b20b01e896c2b",
+      "confirmedSha256": "31dd363b94a541ffb06f24e9f9fc290246934b425e8d68175b8b20b01e896c2b"
+    },
+    {
+      "table": "generation_account_budgets",
+      "rows": 1,
+      "confirmedRows": 1,
+      "sha256": "2c2cdeda588a3436a7d54c4c386c55b88e687ee852fb3a61010bbdc64dca872d",
+      "confirmedSha256": "2c2cdeda588a3436a7d54c4c386c55b88e687ee852fb3a61010bbdc64dca872d"
+    },
+    {
+      "table": "material_revision_approvals",
+      "rows": 107,
+      "confirmedRows": 107,
+      "sha256": "20e92f75a1c985ffb81d1ed2d20b8f8ecc88d850ea4f29b085a5fd3a65131f38",
+      "confirmedSha256": "20e92f75a1c985ffb81d1ed2d20b8f8ecc88d850ea4f29b085a5fd3a65131f38"
+    },
+    {
+      "table": "paid_generation_reservations",
+      "rows": 16,
+      "confirmedRows": 16,
+      "sha256": "8afd5471816b9b9acf0efd9e098734f2c55287eefe51c59bac32f387af60da8a",
+      "confirmedSha256": "8afd5471816b9b9acf0efd9e098734f2c55287eefe51c59bac32f387af60da8a"
+    },
+    {
+      "table": "pre_render_review_member_decisions",
+      "rows": 0,
+      "confirmedRows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "confirmedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "pre_render_review_members",
+      "rows": 119,
+      "confirmedRows": 119,
+      "sha256": "c9ddb501f28f29d1c68c2d647cd9a0ed23b1a393d61402d6b1da565b53ce4835",
+      "confirmedSha256": "c9ddb501f28f29d1c68c2d647cd9a0ed23b1a393d61402d6b1da565b53ce4835"
+    },
+    {
+      "table": "production_dependencies",
+      "rows": 1180,
+      "confirmedRows": 1180,
+      "sha256": "286e8d27529623aa9ca4ebdbf97ac9abd6944135efd8ca9f35cde56692c60b79",
+      "confirmedSha256": "286e8d27529623aa9ca4ebdbf97ac9abd6944135efd8ca9f35cde56692c60b79"
+    },
+    {
+      "table": "production_invalidations",
+      "rows": 6,
+      "confirmedRows": 6,
+      "sha256": "f2b27f6409cb6de33da402775c3b9c6636a9560f821751d1ed9509c1a9267445",
+      "confirmedSha256": "f2b27f6409cb6de33da402775c3b9c6636a9560f821751d1ed9509c1a9267445"
+    },
+    {
+      "table": "production_material_revisions",
+      "rows": 113,
+      "confirmedRows": 113,
+      "sha256": "fb00d1211b63b28999efc9de96bacc0e5111b9c64a9cadf03f66690aa9435805",
+      "confirmedSha256": "fb00d1211b63b28999efc9de96bacc0e5111b9c64a9cadf03f66690aa9435805"
+    },
+    {
+      "table": "prompt_versions",
+      "rows": 17,
+      "confirmedRows": 17,
+      "sha256": "174b4468cd53df84804edd8deb0b0a03a01d26cfe4fea858385e8ff61e045674",
+      "confirmedSha256": "174b4468cd53df84804edd8deb0b0a03a01d26cfe4fea858385e8ff61e045674"
+    },
+    {
+      "table": "qc_review_issues",
+      "rows": 1,
+      "confirmedRows": 1,
+      "sha256": "70b0c7fb5096439d8a774d372788e86d78f929427ce86b2b2567f53ec62d3e3b",
+      "confirmedSha256": "70b0c7fb5096439d8a774d372788e86d78f929427ce86b2b2567f53ec62d3e3b"
+    },
+    {
+      "table": "review_annotations",
+      "rows": 6,
+      "confirmedRows": 6,
+      "sha256": "64043c6dce39a4717d562a0b77f300e04678366d6f40417a151bc30d0a6cc2d7",
+      "confirmedSha256": "64043c6dce39a4717d562a0b77f300e04678366d6f40417a151bc30d0a6cc2d7"
+    },
+    {
+      "table": "review_packages",
+      "rows": 49,
+      "confirmedRows": 49,
+      "sha256": "df9ec4c6575fa8e033cd75591c5377e6420108331e58179db832c8cdb8a315f0",
+      "confirmedSha256": "df9ec4c6575fa8e033cd75591c5377e6420108331e58179db832c8cdb8a315f0"
+    },
+    {
+      "table": "review_render_composition_revisions",
+      "rows": 27,
+      "confirmedRows": 27,
+      "sha256": "225dad3041cb9aac8bb6400295d5868cb1d07f758b7e2ba5a796c6905e8ddd12",
+      "confirmedSha256": "225dad3041cb9aac8bb6400295d5868cb1d07f758b7e2ba5a796c6905e8ddd12"
+    },
+    {
+      "table": "series",
+      "rows": 3,
+      "confirmedRows": 3,
+      "sha256": "2f6bcb7ad780412736f12fccae8bca79dab7f439f4bc24820d169d8e0f9bb25f",
+      "confirmedSha256": "2f6bcb7ad780412736f12fccae8bca79dab7f439f4bc24820d169d8e0f9bb25f"
+    },
+    {
+      "table": "series_versions",
+      "rows": 3,
+      "confirmedRows": 3,
+      "sha256": "3c0c3d88b45c80b6a0903a7d92bcc11fc6325ce34c7ac782777480f1794e6c25",
+      "confirmedSha256": "3c0c3d88b45c80b6a0903a7d92bcc11fc6325ce34c7ac782777480f1794e6c25"
+    },
+    {
+      "table": "shot_preparation_drafts",
+      "rows": 49,
+      "confirmedRows": 49,
+      "sha256": "be2e033a6f5f128f307ad4a980ff29e0c6425fe1f13006610aaace9924b1a61e",
+      "confirmedSha256": "be2e033a6f5f128f307ad4a980ff29e0c6425fe1f13006610aaace9924b1a61e"
+    },
+    {
+      "table": "state_transitions",
+      "rows": 132,
+      "confirmedRows": 132,
+      "sha256": "602b1910fc4d6fae866213df7f5c3b6f68c10f48d9863746d4e63fe88a498e9b",
+      "confirmedSha256": "602b1910fc4d6fae866213df7f5c3b6f68c10f48d9863746d4e63fe88a498e9b"
+    },
+    {
+      "table": "storyboard_audio_selections",
+      "rows": 0,
+      "confirmedRows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "confirmedSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "table": "storyboard_review_shots",
+      "rows": 99,
+      "confirmedRows": 99,
+      "sha256": "7a0d8305c920ad2fa0ef9f59c81e7d5f5976dc968facd0e02664b4d5cd3e3eff",
+      "confirmedSha256": "7a0d8305c920ad2fa0ef9f59c81e7d5f5976dc968facd0e02664b4d5cd3e3eff"
+    },
+    {
+      "table": "task_runs",
+      "rows": 190,
+      "confirmedRows": 190,
+      "sha256": "ba8badc8db6df7314c5229d237929d9a79c5327afa38621045394cd0132babe7",
+      "confirmedSha256": "ba8badc8db6df7314c5229d237929d9a79c5327afa38621045394cd0132babe7"
+    },
+    {
+      "table": "tasks",
+      "rows": 238,
+      "confirmedRows": 238,
+      "sha256": "688314d17b5224f8796525911cf3c504a376aaf38e07ea65519796eb5dcde220",
+      "confirmedSha256": "688314d17b5224f8796525911cf3c504a376aaf38e07ea65519796eb5dcde220"
+    }
+  ]
+}

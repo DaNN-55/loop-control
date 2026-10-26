@@ -1,0 +1,16 @@
+AssertionError [ERR_ASSERTION]: {"id":"2c52936d-6ff3-4548-b060-df06c6a8e289","result":{"retry":{"reason":"媒体执行或产物验证失败，请检查冻结输入和本机执行状态。","shouldRetry":false},"status":"failed","taskId":"2c52936d-6ff3-4548-b060-df06c6a8e289","version":"worker-result/v1","blockers":[],"nextStep":"Retry only after the reported failure is understood.","artifacts":[],"preflight":{"checks":[{"check":"command_availability","phase":"preflight","scope":"worker","action":"none","reason":"本地受控规划执行路径；不自动调用在线Provider。","status":"passed","capability":"b_roll_generation"}],"version":"worker-preflight/v2"},"validation":{"checks":[{"name":"codex_execution","detail":"媒体执行或产物验证失败，请检查冻结输入和本机执行状态。","passed":false}],"passed":false},"actualCostCents":0}}
++ actual - expected
+
++ 'failed'
+- 'completed'
+
+    at Object.test (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/media-acceptance.mjs:81:302)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/media-acceptance.mjs:91:55 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'failed',
+  expected: 'completed',
+  operator: 'strictEqual',
+  diff: 'simple'
+}

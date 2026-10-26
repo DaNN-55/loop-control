@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-26T05:36:00.166Z",
+  "proposalOnly": true,
+  "realSourceUnchanged": true,
+  "sourcePath": "scripts/runtime/codex.mjs",
+  "capability": "visual_planning",
+  "candidateExit": 0,
+  "stubCalls": 1,
+  "returnedStub": "{\"offlineStub\":true}",
+  "realModelCalls": 0,
+  "realProviderCalls": 0,
+  "stderr": ""
+}

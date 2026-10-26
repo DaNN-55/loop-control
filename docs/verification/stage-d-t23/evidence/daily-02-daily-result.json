@@ -1,0 +1,96 @@
+{
+  "passed": true,
+  "atBoundary": "Shanghai09:00",
+  "plans": [
+    {
+      "kind": "backup",
+      "timezone": "Asia/Shanghai",
+      "next_due_at": "2026-10-25T01:00:00.000Z"
+    },
+    {
+      "kind": "health",
+      "timezone": "Asia/Shanghai",
+      "next_due_at": "2026-10-25T01:00:00.000Z"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "532a8aab-c072-4f27-8a1e-2c57f5754f29",
+      "kind": "backup",
+      "due_at": "2026-10-24T01:00:00.000Z",
+      "status": "completed",
+      "attempt": 1,
+      "completed_at": "2026-10-24T01:00:00.000Z",
+      "passed": true,
+      "detail": "本地完整备份已生成并校验：49 张表、842 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。"
+    },
+    {
+      "id": "1d19185d-6759-4b2e-bc77-2543c0fdf9fa",
+      "kind": "health",
+      "due_at": "2026-10-24T01:00:00.000Z",
+      "status": "completed",
+      "attempt": 1,
+      "completed_at": "2026-10-24T01:00:00.000Z",
+      "passed": true,
+      "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。"
+    }
+  ],
+  "operations": {
+    "schedule": {
+      "latest": {
+        "passed": true,
+        "idle": true,
+        "detail": "常驻调度检查完成；空闲结果仅在变化时保存。",
+        "at": "2026-10-24T14:22:43.523Z"
+      },
+      "lastSuccess": {
+        "passed": true,
+        "idle": true,
+        "detail": "常驻调度检查完成；空闲结果仅在变化时保存。",
+        "at": "2026-10-24T14:22:43.523Z"
+      },
+      "lastFailure": null
+    },
+    "notification": {
+      "latest": {
+        "passed": false,
+        "idle": true,
+        "detail": "有 4 条提醒正在投递或结果未知；不会自动重发，请核对控制台队列。",
+        "at": "2026-10-24T14:22:43.530Z"
+      },
+      "lastSuccess": null,
+      "lastFailure": {
+        "passed": false,
+        "idle": true,
+        "detail": "有 4 条提醒正在投递或结果未知；不会自动重发，请核对控制台队列。",
+        "at": "2026-10-24T14:22:43.530Z"
+      }
+    },
+    "health": {
+      "latest": {
+        "passed": true,
+        "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。",
+        "at": "2026-10-24T01:00:00.000Z"
+      },
+      "lastSuccess": {
+        "passed": true,
+        "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。",
+        "at": "2026-10-24T01:00:00.000Z"
+      },
+      "lastFailure": null
+    },
+    "backup": {
+      "latest": {
+        "passed": true,
+        "detail": "本地完整备份已生成并校验：49 张表、842 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+        "at": "2026-10-24T01:00:00.000Z"
+      },
+      "lastSuccess": {
+        "passed": true,
+        "detail": "本地完整备份已生成并校验：49 张表、842 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+        "at": "2026-10-24T01:00:00.000Z"
+      },
+      "lastFailure": null
+    }
+  }
+}

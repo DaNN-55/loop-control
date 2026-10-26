@@ -1,0 +1,194 @@
+{
+  "at": "2026-10-26T09:59:44.799Z",
+  "mode": "dry-run",
+  "passed": true,
+  "sourceProject": "gdvbfnajcjbvywngvppn",
+  "sourceWindow": {
+    "start": "2026-10-26T07:38:46.496Z",
+    "end": "2026-10-26T07:39:43.171Z"
+  },
+  "validation": {
+    "tables": [
+      {
+        "name": "account_blueprint_versions",
+        "source_rows": 9,
+        "inserted_rows": 9
+      },
+      {
+        "name": "account_memberships",
+        "source_rows": 3,
+        "inserted_rows": 3
+      },
+      {
+        "name": "accounts",
+        "source_rows": 3,
+        "inserted_rows": 3
+      },
+      {
+        "name": "approvals",
+        "source_rows": 27,
+        "inserted_rows": 27
+      },
+      {
+        "name": "artifacts",
+        "source_rows": 270,
+        "inserted_rows": 270
+      },
+      {
+        "name": "asset_locks",
+        "source_rows": 0,
+        "inserted_rows": 0
+      },
+      {
+        "name": "audio_track_annotations",
+        "source_rows": 0,
+        "inserted_rows": 0
+      },
+      {
+        "name": "audio_tracks",
+        "source_rows": 69,
+        "inserted_rows": 69
+      },
+      {
+        "name": "audit_events",
+        "source_rows": 862,
+        "inserted_rows": 862
+      },
+      {
+        "name": "episodes",
+        "source_rows": 11,
+        "inserted_rows": 11
+      },
+      {
+        "name": "external_connections",
+        "source_rows": 6,
+        "inserted_rows": 6
+      },
+      {
+        "name": "external_connection_verifications",
+        "source_rows": 16,
+        "inserted_rows": 16
+      },
+      {
+        "name": "external_connection_versions",
+        "source_rows": 8,
+        "inserted_rows": 8
+      },
+      {
+        "name": "generation_account_budgets",
+        "source_rows": 1,
+        "inserted_rows": 1
+      },
+      {
+        "name": "material_revision_approvals",
+        "source_rows": 107,
+        "inserted_rows": 107
+      },
+      {
+        "name": "paid_generation_reservations",
+        "source_rows": 16,
+        "inserted_rows": 16
+      },
+      {
+        "name": "pre_render_review_member_decisions",
+        "source_rows": 0,
+        "inserted_rows": 0
+      },
+      {
+        "name": "pre_render_review_members",
+        "source_rows": 119,
+        "inserted_rows": 119
+      },
+      {
+        "name": "production_dependencies",
+        "source_rows": 1180,
+        "inserted_rows": 1180
+      },
+      {
+        "name": "production_invalidations",
+        "source_rows": 6,
+        "inserted_rows": 6
+      },
+      {
+        "name": "production_material_revisions",
+        "source_rows": 113,
+        "inserted_rows": 113
+      },
+      {
+        "name": "prompt_versions",
+        "source_rows": 17,
+        "inserted_rows": 17
+      },
+      {
+        "name": "qc_review_issues",
+        "source_rows": 1,
+        "inserted_rows": 1
+      },
+      {
+        "name": "review_annotations",
+        "source_rows": 6,
+        "inserted_rows": 6
+      },
+      {
+        "name": "review_packages",
+        "source_rows": 49,
+        "inserted_rows": 49
+      },
+      {
+        "name": "review_render_composition_revisions",
+        "source_rows": 27,
+        "inserted_rows": 27
+      },
+      {
+        "name": "series",
+        "source_rows": 3,
+        "inserted_rows": 3
+      },
+      {
+        "name": "series_versions",
+        "source_rows": 3,
+        "inserted_rows": 3
+      },
+      {
+        "name": "shot_preparation_drafts",
+        "source_rows": 49,
+        "inserted_rows": 49
+      },
+      {
+        "name": "state_transitions",
+        "source_rows": 132,
+        "inserted_rows": 132
+      },
+      {
+        "name": "storyboard_audio_selections",
+        "source_rows": 0,
+        "inserted_rows": 0
+      },
+      {
+        "name": "storyboard_review_shots",
+        "source_rows": 99,
+        "inserted_rows": 99
+      },
+      {
+        "name": "task_runs",
+        "source_rows": 190,
+        "inserted_rows": 190
+      },
+      {
+        "name": "tasks",
+        "source_rows": 238,
+        "inserted_rows": 238
+      }
+    ],
+    "foreignKeysVerified": true,
+    "currentOwnerAccessAccounts": 3,
+    "historyExecutionScopeEmpty": true
+  },
+  "historySourceRows": 3640,
+  "localAdaptations": [
+    "Historical identity UUID retained without login credentials",
+    "Current Owner granted 3 account memberships",
+    "Two declared media prefixes appended; frozen policies unchanged"
+  ],
+  "triggerHandling": "Archive import suppresses triggers only inside this transaction; CHECK/NOT NULL/unique constraints stay active; every FK and imported row is explicitly verified before commit; no production success state synthesized"
+}

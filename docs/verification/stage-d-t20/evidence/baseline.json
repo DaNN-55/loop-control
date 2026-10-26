@@ -1,0 +1,6 @@
+{
+  "head": "98abbdc05c7178a95702572f5c0d0c0651e5917c",
+  "branch": "codex/local-first-stage-a",
+  "status": " M PLAN.md\n?? docs/backlog/local-first-optimization.md\n?? docs/specs/local-first-optimization.md\n?? docs/specs/local-first-tickets/04-restore.md\n?? docs/specs/local-first-tickets/05-lease.md\n?? docs/specs/local-first-tickets/12-local-read.md\n?? docs/specs/local-first-tickets/13-local-owner.md\n?? docs/specs/local-first-tickets/14-local-config.md\n?? docs/specs/local-first-tickets/15-local-secrets.md\n?? docs/specs/local-first-tickets/16-local-input.md\n?? docs/specs/local-first-tickets/17-local-storyboard.md\n?? docs/specs/local-first-tickets/18-local-narration.md\n?? docs/specs/local-first-tickets/19-local-media.md\n?? docs/specs/local-first-tickets/20-local-alignment.md\n?? docs/specs/local-first-tickets/21-local-studio.md\n?? docs/specs/local-first-tickets/22-local-delivery.md\n?? docs/specs/local-first-tickets/23-local-automation.md\n?? docs/specs/local-first-tickets/24-local-restore.md\n?? docs/specs/local-first-tickets/25-local-contract.md\n?? docs/specs/local-first-tickets/github-issues.json\n?? output/\n",
+  "rootPlanSha": "20980bef081217c78cf14b7f91d07462c9533d10060dd09d180e78019bbc24eb"
+}

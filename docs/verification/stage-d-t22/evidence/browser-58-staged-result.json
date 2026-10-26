@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "actualBrowserTitleConfirmation": true,
+  "counts": {
+    "episodes": 0,
+    "tasks": 0,
+    "artifacts": 0,
+    "review_packages": 0,
+    "production_material_revisions": 0,
+    "audio_tracks": 0,
+    "shot_preparation_drafts": 0,
+    "storyboard_audio_selections": 0,
+    "audit_events": 0
+  },
+  "originalEpisodeDirectoryAbsent": true,
+  "stagingParentSubstitutionRejected": true,
+  "pendingCleanupDurable": true,
+  "all61FileBytesRetained": true,
+  "verifiedPrivateBackupExists": true,
+  "providerRequests": 0
+}

@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/ad-closeout-144/loop-control
+
+ ✓ src/local-app/ownerRls.integration.test.ts (4 tests) 979ms
+   ✓ keeps role grants, policy scope and missing/foreign identity fences  448ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  08:22:59
+   Duration  1.20s (transform 24ms, setup 0ms, collect 49ms, tests 979ms, environment 0ms, prepare 42ms)
+

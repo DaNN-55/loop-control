@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "realLeaseRefreshExecuted": true,
+  "actualSqlErrorCode": "22012",
+  "lockHeldAfterSavepointRecovery": true,
+  "oldBytesRestoredBeforeRollback": true,
+  "lockHeldWhileRestoredBytesObserved": true,
+  "canonicalBeforeAndAfterSha256": "87d58df47e0f263cb599595625a41e78ee07214b266b23702e1564abb7870b40",
+  "candidateSha256": "97ff83856eaee35e6e9de435ef4a00d1972231dd843e1459cb8d94c8837803b9",
+  "noNewArtifactBeforeResumingOwnedWorker": true,
+  "frozenInputBudgetAttemptPreserved": true,
+  "realReportPayloadSent": false,
+  "priorCanonicalHasActualDatabaseIndex": false,
+  "scope": "Actual native helper + real PostgreSQL lease refresh/savepoint/SQL error/row-lock and real filesystem; controlled private canonical, not an end-to-end real report payload or indexed cross-task origin case.",
+  "providerRequests": 0
+}

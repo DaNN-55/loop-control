@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "cumulativeRequests": 10,
+  "additionalRequests": 1,
+  "cumulativeCostReservedCny": 0.03,
+  "oldNineRequestLedgerUnchanged": true,
+  "diagnosticProcessesStopped": true,
+  "diagnosticLedgerSealed": true,
+  "googleAcceptancePassed": false,
+  "noRetry": true,
+  "noSynthesis": true
+}

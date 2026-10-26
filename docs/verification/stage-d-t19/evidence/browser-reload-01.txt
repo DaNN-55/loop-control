@@ -1,0 +1,1 @@
+- generic "正在载入控制台…" [ref=e1] clickable [onclick]

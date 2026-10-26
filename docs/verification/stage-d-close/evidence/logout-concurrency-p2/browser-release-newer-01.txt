@@ -1,0 +1,3 @@
+✗ Evaluation error: TypeError: window.__logoutP2.failures[1] is not a function
+    at <anonymous>:1:36
+    at <anonymous>:1:83

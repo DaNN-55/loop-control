@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "realNativeServiceRestart": true,
+  "queuedHttpTaskRecoveredAfterControlledLeaseExpiry": true,
+  "realThirtyMinuteLeaseWaitNotPerformed": true,
+  "noPostRestartHttpWake": true,
+  "workerRuns": 2,
+  "artifactFiles": 1,
+  "artifactShaVerified": true,
+  "completedMaintenanceNotRepeated": true,
+  "reservedAndUncertainNotRepeated": true,
+  "n8nRequired": false,
+  "fullMultiCapabilityWorker": false
+}

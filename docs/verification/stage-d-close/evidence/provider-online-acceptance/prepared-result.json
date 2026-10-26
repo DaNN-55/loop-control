@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "newLedger": true,
+  "oldClosedLedgerPreserved": true,
+  "globalMaxRequests": 17,
+  "effectiveFourProviderCaps": 14,
+  "feeCapCny": 2,
+  "possibleReservationCny": 0.04,
+  "cloudflareSkippedOffline": true,
+  "openaiSkipped": true,
+  "providerRequestsUsed": 0,
+  "noWorkerConfigured": true,
+  "expiry": "2026-10-25T08:56:29.812Z"
+}

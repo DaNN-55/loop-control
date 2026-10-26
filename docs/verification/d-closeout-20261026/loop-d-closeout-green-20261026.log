@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/merge-stage-abc/loop-control
+
+ ✓ src/orchestration/operationsEvidence.test.ts (3 tests) 10ms
+ ✓ src/reviews/blockerGuidance.test.ts (19 tests) 4ms
+ ✓ src/local-app/accountPreflightRoute.test.ts (7 tests) 46ms
+
+ Test Files  3 passed (3)
+      Tests  29 passed (29)
+   Start at  19:16:29
+   Duration  593ms (transform 285ms, setup 0ms, collect 434ms, tests 59ms, environment 823ms, prepare 103ms)
+

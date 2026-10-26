@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "status": 0,
+  "command": [
+    "npm",
+    "start",
+    "--",
+    "--offline-test"
+  ],
+  "modelPhase": true,
+  "osLoopbackTree": false,
+  "noDeploymentArgument": true,
+  "started": "2026-10-25T05:21:49.657Z"
+}

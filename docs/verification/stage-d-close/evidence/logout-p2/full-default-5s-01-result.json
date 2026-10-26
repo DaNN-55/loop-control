@@ -1,0 +1,21 @@
+{
+  "started": "2026-10-25T01:28:49.786Z",
+  "finished": "2026-10-25T01:29:00.961Z",
+  "command": [
+    "node",
+    "--import",
+    "./.loop-control/stage-d/state/d-close-logout-p2-20261025/tests-offline-guard.mjs",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--exclude",
+    "n8n/import-workflows.test.mjs",
+    "--exclude",
+    "**/*.integration.test.ts",
+    "--exclude",
+    "**/.loop-control/**"
+  ],
+  "status": 0,
+  "defaultTimeoutMs": 5000,
+  "timeoutOverride": false,
+  "passed": true
+}

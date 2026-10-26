@@ -1,0 +1,1 @@
+{"passed":true,"originalRows":25258,"tables":38,"artifacts":21,"rootPlanUnchanged":true}

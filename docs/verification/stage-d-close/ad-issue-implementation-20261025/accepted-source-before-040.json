@@ -1,0 +1,128 @@
+{
+  "baselineHead": "bbd2987cd61d3444dca962e50d91b11ed1da5fca",
+  "branch": "codex/ad-closeout-implementation",
+  "phase": "Accepted feature scopes before authorized 040 forward work",
+  "committed": false,
+  "files": [
+    {
+      "path": "db/local/039-caption-text-confirmation.sql",
+      "bytes": 6209,
+      "sha256": "f239b43bd2f66045f6f89b7cf58e70d1148b29e67d3a828500e5598824f75d04"
+    },
+    {
+      "path": "docs/local-native-deployment.md",
+      "bytes": 12693,
+      "sha256": "3e6a4557e4ad699fa39051f699ff581a99649e152ccb5d616f95bd35a0b87e3f"
+    },
+    {
+      "path": "scripts/local/deployment.mjs",
+      "bytes": 5569,
+      "sha256": "9f96a1a06cc1359788b524ac396452912ed3ae8e756c58bcc6f8a7b05d8c8ab5"
+    },
+    {
+      "path": "scripts/local/deployment.test.mjs",
+      "bytes": 4681,
+      "sha256": "4791044d46a4a7b2833b970b41dc2fe393cff0b623cd7a4df08919cb31e373be"
+    },
+    {
+      "path": "scripts/local/migrate.mjs",
+      "bytes": 2172,
+      "sha256": "6cecbad2e0b34370b97fcef0155c3b6a50fc9e1ab1d97f90f47e3663edfd4498"
+    },
+    {
+      "path": "scripts/local/native-restore.mjs",
+      "bytes": 11469,
+      "sha256": "e6532a9a28eb3d7860b85643e74818c92f6f2818c74905a0a8aa281aeaa456ed"
+    },
+    {
+      "path": "src/connections/ConnectionWorkspace.tsx",
+      "bytes": 18259,
+      "sha256": "7c0e81346f7afdb6a5fadc92896c736c99aa4a516f6e8adbbdb5077a2e817255"
+    },
+    {
+      "path": "src/episodes/EpisodeProduction.tsx",
+      "bytes": 290976,
+      "sha256": "5edce35d49bdaaacfd69354c0a5a241d0b4cbc9d65af534f0e52fa2373ef1ba6"
+    },
+    {
+      "path": "src/episodes/captionTextConfirmation.test.tsx",
+      "bytes": 9936,
+      "sha256": "382a69f65c7834e38f2572c15b31ef6cf4211c5d8255381d60558e8e9bedc811"
+    },
+    {
+      "path": "src/lib/database.types.ts",
+      "bytes": 79582,
+      "sha256": "98379b566e46c9696d69462f0711b43021cb3e4e079f9f737667920e4b46a97a"
+    },
+    {
+      "path": "src/local-app/LocalCatalogApp.account.test.tsx",
+      "bytes": 9621,
+      "sha256": "af91641dd8292fa0f2a330a2ad7565671ca2d22f8880f4c78441754411a0cece"
+    },
+    {
+      "path": "src/local-app/LocalConnectionsPanel.test.tsx",
+      "bytes": 8393,
+      "sha256": "c00f1055c8d35788617b748580573ba6627da8e8722fb732f5ec3536e8b05586"
+    },
+    {
+      "path": "src/local-app/LocalEpisodeDetail.tsx",
+      "bytes": 12230,
+      "sha256": "a6ae562da064c5ea82de0a2f3323865642bd405a21729398f220d770a7d48530"
+    },
+    {
+      "path": "src/local-app/accountPreflightRoute.test.ts",
+      "bytes": 9762,
+      "sha256": "d5ae4f2afdd9de515e58c009854b2320a831a85f98dfb945f34b6c1bc8576571"
+    },
+    {
+      "path": "src/local-app/captionTextConfirmationRoute.test.ts",
+      "bytes": 6968,
+      "sha256": "98a9facdeac222fd5e87755d252d1f4835647ee477e5a301ae0489ab1c17c467"
+    },
+    {
+      "path": "src/local-app/connections.ts",
+      "bytes": 13392,
+      "sha256": "9b2964385b416914a6fc2ed5fdaec4b6f17894ec191e2cc05730c3cefdf9e8d9"
+    },
+    {
+      "path": "src/local-app/episodeCommands.ts",
+      "bytes": 40208,
+      "sha256": "a0aa67e75c1abf2d036c063130f8344775398b416856fe91a5157fdeda884640"
+    },
+    {
+      "path": "src/local-app/localWorkerCli.ts",
+      "bytes": 8149,
+      "sha256": "4612814b7c9d634aa1967715cbe21895ebbb17d2afd51804f42f1e0b7a167169"
+    },
+    {
+      "path": "src/local-app/nativeAttemptOutput.test.ts",
+      "bytes": 17277,
+      "sha256": "777273b4cd77513e4cb13e5ed5b1d66a577b82c1e15f816bfff67e6d28a9e93e"
+    },
+    {
+      "path": "src/local-app/nativeAttemptOutput.ts",
+      "bytes": 9051,
+      "sha256": "17ae5ccdec262b58ac2a91e0e4f2dd1a02fc98567b4c57dcf6a4492e88ea13bc"
+    },
+    {
+      "path": "src/reviews/ReviewWorkspace.test.tsx",
+      "bytes": 199096,
+      "sha256": "d4fc98430f28f108ee7639efdb61ea35f1287b124c66d629d30cc37574703004"
+    },
+    {
+      "path": "src/worker/runtimePreflight.test.ts",
+      "bytes": 7654,
+      "sha256": "420291f2a73797cf9bb88991a7fcd0a42ccc48659ed2305c050d4428f804f3ff"
+    },
+    {
+      "path": "src/worker/runtimePreflight.ts",
+      "bytes": 27149,
+      "sha256": "54abaa8825e8371994889ea7388b3df083842d5b5a5303a14d3ad820a8e02402"
+    },
+    {
+      "path": "vite.config.ts",
+      "bytes": 1584,
+      "sha256": "767e62413f0799566843dd2eaa25a4135ffbcfe39ed10ba50dc4218df6ca1cc9"
+    }
+  ]
+}

@@ -1,0 +1,2 @@
+{"event": "installed", "pid": 47777, "at": 1792903229.520975, "python": "3.11.15", "osNetworkSandbox": true, "hfOffline": true}
+{"event": "load-align-model-start", "pid": 47777, "at": 1792903230.3286452, "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn", "cacheOnly": true, "device": "cpu"}

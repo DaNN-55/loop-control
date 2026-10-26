@@ -1,0 +1,42 @@
+{
+  "observedAt": "2026-10-25",
+  "source": "Official pages read in prior pricing turn; no account free credit assumed",
+  "currency": "CNY",
+  "budgetUsdToCny": 10,
+  "budgetExchangeRateNotMarketQuote": true,
+  "feeAuthorizationCny": 2,
+  "subscriptionsOrTopupsAllowed": false,
+  "providers": {
+    "pexels": {
+      "url": "https://help.pexels.com/hc/en-us/articles/47677890260761-Is-the-Pexels-API-free-to-use",
+      "apiFee": 0
+    },
+    "freesound": {
+      "url": "https://freesound.org/docs/api/terms_of_use.html",
+      "apiFee": 0,
+      "scope": "Noncommercial private technical preview acceptance; no publication/commercial authorization"
+    },
+    "google_tts": {
+      "url": "https://cloud.google.com/text-to-speech/pricing",
+      "usdPerMillionCharacters": 4,
+      "maxCharacters": 10,
+      "reservationCny": 0.01
+    },
+    "volcengine_tts": {
+      "url": "https://docs.volcengine.com/docs/DoubaoVoice/Billinginstructions-21?lang=zh",
+      "cnyPer10000Characters": 3,
+      "maxCharactersPerRequest": 10,
+      "requests": 3,
+      "reservationCnyPerRequest": 0.01
+    },
+    "cloudflare": {
+      "url": "https://developers.cloudflare.com/workers-ai/platform/pricing/",
+      "usdPer512Tile": 0.0000528,
+      "usdPerStep": 0.0001056,
+      "steps": 4,
+      "reservationCny": 0.1,
+      "enabled": false,
+      "reason": "Local credential format incompatible; skipped without online request"
+    }
+  }
+}

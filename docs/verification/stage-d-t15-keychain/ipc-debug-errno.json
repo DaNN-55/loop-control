@@ -1,0 +1,8 @@
+{
+  "status": 1,
+  "body": {
+    "ok": false,
+    "code": "pipe_required"
+  },
+  "metadata": "[DEBUG-t15-ipc] fd=0 peerError=22 ENOTCONN=57 peek=1 peekError=22\n"
+}

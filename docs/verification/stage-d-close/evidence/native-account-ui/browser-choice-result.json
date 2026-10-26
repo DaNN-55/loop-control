@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "userAssistedSystemPicker": true,
+  "selectedOwnChosenDirectory": true,
+  "returnedThroughRealOwnerHttp": true,
+  "canonicalPathCheckedByServer": true,
+  "draftUpdated": true,
+  "databaseUnchangedBeforeSave": true,
+  "visibleErrors": 0,
+  "providerRequests": 0
+}

@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/platform/ConfigurationForms.local.test.tsx (1 test) 74ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  17:04:09
+   Duration  760ms (transform 101ms, setup 0ms, collect 255ms, tests 74ms, environment 277ms, prepare 37ms)
+

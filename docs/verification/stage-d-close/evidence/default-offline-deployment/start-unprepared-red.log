@@ -1,0 +1,20 @@
+
+> loop-control@0.1.0 start
+> node scripts/local/start.mjs --deployment /Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-default-20261025/deployment.json --offline-test
+
+node:fs:622
+  return binding.open(
+                 ^
+
+Error: ENOENT: no such file or directory, open '/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-default-20261025/offline-preparation.json'
+    at Object.openSync (node:fs:622:18)
+    at readFileSync (node:fs:488:35)
+    at Module.assertOfflinePrepared (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/offline-preparation.mjs:19:83)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/start.mjs:10:91 {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-default-20261025/offline-preparation.json'
+}
+
+Node.js v24.20.0

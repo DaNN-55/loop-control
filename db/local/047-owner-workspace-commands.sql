@@ -1,0 +1,2 @@
+-- Preserve the existing Owner checks while exposing the original workspace actions locally.
+GRANT EXECUTE ON FUNCTION public.create_audio_track_annotation(uuid,numeric,text),public.review_pre_render_member(uuid,text,text,text),public.request_qc_member_revision(uuid),public.apply_external_connection_repair(uuid,uuid,text,text),public.apply_episode_configuration_repair_v2(uuid,jsonb,text,text) TO loop_owner;

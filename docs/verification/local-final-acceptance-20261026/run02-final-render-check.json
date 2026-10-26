@@ -1,0 +1,40 @@
+{
+  "at": "2026-10-26T07:19:39.969Z",
+  "artifactId": "6db0d747-f79a-4d6b-8b0a-fa2e6461f18d",
+  "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/d0731f0f-0793-4610-8bd5-108f986f1151/final-render.mp4",
+  "bytes": 117898661,
+  "sha256": "0e381fafd73fac4c747fc90f5a59aaf53f7812484ae568d0850f355f28b59a51",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1080,
+        "height": 1920,
+        "r_frame_rate": "30/1",
+        "duration": "57.700000",
+        "side_data_list": [
+          {}
+        ]
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "48000",
+        "channels": 2,
+        "r_frame_rate": "0/0",
+        "duration": "57.749333"
+      }
+    ],
+    "format": {
+      "duration": "57.749333",
+      "size": "117898661"
+    }
+  },
+  "fullDecodePassed": true,
+  "identicalToApprovedReview": true,
+  "finalization": "Normal local final executor verified frozen inputs and reused approved review video, no re-encoding",
+  "coverCandidate": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/docs/verification/local-final-acceptance-20261026/media-run02/publish-cover-run02.jpg"
+}

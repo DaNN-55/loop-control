@@ -1,0 +1,1847 @@
+{
+  "baseline": "7c153c23b3e217685d977711040a06a9d01c414d",
+  "basis": "tracked baseline source; static callsites only, not runtime proof",
+  "filesExamined": 215,
+  "callers": [
+    {
+      "path": "scripts/isolation/baseline.mjs",
+      "line": 1,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import { createClient } from '@supabase/supabase-js';",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/c-evidence.mjs",
+      "line": 19,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const unboundedEpisodes=entries.filter(e=>{const u=new URL(e.request.url);return u.pathname.endsWith('/rest/v1/episodes')&&!u.searchParams.has('id');});assert.equal(unboundedEpisodes.length,0);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/capacity-consumption.mjs",
+      "line": 10,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import { createClient } from '@supabase/supabase-js';",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/capacity-http.mjs",
+      "line": 8,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import {createClient} from '@supabase/supabase-js';",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/capacity.mjs",
+      "line": 6,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import { createClient } from '@supabase/supabase-js';",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/capacity.mjs",
+      "line": 20,
+      "categories": [
+        "client-import"
+      ],
+      "source": "const existing=JSON.parse(sql(`select coalesce(jsonb_agg(to_jsonb(m)),'[]') from supabase_migrations.schema_migrations m where version=${quote(version)}`,targetContainer));",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/capacity.mjs",
+      "line": 23,
+      "categories": [
+        "client-import"
+      ],
+      "source": "assert.equal(sql(\"select count(*) from supabase_migrations.schema_migrations where version='20261023103336'\",targetContainer),'1','T05 is required');",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/capacity.mjs",
+      "line": 26,
+      "categories": [
+        "client-import"
+      ],
+      "source": "const result={target:targetId,version,recorded:true,alreadyApplied:existing.length>0,migrations:Number(sql('select count(*) from supabase_migrations.schema_migrations',targetContainer))};",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/catalog-verification.mjs",
+      "line": 7,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import {createClient} from '@supabase/supabase-js';",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/catalog-verification.mjs",
+      "line": 53,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const anon=await fetch(c.apiUrl+'/rest/v1/rpc/read_episode_catalog',{method:'POST',headers:{apikey:c.anonKey,'Content-Type':'application/json'},body:'{}'});assert.equal(anon.status,401);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/environment.mjs",
+      "line": 68,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "return { ...env, LOOP_N8N_STATE_DIR: join(config.stateRoot, 'orchestration'), LOOP_N8N_BACKUP_DIR: join(config.runtimeRoot, 'backups'), TMPDIR: tmp, ...(existsSync(renderer) ? { OPENCHATCUT_ROOT: renderer, OPENCHATCUT_NODE: process.execPath } : {}), DOCKER_HOS",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/environment.mjs",
+      "line": 90,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "if (key === 'SUPABASE_SERVICE_ROLE_KEY') {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/fast-dispatch-preparation.mjs",
+      "line": 9,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import {createClient} from '@supabase/supabase-js';",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/fast-dispatch.mjs",
+      "line": 9,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import {createClient} from '@supabase/supabase-js';",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/leases.mjs",
+      "line": 2,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import { createClient } from '@supabase/supabase-js';",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/notifications.mjs",
+      "line": 12,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import {createClient} from '@supabase/supabase-js';",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/notifications.mjs",
+      "line": 30,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "const delivery=notificationDelivery({url:process.env.SUPABASE_URL,serviceRoleKey:process.env.SUPABASE_SERVICE_ROLE_KEY},process.env.LOOP_N8N_STATE_DIR);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/queue-entry.mjs",
+      "line": 9,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import { createClient } from '@supabase/supabase-js';",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/reads.mjs",
+      "line": 8,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import {createClient} from '@supabase/supabase-js';",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/render-reuse.mjs",
+      "line": 12,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import{createClient}from'@supabase/supabase-js';",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/restore-verify.mjs",
+      "line": 5,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import { createClient } from '@supabase/supabase-js';",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/restore-verify.mjs",
+      "line": 22,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const unresolved=await admin.rpc('resolve_external_connection_secret',{p_connection_id:f.versionId,p_account_id:ep.account_id});assert.ok(unresolved.error);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/restore-verify.mjs",
+      "line": 27,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const resolved=await unwrap(admin.rpc('resolve_external_connection_secret',{p_connection_id:rotated.current_version_id,p_account_id:ep.account_id}));assert.equal(resolved,replacement);assert.notEqual(rotated.current_version_id,f.versionId);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/restore-verify.mjs",
+      "line": 28,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const oldStillBlocked=await admin.rpc('resolve_external_connection_secret',{p_connection_id:f.versionId,p_account_id:ep.account_id});assert.ok(oldStillBlocked.error);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/restore-vite.config.mjs",
+      "line": 8,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "const observing=process.env.LOOP_STAGE_C_OBSERVE==='1' && process.env.VITE_SUPABASE_URL==='http://127.0.0.1:55461' && !enabled;",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/restore-vite.config.mjs",
+      "line": 9,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "const status=serveSystemStatus(process.env.VITE_SUPABASE_URL,process.env.VITE_SUPABASE_PUBLISHABLE_KEY);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/restore-vite.config.mjs",
+      "line": 10,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "const bridge=createLocalControlPlaneMiddleware({supabaseUrl:process.env.VITE_SUPABASE_URL,supabasePublishableKey:process.env.VITE_SUPABASE_PUBLISHABLE_KEY},{serviceRoleKey:process.env.SUPABASE_SERVICE_ROLE_KEY});",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/restore-vite.config.mjs",
+      "line": 11,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "export default defineConfig({ plugins: [react(), { name:'isolated-recovery-tools', async closeBundle(){await worker?.stop();}, async configureServer(server) { worker=enabled ? await startLocalWorkerService(process.env.VITE_SUPABASE_URL) : undefined; server.htt",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/restore.mjs",
+      "line": 54,
+      "categories": [
+        "client-import"
+      ],
+      "source": "for(const [key,role] of [['anonKey','anon'],['serviceRoleKey','service_role']]){const payload=JSON.parse(Buffer.from(c[key].split('.')[1],'base64url'));if(payload.iss!=='supabase-demo'||payload.role!==role)throw new Error('恢复凭据不是测试凭据');}",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/restore.mjs",
+      "line": 60,
+      "categories": [
+        "client-import"
+      ],
+      "source": "const {createClient}=await import('@supabase/supabase-js');",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/run.mjs",
+      "line": 35,
+      "categories": [
+        "client-import"
+      ],
+      "source": "const { createClient } = await import('@supabase/supabase-js');",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/smoke.mjs",
+      "line": 1,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import { createClient } from '@supabase/supabase-js';",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/stage-b.mjs",
+      "line": 14,
+      "categories": [
+        "client-import"
+      ],
+      "source": "console.log(sql(`begin; ${migration} insert into supabase_migrations.schema_migrations(version,name,statements) values ('20261023103336','worker_lease_recovery_and_fencing',array[${quote(migration)}]);commit;select count(*) from supabase_migrations.schema_migr",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/stage-b.mjs",
+      "line": 21,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const response = await fetch(`${config.apiUrl}/rest/v1/${table}?select=*&limit=0`, { headers: { apikey: config.serviceRoleKey, authorization: `Bearer ${config.serviceRoleKey}` } });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/stage-b.mjs",
+      "line": 30,
+      "categories": [
+        "client-import",
+        "query-rpc-auth-vault"
+      ],
+      "source": "const script=`(async()=>{const {supabase}=await import('/src/lib/supabase.ts'); const r=await supabase.auth.signInWithPassword(${JSON.stringify(restored)}); if(r.error)throw Error('login failed'); return {authenticated:!!r.data.session};})()`;",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/isolation/worker-recovery.mjs",
+      "line": 6,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import { createClient } from '@supabase/supabase-js';",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/local/offline-guard.mjs",
+      "line": 12,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "try{await fetch('http://127.0.0.1:55461/auth/v1/user');}catch{httpDenied=true;}",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/start-local.mjs",
+      "line": 104,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "if (/^(?:SUPABASE_URL|SUPABASE_SERVICE_ROLE_KEY|VITE_SUPABASE_(?:SERVICE_ROLE_KEY|SECRET_KEY))=/m.test(source)) throw new Error(\".env.local 只能保存 VITE_SUPABASE_URL 和 VITE_SUPABASE_PUBLISHABLE_KEY；Worker 密钥请放在 n8n/worker.env.local。\");",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/start-local.mjs",
+      "line": 105,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "for (const name of [\"VITE_SUPABASE_URL\", \"VITE_SUPABASE_PUBLISHABLE_KEY\"]) if (!new RegExp(`^${name}=.+$`, \"m\").test(source)) throw new Error(`.env.local 缺少 ${name}。`);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/start-local.mjs",
+      "line": 108,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "export async function assertSupabaseConnection(source, request = fetch) {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/start-local.mjs",
+      "line": 110,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "const url = requiredEnvironmentValue(source, \"VITE_SUPABASE_URL\");",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/start-local.mjs",
+      "line": 112,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "try { new URL(url); } catch { throw new Error(\"VITE_SUPABASE_URL 必须是有效 URL。\") }",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/start-local.mjs",
+      "line": 115,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "response = await request(`${url.replace(/\\/$/, \"\")}/auth/v1/settings`, { headers: { apikey: key }, signal: AbortSignal.timeout(5_000) });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/start-local.mjs",
+      "line": 117,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "throw new Error(\"Supabase API 不可达。请检查网络、VITE_SUPABASE_URL 和 VITE_SUPABASE_PUBLISHABLE_KEY。\");",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/start-local.mjs",
+      "line": 119,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "if (!response.ok) throw new Error(`Supabase 公开配置验证失败（HTTP ${response.status}）。请检查 VITE_SUPABASE_URL 和 VITE_SUPABASE_PUBLISHABLE_KEY。`);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/start-local.mjs",
+      "line": 127,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "await assertSupabaseConnection(publicEnvironment);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/start-local.mjs",
+      "line": 141,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "n8nProjectHealthy: (port) => recordedProjectServiceHealthy({ name: \"n8n\", port, commandIdentity: n8nIdentity, healthCheck: (candidate) => n8nHealthy(n8nHealthUrl(candidate)) }),",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/start-local.mjs",
+      "line": 146,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "assertActiveWorkflows();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/start-local.mjs",
+      "line": 175,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "Promise.all([waitForHttp(consoleHealthUrl(consolePort.port), \"控制台\", consoleService, (url) => responseContains(url, consoleHealthMarker)), waitForHttp(n8nHealthUrl(n8nPort.port), \"n8n\", n8n, n8nHealthy)]),",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/start-local.mjs",
+      "line": 221,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "function assertActiveWorkflows() {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/start-local.mjs",
+      "line": 231,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "export async function n8nHealthy(url, request = fetch) {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/supabase-migrations.mjs",
+      "line": 109,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "const url = readFileSync(envPath, \"utf8\").match(/^VITE_SUPABASE_URL=(.+)$/m)?.[1]?.trim();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "scripts/supabase-migrations.mjs",
+      "line": 145,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "if (!projectRef) throw new Error(\"缺少 SUPABASE_PROJECT_REF；请设置该环境变量，或在 .env.local 中配置 VITE_SUPABASE_URL。\");",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 10,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import type { Session } from \"@supabase/supabase-js\";",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 12,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import { supabase } from \"./lib/supabase\";",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 288,
+      "categories": [
+        "client-import",
+        "query-rpc-auth-vault"
+      ],
+      "source": "readAllPages((from,to)=>supabase.from(\"accounts\").select(\"*\",{count:\"exact\"}).order(\"created_at\").order(\"id\").range(from,to)),",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 289,
+      "categories": [
+        "client-import",
+        "query-rpc-auth-vault"
+      ],
+      "source": "readAllPages((from,to)=>supabase.from(\"account_blueprint_versions\").select(\"*\",{count:\"exact\"}).order(\"version\", { ascending: false }).order(\"id\").range(from,to)),",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 290,
+      "categories": [
+        "client-import",
+        "query-rpc-auth-vault"
+      ],
+      "source": "readAllPages((from,to)=>supabase.from(\"series\").select(\"*\",{count:\"exact\"}).order(\"name\").order(\"id\").range(from,to)),",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 291,
+      "categories": [
+        "client-import",
+        "query-rpc-auth-vault"
+      ],
+      "source": "readAllPages((from,to)=>supabase.from(\"series_versions\").select(\"*\",{count:\"exact\"}).order(\"version\", { ascending: false }).order(\"id\").range(from,to)),",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 306,
+      "categories": [
+        "client-import",
+        "query-rpc-auth-vault"
+      ],
+      "source": "readAllPages((from,to)=>supabase.from(\"prompt_versions\").select(\"*\",{count:\"exact\"}).order(\"capability\").order(\"version\", { ascending: false }).order(\"id\").range(from,to)),",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 307,
+      "categories": [
+        "client-import",
+        "query-rpc-auth-vault"
+      ],
+      "source": "readAllPages((from,to)=>supabase.from(\"external_connections\").select(\"*\",{count:\"exact\"}).order(\"created_at\", { ascending: false }).order(\"id\").range(from,to)),",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 308,
+      "categories": [
+        "client-import",
+        "query-rpc-auth-vault"
+      ],
+      "source": "readAllPages((from,to)=>supabase.rpc(\"list_external_connection_versions\", { p_connection_id: null },{count:\"exact\"}).range(from,to)),",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 315,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error: sessionError } = await supabase.auth.getSession();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 325,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.auth.getSession();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 335,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.auth.getSession();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 348,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error: sessionError } = await supabase.auth.getSession();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 622,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.auth.getSession();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 631,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: listener } = supabase.auth.onAuthStateChange((event, nextSession) => {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 694,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "void supabase.from(\"episodes\").select(\"*\").eq(\"id\", selectedEpisodeId).maybeSingle().setHeader(\"Authorization\", `Bearer ${token}`).then(({ data }) => {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 793,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.rpc(\"bootstrap_platform\", {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 822,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.rpc(\"apply_episode_configuration_repair_v2\", {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 848,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.rpc(\"update_current_blueprint\", { p_account_id: selectedAccount.id, p_policy: policy });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 867,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.rpc(\"create_series\", { p_account_id: selectedAccount.id, p_name: input.name, p_rules: input.rules });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 884,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.rpc(\"create_series_version\", { p_rules: input.rules, p_series_id: input.seriesId });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 901,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.rpc(\"create_prompt_version\", {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 931,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.rpc(\"create_account\", {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 954,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.rpc(\"create_external_connection\", { p_adapter: input.adapter, p_name: input.name, p_provider: input.provider, p_secret: input.secret });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 970,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error: sessionError } = await supabase.auth.getSession();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 989,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.rpc(\"rotate_external_connection\", { p_adapter: input.adapter, p_connection_id: input.connectionId, p_provider: input.provider, p_secret: input.secret });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 999,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.rpc(\"update_external_connection\", { p_connection_id: input.connectionId, p_description: input.description, p_name: input.name });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 1010,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.rpc(\"rename_account\", { p_account_id: accountId, p_account_name: name });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 1027,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.rpc(\"delete_account\", { p_account_id: accountId, p_confirmation: confirmation });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 1044,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.rpc(\"set_account_archived\", { p_account_id: accountId, p_archived: archived });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 1072,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.rpc(\"create_episode\", {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 1111,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.rpc(\"update_episode_title\", { p_episode_id: episodeId, p_title: title });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 1126,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.rpc(\"set_episode_archived\", { p_archived: archived, p_episode_id: episodeId });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 1141,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.auth.getSession();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 1251,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.auth.getSession();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 1280,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "<div className=\"sidebar-footer\"><div className=\"sidebar-utilities\"><SystemStatusPanel workerSummary={catalog?.worker} episodes={workspace.episodes} isRefreshing={isSystemStatusLoading} onRefresh={refreshSystemStatusAndWorkspace} onRunGoldenTest={runGoldenProdu",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 1288,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "<div className=\"mobile-header-actions\"><SystemStatusPanel workerSummary={catalog?.worker} episodes={workspace.episodes} isRefreshing={isSystemStatusLoading} onRefresh={refreshSystemStatusAndWorkspace} onRunGoldenTest={runGoldenProductionTest} report={systemSta",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 1404,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.auth.updateUser({ password });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 1428,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin } });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/App.tsx",
+      "line": 1444,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.auth.signInWithPassword({ email, password });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/EpisodeProduction.tsx",
+      "line": 388,
+      "categories": [
+        "client-import"
+      ],
+      "source": "const { supabase } = await import(\"../lib/supabase\");",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/EpisodeProduction.tsx",
+      "line": 389,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.auth.getSession();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/EpisodeProduction.tsx",
+      "line": 1213,
+      "categories": [
+        "client-import"
+      ],
+      "source": "const { supabase } = await import(\"../lib/supabase\");",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/EpisodeProduction.tsx",
+      "line": 1214,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error: sessionError } = await supabase.auth.getSession();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/EpisodeProduction.tsx",
+      "line": 1745,
+      "categories": [
+        "client-import"
+      ],
+      "source": "const { supabase } = await import(\"../lib/supabase\");",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/EpisodeProduction.tsx",
+      "line": 1746,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: task, error: requestError } = await supabase.rpc(\"request_shot_acoustic_alignment\", { p_episode_id: episode.id, p_local_only: localOnly, p_review_package_id: reviewPackage.id, p_shot_id: shot.id });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/EpisodeProduction.tsx",
+      "line": 1763,
+      "categories": [
+        "client-import"
+      ],
+      "source": "const { supabase } = await import(\"../lib/supabase\");",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/EpisodeProduction.tsx",
+      "line": 1764,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error: saveError } = await supabase.rpc(\"save_shot_manual_alignment\", { p_cues: cues as unknown as Json, p_episode_id: episode.id, p_review_package_id: reviewPackage.id, p_shot_id: shot.id });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/EpisodeProduction.tsx",
+      "line": 1779,
+      "categories": [
+        "client-import"
+      ],
+      "source": "const { supabase } = await import(\"../lib/supabase\");",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/EpisodeProduction.tsx",
+      "line": 1780,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error: sessionError } = await supabase.auth.getSession();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/EpisodeProductionContainer.tsx",
+      "line": 3,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import type { Session } from \"@supabase/supabase-js\";",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/EpisodeProductionContainer.tsx",
+      "line": 5,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import { supabase } from \"../lib/supabase\";",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/EpisodeProductionContainer.tsx",
+      "line": 109,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const {data,error}=await (supabase.rpc as unknown as (name:string,input:object)=>{setHeader:(name:string,value:string)=>Promise<{data:unknown;error:unknown}>})(\"read_episode_production\",{p_episode_id:episodeId,p_known:known}).setHeader(\"Authorization\",`Bearer ",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/EpisodeProductionContainer.tsx",
+      "line": 115,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const{data,error}=await supabase.auth.getSession();if(error)throw error;if(!data.session)throw Error(\"Owner 登录会话不可用。\");",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/EpisodeProductionContainer.tsx",
+      "line": 121,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.auth.getSession();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/EpisodeProductionContainer.tsx",
+      "line": 131,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "rpc: (name, parameters) => (supabase.rpc as unknown as (rpcName: string, rpcParameters: Record<string, unknown>) => Promise<RpcResult>)(name, parameters),",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/episodeCatalog.ts",
+      "line": 1,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import { supabase } from \"../lib/supabase\";",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/episodeCatalog.ts",
+      "line": 22,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.rpc(\"read_episode_catalog\", {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/episodeProductionPolling.ts",
+      "line": 2,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import { supabase } from \"../lib/supabase\";",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/episodes/episodeProductionPolling.ts",
+      "line": 49,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.auth.getSession();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/lib/database.types.ts",
+      "line": 1312,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "resolve_external_connection_secret: {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/lib/supabase.ts",
+      "line": 1,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import { createClient } from \"@supabase/supabase-js\";",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/lib/supabase.ts",
+      "line": 7,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 5,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import { createClient } from \"@supabase/supabase-js\";",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 821,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: deletion, error } = await supabase.rpc(\"delete_episode\", { p_actor_id: context.actorId, p_episode_id: episodeId });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 993,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: userData, error: userError } = await supabase.auth.getUser(accessToken);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 996,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: episode, error: episodeError } = await supabase.from(\"episodes\").select(\"account_id, archived_at, blueprint_version_id, title\").eq(\"id\", input.episodeId).maybeSingle();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 998,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: membership, error: membershipError } = await supabase.from(\"account_memberships\").select(\"role\").eq(\"account_id\", episode.account_id).eq(\"user_id\", userData.user.id).eq(\"role\", \"owner\").maybeSingle();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 1001,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "supabase.from(\"tasks\").select(\"id\").eq(\"episode_id\", input.episodeId).eq(\"status\", \"running\").limit(1),",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 1002,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "supabase.from(\"asset_locks\").select(\"resource_key\").eq(\"episode_id\", input.episodeId).gt(\"expires_at\", new Date().toISOString()).limit(1),",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 1003,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "supabase.from(\"account_blueprint_versions\").select(\"policy\").eq(\"id\", episode.blueprint_version_id).maybeSingle(),",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 1024,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: userData, error: userError } = await supabase.auth.getUser(accessToken);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 1026,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: membership, error: membershipError } = await supabase.from(\"account_memberships\").select(\"role\").eq(\"account_id\", input.accountId).eq(\"user_id\", userData.user.id).eq(\"role\", \"owner\").maybeSingle();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 1028,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: blueprint, error: blueprintError } = await supabase.from(\"account_blueprint_versions\").select(\"policy\").eq(\"account_id\", input.accountId).eq(\"id\", input.blueprintVersionId).maybeSingle();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 1037,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "return workerEnv.match(/^SUPABASE_SERVICE_ROLE_KEY=(.+)$/m)?.[1]?.trim() || undefined;",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 1574,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: secret, error: secretError } = await serviceClient.rpc(\"resolve_external_connection_secret\", { p_connection_id: connection.current_version_id });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 1770,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "const url = localWorkerEnvironmentValue(\"SUPABASE_URL\") ?? process.env.VITE_SUPABASE_URL;",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 1773,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await client.rpc(\"resolve_external_connection_secret\", { p_account_id: accountId, p_connection_id: reference });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 1854,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.rpc(\"import_production_material\", {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 1997,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "let artifactQuery = supabase.from(\"artifacts\").select(\"episode_id, sha256\").eq(\"episode_id\", input.episodeId).eq(\"relative_path\", input.relativePath);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 2002,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "let materialQuery = supabase.from(\"production_material_revisions\").select(\"episode_id, sha256\").eq(\"episode_id\", input.episodeId).eq(\"storage_path\", input.relativePath);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 2009,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: episode, error: episodeError } = await supabase.from(\"episodes\").select(\"blueprint_version_id\").eq(\"id\", indexedInput.episode_id).maybeSingle();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 2012,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: blueprint, error: blueprintError } = await supabase.from(\"account_blueprint_versions\").select(\"policy\").eq(\"id\", episode.blueprint_version_id).maybeSingle();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 2022,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: userData, error: userError } = await supabase.auth.getUser(accessToken);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 2025,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: episode, error: episodeError } = await supabase.from(\"episodes\").select(\"account_id, blueprint_version_id\").eq(\"id\", input.episodeId).maybeSingle();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 2028,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: membership, error: membershipError } = await supabase.from(\"account_memberships\").select(\"role\").eq(\"account_id\", episode.account_id).eq(\"user_id\", userData.user.id).eq(\"role\", \"owner\").maybeSingle();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 2031,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: blueprint, error: blueprintError } = await supabase.from(\"account_blueprint_versions\").select(\"policy\").eq(\"id\", episode.blueprint_version_id).maybeSingle();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 2056,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: episode, error: episodeError } = await supabase.from(\"episodes\").select(\"stage, account_id, series_version_id\").eq(\"id\", input.episodeId).maybeSingle();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 2061,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: packages, error: packageError } = await supabase.from(\"review_packages\").select(\"id, artifact_id\").eq(\"episode_id\", input.episodeId).eq(\"stage\", \"storyboard_review\").is(\"invalidated_at\", null).order(\"revision_number\", { ascending: false }).limit(",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 2064,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: artifact, error: artifactError } = await supabase.from(\"artifacts\").select(\"relative_path\").eq(\"id\", storyboardPackage.artifact_id).maybeSingle();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 2073,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: seriesVersion, error: seriesVersionError } = await supabase.from(\"series_versions\").select(\"rules\").eq(\"id\", episode.series_version_id).eq(\"account_id\", episode.account_id).maybeSingle();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 2082,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: drafts, error: draftsError } = await supabase.from(\"shot_preparation_drafts\").select(\"shot_id, selected_material_revision_id\").eq(\"episode_id\", input.episodeId).eq(\"review_package_id\", storyboardPackage.id);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 2089,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: qcPackages, error: qcError } = await supabase.from(\"review_packages\").select(\"id, task_id, context_snapshot\").eq(\"episode_id\", input.episodeId).eq(\"stage\", \"qc_review\").is(\"invalidated_at\", null).order(\"revision_number\", { ascending: false }).lim",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 2097,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: preRenderPackage, error: preRenderError } = await supabase.from(\"review_packages\").select(\"id\").eq(\"id\", preRenderPackageId).eq(\"episode_id\", input.episodeId).eq(\"stage\", \"production_ready\").is(\"invalidated_at\", null).maybeSingle();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 2106,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: userData, error: userError } = await supabase.auth.getUser(accessToken);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/routes/handlers.ts",
+      "line": 2108,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: membership, error: membershipError } = await supabase.from(\"account_memberships\").select(\"role\").eq(\"account_id\", input.accountId).eq(\"user_id\", userData.user.id).eq(\"role\", \"owner\").maybeSingle();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/workerService.ts",
+      "line": 10,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "const required = [\"SUPABASE_URL\", \"SUPABASE_SERVICE_ROLE_KEY\", \"CODEX_WORKER_ACTUAL_COST_CENTS\", \"MEDIA_LIBRARY_MOUNT_PATH\", \"MEDIA_LIBRARY_MIN_FREE_BYTES\"];",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/workerService.ts",
+      "line": 19,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "const environment = process.env.SUPABASE_URL ? { ...process.env } : {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/workerService.ts",
+      "line": 22,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "if (!supabaseUrl || environment.SUPABASE_URL !== supabaseUrl) throw Error(\"Worker 与 HTTP 服务的数据库绑定不一致，拒绝派发。\");",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/workerService.ts",
+      "line": 25,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "projectRoot: process.cwd(), supabaseUrl, serviceRoleKey: environment.SUPABASE_SERVICE_ROLE_KEY!, environment,",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/local-control-plane/workerService.ts",
+      "line": 31,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "if (!process.env.SUPABASE_URL && !existsSync(join(process.cwd(), \"n8n/worker.env.local\"))) return;",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/orchestration/loopOrchestratorCli.ts",
+      "line": 24,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "{ const result = await dispatchWorkerTasks({ projectRoot, supabaseUrl: supabaseCredentials().url, serviceRoleKey: supabaseCredentials().serviceRoleKey, concurrency: workerConcurrency }, dispatchScope);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/orchestration/loopOrchestratorCli.ts",
+      "line": 50,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "const delivery = notificationDelivery(supabaseCredentials(), stateDirectory);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/orchestration/loopOrchestratorCli.ts",
+      "line": 74,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "const { url, serviceRoleKey } = supabaseCredentials();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/orchestration/loopOrchestratorCli.ts",
+      "line": 75,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const endpoint = new URL(\"/rest/v1/accounts?select=id&limit=1\", url);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/orchestration/loopOrchestratorCli.ts",
+      "line": 83,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "const { url, serviceRoleKey } = supabaseCredentials();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/orchestration/loopOrchestratorCli.ts",
+      "line": 110,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const endpoint = new URL(`/rest/v1/${table}`, url);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/orchestration/loopOrchestratorCli.ts",
+      "line": 157,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "function supabaseCredentials(): { url: string; serviceRoleKey: string } {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/orchestration/loopOrchestratorCli.ts",
+      "line": 158,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "return { url: requiredEnvironment(\"SUPABASE_URL\"), serviceRoleKey: requiredEnvironment(\"SUPABASE_SERVICE_ROLE_KEY\") };",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/orchestration/notificationDelivery.ts",
+      "line": 8,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const response = await fetch(new URL(`/rest/v1/rpc/${name}`, credentials.url), { method: \"POST\", headers, body: JSON.stringify(body) });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/orchestration/notificationDelivery.ts",
+      "line": 33,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const endpoint = new URL(\"/rest/v1/notification_delivery_events?select=event_id&outcome=in.(reserved,uncertain)\", credentials.url);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/orchestration/workerDispatch.ts",
+      "line": 133,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const response = await fetch(new URL(`/rest/v1/rpc/${name}`, options.supabaseUrl), {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/orchestration/workerDispatch.ts",
+      "line": 157,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const endpoint = new URL(`/rest/v1/${table}`, options.supabaseUrl);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/orchestration/workerDispatch.ts",
+      "line": 188,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const endpoint = new URL(`/rest/v1/rpc/${functionName}`, url);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/platform/ConfigurationForms.tsx",
+      "line": 321,
+      "categories": [
+        "client-import"
+      ],
+      "source": "const { supabase } = await import(\"../lib/supabase\");",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/platform/ConfigurationForms.tsx",
+      "line": 322,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error: sessionError } = await supabase.auth.getSession();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/publishing/publishContext.ts",
+      "line": 1,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import type { SupabaseClient } from \"@supabase/supabase-js\";",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/publishing/publishContext.ts",
+      "line": 14,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: episode, error: episodeError } = await input.supabase.from(\"episodes\").select(\"id, stage, blueprint_version_id\").eq(\"id\", input.episodeId).maybeSingle();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/publishing/publishContext.ts",
+      "line": 18,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: blueprint, error: blueprintError } = await input.supabase.from(\"account_blueprint_versions\").select(\"policy\").eq(\"id\", episode.blueprint_version_id).single();",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/publishing/publishContext.ts",
+      "line": 23,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data: artifacts, error: artifactsError } = await input.supabase.from(\"artifacts\").select(\"artifact_type, relative_path, sha256, file_size\").eq(\"episode_id\", episode.id);",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/publishing/publishInputCli.ts",
+      "line": 4,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import { createClient } from \"@supabase/supabase-js\";",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/publishing/publishInputCli.ts",
+      "line": 13,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "const supabase = createClient(requiredEnvironment(\"SUPABASE_URL\"), requiredEnvironment(\"SUPABASE_SERVICE_ROLE_KEY\"), { auth: { persistSession: false } });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/publishing/publishInputCli.ts",
+      "line": 24,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.rpc(\"record_publish_input\", { p_episode_id: context.episodeId, p_artifact_type: artifactType, p_relative_path: relativePath, p_sha256: createHash(\"sha256\").update(contents).digest(\"hex\"), p_file_size: contents.byteLength });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/publishing/publishPackageCli.ts",
+      "line": 1,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import { createClient } from \"@supabase/supabase-js\";",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/publishing/publishPackageCli.ts",
+      "line": 7,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "const supabase = createClient(requiredEnvironment(\"SUPABASE_URL\"), requiredEnvironment(\"SUPABASE_SERVICE_ROLE_KEY\"), { auth: { persistSession: false } });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/publishing/publishPackageCli.ts",
+      "line": 19,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error: recordError } = await supabase.rpc(\"record_publish_package\", {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/publishing/publishPackageVerifyCli.ts",
+      "line": 1,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import { createClient } from \"@supabase/supabase-js\";",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/publishing/publishPackageVerifyCli.ts",
+      "line": 7,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "const supabase = createClient(requiredEnvironment(\"SUPABASE_URL\"), requiredEnvironment(\"SUPABASE_SERVICE_ROLE_KEY\"), { auth: { persistSession: false } });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/publishing/publishPackageVerifyCli.ts",
+      "line": 14,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error: verificationError } = await supabase.rpc(\"record_publish_package_verification\", {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/reviews/localArtifactPreview.ts",
+      "line": 6,
+      "categories": [
+        "client-import"
+      ],
+      "source": "const legacyClient = backend === 'local' ? null : (await import('../lib/supabase')).supabase;",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/reviews/reviewRevision.ts",
+      "line": 68,
+      "categories": [
+        "client-import"
+      ],
+      "source": "const { supabase } = await import(\"../lib/supabase\");",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/reviews/reviewRevision.ts",
+      "line": 69,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.rpc(\"request_studio_storyboard_revision\", { p_reason: input.reason, p_review_package_id: input.reviewPackageId });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/reviews/reviewRevision.ts",
+      "line": 76,
+      "categories": [
+        "client-import"
+      ],
+      "source": "const { supabase } = await import(\"../lib/supabase\");",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/reviews/reviewRevision.ts",
+      "line": 77,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.rpc(\"request_review_render_revision\", {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/reviews/reviewRevision.ts",
+      "line": 87,
+      "categories": [
+        "client-import"
+      ],
+      "source": "const { supabase } = await import(\"../lib/supabase\");",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/reviews/reviewRevision.ts",
+      "line": 88,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.rpc(\"request_shot_structure_revision\", {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/reviews/reviewRevision.ts",
+      "line": 111,
+      "categories": [
+        "client-import"
+      ],
+      "source": "const { supabase } = await import(\"../lib/supabase\");",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/reviews/reviewRevision.ts",
+      "line": 112,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.rpc(\"retry_failed_final_render\", { p_episode_id: episodeId, p_reason: reason });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/worker/codexWorkerCli.ts",
+      "line": 8,
+      "categories": [
+        "client-import"
+      ],
+      "source": "import { createClient } from \"@supabase/supabase-js\";",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/worker/codexWorkerCli.ts",
+      "line": 31,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "const supabaseUrl = requiredEnvironment(\"SUPABASE_URL\");",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/worker/codexWorkerCli.ts",
+      "line": 32,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "const serviceRoleKey = requiredEnvironment(\"SUPABASE_SERVICE_ROLE_KEY\");",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/worker/codexWorkerCli.ts",
+      "line": 68,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.rpc(\"refresh_worker_task_lease\", { p_task_id: row.task_id, p_attempt: row.attempt, p_lease_token: row.lease_token });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/worker/codexWorkerCli.ts",
+      "line": 71,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.rpc(\"claim_next_worker_task\", { p_worker_capacity: workerCapacity, ...(requestedTaskId ? { p_task_id: requestedTaskId } : {}) });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/worker/codexWorkerCli.ts",
+      "line": 109,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const {data,error}=await supabase.rpc(\"final_render_reuse_source\",{p_task_id:taskPackage.task.id,p_attempt:taskPackage.budget.attempt,p_lease_token:leaseToken(taskPackage.task.id,taskPackage.budget.attempt)});",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/worker/codexWorkerCli.ts",
+      "line": 242,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { data, error } = await supabase.rpc(\"resolve_external_connection_secret\", { p_account_id: accountId, p_connection_id: credentialRef });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/worker/codexWorkerCli.ts",
+      "line": 266,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.rpc(\"report_worker_result\", {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/worker/codexWorkerCli.ts",
+      "line": 280,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.rpc(\"report_worker_progress\", {",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "src/worker/codexWorkerCli.ts",
+      "line": 296,
+      "categories": [
+        "query-rpc-auth-vault"
+      ],
+      "source": "const { error } = await supabase.rpc(\"refresh_worker_task_lease\", { p_task_id: taskId, p_attempt: attempt, p_lease_token: leaseToken(taskId, attempt) });",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    },
+    {
+      "path": "vite.config.ts",
+      "line": 29,
+      "categories": [
+        "cli-probe-or-legacy-worker"
+      ],
+      "source": "plugins: [react(), localControlPlanePlugin(env.VITE_SUPABASE_URL, env.VITE_SUPABASE_PUBLISHABLE_KEY, mode !== \"test\" && !process.env.VITEST)],",
+      "status": "retained legacy or shared callback; native entry excludes or rejects"
+    }
+  ],
+  "baselineNativeDatabase": {
+    "authOrVaultSchemas": 0,
+    "functionsReferencingAuthOrVault": 0
+  },
+  "disposition": {
+    "defaultStartup": "native application; no legacy .env/Supabase/n8n probes",
+    "browser": "static native entry plus build graph enforcement; shared legacy callbacks resolve to an explicit rejection module",
+    "worker": "native bounded-stdin CLI and application-owned scheduler; old worker/orchestrator require explicit legacy commands",
+    "sdk": "development dependency for retained legacy compile/test only",
+    "historicalMigrations": "preserved, not executed against production",
+    "vault": "native reference/qualification ports; no auth or vault schema",
+    "standalonePublishing": "default commands refuse remote fallback; Owner native HTTP workflow remains; old CLI is explicit legacy:publish:*"
+  },
+  "limitations": "Regex inventory identifies source anchors, not arbitrary computed imports or whole SQL dependency proof. Actual native bundle, HTTP, process guard and database checks are separate acceptance evidence."
+}

@@ -1,0 +1,9 @@
+
+> loop-control@0.1.0 worker:build
+> tsc -p tsconfig.worker.json
+
+
+> loop-control@0.1.0 orchestrator:build
+> tsc -p tsconfig.orchestrator.json
+
+Worker/编排程序已准备并通过源码与产物完整性检查。

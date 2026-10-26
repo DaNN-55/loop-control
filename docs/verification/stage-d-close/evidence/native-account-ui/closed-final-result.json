@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "originalIntakeRestored": true,
+  "osLoopbackServiceTree": true,
+  "noWorkerInIntake": true,
+  "preflightReportsUnavailableWithoutWorker": true,
+  "noFalseSuccess": true,
+  "providerRequests": 0,
+  "cumulativeRequests": 10,
+  "cumulativeCostReservedCny": 0.03,
+  "actualBillQueried": false,
+  "allOnlineLedgersRemainSealed": true,
+  "originalClosedLedgerUnchangedAtZero": true
+}

@@ -1,0 +1,8 @@
+{
+  "phase": "final package audit",
+  "initialAuditCompleted": false,
+  "reason": "Workspace sandbox denied access to the existing isolated Docker socket while issuing a read-only task-hash query.",
+  "productFailure": false,
+  "safeAction": "Repeat the same read-only audit with access to the existing local Docker and Keychain resources; no Provider or remote request.",
+  "credentialsPrinted": false
+}

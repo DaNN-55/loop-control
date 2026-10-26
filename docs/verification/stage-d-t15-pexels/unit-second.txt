@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/local-app/pexelsLiveProbe.test.ts (11 tests) 3ms
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  11:17:09
+   Duration  648ms (transform 28ms, setup 0ms, collect 25ms, tests 3ms, environment 330ms, prepare 59ms)
+

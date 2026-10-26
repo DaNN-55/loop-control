@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 start
+> node scripts/start.mjs
+
+{"started":true,"url":"http://127.0.0.1:5174","runtimeRoot":"/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local","database":"loop_control","supabaseRequired":false,"n8nRequired":false}

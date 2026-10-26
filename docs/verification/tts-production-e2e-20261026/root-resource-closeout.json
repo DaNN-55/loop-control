@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "ownedBrowserSessionClosed": true,
+  "ownedAppAndStudioPortsClosed": [
+    55189,
+    55190
+  ],
+  "normalStopUsed": true,
+  "dedicatedKeychainInitiallyLocked": true,
+  "dedicatedKeychainRestoredLocked": true,
+  "networkAndCliLedgersUnchangedAfterStop": true,
+  "networkRequestCapExhausted": true,
+  "cliCallCapExhausted": true,
+  "isolatedDatabaseMediaAndEvidencePreserved": true,
+  "sharedNativeDatabaseTunnelRetained": true,
+  "noStagingCommitPushMerge": true,
+  "privateOwnerPasswordScan": {
+    "files": 105,
+    "matches": 0
+  },
+  "noExternalPublication": true
+}

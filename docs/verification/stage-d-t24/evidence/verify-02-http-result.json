@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "realOwnerHttp": true,
+  "newPasswordLogin": true,
+  "oldPasswordRejected": true,
+  "oldSessionRejected": true,
+  "preservedAccountReadable": true,
+  "pendingTaskCompletedByRealWorkerCli": true,
+  "frozenBusinessInputUnchanged": true,
+  "runtimeLimitsFrozenByExistingClaimSemantics": true,
+  "httpArtifactSha256": "fcab097683c22f592d6695e50a1b4a215a9a37bcf25c317386c468623c4cda87",
+  "artifactSize": 447,
+  "preservedReviewApproved": true,
+  "newControlledStoryboardTaskCompleted": true,
+  "originalMediaAccessGuardActive": true,
+  "keychainMissingReferenceExplicitlyRebound": true,
+  "connectionVersionAndSecretReferenceUnchanged": true,
+  "simulatedProbeReadyFalse": true,
+  "onlineRequests": 0
+}

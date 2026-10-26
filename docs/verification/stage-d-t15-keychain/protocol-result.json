@@ -1,0 +1,15 @@
+{
+  "ticket": 121,
+  "at": "2026-10-24T01:41:13.286Z",
+  "candidateCompiled": true,
+  "candidateExecuted": false,
+  "protocolCases": 26,
+  "nodeStdioPipeAccepted": true,
+  "asynchronousNodeStdioAccepted": true,
+  "regularInputAndOutputFilesRejected": true,
+  "protocolBinaryHasNoKeychainImports": true,
+  "realKeychainOperations": 0,
+  "providerCalls": 0,
+  "sha256": "70474b933bed605620e18998d299907215b21d7c91b5d757063718a5d8fddc73",
+  "passed": true
+}

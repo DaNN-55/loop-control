@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "status": null,
+  "signal": "SIGTERM",
+  "error": "ETIMEDOUT",
+  "elapsedMs": 30029.575083,
+  "timeoutMs": 30000,
+  "timeoutOverride": false,
+  "osNetworkSandbox": true
+}

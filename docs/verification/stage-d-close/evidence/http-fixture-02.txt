@@ -1,0 +1,22 @@
+{"offlineProcessGuard":true,"selfChecks":5,"allowed":"127.0.0.1:55472,55177,55189,55190","supabaseAndN8nDenied":true}
+{"offlineGuardFinal":{"sockets":1,"http":2,"modules":1,"files":1,"onlyNativeLoopbackAllowed":true,"legacySdkAndEnvironmentDenied":true,"hostNetworkUnchanged":true,"deniedFilePaths":["readFileSync:/.env.local"]}}
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: Worker/编排程序未准备、已过期或产物损坏；请先运行 npm run runtime:prepare 并重启服务。
+
+503 !== 200
+
+    at post (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/d-close-20261025/http.mjs:5:261)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/d-close-20261025/http.mjs:21:10 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 503,
+  expected: 200,
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

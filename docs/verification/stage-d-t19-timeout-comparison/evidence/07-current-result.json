@@ -1,0 +1,52 @@
+{
+  "label": "07-current",
+  "variant": "current",
+  "at": "2026-10-24T09:02:58.478Z",
+  "command": [
+    "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--exclude",
+    "n8n/import-workflows.test.mjs",
+    "--exclude",
+    "**/*.integration.test.ts",
+    "--exclude",
+    "**/.loop-control/**"
+  ],
+  "cwd": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t19-timeout-comparison-20261024/checkout",
+  "environmentSha256": "efa307c6f9a81e22ed5c938c6131efa0cd7f6d9792b7c2a919199db2757edb71",
+  "exitCode": 0,
+  "signal": null,
+  "elapsedMs": 10736,
+  "system": {
+    "loadStart": [
+      18.60205078125,
+      8.06787109375,
+      5.2890625
+    ],
+    "loadEnd": [
+      22.13818359375,
+      9.142578125,
+      5.70068359375
+    ],
+    "totalmem": 17179869184,
+    "freemem": 1402781696,
+    "logicalCpus": 10
+  },
+  "targetName": "分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择",
+  "targetTimedOut": false,
+  "targetLines": [
+    "   ✓ 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择  3126ms"
+  ],
+  "targetReportedDurationMs": 3126,
+  "testSummary": [
+    " Test Files  94 passed (94)",
+    "      Tests  740 passed (740)",
+    "   Start at  17:02:47",
+    "   Duration  10.48s (transform 2.62s, setup 0ms, collect 8.96s, tests 21.98s, environment 17.32s, prepare 4.05s)"
+  ],
+  "all740Passed": true,
+  "defaultTimeoutMs": 5000,
+  "stdoutSha256": "a11cc67068493bb7da6cbffc5dc060c988561c8986118f07cd5424c605b98914",
+  "sourceUnchangedAfterTest": true
+}

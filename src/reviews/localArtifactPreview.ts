@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { backend } from "../lib/backend";
+
+// Select once during module initialization. Native pages never initialize the
+// legacy client; legacy previews share the same client across concurrent loads.
+const legacyClient = backend === 'local' ? null : (await import('../lib/supabase')).supabase;
 
 const previewCacheDurationMs = 29 * 60_000;
 const localArtifactPreviewLoads = new Map<string, { expiresAt: number; load: Promise<string> }>();
@@ -33,11 +37,12 @@ export function artifactPreviewKind(relativePath: string): "image" | "video" | "
 }
 
 async function loadLocalArtifactPreview(source: string): Promise<string> {
+  if(backend==='local')return source; // Same-site HttpOnly Owner session; server verifies ownership and fingerprint.
   const cached = localArtifactPreviewLoads.get(source);
   if (cached && cached.expiresAt > Date.now()) return cached.load;
   localArtifactPreviewLoads.delete(source);
   const load = (async () => {
-    const { data, error: sessionError } = await supabase.auth.getSession();
+    const { data, error: sessionError } = await legacyClient!.auth.getSession();
     if (sessionError || !data.session) throw new Error("需要 Owner 登录会话。");
     const response = await fetch(source, { headers: { Authorization: `Bearer ${data.session.access_token}` }, method: "POST" });
     if (!response.ok) throw new Error("无法读取本地产物。");
@@ -59,9 +64,9 @@ async function loadLocalArtifactText(source: string): Promise<string> {
   const cached = localArtifactTextLoads.get(source);
   if (cached) return cached;
   const load = (async () => {
-    const { data, error: sessionError } = await supabase.auth.getSession();
-    if (sessionError || !data.session) throw new Error("需要 Owner 登录会话。");
-    const response = await fetch(source, { headers: { Authorization: `Bearer ${data.session.access_token}` } });
+    const headers: Record<string,string> = {};
+    if (backend !== "local") { const {data,error}=await legacyClient!.auth.getSession();if(error||!data.session)throw Error("需要 Owner 登录会话。");headers.Authorization=`Bearer ${data.session.access_token}`; }
+    const response = await fetch(source, { headers });
     if (!response.ok) throw new Error("无法读取文本产物。");
     return response.text();
   })();

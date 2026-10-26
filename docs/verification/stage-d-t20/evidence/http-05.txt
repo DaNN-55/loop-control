@@ -1,0 +1,14 @@
+AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert(draft.current_audio_track_id)
+
+    at Object.test (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/alignment-acceptance.mjs:72:66)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/alignment-acceptance.mjs:86:55 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: null,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}

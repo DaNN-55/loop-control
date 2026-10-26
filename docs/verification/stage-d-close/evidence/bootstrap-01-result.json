@@ -1,0 +1,10 @@
+{
+  "started": "2026-10-25T00:46:33.528Z",
+  "finished": "2026-10-25T00:46:34.127Z",
+  "command": [
+    "node",
+    ".loop-control/stage-d/state/d-close-20261025/bootstrap.mjs"
+  ],
+  "status": 0,
+  "passed": true
+}

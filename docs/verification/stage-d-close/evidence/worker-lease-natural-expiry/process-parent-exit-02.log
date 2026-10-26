@@ -1,0 +1,12 @@
+{"offlineProcessGuard":true,"selfChecks":5,"allowed":"127.0.0.1:55472,55177,55189,55190","supabaseAndN8nDenied":true}
+{"offlineGuardFinal":{"sockets":1,"http":2,"modules":1,"files":1,"onlyNativeLoopbackAllowed":true,"legacySdkAndEnvironmentDenied":true,"hostNetworkUnchanged":true,"deniedFilePaths":["readFileSync:/.env.local"]}}
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/lease-natural-20261025/control.mjs:4
+export async function until(fn,ms=45000){const end=Date.now()+ms;while(Date.now()<end){const r=await fn();if(r)return r;await sleep(100);}throw Error('Acceptance condition timed out');}
+                                                                                                                                                ^
+
+Error: Acceptance condition timed out
+    at until (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/lease-natural-20261025/control.mjs:4:145)
+    at async verifyCompleted (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/lease-natural-20261025/control.mjs:13:58)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/lease-natural-20261025/process-boundaries.mjs:4:384
+
+Node.js v24.20.0

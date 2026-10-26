@@ -1,0 +1,15 @@
+{
+  "provider": "pexels",
+  "passed": true,
+  "httpStatus": 200,
+  "mode": "live",
+  "outcome": "verified",
+  "ready": true,
+  "requestCountDelta": 1,
+  "requestCountUsed": 1,
+  "providerHttpStatus": 200,
+  "responseBytes": 3119,
+  "budgetHalted": false,
+  "costReservedCny": 0,
+  "notActualBilledCost": true
+}

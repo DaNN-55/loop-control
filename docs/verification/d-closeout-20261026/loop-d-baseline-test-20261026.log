@@ -1,0 +1,222 @@
+
+> loop-control@0.1.0 test
+> vitest run --exclude n8n/import-workflows.test.mjs --exclude '**/*.integration.test.ts' && node --test n8n/import-workflows.test.mjs
+
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/merge-stage-abc/loop-control
+
+ ✓ src/platform/migrationContracts.test.ts (112 tests) 41ms
+ ✓ src/worker/codexRunner.test.ts (28 tests) 13ms
+ ✓ src/worker/contracts.test.ts (18 tests) 12ms
+ ✓ src/worker/openchatcutProject.test.ts (26 tests) 16ms
+ ✓ src/worker/controlledMediaExecutor.test.ts (12 tests) 498ms
+   ✓ 受控媒体执行器 > 使用真实 ffmpeg 裁剪带原声视频并提取当前片段原声  440ms
+ ✓ src/platform/configurationForms.test.ts (23 tests) 9ms
+ ✓ src/App.test.tsx (34 tests) 850ms
+ ✓ src/observability/SystemStatusPanel.test.tsx (19 tests) 418ms
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":0,"workers":[],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":0,"workers":[],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"notify","notifications":0,"skipped":0}
+导出 accounts 失败：Supabase 返回 HTTP 503
+ ✓ src/orchestration/loopOrchestratorCli.test.ts (12 tests) 205ms
+ ✓ src/connections/ConnectionWorkspace.test.tsx (8 tests) 540ms
+ ✓ src/operations/OperationsWorkspace.test.tsx (6 tests) 186ms
+ ✓ src/episodes/captionTextConfirmation.test.tsx (7 tests) 689ms
+ ✓ src/local-app/LocalConnectionsPanel.test.tsx (5 tests) 219ms
+ ✓ src/worker/mediaProviders.test.ts (9 tests) 13ms
+ ✓ src/accounts/AccountWorkspace.test.tsx (32 tests) 2885ms
+   ✓ 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非秘密连接  327ms
+   ✓ 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿  755ms
+ ✓ src/worker/runtimePreflight.test.ts (4 tests) 6ms
+ ✓ scripts/start-local.test.mjs (10 tests) 12ms
+ ✓ src/worker/whisperxAlignment.test.ts (11 tests) 119ms
+ ✓ src/reviews/blockerGuidance.test.ts (18 tests) 4ms
+ ✓ scripts/local-service-record.test.mjs (6 tests) 477ms
+ ✓ src/worker/durationDecision.test.ts (13 tests) 3ms
+ ✓ src/platform/platformService.test.ts (7 tests) 5ms
+ ✓ src/episodes/episodeCatalog.test.tsx (5 tests) 711ms
+ ✓ src/worker/openchatcutRenderer.test.ts (3 tests) 20ms
+ ✓ scripts/startup-lifecycle.acceptance.test.mjs (7 tests) 149ms
+ ✓ scripts/openchatcut-render.test.mjs (5 tests) 210ms
+ ✓ src/worker/runtimeProbes.test.ts (7 tests) 10ms
+ ✓ src/reviews/reviewSelectors.test.ts (7 tests) 7ms
+ ✓ src/worker/mediaLibrary.test.ts (7 tests) 20ms
+ ✓ src/reviews/reviewRevision.test.ts (4 tests) 5ms
+ ✓ scripts/isolation/environment.test.mjs (14 tests) 19ms
+ ✓ src/worker/acousticAlignment.test.ts (7 tests) 6ms
+ ✓ src/platform/ConfigurationForms.local.test.tsx (4 tests) 249ms
+ ✓ src/publishing/publishPackage.test.ts (2 tests) 24ms
+ ✓ src/local-app/keychainStore.test.ts (5 tests) 4ms
+ ✓ src/orchestration/providedScriptDispatch.test.ts (6 tests) 107ms
+ ✓ src/local-app/pexelsLiveProbe.test.ts (11 tests) 4ms
+ ✓ src/observability/TaskProgressPanel.test.tsx (4 tests) 70ms
+ ✓ src/orchestration/notificationPolicy.test.ts (5 tests) 10ms
+ ✓ src/worker/renderReuse.test.ts (2 tests) 23ms
+ ✓ src/worker/storyboardArtifact.test.ts (4 tests) 9ms
+ ✓ src/observability/systemStatusEvidence.test.ts (4 tests) 106ms
+ ✓ src/shotCaptions.test.ts (3 tests) 3ms
+ ✓ src/reviews/localArtifactPreview.test.tsx (3 tests) 29ms
+ ✓ src/worker/manualMaterialChecklist.test.ts (1 test) 4ms
+ ✓ src/worker/registeredAdapters.test.ts (6 tests) 3ms
+ ✓ src/worker/storyboardRevision.test.ts (3 tests) 4ms
+ ✓ src/local-app/connections.test.ts (3 tests) 5ms
+ ✓ src/reviews/materialImport.test.ts (3 tests) 3ms
+ ✓ src/orchestration/operationsEvidence.test.ts (2 tests) 10ms
+ ✓ src/worker/codexWorkerCli.test.ts (6 tests) 2ms
+ ✓ src/worker/shotWorkbenchStudio.test.ts (1 test) 3ms
+ ✓ src/episodes/episodeReadService.test.ts (3 tests) 2ms
+ ✓ src/orchestration/notificationConsumer.test.ts (3 tests) 11ms
+ ✓ src/platform/connectionStatus.test.ts (3 tests) 3ms
+ ✓ src/episodes/episodeCatalogChanges.test.ts (4 tests) 2ms
+ ✓ src/worker/episodeDeletion.test.ts (1 test) 16ms
+ ✓ scripts/supabase-migrations.test.mjs (3 tests) 3ms
+ ✓ src/worker/legacyPexelsReference.test.ts (2 tests) 2ms
+ ✓ src/clipTiming.test.ts (3 tests) 2ms
+ ✓ src/reviews/WorkerBlockerCard.test.tsx (2 tests) 74ms
+ ✓ src/shotComposition.test.ts (2 tests) 3ms
+ ✓ src/lib/pagedRead.test.ts (3 tests) 4ms
+ ✓ src/worker/workerResultSchema.test.ts (3 tests) 2ms
+ ✓ src/ui/PaginationControls.test.tsx (2 tests) 60ms
+ ✓ src/local-app/mediaPaths.test.ts (2 tests) 2ms
+ ✓ src/worker/runtimeConstraints.test.ts (2 tests) 2ms
+ ✓ src/reviews/repairTarget.test.ts (3 tests) 3ms
+ ✓ src/ui/MarkdownPreview.test.tsx (1 test) 43ms
+ ✓ src/platform/externalConnections.test.ts (1 test) 2ms
+ ✓ src/manualArollVideo.test.ts (2 tests) 1ms
+ ✓ src/shotAcceptance.test.ts (3 tests) 2ms
+ ✓ src/orchestration/backupPolicy.test.ts (2 tests) 2ms
+ ✓ src/worker/productionCapabilities.test.ts (1 test) 1ms
+ ✓ scripts/local/import.test.mjs (1 test) 13ms
+ ✓ src/worker/taskClaimArguments.test.ts (2 tests) 1ms
+ ✓ src/platform/accountIdentity.test.ts (2 tests) 1ms
+ ✓ src/lib/backend.test.ts (1 test) 1ms
+ ✓ src/episodePreflightRoute.test.ts (15 tests) 54ms
+ ✓ src/local-app/accountPreflightRoute.test.ts (7 tests) 78ms
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/nativeAttemptOutput.test.ts (20 tests) 629ms
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/captionTextConfirmationRoute.test.ts (11 tests) 80ms
+ ✓ scripts/isolation/regressions.test.mjs (10 tests) 101ms
+ ✓ src/local-app/mediaWorker.reference.test.ts (5 tests) 374ms
+ ✓ scripts/local/deployment.test.mjs (13 tests) 3ms
+ ✓ scripts/local/application.test.mjs (4 tests) 3ms
+ ✓ src/local-app/providerNetwork.test.ts (39 tests) 1534ms
+   ✓ halts and keeps the consumed reservation on timeout  1020ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx (71 tests) 10910ms
+   ✓ 审核台 > 逐镜头主声音和音效独立保存，静音后恢复原选择并保留画面草稿  699ms
+   ✓ 审核台 > 第二镜独立字幕先保存，未保存时键盘切步保持当前正文  546ms
+   ✓ 审核台 > 第二镜修改双屏槽位和衔接后保存，保留已保存的独立正文  537ms
+   ✓ 审核台 > 第二镜修改字幕空间时保留已保存构图，保存刷新后保持所选镜头  665ms
+   ✓ 审核台 > 本地人工时序编辑跨音轨轮询保留并只提交本地回调  318ms
+   ✓ 审核台 > 审核镜头可核对同步预览要求，修改字幕后旧确认与代理立即失效  729ms
+   ✓ 审核台 > 预览失败、缺少原片或旧合同阻止确认，生产就绪时仍可返回编辑  596ms
+   ✓ 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交  623ms
+   ✓ 审核台 > 逐镜头 TTS 可先于原片标记生成，完整保存仍要求视频  346ms
+   ✓ 审核台 > 逐镜头口播无需确认即可保存，并可保存单镜头覆盖  638ms
+   ✓ 审核台 > 同一原片支持多段裁剪并随镜头草稿一起保存  428ms
+   ✓ 审核台 > 人工媒体可在镜头工作台选择原片并保存镜头设置  552ms
+ ✓ src/local-app/providerProbe.test.ts (26 tests) 462ms
+ ✓ src/externalConnectionRoute.test.ts (1 test) 19ms
+ ✓ scripts/isolation/database.test.mjs (5 tests) 7ms
+ ✓ src/orchestration/workerScheduler.test.ts (2 tests) 227ms
+ ✓ src/local-app/localFiles.test.ts (8 tests) 46ms
+ ✓ scripts/local/offline-preparation.test.mjs (2 tests) 8ms
+ ❯ src/local-app/artifactRoute.test.ts (1 test | 1 failed) 24ms
+   × serves verified media byte ranges for seeking and rejects invalid ranges or tampered bytes 24ms
+     → expected 409 to be 200 // Object.is equality
+ ✓ src/orchestration/runtimeBuild.test.ts (1 test) 21ms
+ ✓ src/localControlPlane.test.ts (2 tests) 34ms
+ ✓ src/worker/visualAssetExecutor.test.ts (1 test) 8ms
+ ✓ src/local-app/localRoute.test.ts (1 test) 20ms
+ ✓ scripts/isolation/http-credentials.test.mjs (1 test) 3ms
+ ✓ src/local-app/inputPreflight.test.ts (1 test) 2ms
+ ✓ src/local-app/catalogRoute.test.ts (1 test) 19ms
+ ✓ src/local-app/workerDatabase.test.ts (1 test) 3ms
+ ✓ src/local-app/mediaWorker.test.ts (2 tests) 2ms
+ ✓ src/local-app/catalogQuery.test.ts (1 test) 2ms
+ ✓ src/local-app/configurationCommands.test.ts (1 test) 2ms
+ ✓ src/local-app/databaseConfig.test.ts (1 test) 1ms
+ ✓ src/local-app/password.test.ts (1 test) 208ms
+ ✓ src/localEpisodeDirectoryRoute.test.ts (28 tests) 3424ms
+   ✓ 本地 Episode 目录路由 > 复用短时已验证的产物索引，避免重复查询和哈希  3015ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/episodes/EpisodeProductionContainer.test.tsx [ src/episodes/EpisodeProductionContainer.test.tsx ]
+Error: 缺少 Supabase 本地客户端配置。
+ ❯ src/lib/supabase.ts:11:9
+      9| 
+     10| if (!supabaseUrl || !supabasePublishableKey) {
+     11|   throw new Error("缺少 Supabase 本地客户端配置。");
+       |         ^
+     12| }
+     13| 
+ ❯ src/episodes/EpisodeProductionContainer.tsx:5:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/local-app/LocalCatalogApp.account.test.tsx [ src/local-app/LocalCatalogApp.account.test.tsx ]
+ FAIL  src/local-app/LocalCatalogApp.test.tsx [ src/local-app/LocalCatalogApp.test.tsx ]
+ FAIL  src/publishing/ProductionCompletionModal.test.tsx [ src/publishing/ProductionCompletionModal.test.tsx ]
+Error: 缺少 Supabase 本地客户端配置。
+ ❯ src/lib/supabase.ts:11:9
+      9| 
+     10| if (!supabaseUrl || !supabasePublishableKey) {
+     11|   throw new Error("缺少 Supabase 本地客户端配置。");
+       |         ^
+     12| }
+     13| 
+ ❯ src/reviews/localArtifactPreview.ts:6:52
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/artifactRoute.test.ts > serves verified media byte ranges for seeking and rejects invalid ranges or tampered bytes
+AssertionError: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/artifactRoute.test.ts:15:51
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+
+ Test Files  5 failed | 108 passed (113)
+      Tests  1 failed | 903 passed (904)
+   Start at  19:12:08
+   Duration  13.87s (transform 1.90s, setup 0ms, collect 5.97s, tests 27.62s, environment 15.52s, prepare 3.61s)
+

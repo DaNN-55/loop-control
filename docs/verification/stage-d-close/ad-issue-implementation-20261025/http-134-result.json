@@ -1,0 +1,105 @@
+{
+  "passed": true,
+  "normalNpmEntry": true,
+  "realOwnerHttpPostgresAndFilesystem": true,
+  "configurationModelNetworkQualificationAndReady": [
+    {
+      "label": "configuration_missing",
+      "status": 200,
+      "preflight": {
+        "version": "worker-preflight/v2",
+        "checks": [
+          {
+            "capability": "worker_runtime",
+            "check": "blueprint_configuration",
+            "phase": "preflight",
+            "status": "blocked",
+            "reason": "能力 storyboard_planning 配置缺失：模型、Prompt 版本。",
+            "action": "edit_blueprint",
+            "scope": "blueprint"
+          }
+        ]
+      }
+    },
+    {
+      "label": "model_missing",
+      "status": 200,
+      "preflight": {
+        "version": "worker-preflight/v2",
+        "checks": [
+          {
+            "capability": "worker_runtime",
+            "check": "blueprint_configuration",
+            "phase": "preflight",
+            "status": "blocked",
+            "reason": "能力 storyboard_planning 配置缺失：模型。",
+            "action": "edit_blueprint",
+            "scope": "blueprint"
+          }
+        ]
+      }
+    },
+    {
+      "label": "actual_local_runtime_ready",
+      "status": 200,
+      "preflight": {
+        "version": "worker-preflight/v2",
+        "checks": [
+          {
+            "capability": "worker_runtime",
+            "check": "local_adapter_readiness",
+            "phase": "preflight",
+            "status": "passed",
+            "reason": "本机运行前置条件已检查；实际 Provider 接受与产物仍由任务执行验证。",
+            "scope": "worker",
+            "action": "none"
+          },
+          {
+            "capability": "storyboard_planning",
+            "check": "local_adapter_readiness",
+            "phase": "preflight",
+            "status": "passed",
+            "reason": "本机运行前置条件已检查；实际 Provider 接受与产物仍由任务执行验证。",
+            "scope": "worker",
+            "action": "none"
+          }
+        ]
+      }
+    },
+    {
+      "label": "provider_network_locked_and_unqualified",
+      "status": 200,
+      "preflight": {
+        "version": "worker-preflight/v2",
+        "checks": [
+          {
+            "capability": "worker_runtime",
+            "check": "network_connectivity",
+            "phase": "preflight",
+            "status": "unavailable",
+            "reason": "当前部署的 Provider 网络策略未启用或请求预算不可用；请联系环境管理员，不会发起在线检查。",
+            "scope": "worker",
+            "action": "contact_environment_admin"
+          },
+          {
+            "capability": "worker_runtime",
+            "check": "credential_presence",
+            "phase": "preflight",
+            "status": "blocked",
+            "reason": "连接版本未绑定、已变化或已撤销。",
+            "scope": "connection",
+            "action": "manage_connection"
+          }
+        ]
+      }
+    }
+  ],
+  "staleRevision409": true,
+  "invisibleAccount404": true,
+  "csrfAndOrigin403": true,
+  "noSession401": true,
+  "noTasksOrEpisodesDispatched": true,
+  "actualRestoredReferenceRetained": true,
+  "currentReferenceUnavailableFromActualDatabase": true,
+  "providerRequests": 0
+}

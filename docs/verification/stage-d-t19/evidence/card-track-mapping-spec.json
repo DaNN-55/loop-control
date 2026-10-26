@@ -1,0 +1,48 @@
+{
+  "openchatcutRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/OpenChatCut",
+  "nodePath": "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+  "assetRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/media/t16-volume/t19-local",
+  "outputPath": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t19-20261024/card-track-mapping-after.mp4",
+  "state": {
+    "id": "card-c8eb585c-845f-4e2e-8c74-c9b7ad7664b0",
+    "name": "A-roll 卡片",
+    "order": 0,
+    "fps": 30,
+    "width": 1080,
+    "height": 1920,
+    "fit": "cover",
+    "items": [
+      {
+        "id": "card-shot-1",
+        "track": "V1",
+        "startFrame": 0,
+        "durationInFrames": 120,
+        "kind": "text",
+        "name": "shot-1",
+        "width": 1080,
+        "height": 1920,
+        "props": {
+          "text": "A-ROLL\n介绍本轮合成脚本。\n人工素材",
+          "align": "center",
+          "color": "#ffffff",
+          "fontSize": 64,
+          "fontWeight": 700
+        }
+      }
+    ],
+    "trackOrder": [
+      "V1"
+    ],
+    "tracks": {
+      "V1": {
+        "kind": "video",
+        "name": "卡片"
+      }
+    },
+    "transitions": [],
+    "selectedId": null,
+    "captionsHidden": false,
+    "assets": []
+  },
+  "sources": []
+}

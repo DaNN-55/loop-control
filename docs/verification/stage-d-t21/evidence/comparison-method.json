@@ -1,0 +1,85 @@
+{
+  "sameHost": true,
+  "node": "v24.20.0",
+  "sameEnvironment": true,
+  "sharedDependencies": true,
+  "defaultTimeoutMs": 5000,
+  "overrides": false,
+  "fullSuiteRunOnceEach": true,
+  "workspaceRunOnceEach": true,
+  "results": [
+    {
+      "label": "baseline",
+      "args": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "src/reviews/ReviewWorkspace.test.tsx",
+        "--exclude",
+        "**/.loop-control/**"
+      ],
+      "cwd": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t21-20261024/t20-baseline",
+      "status": 1,
+      "timeoutOverride": false
+    },
+    {
+      "label": "current",
+      "args": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "src/reviews/ReviewWorkspace.test.tsx",
+        "--exclude",
+        "**/.loop-control/**"
+      ],
+      "cwd": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control",
+      "status": 0,
+      "timeoutOverride": false
+    }
+  ],
+  "hashes": [
+    {
+      "file": "src/reviews/ReviewWorkspace.test.tsx",
+      "baseline": "3af94c4d13ef319380f239bda24c45ae2b746dbe42a2a7f3e12851187624a35e",
+      "current": "3af94c4d13ef319380f239bda24c45ae2b746dbe42a2a7f3e12851187624a35e"
+    },
+    {
+      "file": "src/App.tsx",
+      "baseline": "75e28125dbc12441e5b7b29d53d9c0a46d949563c78c675a9372c59f9aaed808",
+      "current": "75e28125dbc12441e5b7b29d53d9c0a46d949563c78c675a9372c59f9aaed808"
+    },
+    {
+      "file": "src/episodes/EpisodeProduction.tsx",
+      "baseline": "603c6f9d2bcadb3f351a1571c80375a0e1e702124e4b05434e5d98c3236c3320",
+      "current": "603c6f9d2bcadb3f351a1571c80375a0e1e702124e4b05434e5d98c3236c3320"
+    },
+    {
+      "file": "vite.config.ts",
+      "baseline": "3787d584237065f6139d7d05ae0b5065cdb5f4bbbe3217e094d45fc4b3aa1f74",
+      "current": "3787d584237065f6139d7d05ae0b5065cdb5f4bbbe3217e094d45fc4b3aa1f74"
+    }
+  ],
+  "full": {
+    "baseline": {
+      "passed": 740,
+      "failed": 4,
+      "total": 744
+    },
+    "current": {
+      "passed": 740,
+      "failed": 5,
+      "total": 745
+    }
+  },
+  "workspace": {
+    "baseline": {
+      "passed": 64,
+      "failed": 1,
+      "total": 65
+    },
+    "current": {
+      "passed": 65,
+      "failed": 0,
+      "total": 65
+    }
+  },
+  "conclusion": "Baseline reproduces historical timeout and three additional full-suite failures. Current-only full-suite delete-shot assertion passes in both workspace-only runs. No stable T21 functional regression established; full default gate remains failed and root cause unresolved. No timeout relaxation or passing rerun substitutes for full-suite failure."
+}

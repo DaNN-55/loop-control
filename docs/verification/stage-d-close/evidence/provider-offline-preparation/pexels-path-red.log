@@ -1,0 +1,51 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/local-app/providerProbe.test.ts (26 tests | 1 failed) 331ms
+   × uses the same Pexels video search path as the media executor 21ms
+     → expected 'https://api.pexels.com/v1/videos/sear…' to be 'https://api.pexels.com/videos/search?…' // Object.is equality
+   ✓ classifies a compatible openai response with one reserved request 19ms
+   ✓ classifies a compatible cloudflare response with one reserved request 16ms
+   ✓ classifies a compatible pexels response with one reserved request 15ms
+   ✓ classifies a compatible freesound response with one reserved request 14ms
+   ✓ classifies a compatible google_tts response with one reserved request 17ms
+   ✓ classifies a compatible volcengine_tts response with one reserved request 15ms
+   ✓ keeps openai closed without touching transport 1ms
+   ✓ keeps cloudflare closed without touching transport 1ms
+   ✓ keeps pexels closed without touching transport 1ms
+   ✓ keeps freesound closed without touching transport 1ms
+   ✓ keeps google_tts closed without touching transport 1ms
+   ✓ keeps volcengine_tts closed without touching transport 1ms
+   ✓ classifies actual transport status 401 as invalid for openai 12ms
+   ✓ classifies actual transport status 401 as invalid for cloudflare 16ms
+   ✓ classifies actual transport status 401 as invalid for pexels 11ms
+   ✓ classifies actual transport status 401 as invalid for freesound 17ms
+   ✓ classifies actual transport status 401 as invalid for google_tts 15ms
+   ✓ classifies actual transport status 401 as invalid for volcengine_tts 17ms
+   ✓ does not grant openai on an unrelated 200 response 18ms
+   ✓ does not grant cloudflare on an unrelated 200 response 14ms
+   ✓ does not grant pexels on an unrelated 200 response 15ms
+   ✓ does not grant freesound on an unrelated 200 response 13ms
+   ✓ does not grant google_tts on an unrelated 200 response 16ms
+   ✓ does not grant volcengine_tts on an unrelated 200 response 21ms
+   ✓ shares the probe reservation with the actual live Worker fetch port 23ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 25 passed (26)
+   Start at  15:26:36
+   Duration  526ms (transform 44ms, setup 0ms, collect 53ms, tests 331ms, environment 0ms, prepare 42ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/providerProbe.test.ts > uses the same Pexels video search path as the media executor
+AssertionError: expected 'https://api.pexels.com/v1/videos/sear…' to be 'https://api.pexels.com/videos/search?…' // Object.is equality
+
+Expected: "https://api.pexels.com/videos/search?query=nature&per_page=1"
+Received: "https://api.pexels.com/v1/videos/search?query=nature&per_page=1"
+
+ ❯ src/local-app/providerProbe.test.ts:8:347
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

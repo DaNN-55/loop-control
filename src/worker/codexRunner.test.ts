@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { runCodexWorker, shotPreparationContractFromSnapshot } from "./codexRunner";
+import {ProviderOutcomeUnknownError} from "./providerOutcome";
 
 const claimedTask = {
   taskId: "task-1",
@@ -733,4 +734,17 @@ describe("本地 Codex Worker runner", () => {
     await runCodexWorker({ claimNextTask: async () => imageTask, reportResult, execute: async () => { throw new Error("OpenAI Images HTTP 401: invalid api key"); }, verifyAssetRoot: async () => undefined, verifyArtifacts: async () => undefined, actualCostCents: 0 });
     expect(reportResult).toHaveBeenCalledWith("task-1", 0, expect.objectContaining({ blockers: [expect.objectContaining({ capability: "static_visual_generation", check: "credential_validity", action: "manage_connection", scope: "connection" })] }));
   });
+});
+
+it('keeps a possibly sent Pexels request blocked for Owner reconciliation rather than automatic retry',async()=>{
+ const reportResult=vi.fn();
+ const inputBasis=[{relativePath:'episodes/episode-1/script.md',sha256:'a'.repeat(64)},{relativePath:'episodes/episode-1/visual.png',sha256:'b'.repeat(64)}];
+ const task={...claimedTask,taskType:'generate_b_roll',provider:'pexels' as const,model:'pexels-video-v1',inputSnapshot:{
+  capability:'b_roll_generation',credential_ref:'11111111-1111-4111-8111-111111111111',allowed_tools:['network','write'],
+  media:{adapter:'pexels_video',b_roll:{query:'nature',target_duration_seconds:3,shot:{id:'shot-1',scriptSegment:'nature',durationSeconds:3,shotType:'b_roll',productionMethod:'Pexels',inputBasis,targetSpec:'9:16'}}},
+  output:{required_artifact_types:['b_roll_asset'],content_type:'video/mp4',relative_path:'episodes/episode-1/b-roll.mp4',review_stage:'production_ready'},input_artifacts:[{artifactType:'main_script',...inputBasis[0],fileSize:128},{artifactType:'static_visual',...inputBasis[1],fileSize:128}]
+ }};
+ await expect(runCodexWorker({claimNextTask:async()=>task,reportResult,execute:async()=>{throw new ProviderOutcomeUnknownError();},verifyAssetRoot:async()=>{},verifyArtifacts:async()=>{},actualCostCents:0})).resolves.toEqual({status:'blocked',taskId:'task-1'});
+ expect(reportResult).toHaveBeenCalledOnce();
+ expect(reportResult).toHaveBeenCalledWith('task-1',0,expect.objectContaining({status:'blocked',artifacts:[],retry:{shouldRetry:false,reason:expect.stringContaining('结果未知')},blockers:[expect.objectContaining({code:'provider_result_unknown',status:'blocked',action:'contact_environment_admin'})]}));
 });

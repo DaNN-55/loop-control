@@ -1,0 +1,139 @@
+{
+  "passed": true,
+  "normalNpmRestart": true,
+  "episodeId": "5eb48e39-6c99-4c95-b3ab-ed91dea7d3e7",
+  "stage": "production_completed",
+  "exactEpisodeProjectionEqual": true,
+  "files": [
+    {
+      "id": "0f2bf308-da17-42e5-86e5-1308ffb39413",
+      "type": "publish_package",
+      "sha256": "5b4713b725f6ee965674856e3e593b34b9ce2fa5f30b975a6ca4d0069baf649c",
+      "size": 1222
+    },
+    {
+      "id": "4fa7af2c-5090-4280-8ce8-4b24b9941f04",
+      "type": "metadata",
+      "sha256": "68cb6c501556769b24107d5319199cc77bf05c4422c46d7226dd4d7ec131ed0f",
+      "size": 219
+    },
+    {
+      "id": "97ce1198-0b96-48eb-9d63-031e852eddc7",
+      "type": "cover",
+      "sha256": "2782204cdde326537a36bc2538c5958bcc48745a8af462f185caae6322c158a3",
+      "size": 1428756
+    },
+    {
+      "id": "2a3aae2b-74f2-4d3d-9420-2af772188e32",
+      "type": "final_render_project",
+      "sha256": "93933186a7c8e2860a41b9b1d63b3e908fc83b5576f23f58853310ec68a8218f",
+      "size": 4717
+    },
+    {
+      "id": "e1253361-33f9-4c78-8251-e8e674ca79ae",
+      "type": "final_qc_report",
+      "sha256": "4c72335e82eb74d11bc885d54052dff9a748a4e823ef03add12252b48a4b098e",
+      "size": 1241
+    },
+    {
+      "id": "e84b015d-57c3-4102-af03-9055f8f6170e",
+      "type": "final_render",
+      "sha256": "299c3860d3e96eb08f4feb29c08b9ff4abfac3ec13c2a0737a1b3fc6dbcf9651",
+      "size": 914414
+    },
+    {
+      "id": "6fd0b161-bda1-4966-b9c7-6cccba23486d",
+      "type": "review_qc_report",
+      "sha256": "d74b4b2cc86eb06ad31e91069852756ae2f06e9437825ac1888f3790df4fb6d6",
+      "size": 866
+    },
+    {
+      "id": "74699402-6fda-426b-bfbc-4563616c6711",
+      "type": "render",
+      "sha256": "299c3860d3e96eb08f4feb29c08b9ff4abfac3ec13c2a0737a1b3fc6dbcf9651",
+      "size": 914414
+    },
+    {
+      "id": "8dcc766a-d351-4ac8-802e-e3228059854d",
+      "type": "review_render_runtime",
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+      "size": 42
+    },
+    {
+      "id": "c46e9632-62b5-4146-9ef9-b00b2567886c",
+      "type": "review_render_project",
+      "sha256": "93933186a7c8e2860a41b9b1d63b3e908fc83b5576f23f58853310ec68a8218f",
+      "size": 4717
+    },
+    {
+      "id": "5255c836-148d-40d4-810d-cdd170cd4dce",
+      "type": "studio_frozen_project",
+      "sha256": "93933186a7c8e2860a41b9b1d63b3e908fc83b5576f23f58853310ec68a8218f",
+      "size": 4717
+    },
+    {
+      "id": "60f98617-59b0-4365-b42b-1ad59be8ac8c",
+      "type": "shot_preview_runtime",
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+      "size": 42
+    },
+    {
+      "id": "dad45599-25c2-47cd-9d80-fa51e8dde030",
+      "type": "shot_preview_qc_report",
+      "sha256": "6a267f8629af25ec889c951e82cf19df31ac04ef5417b8a68515a03a86759b5a",
+      "size": 858
+    },
+    {
+      "id": "f5419e07-c2bc-42bb-bda6-54c026285ed7",
+      "type": "shot_editable_project",
+      "sha256": "12672264fc0bb6de59410fc723e8784f86e9a2e61517c831996e4f6bfcfb9ddb",
+      "size": 4083
+    },
+    {
+      "id": "fae50e5c-714b-42cb-b051-97a90cf62bd7",
+      "type": "shot_preview_proxy",
+      "sha256": "e7bfcd4878fa63b6504181baea4c3c6f5855ac929a7bf97f491a97f4b4b07ac2",
+      "size": 914414
+    },
+    {
+      "id": "c81e33e1-f866-4d2e-a022-3e67e2f887b4",
+      "type": "acoustic_alignment_evidence",
+      "sha256": "f073db192632a8a1441731607608766efc52d237ee52f07a8571db3d8e5357ad",
+      "size": 950
+    },
+    {
+      "id": "efcab44c-2228-4fe2-98bc-a56ab5e2514d",
+      "type": "b_roll_asset",
+      "sha256": "258dce44574cf57e142532dd73f4df8d044d090ab5daae7bbf19fd506a5f5a33",
+      "size": 83082
+    },
+    {
+      "id": "2be61081-e537-42e6-a6f3-b42f08f27fc1",
+      "type": "narration_audio",
+      "sha256": "69da3e47a43535f8e78d28497fd6ca3ced926a2fa9843300014bdaba07bbaa4f",
+      "size": 10029
+    },
+    {
+      "id": "97cfe2e4-42c8-4360-9000-3d52da80975e",
+      "type": "b_roll_asset",
+      "sha256": "707c74ccfe2ebab2aa277826fb8365d657eec2d95187f0caef1a2d1fba29959a",
+      "size": 712159
+    },
+    {
+      "id": "4f8dc9fc-f358-47c8-a267-e13b7681fd0b",
+      "type": "storyboard",
+      "sha256": "c68c456e4f9eb06a0642c02e025125899d02fbbbb6a393359eb695b68224489a",
+      "size": 1131
+    },
+    {
+      "id": "8795fe1f-7842-43f9-8e9f-bb9e37b1bec0",
+      "type": "visual_asset_manifest",
+      "sha256": "69f4c2617699388d7728a1add66f90ec6047655c53c2c91040e00b3177a55825",
+      "size": 2334
+    }
+  ],
+  "cliLedgerSha256": "620a8ce5ee4a8c3d62aa79040b932f0db3c5660739f6569f27eeaa550a9bd434",
+  "providerLedgerSha256": "c94ea2294fec696463f8ac91274be8e74105fb53c6b29dcd5ef433e0ac07a1f1",
+  "additionalCliOrProviderRequests": 0,
+  "externalPublication": false
+}

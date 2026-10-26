@@ -1,0 +1,54 @@
+{
+  "passed": true,
+  "realHttp": true,
+  "realNativePg": true,
+  "realWorkerCli": true,
+  "realOpenChatCutEditorAndRender": true,
+  "editorMutationMethod": "Controlled local editor API; browser UI accepted separately",
+  "firstTask": "8e20860e-be9c-4b2f-9947-3b40f4c3b5eb",
+  "secondTask": "3ee7f14e-af42-4593-be64-7bacacd4276f",
+  "firstQc": "9a3e467e-13ac-4607-803e-fe757f2bed27",
+  "secondQc": "e53b9e9c-f44b-42ed-b897-21372c6c2d2b",
+  "duplicateCommandsOneTask": true,
+  "unchangedInputsDifferentKeyOneTask": true,
+  "workAndFrozenSeparated": true,
+  "replacementRequiresExplicitConsent": true,
+  "qcReopenStartsFromFrozenEditedProject": true,
+  "oldFrozenBytesUnchanged": true,
+  "calls": [
+    {
+      "command": "openStudio",
+      "status": 200
+    },
+    {
+      "command": "generateReviewVideo",
+      "status": 200
+    },
+    {
+      "command": "generateReviewVideo",
+      "status": 200
+    },
+    {
+      "command": "generateReviewVideo",
+      "status": 200
+    },
+    {
+      "command": "openStudio",
+      "status": 200
+    },
+    {
+      "command": "openStudio",
+      "status": 200
+    },
+    {
+      "command": "submitStudioRevision",
+      "status": 200
+    },
+    {
+      "command": "submitStudioRevision",
+      "status": 200
+    }
+  ],
+  "providerRequests": 0,
+  "realWhisperXInference": false
+}

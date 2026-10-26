@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "trackedFilesChangedBeforeReportUpdate": [
+    "README.md",
+    "docs/local-native-deployment.md",
+    "package.json",
+    "scripts/local/deployment.mjs",
+    "scripts/local/deployment.test.mjs",
+    "scripts/local/start.mjs"
+  ],
+  "newSourceFiles": [
+    "scripts/local/offline-preparation.mjs",
+    "scripts/local/offline-preparation.test.mjs",
+    "scripts/local/prepare-offline.mjs",
+    "scripts/local/initialize-whisperx.py"
+  ],
+  "rootPlanAnd43UnrelatedUnchanged": true,
+  "sqlSourcesUnchanged": true,
+  "modelProbeTimeoutUnchangedMs": 30000,
+  "defaultTestTimeoutUnchangedMs": 5000,
+  "assertionsNotWeakened": true,
+  "headUnchanged": true,
+  "stagedFiles": 0
+}

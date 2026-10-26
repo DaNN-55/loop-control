@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {spawnSync,execFileSync} from 'node:child_process';
+import {readFileSync,writeFileSync} from 'node:fs';
+import {login} from '../provider-offline-prep-20261025/control.mjs';
+import {env} from '../../../../scripts/local/environment.mjs';
+const run=new URL('.',import.meta.url).pathname,read=p=>JSON.parse(readFileSync(p)),f=read(run+'fixture-private.json'),loc=read(run+'deployment-location.json'),record=read(loc.base+'/app.json'),headers=await login();
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function ownPickers(){return execFileSync('ps',['-Ao','pid,ppid,comm'],{encoding:'utf8'}).trim().split('\n').slice(1).map(l=>l.trim().split(/\s+/)).filter(v=>Number(v[1])===record.pid&&v[2]==='/usr/bin/osascript').map(v=>Number(v[0]));}
+async function waitPid(){const end=Date.now()+5000;while(Date.now()<end){const p=ownPickers();if(p.length){assert.equal(p.length,1);return p[0];}await sleep(50);}throw Error('Own native picker process not observed');}
+async function gone(pid){const end=Date.now()+5000;while(Date.now()<end){const r=spawnSync('ps',['-p',String(pid),'-o','stat='],{encoding:'utf8'});const s=(r.stdout??'').trim();if(!s||s.startsWith('Z'))return true;await sleep(50);}return false;}
+const choose=signal=>fetch('http://127.0.0.1:55189/api/local/account-commands',{method:'POST',headers,signal,body:JSON.stringify({command:'chooseAssetDirectory',data:{accountId:f.accountId},idempotencyKey:crypto.randomUUID()})}).then(r=>({status:r.status}),()=>({connectionClosed:true}));
+const abort=new AbortController(),first=choose(abort.signal),firstPid=await waitPid();abort.abort();await first;assert(await gone(firstPid),'Request disconnect left picker running');
+const second=choose(),secondPid=await waitPid();
+const stop=spawnSync('npm',['stop','--','--deployment',loc.deploymentFile],{env,encoding:'utf8',timeout:120000,maxBuffer:1048576});writeFileSync(run+'picker-lifecycle-stop-private.log',(stop.stdout??'')+(stop.stderr??''),{flag:'wx',mode:0o600});assert.equal(stop.status,0);
+const outcome=await second;assert(outcome.connectionClosed||outcome.status===503,'Pending picker unexpectedly succeeded during shutdown');assert(await gone(secondPid),'Normal application shutdown left picker running');
+writeFileSync(run+'picker-lifecycle-result.json',JSON.stringify({passed:true,realNormalApplication:true,realNativePickerProcesses:true,clientDisconnectTerminatesPicker:true,applicationStopTerminatesPicker:true,pickerPids:[firstPid,secondPid],bothProcessesGone:true,noManualKillForGreen:true,noProviderRequests:true,originalOrphanRedRetained:true},null,2)+'\n',{flag:'wx',mode:0o600});console.log('Native picker exits on HTTP disconnect and formal application stop; no manual kill for green.');

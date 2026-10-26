@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "database": "loop_t24_restore_adclose20261025",
+  "migration": "042-native-output-ownership.sql",
+  "sha256": "3354f8f837b2f306d0361f6ec88852d12a7bbef826d2f9590dd28898e295f67c",
+  "onlyThisRunNewIsolatedDatabase": true,
+  "idempotentSecondApplication": true,
+  "allExistingBusinessRowsUnchanged": true,
+  "priorMigrationRecordsUnchanged": true,
+  "dispatchClaimLeasePoliciesByteUnchanged": true,
+  "providerAndCliLedgersByteUnchanged": true,
+  "oldTasksNotRewritten": true,
+  "sql146147Deferred": true,
+  "providerRequests": 0,
+  "cliCalls": 0
+}

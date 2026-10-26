@@ -1,0 +1,76 @@
+{
+  "passed": true,
+  "realOwnerHttp": true,
+  "realPgAndFiles": true,
+  "syntheticFileBackupRetained": true,
+  "wrongConfirmation409": true,
+  "crossEpisodePath409": true,
+  "staleDateRevision409": true,
+  "actualDatabaseFailureRestoresFilesAndRows": true,
+  "duplicateDeleteOneResult": true,
+  "deletedEpisode404": true,
+  "nonTestDelete409": true,
+  "providerRequests": 0,
+  "calls": [
+    {
+      "command": "create",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "archiveEpisode",
+      "status": 200
+    },
+    {
+      "command": "planDeletion",
+      "status": 200
+    },
+    {
+      "command": "deleteEpisode",
+      "status": 409
+    },
+    {
+      "command": "deleteEpisode",
+      "status": 409
+    },
+    {
+      "command": "deleteEpisode",
+      "status": 409
+    },
+    {
+      "command": "planDeletion",
+      "status": 200
+    },
+    {
+      "command": "deleteEpisode",
+      "status": 503
+    },
+    {
+      "command": "deleteEpisode",
+      "status": 200
+    },
+    {
+      "command": "deleteEpisode",
+      "status": 200
+    },
+    {
+      "command": "create",
+      "status": 200
+    },
+    {
+      "command": "archiveEpisode",
+      "status": 200
+    },
+    {
+      "command": "planDeletion",
+      "status": 200
+    },
+    {
+      "command": "deleteEpisode",
+      "status": 409
+    }
+  ]
+}

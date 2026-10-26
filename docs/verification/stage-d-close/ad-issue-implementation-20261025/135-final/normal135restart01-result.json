@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "normalRestartReadback": true,
+  "newAppPid": 71122,
+  "previousAppPid": 69671,
+  "args": {
+    "episodeId": "ab5c6b56-ca61-4fa4-9ed1-7fe8a2cd5245",
+    "reviewPackageId": "6d937a76-64a7-4c51-b3cb-0c0b0a8987cf",
+    "shotId": "shot-1"
+  },
+  "artifacts": [
+    {
+      "id": "beb3849e-7f0c-470a-928d-87c39043ad86",
+      "sha256": "05f4e2326df02d2d96504ce9cc667b55e73c340b28d74bef6d2a1c5d6067f1e5",
+      "bytes": 967
+    }
+  ],
+  "providerRequests": 0
+}

@@ -1,0 +1,218 @@
+{
+  "database": "loop_imported",
+  "nativePostgres": true,
+  "sourceCreatedAt": "2026-10-23T16:42:53.747Z",
+  "archiveSha256": "25e75bc66a2b7e16d294752606a121317982b84543b6296bfe927663c384b436",
+  "schemaSha256": "d8c35a0afe36a41fc763632bcba56a52623a37f3ce5ae4dd23491e5a27ea873a",
+  "platformAdaptation": {
+    "identityForeignKeys": 21,
+    "ownerCalls": 185,
+    "vaultDisabled": [
+      "public.create_external_connection(p_provider text, p_adapter text, p_name text, p_secret text) RETURNS public.external_connections",
+      "public.delete_external_connection_version(p_version_id uuid) RETURNS void",
+      "public.resolve_external_connection_secret(p_connection_id uuid) RETURNS text",
+      "public.resolve_external_connection_secret(p_connection_id uuid, p_account_id uuid) RETURNS text",
+      "public.rotate_external_connection(p_connection_id uuid, p_provider text, p_adapter text, p_secret text) RETURNS public.external_connections"
+    ]
+  },
+  "tables": {
+    "tasks": {
+      "md5": "20e4ad91d4f26fb0ea0a6a50b260dac5",
+      "count": 5227
+    },
+    "series": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "accounts": {
+      "md5": "429e6d9c3a39f93742ad9c4353c9e4c7",
+      "count": 18
+    },
+    "episodes": {
+      "md5": "cb7764a63f132a8269eaa835fb9b7f09",
+      "count": 6180
+    },
+    "approvals": {
+      "md5": "ba2edda99fb1d22c733ba0e9e4356b01",
+      "count": 7
+    },
+    "artifacts": {
+      "md5": "077e58d1fa602b9894df332204b4bba8",
+      "count": 181
+    },
+    "task_runs": {
+      "md5": "d8e64050ddc70b9520c9a46d5e9588d3",
+      "count": 213
+    },
+    "asset_locks": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "audio_tracks": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "audit_events": {
+      "md5": "b9e5285097f4d67eba2f31dc692c8cda",
+      "count": 2233
+    },
+    "prompt_versions": {
+      "md5": "9b4a1c10bb8d926f004141e43ac9af28",
+      "count": 54
+    },
+    "review_packages": {
+      "md5": "09b1c598f988c55c2674d42bcad13b5b",
+      "count": 7
+    },
+    "series_versions": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "qc_review_issues": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "state_transitions": {
+      "md5": "f647aa81c9deeb2868ffde9782692b94",
+      "count": 5
+    },
+    "review_annotations": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "account_memberships": {
+      "md5": "1ae0334ae7f01b9bb3523780adf24f3e",
+      "count": 12
+    },
+    "external_connections": {
+      "md5": "b607a44495d11133560c806a76e0107b",
+      "count": 2
+    },
+    "worker_episode_turns": {
+      "md5": "f36f7b02255387251120ef0c1b52c389",
+      "count": 119
+    },
+    "episode_read_revisions": {
+      "md5": "5412c7e25053edad19953d16b144bda4",
+      "count": 4070
+    },
+    "audio_track_annotations": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "production_dependencies": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "shot_preparation_drafts": {
+      "md5": "a121c06b704f066904bc06b6f938f810",
+      "count": 4
+    },
+    "storyboard_review_shots": {
+      "md5": "e1362e66344915708742e7d8bed7493e",
+      "count": 2
+    },
+    "production_invalidations": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "worker_resource_ceilings": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "pre_render_review_members": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "worker_scheduler_settings": {
+      "md5": "bf32eb135285e6bf6334e1cacfe3a0c7",
+      "count": 1
+    },
+    "account_blueprint_versions": {
+      "md5": "05c4dd2800e89fa4bd75538ea2f76f2b",
+      "count": 18
+    },
+    "material_revision_approvals": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "notification_delivery_state": {
+      "md5": "e686825fcfddd1463f13dea40013ce35",
+      "count": 1
+    },
+    "storyboard_audio_selections": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "external_connection_versions": {
+      "md5": "ef83e781874db7343ff7ea51a33269ca",
+      "count": 3
+    },
+    "notification_delivery_events": {
+      "md5": "43d887ab960c1a74fdceb6c21a2a5941",
+      "count": 2018
+    },
+    "production_material_revisions": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "external_connection_verifications": {
+      "md5": "47ed0790ea7624f59f0713edf953ab91",
+      "count": 4
+    },
+    "pre_render_review_member_decisions": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    },
+    "review_render_composition_revisions": {
+      "md5": "d751713988987e9331980363e24189ce",
+      "count": 0
+    }
+  },
+  "rows": 20379,
+  "emptySchemaVerified": true,
+  "copyFingerprints": {
+    "account_blueprint_versions": "db9bc8609e8d477f0dd9e103077a875a726496409a4c4bd3e8e4c6b24973a34b",
+    "account_memberships": "bb910443aa96fa2955298207436d3a67266c9441d84c56f157e56630babb7b41",
+    "accounts": "8d4b43d67414e54117044b32242bd60a26607ca9a5ad35fb930ff2d3b46c8863",
+    "approvals": "24c8467e9361179e8945910e53e03c874a4a2d235b4020266c1de9eb932b9b33",
+    "artifacts": "8e837aa87ce6389c38ce4f57ae4d34a71c7d52fd855340b7787f8365928dec98",
+    "asset_locks": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "audio_track_annotations": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "audio_tracks": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "audit_events": "a60559bf777bdebae00d859847f3ef3842f1d87bfb44f5490b00e110b312984a",
+    "episode_read_revisions": "3e43fa5e1482bec205e6c3680425eaf3c168548fc0f3ab679b2a04a6a02d18b9",
+    "episodes": "5d3100fcd37e79aedfa9d76a77079f142775b44d8bba87456127fb21828b36f6",
+    "external_connection_verifications": "40605ebcb2c2ca2f21ed65a26dc13e7b6b19a50cdd7f174d06760f8cb35bffcf",
+    "external_connection_versions": "3d7f212770935b1df8b30dbb8ef56fdbfa3a00a51b9b5133cc0516be9a910ae3",
+    "external_connections": "9ddab0f055062d17a875dbd87879a7e9ec559f4dd3aac773e44cc45d276eb3de",
+    "material_revision_approvals": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "notification_delivery_events": "36a66fbf1ad0904854eb4f09fd35c1b498c206e294da1f47ed0c9cb5fa61ea96",
+    "notification_delivery_state": "fe0bb2129443913823e1f8cf74cd5ffa406e490573c49024fe4e93599c17faae",
+    "pre_render_review_member_decisions": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "pre_render_review_members": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "production_dependencies": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "production_invalidations": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "production_material_revisions": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "prompt_versions": "5574abdf9b251b1e6a0d43dbc2f7bfdfcdb57b8e65e6364b615a949e5383a9c9",
+    "qc_review_issues": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "review_annotations": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "review_packages": "9da6efe39cd351236dc315b8d7b37afd938f94af117b15b6d57d4a3a83b9f5d5",
+    "review_render_composition_revisions": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "series": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "series_versions": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "shot_preparation_drafts": "7499880783f6dbef99b34b96cea3fa83ed9edab71179f1265b6c020b6b639c5d",
+    "state_transitions": "6767044c62a6ab04a61e946ecd69b4788d2a02403c512d50d9cacc4428a8a2f8",
+    "storyboard_audio_selections": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "storyboard_review_shots": "130c7f04a48fcbe1bc3bc70bbb684f11bbc4580858e3b9a42d8e9446131dc4b6",
+    "task_runs": "c007a992275c7f331a246e45f75f43b15f4627d7db3fc7e554964c66b313c648",
+    "tasks": "77e14ab603ee0f1d807db23a94a5bee62c12f1e011b21701e35cf013ae4e3b81",
+    "worker_episode_turns": "f9c813ca8bb672759429e66f86bd4dca3288c9908cf5ad678c4d5ed104d857e9",
+    "worker_resource_ceilings": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "worker_scheduler_settings": "8468b00b755f1061d6a0148331af3df8915b566d0d5ea336b0ff4246fa33da17"
+  },
+  "localeDigestDifferences": [
+    "worker_episode_turns",
+    "episode_read_revisions"
+  ]
+}

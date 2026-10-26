@@ -1,0 +1,12 @@
+{
+  "passed": false,
+  "exitCode": 1,
+  "signal": null,
+  "stderrHasEpipe": true,
+  "taskStatus": "running",
+  "attempt": 1,
+  "parentOutputReaderClosed": true,
+  "realNativeCliAndDatabase": true,
+  "claimedAtManuallyChanged": false,
+  "leaseDurationChanged": false
+}

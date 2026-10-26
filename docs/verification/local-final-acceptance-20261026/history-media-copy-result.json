@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-26T09:51:44.657Z",
+  "passed": true,
+  "files": 337,
+  "bytes": 2471589045,
+  "sourceModified": false,
+  "originalReferenceRows": 452,
+  "originalMatchedReferenceRows": 444,
+  "originalMismatchedReferenceRows": 8,
+  "originalDatabaseFingerprintsNotRewritten": true,
+  "destinations": [
+    "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/test-account",
+    "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/doubao",
+    "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/rizhao-jinshan"
+  ]
+}

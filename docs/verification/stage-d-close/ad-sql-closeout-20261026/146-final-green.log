@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/ad-closeout-141/loop-control
+
+ ✓ src/local-app/catalogContract.integration.test.ts (4 tests) 1289ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  08:18:43
+   Duration  1.67s (transform 122ms, setup 0ms, collect 196ms, tests 1.29s, environment 0ms, prepare 58ms)
+

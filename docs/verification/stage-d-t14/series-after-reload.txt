@@ -1,0 +1,136 @@
+### Page
+- Page URL: http://127.0.0.1:55177/
+- Page Title: Loop Control
+### Snapshot
+```yaml
+- main [ref=f4e4]:
+  - generic [ref=f4e5]:
+    - generic [ref=f4e6]: Loop Control · 本地
+    - heading "内容工作台" [level=1] [ref=f4e7]
+  - navigation [ref=f4e8]:
+    - button "账号配置" [ref=f4e9] [cursor=pointer]
+    - button "生产单目录" [ref=f4e10] [cursor=pointer]
+    - button "新建账号" [ref=f4e11] [cursor=pointer]
+    - button "刷新" [ref=f4e12] [cursor=pointer]
+    - button "退出登录" [ref=f4e13] [cursor=pointer]
+  - generic [ref=f4e15]:
+    - generic [ref=f4e16]:
+      - text: 当前账号
+      - combobox "当前账号" [ref=f4e17]:
+        - option "A阶段隔离测试"
+        - option "T10 synthetic pagination"
+        - option "T10 synthetic pagination"
+        - option "T10 synthetic pagination"
+        - option "T10 synthetic pagination"
+        - option "T10 synthetic pagination"
+        - option "T10 synthetic pagination"
+        - option "T11 synthetic reuse"
+        - option "T11 synthetic reuse"
+        - option "T11 synthetic reuse"
+        - option "T11 synthetic reuse"
+        - option "T11 synthetic reuse"
+        - option "T14 config bddd9f25"
+        - option "T14 config f4bb4d13 renamed"
+        - option "T14 config d0576f7a renamed" [selected]
+        - option "T14 browser account"
+    - button "账号操作" [ref=f4e19] [cursor=pointer]: …
+  - tablist "账号设置导航" [ref=f4e20]:
+    - tab "蓝图" [ref=f4e21] [cursor=pointer]
+    - tab "系列" [active] [selected] [ref=f4e22] [cursor=pointer]
+  - tabpanel [ref=f4e23]:
+    - generic [ref=f4e180]:
+      - complementary [ref=f4e181]:
+        - generic [ref=f4e182]:
+          - heading "系列" [level=2] [ref=f4e183]
+          - button "新建系列" [ref=f4e184] [cursor=pointer]
+        - button "T14 HTTP series 当前 v3" [ref=f4e185] [cursor=pointer]:
+          - strong [ref=f4e186]: T14 HTTP series
+          - generic [ref=f4e187]: 当前 v3
+        - generic [ref=f4e188]:
+          - heading "版本历史" [level=3] [ref=f4e189]
+          - list [ref=f4e190]:
+            - listitem [ref=f4e191]:
+              - generic [ref=f4e192]:
+                - strong [ref=f4e193]: v3
+                - generic [ref=f4e194]: 当前
+              - time [ref=f4e195]: 2026/10/24
+            - listitem [ref=f4e196]:
+              - strong [ref=f4e198]: v2
+              - time [ref=f4e199]: 2026/10/24
+            - listitem [ref=f4e200]:
+              - strong [ref=f4e202]: v1
+              - time [ref=f4e203]: 2026/10/24
+      - generic [ref=f4e205]:
+        - generic [ref=f4e207]:
+          - heading "T14 HTTP series · 当前 v3" [level=2] [ref=f4e208]
+          - paragraph [ref=f4e209]: 保存会创建 v4；已有生产单继续使用创建时冻结的系列版本。
+        - generic [ref=f4e210]:
+          - generic [ref=f4e211]:
+            - text: 系列名称（创建后固定）
+            - generic "字段说明" [ref=f4e212]:
+              - tooltip "系列名称是稳定标识，创建后不能在版本编辑中修改；当前只更新规则版本。"
+          - textbox "系列名称" [ref=f4e215]:
+            - /placeholder: 例如：城市观察短片
+            - text: T14 HTTP series
+        - group [ref=f4e216]:
+          - generic [ref=f4e218]:
+            - text: 系列基线
+            - generic "系列基线说明" [ref=f4e219]:
+              - tooltip "系列规则会作为固定基线传给视觉准备和分镜任务；新建生产单会冻结当前系列版本。当前主脚本由 Owner 提供，不会依据这些字段自动生成。"
+          - generic [ref=f4e222]:
+            - generic [ref=f4e223]:
+              - text: 系列定位
+              - generic "系列定位说明" [ref=f4e224]:
+                - tooltip "这个系列具体讲什么，与账号定位相比更聚焦。没有系列级额外要求时保持为空，不要填写“没有具体要求”；空值不会向下游增加约束。"
+            - textbox "系列定位" [ref=f4e227]:
+              - /placeholder: 例如：围绕固定主题制作短视频内容。
+              - text: T14 browser series baseline
+          - generic [ref=f4e228]:
+            - generic [ref=f4e229]:
+              - text: 内容格式
+              - generic "内容格式说明" [ref=f4e230]:
+                - tooltip "固定画幅、语言、旁白等制作格式；每集时长由当次分镜决定。没有额外要求时保持为空，不要填写“没有具体要求”。"
+            - textbox "内容格式" [ref=f4e233]:
+              - /placeholder: 例如：9:16 竖屏，目标语言旁白
+              - text: second
+          - generic [ref=f4e234]:
+            - generic [ref=f4e235]:
+              - generic [ref=f4e236]:
+                - text: 角色设定
+                - generic "角色设定说明" [ref=f4e237]:
+                  - tooltip "主要角色、身份、性格、关系和不能随意改变的设定。没有额外要求时保持为空，不要填写“没有具体要求”。"
+              - textbox "角色设定" [ref=f4e240]:
+                - /placeholder: 例如：主持人的身份、性格和固定道具。
+            - generic [ref=f4e241]:
+              - generic [ref=f4e242]:
+                - text: 地点设定
+                - generic "地点设定说明" [ref=f4e243]:
+                  - tooltip "固定出现的国家、城市、建筑、自然环境或时代背景。没有额外要求时保持为空，不要填写“没有具体要求”。"
+              - textbox "地点设定" [ref=f4e246]:
+                - /placeholder: 例如：城市街区、室内工作台和夜间环境。
+            - generic [ref=f4e247]:
+              - generic [ref=f4e248]:
+                - text: 视觉风格
+                - generic "视觉风格说明" [ref=f4e249]:
+                  - tooltip "画面质感、色彩、镜头语言和视觉禁忌。没有额外要求时保持为空，不要填写“没有具体要求”。"
+              - textbox "视觉风格" [ref=f4e252]:
+                - /placeholder: 例如：写实纪实、低饱和、潮湿夜景、手持镜头感。
+            - generic [ref=f4e253]:
+              - generic [ref=f4e254]:
+                - text: 叙事结构
+                - generic "叙事结构说明" [ref=f4e255]:
+                  - tooltip "每集故事的推荐展开顺序，会影响视觉准备和分镜结构。没有额外要求时保持为空，不要填写“没有具体要求”。"
+              - textbox "叙事结构" [ref=f4e258]:
+                - /placeholder: 例如：3秒钩子 → 地点背景 → 异常事件 → 人物选择 → 留白结尾。
+          - generic [ref=f4e259]:
+            - generic [ref=f4e260]:
+              - text: 限制与禁用内容
+              - generic "限制与禁用内容说明" [ref=f4e261]:
+                - tooltip "明确不能出现的事实、表达、人物、素材或画面。没有额外限制时保持为空，不要填写“没有具体要求”。"
+            - textbox "限制与禁用内容" [ref=f4e264]:
+              - /placeholder: 例如：不虚构真实新闻；不使用儿童受害情节；不出现现代品牌标识。
+          - paragraph [ref=f4e265]: 保存的非空字段会进入后续视觉准备和分镜上下文，并随生产单冻结。空字段表示不增加系列级约束；当前主脚本仍由 Owner 提供。
+        - generic [ref=f4e266]:
+          - button "取消编辑" [ref=f4e267] [cursor=pointer]
+          - button "保存为 v4" [ref=f4e268] [cursor=pointer]
+```

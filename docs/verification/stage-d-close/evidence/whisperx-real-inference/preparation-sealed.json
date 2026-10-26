@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "phase": "preparation-complete-inference-offline",
+  "sealedAt": "2026-10-25T04:24:53.975724+00:00",
+  "dependencyPackages": 102,
+  "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+  "revision": "99ccb2737be22b8bb50dcfcc39ad4d567fb90cfd",
+  "modelFileHashesVerified": true,
+  "necessarySentenceTokenizerDataPrepared": true,
+  "downloadsAllCompletedBeforeInference": true,
+  "futureNetworkAllowed": false,
+  "providerCalls": 0
+}

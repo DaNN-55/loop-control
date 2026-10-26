@@ -1,0 +1,10 @@
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync,copyFileSync} from 'node:fs';
+import {createHash,randomUUID} from 'node:crypto';
+import {login,load,q,d as intake} from '../provider-offline-prep-20261025/control.mjs';
+const run=new URL('.',import.meta.url).pathname,read=p=>JSON.parse(readFileSync(p)),f=read(run+'fixture-private.json'),loc=load('deployment-location.json'),record=read(loc.base+'/app.json');assert(record.offlineGuard);assert.equal(record.deploymentFile,loc.deploymentFile);assert(!intake.worker);
+const headers=await login(),revision=q(`SELECT md5(policy::text) FROM public.account_blueprint_versions WHERE id='${f.blueprintId}'`);
+const r=await fetch('http://127.0.0.1:55189/api/local/account-commands',{method:'POST',headers,body:JSON.stringify({command:'checkBlueprint',data:{accountId:f.accountId,blueprintVersionId:f.blueprintId,expectedRevision:revision},idempotencyKey:randomUUID()})});assert.equal(r.status,200);const p=await r.json();assert(p.checks.some(x=>x.status==='unavailable'&&x.scope==='worker'));assert(!p.checks.some(x=>x.status==='passed'));
+const phase=read(new URL('../google-diagnostic-20261025/phase.json',import.meta.url)),s=read(phase.directory+'/state.json');assert.equal(s.used,10);assert.equal(s.costMicrounits,30000);assert.equal(s.halted,true);assert.equal(read(intake.connections.network.directory+'/policy.json').enabled,false);assert.equal(read(intake.connections.network.directory+'/state.json').used,0);
+copyFileSync(run+'closed-service-private.log',run+'closed-service-at-final-private.log');
+writeFileSync(run+'closed-final-result.json',JSON.stringify({passed:true,originalIntakeRestored:true,osLoopbackServiceTree:true,noWorkerInIntake:true,preflightReportsUnavailableWithoutWorker:true,noFalseSuccess:true,providerRequests:0,cumulativeRequests:10,cumulativeCostReservedCny:0.03,actualBillQueried:false,allOnlineLedgersRemainSealed:true,originalClosedLedgerUnchangedAtZero:true},null,2)+'\n',{flag:'wx',mode:0o600});console.log('Original closed intake restored; new preflight honestly reports missing Worker; Provider ledger remains10.');

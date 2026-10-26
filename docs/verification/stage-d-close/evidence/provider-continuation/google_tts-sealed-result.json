@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "provider": "google_tts",
+  "providerAcceptancePassed": false,
+  "cumulativeUsed": 6,
+  "costReservedCny": 0,
+  "countsNotReset": true,
+  "allOwnProcessesStopped": true
+}

@@ -1,0 +1,42 @@
+{
+  "passed": true,
+  "runtimeFingerprintMatches": true,
+  "ownAppAndWorkerProcessesStopped": true,
+  "ownChromeClosed": true,
+  "ownSyntheticVaultEntryDeleted": true,
+  "ownStudioCloseHooksAwaited": true,
+  "ownPort55185Closed": true,
+  "defaultNativeWorkerConfigAbsent": true,
+  "postgresAndMediaVolumeRetained": true,
+  "headUnchanged": true,
+  "indexEmpty": true,
+  "historicalTestAndUiConfigHashes": [
+    {
+      "file": "src/reviews/ReviewWorkspace.test.tsx",
+      "base": "3af94c4d13ef319380f239bda24c45ae2b746dbe42a2a7f3e12851187624a35e",
+      "current": "3af94c4d13ef319380f239bda24c45ae2b746dbe42a2a7f3e12851187624a35e"
+    },
+    {
+      "file": "src/App.tsx",
+      "base": "75e28125dbc12441e5b7b29d53d9c0a46d949563c78c675a9372c59f9aaed808",
+      "current": "75e28125dbc12441e5b7b29d53d9c0a46d949563c78c675a9372c59f9aaed808"
+    },
+    {
+      "file": "src/episodes/EpisodeProduction.tsx",
+      "base": "603c6f9d2bcadb3f351a1571c80375a0e1e702124e4b05434e5d98c3236c3320",
+      "current": "603c6f9d2bcadb3f351a1571c80375a0e1e702124e4b05434e5d98c3236c3320"
+    },
+    {
+      "file": "vite.config.ts",
+      "base": "3787d584237065f6139d7d05ae0b5065cdb5f4bbbe3217e094d45fc4b3aa1f74",
+      "current": "3787d584237065f6139d7d05ae0b5065cdb5f4bbbe3217e094d45fc4b3aa1f74"
+    }
+  ],
+  "historicalFiveSecondFailuresAndRootCauseStillOpen": true,
+  "noProduction": true,
+  "noOnlineRequests": true,
+  "noCommit": true,
+  "noPush": true,
+  "noMerge": true,
+  "noT23": true
+}

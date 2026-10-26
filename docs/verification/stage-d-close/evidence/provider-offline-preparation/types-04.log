@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 check
+> tsc -b --pretty false
+
+src/local-app/providerProbe.test.ts(8,342): error TS2493: Tuple type '[]' of length '0' has no element at index '0'.

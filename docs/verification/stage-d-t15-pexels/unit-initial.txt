@@ -1,0 +1,35 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/local-app/connections.test.ts (3 tests) 3ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx (1 test) 134ms
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  4 passed (4)
+   Start at  11:14:42
+   Duration  1.31s (transform 428ms, setup 0ms, collect 559ms, tests 138ms, environment 1.26s, prepare 258ms)
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/pexelsLiveProbe.test.ts [ src/local-app/pexelsLiveProbe.test.ts ]
+Error: [vitest] No "default" export is defined on the "node:https" mock. Did you forget to return it from "vi.mock"?
+If you need to partially mock a module, you can use "importOriginal" helper inside:
+
+vi[33m.[39m[34mmock[39m([35mimport[39m([32m"node:https"[39m)[33m,[39m [35masync[39m (importOriginal) [33m=>[39m {
+  [35mconst[39m actual [33m=[39m [35mawait[39m [34mimportOriginal[39m()
+  [35mreturn[39m {
+    [33m...[39mactual[33m,[39m
+    [90m// your mocked methods[39m
+  }
+})
+
+ ❯ src/local-app/pexelsLiveProbe.ts:1:23
+      1| import {request} from 'node:https';
+       |                       ^
+      2| import type {ConnectionProbe,ProbeOutcome} from './connectionPorts.js';
+      3| 
+ ❯ src/local-app/pexelsLiveProbe.test.ts:5:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

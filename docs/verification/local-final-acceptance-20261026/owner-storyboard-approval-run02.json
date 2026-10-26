@@ -1,0 +1,21 @@
+{
+  "kind": "storyboard-review",
+  "confirmedBy": "human-owner",
+  "confirmed": true,
+  "confirmedAt": "2026-10-26T06:25:34.614Z",
+  "sourceUserMessage": "Direct human reply to request_user_input_async call_2a02164a38514937b58697aa2628113d item 0: 批准分镜，继续素材与配音",
+  "episodeId": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+  "reviewPackageId": "1a954445-efc4-4544-8b42-b8c237aa045c",
+  "artifactId": "1b2260cf-d769-4cf1-886c-42d64f830ed1",
+  "artifactSha256": "7c3e57dc0a3cced1bf02380fcc186885ff7db70c0366983db34630f2701fec64",
+  "approvedShotIds": [
+    "shot-1",
+    "shot-2",
+    "shot-3"
+  ],
+  "approvedNominalSeconds": 48,
+  "doesNotApprove": [
+    "qc_review",
+    "publication"
+  ]
+}

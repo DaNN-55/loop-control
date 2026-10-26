@@ -1,0 +1,1 @@
+{"passed":true,"checks":{"anonymous":401,"csrf":403,"crossOrigin":403,"crossEpisodePath":400,"staleQc":409,"emptyReason":400,"frozenFingerprint":409,"crossOwner":404}}

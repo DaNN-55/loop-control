@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "realChrome": true,
+  "isolatedOrigin": "http://127.0.0.1:55186",
+  "ownerLogin": true,
+  "reloadedAcrossRealServiceRestart": true,
+  "manualRefresh": true,
+  "independentScheduleNotificationHealthBackupSnapshotStates": true,
+  "unresolvedSixNotHidden": true,
+  "lastFailuresStillVisible": true,
+  "controlledClock": "2026-10-24 through 2026-11-01; not actual waiting",
+  "fullScreenshot": "browser-15-full-status.png",
+  "fullScreenshotInspected": true,
+  "componentCropBlankNotAcceptanceEvidence": true,
+  "actualNetworkTargetsChecked": 414,
+  "inlineDataImages": 5,
+  "svgNamespaceIsNotNetworkRequest": true,
+  "externalRequestOriginsObserved": 0,
+  "rawNetworkPrivate": true
+}

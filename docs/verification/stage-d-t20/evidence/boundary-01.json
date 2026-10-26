@@ -1,0 +1,73 @@
+{
+  "passed": true,
+  "realHttp": true,
+  "checks": [
+    {
+      "command": "generateSourceAudio",
+      "status": 401
+    },
+    {
+      "command": "generateSourceAudio",
+      "status": 403
+    },
+    {
+      "command": "requestAlignment",
+      "status": 403
+    },
+    {
+      "command": "requestAlignment",
+      "status": 400
+    },
+    {
+      "command": "generateSyncPreview",
+      "status": 409
+    },
+    {
+      "command": "saveManualAlignment",
+      "status": 400
+    },
+    {
+      "command": "saveManualAlignment",
+      "status": 400
+    },
+    {
+      "command": "generateSourceAudio",
+      "status": 409
+    },
+    {
+      "command": "saveManualAlignment",
+      "status": 409
+    },
+    {
+      "command": "generateSyncPreview",
+      "status": 409
+    },
+    {
+      "command": "confirmSyncPreview",
+      "status": 409
+    },
+    {
+      "command": "generateSourceAudio",
+      "status": 404
+    },
+    {
+      "command": "requestAlignment",
+      "status": 404
+    },
+    {
+      "command": "saveManualAlignment",
+      "status": 404
+    },
+    {
+      "command": "generateSyncPreview",
+      "status": 404
+    },
+    {
+      "command": "confirmSyncPreview",
+      "status": 404
+    }
+  ],
+  "temporaryCorruptionRestored": true,
+  "domainTextAndOverlapRulesPreserved": true,
+  "providerRequests": 0
+}

@@ -1,0 +1,17 @@
+{
+  "passed": true,
+  "oldCookie401": true,
+  "oldPassword401": true,
+  "newPasswordLogin200": true,
+  "normalEntryCatalogPage2": true,
+  "sourceBrowserBlueprintEditPreserved": true,
+  "sourceBrowserApprovalPreserved": true,
+  "mappedAssetRootUsesNewMedia": true,
+  "keychainReferenceInitiallyMissing": true,
+  "explicitOwnerHttpRebind": true,
+  "exactSameVersionAndReference": true,
+  "offlineVerificationRetryable": true,
+  "noQualificationGranted": true,
+  "restoredWorkerReviewApproved": true,
+  "onlineRequests": 0
+}

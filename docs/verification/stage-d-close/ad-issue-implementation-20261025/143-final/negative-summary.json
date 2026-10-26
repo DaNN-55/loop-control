@@ -1,0 +1,113 @@
+{
+  "thirdOwnerReply": "ok, saw it",
+  "thirdRealEventId": "a99b7345-4a8e-4513-82e0-53b706f615f4",
+  "ownerVisibleConfirmed": true,
+  "firstTwoNotSeenRecordsPreserved": true,
+  "systemNotificationSettingsChanged": false,
+  "denialScope": "Actual OS process-exec EPERM; not user toggling notification permission",
+  "sandboxFormalStartupReceiptsPassed": false,
+  "sandboxStartupFailuresRetained": true,
+  "denial": {
+    "before-restart": {
+      "passed": true,
+      "checks": {
+        "initialized": true,
+        "oldLedgerUnchanged": true,
+        "oneLedgerRow": true,
+        "pendingEmpty": true,
+        "noMissingLedger": true,
+        "eventIdentity": true,
+        "expectedOutcome": true,
+        "hasReservation": true,
+        "completionState": true,
+        "historicalUnresolvedRetained": true
+      },
+      "outcome": "uncertain",
+      "eventFingerprint": "4c425037940cfd2f63f818b7c289465f"
+    },
+    "after-restart": {
+      "passed": true,
+      "checks": {
+        "initialized": true,
+        "oldLedgerUnchanged": true,
+        "oneLedgerRow": true,
+        "pendingEmpty": true,
+        "noMissingLedger": true,
+        "eventIdentity": true,
+        "expectedOutcome": true,
+        "hasReservation": true,
+        "completionState": true,
+        "historicalUnresolvedRetained": true,
+        "sameRecordAfterRestart": true
+      },
+      "outcome": "uncertain",
+      "eventFingerprint": "4c425037940cfd2f63f818b7c289465f"
+    }
+  },
+  "interruption": {
+    "before-kill": {
+      "passed": true,
+      "checks": {
+        "initialized": true,
+        "oldLedgerUnchanged": true,
+        "oneLedgerRow": true,
+        "pendingEmpty": true,
+        "noMissingLedger": true,
+        "eventIdentity": true,
+        "expectedOutcome": true,
+        "hasReservation": true,
+        "completionState": true,
+        "historicalUnresolvedRetained": true
+      },
+      "outcome": "reserved",
+      "eventFingerprint": "437b57a75db0c6648d41c6a1e9aabca7"
+    },
+    "after-kill": {
+      "passed": true,
+      "checks": {
+        "initialized": true,
+        "oldLedgerUnchanged": true,
+        "oneLedgerRow": true,
+        "pendingEmpty": true,
+        "noMissingLedger": true,
+        "eventIdentity": true,
+        "expectedOutcome": true,
+        "hasReservation": true,
+        "completionState": true,
+        "historicalUnresolvedRetained": true,
+        "sameRecordAfterRestart": true
+      },
+      "outcome": "reserved",
+      "eventFingerprint": "437b57a75db0c6648d41c6a1e9aabca7"
+    },
+    "after-restart": {
+      "passed": true,
+      "checks": {
+        "initialized": true,
+        "oldLedgerUnchanged": true,
+        "oneLedgerRow": true,
+        "pendingEmpty": true,
+        "noMissingLedger": true,
+        "eventIdentity": true,
+        "expectedOutcome": true,
+        "hasReservation": true,
+        "completionState": true,
+        "historicalUnresolvedRetained": true,
+        "sameRecordAfterRestart": true
+      },
+      "outcome": "reserved",
+      "eventFingerprint": "437b57a75db0c6648d41c6a1e9aabca7"
+    }
+  },
+  "actualOsPermissionError": "EPERM",
+  "interruptionIdentityChecks": {
+    "serviceStartUnchanged": true,
+    "childStartUnchanged": true,
+    "realParent": true,
+    "ownDetachedGroup": true,
+    "childStopped": true,
+    "actualOsascriptCommand": true
+  },
+  "onlyVerifiedOwnedGroupKilled": true,
+  "providerRequests": 0
+}

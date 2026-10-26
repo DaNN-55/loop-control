@@ -1,0 +1,13 @@
+{
+  "started": "2026-10-25T07:26:19.478Z",
+  "finished": "2026-10-25T07:26:26.141Z",
+  "command": [
+    "npm",
+    "run",
+    "build"
+  ],
+  "status": 0,
+  "passed": true,
+  "defaultTestTimeoutMs": 5000,
+  "timeoutOverride": false
+}

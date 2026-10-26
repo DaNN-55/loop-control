@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "task": {
+    "runs": 0,
+    "status": "ready",
+    "attempt": 0,
+    "claimedAt": null,
+    "availableAt": "2026-10-24T23:47:27.546514+00:00"
+  },
+  "originalDelaySeconds": 20,
+  "testTriggerRemoved": true,
+  "workerLeaseUnchanged": true
+}

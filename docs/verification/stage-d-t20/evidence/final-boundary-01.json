@@ -1,0 +1,126 @@
+{
+  "at": "2026-10-24T10:32:48.068Z",
+  "head": "98abbdc05c7178a95702572f5c0d0c0651e5917c",
+  "branch": "codex/local-first-stage-a",
+  "headUnchanged": true,
+  "staged": "",
+  "rootPlanUnchanged": true,
+  "historicalTimeoutTestUnchanged": true,
+  "historicalTimeoutTestSha256": "eb7243a7295affc770a0b923207501d1563d71e4624a33438bb04d174f4e59bf",
+  "preparedRuntimeMatches": true,
+  "tasks": [
+    {
+      "id": "351ebf61-0ed0-4969-a10b-ecf1eac70527",
+      "type": "prepare_visual_brief",
+      "model": "gpt-5.6-luna",
+      "status": "completed",
+      "attempt": 1
+    },
+    {
+      "id": "4c4c3d4b-787e-4aaf-aed5-8e03d336a1d5",
+      "type": "draft_storyboard",
+      "model": "gpt-5.6-luna",
+      "status": "completed",
+      "attempt": 1
+    },
+    {
+      "id": "2b845fef-73b5-47c6-ab7b-542d72b86332",
+      "type": "generate_a_roll",
+      "model": "ffmpeg",
+      "status": "completed",
+      "attempt": 1
+    },
+    {
+      "id": "0c3589ad-ef3a-4377-8fd2-642780c6a9b9",
+      "type": "extract_embedded_audio",
+      "model": "ffmpeg",
+      "status": "completed",
+      "attempt": 1
+    },
+    {
+      "id": "664c5604-9879-4613-8b6f-19fbc715b51f",
+      "type": "extract_embedded_audio",
+      "model": "ffmpeg",
+      "status": "completed",
+      "attempt": 1
+    },
+    {
+      "id": "19d1d245-644c-42c1-baf4-47b7a08f9e4a",
+      "type": "align_shot_captions",
+      "model": "large-v3",
+      "status": "blocked",
+      "attempt": 1
+    },
+    {
+      "id": "212154d3-d59d-434b-b767-6825ddd71b44",
+      "type": "generate_shot_sync_preview",
+      "model": "openchatcut@0.2.14",
+      "status": "blocked",
+      "attempt": 1
+    },
+    {
+      "id": "4be24c37-d25d-4fda-9605-50d8e1a97b75",
+      "type": "align_shot_captions",
+      "model": "large-v3",
+      "status": "blocked",
+      "attempt": 1
+    },
+    {
+      "id": "65ee1c0b-e498-4b2c-8258-83bd172e83e3",
+      "type": "generate_shot_sync_preview",
+      "model": "openchatcut@0.2.14",
+      "status": "completed",
+      "attempt": 1
+    },
+    {
+      "id": "b89ec86d-2bbb-4207-a5b7-be553082a5a5",
+      "type": "align_shot_captions",
+      "model": "large-v3",
+      "status": "blocked",
+      "attempt": 1
+    },
+    {
+      "id": "db5c96de-7351-4662-a989-834bcf69824f",
+      "type": "generate_shot_sync_preview",
+      "model": "openchatcut@0.2.14",
+      "status": "completed",
+      "attempt": 1
+    },
+    {
+      "id": "30749451-348c-4bd2-8e0d-110921b52195",
+      "type": "align_shot_captions",
+      "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+      "status": "blocked",
+      "attempt": 1
+    },
+    {
+      "id": "947eb7ce-38ab-4207-9490-333789550909",
+      "type": "generate_shot_sync_preview",
+      "model": "openchatcut@0.2.14",
+      "status": "completed",
+      "attempt": 1
+    },
+    {
+      "id": "ecc4adf5-6c0b-4f4c-afbb-9dc15cc26878",
+      "type": "align_shot_captions",
+      "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+      "status": "blocked",
+      "attempt": 1
+    },
+    {
+      "id": "ec1fe453-1cda-4a5e-af24-bbb710499fff",
+      "type": "generate_shot_sync_preview",
+      "model": "openchatcut@0.2.14",
+      "status": "completed",
+      "attempt": 1
+    }
+  ],
+  "providerRequests": 0,
+  "applicationStopped": true,
+  "chromeClosed": true,
+  "browserSyntheticAuthVaultEntryRemoved": true,
+  "noCommit": true,
+  "noPush": true,
+  "noMerge": true,
+  "noT21": true
+}

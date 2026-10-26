@@ -1,0 +1,42 @@
+{
+  "version": "acoustic-alignment/v1",
+  "status": "needs_review",
+  "method": "local_whisperx",
+  "granularity": "phrase",
+  "audioSha256": "f751fd7094be088dc785125e4a1a0222a17c2bd20469aa31728ca5e515ed5809",
+  "textFingerprint": "ccacb472427af8c2b007c511033470b0fd3efee4cf04f60737e5ea202f26b0bf",
+  "inputVersion": "46a81a76accfabe98d771fdbb62dc76a8e2d76df0370f9ec7d9c09a27cbaacce",
+  "provider": "whisperx",
+  "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+  "connectionVersionId": null,
+  "wordCount": 1,
+  "cues": [
+    {
+      "id": "phrase-1",
+      "text": "这是本地字幕验收。",
+      "startMs": 60,
+      "endMs": 3960,
+      "confidence": 0.124375
+    }
+  ],
+  "reviewIssues": [
+    {
+      "id": "low-confidence-1",
+      "kind": "low_confidence",
+      "text": "这是本地字幕验收。",
+      "cueIds": [
+        "phrase-1"
+      ],
+      "detail": "平均置信度 0.12，低于 0.72。"
+    }
+  ],
+  "attempts": [
+    {
+      "method": "local_whisperx",
+      "status": "completed",
+      "detail": "本地 WhisperX 已生成候选时序，存在需要 Owner 检查的区间。"
+    }
+  ],
+  "detail": "本地 WhisperX 返回 1 个待人工检查区间。",
+  "generatedAt": "2026-10-25T04:42:47.773Z"
+}

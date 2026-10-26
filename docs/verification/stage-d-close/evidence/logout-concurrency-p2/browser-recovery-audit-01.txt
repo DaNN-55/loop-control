@@ -1,0 +1,7 @@
+{
+  "noStaleError": true,
+  "oldFailureDidNotClearNewSession": true,
+  "pendingReadFence": true,
+  "realLogins": 1,
+  "sameDocument": true
+}

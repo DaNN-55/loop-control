@@ -1,0 +1,20 @@
+{
+  "browserOsLoopbackAttempts": 2,
+  "browserError": "CDP response channel closed",
+  "offlineDoctorPassed": true,
+  "browserAllowlistOnlyLaunchPassed": true,
+  "firstCookieImportWrongName": "Cookie header prefix treated as part of cookie name; local session401",
+  "cookieImportRecovered": "Bare cookie via memory stdin; no value output or file persistence",
+  "nativePickerUnderOsSandbox": "osascript registered without CGS connection, no visible chooser; current request pending",
+  "adjustment": "Restart UI-only app with standard offline-test Node guard, ports disabled, browser local-domain allowlist. OS wrapper excluded for this desktop GUI step only; original closed intake OS wrapper restored at end.",
+  "fullBuildInvalidatedPreparedRuntimeObserved": true,
+  "runtimeRecovery": "Formal restart after build prepares actual runtime; original unavailable result preserved",
+  "providerRequests": 0,
+  "initialNativeWindowAbsenceInferenceNotConfirmed": true,
+  "ownerConfirmedActualWindowAppeared": true,
+  "freshOwnerAssistedSelectionAndCancellationPassed": true,
+  "actualIssue": "Automation app inventory could not bind the osascript window; no conclusion that OS envelope blocked the picker",
+  "pageBasedPickerAlternativeImplemented": false,
+  "keptSystemPicker": true,
+  "ownedOrphanShutdownRedAndGreenRecorded": true
+}

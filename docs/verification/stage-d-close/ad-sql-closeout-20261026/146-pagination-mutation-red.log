@@ -1,0 +1,139 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/ad-closeout-141/loop-control
+
+ ❯ src/local-app/catalogContract.integration.test.ts (4 tests | 2 failed) 830ms
+   × keeps stable ordering, bounded pages, totals and independent account summaries 48ms
+     → expected { …(13) } to deeply equal { page: 1, total: 28, …(11) }
+   ✓ preserves account, series, archived and review filters without changing global counts 147ms
+   × keeps independently paged pending reviews, blockers and Worker summary 47ms
+     → expected { …(13) } to deeply equal { page: 1, total: 28, …(11) }
+   ✓ isolates Owners and excludes non-Owner memberships through both actual database roles 250ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/catalogContract.integration.test.ts > keeps stable ordering, bounded pages, totals and independent account summaries
+AssertionError: expected { …(13) } to deeply equal { page: 1, total: 28, …(11) }
+
+- Expected
++ Received
+
+@@ -372,29 +372,10 @@
+        "tts_speaking_rate": null,
+        "tts_voice": null,
+        "updated_at": "2026-01-01T00:00:00+00:00",
+        "worker_preflight_at": null,
+      },
+-     {
+-       "account_id": "d94ae82e-05b2-4542-9657-7789a477f2cb",
+-       "archived_at": null,
+-       "audio_source_mode": "tts",
+-       "blueprint_version_id": "d94ae82e-05b2-4542-9657-7789a477f2cb",
+-       "created_at": "2026-10-26T00:18:42.72698+00:00",
+-       "id": "844fadf7-81c8-484d-888d-000000000020",
+-       "is_test": false,
+-       "main_script_revision_id": null,
+-       "script_source": "provided",
+-       "series_version_id": null,
+-       "stage": "script_review",
+-       "title": "Catalog 20",
+-       "tts_language_code": null,
+-       "tts_speaking_rate": null,
+-       "tts_voice": null,
+-       "updated_at": "2026-01-01T00:00:00+00:00",
+-       "worker_preflight_at": null,
+-     },
+    ],
+    "operationRows": [
+      {
+        "blockerCount": 0,
+        "episodeId": "844fadf7-81c8-484d-888d-000000000001",
+@@ -504,16 +485,10 @@
+        "reviewRevision": null,
+      },
+      {
+        "blockerCount": 0,
+        "episodeId": "844fadf7-81c8-484d-888d-000000000019",
+-       "reviewPending": false,
+-       "reviewRevision": null,
+-     },
+-     {
+-       "blockerCount": 0,
+-       "episodeId": "844fadf7-81c8-484d-888d-000000000020",
+        "reviewPending": false,
+        "reviewRevision": null,
+      },
+    ],
+    "page": 1,
+
+ ❯ compare src/local-app/catalogContract.integration.test.ts:107:28
+
+ ❯ src/local-app/catalogContract.integration.test.ts:112:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/catalogContract.integration.test.ts > keeps independently paged pending reviews, blockers and Worker summary
+AssertionError: expected { …(13) } to deeply equal { page: 1, total: 28, …(11) }
+
+- Expected
++ Received
+
+@@ -913,29 +913,10 @@
+        "tts_speaking_rate": null,
+        "tts_voice": null,
+        "updated_at": "2026-01-01T00:00:00+00:00",
+        "worker_preflight_at": null,
+      },
+-     {
+-       "account_id": "d94ae82e-05b2-4542-9657-7789a477f2cb",
+-       "archived_at": null,
+-       "audio_source_mode": "tts",
+-       "blueprint_version_id": "d94ae82e-05b2-4542-9657-7789a477f2cb",
+-       "created_at": "2026-10-26T00:18:42.72698+00:00",
+-       "id": "844fadf7-81c8-484d-888d-000000000020",
+-       "is_test": false,
+-       "main_script_revision_id": null,
+-       "script_source": "provided",
+-       "series_version_id": null,
+-       "stage": "script_review",
+-       "title": "Catalog 20",
+-       "tts_language_code": null,
+-       "tts_speaking_rate": null,
+-       "tts_voice": null,
+-       "updated_at": "2026-01-01T00:00:00+00:00",
+-       "worker_preflight_at": null,
+-     },
+    ],
+    "operationRows": [
+      {
+        "blockerCount": 25,
+        "episodeId": "844fadf7-81c8-484d-888d-000000000001",
+@@ -1045,16 +1026,10 @@
+        "reviewRevision": 1,
+      },
+      {
+        "blockerCount": 0,
+        "episodeId": "844fadf7-81c8-484d-888d-000000000019",
+-       "reviewPending": true,
+-       "reviewRevision": 1,
+-     },
+-     {
+-       "blockerCount": 0,
+-       "episodeId": "844fadf7-81c8-484d-888d-000000000020",
+        "reviewPending": true,
+        "reviewRevision": 1,
+      },
+    ],
+    "page": 1,
+
+ ❯ compare src/local-app/catalogContract.integration.test.ts:107:28
+
+ ❯ src/local-app/catalogContract.integration.test.ts:130:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 2 passed (4)
+   Start at  08:18:42
+   Duration  1.28s (transform 100ms, setup 0ms, collect 240ms, tests 830ms, environment 0ms, prepare 49ms)
+

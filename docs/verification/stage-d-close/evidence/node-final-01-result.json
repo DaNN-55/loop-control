@@ -1,0 +1,11 @@
+{
+  "started": "2026-10-25T00:54:09.299Z",
+  "finished": "2026-10-25T00:54:09.421Z",
+  "command": [
+    "node",
+    "--test",
+    "n8n/import-workflows.test.mjs"
+  ],
+  "status": 0,
+  "passed": true
+}

@@ -1,0 +1,16 @@
+{
+  "started": "2026-10-25T07:52:36.267Z",
+  "finished": "2026-10-25T07:52:37.139Z",
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/local-app/providerProbe.test.ts",
+    "--exclude",
+    "**/.loop-control/**"
+  ],
+  "status": 1,
+  "passed": false,
+  "defaultTestTimeoutMs": 5000,
+  "timeoutOverride": false
+}

@@ -66,7 +66,7 @@ describe("受控媒体供应商", () => {
     }), { status: 200 }));
 
     await expect(searchPexelsVideo({ apiKey: "pexels-key", fetcher, query: "雨夜铜铃", targetDurationSeconds: 5 })).resolves.toEqual({ id: 88, durationSeconds: 6, downloadUrl: "https://cdn.pexels.test/portrait.mp4" });
-    expect(fetcher).toHaveBeenCalledWith("https://api.pexels.com/videos/search?query=%E9%9B%A8%E5%A4%9C%E9%93%9C%E9%93%83&orientation=portrait&per_page=15", { headers: { Authorization: "pexels-key" } });
+    expect(fetcher).toHaveBeenCalledWith("https://api.pexels.com/v1/videos/search?query=%E9%9B%A8%E5%A4%9C%E9%93%9C%E9%93%83&orientation=portrait&per_page=15", { headers: { Authorization: "pexels-key" } });
   });
 
   it("在 Pexels 请求边界将冻结检索词的换行规范为空格", async () => {

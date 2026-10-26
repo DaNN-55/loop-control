@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "database": "loop_control",
+  "origin": "http://127.0.0.1:5174",
+  "catalogs": {
+    "accounts": {
+      "total": 6260,
+      "page": 1,
+      "reviewCount": 21
+    },
+    "episodes": {
+      "total": 6260,
+      "page": 1,
+      "reviewCount": 21
+    },
+    "reviews": {
+      "total": 21,
+      "page": 1,
+      "reviewCount": 21
+    },
+    "operations": {
+      "total": 6260,
+      "page": 1,
+      "reviewCount": 21
+    }
+  },
+  "paging": true,
+  "existingCompletedEpisodeId": "86f722d2-3675-4732-a8cd-d4276af51e7c",
+  "existingArtifacts": 39,
+  "media": [
+    {
+      "type": "publish_package",
+      "sha256": "696e864471f61e40ac42a739e72987fa837cabac92248ef7a9408a79f914c6a0",
+      "bytes": 1225
+    },
+    {
+      "type": "final_render",
+      "sha256": "6d126321a3939a379037047ef67d0b8f56187613f6541d09b5381f389fd291d4",
+      "bytes": 136047301
+    }
+  ],
+  "newAccountCreated": true,
+  "newEpisodeCreated": true,
+  "newEpisodeRenamedArchivedRestored": true,
+  "mainScriptImported": true,
+  "actualPreflightPassed": true,
+  "passwordChangedAndRestored": true,
+  "otherSessionsRevoked": true,
+  "currentSessionPreserved": true,
+  "passwordNeverReturned": true,
+  "automationRunning": true,
+  "n8nRequired": false,
+  "providerRequests": 0,
+  "cliCalls": 0
+}

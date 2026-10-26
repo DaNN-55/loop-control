@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {copyFileSync} from 'node:fs';
+import {q,load,d as intake} from '../provider-offline-prep-20261025/control.mjs';
+import {json,save,hash} from '../provider-continue-20261025/carry.mjs';
+const run=new URL('.',import.meta.url).pathname,phase=json(run+'phase.json'),proof=json(run+'parent-proof.json'),loc=load('deployment-location.json');
+const oldTasks=json(run+'tasks-before-private.json'),tasks=JSON.parse(q("BEGIN READ ONLY; SELECT coalesce(json_agg(json_build_object('id',id,'hash',md5(to_jsonb(t)::text))),'[]') FROM public.tasks t; COMMIT;"));
+assert.equal(tasks.length,oldTasks.length);const m=new Map(tasks.map(x=>[x.id,x.hash]));for(const x of oldTasks)assert.equal(m.get(x.id),x.hash);
+const oldInputs=json(run+'inputs-before-private.json'),inputs=JSON.parse(q("BEGIN READ ONLY; SELECT coalesce(json_agg(json_build_object('episodeId',episode_id,'enabled',enabled)),'[]') FROM local_identity.input_episodes; COMMIT;"));
+assert.equal(inputs.length,oldInputs.length);const im=new Map(inputs.map(x=>[x.episodeId,x.enabled]));for(const x of oldInputs)assert.equal(im.get(x.episodeId),x.enabled);
+const record=json(loc.base+'/app.json');assert(record.offlineGuard);assert.equal(record.deploymentFile,loc.deploymentFile);assert(!intake.worker);assert.equal(json(intake.connections.network.directory+'/policy.json').enabled,false);assert.equal(json(intake.connections.network.directory+'/state.json').used,0);
+const pin=json(run+'connection-private.json');assert.equal(q(`BEGIN READ ONLY; SELECT qualified FROM local_identity.connection_qualifications WHERE version_id='${pin.versionId}'; COMMIT;`),'f');assert.equal(q(`BEGIN READ ONLY; SELECT secret_ref FROM local_identity.connection_bindings WHERE version_id='${pin.versionId}'; COMMIT;`),pin.reference);
+assert.equal(hash(proof.directory+'/state.json'),proof.stateSha256);assert.equal(json(phase.directory+'/state.json').used,10);assert.equal(json(phase.directory+'/state.json').halted,true);
+copyFileSync(run+'closed-service-private.log',run+'closed-service-at-final-private.log');
+save(run+'closed-final-result.json',{passed:true,intakeProfileClosed:true,noWorkerConfigured:true,allProviderVerificationDisabled:true,closedIntakeLedgerUnchangedAtZero:true,cumulativeRequests:10,cumulativeCostReservedCny:0.03,actualBillQueried:false,googleQualified:false,googleKeyReferenceUnchanged:true,historicalTaskRowsHashUnchanged:oldTasks.length,historicalInputFlagsUnchanged:oldInputs.length,noNewTaskCreated:true,oldNineRequestLedgerUnchanged:true,newProviderRequestsDuringCheck:0});console.log('Original closed intake restored; tasks/input flags unchanged; Google remains unqualified.');

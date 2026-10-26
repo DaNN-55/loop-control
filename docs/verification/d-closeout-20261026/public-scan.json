@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "files": 3156,
+  "exactPrivateValues": 8,
+  "keychainSecretsRead": 2,
+  "keychainStateRestored": true,
+  "providerRequests": 0,
+  "hits": [],
+  "invalidJson": []
+}

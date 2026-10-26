@@ -1,0 +1,61 @@
+{
+  "at": "2026-10-24T05:00:35.970Z",
+  "migrations": {
+    "loop_empty": {
+      "checked": 4,
+      "hashesMatch": true
+    },
+    "loop_imported": {
+      "checked": 4,
+      "hashesMatch": true
+    }
+  },
+  "functions": [
+    {
+      "name": "claim_input_task",
+      "publicExecute": false,
+      "fixedSearchPath": true,
+      "securityDefiner": true
+    },
+    {
+      "name": "claim_input_task_pre_lease",
+      "publicExecute": false,
+      "fixedSearchPath": true,
+      "securityDefiner": true
+    },
+    {
+      "name": "input_worker_call",
+      "publicExecute": false,
+      "fixedSearchPath": true,
+      "securityDefiner": true
+    },
+    {
+      "name": "lock_owned_input_episode",
+      "publicExecute": false,
+      "fixedSearchPath": true,
+      "securityDefiner": true
+    },
+    {
+      "name": "plan_input_tasks",
+      "publicExecute": false,
+      "fixedSearchPath": true,
+      "securityDefiner": true
+    },
+    {
+      "name": "recover_input_tasks",
+      "publicExecute": false,
+      "fixedSearchPath": true,
+      "securityDefiner": true
+    }
+  ],
+  "permissions": {
+    "inputRls": true,
+    "workerApprove": false,
+    "workerLocalPlan": true,
+    "workerGlobalClaim": false,
+    "appDirectEpisodeUpdate": false
+  },
+  "advisorNotRunForNativeDatabase": true,
+  "priorAdvisorWarningsRetained": 3,
+  "passed": true
+}

@@ -1,0 +1,1 @@
+{"passed":true,"realGracefulStop":true,"rows":[{"kind":"backup","status":"completed","attempt":1,"lastAttemptStatus":"completed"},{"kind":"health","status":"ready","attempt":1,"lastAttemptStatus":"interrupted"}]}

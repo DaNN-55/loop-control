@@ -1,0 +1,1139 @@
+{
+  "before": {
+    "plans": [
+      [
+        {
+          "Plan": {
+            "Node Type": "Seq Scan",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Relation Name": "external_connections",
+            "Schema": "public",
+            "Alias": "external_connections",
+            "Startup Cost": 0.16,
+            "Total Cost": 26.7,
+            "Plan Rows": 23,
+            "Plan Width": 192,
+            "Actual Startup Time": 0.074,
+            "Actual Total Time": 0.612,
+            "Actual Rows": 32,
+            "Actual Loops": 1,
+            "Output": [
+              "id",
+              "provider",
+              "adapter",
+              "name",
+              "status",
+              "last_verification_detail",
+              "last_verified_at",
+              "created_by",
+              "created_at",
+              "current_version_id",
+              "description",
+              "endpoint"
+            ],
+            "Filter": "((external_connections.id = ANY ('{b304d3cd-17ec-40fc-9925-830f1de06fcd,d819fdbf-7083-4526-b2e5-368a6e586383,dc461686-a146-4eb8-bbfd-d21ed7a272cc,95e64f1a-a2e5-4231-a904-344225f13ab8,01b6d163-3e9c-450e-8ee2-d2b33073eb9d,f994adf7-3494-49a2-973e-55fddda52a49,fdc1b4d8-a7f1-4432-a069-3550a8716986,f45a5f48-2f2e-4854-bbb8-6e397769dc96,c4ea7959-9ea1-40a8-accf-53956735d98b,c899ddfc-4490-4e9f-b04d-f8d891066236,6ec508f1-24ed-4013-843c-7b9680777148,9110d788-66f7-40ee-a429-be3e3ecafc31,d0273f0c-63f0-4543-95b9-83c535fb08ba,94b704a8-0062-4520-9298-4812e0321185,8e31f54a-16f1-4c51-b1ff-3d3ff9a5d967,88a77cbc-8d21-4ed5-a0fc-9fd04575219b,e4a65399-672f-4c73-b93e-0fbd5a10dab0,70e84968-f093-4d80-8090-fc8eff4198de,4318a8a8-c81b-4159-b35d-6682fd98bb1a,bbe0a8d8-e9ee-4ac5-aa14-c4674465935a,6a9b6ad4-4915-45eb-ad3b-aac419dbd29a,d689c6db-933a-468a-9d1e-c073016a0b65,4ec57456-ab96-41bd-8896-94f8b6448337,c978e756-76c2-40c0-b463-b9806b4bff56,ab35dc86-0a0d-4bd2-9214-623e52a5da03,306b6fc3-c6f2-45e8-bd06-2db1769f39fb,45362d19-b785-4c1d-87c8-0babfbfb5ebe,0d11db73-e0bd-4aec-9abd-7d297d4005a6,c119d073-746e-4d3e-9d01-adbaab308475,5cde914a-8beb-4f5b-b7f7-db712622bd0c,d7636fb8-2abe-4969-8f2d-51cbf8e91b22,e7b21176-31ed-4744-9b90-843ace7998dd,3c1c6bd6-8a6f-4015-95a4-2d3773051521,a18a537e-63ec-402d-86a4-4bc79fc0713f,94742061-78c1-4474-82c7-bbf836001174,737004da-720a-4940-bd85-62b8509a596b,2ec2c65a-62ba-418a-96bd-7131a93361b8,b409006f-38ef-44a4-8ddf-db1ecb3748cd,038996b9-4728-4130-bf05-5d2569200311,4298f5d6-45fe-4c5c-a2ce-3114ca03b018,fa2d12f2-4abf-410f-9d92-3cbed9429c52,85b0e928-d8dc-4c7c-974a-805695d4d7e0,9d9c03c3-89a1-4fc1-ab0e-a978a4b63a2f,16693a92-3d79-4b82-bf02-6f63683cbd35,44aa10e7-3d0f-4c31-8080-ac566cdd951f,1e5c901c-d440-496a-98fd-fa6ee127de9f,188e435b-aadf-43d6-945e-99e7325af6ec,7c826c8a-9f5c-4e56-a687-33ddbb642d81,9c77ca26-6e70-46b3-8fe2-209431dda062,bf56bcce-5bc1-4381-8e57-18a7fc2b0896,2c0aa03e-dcb1-4069-b9a4-e1fbed848c09,2bb8d7aa-075a-4ed0-8cb3-25d208058ec5,9a3d1dfd-0fce-44c6-a019-8a64e69b02d7,49da16c8-36a3-4b57-87cf-40acb5f134f0,3da0ac04-4bee-44e3-8ff4-22789e611437,10e2ef0f-b8c1-43ee-a096-e96fec998b69,e6b0beb7-fd28-4e67-b4b5-3215228b7006,0f4674c3-fca5-49fd-bfe1-cc2956f42fdf,583be284-eafd-4b78-bffe-d32cd16ac1d3,300a0aaf-88cb-41b8-965f-6668c3d3a595,01cf541a-8023-4115-8eb7-6e34552be603,a2006971-a444-4cc4-92b2-973ee48dfc70,5aefe71c-2762-4065-b13c-477ed08faeb0,5a48da48-24d6-4114-86fd-c0f472f35b19}'::uuid[])) AND (external_connections.created_by = local_identity.owner_id()))",
+            "Rows Removed by Filter": 56,
+            "Shared Hit Blocks": 67,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning": {
+            "Shared Hit Blocks": 246,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.687,
+          "Triggers": [],
+          "Execution Time": 0.623
+        }
+      ],
+      [
+        {
+          "Plan": {
+            "Node Type": "Bitmap Heap Scan",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Relation Name": "external_connection_verifications",
+            "Schema": "public",
+            "Alias": "external_connection_verifications",
+            "Startup Cost": 4.79,
+            "Total Cost": 547.15,
+            "Plan Rows": 32,
+            "Plan Width": 112,
+            "Actual Startup Time": 0.813,
+            "Actual Total Time": 0.822,
+            "Actual Rows": 32,
+            "Actual Loops": 1,
+            "Output": [
+              "external_connection_verifications.id",
+              "external_connection_verifications.connection_id",
+              "external_connection_verifications.status",
+              "external_connection_verifications.detail",
+              "external_connection_verifications.created_at",
+              "external_connection_verifications.connection_version_id"
+            ],
+            "Recheck Cond": "(external_connection_verifications.id = ANY ('{96af4c44-9fa8-4b3d-987d-b10b91aa9286,5d32f827-dbd6-48ea-8fff-7daf14b60e65,c65f4d70-f8da-4c47-984d-4f0a8f04cc5d,a3c257f7-5c2e-490e-90a0-c4464e89e0fe,b49c7488-4037-4eb1-beb9-a026ac02dbb8,923cbac8-dc41-476b-bcd2-57d0240769db,7e2f11e4-be5d-4bcc-94f7-5620484c31ea,f40dc99e-db50-40d3-a54d-54519f7ddcf4,5b79e46f-cfe7-4b14-988e-1092f6e6fd5f,677c8f21-3ef9-4470-918e-96609505c1a6,88e2d0b3-c803-4ce3-9548-73467ae67461,d5d0ea93-f8e1-47f0-b523-fc17701ffaf6,f18de4d3-f8cf-4617-836b-974cc09aee45,bb7929ba-184a-48d7-947d-0af89f8a4d44,bb7ee919-b177-4e43-a0d6-74cece96ade7,52fd9031-cbc3-461c-8892-01e18fb5d75c,a1114af4-ff19-4372-a140-6ecc9a535775,76953ce1-0726-4704-b55d-830d092448ca,94305564-0d84-4d87-8157-954b79dd3ced,f9b7975a-91b9-46a4-be10-d02df652e476,82fb2503-02d0-42dd-a440-8b9028662e23,03044175-cc82-41b3-9445-8238c3fb7001,b6b96fe3-f4bf-487b-9997-a26236b780a4,c6ba9add-0808-459d-8cc3-4bb3fabfda1c,a70323fb-277c-4589-b401-89c220e1639d,07fd00b6-0cd8-44be-8321-4082f7b9d771,5fe7b7d7-7978-4a2f-87d4-cd8377426cba,ec264770-ce38-4b7f-9793-07ecaefb4717,178078d6-4ecf-4a1d-9ce3-08ad76bf21c3,136cf691-6485-43f1-a82f-856fb852a94a,f66a413a-f1de-4398-b711-339680aba942,b613ab89-dc39-48ab-bab3-f00dc306ce6f,045898d1-9901-44cb-9cc9-e8bbf1624030,8683229f-395b-4825-bfda-5a2e1db1ae0d,ec56de52-6f7c-4893-b32b-d10e7e1d2a95,4013ecbb-2d47-4ace-bb06-0a3a1679fff4,2e376a09-de2e-4115-90ab-f4c79b676a4a,b32c2901-e4fa-45c1-9e74-07514804b49c,a82ac66c-8347-49e1-84cd-e1f763e906a4,e8d1c99b-da32-48e8-9b39-0bf217c2d3af,0acfdf30-857b-4ed3-916a-f7c65cf96437,02c7be85-dd29-404f-8148-93f3eb6d9256,5e04b0e5-0a81-43a3-8462-f5238e96647e,f4b3e121-697c-4dd0-9c00-c2216a8d2b37,aeccf0c7-e057-4bef-9bc4-0a9093eba075,b5f5da2b-9281-442d-b43d-0a68d01bf171,3653a2a1-2462-41cc-afe8-fbf2b38695be,88409d17-ad02-4ad6-9e23-76df8b4931fa,84b47b30-1174-4b24-8d7b-562bee9a9f2f,8257619d-4118-4798-9ebf-02628c2a0930,b7dd0423-4098-4e83-80bf-8f5d381cb5af,68a97796-1e7d-405e-8bcc-e8e2a59e499d,caab8245-4b94-43ce-a446-a0b9522d4446,833f0be4-9280-4d0d-b097-972537db9e17,f8f47ab0-c577-44ab-8428-ed4db01b7474,e81e3fea-0690-4f09-827e-e36ebe952861,ee2e2644-a814-48f1-9968-5578132acc64,9a2834bb-02c4-4632-b95b-09dbe40af7b6,7d01c1f7-9f4e-4ed2-9d9b-69e7eb760b4f,3a5f1f89-b570-4b3b-b831-56edab08a29f,1301c674-a36c-4dd0-b2f9-57a17c790705,41adc5e3-e77c-4b5a-8b20-834a026516c7,244a8303-2147-4e5c-98e6-43444ab8716d,0ded514c-bf4b-4370-8755-de0a20a1b0c2}'::uuid[]))",
+            "Rows Removed by Index Recheck": 0,
+            "Filter": "(ANY (external_connection_verifications.connection_id = (hashed SubPlan 2).col1))",
+            "Rows Removed by Filter": 32,
+            "Exact Heap Blocks": 2,
+            "Lossy Heap Blocks": 0,
+            "Shared Hit Blocks": 94,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Bitmap Index Scan",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Index Name": "external_connection_verifications_pkey",
+                "Startup Cost": 0,
+                "Total Cost": 4.62,
+                "Plan Rows": 64,
+                "Plan Width": 0,
+                "Actual Startup Time": 0.032,
+                "Actual Total Time": 0.032,
+                "Actual Rows": 64,
+                "Actual Loops": 1,
+                "Index Cond": "(external_connection_verifications.id = ANY ('{96af4c44-9fa8-4b3d-987d-b10b91aa9286,5d32f827-dbd6-48ea-8fff-7daf14b60e65,c65f4d70-f8da-4c47-984d-4f0a8f04cc5d,a3c257f7-5c2e-490e-90a0-c4464e89e0fe,b49c7488-4037-4eb1-beb9-a026ac02dbb8,923cbac8-dc41-476b-bcd2-57d0240769db,7e2f11e4-be5d-4bcc-94f7-5620484c31ea,f40dc99e-db50-40d3-a54d-54519f7ddcf4,5b79e46f-cfe7-4b14-988e-1092f6e6fd5f,677c8f21-3ef9-4470-918e-96609505c1a6,88e2d0b3-c803-4ce3-9548-73467ae67461,d5d0ea93-f8e1-47f0-b523-fc17701ffaf6,f18de4d3-f8cf-4617-836b-974cc09aee45,bb7929ba-184a-48d7-947d-0af89f8a4d44,bb7ee919-b177-4e43-a0d6-74cece96ade7,52fd9031-cbc3-461c-8892-01e18fb5d75c,a1114af4-ff19-4372-a140-6ecc9a535775,76953ce1-0726-4704-b55d-830d092448ca,94305564-0d84-4d87-8157-954b79dd3ced,f9b7975a-91b9-46a4-be10-d02df652e476,82fb2503-02d0-42dd-a440-8b9028662e23,03044175-cc82-41b3-9445-8238c3fb7001,b6b96fe3-f4bf-487b-9997-a26236b780a4,c6ba9add-0808-459d-8cc3-4bb3fabfda1c,a70323fb-277c-4589-b401-89c220e1639d,07fd00b6-0cd8-44be-8321-4082f7b9d771,5fe7b7d7-7978-4a2f-87d4-cd8377426cba,ec264770-ce38-4b7f-9793-07ecaefb4717,178078d6-4ecf-4a1d-9ce3-08ad76bf21c3,136cf691-6485-43f1-a82f-856fb852a94a,f66a413a-f1de-4398-b711-339680aba942,b613ab89-dc39-48ab-bab3-f00dc306ce6f,045898d1-9901-44cb-9cc9-e8bbf1624030,8683229f-395b-4825-bfda-5a2e1db1ae0d,ec56de52-6f7c-4893-b32b-d10e7e1d2a95,4013ecbb-2d47-4ace-bb06-0a3a1679fff4,2e376a09-de2e-4115-90ab-f4c79b676a4a,b32c2901-e4fa-45c1-9e74-07514804b49c,a82ac66c-8347-49e1-84cd-e1f763e906a4,e8d1c99b-da32-48e8-9b39-0bf217c2d3af,0acfdf30-857b-4ed3-916a-f7c65cf96437,02c7be85-dd29-404f-8148-93f3eb6d9256,5e04b0e5-0a81-43a3-8462-f5238e96647e,f4b3e121-697c-4dd0-9c00-c2216a8d2b37,aeccf0c7-e057-4bef-9bc4-0a9093eba075,b5f5da2b-9281-442d-b43d-0a68d01bf171,3653a2a1-2462-41cc-afe8-fbf2b38695be,88409d17-ad02-4ad6-9e23-76df8b4931fa,84b47b30-1174-4b24-8d7b-562bee9a9f2f,8257619d-4118-4798-9ebf-02628c2a0930,b7dd0423-4098-4e83-80bf-8f5d381cb5af,68a97796-1e7d-405e-8bcc-e8e2a59e499d,caab8245-4b94-43ce-a446-a0b9522d4446,833f0be4-9280-4d0d-b097-972537db9e17,f8f47ab0-c577-44ab-8428-ed4db01b7474,e81e3fea-0690-4f09-827e-e36ebe952861,ee2e2644-a814-48f1-9968-5578132acc64,9a2834bb-02c4-4632-b95b-09dbe40af7b6,7d01c1f7-9f4e-4ed2-9d9b-69e7eb760b4f,3a5f1f89-b570-4b3b-b831-56edab08a29f,1301c674-a36c-4dd0-b2f9-57a17c790705,41adc5e3-e77c-4b5a-8b20-834a026516c7,244a8303-2147-4e5c-98e6-43444ab8716d,0ded514c-bf4b-4370-8755-de0a20a1b0c2}'::uuid[]))",
+                "Shared Hit Blocks": 1,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0
+              },
+              {
+                "Node Type": "Seq Scan",
+                "Parent Relationship": "SubPlan",
+                "Subplan Name": "SubPlan 2",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Relation Name": "external_connections",
+                "Schema": "public",
+                "Alias": "connection",
+                "Startup Cost": 0,
+                "Total Cost": 26.1,
+                "Plan Rows": 32,
+                "Plan Width": 16,
+                "Actual Startup Time": 0.409,
+                "Actual Total Time": 0.749,
+                "Actual Rows": 32,
+                "Actual Loops": 1,
+                "Output": [
+                  "connection.id"
+                ],
+                "Filter": "(connection.created_by = local_identity.owner_id())",
+                "Rows Removed by Filter": 56,
+                "Shared Hit Blocks": 91,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 251,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.703,
+          "Triggers": [],
+          "Execution Time": 0.879
+        }
+      ],
+      [
+        {
+          "Plan": {
+            "Node Type": "Index Scan",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Scan Direction": "Forward",
+            "Index Name": "storyboard_audio_selections_pkey",
+            "Relation Name": "storyboard_audio_selections",
+            "Schema": "public",
+            "Alias": "storyboard_audio_selections",
+            "Startup Cost": 0.14,
+            "Total Cost": 1391.77,
+            "Plan Rows": 32,
+            "Plan Width": 124,
+            "Actual Startup Time": 0.206,
+            "Actual Total Time": 0.217,
+            "Actual Rows": 32,
+            "Actual Loops": 1,
+            "Output": [
+              "storyboard_audio_selections.id",
+              "storyboard_audio_selections.episode_id",
+              "storyboard_audio_selections.review_package_id",
+              "storyboard_audio_selections.target_kind",
+              "storyboard_audio_selections.target_id",
+              "storyboard_audio_selections.audio_kind",
+              "storyboard_audio_selections.cue_id",
+              "storyboard_audio_selections.material_revision_id",
+              "storyboard_audio_selections.created_by",
+              "storyboard_audio_selections.created_at",
+              "storyboard_audio_selections.updated_at"
+            ],
+            "Index Cond": "(storyboard_audio_selections.id = ANY ('{ac21111f-175a-4fb8-b023-979075275d1f,b8f388f6-62ab-48a8-b756-a011a10cdb2d,568dcf0d-d04b-4dbd-9f7d-408bd57773d1,360bc93c-496d-41d8-bec4-118b13468ced,97cd0188-d629-485c-a550-3c61388b36c6,44f1bcc3-874d-4923-8cd8-46ccc3422c60,1c3d4672-9809-48b2-8c76-acb55cfa001a,2903e367-4fe5-41ab-b39d-9af17c81af5e,fde0d30b-d6af-4b85-9d4c-190c12b70f08,14312ff4-483a-48b9-916c-c2c4c1eda6aa,6eac801e-76f3-487f-a12f-3474966a5a6b,dfb93654-2f6f-481f-8fb7-18f6fd88fc2f,52d59aea-89a8-4ef3-b372-2f5f31b0701f,b1b7d319-698f-4bdb-8ca6-ca4e4b5e4031,d9c9a334-4f5c-48f3-875e-5bc20befc0db,864a597f-8e5e-45c1-ab1c-98cfdd838d3c,32ea4825-2199-4567-a7fe-0b870f8fc453,f5f24581-d1e0-4488-ad4f-e695e7e246fc,f1e0722d-2b74-4615-9bfb-3a6f3f905982,abda273b-731f-4568-8818-2d052ab86811,3e570683-7608-4c87-a48d-6f471a7148fc,8c613efc-b2f0-4fbf-bce5-ab5d20d57c46,9e7b74fd-6b9b-4681-bd68-13bae68deb0c,fcb294a7-c214-4f26-8ac9-46e8158b47bb,4600533a-53a7-40a3-9d84-c448a68be1b8,ec16d0ff-dca2-4e05-a20e-f30ade061252,4e348ee9-19da-4fa2-a636-99e021fb5e39,eb80ec0e-fce4-4239-94c5-a73daf3e85b7,596efc49-44d7-4260-8dca-2366209fac27,18371b8a-82d5-4e4f-bc29-316a64c6bd3a,4acde1c5-eb76-4ca5-b10f-59dd9583bb06,bbbcb5c1-9c6f-40e2-830b-8858f87cf9aa,ba906f25-1585-4685-87c2-6ce8c01a321c,604b6338-2453-473a-8182-a68c441a86d1,634e1c38-0a2e-4249-98fa-1cd811739df1,119ddc53-eccb-486a-8219-dcc7fcb7208e,ffefce8d-4986-45d8-abc2-5099e0951248,4b883522-629d-4eb3-9110-6914c7e16de6,67dcda70-822f-4afc-a55a-6935f987300b,cf980ab5-45ad-4f68-b7dc-f148bd7e0f3f,dbe700fa-bec3-4970-b629-5483288bdfa1,c07d0a2a-c24b-44b3-9fb7-a1020fc06375,6afd863f-f8a0-4138-afc6-8dca7ff9e926,7a931456-c659-45b9-8929-b422e3425f6c,617b770c-2ca3-4bf1-882f-e0e9310e6de6,564f5344-b4b5-4d72-a5e3-f0bc2e6fd5f2,a1fda54c-7d3c-4e5c-9be1-69e95312e51f,4fa99d94-ce96-46cb-ac36-ebd45437038b,844f169e-c8e1-4cdd-8d81-8bbdbe288eea,70419e19-a566-4a9f-afdd-6f80fb484e09,f1c83a66-0fdc-409e-bb62-8d0d0b0c5b2b,1e6b5388-9016-4437-ba7e-2ec1d9c4bae3,dfb168cc-fb88-489e-bc3d-7ae4f4710863,5bde5348-ce9a-4f11-88f9-f78317089c57,f7fed8ed-b187-453a-aaca-08ea9ebf1133,332575db-faa2-43b3-87aa-b8e6239c59fc,b0bd6b13-a358-4198-86ba-5bb22da30ad1,41d205a5-5ca4-4772-8392-5cc3581b703f,48d5acfe-4cc7-4b78-a428-ca703564f7ea,db200eb0-4222-4e9e-b455-93b2f8563db3,3114d1e8-40d9-45d3-a6f2-bddeb2a88696,fed6a7e7-adaa-4850-9cbb-5994b6257f58,7dc8750d-3766-47c9-9d57-23dd8be178e6,6d5ba52e-4f09-4de8-ada4-b4edaf9fb69e}'::uuid[]))",
+            "Rows Removed by Index Recheck": 0,
+            "Filter": "(ANY (storyboard_audio_selections.episode_id = (hashed SubPlan 2).col1))",
+            "Rows Removed by Filter": 32,
+            "Shared Hit Blocks": 58,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Nested Loop",
+                "Parent Relationship": "SubPlan",
+                "Subplan Name": "SubPlan 2",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Join Type": "Inner",
+                "Startup Cost": 5.92,
+                "Total Cost": 178.38,
+                "Plan Rows": 55,
+                "Plan Width": 16,
+                "Actual Startup Time": 0.161,
+                "Actual Total Time": 0.162,
+                "Actual Rows": 1,
+                "Actual Loops": 1,
+                "Output": [
+                  "episode.id"
+                ],
+                "Inner Unique": false,
+                "Shared Hit Blocks": 19,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Index Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Scan Direction": "Forward",
+                    "Index Name": "account_memberships_pkey",
+                    "Relation Name": "account_memberships",
+                    "Schema": "public",
+                    "Alias": "membership",
+                    "Startup Cost": 0.39,
+                    "Total Cost": 12.91,
+                    "Plan Rows": 1,
+                    "Plan Width": 16,
+                    "Actual Startup Time": 0.087,
+                    "Actual Total Time": 0.087,
+                    "Actual Rows": 1,
+                    "Actual Loops": 1,
+                    "Output": [
+                      "membership.account_id",
+                      "membership.user_id",
+                      "membership.role"
+                    ],
+                    "Index Cond": "(membership.user_id = local_identity.owner_id())",
+                    "Rows Removed by Index Recheck": 0,
+                    "Filter": "(is_account_member(membership.account_id) AND (membership.role = 'owner'::member_role))",
+                    "Rows Removed by Filter": 0,
+                    "Shared Hit Blocks": 12,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0
+                  },
+                  {
+                    "Node Type": "Bitmap Heap Scan",
+                    "Parent Relationship": "Inner",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "episodes",
+                    "Schema": "public",
+                    "Alias": "episode",
+                    "Startup Cost": 5.53,
+                    "Total Cost": 164.92,
+                    "Plan Rows": 55,
+                    "Plan Width": 32,
+                    "Actual Startup Time": 0.073,
+                    "Actual Total Time": 0.073,
+                    "Actual Rows": 1,
+                    "Actual Loops": 1,
+                    "Output": [
+                      "episode.id",
+                      "episode.account_id",
+                      "episode.blueprint_version_id",
+                      "episode.title",
+                      "episode.stage",
+                      "episode.created_at",
+                      "episode.updated_at",
+                      "episode.series_version_id",
+                      "episode.main_script_revision_id",
+                      "episode.archived_at",
+                      "episode.is_test",
+                      "episode.script_source",
+                      "episode.worker_preflight_at",
+                      "episode.audio_source_mode",
+                      "episode.tts_language_code",
+                      "episode.tts_voice",
+                      "episode.tts_speaking_rate"
+                    ],
+                    "Recheck Cond": "(membership.account_id = episode.account_id)",
+                    "Rows Removed by Index Recheck": 0,
+                    "Filter": "is_account_member(episode.account_id)",
+                    "Rows Removed by Filter": 0,
+                    "Exact Heap Blocks": 1,
+                    "Lossy Heap Blocks": 0,
+                    "Shared Hit Blocks": 7,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0,
+                    "Plans": [
+                      {
+                        "Node Type": "Bitmap Index Scan",
+                        "Parent Relationship": "Outer",
+                        "Parallel Aware": false,
+                        "Async Capable": false,
+                        "Index Name": "episodes_account_stage_idx",
+                        "Startup Cost": 0,
+                        "Total Cost": 5.51,
+                        "Plan Rows": 164,
+                        "Plan Width": 0,
+                        "Actual Startup Time": 0.008,
+                        "Actual Total Time": 0.008,
+                        "Actual Rows": 1,
+                        "Actual Loops": 1,
+                        "Index Cond": "(episode.account_id = membership.account_id)",
+                        "Shared Hit Blocks": 2,
+                        "Shared Read Blocks": 0,
+                        "Shared Dirtied Blocks": 0,
+                        "Shared Written Blocks": 0,
+                        "Local Hit Blocks": 0,
+                        "Local Read Blocks": 0,
+                        "Local Dirtied Blocks": 0,
+                        "Local Written Blocks": 0,
+                        "Temp Read Blocks": 0,
+                        "Temp Written Blocks": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 424,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.62,
+          "Triggers": [],
+          "Execution Time": 0.243
+        }
+      ]
+    ],
+    "security": {
+      "roles": [
+        {
+          "name": "loop_anonymous",
+          "super": false,
+          "bypass": false,
+          "inherit": true
+        },
+        {
+          "name": "loop_app",
+          "super": false,
+          "bypass": false,
+          "inherit": true
+        },
+        {
+          "name": "loop_owner",
+          "super": false,
+          "bypass": false,
+          "inherit": true
+        },
+        {
+          "name": "loop_worker",
+          "super": false,
+          "bypass": false,
+          "inherit": true
+        }
+      ],
+      "tables": [
+        {
+          "acl": [
+            "postgres=arwdDxtm/postgres",
+            "loop_owner=r/postgres"
+          ],
+          "rls": true,
+          "name": "external_connection_verifications",
+          "force": false
+        },
+        {
+          "acl": [
+            "postgres=arwdDxtm/postgres",
+            "loop_owner=r/postgres"
+          ],
+          "rls": true,
+          "name": "external_connections",
+          "force": false
+        },
+        {
+          "acl": [
+            "postgres=arwdDxtm/postgres",
+            "loop_owner=r/postgres"
+          ],
+          "rls": true,
+          "name": "storyboard_audio_selections",
+          "force": false
+        }
+      ],
+      "policies": [
+        {
+          "cmd": "SELECT",
+          "name": "owners can read their connection verifications",
+          "roles": [
+            "loop_owner"
+          ],
+          "table": "external_connection_verifications",
+          "permissive": "PERMISSIVE"
+        },
+        {
+          "cmd": "SELECT",
+          "name": "owners can read their external connections",
+          "roles": [
+            "loop_owner"
+          ],
+          "table": "external_connections",
+          "permissive": "PERMISSIVE"
+        },
+        {
+          "cmd": "SELECT",
+          "name": "storyboard_audio_selections_owner_read",
+          "roles": [
+            "loop_owner"
+          ],
+          "table": "storyboard_audio_selections",
+          "permissive": "PERMISSIVE"
+        }
+      ],
+      "memberships": [
+        {
+          "role": "loop_owner",
+          "member": "loop_app"
+        }
+      ]
+    }
+  },
+  "after": {
+    "plans": [
+      [
+        {
+          "Plan": {
+            "Node Type": "Seq Scan",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Relation Name": "external_connections",
+            "Schema": "public",
+            "Alias": "external_connections",
+            "Startup Cost": 0.42,
+            "Total Cost": 4.96,
+            "Plan Rows": 21,
+            "Plan Width": 192,
+            "Actual Startup Time": 0.144,
+            "Actual Total Time": 0.153,
+            "Actual Rows": 32,
+            "Actual Loops": 1,
+            "Output": [
+              "external_connections.id",
+              "external_connections.provider",
+              "external_connections.adapter",
+              "external_connections.name",
+              "external_connections.status",
+              "external_connections.last_verification_detail",
+              "external_connections.last_verified_at",
+              "external_connections.created_by",
+              "external_connections.created_at",
+              "external_connections.current_version_id",
+              "external_connections.description",
+              "external_connections.endpoint"
+            ],
+            "Filter": "((external_connections.created_by = (InitPlan 1).col1) AND (external_connections.id = ANY ('{b304d3cd-17ec-40fc-9925-830f1de06fcd,d819fdbf-7083-4526-b2e5-368a6e586383,dc461686-a146-4eb8-bbfd-d21ed7a272cc,95e64f1a-a2e5-4231-a904-344225f13ab8,01b6d163-3e9c-450e-8ee2-d2b33073eb9d,f994adf7-3494-49a2-973e-55fddda52a49,fdc1b4d8-a7f1-4432-a069-3550a8716986,f45a5f48-2f2e-4854-bbb8-6e397769dc96,c4ea7959-9ea1-40a8-accf-53956735d98b,c899ddfc-4490-4e9f-b04d-f8d891066236,6ec508f1-24ed-4013-843c-7b9680777148,9110d788-66f7-40ee-a429-be3e3ecafc31,d0273f0c-63f0-4543-95b9-83c535fb08ba,94b704a8-0062-4520-9298-4812e0321185,8e31f54a-16f1-4c51-b1ff-3d3ff9a5d967,88a77cbc-8d21-4ed5-a0fc-9fd04575219b,e4a65399-672f-4c73-b93e-0fbd5a10dab0,70e84968-f093-4d80-8090-fc8eff4198de,4318a8a8-c81b-4159-b35d-6682fd98bb1a,bbe0a8d8-e9ee-4ac5-aa14-c4674465935a,6a9b6ad4-4915-45eb-ad3b-aac419dbd29a,d689c6db-933a-468a-9d1e-c073016a0b65,4ec57456-ab96-41bd-8896-94f8b6448337,c978e756-76c2-40c0-b463-b9806b4bff56,ab35dc86-0a0d-4bd2-9214-623e52a5da03,306b6fc3-c6f2-45e8-bd06-2db1769f39fb,45362d19-b785-4c1d-87c8-0babfbfb5ebe,0d11db73-e0bd-4aec-9abd-7d297d4005a6,c119d073-746e-4d3e-9d01-adbaab308475,5cde914a-8beb-4f5b-b7f7-db712622bd0c,d7636fb8-2abe-4969-8f2d-51cbf8e91b22,e7b21176-31ed-4744-9b90-843ace7998dd,3c1c6bd6-8a6f-4015-95a4-2d3773051521,a18a537e-63ec-402d-86a4-4bc79fc0713f,94742061-78c1-4474-82c7-bbf836001174,737004da-720a-4940-bd85-62b8509a596b,2ec2c65a-62ba-418a-96bd-7131a93361b8,b409006f-38ef-44a4-8ddf-db1ecb3748cd,038996b9-4728-4130-bf05-5d2569200311,4298f5d6-45fe-4c5c-a2ce-3114ca03b018,fa2d12f2-4abf-410f-9d92-3cbed9429c52,85b0e928-d8dc-4c7c-974a-805695d4d7e0,9d9c03c3-89a1-4fc1-ab0e-a978a4b63a2f,16693a92-3d79-4b82-bf02-6f63683cbd35,44aa10e7-3d0f-4c31-8080-ac566cdd951f,1e5c901c-d440-496a-98fd-fa6ee127de9f,188e435b-aadf-43d6-945e-99e7325af6ec,7c826c8a-9f5c-4e56-a687-33ddbb642d81,9c77ca26-6e70-46b3-8fe2-209431dda062,bf56bcce-5bc1-4381-8e57-18a7fc2b0896,2c0aa03e-dcb1-4069-b9a4-e1fbed848c09,2bb8d7aa-075a-4ed0-8cb3-25d208058ec5,9a3d1dfd-0fce-44c6-a019-8a64e69b02d7,49da16c8-36a3-4b57-87cf-40acb5f134f0,3da0ac04-4bee-44e3-8ff4-22789e611437,10e2ef0f-b8c1-43ee-a096-e96fec998b69,e6b0beb7-fd28-4e67-b4b5-3215228b7006,0f4674c3-fca5-49fd-bfe1-cc2956f42fdf,583be284-eafd-4b78-bffe-d32cd16ac1d3,300a0aaf-88cb-41b8-965f-6668c3d3a595,01cf541a-8023-4115-8eb7-6e34552be603,a2006971-a444-4cc4-92b2-973ee48dfc70,5aefe71c-2762-4065-b13c-477ed08faeb0,5a48da48-24d6-4114-86fd-c0f472f35b19}'::uuid[])))",
+            "Rows Removed by Filter": 56,
+            "Shared Hit Blocks": 86,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Result",
+                "Parent Relationship": "InitPlan",
+                "Subplan Name": "InitPlan 1",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 0,
+                "Total Cost": 0.26,
+                "Plan Rows": 1,
+                "Plan Width": 16,
+                "Actual Startup Time": 0.133,
+                "Actual Total Time": 0.133,
+                "Actual Rows": 1,
+                "Actual Loops": 1,
+                "Output": [
+                  "local_identity.owner_id()"
+                ],
+                "Shared Hit Blocks": 83,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 160,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.193,
+          "Triggers": [],
+          "Execution Time": 0.165
+        }
+      ],
+      [
+        {
+          "Plan": {
+            "Node Type": "Bitmap Heap Scan",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Relation Name": "external_connection_verifications",
+            "Schema": "public",
+            "Alias": "external_connection_verifications",
+            "Startup Cost": 4.79,
+            "Total Cost": 318.67,
+            "Plan Rows": 32,
+            "Plan Width": 112,
+            "Actual Startup Time": 0.212,
+            "Actual Total Time": 0.22,
+            "Actual Rows": 32,
+            "Actual Loops": 1,
+            "Output": [
+              "external_connection_verifications.id",
+              "external_connection_verifications.connection_id",
+              "external_connection_verifications.status",
+              "external_connection_verifications.detail",
+              "external_connection_verifications.created_at",
+              "external_connection_verifications.connection_version_id"
+            ],
+            "Recheck Cond": "(external_connection_verifications.id = ANY ('{96af4c44-9fa8-4b3d-987d-b10b91aa9286,5d32f827-dbd6-48ea-8fff-7daf14b60e65,c65f4d70-f8da-4c47-984d-4f0a8f04cc5d,a3c257f7-5c2e-490e-90a0-c4464e89e0fe,b49c7488-4037-4eb1-beb9-a026ac02dbb8,923cbac8-dc41-476b-bcd2-57d0240769db,7e2f11e4-be5d-4bcc-94f7-5620484c31ea,f40dc99e-db50-40d3-a54d-54519f7ddcf4,5b79e46f-cfe7-4b14-988e-1092f6e6fd5f,677c8f21-3ef9-4470-918e-96609505c1a6,88e2d0b3-c803-4ce3-9548-73467ae67461,d5d0ea93-f8e1-47f0-b523-fc17701ffaf6,f18de4d3-f8cf-4617-836b-974cc09aee45,bb7929ba-184a-48d7-947d-0af89f8a4d44,bb7ee919-b177-4e43-a0d6-74cece96ade7,52fd9031-cbc3-461c-8892-01e18fb5d75c,a1114af4-ff19-4372-a140-6ecc9a535775,76953ce1-0726-4704-b55d-830d092448ca,94305564-0d84-4d87-8157-954b79dd3ced,f9b7975a-91b9-46a4-be10-d02df652e476,82fb2503-02d0-42dd-a440-8b9028662e23,03044175-cc82-41b3-9445-8238c3fb7001,b6b96fe3-f4bf-487b-9997-a26236b780a4,c6ba9add-0808-459d-8cc3-4bb3fabfda1c,a70323fb-277c-4589-b401-89c220e1639d,07fd00b6-0cd8-44be-8321-4082f7b9d771,5fe7b7d7-7978-4a2f-87d4-cd8377426cba,ec264770-ce38-4b7f-9793-07ecaefb4717,178078d6-4ecf-4a1d-9ce3-08ad76bf21c3,136cf691-6485-43f1-a82f-856fb852a94a,f66a413a-f1de-4398-b711-339680aba942,b613ab89-dc39-48ab-bab3-f00dc306ce6f,045898d1-9901-44cb-9cc9-e8bbf1624030,8683229f-395b-4825-bfda-5a2e1db1ae0d,ec56de52-6f7c-4893-b32b-d10e7e1d2a95,4013ecbb-2d47-4ace-bb06-0a3a1679fff4,2e376a09-de2e-4115-90ab-f4c79b676a4a,b32c2901-e4fa-45c1-9e74-07514804b49c,a82ac66c-8347-49e1-84cd-e1f763e906a4,e8d1c99b-da32-48e8-9b39-0bf217c2d3af,0acfdf30-857b-4ed3-916a-f7c65cf96437,02c7be85-dd29-404f-8148-93f3eb6d9256,5e04b0e5-0a81-43a3-8462-f5238e96647e,f4b3e121-697c-4dd0-9c00-c2216a8d2b37,aeccf0c7-e057-4bef-9bc4-0a9093eba075,b5f5da2b-9281-442d-b43d-0a68d01bf171,3653a2a1-2462-41cc-afe8-fbf2b38695be,88409d17-ad02-4ad6-9e23-76df8b4931fa,84b47b30-1174-4b24-8d7b-562bee9a9f2f,8257619d-4118-4798-9ebf-02628c2a0930,b7dd0423-4098-4e83-80bf-8f5d381cb5af,68a97796-1e7d-405e-8bcc-e8e2a59e499d,caab8245-4b94-43ce-a446-a0b9522d4446,833f0be4-9280-4d0d-b097-972537db9e17,f8f47ab0-c577-44ab-8428-ed4db01b7474,e81e3fea-0690-4f09-827e-e36ebe952861,ee2e2644-a814-48f1-9968-5578132acc64,9a2834bb-02c4-4632-b95b-09dbe40af7b6,7d01c1f7-9f4e-4ed2-9d9b-69e7eb760b4f,3a5f1f89-b570-4b3b-b831-56edab08a29f,1301c674-a36c-4dd0-b2f9-57a17c790705,41adc5e3-e77c-4b5a-8b20-834a026516c7,244a8303-2147-4e5c-98e6-43444ab8716d,0ded514c-bf4b-4370-8755-de0a20a1b0c2}'::uuid[]))",
+            "Rows Removed by Index Recheck": 0,
+            "Filter": "(ANY (external_connection_verifications.connection_id = (hashed SubPlan 6).col1))",
+            "Rows Removed by Filter": 32,
+            "Exact Heap Blocks": 2,
+            "Lossy Heap Blocks": 0,
+            "Shared Hit Blocks": 90,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Bitmap Index Scan",
+                "Parent Relationship": "Outer",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Index Name": "external_connection_verifications_pkey",
+                "Startup Cost": 0,
+                "Total Cost": 4.62,
+                "Plan Rows": 64,
+                "Plan Width": 0,
+                "Actual Startup Time": 0.013,
+                "Actual Total Time": 0.013,
+                "Actual Rows": 64,
+                "Actual Loops": 1,
+                "Index Cond": "(external_connection_verifications.id = ANY ('{96af4c44-9fa8-4b3d-987d-b10b91aa9286,5d32f827-dbd6-48ea-8fff-7daf14b60e65,c65f4d70-f8da-4c47-984d-4f0a8f04cc5d,a3c257f7-5c2e-490e-90a0-c4464e89e0fe,b49c7488-4037-4eb1-beb9-a026ac02dbb8,923cbac8-dc41-476b-bcd2-57d0240769db,7e2f11e4-be5d-4bcc-94f7-5620484c31ea,f40dc99e-db50-40d3-a54d-54519f7ddcf4,5b79e46f-cfe7-4b14-988e-1092f6e6fd5f,677c8f21-3ef9-4470-918e-96609505c1a6,88e2d0b3-c803-4ce3-9548-73467ae67461,d5d0ea93-f8e1-47f0-b523-fc17701ffaf6,f18de4d3-f8cf-4617-836b-974cc09aee45,bb7929ba-184a-48d7-947d-0af89f8a4d44,bb7ee919-b177-4e43-a0d6-74cece96ade7,52fd9031-cbc3-461c-8892-01e18fb5d75c,a1114af4-ff19-4372-a140-6ecc9a535775,76953ce1-0726-4704-b55d-830d092448ca,94305564-0d84-4d87-8157-954b79dd3ced,f9b7975a-91b9-46a4-be10-d02df652e476,82fb2503-02d0-42dd-a440-8b9028662e23,03044175-cc82-41b3-9445-8238c3fb7001,b6b96fe3-f4bf-487b-9997-a26236b780a4,c6ba9add-0808-459d-8cc3-4bb3fabfda1c,a70323fb-277c-4589-b401-89c220e1639d,07fd00b6-0cd8-44be-8321-4082f7b9d771,5fe7b7d7-7978-4a2f-87d4-cd8377426cba,ec264770-ce38-4b7f-9793-07ecaefb4717,178078d6-4ecf-4a1d-9ce3-08ad76bf21c3,136cf691-6485-43f1-a82f-856fb852a94a,f66a413a-f1de-4398-b711-339680aba942,b613ab89-dc39-48ab-bab3-f00dc306ce6f,045898d1-9901-44cb-9cc9-e8bbf1624030,8683229f-395b-4825-bfda-5a2e1db1ae0d,ec56de52-6f7c-4893-b32b-d10e7e1d2a95,4013ecbb-2d47-4ace-bb06-0a3a1679fff4,2e376a09-de2e-4115-90ab-f4c79b676a4a,b32c2901-e4fa-45c1-9e74-07514804b49c,a82ac66c-8347-49e1-84cd-e1f763e906a4,e8d1c99b-da32-48e8-9b39-0bf217c2d3af,0acfdf30-857b-4ed3-916a-f7c65cf96437,02c7be85-dd29-404f-8148-93f3eb6d9256,5e04b0e5-0a81-43a3-8462-f5238e96647e,f4b3e121-697c-4dd0-9c00-c2216a8d2b37,aeccf0c7-e057-4bef-9bc4-0a9093eba075,b5f5da2b-9281-442d-b43d-0a68d01bf171,3653a2a1-2462-41cc-afe8-fbf2b38695be,88409d17-ad02-4ad6-9e23-76df8b4931fa,84b47b30-1174-4b24-8d7b-562bee9a9f2f,8257619d-4118-4798-9ebf-02628c2a0930,b7dd0423-4098-4e83-80bf-8f5d381cb5af,68a97796-1e7d-405e-8bcc-e8e2a59e499d,caab8245-4b94-43ce-a446-a0b9522d4446,833f0be4-9280-4d0d-b097-972537db9e17,f8f47ab0-c577-44ab-8428-ed4db01b7474,e81e3fea-0690-4f09-827e-e36ebe952861,ee2e2644-a814-48f1-9968-5578132acc64,9a2834bb-02c4-4632-b95b-09dbe40af7b6,7d01c1f7-9f4e-4ed2-9d9b-69e7eb760b4f,3a5f1f89-b570-4b3b-b831-56edab08a29f,1301c674-a36c-4dd0-b2f9-57a17c790705,41adc5e3-e77c-4b5a-8b20-834a026516c7,244a8303-2147-4e5c-98e6-43444ab8716d,0ded514c-bf4b-4370-8755-de0a20a1b0c2}'::uuid[]))",
+                "Shared Hit Blocks": 1,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0
+              },
+              {
+                "Node Type": "Result",
+                "Parent Relationship": "SubPlan",
+                "Subplan Name": "SubPlan 6",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Startup Cost": 0.52,
+                "Total Cost": 4.62,
+                "Plan Rows": 29,
+                "Plan Width": 16,
+                "Actual Startup Time": 0.176,
+                "Actual Total Time": 0.185,
+                "Actual Rows": 32,
+                "Actual Loops": 1,
+                "Output": [
+                  "connection.id"
+                ],
+                "One-Time Filter": "((InitPlan 5).col1 = (InitPlan 4).col1)",
+                "Shared Hit Blocks": 87,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Result",
+                    "Parent Relationship": "InitPlan",
+                    "Subplan Name": "InitPlan 4",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Startup Cost": 0,
+                    "Total Cost": 0.26,
+                    "Plan Rows": 1,
+                    "Plan Width": 16,
+                    "Actual Startup Time": 0.025,
+                    "Actual Total Time": 0.025,
+                    "Actual Rows": 1,
+                    "Actual Loops": 1,
+                    "Output": [
+                      "local_identity.owner_id()"
+                    ],
+                    "Shared Hit Blocks": 1,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0
+                  },
+                  {
+                    "Node Type": "Result",
+                    "Parent Relationship": "InitPlan",
+                    "Subplan Name": "InitPlan 5",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Startup Cost": 0,
+                    "Total Cost": 0.26,
+                    "Plan Rows": 1,
+                    "Plan Width": 16,
+                    "Actual Startup Time": 0.143,
+                    "Actual Total Time": 0.143,
+                    "Actual Rows": 1,
+                    "Actual Loops": 1,
+                    "Output": [
+                      "local_identity.owner_id()"
+                    ],
+                    "Shared Hit Blocks": 83,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0
+                  },
+                  {
+                    "Node Type": "Seq Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "external_connections",
+                    "Schema": "public",
+                    "Alias": "connection",
+                    "Startup Cost": 0.52,
+                    "Total Cost": 4.62,
+                    "Plan Rows": 29,
+                    "Plan Width": 16,
+                    "Actual Startup Time": 0.007,
+                    "Actual Total Time": 0.016,
+                    "Actual Rows": 32,
+                    "Actual Loops": 1,
+                    "Output": [
+                      "connection.id",
+                      "connection.provider",
+                      "connection.adapter",
+                      "connection.name",
+                      "connection.status",
+                      "connection.last_verification_detail",
+                      "connection.last_verified_at",
+                      "connection.created_by",
+                      "connection.created_at",
+                      "connection.current_version_id",
+                      "connection.description",
+                      "connection.endpoint"
+                    ],
+                    "Filter": "(connection.created_by = (InitPlan 4).col1)",
+                    "Rows Removed by Filter": 56,
+                    "Shared Hit Blocks": 3,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 164,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.253,
+          "Triggers": [],
+          "Execution Time": 0.247
+        }
+      ],
+      [
+        {
+          "Plan": {
+            "Node Type": "Index Scan",
+            "Parallel Aware": false,
+            "Async Capable": false,
+            "Scan Direction": "Forward",
+            "Index Name": "storyboard_audio_selections_pkey",
+            "Relation Name": "storyboard_audio_selections",
+            "Schema": "public",
+            "Alias": "storyboard_audio_selections",
+            "Startup Cost": 0.14,
+            "Total Cost": 1239.45,
+            "Plan Rows": 32,
+            "Plan Width": 124,
+            "Actual Startup Time": 0.382,
+            "Actual Total Time": 0.394,
+            "Actual Rows": 32,
+            "Actual Loops": 1,
+            "Output": [
+              "storyboard_audio_selections.id",
+              "storyboard_audio_selections.episode_id",
+              "storyboard_audio_selections.review_package_id",
+              "storyboard_audio_selections.target_kind",
+              "storyboard_audio_selections.target_id",
+              "storyboard_audio_selections.audio_kind",
+              "storyboard_audio_selections.cue_id",
+              "storyboard_audio_selections.material_revision_id",
+              "storyboard_audio_selections.created_by",
+              "storyboard_audio_selections.created_at",
+              "storyboard_audio_selections.updated_at"
+            ],
+            "Index Cond": "(storyboard_audio_selections.id = ANY ('{ac21111f-175a-4fb8-b023-979075275d1f,b8f388f6-62ab-48a8-b756-a011a10cdb2d,568dcf0d-d04b-4dbd-9f7d-408bd57773d1,360bc93c-496d-41d8-bec4-118b13468ced,97cd0188-d629-485c-a550-3c61388b36c6,44f1bcc3-874d-4923-8cd8-46ccc3422c60,1c3d4672-9809-48b2-8c76-acb55cfa001a,2903e367-4fe5-41ab-b39d-9af17c81af5e,fde0d30b-d6af-4b85-9d4c-190c12b70f08,14312ff4-483a-48b9-916c-c2c4c1eda6aa,6eac801e-76f3-487f-a12f-3474966a5a6b,dfb93654-2f6f-481f-8fb7-18f6fd88fc2f,52d59aea-89a8-4ef3-b372-2f5f31b0701f,b1b7d319-698f-4bdb-8ca6-ca4e4b5e4031,d9c9a334-4f5c-48f3-875e-5bc20befc0db,864a597f-8e5e-45c1-ab1c-98cfdd838d3c,32ea4825-2199-4567-a7fe-0b870f8fc453,f5f24581-d1e0-4488-ad4f-e695e7e246fc,f1e0722d-2b74-4615-9bfb-3a6f3f905982,abda273b-731f-4568-8818-2d052ab86811,3e570683-7608-4c87-a48d-6f471a7148fc,8c613efc-b2f0-4fbf-bce5-ab5d20d57c46,9e7b74fd-6b9b-4681-bd68-13bae68deb0c,fcb294a7-c214-4f26-8ac9-46e8158b47bb,4600533a-53a7-40a3-9d84-c448a68be1b8,ec16d0ff-dca2-4e05-a20e-f30ade061252,4e348ee9-19da-4fa2-a636-99e021fb5e39,eb80ec0e-fce4-4239-94c5-a73daf3e85b7,596efc49-44d7-4260-8dca-2366209fac27,18371b8a-82d5-4e4f-bc29-316a64c6bd3a,4acde1c5-eb76-4ca5-b10f-59dd9583bb06,bbbcb5c1-9c6f-40e2-830b-8858f87cf9aa,ba906f25-1585-4685-87c2-6ce8c01a321c,604b6338-2453-473a-8182-a68c441a86d1,634e1c38-0a2e-4249-98fa-1cd811739df1,119ddc53-eccb-486a-8219-dcc7fcb7208e,ffefce8d-4986-45d8-abc2-5099e0951248,4b883522-629d-4eb3-9110-6914c7e16de6,67dcda70-822f-4afc-a55a-6935f987300b,cf980ab5-45ad-4f68-b7dc-f148bd7e0f3f,dbe700fa-bec3-4970-b629-5483288bdfa1,c07d0a2a-c24b-44b3-9fb7-a1020fc06375,6afd863f-f8a0-4138-afc6-8dca7ff9e926,7a931456-c659-45b9-8929-b422e3425f6c,617b770c-2ca3-4bf1-882f-e0e9310e6de6,564f5344-b4b5-4d72-a5e3-f0bc2e6fd5f2,a1fda54c-7d3c-4e5c-9be1-69e95312e51f,4fa99d94-ce96-46cb-ac36-ebd45437038b,844f169e-c8e1-4cdd-8d81-8bbdbe288eea,70419e19-a566-4a9f-afdd-6f80fb484e09,f1c83a66-0fdc-409e-bb62-8d0d0b0c5b2b,1e6b5388-9016-4437-ba7e-2ec1d9c4bae3,dfb168cc-fb88-489e-bc3d-7ae4f4710863,5bde5348-ce9a-4f11-88f9-f78317089c57,f7fed8ed-b187-453a-aaca-08ea9ebf1133,332575db-faa2-43b3-87aa-b8e6239c59fc,b0bd6b13-a358-4198-86ba-5bb22da30ad1,41d205a5-5ca4-4772-8392-5cc3581b703f,48d5acfe-4cc7-4b78-a428-ca703564f7ea,db200eb0-4222-4e9e-b455-93b2f8563db3,3114d1e8-40d9-45d3-a6f2-bddeb2a88696,fed6a7e7-adaa-4850-9cbb-5994b6257f58,7dc8750d-3766-47c9-9d57-23dd8be178e6,6d5ba52e-4f09-4de8-ada4-b4edaf9fb69e}'::uuid[]))",
+            "Rows Removed by Index Recheck": 0,
+            "Filter": "(ANY (storyboard_audio_selections.episode_id = (hashed SubPlan 4).col1))",
+            "Rows Removed by Filter": 32,
+            "Shared Hit Blocks": 139,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0,
+            "Plans": [
+              {
+                "Node Type": "Nested Loop",
+                "Parent Relationship": "SubPlan",
+                "Subplan Name": "SubPlan 4",
+                "Parallel Aware": false,
+                "Async Capable": false,
+                "Join Type": "Inner",
+                "Startup Cost": 5.79,
+                "Total Cost": 176,
+                "Plan Rows": 55,
+                "Plan Width": 16,
+                "Actual Startup Time": 0.363,
+                "Actual Total Time": 0.364,
+                "Actual Rows": 1,
+                "Actual Loops": 1,
+                "Output": [
+                  "episode.id"
+                ],
+                "Inner Unique": false,
+                "Shared Hit Blocks": 101,
+                "Shared Read Blocks": 0,
+                "Shared Dirtied Blocks": 0,
+                "Shared Written Blocks": 0,
+                "Local Hit Blocks": 0,
+                "Local Read Blocks": 0,
+                "Local Dirtied Blocks": 0,
+                "Local Written Blocks": 0,
+                "Temp Read Blocks": 0,
+                "Temp Written Blocks": 0,
+                "Plans": [
+                  {
+                    "Node Type": "Result",
+                    "Parent Relationship": "InitPlan",
+                    "Subplan Name": "InitPlan 3",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Startup Cost": 0,
+                    "Total Cost": 0.26,
+                    "Plan Rows": 1,
+                    "Plan Width": 16,
+                    "Actual Startup Time": 0.185,
+                    "Actual Total Time": 0.185,
+                    "Actual Rows": 1,
+                    "Actual Loops": 1,
+                    "Output": [
+                      "local_identity.owner_id()"
+                    ],
+                    "Shared Hit Blocks": 83,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0
+                  },
+                  {
+                    "Node Type": "Seq Scan",
+                    "Parent Relationship": "Outer",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "account_memberships",
+                    "Schema": "public",
+                    "Alias": "membership",
+                    "Startup Cost": 0,
+                    "Total Cost": 10.28,
+                    "Plan Rows": 1,
+                    "Plan Width": 16,
+                    "Actual Startup Time": 0.289,
+                    "Actual Total Time": 0.289,
+                    "Actual Rows": 1,
+                    "Actual Loops": 1,
+                    "Output": [
+                      "membership.account_id",
+                      "membership.user_id",
+                      "membership.role"
+                    ],
+                    "Filter": "((membership.user_id = (InitPlan 3).col1) AND is_account_member(membership.account_id) AND (membership.role = 'owner'::member_role))",
+                    "Rows Removed by Filter": 55,
+                    "Shared Hit Blocks": 94,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0
+                  },
+                  {
+                    "Node Type": "Bitmap Heap Scan",
+                    "Parent Relationship": "Inner",
+                    "Parallel Aware": false,
+                    "Async Capable": false,
+                    "Relation Name": "episodes",
+                    "Schema": "public",
+                    "Alias": "episode",
+                    "Startup Cost": 5.53,
+                    "Total Cost": 164.92,
+                    "Plan Rows": 55,
+                    "Plan Width": 32,
+                    "Actual Startup Time": 0.072,
+                    "Actual Total Time": 0.073,
+                    "Actual Rows": 1,
+                    "Actual Loops": 1,
+                    "Output": [
+                      "episode.id",
+                      "episode.account_id",
+                      "episode.blueprint_version_id",
+                      "episode.title",
+                      "episode.stage",
+                      "episode.created_at",
+                      "episode.updated_at",
+                      "episode.series_version_id",
+                      "episode.main_script_revision_id",
+                      "episode.archived_at",
+                      "episode.is_test",
+                      "episode.script_source",
+                      "episode.worker_preflight_at",
+                      "episode.audio_source_mode",
+                      "episode.tts_language_code",
+                      "episode.tts_voice",
+                      "episode.tts_speaking_rate"
+                    ],
+                    "Recheck Cond": "(membership.account_id = episode.account_id)",
+                    "Rows Removed by Index Recheck": 0,
+                    "Filter": "is_account_member(episode.account_id)",
+                    "Rows Removed by Filter": 0,
+                    "Exact Heap Blocks": 1,
+                    "Lossy Heap Blocks": 0,
+                    "Shared Hit Blocks": 7,
+                    "Shared Read Blocks": 0,
+                    "Shared Dirtied Blocks": 0,
+                    "Shared Written Blocks": 0,
+                    "Local Hit Blocks": 0,
+                    "Local Read Blocks": 0,
+                    "Local Dirtied Blocks": 0,
+                    "Local Written Blocks": 0,
+                    "Temp Read Blocks": 0,
+                    "Temp Written Blocks": 0,
+                    "Plans": [
+                      {
+                        "Node Type": "Bitmap Index Scan",
+                        "Parent Relationship": "Outer",
+                        "Parallel Aware": false,
+                        "Async Capable": false,
+                        "Index Name": "episodes_account_stage_idx",
+                        "Startup Cost": 0,
+                        "Total Cost": 5.51,
+                        "Plan Rows": 164,
+                        "Plan Width": 0,
+                        "Actual Startup Time": 0.01,
+                        "Actual Total Time": 0.01,
+                        "Actual Rows": 1,
+                        "Actual Loops": 1,
+                        "Index Cond": "(episode.account_id = membership.account_id)",
+                        "Shared Hit Blocks": 2,
+                        "Shared Read Blocks": 0,
+                        "Shared Dirtied Blocks": 0,
+                        "Shared Written Blocks": 0,
+                        "Local Hit Blocks": 0,
+                        "Local Read Blocks": 0,
+                        "Local Dirtied Blocks": 0,
+                        "Local Written Blocks": 0,
+                        "Temp Read Blocks": 0,
+                        "Temp Written Blocks": 0
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "Planning": {
+            "Shared Hit Blocks": 337,
+            "Shared Read Blocks": 0,
+            "Shared Dirtied Blocks": 0,
+            "Shared Written Blocks": 0,
+            "Local Hit Blocks": 0,
+            "Local Read Blocks": 0,
+            "Local Dirtied Blocks": 0,
+            "Local Written Blocks": 0,
+            "Temp Read Blocks": 0,
+            "Temp Written Blocks": 0
+          },
+          "Planning Time": 0.5,
+          "Triggers": [],
+          "Execution Time": 0.432
+        }
+      ]
+    ],
+    "security": {
+      "roles": [
+        {
+          "name": "loop_anonymous",
+          "super": false,
+          "bypass": false,
+          "inherit": true
+        },
+        {
+          "name": "loop_app",
+          "super": false,
+          "bypass": false,
+          "inherit": true
+        },
+        {
+          "name": "loop_owner",
+          "super": false,
+          "bypass": false,
+          "inherit": true
+        },
+        {
+          "name": "loop_worker",
+          "super": false,
+          "bypass": false,
+          "inherit": true
+        }
+      ],
+      "tables": [
+        {
+          "acl": [
+            "postgres=arwdDxtm/postgres",
+            "loop_owner=r/postgres"
+          ],
+          "rls": true,
+          "name": "external_connection_verifications",
+          "force": false
+        },
+        {
+          "acl": [
+            "postgres=arwdDxtm/postgres",
+            "loop_owner=r/postgres"
+          ],
+          "rls": true,
+          "name": "external_connections",
+          "force": false
+        },
+        {
+          "acl": [
+            "postgres=arwdDxtm/postgres",
+            "loop_owner=r/postgres"
+          ],
+          "rls": true,
+          "name": "storyboard_audio_selections",
+          "force": false
+        }
+      ],
+      "policies": [
+        {
+          "cmd": "SELECT",
+          "name": "owners can read their connection verifications",
+          "roles": [
+            "loop_owner"
+          ],
+          "table": "external_connection_verifications",
+          "permissive": "PERMISSIVE"
+        },
+        {
+          "cmd": "SELECT",
+          "name": "owners can read their external connections",
+          "roles": [
+            "loop_owner"
+          ],
+          "table": "external_connections",
+          "permissive": "PERMISSIVE"
+        },
+        {
+          "cmd": "SELECT",
+          "name": "storyboard_audio_selections_owner_read",
+          "roles": [
+            "loop_owner"
+          ],
+          "table": "storyboard_audio_selections",
+          "permissive": "PERMISSIVE"
+        }
+      ],
+      "memberships": [
+        {
+          "role": "loop_owner",
+          "member": "loop_app"
+        }
+      ]
+    }
+  }
+}

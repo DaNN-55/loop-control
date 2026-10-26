@@ -1,0 +1,14 @@
+{
+  "kind": "minimal-native-planning-repair",
+  "approvedBy": "human-owner",
+  "approvedAt": "2026-10-26T05:40:12.882Z",
+  "sourceUserMessage": "Direct reply to request_user_input_async call_71abf2c2b90244d5a99810292144d6ff item 0: 授权最小修复并接续重跑",
+  "scope": [
+    "scripts/runtime/codex.mjs capability name",
+    "forward migration for future native planning attempt limits",
+    "offline and rollback checks",
+    "normal UI new continuation episode using same approved input bytes"
+  ],
+  "failedEpisodeRetained": "cf4765d7-8e50-412f-8b4d-ad536dc5254c",
+  "budgetsNotIncreased": true
+}

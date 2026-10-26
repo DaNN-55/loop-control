@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "tests": [
+    {
+      "hostClass": "loopback",
+      "errno": 1,
+      "deniedByOS": true
+    },
+    {
+      "hostClass": "documentation-address",
+      "errno": 1,
+      "deniedByOS": true
+    },
+    {
+      "hostClass": "loopback",
+      "errno": 1,
+      "deniedByOS": true
+    }
+  ],
+  "socketDeniedBeforeConnection": true
+}

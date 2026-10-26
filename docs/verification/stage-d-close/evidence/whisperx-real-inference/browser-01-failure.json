@@ -1,0 +1,6 @@
+{
+  "passed": false,
+  "error": "CDP response channel closed under outer macOS sandbox",
+  "attempt": "dedicated session with OS localhost-only policy",
+  "retryScope": "same dedicated session; outer OS network policy and domain allowlist retained"
+}

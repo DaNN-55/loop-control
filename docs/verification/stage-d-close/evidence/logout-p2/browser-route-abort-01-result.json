@@ -1,0 +1,17 @@
+{
+  "started": "2026-10-25T01:30:44.852Z",
+  "finished": "2026-10-25T01:30:44.864Z",
+  "command": [
+    "agent-browser",
+    "--session",
+    "d-close-logout-p2",
+    "network",
+    "route",
+    "**/api/local/logout",
+    "--abort"
+  ],
+  "status": 0,
+  "defaultTimeoutMs": 5000,
+  "timeoutOverride": false,
+  "passed": true
+}

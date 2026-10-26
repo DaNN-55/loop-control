@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "sourceDedicatedKeychainDeletedAndFreshRecreated": true,
+  "oldReferenceMissing": true,
+  "loginAndSystemKeychainsUntouched": true,
+  "existingAclUntouched": true
+}

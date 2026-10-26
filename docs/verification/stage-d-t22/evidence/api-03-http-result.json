@@ -1,0 +1,62 @@
+{
+  "passed": true,
+  "realOwnerHttp": true,
+  "realNativePgAndWorkerCli": true,
+  "realOpenChatCut": true,
+  "qcIssueBlocksApproval": true,
+  "repairCreatesNewQcAndRetainsOldIssue": true,
+  "oldQcIssueRejectsResolution": true,
+  "approvalDuplicatesOneFinalTask": true,
+  "finalReuse": true,
+  "reviewedAndFinalVideoShaMatch": true,
+  "corruptCandidateRerender": true,
+  "corruptCandidateOriginalBytesRestored": true,
+  "orphanWrongVideoManifestRejected": true,
+  "completionOnlyAfterRealPackageValidation": true,
+  "duplicatePackageOneVerification": true,
+  "fixedInputChanges409": true,
+  "providerRequests": 0,
+  "realWhisperXSuccess": false,
+  "calls": [
+    {
+      "command": "approveQc",
+      "status": 200
+    },
+    {
+      "command": "approveQc",
+      "status": 200
+    },
+    {
+      "command": "approveQc",
+      "status": 200
+    },
+    {
+      "command": "preparePublishPackage",
+      "status": 409
+    },
+    {
+      "command": "preparePublishPackage",
+      "status": 200
+    },
+    {
+      "command": "preparePublishPackage",
+      "status": 200
+    },
+    {
+      "command": "preparePublishPackage",
+      "status": 200
+    },
+    {
+      "command": "preparePublishPackage",
+      "status": 409
+    },
+    {
+      "command": "approveQc",
+      "status": 200
+    },
+    {
+      "command": "preparePublishPackage",
+      "status": 200
+    }
+  ]
+}

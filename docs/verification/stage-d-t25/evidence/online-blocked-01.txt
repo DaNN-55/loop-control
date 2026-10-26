@@ -1,0 +1,33 @@
+node:internal/errors:986
+  const err = new Error(message);
+              ^
+
+Error: Command failed: docker exec -i loop-control-stage-d-postgres psql -XqAt -U postgres -d loop_t25 -v ON_ERROR_STOP=1
+ERROR:  duplicate key value violates unique constraint "tasks_one_b_roll_per_storyboard_shot_configuration_revision_idx"
+DETAIL:  Key (episode_id, (input_snapshot ->> 'storyboard_review_package_id'::text), (input_snapshot #>> '{shot,id}'::text[]), (input_snapshot ->> 'configuration_hash'::text), COALESCE(input_snapshot ->> 'pre_render_revision'::text, ''::text))=(309193d7-d091-45c6-834f-560fc0524408, 65dc8ece-e63d-4814-90b2-797ca45faa6e, shot-2, 646c8ceea35046a163b81701d05fa5ea-retry-dcfa1680-59d0-4c33-a5bc-fbbab2167256-retry-f7b754b1-0339-440c-ab80-48725b94241d, ) already exists.
+
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:942:11)
+    at execFileSync (node:child_process:978:15)
+    at docker (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/environment.mjs:11:43)
+    at sql (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/environment.mjs:13:76)
+    at q (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t25-20261025/online-blocked.mjs:2:46)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t25-20261025/online-blocked.mjs:2:509
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26 {
+  status: 3,
+  signal: null,
+  output: [
+    null,
+    '',
+    'ERROR:  duplicate key value violates unique constraint "tasks_one_b_roll_per_storyboard_shot_configuration_revision_idx"\n' +
+      "DETAIL:  Key (episode_id, (input_snapshot ->> 'storyboard_review_package_id'::text), (input_snapshot #>> '{shot,id}'::text[]), (input_snapshot ->> 'configuration_hash'::text), COALESCE(input_snapshot ->> 'pre_render_revision'::text, ''::text))=(309193d7-d091-45c6-834f-560fc0524408, 65dc8ece-e63d-4814-90b2-797ca45faa6e, shot-2, 646c8ceea35046a163b81701d05fa5ea-retry-dcfa1680-59d0-4c33-a5bc-fbbab2167256-retry-f7b754b1-0339-440c-ab80-48725b94241d, ) already exists.\n"
+  ],
+  pid: 81217,
+  stdout: '',
+  stderr: 'ERROR:  duplicate key value violates unique constraint "tasks_one_b_roll_per_storyboard_shot_configuration_revision_idx"\n' +
+    "DETAIL:  Key (episode_id, (input_snapshot ->> 'storyboard_review_package_id'::text), (input_snapshot #>> '{shot,id}'::text[]), (input_snapshot ->> 'configuration_hash'::text), COALESCE(input_snapshot ->> 'pre_render_revision'::text, ''::text))=(309193d7-d091-45c6-834f-560fc0524408, 65dc8ece-e63d-4814-90b2-797ca45faa6e, shot-2, 646c8ceea35046a163b81701d05fa5ea-retry-dcfa1680-59d0-4c33-a5bc-fbbab2167256-retry-f7b754b1-0339-440c-ab80-48725b94241d, ) already exists.\n"
+}
+
+Node.js v24.20.0

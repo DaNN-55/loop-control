@@ -1,0 +1,6 @@
+{
+  "command": "./node_modules/.bin/vitest",
+  "error": "FileNotFoundError: worker had no node_modules; process never started",
+  "emptyLogRetained": "147-before-red.log",
+  "resolution": "link existing integration node_modules; no install"
+}

@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "files": [
+    "acceptance-summary.mjs",
+    "broken-parent-pipe-before-green.mjs",
+    "broken-parent-pipe.mjs",
+    "cleanup.mjs",
+    "competition-continue.mjs",
+    "competition-finish.mjs",
+    "competition-start-first-failed-private.mjs",
+    "competition-start.mjs",
+    "control.mjs",
+    "fixture.mjs",
+    "natural-followthrough.mjs",
+    "natural-init.mjs",
+    "natural-late-fences.mjs",
+    "natural-watch.mjs",
+    "observe-transition.mjs",
+    "process-boundaries.mjs",
+    "process-setup.mjs",
+    "run-check.mjs",
+    "server.mjs",
+    "setup-first-failed-private.mjs",
+    "setup.mjs",
+    "stop-during-claim.mjs",
+    "tests-offline-guard.mjs"
+  ],
+  "allCurrentDriversChecked": true
+}

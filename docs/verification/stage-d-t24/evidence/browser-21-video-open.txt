@@ -1,0 +1,2 @@
+✓ 
+  http://127.0.0.1:55187/api/local/artifacts/b7b45207-7131-4f88-a1ec-c6dc0acfba6d

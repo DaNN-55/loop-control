@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "provider": "volcengine_tts",
+  "realTaskPassed": true,
+  "artifact": {
+    "sha256": "adbd80378d24c3a2a8666cf7e2de866e0f299361f2e7581eaeda6672fb9e9f06",
+    "bytes": 9837
+  },
+  "durationSeconds": 1.224,
+  "streams": [
+    {
+      "codec_type": "audio"
+    }
+  ],
+  "taskClaimCount": 1,
+  "taskRequestDelta": 1,
+  "httpArtifactMatches": true,
+  "actualDecodePassed": true
+}

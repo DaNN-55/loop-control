@@ -2,7 +2,7 @@
 
 **Stage:** A
 
-**Status:** published — 已获Owner确认；GitHub Issue [#108](https://github.com/DaNN-55/loop-control/issues/108)，ready-for-agent；本地再次复审：验收满足且Owner已确认，最终loopback拓扑已补跑且T01前置已满足；云端 Issue 仍 open。
+**Status:** 本地交付并获 Owner 认可（2026-10-26）。GitHub Issue [#108](https://github.com/DaNN-55/loop-control/issues/108) 为原票引用；本轮仅同步本地状态，不更改或推断其当前云端状态。
 
 ## What to build
 
@@ -27,3 +27,9 @@
 见[阶段A报告](../../verification/stage-a/README.md)。T03 ADR已由Owner批准为Accepted，未提前实施后续阶段或切换生产。
 
 最终修复、再次复审及证据见 [A阶段四项修复报告](../../verification/stage-a/fixes/README.md)。
+
+## 当前证据与限制（2026-10-26）
+
+[A 阶段基线](../../verification/stage-a/README.md)及[修复终验](../../verification/stage-a/fixes/README.md)。固定最小/多镜头样本已有请求、耗时及资源原始记录；不推导正式产能。
+
+[本轮普通长度、多镜头隔离功能全流程及发布包](../../verification/tts-production-e2e-20261026/README.md)已完成，包含中断恢复、一次人工对齐和 Agent QC；适用范围与画质限制见[当前票单索引](README.md)，不替代本票的专项验收或未测 Provider 证据。本轮暂不提交、推送或合并；E/F 继续搁置，旧交接与失败记录保留为历史。

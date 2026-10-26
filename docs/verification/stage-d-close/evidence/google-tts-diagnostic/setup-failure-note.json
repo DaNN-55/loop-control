@@ -1,0 +1,8 @@
+{
+  "initialSetupPassed": false,
+  "reason": "Acceptance-only read-only input baseline query had an extra closing parenthesis",
+  "recovery": "Correct query and complete only missing baseline and receipt; reuse already prepared ledger without recreation or reset",
+  "newProviderRequests": 0,
+  "sqlSourceChanged": false,
+  "historicalFailurePreserved": true
+}

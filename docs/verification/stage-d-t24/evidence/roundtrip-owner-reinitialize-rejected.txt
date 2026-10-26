@@ -1,0 +1,8 @@
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/owner.mjs:9
+if(restored&&(selectedSql('SELECT count(*) FROM local_identity.restore_record')!=='1'||selectedSql('SELECT count(*) FROM local_identity.credentials')!=='0'))throw Error('Only initialize an uninitialized restored Owner');
+                                                                                                                                                                   ^
+
+Error: Only initialize an uninitialized restored Owner
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/owner.mjs:9:164
+
+Node.js v24.20.0

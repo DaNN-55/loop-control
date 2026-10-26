@@ -1,3 +1,6 @@
+import{stageLocalEpisodeDirectoryForDeletion,restoreStagedLocalEpisodeDirectory,finalizeStagedLocalEpisodeDirectory}from"../../worker/episodeDeletion.js";
+export{stageLocalEpisodeDirectoryForDeletion,restoreStagedLocalEpisodeDirectory,finalizeStagedLocalEpisodeDirectory}from"../../worker/episodeDeletion.js";
+import {parseShotWorkbenchClipSegments, shotWorkbenchReviewRender} from "../../worker/shotWorkbenchStudio";
 import { readOperationsEvidence } from "../../orchestration/operationsEvidence";
 import { createClient } from "@supabase/supabase-js";
 import { execFile, spawn } from "node:child_process";
@@ -25,7 +28,7 @@ import { registeredAdapters } from "../../worker/registeredAdapters";
 import { synthesizeGoogleTts, synthesizeVolcengineTts } from "../../worker/mediaProviders";
 import { reviewRenderFromSnapshot, shotPreparationContractFromSnapshot } from "../../worker/codexRunner";
 import { freezeOpenChatCutStudio, openOpenChatCutStudio } from "../../worker/openchatcutStudio";
-import type { ShotPreparationContract, StoryboardManifest, WorkerTaskPackage } from "../../worker/contracts";
+import type { StoryboardManifest, WorkerTaskPackage } from "../../worker/contracts";
 import { ExpiringProbeCache, summarizeN8nExecutions, supabaseControlDataEvidence, type N8nExecutionEvidence, type N8nExecutionEvidenceRow } from "../../observability/systemStatusEvidence";
 
 export { coverImageExtension } from "../../publishing/coverImage";
@@ -239,116 +242,8 @@ function isFilesystemRoot(path: string): boolean {
   return parse(resolvedPath).root === resolvedPath;
 }
 
-export interface ShotWorkbenchStudioInput {
-  allowedFrames: number;
-  audioTracks: Array<{ id?: string; cueId: string; relativePath: string; sha256: string; startSeconds: number; durationSeconds: number }>;
-  drafts: Array<{ audioMode: "none" | "source" | "tts"; audioTrackId: string | null; clipSegments: Array<{ startSeconds: number; endSeconds: number }>; composition: ShotPreparationContract["composition"]; confirmationStatus: "confirmed"; inputFingerprint: string; materialRevisionId: string | null; preparationContract: ShotPreparationContract; shotId: string; subtitleText: string; subtitlesEnabled: boolean; ttsText: string | null; videoArtifactId: string | null; videoTaskId: string | null }>;
-  frameRate: number;
-  materials: Array<{ id: string; relativePath: string; sha256: string }>;
-  storyboard: StoryboardManifest;
-}
-
-export function parseShotWorkbenchClipSegments(value: unknown): Array<{ startSeconds: number; endSeconds: number }> {
-  if (!Array.isArray(value)) return [];
-  return value.map((segment) => {
-    if (!segment || typeof segment !== "object" || Array.isArray(segment)) throw new Error("Studio 片段标记无效。");
-    const record = segment as Record<string, unknown>;
-    const startSeconds = record.start_seconds;
-    const endSeconds = record.end_seconds;
-    if (typeof startSeconds !== "number" || !Number.isFinite(startSeconds) || startSeconds < 0 || typeof endSeconds !== "number" || !Number.isFinite(endSeconds) || endSeconds <= startSeconds) throw new Error("Studio 片段标记无效。");
-    return { startSeconds, endSeconds };
-  });
-}
-
-export function shotWorkbenchReviewRender(episodeId: string, projectRelativePath: string, input: ShotWorkbenchStudioInput): NonNullable<WorkerTaskPackage["reviewRender"]> {
-  if (!isEpisodeId(episodeId)) throw new Error("无效的 Episode ID。");
-  const materialById = new Map(input.materials.map((material) => [material.id, material]));
-  const trackByCueId = new Map(input.audioTracks.map((track) => [track.cueId, track]));
-  const members: NonNullable<WorkerTaskPackage["reviewRender"]>["members"] = [];
-  let timelineStartSeconds = 0;
-  for (const shot of input.storyboard.shots) {
-    const draft = input.drafts.find((candidate) => candidate.shotId === shot.id);
-    const material = draft?.materialRevisionId ? materialById.get(draft.materialRevisionId) : undefined;
-    const segments = draft?.clipSegments?.length ? draft.clipSegments : [{ startSeconds: 0, endSeconds: shot.durationSeconds }];
-    const durationSeconds = segments.reduce((total, segment) => total + segment.endSeconds - segment.startSeconds, 0);
-    members.push({
-      memberKey: `shot:${shot.id}`,
-      memberKind: "shot_media",
-      mediaMissing: !material,
-      sourceMaterialRevisionId: material?.id,
-      clipSegments: segments,
-      composition: draft?.composition,
-      preparationContract: draft?.preparationContract,
-      inputFingerprint: draft?.inputFingerprint,
-      audioTrackId: draft?.audioTrackId,
-      audioMode: draft?.audioMode ?? "none",
-      relativePath: material?.relativePath ?? `episodes/${episodeId}/studio-work/missing-${members.length}.mp4`,
-      sha256: material?.sha256 ?? "0".repeat(64),
-      subtitleText: draft?.subtitlesEnabled === false ? "" : draft?.subtitleText ?? shot.scriptSegment,
-      subtitlesEnabled: draft?.subtitlesEnabled !== false,
-      startSeconds: timelineStartSeconds,
-      durationSeconds,
-    });
-    const track = trackByCueId.get(shot.id);
-    if (draft?.audioMode === "tts" && track) {
-      members.push({
-        memberKey: `narration:${shot.id}`,
-        memberKind: "narration",
-        audioTrackId: track.id ?? track.cueId,
-        audioMode: "tts",
-        relativePath: track.relativePath,
-        sha256: track.sha256,
-        startSeconds: timelineStartSeconds + track.startSeconds,
-        durationSeconds: track.durationSeconds,
-      });
-    }
-    timelineStartSeconds += durationSeconds;
-  }
-  return {
-    compositionId: "shot-workbench",
-    projectRelativePath,
-    projectRevision: 1,
-    preRenderReviewPackageId: "shot-workbench",
-    confirmationMode: "shot_preparation",
-    confirmedShots: input.storyboard.shots.map((shot) => {
-      const draft = input.drafts.find((candidate) => candidate.shotId === shot.id);
-      if (!draft) throw new Error(`镜头 ${shot.id} 缺少当前版本化准备契约。`);
-      return {
-        shotId: shot.id,
-        confirmationStatus: draft.confirmationStatus,
-        inputFingerprint: draft.inputFingerprint,
-        ...(draft.videoArtifactId ? { videoArtifactId: draft.videoArtifactId } : {}),
-        ...(draft.videoTaskId ? { videoTaskId: draft.videoTaskId } : {}),
-        ...(draft.materialRevisionId ? { sourceMaterialRevisionId: draft.materialRevisionId, clipSegments: draft.clipSegments } : {}),
-        composition: draft.composition,
-        preparationContract: draft.preparationContract,
-        audioMode: draft.audioMode,
-        audioTrackId: draft.audioTrackId,
-        subtitleText: draft.subtitleText,
-        subtitlesEnabled: draft.subtitlesEnabled,
-      };
-    }),
-    adjustments: {
-      aspectRatio: "9:16",
-      width: 1080,
-      height: 1920,
-      captionsEnabled: true,
-      captionStyle: "minimal",
-      pacing: "standard",
-      crop: "cover",
-      transition: "cut",
-      layout: "lower_third",
-      narrationGainDb: 0,
-      bgmGainDb: -12,
-      sfxGainDb: -6,
-      frameRate: input.frameRate,
-      allowedFrames: input.allowedFrames,
-      reason: "镜头工作版本",
-    },
-    storyboard: input.storyboard,
-    members,
-  };
-}
+export type {ShotWorkbenchStudioInput} from "../../worker/shotWorkbenchStudio";
+export {parseShotWorkbenchClipSegments, shotWorkbenchReviewRender} from "../../worker/shotWorkbenchStudio";
 
 function isStoryboardThumbnailVideo(path: string): boolean {
   return [".mov", ".mp4", ".webm"].includes(extname(path).toLowerCase());
@@ -1028,84 +923,6 @@ export async function createLocalEpisodeDirectory(assetRoot: string, episodeId: 
   return episodeDirectory;
 }
 
-export async function stageLocalEpisodeDirectoryForDeletion(assetRoot: string, episodeId: string): Promise<{ existed: boolean; path: string; stagingPath: string }> {
-  if (!isEpisodeId(episodeId)) throw new Error("无效的 Episode ID。");
-  const resolvedRoot = await fs.realpath(assetRoot);
-  if (isFilesystemRoot(resolvedRoot)) throw new Error("资产根不能是文件系统根目录。");
-  const episodesDirectory = resolve(resolvedRoot, "episodes");
-  const episodeDirectory = resolve(episodesDirectory, episodeId);
-  let episodesStat;
-  try {
-    episodesStat = await fs.lstat(episodesDirectory);
-  } catch (error) {
-    if (error instanceof Error && "code" in error && error.code === "ENOENT") return { existed: false, path: episodeDirectory, stagingPath: resolve(episodesDirectory, ".deletion-staging", episodeId) };
-    throw error;
-  }
-  if (episodesStat.isSymbolicLink() || !episodesStat.isDirectory()) throw new Error("目录不是安全目录。");
-
-  const stagingRoot = await ensureDirectoryWithinRoot(episodesDirectory, resolve(episodesDirectory, ".deletion-staging"));
-  const stagingPath = resolve(stagingRoot, episodeId);
-  let stagedStat;
-  try {
-    stagedStat = await fs.lstat(stagingPath);
-  } catch (error) {
-    if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) throw error;
-    stagedStat = null;
-  }
-  if (stagedStat && (stagedStat.isSymbolicLink() || !stagedStat.isDirectory())) throw new Error("删除暂存目录不是安全目录。");
-
-  let episodeStat;
-  try {
-    episodeStat = await fs.lstat(episodeDirectory);
-  } catch (error) {
-    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
-      if (stagedStat) return { existed: true, path: episodeDirectory, stagingPath };
-      return { existed: false, path: episodeDirectory, stagingPath };
-    }
-    throw error;
-  }
-  if (episodeStat.isSymbolicLink() || !episodeStat.isDirectory()) throw new Error("目录不是安全目录。");
-  if (stagedStat) throw new Error("Episode 已有待删除的暂存目录。");
-
-  const resolvedEpisodeDirectory = await fs.realpath(episodeDirectory);
-  if (!isDescendant(resolvedRoot, resolvedEpisodeDirectory)) throw new Error("目录超出资产根。");
-  await fs.rename(resolvedEpisodeDirectory, stagingPath);
-  return { existed: true, path: episodeDirectory, stagingPath };
-}
-
-export async function restoreStagedLocalEpisodeDirectory(assetRoot: string, episodeId: string): Promise<void> {
-  if (!isEpisodeId(episodeId)) throw new Error("无效的 Episode ID。");
-  const resolvedRoot = await fs.realpath(assetRoot);
-  const episodesDirectory = resolve(resolvedRoot, "episodes");
-  const episodeDirectory = resolve(episodesDirectory, episodeId);
-  const stagingPath = resolve(episodesDirectory, ".deletion-staging", episodeId);
-  const stagedDirectory = await fs.realpath(stagingPath);
-  if (!isDescendant(resolvedRoot, stagedDirectory)) throw new Error("删除暂存目录超出资产根。");
-  const existingEpisode = await fs.lstat(episodeDirectory).catch((error: unknown) => {
-    if (error instanceof Error && "code" in error && error.code === "ENOENT") return null;
-    throw error;
-  });
-  if (existingEpisode) throw new Error("原 Episode 目录已存在，无法恢复删除暂存目录。");
-  await fs.rename(stagedDirectory, episodeDirectory);
-}
-
-export async function finalizeStagedLocalEpisodeDirectory(assetRoot: string, episodeId: string): Promise<boolean> {
-  if (!isEpisodeId(episodeId)) throw new Error("无效的 Episode ID。");
-  const resolvedRoot = await fs.realpath(assetRoot);
-  const stagingPath = resolve(resolvedRoot, "episodes", ".deletion-staging", episodeId);
-  let stagedStat;
-  try {
-    stagedStat = await fs.lstat(stagingPath);
-  } catch (error) {
-    if (error instanceof Error && "code" in error && error.code === "ENOENT") return false;
-    throw error;
-  }
-  if (stagedStat.isSymbolicLink() || !stagedStat.isDirectory()) throw new Error("删除暂存目录不是安全目录。");
-  const resolvedStagingPath = await fs.realpath(stagingPath);
-  if (!isDescendant(resolvedRoot, resolvedStagingPath)) throw new Error("删除暂存目录超出资产根。");
-  await fs.rm(resolvedStagingPath, { force: false, recursive: true });
-  return true;
-}
 
 interface MaterialSnapshotInput {
   sourceKind: "directory" | "file" | "paste";

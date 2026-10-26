@@ -1,0 +1,26 @@
+{
+  passed: true,
+  fallback: {
+    episodeId: 'bc1bb7c4-f110-4007-b47e-9ee5234aaee5',
+    oneTask: true,
+    attempt: 1,
+    conservativeStartTransactionToClaimMs: 3923.05,
+    noExplicitWake: true,
+    noBrowserRequired: true
+  },
+  restart: {
+    episodeId: 'b1a6c26f-83db-4e29-bf45-e42c237b2170',
+    pendingWithoutTaskBeforeRestart: true,
+    oneTask: true,
+    attempt: 1,
+    restartDbClockToClaimMs: 273.267
+  },
+  shutdown: {
+    episodeId: '51691a51-2718-460c-9be9-dc67be3ba078',
+    taskId: '995b41b0-3aed-4a21-87cd-4983f4544ade',
+    realWorkerAndPlannerKilled: true,
+    readyAfterStop: true,
+    attempts: [ [Object], [Object] ],
+    completedAfterRestart: true
+  }
+}

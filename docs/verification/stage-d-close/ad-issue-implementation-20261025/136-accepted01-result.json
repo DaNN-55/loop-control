@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "ownerReply": "已试听，正文一致",
+  "actualBrowserOwnerButtonSaved": true,
+  "browserReloadRetained": true,
+  "twoFreshHttpReadsRetained": true,
+  "actualModelScoreDoesNotReplaceOwner": true,
+  "providerRequests": 0
+}

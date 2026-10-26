@@ -1,0 +1,29 @@
+{
+  "at": "2026-10-26T06:00:34.558Z",
+  "episode": {
+    "id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+    "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+    "blueprint_version_id": "a467cbba-de5a-404d-8d64-34d0406bf3f6",
+    "title": "本地最终验收：森林、河流与山峦（接续 02）",
+    "stage": "waiting_input",
+    "created_at": "2026-10-26T06:00:10.837778+00:00",
+    "updated_at": "2026-10-26T06:00:10.837778+00:00",
+    "series_version_id": null,
+    "main_script_revision_id": null,
+    "archived_at": null,
+    "is_test": false,
+    "script_source": "provided",
+    "worker_preflight_at": null,
+    "audio_source_mode": "tts",
+    "tts_language_code": null,
+    "tts_voice": null,
+    "tts_speaking_rate": null
+  },
+  "previousFailedEpisode": "cf4765d7-8e50-412f-8b4d-ad536dc5254c",
+  "sourceApproval": "owner-main-input-approval.json",
+  "continuationAuthorizedBy": "repair-authorization.json",
+  "approvedScriptBodyUnchanged": true,
+  "approvedColorGuideUnchanged": true,
+  "normalUiCreated": true,
+  "automaticRetryLimitConfigured": 1
+}

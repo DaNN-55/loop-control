@@ -1,0 +1,14 @@
+
+> loop-control@0.1.0 start
+> node scripts/local/start.mjs
+
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/deployment.mjs:35
+ if(!isAbsolute(file)||realpathSync(file)!==file||!/^t(?:24|25)-[a-z0-9-]+$/.test(dirname(file).slice(join(root,'state').length+1))||dirname(dirname(file))!==join(root,'state'))throw Error('Unapproved isolated deployment file');
+                                                                                                                                                                                       ^
+
+Error: Unapproved isolated deployment file
+    at readDeployment (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/deployment.mjs:35:184)
+    at readDeployment (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/deployment.mjs:29:14)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/start.mjs:9:44
+
+Node.js v24.20.0

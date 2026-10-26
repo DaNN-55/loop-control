@@ -1,0 +1,1 @@
+{"typecheck03":"npm script typecheck does not exist; use existing check", "finalState01":"helper missing correctly returns exit1/code missing; driver wrongly expected exit0/status", "fullDefault02":"npm test omitted established private-history exclusion; intentionally terminated only this run process tree, not accepted as regression"}

@@ -1,0 +1,593 @@
+{
+  "version": 1,
+  "at": "2026-10-24T07:42:30.832Z",
+  "baseline": "d06b2a5f1b0fb571c53ac36485d8d6fac5e22c46",
+  "commits": [],
+  "scope": "T18 isolated controlled responses, seeded qualification metadata and SecretStore substitute; no online requests",
+  "entries": [
+    {
+      "path": "scripts/local/migrate.mjs",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 1501,
+      "sha256": "526fe3809bf53f5b281f6d4ce83bf889b75c0c5da69f9eae599a404ffacdc925"
+    },
+    {
+      "path": "src/local-app/LocalEpisodeDetail.tsx",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 4802,
+      "sha256": "0bd9180a6b02079b4e9097ab7200cba40351f459a04659f9ed291b55f708b843"
+    },
+    {
+      "path": "src/local-app/episodeCommands.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 17320,
+      "sha256": "f904daa0ab25c3f1426a37b31604806bda84b612c8f8775d6d4c73ce4ba2719c"
+    },
+    {
+      "path": "src/local-app/localWorkerCli.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 5309,
+      "sha256": "5ad2d322d88d8be3f923f4db5493ea03cd6a92ffa082da6eda265fdc7383dc9e"
+    },
+    {
+      "path": "src/local-app/localWorkerService.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 4871,
+      "sha256": "36b9d003c27b3c700a17b35dd7a10658ff0820249759555ad7819f9dc161a155"
+    },
+    {
+      "path": "src/local-app/workerDatabase.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 2795,
+      "sha256": "d2af45494df22b35fb1e2549a34b102e2703be07713cff64ec20f53bb0ceb143"
+    },
+    {
+      "path": "db/local/014-narration.sql",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 2799,
+      "sha256": "aabd3a50575ebd463c35c5adc6ed12f9923fbd53ba0ec037bab77e3d1077bba5"
+    },
+    {
+      "path": "db/local/015-narration-retry.sql",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 9528,
+      "sha256": "99cf091c068a0d270db652a92ba2ca152d0d576f04717db72f9372104aada2d0"
+    },
+    {
+      "path": "src/local-app/narrationWorker.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 3690,
+      "sha256": "b6d89993c41b6990eb7b0e677dd12b7d4b158978e56bee8d7d0c025e6aad3012"
+    },
+    {
+      "path": "scripts/local/narration-acceptance.mjs",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 15502,
+      "sha256": "2d18c534f024a89b5c9ecd5234b22c822dba6fed3892ea34511fd9ec8f0498e0"
+    },
+    {
+      "path": "scripts/local/narration-controlled-ports.mjs",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 1951,
+      "sha256": "c610c62d67538cfd0f7a098b4144a3fd81050510200d96764ea3377cd15ddd25"
+    },
+    {
+      "path": "scripts/local/narration-boundaries.mjs",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 5949,
+      "sha256": "f8bc2c9325e892b2ac1f6262d064f67794b8c9829fcc51304ddd59fefc6eaa7f"
+    },
+    {
+      "path": "scripts/local/narration-readiness.mjs",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 3028,
+      "sha256": "c108e17e4e27aaac1e2ab2221c8998e7bfe418f72d4c31dc8b1c15df9d3da08f"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/README.md",
+      "kind": "public-report-or-evidence",
+      "bytes": 11354,
+      "sha256": "c3362ecf7f16bc4987e08f40fa058e5ce09c8368ae2391673baa05fb2eaf27ed"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/application-final-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 7832,
+      "sha256": "94742acbf32c35fc71aff37beb485e967e862b15ba0c7c61496e7181ca1be6b8"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/application-types-final-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/boundaries.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 1984,
+      "sha256": "4e268f14dc3f76a0318e8e576b2a3c40b7592e6fa40bc02278eb9d4a0c6e86c9"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/boundary-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 25,
+      "sha256": "a136d3f0324a108035bc4c78808fcd2a39a31f2a8ff44f9fbd9e569a963525c8"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/boundary-result.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 468,
+      "sha256": "abfb5af74b596d743a5ab700f94a40f57961ffd286a527f7069cdc6153ada919"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-audio-focused-controls-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 5059,
+      "sha256": "b6e3d353d09ac9a39a46121e12f1c6632165dcd795411242be3b9400241019f9"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-audio-metadata-01.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 686,
+      "sha256": "430c93a6e7848ca62d34593f0b1d4fad2132f288d71c3c873332f1526071f114"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-controls-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 4547,
+      "sha256": "201d0043b4b11583b9ad0eb6c968268385a6afb0a4d58d440ce9d7f3adf482ef"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-controls-02.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 4333,
+      "sha256": "3496cd5cd38b3af919c24513bdfef54297d857a86edc63422822b46439023c9e"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-controls-03.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 4455,
+      "sha256": "e0e21baa57ba67c403e0d33a7b5f341bdd6654da10f4057251d7d5ffbc47ff63"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-controls-04.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 5203,
+      "sha256": "50ec67bfbd3ec373506de74f8e212facbcb33bee4ed67b1fc31f8ad811e54427"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-controls-05.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 4391,
+      "sha256": "7b972c75da113efcb1002bc480e5b55f16c7649b614a43da9a1ca36228197e88"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-controls-06.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 4625,
+      "sha256": "3f450443b592344af0ac46dc632cf8ad9941d47acafee82b2b75fc80322874a9"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-draft-pending-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 11574,
+      "sha256": "19d265eaa12d5ef875f56037cc4b41a5f34f7c4f58b3a06e810847f91aefe99c"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-final-audit-01.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 3960,
+      "sha256": "84df9abcc41764e41e11684128ca78d71e943297171cdcd70dc648b527a5197f"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-generating-01.png",
+      "kind": "public-report-or-evidence",
+      "bytes": 83457,
+      "sha256": "45a22ab6fc11842b3673bbed726861ca64cba69b62281d8e5ade709325b6f4e0"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-generating-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 11537,
+      "sha256": "cfd031727ddbaf29ce0b64b6116466fdba44f95626ad03aa8735d2b14c11aa88"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-google-ready-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 12385,
+      "sha256": "7d39c33d17412a4d4eecb51e9d16dde06a5df1f8370ec801e26adc6ef24c354a"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-google-reload-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 656,
+      "sha256": "e7c4c6938daf6df1f2ef0d0f648108dc64d44edb4f5e71f0f241c72b9ac0d3d5"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-google-task-01.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 641,
+      "sha256": "f26a02c730c1e595778765de093d8b2990210ae5b7ecad0fee1ebd637c766d8d"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-network-mid-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 235383,
+      "sha256": "b9e5bdbbc28c2489487f8bd33ee309e812a7dec06937ebf57edca7d72849e331"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-requests-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 339789,
+      "sha256": "eb2ec8103d974b41be2dfc1aed6c6cd279847cbcb4aeb32c4daf359faae49c3d"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-requests-02.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 446168,
+      "sha256": "4fa81120b2c4552a6df40660bdbaa3d0a19ac46c5bef4ab27624d05915f6bcd4"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-settings-pending-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 12504,
+      "sha256": "a28a4446a1d37131cdd942e3eff2ab6b824b8888b7b21e517abc6d80a4aaf29e"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-volc-audio-metadata-01.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 686,
+      "sha256": "b87d1ae218d2cde8824cbd77d384c16702eaa8a7d62009f1b131fc6e48ed988d"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-volc-audio-ready-03.png",
+      "kind": "public-report-or-evidence",
+      "bytes": 85466,
+      "sha256": "d9aa57e3cbe788d7cf091786084a058d1ec884f45d33af88bc9fc0a93db3b174"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-volc-controls-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 66,
+      "sha256": "e0d578d99521e97fdd39e7dca64af66d0c6745ea54997c78dcd253ce4372490c"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-volc-controls-02.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 564,
+      "sha256": "e6e9b78843aa71763c9aabf908dfc8356cfddbf7056627c98b4499fb131fc333"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-volc-controls-03.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 564,
+      "sha256": "e6e9b78843aa71763c9aabf908dfc8356cfddbf7056627c98b4499fb131fc333"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-volc-controls-04.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 4969,
+      "sha256": "9091ee322eddb42e143e99ad868ff0d6e05a6b6368a8e1145aca8c75988732d2"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-volc-controls-05.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 4912,
+      "sha256": "fc357a683ad2ccb63f9e46e999e74676d36ffaa308c81aa722878e1ed1da2db2"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-volc-controls-06.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 5626,
+      "sha256": "344e3b99b73824d59dc1866c3d49b13ad3215ff2cf9a76b65257e6b1ce887335"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-volc-controls-07.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 4848,
+      "sha256": "11c6b40f9d0f04975140e118ff731fc47e4b5ee99ad10bc090bcd0cb69e63a55"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-volc-generating-01.png",
+      "kind": "public-report-or-evidence",
+      "bytes": 86472,
+      "sha256": "0cf113c1afa77f8d11a571ae930e64525e844c0d92edbd00a6081e562b18b5c3"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-volc-generating-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 12091,
+      "sha256": "ebbd8f0a42fd50e2a40de19a847c1ffe477824357947716cd4a9424f4fdfaa3f"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-volc-ready-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 12905,
+      "sha256": "77e4011a16affb11fefef0326290f64bbc8b4d85e30341dd98605ca83d6601b9"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-volc-reload-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 12905,
+      "sha256": "77e4011a16affb11fefef0326290f64bbc8b4d85e30341dd98605ca83d6601b9"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/browser-volc-save-pending-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 12134,
+      "sha256": "fe759219e68ff6b1c23584d9cd26e4c423dddc7e2f063fbc289558278affad20"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/controlled-events.jsonl",
+      "kind": "public-report-or-evidence",
+      "bytes": 2682,
+      "sha256": "f127b852a818b7d00a254a0b578c4c202bfe25a5a62b49f6cdd98c3b34eefc72"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/controlled-tone.mp3",
+      "kind": "public-report-or-evidence",
+      "bytes": 10074,
+      "sha256": "a09f9c4890f827c47a435584e204fe87076c1e4993faab2d3320f01d72e5b356"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/credential-scan.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 545,
+      "sha256": "7ba2503d19ca086cebb3983611b9d2da0da8b140b4feb00f841a1a467fdf4988"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/events.jsonl",
+      "kind": "public-report-or-evidence",
+      "bytes": 18832,
+      "sha256": "c65d60489ad0bfa3474a1669cbafb157a063fefa3cd30b62f77d072532a578ea"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/frontend-build-final-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 1214,
+      "sha256": "5b9c982fb43e5b92ffd8d081d0573e48ba8733f7f21b062f54efc697d0e5a8cb"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/http-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 714,
+      "sha256": "0a9d5bb961d4d126a2ab88662eb62c21095562f99a521a9dda18ad97cb68a943"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/http-02.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 64,
+      "sha256": "ce5fe9ebe53b22079b261e407e6648661f427d377cae7fbacc33bcd5a2746866"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/http-result.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 4730,
+      "sha256": "350c310881f74226f74ddcbf05ff6f04a9192c42c5d962c37a5489bca500be29"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/local-types-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 131,
+      "sha256": "a17512f633bd5ac25b7d6b41a780b18093ebc05df2f1055014f33e653d74fd38"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/local-types-02.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/local-types-03.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/local-types-04.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/local-types-05.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/local-types-final-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/migration-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 87,
+      "sha256": "5d6416117be4b330cf777e0556deb704fc338adb4e57ba927c95c847019dc184"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/migration-02.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 87,
+      "sha256": "5d6416117be4b330cf777e0556deb704fc338adb4e57ba927c95c847019dc184"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/native-security.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 767,
+      "sha256": "27083c37759ad70d6bf05ee96c3dcf20a6a374b6446fca1b8f54716a83b765a2"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/network-guard.mjs",
+      "kind": "public-report-or-evidence",
+      "bytes": 890,
+      "sha256": "895e86f9a90bddb20b790d7c439ee44d5871a9263e10f36d1106be87b22ad22e"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/node-final-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 339,
+      "sha256": "82ded47c1f1862502606b5225c36adf228090ffca88f5da52e08ec25b37d41ed"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/pre-t18-history.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 4065,
+      "sha256": "e68d56bc19a8979c18bad18f1d45bc05711585be32149069ccca8a8d7aa527b0"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/prepare-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 1618,
+      "sha256": "5cc45a82a64bc69b252b42d98b90755ac1e0ee798ab153be6eaa49aaaa97be31"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/prepare-02.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/readiness-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 17,
+      "sha256": "4da170ba15fc04eb66f0c7c5e74edd5b4f973f3a79fa499177a2b68216f90197"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/readiness-result.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 301,
+      "sha256": "4b499815956da4216efd7ad1053b4f663be31c4f4541677336faa2de012a0dbb"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/regression-results-01.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 1901,
+      "sha256": "cf9b30795e234fc45a19ef75ff74d7bcfdbb8298f73c33e2d282d052db64e66b"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/review.md",
+      "kind": "public-report-or-evidence",
+      "bytes": 1376,
+      "sha256": "c4f7fdc37852519d90141ac367c09b6d78e5c604871dc77b388f01b6e8089370"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/revocation-result.json",
+      "kind": "public-report-or-evidence",
+      "bytes": 592,
+      "sha256": "27f9327489460953014d5658ae09f575f18e00af18e072686f818e3d9c67d0a1"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/revoke-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 25,
+      "sha256": "75445bb4304971651fad838e82a3fdd139a62d2a0b2328232ee9d1f77f306ef9"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/runtime-01.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 215,
+      "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/runtime-02.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 215,
+      "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/runtime-03.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 215,
+      "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/runtime-04.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 215,
+      "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/runtime-05.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 215,
+      "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/types-02.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/verification/stage-d-t18/types-03.txt",
+      "kind": "public-report-or-evidence",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "privateRetained": [
+    {
+      "path": ".loop-control/stage-d/state/t18-20261024/baseline.json",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t18-20261024/PLAN.md",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t18-20261024/fixture.json",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t18-20261024/change-scope.json",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t18-20261024/business-before-private.sql",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t18-20261024/post-t18-private.sql",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t18-20261024/google_tts-snapshot-private.json",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t18-20261024/volcengine_tts-snapshot-private.json",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t18-20261024/server-private.log",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t18-20261024/browser-volc-audio-ready-01.png",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t18-20261024/browser-volc-audio-ready-02.png",
+      "status": "retained privately; not copied or fingerprinted in public index"
+    }
+  ],
+  "excluded": [
+    "Root PLAN.md and unrelated docs/specs/docs/backlog/output",
+    "Owner/app/Worker credential files not indexed",
+    "Identity/session/lease dumps, snapshots and raw server diagnostics",
+    "Raw HAR: not captured"
+  ],
+  "limitations": "Historical default 5-second gate failure/root cause unresolved; default deployment, online generation, other Providers, full multi-capability Worker and T18 real Keychain/live qualification unaccepted. T17 intermediate log overwrite explanation retained; T18 raw logs uniquely numbered.",
+  "self": "Excluded from its own fingerprint list.",
+  "archiveAuthorization": {
+    "status": "Owner approved local commit of this exact T18 scope",
+    "acceptanceSnapshot": "commits empty and noCommit/HEAD/index fields in raw evidence describe pre-archive acceptance",
+    "limitationsRetained": "Historical default 5-second gate failure/root cause unresolved; default deployment, online generation, other Providers and full multi-capability Worker unaccepted; seeded qualification and SecretStore substitute; T17 intermediate log overwrite explanation",
+    "excluded": "Unrelated planning and credential-bearing private evidence",
+    "boundaries": "No production operations, push, merge or T19",
+    "commitIdentity": "See Git history; acceptance baseline unchanged"
+  }
+}

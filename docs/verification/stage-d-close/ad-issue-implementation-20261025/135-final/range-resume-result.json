@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "initialTruncationBytes": 956227935,
+  "rangeAddedBytes": 320068216,
+  "fullBytes": 1276296151,
+  "fullSha256": "de031fd4b29e0c0667e5346450fadfe1326c89936b888b59c4ede608db763ee4",
+  "fixedSourceUnchanged": true,
+  "originalTruncatedPrefixRetained": true
+}

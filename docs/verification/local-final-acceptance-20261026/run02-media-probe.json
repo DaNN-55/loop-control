@@ -1,0 +1,175 @@
+{
+  "at": "2026-10-26T06:33:48.492Z",
+  "media": [
+    {
+      "artifactId": "0e6953f6-7a23-4526-9cb2-94773b57aba1",
+      "taskId": "51e67543-33fc-4a9a-a53a-fddc8f596557",
+      "taskType": "generate_b_roll",
+      "shot": "shot-1",
+      "artifactType": "b_roll_asset",
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/51e67543-33fc-4a9a-a53a-fddc8f596557/shot-1.mp4",
+      "sha256": "ca2c027a7b9c936f1db0273f094bb037825791e23395a13f473ac4329e240927",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 360,
+            "height": 640,
+            "r_frame_rate": "60/1"
+          }
+        ],
+        "format": {
+          "duration": "30.500000",
+          "size": "7255396"
+        }
+      }
+    },
+    {
+      "artifactId": "29d3e6ff-8986-4ea6-b6ae-fafadc5adf29",
+      "taskId": "2189bc91-599f-4f6e-98e6-d75ee6f71d8f",
+      "taskType": "generate_b_roll",
+      "shot": "shot-3",
+      "artifactType": "b_roll_asset",
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/2189bc91-599f-4f6e-98e6-d75ee6f71d8f/shot-3.mp4",
+      "sha256": "f23edb4febd578cf30f006c5ed84c2b17fd8122a73b204d0d383239ecc420eff",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 360,
+            "height": 640,
+            "r_frame_rate": "60000/1001"
+          }
+        ],
+        "format": {
+          "duration": "20.687333",
+          "size": "1704871"
+        }
+      }
+    },
+    {
+      "artifactId": "2deee519-17f9-4e9d-bff6-efeea32a8838",
+      "taskId": "4af14d72-e7af-4b5f-8416-b4f0c9079634",
+      "taskType": "generate_narration",
+      "shot": "shot-3",
+      "artifactType": "narration_audio",
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/4af14d72-e7af-4b5f-8416-b4f0c9079634/shot-narration-shot-3-b68253aa5ac5596afb4da5c2dafebbf4.mp3",
+      "sha256": "7fabfd116a1cb4c9bb459c881fb03dc5ddc53be2475730a890c5a127b735ea67",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mp3",
+            "codec_type": "audio",
+            "sample_rate": "24000",
+            "channels": 1,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "19.920000",
+          "size": "159405"
+        }
+      }
+    },
+    {
+      "artifactId": "6bc6a49c-167a-4676-8a4b-da33da98a04b",
+      "taskId": "12a6fe77-3f0f-4234-bee2-3811c8c04e80",
+      "taskType": "generate_narration",
+      "shot": "shot-2",
+      "artifactType": "narration_audio",
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/12a6fe77-3f0f-4234-bee2-3811c8c04e80/shot-narration-shot-2-8b1856649c911ce7165af56072ae13e8.mp3",
+      "sha256": "d8ddd107580abb86331286d1e013172d0e8f46a5563c99c08c7d560cbba81d50",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mp3",
+            "codec_type": "audio",
+            "sample_rate": "24000",
+            "channels": 1,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "19.104000",
+          "size": "152877"
+        }
+      }
+    },
+    {
+      "artifactId": "d3acaa6c-d9fb-4857-8252-a4b663f3854e",
+      "taskId": "4ddb2f66-d9f9-47f4-a251-cee346e1b3ba",
+      "taskType": "generate_b_roll",
+      "shot": "shot-2",
+      "artifactType": "b_roll_asset",
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/4ddb2f66-d9f9-47f4-a251-cee346e1b3ba/shot-2.mp4",
+      "sha256": "ed6548914d5d26772bd3141f7539fef5a242cd4707f7b24a0338b285a5ba92ca",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "h264",
+            "codec_type": "video",
+            "width": 540,
+            "height": 960,
+            "r_frame_rate": "30000/1001"
+          },
+          {
+            "index": 1,
+            "codec_name": "aac",
+            "codec_type": "audio",
+            "sample_rate": "48000",
+            "channels": 2,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "20.565000",
+          "size": "4982261"
+        }
+      }
+    },
+    {
+      "artifactId": "e4a47e67-3ec9-4740-9c47-5f73e5541bb2",
+      "taskId": "57a27d39-4150-4725-a60c-c7c8f166ec66",
+      "taskType": "generate_narration",
+      "shot": "shot-1",
+      "artifactType": "narration_audio",
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/57a27d39-4150-4725-a60c-c7c8f166ec66/shot-narration-shot-1-514626e0429da061dc85aeaa64c9745c.mp3",
+      "sha256": "334cb7b62da6e90cb5981af7fb70f5abcd439e6bba77e3c5a836a3c176bf151d",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "index": 0,
+            "codec_name": "mp3",
+            "codec_type": "audio",
+            "sample_rate": "24000",
+            "channels": 1,
+            "r_frame_rate": "0/0"
+          }
+        ],
+        "format": {
+          "duration": "18.672000",
+          "size": "149421"
+        }
+      }
+    }
+  ]
+}

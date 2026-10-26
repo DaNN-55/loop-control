@@ -1,0 +1,101 @@
+{
+  "annotations": [
+    {
+      "id": "2bb64d59-2050-4145-840b-72e95eeaa885",
+      "packageId": "914de993-ea3c-4b55-a757-7a2d0257e8dd",
+      "reason": "补充结尾依据。",
+      "shotId": "shot-2"
+    }
+  ],
+  "artifacts": [
+    {
+      "bytes": 2080,
+      "id": "ff5991c8-ce7b-4709-b31e-c6fc3bd0e744",
+      "path": "episodes/fe16d614-416f-42c4-a6ad-500243e9f52a/storyboard-revision-3.json",
+      "sha256": "bf944e4f29f35737e8ec140bcaec3f28bf34bde14d9d00514676d65ad0856bc2"
+    },
+    {
+      "bytes": 2080,
+      "id": "17a6db0b-7a7c-4f79-9c55-e760f4052c16",
+      "path": "episodes/fe16d614-416f-42c4-a6ad-500243e9f52a/storyboard-v2.json",
+      "sha256": "9c2cb3f01e28a6f0d1308ab20e6270da7fc4cfb4076caef98530921e4315125a"
+    },
+    {
+      "bytes": 2080,
+      "id": "c1ebd29c-ec3b-4c44-b8af-ce27e22a6f42",
+      "path": "episodes/fe16d614-416f-42c4-a6ad-500243e9f52a/storyboard-v1.json",
+      "sha256": "9c2cb3f01e28a6f0d1308ab20e6270da7fc4cfb4076caef98530921e4315125a"
+    },
+    {
+      "bytes": 443,
+      "id": "7ce60486-3e95-4c38-99ca-0e68cc1fdd78",
+      "path": "episodes/fe16d614-416f-42c4-a6ad-500243e9f52a/visual-assets-v1.md",
+      "sha256": "7c76daf09acb6db5e0aff71a1cbbc4136d9bcc2cf1cc527b35503256c809ab71"
+    }
+  ],
+  "episodeId": "fe16d614-416f-42c4-a6ad-500243e9f52a",
+  "packages": [
+    {
+      "artifactId": "c1ebd29c-ec3b-4c44-b8af-ce27e22a6f42",
+      "id": "914de993-ea3c-4b55-a757-7a2d0257e8dd",
+      "invalidatedAt": null,
+      "revision": 1,
+      "shots": [
+        {
+          "duration": 4,
+          "id": "shot-1",
+          "type": "a_roll"
+        },
+        {
+          "duration": 4,
+          "id": "shot-2",
+          "type": "b_roll"
+        }
+      ]
+    },
+    {
+      "artifactId": "17a6db0b-7a7c-4f79-9c55-e760f4052c16",
+      "id": "db77acb2-9032-4009-b3da-5b2da18271d1",
+      "invalidatedAt": null,
+      "revision": 2,
+      "shots": [
+        {
+          "duration": 4,
+          "id": "shot-1",
+          "type": "a_roll"
+        },
+        {
+          "duration": 4,
+          "id": "shot-2",
+          "type": "b_roll"
+        }
+      ]
+    },
+    {
+      "artifactId": "ff5991c8-ce7b-4709-b31e-c6fc3bd0e744",
+      "id": "b464d055-ce43-4f71-be2f-21f9c164b68e",
+      "invalidatedAt": null,
+      "revision": 3,
+      "shots": [
+        {
+          "duration": 4,
+          "id": "shot-1",
+          "type": "b_roll"
+        },
+        {
+          "duration": 4,
+          "id": "shot-2",
+          "type": "b_roll"
+        }
+      ]
+    }
+  ],
+  "stage": "storyboard_approved",
+  "taskTypes": [
+    "draft_storyboard_revision",
+    "draft_storyboard",
+    "draft_storyboard",
+    "prepare_visual_brief"
+  ],
+  "url": "http://127.0.0.1:55180/?episode=fe16d614-416f-42c4-a6ad-500243e9f52a"
+}

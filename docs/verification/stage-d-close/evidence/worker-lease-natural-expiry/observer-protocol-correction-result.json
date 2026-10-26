@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "initialObserverExitedNonzero": true,
+  "initialObserverError": "Expected original claimedAt during legitimate ready/backoff; actual null",
+  "productFailure": false,
+  "strictReplacementStartedBeforeExpiry": true,
+  "replacementChecks": [
+    "No change to live original lease before expiry",
+    "Ready only after >=1800 seconds, token null, old run failed",
+    "Exactly one new attempt and verified completed artifact"
+  ],
+  "initialRawLogRetained": "natural-watch-01.log",
+  "naturalTaskNotResetOrResubmitted": true
+}

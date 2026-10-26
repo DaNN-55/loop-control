@@ -1,0 +1,29 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ scripts/local/application.test.mjs (2 tests | 1 failed) 4ms
+   × assembles approved deployment ports in the normal factory and refuses a network reservation 3ms
+     → expected "spy" to be called with arguments: [ { approved: true, …(2) } ]
+
+Number of calls: 0
+
+   ✓ keeps absent capability configuration disabled and ignores ambient OpenChatCut 0ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  08:42:49
+   Duration  734ms (transform 16ms, setup 0ms, collect 17ms, tests 4ms, environment 0ms, prepare 39ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  scripts/local/application.test.mjs > assembles approved deployment ports in the normal factory and refuses a network reservation
+AssertionError: expected "spy" to be called with arguments: [ { approved: true, …(2) } ]
+
+Number of calls: 0
+
+ ❯ scripts/local/application.test.mjs:17:69
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,0 +1,60 @@
+{
+  "at": "2026-10-26T07:21:03.854Z",
+  "episodeId": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+  "sourceManifest": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/publish-package/manifest.json",
+  "copyRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/state/final-acceptance-20261026/portable-publish-run02",
+  "method": "Copied manifest plus exactly its 4 required files preserving relative tree; original production root not used by verifier",
+  "verifiedAtAlternateRoot": true,
+  "requiredTypes": [
+    "final_render",
+    "cover",
+    "metadata",
+    "final_qc_report"
+  ],
+  "totalBytes": 118141989,
+  "entries": [
+    {
+      "artifactType": "publish_package",
+      "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/publish-package/manifest.json",
+      "sha256": "94a7dba306362a97531c7e02b3d3421cd59b6915e55634faaf6664dc62eec7b7",
+      "fileSize": 1224,
+      "sizeMatched": true,
+      "shaMatched": true
+    },
+    {
+      "artifactType": "final_render",
+      "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/d0731f0f-0793-4610-8bd5-108f986f1151/final-render.mp4",
+      "sha256": "0e381fafd73fac4c747fc90f5a59aaf53f7812484ae568d0850f355f28b59a51",
+      "fileSize": 117898661,
+      "sizeMatched": true,
+      "shaMatched": true
+    },
+    {
+      "artifactType": "cover",
+      "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/publish-input/cover-v1.jpg",
+      "sha256": "760bc9bb001656db086837917d0bec95756e5d0d61967fd3939f06b8836d6cfa",
+      "fileSize": 240611,
+      "sizeMatched": true,
+      "shaMatched": true
+    },
+    {
+      "artifactType": "metadata",
+      "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/publish-input/metadata-v1.json",
+      "sha256": "a64ee746c159cf2959291bf2f355b6332759438e3acda16a36134696eb9eb346",
+      "fileSize": 302,
+      "sizeMatched": true,
+      "shaMatched": true
+    },
+    {
+      "artifactType": "final_qc_report",
+      "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/d0731f0f-0793-4610-8bd5-108f986f1151/final-qc-report.json",
+      "sha256": "b4dc9c2a03d2e61f2fd9005cb52b7a4da7702eb509693f8c80512f16830c63ac",
+      "fileSize": 1191,
+      "sizeMatched": true,
+      "shaMatched": true
+    }
+  ],
+  "containsMachineAbsolutePath": false,
+  "containsCredentialField": false,
+  "scope": "Portable local publication assets; does not claim portable Studio project or runnable application"
+}

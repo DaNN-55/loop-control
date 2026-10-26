@@ -1,0 +1,9 @@
+{
+  "closedNetworkMessageVisible": true,
+  "localStorageContainsSyntheticSecret": false,
+  "passed": true,
+  "passwordCleared": true,
+  "passwordFieldType": "password",
+  "sessionStorageContainsSyntheticSecret": false,
+  "syntheticCredentialOnly": true
+}

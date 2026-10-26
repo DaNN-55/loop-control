@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "newModelInference": true,
+  "historyReplay": false,
+  "mode": "mismatch",
+  "taskId": "6049646f-fe55-4fc0-9b3c-a9f6b505d3a3",
+  "status": "completed",
+  "method": "local_whisperx",
+  "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+  "text": "紫色的火车正在海底跳舞。",
+  "textFingerprint": "05a2cce9f8cc5c5a76fff84e9e52e39c95571b37c2724c9018ead69f8229e204",
+  "inputVersion": "29fc6ea6280c627d1ae11eecc181f40d8d1c17a52335a2341b6c360440a63e3a",
+  "audioSha256": "26f49a501b9185e6f6a2f1b0e52c561a56717d361c7bf05e8f399593de7c74f3",
+  "captionTextConfirmationStillRequired": true,
+  "artifacts": [
+    {
+      "id": "1a6ea4d4-06cf-4783-bfdb-8cd474eb6c2e",
+      "sha256": "a28631f4a0db28ea7674ad76453c8f27f161b54917798f4e1b4b3cc8a4f38fc9",
+      "bytes": 983
+    }
+  ],
+  "traceFiles": [
+    "python-45044.jsonl",
+    "python-45045.jsonl"
+  ],
+  "scores": [
+    0.8380909090909092
+  ],
+  "reviewIssues": [],
+  "providerRequests": 0
+}

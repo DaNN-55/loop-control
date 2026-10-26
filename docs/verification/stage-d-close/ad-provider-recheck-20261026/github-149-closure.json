@@ -1,0 +1,12 @@
+{
+  "issue": 149,
+  "state": "CLOSED",
+  "stateReason": "COMPLETED",
+  "url": "https://github.com/DaNN-55/loop-control/issues/149",
+  "acceptanceComment": "https://github.com/DaNN-55/loop-control/issues/149#issuecomment-6405907543",
+  "auditCompleteUnderExplicitOwnerProviderExceptions": true,
+  "providerFunctionalAcceptancePassed": false,
+  "precloseIntegrityPassed": true,
+  "precloseIndexSha256": "a84b00effe88e64e0b4ebf86f49d7f3ef4d64d8a2aca76cedf0ff5a2d3b01e3b",
+  "enterEF": false
+}

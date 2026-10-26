@@ -1,0 +1,18 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: The expression evaluated to a falsy value:
+
+  assert(sourceFiles.every(x=>/\/(script\.md|reference\.png)$/.test(x)))
+
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-20261024/audit.mjs:5:616 {
+  generatedMessage: true,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '==',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

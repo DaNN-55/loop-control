@@ -1,0 +1,20 @@
+
+> loop-control@0.1.0 worker:build
+> tsc -p tsconfig.worker.json
+
+src/local-app/mediaDeployment.ts(5,114): error TS1005: ',' expected.
+src/local-app/mediaDeployment.ts(5,132): error TS1005: ',' expected.
+src/local-app/mediaDeployment.ts(5,141): error TS1005: ',' expected.
+src/local-app/mediaDeployment.ts(5,145): error TS1005: ',' expected.
+src/local-app/mediaDeployment.ts(5,150): error TS1005: ',' expected.
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/prepare-runtime.mjs:9
+    child.once('error',reject);child.once('exit',code=>code===0?resolve():reject(Error(`${script} failed (${code})`)));
+                                                                                 ^
+
+Error: worker:build failed (2)
+    at ChildProcess.<anonymous> (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/prepare-runtime.mjs:9:82)
+    at ChildProcess.wrapper (node:events:639:12)
+    at ChildProcess.emit (node:events:514:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:295:12)
+
+Node.js v24.20.0

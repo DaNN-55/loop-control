@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-24T01:43:07.447Z",
+  "dedicatedKeychainDeleted": true,
+  "onlyThisRunReferencesRemoved": true,
+  "defaultKeychainUnchanged": true,
+  "searchListExactlyRestored": true,
+  "passwordRecoveryFileRemoved": true,
+  "runtimeModeRestored": "0o755",
+  "existingDServiceChanged": false,
+  "passed": true
+}

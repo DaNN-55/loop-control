@@ -1,0 +1,4 @@
+{
+  "catalogReads": 0,
+  "pendingLogoutCalls": 2
+}

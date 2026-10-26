@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "checkedBy": "agent",
+  "humanListeningClaim": false,
+  "shots": [
+    {
+      "shotId": "shot-1",
+      "characters": 70,
+      "alignmentMethod": "local_whisperx",
+      "cueCount": 8
+    },
+    {
+      "shotId": "shot-2",
+      "characters": 75,
+      "alignmentMethod": "local_whisperx",
+      "cueCount": 9
+    },
+    {
+      "shotId": "shot-3",
+      "characters": 76,
+      "alignmentMethod": "manual",
+      "cueCount": 8
+    }
+  ],
+  "originalLowConfidenceRetained": true
+}

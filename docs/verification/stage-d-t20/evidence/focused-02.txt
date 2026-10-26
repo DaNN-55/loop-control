@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/worker/whisperxAlignment.test.ts (10 tests) 28ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx (65 tests | 64 skipped) 229ms
+
+ Test Files  2 passed (2)
+      Tests  11 passed | 64 skipped (75)
+   Start at  18:02:20
+   Duration  1.01s (transform 358ms, setup 0ms, collect 613ms, tests 257ms, environment 249ms, prepare 64ms)
+

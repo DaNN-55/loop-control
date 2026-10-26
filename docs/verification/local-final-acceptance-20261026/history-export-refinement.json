@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-26T07:38:46.462Z",
+  "mcpFailures": [
+    "Transport closed on large export",
+    "Transport send error on followup"
+  ],
+  "restPrimaryExport": "34 tables / 3640 rows complete",
+  "confirmFailures": [
+    {
+      "attempt": 1,
+      "reason": "Local primary-key inventory omitted two source-only budget tables; stopped without a confirmed snapshot"
+    },
+    {
+      "attempt": 2,
+      "reason": "Same missing-table premise remained; stopped, then compared actual source/local schemas"
+    }
+  ],
+  "adjustment": "Actual original migration confirms primary keys account_id and task_id for the two source-only ledger tables; use stable order and fresh confirm-03 target; retain prior failed directories",
+  "sourceDataWrites": 0
+}

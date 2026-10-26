@@ -1,0 +1,16 @@
+{
+  "started": "2026-10-25T01:30:45.119Z",
+  "finished": "2026-10-25T01:30:45.126Z",
+  "command": [
+    "agent-browser",
+    "--session",
+    "d-close-logout-p2",
+    "wait",
+    "--text",
+    "未能确认退出，请重新登录。"
+  ],
+  "status": 0,
+  "defaultTimeoutMs": 5000,
+  "timeoutOverride": false,
+  "passed": true
+}

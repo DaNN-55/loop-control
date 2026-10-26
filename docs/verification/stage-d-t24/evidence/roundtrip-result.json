@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "database": "loop_t24_restore_roundtrip",
+  "archiveRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/backups/loop_t24_restored2/7e867bb4-519d-4895-ba78-d3d4e0180fa1",
+  "archiveSha256": "477cfef92255d91f8699860c57a8bdc3e328e490ce165caf6dd08c852c102b3b",
+  "archiveVersion": "loop-native-backup/v2",
+  "tables": 51,
+  "rows": 28294,
+  "mediaFiles": 853,
+  "mediaReferences": 743,
+  "rawRowsAndSequencesUnchanged": true,
+  "allIndexedReferencesVerified": true,
+  "securityMatched": true,
+  "foreignKeysVerified": true,
+  "restoredCompletedTaskRetained": true,
+  "restoredMediaCanBeBackedUpAgain": true,
+  "multipleLogicalRootAliasesPreserved": [
+    "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-20261024/restore-volume/restore2/media",
+    "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/media",
+    "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/media"
+  ],
+  "credentialsAndSessionsAbsent": true,
+  "qualificationsClearedAgain": true,
+  "publicationFence": true
+}

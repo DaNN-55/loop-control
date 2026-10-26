@@ -1,0 +1,390 @@
+### Page
+- Page URL: http://127.0.0.1:55177/
+- Page Title: Loop Control
+### Snapshot
+```yaml
+- main [ref=f3e3]:
+  - generic [ref=f3e4]:
+    - generic [ref=f3e5]: Loop Control · 本地
+    - heading "内容工作台" [level=1] [ref=f3e6]
+  - navigation [ref=f3e7]:
+    - button "账号配置" [ref=f3e8] [cursor=pointer]
+    - button "生产单目录" [ref=f3e9] [cursor=pointer]
+    - button "新建账号" [ref=f3e10] [cursor=pointer]
+    - button "刷新" [ref=f3e11] [cursor=pointer]
+    - button "退出登录" [ref=f3e12] [cursor=pointer]
+  - generic [ref=f3e14]:
+    - generic [ref=f3e15]:
+      - text: 当前账号
+      - combobox "当前账号" [ref=f3e16]:
+        - option "A阶段隔离测试" [selected]
+        - option "T10 synthetic pagination"
+        - option "T10 synthetic pagination"
+        - option "T10 synthetic pagination"
+        - option "T10 synthetic pagination"
+        - option "T10 synthetic pagination"
+        - option "T10 synthetic pagination"
+        - option "T11 synthetic reuse"
+        - option "T11 synthetic reuse"
+        - option "T11 synthetic reuse"
+        - option "T11 synthetic reuse"
+        - option "T11 synthetic reuse"
+        - option "T14 config bddd9f25"
+        - option "T14 config f4bb4d13 renamed"
+        - option "T14 config d0576f7a renamed"
+        - option "T14 browser account"
+    - button "账号操作" [ref=f3e18] [cursor=pointer]: …
+  - tablist "账号设置导航" [ref=f3e19]:
+    - tab "蓝图" [selected] [ref=f3e20] [cursor=pointer]
+    - tab "系列" [ref=f3e21] [cursor=pointer]
+  - tabpanel [ref=f3e22]:
+    - navigation "蓝图配置分区" [ref=f3e23]:
+      - link "账号基础规则" [ref=f3e24] [cursor=pointer]:
+        - /url: "#account-rules"
+        - generic [aria-hidden] [ref=f3e25]: "1"
+        - text: 账号基础规则
+      - link "生产能力" [ref=f3e26] [cursor=pointer]:
+        - /url: "#account-capabilities"
+        - generic [aria-hidden] [ref=f3e27]: "2"
+        - text: 生产能力
+      - link "分镜规划" [ref=f3e28] [cursor=pointer]:
+        - /url: "#account-budget"
+        - generic [aria-hidden] [ref=f3e29]: "3"
+        - text: 分镜规划
+    - main [ref=f3e30]:
+      - generic [ref=f3e31]:
+        - paragraph [ref=f3e32]: 保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。
+        - group [ref=f3e33]:
+          - generic [ref=f3e35]:
+            - text: 账号定位
+            - generic "账号定位说明" [ref=f3e36]:
+              - tooltip "账号级长期创作基线，会进入视觉准备与分镜生成的 Prompt 上下文。当前主脚本由 Owner 提供，因此不会依据此字段自动生成脚本。只填写跨系列长期稳定的受众、主题和表达方向。"
+          - textbox "账号定位" [ref=f3e40]:
+            - /placeholder: 例如：面向固定受众，持续制作某类短视频内容。
+          - paragraph [ref=f3e41]: 描述账号面向谁、持续讲什么以及希望保持的表达方向。
+        - group "本地资产与审批" [ref=f3e42]:
+          - generic [ref=f3e44]:
+            - generic [ref=f3e45]:
+              - text: 资产目录
+              - generic "资产目录说明" [ref=f3e46]:
+                - tooltip "建议填写一个稳定的账号目录，例如 /Volumes/素材盘/账号目录。"
+            - generic [ref=f3e49]:
+              - textbox "资产目录" [ref=f3e50]:
+                - /placeholder: 例如：/Volumes/素材盘/账号目录
+                - text: /Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/media/smoke
+              - button "选择文件夹" [ref=f3e51] [cursor=pointer]
+              - button "打开文件夹" [ref=f3e52] [cursor=pointer]
+          - status [ref=f3e53]: 资产目录已填写；保存后仍需 Worker 验证目录可读写。
+          - generic [ref=f3e55]:
+            - generic [ref=f3e57]:
+              - text: 审批关卡
+              - generic "审批关卡说明" [ref=f3e58]:
+                - tooltip "开启后，新产物完成时会停下来等待 Owner；关闭后，校验通过便自动推进。素材来源和能力开关不会改变这里的设置。"
+            - generic [ref=f3e61]:
+              - generic [ref=f3e62] [cursor=pointer]:
+                - checkbox "脚本审核 脚本审核说明" [checked] [ref=f3e63]
+                - generic [ref=f3e65]:
+                  - text: 脚本审核
+                  - generic "脚本审核说明" [ref=f3e66]:
+                    - tooltip "AI 生成或修改脚本后暂停，等待 Owner 审核。自行上传的脚本仍需确认为主脚本，但不会因此触发 AI 脚本审核。"
+              - generic [ref=f3e69] [cursor=pointer]:
+                - checkbox "视觉审核 视觉审核说明" [checked] [ref=f3e70]
+                - generic [ref=f3e72]:
+                  - text: 视觉审核
+                  - generic "视觉审核说明" [ref=f3e73]:
+                    - tooltip "产生新的视觉方案或视觉素材后暂停。素材来自上传还是外部 API，不改变是否需要审核。"
+              - generic [ref=f3e76] [cursor=pointer]:
+                - checkbox "分镜审核 分镜审核说明" [checked] [ref=f3e77]
+                - generic [ref=f3e79]:
+                  - text: 分镜审核
+                  - generic "分镜审核说明" [ref=f3e80]:
+                    - tooltip "生成或修改分镜 JSON 后暂停，等待 Owner 审核镜头结构与制作要求。"
+              - generic [ref=f3e83] [cursor=pointer]:
+                - checkbox "QC 审核 QC 审核说明" [checked] [ref=f3e84]
+                - generic [ref=f3e86]:
+                  - text: QC 审核
+                  - generic "QC 审核说明" [ref=f3e87]:
+                    - tooltip "审核视频生成并通过自动校验后暂停。关闭后仅在没有阻塞问题时自动继续。"
+        - group "生产能力" [ref=f3e90]:
+          - paragraph [ref=f3e92]: 在此启用能力并比较当前路径与配置状态；点击“配置”只打开该能力。配置未完成时，生产前检查会阻止创建生产单。
+          - table "生产能力配置矩阵" [ref=f3e93]:
+            - row [ref=f3e94]:
+              - columnheader "能力" [ref=f3e95]
+              - columnheader "启用" [ref=f3e96]
+              - columnheader "执行路径" [ref=f3e97]
+              - columnheader "状态" [ref=f3e98]
+              - columnheader "操作" [ref=f3e99]
+            - row [ref=f3e100]:
+              - cell "图片生成" [ref=f3e101]
+              - cell [ref=f3e102]:
+                - checkbox "启用图片生成" [ref=f3e104]
+              - cell "—" [ref=f3e106]
+              - cell "未启用" [ref=f3e107]
+              - cell
+            - row [ref=f3e108]:
+              - cell "A-roll" [ref=f3e109]
+              - cell [ref=f3e110]:
+                - checkbox "启用A-roll" [ref=f3e112]
+              - cell "—" [ref=f3e114]
+              - cell "未启用" [ref=f3e115]
+              - cell
+            - row [ref=f3e116]:
+              - cell "B-roll" [ref=f3e117]
+              - cell [ref=f3e118]:
+                - checkbox "启用B-roll" [ref=f3e120]
+              - cell "—" [ref=f3e122]
+              - cell "未启用" [ref=f3e123]
+              - cell
+            - row [ref=f3e124]:
+              - cell "旁白" [ref=f3e125]
+              - cell [ref=f3e126]:
+                - checkbox "启用旁白" [ref=f3e128]
+              - cell "—" [ref=f3e130]
+              - cell "未启用" [ref=f3e131]
+              - cell
+            - row [ref=f3e132]:
+              - cell "配乐 / 音效" [ref=f3e133]
+              - cell [ref=f3e134]:
+                - checkbox "启用配乐 / 音效" [ref=f3e136]
+              - cell "—" [ref=f3e138]
+              - cell "未启用" [ref=f3e139]
+              - cell
+          - paragraph [ref=f3e140]: Provider、Adapter、连接、模型、预设和调度参数只作用于之后新建的 Episode。
+        - group "分镜规划" [ref=f3e141]:
+          - article [ref=f3e144]:
+            - generic [ref=f3e145]:
+              - strong [ref=f3e146]: 分镜规划
+              - generic [ref=f3e147]: 新建 Episode 时冻结此选择
+            - generic [ref=f3e148]:
+              - generic [ref=f3e149]:
+                - term [ref=f3e150]: 运行模型
+                - definition [ref=f3e151]: codex · gpt-5.6-codex
+              - generic [ref=f3e152]:
+                - term [ref=f3e153]: 提示词 Harness
+                - definition [ref=f3e154]: unversioned
+            - button "修改分镜规划配置" [ref=f3e155] [cursor=pointer]: 配置
+        - generic [ref=f3e156]:
+          - button "取消编辑" [ref=f3e157] [cursor=pointer]
+          - button "保存并检查" [ref=f3e158] [cursor=pointer]
+    - complementary "账号默认配置检查" [ref=f3e159]:
+      - generic [ref=f3e160]:
+        - text: 账号默认配置检查
+        - heading "检查暂不可用" [level=2] [ref=f3e161]
+        - paragraph [ref=f3e162]: 只检查当前账号蓝图，不包含具体系列；新建生产单选择系列后会再次检查并冻结配置。
+        - paragraph [ref=f3e163]: 本地外部连接尚未就绪；相关选择暂时阻塞。生产能力仍需后续运行前检查。
+      - generic [ref=f3e164]:
+        - heading "配置范围" [level=3] [ref=f3e165]
+        - generic [ref=f3e166]:
+          - generic [ref=f3e167]:
+            - term [ref=f3e168]: 生效对象
+            - definition [ref=f3e169]: 新生产单
+          - generic [ref=f3e170]:
+            - term [ref=f3e171]: 已有生产单
+            - definition [ref=f3e172]: 保持冻结配置
+          - generic [ref=f3e173]:
+            - term [ref=f3e174]: 当前开启
+            - definition [ref=f3e175]: 0 项能力
+          - generic [ref=f3e176]:
+            - term [ref=f3e177]: 本机依赖
+            - definition [ref=f3e178]: 待检查
+  - group [ref=f3e179]:
+    - generic "蓝图连接恢复与版本维护" [active] [ref=f3e180]
+    - region "本地连接" [ref=f3e181]:
+      - status [ref=f3e182]: 真实Keychain和在线验证尚未启用；保存或模拟检查不能作为生产就绪证明。
+      - button "刷新连接" [ref=f3e183] [cursor=pointer]
+      - region "外部连接管理" [ref=f3e184]:
+        - generic [ref=f3e186]:
+          - text: Owner 连接池
+          - heading "外部连接" [level=2] [ref=f3e187]
+          - paragraph [ref=f3e188]: 秘密只提交给 本机 Keychain（需授权） 和 Worker 测试；蓝图、Episode、任务和普通日志只保存连接版本 ID。连接撤销后不会自动切换。
+        - group "添加 Pexels B-roll 连接" [ref=f3e190]:
+          - generic [ref=f3e192]:
+            - generic [ref=f3e193]: 连接类型
+            - combobox "连接类型" [ref=f3e194]:
+              - option "Pexels B-roll" [selected]
+              - option "Freesound 配乐 / 音效"
+              - option "OpenAI Images"
+              - option "Cloudflare Workers AI 图片"
+              - option "Google TTS 旁白"
+              - option "豆包语音 V3"
+          - generic [ref=f3e195]:
+            - text: 连接名称（自定义填写）
+            - textbox "连接名称" [ref=f3e196]
+          - generic [ref=f3e197]:
+            - text: Pexels API Key
+            - textbox "Pexels API Key" [ref=f3e198]
+          - button "保存并测试" [disabled] [ref=f3e200]
+        - region "连接列表" [ref=f3e201]:
+          - heading "已登记连接（10）" [level=3] [ref=f3e202]
+          - list [ref=f3e203]:
+            - listitem [ref=f3e204]:
+              - strong [ref=f3e205]: Stage B restore d16e1b11-804a-4046-b618-b0b48b3150fa · 暂时失败
+              - generic [ref=f3e206]: pexels · pexels_video · 当前 v1
+              - generic [ref=f3e207]:
+                - text: 连接名称
+                - textbox "Stage B restore d16e1b11-804a-4046-b618-b0b48b3150fa 连接名称" [ref=f3e208]: Stage B restore d16e1b11-804a-4046-b618-b0b48b3150fa
+              - generic [ref=f3e209]:
+                - text: 连接说明
+                - textbox "Stage B restore d16e1b11-804a-4046-b618-b0b48b3150fa 连接说明" [ref=f3e210]
+              - paragraph [ref=f3e211]: 本机秘密未绑定，请显式重新录入。
+              - generic [ref=f3e212]:
+                - button "重新测试" [ref=f3e213] [cursor=pointer]
+                - button "保存说明" [ref=f3e214] [cursor=pointer]
+              - group [ref=f3e215]:
+                - generic "轮换认证版本" [ref=f3e216]
+              - group [ref=f3e217]:
+                - generic "连接版本（1）" [ref=f3e218]
+            - listitem [ref=f3e219]:
+              - strong [ref=f3e220]: Stage B restore cd49018e-1f3e-48cc-ba3a-80f6be1cb87c · 暂时失败
+              - generic [ref=f3e221]: pexels · pexels_video · 当前 v2
+              - generic [ref=f3e222]:
+                - text: 连接名称
+                - textbox "Stage B restore cd49018e-1f3e-48cc-ba3a-80f6be1cb87c 连接名称" [ref=f3e223]: Stage B restore cd49018e-1f3e-48cc-ba3a-80f6be1cb87c
+              - generic [ref=f3e224]:
+                - text: 连接说明
+                - textbox "Stage B restore cd49018e-1f3e-48cc-ba3a-80f6be1cb87c 连接说明" [ref=f3e225]
+              - paragraph [ref=f3e226]: 本机秘密未绑定，请显式重新录入。
+              - generic [ref=f3e227]:
+                - button "重新测试" [ref=f3e228] [cursor=pointer]
+                - button "保存说明" [ref=f3e229] [cursor=pointer]
+              - group [ref=f3e230]:
+                - generic "轮换认证版本" [ref=f3e231]
+              - group [ref=f3e232]:
+                - generic "连接版本（2）" [ref=f3e233]
+            - listitem [ref=f3e234]:
+              - strong [ref=f3e235]: T15 simulated 40b110b7 renamed · 暂时失败
+              - generic [ref=f3e236]: pexels · pexels_video · 当前 v3
+              - generic [ref=f3e237]:
+                - text: 连接名称
+                - textbox "T15 simulated 40b110b7 renamed 连接名称" [ref=f3e238]: T15 simulated 40b110b7 renamed
+              - generic [ref=f3e239]:
+                - text: 连接说明
+                - textbox "T15 simulated 40b110b7 renamed 连接说明" [ref=f3e240]: synthetic local test
+              - paragraph [ref=f3e241]: 真实Keychain及在线验证尚未启用。
+              - generic [ref=f3e242]:
+                - button "重新测试" [ref=f3e243] [cursor=pointer]
+                - button "保存说明" [ref=f3e244] [cursor=pointer]
+              - group [ref=f3e245]:
+                - generic "轮换认证版本" [ref=f3e246]
+              - group [ref=f3e247]:
+                - generic "连接版本（3）" [ref=f3e248]
+            - listitem [ref=f3e249]:
+              - strong [ref=f3e250]: T15 simulated 16e5e7f4 renamed · 暂时失败
+              - generic [ref=f3e251]: pexels · pexels_video · 当前 v3
+              - generic [ref=f3e252]:
+                - text: 连接名称
+                - textbox "T15 simulated 16e5e7f4 renamed 连接名称" [ref=f3e253]: T15 simulated 16e5e7f4 renamed
+              - generic [ref=f3e254]:
+                - text: 连接说明
+                - textbox "T15 simulated 16e5e7f4 renamed 连接说明" [ref=f3e255]: synthetic local test
+              - paragraph [ref=f3e256]: 真实Keychain及在线验证尚未启用。
+              - generic [ref=f3e257]:
+                - button "重新测试" [ref=f3e258] [cursor=pointer]
+                - button "保存说明" [ref=f3e259] [cursor=pointer]
+              - group [ref=f3e260]:
+                - generic "轮换认证版本" [ref=f3e261]
+              - group [ref=f3e262]:
+                - generic "连接版本（3）" [ref=f3e263]
+            - listitem [ref=f3e264]:
+              - strong [ref=f3e265]: T15 simulated 88e7c5f4 renamed · 暂时失败
+              - generic [ref=f3e266]: pexels · pexels_video · 当前 v3
+              - generic [ref=f3e267]:
+                - text: 连接名称
+                - textbox "T15 simulated 88e7c5f4 renamed 连接名称" [ref=f3e268]: T15 simulated 88e7c5f4 renamed
+              - generic [ref=f3e269]:
+                - text: 连接说明
+                - textbox "T15 simulated 88e7c5f4 renamed 连接说明" [ref=f3e270]: synthetic local test
+              - paragraph [ref=f3e271]: 真实Keychain及在线验证尚未启用。
+              - generic [ref=f3e272]:
+                - button "重新测试" [ref=f3e273] [cursor=pointer]
+                - button "保存说明" [ref=f3e274] [cursor=pointer]
+              - group [ref=f3e275]:
+                - generic "轮换认证版本" [ref=f3e276]
+              - group [ref=f3e277]:
+                - generic "连接版本（3）" [ref=f3e278]
+            - listitem [ref=f3e279]:
+              - strong [ref=f3e280]: T15 simulated 071397ec renamed · 暂时失败
+              - generic [ref=f3e281]: pexels · pexels_video · 当前 v3
+              - generic [ref=f3e282]:
+                - text: 连接名称
+                - textbox "T15 simulated 071397ec renamed 连接名称" [ref=f3e283]: T15 simulated 071397ec renamed
+              - generic [ref=f3e284]:
+                - text: 连接说明
+                - textbox "T15 simulated 071397ec renamed 连接说明" [ref=f3e285]: synthetic local test
+              - paragraph [ref=f3e286]: 真实Keychain及在线验证尚未启用。
+              - generic [ref=f3e287]:
+                - button "重新测试" [ref=f3e288] [cursor=pointer]
+                - button "保存说明" [ref=f3e289] [cursor=pointer]
+              - group [ref=f3e290]:
+                - generic "轮换认证版本" [ref=f3e291]
+              - group [ref=f3e292]:
+                - generic "连接版本（3）" [ref=f3e293]
+            - listitem [ref=f3e294]:
+              - strong [ref=f3e295]: T15 simulated d4678244 renamed · 暂时失败
+              - generic [ref=f3e296]: pexels · pexels_video · 当前 v3
+              - generic [ref=f3e297]:
+                - text: 连接名称
+                - textbox "T15 simulated d4678244 renamed 连接名称" [ref=f3e298]: T15 simulated d4678244 renamed
+              - generic [ref=f3e299]:
+                - text: 连接说明
+                - textbox "T15 simulated d4678244 renamed 连接说明" [ref=f3e300]: synthetic local test
+              - paragraph [ref=f3e301]: 真实Keychain及在线验证尚未启用。
+              - generic [ref=f3e302]:
+                - button "重新测试" [ref=f3e303] [cursor=pointer]
+                - button "保存说明" [ref=f3e304] [cursor=pointer]
+              - group [ref=f3e305]:
+                - generic "轮换认证版本" [ref=f3e306]
+              - group [ref=f3e307]:
+                - generic "连接版本（3）" [ref=f3e308]
+            - listitem [ref=f3e309]:
+              - strong [ref=f3e310]: T15 simulated 383a01a1 renamed · 暂时失败
+              - generic [ref=f3e311]: pexels · pexels_video · 当前 v3
+              - generic [ref=f3e312]:
+                - text: 连接名称
+                - textbox "T15 simulated 383a01a1 renamed 连接名称" [ref=f3e313]: T15 simulated 383a01a1 renamed
+              - generic [ref=f3e314]:
+                - text: 连接说明
+                - textbox "T15 simulated 383a01a1 renamed 连接说明" [ref=f3e315]: synthetic local test
+              - paragraph [ref=f3e316]: 真实Keychain及在线验证尚未启用。
+              - generic [ref=f3e317]:
+                - button "重新测试" [ref=f3e318] [cursor=pointer]
+                - button "保存说明" [ref=f3e319] [cursor=pointer]
+              - group [ref=f3e320]:
+                - generic "轮换认证版本" [ref=f3e321]
+              - group [ref=f3e322]:
+                - generic "连接版本（3）" [ref=f3e323]
+            - listitem [ref=f3e324]:
+              - strong [ref=f3e325]: T15 simulated 65d42991 renamed · 暂时失败
+              - generic [ref=f3e326]: pexels · pexels_video · 当前 v3
+              - generic [ref=f3e327]:
+                - text: 连接名称
+                - textbox "T15 simulated 65d42991 renamed 连接名称" [ref=f3e328]: T15 simulated 65d42991 renamed
+              - generic [ref=f3e329]:
+                - text: 连接说明
+                - textbox "T15 simulated 65d42991 renamed 连接说明" [ref=f3e330]: synthetic local test
+              - paragraph [ref=f3e331]: 真实Keychain及在线验证尚未启用。
+              - generic [ref=f3e332]:
+                - button "重新测试" [ref=f3e333] [cursor=pointer]
+                - button "保存说明" [ref=f3e334] [cursor=pointer]
+              - group [ref=f3e335]:
+                - generic "轮换认证版本" [ref=f3e336]
+              - group [ref=f3e337]:
+                - generic "连接版本（3）" [ref=f3e338]
+            - listitem [ref=f3e339]:
+              - strong [ref=f3e340]: T15 simulated 667f7d1b renamed · 暂时失败
+              - generic [ref=f3e341]: pexels · pexels_video · 当前 v3
+              - generic [ref=f3e342]:
+                - text: 连接名称
+                - textbox "T15 simulated 667f7d1b renamed 连接名称" [ref=f3e343]: T15 simulated 667f7d1b renamed
+              - generic [ref=f3e344]:
+                - text: 连接说明
+                - textbox "T15 simulated 667f7d1b renamed 连接说明" [ref=f3e345]: synthetic local test
+              - paragraph [ref=f3e346]: 真实Keychain及在线验证尚未启用。
+              - generic [ref=f3e347]:
+                - button "重新测试" [ref=f3e348] [cursor=pointer]
+                - button "保存说明" [ref=f3e349] [cursor=pointer]
+              - group [ref=f3e350]:
+                - generic "轮换认证版本" [ref=f3e351]
+              - group [ref=f3e352]:
+                - generic "连接版本（3）" [ref=f3e353]
+```

@@ -1,0 +1,39 @@
+node:internal/errors:986
+  const err = new Error(message);
+              ^
+
+Error: Command failed: docker exec -i loop-control-stage-d-postgres psql -XqAt -U postgres -d loop_imported -v ON_ERROR_STOP=1
+ERROR:  Owner membership is required to save a shot preparation draft
+CONTEXT:  PL/pgSQL function public.save_shot_preparation_draft(uuid,uuid,text,text,text,boolean,text,text,numeric) line 24 at RAISE
+SQL statement "SELECT public.save_shot_preparation_draft(d.episode_id,d.review_package_id,d.shot_id,'source',d.subtitle_text||'校时',true,d.tts_text,d.tts_voice,d.tts_speaking_rate)"
+PL/pgSQL function inline_code_block line 12 at PERFORM
+
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:942:11)
+    at execFileSync (node:child_process:978:15)
+    at docker (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/environment.mjs:11:43)
+    at sql (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/environment.mjs:13:76)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/alignment-fence-acceptance.mjs:51:14
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  status: 3,
+  signal: null,
+  output: [
+    null,
+    '644f8c5a-b668-48a3-8a25-94c4e502fa04\n',
+    'ERROR:  Owner membership is required to save a shot preparation draft\n' +
+      'CONTEXT:  PL/pgSQL function public.save_shot_preparation_draft(uuid,uuid,text,text,text,boolean,text,text,numeric) line 24 at RAISE\n' +
+      `SQL statement "SELECT public.save_shot_preparation_draft(d.episode_id,d.review_package_id,d.shot_id,'source',d.subtitle_text||'校时',true,d.tts_text,d.tts_voice,d.tts_speaking_rate)"\n` +
+      'PL/pgSQL function inline_code_block line 12 at PERFORM\n'
+  ],
+  pid: 17772,
+  stdout: '644f8c5a-b668-48a3-8a25-94c4e502fa04\n',
+  stderr: 'ERROR:  Owner membership is required to save a shot preparation draft\n' +
+    'CONTEXT:  PL/pgSQL function public.save_shot_preparation_draft(uuid,uuid,text,text,text,boolean,text,text,numeric) line 24 at RAISE\n' +
+    `SQL statement "SELECT public.save_shot_preparation_draft(d.episode_id,d.review_package_id,d.shot_id,'source',d.subtitle_text||'校时',true,d.tts_text,d.tts_voice,d.tts_speaking_rate)"\n` +
+    'PL/pgSQL function inline_code_block line 12 at PERFORM\n'
+}
+
+Node.js v24.20.0

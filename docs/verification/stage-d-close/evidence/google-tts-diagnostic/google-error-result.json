@@ -1,0 +1,16 @@
+{
+  "httpStatus": 403,
+  "errorStatus": "PERMISSION_DENIED",
+  "errorInfo": [
+    {
+      "reason": "BILLING_DISABLED",
+      "domain": "googleapis.com",
+      "service": "texttospeech.googleapis.com"
+    }
+  ],
+  "unrecognizedErrorInfoCount": 0,
+  "rawMessageStored": false,
+  "projectIdentifiersStored": false,
+  "headersOrCredentialsStored": false,
+  "onlyAllowlistedFieldsStored": true
+}

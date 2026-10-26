@@ -1,0 +1,15 @@
+AssertionError [ERR_ASSERTION]: {"error":"invalid request origin"}
+
+403 !== 200
+
+    at editCaption (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/studio-acceptance.mjs:98:255)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Object.exercise (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/studio-acceptance.mjs:109:16)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/studio-acceptance.mjs:80:78 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 403,
+  expected: 200,
+  operator: 'strictEqual',
+  diff: 'simple'
+}

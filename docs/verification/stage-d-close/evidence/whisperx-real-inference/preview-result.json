@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "realOpenChatCutRenderer": true,
+  "realWhisperXCues": [
+    {
+      "id": "phrase-1",
+      "text": "这是本地字幕验收？",
+      "endMs": 4006,
+      "startMs": 60,
+      "confidence": 0.982125
+    }
+  ],
+  "captionContractCues": [
+    {
+      "id": "phrase-1",
+      "text": "这是本地字幕验收？",
+      "end_ms": 4006,
+      "start_ms": 60
+    }
+  ],
+  "text": "这是本地字幕验收？",
+  "previewStatus": "ready",
+  "previewArtifactId": "24543c73-4130-4f1d-8fb5-250bb5133722",
+  "taskId": "3059b943-f1d6-4dee-afd4-8b45d439520d",
+  "sha256": "76abef50890c973f87d11b98035887e6b46605677bf54f01268e469ba26e2378",
+  "bytes": 193250,
+  "allRenderingProcessesOsLoopbackOnly": true,
+  "modelPhaseAlreadyComplete": true,
+  "providerRequests": 0
+}

@@ -1,0 +1,7 @@
+{
+  "passed": false,
+  "phase": "offline pure policy preflight",
+  "error": "ERR_MODULE_NOT_FOUND: dist/local-app cleared by npm build",
+  "correction": "Run existing runtime:prepare and local-app tsc before preflight; no runtime integrity check weakened",
+  "providerRequests": 0
+}

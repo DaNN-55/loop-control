@@ -1,0 +1,203 @@
+{
+  "passed": true,
+  "runsChecked": 32,
+  "allRunsHaveActualWorkerInstallEvidence": true,
+  "allFullRunsHaveAtLeast102WorkerInstalls": true,
+  "nodeOptionsForwarding": true,
+  "commandLineImportOnlyDoesNotProveWorkerGuard": true,
+  "traceContainsNoCredentialsOrArguments": true,
+  "rows": [
+    {
+      "label": "stable-sealed-target-01",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-target-02",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-target-03",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-target-04",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-target-05",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-target-06",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-target-07",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-target-08",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-target-09",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-target-10",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-target-11",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-target-12",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-target-13",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-target-14",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-target-15",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-target-16",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-target-17",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-target-18",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-target-19",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-target-20",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-review-01",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-review-02",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-review-03",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-review-04",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-review-05",
+      "installedProcesses": 7,
+      "testWorkerInstalls": 6,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-full-01",
+      "installedProcesses": 114,
+      "testWorkerInstalls": 107,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-full-02",
+      "installedProcesses": 114,
+      "testWorkerInstalls": 107,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "stable-sealed-full-03",
+      "installedProcesses": 114,
+      "testWorkerInstalls": 107,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "pressure-sealed-before-full-01",
+      "installedProcesses": 118,
+      "testWorkerInstalls": 111,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "pressure-sealed-before-full-02",
+      "installedProcesses": 118,
+      "testWorkerInstalls": 111,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "pressure-sealed-final-full-01",
+      "installedProcesses": 114,
+      "testWorkerInstalls": 107,
+      "blockedRemoteSocketsReportedOnExit": 0
+    },
+    {
+      "label": "pressure-sealed-final-full-02",
+      "installedProcesses": 114,
+      "testWorkerInstalls": 107,
+      "blockedRemoteSocketsReportedOnExit": 0
+    }
+  ]
+}

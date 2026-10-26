@@ -1,0 +1,60 @@
+{
+  "passed": true,
+  "taskId": "ceeec5db-5f6c-4ec1-bf76-b852626a4bda",
+  "claimedAt": "2026-10-25T03:27:53.750116+00:00",
+  "lastObservedStillOriginal": {
+    "dbNow": "2026-10-25T03:57:54.57113+00:00",
+    "status": "running",
+    "attempt": 1,
+    "claimedAt": "2026-10-25T03:27:53.750116+00:00",
+    "oldLeaseElapsedSeconds": 1800.821,
+    "observerMonotonicMs": 181199.530416
+  },
+  "firstObservedReady": {
+    "dbNow": "2026-10-25T03:57:55.673629+00:00",
+    "status": "ready",
+    "attempt": 1,
+    "claimedAt": null,
+    "oldLeaseElapsedSeconds": 1801.923,
+    "observerMonotonicMs": 182295.088125
+  },
+  "firstObservedNewAttempt": {
+    "dbNow": "2026-10-25T03:57:58.854484+00:00",
+    "status": "completed",
+    "attempt": 2,
+    "claimedAt": "2026-10-25T03:57:58.759216+00:00",
+    "oldLeaseElapsedSeconds": 1805.104,
+    "observerMonotonicMs": 185543.487791
+  },
+  "sampleCount": 47,
+  "actualDatabaseSecondsFromLastHeartbeat": 1805.104,
+  "observerMonotonicMs": 185731.919333,
+  "noManualClaimedAtChange": true,
+  "noLeaseShortening": true,
+  "noClockChange": true,
+  "originalTaskResubmittedAfterCrash": false,
+  "targetedWakeOfOriginalTaskAfterCrash": false,
+  "unrelatedEarlyHttpStarts": 2,
+  "realNativeCli": true,
+  "normalApplicationFactory": true,
+  "attempts": [
+    {
+      "attempt": 0,
+      "status": "failed"
+    },
+    {
+      "attempt": 1,
+      "status": "completed"
+    }
+  ],
+  "artifactShaVerified": true,
+  "artifactCount": 1,
+  "earlierObserverRunningOnlyAssumptionNotAcceptanceCondition": true,
+  "onlineRequests": 0,
+  "initialObservationLog": "natural-observations.jsonl",
+  "lateObservationLog": "natural-followthrough-observations.jsonl",
+  "unrelatedHttpStartsEarlyDuringWait": 2,
+  "expiryReachedByNormalPeriodicScanning": true,
+  "rawBroadNoHttpWakeFlagAccepted": false,
+  "provenance": "Original observer output retained unchanged; broad noPostRestartHttpWake metadata is not accepted because two early unrelated HTTP starts occurred"
+}

@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "status": 0,
+  "formalEntry": true,
+  "usesNewApprovedLedger": true,
+  "originalIndexedLogPreserved": true,
+  "noWorkerConfigured": true,
+  "openaiAndCloudflareExcluded": true
+}

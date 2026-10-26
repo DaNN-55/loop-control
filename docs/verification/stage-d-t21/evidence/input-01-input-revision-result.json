@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "realHttp": true,
+  "manualAlignmentChangesFingerprint": true,
+  "previewAndConfirmationInvalidated": true,
+  "unconfirmedWorkbenchStudio409": true,
+  "oldFrozenUnchanged": true,
+  "noNewReviewTask": true,
+  "apiFixtureIntentionallyRequiresNewPreview": true,
+  "providerRequests": 0
+}

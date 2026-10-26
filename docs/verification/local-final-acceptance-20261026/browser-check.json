@@ -1,0 +1,600 @@
+{
+  "at": "2026-10-26T05:01:49.262Z",
+  "capabilities": {
+    "externalReady": false,
+    "networkAvailable": false,
+    "secrets": "keychain",
+    "verification": "live"
+  },
+  "connectionStates": [
+    {
+      "id": "03757f67-e0ea-4bae-b7b9-274eda8d95c5",
+      "provider": "freesound",
+      "secretState": "bound-unchecked",
+      "status": "revoked"
+    },
+    {
+      "id": "87c1ae7c-b59a-4833-b54d-12b7cdce5bc6",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "9c89ac0f-d071-490a-9496-68d90dca51c8",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "revoked"
+    },
+    {
+      "id": "7ff2d8f5-3f68-4536-9814-4c087cef0079",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "582f491c-0a32-42f4-a875-3edbefb3ba48",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "a8bc1579-c38f-4983-a125-394675e1d90b",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "revoked"
+    },
+    {
+      "id": "fa881536-a5ec-4884-9db7-7c9caaa6f355",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "77c390c3-2bf3-4302-8c62-fa71ee136ff4",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "revoked"
+    },
+    {
+      "id": "54a49f01-5c96-4b8e-86d6-b6ad128d50ef",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "revoked"
+    },
+    {
+      "id": "3e83d07f-dd79-4897-838f-41d82fc647ea",
+      "provider": "volcengine_tts",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "13592ea6-5467-4217-b037-a15df18b2770",
+      "provider": "volcengine_tts",
+      "secretState": "bound-unchecked",
+      "status": "revoked"
+    },
+    {
+      "id": "5aeaef4a-ae20-4c82-bbac-f0afe9f53e27",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "660b5a72-1861-445b-a0ba-bdcad4298ca2",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "15fce2b6-7047-4ad5-af15-058033980ba5",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "revoked"
+    },
+    {
+      "id": "7feb2edd-9a33-4c2f-88f4-b10df2e368da",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "100346df-2c72-4253-b13c-6e5a132bbf1d",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "5168728b-c646-424f-929e-80b002e32771",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "revoked"
+    },
+    {
+      "id": "22f25256-bbfa-4002-82ba-989f5be3f9d2",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "6590efc9-8efd-4af4-87fb-8774be2a4f7e",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "revoked"
+    },
+    {
+      "id": "b79e9659-cf88-44b0-b789-536ea6bfb7ab",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "revoked"
+    },
+    {
+      "id": "80027138-9094-437c-b128-8a71d31a2205",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "521f29bc-c252-4686-8ab7-0f3cc53ca650",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "revoked"
+    },
+    {
+      "id": "0b6b8953-9b1c-4826-955b-19c44336ccf2",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "43b37c2a-1316-441e-b6cb-940a1f4f683f",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "revoked"
+    },
+    {
+      "id": "c984ca00-3a97-4c2a-ab38-2158816aa106",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "ff811b85-3a9a-4357-a7cb-bbb5dc5e4d73",
+      "provider": "google_tts",
+      "secretState": "bound-unchecked",
+      "status": "revoked"
+    },
+    {
+      "id": "7a3183fd-8cb4-49ff-b068-348429afaeea",
+      "provider": "pexels",
+      "secretState": "unbound",
+      "status": "retryable"
+    },
+    {
+      "id": "7cc941e3-10b4-4210-b610-3fc5b9e09558",
+      "provider": "pexels",
+      "secretState": "unbound",
+      "status": "retryable"
+    },
+    {
+      "id": "7c038444-3cce-4e34-b25c-58b200fdf6b2",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "3e64c01a-f144-4275-92cc-05a32403677a",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "revoked"
+    },
+    {
+      "id": "aad8a5e5-3c48-48e7-8dc2-3829ffbb5abe",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "1931c664-0bdd-427b-b769-7c74352410cf",
+      "provider": "openai",
+      "secretState": "bound-unchecked",
+      "status": "revoked"
+    },
+    {
+      "id": "aaf27437-1065-41c5-a8aa-9db4443882b8",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "0d2f2b12-2195-437a-a3c5-45a72ceb2c16",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "revoked"
+    },
+    {
+      "id": "de984a9a-4646-4d0f-ad1f-94a12af16df3",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "084880df-5f5f-4d42-bf34-56cf7cb3d208",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "6ae5a948-8950-48dc-9f51-0d5eb98f225a",
+      "provider": "pexels",
+      "secretState": "unbound",
+      "status": "retryable"
+    },
+    {
+      "id": "9bf6f776-a439-4e17-8260-55fa2b060e79",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "2c3537e0-e683-4a25-ac15-d2d481973651",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "c5963e6f-24da-43b8-96bb-1c4355925519",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "revoked"
+    },
+    {
+      "id": "8a784d0a-bb4d-46c2-bee3-5c1cfcf2da2f",
+      "provider": "pexels",
+      "secretState": "bound-unchecked",
+      "status": "retryable"
+    },
+    {
+      "id": "e9bb2554-af6c-4714-ac9b-40d4368292a1",
+      "provider": "cloudflare",
+      "secretState": "bound-unchecked",
+      "status": "revoked"
+    }
+  ],
+  "localSessionRestored": true,
+  "requests": [
+    {
+      "at": "2026-10-26T05:00:01.991Z",
+      "elapsedMs": 34,
+      "method": "POST",
+      "origin": "http://127.0.0.1:5174",
+      "path": "/api/local/episode-commands",
+      "status": 409
+    },
+    {
+      "at": "2026-10-26T05:01:49.227Z",
+      "elapsedMs": 23,
+      "method": "GET",
+      "origin": "http://127.0.0.1:5174",
+      "path": "/api/local/system-status",
+      "status": 200
+    },
+    {
+      "at": "2026-10-26T05:01:49.251Z",
+      "elapsedMs": 10,
+      "method": "GET",
+      "origin": "http://127.0.0.1:5174",
+      "path": "/api/local/connections",
+      "status": 200
+    },
+    {
+      "at": "2026-10-26T05:01:49.261Z",
+      "elapsedMs": 1,
+      "method": "GET",
+      "origin": "http://127.0.0.1:5174",
+      "path": "/api/local/session",
+      "status": 200
+    }
+  ],
+  "resourceOrigins": [
+    "http://127.0.0.1:5174"
+  ],
+  "status": {
+    "automation": {
+      "hour": 9,
+      "lastError": null,
+      "lastScanAt": "2026-10-26T05:01:46.405Z",
+      "n8nRequired": false,
+      "stopped": false,
+      "timezone": "Asia/Shanghai"
+    },
+    "jobs": [
+      {
+        "attempt": 1,
+        "completed_at": "2026-11-01T01:00:00.000Z",
+        "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复能力尚未验收。",
+        "due_at": "2026-11-01T01:00:00.000Z",
+        "id": "63f25b69-9606-4dba-8f80-b18599539cda",
+        "kind": "backup",
+        "passed": true,
+        "status": "completed"
+      },
+      {
+        "attempt": 1,
+        "completed_at": "2026-11-01T01:00:00.000Z",
+        "detail": "数据库、媒体目录和本地运行程序检查通过。",
+        "due_at": "2026-11-01T01:00:00.000Z",
+        "id": "076f0a4b-2f7f-4a74-9094-6b316e915513",
+        "kind": "health",
+        "passed": true,
+        "status": "completed"
+      },
+      {
+        "attempt": 1,
+        "completed_at": "2026-10-31T01:00:00.000Z",
+        "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+        "due_at": "2026-10-31T01:00:00.000Z",
+        "id": "8c5b486d-9e18-4a2e-a431-c20790bb906b",
+        "kind": "backup",
+        "passed": true,
+        "status": "completed"
+      },
+      {
+        "attempt": 2,
+        "completed_at": "2026-10-31T01:00:31.000Z",
+        "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。",
+        "due_at": "2026-10-31T01:00:00.000Z",
+        "id": "83107ed2-8321-4cc5-9d26-2e0748a78035",
+        "kind": "health",
+        "passed": true,
+        "status": "completed"
+      },
+      {
+        "attempt": 1,
+        "completed_at": "2026-10-30T01:00:00.000Z",
+        "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+        "due_at": "2026-10-30T01:00:00.000Z",
+        "id": "f9a75111-907e-495c-bfda-b943136b4cd5",
+        "kind": "backup",
+        "passed": true,
+        "status": "completed"
+      },
+      {
+        "attempt": 2,
+        "completed_at": "2026-10-30T01:00:31.000Z",
+        "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。",
+        "due_at": "2026-10-30T01:00:00.000Z",
+        "id": "2cc0a6a6-211f-46cd-be5d-c9c52a4727f5",
+        "kind": "health",
+        "passed": true,
+        "status": "completed"
+      },
+      {
+        "attempt": 1,
+        "completed_at": "2026-10-29T01:00:00.000Z",
+        "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+        "due_at": "2026-10-29T01:00:00.000Z",
+        "id": "41cbcaee-4c6e-4404-92ae-bc7dc79d4455",
+        "kind": "backup",
+        "passed": true,
+        "status": "completed"
+      },
+      {
+        "attempt": 1,
+        "completed_at": "2026-10-29T01:00:00.000Z",
+        "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。",
+        "due_at": "2026-10-29T01:00:00.000Z",
+        "id": "c2e75f4e-07d8-4f91-9996-e37b0130de7d",
+        "kind": "health",
+        "passed": true,
+        "status": "completed"
+      },
+      {
+        "attempt": 1,
+        "completed_at": "2026-10-28T01:00:00.000Z",
+        "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+        "due_at": "2026-10-28T01:00:00.000Z",
+        "id": "18e97f08-8216-428a-bedb-fb202eef6e7e",
+        "kind": "backup",
+        "passed": true,
+        "status": "completed"
+      },
+      {
+        "attempt": 3,
+        "completed_at": "2026-10-28T01:02:00.000Z",
+        "detail": "T23 controlled health failure; independent result.",
+        "due_at": "2026-10-28T01:00:00.000Z",
+        "id": "1c0836a0-49ea-4c13-88a3-3783d23dd06f",
+        "kind": "health",
+        "passed": false,
+        "status": "failed"
+      },
+      {
+        "attempt": 1,
+        "completed_at": "2026-10-27T01:00:00.000Z",
+        "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+        "due_at": "2026-10-27T01:00:00.000Z",
+        "id": "f86dd95f-b5cc-4587-a035-e0044ffd5a80",
+        "kind": "backup",
+        "passed": true,
+        "status": "completed"
+      },
+      {
+        "attempt": 2,
+        "completed_at": "2026-10-28T00:59:59.000Z",
+        "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。",
+        "due_at": "2026-10-27T01:00:00.000Z",
+        "id": "e031be4a-bb18-414b-9898-8e72121c4ccb",
+        "kind": "health",
+        "passed": true,
+        "status": "completed"
+      },
+      {
+        "attempt": 1,
+        "completed_at": "2026-10-26T04:47:25.564Z",
+        "detail": "本地完整备份已生成并校验：51 张表、975 个文件；不包含密码、会话或 Keychain，恢复能力尚未验收。",
+        "due_at": "2026-10-26T04:47:09.519Z",
+        "id": "93b82876-03a4-4dc8-8478-4db57fbd48b4",
+        "kind": "backup",
+        "passed": true,
+        "status": "completed"
+      },
+      {
+        "attempt": 1,
+        "completed_at": "2026-10-26T04:47:10.060Z",
+        "detail": "数据库、媒体目录和本地运行程序检查通过。",
+        "due_at": "2026-10-26T04:47:09.460Z",
+        "id": "b6741bc6-c440-4e6f-bfcc-028ec987ac3c",
+        "kind": "health",
+        "passed": true,
+        "status": "completed"
+      },
+      {
+        "attempt": 2,
+        "completed_at": "2026-10-26T01:01:00.000Z",
+        "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+        "due_at": "2026-10-26T01:00:00.000Z",
+        "id": "4e986e18-3c69-45df-9a0c-ad11124d0c9f",
+        "kind": "backup",
+        "passed": true,
+        "status": "completed"
+      },
+      {
+        "attempt": 1,
+        "completed_at": "2026-10-26T01:00:00.000Z",
+        "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。",
+        "due_at": "2026-10-26T01:00:00.000Z",
+        "id": "eab83bb4-9cbf-4d26-bc23-ceb70af93b4d",
+        "kind": "health",
+        "passed": true,
+        "status": "completed"
+      },
+      {
+        "attempt": 1,
+        "completed_at": "2026-10-25T01:00:00.000Z",
+        "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+        "due_at": "2026-10-25T01:00:00.000Z",
+        "id": "5ce285bb-387a-4101-9e5a-c5af4db1dbd9",
+        "kind": "backup",
+        "passed": true,
+        "status": "completed"
+      },
+      {
+        "attempt": 2,
+        "completed_at": "2026-10-25T01:01:00.000Z",
+        "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。",
+        "due_at": "2026-10-25T01:00:00.000Z",
+        "id": "20194f9c-70a6-40a1-8eb3-9b77fbff46eb",
+        "kind": "health",
+        "passed": true,
+        "status": "completed"
+      },
+      {
+        "attempt": 1,
+        "completed_at": "2026-10-24T01:00:00.000Z",
+        "detail": "本地完整备份已生成并校验：49 张表、842 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+        "due_at": "2026-10-24T01:00:00.000Z",
+        "id": "532a8aab-c072-4f27-8a1e-2c57f5754f29",
+        "kind": "backup",
+        "passed": true,
+        "status": "completed"
+      },
+      {
+        "attempt": 1,
+        "completed_at": "2026-10-24T01:00:00.000Z",
+        "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。",
+        "due_at": "2026-10-24T01:00:00.000Z",
+        "id": "1d19185d-6759-4b2e-bc77-2543c0fdf9fa",
+        "kind": "health",
+        "passed": true,
+        "status": "completed"
+      }
+    ],
+    "observedAt": "2026-10-26T05:01:49.247Z",
+    "operations": {
+      "backup": {
+        "lastFailure": {
+          "at": "2026-10-26T01:00:00.000Z",
+          "detail": "本地完整备份未完成；没有成功结论。",
+          "passed": false
+        },
+        "lastSuccess": {
+          "at": "2026-11-01T01:00:00.000Z",
+          "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复能力尚未验收。",
+          "passed": true
+        },
+        "latest": {
+          "at": "2026-11-01T01:00:00.000Z",
+          "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复能力尚未验收。",
+          "passed": true
+        }
+      },
+      "health": {
+        "lastFailure": {
+          "at": "2026-10-31T01:00:31.000Z",
+          "detail": "服务中断或租约过期；保留旧尝试。",
+          "passed": false
+        },
+        "lastSuccess": {
+          "at": "2026-11-01T01:00:00.000Z",
+          "detail": "数据库、媒体目录和本地运行程序检查通过。",
+          "passed": true
+        },
+        "latest": {
+          "at": "2026-11-01T01:00:00.000Z",
+          "detail": "数据库、媒体目录和本地运行程序检查通过。",
+          "passed": true
+        }
+      },
+      "notification": {
+        "lastFailure": {
+          "at": "2026-10-26T05:01:46.611Z",
+          "detail": "有 6 条提醒正在投递或结果未知；不会自动重发，请核对控制台队列。",
+          "idle": true,
+          "passed": false
+        },
+        "lastSuccess": null,
+        "latest": {
+          "at": "2026-10-26T05:01:46.611Z",
+          "detail": "有 6 条提醒正在投递或结果未知；不会自动重发，请核对控制台队列。",
+          "idle": true,
+          "passed": false
+        }
+      },
+      "schedule": {
+        "lastFailure": {
+          "at": "2026-10-26T04:58:04.255Z",
+          "detail": "常驻调度或规划失败，请检查本机日志。",
+          "idle": false,
+          "passed": false
+        },
+        "lastSuccess": {
+          "at": "2026-10-26T04:58:18.374Z",
+          "detail": "常驻调度检查完成；空闲结果仅在变化时保存。",
+          "idle": true,
+          "passed": true
+        },
+        "latest": {
+          "at": "2026-10-26T04:58:18.374Z",
+          "detail": "常驻调度检查完成；空闲结果仅在变化时保存。",
+          "idle": true,
+          "passed": true
+        }
+      }
+    },
+    "plans": [
+      {
+        "kind": "backup",
+        "next_due_at": "2026-10-27T01:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      },
+      {
+        "kind": "health",
+        "next_due_at": "2026-10-27T01:00:00.000Z",
+        "timezone": "Asia/Shanghai"
+      }
+    ]
+  },
+  "title": "Loop Control",
+  "uiTail": "\n—\nv1\n逐镜头准备工作台\n10\n2026年10月24日 16:31\n⋯\nT19 freesound\n29dfac4c\nT1\nT19 CONTROLLED freesound\n—\nv1\n逐镜头准备工作台\n4\n2026年10月24日 16:31\n⋯\nT19 pexels\nf9749842\nT1\nT19 CONTROLLED pexels\n—\nv1\n逐镜头准备工作台\n3\n2026年10月24日 16:31\n⋯\nT19 cloudflare\nda799b9d\nT1\nT19 CONTROLLED cloudflare\n—\nv1\n逐镜头准备工作台\n3\n2026年10月24日 16:31\n⋯\n第 1 / 313 页 · 共 6260 条\n上一页\n下一页\n已通过\n待审核\n草稿 / 制作\n新建生产单\n\n会固定所选账号当前激活蓝图和可选系列版本。\n\n账号\nA阶段隔离测试\nT10 synthetic pagination\nT10 synthetic pagination\nT10 synthetic pagination\nT10 synthetic pagination\nT10 synthetic pagination\nT10 synthetic pagination\nT11 synthetic reuse\nT11 synthetic reuse\nT11 synthetic reuse\nT11 synthetic reuse\nT11 synthetic reuse\nT14 config bddd9f25\nT14 config f4bb4d13 renamed\nT14 config d0576f7a renamed\nT14 browser account\nT16 isolated input\nT17 isolated input\nT18 CONTROLLED google_tts\nT18 CONTROLLED volcengine_tts\nT19 CONTROLLED openai\nT19 CONTROLLED cloudflare\nT19 CONTROLLED pexels\nT19 CONTROLLED freesound\nT19 manual\nT19 local\nT19 disabled\nT20 OFFLINE alignment\nT21 OFFLINE alignment\nT22 OFFLINE alignment\nT23 OFFLINE automation\nT24 OFFLINE recovery\nT25 OFFLINE native data\nD CLOSE offline\n普通长度三镜头端到端验收\n日常工作区\n系列版本（可选）\n不关联系列\n工作标题（可留空）\n本单将冻结的生产能力\n2 项\nA-roll · 人工素材\n配乐 / 音效 · 人工素材\n\n只会冻结以下已启用且完整配置的能力；分镜没有声明需求时不会创建对应任务。\n\n标题只是管理元数据，后续修改不会使已导入内容失效。\n\n创建前可生产性检查：未通过（2）\n展开阻塞详情\n\n本次检查未通过，因此尚未创建生产单。处理下面的原因后，点击“创建生产单”重新检查。\n\nWorker 网络不可用\n网络恢复后重试当前任务\n\nWorker 已执行真实网络探测，但当前网络或供应商连接未通过。\n\n确认运行 Worker 的机器可以访问对应供应商服务。\n检查代理、防火墙、DNS 和供应商服务状态。\n网络恢复后重新执行当前任务。\n处理位置\nWorker 运行环境 / 网络连接\n\n当前页面没有可修改的网络入口。\n\n技术详情\n外部连接需要更新\n管理连接并重试当前任务\n\n当前连接引用仍然有效，但供应商拒绝了认证材料或连接秘密已不可用。\n\n打开外部连接管理，重新提交对应 Provider 的认证材料。\n点击测试连接，确认供应商接受新的认证材料。\n连接恢复后重新执行当前任务。\n处理位置\n外部连接管理 → 对应 Provider\n\n连接秘密不会写入蓝图、Episode、任务或普通日志。\n\n打开外部连接管理\n技术详情\n取消\n创建生产单",
+  "url": "http://127.0.0.1:5174/"
+}

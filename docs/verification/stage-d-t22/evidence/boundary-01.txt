@@ -1,0 +1,1 @@
+{"passed":true,"checks":{"anonymous":401,"csrf":403,"origin":403,"crossOwner":404,"title201":400,"description5001":400,"tags21":400,"tag51":400,"invalidCover":400,"fixedManifestTamper":409,"tamperedArtifactHttp":409,"syntheticRunningFence":409,"syntheticAssetLockFence":409}}

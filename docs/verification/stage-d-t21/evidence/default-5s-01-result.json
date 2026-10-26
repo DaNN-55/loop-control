@@ -1,0 +1,1 @@
+{"command":"node node_modules/vitest/vitest.mjs run --exclude n8n/import-workflows.test.mjs --exclude **/*.integration.test.ts --exclude **/.loop-control/**","status":1,"signal":null,"timeoutOverride":false,"onlineRequests":0}

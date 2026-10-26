@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "observedRequests": 5507,
+  "origins": [
+    "http://127.0.0.1:55189",
+    "http://127.0.0.1:55190"
+  ],
+  "newOnlineRequests": 0,
+  "rawRequestsPrivate": true,
+  "harCreated": false,
+  "containment": "Browser allowed-domains and Node process guard; not host firewall",
+  "studioClosedPageReconnectRequestsRetained": true
+}

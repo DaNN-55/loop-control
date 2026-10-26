@@ -1,0 +1,14 @@
+const reasons=new Set(['SERVICE_DISABLED','BILLING_DISABLED','API_KEY_INVALID','API_KEY_SERVICE_BLOCKED','API_KEY_HTTP_REFERRER_BLOCKED','API_KEY_IP_ADDRESS_BLOCKED','API_KEY_ANDROID_APP_BLOCKED','API_KEY_IOS_APP_BLOCKED','API_KEY_EXPIRED','API_KEY_NOT_FOUND','API_KEY_RESTRICTION_VIOLATION','CREDENTIALS_MISSING','CREDENTIALS_EXPIRED','ACCESS_TOKEN_EXPIRED','ACCESS_TOKEN_SCOPE_INSUFFICIENT','IAM_PERMISSION_DENIED','CONSUMER_INVALID','CONSUMER_SUSPENDED','RATE_LIMIT_EXCEEDED','QUOTA_EXCEEDED','SECURITY_POLICY_VIOLATED','LOCATION_TAX_POLICY_VIOLATED','ORG_RESTRICTION_VIOLATION']);
+const statuses=new Set(['OK','CANCELLED','UNKNOWN','INVALID_ARGUMENT','DEADLINE_EXCEEDED','NOT_FOUND','ALREADY_EXISTS','PERMISSION_DENIED','RESOURCE_EXHAUSTED','FAILED_PRECONDITION','ABORTED','OUT_OF_RANGE','UNIMPLEMENTED','INTERNAL','UNAVAILABLE','DATA_LOSS','UNAUTHENTICATED']);
+export function sanitizeError(body,httpStatus){
+ const error=body&&typeof body==='object'?body.error:undefined,details=Array.isArray(error?.details)?error.details:[];
+ const info=details.filter(x=>x&&x['@type']==='type.googleapis.com/google.rpc.ErrorInfo');
+ const accepted=info.filter(x=>x.domain==='googleapis.com'&&reasons.has(x.reason)).map(x=>({reason:x.reason,domain:'googleapis.com',service:x.metadata?.service==='texttospeech.googleapis.com'?'texttospeech.googleapis.com':'NOT_RECORDED'}));
+ return{httpStatus,errorStatus:statuses.has(error?.status)?error.status:'NOT_RECORDED',errorInfo:accepted,unrecognizedErrorInfoCount:info.length-accepted.length,rawMessageStored:false,projectIdentifiersStored:false,headersOrCredentialsStored:false,onlyAllowlistedFieldsStored:true};
+}
+export async function readSanitizedError(response){
+ const clone=response.clone(),reader=clone.body?.getReader();let size=0;const chunks=[];
+ if(reader)while(true){const n=await reader.read();if(n.done)break;size+=n.value.byteLength;if(size>65536){void reader.cancel().catch(()=>{});return{...sanitizeError(undefined,response.status),diagnosticBodyLimitExceeded:true};}chunks.push(n.value);}
+ let body;try{body=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{}
+ return sanitizeError(body,response.status);
+}

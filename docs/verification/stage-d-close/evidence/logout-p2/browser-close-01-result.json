@@ -1,0 +1,14 @@
+{
+  "started": "2026-10-25T01:34:00.606Z",
+  "finished": "2026-10-25T01:34:00.789Z",
+  "command": [
+    "agent-browser",
+    "--session",
+    "d-close-logout-p2",
+    "close"
+  ],
+  "status": 0,
+  "defaultTimeoutMs": 5000,
+  "timeoutOverride": false,
+  "passed": true
+}

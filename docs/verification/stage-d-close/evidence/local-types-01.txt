@@ -1,0 +1,2 @@
+src/episodes/episodeCatalogTypes.ts(1,29): error TS2307: Cannot find module '../lib/database.types' or its corresponding type declarations.
+src/episodes/episodeCatalogTypes.ts(2,34): error TS2835: Relative import paths need explicit file extensions in ECMAScript imports when '--moduleResolution' is 'node16' or 'nodenext'. Did you mean '../reviews/reviewSelectors.js'?

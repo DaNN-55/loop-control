@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "missingFfmpegRejected": true,
+  "realWorkerPermissionRevokedStartup503": true,
+  "http503V2Preflight": true,
+  "taskCountAndFlagsUnchanged": true,
+  "grantsRestoredInFinally": true,
+  "providerRequests": 0
+}

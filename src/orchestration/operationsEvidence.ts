@@ -6,22 +6,23 @@ export interface OperationResult { at: string; passed: boolean; detail: string; 
 export interface OperationEvidence { latest: OperationResult; lastSuccess: OperationResult | null; lastFailure: OperationResult | null }
 export type OperationsEvidence = Partial<Record<Operation, OperationEvidence>>;
 const operations: Operation[] = ["schedule", "notification", "health", "backup", "snapshot"];
-function readResult(path: string): OperationResult | null {
+function readResult(path: string, observedAt = new Date()): OperationResult | null {
   try {
     const value = JSON.parse(readFileSync(path, "utf8")) as OperationResult;
     if (!value || typeof value.passed !== "boolean" || typeof value.detail !== "string" || value.detail.length > 1000 || !Number.isFinite(Date.parse(value.at))) throw Error("invalid");
     return value;
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") return null;
-    return { at: new Date().toISOString(), passed: false, detail: "本机结果记录无效或无法读取。" };
+    return { at: observedAt.toISOString(), passed: false, detail: "本机结果记录无效或无法读取。" };
   }
 }
-export async function readOperationsEvidence(directory: string): Promise<OperationsEvidence> {
+export async function readOperationsEvidence(directory: string, observedAt = new Date()): Promise<OperationsEvidence> {
   const result: OperationsEvidence = {};
+  const current = (entry: OperationResult | null) => entry && Date.parse(entry.at) <= observedAt.getTime() ? entry : null;
   for (const operation of operations) {
-    const lastSuccess=readResult(join(directory, `${operation}-last-success.json`));
-    const lastFailure=readResult(join(directory, `${operation}-last-failure.json`));
-    const latest=[readResult(join(directory, `${operation}-result.json`)),lastSuccess,lastFailure].filter((entry):entry is OperationResult=>entry!==null).sort((a,b)=>Date.parse(b.at)-Date.parse(a.at)||Number(a.passed)-Number(b.passed))[0];
+    const lastSuccess=current(readResult(join(directory, `${operation}-last-success.json`),observedAt));
+    const lastFailure=current(readResult(join(directory, `${operation}-last-failure.json`),observedAt));
+    const latest=[current(readResult(join(directory, `${operation}-result.json`),observedAt)),lastSuccess,lastFailure].filter((entry):entry is OperationResult=>entry!==null).sort((a,b)=>Date.parse(b.at)-Date.parse(a.at)||Number(a.passed)-Number(b.passed))[0];
     if (latest) result[operation] = { latest, lastSuccess, lastFailure };
   }
   return result;

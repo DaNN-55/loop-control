@@ -1,0 +1,76 @@
+{
+  "passed": true,
+  "scope": "Default 5000ms test instability only",
+  "baselineHead": "bca697bbc1e12626771d1283ec87a17bf85f02fe",
+  "rootCause": "Default CPU-count-minus-one test pool oversubscribes React/jsdom work under concurrent full-suite load; fixed test CPU budget retains default timeout",
+  "fixes": [
+    "test mode maxWorkers=50%",
+    "First LocalCatalogApp test awaits asynchronous render initialization"
+  ],
+  "productionComponentsUnchanged": true,
+  "targetReviewTestEntireFileUnchanged": true,
+  "businessAssertionsUnchanged": true,
+  "defaultTimeoutMs": 5000,
+  "timeoutOverride": false,
+  "finalValidation": {
+    "fixedTarget": {
+      "runs": 20,
+      "passed": 20,
+      "failed": 0,
+      "targetMinMs": 1571,
+      "targetMaxMs": 1738,
+      "targetMedianMs": 1630.5
+    },
+    "fixedReviewFile": {
+      "runs": 5,
+      "passed": 5,
+      "failed": 0,
+      "targetMinMs": 1292,
+      "targetMaxMs": 1351,
+      "targetMedianMs": 1296
+    },
+    "fixedFull": {
+      "runs": 3,
+      "passed": 3,
+      "failed": 0,
+      "targetMinMs": 1941,
+      "targetMaxMs": 2138,
+      "targetMedianMs": 2074
+    },
+    "sealedOriginalPressure": {
+      "runs": 2,
+      "passed": 0,
+      "failed": 2,
+      "targetMinMs": 5010,
+      "targetMaxMs": 5207,
+      "targetMedianMs": 5108.5
+    },
+    "sealedFinalPressure": {
+      "runs": 2,
+      "passed": 2,
+      "failed": 0,
+      "targetMinMs": 3857,
+      "targetMaxMs": 4130,
+      "targetMedianMs": 3993.5
+    }
+  },
+  "workerGuardAuditRuns": 32,
+  "workerGuardViaNodeOptionsVerified": true,
+  "historicalFiveSecondGateClosed": true,
+  "gateClosureScope": "Current source and default test runner resource policy under the declared validation protocol only",
+  "historicalFailuresRetained": true,
+  "historicalRunsReclassifiedAsPassed": false,
+  "allHistoricalFailuresProvenSameCause": false,
+  "initialValidationV1HadOneFailure": true,
+  "initialImportOnlyGuardDidNotProveWorkerCoverage": true,
+  "typescriptPassed": true,
+  "noProductFiveSecondLatencyClaim": true,
+  "otherUnverifiedCapabilitiesClosed": false,
+  "workerLeaseMinutes": 30,
+  "immediateFailoverProven": false,
+  "realWhisperXProven": false,
+  "sqlConsistencySuggestionDeferred": true,
+  "newOnlineRequests": 0,
+  "noCommit": true,
+  "EF": false
+}

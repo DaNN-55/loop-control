@@ -1,0 +1,7 @@
+{
+  mode: 'dry-run',
+  passed: true,
+  tables: 34,
+  sourceRows: 3640,
+  inserted: 3640
+}

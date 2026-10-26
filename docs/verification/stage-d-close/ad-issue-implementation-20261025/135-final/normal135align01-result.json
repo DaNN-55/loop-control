@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "newModelInference": true,
+  "historyReplay": false,
+  "args": {
+    "episodeId": "ab5c6b56-ca61-4fa4-9ed1-7fe8a2cd5245",
+    "reviewPackageId": "6d937a76-64a7-4c51-b3cb-0c0b0a8987cf",
+    "shotId": "shot-1"
+  },
+  "appPid": 69671,
+  "taskId": "f0a5bb23-6393-4a99-a908-a7ded44e82b4",
+  "text": "这是本地字幕验收？！",
+  "textFingerprint": "578ceb3d97b435baf32bb38328dd1889d3963a2b5fdc87709bdd3e4c179f07c9",
+  "inputVersion": "f7e5227d6069b3058e54caf8acabe2d0df7f822609d9b9751e14a73b718136ec",
+  "audioSha256": "26f49a501b9185e6f6a2f1b0e52c561a56717d361c7bf05e8f399593de7c74f3",
+  "method": "local_whisperx",
+  "status": "completed",
+  "artifacts": [
+    {
+      "id": "beb3849e-7f0c-470a-928d-87c39043ad86",
+      "sha256": "05f4e2326df02d2d96504ce9cc667b55e73c340b28d74bef6d2a1c5d6067f1e5",
+      "bytes": 967
+    }
+  ],
+  "providerRequests": 0,
+  "ownerIdentityIsImported": true,
+  "sameHostColdInitialization": true,
+  "newHardwareInstallation": false
+}

@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/local-app/artifactRoute.test.ts (1 test) 39ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  08:51:04
+   Duration  255ms (transform 21ms, setup 0ms, collect 23ms, tests 39ms, environment 0ms, prepare 52ms)
+

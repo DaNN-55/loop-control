@@ -1,0 +1,15 @@
+{
+  "startedAt": "2026-10-26T06:19:53.787Z",
+  "completedAt": "2026-10-26T06:20:00.960Z",
+  "exit": 0,
+  "signal": null,
+  "response": {
+    "status": 0,
+    "unlocked": true,
+    "ok": true
+  },
+  "stderrPresent": false,
+  "passwordCaptured": false,
+  "interactiveHumanEntry": true,
+  "savedPasswordFileModified": false
+}

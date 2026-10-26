@@ -1,0 +1,12 @@
+{
+  "started": "2026-10-25T00:52:25.861Z",
+  "finished": "2026-10-25T00:52:25.981Z",
+  "command": [
+    "agent-browser",
+    "--session",
+    "d-close-20261025",
+    "reload"
+  ],
+  "status": 0,
+  "passed": true
+}

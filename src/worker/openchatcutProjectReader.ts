@@ -4,8 +4,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import type { WorkerTaskPackage } from "./contracts.js";
 import { normalizeShotComposition, shotCompositionRect } from "../shotComposition.js";
-import { openChatCutSlotTransform } from "./openchatcutProject.js";
-import { shotCaptionSafeAreaGeometry } from "../shotCaptions.js";
+import { openChatCutSlotTransform, openChatCutCaptionGeometry } from "./openchatcutProject.js";
 
 type ReviewRender = NonNullable<WorkerTaskPackage["reviewRender"]>;
 
@@ -22,7 +21,7 @@ export interface OpenChatCutProjectObservation {
 
 export async function inspectOpenChatCutProjectWithRuntime(
   project: unknown,
-  runtimeConfig: { nodePath?: string; root?: string } = {},
+  runtimeConfig: { nodePath?: string; root?: string; environment?: NodeJS.ProcessEnv } = {},
 ): Promise<OpenChatCutProjectObservation> {
   const openchatcutRoot = runtimeConfig.root?.trim() || process.env.OPENCHATCUT_ROOT?.trim();
   if (!openchatcutRoot) throw new Error("未配置 OPENCHATCUT_ROOT，无法验证 OpenChatCut 工程。");
@@ -33,7 +32,7 @@ export async function inspectOpenChatCutProjectWithRuntime(
   const projectPath = join(directory, "project.json");
   await writeFile(projectPath, JSON.stringify(project));
   try {
-    const stdout = await run(nodePath, ["--import", tsxLoaderPath, inspectorPath, projectPath, openchatcutRoot]);
+    const stdout = await run(nodePath, ["--import", tsxLoaderPath, inspectorPath, projectPath, openchatcutRoot], runtimeConfig.environment);
     return JSON.parse(stdout) as OpenChatCutProjectObservation;
   } catch (cause) {
     throw new Error(`OpenChatCut 真实读取失败：${cause instanceof Error ? cause.message : String(cause)}`);
@@ -57,7 +56,7 @@ export function assertConfirmedShotCaptionsReadable(
     const cues = track?.cues.filter((cue) => cue.id === `cue-${shot.shotId}` || cue.id?.startsWith(`cue-${shot.shotId}-`)) ?? [];
     const constraint = track?.constraints?.find((candidate) => candidate.sourceId === `lane-${shot.shotId}`);
     const spatial = shot.preparationContract.captions.spatial;
-    const safeArea = shotCaptionSafeAreaGeometry(spatial);
+    const safeArea = openChatCutCaptionGeometry(spatial);
     return cues.length === 0
       || (options.requireConfirmedText === false ? !cues.some((cue) => cue.text.trim()) : cues.map((cue) => cue.text).join("") !== shot.subtitleText)
       || cues.some((cue) => !Number.isFinite(cue.start) || !Number.isFinite(cue.end) || cue.start < 0 || cue.end <= cue.start)
@@ -125,7 +124,7 @@ export function assertShotPreviewFingerprint(render: ReviewRender, project: unkn
 export async function verifyOpenChatCutProject(
   render: ReviewRender,
   project: unknown,
-  runtimeConfig: { nodePath?: string; root?: string } = {},
+  runtimeConfig: { nodePath?: string; root?: string; environment?: NodeJS.ProcessEnv } = {},
   options: { requireConfirmedText?: boolean; allowStudioEdits?: boolean } = {},
 ): Promise<OpenChatCutProjectObservation> {
   const observation = await inspectOpenChatCutProjectWithRuntime(project, runtimeConfig);
@@ -141,9 +140,9 @@ function sameTransform(actual: Record<string, unknown> | undefined, expected: Re
   return JSON.stringify(actual) === JSON.stringify(expected);
 }
 
-function run(command: string, args: string[]): Promise<string> {
+function run(command: string, args: string[], environment?: NodeJS.ProcessEnv): Promise<string> {
   return new Promise((resolveRun, rejectRun) => {
-    execFile(command, args, { maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
+    execFile(command, args, { maxBuffer: 1024 * 1024, timeout: 30000, ...(environment ? {env: environment} : {}) }, (error, stdout, stderr) => {
       if (error) rejectRun(new Error(String(stderr || error.message).trim()));
       else resolveRun(stdout);
     });

@@ -1,0 +1,96 @@
+{
+  "passed": true,
+  "browser": "Google Chrome for Testing",
+  "session": "d-closeout-20261026",
+  "episodes": [
+    {
+      "id": "07328b9c-9d33-4355-bebc-998329191c56",
+      "title": "E2E 2026-08-26 · 手工视觉素材",
+      "archived": true,
+      "drawerOpened": true,
+      "titleVisible": true,
+      "screenshot": "history-07328b9c.png"
+    },
+    {
+      "id": "265dcee5-32c8-4066-b3ad-58803d195e01",
+      "title": "操作电脑-v4",
+      "archived": true,
+      "drawerOpened": true,
+      "titleVisible": true,
+      "screenshot": "history-265dcee5.png"
+    },
+    {
+      "id": "3bf59fde-cf0b-47e1-990e-d7034cfbcfb3",
+      "title": "操作电脑-v2",
+      "archived": true,
+      "drawerOpened": true,
+      "titleVisible": true,
+      "screenshot": "history-3bf59fde.png"
+    },
+    {
+      "id": "4bf30683-7a28-4f7f-ac2f-2a263b90bfff",
+      "title": "",
+      "archived": true,
+      "drawerOpened": true,
+      "titleVisible": true,
+      "screenshot": "history-4bf30683.png"
+    },
+    {
+      "id": "603a1588-a786-4ded-a4dd-a660d48ee617",
+      "title": "操作电脑",
+      "archived": true,
+      "drawerOpened": true,
+      "titleVisible": true,
+      "screenshot": "history-603a1588.png"
+    },
+    {
+      "id": "92b3067d-ced9-4e85-bc44-1968fa83695a",
+      "title": "操作电脑-v3",
+      "archived": true,
+      "drawerOpened": true,
+      "titleVisible": true,
+      "screenshot": "history-92b3067d.png"
+    },
+    {
+      "id": "b4164d65-494e-4321-b5d7-e2bc7e929434",
+      "title": "E2E 2026-08-26 · HyperFrames A-roll",
+      "archived": true,
+      "drawerOpened": true,
+      "titleVisible": true,
+      "screenshot": "history-b4164d65.png"
+    },
+    {
+      "id": "b865e3dc-1c0b-40f7-8b70-7c8d1273adaa",
+      "title": "E2E 2026-08-26 · 本地 HyperFrames 与上传",
+      "archived": true,
+      "drawerOpened": true,
+      "titleVisible": true,
+      "screenshot": "history-b865e3dc.png"
+    },
+    {
+      "id": "bbea3b57-061b-4341-9ba1-3bf65d28899f",
+      "title": "日照金山样片 · 原稿 v1",
+      "archived": false,
+      "drawerOpened": true,
+      "titleVisible": true,
+      "screenshot": "history-bbea3b57.png"
+    },
+    {
+      "id": "da8677ae-3c4d-4815-92d5-e1fef8bc7164",
+      "title": "测试",
+      "archived": true,
+      "drawerOpened": true,
+      "titleVisible": true,
+      "screenshot": "history-da8677ae.png"
+    },
+    {
+      "id": "e8700b8e-e95f-48a9-9f2e-ac3259a61ed4",
+      "title": "电脑体检打假",
+      "archived": true,
+      "drawerOpened": true,
+      "titleVisible": true,
+      "screenshot": "history-e8700b8e.png"
+    }
+  ],
+  "otherTabsModified": false
+}

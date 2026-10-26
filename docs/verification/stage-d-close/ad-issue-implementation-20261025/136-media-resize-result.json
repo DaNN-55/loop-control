@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "onlyOwnMediaImage": true,
+  "preexistingMediaAndReceiptFilesPreserved": true,
+  "verifiedNonJournalFiles": 880,
+  "changedFilesystemJournalPaths": [],
+  "requestedBytes": 3221225472,
+  "otherImagesUntouched": true,
+  "downloads": 0
+}

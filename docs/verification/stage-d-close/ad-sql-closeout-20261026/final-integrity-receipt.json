@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "indexSha256": "e85de83df6ca15476e404f975c6f185ed8e807b02e1089483e2d36bcf73e7784",
+  "publicItems": 1400,
+  "privateItems": 4442,
+  "allIndexedBytesVerified": true,
+  "history": {
+    "passed": true,
+    "historicalPublicChecked": 1364,
+    "historicalPrivateChecked": 4214,
+    "oldMetadataPreserved": true,
+    "unrelatedBaselineHashesChecked": 20,
+    "headUnchanged": true,
+    "stagedFiles": [],
+    "errors": []
+  },
+  "credentialScan": {
+    "passed": true,
+    "method": "Full byte-window SHA256 comparison against approved private fingerprints; raw secrets never loaded",
+    "privateFingerprints": 9,
+    "filesChecked": 83,
+    "indexIncluded": true,
+    "hits": [],
+    "rawSecretsLoaded": false
+  },
+  "sourceAggregateSha256": "056d325ff85ba9b06cb28ef2a1f1ba12eb4459d98a2c530b4777ca1f07ca72a7",
+  "closedIssues": [
+    146,
+    147
+  ],
+  "gate149": "OPEN",
+  "provider137to140": "Owner-approved skipped, OPEN, not passed",
+  "headUnchanged": true,
+  "stagedFiles": 0,
+  "newProviderRequests": 0,
+  "committed": false,
+  "pushed": false,
+  "enteredEF": false,
+  "receiptExcludedFromItemizedIndex": true,
+  "receiptExclusionReason": "Avoid circular hash dependency on final index; final receipt itself receives a further independent scan"
+}

@@ -1,0 +1,35 @@
+{"offlineProcessGuard":true,"selfChecks":5,"allowed":"127.0.0.1:55472,55177,55189,55190","supabaseAndN8nDenied":true}
+{"offlineGuardFinal":{"sockets":1,"http":2,"modules":1,"files":1,"onlyNativeLoopbackAllowed":true,"legacySdkAndEnvironmentDenied":true,"hostNetworkUnchanged":true,"deniedFilePaths":["readFileSync:/.env.local"]}}
+node:internal/errors:986
+  const err = new Error(message);
+              ^
+
+Error: Command failed: docker exec -i loop-control-stage-d-postgres psql -XqAt -U postgres -d loop_t24_restore_lease_race20261025 -v ON_ERROR_STOP=1
+ERROR:  duplicate key value violates unique constraint "tasks_one_active_visual_brief_idx"
+DETAIL:  Key (episode_id)=(c3b1da80-7572-4ade-8cef-04807ae6aa6c) already exists.
+
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:942:11)
+    at execFileSync (node:child_process:978:15)
+    at docker (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/environment.mjs:11:43)
+    at sql (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/environment.mjs:13:76)
+    at q (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/lease-natural-20261025/competition-start.mjs:2:59)
+    at make (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/lease-natural-20261025/competition-start.mjs:3:663)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/lease-natural-20261025/competition-start.mjs:4:182
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25) {
+  status: 3,
+  signal: null,
+  output: [
+    null,
+    '',
+    'ERROR:  duplicate key value violates unique constraint "tasks_one_active_visual_brief_idx"\n' +
+      'DETAIL:  Key (episode_id)=(c3b1da80-7572-4ade-8cef-04807ae6aa6c) already exists.\n'
+  ],
+  pid: 38697,
+  stdout: '',
+  stderr: 'ERROR:  duplicate key value violates unique constraint "tasks_one_active_visual_brief_idx"\n' +
+    'DETAIL:  Key (episode_id)=(c3b1da80-7572-4ade-8cef-04807ae6aa6c) already exists.\n'
+}
+
+Node.js v24.20.0

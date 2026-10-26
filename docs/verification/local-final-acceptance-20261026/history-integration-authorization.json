@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-26T09:45:52.324Z",
+  "authorized": true,
+  "source": [
+    "call_f9b181a6119d4fee8e89804409860fd1",
+    "call_f5304f0b4ecd406f9ae387d50a5e0be3"
+  ],
+  "answer": "授权这两项最小修复并接入",
+  "scope": "Trailing slash normalization; two historical ledger tables with native Owner read-only access; append 3 accounts/11 episodes/34 tables/337 referenced media preserving IDs/reviews/archive statuses; no source writes, task execution, source authentication secrets, or new Provider calls",
+  "additional": {
+    "at": "2026-10-26T10:02:09.625Z",
+    "source": "call_6b1dbc8a1ae34f79a0a9f6daf5f1f691",
+    "answer": "授权原样接入并保留失败项",
+    "scope": "Exact historical connection UUID/author/provider tuple compatibility only; retain 8 known source integrity failures and strict rejection; no general provider capability"
+  }
+}

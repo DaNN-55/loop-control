@@ -1,0 +1,49 @@
+{
+  "passed": true,
+  "scope": "Existing 30-minute native Worker natural expiry and tested process boundaries only",
+  "naturalExpiryDatabaseSeconds": 1800.913066,
+  "budgetExpiryDatabaseSeconds": 1800.411,
+  "naturalAttempts": [
+    {
+      "attempt": 0,
+      "status": "failed"
+    },
+    {
+      "attempt": 1,
+      "status": "completed"
+    }
+  ],
+  "actualCompetingConnections": 2,
+  "actualClaimedRowsByConnection": [
+    1,
+    0
+  ],
+  "lateFencesPassed": true,
+  "processCases": [
+    "worker-only exit",
+    "parent-only SIGKILL with live valid child",
+    "graceful stop",
+    "stop during pending DB claim",
+    "parent stdout reader disappearance"
+  ],
+  "fix": "Ignore only Worker stdout EPIPE; preserve all lease, heartbeat and DB write fences",
+  "defaultFullTests": 766,
+  "defaultFullFiles": 102,
+  "defaultTestTimeoutMs": 5000,
+  "typecheckPassed": true,
+  "naturalThirtyMinuteExpiryGateClosed": true,
+  "immediateFailoverGateClosed": false,
+  "liveExpiredExecutorFileIsolationProven": false,
+  "onlineRequestCancellationProven": false,
+  "allWorkerCapabilitiesAccepted": false,
+  "otherUnverifiedGatesClosed": false,
+  "historicalFailuresPreserved": true,
+  "claimedAtManuallyUpdated": false,
+  "leaseShortened": false,
+  "clockChanged": false,
+  "sqlConsistencySuggestionDeferred": true,
+  "newOnlineRequests": 0,
+  "commit": false,
+  "EF": false,
+  "naturalNewAttemptObservedAfterSeconds": 1805.104
+}

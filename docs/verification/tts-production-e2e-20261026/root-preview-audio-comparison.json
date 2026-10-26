@@ -1,0 +1,28 @@
+{
+  "method": "FFT search all integer lags within +/-100ms, then normalized full overlap correlation at 16kHz mono",
+  "threshold": 0.95,
+  "passed": true,
+  "rows": [
+    {
+      "normalizedCorrelation": 0.9869871766048558,
+      "offsetSeconds": 0.0426875,
+      "overlapSeconds": 15.6373125,
+      "passed": true,
+      "shotId": "shot-1"
+    },
+    {
+      "normalizedCorrelation": 0.990045451118341,
+      "offsetSeconds": 0.0426875,
+      "overlapSeconds": 15.888,
+      "passed": true,
+      "shotId": "shot-2"
+    },
+    {
+      "normalizedCorrelation": 0.9898009994162349,
+      "offsetSeconds": 0.0426875,
+      "overlapSeconds": 15.264,
+      "passed": true,
+      "shotId": "shot-3"
+    }
+  ]
+}

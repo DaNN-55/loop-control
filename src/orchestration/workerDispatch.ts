@@ -3,10 +3,15 @@ import { join } from "node:path";
 import { assertPreparedRuntime } from "./runtimeBuild.js";
 
 export type DispatchScope = { taskId?: string; episodeId?: string };
+export interface WorkerDatabasePort {
+  rpc(name: string, args: Record<string, unknown>): Promise<unknown[]>;
+  plan(scope: DispatchScope): Promise<number>;
+}
 export interface WorkerDispatchOptions {
   projectRoot: string;
-  supabaseUrl: string;
-  serviceRoleKey: string;
+  supabaseUrl?: string;
+  serviceRoleKey?: string;
+  database?: WorkerDatabasePort;
   environment?: NodeJS.ProcessEnv;
   concurrency: number;
   signal?: AbortSignal;
@@ -86,6 +91,7 @@ export function createWorkerTaskConsumer(options: WorkerDispatchOptions, executo
   async function plan(scope: DispatchScope = {}) {
     if (options.signal?.aborted) return;
     if (!executor) await assertPreparedRuntime(options.projectRoot);
+    if (options.database) { plannedTasks += await options.database.plan(scope); return; }
     const expiredBefore = new Date(Date.now() - 30 * 60 * 1000).toISOString();
     if (!scope.episodeId && !active.size && !await hasPendingWork(expiredBefore)) return;
     plannedTasks += (await planTasks(scope.episodeId)).length;
@@ -100,7 +106,7 @@ export function createWorkerTaskConsumer(options: WorkerDispatchOptions, executo
   };
 
   function requestSignal() { return options.signal ? AbortSignal.any([options.signal, AbortSignal.timeout(4000)]) : AbortSignal.timeout(4000); }
-  function headers() { return { apikey: options.serviceRoleKey, Authorization: `Bearer ${options.serviceRoleKey}` }; }
+  function headers() { if(!options.serviceRoleKey)throw Error('Worker database transport is not configured.');return { apikey: options.serviceRoleKey, Authorization: `Bearer ${options.serviceRoleKey}` }; }
   function runCommand(command: string, argumentsList: string[], input?: string): Promise<{ stdout: string }> {
     return new Promise((resolve, reject) => {
       const child = spawn(command, argumentsList, { cwd: options.projectRoot, env: options.environment ?? process.env, detached: process.platform !== "win32", stdio: [input === undefined ? "ignore" : "pipe", "pipe", "pipe"] });
@@ -122,6 +128,8 @@ export function createWorkerTaskConsumer(options: WorkerDispatchOptions, executo
     });
   }
   async function rpc(name: string, args: Record<string, unknown>, allowDuringStop = false): Promise<unknown[]> {
+    if (options.database) return options.database.rpc(name, args);
+    if (!options.supabaseUrl || !options.serviceRoleKey) throw Error('Worker database transport is not configured.');
     const response = await fetch(new URL(`/rest/v1/rpc/${name}`, options.supabaseUrl), {
       method: "POST", headers: { ...headers(), "Content-Type": "application/json" }, body: JSON.stringify(args), signal: allowDuringStop ? AbortSignal.timeout(4000) : requestSignal(),
     });
@@ -141,6 +149,7 @@ export function createWorkerTaskConsumer(options: WorkerDispatchOptions, executo
     }
   }
   async function hasPendingWork(expiredBefore: string): Promise<boolean> {
+    if (!options.supabaseUrl || !options.serviceRoleKey) throw Error('Worker database transport is not configured.');
     for (const [table, filters] of [
       ["tasks", { or: `(status.eq.ready,and(status.eq.running,or(claimed_at.is.null,claimed_at.lte.${expiredBefore})))` }],
       ["episodes", { stage: "in.(script_approved,visual_approved,storyboard_approved,production_ready,render_ready,qc_passed)" }],
@@ -175,6 +184,7 @@ export function createWorkerTaskConsumer(options: WorkerDispatchOptions, executo
 
   async function orchestrateTasks(functionName: string, args: Record<string, string> = {}): Promise<Array<{ id: string }>> {
     const { supabaseUrl: url, serviceRoleKey } = options;
+    if (!url || !serviceRoleKey) throw Error('Worker database transport is not configured.');
     const endpoint = new URL(`/rest/v1/rpc/${functionName}`, url);
     const response = await fetch(endpoint, {
       method: "POST",
