@@ -1,0 +1,84 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/merge-stage-abc/loop-control
+
+ ❯ src/local-app/accountPreflightRoute.test.ts (7 tests | 2 failed) 46ms
+   × reports locked Provider networking independently from connection qualification through Owner HTTP 24ms
+     → expected [ { …(7) } ] to deeply equal [ ObjectContaining{…} ]
+   × reports both locked networking and missing qualification without calling a Provider or reading secrets 7ms
+     → expected [ { …(7) }, { …(7) } ] to deeply equal [ ObjectContaining{…}, …(1) ]
+   ✓ keeps missing connection qualification actionable when networking is available 3ms
+   ✓ rejects an unavailable exact secret even when networking and recorded qualification are available 3ms
+   ✓ identifies a missing planning model without claiming that Provider and Prompt are also missing 3ms
+   ✓ reports incomplete planning configuration separately from runtime readiness 3ms
+   ✓ reports readiness after the current configuration, qualification and runtime checks pass 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/accountPreflightRoute.test.ts > reports locked Provider networking independently from connection qualification through Owner HTTP
+AssertionError: expected [ { …(7) } ] to deeply equal [ ObjectContaining{…} ]
+
+- Expected
++ Received
+
+  [
+-   ObjectContaining {
++   {
+      "action": "contact_environment_admin",
+-     "check": "provider_network_policy",
++     "capability": "worker_runtime",
++     "check": "network_connectivity",
++     "phase": "preflight",
++     "reason": "当前部署的 Provider 网络策略未启用或请求预算不可用；请联系环境管理员，不会发起在线检查。",
+      "scope": "worker",
+      "status": "unavailable",
+    },
+  ]
+
+ ❯ src/local-app/accountPreflightRoute.test.ts:58:29
+     56|  const result=await check(policy,false);
+     57|  expect(result.status).toBe(200);
+     58|  expect(result.body.checks).toEqual([expect.objectContaining({check:'p…
+       |                             ^
+     59|  expect(result.body.checks[0].reason).toContain('网络');
+     60| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/accountPreflightRoute.test.ts > reports both locked networking and missing qualification without calling a Provider or reading secrets
+AssertionError: expected [ { …(7) }, { …(7) } ] to deeply equal [ ObjectContaining{…}, …(1) ]
+
+- Expected
++ Received
+
+@@ -1,9 +1,12 @@
+  [
+-   ObjectContaining {
++   {
+      "action": "contact_environment_admin",
+-     "check": "provider_network_policy",
++     "capability": "worker_runtime",
++     "check": "network_connectivity",
++     "phase": "preflight",
++     "reason": "当前部署的 Provider 网络策略未启用或请求预算不可用；请联系环境管理员，不会发起在线检查。",
+      "scope": "worker",
+      "status": "unavailable",
+    },
+    ObjectContaining {
+      "action": "manage_connection",
+
+ ❯ src/local-app/accountPreflightRoute.test.ts:65:29
+     63|  const result=await check(policy,false,false);
+     64|  expect(result.status).toBe(200);
+     65|  expect(result.body.checks).toEqual([
+       |                             ^
+     66|   expect.objectContaining({check:'provider_network_policy',status:'una…
+     67|   expect.objectContaining({check:'credential_presence',status:'blocked…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 5 passed (7)
+   Start at  19:16:05
+   Duration  501ms (transform 173ms, setup 0ms, collect 238ms, tests 46ms, environment 0ms, prepare 96ms)
+
