@@ -7,7 +7,7 @@ vi.mock('node:fs',()=>({existsSync:p=>fixture.files.has(p),realpathSync:p=>p,rea
 import{readDeployment}from'./deployment.mjs';
 const base=root+'/state/t24-new',file=base+'/deployment.json',mediaRoot=base+'/volume/restored/media',receiptFile=base+'/volume/restored/restore-receipt.json';
 const database={host:'127.0.0.1',port:55472,database:'loop_t24_restore_new',user:'loop_app',password:'synthetic'};
-function config(){return{projectRoot,port:55189,database,worker:{},workerDatabase:{...database,user:'loop_worker'},mediaRoot,home:base+'/home',stateDirectory:base+'/state'};}
+function config(){return{projectRoot,port:55189,database:{...database},worker:{},workerDatabase:{...database,user:'loop_worker'},mediaRoot,home:base+'/home',stateDirectory:base+'/state'};}
 beforeEach(()=>{fixture.files.clear();fixture.files.set(file,config());fixture.files.set(receiptFile,{passed:true,publicationFence:true,connectionQualificationsCleared:true,database:database.database,mediaRoot});});
 it('selects a restored deployment using the same strict normal startup reader',()=>{expect(readDeployment(file)).toMatchObject({database,mediaRoot,deploymentFile:file});});
 it('selects an optional default pointer and still rejects a changed restore binding',()=>{
@@ -22,4 +22,27 @@ it('requires the probe and live Worker to share the same approved network budget
 it('rejects mismatched restore receipt, worker database, production paths and online policy',()=>{
  for(const change of[c=>{c.workerDatabase.database='loop_imported';},c=>{c.database.database='postgres';},c=>{c.mediaRoot='/Users/dan/Programs/loop-control/media';},c=>{c.connections={verification:'pexels-live'};}]){const c=config();change(c);fixture.files.set(file,c);expect(()=>readDeployment(file)).toThrow();}
  fixture.files.set(file,config());fixture.files.set(receiptFile,{passed:true,database:database.database,mediaRoot});expect(()=>readDeployment(file)).toThrow();
+});
+
+it('routes an explicitly selected desktop mode through the normal deployment reader',()=>{
+ const c=config();c.notifications='desktop';fixture.files.set(file,c);
+ expect(readDeployment(file)).toMatchObject({controlledNotifications:false,notifications:'desktop',database,mediaRoot});
+});
+
+it('keeps omitted and explicitly controlled notification delivery in isolated mode',()=>{
+ expect(readDeployment(file).controlledNotifications).toBe(true);
+ const c=config();c.notifications='controlled';fixture.files.set(file,c);
+ expect(readDeployment(file).controlledNotifications).toBe(true);
+});
+it.each([['unknown string','native'],['boolean',false],['null',null],['object',{}],['array',[]],['number',1]])('rejects invalid %s notification delivery mode',(_kind,notifications)=>{
+ const c=config();c.notifications=notifications;fixture.files.set(file,c);
+ expect(()=>readDeployment(file)).toThrow('Invalid notification delivery mode');
+});
+
+it('does not let desktop delivery bypass restored deployment or Provider boundaries',()=>{
+ for(const change of[c=>{c.workerDatabase.database='loop_imported';},c=>{c.database.database='postgres';},c=>{c.mediaRoot='/Users/dan/Programs/loop-control/media';},c=>{c.connections={verification:'pexels-live'};}]){
+  const c=config();c.notifications='desktop';change(c);fixture.files.set(file,c);expect(()=>readDeployment(file)).toThrow();
+ }
+ const c=config();c.notifications='desktop';fixture.files.set(file,c);fixture.files.set(receiptFile,{passed:false});
+ expect(()=>readDeployment(file)).toThrow('Restore deployment receipt mismatch');
 });

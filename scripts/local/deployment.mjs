@@ -41,6 +41,7 @@ export function readDeployment(file=deploymentFile()){
  if(!isAbsolute(file)||realpathSync(file)!==file||!/^t(?:24|25)-[a-z0-9-]+$/.test(dirname(file).slice(join(root,'state').length+1))||dirname(dirname(file))!==join(root,'state'))throw Error('Unapproved isolated deployment file');
  assertPrivatePath(file);const c=JSON.parse(readFileSync(file)),base=dirname(file),restored=c.database?.database;
  if(c.projectRoot!==projectRoot||c.port!==55189)throw Error('Isolated native deployment identity mismatch');
+ if(c.notifications!==undefined&&!['desktop','controlled'].includes(c.notifications))throw Error('Invalid notification delivery mode');
  if(restored!=='loop_t25'){
   if(!/^loop_t24_restore[a-z0-9_]*$/.test(restored??'')||restored.length>60)throw Error('Unapproved restore database');
   const receiptFile=join(dirname(c.mediaRoot??''),'restore-receipt.json');assertPrivatePath(receiptFile);const r=JSON.parse(readFileSync(receiptFile));
@@ -48,5 +49,5 @@ export function readDeployment(file=deploymentFile()){
  }
  databaseBinding(c,restored);
  for(const k of ['mediaRoot','stateDirectory','home'])if(typeof c[k]!=='string'||!c[k].startsWith(base+'/')||realpathSync(c[k])!==c[k])throw Error('Isolated native path mismatch');
- return{...c,...capabilities(c),projectRoot,recordPath:join(base,'app.json'),logPath:join(base,'app-private.log'),deploymentFile:file,controlledNotifications:true};
+ return{...c,...capabilities(c),projectRoot,recordPath:join(base,'app.json'),logPath:join(base,'app-private.log'),deploymentFile:file,controlledNotifications:c.notifications!=='desktop'};
 }
