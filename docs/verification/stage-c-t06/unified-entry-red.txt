@@ -1,0 +1,189 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+Worker 没有输出结果。
+{"mode":"dispatch","episodeId":"22222222-2222-4222-8222-222222222222","plannedTasks":0,"workers":[],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","skipped":"idle"}
+{"mode":"notify","notifications":0,"cursor":null}
+ ❯ src/orchestration/loopOrchestratorCli.test.ts (8 tests | 3 failed) 193ms
+   ✓ 定向生产单调度 > 提醒工作流复用一次事件扫描，而不是各自定时读取 audit_events 6ms
+   ✓ 定向生产单调度 > 派发和提醒使用保守默认值，并在导入时读取本机间隔配置 2ms
+   ✓ 定向生产单调度 > 每日健康检查每天 09:00 只运行一次 1ms
+   × 定向生产单调度 > 定时扫描会消费规划器未新建的持久 ready 任务 131ms
+     → expected "spy" to be called with arguments: [ …(3) ]
+
+Received:
+
+  1st spy call:
+
+  [
+-   "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
++   "npm",
+    [
+-     StringContaining "codexWorkerCli.js",
+-     "--task-id",
+-     "55555555-5555-4555-8555-555555555555",
++     "run",
++     "worker:build",
+    ],
+-   Anything,
++   {
++     "cwd": "/tmp/loop",
++     "stdio": [
++       "ignore",
++       "pipe",
++       "pipe",
++     ],
++   },
+  ]
+
+  2nd spy call:
+
+  [
+-   "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
++   "npm",
+    [
+-     StringContaining "codexWorkerCli.js",
+-     "--task-id",
+-     "55555555-5555-4555-8555-555555555555",
++     "run",
++     "worker:execute",
+    ],
+-   Anything,
++   {
++     "cwd": "/tmp/loop",
++     "stdio": [
++       "ignore",
++       "pipe",
++       "pipe",
++     ],
++   },
+  ]
+
+
+Number of calls: 2
+
+   × 定向生产单调度 > 单任务入口只消费指定持久任务，不重新规划冻结输入 11ms
+     → 用法：orchestrator:run dispatch [--episode <UUID>]
+   × 定向生产单调度 > Episode入口会消费已存在的任务，即使规划器返回空 18ms
+     → expected [ …(11) ] to deep equally contain StringContaining{…}
+   ✓ 定向生产单调度 > 空队列不构建或启动Worker 14ms
+   ✓ 定向生产单调度 > 一次提醒轮次只读取一次增量 audit_events 8ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > 定时扫描会消费规划器未新建的持久 ready 任务
+AssertionError: expected "spy" to be called with arguments: [ …(3) ]
+
+Received:
+
+  1st spy call:
+
+  [
+-   "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
++   "npm",
+    [
+-     StringContaining "codexWorkerCli.js",
+-     "--task-id",
+-     "55555555-5555-4555-8555-555555555555",
++     "run",
++     "worker:build",
+    ],
+-   Anything,
++   {
++     "cwd": "/tmp/loop",
++     "stdio": [
++       "ignore",
++       "pipe",
++       "pipe",
++     ],
++   },
+  ]
+
+  2nd spy call:
+
+  [
+-   "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
++   "npm",
+    [
+-     StringContaining "codexWorkerCli.js",
+-     "--task-id",
+-     "55555555-5555-4555-8555-555555555555",
++     "run",
++     "worker:execute",
+    ],
+-   Anything,
++   {
++     "cwd": "/tmp/loop",
++     "stdio": [
++       "ignore",
++       "pipe",
++       "pipe",
++     ],
++   },
+  ]
+
+
+Number of calls: 2
+
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:60:32
+     58|     childProcess.spawn.mockImplementation((_command: string, args: str…
+     59|     await runDispatch(fetchMock);
+     60|     expect(childProcess.spawn).toHaveBeenCalledWith(process.execPath, …
+       |                                ^
+     61|   });
+     62|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > 单任务入口只消费指定持久任务，不重新规划冻结输入
+Error: 用法：orchestrator:run dispatch [--episode <UUID>]
+ ❯ readEpisodeIdArgument src/orchestration/loopOrchestratorCli.ts:170:11
+    168|   if (args.length === 0) return null;
+    169|   if (args.length !== 2 || args[0] !== "--episode" || !/^[0-9a-f]{8}-[…
+    170|     throw new Error("用法：orchestrator:run dispatch [--episode <UUID>]");
+       |           ^
+    171|   }
+    172|   return args[1].toLowerCase();
+ ❯ src/orchestration/loopOrchestratorCli.ts:14:25
+ ❯ runDispatch src/orchestration/loopOrchestratorCli.test.ts:108:3
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:67:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > Episode入口会消费已存在的任务，即使规划器返回空
+AssertionError: expected [ …(11) ] to deep equally contain StringContaining{…}
+
+- Expected:
+StringContaining "episode_id=eq.22222222"
+
++ Received:
+[
+  "https://example.supabase.co/rest/v1/rpc/orchestrate_provided_script_tasks_for_episode",
+  "https://example.supabase.co/rest/v1/rpc/orchestrate_storyboard_tasks_for_episode",
+  "https://example.supabase.co/rest/v1/rpc/orchestrate_b_roll_tasks",
+  "https://example.supabase.co/rest/v1/rpc/orchestrate_a_roll_tasks_for_episode",
+  "https://example.supabase.co/rest/v1/rpc/orchestrate_narration_tasks",
+  "https://example.supabase.co/rest/v1/rpc/orchestrate_soundtrack_tasks",
+  "https://example.supabase.co/rest/v1/rpc/orchestrate_embedded_audio_tasks",
+  "https://example.supabase.co/rest/v1/rpc/orchestrate_review_render_tasks",
+  "https://example.supabase.co/rest/v1/rpc/orchestrate_final_render_tasks",
+  "https://example.supabase.co/rest/v1/rpc/advance_production_ready_episodes",
+  "https://example.supabase.co/rest/v1/rpc/create_pre_render_review_packages_for_episode",
+]
+
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:77:35
+     75|     childProcess.spawn.mockImplementation((_command: string, args: str…
+     76|     await runDispatch(fetchMock, ["--episode", "22222222-2222-4222-822…
+     77|     expect(fetchCalls(fetchMock)).toContainEqual(expect.stringContaini…
+       |                                   ^
+     78|     expect(childProcess.spawn).toHaveBeenCalledWith(process.execPath, …
+     79|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 5 passed (8)
+   Start at  20:04:12
+   Duration  2.94s (transform 251ms, setup 0ms, collect 175ms, tests 193ms, environment 1.31s, prepare 245ms)

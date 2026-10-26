@@ -1,5 +1,10 @@
 import { EventEmitter } from "node:events";
 import { readFileSync } from "node:fs";
+import { mkdir, mkdtemp, writeFile, rm, readFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { prepareRuntime } from "./runtimeBuild";
+const fixtureRoots: string[] = [];
 import { resolve } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -7,12 +12,19 @@ const childProcess = vi.hoisted(() => ({ execFile: vi.fn(), spawn: vi.fn() }));
 vi.mock("node:child_process", () => ({ ...childProcess, default: childProcess }));
 
 const originalArgv = process.argv;
+const originalWorkerCapacity = process.env.CODEX_WORKER_CAPACITY;
 const originalProjectRoot = process.env.LOOP_PROJECT_ROOT;
+const originalStateDirectory = process.env.LOOP_N8N_STATE_DIR;
+const originalExitCode = process.exitCode;
 const originalSupabaseUrl = process.env.SUPABASE_URL;
 const originalServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-afterEach(() => {
+afterEach(async () => {
+  await Promise.all(fixtureRoots.splice(0).map(root=>rm(root,{recursive:true,force:true})));
   process.argv = originalArgv;
+  process.exitCode = originalExitCode;
+  restoreEnvironment("LOOP_N8N_STATE_DIR",originalStateDirectory);
+  restoreEnvironment("CODEX_WORKER_CAPACITY", originalWorkerCapacity);
   restoreEnvironment("LOOP_PROJECT_ROOT", originalProjectRoot);
   restoreEnvironment("SUPABASE_URL", originalSupabaseUrl);
   restoreEnvironment("SUPABASE_SERVICE_ROLE_KEY", originalServiceRoleKey);
@@ -49,108 +61,132 @@ describe("定向生产单调度", () => {
   it("每日健康检查每天 09:00 只运行一次", () => {
     const workflow = JSON.parse(readFileSync(resolve("n8n/workflows/daily-health-check.json"), "utf8"));
 
+    expect(workflow.settings.timezone).toBe("Asia/Shanghai");
+    expect(workflow.settings.saveDataSuccessExecution).toBe("none");
+    expect(workflow.settings.saveDataErrorExecution).toBe("all");
     expect(workflow.nodes[0].parameters.rule.interval).toEqual([{ daysInterval: 1, field: "days", triggerAtHour: 9, triggerAtMinute: 0 }]);
   });
 
-  it("会为指定生产单安排核心、A-roll、声轨与人工视频派生音频任务", () => {
-    const source = readFileSync(resolve("src/orchestration/loopOrchestratorCli.ts"), "utf8");
-    const scopedPlanner = source.slice(source.indexOf("async function planScopedMediaTasks"), source.indexOf("async function planWorkerTasks"));
-
-    expect(scopedPlanner).toContain('orchestrateTasks("orchestrate_provided_script_tasks_for_episode", { p_episode_id: episodeId })');
-    expect(scopedPlanner).toContain('orchestrateTasks("orchestrate_storyboard_tasks_for_episode", { p_episode_id: episodeId })');
-    expect(scopedPlanner).toContain('orchestrateTasks("orchestrate_a_roll_tasks_for_episode", { p_episode_id: episodeId })');
-    expect(scopedPlanner).toContain('orchestrateTasks("orchestrate_soundtrack_tasks", { p_episode_id: episodeId })');
-    expect(scopedPlanner).toContain('orchestrateTasks("orchestrate_embedded_audio_tasks", { p_episode_id: episodeId })');
-  });
-
-  it("全局调度会创建 A-roll 与声轨任务", () => {
-    const source = readFileSync(resolve("src/orchestration/loopOrchestratorCli.ts"), "utf8");
-    const workerPlanner = source.slice(source.indexOf("async function planWorkerTasks"), source.indexOf("async function orchestrateTasks"));
-
-    expect(workerPlanner).toContain('orchestrateTasks("orchestrate_a_roll_tasks")');
-    expect(workerPlanner).toContain('orchestrateTasks("orchestrate_soundtrack_tasks")');
-  });
-
-  it("每轮只编译一次 Worker，并按受限并发执行所有已规划任务", () => {
-    const source = readFileSync(resolve("src/orchestration/loopOrchestratorCli.ts"), "utf8");
-
-    expect(source).toContain('const workerConcurrency = positiveIntegerEnvironment("LOOP_WORKER_CONCURRENCY", process.env.CODEX_WORKER_CAPACITY ?? "2")');
-    expect(source).toContain('await runCommand("npm", ["run", "worker:build"], projectRoot)');
-    expect(source).toContain('runWithConcurrency(plannedTasks, workerConcurrency');
-    expect(source).toContain('"worker:execute", "--", "--task-id", task.id');
-  });
-
-  it("空闲轮次只做轻量探针，不编排或构建 Worker", () => {
-    const source = readFileSync(resolve("src/orchestration/loopOrchestratorCli.ts"), "utf8");
-
-    expect(source).toContain('const pendingWork = await findPendingGlobalDispatchWork()');
-    expect(source).toContain('skipped: "idle"');
-    expect(source).toContain('endpoint.searchParams.set("select", "id")');
-    expect(source).toContain('endpoint.searchParams.set("limit", "1")');
-    expect(source).toContain('claimed_at: `lt.${new Date(Date.now() - 30 * 60 * 1000).toISOString()}`');
-    expect(source).toContain('stage: "in.(script_approved,visual_approved,storyboard_approved,production_ready,render_ready)"');
-    expect(source).toContain('orchestrateTasks("orchestrate_final_render_tasks")');
-  });
-
-  it("空闲 CLI 轮次不会编排或构建 Worker", async () => {
-    const fetchMock = vi.fn(async () => ({ ok: true, json: async () => [] }));
+  it("定时扫描先领取持久任务，再用stdin传递给Worker", async () => {
+    const fetchMock = claimedQueue();
+    childProcess.spawn.mockImplementation((_command: string, args: string[]) => fakeChild(args.includes("--claimed-task") ? '{"status":"completed"}\n' : ""));
     await runDispatch(fetchMock);
+    expect(childProcess.spawn).toHaveBeenCalledWith(process.execPath, [expect.stringContaining("codexWorkerCli.js"), "--claimed-task"], expect.objectContaining({ stdio: ["pipe", "pipe", "pipe"] }));
+  });
 
-    expect(fetchMock).toHaveBeenCalledTimes(4);
-    expect(fetchCalls(fetchMock).some((url) => url.includes("/rpc/"))).toBe(false);
+  it("任务唤醒不重新规划冻结输入，仍消费公平共享队列", async () => {
+    const fetchMock = claimedQueue();
+    childProcess.spawn.mockImplementation((_command: string, args: string[]) => fakeChild(args.includes("--claimed-task") ? '{"status":"completed"}\n' : ""));
+    await runDispatch(fetchMock, ["--task-id", "55555555-5555-4555-8555-555555555555"]);
+    expect(fetchCalls(fetchMock).some(url => url.includes("orchestrate_"))).toBe(false);
+    expect(fetchMock.mock.calls.filter(([url])=>String(url).includes("claim_next_worker_task")).every(([,init])=>!JSON.parse(String(init?.body)).p_task_id)).toBe(true);
+  });
+
+  it("Episode入口限定规划范围，执行仍使用全局原子领取", async () => {
+    const fetchMock = claimedQueue();
+    childProcess.spawn.mockImplementation((_command: string, args: string[]) => fakeChild(args.includes("--claimed-task") ? '{"status":"completed"}\n' : ""));
+    await runDispatch(fetchMock, ["--episode", "22222222-2222-4222-8222-222222222222"]);
+    const calls=fetchMock.mock.calls.filter(([url])=>String(url).includes("orchestrate_provided_script_tasks_for_episode"));
+    expect(JSON.parse(String(calls[0][1]?.body))).toEqual({p_episode_id:"22222222-2222-4222-8222-222222222222"});
+    expect(childProcess.spawn).toHaveBeenCalledWith(process.execPath, [expect.stringContaining("codexWorkerCli.js"), "--claimed-task"], expect.anything());
+  });
+
+  it("满载领取为空时不构建或启动空跑Worker", async () => {
+    const fetchMock = vi.fn(async (url: URL) => ({ok:true,json:async()=>String(url).includes("/tasks?") && !String(url).includes("available_at") ? [{id:"queued"}] : []}));
+    await runDispatch(fetchMock);
     expect(childProcess.spawn).not.toHaveBeenCalled();
   });
 
-  it("一次提醒轮次只读取一次增量 audit_events", async () => {
+  it("CLI不传显式environment时仍尊重进程中的Worker容量", async () => {
+    process.env.CODEX_WORKER_CAPACITY="1";
+    const fetchMock=claimedQueue();
+    childProcess.spawn.mockImplementation((_command:string,args:string[])=>fakeChild(args.includes("--claimed-task")?'{"status":"completed"}\n':""));
+    await runDispatch(fetchMock);
+    const requests=fetchMock.mock.calls.filter(([url])=>String(url).includes("claim_next_worker_task"));
+    expect(requests.length).toBeGreaterThan(0);
+    expect(requests.every(([,init])=>JSON.parse(String(init?.body)).p_worker_capacity===1)).toBe(true);
+  });
+
+  it("已准备的任务热路径只执行产物，不调用npm或编译器", async () => {
+    const fetchMock=claimedQueue();
+    childProcess.spawn.mockImplementation(()=>fakeChild('{"status":"completed"}\n'));
+    await runDispatch(fetchMock);
+    expect(childProcess.spawn.mock.calls.every(([command])=>command===process.execPath)).toBe(true);
+  });
+
+  it("空队列不构建或启动Worker", async () => {
     const fetchMock = vi.fn(async () => ({ ok: true, json: async () => [] }));
+    await runDispatch(fetchMock);
+    expect(childProcess.spawn).not.toHaveBeenCalled();
+  });
+
+  it("一次提醒轮次通过原子领取消费事件，不再按时间重扫 audit_events", async () => {
+    const fetchMock = vi.fn(async () => ({ ok: true, headers:new Headers({"content-range":"*/0"}), json: async () => [] }));
     process.argv = ["node", "loopOrchestratorCli.ts", "notify"];
-    process.env.LOOP_PROJECT_ROOT = "/tmp/loop";
+    process.env.LOOP_PROJECT_ROOT = await preparedFixture();
     process.env.SUPABASE_URL = "https://example.supabase.co";
     process.env.SUPABASE_SERVICE_ROLE_KEY = "test-key";
     vi.stubGlobal("fetch", fetchMock);
     await import("./loopOrchestratorCli.js");
 
-    expect(fetchCalls(fetchMock)).toEqual([expect.stringContaining("/rest/v1/audit_events")]);
+    expect(fetchCalls(fetchMock)).toEqual([
+      expect.stringContaining("/rpc/initialize_notification_delivery"),
+      expect.stringContaining("/rpc/claim_notification_event"),
+      expect.stringContaining("/notification_delivery_events"),
+    ]);
+  });
+  it("部分快照失败归入快照结果，不误报为调度失败", async()=>{
+    process.argv=["node","loopOrchestratorCli.ts","export"];
+    const root=await preparedFixture();process.env.LOOP_PROJECT_ROOT=root;
+    process.env.SUPABASE_URL="https://example.supabase.co";process.env.SUPABASE_SERVICE_ROLE_KEY="test-key";
+    vi.stubGlobal("fetch",vi.fn(async()=>({ok:false,status:503})));
+    await import("./loopOrchestratorCli.js");
+    const outcome=JSON.parse(await readFile(join(root,"state","snapshot-result.json"),"utf8"));
+    expect(outcome.passed).toBe(false);expect(outcome.detail).toContain("部分快照");
   });
 
-  it.each([
-    ["ready 任务", [{ id: "ready-task" }]],
-    ["超时租约", [], [{ id: "expired-task" }]],
-  ])("%s 不会被 CLI 跳过", async (_name, ...probeResponses: unknown[][]) => {
-    const fetchMock = vi.fn(async () => ({ ok: true, json: async () => probeResponses.shift() ?? [] }));
-    childProcess.spawn.mockImplementation((_command: string, args: string[]) => fakeChild(args.includes("worker:execute") ? '{"status":"idle"}\n' : ""));
-    await runDispatch(fetchMock);
 
-    expect(fetchCalls(fetchMock).some((url) => url.includes("/rpc/orchestrate_provided_script_tasks"))).toBe(true);
-    expect(childProcess.spawn).toHaveBeenCalledWith("npm", ["run", "worker:build"], expect.anything());
-    expect(childProcess.spawn).toHaveBeenCalledWith("npm", ["run", "worker:execute"], expect.anything());
-  });
 
-  it("已有最终渲染任务的 qc_passed 生产单只检查最终渲染", async () => {
-    const responses = [[], [], [], [{ id: "qc-passed" }], []];
-    const fetchMock = vi.fn(async () => ({ ok: true, json: async () => responses.shift() ?? [] }));
-    await runDispatch(fetchMock);
-
-    expect(fetchCalls(fetchMock).filter((url) => url.includes("/rpc/"))).toEqual(["https://example.supabase.co/rest/v1/rpc/orchestrate_final_render_tasks"]);
-    expect(childProcess.spawn).not.toHaveBeenCalled();
-  });
 });
 
-async function runDispatch(fetchMock: ReturnType<typeof vi.fn>): Promise<void> {
-  process.argv = ["node", "loopOrchestratorCli.ts", "dispatch"];
-  process.env.LOOP_PROJECT_ROOT = "/tmp/loop";
+async function runDispatch(fetchMock: ReturnType<typeof vi.fn>, args: string[] = []): Promise<void> {
+  process.argv = ["node", "loopOrchestratorCli.ts", "dispatch", ...args];
+  const root=await preparedFixture();
+  process.env.LOOP_PROJECT_ROOT = root;
   process.env.SUPABASE_URL = "https://example.supabase.co";
   process.env.SUPABASE_SERVICE_ROLE_KEY = "test-key";
   vi.stubGlobal("fetch", fetchMock);
   await import("./loopOrchestratorCli.js");
 }
 
+async function preparedFixture() {
+  const root=await mkdtemp(join(tmpdir(),"loop-cli-")); fixtureRoots.push(root);
+  process.env.LOOP_N8N_STATE_DIR=join(root,"state");
+  for(const dir of ["src", "dist/worker/worker", "dist/orchestration/orchestration"])await mkdir(join(root,dir),{recursive:true});
+  for(const name of ["package.json","package-lock.json","tsconfig.worker.json","tsconfig.orchestrator.json"])await writeFile(join(root,name),"{}");
+  await prepareRuntime(root,async()=>{
+    await writeFile(join(root,"dist/worker/worker/codexWorkerCli.js"),"// prepared worker");
+    await writeFile(join(root,"dist/orchestration/orchestration/loopOrchestratorCli.js"),"// prepared dispatcher");
+  });
+  return root;
+}
+
 function fetchCalls(fetchMock: ReturnType<typeof vi.fn>): string[] {
   return (fetchMock.mock.calls as unknown as Array<[unknown]>).map(([url]) => String(url));
 }
 
+function claimedQueue() {
+  let claimed=false;
+  return vi.fn(async (url: URL, _init?: RequestInit) => ({ok:true,json:async()=>{
+    if(String(url).includes("claim_next_worker_task")) {
+      if(claimed)return []; claimed=true;return [{task_id:"55555555-5555-4555-8555-555555555555",attempt:0,lease_token:"66666666-6666-4666-8666-666666666666"}];
+    }
+    return String(url).includes("/tasks?") && !String(url).includes("available_at") ? [{id:"ready"}] : [];
+  }}));
+}
+
 function fakeChild(stdout: string): EventEmitter & { stdout: EventEmitter; stderr: EventEmitter } {
-  const child = Object.assign(new EventEmitter(), { stdout: new EventEmitter(), stderr: new EventEmitter() });
+  const child = Object.assign(new EventEmitter(), { stdout: new EventEmitter(), stderr: new EventEmitter(), stdin: { end: vi.fn(), on: vi.fn() } });
   queueMicrotask(() => {
     if (stdout) child.stdout.emit("data", Buffer.from(stdout));
     child.emit("close", 0);

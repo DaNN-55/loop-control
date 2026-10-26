@@ -1,0 +1,14 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "browser": "headed Chrome, agent-browser named isolated session",
+  "pages": 51,
+  "uniqueRows": 1005,
+  "tailRows": 5,
+  "previousPageEqual": true,
+  "seriesRows": 47,
+  "emptySeriesRows": 0,
+  "archivedRows": 2,
+  "allRows": 1007,
+  "filterResetPage": true,
+  "log": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/c-followup/browser-actions-1792804632234.jsonl"
+}

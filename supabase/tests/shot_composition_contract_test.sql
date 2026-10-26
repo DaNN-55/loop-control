@@ -49,8 +49,8 @@ select ok(
 );
 
 select ok(
-  has_function_privilege('authenticated', 'public.save_shot_workbench_composition_draft(uuid,uuid,text,uuid,jsonb,jsonb,text,text,boolean,text,text,numeric)', 'execute')
-    and not has_function_privilege('anon', 'public.save_shot_workbench_composition_draft(uuid,uuid,text,uuid,jsonb,jsonb,text,text,boolean,text,text,numeric)', 'execute'),
+  has_function_privilege('authenticated', 'public.save_shot_workbench_composition_draft(uuid,uuid,text,uuid,jsonb,jsonb,numeric,text,text,boolean,text,text,numeric)', 'execute')
+    and not has_function_privilege('anon', 'public.save_shot_workbench_composition_draft(uuid,uuid,text,uuid,jsonb,jsonb,numeric,text,text,boolean,text,text,numeric)', 'execute'),
   'only authenticated clients can call the owner-checked composition save RPC'
 );
 

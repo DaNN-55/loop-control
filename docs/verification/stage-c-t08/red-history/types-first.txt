@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 check
+> tsc -b --pretty false
+
+src/local-control-plane/routes/handlers.ts(9,21): error TS6133: 'parseEnv' is declared but its value is never read.

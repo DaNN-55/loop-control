@@ -1,0 +1,27 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/orchestration/runtimeBuild.test.ts [ src/orchestration/runtimeBuild.test.ts ]
+Error: Cannot find module './runtimeBuild' imported from '/Users/dan/.codex/worktrees/local-first-optimization/loop-control/src/orchestration/runtimeBuild.test.ts'
+ ❯ src/orchestration/runtimeBuild.test.ts:6:1
+      4| import { join } from "node:path";
+      5| import { afterEach, expect, it } from "vitest";
+      6| import { assertPreparedRuntime, prepareRuntime } from "./runtimeBuild";
+       | ^
+      7| 
+      8| const roots: string[] = [];
+
+Caused by: Error: Failed to load url ./runtimeBuild (resolved id: ./runtimeBuild) in /Users/dan/.codex/worktrees/local-first-optimization/loop-control/src/orchestration/runtimeBuild.test.ts. Does the file exist?
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:22739:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  22:25:52
+   Duration  132ms (transform 14ms, setup 0ms, collect 0ms, tests 0ms, environment 0ms, prepare 37ms)
+

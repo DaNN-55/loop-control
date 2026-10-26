@@ -1,0 +1,30 @@
+{
+  "checkedAt": "2026-10-23T12:15:23.072Z",
+  "sourceDataMatchesBackup": true,
+  "sourceSecurityMatchesBackup": true,
+  "sourceTables": 32,
+  "sourceRows": 90,
+  "sourceMigrations": 230,
+  "target": "loop-control-stage-b-verified",
+  "targetMigrations": 231,
+  "allSourceVaultSecretsExcluded": true,
+  "sourcePasswordExcluded": true,
+  "reviewedEvidenceFiles": 45,
+  "productionBranch": "codex/project-architecture-map",
+  "productionPids": [
+    "28387",
+    "28388"
+  ],
+  "productionStatus": "?? docs/architecture-map/",
+  "allTestListenersLoopback": true,
+  "requiredListeningPorts": [
+    55173,
+    55431,
+    55432,
+    55176,
+    55461,
+    55462
+  ],
+  "finalBackupArchiveSha256": "651b24635724b2bbbd864d9443f85f457376193231aa3c9f9059d79f481a381f",
+  "mediaFiles": 75
+}

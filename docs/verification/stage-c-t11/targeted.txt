@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/worker/renderReuse.test.ts (2 tests) 14ms
+ ✓ src/worker/openchatcutRenderer.test.ts (3 tests) 10ms
+
+ Test Files  2 passed (2)
+      Tests  5 passed (5)
+   Start at  00:26:16
+   Duration  354ms (transform 87ms, setup 0ms, collect 141ms, tests 24ms, environment 251ms, prepare 58ms)
+

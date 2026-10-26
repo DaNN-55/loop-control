@@ -1,0 +1,17 @@
+{
+  "checkedAt": "2026-10-23T08:55:30.577Z",
+  "tests": [
+    {
+      "label": "generated-file-current-parser",
+      "status": 401,
+      "hasData": false,
+      "error": "JWT cryptographic operation failed"
+    },
+    {
+      "label": "normalized-local-key",
+      "status": 200,
+      "hasData": true,
+      "error": null
+    }
+  ]
+}

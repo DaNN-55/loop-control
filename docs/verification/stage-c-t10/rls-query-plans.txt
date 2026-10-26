@@ -1,0 +1,108 @@
+644f8c5a-b668-48a3-8a25-94c4e502fa04
+Aggregate  (cost=36.37..36.38 rows=1 width=96) (actual time=4667.085..4667.086 rows=1 loops=1)
+  Buffers: shared hit=4032790
+  ->  Sort  (cost=36.34..36.34 rows=1 width=32) (actual time=4666.459..4666.489 rows=1005 loops=1)
+        Sort Key: r.created_at DESC, r.id
+        Sort Method: quicksort  Memory: 72kB
+        Buffers: shared hit=4032790
+        ->  Nested Loop Left Join  (cost=0.56..36.33 rows=1 width=32) (actual time=0.671..4666.010 rows=1005 loops=1)
+              Join Filter: (v.item_id = (r.id)::text)
+              Rows Removed by Join Filter: 504510
+              Buffers: shared hit=4032784
+              ->  Index Scan using tasks_episode_status_idx on tasks r  (cost=0.28..17.10 rows=1 width=24) (actual time=0.122..8.096 rows=1005 loops=1)
+                    Index Cond: (episode_id = '53cffe33-b0c3-4e10-8f3c-e80e6ccb7ecd'::uuid)
+                    Filter: EXISTS(SubPlan 1)
+                    Buffers: shared hit=5295
+                    SubPlan 1
+                      ->  Index Scan using episodes_pkey on episodes  (cost=0.28..8.80 rows=1 width=0) (actual time=0.007..0.007 rows=1 loops=1005)
+                            Index Cond: (id = r.episode_id)
+                            Filter: (is_account_member(account_id) AND is_account_member(account_id))
+                            Buffers: shared hit=5041
+              ->  Index Scan using episode_read_revisions_pkey on episode_read_revisions v  (cost=0.28..19.21 rows=1 width=44) (actual time=0.011..4.587 rows=503 loops=1005)
+                    Index Cond: ((episode_id = '53cffe33-b0c3-4e10-8f3c-e80e6ccb7ecd'::uuid) AND (section = 'tasks'::text))
+                    Filter: EXISTS(SubPlan 4)
+                    Buffers: shared hit=4027489
+                    SubPlan 4
+                      ->  Nested Loop  (cost=0.31..10.92 rows=1 width=0) (actual time=0.009..0.009 rows=1 loops=505515)
+                            Join Filter: (m.account_id = e.account_id)
+                            Rows Removed by Join Filter: 1
+                            Buffers: shared hit=3538605
+                            InitPlan 3
+                              ->  Result  (cost=0.00..0.03 rows=1 width=16) (actual time=0.000..0.001 rows=1 loops=1)
+                            ->  Index Scan using episodes_pkey on episodes e  (cost=0.28..8.55 rows=1 width=16) (actual time=0.003..0.003 rows=1 loops=505515)
+                                  Index Cond: (id = v.episode_id)
+                                  Filter: is_account_member(account_id)
+                                  Buffers: shared hit=2022060
+                            ->  Seq Scan on account_memberships m  (cost=0.00..2.33 rows=1 width=16) (actual time=0.003..0.005 rows=2 loops=505515)
+                                  Filter: ((user_id = (InitPlan 3).col1) AND is_account_member(account_id) AND (role = 'owner'::member_role))
+                                  Buffers: shared hit=1516545
+Planning:
+  Buffers: shared hit=758
+Planning Time: 0.847 ms
+Execution Time: 4673.735 ms
+644f8c5a-b668-48a3-8a25-94c4e502fa04
+Aggregate  (cost=168.51..168.52 rows=1 width=32) (actual time=22.172..22.174 rows=1 loops=1)
+  Buffers: shared hit=10709
+  InitPlan 3
+    ->  Index Scan using tasks_episode_status_idx on tasks  (cost=0.28..17.10 rows=1 width=16) (actual time=0.231..6.717 rows=1005 loops=1)
+          Index Cond: (episode_id = '53cffe33-b0c3-4e10-8f3c-e80e6ccb7ecd'::uuid)
+          Filter: EXISTS(SubPlan 1)
+          Buffers: shared hit=5385
+          SubPlan 1
+            ->  Index Scan using episodes_pkey on episodes  (cost=0.28..8.80 rows=1 width=0) (actual time=0.006..0.006 rows=1 loops=1005)
+                  Index Cond: (id = tasks.episode_id)
+                  Filter: (is_account_member(account_id) AND is_account_member(account_id))
+                  Buffers: shared hit=5131
+  ->  Sort  (cost=151.37..151.39 rows=5 width=2188) (actual time=14.259..14.326 rows=1005 loops=1)
+        Sort Key: r.created_at DESC, r.id
+        Sort Method: quicksort  Memory: 1713kB
+        Buffers: shared hit=10705
+        ->  Bitmap Heap Scan on tasks r  (cost=26.03..151.32 rows=5 width=2188) (actual time=7.140..13.592 rows=1005 loops=1)
+              Recheck Cond: (id = ANY ((InitPlan 3).col1))
+              Filter: EXISTS(SubPlan 4)
+              Heap Blocks: exact=252
+              Buffers: shared hit=10699
+              ->  Bitmap Index Scan on tasks_pkey  (cost=0.00..26.03 rows=10 width=0) (actual time=7.014..7.014 rows=1005 loops=1)
+                    Index Cond: (id = ANY ((InitPlan 3).col1))
+                    Buffers: shared hit=5422
+              SubPlan 4
+                ->  Index Scan using episodes_pkey on episodes episodes_1  (cost=0.28..8.80 rows=1 width=0) (actual time=0.006..0.006 rows=1 loops=1005)
+                      Index Cond: (id = r.episode_id)
+                      Filter: (is_account_member(account_id) AND is_account_member(account_id))
+                      Buffers: shared hit=5025
+Planning:
+  Buffers: shared hit=565
+Planning Time: 0.600 ms
+Execution Time: 22.574 ms
+644f8c5a-b668-48a3-8a25-94c4e502fa04
+Nested Loop  (cost=0.55..51.33 rows=1 width=56) (actual time=7.182..7.184 rows=0 loops=1)
+  Buffers: shared hit=7393
+  ->  Index Scan using tasks_episode_status_idx on tasks  (cost=0.28..17.10 rows=1 width=16) (actual time=0.286..6.715 rows=1005 loops=1)
+        Index Cond: (episode_id = '53cffe33-b0c3-4e10-8f3c-e80e6ccb7ecd'::uuid)
+        Filter: EXISTS(SubPlan 7)
+        Buffers: shared hit=5383
+        SubPlan 7
+          ->  Index Scan using episodes_pkey on episodes episodes_1  (cost=0.28..8.80 rows=1 width=0) (actual time=0.006..0.006 rows=1 loops=1005)
+                Index Cond: (id = tasks.episode_id)
+                Filter: (is_account_member(account_id) AND is_account_member(account_id))
+                Buffers: shared hit=5129
+  ->  Index Scan using task_runs_task_started_idx on task_runs  (cost=0.27..34.22 rows=1 width=56) (actual time=0.000..0.000 rows=0 loops=1005)
+        Index Cond: (task_id = tasks.id)
+        Filter: EXISTS(SubPlan 3)
+        Buffers: shared hit=2010
+        SubPlan 3
+          ->  Nested Loop  (cost=0.56..25.93 rows=1 width=0) (never executed)
+                ->  Index Scan using tasks_pkey on tasks task  (cost=0.28..17.10 rows=1 width=16) (never executed)
+                      Index Cond: (id = task_runs.task_id)
+                      Filter: EXISTS(SubPlan 1)
+                      SubPlan 1
+                        ->  Index Scan using episodes_pkey on episodes  (cost=0.28..8.80 rows=1 width=0) (never executed)
+                              Index Cond: (id = task.episode_id)
+                              Filter: (is_account_member(account_id) AND is_account_member(account_id))
+                ->  Index Scan using episodes_pkey on episodes episode  (cost=0.28..8.80 rows=1 width=16) (never executed)
+                      Index Cond: (id = task.episode_id)
+                      Filter: (is_account_member(account_id) AND is_account_member(account_id))
+Planning:
+  Buffers: shared hit=733
+Planning Time: 0.982 ms
+Execution Time: 7.259 ms

@@ -1,0 +1,74 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "episode": "944d90d5-464b-4f77-ac43-89c5561a335b",
+  "actualBrowserSubmit": true,
+  "titlePersistedInDatabase": true,
+  "selectedDetailSurvivesReordering": true,
+  "actualChromeBackground": {
+    "begin": 1792804260839,
+    "end": 1792804273278,
+    "ms": 12439,
+    "nativeTabSwitch": true,
+    "noDetailRequests": true,
+    "resources": [
+      {
+        "bytes": 0,
+        "duration": 18.099999994039536,
+        "start": 1792804123333.2
+      },
+      {
+        "bytes": 0,
+        "duration": 6.399999976158142,
+        "start": 1792804123352.1
+      },
+      {
+        "bytes": 0,
+        "duration": 20.400000005960464,
+        "start": 1792804133389.4
+      },
+      {
+        "bytes": 0,
+        "duration": 99.2999999821186,
+        "start": 1792804140954.7
+      },
+      {
+        "bytes": 0,
+        "duration": 16,
+        "start": 1792804227747
+      },
+      {
+        "bytes": 0,
+        "duration": 6.5999999940395355,
+        "start": 1792804227763.8
+      },
+      {
+        "bytes": 0,
+        "duration": 21.099999994039536,
+        "start": 1792804237791.3
+      },
+      {
+        "bytes": 0,
+        "duration": 12.199999988079073,
+        "start": 1792804247791.3
+      },
+      {
+        "bytes": 0,
+        "duration": 83.69999998807907,
+        "start": 1792804257792.2
+      },
+      {
+        "bytes": 0,
+        "duration": 272,
+        "start": 1792804285370.5
+      }
+    ]
+  },
+  "visibleCatalogUpdated": true,
+  "artifactOnlyUpdateRefreshed": true,
+  "artifactId": "1526195b-b6f1-45f3-91ff-f10ebfc85c42",
+  "artifactRelativePath": "episodes/944d90d5-464b-4f77-ac43-89c5561a335b/c-followup/browser-proof-1792804227919.txt",
+  "fullReloadPersisted": true,
+  "reviewQueuePage2": true,
+  "controlledTaskStatus": "Real DB ready->completed; no execution or Provider calls",
+  "log": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/c-followup/browser-actions-1792804226099.jsonl"
+}

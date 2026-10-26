@@ -1,0 +1,60 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "allPages": 51,
+  "uniqueActiveEpisodes": 1005,
+  "tailRows": 5,
+  "archiveRows": 2,
+  "seriesRows": 47,
+  "emptySeriesRows": 0,
+  "reviewRows": 23,
+  "pendingPackages": 23,
+  "blockers": 23,
+  "independentHighlightPages": true,
+  "globalWorkerMatchesOriginalSelectors": true,
+  "globalCountsNotPageCounts": true,
+  "stableOrdering": true,
+  "unauthorizedCountsAndRowsEmpty": true,
+  "anonymousStatus": 401,
+  "oldTasksUnchanged": true,
+  "samples": [
+    {
+      "name": "old-actual-startup-summary-and-operations",
+      "requests": 33,
+      "requestBytes": 0,
+      "responseBytes": 14429885,
+      "ms": 3419.3150840000003
+    },
+    {
+      "name": "new-actual-startup-summary-and-operations",
+      "requests": 5,
+      "requestBytes": 43,
+      "responseBytes": 53343,
+      "ms": 261.064292
+    },
+    {
+      "name": "old-all-active-1005",
+      "requests": 3,
+      "requestBytes": 0,
+      "responseBytes": 540297,
+      "ms": 51.669624999999996
+    },
+    {
+      "name": "new-active-page1",
+      "requests": 1,
+      "requestBytes": 55,
+      "responseBytes": 14894,
+      "ms": 150.11874999999964
+    },
+    {
+      "name": "new-active-page51",
+      "requests": 1,
+      "requestBytes": 67,
+      "responseBytes": 4501,
+      "ms": 182.3824169999989
+    }
+  ],
+  "limitations": [
+    "Page requests are independent snapshots; changes to ordering between clicks can move records.",
+    "Historical default 5000ms gate failure and root cause remain unresolved."
+  ]
+}

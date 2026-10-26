@@ -1,0 +1,48 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/episodePreflightRoute.test.ts (15 tests | 1 failed) 39ms
+   × Episode 修复 preflight 路由 > 程序未准备时启动请求返回503，且不记录预检或迁移Episode状态 16ms
+     → expected 500 to be 503 // Object.is equality
+   ✓ Episode 修复 preflight 路由 > 蓝图预检只向运行前置条件模块提交业务 subject 1ms
+   ✓ Episode 修复 preflight 路由 > 创建生产单前不要求预先存在 episodes 目录 0ms
+   ✓ Episode 修复 preflight 路由 > 使用提交中的修复策略、Episode 的系列快照，并执行资产目录检查 6ms
+   ✓ 持久任务派发状态 > 重复提交返回可查询的排队状态，执行器退出不能改写持久状态 5ms
+   ✓ 持久任务派发状态 > foreign origin 不启动额外执行 1ms
+   ✓ 持久任务派发状态 > missing origin 不启动额外执行 1ms
+   ✓ 持久任务派发状态 > forged host and origin 不启动额外执行 1ms
+   ✓ 持久任务派发状态 > viewer 不启动额外执行 1ms
+   ✓ 持久任务派发状态 > completed duplicate 不启动额外执行 1ms
+   ✓ 持久任务派发状态 > launch failure 不启动额外执行 1ms
+   ✓ 持久任务派发状态 > 重建 HTTP 服务后仍可查询 ready 任务 3ms
+   ✓ 持久任务派发状态 > 重建 HTTP 服务后仍可查询 running 任务 1ms
+   ✓ 持久任务派发状态 > 重建 HTTP 服务后仍可查询 completed 任务 1ms
+   ✓ 持久任务派发状态 > 重建 HTTP 服务后仍可查询 blocked 任务 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/episodePreflightRoute.test.ts > Episode 修复 preflight 路由 > 程序未准备时启动请求返回503，且不记录预检或迁移Episode状态
+AssertionError: expected 500 to be 503 // Object.is equality
+
+- Expected
++ Received
+
+- 503
++ 500
+
+ ❯ src/episodePreflightRoute.test.ts:83:31
+     81|       const address=server.address();if(!address||typeof address==="st…
+     82|       const response=await fetch(`http://127.0.0.1:${address.port}/_wo…
+     83|       expect(response.status).toBe(503);
+       |                               ^
+     84|       expect(await response.text()).toContain("runtime:prepare");
+     85|       expect(client.rpc).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 passed (15)
+   Start at  22:50:06
+   Duration  292ms (transform 112ms, setup 0ms, collect 143ms, tests 39ms, environment 0ms, prepare 32ms)
+

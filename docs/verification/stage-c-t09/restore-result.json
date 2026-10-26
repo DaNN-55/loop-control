@@ -1,0 +1,22 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "database": "loop_t09_restore_1792769874471",
+  "backupRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/backups/56b3ad3b-d126-479b-a2af-5cf2b5ce8a8a",
+  "archiveSha256": "3a1a185561631df4c8fae047c27091ceab6637afda82b34e60d3656ba203a803",
+  "emptyPublicBeforeRestore": true,
+  "inventoryMatched": true,
+  "tables": 37,
+  "rows": 5083,
+  "schemaSecurity": {
+    "md5": "bfb9cf6c186d7cc926b9069b751db765",
+    "count": 264
+  },
+  "internalTriggerRestored": true,
+  "restoredAcceptedEventsNotReplayed": true,
+  "authenticatedClaimDenied": true,
+  "managedSchemas": "real source schema-only; no managed data or secrets",
+  "authIdentityOnly": true,
+  "authLoginTested": false,
+  "mediaFilesVerified": 242,
+  "databaseRetained": true
+}

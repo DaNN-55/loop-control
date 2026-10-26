@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 isolated:stage-b
+> node scripts/isolation/stage-b.mjs apply-lease-migration --replay
+
+231

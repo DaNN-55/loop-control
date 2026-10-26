@@ -359,6 +359,15 @@ describe("审核台", () => {
     expect(screen.getByText("最新结果：执行中")).toBeTruthy();
   });
 
+  it.each(["completed", "running", "failed", "blocked"] as const)("按真实状态展示 A-roll 任务卡片：%s", (status) => {
+    const task: Task = { ...blockedTask, input_snapshot: {}, status, task_type: "generate_a_roll" };
+    const { container } = render(<EpisodeDetail {...materialInputProps} artifacts={[]} blueprint={blueprint} episode={reviewEpisode} isTransitionPending={false} onTransition={vi.fn()} tasks={[task]} transitions={[]} />);
+    const card = container.querySelector(".a-roll-task");
+    expect(card?.getAttribute("data-status")).toBe(status);
+    expect(card?.classList.contains("worker-blocker")).toBe(false);
+    expect(card?.querySelector(".a-roll-task-metrics")?.textContent).toContain("实际成本");
+  });
+
   it("在冻结执行器缺失时仍展示 A-roll 阻塞状态", () => {
     const aRollTask: Task = {
       ...blockedTask,

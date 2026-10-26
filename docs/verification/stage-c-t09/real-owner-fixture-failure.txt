@@ -1,0 +1,15 @@
+node:fs:484
+    return binding.readFileUtf8(path, stringToFlags(options.flag));
+                   ^
+
+Error: ENOENT: no such file or directory, open '/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/owner-a0000000-0000-4000-8000-000000000004.json'
+    at readFileSync (node:fs:484:20)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/isolation/notifications.mjs:74:28
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/owner-a0000000-0000-4000-8000-000000000004.json'
+}
+
+Node.js v24.20.0

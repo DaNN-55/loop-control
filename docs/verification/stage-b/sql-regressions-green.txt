@@ -1,0 +1,26 @@
+
+> loop-control@0.1.0 isolated:sql-tests
+> node scripts/isolation/sql-tests.mjs --affected --replay
+
+{
+  "target": "loop-control-stage-b-replay",
+  "results": [
+    {
+      "file": "local_whisperx_alignment_test.sql",
+      "passed": true,
+      "checks": 10,
+      "failures": [],
+      "sqlError": false,
+      "planProblem": false
+    },
+    {
+      "file": "worker_runtime_constraints_test.sql",
+      "passed": true,
+      "checks": 27,
+      "failures": [],
+      "sqlError": false,
+      "planProblem": false
+    }
+  ],
+  "checks": 37
+}

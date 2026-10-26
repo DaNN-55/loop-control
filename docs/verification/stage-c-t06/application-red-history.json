@@ -1,0 +1,50 @@
+[
+  {
+    "run": "initial-default",
+    "rawLog": "/tmp/t06-full-app.txt",
+    "failedTests": [
+      "FAIL  src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非秘密连接",
+      "FAIL  src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 火山旁白配置不再展示声音和语速字段",
+      "FAIL  src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 在 A-roll 尚未配置时，仍使用本机 OpenChatCut 状态开放本地路径",
+      "FAIL  src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿",
+      "FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 通过统一入口标注用途后按顺序导入脚本、图片、A-roll 和 B-roll",
+      "FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择",
+      "FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 已生成字幕时序先只读查看，明确调整后才开放编辑",
+      "FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 审核阶段可返回可编辑镜头工作台，且保留当前 QC 证据",
+      "FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交",
+      "FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 删除镜头后在工作台切换新版，并打开下一镜",
+      "FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 刷新后从运行中的结构任务恢复工作台，并在完成后打开删除镜头的下一镜",
+      "FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 本期 TTS 试听只在点击后读取当前表单，不保存或创建任务"
+    ],
+    "summary": [
+      "Test Files  2 failed | 68 passed (70)",
+      "Tests  12 failed | 660 passed (672)",
+      "Duration  106.71s (transform 20.15s, setup 0ms, collect 83.55s, tests 247.90s, environment 329.00s, prepare 61.35s)"
+    ]
+  },
+  {
+    "run": "two-file-workers2",
+    "rawLog": "/tmp/t06-timeout-recheck.txt",
+    "failedTests": [
+      "FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择",
+      "FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 审核阶段可返回可编辑镜头工作台，且保留当前 QC 证据"
+    ],
+    "summary": [
+      "Test Files  1 failed | 1 passed (2)",
+      "Tests  2 failed | 94 passed (96)",
+      "Duration  52.05s (transform 2.31s, setup 0ms, collect 6.34s, tests 55.56s, environment 3.61s, prepare 602ms)"
+    ]
+  },
+  {
+    "run": "full-workers1-default",
+    "rawLog": "/tmp/t06-full-final.txt",
+    "failedTests": [
+      "FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择"
+    ],
+    "summary": [
+      "Test Files  1 failed | 69 passed (70)",
+      "Tests  1 failed | 673 passed (674)",
+      "Duration  111.74s (transform 3.08s, setup 0ms, collect 9.33s, tests 40.89s, environment 36.70s, prepare 6.86s)"
+    ]
+  }
+]

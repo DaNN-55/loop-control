@@ -50,7 +50,9 @@
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "all"
   },
   "active": false,
   "versionId": "23b8b19e-966f-4a16-86d6-9200c0599b14",

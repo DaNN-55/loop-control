@@ -1,0 +1,9 @@
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/isolation/fast-dispatch.mjs:31
+const wait=async(predicate,label)=>{for(let i=0;i<400;i++){if(await predicate())return;await delay(25);}throw Error(`T08 timeout: ${label}`);};
+                                                                                                              ^
+
+Error: T08 timeout: actual Worker child started
+    at wait (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/isolation/fast-dispatch.mjs:31:111)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/isolation/fast-dispatch.mjs:80:112
+
+Node.js v24.20.0

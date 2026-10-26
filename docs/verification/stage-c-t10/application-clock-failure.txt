@@ -1,0 +1,156 @@
+CHECK ["node_modules/vitest/vitest.mjs","run","--exclude","n8n/import-workflows.test.mjs","--exclude","**/*.integration.test.ts","--exclude","**/.loop-control/**"]
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/worker/whisperxAlignment.test.ts (9 tests) 16ms
+ ✓ scripts/openchatcut-render.test.mjs (5 tests) 264ms
+ ✓ src/platform/migrationContracts.test.ts (112 tests) 43ms
+ ✓ scripts/local-service-record.test.mjs (6 tests) 534ms
+ ✓ src/observability/SystemStatusPanel.test.tsx (19 tests) 445ms
+ ✓ src/worker/controlledMediaExecutor.test.ts (12 tests) 508ms
+   ✓ 受控媒体执行器 > 使用真实 ffmpeg 裁剪带原声视频并提取当前片段原声  429ms
+ ✓ src/connections/ConnectionWorkspace.test.tsx (8 tests) 697ms
+ ❯ src/orchestration/operationsEvidence.test.ts (1 test | 1 failed) 21ms
+   × 通知失败不覆盖健康和备份，成功后仍可查看最近失败，空闲成功不反复写入 21ms
+     → expected false to be true // Object.is equality
+ ✓ src/operations/OperationsWorkspace.test.tsx (6 tests) 308ms
+ ✓ src/observability/systemStatusEvidence.test.ts (4 tests) 113ms
+ ✓ scripts/startup-lifecycle.acceptance.test.mjs (7 tests) 176ms
+ ✓ src/orchestration/providedScriptDispatch.test.ts (6 tests) 108ms
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+ ✓ src/worker/openchatcutRenderer.test.ts (3 tests) 33ms
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":0,"workers":[],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+ ✓ src/observability/TaskProgressPanel.test.tsx (4 tests) 139ms
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":0,"workers":[],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"notify","notifications":0,"skipped":0}
+导出 accounts 失败：Supabase 返回 HTTP 503
+ ✓ src/orchestration/loopOrchestratorCli.test.ts (12 tests) 498ms
+ ✓ src/App.test.tsx (34 tests) 1113ms
+ ✓ src/reviews/WorkerBlockerCard.test.tsx (2 tests) 170ms
+ ✓ src/ui/PaginationControls.test.tsx (2 tests) 75ms
+ ✓ src/publishing/ProductionCompletionModal.test.tsx (1 test) 50ms
+ ✓ src/publishing/publishPackage.test.ts (2 tests) 76ms
+ ✓ src/ui/MarkdownPreview.test.tsx (1 test) 74ms
+ ✓ src/worker/storyboardArtifact.test.ts (4 tests) 10ms
+ ✓ src/worker/mediaLibrary.test.ts (7 tests) 43ms
+ ✓ src/reviews/localArtifactPreview.test.tsx (3 tests) 55ms
+ ✓ scripts/isolation/environment.test.mjs (14 tests) 41ms
+ ✓ src/worker/openchatcutProject.test.ts (26 tests) 37ms
+ ✓ src/episodes/EpisodeProductionContainer.test.tsx (3 tests) 71ms
+ ✓ src/worker/codexRunner.test.ts (27 tests) 25ms
+ ✓ src/platform/platformService.test.ts (7 tests) 11ms
+ ✓ src/worker/runtimeProbes.test.ts (7 tests) 17ms
+ ✓ src/worker/mediaProviders.test.ts (9 tests) 37ms
+ ✓ src/orchestration/notificationConsumer.test.ts (3 tests) 11ms
+ ✓ src/platform/configurationForms.test.ts (23 tests) 21ms
+ ✓ scripts/start-local.test.mjs (10 tests) 10ms
+ ✓ src/reviews/reviewSelectors.test.ts (7 tests) 12ms
+ ✓ scripts/supabase-migrations.test.mjs (3 tests) 7ms
+ ✓ src/worker/contracts.test.ts (17 tests) 5ms
+ ✓ src/orchestration/notificationPolicy.test.ts (5 tests) 10ms
+ ✓ src/lib/pagedRead.test.ts (3 tests) 8ms
+ ✓ src/worker/workerResultSchema.test.ts (3 tests) 2ms
+ ✓ src/shotComposition.test.ts (2 tests) 5ms
+ ✓ src/reviews/reviewRevision.test.ts (4 tests) 4ms
+ ✓ src/clipTiming.test.ts (3 tests) 1ms
+ ✓ src/worker/manualMaterialChecklist.test.ts (1 test) 2ms
+ ✓ src/worker/storyboardRevision.test.ts (3 tests) 5ms
+ ✓ src/worker/durationDecision.test.ts (13 tests) 2ms
+ ✓ src/worker/legacyPexelsReference.test.ts (2 tests) 3ms
+ ✓ src/worker/runtimePreflight.test.ts (4 tests) 6ms
+ ✓ src/platform/connectionStatus.test.ts (3 tests) 2ms
+ ✓ src/shotCaptions.test.ts (3 tests) 7ms
+ ✓ src/worker/acousticAlignment.test.ts (7 tests) 6ms
+ ✓ src/reviews/blockerGuidance.test.ts (17 tests) 6ms
+ ✓ src/orchestration/backupPolicy.test.ts (2 tests) 7ms
+ ✓ src/worker/registeredAdapters.test.ts (6 tests) 5ms
+ ✓ src/platform/externalConnections.test.ts (1 test) 2ms
+ ✓ src/reviews/materialImport.test.ts (3 tests) 4ms
+ ✓ src/episodes/episodeReadService.test.ts (3 tests) 4ms
+ ✓ src/worker/productionCapabilities.test.ts (1 test) 2ms
+ ✓ src/worker/taskClaimArguments.test.ts (2 tests) 2ms
+ ✓ src/shotAcceptance.test.ts (3 tests) 2ms
+ ✓ src/worker/codexWorkerCli.test.ts (6 tests) 2ms
+ ✓ src/worker/runtimeConstraints.test.ts (2 tests) 4ms
+ ✓ src/platform/accountIdentity.test.ts (2 tests) 2ms
+ ✓ src/manualArollVideo.test.ts (2 tests) 2ms
+ ✓ src/reviews/repairTarget.test.ts (3 tests) 1ms
+ ✓ src/orchestration/workerScheduler.test.ts (2 tests) 245ms
+ ✓ scripts/isolation/regressions.test.mjs (10 tests) 118ms
+ ✓ src/orchestration/runtimeBuild.test.ts (1 test) 33ms
+ ✓ src/episodePreflightRoute.test.ts (15 tests) 55ms
+ ✓ src/externalConnectionRoute.test.ts (1 test) 31ms
+ ✓ src/localControlPlane.test.ts (2 tests) 44ms
+ ✓ scripts/isolation/database.test.mjs (5 tests) 17ms
+ ✓ scripts/isolation/http-credentials.test.mjs (1 test) 4ms
+ ✓ src/accounts/AccountWorkspace.test.tsx (32 tests) 4775ms
+   ✓ 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非秘密连接  555ms
+   ✓ 账号配置工作区 > 在 A-roll 尚未配置时，仍使用本机 OpenChatCut 状态开放本地路径  339ms
+   ✓ 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿  1518ms
+ ✓ src/localEpisodeDirectoryRoute.test.ts (28 tests) 3344ms
+   ✓ 本地 Episode 目录路由 > 复用短时已验证的产物索引，避免重复查询和哈希  3007ms
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/reviews/ReviewWorkspace.test.tsx (64 tests) 9642ms
+   ✓ 审核台 > 通过统一入口标注用途后按顺序导入脚本、图片、A-roll 和 B-roll  408ms
+   ✓ 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择  3165ms
+   ✓ 审核台 > 审核阶段可返回可编辑镜头工作台，且保留当前 QC 证据  683ms
+   ✓ 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交  430ms
+   ✓ 审核台 > 逐镜头口播无需确认即可保存，并可保存单镜头覆盖  469ms
+   ✓ 审核台 > 同一原片支持多段裁剪并随镜头草稿一起保存  318ms
+   ✓ 审核台 > 人工媒体可在镜头工作台选择原片并保存镜头设置  489ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/orchestration/operationsEvidence.test.ts > 通知失败不覆盖健康和备份，成功后仍可查看最近失败，空闲成功不反复写入
+AssertionError: expected false to be true // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+ ❯ src/orchestration/operationsEvidence.test.ts:20:45
+     18|  expect(report.backup?.latest.passed).toBe(false);
+     19|  expect(report.notification?.lastFailure?.detail).toBe("投递失败");
+     20|  expect(report.notification?.latest.passed).toBe(true);
+       |                                             ^
+     21|  expect((await stat(join(directory,"notification-result.json"))).mtime…
+     22| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 75 passed (76)
+      Tests  1 failed | 695 passed (696)
+   Start at  00:19:44
+   Duration  11.13s (transform 2.08s, setup 0ms, collect 7.81s, tests 24.30s, environment 17.34s, prepare 3.11s)
+
+EXIT 1

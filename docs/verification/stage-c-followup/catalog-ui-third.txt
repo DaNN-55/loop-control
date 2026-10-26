@@ -1,0 +1,579 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/episodes/episodeCatalog.test.tsx (2 tests | 1 failed) 277ms
+   × server catalog in the real console > 筛选重置到第一页，慢旧页不能覆盖新筛选结果 177ms
+     → Found multiple elements with the text of: 账号
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<select>[39m
+  [36m<option[39m
+    [33mvalue[39m=[32m"全部账号"[39m
+  [36m>[39m
+    [0m全部账号[0m
+  [36m</option>[39m
+  [36m<option[39m
+    [33mvalue[39m=[32m"account-one"[39m
+  [36m>[39m
+    [0m测试账号[0m
+  [36m</option>[39m
+[36m</select>[39m
+
+Ignored nodes: comments, script, style
+[36m<button[39m
+  [33maria-label[39m=[32m"账号"[39m
+  [33mclass[39m=[32m"navigation-item "[39m
+  [33mtype[39m=[32m"button"[39m
+[36m>[39m
+  [36m<svg[39m
+    [33maria-hidden[39m=[32m"true"[39m
+    [33mclass[39m=[32m"lucide lucide-users icon"[39m
+    [33mfill[39m=[32m"none"[39m
+    [33mheight[39m=[32m"24"[39m
+    [33mstroke[39m=[32m"currentColor"[39m
+    [33mstroke-linecap[39m=[32m"round"[39m
+    [33mstroke-linejoin[39m=[32m"round"[39m
+    [33mstroke-width[39m=[32m"1.8"[39m
+    [33mviewBox[39m=[32m"0 0 24 24"[39m
+    [33mwidth[39m=[32m"24"[39m
+    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+  [36m>[39m
+    [36m<path[39m
+      [33md[39m=[32m"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"[39m
+    [36m/>[39m
+    [36m<path[39m
+      [33md[39m=[32m"M16 3.128a4 4 0 0 1 0 7.744"[39m
+    [36m/>[39m
+    [36m<path[39m
+      [33md[39m=[32m"M22 21v-2a4 4 0 0 0-3-3.87"[39m
+    [36m/>[39m
+    [36m<circle[39m
+      [33mcx[39m=[32m"9"[39m
+      [33mcy[39m=[32m"7"[39m
+      [33mr[39m=[32m"4"[39m
+    [36m/>[39m
+  [36m</svg>[39m
+  [36m<span[39m
+    [33mclass[39m=[32m"navigation-label"[39m
+  [36m>[39m
+    [0m账号[0m
+  [36m</span>[39m
+[36m</button>[39m
+
+Ignored nodes: comments, script, style
+[36m<button[39m
+  [33maria-label[39m=[32m"账号"[39m
+  [33mclass[39m=[32m"navigation-item "[39m
+  [33mtype[39m=[32m"button"[39m
+[36m>[39m
+  [36m<svg[39m
+    [33maria-hidden[39m=[32m"true"[39m
+    [33mclass[39m=[32m"lucide lucide-users icon"[39m
+    [33mfill[39m=[32m"none"[39m
+    [33mheight[39m=[32m"24"[39m
+    [33mstroke[39m=[32m"currentColor"[39m
+    [33mstroke-linecap[39m=[32m"round"[39m
+    [33mstroke-linejoin[39m=[32m"round"[39m
+    [33mstroke-width[39m=[32m"1.8"[39m
+    [33mviewBox[39m=[32m"0 0 24 24"[39m
+    [33mwidth[39m=[32m"24"[39m
+    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+  [36m>[39m
+    [36m<path[39m
+      [33md[39m=[32m"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"[39m
+    [36m/>[39m
+    [36m<path[39m
+      [33md[39m=[32m"M16 3.128a4 4 0 0 1 0 7.744"[39m
+    [36m/>[39m
+    [36m<path[39m
+      [33md[39m=[32m"M22 21v-2a4 4 0 0 0-3-3.87"[39m
+    [36m/>[39m
+    [36m<circle[39m
+      [33mcx[39m=[32m"9"[39m
+      [33mcy[39m=[32m"7"[39m
+      [33mr[39m=[32m"4"[39m
+    [36m/>[39m
+  [36m</svg>[39m
+  [36m<span[39m
+    [33mclass[39m=[32m"navigation-label"[39m
+  [36m>[39m
+    [0m账号[0m
+  [36m</span>[39m
+[36m</button>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+      [33mdata-sidebar[39m=[32m"expanded"[39m
+      [33mdata-theme[39m=[32m"light"[39m
+    [36m>[39m
+      [36m<a[39m
+        [33mclass[39m=[32m"skip-link"[39m
+        [33mhref[39m=[32m"#main-content"[39m
+      [36m>[39m
+        [0m跳到主要内容[0m
+      [36m</a>[39m
+      [36m<aside[39m
+        [33maria-label[39m=[32m"主导航"[39m
+        [33mclass[39m=[32m"sidebar"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"wordmark"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"wordmark-text"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wordmark-letter-cyan"[39m
+              [36m>[39m
+                [0mL[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wordmark-letter-blue"[39m
+              [36m>[39m
+                [0moo[0m
+              [36m</span>[39m
+              [0mp[0m
+            [36m</span>[39m
+            [36m<span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wordmark-letter-pink"[39m
+              [36m>[39m
+                [0mC[0m
+              [36m</span>[39m
+              [0montrol[0m
+            [36m</span>[39m
+          [36m</span>[39m
+          [36m<img[39m
+            [33malt[39m=[32m"Loop Control"[39m
+            [33mclass[39m=[32m"wordmark-mark"[39m
+            [33msrc[39m=[32m"/brand/loop-mark.svg"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<nav[39m
+          [33mclass[39m=[32m"navigation"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"系列运营"[39m
+            [33mclass[39m=[32m"navigation-item "[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chart-column icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 3v16a2 2 0 0 0 2 2h16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M18 17V9"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M13 17V5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 17v-3"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"navigation-label"[39m
+            [36m>[39m
+              [0m系列运营[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-current[39m=[32m"page"[39m
+            [33maria-label[39m=[32m"生产单"[39m
+            [33mclass[39m=[32m"navigation-item is-active"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-table2 lucide-table-2 icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"navigation-label"[39m
+            [36m>[39m
+              [0m生产单[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"审核"[39m
+            [33mclass[39m=[32m"navigation-item "[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-message-square icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"navigation-label"[39m
+            [36m>[39m
+              [0m审核[0m
+            [36m</span>[39m
+            [36m<span[39m
+              [33maria-label[39m=[32m"36 个待处理"[39m
+              [33mclass[39m=[32m"navigation-badge"[39m
+            [36m>[39m
+              [0m36[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"账号"[39m
+            [33mclass[39m=[32m"navigation-item "[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-users icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://ww...
+   ✓ server catalog in the real console > 退出登录后拒绝在途列表及旧会话的回填 100ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/episodes/episodeCatalog.test.tsx > server catalog in the real console > 筛选重置到第一页，慢旧页不能覆盖新筛选结果
+TestingLibraryElementError: Found multiple elements with the text of: 账号
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<select>[39m
+  [36m<option[39m
+    [33mvalue[39m=[32m"全部账号"[39m
+  [36m>[39m
+    [0m全部账号[0m
+  [36m</option>[39m
+  [36m<option[39m
+    [33mvalue[39m=[32m"account-one"[39m
+  [36m>[39m
+    [0m测试账号[0m
+  [36m</option>[39m
+[36m</select>[39m
+
+Ignored nodes: comments, script, style
+[36m<button[39m
+  [33maria-label[39m=[32m"账号"[39m
+  [33mclass[39m=[32m"navigation-item "[39m
+  [33mtype[39m=[32m"button"[39m
+[36m>[39m
+  [36m<svg[39m
+    [33maria-hidden[39m=[32m"true"[39m
+    [33mclass[39m=[32m"lucide lucide-users icon"[39m
+    [33mfill[39m=[32m"none"[39m
+    [33mheight[39m=[32m"24"[39m
+    [33mstroke[39m=[32m"currentColor"[39m
+    [33mstroke-linecap[39m=[32m"round"[39m
+    [33mstroke-linejoin[39m=[32m"round"[39m
+    [33mstroke-width[39m=[32m"1.8"[39m
+    [33mviewBox[39m=[32m"0 0 24 24"[39m
+    [33mwidth[39m=[32m"24"[39m
+    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+  [36m>[39m
+    [36m<path[39m
+      [33md[39m=[32m"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"[39m
+    [36m/>[39m
+    [36m<path[39m
+      [33md[39m=[32m"M16 3.128a4 4 0 0 1 0 7.744"[39m
+    [36m/>[39m
+    [36m<path[39m
+      [33md[39m=[32m"M22 21v-2a4 4 0 0 0-3-3.87"[39m
+    [36m/>[39m
+    [36m<circle[39m
+      [33mcx[39m=[32m"9"[39m
+      [33mcy[39m=[32m"7"[39m
+      [33mr[39m=[32m"4"[39m
+    [36m/>[39m
+  [36m</svg>[39m
+  [36m<span[39m
+    [33mclass[39m=[32m"navigation-label"[39m
+  [36m>[39m
+    [0m账号[0m
+  [36m</span>[39m
+[36m</button>[39m
+
+Ignored nodes: comments, script, style
+[36m<button[39m
+  [33maria-label[39m=[32m"账号"[39m
+  [33mclass[39m=[32m"navigation-item "[39m
+  [33mtype[39m=[32m"button"[39m
+[36m>[39m
+  [36m<svg[39m
+    [33maria-hidden[39m=[32m"true"[39m
+    [33mclass[39m=[32m"lucide lucide-users icon"[39m
+    [33mfill[39m=[32m"none"[39m
+    [33mheight[39m=[32m"24"[39m
+    [33mstroke[39m=[32m"currentColor"[39m
+    [33mstroke-linecap[39m=[32m"round"[39m
+    [33mstroke-linejoin[39m=[32m"round"[39m
+    [33mstroke-width[39m=[32m"1.8"[39m
+    [33mviewBox[39m=[32m"0 0 24 24"[39m
+    [33mwidth[39m=[32m"24"[39m
+    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+  [36m>[39m
+    [36m<path[39m
+      [33md[39m=[32m"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"[39m
+    [36m/>[39m
+    [36m<path[39m
+      [33md[39m=[32m"M16 3.128a4 4 0 0 1 0 7.744"[39m
+    [36m/>[39m
+    [36m<path[39m
+      [33md[39m=[32m"M22 21v-2a4 4 0 0 0-3-3.87"[39m
+    [36m/>[39m
+    [36m<circle[39m
+      [33mcx[39m=[32m"9"[39m
+      [33mcy[39m=[32m"7"[39m
+      [33mr[39m=[32m"4"[39m
+    [36m/>[39m
+  [36m</svg>[39m
+  [36m<span[39m
+    [33mclass[39m=[32m"navigation-label"[39m
+  [36m>[39m
+    [0m账号[0m
+  [36m</span>[39m
+[36m</button>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell"[39m
+      [33mdata-sidebar[39m=[32m"expanded"[39m
+      [33mdata-theme[39m=[32m"light"[39m
+    [36m>[39m
+      [36m<a[39m
+        [33mclass[39m=[32m"skip-link"[39m
+        [33mhref[39m=[32m"#main-content"[39m
+      [36m>[39m
+        [0m跳到主要内容[0m
+      [36m</a>[39m
+      [36m<aside[39m
+        [33maria-label[39m=[32m"主导航"[39m
+        [33mclass[39m=[32m"sidebar"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"wordmark"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"wordmark-text"[39m
+          [36m>[39m
+            [36m<span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wordmark-letter-cyan"[39m
+              [36m>[39m
+                [0mL[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wordmark-letter-blue"[39m
+              [36m>[39m
+                [0moo[0m
+              [36m</span>[39m
+              [0mp[0m
+            [36m</span>[39m
+            [36m<span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wordmark-letter-pink"[39m
+              [36m>[39m
+                [0mC[0m
+              [36m</span>[39m
+              [0montrol[0m
+            [36m</span>[39m
+          [36m</span>[39m
+          [36m<img[39m
+            [33malt[39m=[32m"Loop Control"[39m
+            [33mclass[39m=[32m"wordmark-mark"[39m
+            [33msrc[39m=[32m"/brand/loop-mark.svg"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<nav[39m
+          [33mclass[39m=[32m"navigation"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"系列运营"[39m
+            [33mclass[39m=[32m"navigation-item "[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chart-column icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 3v16a2 2 0 0 0 2 2h16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M18 17V9"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M13 17V5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 17v-3"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"navigation-label"[39m
+            [36m>[39m
+              [0m系列运营[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-current[39m=[32m"page"[39m
+            [33maria-label[39m=[32m"生产单"[39m
+            [33mclass[39m=[32m"navigation-item is-active"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-table2 lucide-table-2 icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"navigation-label"[39m
+            [36m>[39m
+              [0m生产单[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"审核"[39m
+            [33mclass[39m=[32m"navigation-item "[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-message-square icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"navigation-label"[39m
+            [36m>[39m
+              [0m审核[0m
+            [36m</span>[39m
+            [36m<span[39m
+              [33maria-label[39m=[32m"36 个待处理"[39m
+              [33mclass[39m=[32m"navigation-badge"[39m
+            [36m>[39m
+              [0m36[0m
+            [36m</span>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33maria-label[39m=[32m"账号"[39m
+            [33mclass[39m=[32m"navigation-item "[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-users icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"1.8"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://ww...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getElementError node_modules/@testing-library/dom/dist/query-helpers.js:20:35
+ ❯ getMultipleElementsFoundError node_modules/@testing-library/dom/dist/query-helpers.js:23:10
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:55:13
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/episodes/episodeCatalog.test.tsx:45:29
+     43|     // Filters stay available during a page request.
+     44|     await answer(2, page('第二页', 2));
+     45|     fireEvent.change(screen.getByLabelText('账号'), { target: { value: '…
+       |                             ^
+     46|     await waitFor(() => expect(remote.requests.length).toBe(4));
+     47|     expect(remote.requests[3].args).toMatchObject({ p_page: 1, p_accou…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  08:52:00
+   Duration  1.51s (transform 403ms, setup 0ms, collect 658ms, tests 277ms, environment 328ms, prepare 39ms)
+

@@ -1,0 +1,76 @@
+{
+  "checkedAt": "2026-10-23T10:10:53.891Z",
+  "fullTestStartedAt": "2026-10-23T10:09:00.000Z",
+  "allSourceChangesBeforeFullTest": true,
+  "files": 70,
+  "tests": 675,
+  "isolationTestsIncluded": 30,
+  "nodeTestsPassed": 2,
+  "nodeTestsSkipped": 1,
+  "sources": [
+    {
+      "path": "scripts/isolation/baseline.mjs",
+      "modifiedAt": "2026-10-23T09:58:47.122Z"
+    },
+    {
+      "path": "scripts/isolation/database.mjs",
+      "modifiedAt": "2026-10-23T09:53:08.345Z"
+    },
+    {
+      "path": "scripts/isolation/database.test.mjs",
+      "modifiedAt": "2026-10-23T09:53:08.355Z"
+    },
+    {
+      "path": "scripts/isolation/environment.mjs",
+      "modifiedAt": "2026-10-23T09:53:08.345Z"
+    },
+    {
+      "path": "scripts/isolation/environment.test.mjs",
+      "modifiedAt": "2026-10-23T08:37:24.850Z"
+    },
+    {
+      "path": "scripts/isolation/http-credentials.test.mjs",
+      "modifiedAt": "2026-10-23T09:53:08.351Z"
+    },
+    {
+      "path": "scripts/isolation/lifecycle.mjs",
+      "modifiedAt": "2026-10-23T10:03:50.366Z"
+    },
+    {
+      "path": "scripts/isolation/package.mjs",
+      "modifiedAt": "2026-10-23T10:03:50.366Z"
+    },
+    {
+      "path": "scripts/isolation/regressions.test.mjs",
+      "modifiedAt": "2026-10-23T10:03:50.367Z"
+    },
+    {
+      "path": "scripts/isolation/run.mjs",
+      "modifiedAt": "2026-10-23T09:51:47.689Z"
+    },
+    {
+      "path": "scripts/isolation/smoke.mjs",
+      "modifiedAt": "2026-10-23T10:03:50.366Z"
+    },
+    {
+      "path": "scripts/isolation/tunnel.mjs",
+      "modifiedAt": "2026-10-23T09:51:47.690Z"
+    },
+    {
+      "path": "package.json",
+      "modifiedAt": "2026-10-23T09:51:47.691Z"
+    },
+    {
+      "path": "src/episodes/EpisodeProduction.tsx",
+      "modifiedAt": "2026-10-23T09:55:00.642Z"
+    },
+    {
+      "path": "src/styles.css",
+      "modifiedAt": "2026-10-23T09:55:00.643Z"
+    },
+    {
+      "path": "src/reviews/ReviewWorkspace.test.tsx",
+      "modifiedAt": "2026-10-23T09:55:00.644Z"
+    }
+  ]
+}

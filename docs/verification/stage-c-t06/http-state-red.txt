@@ -1,0 +1,52 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/episodePreflightRoute.test.ts (7 tests | 4 failed) 243ms
+   ✓ Episode 修复 preflight 路由 > 蓝图预检只向运行前置条件模块提交业务 subject 7ms
+   ✓ Episode 修复 preflight 路由 > 创建生产单前不要求预先存在 episodes 目录 5ms
+   ✓ Episode 修复 preflight 路由 > 使用提交中的修复策略、Episode 的系列快照，并执行资产目录检查 138ms
+   × 持久任务派发状态 > 重建 HTTP 服务后仍可查询 ready 任务 58ms
+     → expected { detail: '当前服务没有这次即时派发记录。', …(2) } to deeply equal ObjectContaining{…}
+   × 持久任务派发状态 > 重建 HTTP 服务后仍可查询 running 任务 15ms
+     → expected { detail: '当前服务没有这次即时派发记录。', …(2) } to deeply equal ObjectContaining{…}
+   × 持久任务派发状态 > 重建 HTTP 服务后仍可查询 completed 任务 10ms
+     → expected { detail: '当前服务没有这次即时派发记录。', …(2) } to deeply equal ObjectContaining{…}
+   × 持久任务派发状态 > 重建 HTTP 服务后仍可查询 blocked 任务 7ms
+     → expected { detail: '当前服务没有这次即时派发记录。', …(2) } to deeply equal ObjectContaining{…}
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/episodePreflightRoute.test.ts > 持久任务派发状态 > 重建 HTTP 服务后仍可查询 ready 任务
+ FAIL  src/episodePreflightRoute.test.ts > 持久任务派发状态 > 重建 HTTP 服务后仍可查询 running 任务
+ FAIL  src/episodePreflightRoute.test.ts > 持久任务派发状态 > 重建 HTTP 服务后仍可查询 completed 任务
+ FAIL  src/episodePreflightRoute.test.ts > 持久任务派发状态 > 重建 HTTP 服务后仍可查询 blocked 任务
+AssertionError: expected { detail: '当前服务没有这次即时派发记录。', …(2) } to deeply equal ObjectContaining{…}
+
+- Expected
++ Received
+
+- ObjectContaining {
+-   "status": "queued",
+-   "taskId": "55555555-5555-4555-8555-555555555555",
+-   "taskStatus": "ready",
++ {
++   "detail": "当前服务没有这次即时派发记录。",
++   "status": "unknown",
++   "updatedAt": null,
+  }
+
+ ❯ src/episodePreflightRoute.test.ts:149:37
+    147|       const response = await fetch(`http://127.0.0.1:${address.port}/_…
+    148|       expect(response.status).toBe(200);
+    149|       expect(await response.json()).toEqual(expect.objectContaining({ …
+       |                                     ^
+    150|     } finally { await new Promise<void>((resolve) => server.close(() =…
+    151|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 3 passed (7)
+   Start at  20:02:37
+   Duration  4.50s (transform 1.35s, setup 0ms, collect 1.79s, tests 243ms, environment 0ms, prepare 717ms)

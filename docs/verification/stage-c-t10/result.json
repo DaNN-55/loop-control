@@ -1,0 +1,63 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "account": "232446d2-e659-48f9-b39e-685fe3df471a",
+  "episode": "6de5876f-c278-4a36-91aa-a08fb5c47321",
+  "fixturesRetained": true,
+  "originalTasksUnchanged": true,
+  "allOriginalFieldsEquivalent": true,
+  "unauthorizedAndMissingNull": true,
+  "completePagination": 1005,
+  "completeDetailTasks": 1005,
+  "duplicateRefreshEqual": true,
+  "metrics": [
+    {
+      "name": "legacy-detail-3tasks",
+      "requests": 12,
+      "bytes": 7768,
+      "requestBytes": 24,
+      "totalPayloadBytes": 7792,
+      "elapsedMs": 77.77370900000005
+    },
+    {
+      "name": "aggregate-detail-3tasks",
+      "requests": 1,
+      "bytes": 9330,
+      "requestBytes": 68,
+      "totalPayloadBytes": 9398,
+      "elapsedMs": 12.88570900000002
+    },
+    {
+      "name": "unchanged-detail",
+      "requests": 1,
+      "bytes": 800,
+      "requestBytes": 782,
+      "totalPayloadBytes": 1582,
+      "elapsedMs": 8.330083000000059
+    },
+    {
+      "name": "list-1005",
+      "requests": 3,
+      "bytes": 551634,
+      "requestBytes": 0,
+      "totalPayloadBytes": 551634,
+      "elapsedMs": 55.66724999999997
+    },
+    {
+      "name": "detail-1005tasks",
+      "requests": 1,
+      "bytes": 2122225,
+      "requestBytes": 782,
+      "totalPayloadBytes": 2123007,
+      "elapsedMs": 179.51579200000003
+    },
+    {
+      "name": "single-task-update-among-1005",
+      "requests": 1,
+      "bytes": 96226,
+      "requestBytes": 51890,
+      "totalPayloadBytes": 148116,
+      "elapsedMs": 81.92275000000018
+    }
+  ],
+  "notes": "Real verified Auth/PostgREST. Legacy source loaded from356ce5c with this isolated client. Wall timings are samples, not guaranteed latency. No UI redesign, Provider invocation or production changes."
+}

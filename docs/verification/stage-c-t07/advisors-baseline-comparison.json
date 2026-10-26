@@ -1,0 +1,26 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "baseline": "loop-control-stage-a",
+  "baselineReadOnly": true,
+  "policyDefinitionsIdentical": true,
+  "sourceSha256": "b76e1ecfa5c452d31a209da71152aa15cfd84f6e9d87772bbfad48d42705574d",
+  "verifiedSha256": "b76e1ecfa5c452d31a209da71152aa15cfd84f6e9d87772bbfad48d42705574d",
+  "warnings": [
+    {
+      "name": "auth_rls_initplan",
+      "level": "WARN",
+      "table": "external_connection_verifications"
+    },
+    {
+      "name": "auth_rls_initplan",
+      "level": "WARN",
+      "table": "external_connections"
+    },
+    {
+      "name": "auth_rls_initplan",
+      "level": "WARN",
+      "table": "storyboard_audio_selections"
+    }
+  ],
+  "newT07ObjectsWarned": false
+}

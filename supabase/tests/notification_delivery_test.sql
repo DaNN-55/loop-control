@@ -1,0 +1,21 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+set local search_path=public,extensions;
+select plan(9);
+select ok(not has_function_privilege('authenticated','public.claim_notification_event()','execute'),'browser cannot claim notifications');
+select ok(not has_table_privilege('authenticated','public.notification_delivery_events','select'),'browser cannot read the internal ledger');
+update public.notification_delivery_events set outcome='historical' where outcome='pending';
+select public.initialize_notification_delivery();
+insert into public.accounts(id,slug,name,timezone) values('11500000-0000-4000-8000-000000000010','t09-delivery-test','T09 delivery test','Asia/Shanghai');
+insert into public.audit_events(id,account_id,event_type,payload,created_at)
+values('11500000-0000-4000-8000-000000000001','11500000-0000-4000-8000-000000000010','stage_transition','{"to_stage":"script_review"}','2001-01-01');
+create temporary table t09_claim as select * from public.claim_notification_event();
+select is((select count(*) from t09_claim where id='11500000-0000-4000-8000-000000000001'),1::bigint,'late timestamp event is not lost');
+select is((select count(*) from public.claim_notification_event()),0::bigint,'reserved event is not redelivered');
+select ok(not public.finish_notification_delivery((select id from t09_claim),gen_random_uuid(),'accepted'),'wrong token is rejected');
+select ok(public.finish_notification_delivery((select id from t09_claim),(select delivery_token from t09_claim),'accepted'),'matching token accepts delivery');
+select ok(not public.finish_notification_delivery((select id from t09_claim),(select delivery_token from t09_claim),'uncertain'),'completed outcome cannot be rewritten');
+select is((select count(*) from public.claim_notification_event()),0::bigint,'restart does not redeliver completed event');
+select ok((select relrowsecurity from pg_class where oid='public.notification_delivery_events'::regclass),'delivery ledger RLS enabled');
+select * from finish();
+rollback;

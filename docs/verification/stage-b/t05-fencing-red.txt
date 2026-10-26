@@ -1,0 +1,29 @@
+
+> loop-control@0.1.0 isolated:leases
+> node scripts/isolation/leases.mjs fencing-red
+
+{
+  "checkedAt": "2026-10-23T10:35:04.759Z",
+  "target": "loop-control-stage-b-restore",
+  "mode": "fencing-red",
+  "outcomes": [
+    {
+      "name": "only expired running is recovered without a ready candidate",
+      "passed": true
+    },
+    {
+      "name": "expired same-group occupant releases capacity before candidate selection",
+      "passed": true
+    },
+    {
+      "name": "expired heartbeat cannot revive an interrupted attempt",
+      "passed": false,
+      "detail": "Expected values to be strictly equal:\n\ntrue !== false\n"
+    },
+    {
+      "name": "claim returns a distinct lease token for the active attempt",
+      "passed": false,
+      "detail": "The \"string\" argument must be of type string. Received type undefined (undefined)"
+    }
+  ]
+}

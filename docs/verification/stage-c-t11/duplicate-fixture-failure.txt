@@ -1,0 +1,15 @@
+review: ready
+review: running
+review completed
+reuse: ready
+reuse completed
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/isolation/render-reuse.mjs:20
+const unwrap=async p=>{const{data,error}=await p;if(error)throw Error(`T11 database error ${error.code}: ${error.message}`);return data;};
+                                                                ^
+
+Error: T11 database error 23505: duplicate key value violates unique constraint "tasks_one_final_render_per_qc_package_idx"
+    at unwrap (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/isolation/render-reuse.mjs:20:65)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/isolation/render-reuse.mjs:47:2
+
+Node.js v24.20.0

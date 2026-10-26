@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 isolated:stage-b
+> node scripts/isolation/stage-b.mjs health
+
+{"mode":"health","passed":true,"checks":[{"name":"项目目录","passed":true,"detail":"正常"},{"name":"Codex CLI","passed":true,"detail":"正常"},{"name":"Supabase 服务","passed":true,"detail":"正常"}]}

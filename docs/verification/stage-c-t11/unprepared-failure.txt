@@ -1,0 +1,33 @@
+review: ready
+review: ready
+review: ready
+review: ready
+review: ready
+review: ready
+review: ready
+review: ready
+review: ready
+review: ready
+review: ready
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: review status blocked; see private task result
++ actual - expected
+
++ 'blocked'
+- 'completed'
+
+    at execute (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/isolation/render-reuse.mjs:38:656)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/isolation/render-reuse.mjs:39:15 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'blocked',
+  expected: 'completed',
+  operator: 'strictEqual',
+  diff: 'simple'
+}
+
+Node.js v24.20.0

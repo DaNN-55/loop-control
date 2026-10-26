@@ -1,0 +1,51 @@
+// T10 real verified Auth/PostgREST, fixed fixtures; no production or Provider calls.
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {join} from 'node:path';
+import {execFileSync} from 'node:child_process';
+import {randomUUID} from 'node:crypto';
+import ts from 'typescript';
+import {createClient} from '@supabase/supabase-js';
+import {targetConfiguration,targetContainer,targetId} from './restore.mjs';
+import {sql,quote,digest,assertContainer} from './backup.mjs';
+import {ensurePrivateDirectory,writePrivateFile} from './environment.mjs';
+assert.ok(process.argv.includes('--verified'));assert.equal(targetId,'loop-control-stage-b-verified');assertContainer(targetContainer,targetId);
+const c=targetConfiguration(),directory=join(c.stateRoot,'t10',String(Date.now()));ensurePrivateDirectory(directory);
+const ownerId=sql("select user_id from account_memberships where account_id='a0000000-0000-4000-8000-000000000001' and role='owner' limit 1",targetContainer);
+const owner=JSON.parse(readFileSync(join(c.stateRoot,`owner-${ownerId}.json`)));
+let requests=0,bytes=0,requestBytes=0;const client=createClient(c.apiUrl,c.anonKey,{auth:{persistSession:false},global:{fetch:async(input,init)=>{const r=await fetch(input,init);requests++;requestBytes+=Buffer.byteLength(typeof init?.body==='string'?init.body:'');bytes+=Buffer.byteLength(await r.clone().text());return r;}}});
+const login=await client.auth.signInWithPassword({email:owner.email,password:owner.password});assert.ifError(login.error);
+const account=randomUUID(),blueprint=randomUUID(),ep=randomUUID(),foreignAccount=randomUUID(),foreignBlueprint=randomUUID(),foreignEp=randomUUID();
+const oldTasks=digest(sql("select coalesce(jsonb_agg(to_jsonb(t) order by id),'[]') from tasks t",targetContainer));
+sql(`insert into accounts(id,slug,name,timezone) values(${quote(account)},${quote('t10-'+Date.now())},'T10 synthetic pagination','Asia/Shanghai'),(${quote(foreignAccount)},${quote('t10-unowned-'+Date.now())},'T10 unowned test','Asia/Shanghai');
+insert into account_memberships(account_id,user_id,role) values(${quote(account)},${quote(ownerId)},'owner');
+insert into account_blueprint_versions(id,account_id,version,policy,is_active) values(${quote(blueprint)},${quote(account)},1,jsonb_build_object('asset_root',${quote(join(c.mediaRoot,'smoke'))}),true),(${quote(foreignBlueprint)},${quote(foreignAccount)},1,'{}',true);
+insert into episodes(id,account_id,blueprint_version_id,title,is_test) values(${quote(ep)},${quote(account)},${quote(blueprint)},'T10 fixed detail',true),(${quote(foreignEp)},${quote(foreignAccount)},${quote(foreignBlueprint)},'T10 inaccessible',true);
+insert into episodes(account_id,blueprint_version_id,title,is_test) select ${quote(account)},${quote(blueprint)},'T10 pagination '||n,true from generate_series(1,1004)n;
+insert into tasks(episode_id,task_type,status,input_snapshot,budget_limit_cents,max_attempts,provider,model,prompt_version) select ${quote(ep)},'draft_brief','completed',jsonb_build_object('fixture',repeat('x',1200)),0,2,'codex','controlled','t10' from generate_series(1,3);`,targetContainer);
+async function moduleFrom(path){const result=ts.transpileModule(readFileSync(path,'utf8'),{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText;return import('data:text/javascript;base64,'+Buffer.from(result).toString('base64'));}
+const {createEpisodeReader}=await moduleFrom('src/episodes/episodeReadService.ts'),{readAllPages}=await moduleFrom('src/lib/pagedRead.ts');
+const before=execFileSync('git',['show','356ce5c:src/episodes/EpisodeProductionContainer.tsx'],{encoding:'utf8'});
+const source=before.slice(before.indexOf('function throwResultError'),before.indexOf('const productionRuntime:'));
+const oldLoad=new Function('supabase',ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.None}}).outputText+';return loadEpisodeProduction;')(client);
+const snapshots=[];async function measure(name,action){requests=0;bytes=0;requestBytes=0;const start=performance.now();let value;try{value=await action();}catch(error){console.error(JSON.stringify({failedStep:name,elapsedMs:performance.now()-start,code:error.code,message:error.message}));throw error;}console.error(name+' passed');snapshots.push({name,requests,bytes,requestBytes,totalPayloadBytes:bytes+requestBytes,elapsedMs:performance.now()-start});return value;}
+const baseline=await measure('legacy-detail-3tasks',()=>oldLoad(ep));
+const load=createEpisodeReader(async(id,known)=>{const{data,error}=await client.rpc('read_episode_production',{p_episode_id:id,p_known:known});if(error)throw error;if(!data)throw Error('not visible');return data;});
+const current=await measure('aggregate-detail-3tasks',()=>load(ep));
+function normalize(value){if(Array.isArray(value))return value.map(normalize).sort((a,b)=>JSON.stringify(a).localeCompare(JSON.stringify(b)));if(value&&typeof value==='object')return Object.fromEntries(Object.entries(value).sort().map(([k,v])=>[k,normalize(v)]));return value;}
+assert.deepEqual(normalize(current),normalize(baseline));
+await measure('unchanged-detail',()=>load(ep));
+const lists=await measure('list-1005',()=>readAllPages((from,to)=>client.from('episodes').select('*',{count:'exact'}).eq('account_id',account).order('updated_at',{ascending:false}).order('id').range(from,to)));
+assert.equal(lists.data.length,1005);assert.equal(new Set(lists.data.map(row=>row.id)).size,1005);
+assert.deepEqual((await readAllPages((from,to)=>client.from('episodes').select('*',{count:'exact'}).eq('account_id',account).order('updated_at',{ascending:false}).order('id').range(from,to))).data,lists.data);
+assert.equal((await client.rpc('read_episode_production',{p_episode_id:foreignEp})).data,null);
+assert.equal((await client.rpc('read_episode_production',{p_episode_id:randomUUID()})).data,null);
+sql(`insert into tasks(episode_id,task_type,status,input_snapshot,budget_limit_cents,max_attempts,provider,model,prompt_version) select ${quote(ep)},'draft_brief','completed',jsonb_build_object('fixture',repeat('x',1200)),0,2,'codex','controlled','t10' from generate_series(1,1002);`,targetContainer);
+const large=await measure('detail-1005tasks',()=>load(ep));assert.equal(large.tasks.length,1005);
+const task=large.tasks[0];sql(`update tasks set last_result='{"fixture_status":"changed"}' where id=${quote(task.id)}`,targetContainer);
+const delta=await measure('single-task-update-among-1005',()=>load(ep));assert.equal(delta.tasks.length,1005);assert.deepEqual(delta.tasks.find(row=>row.id===task.id).last_result,{fixture_status:'changed'});assert.equal(delta.artifacts,large.artifacts);
+assert.ok(snapshots.at(-1).bytes<snapshots.at(-2).bytes/2,'task update payload must not resend frozen input history');
+const original=digest(sql(`select coalesce(jsonb_agg(to_jsonb(t) order by id),'[]') from tasks t where episode_id<>${quote(ep)}`,targetContainer));assert.equal(original,oldTasks);
+await client.auth.signOut();
+const evidence={target:targetId,account,episode:ep,fixturesRetained:true,originalTasksUnchanged:true,allOriginalFieldsEquivalent:true,unauthorizedAndMissingNull:true,completePagination:1005,completeDetailTasks:1005,duplicateRefreshEqual:true,metrics:snapshots,notes:'Real verified Auth/PostgREST. Legacy source loaded from356ce5c with this isolated client. Wall timings are samples, not guaranteed latency. No UI redesign, Provider invocation or production changes.'};
+writePrivateFile(join(directory,'result.json'),JSON.stringify(evidence,null,2)+'\n');writePrivateFile(join(c.stateRoot,'t10-latest.json'),JSON.stringify({directory})+'\n');console.log(JSON.stringify(evidence,null,2));

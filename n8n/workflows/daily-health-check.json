@@ -52,7 +52,10 @@
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "timezone": "Asia/Shanghai",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "all"
   },
   "active": false,
   "versionId": "de63c5ad-5953-4f2e-b649-d71eaf037732",

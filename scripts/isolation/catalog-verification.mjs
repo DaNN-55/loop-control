@@ -1,0 +1,58 @@
+// Compare the old full-history read with bounded pages using real verified Auth/RLS.
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {join} from 'node:path';
+import ts from 'typescript';
+import {createClient} from '@supabase/supabase-js';
+import {targetConfiguration,targetContainer,targetId} from './restore.mjs';
+import {sql,quote,assertContainer,digest} from './backup.mjs';
+import {writePrivateFile} from './environment.mjs';
+assert.ok(process.argv.includes('--verified'));assert.equal(targetId,'loop-control-stage-b-verified');assertContainer(targetContainer,targetId);
+const c=targetConfiguration(),directory=join(c.stateRoot,'c-followup'),ids=JSON.parse(readFileSync(join(directory,'fixtures.json')));
+const ownerId=sql(`select user_id from account_memberships where account_id=${quote(ids.account)} and role='owner' limit 1`,targetContainer);
+const owner=JSON.parse(readFileSync(join(c.stateRoot,`owner-${ownerId}.json`)));
+let metrics={requests:0,requestBytes:0,responseBytes:0};
+const client=createClient(c.apiUrl,c.anonKey,{auth:{persistSession:false},global:{fetch:async(input,init)=>{const r=await fetch(input,init);metrics.requests++;metrics.requestBytes+=Buffer.byteLength(typeof init?.body==='string'?init.body:'');metrics.responseBytes+=Buffer.byteLength(await r.clone().text());return r;}}});
+assert.ifError((await client.auth.signInWithPassword(owner)).error);
+async function moduleFrom(source){return import('data:text/javascript;base64,'+Buffer.from(ts.transpileModule(source,{compilerOptions:{target:ts.ScriptTarget.ES2022,module:ts.ModuleKind.ESNext}}).outputText).toString('base64'));}
+const {readAllPages}=await moduleFrom(readFileSync('src/lib/pagedRead.ts','utf8'));
+const selectors=await moduleFrom(readFileSync('src/reviews/reviewSelectors.ts','utf8'));
+const panelSource=readFileSync('src/observability/SystemStatusPanel.tsx','utf8');
+const worker=await moduleFrom(panelSource.slice(panelSource.indexOf('function latestTask('),panelSource.indexOf('function workerStatus('))+'\nexport {currentWorkerTasks,latestTask};');
+const samples=[];
+async function measure(name,fn){metrics={requests:0,requestBytes:0,responseBytes:0};const begin=performance.now();const result=await fn();samples.push({name,...metrics,ms:performance.now()-begin});return result;}
+async function catalog(args={}){const r=await client.rpc('read_episode_catalog',{p_account_id:ids.account,...args});assert.ifError(r.error);return r.data;}
+const baselineSource=execFileSync('git',['show','5384429:src/App.tsx'],{encoding:'utf8'});
+globalThis.__cClient=client;globalThis.__cReadAllPages=readAllPages;
+const legacy=await moduleFrom('const supabase=globalThis.__cClient;const readAllPages=globalThis.__cReadAllPages;\n'+baselineSource.slice(baselineSource.indexOf('export async function loadWorkspaceSummary'),baselineSource.indexOf('async function loadSystemStatusReport'))+'\nexport {loadWorkspaceSection};');
+const currentSource=readFileSync('src/App.tsx','utf8');
+const current=await moduleFrom('const supabase=globalThis.__cClient;const readAllPages=globalThis.__cReadAllPages;\n'+currentSource.slice(currentSource.indexOf('export async function loadWorkspaceSummary'),currentSource.indexOf('function throwResultError')));
+await measure('old-actual-startup-summary-and-operations',async()=>{await legacy.loadWorkspaceSummary();await legacy.loadWorkspaceSection('operations');});
+await measure('new-actual-startup-summary-and-operations',async()=>{await current.loadWorkspaceSummary();await catalog({p_view:'operations',p_account_id:null});});
+const old=await measure('old-all-active-1005',async()=>{const r=await readAllPages((from,to)=>client.from('episodes').select('*',{count:'exact'}).eq('account_id',ids.account).is('archived_at',null).order('updated_at',{ascending:false}).order('id').range(from,to));assert.ifError(r.error);return r.data;});assert.equal(old.length,1005);
+const first=await measure('new-active-page1',()=>catalog());assert.equal(first.episodes.length,20);assert.equal(first.total,1005);assert.equal(first.accountCounts[ids.account],1007);
+assert.deepEqual(first.episodes,old.slice(0,20));assert.deepEqual((await catalog({p_page:2})).episodes,old.slice(20,40));
+const unique=[];for(let page=1;page<=51;page++){const result=await catalog({p_page:page});assert.equal(result.page,page);unique.push(...result.episodes.map(e=>e.id));}assert.deepEqual(unique,old.map(e=>e.id));assert.equal(new Set(unique).size,1005);
+const tail=await measure('new-active-page51',()=>catalog({p_page:51}));assert.equal(tail.episodes.length,5);assert.equal((await catalog({p_page:999})).page,51);
+assert.equal((await catalog({p_visibility:'archived'})).total,2);assert.equal((await catalog({p_visibility:'all'})).total,1007);
+assert.equal((await catalog({p_series_id:ids.series})).total,47);assert.equal((await catalog({p_series_id:ids.emptySeries})).total,0);assert.equal((await catalog({p_view:'reviews'})).total,23);
+const tasks=await readAllPages((from,to)=>client.from('tasks').select('*',{count:'exact'}).order('created_at',{ascending:false}).order('id').range(from,to));assert.ifError(tasks.error);
+const activeEpisodes=await readAllPages((from,to)=>client.from('episodes').select('*',{count:'exact'}).is('archived_at',null).order('id').range(from,to));assert.ifError(activeEpisodes.error);
+const activeIds=new Set(activeEpisodes.data.map(e=>e.id)),activeTasks=tasks.data.filter(t=>activeIds.has(t.episode_id));
+const actionable=worker.currentWorkerTasks(activeTasks),latest=worker.latestTask(activeTasks);
+const full=await catalog({p_view:'operations',p_account_id:null});
+assert.deepEqual({running:full.worker.running,blocked:full.worker.blocked,failed:full.worker.failed,latestCompleted:full.worker.latestCompleted},{running:actionable.filter(t=>t.status==='running').length,blocked:actionable.filter(t=>t.status==='blocked').length,failed:actionable.filter(t=>t.status==='failed').length,latestCompleted:latest?.status==='completed'});
+const a=await catalog({p_view:'operations',p_series_id:ids.series}),b=await catalog({p_view:'operations',p_series_id:ids.series,p_pending_page:2,p_blocked_page:2});
+assert.equal(a.pending.total,23);assert.equal(a.pending.items.length,20);assert.equal(b.pending.items.length,3);assert.equal(a.blocked.total,23);assert.equal(b.blocked.items.length,3);
+const blockers=activeEpisodes.data.filter(e=>e.account_id===ids.account).flatMap(episode=>selectors.workerBlockers(tasks.data,episode.id).map(blocker=>({episodeId:episode.id,code:blocker.code,detail:blocker.detail,taskId:blocker.taskId,taskType:blocker.taskType}))).sort((x,y)=>x.taskId.localeCompare(y.taskId));
+const remote=[...a.blocked.items,...b.blocked.items].map(({episode,blocker})=>({episodeId:episode.id,code:blocker.code,detail:blocker.detail,taskId:blocker.taskId,taskType:blocker.taskType})).sort((x,y)=>x.taskId.localeCompare(y.taskId));assert.deepEqual(remote,blockers);
+assert.equal(Object.values(a.stages).reduce((n,x)=>n+x,0),47);assert.equal(a.reviewCount,full.reviewCount);
+const foreignAccount=sql(`select id from accounts where id not in(select account_id from account_memberships where user_id=${quote(ownerId)}) limit 1`,targetContainer);
+assert.equal((await catalog({p_account_id:foreignAccount})).total,0);
+const anon=await fetch(c.apiUrl+'/rest/v1/rpc/read_episode_catalog',{method:'POST',headers:{apikey:c.anonKey,'Content-Type':'application/json'},body:'{}'});assert.equal(anon.status,401);
+await client.auth.signOut({scope:'local'});
+const oldTasks=digest(sql(`select coalesce(jsonb_agg(to_jsonb(t) order by id),'[]') from public.tasks t where episode_id not in(select id from episodes where account_id=${quote(ids.account)})`,targetContainer));
+assert.equal(oldTasks,JSON.parse(readFileSync(join(directory,'baseline.json'))).tasks);
+const result={target:targetId,allPages:51,uniqueActiveEpisodes:1005,tailRows:5,archiveRows:2,seriesRows:47,emptySeriesRows:0,reviewRows:23,pendingPackages:23,blockers:23,independentHighlightPages:true,globalWorkerMatchesOriginalSelectors:true,globalCountsNotPageCounts:true,stableOrdering:true,unauthorizedCountsAndRowsEmpty:true,anonymousStatus:anon.status,oldTasksUnchanged:true,samples,limitations:['Page requests are independent snapshots; changes to ordering between clicks can move records.','Historical default 5000ms gate failure and root cause remain unresolved.']};
+writePrivateFile(join(directory,'http-result.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result,null,2));

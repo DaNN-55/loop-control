@@ -1,0 +1,16 @@
+{
+  "checkedAt": "2026-10-23T08:38:57.831Z",
+  "isolatedPortsClosed": [
+    55173,
+    55431,
+    55432
+  ],
+  "isolatedVm": "Stopped",
+  "productionPorts": {
+    "5173": 28388,
+    "5678": 28387
+  },
+  "productionGitStatusUnchanged": true,
+  "extraWorktree": "archived after transfer",
+  "data": "database volume and sparse media image retained; media volume remains mounted for review"
+}

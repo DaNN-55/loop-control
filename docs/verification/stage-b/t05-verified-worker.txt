@@ -1,0 +1,31 @@
+
+> loop-control@0.1.0 isolated:worker-recovery
+> node scripts/isolation/worker-recovery.mjs --verified
+
+{
+  "checkedAt": "2026-10-23T11:01:23.195Z",
+  "target": "loop-control-stage-b-verified",
+  "episodeId": "4a7e8f67-a1dd-4f3e-adb6-df25d7b8c0bc",
+  "taskId": "299743ed-eb88-4c54-b60a-23f4e587d53a",
+  "realWorkerKilledAfterClaim": true,
+  "expiry": "controlled DB clock fixture after SIGKILL; not a 30-minute wait",
+  "httpDispatchStatus": 202,
+  "anonymousStatus": 400,
+  "execution": "real prebuilt Worker CLI and FFmpeg",
+  "attempts": [
+    {
+      "attempt": 0,
+      "status": "failed"
+    },
+    {
+      "attempt": 1,
+      "status": "completed"
+    }
+  ],
+  "artifact": {
+    "relativePath": "episodes/4a7e8f67-a1dd-4f3e-adb6-df25d7b8c0bc/recovered.mp4",
+    "sha256": "52ee826ea305bfd0e4e82e357905efdbc6ee3c2297313d22f66341e6012f911c",
+    "fileSize": 23297
+  },
+  "lateKilledWorkerResultRejected": true
+}

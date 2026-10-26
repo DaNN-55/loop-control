@@ -1,0 +1,60 @@
+{
+  "status": 200,
+  "operations": {
+    "notification": {
+      "latest": {
+        "passed": false,
+        "idle": true,
+        "detail": "有 4 条提醒正在投递或结果未知；不会自动重复投递，请核对控制台队列。",
+        "at": "2026-10-23T15:35:10.744Z"
+      },
+      "lastSuccess": null,
+      "lastFailure": {
+        "passed": false,
+        "idle": true,
+        "detail": "有 4 条提醒正在投递或结果未知；不会自动重复投递，请核对控制台队列。",
+        "at": "2026-10-23T15:35:10.744Z"
+      }
+    },
+    "health": {
+      "latest": {
+        "passed": true,
+        "detail": "独立健康检查通过。",
+        "at": "2026-10-23T15:35:11.537Z"
+      },
+      "lastSuccess": {
+        "passed": true,
+        "detail": "独立健康检查通过。",
+        "at": "2026-10-23T15:35:11.537Z"
+      },
+      "lastFailure": null
+    },
+    "backup": {
+      "latest": {
+        "at": "2026-10-23T15:35:22.244Z",
+        "passed": true,
+        "detail": "完整 v2 备份成功：37 张表、5083 行、242 个媒体文件。"
+      },
+      "lastSuccess": {
+        "at": "2026-10-23T15:35:22.244Z",
+        "passed": true,
+        "detail": "完整 v2 备份成功：37 张表、5083 行、242 个媒体文件。"
+      },
+      "lastFailure": null
+    },
+    "snapshot": {
+      "latest": {
+        "passed": true,
+        "detail": "REST 部分快照已导出；best_effort，不是完整可恢复备份。",
+        "at": "2026-10-23T15:35:12.692Z"
+      },
+      "lastSuccess": {
+        "passed": true,
+        "detail": "REST 部分快照已导出；best_effort，不是完整可恢复备份。",
+        "at": "2026-10-23T15:35:12.692Z"
+      },
+      "lastFailure": null
+    }
+  },
+  "lastHealthCheckAt": "2026-10-23T15:35:11.537Z"
+}

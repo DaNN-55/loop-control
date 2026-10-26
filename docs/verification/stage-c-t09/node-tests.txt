@@ -1,0 +1,11 @@
+✔ 导入脚本先创建可覆盖的 n8n runtime，再在其中暂存工作流 (5.285792ms)
+✔ 提醒工作流声明零字段透传契约 (7.142458ms)
+﹣ 提醒工作流通过本机 n8n 节点配置校验 (0.386584ms) # SKIP
+ℹ tests 3
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 1
+ℹ todo 0
+ℹ duration_ms 100.772416

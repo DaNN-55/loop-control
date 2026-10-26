@@ -145,6 +145,9 @@ async function main() {
   const openChatCutAvailable = assertOpenChatCutAvailable(process.env.OPENCHATCUT_NODE);
   assertActiveWorkflows();
 
+  // Preparation happens before starting either the console or compatible timers.
+  const preparation=spawnSync(process.execPath,[join(projectRoot,"scripts/prepare-runtime.mjs")],{cwd:projectRoot,env:process.env,stdio:"inherit"});
+  if(preparation.error || preparation.status!==0)throw new Error("Worker/编排程序准备失败；未启动本机服务。");
   const children = [];
   let requestStop;
   let stopRequested = false;

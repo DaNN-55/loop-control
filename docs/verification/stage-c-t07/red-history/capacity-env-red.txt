@@ -1,0 +1,50 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":0,"workers":[],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":0,"workers":[],"productionReadyEpisodes":0,"preRenderReviewPackages":0,"skipped":"idle"}
+{"mode":"notify","notifications":0,"cursor":null}
+ ❯ src/orchestration/loopOrchestratorCli.test.ts (10 tests | 1 failed) 43ms
+   ✓ 定向生产单调度 > 提醒工作流复用一次事件扫描，而不是各自定时读取 audit_events 2ms
+   ✓ 定向生产单调度 > 派发和提醒使用保守默认值，并在导入时读取本机间隔配置 0ms
+   ✓ 定向生产单调度 > 每日健康检查每天 09:00 只运行一次 0ms
+   ✓ 定向生产单调度 > 定时扫描先领取持久任务，再用stdin传递给Worker 22ms
+   ✓ 定向生产单调度 > 任务唤醒不重新规划冻结输入，仍消费公平共享队列 2ms
+   ✓ 定向生产单调度 > Episode入口限定规划范围，执行仍使用全局原子领取 3ms
+   ✓ 定向生产单调度 > 满载领取为空时不构建或启动空跑Worker 3ms
+   × 定向生产单调度 > CLI不传显式environment时仍尊重进程中的Worker容量 6ms
+     → expected false to be true // Object.is equality
+   ✓ 定向生产单调度 > 空队列不构建或启动Worker 2ms
+   ✓ 定向生产单调度 > 一次提醒轮次只读取一次增量 audit_events 2ms
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed (10)
+   Start at  22:10:43
+   Duration  493ms (transform 35ms, setup 0ms, collect 24ms, tests 43ms, environment 290ms, prepare 38ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > CLI不传显式environment时仍尊重进程中的Worker容量
+AssertionError: expected false to be true // Object.is equality
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- true[39m
+[31m+ false[39m
+
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:94:93
+     92|     const requests=fetchMock.mock.calls.filter(([url])=>String(url).in…
+     93|     expect(requests.length).toBeGreaterThan(0);
+     94|     expect(requests.every(([,init])=>JSON.parse(String(init?.body)).p_…
+       |                                                                                             ^
+     95|   });
+     96| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

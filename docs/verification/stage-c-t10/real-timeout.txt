@@ -1,0 +1,17 @@
+legacy-detail-3tasks passed
+aggregate-detail-3tasks passed
+unchanged-detail passed
+list-1005 passed
+{"failedStep":"detail-1005tasks","elapsedMs":8108.8870830000005,"code":"57014","message":"canceling statement due to statement timeout"}
+
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+{
+  code: '57014',
+  details: null,
+  hint: null,
+  message: 'canceling statement due to statement timeout'
+}
+
+Node.js v24.20.0

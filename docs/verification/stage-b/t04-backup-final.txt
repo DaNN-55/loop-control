@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 isolated:backup
+> node scripts/isolation/backup.mjs
+
+{"mode":"backup","passed":true,"root":"/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-a/backups/f551a4f2-f79b-4675-a1b0-dca081a78635","tables":32,"rows":90,"mediaFiles":75,"archiveSha256":"651b24635724b2bbbd864d9443f85f457376193231aa3c9f9059d79f481a381f"}

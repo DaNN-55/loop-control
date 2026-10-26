@@ -1,0 +1,64 @@
+{
+  "baselineCommit": "19f1607",
+  "target": "loop-control-stage-b-verified",
+  "files": 21,
+  "checks": 223,
+  "passedFiles": 16,
+  "comparison": [
+    {
+      "file": "acoustic_alignment_priority_chain_test.sql",
+      "failures": [
+        "not ok 8 - worker timing updates cues without overwriting Owner subtitle body"
+      ],
+      "sqlError": false,
+      "baselineFailures": [
+        "not ok 8 - worker timing updates cues without overwriting Owner subtitle body"
+      ],
+      "baselineSqlError": false
+    },
+    {
+      "file": "clip_interval_union_duration_test.sql",
+      "failures": [
+        "not ok 4 - preview generation and confirmation use interval-union duration"
+      ],
+      "sqlError": false,
+      "baselineFailures": [
+        "not ok 4 - preview generation and confirmation use interval-union duration"
+      ],
+      "baselineSqlError": false
+    },
+    {
+      "file": "external_connection_security_test.sql",
+      "failures": [
+        "not ok 6 - only the Worker service role can resolve the Vault secret for the frozen version",
+        "not ok 8 - the owning Owner can select the verified connection version"
+      ],
+      "sqlError": false,
+      "baselineFailures": [
+        "not ok 6 - only the Worker service role can resolve the Vault secret for the frozen version",
+        "not ok 8 - the owning Owner can select the verified connection version"
+      ],
+      "baselineSqlError": false
+    },
+    {
+      "file": "global_owner_connection_integration_test.sql",
+      "failures": [
+        "not ok 4 - each connection creates one immutable version",
+        "not ok 9 - connection versions store Vault references rather than plaintext secrets"
+      ],
+      "sqlError": false,
+      "baselineFailures": [
+        "not ok 4 - each connection creates one immutable version",
+        "not ok 9 - connection versions store Vault references rather than plaintext secrets"
+      ],
+      "baselineSqlError": false
+    },
+    {
+      "file": "shot_composition_contract_test.sql",
+      "failures": [],
+      "sqlError": true,
+      "baselineFailures": [],
+      "baselineSqlError": true
+    }
+  ]
+}

@@ -1,0 +1,282 @@
+- generic [ref=e1] clickable [onclick]
+  - link "跳到主要内容" [ref=e2]
+  - complementary "主导航"
+    - StaticText "L"
+    - StaticText "oo"
+    - StaticText "p"
+    - StaticText "C"
+    - StaticText "ontrol"
+    - navigation
+      - button "系列运营" [ref=e7]
+        - StaticText "系列运营"
+      - button "生产单" [ref=e8]
+        - StaticText "生产单"
+      - button "审核" [ref=e9]
+        - StaticText "审核"
+        - StaticText "1"
+      - button "账号" [ref=e10]
+        - StaticText "账号"
+    - button "OpenChatCut 仅从有审核渲染的生产单打开" [disabled, ref=e4]
+      - StaticText "OpenChatCut"
+    - button "系统状态：需处理" [expanded=false, ref=e21]
+    - button "切换至深色模式" [ref=e11]
+    - button "收起侧栏" [ref=e12]
+    - button "所有者设置" [expanded=false, ref=e22]
+  - region "平台工作台" [ref=e3]
+    - sectionheader
+      - heading "系列运营" [level=1, ref=e13]
+    - region "系列运营概览" [ref=e5]
+      - sectionheader
+        - heading "系列运营概览" [level=2, ref=e23]
+        - paragraph
+          - StaticText "按生产单的当前阶段、待审包和 Worker 阻塞项汇总。这里不折算统一完成百分比。"
+        - LabelText
+          - StaticText "系列"
+          - combobox "运营系列筛选" [expanded=false, ref=e48]: 全部系列
+            - MenuListPopup
+              - option "全部系列" [selected, ref=e57]
+              - option "未归属系列" [ref=e58]
+      - generic "阶段分布"
+        - article
+          - StaticText "输入与脚本"
+          - strong
+            - StaticText "108"
+          - StaticText "个生产单"
+        - article
+          - StaticText "视觉准备"
+          - strong
+            - StaticText "0"
+          - StaticText "个生产单"
+        - article
+          - StaticText "分镜与媒体"
+          - strong
+            - StaticText "4"
+          - StaticText "个生产单"
+        - article
+          - StaticText "合成与 QC"
+          - strong
+            - StaticText "1"
+          - StaticText "个生产单"
+        - article
+          - StaticText "生产完成"
+          - strong
+            - StaticText "0"
+          - StaticText "个生产单"
+      - generic
+        - sectionheader
+          - heading "待审核" [level=3, ref=e49]
+          - StaticText "1"
+          - StaticText " 个待审核包"
+        - list
+          - listitem [level=1]
+            - button "Stage B restore checkpoint 合成与 QC · 审核包 v1" [ref=e55]
+              - strong
+                - StaticText "Stage B restore checkpoint"
+              - StaticText "合成与 QC"
+              - StaticText " · 审核包 v"
+              - StaticText "1"
+      - generic
+        - sectionheader
+          - heading "阻塞项" [level=3, ref=e50]
+          - StaticText "0"
+          - StaticText " 个阻塞项"
+        - paragraph
+          - StaticText "当前筛选范围没有 Worker 阻塞项。"
+      - region "系列生产单" [ref=e14]
+        - sectionheader
+          - heading "生产单明细" [level=3, ref=e51]
+          - StaticText "113"
+          - StaticText " 个生产单"
+        - button "T07 browser queued 3dadf8cd 输入与脚本 无待审包 无阻塞" [ref=e24]
+          - strong
+            - StaticText "T07 browser queued"
+          - StaticText "3dadf8cd"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "T07 browser running ce7b7c25 输入与脚本 无待审包 无阻塞" [ref=e25]
+          - strong
+            - StaticText "T07 browser running"
+          - StaticText "ce7b7c25"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "T07 ineligible future 2 efbb59f0 输入与脚本 无待审包 无阻塞" [ref=e26]
+          - strong
+            - StaticText "T07 ineligible future 2"
+          - StaticText "efbb59f0"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "T07 ineligible future 1 11c18da9 输入与脚本 无待审包 无阻塞" [ref=e27]
+          - strong
+            - StaticText "T07 ineligible future 1"
+          - StaticText "11c18da9"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "T07 ineligible future 0 4c050dc1 输入与脚本 无待审包 无阻塞" [ref=e28]
+          - strong
+            - StaticText "T07 ineligible future 0"
+          - StaticText "4c050dc1"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "T07 interrupted lease 7d45a84f 输入与脚本 无待审包 无阻塞" [ref=e29]
+          - strong
+            - StaticText "T07 interrupted lease"
+          - StaticText "7d45a84f"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "T07 connection competition 2 4bdf5cc5 输入与脚本 无待审包 无阻塞" [ref=e30]
+          - strong
+            - StaticText "T07 connection competition 2"
+          - StaticText "4bdf5cc5"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "T07 connection competition 1 786af5d6 输入与脚本 无待审包 无阻塞" [ref=e31]
+          - strong
+            - StaticText "T07 connection competition 1"
+          - StaticText "786af5d6"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "T07 connection competition 0 5be4420c 输入与脚本 无待审包 无阻塞" [ref=e32]
+          - strong
+            - StaticText "T07 connection competition 0"
+          - StaticText "5be4420c"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "T07 concurrent distinct resource 1 b84eca8c 输入与脚本 无待审包 无阻塞" [ref=e33]
+          - strong
+            - StaticText "T07 concurrent distinct resource 1"
+          - StaticText "b84eca8c"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "T07 concurrent distinct resource 0 88c4db80 输入与脚本 无待审包 无阻塞" [ref=e34]
+          - strong
+            - StaticText "T07 concurrent distinct resource 0"
+          - StaticText "88c4db80"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "T07 concurrent distinct resource 2 da757cbf 输入与脚本 无待审包 无阻塞" [ref=e35]
+          - strong
+            - StaticText "T07 concurrent distinct resource 2"
+          - StaticText "da757cbf"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "T07 cancel cd9fb243 分镜与媒体 无待审包 无阻塞" [ref=e36]
+          - strong
+            - StaticText "T07 cancel"
+          - StaticText "cd9fb243"
+          - StaticText "分镜与媒体"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "T07 after cancel 7eadca32 输入与脚本 无待审包 无阻塞" [ref=e37]
+          - strong
+            - StaticText "T07 after cancel"
+          - StaticText "7eadca32"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "T07 continue after failure f1c4bb9a 输入与脚本 无待审包 无阻塞" [ref=e38]
+          - strong
+            - StaticText "T07 continue after failure"
+          - StaticText "f1c4bb9a"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "T07 retry 19403138 输入与脚本 无待审包 无阻塞" [ref=e39]
+          - strong
+            - StaticText "T07 retry"
+          - StaticText "19403138"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "T07 restart F bf8b1145 输入与脚本 无待审包 无阻塞" [ref=e40]
+          - strong
+            - StaticText "T07 restart F"
+          - StaticText "bf8b1145"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "T07 restart E 046dccb8 输入与脚本 无待审包 无阻塞" [ref=e41]
+          - strong
+            - StaticText "T07 restart E"
+          - StaticText "046dccb8"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "T07 joined while executing e7b6eaac 输入与脚本 无待审包 无阻塞" [ref=e42]
+          - strong
+            - StaticText "T07 joined while executing"
+          - StaticText "e7b6eaac"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - button "T07 short B d3022292 输入与脚本 无待审包 无阻塞" [ref=e43]
+          - strong
+            - StaticText "T07 short B"
+          - StaticText "d3022292"
+          - StaticText "输入与脚本"
+          - StaticText "无待审包"
+          - StaticText "无阻塞"
+        - navigation "分页" [ref=e44]
+          - StaticText "第 "
+          - StaticText "1"
+          - StaticText " / "
+          - StaticText "6"
+          - StaticText " 页 · 共 "
+          - StaticText "113"
+          - StaticText " 条"
+          - button "上一页" [disabled, ref=e52]
+          - button "下一页" [ref=e53]
+  - complementary "当前生产单详情"
+    - button "关闭生产单详情" [ref=e6]
+    - sectionheader
+      - heading "T07 browser queued" [level=2, ref=e15]
+      - StaticText "3dadf8cd"
+    - button "刷新生产单状态" [ref=e16]
+    - button "打开本地输入目录" [ref=e17]
+    - button "复制本地输入目录路径" [ref=e18]
+    - button "查看产物索引" [expanded=false, ref=e19]
+    - button "查看执行与审计时间线" [expanded=false, ref=e20]
+    - paragraph
+      - StaticText "蓝图 v1 · 创建于 2026年10月23日 21:58"
+    - generic
+      - StaticText "当前阶段"
+      - strong
+        - StaticText "等待输入"
+      - StaticText "下一步"
+      - paragraph
+        - StaticText "导入主脚本"
+      - generic
+        - StaticText "当前任务"
+        - strong
+          - StaticText "已完成"
+        - paragraph
+          - StaticText "最近一次 Worker 任务已完成。"
+    - group
+      - DisclosureTriangle "准备生产材料 −" [expanded=true]
+        - heading "准备生产材料" [level=3, ref=e45]
+        - StaticText "−"
+      - paragraph
+        - StaticText "主脚本由外部制作后上传；确认后会作为本生产单不可变输入。"
+      - form
+        - paragraph
+          - StaticText "一次选择多个文件；系统只识别文件类型，具体用途由你逐项确认。"
+        - button "查看主脚本模板" [ref=e46]
+        - region "统一材料导入" [ref=e47]
+          - LabelText [ref=e54] clickable [cursor:pointer]
+            - button "选择生产材料" [ref=e56]: 未选择任何文件
+            - strong
+              - StaticText "选择生产材料"
+            - StaticText "支持脚本、图片、音频和视频；可一次选择多个文件。"
+          - paragraph
+            - StaticText "尚未选择文件。"

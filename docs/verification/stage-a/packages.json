@@ -1,0 +1,84 @@
+{
+  "checkedAt": "2026-10-23T08:30:38.528Z",
+  "samples": [
+    {
+      "sample": "1-shot",
+      "episodeId": "a6f530bd-045d-4cbf-9c74-6e720da674d3",
+      "execution": "real package module and real media; synthetic final/QC roles, no approvals",
+      "elapsedMs": 63.6365,
+      "manifest": {
+        "relativePath": "episodes/a6f530bd-045d-4cbf-9c74-6e720da674d3/publish-package/manifest.json",
+        "fileSize": 1105,
+        "sha256": "f09aa38273632c73d3d1c85db246d7cd3b9284dd08b56d8d1790bbec00aa5a8c"
+      },
+      "artifacts": [
+        {
+          "artifactType": "final_render",
+          "relativePath": "episodes/a6f530bd-045d-4cbf-9c74-6e720da674d3/review-render/v1/review.mp4",
+          "sha256": "6cfcfe3d57906079f57f2f7644a9cad6345314a151b7ad707a4e029b6cba650f",
+          "fileSize": 87414
+        },
+        {
+          "artifactType": "cover",
+          "relativePath": "episodes/a6f530bd-045d-4cbf-9c74-6e720da674d3/cover.jpg",
+          "sha256": "3eca5380a075af83c4a969f22e88aa51a99dabaced802ff29d95c6df5b30311a",
+          "fileSize": 2077
+        },
+        {
+          "artifactType": "metadata",
+          "relativePath": "episodes/a6f530bd-045d-4cbf-9c74-6e720da674d3/metadata.json",
+          "sha256": "cd064d5d7fee5732a0dc63854137a1bead9ce8a04a6e4c33535be1a1aefdf99b",
+          "fileSize": 140
+        },
+        {
+          "artifactType": "final_qc_report",
+          "relativePath": "episodes/a6f530bd-045d-4cbf-9c74-6e720da674d3/review-render/v1/qc-report.json",
+          "sha256": "8c043c9d9f24897355e6e6023893a6154e14fd967ce4090839583c41dc70fa44",
+          "fileSize": 663
+        }
+      ],
+      "corruptionRejected": true,
+      "restoredAndVerified": true
+    },
+    {
+      "sample": "3-shot",
+      "episodeId": "4ee28bf3-a3fc-486f-97fb-b60d21777c6d",
+      "execution": "real package module and real media; synthetic final/QC roles, no approvals",
+      "elapsedMs": 41.282792,
+      "manifest": {
+        "relativePath": "episodes/4ee28bf3-a3fc-486f-97fb-b60d21777c6d/publish-package/manifest.json",
+        "fileSize": 1106,
+        "sha256": "6584c6ef2d1425b79bff7a58c32ca36f6c3fe51dd75f55ab7bc72038febb9889"
+      },
+      "artifacts": [
+        {
+          "artifactType": "final_render",
+          "relativePath": "episodes/4ee28bf3-a3fc-486f-97fb-b60d21777c6d/review-render/v1/review.mp4",
+          "sha256": "9e093a4d1fc584892d5c9ff3b9bbc3205fa38efbe7583ba7bf3ff5c9e12060eb",
+          "fileSize": 258314
+        },
+        {
+          "artifactType": "cover",
+          "relativePath": "episodes/4ee28bf3-a3fc-486f-97fb-b60d21777c6d/cover.jpg",
+          "sha256": "3eca5380a075af83c4a969f22e88aa51a99dabaced802ff29d95c6df5b30311a",
+          "fileSize": 2077
+        },
+        {
+          "artifactType": "metadata",
+          "relativePath": "episodes/4ee28bf3-a3fc-486f-97fb-b60d21777c6d/metadata.json",
+          "sha256": "8967f871af309996158f99ff53e8ade1f0c66dc176f4711d87a45337d740e4d4",
+          "fileSize": 140
+        },
+        {
+          "artifactType": "final_qc_report",
+          "relativePath": "episodes/4ee28bf3-a3fc-486f-97fb-b60d21777c6d/review-render/v1/qc-report.json",
+          "sha256": "f55beee89f432064ca8b9c80d21752c1c48a8918bb0ad9bb10db8aa8fed9616b",
+          "fileSize": 608
+        }
+      ],
+      "corruptionRejected": true,
+      "restoredAndVerified": true
+    }
+  ],
+  "note": "Supplemental real-file package boundary; render videos and QC reused as explicit fixtures, not approved final production outputs."
+}

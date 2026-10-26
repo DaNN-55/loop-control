@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/episodes/episodeReadService.test.ts (3 tests) 2ms
+ ✓ src/lib/pagedRead.test.ts (3 tests) 3ms
+
+ Test Files  2 passed (2)
+      Tests  6 passed (6)
+   Start at  00:09:42
+   Duration  534ms (transform 27ms, setup 0ms, collect 25ms, tests 4ms, environment 275ms, prepare 61ms)
+

@@ -20,24 +20,31 @@ values
   ('63000000-0000-4000-8000-000000000012', '63000000-0000-4000-8000-000000000002', 'owner');
 
 select set_config('request.jwt.claim.sub', '63000000-0000-4000-8000-000000000001', true);
+select set_config('request.jwt.claim.role', 'authenticated', true);
 select lives_ok(
   $$select public.create_external_connection('pexels', 'pexels_video', 'Owner one Pexels', 'pexels-secret-value')$$,
   'an Owner creates a Pexels connection without a business-table secret'
 );
 select ok(
-  exists (select 1 from public.external_connection_versions),
+  exists (
+    select 1 from public.external_connection_versions version
+    join public.external_connections connection on connection.id = version.connection_id
+    where connection.created_by = '63000000-0000-4000-8000-000000000001'
+  ),
   'a connection receives an immutable version record'
 );
 select hasnt_table('public', 'external_connection_secrets', 'the plaintext secret table is removed');
 select isnt(
-  (select vault_secret_id::text from public.external_connection_versions limit 1),
+  (select version.vault_secret_id::text from public.external_connection_versions version
+    join public.external_connections connection on connection.id = version.connection_id
+    where connection.created_by = '63000000-0000-4000-8000-000000000001'),
   'pexels-secret-value',
   'the connection version stores only a Vault reference'
 );
 
 select set_config('request.jwt.claim.role', 'authenticated', true);
 select throws_ok(
-  $$select public.resolve_external_connection_secret((select current_version_id from public.external_connections limit 1))$$,
+  $$select public.resolve_external_connection_secret((select current_version_id from public.external_connections where created_by = '63000000-0000-4000-8000-000000000001'))$$,
   '42501',
   'Worker service role is required to resolve a connection secret',
   'an Owner cannot resolve the Vault secret'
@@ -45,13 +52,13 @@ select throws_ok(
 
 select set_config('request.jwt.claim.role', 'service_role', true);
 select is(
-  public.resolve_external_connection_secret((select current_version_id from public.external_connections limit 1)),
+  public.resolve_external_connection_secret((select current_version_id from public.external_connections where created_by = '63000000-0000-4000-8000-000000000001')),
   'pexels-secret-value',
   'only the Worker service role can resolve the Vault secret for the frozen version'
 );
 select lives_ok(
   $$select public.record_external_connection_verification(
-    (select current_version_id from public.external_connections limit 1),
+    (select current_version_id from public.external_connections where created_by = '63000000-0000-4000-8000-000000000001'),
     'verified',
     'Pexels accepted the connection.'
   )$$,
@@ -64,7 +71,7 @@ select lives_ok(
     values (
       '63000000-0000-4000-8000-000000000011',
       1,
-      jsonb_build_object('b_roll', jsonb_build_object('credential_ref', (select current_version_id from public.external_connections limit 1))),
+      jsonb_build_object('b_roll', jsonb_build_object('credential_ref', (select current_version_id from public.external_connections where created_by = '63000000-0000-4000-8000-000000000001'))),
       true
     )$$,
   'the owning Owner can select the verified connection version'
@@ -76,7 +83,7 @@ select throws_ok(
     values (
       '63000000-0000-4000-8000-000000000012',
       1,
-      jsonb_build_object('b_roll', jsonb_build_object('credential_ref', (select current_version_id from public.external_connections limit 1))),
+      jsonb_build_object('b_roll', jsonb_build_object('credential_ref', (select current_version_id from public.external_connections where created_by = '63000000-0000-4000-8000-000000000001'))),
       true
     )$$,
   '22023',

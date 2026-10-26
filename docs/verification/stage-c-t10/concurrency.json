@@ -1,0 +1,9 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "episode": "6de5876f-c278-4a36-91aa-a08fb5c47321",
+  "oppositeTableOrder": true,
+  "bothInitialUpdatesHeldAtBarrier": true,
+  "bothTransactionsCompleted": true,
+  "mutationsRolledBack": true,
+  "sharedSectionCounterWrites": false
+}

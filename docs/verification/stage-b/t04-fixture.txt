@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 isolated:restore-fixture
+> node scripts/isolation/restore-fixture.mjs
+
+{"episode":"d96d613d-34f0-426d-8057-2ecaefea58ca","task":"4f7e2030-a213-443a-af42-2361e30cd2fc","run":"bd3741c3-3fc9-409f-ab49-17cfc2626f16","artifact":"a38ca9cf-d9f0-41df-90bb-dc594051814f","review":"41551261-6dd1-4a53-bca5-bfb25fb7cb12","connectionId":"79076cd6-3fb1-42d7-a56d-fbcb42810c74","versionId":"7cc941e3-10b4-4210-b610-3fc5b9e09558","note":"synthetic checkpoint, real DB and existing media; no full approval chain claimed","output":{"artifact":"a38ca9cf-d9f0-41df-90bb-dc594051814f","sha256":"52ee826ea305bfd0e4e82e357905efdbc6ee3c2297313d22f66341e6012f911c"}}

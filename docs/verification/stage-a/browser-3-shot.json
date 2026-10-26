@@ -1,0 +1,174 @@
+{
+  "sample": "3-shot",
+  "capturedAt": "2026-10-23T08:20:10.053Z",
+  "requests": [
+    {
+      "path": "/rest/v1/episodes",
+      "status": 200,
+      "bytes": 547,
+      "elapsedMs": 13.5,
+      "startedMs": 15.800000011920929
+    },
+    {
+      "path": "/rest/v1/episodes",
+      "status": 200,
+      "bytes": 547,
+      "elapsedMs": 27.19999998807907,
+      "startedMs": 15.700000017881393
+    },
+    {
+      "path": "/rest/v1/review_packages",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 22.700000017881393,
+      "startedMs": 30
+    },
+    {
+      "path": "/rest/v1/storyboard_audio_selections",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 22.700000017881393,
+      "startedMs": 30
+    },
+    {
+      "path": "/rest/v1/state_transitions",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 33.20000001788139,
+      "startedMs": 30.099999994039536
+    },
+    {
+      "path": "/rest/v1/production_material_revisions",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 33.599999994039536,
+      "startedMs": 29.80000001192093
+    },
+    {
+      "path": "/rest/v1/audio_tracks",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 34.80000001192093,
+      "startedMs": 30
+    },
+    {
+      "path": "/rest/v1/rpc/list_external_connection_versions",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 24.5,
+      "startedMs": 43.30000001192093
+    },
+    {
+      "path": "/rest/v1/account_blueprint_versions",
+      "status": 200,
+      "bytes": 342,
+      "elapsedMs": 38.5,
+      "startedMs": 29.599999994039536
+    },
+    {
+      "path": "/rest/v1/rpc/list_external_connection_versions",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 39.099999994039536,
+      "startedMs": 29.700000017881393
+    },
+    {
+      "path": "/rest/v1/shot_preparation_drafts",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 39.400000005960464,
+      "startedMs": 30
+    },
+    {
+      "path": "/rest/v1/artifacts",
+      "status": 200,
+      "bytes": 1219,
+      "elapsedMs": 40.099999994039536,
+      "startedMs": 30
+    },
+    {
+      "path": "/rest/v1/state_transitions",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 27.600000023841858,
+      "startedMs": 43.599999994039536
+    },
+    {
+      "path": "/rest/v1/tasks",
+      "status": 200,
+      "bytes": 8952,
+      "elapsedMs": 42.099999994039536,
+      "startedMs": 30
+    },
+    {
+      "path": "/rest/v1/review_packages",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 29,
+      "startedMs": 43.5
+    },
+    {
+      "path": "/rest/v1/storyboard_audio_selections",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 30.5,
+      "startedMs": 43.5
+    },
+    {
+      "path": "/rest/v1/production_material_revisions",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 30.900000005960464,
+      "startedMs": 43.400000005960464
+    },
+    {
+      "path": "/rest/v1/account_blueprint_versions",
+      "status": 200,
+      "bytes": 342,
+      "elapsedMs": 31.299999982118607,
+      "startedMs": 43.20000001788139
+    },
+    {
+      "path": "/rest/v1/artifacts",
+      "status": 200,
+      "bytes": 1219,
+      "elapsedMs": 31.700000017881393,
+      "startedMs": 43.5
+    },
+    {
+      "path": "/rest/v1/audio_tracks",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 32.099999994039536,
+      "startedMs": 43.5
+    },
+    {
+      "path": "/rest/v1/shot_preparation_drafts",
+      "status": 200,
+      "bytes": 2,
+      "elapsedMs": 32.5,
+      "startedMs": 43.5
+    },
+    {
+      "path": "/rest/v1/task_runs",
+      "status": 200,
+      "bytes": 684,
+      "elapsedMs": 6.0999999940395355,
+      "startedMs": 72.30000001192093
+    },
+    {
+      "path": "/rest/v1/tasks",
+      "status": 200,
+      "bytes": 8952,
+      "elapsedMs": 38.30000001192093,
+      "startedMs": 43.599999994039536
+    },
+    {
+      "path": "/rest/v1/task_runs",
+      "status": 200,
+      "bytes": 684,
+      "elapsedMs": 2.9000000059604645,
+      "startedMs": 82.30000001192093
+    }
+  ]
+}

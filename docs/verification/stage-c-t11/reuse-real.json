@@ -1,0 +1,121 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "case": "reuse",
+  "episode": "132c8432-d7cc-4850-a5cf-56333ff38b20",
+  "sourceReviewPackageId": "a69221e6-6fcb-43ca-b933-f43cc837e49e",
+  "fixtureApproval": "synthetic database test approval, not human Owner acceptance",
+  "http": "existing serveEpisodeDispatch with real Owner auth; injected targeted real prebuilt CLI avoids starting a second global consumer",
+  "results": [
+    {
+      "label": "review",
+      "id": "6e5f77d5-f0e7-4b9d-91d6-5de32032de52",
+      "elapsedMs": 5132.221165999999,
+      "status": "completed",
+      "runs": [
+        {
+          "id": "a89be90f-2740-4ba8-b7bc-2eddce152d49",
+          "attempt": 0,
+          "status": "completed"
+        }
+      ],
+      "artifacts": [
+        {
+          "artifactType": "render",
+          "relativePath": "episodes/132c8432-d7cc-4850-a5cf-56333ff38b20/review-render/v1/review.mp4",
+          "sha256": "072a7695acfdedfbe316d9187d47ac197cfa9ad1b21d6285bd55b70733e8e143",
+          "fileSize": 227674
+        },
+        {
+          "artifactType": "review_render_project",
+          "relativePath": "episodes/132c8432-d7cc-4850-a5cf-56333ff38b20/review-render/v1/project.json",
+          "sha256": "e0ef5b44c0d70a7f9ccd45e32187a642030efd5e878384a0e43c16fb8d3097d2",
+          "fileSize": 3593
+        },
+        {
+          "artifactType": "review_render_runtime",
+          "relativePath": "episodes/132c8432-d7cc-4850-a5cf-56333ff38b20/review-render/v1/openchatcut-runtime.json",
+          "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+          "fileSize": 42
+        },
+        {
+          "artifactType": "review_qc_report",
+          "relativePath": "episodes/132c8432-d7cc-4850-a5cf-56333ff38b20/review-render/v1/qc-report.json",
+          "sha256": "97f5176f29254dfba3e0df02d0be1c951711991d54c1a0a82536a47e620f7ec7",
+          "fileSize": 792
+        }
+      ]
+    },
+    {
+      "label": "reuse",
+      "id": "73a67fa1-71ed-4f99-890e-52832eaafadc",
+      "elapsedMs": 488.4124580000007,
+      "status": "completed",
+      "runs": [
+        {
+          "id": "e5e6d61d-7732-4ef4-9f3f-9d23daf5355c",
+          "attempt": 0,
+          "status": "completed"
+        }
+      ],
+      "artifacts": [
+        {
+          "artifactType": "final_render",
+          "relativePath": "episodes/132c8432-d7cc-4850-a5cf-56333ff38b20/final-render/v1/final-render.mp4",
+          "sha256": "072a7695acfdedfbe316d9187d47ac197cfa9ad1b21d6285bd55b70733e8e143",
+          "fileSize": 227674
+        },
+        {
+          "artifactType": "final_render_project",
+          "relativePath": "episodes/132c8432-d7cc-4850-a5cf-56333ff38b20/final-render/v1/project.json",
+          "sha256": "e0ef5b44c0d70a7f9ccd45e32187a642030efd5e878384a0e43c16fb8d3097d2",
+          "fileSize": 3593
+        },
+        {
+          "artifactType": "final_qc_report",
+          "relativePath": "episodes/132c8432-d7cc-4850-a5cf-56333ff38b20/final-render/v1/final-qc-report.json",
+          "sha256": "f070c0d345e0ac63e17acdeea99cb2ddc31fcc3e17db3ffe76f590946f1475b7",
+          "fileSize": 1132
+        }
+      ],
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_type": "video",
+            "width": 360,
+            "height": 640,
+            "side_data_list": [
+              {}
+            ]
+          },
+          {
+            "codec_type": "audio"
+          }
+        ],
+        "format": {
+          "duration": "2.048000"
+        }
+      }
+    }
+  ],
+  "packages": [
+    {
+      "case": "reuse",
+      "episode": "132c8432-d7cc-4850-a5cf-56333ff38b20",
+      "manifest": {
+        "relativePath": "episodes/132c8432-d7cc-4850-a5cf-56333ff38b20/publish-package/manifest.json",
+        "fileSize": 1116,
+        "sha256": "62026222de7913a4d04f984762235b7a5ab7c5558eb756274c35dc6fc6fcc00b"
+      },
+      "verified": true
+    }
+  ],
+  "reviewPackageUnchanged": true,
+  "sourceVideoRestored": true,
+  "originalTasksUnchanged": true,
+  "limitations": [
+    "not a browser or human approval-chain test",
+    "missing/changed-input variants covered by unit/SQL; real fault case corrupt video rerender"
+  ]
+}

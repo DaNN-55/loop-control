@@ -1,0 +1,16 @@
+
+⎯⎯⎯⎯⎯⎯⎯ Startup Error ⎯⎯⎯⎯⎯⎯⎯⎯
+Error: Worker 与 HTTP 服务的数据库绑定不一致，拒绝派发。
+    at workerDispatchOptions (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/node_modules/.vite-temp/vite.config.ts.timestamp-1792765802442-8ab0bdb3a77c88.mjs:313:71)
+    at startLocalWorkerService (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/node_modules/.vite-temp/vite.config.ts.timestamp-1792765802442-8ab0bdb3a77c88.mjs:325:19)
+    at BasicMinimalPluginContext.configureServer (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/node_modules/.vite-temp/vite.config.ts.timestamp-1792765802442-8ab0bdb3a77c88.mjs:4827:28)
+    at _createServer (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/node_modules/vite/dist/node/chunks/config.js:25682:97)
+    at async createViteServer (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/node_modules/vitest/dist/chunks/cli-api.DVe0nWUx.js:6921:17)
+    at async createVitest (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/node_modules/vitest/dist/chunks/cli-api.DVe0nWUx.js:10212:17)
+    at async prepareVitest (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/node_modules/vitest/dist/chunks/cli-api.DVe0nWUx.js:10551:14)
+    at async startVitest (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/node_modules/vitest/dist/chunks/cli-api.DVe0nWUx.js:10498:14)
+    at async start (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/node_modules/vitest/dist/chunks/cac.BfaZ95xE.js:1414:15)
+    at async CAC.run (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/node_modules/vitest/dist/chunks/cac.BfaZ95xE.js:1393:2)
+
+
+

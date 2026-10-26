@@ -1,0 +1,12 @@
+[
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t10/1792772281388/result.json",
+    "bytes": 1764,
+    "sha256": "3fbb19faa6c2b4158ea4555d1af54291505c23ad0540f83c91d6a167bc758256"
+  },
+  {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/verified/state/t10/1792772281388/concurrency.json",
+    "bytes": 281,
+    "sha256": "f29b85ad49b350494a20f38ac598d0d10ecdd0384fbfd45a7f23b7845d88e21c"
+  }
+]

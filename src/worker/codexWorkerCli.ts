@@ -1,3 +1,4 @@
+import { assertPreparedRuntime } from "../orchestration/runtimeBuild.js";
 import { spawn } from "node:child_process";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -36,11 +37,14 @@ const workerCapacity = Number(process.env.CODEX_WORKER_CAPACITY ?? "2");
 if (!Number.isSafeInteger(workerCapacity) || workerCapacity <= 0) throw new Error("CODEX_WORKER_CAPACITY must be a positive integer.");
 const codexExecutionTimeoutMs = Number(process.env.CODEX_WORKER_EXECUTION_TIMEOUT_MS ?? "300000");
 if (!Number.isSafeInteger(codexExecutionTimeoutMs) || codexExecutionTimeoutMs <= 0) throw new Error("CODEX_WORKER_EXECUTION_TIMEOUT_MS must be a positive integer.");
-const requestedTaskId = readTaskIdArgument(process.argv.slice(2));
+const fromDispatcher = process.argv.length === 3 && process.argv[2] === "--claimed-task";
+const requestedTaskId = fromDispatcher ? null : readTaskIdArgument(process.argv.slice(2));
 const supabase = createClient(supabaseUrl, serviceRoleKey, { auth: { persistSession: false } });
 const workerLeaseHeartbeatMs = 5 * 60 * 1000;
 let leaseHeartbeat: ReturnType<typeof setInterval> | undefined;
+let activeLease: { taskId: string; attempt: number; token: string } | undefined;
 
+await assertPreparedRuntime(process.env.LOOP_PROJECT_ROOT ?? process.cwd());
 const result = await runCodexWorker({
   claimNextTask: claimNextTask,
   reportResult,
@@ -55,11 +59,23 @@ const result = await runCodexWorker({
 process.stdout.write(`${JSON.stringify(result)}\n`);
 
 async function claimNextTask(): Promise<ClaimedWorkerTask | null> {
+  let row;
+  if (fromDispatcher) {
+    let input = "";
+    for await (const chunk of process.stdin) { input += chunk.toString(); if (Buffer.byteLength(input) > 10 * 1024 * 1024) throw new Error("Claimed task package is too large."); }
+    row = JSON.parse(input);
+    // Validate the actual attempt/token before running an already reserved task.
+    const { error } = await supabase.rpc("refresh_worker_task_lease", { p_task_id: row.task_id, p_attempt: row.attempt, p_lease_token: row.lease_token });
+    if (error) throw new Error(`Unable to validate dispatched Worker lease: ${error.message}`);
+  } else {
   const { data, error } = await supabase.rpc("claim_next_worker_task", { p_worker_capacity: workerCapacity, ...(requestedTaskId ? { p_task_id: requestedTaskId } : {}) });
   if (error) throw new Error(`Unable to claim a worker task: ${error.message}`);
-  const row = data?.[0];
+  row = data?.[0];
+  }
   if (!row) return null;
   if (row.provider !== "codex" && row.provider !== "google_tts" && row.provider !== "volcengine_tts" && row.provider !== "pexels" && row.provider !== "ffmpeg" && row.provider !== "freesound" && row.provider !== "openchatcut" && row.provider !== "openai" && row.provider !== "cloudflare" && row.provider !== "whisperx") throw new Error(`Unsupported worker provider: ${row.provider}`);
+  if (typeof row.lease_token !== "string" || !/^[0-9a-f-]{36}$/i.test(row.lease_token)) throw new Error("Claimed task has no valid lease token; upgrade the database.");
+  activeLease = { taskId: row.task_id, attempt: row.attempt, token: row.lease_token };
   startLeaseHeartbeat(row.task_id, row.attempt);
 
   return {
@@ -88,7 +104,12 @@ async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
     return taskPackage.capability === "storyboard_planning" ? useWrittenStoryboard(taskPackage, completedOutput) : completedOutput;
   }
   if (taskPackage.provider === "openchatcut") {
-    const input = { taskPackage, run: runCommand, validateMp4: validateMp4Artifact, inspectMp4: inspectMp4Artifact };
+    const input = { taskPackage, run: runCommand, validateMp4: validateMp4Artifact, inspectMp4: inspectMp4Artifact,
+      ...(taskPackage.finalRender?{getApprovedReuseSource:async()=>{
+        const {data,error}=await supabase.rpc("final_render_reuse_source",{p_task_id:taskPackage.task.id,p_attempt:taskPackage.budget.attempt,p_lease_token:leaseToken(taskPackage.task.id,taskPackage.budget.attempt)});
+        if(error||!data||data.reviewPackageId!==taskPackage.finalRender?.sourceReviewPackageId)throw Error("最终成片来源审核已失效或无法核验，停止执行。");
+        return data;
+      }}:{}) };
     return executeOpenChatCutRender(input);
   }
   if (taskPackage.provider === "whisperx") return executeWhisperXTask(taskPackage);
@@ -388,6 +409,7 @@ async function reportResult(taskId: string, attempt: number, workerResult: unkno
       p_task_id: taskId,
       p_attempt: attempt,
       p_result: workerResult,
+      p_lease_token: leaseToken(taskId, attempt),
     });
     if (error) throw new Error(`Unable to report the worker result: ${error.message}`);
   } finally {
@@ -397,10 +419,15 @@ async function reportResult(taskId: string, attempt: number, workerResult: unkno
 
 async function reportProgress(taskId: string, attempt: number, progress: WorkerProgress): Promise<void> {
   const value = { version: "worker-progress/v1", progress };
-  const { error: taskError } = await supabase.from("tasks").update({ last_result: value }).eq("id", taskId).eq("attempt", attempt).eq("status", "running");
-  if (taskError) throw new Error(`Unable to report Worker progress: ${taskError.message}`);
-  const { error: runError } = await supabase.from("task_runs").update({ result: value }).eq("task_id", taskId).eq("attempt", attempt).eq("status", "running");
-  if (runError) throw new Error(`Unable to report Worker run progress: ${runError.message}`);
+  const { error } = await supabase.rpc("report_worker_progress", {
+    p_task_id: taskId, p_attempt: attempt, p_lease_token: leaseToken(taskId, attempt), p_progress: value,
+  });
+  if (error) throw new Error(`Unable to report Worker progress: ${error.message}`);
+}
+
+function leaseToken(taskId: string, attempt: number): string {
+  if (!activeLease || activeLease.taskId !== taskId || activeLease.attempt !== attempt) throw new Error("Worker lease does not match this attempt.");
+  return activeLease.token;
 }
 
 function startLeaseHeartbeat(taskId: string, attempt: number): void {
@@ -408,7 +435,7 @@ function startLeaseHeartbeat(taskId: string, attempt: number): void {
   leaseHeartbeat = setInterval(() => {
     void (async () => {
       try {
-        const { error } = await supabase.rpc("refresh_worker_task_lease", { p_task_id: taskId, p_attempt: attempt });
+        const { error } = await supabase.rpc("refresh_worker_task_lease", { p_task_id: taskId, p_attempt: attempt, p_lease_token: leaseToken(taskId, attempt) });
         if (error) process.stderr.write(`Unable to refresh the worker lease: ${error.message}\n`);
       } catch (error) {
         process.stderr.write(`Unable to refresh the worker lease: ${error instanceof Error ? error.message : String(error)}\n`);

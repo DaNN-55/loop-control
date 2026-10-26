@@ -1,0 +1,55 @@
+
+> loop-control@0.1.0 isolated:leases
+> node scripts/isolation/leases.mjs final --verified
+
+{
+  "checkedAt": "2026-10-23T11:01:21.935Z",
+  "target": "loop-control-stage-b-verified",
+  "mode": "final",
+  "outcomes": [
+    {
+      "name": "only expired running is recovered without a ready candidate",
+      "passed": true
+    },
+    {
+      "name": "expired same-group occupant releases capacity before candidate selection",
+      "passed": true
+    },
+    {
+      "name": "expired heartbeat cannot revive an interrupted attempt",
+      "passed": true
+    },
+    {
+      "name": "claim returns a distinct lease token for the active attempt",
+      "passed": true
+    },
+    {
+      "name": "active heartbeat and progress retain zero-based attempt and prevent recovery",
+      "passed": true
+    },
+    {
+      "name": "attempt budget terminates expired run and preserves attempt history",
+      "passed": true
+    },
+    {
+      "name": "late result, heartbeat, progress, wrong token and legacy API cannot overwrite next attempt",
+      "passed": true
+    },
+    {
+      "name": "two truly overlapping transactions claim exactly once without duplicate runs",
+      "passed": true
+    },
+    {
+      "name": "renewal holding a real row lock is skipped by concurrent recovery",
+      "passed": true
+    },
+    {
+      "name": "recovery winning the race makes late renewal fail",
+      "passed": true
+    },
+    {
+      "name": "anonymous cannot claim or recover",
+      "passed": true
+    }
+  ]
+}

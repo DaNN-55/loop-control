@@ -1,0 +1,64 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":0,"workers":[],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":1,"workers":[{"status":"completed"}],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"dispatch","plannedTasks":0,"queuedTasks":0,"workers":[],"productionReadyEpisodes":0,"preRenderReviewPackages":0}
+{"mode":"notify","notifications":0,"skipped":0}
+导出 accounts 失败：Supabase 返回 HTTP 503
+ ❯ src/orchestration/loopOrchestratorCli.test.ts (12 tests | 2 failed) 33078ms
+   ✓ 定向生产单调度 > 提醒工作流复用一次事件扫描，而不是各自定时读取 audit_events 17ms
+   ✓ 定向生产单调度 > 派发和提醒使用保守默认值，并在导入时读取本机间隔配置 19ms
+   ✓ 定向生产单调度 > 每日健康检查每天 09:00 只运行一次 3ms
+   ✓ 定向生产单调度 > 定时扫描先领取持久任务，再用stdin传递给Worker  3781ms
+   × 定向生产单调度 > 任务唤醒不重新规划冻结输入，仍消费公平共享队列 13373ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   × 定向生产单调度 > Episode入口限定规划范围，执行仍使用全局原子领取 7491ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ 定向生产单调度 > 满载领取为空时不构建或启动空跑Worker  4352ms
+   ✓ 定向生产单调度 > CLI不传显式environment时仍尊重进程中的Worker容量 223ms
+   ✓ 定向生产单调度 > 已准备的任务热路径只执行产物，不调用npm或编译器 71ms
+   ✓ 定向生产单调度 > 空队列不构建或启动Worker 136ms
+   ✓ 定向生产单调度 > 一次提醒轮次通过原子领取消费事件，不再按时间重扫 audit_events  772ms
+   ✓ 定向生产单调度 > 部分快照失败归入快照结果，不误报为调度失败  2835ms
+ ✓ src/orchestration/workerScheduler.test.ts (2 tests) 281ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > 任务唤醒不重新规划冻结输入，仍消费公平共享队列
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:77:3
+     75|   });
+     76| 
+     77|   it("任务唤醒不重新规划冻结输入，仍消费公平共享队列", async () => {
+       |   ^
+     78|     const fetchMock = claimedQueue();
+     79|     childProcess.spawn.mockImplementation((_command: string, args: str…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > Episode入口限定规划范围，执行仍使用全局原子领取
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:85:3
+     83|   });
+     84| 
+     85|   it("Episode入口限定规划范围，执行仍使用全局原子领取", async () => {
+       |   ^
+     86|     const fetchMock = claimedQueue();
+     87|     childProcess.spawn.mockImplementation((_command: string, args: str…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 12 passed (14)
+   Start at  23:43:40
+   Duration  47.12s (transform 1.94s, setup 0ms, collect 3.98s, tests 33.36s, environment 1.52s, prepare 1.82s)
+

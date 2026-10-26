@@ -1,0 +1,56 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "episode": "9e640ec0-f3ea-4f0c-8077-7c5b23a7ea3e",
+  "task": "8d6212a2-ac3b-4f10-b068-0c4110045842",
+  "evidence": [
+    {
+      "kind": "missing",
+      "workerAndOrchestratorCliRejected": true,
+      "directOrchestratorRejected": true,
+      "http": 503,
+      "workerPreflightHttp": 503,
+      "episodeRowUnchanged": true,
+      "detail": "Worker/编排程序未准备、已过期或产物损坏；请先运行 npm run runtime:prepare 并重启服务。",
+      "task": {
+        "status": "ready",
+        "attempt": 0
+      }
+    },
+    {
+      "kind": "corrupt",
+      "workerAndOrchestratorCliRejected": true,
+      "directOrchestratorRejected": true,
+      "http": 503,
+      "workerPreflightHttp": 503,
+      "episodeRowUnchanged": true,
+      "detail": "Worker/编排程序未准备、已过期或产物损坏；请先运行 npm run runtime:prepare 并重启服务。",
+      "task": {
+        "status": "ready",
+        "attempt": 0
+      }
+    },
+    {
+      "kind": "source-changed",
+      "workerAndOrchestratorCliRejected": true,
+      "directOrchestratorRejected": true,
+      "http": 503,
+      "workerPreflightHttp": 503,
+      "episodeRowUnchanged": true,
+      "detail": "Worker/编排程序未准备、已过期或产物损坏；请先运行 npm run runtime:prepare 并重启服务。",
+      "task": {
+        "status": "ready",
+        "attempt": 0
+      }
+    },
+    {
+      "kind": "explicit preparation and service restart restores real Worker completion",
+      "passed": true,
+      "task": {
+        "status": "completed",
+        "attempt": 1
+      }
+    }
+  ],
+  "production": false,
+  "providerCalls": false
+}

@@ -1,0 +1,9 @@
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/isolation/fast-dispatch.mjs:28
+const wait=async(predicate,label)=>{for(let i=0;i<400;i++){if(await predicate())return;await delay(25);}throw Error(`T08 timeout: ${label}`);};
+                                                                                                              ^
+
+Error: T08 timeout: fallback during long execution
+    at wait (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/isolation/fast-dispatch.mjs:28:111)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/isolation/fast-dispatch.mjs:53:71
+
+Node.js v24.20.0

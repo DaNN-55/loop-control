@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 isolated:restore
+> node scripts/isolation/restore.mjs mount-media --replay
+
+{"mounted":true,"image":"/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/replay/media.sparseimage","mediaRoot":"/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/replay/media","originalCopyPreserved":"/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-b/replay/media-restored-before-mount"}

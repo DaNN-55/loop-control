@@ -1,0 +1,6 @@
+{
+  "checkedAt": "2026-10-23T08:53:34.689Z",
+  "scope": "temporary sentinel fixture, same validate/open primitives as run.mjs; no production target",
+  "rootConfigurationAccepted": true,
+  "danglingLeafEscapesRoot": true
+}

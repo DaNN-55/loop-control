@@ -1,0 +1,21 @@
+
+> loop-control@0.1.0 isolated:leases
+> node scripts/isolation/leases.mjs red
+
+{
+  "checkedAt": "2026-10-23T10:33:35.491Z",
+  "target": "loop-control-stage-b-restore",
+  "mode": "red",
+  "outcomes": [
+    {
+      "name": "only expired running is recovered without a ready candidate",
+      "passed": false,
+      "detail": "Expected values to be strictly equal:\n\n0 !== 1\n"
+    },
+    {
+      "name": "expired same-group occupant releases capacity before candidate selection",
+      "passed": false,
+      "detail": "Expected values to be strictly equal:\n\n0 !== 1\n"
+    }
+  ]
+}

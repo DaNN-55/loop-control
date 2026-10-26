@@ -1,0 +1,30 @@
+{
+  "baseline": "eb83b30724a0dcc7a65ff5c80bfcd27b1cb0e2ba",
+  "target": "loop-control-stage-b-verified",
+  "ports": {
+    "console": 55176,
+    "api": 55461,
+    "database": 55462
+  },
+  "migration": "20261023133427",
+  "migrations": 232,
+  "productionOperations": false,
+  "onlineProviderCalls": false,
+  "fullOwnerApprovalChain": false,
+  "defaultTestTimeoutOverride": null,
+  "defaultBudgetThisRun": {
+    "files": 70,
+    "tests": 676,
+    "passed": true
+  },
+  "priorDefaultFiveSecondGateFailureRetained": true,
+  "priorTimingInstabilityRootCauseFixed": false,
+  "fullSuiteCommand": "node node_modules/vitest/vitest.mjs run --maxWorkers=1 --exclude n8n/import-workflows.test.mjs --exclude **/*.integration.test.ts --exclude **/.loop-control/**",
+  "T08Started": false,
+  "pushed": false,
+  "merged": false,
+  "committed": true,
+  "oldTasksPreservedPerRealScenario": true,
+  "temporaryBrowserConsoleRestored": true,
+  "ownerAcceptedLocalVerification": true
+}

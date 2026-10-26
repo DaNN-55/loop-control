@@ -1,3 +1,4 @@
+import { createEpisodeReader, type EpisodeReadChanges } from "./episodeReadService";
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import type { Session } from "@supabase/supabase-js";
 import type { Database, Json } from "../lib/database.types";
@@ -75,7 +76,7 @@ export interface EpisodeProductionProps {
   episodeId: string;
   onClose: () => void;
   onOpenAccountWorkspace: (request: AccountWorkspaceRequest) => void;
-  onSummaryChanged: () => Promise<void> | void;
+  onSummaryChanged: (snapshot?: EpisodeProductionSnapshot) => Promise<void> | void;
   ownerId: string;
 }
 
@@ -86,7 +87,7 @@ interface RpcResult {
 
 export interface EpisodeProductionRuntime {
   getSession: () => Promise<Session | null>;
-  load: (episodeId: string) => Promise<EpisodeProductionSnapshot>;
+  load: (episodeId: string, fresh?: boolean) => Promise<EpisodeProductionSnapshot>;
   openWindow: (url: string, target: string, features?: string) => Window | null;
   recoverFinalReviewRender: typeof recoverFinalReviewRender;
   request: typeof fetch;
@@ -104,52 +105,15 @@ export interface MemoryEpisodeProductionRuntime {
   runtime: EpisodeProductionRuntime;
 }
 
-function throwResultError(results: Array<{ error: unknown }>) {
-  const failed = results.find((result) => result.error);
-  if (failed?.error) throw failed.error;
-}
+const readEpisodeChanges = createEpisodeReader<EpisodeProductionSnapshot>(async(episodeId,known,accessToken)=>{
+  const {data,error}=await (supabase.rpc as unknown as (name:string,input:object)=>{setHeader:(name:string,value:string)=>Promise<{data:unknown;error:unknown}>})("read_episode_production",{p_episode_id:episodeId,p_known:known}).setHeader("Authorization",`Bearer ${accessToken}`);
+  if(error)throw error;if(!data)throw Error("生产单不存在或当前 Owner 无权访问。");
+  return data as EpisodeReadChanges<EpisodeProductionSnapshot>;
+});
 
-function isMissingStoryboardAudioSelections(error: unknown): boolean {
-  if (!error || typeof error !== "object") return false;
-  const candidate = error as { code?: unknown; message?: unknown };
-  return candidate.code === "42P01" || candidate.code === "PGRST205" || (typeof candidate.message === "string" && candidate.message.includes("storyboard_audio_selections"));
-}
-
-async function loadEpisodeProduction(episodeId: string): Promise<EpisodeProductionSnapshot> {
-  const episodeResult = await supabase.from("episodes").select("*").eq("id", episodeId).single();
-  throwResultError([episodeResult]);
-  const episode = episodeResult.data;
-  if (!episode) throw new Error("生产单不存在或当前 Owner 无权访问。");
-  const [blueprintResult, seriesVersionResult, connectionVersionsResult, materialRevisionsResult, shotPreparationDraftsResult, storyboardAudioSelectionsResult, reviewPackagesResult, artifactsResult, audioTracksResult, tasksResult, transitionsResult] = await Promise.all([
-    supabase.from("account_blueprint_versions").select("*").eq("id", episode.blueprint_version_id).maybeSingle(),
-    episode.series_version_id ? supabase.from("series_versions").select("*").eq("id", episode.series_version_id).maybeSingle() : Promise.resolve({ data: null, error: null }),
-    supabase.rpc("list_external_connection_versions", { p_connection_id: null }),
-    supabase.from("production_material_revisions").select("*").eq("episode_id", episodeId).order("created_at", { ascending: false }),
-    supabase.from("shot_preparation_drafts").select("*").eq("episode_id", episodeId).order("updated_at", { ascending: false }),
-    supabase.from("storyboard_audio_selections").select("*").eq("episode_id", episodeId).order("updated_at", { ascending: false }),
-    supabase.from("review_packages").select("*").eq("episode_id", episodeId).order("created_at", { ascending: false }),
-    supabase.from("artifacts").select("*").eq("episode_id", episodeId).order("created_at", { ascending: false }),
-    supabase.from("audio_tracks").select("*").eq("episode_id", episodeId).order("created_at", { ascending: false }),
-    supabase.from("tasks").select("*").eq("episode_id", episodeId).order("created_at", { ascending: false }),
-    supabase.from("state_transitions").select("*").eq("episode_id", episodeId).order("created_at", { ascending: false }),
-  ]);
-  if (storyboardAudioSelectionsResult.error && !isMissingStoryboardAudioSelections(storyboardAudioSelectionsResult.error)) throw storyboardAudioSelectionsResult.error;
-  throwResultError([blueprintResult, seriesVersionResult, connectionVersionsResult, materialRevisionsResult, shotPreparationDraftsResult, reviewPackagesResult, artifactsResult, audioTracksResult, tasksResult, transitionsResult]);
-  const reviewPackageIds = (reviewPackagesResult.data ?? []).map((reviewPackage) => reviewPackage.id);
-  const audioTrackIds = (audioTracksResult.data ?? []).map((track) => track.id);
-  const taskIds = (tasksResult.data ?? []).map((task) => task.id);
-  const [reviewAnnotationsResult, qcReviewIssuesResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, audioTrackAnnotationsResult, taskRunsResult] = await Promise.all([
-    reviewPackageIds.length ? supabase.from("review_annotations").select("*").in("review_package_id", reviewPackageIds).order("created_at") : Promise.resolve({ data: [], error: null }),
-    reviewPackageIds.length ? supabase.from("qc_review_issues").select("*").in("review_package_id", reviewPackageIds).order("created_at") : Promise.resolve({ data: [], error: null }),
-    reviewPackageIds.length ? supabase.from("pre_render_review_members").select("*").in("review_package_id", reviewPackageIds).order("created_at") : Promise.resolve({ data: [], error: null }),
-    reviewPackageIds.length ? supabase.from("pre_render_review_member_decisions").select("*").in("review_package_id", reviewPackageIds).order("created_at") : Promise.resolve({ data: [], error: null }),
-    audioTrackIds.length ? supabase.from("audio_track_annotations").select("*").in("audio_track_id", audioTrackIds).order("created_at") : Promise.resolve({ data: [], error: null }),
-    taskIds.length ? supabase.from("task_runs").select("id,task_id,status,attempt,started_at,completed_at").in("task_id", taskIds).order("started_at", { ascending: false }) : Promise.resolve({ data: [], error: null }),
-  ]);
-  throwResultError([reviewAnnotationsResult, qcReviewIssuesResult, preRenderReviewMembersResult, preRenderReviewMemberDecisionsResult, audioTrackAnnotationsResult, taskRunsResult]);
-  return {
-    artifacts: artifactsResult.data ?? [], audioTrackAnnotations: audioTrackAnnotationsResult.data ?? [], audioTracks: audioTracksResult.data ?? [], blueprint: blueprintResult.data, connectionVersions: connectionVersionsResult.data ?? [], episode, materialRevisions: materialRevisionsResult.data ?? [], preRenderReviewMemberDecisions: preRenderReviewMemberDecisionsResult.data ?? [], preRenderReviewMembers: preRenderReviewMembersResult.data ?? [], qcReviewIssues: qcReviewIssuesResult.data ?? [], reviewAnnotations: reviewAnnotationsResult.data ?? [], reviewPackages: reviewPackagesResult.data ?? [], seriesVersion: seriesVersionResult.data, shotPreparationDrafts: shotPreparationDraftsResult.data ?? [], storyboardAudioSelections: storyboardAudioSelectionsResult.data ?? [], taskRuns: taskRunsResult.data ?? [], tasks: tasksResult.data ?? [], transitions: transitionsResult.data ?? [],
-  };
+async function loadEpisodeProduction(episodeId:string,fresh=false){
+ const{data,error}=await supabase.auth.getSession();if(error)throw error;if(!data.session)throw Error("Owner 登录会话不可用。");
+ return readEpisodeChanges(episodeId,data.session.access_token,fresh);
 }
 
 const productionRuntime: EpisodeProductionRuntime = {
@@ -259,32 +223,32 @@ export function EpisodeProduction({ episodeId, onClose, onOpenAccountWorkspace, 
   const [productionTrackingEpisodeIds, setProductionTrackingEpisodeIds] = useState<Set<string>>(() => new Set());
   const [taskDispatchFailures, setTaskDispatchFailures] = useState<Record<string, string>>({});
   const requestRef = useRef(0);
-  const refresh = useCallback(async (silent = false) => {
+  const summaryCallbackRef = useRef(onSummaryChanged);
+  summaryCallbackRef.current = onSummaryChanged;
+  const refresh = useCallback(async (silent = false, fresh = true) => {
     const requestId = ++requestRef.current;
     if (!silent) setPendingAction("workspace-refresh");
     try {
-      const next = await runtime.load(episodeId);
-      if (requestId === requestRef.current) setSnapshot(next);
+      const next = await runtime.load(episodeId,fresh);
+      if (requestId === requestRef.current) {
+        setSnapshot(next);
+        await summaryCallbackRef.current(next);
+      }
     } catch (error) {
       if (requestId === requestRef.current) setErrorMessage(messageFromError(error, "无法读取当前生产单详情。"));
     } finally {
       if (!silent && requestId === requestRef.current) setPendingAction("");
     }
-  }, [episodeId, runtime]);
-  const refreshWorkspace = useCallback(async () => {
-    await refresh(true);
-    try {
-      await onSummaryChanged();
-    } catch (error) {
-      setErrorMessage(messageFromError(error, "生产单已更新，但列表摘要刷新失败。"));
-    }
-  }, [onSummaryChanged, refresh]);
+  }, [episodeId, runtime, ownerId]);
+  const refreshWorkspace = useCallback(async () => { await refresh(true); }, [refresh]);
   const refreshEpisodeDetail = useCallback(async (_episodeId?: string, _silent?: boolean) => { await refresh(true); }, [refresh]);
   useEffect(() => { void runtime.getSession().then(setSession).catch(() => setSession(null)); void refresh(); return () => { requestRef.current += 1; }; }, [refresh, runtime]);
   useEffect(() => {
     if (!snapshot?.tasks.some((task) => task.status === "ready" || task.status === "running") && !productionTrackingEpisodeIds.has(episodeId)) return;
-    const interval = window.setInterval(() => { if (document.visibilityState !== "hidden") void refresh(true); }, 10000);
-    return () => window.clearInterval(interval);
+    const interval = window.setInterval(() => { if (document.visibilityState !== "hidden") void refresh(true,false); }, 10000);
+    const resume = () => { if (document.visibilityState !== "hidden") void refresh(true, false); };
+    document.addEventListener("visibilitychange", resume);
+    return () => { window.clearInterval(interval); document.removeEventListener("visibilitychange", resume); };
   }, [episodeId, productionTrackingEpisodeIds, refresh, snapshot?.tasks]);
   useEffect(() => {
     if (!message) return;

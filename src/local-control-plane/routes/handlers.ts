@@ -1,3 +1,4 @@
+import { readOperationsEvidence } from "../../orchestration/operationsEvidence";
 import { createClient } from "@supabase/supabase-js";
 import { execFile, spawn } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
@@ -7,6 +8,9 @@ import { tmpdir } from "node:os";
 import { DatabaseSync } from "node:sqlite";
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { promisify } from "node:util";
+import type { DispatchScope } from "../../orchestration/workerDispatch";
+import { assertLocalWorkerServiceReady, wakeLocalWorkerService } from "../workerService";
+export { assertWorkerDispatchEnvironment } from "../workerService";
 import { verifyMediaLibrary } from "../../worker/mediaLibrary";
 import { createRuntimePreflight, type RuntimeEvidenceAdapter, type RuntimeEvidenceDemand, type RuntimeEvidenceFact } from "../../worker/runtimePreflight";
 import { runtimeCommandArguments, runtimeCommandInvocation } from "../../worker/runtimeEvidence";
@@ -32,8 +36,7 @@ const execFileAsync = promisify(execFile);
 const storyboardThumbnailInFlight = new Map<string, Promise<LocalArtifactFile>>();
 const episodeDispatchInFlight = new Map<string, Promise<void>>();
 const taskDispatchInFlight = new Map<string, Promise<void>>();
-export type TaskDispatchStatus = { detail: string; status: "failed" | "starting" | "succeeded" | "unknown"; updatedAt: string | null };
-const taskDispatchStatuses = new Map<string, TaskDispatchStatus>();
+
 
 type LocalArtifactFile = { modifiedAt: number; path: string; size: number };
 
@@ -58,9 +61,10 @@ function isEpisodeId(value: string): boolean {
   return isUuid(value);
 }
 
-export function beginEpisodeDispatch(episodeId: string, run: (episodeId: string) => Promise<unknown> = async (id) => runProbeCommand(join(process.cwd(), "n8n", "run-orchestrator.sh"), ["dispatch", "--episode", id], 30 * 60 * 1000)): "started" | "already_running" {
+export function beginEpisodeDispatch(episodeId: string, run?: (episodeId: string) => Promise<unknown>, supabaseUrl?: string): "started" | "already_running" {
   if (episodeDispatchInFlight.has(episodeId)) return "already_running";
-  const operation = run(episodeId).then(() => undefined).catch((error) => {
+  const execute = run ?? localDispatchExecutor(supabaseUrl, id => ({ episodeId: id }));
+  const operation = execute(episodeId).then(() => undefined).catch((error) => {
     console.error(`Episode ${episodeId} 即时派发失败：`, error);
   }).finally(() => {
     if (episodeDispatchInFlight.get(episodeId) === operation) episodeDispatchInFlight.delete(episodeId);
@@ -69,48 +73,14 @@ export function beginEpisodeDispatch(episodeId: string, run: (episodeId: string)
   return "started";
 }
 
-const requiredWorkerDispatchEnvironment = ["SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY", "CODEX_WORKER_ACTUAL_COST_CENTS", "MEDIA_LIBRARY_MOUNT_PATH", "MEDIA_LIBRARY_MIN_FREE_BYTES"] as const;
-
-export function assertWorkerDispatchEnvironment(contents: string): void {
-  const values = new Map<string, string>();
-  for (const sourceLine of contents.split(/\r?\n/)) {
-    const line = sourceLine.trim();
-    if (!line || line.startsWith("#")) continue;
-    const match = line.match(/^(?:export\s+)?([A-Z][A-Z0-9_]*)\s*=\s*(.*)$/);
-    if (!match) continue;
-    const rawValue = match[2].trim();
-    const value = rawValue.length >= 2 && ((rawValue.startsWith('"') && rawValue.endsWith('"')) || (rawValue.startsWith("'") && rawValue.endsWith("'"))) ? rawValue.slice(1, -1).trim() : rawValue;
-    values.set(match[1], value);
-  }
-  const missing = requiredWorkerDispatchEnvironment.filter((name) => !values.get(name));
-  if (missing.length) throw new Error(`Worker 即时派发配置不完整：${missing.join("、")}`);
+function localDispatchExecutor(supabaseUrl: string | undefined, scope: (id: string) => DispatchScope) {
+  return async (id: string) => wakeLocalWorkerService(supabaseUrl, scope(id));
 }
 
-export function taskDispatchInvocation(projectRoot: string, taskId: string): { argumentsList: string[]; command: string } {
-  return { argumentsList: ["--task-id", taskId], command: join(projectRoot, "n8n", "run-worker.sh") };
-}
-
-export function beginTaskDispatch(taskId: string, run?: (taskId: string) => Promise<unknown>): "started" | "already_running" {
+export function beginTaskDispatch(taskId: string, run?: (taskId: string) => Promise<unknown>, supabaseUrl?: string): "started" | "already_running" {
   if (taskDispatchInFlight.has(taskId)) return "already_running";
-  let execute = run;
-  if (!execute) {
-    const projectRoot = process.cwd();
-    const workerEnvironmentPath = join(projectRoot, "n8n", "worker.env.local");
-    let workerEnvironment = "";
-    try { workerEnvironment = readFileSync(workerEnvironmentPath, "utf8"); }
-    catch { throw new Error("Worker 即时派发尚未配置：缺少 n8n/worker.env.local。"); }
-    assertWorkerDispatchEnvironment(workerEnvironment);
-    execute = async (id) => {
-      const invocation = taskDispatchInvocation(projectRoot, id);
-      return runProbeCommand(invocation.command, invocation.argumentsList, 30 * 60 * 1000);
-    };
-  }
-  taskDispatchStatuses.set(taskId, { detail: "Worker 进程正在启动。", status: "starting", updatedAt: new Date().toISOString() });
-  const operation = execute(taskId).then(() => {
-    taskDispatchStatuses.set(taskId, { detail: "Worker 进程已结束，任务结果已写回。", status: "succeeded", updatedAt: new Date().toISOString() });
-  }).catch((error) => {
-    const detail = error instanceof Error ? error.message : "Worker 进程启动或执行失败。";
-    taskDispatchStatuses.set(taskId, { detail, status: "failed", updatedAt: new Date().toISOString() });
+  const execute = run ?? localDispatchExecutor(supabaseUrl, id => ({ taskId: id }));
+  const operation = execute(taskId).then(() => undefined).catch((error) => {
     console.error(`Task ${taskId} 即时派发失败：`, error);
   }).finally(() => {
     if (taskDispatchInFlight.get(taskId) === operation) taskDispatchInFlight.delete(taskId);
@@ -119,18 +89,25 @@ export function beginTaskDispatch(taskId: string, run?: (taskId: string) => Prom
   return "started";
 }
 
-export function taskDispatchStatus(taskId: string): TaskDispatchStatus {
-  return taskDispatchStatuses.get(taskId) ?? { detail: "当前服务没有这次即时派发记录。", status: "unknown", updatedAt: null };
+function persistentTaskDispatchStatus(task: { id: string; status: string; created_at: string; claimed_at?: string | null; completed_at?: string | null }) {
+  const status = task.status === "ready" ? "queued" : task.status === "running" ? "starting" : task.status === "completed" ? "succeeded" : "failed";
+  const detail = status === "queued" ? "任务已排队，等待可用执行容量。" : status === "starting" ? "Worker 正在执行当前任务。" : status === "succeeded" ? "任务已完成，结果已写回。" : "请查看当前任务的结果和阻塞原因。";
+  return { taskId: task.id, taskStatus: task.status, status, detail, updatedAt: task.completed_at ?? task.claimed_at ?? task.created_at };
 }
 
 export function serveEpisodeDispatch(
   supabaseUrl: string | undefined,
   supabasePublishableKey: string | undefined,
-  dispatch: (taskId: string) => "started" | "already_running" = beginTaskDispatch,
-  readStatus: (taskId: string) => TaskDispatchStatus = taskDispatchStatus,
+  dispatch: (taskId: string) => "started" | "already_running" | Promise<"started" | "already_running"> = async (id) => { await assertLocalWorkerServiceReady(supabaseUrl); return beginTaskDispatch(id, undefined, supabaseUrl); },
 ) {
   return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
     if (request.method !== "POST" && request.method !== "GET") { response.statusCode = 405; response.end(); return; }
+    // Bearer authorization is explicit (no cookie authority). Browser mutations
+    // must also originate from this exact local HTTP service.
+    const localOrigins = ["127.0.0.1", "localhost", "[::1]"].map(host => `http://${host}:${request.socket.localPort}`);
+    if (request.method === "POST" && !localOrigins.includes(request.headers.origin ?? "")) {
+      response.statusCode = 403; response.end("请求来源与当前本机服务不一致。"); return;
+    }
     const authorization = request.headers.authorization ?? "";
     const episodeId = new URL(request.url ?? "", "http://localhost").searchParams.get("episode") ?? "";
     const taskId = new URL(request.url ?? "", "http://localhost").searchParams.get("task") ?? "";
@@ -147,19 +124,22 @@ export function serveEpisodeDispatch(
       const { data: membership, error: membershipError } = await client.from("account_memberships").select("role").eq("account_id", episode.account_id).eq("user_id", userData.user.id).eq("role", "owner").maybeSingle();
       if (membershipError) throw membershipError;
       if (!membership) { response.statusCode = 403; response.end("Owner 权限不足。"); return; }
-      const { data: task, error: taskError } = await client.from("tasks").select("id").eq("id", taskId).eq("episode_id", episodeId).in("status", ["ready", "running"]).maybeSingle();
+      const { data: task, error: taskError } = await client.from("tasks").select("id,status,created_at,claimed_at,completed_at").eq("id", taskId).eq("episode_id", episodeId).maybeSingle();
       if (taskError) throw taskError;
       if (!task) { response.statusCode = 404; response.end("未找到可派发的当前任务。"); return; }
       response.setHeader("Content-Type", "application/json");
       if (request.method === "GET") {
         response.statusCode = 200;
-        response.end(JSON.stringify(readStatus(taskId)));
+        response.end(JSON.stringify(persistentTaskDispatchStatus(task)));
         return;
       }
-      response.statusCode = 202;
-      response.end(JSON.stringify({ status: dispatch(taskId) }));
+      // The existing task ID and frozen input are the durable submission. A wake
+      // can be lost or repeated: the timer scans the same rows and claims atomically.
+      if (task.status === "ready") await dispatch(taskId);
+      response.statusCode = ["ready", "running"].includes(task.status) ? 202 : 200;
+      response.end(JSON.stringify({ ...persistentTaskDispatchStatus(task), statusUrl: `/_episode-dispatch?episode=${episodeId}&task=${taskId}` }));
     } catch (error) {
-      response.statusCode = 500;
+      response.statusCode = error instanceof Error && /runtime:prepare/.test(error.message) ? 503 : 500;
       response.end(error instanceof Error ? error.message : "无法即时派发当前生产单。");
     }
   };
@@ -1407,7 +1387,10 @@ export function serveSystemStatus(supabaseUrl: string | undefined, supabasePubli
               }, () => probeCodexModel(model, (command, argumentsList, options) => runProbeCommand(command, argumentsList, options?.timeoutMs), tmpdir()));
               return { detail: probe.modelPermission.detail, name: `Codex 模型 · ${model}`, state: probe.modelPermission.available ? "healthy" as const : probe.modelPermission.status === "retryable" ? "unknown" as const : "attention" as const };
             });
-      const notificationFailed = n8nEvidence?.lastNotification?.state === "failure";
+      const operations = await readOperationsEvidence(localWorkerEnvironmentValue("LOOP_N8N_STATE_DIR") ?? resolve("n8n", "runtime", "orchestration"));
+      const currentNotification = operations.notification?.latest;
+      if (currentNotification && n8nEvidence) n8nEvidence.lastNotification = {at:currentNotification.at,state:currentNotification.passed ? "success" : "failure",workflowName:"统一事件提醒"};
+      const notificationFailed = currentNotification ? !currentNotification.passed : n8nEvidence?.lastNotification?.state === "failure";
       const n8nDetail = !runtimeExists
         ? "未发现本地 n8n 运行时目录。"
         : !n8nRunning
@@ -1421,13 +1404,14 @@ export function serveSystemStatus(supabaseUrl: string | undefined, supabasePubli
         ...codexModelDependencies,
       ];
       const report = {
+        operations,
         dependencies,
         mediaLibrary: { detail: mediaRoot ? (mediaExists ? `已挂载：${mediaRoot}` : `未找到挂载目录：${mediaRoot}`) : "未配置 MEDIA_LIBRARY_MOUNT_PATH。", state: mediaExists ? "healthy" : "offline" },
         n8n: {
           detail: n8nDetail,
           lastDispatchAt: n8nEvidence?.lastWorkerDispatchAt ?? null,
           lastEventAt: n8nEvidence?.lastScheduleCheckAt ?? null,
-          lastHealthCheckAt: n8nRunning ? new Date().toISOString() : null,
+          lastHealthCheckAt: operations.health?.latest.at ?? null,
           lastNotification: n8nEvidence?.lastNotification ?? null,
           lastRunAt: n8nEvidence?.lastWorkerDispatchAt ?? null,
           lastScheduleCheckAt: n8nEvidence?.lastScheduleCheckAt ?? null,
@@ -1518,6 +1502,8 @@ export function serveWorkerPreflight(supabaseUrl: string | undefined, supabasePu
         response.end("Owner 权限不足。");
         return;
       }
+      // Check executable readiness before probing or writing any production state.
+      if (request.method === "POST") await assertLocalWorkerServiceReady(supabaseUrl);
       let seriesRules: unknown;
       if (episode.series_version_id) {
         const { data: seriesVersion, error: seriesVersionError } = await client.from("series_versions").select("rules").eq("id", episode.series_version_id).eq("account_id", episode.account_id).maybeSingle();
@@ -1561,7 +1547,7 @@ export function serveWorkerPreflight(supabaseUrl: string | undefined, supabasePu
           response.end(JSON.stringify({ error: startError.message, preflight: report }));
           return;
         }
-        const dispatchStatus = beginEpisodeDispatch(episodeId);
+        const dispatchStatus = beginEpisodeDispatch(episodeId, undefined, supabaseUrl);
         response.statusCode = 200;
         response.end(JSON.stringify({ dispatch: { status: dispatchStatus }, episode: startedEpisode, preflight: report }));
         return;
@@ -1570,7 +1556,7 @@ export function serveWorkerPreflight(supabaseUrl: string | undefined, supabasePu
       response.statusCode = 200;
       response.end(JSON.stringify(report));
     } catch (error) {
-      response.statusCode = 500;
+      response.statusCode = error instanceof Error && /runtime:prepare/.test(error.message) ? 503 : 500;
       response.end(error instanceof Error ? error.message : "无法读取 Worker 运行态检查。");
     }
   };

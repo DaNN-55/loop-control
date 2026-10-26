@@ -1,0 +1,6 @@
+{
+  "target": "loop-control-stage-b-verified",
+  "file": "20261024004749_episode_catalog_paging.sql",
+  "method": "Forward function only; db pull shadow timed out after 55s. CLI migration new used, exact verified function source recorded.",
+  "recorded": true
+}

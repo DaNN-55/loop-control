@@ -7,6 +7,8 @@ import { safeAssetOutputPath, writeSafeAssetFile } from "./controlledMediaExecut
 import { activeOpenChatCutState, buildOpenChatCutCardProject, buildOpenChatCutProject, openChatCutProjectPath, type OpenChatCutProject } from "./openchatcutProject.js";
 import { verifyOpenChatCutProject } from "./openchatcutProjectReader.js";
 
+import {renderInputFingerprint,tryReuseRender,type ApprovedRenderSource} from "./renderReuse.js";
+
 type ReviewRender = NonNullable<WorkerTaskPackage["reviewRender"]>;
 
 export function reviewRenderMinimumDurationSeconds(render: ReviewRender): number {
@@ -27,6 +29,7 @@ export async function executeOpenChatCutRender(input: {
   taskPackage: WorkerTaskPackage;
   run(command: string, args: string[]): Promise<void>;
   validateMp4(path: string, minimumDurationSeconds: number, frameRate?: number, allowedFrames?: number): Promise<void>;
+  getApprovedReuseSource?: () => Promise<ApprovedRenderSource>;
   inspectMp4(path: string): Promise<{ durationSeconds: number; width: number; height: number; hasAudio: boolean; blackFrameCount: number }>;
 }): Promise<string> {
   const cardShot = input.taskPackage.aRoll?.adapter === "openchatcut_card_video"
@@ -44,8 +47,19 @@ export async function executeOpenChatCutRender(input: {
     : buildOpenChatCutProject(render, `production-${input.taskPackage.episode.id}`);
   await verifyOpenChatCutProject(render, project, {}, render.studioProject ? { requireConfirmedText: false, allowStudioEdits: true } : {});
   const projectPath = await safeAssetOutputPath(input.taskPackage.assets.allowedRoot, projectRelativePath);
+  const renderFingerprint=renderInputFingerprint(render,project,input.taskPackage.model);
+  const source=input.taskPackage.finalRender&&input.getApprovedReuseSource?await input.getApprovedReuseSource():null;
+  if(input.taskPackage.finalRender){
+    const outputs=[projectRelativePath,input.taskPackage.output.relativePath,`${dirname(projectRelativePath)}/final-qc-report.json`,`${dirname(projectRelativePath)}/openchatcut-runtime.json`];
+    const inputs=[...input.taskPackage.assets.inputs.map(artifact=>artifact.relativePath),...(source?.video?[source.video.relativePath]:[])];
+    if(outputs.some(path=>inputs.includes(path)))throw Error("最终交付路径不能覆盖已审核输入或历史产物。");
+  }
   await writeSafeAssetFile(input.taskPackage.assets.allowedRoot, projectRelativePath, JSON.stringify(project, null, 2) + "\n");
-  await renderProject(input, project, outputPath, render.members.map((member) => ({ relativePath: member.relativePath })));
+  let reused=Boolean(input.taskPackage.finalRender&&source&&await tryReuseRender({root:input.taskPackage.assets.allowedRoot,finalRender:input.taskPackage.finalRender,source,project,fingerprint:renderFingerprint,model:input.taskPackage.model,outputRelativePath:input.taskPackage.output.relativePath}));
+  const renderNow=()=>renderProject(input, project, outputPath, render.members.map((member) => ({ relativePath: member.relativePath })));
+  if(!reused)await renderNow();
+  const validateOutput=async()=>{
+
   await input.validateMp4(
     outputPath,
     reviewRenderMinimumDurationSeconds(render),
@@ -54,13 +68,24 @@ export async function executeOpenChatCutRender(input: {
   );
   const inspection = await input.inspectMp4(outputPath);
   if (inspection.width !== render.adjustments.width || inspection.height !== render.adjustments.height || inspection.blackFrameCount > 0) throw new Error("OpenChatCut 渲染未通过画幅或黑帧检查。");
+  const audioExpected=render.members.some(member=>member.memberKind!=="shot_media")||render.confirmedShots.some(shot=>shot.audioMode==="source");
+  if(audioExpected&&!inspection.hasAudio)throw Error("OpenChatCut 渲染缺少必需音频。");
+  return inspection;
+  };
+  let inspection;
+  try{inspection=await validateOutput();}catch(error){if(!reused)throw error;reused=false;await renderNow();inspection=await validateOutput();}
+
+  if(reused&&input.getApprovedReuseSource){
+    const current=await input.getApprovedReuseSource();
+    if(!current.inputsMatch||current.video?.fileSize!==source?.video?.fileSize||current.video?.artifactType!==source?.video?.artifactType||current.reviewPackageId!==source?.reviewPackageId||current.video?.sha256!==source?.video?.sha256||current.video?.relativePath!==source?.video?.relativePath)throw Error("复用期间来源审核或产物发生变化，停止登记。");
+  }
   const isShotPreview = input.taskPackage.task.type === "generate_shot_sync_preview";
   const qcRelativePath = `${dirname(projectRelativePath)}/${input.taskPackage.finalRender ? "final-qc-report.json" : "qc-report.json"}`;
   const runtimeRelativePath = `${dirname(projectRelativePath)}/openchatcut-runtime.json`;
   const audioExpected = render.members.some((member) => member.memberKind !== "shot_media") || render.confirmedShots?.some((shot) => shot.audioMode === "source");
   const audioPassed = !audioExpected || inspection.hasAudio;
   const inputFingerprint = render.confirmationMode === "shot_preparation" && render.confirmedShots?.length === 1 ? render.confirmedShots[0].inputFingerprint : undefined;
-  const report = { version: "qc-report/v1", passed: audioPassed && inspection.blackFrameCount === 0, ...(inputFingerprint ? { inputFingerprint } : {}), output: { relativePath: input.taskPackage.output.relativePath, ...inspection }, checks: [{ name: "openchatcut_project", passed: true, detail: `OpenChatCut 项目已冻结：${projectRelativePath}` }, { name: "openchatcut_render", passed: audioPassed, detail: inspection.hasAudio ? "输出包含音频。" : audioExpected ? "输出缺少必需音频。" : "静音镜头按契约不要求音频流。" }] };
+  const report = { version: "qc-report/v1", renderFingerprint, reuse:{reused,...(reused&&source?{sourceReviewPackageId:source.reviewPackageId,sourceVideo:source.video}: {})}, passed: audioPassed && inspection.blackFrameCount === 0, ...(inputFingerprint ? { inputFingerprint } : {}), output: { relativePath: input.taskPackage.output.relativePath, ...inspection }, checks: [{ name: "openchatcut_project", passed: true, detail: `OpenChatCut 项目已冻结：${projectRelativePath}` }, { name: "openchatcut_render", passed: audioPassed, detail: inspection.hasAudio ? "输出包含音频。" : audioExpected ? "输出缺少必需音频。" : "静音镜头按契约不要求音频流。" }] };
   if (!report.passed) throw new Error("OpenChatCut 渲染未通过 QC 校验。");
   await writeSafeAssetFile(input.taskPackage.assets.allowedRoot, qcRelativePath, JSON.stringify(report, null, 2) + "\n");
   await writeSafeAssetFile(input.taskPackage.assets.allowedRoot, runtimeRelativePath, JSON.stringify({ name: "OpenChatCut", version: "0.2.14" }) + "\n");
@@ -71,7 +96,7 @@ export async function executeOpenChatCutRender(input: {
   const artifacts = input.taskPackage.finalRender ? [outputArtifact, projectArtifact, qcArtifact] : [outputArtifact, projectArtifact, runtimeArtifact, qcArtifact];
   const normalizedQcArtifact = input.taskPackage.finalRender ? { ...qcArtifact, artifactType: "final_qc_report" } : qcArtifact;
   const finalArtifacts = input.taskPackage.finalRender ? [outputArtifact, projectArtifact, normalizedQcArtifact] : artifacts;
-  const result: WorkerResult = { version: "worker-result/v1", taskId: input.taskPackage.task.id, status: "completed", artifacts: finalArtifacts, validation: { passed: true, checks: [{ name: "openchatcut_project", passed: true, detail: `已将 ${render.members.length} 个冻结成员转换为 OpenChatCut 时间线。` }, { name: "openchatcut_render", passed: true, detail: `已完成 OpenChatCut ${input.taskPackage.finalRender ? "最终" : "审核"}预览渲染。` }, { name: "openchatcut_qc", passed: true, detail: "时长、分辨率、音频和黑帧检查通过。" }] }, actualCostCents: 0, blockers: [], retry: { shouldRetry: false, reason: "Completed successfully." }, nextStep: "Owner reviews the OpenChatCut project and QC evidence." };
+  const result: WorkerResult = { version: "worker-result/v1", taskId: input.taskPackage.task.id, status: "completed", artifacts: finalArtifacts, validation: { passed: true, checks: [{ name: "openchatcut_project", passed: true, detail: `已将 ${render.members.length} 个冻结成员转换为 OpenChatCut 时间线。` }, { name: "openchatcut_render", passed: true, detail: reused ? "已校验来源审核、冻结输入及视频完整性，复用已审核视频生成最终交付记录。" : `已完成 OpenChatCut ${input.taskPackage.finalRender ? "最终" : "审核"}预览渲染。` }, { name: "openchatcut_qc", passed: true, detail: "时长、分辨率、音频和黑帧检查通过。" }] }, actualCostCents: 0, blockers: [], retry: { shouldRetry: false, reason: "Completed successfully." }, nextStep: "Owner reviews the OpenChatCut project and QC evidence." };
   return JSON.stringify(result);
 }
 
