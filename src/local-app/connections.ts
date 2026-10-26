@@ -5,6 +5,7 @@ import {ownerTransaction,sessionTransaction} from './ownerTransaction.js';
 import {ConfigurationError} from './configurationCommands.js';
 import {disabledSecretStore,disabledConnectionProbe,type SecretStore,type ConnectionProbe} from './connectionPorts.js';
 import {ownedConnectionVersion,verifyLocalConnection} from '../worker/localConnection.js';
+import {workerPreflightVersion,type WorkerPreflightCheck} from '../worker/contracts.js';
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 const fields={create:['name','provider','adapter','secret'],rotate:['connectionId','provider','adapter','secret'],rebind:['versionId','secret'],update:['connectionId','name','description'],revoke:['versionId'],verify:['connectionId']} as const;
 const metadataJSON=(value:Record<string,string>)=>JSON.stringify(Object.entries(value).sort());
@@ -29,18 +30,28 @@ export function parseConnectionCommand(body:Record<string,unknown>){
 async function lockIntent(client:PoolClient,ownerId:string,key:string){await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',['connection:'+ownerId+':'+key]);}
 export class LocalConnections {
  constructor(private pool:Pool,private store:SecretStore=disabledSecretStore,private probe:ConnectionProbe=disabledConnectionProbe){}
- get externalReady(){return this.store.mode==='keychain'&&this.probe.mode==='live'&&this.probe.networkAvailable!==false;}
+ get externalReady(){return this.store.mode==='keychain'&&this.networkAvailable;}
+ get networkAvailable(){return this.probe.mode==='live'&&this.probe.networkAvailable!==false;}
  async assertBlueprintReferences(client:PoolClient,refs:string[]){
-  if(!this.externalReady)throw new ConfigurationError(409,'真实Keychain及在线验证尚未就绪。');
-  const owners=await Promise.all(refs.map(id=>ownedConnectionVersion(client,id)));
-  if(owners.some(v=>!v))throw new ConfigurationError(409,'连接版本不可见。');
-  for(const connectionId of [...new Set(owners.map(v=>v!.connection_id))].sort())await client.query('SELECT local_identity.lock_owned_connection($1)',[connectionId]);
-  for(const id of [...refs].sort()){
-   const v=await ownedConnectionVersion(client,id);
-   if(!v||v.revoked_at||!v.is_current||v.store_mode!=='keychain'||!v.secret_ref)throw new ConfigurationError(409,'连接版本未绑定、已变化或已撤销。');
-   const verified=(await client.query("SELECT public.connection_version_is_verified($1) AND EXISTS(SELECT 1 FROM local_identity.connection_probe_evidence WHERE version_id=$1 AND mode='live' AND outcome='verified') allowed",[id])).rows[0];
-   if(!verified.allowed)throw new ConfigurationError(409,'连接版本需要真实验证。');
-   await this.store.get(v.secret_ref); // Availability check; resolved bytes never enter SQL/HTTP.
+  const networkAvailable=this.networkAvailable,checks:WorkerPreflightCheck[]=[];
+  if(!networkAvailable)checks.push({capability:'worker_runtime',check:'network_connectivity',phase:'preflight',status:'unavailable',reason:'当前部署的 Provider 网络策略未启用或请求预算不可用；请联系环境管理员，不会发起在线检查。',scope:'worker',action:'contact_environment_admin'});
+  let credentialFailure=this.store.mode!=='keychain'||this.probe.mode!=='live'?'真实Keychain及在线验证尚未就绪。':'';
+  if(!credentialFailure)try{
+   const owners=await Promise.all(refs.map(id=>ownedConnectionVersion(client,id)));
+   if(owners.some(v=>!v))throw new ConfigurationError(409,'连接版本不可见。');
+   for(const connectionId of [...new Set(owners.map(v=>v!.connection_id))].sort())await client.query('SELECT local_identity.lock_owned_connection($1)',[connectionId]);
+   for(const id of [...refs].sort()){
+    const v=await ownedConnectionVersion(client,id);
+    if(!v||v.revoked_at||!v.is_current||v.store_mode!=='keychain'||!v.secret_ref)throw new ConfigurationError(409,'连接版本未绑定、已变化或已撤销。');
+    const verified=(await client.query("SELECT public.connection_version_is_verified($1) AND EXISTS(SELECT 1 FROM local_identity.connection_probe_evidence WHERE version_id=$1 AND mode='live' AND outcome='verified') allowed",[id])).rows[0];
+    if(!verified.allowed)throw new ConfigurationError(409,'连接版本需要真实验证。');
+    // Closed networking still permits metadata checks, never a secret read.
+    if(networkAvailable)await this.store.get(v.secret_ref);
+   }
+  }catch(error){credentialFailure=error instanceof ConfigurationError?error.message:'连接版本未就绪，请检查本机绑定与验证资格。';}
+  if(credentialFailure)checks.push({capability:'worker_runtime',check:'credential_presence',phase:'preflight',status:'blocked',reason:credentialFailure,scope:'connection',action:'manage_connection'});
+  if(checks.length){
+   throw new ConfigurationError(409,credentialFailure||checks[0].reason,{version:workerPreflightVersion,checks});
   }
  }
  async read(ownerId:string){
@@ -51,14 +62,14 @@ export class LocalConnections {
    const qualifications=(await client.query('SELECT version_id,qualified FROM local_identity.connection_qualifications WHERE owner_id=$1',[ownerId])).rows;
    const latest=(await client.query('SELECT DISTINCT ON(connection_version_id) connection_version_id,status FROM public.external_connection_verifications ORDER BY connection_version_id,created_at DESC,id DESC')).rows;
    const pending=(await client.query('SELECT idempotency_key,metadata,created_at FROM local_identity.connection_intents WHERE owner_id=$1 AND applied_at IS NULL ORDER BY created_at',[ownerId])).rows;
-   const externalReady=this.store.mode==='keychain'&&this.probe.mode==='live'&&this.probe.networkAvailable!==false;
+   const externalReady=this.externalReady;
    const localVersions=versions.map(v=>{const binding=bindings.find(b=>b.version_id===v.id),qualified=qualifications.some(q=>q.version_id===v.id&&q.qualified);return {...v,historicalStatus:v.status,status:v.revoked_at?'revoked':!externalReady||!binding||binding.store_mode!=='keychain'?'retryable':qualified?'verified':v.status==='verified'?'retryable':v.status,secretState:binding?'bound-unchecked':'unbound'};});
    // Historical provider text is never used as a diagnostic response channel;
    // an imported verified flag cannot stand in for a usable native binding.
    for(const c of connections){const current=localVersions.find(v=>v.id===c.current_version_id);if(current?.status==='revoked')c.status='invalid';else if(current)c.status=current.status;
     const last=latest.find(p=>p.connection_version_id===c.current_version_id);
     c.last_verification_detail=current?.secretState==='unbound'?'本机秘密未绑定，请显式重新录入。':!externalReady?'真实Keychain及在线验证尚未启用。':last?.status==='retryable'&&c.status==='verified'?'本次测试暂不可用；上次有效验证资格保留，生产前仍须检查。':c.status==='verified'?'已验证；运行时仍检查秘密可用性。':'需要在本机重新验证。';}
-   return {connections,versions:localVersions,pending,capabilities:{secrets:this.store.mode,verification:this.probe.mode,externalReady,networkAvailable:this.probe.mode==='live'&&this.probe.networkAvailable!==false}};
+   return {connections,versions:localVersions,pending,capabilities:{secrets:this.store.mode,verification:this.probe.mode,externalReady,networkAvailable:this.networkAvailable}};
   });
  }
  async command(session:OwnerSession,body:Record<string,unknown>){

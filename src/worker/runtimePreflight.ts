@@ -392,7 +392,8 @@ function capabilityFromExecutor(capability: string, executor: Record<string, unk
 
 function configurationErrorFor(capability: RuntimeCapability): string | undefined {
   if (mediaCapabilityForCapability(capability.capability) && capability.executionPath === "") return `能力 ${capability.capability} 缺少执行路径。`;
-  if (!capability.provider || !capability.model || !capability.promptVersion) return `能力 ${capability.capability} 缺少 Provider、模型或 Prompt 版本。`;
+  const missingFields = [!capability.provider && "Provider", !capability.model && "模型", !capability.promptVersion && "Prompt 版本"].filter(Boolean);
+  if (missingFields.length) return `能力 ${capability.capability} 配置缺失：${missingFields.join("、")}。`;
   if (capability.requiresAdapter && !capability.adapter) return `能力 ${capability.capability} 缺少已注册 Adapter。`;
   const resolution = registeredAdapters.resolve({ capability: capability.capability, executionPath: capability.executionPath, provider: capability.provider, adapter: capability.adapter, model: capability.model, preset: capability.promptVersion });
   if (resolution.kind === "invalid" && (resolution.code === "model_unsupported" || resolution.code === "preset_unsupported" || resolution.code === "execution_path_mismatch" || resolution.code === "capability_unsupported")) return resolution.detail;
