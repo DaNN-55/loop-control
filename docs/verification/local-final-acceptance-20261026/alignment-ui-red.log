@@ -1,0 +1,399 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/episodes/captionTextConfirmation.test.tsx (9 tests | 1 failed) 762ms
+   ✓ keeps a completed high-score mismatch awaiting Owner text review and blocks preview 175ms
+   ✓ saves an explicit review identity, keeps it on refresh and invalidates local text edits 116ms
+   ✓ does not count a historical preview confirmation as current text review 51ms
+   ✓ does not promote a new audio or alignment identity when an old confirmation callback arrives late 106ms
+   ✓ invalidates an already saved content review when the audio identity changes 92ms
+   ✓ invalidates an already saved content review when the text identity changes 117ms
+   ✓ invalidates an already saved content review when the alignment identity changes 34ms
+   × allows queued alignment to start through its normal callback but prevents duplicate running alignment (ready) 42ms
+     → Unable to find an accessible element with the role "button" and name "使用本地 WhisperX"
+
+Here are the accessible roles:
+
+  banner:
+
+  Name "":
+  [36m<header />[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "声学对齐":
+  [36m<h4 />[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "正在进行声学对齐":
+  [36m<span[39m
+    [33maria-label[39m=[32m"正在进行声学对齐"[39m
+    [33mclass[39m=[32m"shot-alignment-status-spinner"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------term:
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  --------------------------------------------------
+  definition:
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc":
+  [36m<dd[39m
+    [33mtitle[39m=[32m"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  --------------------------------------------------button:
+
+  Name "正在启动对齐…":
+  [36m<button[39m
+    [33mclass[39m=[32m"button button-secondary"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "正在启动 WhisperX…":
+  [36m<button[39m
+    [33mclass[39m=[32m"button button-secondary"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "查看时序":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"shot-1-caption-timing-details"[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33mclass[39m=[32m"button button-secondary"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<section[39m
+  [33maria-label[39m=[32m"shot-1 声学对齐"[39m
+  [33maria-live[39m=[32m"polite"[39m
+  [33mclass[39m=[32m"shot-alignment-card is-aligning"[39m
+  [33mdata-shot-focus[39m=[32m"caption-timing"[39m
+  [33mtabindex[39m=[32m"-1"[39m
+[36m>[39m
+  [36m<header>[39m
+    [36m<div>[39m
+      [36m<h4>[39m
+        [0m声学对齐[0m
+      [36m</h4>[39m
+      [36m<p>[39m
+        [0m时序对齐完成，平均分 0.838。[0m
+      [36m</p>[39m
+    [36m</div>[39m
+    [36m<span[39m
+      [33maria-label[39m=[32m"正在进行声学对齐"[39m
+      [33mclass[39m=[32m"shot-alignment-status-spinner"[39m
+      [33mrole[39m=[32m"status"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33maria-hidden[39m=[32m"true"[39m
+        [33mclass[39m=[32m"loading-spinner"[39m
+      [36m/>[39m
+    [36m</span>[39m
+  [36m</header>[39m
+  [36m<dl>[39m
+    [36m<div>[39m
+      [36m<dt>[39m
+        [0m方法[0m
+      [36m</dt>[39m
+      [36m<dd>[39m
+        [0m本地 WhisperX[0m
+      [36m</dd>[39m
+    [36m</div>[39m
+    [36m<div>[39m
+      [36m<dt>[39m
+        [0m粒度[0m
+      [36m</dt>[39m
+      [36m<dd>[39m
+        [0m短语级[0m
+      [36m</dd>[39m
+    [36m</div>[39m
+    [36m<div>[39m
+      [36m<dt>[39m
+        [0m输入版本[0m
+      [36m</dt>[39m
+      [36m<dd[39m
+        [33mtitle[39m=[32m"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"[39m
+      [36m>[39m
+        [0mcccccccccccc[0m
+      [36m</dd>[39m
+    [36m</div>[39m
+    [36m<div>[39m
+      [36m<dt>[39m
+        [0m短语数量[0m
+      [36m</dt>[39m
+      [36m<dd>[39m
+        [0m1[0m
+      [36m</dd>[39m
+    [36m</div>[39m
+  [36m</dl>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"shot-alignment-actions"[39m
+  [36m>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"button button-secondary"[39m
+      [33mdisabled[39m=[32m""[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0m正在启动对齐…[0m
+    [36m</button>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"button button-secondary"[39m
+      [33mdisabled[39m=[32m""[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0m正在启动 WhisperX…[0m
+    [36m</button>[39m
+    [36m<button[39m
+      [33maria-controls[39m=[32m"shot-1-caption-timing-details"[39m
+      [33maria-expanded[39m=[32m"false"[39m
+      [33mclass[39m=[32m"button button-secondary"[39m
+      [33mdisabled[39m=[32m""[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0m查看时序[0m
+    [36m</button>[39m
+  [36m</div>[39m
+[36m</section>[39m
+   ✓ allows queued alignment to start through its normal callback but prevents duplicate running alignment (running) 28ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/episodes/captionTextConfirmation.test.tsx > allows queued alignment to start through its normal callback but prevents duplicate running alignment (ready)
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name "使用本地 WhisperX"
+
+Here are the accessible roles:
+
+  banner:
+
+  Name "":
+  [36m<header />[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "声学对齐":
+  [36m<h4 />[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p />[39m
+
+  --------------------------------------------------
+  status:
+
+  Name "正在进行声学对齐":
+  [36m<span[39m
+    [33maria-label[39m=[32m"正在进行声学对齐"[39m
+    [33mclass[39m=[32m"shot-alignment-status-spinner"[39m
+    [33mrole[39m=[32m"status"[39m
+  [36m/>[39m
+
+  --------------------------------------------------term:
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  --------------------------------------------------
+  definition:
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc":
+  [36m<dd[39m
+    [33mtitle[39m=[32m"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  --------------------------------------------------button:
+
+  Name "正在启动对齐…":
+  [36m<button[39m
+    [33mclass[39m=[32m"button button-secondary"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "正在启动 WhisperX…":
+  [36m<button[39m
+    [33mclass[39m=[32m"button button-secondary"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  Name "查看时序":
+  [36m<button[39m
+    [33maria-controls[39m=[32m"shot-1-caption-timing-details"[39m
+    [33maria-expanded[39m=[32m"false"[39m
+    [33mclass[39m=[32m"button button-secondary"[39m
+    [33mdisabled[39m=[32m""[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<section[39m
+  [33maria-label[39m=[32m"shot-1 声学对齐"[39m
+  [33maria-live[39m=[32m"polite"[39m
+  [33mclass[39m=[32m"shot-alignment-card is-aligning"[39m
+  [33mdata-shot-focus[39m=[32m"caption-timing"[39m
+  [33mtabindex[39m=[32m"-1"[39m
+[36m>[39m
+  [36m<header>[39m
+    [36m<div>[39m
+      [36m<h4>[39m
+        [0m声学对齐[0m
+      [36m</h4>[39m
+      [36m<p>[39m
+        [0m时序对齐完成，平均分 0.838。[0m
+      [36m</p>[39m
+    [36m</div>[39m
+    [36m<span[39m
+      [33maria-label[39m=[32m"正在进行声学对齐"[39m
+      [33mclass[39m=[32m"shot-alignment-status-spinner"[39m
+      [33mrole[39m=[32m"status"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33maria-hidden[39m=[32m"true"[39m
+        [33mclass[39m=[32m"loading-spinner"[39m
+      [36m/>[39m
+    [36m</span>[39m
+  [36m</header>[39m
+  [36m<dl>[39m
+    [36m<div>[39m
+      [36m<dt>[39m
+        [0m方法[0m
+      [36m</dt>[39m
+      [36m<dd>[39m
+        [0m本地 WhisperX[0m
+      [36m</dd>[39m
+    [36m</div>[39m
+    [36m<div>[39m
+      [36m<dt>[39m
+        [0m粒度[0m
+      [36m</dt>[39m
+      [36m<dd>[39m
+        [0m短语级[0m
+      [36m</dd>[39m
+    [36m</div>[39m
+    [36m<div>[39m
+      [36m<dt>[39m
+        [0m输入版本[0m
+      [36m</dt>[39m
+      [36m<dd[39m
+        [33mtitle[39m=[32m"cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc"[39m
+      [36m>[39m
+        [0mcccccccccccc[0m
+      [36m</dd>[39m
+    [36m</div>[39m
+    [36m<div>[39m
+      [36m<dt>[39m
+        [0m短语数量[0m
+      [36m</dt>[39m
+      [36m<dd>[39m
+        [0m1[0m
+      [36m</dd>[39m
+    [36m</div>[39m
+  [36m</dl>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"shot-alignment-actions"[39m
+  [36m>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"button button-secondary"[39m
+      [33mdisabled[39m=[32m""[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0m正在启动对齐…[0m
+    [36m</button>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"button button-secondary"[39m
+      [33mdisabled[39m=[32m""[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0m正在启动 WhisperX…[0m
+    [36m</button>[39m
+    [36m<button[39m
+      [33maria-controls[39m=[32m"shot-1-caption-timing-details"[39m
+      [33maria-expanded[39m=[32m"false"[39m
+      [33mclass[39m=[32m"button button-secondary"[39m
+      [33mdisabled[39m=[32m""[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0m查看时序[0m
+    [36m</button>[39m
+  [36m</div>[39m
+[36m</section>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/episodes/captionTextConfirmation.test.tsx:89:30
+     87|  await act(async()=>{render(<EpisodeProductionView {...f.props} onRequ…
+     88|  const region=await screen.findByRole('region',{name:'shot-1 声学对齐'});
+     89|  const button=within(region).getByRole('button',{name:status==='runnin…
+       |                              ^
+     90|  expect(button.disabled).toBe(status==='running');
+     91|  fireEvent.click(button);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  14:46:02
+   Duration  2.06s (transform 416ms, setup 0ms, collect 729ms, tests 762ms, environment 413ms, prepare 49ms)
+

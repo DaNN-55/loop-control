@@ -1,0 +1,14 @@
+{
+  "startedAt": "2026-10-26T06:14:47.877Z",
+  "completedAt": "2026-10-26T06:17:14.857Z",
+  "exit": 1,
+  "signal": null,
+  "result": {
+    "code": "validation_failed",
+    "status": -25293,
+    "ok": false,
+    "saved": false
+  },
+  "stderrPresent": false,
+  "passwordCapturedByAgent": false
+}

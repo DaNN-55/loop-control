@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "detail": "本地完整备份已生成并校验：53 张表、554 个文件，保留 8 条已批准的历史引用异常；不包含密码、会话或 Keychain，恢复能力尚未验收。",
+  "archiveSha256": "41152de6d06786d997cf42da22190cc9ba35bb1a34aa56cc056d3a9488dddea9",
+  "mediaFiles": 554,
+  "historicalReferenceFailures": 8,
+  "jobId": "63a77d57-6b46-448b-b146-3414ea6716c4",
+  "archiveRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/backups/loop_control/63a77d57-6b46-448b-b146-3414ea6716c4"
+}

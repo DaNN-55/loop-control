@@ -1,0 +1,30 @@
+{
+  "at": "2026-10-26T07:09:39.970Z",
+  "episodeId": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+  "source": "Direct human reply call_7d5efd3dc7ac45fdb67fbeb2f41fd942",
+  "answer": "确认同步并接受第三镜头偏差",
+  "scope": "Three current sync previews plus explicit third-shot overhead-river-valley deviation; permits Studio and review render; excludes final QC",
+  "previews": [
+    {
+      "shot": "shot-1",
+      "taskId": "75d6f769-76c1-483e-8bbe-1b98d13aa82e",
+      "artifactId": "32b225dd-d4d5-41d1-9267-37c9fc9f6d8a",
+      "sha256": "98ed8ca7bdffe79c6fac897d2225aab0ecaccf0924186bd6bf34720867e2e36c",
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/75d6f769-76c1-483e-8bbe-1b98d13aa82e/proxy.mp4"
+    },
+    {
+      "shot": "shot-3",
+      "taskId": "cfa473aa-d73a-470f-bbed-8c1235a77c93",
+      "artifactId": "70722fec-c62c-46f1-ab75-fd627a6e94e2",
+      "sha256": "26f0bae644302cc2fcbc10747a377cb04fea6cabb2b16f1e4fdc0bf686b13ff1",
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/cfa473aa-d73a-470f-bbed-8c1235a77c93/proxy.mp4"
+    },
+    {
+      "shot": "shot-2",
+      "taskId": "4b94da48-a946-4220-bbe4-ff132f0003a7",
+      "artifactId": "a53353c3-a515-4d2c-b476-2bb5aff45b00",
+      "sha256": "dfbad43b66bbc1d5c2590763c7f7192f786bf970745db0dc245fedabe066004e",
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/4b94da48-a946-4220-bbe4-ff132f0003a7/proxy.mp4"
+    }
+  ]
+}

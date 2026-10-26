@@ -21,7 +21,7 @@ export class LocalEpisodeLifecycle{
  private async plan(c:PoolClient,id:unknown){const{e,root}=await this.episode(c,id);const path=join(root,'episodes',e.id),stagingPath=join(root,'episodes','.deletion-staging',e.id);return{e,root,visible:{episodeId:e.id,title:e.title,path,stagingPath,confirmation:e.title.trim()||'DELETE',archived:Boolean(e.archived_at),isTest:e.is_test,revision:fingerprint({id:e.id,title:e.title,archivedAt:e.archived_at?new Date(e.archived_at).toISOString():null,updatedAt:new Date(e.updated_at).toISOString(),stage:e.stage,root})}};}
  async execute(session:OwnerSession,body:Record<string,unknown>){
   const command=String(body.command),key=body.idempotencyKey,data=body.data as Record<string,unknown>;
-  const fields:Record<string,string[]>={planDeletion:['episodeId'],archiveEpisode:['episodeId','archived'],deleteEpisode:['episodeId','confirmation','expectedPath','expectedRevision'],retryDeletionCleanup:['deletionKey']};
+  const fields:Record<string,string[]>={renameEpisode:['episodeId','title'],planDeletion:['episodeId'],archiveEpisode:['episodeId','archived'],deleteEpisode:['episodeId','confirmation','expectedPath','expectedRevision'],retryDeletionCleanup:['deletionKey']};
   if(!fields[command]||typeof key!=='string'||!uuid.test(key)||!data||typeof data!=='object'||Array.isArray(data)||Object.keys(body).some(k=>!['command','idempotencyKey','data'].includes(k))||Object.keys(data).some(k=>!fields[command].includes(k)))throw new ConfigurationError(400,'生命周期命令无效。');
   if(command==='retryDeletionCleanup'){if(typeof data.deletionKey!=='string'||!uuid.test(data.deletionKey))throw new ConfigurationError(400,'清理标识无效。');return this.finish(session,data.deletionKey);}
   const hash=fingerprint({endpoint:'episode-lifecycle',...body});let staged:{root:string;id:string;existed:boolean}|undefined;
@@ -32,7 +32,8 @@ export class LocalEpisodeLifecycle{
    if(old){if(old.payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');if(command!=='planDeletion')return old.result;}
    if(command==='planDeletion')return(await this.plan(c,data.episodeId)).visible;
    let value;
-   if(command==='archiveEpisode'){if(typeof data.archived!=='boolean')throw new ConfigurationError(400,'归档状态无效。');await this.episode(c,data.episodeId);value=(await c.query('SELECT to_jsonb(local_identity.archive_owned_input_episode($1,$2)) result',[data.episodeId,data.archived])).rows[0].result;}
+   if(command==='renameEpisode'){if(typeof data.title!=='string'||!data.title.trim()||data.title.length>200)throw new ConfigurationError(400,'生产单标题无效。');await this.episode(c,data.episodeId);value=(await c.query('SELECT to_jsonb(public.update_episode_title($1,$2)) result',[data.episodeId,data.title.trim()])).rows[0].result;}
+   else if(command==='archiveEpisode'){if(typeof data.archived!=='boolean')throw new ConfigurationError(400,'归档状态无效。');await this.episode(c,data.episodeId);value=(await c.query('SELECT to_jsonb(local_identity.archive_owned_input_episode($1,$2)) result',[data.episodeId,data.archived])).rows[0].result;}
    else{
     const p=await this.plan(c,data.episodeId);if(!p.e.is_test||!p.e.archived_at)throw new ConfigurationError(409,'仅可永久删除已归档的测试生产单。');
     if(data.confirmation!==p.visible.confirmation||data.expectedPath!==p.visible.path||data.expectedRevision!==p.visible.revision)throw new ConfigurationError(409,'删除确认或目录版本不匹配，请重新查看。');

@@ -1,0 +1,72 @@
+{
+  "version": "storyboard/v1",
+  "shots": [
+    {
+      "id": "shot-1",
+      "scriptSegment": "先把目光放进森林。树干之间有明有暗，枝叶把阳光分成细小的光斑。风吹过时，叶片轻轻摇动，地面的影子也跟着变化。不急着寻找特别的东西，先看一棵树、一片叶子，留意那些平时容易错过的细节。",
+      "durationSeconds": 16,
+      "shotType": "b_roll",
+      "productionMethod": "forest",
+      "inputBasis": [
+        {
+          "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md",
+          "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb"
+        },
+        {
+          "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/d0565687-4d4f-4e11-ac6e-2b268bb512dd/visual-assets-v1.md",
+          "sha256": "7de96897a75645d9c018a95156b94065718a90b18d2d5b38bc26c463c5f26591"
+        },
+        {
+          "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8-actor.png",
+          "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8"
+        }
+      ],
+      "targetSpec": "1080x1920竖屏自然画面"
+    },
+    {
+      "id": "shot-2",
+      "scriptSegment": "再沿着水流向前。近处是细小的波纹，远处是河道缓慢转过的弯。水碰到石头，流向会发生变化；绕过障碍，又重新连成一片。把视线停在同一个位置，看水不断经过，就能发现，熟悉的画面也一直在改变。",
+      "durationSeconds": 16,
+      "shotType": "b_roll",
+      "productionMethod": "river",
+      "inputBasis": [
+        {
+          "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md",
+          "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb"
+        },
+        {
+          "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/d0565687-4d4f-4e11-ac6e-2b268bb512dd/visual-assets-v1.md",
+          "sha256": "7de96897a75645d9c018a95156b94065718a90b18d2d5b38bc26c463c5f26591"
+        },
+        {
+          "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8-actor.png",
+          "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8"
+        }
+      ],
+      "targetSpec": "1080x1920竖屏自然画面"
+    },
+    {
+      "id": "shot-3",
+      "scriptSegment": "最后把视线抬向山谷。山脊在远处一层层展开，近处的树林和河流，把宽阔的风景分成不同的层次。从一片叶子，到一段水流，再到整片山峦，观察的距离变了，看到的细节也会不同。给自己一点时间，让目光慢下来。",
+      "durationSeconds": 16,
+      "shotType": "b_roll",
+      "productionMethod": "mountains",
+      "inputBasis": [
+        {
+          "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md",
+          "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb"
+        },
+        {
+          "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/d0565687-4d4f-4e11-ac6e-2b268bb512dd/visual-assets-v1.md",
+          "sha256": "7de96897a75645d9c018a95156b94065718a90b18d2d5b38bc26c463c5f26591"
+        },
+        {
+          "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8-actor.png",
+          "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8"
+        }
+      ],
+      "targetSpec": "1080x1920竖屏自然画面"
+    }
+  ],
+  "audioCues": []
+}

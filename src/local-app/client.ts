@@ -4,7 +4,7 @@ export async function localRequest(path:string,init?:RequestInit){
  if(path==='login'||path==='logout'){sessionGeneration++;csrf='';inFlight.clear();}
  const session=sessionGeneration;
  const response=await fetch('/api/local/'+path,init);const value=await response.json();
- if(!response.ok)throw Object.assign(new Error(value.error??'本机请求失败。'),value.preflight?{preflight:value.preflight}:{});
+ if(!response.ok){if(response.status===401&&path!=='login'&&session===sessionGeneration){sessionGeneration++;csrf='';inFlight.clear();window.dispatchEvent(new Event('loop-local-session-expired'));}throw Object.assign(new Error(value.error??'本机请求失败。'),value.preflight?{preflight:value.preflight}:{});}
  if(session===sessionGeneration&&typeof value.csrfToken==='string')csrf=value.csrfToken;return value;
 }
 export async function localCommand<T>(command:string,data:unknown,expectedRevision?:string,endpoint='configuration'):Promise<T>{

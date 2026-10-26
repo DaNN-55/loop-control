@@ -9,6 +9,9 @@
 #ifndef LOOP_KEYCHAIN_PATH
 #define LOOP_KEYCHAIN_PATH ""
 #endif
+#ifndef LOOP_KEYCHAIN_SERVICE
+#define LOOP_KEYCHAIN_SERVICE "com.loop-control.stage-d.connections.v1"
+#endif
 #ifndef LOOP_KEYCHAIN_PROTOCOL_ONLY
 #import <Security/Security.h>
 #endif
@@ -87,7 +90,7 @@ static int performKeychainRequest(NSDictionary *request, const char *path) {
     id scopedKeychain = CFBridgingRelease(keychain);
     NSMutableDictionary *query = [@{
         (__bridge id)kSecClass: (__bridge id)kSecClassGenericPassword,
-        (__bridge id)kSecAttrService: @"com.loop-control.stage-d.connections.v1",
+        (__bridge id)kSecAttrService: @LOOP_KEYCHAIN_SERVICE,
         (__bridge id)kSecAttrAccount: request[@"reference"],
         (__bridge id)kSecAttrSynchronizable: @NO,
         (__bridge id)kSecUseAuthenticationUI: (__bridge id)kSecUseAuthenticationUIFail

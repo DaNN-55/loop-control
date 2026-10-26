@@ -17,7 +17,7 @@ afterEach(async () => {
 describe("本地服务安全停止", () => {
   it("npm stop 只停止记录的原生应用，旧停止行为显式保留", () => {
     const { scripts } = JSON.parse(readFileSync(join(projectRoot, "package.json"), "utf8"));
-    expect(scripts.stop).toBe("node scripts/local/stop.mjs");
+    expect(scripts.stop).toBe("node scripts/stop.mjs");
     expect(scripts["legacy:stop"]).toBe("./scripts/stop-all.sh");
     expect(scripts["stop:all"]).toBe(scripts.stop);
   });

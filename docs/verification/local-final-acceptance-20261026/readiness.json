@@ -1,0 +1,29 @@
+{
+  "at": "2026-10-26T04:59:00.845Z",
+  "keychain": [
+    {
+      "provider": "pexels",
+      "version": "9bf6f776-a439-4e17-8260-55fa2b060e79",
+      "configured": false,
+      "code": "unavailable"
+    },
+    {
+      "provider": "volcengine_tts",
+      "version": "3e83d07f-dd79-4897-838f-41d82fc647ea",
+      "configured": false,
+      "code": "unavailable"
+    }
+  ],
+  "health": {
+    "passed": true,
+    "detail": "数据库、媒体目录和本地运行程序检查通过。"
+  },
+  "runtimeMatches": true,
+  "frontendGraph": {
+    "entry": "src/local-app/main.tsx",
+    "sdkPresent": false,
+    "legacyControlPlanePresent": false,
+    "modules": 1864,
+    "suspicious": []
+  }
+}

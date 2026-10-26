@@ -1,0 +1,27 @@
+{
+  "at": "2026-10-26T06:48:45.565Z",
+  "source": "Direct human async response call_51464e6349f044738d0947115117acbf",
+  "answer": "三段正文均确认",
+  "scope": "Current three narration audio texts only; excludes visual mismatch, sync and QC",
+  "episodeId": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+  "audio": [
+    {
+      "id": "3e21d9cc-8c8f-44f8-ac08-a53584649332",
+      "shot": "shot-3",
+      "sha256": "7fabfd116a1cb4c9bb459c881fb03dc5ddc53be2475730a890c5a127b735ea67",
+      "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/4af14d72-e7af-4b5f-8416-b4f0c9079634/shot-narration-shot-3-b68253aa5ac5596afb4da5c2dafebbf4.mp3"
+    },
+    {
+      "id": "55a7055d-36be-45de-aeee-b696bd436f2b",
+      "shot": "shot-2",
+      "sha256": "d8ddd107580abb86331286d1e013172d0e8f46a5563c99c08c7d560cbba81d50",
+      "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/12a6fe77-3f0f-4234-bee2-3811c8c04e80/shot-narration-shot-2-8b1856649c911ce7165af56072ae13e8.mp3"
+    },
+    {
+      "id": "5e4b7fef-cba7-466a-b3bd-706f145e42ea",
+      "shot": "shot-1",
+      "sha256": "334cb7b62da6e90cb5981af7fb70f5abcd439e6bba77e3c5a836a3c176bf151d",
+      "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/57a27d39-4150-4725-a60c-c7c8f166ec66/shot-narration-shot-1-514626e0429da061dc85aeaa64c9745c.mp3"
+    }
+  ]
+}

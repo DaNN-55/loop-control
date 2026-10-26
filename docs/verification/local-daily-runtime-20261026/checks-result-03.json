@@ -1,0 +1,26 @@
+{
+  "results": [
+    {
+      "label": "check",
+      "exitCode": 0,
+      "signal": null,
+      "elapsedMs": 5040
+    },
+    {
+      "label": "local-types",
+      "exitCode": 0,
+      "signal": null,
+      "elapsedMs": 1345
+    },
+    {
+      "label": "test",
+      "exitCode": 0,
+      "signal": null,
+      "elapsedMs": 15784
+    }
+  ],
+  "defaultTestTimeoutMs": 5000,
+  "noTimeoutOverride": true,
+  "publicNetworkBlocked": true,
+  "providerRequests": 0
+}

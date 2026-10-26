@@ -1,0 +1,30 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/local-app/mediaPaths.test.ts (3 tests | 1 failed) 3ms
+   ✓ restored media mapping > maps frozen roots to the independent destination even when source still exists 1ms
+   ✓ restored media mapping > uses the longest declared prefix and rejects undeclared/traversal/root aliases 0ms
+   × accepts trailing separators in frozen roots while retaining all prefix and traversal checks 1ms
+     → 素材目录映射无效。
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/mediaPaths.test.ts > accepts trailing separators in frozen roots while retaining all prefix and traversal checks
+Error: 素材目录映射无效。
+ ❯ mappedAssetPath src/local-app/mediaPaths.ts:4:135
+      2| // Trusted deployment aliases resolve logical, frozen roots at the I/O…
+      3| export function mappedAssetPath(mediaRoot:string,value:unknown,sourceR…
+      4|  if(typeof value!=='string'||!isAbsolute(value)||resolve(value)!==valu…
+       |                                                                                                                                       ^
+      5|  const within=(parent:string,child:string)=>{const p=relative(parent,c…
+      6|  if(within(mediaRoot,value))return value;
+ ❯ src/local-app/mediaPaths.test.ts:15:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  17:45:51
+   Duration  416ms (transform 20ms, setup 0ms, collect 15ms, tests 3ms, environment 272ms, prepare 38ms)
+

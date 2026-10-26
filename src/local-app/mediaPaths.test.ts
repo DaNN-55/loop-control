@@ -11,3 +11,8 @@ describe('restored media mapping',()=>{
   for(const p of['/source/media-evil/account','/source/media/../escape','relative','/source/media'])expect(()=>mappedAssetPath('/restore/media',p,['/source/media'])).toThrow();
  });
 });
+it('accepts trailing separators in frozen roots while retaining all prefix and traversal checks',()=>{
+ expect(mappedAssetPath('/restore/media','/source/media/account/',['/source/media'])).toBe('/restore/media/account');
+ expect(mappedAssetPath('/restore/media','/restore/media/account/',['/source/media'])).toBe('/restore/media/account');
+ for(const p of ['/source/media/../escape/','/source/media-evil/account/','/source/media/','relative/','/'])expect(()=>mappedAssetPath('/restore/media',p,['/source/media'])).toThrow();
+});

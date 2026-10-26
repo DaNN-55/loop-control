@@ -34,7 +34,7 @@ export class LocalConnections {
  get networkAvailable(){return this.probe.mode==='live'&&this.probe.networkAvailable!==false;}
  async assertBlueprintReferences(client:PoolClient,refs:string[]){
   const networkAvailable=this.networkAvailable,checks:WorkerPreflightCheck[]=[];
-  if(!networkAvailable)checks.push({capability:'worker_runtime',check:'network_connectivity',phase:'preflight',status:'unavailable',reason:'当前部署的 Provider 网络策略未启用或请求预算不可用；请联系环境管理员，不会发起在线检查。',scope:'worker',action:'contact_environment_admin'});
+  if(!networkAvailable)checks.push({capability:'worker_runtime',check:'provider_network_policy',phase:'preflight',status:'unavailable',reason:'当前部署的 Provider 网络策略未启用或请求预算不可用；请联系环境管理员，不会发起在线检查。',scope:'worker',action:'contact_environment_admin'});
   let credentialFailure=this.store.mode!=='keychain'||this.probe.mode!=='live'?'真实Keychain及在线验证尚未就绪。':'';
   if(!credentialFailure)try{
    const owners=await Promise.all(refs.map(id=>ownedConnectionVersion(client,id)));

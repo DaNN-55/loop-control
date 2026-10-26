@@ -1,0 +1,9 @@
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/runtime/codex.mjs:3
+let input='';for await(const b of process.stdin){input+=b;if(Buffer.byteLength(input)>10*1024*1024)throw Error('Task too large');}const task=JSON.parse(input);if(task.version!=='worker-task/v1'||!task.task?.id||!['visual_asset_preparation','storyboard_planning'].includes(task.capability))throw Error('Unsupported planning package');if(!isAbsolute(task.assets.allowedRoot))throw Error('Asset root required');
+                                                                                                                                                                                                                                                                                                       ^
+
+Error: Unsupported planning package
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/runtime/codex.mjs:3:296
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+Node.js v24.20.0

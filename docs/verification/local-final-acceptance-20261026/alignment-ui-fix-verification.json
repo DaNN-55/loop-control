@@ -1,0 +1,16 @@
+{
+  "at": "2026-10-26T06:48:45.566Z",
+  "authorization": "call_82a8d38b5edf488b81e46a2e20054fcf: 授权最小修复并继续",
+  "source": "src/episodes/EpisodeProduction.tsx",
+  "change": "Only running task disables alignment; ready can use existing guarded API",
+  "test": {
+    "red": "1 failed / 8 passed",
+    "green": "9 passed"
+  },
+  "typecheck": true,
+  "frontendBuild": true,
+  "runtimeManifestMatches": true,
+  "originalTaskClaimed": "242a0d71-4c6f-484e-b253-cd130013743c",
+  "newProviderRequests": 0,
+  "newModelJobs": 0
+}

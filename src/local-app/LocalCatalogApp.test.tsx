@@ -1,9 +1,12 @@
+import{flushSync}from'react-dom';
 import {afterEach,it,expect,vi} from 'vitest';
-import {render,screen,fireEvent,waitFor,cleanup,act} from '@testing-library/react';
+import {render,screen,fireEvent,waitFor,cleanup,act,within} from '@testing-library/react';
 import {webcrypto} from 'node:crypto';
 import {LocalCatalogApp} from './LocalCatalogApp';
 import type {LocalCatalog} from './catalog';
 import {localCommand} from './client';
+async function productionButton(){return within(await screen.findByRole('complementary',{name:'主导航'})).getByRole('button',{name:'生产单'});}
+function clickLogout(){if(!screen.queryByRole('menuitem',{name:'退出登录'}))flushSync(()=>{fireEvent.click(screen.getAllByRole('button',{name:'所有者设置'})[0]);});fireEvent.click(screen.getByRole('menuitem',{name:'退出登录'}));}
 afterEach(()=>{cleanup();vi.unstubAllGlobals();sessionStorage.clear();});
 it('keeps a committed series save successful when its follow-up read fails',async()=>{
  const accountId='10000000-0000-4000-8000-000000000001',blueprintId='10000000-0000-4000-8000-000000000002',seriesId='10000000-0000-4000-8000-000000000003',ownerId='10000000-0000-4000-8000-000000000004',at='2026-10-23T00:00:00Z';
@@ -30,31 +33,31 @@ it('keeps a committed series save successful when its follow-up read fails',asyn
  await waitFor(()=>expect(screen.getByRole('heading',{name:'Fixture series · 当前 v2'})).toBeTruthy());
  expect(posts).toBe(1);
 });
-function pagedCatalog(title:string,page=1):LocalCatalog{return{accounts:[],blueprints:[],episodes:[{id:title,title,stage:'waiting_input',archived_at:null} as LocalCatalog['episodes'][number]],series:[],seriesVersions:[],promptVersions:[],blueprintRevisions:{},sourceCreatedAt:'2026-10-25',importedAt:'2026-10-25',page,pageSize:20,total:60,episodeCount:60,accountCounts:{},reviewCount:3,stages:{},artifactCounts:{},pending:{page:1,total:0,items:[]},blocked:{page:1,total:0,items:[]},worker:{running:0,blocked:0,failed:0,latestCompleted:false},operationRows:[]};}
+function pagedCatalog(title:string,page=1):LocalCatalog{return{accounts:[],blueprints:[],episodes:[{id:title,title,stage:'qc_review',account_id:'fixture',blueprint_version_id:'fixture',series_version_id:null,created_at:'2026-10-25T00:00:00Z',updated_at:'2026-10-25T00:00:00Z',archived_at:null} as LocalCatalog['episodes'][number]],series:[],seriesVersions:[],promptVersions:[],blueprintRevisions:{},sourceCreatedAt:'2026-10-25',importedAt:'2026-10-25',page,pageSize:20,total:60,episodeCount:60,accountCounts:{},reviewCount:3,stages:{},artifactCounts:{},pending:{page:1,total:0,items:[]},blocked:{page:1,total:0,items:[]},worker:{running:0,blocked:0,failed:0,latestCompleted:false},operationRows:[]};}
 it('requests server pages and discards a late response from an earlier filter',async()=>{
  const waiting:Array<(value:Response)=>void>=[];let catalogs=0;const paths:string[]=[];const json=(v:unknown)=>new Response(JSON.stringify(v));
  vi.stubGlobal('fetch',vi.fn(async(path:string)=>{if(path.endsWith('/session'))return json({csrfToken:'synthetic'});if(path.includes('/catalog?')){paths.push(path);if(catalogs++===0)return json(pagedCatalog('initial'));return new Promise<Response>(resolve=>waiting.push(resolve));}return json({});}));
- render(<LocalCatalogApp/>);fireEvent.click(await screen.findByRole('button',{name:'生产单目录'}));
+ render(<LocalCatalogApp/>);fireEvent.click(await productionButton());
  fireEvent.click(screen.getByRole('button',{name:'下一页'}));await waitFor(()=>expect(waiting).toHaveLength(1));expect(paths.at(-1)).toContain('page=2');
- fireEvent.change(screen.getByRole('combobox',{name:'审核状态'}),{target:{value:'reviews'}});await waitFor(()=>expect(waiting).toHaveLength(2));expect(paths.at(-1)).toContain('page=1');
- waiting[1](json(pagedCatalog('new-filter')));await screen.findByRole('button',{name:/new-filter/});waiting[0](json(pagedCatalog('stale-page',2)));
- await waitFor(()=>expect(screen.queryByRole('button',{name:/stale-page/})).toBeNull());expect(screen.getByRole('button',{name:/new-filter/})).toBeTruthy();
+ fireEvent.click(within(screen.getByRole('complementary',{name:'主导航'})).getByRole('button',{name:'审核'}));await waitFor(()=>expect(waiting).toHaveLength(2));expect(paths.at(-1)).toContain('page=1');
+ waiting[1](json(pagedCatalog('new-filter')));await screen.findByText(/new-filter/);waiting[0](json(pagedCatalog('stale-page',2)));
+ await waitFor(()=>expect(screen.queryByText(/stale-page/)).toBeNull());expect(screen.getByText(/new-filter/)).toBeTruthy();
 });
 it('does not restore an old catalog after Owner logout',async()=>{
  let resolveLate!:(value:Response)=>void,catalogs=0;const json=(v:unknown)=>new Response(JSON.stringify(v));
  vi.stubGlobal('fetch',vi.fn(async(path:string)=>{if(path.endsWith('/session'))return json({csrfToken:'synthetic'});if(path.includes('/catalog?'))return catalogs++===0?json(pagedCatalog('before')):new Promise<Response>(r=>{resolveLate=r;});return json({});}));
- render(<LocalCatalogApp/>);await screen.findByRole('button',{name:'生产单目录'});fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));await waitFor(()=>expect(resolveLate).toBeTypeOf('function'));fireEvent.click(screen.getByRole('button',{name:'退出登录'}));await screen.findByRole('button',{name:'使用密码登录'});resolveLate(json(pagedCatalog('old-owner')));await waitFor(()=>expect(screen.queryByRole('button',{name:'退出登录'})).toBeNull());
+ render(<LocalCatalogApp/>);await productionButton();fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));await waitFor(()=>expect(resolveLate).toBeTypeOf('function'));clickLogout();await screen.findByRole('button',{name:'使用密码登录'});resolveLate(json(pagedCatalog('old-owner')));await waitFor(()=>expect(screen.queryByRole('button',{name:'退出登录'})).toBeNull());
 });
 it('refreshes the current page on becoming visible and does not fetch while hidden',async()=>{
  let reads=0;const json=(v:unknown)=>new Response(JSON.stringify(v));
  vi.stubGlobal('fetch',vi.fn(async(path:string)=>{if(path.endsWith('/session'))return json({csrfToken:'synthetic'});if(path.includes('/catalog?')){reads++;return json(pagedCatalog('visible'));}return json({});}));
- render(<LocalCatalogApp/>);await screen.findByRole('button',{name:'生产单目录'});const before=reads;
+ render(<LocalCatalogApp/>);await productionButton();const before=reads;
  const hidden=vi.spyOn(document,'hidden','get');hidden.mockReturnValue(true);fireEvent(document,new Event('visibilitychange'));expect(reads).toBe(before);hidden.mockReturnValue(false);fireEvent(document,new Event('visibilitychange'));await waitFor(()=>expect(reads).toBe(before+1));hidden.mockRestore();
 });
 it('does not start a new catalog read while logout is pending',async()=>{
  let reads=0,finishLogout!:(value:Response)=>void;const json=(v:unknown)=>new Response(JSON.stringify(v));
  vi.stubGlobal('fetch',vi.fn(async(path:string)=>{if(path.endsWith('/session'))return json({csrfToken:'synthetic'});if(path.endsWith('/logout'))return new Promise<Response>(r=>{finishLogout=r;});if(path.includes('/catalog?')){reads++;return json(pagedCatalog('owner'));}return json({});}));
- render(<LocalCatalogApp/>);await screen.findByRole('button',{name:'退出登录'});const before=reads;fireEvent.click(screen.getByRole('button',{name:'退出登录'}));await waitFor(()=>expect(finishLogout).toBeTypeOf('function'));fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));expect(reads).toBe(before);finishLogout(json({}));await screen.findByRole('button',{name:'使用密码登录'});
+ render(<LocalCatalogApp/>);await productionButton();const before=reads;clickLogout();await waitFor(()=>expect(finishLogout).toBeTypeOf('function'));fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));expect(reads).toBe(before);finishLogout(json({}));await screen.findByRole('button',{name:'使用密码登录'});
 });
 it.each(['network','503'] as const)('returns to login after %s logout failure without accepting old reads, then restores writable CSRF on login',async fault=>{
  let reads=0,failLogout!:()=>void,resolveOld!:(response:Response)=>void;
@@ -70,24 +73,24 @@ it.each(['network','503'] as const)('returns to login after %s logout failure wi
   return json({});
  }));
  render(<LocalCatalogApp/>);
- fireEvent.click(await screen.findByRole('button',{name:'生产单目录'}));
+ fireEvent.click(await productionButton());
  fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));
  await waitFor(()=>expect(resolveOld).toBeTypeOf('function'));
- fireEvent.click(screen.getByRole('button',{name:'退出登录'}));
+ clickLogout();
  await waitFor(()=>expect(failLogout).toBeTypeOf('function'));
  const before=reads;fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));expect(reads).toBe(before);
  await act(async()=>{failLogout();});
  expect(await screen.findByRole('button',{name:'使用密码登录'})).toBeTruthy();
  expect(screen.getByRole('alert').textContent).toContain('未能确认退出，请重新登录');
- expect(screen.queryByRole('button',{name:'生产单目录'})).toBeNull();
+ expect(screen.queryByRole('complementary',{name:'主导航'})).toBeNull();
  fireEvent.change(screen.getByRole('textbox',{name:'邮箱'}),{target:{value:'owner@p2.invalid'}});
  fireEvent.change(screen.getByLabelText('密码'),{target:{value:'synthetic-p2-password'}});
  fireEvent.click(screen.getByRole('button',{name:'使用密码登录'}));
- fireEvent.click(await screen.findByRole('button',{name:'生产单目录'}));
- await screen.findByRole('button',{name:/current-owner/});
+ fireEvent.click(await productionButton());
+ await screen.findByText(/current-owner/);
  await act(async()=>{resolveOld(json(pagedCatalog('stale-owner')));});
- expect(screen.queryByRole('button',{name:/stale-owner/})).toBeNull();
- expect(screen.getByRole('button',{name:/current-owner/})).toBeTruthy();
+ expect(screen.queryByText(/stale-owner/)).toBeNull();
+ expect(screen.getByText(/current-owner/)).toBeTruthy();
  await expect(localCommand('renameAccount',{accountId:'10000000-0000-4000-8000-000000000001',name:'P2 fixture'})).resolves.toEqual({saved:true});
  expect(writes).toBe(1);
 });
@@ -112,11 +115,11 @@ it.each([
   return json({});
  }));
  render(<LocalCatalogApp/>);
- fireEvent.click(await screen.findByRole('button',{name:'生产单目录'}));
+ fireEvent.click(await productionButton());
  fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));
  await waitFor(()=>expect(resolveOld).toBeTypeOf('function'));
- fireEvent.click(screen.getByRole('button',{name:'退出登录'}));
- fireEvent.click(screen.getByRole('button',{name:'退出登录'}));
+ clickLogout();
+ clickLogout();
  await waitFor(()=>expect(failures).toHaveLength(2));
  const before=reads;
  fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));
@@ -135,19 +138,23 @@ it.each([
  fireEvent.change(screen.getByRole('textbox',{name:'邮箱'}),{target:{value:'owner@concurrent.invalid'}});
  fireEvent.change(screen.getByLabelText('密码'),{target:{value:'synthetic-concurrent-password'}});
  await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'使用密码登录'}));});
- fireEvent.click(await screen.findByRole('button',{name:'生产单目录'}));
- await screen.findByRole('button',{name:/fresh-owner/});
+ fireEvent.click(await productionButton());
+ await screen.findByText(/fresh-owner/);
  if(order==='newer-first')await act(async()=>{failures[0]();});
  await act(async()=>{resolveOld(json(pagedCatalog('stale-concurrent-owner')));});
  expect(screen.queryByRole('button',{name:'使用密码登录'})).toBeNull();
  expect(screen.queryByRole('alert')).toBeNull();
- expect(screen.queryByRole('button',{name:/stale-concurrent-owner/})).toBeNull();
- expect(screen.getByRole('button',{name:/fresh-owner/})).toBeTruthy();
+ expect(screen.queryByText(/stale-concurrent-owner/)).toBeNull();
+ expect(screen.getByText(/fresh-owner/)).toBeTruthy();
  await act(async()=>{fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));});
  await waitFor(()=>expect(reads).toBe(before+2));
  await expect(localCommand('renameAccount',{accountId:'10000000-0000-4000-8000-000000000001',name:'Concurrent fixture'})).resolves.toEqual({saved:true});
  expect(writes).toBe(1);
- await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'退出登录'}));});
+ await act(async()=>{clickLogout();});
  await screen.findByRole('button',{name:'使用密码登录'});
  expect(logoutCsrf).toEqual(['synthetic-concurrent-old-csrf','synthetic-concurrent-old-csrf',currentCsrf]);
+});
+it('returns to login and clears the visible workspace when a remote local session is revoked',async()=>{
+ let revoked=false;vi.stubGlobal('fetch',vi.fn(async(path:string)=>{if(path.endsWith('/session'))return Response.json({owner:{id:'owner'},csrfToken:'fixture'});if(path.includes('/catalog?'))return revoked?Response.json({error:'请先登录所有者。'},{status:401}):Response.json(pagedCatalog('revoked-owner-data'));return Response.json({connections:[],versions:[]});}));
+ render(<LocalCatalogApp/>);fireEvent.click(await productionButton());await screen.findByText('revoked-owner-data');revoked=true;fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));await screen.findByRole('button',{name:'使用密码登录'});expect(screen.queryByText('revoked-owner-data')).toBeNull();
 });

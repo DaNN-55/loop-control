@@ -79,3 +79,16 @@ it.each(['audio','text','alignment'])('invalidates an already saved content revi
  await act(async()=>{view.rerender(<EpisodeProductionView {...f.props} audioTracks={[track] as never} shotPreparationDrafts={[draft] as never}/>);});
  expect(review.textContent).toContain('正文待人工核对');expect(review.textContent).not.toContain('Owner 已核对当前音频正文');
 });
+
+it.each(['ready','running'] as const)('allows queued alignment to start through its normal callback but prevents duplicate running alignment (%s)',async status=>{
+ const f=fixture(),onRequestShotAlignment=vi.fn().mockResolvedValue(undefined),onRefresh=vi.fn().mockResolvedValue(undefined);
+ f.props.tasks=[{id:'alignment-task',episode_id:f.draft.episode_id,task_type:'align_shot_captions',status}] as never;
+ f.props.shotPreparationDrafts=[{...f.draft,pending_alignment_task_id:'alignment-task',acoustic_alignment:{...f.draft.acoustic_alignment,status:'waiting',cues:[]}}] as never;
+ await act(async()=>{render(<EpisodeProductionView {...f.props} onRequestShotAlignment={onRequestShotAlignment} onRefresh={onRefresh}/>);});
+ const region=await screen.findByRole('region',{name:'shot-1 声学对齐'});
+ const button=within(region).getByRole('button',{name:status==='running'?'正在启动 WhisperX…':'使用本地 WhisperX'}) as HTMLButtonElement;
+ expect(button.disabled).toBe(status==='running');
+ fireEvent.click(button);
+ if(status==='ready')await waitFor(()=>expect(onRequestShotAlignment).toHaveBeenCalledWith({episodeId:f.draft.episode_id,reviewPackageId:f.review.id,shotId:'shot-1',localOnly:true}));
+ else expect(onRequestShotAlignment).not.toHaveBeenCalled();
+});

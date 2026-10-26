@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-26T09:57:31.584Z",
+  "scope": "All existing native CHECK expressions against the full frozen source rows; no persistent business changes",
+  "incompatibleChecks": [
+    {
+      "table": "external_connections",
+      "constraint": "external_connections_provider_adapter_check",
+      "failedRows": 1
+    }
+  ]
+}

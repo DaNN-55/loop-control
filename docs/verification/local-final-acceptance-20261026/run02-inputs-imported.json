@@ -1,0 +1,261 @@
+{
+  "phase": "run02-inputs-imported",
+  "at": "2026-10-26T06:01:36.083Z",
+  "episode": {
+    "id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+    "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+    "blueprint_version_id": "a467cbba-de5a-404d-8d64-34d0406bf3f6",
+    "title": "本地最终验收：森林、河流与山峦（接续 02）",
+    "stage": "waiting_input",
+    "created_at": "2026-10-26T06:00:10.837778+00:00",
+    "updated_at": "2026-10-26T06:01:25.778951+00:00",
+    "series_version_id": null,
+    "main_script_revision_id": "641e3065-8958-4934-ac81-d05a60590daf",
+    "archived_at": null,
+    "is_test": false,
+    "script_source": "provided",
+    "worker_preflight_at": null,
+    "audio_source_mode": "tts",
+    "tts_language_code": null,
+    "tts_voice": null,
+    "tts_speaking_rate": null
+  },
+  "blueprint": {
+    "id": "a467cbba-de5a-404d-8d64-34d0406bf3f6",
+    "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+    "version": 1,
+    "policy": {
+      "a_roll": {
+        "execution_path": "manual"
+      },
+      "b_roll": {
+        "executor": {
+          "model": "pexels-video-v1",
+          "adapter": "pexels_video",
+          "provider": "pexels",
+          "prompt_version": "b-roll-v1"
+        },
+        "budget_cents": 1,
+        "max_attempts": 1,
+        "allowed_tools": [
+          "read",
+          "write"
+        ],
+        "credential_ref": "9bf6f776-a439-4e17-8260-55fa2b060e79",
+        "execution_path": "external",
+        "max_concurrency": 1,
+        "total_budget_cents": 3,
+        "provider_max_concurrency": 1
+      },
+      "budgets": {
+        "visual_planning_cents": 100,
+        "storyboard_planning_cents": 100
+      },
+      "executors": {
+        "visual_planning": {
+          "model": "gpt-6.1-sol",
+          "adapter": "codex",
+          "provider": "codex",
+          "harness_id": "3068cda2-04db-41b8-b6b1-fd1d931882e8",
+          "max_attempts": 1,
+          "prompt_version": "storyboard-planning-v2"
+        },
+        "storyboard_planning": {
+          "model": "gpt-6.1-sol",
+          "adapter": "codex",
+          "provider": "codex",
+          "harness_id": "3068cda2-04db-41b8-b6b1-fd1d931882e8",
+          "max_attempts": 1,
+          "prompt_version": "storyboard-planning-v2"
+        }
+      },
+      "narration": {
+        "voice": {
+          "name": "zh_female_vv_uranus_bigtts",
+          "language_code": "zh-CN",
+          "speaking_rate": 1
+        },
+        "executor": {
+          "model": "seed-tts-2.0",
+          "adapter": "volcengine_tts",
+          "provider": "volcengine_tts",
+          "prompt_version": "narration-v1"
+        },
+        "budget_cents": 15,
+        "max_attempts": 1,
+        "allowed_tools": [
+          "read",
+          "write"
+        ],
+        "credential_ref": "3e83d07f-dd79-4897-838f-41d82fc647ea",
+        "execution_path": "external",
+        "total_budget_cents": 45
+      },
+      "asset_root": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-tts-production-20261026-02/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071",
+      "soundtrack": {
+        "execution_path": "manual"
+      },
+      "positioning": "森林、河流与山峦：普通长度三镜头本机视频生产",
+      "allowed_tools": [
+        "read",
+        "write"
+      ],
+      "approval_gates": [
+        "script",
+        "visual",
+        "storyboard",
+        "qc"
+      ]
+    },
+    "is_active": true,
+    "created_at": "2026-10-26T01:56:06.281046+00:00",
+    "archived_at": null,
+    "is_snapshot": false
+  },
+  "assetRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071",
+  "tables": {
+    "production_material_revisions": [
+      {
+        "id": "102bae26-f582-4319-9d77-f30d2a3141a3",
+        "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8",
+        "file_size": 3517,
+        "mime_type": "image/png",
+        "created_at": "2026-10-26T06:01:25.795004+00:00",
+        "created_by": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "source_kind": "file",
+        "source_path": "actor.png",
+        "storage_path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8-actor.png",
+        "material_type": "image",
+        "is_main_script": false,
+        "revision_number": 1,
+        "material_purpose": "visual_reference"
+      },
+      {
+        "id": "641e3065-8958-4934-ac81-d05a60590daf",
+        "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+        "file_size": 893,
+        "mime_type": "text/markdown",
+        "created_at": "2026-10-26T06:01:25.778951+00:00",
+        "created_by": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "source_kind": "file",
+        "source_path": "script.md",
+        "storage_path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md",
+        "material_type": "script",
+        "is_main_script": true,
+        "revision_number": 1,
+        "material_purpose": "main_script"
+      }
+    ],
+    "tasks": [],
+    "artifacts": [],
+    "audio_tracks": [],
+    "review_packages": [],
+    "approvals": [],
+    "state_transitions": [],
+    "audit_events": [
+      {
+        "id": "513b2982-5780-4d7b-a92f-8027bf120890",
+        "payload": {
+          "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+          "approval_id": "d870c751-3db8-4692-b465-ffdaa36dc440",
+          "source_kind": "file",
+          "material_type": "script",
+          "is_main_script": true,
+          "material_purpose": "main_script",
+          "material_revision_id": "641e3065-8958-4934-ac81-d05a60590daf"
+        },
+        "actor_id": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+        "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+        "created_at": "2026-10-26T06:01:25.778951+00:00",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "event_type": "production_material_imported"
+      },
+      {
+        "id": "beea9c47-271f-414a-aef9-6609c0cd0a6b",
+        "payload": {
+          "is_test": false,
+          "series_version_id": null,
+          "blueprint_version_id": "a467cbba-de5a-404d-8d64-34d0406bf3f6"
+        },
+        "actor_id": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+        "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+        "created_at": "2026-10-26T06:00:10.837778+00:00",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "event_type": "episode_created"
+      },
+      {
+        "id": "c011ebb4-f6c5-453b-abbd-338089edcd02",
+        "payload": {
+          "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8",
+          "approval_id": "bd458325-3b58-4f08-947b-60fec9baf783",
+          "source_kind": "file",
+          "material_type": "image",
+          "is_main_script": false,
+          "material_purpose": "visual_reference",
+          "material_revision_id": "102bae26-f582-4319-9d77-f30d2a3141a3"
+        },
+        "actor_id": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+        "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+        "created_at": "2026-10-26T06:01:25.795004+00:00",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "event_type": "production_material_imported"
+      }
+    ],
+    "task_runs": []
+  },
+  "network": {
+    "version": 1,
+    "policySha256": "ea22225ede987658e0049b1f3d4fd6c68c8f696b35e7e73aa573c1b409e2d24e",
+    "used": 2,
+    "costMicrounits": 10000,
+    "byOperation": {
+      "pexels.verify": 1,
+      "volcengine_tts.verify": 1
+    },
+    "halted": false,
+    "events": [
+      {
+        "operation": "pexels.verify",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "pexels.verify",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 3119
+      },
+      {
+        "operation": "volcengine_tts.verify",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "volcengine_tts.verify",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 13766
+      }
+    ]
+  },
+  "files": [
+    {
+      "table": "production_material_revisions",
+      "id": "102bae26-f582-4319-9d77-f30d2a3141a3",
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8-actor.png",
+      "bytes": 3517,
+      "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8",
+      "sizeMatched": true,
+      "hashMatched": true
+    },
+    {
+      "table": "production_material_revisions",
+      "id": "641e3065-8958-4934-ac81-d05a60590daf",
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md",
+      "bytes": 893,
+      "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+      "sizeMatched": true,
+      "hashMatched": true
+    }
+  ]
+}

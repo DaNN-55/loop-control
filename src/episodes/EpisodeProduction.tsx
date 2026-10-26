@@ -1871,7 +1871,7 @@ function ShotPreparationCard({ onRequestAlignment, onSaveManualAlignment, onConf
           : { label: isDirty ? "配置已修改，待保存" : "待配置", tone: "pending" };
   const savedAlignment = acousticAlignmentFromJson(draft?.acoustic_alignment);
   const activeAlignmentTask = draft?.pending_alignment_task_id ? tasks.find((task) => task.id === draft.pending_alignment_task_id) : undefined;
-  const alignmentIsRunning = activeAlignmentTask?.status === "ready" || activeAlignmentTask?.status === "running";
+  const alignmentIsRunning = activeAlignmentTask?.status === "running";
   const contractNeedsUpgrade = draft?.preparation_contract_status === "needs_upgrade";
   const alignmentInputsDirty = draft !== undefined && (
     effectiveSubtitleText !== draft?.subtitle_text

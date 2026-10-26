@@ -45,7 +45,7 @@ it('does not start a blueprint check while logout is pending',async()=>{
   if(path.endsWith('/account-commands')){checks++;return Response.json({version:'worker-preflight/v2',checks:[]});}
   return Response.json({connections:[],versions:[]});
  }));
- await act(async()=>{render(<LocalCatalogApp/>);});fireEvent.click(screen.getByRole('button',{name:'退出登录'}));await waitFor(()=>expect(finishLogout).toBeTypeOf('function'));
+ await act(async()=>{render(<LocalCatalogApp/>);});fireEvent.click(screen.getAllByRole('button',{name:'所有者设置'})[0]);fireEvent.click(screen.getByRole('menuitem',{name:'退出登录'}));await waitFor(()=>expect(finishLogout).toBeTypeOf('function'));
  fireEvent.click(within(screen.getByLabelText('账号默认配置检查')).getByRole('button',{name:'重新检查'}));expect(checks).toBe(0);
  await act(async()=>{finishLogout(Response.json({}));});await screen.findByRole('button',{name:'使用密码登录'});
 });
@@ -85,7 +85,7 @@ it('keeps the relogged-in session check when an old session check returns late',
  }));
  await act(async()=>{render(<LocalCatalogApp/>);});
  fireEvent.click(within(screen.getByLabelText('账号默认配置检查')).getByRole('button',{name:'重新检查'}));await waitFor(()=>expect(finishOld).toBeTypeOf('function'));
- fireEvent.click(screen.getByRole('button',{name:'退出登录'}));await screen.findByRole('button',{name:'使用密码登录'});
+ fireEvent.click(screen.getAllByRole('button',{name:'所有者设置'})[0]);fireEvent.click(screen.getByRole('menuitem',{name:'退出登录'}));await screen.findByRole('button',{name:'使用密码登录'});
  fireEvent.change(screen.getByLabelText('邮箱'),{target:{value:'owner@example.test'}});fireEvent.change(screen.getByLabelText('密码'),{target:{value:'synthetic-password'}});fireEvent.click(screen.getByRole('button',{name:'使用密码登录'}));
  const rail=await screen.findByLabelText('账号默认配置检查');fireEvent.click(within(rail).getByRole('button',{name:'重新检查'}));await waitFor(()=>expect(rail.textContent).toContain('New session blocker'));
  await act(async()=>{finishOld(Response.json({version:'worker-preflight/v2',checks:[{capability:'worker_runtime',check:'command_availability',phase:'preflight',status:'passed',scope:'worker',action:'none',reason:'Old session success'}]}));});

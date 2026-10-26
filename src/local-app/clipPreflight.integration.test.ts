@@ -88,7 +88,7 @@ async function runCase(localClip=true,mediaWasEnabled=true){
   if(localClip&&mediaWasEnabled){
    expect(response.status,JSON.stringify(result)).toBe(200);expect(result.id).not.toBe(fixture.oldClipTaskId);expect(result.provider).toBe('ffmpeg');expect(result.input_snapshot.media.adapter).toBe('ffmpeg_trim_video');expect(result.input_snapshot.native_output_namespace).toBe(result.id);expect(wakes).toBe(1);expect((await client.query('SELECT to_jsonb(i) snapshot FROM local_identity.input_episodes i WHERE episode_id=$1',[fixture.episodeId])).rows[0].snapshot).toEqual(dispatchBefore);
   }else{
-   expect(response.status).toBe(409);expect(result.preflight.checks).toContainEqual(expect.objectContaining({check:'network_connectivity',status:'unavailable'}));expect(wakes).toBe(0);expect((await client.query('SELECT count(*)::integer n FROM public.tasks WHERE episode_id=$1',[fixture.episodeId])).rows[0].n).toBe(taskCountBeforeCommand);
+   expect(response.status).toBe(409);expect(result.preflight.checks).toContainEqual(expect.objectContaining({check:'provider_network_policy',status:'unavailable'}));expect(wakes).toBe(0);expect((await client.query('SELECT count(*)::integer n FROM public.tasks WHERE episode_id=$1',[fixture.episodeId])).rows[0].n).toBe(taskCountBeforeCommand);
    if(!mediaWasEnabled){
     expect((await client.query('SELECT media_enabled FROM local_identity.input_episodes WHERE episode_id=$1',[fixture.episodeId])).rows[0].media_enabled).toBe(false);
     await client.query('RESET SESSION AUTHORIZATION');await client.query('SET SESSION AUTHORIZATION loop_worker');

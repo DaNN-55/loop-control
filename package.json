@@ -7,11 +7,11 @@
     "node": "24.x"
   },
   "scripts": {
-    "start": "node scripts/local/start.mjs",
-    "dev": "node scripts/local/start.mjs",
-    "dev:local": "node scripts/local/start.mjs",
-    "stop": "node scripts/local/stop.mjs",
-    "stop:all": "node scripts/local/stop.mjs",
+    "start": "node scripts/start.mjs",
+    "dev": "node scripts/start.mjs",
+    "dev:local": "node scripts/start.mjs",
+    "stop": "node scripts/stop.mjs",
+    "stop:all": "node scripts/stop.mjs",
     "build": "tsc -b && vite build",
     "check": "tsc -b --pretty false",
     "test": "vitest run --exclude n8n/import-workflows.test.mjs --exclude '**/*.integration.test.ts' && node --test n8n/import-workflows.test.mjs",
@@ -60,7 +60,8 @@
     "legacy:orchestrator": "node scripts/run-prepared.mjs legacy-orchestrator",
     "legacy:publish:prepare": "npm run worker:build && node dist/worker/publishing/publishPackageCli.js",
     "legacy:publish:register-input": "npm run worker:build && node dist/worker/publishing/publishInputCli.js",
-    "legacy:publish:verify": "npm run worker:build && node dist/worker/publishing/publishPackageVerifyCli.js"
+    "legacy:publish:verify": "npm run worker:build && node dist/worker/publishing/publishPackageVerifyCli.js",
+    "runtime:migrate": "node scripts/runtime/migrate.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.31.0",

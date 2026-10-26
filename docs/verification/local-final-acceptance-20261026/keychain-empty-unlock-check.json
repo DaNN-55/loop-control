@@ -1,0 +1,59 @@
+{
+  "at": "2026-10-26T05:46:37.413Z",
+  "emptyDiagnosticOnly": true,
+  "dailyKeychainUntouched": true,
+  "steps": [
+    {
+      "operation": "create",
+      "exit": 0,
+      "value": {
+        "status": 0,
+        "unlocked": true,
+        "ok": true
+      }
+    },
+    {
+      "operation": "lock",
+      "exit": 0,
+      "value": {
+        "status": 0,
+        "unlocked": false,
+        "ok": true
+      }
+    },
+    {
+      "operation": "status",
+      "exit": 0,
+      "value": {
+        "status": 0,
+        "unlocked": false,
+        "ok": true
+      }
+    },
+    {
+      "operation": "unlock",
+      "exit": 0,
+      "value": {
+        "status": 0,
+        "unlocked": true,
+        "ok": true
+      }
+    },
+    {
+      "operation": "status",
+      "exit": 0,
+      "value": {
+        "status": 0,
+        "unlocked": true,
+        "ok": true
+      }
+    }
+  ],
+  "directoryEntries": [
+    ".flDACB6BFC",
+    "control",
+    "diagnostic.keychain-db",
+    "password-private.json"
+  ],
+  "externalCalls": 0
+}

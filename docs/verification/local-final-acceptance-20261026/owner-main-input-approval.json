@@ -1,0 +1,21 @@
+{
+  "kind": "main-script-and-color-reference",
+  "confirmedBy": "human-owner",
+  "confirmed": true,
+  "confirmedAt": "2026-10-26T05:26:42.594Z",
+  "sourceUserMessage": "Direct human reply to request_user_input_async call_7390da60e88b429bbf3525eeaecd8518 item 0: 确认这些输入，继续视觉规划",
+  "episodeId": "cf4765d7-8e50-412f-8b4d-ad536dc5254c",
+  "script": {
+    "path": "script-proposal.txt",
+    "sha256": "c2945362f16a8f9d1f3c046a00e9225f61c65cb7a439bd5a589ff6396f8261dc"
+  },
+  "reference": {
+    "path": ".loop-control/local/state/final-acceptance-20261026/visual-color-guide.png",
+    "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8"
+  },
+  "doesNotApprove": [
+    "visual_review",
+    "storyboard_review",
+    "qc_review"
+  ]
+}

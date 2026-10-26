@@ -1,0 +1,97 @@
+{
+  "at": "2026-10-26T07:15:39.076Z",
+  "initialAction": "Current review video started at 0 with muted=false using normal HTML media playback",
+  "samples": [
+    {
+      "at": "2026-10-26T07:15:14.040Z",
+      "player": {
+        "decodedAudioBytes": 1345669,
+        "droppedFrames": 0,
+        "duration": 57.749333,
+        "ended": false,
+        "error": null,
+        "muted": false,
+        "paused": false,
+        "time": 33.387887,
+        "totalFrames": 1006,
+        "volume": 1
+      }
+    },
+    {
+      "at": "2026-10-26T07:15:19.047Z",
+      "player": {
+        "decodedAudioBytes": 1544557,
+        "droppedFrames": 0,
+        "duration": 57.749333,
+        "ended": false,
+        "error": null,
+        "muted": false,
+        "paused": false,
+        "time": 38.39541,
+        "totalFrames": 1157,
+        "volume": 1
+      }
+    },
+    {
+      "at": "2026-10-26T07:15:24.054Z",
+      "player": {
+        "decodedAudioBytes": 1742599,
+        "droppedFrames": 0,
+        "duration": 57.749333,
+        "ended": false,
+        "error": null,
+        "muted": false,
+        "paused": false,
+        "time": 43.401807,
+        "totalFrames": 1308,
+        "volume": 1
+      }
+    },
+    {
+      "at": "2026-10-26T07:15:29.062Z",
+      "player": {
+        "decodedAudioBytes": 1941488,
+        "droppedFrames": 0,
+        "duration": 57.749333,
+        "ended": false,
+        "error": null,
+        "muted": false,
+        "paused": false,
+        "time": 48.409665,
+        "totalFrames": 1458,
+        "volume": 1
+      }
+    },
+    {
+      "at": "2026-10-26T07:15:34.070Z",
+      "player": {
+        "decodedAudioBytes": 2140376,
+        "droppedFrames": 0,
+        "duration": 57.749333,
+        "ended": false,
+        "error": null,
+        "muted": false,
+        "paused": false,
+        "time": 53.417329,
+        "totalFrames": 1609,
+        "volume": 1
+      }
+    },
+    {
+      "at": "2026-10-26T07:15:39.076Z",
+      "player": {
+        "decodedAudioBytes": 2300333,
+        "droppedFrames": 0,
+        "duration": 57.749333,
+        "ended": true,
+        "error": null,
+        "muted": false,
+        "paused": true,
+        "time": 57.749333,
+        "totalFrames": 1735,
+        "volume": 1
+      }
+    }
+  ],
+  "limitation": "Browser playback and decoding verified; agent does not claim to have heard semantic audio content"
+}

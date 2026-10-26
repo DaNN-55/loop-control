@@ -1,9 +1,27 @@
-import { mkdtemp, rm, stat } from "node:fs/promises";
+import { mkdtemp, rm, stat, writeFile, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, expect, it, vi } from "vitest";
 import { readOperationsEvidence, recordOperation } from "./operationsEvidence";
 const roots:string[]=[];
+it("筛选未来记录时仍保留实际读取错误",async()=>{
+ const directory=await mkdtemp(join(tmpdir(),"loop-operations-invalid-"));roots.push(directory);
+ await writeFile(join(directory,"health-result.json"),"invalid json");
+ const report=await readOperationsEvidence(directory,new Date("2026-10-26T10:00:00Z"));
+ expect(report.health?.latest).toMatchObject({at:"2026-10-26T10:00:00.000Z",passed:false,detail:"本机结果记录无效或无法读取。"});
+});
+it("保留未来运维记录但不用它替代当前检查结果",async()=>{
+ vi.useFakeTimers({toFake:["Date"]});vi.setSystemTime(new Date("2026-10-26T10:00:00Z"));
+ const directory=await mkdtemp(join(tmpdir(),"loop-operations-future-"));roots.push(directory);
+ const future=JSON.stringify({at:"2026-11-01T09:00:00Z",passed:true,detail:"历史未来日期备份"});
+ await writeFile(join(directory,"backup-result.json"),future);
+ await writeFile(join(directory,"backup-last-success.json"),future);
+ await writeFile(join(directory,"backup-last-failure.json"),JSON.stringify({at:"2026-10-26T09:00:00Z",passed:false,detail:"本次备份失败"}));
+ const report=await readOperationsEvidence(directory);
+ expect(report.backup?.latest.detail).toBe("本次备份失败");
+ expect(report.backup?.lastSuccess).toBeNull();
+ expect(await readFile(join(directory,"backup-result.json"),"utf8")).toBe(future);
+});
 afterEach(async()=>{vi.useRealTimers();await Promise.all(roots.splice(0).map(root=>rm(root,{recursive:true,force:true})));});
 it("通知失败不覆盖健康和备份，成功后仍可查看最近失败，空闲成功不反复写入",async()=>{
  vi.useFakeTimers({toFake:["Date"]});vi.setSystemTime(new Date("2026-10-23T10:00:00Z"));

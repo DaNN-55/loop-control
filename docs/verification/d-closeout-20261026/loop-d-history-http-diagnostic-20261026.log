@@ -1,0 +1,9 @@
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.scratch/d-closeout-20261026/http-check.mjs:9
+ for(const e of episodes){const snapshot=await get('/api/local/episodes/'+e.id);const actual=snapshot.episode??snapshot;if(actual.stage!==e.stage||actual.archived_at!==e.archived_at)throw Error(JSON.stringify({id:e.id,expectedStage:e.stage,actualStage:actual.stage,expectedArchived:e.archived_at,actualArchived:actual.archived_at,keys:Object.keys(snapshot)}));result.episodes.push({id:e.id,title:e.title,stage:actual.stage,archived:Boolean(actual.archived_at),opened:true});}
+                                                                                                                                                                                            ^
+
+Error: {"id":"265dcee5-32c8-4066-b3ad-58803d195e01","expectedStage":"qc_passed","expectedArchived":"2026-10-24T07:39:33.564497+00:00","keys":["hashes","patches","sections"]}
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.scratch/d-closeout-20261026/http-check.mjs:9:189
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+Node.js v24.20.0

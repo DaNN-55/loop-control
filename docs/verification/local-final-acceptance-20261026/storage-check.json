@@ -1,0 +1,49 @@
+{
+  "at": "2026-10-26T04:58:26.007Z",
+  "backupPath": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/backups/loop_control/93b82876-03a4-4dc8-8478-4db57fbd48b4",
+  "backup": {
+    "integrityPassed": true,
+    "createdAt": "2026-10-26T04:47:23.974Z",
+    "tables": 51,
+    "rows": 29099,
+    "files": 975,
+    "archiveSha256": "f088e9d70e41ea30c95421ef1d481240b0af23f60ee42b500965287eb672428f",
+    "excluded": [
+      "local Owner password digests",
+      "sessions and tokens",
+      "Keychain values",
+      "host database credentials",
+      "OS volume metadata directories"
+    ],
+    "restoreStatus": "Archive integrity verified. A successful restore receipt is required; Owner password reset and Keychain rebind are separate steps."
+  },
+  "currentMedia": {
+    "compared": 975,
+    "missing": [],
+    "changed": []
+  },
+  "currentReferences": {
+    "passed": true,
+    "count": 812
+  },
+  "importSource": {
+    "database": "loop_t24_restore_ttsproduction20261026_02",
+    "snapshotAt": "2026-10-26T03:40:54.224Z",
+    "tables": 51,
+    "rows": 29060,
+    "mediaFiles": 974,
+    "archiveSha256": "d8b1b8d1e71f5d749b6893009cfe50fe6e7d36231ef588a432d4fdc3b6d6b308",
+    "excluded": [
+      "local Owner password digests",
+      "sessions and tokens",
+      "Keychain values",
+      "host database credentials",
+      "OS volume metadata directories"
+    ]
+  },
+  "originalImportedMedia": {
+    "compared": 974,
+    "mismatches": []
+  },
+  "elapsedMs": 6717
+}

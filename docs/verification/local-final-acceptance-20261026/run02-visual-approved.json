@@ -1,0 +1,1122 @@
+{
+  "phase": "run02-visual-approved",
+  "at": "2026-10-26T06:08:08.382Z",
+  "episode": {
+    "id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+    "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+    "blueprint_version_id": "a467cbba-de5a-404d-8d64-34d0406bf3f6",
+    "title": "本地最终验收：森林、河流与山峦（接续 02）",
+    "stage": "visual_approved",
+    "created_at": "2026-10-26T06:00:10.837778+00:00",
+    "updated_at": "2026-10-26T06:07:14.818383+00:00",
+    "series_version_id": null,
+    "main_script_revision_id": "641e3065-8958-4934-ac81-d05a60590daf",
+    "archived_at": null,
+    "is_test": false,
+    "script_source": "provided",
+    "worker_preflight_at": null,
+    "audio_source_mode": "tts",
+    "tts_language_code": null,
+    "tts_voice": null,
+    "tts_speaking_rate": null
+  },
+  "blueprint": {
+    "id": "a467cbba-de5a-404d-8d64-34d0406bf3f6",
+    "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+    "version": 1,
+    "policy": {
+      "a_roll": {
+        "execution_path": "manual"
+      },
+      "b_roll": {
+        "executor": {
+          "model": "pexels-video-v1",
+          "adapter": "pexels_video",
+          "provider": "pexels",
+          "prompt_version": "b-roll-v1"
+        },
+        "budget_cents": 1,
+        "max_attempts": 1,
+        "allowed_tools": [
+          "read",
+          "write"
+        ],
+        "credential_ref": "9bf6f776-a439-4e17-8260-55fa2b060e79",
+        "execution_path": "external",
+        "max_concurrency": 1,
+        "total_budget_cents": 3,
+        "provider_max_concurrency": 1
+      },
+      "budgets": {
+        "visual_planning_cents": 100,
+        "storyboard_planning_cents": 100
+      },
+      "executors": {
+        "visual_planning": {
+          "model": "gpt-6.1-sol",
+          "adapter": "codex",
+          "provider": "codex",
+          "harness_id": "3068cda2-04db-41b8-b6b1-fd1d931882e8",
+          "max_attempts": 1,
+          "prompt_version": "storyboard-planning-v2"
+        },
+        "storyboard_planning": {
+          "model": "gpt-6.1-sol",
+          "adapter": "codex",
+          "provider": "codex",
+          "harness_id": "3068cda2-04db-41b8-b6b1-fd1d931882e8",
+          "max_attempts": 1,
+          "prompt_version": "storyboard-planning-v2"
+        }
+      },
+      "narration": {
+        "voice": {
+          "name": "zh_female_vv_uranus_bigtts",
+          "language_code": "zh-CN",
+          "speaking_rate": 1
+        },
+        "executor": {
+          "model": "seed-tts-2.0",
+          "adapter": "volcengine_tts",
+          "provider": "volcengine_tts",
+          "prompt_version": "narration-v1"
+        },
+        "budget_cents": 15,
+        "max_attempts": 1,
+        "allowed_tools": [
+          "read",
+          "write"
+        ],
+        "credential_ref": "3e83d07f-dd79-4897-838f-41d82fc647ea",
+        "execution_path": "external",
+        "total_budget_cents": 45
+      },
+      "asset_root": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-tts-production-20261026-02/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071",
+      "soundtrack": {
+        "execution_path": "manual"
+      },
+      "positioning": "森林、河流与山峦：普通长度三镜头本机视频生产",
+      "allowed_tools": [
+        "read",
+        "write"
+      ],
+      "approval_gates": [
+        "script",
+        "visual",
+        "storyboard",
+        "qc"
+      ]
+    },
+    "is_active": true,
+    "created_at": "2026-10-26T01:56:06.281046+00:00",
+    "archived_at": null,
+    "is_snapshot": false
+  },
+  "assetRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071",
+  "tables": {
+    "production_material_revisions": [
+      {
+        "id": "102bae26-f582-4319-9d77-f30d2a3141a3",
+        "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8",
+        "file_size": 3517,
+        "mime_type": "image/png",
+        "created_at": "2026-10-26T06:01:25.795004+00:00",
+        "created_by": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "source_kind": "file",
+        "source_path": "actor.png",
+        "storage_path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8-actor.png",
+        "material_type": "image",
+        "is_main_script": false,
+        "revision_number": 1,
+        "material_purpose": "visual_reference"
+      },
+      {
+        "id": "641e3065-8958-4934-ac81-d05a60590daf",
+        "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+        "file_size": 893,
+        "mime_type": "text/markdown",
+        "created_at": "2026-10-26T06:01:25.778951+00:00",
+        "created_by": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "source_kind": "file",
+        "source_path": "script.md",
+        "storage_path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md",
+        "material_type": "script",
+        "is_main_script": true,
+        "revision_number": 1,
+        "material_purpose": "main_script"
+      }
+    ],
+    "tasks": [
+      {
+        "id": "d0565687-4d4f-4e11-ac6e-2b268bb512dd",
+        "model": "gpt-6.1-sol",
+        "status": "completed",
+        "attempt": 1,
+        "provider": "codex",
+        "task_type": "prepare_visual_brief",
+        "claimed_at": "2026-10-26T06:03:26.888157+00:00",
+        "created_at": "2026-10-26T06:01:45.748661+00:00",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "last_result": {
+          "retry": {
+            "reason": "Completed successfully",
+            "shouldRetry": false
+          },
+          "status": "completed",
+          "taskId": "d0565687-4d4f-4e11-ac6e-2b268bb512dd",
+          "version": "worker-result/v1",
+          "blockers": [],
+          "nextStep": "等待 Owner 视觉审核；未生成媒体或更改 Episode 阶段。",
+          "artifacts": [
+            {
+              "sha256": "7de96897a75645d9c018a95156b94065718a90b18d2d5b38bc26c463c5f26591",
+              "fileSize": 5389,
+              "artifactType": "visual_asset_manifest",
+              "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/d0565687-4d4f-4e11-ac6e-2b268bb512dd/visual-assets-v1.md"
+            }
+          ],
+          "preflight": {
+            "checks": [
+              {
+                "check": "command_availability",
+                "phase": "preflight",
+                "scope": "worker",
+                "action": "none",
+                "reason": "本地受控规划执行路径；不自动调用在线Provider。",
+                "status": "passed",
+                "capability": "visual_planning"
+              }
+            ],
+            "version": "worker-preflight/v2"
+          },
+          "validation": {
+            "checks": [
+              {
+                "name": "frozen_inputs",
+                "detail": "主脚本与颜色参考图的 SHA-256、文件大小均与冻结输入一致。",
+                "passed": true
+              },
+              {
+                "name": "manifest_readback",
+                "detail": "清单已写入并回读核验，包含唯一外部视觉输入的用途及森林、河流、山峦三类场景需求，无缺失图片资产。",
+                "passed": true
+              }
+            ],
+            "passed": true
+          },
+          "actualCostCents": 0,
+          "visualAssetRequests": []
+        },
+        "lease_token": null,
+        "available_at": "-infinity",
+        "completed_at": "2026-10-26T06:03:26.887355+00:00",
+        "max_attempts": 1,
+        "input_snapshot": {
+          "budget": {
+            "limit_cents": 0,
+            "max_attempts": 1
+          },
+          "output": {
+            "content_type": "text/markdown",
+            "review_stage": "visual_review",
+            "relative_path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/d0565687-4d4f-4e11-ac6e-2b268bb512dd/visual-assets-v1.md",
+            "required_artifact_types": [
+              "visual_asset_manifest"
+            ]
+          },
+          "harness": {
+            "id": "3068cda2-04db-41b8-b6b1-fd1d931882e8",
+            "model": "gpt-6.1-sol",
+            "adapter": "codex",
+            "content": "基于冻结主脚本完成真实视觉规划和分镜。提供的图只是本次新建颜色参考；最终视频来自后续Pexels。视觉准备说明森林、河流、山峦三类自然场景，不请求额外图片，visualAssetRequests=[]。分镜必须恰好三条b_roll镜头，id依次shot-1、shot-2、shot-3，scriptSegment分别逐字采用正文第1、第2、第3段完整文本，不缩写。三镜头productionMethod依次为forest、river、mountains（英文Pexels检索词）；每条durationSeconds=16，targetSpec为字符串1080x1920竖屏自然画面，audioCues=[]。不添加BGM/SFX、人物或多余镜头。每条inputBasis必须引用冻结主脚本和批准视觉清单。真实写入指定artifact并返回相同storyboard对象，不代用户审核。",
+            "version": 2,
+            "content_hash": "b769a487c1ffa69c28573a28867d33d3be336b6e85ee94c613bdf0317902ce34",
+            "prompt_version": "storyboard-planning-v2"
+          },
+          "executor": {
+            "model": "gpt-6.1-sol",
+            "adapter": "codex",
+            "provider": "codex",
+            "prompt_version": "storyboard-planning-v2"
+          },
+          "capability": "visual_planning",
+          "allowed_tools": [
+            "read",
+            "write"
+          ],
+          "visual_assets": {
+            "external_inputs": [
+              {
+                "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8",
+                "fileSize": 3517,
+                "artifactType": "external_visual_input",
+                "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8-actor.png",
+                "materialPurpose": "visual_reference"
+              }
+            ]
+          },
+          "execution_mode": "worker_default",
+          "prompt_context": {
+            "hash": "5e7b6d9837a15f9048ec8042d93c1161",
+            "version": "prompt-context/v1",
+            "episode_input": {
+              "input_artifacts": [
+                {
+                  "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+                  "fileSize": 893,
+                  "artifactType": "main_script",
+                  "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md"
+                },
+                {
+                  "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8",
+                  "fileSize": 3517,
+                  "artifactType": "external_visual_input",
+                  "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8-actor.png",
+                  "materialPurpose": "visual_reference"
+                }
+              ],
+              "script_revision": {
+                "id": "641e3065-8958-4934-ac81-d05a60590daf",
+                "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+                "file_size": 893,
+                "mime_type": "text/markdown",
+                "storage_path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md"
+              }
+            },
+            "account_defaults": {
+              "positioning": "森林、河流与山峦：普通长度三镜头本机视频生产"
+            },
+            "blueprint_version_id": "a467cbba-de5a-404d-8d64-34d0406bf3f6",
+            "account_hard_constraints": {
+              "asset_root": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-tts-production-20261026-02/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071",
+              "allowed_tools": [
+                "read",
+                "write"
+              ],
+              "approval_gates": [
+                "script",
+                "visual",
+                "storyboard",
+                "qc"
+              ]
+            }
+          },
+          "input_artifacts": [
+            {
+              "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+              "fileSize": 893,
+              "artifactType": "main_script",
+              "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md"
+            },
+            {
+              "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8",
+              "fileSize": 3517,
+              "artifactType": "external_visual_input",
+              "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8-actor.png",
+              "materialPurpose": "visual_reference"
+            }
+          ],
+          "script_revision": {
+            "id": "641e3065-8958-4934-ac81-d05a60590daf",
+            "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+            "file_size": 893,
+            "mime_type": "text/markdown",
+            "storage_path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md"
+          },
+          "runtime_constraints": {
+            "source": {
+              "worker_capacity": 2,
+              "adapter_safety_limit": 1,
+              "provider_or_connection_limit": null
+            },
+            "version": "worker-runtime/v1",
+            "resource_limits": [
+              {
+                "key": "adapter:codex:codex",
+                "limit": 1
+              },
+              {
+                "key": "connection:codex:codex:shared",
+                "limit": 1
+              },
+              {
+                "key": "provider:codex",
+                "limit": 1
+              }
+            ],
+            "concurrency_group": "codex:codex:shared",
+            "effective_concurrency": 1
+          },
+          "native_output_namespace": "d0565687-4d4f-4e11-ac6e-2b268bb512dd"
+        },
+        "invalidated_at": null,
+        "prompt_version": "storyboard-planning-v2",
+        "actual_cost_cents": 0,
+        "budget_limit_cents": 0,
+        "invalidated_reason": null
+      }
+    ],
+    "artifacts": [
+      {
+        "id": "26f9528e-72e5-4828-88c7-f9ce7a5f678d",
+        "sha256": "7de96897a75645d9c018a95156b94065718a90b18d2d5b38bc26c463c5f26591",
+        "file_size": 5389,
+        "created_at": "2026-10-26T06:03:26.887355+00:00",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "artifact_type": "visual_asset_manifest",
+        "relative_path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/d0565687-4d4f-4e11-ac6e-2b268bb512dd/visual-assets-v1.md",
+        "producer_task_id": "d0565687-4d4f-4e11-ac6e-2b268bb512dd"
+      }
+    ],
+    "audio_tracks": [],
+    "review_packages": [
+      {
+        "id": "c6080d2a-f1c4-4735-ac0a-2fc35bc4ad3f",
+        "stage": "visual_review",
+        "task_id": "d0565687-4d4f-4e11-ac6e-2b268bb512dd",
+        "created_at": "2026-10-26T06:03:26.887355+00:00",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "artifact_id": "26f9528e-72e5-4828-88c7-f9ce7a5f678d",
+        "task_run_id": "7a42157f-0194-4b3a-88de-d83a83488f2a",
+        "invalidated_at": null,
+        "revision_number": 1,
+        "context_snapshot": {
+          "budget": {
+            "limit_cents": 0,
+            "max_attempts": 1
+          },
+          "output": {
+            "content_type": "text/markdown",
+            "review_stage": "visual_review",
+            "relative_path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/d0565687-4d4f-4e11-ac6e-2b268bb512dd/visual-assets-v1.md",
+            "required_artifact_types": [
+              "visual_asset_manifest"
+            ]
+          },
+          "harness": {
+            "id": "3068cda2-04db-41b8-b6b1-fd1d931882e8",
+            "model": "gpt-6.1-sol",
+            "adapter": "codex",
+            "content": "基于冻结主脚本完成真实视觉规划和分镜。提供的图只是本次新建颜色参考；最终视频来自后续Pexels。视觉准备说明森林、河流、山峦三类自然场景，不请求额外图片，visualAssetRequests=[]。分镜必须恰好三条b_roll镜头，id依次shot-1、shot-2、shot-3，scriptSegment分别逐字采用正文第1、第2、第3段完整文本，不缩写。三镜头productionMethod依次为forest、river、mountains（英文Pexels检索词）；每条durationSeconds=16，targetSpec为字符串1080x1920竖屏自然画面，audioCues=[]。不添加BGM/SFX、人物或多余镜头。每条inputBasis必须引用冻结主脚本和批准视觉清单。真实写入指定artifact并返回相同storyboard对象，不代用户审核。",
+            "version": 2,
+            "content_hash": "b769a487c1ffa69c28573a28867d33d3be336b6e85ee94c613bdf0317902ce34",
+            "prompt_version": "storyboard-planning-v2"
+          },
+          "artifact": {
+            "id": "26f9528e-72e5-4828-88c7-f9ce7a5f678d",
+            "sha256": "7de96897a75645d9c018a95156b94065718a90b18d2d5b38bc26c463c5f26591",
+            "file_size": 5389,
+            "relative_path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/d0565687-4d4f-4e11-ac6e-2b268bb512dd/visual-assets-v1.md"
+          },
+          "executor": {
+            "model": "gpt-6.1-sol",
+            "adapter": "codex",
+            "provider": "codex",
+            "prompt_version": "storyboard-planning-v2"
+          },
+          "capability": "visual_planning",
+          "task_package": {
+            "task": {
+              "id": "d0565687-4d4f-4e11-ac6e-2b268bb512dd",
+              "type": "prepare_visual_brief",
+              "attempt": 0
+            },
+            "budget": {
+              "attempt": 0,
+              "limit_cents": 0,
+              "max_attempts": 1
+            },
+            "output": {
+              "content_type": "text/markdown",
+              "review_stage": "visual_review",
+              "relative_path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/d0565687-4d4f-4e11-ac6e-2b268bb512dd/visual-assets-v1.md",
+              "required_artifact_types": [
+                "visual_asset_manifest"
+              ]
+            },
+            "episode": {
+              "id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+              "title": "本地最终验收：森林、河流与山峦（接续 02）",
+              "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+              "blueprint_version_id": "a467cbba-de5a-404d-8d64-34d0406bf3f6"
+            },
+            "harness": {
+              "id": "3068cda2-04db-41b8-b6b1-fd1d931882e8",
+              "model": "gpt-6.1-sol",
+              "adapter": "codex",
+              "content": "基于冻结主脚本完成真实视觉规划和分镜。提供的图只是本次新建颜色参考；最终视频来自后续Pexels。视觉准备说明森林、河流、山峦三类自然场景，不请求额外图片，visualAssetRequests=[]。分镜必须恰好三条b_roll镜头，id依次shot-1、shot-2、shot-3，scriptSegment分别逐字采用正文第1、第2、第3段完整文本，不缩写。三镜头productionMethod依次为forest、river、mountains（英文Pexels检索词）；每条durationSeconds=16，targetSpec为字符串1080x1920竖屏自然画面，audioCues=[]。不添加BGM/SFX、人物或多余镜头。每条inputBasis必须引用冻结主脚本和批准视觉清单。真实写入指定artifact并返回相同storyboard对象，不代用户审核。",
+              "version": 2,
+              "content_hash": "b769a487c1ffa69c28573a28867d33d3be336b6e85ee94c613bdf0317902ce34",
+              "prompt_version": "storyboard-planning-v2"
+            },
+            "version": "worker-task/v1",
+            "executor": {
+              "model": "gpt-6.1-sol",
+              "adapter": "codex",
+              "provider": "codex",
+              "prompt_version": "storyboard-planning-v2"
+            },
+            "capability": "visual_planning",
+            "lease_token": "[configured]",
+            "allowed_tools": [
+              "read",
+              "write"
+            ],
+            "prompt_context": {
+              "hash": "5e7b6d9837a15f9048ec8042d93c1161",
+              "version": "prompt-context/v1",
+              "episode_input": {
+                "input_artifacts": [
+                  {
+                    "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+                    "fileSize": 893,
+                    "artifactType": "main_script",
+                    "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md"
+                  },
+                  {
+                    "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8",
+                    "fileSize": 3517,
+                    "artifactType": "external_visual_input",
+                    "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8-actor.png",
+                    "materialPurpose": "visual_reference"
+                  }
+                ],
+                "script_revision": {
+                  "id": "641e3065-8958-4934-ac81-d05a60590daf",
+                  "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+                  "file_size": 893,
+                  "mime_type": "text/markdown",
+                  "storage_path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md"
+                }
+              },
+              "account_defaults": {
+                "positioning": "森林、河流与山峦：普通长度三镜头本机视频生产"
+              },
+              "blueprint_version_id": "a467cbba-de5a-404d-8d64-34d0406bf3f6",
+              "account_hard_constraints": {
+                "asset_root": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-tts-production-20261026-02/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071",
+                "allowed_tools": [
+                  "read",
+                  "write"
+                ],
+                "approval_gates": [
+                  "script",
+                  "visual",
+                  "storyboard",
+                  "qc"
+                ]
+              }
+            },
+            "input_artifacts": [
+              {
+                "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+                "fileSize": 893,
+                "artifactType": "main_script",
+                "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md"
+              },
+              {
+                "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8",
+                "fileSize": 3517,
+                "artifactType": "external_visual_input",
+                "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8-actor.png",
+                "materialPurpose": "visual_reference"
+              }
+            ],
+            "script_revision": {
+              "id": "641e3065-8958-4934-ac81-d05a60590daf",
+              "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+              "file_size": 893,
+              "mime_type": "text/markdown",
+              "storage_path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md"
+            },
+            "forbidden_actions": [
+              "approve",
+              "publish",
+              "change_blueprint",
+              "change_episode_stage"
+            ]
+          },
+          "allowed_tools": [
+            "read",
+            "write"
+          ],
+          "visual_assets": {
+            "external_inputs": [
+              {
+                "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8",
+                "fileSize": 3517,
+                "artifactType": "external_visual_input",
+                "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8-actor.png",
+                "materialPurpose": "visual_reference"
+              }
+            ]
+          },
+          "worker_result": {
+            "retry": {
+              "reason": "Completed successfully",
+              "shouldRetry": false
+            },
+            "status": "completed",
+            "taskId": "d0565687-4d4f-4e11-ac6e-2b268bb512dd",
+            "version": "worker-result/v1",
+            "blockers": [],
+            "nextStep": "等待 Owner 视觉审核；未生成媒体或更改 Episode 阶段。",
+            "artifacts": [
+              {
+                "sha256": "7de96897a75645d9c018a95156b94065718a90b18d2d5b38bc26c463c5f26591",
+                "fileSize": 5389,
+                "artifactType": "visual_asset_manifest",
+                "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/d0565687-4d4f-4e11-ac6e-2b268bb512dd/visual-assets-v1.md"
+              }
+            ],
+            "preflight": {
+              "checks": [
+                {
+                  "check": "command_availability",
+                  "phase": "preflight",
+                  "scope": "worker",
+                  "action": "none",
+                  "reason": "本地受控规划执行路径；不自动调用在线Provider。",
+                  "status": "passed",
+                  "capability": "visual_planning"
+                }
+              ],
+              "version": "worker-preflight/v2"
+            },
+            "validation": {
+              "checks": [
+                {
+                  "name": "frozen_inputs",
+                  "detail": "主脚本与颜色参考图的 SHA-256、文件大小均与冻结输入一致。",
+                  "passed": true
+                },
+                {
+                  "name": "manifest_readback",
+                  "detail": "清单已写入并回读核验，包含唯一外部视觉输入的用途及森林、河流、山峦三类场景需求，无缺失图片资产。",
+                  "passed": true
+                }
+              ],
+              "passed": true
+            },
+            "actualCostCents": 0,
+            "visualAssetRequests": []
+          },
+          "execution_mode": "worker_default",
+          "prompt_context": {
+            "hash": "5e7b6d9837a15f9048ec8042d93c1161",
+            "version": "prompt-context/v1",
+            "episode_input": {
+              "input_artifacts": [
+                {
+                  "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+                  "fileSize": 893,
+                  "artifactType": "main_script",
+                  "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md"
+                },
+                {
+                  "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8",
+                  "fileSize": 3517,
+                  "artifactType": "external_visual_input",
+                  "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8-actor.png",
+                  "materialPurpose": "visual_reference"
+                }
+              ],
+              "script_revision": {
+                "id": "641e3065-8958-4934-ac81-d05a60590daf",
+                "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+                "file_size": 893,
+                "mime_type": "text/markdown",
+                "storage_path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md"
+              }
+            },
+            "account_defaults": {
+              "positioning": "森林、河流与山峦：普通长度三镜头本机视频生产"
+            },
+            "blueprint_version_id": "a467cbba-de5a-404d-8d64-34d0406bf3f6",
+            "account_hard_constraints": {
+              "asset_root": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-tts-production-20261026-02/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071",
+              "allowed_tools": [
+                "read",
+                "write"
+              ],
+              "approval_gates": [
+                "script",
+                "visual",
+                "storyboard",
+                "qc"
+              ]
+            }
+          },
+          "input_artifacts": [
+            {
+              "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+              "fileSize": 893,
+              "artifactType": "main_script",
+              "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md"
+            },
+            {
+              "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8",
+              "fileSize": 3517,
+              "artifactType": "external_visual_input",
+              "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8-actor.png",
+              "materialPurpose": "visual_reference"
+            }
+          ],
+          "script_revision": {
+            "id": "641e3065-8958-4934-ac81-d05a60590daf",
+            "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+            "file_size": 893,
+            "mime_type": "text/markdown",
+            "storage_path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md"
+          },
+          "generated_artifacts": [
+            {
+              "id": "26f9528e-72e5-4828-88c7-f9ce7a5f678d",
+              "sha256": "7de96897a75645d9c018a95156b94065718a90b18d2d5b38bc26c463c5f26591",
+              "file_size": 5389,
+              "artifact_type": "visual_asset_manifest",
+              "relative_path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/d0565687-4d4f-4e11-ac6e-2b268bb512dd/visual-assets-v1.md"
+            }
+          ],
+          "runtime_constraints": {
+            "source": {
+              "worker_capacity": 2,
+              "adapter_safety_limit": 1,
+              "provider_or_connection_limit": null
+            },
+            "version": "worker-runtime/v1",
+            "resource_limits": [
+              {
+                "key": "adapter:codex:codex",
+                "limit": 1
+              },
+              {
+                "key": "connection:codex:codex:shared",
+                "limit": 1
+              },
+              {
+                "key": "provider:codex",
+                "limit": 1
+              }
+            ],
+            "concurrency_group": "codex:codex:shared",
+            "effective_concurrency": 1
+          },
+          "native_output_namespace": "d0565687-4d4f-4e11-ac6e-2b268bb512dd"
+        },
+        "invalidated_reason": null
+      }
+    ],
+    "approvals": [
+      {
+        "id": "7cce5482-d0e0-4927-813a-f7f12e8dc34d",
+        "stage": "visual_approved",
+        "reason": "Owner 已审阅并明确批准本次森林、河流、山峦三场景视觉清单；继续分镜规划，后续分镜和 QC 仍单独审核。",
+        "actor_id": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+        "decision": "approved",
+        "created_at": "2026-10-26T06:07:14.818383+00:00",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "review_package_id": "c6080d2a-f1c4-4735-ac0a-2fc35bc4ad3f"
+      }
+    ],
+    "state_transitions": [
+      {
+        "id": "13603414-f03b-45da-9579-564959f0e465",
+        "reason": "Owner 已审阅并明确批准本次森林、河流、山峦三场景视觉清单；继续分镜规划，后续分镜和 QC 仍单独审核。",
+        "actor_id": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+        "to_stage": "visual_approved",
+        "created_at": "2026-10-26T06:07:14.818383+00:00",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "from_stage": "visual_review"
+      },
+      {
+        "id": "3ce4abbc-1a61-490d-a727-bd83a4c1bc95",
+        "reason": "Orchestrator froze visual asset preparation from the approved script and uploaded visual media.",
+        "actor_id": null,
+        "to_stage": "visual_draft",
+        "created_at": "2026-10-26T06:01:45.748661+00:00",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "from_stage": "script_approved"
+      },
+      {
+        "id": "4433a16f-8eac-41cb-bbb5-e3efff4aca4e",
+        "reason": "Owner confirmed all production materials are ready; start production.",
+        "actor_id": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+        "to_stage": "script_approved",
+        "created_at": "2026-10-26T06:01:45.561158+00:00",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "from_stage": "waiting_input"
+      },
+      {
+        "id": "67f52810-73a7-4bb5-84bd-b9966ddb1389",
+        "reason": "Worker submitted a frozen visual asset review package.",
+        "actor_id": null,
+        "to_stage": "visual_review",
+        "created_at": "2026-10-26T06:03:26.887355+00:00",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "from_stage": "visual_draft"
+      }
+    ],
+    "audit_events": [
+      {
+        "id": "1522e1d3-188f-4273-bebe-786416dec260",
+        "payload": {
+          "task_id": "d0565687-4d4f-4e11-ac6e-2b268bb512dd",
+          "artifact_id": "26f9528e-72e5-4828-88c7-f9ce7a5f678d",
+          "revision_number": 1,
+          "review_package_id": "c6080d2a-f1c4-4735-ac0a-2fc35bc4ad3f"
+        },
+        "actor_id": null,
+        "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+        "created_at": "2026-10-26T06:03:26.887355+00:00",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "event_type": "visual_review_package_created"
+      },
+      {
+        "id": "513b2982-5780-4d7b-a92f-8027bf120890",
+        "payload": {
+          "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+          "approval_id": "d870c751-3db8-4692-b465-ffdaa36dc440",
+          "source_kind": "file",
+          "material_type": "script",
+          "is_main_script": true,
+          "material_purpose": "main_script",
+          "material_revision_id": "641e3065-8958-4934-ac81-d05a60590daf"
+        },
+        "actor_id": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+        "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+        "created_at": "2026-10-26T06:01:25.778951+00:00",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "event_type": "production_material_imported"
+      },
+      {
+        "id": "71b5c729-8f5a-45bf-8e58-44268d7d61ef",
+        "payload": {
+          "reason": "Owner 已审阅并明确批准本次森林、河流、山峦三场景视觉清单；继续分镜规划，后续分镜和 QC 仍单独审核。",
+          "to_stage": "visual_approved"
+        },
+        "actor_id": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+        "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+        "created_at": "2026-10-26T06:07:14.818383+00:00",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "event_type": "stage_transition"
+      },
+      {
+        "id": "7b57c359-e32b-40d7-8f66-5631cca89a84",
+        "payload": {
+          "task_id": "d0565687-4d4f-4e11-ac6e-2b268bb512dd",
+          "execution_mode": "worker_default",
+          "script_revision_id": "641e3065-8958-4934-ac81-d05a60590daf",
+          "external_visual_inputs": 1
+        },
+        "actor_id": null,
+        "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+        "created_at": "2026-10-26T06:01:45.748661+00:00",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "event_type": "visual_asset_preparation_task_created"
+      },
+      {
+        "id": "beea9c47-271f-414a-aef9-6609c0cd0a6b",
+        "payload": {
+          "is_test": false,
+          "series_version_id": null,
+          "blueprint_version_id": "a467cbba-de5a-404d-8d64-34d0406bf3f6"
+        },
+        "actor_id": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+        "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+        "created_at": "2026-10-26T06:00:10.837778+00:00",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "event_type": "episode_created"
+      },
+      {
+        "id": "c011ebb4-f6c5-453b-abbd-338089edcd02",
+        "payload": {
+          "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8",
+          "approval_id": "bd458325-3b58-4f08-947b-60fec9baf783",
+          "source_kind": "file",
+          "material_type": "image",
+          "is_main_script": false,
+          "material_purpose": "visual_reference",
+          "material_revision_id": "102bae26-f582-4319-9d77-f30d2a3141a3"
+        },
+        "actor_id": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+        "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+        "created_at": "2026-10-26T06:01:25.795004+00:00",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "event_type": "production_material_imported"
+      },
+      {
+        "id": "cf206c58-7e45-4dba-af52-3557a5548679",
+        "payload": {
+          "status": "completed",
+          "attempt": 0,
+          "task_id": "d0565687-4d4f-4e11-ac6e-2b268bb512dd",
+          "actual_cost_cents": 0
+        },
+        "actor_id": null,
+        "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+        "created_at": "2026-10-26T06:03:26.887355+00:00",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "event_type": "worker_result_reported"
+      },
+      {
+        "id": "fa21719b-d222-4f07-b732-e3411f8860ff",
+        "payload": {
+          "main_script_revision_id": "641e3065-8958-4934-ac81-d05a60590daf"
+        },
+        "actor_id": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+        "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+        "created_at": "2026-10-26T06:01:45.561158+00:00",
+        "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+        "event_type": "episode_production_started"
+      }
+    ],
+    "task_runs": [
+      {
+        "id": "7a42157f-0194-4b3a-88de-d83a83488f2a",
+        "result": {
+          "retry": {
+            "reason": "Completed successfully",
+            "shouldRetry": false
+          },
+          "status": "completed",
+          "taskId": "d0565687-4d4f-4e11-ac6e-2b268bb512dd",
+          "version": "worker-result/v1",
+          "blockers": [],
+          "nextStep": "等待 Owner 视觉审核；未生成媒体或更改 Episode 阶段。",
+          "artifacts": [
+            {
+              "sha256": "7de96897a75645d9c018a95156b94065718a90b18d2d5b38bc26c463c5f26591",
+              "fileSize": 5389,
+              "artifactType": "visual_asset_manifest",
+              "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/d0565687-4d4f-4e11-ac6e-2b268bb512dd/visual-assets-v1.md"
+            }
+          ],
+          "preflight": {
+            "checks": [
+              {
+                "check": "command_availability",
+                "phase": "preflight",
+                "scope": "worker",
+                "action": "none",
+                "reason": "本地受控规划执行路径；不自动调用在线Provider。",
+                "status": "passed",
+                "capability": "visual_planning"
+              }
+            ],
+            "version": "worker-preflight/v2"
+          },
+          "validation": {
+            "checks": [
+              {
+                "name": "frozen_inputs",
+                "detail": "主脚本与颜色参考图的 SHA-256、文件大小均与冻结输入一致。",
+                "passed": true
+              },
+              {
+                "name": "manifest_readback",
+                "detail": "清单已写入并回读核验，包含唯一外部视觉输入的用途及森林、河流、山峦三类场景需求，无缺失图片资产。",
+                "passed": true
+              }
+            ],
+            "passed": true
+          },
+          "actualCostCents": 0,
+          "visualAssetRequests": []
+        },
+        "status": "completed",
+        "attempt": 0,
+        "task_id": "d0565687-4d4f-4e11-ac6e-2b268bb512dd",
+        "started_at": "2026-10-26T06:01:45.780129+00:00",
+        "lease_token": "[configured]",
+        "completed_at": "2026-10-26T06:03:26.887355+00:00",
+        "task_package": {
+          "task": {
+            "id": "d0565687-4d4f-4e11-ac6e-2b268bb512dd",
+            "type": "prepare_visual_brief",
+            "attempt": 0
+          },
+          "budget": {
+            "attempt": 0,
+            "limit_cents": 0,
+            "max_attempts": 1
+          },
+          "output": {
+            "content_type": "text/markdown",
+            "review_stage": "visual_review",
+            "relative_path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/d0565687-4d4f-4e11-ac6e-2b268bb512dd/visual-assets-v1.md",
+            "required_artifact_types": [
+              "visual_asset_manifest"
+            ]
+          },
+          "episode": {
+            "id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+            "title": "本地最终验收：森林、河流与山峦（接续 02）",
+            "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+            "blueprint_version_id": "a467cbba-de5a-404d-8d64-34d0406bf3f6"
+          },
+          "harness": {
+            "id": "3068cda2-04db-41b8-b6b1-fd1d931882e8",
+            "model": "gpt-6.1-sol",
+            "adapter": "codex",
+            "content": "基于冻结主脚本完成真实视觉规划和分镜。提供的图只是本次新建颜色参考；最终视频来自后续Pexels。视觉准备说明森林、河流、山峦三类自然场景，不请求额外图片，visualAssetRequests=[]。分镜必须恰好三条b_roll镜头，id依次shot-1、shot-2、shot-3，scriptSegment分别逐字采用正文第1、第2、第3段完整文本，不缩写。三镜头productionMethod依次为forest、river、mountains（英文Pexels检索词）；每条durationSeconds=16，targetSpec为字符串1080x1920竖屏自然画面，audioCues=[]。不添加BGM/SFX、人物或多余镜头。每条inputBasis必须引用冻结主脚本和批准视觉清单。真实写入指定artifact并返回相同storyboard对象，不代用户审核。",
+            "version": 2,
+            "content_hash": "b769a487c1ffa69c28573a28867d33d3be336b6e85ee94c613bdf0317902ce34",
+            "prompt_version": "storyboard-planning-v2"
+          },
+          "version": "worker-task/v1",
+          "executor": {
+            "model": "gpt-6.1-sol",
+            "adapter": "codex",
+            "provider": "codex",
+            "prompt_version": "storyboard-planning-v2"
+          },
+          "capability": "visual_planning",
+          "lease_token": "[configured]",
+          "allowed_tools": [
+            "read",
+            "write"
+          ],
+          "prompt_context": {
+            "hash": "5e7b6d9837a15f9048ec8042d93c1161",
+            "version": "prompt-context/v1",
+            "episode_input": {
+              "input_artifacts": [
+                {
+                  "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+                  "fileSize": 893,
+                  "artifactType": "main_script",
+                  "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md"
+                },
+                {
+                  "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8",
+                  "fileSize": 3517,
+                  "artifactType": "external_visual_input",
+                  "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8-actor.png",
+                  "materialPurpose": "visual_reference"
+                }
+              ],
+              "script_revision": {
+                "id": "641e3065-8958-4934-ac81-d05a60590daf",
+                "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+                "file_size": 893,
+                "mime_type": "text/markdown",
+                "storage_path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md"
+              }
+            },
+            "account_defaults": {
+              "positioning": "森林、河流与山峦：普通长度三镜头本机视频生产"
+            },
+            "blueprint_version_id": "a467cbba-de5a-404d-8d64-34d0406bf3f6",
+            "account_hard_constraints": {
+              "asset_root": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-tts-production-20261026-02/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071",
+              "allowed_tools": [
+                "read",
+                "write"
+              ],
+              "approval_gates": [
+                "script",
+                "visual",
+                "storyboard",
+                "qc"
+              ]
+            }
+          },
+          "input_artifacts": [
+            {
+              "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+              "fileSize": 893,
+              "artifactType": "main_script",
+              "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md"
+            },
+            {
+              "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8",
+              "fileSize": 3517,
+              "artifactType": "external_visual_input",
+              "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8-actor.png",
+              "materialPurpose": "visual_reference"
+            }
+          ],
+          "script_revision": {
+            "id": "641e3065-8958-4934-ac81-d05a60590daf",
+            "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+            "file_size": 893,
+            "mime_type": "text/markdown",
+            "storage_path": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md"
+          },
+          "forbidden_actions": [
+            "approve",
+            "publish",
+            "change_blueprint",
+            "change_episode_stage"
+          ]
+        },
+        "actual_cost_cents": 0
+      }
+    ]
+  },
+  "network": {
+    "version": 1,
+    "policySha256": "ea22225ede987658e0049b1f3d4fd6c68c8f696b35e7e73aa573c1b409e2d24e",
+    "used": 2,
+    "costMicrounits": 10000,
+    "byOperation": {
+      "pexels.verify": 1,
+      "volcengine_tts.verify": 1
+    },
+    "halted": false,
+    "events": [
+      {
+        "operation": "pexels.verify",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "pexels.verify",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 3119
+      },
+      {
+        "operation": "volcengine_tts.verify",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "volcengine_tts.verify",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 13766
+      }
+    ]
+  },
+  "files": [
+    {
+      "table": "production_material_revisions",
+      "id": "102bae26-f582-4319-9d77-f30d2a3141a3",
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8-actor.png",
+      "bytes": 3517,
+      "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8",
+      "sizeMatched": true,
+      "hashMatched": true
+    },
+    {
+      "table": "production_material_revisions",
+      "id": "641e3065-8958-4934-ac81-d05a60590daf",
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/materials/4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb-script.md",
+      "bytes": 893,
+      "sha256": "4dbea80f65c0bf33f1092b63f00d589a131cd16234f79e8c840b8f8d37dd9abb",
+      "sizeMatched": true,
+      "hashMatched": true
+    },
+    {
+      "table": "artifacts",
+      "id": "26f9528e-72e5-4828-88c7-f9ce7a5f678d",
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/d0565687-4d4f-4e11-ac6e-2b268bb512dd/visual-assets-v1.md",
+      "bytes": 5389,
+      "sha256": "7de96897a75645d9c018a95156b94065718a90b18d2d5b38bc26c463c5f26591",
+      "sizeMatched": true,
+      "hashMatched": true
+    }
+  ]
+}

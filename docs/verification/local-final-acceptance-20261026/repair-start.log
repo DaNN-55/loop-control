@@ -1,0 +1,15 @@
+
+> loop-control@0.1.0 start
+> node scripts/start.mjs
+
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/runtime/keychain.mjs:2
+export function keychainState(operation){const helper=join(root,'native/keychain-control');assertPrivatePath(helper);const invoke=body=>{const r=spawnSync(helper,[],{input:JSON.stringify(body),encoding:'utf8',env:{PATH:'/usr/bin:/bin'},timeout:5000});if(r.status!==0)throw Error('Daily application Keychain unavailable');return JSON.parse(r.stdout);};
+                                                                                                                                                                                                                                                                                 ^
+
+Error: Daily application Keychain unavailable
+    at invoke (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/runtime/keychain.mjs:2:274)
+    at keychainState (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/runtime/keychain.mjs:3:202)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/runtime/start.mjs:7:2
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+Node.js v24.20.0

@@ -1,0 +1,104 @@
+{
+  "approval": {
+    "version": 1,
+    "approvedAt": "2026-10-26T05:17:07.709Z",
+    "source": "Direct human reply to request_user_input_async call_f31425a28a1c4dc397fddfdec025c9f6 item 0",
+    "answer": "授权按上述范围继续",
+    "scope": {
+      "providerHttpRequests": 11,
+      "currency": "CNY",
+      "costCapMicrounits": 1000000,
+      "codexCalls": 2,
+      "codexModel": "gpt-6.1-sol",
+      "codexBilling": "Current ChatGPT login quota; money unknown and not constrained by Provider ledger",
+      "providers": [
+        "pexels",
+        "volcengine_tts"
+      ],
+      "videoShots": 3,
+      "targetSeconds": [
+        45,
+        90
+      ],
+      "automaticRetry": false,
+      "humanContentApprovalRequired": true
+    },
+    "existingLedgersNotReused": true
+  },
+  "price": {
+    "checkedAt": "2026-10-26",
+    "currency": "CNY",
+    "pexels": {
+      "api": "free subject to quota",
+      "source": "https://www.pexels.com/api/documentation/"
+    },
+    "volcengine_tts": {
+      "model": "seed-tts-2.0",
+      "listPricePer10000Characters": 3,
+      "source": "https://docs.volcengine.com/docs/DoubaoVoice/Billinginstructions-21?lang=zh",
+      "accountActualBilling": "unknown"
+    },
+    "reservationsNotActualCharges": true
+  },
+  "network": {
+    "directory": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/state/provider-network-final-20261026",
+    "policySha256": "ea22225ede987658e0049b1f3d4fd6c68c8f696b35e7e73aa573c1b409e2d24e"
+  },
+  "policy": {
+    "version": 1,
+    "runId": "daily-final-20261026-e0bf3bf3-c6fe-4b5a-b6a3-474af97d5c83",
+    "enabled": true,
+    "expiresAt": "2026-10-26T17:17:07.710Z",
+    "maxRequests": 11,
+    "currency": "CNY",
+    "maxCostMicrounits": 1000000,
+    "priceEvidenceSha256": "9e7753f8d0df46c491eb86dd26a072b68cdc82540ef54e6081103aac4cdea53e",
+    "approvalSha256": "0ae5a8e874fe0666ae2ea97862dd1bbfe8ff2856249f377a43c65c6ca5fb65c1",
+    "providers": [
+      "pexels",
+      "volcengine_tts"
+    ],
+    "operations": {
+      "pexels.verify": {
+        "maxRequests": 1,
+        "maxBytes": 1048576,
+        "timeoutMs": 30000,
+        "costMicrounits": 0
+      },
+      "pexels.search": {
+        "maxRequests": 3,
+        "maxBytes": 3145728,
+        "timeoutMs": 30000,
+        "costMicrounits": 0
+      },
+      "pexels.download": {
+        "maxRequests": 3,
+        "maxBytes": 20971520,
+        "timeoutMs": 60000,
+        "costMicrounits": 0
+      },
+      "volcengine_tts.verify": {
+        "maxRequests": 1,
+        "maxBytes": 3145728,
+        "timeoutMs": 60000,
+        "costMicrounits": 10000
+      },
+      "volcengine_tts.generate": {
+        "maxRequests": 3,
+        "maxBytes": 3145728,
+        "timeoutMs": 60000,
+        "costMicrounits": 150000,
+        "tts": {
+          "maxCharacters": 500,
+          "voices": [
+            "zh_female_vv_uranus_bigtts"
+          ],
+          "resourceIds": [
+            "seed-tts-2.0"
+          ]
+        }
+      }
+    }
+  },
+  "enabledAfterNormalRestart": true
+}

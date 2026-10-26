@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "python": "3.11.15",
+  "runtime": ".loop-control/local/python/venv",
+  "offline": true,
+  "osNetworkDenied": true,
+  "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+  "cache": ".loop-control/local/volume/media/whisperx-models",
+  "probe": "Python model load only; no new alignment or download"
+}

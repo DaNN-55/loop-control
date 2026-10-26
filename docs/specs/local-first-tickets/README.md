@@ -1,8 +1,10 @@
 # A–D 实施票单（已发布）
 
-A-C was merged in PR #150 (cccc04ee); its pagination and 50% test-worker limit remain in this D integration. D is being verified locally; no remote merge or production cutover is included.
+2026-10-26 D 本地收尾：953 项回归、日常启动、历史账号接入、完整备份及新库恢复已通过，8 条已批准的历史差异原样保留。详见[本次验收](../../verification/d-closeout-20261026/README.md)。未推送、合并远端或切换旧生产。
 
 更新：2026-10-26。25 张票的主体实现已在当前优化工作区落地：A–C 已完成阶段交付，D 已有本地化及受限链路验收。4 家 Provider 按 Owner 豁免保留，不记为技术通过；本轮已修复 TTS 的 10 字/固定音色限制，并完成当前完整源码的普通长度、多镜头隔离功能全流程及发布包校验；中断恢复、一次人工对齐与画质限制见下方。Owner 已查看本轮生产单并授权分批本地提交，画质、第三镜头与字幕问题作为后续设置调整项保留；不推送、合并或切换生产。
+
+日常入口接续（2026-10-26）：原界面已接本地 API，默认启动使用当前 worktree 的 `.loop-control/local/` 日常资源，不依赖 Supabase/n8n；原验收库、媒体和证据保留。937 项回归、真实 HTTP、完整备份和重启读回通过；新外部调用仍默认关闭，连接需重新绑定，四家豁免不变。本次不提交、推送或合并，详见[日常主程序验收](../../verification/local-daily-runtime-20261026/README.md)。
 
 E（界面与流程精简）、F（总体发布验收与切换）继续搁置；本轮单次隔离 E2E 不代表启动 F 的总体容量、发布或切换验收。完全离线生成仍不纳入本轮。阶段必要测试、真实数据库验证与恢复演练继续沿用已批准边界。
 

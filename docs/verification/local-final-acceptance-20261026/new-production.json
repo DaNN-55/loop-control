@@ -1,0 +1,143 @@
+{
+  "at": "2026-10-26T05:21:14.779Z",
+  "episode": {
+    "id": "cf4765d7-8e50-412f-8b4d-ad536dc5254c",
+    "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+    "blueprint_version_id": "a467cbba-de5a-404d-8d64-34d0406bf3f6",
+    "title": "本地最终验收：森林、河流与山峦（全新三镜头）",
+    "stage": "waiting_input",
+    "created_at": "2026-10-26T05:20:30.95066+00:00",
+    "updated_at": "2026-10-26T05:20:30.95066+00:00",
+    "series_version_id": null,
+    "main_script_revision_id": null,
+    "archived_at": null,
+    "is_test": false,
+    "script_source": "provided",
+    "worker_preflight_at": null,
+    "audio_source_mode": "tts",
+    "tts_language_code": null,
+    "tts_voice": null,
+    "tts_speaking_rate": null
+  },
+  "blueprint": {
+    "id": "a467cbba-de5a-404d-8d64-34d0406bf3f6",
+    "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+    "version": 1,
+    "policy": {
+      "a_roll": {
+        "execution_path": "manual"
+      },
+      "b_roll": {
+        "executor": {
+          "model": "pexels-video-v1",
+          "adapter": "pexels_video",
+          "provider": "pexels",
+          "prompt_version": "b-roll-v1"
+        },
+        "budget_cents": 1,
+        "max_attempts": 1,
+        "allowed_tools": [
+          "read",
+          "write"
+        ],
+        "credential_ref": "9bf6f776-a439-4e17-8260-55fa2b060e79",
+        "execution_path": "external",
+        "max_concurrency": 1,
+        "total_budget_cents": 3,
+        "provider_max_concurrency": 1
+      },
+      "budgets": {
+        "visual_planning_cents": 100,
+        "storyboard_planning_cents": 100
+      },
+      "executors": {
+        "visual_planning": {
+          "model": "gpt-6.1-sol",
+          "adapter": "codex",
+          "provider": "codex",
+          "harness_id": "3068cda2-04db-41b8-b6b1-fd1d931882e8",
+          "max_attempts": 1,
+          "prompt_version": "storyboard-planning-v2"
+        },
+        "storyboard_planning": {
+          "model": "gpt-6.1-sol",
+          "adapter": "codex",
+          "provider": "codex",
+          "harness_id": "3068cda2-04db-41b8-b6b1-fd1d931882e8",
+          "max_attempts": 1,
+          "prompt_version": "storyboard-planning-v2"
+        }
+      },
+      "narration": {
+        "voice": {
+          "name": "zh_female_vv_uranus_bigtts",
+          "language_code": "zh-CN",
+          "speaking_rate": 1
+        },
+        "executor": {
+          "model": "seed-tts-2.0",
+          "adapter": "volcengine_tts",
+          "provider": "volcengine_tts",
+          "prompt_version": "narration-v1"
+        },
+        "budget_cents": 15,
+        "max_attempts": 1,
+        "allowed_tools": [
+          "read",
+          "write"
+        ],
+        "credential_ref": "3e83d07f-dd79-4897-838f-41d82fc647ea",
+        "execution_path": "external",
+        "total_budget_cents": 45
+      },
+      "asset_root": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-tts-production-20261026-02/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071",
+      "soundtrack": {
+        "execution_path": "manual"
+      },
+      "positioning": "森林、河流与山峦：普通长度三镜头本机视频生产",
+      "allowed_tools": [
+        "read",
+        "write"
+      ],
+      "approval_gates": [
+        "script",
+        "visual",
+        "storyboard",
+        "qc"
+      ]
+    },
+    "is_active": true,
+    "created_at": "2026-10-26T01:56:06.281046+00:00",
+    "archived_at": null,
+    "is_snapshot": false
+  },
+  "harness": {
+    "id": "3068cda2-04db-41b8-b6b1-fd1d931882e8",
+    "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+    "capability": "storyboard_planning",
+    "version": 2,
+    "slug": "storyboard-planning-v2",
+    "name": "三镜头自然短片规划",
+    "summary": "普通正文三镜头，视觉和分镜均由真实CLI规划",
+    "instructions": "基于冻结主脚本完成真实视觉规划和分镜。提供的图只是本次新建颜色参考；最终视频来自后续Pexels。视觉准备说明森林、河流、山峦三类自然场景，不请求额外图片，visualAssetRequests=[]。分镜必须恰好三条b_roll镜头，id依次shot-1、shot-2、shot-3，scriptSegment分别逐字采用正文第1、第2、第3段完整文本，不缩写。三镜头productionMethod依次为forest、river、mountains（英文Pexels检索词）；每条durationSeconds=16，targetSpec为字符串1080x1920竖屏自然画面，audioCues=[]。不添加BGM/SFX、人物或多余镜头。每条inputBasis必须引用冻结主脚本和批准视觉清单。真实写入指定artifact并返回相同storyboard对象，不代用户审核。",
+    "is_active": true,
+    "created_by": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+    "created_at": "2026-10-26T01:56:06.306896+00:00",
+    "content_hash": "b769a487c1ffa69c28573a28867d33d3be336b6e85ee94c613bdf0317902ce34"
+  },
+  "newInputs": {
+    "script": "script-proposal.txt",
+    "visualReference": "manually authored new three-color palette, not source footage or successful output"
+  },
+  "plannedShotCount": 3,
+  "plannedNominalSeconds": 48,
+  "targetFinalSeconds": [
+    45,
+    90
+  ],
+  "providerBudget": {
+    "maxRequests": 11,
+    "maxCNY": 1
+  },
+  "ownerApprovals": "not granted"
+}

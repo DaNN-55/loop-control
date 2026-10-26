@@ -55,7 +55,7 @@ it('reports locked Provider networking independently from connection qualificati
  const policy={executors:{storyboard_planning:{provider:'codex',adapter:'codex',model:'configured-model',prompt_version:'storyboard-v1',harness_id:randomUUID()}},b_roll:{execution_path:'external',executor:{provider:'pexels',adapter:'pexels_video',model:'pexels-video-v1',prompt_version:'b-roll-v1'},credential_ref:randomUUID()}};
  const result=await check(policy,false);
  expect(result.status).toBe(200);
- expect(result.body.checks).toEqual([expect.objectContaining({check:'network_connectivity',status:'unavailable',scope:'worker',action:'contact_environment_admin'})]);
+ expect(result.body.checks).toEqual([expect.objectContaining({check:'provider_network_policy',status:'unavailable',scope:'worker',action:'contact_environment_admin'})]);
  expect(result.body.checks[0].reason).toContain('网络');
 });
 it('reports both locked networking and missing qualification without calling a Provider or reading secrets',async()=>{
@@ -63,7 +63,7 @@ it('reports both locked networking and missing qualification without calling a P
  const result=await check(policy,false,false);
  expect(result.status).toBe(200);
  expect(result.body.checks).toEqual([
-  expect.objectContaining({check:'network_connectivity',status:'unavailable',scope:'worker',action:'contact_environment_admin'}),
+  expect.objectContaining({check:'provider_network_policy',status:'unavailable',scope:'worker',action:'contact_environment_admin'}),
   expect.objectContaining({check:'credential_presence',status:'blocked',scope:'connection',action:'manage_connection'}),
  ]);
  expect(result.body.checks[1].reason).toContain('验证');

@@ -1,0 +1,7 @@
+{
+  "at": "2026-10-26T05:00:42.194Z",
+  "process": "53086     1 Mon Oct 26 12:58:18 2026     /opt/homebrew/Cellar/node@24/24.20.0/bin/node /Users/dan/.codex/worktrees/local-first-optimization/loop-control/node_modules/vite/bin/vite.js --config scripts/runtime/vite.config.mjs\n",
+  "cwd": "p53086\nfcwd\nn/Users/dan/.codex/worktrees/local-first-optimization/loop-control\n",
+  "tcp": "COMMAND   PID USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME\nnode    53086  dan   17u  IPv4 0x6fcf6602dc1b29da      0t0  TCP 127.0.0.1:59750->127.0.0.1:54329 (ESTABLISHED)\nnode    53086  dan   28u  IPv4 0x71e6c87115b3fe5a      0t0  TCP 127.0.0.1:59751->127.0.0.1:54329 (ESTABLISHED)\nnode    53086  dan   29u  IPv4 0x3f78d9c7b045f9b1      0t0  TCP 127.0.0.1:5174 (LISTEN)\nnode    53086  dan   30u  IPv4 0x4c373e1db18fb13c      0t0  TCP 127.0.0.1:59752->127.0.0.1:54329 (ESTABLISHED)\nnode    53086  dan   37u  IPv4 0x320a2fcfed4d8e36      0t0  TCP 127.0.0.1:5174->127.0.0.1:59811 (ESTABLISHED)\n",
+  "colimaDisk": "/Users/dan/.colima/_lima/colima-loop-control/disk"
+}

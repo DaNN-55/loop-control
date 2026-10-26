@@ -1,0 +1,6 @@
+import{readFileSync,readdirSync}from'node:fs';import{join}from'node:path';import{createHash,randomUUID}from'node:crypto';import{runtimeContext,readDeployment}from'./environment.mjs';import{createNativeBackup}from'../storage/backup.mjs';
+const d=readDeployment(),c=runtimeContext(),versions=JSON.parse(c.sql("SELECT coalesce(jsonb_object_agg(version,sha256),'{}') FROM local_identity.schema_migrations")),sha=b=>createHash('sha256').update(b).digest('hex');
+for(const[name,expected]of Object.entries(versions)){if(!/^[0-9]{3}-[a-z0-9-]+\.sql$/.test(name)||sha(readFileSync(join(d.projectRoot,'db/local',name)))!==expected)throw Error('Applied migration changed; refusing to continue');}
+const pending=readdirSync(join(d.projectRoot,'db/local')).filter(f=>/^\d{3}-[a-z0-9-]+\.sql$/.test(f)&&Number(f.slice(0,3))>=2&&!versions[f]).sort();
+if(pending.length){await createNativeBackup({projectRoot:d.projectRoot,database:c.database,mediaRoot:d.mediaRoot,backupRoot:d.backupRoot,jobId:randomUUID()},undefined,c);for(const name of pending){const body=readFileSync(join(d.projectRoot,'db/local',name),'utf8');c.sql(`BEGIN;${body}INSERT INTO local_identity.schema_migrations(version,sha256)VALUES('${name}','${sha(body)}');COMMIT;`);}}
+console.log(JSON.stringify({passed:true,applied:pending,database:c.database,oldMigrationsUnchanged:true}));

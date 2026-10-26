@@ -15,7 +15,7 @@ export default defineConfig(async environment=>{
  // Runtime state and archived evidence contain historical source copies.
  if(mode==='test')return{envFile:false,plugins:[react()],define:{'import.meta.env.VITE_LOOP_BACKEND':JSON.stringify('supabase')},test:{environment:'jsdom',globals:true,maxWorkers:'50%',exclude:[...configDefaults.exclude,'.loop-control/**','.scratch/**','output/**','outputs/**','tmp/**','docs/verification/**']}};
  if(command==='serve'){
-  const configPath=pathToFileURL(resolve('scripts/local/vite.config.mjs')).href;
+  const configPath=pathToFileURL(resolve('scripts/runtime/vite.config.mjs')).href;
   return(await import(/* @vite-ignore */configPath)).default;
  }
  return{envFile:false,envPrefix:'LOOP_LOCAL_PUBLIC_',plugins:[react(),nativeFrontendBoundary(process.cwd())],define:{'import.meta.env.VITE_LOOP_BACKEND':JSON.stringify('local')}};

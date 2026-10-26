@@ -1,0 +1,32 @@
+{
+  "events": [
+    {
+      "at": "2026-10-26T06:02:28.725Z",
+      "id": "d0565687-4d4f-4e11-ac6e-2b268bb512dd",
+      "status": "running",
+      "attempt": 1,
+      "maxAttempts": 1,
+      "claimedAt": "2026-10-26T06:01:45.912748+00:00",
+      "completedAt": null,
+      "actualCostCents": null,
+      "resultStatus": null,
+      "retry": null
+    },
+    {
+      "at": "2026-10-26T06:03:28.992Z",
+      "id": "d0565687-4d4f-4e11-ac6e-2b268bb512dd",
+      "status": "completed",
+      "attempt": 1,
+      "maxAttempts": 1,
+      "claimedAt": "2026-10-26T06:03:26.888157+00:00",
+      "completedAt": "2026-10-26T06:03:26.887355+00:00",
+      "actualCostCents": 0,
+      "resultStatus": "completed",
+      "retry": {
+        "reason": "Completed successfully",
+        "shouldRetry": false
+      }
+    }
+  ],
+  "elapsedMs": 60444
+}

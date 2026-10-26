@@ -1,0 +1,55 @@
+{
+  "at": "2026-10-26T07:38:33.692Z",
+  "differences": [
+    {
+      "table": "generation_account_budgets",
+      "missingTable": true,
+      "rows": 1,
+      "sourceColumns": [
+        "account_id",
+        "trial_video_limit_cents",
+        "total_limit_cents",
+        "full_generation_enabled",
+        "approved_by",
+        "approved_at"
+      ]
+    },
+    {
+      "table": "paid_generation_reservations",
+      "missingTable": true,
+      "rows": 16,
+      "sourceColumns": [
+        "task_id",
+        "account_id",
+        "kind",
+        "reserved_cents",
+        "provider_task_id",
+        "request_state",
+        "material_revision_id",
+        "created_at"
+      ]
+    },
+    {
+      "table": "shot_preparation_drafts",
+      "sourceColumnsMissingLocally": [],
+      "localOnlyColumns": [
+        "caption_text_confirmation"
+      ]
+    },
+    {
+      "table": "task_runs",
+      "sourceColumnsMissingLocally": [],
+      "localOnlyColumns": [
+        "lease_token"
+      ]
+    },
+    {
+      "table": "tasks",
+      "sourceColumnsMissingLocally": [],
+      "localOnlyColumns": [
+        "lease_token",
+        "available_at"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/state/final-acceptance-20261026/history-source/integrate-local.mjs:11
+for(const r of plan.refs){if(path.isAbsolute(r.relativePath)||r.relativePath.split(/[\\/]/).some(p=>!p||p==='.'||p==='..'))throw Error('Unsafe media reference');const old=refs.get(r.path);if(old&&(old.expectedSha256!==r.expectedSha256||old.expectedBytes!==r.expectedBytes))throw Error('Conflicting source reference');refs.set(r.path,r)}
+                                                                                                                                                                                                                                                                                       ^
+
+Error: Conflicting source reference
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/state/final-acceptance-20261026/history-source/integrate-local.mjs:11:280
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.20.0

@@ -36,3 +36,8 @@ it('discards stderr and unrecognized native diagnostics without exposing materia
 it('refuses a helper hash mismatch before starting a process',async()=>{
  await expect(configuredKeychainStore({...config,helperSha256:'wrong'}).get(reference)).rejects.toMatchObject({code:'unavailable'});expect(spawn).not.toHaveBeenCalled();
 });
+it('uses the independently scoped daily application Keychain without the acceptance store',async()=>{
+ mockHelper(()=>({value:{ok:true,code:'resolved',secret},status:0}));const daily={...config,runtimeRoot:'/tmp/fixture/.loop-control/local',keychainName:'loop-control.keychain-db'};
+ expect(await configuredKeychainStore(daily).get(reference)).toBe(secret);expect(vi.mocked(spawn).mock.calls[0][1]).toEqual(['--keychain','/tmp/fixture/.loop-control/local/keychain/loop-control.keychain-db']);
+ await expect(configuredKeychainStore({...daily,keychainName:'../other.keychain-db'}).get(reference)).rejects.toMatchObject({code:'unavailable'});
+});

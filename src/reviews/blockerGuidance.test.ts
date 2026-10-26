@@ -76,6 +76,13 @@ describe("Worker 阻塞项指导", () => {
     expect(guidance.location).toBe("当前生产单 → 专用媒体配置");
   });
 
+  it("将部署策略关闭与真实网络失败分开", () => {
+    const guidance = workerBlockerGuidance({ code: "provider_network_policy", check: "provider_network_policy", detail: "当前部署未启用在线调用。", action: "contact_environment_admin" });
+    expect(guidance.title).toBe("在线调用未启用");
+    expect(guidance.summary).not.toContain("已执行真实网络探测");
+    expect(guidance.summary).toContain("尚未发起网络请求");
+  });
+
   it("尊重结构化 preflight 的重试动作", () => {
     const guidance = workerBlockerGuidance({ code: "network_request", check: "network_connectivity", detail: "供应商连接暂时失败。", action: "retry" });
 

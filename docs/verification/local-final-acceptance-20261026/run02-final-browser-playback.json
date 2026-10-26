@@ -1,0 +1,194 @@
+{
+  "at": "2026-10-26T07:22:43.788Z",
+  "priorAttempt": "Initial playback was interrupted by normal completion-dialog rerender during package preparation; not counted as full playback",
+  "start": {
+    "duration": 57.749333,
+    "started": true,
+    "time": 0
+  },
+  "samples": [
+    {
+      "at": "2026-10-26T07:21:43.698Z",
+      "player": {
+        "decodedAudioBytes": 19465,
+        "droppedFrames": 0,
+        "duration": 57.749333,
+        "ended": false,
+        "error": null,
+        "muted": false,
+        "paused": false,
+        "time": 0.021333,
+        "totalFrames": 9
+      }
+    },
+    {
+      "at": "2026-10-26T07:21:48.705Z",
+      "player": {
+        "decodedAudioBytes": 217507,
+        "droppedFrames": 0,
+        "duration": 57.749333,
+        "ended": false,
+        "error": null,
+        "muted": false,
+        "paused": false,
+        "time": 4.948687,
+        "totalFrames": 157
+      }
+    },
+    {
+      "at": "2026-10-26T07:21:53.712Z",
+      "player": {
+        "decodedAudioBytes": 415549,
+        "droppedFrames": 0,
+        "duration": 57.749333,
+        "ended": false,
+        "error": null,
+        "muted": false,
+        "paused": false,
+        "time": 9.955064,
+        "totalFrames": 307
+      }
+    },
+    {
+      "at": "2026-10-26T07:21:58.719Z",
+      "player": {
+        "decodedAudioBytes": 614437,
+        "droppedFrames": 0,
+        "duration": 57.749333,
+        "ended": false,
+        "error": null,
+        "muted": false,
+        "paused": false,
+        "time": 14.962031,
+        "totalFrames": 457
+      }
+    },
+    {
+      "at": "2026-10-26T07:22:03.727Z",
+      "player": {
+        "decodedAudioBytes": 813325,
+        "droppedFrames": 0,
+        "duration": 57.749333,
+        "ended": false,
+        "error": null,
+        "muted": false,
+        "paused": false,
+        "time": 19.969461,
+        "totalFrames": 608
+      }
+    },
+    {
+      "at": "2026-10-26T07:22:08.735Z",
+      "player": {
+        "decodedAudioBytes": 1012214,
+        "droppedFrames": 0,
+        "duration": 57.749333,
+        "ended": false,
+        "error": null,
+        "muted": false,
+        "paused": false,
+        "time": 24.97782,
+        "totalFrames": 758
+      }
+    },
+    {
+      "at": "2026-10-26T07:22:13.741Z",
+      "player": {
+        "decodedAudioBytes": 1210256,
+        "droppedFrames": 0,
+        "duration": 57.749333,
+        "ended": false,
+        "error": null,
+        "muted": false,
+        "paused": false,
+        "time": 29.984549,
+        "totalFrames": 908
+      }
+    },
+    {
+      "at": "2026-10-26T07:22:18.748Z",
+      "player": {
+        "decodedAudioBytes": 1409144,
+        "droppedFrames": 0,
+        "duration": 57.749333,
+        "ended": false,
+        "error": null,
+        "muted": false,
+        "paused": false,
+        "time": 34.99111,
+        "totalFrames": 1058
+      }
+    },
+    {
+      "at": "2026-10-26T07:22:23.756Z",
+      "player": {
+        "decodedAudioBytes": 1608032,
+        "droppedFrames": 0,
+        "duration": 57.749333,
+        "ended": false,
+        "error": null,
+        "muted": false,
+        "paused": false,
+        "time": 39.998626,
+        "totalFrames": 1208
+      }
+    },
+    {
+      "at": "2026-10-26T07:22:28.762Z",
+      "player": {
+        "decodedAudioBytes": 1806074,
+        "droppedFrames": 0,
+        "duration": 57.749333,
+        "ended": false,
+        "error": null,
+        "muted": false,
+        "paused": false,
+        "time": 45.005301,
+        "totalFrames": 1359
+      }
+    },
+    {
+      "at": "2026-10-26T07:22:33.769Z",
+      "player": {
+        "decodedAudioBytes": 2004963,
+        "droppedFrames": 0,
+        "duration": 57.749333,
+        "ended": false,
+        "error": null,
+        "muted": false,
+        "paused": false,
+        "time": 50.012192,
+        "totalFrames": 1509
+      }
+    },
+    {
+      "at": "2026-10-26T07:22:38.781Z",
+      "player": {
+        "decodedAudioBytes": 2203851,
+        "droppedFrames": 0,
+        "duration": 57.749333,
+        "ended": false,
+        "error": null,
+        "muted": false,
+        "paused": false,
+        "time": 55.024159,
+        "totalFrames": 1659
+      }
+    },
+    {
+      "at": "2026-10-26T07:22:43.788Z",
+      "player": {
+        "decodedAudioBytes": 2300333,
+        "droppedFrames": 0,
+        "duration": 57.749333,
+        "ended": true,
+        "error": null,
+        "muted": false,
+        "paused": true,
+        "time": 57.749333,
+        "totalFrames": 1735
+      }
+    }
+  ],
+  "limitation": "Browser playback/decoding evidence; no claim of agent semantic listening"
+}

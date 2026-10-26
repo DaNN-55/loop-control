@@ -1,0 +1,69 @@
+{
+  "at": "2026-10-26T05:22:35.656Z",
+  "episodeId": "cf4765d7-8e50-412f-8b4d-ad536dc5254c",
+  "episodeUrl": "http://127.0.0.1:5174/?episode=cf4765d7-8e50-412f-8b4d-ad536dc5254c",
+  "episode": {
+    "id": "cf4765d7-8e50-412f-8b4d-ad536dc5254c",
+    "account_id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+    "blueprint_version_id": "a467cbba-de5a-404d-8d64-34d0406bf3f6",
+    "title": "本地最终验收：森林、河流与山峦（全新三镜头）",
+    "stage": "waiting_input",
+    "created_at": "2026-10-26T05:20:30.95066+00:00",
+    "updated_at": "2026-10-26T05:20:30.95066+00:00",
+    "series_version_id": null,
+    "main_script_revision_id": null,
+    "archived_at": null,
+    "is_test": false,
+    "script_source": "provided",
+    "worker_preflight_at": null,
+    "audio_source_mode": "tts",
+    "tts_language_code": null,
+    "tts_voice": null,
+    "tts_speaking_rate": null
+  },
+  "materials": [],
+  "tasks": [],
+  "approvals": [],
+  "network": {
+    "version": 1,
+    "policySha256": "ea22225ede987658e0049b1f3d4fd6c68c8f696b35e7e73aa573c1b409e2d24e",
+    "used": 2,
+    "costMicrounits": 10000,
+    "byOperation": {
+      "pexels.verify": 1,
+      "volcengine_tts.verify": 1
+    },
+    "halted": false,
+    "events": [
+      {
+        "operation": "pexels.verify",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "pexels.verify",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 3119
+      },
+      {
+        "operation": "volcengine_tts.verify",
+        "outcome": "reserved"
+      },
+      {
+        "operation": "volcengine_tts.verify",
+        "outcome": "completed",
+        "status": 200,
+        "bytes": 13766
+      }
+    ]
+  },
+  "dailyKeychainMode": "600",
+  "manuallyAuthoredVisualInput": {
+    "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/state/final-acceptance-20261026/visual-color-guide.png",
+    "bytes": 3517,
+    "sha256": "eeb059915387cbc1afe2ee87d3b7336ec169fbd209a1bf41abdb6c70f29e01a8",
+    "notActualSourceFootage": true,
+    "tool": "new procedural color input, PPM converted to PNG with local FFmpeg"
+  },
+  "pendingDecision": "Human Owner confirmation of actual main script and visual reference; no AI review approval inferred"
+}

@@ -1,0 +1,104 @@
+{
+  "at": "2026-10-26T07:14:43.923Z",
+  "artifactId": "64137fb3-5c5c-4c91-a95c-4ad220c8ca1f",
+  "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/156ddca0-86ab-49f7-b328-f6e850f814f8/review-render.mp4",
+  "sha256": "0e381fafd73fac4c747fc90f5a59aaf53f7812484ae568d0850f355f28b59a51",
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1080,
+        "height": 1920,
+        "r_frame_rate": "30/1",
+        "duration": "57.700000",
+        "side_data_list": [
+          {}
+        ]
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "sample_rate": "48000",
+        "channels": 2,
+        "r_frame_rate": "0/0",
+        "duration": "57.749333"
+      }
+    ],
+    "format": {
+      "duration": "57.749333",
+      "size": "117898661"
+    }
+  },
+  "decode": {
+    "ok": true
+  },
+  "qc": {
+    "version": "qc-report/v1",
+    "renderFingerprint": "351f28d3c0d4fc60d1469e49424e8a15b6190a231ef28337b2e42e6399c7ee7b",
+    "reuse": {
+      "reused": false
+    },
+    "passed": true,
+    "output": {
+      "relativePath": "episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/156ddca0-86ab-49f7-b328-f6e850f814f8/review-render.mp4",
+      "durationSeconds": 57.749333,
+      "width": 1080,
+      "height": 1920,
+      "hasAudio": true,
+      "blackFrameCount": 0
+    },
+    "checks": [
+      {
+        "name": "openchatcut_project",
+        "passed": true,
+        "detail": "OpenChatCut 项目已冻结：episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/native-tasks/156ddca0-86ab-49f7-b328-f6e850f814f8/project.json"
+      },
+      {
+        "name": "openchatcut_render",
+        "passed": true,
+        "detail": "输出包含音频。"
+      }
+    ]
+  },
+  "frames": [
+    {
+      "time": 0.5,
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/docs/verification/local-final-acceptance-20261026/media-run02/review-0_5.jpg"
+    },
+    {
+      "time": 9,
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/docs/verification/local-final-acceptance-20261026/media-run02/review-9.jpg"
+    },
+    {
+      "time": 18.6,
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/docs/verification/local-final-acceptance-20261026/media-run02/review-18_6.jpg"
+    },
+    {
+      "time": 18.8,
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/docs/verification/local-final-acceptance-20261026/media-run02/review-18_8.jpg"
+    },
+    {
+      "time": 28,
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/docs/verification/local-final-acceptance-20261026/media-run02/review-28.jpg"
+    },
+    {
+      "time": 37.65,
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/docs/verification/local-final-acceptance-20261026/media-run02/review-37_65.jpg"
+    },
+    {
+      "time": 38,
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/docs/verification/local-final-acceptance-20261026/media-run02/review-38.jpg"
+    },
+    {
+      "time": 46,
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/docs/verification/local-final-acceptance-20261026/media-run02/review-46.jpg"
+    },
+    {
+      "time": 56.8,
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/docs/verification/local-final-acceptance-20261026/media-run02/review-56_8.jpg"
+    }
+  ]
+}

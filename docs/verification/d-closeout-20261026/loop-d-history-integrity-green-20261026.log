@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/merge-stage-abc/loop-control
+
+ ✓ scripts/storage/reference-integrity.test.mjs (10 tests) 2ms
+
+ Test Files  1 passed (1)
+      Tests  10 passed (10)
+   Start at  19:28:02
+   Duration  162ms (transform 13ms, setup 0ms, collect 10ms, tests 2ms, environment 0ms, prepare 45ms)
+

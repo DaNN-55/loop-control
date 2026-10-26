@@ -1,5 +1,7 @@
 # 已批准隔离范围的原生部署入口
 
+本页保留历史验收入口；当前无参 `npm start/stop` 已使用日常运行配置，见[日常运行说明](local-daily-runtime.md)。本页的默认验收指针仅由 `local:start/local:stop` 或历史显式部署入口读取，不再是日常主程序默认值。
+
 本说明适用于优化 worktree 的 stage-d 隔离 PostgreSQL，不是生产部署或新主机安装指南。应用默认不启用 Worker、Keychain、在线验证或 Studio；缺配置不读取旧环境文件，也不回落远端。
 
 ## 正常启动与能力配置

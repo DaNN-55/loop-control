@@ -1,0 +1,2045 @@
+{
+  "at": "2026-10-26T07:32:15.052Z",
+  "referenceRows": 452,
+  "unique": 337,
+  "totalBytes": 2471589045,
+  "failures": [],
+  "destinationNames": [
+    {
+      "name": "test-account",
+      "targetExists": false
+    },
+    {
+      "name": "doubao",
+      "targetExists": false
+    },
+    {
+      "name": "rizhao-jinshan",
+      "targetExists": false
+    }
+  ],
+  "files": [
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/b865e3dc-1c0b-40f7-8b70-7c8d1273adaa/visual-assets-v1.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 3040
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/b865e3dc-1c0b-40f7-8b70-7c8d1273adaa/audio/derived-material-v1.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 15728
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/visual-assets-v1.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2411
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/audio/derived-material-v1.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 15728
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/storyboard-v1.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 5061
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/b-roll/shot-01.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 4425678
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/b-roll/shot-02.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 537813
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/b-roll/shot-04.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 6631899
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/b-roll/shot-03.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 3994886
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/materials/683b1064d478430dac23ecff34f84eabbb8490c3857ccd191f360705ab37c801-sfx-001.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 107068
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/review-render/v1/review-render.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 29557137
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/review-render/v1/index.html",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 4488
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/review-render/v1/assets/gsap.min.js",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 72779
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/review-render/v1/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1121
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/final-render/v1/final-render.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 46852849
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/final-render/v1/index.html",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 4488
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/final-render/v1/final-qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1118
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/publish-input/cover-v1.png",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2467908
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/publish-input/metadata-v1.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 396
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/publish-package/manifest.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1156
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/b4164d65-494e-4321-b5d7-e2bc7e929434/visual-assets-v1.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1422
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/b4164d65-494e-4321-b5d7-e2bc7e929434/storyboard-v1.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1532
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/b4164d65-494e-4321-b5d7-e2bc7e929434/audio/narration-5857a16e-c1c8-4769-b360-957c7954821a-shot-01.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 111744
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/b4164d65-494e-4321-b5d7-e2bc7e929434/a-roll/shot-01.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 519465
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/visual-assets-v1.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2719
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/b4164d65-494e-4321-b5d7-e2bc7e929434/review-render/v1/review-render.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 3552199
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/b4164d65-494e-4321-b5d7-e2bc7e929434/review-render/v1/index.html",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 3153
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/b4164d65-494e-4321-b5d7-e2bc7e929434/review-render/v1/assets/gsap.min.js",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 72779
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/b4164d65-494e-4321-b5d7-e2bc7e929434/review-render/v1/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1118
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/storyboard-v1.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 8530
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/materials/11b0753e02873a5d0b7dd532ab83d4bb737696a4ad0475d4f964f03166f4c0ad-a-shot-007.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 963700
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/audio/narration-219c9f69-2c9b-4c28-a38d-1f435f00b0f0-pc-01.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 19392
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/materials/b40eafb0a3ec372f0c637aeb216d7bf97a4a425cc3eb40e5e58db76542502b06-a-shot-001.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1453808
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/materials/3ee61fa4a4e9d7457d4bfdf679db932da8fe1d048d467767d44ac04def88f2c1-a-shot-003.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2972905
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/materials/7e65f0faa7c3f95dce724f55ae3c381c410fbf33c0e13c5ab2dc5762a6549eaa-a-shot-004.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 4500831
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/materials/27f1f47076212a11f21c0ff8575cef411eeefd8f4e726bf47e927926d2b24e9d-a-shot-005.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 3102310
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/materials/222a5a1f2d715570da177a36da313c3bc7e6356de28480ad55d427499cc86258-a-shot-002.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 646806
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/materials/d1fb3286aaad394051813f9b363af29218386e4a211d6521d52873f6434880ee-a-shot-006.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1894156
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/audio/narration-47f15111-6ea9-44e0-ab55-644f5140b317-pc-01.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 19392
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/audio/narration-47f15111-6ea9-44e0-ab55-644f5140b317-pc-02.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 35520
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/audio/narration-47f15111-6ea9-44e0-ab55-644f5140b317-pc-03.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 41856
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/audio/narration-47f15111-6ea9-44e0-ab55-644f5140b317-pc-04.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 36096
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/audio/narration-47f15111-6ea9-44e0-ab55-644f5140b317-pc-05.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 28608
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/audio/narration-47f15111-6ea9-44e0-ab55-644f5140b317-pc-06.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 46464
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/audio/narration-47f15111-6ea9-44e0-ab55-644f5140b317-pc-08.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 23040
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/review-render/v1/review-render.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 29945757
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/review-render/v1/index.html",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 6816
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/review-render/v1/assets/gsap.min.js",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 72779
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/review-render/v1/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1122
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/materials/cfbe2e2c87cf1e0d7a5fe5c5244181cde1b87c34fd826596d7bdf2d81c73ced0-a-shot-008.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1515677
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/materials/e2bbeff53847a06edafa868b4733d1a8d483a6f49e304b9cf9bc342b477be7c2-b-shot-003.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 722043
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/materials/e450097ab058fd24d092c26e6cf165b9e043a236716a89d8734fcc21a389ff68-a-shot-009.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 3021480
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/materials/de7746f520d69d6e2cc25ca3e0499c6fda8ee0de04c465410e5902988e5a05dd-a-shot-010.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 4606061
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/materials/c930a32944237ad66f24d4e47a891b20c6d672fa5ebc2c6bfbebd0edf709bbb3-a-shot-011.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 3201256
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/materials/64dd4e6227d6748c8c03173a9f8d1d3eac57a47aa67e65276a6c4de786d98cc9-b-shot-004.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1930525
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/materials/5df8a747694259c2722b7359b50a9ef94348bc85e8e2df9c907589ffe24b2389-a-shot-012.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 969766
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/audio/narration-219c9f69-2c9b-4c28-a38d-1f435f00b0f0-pc-08.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 23040
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/audio/narration-219c9f69-2c9b-4c28-a38d-1f435f00b0f0-pc-02.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 35520
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/audio/narration-219c9f69-2c9b-4c28-a38d-1f435f00b0f0-pc-03.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 41856
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/audio/narration-219c9f69-2c9b-4c28-a38d-1f435f00b0f0-pc-04.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 36096
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/audio/narration-219c9f69-2c9b-4c28-a38d-1f435f00b0f0-pc-06.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 44352
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/audio/narration-219c9f69-2c9b-4c28-a38d-1f435f00b0f0-pc-05.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 28608
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/review-render/v2/review-render.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 29699154
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/review-render/v2/index.html",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 6860
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/review-render/v2/assets/gsap.min.js",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 72779
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/review-render/v2/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1122
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/final-render/v2/final-render.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 49353182
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/final-render/v2/index.html",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 6860
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/final-render/v2/final-qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1119
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/publish-input/cover-v1.jpg",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 210867
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/publish-input/metadata-v1.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 285
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/publish-package/manifest.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1155
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/visual-assets-v1.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1953
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/storyboard-v1.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 10940
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/storyboard-v2.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 11178
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/storyboard-v3.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 11219
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/storyboard-v4.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 11249
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/audio/narration-cfff41a5-fcac-4c50-885e-52315d794a75-shot-001.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 21933
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/audio/narration-cfff41a5-fcac-4c50-885e-52315d794a75-shot-003.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 208365
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/audio/narration-cfff41a5-fcac-4c50-885e-52315d794a75-shot-002.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 39597
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/audio/narration-cfff41a5-fcac-4c50-885e-52315d794a75-shot-004.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 13677
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/audio/narration-cfff41a5-fcac-4c50-885e-52315d794a75-shot-005.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 53997
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/audio/narration-cfff41a5-fcac-4c50-885e-52315d794a75-shot-006.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 45549
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/audio/narration-cfff41a5-fcac-4c50-885e-52315d794a75-shot-007.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 28845
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/audio/narration-cfff41a5-fcac-4c50-885e-52315d794a75-shot-008.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 32685
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/audio/narration-cfff41a5-fcac-4c50-885e-52315d794a75-shot-009.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 20781
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/materials/d6bffc203be92d4635191e2f3478f05fb0454f49f7f70ebef7551d8cb3698c2a-b-shot-001.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1317037
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/materials/20950a870362bcee64964be03bbaf4c0baa35059ae03d176ff1c62bedd0c736c-a-shot-001.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 17496296
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/materials/45271908fd702abcb2eebce5a52441abd871ecabc9b881969ba15b6a37cc4dd2-a-shot-002.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 66640159
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/materials/593a0e7df76acee1d6b02af4fd1d6ae41e12422005a32c111f814423dddc43e4-a-shot-003.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 12688280
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/materials/f877d71b0f44aa9013a5808ecbeab05b24ae5d5b31f83ac5acc76ea376709809-b-shot-002.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 111712
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/audio/shot-narration-shot-001-784283601ce557fab2ac1f9c994066b7.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 24813
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/audio/shot-narration-shot-001-8c82678184ed89d5468974a0690cc1b2.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 18669
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/audio/shot-narration-shot-002-d19e1e8614ebcb119ebda4ed7279ae50.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 34605
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/shot-clips/shot-004-957c8308921b9f9b75cee790dc21f35e.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 830550
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/shot-clips/shot-003-05eea243e7bfa84004a59d6cb8922e2d.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 16490458
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/shot-clips/shot-001-add6401450c0ce875b2a5f1807fdae1e.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 267593
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/shot-clips/shot-005-8b0f83c0dc8ff07e8271aa103aab1e84.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 71359
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/shot-clips/shot-006-96a124a76bc8e1c61a1702d36cb82f1f.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1814378
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/shot-clips/shot-007-38421d6e02c89099b0643a5b72d12ab7.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1528888
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/shot-clips/shot-008-957c8308921b9f9b75cee790dc21f35e.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 830550
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/shot-clips/shot-009-957c8308921b9f9b75cee790dc21f35e.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 830550
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/shot-clips/shot-002-a4106f1ded7cd31b1bf33b220ddfb1f7.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1396597
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/review-render/v4/review-render.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 40976984
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/review-render/v4/index.html",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 7422
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/review-render/v4/assets/gsap.min.js",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 72779
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/review-render/v4/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1146
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/review-render/v6/review-render.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 38921027
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/review-render/v6/index.html",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 7930
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/review-render/v6/assets/gsap.min.js",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 72779
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/review-render/v6/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1146
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/3bf59fde-cf0b-47e1-990e-d7034cfbcfb3/visual-assets-v1.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1947
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/visual-assets-v1.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 4635
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/storyboard-v1.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 9958
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/audio/shot-narration-shot-001-hook-784283601ce557fab2ac1f9c994066b7.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 26157
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/shot-clips/shot-001-hook-16d42aa466839b7b02746c0a59c828a0.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 363747
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/audio/shot-narration-shot-002-nightmare-sheet-89724e72b9bf4362880ce1bafb98c056.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 87597
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/audio/shot-narration-shot-002-nightmare-sheet-8cb18161d89e2fe6b65ecbc5c6bc3d1d.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 44013
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/audio/shot-narration-shot-003-task-instruction-2d705bbd1e5f32c71f87a67ce3d9b0ed.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 222381
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/audio/shot-narration-shot-004-reading-46a20861183280d90fc533ae98ffe36c.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 18669
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/storyboard-revision-2.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 8400
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/audio/shot-narration-shot-006-execution-montage-289379c6f8471fc29adabacdf099448d.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42669
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/audio/shot-narration-shot-008-outro-e4d834d32bc09abecfd3017c53531a7f.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 23469
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/storyboard-revision-3.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 8400
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/review-render/v2/review-render.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 40889889
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/review-render/v2/index.html",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 7075
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/review-render/v2/assets/gsap.min.js",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 72779
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/review-render/v2/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1146
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/review-render/v4/review-render.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 41264380
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/review-render/v4/index.html",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 7505
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/review-render/v4/assets/gsap.min.js",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 72779
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/review-render/v4/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1146
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/review-render/v8/review-render.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 45010020
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/review-render/v8/index.html",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 8911
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/review-render/v8/assets/gsap.min.js",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 72779
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/review-render/v8/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1146
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/final-render/v8/final-render.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 72582820
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/final-render/v8/index.html",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 8911
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/final-render/v8/final-qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1143
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/audio/shot-narration-shot-001-72db0ba94435d0facbcf08a4513b6e4b.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 19629
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/review-render/v2/review-render.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 103353164
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/review-render/v2/project.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 12743
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/review-render/v2/openchatcut-runtime.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/review-render/v2/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 618
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/visual-assets-v1.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 3769
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/storyboard-v1.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 9593
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/audio/shot-narration-shot-001-a9d93454b054decf55fdddc6aa7ca206.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 30765
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/audio/shot-narration-shot-002-e21e08864623c92ad9416020a67c225e.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 56109
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/audio/shot-narration-shot-003-e3bfb6e8e8a0ee48522e35f8a88c2493.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 274797
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/audio/shot-narration-shot-004-39cb33581bdb5905f4e4aa9fe833d9f4.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 19437
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/audio/shot-narration-shot-007-7d6daba5497fbe63641add3d934b49bd.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 43437
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/audio/shot-narration-shot-008-a5bb8b32f1f1e7f29ecfa8acc1e5d51d.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 30573
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/review-render/v1/review-render.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 141805399
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/review-render/v1/project.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 15951
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/review-render/v1/openchatcut-runtime.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/review-render/v1/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 618
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/alignment/shot-001-87398b4113ed0a82a1ef9eb4760015b6d97a25da3661982f574a6567ecd81b06.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1074
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/b4d57fc59e2f9b8b7d9c1c69795572b4/proxy.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2265871
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/b4d57fc59e2f9b8b7d9c1c69795572b4/project.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 5215
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/b4d57fc59e2f9b8b7d9c1c69795572b4/openchatcut-runtime.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/b4d57fc59e2f9b8b7d9c1c69795572b4/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 745
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/b267821a10090166d82f6b3f59a12110/proxy.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 4487453
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/b267821a10090166d82f6b3f59a12110/project.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 5218
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/b267821a10090166d82f6b3f59a12110/openchatcut-runtime.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/b267821a10090166d82f6b3f59a12110/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 745
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/d89f8d0f72ac6cac57bd491bbd13a8e0/proxy.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2009305
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/d89f8d0f72ac6cac57bd491bbd13a8e0/project.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 4805
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/d89f8d0f72ac6cac57bd491bbd13a8e0/openchatcut-runtime.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/d89f8d0f72ac6cac57bd491bbd13a8e0/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 745
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/2c821530f7f29bc3c2c36adada349ee1/proxy.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 3874294
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/2c821530f7f29bc3c2c36adada349ee1/project.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 4807
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/2c821530f7f29bc3c2c36adada349ee1/openchatcut-runtime.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/2c821530f7f29bc3c2c36adada349ee1/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 745
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/94743af77c3f43c859d9bf4e2fd22ad7/proxy.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 3448944
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/94743af77c3f43c859d9bf4e2fd22ad7/project.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 5069
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/94743af77c3f43c859d9bf4e2fd22ad7/openchatcut-runtime.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-001/94743af77c3f43c859d9bf4e2fd22ad7/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 745
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/alignment/shot-002-11d84d62bcb9074c59b1884d229f2966269d94e734f852167ef4f1b3288ecd35.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1547
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-002/b317fedfc86d547c50fc88bb9b863150/proxy.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 8070148
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-002/b317fedfc86d547c50fc88bb9b863150/project.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 6471
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-002/b317fedfc86d547c50fc88bb9b863150/openchatcut-runtime.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-002/b317fedfc86d547c50fc88bb9b863150/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 745
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-002/4d442a3b5d971a09964eafe03a0dee00/proxy.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 14612431
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-002/4d442a3b5d971a09964eafe03a0dee00/project.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 6471
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-002/4d442a3b5d971a09964eafe03a0dee00/openchatcut-runtime.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-002/4d442a3b5d971a09964eafe03a0dee00/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 745
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/alignment/shot-003-fbb1a3063bce9d59d58a7391539bc0e6997d7d2de195cdf28429450ae6d908b2.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1521
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/audio/shot-narration-shot-003-0005e7670e95bb1b65451f40912bcdcd.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 261933
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/alignment/shot-003-8ff78da5e9f3e95e370e770c28fed5f7e2d3e3a7c253a2f3abecb21a46ef3dbb.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 3163
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-003/c7bb1097d7486c3e761c5e06e2e9cd85/proxy.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 56208994
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-003/c7bb1097d7486c3e761c5e06e2e9cd85/project.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 9224
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-003/c7bb1097d7486c3e761c5e06e2e9cd85/openchatcut-runtime.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-003/c7bb1097d7486c3e761c5e06e2e9cd85/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 746
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/alignment/shot-004-e100e952222cbd686bdbf2a50d55fd08f50d362e3be655332c72364281223e66.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 975
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-004/d55431a325186cd3cbf4f497a76118f1/proxy.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 5891314
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-004/d55431a325186cd3cbf4f497a76118f1/project.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 3892
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-004/d55431a325186cd3cbf4f497a76118f1/openchatcut-runtime.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-004/d55431a325186cd3cbf4f497a76118f1/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 742
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-005/aca9e4e2d589097d34ca71e3978f85a3/proxy.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 483881
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-005/aca9e4e2d589097d34ca71e3978f85a3/project.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2730
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-005/aca9e4e2d589097d34ca71e3978f85a3/openchatcut-runtime.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-005/aca9e4e2d589097d34ca71e3978f85a3/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 742
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-005/f81c1d736896b41fd1380a6565d7aa35/proxy.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 483881
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-005/f81c1d736896b41fd1380a6565d7aa35/project.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2730
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-005/f81c1d736896b41fd1380a6565d7aa35/openchatcut-runtime.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-005/f81c1d736896b41fd1380a6565d7aa35/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 742
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-006/f1fbce50069122c595b7645fd553795a/proxy.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 27805998
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-006/f1fbce50069122c595b7645fd553795a/project.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2143
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-006/f1fbce50069122c595b7645fd553795a/openchatcut-runtime.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-006/f1fbce50069122c595b7645fd553795a/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 745
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/alignment/shot-007-cd81af7063df2378556b1ff42efd86a65f6aecb9ea38b59bca379afd6a151182.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1272
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-007/60d4dfc1631bad46ebe89f59e6397aea/proxy.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 8201792
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-007/60d4dfc1631bad46ebe89f59e6397aea/project.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 4318
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-007/60d4dfc1631bad46ebe89f59e6397aea/openchatcut-runtime.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-007/60d4dfc1631bad46ebe89f59e6397aea/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 745
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/alignment/shot-008-9147169168d5d7cbcde60713e7b5afb53f1687b9684ff514877c41fffd02b042.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1123
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-008/098d783d820e9e5972a244b8c3ab63f0/proxy.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 8604661
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-008/098d783d820e9e5972a244b8c3ab63f0/project.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 6319
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/review-render/v1/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 615
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-008/098d783d820e9e5972a244b8c3ab63f0/openchatcut-runtime.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/shot-previews/shot-008/098d783d820e9e5972a244b8c3ab63f0/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 745
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/review-render/v3/review-render.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 126883948
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/review-render/v3/project.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 29941
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/review-render/v3/openchatcut-runtime.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/review-render/v3/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 618
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/4bf30683-7a28-4f7f-ac2f-2a263b90bfff/visual-assets-v1.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1651
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/4bf30683-7a28-4f7f-ac2f-2a263b90bfff/storyboard-v1.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 6580
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/2d1de3e1ff1f24ec0aabe017ee1357abf5a78314988db45c7e2e5164f40cbfe3-main-script.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 643
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/approved-plan/visual-assets.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2423
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/approved-plan/storyboard.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 15393
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/wan/e50d204d-9ca7-43af-bf18-243218c0f52f.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 4961884
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/wan/bfc1b53e-993b-4626-a264-c8c9cfb0a6ae.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 6405999
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/audio/shot-narration-S01-6828822b2641ba4e92746ead55ce7676.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 39981
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/wan/42493b4f-749e-4ccf-b4c0-d78b3992d354.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 3567469
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/audio/shot-narration-S02-44ac93f4e73eae78a923c3a3f9351d7b.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 35565
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/audio/shot-narration-S03-3ed242a92cea20a3196e41021f443aad.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 26349
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/audio/shot-narration-S04-032658d65209c6f532286efd660994c4.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 18669
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/wan/f4ed699c-c7ef-4ebe-9366-8d854f0b5162.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 3758252
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/audio/shot-narration-S05-744e37306e4e91303556907be98472f2.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 49005
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/audio/shot-narration-S06-83d5be044dbbe052e6a1f46404abbf4e.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 20205
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/audio/shot-narration-S07-63bee222e233bf60df832fa7bc792fc5.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 38637
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/audio/shot-narration-S08-fce0190e3395f594346592b0cbf7bd4c.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 29421
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/audio/shot-narration-S09-620b6194e4b18a4b79e3172fde951a46.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 32493
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/audio/shot-narration-S10-6445577f28d108be4a39d7d1f751831c.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 29421
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/wan/bbbc2419-63f0-4cd2-ad16-81c3c13f5009.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2965726
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/wan/b4640091-7b22-4f51-829c-9d56e4187f74.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 5718805
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/review-render/v1/review-render.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 57039185
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/review-render/v1/project.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 29712
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/review-render/v1/openchatcut-runtime.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/review-render/v2/review-render.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 55188379
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/review-render/v2/project.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 29692
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/review-render/v2/openchatcut-runtime.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 42
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/review-render/v2/qc-report.json",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 615
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/b865e3dc-1c0b-40f7-8b70-7c8d1273adaa/materials/6814c3120912047f866149a6003ec7bbe477631b962ec33a560a0b612fa3313f-script.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 302
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/b865e3dc-1c0b-40f7-8b70-7c8d1273adaa/materials/2cc46c4635dc86b62aec857f6b7e494ab15c146a8989dd5b4b911e03dfd9ccb9-actor.png",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 5564
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/b865e3dc-1c0b-40f7-8b70-7c8d1273adaa/materials/92bae2a91db74b3b71da7bc599e9782a3a0370a05536e9a7af031e23c72d4393-a-shot-001.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 333140
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/materials/6814c3120912047f866149a6003ec7bbe477631b962ec33a560a0b612fa3313f-script.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 302
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/materials/5ac78c06d4ef7d645b666b64230d620aad05ecb7ae2b99ff9d56fd02431cf9c8-actor.png",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2467908
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/materials/92bae2a91db74b3b71da7bc599e9782a3a0370a05536e9a7af031e23c72d4393-a-shot-001.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 333140
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/materials/ca83ba41db012650adbea12e2db38f15e79c2f547e0a457c02e06f77f1305bff-actor.png",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1853837
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/materials/e378b4e0413bb4e280ac17f276a5d2965c5d01c4686e23d4878ea43159f20147-actor.png",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2807088
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/07328b9c-9d33-4355-bebc-998329191c56/materials/5ac78c06d4ef7d645b666b64230d620aad05ecb7ae2b99ff9d56fd02431cf9c8-cover.png",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2467908
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/b4164d65-494e-4321-b5d7-e2bc7e929434/materials/9fea7a505e125a21ceabe17352d2ffea11bf1311cfec7430862f5fb88f30fa19-script.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 201
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/b4164d65-494e-4321-b5d7-e2bc7e929434/materials/ca83ba41db012650adbea12e2db38f15e79c2f547e0a457c02e06f77f1305bff-actor.png",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1853837
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/e8700b8e-e95f-48a9-9f2e-ac3259a61ed4/materials/5aa6e2f3334ce19ba05edff6a30765bdf5b20c56ffda980589632d14473cf355-script.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 7788
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/materials/b23442f1ff42badc5e5cec38934ceadc998a36447b27ac35767aac438a0388d8-a-shot-004.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 67982899
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/materials/599e8fe43ff0b10144eab597567da6da78d5ec6218b74de5fbb7cf3df04e628a-script.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 4822
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/materials/f6d64ec319573247632de95038411c65568a4660c084f66caab36508737c7356-sfx-001.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 35522
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/603a1588-a786-4ded-a4dd-a660d48ee617/materials/ef32690e1ef5fb9789b9d44422b8c881269532ba9ef07512565cce518eea4220-b-shot-003.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 777335
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/3bf59fde-cf0b-47e1-990e-d7034cfbcfb3/materials/593a0e7df76acee1d6b02af4fd1d6ae41e12422005a32c111f814423dddc43e4-a-shot-001.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 12688280
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/3bf59fde-cf0b-47e1-990e-d7034cfbcfb3/materials/599e8fe43ff0b10144eab597567da6da78d5ec6218b74de5fbb7cf3df04e628a-script.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 4822
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/3bf59fde-cf0b-47e1-990e-d7034cfbcfb3/materials/20950a870362bcee64964be03bbaf4c0baa35059ae03d176ff1c62bedd0c736c-a-shot-002.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 17496296
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/3bf59fde-cf0b-47e1-990e-d7034cfbcfb3/materials/45271908fd702abcb2eebce5a52441abd871ecabc9b881969ba15b6a37cc4dd2-a-shot-003.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 66640159
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/3bf59fde-cf0b-47e1-990e-d7034cfbcfb3/materials/b23442f1ff42badc5e5cec38934ceadc998a36447b27ac35767aac438a0388d8-a-shot-004.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 67982899
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/3bf59fde-cf0b-47e1-990e-d7034cfbcfb3/materials/d6bffc203be92d4635191e2f3478f05fb0454f49f7f70ebef7551d8cb3698c2a-b-shot-001.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1317037
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/3bf59fde-cf0b-47e1-990e-d7034cfbcfb3/materials/f877d71b0f44aa9013a5808ecbeab05b24ae5d5b31f83ac5acc76ea376709809-b-shot-002.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 111712
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/3bf59fde-cf0b-47e1-990e-d7034cfbcfb3/materials/f6d64ec319573247632de95038411c65568a4660c084f66caab36508737c7356-bgm-001.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 35522
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/materials/20950a870362bcee64964be03bbaf4c0baa35059ae03d176ff1c62bedd0c736c-a-shot-001.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 17496296
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/materials/599e8fe43ff0b10144eab597567da6da78d5ec6218b74de5fbb7cf3df04e628a-script.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 4822
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/materials/45271908fd702abcb2eebce5a52441abd871ecabc9b881969ba15b6a37cc4dd2-a-shot-002.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 66640159
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/materials/593a0e7df76acee1d6b02af4fd1d6ae41e12422005a32c111f814423dddc43e4-a-shot-003.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 12688280
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/materials/b23442f1ff42badc5e5cec38934ceadc998a36447b27ac35767aac438a0388d8-a-shot-004.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 67982899
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/materials/d6bffc203be92d4635191e2f3478f05fb0454f49f7f70ebef7551d8cb3698c2a-b-shot-001.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1317037
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/materials/f877d71b0f44aa9013a5808ecbeab05b24ae5d5b31f83ac5acc76ea376709809-b-shot-002.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 111712
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/materials/f6d64ec319573247632de95038411c65568a4660c084f66caab36508737c7356-sfx-001.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 35522
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/materials/ef32690e1ef5fb9789b9d44422b8c881269532ba9ef07512565cce518eea4220-b-shot-003.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 777335
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/materials/599e8fe43ff0b10144eab597567da6da78d5ec6218b74de5fbb7cf3df04e628a-599e8fe43ff0b10144eab597567da6da78d5ec6218b74de5fbb7cf3df04e628a-script.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 4822
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/materials/593a0e7df76acee1d6b02af4fd1d6ae41e12422005a32c111f814423dddc43e4-b-shot-004.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 12688280
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/materials/20950a870362bcee64964be03bbaf4c0baa35059ae03d176ff1c62bedd0c736c-b-shot-005.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 17496296
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/materials/45271908fd702abcb2eebce5a52441abd871ecabc9b881969ba15b6a37cc4dd2-b-shot-006.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 66640159
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/materials/b23442f1ff42badc5e5cec38934ceadc998a36447b27ac35767aac438a0388d8-a-shot-005.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 67982899
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/materials/b23442f1ff42badc5e5cec38934ceadc998a36447b27ac35767aac438a0388d8-b-shot-007.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 67982899
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/materials/593a0e7df76acee1d6b02af4fd1d6ae41e12422005a32c111f814423dddc43e4-a-shot-002.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 12688280
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/materials/599e8fe43ff0b10144eab597567da6da78d5ec6218b74de5fbb7cf3df04e628a-script.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 4822
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/materials/b23442f1ff42badc5e5cec38934ceadc998a36447b27ac35767aac438a0388d8-a-shot-001.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 67982899
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/materials/20950a870362bcee64964be03bbaf4c0baa35059ae03d176ff1c62bedd0c736c-a-shot-003.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 17496296
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/materials/d6bffc203be92d4635191e2f3478f05fb0454f49f7f70ebef7551d8cb3698c2a-b-shot-001.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1317037
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/materials/45271908fd702abcb2eebce5a52441abd871ecabc9b881969ba15b6a37cc4dd2-a-shot-004.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 66640159
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/materials/ef32690e1ef5fb9789b9d44422b8c881269532ba9ef07512565cce518eea4220-b-shot-002.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 777335
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/materials/f6d64ec319573247632de95038411c65568a4660c084f66caab36508737c7356-sfx-001.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 35522
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01/materials/f877d71b0f44aa9013a5808ecbeab05b24ae5d5b31f83ac5acc76ea376709809-a-shot-005.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 111712
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164/materials/ef32690e1ef5fb9789b9d44422b8c881269532ba9ef07512565cce518eea4220-a-shot-003.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 777335
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164/materials/593a0e7df76acee1d6b02af4fd1d6ae41e12422005a32c111f814423dddc43e4-a-shot-002.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 12688280
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164/materials/20950a870362bcee64964be03bbaf4c0baa35059ae03d176ff1c62bedd0c736c-a-shot-001.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 17496296
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164/materials/d6bffc203be92d4635191e2f3478f05fb0454f49f7f70ebef7551d8cb3698c2a-b-shot-001.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1317037
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164/materials/b23442f1ff42badc5e5cec38934ceadc998a36447b27ac35767aac438a0388d8-b-shot-002.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 67982899
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164/materials/f6d64ec319573247632de95038411c65568a4660c084f66caab36508737c7356-sfx-001.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 35522
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164/materials/45271908fd702abcb2eebce5a52441abd871ecabc9b881969ba15b6a37cc4dd2-a-shot-004.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 66640159
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164/materials/f877d71b0f44aa9013a5808ecbeab05b24ae5d5b31f83ac5acc76ea376709809-b-shot-003.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 111712
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164/materials/508aaca47ae36dc5541d2c63d461e2af8abc2b4e6cfabdba51b459b7019f5989-script.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 4814
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164/materials/508aaca47ae36dc5541d2c63d461e2af8abc2b4e6cfabdba51b459b7019f5989-测试.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 4814
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164/materials/53b8fab99b91c611973d8b0b8d47583f20cf74183eb4b469a1d78eb1f9a24ecb-actor.png",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 934994
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164/materials/53b8fab99b91c611973d8b0b8d47583f20cf74183eb4b469a1d78eb1f9a24ecb-Codex 图像 2026年9月5日 12_34_53.png",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 934994
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164/materials/45271908fd702abcb2eebce5a52441abd871ecabc9b881969ba15b6a37cc4dd2-a-shot-005.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 66640159
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/4bf30683-7a28-4f7f-ac2f-2a263b90bfff/materials/d6bffc203be92d4635191e2f3478f05fb0454f49f7f70ebef7551d8cb3698c2a-b-shot-001.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1317037
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/4bf30683-7a28-4f7f-ac2f-2a263b90bfff/materials/593a0e7df76acee1d6b02af4fd1d6ae41e12422005a32c111f814423dddc43e4-a-shot-001.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 12688280
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/4bf30683-7a28-4f7f-ac2f-2a263b90bfff/materials/45271908fd702abcb2eebce5a52441abd871ecabc9b881969ba15b6a37cc4dd2-a-shot-002.mov",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 66640159
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/4bf30683-7a28-4f7f-ac2f-2a263b90bfff/materials/f6d64ec319573247632de95038411c65568a4660c084f66caab36508737c7356-sfx-001.mp3",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 35522
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/4bf30683-7a28-4f7f-ac2f-2a263b90bfff/materials/f877d71b0f44aa9013a5808ecbeab05b24ae5d5b31f83ac5acc76ea376709809-b-shot-002.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 111712
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/4bf30683-7a28-4f7f-ac2f-2a263b90bfff/materials/63a2d21022a2d74a57db9ea0c124d8434372c72b823668ec4a6e11dc372d5cca-script.md",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 214
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/c6efc49954d4f1404c4ac41172a526d783961180d06dfa494b8f61e7238dfabf-01-man-product.png",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2352230
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/c842afdf4bffb9c11116619b5f51ca7cb4e98cd3f47e29cc469fd4d2074aac03-02-shop-owner.png",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2267835
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/e9045ed4c50db62cc3ec673f21943949334c0620c7ad321ce62e85f8c708180e-03-card-hands.png",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2005629
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/74e27bb9f6e15d4ec5ae1650f43faf0fc1e4275a3121e6842e41cb08fb30f7f1-04-couple-phone.png",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2107141
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/7f4b295ead815a9698112503fb0350cc316b769f4add74d8d1ade38a56e10087-05-living-room.png",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2325127
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/ba0a7c99fdf0d6dae15657f44711226a1a484731015a567df257d308a483bdcd-06-shop-display.png",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2189141
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/9794cba9e12b7d027ba5ca7fb3b3e9800205c17ed3fc740b94aed0fb37a1467a-00-product-original.png",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1458475
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/54254cbbc3c770ec259bdc18dce1570bd65e13dd98446accfe449ca61a6fd3b1-prepared-S01.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 3611909
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/1cf029cc7348537bff46a35925637410e121e3dd96249b94d3d549e3e1712120-prepared-S02.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2505843
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/de688d12bec3a104074599874fcec84d2cfe30e064e645fbb4004f20ebef405b-prepared-S03.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1838317
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/b2a08eeeeefdd00ce76d0bf2e89a94d919a75305f9213c2d3afe441f51f3fe2f-prepared-S04.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1009725
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/9e1035475a79576b965e94dd3654bc29772e421e6400f14ff924ca9ab7f69727-prepared-S05.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2118925
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/8b1e1d1c8507f24f147f3f7e0f64c2a560c3bc5e88d859256130dd8bdc7abd31-prepared-S06.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2294459
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/e193d228e7b75e43b07b3a0a1dd8b48b944a50c6023cff7838008355be962de2-prepared-S07.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 1572425
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/f86f03a8ab06b9680e0096a57ac4f48516e4d23e17c6e170cb8fc01864b8b301-prepared-S08.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2923722
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/abba64dfe88ea6714061b809485ea17cc12b68aa780ee807951344636ae4fe16-prepared-S09.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2573051
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan/episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/70f3ad0b2c84e3fa8ae37dea1e0577effabd9b0263171f57b759fa44d5b264c1-prepared-S10.mp4",
+      "shaMatched": true,
+      "sizeMatched": true,
+      "bytes": 2406688
+    }
+  ]
+}

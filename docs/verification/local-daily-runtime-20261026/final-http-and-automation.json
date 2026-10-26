@@ -1,0 +1,63 @@
+{
+  "passed": true,
+  "episodeId": "86f722d2-3675-4732-a8cd-d4276af51e7c",
+  "originalEpisodeAnd39ArtifactsUnchanged": true,
+  "newOwnerCommands": [
+    {
+      "command": "annotateAudio",
+      "status": 404,
+      "expected": 404
+    },
+    {
+      "command": "reviewPreRenderMember",
+      "status": 404,
+      "expected": 404
+    },
+    {
+      "command": "requestQcMemberRevision",
+      "status": 404,
+      "expected": 404
+    },
+    {
+      "command": "repairConfiguration",
+      "status": 400,
+      "expected": 400
+    },
+    {
+      "command": "repairConnection",
+      "status": 409,
+      "expected": 409
+    }
+  ],
+  "audioAnnotationSaved": true,
+  "annotationIdempotent": true,
+  "studioGuardStatus": 409,
+  "studioGuardReason": "请先核对当前音频正文并保存确认。",
+  "studioPort": 5175,
+  "completedEpisodeStudioEditDenied": true,
+  "studioFixtureEpisodeId": "1abcd883-6a6d-4276-8152-b80dbc281139",
+  "automationQueueInsertedForAcceptance": true,
+  "automationRealJobs": [
+    {
+      "id": "93b82876-03a4-4dc8-8478-4db57fbd48b4",
+      "kind": "backup",
+      "status": "completed",
+      "passed": true,
+      "attempt": 1,
+      "detail": "本地完整备份已生成并校验：51 张表、975 个文件；不包含密码、会话或 Keychain，恢复能力尚未验收。"
+    },
+    {
+      "id": "b6741bc6-c440-4e6f-bfcc-028ec987ac3c",
+      "kind": "health",
+      "status": "completed",
+      "passed": true,
+      "attempt": 1,
+      "detail": "数据库、媒体目录和本地运行程序检查通过。"
+    }
+  ],
+  "normalServiceExecutedJobs": true,
+  "mediaAndModelTasksUnchanged": true,
+  "providerRequests": 0,
+  "cliCalls": 0,
+  "n8nRequired": false
+}

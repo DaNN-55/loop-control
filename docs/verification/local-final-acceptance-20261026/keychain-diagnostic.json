@@ -1,0 +1,70 @@
+{
+  "at": "2026-10-26T04:59:24.689Z",
+  "paths": [
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local",
+      "mode": "700",
+      "ownerMatches": true,
+      "canonical": true
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/native",
+      "mode": "700",
+      "ownerMatches": true,
+      "canonical": true
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/keychain",
+      "mode": "700",
+      "ownerMatches": true,
+      "canonical": true
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/native/keychain-helper",
+      "mode": "700",
+      "ownerMatches": true,
+      "canonical": true
+    },
+    {
+      "path": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/keychain/loop-control.keychain-db",
+      "mode": "644",
+      "ownerMatches": true,
+      "canonical": true
+    }
+  ],
+  "helperHashMatches": true,
+  "status": {
+    "exit": 0,
+    "response": {
+      "status": 0,
+      "unlocked": true,
+      "ok": true
+    }
+  },
+  "directHelper": {
+    "exit": 1,
+    "response": {
+      "ok": false,
+      "code": "missing"
+    },
+    "stderrPresent": false
+  },
+  "directBindings": [
+    {
+      "provider": "pexels",
+      "version": "9bf6f776-a439-4e17-8260-55fa2b060e79",
+      "exit": 1,
+      "ok": false,
+      "code": "missing",
+      "configured": false
+    },
+    {
+      "provider": "volcengine_tts",
+      "version": "3e83d07f-dd79-4897-838f-41d82fc647ea",
+      "exit": 1,
+      "ok": false,
+      "code": "missing",
+      "configured": false
+    }
+  ]
+}

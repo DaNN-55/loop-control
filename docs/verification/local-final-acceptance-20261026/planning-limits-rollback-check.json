@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "cases": 4,
+  "nativePlanningLimit": 1,
+  "unrelatedLimitPreserved": 2,
+  "transaction": "ROLLBACK",
+  "at": "2026-10-26T05:41:36.020Z",
+  "database": "loop_control",
+  "oldFailureHashBefore": "43c90da4ea12c26e73b46a7687ecb211",
+  "oldFailureHashAfter": "43c90da4ea12c26e73b46a7687ecb211"
+}

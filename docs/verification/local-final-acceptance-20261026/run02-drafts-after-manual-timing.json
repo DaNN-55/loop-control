@@ -1,0 +1,1467 @@
+{
+  "at": "2026-10-26T06:52:34.945Z",
+  "drafts": [
+    {
+      "id": "ec0e0893-27ea-4f3e-8304-391c3e3590cf",
+      "shot_id": "shot-1",
+      "tts_text": "先把目光放进森林。树干之间有明有暗，枝叶把阳光分成细小的光斑。风吹过时，叶片轻轻摇动，地面的影子也跟着变化。不急着寻找特别的东西，先看一棵树、一片叶子，留意那些平时容易错过的细节。",
+      "frozen_at": null,
+      "frozen_by": null,
+      "tts_error": null,
+      "tts_voice": "zh_female_vv_uranus_bigtts",
+      "audio_mode": "tts",
+      "created_at": "2026-10-26T06:25:34.558079+00:00",
+      "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+      "skipped_at": null,
+      "skipped_by": null,
+      "updated_at": "2026-10-26T06:51:34.339184+00:00",
+      "composition": {
+        "slots": [
+          {
+            "id": "full",
+            "fit": "cover",
+            "focalPoint": {
+              "x": 0.5,
+              "y": 0.5
+            },
+            "clipSegmentIndex": 0
+          }
+        ],
+        "layout": "full",
+        "version": "shot-composition/v1"
+      },
+      "video_error": null,
+      "audio_status": "ready",
+      "confirmed_at": null,
+      "confirmed_by": null,
+      "video_status": "ready",
+      "clip_segments": [
+        {
+          "end_seconds": 18.672,
+          "start_seconds": 0
+        }
+      ],
+      "preview_error": null,
+      "subtitle_text": "先把目光放进森林。树干之间有明有暗，枝叶把阳光分成细小的光斑。风吹过时，叶片轻轻摇动，地面的影子也跟着变化。不急着寻找特别的东西，先看一棵树、一片叶子，留意那些平时容易错过的细节。",
+      "preview_status": "ready",
+      "warning_reason": null,
+      "transition_mode": "cut",
+      "caption_contract": {
+        "cues": [
+          {
+            "id": "phrase-1",
+            "text": "先把目光放进森林。",
+            "end_ms": 2241,
+            "start_ms": 140
+          },
+          {
+            "id": "phrase-2",
+            "text": "树干之间有明有暗，",
+            "end_ms": 3842,
+            "start_ms": 2261
+          },
+          {
+            "id": "phrase-3",
+            "text": "枝叶把阳光分成细小的光斑。",
+            "end_ms": 6444,
+            "start_ms": 4283
+          },
+          {
+            "id": "phrase-4",
+            "text": "风吹过时，",
+            "end_ms": 7865,
+            "start_ms": 7025
+          },
+          {
+            "id": "phrase-5",
+            "text": "叶片轻轻摇动，",
+            "end_ms": 9086,
+            "start_ms": 8085
+          },
+          {
+            "id": "phrase-6",
+            "text": "地面的影子也跟着变化。",
+            "end_ms": 11367,
+            "start_ms": 9726
+          },
+          {
+            "id": "phrase-7",
+            "text": "不急着寻找特别的东西，",
+            "end_ms": 13569,
+            "start_ms": 11848
+          },
+          {
+            "id": "phrase-8",
+            "text": "先看一棵树、一片叶子，",
+            "end_ms": 15810,
+            "start_ms": 13909
+          },
+          {
+            "id": "phrase-9",
+            "text": "留意那些平时容易错过的细节。",
+            "end_ms": 18432,
+            "start_ms": 16250
+          }
+        ],
+        "text": "先把目光放进森林。树干之间有明有暗，枝叶把阳光分成细小的光斑。风吹过时，叶片轻轻摇动，地面的影子也跟着变化。不急着寻找特别的东西，先看一棵树、一片叶子，留意那些平时容易错过的细节。",
+        "enabled": true,
+        "spatial": {
+          "anchor": "bottom-center",
+          "insets": {
+            "top": 0.08,
+            "left": 0.08,
+            "right": 0.08,
+            "bottom": 0.18
+          },
+          "version": "shot-caption-space/v2",
+          "max_lines": 2,
+          "safe_area": "title-safe",
+          "aspect_ratio": "9:16",
+          "max_characters_per_line": 16
+        },
+        "version": "shot-captions/v1",
+        "content_mode": "follow_tts"
+      },
+      "clip_end_seconds": null,
+      "warning_decision": "not_required",
+      "bgm_ducking_level": "off",
+      "input_fingerprint": "34d73a85b7b7ce6c201af0ba6b8be00d",
+      "review_package_id": "1a954445-efc4-4544-8b42-b8c237aa045c",
+      "subtitles_enabled": true,
+      "tts_language_code": "zh-CN",
+      "tts_speaking_rate": 1,
+      "acoustic_alignment": {
+        "cues": [
+          {
+            "id": "phrase-1",
+            "text": "先把目光放进森林。",
+            "endMs": 2241,
+            "startMs": 140,
+            "confidence": 0.9042500000000001
+          },
+          {
+            "id": "phrase-2",
+            "text": "树干之间有明有暗，",
+            "endMs": 3842,
+            "startMs": 2261,
+            "confidence": 0.857125
+          },
+          {
+            "id": "phrase-3",
+            "text": "枝叶把阳光分成细小的光斑。",
+            "endMs": 6444,
+            "startMs": 4283,
+            "confidence": 0.8849166666666667
+          },
+          {
+            "id": "phrase-4",
+            "text": "风吹过时，",
+            "endMs": 7865,
+            "startMs": 7025,
+            "confidence": 0.8527499999999999
+          },
+          {
+            "id": "phrase-5",
+            "text": "叶片轻轻摇动，",
+            "endMs": 9086,
+            "startMs": 8085,
+            "confidence": 0.7403333333333334
+          },
+          {
+            "id": "phrase-6",
+            "text": "地面的影子也跟着变化。",
+            "endMs": 11367,
+            "startMs": 9726,
+            "confidence": 0.8171000000000002
+          },
+          {
+            "id": "phrase-7",
+            "text": "不急着寻找特别的东西，",
+            "endMs": 13569,
+            "startMs": 11848,
+            "confidence": 0.8358000000000001
+          },
+          {
+            "id": "phrase-8",
+            "text": "先看一棵树、一片叶子，",
+            "endMs": 15810,
+            "startMs": 13909,
+            "confidence": 0.8415555555555554
+          },
+          {
+            "id": "phrase-9",
+            "text": "留意那些平时容易错过的细节。",
+            "endMs": 18432,
+            "startMs": 16250,
+            "confidence": 0.8774615384615385
+          }
+        ],
+        "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+        "detail": "本地 WhisperX 对齐已完成。",
+        "method": "local_whisperx",
+        "status": "completed",
+        "version": "acoustic-alignment/v1",
+        "attempts": [
+          {
+            "detail": "本地 WhisperX 已生成短语 cues。",
+            "method": "local_whisperx",
+            "status": "completed"
+          }
+        ],
+        "provider": "whisperx",
+        "wordCount": 9,
+        "audioSha256": "334cb7b62da6e90cb5981af7fb70f5abcd439e6bba77e3c5a836a3c176bf151d",
+        "generatedAt": "2026-10-26T06:48:49.797Z",
+        "granularity": "phrase",
+        "inputVersion": "6c49cc06bca8296a963d91333bedc38390b3362a28dcc19d029bad296eda11aa",
+        "reviewIssues": [],
+        "textFingerprint": "4f69c2c6dfba198cabf8d7d45b9e6bb19893f2382e98067b9df5ca24350c6117",
+        "connectionVersionId": null
+      },
+      "clip_start_seconds": null,
+      "source_audio_error": null,
+      "tts_override_voice": null,
+      "confirmation_reason": null,
+      "confirmation_status": "pending",
+      "current_tts_task_id": "57a27d39-4150-4725-a60c-c7c8f166ec66",
+      "pending_tts_task_id": null,
+      "warning_accepted_at": null,
+      "warning_accepted_by": null,
+      "preparation_contract": {
+        "version": "shot-preparation/v1",
+        "captions": {
+          "cues": [
+            {
+              "id": "phrase-1",
+              "text": "先把目光放进森林。",
+              "end_ms": 2241,
+              "start_ms": 140
+            },
+            {
+              "id": "phrase-2",
+              "text": "树干之间有明有暗，",
+              "end_ms": 3842,
+              "start_ms": 2261
+            },
+            {
+              "id": "phrase-3",
+              "text": "枝叶把阳光分成细小的光斑。",
+              "end_ms": 6444,
+              "start_ms": 4283
+            },
+            {
+              "id": "phrase-4",
+              "text": "风吹过时，",
+              "end_ms": 7865,
+              "start_ms": 7025
+            },
+            {
+              "id": "phrase-5",
+              "text": "叶片轻轻摇动，",
+              "end_ms": 9086,
+              "start_ms": 8085
+            },
+            {
+              "id": "phrase-6",
+              "text": "地面的影子也跟着变化。",
+              "end_ms": 11367,
+              "start_ms": 9726
+            },
+            {
+              "id": "phrase-7",
+              "text": "不急着寻找特别的东西，",
+              "end_ms": 13569,
+              "start_ms": 11848
+            },
+            {
+              "id": "phrase-8",
+              "text": "先看一棵树、一片叶子，",
+              "end_ms": 15810,
+              "start_ms": 13909
+            },
+            {
+              "id": "phrase-9",
+              "text": "留意那些平时容易错过的细节。",
+              "end_ms": 18432,
+              "start_ms": 16250
+            }
+          ],
+          "text": "先把目光放进森林。树干之间有明有暗，枝叶把阳光分成细小的光斑。风吹过时，叶片轻轻摇动，地面的影子也跟着变化。不急着寻找特别的东西，先看一棵树、一片叶子，留意那些平时容易错过的细节。",
+          "enabled": true,
+          "spatial": {
+            "anchor": "bottom-center",
+            "insets": {
+              "top": 0.08,
+              "left": 0.08,
+              "right": 0.08,
+              "bottom": 0.18
+            },
+            "version": "shot-caption-space/v2",
+            "max_lines": 2,
+            "safe_area": "title-safe",
+            "aspect_ratio": "9:16",
+            "max_characters_per_line": 16
+          },
+          "version": "shot-captions/v1",
+          "content_mode": "follow_tts"
+        },
+        "tts_text": "先把目光放进森林。树干之间有明有暗，枝叶把阳光分成细小的光斑。风吹过时，叶片轻轻摇动，地面的影子也跟着变化。不急着寻找特别的东西，先看一棵树、一片叶子，留意那些平时容易错过的细节。",
+        "audio_mix": {
+          "bgm": null,
+          "sfx": null,
+          "version": "shot-audio-mix/v1",
+          "main_voice": {
+            "mode": "tts",
+            "role": "anchor",
+            "gain_db": 0,
+            "track_id": "5e4b7fef-cba7-466a-b3bd-706f145e42ea"
+          }
+        },
+        "tts_voice": "zh_female_vv_uranus_bigtts",
+        "audio_mode": "tts",
+        "composition": {
+          "slots": [
+            {
+              "id": "full",
+              "fit": "cover",
+              "focalPoint": {
+                "x": 0.5,
+                "y": 0.5
+              },
+              "clipSegmentIndex": 0
+            }
+          ],
+          "layout": "full",
+          "version": "shot-composition/v1"
+        },
+        "clip_segments": [
+          {
+            "end_seconds": 18.672,
+            "start_seconds": 0
+          }
+        ],
+        "audio_track_id": "5e4b7fef-cba7-466a-b3bd-706f145e42ea",
+        "transition_mode": "cut",
+        "input_fingerprint": "386c1f4955d22e87ffec9f28550a38cd",
+        "tts_speaking_rate": 1,
+        "acoustic_alignment": {
+          "cues": [
+            {
+              "id": "phrase-1",
+              "text": "先把目光放进森林。",
+              "endMs": 2241,
+              "startMs": 140,
+              "confidence": 0.9042500000000001
+            },
+            {
+              "id": "phrase-2",
+              "text": "树干之间有明有暗，",
+              "endMs": 3842,
+              "startMs": 2261,
+              "confidence": 0.857125
+            },
+            {
+              "id": "phrase-3",
+              "text": "枝叶把阳光分成细小的光斑。",
+              "endMs": 6444,
+              "startMs": 4283,
+              "confidence": 0.8849166666666667
+            },
+            {
+              "id": "phrase-4",
+              "text": "风吹过时，",
+              "endMs": 7865,
+              "startMs": 7025,
+              "confidence": 0.8527499999999999
+            },
+            {
+              "id": "phrase-5",
+              "text": "叶片轻轻摇动，",
+              "endMs": 9086,
+              "startMs": 8085,
+              "confidence": 0.7403333333333334
+            },
+            {
+              "id": "phrase-6",
+              "text": "地面的影子也跟着变化。",
+              "endMs": 11367,
+              "startMs": 9726,
+              "confidence": 0.8171000000000002
+            },
+            {
+              "id": "phrase-7",
+              "text": "不急着寻找特别的东西，",
+              "endMs": 13569,
+              "startMs": 11848,
+              "confidence": 0.8358000000000001
+            },
+            {
+              "id": "phrase-8",
+              "text": "先看一棵树、一片叶子，",
+              "endMs": 15810,
+              "startMs": 13909,
+              "confidence": 0.8415555555555554
+            },
+            {
+              "id": "phrase-9",
+              "text": "留意那些平时容易错过的细节。",
+              "endMs": 18432,
+              "startMs": 16250,
+              "confidence": 0.8774615384615385
+            }
+          ],
+          "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+          "detail": "本地 WhisperX 对齐已完成。",
+          "method": "local_whisperx",
+          "status": "completed",
+          "version": "acoustic-alignment/v1",
+          "attempts": [
+            {
+              "detail": "本地 WhisperX 已生成短语 cues。",
+              "method": "local_whisperx",
+              "status": "completed"
+            }
+          ],
+          "provider": "whisperx",
+          "wordCount": 9,
+          "audioSha256": "334cb7b62da6e90cb5981af7fb70f5abcd439e6bba77e3c5a836a3c176bf151d",
+          "generatedAt": "2026-10-26T06:48:49.797Z",
+          "granularity": "phrase",
+          "inputVersion": "6c49cc06bca8296a963d91333bedc38390b3362a28dcc19d029bad296eda11aa",
+          "reviewIssues": [],
+          "textFingerprint": "4f69c2c6dfba198cabf8d7d45b9e6bb19893f2382e98067b9df5ca24350c6117",
+          "connectionVersionId": null
+        },
+        "storyboard_fingerprint": "34d73a85b7b7ce6c201af0ba6b8be00d",
+        "source_material_revision_id": "90c28161-1e85-40f9-a764-a6d8c4139176"
+      },
+      "current_video_task_id": "3f5b79bf-01cc-4442-8f6c-82e9d278c28c",
+      "pending_video_task_id": null,
+      "tts_text_confirmed_at": null,
+      "tts_text_confirmed_by": null,
+      "current_audio_track_id": "5e4b7fef-cba7-466a-b3bd-706f145e42ea",
+      "video_duration_seconds": 18.672,
+      "current_preview_task_id": "75d6f769-76c1-483e-8bbe-1b98d13aa82e",
+      "pending_preview_task_id": null,
+      "caption_text_confirmation": {
+        "version": "caption-text-confirmation/v1",
+        "audioSha256": "334cb7b62da6e90cb5981af7fb70f5abcd439e6bba77e3c5a836a3c176bf151d",
+        "confirmedAt": "2026-10-26T06:49:50.075506+00:00",
+        "confirmedBy": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+        "audioTrackId": "5e4b7fef-cba7-466a-b3bd-706f145e42ea",
+        "confirmedText": "先把目光放进森林。树干之间有明有暗，枝叶把阳光分成细小的光斑。风吹过时，叶片轻轻摇动，地面的影子也跟着变化。不急着寻找特别的东西，先看一棵树、一片叶子，留意那些平时容易错过的细节。",
+        "textFingerprint": "4f69c2c6dfba198cabf8d7d45b9e6bb19893f2382e98067b9df5ca24350c6117",
+        "alignmentInputVersion": "6c49cc06bca8296a963d91333bedc38390b3362a28dcc19d029bad296eda11aa"
+      },
+      "current_video_artifact_id": "81b06541-625c-4f30-b1a9-963cff14c349",
+      "pending_alignment_task_id": null,
+      "tts_override_speaking_rate": null,
+      "current_preview_artifact_id": "32b225dd-d4d5-41d1-9267-37c9fc9f6d8a",
+      "preparation_contract_status": "current",
+      "tts_actual_duration_seconds": 18.672,
+      "pending_source_audio_task_id": null,
+      "preparation_input_fingerprint": "386c1f4955d22e87ffec9f28550a38cd",
+      "selected_material_revision_id": "90c28161-1e85-40f9-a764-a6d8c4139176",
+      "source_audio_duration_seconds": null,
+      "source_video_duration_seconds": 30.5,
+      "current_preview_input_fingerprint": "386c1f4955d22e87ffec9f28550a38cd",
+      "tts_text_confirmation_fingerprint": null,
+      "current_preview_project_artifact_id": "ea8714bd-4a50-4e3d-a2cc-d2107b115c5a"
+    },
+    {
+      "id": "da42a62f-bc1b-40fe-86da-ac5a9e99db23",
+      "shot_id": "shot-3",
+      "tts_text": "最后把视线抬向山谷。山脊在远处一层层展开，近处的树林和河流，把宽阔的风景分成不同的层次。从一片叶子，到一段水流，再到整片山峦，观察的距离变了，看到的细节也会不同。给自己一点时间，让目光慢下来。",
+      "frozen_at": null,
+      "frozen_by": null,
+      "tts_error": null,
+      "tts_voice": "zh_female_vv_uranus_bigtts",
+      "audio_mode": "tts",
+      "created_at": "2026-10-26T06:25:34.558079+00:00",
+      "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+      "skipped_at": null,
+      "skipped_by": null,
+      "updated_at": "2026-10-26T06:52:02.869643+00:00",
+      "composition": {
+        "slots": [
+          {
+            "id": "full",
+            "fit": "cover",
+            "focalPoint": {
+              "x": 0.5,
+              "y": 0.5
+            },
+            "clipSegmentIndex": 0
+          }
+        ],
+        "layout": "full",
+        "version": "shot-composition/v1"
+      },
+      "video_error": null,
+      "audio_status": "ready",
+      "confirmed_at": null,
+      "confirmed_by": null,
+      "video_status": "ready",
+      "clip_segments": [
+        {
+          "end_seconds": 19.92,
+          "start_seconds": 0
+        }
+      ],
+      "preview_error": null,
+      "subtitle_text": "最后把视线抬向山谷。山脊在远处一层层展开，近处的树林和河流，把宽阔的风景分成不同的层次。从一片叶子，到一段水流，再到整片山峦，观察的距离变了，看到的细节也会不同。给自己一点时间，让目光慢下来。",
+      "preview_status": "ready",
+      "warning_reason": null,
+      "transition_mode": "cut",
+      "caption_contract": {
+        "cues": [
+          {
+            "id": "phrase-1",
+            "text": "最后把视线抬向山谷。",
+            "end_ms": 1602,
+            "start_ms": 80
+          },
+          {
+            "id": "phrase-2",
+            "text": "山脊在远处一层层展开，",
+            "end_ms": 4304,
+            "start_ms": 2162
+          },
+          {
+            "id": "phrase-3",
+            "text": "近处的树林和河流，",
+            "end_ms": 6086,
+            "start_ms": 4725
+          },
+          {
+            "id": "phrase-4",
+            "text": "把宽阔的风景分成不同的层次。",
+            "end_ms": 9069,
+            "start_ms": 6567
+          },
+          {
+            "id": "phrase-5",
+            "text": "从一片叶子，",
+            "end_ms": 10531,
+            "start_ms": 9550
+          },
+          {
+            "id": "phrase-6",
+            "text": "到一段水流，",
+            "end_ms": 11952,
+            "start_ms": 10751
+          },
+          {
+            "id": "phrase-7",
+            "text": "再到整片山峦，",
+            "end_ms": 12953,
+            "start_ms": 11972
+          },
+          {
+            "id": "phrase-8",
+            "text": "观察的距离变了，",
+            "end_ms": 14855,
+            "start_ms": 13674
+          },
+          {
+            "id": "phrase-9",
+            "text": "看到的细节也会不同。",
+            "end_ms": 16797,
+            "start_ms": 15115
+          },
+          {
+            "id": "phrase-10",
+            "text": "给自己一点时间，",
+            "end_ms": 18158,
+            "start_ms": 17277
+          },
+          {
+            "id": "phrase-11",
+            "text": "让目光慢下来。",
+            "end_ms": 19580,
+            "start_ms": 18599
+          }
+        ],
+        "text": "最后把视线抬向山谷。山脊在远处一层层展开，近处的树林和河流，把宽阔的风景分成不同的层次。从一片叶子，到一段水流，再到整片山峦，观察的距离变了，看到的细节也会不同。给自己一点时间，让目光慢下来。",
+        "enabled": true,
+        "spatial": {
+          "anchor": "bottom-center",
+          "insets": {
+            "top": 0.08,
+            "left": 0.08,
+            "right": 0.08,
+            "bottom": 0.18
+          },
+          "version": "shot-caption-space/v2",
+          "max_lines": 2,
+          "safe_area": "title-safe",
+          "aspect_ratio": "9:16",
+          "max_characters_per_line": 16
+        },
+        "version": "shot-captions/v1",
+        "content_mode": "follow_tts"
+      },
+      "clip_end_seconds": null,
+      "warning_decision": "not_required",
+      "bgm_ducking_level": "off",
+      "input_fingerprint": "157a2ff8a0fd797e4a5216c949c2ab81",
+      "review_package_id": "1a954445-efc4-4544-8b42-b8c237aa045c",
+      "subtitles_enabled": true,
+      "tts_language_code": "zh-CN",
+      "tts_speaking_rate": 1,
+      "acoustic_alignment": {
+        "cues": [
+          {
+            "id": "phrase-1",
+            "text": "最后把视线抬向山谷。",
+            "endMs": 1602,
+            "startMs": 80,
+            "confidence": 0.740111111111111
+          },
+          {
+            "id": "phrase-2",
+            "text": "山脊在远处一层层展开，",
+            "endMs": 4304,
+            "startMs": 2162,
+            "confidence": 0.7933
+          },
+          {
+            "id": "phrase-3",
+            "text": "近处的树林和河流，",
+            "endMs": 6086,
+            "startMs": 4725,
+            "confidence": 0.8313750000000001
+          },
+          {
+            "id": "phrase-4",
+            "text": "把宽阔的风景分成不同的层次。",
+            "endMs": 9069,
+            "startMs": 6567,
+            "confidence": 0.7836923076923077
+          },
+          {
+            "id": "phrase-5",
+            "text": "从一片叶子，",
+            "endMs": 10531,
+            "startMs": 9550,
+            "confidence": 0.8091999999999999
+          },
+          {
+            "id": "phrase-6",
+            "text": "到一段水流，",
+            "endMs": 11952,
+            "startMs": 10751,
+            "confidence": 0.7941999999999999
+          },
+          {
+            "id": "phrase-7",
+            "text": "再到整片山峦，",
+            "endMs": 12953,
+            "startMs": 11972,
+            "confidence": 0.7766666666666665
+          },
+          {
+            "id": "phrase-8",
+            "text": "观察的距离变了，",
+            "endMs": 14855,
+            "startMs": 13674,
+            "confidence": 0.8154285714285715
+          },
+          {
+            "id": "phrase-9",
+            "text": "看到的细节也会不同。",
+            "endMs": 16797,
+            "startMs": 15115,
+            "confidence": 0.8062222222222223
+          },
+          {
+            "id": "phrase-10",
+            "text": "给自己一点时间，",
+            "endMs": 18158,
+            "startMs": 17277,
+            "confidence": 0.877
+          },
+          {
+            "id": "phrase-11",
+            "text": "让目光慢下来。",
+            "endMs": 19580,
+            "startMs": 18599,
+            "confidence": 0.7858333333333333
+          }
+        ],
+        "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+        "detail": "本地 WhisperX 对齐已完成。",
+        "method": "local_whisperx",
+        "status": "completed",
+        "version": "acoustic-alignment/v1",
+        "attempts": [
+          {
+            "detail": "本地 WhisperX 已生成短语 cues。",
+            "method": "local_whisperx",
+            "status": "completed"
+          }
+        ],
+        "provider": "whisperx",
+        "wordCount": 11,
+        "audioSha256": "7fabfd116a1cb4c9bb459c881fb03dc5ddc53be2475730a890c5a127b735ea67",
+        "generatedAt": "2026-10-26T06:49:25.955Z",
+        "granularity": "phrase",
+        "inputVersion": "de5e598a0b2e0f492ded7bb613371782c1b7ec73640ed960c6c0702f5a9c9e7a",
+        "reviewIssues": [],
+        "textFingerprint": "84a9908d41074ebd58b38752ad4d50e5f17012da1c29111e71c642d23e147ce4",
+        "connectionVersionId": null
+      },
+      "clip_start_seconds": null,
+      "source_audio_error": null,
+      "tts_override_voice": null,
+      "confirmation_reason": null,
+      "confirmation_status": "pending",
+      "current_tts_task_id": "4af14d72-e7af-4b5f-8416-b4f0c9079634",
+      "pending_tts_task_id": null,
+      "warning_accepted_at": null,
+      "warning_accepted_by": null,
+      "preparation_contract": {
+        "version": "shot-preparation/v1",
+        "captions": {
+          "cues": [
+            {
+              "id": "phrase-1",
+              "text": "最后把视线抬向山谷。",
+              "end_ms": 1602,
+              "start_ms": 80
+            },
+            {
+              "id": "phrase-2",
+              "text": "山脊在远处一层层展开，",
+              "end_ms": 4304,
+              "start_ms": 2162
+            },
+            {
+              "id": "phrase-3",
+              "text": "近处的树林和河流，",
+              "end_ms": 6086,
+              "start_ms": 4725
+            },
+            {
+              "id": "phrase-4",
+              "text": "把宽阔的风景分成不同的层次。",
+              "end_ms": 9069,
+              "start_ms": 6567
+            },
+            {
+              "id": "phrase-5",
+              "text": "从一片叶子，",
+              "end_ms": 10531,
+              "start_ms": 9550
+            },
+            {
+              "id": "phrase-6",
+              "text": "到一段水流，",
+              "end_ms": 11952,
+              "start_ms": 10751
+            },
+            {
+              "id": "phrase-7",
+              "text": "再到整片山峦，",
+              "end_ms": 12953,
+              "start_ms": 11972
+            },
+            {
+              "id": "phrase-8",
+              "text": "观察的距离变了，",
+              "end_ms": 14855,
+              "start_ms": 13674
+            },
+            {
+              "id": "phrase-9",
+              "text": "看到的细节也会不同。",
+              "end_ms": 16797,
+              "start_ms": 15115
+            },
+            {
+              "id": "phrase-10",
+              "text": "给自己一点时间，",
+              "end_ms": 18158,
+              "start_ms": 17277
+            },
+            {
+              "id": "phrase-11",
+              "text": "让目光慢下来。",
+              "end_ms": 19580,
+              "start_ms": 18599
+            }
+          ],
+          "text": "最后把视线抬向山谷。山脊在远处一层层展开，近处的树林和河流，把宽阔的风景分成不同的层次。从一片叶子，到一段水流，再到整片山峦，观察的距离变了，看到的细节也会不同。给自己一点时间，让目光慢下来。",
+          "enabled": true,
+          "spatial": {
+            "anchor": "bottom-center",
+            "insets": {
+              "top": 0.08,
+              "left": 0.08,
+              "right": 0.08,
+              "bottom": 0.18
+            },
+            "version": "shot-caption-space/v2",
+            "max_lines": 2,
+            "safe_area": "title-safe",
+            "aspect_ratio": "9:16",
+            "max_characters_per_line": 16
+          },
+          "version": "shot-captions/v1",
+          "content_mode": "follow_tts"
+        },
+        "tts_text": "最后把视线抬向山谷。山脊在远处一层层展开，近处的树林和河流，把宽阔的风景分成不同的层次。从一片叶子，到一段水流，再到整片山峦，观察的距离变了，看到的细节也会不同。给自己一点时间，让目光慢下来。",
+        "audio_mix": {
+          "bgm": null,
+          "sfx": null,
+          "version": "shot-audio-mix/v1",
+          "main_voice": {
+            "mode": "tts",
+            "role": "anchor",
+            "gain_db": 0,
+            "track_id": "3e21d9cc-8c8f-44f8-ac08-a53584649332"
+          }
+        },
+        "tts_voice": "zh_female_vv_uranus_bigtts",
+        "audio_mode": "tts",
+        "composition": {
+          "slots": [
+            {
+              "id": "full",
+              "fit": "cover",
+              "focalPoint": {
+                "x": 0.5,
+                "y": 0.5
+              },
+              "clipSegmentIndex": 0
+            }
+          ],
+          "layout": "full",
+          "version": "shot-composition/v1"
+        },
+        "clip_segments": [
+          {
+            "end_seconds": 19.92,
+            "start_seconds": 0
+          }
+        ],
+        "audio_track_id": "3e21d9cc-8c8f-44f8-ac08-a53584649332",
+        "transition_mode": "cut",
+        "input_fingerprint": "8a67e4aeb54f3da467aa370a81f42e2c",
+        "tts_speaking_rate": 1,
+        "acoustic_alignment": {
+          "cues": [
+            {
+              "id": "phrase-1",
+              "text": "最后把视线抬向山谷。",
+              "endMs": 1602,
+              "startMs": 80,
+              "confidence": 0.740111111111111
+            },
+            {
+              "id": "phrase-2",
+              "text": "山脊在远处一层层展开，",
+              "endMs": 4304,
+              "startMs": 2162,
+              "confidence": 0.7933
+            },
+            {
+              "id": "phrase-3",
+              "text": "近处的树林和河流，",
+              "endMs": 6086,
+              "startMs": 4725,
+              "confidence": 0.8313750000000001
+            },
+            {
+              "id": "phrase-4",
+              "text": "把宽阔的风景分成不同的层次。",
+              "endMs": 9069,
+              "startMs": 6567,
+              "confidence": 0.7836923076923077
+            },
+            {
+              "id": "phrase-5",
+              "text": "从一片叶子，",
+              "endMs": 10531,
+              "startMs": 9550,
+              "confidence": 0.8091999999999999
+            },
+            {
+              "id": "phrase-6",
+              "text": "到一段水流，",
+              "endMs": 11952,
+              "startMs": 10751,
+              "confidence": 0.7941999999999999
+            },
+            {
+              "id": "phrase-7",
+              "text": "再到整片山峦，",
+              "endMs": 12953,
+              "startMs": 11972,
+              "confidence": 0.7766666666666665
+            },
+            {
+              "id": "phrase-8",
+              "text": "观察的距离变了，",
+              "endMs": 14855,
+              "startMs": 13674,
+              "confidence": 0.8154285714285715
+            },
+            {
+              "id": "phrase-9",
+              "text": "看到的细节也会不同。",
+              "endMs": 16797,
+              "startMs": 15115,
+              "confidence": 0.8062222222222223
+            },
+            {
+              "id": "phrase-10",
+              "text": "给自己一点时间，",
+              "endMs": 18158,
+              "startMs": 17277,
+              "confidence": 0.877
+            },
+            {
+              "id": "phrase-11",
+              "text": "让目光慢下来。",
+              "endMs": 19580,
+              "startMs": 18599,
+              "confidence": 0.7858333333333333
+            }
+          ],
+          "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+          "detail": "本地 WhisperX 对齐已完成。",
+          "method": "local_whisperx",
+          "status": "completed",
+          "version": "acoustic-alignment/v1",
+          "attempts": [
+            {
+              "detail": "本地 WhisperX 已生成短语 cues。",
+              "method": "local_whisperx",
+              "status": "completed"
+            }
+          ],
+          "provider": "whisperx",
+          "wordCount": 11,
+          "audioSha256": "7fabfd116a1cb4c9bb459c881fb03dc5ddc53be2475730a890c5a127b735ea67",
+          "generatedAt": "2026-10-26T06:49:25.955Z",
+          "granularity": "phrase",
+          "inputVersion": "de5e598a0b2e0f492ded7bb613371782c1b7ec73640ed960c6c0702f5a9c9e7a",
+          "reviewIssues": [],
+          "textFingerprint": "84a9908d41074ebd58b38752ad4d50e5f17012da1c29111e71c642d23e147ce4",
+          "connectionVersionId": null
+        },
+        "storyboard_fingerprint": "157a2ff8a0fd797e4a5216c949c2ab81",
+        "source_material_revision_id": "09ec7fe9-b9d0-4f5b-88a7-5f9df6320d5b"
+      },
+      "current_video_task_id": "a32d1d98-543a-45e0-956e-346d665aaaf7",
+      "pending_video_task_id": null,
+      "tts_text_confirmed_at": null,
+      "tts_text_confirmed_by": null,
+      "current_audio_track_id": "3e21d9cc-8c8f-44f8-ac08-a53584649332",
+      "video_duration_seconds": 19.92,
+      "current_preview_task_id": "cfa473aa-d73a-470f-bbed-8c1235a77c93",
+      "pending_preview_task_id": null,
+      "caption_text_confirmation": {
+        "version": "caption-text-confirmation/v1",
+        "audioSha256": "7fabfd116a1cb4c9bb459c881fb03dc5ddc53be2475730a890c5a127b735ea67",
+        "confirmedAt": "2026-10-26T06:50:42.05802+00:00",
+        "confirmedBy": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+        "audioTrackId": "3e21d9cc-8c8f-44f8-ac08-a53584649332",
+        "confirmedText": "最后把视线抬向山谷。山脊在远处一层层展开，近处的树林和河流，把宽阔的风景分成不同的层次。从一片叶子，到一段水流，再到整片山峦，观察的距离变了，看到的细节也会不同。给自己一点时间，让目光慢下来。",
+        "textFingerprint": "84a9908d41074ebd58b38752ad4d50e5f17012da1c29111e71c642d23e147ce4",
+        "alignmentInputVersion": "de5e598a0b2e0f492ded7bb613371782c1b7ec73640ed960c6c0702f5a9c9e7a"
+      },
+      "current_video_artifact_id": "da874b8a-17c0-41df-839c-05cf586a3971",
+      "pending_alignment_task_id": null,
+      "tts_override_speaking_rate": null,
+      "current_preview_artifact_id": "70722fec-c62c-46f1-ab75-fd627a6e94e2",
+      "preparation_contract_status": "current",
+      "tts_actual_duration_seconds": 19.92,
+      "pending_source_audio_task_id": null,
+      "preparation_input_fingerprint": "8a67e4aeb54f3da467aa370a81f42e2c",
+      "selected_material_revision_id": "09ec7fe9-b9d0-4f5b-88a7-5f9df6320d5b",
+      "source_audio_duration_seconds": null,
+      "source_video_duration_seconds": 20.687333,
+      "current_preview_input_fingerprint": "8a67e4aeb54f3da467aa370a81f42e2c",
+      "tts_text_confirmation_fingerprint": null,
+      "current_preview_project_artifact_id": "42e4465d-b80e-4055-ba10-799826d1d939"
+    },
+    {
+      "id": "254dc160-6730-468d-ab6e-db27dd29e532",
+      "shot_id": "shot-2",
+      "tts_text": "再沿着水流向前。近处是细小的波纹，远处是河道缓慢转过的弯。水碰到石头，流向会发生变化；绕过障碍，又重新连成一片。把视线停在同一个位置，看水不断经过，就能发现，熟悉的画面也一直在改变。",
+      "frozen_at": null,
+      "frozen_by": null,
+      "tts_error": null,
+      "tts_voice": "zh_female_vv_uranus_bigtts",
+      "audio_mode": "tts",
+      "created_at": "2026-10-26T06:25:34.558079+00:00",
+      "episode_id": "7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc",
+      "skipped_at": null,
+      "skipped_by": null,
+      "updated_at": "2026-10-26T06:50:29.558274+00:00",
+      "composition": {
+        "slots": [
+          {
+            "id": "full",
+            "fit": "cover",
+            "focalPoint": {
+              "x": 0.5,
+              "y": 0.5
+            },
+            "clipSegmentIndex": 0
+          }
+        ],
+        "layout": "full",
+        "version": "shot-composition/v1"
+      },
+      "video_error": null,
+      "audio_status": "ready",
+      "confirmed_at": null,
+      "confirmed_by": null,
+      "video_status": "ready",
+      "clip_segments": [
+        {
+          "end_seconds": 19.104,
+          "start_seconds": 0
+        }
+      ],
+      "preview_error": null,
+      "subtitle_text": "再沿着水流向前。近处是细小的波纹，远处是河道缓慢转过的弯。水碰到石头，流向会发生变化；绕过障碍，又重新连成一片。把视线停在同一个位置，看水不断经过，就能发现，熟悉的画面也一直在改变。",
+      "preview_status": "pending",
+      "warning_reason": null,
+      "transition_mode": "cut",
+      "caption_contract": {
+        "cues": [
+          {
+            "id": "phrase-1",
+            "text": "再沿着水流向前。",
+            "end_ms": 1121,
+            "start_ms": 60
+          },
+          {
+            "id": "phrase-2",
+            "text": "近处是细小的波纹，",
+            "end_ms": 3524,
+            "start_ms": 1942
+          },
+          {
+            "id": "phrase-3",
+            "text": "远处是河道缓慢转过的弯。",
+            "end_ms": 5988,
+            "start_ms": 3965
+          },
+          {
+            "id": "phrase-4",
+            "text": "水碰到石头，",
+            "end_ms": 7690,
+            "start_ms": 6748
+          },
+          {
+            "id": "phrase-5",
+            "text": "流向会发生变化；",
+            "end_ms": 9131,
+            "start_ms": 7950
+          },
+          {
+            "id": "phrase-6",
+            "text": "绕过障碍，",
+            "end_ms": 10633,
+            "start_ms": 9752
+          },
+          {
+            "id": "phrase-7",
+            "text": "又重新连成一片。",
+            "end_ms": 11735,
+            "start_ms": 10653
+          },
+          {
+            "id": "phrase-8",
+            "text": "把视线停在同一个位置，",
+            "end_ms": 13998,
+            "start_ms": 12436
+          },
+          {
+            "id": "phrase-9",
+            "text": "看水不断经过，",
+            "end_ms": 15920,
+            "start_ms": 14578
+          },
+          {
+            "id": "phrase-10",
+            "text": "就能发现，",
+            "end_ms": 16421,
+            "start_ms": 15940
+          },
+          {
+            "id": "phrase-11",
+            "text": "熟悉的画面也一直在改变。",
+            "end_ms": 18884,
+            "start_ms": 16901
+          }
+        ],
+        "text": "再沿着水流向前。近处是细小的波纹，远处是河道缓慢转过的弯。水碰到石头，流向会发生变化；绕过障碍，又重新连成一片。把视线停在同一个位置，看水不断经过，就能发现，熟悉的画面也一直在改变。",
+        "enabled": true,
+        "spatial": {
+          "anchor": "bottom-center",
+          "insets": {
+            "top": 0.08,
+            "left": 0.08,
+            "right": 0.08,
+            "bottom": 0.18
+          },
+          "version": "shot-caption-space/v2",
+          "max_lines": 2,
+          "safe_area": "title-safe",
+          "aspect_ratio": "9:16",
+          "max_characters_per_line": 16
+        },
+        "version": "shot-captions/v1",
+        "content_mode": "follow_tts"
+      },
+      "clip_end_seconds": null,
+      "warning_decision": "not_required",
+      "bgm_ducking_level": "off",
+      "input_fingerprint": "d253c73006fb28e41efd68ae595b0f8f",
+      "review_package_id": "1a954445-efc4-4544-8b42-b8c237aa045c",
+      "subtitles_enabled": true,
+      "tts_language_code": "zh-CN",
+      "tts_speaking_rate": 1,
+      "acoustic_alignment": {
+        "cues": [
+          {
+            "id": "phrase-1",
+            "text": "再沿着水流向前。",
+            "endMs": 1121,
+            "startMs": 60
+          },
+          {
+            "id": "phrase-2",
+            "text": "近处是细小的波纹，",
+            "endMs": 3524,
+            "startMs": 1942
+          },
+          {
+            "id": "phrase-3",
+            "text": "远处是河道缓慢转过的弯。",
+            "endMs": 5988,
+            "startMs": 3965
+          },
+          {
+            "id": "phrase-4",
+            "text": "水碰到石头，",
+            "endMs": 7690,
+            "startMs": 6748
+          },
+          {
+            "id": "phrase-5",
+            "text": "流向会发生变化；",
+            "endMs": 9131,
+            "startMs": 7950
+          },
+          {
+            "id": "phrase-6",
+            "text": "绕过障碍，",
+            "endMs": 10633,
+            "startMs": 9752
+          },
+          {
+            "id": "phrase-7",
+            "text": "又重新连成一片。",
+            "endMs": 11735,
+            "startMs": 10653
+          },
+          {
+            "id": "phrase-8",
+            "text": "把视线停在同一个位置，",
+            "endMs": 13998,
+            "startMs": 12436
+          },
+          {
+            "id": "phrase-9",
+            "text": "看水不断经过，",
+            "endMs": 15920,
+            "startMs": 14578
+          },
+          {
+            "id": "phrase-10",
+            "text": "就能发现，",
+            "endMs": 16421,
+            "startMs": 15940
+          },
+          {
+            "id": "phrase-11",
+            "text": "熟悉的画面也一直在改变。",
+            "endMs": 18884,
+            "startMs": 16901
+          }
+        ],
+        "model": "manual",
+        "detail": "Owner 已保存人工字幕时序。",
+        "method": "manual",
+        "status": "completed",
+        "version": "acoustic-alignment/v1",
+        "attempts": [],
+        "provider": "owner",
+        "wordCount": 11,
+        "audioSha256": "d8ddd107580abb86331286d1e013172d0e8f46a5563c99c08c7d560cbba81d50",
+        "generatedAt": "2026-10-26T06:52:28.555499+00:00",
+        "granularity": "phrase",
+        "inputVersion": "323de2bb365e6584d6d0233949ae8e8640dd7b29fcedd802dabfc21c37ab77a0",
+        "reviewIssues": [],
+        "textFingerprint": "90983b9d064eab64195d61f0a98bff1c9ab72e27a00ab22428f59b7e5d4494b6",
+        "connectionVersionId": null
+      },
+      "clip_start_seconds": null,
+      "source_audio_error": null,
+      "tts_override_voice": null,
+      "confirmation_reason": null,
+      "confirmation_status": "pending",
+      "current_tts_task_id": "12a6fe77-3f0f-4234-bee2-3811c8c04e80",
+      "pending_tts_task_id": null,
+      "warning_accepted_at": null,
+      "warning_accepted_by": null,
+      "preparation_contract": {
+        "version": "shot-preparation/v1",
+        "captions": {
+          "cues": [
+            {
+              "id": "phrase-1",
+              "text": "再沿着水流向前。",
+              "end_ms": 1121,
+              "start_ms": 60
+            },
+            {
+              "id": "phrase-2",
+              "text": "近处是细小的波纹，",
+              "end_ms": 3524,
+              "start_ms": 1942
+            },
+            {
+              "id": "phrase-3",
+              "text": "远处是河道缓慢转过的弯。",
+              "end_ms": 5988,
+              "start_ms": 3965
+            },
+            {
+              "id": "phrase-4",
+              "text": "水碰到石头，",
+              "end_ms": 7690,
+              "start_ms": 6748
+            },
+            {
+              "id": "phrase-5",
+              "text": "流向会发生变化；",
+              "end_ms": 9131,
+              "start_ms": 7950
+            },
+            {
+              "id": "phrase-6",
+              "text": "绕过障碍，",
+              "end_ms": 10633,
+              "start_ms": 9752
+            },
+            {
+              "id": "phrase-7",
+              "text": "又重新连成一片。",
+              "end_ms": 11735,
+              "start_ms": 10653
+            },
+            {
+              "id": "phrase-8",
+              "text": "把视线停在同一个位置，",
+              "end_ms": 13998,
+              "start_ms": 12436
+            },
+            {
+              "id": "phrase-9",
+              "text": "看水不断经过，",
+              "end_ms": 15920,
+              "start_ms": 14578
+            },
+            {
+              "id": "phrase-10",
+              "text": "就能发现，",
+              "end_ms": 16421,
+              "start_ms": 15940
+            },
+            {
+              "id": "phrase-11",
+              "text": "熟悉的画面也一直在改变。",
+              "end_ms": 18884,
+              "start_ms": 16901
+            }
+          ],
+          "text": "再沿着水流向前。近处是细小的波纹，远处是河道缓慢转过的弯。水碰到石头，流向会发生变化；绕过障碍，又重新连成一片。把视线停在同一个位置，看水不断经过，就能发现，熟悉的画面也一直在改变。",
+          "enabled": true,
+          "spatial": {
+            "anchor": "bottom-center",
+            "insets": {
+              "top": 0.08,
+              "left": 0.08,
+              "right": 0.08,
+              "bottom": 0.18
+            },
+            "version": "shot-caption-space/v2",
+            "max_lines": 2,
+            "safe_area": "title-safe",
+            "aspect_ratio": "9:16",
+            "max_characters_per_line": 16
+          },
+          "version": "shot-captions/v1",
+          "content_mode": "follow_tts"
+        },
+        "tts_text": "再沿着水流向前。近处是细小的波纹，远处是河道缓慢转过的弯。水碰到石头，流向会发生变化；绕过障碍，又重新连成一片。把视线停在同一个位置，看水不断经过，就能发现，熟悉的画面也一直在改变。",
+        "audio_mix": {
+          "bgm": null,
+          "sfx": null,
+          "version": "shot-audio-mix/v1",
+          "main_voice": {
+            "mode": "tts",
+            "role": "anchor",
+            "gain_db": 0,
+            "track_id": "55a7055d-36be-45de-aeee-b696bd436f2b"
+          }
+        },
+        "tts_voice": "zh_female_vv_uranus_bigtts",
+        "audio_mode": "tts",
+        "composition": {
+          "slots": [
+            {
+              "id": "full",
+              "fit": "cover",
+              "focalPoint": {
+                "x": 0.5,
+                "y": 0.5
+              },
+              "clipSegmentIndex": 0
+            }
+          ],
+          "layout": "full",
+          "version": "shot-composition/v1"
+        },
+        "clip_segments": [
+          {
+            "end_seconds": 19.104,
+            "start_seconds": 0
+          }
+        ],
+        "audio_track_id": "55a7055d-36be-45de-aeee-b696bd436f2b",
+        "transition_mode": "cut",
+        "input_fingerprint": "1fd070b3f3d58cd31015de8c179c0eb2",
+        "tts_speaking_rate": 1,
+        "acoustic_alignment": {
+          "cues": [
+            {
+              "id": "phrase-1",
+              "text": "再沿着水流向前。",
+              "endMs": 1121,
+              "startMs": 60
+            },
+            {
+              "id": "phrase-2",
+              "text": "近处是细小的波纹，",
+              "endMs": 3524,
+              "startMs": 1942
+            },
+            {
+              "id": "phrase-3",
+              "text": "远处是河道缓慢转过的弯。",
+              "endMs": 5988,
+              "startMs": 3965
+            },
+            {
+              "id": "phrase-4",
+              "text": "水碰到石头，",
+              "endMs": 7690,
+              "startMs": 6748
+            },
+            {
+              "id": "phrase-5",
+              "text": "流向会发生变化；",
+              "endMs": 9131,
+              "startMs": 7950
+            },
+            {
+              "id": "phrase-6",
+              "text": "绕过障碍，",
+              "endMs": 10633,
+              "startMs": 9752
+            },
+            {
+              "id": "phrase-7",
+              "text": "又重新连成一片。",
+              "endMs": 11735,
+              "startMs": 10653
+            },
+            {
+              "id": "phrase-8",
+              "text": "把视线停在同一个位置，",
+              "endMs": 13998,
+              "startMs": 12436
+            },
+            {
+              "id": "phrase-9",
+              "text": "看水不断经过，",
+              "endMs": 15920,
+              "startMs": 14578
+            },
+            {
+              "id": "phrase-10",
+              "text": "就能发现，",
+              "endMs": 16421,
+              "startMs": 15940
+            },
+            {
+              "id": "phrase-11",
+              "text": "熟悉的画面也一直在改变。",
+              "endMs": 18884,
+              "startMs": 16901
+            }
+          ],
+          "model": "manual",
+          "detail": "Owner 已保存人工字幕时序。",
+          "method": "manual",
+          "status": "completed",
+          "version": "acoustic-alignment/v1",
+          "attempts": [],
+          "provider": "owner",
+          "wordCount": 11,
+          "audioSha256": "d8ddd107580abb86331286d1e013172d0e8f46a5563c99c08c7d560cbba81d50",
+          "generatedAt": "2026-10-26T06:52:28.555499+00:00",
+          "granularity": "phrase",
+          "inputVersion": "323de2bb365e6584d6d0233949ae8e8640dd7b29fcedd802dabfc21c37ab77a0",
+          "reviewIssues": [],
+          "textFingerprint": "90983b9d064eab64195d61f0a98bff1c9ab72e27a00ab22428f59b7e5d4494b6",
+          "connectionVersionId": null
+        },
+        "storyboard_fingerprint": "d253c73006fb28e41efd68ae595b0f8f",
+        "source_material_revision_id": "66cb3c3b-ce09-4871-ba51-338e9828d551"
+      },
+      "current_video_task_id": "852e0b06-450c-4b52-966a-a119f5dcf8f4",
+      "pending_video_task_id": null,
+      "tts_text_confirmed_at": null,
+      "tts_text_confirmed_by": null,
+      "current_audio_track_id": "55a7055d-36be-45de-aeee-b696bd436f2b",
+      "video_duration_seconds": 19.104,
+      "current_preview_task_id": null,
+      "pending_preview_task_id": null,
+      "caption_text_confirmation": null,
+      "current_video_artifact_id": "03d9bb62-b9dc-4cba-afdd-68a5fb7dbd07",
+      "pending_alignment_task_id": null,
+      "tts_override_speaking_rate": null,
+      "current_preview_artifact_id": null,
+      "preparation_contract_status": "current",
+      "tts_actual_duration_seconds": 19.104,
+      "pending_source_audio_task_id": null,
+      "preparation_input_fingerprint": "1fd070b3f3d58cd31015de8c179c0eb2",
+      "selected_material_revision_id": "66cb3c3b-ce09-4871-ba51-338e9828d551",
+      "source_audio_duration_seconds": null,
+      "source_video_duration_seconds": 20.565,
+      "current_preview_input_fingerprint": null,
+      "tts_text_confirmation_fingerprint": null,
+      "current_preview_project_artifact_id": null
+    }
+  ]
+}

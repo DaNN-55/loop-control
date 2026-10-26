@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/local-app/mediaPaths.test.ts (3 tests) 2ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  17:45:58
+   Duration  275ms (transform 19ms, setup 0ms, collect 20ms, tests 2ms, environment 140ms, prepare 26ms)
+

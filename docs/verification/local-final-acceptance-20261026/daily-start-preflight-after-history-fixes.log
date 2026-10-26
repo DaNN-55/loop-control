@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 start
+> node scripts/start.mjs
+
+{"alreadyRunning":true,"url":"http://127.0.0.1:5174"}

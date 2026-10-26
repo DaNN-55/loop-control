@@ -1,0 +1,14 @@
+{
+  "status": "proposal-not-frozen-not-executed",
+  "theme": "从森林到山谷：跟着水流看自然",
+  "targetDurationSeconds": 66,
+  "minimumShots": 3,
+  "shots": [
+    {"id":"forest","targetSeconds":22,"searchQuery":"forest sunlight trees","material":"new Pexels video download","narrationParagraph":1},
+    {"id":"river","targetSeconds":22,"searchQuery":"river flowing water nature","material":"new Pexels video download","narrationParagraph":2},
+    {"id":"mountains","targetSeconds":22,"searchQuery":"mountain valley landscape","material":"new Pexels video download","narrationParagraph":3}
+  ],
+  "tts":{"provider":"volcengine_tts","model":"seed-tts-2.0","voice":"zh_female_vv_uranus_bigtts","language":"zh-CN","speakingRate":1},
+  "output":{"aspectRatio":"9:16","width":1080,"height":1920,"fps":30,"captionsEnabled":true,"captionStyle":"cinematic","captionLayout":"lower_third","transition":"fade","backgroundMusic":false},
+  "qualityGate":"Source quality, stock duration and actual TTS duration must be checked after acquisition; do not pad a short single-shot sample or borrow prior render evidence."
+}

@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "sourceDatabase": "loop_t24_restore_ttsproduction20261026_02",
+  "sourceBusinessTablesUnchanged": 51,
+  "sourceBusinessRowsUnchanged": 29060,
+  "sourceMediaFilesUnchanged": 974,
+  "sourceArchiveSha256": "d8b1b8d1e71f5d749b6893009cfe50fe6e7d36231ef588a432d4fdc3b6d6b308",
+  "sourceOwnerCredentialsAndSessionsExcludedFromBackup": true,
+  "oldPublicEvidenceUnchanged": true
+}

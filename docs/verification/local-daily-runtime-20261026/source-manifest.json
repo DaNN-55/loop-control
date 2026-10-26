@@ -1,0 +1,240 @@
+{
+  "scope": "Changed and new source files in this task, not a full video-production source freeze",
+  "files": [
+    {
+      "path": "db/local/044-owner-password.sql",
+      "bytes": 1285,
+      "sha256": "1f804ba99eb4766d255922a0ecd23edf1835913851ba2e3fd170379c7fc026e6"
+    },
+    {
+      "path": "db/local/045-owner-password-digest-validation.sql",
+      "bytes": 1298,
+      "sha256": "ef289149ec58b446d8c51aff8d99220f5b72cf92b9b0744995f05d92297a44dd"
+    },
+    {
+      "path": "db/local/046-owner-episode-title.sql",
+      "bytes": 161,
+      "sha256": "f9a8cb7b29373c30fc70bb2319666917bc22a2c14a6602b14207698769228714"
+    },
+    {
+      "path": "db/local/047-owner-workspace-commands.sql",
+      "bytes": 411,
+      "sha256": "819ca6030a8d5cbe17a851cf48c7a1718d91b6d2dc9bc0a562168671c1425b24"
+    },
+    {
+      "path": "native/keychain-control.m",
+      "bytes": 5681,
+      "sha256": "40718bfee3db3cf1680886e4e80d95a3bc11b75eaacfa04cb99e29762386a6ff"
+    },
+    {
+      "path": "native/keychain-helper.m",
+      "bytes": 7929,
+      "sha256": "35e181850a6ef4736c1ff9df211b751a0aa767b7e27d6f2b3866886db3480d3e"
+    },
+    {
+      "path": "package.json",
+      "bytes": 4437,
+      "sha256": "06aca6fe2cf78ebbda7e5a8e77aca5387340924978c1ef272ccb4d48ec8e3bf0"
+    },
+    {
+      "path": "scripts/local-service-record.test.mjs",
+      "bytes": 6889,
+      "sha256": "e134b6b31d74eb38d6a9d2da126ab7aa6b9d73c0f52c18c542d08cef13befaae"
+    },
+    {
+      "path": "scripts/local/application.mjs",
+      "bytes": 3409,
+      "sha256": "bfecf13880524e6c50a408209b7768f740b5084472a0217dc5aceed5c1b3b5e2"
+    },
+    {
+      "path": "scripts/local/backup.mjs",
+      "bytes": 666,
+      "sha256": "e97bcd1f26941fb75de298b3d9d3cefd369d6de5acb3e029950e7fcfaca3f603"
+    },
+    {
+      "path": "scripts/local/migrate.mjs",
+      "bytes": 2441,
+      "sha256": "9d990821bb3f1a9117ddb15b09a029d9e1ee4d0332f140f5b2590b04c35f6dc6"
+    },
+    {
+      "path": "scripts/local/native-restore.mjs",
+      "bytes": 12042,
+      "sha256": "7155527222ed0df9748b5a89ee43d5e7c2cc84118b57531672b96e613fe080a4"
+    },
+    {
+      "path": "scripts/runtime/backup.mjs",
+      "bytes": 416,
+      "sha256": "b48849bd9d0e917582a61aeccdfc250d4518e586a2188b752502ec0ac8603bfd"
+    },
+    {
+      "path": "scripts/runtime/codex.mjs",
+      "bytes": 1964,
+      "sha256": "4807559c2a640cf06cbc6986a006e440f4fd0e54ae746ed0b8b7a63c3346d892"
+    },
+    {
+      "path": "scripts/runtime/environment.mjs",
+      "bytes": 4525,
+      "sha256": "faf7c84e91a2e03deae625a77ac90daf232e3397abd9b43e1655c30b1f46d5ca"
+    },
+    {
+      "path": "scripts/runtime/environment.test.mjs",
+      "bytes": 2226,
+      "sha256": "3436e15195aa14334d833fe029b7323b274a472672afac864bd461626e75d2ca"
+    },
+    {
+      "path": "scripts/runtime/keychain.mjs",
+      "bytes": 882,
+      "sha256": "43c1a0057f60e535313303d3a333dd28700443d9abad7a2fbb7a2ebd98323c0e"
+    },
+    {
+      "path": "scripts/runtime/migrate.mjs",
+      "bytes": 1335,
+      "sha256": "3143b3a876e0a2d3f8cdf3cab8805ca23cb3c555a1361ca87662ef680dadabc9"
+    },
+    {
+      "path": "scripts/runtime/offline-python",
+      "bytes": 503,
+      "sha256": "969f05a60d04804d93588657636a9e42f100a79902dd7c0ff29601ab43594448"
+    },
+    {
+      "path": "scripts/runtime/services.mjs",
+      "bytes": 2966,
+      "sha256": "b44eb7555c3f7fae12ee72e149a7ca9d035ee42e14abe91f094680fe633fd5ac"
+    },
+    {
+      "path": "scripts/runtime/start.mjs",
+      "bytes": 2139,
+      "sha256": "1ad359999c6f5e4175d5406eb61b846130c194be95923919b02f1f5a4c7c9151"
+    },
+    {
+      "path": "scripts/runtime/stop.mjs",
+      "bytes": 1124,
+      "sha256": "02d94ef2a8a687486303ec263e168cd9cb5a54eb7d1cf9a2645b3fccd879922e"
+    },
+    {
+      "path": "scripts/runtime/vite.config.mjs",
+      "bytes": 1287,
+      "sha256": "a95196ee63909abeb3d396580198be8fad5668484fac4e1b268ac8dcd6cf75b5"
+    },
+    {
+      "path": "scripts/start.mjs",
+      "bytes": 376,
+      "sha256": "96180b8157df61fce407d446512e0ece1abbdeb9d62236478342c9f82b745189"
+    },
+    {
+      "path": "scripts/startup-lifecycle.acceptance.test.mjs",
+      "bytes": 5557,
+      "sha256": "01dec01e6ef68a54c8895590f2078e5c30de5feae37bda4a7415027c831ecdb6"
+    },
+    {
+      "path": "scripts/stop.mjs",
+      "bytes": 270,
+      "sha256": "3e470022e17440928fd07fa8d63b7148503fa2e99380f4517ac73afbc63759e3"
+    },
+    {
+      "path": "scripts/storage/backup.mjs",
+      "bytes": 10628,
+      "sha256": "4765cd957dcdaae6d0c073281a8fe5efb17206b59fdb24cc855643be05706ed2"
+    },
+    {
+      "path": "src/App.tsx",
+      "bytes": 83475,
+      "sha256": "dd30457ccb802b4e84afabb20703d598887b8a73f8d52145691eedd2a9c26bbf"
+    },
+    {
+      "path": "src/local-app/LocalCatalogApp.account.test.tsx",
+      "bytes": 9775,
+      "sha256": "c945d8009b6ce628d94bb156562eb05b8dea469ee27f7d8fc385b95f6c679943"
+    },
+    {
+      "path": "src/local-app/LocalCatalogApp.test.tsx",
+      "bytes": 15384,
+      "sha256": "c9dc89c517e77e374a776232986b6467ff448391a0f419ebb0a979ff745aac79"
+    },
+    {
+      "path": "src/local-app/LocalCatalogApp.tsx",
+      "bytes": 20532,
+      "sha256": "aa870e397528471090f6dca67fd3d8bd736832f4c2f4f1f081a457e8e06e4783"
+    },
+    {
+      "path": "src/local-app/LocalCatalogApp.workspace.test.tsx",
+      "bytes": 4023,
+      "sha256": "e239b28e0f80941a0f8d6d403d1f1247c0e242733e6d501cf1a6fa02c84f4d5d"
+    },
+    {
+      "path": "src/local-app/LocalEpisodeDetail.tsx",
+      "bytes": 13517,
+      "sha256": "b92fc1a5dd330c25e611d34a0e13288c976c1b5faccae76f56dc3250ec944aaf"
+    },
+    {
+      "path": "src/local-app/LocalSystemStatus.tsx",
+      "bytes": 2964,
+      "sha256": "9e08228fefe8e349b306c9aa0ea5c77641bf230ab437a02693d696c1f712836d"
+    },
+    {
+      "path": "src/local-app/client.ts",
+      "bytes": 2990,
+      "sha256": "2750a6148771203ce3de08d24e42d49f4311aef3672ddf303c1832ef920c98cb"
+    },
+    {
+      "path": "src/local-app/episodeCommands.ts",
+      "bytes": 44698,
+      "sha256": "91bfd6f89d5ba7524c02928e15de3d4d50f4e1d412f93a078e4cde7af8fb4deb"
+    },
+    {
+      "path": "src/local-app/episodeLifecycle.ts",
+      "bytes": 8055,
+      "sha256": "0f326fc63e7c121e10957f5190ec39d80f81fc6a768671caef315a0f5b181a13"
+    },
+    {
+      "path": "src/local-app/keychainStore.test.ts",
+      "bytes": 4339,
+      "sha256": "4342fe6616319878fb4a11a1ddda994eb6bb3c6b60b6205ec94a9f109a788fba"
+    },
+    {
+      "path": "src/local-app/keychainStore.ts",
+      "bytes": 3725,
+      "sha256": "765e13b99fef16efb37f9f610baedfa0b8081d85e88f6edb5c7951059b17cb12"
+    },
+    {
+      "path": "src/local-app/localRoute.ts",
+      "bytes": 10700,
+      "sha256": "6c7d47a616b41913bc5e01cc7c2176ffecb5da0f52f312b1729f7a746318692a"
+    },
+    {
+      "path": "src/local-app/nativeBackup.ts",
+      "bytes": 1705,
+      "sha256": "a53df4549eea2111f820db0f43b7ad3dbcd36282034b67e4faec0e23ee492256"
+    },
+    {
+      "path": "src/local-app/ownerPasswordRoute.test.ts",
+      "bytes": 1913,
+      "sha256": "7f4ee0d530a7e9301490273d9452bc953f4d11c6377069218826071a8f565b58"
+    },
+    {
+      "path": "src/styles.css",
+      "bytes": 275805,
+      "sha256": "13d424b54f05af6652cd1c76be319aea8629842e1d05a13429bb0e300358a403"
+    },
+    {
+      "path": "src/worker/codexPrompt.ts",
+      "bytes": 3965,
+      "sha256": "91f06c4334f2252bee0389ecfe813cc0f7eca175f02fa76c1d87dea5a1705ccd"
+    },
+    {
+      "path": "src/worker/codexWorkerCli.ts",
+      "bytes": 22105,
+      "sha256": "eca09a1eb04cb2147d8a4af5595bf38feddc61779659a63d3405a74159509714"
+    },
+    {
+      "path": "src/workspace/WorkspaceViews.tsx",
+      "bytes": 21452,
+      "sha256": "69ca355e4f40bea77371f0b53366c33ccdf70e8145af5a4d930cabcfe5d883bc"
+    },
+    {
+      "path": "vite.config.ts",
+      "bytes": 1586,
+      "sha256": "130fbc72cb91b2b265500d9a591e132e9c4db9d6b9bab18fcb37b0a5ad520427"
+    }
+  ]
+}

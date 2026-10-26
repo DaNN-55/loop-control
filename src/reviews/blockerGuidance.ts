@@ -46,6 +46,17 @@ function specializedMediaUnavailableGuidance(blocker: Pick<WorkerBlocker, "detai
 }
 
 function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "action" | "check" | "status">, repairTarget: RepairTarget | null): WorkerBlockerGuidance | undefined {
+  if (blocker.check === "provider_network_policy") {
+    return {
+      title: "在线调用未启用",
+      summary: "当前部署的在线调用策略或额度不可用，尚未发起网络请求。",
+      resolution: ["检查当前部署是否已获准启用在线调用，以及本次调用额度是否可用。", "配置就绪后重新检查当前生产单。"],
+      retryLabel: "配置就绪后重新检查",
+      location: "本机运行配置",
+      locationNote: "页面不会自动启用在线调用或增加额度。",
+      technicalDetail: blocker.detail,
+    };
+  }
   if (blocker.action === "manage_connection") {
     return {
       primaryAction: "connection",

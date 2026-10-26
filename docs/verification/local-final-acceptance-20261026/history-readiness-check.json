@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-26T07:36:59.173Z",
+  "identityReferences": [
+    "02a8d594-a063-4bb7-be40-0ac1e7c14da5"
+  ],
+  "identityMapping": "IDs preserved as historical identities without local credentials; current Owner gets account access",
+  "pathBoundary": [
+    {
+      "root": "/Volumes/Ebuget 1T/Media/accounts/test-account/",
+      "rejected": true
+    },
+    {
+      "root": "/Volumes/Ebuget 1T/Media/accounts/doubao/",
+      "rejected": true
+    },
+    {
+      "root": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan",
+      "rejected": false
+    }
+  ]
+}

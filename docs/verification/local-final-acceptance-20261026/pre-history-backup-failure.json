@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-26T07:30:09.739Z",
+  "jobId": "db6a4899-bfae-4748-9231-42d81804cded",
+  "passed": false,
+  "error": "Source changed during backup",
+  "partialRetained": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/backups/loop_control/db6a4899-bfae-4748-9231-42d81804cded.pending/media",
+  "oldFiles": 1085,
+  "currentFiles": 1085,
+  "changes": [
+    {
+      "path": "ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/episodes/7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc/openchatcut-work/current/runtime/project-store-v1/project-edit-ownership%3Aloop-control-7ac796f5-ca57-4fbe-8e7c-fbcf87db3dbc.json",
+      "kind": "content-changed"
+    }
+  ]
+}

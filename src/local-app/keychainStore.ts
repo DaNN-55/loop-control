@@ -3,17 +3,17 @@ import {createHash,timingSafeEqual} from 'node:crypto';
 import {readFile,lstat,realpath} from 'node:fs/promises';
 import {join} from 'node:path';
 import {SecretStoreError,disabledSecretStore,type SecretStore} from './connectionPorts.js';
-interface KeychainConfiguration {approved:boolean;runtimeRoot:string;helperSha256:string}
+interface KeychainConfiguration {approved:boolean;runtimeRoot:string;helperSha256:string;keychainName?:string}
 // Deployment-only configuration. HTTP/UI can never enable or select this port.
 export function configuredKeychainStore(config:KeychainConfiguration):SecretStore{
  if(!config.approved)return disabledSecretStore;
- const helper=join(config.runtimeRoot,'native/keychain-helper'),keychain=join(config.runtimeRoot,'keychain/t15-synthetic.keychain-db');
+ const helper=join(config.runtimeRoot,'native/keychain-helper'),keychain=join(config.runtimeRoot,'keychain',config.keychainName??'t15-synthetic.keychain-db');
  async function validate(){
   try{
    for(const path of [config.runtimeRoot,join(config.runtimeRoot,'native'),join(config.runtimeRoot,'keychain'),helper,keychain]){
     const info=await lstat(path);if(info.isSymbolicLink()||info.uid!==process.getuid?.()||(info.mode&0o077)!==0||await realpath(path)!==path)throw Error();
    }
-   if(!(await lstat(helper)).isFile()||!(await lstat(keychain)).isFile()||!config.runtimeRoot.endsWith('/.loop-control/stage-d'))throw Error();
+   if(!(await lstat(helper)).isFile()||!(await lstat(keychain)).isFile()||!(config.runtimeRoot.endsWith('/.loop-control/stage-d')&&config.keychainName===undefined||config.runtimeRoot.endsWith('/.loop-control/local')&&config.keychainName==='loop-control.keychain-db'))throw Error();
    if(createHash('sha256').update(await readFile(helper)).digest('hex')!==config.helperSha256)throw Error();
   }catch{throw new SecretStoreError('unavailable');}
  }

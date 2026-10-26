@@ -1,3 +1,5 @@
+import{hashPassword}from'./password.js';
+import{tokenHash}from'./sessions.js';
 import{readMediaDeployment}from'./mediaDeployment.js';
 import {LocalAccountCommands} from './accountCommands.js';
 import type{NativeAutomation}from'./nativeAutomation.js';
@@ -38,7 +40,7 @@ export function createLocalHandler(options:LocalOptions){
     if(typeof body.email!=='string'||typeof body.password!=='string'||body.email.length>320||body.password.length>1024){send(400,{error:'登录请求格式无效。'});return;}
     const next=await establishSession(options.pool,body.email.trim(),body.password,token);
     if(!next){send(401,{error:'邮箱或密码无效，或登录暂时锁定。'});return;}
-    response.setHeader('Set-Cookie',cookieHeader(next));send(200,{csrfToken:csrfFor(next)});return;
+    response.setHeader('Set-Cookie',cookieHeader(next));const owner=await lookupSession(options.pool,next);send(200,{owner:owner?{id:owner.id,email:owner.email}:null,csrfToken:csrfFor(next)});return;
    }
    const session=await lookupSession(options.pool,token);
    if(!session){response.setHeader('Set-Cookie',cookieHeader(''));send(401,{error:'请先登录所有者。'});return;}
@@ -48,6 +50,13 @@ export function createLocalHandler(options:LocalOptions){
    }
    if(url.pathname==='/api/local/logout'&&request.method==='POST'){
     await revokeSession(options.pool,session.token);response.setHeader('Set-Cookie',cookieHeader(''));send(200,{loggedOut:true});return;
+   }
+   if(url.pathname==='/api/local/password'&&request.method==='POST'){
+    let body;try{body=await readBody(request,8192);}catch{send(400,{error:'密码请求格式无效。'});return;}
+    if(Object.keys(body).some(k=>k!=='password')||typeof body.password!=='string'||body.password.length<12||body.password.length>1024){send(400,{error:'密码须为12至1024字符。'});return;}
+    const digest=await hashPassword(body.password);
+    const changed=(await options.pool.query('SELECT local_identity.change_owner_password($1,$2,$3) changed',[session.id,tokenHash(session.token),JSON.stringify(digest)])).rows[0]?.changed;
+    if(!changed){send(401,{error:'会话已失效，请重新登录。'});return;}send(200,{changed:true});return;
    }
    if(url.pathname==='/api/local/session'&&request.method==='GET'){send(200,{owner:{id:session.id,email:session.email},csrfToken:csrfFor(session.token)});return;}
    await readMediaDeployment(options.pool,options.mediaRoot);

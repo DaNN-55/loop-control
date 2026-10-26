@@ -1,5 +1,7 @@
 <div align="center">
 
+2026-10-26 D 本地收尾：已完成与 main 整合、953 项回归、日常启动、3 个历史账号 / 11 单接入，以及完整备份和新库恢复。8 条已批准的源端差异仍按严格校验拒绝读取。详见 [D 收尾验收](docs/verification/d-closeout-20261026/README.md)。未推送、合并远端或切换旧生产。
+
 # Loop Control
 
 **面向单一 Owner 的多账号短视频生产控制台，把配置、素材、生产、审核、QC 和最终交付包放在一条可追溯流程里。**
@@ -31,20 +33,21 @@ Loop Control 用于管理多个内容账号和系列的短视频生产。每个 
 5. 生成审核视频，完成 QC，补齐封面和发布元数据。
 6. 系统固定并校验发布包，将 Episode 标记为“生产完成”；外部发布由 Owner 在目标平台完成。
 
-## 当前分支：原生本地运行
+## 当前分支：日常原生本地运行
 
-T25 后，默认 `npm start` / `npm stop` 使用原生 PostgreSQL 应用及其常驻 Worker/运维，不要求 Supabase Auth/REST/Vault 或 n8n。默认构建不包含 Supabase SDK；该 SDK 仅作为旧路径编译和回归的开发依赖保留。历史迁移和旧生产环境不变。
+默认 `npm start` / `npm stop` 使用当前 worktree 的 `.loop-control/local/deployment.json`。界面沿用原导航、账号、生产单表格、审核和运营视图；本地 API、PostgreSQL、Keychain 及应用内持久调度承接业务，不要求 Supabase Auth/REST/Vault 或 n8n。
 
-已有批准的本地数据库、媒体目录和私有部署配置后：
+本机已准备日常资源后，在 Node 24 下执行：
 
-```zsh
+```sh
 npm start
+# 控制台：http://127.0.0.1:5174/
 npm stop
 ```
 
-当前默认配置沿用 `.loop-control/stage-d/config.json`、可选 `native-worker.json` 及 `worker-database.json`，由已有隔离准备/导入或恢复流程生成；不要在聊天、Git 或前端环境中录入数据库密码。`npm run build` 不需要这些数据库配置，也不读取旧 `.env.local`。缺少本地配置会明确失败，不回落远端。独立 Worker 由应用通过 stdin 提供冻结任务包；本地交付包通过 Owner 控制台操作，旧独立发布 CLI 不自动进入远端路径。
+日常 PostgreSQL 是独立 Colima `loop-control` 中的 `loop_control` 库，媒体、Studio、模型和专用 Keychain 均位于 `.loop-control/local/`。缺少配置或身份/恢复回执不匹配时明确失败，不回落旧验收指针或远端。迁移、目录、首次登录及旧数据保留方式见[日常运行说明](docs/local-daily-runtime.md)。
 
-也可由 `local:prepare-offline -- --deployment … --set-default` 校验已准备的本地依赖/模型并选择独立默认部署；后续无参 `npm start/stop` 使用该目标。此流程不下载、不覆盖旧默认配置，仍限定批准的隔离路径和恢复回执；见[离线准备说明](docs/local-native-deployment.md)。它不代表通用新主机安装已经通过。
+`npm run build` 不需要数据库或旧环境文件；默认构建继续拒绝 Supabase SDK、旧 App 和旧控制面进入依赖图。历史 `--deployment` / `local:start` 与显式 `legacy:*` 入口保留用于复现，旧测试数据和证据不删除。跨主机安装及原生产数据切换不由本次日常入口自动完成。
 
 六适配器的正式探针、共享持久预算和页面→专用Keychain私密录入已完成离线准备；录入策略保持关闭；截至 Google 诊断累计 10/17 次，Pexels与豆包固定样本通过，Freesound401、Google403、Cloudflare材料组合及OpenAI缺Key仍未闭环。见[离线准备与待确认清单](docs/verification/stage-d-close/provider-offline-preparation.md)。
 
@@ -109,7 +112,7 @@ n8n/import-workflows.sh
 
 ## 旧版兼容启动
 
-日常只有一个入口：
+旧版兼容栈入口：
 
 ```zsh
 npm run legacy:start

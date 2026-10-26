@@ -1,0 +1,21 @@
+
+> loop-control@0.1.0 runtime:migrate
+> node scripts/runtime/migrate.mjs
+
+node:fs:3177
+  binding.copyFile(
+          ^
+
+Error: ENOSPC: no space left on device, copyfile '/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164/materials/45271908fd702abcb2eebce5a52441abd871ecabc9b881969ba15b6a37cc4dd2-a-shot-005.mov' -> '/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/backups/loop_control/07cff39a-b2f4-4979-b2b5-e06be4c923bb.pending/media/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164/materials/45271908fd702abcb2eebce5a52441abd871ecabc9b881969ba15b6a37cc4dd2-a-shot-005.mov'
+    at copyFileSync (node:fs:3177:11)
+    at createNativeBackup (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/storage/backup.mjs:36:113)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/runtime/migrate.mjs:5:20 {
+  errno: -28,
+  code: 'ENOSPC',
+  syscall: 'copyfile',
+  path: '/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/volume/media/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164/materials/45271908fd702abcb2eebce5a52441abd871ecabc9b881969ba15b6a37cc4dd2-a-shot-005.mov',
+  dest: '/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/local/backups/loop_control/07cff39a-b2f4-4979-b2b5-e06be4c923bb.pending/media/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164/materials/45271908fd702abcb2eebce5a52441abd871ecabc9b881969ba15b6a37cc4dd2-a-shot-005.mov'
+}
+
+Node.js v24.20.0
