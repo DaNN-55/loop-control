@@ -15,6 +15,7 @@ import {
   validateWorkerResult,
 } from "./contracts.js";
 import { registeredAdapters } from "./registeredAdapters.js";
+import {ProviderOutcomeUnknownError} from "./providerOutcome.js";
 import { validateStoryboardManifest } from "./contracts.js";
 import type { StoryboardStructureRevision } from "./storyboardRevision.js";
 import { defaultAllowedDurationFrames, defaultDurationFrameRate, shotDurationDecisionFromJson } from "./durationDecision.js";
@@ -143,7 +144,7 @@ export async function runCodexWorker(dependencies: CodexWorkerDependencies): Pro
     const result = createFailedResult(taskPackage, dependencies.actualCostCents, error);
     if (executionCheck) result.blockers = [preflightBlocker(executionCheck)];
     await dependencies.reportResult(task.taskId, task.attempt, addPreflight(result, executionCheck ? appendPreflight(preflight, executionCheck) : preflight));
-    return { status: "failed", taskId: task.taskId };
+    return { status: result.status, taskId: task.taskId };
   }
 }
 
@@ -825,24 +826,26 @@ function preflightBlocker(check: WorkerPreflightCheck): NonNullable<WorkerResult
 }
 
 function createFailedResult(taskPackage: WorkerTaskPackage, actualCostCents: number, error: unknown): WorkerResult {
+  const unknown = error instanceof ProviderOutcomeUnknownError;
   return {
     version: "worker-result/v1",
     taskId: taskPackage.task.id,
-    status: "failed",
+    status: unknown ? "blocked" : "failed",
     artifacts: [],
     validation: { passed: false, checks: [{ name: "codex_execution", passed: false, detail: errorMessage(error) }] },
     actualCostCents,
     blockers: [],
     retry: {
-      shouldRetry: taskPackage.budget.attempt + 1 < taskPackage.budget.maxAttempts,
+      shouldRetry: !unknown && taskPackage.budget.attempt + 1 < taskPackage.budget.maxAttempts,
       reason: errorMessage(error),
     },
-    nextStep: "Retry only after the reported failure is understood.",
+    nextStep: unknown ? "先核对请求账本及供应商记录，再由 Owner 明确决定后续操作；不会自动重发。" : "Retry only after the reported failure is understood.",
   };
 }
 
 function executionPreflightCheck(taskPackage: WorkerTaskPackage, error: unknown): WorkerPreflightCheck | undefined {
   const detail = errorMessage(error);
+  if(error instanceof ProviderOutcomeUnknownError)return {capability:taskPackage.capability,check:"provider_result_unknown",phase:"execution",status:"blocked",reason:detail,action:"contact_environment_admin",scope:"worker"};
   const imageGeneration = taskPackage.visualAssetPreparation?.imageGeneration;
   const isOpenAiStaticVisual = (taskPackage.provider === "openai" && taskPackage.media?.adapter === "openai_images") || (imageGeneration?.provider === "openai" && imageGeneration.adapter === "openai_images");
   const isCloudflareStaticVisual = (taskPackage.provider === "cloudflare" && taskPackage.media?.adapter === "workers_ai_images") || (imageGeneration?.provider === "cloudflare" && imageGeneration.adapter === "workers_ai_images");

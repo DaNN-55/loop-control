@@ -176,6 +176,15 @@ function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "ac
 }
 
 export function workerBlockerGuidance(blocker: Pick<WorkerBlocker, "capability" | "code" | "detail" | "action" | "check" | "status">): WorkerBlockerGuidance {
+  if(blocker.code === "provider_result_unknown")return {
+    title: "外部请求结果未知",
+    summary: "请求可能已到达供应商，当前无法确认远端完成或取消；系统已暂停后续请求。",
+    resolution: ["先核对本轮请求账本、供应商请求记录与现有产物。", "已消费的请求预算保留；没有远端完成或取消证据前，不要重复发送。", "确认原请求结果后，由 Owner 明确决定恢复或重新执行。"],
+    retryLabel: "核对原请求后再决定",
+    location: "Worker 运行环境 / 请求账本",
+    locationNote: "不会自动重发；本地记录金额不代表供应商最终费用。",
+    technicalDetail: blocker.detail,
+  };
   const repairTarget = repairTargetForBlocker(blocker);
   const structured = structuredPreflightGuidance(blocker, repairTarget);
   if (structured) return structured;

@@ -1,3 +1,5 @@
+import{ProviderOutcomeUnknownError}from'../worker/providerOutcome.js';
+import{registeredAdapters}from'../worker/registeredAdapters.js';
 import type {Pool} from 'pg';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
@@ -20,8 +22,17 @@ export async function assertMediaReady(config:NativeMediaConfiguration|undefined
  if(external){const ports=await narrationPorts(config.mode==='local'?undefined:config);if(ports.store.mode!=='keychain')throw Error('在线媒体秘密存储尚未配置。');}
 }
 export function nativeMediaTask(type:string,provider:string){return (['generate_shot_sync_preview','generate_review_render','generate_final_render'].includes(type)&&provider==='openchatcut')||(['generate_a_roll','generate_b_roll'].includes(type)&&['openchatcut','ffmpeg','pexels'].includes(provider))||(type==='generate_soundtrack'&&provider==='freesound')||(type==='extract_embedded_audio'&&provider==='ffmpeg');}
+// A frozen reference may come from the Episode blueprint even for a local clip.
+// Only the registered executor determines whether execution needs credentials.
+export function nativeMediaRequiresExternal(p:WorkerTaskPackage){
+ if(p.visualAssetPreparation?.imageGeneration)return true;
+ const adapter=p.aRoll?.adapter??p.media?.adapter??(p.provider==='openchatcut'?'openchatcut':undefined);
+ const resolved=registeredAdapters.resolve({capability:p.capability,provider:p.provider,adapter});
+ if(resolved.kind!=='registered')throw Error('本地媒体任务执行器未注册。');
+ return resolved.choice.connection.kind==='owner_managed';
+}
 export async function executeNativeMedia(pool:Pool,config:NativeMediaConfiguration|undefined,p:WorkerTaskPackage,fence:{p_task_id:string;p_attempt:number;p_lease_token:string},visualOutput?:string){
- const external=Boolean(p.credentialRef||p.visualAssetPreparation?.imageGeneration);
+ const external=nativeMediaRequiresExternal(p);
  await assertMediaReady(config,{},process.env,external);
  const ports=external?await narrationPorts(config?.mode==='local'?undefined:config):undefined;
  const resolve=async(ref:string|undefined,provider:string,adapter:string)=>{
@@ -30,7 +41,7 @@ export async function executeNativeMedia(pool:Pool,config:NativeMediaConfigurati
  };
  try{
   let output:string;
-  if(visualOutput!==undefined){if(!ports)throw new SecretStoreError('unavailable');output=await generateVisualAssets(p,visualOutput,resolve,ports.fetcher);}
+  if(visualOutput!==undefined){if(!ports)throw new SecretStoreError('unavailable');output=await generateVisualAssets(p,visualOutput,resolve,ports.fetcher,`episodes/${p.episode.id}/native-tasks/${p.task.id}/visuals`);}
   else if(p.provider==='openchatcut'){
    if(!['generate_shot_sync_preview','generate_review_render','generate_final_render'].includes(p.task.type)&&p.aRoll?.adapter!=='openchatcut_card_video'&&p.media?.adapter!=='openchatcut_card_video')throw Error();
    output=await executeOpenChatCutRender({taskPackage:p,...(p.finalRender?{getApprovedReuseSource:async()=>{const result=(await pool.query('SELECT local_identity.input_final_reuse_source($1,$2,$3) result',[fence.p_task_id,fence.p_attempt,fence.p_lease_token])).rows[0]?.result;if(!result)throw Error('Final approval or lease unavailable');return result;}}:{}),validateMp4:validateMp4Artifact,inspectMp4:inspectMp4Artifact,async run(command,args){const invocation=runtimeCommandInvocation(command,args);await promisify(execFile)(invocation.command,invocation.argumentsList,{timeout:300000,maxBuffer:4*1024*1024});}});
@@ -40,5 +51,5 @@ export async function executeNativeMedia(pool:Pool,config:NativeMediaConfigurati
    output=await executeControlledMediaTask({taskPackage:p,fetcher:ports?.fetcher??denied,pexelsApiKey:p.provider==='pexels'?secret:undefined,googleTtsApiKey:undefined,freesoundApiKey:p.provider==='freesound'?secret:undefined,validateMp4:validateMp4Artifact,probeMp3:probeMp3Artifact,extractMp3:extractMp3Artifact,trimMp3:trimMp3Artifact,trimMp4:trimMp4Artifact,trimMp4Segments:trimMp4SegmentsArtifact});
   }
   const result=JSON.parse(output);result.validation.checks.push({name:'native_media_mode',passed:true,detail:ports?.mode==='controlled'?'受控Provider响应和SecretStore替身；没有在线资格或在线生成证明。':external?'在线执行路径。':'本机媒体执行。'});return JSON.stringify(result);
- }catch{throw Error('媒体执行或产物验证失败，请检查冻结输入和本机执行状态。');}
+ }catch(error){if(error instanceof ProviderOutcomeUnknownError)throw error;throw Error('媒体执行或产物验证失败，请检查冻结输入和本机执行状态。');}
 }

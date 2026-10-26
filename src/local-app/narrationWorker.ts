@@ -1,3 +1,4 @@
+import{ProviderOutcomeUnknownError}from'../worker/providerOutcome.js';
 import type{Pool}from'pg';
 import{pathToFileURL}from'node:url';
 import{execFile}from'node:child_process';
@@ -37,6 +38,6 @@ export async function executeNativeNarration(pool:Pool,config:NativeNarrationCon
  const unavailable=async():Promise<never>=>{throw Error('Task outside native narration scope');};
  let output:string;
  try{output=await executeControlledMediaTask({taskPackage:p,fetcher:ports.fetcher,pexelsApiKey:undefined,googleTtsApiKey:p.provider==='google_tts'?secret:undefined,volcengineTtsApiKey:p.provider==='volcengine_tts'?secret:undefined,validateMp4:unavailable,extractMp3:unavailable,trimMp3:unavailable,
-  async probeMp3(path){const{stdout}=await promisify(execFile)('ffprobe',['-v','error','-show_entries','format=duration','-of','default=noprint_wrappers=1:nokey=1',path],{env:{PATH:process.env.PATH},timeout:5000,maxBuffer:65536});const duration=Number(stdout.trim());if(!Number.isFinite(duration)||duration<=0)throw Error('音频不可播放或时长无效。');return duration;}});}catch{throw Error('口播生成或音频验证失败，请检查连接和本机执行状态。');}
+  async probeMp3(path){const{stdout}=await promisify(execFile)('ffprobe',['-v','error','-show_entries','format=duration','-of','default=noprint_wrappers=1:nokey=1',path],{env:{PATH:process.env.PATH},timeout:5000,maxBuffer:65536});const duration=Number(stdout.trim());if(!Number.isFinite(duration)||duration<=0)throw Error('音频不可播放或时长无效。');return duration;}});}catch(error){if(error instanceof ProviderOutcomeUnknownError)throw error;throw Error('口播生成或音频验证失败，请检查连接和本机执行状态。');}
  const result=JSON.parse(output);result.validation.checks.push({name:'native_narration_mode',passed:true,detail:ports.mode==='controlled'?'受控响应及秘密存储替身；没有在线Provider请求或真实语音生成证明。':'实际在线Provider执行。'});return JSON.stringify(result);
 }
