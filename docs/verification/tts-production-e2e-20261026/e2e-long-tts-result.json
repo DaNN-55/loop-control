@@ -1,0 +1,27 @@
+{
+  "realTtsTasksCompleted": 3,
+  "totalCharacters": 221,
+  "shots": [
+    {
+      "shotId": "shot-1",
+      "characters": 70,
+      "audioSeconds": 15.648,
+      "sourceVideoSeconds": 16.666667,
+      "audioBytes": 125229
+    },
+    {
+      "shotId": "shot-2",
+      "characters": 75,
+      "audioSeconds": 15.888,
+      "sourceVideoSeconds": 31.2,
+      "audioBytes": 127149
+    },
+    {
+      "shotId": "shot-3",
+      "characters": 76,
+      "audioSeconds": 15.264,
+      "sourceVideoSeconds": 33.813333,
+      "audioBytes": 122157
+    }
+  ]
+}

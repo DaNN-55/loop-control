@@ -1,0 +1,17 @@
+{
+  "prepared": true,
+  "newIsolatedDatabase": true,
+  "newMediaVolume": true,
+  "restoredTables": 51,
+  "restoredRows": 28620,
+  "restoredMediaFiles": 890,
+  "priorRunPolicyStateLockUnchanged": true,
+  "priorSpentRequests": 7,
+  "priorUnknownOperationPreserved": true,
+  "cumulativeMaxRequests": 18,
+  "newRequestAllowance": 11,
+  "cumulativeCapCny": 1,
+  "policyEnabled": false,
+  "newProviderRequests": 0,
+  "newCliCalls": 0
+}

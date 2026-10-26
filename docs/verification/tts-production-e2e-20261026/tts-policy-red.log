@@ -1,0 +1,78 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/local-app/providerNetwork.test.ts (29 tests | 2 failed) 1276ms
+   ✓ closed authorization never invokes transport or consumes a request 5ms
+   ✓ reserves before transport and refuses a second request without logging credentials 24ms
+   ✓ halts and keeps the consumed reservation on redirect 16ms
+   ✓ halts and keeps the consumed reservation on declared-size 16ms
+   ✓ halts and keeps the consumed reservation on stream-size 16ms
+   ✓ halts and keeps the consumed reservation on timeout  1025ms
+   ✓ halts and keeps the consumed reservation on transport-error 20ms
+   ✓ rejects wrong hosts and alternate ports without reserving 3ms
+   ✓ binds existing counters to the original authorization digest 2ms
+   ✓ cancels the actual transport and records an unknown spent request after caller abort 49ms
+   ✓ keeps a persisted reserved outcome blocked without resetting a prior reservation or lock 2ms
+   ✓ keeps a persisted unknown outcome blocked without resetting a prior reservation or lock 1ms
+   ✓ does not reserve or send a request that was cancelled before dispatch 1ms
+   ✓ retains a completed real HTTP response when the caller aborts after completion 26ms
+   ✓ preserves an unknown result written by another request while waiting for its lock 13ms
+   × google_tts executes ordinary narration and the selected voice under explicit production limits 6ms
+     → Provider request denied by private authorization or budget
+   ✓ google_tts retains the legacy acceptance envelope when production rules are absent 17ms
+   ✓ google_tts refuses production overflow or an unapproved voice before reservation 3ms
+   ✓ google_tts rejects malformed production TTS policy {"maxCharacters":0,"voices":["cmn-CN-Standard-B"],"languageCodes":["zh-CN"]} 1ms
+   ✓ google_tts rejects malformed production TTS policy {"maxCharacters":5001,"voices":["cmn-CN-Standard-B"],"languageCodes":["zh-CN"]} 1ms
+   ✓ google_tts rejects malformed production TTS policy {"maxCharacters":200,"voices":[],"languageCodes":["zh-CN"]} 1ms
+   ✓ google_tts rejects malformed production TTS policy {"maxCharacters":200,"voices":["cmn-CN-Standard-B"],"languageCodes":["zh-CN"],"unexpected":true} 1ms
+   × volcengine_tts executes ordinary narration and the selected voice under explicit production limits 1ms
+     → Provider request denied by private authorization or budget
+   ✓ volcengine_tts retains the legacy acceptance envelope when production rules are absent 18ms
+   ✓ volcengine_tts refuses production overflow or an unapproved voice before reservation 2ms
+   ✓ volcengine_tts rejects malformed production TTS policy {"maxCharacters":0,"voices":["zh_female_shuangkuaisisi_moon_bigtts"],"resourceIds":["seed-tts-1.0"]} 1ms
+   ✓ volcengine_tts rejects malformed production TTS policy {"maxCharacters":5001,"voices":["zh_female_shuangkuaisisi_moon_bigtts"],"resourceIds":["seed-tts-1.0"]} 1ms
+   ✓ volcengine_tts rejects malformed production TTS policy {"maxCharacters":200,"voices":[],"resourceIds":["seed-tts-1.0"]} 1ms
+   ✓ volcengine_tts rejects malformed production TTS policy {"maxCharacters":200,"voices":["zh_female_shuangkuaisisi_moon_bigtts"],"resourceIds":["seed-tts-1.0"],"unexpected":true} 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/providerNetwork.test.ts > google_tts executes ordinary narration and the selected voice under explicit production limits
+Error: Provider request denied by private authorization or budget
+ ❯ denied src/local-app/providerNetwork.ts:12:18
+     10| interface State{version:number;policySha256:string;used:number;costMic…
+     11| const providers=['openai','cloudflare','pexels','freesound','google_tt…
+     12| const denied=()=>new Error('Provider request denied by private authori…
+       |                  ^
+     13| function integer(n:unknown,max:number){return Number.isSafeInteger(n)&…
+     14| function privateFile(path:string){const s=lstatSync(path);if(!s.isFile…
+ ❯ requestOperation src/local-app/providerNetwork.ts:60:215
+ ❯ Object.fetcher src/local-app/providerNetwork.ts:69:19
+ ❯ synthesizeGoogleTts src/worker/mediaProviders.ts:57:32
+ ❯ synthesize src/local-app/providerNetwork.test.ts:97:45
+ ❯ src/local-app/providerNetwork.test.ts:100:62
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/providerNetwork.test.ts > volcengine_tts executes ordinary narration and the selected voice under explicit production limits
+Error: Provider request denied by private authorization or budget
+ ❯ denied src/local-app/providerNetwork.ts:12:18
+     10| interface State{version:number;policySha256:string;used:number;costMic…
+     11| const providers=['openai','cloudflare','pexels','freesound','google_tt…
+     12| const denied=()=>new Error('Provider request denied by private authori…
+       |                  ^
+     13| function integer(n:unknown,max:number){return Number.isSafeInteger(n)&…
+     14| function privateFile(path:string){const s=lstatSync(path);if(!s.isFile…
+ ❯ requestOperation src/local-app/providerNetwork.ts:61:243
+ ❯ Object.fetcher src/local-app/providerNetwork.ts:69:19
+ ❯ synthesizeVolcengineTts src/worker/mediaProviders.ts:75:32
+ ❯ synthesize src/local-app/providerNetwork.test.ts:97:78
+ ❯ src/local-app/providerNetwork.test.ts:100:62
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 27 passed (29)
+   Start at  09:27:33
+   Duration  1.49s (transform 49ms, setup 0ms, collect 54ms, tests 1.28s, environment 0ms, prepare 41ms)
+

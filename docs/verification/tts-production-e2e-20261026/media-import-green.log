@@ -1,0 +1,39 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/local-app/providerProbe.test.ts (26 tests) 388ms
+ ✓ src/local-app/providerNetwork.test.ts (39 tests) 1435ms
+   ✓ halts and keeps the consumed reservation on timeout  1031ms
+ ❯ src/local-app/localFiles.test.ts (8 tests | 1 failed) 29080ms
+   ✓ snapshots immutable input bytes, rejects traversal, corruption and symlink escapes 36ms
+   × imports a valid 13MB Base64 media file without a regular-expression stack overflow 29033ms
+     → Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+   ✓ rejects noncanonical Base64 input "a===" 3ms
+   ✓ rejects noncanonical Base64 input "YQ" 1ms
+   ✓ rejects noncanonical Base64 input "YQ==\n" 1ms
+   ✓ rejects noncanonical Base64 input "YR==" 4ms
+   ✓ rejects noncanonical Base64 input "YQ===" 1ms
+   ✓ rejects noncanonical Base64 input "YQ==AAAA" 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/localFiles.test.ts > imports a valid 13MB Base64 media file without a regular-expression stack overflow
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/local-app/localFiles.test.ts:26:1
+     24| 
+     25| 
+     26| it('imports a valid 13MB Base64 media file without a regular-expressio…
+       | ^
+     27|  const root=await realpath(await mkdtemp(join(tmpdir(),'native-large-i…
+     28|  const bytes=Buffer.alloc(13326115,0x61),contentBase64=bytes.toString(…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 72 passed (73)
+   Start at  09:50:56
+   Duration  29.52s (transform 107ms, setup 0ms, collect 191ms, tests 30.90s, environment 0ms, prepare 123ms)
+

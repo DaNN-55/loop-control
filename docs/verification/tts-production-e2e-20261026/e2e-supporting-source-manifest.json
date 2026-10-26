@@ -1,0 +1,47 @@
+{
+  "createdAt": "2026-10-26T01:39:36.025Z",
+  "files": [
+    {
+      "path": "common.mjs",
+      "sha256": "38ac765e8c48aedec1b588e170e51a48b248c2e89517fc6bf05310b4fee5c460"
+    },
+    {
+      "path": "service.mjs",
+      "sha256": "9b595b5307a0e44c8e6fe452256b145752cc1d3b9fd38cebeab0546065e27b3b"
+    },
+    {
+      "path": "prepare-config.mjs",
+      "sha256": "78585aecd2ac129b7d5669ae3633e9701af30e430fc8db6b881e376118c06538"
+    },
+    {
+      "path": "bridge.mjs",
+      "sha256": "2f61bea0d00c76ee87a76a1b6de80cf8897895119995fb69545968f1e6f678f1"
+    },
+    {
+      "path": "frozen-codex-prompt.mjs",
+      "sha256": "3a859872b4015e216fb321e947691d67a1dcca3a5aa6924e9e93f4bc403e85a3"
+    },
+    {
+      "path": "cli-deadline.py",
+      "sha256": "0986065498b299d646de4e139168b9bd3a153f4286ec4c5ea538161fef6fddec"
+    },
+    {
+      "path": "pin-task.mjs",
+      "sha256": "c1c071ff9e63701958af512144c49d0b78fa4c5799c2c145f883bb35538bb203"
+    },
+    {
+      "path": "pipeline.mjs",
+      "sha256": "2a9c61a8399eca4e828d167ea736b708bd27d878663f7175dfe558886169ca01"
+    },
+    {
+      "path": "script-input.json",
+      "sha256": "90a15ef71df69d993407fbb9c6f1deadccb8d963f74f78ca1bc05db4a8323674"
+    },
+    {
+      "path": "new-reference.png",
+      "sha256": "5cfe76fcf307a7ccb29ffb8128d7c5983051521f16b334820b0b63ac4f1f36bd"
+    }
+  ],
+  "runtimeToolsObservedDuringFirstCli": true,
+  "executablePathsPinnedBeforeFirstCli": true
+}
