@@ -18,6 +18,32 @@ vi.mock("./lib/supabase", () => ({
 }));
 
 describe("approval console", () => {
+  it("首页没有生产单时仍可打开独立剪辑，不创建生产任务", async () => {
+    const user = userEvent.setup();
+    const account = { id: "account-1", name: "剪辑账号", slug: "editing" };
+    const from = vi.fn((table: string) => {
+      const query = { order: vi.fn(), range: vi.fn().mockResolvedValue({ data: table === "accounts" ? [account] : [], error: null }) };
+      query.order.mockReturnValue(query);
+      return { select: vi.fn().mockReturnValue(query) };
+    });
+    Object.assign(supabase, { from });
+    vi.mocked(supabase.rpc).mockImplementationOnce(() => ({ setHeader: () => Promise.resolve({ data: { episodes: [], page: 1, pageSize: 20, total: 0, episodeCount: 0, accountCounts: {}, reviewCount: 0, stages: {}, artifactCounts: {}, pending: { items: [], page: 1, total: 0 }, blocked: { items: [], page: 1, total: 0 }, worker: { running: 0, blocked: 0, failed: 0, latestCompleted: false }, operationRows: [] }, error: null }) }) as never);
+    vi.mocked(supabase.auth.getSession).mockResolvedValueOnce({ data: { session: { access_token: "owner-token", user: { id: "owner-1" } } }, error: null } as never);
+    const replace = vi.fn();
+    const popup = vi.spyOn(window, "open").mockReturnValue({ location: { replace }, close: vi.fn() } as never);
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ studioUrl: "http://127.0.0.1:54001/" })));
+    vi.stubGlobal("fetch", fetcher);
+    try {
+      render(<App />);
+      const button = await screen.findByRole("button", { name: "打开 OpenChatCut 独立剪辑" });
+      expect((button as HTMLButtonElement).disabled).toBe(false);
+      await user.click(button);
+      await waitFor(() => expect(replace).toHaveBeenCalledWith("http://127.0.0.1:54001/"));
+      expect(fetcher).toHaveBeenCalledWith("/_open-openchatcut-workspace", { method: "POST", headers: { Authorization: "Bearer owner-token" } });
+      expect(popup).toHaveBeenCalledWith("about:blank", "_blank");
+    } finally { popup.mockRestore(); vi.unstubAllGlobals(); }
+  });
+
   it("默认预览只保留当前产物，其余版本进入历史", () => {
     const base = { artifact_type: "shot_preview_proxy", episode_id: "episode-1", file_size: 10, producer_task_id: "task-1", relative_path: "episodes/episode-1/shot-previews/shot-1/current/proxy.mp4", sha256: "a".repeat(64) };
     const current = { ...base, created_at: "2026-09-12T01:00:00.000Z", id: "artifact-current" } as Database["public"]["Tables"]["artifacts"]["Row"];

@@ -27,7 +27,7 @@ import { coverImageExtension, coverInputPath } from "../../publishing/coverImage
 import { registeredAdapters } from "../../worker/registeredAdapters";
 import { synthesizeGoogleTts, synthesizeVolcengineTts } from "../../worker/mediaProviders";
 import { reviewRenderFromSnapshot, shotPreparationContractFromSnapshot } from "../../worker/codexRunner";
-import { freezeOpenChatCutStudio, openOpenChatCutStudio } from "../../worker/openchatcutStudio";
+import { freezeOpenChatCutStudio, openOpenChatCutStudio, openStandaloneOpenChatCutStudio } from "../../worker/openchatcutStudio";
 import type { StoryboardManifest, WorkerTaskPackage } from "../../worker/contracts";
 import { ExpiringProbeCache, summarizeN8nExecutions, supabaseControlDataEvidence, type N8nExecutionEvidence, type N8nExecutionEvidenceRow } from "../../observability/systemStatusEvidence";
 
@@ -559,6 +559,30 @@ export function serveOpenLocalEpisodeDirectory(supabaseUrl: string | undefined, 
   };
 }
 
+export function serveOpenStandaloneOpenChatCut(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
+  return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
+    if (request.method !== "POST") { response.statusCode = 405; response.end(); return; }
+    const authorization = request.headers.authorization;
+    if (!authorization?.startsWith("Bearer ")) { response.statusCode = 401; response.end("需要 Owner 登录会话。"); return; }
+    if (!supabaseUrl || !supabasePublishableKey) { response.statusCode = 503; response.end("Supabase 本地客户端未配置。"); return; }
+    try {
+      const client = createClient(supabaseUrl, supabasePublishableKey, { auth: { persistSession: false }, global: { headers: { Authorization: authorization } } });
+      const { data, error } = await client.auth.getUser(authorization.slice("Bearer ".length));
+      if (error || !data.user || !isUuid(data.user.id)) { response.statusCode = 401; response.end("Owner 登录会话无效。"); return; }
+      const membership = await client.from("account_memberships").select("account_id").eq("user_id", data.user.id).eq("role", "owner").limit(1);
+      if (membership.error) throw membership.error;
+      if (!membership.data?.length) { response.statusCode = 403; response.end("需要 Owner 权限。"); return; }
+      const opened = await openStandaloneOpenChatCutStudio(resolve(".loop-control", "openchatcut", "standalone", data.user.id), { nodePath: localWorkerEnvironmentValue("OPENCHATCUT_NODE"), root: localWorkerEnvironmentValue("OPENCHATCUT_ROOT") });
+      response.setHeader("Content-Type", "application/json");
+      response.statusCode = 201;
+      response.end(JSON.stringify(opened));
+    } catch (error) {
+      response.statusCode = 500;
+      response.end(error instanceof Error ? error.message : "无法打开 OpenChatCut。");
+    }
+  };
+}
+
 export function serveOpenOpenChatCutStudio(supabaseUrl: string | undefined, supabasePublishableKey: string | undefined) {
   return async (request: IncomingMessage, response: ServerResponse): Promise<void> => {
     if (request.method !== "POST") { response.statusCode = 405; response.end(); return; }
@@ -1083,9 +1107,9 @@ function safeStatusDetail(error: unknown): string {
     .slice(0, 500);
 }
 
-async function dependencyStatus(name: string, command: string, args: string[]): Promise<{ detail: string; name: string; state: "healthy" | "offline" }> {
+async function dependencyStatus(name: string, command: string, args: string[], env: NodeJS.ProcessEnv = process.env): Promise<{ detail: string; name: string; state: "healthy" | "offline" }> {
   try {
-    const result = await execFileAsync(command, args);
+    const result = await execFileAsync(command, args, { env });
     return { detail: result.stdout.split("\n")[0] || "可调用", name, state: "healthy" };
   } catch (error) {
     return { detail: error instanceof Error ? error.message : "无法调用", name, state: "offline" };
@@ -1162,7 +1186,7 @@ export function serveSystemStatus(supabaseUrl: string | undefined, supabasePubli
       const localDependencies = await Promise.all([
         dependencyStatus("Codex CLI", "codex", ["--version"]),
         dependencyStatus("ffmpeg", "ffmpeg", ["-version"]),
-        dependencyStatus("OpenChatCut", localWorkerEnvironmentValue("OPENCHATCUT_NODE") || process.execPath, ["scripts/openchatcut-render.mjs", "--version"]),
+        dependencyStatus("OpenChatCut", localWorkerEnvironmentValue("OPENCHATCUT_NODE") || process.execPath, ["scripts/openchatcut-render.mjs", "--version"], { ...process.env, OPENCHATCUT_ROOT: localWorkerEnvironmentValue("OPENCHATCUT_ROOT") }),
       ]);
       const migration = migrationCache.read("remote-history", { detail: "Supabase 迁移正在后台探测；当前无法确认。", state: "unknown" }, async () => {
         try {
@@ -1909,6 +1933,9 @@ export function serveTtsVoicePreview(supabaseUrl: string | undefined, supabasePu
       const adapter = capability.adapter ?? capability.provider;
       const connectionVersionId = typeof narration.credential_ref === "string" ? narration.credential_ref.trim() : "";
       const preview = await cachedTtsVoicePreview(assetRoot, { adapter, connectionVersionId, languageCode, model, provider: capability.provider, speakingRate, text, textVersion: "tts-voice-preview/v1", voice }, async () => {
+        const { data: generationBudget, error: budgetError } = await client.from("generation_account_budgets").select("account_id").eq("account_id", episode.account_id).maybeSingle();
+        if (budgetError) throw new Error("无法检查配音调用预算。");
+        if (generationBudget) throw new Error("当前账号启用调用预算，请通过本期配音任务生成；未计入预算的付费试听已暂停。");
         const input = { apiKey, fetcher: fetch, text, voice: { languageCode, name: voice, speakingRate } };
         return capability.provider === "volcengine_tts" ? synthesizeVolcengineTts({ ...input, model }) : synthesizeGoogleTts(input);
       });

@@ -29,7 +29,7 @@ export interface ClaimedWorkerTask {
   attempt: number;
   budgetLimitCents: number;
   maxAttempts: number;
-  provider: "codex" | "google_tts" | "volcengine_tts" | "pexels" | "ffmpeg" | "freesound" | "openchatcut" | "openai" | "cloudflare" | "whisperx";
+  provider: "codex" | "google_tts" | "volcengine_tts" | "pexels" | "ffmpeg" | "freesound" | "openchatcut" | "openai" | "cloudflare" | "whisperx" | "bailian";
   model: string;
   promptVersion: string;
   episodeId: string;
@@ -502,6 +502,11 @@ function media(snapshot: Record<string, unknown>): WorkerTaskPackageInput["media
       },
     };
   }
+  if (value.adapter === "wan_video") {
+    const video = value.wan_video;
+    if (!isRecord(video) || !isRecord(video.first_frame)) throw new Error("万相镜头缺少冻结首帧。");
+    return { adapter: "wan_video", wanVideo: { firstFrame: video.first_frame as unknown as ArtifactManifest, prompt: requiredString(video.prompt, "缺少视频提示词。"), durationSeconds: requiredPositiveNumber(video.duration_seconds, "缺少视频时长。"), imageMime: requiredString(video.image_mime, "缺少首帧 MIME。") } };
+  }
   if (value.adapter === "pexels_video") {
     const bRoll = value.b_roll;
     if (!isRecord(bRoll) || !isRecord(bRoll.shot) || !Array.isArray(bRoll.shot.inputBasis)) throw new Error("B-roll 任务冻结配置无效。");
@@ -686,7 +691,7 @@ function reviewAnnotations(snapshot: Record<string, unknown>): WorkerTaskPackage
 }
 
 function aRoll(snapshot: Record<string, unknown>): WorkerTaskPackageInput["aRoll"] {
-  if (snapshot.capability !== "a_roll_generation") return undefined;
+  if (snapshot.capability !== "a_roll_generation" || (isRecord(snapshot.media) && snapshot.media.adapter === "wan_video")) return undefined;
   const executor = snapshot.executor;
   const shot = snapshot.shot;
   if (!isRecord(executor) || !isRecord(shot)) throw new Error("A-roll 任务缺少冻结执行器或镜头。");

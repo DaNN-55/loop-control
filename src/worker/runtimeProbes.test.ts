@@ -2,6 +2,14 @@ import { describe, expect, it, vi } from "vitest";
 import { probeCodexModel, probeProviderConnection } from "./runtimeProbes";
 
 describe("runtime probes", () => {
+  it("百炼接受完整北京 Base URL 并只 GET 模型目录", async () => {
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ output: { models: [{ model: "wan2.6-i2v-flash" }] } }), { status: 200 }));
+    const result = await probeProviderConnection("bailian", JSON.stringify({ apiKey: "test-key", workspaceId: "https://ws-abcdefgh12345678.cn-beijing.maas.aliyuncs.com/compatible-mode/v1" }), fetcher);
+    expect(result.credentialValidity?.available).toBe(true);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(fetcher.mock.calls[0][0]).toMatch(/^https:\/\/ws-abcdefgh12345678\.cn-beijing\.maas\.aliyuncs\.com\/api\/v1\/models\?/);
+    expect(fetcher.mock.calls[0][1].method).toBeUndefined();
+  });
   it("使用当前 Codex CLI 的只读探测参数", async () => {
     const command = vi.fn().mockResolvedValue({ stdout: "READY", stderr: "" });
 

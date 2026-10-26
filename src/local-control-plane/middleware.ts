@@ -15,6 +15,7 @@ import {
   serveOpenLocalAssetDirectory,
   serveOpenLocalEpisodeDirectory,
   serveOpenOpenChatCutStudio,
+  serveOpenStandaloneOpenChatCut,
   serveProductionMaterial,
   servePublishPreparation,
   serveSystemStatus,
@@ -58,6 +59,7 @@ function productionToolRoutes({ supabasePublishableKey, supabaseUrl }: RouteCont
     ["/_production-material", serveProductionMaterial(supabaseUrl, supabasePublishableKey)],
     ["/_tts-voice-preview", serveTtsVoicePreview(supabaseUrl, supabasePublishableKey)],
     ["/_open-openchatcut-studio", serveOpenOpenChatCutStudio(supabaseUrl, supabasePublishableKey)],
+    ["/_open-openchatcut-workspace", serveOpenStandaloneOpenChatCut(supabaseUrl, supabasePublishableKey)],
     ["/_freeze-openchatcut-studio", serveFreezeOpenChatCutStudio(supabaseUrl, supabasePublishableKey)],
   ];
 }

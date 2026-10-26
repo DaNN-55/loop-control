@@ -884,7 +884,7 @@ export function App() {
     setErrorMessage("");
     try {
       const { data, error } = await supabase.rpc("create_external_connection", { p_adapter: input.adapter, p_name: input.name, p_provider: input.provider, p_secret: input.secret });
-      if (error) throw error;
+      if (error) throw new Error(error.message);
       await refreshWorkspace();
       return data;
     } catch (error) {
@@ -1162,7 +1162,25 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
 
   async function openSelectedOpenChatCutStudio(): Promise<void> {
     if (!selectedEpisode || !selectedEpisodeOpenChatCutProjectPath) {
-      setErrorMessage("当前选中的生产单没有可编辑的审核渲染。");
+      const token = session?.access_token;
+      if (!token) { setErrorMessage("需要 Owner 登录会话。"); return; }
+      const studioWindow = window.open("about:blank", "_blank");
+      setPendingAction("openchatcut-standalone");
+      setErrorMessage("");
+      try {
+        const response = await fetch("/_open-openchatcut-workspace", { method: "POST", headers: { Authorization: `Bearer ${token}` } });
+        const contents = await response.text();
+        if (!response.ok) throw new Error(contents || "无法打开 OpenChatCut。");
+        const opened: unknown = JSON.parse(contents);
+        if (!opened || typeof opened !== "object" || !("studioUrl" in opened) || typeof opened.studioUrl !== "string") throw new Error("OpenChatCut 返回的工作区地址无效。");
+        if (studioWindow) studioWindow.location.replace(opened.studioUrl);
+        else window.open(opened.studioUrl, "_blank", "noopener,noreferrer");
+      } catch (error) {
+        studioWindow?.close();
+        setErrorMessage(error instanceof Error ? error.message : "无法打开 OpenChatCut。");
+      } finally {
+        setPendingAction("");
+      }
       return;
     }
     setPendingAction(`openchatcut-studio-${selectedEpisode.id}`);
@@ -1208,7 +1226,7 @@ async function deleteEpisode(episodeId: string, confirmation: string) {
       <aside className="sidebar" aria-label="主导航">
         <div className="wordmark"><span className="wordmark-text"><span><span className="wordmark-letter-cyan">L</span><span className="wordmark-letter-blue">oo</span>p</span><span><span className="wordmark-letter-pink">C</span>ontrol</span></span><img alt="Loop Control" className="wordmark-mark" src="/brand/loop-mark.svg" /></div>
         <nav className="navigation"><NavigationButtons activeNavigation={activeNavigation} badges={navigationBadges} onSelect={changeNavigation} /></nav>
-        <button aria-label={selectedEpisodeOpenChatCutProjectPath ? `打开${selectedEpisode?.title ?? "当前生产单"}的 OpenChatCut` : "OpenChatCut 仅从有审核渲染的生产单打开"} className="sidebar-studio-shortcut" disabled={!selectedEpisodeOpenChatCutProjectPath || pendingAction === `openchatcut-studio-${selectedEpisode?.id ?? ""}`} onClick={() => void openSelectedOpenChatCutStudio()} title={selectedEpisodeOpenChatCutProjectPath ? `打开${selectedEpisode?.title ?? "当前生产单"}的 OpenChatCut` : "请选择有审核渲染的生产单"} type="button"><Icon name="Video" /><span>{pendingAction === `openchatcut-studio-${selectedEpisode?.id ?? ""}` ? "正在打开…" : "OpenChatCut"}</span></button>
+        <button aria-label={selectedEpisodeOpenChatCutProjectPath ? `打开${selectedEpisode?.title ?? "当前生产单"}的 OpenChatCut` : "打开 OpenChatCut 独立剪辑"} className="sidebar-studio-shortcut" disabled={pendingAction === "openchatcut-standalone" || pendingAction === `openchatcut-studio-${selectedEpisode?.id ?? ""}`} onClick={() => void openSelectedOpenChatCutStudio()} title={selectedEpisodeOpenChatCutProjectPath ? `打开${selectedEpisode?.title ?? "当前生产单"}的 OpenChatCut` : "打开独立剪辑工作区"} type="button"><Icon name="Video" /><span>{pendingAction === "openchatcut-standalone" || pendingAction === `openchatcut-studio-${selectedEpisode?.id ?? ""}` ? "正在打开…" : "OpenChatCut"}</span></button>
         <div className="sidebar-footer"><div className="sidebar-utilities"><SystemStatusPanel workerSummary={catalog?.worker} episodes={workspace.episodes} isRefreshing={isSystemStatusLoading} onRefresh={refreshSystemStatusAndWorkspace} onRunGoldenTest={runGoldenProductionTest} report={systemStatus} tasks={workspace.tasks} /><button aria-label={theme === "light" ? "切换至深色模式" : "切换至浅色模式"} className="sidebar-utility" onClick={changeTheme} title={theme === "light" ? "深色模式" : "浅色模式"} type="button"><Icon name={theme === "light" ? "Moon" : "Sun"} /></button><button aria-label={sidebarCollapsed ? "展开侧栏" : "收起侧栏"} className="sidebar-collapse-button sidebar-utility" onClick={changeSidebarCollapsed} title={sidebarCollapsed ? "展开侧栏" : "收起侧栏"} type="button"><Icon name="PanelLeft" /></button><OwnerMenu onOpenSettings={() => setShowPasswordForm(true)} onSignOut={() => void supabase.auth.signOut()} /></div></div>
       </aside>
 

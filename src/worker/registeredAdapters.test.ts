@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 import { registeredAdapters } from "./registeredAdapters";
 
 describe("registered adapters", () => {
+  it("接受现有数据库编排器产生的审核渲染 v4 预设", () => {
+    expect(registeredAdapters.resolve({ capability: "review_rendering", provider: "openchatcut", model: "openchatcut@0.2.14", preset: "review-render-v4" }).kind).toBe("registered");
+  });
   it("以稳定身份声明多项能力，而不复制 Adapter", () => {
     const aRoll = registeredAdapters.choicesFor({ capability: "a_roll_generation", executionPath: "local" });
     const bRoll = registeredAdapters.choicesFor({ capability: "b_roll_generation", executionPath: "local" });

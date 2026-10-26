@@ -134,7 +134,7 @@ function MediaAdapterCard({ adapterKey, connectionVersions = [], externalConnect
   const connectionOptions: Array<{ credentialRef: string; label: string }> = [];
   const modelCatalog = selectedCatalog?.modelCatalog ?? [];
   const presetCatalog = selectedCatalog?.presetCatalog ?? [];
-  const presetLabel = adapterKey === "a_roll" ? "卡片预设" : "执行预设";
+  const presetLabel = adapterKey === "a_roll" && form.provider !== "bailian" ? "卡片预设" : "执行预设";
 
   return <article className={`media-adapter-card ${statusClass}`}>
     <header><div><h4>{label}</h4><p>{definition.description}</p></div><span className="media-adapter-status">{status}</span></header><div className="media-adapter-controls">
@@ -200,7 +200,7 @@ function runtimeDependencyItems(report: LocalSystemStatusReport | null): Array<{
 }
 
 function externalConnectionProviderLabel(provider: string): string {
-  return provider === "openai" ? "OpenAI Images" : provider === "cloudflare" ? "Cloudflare Workers AI" : provider === "google_tts" ? "Google TTS" : provider === "volcengine_tts" ? "火山语音" : provider === "pexels" ? "Pexels" : provider === "freesound" ? "Freesound" : provider || "未选择供应商";
+  return provider === "bailian" ? "百炼万相" : provider === "openai" ? "OpenAI Images" : provider === "cloudflare" ? "Cloudflare Workers AI" : provider === "google_tts" ? "Google TTS" : provider === "volcengine_tts" ? "火山语音" : provider === "pexels" ? "Pexels" : provider === "freesound" ? "Freesound" : provider || "未选择供应商";
 }
 
 function externalConnectionStatusLabel(status: ExternalConnectionStatus["status"], check: string | null): string {

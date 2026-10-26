@@ -15,6 +15,7 @@ const routePaths = [
   "/_production-material",
   "/_tts-voice-preview",
   "/_open-openchatcut-studio",
+  "/_open-openchatcut-workspace",
   "/_freeze-openchatcut-studio",
   "/_system-status",
   "/_golden-production-test",
@@ -45,9 +46,9 @@ afterAll(async () => {
 });
 
 describe("本机控制面路由边界", () => {
-  it("统一接管全部 19 条本机路由", async () => {
+  it("统一接管全部本机路由", async () => {
     const responses = await Promise.all(routePaths.map((path) => fetch(`${origin}${path}`)));
-    expect(responses).toHaveLength(19);
+    expect(responses).toHaveLength(routePaths.length);
     expect(responses.every((response) => response.status !== 599)).toBe(true);
   });
 

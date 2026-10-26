@@ -137,7 +137,7 @@ export interface WorkerTaskPackageInput {
     attempt: number;
     budgetLimitCents: number;
     maxAttempts: number;
-    provider: "codex" | "google_tts" | "volcengine_tts" | "pexels" | "ffmpeg" | "freesound" | "openchatcut" | "openai" | "cloudflare" | "whisperx";
+    provider: "codex" | "google_tts" | "volcengine_tts" | "pexels" | "ffmpeg" | "freesound" | "openchatcut" | "openai" | "cloudflare" | "whisperx" | "bailian";
     model: string;
     promptVersion: string;
   };
@@ -193,6 +193,7 @@ export interface WorkerTaskPackageInput {
     shot: StoryboardShotManifest;
   };
   media?:
+    | { adapter: "wan_video"; wanVideo: { firstFrame: ArtifactManifest; prompt: string; durationSeconds: number; imageMime: string } }
     | {
       adapter: "google_tts" | "volcengine_tts";
       narration: {
@@ -453,12 +454,18 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
   }
   if (input.reviewFeedback && (!isNonEmptyString(input.reviewFeedback.reviewPackageId) || !isNonEmptyString(input.reviewFeedback.reason))) throw new Error("review feedback must contain its package and reason.");
   if (input.reviewAnnotations?.some((annotation) => !isNonEmptyString(annotation.shotId) || !isNonEmptyString(annotation.reason))) throw new Error("review annotations must contain a shot and reason.");
-  if (input.capability === "a_roll_generation" && !input.aRoll) throw new Error("a-roll generation requires its frozen adapter and shot.");
+  if (input.capability === "a_roll_generation" && !input.aRoll && input.media?.adapter !== "wan_video") throw new Error("a-roll generation requires its frozen adapter and shot.");
   if (input.capability !== "a_roll_generation" && input.aRoll) throw new Error("only a-roll generation may include a frozen shot.");
   if (input.aRoll) {
     if (!isNonEmptyString(input.aRoll.adapter)) throw new Error("a-roll generation requires an adapter.");
     if (input.aRoll.adapter === "openchatcut_card_video" && input.task.provider !== "openchatcut") throw new Error("A-roll 卡片视频任务 Provider 必须是 OpenChatCut。");
     validateStoryboardManifest({ version: "storyboard/v1", shots: [input.aRoll.shot] }, input.inputArtifacts);
+  }
+  if (input.media?.adapter === "wan_video") {
+    const video = input.media.wanVideo;
+    if (input.task.provider !== "bailian" || !["a_roll_generation", "b_roll_generation"].includes(input.capability) || !isConnectionId(input.credentialRef) || input.task.model !== "wan2.6-i2v-flash" || !Number.isInteger(video.durationSeconds) || video.durationSeconds < 2 || video.durationSeconds > 15 || !isNonEmptyString(video.prompt) || video.prompt.length > 1500) throw new Error("万相任务的冻结配置无效。");
+    assertArtifactManifest(video.firstFrame);
+    if (!input.inputArtifacts.some((artifact) => artifact.relativePath === video.firstFrame.relativePath && artifact.sha256 === video.firstFrame.sha256)) throw new Error("万相首帧不属于冻结输入。");
   }
   if (input.capability === "narration_generation" && (!input.media || (input.media.adapter !== "google_tts" && input.media.adapter !== "volcengine_tts"))) throw new Error("旁白生成必须包含冻结的 TTS 配置。");
   if (input.capability === "narration_generation" && !isConnectionId(input.credentialRef)) throw new Error("旁白生成必须包含冻结的外部连接版本 ID。");
@@ -470,7 +477,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
   if (input.capability !== "narration_generation" && input.capability !== "acoustic_alignment" && input.acousticAlignment) throw new Error("只有旁白生成或独立字幕对齐任务可以冻结声学对齐输入。");
   if (input.capability === "acoustic_alignment" && (!input.acousticAlignment?.audioRelativePath || !isSha256(input.acousticAlignment.audioSha256) || !isSha256(input.acousticAlignment.inputVersion))) throw new Error("独立字幕对齐任务必须冻结音频路径、哈希与输入版本。");
   if (input.capability === "acoustic_alignment" && input.task.provider !== "whisperx") throw new Error("独立字幕对齐任务必须使用本地 WhisperX Provider。");
-  if (input.capability === "b_roll_generation" && (!input.media || (input.media.adapter !== "pexels_video" && input.media.adapter !== "openchatcut_card_video"))) throw new Error("B-roll 生成必须包含冻结的媒体配置。");
+  if (input.capability === "b_roll_generation" && (!input.media || (input.media.adapter !== "pexels_video" && input.media.adapter !== "openchatcut_card_video" && input.media.adapter !== "wan_video"))) throw new Error("B-roll 生成必须包含冻结的媒体配置。");
   if (input.capability === "b_roll_generation" && input.media?.adapter === "pexels_video" && !isConnectionId(input.credentialRef)) throw new Error("B-roll 生成必须包含冻结的外部连接版本 ID。");
   if (input.credentialRef !== undefined && !isNonEmptyString(input.credentialRef)) throw new Error("外部连接引用格式无效。");
   if (input.capability === "embedded_audio_extraction" && (!input.media || input.media.adapter !== "ffmpeg_extract_audio")) throw new Error("派生音频提取必须包含冻结的视频输入。");

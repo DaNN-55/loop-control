@@ -7,7 +7,7 @@ import { promisify } from "node:util";
 import { afterEach, describe, expect, it } from "vitest";
 import { buildOpenChatCutProject } from "./openchatcutProject";
 import { inspectOpenChatCutProjectWithRuntime, verifyOpenChatCutProject } from "./openchatcutProjectReader";
-import { closeOpenChatCutStudio, freezeOpenChatCutStudio, openOpenChatCutStudio } from "./openchatcutStudio";
+import { closeOpenChatCutStudio, closeStandaloneOpenChatCutStudio, freezeOpenChatCutStudio, openOpenChatCutStudio, openStandaloneOpenChatCutStudio } from "./openchatcutStudio";
 import { confirmedTtsRender } from "./openchatcutProject.fixture";
 import { createWorkerTaskPackage } from "./contracts";
 import { executeOpenChatCutRender } from "./openchatcutRenderer";
@@ -27,6 +27,27 @@ afterEach(async () => {
 });
 
 describe("OpenChatCut real project reader integration", () => {
+  it("opens an independent dashboard, reuses concurrent launches, and preserves projects after restart", async () => {
+    const dataDir = await mkdtemp(join(tmpdir(), "loop-control-openchatcut-standalone-"));
+    const project = buildOpenChatCutProject(confirmedTtsRender(), "standalone-project");
+    try {
+      const [first, second] = await Promise.all([openStandaloneOpenChatCutStudio(dataDir, runtime), openStandaloneOpenChatCutStudio(dataDir, runtime)]);
+      expect(second.studioUrl).toBe(first.studioUrl);
+      expect((await fetch(first.studioUrl)).status).toBe(200);
+      const entryModule = await (await fetch(new URL("src/main.tsx", first.studioUrl))).text();
+      expect(entryModule).toContain("vite-cache/deps");
+      await mkdir(join(dataDir, "project-store-v1"), { recursive: true });
+      await writeFile(join(dataDir, "project-store-v1", `${encodeURIComponent("project:standalone-project")}.json`), JSON.stringify(project));
+      await closeStandaloneOpenChatCutStudio(dataDir);
+      const reopened = await openStandaloneOpenChatCutStudio(dataDir, runtime);
+      const saved = await waitForStoredProject(new URL(reopened.studioUrl).origin, "standalone-project");
+      expect(saved).toEqual(JSON.parse(JSON.stringify(project)));
+    } finally {
+      await closeStandaloneOpenChatCutStudio(dataDir);
+      await rm(dataDir, { recursive: true, force: true });
+    }
+  }, 120_000);
+
   it("opens Studio and reads editable caption cues back from its project store", async () => {
     const episodeId = "00000000-0000-4000-8000-000000000096";
     episodeIds.push(episodeId);

@@ -69,6 +69,10 @@ const volcengineTtsAlignment: AcousticAlignmentCapabilities = {
 };
 
 const manifest: readonly RegisteredAdapterDefinition[] = [
+  { provider: "bailian", adapter: "wan_video", executionPath: "external", connection: { kind: "owner_managed", type: "bailian_video_api", endpoint: "https://dashscope.aliyuncs.com" }, execution: { kind: "controlled_media", safetyLimit: 1 }, capabilities: [
+    { capability: "a_roll_generation", configurationFields: ["credential_ref", "max_attempts"], modelCatalog: ["wan2.6-i2v-flash"], presetCatalog: ["wan-video-v1"] },
+    { capability: "b_roll_generation", configurationFields: ["credential_ref", "max_attempts"], modelCatalog: ["wan2.6-i2v-flash"], presetCatalog: ["wan-video-v1"] },
+  ] },
   { provider: "codex", adapter: "codex", executionPath: "internal", connection: { kind: "none" }, execution: { kind: "codex", safetyLimit: 1 }, capabilities: [
     { capability: "script_writing", configurationFields: ["model"], modelCatalog: [], presetCatalog: [] },
     { capability: "visual_planning", configurationFields: ["model"], modelCatalog: [], presetCatalog: [] },
@@ -106,7 +110,7 @@ const manifest: readonly RegisteredAdapterDefinition[] = [
     { capability: "b_roll_generation", configurationFields: ["max_attempts"], modelCatalog: ["openchatcut@0.2.14"], presetCatalog: ["card-video-v1"] },
   ] },
   { provider: "openchatcut", adapter: "openchatcut", executionPath: "internal", connection: { kind: "none" }, execution: { kind: "openchatcut", safetyLimit: 1 }, capabilities: [
-    { capability: "review_rendering", configurationFields: [], modelCatalog: ["openchatcut@0.2.14"], presetCatalog: ["review-render-v1"] },
+    { capability: "review_rendering", configurationFields: [], modelCatalog: ["openchatcut@0.2.14"], presetCatalog: ["review-render-v1", "review-render-v4"] },
     { capability: "final_rendering", configurationFields: [], modelCatalog: ["openchatcut@0.2.14"], presetCatalog: ["final-render-v1"] },
   ] },
 ] as const;

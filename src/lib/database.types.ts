@@ -1261,6 +1261,8 @@ export type Database = {
         Args: { p_view?: string; p_page?: number; p_account_id?: string | null; p_series_id?: string; p_visibility?: string; p_pending_page?: number; p_blocked_page?: number }
         Returns: Json
       }
+      request_wan_shot_video: { Args: { p_episode_id: string; p_review_package_id: string; p_shot_id: string; p_first_frame_id: string; p_prompt: string; p_duration: number; p_request_id: string }; Returns: string }
+      resume_wan_video_task: { Args: { p_task_id: string }; Returns: undefined }
 
       create_external_connection: {
         Args: { p_adapter: string; p_name: string; p_provider: string; p_secret: string }

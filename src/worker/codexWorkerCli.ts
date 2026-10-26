@@ -75,7 +75,7 @@ async function claimNextTask(): Promise<ClaimedWorkerTask | null> {
   row = data?.[0];
   }
   if (!row) return null;
-  if (row.provider !== "codex" && row.provider !== "google_tts" && row.provider !== "volcengine_tts" && row.provider !== "pexels" && row.provider !== "ffmpeg" && row.provider !== "freesound" && row.provider !== "openchatcut" && row.provider !== "openai" && row.provider !== "cloudflare" && row.provider !== "whisperx") throw new Error(`Unsupported worker provider: ${row.provider}`);
+  if (row.provider !== "codex" && row.provider !== "google_tts" && row.provider !== "volcengine_tts" && row.provider !== "pexels" && row.provider !== "ffmpeg" && row.provider !== "freesound" && row.provider !== "openchatcut" && row.provider !== "openai" && row.provider !== "cloudflare" && row.provider !== "whisperx" && row.provider !== "bailian") throw new Error(`Unsupported worker provider: ${row.provider}`);
   if (typeof row.lease_token !== "string" || !/^[0-9a-f-]{36}$/i.test(row.lease_token)) throw new Error("Claimed task has no valid lease token; upgrade the database.");
   activeLease = { taskId: row.task_id, attempt: row.attempt, token: row.lease_token };
   startLeaseHeartbeat(row.task_id, row.attempt);
@@ -116,9 +116,17 @@ async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
   }
   if (taskPackage.provider === "whisperx") return executeWhisperXTask(taskPackage);
   const apiKey = await resolveTaskSecret(taskPackage);
-  return executeControlledMediaTask({
+  if (taskPackage.provider === "volcengine_tts" || taskPackage.provider === "google_tts") {
+    const { data: reservation, error } = await supabase.rpc("reserve_paid_generation", { p_task_id: taskPackage.task.id, p_attempt: taskPackage.budget.attempt });
+    if (error) throw new Error(error.message);
+    if (reservation?.new === false) throw new Error("上次配音调用已经预留费用，结果可能未知，禁止自动重复收费。");
+  }
+  const output = await executeControlledMediaTask({
     taskPackage,
     fetcher: fetch,
+    bailianCredentials: taskPackage.provider === "bailian" ? apiKey : undefined,
+    reserveWan: async () => { const { data, error } = await supabase.rpc("reserve_paid_generation", { p_task_id: taskPackage.task.id, p_attempt: taskPackage.budget.attempt }); if (error) throw new Error(error.message); return data; },
+    recordWanSubmission: async (id) => { const { error } = await supabase.rpc("record_wan_submission", { p_task_id: taskPackage.task.id, p_attempt: taskPackage.budget.attempt, p_provider_task_id: id }); if (error) throw new Error(error.message); },
     pexelsApiKey: taskPackage.provider === "pexels" ? apiKey : undefined,
     googleTtsApiKey: taskPackage.provider === "google_tts" ? apiKey : undefined,
     volcengineTtsApiKey: taskPackage.provider === "volcengine_tts" ? apiKey : undefined,
@@ -133,6 +141,13 @@ async function executeTask(taskPackage: WorkerTaskPackage): Promise<string> {
     trimMp4Segments: trimMp4SegmentsArtifact,
     whisperXCacheDirectory: process.env.WHISPERX_MODEL_CACHE?.trim() || join(mediaLibraryMountPath, ".cache", "whisperx"),
   });
+  if (taskPackage.provider === "bailian") {
+    const result = JSON.parse(output) as { artifacts: ArtifactManifest[] };
+    const artifact = result.artifacts[0];
+    const { error } = await supabase.rpc("register_wan_material", { p_task_id: taskPackage.task.id, p_attempt: taskPackage.budget.attempt, p_path: artifact.relativePath, p_sha256: artifact.sha256, p_size: artifact.fileSize });
+    if (error) throw new Error(`无法登记万相视频素材：${error.message}`);
+  }
+  return output;
 }
 
 async function executeWhisperXTask(taskPackage: WorkerTaskPackage): Promise<string> {

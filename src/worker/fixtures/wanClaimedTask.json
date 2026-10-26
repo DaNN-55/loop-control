@@ -1,0 +1,149 @@
+{
+  "model": "wan2.6-i2v-flash",
+  "title": "Wan transaction-only contract fixture",
+  "attempt": 0,
+  "task_id": "82ede380-c756-4823-99a1-312c377240d8",
+  "provider": "bailian",
+  "task_type": "generate_a_roll",
+  "account_id": "9179a633-a946-4442-9877-6293507672e6",
+  "episode_id": "90a7cd77-68ac-42ff-a80a-bc1f78a9d888",
+  "max_attempts": 1,
+  "input_snapshot": {
+    "shot": {
+      "id": "shot-a",
+      "shotType": "a_roll",
+      "inputBasis": [
+        {
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "relativePath": "inputs/generated-images/01-man-product.png"
+        }
+      ],
+      "targetSpec": "720P",
+      "scriptSegment": "原版口播",
+      "durationSeconds": 5,
+      "productionMethod": "人物轻微转身"
+    },
+    "media": {
+      "adapter": "wan_video",
+      "wan_video": {
+        "audio": false,
+        "prompt": "人物轻微转身",
+        "image_mime": "image/png",
+        "resolution": "720P",
+        "first_frame": {
+          "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "fileSize": 123,
+          "artifactType": "wan_first_frame",
+          "relativePath": "inputs/generated-images/01-man-product.png"
+        },
+        "duration_seconds": 5
+      }
+    },
+    "budget": {
+      "limit_cents": 75,
+      "max_attempts": 1
+    },
+    "output": {
+      "content_type": "video/mp4",
+      "review_stage": "production_ready",
+      "relative_path": "episodes/90a7cd77-68ac-42ff-a80a-bc1f78a9d888/wan/82ede380-c756-4823-99a1-312c377240d8.mp4",
+      "required_artifact_types": [
+        "a_roll_video"
+      ]
+    },
+    "executor": {
+      "model": "wan2.6-i2v-flash",
+      "adapter": "wan_video",
+      "provider": "bailian",
+      "prompt_version": "wan-video-v1"
+    },
+    "capability": "a_roll_generation",
+    "requested_by": "02a8d594-a063-4bb7-be40-0ac1e7c14da5",
+    "allowed_tools": [
+      "read",
+      "write"
+    ],
+    "credential_ref": "d7aa9014-a90e-4ada-afa9-77f4388fcc1c",
+    "prompt_context": {
+      "hash": "44c955f863438034bb2fd047ad9cc16a",
+      "version": "prompt-context/v1",
+      "episode_input": {
+        "shot": {
+          "id": "shot-a",
+          "shotType": "a_roll",
+          "inputBasis": [
+            {
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "relativePath": "inputs/generated-images/01-man-product.png"
+            }
+          ],
+          "targetSpec": "720P",
+          "scriptSegment": "原版口播",
+          "durationSeconds": 5,
+          "productionMethod": "人物轻微转身"
+        },
+        "media": {
+          "adapter": "wan_video",
+          "wan_video": {
+            "audio": false,
+            "prompt": "人物轻微转身",
+            "image_mime": "image/png",
+            "resolution": "720P",
+            "first_frame": {
+              "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "fileSize": 123,
+              "artifactType": "wan_first_frame",
+              "relativePath": "inputs/generated-images/01-man-product.png"
+            },
+            "duration_seconds": 5
+          }
+        },
+        "input_artifacts": [
+          {
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "fileSize": 123,
+            "artifactType": "wan_first_frame",
+            "relativePath": "inputs/generated-images/01-man-product.png"
+          }
+        ]
+      },
+      "account_defaults": {
+        "positioning": "制作中式挂画商品短视频样片。以用户确认的原版口播和现有商品图为输入，情景画面与商品特写结合；首片优先跑通生产，允许近似画面，不要求一比一复刻。"
+      },
+      "blueprint_version_id": "19dbfac5-c69d-4b83-a18f-f227c4ea5b3e",
+      "account_hard_constraints": {
+        "asset_root": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan",
+        "approval_gates": [
+          "visual",
+          "storyboard",
+          "qc"
+        ]
+      }
+    },
+    "wan_request_id": "02af2d4e-456e-4ca9-bcf3-9584a4641fc4",
+    "input_artifacts": [
+      {
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "fileSize": 123,
+        "artifactType": "wan_first_frame",
+        "relativePath": "inputs/generated-images/01-man-product.png"
+      }
+    ],
+    "configuration_hash": "82ede380-c756-4823-99a1-312c377240d8",
+    "runtime_constraints": {
+      "source": {
+        "worker_capacity": 1,
+        "adapter_safety_limit": 1,
+        "provider_or_connection_limit": null
+      },
+      "version": "worker-runtime/v1",
+      "concurrency_group": "bailian:wan_video:d7aa9014-a90e-4ada-afa9-77f4388fcc1c",
+      "effective_concurrency": 1
+    },
+    "storyboard_review_package_id": "968e8d05-f134-44bd-b986-ffe61fad5c09"
+  },
+  "prompt_version": "wan-video-v1",
+  "allowed_asset_root": "/Volumes/Ebuget 1T/loop-control/rizhao-jinshan",
+  "budget_limit_cents": 75,
+  "blueprint_version_id": "19dbfac5-c69d-4b83-a18f-f227c4ea5b3e"
+}

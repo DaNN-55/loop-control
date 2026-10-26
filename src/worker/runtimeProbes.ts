@@ -1,3 +1,4 @@
+import { bailianCredential } from "./wanVideoProvider.js";
 import { tmpdir } from "node:os";
 import type { RuntimeDependencyStatus } from "./runtimeEvidence.js";
 
@@ -55,6 +56,22 @@ export async function probeCodexModel(model: string, runCommand: RuntimeProbeCom
 }
 
 export async function probeProviderConnection(provider: string, apiKey: string, fetcher: RuntimeProbeFetcher = fetch, model?: string): Promise<ProviderConnectionProbeResult> {
+  if (provider === "bailian") {
+    try {
+      const credential = bailianCredential(apiKey);
+      const response = await fetcher(`${credential.origin}/api/v1/models?model=wan2.6-i2v-flash&page_no=1&page_size=1`, { headers: { Authorization: `Bearer ${credential.apiKey}` }, signal: AbortSignal.timeout(10_000) });
+      if (!response.ok) {
+        const status: RuntimeDependencyStatus = { available: false, status: response.status >= 500 || response.status === 429 ? "retryable" : "unavailable", detail: `百炼模型目录查询失败：HTTP ${response.status}。` };
+        return { connection: status, credentialValidity: status };
+      }
+      const payload: unknown = await response.json();
+      const models = payload && typeof payload === "object" ? (payload as { output?: { models?: unknown[] } }).output?.models : undefined;
+      if (!Array.isArray(models) || !models.some((entry) => entry && typeof entry === "object" && (entry as { model?: string }).model === "wan2.6-i2v-flash")) return { connection: { available: false, status: "unavailable", detail: "百炼未列出万相模型，请核对北京业务空间与模型权限。" } };
+      return { connection: { available: true, detail: "百炼只读模型目录已连通；未生成视频。" }, credentialValidity: { available: true, detail: "API Key 与业务空间已通过只读验证，余额和实际生成资格待首次试片。" } };
+    } catch {
+      return { connection: { available: false, status: "retryable", detail: "百炼只读模型目录查询失败，请核对业务空间 ID 与网络后重试。" } };
+    }
+  }
   if (provider === "cloudflare" && !isCloudflareCredential(apiKey)) {
     const status: RuntimeDependencyStatus = { available: false, status: "unavailable", detail: "cloudflare 凭据格式无效。请使用 Account ID:API Token。" };
     return { connection: status, credentialValidity: status };

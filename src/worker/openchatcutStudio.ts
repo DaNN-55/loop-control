@@ -60,6 +60,57 @@ export interface OpenChatCutRuntimeConfig {
 }
 
 const sessions = new Map<string, Session>();
+const standaloneSessions = new Map<string, Promise<{ child: ChildProcess; studioUrl: string }>>();
+
+export async function openStandaloneOpenChatCutStudio(dataDirectory: string, runtimeConfig: OpenChatCutRuntimeConfig = {}): Promise<{ studioUrl: string }> {
+  const dataDir = resolve(dataDirectory);
+  let session = standaloneSessions.get(dataDir);
+  if (!session) {
+    session = startStandaloneOpenChatCutStudio(dataDir, runtimeConfig);
+    standaloneSessions.set(dataDir, session);
+    const opening = session;
+    void opening.then(({ child }) => {
+      child.once("close", () => { if (standaloneSessions.get(dataDir) === opening) standaloneSessions.delete(dataDir); });
+    }, () => { if (standaloneSessions.get(dataDir) === opening) standaloneSessions.delete(dataDir); });
+  }
+  return { studioUrl: (await session).studioUrl };
+}
+
+export async function closeStandaloneOpenChatCutStudio(dataDirectory: string): Promise<void> {
+  const dataDir = resolve(dataDirectory);
+  const opening = standaloneSessions.get(dataDir);
+  standaloneSessions.delete(dataDir);
+  const session = await opening?.catch(() => undefined);
+  if (session && session.child.exitCode === null) {
+    const closed = new Promise<void>((done) => session.child.once("close", () => done()));
+    session.child.kill("SIGTERM");
+    await Promise.race([closed, new Promise<void>((done) => setTimeout(done, 2_000))]);
+  }
+}
+
+async function startStandaloneOpenChatCutStudio(dataDir: string, runtimeConfig: OpenChatCutRuntimeConfig) {
+  const nodePath = runtimeConfig.nodePath?.trim() || process.env.OPENCHATCUT_NODE || process.execPath;
+  if (Number(nodeVersion(nodePath)) !== 24) throw new Error("OpenChatCut 需要 Node 24，请配置 OPENCHATCUT_NODE。");
+  const root = runtimeConfig.root?.trim() || process.env.OPENCHATCUT_ROOT?.trim();
+  if (!root) throw new Error("未配置 OPENCHATCUT_ROOT，无法打开 OpenChatCut 编辑器。");
+  await mkdir(dataDir, { recursive: true });
+  const port = await availablePort();
+  const child = spawn(nodePath, [resolve("scripts/openchatcut-standalone.mjs"), String(port)], {
+    cwd: root,
+    env: { ...process.env, OPENCHATCUT_ROOT: root, OPENCHATCUT_DATA_DIR: dataDir, OPENCHATCUT_DEV_PROFILE_ID: randomUUID(), OPENCHATCUT_DISABLE_HARDWARE_ENCODING: "1", BROWSER: "none" },
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+  const logs: string[] = [];
+  child.stdout?.on("data", (chunk) => logs.push(String(chunk)));
+  child.stderr?.on("data", (chunk) => logs.push(String(chunk)));
+  try {
+    await waitForServer(`http://127.0.0.1:${port}`, child, logs);
+    return { child, studioUrl: `http://127.0.0.1:${port}/` };
+  } catch (error) {
+    child.kill("SIGTERM");
+    throw error;
+  }
+}
 
 export async function closeOpenChatCutStudio(episodeId: string): Promise<void> {
   const session = sessions.get(episodeId);
