@@ -31,6 +31,8 @@ export default defineConfig(({ mode }) => {
     test: {
       environment: "jsdom",
       globals: true,
+      // Leave CPU headroom for React/jsdom while keeping the default test timeout.
+      maxWorkers: "50%",
     },
   };
 });
