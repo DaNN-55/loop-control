@@ -49,3 +49,45 @@ it('does not start a blueprint check while logout is pending',async()=>{
  fireEvent.click(within(screen.getByLabelText('账号默认配置检查')).getByRole('button',{name:'重新检查'}));expect(checks).toBe(0);
  await act(async()=>{finishLogout(Response.json({}));});await screen.findByRole('button',{name:'使用密码登录'});
 });
+it('keeps the new account check when the previous account check returns late',async()=>{
+ vi.stubGlobal('crypto',webcrypto);const secondAccountId='20000000-0000-4000-8000-000000000001',secondBlueprintId='20000000-0000-4000-8000-000000000002';
+ const next=catalog();next.accounts.push({...next.accounts[0],id:secondAccountId,name:'Second account',slug:'second-account',current_blueprint_version_id:secondBlueprintId});next.blueprints.push({...next.blueprints[0],id:secondBlueprintId,account_id:secondAccountId});next.blueprintRevisions[secondBlueprintId]='b'.repeat(32);
+ let finishOld!:(response:Response)=>void;
+ vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
+  if(path.endsWith('/session'))return Response.json({csrfToken:'account-switch'});
+  if(path.includes('/catalog?'))return Response.json(next);
+  if(path.endsWith('/account-commands')){
+   const data=JSON.parse(String(init?.body)).data;
+   if(data.accountId===accountId)return new Promise<Response>(resolve=>{finishOld=resolve;});
+   expect(data).toMatchObject({accountId:secondAccountId,blueprintVersionId:secondBlueprintId,expectedRevision:'b'.repeat(32)});
+   return Response.json({version:'worker-preflight/v2',checks:[{capability:'worker_runtime',check:'command_availability',phase:'preflight',status:'unavailable',scope:'worker',action:'contact_environment_admin',reason:'Current account blocker'}]});
+  }return Response.json({connections:[],versions:[]});
+ }));
+ await act(async()=>{render(<LocalCatalogApp/>);});
+ const rail=screen.getByLabelText('账号默认配置检查');fireEvent.click(within(rail).getByRole('button',{name:'重新检查'}));await waitFor(()=>expect(finishOld).toBeTypeOf('function'));
+ fireEvent.change(screen.getByRole('combobox',{name:'当前账号'}),{target:{value:secondAccountId}});
+ fireEvent.click(within(rail).getByRole('button',{name:'重新检查'}));await waitFor(()=>expect(rail.textContent).toContain('Current account blocker'));
+ await act(async()=>{finishOld(Response.json({version:'worker-preflight/v2',checks:[{capability:'worker_runtime',check:'command_availability',phase:'preflight',status:'passed',scope:'worker',action:'none',reason:'Old account success'}]}));});
+ expect(rail.textContent).toContain('Current account blocker');expect(rail.textContent).not.toContain('Old account success');
+});
+it('keeps the relogged-in session check when an old session check returns late',async()=>{
+ vi.stubGlobal('crypto',webcrypto);let finishOld!:(response:Response)=>void,checks=0;
+ vi.stubGlobal('fetch',vi.fn(async(path:string,init?:RequestInit)=>{
+  if(path.endsWith('/session'))return Response.json({csrfToken:'old-session'});
+  if(path.endsWith('/login'))return Response.json({csrfToken:'new-session'});
+  if(path.endsWith('/logout'))return Response.json({});
+  if(path.includes('/catalog?'))return Response.json(catalog());
+  if(path.endsWith('/account-commands')){
+   checks++;if(checks===1)return new Promise<Response>(resolve=>{finishOld=resolve;});
+   expect(new Headers(init?.headers).get('X-CSRF-Token')).toBe('new-session');
+   return Response.json({version:'worker-preflight/v2',checks:[{capability:'worker_runtime',check:'command_availability',phase:'preflight',status:'unavailable',scope:'worker',action:'contact_environment_admin',reason:'New session blocker'}]});
+  }return Response.json({connections:[],versions:[]});
+ }));
+ await act(async()=>{render(<LocalCatalogApp/>);});
+ fireEvent.click(within(screen.getByLabelText('账号默认配置检查')).getByRole('button',{name:'重新检查'}));await waitFor(()=>expect(finishOld).toBeTypeOf('function'));
+ fireEvent.click(screen.getByRole('button',{name:'退出登录'}));await screen.findByRole('button',{name:'使用密码登录'});
+ fireEvent.change(screen.getByLabelText('邮箱'),{target:{value:'owner@example.test'}});fireEvent.change(screen.getByLabelText('密码'),{target:{value:'synthetic-password'}});fireEvent.click(screen.getByRole('button',{name:'使用密码登录'}));
+ const rail=await screen.findByLabelText('账号默认配置检查');fireEvent.click(within(rail).getByRole('button',{name:'重新检查'}));await waitFor(()=>expect(rail.textContent).toContain('New session blocker'));
+ await act(async()=>{finishOld(Response.json({version:'worker-preflight/v2',checks:[{capability:'worker_runtime',check:'command_availability',phase:'preflight',status:'passed',scope:'worker',action:'none',reason:'Old session success'}]}));});
+ expect(rail.textContent).toContain('New session blocker');expect(rail.textContent).not.toContain('Old session success');expect(checks).toBe(2);
+});

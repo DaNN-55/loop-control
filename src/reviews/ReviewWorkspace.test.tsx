@@ -681,12 +681,13 @@ describe("审核台", () => {
     expect(screen.queryByRole("radio", { name: /保留上传视频原声/ })).toBeNull();
   });
 
-  it("分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择", async () => {
+  function renderApprovedSoundWorkbench(savedSecondShot: Partial<ShotPreparationDraft> = {}) {
     const user = userEvent.setup();
     const approvedEpisode: Episode = { ...reviewEpisode, id: "episode-shot-workbench", stage: "storyboard_approved", tts_language_code: "zh-CN", tts_speaking_rate: 1.35, tts_voice: "episode-voice" };
     const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", episode_id: approvedEpisode.id, id: "artifact-shot-workbench", relative_path: "episodes/episode-shot-workbench/storyboard.json" };
     const reviewPackage = { artifact_id: storyboardArtifact.id, context_snapshot: {}, created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "review-package-shot-workbench", invalidated_at: null, invalidated_reason: null, revision_number: 1, stage: "storyboard_review" as const, task_id: "task-shot-workbench", task_run_id: "run-shot-workbench" };
     const drafts: ShotPreparationDraft[] = [{ clip_segments: [], acoustic_alignment: { version: "acoustic-alignment/v1", status: "failed", method: "none", granularity: "none", inputVersion: "a".repeat(64), audioSha256: "b".repeat(64), textFingerprint: "c".repeat(64), provider: "volcengine_tts", model: "seed-tts-2.0", connectionVersionId: "connection-v1", wordCount: 0, cues: [], attempts: [], detail: "当前冻结的豆包 TTS 连接未注册自动字幕打轴能力。", generatedAt: "2026-09-03T00:00:00.000Z" }, audio_mode: "tts", audio_status: "running", confirmation_status: "pending", created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "draft-shot-1", pending_tts_task_id: "task-pending-tts", review_package_id: reviewPackage.id, shot_id: "shot-1", subtitle_text: "第一镜字幕", subtitles_enabled: true, tts_speaking_rate: 1.35, tts_voice: "voice-a", updated_at: "2026-09-03T00:00:00.000Z", video_status: "pending", warning_decision: "accepted" }, { ...({} as ShotPreparationDraft), audio_mode: "tts", audio_status: "pending", confirmation_status: "pending", created_at: "2026-09-03T00:00:00.000Z", episode_id: approvedEpisode.id, id: "draft-shot-2", review_package_id: reviewPackage.id, shot_id: "shot-2", subtitle_text: "第二镜字幕", subtitles_enabled: true, tts_speaking_rate: 1.35, tts_voice: "voice-a", updated_at: "2026-09-03T00:00:00.000Z", video_status: "pending" }];
+    Object.assign(drafts[1], savedSecondShot);
     let releaseMuteSave!: () => void;
     const muteSave = new Promise<void>((resolve) => { releaseMuteSave = resolve; });
     const onSave = vi.fn().mockImplementationOnce(() => muteSave).mockResolvedValue(undefined);
@@ -703,8 +704,14 @@ describe("审核台", () => {
     const onSaveEpisodeTtsSettings = vi.fn().mockResolvedValue(undefined);
     const onSaveStoryboardAudioSelection = vi.fn().mockResolvedValue(undefined);
 
-    const view = render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} audioTracks={[sfxTrack]} blueprint={{ ...blueprint, policy: { narration: { executor: { adapter: "volcengine_tts", model: "seed-tts-2.0", provider: "volcengine_tts" }, voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 1.35 } } } }} episode={approvedEpisode} isTransitionPending={false} materialRevisions={materials} onSaveEpisodeTtsSettings={onSaveEpisodeTtsSettings} onSaveShotPreparationDraft={onSave} onSaveStoryboardAudioSelection={onSaveStoryboardAudioSelection} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={drafts} tasks={[]} transitions={[]} />);
+    const props = { ...materialInputProps, artifacts: [storyboardArtifact], audioTracks: [sfxTrack], blueprint: { ...blueprint, policy: { narration: { executor: { adapter: "volcengine_tts", model: "seed-tts-2.0", provider: "volcengine_tts" }, voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 1.35 } } } }, episode: approvedEpisode, isTransitionPending: false, materialRevisions: materials, onSaveEpisodeTtsSettings, onSaveShotPreparationDraft: onSave, onSaveStoryboardAudioSelection, onTransition: vi.fn(), reviewPackages: [reviewPackage], shotPreparationDrafts: drafts, tasks: [], transitions: [] };
+    const view = render(<EpisodeDetail {...props} />);
+    return { user, view, props, releaseMuteSave };
+  }
 
+  it("已批准分镜显示声音与对齐状态，并保存整期 BGM 和闪避选择", async () => {
+    const { user, view, props } = renderApprovedSoundWorkbench();
+    const { episode: approvedEpisode, reviewPackages: [reviewPackage], onSaveStoryboardAudioSelection } = props;
     await screen.findByRole("heading", { name: "分镜工作台" });
     const workbench = screen.getByRole("region", { name: "分镜工作台" });
     const confirmationOverview = screen.getByRole("navigation", { name: "镜头确认概览" });
@@ -744,7 +751,7 @@ describe("审核台", () => {
     expect(screen.queryByLabelText("shot-1 BGM 闪避")).toBeNull();
     expect(onSaveStoryboardAudioSelection).toHaveBeenCalledWith(expect.objectContaining({ audioKind: "bgm", cueId: null, materialRevisionId: "material-shot-workbench-bgm", targetKind: "episode" }));
     const bgmSelection: StoryboardAudioSelection = { audio_kind: "bgm", created_at: "2026-09-03T00:00:00.000Z", created_by: "owner-1", cue_id: null, episode_id: approvedEpisode.id, id: "bgm-selection", material_revision_id: "material-shot-workbench-bgm", review_package_id: reviewPackage.id, target_id: approvedEpisode.id, target_kind: "episode", updated_at: "2026-09-03T00:01:00.000Z" };
-    view.rerender(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} audioTracks={[sfxTrack]} blueprint={{ ...blueprint, policy: { narration: { executor: { adapter: "volcengine_tts", model: "seed-tts-2.0", provider: "volcengine_tts" }, voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 1.35 } } } }} episode={approvedEpisode} isTransitionPending={false} materialRevisions={materials} onSaveEpisodeTtsSettings={onSaveEpisodeTtsSettings} onSaveShotPreparationDraft={onSave} onSaveStoryboardAudioSelection={onSaveStoryboardAudioSelection} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={drafts} storyboardAudioSelections={[bgmSelection]} tasks={[]} transitions={[]} />);
+    view.rerender(<EpisodeDetail {...props} storyboardAudioSelections={[bgmSelection]} />);
     expect(screen.getByLabelText("shot-1 BGM 闪避")).toBeTruthy();
     await user.selectOptions(screen.getByLabelText("shot-1 BGM 闪避"), "strong");
     expect(screen.getByRole("button", { name: "在 OpenChatCut 中编辑" })).toBeTruthy();
@@ -769,6 +776,17 @@ describe("审核台", () => {
     expect(screen.queryByText(/默认声音：voice-a/)).toBeNull();
     expect(screen.queryByText(/基准文案：/)).toBeNull();
     expect(screen.queryByText("上传视频的声音")).toBeNull();
+  });
+
+  it("逐镜头主声音和音效独立保存，静音后恢复原选择并保留画面草稿", async () => {
+    const { user, view, props, releaseMuteSave } = renderApprovedSoundWorkbench();
+    const { episode: approvedEpisode, reviewPackages: [reviewPackage], onSaveShotPreparationDraft: onSave, onSaveStoryboardAudioSelection } = props;
+    await screen.findByRole("heading", { name: "分镜工作台" });
+    await user.click(screen.getByRole("switch", { name: "使用 BGM" }));
+    await user.selectOptions(screen.getByLabelText("整期 BGM 音频"), "material-shot-workbench-bgm");
+    const bgmSelection: StoryboardAudioSelection = { audio_kind: "bgm", created_at: "2026-09-03T00:00:00.000Z", created_by: "owner-1", cue_id: null, episode_id: approvedEpisode.id, id: "bgm-selection", material_revision_id: "material-shot-workbench-bgm", review_package_id: reviewPackage.id, target_id: approvedEpisode.id, target_kind: "episode", updated_at: "2026-09-03T00:01:00.000Z" };
+    view.rerender(<EpisodeDetail {...props} storyboardAudioSelections={[bgmSelection]} />);
+    await user.selectOptions(screen.getByLabelText("shot-1 BGM 闪避"), "strong");
     const playSfx = vi.spyOn(HTMLMediaElement.prototype, "play").mockResolvedValue();
     await user.selectOptions(screen.getByLabelText("shot-1 主声音"), "source");
     expect(screen.getByText("当前片段原声成为唯一主声音；多槽位复用也只播放一次。")).toBeTruthy();
@@ -798,11 +816,25 @@ describe("审核台", () => {
     await user.click(screen.getByRole("button", { name: "保存草稿" }));
     expect(screen.getByRole("button", { name: /^shot-1 A-roll/ }).getAttribute("aria-expanded")).toBe("true");
     expect(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "3 同步预览与确认" }).getAttribute("aria-selected")).toBe("true");
+    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ bgmDuckingLevel: "off" }));
     await user.click(screen.getByRole("button", { name: /^shot-2 B-roll/ }));
     const waitingAlignment = screen.getByRole("region", { name: "shot-2 声学对齐" });
     expect(within(waitingAlignment).getByRole("status", { name: "等待音频后开始声学对齐" })).toBeTruthy();
     expect(within(waitingAlignment).queryByText("等待")).toBeNull();
     expect(screen.getByRole("button", { name: /shot-1 准备状态：画面 配置已保存，待生成/ })).toBeTruthy();
+  });
+
+  function savedIndependentSecondShotText(): Partial<ShotPreparationDraft> {
+    return { subtitle_text: "修改后的字幕", tts_text: "第二镜字幕", updated_at: "2026-09-03T00:02:00.000Z", caption_contract: { version: "shot-captions/v1", enabled: true, contentMode: "independent", text: "修改后的字幕", cues: [], spatial: { version: "shot-caption-space/v2", anchor: "bottom-center", safeArea: "title-safe", aspectRatio: "9:16", insets: { top: 0.08, right: 0.08, bottom: 0.18, left: 0.08 }, maxLines: 2, maxCharactersPerLine: 16 } } };
+  }
+
+  it("第二镜独立字幕先保存，未保存时键盘切步保持当前正文", async () => {
+    const { user, props, releaseMuteSave } = renderApprovedSoundWorkbench();
+    const { episode: approvedEpisode, onSaveShotPreparationDraft: onSave, onSaveEpisodeTtsSettings } = props;
+    releaseMuteSave();
+    await screen.findByRole("heading", { name: "分镜工作台" });
+    await user.click(screen.getByRole("button", { name: /^shot-2 B-roll/ }));
+    const confirmationOverview = screen.getByRole("navigation", { name: "镜头确认概览" });
     await user.selectOptions(screen.getByLabelText("本期 TTS 声音"), "zh_female_vv_uranus_bigtts");
     await user.click(screen.getByRole("button", { name: "保存本期设置" }));
     expect(onSaveEpisodeTtsSettings).toHaveBeenCalledWith({ episodeId: approvedEpisode.id, languageCode: "zh-CN", speakingRate: 1.35, voice: "zh_female_vv_uranus_bigtts" });
@@ -821,8 +853,19 @@ describe("审核台", () => {
     await user.keyboard("{ArrowRight}");
     expect(textTab.getAttribute("aria-selected")).toBe("true");
     expect(screen.getByRole("alert").textContent).toContain("请先保存当前步骤草稿");
-    await user.click(screen.getByRole("button", { name: "保存草稿" }));
+    await user.click(within(shotTwoTabs.closest("article") as HTMLElement).getByRole("button", { name: "保存草稿" }));
     expect(within(shotTwoTabs).getByRole("tab", { name: "2 画面与构图" }).getAttribute("aria-selected")).toBe("true");
+    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ shotId: "shot-2", includeVideo: false, subtitleText: "修改后的字幕", ttsText: "第二镜字幕", captionContract: { version: "shot-captions/v1", enabled: true, contentMode: "independent", text: "修改后的字幕", cues: [], spatial: { version: "shot-caption-space/v2", anchor: "bottom-center", safeArea: "title-safe", aspectRatio: "9:16", insets: { top: 0.08, right: 0.08, bottom: 0.18, left: 0.08 }, maxLines: 2, maxCharactersPerLine: 16 } } }));
+  });
+
+  it("第二镜修改双屏槽位和衔接后保存，保留已保存的独立正文", async () => {
+    const { user, props, releaseMuteSave } = renderApprovedSoundWorkbench(savedIndependentSecondShotText());
+    const { onSaveShotPreparationDraft: onSave } = props;
+    releaseMuteSave();
+    await screen.findByRole("heading", { name: "分镜工作台" });
+    await user.click(screen.getByRole("button", { name: /^shot-2 B-roll/ }));
+    const shotTwoTabs = screen.getByRole("tablist", { name: "shot-2 镜头工作区" });
+    await user.click(within(shotTwoTabs).getByRole("tab", { name: "2 画面与构图" }));
     await user.selectOptions(screen.getByLabelText("shot-2 当前原片"), "material-shot-workbench-b");
     const layoutSelect = screen.getByLabelText("shot-2 构图布局") as HTMLSelectElement;
     expect(Array.from(layoutSelect.options).map((option) => option.text)).toEqual(["全屏", "左右双屏", "上下双屏", "画中画", "四宫格"]);
@@ -832,11 +875,6 @@ describe("审核台", () => {
     expect(within(advancedSettings).queryByText("构图设置")).toBeNull();
     expect(within(advancedSettings).getByText("槽位与裁切")).toBeTruthy();
     expect(within(advancedSettings).getByText("基础衔接")).toBeTruthy();
-    const captionSettings = shotTwoCard.querySelector(".shot-caption-space-disclosure") as HTMLDetailsElement;
-    expect(captionSettings.open).toBe(false);
-    expect(within(captionSettings).getByText(/标题安全区 · 9:16 · 字幕下方/)).toBeTruthy();
-    await user.click(within(captionSettings).getByText("展开"));
-    expect(captionSettings.open).toBe(true);
     expect(screen.getByLabelText("shot-2 上方片段")).toBeTruthy();
     expect(screen.getByLabelText("shot-2 下方片段")).toBeTruthy();
     expect((screen.getByLabelText("shot-2 上方片段") as HTMLSelectElement).value).toBe("0");
@@ -845,6 +883,30 @@ describe("审核台", () => {
     await user.selectOptions(screen.getByLabelText("shot-2 下方主体焦点"), "1,1");
     expect(Array.from((screen.getByLabelText("shot-2 衔接方式") as HTMLSelectElement).options).map((option) => option.text)).toEqual(["硬切", "基础淡化", "交给 Studio"]);
     await user.selectOptions(screen.getByLabelText("shot-2 衔接方式"), "fade");
+    const compositionPreview = screen.getByRole("figure", { name: "shot-2 构图示意" });
+    expect(within(compositionPreview).getByText("非最终同步预览")).toBeTruthy();
+    expect(within(compositionPreview).getByText("完整 · 焦点 100% / 100%")).toBeTruthy();
+    await user.click(within(shotTwoCard).getByRole("button", { name: "保存草稿" }));
+    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ shotId: "shot-2", materialRevisionId: "material-shot-workbench-b", clipSegments: [{ end_seconds: 1, start_seconds: 0 }], composition: { version: "shot-composition/v1", layout: "2up-vertical", slots: [{ id: "top", clipSegmentIndex: 0, fit: "cover", focalPoint: { x: 0.5, y: 0.5 } }, { id: "bottom", clipSegmentIndex: 0, fit: "contain", focalPoint: { x: 1, y: 1 } }] }, transitionMode: "fade", subtitleText: "修改后的字幕", ttsText: "第二镜字幕", captionContract: { version: "shot-captions/v1", enabled: true, contentMode: "independent", text: "修改后的字幕", cues: [], spatial: { version: "shot-caption-space/v2", anchor: "bottom-center", safeArea: "title-safe", aspectRatio: "9:16", insets: { top: 0.08, right: 0.08, bottom: 0.18, left: 0.08 }, maxLines: 2, maxCharactersPerLine: 16 } } }));
+  });
+
+  it("第二镜修改字幕空间时保留已保存构图，保存刷新后保持所选镜头", async () => {
+    const { user, view, props, releaseMuteSave } = renderApprovedSoundWorkbench({ ...savedIndependentSecondShotText(), selected_material_revision_id: "material-shot-workbench-b", clip_segments: [{ end_seconds: 1, start_seconds: 0 }], composition: { version: "shot-composition/v1", layout: "2up-vertical", slots: [{ id: "top", clipSegmentIndex: 0, fit: "cover", focalPoint: { x: 0.5, y: 0.5 } }, { id: "bottom", clipSegmentIndex: 0, fit: "contain", focalPoint: { x: 1, y: 1 } }] }, transition_mode: "fade" });
+    const { episode: approvedEpisode, reviewPackages: [reviewPackage], onSaveShotPreparationDraft: onSave } = props;
+    releaseMuteSave();
+    await screen.findByRole("heading", { name: "分镜工作台" });
+    await user.click(screen.getByRole("button", { name: /^shot-2 B-roll/ }));
+    const shotTwoTabs = screen.getByRole("tablist", { name: "shot-2 镜头工作区" });
+    await user.click(within(shotTwoTabs).getByRole("tab", { name: "2 画面与构图" }));
+    const shotTwoCard = shotTwoTabs.closest("article") as HTMLElement;
+    const advancedSettings = shotTwoCard.querySelector(".shot-advanced-settings") as HTMLElement;
+    expect((screen.getByLabelText("shot-2 构图布局") as HTMLSelectElement).value).toBe("2up-vertical");
+    expect((screen.getByLabelText("shot-2 衔接方式") as HTMLSelectElement).value).toBe("fade");
+    const captionSettings = shotTwoCard.querySelector(".shot-caption-space-disclosure") as HTMLDetailsElement;
+    expect(captionSettings.open).toBe(false);
+    expect(within(captionSettings).getByText(/标题安全区 · 9:16 · 字幕下方/)).toBeTruthy();
+    await user.click(within(captionSettings).getByText("展开"));
+    expect(captionSettings.open).toBe(true);
     await user.selectOptions(screen.getByLabelText("shot-2 字幕安全区"), "action-safe");
     await user.click(screen.getByRole("button", { name: "shot-2 字幕锚点 上方" }));
     await user.clear(screen.getByLabelText("shot-2 字幕最大行数"));
@@ -854,17 +916,13 @@ describe("审核台", () => {
     expect(within(advancedSettings).queryByText(/已自定义|默认配置/)).toBeNull();
     expect(within(captionSettings).getByText(/动作安全区 · 9:16 · 字幕上方/)).toBeTruthy();
     expect(screen.getByRole("figure", { name: "shot-2 字幕安全框" })).toBeTruthy();
-    const compositionPreview = screen.getByRole("figure", { name: "shot-2 构图示意" });
-    expect(within(compositionPreview).getByText("非最终同步预览")).toBeTruthy();
-    expect(within(compositionPreview).getByText("完整 · 焦点 100% / 100%")).toBeTruthy();
-    await user.click(screen.getByRole("button", { name: "保存草稿" }));
+    await user.click(within(shotTwoCard).getByRole("button", { name: "保存草稿" }));
     expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ audioMode: "tts", captionContract: { version: "shot-captions/v1", enabled: true, contentMode: "independent", text: "修改后的字幕", cues: [], spatial: { version: "shot-caption-space/v2", anchor: "top-center", safeArea: "action-safe", aspectRatio: "9:16", insets: { top: 0.05, right: 0.05, bottom: 0.12, left: 0.05 }, maxLines: 1, maxCharactersPerLine: 12 } }, clipSegments: [{ end_seconds: 1, start_seconds: 0 }], composition: { version: "shot-composition/v1", layout: "2up-vertical", slots: [{ id: "top", clipSegmentIndex: 0, fit: "cover", focalPoint: { x: 0.5, y: 0.5 } }, { id: "bottom", clipSegmentIndex: 0, fit: "contain", focalPoint: { x: 1, y: 1 } }] }, episodeId: approvedEpisode.id, materialRevisionId: "material-shot-workbench-b", reviewPackageId: reviewPackage.id, shotId: "shot-2", subtitleText: "修改后的字幕", subtitlesEnabled: true, transitionMode: "fade", ttsText: "第二镜字幕" }));
-    expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ bgmDuckingLevel: "off" }));
     expect(within(shotTwoTabs).getByRole("tab", { name: "3 同步预览与确认" }).getAttribute("aria-selected")).toBe("true");
     expect(window.location.hash).toBe(`#storyboard-shot-${reviewPackage.id}-shot-2`);
 
     view.unmount();
-    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={{ ...blueprint, policy: { narration: { executor: { adapter: "volcengine_tts", model: "seed-tts-2.0", provider: "volcengine_tts" }, voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 1.35 } } } }} episode={approvedEpisode} isTransitionPending={false} materialRevisions={materials} onSaveEpisodeTtsSettings={onSaveEpisodeTtsSettings} onSaveShotPreparationDraft={onSave} onTransition={vi.fn()} reviewPackages={[reviewPackage]} shotPreparationDrafts={drafts} tasks={[]} transitions={[]} />);
+    render(<EpisodeDetail {...props} audioTracks={[]} onSaveStoryboardAudioSelection={undefined} />);
     await screen.findByRole("heading", { name: "分镜工作台" });
     expect(screen.getByRole("button", { name: /^shot-1 A-roll/ }).getAttribute("aria-expanded")).toBe("false");
     expect(screen.getByRole("button", { name: /^shot-2 B-roll/ }).getAttribute("aria-expanded")).toBe("true");
@@ -945,7 +1003,7 @@ describe("审核台", () => {
     expect(await screen.findByText("本地模型不可用")).toBeTruthy();
   });
 
-  it("审核阶段可返回可编辑镜头工作台，且保留当前 QC 证据", async () => {
+  function renderQcReturnWorkbench() {
     const user = userEvent.setup();
     const qcEpisode: Episode = { ...reviewEpisode, id: "episode-return-workbench", stage: "qc_review", tts_language_code: "zh-CN", tts_speaking_rate: 1.2, tts_voice: "voice-a" };
     const storyboardArtifact: Artifact = { ...previewArtifact, artifact_type: "storyboard", episode_id: qcEpisode.id, id: "artifact-return-storyboard", relative_path: "episodes/episode-return-workbench/storyboard.json" };
@@ -973,8 +1031,24 @@ describe("审核台", () => {
       return Promise.resolve(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜口播", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } }));
     }));
 
-    const view = render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact, qcArtifact, syncProxy, syncProject]} blueprint={blueprint} episode={qcEpisode} isTransitionPending={false} materialRevisions={[material]} onGenerateShotReviewVideo={onGenerateShotReviewVideo} onGenerateShotSyncPreview={onGenerateShotSyncPreview} onOpenStudio={onOpenStudio} onTransition={vi.fn()} reviewPackages={[storyboardPackage, qcPackage]} shotPreparationDrafts={[draft]} tasks={[syncTask]} transitions={[]} />);
+    const props = { ...materialInputProps, artifacts: [storyboardArtifact, qcArtifact, syncProxy, syncProject], blueprint, episode: qcEpisode, isTransitionPending: false, materialRevisions: [material], onGenerateShotReviewVideo, onGenerateShotSyncPreview, onOpenStudio, onTransition: vi.fn(), reviewPackages: [storyboardPackage, qcPackage], shotPreparationDrafts: [draft], tasks: [syncTask], transitions: [] };
+    const view = render(<EpisodeDetail {...props} />);
+    return { user, view, props };
+  }
 
+  async function acceptReturnedStudioWorkspace(user: ReturnType<typeof userEvent.setup>) {
+    await user.click(screen.getByRole("button", { name: "返回镜头工作台修改" }));
+    await screen.findByRole("region", { name: "分镜工作台" });
+    await user.click(within(screen.getByRole("region", { name: "OpenChatCut 审核视频" })).getByRole("button", { name: "在 OpenChatCut 中编辑" }));
+    await user.click(screen.getByRole("button", { name: "取消，保留工作版本" }));
+    await user.click(within(screen.getByRole("region", { name: "OpenChatCut 审核视频" })).getByRole("button", { name: "在 OpenChatCut 中编辑" }));
+    await user.click(screen.getByRole("button", { name: "覆盖并重新生成" }));
+    await screen.findByRole("button", { name: "生成审核视频" });
+  }
+
+  it("审核阶段返回镜头工作台时保留 QC 证据，并显式确认覆盖 Studio 工程", async () => {
+    const { user, props } = renderQcReturnWorkbench();
+    const { episode: qcEpisode, artifacts: [storyboardArtifact], onOpenStudio, onGenerateShotReviewVideo } = props;
     expect(screen.getByRole("heading", { name: /OpenChatCut 审核渲染/ })).toBeTruthy();
     const technicalEvidence = screen.getByText("工程与 QC 技术信息").closest("details");
     expect(technicalEvidence?.hasAttribute("open")).toBe(false);
@@ -997,6 +1071,14 @@ describe("审核台", () => {
     await user.click(screen.getByRole("button", { name: "覆盖并重新生成" }));
     await waitFor(() => expect(onOpenStudio).toHaveBeenLastCalledWith(qcEpisode.id, storyboardArtifact.relative_path, expect.any(Object), true));
     expect(screen.getByRole("button", { name: "生成审核视频" })).toBeTruthy();
+    expect(onOpenStudio).toHaveBeenCalledTimes(3);
+    expect(onGenerateShotReviewVideo).not.toHaveBeenCalled();
+  });
+
+  it("审核镜头可核对同步预览要求，修改字幕后旧确认与代理立即失效", async () => {
+    const { user, props } = renderQcReturnWorkbench();
+    const { episode: qcEpisode, artifacts: [, , , syncProject], reviewPackages: [storyboardPackage], onGenerateShotSyncPreview, onOpenStudio, onGenerateShotReviewVideo } = props;
+    await acceptReturnedStudioWorkspace(user);
     await user.click(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "3 同步预览与确认" }));
     expect(await screen.findByLabelText("shot_preview_proxy 产物预览")).toBeTruthy();
     const previewHeader = screen.getByRole("heading", { name: "同步预览与确认" }).closest("header");
@@ -1046,24 +1128,32 @@ describe("审核台", () => {
     expect(onOpenStudio).toHaveBeenCalledTimes(3);
     expect(onGenerateShotReviewVideo).not.toHaveBeenCalled();
 
+  });
+
+  it("预览失败、缺少原片或旧合同阻止确认，生产就绪时仍可返回编辑", async () => {
+    const { user, view, props } = renderQcReturnWorkbench();
+    const { episode: qcEpisode, artifacts: [storyboardArtifact], reviewPackages: [storyboardPackage], shotPreparationDrafts: [draft] } = props;
+    await acceptReturnedStudioWorkspace(user);
+    expect(screen.getByRole("button", { name: "生成审核视频" })).toBeTruthy();
+    await user.click(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "3 同步预览与确认" }));
     const failedDraft = { ...draft, preview_error: "Owner action is required before retrying this task.", preview_status: "failed" as const, updated_at: "2026-09-09T00:01:30.000Z" };
-    view.rerender(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact, qcArtifact, syncProxy, syncProject]} blueprint={blueprint} episode={qcEpisode} isTransitionPending={false} materialRevisions={[material]} onGenerateShotReviewVideo={onGenerateShotReviewVideo} onGenerateShotSyncPreview={onGenerateShotSyncPreview} onOpenStudio={onOpenStudio} onTransition={vi.fn()} reviewPackages={[storyboardPackage, qcPackage]} shotPreparationDrafts={[failedDraft]} tasks={[syncTask]} transitions={[]} />);
+    view.rerender(<EpisodeDetail {...props} shotPreparationDrafts={[failedDraft]} />);
     expect(await screen.findByText(/同步预览生成失败，需要人工处理后才能重试/)).toBeTruthy();
     expect(screen.queryByText(/Owner action is required/)).toBeNull();
 
     const unreadyDraft = { ...draft, selected_material_revision_id: null, updated_at: "2026-09-09T00:02:00.000Z" };
-    view.rerender(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact, qcArtifact, syncProxy, syncProject]} blueprint={blueprint} episode={qcEpisode} isTransitionPending={false} materialRevisions={[material]} onGenerateShotReviewVideo={onGenerateShotReviewVideo} onOpenStudio={onOpenStudio} onTransition={vi.fn()} reviewPackages={[storyboardPackage, qcPackage]} shotPreparationDrafts={[unreadyDraft]} tasks={[syncTask]} transitions={[]} />);
+    view.rerender(<EpisodeDetail {...props} shotPreparationDrafts={[unreadyDraft]} onGenerateShotSyncPreview={undefined} />);
     await waitFor(() => expect(screen.queryByRole("button", { name: "生成审核视频" })).toBeNull());
 
     const legacyDraft = { ...draft, preparation_contract_status: "needs_upgrade" as const, updated_at: "2026-09-09T00:03:00.000Z" };
-    view.rerender(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact, qcArtifact, syncProxy, syncProject]} blueprint={blueprint} episode={qcEpisode} isTransitionPending={false} materialRevisions={[material]} onGenerateShotReviewVideo={onGenerateShotReviewVideo} onOpenStudio={onOpenStudio} onTransition={vi.fn()} reviewPackages={[storyboardPackage, qcPackage]} shotPreparationDrafts={[legacyDraft]} tasks={[syncTask]} transitions={[]} />);
+    view.rerender(<EpisodeDetail {...props} shotPreparationDrafts={[legacyDraft]} onGenerateShotSyncPreview={undefined} />);
     expect(await screen.findByText(/这是旧版镜头记录/)).toBeTruthy();
     expect(screen.getByText("已确认 0 / 1 个镜头")).toBeTruthy();
     expect(screen.queryByRole("button", { name: "Owner 已确认" })).toBeNull();
 
     view.unmount();
     const productionEpisode = { ...qcEpisode, stage: "production_ready" as const };
-    render(<EpisodeDetail {...materialInputProps} artifacts={[storyboardArtifact]} blueprint={blueprint} episode={productionEpisode} isTransitionPending={false} materialRevisions={[material]} onOpenStudio={onOpenStudio} onTransition={vi.fn()} reviewPackages={[storyboardPackage]} shotPreparationDrafts={[draft]} tasks={[]} transitions={[]} />);
+    render(<EpisodeDetail {...props} artifacts={[storyboardArtifact]} episode={productionEpisode} onGenerateShotReviewVideo={undefined} onGenerateShotSyncPreview={undefined} reviewPackages={[storyboardPackage]} tasks={[]} />);
     await user.click(screen.getByRole("button", { name: "返回镜头工作台修改" }));
     await screen.findByRole("region", { name: "分镜工作台" });
     expect((screen.getByLabelText("shot-1 字幕正文") as HTMLTextAreaElement).disabled).toBe(false);
