@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "realDefaultNpmStartStopAndRestart": true,
+  "samePrivateDeployment": true,
+  "readyQueuePersistedWithoutLeaseEdit": true,
+  "noPostRestartWakeOrCommandForReadyTask": true,
+  "originalTaskCompletedByRealNativeCli": true,
+  "exactlyOneRun": true,
+  "ownerLoginAndEpisodeRead": true,
+  "mediaSha256": "26d641ec37b467b1777c1f91260db709be20fb96420594d638b7d1108b1368ba",
+  "restoredReviewApproved": true,
+  "newStoryboardCompleted": true,
+  "supabaseSdkAndOldEnvGuardActive": true,
+  "providerExecution": "controlled offline synthetic planner; not online generation",
+  "onlineRequests": 0
+}

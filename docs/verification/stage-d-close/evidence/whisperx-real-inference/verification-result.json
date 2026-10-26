@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "scope": "Specified Chinese forced-alignment model in the prepared isolated environment only",
+  "preparationDownloadsAllowed": true,
+  "downloadsSealedBeforeInference": true,
+  "inferencePythonAllNetworkDeniedByOS": true,
+  "noOnlineProviderCalls": true,
+  "realModelClass": "Wav2Vec2ForCTC",
+  "parameters": 319029295,
+  "normalOwnerHttpQueueCliModelArtifactPassed": true,
+  "realLateResultFencePassed": true,
+  "negativeSilenceNeedsReview": true,
+  "missingAndWrongModelRejected": true,
+  "browserPlaybackSeekAndVisibleCaptionPassed": true,
+  "fullDefaultRegression": {
+    "files": 102,
+    "tests": 766,
+    "defaultTimeoutMs": 5000,
+    "passed": true
+  },
+  "typecheckPassed": true,
+  "coldFirstProbeTimedOut": true,
+  "freshHostColdStartupGateClosed": false,
+  "arbitraryTranscriptMismatchDetectionProven": false,
+  "historicalFailuresPreserved": true,
+  "otherUnverifiedGatesClosed": false,
+  "sqlConsistencySuggestionDeferred": true,
+  "commit": false,
+  "push": false,
+  "EF": false
+}

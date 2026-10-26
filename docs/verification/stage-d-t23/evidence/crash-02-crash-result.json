@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "realSigkill": true,
+  "notificationOutcome": "reserved",
+  "queuedTaskBeforeCrash": {
+    "id": "82e11461-24ef-4303-b30e-1b37ee4029c1",
+    "status": "ready",
+    "attempt": 0
+  },
+  "capacityLockWasControlledTestOnly": true
+}

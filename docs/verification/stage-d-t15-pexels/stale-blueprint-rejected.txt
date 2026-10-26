@@ -1,0 +1,192 @@
+- generic [ref=e1] clickable [onclick]
+  - main
+    - sectionheader
+      - StaticText "Loop Control · 本地"
+      - heading "内容工作台" [level=1, ref=e2]
+    - alert
+      - StaticText "连接版本未绑定、已变化或已撤销。"
+    - navigation
+      - button "账号配置" [ref=e3]
+      - button "生产单目录" [ref=e4]
+      - button "新建账号" [ref=e5]
+      - button "刷新" [ref=e6]
+      - button "退出登录" [ref=e7]
+    - sectionheader
+      - LabelText
+        - StaticText "当前账号"
+        - combobox "当前账号" [expanded=false, ref=e11]: T15 Pexels live acceptance
+          - MenuListPopup
+            - group "使用中"
+              - option "T15 Pexels live acceptance" [selected, ref=e25]
+      - button "账号操作" [expanded=false, ref=e12]
+        - StaticText "…"
+    - tablist "账号设置导航"
+      - tab "蓝图" [selected, ref=e8]
+      - tab "系列" [ref=e9]
+    - tabpanel
+      - navigation "蓝图配置分区" [ref=e10]
+        - link "账号基础规则" [ref=e13]
+        - link "生产能力" [ref=e14]
+        - link "分镜规划" [ref=e15]
+      - main
+        - generic
+          - paragraph
+            - StaticText "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。"
+          - group "账号定位 账号定位说明"
+            - Legend
+              - StaticText "账号定位"
+              - generic "账号定位说明" [ref=e26] focusable [tabindex]
+                - tooltip "账号级长期创作基线，会进入视觉准备与分镜生成的 Prompt 上下文。当前主脚本由 Owner 提供，因此不会依据此字段自动生成脚本。只填写跨系列长期稳定的受众、主题和表达方向。"
+            - LabelText
+              - textbox "账号定位" [ref=e27]: T15 Pexels isolated acceptance
+                - StaticText "T15 Pexels isolated acceptance"
+            - paragraph
+              - StaticText "描述账号面向谁、持续讲什么以及希望保持的表达方向。"
+          - group "本地资产与审批"
+            - Legend
+              - StaticText "本地资产与审批"
+            - LabelText
+              - StaticText "资产目录"
+              - generic "资产目录说明" [ref=e28] focusable [tabindex]
+                - tooltip "建议填写一个稳定的账号目录，例如 /Volumes/素材盘/账号目录。"
+              - textbox "资产目录" [ref=e29]: /Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/media/t15-pexels-e309082b-a993-4e00-a0c9-22fadae404ab
+                - StaticText "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/media/t15-pexels-e309082b-a993-4e00-a0c9-22fadae404ab"
+              - button "选择文件夹" [ref=e30]
+              - button "打开文件夹" [ref=e31]
+            - status
+              - StaticText "资产目录已填写；保存后仍需 Worker 验证目录可读写。"
+            - StaticText "审批关卡"
+            - generic "审批关卡说明" [ref=e20] focusable [tabindex]
+              - tooltip "开启后，新产物完成时会停下来等待 Owner；关闭后，校验通过便自动推进。素材来源和能力开关不会改变这里的设置。"
+            - LabelText [ref=e21] clickable [cursor:pointer]
+              - checkbox "脚本审核 脚本审核说明" [checked=true, ref=e32]
+              - StaticText "脚本审核"
+              - generic "脚本审核说明" [ref=e33] clickable [cursor:pointer, tabindex]
+                - tooltip "AI 生成或修改脚本后暂停，等待 Owner 审核。自行上传的脚本仍需确认为主脚本，但不会因此触发 AI 脚本审核。"
+            - LabelText [ref=e22] clickable [cursor:pointer]
+              - checkbox "视觉审核 视觉审核说明" [checked=true, ref=e34]
+              - StaticText "视觉审核"
+              - generic "视觉审核说明" [ref=e35] clickable [cursor:pointer, tabindex]
+                - tooltip "产生新的视觉方案或视觉素材后暂停。素材来自上传还是外部 API，不改变是否需要审核。"
+            - LabelText [ref=e23] clickable [cursor:pointer]
+              - checkbox "分镜审核 分镜审核说明" [checked=true, ref=e36]
+              - StaticText "分镜审核"
+              - generic "分镜审核说明" [ref=e37] clickable [cursor:pointer, tabindex]
+                - tooltip "生成或修改分镜 JSON 后暂停，等待 Owner 审核镜头结构与制作要求。"
+            - LabelText [ref=e24] clickable [cursor:pointer]
+              - checkbox "QC 审核 QC 审核说明" [checked=true, ref=e38]
+              - StaticText "QC 审核"
+              - generic "QC 审核说明" [ref=e39] clickable [cursor:pointer, tabindex]
+                - tooltip "审核视频生成并通过自动校验后暂停。关闭后仅在没有阻塞问题时自动继续。"
+          - group "生产能力"
+            - Legend
+              - StaticText "生产能力"
+            - paragraph
+              - StaticText "在此启用能力并比较当前路径与配置状态；点击“配置”只打开该能力。配置未完成时，生产前检查会阻止创建生产单。"
+            - table "生产能力配置矩阵"
+              - row
+                - columnheader "能力" [ref=e43]
+                - columnheader "启用" [ref=e44]
+                - columnheader "执行路径" [ref=e45]
+                - columnheader "状态" [ref=e46]
+                - columnheader "操作" [ref=e47]
+              - row
+                - cell "图片生成" [ref=e48]
+                - cell "启用图片生成" [ref=e49]
+                  - LabelText [ref=e71] clickable [cursor:pointer]
+                    - checkbox "启用图片生成" [checked=false, ref=e77]
+                - cell "—" [ref=e50]
+                - cell "未启用" [ref=e51]
+                - cell
+              - row
+                - cell "A-roll" [ref=e52]
+                - cell "启用A-roll" [ref=e53]
+                  - LabelText [ref=e72] clickable [cursor:pointer]
+                    - checkbox "启用A-roll" [checked=false, ref=e78]
+                - cell "—" [ref=e54]
+                - cell "未启用" [ref=e55]
+                - cell
+              - row
+                - cell "B-roll" [ref=e56]
+                - cell "启用B-roll" [ref=e57]
+                  - LabelText [ref=e73] clickable [cursor:pointer]
+                    - checkbox "启用B-roll" [checked=true, ref=e79]
+                - cell "外部 · Pexels" [ref=e58]
+                - cell "已配置" [ref=e59]
+                - cell "配置B-roll" [ref=e60]
+                  - button "配置B-roll" [ref=e74]
+                    - StaticText "配置"
+              - row
+                - cell "旁白" [ref=e61]
+                - cell "启用旁白" [ref=e62]
+                  - LabelText [ref=e75] clickable [cursor:pointer]
+                    - checkbox "启用旁白" [checked=false, ref=e80]
+                - cell "—" [ref=e63]
+                - cell "未启用" [ref=e64]
+                - cell
+              - row
+                - cell "配乐 / 音效" [ref=e65]
+                - cell "启用配乐 / 音效" [ref=e66]
+                  - LabelText [ref=e76] clickable [cursor:pointer]
+                    - checkbox "启用配乐 / 音效" [checked=false, ref=e81]
+                - cell "—" [ref=e67]
+                - cell "未启用" [ref=e68]
+                - cell
+            - paragraph
+              - StaticText "Provider、Adapter、连接、模型、预设和调度参数只作用于之后新建的 Episode。"
+          - group "分镜规划"
+            - Legend
+              - StaticText "分镜规划"
+            - article
+              - strong
+                - StaticText "分镜规划"
+              - StaticText "新建 Episode 时冻结此选择"
+              - DescriptionList
+                - term "运行模型"
+                - definition
+                  - StaticText "codex · gpt-5.6-codex"
+                - term "提示词 Harness"
+                - definition
+                  - StaticText "storyboard-planning-v2"
+              - button "修改分镜规划配置" [ref=e69]
+                - StaticText "配置"
+          - paragraph
+            - StaticText "蓝图未保存，请处理错误后重试。"
+          - button "取消编辑" [ref=e16]
+          - button "保存并检查" [ref=e17]
+          - dialog "确认保存蓝图"
+            - sectionheader
+              - heading "确认保存蓝图" [level=2, ref=e70]
+            - region "本次保存影响" [ref=e40]
+              - strong
+                - StaticText "本次保存将影响"
+              - paragraph
+                - StaticText "之后新建的生产单会使用当前账号定位、已开启的 1 项媒体能力和分镜配置；已有生产单与系列规则保持不变。保存后只校验已开启的能力。"
+            - button "取消" [ref=e41]
+            - button "确认保存并检查" [ref=e42]
+      - complementary "账号默认配置检查"
+        - generic
+          - StaticText "账号默认配置检查"
+          - heading "检查暂不可用" [level=2, ref=e18]
+          - paragraph
+            - StaticText "只检查当前账号蓝图，不包含具体系列；新建生产单选择系列后会再次检查并冻结配置。"
+          - paragraph
+            - StaticText "连接以逐版本验证为准；本地生产前检查尚未接管。"
+        - generic
+          - heading "配置范围" [level=3, ref=e19]
+          - DescriptionList
+            - term "生效对象"
+            - definition
+              - StaticText "新生产单"
+            - term "已有生产单"
+            - definition
+              - StaticText "保持冻结配置"
+            - term "当前开启"
+            - definition
+              - StaticText "1 项能力"
+            - term "本机依赖"
+            - definition
+              - StaticText "待检查"
+    - group
+      - DisclosureTriangle "蓝图连接恢复与版本维护" [expanded=false]
+        - StaticText "蓝图连接恢复与版本维护"

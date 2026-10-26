@@ -1,0 +1,10 @@
+{
+  "initialAttemptPassed": false,
+  "nestedSandboxExitCode": 71,
+  "cause": "macOS sandbox_apply Operation not permitted; Python never started",
+  "blockedTaskAndTimeoutRetained": true,
+  "modelPhase": "Node loopback guard plus standalone Python OS no-network sandbox",
+  "renderBrowserPhase": "Separate loopback OS policy after all model calls complete",
+  "outsideNetworkNeverEnabled": true,
+  "productionCodeUnchanged": true
+}

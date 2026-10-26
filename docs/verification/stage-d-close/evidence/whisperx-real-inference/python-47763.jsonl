@@ -1,0 +1,6 @@
+{"event": "installed", "pid": 47763, "at": 1792903152.48646, "python": "3.11.15", "osNetworkSandbox": true, "hfOffline": true}
+{"event": "load-align-model-start", "pid": 47763, "at": 1792903153.375303, "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn", "cacheOnly": true, "device": "cpu"}
+{"event": "load-align-model-end", "pid": 47763, "at": 1792903157.463994, "seconds": 4.088340250018518, "modelClass": "Wav2Vec2ForCTC", "parameters": 319029295, "language": "zh", "pipelineType": "huggingface", "networkDenied": 0}
+{"event": "align-start", "pid": 47763, "at": 1792903157.4641018, "returnCharAlignments": true}
+{"event": "align-end", "pid": 47763, "at": 1792903157.7757509, "seconds": 0.31085591594455764, "chars": 9, "timedChars": 9, "minScore": 0.911, "meanScore": 0.9814444444444445, "rawSha256": "93e4dd58496c0c9e723d9a2f1703f6c5324f069355841ac468d0b108425a304e", "networkDenied": 0}
+{"event": "controlled-return-gate", "pid": 47763, "at": 1792903157.7758238, "noResultSubstitution": true}

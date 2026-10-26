@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "mode": "live",
+  "outcome": "invalid",
+  "ready": false,
+  "requestCountDelta": 1,
+  "cumulativeUsed": 6,
+  "providerHttpStatus": 403
+}

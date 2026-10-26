@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "realOwnerHttp55188": true,
+  "samePreservedOwnerNewPassword": true,
+  "reinitializingCredentialsRefused": true,
+  "episodeReadableAfterSecondRestore": true,
+  "multipleLogicalRootMappingToThirdPhysicalRoot": true,
+  "restoredVideoHttpSha256": "20a7d9c2a03a40609c67234665d80d1466c9ada76e6a0655700d4fce42ef19fb",
+  "allQualificationsFalse": true,
+  "originalMediaGuardActive": true,
+  "noWorkerOrOnlineRequests": true
+}

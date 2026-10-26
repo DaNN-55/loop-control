@@ -1,0 +1,8 @@
+{
+  "initialStartupPassed": false,
+  "reason": "New stateDirectory retained original intake network binding; strict deployment validation correctly rejected mismatched private budget directory",
+  "minimalFix": "New UI-only deployment omits optional external connections; ports default disabled. Original intake/online policies and ledgers untouched.",
+  "productValidationWeakened": false,
+  "providerRequests": 0,
+  "originalFailureLogRetained": true
+}

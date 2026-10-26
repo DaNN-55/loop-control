@@ -1,0 +1,12 @@
+import {readFileSync} from 'node:fs';
+import {join,relative} from 'node:path';
+import {randomUUID,createHash} from 'node:crypto';
+import assert from 'node:assert/strict';
+import {root,appPort,sql,writePrivateFile} from './environment.mjs';
+const fixture=JSON.parse(readFileSync(join(root,'state/t14-http.json'))),owner=JSON.parse(readFileSync(join(root,'state/t13-owner.json'))),base=`http://127.0.0.1:${appPort}`;
+const login=await fetch(base+'/api/local/login',{method:'POST',headers:{Origin:base,'Content-Type':'application/json'},body:JSON.stringify({email:owner.email,password:owner.password})});assert.equal(login.status,200);const cookie=login.headers.get('set-cookie').split(';')[0];
+const asset=sql(`select policy->>'asset_root' from public.account_blueprint_versions where id='${fixture.snapshotBlueprintId}'`),id=randomUUID(),path=join(asset,`t14-media-${id}.txt`),bytes='T14 local root file fixture',hash=createHash('sha256').update(bytes).digest('hex');
+assert.ok(!relative(join(root,'media'),path).startsWith('..'));writePrivateFile(path,bytes,{exclusive:true});
+sql(`insert into public.artifacts(id,episode_id,artifact_type,relative_path,sha256,file_size) values('${id}','${fixture.fixtureEpisode}','test','t14-media-${id}.txt','${hash}',${Buffer.byteLength(bytes)})`);
+const file=await fetch(base+'/api/local/artifacts/'+id,{headers:{Cookie:cookie}});assert.equal(file.status,200);assert.equal(await file.text(),bytes);
+const result={ticket:120,newLocalBlueprintRootRead:true,artifactId:id,sha256:hash};writePrivateFile(join(root,'state/t14-local-media.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));

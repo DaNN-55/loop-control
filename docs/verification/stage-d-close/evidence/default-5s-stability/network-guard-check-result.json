@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "remoteArgumentFormsRejected": 3,
+  "nativeConnectInvocations": 0,
+  "actualNetworkRequests": 0,
+  "noDnsOrSocketsUsed": true
+}

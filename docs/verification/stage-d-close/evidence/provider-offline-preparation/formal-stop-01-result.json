@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "status": 0,
+  "command": [
+    "npm",
+    "run",
+    "stop",
+    "--",
+    "--deployment",
+    "WORKTREE/.loop-control/stage-d/state/t24-provider-prep-20261025/deployment.json"
+  ],
+  "modelPhase": false,
+  "osLoopbackTree": true,
+  "noDeploymentArgument": false,
+  "started": "2026-10-25T07:26:13.774Z"
+}

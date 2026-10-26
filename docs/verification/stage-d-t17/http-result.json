@@ -1,0 +1,154 @@
+{
+  "at": "2026-10-24T05:22:27.363Z",
+  "realHttp": true,
+  "realNativePostgres": true,
+  "realWorkerCli": true,
+  "planner": "controlled offline executable",
+  "providerRequests": 0,
+  "normalEpisodeId": "b1f12861-7dcf-49d3-a708-4639574eb81c",
+  "normalPackageId": "bbf422f1-e210-4aee-9357-b7d79f621c87",
+  "normalArtifact": {
+    "artifactId": "f53a4f61-94f5-4f09-94f4-3f216114408a",
+    "path": "episodes/b1f12861-7dcf-49d3-a708-4639574eb81c/storyboard-v1.json",
+    "sha256": "0aebf07d530ddfb6cc744111eb588a2aa8be938e88390cc7192b1b2b5fdc7311",
+    "bytes": 2080
+  },
+  "revisionPackageId": "e5ece390-cb40-462b-bb38-83d1e0e1695b",
+  "revisionArtifact": {
+    "artifactId": "c87a43d2-6194-48a3-a957-8eae5e9dfc73",
+    "path": "episodes/b1f12861-7dcf-49d3-a708-4639574eb81c/storyboard-revision-2.json",
+    "sha256": "e69bd175bab236e0c26ef2876440c0ac69e8aa91207b0499e2cad66140f3ba7f",
+    "bytes": 2080
+  },
+  "deterministicRevisionTaskId": "e2df7810-cde6-4502-b1ee-0106119ebdf9",
+  "normalStage": "storyboard_approved",
+  "oldArtifactBytesAndContextPreserved": true,
+  "currentBlueprintAndSeriesEditsDoNotChangeFrozenContext": true,
+  "oldAnnotationsAndApprovalsRetained": true,
+  "createPlan3OneTask": true,
+  "annotation2OneRow": true,
+  "approval2OneDecision": true,
+  "structureRevision2OneTask": true,
+  "stalePackage409": true,
+  "invalidShotAndOperation400": true,
+  "feedbackEpisodeId": "fe16d614-416f-42c4-a6ad-500243e9f52a",
+  "feedbackOldPackageId": "914de993-ea3c-4b55-a757-7a2d0257e8dd",
+  "feedbackNewPackageId": "db77acb2-9032-4009-b3da-5b2da18271d1",
+  "feedbackAndAnnotationsFrozen": true,
+  "noLaterTasks": true,
+  "calls": [
+    {
+      "command": "create",
+      "status": 200
+    },
+    {
+      "command": "planStoryboard",
+      "status": 409
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "start",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "planStoryboard",
+      "status": 200
+    },
+    {
+      "command": "planStoryboard",
+      "status": 200
+    },
+    {
+      "command": "planStoryboard",
+      "status": 200
+    },
+    {
+      "command": "annotateStoryboard",
+      "status": 200
+    },
+    {
+      "command": "annotateStoryboard",
+      "status": 200
+    },
+    {
+      "command": "annotateStoryboard",
+      "status": 400
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "requestStructureRevision",
+      "status": 400
+    },
+    {
+      "command": "requestStructureRevision",
+      "status": 200
+    },
+    {
+      "command": "requestStructureRevision",
+      "status": 200
+    },
+    {
+      "command": "requestStructureRevision",
+      "status": 409
+    },
+    {
+      "command": "annotateStoryboard",
+      "status": 409
+    },
+    {
+      "command": "create",
+      "status": 200
+    },
+    {
+      "command": "planStoryboard",
+      "status": 409
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "start",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "planStoryboard",
+      "status": 200
+    },
+    {
+      "command": "annotateStoryboard",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    }
+  ],
+  "passed": true
+}

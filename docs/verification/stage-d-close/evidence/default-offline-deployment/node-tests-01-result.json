@@ -1,0 +1,13 @@
+{
+  "started": "2026-10-25T05:26:41.711Z",
+  "finished": "2026-10-25T05:26:41.790Z",
+  "command": [
+    "node",
+    "--test",
+    "n8n/import-workflows.test.mjs"
+  ],
+  "status": 0,
+  "passed": true,
+  "defaultTestTimeoutMs": 5000,
+  "timeoutOverride": false
+}

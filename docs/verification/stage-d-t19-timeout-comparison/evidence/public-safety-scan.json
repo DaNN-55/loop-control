@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "filesCheckedBeforeSelf": 30,
+  "originalEnvironmentCredentialMatches": 0,
+  "privateEnvironmentAndArchivesExcluded": true,
+  "noHar": true,
+  "noProductionOrOnlineAction": true
+}

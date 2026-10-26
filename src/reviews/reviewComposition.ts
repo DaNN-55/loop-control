@@ -1,4 +1,4 @@
-import { defaultAllowedDurationFrames, defaultDurationFrameRate } from "../worker/durationDecision";
+import { defaultAllowedDurationFrames, defaultDurationFrameRate } from "../worker/durationDecision.js";
 
 export interface ReviewRenderComposition {
   aspectRatio: "9:16" | "16:9" | "1:1";

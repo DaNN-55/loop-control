@@ -1,0 +1,51 @@
+{
+  "passed": false,
+  "scope": "Pexels remaining and Volcengine fixed samples accepted; Google403 retained; full six-adapter acceptance not closed",
+  "perProviderStopRuleSatisfied": true,
+  "pexelsFixedSampleAccepted": true,
+  "volcengineFixedSampleAccepted": true,
+  "googleAccepted": false,
+  "googleProviderHttpStatus": 403,
+  "freesoundPriorHttpStatus401Preserved": true,
+  "skipped": [
+    "freesound",
+    "cloudflare",
+    "openai"
+  ],
+  "priorRequests": 2,
+  "newRequests": 7,
+  "cumulativeRequests": 9,
+  "maxCumulativeRequests": 17,
+  "cumulativeCostReservedCny": 0.03,
+  "feeAuthorizationCny": 2,
+  "actualBillQueried": false,
+  "oldLedgerReset": false,
+  "originalGlobalStopLedgerUnchanged": true,
+  "providerLedgersSealed": true,
+  "realNativeWorkerUsed": true,
+  "fixedLocalPlannerOnly": true,
+  "realProviderRequestsByFamily": {
+    "pexels": 4,
+    "freesound": 1,
+    "google_tts": 1,
+    "volcengine_tts": 3,
+    "cloudflare": 0,
+    "openai": 0
+  },
+  "rebindClearAndLiveReverify": {
+    "pexels": true,
+    "volcengine_tts": true
+  },
+  "realOldLeaseLateWriteRejected": {
+    "pexels": true,
+    "volcengine_tts": true
+  },
+  "intakeProfileRestoredClosed": true,
+  "realCredentialsRetained": true,
+  "historicalFailuresPreserved": true,
+  "otherUnverifiedGatesClosed": false,
+  "sqlConsistencySuggestionDeferred": true,
+  "commit": false,
+  "push": false,
+  "EF": false
+}

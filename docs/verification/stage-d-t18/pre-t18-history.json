@@ -1,0 +1,197 @@
+{
+  "at": "2026-10-24T07:31:02.921Z",
+  "originalRows": 21836,
+  "tables": {
+    "account_blueprint_versions": {
+      "original": 36,
+      "current": 38,
+      "preserved": true
+    },
+    "accounts": {
+      "original": 25,
+      "current": 27,
+      "preserved": true
+    },
+    "account_memberships": {
+      "original": 19,
+      "current": 21,
+      "preserved": true
+    },
+    "series": {
+      "original": 3,
+      "current": 3,
+      "preserved": true
+    },
+    "series_versions": {
+      "original": 13,
+      "current": 13,
+      "preserved": true
+    },
+    "episodes": {
+      "original": 6213,
+      "current": 6216,
+      "preserved": true
+    },
+    "tasks": {
+      "original": 5265,
+      "current": 5287,
+      "preserved": true
+    },
+    "artifacts": {
+      "original": 221,
+      "current": 233,
+      "preserved": true
+    },
+    "task_runs": {
+      "original": 256,
+      "current": 272,
+      "preserved": true
+    },
+    "review_packages": {
+      "original": 45,
+      "current": 51,
+      "preserved": true
+    },
+    "approvals": {
+      "original": 31,
+      "current": 37,
+      "preserved": true
+    },
+    "asset_locks": {
+      "original": 0,
+      "current": 0,
+      "preserved": true
+    },
+    "production_material_revisions": {
+      "original": 59,
+      "current": 65,
+      "preserved": true
+    },
+    "audio_tracks": {
+      "original": 0,
+      "current": 6,
+      "preserved": true
+    },
+    "audio_track_annotations": {
+      "original": 0,
+      "current": 0,
+      "preserved": true
+    },
+    "audit_events": {
+      "original": 2542,
+      "current": 2626,
+      "preserved": true
+    },
+    "episode_read_revisions": {
+      "original": 4420,
+      "current": 4515,
+      "preserved": true
+    },
+    "external_connections": {
+      "original": 12,
+      "current": 14,
+      "preserved": true
+    },
+    "external_connection_versions": {
+      "original": 32,
+      "current": 34,
+      "preserved": true
+    },
+    "external_connection_verifications": {
+      "original": 54,
+      "current": 56,
+      "preserved": true
+    },
+    "material_revision_approvals": {
+      "original": 59,
+      "current": 65,
+      "preserved": true
+    },
+    "notification_delivery_events": {
+      "original": 2038,
+      "current": 2044,
+      "preserved": true
+    },
+    "notification_delivery_state": {
+      "original": 1,
+      "current": 1,
+      "preserved": true
+    },
+    "pre_render_review_member_decisions": {
+      "original": 0,
+      "current": 0,
+      "preserved": true
+    },
+    "pre_render_review_members": {
+      "original": 0,
+      "current": 0,
+      "preserved": true
+    },
+    "production_dependencies": {
+      "original": 102,
+      "current": 124,
+      "preserved": true
+    },
+    "production_invalidations": {
+      "original": 0,
+      "current": 0,
+      "preserved": true
+    },
+    "prompt_versions": {
+      "original": 77,
+      "current": 83,
+      "preserved": true
+    },
+    "qc_review_issues": {
+      "original": 0,
+      "current": 0,
+      "preserved": true
+    },
+    "review_annotations": {
+      "original": 5,
+      "current": 5,
+      "preserved": true
+    },
+    "review_render_composition_revisions": {
+      "original": 0,
+      "current": 0,
+      "preserved": true
+    },
+    "shot_preparation_drafts": {
+      "original": 20,
+      "current": 26,
+      "preserved": true
+    },
+    "state_transitions": {
+      "original": 116,
+      "current": 137,
+      "preserved": true
+    },
+    "storyboard_audio_selections": {
+      "original": 0,
+      "current": 0,
+      "preserved": true
+    },
+    "storyboard_review_shots": {
+      "original": 26,
+      "current": 32,
+      "preserved": true
+    },
+    "worker_episode_turns": {
+      "original": 145,
+      "current": 148,
+      "preserved": true
+    },
+    "worker_resource_ceilings": {
+      "original": 0,
+      "current": 0,
+      "preserved": true
+    },
+    "worker_scheduler_settings": {
+      "original": 1,
+      "current": 1,
+      "preserved": true
+    }
+  },
+  "allOriginalRecordsPreserved": true
+}

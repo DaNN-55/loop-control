@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "newModelInference": true,
+  "historyReplay": false,
+  "mode": "speech",
+  "taskId": "9ff1b0dd-5443-4eb2-ace8-70720933d531",
+  "status": "completed",
+  "method": "local_whisperx",
+  "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+  "text": "这是本地字幕验收！",
+  "textFingerprint": "38dff367148526cb63dc9485d252240acc1832d0ae0d2db0785d2a3733174667",
+  "inputVersion": "d0bf27b30191dda213877d0b0437961207077948721a64c980b31cee36a98ad1",
+  "audioSha256": "26f49a501b9185e6f6a2f1b0e52c561a56717d361c7bf05e8f399593de7c74f3",
+  "captionTextConfirmationStillRequired": true,
+  "artifacts": [
+    {
+      "id": "e774de7f-de4b-47a5-ac4e-867e276e65d9",
+      "sha256": "6544f603d6cc034ae96988508396a42dbacb77922a3064346861b9ecdcc19708",
+      "bytes": 964
+    }
+  ],
+  "traceFiles": [
+    "python-44507.jsonl",
+    "python-44567.jsonl"
+  ],
+  "scores": [
+    0.982125
+  ],
+  "reviewIssues": [],
+  "providerRequests": 0
+}

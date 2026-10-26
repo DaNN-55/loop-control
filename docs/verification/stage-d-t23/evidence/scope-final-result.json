@@ -1,0 +1,84 @@
+{
+  "passed": true,
+  "at": "2026-10-24T15:09:39.596Z",
+  "baseline": "8a9c7eb5d609c61038e01bd0fbc2555b8741a895",
+  "sourceFiles": [
+    {
+      "path": "scripts/local/migrate.mjs",
+      "sha256": "43e42fc2fc676e8688e16811f82173890642258da91fa30ca197b4140d4b776a"
+    },
+    {
+      "path": "scripts/local/start.mjs",
+      "sha256": "93ed5852570f2237147de1370290383913dfe8433dfdf181baa06aa7f075d010"
+    },
+    {
+      "path": "scripts/local/vite.config.mjs",
+      "sha256": "ab0a034d39d5bfa4dbf8fd71eca4137a3d54bac4b8141357556ea034085036bb"
+    },
+    {
+      "path": "src/local-app/LocalCatalogApp.tsx",
+      "sha256": "81e3e8575751b8100b4d7c9bb98f884225aa59ad40a04f179fac7c732dec5322"
+    },
+    {
+      "path": "src/local-app/localRoute.ts",
+      "sha256": "b1f4e5306b27fa08a198f8e0610aab1a4bd073db7a2b4747aea91d1faa8cb8fe"
+    },
+    {
+      "path": "tsconfig.local-app.json",
+      "sha256": "57e4ee5a3e80ad5a76223da7c781da94a15a6d8bc1ae47242893162ea0f3219b"
+    },
+    {
+      "path": "db/local/036-native-automation.sql",
+      "sha256": "a3ef40daafc9e2d80172fd63cc9a3f2a805b49e1982c7a8445bfe712b7da0e93"
+    },
+    {
+      "path": "db/local/037-automation-attempts.sql",
+      "sha256": "9a8184724892dc93aa79c56a1854045e58f4f347e8fe1d9e7936a87980f6559a"
+    },
+    {
+      "path": "scripts/local/backup.mjs",
+      "sha256": "47e81bd50cf6f26ba727d75a56ae0f63d0f7769c7b60844c0910656c8298926f"
+    },
+    {
+      "path": "scripts/local/automation-acceptance.mjs",
+      "sha256": "18ee3dc19266a74d94c50bca4a847909967d47f5451dd65c04c4e9514c8ae9a9"
+    },
+    {
+      "path": "scripts/local/automation-resilience.mjs",
+      "sha256": "2b6ef80058ecf9ba501a0beeafe373022eb0113445453999f82f3f073bab7af4"
+    },
+    {
+      "path": "scripts/local/automation-audit.mjs",
+      "sha256": "2180dc476f0ba101d28839902ba30391f060bec9f9365e4375e8ecde9e2b7b4a"
+    },
+    {
+      "path": "src/local-app/LocalSystemStatus.tsx",
+      "sha256": "763686421ab8161857d3d791eb2b5226f210aa9b11316d6f3338f2a3ee068987"
+    },
+    {
+      "path": "src/local-app/nativeAutomation.ts",
+      "sha256": "81c564d27a5e36610680dd289158f259eb7d452fe61f34f2ca46bd74509b6a35"
+    },
+    {
+      "path": "src/local-app/nativeBackup.ts",
+      "sha256": "7b044d9b01dda6dc9794bd85474d83527c0d235f8ad985bce0e8453965b86c21"
+    }
+  ],
+  "originalUnrelatedFilesPreserved": 43,
+  "rootPlanUnchanged": true,
+  "headUnchanged": true,
+  "indexEmpty": true,
+  "whitespacePassed": true,
+  "knownOwnerDatabaseJwtAndActualLeaseValuesChecked": true,
+  "privateValueHits": 0,
+  "privateEvidenceCopied": false,
+  "rawHarIncluded": false,
+  "ownPortClosed": true,
+  "ownPgConnectionsClosed": true,
+  "noOnlineRequests": true,
+  "noProduction": true,
+  "noCommit": true,
+  "noPush": true,
+  "noMerge": true,
+  "noT24": true
+}

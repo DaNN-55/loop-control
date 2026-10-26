@@ -1,0 +1,8 @@
+{
+  "status": 1,
+  "body": {
+    "ok": false,
+    "code": "pipe_required"
+  },
+  "metadata": "[DEBUG-t15-ipc] fd=0 mode=140444 fifo=0 socket=1\n[DEBUG-t15-ipc] fd=0 gets=0 peer=-1 opt=0 family=1 peerFamily=141 expectedFamily=1 type=1 expectedType=1\n"
+}

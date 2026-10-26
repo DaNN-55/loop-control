@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import type { Database, Json } from "../lib/database.types";
-import { supabase } from "../lib/supabase";
+import { backend } from "../lib/backend";
+import {localCommand} from '../local-app/client';
 import { HelpTip } from "../ui/HelpTip";
 import { ConfirmationModal } from "../ui/ConfirmationModal";
 import { useDialogFocus } from "../ui/useDialogFocus";
@@ -277,6 +278,8 @@ export function BlueprintConfigurationForm({ accountId, connectionVersions = [],
   const [form, setForm] = useState<BlueprintFormValues>(initialForm);
   const [error, setError] = useState("");
   const [assetDirectoryAction, setAssetDirectoryAction] = useState<"choose" | "open" | null>(null);
+  const assetDirectoryGeneration = useRef(0);
+  useEffect(() => { assetDirectoryGeneration.current++; setAssetDirectoryAction(null); return () => { assetDirectoryGeneration.current++; }; }, [accountId, initialAssetRoot, initialPolicyKey]);
   const [storyboardConfigurationOpen, setStoryboardConfigurationOpen] = useState(false);
   const [promptVersionManagerOpen, setPromptVersionManagerOpen] = useState(false);
   const [mediaAdapterConfigurationKey, setMediaAdapterConfigurationKey] = useState<MediaAdapterKey | null>(null);
@@ -317,30 +320,36 @@ export function BlueprintConfigurationForm({ accountId, connectionVersions = [],
 
   async function requestLocalAssetDirectory(action: "choose" | "open") {
     if (!accountId) throw new Error("当前账号不可用，无法操作本地目录。");
+    if (backend === "local") return localCommand<{assetRoot?:unknown;cancelled?:boolean}>(action === "choose" ? 'chooseAssetDirectory' : 'openAssetDirectory', {accountId,...(action === 'open' ? {path:form.assetRoot.trim()} : {})}, undefined, 'account-commands');
+    const { supabase } = await import("../lib/supabase");
     const { data, error: sessionError } = await supabase.auth.getSession();
     if (sessionError) throw sessionError;
     if (!data.session) throw new Error("需要 Owner 登录会话。");
     const query = new URLSearchParams({ account: accountId, ...(action === "open" ? { path: form.assetRoot.trim() } : {}) });
     const response = await fetch(`${action === "choose" ? "/_choose-local-asset-directory" : "/_open-local-asset-directory"}?${query}`, { method: "POST", headers: { Authorization: `Bearer ${data.session.access_token}` } });
     if (!response.ok) throw new Error((await response.text()).trim() || (action === "choose" ? "无法选择本地文件夹。" : "无法打开本地文件夹。"));
-    return action === "choose" ? await response.json() as { assetRoot?: unknown } : null;
+    return action === "choose" ? await response.json() as { assetRoot?: unknown; cancelled?: boolean } : null;
   }
 
   async function chooseAssetDirectory() {
+    const generation = ++assetDirectoryGeneration.current;
     setAssetDirectoryAction("choose");
     setError("");
     try {
       const result = await requestLocalAssetDirectory("choose");
+      if (generation !== assetDirectoryGeneration.current) return;
+      if (result?.cancelled) return;
       if (typeof result?.assetRoot !== "string" || !result.assetRoot.trim()) throw new Error("未获取到有效的本地文件夹路径。");
       update({ assetRoot: result.assetRoot });
-    } catch (cause) { setError(cause instanceof Error ? cause.message : "无法选择本地文件夹。"); } finally { setAssetDirectoryAction(null); }
+    } catch (cause) { if (generation === assetDirectoryGeneration.current) setError(cause instanceof Error ? cause.message : "无法选择本地文件夹。"); } finally { if (generation === assetDirectoryGeneration.current) setAssetDirectoryAction(null); }
   }
 
   async function openAssetDirectory() {
     if (!form.assetRoot.trim()) { setError("请先填写或选择资产目录。"); return; }
+    const generation = ++assetDirectoryGeneration.current;
     setAssetDirectoryAction("open");
     setError("");
-    try { await requestLocalAssetDirectory("open"); } catch (cause) { setError(cause instanceof Error ? cause.message : "无法打开本地文件夹。"); } finally { setAssetDirectoryAction(null); }
+    try { await requestLocalAssetDirectory("open"); } catch (cause) { if (generation === assetDirectoryGeneration.current) setError(cause instanceof Error ? cause.message : "无法打开本地文件夹。"); } finally { if (generation === assetDirectoryGeneration.current) setAssetDirectoryAction(null); }
   }
 
   function requestSubmit() {
@@ -381,7 +390,7 @@ export function BlueprintConfigurationForm({ accountId, connectionVersions = [],
 
   const enabledMediaAdapters = form.enabledMediaAdapters ?? [];
   const readinessMessage = form.assetRoot.trim() ? "资产目录已填写；保存后仍需 Worker 验证目录可读写。" : "草稿：未填写资产目录，不能达到生产就绪。";
-  const localDirectoryActions = Boolean(accountId && import.meta.env.DEV && !readOnly);
+  const localDirectoryActions = Boolean(accountId && (backend === 'local' || import.meta.env.DEV) && !readOnly);
   return <section className="configuration-form blueprint-configuration-form">
     <p className="blueprint-editor-note">{readOnly ? "以下按表单结构显示此蓝图版本当前保存的规则。" : isEpisodeRepair ? "只修改当前生产单需要的冻结配置；已完成工作和审核记录会保留。" : technicalOnly ? "这里编辑当前蓝图的技术与运行前置声明；保存后只影响之后新建的 Episode，已有 Episode 继续使用冻结配置。" : "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。"}</p>
     {technicalOnly ? <RuntimeDependencyStatus report={systemStatus} /> : null}

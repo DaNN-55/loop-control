@@ -1,0 +1,1 @@
+{"passed":false,"reason":"Original selector refused a preserved dead default service record after successful offline model probe","historicalRecordPreserved":true,"ports55177And55189HadNoListener":true,"minimalFix":"Check recorded PID liveness before refusal; dead record is retained, live or malformed record still refuses selection"}

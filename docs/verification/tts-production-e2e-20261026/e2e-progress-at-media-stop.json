@@ -1,0 +1,35 @@
+{
+  "stage": "Stopped at normal material import; no final production success claimed",
+  "episodeId": "c98880ae-f6ce-4025-9c72-a6843841ef55",
+  "shots": 3,
+  "narrationCharacters": [
+    70,
+    75,
+    76
+  ],
+  "totalCharacters": 221,
+  "realPlanningTasks": 2,
+  "planningCompleted": true,
+  "planningElapsedMs": 118056.72329200001,
+  "providerRequests": 7,
+  "declaredReservationCny": 0.01,
+  "providerFinalOutcomeUnknown": true,
+  "unknownOperation": "pexels.search",
+  "orphanRequestLockPreserved": true,
+  "materialImportStatus": 503,
+  "materialImportCause": "Base64 repetition regex exceeds V8 stack for 13326115-byte MP4",
+  "completedNewMedia": [
+    {
+      "shot": "shot-1",
+      "bytes": 13326115
+    },
+    {
+      "shot": "shot-3",
+      "bytes": 2117738
+    }
+  ],
+  "ordinaryTtsTasksExecuted": 0,
+  "finalPackageCreated": false,
+  "noAutomaticRetry": true,
+  "ownApplicationStopped": true
+}

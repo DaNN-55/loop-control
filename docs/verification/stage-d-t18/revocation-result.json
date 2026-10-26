@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-24T07:33:37.259Z",
+  "results": [
+    {
+      "provider": "google_tts",
+      "versionId": "ff811b85-3a9a-4357-a7cb-bbb5dc5e4d73",
+      "revoked": true,
+      "frozenVersion409NoFallback": true,
+      "noDraftMutation": true
+    },
+    {
+      "provider": "volcengine_tts",
+      "versionId": "13592ea6-5467-4217-b037-a15df18b2770",
+      "revoked": true,
+      "frozenVersion409NoFallback": true,
+      "noDraftMutation": true
+    }
+  ],
+  "allControlledFixtureVersionsRevoked": true,
+  "realLiveQualificationNotProven": true,
+  "providerRequests": 0,
+  "passed": true
+}

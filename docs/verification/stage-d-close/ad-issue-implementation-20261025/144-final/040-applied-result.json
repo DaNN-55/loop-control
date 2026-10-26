@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "database": "loop_t24_restore_adclose20261025",
+  "migration": "040-native-output-publication.sql",
+  "sha256": "e37033e5b167eadca17862ec1ef2a59aeefc9d71ddf2b66c7178d9d25b70a8a1",
+  "onlyThisRunNewIsolatedDatabase": true,
+  "priorMigrationRecordsUnchanged": true,
+  "allPreexistingTaskInputsAttemptsBudgetsStatusesUnchanged": true,
+  "oldDatabasesUntouched": true,
+  "sql146147StillDeferred": true
+}

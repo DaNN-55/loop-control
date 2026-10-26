@@ -1,0 +1,42 @@
+{
+  "at": "2026-10-24T05:28:16.798Z",
+  "functions": [
+    {
+      "name": "claim_input_task_pre_lease",
+      "fixedPath": true,
+      "publicExecute": false,
+      "securityDefiner": true
+    },
+    {
+      "name": "input_task_allowed",
+      "fixedPath": true,
+      "publicExecute": false,
+      "securityDefiner": true
+    },
+    {
+      "name": "input_worker_call",
+      "fixedPath": true,
+      "publicExecute": false,
+      "securityDefiner": true
+    },
+    {
+      "name": "plan_input_tasks",
+      "fixedPath": true,
+      "publicExecute": false,
+      "securityDefiner": true
+    },
+    {
+      "name": "recover_input_tasks",
+      "fixedPath": true,
+      "publicExecute": false,
+      "securityDefiner": true
+    }
+  ],
+  "migrationHashesMatch": {
+    "loop_empty": true,
+    "loop_imported": true
+  },
+  "priorAdvisorWarningsRetained": 3,
+  "advisorNotRunForNativePg": true,
+  "passed": true
+}

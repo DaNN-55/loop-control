@@ -1,0 +1,57 @@
+{
+  "taskId": "ecc4adf5-6c0b-4f4c-afbb-9dc15cc26878",
+  "taskType": "align_shot_captions",
+  "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+  "status": "blocked",
+  "result": {
+    "retry": {
+      "reason": "本地 WhisperX/torch 依赖或缓存模型不可用，请由环境管理员准备后重试；本任务不会下载或伪造对齐结果。",
+      "shouldRetry": false
+    },
+    "status": "blocked",
+    "taskId": "ecc4adf5-6c0b-4f4c-afbb-9dc15cc26878",
+    "version": "worker-result/v1",
+    "blockers": [
+      {
+        "code": "preflight",
+        "check": "preflight",
+        "phase": "preflight",
+        "scope": "worker",
+        "action": "contact_environment_admin",
+        "detail": "本地 WhisperX/torch 依赖或缓存模型不可用，请由环境管理员准备后重试；本任务不会下载或伪造对齐结果。",
+        "status": "unavailable",
+        "capability": "acoustic_alignment"
+      }
+    ],
+    "nextStep": "Resolve the Worker preflight blocker before retrying this task.",
+    "artifacts": [],
+    "preflight": {
+      "checks": [
+        {
+          "check": "preflight",
+          "phase": "preflight",
+          "scope": "worker",
+          "action": "contact_environment_admin",
+          "reason": "本地 WhisperX/torch 依赖或缓存模型不可用，请由环境管理员准备后重试；本任务不会下载或伪造对齐结果。",
+          "status": "unavailable",
+          "capability": "acoustic_alignment"
+        }
+      ],
+      "version": "worker-preflight/v2"
+    },
+    "validation": {
+      "checks": [
+        {
+          "name": "preflight:preflight",
+          "detail": "本地 WhisperX/torch 依赖或缓存模型不可用，请由环境管理员准备后重试；本任务不会下载或伪造对齐结果。",
+          "passed": false
+        }
+      ],
+      "passed": false
+    },
+    "actualCostCents": 0
+  },
+  "realWorkerCli": true,
+  "realWhisperXInference": false,
+  "providerRequests": 0
+}

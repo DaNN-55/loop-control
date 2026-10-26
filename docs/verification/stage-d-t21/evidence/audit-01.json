@@ -1,0 +1,531 @@
+{
+  "passed": true,
+  "at": "2026-10-24T11:52:40.175Z",
+  "allPreT21PublicRowsPreserved": true,
+  "originalRows": 25476,
+  "tables": {
+    "account_blueprint_versions": {
+      "originalRows": 46,
+      "allPreserved": true
+    },
+    "accounts": {
+      "originalRows": 35,
+      "allPreserved": true
+    },
+    "account_memberships": {
+      "originalRows": 29,
+      "allPreserved": true
+    },
+    "series": {
+      "originalRows": 3,
+      "allPreserved": true
+    },
+    "series_versions": {
+      "originalRows": 13,
+      "allPreserved": true
+    },
+    "episodes": {
+      "originalRows": 6253,
+      "allPreserved": true
+    },
+    "tasks": {
+      "originalRows": 5433,
+      "allPreserved": true
+    },
+    "artifacts": {
+      "originalRows": 392,
+      "allPreserved": true
+    },
+    "task_runs": {
+      "originalRows": 396,
+      "allPreserved": true
+    },
+    "review_packages": {
+      "originalRows": 123,
+      "allPreserved": true
+    },
+    "approvals": {
+      "originalRows": 109,
+      "allPreserved": true
+    },
+    "asset_locks": {
+      "originalRows": 0,
+      "allPreserved": true
+    },
+    "production_material_revisions": {
+      "originalRows": 161,
+      "allPreserved": true
+    },
+    "audio_tracks": {
+      "originalRows": 35,
+      "allPreserved": true
+    },
+    "audio_track_annotations": {
+      "originalRows": 0,
+      "allPreserved": true
+    },
+    "audit_events": {
+      "originalRows": 3251,
+      "allPreserved": true
+    },
+    "episode_read_revisions": {
+      "originalRows": 5475,
+      "allPreserved": true
+    },
+    "external_connections": {
+      "originalRows": 18,
+      "allPreserved": true
+    },
+    "external_connection_versions": {
+      "originalRows": 38,
+      "allPreserved": true
+    },
+    "external_connection_verifications": {
+      "originalRows": 60,
+      "allPreserved": true
+    },
+    "material_revision_approvals": {
+      "originalRows": 161,
+      "allPreserved": true
+    },
+    "notification_delivery_events": {
+      "originalRows": 2124,
+      "allPreserved": true
+    },
+    "notification_delivery_state": {
+      "originalRows": 1,
+      "allPreserved": true
+    },
+    "pre_render_review_member_decisions": {
+      "originalRows": 0,
+      "allPreserved": true
+    },
+    "pre_render_review_members": {
+      "originalRows": 0,
+      "allPreserved": true
+    },
+    "production_dependencies": {
+      "originalRows": 421,
+      "allPreserved": true
+    },
+    "production_invalidations": {
+      "originalRows": 0,
+      "allPreserved": true
+    },
+    "prompt_versions": {
+      "originalRows": 107,
+      "allPreserved": true
+    },
+    "qc_review_issues": {
+      "originalRows": 0,
+      "allPreserved": true
+    },
+    "review_annotations": {
+      "originalRows": 5,
+      "allPreserved": true
+    },
+    "review_render_composition_revisions": {
+      "originalRows": 0,
+      "allPreserved": true
+    },
+    "shot_preparation_drafts": {
+      "originalRows": 98,
+      "allPreserved": true
+    },
+    "state_transitions": {
+      "originalRows": 391,
+      "allPreserved": true
+    },
+    "storyboard_audio_selections": {
+      "originalRows": 8,
+      "allPreserved": true
+    },
+    "storyboard_review_shots": {
+      "originalRows": 104,
+      "allPreserved": true
+    },
+    "worker_episode_turns": {
+      "originalRows": 185,
+      "allPreserved": true
+    },
+    "worker_resource_ceilings": {
+      "originalRows": 0,
+      "allPreserved": true
+    },
+    "worker_scheduler_settings": {
+      "originalRows": 1,
+      "allPreserved": true
+    }
+  },
+  "migrations": {
+    "loop_imported": [
+      {
+        "sha256": "0551afdfb46f3ff6a8df4b449455ff5e6354480a3adcf331330ce24e61fc193b",
+        "version": "025-studio.sql"
+      },
+      {
+        "sha256": "f87c0e61e7484c4e727d5d500c44e467d7cc5385d702910deef97139ea281d79",
+        "version": "026-studio-duration.sql"
+      },
+      {
+        "sha256": "343c2fa15fa865680193f2e7b065ee497269d466d8d104e97ad8360b43742c4d",
+        "version": "027-studio-freeze-binding.sql"
+      }
+    ],
+    "loop_empty": [
+      {
+        "sha256": "0551afdfb46f3ff6a8df4b449455ff5e6354480a3adcf331330ce24e61fc193b",
+        "version": "025-studio.sql"
+      },
+      {
+        "sha256": "f87c0e61e7484c4e727d5d500c44e467d7cc5385d702910deef97139ea281d79",
+        "version": "026-studio-duration.sql"
+      },
+      {
+        "sha256": "343c2fa15fa865680193f2e7b065ee497269d466d8d104e97ad8360b43742c4d",
+        "version": "027-studio-freeze-binding.sql"
+      }
+    ]
+  },
+  "artifactCount": 47,
+  "artifacts": [
+    {
+      "id": "0f1d523e-8f65-409a-9255-321207681934",
+      "type": "shot_preview_qc_report",
+      "sha256": "d6ebcb2432f46732e532b91e03d4ac4bae31a3d1ad3dcc2f9a867593128b8e0d",
+      "fileSize": 868,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/post-production/ff183bab-ff8f-49e8-81de-c878c2b4f3cb/qc-report.json"
+    },
+    {
+      "id": "112ee92e-d7ea-44fe-9c16-7a154565a5c8",
+      "type": "review_render_project",
+      "sha256": "9281361213e51972c1200a5262945ce6780c2fde222f02565934698f0899866d",
+      "fileSize": 8720,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/review-render/8e20860e-be9c-4b2f-9947-3b40f4c3b5eb/project.json"
+    },
+    {
+      "id": "127b6bfc-ec4a-49b7-ae98-99fd3b4b8195",
+      "type": "shot_preview_proxy",
+      "sha256": "143e9255da4262022d13797729194707d5b96b05c0a206fb67b568c41b6b8112",
+      "fileSize": 192657,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/a85ec092-e680-4d49-94e5-2d6f1a6e33c5/proxy.mp4"
+    },
+    {
+      "id": "14a08b80-1af7-4131-812d-6adb06b3433c",
+      "type": "render",
+      "sha256": "a61445d32e0423177d3c6ed37578b33fdbfe12a42b0205f71b546d5654502469",
+      "fileSize": 380322,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/review-render/11d2fabf-a387-4469-a9d3-23ec2e2f3f0c/review-render.mp4"
+    },
+    {
+      "id": "165561de-8dc7-4afe-a2e8-f65e41e6eaf3",
+      "type": "b_roll_asset",
+      "sha256": "ed658eb27494f2b5e818efd7c60320fca0cb24e17ec7048224a352f7a2c87c82",
+      "fileSize": 23662,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/shot-clips/shot-2-fc4d09deb746d7cd23297e31fbd82444.mp4"
+    },
+    {
+      "id": "1a674e24-fb76-40d8-9d9b-2fb0bce66956",
+      "type": "a_roll_video",
+      "sha256": "ed658eb27494f2b5e818efd7c60320fca0cb24e17ec7048224a352f7a2c87c82",
+      "fileSize": 23662,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/shot-clips/shot-1-c38cbf70dacd3e8e28f7d1b4ac40d76d.mp4"
+    },
+    {
+      "id": "212520d7-4f0d-4e72-86af-e6a3f80b4790",
+      "type": "shot_preview_qc_report",
+      "sha256": "cd1272250477d0e11ea36a9a187d91616068794c73fb4c542a7cf71dda465e61",
+      "fileSize": 868,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/edd69af6-9114-48e9-ac48-f615b4a00949/qc-report.json"
+    },
+    {
+      "id": "252e40b2-8b4d-4654-8ac2-6035b25cf111",
+      "type": "b_roll_asset",
+      "sha256": "ed658eb27494f2b5e818efd7c60320fca0cb24e17ec7048224a352f7a2c87c82",
+      "fileSize": 23662,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/shot-clips/shot-2-212a0daaacf84e52daf19f7351a5b093.mp4"
+    },
+    {
+      "id": "2bc3292b-cf0d-4776-952b-10af442446f1",
+      "type": "studio_frozen_project",
+      "sha256": "905b4d643603c4906a89c52d851c82c220e3d49d59ae9e7abf680a9d85254959",
+      "fileSize": 8720,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/openchatcut-frozen/a8c33f40-aedc-4740-9c79-49fb9f07e93f/project.json"
+    },
+    {
+      "id": "360ebc46-e834-48a4-b27c-2fa0fe0a5c94",
+      "type": "shot_preview_qc_report",
+      "sha256": "f52079d0f808a95ddba6664e348f57d5e2dd2b3e2e72178522e609645ab1c0dc",
+      "fileSize": 868,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/post-production/829cce9b-6442-4ae7-a561-2fbf3d339e17/qc-report.json"
+    },
+    {
+      "id": "38f8c19f-8d98-405d-9190-d490d246a702",
+      "type": "review_qc_report",
+      "sha256": "f0cf8d83c76d1c130eadb8bfa709c1ec0f2486a0915825dfcf604500956d596a",
+      "fileSize": 814,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/review-render/8e20860e-be9c-4b2f-9947-3b40f4c3b5eb/qc-report.json"
+    },
+    {
+      "id": "394e32f1-d760-4ec9-9678-7815b13fa6f3",
+      "type": "review_render_project",
+      "sha256": "2df120f05a1aabdc3daf2be3eda40ac56ed48c49628616006624cae5df411ff4",
+      "fileSize": 10893,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/review-render/11d2fabf-a387-4469-a9d3-23ec2e2f3f0c/project.json"
+    },
+    {
+      "id": "4a313b82-13f5-4f66-9669-62966e22d4dd",
+      "type": "render",
+      "sha256": "c132e1f630cc605818b3dd2d6c9e100262b06a1b8dd239de95ed713024924cd1",
+      "fileSize": 377372,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/review-render/8e20860e-be9c-4b2f-9947-3b40f4c3b5eb/review-render.mp4"
+    },
+    {
+      "id": "4d0e0784-e552-433e-89c0-363b3b3b1f82",
+      "type": "visual_asset_manifest",
+      "sha256": "ce1ffacf13b6055f33cf7e838fc10ad18106e70abd2d801252438e61bb94d3ed",
+      "fileSize": 464,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/visual-assets-v1.md"
+    },
+    {
+      "id": "4eb1096e-7a55-459d-b3d3-8377d3631810",
+      "type": "a_roll_video",
+      "sha256": "ed658eb27494f2b5e818efd7c60320fca0cb24e17ec7048224a352f7a2c87c82",
+      "fileSize": 23662,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/shot-clips/shot-1-0ef64e220b4a71afdd421cf53763faf8.mp4"
+    },
+    {
+      "id": "52ac87cf-68bf-4ae9-9b61-e2fd157420f1",
+      "type": "review_render_runtime",
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+      "fileSize": 42,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/review-render/11d2fabf-a387-4469-a9d3-23ec2e2f3f0c/openchatcut-runtime.json"
+    },
+    {
+      "id": "5547d39e-918a-492a-84ae-487b53bf382d",
+      "type": "render",
+      "sha256": "d4c48e50b0ba87eb71b9c751b176d71458f09516b144bf55aaeee9391024514b",
+      "fileSize": 376115,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/review-render/3ee7f14e-af42-4593-be64-7bacacd4276f/review-render.mp4"
+    },
+    {
+      "id": "56776ca6-a6fa-4a64-bcd5-7230e21d26bd",
+      "type": "shot_editable_project",
+      "sha256": "154d15a439a353cdf8316d33d0f53d9cef78b44f65e932a3517f40a8cd990922",
+      "fileSize": 4811,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/edd69af6-9114-48e9-ac48-f615b4a00949/project.json"
+    },
+    {
+      "id": "591806b5-d270-429d-8ab2-2dfc94bbcd14",
+      "type": "shot_preview_proxy",
+      "sha256": "143e9255da4262022d13797729194707d5b96b05c0a206fb67b568c41b6b8112",
+      "fileSize": 192657,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/post-production/ff183bab-ff8f-49e8-81de-c878c2b4f3cb/proxy.mp4"
+    },
+    {
+      "id": "6206937f-60c4-4a80-95eb-24407fba67ac",
+      "type": "shot_preview_runtime",
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+      "fileSize": 42,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/post-production/829cce9b-6442-4ae7-a561-2fbf3d339e17/openchatcut-runtime.json"
+    },
+    {
+      "id": "693cb03c-829c-4077-b3af-cc8c9c2aa31b",
+      "type": "shot_source_audio",
+      "sha256": "26f49a501b9185e6f6a2f1b0e52c561a56717d361c7bf05e8f399593de7c74f3",
+      "fileSize": 18730,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/977e920f-035f-4a20-9b6b-d171efc2618a/source.mp3"
+    },
+    {
+      "id": "6ee299bb-df78-43de-bd00-edf7251c098b",
+      "type": "studio_frozen_project",
+      "sha256": "2df120f05a1aabdc3daf2be3eda40ac56ed48c49628616006624cae5df411ff4",
+      "fileSize": 10893,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/openchatcut-frozen/5e21baa1-8b73-4dfe-8b49-9dc24aa92eab/project.json"
+    },
+    {
+      "id": "75b944f0-1688-4df1-a245-5d34b1bfcfcb",
+      "type": "shot_source_audio",
+      "sha256": "26f49a501b9185e6f6a2f1b0e52c561a56717d361c7bf05e8f399593de7c74f3",
+      "fileSize": 18730,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/post-production/e7deda21-94fc-4917-be0f-eb68ff9112c7/source.mp3"
+    },
+    {
+      "id": "794521de-a6a0-4893-a26a-32a3166baa24",
+      "type": "derived_audio",
+      "sha256": "3bb4a9c0c01aa61afa1725f26e14f85bc85e5094645be39f5e9204fb864a3fde",
+      "fileSize": 22815,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/audio/derived-material-v2.mp3"
+    },
+    {
+      "id": "7f6985f8-ffc9-452a-9e62-535933944178",
+      "type": "derived_audio",
+      "sha256": "3bb4a9c0c01aa61afa1725f26e14f85bc85e5094645be39f5e9204fb864a3fde",
+      "fileSize": 22815,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/audio/derived-material-v2.mp3"
+    },
+    {
+      "id": "801c019a-bc02-45f0-be54-58ec662af425",
+      "type": "review_render_runtime",
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+      "fileSize": 42,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/review-render/8e20860e-be9c-4b2f-9947-3b40f4c3b5eb/openchatcut-runtime.json"
+    },
+    {
+      "id": "8d805d81-a2a2-4976-b167-fcf342b511a0",
+      "type": "shot_preview_runtime",
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+      "fileSize": 42,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/post-production/ff183bab-ff8f-49e8-81de-c878c2b4f3cb/openchatcut-runtime.json"
+    },
+    {
+      "id": "95bc446d-95e9-46e4-861b-648a458db377",
+      "type": "shot_preview_runtime",
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+      "fileSize": 42,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/edd69af6-9114-48e9-ac48-f615b4a00949/openchatcut-runtime.json"
+    },
+    {
+      "id": "99da3bc4-bfe5-432e-8474-9ede5ea88279",
+      "type": "shot_preview_runtime",
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+      "fileSize": 42,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/a85ec092-e680-4d49-94e5-2d6f1a6e33c5/openchatcut-runtime.json"
+    },
+    {
+      "id": "9a97e3ac-b11f-4975-aec1-a2ceec83a2ce",
+      "type": "storyboard",
+      "sha256": "254846103b9815c4352b69d0190945e2d1241dc09f2c7157838f254139260502",
+      "fileSize": 2480,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/storyboard-v1.json"
+    },
+    {
+      "id": "9ef848ab-735c-4044-967d-6dc5f00270a9",
+      "type": "review_qc_report",
+      "sha256": "489d2bbac109b6ef29b21291b0e1626079d62f2fd21cbe8d6fcb102b00401e8d",
+      "fileSize": 814,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/review-render/3ee7f14e-af42-4593-be64-7bacacd4276f/qc-report.json"
+    },
+    {
+      "id": "a0a38d77-4e49-4f76-b4b0-353e6c442ebe",
+      "type": "shot_editable_project",
+      "sha256": "8d74841a178de829ca5ac2299982a3ac541e7fc15a437eb92c3da07decf1dbdd",
+      "fileSize": 4811,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/a85ec092-e680-4d49-94e5-2d6f1a6e33c5/project.json"
+    },
+    {
+      "id": "b2cc03db-c5f5-468f-8c81-32de56bf139d",
+      "type": "derived_audio",
+      "sha256": "3bb4a9c0c01aa61afa1725f26e14f85bc85e5094645be39f5e9204fb864a3fde",
+      "fileSize": 22815,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/audio/derived-material-v1.mp3"
+    },
+    {
+      "id": "b4a7957a-e2cb-4d07-9bdd-b38de4af7ef9",
+      "type": "shot_editable_project",
+      "sha256": "e8835d22a8404bb76693af27670f78d093a4c2a33d7d051120dc9012ac16df44",
+      "fileSize": 4811,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/post-production/ff183bab-ff8f-49e8-81de-c878c2b4f3cb/project.json"
+    },
+    {
+      "id": "bb00116a-44ce-40d4-9ce6-680800ea59f9",
+      "type": "storyboard",
+      "sha256": "24a9db2066c6d31ebcdf5d8c060f736ec5b231a199a683c5746e39cc34b8e5a4",
+      "fileSize": 2480,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/storyboard-v1.json"
+    },
+    {
+      "id": "be4afd20-0ad0-4498-a7b3-e01b342fc19e",
+      "type": "review_render_runtime",
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7",
+      "fileSize": 42,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/review-render/3ee7f14e-af42-4593-be64-7bacacd4276f/openchatcut-runtime.json"
+    },
+    {
+      "id": "cada3bb3-fa33-4ef3-a81a-6663c3ad9066",
+      "type": "shot_preview_proxy",
+      "sha256": "143e9255da4262022d13797729194707d5b96b05c0a206fb67b568c41b6b8112",
+      "fileSize": 192657,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/post-production/829cce9b-6442-4ae7-a561-2fbf3d339e17/proxy.mp4"
+    },
+    {
+      "id": "cb642bc1-8483-461d-be7e-65dfb6e7a73a",
+      "type": "studio_frozen_project",
+      "sha256": "9281361213e51972c1200a5262945ce6780c2fde222f02565934698f0899866d",
+      "fileSize": 8720,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/openchatcut-frozen/a0960377-238b-4cb2-a5be-a5498002cafa/project.json"
+    },
+    {
+      "id": "cdbf2734-2870-4eb1-85b7-ec8b9ecd486e",
+      "type": "shot_preview_qc_report",
+      "sha256": "cc1a587f05a5dfaf06f7dfdd03216ecb28e422aae2a72c322b7998f92539facc",
+      "fileSize": 868,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/a85ec092-e680-4d49-94e5-2d6f1a6e33c5/qc-report.json"
+    },
+    {
+      "id": "cf073866-e125-4788-8d56-633b47232aeb",
+      "type": "review_qc_report",
+      "sha256": "b932be0b15b70e8f0301b1495f8ec672c0302410c7c5579dffc71029e57556c6",
+      "fileSize": 814,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/review-render/11d2fabf-a387-4469-a9d3-23ec2e2f3f0c/qc-report.json"
+    },
+    {
+      "id": "d1cf43a2-2af6-4131-b81b-bb85d4b6cd25",
+      "type": "shot_preview_proxy",
+      "sha256": "143e9255da4262022d13797729194707d5b96b05c0a206fb67b568c41b6b8112",
+      "fileSize": 192657,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/edd69af6-9114-48e9-ac48-f615b4a00949/proxy.mp4"
+    },
+    {
+      "id": "d1d873a2-4818-4616-817a-04ab670ee90f",
+      "type": "shot_source_audio",
+      "sha256": "26f49a501b9185e6f6a2f1b0e52c561a56717d361c7bf05e8f399593de7c74f3",
+      "fileSize": 18730,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/post-production/b46a8db8-848f-49bf-bd28-d35db67ba2dc/source.mp3"
+    },
+    {
+      "id": "d416ade1-4088-44e4-9c65-a35610503231",
+      "type": "visual_asset_manifest",
+      "sha256": "429b75dfd9584403a4d56519bd38bc3edb1d11933a4b01e34e958c99769fb7d5",
+      "fileSize": 464,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/visual-assets-v1.md"
+    },
+    {
+      "id": "df924388-7231-4e5a-8f21-f301588521b8",
+      "type": "review_render_project",
+      "sha256": "905b4d643603c4906a89c52d851c82c220e3d49d59ae9e7abf680a9d85254959",
+      "fileSize": 8720,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/review-render/3ee7f14e-af42-4593-be64-7bacacd4276f/project.json"
+    },
+    {
+      "id": "e326468c-9c61-42de-a97a-937f5a33a6a8",
+      "type": "shot_source_audio",
+      "sha256": "26f49a501b9185e6f6a2f1b0e52c561a56717d361c7bf05e8f399593de7c74f3",
+      "fileSize": 18730,
+      "relativePath": "episodes/1abcd883-6a6d-4276-8152-b80dbc281139/post-production/55c0cd9b-15e1-4756-a1e7-bc85d5ab6dce/source.mp3"
+    },
+    {
+      "id": "e866934b-0ec1-436b-8d33-b40621db3e5e",
+      "type": "derived_audio",
+      "sha256": "3bb4a9c0c01aa61afa1725f26e14f85bc85e5094645be39f5e9204fb864a3fde",
+      "fileSize": 22815,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/audio/derived-material-v1.mp3"
+    },
+    {
+      "id": "f496f5d2-dece-4242-817a-77177f926045",
+      "type": "shot_editable_project",
+      "sha256": "8fa849a2471e9c706b42c0d9042ad1d247cc8ea6d03fb5f5a21372b1d1d7a60d",
+      "fileSize": 4811,
+      "relativePath": "episodes/4aa1db3e-5c21-495c-9005-3f91249571ec/post-production/829cce9b-6442-4ae7-a561-2fbf3d339e17/project.json"
+    }
+  ],
+  "privateFunction": {
+    "owner": true,
+    "worker": false,
+    "anonymous": false,
+    "safeSearchPath": "{\"search_path=\\\"\\\"\"}"
+  },
+  "rootPlanUnchanged": true,
+  "providerRequests": 0,
+  "realWhisperXInference": false
+}

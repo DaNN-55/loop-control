@@ -1,0 +1,42 @@
+node:internal/errors:986
+  const err = new Error(message);
+              ^
+
+Error: Command failed: docker exec -i loop-control-stage-d-postgres psql -XqAt -U postgres -d loop_imported -v ON_ERROR_STOP=1
+ERROR:  null value in column "source_artifact_id" of relation "audio_tracks" violates not-null constraint
+DETAIL:  Failing row contains (3c542e45-47e9-4bfc-b12c-37e5144a14b6, ab08ff5b-7dfa-40bf-96d4-90674c65523a, fdab3934-53e8-4843-9348-ddfc0f85931a, null, 5be0a64f-47b6-4706-bf14-1661b6c71d23, source, shot-1, episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/66..., 26f49a501b9185e6f6a2f1b0e52c561a56717d361c7bf05e8f399593de7c74f3, 18730, 0.000, 4.046, 2026-10-24 10:09:06.252644+00, null).
+CONTEXT:  SQL statement "INSERT INTO public.audio_tracks(episode_id,source_task_id,source_review_package_id,cue_id,track_kind,relative_path,sha256,file_size,start_seconds,duration_seconds)
+ VALUES(d.episode_id,source_task.id,d.review_package_id,d.shot_id,'source',source_track.relative_path,source_track.sha256,source_track.file_size,0,source_track.duration_seconds) RETURNING *"
+PL/pgSQL function pg_temp_91.t20_callback_contract() line 18 at SQL statement
+
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:942:11)
+    at execFileSync (node:child_process:978:15)
+    at docker (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/environment.mjs:11:43)
+    at sql (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/environment.mjs:13:76)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/alignment-fence-acceptance.mjs:54:14
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  status: 3,
+  signal: null,
+  output: [
+    null,
+    '644f8c5a-b668-48a3-8a25-94c4e502fa04\n',
+    'ERROR:  null value in column "source_artifact_id" of relation "audio_tracks" violates not-null constraint\n' +
+      'DETAIL:  Failing row contains (3c542e45-47e9-4bfc-b12c-37e5144a14b6, ab08ff5b-7dfa-40bf-96d4-90674c65523a, fdab3934-53e8-4843-9348-ddfc0f85931a, null, 5be0a64f-47b6-4706-bf14-1661b6c71d23, source, shot-1, episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/66..., 26f49a501b9185e6f6a2f1b0e52c561a56717d361c7bf05e8f399593de7c74f3, 18730, 0.000, 4.046, 2026-10-24 10:09:06.252644+00, null).\n' +
+      'CONTEXT:  SQL statement "INSERT INTO public.audio_tracks(episode_id,source_task_id,source_review_package_id,cue_id,track_kind,relative_path,sha256,file_size,start_seconds,duration_seconds)\n' +
+      ` VALUES(d.episode_id,source_task.id,d.review_package_id,d.shot_id,'source',source_track.relative_path,source_track.sha256,source_track.file_size,0,source_track.duration_seconds) RETURNING *"\n` +
+      'PL/pgSQL function pg_temp_91.t20_callback_contract() line 18 at SQL statement\n'
+  ],
+  pid: 17850,
+  stdout: '644f8c5a-b668-48a3-8a25-94c4e502fa04\n',
+  stderr: 'ERROR:  null value in column "source_artifact_id" of relation "audio_tracks" violates not-null constraint\n' +
+    'DETAIL:  Failing row contains (3c542e45-47e9-4bfc-b12c-37e5144a14b6, ab08ff5b-7dfa-40bf-96d4-90674c65523a, fdab3934-53e8-4843-9348-ddfc0f85931a, null, 5be0a64f-47b6-4706-bf14-1661b6c71d23, source, shot-1, episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/66..., 26f49a501b9185e6f6a2f1b0e52c561a56717d361c7bf05e8f399593de7c74f3, 18730, 0.000, 4.046, 2026-10-24 10:09:06.252644+00, null).\n' +
+    'CONTEXT:  SQL statement "INSERT INTO public.audio_tracks(episode_id,source_task_id,source_review_package_id,cue_id,track_kind,relative_path,sha256,file_size,start_seconds,duration_seconds)\n' +
+    ` VALUES(d.episode_id,source_task.id,d.review_package_id,d.shot_id,'source',source_track.relative_path,source_track.sha256,source_track.file_size,0,source_track.duration_seconds) RETURNING *"\n` +
+    'PL/pgSQL function pg_temp_91.t20_callback_contract() line 18 at SQL statement\n'
+}
+
+Node.js v24.20.0

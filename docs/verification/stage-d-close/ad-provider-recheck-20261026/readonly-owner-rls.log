@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/local-app/ownerRls.integration.test.ts (4 tests) 1135ms
+   ✓ keeps role grants, policy scope and missing/foreign identity fences  486ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  08:40:33
+   Duration  1.46s (transform 26ms, setup 0ms, collect 160ms, tests 1.13s, environment 0ms, prepare 40ms)
+

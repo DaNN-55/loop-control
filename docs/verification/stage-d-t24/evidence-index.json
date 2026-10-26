@@ -1,0 +1,1599 @@
+{
+  "ticket": "T24",
+  "issue": 130,
+  "baseline": "20e93bd8f80c8de8774806a666ba616a3b133e88",
+  "branch": "codex/local-first-stage-a",
+  "dependencies": [
+    {
+      "ticket": "T22",
+      "issue": 128
+    },
+    {
+      "ticket": "T15",
+      "issue": 121
+    }
+  ],
+  "acceptance": "passed in controlled offline existing isolated cluster/new empty databases/independent APFS media; not default production/new-host deployment or F-stage acceptance",
+  "implementationFiles": [
+    {
+      "path": "docs/adr/0008-local-execution-and-migration-contract.md",
+      "bytes": 16941,
+      "sha256": "53f45b4ae30700094bfd1d860f35b66d34c46a878e843b13ef59d3344bd9ffc5"
+    },
+    {
+      "path": "scripts/local/backup.mjs",
+      "bytes": 10566,
+      "sha256": "3630f84b6b4939274688d33377e525be885de5a74bca93526552fe585bb49572"
+    },
+    {
+      "path": "scripts/local/migrate.mjs",
+      "bytes": 2136,
+      "sha256": "93a97feec1d6a14948e8270b581555a36107691705a187453e1b1d0990cba932"
+    },
+    {
+      "path": "scripts/local/owner.mjs",
+      "bytes": 1782,
+      "sha256": "6a1cd1192272091146cbba2597edab72cac8b8054c064b2b636ea631b36eab2b"
+    },
+    {
+      "path": "scripts/local/native-backup-format.mjs",
+      "bytes": 2765,
+      "sha256": "d5c957e72b643ec7473be81ff96d81f149ea276cd20a2e8f06882e69998a94f3"
+    },
+    {
+      "path": "scripts/local/native-restore.mjs",
+      "bytes": 11416,
+      "sha256": "c0ca7be0ba55e66b57792a97b0916bd0cecd9cf3470a3a354dde05a4ffb10cb4"
+    },
+    {
+      "path": "scripts/local/recovery-acceptance.mjs",
+      "bytes": 21612,
+      "sha256": "4f62e12d03013adb9eac3618acbe7f32aa976f5148aa38c5bbfd632127edcba2"
+    },
+    {
+      "path": "db/local/038-media-deployment.sql",
+      "bytes": 1181,
+      "sha256": "efa59ac839d3705e7740b94119f158456f8b869e908684a1f49839cd1365fee4"
+    },
+    {
+      "path": "src/episodes/EpisodeProduction.tsx",
+      "bytes": 287222,
+      "sha256": "fd4abbce7c57b4c2f9ead241107b80fe17487eb023fa687394d82955a4a4c9b4"
+    },
+    {
+      "path": "src/local-app/LocalEpisodeDetail.tsx",
+      "bytes": 11820,
+      "sha256": "de5036a737182789b944fa0d3212087ee75bfd944bea9256b0b8e1cd4c51daee"
+    },
+    {
+      "path": "src/local-app/artifactRoute.ts",
+      "bytes": 3175,
+      "sha256": "137130a49bae359d6ef739abc14ed54bf49f6eadeb5e56a47495cda193c5b8cb"
+    },
+    {
+      "path": "src/local-app/episodeCommands.ts",
+      "bytes": 36871,
+      "sha256": "f8b53d09bc4e5f11a3e020bad905004874811741eb013643e66370aaa543e09f"
+    },
+    {
+      "path": "src/local-app/episodeLifecycle.ts",
+      "bytes": 7672,
+      "sha256": "e127a9f721cffce040c1b96a8dfbbf0c3737f5ebe8f3c12fad4692bc10449afc"
+    },
+    {
+      "path": "src/local-app/episodeReads.ts",
+      "bytes": 2930,
+      "sha256": "1591f6bf93550b470f3d100dcf16b00b4c413483f8f8b9f1840c048bd11f114c"
+    },
+    {
+      "path": "src/local-app/localFiles.ts",
+      "bytes": 4002,
+      "sha256": "e7d85dc2474dbc07515c5d81a305a3e58203fd3ddc72deccb314e486f621c77a"
+    },
+    {
+      "path": "src/local-app/localRoute.ts",
+      "bytes": 8970,
+      "sha256": "c01bff804c97362a38e5d0efee6d8a86528892de632d3a8ab86b1052d0b30dad"
+    },
+    {
+      "path": "src/local-app/localWorkerCli.ts",
+      "bytes": 6812,
+      "sha256": "00ae33a178c271efdb617a7468e60e5bbd1018106ebe30613e8a56d8c70fd5d8"
+    },
+    {
+      "path": "src/local-app/localWorkerService.ts",
+      "bytes": 6575,
+      "sha256": "7eb6c16d79f021e1ea68a6a573686209ecdc054d499cdb9340347d506f522fc6"
+    },
+    {
+      "path": "src/local-app/mediaDeployment.ts",
+      "bytes": 1006,
+      "sha256": "4349e75a74cb725e741995d66dc92590df668e7bd7db6e9636bef4bfc5af59a5"
+    },
+    {
+      "path": "src/local-app/mediaPaths.ts",
+      "bytes": 940,
+      "sha256": "aea5c91ebd0993aa63bebc47834f69118f26fbc0c695bce9789944fcf3baf2d6"
+    },
+    {
+      "path": "src/local-app/mediaPaths.test.ts",
+      "bytes": 970,
+      "sha256": "f91eb8b9f11df97100613446977bd975af88bd149f58002ff4a44b584632e912"
+    }
+  ],
+  "publicEvidence": [
+    {
+      "path": "evidence/audit-01.json",
+      "bytes": 4219,
+      "sha256": "91d8bd4e413780bf7d7f7922af91c77e2bbb57e18c8652902a35c3ece8d9fc1b"
+    },
+    {
+      "path": "evidence/audit-01.txt",
+      "bytes": 502,
+      "sha256": "3c593f1d8f577390a440b0f6e2e27b1f736099956617a01a85f0abd39de4ac0e"
+    },
+    {
+      "path": "evidence/audit-02.txt",
+      "bytes": 414,
+      "sha256": "09dba6099dd57f4a0848272b6767a5d89c77c92fa38e3f3c29d4d2de599cbe76"
+    },
+    {
+      "path": "evidence/audit-03.txt",
+      "bytes": 114,
+      "sha256": "f963907a4b0104d1904ec0b10122d0764cd934d6e26af875de7cf4f8575b2b5c"
+    },
+    {
+      "path": "evidence/backup-01-backup-result.json",
+      "bytes": 463,
+      "sha256": "ceff6b2cb70bef0e1816c6788726c3dd25c4d06a5da0caa18af0d69901d4c18f"
+    },
+    {
+      "path": "evidence/backup-02-backup-result.json",
+      "bytes": 463,
+      "sha256": "b737a16d68c24a81fd6ad219024f41a6d4cdda194a20e2c3a011fa2b453539dc"
+    },
+    {
+      "path": "evidence/boundary-checks-01.txt",
+      "bytes": 75,
+      "sha256": "49b117c7bb9656cb51c26a6b260ef4231704b0aded3b7a99434c999219bf7e03"
+    },
+    {
+      "path": "evidence/boundary-result.json",
+      "bytes": 731,
+      "sha256": "ff8c491e6a4d635f1c7afeb00249927432f9dd76ab5cae7c47167d4e0086450f"
+    },
+    {
+      "path": "evidence/browser-01-open.txt",
+      "bytes": 88,
+      "sha256": "1ad22a0786ca5b553a57f2f29556e543ae1591b71c2b14922278469eade3c2f4"
+    },
+    {
+      "path": "evidence/browser-02-restored.txt",
+      "bytes": 1699,
+      "sha256": "369ef8a5c3ba8475bd95da8f3270f13507abc51f09b2a61cc0e11ea47753d0f2"
+    },
+    {
+      "path": "evidence/browser-03-review-reason.txt",
+      "bytes": 1807,
+      "sha256": "c43c2701c44f6f75e78bcf3ae1382dc325bfe7910f49d777e4c4322e22385076"
+    },
+    {
+      "path": "evidence/browser-04-approved.txt",
+      "bytes": 1660,
+      "sha256": "9bc80f31ef678136eb388e1cd9d7013f8e5ef88daa2cbf9b2b901965a63bfd0f"
+    },
+    {
+      "path": "evidence/browser-05-before-plan.txt",
+      "bytes": 1640,
+      "sha256": "cd160819d165eeb266a50848a075a386183f664114b916ed669486721577616a"
+    },
+    {
+      "path": "evidence/browser-06-storyboard.txt",
+      "bytes": 1799,
+      "sha256": "acd3812dfa973d6536dd519c6b5b4d653ec994a32671415f39daad0f8918b6b4"
+    },
+    {
+      "path": "evidence/browser-07-directory-before.txt",
+      "bytes": 201,
+      "sha256": "972a4fbb3c0c460bf7a79fd58dfa1870bf3faca6d2b2e3c7dd2fe8da2bf369c1"
+    },
+    {
+      "path": "evidence/browser-08-restarted.txt",
+      "bytes": 1799,
+      "sha256": "acd3812dfa973d6536dd519c6b5b4d653ec994a32671415f39daad0f8918b6b4"
+    },
+    {
+      "path": "evidence/browser-10-reopen.txt",
+      "bytes": 88,
+      "sha256": "1ad22a0786ca5b553a57f2f29556e543ae1591b71c2b14922278469eade3c2f4"
+    },
+    {
+      "path": "evidence/browser-11-final-reloaded.txt",
+      "bytes": 1799,
+      "sha256": "acd3812dfa973d6536dd519c6b5b4d653ec994a32671415f39daad0f8918b6b4"
+    },
+    {
+      "path": "evidence/browser-12-directory-after.txt",
+      "bytes": 244,
+      "sha256": "7576a62a9bdb5ea18aea9773e166f6e3ae8714c1a06b287d564c97f4217e0890"
+    },
+    {
+      "path": "evidence/browser-13-screenshot-command.txt",
+      "bytes": 95,
+      "sha256": "d2c857f005ff16e4c9a948f036a21cc7364adfab6289914a0f382be033433360"
+    },
+    {
+      "path": "evidence/browser-15-final-reload.txt",
+      "bytes": 69,
+      "sha256": "576f697c30aa289f329fb5ecf65cddb8c0be9a9347e0aa93a32c493cc244dfdf"
+    },
+    {
+      "path": "evidence/browser-16-final-ready.txt",
+      "bytes": 13,
+      "sha256": "13740fb1b39f924db6b028b7ea353398423f6f1a8220e39991f82148362925c9"
+    },
+    {
+      "path": "evidence/browser-17-final-snapshot.txt",
+      "bytes": 1799,
+      "sha256": "acd3812dfa973d6536dd519c6b5b4d653ec994a32671415f39daad0f8918b6b4"
+    },
+    {
+      "path": "evidence/browser-18-final-directory.txt",
+      "bytes": 244,
+      "sha256": "7576a62a9bdb5ea18aea9773e166f6e3ae8714c1a06b287d564c97f4217e0890"
+    },
+    {
+      "path": "evidence/browser-19-screenshot-command.txt",
+      "bytes": 95,
+      "sha256": "59a5d022e63a5f79c5e619ffd834232496bfa150528ed00df5509a8f0d6c98ff"
+    },
+    {
+      "path": "evidence/browser-20-restored-storyboard-final.png",
+      "bytes": 141416,
+      "sha256": "197121d0d6bd7b75f5ec7c5d6a37a07d1b68c6274480fa85394184319a6c9f96"
+    },
+    {
+      "path": "evidence/browser-21-video-open.txt",
+      "bytes": 87,
+      "sha256": "3faefde1c055955d4fa8be357efa9347823936125bf1381c53d8a884083dc2a7"
+    },
+    {
+      "path": "evidence/browser-22-video-metadata.txt",
+      "bytes": 89,
+      "sha256": "834c40eb6110c79531963caab0cb6e68e0bd360bdd4b6b6ffbe83d95f43096b9"
+    },
+    {
+      "path": "evidence/browser-23-video-error.txt",
+      "bytes": 55,
+      "sha256": "9e420fc058e5fc1dd114f6e756b82bf82f0553879e651b4731651b4dae0fcbc2"
+    },
+    {
+      "path": "evidence/browser-24-video-episode-open.txt",
+      "bytes": 88,
+      "sha256": "a4e613e42f78448db751cf1bbcdd87de14844f7b06b9e16c6a66dd0d7f86098c"
+    },
+    {
+      "path": "evidence/browser-25-video-episode-snapshot.txt",
+      "bytes": 66,
+      "sha256": "e0d578d99521e97fdd39e7dca64af66d0c6745ea54997c78dcd253ce4372490c"
+    },
+    {
+      "path": "evidence/browser-26-video-episode-ready.txt",
+      "bytes": 33,
+      "sha256": "2bc37e1e973308cb8fe28ceee86da2a8132a834af061c29f2493e6d52977e34e"
+    },
+    {
+      "path": "evidence/browser-28-final-materials-click.txt",
+      "bytes": 9,
+      "sha256": "7c8f56aecbeeb314c13c01df65278c8ff9c1d10cc764cfb6bb4fea2accaffc6f"
+    },
+    {
+      "path": "evidence/browser-29-final-materials-snapshot.txt",
+      "bytes": 2020,
+      "sha256": "0003565b1212127694f6fee292c415b089038dd143900839ccd8a856a12d5c83"
+    },
+    {
+      "path": "evidence/browser-30-mute.txt",
+      "bytes": 5,
+      "sha256": "a17fcf0a2f50e2d495e4f90ce263410edc183add6c62699a2facbccf60410f74"
+    },
+    {
+      "path": "evidence/browser-31-play.txt",
+      "bytes": 9,
+      "sha256": "7c8f56aecbeeb314c13c01df65278c8ff9c1d10cc764cfb6bb4fea2accaffc6f"
+    },
+    {
+      "path": "evidence/browser-32-play-ready.txt",
+      "bytes": 5,
+      "sha256": "a17fcf0a2f50e2d495e4f90ce263410edc183add6c62699a2facbccf60410f74"
+    },
+    {
+      "path": "evidence/browser-33-play-result.json",
+      "bytes": 426,
+      "sha256": "bb085da8f919cabf44d3d50451e614f53baf5c5bfe3ee7451f76915b876982a1"
+    },
+    {
+      "path": "evidence/browser-34-video-screenshot-command.txt",
+      "bytes": 95,
+      "sha256": "97c059bb95f6bdc07caec3e1fb0fc2d4d1043d67a4522beae5ef66d871876963"
+    },
+    {
+      "path": "evidence/browser-35-restored-video.png",
+      "bytes": 121953,
+      "sha256": "febec52b36ba6c24b8044244924275367a67a7c1d3738f28d1b24e703bc1c052"
+    },
+    {
+      "path": "evidence/browser-36-close.txt",
+      "bytes": 19,
+      "sha256": "7b6df3d55d43203cadbfcf966c168fb8c40fcd4653461c98f3b6c02abf9b5605"
+    },
+    {
+      "path": "evidence/browser-final-result.json",
+      "bytes": 984,
+      "sha256": "ca4b2f36c9d8f07f13c3878d0f164cd3f86d61e653dc0bdbc6e35b9d26f08bf9"
+    },
+    {
+      "path": "evidence/check-commands.json",
+      "bytes": 885,
+      "sha256": "2e7122173558858155c774b11f36a11b9c948554f436bc10966db9b5c4b308b0"
+    },
+    {
+      "path": "evidence/cleanup-01.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/default-5s-01-result.json",
+      "bytes": 261,
+      "sha256": "44008621d2b6eb17abb6b39707c2055d4dc4ff29e09218f1e18c2e7f16d0c7b2"
+    },
+    {
+      "path": "evidence/default-5s-01.txt",
+      "bytes": 8912,
+      "sha256": "3f157b3ce8e14327573665f4b6ab3fd455481f3fe0e2462021679cb5130021ba"
+    },
+    {
+      "path": "evidence/frontend-final-01-result.json",
+      "bytes": 274,
+      "sha256": "18f09568d7437c8b7aa7d35e0159fc9898fec41492b0893c64442fd0928ae09c"
+    },
+    {
+      "path": "evidence/frontend-final-01.txt",
+      "bytes": 1094,
+      "sha256": "c33ad9b45dbf04f4528ae61ce1fa63638cfd591bb8980274437ffc74f2cfcb19"
+    },
+    {
+      "path": "evidence/keychain-cleanup.json",
+      "bytes": 250,
+      "sha256": "b58460fb34de37d997a098ed3111b86ffb431e393fc76a9f1bf6aafe08b9e18d"
+    },
+    {
+      "path": "evidence/local-types-01.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/local-types-02.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/local-types-03.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/local-types-04.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/local-types-05.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/local-types-06.txt",
+      "bytes": 345,
+      "sha256": "fc0be16cdd318764248b7849eafda67f7e532b3d903376b9207ab6e32629dd13"
+    },
+    {
+      "path": "evidence/local-types-07.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/migration-01.txt",
+      "bytes": 87,
+      "sha256": "5d6416117be4b330cf777e0556deb704fc338adb4e57ba927c95c847019dc184"
+    },
+    {
+      "path": "evidence/node-final-01-result.json",
+      "bytes": 146,
+      "sha256": "fb7d44414934af6e1c70df257645e2c36c0f0b548b43b4abf56f1c82066b5c9d"
+    },
+    {
+      "path": "evidence/node-final-01.txt",
+      "bytes": 339,
+      "sha256": "ec2bdd11ca6aa08d8cdd1ff4371cfed27d1d06a95df6823525e4145faf0b9a25"
+    },
+    {
+      "path": "evidence/prepare-04-prepare-result.json",
+      "bytes": 427,
+      "sha256": "cb30a72974a47fa60dd8494ca8214fc387899dbd5e5301edd11940980669e892"
+    },
+    {
+      "path": "evidence/restore-02-missing-keychain-result.json",
+      "bytes": 187,
+      "sha256": "94522a64dabe199c34d764268bbe1f79c6ec593bc2b95e94ed220a44f0d55c53"
+    },
+    {
+      "path": "evidence/restore-02-owner-bootstrap.txt",
+      "bytes": 52,
+      "sha256": "76de656138e8e69fe641587f0a86afef4e3debb64a572f4d8d6d4822505a74c2"
+    },
+    {
+      "path": "evidence/restore-02-restore-result.json",
+      "bytes": 393,
+      "sha256": "e72e370c76a393cdec1227c044e54159a77ccde85516b4968ee4248e70668394"
+    },
+    {
+      "path": "evidence/restore-checks-01.txt",
+      "bytes": 52,
+      "sha256": "59685a595e88a7b372d6195bb0d6b175b6e13c76cc834a0c5365e83552858cab"
+    },
+    {
+      "path": "evidence/restore-negative-result.json",
+      "bytes": 895,
+      "sha256": "022a29e5eb0f78273c221ef3c2f512f20aac0e7319829260f355723abaefc390"
+    },
+    {
+      "path": "evidence/restore-v1-result.json",
+      "bytes": 769,
+      "sha256": "c8d3c60fb4cf9731530ee5fa2081ac4227d3dab2a574b1eb664b8729bf3cb2d1"
+    },
+    {
+      "path": "evidence/restored-video-result.json",
+      "bytes": 317,
+      "sha256": "49a026ee3843884ec422d2d5d0ad4078a8ae777239ff0a9947d707afa0aefd00"
+    },
+    {
+      "path": "evidence/roundtrip-check-01.txt",
+      "bytes": 68,
+      "sha256": "080920ff4873fccf9032637304214583dcabcdcbe33bbfd74b465baab2ce9475"
+    },
+    {
+      "path": "evidence/roundtrip-http-01.txt",
+      "bytes": 46,
+      "sha256": "ff1aaebda12bae0642e64d1e52146609dffca09c12d19755262e29ae08ee4484"
+    },
+    {
+      "path": "evidence/roundtrip-http-result.json",
+      "bytes": 441,
+      "sha256": "cac7fce002c167fc844e892e0b577b2812c8b5a522b6dac5147daa1e070fd65f"
+    },
+    {
+      "path": "evidence/roundtrip-owner-bootstrap.txt",
+      "bytes": 52,
+      "sha256": "76de656138e8e69fe641587f0a86afef4e3debb64a572f4d8d6d4822505a74c2"
+    },
+    {
+      "path": "evidence/roundtrip-owner-reinitialize-rejected.txt",
+      "bytes": 669,
+      "sha256": "b80addfbd9d8adf72f4eaa0508d828abb8021aa527ff87f1011a75514e0cf8f9"
+    },
+    {
+      "path": "evidence/roundtrip-result.json",
+      "bytes": 1179,
+      "sha256": "367e51f2eeb1871c2639bcc87ae1aa271cb7bc61395d18d019570b10a2e7acdc"
+    },
+    {
+      "path": "evidence/runtime-prepare-01.txt",
+      "bytes": 215,
+      "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4"
+    },
+    {
+      "path": "evidence/runtime-prepare-02.txt",
+      "bytes": 215,
+      "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4"
+    },
+    {
+      "path": "evidence/runtime-prepare-03.txt",
+      "bytes": 215,
+      "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4"
+    },
+    {
+      "path": "evidence/runtime-prepare-04.txt",
+      "bytes": 1074,
+      "sha256": "03b2c42a19710dfbcc17ee6447b9974e5e620b2863cb8b982d9ad689b6db6278"
+    },
+    {
+      "path": "evidence/runtime-prepare-05.txt",
+      "bytes": 215,
+      "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4"
+    },
+    {
+      "path": "evidence/security-difference-01.json",
+      "bytes": 21229,
+      "sha256": "cac99fade64987613cb90e3c3f13ff756973f9bedb920cdbf5dc173d4cf95dab"
+    },
+    {
+      "path": "evidence/syntax-01.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/types-01.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/types-02.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/types-03.txt",
+      "bytes": 345,
+      "sha256": "fc0be16cdd318764248b7849eafda67f7e532b3d903376b9207ab6e32629dd13"
+    },
+    {
+      "path": "evidence/types-04.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "evidence/verify-02-http-result.json",
+      "bytes": 721,
+      "sha256": "95f981dc251a17e39de453c729eef0eac1df3f3e0c2a4d742a5865da08d706f3"
+    },
+    {
+      "path": "evidence/scope-final-result.json",
+      "bytes": 697,
+      "sha256": "7ccc442e1705f7528e6717a6818953717e007dc96132c3c32486f73a6e5fa8fd"
+    }
+  ],
+  "privateOriginals": [
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/PLAN.md",
+      "bytes": 4680,
+      "sha256": "3e0805c5037d6af72fe4317a9ce68e22f28df6128ebb500086325cb7a63e285b",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/archive-schema-private.sql",
+      "bytes": 1056064,
+      "sha256": "28f9884afb69967bd207f8ac4e8c06bc9c681964d08438a47736b2a2e544ff58",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/audit-01.json",
+      "bytes": 4219,
+      "sha256": "91d8bd4e413780bf7d7f7922af91c77e2bbb57e18c8652902a35c3ece8d9fc1b",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/audit-01.txt",
+      "bytes": 502,
+      "sha256": "3c593f1d8f577390a440b0f6e2e27b1f736099956617a01a85f0abd39de4ac0e",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/audit-02.txt",
+      "bytes": 414,
+      "sha256": "09dba6099dd57f4a0848272b6767a5d89c77c92fa38e3f3c29d4d2de599cbe76",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/audit-03.txt",
+      "bytes": 114,
+      "sha256": "f963907a4b0104d1904ec0b10122d0764cd934d6e26af875de7cf4f8575b2b5c",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/audit.mjs",
+      "bytes": 10535,
+      "sha256": "9f174f2819277eb6a17a76163d0851b5723412035d3f8d9007673727c984f099",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/backup-01-backup-result.json",
+      "bytes": 463,
+      "sha256": "ceff6b2cb70bef0e1816c6788726c3dd25c4d06a5da0caa18af0d69901d4c18f",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/backup-01-private.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/backup-02-backup-result.json",
+      "bytes": 463,
+      "sha256": "b737a16d68c24a81fd6ad219024f41a6d4cdda194a20e2c3a011fa2b453539dc",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/backup-02-private.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/backup-pointer-first-private.json",
+      "bytes": 311,
+      "sha256": "e47e62089ffb0fb28adf924bf34dc0a216bd8f6791ef16a1b199b44d5c18ce6d",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/backup-pointer.json",
+      "bytes": 311,
+      "sha256": "a917ccd3b5957c04c507c587f06d2aa81292852daa30b539dffb425e49b6b5e3",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/baseline.json",
+      "bytes": 8808,
+      "sha256": "10734a0ed430ff76646da0006e13c13eae3ddd307f01e4c0dde0afe0ee3183b3",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/boundary-checks-01.txt",
+      "bytes": 75,
+      "sha256": "49b117c7bb9656cb51c26a6b260ef4231704b0aded3b7a99434c999219bf7e03",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/boundary-checks.mjs",
+      "bytes": 5546,
+      "sha256": "4c48261334546b2273085bb7c7e6a1c84683d612044858802d77de654726917d",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/boundary-result.json",
+      "bytes": 731,
+      "sha256": "ff8c491e6a4d635f1c7afeb00249927432f9dd76ab5cae7c47167d4e0086450f",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-01-open.txt",
+      "bytes": 88,
+      "sha256": "1ad22a0786ca5b553a57f2f29556e543ae1591b71c2b14922278469eade3c2f4",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-02-restored.txt",
+      "bytes": 1699,
+      "sha256": "369ef8a5c3ba8475bd95da8f3270f13507abc51f09b2a61cc0e11ea47753d0f2",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-03-review-reason.txt",
+      "bytes": 1807,
+      "sha256": "c43c2701c44f6f75e78bcf3ae1382dc325bfe7910f49d777e4c4322e22385076",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-04-approved.txt",
+      "bytes": 1660,
+      "sha256": "9bc80f31ef678136eb388e1cd9d7013f8e5ef88daa2cbf9b2b901965a63bfd0f",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-05-before-plan.txt",
+      "bytes": 1640,
+      "sha256": "cd160819d165eeb266a50848a075a386183f664114b916ed669486721577616a",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-06-storyboard.txt",
+      "bytes": 1799,
+      "sha256": "acd3812dfa973d6536dd519c6b5b4d653ec994a32671415f39daad0f8918b6b4",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-07-directory-before.txt",
+      "bytes": 201,
+      "sha256": "972a4fbb3c0c460bf7a79fd58dfa1870bf3faca6d2b2e3c7dd2fe8da2bf369c1",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-08-restarted.txt",
+      "bytes": 1799,
+      "sha256": "acd3812dfa973d6536dd519c6b5b4d653ec994a32671415f39daad0f8918b6b4",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-10-reopen.txt",
+      "bytes": 88,
+      "sha256": "1ad22a0786ca5b553a57f2f29556e543ae1591b71c2b14922278469eade3c2f4",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-11-final-reloaded.txt",
+      "bytes": 1799,
+      "sha256": "acd3812dfa973d6536dd519c6b5b4d653ec994a32671415f39daad0f8918b6b4",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-12-directory-after.txt",
+      "bytes": 244,
+      "sha256": "7576a62a9bdb5ea18aea9773e166f6e3ae8714c1a06b287d564c97f4217e0890",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-13-screenshot-command.txt",
+      "bytes": 95,
+      "sha256": "d2c857f005ff16e4c9a948f036a21cc7364adfab6289914a0f382be033433360",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-14-restored-storyboard.png",
+      "bytes": 141416,
+      "sha256": "197121d0d6bd7b75f5ec7c5d6a37a07d1b68c6274480fa85394184319a6c9f96",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-15-final-reload.txt",
+      "bytes": 69,
+      "sha256": "576f697c30aa289f329fb5ecf65cddb8c0be9a9347e0aa93a32c493cc244dfdf",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-16-final-ready.txt",
+      "bytes": 13,
+      "sha256": "13740fb1b39f924db6b028b7ea353398423f6f1a8220e39991f82148362925c9",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-17-final-snapshot.txt",
+      "bytes": 1799,
+      "sha256": "acd3812dfa973d6536dd519c6b5b4d653ec994a32671415f39daad0f8918b6b4",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-18-final-directory.txt",
+      "bytes": 244,
+      "sha256": "7576a62a9bdb5ea18aea9773e166f6e3ae8714c1a06b287d564c97f4217e0890",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-19-screenshot-command.txt",
+      "bytes": 95,
+      "sha256": "59a5d022e63a5f79c5e619ffd834232496bfa150528ed00df5509a8f0d6c98ff",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-20-restored-storyboard-final.png",
+      "bytes": 141416,
+      "sha256": "197121d0d6bd7b75f5ec7c5d6a37a07d1b68c6274480fa85394184319a6c9f96",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-21-video-open.txt",
+      "bytes": 87,
+      "sha256": "3faefde1c055955d4fa8be357efa9347823936125bf1381c53d8a884083dc2a7",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-22-video-metadata.txt",
+      "bytes": 89,
+      "sha256": "834c40eb6110c79531963caab0cb6e68e0bd360bdd4b6b6ffbe83d95f43096b9",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-23-video-error.txt",
+      "bytes": 55,
+      "sha256": "9e420fc058e5fc1dd114f6e756b82bf82f0553879e651b4731651b4dae0fcbc2",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-24-video-episode-open.txt",
+      "bytes": 88,
+      "sha256": "a4e613e42f78448db751cf1bbcdd87de14844f7b06b9e16c6a66dd0d7f86098c",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-25-video-episode-snapshot.txt",
+      "bytes": 66,
+      "sha256": "e0d578d99521e97fdd39e7dca64af66d0c6745ea54997c78dcd253ce4372490c",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-26-video-episode-ready.txt",
+      "bytes": 33,
+      "sha256": "2bc37e1e973308cb8fe28ceee86da2a8132a834af061c29f2493e6d52977e34e",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-28-final-materials-click.txt",
+      "bytes": 9,
+      "sha256": "7c8f56aecbeeb314c13c01df65278c8ff9c1d10cc764cfb6bb4fea2accaffc6f",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-29-final-materials-snapshot.txt",
+      "bytes": 2020,
+      "sha256": "0003565b1212127694f6fee292c415b089038dd143900839ccd8a856a12d5c83",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-30-mute.txt",
+      "bytes": 5,
+      "sha256": "a17fcf0a2f50e2d495e4f90ce263410edc183add6c62699a2facbccf60410f74",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-31-play.txt",
+      "bytes": 9,
+      "sha256": "7c8f56aecbeeb314c13c01df65278c8ff9c1d10cc764cfb6bb4fea2accaffc6f",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-32-play-ready.txt",
+      "bytes": 5,
+      "sha256": "a17fcf0a2f50e2d495e4f90ce263410edc183add6c62699a2facbccf60410f74",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-33-play-result.json",
+      "bytes": 426,
+      "sha256": "bb085da8f919cabf44d3d50451e614f53baf5c5bfe3ee7451f76915b876982a1",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-34-video-screenshot-command.txt",
+      "bytes": 95,
+      "sha256": "97c059bb95f6bdc07caec3e1fb0fc2d4d1043d67a4522beae5ef66d871876963",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-35-restored-video.png",
+      "bytes": 121953,
+      "sha256": "febec52b36ba6c24b8044244924275367a67a7c1d3738f28d1b24e703bc1c052",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-36-close.txt",
+      "bytes": 19,
+      "sha256": "7b6df3d55d43203cadbfcf966c168fb8c40fcd4653461c98f3b6c02abf9b5605",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-37-auth-delete.txt",
+      "bytes": 9,
+      "sha256": "7c8f56aecbeeb314c13c01df65278c8ff9c1d10cc764cfb6bb4fea2accaffc6f",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-auth-login-private.txt",
+      "bytes": 38,
+      "sha256": "4eb58ed7243d961ed62d562a46bc31b7fd2497e06631b2a698b16a3387df9b04",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-auth-private.txt",
+      "bytes": 9,
+      "sha256": "7c8f56aecbeeb314c13c01df65278c8ff9c1d10cc764cfb6bb4fea2accaffc6f",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-final-result.json",
+      "bytes": 984,
+      "sha256": "ca4b2f36c9d8f07f13c3878d0f164cd3f86d61e653dc0bdbc6e35b9d26f08bf9",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/browser-network-private.txt",
+      "bytes": 603363,
+      "sha256": "c1a82ae3de6fece4773bf95111cc42212e34b707b0914e7440ae25a2de65ec39",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/check-commands.json",
+      "bytes": 885,
+      "sha256": "2e7122173558858155c774b11f36a11b9c948554f436bc10966db9b5c4b308b0",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/cleanup-01.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/default-5s-01-result.json",
+      "bytes": 261,
+      "sha256": "44008621d2b6eb17abb6b39707c2055d4dc4ff29e09218f1e18c2e7f16d0c7b2",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/default-5s-01.txt",
+      "bytes": 8912,
+      "sha256": "3f157b3ce8e14327573665f4b6ab3fd455481f3fe0e2462021679cb5130021ba",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/events-private.jsonl",
+      "bytes": 3987,
+      "sha256": "9e0bac11f28f351c4bfc2819a70364ec0c419a56780a74e16ebf521c827c2a12",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/fixture-private.json",
+      "bytes": 1110,
+      "sha256": "ff3c161a52a42013c5509d3ff468dd0f773f88801dd35b6e0e941592200d0464",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/frontend-final-01-result.json",
+      "bytes": 274,
+      "sha256": "18f09568d7437c8b7aa7d35e0159fc9898fec41492b0893c64442fd0928ae09c",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/frontend-final-01.txt",
+      "bytes": 1094,
+      "sha256": "c33ad9b45dbf04f4528ae61ce1fa63638cfd591bb8980274437ffc74f2cfcb19",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/keychain-cleanup.json",
+      "bytes": 250,
+      "sha256": "b58460fb34de37d997a098ed3111b86ffb431e393fc76a9f1bf6aafe08b9e18d",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/keychain-control",
+      "bytes": 54432,
+      "sha256": "8ceb6e7e17a7e68c142eab57f1411b91237487ba0cc06f350a244ec3746cd156",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/keychain-control-build.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/keychain-ownership.json",
+      "bytes": 461,
+      "sha256": "1895b0421df9e730c0b14eebdccb6b9c217bc855fd3dfcac3a738d1998bb55fe",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/keychain-search-before-private.json",
+      "bytes": 219,
+      "sha256": "43ee617897eaf2c87cea416514bbc3e204e49239566b030a582e14943098cf1e",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/local-types-01.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/local-types-02.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/local-types-03.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/local-types-04.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/local-types-05.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/local-types-06.txt",
+      "bytes": 345,
+      "sha256": "fc0be16cdd318764248b7849eafda67f7e532b3d903376b9207ab6e32629dd13",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/local-types-07.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/migration-01.txt",
+      "bytes": 87,
+      "sha256": "5d6416117be4b330cf777e0556deb704fc338adb4e57ba927c95c847019dc184",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/node-final-01-result.json",
+      "bytes": 146,
+      "sha256": "fb7d44414934af6e1c70df257645e2c36c0f0b548b43b4abf56f1c82066b5c9d",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/node-final-01.txt",
+      "bytes": 339,
+      "sha256": "ec2bdd11ca6aa08d8cdd1ff4371cfed27d1d06a95df6823525e4145faf0b9a25",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/notification-source-outcomes.json",
+      "bytes": 143,
+      "sha256": "eb22b53cda9aed63c04573913e5a4cf45ef036d0f8563f9deaf3c5575ca29ee2",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/post-original-public-private.sql",
+      "bytes": 17993720,
+      "sha256": "0eca14abf74ac1985d928100a65c0e3f559d1b046ffc595bea6fe3fa58ba6532",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/pre-original-public-private.sql",
+      "bytes": 17993720,
+      "sha256": "3eecc8c07c3198d937c9256572077d0f44383dcd339b0674b9c05709bc7dcf99",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/prepare-01-private.txt",
+      "bytes": 921,
+      "sha256": "72905bf1ac6f6376c4870211a084b57a005a37df8d973307eab1faedccae9fd5",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/prepare-02-private.txt",
+      "bytes": 836,
+      "sha256": "859a8089647dcd76dd075ebf78e4426bbace5d37d1830ae9df6780b4b41a277b",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/prepare-03-private.txt",
+      "bytes": 816,
+      "sha256": "d398cb7ffd818c95cf33dc6703af1a58fa114350d40bc8bbe636c1f82ee0d632",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/prepare-04-prepare-result.json",
+      "bytes": 427,
+      "sha256": "cb30a72974a47fa60dd8494ca8214fc387899dbd5e5301edd11940980669e892",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/prepare-04-private.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/publish-evidence-01.txt",
+      "bytes": 692,
+      "sha256": "220ab23c923ba4f4c2bc7c49a2a605cc1f2de1865cd3cae7fd349db4e092f5a2",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/publish-evidence.mjs",
+      "bytes": 7882,
+      "sha256": "5fecc85d0d0200edbc2120c2b5edd9353b5b216d0c51fefbf40657c2dfab8e16",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/restore-01-private.txt",
+      "bytes": 1211,
+      "sha256": "a9a81f2215f29b677ae6d809db15788dc91b5af09a98e46995a5874723a6ac06",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/restore-02-missing-keychain-result.json",
+      "bytes": 187,
+      "sha256": "94522a64dabe199c34d764268bbe1f79c6ec593bc2b95e94ed220a44f0d55c53",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/restore-02-owner-bootstrap.txt",
+      "bytes": 52,
+      "sha256": "76de656138e8e69fe641587f0a86afef4e3debb64a572f4d8d6d4822505a74c2",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/restore-02-private.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/restore-02-restore-result.json",
+      "bytes": 393,
+      "sha256": "e72e370c76a393cdec1227c044e54159a77ccde85516b4968ee4248e70668394",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/restore-checks-01.txt",
+      "bytes": 52,
+      "sha256": "59685a595e88a7b372d6195bb0d6b175b6e13c76cc834a0c5365e83552858cab",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/restore-checks.mjs",
+      "bytes": 4594,
+      "sha256": "94d482b23dd32d2dd345c8f82c6af5a060758b45d4cb83393b2f01fdc9c299ca",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/restore-media.sparseimage",
+      "bytes": 115347456,
+      "sha256": "971207b708f5a65d80811d68660b98326a4793d454ed1767096fca29cee26c5c",
+      "visibility": "private original; do not stage or commit",
+      "snapshotNote": "Mounted APFS image is mutable; digest is a point-in-time observation, file manifests/receipts are the recovery authority"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/restore-negative-result.json",
+      "bytes": 895,
+      "sha256": "022a29e5eb0f78273c221ef3c2f512f20aac0e7319829260f355723abaefc390",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/restore-v1-result.json",
+      "bytes": 769,
+      "sha256": "c8d3c60fb4cf9731530ee5fa2081ac4227d3dab2a574b1eb664b8729bf3cb2d1",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/restored-guard.mjs",
+      "bytes": 2713,
+      "sha256": "e9bfaa501d6569e18f417567732c13f347c88bb8a1bfa2797f8f1ed2c88913b1",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/restored-owner-private.json",
+      "bytes": 168,
+      "sha256": "e7f616ec91ab1f46a2a658c05aa074cb5155541659e1d8e54e099abbe37afd95",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/restored-reference-check.json",
+      "bytes": 192,
+      "sha256": "71f58f763fbb85a7b59f7e985f3e210252fa3299351179c1ad3fccc6d37480db",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/restored-video-result.json",
+      "bytes": 317,
+      "sha256": "49a026ee3843884ec422d2d5d0ad4078a8ae777239ff0a9947d707afa0aefd00",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/roundtrip-check-01.txt",
+      "bytes": 68,
+      "sha256": "080920ff4873fccf9032637304214583dcabcdcbe33bbfd74b465baab2ce9475",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/roundtrip-check.mjs",
+      "bytes": 1929,
+      "sha256": "1146b60d4ca9e961a4a4c4ab0c845f2568b3878dc2711adeb48e68f22fbefc1c",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/roundtrip-http-01.txt",
+      "bytes": 46,
+      "sha256": "ff1aaebda12bae0642e64d1e52146609dffca09c12d19755262e29ae08ee4484",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/roundtrip-http-result.json",
+      "bytes": 441,
+      "sha256": "cac7fce002c167fc844e892e0b577b2812c8b5a522b6dac5147daa1e070fd65f",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/roundtrip-http.mjs",
+      "bytes": 3376,
+      "sha256": "c7fc0894aec5ad4994b98553f820f408a6327a76759bfcf3a8fb19f808855ec0",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/roundtrip-owner-bootstrap.txt",
+      "bytes": 52,
+      "sha256": "76de656138e8e69fe641587f0a86afef4e3debb64a572f4d8d6d4822505a74c2",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/roundtrip-owner-private.json",
+      "bytes": 154,
+      "sha256": "5d5f924a1cf5f0d3f72c1c85f86ce99e91698db9b5aa05cd16e31700b5be4b03",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/roundtrip-owner-reinitialize-rejected.txt",
+      "bytes": 669,
+      "sha256": "b80addfbd9d8adf72f4eaa0508d828abb8021aa527ff87f1011a75514e0cf8f9",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/roundtrip-result.json",
+      "bytes": 1179,
+      "sha256": "367e51f2eeb1871c2639bcc87ae1aa271cb7bc61395d18d019570b10a2e7acdc",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/run-final-checks-01.txt",
+      "bytes": 115,
+      "sha256": "c6a94ecad566aa78ec8bde472b85f60ef26e549d539555ae5b8dd1ae37279859",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/run-final-checks.mjs",
+      "bytes": 1240,
+      "sha256": "960953cb745beca81c43f6c91d9e8ed356d36267a4a392ad3177f6c3cbaef337",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/runtime-prepare-01.txt",
+      "bytes": 215,
+      "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/runtime-prepare-02.txt",
+      "bytes": 215,
+      "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/runtime-prepare-03.txt",
+      "bytes": 215,
+      "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/runtime-prepare-04.txt",
+      "bytes": 1074,
+      "sha256": "03b2c42a19710dfbcc17ee6447b9974e5e620b2863cb8b982d9ad689b6db6278",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/runtime-prepare-05.txt",
+      "bytes": 215,
+      "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/runtime-private.json",
+      "bytes": 179,
+      "sha256": "887fbc170885ffa589f24fd7526e38200288d07d197b74d80d35552a7f8aff42",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/secrets-private.json",
+      "bytes": 292,
+      "sha256": "551963ef6a05e416c1f262959b1d4450b1d8a493c0ccce0241e7a0af39ae9d38",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/security-difference-01.json",
+      "bytes": 21229,
+      "sha256": "cac99fade64987613cb90e3c3f13ff756973f9bedb920cdbf5dc173d4cf95dab",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/security-failed-restore-private.json",
+      "bytes": 168486,
+      "sha256": "49d5529084f31b4eea477c68740201b0818f34b885ea1bf5c5d4ebdf9af08ae7",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/security-source-private.json",
+      "bytes": 183519,
+      "sha256": "04bbe1aa4e96649e15d75d7961a24f1373aefb0b50697e99897088cf31fda1f6",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/serve-01-private.txt",
+      "bytes": 5107,
+      "sha256": "bdac745464390872f1f1e83524cd692f40ccf57f8c8b63aabcad1ebc8044aa35",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/serve-02-private.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/serve-03-private.txt",
+      "bytes": 767,
+      "sha256": "8eac4fda0b8f3931c284fe533bc7bb707577efc03ced71d7322ebbffd613769c",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/serve-04-private.txt",
+      "bytes": 250,
+      "sha256": "7d55b20fc4c04bb9eaf4d22cd38a7adff8ea57eb1b92718443aeb41337c446c0",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/serve-05-private.txt",
+      "bytes": 1151,
+      "sha256": "208b749b206202f936599386c8478034627c60c410b46a4ca36f3ccdd040cc4b",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/serve-06-private.txt",
+      "bytes": 250,
+      "sha256": "7d55b20fc4c04bb9eaf4d22cd38a7adff8ea57eb1b92718443aeb41337c446c0",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/syntax-01.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/task-snapshot-diff-private.json",
+      "bytes": 9182,
+      "sha256": "25004ac1925016a27f963dfc43afc7eb829bf25e1aa647b57093216f100d6dbd",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/types-01.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/types-02.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/types-03.txt",
+      "bytes": 345,
+      "sha256": "fc0be16cdd318764248b7849eafda67f7e532b3d903376b9207ab6e32629dd13",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/types-04.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/verify-01-private.txt",
+      "bytes": 925,
+      "sha256": "da3b01c65d5a57e4337429d07a569cb03ccdcc6d1f1c1a5b68e118f00b46409f",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/verify-02-http-result.json",
+      "bytes": 721,
+      "sha256": "95f981dc251a17e39de453c729eef0eac1df3f3e0c2a4d742a5865da08d706f3",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/verify-02-private.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/volume-attach-private.plist",
+      "bytes": 1762,
+      "sha256": "f52b1102141f3c7bcfe375664a84a2193049f4771aebe15e947943cdc79d73e9",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/volume-create-01.txt",
+      "bytes": 289,
+      "sha256": "c8b2640f5e7736e93e7c624f6071e6c1798ce075e5535fa4779aadf8076081d0",
+      "visibility": "private original; do not stage or commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/publish-evidence-02.txt",
+      "bytes": 93,
+      "sha256": "524f6d61fad1e94ea2e183bc31ad38d9146775397a591f8ac48bd177d2e81321",
+      "visibility": "private original; do not commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/final-scope.mjs",
+      "bytes": 4136,
+      "sha256": "88a5d98265f64dff6c7b7ea3456ac5ee25238b37b244929d53b4f208fa66f79d",
+      "visibility": "private original; do not commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/scope-final-result.json",
+      "bytes": 697,
+      "sha256": "7ccc442e1705f7528e6717a6818953717e007dc96132c3c32486f73a6e5fa8fd",
+      "visibility": "private original; do not commit"
+    }
+  ],
+  "privateRestoreReceipts": [
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/restore-volume/restore2/restore-receipt.json",
+      "bytes": 8656,
+      "sha256": "c15bda206a210da6b28f5ccac160a5c93b6fd65f93389c1f574a374a635fa1f5",
+      "visibility": "private restore receipt with full raw copy/sequence/security metadata"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/restore-volume/v1/restore-receipt.json",
+      "bytes": 8560,
+      "sha256": "9a1f84bca1e525efc13c46dcf186ea1de832c84ff8107b22937548b9f8432273",
+      "visibility": "private restore receipt with full raw copy/sequence/security metadata"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/restore-volume/roundtrip/restore-receipt.json",
+      "bytes": 8863,
+      "sha256": "99f9f1bc3e19c9260b1102465ac44786f05f59cd73aca5d9da947a7a0eebb068",
+      "visibility": "private restore receipt with full raw copy/sequence/security metadata"
+    }
+  ],
+  "backupManifests": [
+    {
+      "path": ".loop-control/stage-d/backups/loop_t24_source/c6b2186d-e752-4812-80ff-c21a9901f2a6/manifest.json",
+      "sha256": "6f7f18cb3c119633ab606c41da7b34fa0b2702353b163c9c805c379f0076b683",
+      "archiveSha256": "5a47efb12246fbc60570fb1afcebca66c6a633e1fb08872589e13d4745a99e0e",
+      "tables": 51,
+      "mediaFiles": 850,
+      "authRowsExcluded": true,
+      "knownPlaintextSecretScanClear": true
+    },
+    {
+      "path": ".loop-control/stage-d/backups/loop_t24_source/a2313549-ada8-4617-aa5c-d8ca181c56e3/manifest.json",
+      "sha256": "80e5c75da46a4b9363ed54b618c7b24cb9799e1a4d25dee00ab6c1217ef31e3f",
+      "archiveSha256": "85a89d61ca9e54b2e3edb9f2e0b42b223d16effd63d2297a3eecb35acba1e482",
+      "tables": 51,
+      "mediaFiles": 850,
+      "authRowsExcluded": true,
+      "knownPlaintextSecretScanClear": true
+    },
+    {
+      "path": ".loop-control/stage-d/backups/loop_t24_restored2/7e867bb4-519d-4895-ba78-d3d4e0180fa1/manifest.json",
+      "sha256": "348dc0e58fb94cec74de6ae0c7316db3c3c391346e6225577cb952d6135cac73",
+      "archiveSha256": "477cfef92255d91f8699860c57a8bdc3e328e490ce165caf6dd08c852c102b3b",
+      "tables": 51,
+      "mediaFiles": 853,
+      "authRowsExcluded": true,
+      "knownPlaintextSecretScanClear": true
+    }
+  ],
+  "negativeFixtureManifests": [
+    {
+      "path": ".loop-control/stage-d/backups/t24-negative/corrupt/manifest.json",
+      "bytes": 200379,
+      "sha256": "63c428893a90237d3a7b9782fd63b7abea1414cfc88945c43ba69ceaff6d8f6d",
+      "visibility": "private intentionally malformed negative fixture; not a valid recovery archive"
+    },
+    {
+      "path": ".loop-control/stage-d/backups/t24-negative/missing-reference/manifest.json",
+      "bytes": 232773,
+      "sha256": "54ff29ff0ae1c20a1a1b91190a731d9ff6753a5eb773a8fb157b0f5cd483102f",
+      "visibility": "private intentionally malformed negative fixture; not a valid recovery archive"
+    },
+    {
+      "path": ".loop-control/stage-d/backups/t24-negative/symlink/manifest.json",
+      "bytes": 200379,
+      "sha256": "63c428893a90237d3a7b9782fd63b7abea1414cfc88945c43ba69ceaff6d8f6d",
+      "visibility": "private intentionally malformed negative fixture; not a valid recovery archive"
+    },
+    {
+      "path": ".loop-control/stage-d/backups/t24-negative/traversal/manifest.json",
+      "bytes": 18517,
+      "sha256": "e0a488a29af2cdbc7f4bdcd490367b50465e0e2b0ea139c6a1054f9963c069dc",
+      "visibility": "private intentionally malformed negative fixture; not a valid recovery archive"
+    }
+  ],
+  "privateDirectories": [
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/restore-volume",
+      "note": "successful and failed/pending restoration media retained; includes source file fingerprints and per-restore receipts"
+    },
+    {
+      "path": ".loop-control/stage-d/backups/loop_t24_source",
+      "note": "two actual source backups, all private"
+    },
+    {
+      "path": ".loop-control/stage-d/backups/loop_t24_restored2",
+      "note": "actual roundtrip backup, all private"
+    },
+    {
+      "path": ".loop-control/stage-d/backups/t24-negative",
+      "note": "intentional corruption/missing-indexed-media fixtures, all private"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/home",
+      "note": "private runtime/cache; do not commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/tmp",
+      "note": "private runtime/cache; do not commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/vite-cache",
+      "note": "private runtime/cache; do not commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/frontend",
+      "note": "private runtime/cache; do not commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/orchestration",
+      "note": "private runtime/cache; do not commit"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t24-20261024/clang-cache",
+      "note": "private runtime/cache; do not commit"
+    }
+  ],
+  "historicalEvidence": [
+    {
+      "path": "docs/verification/stage-d-t21/evidence/default-5s-01.txt",
+      "sha256": "6070bb0ac58ac0c4560931c64c01e923411eab7873bd12f4cfde7d54eecb8a31",
+      "unchanged": true
+    },
+    {
+      "path": "docs/verification/stage-d-t21/evidence/baseline-default-5s-01.txt",
+      "sha256": "96742512ad105b12fd59c0ee750d8d33c375714d20727d8ccf50f0532269db48",
+      "unchanged": true
+    },
+    {
+      "path": "docs/verification/stage-d-t17/README.md",
+      "sha256": "78da3c0e354c766de87aeb0178d3d3778a58c9f35d91bbfaaef544d1fc8cafab",
+      "unchanged": true
+    }
+  ],
+  "defaultGate": {
+    "currentPassed": 749,
+    "failed": 0,
+    "timeoutMs": 5000,
+    "override": false,
+    "t21AndHistoricalFailuresRetained": true,
+    "rootCauseUnresolved": true
+  },
+  "workerLease": {
+    "minutes": 30,
+    "changed": false,
+    "immediateFailoverProven": false
+  },
+  "outstanding": [
+    "real WhisperX successful inference",
+    "default deployment and fresh-host role provisioning",
+    "online generation",
+    "other Providers",
+    "full multi-capability Worker",
+    "T25 dependency retirement",
+    "F-stage overall release acceptance"
+  ],
+  "retainedCaveats": [
+    "simulated qualification; this run simulated Provider probe is ready false",
+    "historical SecretStore substitute; this run real dedicated Keychain synthetic-only rebind",
+    "T17 overwritten intermediate logs",
+    "v1 has no complete source security hash",
+    "single preserved Owner credential bootstrap tested",
+    "existing lease remains 30 minutes; immediate failover not proven"
+  ],
+  "noOnlineRequests": true,
+  "noProduction": true,
+  "rawHarIncluded": false,
+  "knownSecretScanClear": true,
+  "unrelatedFilesExcluded": 43,
+  "staged": true,
+  "committed": true,
+  "pushed": false,
+  "merged": false,
+  "noT25": true,
+  "commitStatus": "Included in the authorized local T24 commit; resolve SHA from Git history. Original noCommit/indexEmpty/baseline evidence records the pre-authorization acceptance snapshot. Business implementation and raw evidence are unchanged.",
+  "commitAuthorizationDate": "2026-10-25"
+}

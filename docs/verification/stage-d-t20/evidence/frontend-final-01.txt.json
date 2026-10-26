@@ -1,0 +1,12 @@
+{
+  "command": [
+    "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+    "node_modules/vite/bin/vite.js",
+    "build",
+    "--outDir",
+    ".loop-control/stage-d/state/t20-20261024/frontend-build-final-01"
+  ],
+  "exitCode": 0,
+  "started": "2026-10-24T10:24:28.594Z",
+  "ended": "2026-10-24T10:24:30.235Z"
+}

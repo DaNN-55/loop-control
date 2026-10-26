@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "formalNpmDefaultEntry": true,
+  "taskId": "eb9c5ffd-5e3c-42d8-8ad8-74367eba018b",
+  "alignmentStatus": "completed",
+  "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+  "text": "这是本地字幕验收？",
+  "cues": [
+    {
+      "id": "phrase-1",
+      "text": "这是本地字幕验收？",
+      "endMs": 4006,
+      "startMs": 60,
+      "confidence": 0.982125
+    }
+  ],
+  "reviewIssues": 0,
+  "httpSha256": "1c5cbbc83a511af3f703067be6fa886de9be8df326efef771fca8c243fbb1f9f",
+  "realModelOsAllNetworkDenied": true,
+  "noOnlineProviderRequests": true
+}

@@ -630,6 +630,7 @@ export type Database = {
       }
       shot_preparation_drafts: {
         Row: {
+          caption_text_confirmation?: Json | null
           acoustic_alignment?: Json | null
           caption_contract?: Json
           composition?: Json
@@ -699,6 +700,7 @@ export type Database = {
           video_status: "failed" | "pending" | "ready" | "running"
         }
         Insert: {
+          caption_text_confirmation?: Json | null
           acoustic_alignment?: Json | null
           caption_contract?: Json
           composition?: Json
@@ -768,6 +770,7 @@ export type Database = {
           skipped_by?: string | null
         }
         Update: {
+          caption_text_confirmation?: Json | null
           acoustic_alignment?: Json | null
           caption_contract?: Json
           composition?: Json

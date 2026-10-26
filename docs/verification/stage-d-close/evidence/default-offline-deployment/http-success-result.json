@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "normalNativeApplicationFactory": true,
+  "ownerHttpRequest": true,
+  "realPersistentQueue": true,
+  "realNativeWorkerCli": true,
+  "realWhisperXInference": true,
+  "taskId": "f1aa7c56-4ee7-4750-adc8-6735bfddbec3",
+  "taskStatus": "completed",
+  "taskAttempt": 1,
+  "runs": 1,
+  "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+  "alignmentStatus": "completed",
+  "cues": [
+    {
+      "id": "phrase-1",
+      "text": "这是本地字幕验收。",
+      "endMs": 4006,
+      "startMs": 60,
+      "confidence": 0.982125
+    }
+  ],
+  "reviewIssues": 0,
+  "inputVersionMatchesFrozenTask": true,
+  "textAndAudioFingerprintsMatch": true,
+  "httpArtifactSha256": "ce402e01d386de9b4b8db0cbafd375a976a0d2a07552d9d413b34f1030ec5dce",
+  "httpArtifactBytes": 964,
+  "priorManualAlignmentNotReused": true,
+  "offlineInferenceSandbox": true,
+  "providerRequests": 0
+}

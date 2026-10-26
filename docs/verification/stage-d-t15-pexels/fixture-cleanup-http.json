@@ -1,0 +1,25 @@
+{
+  "at": "2026-10-24T03:32:32.737Z",
+  "originalReferenceDidNotMigrate": true,
+  "blueprintReferencesCleared": true,
+  "testAccountArchived": true,
+  "bothTestVersionsRevoked": true,
+  "records": [
+    {
+      "command": "updateBlueprint",
+      "status": 200
+    },
+    {
+      "command": "revoke",
+      "status": 200
+    },
+    {
+      "command": "revoke",
+      "status": 200
+    },
+    {
+      "command": "archiveAccount",
+      "status": 200
+    }
+  ]
+}

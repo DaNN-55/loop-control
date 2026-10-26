@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/local-app/workerDatabase.test.ts (1 test) 2ms
+ ✓ src/local-app/localFiles.test.ts (1 test) 15ms
+
+ Test Files  2 passed (2)
+      Tests  2 passed (2)
+   Start at  12:02:24
+   Duration  363ms (transform 84ms, setup 0ms, collect 128ms, tests 17ms, environment 0ms, prepare 110ms)
+

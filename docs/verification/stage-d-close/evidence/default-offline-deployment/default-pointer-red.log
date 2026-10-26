@@ -1,0 +1,50 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ scripts/local/deployment.test.mjs (3 tests | 1 failed) 6ms
+   ✓ selects a restored deployment using the same strict normal startup reader 1ms
+   × selects an optional default pointer and still rejects a changed restore binding 4ms
+     → expected { projectRoot: '/isolated', …(10) } to match object { database: { …(5) }, …(3) }
+(9 matching properties omitted from actual)
+   ✓ rejects mismatched restore receipt, worker database, production paths and online policy 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  scripts/local/deployment.test.mjs > selects an optional default pointer and still rejects a changed restore binding
+AssertionError: expected { projectRoot: '/isolated', …(10) } to match object { database: { …(5) }, …(3) }
+(9 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "database": {
+-     "database": "loop_t24_restore_new",
+-     "host": "127.0.0.1",
+-     "password": "synthetic",
+-     "port": 55472,
+-     "user": "loop_app",
+-   },
+-   "deploymentFile": "/isolated/.loop-control/stage-d/state/t24-new/deployment.json",
+-   "mediaRoot": "/isolated/.loop-control/stage-d/state/t24-new/volume/restored/media",
+-   "offlinePreparationRequired": true,
++   "database": {},
++   "mediaRoot": "/isolated/.loop-control/stage-d/media",
+  }
+
+ ❯ scripts/local/deployment.test.mjs:15:27
+     13| it('selects an optional default pointer and still rejects a changed re…
+     14|  fixture.files.set(root+'/default-deployment.json',{version:1,deployme…
+     15|  expect(readDeployment()).toMatchObject({database,mediaRoot,deployment…
+       |                           ^
+     16|  fixture.files.set(receiptFile,{passed:false});expect(()=>readDeployme…
+     17| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  13:16:10
+   Duration  997ms (transform 15ms, setup 0ms, collect 16ms, tests 6ms, environment 0ms, prepare 37ms)
+

@@ -1,0 +1,80 @@
+{
+  "baseline": "af4856a8683d0a61f2f01911ccfe00077b4c9cc1",
+  "current": "frozen worktree: exactly 22 T19 source changes; unrelated PLAN/docs excluded",
+  "cwd": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t19-timeout-comparison-20261024/checkout",
+  "command": [
+    "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "--exclude",
+    "n8n/import-workflows.test.mjs",
+    "--exclude",
+    "**/*.integration.test.ts",
+    "--exclude",
+    "**/.loop-control/**"
+  ],
+  "environmentSha256": "efa307c6f9a81e22ed5c938c6131efa0cd7f6d9792b7c2a919199db2757edb71",
+  "environmentSameExceptReadOnlyNetworkGuard": "Original cleanEnvironment(verifiedSource()) plus identical NODE_OPTIONS guard in both variants. No .env files in original or snapshots.",
+  "node": "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+  "nodeSha256": "c8eedc7651a438fb7d2ceb36fd70032676c855586a36c950ba5a662f0b7853bd",
+  "nodeVersion": "v24.20.0",
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t27.0\nBuildVersion:\t\t26A428\n",
+  "architecture": "arm64",
+  "configHashes": [
+    {
+      "path": "package.json",
+      "sha256": "b57ab518596976812300002dbf6da7b661b59222aae7edef85910a97fd309502"
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "b9dc1c923b316e086ba39c99dd42df496141b76224807e593808211a2e71b39d"
+    },
+    {
+      "path": "vite.config.ts",
+      "sha256": "3787d584237065f6139d7d05ae0b5065cdb5f4bbbe3217e094d45fc4b3aa1f74"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "770b4140bbb581e2dfd9ea9946ffc9c75a1d86ba7d2db5f77c83e37cbdf9d808"
+    },
+    {
+      "path": "tsconfig.app.json",
+      "sha256": "c5692c15b85608cc6edd92e8b00f66af18c11e0a789df542089cc871524e1020"
+    },
+    {
+      "path": "tsconfig.node.json",
+      "sha256": "2fba2f25e1859f193b54edef5d2d2cd08cae2a37fab64c08699f6f8672bea2cc"
+    }
+  ],
+  "targetFileSha256": "b562195f89bbd005ff68990452eac78d6b407b953011a01dafbf6ab0a756faaa",
+  "defaultTimeoutMs": 5000,
+  "timeoutFlagsOrSourceChanges": false,
+  "dependencyRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/node_modules",
+  "dependencyVersions": {
+    "vitest": "3.2.7",
+    "vite": "7.3.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "jsdom": "26.1.0",
+    "@testing-library/react": "16.3.2",
+    "@testing-library/user-event": "14.6.4"
+  },
+  "order": [
+    "baseline",
+    "current",
+    "current",
+    "baseline"
+  ],
+  "extensionIfInconclusive": [
+    "baseline",
+    "current",
+    "current",
+    "baseline"
+  ],
+  "maxRuns": 8,
+  "cachePolicy": "Same checkout path. Fresh snapshot and fresh checkout-local node_modules/.vite cache each run; dependency links point to same installed bytes. No installation.",
+  "noOnline": true,
+  "noProduction": true,
+  "noCommit": true,
+  "noT20": true
+}

@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "provider": "volcengine_tts",
+  "providerAcceptancePassed": true,
+  "cumulativeUsed": 9,
+  "costReservedCny": 0.03,
+  "countsNotReset": true,
+  "allOwnProcessesStopped": true
+}

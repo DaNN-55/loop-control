@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "detail": "本地完整备份已生成并校验：51 张表、872 个文件；不包含密码、会话或 Keychain，恢复能力尚未验收。",
+  "archiveSha256": "12b87290fb5b4f9cdaa7413fb525a9b7ab45d2717652f3c268ea6d613c7ec529",
+  "mediaFiles": 872,
+  "jobId": "8d6cb063-667e-46c2-82db-b64bddb7b0d8",
+  "sourceDatabase": "loop_t24_restore_dclose01"
+}

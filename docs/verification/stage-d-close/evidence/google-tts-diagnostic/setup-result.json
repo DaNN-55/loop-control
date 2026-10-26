@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "inheritedRequests": 9,
+  "inheritedCostReservedCny": 0.03,
+  "additionalGoogleVerifyCap": 1,
+  "otherOperationCapsAtAlreadyUsed": true,
+  "noWorkerConfigured": true,
+  "oldLedgerUnchanged": true,
+  "newProviderRequests": 0,
+  "initialReadOnlyQueryFailurePreserved": true
+}

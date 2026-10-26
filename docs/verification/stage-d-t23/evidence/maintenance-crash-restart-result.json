@@ -1,0 +1,25 @@
+{
+  "passed": true,
+  "realServiceRestart": true,
+  "controlledClockAdvanced31Seconds": true,
+  "expiredAttemptRetained": true,
+  "recoveredAutomatically": true,
+  "noDuplicateBackup": true,
+  "attempts": [
+    {
+      "kind": "backup",
+      "status": "completed",
+      "attempt": 1
+    },
+    {
+      "kind": "health",
+      "status": "interrupted",
+      "attempt": 1
+    },
+    {
+      "kind": "health",
+      "status": "completed",
+      "attempt": 2
+    }
+  ]
+}

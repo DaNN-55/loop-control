@@ -1,0 +1,5 @@
+{
+  "reason": "Copied acceptance CLI used modelPhase for its mode label; both actual invocations were npm stop and performed no model request",
+  "correction": "Rename metadata field to modeLabel; original receipts privately preserved",
+  "newProviderRequests": 0
+}

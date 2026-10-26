@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-24T07:23:06.695Z",
+  "corruptCompletedMp3Reuse409AndDraftRollback": true,
+  "invalidRate400": true,
+  "staleReviewPackage409": true,
+  "sourceAudioPathNotAccepted": true,
+  "unknownCredentialField400": true,
+  "foreignOwnerCommandsAndArtifact404": true,
+  "ownerCannotReadWorkerConnectionMetadata": true,
+  "workerCannotSaveOwnerSettings": true,
+  "staleLeaseMetadataRequestRejectedNoTaskMutation": true,
+  "providerRequests": 0,
+  "passed": true
+}

@@ -1,0 +1,11 @@
+{
+  "command": [
+    "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+    "--test",
+    "n8n/import-workflows.test.mjs"
+  ],
+  "timeoutOverride": false,
+  "exitCode": 0,
+  "start": "2026-10-24T10:28:03.819Z",
+  "end": "2026-10-24T10:28:03.910Z"
+}

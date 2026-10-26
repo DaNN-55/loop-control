@@ -1,0 +1,12 @@
+{
+  "started": "2026-10-25T01:32:47.213Z",
+  "finished": "2026-10-25T01:32:47.702Z",
+  "command": [
+    "node",
+    ".loop-control/stage-d/state/d-close-logout-p2-20261025/browser-write2.mjs"
+  ],
+  "status": 1,
+  "defaultTimeoutMs": 5000,
+  "timeoutOverride": false,
+  "passed": false
+}

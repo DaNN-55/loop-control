@@ -1,0 +1,226 @@
+- dialog "配置B-roll"
+  - generic
+    - sectionheader
+      - StaticText "生产能力配置"
+      - heading "配置B-roll" [level=3, ref=e66]
+        - StaticText "配置B-roll"
+      - paragraph
+        - StaticText "选择可用于之后新建 Episode 的执行路径；连接中的秘密不会写入蓝图。"
+      - button "关闭B-roll配置" [ref=e67]
+        - StaticText "×"
+    - article
+      - generic
+        - heading "执行方式" [level=5, ref=e76]
+        - LabelText
+          - StaticText "执行路径"
+          - generic "执行路径说明" [ref=e84] focusable [tabindex]
+            - tooltip "首次启用不会自动选择路径；人工素材不会创建 Worker 或外部任务。"
+          - combobox "B-roll 执行路径" [expanded=false, ref=e85]: 外部
+            - MenuListPopup
+              - option "请选择执行路径" [ref=e97]
+              - option "外部" [selected, ref=e98]
+              - option "本地（未部署）" [disabled, ref=e99]
+              - option "人工素材" [ref=e100]
+        - LabelText
+          - StaticText "Provider"
+          - generic "Provider说明" [ref=e86] focusable [tabindex]
+            - tooltip "Provider 由已注册 Adapter 声明，不能自由填写。"
+          - textbox "Provider" [ref=e87]: pexels
+            - StaticText "pexels"
+        - LabelText
+          - StaticText "Adapter"
+          - generic "Adapter说明" [ref=e88] focusable [tabindex]
+            - tooltip "只能选择 Worker 已注册的外部 Adapter。"
+          - combobox "B-roll Adapter" [expanded=false, ref=e89]: pexels · pexels_video
+            - MenuListPopup
+              - option "请选择 Adapter" [ref=e101]
+              - option "pexels · pexels_video" [selected, ref=e102]
+      - generic
+        - heading "外部连接" [level=5, ref=e77]
+        - generic "B-roll连接"
+          - generic
+            - StaticText "当前连接"
+            - strong
+              - StaticText "T15 Pexels live e309082b · v1 · 已验证"
+            - StaticText "本次测试暂不可用；上次有效验证资格保留，生产前仍须检查。"
+            - button "重新测试" [ref=e96]
+          - group
+            - DisclosureTriangle "更新连接" [expanded=false]
+              - StaticText "更新连接"
+          - paragraph
+            - StaticText "官方 Endpoint：https://api.pexels.com"
+      - generic
+        - heading "输出设置" [level=5, ref=e78]
+        - LabelText
+          - StaticText "模型"
+          - generic "模型说明" [ref=e90] focusable [tabindex]
+            - tooltip "只能从当前 Adapter 声明的模型目录选择。"
+          - combobox "B-roll 模型" [expanded=false, ref=e91]: pexels-video-v1
+            - MenuListPopup
+              - option "请选择模型" [ref=e103]
+              - option "pexels-video-v1" [selected, ref=e104]
+        - LabelText
+          - StaticText "执行预设"
+          - generic "执行预设说明" [ref=e92] focusable [tabindex]
+            - tooltip "固定该 Adapter 的执行规则版本。"
+          - combobox "B-roll 执行预设" [expanded=false, ref=e93]: b-roll-v1
+            - MenuListPopup
+              - option "请选择预设" [ref=e105]
+              - option "b-roll-v1" [selected, ref=e106]
+        - LabelText
+          - StaticText "最大尝试次数"
+          - generic "最大尝试次数说明" [ref=e94] focusable [tabindex]
+            - tooltip "媒体任务失败后的最大执行尝试次数。"
+          - spinbutton "最大尝试次数" [ref=e95]: 1
+            - StaticText "1"
+    - sectionfooter
+      - button "完成" [ref=e68]
+- StaticText "生产能力配置"
+- heading "配置B-roll" [level=3, ref=e66]
+  - StaticText "配置B-roll"
+- paragraph
+  - StaticText "选择可用于之后新建 Episode 的执行路径；连接中的秘密不会写入蓝图。"
+- generic
+  - heading "执行方式" [level=5, ref=e76]
+  - LabelText
+    - StaticText "执行路径"
+    - generic "执行路径说明" [ref=e84] focusable [tabindex]
+      - tooltip "首次启用不会自动选择路径；人工素材不会创建 Worker 或外部任务。"
+    - combobox "B-roll 执行路径" [expanded=false, ref=e85]: 外部
+      - MenuListPopup
+        - option "请选择执行路径" [ref=e97]
+        - option "外部" [selected, ref=e98]
+        - option "本地（未部署）" [disabled, ref=e99]
+        - option "人工素材" [ref=e100]
+  - LabelText
+    - StaticText "Provider"
+    - generic "Provider说明" [ref=e86] focusable [tabindex]
+      - tooltip "Provider 由已注册 Adapter 声明，不能自由填写。"
+    - textbox "Provider" [ref=e87]: pexels
+      - StaticText "pexels"
+  - LabelText
+    - StaticText "Adapter"
+    - generic "Adapter说明" [ref=e88] focusable [tabindex]
+      - tooltip "只能选择 Worker 已注册的外部 Adapter。"
+    - combobox "B-roll Adapter" [expanded=false, ref=e89]: pexels · pexels_video
+      - MenuListPopup
+        - option "请选择 Adapter" [ref=e101]
+        - option "pexels · pexels_video" [selected, ref=e102]
+- generic
+  - heading "外部连接" [level=5, ref=e77]
+  - generic "B-roll连接"
+    - generic
+      - StaticText "当前连接"
+      - strong
+        - StaticText "T15 Pexels live e309082b · v1 · 已验证"
+      - StaticText "本次测试暂不可用；上次有效验证资格保留，生产前仍须检查。"
+      - button "重新测试" [ref=e96]
+    - group
+      - DisclosureTriangle "更新连接" [expanded=false]
+        - StaticText "更新连接"
+    - paragraph
+      - StaticText "官方 Endpoint：https://api.pexels.com"
+- generic
+  - heading "输出设置" [level=5, ref=e78]
+  - LabelText
+    - StaticText "模型"
+    - generic "模型说明" [ref=e90] focusable [tabindex]
+      - tooltip "只能从当前 Adapter 声明的模型目录选择。"
+    - combobox "B-roll 模型" [expanded=false, ref=e91]: pexels-video-v1
+      - MenuListPopup
+        - option "请选择模型" [ref=e103]
+        - option "pexels-video-v1" [selected, ref=e104]
+  - LabelText
+    - StaticText "执行预设"
+    - generic "执行预设说明" [ref=e92] focusable [tabindex]
+      - tooltip "固定该 Adapter 的执行规则版本。"
+    - combobox "B-roll 执行预设" [expanded=false, ref=e93]: b-roll-v1
+      - MenuListPopup
+        - option "请选择预设" [ref=e105]
+        - option "b-roll-v1" [selected, ref=e106]
+  - LabelText
+    - StaticText "最大尝试次数"
+    - generic "最大尝试次数说明" [ref=e94] focusable [tabindex]
+      - tooltip "媒体任务失败后的最大执行尝试次数。"
+    - spinbutton "最大尝试次数" [ref=e95]: 1
+      - StaticText "1"
+- LabelText
+  - StaticText "执行路径"
+  - generic "执行路径说明" [ref=e84] focusable [tabindex]
+    - tooltip "首次启用不会自动选择路径；人工素材不会创建 Worker 或外部任务。"
+  - combobox "B-roll 执行路径" [expanded=false, ref=e85]: 外部
+    - MenuListPopup
+      - option "请选择执行路径" [ref=e97]
+      - option "外部" [selected, ref=e98]
+      - option "本地（未部署）" [disabled, ref=e99]
+      - option "人工素材" [ref=e100]
+- LabelText
+  - StaticText "Provider"
+  - generic "Provider说明" [ref=e86] focusable [tabindex]
+    - tooltip "Provider 由已注册 Adapter 声明，不能自由填写。"
+  - textbox "Provider" [ref=e87]: pexels
+    - StaticText "pexels"
+- LabelText
+  - StaticText "Adapter"
+  - generic "Adapter说明" [ref=e88] focusable [tabindex]
+    - tooltip "只能选择 Worker 已注册的外部 Adapter。"
+  - combobox "B-roll Adapter" [expanded=false, ref=e89]: pexels · pexels_video
+    - MenuListPopup
+      - option "请选择 Adapter" [ref=e101]
+      - option "pexels · pexels_video" [selected, ref=e102]
+- LabelText
+  - StaticText "模型"
+  - generic "模型说明" [ref=e90] focusable [tabindex]
+    - tooltip "只能从当前 Adapter 声明的模型目录选择。"
+  - combobox "B-roll 模型" [expanded=false, ref=e91]: pexels-video-v1
+    - MenuListPopup
+      - option "请选择模型" [ref=e103]
+      - option "pexels-video-v1" [selected, ref=e104]
+- LabelText
+  - StaticText "执行预设"
+  - generic "执行预设说明" [ref=e92] focusable [tabindex]
+    - tooltip "固定该 Adapter 的执行规则版本。"
+  - combobox "B-roll 执行预设" [expanded=false, ref=e93]: b-roll-v1
+    - MenuListPopup
+      - option "请选择预设" [ref=e105]
+      - option "b-roll-v1" [selected, ref=e106]
+- LabelText
+  - StaticText "最大尝试次数"
+  - generic "最大尝试次数说明" [ref=e94] focusable [tabindex]
+    - tooltip "媒体任务失败后的最大执行尝试次数。"
+  - spinbutton "最大尝试次数" [ref=e95]: 1
+    - StaticText "1"
+- StaticText "执行路径"
+- generic "执行路径说明" [ref=e84] focusable [tabindex]
+  - tooltip "首次启用不会自动选择路径；人工素材不会创建 Worker 或外部任务。"
+- StaticText "Provider"
+- generic "Provider说明" [ref=e86] focusable [tabindex]
+  - tooltip "Provider 由已注册 Adapter 声明，不能自由填写。"
+- StaticText "Adapter"
+- generic "Adapter说明" [ref=e88] focusable [tabindex]
+  - tooltip "只能选择 Worker 已注册的外部 Adapter。"
+- StaticText "模型"
+- generic "模型说明" [ref=e90] focusable [tabindex]
+  - tooltip "只能从当前 Adapter 声明的模型目录选择。"
+- StaticText "执行预设"
+- generic "执行预设说明" [ref=e92] focusable [tabindex]
+  - tooltip "固定该 Adapter 的执行规则版本。"
+- StaticText "最大尝试次数"
+- generic "最大尝试次数说明" [ref=e94] focusable [tabindex]
+  - tooltip "媒体任务失败后的最大执行尝试次数。"
+- StaticText "当前连接"
+- strong
+  - StaticText "T15 Pexels live e309082b · v1 · 已验证"
+- StaticText "本次测试暂不可用；上次有效验证资格保留，生产前仍须检查。"
+- DisclosureTriangle "更新连接" [expanded=false]
+  - StaticText "更新连接"
+- option "请选择执行路径" [ref=e97]
+- option "外部" [selected, ref=e98]
+- option "本地（未部署）" [disabled, ref=e99]
+- option "人工素材" [ref=e100]
+- option "请选择 Adapter" [ref=e101]
+- option "pexels · pexels_video" [selected, ref=e102]
+- option "请选择模型" [ref=e103]
+- option "pexels-video-v1" [selected, ref=e104]
+- option "请选择预设" [ref=e105]
+- option "b-roll-v1" [selected, ref=e106]

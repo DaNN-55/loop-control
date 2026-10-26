@@ -1,0 +1,9 @@
+{
+  "natural144": "original observer rejected legitimate ready after natural 1800 seconds; original log retained; resumed observation only",
+  "browser148": [
+    "nonexistent v.status query corrected to c.status",
+    "rebind creates one retryable local record; qualified false and verify commands zero confirmed",
+    "stdin Python __file__ mismatch fixed with helper file",
+    "corrections-note write initially missing json import; note now saved"
+  ]
+}

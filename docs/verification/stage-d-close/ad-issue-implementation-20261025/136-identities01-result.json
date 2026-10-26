@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "field": "audioTrackId",
+      "status": 409
+    },
+    {
+      "field": "audioSha256",
+      "status": 409
+    },
+    {
+      "field": "textFingerprint",
+      "status": 409
+    },
+    {
+      "field": "alignmentInputVersion",
+      "status": 409
+    },
+    {
+      "boundary": "anonymous",
+      "status": 401
+    },
+    {
+      "boundary": "csrf",
+      "status": 403
+    },
+    {
+      "boundary": "cross-origin",
+      "status": 403
+    }
+  ],
+  "metadataUnchanged": true,
+  "lateTupleCannotReviewDifferentInput": true,
+  "providerRequests": 0
+}

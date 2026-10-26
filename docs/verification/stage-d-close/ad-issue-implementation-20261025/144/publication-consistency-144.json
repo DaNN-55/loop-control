@@ -1,0 +1,78 @@
+{
+  "determinateFailureFocusedPassed": true,
+  "issueMayClose": false,
+  "implementationPendingIntegratorRealPostgresVerification": true,
+  "redCases": {
+    "log": "publication-rollback-red.log",
+    "tests": 2,
+    "failed": 2,
+    "cases": [
+      "existing canonical bytes changed after rejected database registration",
+      "earlier files changed after a later target publication failure"
+    ]
+  },
+  "focused": {
+    "log": "publication-rollback-focused-final.log",
+    "files": 5,
+    "tests": 22,
+    "nativeAttemptTests": 14,
+    "passed": true,
+    "defaultTestTimeoutMs": 5000
+  },
+  "sourceFiles": {
+    "src/local-app/nativeAttemptOutput.ts": "17ae5ccdec262b58ac2a91e0e4f2dd1a02fc98567b4c57dcf6a4492e88ea13bc",
+    "src/local-app/nativeAttemptOutput.test.ts": "777273b4cd77513e4cb13e5ed5b1d66a577b82c1e15f816bfff67e6d28a9e93e",
+    "src/local-app/localWorkerCli.ts": "4612814b7c9d634aa1967715cbe21895ebbb17d2afd51804f42f1e0b7a167169"
+  },
+  "incrementPatchSha256": "170e739d145e01d37f103ed1776e9d30995d8c3138715e0d0fc07bf456f9e3db",
+  "typechecks": {
+    "application": true,
+    "workerNoEmit": true
+  },
+  "knownFailureHandling": [
+    "Independent backups of all existing canonical targets and all new temporary candidates are prepared before any replacement",
+    "Existing lease/task row lock acquired before SAVEPOINT",
+    "Successful ROLLBACK TO SAVEPOINT proves the outer transaction is still usable before filesystem restoration",
+    "All previous bytes restored and new files removed before full ROLLBACK/unlock",
+    "Failed staging and backups retained for diagnosis"
+  ],
+  "unknownOutcome": {
+    "commitOrConnectionOutcomeUnknownIsNotSuccess": true,
+    "noBlindFilesystemRestoration": true,
+    "oldAndCandidateGenerationsRetained": true,
+    "privateOutcomeFile": "publication-outcome.json",
+    "clientDiscarded": true,
+    "noAutomaticFailureReportFromCliAfterUncertainPublication": true,
+    "issue144MayClose": false,
+    "remainingGate": "Connection/COMMIT uncertainty or process failure during publication still lacks a durable filesystem/database reconciliation protocol and can affect old indexed paths; do not claim complete consistency."
+  },
+  "frozenPathConstraints": {
+    "typescript": "src/worker/contracts.ts:657-658 exact primary frozen output path",
+    "database": [
+      "c-baseline.sql:3938 storyboard revision artifact equality",
+      "c-baseline.sql:8737 audio registration equality",
+      "c-baseline.sql:11946 shot clip output equality"
+    ],
+    "changingAcceptedPathsWouldRequireFrozenInputAndForwardDatabaseContractChanges": true
+  },
+  "outputPathUniqueness": {
+    "taskUuidScoped": [
+      "db/local/019-alignment-preview.sql:15 post-production",
+      "db/local/025-studio.sql:23 review render",
+      "db/local/028-delivery.sql:90 final render"
+    ],
+    "notUniversallyTaskUnique": [
+      "c-baseline.sql:7537 visual-assets-v1.md per episode",
+      "c-baseline.sql:7953 storyboard-v1.json per episode",
+      "db/local/015-narration-retry.sql:105 shot/config hash narration"
+    ],
+    "normalReachability": "c-baseline.sql:9687-9689 Studio structural revision returns to visual_approved and invokes new storyboard planning; :7928 excludes only active ready/running tasks, so a new task may reuse storyboard-v1.json while a prior completed artifact remains indexed; artifact unique index includes producer_task_id (:13307)."
+  },
+  "naturalLeaseAcceptanceIsEarlierSourceEvidence": true,
+  "existingNaturalResultNotOverwritten": true,
+  "providerRequests": 0,
+  "SQLChanged": false,
+  "commit": false,
+  "push": false,
+  "EF": false
+}

@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "anonymous401": true,
+  "wrongOrigin403": true,
+  "badCsrf403": true,
+  "acl": {
+    "ownerJobs": false,
+    "ownerClaim": false,
+    "workerClaim": false,
+    "anonymousPlans": false
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "normalNpmStart": true,
+  "persistentReadyWithoutPostRestartWake": true,
+  "realNativeCli": true,
+  "taskId": "0a90dac8-cd49-4425-b843-794edcd08441",
+  "status": "completed",
+  "attempt": 1,
+  "runs": 1,
+  "httpArtifactSha256": "51239dd0c90ea823c899d3e0a1ad72ceb48ac7f99b7e6b197f8931d831844d43",
+  "artifactBytes": 447,
+  "restored": true,
+  "workerLeaseUnchanged": true,
+  "syntheticOfflinePlannerOnly": true,
+  "onlineRequests": 0
+}

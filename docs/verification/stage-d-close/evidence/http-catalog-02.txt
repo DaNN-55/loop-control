@@ -1,0 +1,20 @@
+{"offlineProcessGuard":true,"selfChecks":5,"allowed":"127.0.0.1:55472,55177,55189,55190","supabaseAndN8nDenied":true}
+{"offlineGuardFinal":{"sockets":1,"http":2,"modules":1,"files":1,"onlyNativeLoopbackAllowed":true,"legacySdkAndEnvironmentDenied":true,"hostNetworkUnchanged":true,"deniedFilePaths":["readFileSync:/.env.local"]}}
+node:fs:622
+  return binding.open(
+                 ^
+
+Error: EEXIST: file already exists, open '/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/d-close-20261025/http-session-private.json'
+    at Object.openSync (node:fs:622:18)
+    at Object.wrapped [as openSync] (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/offline-guard.mjs:9:312)
+    at writeFileSync (node:fs:2497:35)
+    at save (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/d-close-20261025/http.mjs:2:174)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/d-close-20261025/http.mjs:3:352
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5) {
+  errno: -17,
+  code: 'EEXIST',
+  syscall: 'open',
+  path: '/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/d-close-20261025/http-session-private.json'
+}
+
+Node.js v24.20.0

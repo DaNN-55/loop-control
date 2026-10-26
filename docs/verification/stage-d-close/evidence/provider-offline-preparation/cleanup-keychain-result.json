@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "syntheticConnectionsRevoked": 7,
+  "onlyKnownSyntheticKeychainItemsRemoved": 7,
+  "emptyOwnKeychainRetainedForPrivateIntake": true,
+  "defaultKeychainUnchanged": true,
+  "otherSearchItemsAndOrderUnchanged": true,
+  "ownKeychainSearchEntryRetained": false,
+  "stageDPrivateMode": "0700",
+  "keychainFileMode": "0600",
+  "userProviderCredentialsReceived": 0,
+  "liveQualifications": 0,
+  "onlineRequestsUsed": 0,
+  "ownSessionsRevoked": true,
+  "noDotenvCreated": true
+}

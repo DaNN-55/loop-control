@@ -1,0 +1,17 @@
+{
+  "started": "2026-10-25T09:06:18.015Z",
+  "finished": "2026-10-25T09:06:20.573Z",
+  "command": [
+    "npx",
+    "--no-install",
+    "tsc",
+    "-p",
+    "tsconfig.local-app.json",
+    "--pretty",
+    "false"
+  ],
+  "status": 0,
+  "passed": true,
+  "defaultTestTimeoutMs": 5000,
+  "timeoutOverride": false
+}

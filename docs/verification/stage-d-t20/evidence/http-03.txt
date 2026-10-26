@@ -1,0 +1,16 @@
+AssertionError [ERR_ASSERTION]: {"retry":{"reason":"Owner action is required before retrying this task.","shouldRetry":false},"status":"blocked","taskId":"212154d3-d59d-434b-b767-6825ddd71b44","version":"worker-result/v1","blockers":[{"code":"task_package_invalid","detail":"冻结审核渲染成员格式无效。 "}],"nextStep":"Correct the task package and create a new task attempt.","artifacts":[],"validation":{"checks":[],"passed":false},"actualCostCents":0}
++ actual - expected
+
++ 'blocked'
+- 'completed'
+
+    at Object.test (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/alignment-acceptance.mjs:75:214)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/alignment-acceptance.mjs:83:55 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 'blocked',
+  expected: 'completed',
+  operator: 'strictEqual',
+  diff: 'simple'
+}

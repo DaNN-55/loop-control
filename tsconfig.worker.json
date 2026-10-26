@@ -18,6 +18,7 @@
     "src/worker/codexRunner.ts",
     "src/worker/mediaLibrary.ts",
     "src/worker/codexWorkerCli.ts",
+    "src/local-app/localWorkerCli.ts",
     "src/publishing/publishPackage.ts",
     "src/publishing/publishContext.ts",
     "src/publishing/publishPackageCli.ts",

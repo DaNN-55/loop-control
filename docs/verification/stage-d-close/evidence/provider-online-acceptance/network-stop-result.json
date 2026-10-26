@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "providerRequests": 2,
+  "requestHosts": [
+    "api.pexels.com",
+    "freesound.org"
+  ],
+  "budgetHalted": true,
+  "maxRequests": 17,
+  "feeAuthorizationCny": 2,
+  "costReservedCny": 0,
+  "actualProviderBillQueried": false,
+  "pexelsCredentialProbePassed": true,
+  "pexelsFullMediaTaskAccepted": false,
+  "freesoundProviderHttpStatus": 401,
+  "googleRequests": 0,
+  "volcengineRequests": 0,
+  "cloudflareRequests": 0,
+  "openaiRequests": 0,
+  "noAutomaticRetry": true,
+  "noTasksDispatched": true,
+  "oldClosedLedgerPreserved": true,
+  "priorPublicVerified": 1013,
+  "priorPrivateVerified": 1525,
+  "allPriorIndexedHashesUnchanged": true,
+  "rawCredentialOrQueryOrBodyCaptured": false
+}

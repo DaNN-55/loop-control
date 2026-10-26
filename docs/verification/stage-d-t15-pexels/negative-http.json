@@ -1,0 +1,16 @@
+{
+  "rotated": {
+    "status": 200,
+    "connectionId": "1554252d-6e27-43d7-b004-9f102f134784",
+    "versionId": "77c390c3-2bf3-4302-8c62-fa71ee136ff4"
+  },
+  "verified": {
+    "status": 200,
+    "result": {
+      "versionId": "77c390c3-2bf3-4302-8c62-fa71ee136ff4",
+      "mode": "live",
+      "outcome": "invalid",
+      "ready": false
+    }
+  }
+}

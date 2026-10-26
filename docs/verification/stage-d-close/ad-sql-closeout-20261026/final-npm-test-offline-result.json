@@ -1,0 +1,9 @@
+{
+  "command": "npm test",
+  "exitCode": 0,
+  "testTimeoutOverride": false,
+  "defaultTestTimeoutMs": 5000,
+  "publicNetworkBlocked": true,
+  "testConfiguration": "Dummy loopback compatibility client; canonical /private/tmp; copied offline guard (old trace untouched)",
+  "log": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/ad-sql-closeout-20261026/final-npm-test-offline.log"
+}

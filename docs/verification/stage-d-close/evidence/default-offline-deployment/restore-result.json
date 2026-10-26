@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "database": "loop_t24_restore_default20261025",
+  "mediaFiles": 872,
+  "archiveSha256": "12b87290fb5b4f9cdaa7413fb525a9b7ab45d2717652f3c268ea6d613c7ec529",
+  "publicationFence": true,
+  "connectionQualificationsCleared": true
+}

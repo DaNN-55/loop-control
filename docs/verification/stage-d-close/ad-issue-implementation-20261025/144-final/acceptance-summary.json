@@ -1,0 +1,264 @@
+{
+  "passed": true,
+  "normalOwnerCases": [
+    {
+      "evidence": "owned-case-1792939244184-0a635484-5f03-4d92-a5a0-052ebdd2be95-result.json",
+      "result": {
+        "passed": true,
+        "mode": "committed-ack-lost",
+        "normalOwnerHttpTask": true,
+        "realOwnParentAndChildFinallyReleased": true,
+        "lateOriginalCallbackCannotChangeIndexOrBytes": true,
+        "cleanupFailure": null,
+        "priorControlBytesRestored": true,
+        "onlyDatabase": "loop_t24_restore_adclose20261025",
+        "leaseBudgetPolicyNotChanged": true,
+        "providerRequests": 0
+      }
+    },
+    {
+      "evidence": "owned-case-1792939405002-ea989633-965b-470d-95d8-e8c70a3ef199-result.json",
+      "result": {
+        "passed": true,
+        "mode": "disconnected-before-commit",
+        "normalOwnerHttpTask": true,
+        "realOwnParentAndChildFinallyReleased": true,
+        "lateOriginalCallbackCannotChangeIndexOrBytes": true,
+        "cleanupFailure": null,
+        "priorControlBytesRestored": true,
+        "onlyDatabase": "loop_t24_restore_adclose20261025",
+        "leaseBudgetPolicyNotChanged": true,
+        "providerRequests": 0
+      }
+    },
+    {
+      "evidence": "owned-case-1792939408277-fc126800-2b33-41fc-8fb7-32093df4cab2-result.json",
+      "result": {
+        "passed": true,
+        "mode": "sql-error-before-report",
+        "normalOwnerHttpTask": true,
+        "realOwnParentAndChildFinallyReleased": true,
+        "lateOriginalCallbackCannotChangeIndexOrBytes": true,
+        "cleanupFailure": null,
+        "priorControlBytesRestored": true,
+        "onlyDatabase": "loop_t24_restore_adclose20261025",
+        "leaseBudgetPolicyNotChanged": true,
+        "providerRequests": 0
+      }
+    }
+  ],
+  "recovery": [
+    {
+      "evidence": "recovery-committed-ack-lost-1792939246659-a04c6fa6-7641-4625-af4c-3788b1fea802-result.json",
+      "result": {
+        "passed": true,
+        "mode": "committed-ack-lost",
+        "realPostgres": true,
+        "realFilesystem": true,
+        "actualReportPayload": true,
+        "oldCanonicalWasDatabaseIndexed": false,
+        "providerRequests": 0,
+        "executorRunsByProof": 0,
+        "commitActuallySent": true,
+        "commitActuallyAcknowledgedByServer": true,
+        "connectionDestroyedBeforeCommit": false,
+        "thinCliRuns": 2,
+        "realSqlErrorRestoredUnderHeldTaskAndPathLocks": false,
+        "finalArtifactCount": 1,
+        "wrongAttemptRejected": true,
+        "tamperedFrozenContractRejected": true,
+        "canonicalMatchesActualIndex": true,
+        "inputBudgetAndAttemptPreserved": true,
+        "receiptReconciled": true,
+        "registeredOutputSha256": "39a72a4c3ebcf9ddfd1fc37bfa0c7c2c38803abef09684accbb01ef8203cb8d8",
+        "originalUnindexedCanonicalSha256": "c3603741e2781e091ac941731912b08e347a92e24aa4c6a9d32335bf26241697"
+      }
+    },
+    {
+      "evidence": "recovery-disconnected-before-commit-1792939407178-ed5703eb-0155-4498-b86f-4f54ceeedf61-result.json",
+      "result": {
+        "passed": true,
+        "mode": "disconnected-before-commit",
+        "realPostgres": true,
+        "realFilesystem": true,
+        "actualReportPayload": true,
+        "oldCanonicalWasDatabaseIndexed": false,
+        "providerRequests": 0,
+        "executorRunsByProof": 0,
+        "commitActuallySent": false,
+        "commitActuallyAcknowledgedByServer": false,
+        "connectionDestroyedBeforeCommit": true,
+        "thinCliRuns": 2,
+        "realSqlErrorRestoredUnderHeldTaskAndPathLocks": false,
+        "finalArtifactCount": 1,
+        "wrongAttemptRejected": true,
+        "tamperedFrozenContractRejected": true,
+        "canonicalMatchesActualIndex": true,
+        "inputBudgetAndAttemptPreserved": true,
+        "receiptReconciled": true,
+        "registeredOutputSha256": "27f6e82adce0fd53d3bd961f053b5f71b31457ce2d3319c63bfb98472b9f448b",
+        "originalUnindexedCanonicalSha256": "545764f351f236b9284650e5c31777a0456c4bf5790013ff4e4a0cbc2427dea8"
+      }
+    },
+    {
+      "evidence": "recovery-sql-error-before-report-1792939410690-57e8255e-b45b-4c5d-b8e8-e9bc01d9c4f1-result.json",
+      "result": {
+        "passed": true,
+        "mode": "sql-error-before-report",
+        "realPostgres": true,
+        "realFilesystem": true,
+        "actualReportPayload": true,
+        "oldCanonicalWasDatabaseIndexed": false,
+        "providerRequests": 0,
+        "executorRunsByProof": 0,
+        "commitActuallySent": false,
+        "commitActuallyAcknowledgedByServer": false,
+        "connectionDestroyedBeforeCommit": false,
+        "thinCliRuns": 2,
+        "realSqlErrorRestoredUnderHeldTaskAndPathLocks": true,
+        "finalArtifactCount": 1,
+        "wrongAttemptRejected": true,
+        "tamperedFrozenContractRejected": true,
+        "canonicalMatchesActualIndex": true,
+        "inputBudgetAndAttemptPreserved": true,
+        "receiptReconciled": true,
+        "registeredOutputSha256": "7bcfbc1d57a5210bc7a62b49e96f530d1ed8b239dbee7aabb683f4ca2f46a67f",
+        "originalUnindexedCanonicalSha256": "76b7cd2f2fed8855a5df80e2a2eeefc1b9811001bb0cdc1f1853fd9ca8061102"
+      }
+    }
+  ],
+  "boundaries": [
+    {
+      "evidence": "sql-boundaries-1792939245223-result.json",
+      "result": {
+        "passed": true,
+        "realPostgres": true,
+        "taskLockHeldAfterSavepoint": true,
+        "pathLockHeldAfterSavepoint": true,
+        "actualSqlError": "22012",
+        "foreignTaskPathRejected": true,
+        "changedAttemptRejected": true,
+        "changedTokenRejected": true,
+        "historicalOldAttemptRejected": true,
+        "nonFrozenPrimaryDirectReportRejected": true,
+        "noNewArtifact": true,
+        "providerRequests": 0,
+        "oldInputsAndBudgetUntouched": true
+      }
+    },
+    {
+      "evidence": "sql-boundaries-1792939406023-result.json",
+      "result": {
+        "passed": true,
+        "realPostgres": true,
+        "taskLockHeldAfterSavepoint": true,
+        "pathLockHeldAfterSavepoint": true,
+        "actualSqlError": "22012",
+        "foreignTaskPathRejected": true,
+        "changedAttemptRejected": true,
+        "changedTokenRejected": true,
+        "historicalOldAttemptRejected": true,
+        "nonFrozenPrimaryDirectReportRejected": true,
+        "noNewArtifact": true,
+        "providerRequests": 0,
+        "oldInputsAndBudgetUntouched": true
+      }
+    },
+    {
+      "evidence": "sql-boundaries-1792939409266-result.json",
+      "result": {
+        "passed": true,
+        "realPostgres": true,
+        "taskLockHeldAfterSavepoint": true,
+        "pathLockHeldAfterSavepoint": true,
+        "actualSqlError": "22012",
+        "foreignTaskPathRejected": true,
+        "changedAttemptRejected": true,
+        "changedTokenRejected": true,
+        "historicalOldAttemptRejected": true,
+        "nonFrozenPrimaryDirectReportRejected": true,
+        "noNewArtifact": true,
+        "providerRequests": 0,
+        "oldInputsAndBudgetUntouched": true
+      }
+    },
+    {
+      "evidence": "namespace-1792939246060-result.json",
+      "result": {
+        "passed": true,
+        "realPostgresTrigger": true,
+        "newInsertUnique": true,
+        "sameCreationTransactionOutputAndProjectUpdateScoped": true,
+        "allExistingTaskInputBudgetFingerprintPreserved": true,
+        "syntheticRowsRolledBack": true,
+        "businessWorkflowRenderAcceptance": false,
+        "providerRequests": 0
+      }
+    },
+    {
+      "evidence": "namespace-1792939406586-result.json",
+      "result": {
+        "passed": true,
+        "realPostgresTrigger": true,
+        "newInsertUnique": true,
+        "sameCreationTransactionOutputAndProjectUpdateScoped": true,
+        "allExistingTaskInputBudgetFingerprintPreserved": true,
+        "syntheticRowsRolledBack": true,
+        "businessWorkflowRenderAcceptance": false,
+        "providerRequests": 0
+      }
+    },
+    {
+      "evidence": "namespace-1792939410024-result.json",
+      "result": {
+        "passed": true,
+        "realPostgresTrigger": true,
+        "newInsertUnique": true,
+        "sameCreationTransactionOutputAndProjectUpdateScoped": true,
+        "allExistingTaskInputBudgetFingerprintPreserved": true,
+        "syntheticRowsRolledBack": true,
+        "businessWorkflowRenderAcceptance": false,
+        "providerRequests": 0
+      }
+    },
+    {
+      "evidence": "indexed-conflict-1792939246414-result.json",
+      "result": {
+        "passed": true,
+        "realPostgresAuthorityAndNativeDispatcher": true,
+        "foreignIndexedRowVisible": true,
+        "completedReportRejectedBeforeRegistration": true,
+        "fixtureRowsRolledBack": true,
+        "actualCanonicalFileCreated": false,
+        "normalBusinessIndexedOrigin": false,
+        "providerRequests": 0
+      }
+    },
+    {
+      "evidence": "indexed-conflict-1792939406939-result.json",
+      "result": {
+        "passed": true,
+        "realPostgresAuthorityAndNativeDispatcher": true,
+        "foreignIndexedRowVisible": true,
+        "completedReportRejectedBeforeRegistration": true,
+        "fixtureRowsRolledBack": true,
+        "actualCanonicalFileCreated": false,
+        "normalBusinessIndexedOrigin": false,
+        "providerRequests": 0
+      }
+    },
+    {
+      "evidence": "indexed-conflict-1792939410414-result.json",
+      "result": {
+        "passed": true,
+        "realPostgresAuthorityAndNativeDispatcher": true,
+        "foreignIndexedRowVisible": true,
+        "completedReportRejectedBeforeRegistration": true,
+        "fixtureRowsRolledBack": true,
+        "actualCanonicalFileCreated": false,
+        "normalBusinessIndexedOrigin": false,
+        "providerRequests": 0
+      }
+    }
+  ]
+}

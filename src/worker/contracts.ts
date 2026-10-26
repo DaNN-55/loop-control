@@ -1,3 +1,4 @@
+import{openChatCutProjectPath}from"./openchatcutPaths.js";
 import { registeredAdapters } from "./registeredAdapters.js";
 import type { StoryboardStructureRevision } from "./storyboardRevision.js";
 import { isShotDurationDecision, type ShotDurationDecision } from "./durationDecision.js";
@@ -506,7 +507,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
       || !input.inputArtifacts.some((artifact) => artifact.relativePath === finalRender.sourceRuntime.relativePath && artifact.sha256 === finalRender.sourceRuntime.sha256)
       || !input.inputArtifacts.some((artifact) => artifact.relativePath === finalRender.sourceQcReport.relativePath && artifact.sha256 === finalRender.sourceQcReport.sha256)) throw new Error("最终渲染引用未冻结的审核证据。 ");
     const source = finalRender.reviewRender;
-    if (source.projectRelativePath !== finalRender.sourceProject.relativePath || source.projectRevision !== finalRender.projectRevision || !isNonEmptyString(source.preRenderReviewPackageId) || source.members.length === 0) throw new Error("最终渲染冻结工程不一致。 ");
+    if (openChatCutProjectPath(source.projectRelativePath) !== finalRender.sourceProject.relativePath || source.projectRevision !== finalRender.projectRevision || !isNonEmptyString(source.preRenderReviewPackageId) || source.members.length === 0) throw new Error("最终渲染冻结工程不一致。 ");
     if (source.confirmationMode !== "shot_preparation") throw new Error("OpenChatCut 最终渲染只接受版本化镜头准备契约。 ");
     validateConfirmedShotPreparationRender(source);
   }

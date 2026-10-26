@@ -1,0 +1,10 @@
+// T17 acceptance only. No credentials or online requests; not a model-quality proof.
+import{writeFileSync}from'node:fs';
+import{join}from'node:path';
+import{createHash}from'node:crypto';
+let text='';for await(const c of process.stdin)text+=c;const p=JSON.parse(text);
+if(!['visual_planning','storyboard_planning'].includes(p.capability))throw Error('Fixture scope exceeded');
+const storyboard=p.capability==='storyboard_planning'?{version:'storyboard/v1',audioCues:[],shots:['shot-1','shot-2'].map((id,i)=>({id,scriptSegment:(p.promptContext?.reviewFeedback?'修订后：':'')+(i?'nature':'这是一条测试。'),durationSeconds:4,shotType:i?'b_roll':'a_roll',productionMethod:i?'nature':'固定自供参考',inputBasis:p.assets.inputs.map(x=>({relativePath:x.relativePath,sha256:x.sha256})),targetSpec:'9:16，1080×1920，24fps'}))}:null;
+const content=storyboard?JSON.stringify(storyboard,null,2)+'\n':'# Controlled offline visual manifest\n'+p.assets.inputs.map(x=>x.relativePath+' SHA256 '+x.sha256).join('\n')+'\n';
+writeFileSync(join(p.assets.allowedRoot,p.output.relativePath),content,{flag:'wx',mode:0o600});
+process.stdout.write(JSON.stringify({version:'worker-result/v1',taskId:p.task.id,status:'completed',artifacts:[{artifactType:storyboard?'storyboard':'visual_asset_manifest',relativePath:p.output.relativePath,sha256:createHash('sha256').update(content).digest('hex'),fileSize:Buffer.byteLength(content)}],...(storyboard?{storyboard}:{visualAssetRequests:[]}),validation:{passed:true,checks:[{name:'offline_fixture',passed:true,detail:'Supplied frozen synthetic inputs only.'}]},actualCostCents:0,blockers:[],retry:{shouldRetry:false,reason:'Completed offline fixture.'},nextStep:'Owner review.'}));

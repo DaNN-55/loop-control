@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "cases": [
+    {
+      "name": "wrong-digest",
+      "databaseCreated": false,
+      "sourceRetained": true
+    },
+    {
+      "name": "existing-target",
+      "databaseCreated": true,
+      "sourceRetained": true
+    },
+    {
+      "name": "existing-media",
+      "databaseCreated": false,
+      "sourceRetained": true
+    },
+    {
+      "name": "corrupt",
+      "databaseCreated": false,
+      "sourceRetained": true
+    },
+    {
+      "name": "traversal",
+      "databaseCreated": false,
+      "sourceRetained": true
+    },
+    {
+      "name": "symlink",
+      "databaseCreated": false,
+      "sourceRetained": true
+    },
+    {
+      "name": "indexed-media-omitted",
+      "databaseCreated": true,
+      "sourceRetained": true
+    }
+  ],
+  "missingIndexedMediaRefusedBeforePublication": true,
+  "partialDatabaseFencedPending": true,
+  "partialEvidenceRetained": true
+}

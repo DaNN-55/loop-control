@@ -1,0 +1,19 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ .loop-control/stage-d/state/t21-20261024/t20-baseline/src/local-app/LocalConnectionsPanel.test.tsx (1 test) 77ms
+ ✓ .loop-control/stage-d/state/t19-timeout-comparison-20261024/frozen-baseline/src/local-app/LocalConnectionsPanel.test.tsx (1 test) 94ms
+ ✓ .loop-control/stage-d/state/t19-timeout-comparison-20261024/frozen-current/src/local-app/LocalConnectionsPanel.test.tsx (1 test) 99ms
+ ✓ .loop-control/stage-d/state/t19-timeout-comparison-20261024/checkout/src/local-app/LocalConnectionsPanel.test.tsx (1 test) 97ms
+ ✓ src/local-app/LocalConnectionsPanel.test.tsx (2 tests) 113ms
+ ✓ scripts/local/application.test.mjs (2 tests) 2ms
+ ✓ scripts/local/deployment.test.mjs (3 tests) 2ms
+ ✓ src/local-app/providerProbe.test.ts (24 tests) 360ms
+ ✓ src/local-app/providerNetwork.test.ts (9 tests) 1171ms
+   ✓ halts and keeps the consumed reservation on timeout  1039ms
+
+ Test Files  9 passed (9)
+      Tests  44 passed (44)
+   Start at  15:14:00
+   Duration  2.45s (transform 322ms, setup 0ms, collect 1.01s, tests 2.02s, environment 1.47s, prepare 275ms)
+

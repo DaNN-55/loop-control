@@ -1,0 +1,16 @@
+{
+  "started": "2026-10-25T01:34:00.566Z",
+  "finished": "2026-10-25T01:34:00.573Z",
+  "command": [
+    "agent-browser",
+    "--session",
+    "d-close-logout-p2",
+    "auth",
+    "delete",
+    "d-close-logout-p2-synthetic"
+  ],
+  "status": 0,
+  "defaultTimeoutMs": 5000,
+  "timeoutOverride": false,
+  "passed": true
+}

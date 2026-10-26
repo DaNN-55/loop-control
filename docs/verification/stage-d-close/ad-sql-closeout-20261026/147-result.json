@@ -1,0 +1,50 @@
+{
+  "passed": true,
+  "sameFixtureFullRowsUnchanged": true,
+  "roleGrantsPolicyScopeUnchanged": true,
+  "plans": [
+    {
+      "table": "external_connections",
+      "beforeOwnerInitplans": 0,
+      "afterOwnerInitplans": 1,
+      "afterOwnerInitplanActualLoops": [
+        1
+      ],
+      "visibleRowsPerOwner": [
+        32,
+        32
+      ]
+    },
+    {
+      "table": "external_connection_verifications",
+      "beforeOwnerInitplans": 0,
+      "afterOwnerInitplans": 2,
+      "afterOwnerInitplanActualLoops": [
+        1,
+        1
+      ],
+      "visibleRowsPerOwner": [
+        32,
+        32
+      ]
+    },
+    {
+      "table": "storyboard_audio_selections",
+      "beforeOwnerInitplans": 0,
+      "afterOwnerInitplans": 1,
+      "afterOwnerInitplanActualLoops": [
+        1
+      ],
+      "visibleRowsPerOwner": [
+        32,
+        32
+      ]
+    }
+  ],
+  "remoteRequests": 0,
+  "notes": [
+    "Before red: all three lack Owner initplans; exact role/row assertions already pass.",
+    "After green: Owner helper initplans each execute once on nonempty controlled sample.",
+    "Controlled plan improvement only; no production latency claim."
+  ]
+}

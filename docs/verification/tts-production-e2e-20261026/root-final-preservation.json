@@ -1,0 +1,28 @@
+{
+  "passed": true,
+  "originalSourceTablesMatched": 51,
+  "originalSourceRowsMatched": 28620,
+  "originalSourceRowFingerprintsUnchanged": true,
+  "predecessorPolicyStateCliUnchanged": true,
+  "predecessorUnknownRequestAndLockPreserved": true,
+  "olderLedgersUnchanged": true,
+  "cumulativeReservedRequests": 18,
+  "currentRunEvents": 22,
+  "cumulativeCostReservationMicrounits": 470000,
+  "currency": "CNY",
+  "actualBillQueried": false,
+  "byOperation": {
+    "pexels.verify": 2,
+    "volcengine_tts.verify": 2,
+    "pexels.search": 6,
+    "pexels.download": 5,
+    "volcengine_tts.generate": 3
+  },
+  "currentRunOutcomes": {
+    "reserved": 11,
+    "completed": 11
+  },
+  "cliCalls": 4,
+  "cliElapsedMs": 251588.087375,
+  "exemptProviderRequests": 0
+}

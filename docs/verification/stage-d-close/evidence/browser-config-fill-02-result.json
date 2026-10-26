@@ -1,0 +1,16 @@
+{
+  "started": "2026-10-25T00:54:44.986Z",
+  "finished": "2026-10-25T00:54:44.994Z",
+  "command": [
+    "agent-browser",
+    "--session",
+    "d-close-20261025",
+    "find",
+    "label",
+    "账号定位",
+    "fill",
+    "D close Chrome saved configuration"
+  ],
+  "status": 0,
+  "passed": true
+}

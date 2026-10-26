@@ -1,0 +1,80 @@
+{
+  "passed": true,
+  "head": "7c153c23b3e217685d977711040a06a9d01c414d",
+  "indexEmpty": true,
+  "noCommit": true,
+  "unrelatedFilesUnchanged": 43,
+  "rootPlanUnchanged": true,
+  "originalPublic": [
+    {
+      "database": "loop_imported",
+      "tables": 38,
+      "rows": 26552,
+      "copyMultisetsUnchanged": true
+    },
+    {
+      "database": "loop_t24_restored2",
+      "tables": 38,
+      "rows": 27019,
+      "copyMultisetsUnchanged": true
+    }
+  ],
+  "oldMediaFingerprintsVerified": 1701,
+  "migrationsVerified": 37,
+  "noSchemaMigrationRequired": true,
+  "nativeAuthOrVaultSchemas": 0,
+  "qualifiedConnections": 0,
+  "originalTaskCompletedExactlyOneRun": true,
+  "approvedStoryboardPersistent": true,
+  "sdkRemovedFromProductionDependencies": true,
+  "allSupabasePackagesDevelopmentOnly": true,
+  "nativeBundleModules": 1859,
+  "nativeBundleHasNoLegacyEntryOrSdk": true,
+  "legacyViteConfigByteEquivalentToBaseline": true,
+  "oldStartupStopN8nAndMigrationFilesUnchanged": true,
+  "finalServerGuard": {
+    "sockets": 1,
+    "http": 2,
+    "modules": 1,
+    "files": 1,
+    "onlyNativeLoopbackAllowed": true,
+    "legacySdkAndEnvironmentDenied": true,
+    "hostNetworkUnchanged": true,
+    "deniedFilePaths": [
+      "readFileSync:/.env.local"
+    ]
+  },
+  "onlySelfTestNetworkDenials": true,
+  "earlierWatcherMetadataProbesDeniedThenIgnored": true,
+  "ownAppPortClosed": true,
+  "ownDbConnections": 0,
+  "backup": {
+    "archiveRoot": ".loop-control/stage-d/backups/loop_t25/c4edd11d-ae5f-4b6a-a948-82897cd467ce",
+    "manifestSha256": "006fa4e06757b7895ebe032618c2a372fb5e08eae33a232c804b88baf73161e0",
+    "archiveSha256": "70ed59263cb3b6be6657f43d0a9dc380b86f8413e4a34d9d5be7f47df3013315",
+    "tables": 51,
+    "mediaFiles": 857,
+    "credentialsAndSessionsExcluded": true,
+    "knownSecretScanClear": true
+  },
+  "defaultGate": {
+    "currentPassed": 749,
+    "failed": 0,
+    "timeoutMs": 5000,
+    "timeoutOverride": false,
+    "initialFailures": "2 obsolete default CLI-path assertions; corrected to T25 native defaults plus explicit legacy assertions",
+    "t21AndHistoricalFailuresRetained": true,
+    "rootCauseUnresolved": true
+  },
+  "workerLease": {
+    "minutes": 30,
+    "changed": false,
+    "readySampleDidNotUseLease": true,
+    "immediateFailoverProven": false
+  },
+  "onlineRequests": 0,
+  "productionOperations": 0,
+  "noPush": true,
+  "noMerge": true,
+  "noEOrF": true
+}

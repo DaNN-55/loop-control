@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {readFileSync,writeFileSync} from 'node:fs';
+import {carry,hash,json} from '../provider-continue-20261025/carry.mjs';
+export function prepareDiagnostic(parent,directory,approvalFile){
+ const network=carry(parent,directory,'google_tts',approvalFile),p=json(directory+'/policy.json'),s=json(directory+'/state.json');
+ assert(s.used<17);const inherited=structuredClone(s);
+ for(const[op,limit]of Object.entries(p.operations))limit.maxRequests=(s.byOperation[op]??0)+(op==='google_tts.verify'?1:0);
+ p.diagnostic={additionalRequests:1,operation:'google_tts.verify',synthesis:false};
+ writeFileSync(directory+'/policy.json',JSON.stringify(p,null,2)+'\n',{mode:0o600});
+ s.policySha256=hash(directory+'/policy.json');writeFileSync(directory+'/state.json',JSON.stringify(s,null,2)+'\n',{mode:0o600});
+ assert.deepEqual({...s,policySha256:inherited.policySha256},inherited);
+ return{directory,policySha256:s.policySha256};
+}

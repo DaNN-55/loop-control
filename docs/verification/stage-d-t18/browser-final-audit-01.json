@@ -1,0 +1,120 @@
+{
+  "audioTracks": [
+    {
+      "artifactId": "9ee063f3-868a-414d-854e-a484799b594f",
+      "duration": 1.2,
+      "id": "6f6e8170-1890-45d1-835c-2a2f9ac3cecd",
+      "path": "episodes/e5681db8-8640-46a8-8bea-d5d8ba63f738/audio/shot-narration-shot-1-3a4b17db6838df0f15dec11f95457e2b.mp3",
+      "sha256": "a09f9c4890f827c47a435584e204fe87076c1e4993faab2d3320f01d72e5b356",
+      "taskId": "fe5ef6e6-63d7-4afd-8030-15ea2239877b"
+    },
+    {
+      "artifactId": "30b04e7a-c908-4dc1-b6b1-7bca88374984",
+      "duration": 1.2,
+      "id": "c5d478e1-894d-4d41-8acc-4a854fb31853",
+      "path": "episodes/e5681db8-8640-46a8-8bea-d5d8ba63f738/audio/shot-narration-shot-1-c5d92cd4494ef33e6abd16b025950642-retry-260bc79d-f089-4908-b3d5-14b9afac0ae8.mp3",
+      "sha256": "a09f9c4890f827c47a435584e204fe87076c1e4993faab2d3320f01d72e5b356",
+      "taskId": "d93a5580-0694-4a85-9739-c5e85eae25f6"
+    },
+    {
+      "artifactId": "83cced35-85e9-42b0-8c2c-012e6499b0b2",
+      "duration": 1.2,
+      "id": "c85d6456-9a41-4214-b039-ee96b9f6eb75",
+      "path": "episodes/e5681db8-8640-46a8-8bea-d5d8ba63f738/audio/shot-narration-shot-1-d555374e9fc9ded93fd163d58593067e.mp3",
+      "sha256": "a09f9c4890f827c47a435584e204fe87076c1e4993faab2d3320f01d72e5b356",
+      "taskId": "86e6eb0b-3d83-42f0-8779-2fe4f9d83a52"
+    }
+  ],
+  "drafts": [
+    {
+      "audioStatus": "ready",
+      "duration": 1.2,
+      "shotId": "shot-1",
+      "taskId": "fe5ef6e6-63d7-4afd-8030-15ea2239877b",
+      "text": "浏览器确认的火山受控口播文本，实际在线生成未验收。",
+      "trackId": "6f6e8170-1890-45d1-835c-2a2f9ac3cecd"
+    },
+    {
+      "audioStatus": "pending",
+      "duration": null,
+      "shotId": "shot-2",
+      "taskId": null,
+      "text": null,
+      "trackId": null
+    }
+  ],
+  "episode": {
+    "id": "e5681db8-8640-46a8-8bea-d5d8ba63f738",
+    "rate": 1,
+    "voice": "zh_female_vv_uranus_bigtts"
+  },
+  "tasks": [
+    {
+      "attempt": 0,
+      "id": "bb64db04-007c-4f95-9464-e9145f546be5",
+      "provider": "whisperx",
+      "status": "ready",
+      "type": "align_shot_captions"
+    },
+    {
+      "attempt": 1,
+      "id": "fe5ef6e6-63d7-4afd-8030-15ea2239877b",
+      "mode": "受控响应及秘密存储替身；没有在线Provider请求或真实语音生成证明。",
+      "provider": "volcengine_tts",
+      "status": "completed",
+      "type": "generate_narration"
+    },
+    {
+      "attempt": 0,
+      "id": "f313907f-7130-4445-9707-2dab064ebf12",
+      "provider": "whisperx",
+      "status": "ready",
+      "type": "align_shot_captions"
+    },
+    {
+      "attempt": 1,
+      "id": "d93a5580-0694-4a85-9739-c5e85eae25f6",
+      "mode": "受控响应及秘密存储替身；没有在线Provider请求或真实语音生成证明。",
+      "provider": "volcengine_tts",
+      "status": "completed",
+      "type": "generate_narration"
+    },
+    {
+      "attempt": 1,
+      "id": "956cb78e-2c1d-4d26-bae4-e9074bdf30cd",
+      "provider": "volcengine_tts",
+      "status": "failed",
+      "type": "generate_narration"
+    },
+    {
+      "attempt": 0,
+      "id": "8a6cb56a-ab4e-408c-9751-932bc9be903b",
+      "provider": "whisperx",
+      "status": "ready",
+      "type": "align_shot_captions"
+    },
+    {
+      "attempt": 1,
+      "id": "86e6eb0b-3d83-42f0-8779-2fe4f9d83a52",
+      "mode": "受控响应及秘密存储替身；没有在线Provider请求或真实语音生成证明。",
+      "provider": "volcengine_tts",
+      "status": "completed",
+      "type": "generate_narration"
+    },
+    {
+      "attempt": 1,
+      "id": "4ef2517e-dadc-4b9f-af76-cbde754026c2",
+      "provider": "codex",
+      "status": "completed",
+      "type": "draft_storyboard"
+    },
+    {
+      "attempt": 1,
+      "id": "c4bc8b78-17ff-4345-ac30-9318b1dbb68c",
+      "provider": "codex",
+      "status": "completed",
+      "type": "prepare_visual_brief"
+    }
+  ],
+  "url": "http://127.0.0.1:55181/?episode=e5681db8-8640-46a8-8bea-d5d8ba63f738"
+}

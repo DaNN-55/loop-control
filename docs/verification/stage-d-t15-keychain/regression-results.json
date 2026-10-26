@@ -1,0 +1,55 @@
+{
+  "defaultTestTimeoutMs": 5000,
+  "noTimeoutOverride": true,
+  "results": [
+    {
+      "log": "application-types.txt",
+      "command": [
+        "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-b",
+        "--pretty",
+        "false"
+      ],
+      "exitCode": 0,
+      "errorCode": null
+    },
+    {
+      "log": "local-types-final.txt",
+      "command": [
+        "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.local-app.json"
+      ],
+      "exitCode": 0,
+      "errorCode": null
+    },
+    {
+      "log": "application-final.txt",
+      "command": [
+        "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--exclude",
+        "n8n/import-workflows.test.mjs",
+        "--exclude",
+        "**/*.integration.test.ts",
+        "--exclude",
+        "**/.loop-control/**"
+      ],
+      "exitCode": 0,
+      "errorCode": null
+    },
+    {
+      "log": "node-final.txt",
+      "command": [
+        "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+        "--test",
+        "n8n/import-workflows.test.mjs"
+      ],
+      "exitCode": 0,
+      "errorCode": null
+    }
+  ]
+}

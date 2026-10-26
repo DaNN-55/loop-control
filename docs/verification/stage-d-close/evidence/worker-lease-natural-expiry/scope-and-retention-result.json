@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "newProductionSourceChanges": [
+    "src/local-app/localWorkerCli.ts"
+  ],
+  "twoLinesOnly": true,
+  "priorStabilityFixUnchanged": true,
+  "unrelatedFilesUnchanged": 43,
+  "oldPublicPreservedAtOriginalPaths": 688,
+  "oldLiveReportsArchived": 2,
+  "oldPrivatePreserved": 862,
+  "allOldFollowupsUnchanged": true,
+  "sqlSourceUnchanged": true,
+  "headUnchanged": true,
+  "stagedFiles": 0,
+  "newOnlineRequests": 0,
+  "EF": false
+}

@@ -1,0 +1,207 @@
+{
+  "passed": true,
+  "pythonCalls": [
+    {
+      "event": "load-align-model-end",
+      "pid": 50981,
+      "at": 1792905484.0902421,
+      "seconds": 4.142675667011645,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 51033,
+      "at": 1792905528.420872,
+      "seconds": 4.108224999974482,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 51306,
+      "at": 1792905567.830312,
+      "seconds": 5.550302791991271,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 51307,
+      "at": 1792905573.403369,
+      "seconds": 4.238829292007722,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "align-end",
+      "pid": 51307,
+      "at": 1792905573.728989,
+      "seconds": 0.32522158295614645,
+      "chars": 9,
+      "timedChars": 9,
+      "minScore": 0.911,
+      "meanScore": 0.9814444444444445,
+      "rawSha256": "9acc380243d47d42b4d5dc763e2f08e58c4aa746734a0daeb3c0f8e4d1b18ced",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 51318,
+      "at": 1792905584.340172,
+      "seconds": 4.163227375014685,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 51319,
+      "at": 1792905589.738312,
+      "seconds": 4.146088665991556,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "align-end",
+      "pid": 51319,
+      "at": 1792905590.024422,
+      "seconds": 0.28596941602882,
+      "chars": 9,
+      "timedChars": 9,
+      "minScore": 0.911,
+      "meanScore": 0.9814444444444445,
+      "rawSha256": "93e4dd58496c0c9e723d9a2f1703f6c5324f069355841ac468d0b108425a304e",
+      "networkDenied": 0
+    },
+    {
+      "event": "controlled-return-gate",
+      "pid": 51319,
+      "at": 1792905590.024479,
+      "noResultSubstitution": true
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 51322,
+      "at": 1792905596.203424,
+      "seconds": 4.26578558300389,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 51323,
+      "at": 1792905601.902894,
+      "seconds": 4.396769041020889,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "align-end",
+      "pid": 51323,
+      "at": 1792905602.197161,
+      "seconds": 0.29411208303645253,
+      "chars": 9,
+      "timedChars": 9,
+      "minScore": 0.911,
+      "meanScore": 0.9814444444444445,
+      "rawSha256": "ffe96045a70b31cd0aab6ed30eaac5b306c1bb7e55c9c4c850e239980e1befa6",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 51675,
+      "at": 1792905665.236943,
+      "seconds": 4.175490749999881,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 51731,
+      "at": 1792905692.1547399,
+      "seconds": 4.201455625006929,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 52059,
+      "at": 1792905727.866903,
+      "seconds": 5.485273500031326,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "load-align-model-end",
+      "pid": 52069,
+      "at": 1792905733.527501,
+      "seconds": 4.314913041016553,
+      "modelClass": "Wav2Vec2ForCTC",
+      "parameters": 319029295,
+      "language": "zh",
+      "pipelineType": "huggingface",
+      "networkDenied": 0
+    },
+    {
+      "event": "align-end",
+      "pid": 52069,
+      "at": 1792905733.8302898,
+      "seconds": 0.3026640000171028,
+      "chars": 9,
+      "timedChars": 9,
+      "minScore": 0.911,
+      "meanScore": 0.9814444444444445,
+      "rawSha256": "ffe96045a70b31cd0aab6ed30eaac5b306c1bb7e55c9c4c850e239980e1befa6",
+      "networkDenied": 0
+    }
+  ],
+  "pythonNetworkAttempts": 0,
+  "pythonAllNetworkDeniedByOs": true,
+  "browserCapturedNetworkResources": 609,
+  "inlineResources": {
+    "data": 24,
+    "blob": 2
+  },
+  "browserOrigins": [
+    "http://127.0.0.1:55189"
+  ],
+  "providerRequests": 0,
+  "HARCreated": false,
+  "starterIdentityInspectionOutsideOsPolicy": true,
+  "renderServiceTreeOsLoopback": true,
+  "modelServiceNodeGuardAndIndependentPythonOsDeny": true,
+  "hostNetworkSettingsChanged": false
+}

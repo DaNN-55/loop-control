@@ -1,0 +1,2 @@
+{"mode":"sync","status":0,"response":{"ok":true,"code":"validated"}}
+{"mode":"async","status":0,"body":{"ok":true,"code":"validated"},"stderrBytes":0}

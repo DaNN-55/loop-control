@@ -1,0 +1,7 @@
+{
+  "initialRestorePassed": false,
+  "reason": "Exclusive snapshot filename already existed from initial UI startup harness; EEXIST refused overwrite before service mutation",
+  "recovery": "Use a new final intake snapshot filename, preserve earlier snapshot unchanged",
+  "providerRequests": 0,
+  "productCodeChangedForRecovery": false
+}

@@ -1,0 +1,252 @@
+{
+  "baselineHead": "bbd2987cd61d3444dca962e50d91b11ed1da5fca",
+  "branch": "codex/ad-closeout-implementation",
+  "committed": false,
+  "files": [
+    {
+      "path": "db/local/039-caption-text-confirmation.sql",
+      "bytes": 6209,
+      "sha256": "f239b43bd2f66045f6f89b7cf58e70d1148b29e67d3a828500e5598824f75d04"
+    },
+    {
+      "path": "db/local/040-native-output-publication.sql",
+      "bytes": 9982,
+      "sha256": "e37033e5b167eadca17862ec1ef2a59aeefc9d71ddf2b66c7178d9d25b70a8a1"
+    },
+    {
+      "path": "db/local/041-shared-planning-freeze.sql",
+      "bytes": 981,
+      "sha256": "c3e260dab40a48cc1fc874794899663d8636a19e228d7a55ee6677df482f5e0c"
+    },
+    {
+      "path": "db/local/042-native-output-ownership.sql",
+      "bytes": 2937,
+      "sha256": "3354f8f837b2f306d0361f6ec88852d12a7bbef826d2f9590dd28898e295f67c"
+    },
+    {
+      "path": "db/local/043-owner-policy-initplans.sql",
+      "bytes": 1018,
+      "sha256": "361ff9ae7f716aa3e97fe4372d168adab3ab8642b4f431c9f99da1044ca3fd09"
+    },
+    {
+      "path": "docs/local-native-deployment.md",
+      "bytes": 12693,
+      "sha256": "3e6a4557e4ad699fa39051f699ff581a99649e152ccb5d616f95bd35a0b87e3f"
+    },
+    {
+      "path": "scripts/local/deployment.mjs",
+      "bytes": 5569,
+      "sha256": "9f96a1a06cc1359788b524ac396452912ed3ae8e756c58bcc6f8a7b05d8c8ab5"
+    },
+    {
+      "path": "scripts/local/deployment.test.mjs",
+      "bytes": 4681,
+      "sha256": "4791044d46a4a7b2833b970b41dc2fe393cff0b623cd7a4df08919cb31e373be"
+    },
+    {
+      "path": "scripts/local/migrate.mjs",
+      "bytes": 2308,
+      "sha256": "00da6b2f64c53e2281c168a8b114166b5962d9108a606035031514080ea773d2"
+    },
+    {
+      "path": "scripts/local/native-restore.mjs",
+      "bytes": 11605,
+      "sha256": "ac423020efe116ab525f91f61f5756c276615dc80421d4afd744a1a8f7dd0fb6"
+    },
+    {
+      "path": "scripts/local/recover-native-output.mjs",
+      "bytes": 1801,
+      "sha256": "6d9fc89206fb805fa6acf28b58390d7885274a59f7d20954d0688f1d6503fea9"
+    },
+    {
+      "path": "src/connections/ConnectionWorkspace.tsx",
+      "bytes": 18259,
+      "sha256": "7c0e81346f7afdb6a5fadc92896c736c99aa4a516f6e8adbbdb5077a2e817255"
+    },
+    {
+      "path": "src/episodes/EpisodeProduction.tsx",
+      "bytes": 290976,
+      "sha256": "5edce35d49bdaaacfd69354c0a5a241d0b4cbc9d65af534f0e52fa2373ef1ba6"
+    },
+    {
+      "path": "src/episodes/captionTextConfirmation.test.tsx",
+      "bytes": 9936,
+      "sha256": "382a69f65c7834e38f2572c15b31ef6cf4211c5d8255381d60558e8e9bedc811"
+    },
+    {
+      "path": "src/lib/database.types.ts",
+      "bytes": 79582,
+      "sha256": "98379b566e46c9696d69462f0711b43021cb3e4e079f9f737667920e4b46a97a"
+    },
+    {
+      "path": "src/local-app/LocalCatalogApp.account.test.tsx",
+      "bytes": 9621,
+      "sha256": "af91641dd8292fa0f2a330a2ad7565671ca2d22f8880f4c78441754411a0cece"
+    },
+    {
+      "path": "src/local-app/LocalConnectionsPanel.test.tsx",
+      "bytes": 8393,
+      "sha256": "c00f1055c8d35788617b748580573ba6627da8e8722fb732f5ec3536e8b05586"
+    },
+    {
+      "path": "src/local-app/LocalEpisodeDetail.tsx",
+      "bytes": 12230,
+      "sha256": "a6ae562da064c5ea82de0a2f3323865642bd405a21729398f220d770a7d48530"
+    },
+    {
+      "path": "src/local-app/accountPreflightRoute.test.ts",
+      "bytes": 9762,
+      "sha256": "d5ae4f2afdd9de515e58c009854b2320a831a85f98dfb945f34b6c1bc8576571"
+    },
+    {
+      "path": "src/local-app/captionTextConfirmationRoute.test.ts",
+      "bytes": 6968,
+      "sha256": "98a9facdeac222fd5e87755d252d1f4835647ee477e5a301ae0489ab1c17c467"
+    },
+    {
+      "path": "src/local-app/catalogContract.integration.test.ts",
+      "bytes": 14988,
+      "sha256": "dd664d573ba29227dbebfb67f87960d44b31dcfc50a115bfc142aba3498445d5"
+    },
+    {
+      "path": "src/local-app/clipPreflight.integration.test.ts",
+      "bytes": 12553,
+      "sha256": "870f8b7f9c8e6d27812c520d186221c1f41a85bbb47e490d8f5e06e7ba3e2454"
+    },
+    {
+      "path": "src/local-app/connections.ts",
+      "bytes": 13392,
+      "sha256": "9b2964385b416914a6fc2ed5fdaec4b6f17894ec191e2cc05730c3cefdf9e8d9"
+    },
+    {
+      "path": "src/local-app/episodeCommands.ts",
+      "bytes": 40797,
+      "sha256": "458c03237eac140bf42054cedeb606f503e2c379013633c5535e4030f5b9a6ca"
+    },
+    {
+      "path": "src/local-app/localWorkerCli.ts",
+      "bytes": 8140,
+      "sha256": "95aa935179b3cd9409e9998659ecaa8f1e3c4a0a22e40e1b2231d6decca27784"
+    },
+    {
+      "path": "src/local-app/localWorkerService.ts",
+      "bytes": 6726,
+      "sha256": "f93dbddd4312c9633999ee86c95cb6bffe35057936ea4924ae066013a05630b3"
+    },
+    {
+      "path": "src/local-app/mediaWorker.reference.test.ts",
+      "bytes": 6854,
+      "sha256": "200a9bff2215fc8dec06c5bb007c12952de4894b6601a9c12cc4ae4736b4c742"
+    },
+    {
+      "path": "src/local-app/mediaWorker.ts",
+      "bytes": 6381,
+      "sha256": "b39db0182f2dbfefd1158a518c9743e618e61ec003d7dd76be3b05da4e41781d"
+    },
+    {
+      "path": "src/local-app/narrationWorker.ts",
+      "bytes": 4616,
+      "sha256": "d996d5e8f851812414ec6262d26b1046dc8f8c8c2041eb1d1e08b964a4ccdb89"
+    },
+    {
+      "path": "src/local-app/nativeAttemptOutput.test.ts",
+      "bytes": 25416,
+      "sha256": "1d6c0c32cb67d63402e8b44690e442ea17a611ffe8b69cd3a3713f87f0d22268"
+    },
+    {
+      "path": "src/local-app/nativeAttemptOutput.ts",
+      "bytes": 18210,
+      "sha256": "e2505d01ad415c0a8386a29843cb4ba8d7a77db712683bf3a882e6a33c8859d3"
+    },
+    {
+      "path": "src/local-app/nativeTtsOptIn.integration.test.ts",
+      "bytes": 6741,
+      "sha256": "dc6a08b9bc67d5885fd3fe6bdbf9cb698392fb10bf067e533470210a975019ea"
+    },
+    {
+      "path": "src/local-app/ownerRls.integration.test.ts",
+      "bytes": 4859,
+      "sha256": "26d0ab132eb072855cd4606da936b6a37aef3edc1a4a58aac9e1837dee220c3d"
+    },
+    {
+      "path": "src/local-app/providerNetwork.test.ts",
+      "bytes": 10029,
+      "sha256": "a15a8f930da193f24646a50d77df0c3d02217ea5c7b3f980fc31c726bb2b37b5"
+    },
+    {
+      "path": "src/local-app/providerNetwork.ts",
+      "bytes": 10900,
+      "sha256": "0a7eb76b899f7485f3aef0c724a70ee4c1191e9b5bd6c934bb823b2201def2e0"
+    },
+    {
+      "path": "src/reviews/ReviewWorkspace.test.tsx",
+      "bytes": 199096,
+      "sha256": "d4fc98430f28f108ee7639efdb61ea35f1287b124c66d629d30cc37574703004"
+    },
+    {
+      "path": "src/reviews/blockerGuidance.test.ts",
+      "bytes": 6742,
+      "sha256": "b8b6a02286ac029fd35f80a4b3f2ca6b9d359fe6b5dd936b612f8699525587ad"
+    },
+    {
+      "path": "src/reviews/blockerGuidance.ts",
+      "bytes": 20120,
+      "sha256": "d561f6f9a0d65355175b3683697faa12b4eaabc6ed8161ae4f687a1a3ddec37b"
+    },
+    {
+      "path": "src/worker/codexRunner.test.ts",
+      "bytes": 44016,
+      "sha256": "9fd8d021758e62857de11ff8fbf1cd3091f55ef3095b03b9edbf5c4a5d0cdc18"
+    },
+    {
+      "path": "src/worker/codexRunner.ts",
+      "bytes": 53637,
+      "sha256": "c314c9ad2f0fd16d60b0f4c75045ce9563f34cdd02e1791f157a9c5345a7acf7"
+    },
+    {
+      "path": "src/worker/providerOutcome.ts",
+      "bytes": 346,
+      "sha256": "467fe60763e79ba0f9e85f9140625889ca816aeec5612071513af00d8b31e695"
+    },
+    {
+      "path": "src/worker/runtimePreflight.test.ts",
+      "bytes": 7654,
+      "sha256": "420291f2a73797cf9bb88991a7fcd0a42ccc48659ed2305c050d4428f804f3ff"
+    },
+    {
+      "path": "src/worker/runtimePreflight.ts",
+      "bytes": 27149,
+      "sha256": "54abaa8825e8371994889ea7388b3df083842d5b5a5303a14d3ad820a8e02402"
+    },
+    {
+      "path": "src/worker/visualAssetExecutor.test.ts",
+      "bytes": 1588,
+      "sha256": "c2f8a580e25ce795298cf2d9c6bea67aff0266ff8eb795da5b6cde78ba1f6fff"
+    },
+    {
+      "path": "src/worker/visualAssetExecutor.ts",
+      "bytes": 3394,
+      "sha256": "8a27acaca39d1b50f1b949cdba1e86d79672b5abb141d222cfa59145f30dd39f"
+    },
+    {
+      "path": "vite.config.ts",
+      "bytes": 1584,
+      "sha256": "767e62413f0799566843dd2eaa25a4135ffbcfe39ed10ba50dc4218df6ca1cc9"
+    }
+  ],
+  "aggregateAlgorithm": "SHA256 of sorted path + NUL + sha256 + newline UTF8 records",
+  "aggregateSha256": "056d325ff85ba9b06cb28ef2a1f1ba12eb4459d98a2c530b4777ca1f07ca72a7",
+  "thisPhaseAdded": [
+    "db/local/043-owner-policy-initplans.sql",
+    "src/local-app/catalogContract.integration.test.ts",
+    "src/local-app/ownerRls.integration.test.ts"
+  ],
+  "thisPhaseChanged": [
+    "scripts/local/migrate.mjs",
+    "scripts/local/native-restore.mjs"
+  ],
+  "priorSourceFilesUnchanged": 41,
+  "priorRuntimeTypeScriptUnchanged": true,
+  "sqlAppliedOnlyTo": "loop_t24_restore_sql20261026",
+  "newProviderRequests": 0
+}

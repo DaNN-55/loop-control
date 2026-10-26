@@ -1,0 +1,7 @@
+{
+  "status": 0,
+  "elapsedSeconds": 47.956166375020985,
+  "diagnosticProcessSafetyLimitSeconds": 120,
+  "acceptanceTimeoutStillSeconds": 30,
+  "notAcceptanceEvidence": true
+}

@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "realOwnerHttpEnqueue": true,
+  "queued": {
+    "id": "58438a6f-4279-4458-a58b-5f7d9e1f3aa0",
+    "status": "ready",
+    "attempt": 0,
+    "availableAt": "2026-10-24T14:32:40.697726+00:00"
+  },
+  "realSigkill": true,
+  "onlyOwnTaskAvailabilityDelayedEightSeconds": true,
+  "noLeaseExpiryOrRetryModification": true
+}

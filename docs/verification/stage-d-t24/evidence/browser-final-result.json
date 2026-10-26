@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "realChrome": true,
+  "restoredReviewApprovedThroughUi": true,
+  "newStoryboardRequestedThroughUi": true,
+  "storyboardReviewVisibleAfterServerRestartAndPageReload": true,
+  "directoryTitlePointsToIndependentMedia": true,
+  "actualRestoredMp4Played": true,
+  "duration": 8.042667,
+  "playhead": 0.393008,
+  "width": 1080,
+  "height": 1920,
+  "readiness": 4,
+  "browserRequestsObserved": 1110,
+  "allRequestsLoopback55187": true,
+  "noHarExported": true,
+  "standaloneArtifactDocumentPlayback": false,
+  "standaloneDocumentNote": "Direct artifact document has restrictive existing CSP; supported in-app final-materials video loaded and played successfully.",
+  "optionalWaitNote": "Waiting for Owner on production_completed page timed out; completed stage has no Owner controls. Inspected actual final-materials UI instead.",
+  "initialNetworkParserNote": "Numeric-only request id parser rejected mixed Chrome ids; corrected parsing without dropping requests."
+}

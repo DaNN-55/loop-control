@@ -1,0 +1,197 @@
+{
+  "version": "t19-timeout-comparison/v1",
+  "at": "2026-10-24T09:12:49.507Z",
+  "baseline": "af4856a8683d0a61f2f01911ccfe00077b4c9cc1",
+  "currentSourceTree": "0dceb7233888fdd53aa1a80b9e985e5839f9d1f06de5c1e24f85535f11a130a7",
+  "verdict": "Exact target timeout exists before T19; not a newly introduced failure",
+  "baselineTimeouts": "1/4",
+  "currentTimeouts": "1/4",
+  "defaultTimeoutMs": 5000,
+  "gatePassed": false,
+  "rootCauseResolved": false,
+  "originalWorktreeAndT19EvidenceUnchanged": true,
+  "noCommit": true,
+  "noPush": true,
+  "noMerge": true,
+  "noOnlineRequests": true,
+  "noProduction": true,
+  "noT20": true,
+  "privateEvidenceExcluded": [
+    "environment-private.json",
+    "Git archive",
+    "frozen baseline/current/checkout",
+    "redundant archive-buffer JSON"
+  ],
+  "entries": [
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/README.md",
+      "bytes": 6347,
+      "sha256": "35af05d173ea4f354675fac9400b01bc44e7c30edcf5338d34ab097cc9ca1572"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/01-baseline-result.json",
+      "bytes": 1982,
+      "sha256": "42e10bf17e4fb6d26c6550d2601bb6173cea4768fc36c05fc15381cda983753e"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/01-baseline-stdout.txt",
+      "bytes": 14749,
+      "sha256": "43dbacbc5943bd1fdfafe76cd96faf00deac72737178bec92ebf72aa200d943b"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/02-current-result.json",
+      "bytes": 1666,
+      "sha256": "6cad41d87fcef4a2bd79c2f9141dc17163da3470af3478bd7e489b94b9fb812b"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/02-current-stdout.txt",
+      "bytes": 8902,
+      "sha256": "9eed902ce0ae55d20c62a0c2bcd75520f5312f328d2bb19cad6c1b7dd7001848"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/03-current-result.json",
+      "bytes": 1984,
+      "sha256": "dd05763597a0ae14108c4a2ef353ef869eefb13a317bcc10e8c9c6731e2e04a0"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/03-current-stdout.txt",
+      "bytes": 14660,
+      "sha256": "fdec00dd2cb56f016731387f3cc4d8ab7e85704ce14ff5896b26a0c3774ee20a"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/04-baseline-result.json",
+      "bytes": 1668,
+      "sha256": "5651a0d4a71b8178defcc4565de77d4b679c2726980d0fcbd8a6b89c186370cf"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/04-baseline-stdout.txt",
+      "bytes": 8965,
+      "sha256": "3e649c47ac7c2dc898ca42db0514a8a84b33234fa0713756c7dbfe86ec3ea236"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/05-baseline-result.json",
+      "bytes": 1666,
+      "sha256": "d7191c61951aba59da9b2a7f9f0aca84a6fc6bb50e840e996a7c3469fc97971a"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/05-baseline-stdout.txt",
+      "bytes": 9063,
+      "sha256": "6a751d52b0828ecbecf18c0f6058e9e272ea2caf62c9479afdfba86b4ca4d89a"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/06-current-result.json",
+      "bytes": 1664,
+      "sha256": "1bc2af1606c1feab2e9de7ca627ffee9c3cb9ded80c746efa71facec64fa52c6"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/06-current-stdout.txt",
+      "bytes": 9652,
+      "sha256": "82cad62062753698d6a8960c3dceeb941951a5bc3e58742cdf5f9f544a7aba3b"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/07-current-result.json",
+      "bytes": 1665,
+      "sha256": "91e72cdfb30c23ac5e57ef170ff6cd3719d09cd87ccb19f1553ae34edaff567c"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/07-current-stdout.txt",
+      "bytes": 8649,
+      "sha256": "a11cc67068493bb7da6cbffc5dc060c988561c8986118f07cd5424c605b98914"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/08-baseline-result.json",
+      "bytes": 1668,
+      "sha256": "d0a2acfa0cac01af448b56e753a51231f4998c80b27e1c39836447b047240a6c"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/08-baseline-stdout.txt",
+      "bytes": 9192,
+      "sha256": "2cb7a995b8667b4ef4d12935d874fe6664d036e46b0fb6bab08b02f8a73f83aa"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/analysis.json",
+      "bytes": 5235,
+      "sha256": "de52118e25fef2765fde2c3441a978eaf23dad89186db292a2209969d73f9652"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/analyze.mjs",
+      "bytes": 2927,
+      "sha256": "adaafb8aa819131dd4a0f621fea358d4a18919cecf0cf13da98af01d9210fee0"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/driver-stdout-01.txt",
+      "bytes": 3369,
+      "sha256": "df758f5c59d99f5b7a3240ee077ad5b2cee0fe0b63fa81c58c8a30e5a961e39a"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/method.json",
+      "bytes": 2874,
+      "sha256": "eca80128cea0eb6e9113bca93b30fb2afdd3d37414c99d600043e03c7c7cd56d"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/network-events.jsonl",
+      "bytes": 62748,
+      "sha256": "27a8c356723e96e98f75556ca060e45d7da89df9831a220c9966960cdeefd459"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/network-guard-selfcheck.txt",
+      "bytes": 110,
+      "sha256": "5d2363b4852b4fb2c11d92ba4581d26d7ad46b7de5fa8b4da74a90655aa0c424"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/network-guard.mjs",
+      "bytes": 1427,
+      "sha256": "8fe64592aa945d711bf236f1cc1db48ef193ded6a726a56fff4d9c3cc7bb66ff"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/provenance.json",
+      "bytes": 1495,
+      "sha256": "4ec1045961016c4bcf991249902faa1c8a0c54a4065ecb7bf1b2fb90707af472"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/public-safety-scan.json",
+      "bytes": 202,
+      "sha256": "c7be79cb57ecea1391f62514e30c6e940d1be7e74860ef9de2719efd07d1e7b6"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/results.json",
+      "bytes": 15775,
+      "sha256": "8bca9acbbb05e1a9359eae9fed17633cc8b196c1527f49041ae31b71ad8f13ac"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/run-used-01.mjs",
+      "bytes": 4263,
+      "sha256": "600476213505468e3433dc9f59e1440bb1d9ca93af9c888beb7061b3a33c3a5f"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/setup-used-01.mjs",
+      "bytes": 5444,
+      "sha256": "c09b789de2aeb1a660f75034ed7ada825d0d2aa048f10a65bbb377767e5cf54c"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/source-manifests.json",
+      "bytes": 414430,
+      "sha256": "16c3829ca8d989c00c72ceebcd1ef65f01de519929a62bf08aa3585f0e8ef33c"
+    },
+    {
+      "path": "docs/verification/stage-d-t19-timeout-comparison/evidence/verification.json",
+      "bytes": 1938,
+      "sha256": "f75daef2a12ef8444f8dc082afc2470351570ee2388957dd1fd257d2c4c6ce15"
+    }
+  ],
+  "selfExcluded": true,
+  "archive": {
+    "authorization": "Owner accepted controlled offline T19 and baseline comparison; archive current branch only",
+    "acceptanceSnapshotFieldsPreserved": true,
+    "acceptedIndexSha256": "cd1007e3d3dc074024c73a8ee323d5f4d29525723066822ecefef9051d9f7ab8",
+    "sourceAndRawEvidenceUnchanged": true,
+    "default5000msGatePassed": false,
+    "rootCauseResolved": false,
+    "unacceptedItemsAndSyntheticQualificationSecretStoreT17CaveatsRetained": true,
+    "noProduction": true,
+    "noOnlineRequests": true,
+    "noPush": true,
+    "noMerge": true,
+    "noT20": true
+  }
+}

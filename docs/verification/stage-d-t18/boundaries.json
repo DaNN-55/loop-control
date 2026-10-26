@@ -1,0 +1,81 @@
+{
+  "at": "2026-10-24T07:41:19.803Z",
+  "head": "d06b2a5f1b0fb571c53ac36485d8d6fac5e22c46",
+  "branch": "codex/local-first-stage-a",
+  "indexEmpty": true,
+  "rootPlanUnchanged": true,
+  "unrelatedPlansUntouched": true,
+  "noCommitPushMerge": true,
+  "noProductionOperations": true,
+  "newOnlineRequests": 0,
+  "ownPort55181Closed": true,
+  "ownChromeClosed": true,
+  "ownRunningTasks": 0,
+  "deferredAlignmentTasks": [
+    {
+      "type": "align_shot_captions",
+      "status": "ready",
+      "attempt": 0
+    },
+    {
+      "type": "align_shot_captions",
+      "status": "ready",
+      "attempt": 0
+    },
+    {
+      "type": "align_shot_captions",
+      "status": "ready",
+      "attempt": 0
+    },
+    {
+      "type": "align_shot_captions",
+      "status": "ready",
+      "attempt": 0
+    },
+    {
+      "type": "align_shot_captions",
+      "status": "ready",
+      "attempt": 0
+    },
+    {
+      "type": "align_shot_captions",
+      "status": "ready",
+      "attempt": 0
+    },
+    {
+      "type": "align_shot_captions",
+      "status": "ready",
+      "attempt": 0
+    }
+  ],
+  "deferredAlignmentNeverClaimedOrExecuted": true,
+  "t19NotImplementedOrExecuted": true,
+  "t20NotImplementedOrExecuted": true,
+  "fixtureVersionsRevoked": [
+    {
+      "revoked": true,
+      "provider": "google_tts"
+    },
+    {
+      "revoked": true,
+      "provider": "volcengine_tts"
+    }
+  ],
+  "fixtureQualificationWasSeededNotLive": true,
+  "noRealKeychainCreated": true,
+  "priorPexelsBudget": {
+    "max": 2,
+    "used": 2,
+    "phase": "hold",
+    "phaseSpent": true,
+    "halted": false
+  },
+  "priorKeychainAbsent": true,
+  "defaultDeploymentNotEnabled": true,
+  "browserHttpRecordsChecked": 1379,
+  "browserExternalRequests": 0,
+  "historicalDefault5000msFailureAndRootCauseUnresolved": true,
+  "defaultDeploymentOnlineGenerationOtherProvidersFullWorkerUnaccepted": true,
+  "priorT17IntermediateLogOverwriteExplanationRetained": true,
+  "thisRunRawLogsNumberedAndNotOverwritten": true
+}

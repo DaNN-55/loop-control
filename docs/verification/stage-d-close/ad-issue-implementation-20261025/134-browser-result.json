@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "realChromeNormalPage": true,
+  "realNormalNpmHttpAndPostgres": true,
+  "readyAndLockedClassificationsVisible": true,
+  "heldResponsesWereRealHttp200": true,
+  "accountSwitchLateResponseRejected": true,
+  "samePageReloginLateResponseRejected": true,
+  "logoutPendingCatalogRequestFence": true,
+  "passwordPassedOnlyByStdin": true,
+  "driverArrayParsingAndAsyncExpressionErrorsRetained": true,
+  "sameDocumentPreservedDuringDriverRepairs": true,
+  "providerRequests": 0
+}

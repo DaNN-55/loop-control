@@ -1,0 +1,12 @@
+{
+  passed: true,
+  families: [
+    'openai',
+    'cloudflare',
+    'pexels',
+    'freesound',
+    'manual',
+    'local',
+    'disabled'
+  ]
+}

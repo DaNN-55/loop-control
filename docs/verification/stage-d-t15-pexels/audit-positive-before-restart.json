@@ -1,0 +1,64 @@
+{
+  "at": "2026-10-24T03:29:58.118Z",
+  "versions": [
+    {
+      "id": "54a49f01-5c96-4b8e-86d6-b6ad128d50ef",
+      "version": 1,
+      "revoked_at": null,
+      "is_current": true,
+      "qualified": true,
+      "mode": "live",
+      "outcome": "verified"
+    }
+  ],
+  "policy": {
+    "b_roll": {
+      "executor": {
+        "model": "pexels-video-v1",
+        "adapter": "pexels_video",
+        "provider": "pexels",
+        "prompt_version": "b-roll-v1"
+      },
+      "max_attempts": 1,
+      "credential_ref": "54a49f01-5c96-4b8e-86d6-b6ad128d50ef",
+      "execution_path": "external"
+    },
+    "budgets": {
+      "script_writing_cents": 0,
+      "storyboard_planning_cents": 0
+    },
+    "executors": {
+      "script_writing": {
+        "model": "gpt-5.6-codex",
+        "adapter": "codex",
+        "provider": "codex",
+        "prompt_version": "unversioned"
+      },
+      "storyboard_planning": {
+        "model": "gpt-5.6-codex",
+        "adapter": "codex",
+        "provider": "codex",
+        "harness_id": "0694a8d1-328f-49e0-9e3d-34916f3c5198",
+        "prompt_version": "storyboard-planning-v2"
+      }
+    },
+    "asset_root": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/media/t15-pexels-e309082b-a993-4e00-a0c9-22fadae404ab",
+    "positioning": "T15 Pexels isolated acceptance",
+    "approval_gates": [
+      "script",
+      "visual",
+      "storyboard",
+      "qc"
+    ]
+  },
+  "workerExactVersionResolvable": true,
+  "budget": {
+    "max": 2,
+    "used": 1,
+    "phase": "hold",
+    "phaseSpent": true,
+    "halted": false
+  },
+  "secretAbsentFromDatabaseDumpAndLogs": true,
+  "actualKeyKnownOnlyInKeychainAndProcessMemory": true
+}

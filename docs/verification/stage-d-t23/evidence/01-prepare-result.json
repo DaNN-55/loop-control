@@ -1,0 +1,7 @@
+{
+  "passed": true,
+  "database": "loop_t23",
+  "oldInputWorkersDisabledInCloneOnly": true,
+  "qualification": "offline synthetic planner only; no live evidence",
+  "secretStore": "not used; previous substitute caveat retained"
+}

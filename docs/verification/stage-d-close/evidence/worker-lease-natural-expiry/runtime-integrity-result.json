@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "sourceFiles": 154,
+  "outputFiles": 69,
+  "manifestSha256": "7d226a574f183ac12fa0c74823ff186a792bd63ed7178f77b5be434f02149b67",
+  "allCurrentHashesMatch": true,
+  "explicitPreparePassed": true,
+  "entry": "dist/worker/local-app/localWorkerCli.js",
+  "newCliSourceSha256": "371514715607fad062e6de157dddd3c72ec4e7eff6cc4173e8b20c81f4599d79"
+}

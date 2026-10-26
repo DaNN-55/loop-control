@@ -1,0 +1,65 @@
+{
+  "createdAt": "2026-10-26T01:55:36.515Z",
+  "files": [
+    {
+      "path": "common.mjs",
+      "sha256": "f51aa68211d92059c22147b4a4b606ffbe795fca7ea8747b5cab050813d37c81"
+    },
+    {
+      "path": "service.mjs",
+      "sha256": "9b595b5307a0e44c8e6fe452256b145752cc1d3b9fd38cebeab0546065e27b3b"
+    },
+    {
+      "path": "prepare-config.mjs",
+      "sha256": "ef06db0423bb115b706dc07ca9f5388521dd6bf30eb03ec01b5b890ce42ee074"
+    },
+    {
+      "path": "bridge.mjs",
+      "sha256": "8e9bc48c3a17768bfd958182e2b4bfa8c1d20e52fe1748b648ec189741544aeb"
+    },
+    {
+      "path": "frozen-codex-prompt.mjs",
+      "sha256": "3a859872b4015e216fb321e947691d67a1dcca3a5aa6924e9e93f4bc403e85a3"
+    },
+    {
+      "path": "cli-deadline.py",
+      "sha256": "0986065498b299d646de4e139168b9bd3a153f4286ec4c5ea538161fef6fddec"
+    },
+    {
+      "path": "pin-task.mjs",
+      "sha256": "c1c071ff9e63701958af512144c49d0b78fa4c5799c2c145f883bb35538bb203"
+    },
+    {
+      "path": "pipeline.mjs",
+      "sha256": "57fa8b1a8c08b96f7032544c2789200af262c78eccd358ba4012130d4f61405d"
+    },
+    {
+      "path": "script-input.json",
+      "sha256": "90a15ef71df69d993407fbb9c6f1deadccb8d963f74f78ca1bc05db4a8323674"
+    },
+    {
+      "path": "new-reference.png",
+      "sha256": "5cfe76fcf307a7ccb29ffb8128d7c5983051521f16b334820b0b63ac4f1f36bd"
+    }
+  ],
+  "runtimeToolDigests": [
+    {
+      "path": "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+      "sha256": "c8eedc7651a438fb7d2ceb36fd70032676c855586a36c950ba5a662f0b7853bd",
+      "bytes": 50320
+    },
+    {
+      "path": "/opt/homebrew/bin/codex",
+      "sha256": "61b0194f3bb6534439c8d26a3ed57d0805f84b884588b761795323eeb92fcf70",
+      "bytes": 8790
+    },
+    {
+      "path": "/usr/bin/python3",
+      "sha256": "34129c71a01a74f7f3b2443521519b2e5447553fa187f5fcafaaf8c42cc192e2",
+      "bytes": 200560
+    }
+  ],
+  "allCapturedBeforeNewCli": true,
+  "sourceAggregateSha256": "afc8a44b2413eedbe695fa4162a821a0792949a402254dd970db89058ddcbc00",
+  "priorFailedRunPreserved": true
+}

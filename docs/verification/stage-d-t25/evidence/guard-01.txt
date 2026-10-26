@@ -1,0 +1,10 @@
+{"offlineProcessGuard":true,"selfChecks":5,"allowed":"127.0.0.1:55472,55177,55189","supabaseAndN8nDenied":true}
+{
+  sockets: 1,
+  http: 2,
+  modules: 1,
+  files: 1,
+  onlyNativeLoopbackAllowed: true,
+  legacySdkAndEnvironmentDenied: true,
+  hostNetworkUnchanged: true
+}

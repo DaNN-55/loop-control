@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "normalDetailSummaryAndInnerViewButtonsUsed": true,
+  "renderedMarkdownVisible": true,
+  "containsCurrentPlanningManifestHeading": true,
+  "currentModelVisible": true,
+  "normalRefreshTextExactlyEqual": true,
+  "visibleTextSha256": "fb837a43a9c944a6eda647c400d816620197e8ffccfb46af7095cca0b73f4e76",
+  "visualManifestSha256": "69f4c2617699388d7728a1add66f90ec6047655c53c2c91040e00b3177a55825",
+  "downloadLinkInVisualSection": false,
+  "previewEntry": true,
+  "priorRootSummaryOnlyWaitNotProductFailure": true
+}

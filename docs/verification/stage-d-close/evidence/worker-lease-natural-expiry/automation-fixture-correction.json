@@ -1,0 +1,1 @@
+{"passed":true,"fixtureOnly":true,"reason":"infinity plan date produced PG_INVALID_DATE warning; use explicit remote-future date instead","database":"loop_t24_restore_lease20261025","workerTaskOrLeaseChanged":false}

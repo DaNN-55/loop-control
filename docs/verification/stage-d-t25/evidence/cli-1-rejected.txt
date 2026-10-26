@@ -1,0 +1,11 @@
+{"offlineProcessGuard":true,"selfChecks":5,"allowed":"127.0.0.1:55472,55177,55189","supabaseAndN8nDenied":true}
+{"offlineGuardFinal":{"sockets":1,"http":2,"modules":1,"files":1,"onlyNativeLoopbackAllowed":true,"legacySdkAndEnvironmentDenied":true,"hostNetworkUnchanged":true,"deniedFilePaths":["readFileSync:/.env.local"]}}
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/dist/worker/local-app/localWorkerCli.js:23
+    throw Error('本地Worker需要常驻调度器通过stdin提供任务包；请使用 npm start。');
+          ^
+
+Error: 本地Worker需要常驻调度器通过stdin提供任务包；请使用 npm start。
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/dist/worker/local-app/localWorkerCli.js:23:11
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+Node.js v24.20.0

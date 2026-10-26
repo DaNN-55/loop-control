@@ -1,0 +1,47 @@
+{
+  "sql146": {
+    "passed": 4,
+    "mutationFailed": 2,
+    "productionSqlChanged": false
+  },
+  "sql147": {
+    "passed": 4,
+    "beforePlanFailed": 3,
+    "rowsPerOwnerPerTable": 32,
+    "initplans": [
+      1,
+      2,
+      1
+    ]
+  },
+  "finalIntegration": {
+    "files": 2,
+    "passed": 8
+  },
+  "finalDefaultSuite": {
+    "files": 113,
+    "passed": 894,
+    "defaultTimeoutMs": 5000,
+    "requiredOfflineEnvironment": true,
+    "unconfiguredFirstAttemptFailed": true
+  },
+  "legacyN8n": {
+    "passed": 2,
+    "skipped": 1,
+    "skipPreexisting": true
+  },
+  "build": {
+    "passed": true,
+    "chunkKb": 590.47,
+    "gzipKb": 177.93,
+    "warningRetained": true
+  },
+  "reviews": {
+    "standardsFindings": 0,
+    "specFindings": 0
+  },
+  "noNewProviderRequests": true,
+  "committed": false,
+  "pushed": false,
+  "enteredEF": false
+}

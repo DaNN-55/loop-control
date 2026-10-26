@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "newModelInference": true,
+  "pausedAfterActualAlign": true,
+  "gatePid": 45031,
+  "oldTaskId": "bb646154-0435-40c6-8728-c114b1ff7547",
+  "oldTaskStatus": "completed",
+  "oldCallbackCannotOverwriteCurrentTextOrTiming": true,
+  "oldCallbackCannotRestoreCaptionTextConfirmation": true,
+  "oldOwnerTupleHttpStatus": 409,
+  "priorAlignmentArtifactsShaPreserved": [
+    {
+      "id": "e774de7f-de4b-47a5-ac4e-867e276e65d9",
+      "sha256": "6544f603d6cc034ae96988508396a42dbacb77922a3064346861b9ecdcc19708"
+    }
+  ],
+  "noTimestampOrLeaseMutation": true,
+  "noResultSubstitution": true,
+  "providerRequests": 0
+}

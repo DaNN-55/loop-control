@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "status": 0,
+  "formalEntry": true,
+  "providerPortsDisabled": true,
+  "originalIndexedLogPreserved": true,
+  "noWorkerConfigured": false,
+  "workerConfigured": true,
+  "allProviderNetworkDisabled": true
+}

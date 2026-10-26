@@ -1,0 +1,24 @@
+{
+  "passed": true,
+  "anonymous401": true,
+  "badOrigin403": true,
+  "badCsrf403": true,
+  "wrongMediaRootHttp503": true,
+  "wrongMediaRootWorkerRefusedBeforeClaim": true,
+  "failedAndPendingDatabaseWorkerRefused": true,
+  "pendingDeploymentReadRefused": true,
+  "sessionAndLogoutAvailableForWrongMediaDeployment": true,
+  "localAssetRootSeparateFromFrozenBlueprint": true,
+  "incrementalHashStable": true,
+  "originalSourceTaskStillReadyAttempt0": true,
+  "restoredTaskCompleted": true,
+  "guard": {
+    "originalMediaRootsDenied": true,
+    "externalHttpDenied": true,
+    "externalSocketsDenied": true,
+    "fsDenied": 1,
+    "httpDenied": 1,
+    "socketDenied": 1,
+    "hostNetworkAndOriginalPermissionsUnchanged": true
+  }
+}

@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ scripts/local/deployment.test.mjs (3 tests) 2ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  13:16:26
+   Duration  401ms (transform 14ms, setup 0ms, collect 15ms, tests 2ms, environment 0ms, prepare 25ms)
+

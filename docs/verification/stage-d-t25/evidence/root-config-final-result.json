@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "finalRootConfigNativeServeLoaded": true,
+  "oldEnvFilesDisabled": true,
+  "nativeBoundaryPlugin": true,
+  "legacyStartExplicitlyPropagatesMode": true,
+  "legacyStackNotStarted": true,
+  "guard": {
+    "sockets": 1,
+    "http": 2,
+    "modules": 1,
+    "files": 1,
+    "onlyNativeLoopbackAllowed": true,
+    "legacySdkAndEnvironmentDenied": true,
+    "hostNetworkUnchanged": true,
+    "deniedFilePaths": [
+      "readFileSync:/.env.local"
+    ]
+  }
+}

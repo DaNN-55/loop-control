@@ -1,0 +1,267 @@
+{
+  "evidenceRoot": "docs/verification/stage-d-close",
+  "rows": [
+    {
+      "issue": 132,
+      "state": "CLOSED",
+      "assessment": "accepted_with_documented_scope",
+      "evidence": [
+        {
+          "path": "ad-sql-closeout-20261026/final-npm-test-offline.log",
+          "bytes": 10941,
+          "sha256": "3fde395a57dff8c31c2594d9190869c1d76db9f553fe73bd38068b1c3c31dc49"
+        },
+        {
+          "path": "ad-issue-implementation-20261025/report-132-134-148.md",
+          "bytes": 3988,
+          "sha256": "4dbea3d52610557e4f2d609bce53a4d0e4b51cecaa0bb8fb813d3bd6b4c0174c"
+        }
+      ]
+    },
+    {
+      "issue": 133,
+      "state": "CLOSED",
+      "assessment": "accepted_with_documented_scope",
+      "evidence": [
+        {
+          "path": "native-account-ui.md",
+          "bytes": 8752,
+          "sha256": "43594d52e56d6e002ace80b8be68f05716f5f29d42cb1a1db34bad0d36b2c8e0"
+        }
+      ]
+    },
+    {
+      "issue": 134,
+      "state": "CLOSED",
+      "assessment": "accepted_with_documented_scope",
+      "evidence": [
+        {
+          "path": "ad-issue-implementation-20261025/report-132-134-148.md",
+          "bytes": 3988,
+          "sha256": "4dbea3d52610557e4f2d609bce53a4d0e4b51cecaa0bb8fb813d3bd6b4c0174c"
+        },
+        {
+          "path": "ad-issue-implementation-20261025/issue-134-closure.md",
+          "bytes": 1945,
+          "sha256": "0b482eaa5e4746d2a6192fbf305f4653f290968809c8743f270587cda3ff9771"
+        }
+      ]
+    },
+    {
+      "issue": 135,
+      "state": "CLOSED",
+      "assessment": "accepted_with_documented_scope",
+      "evidence": [
+        {
+          "path": "ad-issue-implementation-20261025/report-135-final.md",
+          "bytes": 3681,
+          "sha256": "97e5decc0379c949edd0467802c9f506b592ffff53f27d438d2a6a836e518524"
+        }
+      ]
+    },
+    {
+      "issue": 136,
+      "state": "CLOSED",
+      "assessment": "accepted_with_documented_scope",
+      "evidence": [
+        {
+          "path": "ad-issue-implementation-20261025/report-136.md",
+          "bytes": 3720,
+          "sha256": "b8f1b73022c2d17eb7a87cc571fcd601e7908ba02923b2c14aface63c79a6fc7"
+        }
+      ]
+    },
+    {
+      "issue": 137,
+      "state": "CLOSED",
+      "assessment": "owner_exception_not_passed",
+      "evidence": [
+        {
+          "path": "ad-provider-recheck-20261026/google_tts-retry-result.json",
+          "bytes": 1072,
+          "sha256": "8f541d27f43d3c5f131f90ff3c9e19513b278ffc88d647a8a6e3d14acc13e35d"
+        },
+        {
+          "path": "ad-provider-recheck-20261026/github-provider-closures.json",
+          "bytes": 1343,
+          "sha256": "8d61007ed522a17400e9d0a04bf2d1200ee720e773819e2d87967dbdb8284b9e"
+        }
+      ]
+    },
+    {
+      "issue": 138,
+      "state": "CLOSED",
+      "assessment": "owner_exception_not_passed",
+      "evidence": [
+        {
+          "path": "ad-provider-recheck-20261026/freesound-retry-result.json",
+          "bytes": 742,
+          "sha256": "a289ed4d01921003591fb8d93bc2628cddae24c4510988db039f47bb46d1f70f"
+        },
+        {
+          "path": "ad-provider-recheck-20261026/github-provider-closures.json",
+          "bytes": 1343,
+          "sha256": "8d61007ed522a17400e9d0a04bf2d1200ee720e773819e2d87967dbdb8284b9e"
+        }
+      ]
+    },
+    {
+      "issue": 139,
+      "state": "CLOSED",
+      "assessment": "owner_exception_not_passed",
+      "evidence": [
+        {
+          "path": "ad-provider-recheck-20261026/cloudflare-retry-result.json",
+          "bytes": 534,
+          "sha256": "032b904ab79e2853ab90248d6bada334035e276edd2d75878b46a8820d8f0e0c"
+        },
+        {
+          "path": "ad-provider-recheck-20261026/github-provider-closures.json",
+          "bytes": 1343,
+          "sha256": "8d61007ed522a17400e9d0a04bf2d1200ee720e773819e2d87967dbdb8284b9e"
+        }
+      ]
+    },
+    {
+      "issue": 140,
+      "state": "CLOSED",
+      "assessment": "owner_exception_not_passed",
+      "evidence": [
+        {
+          "path": "ad-provider-recheck-20261026/openai-retry-result.json",
+          "bytes": 514,
+          "sha256": "635e303eaeed8d8d458926752b86ad0be39d4e64c867d6bef50511e9caefcd66"
+        },
+        {
+          "path": "ad-provider-recheck-20261026/github-provider-closures.json",
+          "bytes": 1343,
+          "sha256": "8d61007ed522a17400e9d0a04bf2d1200ee720e773819e2d87967dbdb8284b9e"
+        }
+      ]
+    },
+    {
+      "issue": 141,
+      "state": "CLOSED",
+      "assessment": "accepted_with_documented_scope",
+      "evidence": [
+        {
+          "path": "ad-issue-implementation-20261025/report-141-final.md",
+          "bytes": 2219,
+          "sha256": "77668389248a9fde2aa5196c0c9b654752f0e20a5eef2147208c5e00900c6a21"
+        }
+      ]
+    },
+    {
+      "issue": 142,
+      "state": "CLOSED",
+      "assessment": "accepted_with_documented_scope",
+      "evidence": [
+        {
+          "path": "ad-issue-implementation-20261025/report-142-final.md",
+          "bytes": 6979,
+          "sha256": "766f2f4824b71ef3de36ebee327a2a081fe2e0c8238ffe16ced98bab86aefeef"
+        }
+      ]
+    },
+    {
+      "issue": 143,
+      "state": "CLOSED",
+      "assessment": "accepted_with_documented_scope",
+      "evidence": [
+        {
+          "path": "ad-issue-implementation-20261025/report-143-final.md",
+          "bytes": 2391,
+          "sha256": "9438bd61f019c83477792193dd424be0275c783e56bcd883f4661cab3d3d8c73"
+        }
+      ]
+    },
+    {
+      "issue": 144,
+      "state": "CLOSED",
+      "assessment": "accepted_with_documented_scope",
+      "evidence": [
+        {
+          "path": "ad-issue-implementation-20261025/report-144-042-final.md",
+          "bytes": 2595,
+          "sha256": "72452f8c6879a2f9cc49a5884ffefa8d7b602b5004611e9070da13c882957309"
+        },
+        {
+          "path": "ad-issue-implementation-20261025/report-144-final.md",
+          "bytes": 3569,
+          "sha256": "08762759e5e172e0a29af67b230518db8024e59bcdce7f2fb6c453ab406710f5"
+        }
+      ]
+    },
+    {
+      "issue": 145,
+      "state": "CLOSED",
+      "assessment": "accepted_with_documented_scope",
+      "evidence": [
+        {
+          "path": "ad-issue-implementation-20261025/report-145-final.md",
+          "bytes": 3354,
+          "sha256": "bc0be6e73e6c8d680d4f60242a402ef9088b555e2c4d1b2b3fcb8eafa48096ab"
+        }
+      ]
+    },
+    {
+      "issue": 146,
+      "state": "CLOSED",
+      "assessment": "accepted_with_documented_scope",
+      "evidence": [
+        {
+          "path": "ad-sql-closeout-20261026/report-146.md",
+          "bytes": 1948,
+          "sha256": "00364c2e03df69c2827c341955db2a9478556fd8fe34b66aab4c0603e0792fae"
+        },
+        {
+          "path": "ad-provider-recheck-20261026/readonly-review.md",
+          "bytes": 1398,
+          "sha256": "9d329a778f91e1140f5c938991639c5d29c5bdb36f4cc731715a1c50ec29220c"
+        }
+      ]
+    },
+    {
+      "issue": 147,
+      "state": "CLOSED",
+      "assessment": "accepted_with_documented_scope",
+      "evidence": [
+        {
+          "path": "ad-sql-closeout-20261026/report-147.md",
+          "bytes": 2533,
+          "sha256": "172ba9fc7fa08b457a22e860652c39245e71257a94b2f299838c6588f50fff10"
+        },
+        {
+          "path": "ad-provider-recheck-20261026/readonly-owner-rls.log",
+          "bytes": 410,
+          "sha256": "f36dd91e814df26eab2005a4ca6c046ade9ab11f0fec63361aaf45ffe6a7c564"
+        }
+      ]
+    },
+    {
+      "issue": 148,
+      "state": "CLOSED",
+      "assessment": "accepted_with_documented_scope",
+      "evidence": [
+        {
+          "path": "ad-issue-implementation-20261025/report-132-134-148.md",
+          "bytes": 3988,
+          "sha256": "4dbea3d52610557e4f2d609bce53a4d0e4b51cecaa0bb8fb813d3bd6b4c0174c"
+        },
+        {
+          "path": "ad-issue-implementation-20261025/issue-148-closure.md",
+          "bytes": 1824,
+          "sha256": "7edbf4cf43b185599376274dd75e55f40964ad72682952b8d13c20da690f9008"
+        }
+      ]
+    }
+  ],
+  "explicitOwnerExceptions": [
+    137,
+    138,
+    139,
+    140
+  ],
+  "allFunctionalCapabilitiesPassed": false,
+  "enterEFAuthorized": false
+}

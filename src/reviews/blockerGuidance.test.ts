@@ -114,3 +114,13 @@ describe("Worker 阻塞项指导", () => {
     expect(guidance.location).toBe("技术详情 / Worker 运行环境");
   });
 });
+
+it('tells Owner to reconcile an unknown sent request before deciding to send again',()=>{
+ const guidance=workerBlockerGuidance({code:'provider_result_unknown',check:'provider_result_unknown',status:'blocked',action:'contact_environment_admin',detail:'Provider request outcome unknown'});
+ expect(guidance.title).toBe('外部请求结果未知');
+ expect(guidance.summary).toContain('无法确认远端完成或取消');
+ expect(guidance.resolution.join(' ')).toContain('请求账本');
+ expect(guidance.retryLabel).toBe('核对原请求后再决定');
+ expect(guidance.locationNote).toContain('不会自动重发');
+ expect(guidance.primaryAction).toBeUndefined();
+});

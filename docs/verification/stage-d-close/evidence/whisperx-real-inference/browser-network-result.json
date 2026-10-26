@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "capturedHttpRequests": 177,
+  "inlineDataResources": 11,
+  "origins": [
+    "http://127.0.0.1:55189"
+  ],
+  "nonLoopbackRequests": 0,
+  "rawHeadersPrivate": true,
+  "HARCreated": false,
+  "outerOsLoopbackPolicy": true
+}

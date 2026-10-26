@@ -1,0 +1,5 @@
+src/local-app/mediaDeployment.ts(5,114): error TS1005: ',' expected.
+src/local-app/mediaDeployment.ts(5,132): error TS1005: ',' expected.
+src/local-app/mediaDeployment.ts(5,141): error TS1005: ',' expected.
+src/local-app/mediaDeployment.ts(5,145): error TS1005: ',' expected.
+src/local-app/mediaDeployment.ts(5,150): error TS1005: ',' expected.

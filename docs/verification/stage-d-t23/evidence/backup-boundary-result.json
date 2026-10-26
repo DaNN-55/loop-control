@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "realPgDumpAndMediaCopy": true,
+  "sameJobReusedWithoutNewArchive": true,
+  "existingArchiveCorruptionRejected": true,
+  "originalArchiveBytesRestored": true,
+  "controlledPartialDirectoryAndDeadLockPreserved": true,
+  "partialRecoveryCreatedVerifiedArchive": true,
+  "symlinkDestinationRejected": true,
+  "controlBytesPreserved": true,
+  "extraBackupRequestWasSyntheticNotScheduled": true,
+  "mediaFiles": 848,
+  "restoreTestNotPerformed": true
+}

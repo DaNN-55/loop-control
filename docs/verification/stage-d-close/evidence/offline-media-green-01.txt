@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/local-app/mediaWorker.test.ts (2 tests) 2ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  08:58:12
+   Duration  289ms (transform 82ms, setup 0ms, collect 105ms, tests 2ms, environment 0ms, prepare 38ms)
+

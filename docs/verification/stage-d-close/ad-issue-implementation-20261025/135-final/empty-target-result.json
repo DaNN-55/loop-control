@@ -1,0 +1,15 @@
+{
+  "phase": "empty-target",
+  "baseInterpreter": {
+    "version": "3.11.15",
+    "executable": "/Users/dan/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none/bin/python3.11",
+    "prefix": "/Users/dan/.local/share/uv/python/cpython-3.11.15-macos-aarch64-none",
+    "ensurepip": "24.0"
+  },
+  "oldVenvBorrowed": false,
+  "oldModelCacheBorrowed": false,
+  "modelDirectoryEmpty": true,
+  "wheelhouseEmpty": true,
+  "downloads": 0,
+  "providerRequests": 0
+}

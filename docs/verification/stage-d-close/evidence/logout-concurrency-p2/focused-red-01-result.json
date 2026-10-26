@@ -1,0 +1,18 @@
+{
+  "started": "2026-10-25T01:47:13.960Z",
+  "finished": "2026-10-25T01:47:15.604Z",
+  "command": [
+    "node",
+    "--import",
+    "./.loop-control/stage-d/state/d-close-logout-concurrency-p2-20261025/tests-offline-guard.mjs",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "src/local-app/LocalCatalogApp.test.tsx",
+    "--exclude",
+    "**/.loop-control/**"
+  ],
+  "status": 1,
+  "defaultTimeoutMs": 5000,
+  "timeoutOverride": false,
+  "passed": false
+}

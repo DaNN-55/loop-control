@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "total": 6259,
+  "pageSize": 20,
+  "stableOrder": true,
+  "nonoverlappingPages": true,
+  "accountCounts": true,
+  "accountFilter": true,
+  "archivedFilter": true,
+  "reviewFilter": true,
+  "seriesFilter": true,
+  "operationsSubpagesBounded": true,
+  "foreignOwnerExcluded": true,
+  "invalidQuery400": true,
+  "incrementalDetailUnchanged": true,
+  "responseBytes": 108665,
+  "episodesReceived": 20
+}

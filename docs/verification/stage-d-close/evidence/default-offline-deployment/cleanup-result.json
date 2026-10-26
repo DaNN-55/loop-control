@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "formalNpmStop": true,
+  "onlyOwnServiceStopped": true,
+  "cloneBusinessConnections": 0,
+  "ownSessionsRevoked": true,
+  "ownBrowserClosedAndSyntheticAuthDeleted": true,
+  "defaultPointerAndPreparationRetained": true,
+  "privateDatabaseMediaModelsRetained": true,
+  "sourceDefaultConfigAndDeadServiceRecordUntouched": true,
+  "unrelatedServicesNotSignalled": true
+}

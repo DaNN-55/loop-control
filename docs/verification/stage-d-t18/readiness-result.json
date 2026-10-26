@@ -1,0 +1,11 @@
+{
+  "at": "2026-10-24T07:25:06.432Z",
+  "realNativePgPermissionRevoked": true,
+  "startup503": true,
+  "generate503BeforeMutation": true,
+  "taskCountAndDraftUnchanged": true,
+  "currentPreflightVersion": "worker-preflight/v2",
+  "restoredInFinally": true,
+  "providerRequests": 0,
+  "passed": true
+}

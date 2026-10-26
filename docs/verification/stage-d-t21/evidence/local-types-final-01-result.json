@@ -1,0 +1,1 @@
+{"args":["node_modules/typescript/bin/tsc","-p","tsconfig.local-app.json"],"status":0,"envAllowlist":true,"privateOutDir":false}

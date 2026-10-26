@@ -1,0 +1,10 @@
+{
+  "started": "2026-10-25T00:59:33.830Z",
+  "finished": "2026-10-25T00:59:34.094Z",
+  "command": [
+    "node",
+    ".loop-control/stage-d/state/d-close-20261025/timeout-attribution.mjs"
+  ],
+  "status": 1,
+  "passed": false
+}

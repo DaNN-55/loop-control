@@ -1,0 +1,33 @@
+{
+  "statuses": [
+    {
+      "provider": "cloudflare",
+      "version": 1,
+      "hasAsciiColon": false,
+      "hasFullWidthColon": false,
+      "accountIdMatchesProductionRule": false,
+      "tokenPresent": false,
+      "compatible": false
+    },
+    {
+      "provider": "cloudflare",
+      "version": 1,
+      "hasAsciiColon": false,
+      "hasFullWidthColon": false,
+      "accountIdMatchesProductionRule": true,
+      "tokenPresent": false,
+      "compatible": false
+    },
+    {
+      "provider": "cloudflare",
+      "version": 1,
+      "hasAsciiColon": false,
+      "hasFullWidthColon": false,
+      "accountIdMatchesProductionRule": true,
+      "tokenPresent": false,
+      "compatible": false
+    }
+  ],
+  "providerRequests": 0,
+  "skipped": true
+}

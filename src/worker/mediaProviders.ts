@@ -88,6 +88,10 @@ export async function synthesizeVolcengineTts(input: { apiKey: string; fetcher: 
   });
   const contents = await response.text();
   if (!response.ok) throw new Error(`豆包语音 V3 请求失败：HTTP ${response.status}。`);
+  return parseVolcengineTtsAudio(contents);
+}
+
+export function parseVolcengineTtsAudio(contents:string):Uint8Array {
   const chunks: Uint8Array[] = [];
   for (const line of contents.split(/\r?\n/)) {
     if (!line.startsWith("data:")) continue;
@@ -106,7 +110,7 @@ export async function searchPexelsVideo(input: { apiKey: string; fetcher: MediaF
   if (!input.apiKey.trim() || !input.query.trim() || !Number.isFinite(input.targetDurationSeconds) || input.targetDurationSeconds <= 0) throw new Error("Pexels 检索配置无效。");
   if (input.query.length > 100) throw new Error("Pexels 冻结检索词不能超过 100 个字符。");
   const query = input.query.replace(/\s+/g, " ").trim();
-  const endpoint = new URL("https://api.pexels.com/videos/search");
+  const endpoint = new URL("https://api.pexels.com/v1/videos/search");
   endpoint.searchParams.set("query", query);
   endpoint.searchParams.set("orientation", "portrait");
   endpoint.searchParams.set("per_page", "15");

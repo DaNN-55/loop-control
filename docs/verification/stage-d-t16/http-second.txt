@@ -1,0 +1,4 @@
+TypeError: Cannot read properties of undefined (reading 'some')
+    at Object.test (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/episode-input-acceptance.mjs:59:127)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/episode-input-acceptance.mjs:69:55

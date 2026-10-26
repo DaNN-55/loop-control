@@ -1,0 +1,76 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/local-app/LocalCatalogApp.test.tsx (11 tests | 4 failed) 335ms
+   ✓ keeps a committed series save successful when its follow-up read fails 117ms
+   ✓ requests server pages and discards a late response from an earlier filter 28ms
+   ✓ does not restore an old catalog after Owner logout 15ms
+   ✓ refreshes the current page on becoming visible and does not fetch while hidden 7ms
+   ✓ does not start a new catalog read while logout is pending 13ms
+   ✓ returns to login after network logout failure without accepting old reads, then restores writable CSRF on login 33ms
+   ✓ returns to login after 503 logout failure without accepting old reads, then restores writable CSRF on login 29ms
+   × isolates concurrent network logout failures in older-first order from a fresh login 16ms
+     → expected <button …(1)></button> to be null
+   × isolates concurrent 503 logout failures in older-first order from a fresh login 17ms
+     → expected <button …(1)></button> to be null
+   × isolates concurrent network logout failures in newer-first order from a fresh login 29ms
+     → expected <button …(1)></button> to be null
+   × isolates concurrent 503 logout failures in newer-first order from a fresh login 31ms
+     → expected <button …(1)></button> to be null
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 7 passed (11)
+   Start at  09:47:14
+   Duration  1.34s (transform 299ms, setup 0ms, collect 526ms, tests 335ms, environment 284ms, prepare 36ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/LocalCatalogApp.test.tsx > isolates concurrent network logout failures in older-first order from a fresh login
+ FAIL  src/local-app/LocalCatalogApp.test.tsx > isolates concurrent 503 logout failures in older-first order from a fresh login
+AssertionError: expected <button …(1)></button> to be null
+
+- Expected: 
+null
+
++ Received: 
+<button
+  class="button button-primary"
+>
+  使用密码登录
+</button>
+
+ ❯ src/local-app/LocalCatalogApp.test.tsx:126:56
+    124|  if(order==='older-first'){
+    125|   await act(async()=>{failures[0]();});
+    126|   expect(screen.queryByRole('button',{name:'使用密码登录'})).toBeNull();
+       |                                                        ^
+    127|   expect(screen.queryByRole('alert')).toBeNull();
+    128|   fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/local-app/LocalCatalogApp.test.tsx > isolates concurrent network logout failures in newer-first order from a fresh login
+ FAIL  src/local-app/LocalCatalogApp.test.tsx > isolates concurrent 503 logout failures in newer-first order from a fresh login
+AssertionError: expected <button …(1)></button> to be null
+
+- Expected: 
+null
+
++ Received: 
+<button
+  class="button button-primary"
+>
+  使用密码登录
+</button>
+
+ ❯ src/local-app/LocalCatalogApp.test.tsx:141:55
+    139|  if(order==='newer-first')await act(async()=>{failures[0]();});
+    140|  await act(async()=>{resolveOld(json(pagedCatalog('stale-concurrent-ow…
+    141|  expect(screen.queryByRole('button',{name:'使用密码登录'})).toBeNull();
+       |                                                       ^
+    142|  expect(screen.queryByRole('alert')).toBeNull();
+    143|  expect(screen.queryByRole('button',{name:/stale-concurrent-owner/})).…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+

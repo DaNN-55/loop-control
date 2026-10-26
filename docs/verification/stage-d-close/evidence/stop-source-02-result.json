@@ -1,0 +1,13 @@
+{
+  "started": "2026-10-25T00:53:31.470Z",
+  "finished": "2026-10-25T00:53:31.766Z",
+  "command": [
+    "npm",
+    "stop",
+    "--",
+    "--deployment",
+    "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-dclose-20261025/deployment.json"
+  ],
+  "status": 0,
+  "passed": true
+}

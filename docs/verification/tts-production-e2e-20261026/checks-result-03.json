@@ -1,0 +1,32 @@
+{
+  "results": [
+    {
+      "label": "check-final-03",
+      "exitCode": 0,
+      "signal": null,
+      "elapsedMs": 5786
+    },
+    {
+      "label": "local-types-final-03",
+      "exitCode": 0,
+      "signal": null,
+      "elapsedMs": 961
+    },
+    {
+      "label": "test-final-03",
+      "exitCode": 1,
+      "signal": null,
+      "elapsedMs": 113112
+    },
+    {
+      "label": "build-final-03",
+      "exitCode": 0,
+      "signal": null,
+      "elapsedMs": 7060
+    }
+  ],
+  "testTimeoutOverride": false,
+  "publicNetworkBlocked": true,
+  "compatibilityEnvironment": "dummy loopback client, canonical TMPDIR, private HOME",
+  "providerRequests": 0
+}

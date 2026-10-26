@@ -1,0 +1,2 @@
+{"event": "installed", "pid": 47391, "at": 1792902415.311239, "python": "3.11.15", "osNetworkSandbox": true, "hfOffline": true}
+{"event": "runner-returned", "pid": 47391, "at": 1792902416.135722, "networkDenied": 0}

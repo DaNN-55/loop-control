@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/local-app/providerNetwork.test.ts (2 tests) 24ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  15:11:31
+   Duration  477ms (transform 18ms, setup 0ms, collect 18ms, tests 24ms, environment 0ms, prepare 25ms)
+

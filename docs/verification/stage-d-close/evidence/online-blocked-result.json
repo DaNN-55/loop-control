@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "fixture": "bounded SQL copy of a prior controlled Pexels task in the D close restored clone; native queue/CLI/preflight are real, not Owner qualification or online execution",
+  "taskId": "cc000a29-2bdb-40a3-888e-3922fadcc70e",
+  "previousTaskId": "3d568f90-70e7-45de-8a29-edd6a7fbe981",
+  "priorHistoryUnchanged": true,
+  "status": "blocked",
+  "attempt": 1,
+  "artifacts": 0,
+  "validationPassed": false,
+  "preflight": {
+    "checks": [
+      {
+        "check": "preflight",
+        "phase": "preflight",
+        "scope": "worker",
+        "action": "contact_environment_admin",
+        "reason": "在线媒体执行尚未配置；当前部署仅允许本机媒体。",
+        "status": "unavailable",
+        "capability": "b_roll_generation"
+      }
+    ],
+    "version": "worker-preflight/v2"
+  },
+  "allQualificationsFalse": true,
+  "newFixtureOnlyConfigurationHashSuffix": true,
+  "noKeychainOrProviderSecretRead": true,
+  "onlineRequests": 0,
+  "workerLeaseUnchanged": true,
+  "oldEpisodeConsumerDisabledAfterCheck": true
+}

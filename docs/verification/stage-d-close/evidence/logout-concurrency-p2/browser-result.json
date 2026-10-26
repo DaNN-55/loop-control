@@ -1,0 +1,30 @@
+{
+  "actualChrome": true,
+  "componentFreshCsrfAcceptedByServer": true,
+  "controlledFault": "Two browser fetch promises rejected; no server 503 injected",
+  "newConfigurationWrites": 0,
+  "newOnlineRequests": 0,
+  "newerFailureBeforeRelogin": true,
+  "olderFailureAfterRealRelogin": true,
+  "passed": true,
+  "realFinalLogoutStatus": 200,
+  "realNormalApplication": true,
+  "realOwnerRelogins": 1,
+  "sameDocument": true,
+  "twoConcurrentFailures": true,
+  "pendingReadFenceVerified": true,
+  "driverFailuresRetained": [
+    "browser-pending-01.txt",
+    "browser-pending-audit-01.txt",
+    "browser-release-newer-01.txt"
+  ],
+  "driverCorrection": "Initial dblclick registered one pending promise; inspected actual count, then issued one explicit second click before completing either promise",
+  "noServer503OrCookieRaceClaim": true,
+  "archivedHttpRequestCounts": {
+    "login": 2,
+    "logout": 1,
+    "configuration": 0
+  },
+  "realFinalLogoutNetworkStatus200": true,
+  "rawBrowserNetworkHttpOriginsLoopbackOnly": true
+}

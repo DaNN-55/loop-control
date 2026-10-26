@@ -1,0 +1,33 @@
+node:internal/errors:986
+  const err = new Error(message);
+              ^
+
+Error: Command failed: docker exec -i loop-control-stage-d-postgres psql -XqAt -U postgres -d loop_empty -v ON_ERROR_STOP=1
+ERROR:  An existing owner membership is required to create an account
+CONTEXT:  PL/pgSQL function public.create_account(text,text,text,jsonb) line 10 at RAISE
+
+    at genericNodeError (node:internal/errors:986:15)
+    at wrappedFn (node:internal/errors:540:14)
+    at checkExecSyncError (node:child_process:942:11)
+    at execFileSync (node:child_process:978:15)
+    at docker (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/environment.mjs:11:43)
+    at sql (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/environment.mjs:13:76)
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/input-freeze-check.mjs:30:14
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5) {
+  status: 3,
+  signal: null,
+  output: [
+    null,
+    'd4b3a093-1d85-4051-8a1b-e46f311ce6ac\n',
+    'ERROR:  An existing owner membership is required to create an account\n' +
+      'CONTEXT:  PL/pgSQL function public.create_account(text,text,text,jsonb) line 10 at RAISE\n'
+  ],
+  pid: 40814,
+  stdout: 'd4b3a093-1d85-4051-8a1b-e46f311ce6ac\n',
+  stderr: 'ERROR:  An existing owner membership is required to create an account\n' +
+    'CONTEXT:  PL/pgSQL function public.create_account(text,text,text,jsonb) line 10 at RAISE\n'
+}
+
+Node.js v24.20.0

@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "database": "loop_t24_restore_dclose02",
+  "mediaRoot": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-dclose-restored-20261025/volume/restored/media",
+  "archiveVersion": "loop-native-backup/v2",
+  "rawTables": 51,
+  "rawRows": 28562,
+  "mediaFiles": 872,
+  "securityMatched": true,
+  "foreignKeysVerified": true,
+  "pendingReadySnapshotUnchanged": true,
+  "credentialsAndSessionsAbsentBeforeBootstrap": true,
+  "preservedOwnerNewPassword": true,
+  "allQualificationsCleared": true,
+  "dedicatedSyntheticKeychainRecreated": true,
+  "oldSecretReferenceRequiresExplicitRebind": true,
+  "sameNormalDeploymentWriter": true,
+  "normalDeploymentFile": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-dclose-restored-20261025/deployment.json",
+  "onlineRequests": 0
+}

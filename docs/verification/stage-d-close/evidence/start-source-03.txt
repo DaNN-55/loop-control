@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 start
+> node scripts/local/start.mjs --deployment /Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-dclose-20261025/deployment.json --offline-test
+
+{"appPort":55189,"started":true}

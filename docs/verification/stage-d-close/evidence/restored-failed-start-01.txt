@@ -1,0 +1,12 @@
+
+> loop-control@0.1.0 start
+> node scripts/local/start.mjs --deployment /Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t24-dclose-restored-20261025/deployment.json --offline-test
+
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/start.mjs:21
+ for(let i=0;i<100;i++){if(valid(r)){writePrivateFile(path,JSON.stringify(r)+'\n',{exclusive:true});child.unref();break;}if(child.exitCode!==null)throw Error('Native app failed; inspect private app log');await new Promise(r=>setTimeout(r,100));}
+                                                                                                                                                        ^
+
+Error: Native app failed; inspect private app log
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/start.mjs:21:153
+
+Node.js v24.20.0

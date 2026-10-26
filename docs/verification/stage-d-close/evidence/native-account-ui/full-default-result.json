@@ -1,0 +1,22 @@
+{
+  "started": "2026-10-25T09:16:23.949Z",
+  "finished": "2026-10-25T09:16:40.482Z",
+  "command": [
+    "npx",
+    "--no-install",
+    "vitest",
+    "run",
+    "--exclude",
+    "n8n/import-workflows.test.mjs",
+    "--exclude",
+    "**/*.integration.test.ts",
+    "--exclude",
+    "**/.loop-control/**",
+    "--exclude",
+    "docs/verification/**/source/**"
+  ],
+  "status": 0,
+  "passed": true,
+  "defaultTestTimeoutMs": 5000,
+  "timeoutOverride": false
+}

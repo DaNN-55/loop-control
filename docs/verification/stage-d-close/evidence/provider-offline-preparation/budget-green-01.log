@@ -1,0 +1,31 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/local-app/providerNetwork.test.ts (2 tests | 1 failed) 5ms
+   ✓ closed authorization never invokes transport or consumes a request 3ms
+   × reserves before transport and refuses a second request without logging credentials 2ms
+     → Provider request denied by private authorization or budget
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/providerNetwork.test.ts > reserves before transport and refuses a second request without logging credentials
+Error: Provider request denied by private authorization or budget
+ ❯ denied src/local-app/providerNetwork.ts:11:18
+      9| interface State{version:number;policySha256:string;used:number;costMic…
+     10| const providers=['openai','cloudflare','pexels','freesound','google_tt…
+     11| const denied=()=>new Error('Provider request denied by private authori…
+       |                  ^
+     12| function integer(n:unknown,max:number){return Number.isSafeInteger(n)&…
+     13| function privateFile(path:string){const s=lstatSync(path);if(!s.isFile…
+ ❯ read src/local-app/providerNetwork.ts:15:233
+ ❯ src/local-app/providerNetwork.ts:68:63
+ ❯ src/local-app/providerNetwork.test.ts:8:309
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  15:11:08
+   Duration  420ms (transform 18ms, setup 0ms, collect 19ms, tests 5ms, environment 0ms, prepare 25ms)
+

@@ -1,0 +1,31 @@
+{
+  "ticket": 121,
+  "at": "2026-10-23T18:25:16.443Z",
+  "realPostgres": true,
+  "realHttp": true,
+  "secretStore": "in-memory simulated",
+  "provider": "simulated, no outbound calls",
+  "nativeKeychainOperations": 0,
+  "connectionId": "97e6a341-3aab-45e3-b855-beb207bec891",
+  "versions": [
+    "de984a9a-4646-4d0f-ad1f-94a12af16df3",
+    "0d2f2b12-2195-437a-a3c5-45a72ceb2c16",
+    "aaf27437-1065-41c5-a8aa-9db4443882b8"
+  ],
+  "concurrentCreate8SingleResult": true,
+  "concurrentRotate6SingleVersion": true,
+  "completedIntentReplayNeverWrites": true,
+  "interruptedAfterStoreWriteResumedWithoutDuplicate": true,
+  "explicitMissingBindingRestored": true,
+  "revokedVersionNeverFallsBack": true,
+  "untrustedProviderErrorRedacted": true,
+  "simulatedVerificationCannotMarkReady": true,
+  "simulatedBlueprintSelection409": true,
+  "historicalVerifiedFlagsDoNotImplyNativeReadiness": true,
+  "productionWorkerRejectsSimulatedBinding": true,
+  "anonymous401": true,
+  "csrf403": true,
+  "crossOwnerCommands404": true,
+  "secretsAbsentFromHttpDatabaseBackupAndAppLog": true,
+  "passed": true
+}

@@ -1,0 +1,65 @@
+[
+  {
+    "provider": "openai",
+    "episodeId": "bfcaf69d-8ee5-4e9b-a25f-93b829d6f3a4",
+    "id": "4973f59d-93b5-46fd-8e51-790bbdcb600c",
+    "path": "episodes/bfcaf69d-8ee5-4e9b-a25f-93b829d6f3a4/visuals/synthetic-image.png",
+    "sha256": "9d99ae1cf906c42157f6e7ef3ac39c4c3389621c3055b1b3f359dfed99a30e5f",
+    "bytes": 68,
+    "type": "static_visual"
+  },
+  {
+    "provider": "cloudflare",
+    "episodeId": "da799b9d-511c-47ee-8d7a-83dc86676bfa",
+    "id": "5c7c3f86-0c7f-447e-8382-355d058737af",
+    "path": "episodes/da799b9d-511c-47ee-8d7a-83dc86676bfa/visuals/synthetic-image.jpg",
+    "sha256": "76dc6f21c05ea16db54094b2fc75ef1e1b2fdf70abfb9e7c02aacb0d82e7f507",
+    "bytes": 203,
+    "type": "static_visual"
+  },
+  {
+    "provider": "pexels",
+    "episodeId": "f9749842-d075-4ff6-8fa5-b055429c0aee",
+    "id": "3e594184-0d9d-4048-94de-718e02a58c87",
+    "path": "episodes/f9749842-d075-4ff6-8fa5-b055429c0aee/b-roll/shot-2.mp4",
+    "sha256": "4138276b53b00d7944141521d49c8e94e047472986a674ddcf0a5dfe40c49436",
+    "bytes": 81899,
+    "type": "b_roll_asset"
+  },
+  {
+    "provider": "freesound",
+    "episodeId": "29dfac4c-29cb-4fb5-bc69-91f96380a705",
+    "id": "524b4d5e-2962-4232-9ca5-a93a4a07b95c",
+    "path": "episodes/29dfac4c-29cb-4fb5-bc69-91f96380a705/audio/bgm-bgm-1.mp3",
+    "sha256": "8a1ff460da553aace420388c84c1d9c72e48c6796235a09a227ba59c899b43e1",
+    "bytes": 19677,
+    "type": "soundtrack_audio"
+  },
+  {
+    "provider": "freesound",
+    "episodeId": "29dfac4c-29cb-4fb5-bc69-91f96380a705",
+    "id": "27bcf157-14f3-49ab-ae61-6d6cb45c7e7b",
+    "path": "episodes/29dfac4c-29cb-4fb5-bc69-91f96380a705/audio/sfx-sfx-1.mp3",
+    "sha256": "a957c95524d88ffbd8601b8c02504dbef753d3066b5dfc9de6a431076ff9e6f1",
+    "bytes": 10473,
+    "type": "soundtrack_audio"
+  },
+  {
+    "provider": "local",
+    "episodeId": "ad62fde0-b35c-4e67-b4bf-64a1ccc8e3a2",
+    "id": "df40238e-d4d3-4787-b615-6b87a2eb04d2",
+    "path": "episodes/ad62fde0-b35c-4e67-b4bf-64a1ccc8e3a2/b-roll/shot-2.mp4",
+    "sha256": "fe516c7a09f72af9fcc511f9fb7afc9f4a32b322e03ffdadf08111153aa5685b",
+    "bytes": 241470,
+    "type": "b_roll_asset"
+  },
+  {
+    "provider": "local",
+    "episodeId": "ad62fde0-b35c-4e67-b4bf-64a1ccc8e3a2",
+    "id": "3832df8c-df56-4ebe-944c-3d184f97c861",
+    "path": "episodes/ad62fde0-b35c-4e67-b4bf-64a1ccc8e3a2/a-roll/shot-1.mp4",
+    "sha256": "5acb3d5806cf8d5a468cf517116a1ef7c3ccd659f94c6748c50cf5cf38c3f653",
+    "bytes": 239862,
+    "type": "a_roll_video"
+  }
+]

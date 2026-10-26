@@ -1,0 +1,15 @@
+AssertionError [ERR_ASSERTION]: {"error":"invalid project document write request"}
+
+400 !== 200
+
+    at editCaption (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/studio-acceptance.mjs:105:233)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Object.exercise (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/studio-acceptance.mjs:113:16)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/studio-acceptance.mjs:82:78 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 400,
+  expected: 200,
+  operator: 'strictEqual',
+  diff: 'simple'
+}

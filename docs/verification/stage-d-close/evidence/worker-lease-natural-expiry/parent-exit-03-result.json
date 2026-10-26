@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "parentKilled": true,
+  "detachedWorkerSurvived": true,
+  "newServiceDidNotRevokeValidLease": true,
+  "sameAttemptCompleted": true,
+  "attempt": 1,
+  "runs": 1,
+  "httpArtifactShaVerified": true,
+  "notImmediateFailoverEvidence": true
+}

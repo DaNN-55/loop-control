@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "secrets": "keychain",
+  "verification": "live",
+  "networkAvailable": true,
+  "initialUsed": 0,
+  "noRawCredentialInResponse": true
+}

@@ -1,0 +1,10 @@
+{
+  "passed": false,
+  "status": 1,
+  "formalEntry": true,
+  "usesOriginalClosedIntakePolicy": true,
+  "originalIndexedLogPreserved": true,
+  "noWorkerConfigured": false,
+  "workerConfigured": true,
+  "allProviderNetworkDisabled": true
+}

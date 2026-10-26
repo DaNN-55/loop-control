@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "actualChrome": true,
+  "userAssistedNativePickerAndCancel": true,
+  "sourceUsesSystemPickerNotNewPagePicker": true,
+  "localOwnerSessionImportedViaMemoryStdin": true,
+  "noCredentialFileOrCommandArgument": true,
+  "explicitSaveVerifiedInDatabase": true,
+  "chosenPathRetainedAfterFullReload": true,
+  "oldPreflightClearedAfterSavedRevision": true,
+  "currentSavedBlueprintRechecked": true,
+  "localRuntimePreflightPassed": true,
+  "noVisibleErrors": true,
+  "noProductionTasksCreated": true,
+  "providerRequests": 0,
+  "browserGuard": "local-domain allowlist; not an OS network sandbox",
+  "applicationGuard": "standard offline-test Node guard plus disabled Provider ports"
+}

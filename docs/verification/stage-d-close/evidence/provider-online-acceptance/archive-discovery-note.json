@@ -1,0 +1,8 @@
+{
+  "scope": "test-driver archive discovery",
+  "cause": "Vitest substring filename filter also discovers preserved public source snapshots under docs/verification/stage-d-close/evidence/provider-offline-preparation/source",
+  "firstRedHasRealPexelsAssertionFailure": true,
+  "greenActualProbeTestsPassButArchiveCopiesFailImport": true,
+  "adjustment": "Explicitly exclude archived evidence source copies; retain all 105 actual production test files, all assertions, default5000ms, and original archives bytewise",
+  "productConfigModified": false
+}

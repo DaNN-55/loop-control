@@ -1,0 +1,16 @@
+AssertionError [ERR_ASSERTION]: {"error":"所有者权限不足。"}
+
+403 !== 200
+
+    at Object.post (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/delivery-acceptance.mjs:52:326)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Promise.all (index 0)
+    at async Object.resume (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/delivery-acceptance.mjs:145:134)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/delivery-acceptance.mjs:136:89 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 403,
+  expected: 200,
+  operator: 'strictEqual',
+  diff: 'simple'
+}

@@ -1,0 +1,57 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/local-app/localFiles.test.ts (8 tests | 7 failed) 9ms
+   ✓ snapshots immutable input bytes, rejects traversal, corruption and symlink escapes 7ms
+   × imports a valid 13MB Base64 media file without a regular-expression stack overflow 1ms
+     → realpathSync is not defined
+   × rejects noncanonical Base64 input "a===" 0ms
+     → realpathSync is not defined
+   × rejects noncanonical Base64 input "YQ" 0ms
+     → realpathSync is not defined
+   × rejects noncanonical Base64 input "YQ==\n" 0ms
+     → realpathSync is not defined
+   × rejects noncanonical Base64 input "YR==" 0ms
+     → realpathSync is not defined
+   × rejects noncanonical Base64 input "YQ===" 0ms
+     → realpathSync is not defined
+   × rejects noncanonical Base64 input "YQ==AAAA" 0ms
+     → realpathSync is not defined
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/localFiles.test.ts > imports a valid 13MB Base64 media file without a regular-expression stack overflow
+ReferenceError: realpathSync is not defined
+ ❯ src/local-app/localFiles.test.ts:27:13
+     25| 
+     26| it('imports a valid 13MB Base64 media file without a regular-expressio…
+     27|  const root=realpathSync(mkdtempSync(join(tmpdir(),'native-large-input…
+       |             ^
+     28|  const bytes=Buffer.alloc(13326115,0x61),contentBase64=bytes.toString(…
+     29|  const result=await snapshotInput(root,'11111111-1111-4111-8111-111111…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/7]⎯
+
+ FAIL  src/local-app/localFiles.test.ts > rejects noncanonical Base64 input "a==="
+ FAIL  src/local-app/localFiles.test.ts > rejects noncanonical Base64 input "YQ"
+ FAIL  src/local-app/localFiles.test.ts > rejects noncanonical Base64 input "YQ==\n"
+ FAIL  src/local-app/localFiles.test.ts > rejects noncanonical Base64 input "YR=="
+ FAIL  src/local-app/localFiles.test.ts > rejects noncanonical Base64 input "YQ==="
+ FAIL  src/local-app/localFiles.test.ts > rejects noncanonical Base64 input "YQ==AAAA"
+ReferenceError: realpathSync is not defined
+ ❯ src/local-app/localFiles.test.ts:33:13
+     31| });
+     32| it.each(['a===','YQ','YQ==\n','YR==','YQ===','YQ==AAAA'])('rejects non…
+     33|  const root=realpathSync(mkdtempSync(join(tmpdir(),'native-invalid-bas…
+       |             ^
+     34|  await expect(snapshotInput(root,'11111111-1111-4111-8111-111111111111…
+     35| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/7]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  7 failed | 1 passed (8)
+   Start at  09:50:23
+   Duration  230ms (transform 48ms, setup 0ms, collect 53ms, tests 9ms, environment 0ms, prepare 47ms)
+

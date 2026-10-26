@@ -1,0 +1,19 @@
+{
+  "started": "2026-10-25T00:46:48.453Z",
+  "finished": "2026-10-25T00:46:50.257Z",
+  "command": [
+    "node",
+    "node_modules/vitest/vitest.mjs",
+    "run",
+    "scripts/local/application.test.mjs",
+    "scripts/local/deployment.test.mjs",
+    "src/local-app/catalogQuery.test.ts",
+    "src/local-app/LocalCatalogApp.test.tsx",
+    "src/episodes/episodeCatalog.test.tsx",
+    "src/worker/openchatcutStudio.test.ts",
+    "--exclude",
+    "**/.loop-control/**"
+  ],
+  "status": 0,
+  "passed": true
+}

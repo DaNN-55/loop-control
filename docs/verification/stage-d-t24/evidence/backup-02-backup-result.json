@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "detail": "本地完整备份已生成并校验：51 张表、850 个文件；不包含密码、会话或 Keychain，恢复能力尚未验收。",
+  "archiveSha256": "85a89d61ca9e54b2e3edb9f2e0b42b223d16effd63d2297a3eecb35acba1e482",
+  "mediaFiles": 850,
+  "snapshotCommittedWriterAfterExport": true,
+  "lateId": "158b0c0c-5677-4404-abc6-457458c9c77d",
+  "archiveVersion": "loop-native-backup/v2",
+  "tables": 51,
+  "copyFingerprints": 51
+}

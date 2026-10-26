@@ -1,0 +1,29 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/local-app/workerDatabase.test.ts (1 test) 2ms
+ ❯ src/local-app/localFiles.test.ts (1 test | 1 failed) 5ms
+   × snapshots immutable input bytes, rejects traversal, corruption and symlink escapes 4ms
+     → 资产目录超出本机授权范围。
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/localFiles.test.ts > snapshots immutable input bytes, rejects traversal, corruption and symlink escapes
+Error: 资产目录超出本机授权范围。
+ ❯ nativeAssetRoot src/local-app/localFiles.ts:11:102
+      9|  if(typeof value!=='string'||!isAbsolute(value))throw new Configuratio…
+     10|  const rel=relative(mediaRoot,value);
+     11|  if(!rel||rel.startsWith('..')||isAbsolute(rel)||await realpath(value)…
+       |                                                                                                      ^
+     12|  const stat=await lstat(value);if(!stat.isDirectory()||stat.isSymbolic…
+     13| }
+ ❯ src/local-app/localFiles.test.ts:11:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 1 passed (2)
+   Start at  11:59:32
+   Duration  287ms (transform 64ms, setup 0ms, collect 114ms, tests 7ms, environment 0ms, prepare 91ms)
+

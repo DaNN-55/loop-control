@@ -1,0 +1,35 @@
+{
+  "sourceResolution": [
+    {
+      "shotId": "shot-1",
+      "sourceWidth": 360,
+      "sourceHeight": 640,
+      "outputWidth": 1080,
+      "outputHeight": 1920,
+      "upscaled": true
+    },
+    {
+      "shotId": "shot-2",
+      "sourceWidth": 360,
+      "sourceHeight": 640,
+      "outputWidth": 1080,
+      "outputHeight": 1920,
+      "upscaled": true
+    },
+    {
+      "shotId": "shot-3",
+      "sourceWidth": 240,
+      "sourceHeight": 426,
+      "outputWidth": 1080,
+      "outputHeight": 1920,
+      "upscaled": true
+    }
+  ],
+  "technicalWorkflowAcceptanceOnly": true,
+  "contentQualityObservations": [
+    "shot-3 is a 240x426 source; output dimensions do not imply HD source detail",
+    "shot-3 contains mountaintop architecture and visitors in the downloaded footage; selection has not been declared pure unpopulated landscape",
+    "one shot-2 caption wraps the final word across two lines; text remains complete and within safe area"
+  ],
+  "humanViewingClaim": false
+}

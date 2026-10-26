@@ -1,0 +1,26 @@
+{
+  "passed": true,
+  "previews": [
+    {
+      "shotId": "shot-1",
+      "duration": 15.68,
+      "width": 1080,
+      "height": 1920,
+      "frameAt": 4.2
+    },
+    {
+      "shotId": "shot-2",
+      "duration": 15.957333,
+      "width": 1080,
+      "height": 1920,
+      "frameAt": 4.5
+    },
+    {
+      "shotId": "shot-3",
+      "duration": 15.317333,
+      "width": 1080,
+      "height": 1920,
+      "frameAt": 2.5
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-24T05:24:27.285Z",
+  "anonymous401": true,
+  "csrf403": true,
+  "tamperedArtifact409AndNoStageWrite": true,
+  "foreignPackage409": true,
+  "foreignOwnerCommandsAndArtifact404": true,
+  "ownerCannotClaim": true,
+  "workerCannotAnnotateOrRequestStructureRevision": true,
+  "nonOptedInEpisodesHaveNoStoryboardTasks": true,
+  "passwordsNotLogged": true,
+  "providerRequests": 0,
+  "passed": true
+}

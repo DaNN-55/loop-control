@@ -1,0 +1,20 @@
+{
+  "started": "2026-10-25T09:05:06.078Z",
+  "finished": "2026-10-25T09:05:07.818Z",
+  "command": [
+    "npx",
+    "--no-install",
+    "vitest",
+    "run",
+    "src/platform/ConfigurationForms.local.test.tsx",
+    "src/local-app/LocalCatalogApp.account.test.tsx",
+    "--exclude",
+    "**/.loop-control/**",
+    "--exclude",
+    "docs/verification/**/source/**"
+  ],
+  "status": 1,
+  "passed": false,
+  "defaultTestTimeoutMs": 5000,
+  "timeoutOverride": false
+}

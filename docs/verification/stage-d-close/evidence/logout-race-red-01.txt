@@ -1,0 +1,33 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ❯ src/local-app/LocalCatalogApp.test.tsx (5 tests | 1 failed) 243ms
+   ✓ keeps a committed series save successful when its follow-up read fails 154ms
+   ✓ requests server pages and discards a late response from an earlier filter 30ms
+   ✓ does not restore an old catalog after Owner logout 22ms
+   ✓ refreshes the current page on becoming visible and does not fetch while hidden 15ms
+   × does not start a new catalog read while logout is pending 21ms
+     → expected 2 to be 1 // Object.is equality
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  09:07:05
+   Duration  1.56s (transform 399ms, setup 0ms, collect 728ms, tests 243ms, environment 346ms, prepare 47ms)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/LocalCatalogApp.test.tsx > does not start a new catalog read while logout is pending
+AssertionError: expected 2 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/local-app/LocalCatalogApp.test.tsx:55:289
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

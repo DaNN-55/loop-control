@@ -1,0 +1,13 @@
+{"offlineProcessGuard":true,"selfChecks":5,"allowed":"127.0.0.1:55472,55177,55189","supabaseAndN8nDenied":true}
+{"offlineGuardFinal":{"sockets":1,"http":2,"modules":1,"files":1,"onlyNativeLoopbackAllowed":true,"legacySdkAndEnvironmentDenied":true,"hostNetworkUnchanged":true,"deniedFilePaths":["readFileSync:/.env.local"]}}
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/run-prepared.mjs:6
+if(mode==='orchestrator')throw Error('本地编排由应用常驻服务管理；请使用 npm start。旧运行方式需显式 legacy:orchestrator。');
+                               ^
+
+Error: 本地编排由应用常驻服务管理；请使用 npm start。旧运行方式需显式 legacy:orchestrator。
+    at file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/run-prepared.mjs:6:32
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+
+Node.js v24.20.0

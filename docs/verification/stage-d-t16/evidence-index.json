@@ -1,0 +1,649 @@
+{
+  "version": 1,
+  "at": "2026-10-24T05:07:58.917Z",
+  "baseline": "aeaf25c25a229573b35c5a3a7daa9bb62c10c918",
+  "commits": [],
+  "scope": "T16 isolated controlled offline implementation and acceptance; no online Provider requests",
+  "entries": [
+    {
+      "path": "scripts/local/migrate.mjs",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 1434,
+      "sha256": "fb00ba8898f047d5848a357c1673b66e8f47235e6869b53ef2685111a10a852c"
+    },
+    {
+      "path": "scripts/local/start.mjs",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 2067,
+      "sha256": "12fef998bd5bca3b899e66848a256294fd8418dabb73f1d0345c151e0db08d24"
+    },
+    {
+      "path": "scripts/local/vite.config.mjs",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 2255,
+      "sha256": "f9d1f128aceb732075cdc8cfe856001ac828642d110478f6d794945fa45352b9"
+    },
+    {
+      "path": "src/App.tsx",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 103689,
+      "sha256": "75e28125dbc12441e5b7b29d53d9c0a46d949563c78c675a9372c59f9aaed808"
+    },
+    {
+      "path": "src/episodes/EpisodeProduction.tsx",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 285647,
+      "sha256": "1a461e0f0c8d611dc6ce0cffdec500ec664c4ebe0e98ef6caba135ea65157c5b"
+    },
+    {
+      "path": "src/local-app/LocalCatalogApp.tsx",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 9177,
+      "sha256": "9adcc181485e325cafd3cfa594c73d15ec94c069c1daa450fc2b187594b9f578"
+    },
+    {
+      "path": "src/local-app/client.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 2642,
+      "sha256": "ace7ca333af79bcd6c92ced21fbeb2294954a955341d61cb3c34aadf80432e30"
+    },
+    {
+      "path": "src/local-app/episodeReads.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 1840,
+      "sha256": "b66b15a3689c29f749eb2f64f0f1217710c06a44d0b9c31b5b9c0856f12c7c7d"
+    },
+    {
+      "path": "src/local-app/localRoute.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 7917,
+      "sha256": "93cdf9439afce5f0c012cf281f035cfb33ec8b8a009277a213a3a1a757440342"
+    },
+    {
+      "path": "src/local-control-plane/workerService.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 3190,
+      "sha256": "f843d305e114de77f0f36d73502ddbe6ebcd3faf942b9f9e2792255aa9ab8950"
+    },
+    {
+      "path": "src/orchestration/workerDispatch.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 12534,
+      "sha256": "947c5b3661a83aa9b054c6b6fa7e25dba2f5c544d7ad7593423facf4363586e9"
+    },
+    {
+      "path": "src/reviews/localArtifactPreview.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 5466,
+      "sha256": "09119bdc99666228f067468ed3f4abe1ff9cbd2cec160e609ee439a146ab39ab"
+    },
+    {
+      "path": "src/reviews/reviewRevision.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 7423,
+      "sha256": "c1d6fe4b835e087eae150eb6cb0a259dcad618ea6ac891473077780bc82a17e9"
+    },
+    {
+      "path": "tsconfig.local-app.json",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 594,
+      "sha256": "8856af7a81419ca00b6dae1af305bf4134dd9d8d505b410d1ac352775d982194"
+    },
+    {
+      "path": "tsconfig.worker.json",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 766,
+      "sha256": "eef12b1b5a8240be8a2bbb37ae942233523fdd336c16a80e07c9ae5c322078b9"
+    },
+    {
+      "path": "src/local-app/configurationCommands.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 7922,
+      "sha256": "501239328d4049900d87eccd6e2bbbf3fead05513057855256f47a220ca1d85e"
+    },
+    {
+      "path": "src/worker/runtimePreflight.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 27042,
+      "sha256": "eb87f2f2f658ab8e771bcbe239d75355c94e8bb0639584430790d17ceb8c8925"
+    },
+    {
+      "path": "src/local-app/catalog.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 3337,
+      "sha256": "38a9e81a00457bf197b1808d1ccc54d2f29c5066fe8f47e972ca6b9416ebc98a"
+    },
+    {
+      "path": "db/local/009-episode-input.sql",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 11805,
+      "sha256": "b12947a9ff5ff626fbf64ebdae08cec8a524eccfed7a8f4656bead13a823d342"
+    },
+    {
+      "path": "db/local/010-input-scheduler-turn.sql",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 4832,
+      "sha256": "ea70992e2c0609c72de74847b2201ae06f005d2161bcf726719ca896bbb986a2"
+    },
+    {
+      "path": "db/local/011-input-owner-lock.sql",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 728,
+      "sha256": "2cf8fcc821c3ff02b19d050001a718af2366e567d97d0d1f6fc0f2bb835f0344"
+    },
+    {
+      "path": "db/local/012-input-worker-fence-call.sql",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 1300,
+      "sha256": "95a4279ef18a83732187606d74b51efd7a3096e0b37eeb79d60c7dc4ce4276b3"
+    },
+    {
+      "path": "scripts/local/episode-input-acceptance.mjs",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 13957,
+      "sha256": "f081731be3dcee06a204af6fed788da4ab44b82969a81f9f46655b9c27eb9b9a"
+    },
+    {
+      "path": "scripts/local/episode-input-boundaries.mjs",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 7759,
+      "sha256": "dd53482ca254634c035812720773e2f6d956ad8bb05be5cc2e50a8c434d113ab"
+    },
+    {
+      "path": "scripts/local/episode-input-resilience.mjs",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 7689,
+      "sha256": "ddf8006ede383bb114ad2efa2664c6fd9ad5d47d59a2e9b2befe9ac72989de7c"
+    },
+    {
+      "path": "scripts/local/input-freeze-check.mjs",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 3530,
+      "sha256": "5801238313c30bda00b9aaea8bd5339c88ce7f954f5b681e76b7ecea47225560"
+    },
+    {
+      "path": "scripts/local/worker-prepare.mjs",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 1161,
+      "sha256": "bd3b239a08e302c607c8caf1f3727ec89419109832611462d1b906340b464dd4"
+    },
+    {
+      "path": "src/episodes/EpisodeForm.tsx",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 9152,
+      "sha256": "9dbe5a90a2ff2d15349fb9cb36e38705a5dbb285c69c002607421e1c6036425c"
+    },
+    {
+      "path": "src/local-app/LocalEpisodeDetail.tsx",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 3339,
+      "sha256": "c22dc54f3c22ec1933422ab1fa1cbaa10ac8fa45efced1c3aa8c15827ea6bf85"
+    },
+    {
+      "path": "src/local-app/episodeCommands.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 10749,
+      "sha256": "1af2c39da37f73536426cc4906b73730d1873a1a85108926933bac425c1babf0"
+    },
+    {
+      "path": "src/local-app/localFiles.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 4012,
+      "sha256": "e70ebfaafff448770d9ce568b73f70908c3684a3f0f902281992abf52fa13f1a"
+    },
+    {
+      "path": "src/local-app/localFiles.test.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 1798,
+      "sha256": "bf4fe353859e597e2250044245015341b313875c94d646aa25010a0ecbbe62f7"
+    },
+    {
+      "path": "src/local-app/localWorkerCli.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 4340,
+      "sha256": "edfeb0b5bf1499a130b8224916381f58d188dd6334b16f8cc70ebed3eb8a0457"
+    },
+    {
+      "path": "src/local-app/localWorkerService.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 4607,
+      "sha256": "0c962bb7b3f0baa86199b36cf5ce57a5ca0f624771458a02ff9d45bcd58b0cd0"
+    },
+    {
+      "path": "src/local-app/workerDatabase.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 2605,
+      "sha256": "b5d32c81ff34689238e644906204b8891d495996af0e746c2314794d30d434d5"
+    },
+    {
+      "path": "src/local-app/workerDatabase.test.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 960,
+      "sha256": "1e0bd67999b497f6af521d2d02c8a58031eb189fae642d2680ae2356236dca60"
+    },
+    {
+      "path": "src/reviews/mainScript.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 299,
+      "sha256": "01add31c00e4f9790df145c4cf4a51203c34a35127d53ac39e98e11ada7ef2a2"
+    },
+    {
+      "path": "src/local-app/inputPreflight.test.ts",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 1044,
+      "sha256": "f662274834b409a34cf2a0775724f03db2a2ebfedb5d9df1d3c4b8ea1994d789"
+    },
+    {
+      "path": "scripts/local/input-worker-readiness-check.mjs",
+      "kind": "implementation-or-acceptance-source",
+      "bytes": 6376,
+      "sha256": "b2b9122048859695155933779adb2759d21f6af0d077a3f2634296e244b8e5ef"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/README.md",
+      "kind": "public-evidence-or-report",
+      "bytes": 12721,
+      "sha256": "61d7af2235691bd1d9ae5409d81991b065e8d2b6c517717dbb20d4dd8340d464"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/application-final.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 7594,
+      "sha256": "ec13a77bcb34dd9dba7fb2bc853c92f0f4b8cabeaf1faad52e05766c0fb8c44c"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/application-preview-import-failed.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 50786,
+      "sha256": "37dd2a5858206b30e607f94b4cb833a78cea227121d19678bc5942245811b814"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/application-types.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/application-wrong-local-mode.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 27595,
+      "sha256": "b7525aaf8a246bf4ecd46e226fe814076d97831bbc2353623a20b35f2f7bf2a4"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/boundaries.json",
+      "kind": "public-evidence-or-report",
+      "bytes": 1158,
+      "sha256": "34c70b3ba7d7e404e1f955d3425163a1dfeafb8079883ae3b370056f9f3a9852"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/boundary-imported-isolation-final.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 28,
+      "sha256": "fab6327eb9be42b746cf1b360a7901faf8291dd2ed7e357ff503b376071faf95"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/boundary-post-review-final.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 28,
+      "sha256": "1b1bae141d59a1b755f3d66fc5ce2fe9836f7595a354f97eacdf4ad68d25a717"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/boundary-result.json",
+      "kind": "public-evidence-or-report",
+      "bytes": 1322,
+      "sha256": "b793d97e75f0951b37812952e3300518664e05c0cd126afa6adfbd0f54e86ebf"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/browser-final-materials.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 3782,
+      "sha256": "347070d93d87d3812dd56630502784fe8c007fec514c8fc0ab5cba4f0bcf5ddc"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/browser-final-reload.png",
+      "kind": "public-evidence-or-report",
+      "bytes": 90854,
+      "sha256": "86f88c0ef51c986a3f26c5cb4ca745a76414f4a60e8440e5b102c377c2566a5a"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/browser-final-reload.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 3668,
+      "sha256": "b28ffebd39470df335f01f681b6393bb740b433ab9f5f16cb31b30e649d424ab"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/browser-final-requests.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 81680,
+      "sha256": "2d5034d5a2dc44542779e0cfe7d198b03b575208fedf94b024f0ce2a30922305"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/browser-final-review.png",
+      "kind": "public-evidence-or-report",
+      "bytes": 94691,
+      "sha256": "b7f1aa81ac062f5b62fbd004a87b1336b04f5a159a2dcedf985da7402704ea5c"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/browser-final-review.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 4058,
+      "sha256": "b672f11ef819c6c2a289f73aeca5ee78eabbb7f030ca0055f7985f13592d3592"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/browser-load-504-urls.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 1842,
+      "sha256": "8d8d41ccac4e9984c62c0a8e6cf14a38bf8802c9aebc33c5c57f41b96e4883e7"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/browser-preview-fixed-requests.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 16239,
+      "sha256": "d428dcae2a0ffecf3b1013b3326992582a9cd996eaad118cce60ac18e47577e8"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/browser-preview-fixed.png",
+      "kind": "public-evidence-or-report",
+      "bytes": 97526,
+      "sha256": "498444d217bd113af5b4a807340b10f411214d07eff9fa55e53ba3a09792dc75"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/browser-preview-fixed.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 4001,
+      "sha256": "6a8156783274408d55eaa9368efb3c02570dd14aab5389e9dc9a6b26ec80b244"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/browser-script-invalid-blocked.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 953,
+      "sha256": "8812542759496d1825c8ef74870f797e60cdac65ea78e3c032f23970834964cf"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/credential-scan-initial.json",
+      "kind": "public-evidence-or-report",
+      "bytes": 423,
+      "sha256": "b190faedba1bd4b02d646ac2d0587658dd8435b179966e8ecaa4568c7819afc4"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/credential-scan.json",
+      "kind": "public-evidence-or-report",
+      "bytes": 572,
+      "sha256": "f5b2dd71227160d5931e5e09cfe8f51b9d10eab0d06475d8704f816c0ceba764"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/episode-input-resilience-verified.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 682,
+      "sha256": "18ef473f615b947fbba81bad01698e9134388abb2a32b635b697945b4f9cff8d"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/events.jsonl",
+      "kind": "public-evidence-or-report",
+      "bytes": 44968,
+      "sha256": "43a91d8cc2371a1bcbf003a3d16bc6e2cfccf3d0a9f57bcd19128f25bce1e20a"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/first-worker-diagnostic.json",
+      "kind": "public-evidence-or-report",
+      "bytes": 165,
+      "sha256": "d2f810645811b6abe779260252fdb941dc7d5d07bd8975679be47bb1a18d84c0"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/fixture-visual.mjs",
+      "kind": "public-evidence-or-report",
+      "bytes": 1944,
+      "sha256": "15c77294992cdfa7c62667cc45e6ce2e61e6110fc535c689affc0d30f2282bdf"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/freeze-first.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 1689,
+      "sha256": "e2f0e7756c81305afe5af9c01150a9c28861faca1a9d4564cbec0d7b00ac38c8"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/freeze-metadata-result.json",
+      "kind": "public-evidence-or-report",
+      "bytes": 502,
+      "sha256": "f39a4a95792b2fcb0559196504f5253ca682a64eaf806bdc7e0115c5406dbd83"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/freeze-second.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 60,
+      "sha256": "53d63f74e17586909eae36338f748692b9810e47dda1490cbccb3803677a7780"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/frontend-build.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 1142,
+      "sha256": "b82aed4252c530e61d36cb51451cc0c1a7a946173752144675b36c9b85add0e0"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/http-first.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 718,
+      "sha256": "a56be0a50fa294af19145126194df925acd0e6bd8d9bb4fb55b7a3d29e7efc44"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/http-post-review-final.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 122,
+      "sha256": "2f090db6a88874d3ab8e156c7a111025383670b9887932248f3afaf04fc032e9"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/http-result.json",
+      "kind": "public-evidence-or-report",
+      "bytes": 2222,
+      "sha256": "f859284e7a4ee8182b759f4f5cc3cf6724e9c1088728f0ce805735088cc22b41"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/http-second.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 426,
+      "sha256": "a32ac1f4e6c488a7ca047bb0fcd0cdfcc8517f5bddc96f5a813de51a0f9ba65a"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/http-third.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 122,
+      "sha256": "f9b64418d4304e1566d546d8db776f3b1f30697c0d3d82d5032228d6d47135bc"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/local-types.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/migration-first.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 87,
+      "sha256": "5d6416117be4b330cf777e0556deb704fc338adb4e57ba927c95c847019dc184"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/migration-fourth.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 87,
+      "sha256": "5d6416117be4b330cf777e0556deb704fc338adb4e57ba927c95c847019dc184"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/migration-second.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 87,
+      "sha256": "5d6416117be4b330cf777e0556deb704fc338adb4e57ba927c95c847019dc184"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/migration-third.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 87,
+      "sha256": "5d6416117be4b330cf777e0556deb704fc338adb4e57ba927c95c847019dc184"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/native-security.json",
+      "kind": "public-evidence-or-report",
+      "bytes": 1349,
+      "sha256": "a1d4239afc8040e6543c77c1112078e5fec3dd95fd6aa0b8d7349edad55752a0"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/network-blocks.jsonl",
+      "kind": "public-evidence-or-report",
+      "bytes": 1100,
+      "sha256": "8fa8a3a99abf805a3f4b049be41f7050f9289a965680f230f551192a813c1e9b"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/network-guard.mjs",
+      "kind": "public-evidence-or-report",
+      "bytes": 890,
+      "sha256": "34575b0991ee95cbc7ad8751ae49ff58b33db79e0f31f7d53a7ac8c58d459a0b"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/node-final.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 339,
+      "sha256": "bbf8645138ca5a463cb91b8c38e26697d15f3012af952eb84a9ac6b39b551b12"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/original-history.json",
+      "kind": "public-evidence-or-report",
+      "bytes": 4874,
+      "sha256": "3397ff2b03965b9110b55df5f9bdcda906fb0a90eee1ab179f16e7fe6bb73c58"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/pre-t16-history.json",
+      "kind": "public-evidence-or-report",
+      "bytes": 4055,
+      "sha256": "857987457ba9f6a797eb107d01ab03ffde4b289e5c0cfc6e736827fbbaed12b4"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/preview-diagnostic.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 45893,
+      "sha256": "1d29b61ea7b983cc3636ff1d92a1a5cd0dd6ce1a1e62011765b48e74cedd641e"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/preview-fixed.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 1688,
+      "sha256": "df396d5e525ab3978ecb54a2bed5e9b73432e29c6a2a6dbbb2d97edfbadd93b8"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/regression-results.json",
+      "kind": "public-evidence-or-report",
+      "bytes": 2073,
+      "sha256": "70b2b597971c0feaf12d4fd032ac668fc78353c03d3b687605b5290219fa06a5"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/regression-wrong-local-mode.json",
+      "kind": "public-evidence-or-report",
+      "bytes": 1995,
+      "sha256": "3c1ede3e6ee654623298d2f5e316ef0a121f07dfc9883e4c701900f6012e7323"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/resilience-pid-verified.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 728,
+      "sha256": "e6b23bdd419c9729e1164c911762239a3cbf0b67fe1aa8990a3e65876f68b128"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/resilience-result.json",
+      "kind": "public-evidence-or-report",
+      "bytes": 1504,
+      "sha256": "9956429aed394db9ef5ae566942fc628f1377dcec32969d4be7014a399f5aeb0"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/resilience-vite-shutdown-failed.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 454,
+      "sha256": "ce81c9a447b39e53f21d615d69e24962921b368bf93b158dac39125190168e41"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/review.md",
+      "kind": "public-evidence-or-report",
+      "bytes": 1525,
+      "sha256": "bd879371e990d37a404afb1a6256970cf60b7da9da20108765056a2ef3bd81b2"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/runtime-final.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 215,
+      "sha256": "de5bd52b5cb64fe9d96c2178597f8631143208908b84192c6c0b6791d233eea4"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/targeted-first.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 1377,
+      "sha256": "934bbf553813a3eeeb696a3d6bdbb7602b8719ac39c1443b0851f62b2373ae30"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/targeted-second.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 370,
+      "sha256": "75de57833e06702ae24df80cfd471a5c603622df78da7538cff5b1741da1df5f"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/worker-readiness-result.json",
+      "kind": "public-evidence-or-report",
+      "bytes": 519,
+      "sha256": "76e1e3065646f768a67549cc7cb72799dc561e91c4b3d59ab70567a90964d02e"
+    },
+    {
+      "path": "docs/verification/stage-d-t16/worker-readiness.txt",
+      "kind": "public-evidence-or-report",
+      "bytes": 96,
+      "sha256": "618a0493399dd8dad9107988e64a2a33ff9cd59eb19ee235f67c133ab6a92974"
+    }
+  ],
+  "privateRetained": [
+    {
+      "path": ".loop-control/stage-d/state/t16-20261024/business-before-private.sql",
+      "status": "private; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t16-20261024/post-t16-private.sql",
+      "status": "private; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t16-20261024/abandoned-attempt-private.json",
+      "status": "private; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t16-20261024/shutdown-attempt-private.json",
+      "status": "private; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t16-20261024/server.log",
+      "status": "private; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t16-20261024/server-resume-private.log",
+      "status": "private; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t16-20261024/baseline.json",
+      "status": "private; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t16-20261024/PLAN.md",
+      "status": "private; not copied or fingerprinted in public index"
+    },
+    {
+      "path": ".loop-control/stage-d/state/t16-20261024/media.sparseimage",
+      "status": "private; not copied or fingerprinted in public index"
+    }
+  ],
+  "excluded": [
+    "Root PLAN.md and unrelated planning/output",
+    "worker-database.json and app/Owner credential files: not indexed",
+    "Credential-bearing raw logs/dumps/tokens",
+    "Raw HAR: not captured"
+  ],
+  "self": "This index is excluded from its own fingerprint list.",
+  "archiveAuthorization": {
+    "status": "Owner approved local commit of this exact T16 scope",
+    "acceptanceSnapshot": "commits empty and noCommit/HEAD/index fields in raw evidence describe the pre-archive acceptance point",
+    "excluded": "Unrelated planning files and credential-bearing private evidence",
+    "boundaries": "No production operations, push, merge or T17; historical default 5-second gate failure/root cause unresolved; default deployment, online generation, other Providers and full multi-capability Worker not accepted",
+    "commitIdentity": "See Git history; acceptance baseline unchanged"
+  }
+}

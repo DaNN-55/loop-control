@@ -1,0 +1,10 @@
+{
+  "started": "2026-10-25T00:42:21.669Z",
+  "finished": "2026-10-25T00:42:21.903Z",
+  "command": [
+    "node",
+    ".loop-control/stage-d/state/d-close-20261025/reproduce.mjs"
+  ],
+  "status": 1,
+  "passed": false
+}

@@ -1,0 +1,13 @@
+{
+  "command": [
+    "/opt/homebrew/Cellar/node@24/24.20.0/bin/node",
+    "node_modules/typescript/bin/tsc",
+    "-b",
+    "--pretty",
+    "false"
+  ],
+  "timeoutOverride": false,
+  "exitCode": 0,
+  "start": "2026-10-24T10:27:45.940Z",
+  "end": "2026-10-24T10:27:51.058Z"
+}

@@ -1,0 +1,9 @@
+{
+  "initialCredentialPinPassed": false,
+  "observed": "Pexels Keychain value unavailable to first preflight; failure occurred before any Provider request",
+  "recovery": "Explicit unlock of the owned dedicated Keychain, then credential-read checks passed for four providers",
+  "lockedStateCapturedBeforeFailure": false,
+  "automaticLockRootCauseNotIndependentlyProven": true,
+  "cloudflareStillNoSingleCompatibleCombinedRecord": true,
+  "noProviderRetryPerformed": true
+}

@@ -1,0 +1,48 @@
+{
+  "at": "2026-10-24T03:32:28.218Z",
+  "defaultTimeoutMs": 5000,
+  "timeoutNotChanged": true,
+  "results": [
+    {
+      "log": "application-types.txt",
+      "status": 0,
+      "command": [
+        "node_modules/typescript/bin/tsc",
+        "-b",
+        "--pretty",
+        "false"
+      ]
+    },
+    {
+      "log": "local-types.txt",
+      "status": 0,
+      "command": [
+        "node_modules/typescript/bin/tsc",
+        "-p",
+        "tsconfig.local-app.json"
+      ]
+    },
+    {
+      "log": "application-final.txt",
+      "status": 1,
+      "command": [
+        "node_modules/vitest/vitest.mjs",
+        "run",
+        "--exclude",
+        "n8n/import-workflows.test.mjs",
+        "--exclude",
+        "**/*.integration.test.ts",
+        "--exclude",
+        "**/.loop-control/**"
+      ]
+    },
+    {
+      "log": "node-final.txt",
+      "status": 0,
+      "command": [
+        "--test",
+        "n8n/import-workflows.test.mjs"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "sourceFiles": 728,
+  "sourceAggregateSha256": "afc8a44b2413eedbe695fa4162a821a0792949a402254dd970db89058ddcbc00",
+  "allFilesByteAndSha256Identical": true,
+  "head": "bbd2987cd61d3444dca962e50d91b11ed1da5fca",
+  "branch": "codex/ad-closeout-implementation",
+  "noStagedFiles": true,
+  "comparisonManifest": "source-frozen-before-e2e-02.json"
+}

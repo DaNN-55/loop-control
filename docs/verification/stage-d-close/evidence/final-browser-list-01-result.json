@@ -1,0 +1,13 @@
+{
+  "started": "2026-10-25T01:12:11.138Z",
+  "finished": "2026-10-25T01:12:11.147Z",
+  "command": [
+    "agent-browser",
+    "--session",
+    "d-close-20261025",
+    "eval",
+    "({rows:document.querySelectorAll(\"section > ul > li\").length,hasPaging:!!document.querySelector(\"nav[aria-label=\\\"生产单分页\\\"]\")})"
+  ],
+  "status": 0,
+  "passed": true
+}

@@ -1,0 +1,22 @@
+{
+  "passed": true,
+  "typescript": "types-05.txt",
+  "nativeTypes": "local-types-03.txt",
+  "runtimePrepared": "runtime-prepare-05.txt",
+  "defaultRegression": "default-5s-04-result.json",
+  "node": "node-final-04-result.json",
+  "frontend": "frontend-final-04-result.json",
+  "syntaxChecked": [
+    "scripts/local/application.mjs",
+    "scripts/local/deployment.mjs",
+    "scripts/local/offline-guard.mjs",
+    "scripts/local/offline-data-acceptance.mjs",
+    "scripts/local/retired-command.mjs",
+    "scripts/local/start.mjs",
+    "scripts/local/stop.mjs",
+    "scripts/run-prepared.mjs"
+  ],
+  "allChecksActualExit0": true,
+  "noTimeoutOverride": true,
+  "noFurtherBusinessChanges": true
+}

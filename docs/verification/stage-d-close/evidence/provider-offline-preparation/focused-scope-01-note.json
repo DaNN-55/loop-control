@@ -1,0 +1,1 @@
+{"focusedFirstIncludedHistoricalCopies":true,"reason":"Vitest filename filtering matched retained private historical test copies","acceptedFocusedCount":false,"correction":"Exclude **/.loop-control/** explicitly; keep original log"}

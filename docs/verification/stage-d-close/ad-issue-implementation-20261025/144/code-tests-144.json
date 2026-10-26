@@ -1,0 +1,36 @@
+{
+  "passed": true,
+  "focusedFiles": 5,
+  "focusedTests": 17,
+  "nativeAttemptTests": 9,
+  "defaultTestTimeoutMs": 5000,
+  "timeoutOverride": false,
+  "realFilesystemTests": true,
+  "databaseTransportBoundarySubstitute": true,
+  "normalPlannerRealNodeChildDirectWrite": true,
+  "outputParentRed": {
+    "reason": "ENOENT in real child writeFileSync with flag wx; output parent absent",
+    "originalLogSha256": "b39a28a5534b5a14b8a59d0c79ec6cf7b9473edc585f22eb4593443b30a47415",
+    "originalLogRemainsPrivate": true
+  },
+  "outputParentFix": "Existing safeAssetOutputPath prepares only the frozen parent directory; exclusive child write creates the file.",
+  "cases": [
+    "Late old attempt cannot overwrite the newer accepted output",
+    "Input copies do not share writable inodes",
+    "Frozen inputs and approved reuse sources cannot be published over",
+    "Known card project auxiliary path remains available",
+    "Published inode is independent from a still-open staging fd",
+    "Canonical symlink destinations are rejected",
+    "Failed database registration retains diagnostic staging without repeat acceptance",
+    "Changed output hash cannot replace canonical bytes",
+    "Direct exclusive planner write works with newly prepared output parent"
+  ],
+  "workerAndApplicationTypechecksPassed": true,
+  "sourceFiles": {
+    "src/local-app/localWorkerCli.ts": "05091c3e617a02b700bff20d2c3ee04d9d1b3723ab03179531c0f45a2bf3c451",
+    "src/local-app/nativeAttemptOutput.ts": "33fc80b6e8b6b5b03c3a1b1bc8c38da87b75d0ab1803608463704d63b9daad79",
+    "src/local-app/nativeAttemptOutput.test.ts": "3872dff2d5a1a329ec29a0ed423ff86848498217cf375e5c44e6fe1761570bf9"
+  },
+  "fullRegressionNotPerformedByThisSubtask": true,
+  "providerRequests": 0
+}

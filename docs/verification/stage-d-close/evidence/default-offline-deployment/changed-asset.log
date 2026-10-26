@@ -1,0 +1,15 @@
+
+> loop-control@0.1.0 start
+> node scripts/local/start.mjs
+
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/offline-preparation.mjs:14
+  if(size!==f.bytes||h.digest('hex')!==f.sha256)throw Error('Offline asset changed; prepare the deployment again');
+                                                      ^
+
+Error: Offline asset changed; prepare the deployment again
+    at inspectOfflineAssets (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/offline-preparation.mjs:14:55)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Module.assertOfflinePrepared (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/offline-preparation.mjs:20:55)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/start.mjs:10:42
+
+Node.js v24.20.0

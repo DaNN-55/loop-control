@@ -1,0 +1,22 @@
+{
+  "prepared": true,
+  "newIsolatedDatabase": true,
+  "mediaMounted": true,
+  "restoredTables": 51,
+  "restoredRows": 28620,
+  "mediaFiles": 890,
+  "sourceCopyTablesMatched": 51,
+  "sourceRowsMatched": true,
+  "oldLedgersUnchanged": true,
+  "keychainStateUnchanged": true,
+  "policyEnabled": false,
+  "providerRequests": 0,
+  "cliCalls": 0,
+  "maxRequests": 11,
+  "currency": "CNY",
+  "budgetCap": 1,
+  "preparationFailuresPreserved": [
+    "Owner bootstrap occurred while root build had removed dist; failed bootstrap did not change data",
+    "Plain pg_dump random restrict key made raw hashes unstable; source exact COPY fingerprints matched backup snapshot"
+  ]
+}

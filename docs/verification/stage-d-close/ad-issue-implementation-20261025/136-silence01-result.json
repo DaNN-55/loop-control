@@ -1,0 +1,41 @@
+{
+  "passed": true,
+  "newModelInference": true,
+  "historyReplay": false,
+  "mode": "current",
+  "taskId": "fb445105-a8ee-402d-9d28-153e016b0680",
+  "status": "needs_review",
+  "method": "local_whisperx",
+  "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+  "text": "这是本地字幕验收。",
+  "textFingerprint": "ccacb472427af8c2b007c511033470b0fd3efee4cf04f60737e5ea202f26b0bf",
+  "inputVersion": "e287b9fb050848dc2126208d51dbd208fd7b5616cee06ef3bfe471d481e6db3f",
+  "audioSha256": "f518aebb2e1a38736f1557ac083eff8a2c4cbd9d8a55c0b5901e15089f8480c5",
+  "captionTextConfirmationStillRequired": true,
+  "artifacts": [
+    {
+      "id": "3abd12df-9dee-4acc-a1fa-b62a659118f6",
+      "sha256": "ac4588a94999b678eef22af5ae62bc96f264f1d51b900f21469167327861a91d",
+      "bytes": 1249
+    }
+  ],
+  "traceFiles": [
+    "python-46048.jsonl",
+    "python-46075.jsonl"
+  ],
+  "scores": [
+    0.124375
+  ],
+  "reviewIssues": [
+    {
+      "id": "low-confidence-1",
+      "kind": "low_confidence",
+      "text": "这是本地字幕验收。",
+      "cueIds": [
+        "phrase-1"
+      ],
+      "detail": "平均置信度 0.12，低于 0.72。"
+    }
+  ],
+  "providerRequests": 0
+}

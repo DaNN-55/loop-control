@@ -1,0 +1,39 @@
+{
+  "passed": true,
+  "method": "16kHz mono FFT +/-100ms lag and full overlap normalized audio correlation",
+  "threshold": 0.95,
+  "rows": [
+    {
+      "shotId": "shot-1",
+      "startSeconds": 0.0,
+      "offsetSeconds": 0.0426875,
+      "normalizedCorrelation": 0.9869939444517235,
+      "measuredGain": 0.8871520539884085,
+      "studioItemVolume": 0.9,
+      "overlapSeconds": 15.648,
+      "passed": true
+    },
+    {
+      "shotId": "shot-2",
+      "startSeconds": 15.633333333333333,
+      "offsetSeconds": 0.042375,
+      "normalizedCorrelation": 0.9900563339189381,
+      "measuredGain": 0.9888128125226512,
+      "studioItemVolume": 1,
+      "overlapSeconds": 15.888,
+      "passed": true
+    },
+    {
+      "shotId": "shot-3",
+      "startSeconds": 31.533333333333335,
+      "offsetSeconds": 0.042375,
+      "normalizedCorrelation": 0.9898190803385264,
+      "measuredGain": 0.9887554434687861,
+      "studioItemVolume": 1,
+      "overlapSeconds": 15.264,
+      "passed": true
+    }
+  ],
+  "captionTextCompleteAcross3Lanes": true,
+  "all221CharactersPreserved": true
+}

@@ -1,0 +1,6 @@
+{
+  "mismatchTextWait": "wait --text timed out because text was textarea value; subsequent direct DOM value/required-review check passed; original timeout retained",
+  "screenshotPath": "current CLI saved actual temporary path; copied observed files into RUN, no recapture or content changes",
+  "silenceGeneration": "first mp4 generated successfully; second -n attempt refused overwrite and was retained",
+  "stalePriorArtifactFilter": "corrected helper task type align_shot_audio to actual align_shot_captions before execution; asserted nonempty one prior artifact SHA"
+}

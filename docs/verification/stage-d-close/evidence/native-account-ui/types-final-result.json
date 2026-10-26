@@ -1,0 +1,16 @@
+{
+  "started": "2026-10-25T09:36:18.918Z",
+  "finished": "2026-10-25T09:36:24.596Z",
+  "command": [
+    "npx",
+    "--no-install",
+    "tsc",
+    "-b",
+    "--pretty",
+    "false"
+  ],
+  "status": 0,
+  "passed": true,
+  "defaultTestTimeoutMs": 5000,
+  "timeoutOverride": false
+}

@@ -1,0 +1,12 @@
+{
+  "started": "2026-10-25T01:37:27.174Z",
+  "finished": "2026-10-25T01:37:27.570Z",
+  "command": [
+    "node",
+    ".loop-control/stage-d/state/d-close-logout-p2-20261025/scope.mjs"
+  ],
+  "status": 0,
+  "defaultTimeoutMs": 5000,
+  "timeoutOverride": false,
+  "passed": true
+}

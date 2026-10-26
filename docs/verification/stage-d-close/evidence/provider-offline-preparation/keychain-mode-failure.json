@@ -1,0 +1,1 @@
+{"passed":false,"httpStatus":503,"rootCause":"SecKeychainCreate produced mode0644; configuredKeychainStore correctly rejected before secret write","minimalEnvironmentFix":"chmod only this newly created Keychain to0600","gateNotWeakened":true,"resumeOwnUnappliedIntent":true,"noUserSecrets":true}

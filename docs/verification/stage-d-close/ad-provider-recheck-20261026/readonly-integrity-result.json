@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "publicItems": 1400,
+  "privateItems": 4442,
+  "sourceFiles": 46,
+  "indexSha256": "e85de83df6ca15476e404f975c6f185ed8e807b02e1089483e2d36bcf73e7784",
+  "historicalFailuresAndMetadataPreserved": true,
+  "readOnly": true,
+  "mismatches": []
+}

@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "database": "loop_t24_restored2",
+  "archiveVersion": "loop-native-backup/v2",
+  "rawTables": 51,
+  "rawRows": 28224,
+  "mediaFiles": 850,
+  "securityMatched": true,
+  "foreignKeysVerified": true,
+  "lateTransactionExcludedFromAuditAndLedger": true,
+  "readyTaskSnapshotUnchanged": true,
+  "credentialsAndSessionsAbsent": true,
+  "allRestoredQualificationsFalse": true
+}

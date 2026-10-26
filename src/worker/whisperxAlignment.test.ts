@@ -1,3 +1,4 @@
+import { execFileSync, spawnSync } from "node:child_process";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -96,4 +97,30 @@ describe("本地 WhisperX 对齐", () => {
     const changedText = await run("另一正文", [{ text: "另一正文", startMs: 0, endMs: 600 }]);
     expect(changedText.inputVersion).not.toBe(original.inputVersion);
   });
+});
+
+it("真实 Python 适配器不把缺时间戳或错配字符的候选当成模型成功", async () => {
+  const output = execFileSync("python3", ["-c", `
+import json, runpy
+f = runpy.run_path("scripts/whisperx-align.py")["aligned_tokens"]
+print(json.dumps({
+ "missing": f("测试", [], 2),
+ "mismatch": f("测试", [{"char":"别","start":0,"end":1,"score":0.99}], 2),
+ "actual": f("测", [{"char":"测","start":0.1,"end":0.8,"score":0.98}], 2),
+ "outside": f("测", [{"char":"测","start":0.1,"end":3,"score":0.98}], 2)
+}))
+`], { encoding: "utf8" });
+  const values = JSON.parse(output);
+  expect(values.missing.every((token: { confidence: number }) => token.confidence === 0)).toBe(true);
+  expect(values.mismatch.every((token: { confidence: number }) => token.confidence === 0)).toBe(true);
+  expect(values.actual).toEqual([{ text: "测", startMs: 100, endMs: 800, confidence: 0.98 }]);
+  expect(values.outside[0].confidence).toBe(0);
+  const candidate = await run("测试", values.missing);
+  expect(candidate.status).toBe("needs_review");
+});
+
+it("真实 Python runner 拒绝未冻结的另一模型且不尝试加载依赖", () => {
+  const result = spawnSync("python3", ["scripts/whisperx-align.py", "--probe", "--cache-dir", "/not-used", "--model", "large-v3"], { encoding: "utf8" });
+  expect(result.status).toBe(1);
+  expect(result.stderr).toContain("冻结模型与本地强制对齐模型不一致");
 });

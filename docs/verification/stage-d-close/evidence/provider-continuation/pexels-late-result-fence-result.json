@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "realOriginalLeaseToken": true,
+  "completedTaskLateWriteRejected": true,
+  "taskUnchanged": true,
+  "code": "42501",
+  "extraProviderRequests": 0
+}

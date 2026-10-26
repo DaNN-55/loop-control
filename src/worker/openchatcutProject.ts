@@ -3,6 +3,15 @@ import { normalizeShotComposition, shotCompositionRect, shotCompositionTiming, t
 import { captionCuesForShot, shotCaptionSafeAreaGeometry } from "../shotCaptions.js";
 import { normalizeShotAudioMix, type BgmDuckingLevel, type ShotAudioMixContract } from "../shotAudioMix.js";
 
+// OpenChatCut 0.2.14 anchors already include 10% horizontal / 8% vertical padding.
+// Bottom offsets are inward-positive; the workbench geometry uses canvas coordinates.
+export function openChatCutCaptionGeometry(spatial: Parameters<typeof shotCaptionSafeAreaGeometry>[0]) {
+  const area = shotCaptionSafeAreaGeometry(spatial);
+  const offsetX = spatial.anchor.endsWith("-left") ? area.insets.left - 0.1 : spatial.anchor.endsWith("-right") ? 0.1 - area.insets.right : area.offsetX;
+  const offsetY = spatial.anchor.startsWith("top-") ? area.insets.top - 0.08 : spatial.anchor.startsWith("bottom-") ? area.insets.bottom - 0.08 : area.offsetY;
+  return { ...area, offsetX: Math.round(offsetX * 1e6) / 1e6, offsetY: Math.round(offsetY * 1e6) / 1e6 };
+}
+
 type ReviewRender = NonNullable<WorkerTaskPackage["reviewRender"]>;
 
 export interface OpenChatCutProject {
@@ -158,7 +167,7 @@ export function buildOpenChatCutProject(render: ReviewRender, projectId = "produ
       if (!captions) throw new Error(`镜头 ${shot.id} 缺少版本化字幕契约。`);
       const laneId = `lane-${shot.id}`;
       const slotId = `caption-slot-${shot.id}`;
-      const safeArea = shotCaptionSafeAreaGeometry(captions.spatial);
+      const safeArea = openChatCutCaptionGeometry(captions.spatial);
       const localCues = captionCuesForShot(captions, shotFrames * 1000 / fps);
       if (!localCues.length) throw new Error(`镜头 ${shot.id} 字幕尚未完成声学对齐或手动时序，不能生成字幕轨。`);
       captionSourceEntries.push({
@@ -288,7 +297,7 @@ export function buildOpenChatCutCardProject(shot: StoryboardShotManifest, projec
     fit: "cover",
     items: [{
       id: `card-${shot.id}`,
-      track: "C1",
+      track: "V1",
       startFrame: 0,
       durationInFrames,
       kind: "text",
@@ -297,8 +306,8 @@ export function buildOpenChatCutCardProject(shot: StoryboardShotManifest, projec
       height: 1920,
       props: { text: `${shot.shotType === "a_roll" ? "A-ROLL" : "B-ROLL"}\n${shot.scriptSegment}\n${shot.productionMethod}`, align: "center", color: "#ffffff", fontSize: 64, fontWeight: 700 },
     }],
-    trackOrder: ["C1"],
-    tracks: { C1: { kind: "caption", name: "卡片" } },
+    trackOrder: ["V1"],
+    tracks: { V1: { kind: "video", name: "卡片" } },
     transitions: [],
     selectedId: null,
     captionsHidden: false,
@@ -359,6 +368,4 @@ export function activeOpenChatCutState(project: OpenChatCutProject): Record<stri
   return { ...timeline, assets: project.assets };
 }
 
-export function openChatCutProjectPath(path: string): string {
-  return path.endsWith("/index.html") ? `${path.slice(0, -"/index.html".length)}/project.json` : path.endsWith(".json") ? path : `${path}/project.json`;
-}
+export {openChatCutProjectPath} from "./openchatcutPaths.js";

@@ -1,0 +1,10 @@
+{
+  "pcmCorrelationThreshold": 0.95,
+  "pcmObserved": 0.48640910868700643,
+  "passed": false,
+  "toolTranscriptRetained": true,
+  "envelopeCorrelation": 0.9933959548991342,
+  "envelopeOffset10ms": 4,
+  "sourceSamples": 19968,
+  "renderSamples": 20480
+}

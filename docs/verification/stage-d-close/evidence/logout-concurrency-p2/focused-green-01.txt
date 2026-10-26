@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/local-app/LocalCatalogApp.test.tsx (11 tests) 390ms
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  09:47:32
+   Duration  1.12s (transform 279ms, setup 0ms, collect 434ms, tests 390ms, environment 123ms, prepare 33ms)
+

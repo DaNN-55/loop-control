@@ -120,7 +120,7 @@ function providerProbeRequest(provider: string, apiKey: string, model?: string):
     return { url: endpoint.toString(), init: { headers: { "X-goog-api-key": apiKey } } };
   }
   if (provider === "pexels") {
-    const endpoint = new URL("https://api.pexels.com/videos/search");
+    const endpoint = new URL("https://api.pexels.com/v1/videos/search");
     endpoint.searchParams.set("query", "preflight");
     endpoint.searchParams.set("per_page", "1");
     return { url: endpoint.toString(), init: { headers: { Authorization: apiKey } } };

@@ -1,0 +1,974 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ .loop-control/stage-b/verified/state/t06-followup/comparison-snapshot/src/reviews/localArtifactPreview.test.tsx (3 tests) 21ms
+ ❯ src/reviews/localArtifactPreview.test.tsx (3 tests | 1 failed) 1022ms
+   ✓ 本地产物预览 > 在 StrictMode 下合并同一产物的并发读取 16ms
+   ✓ 本地产物预览 > 为视频关键帧沿用本地产物鉴权入口 0ms
+   × 本地产物预览 > 重新挂载时复用已经加载的预览 ticket 和文本 1005ms
+     → Unable to find an element with the text: /_local-artifact?ticket=cachedstoryboard. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<output>[39m
+      [0m/_local-artifact?ticket=cached[0m
+    [36m</output>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<output>[39m
+        [0m/_local-artifact?ticket=cached[0m
+      [36m</output>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ✓ .loop-control/stage-b/verified/state/t06-followup/comparison-snapshot/src/reviews/ReviewWorkspace.test.tsx (64 tests) 5818ms
+   ✓ 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择  1330ms
+   ✓ 审核台 > 审核阶段可返回可编辑镜头工作台，且保留当前 QC 证据  606ms
+   ✓ 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交  344ms
+   ✓ 审核台 > 同一原片支持多段裁剪并随镜头草稿一起保存  322ms
+   ✓ 审核台 > 人工媒体可在镜头工作台选择原片并保存镜头设置  434ms
+ ❯ src/reviews/ReviewWorkspace.test.tsx (64 tests | 2 failed) 6764ms
+   ✓ 审核台 > 点击抽屉外遮罩或按 Escape 可以关闭生产单详情 42ms
+   ✓ 审核台 > 放大预览打开时按 Escape 不关闭生产单详情 6ms
+   ✓ 审核台 > 在详情顶部显示当前阶段和下一步，并默认收起技术索引 26ms
+   ✓ 审核台 > Worker 排队或运行时显示持续刷新反馈 4ms
+   ✓ 审核台 > QC 通过但缺少最终材料时明确提示，并可进入生产完成流程 15ms
+   ✓ 审核台 > 通过顶部图标按需打开产物索引及包含任务进度的审计时间线 40ms
+   ✓ 审核台 > 审计时间线只显示中文原因，不展示技术原文 19ms
+   ✓ 审核台 > 只列出需要 Owner 审核的 Episode，并允许选择其中一项 11ms
+   ✓ 审核台 > 对待审核 Episode 使用分页 17ms
+   ✓ 审核台 > 显示可预览产物和 Worker 阻塞项，并以理由执行批准或要求修改 89ms
+   ✓ 审核台 > 即时派发失败时在当前任务区域持续显示原因 4ms
+   × 审核台 > 生成媒体预览默认展示当前镜头代理并折叠历史版本 21ms
+     → Unable to find a label with the text of: shot_preview_proxy 产物预览
+
+Ignored nodes: comments, script, style
+[36m<details[39m
+  [33mclass[39m=[32m"artifact-preview-history"[39m
+[36m>[39m
+  [36m<summary>[39m
+    [0m历史预览产物（[0m
+    [0m1[0m
+    [0m）[0m
+  [36m</summary>[39m
+  [36m<p>[39m
+    [0m这些媒体来自旧输入或已被当前版本替代，仅用于比较。[0m
+  [36m</p>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"artifact-preview"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"no-media-preview"[39m
+    [36m>[39m
+      [36m<svg[39m
+        [33maria-hidden[39m=[32m"true"[39m
+        [33mclass[39m=[32m"lucide lucide-play icon"[39m
+        [33mfill[39m=[32m"none"[39m
+        [33mheight[39m=[32m"24"[39m
+        [33mstroke[39m=[32m"currentColor"[39m
+        [33mstroke-linecap[39m=[32m"round"[39m
+        [33mstroke-linejoin[39m=[32m"round"[39m
+        [33mstroke-width[39m=[32m"1.8"[39m
+        [33mviewBox[39m=[32m"0 0 24 24"[39m
+        [33mwidth[39m=[32m"24"[39m
+        [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+      [36m>[39m
+        [36m<path[39m
+          [33md[39m=[32m"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"[39m
+        [36m/>[39m
+      [36m</svg>[39m
+      [36m<strong>[39m
+        [0m无法预览产物[0m
+      [36m</strong>[39m
+      [36m<span>[39m
+        [0mInvalid supabaseUrl: Provided URL is malformed.[0m
+      [36m</span>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</details>[39m
+   ✓ 审核台 > 只在整片音轨中展示可试听的 BGM，并将时间批注交给受控 RPC 65ms
+   ✓ 审核台 > 展示 A-roll 的冻结执行证据和运行状态 6ms
+   ✓ 审核台 > 按真实状态展示 A-roll 任务卡片：completed 4ms
+   ✓ 审核台 > 按真实状态展示 A-roll 任务卡片：running 3ms
+   ✓ 审核台 > 按真实状态展示 A-roll 任务卡片：failed 4ms
+   ✓ 审核台 > 按真实状态展示 A-roll 任务卡片：blocked 3ms
+   ✓ 审核台 > 在冻结执行器缺失时仍展示 A-roll 阻塞状态 7ms
+   ✓ 审核台 > 合并重复阻塞任务并提供蓝图修改入口 16ms
+   ✓ 审核台 > 以纵向缩略图展示产物，并允许 Owner 放大后关闭预览 46ms
+   ✓ 审核台 > 在详情头部以图标提供刷新、打开和复制本地目录 30ms
+   ✓ 审核台 > 材料区提供统一文件导入 4ms
+   ✓ 审核台 > 等待输入时仅允许上传外部制作的主脚本 7ms
+   ✓ 审核台 > 主脚本导入后等待 Owner 明确开始制作 12ms
+   ✓ 审核台 > 显示生产开始前的真实运行态阻塞 4ms
+   ✓ 审核台 > 通过统一入口标注用途后按顺序导入脚本、图片、A-roll 和 B-roll 158ms
+   ✓ 审核台 > 将主脚本和补充脚本归入同一个脚本分组 36ms
+   ✓ 审核台 > 最多并发导入三个材料并在完成后立即补位 81ms
+   ✓ 审核台 > 导入成功后保留材料卡，直到冻结材料刷新完成 36ms
+   ✓ 审核台 > 可打开脚本模板，并点击材料名称预览 51ms
+   ✓ 审核台 > 使用浏览器文件地址预览待导入视频 25ms
+   ✓ 审核台 > 在材料列表显示已确认、已导入和已绑定镜头状态 6ms
+   ✓ 审核台 > 新 Episode 的上传阶段不要求整期声音选择 4ms
+   ✓ 审核台 > 分镜批准后按整期 BGM、TTS、逐镜头声音的顺序显示并保存独立音效选择  1345ms
+   ✓ 审核台 > 已生成字幕时序先只读查看，明确调整后才开放编辑 150ms
+   ✓ 审核台 > 审核阶段可返回可编辑镜头工作台，且保留当前 QC 证据  583ms
+   ✓ 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交  342ms
+   ✓ 审核台 > 删除镜头后在工作台切换新版，并打开下一镜 157ms
+   ✓ 审核台 > 刷新后从运行中的结构任务恢复工作台，并在完成后打开删除镜头的下一镜 92ms
+   ✓ 审核台 > 新版分镜保留旧版本 hash 中仍存在的镜头 61ms
+   ✓ 审核台 > 本期 TTS 试听只在点击后读取当前表单，不保存或创建任务 95ms
+   ✓ 审核台 > 本期 TTS 未保存时明确阻止逐镜头生成，并标记表单修改状态 67ms
+   ✓ 审核台 > 逐镜头 TTS 可先于原片标记生成，完整保存仍要求视频 170ms
+   ✓ 审核台 > 重新生成口播时隐藏旧音轨，完成后可从右上角筛选历史口播 32ms
+   ✓ 审核台 > 逐镜头口播无需确认即可保存，并可保存单镜头覆盖 224ms
+   ✓ 审核台 > 后台刷新时保留未保存的原片与片段标记 124ms
+   ✓ 审核台 > 保留原声直接使用视频内嵌音轨并允许生成同步预览 86ms
+   ✓ 审核台 > 无口播显示为明确静音，并仍可保存字幕开关 124ms
+   ✓ 审核台 > 同一原片支持多段裁剪并随镜头草稿一起保存  304ms
+   ✓ 审核台 > 选择镜头原片文件后立即导入，不再要求二次确认 36ms
+   ✓ 审核台 > 分镜准备阶段不提供 Studio 入口 13ms
+   ✓ 审核台 > 展示委托脚本的冻结输入，并让 Owner 完成审核或要求重写 45ms
+   × 审核台 > 读取分镜前文本产物及其冻结审核上下文 1014ms
+     → Unable to find an element with the text: 林砚：雨夜深色雨衣。. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<header[39m
+      [33mclass[39m=[32m"review-heading"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"review-heading-copy"[39m
+      [36m>[39m
+        [36m<h2>[39m
+          [0m越南民间信仰中的符号[0m
+        [36m</h2>[39m
+        [36m<span>[39m
+          [0mepisode-[0m
+        [36m</span>[39m
+      [36m</div>[39m
+    [36m</header>[39m
+    [36m<div[39m
+      [33maria-label[39m=[32m"生产单操作"[39m
+      [33mclass[39m=[32m"episode-detail-toolbar"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"episode-toolbar-actions"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"刷新生产单状态"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button"[39m
+          [33mtitle[39m=[32m"刷新状态"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-refresh-cw icon"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21 3v5h-5"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 16H3v5"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"打开本地输入目录"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button"[39m
+          [33mtitle[39m=[32m"打开本地输入目录：/Volumes/素材盘/loop-control/dao/episodes/episode-review/input"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-folder-open icon"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"复制本地输入目录路径"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button"[39m
+          [33mtitle[39m=[32m"复制本地输入目录路径：/Volumes/素材盘/loop-control/dao/episodes/episode-review/input"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-copy icon"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"14"[39m
+              [33mrx[39m=[32m"2"[39m
+              [33mry[39m=[32m"2"[39m
+              [33mwidth[39m=[32m"14"[39m
+              [33mx[39m=[32m"8"[39m
+              [33my[39m=[32m"8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"false"[39m
+          [33maria-haspopup[39m=[32m"dialog"[39m
+          [33maria-label[39m=[32m"查看产物索引"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button"[39m
+          [33mtitle[39m=[32m"查看产物索引"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-clipboard-list icon"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"4"[39m
+              [33mrx[39m=[32m"1"[39m
+              [33mry[39m=[32m"1"[39m
+              [33mwidth[39m=[32m"8"[39m
+              [33mx[39m=[32m"8"[39m
+              [33my[39m=[32m"2"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 11h4"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 16h4"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 11h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 16h.01"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"false"[39m
+          [33maria-haspopup[39m=[32m"dialog"[39m
+          [33maria-label[39m=[32m"查看执行与审计时间线"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<header[39m
+      [33mclass[39m=[32m"review-heading"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"review-heading-copy"[39m
+      [36m>[39m
+        [36m<h2>[39m
+          [0m越南民间信仰中的符号[0m
+        [36m</h2>[39m
+        [36m<span>[39m
+          [0mepisode-[0m
+        [36m</span>[39m
+      [36m</div>[39m
+    [36m</header>[39m
+    [36m<div[39m
+      [33maria-label[39m=[32m"生产单操作"[39m
+      [33mclass[39m=[32m"episode-detail-toolbar"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"episode-toolbar-actions"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"刷新生产单状态"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button"[39m
+          [33mtitle[39m=[32m"刷新状态"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-refresh-cw icon"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21 3v5h-5"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 16H3v5"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"打开本地输入目录"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button"[39m
+          [33mtitle[39m=[32m"打开本地输入目录：/Volumes/素材盘/loop-control/dao/episodes/episode-review/input"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-folder-open icon"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"复制本地输入目录路径"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button"[39m
+          [33mtitle[39m=[32m"复制本地输入目录路径：/Volumes/素材盘/loop-control/dao/episodes/episode-review/input"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-copy icon"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"14"[39m
+              [33mrx[39m=[32m"2"[39m
+              [33mry[39m=[32m"2"[39m
+              [33mwidth[39m=[32m"14"[39m
+              [33mx[39m=[32m"8"[39m
+              [33my[39m=[32m"8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"false"[39m
+          [33maria-haspopup[39m=[32m"dialog"[39m
+          [33maria-label[39m=[32m"查看产物索引"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button"[39m
+          [33mtitle[39m=[32m"查看产物索引"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-clipboard-list icon"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"4"[39m
+              [33mrx[39m=[32m"1"[39m
+              [33mry[39m=[32m"1"[39m
+              [33mwidth[39m=[32m"8"[39m
+              [33mx[39m=[32m"8"[39m
+              [33my[39m=[32m"2"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 11h4"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 16h4"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 11h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 16h.01"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"false"[39m
+          [33maria-haspopup[39m=[32m"dialog"[39m
+          [33maria-label[39m=[32m"查看执行与审计时间线"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button...
+   ✓ 审核台 > 将冻结的外部视觉输入连同视觉资产清单交给 Owner 审核 53ms
+   ✓ 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产 7ms
+   ✓ 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览 6ms
+   ✓ 审核台 > 在 Studio 提交一次合成修订并重新审核 83ms
+   ✓ 审核台 > 在审核渲染中只提供官方 Studio 入口 8ms
+   ✓ 审核台 > 按镜头审核冻结分镜、保存批注，并执行批准或返工 122ms
+   ✓ 审核台 > 人工媒体可在镜头工作台选择原片并保存镜头设置  435ms
+   ✓ 审核台 > 已保存原片可预览并在冻结前替换 74ms
+   ✓ 审核台 > 分镜产物格式无效时不允许 Owner 批准或退回 5ms
+   ✓ 审核台 > 将预渲染成员作为审计证据，并自动进入审核渲染 4ms
+
+ Test Files  2 failed | 2 passed (4)
+      Tests  3 failed | 131 passed (134)
+   Start at  13:01:10
+   Duration  7.83s (transform 976ms, setup 0ms, collect 1.82s, tests 13.62s, environment 543ms, prepare 126ms)
+
+stderr | .loop-control/stage-b/verified/state/t06-followup/comparison-snapshot/src/reviews/ReviewWorkspace.test.tsx > 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | .loop-control/stage-b/verified/state/t06-followup/comparison-snapshot/src/reviews/ReviewWorkspace.test.tsx > 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 生成媒体预览默认展示当前镜头代理并折叠历史版本
+TestingLibraryElementError: Unable to find a label with the text of: shot_preview_proxy 产物预览
+
+Ignored nodes: comments, script, style
+[36m<details[39m
+  [33mclass[39m=[32m"artifact-preview-history"[39m
+[36m>[39m
+  [36m<summary>[39m
+    [0m历史预览产物（[0m
+    [0m1[0m
+    [0m）[0m
+  [36m</summary>[39m
+  [36m<p>[39m
+    [0m这些媒体来自旧输入或已被当前版本替代，仅用于比较。[0m
+  [36m</p>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"artifact-preview"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"no-media-preview"[39m
+    [36m>[39m
+      [36m<svg[39m
+        [33maria-hidden[39m=[32m"true"[39m
+        [33mclass[39m=[32m"lucide lucide-play icon"[39m
+        [33mfill[39m=[32m"none"[39m
+        [33mheight[39m=[32m"24"[39m
+        [33mstroke[39m=[32m"currentColor"[39m
+        [33mstroke-linecap[39m=[32m"round"[39m
+        [33mstroke-linejoin[39m=[32m"round"[39m
+        [33mstroke-width[39m=[32m"1.8"[39m
+        [33mviewBox[39m=[32m"0 0 24 24"[39m
+        [33mwidth[39m=[32m"24"[39m
+        [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+      [36m>[39m
+        [36m<path[39m
+          [33md[39m=[32m"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z"[39m
+        [36m/>[39m
+      [36m</svg>[39m
+      [36m<strong>[39m
+        [0m无法预览产物[0m
+      [36m</strong>[39m
+      [36m<span>[39m
+        [0mInvalid supabaseUrl: Provided URL is malformed.[0m
+      [36m</span>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</details>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getAllByLabelText node_modules/@testing-library/dom/dist/queries/label-text.js:111:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/reviews/ReviewWorkspace.test.tsx:312:43
+    310|     expect(history).toBeTruthy();
+    311|     expect(history?.hasAttribute("open")).toBe(false);
+    312|     expect(within(history as HTMLElement).getByLabelText("shot_preview…
+       |                                           ^
+    313|   });
+    314| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 读取分镜前文本产物及其冻结审核上下文
+TestingLibraryElementError: Unable to find an element with the text: 林砚：雨夜深色雨衣。. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<header[39m
+      [33mclass[39m=[32m"review-heading"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"review-heading-copy"[39m
+      [36m>[39m
+        [36m<h2>[39m
+          [0m越南民间信仰中的符号[0m
+        [36m</h2>[39m
+        [36m<span>[39m
+          [0mepisode-[0m
+        [36m</span>[39m
+      [36m</div>[39m
+    [36m</header>[39m
+    [36m<div[39m
+      [33maria-label[39m=[32m"生产单操作"[39m
+      [33mclass[39m=[32m"episode-detail-toolbar"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"episode-toolbar-actions"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"刷新生产单状态"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button"[39m
+          [33mtitle[39m=[32m"刷新状态"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-refresh-cw icon"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21 3v5h-5"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 16H3v5"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"打开本地输入目录"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button"[39m
+          [33mtitle[39m=[32m"打开本地输入目录：/Volumes/素材盘/loop-control/dao/episodes/episode-review/input"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-folder-open icon"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"复制本地输入目录路径"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button"[39m
+          [33mtitle[39m=[32m"复制本地输入目录路径：/Volumes/素材盘/loop-control/dao/episodes/episode-review/input"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-copy icon"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"14"[39m
+              [33mrx[39m=[32m"2"[39m
+              [33mry[39m=[32m"2"[39m
+              [33mwidth[39m=[32m"14"[39m
+              [33mx[39m=[32m"8"[39m
+              [33my[39m=[32m"8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"false"[39m
+          [33maria-haspopup[39m=[32m"dialog"[39m
+          [33maria-label[39m=[32m"查看产物索引"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button"[39m
+          [33mtitle[39m=[32m"查看产物索引"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-clipboard-list icon"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"4"[39m
+              [33mrx[39m=[32m"1"[39m
+              [33mry[39m=[32m"1"[39m
+              [33mwidth[39m=[32m"8"[39m
+              [33mx[39m=[32m"8"[39m
+              [33my[39m=[32m"2"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 11h4"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 16h4"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 11h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 16h.01"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"false"[39m
+          [33maria-haspopup[39m=[32m"dialog"[39m
+          [33maria-label[39m=[32m"查看执行与审计时间线"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<header[39m
+      [33mclass[39m=[32m"review-heading"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"review-heading-copy"[39m
+      [36m>[39m
+        [36m<h2>[39m
+          [0m越南民间信仰中的符号[0m
+        [36m</h2>[39m
+        [36m<span>[39m
+          [0mepisode-[0m
+        [36m</span>[39m
+      [36m</div>[39m
+    [36m</header>[39m
+    [36m<div[39m
+      [33maria-label[39m=[32m"生产单操作"[39m
+      [33mclass[39m=[32m"episode-detail-toolbar"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"episode-toolbar-actions"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"刷新生产单状态"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button"[39m
+          [33mtitle[39m=[32m"刷新状态"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-refresh-cw icon"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21 3v5h-5"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 16H3v5"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"打开本地输入目录"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button"[39m
+          [33mtitle[39m=[32m"打开本地输入目录：/Volumes/素材盘/loop-control/dao/episodes/episode-review/input"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-folder-open icon"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-label[39m=[32m"复制本地输入目录路径"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button"[39m
+          [33mtitle[39m=[32m"复制本地输入目录路径：/Volumes/素材盘/loop-control/dao/episodes/episode-review/input"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-copy icon"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"14"[39m
+              [33mrx[39m=[32m"2"[39m
+              [33mry[39m=[32m"2"[39m
+              [33mwidth[39m=[32m"14"[39m
+              [33mx[39m=[32m"8"[39m
+              [33my[39m=[32m"8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"false"[39m
+          [33maria-haspopup[39m=[32m"dialog"[39m
+          [33maria-label[39m=[32m"查看产物索引"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button"[39m
+          [33mtitle[39m=[32m"查看产物索引"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-clipboard-list icon"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"4"[39m
+              [33mrx[39m=[32m"1"[39m
+              [33mry[39m=[32m"1"[39m
+              [33mwidth[39m=[32m"8"[39m
+              [33mx[39m=[32m"8"[39m
+              [33my[39m=[32m"2"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 11h4"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 16h4"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 11h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 16h.01"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"false"[39m
+          [33maria-haspopup[39m=[32m"dialog"[39m
+          [33maria-label[39m=[32m"查看执行与审计时间线"[39m
+          [33mclass[39m=[32m"icon-button episode-toolbar-button...
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/reviews/ReviewWorkspace.test.tsx:1552:25
+    1550|     expect(screen.getByText('{"visual_style":"写实雨夜"}')).toBeTruthy();
+    1551|     expect(screen.getByText("角色 / 地点 / 关键道具参考组")).toBeTruthy();
+    1552|     expect(await screen.findByText("林砚：雨夜深色雨衣。", { exact: false })).to…
+       |                         ^
+    1553|     expect(screen.getByText("所需静态视觉")).toBeTruthy();
+    1554|     const frozenContext = screen.getByText("审核与冻结依据").closest(".review…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/reviews/localArtifactPreview.test.tsx > 本地产物预览 > 重新挂载时复用已经加载的预览 ticket 和文本
+TestingLibraryElementError: Unable to find an element with the text: /_local-artifact?ticket=cachedstoryboard. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<output>[39m
+      [0m/_local-artifact?ticket=cached[0m
+    [36m</output>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<output>[39m
+        [0m/_local-artifact?ticket=cached[0m
+      [36m</output>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/reviews/localArtifactPreview.test.tsx:54:11
+     52| 
+     53|     const first = render(<PreviewWithText source={source} />);
+     54|     await waitFor(() => expect(screen.getByText("/_local-artifact?tick…
+       |           ^
+     55|     first.unmount();
+     56|     render(<PreviewWithText source={source} />);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+

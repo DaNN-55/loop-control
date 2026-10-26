@@ -1,0 +1,15 @@
+{
+  "codeReviewFindings": 0,
+  "evidenceReviewFindings": 2,
+  "corrections": [
+    "Intermediate hard-coded competition counts not accepted; use final actual rows",
+    "Broad noPostRestartHttpWake not accepted; disclose 2 unrelated early HTTP starts and only assert original task not resubmitted or targeted"
+  ],
+  "otherLimitsRetained": [
+    "live expired executor file writes",
+    "online request cancellation",
+    "immediate failover"
+  ],
+  "independentReadOnlyReview": true,
+  "naturalWaitStillPendingAtReview": true
+}

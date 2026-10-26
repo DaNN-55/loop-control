@@ -64,7 +64,7 @@ describe("runtime preflight", () => {
     expect(decision.report).toEqual({
       version: "worker-preflight/v2",
       checks: [
-        { action: "edit_blueprint", capability: "storyboard_planning", check: "blueprint_configuration", phase: "preflight", reason: "能力 storyboard_planning 缺少 Provider、模型或 Prompt 版本。", scope: "blueprint", status: "blocked" },
+        { action: "edit_blueprint", capability: "storyboard_planning", check: "blueprint_configuration", phase: "preflight", reason: "能力 storyboard_planning 配置缺失：模型、Prompt 版本。", scope: "blueprint", status: "blocked" },
         { action: "none", capability: "review_rendering", check: "capability_registration", phase: "preflight", reason: "Worker 已注册 openchatcut/openchatcut 执行路径。", scope: "worker", status: "passed" },
         { action: "none", capability: "review_rendering", check: "tool_permission", phase: "preflight", reason: "Worker 运行权限包含 read 和 write。", scope: "worker", status: "passed" },
         { action: "none", capability: "final_rendering", check: "capability_registration", phase: "preflight", reason: "Worker 已注册 openchatcut/openchatcut 执行路径。", scope: "worker", status: "passed" },

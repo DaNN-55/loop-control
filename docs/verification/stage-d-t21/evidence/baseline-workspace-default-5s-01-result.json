@@ -1,0 +1,1 @@
+{"label":"baseline","args":["node_modules/vitest/vitest.mjs","run","src/reviews/ReviewWorkspace.test.tsx","--exclude","**/.loop-control/**"],"cwd":"/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t21-20261024/t20-baseline","status":1,"timeoutOverride":false}

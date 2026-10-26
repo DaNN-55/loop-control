@@ -1,0 +1,14 @@
+{
+  "completed": true,
+  "taskId": "5f547403-6e99-4374-8061-2b626e9b8c02",
+  "episodeId": "86f722d2-3675-4732-a8cd-d4276af51e7c",
+  "sourceCliResultSha256": "f9d112e8299b040a0127d8d149d9338acfc0cdadb3d97bd498028e5aee563d55",
+  "originalAttempt": 0,
+  "existingActiveLeaseValidated": true,
+  "normalNativeOutputPublisherUsed": true,
+  "priorStagingPreserved": true,
+  "newGeneratorCalls": 0,
+  "newProviderRequests": 0,
+  "cliCallsCumulative": 3,
+  "cliChargedElapsedMs": 185056.723292
+}

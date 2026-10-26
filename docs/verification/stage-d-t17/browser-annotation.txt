@@ -1,0 +1,105 @@
+- generic [ref=e1] clickable [onclick]
+  - main
+    - sectionheader
+      - StaticText "Loop Control · 本地"
+      - heading "内容工作台" [level=1, ref=e2]
+    - navigation
+      - button "账号配置" [ref=e3]
+      - button "生产单目录" [ref=e4]
+      - button "新建账号" [ref=e5]
+      - button "刷新" [ref=e6]
+      - button "退出登录" [ref=e7]
+    - generic
+      - heading "生产单（5）" [level=2, ref=e8]
+        - StaticText "生产单（5）"
+      - button "新建生产单" [ref=e9]
+      - generic
+        - button "返回生产单目录" [ref=e10]
+        - sectionheader
+          - heading "T17 浏览器分镜补验" [level=2, ref=e11]
+          - StaticText "1ea799b6"
+        - button "刷新生产单状态" [ref=e12]
+        - button "打开本地输入目录" [ref=e13]
+        - button "复制本地输入目录路径" [ref=e14]
+        - button "查看产物索引" [expanded=false, ref=e15]
+        - button "查看执行与审计时间线" [expanded=false, ref=e16]
+        - paragraph
+          - StaticText "蓝图 v1 · 创建于 2026年10月24日 13:23"
+        - generic
+          - StaticText "当前阶段"
+          - strong
+            - StaticText "分镜生成与审核"
+          - StaticText "下一步"
+          - paragraph
+            - StaticText "审核分镜并处理镜头批注"
+          - generic
+            - StaticText "当前审核"
+            - strong
+              - StaticText "分镜审核"
+            - paragraph
+              - StaticText "需要你审核"
+          - generic
+            - StaticText "当前任务"
+            - strong
+              - StaticText "等待审核"
+            - paragraph
+              - StaticText "审核包已就绪，等待 Owner 决定。"
+        - group
+          - DisclosureTriangle "视觉清单" [expanded=false]
+            - ListMarker "▸"
+            - heading "视觉清单" [level=3, ref=e23]
+        - group
+          - DisclosureTriangle "准备生产材料" [expanded=false]
+            - ListMarker "▸"
+            - heading "准备生产材料" [level=3, ref=e24]
+        - generic
+          - heading "可审核分镜 · 修订 v1" [level=3, ref=e17]
+            - StaticText "可审核分镜 · 修订 v1"
+          - paragraph
+            - StaticText "本阶段确认镜头顺序与内容；最终时长由生成后的 TTS 口播确定。"
+          - navigation "分镜时间轴" [ref=e18]
+            - button "选择 shot-1，A-roll" [ref=e25]
+              - strong
+                - StaticText "shot-1"
+              - StaticText "A-roll"
+            - button "选择 shot-2，B-roll" [ref=e26]
+              - strong
+                - StaticText "shot-2"
+              - StaticText "B-roll"
+          - generic "镜头切换"
+            - status
+              - StaticText "第 1 / 2 镜"
+            - button "上一镜" [disabled, ref=e27]
+            - button "下一镜" [ref=e28]
+          - article "镜头详情：shot-1" [ref=e19]
+            - heading "shot-1 · A-roll" [level=4, ref=e29]
+              - StaticText "shot-1 · A-roll"
+            - DescriptionList
+              - term "脚本片段"
+              - definition
+                - StaticText "介绍本轮合成脚本。"
+              - term "制作方法"
+              - definition
+                - StaticText "人工素材"
+              - term "目标规格"
+              - definition
+                - StaticText "9:16，1080×1920，24fps"
+              - term "生成依据"
+              - definition
+                - StaticText "episodes/1ea799b6…bfb5a9/materials/13a029dd…-script.md · 13a029dd19b0…、episodes/1ea799b6…bfb5a9/visual-assets-v1.md · 6c506b332e77…、episodes/1ea799b6…bfb5a9/materials/9d99ae1c…-actor.png · 9d99ae1cf906…"
+            - strong
+              - StaticText "已留批注"
+            - paragraph
+              - StaticText "浏览器批注：开场应保留冻结脚本引用。"
+            - form
+              - LabelText
+                - StaticText "镜头批注"
+                - textbox "shot-1 镜头批注" [ref=e32]
+              - button "添加镜头批注" [ref=e31]
+        - generic
+          - heading "Owner 审批" [level=3, ref=e20]
+          - LabelText
+            - StaticText "审批理由"
+            - textbox "审批理由" [ref=e30]
+          - button "批准" [ref=e21]
+          - button "要求修改" [ref=e22]

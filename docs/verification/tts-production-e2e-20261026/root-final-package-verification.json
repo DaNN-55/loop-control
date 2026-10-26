@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "episodeId": "86f722d2-3675-4732-a8cd-d4276af51e7c",
+  "stage": "production_completed",
+  "indexedArtifacts": 39,
+  "reviewVideoReused": true,
+  "finalVideoSha256": "6d126321a3939a379037047ef67d0b8f56187613f6541d09b5381f389fd291d4",
+  "finalVideoBytes": 136047301,
+  "publishPackageSha256": "696e864471f61e40ac42a739e72987fa837cabac92248ef7a9408a79f914c6a0",
+  "publishPackageBytes": 1225,
+  "requiredArtifactTypes": [
+    "final_render",
+    "cover",
+    "metadata",
+    "final_qc_report"
+  ],
+  "portablePackageVerified": true,
+  "exportedVideo": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/output/tts-production-e2e-20261026/final.mp4",
+  "portablePackageManifest": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/output/tts-production-e2e-20261026/publish-package/episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/publish-package/manifest.json"
+}

@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "head": "20e93bd8f80c8de8774806a666ba616a3b133e88",
+  "branch": "codex/local-first-stage-a",
+  "indexEmpty": true,
+  "unrelatedFilesUnchanged": 43,
+  "implementationFiles": 21,
+  "publicEvidence": 85,
+  "allPublicAndImplementationHashesVerified": true,
+  "allReportLinksExist": true,
+  "knownSecretScanClear": true,
+  "noPrivateEvidenceInProspectiveScope": true,
+  "rawHarIncluded": false,
+  "notStaged": true,
+  "notCommitted": true,
+  "notPushed": true,
+  "notMerged": true,
+  "noT25": true,
+  "defaultFiveSecondHistoricalFailureStillOpen": true,
+  "rootCauseUnresolved": true,
+  "workerLeaseMinutes": 30,
+  "simulatedQualificationSecretStoreAndT17CaveatsRetained": true
+}

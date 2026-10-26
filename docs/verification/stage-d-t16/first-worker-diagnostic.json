@@ -1,0 +1,5 @@
+{
+  "code": "42702",
+  "message": "column reference \"id\" is ambiguous",
+  "where": "PL/pgSQL function local_identity.input_worker_call(text,jsonb) line 3 at IF"
+}

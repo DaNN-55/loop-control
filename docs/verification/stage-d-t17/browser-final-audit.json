@@ -1,0 +1,77 @@
+{
+  "packages": [
+    {
+      "artifactId": "c1ebd29c-ec3b-4c44-b8af-ce27e22a6f42",
+      "id": "914de993-ea3c-4b55-a757-7a2d0257e8dd",
+      "invalidatedAt": null,
+      "revision": 1,
+      "shots": [
+        {
+          "id": "shot-1",
+          "type": "a_roll"
+        },
+        {
+          "id": "shot-2",
+          "type": "b_roll"
+        }
+      ]
+    },
+    {
+      "artifactId": "17a6db0b-7a7c-4f79-9c55-e760f4052c16",
+      "id": "db77acb2-9032-4009-b3da-5b2da18271d1",
+      "invalidatedAt": null,
+      "revision": 2,
+      "shots": [
+        {
+          "id": "shot-1",
+          "type": "a_roll"
+        },
+        {
+          "id": "shot-2",
+          "type": "b_roll"
+        }
+      ]
+    },
+    {
+      "artifactId": "ff5991c8-ce7b-4709-b31e-c6fc3bd0e744",
+      "id": "b464d055-ce43-4f71-be2f-21f9c164b68e",
+      "invalidatedAt": null,
+      "revision": 3,
+      "shots": [
+        {
+          "id": "shot-1",
+          "type": "b_roll"
+        },
+        {
+          "id": "shot-2",
+          "type": "b_roll"
+        }
+      ]
+    },
+    {
+      "artifactId": "06c5186c-8891-4034-aee2-625c04a0860b",
+      "id": "f62d1449-7526-4666-9af8-8ca625855183",
+      "invalidatedAt": null,
+      "revision": 4,
+      "shots": [
+        {
+          "id": "shot-1",
+          "type": "b_roll"
+        },
+        {
+          "id": "shot-2",
+          "type": "a_roll"
+        }
+      ]
+    }
+  ],
+  "stage": "storyboard_approved",
+  "taskTypes": [
+    "draft_storyboard_revision",
+    "draft_storyboard_revision",
+    "draft_storyboard",
+    "draft_storyboard",
+    "prepare_visual_brief"
+  ],
+  "url": "http://127.0.0.1:55180/?episode=fe16d614-416f-42c4-a6ad-500243e9f52a#storyboard-shot-f62d1449-7526-4666-9af8-8ca625855183-shot-2"
+}

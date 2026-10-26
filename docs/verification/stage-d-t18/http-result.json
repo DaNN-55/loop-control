@@ -1,0 +1,205 @@
+{
+  "at": "2026-10-24T07:19:17.699Z",
+  "results": [
+    {
+      "provider": "google_tts",
+      "episodeId": "a2eed261-2f28-4fc0-9e06-6776a83b6b37",
+      "reviewPackageId": "037a3b04-1b94-434e-8cf0-8da1563cb9cf",
+      "taskId": "fb9f50f3-4aec-4a78-8f41-76db8fd01762",
+      "artifact": {
+        "id": "20f59eaf-b643-4229-9c85-5c660d1a0470",
+        "path": "episodes/a2eed261-2f28-4fc0-9e06-6776a83b6b37/audio/shot-narration-shot-1-d06140ad0d6221a6fb59f9f83850a243.mp3",
+        "sha256": "a09f9c4890f827c47a435584e204fe87076c1e4993faab2d3320f01d72e5b356",
+        "bytes": 10074
+      },
+      "audioTrackId": "eb1a98e3-5021-47af-adaf-435c3f74b70b",
+      "durationSeconds": 1.2,
+      "progressObserved": true,
+      "frozenTextVoiceAndConnection": true,
+      "duplicate2OneTask": true,
+      "reuseWithoutProviderResponse": true,
+      "failedTaskId": "27d754dd-4c1a-409b-9ef1-6860e80bf435",
+      "retryTaskId": "1e39c9a5-195d-4687-8f5c-5a401eeff858",
+      "explicitRetryNewTask": true,
+      "oldTrackRetainedAndRestored": true
+    },
+    {
+      "provider": "volcengine_tts",
+      "episodeId": "e5681db8-8640-46a8-8bea-d5d8ba63f738",
+      "reviewPackageId": "3721dd55-dd4d-43eb-b9b2-fefae2297bae",
+      "taskId": "86e6eb0b-3d83-42f0-8779-2fe4f9d83a52",
+      "artifact": {
+        "id": "83cced35-85e9-42b0-8c2c-012e6499b0b2",
+        "path": "episodes/e5681db8-8640-46a8-8bea-d5d8ba63f738/audio/shot-narration-shot-1-d555374e9fc9ded93fd163d58593067e.mp3",
+        "sha256": "a09f9c4890f827c47a435584e204fe87076c1e4993faab2d3320f01d72e5b356",
+        "bytes": 10074
+      },
+      "audioTrackId": "c85d6456-9a41-4214-b039-ee96b9f6eb75",
+      "durationSeconds": 1.2,
+      "progressObserved": true,
+      "frozenTextVoiceAndConnection": true,
+      "duplicate2OneTask": true,
+      "reuseWithoutProviderResponse": true,
+      "failedTaskId": "956cb78e-2c1d-4d26-bae4-e9074bdf30cd",
+      "retryTaskId": "d93a5580-0694-4a85-9739-c5e85eae25f6",
+      "explicitRetryNewTask": true,
+      "oldTrackRetainedAndRestored": true
+    }
+  ],
+  "realHttp": true,
+  "realNativePg": true,
+  "realWorkerCli": true,
+  "realMp3FilesAndFfprobe": true,
+  "providerRequests": 0,
+  "controlledResponses": true,
+  "secretStore": "substitute, not real Keychain",
+  "qualification": "seeded fixture metadata, not live verification",
+  "onlineGenerationNotAccepted": true,
+  "calls": [
+    {
+      "command": "create",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "start",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "planStoryboard",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "saveTtsSettings",
+      "status": 200
+    },
+    {
+      "command": "saveTtsDraft",
+      "status": 200
+    },
+    {
+      "command": "generateTts",
+      "status": 200
+    },
+    {
+      "command": "generateTts",
+      "status": 200
+    },
+    {
+      "command": "generateTts",
+      "status": 200
+    },
+    {
+      "command": "saveTtsDraft",
+      "status": 200
+    },
+    {
+      "command": "generateTts",
+      "status": 200
+    },
+    {
+      "command": "generateTts",
+      "status": 200
+    },
+    {
+      "command": "generateTts",
+      "status": 200
+    },
+    {
+      "command": "saveTtsDraft",
+      "status": 200
+    },
+    {
+      "command": "generateTts",
+      "status": 200
+    },
+    {
+      "command": "create",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "importMaterial",
+      "status": 200
+    },
+    {
+      "command": "start",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "planStoryboard",
+      "status": 200
+    },
+    {
+      "command": "review",
+      "status": 200
+    },
+    {
+      "command": "saveTtsSettings",
+      "status": 200
+    },
+    {
+      "command": "saveTtsDraft",
+      "status": 200
+    },
+    {
+      "command": "generateTts",
+      "status": 200
+    },
+    {
+      "command": "generateTts",
+      "status": 200
+    },
+    {
+      "command": "generateTts",
+      "status": 200
+    },
+    {
+      "command": "saveTtsDraft",
+      "status": 200
+    },
+    {
+      "command": "generateTts",
+      "status": 200
+    },
+    {
+      "command": "generateTts",
+      "status": 200
+    },
+    {
+      "command": "generateTts",
+      "status": 200
+    },
+    {
+      "command": "saveTtsDraft",
+      "status": 200
+    },
+    {
+      "command": "generateTts",
+      "status": 200
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,17 @@
+node:internal/modules/run_main:107
+    triggerUncaughtException(
+    ^
+
+[TypeError: fetch failed] {
+  [cause]: Error: T23 outbound socket denied
+      at Socket.connect (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/t23-20261024/network-guard.mjs:1:280)
+      at Object.connect (node:net:261:17)
+      at connect (node:internal/deps/undici/undici:3320:24)
+      at Client.connect (node:internal/deps/undici/undici:9336:65)
+      at connect (node:internal/deps/undici/undici:9491:27)
+      at _resume (node:internal/deps/undici/undici:9647:11)
+      at resume (node:internal/deps/undici/undici:9589:7)
+      at node:internal/deps/undici/undici:9410:32
+}
+
+Node.js v24.20.0

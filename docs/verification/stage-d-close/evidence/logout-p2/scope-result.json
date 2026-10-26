@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "head": "49e25388a65687a93ec14d864345b194a73607fa",
+  "branch": "codex/local-first-stage-a",
+  "sourceChangedThisP2": [
+    "src/local-app/LocalCatalogApp.test.tsx",
+    "src/local-app/LocalCatalogApp.tsx"
+  ],
+  "clientUnchanged": true,
+  "sqlAndOtherPriorImplementationUnchanged": true,
+  "priorPublicEvidenceUnchanged": 331,
+  "priorPrivateEvidenceUnchanged": 397,
+  "rootPlanAnd43UnrelatedFilesUnchanged": true,
+  "privatePriorPlanUnchanged": true,
+  "currentRuntimeFingerprintMatched": true,
+  "normalServiceStopped": true,
+  "ownPortsClosed": [
+    55189,
+    55190
+  ],
+  "ownPgConnections": 0,
+  "syntheticKeychainStillAbsent": true,
+  "indexEmpty": true,
+  "noCommitPushMerge": true,
+  "newOnlineRequests": 0,
+  "noProduction": true,
+  "noEF": true,
+  "retainedResources": "Existing isolated database/media; this P2 created neither a new database nor a Keychain",
+  "historicalGateClosed": false
+}

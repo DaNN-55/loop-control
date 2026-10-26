@@ -1,0 +1,1 @@
+{"passed":true,"rangeCases":6,"providerRequests":0}

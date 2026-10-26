@@ -1,0 +1,19 @@
+{
+  "passed": true,
+  "twoIndependentNativeConsumers": true,
+  "controlledClockExpiry": true,
+  "leaseLossAbortsOldAction": true,
+  "oldAttemptCannotOverwriteRecoveredSuccess": true,
+  "history": [
+    {
+      "passed": false,
+      "status": "interrupted",
+      "attempt": 1
+    },
+    {
+      "passed": true,
+      "status": "completed",
+      "attempt": 2
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "beforeFiles": 788,
+  "currentSourceBefore": 107,
+  "integratedAfterFiles": 107,
+  "exactCurrentSourceSetPreserved": true,
+  "archivedCopiesAfter": 0,
+  "exitCode": 0,
+  "fullNpmTestNotRunByMerger": true
+}

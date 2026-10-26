@@ -1,0 +1,1 @@
+{"reason":"Natural running lease occupies Codex capacity; process tests cannot claim in same database before expiry","firstTwoProcessRunsRetained":true,"correction":"Separate process-boundary database and HTTP port; serialize process mutations","naturalSampleUntouched":true}

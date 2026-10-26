@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-24T01:41:18.964Z",
+  "realKeychain": true,
+  "realHelper": true,
+  "realAdapter": true,
+  "putGet": true,
+  "immutableRepeat": true,
+  "differentSecretConflict": true,
+  "lockedAccessDenied": true,
+  "lockedAdapterDenied": true,
+  "dedicatedUnlockRestored": true,
+  "removedReferenceMissing": true,
+  "existingAclModified": false,
+  "onlineProviderCalls": 0,
+  "otherSearchItemsAndOrderUnchanged": true,
+  "defaultKeychainUnchanged": true,
+  "helperSha256": "70474b933bed605620e18998d299907215b21d7c91b5d757063718a5d8fddc73",
+  "controllerSha256": "dfcfb96edc4748b022fa89c75106e35c2dbc21c96b93e9dedd4ef15268feab60",
+  "passed": true
+}

@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "source": "Existing local macOS installed-voice synthetic Chinese sample, not online TTS",
+  "text": "这是本地字幕验收。",
+  "audioRelativePath": "episodes/ab08ff5b-7dfa-40bf-96d4-90674c65523a/post-production/664c5604-9879-4613-8b6f-19fbc715b51f/source.mp3",
+  "audioSha256": "26f49a501b9185e6f6a2f1b0e52c561a56717d361c7bf05e8f399593de7c74f3",
+  "audioBytes": 18730,
+  "durationSeconds": 4.046,
+  "clonedMediaShaVerified": true,
+  "priorManualAlignmentNotWhisperXEvidence": true
+}

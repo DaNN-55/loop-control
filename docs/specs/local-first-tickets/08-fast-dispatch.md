@@ -2,7 +2,7 @@
 
 **Stage:** C
 
-**Status:** committed locally — 已完成本地实现与验收并获Owner认可，本次提交归档，未推送或合并。开工只读核对 GitHub Issue [#114](https://github.com/DaNN-55/loop-control/issues/114) OPEN / ready-for-agent，唯一依赖为本地已认可并提交的T07/#113；未修改云端。
+**Status:** 本地交付并获 Owner 认可（2026-10-26）。GitHub Issue [#114](https://github.com/DaNN-55/loop-control/issues/114) 为原票引用；本轮仅同步本地状态，不更改或推断其当前云端状态。
 
 ## What to build
 
@@ -22,6 +22,12 @@ Owner提交可执行任务后及时领取，关闭页面也有后台补漏，派
 
 仅在优化工作树及隔离环境修改和验证；保留现有生产服务与数据，不合并。使用已认可的HTTP、真实数据库与真实产物测试边界；阶段必要验证不能省略。遵守票单索引中的A→B→C→D执行门禁。
 
-## 本地验收记录
+## 历史本地验收记录（2026-10-23）
 
 见[实现与验收报告](../../verification/stage-c-t08/README.md)。准备阶段构建与内容校验、即时唤醒、实际4秒兜底周期为5秒领取目标留预算、规划与领取/执行分离、运行中关闭及重启恢复均留证。普通HTTP/真实Worker/FFmpeg的ready→claim为130.337/3663.163/296.040ms；受控长任务期间无唤醒兜底为3896.427ms。满载、数据库不可用、程序过期和主动中断另列，不混入健康空槽样本。默认5000ms完整回归72文件/681项及SQL249条通过，不清除此前默认5秒门禁未通过及根因未解决限制。T09未开始。
+
+## 当前证据与限制（2026-10-26）
+
+[T08 报告](../../verification/stage-c-t08/README.md)覆盖热路径预构建、即时/兜底领取及重启；任务领取五秒与测试超时不同。当前默认 5000ms 稳定性已[补修通过](../../verification/stage-d-close/default-5s-stability.md)。
+
+[本轮普通长度、多镜头隔离功能全流程及发布包](../../verification/tts-production-e2e-20261026/README.md)已完成，包含中断恢复、一次人工对齐和 Agent QC；适用范围与画质限制见[当前票单索引](README.md)，不替代本票的专项验收或未测 Provider 证据。本轮暂不提交、推送或合并；E/F 继续搁置，旧交接与失败记录保留为历史。

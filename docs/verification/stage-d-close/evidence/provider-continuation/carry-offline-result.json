@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "syntheticOnly": true,
+  "realProviderRequests": 0,
+  "inherited16NotReset": true,
+  "seventeenthAllowedOnce": true,
+  "eighteenthDenied": true,
+  "nextProviderCannotBypassGlobal17": true,
+  "parentUnchanged": true
+}

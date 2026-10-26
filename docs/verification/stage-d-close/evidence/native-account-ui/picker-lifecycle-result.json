@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "realNormalApplication": true,
+  "realNativePickerProcesses": true,
+  "clientDisconnectTerminatesPicker": true,
+  "applicationStopTerminatesPicker": true,
+  "pickerPids": [
+    98673,
+    98701
+  ],
+  "bothProcessesGone": true,
+  "noManualKillForGreen": true,
+  "noProviderRequests": true,
+  "originalOrphanRedRetained": true
+}

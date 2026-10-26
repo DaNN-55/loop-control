@@ -1,0 +1,11 @@
+{
+  "after": 0.663762,
+  "before": 0,
+  "duration": 4.053333,
+  "error": null,
+  "passed": true,
+  "paused": true,
+  "readyState": 4,
+  "seekTime": 1.5,
+  "src": "http://127.0.0.1:55189/_local-artifact?episode=ab08ff5b-7dfa-40bf-96d4-90674c65523a&path=episodes%2Fab08ff5b-7dfa-40bf-96d4-90674c65523a%2Fpost-production%2F3059b943-f1d6-4dee-afd4-8b45d439520d%2Fproxy.mp4&sha256=76abef50890c973f87d11b98035887e6b46605677bf54f01268e469ba26e2378"
+}

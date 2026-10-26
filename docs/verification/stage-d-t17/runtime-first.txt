@@ -1,0 +1,16 @@
+
+> loop-control@0.1.0 worker:build
+> tsc -p tsconfig.worker.json
+
+src/local-app/localWorkerCli.ts(22,87): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/prepare-runtime.mjs:9
+    child.once('error',reject);child.once('exit',code=>code===0?resolve():reject(Error(`${script} failed (${code})`)));
+                                                                                 ^
+
+Error: worker:build failed (2)
+    at ChildProcess.<anonymous> (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/prepare-runtime.mjs:9:82)
+    at ChildProcess.wrapper (node:events:639:12)
+    at ChildProcess.emit (node:events:514:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:295:12)
+
+Node.js v24.20.0

@@ -1,0 +1,14 @@
+{
+  "started": "2026-10-25T01:12:11.231Z",
+  "finished": "2026-10-25T01:12:11.236Z",
+  "command": [
+    "agent-browser",
+    "--session",
+    "d-close-20261025",
+    "wait",
+    "--text",
+    "所有者登录"
+  ],
+  "status": 0,
+  "passed": true
+}

@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "episodeId": "58c94ff6-05d0-4de3-ac71-7b400bb49d5b",
+  "taskId": "ceeec5db-5f6c-4ec1-bf76-b852626a4bda",
+  "oldServiceAndWorkerKilled": true,
+  "claimedAt": "2026-10-25T03:27:53.750116+00:00",
+  "observedDatabaseTime": "2026-10-25T03:27:53.996831+00:00",
+  "leaseMinutes": 30,
+  "claimedAtManuallyChanged": false,
+  "leaseShortened": false,
+  "clockChanged": false,
+  "oldAttempt": 0,
+  "oldRunStillRunning": true
+}

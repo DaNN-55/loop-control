@@ -1,0 +1,414 @@
+{
+  "passed": true,
+  "episodeId": "86f722d2-3675-4732-a8cd-d4276af51e7c",
+  "stage": "qc_review",
+  "artifacts": 33,
+  "files": [
+    {
+      "type": "render",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/5072e6cb-1fec-439b-9727-f57228ff6a3d/review-render.mp4",
+      "bytes": 136047301,
+      "sha256": "6d126321a3939a379037047ef67d0b8f56187613f6541d09b5381f389fd291d4",
+      "durationSeconds": 46.848,
+      "streams": [
+        {
+          "type": "video",
+          "codec": "h264",
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "type": "audio",
+          "codec": "aac",
+          "sampleRate": "48000",
+          "channels": 2
+        }
+      ],
+      "fullDecodePassed": true
+    },
+    {
+      "type": "review_render_project",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/5072e6cb-1fec-439b-9727-f57228ff6a3d/project.json",
+      "bytes": 15744,
+      "sha256": "6b541159da35d165f3a4898e2723e7973669ef7e4d95d2beacc0946fb7b04bbe"
+    },
+    {
+      "type": "review_render_runtime",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/5072e6cb-1fec-439b-9727-f57228ff6a3d/openchatcut-runtime.json",
+      "bytes": 42,
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7"
+    },
+    {
+      "type": "review_qc_report",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/5072e6cb-1fec-439b-9727-f57228ff6a3d/qc-report.json",
+      "bytes": 810,
+      "sha256": "a87a4c12b9bf7419ca432b69814dfb090934fe704a2a24dd891f815819165e1d"
+    },
+    {
+      "type": "studio_frozen_project",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/openchatcut-frozen/c9bb45f0-46e1-4541-9eba-2985503642eb/project.json",
+      "bytes": 15744,
+      "sha256": "6b541159da35d165f3a4898e2723e7973669ef7e4d95d2beacc0946fb7b04bbe"
+    },
+    {
+      "type": "shot_preview_qc_report",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/f64eb266-f662-4017-a50c-57b3958d8d7e/qc-report.json",
+      "bytes": 863,
+      "sha256": "00b3bfdf3c426ae5389d7b2a96448c66b6359935a52cba2ed3e5e73f986c41d8"
+    },
+    {
+      "type": "shot_editable_project",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/f64eb266-f662-4017-a50c-57b3958d8d7e/project.json",
+      "bytes": 5725,
+      "sha256": "e2b0267e883d12add0a3d2b61e6b42324cc80989049f4a0eac921b767f14bd50"
+    },
+    {
+      "type": "shot_preview_proxy",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/f64eb266-f662-4017-a50c-57b3958d8d7e/proxy.mp4",
+      "bytes": 17649009,
+      "sha256": "af27dfe7c836d3ce4354e2cb06fb8471cf3968b2f3abf39319ca34b66235e4d7",
+      "durationSeconds": 15.317333,
+      "streams": [
+        {
+          "type": "video",
+          "codec": "h264",
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "type": "audio",
+          "codec": "aac",
+          "sampleRate": "48000",
+          "channels": 2
+        }
+      ],
+      "fullDecodePassed": true
+    },
+    {
+      "type": "shot_preview_runtime",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/f64eb266-f662-4017-a50c-57b3958d8d7e/openchatcut-runtime.json",
+      "bytes": 42,
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7"
+    },
+    {
+      "type": "shot_preview_runtime",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/0a1a0aa2-e207-410d-94b5-12b9e2504b96/openchatcut-runtime.json",
+      "bytes": 42,
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7"
+    },
+    {
+      "type": "shot_preview_qc_report",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/0a1a0aa2-e207-410d-94b5-12b9e2504b96/qc-report.json",
+      "bytes": 863,
+      "sha256": "02052cbe11afc59d8b9882e22e918340a64b7e902630fba7f90ca62c5c0a41a3"
+    },
+    {
+      "type": "shot_preview_proxy",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/0a1a0aa2-e207-410d-94b5-12b9e2504b96/proxy.mp4",
+      "bytes": 48662506,
+      "sha256": "989660d879d2bff3d2a005f636db22ca66d8f0a5f0f291ed7b8bfa8fe824ba2d",
+      "durationSeconds": 15.957333,
+      "streams": [
+        {
+          "type": "video",
+          "codec": "h264",
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "type": "audio",
+          "codec": "aac",
+          "sampleRate": "48000",
+          "channels": 2
+        }
+      ],
+      "fullDecodePassed": true
+    },
+    {
+      "type": "shot_editable_project",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/0a1a0aa2-e207-410d-94b5-12b9e2504b96/project.json",
+      "bytes": 5912,
+      "sha256": "0eca8f0d47829119bb70bf8356cc095c976373ef4783f3aa14531973e6b7c194"
+    },
+    {
+      "type": "shot_preview_runtime",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/c5e66eb7-3668-4e0b-b3b3-897e12feebed/openchatcut-runtime.json",
+      "bytes": 42,
+      "sha256": "88c0bd65cff707c2113ea8f63d9cc5965a397f4bc14c35de28269ceaf6d08cd7"
+    },
+    {
+      "type": "shot_editable_project",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/c5e66eb7-3668-4e0b-b3b3-897e12feebed/project.json",
+      "bytes": 5707,
+      "sha256": "31bd03a1d81ce5efab32ed6f276c435dbc563467b690905b34d34966f774d5fa"
+    },
+    {
+      "type": "shot_preview_qc_report",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/c5e66eb7-3668-4e0b-b3b3-897e12feebed/qc-report.json",
+      "bytes": 859,
+      "sha256": "bee2d5c491ccb219d466de763a18511af9dcce6de7e72d9cf598d3c6359907cc"
+    },
+    {
+      "type": "shot_preview_proxy",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/c5e66eb7-3668-4e0b-b3b3-897e12feebed/proxy.mp4",
+      "bytes": 69884289,
+      "sha256": "8e71abd9faabf4d80fc0d117d422d0283e7e8544df9799d4dac7e1a3dfd5cbb3",
+      "durationSeconds": 15.68,
+      "streams": [
+        {
+          "type": "video",
+          "codec": "h264",
+          "width": 1080,
+          "height": 1920
+        },
+        {
+          "type": "audio",
+          "codec": "aac",
+          "sampleRate": "48000",
+          "channels": 2
+        }
+      ],
+      "fullDecodePassed": true
+    },
+    {
+      "type": "acoustic_alignment_evidence",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/ce904233-ca16-4c4e-a6d2-1302716c9d5c/alignment.json",
+      "bytes": 2411,
+      "sha256": "35eb31e993b9ee4aed4e7ad31f1155ada374b5234a2d5d59da1ce16fc38af16b"
+    },
+    {
+      "type": "b_roll_asset",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/5c902cc2-43da-403b-9fc3-8c2772f65f5a/shot-3-8e6e7756e89f80d749d36ef06e1f47d6.mp4",
+      "bytes": 500693,
+      "sha256": "8e463439e4359b3f2a44cf93170432ed274803cac49b0f574ea1b6279cea7b27",
+      "durationSeconds": 15.288021,
+      "streams": [
+        {
+          "type": "video",
+          "codec": "h264",
+          "width": 240,
+          "height": 426
+        },
+        {
+          "type": "audio",
+          "codec": "aac",
+          "sampleRate": "48000",
+          "channels": 2
+        }
+      ],
+      "fullDecodePassed": true
+    },
+    {
+      "type": "acoustic_alignment_evidence",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/5a86dc44-fd01-4b79-b0e7-8fbe3eab4ab0/alignment.json",
+      "bytes": 2225,
+      "sha256": "f14910054d0a01e03db8ebebb25c0da1be73ba7dd5ed187b6a03791f8b75f982"
+    },
+    {
+      "type": "b_roll_asset",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/8497cd4f-6526-45d7-840c-19488d7af413/shot-2-70ee7dc44256e39c34b6633ecaa326bc.mp4",
+      "bytes": 7157192,
+      "sha256": "446a70a31ccd0b88d1eebfb471ef902643ee8ac5e463e42726fdeb1e006894da",
+      "durationSeconds": 15.9,
+      "streams": [
+        {
+          "type": "video",
+          "codec": "h264",
+          "width": 360,
+          "height": 640
+        }
+      ],
+      "fullDecodePassed": true
+    },
+    {
+      "type": "acoustic_alignment_evidence",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/2e03a20d-d04a-4009-951d-44e1fdc30026/shot-3-2d485e2c05bcd9a487996998757cdb45d33aff58e353ad506a3073a88eecc389.json",
+      "bytes": 2411,
+      "sha256": "eec0f714530f244123ab6dcbccd70bdacf14ec48f0e7a0ec65b4acdfbc2faf78"
+    },
+    {
+      "type": "acoustic_alignment_evidence",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/e71e579b-9814-45c6-8b6c-2e23691b64a8/shot-2-6c6fa97eb9eaeb9150767a7d559ca7c0e69082b63b6cf66ac65305ebbc83aa9b.json",
+      "bytes": 2225,
+      "sha256": "b1ad603db31476a20ac421bdd78ff591eac9c36db181719062b32d9e38cb2de8"
+    },
+    {
+      "type": "acoustic_alignment_evidence",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/3921b539-167b-4649-8fb5-bd2785295085/shot-1-c42498e4dd34e0943e00a58581180ba9e24294b668fd8fd70497b1144ced628f.json",
+      "bytes": 2119,
+      "sha256": "6a1f3fbcc0e3a0deb28cc68df2ea1166da7cc396d72358be96055c524a67bc3c"
+    },
+    {
+      "type": "b_roll_asset",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/a73e9a9f-ea6b-4864-93fb-9d3eaf0ddee5/shot-1-f1a319e92fc72886b306eb5541a99ffa.mp4",
+      "bytes": 8997635,
+      "sha256": "ee71aaa3dcdf459fc9b2bbf050ad0de26caae5fb43ffab75eab25e65ba357bd0",
+      "durationSeconds": 15.65,
+      "streams": [
+        {
+          "type": "video",
+          "codec": "h264",
+          "width": 360,
+          "height": 640
+        }
+      ],
+      "fullDecodePassed": true
+    },
+    {
+      "type": "narration_audio",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/1383ac69-493c-48e7-afd9-8aea93b9d0ea/shot-narration-shot-3-9472554f748dc674454cd417349e597c.mp3",
+      "bytes": 122157,
+      "sha256": "96bb253eaf01b33f1c0b14bda9374147cac9f8f6e35638e22ab155126d155469",
+      "durationSeconds": 15.264,
+      "streams": [
+        {
+          "type": "audio",
+          "codec": "mp3",
+          "sampleRate": "24000",
+          "channels": 1
+        }
+      ],
+      "fullDecodePassed": true
+    },
+    {
+      "type": "narration_audio",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/df7ce473-1af9-4271-80fd-a0db57bc6bb2/shot-narration-shot-2-b56ff893ef9f7a59e2202cd836cba8a1.mp3",
+      "bytes": 127149,
+      "sha256": "e6d9a61831b7950eb7ce27b98260246f488d5426f4a172bc13383d817614e06c",
+      "durationSeconds": 15.888,
+      "streams": [
+        {
+          "type": "audio",
+          "codec": "mp3",
+          "sampleRate": "24000",
+          "channels": 1
+        }
+      ],
+      "fullDecodePassed": true
+    },
+    {
+      "type": "narration_audio",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/7d14311e-441b-4f1e-8e68-089c7955db82/shot-narration-shot-1-13e1e50e9635f72d2130115474140502.mp3",
+      "bytes": 125229,
+      "sha256": "6e551c3d863c0baa3a2c3b45bad387b13354abe221158d810e4a1128cdfd04c0",
+      "durationSeconds": 15.648,
+      "streams": [
+        {
+          "type": "audio",
+          "codec": "mp3",
+          "sampleRate": "24000",
+          "channels": 1
+        }
+      ],
+      "fullDecodePassed": true
+    },
+    {
+      "type": "b_roll_asset",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/f0c4d6fa-9d1c-4357-ab73-d1a8a54c734e/shot-3.mp4",
+      "bytes": 2117738,
+      "sha256": "cf42a5062fd7f775f15ec9112a95b1909d8f006fffa73012f980571573fa4c5d",
+      "durationSeconds": 33.813333,
+      "streams": [
+        {
+          "type": "video",
+          "codec": "h264",
+          "width": 240,
+          "height": 426
+        },
+        {
+          "type": "audio",
+          "codec": "aac",
+          "sampleRate": "48000",
+          "channels": 2
+        }
+      ],
+      "fullDecodePassed": true
+    },
+    {
+      "type": "b_roll_asset",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/ba170534-6b3d-492e-972c-228594f687fa/shot-1.mp4",
+      "bytes": 13326115,
+      "sha256": "0471d81831cd2085860767f2d2cae3a4bae889311f5f12c0eaa2b5448a62ee85",
+      "durationSeconds": 16.666667,
+      "streams": [
+        {
+          "type": "video",
+          "codec": "h264",
+          "width": 360,
+          "height": 640
+        }
+      ],
+      "fullDecodePassed": true
+    },
+    {
+      "type": "b_roll_asset",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/44ce9945-3d7a-40b3-9fc1-7f75d9b5304e/shot-2.mp4",
+      "bytes": 19136325,
+      "sha256": "960928924349b11578db49de08333a7123707044b6af65ef896594941aa65720",
+      "durationSeconds": 31.2,
+      "streams": [
+        {
+          "type": "video",
+          "codec": "h264",
+          "width": 360,
+          "height": 640
+        }
+      ],
+      "fullDecodePassed": true
+    },
+    {
+      "type": "storyboard",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/dadfddca-0c46-4284-817d-da418b1aad3c/storyboard-v1.json",
+      "bytes": 3908,
+      "sha256": "011c7a30ba9d9cafacc622b5ae2f5468f87e40e4983b230bf4064475189a560d"
+    },
+    {
+      "type": "visual_asset_manifest",
+      "path": "episodes/86f722d2-3675-4732-a8cd-d4276af51e7c/native-tasks/5f547403-6e99-4374-8061-2b626e9b8c02/visual-assets-v1.md",
+      "bytes": 3541,
+      "sha256": "b50bd940f2cee3dfb7adbc7656c9ff8309e23b54eb5e5d3b8242c81381a5be61"
+    }
+  ],
+  "shots": [
+    {
+      "shotId": "shot-1",
+      "characters": 70,
+      "text": "清晨走进森林，先把脚步放慢。阳光穿过层层树叶，在小路上留下细碎的光影。仔细听，鸟鸣和风声一直都在，只是平时忙着赶路，我们很少真正停下来感受。",
+      "audioBytes": 125229,
+      "audioSha256": "6e551c3d863c0baa3a2c3b45bad387b13354abe221158d810e4a1128cdfd04c0",
+      "alignmentInputVersion": "c42498e4dd34e0943e00a58581180ba9e24294b668fd8fd70497b1144ced628f",
+      "alignmentStatus": "completed",
+      "cues": 8,
+      "captionConfirmationPresent": true,
+      "previewConfirmed": true
+    },
+    {
+      "shotId": "shot-2",
+      "characters": 75,
+      "text": "沿着河流继续向前，水面映出天空，也映出两岸安静的树木。河水绕过石头，仍然朝远方流去。遇到暂时的阻碍，不必急着和自己较劲，换一个方向，也能找到新的出口。",
+      "audioBytes": 127149,
+      "audioSha256": "e6d9a61831b7950eb7ce27b98260246f488d5426f4a172bc13383d817614e06c",
+      "alignmentInputVersion": "6c6fa97eb9eaeb9150767a7d559ca7c0e69082b63b6cf66ac65305ebbc83aa9b",
+      "alignmentStatus": "completed",
+      "cues": 9,
+      "captionConfirmationPresent": true,
+      "previewConfirmed": true
+    },
+    {
+      "shotId": "shot-3",
+      "characters": 76,
+      "text": "当山峦出现在眼前，视野忽然变得开阔。远处的峰顶并不催促谁，路却始终在那里。把注意力放回眼前这一步，认真走过今天能走的一段，日积月累，就会看见自己的变化。",
+      "audioBytes": 122157,
+      "audioSha256": "96bb253eaf01b33f1c0b14bda9374147cac9f8f6e35638e22ab155126d155469",
+      "alignmentInputVersion": "6e6e11852eaadece4376d9fa20f1cb52058cdaf42e49b0a5836fd6468f8991d4",
+      "alignmentStatus": "completed",
+      "cues": 8,
+      "captionConfirmationPresent": true,
+      "previewConfirmed": true
+    }
+  ],
+  "publishPackageVerified": false,
+  "allMediaDecoded": true,
+  "humanViewingClaim": false,
+  "humanListeningClaim": false
+}

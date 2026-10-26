@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "actualBlockedConnections": 2,
+  "claimedRowsByConnection": [
+    1,
+    0
+  ],
+  "sameTaskNewAttemptClaimedExactlyOnce": true,
+  "newWorkerAttempt": 1,
+  "expiredBudgetTaskNaturallyWaited": true,
+  "budgetElapsedSecondsAtRecovery": 1800.411,
+  "budgetTerminal": true,
+  "noExtraBudgetRun": true,
+  "expiredHeartbeatDidNotRevive": true,
+  "lateOperationsRejected": [
+    {
+      "operation": "refresh_worker_task_lease",
+      "code": "42501"
+    },
+    {
+      "operation": "refresh_worker_task_lease",
+      "code": "42501"
+    },
+    {
+      "operation": "report_worker_progress",
+      "code": "42501"
+    },
+    {
+      "operation": "report_worker_result",
+      "code": "42501"
+    },
+    {
+      "operation": "refresh_worker_task_lease",
+      "code": "42501"
+    }
+  ],
+  "oldCallbacksDidNotChangeNewAttempt": true,
+  "renewalHeldRealRowLock": true,
+  "validRenewalWasNotRecovered": true,
+  "noClaimedAtUpdate": true,
+  "noClockOrLeaseDurationChange": true,
+  "fixtures": "Real native worker RPC and actual DB concurrency in dedicated clone; final result is controlled failure, not an artifact completion claim"
+}

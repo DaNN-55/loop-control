@@ -1,0 +1,15 @@
+AssertionError [ERR_ASSERTION]: {"error":"配置校验未通过。"}
+
+400 !== 200
+
+    at post (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/alignment-acceptance.mjs:46:305)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Object.test (file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/alignment-acceptance.mjs:64:2)
+    at async file:///Users/dan/.codex/worktrees/local-first-optimization/loop-control/scripts/local/alignment-acceptance.mjs:83:55 {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: 400,
+  expected: 200,
+  operator: 'strictEqual',
+  diff: 'simple'
+}

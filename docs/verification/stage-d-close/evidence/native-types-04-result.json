@@ -1,0 +1,12 @@
+{
+  "started": "2026-10-25T00:46:11.452Z",
+  "finished": "2026-10-25T00:46:12.269Z",
+  "command": [
+    "node",
+    "node_modules/typescript/bin/tsc",
+    "-p",
+    "tsconfig.local-app.json"
+  ],
+  "status": 0,
+  "passed": true
+}

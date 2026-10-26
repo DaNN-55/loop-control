@@ -1,0 +1,29 @@
+{
+  "passed": true,
+  "intakeProfileRestored": true,
+  "allOnlineVerificationDisabled": true,
+  "liveLedgerHalted": true,
+  "requestsUsed": 2,
+  "feeReservedCny": 0,
+  "currentVersions": [
+    {
+      "provider": "pexels",
+      "qualified": true
+    },
+    {
+      "provider": "freesound",
+      "qualified": false
+    },
+    {
+      "provider": "google_tts",
+      "qualified": false
+    },
+    {
+      "provider": "volcengine_tts",
+      "qualified": false
+    }
+  ],
+  "realCredentialsRetained": true,
+  "onlineWorkerOrTasksConfigured": false,
+  "noMoreProviderRequests": true
+}

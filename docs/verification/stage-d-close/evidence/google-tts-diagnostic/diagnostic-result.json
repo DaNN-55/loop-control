@@ -1,0 +1,15 @@
+{
+  "diagnosticCompleted": true,
+  "ownerHttpStatus": 200,
+  "mode": "live",
+  "outcome": "invalid",
+  "ready": false,
+  "additionalRequests": 1,
+  "cumulativeRequests": 10,
+  "cumulativeCostReservedCny": 0.03,
+  "maxRequests": 17,
+  "feeAuthorizationCny": 2,
+  "actualBillQueried": false,
+  "synthesisCalled": false,
+  "automaticRetry": false
+}

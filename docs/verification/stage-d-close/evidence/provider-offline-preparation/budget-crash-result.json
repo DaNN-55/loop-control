@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "realOwnerProcessKilledAfterDurableReservation": true,
+  "used": 1,
+  "secondProcessTransportCalled": false,
+  "orphanLockRetained": true,
+  "noAutomaticRefundOrTakeover": true,
+  "noOnlineRequests": true
+}

@@ -1,0 +1,43 @@
+{
+  "provider": "google_tts",
+  "configurationUnchanged": true,
+  "configuredCandidates": 1,
+  "outcome": "invalid",
+  "ready": false,
+  "reason": "BILLING_DISABLED",
+  "httpStatus": 403,
+  "diagnostic": {
+    "httpStatus": 403,
+    "errorStatus": "PERMISSION_DENIED",
+    "errorInfo": [
+      {
+        "reason": "BILLING_DISABLED",
+        "domain": "googleapis.com",
+        "service": "texttospeech.googleapis.com"
+      }
+    ],
+    "unrecognizedErrorInfoCount": 0,
+    "rawMessageStored": false,
+    "projectIdentifiersStored": false,
+    "headersOrCredentialsStored": false,
+    "onlyAllowlistedFieldsStored": true
+  },
+  "actualRequests": 1,
+  "transportDispatches": 1,
+  "synthesisCalls": 0,
+  "generationCalls": 0,
+  "downloads": 0,
+  "automaticRetry": false,
+  "actualBillQueried": false,
+  "costReservedCny": 0,
+  "verificationOnly": true,
+  "fullMediaAcceptancePassed": false,
+  "transportEvents": [
+    {
+      "host": "texttospeech.googleapis.com",
+      "path": "/v1/voices",
+      "method": "GET",
+      "queryHeadersAndBodyNotRecorded": true
+    }
+  ]
+}

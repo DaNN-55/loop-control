@@ -1,5 +1,4 @@
 import type { Database, Json } from "../lib/database.types";
-import type { WorkerPreflightAction, WorkerPreflightPhase, WorkerPreflightScope, WorkerPreflightStatus } from "../worker/contracts";
 
 type Episode = Database["public"]["Tables"]["episodes"]["Row"];
 type PreRenderReviewMember = Database["public"]["Tables"]["pre_render_review_members"]["Row"];
@@ -7,18 +6,8 @@ type PreRenderReviewMemberDecision = Database["public"]["Tables"]["pre_render_re
 type ReviewPackage = Database["public"]["Tables"]["review_packages"]["Row"];
 type Task = Database["public"]["Tables"]["tasks"]["Row"];
 
-export interface WorkerBlocker {
-  code: string;
-  detail: string;
-  taskId?: string;
-  taskType?: Task["task_type"];
-  capability?: string;
-  check?: string;
-  phase?: WorkerPreflightPhase;
-  status?: WorkerPreflightStatus;
-  action?: WorkerPreflightAction;
-  scope?: WorkerPreflightScope;
-}
+export type{WorkerBlocker}from"./workerBlocker";
+import type{WorkerBlocker}from"./workerBlocker";
 
 export function currentReviewPackage(reviewPackages: ReviewPackage[], episode: Episode): ReviewPackage | null {
   return reviewPackages

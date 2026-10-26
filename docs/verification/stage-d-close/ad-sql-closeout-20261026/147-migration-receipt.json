@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "database": "loop_t24_restore_sql20261026",
+  "migration": "043-owner-policy-initplans.sql",
+  "sha256": "361ff9ae7f716aa3e97fe4372d168adab3ab8642b4f431c9f99da1044ca3fd09",
+  "existingRowsRewritten": false,
+  "oldDatabasesChanged": false,
+  "providerRequests": 0
+}

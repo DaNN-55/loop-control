@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/local-first-optimization/loop-control
+
+ ✓ src/worker/contracts.test.ts (18 tests | 17 skipped) 5ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 17 skipped (18)
+   Start at  20:47:16
+   Duration  612ms (transform 54ms, setup 0ms, collect 64ms, tests 5ms, environment 271ms, prepare 44ms)
+

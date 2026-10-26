@@ -1,0 +1,12 @@
+[
+  {
+    "duration": 1.2,
+    "readyState": 4,
+    "src": "/_local-artifact?episode=a2eed261-2f28-4fc0-9e06-6776a83b6b37&path=episodes%2Fa2eed261-2f28-4fc0-9e06-6776a83b6b37%2Faudio%2Fshot-narration-shot-1-ec759dbf14142c86453f9c2d1ceaf951-retry-cf4651a8-fb96-4cd1-8d0c-a5ccde63ee6a.mp3&sha256=a09f9c4890f827c47a435584e204fe87076c1e4993faab2d3320f01d72e5b356"
+  },
+  {
+    "duration": 1.2,
+    "readyState": 4,
+    "src": "/_local-artifact?episode=a2eed261-2f28-4fc0-9e06-6776a83b6b37&path=episodes%2Fa2eed261-2f28-4fc0-9e06-6776a83b6b37%2Faudio%2Fshot-narration-shot-1-b40a32b4c452dc7a49606a6a86402223.mp3&sha256=a09f9c4890f827c47a435584e204fe87076c1e4993faab2d3320f01d72e5b356"
+  }
+]

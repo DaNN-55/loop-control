@@ -1,0 +1,77 @@
+{
+  "passed": true,
+  "realNormalNpmEntry": true,
+  "realOwnerHttpAndPostgres": true,
+  "sharedCreateEpisodePreflightPassed": true,
+  "preflightHasNoTaskDispatch": true,
+  "staleBlueprintAndRevision409": true,
+  "unknownField400": true,
+  "outsideAndSymlink400": true,
+  "crossOwnerRealAccount404": true,
+  "noCsrfAndCrossOrigin403": true,
+  "noSessionAndRevokedSession401": true,
+  "realNativeOpenAccepted": true,
+  "providerRequests": 0,
+  "calls": [
+    {
+      "command": "checkBlueprint",
+      "status": 200
+    },
+    {
+      "command": "checkBlueprint",
+      "status": 409
+    },
+    {
+      "command": "checkBlueprint",
+      "status": 409
+    },
+    {
+      "command": "checkBlueprint",
+      "status": 400
+    },
+    {
+      "command": "openAssetDirectory",
+      "status": 400
+    },
+    {
+      "command": "openAssetDirectory",
+      "status": 400
+    },
+    {
+      "command": "openAssetDirectory",
+      "status": 400
+    },
+    {
+      "command": "openAssetDirectory",
+      "status": 404
+    },
+    {
+      "command": "openAssetDirectory",
+      "status": 404
+    },
+    {
+      "command": "checkBlueprint",
+      "status": 404
+    },
+    {
+      "command": "openAssetDirectory",
+      "status": 403
+    },
+    {
+      "command": "openAssetDirectory",
+      "status": 403
+    },
+    {
+      "command": "openAssetDirectory",
+      "status": 401
+    },
+    {
+      "command": "openAssetDirectory",
+      "status": 200
+    },
+    {
+      "command": "checkBlueprint",
+      "status": 401
+    }
+  ]
+}

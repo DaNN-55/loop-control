@@ -1,0 +1,11 @@
+{
+  "originalNegativeTestPassed": false,
+  "actualStatus": "completed",
+  "actualPhraseConfidence": 0.8380909090909092,
+  "confirmedTextUsed": "\u7d2b\u8272\u7684\u706b\u8f66\u6b63\u5728\u6d77\u5e95\u8df3\u821e\u3002",
+  "reason": "Forced alignment assumes supplied confirmed text; its score is not an independent transcript verification",
+  "thresholdNotChanged": 0.72,
+  "rawUnexpectedResultRetained": "real-mismatch-alignment.json",
+  "notClaimedAsMismatchDetectionSuccess": true,
+  "noASRScopeAdded": true
+}
