@@ -1,0 +1,37 @@
+{
+  "passed": true,
+  "newRunAuthorizationsDisabled": true,
+  "originalHistoricalBudgetsUntouched": true,
+  "receipts": [
+    {
+      "directory": "cloudflare-network-v2",
+      "enabled": false,
+      "used": 0,
+      "countersEventsAndReservationsPreserved": true
+    },
+    {
+      "directory": "freesound-network-v2",
+      "enabled": false,
+      "used": 1,
+      "countersEventsAndReservationsPreserved": true
+    },
+    {
+      "directory": "google_tts-network",
+      "enabled": false,
+      "used": 0,
+      "countersEventsAndReservationsPreserved": true
+    },
+    {
+      "directory": "google_tts-network-v2",
+      "enabled": false,
+      "used": 1,
+      "countersEventsAndReservationsPreserved": true
+    },
+    {
+      "directory": "openai-network-v2",
+      "enabled": false,
+      "used": 0,
+      "countersEventsAndReservationsPreserved": true
+    }
+  ]
+}

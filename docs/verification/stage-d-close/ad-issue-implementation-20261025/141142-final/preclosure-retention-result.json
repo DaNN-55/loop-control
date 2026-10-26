@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "priorPublic": 1324,
+  "priorPrivate": 3506,
+  "priorEvidenceMismatches": [],
+  "originalUnrelatedHashedFiles": 20,
+  "unrelatedChanges": [],
+  "finalSourceFiles": 43,
+  "finalSourceAggregateSha256": "207c8547fba52862d4e9bf535605f7b41d23c15d343dd4ee701b98abeb1852a8",
+  "sourceChangedSinceFinalRun": false,
+  "historicalGateMetadataPreserved": true,
+  "newDebugRawGapsExplicitlyDeclared": 2
+}

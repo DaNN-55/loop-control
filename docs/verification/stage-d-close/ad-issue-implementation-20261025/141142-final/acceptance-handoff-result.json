@@ -1,0 +1,127 @@
+{
+  "at": "2026-10-25T23:33:21.226298+00:00",
+  "scope": "#141/#142 actual acceptance handoff; ticket closure remains root Spec decision",
+  "episodeId": "5eb48e39-6c99-4c95-b3ab-ed91dea7d3e7",
+  "blueprintId": "e9fd2ae1-bc44-4929-991b-4b3325220baf",
+  "sameOwnerSameEpisodeSameBlueprint": true,
+  "normalEntrypoints": true,
+  "actualCli": {
+    "tasks": 2,
+    "totalMs": 138642.002625,
+    "validated": true,
+    "noRetries": true
+  },
+  "actualProvider": {
+    "requests": 4,
+    "costReservedMicrounits": 100000,
+    "byOperation": {
+      "volcengine_tts.verify": 1,
+      "pexels.search": 1,
+      "pexels.download": 1,
+      "volcengine_tts.generate": 1
+    },
+    "halted": false,
+    "policyExpiredAndUnchanged": true
+  },
+  "normalHttpNegatives": {
+    "noOwner401": true,
+    "foreign404": true,
+    "missingConfigBlocked": true,
+    "missingCommandBlockedBeforeScheduler": true,
+    "remoteAuthFailureNotExercised": true
+  },
+  "localContractNegatives": "local-contract-negatives-result.json; actual old failed lease rejected before later local chain; accepted bytes/DB then unchanged",
+  "taskIds": {
+    "visual": "a63d4d72-59bb-4f6f-93be-690e4eb6dd24",
+    "storyboard": "8688c8e8-9e5a-43b2-b23f-ca3740c8c3a3",
+    "media": "784cad27-9dbd-49cc-990f-cac50b5faf56",
+    "tts": "deb72552-fce9-4381-8de5-a977235e6b0e",
+    "clip": "cb4446b0-19ad-4811-b6bb-e18f8c7d8380",
+    "alignment": "2e964abf-cf78-4ea1-bcbd-ac9366f1d9c6",
+    "preview": "06441804-4aec-4f37-8418-4bd6fca501dd",
+    "review": "f5ed5d41-059a-4f9a-961a-5d1aa322a37e",
+    "final": "e92bd34a-ddbd-492b-96af-fe57057fc4a7"
+  },
+  "artifactCount": 21,
+  "allArtifactsOwnerHttpEqualsDisk": true,
+  "productionCompleted": true,
+  "normalRestartReadbackExact": true,
+  "oldFailedTasksAndFourRunsPreserved": true,
+  "audioReview": {
+    "receipt": "owner-listening-confirmed-private.json",
+    "realHumanOwnerHeard": true,
+    "text": "看见自然。",
+    "actualSeconds": 1.248,
+    "plannedSeconds": 2,
+    "planDeltaSeconds": -0.752,
+    "boardNotRewritten": true
+  },
+  "qcReview": {
+    "receipt": "root-agent-qc-reviewed-private.json",
+    "agentActuallyInspected": true,
+    "testOwnerApiAuthorized": true,
+    "humanViewingClaim": false,
+    "rootFullDecodeAndAudioCorrelationEvidence": "root-video-inspection-result.json"
+  },
+  "studio": {
+    "normalCurrentRevisionWriteAndReadback": true,
+    "volumeBefore": 1,
+    "volumeAfter": 0.9,
+    "actualChromeVisible": true
+  },
+  "publishPackage": {
+    "episodeId": "5eb48e39-6c99-4c95-b3ab-ed91dea7d3e7",
+    "status": "verified",
+    "publishPackage": {
+      "artifactType": "publish_package",
+      "relativePath": "episodes/5eb48e39-6c99-4c95-b3ab-ed91dea7d3e7/publish-package/manifest.json",
+      "sha256": "5b4713b725f6ee965674856e3e593b34b9ce2fa5f30b975a6ca4d0069baf649c",
+      "fileSize": 1222
+    }
+  },
+  "externalPublication": false,
+  "skippedOnlineProviders": [
+    "google_tts",
+    "cloudflare",
+    "openai",
+    "freesound"
+  ],
+  "evidence": {
+    "audit-result.json": "9b331c57ce920dc334876721ff91f781c374a010165d06cd855c36ee863c8d57",
+    "restart-readback-result.json": "c689253746618a705ed47c09839ab9f09b4621a9526af7c7e9fe666be341b778",
+    "historical-failure-retention-result.json": "cc9377ad91ce74959142f7f84ab75025a9b5b94eead152fcaa80062ee7e394f1",
+    "http-preflight-negatives-result.json": "2455f71a25ff4b3767fd877290f812e129bd0ffedbadb39bc0188a377e1cb481",
+    "local-contract-negatives-result.json": "1bf95be3807eef6ce661a2ff48dd0bb16d57d6e5a8925869dfa6684683282091",
+    "current-sync-preview-playback-private.json": "e71c3e0ea2d72f5c89a2dba938ebe855f739b8d17146edd9a5929fe750365b70",
+    "current-review-browser-playback-verified-private.json": "e33f8aed816da59f4b709967e0503729af9f97cee5755319b8a655ee770f02d7",
+    "final-after-restart-visible.png": "4dbc2de59da8b6c07ddbdf4093b0ccbdab2eeb0651c3f3d7d422a96cc68e5e46"
+  },
+  "remaining": [],
+  "historyLimitations": "clip-scope-result.json explicitly records two new debug raw-log overwrites; failure facts/tool transcripts retained; no old failure records removed",
+  "rootSpecFormalAcceptance": true,
+  "cleanup": {
+    "at": "2026-10-25T23:40:07.795898+00:00",
+    "passed": true,
+    "normalOwnedServiceStop": true,
+    "appRecordAbsent": true,
+    "ports55189And55190HaveNoListeners": true,
+    "ownChromeSessionClosed": true,
+    "keychainInitiallyLocked": true,
+    "keychainRestoredLocked": true,
+    "publicCredentialScanPassed": true,
+    "credentialScanResult": "final-owned-keys-02-credential-scan-result.json",
+    "privateFingerprintFileContainsOnlyLengthAndSha256": true,
+    "firstScanDeniedRetained": true,
+    "visualManifestNormalPreviewAndRefreshPassed": true,
+    "cliTasks": 2,
+    "cliElapsedMs": 138642.002625,
+    "providerRequests": 4,
+    "providerCostReservedMicrounits": 100000,
+    "cliLedgerSha256": "620a8ce5ee4a8c3d62aa79040b932f0db3c5660739f6569f27eeaa550a9bd434",
+    "providerLedgerSha256": "c94ea2294fec696463f8ac91274be8e74105fb53c6b29dcd5ef433e0ac07a1f1",
+    "privateEvidencePreserved": true,
+    "noCommitPushExternalPublishOrEF": true
+  },
+  "visualManifestUiResult": "visual-manifest-ui-result.json",
+  "finalPublicScanResult": "/Users/dan/.codex/worktrees/local-first-optimization/loop-control/.loop-control/stage-d/state/ad-closeout-implementation-20261025/final-owned-keys-02-credential-scan-result.json"
+}

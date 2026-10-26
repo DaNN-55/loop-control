@@ -1,0 +1,103 @@
+{
+  "issue": 132,
+  "baseTestSourceSha256": "e8a4d3e4d531ee3c0a11836db5e7e34980aaafeba67ddd4bb57a43aeadb60dcd",
+  "finalTestSourceSha256": "d4fc98430f28f108ee7639efdb61ea35f1287b124c66d629d30cc37574703004",
+  "originalReviewCases": 65,
+  "previousSlicesReviewCases": 69,
+  "finalReviewCases": 71,
+  "expectedFullCaseDeltaFromLastIntegratedRun": 2,
+  "old497MatcherCallsPreserved": true,
+  "currentMatcherCalls": 504,
+  "literalContractChain": [
+    {
+      "producer": "Independent subtitle and keyboard step-guard case",
+      "actualUiOperations": [
+        "select independent subtitle mode",
+        "clear and type new text",
+        "exercise keyboard dirty-step guard",
+        "click save draft"
+      ],
+      "assertedOutput": "onSave includeVideo=false, shotId=shot-2, revised subtitleText, original ttsText, complete caption contract v1 with spatial v2/title-safe/9:16/default insets/2 lines/16 chars",
+      "consumer": "Two-slot composition and transition case",
+      "fixture": "savedIndependentSecondShotText() constructs a new object each call; no shared mutable state or previous-test callback result."
+    },
+    {
+      "producer": "Two-slot composition and transition case",
+      "actualUiOperations": [
+        "select material-shot-workbench-b",
+        "change layout to 2up-vertical",
+        "change bottom fit to contain and focal point to 1,1",
+        "change transition cut to fade",
+        "click save draft"
+      ],
+      "assertedOutput": "onSave clipSegments 0-1, selected material, exact two-slot composition, fade transition, complete unchanged saved subtitle contract",
+      "consumer": "Caption space and selected-shot refresh case",
+      "fixture": "Literal saved text/contract plus exact material/clip/composition/transition from independently asserted producer output; UI also verifies layout and transition before editing."
+    },
+    {
+      "producer": "Caption space and selected-shot refresh case",
+      "actualUiOperations": [
+        "open caption space",
+        "change title-safe to action-safe",
+        "change bottom anchor to top",
+        "clear/type max lines 1 and max chars 12",
+        "click save draft",
+        "unmount and render again"
+      ],
+      "assertedOutput": "Original complete onSave payload matcher remains byte-equivalent, including text, slots, transition, caption spatial values; original URL hash and selected-shot refresh matchers remain."
+    }
+  ],
+  "rejectedIntermediateFixture": "Initial saved subtitle literal used legacy spatial v1/18 chars; caught by semantic audit, corrected to actual saved v2/16 chars and strengthened producer assertions before final delivery. Initial passing log is retained and is not the final acceptance.",
+  "preservedExecutionPolicy": {
+    "maxWorkers": "50%",
+    "testTimeoutMs": 5000,
+    "realUserEventScheduling": true,
+    "newSkips": 0,
+    "productCodeChanges": 0,
+    "providerRequests": 0,
+    "SQLChanges": 0,
+    "commits": 0
+  },
+  "finalReviewResult": {
+    "command": [
+      "npx",
+      "--no-install",
+      "vitest",
+      "run",
+      "src/reviews/ReviewWorkspace.test.tsx"
+    ],
+    "cwd": "/Users/dan/.codex/worktrees/ad-closeout-132/loop-control",
+    "startedAt": "2026-10-25T11:30:52.655545+00:00",
+    "finishedAt": "2026-10-25T11:31:21.010876+00:00",
+    "exitCode": 0,
+    "passed": true,
+    "defaultTestTimeoutMs": 5000,
+    "testTimeoutOverride": false,
+    "providerRequests": 0,
+    "viteConfigSha256": "767e62413f0799566843dd2eaa25a4135ffbcfe39ed10ba50dc4218df6ca1cc9",
+    "reviewTestSha256": "d4fc98430f28f108ee7639efdb61ea35f1287b124c66d629d30cc37574703004",
+    "existingVitestOrTinypoolPids": [],
+    "concurrencyCondition": "No other complete suite intentionally scheduled; one other agent may run focused local tests."
+  },
+  "finalTypecheckResult": {
+    "command": [
+      "npm",
+      "run",
+      "check"
+    ],
+    "cwd": "/Users/dan/.codex/worktrees/ad-closeout-132/loop-control",
+    "startedAt": "2026-10-25T11:31:36.523113+00:00",
+    "finishedAt": "2026-10-25T11:32:12.269852+00:00",
+    "exitCode": 0,
+    "passed": true,
+    "defaultTestTimeoutMs": 5000,
+    "testTimeoutOverride": false,
+    "providerRequests": 0,
+    "viteConfigSha256": "767e62413f0799566843dd2eaa25a4135ffbcfe39ed10ba50dc4218df6ca1cc9",
+    "reviewTestSha256": "d4fc98430f28f108ee7639efdb61ea35f1287b124c66d629d30cc37574703004",
+    "existingVitestOrTinypoolPids": [],
+    "concurrencyCondition": "No other complete suite intentionally scheduled; one other agent may run focused local tests."
+  },
+  "incrementPatch": "/private/tmp/ad-closeout-132-final-increment.patch",
+  "totalPatch": "/private/tmp/ad-closeout-132-final-total.patch"
+}

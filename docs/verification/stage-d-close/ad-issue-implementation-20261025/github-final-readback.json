@@ -1,0 +1,278 @@
+{
+  "issues": [
+    {
+      "closedAt": "2026-10-25T13:26:02Z",
+      "labels": [
+        {
+          "id": "LA_kwDOT2VE988AAAACwTL2Ww",
+          "name": "ready-for-agent",
+          "description": "Ready for an implementation agent",
+          "color": "0E8A16"
+        }
+      ],
+      "number": 132,
+      "state": "CLOSED",
+      "title": "[A–D 收口 C01] 裸 npm test 只验证当前源码并保持默认超时",
+      "url": "https://github.com/DaNN-55/loop-control/issues/132"
+    },
+    {
+      "closedAt": "2026-10-25T10:13:12Z",
+      "labels": [
+        {
+          "id": "LA_kwDOT2VE988AAAACwTL2Ww",
+          "name": "ready-for-agent",
+          "description": "Ready for an implementation agent",
+          "color": "0E8A16"
+        }
+      ],
+      "number": 133,
+      "state": "CLOSED",
+      "title": "[A–D 收口 C02] 账号资产目录选择与打开的原生闭环",
+      "url": "https://github.com/DaNN-55/loop-control/issues/133"
+    },
+    {
+      "closedAt": "2026-10-25T13:26:11Z",
+      "labels": [
+        {
+          "id": "LA_kwDOT2VE988AAAACwTL2Ww",
+          "name": "ready-for-agent",
+          "description": "Ready for an implementation agent",
+          "color": "0E8A16"
+        }
+      ],
+      "number": 134,
+      "state": "CLOSED",
+      "title": "[A–D 收口 C03] 当前蓝图生产前检查与迟到结果隔离",
+      "url": "https://github.com/DaNN-55/loop-control/issues/134"
+    },
+    {
+      "closedAt": "2026-10-25T15:33:04Z",
+      "labels": [
+        {
+          "id": "LA_kwDOT2VE988AAAAC_JneFw",
+          "name": "needs-info",
+          "description": "Waiting on reporter for more information",
+          "color": "D876E3"
+        }
+      ],
+      "number": 135,
+      "state": "CLOSED",
+      "title": "[A–D 收口 C04] 冷环境准备后经正式入口运行真实对齐",
+      "url": "https://github.com/DaNN-55/loop-control/issues/135"
+    },
+    {
+      "closedAt": "2026-10-25T13:26:21Z",
+      "labels": [
+        {
+          "id": "LA_kwDOT2VE988AAAACwTL2Ww",
+          "name": "ready-for-agent",
+          "description": "Ready for an implementation agent",
+          "color": "0E8A16"
+        }
+      ],
+      "number": 136,
+      "state": "CLOSED",
+      "title": "[A–D 收口 C05] 对齐高分不代表正文正确的人工确认闭环",
+      "url": "https://github.com/DaNN-55/loop-control/issues/136"
+    },
+    {
+      "closedAt": null,
+      "labels": [
+        {
+          "id": "LA_kwDOT2VE988AAAAC_JneFw",
+          "name": "needs-info",
+          "description": "Waiting on reporter for more information",
+          "color": "D876E3"
+        }
+      ],
+      "number": 137,
+      "state": "OPEN",
+      "title": "[A–D 收口 C06] Google TTS 计费恢复后的真实语音闭环",
+      "url": "https://github.com/DaNN-55/loop-control/issues/137"
+    },
+    {
+      "closedAt": null,
+      "labels": [
+        {
+          "id": "LA_kwDOT2VE988AAAAC_JneFw",
+          "name": "needs-info",
+          "description": "Waiting on reporter for more information",
+          "color": "D876E3"
+        }
+      ],
+      "number": 138,
+      "state": "OPEN",
+      "title": "[A–D 收口 C07] Freesound 认证恢复后的真实音频闭环",
+      "url": "https://github.com/DaNN-55/loop-control/issues/138"
+    },
+    {
+      "closedAt": null,
+      "labels": [
+        {
+          "id": "LA_kwDOT2VE988AAAAC_JneFw",
+          "name": "needs-info",
+          "description": "Waiting on reporter for more information",
+          "color": "D876E3"
+        }
+      ],
+      "number": 139,
+      "state": "OPEN",
+      "title": "[A–D 收口 C08] Cloudflare 组合凭据与真实图片闭环",
+      "url": "https://github.com/DaNN-55/loop-control/issues/139"
+    },
+    {
+      "closedAt": null,
+      "labels": [
+        {
+          "id": "LA_kwDOT2VE988AAAAC_JneFw",
+          "name": "needs-info",
+          "description": "Waiting on reporter for more information",
+          "color": "D876E3"
+        }
+      ],
+      "number": 140,
+      "state": "OPEN",
+      "title": "[A–D 收口 C09] OpenAI 测试连接与真实图片闭环",
+      "url": "https://github.com/DaNN-55/loop-control/issues/140"
+    },
+    {
+      "closedAt": "2026-10-25T23:55:17Z",
+      "labels": [
+        {
+          "id": "LA_kwDOT2VE988AAAAC_JneFw",
+          "name": "needs-info",
+          "description": "Waiting on reporter for more information",
+          "color": "D876E3"
+        }
+      ],
+      "number": 141,
+      "state": "CLOSED",
+      "title": "[A–D 收口 C10] 真实脚本分析与分镜规划回写",
+      "url": "https://github.com/DaNN-55/loop-control/issues/141"
+    },
+    {
+      "closedAt": "2026-10-25T23:55:22Z",
+      "labels": [
+        {
+          "id": "LA_kwDOT2VE988AAAAC_JneFw",
+          "name": "needs-info",
+          "description": "Waiting on reporter for more information",
+          "color": "D876E3"
+        }
+      ],
+      "number": 142,
+      "state": "CLOSED",
+      "title": "[A–D 收口 C11] 同一生产单的真实多能力审批与交付闭环",
+      "url": "https://github.com/DaNN-55/loop-control/issues/142"
+    },
+    {
+      "closedAt": "2026-10-25T15:29:22Z",
+      "labels": [
+        {
+          "id": "LA_kwDOT2VE988AAAACwTL2Ww",
+          "name": "ready-for-agent",
+          "description": "Ready for an implementation agent",
+          "color": "0E8A16"
+        }
+      ],
+      "number": 143,
+      "state": "CLOSED",
+      "title": "[A–D 收口 C12] 系统通知真实可见与未知投递状态",
+      "url": "https://github.com/DaNN-55/loop-control/issues/143"
+    },
+    {
+      "closedAt": "2026-10-25T23:55:28Z",
+      "labels": [
+        {
+          "id": "LA_kwDOT2VE988AAAACwTL2Ww",
+          "name": "ready-for-agent",
+          "description": "Ready for an implementation agent",
+          "color": "0E8A16"
+        }
+      ],
+      "number": 144,
+      "state": "CLOSED",
+      "title": "[A–D 收口 C13] 存活但租约过期的执行器输出隔离",
+      "url": "https://github.com/DaNN-55/loop-control/issues/144"
+    },
+    {
+      "closedAt": "2026-10-25T15:41:14Z",
+      "labels": [
+        {
+          "id": "LA_kwDOT2VE988AAAAC_JneFw",
+          "name": "needs-info",
+          "description": "Waiting on reporter for more information",
+          "color": "D876E3"
+        }
+      ],
+      "number": 145,
+      "state": "CLOSED",
+      "title": "[A–D 收口 C14] 在线任务中断后的取消与副作用状态",
+      "url": "https://github.com/DaNN-55/loop-control/issues/145"
+    },
+    {
+      "closedAt": null,
+      "labels": [
+        {
+          "id": "LA_kwDOT2VE988AAAAC_JneFw",
+          "name": "needs-info",
+          "description": "Waiting on reporter for more information",
+          "color": "D876E3"
+        }
+      ],
+      "number": 146,
+      "state": "OPEN",
+      "title": "[A–D 收口 C15] 原生目录与保留查询的合同一致性",
+      "url": "https://github.com/DaNN-55/loop-control/issues/146"
+    },
+    {
+      "closedAt": null,
+      "labels": [
+        {
+          "id": "LA_kwDOT2VE988AAAAC_JneFw",
+          "name": "needs-info",
+          "description": "Waiting on reporter for more information",
+          "color": "D876E3"
+        }
+      ],
+      "number": 147,
+      "state": "OPEN",
+      "title": "[A–D 收口 C16] 三条历史 RLS 告警的适用性与验证",
+      "url": "https://github.com/DaNN-55/loop-control/issues/147"
+    },
+    {
+      "closedAt": "2026-10-25T13:26:28Z",
+      "labels": [
+        {
+          "id": "LA_kwDOT2VE988AAAACwTL2Ww",
+          "name": "ready-for-agent",
+          "description": "Ready for an implementation agent",
+          "color": "0E8A16"
+        }
+      ],
+      "number": 148,
+      "state": "CLOSED",
+      "title": "[A–D 收口 C17] 锁网凭据轮换提示与实际行为一致",
+      "url": "https://github.com/DaNN-55/loop-control/issues/148"
+    },
+    {
+      "closedAt": null,
+      "labels": [
+        {
+          "id": "LA_kwDOT2VE988AAAACwTL2Ww",
+          "name": "ready-for-agent",
+          "description": "Ready for an implementation agent",
+          "color": "0E8A16"
+        }
+      ],
+      "number": 149,
+      "state": "OPEN",
+      "title": "[A–D 收口 C18] A–D 检查口径与零遗留退出验收",
+      "url": "https://github.com/DaNN-55/loop-control/issues/149"
+    }
+  ],
+  "onlyThisBatchQueried": true,
+  "closed": 11,
+  "open": 7,
+  "noOldIssueQueries": true
+}

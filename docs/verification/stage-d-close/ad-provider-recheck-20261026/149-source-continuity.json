@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "sourceFilesCheckedAgainstPreSqlBaseline": 436,
+  "sqlPhaseAdded": [
+    "db/local/043-owner-policy-initplans.sql",
+    "src/local-app/catalogContract.integration.test.ts",
+    "src/local-app/ownerRls.integration.test.ts"
+  ],
+  "sqlPhaseChanged": [
+    "scripts/local/native-restore.mjs",
+    "scripts/local/migrate.mjs"
+  ],
+  "changesSinceFinalSqlAcceptance": [],
+  "finalManifestFiles": 46,
+  "sourceAggregateSha256": "056d325ff85ba9b06cb28ef2a1f1ba12eb4459d98a2c530b4777ca1f07ca72a7",
+  "currentTaskBusinessSourceChanges": 0,
+  "defaultSuiteEvidence": "ad-sql-closeout-20261026/final-npm-test-offline.log",
+  "priorDefaultSuite": {
+    "files": 113,
+    "passed": 894,
+    "defaultTimeoutMs": 5000,
+    "offlineFixtureEnvironmentRequired": true
+  },
+  "priorSqlIntegration": {
+    "files": 2,
+    "passed": 8
+  },
+  "freshReadOnlyRlsTests": 4,
+  "evidenceCarriedOnlyForUnchangedSource": true,
+  "newCliGenerationOrProviderAcceptanceReplay": false
+}

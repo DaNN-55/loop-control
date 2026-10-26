@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "episodeId": "5eb48e39-6c99-4c95-b3ab-ed91dea7d3e7",
+  "videoSha256": "299c3860d3e96eb08f4feb29c08b9ff4abfac3ec13c2a0737a1b3fc6dbcf9651",
+  "framesPersonallyInspectedByRoot": 3,
+  "captionText": "\u770b\u89c1\u81ea\u7136\u3002",
+  "captionMatchesOwnerConfirmedText": true,
+  "portraitFrameSize": [
+    1080,
+    1920
+  ],
+  "naturalSceneVisible": true,
+  "videoDecodedWithoutErrors": true,
+  "audioComparedWithActualOwnerHeardSource": true,
+  "audioFftCorrelation": 0.9904020319713188,
+  "audioOffsetSeconds": 0.0426875,
+  "thresholdNotLowered": true,
+  "initialCoarseInspectionFailurePreserved": true,
+  "humanViewingClaim": false
+}

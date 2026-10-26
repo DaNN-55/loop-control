@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "mode": "held",
+  "used": 2,
+  "byOperation": {
+    "pexels.verify": 1,
+    "pexels.search": 1
+  },
+  "events": [
+    {
+      "operation": "pexels.verify",
+      "outcome": "reserved"
+    },
+    {
+      "operation": "pexels.verify",
+      "outcome": "completed",
+      "status": 200,
+      "bytes": 3119
+    },
+    {
+      "operation": "pexels.search",
+      "outcome": "reserved"
+    }
+  ],
+  "halted": false,
+  "stateSha256": "412fff1ffb3ba2476072bfc2724ce8fdf6c96b037c5b8abf7da1734534635752",
+  "requestLockPresent": true,
+  "realProviderRequests": 2,
+  "remoteCancellationConfirmed": false,
+  "externalFinalCostConfirmed": false,
+  "taskId": "e47526b2-d65b-4808-8a6f-bd75a245a992",
+  "realResponseHeadersObserved200": true,
+  "originalPayloadSubstituted": false
+}

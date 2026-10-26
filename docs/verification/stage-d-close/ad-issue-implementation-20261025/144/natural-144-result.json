@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "normalPrimaryNpmEntry": true,
+  "secondConsumerUsesSameNativeApplicationFactory": true,
+  "oldChildActuallyStayedAlive": true,
+  "oldParentOnlyPausedForHeartbeatAndDeadline": true,
+  "naturalLeaseSeconds": 1899.44,
+  "leasePolicyMinutes": 30,
+  "leaseShortened": false,
+  "claimedAtManuallyChanged": false,
+  "samples": 1,
+  "twoRealNativeAttempts": true,
+  "oldChildActuallyWroteAfterNewAcceptance": true,
+  "oldLateOutputSha256": "f0a16871a134901be7151adc3a2643648115294ee52036315d8b8a243c7aa44b",
+  "acceptedOutputs": [
+    {
+      "sha256": "6bc662b9f48fd45b07ab0005a9b5d1e861cbb7c4fad5ce7e541e404e07201b1e",
+      "bytes": 468
+    }
+  ],
+  "normalHttpAcceptedBytesUnchangedAfterLateWrite": true,
+  "oldAttemptRemainsFailed": true,
+  "frozenInputsAttemptBudgetPreserved": true,
+  "providerRequests": 0,
+  "limits": [
+    "Controlled offline planner; not AI planning quality",
+    "No sandbox against malicious same-UID writes or already-running pre-upgrade binaries",
+    "Per-file atomic publication; filesystem and database do not form one atomic transaction"
+  ]
+}

@@ -1,0 +1,56 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/ad-closeout-144/loop-control
+
+ ❯ src/local-app/ownerRls.integration.test.ts (4 tests | 3 failed) 1004ms
+   × external_connections evaluates Owner identity once while preserving exact Owner rows 3ms
+     → external_connections: Owner must be an uncorrelated initplan: expected 0 to be greater than 0
+   × external_connection_verifications evaluates Owner identity once while preserving exact Owner rows 0ms
+     → external_connection_verifications: Owner must be an uncorrelated initplan: expected 0 to be greater than 0
+   × storyboard_audio_selections evaluates Owner identity once while preserving exact Owner rows 0ms
+     → storyboard_audio_selections: Owner must be an uncorrelated initplan: expected 0 to be greater than 0
+   ✓ keeps role grants, policy scope and missing/foreign identity fences  447ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/ownerRls.integration.test.ts > external_connections evaluates Owner identity once while preserving exact Owner rows
+AssertionError: external_connections: Owner must be an uncorrelated initplan: expected 0 to be greater than 0
+ ❯ src/local-app/ownerRls.integration.test.ts:50:78
+     48|  }
+     49|  const initplans=nodes(plans[i][0].Plan as Plan).filter(node=>node['Pa…
+     50|  expect(initplans.length,`${table}: Owner must be an uncorrelated init…
+       |                                                                              ^
+     51|  for(const plan of initplans)expect(plan['Actual Loops']).toBe(1);
+     52| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/local-app/ownerRls.integration.test.ts > external_connection_verifications evaluates Owner identity once while preserving exact Owner rows
+AssertionError: external_connection_verifications: Owner must be an uncorrelated initplan: expected 0 to be greater than 0
+ ❯ src/local-app/ownerRls.integration.test.ts:50:78
+     48|  }
+     49|  const initplans=nodes(plans[i][0].Plan as Plan).filter(node=>node['Pa…
+     50|  expect(initplans.length,`${table}: Owner must be an uncorrelated init…
+       |                                                                              ^
+     51|  for(const plan of initplans)expect(plan['Actual Loops']).toBe(1);
+     52| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/local-app/ownerRls.integration.test.ts > storyboard_audio_selections evaluates Owner identity once while preserving exact Owner rows
+AssertionError: storyboard_audio_selections: Owner must be an uncorrelated initplan: expected 0 to be greater than 0
+ ❯ src/local-app/ownerRls.integration.test.ts:50:78
+     48|  }
+     49|  const initplans=nodes(plans[i][0].Plan as Plan).filter(node=>node['Pa…
+     50|  expect(initplans.length,`${table}: Owner must be an uncorrelated init…
+       |                                                                              ^
+     51|  for(const plan of initplans)expect(plan['Actual Loops']).toBe(1);
+     52| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 1 passed (4)
+   Start at  08:22:32
+   Duration  1.35s (transform 27ms, setup 0ms, collect 142ms, tests 1.00s, environment 0ms, prepare 46ms)
+

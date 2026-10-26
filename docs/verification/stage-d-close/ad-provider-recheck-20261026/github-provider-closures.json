@@ -1,0 +1,42 @@
+[
+  {
+    "number": 137,
+    "state": "CLOSED",
+    "stateReason": "NOT_PLANNED",
+    "url": "https://github.com/DaNN-55/loop-control/issues/137",
+    "acceptanceComment": "https://github.com/DaNN-55/loop-control/issues/137#issuecomment-6405774661",
+    "passed": false,
+    "ownerException": true,
+    "exactAcceptanceComments": 1
+  },
+  {
+    "number": 138,
+    "state": "CLOSED",
+    "stateReason": "NOT_PLANNED",
+    "url": "https://github.com/DaNN-55/loop-control/issues/138",
+    "acceptanceComment": "https://github.com/DaNN-55/loop-control/issues/138#issuecomment-6405775777",
+    "passed": false,
+    "ownerException": true,
+    "exactAcceptanceComments": 1
+  },
+  {
+    "number": 139,
+    "state": "CLOSED",
+    "stateReason": "NOT_PLANNED",
+    "url": "https://github.com/DaNN-55/loop-control/issues/139",
+    "acceptanceComment": "https://github.com/DaNN-55/loop-control/issues/139#issuecomment-6405776731",
+    "passed": false,
+    "ownerException": true,
+    "exactAcceptanceComments": 1
+  },
+  {
+    "number": 140,
+    "state": "CLOSED",
+    "stateReason": "NOT_PLANNED",
+    "url": "https://github.com/DaNN-55/loop-control/issues/140",
+    "acceptanceComment": "https://github.com/DaNN-55/loop-control/issues/140#issuecomment-6405777765",
+    "passed": false,
+    "ownerException": true,
+    "exactAcceptanceComments": 1
+  }
+]

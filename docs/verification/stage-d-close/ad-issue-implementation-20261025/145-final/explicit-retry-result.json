@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "httpStatus409": true,
+  "noNewTask": true,
+  "noNewRequest": true,
+  "requestsUsed": 2,
+  "manualReconciliationStillRequired": true
+}

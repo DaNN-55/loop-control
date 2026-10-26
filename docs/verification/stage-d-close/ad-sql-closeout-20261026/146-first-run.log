@@ -1,0 +1,30 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/ad-closeout-141/loop-control
+
+ ❯ src/local-app/catalogContract.integration.test.ts (4 tests | 4 skipped) 170ms
+   ↓ keeps stable ordering, bounded pages, totals and independent account summaries
+   ↓ preserves account, series, archived and review filters without changing global counts
+   ↓ keeps independently paged pending reviews, blockers and Worker summary
+   ↓ isolates Owners and excludes editor memberships through both actual database roles
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/catalogContract.integration.test.ts [ src/local-app/catalogContract.integration.test.ts ]
+error: invalid input value for enum member_role: "editor"
+ ❯ ../../local-first-optimization/loop-control/node_modules/pg/lib/client.js:694:17
+ ❯ src/local-app/catalogContract.integration.test.ts:62:4
+     60|   for(const [id,user,role]of [[accountA,owner,'owner'],[accountB,owner…
+     61|    await client.query("INSERT INTO public.accounts(id,slug,name,timezo…
+     62|    await client.query('INSERT INTO public.account_memberships(account_…
+       |    ^
+     63|    await client.query('INSERT INTO public.account_blueprint_versions(i…
+     64|   }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 skipped (4)
+   Start at  08:17:54
+   Duration  628ms (transform 109ms, setup 0ms, collect 280ms, tests 170ms, environment 0ms, prepare 43ms)
+

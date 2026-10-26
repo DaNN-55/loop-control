@@ -1,0 +1,9 @@
+{
+  "command": [
+    "npm",
+    "run",
+    "build"
+  ],
+  "exitCode": 0,
+  "log": ".loop-control/stage-d/state/ad-sql-closeout-20261026/final-build.log"
+}

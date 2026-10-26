@@ -1,0 +1,84 @@
+{
+  "passed": true,
+  "readOnlyObservedAt": "2026-10-25T12:19:56.619389+00:00",
+  "initialClaimedAtUtc": "2026-10-25T11:38:34.135404+00:00",
+  "newClaimedAtUtc": "2026-10-25T12:08:38.5106+00:00",
+  "claimToClaimSeconds": 1804.375196,
+  "leasePolicyMinutes": 30,
+  "manualClaimedAtChange": false,
+  "leasePolicyShortened": false,
+  "allObservationSamples": 68,
+  "resumeWatcherSamples": 1,
+  "finalObservationElapsedSeconds": 1899.44,
+  "finalObservationIsNotPreciseTakeoverLatency": true,
+  "stateTransitions": [
+    {
+      "at": "2026-10-25T11:40:16.503113+00:00",
+      "status": "running",
+      "attempt": 1,
+      "elapsedSeconds": 102.368
+    },
+    {
+      "at": "2026-10-25T12:08:35.141067+00:00",
+      "status": "ready",
+      "attempt": 1,
+      "elapsedSeconds": 1801.006
+    },
+    {
+      "at": "2026-10-25T12:10:13.575706+00:00",
+      "status": "completed",
+      "attempt": 2,
+      "elapsedSeconds": 1899.44
+    }
+  ],
+  "lastStillOriginalRunningObservation": {
+    "at": "2026-10-25T12:08:34.058523+00:00",
+    "status": "running",
+    "attempt": 1,
+    "elapsedSeconds": 1799.923
+  },
+  "databaseAttemptCount": 2,
+  "taskRuns": [
+    {
+      "status": "failed",
+      "attempt": 0
+    },
+    {
+      "status": "completed",
+      "attempt": 1
+    }
+  ],
+  "frozenInputHashUnchanged": true,
+  "maxAttempts": 2,
+  "budgetLimitCents": 0,
+  "budgetAndAttemptLimitNotReset": true,
+  "acceptedFiles": [
+    {
+      "sha256": "6bc662b9f48fd45b07ab0005a9b5d1e861cbb7c4fad5ce7e541e404e07201b1e",
+      "bytes": 468,
+      "matchesDatabaseAndSavedHttpAcceptance": true,
+      "currentBytesStillNewAttempt": true
+    }
+  ],
+  "oldLateStagingFile": {
+    "bytes": 468,
+    "sha256": "f0a16871a134901be7151adc3a2643648115294ee52036315d8b8a243c7aa44b",
+    "differentFromAcceptedOutput": true,
+    "stillRetainedForDiagnosis": true
+  },
+  "sourceFiles": {
+    "src/local-app/localWorkerCli.ts": "05091c3e617a02b700bff20d2c3ee04d9d1b3723ab03179531c0f45a2bf3c451",
+    "src/local-app/nativeAttemptOutput.ts": "33fc80b6e8b6b5b03c3a1b1bc8c38da87b75d0ab1803608463704d63b9daad79",
+    "src/local-app/nativeAttemptOutput.test.ts": "3872dff2d5a1a329ec29a0ed423ff86848498217cf375e5c44e6fe1761570bf9"
+  },
+  "preparedRuntimeSourcesMatch": {
+    "src/local-app/localWorkerCli.ts": "05091c3e617a02b700bff20d2c3ee04d9d1b3723ab03179531c0f45a2bf3c451",
+    "src/local-app/nativeAttemptOutput.ts": "33fc80b6e8b6b5b03c3a1b1bc8c38da87b75d0ab1803608463704d63b9daad79"
+  },
+  "oldChildAndParentAbsentAfterNormalNpmStop": true,
+  "processStatusObservedAtUtc": "2026-10-25T12:19:56.619389+00:00",
+  "providerRequests": 0,
+  "scope": "Actual normal native attempts and controlled offline planner only; no AI-quality, malicious same-UID sandbox, pre-upgrade process isolation or filesystem/database atomic-transaction claim.",
+  "claimedAtFollowsExistingLeaseRefreshSemantics": true,
+  "claimedAtRecordDeltaIsNotPreciseAtomicClaimLatency": true
+}

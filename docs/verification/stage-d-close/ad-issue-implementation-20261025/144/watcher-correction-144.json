@@ -1,0 +1,23 @@
+{
+  "initialWatcherFailed": true,
+  "expected": "running",
+  "actual": "ready",
+  "cause": "Observer incorrectly rejected the legitimate ready state after natural lease recovery and before the new claim.",
+  "firstReadyObservation": {
+    "at": "2026-10-25T12:08:35.141067+00:00",
+    "status": "ready",
+    "attempt": 1,
+    "elapsedSeconds": 1801.006
+  },
+  "originalFailureLogRetainedPrivate": true,
+  "originalFailureLogSha256": "46b3d8cfb5257b51f212168340da5d71e610c801c130c447d3ea054919f5dd32",
+  "resumeOnlyAllowsReadyAfter1800Seconds": true,
+  "resumeWatcherDoesNotManuallyWriteTaskFields": true,
+  "totalObservedSamples": 68,
+  "resumeWatcherSamples": 1,
+  "resultNaturalLeaseSecondsMeansFinalObservationElapsed": 1899.44,
+  "exactNewClaimFromDatabaseSeconds": 1804.375196,
+  "failureNotReclassifiedAsProductSuccess": true,
+  "claimedAtFollowsExistingLeaseRefreshSemantics": true,
+  "claimedAtRecordDeltaIsNotPreciseAtomicClaimLatency": true
+}

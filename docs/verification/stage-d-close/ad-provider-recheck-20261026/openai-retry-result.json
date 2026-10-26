@@ -1,0 +1,21 @@
+{
+  "provider": "openai",
+  "configurationUnchanged": true,
+  "configuredCandidates": 0,
+  "outcome": "not_dispatched",
+  "ready": false,
+  "reason": "NO_EXISTING_TEST_CONNECTION",
+  "httpStatus": null,
+  "diagnostic": null,
+  "actualRequests": 0,
+  "transportDispatches": 0,
+  "synthesisCalls": 0,
+  "generationCalls": 0,
+  "downloads": 0,
+  "automaticRetry": false,
+  "actualBillQueried": false,
+  "costReservedCny": 0,
+  "verificationOnly": true,
+  "fullMediaAcceptancePassed": false,
+  "transportEvents": []
+}

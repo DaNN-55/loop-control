@@ -1,0 +1,11 @@
+{
+  "passed": true,
+  "database": "loop_t24_restore_adclose20261025",
+  "migration": "039-caption-text-confirmation.sql",
+  "sha256": "f239b43bd2f66045f6f89b7cf58e70d1148b29e67d3a828500e5598824f75d04",
+  "onlyThisNewIsolatedDatabase": true,
+  "priorMigrationRecordsUnchanged": true,
+  "previousMigrationCount": 37,
+  "sql146147StillDeferred": true,
+  "providerRequests": 0
+}

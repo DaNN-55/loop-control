@@ -1,0 +1,16 @@
+{
+  "passed": true,
+  "results": [
+    {
+      "command": "generateSyncPreview",
+      "status": 409
+    },
+    {
+      "command": "confirmSyncPreview",
+      "status": 409
+    }
+  ],
+  "serverGate": true,
+  "noTaskCreated": true,
+  "providerRequests": 0
+}

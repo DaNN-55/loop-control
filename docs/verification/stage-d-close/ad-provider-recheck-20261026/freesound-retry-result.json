@@ -1,0 +1,32 @@
+{
+  "provider": "freesound",
+  "configurationUnchanged": true,
+  "configuredCandidates": 1,
+  "outcome": "invalid",
+  "ready": false,
+  "reason": "HTTP_401_UNAUTHORIZED",
+  "httpStatus": 401,
+  "diagnostic": {
+    "httpStatus": 401,
+    "reason": "HTTP_401_UNAUTHORIZED",
+    "rawMessageStored": false
+  },
+  "actualRequests": 1,
+  "transportDispatches": 1,
+  "synthesisCalls": 0,
+  "generationCalls": 0,
+  "downloads": 0,
+  "automaticRetry": false,
+  "actualBillQueried": false,
+  "costReservedCny": 0,
+  "verificationOnly": true,
+  "fullMediaAcceptancePassed": false,
+  "transportEvents": [
+    {
+      "host": "freesound.org",
+      "path": "/apiv2/search/",
+      "method": "GET",
+      "queryHeadersAndBodyNotRecorded": true
+    }
+  ]
+}

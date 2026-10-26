@@ -1,0 +1,20 @@
+{
+  "passed": true,
+  "actualPostgresTrigger": true,
+  "rollbackOnlyFixtureReconstructionFromActualAcceptedRecord": true,
+  "realNewAudioTrackUsed": true,
+  "actualOwnerHttpNewTrackTestSeparate": true,
+  "checks": {
+    "confirmedAtCleared": true,
+    "confirmedByCleared": true,
+    "confirmationCleared": true,
+    "previewConfirmationPending": true
+  },
+  "currentDraftUnchangedAfterRollback": true,
+  "acl": {
+    "ownerCanConfirm": true,
+    "workerCanConfirm": false,
+    "anonymousCanConfirm": false
+  },
+  "providerRequests": 0
+}

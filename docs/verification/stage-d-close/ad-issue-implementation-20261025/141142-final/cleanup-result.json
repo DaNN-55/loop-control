@@ -1,0 +1,23 @@
+{
+  "at": "2026-10-25T23:40:07.795898+00:00",
+  "passed": true,
+  "normalOwnedServiceStop": true,
+  "appRecordAbsent": true,
+  "ports55189And55190HaveNoListeners": true,
+  "ownChromeSessionClosed": true,
+  "keychainInitiallyLocked": true,
+  "keychainRestoredLocked": true,
+  "publicCredentialScanPassed": true,
+  "credentialScanResult": "final-owned-keys-02-credential-scan-result.json",
+  "privateFingerprintFileContainsOnlyLengthAndSha256": true,
+  "firstScanDeniedRetained": true,
+  "visualManifestNormalPreviewAndRefreshPassed": true,
+  "cliTasks": 2,
+  "cliElapsedMs": 138642.002625,
+  "providerRequests": 4,
+  "providerCostReservedMicrounits": 100000,
+  "cliLedgerSha256": "620a8ce5ee4a8c3d62aa79040b932f0db3c5660739f6569f27eeaa550a9bd434",
+  "providerLedgerSha256": "c94ea2294fec696463f8ac91274be8e74105fb53c6b29dcd5ef433e0ac07a1f1",
+  "privateEvidencePreserved": true,
+  "noCommitPushExternalPublishOrEF": true
+}

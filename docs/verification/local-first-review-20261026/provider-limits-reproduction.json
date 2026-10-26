@@ -1,0 +1,61 @@
+{
+  "source": "src/local-app/providerNetwork.ts",
+  "execution": "compiled current TypeScript; synthetic private policy and injected transport",
+  "realProviderRequests": 0,
+  "records": [
+    {
+      "provider": "google_tts",
+      "variant": "10-characters",
+      "characters": 10,
+      "outcome": "accepted",
+      "transportCalls": 1,
+      "budgetUsed": 1,
+      "message": null
+    },
+    {
+      "provider": "google_tts",
+      "variant": "11-characters",
+      "characters": 11,
+      "outcome": "rejected",
+      "transportCalls": 0,
+      "budgetUsed": 0,
+      "message": "Provider request denied by private authorization or budget"
+    },
+    {
+      "provider": "google_tts",
+      "variant": "alternate-voice",
+      "characters": 10,
+      "outcome": "rejected",
+      "transportCalls": 0,
+      "budgetUsed": 0,
+      "message": "Provider request denied by private authorization or budget"
+    },
+    {
+      "provider": "volcengine_tts",
+      "variant": "10-characters",
+      "characters": 10,
+      "outcome": "accepted",
+      "transportCalls": 1,
+      "budgetUsed": 1,
+      "message": null
+    },
+    {
+      "provider": "volcengine_tts",
+      "variant": "11-characters",
+      "characters": 11,
+      "outcome": "rejected",
+      "transportCalls": 0,
+      "budgetUsed": 0,
+      "message": "Provider request denied by private authorization or budget"
+    },
+    {
+      "provider": "volcengine_tts",
+      "variant": "alternate-voice",
+      "characters": 10,
+      "outcome": "rejected",
+      "transportCalls": 0,
+      "budgetUsed": 0,
+      "message": "Provider request denied by private authorization or budget"
+    }
+  ]
+}

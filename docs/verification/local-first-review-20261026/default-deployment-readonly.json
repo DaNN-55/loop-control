@@ -1,0 +1,14 @@
+{
+  "configurationRead": true,
+  "port": 55189,
+  "workerConfigured": true,
+  "narrationMode": null,
+  "mediaMode": "local",
+  "connectionVerification": "disabled",
+  "policyEnabled": null,
+  "ledgerHalted": null,
+  "appRecordExists": false,
+  "offlinePreparationRequired": true,
+  "serviceStarted": false,
+  "providerRequests": 0
+}

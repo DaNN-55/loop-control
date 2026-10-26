@@ -1,0 +1,15 @@
+{
+  "redDiscovery": {
+    "total": 788,
+    "currentSource": 107,
+    "historicalRuntimeCopies": 676,
+    "publicEvidenceCopies": 5,
+    "exitCode": 0
+  },
+  "worktreeGreenDiscovery": {
+    "total": 107,
+    "exactCurrentSourceSetPreserved": true,
+    "exitCode": 0
+  },
+  "note": "Final original-worktree discovery and bare npm test must be run by integrator after applying patch; this clean worktree contains no private snapshots."
+}
