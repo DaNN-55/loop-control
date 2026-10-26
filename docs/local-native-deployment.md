@@ -38,6 +38,7 @@ npm stop
 - `connections.keychain`：`approved`、本 worktree 的 stage-d `runtimeRoot`、已固定 helper 的 `helperSha256`。仅限现有专用合成测试 Keychain；没有配置时禁用，不访问登录/系统 Keychain。
 - `connections.verification`：省略或 `disabled` 时禁用；`pexels-offline` 装配实际 probe，但请求预留恒为 false，返回可重试结果，`externalReady:false`，不能产生 live verified 资格。该旧模式没有在线预算开关；另见下方显式 providers-budgeted 装配。
 - `openChatCut`：`root` 固定为本 worktree 的 `.loop-control/stage-b/verified/OpenChatCut`，`node` 必须是当前 Node 的规范路径，`port:55190`。同时需明确的 `worker.studio:true` 和本机媒体配置 `worker.media:{"mode":"local"}`。该模式允许本机媒体工具和 Studio，冻结任务需要外部连接时在 CLI 前置检查中阻塞。
+- `notifications`：显式隔离部署省略此字段或设为 `controlled` 时，只记录受控提醒；设为 `desktop` 时，正常应用消费新事件后调用本机桌面通知。该选择不修改系统通知权限；接口接受不代表可见或已读，仍需单独完成实际可见验收。
 - Worker 的执行命令、媒体挂载点和运行约束继续显式提供。正常启动负责准备与核对 runtime；前端构建会清理 `dist`，构建完成后应重新正常启动，不在构建过程中验收 Worker。
 
 55190 是本次隔离部署的单 Studio 端口。不能据单工程打开证明并行编辑器容量、完整渲染或通用部署能力。
@@ -100,3 +101,28 @@ Google TTS 单次诊断（2026-10-25）：正式音色目录请求403，原因�
 本轮Provider新增0、累计10/17次、预留0.03/2元（未查实际账单）；Owner签收不将原Google计费失败或其他跳过改判为技术通过。历史失败和其他未验收门禁不变。见[验收与证据](verification/stage-d-close/native-account-ui.md)。
 
 本节账号功能已在前六组归档之后，按 Owner 认可的 92 文件范围完成独立本地归档。验收报告仍保留原基线和当时“未提交”的说明；本次只更新当前归档状态及索引 SHA，没有修改功能源码、原始日志或历史快照，也没有新的 Provider 请求、Issue 操作、推送或合并。
+
+
+## 普通长度 TTS 的批准策略（2026-10-26）
+
+现有 `provider-network` 策略和账本不变。未配置 `tts` 的语音操作仍使用原验收保护：最多 10 字及原固定音色。普通生产在新批准策略的 `operations.google_tts.generate` 或 `operations.volcengine_tts.generate` 中添加 `tts`，按本次实际任务选择限制，不通过重置旧账本启用。
+
+豆包示例（仅策略结构，不是网络授权）：
+
+```json
+{
+  "maxRequests": 3,
+  "maxBytes": 3145728,
+  "timeoutMs": 60000,
+  "costMicrounits": 150000,
+  "tts": {
+    "maxCharacters": 500,
+    "voices": ["zh_female_vv_uranus_bigtts"],
+    "resourceIds": ["seed-tts-2.0"]
+  }
+}
+```
+
+`maxCharacters` 按 Unicode 字符计数，范围为 1–5000；现有请求正文 16 KiB 边界同时生效。`voices` 为允许的音色列表，不再由代码固定一个值；音色与语言/资源列表各自为许可集合，集合内组合均可使用，本轮豆包只批准一个资源 ID。Google 使用 `languageCodes`，豆包使用 `resourceIds`；两者不能混用，资格探针不接受生产 `tts` 覆盖。每次费用预留应覆盖该操作最大文本的声明费用，仍由批准摘要、价格证据和总额共同约束；示例金额不代表实际账单。
+
+文本超限、未批准音色/语言/资源 ID、策略关闭或过期时，在请求发送和预算预留前拒绝。HTTP/传输失败、结果未知与持久账本停用机制沿用原规则，不自动退款或重试。`local:prepare-providers` 仍只生成关闭策略。四家 Provider 的既有豁免不因本次 TTS 代码修复变为在线验收通过。

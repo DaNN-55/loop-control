@@ -33,8 +33,9 @@ export async function snapshotInput(root:string,episodeId:string,input:{sourceKi
   const path=join(root,'episodes',episodeId,'input',input.sourcePath),s=await lstat(path);
   if(await realpath(path)!==path||!s.isFile()||s.nlink!==1)throw new ConfigurationError(400,'输入文件不是安全普通文件。');bytes=await readFile(path);
  }else{
-  if(!['file','paste'].includes(input.sourceKind)||typeof input.contentBase64!=='string'||!/^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(input.contentBase64))throw new ConfigurationError(400,'材料内容无效。');
+  if(!['file','paste'].includes(input.sourceKind)||typeof input.contentBase64!=='string')throw new ConfigurationError(400,'材料内容无效。');
   bytes=Buffer.from(input.contentBase64,'base64');
+  if(bytes.toString('base64')!==input.contentBase64)throw new ConfigurationError(400,'材料内容无效。');
  }
  if(!bytes.length||bytes.length>100*1024*1024)throw new ConfigurationError(400,'材料不能为空或超过100MB。');
  if(input.isMainScript&&!isValidMainScript(bytes.toString('utf8')))throw new ConfigurationError(400,mainScriptFormatError);
