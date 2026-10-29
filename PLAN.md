@@ -11,6 +11,8 @@
 - [ ] 集成 Standards/Spec 双轨审查，修复、真实 HTTP/Worker/Studio/文件与浏览器完整验收。
 - [ ] 按仓库规则关闭全部子票及规格；归档子 Agent 工作树，报告集成分支。
 
+受控验收素材已纳入仓库（`21a71be1`）；旧临时目录禁读条件下，原先失败的真实 HTTP/原生渲染逐帧用例已通过。见 [素材复现记录](docs/verification/spec-152-integration/CONTROLLED-MEDIA.md)。
+
 验证沿用 Owner 已确认的真实 UI → HTTP → 隔离 PostgreSQL/Worker → 真实 Studio/渲染 → 交付文件边界；Provider 使用受控契约样本，不产生未经授权的付费调用。每票先失败再实现，完成后合并最新集成 tip，独立 merger 负责串行合并。禁用日常数据库写入、服务停启和历史清理。
 
 # #153 / T01 真实嵌入 Studio（完成）
