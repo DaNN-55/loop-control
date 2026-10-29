@@ -9,7 +9,7 @@ import { mkdtemp, mkdir, writeFile, readFile, rm, realpath } from 'node:fs/promi
 import { join } from 'node:path';
 import { Pool } from 'pg';
 import { createLocalHandler } from './localRoute';
-import { LocalEpisodeCommands } from './episodeCommands';
+import { LocalEpisodeCommands,type InputRuntime } from './episodeCommands';
 import { hashPassword } from './password';
 import { csrfFor, tokenHash } from './sessions';
 import { reviewRenderFromSnapshot } from '../worker/codexRunner';
@@ -17,7 +17,7 @@ import { verifyOpenChatCutProject } from '../worker/openchatcutProjectReader';
 import { buildOpenChatCutProject } from '../worker/openchatcutProject';
 import { confirmedTtsRender } from '../worker/openchatcutProject.fixture';
 const exec=promisify(execFile);
-export async function embeddedStudioFixture(options:{origin?:string;landscape?:boolean;testContextModule?:string;openChatCutRoot?:string;migrations?:string[]}={}){
+export async function embeddedStudioFixture(options:{origin?:string;landscape?:boolean;testContextModule?:string;openChatCutRoot?:string;migrations?:string[];runtime?:Partial<InputRuntime>}={}){
   const mod=options.testContextModule??process.env.LOOP_TEST_CONTEXT_MODULE??join(process.cwd(),'scripts/runtime/environment.mjs');const {runtimeContext}=await import(mod);const context=runtimeContext();context.assertDatabase();
   const database='loop_studio_153_'+randomBytes(6).toString('hex');context.sql('CREATE DATABASE '+database+' TEMPLATE template0','postgres');
   try{
@@ -37,8 +37,9 @@ export async function embeddedStudioFixture(options:{origin?:string;landscape?:b
     const socket=Duplex.from({readable:child.stdout!,writable:child.stdin!});
     return Object.assign(socket,{ref(){return socket;},unref(){return socket;},connect(){queueMicrotask(()=>socket.emit('connect'));return socket;},setNoDelay(){return socket;},setKeepAlive(){return socket;}});
   }} as ConstructorParameters<typeof Pool>[0]);
+  const workerPool=()=>new Pool({...pool.options,user:'loop_worker'} as ConstructorParameters<typeof Pool>[0]);
   const runtime={root:options.openChatCutRoot??process.env.LOOP_TEST_OPENCHATCUT_ROOT??join(process.cwd(),'.loop-control/local/OpenChatCut'),nodePath:process.execPath};
-  const createCommands=()=>new LocalEpisodeCommands(pool,root,{ready:async()=>{},wake(){throw Error('No generation permitted');},mountPath:root,minimumFreeBytes:0,studioRuntime:async()=>runtime,checkReferences:async()=>{throw Error('No Provider permitted');}});
+  const createCommands=()=>new LocalEpisodeCommands(pool,root,{ready:async()=>{},wake(){throw Error('No generation permitted');},mountPath:root,minimumFreeBytes:0,studioRuntime:async()=>runtime,checkReferences:async()=>{throw Error('No Provider permitted');},...options.runtime});
   let commands=createCommands();
   let handler:ReturnType<typeof createLocalHandler>;const server=createServer((q,r)=>handler(q,r));let started=false;
   async function close(){await commands.close();if(started){server.closeAllConnections();await new Promise<void>(done=>server.close(()=>done()));}try{await pool.end();}finally{c.release();await admin.end();bridge.kill();for(const client of clients)client.kill();context.sql('DROP DATABASE '+database+' WITH (FORCE)','postgres');await rm(root,{recursive:true,force:true});}}
@@ -71,6 +72,6 @@ export async function embeddedStudioFixture(options:{origin?:string;landscape?:b
     server.listen(0,'127.0.0.1');await once(server,'listening');started=true;const origin=options.origin??`http://127.0.0.1:${(server.address() as {port:number}).port}`;
     handler=createLocalHandler({pool,origin,mediaRoot:root,episodes:commands});
     const request=async(command:string,data:Record<string,unknown>={},options:{token?:string;csrf?:boolean;origin?:string}={})=>{const session=options.token??token;const response=await fetch(origin+'/api/local/episode-commands',{method:'POST',headers:{Origin:options.origin??origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+session,...(options.csrf===false?{}:{'X-CSRF-Token':csrfFor(session)})},body:JSON.stringify({command,idempotencyKey:randomUUID(),data:{episodeId:episode,...data}})});return{status:response.status,body:await response.json()};};
-    return{root,assetRoot,database,episode,owner,email,password,token,otherToken,pool,c,origin,boardPath,board,task,videoPath,files,runtime,request,handler,restart:async()=>{await commands.close();commands=createCommands();handler=createLocalHandler({pool,origin,mediaRoot:root,episodes:commands});},closeStudio:()=>commands.closeStudio(episode),close};
+    return{workerPool,root,assetRoot,database,episode,owner,email,password,token,otherToken,pool,c,origin,boardPath,board,task,videoPath,files,runtime,request,handler,restart:async()=>{await commands.close();commands=createCommands();handler=createLocalHandler({pool,origin,mediaRoot:root,episodes:commands});},closeStudio:()=>commands.closeStudio(episode),close};
   }catch(error){await close();throw error;}
 }

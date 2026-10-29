@@ -1,3 +1,4 @@
+import {matchWorkspaceImage,generateWorkspaceImage,fillWorkspaceImageResult} from './workspaceImages.js';
 import {randomUUID,createHash} from 'node:crypto';
 import {writeFile,mkdir} from 'node:fs/promises';
 import {join,dirname} from 'node:path';
@@ -10,8 +11,8 @@ import {inspectOpenChatCutProjectWithRuntime} from '../worker/openchatcutProject
 import {openOpenChatCutDraftStudio,snapshotOpenChatCutStudio,closeOpenChatCutStudio,isOpenChatCutStudio,type OpenChatCutRuntimeConfig} from '../worker/openchatcutStudio.js';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import type {ProductionWorkspace,WorkspaceClip} from '../productionWorkspace.js';
-interface Episode {id:string;main_script_revision_id:string|null;stage:string;archived_at?:string|null}
-export interface ProductionWorkspaceRecord {id:string;episode_id:string;workflow_version:'four-step/v1';script_revision_id:string;storyboard_package_id:string;revision:string|number;bindings:WorkspaceClip[];project_path:string;project_sha256:string;content_sha256:string;project_size:string|number}
+interface Episode {id:string;account_id:string;policy:Record<string,unknown>;main_script_revision_id:string|null;stage:string;archived_at?:string|null}
+export interface ProductionWorkspaceRecord {id:string;episode_id:string;workflow_version:'four-step/v1';script_revision_id:string;storyboard_package_id:string;revision:string|number;native_edit_revision:string|number;bindings:WorkspaceClip[];project_path:string;project_sha256:string;content_sha256:string;project_size:string|number}
 const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 const hash=(bytes:Buffer|string)=>createHash('sha256').update(bytes).digest('hex');
 export async function readProductionWorkspace(c:PoolClient,episodeId:string,root:string):Promise<ProductionWorkspace|null>{
@@ -33,7 +34,7 @@ export class ProductionWorkspaceCommands{
  async closeEpisode(id:string){await closeOpenChatCutStudio(id);this.opened.delete(id);}
  async close(){await Promise.all([...this.opened].map(id=>this.closeEpisode(id)));}
 
- async execute(c:PoolClient,e:Episode,root:string,runtime:{studioRuntime?():Promise<OpenChatCutRuntimeConfig>},command:string,data:Record<string,unknown>){
+ async execute(c:PoolClient,e:Episode,root:string,runtime:import('./episodeCommands.js').InputRuntime,command:string,data:Record<string,unknown>){
   if(e.archived_at||e.stage==='production_completed'||(await c.query('SELECT local_identity.is_historical_episode($1) historical',[e.id])).rows[0].historical)throw new ConfigurationError(409,'历史或已完成生产单只读。');
   await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[e.id+':studio']);
   let row=(await c.query('SELECT * FROM local_identity.production_workspaces WHERE episode_id=$1 FOR UPDATE',[e.id])).rows[0] as ProductionWorkspaceRecord|undefined;
@@ -62,6 +63,9 @@ export class ProductionWorkspaceCommands{
    }
    return readProductionWorkspace(c,e.id,root);
   }
+  if(command==='generateWorkspaceImage')return generateWorkspaceImage(c,root,e,runtime,data);
+  if(command==='fillWorkspaceImageResult')return fillWorkspaceImageResult(c,root,e.id,data);
+  if(command==='matchWorkspaceImage')return matchWorkspaceImage(c,root,e.id,data);
   const locked=await lockProductionWorkspace(c,root,e.id,data.workspaceId,data.expectedRevision);row=locked.row;const project=locked.project;
   if(command==='matchWorkspaceMaterial'){
    if(isOpenChatCutStudio(e.id))throw new ConfigurationError(409,'请先保存并返回素材匹配，再填入指定占位。');
@@ -86,7 +90,9 @@ export class ProductionWorkspaceCommands{
   if(command==='saveWorkspaceStudio'){
    if(data.projectId!==`loop-control-${e.id}`||typeof data.workspaceRelativePath!=='string'||data.workspaceRelativePath!==`episodes/${e.id}/openchatcut-work/current/project.json`||data.expectedWorkspaceSha256!==row.project_sha256)throw new ConfigurationError(409,'当前工程身份或文件版本已变化。');
    let file;try{file=await snapshotOpenChatCutStudio(root,e.id,`episodes/${e.id}/openchatcut-work/current/project.json`,row.project_sha256,validate);}catch(error){if(error instanceof ConfigurationError)throw error;throw new ConfigurationError(409,'Studio 会话或版本已失效，请重新打开当前工程。');}
-   const current=JSON.parse((await verifyNativeFile(root,file.relativePath,file.sha256,file.fileSize)).toString('utf8')) as OpenChatCutProject;await updateWorkspaceProject(c,root,row,current,row.bindings);return{...file,productionWorkspace:await readProductionWorkspace(c,e.id,root)};
+   const current=JSON.parse((await verifyNativeFile(root,file.relativePath,file.sha256,file.fileSize)).toString('utf8')) as OpenChatCutProject;
+   if(workspaceContentSha256(current)!==row.content_sha256)await c.query('UPDATE local_identity.production_workspaces SET native_edit_revision=native_edit_revision+1 WHERE id=$1',[row.id]);
+   await updateWorkspaceProject(c,root,row,current,row.bindings);return{...file,productionWorkspace:await readProductionWorkspace(c,e.id,root)};
   }
   throw new ConfigurationError(400,'不支持的工作台操作。');
  }
@@ -128,6 +134,6 @@ export async function readWorkspaceVersion(c:PoolClient,root:string,episodeId:st
 
 export async function validateWorkspaceProject(c:PoolClient,root:string,episodeId:string,doc:OpenChatCutProject,config:OpenChatCutRuntimeConfig){
    const sources=new Set<string>();const visit=(value:unknown)=>{if(Array.isArray(value)){value.forEach(visit);return;}if(value&&typeof value==='object')for(const[key,v]of Object.entries(value)){if(key==='src'&&typeof v==='string')sources.add(v);visit(v);}};visit(doc);
-   for(const path of sources){const m=(await c.query('SELECT * FROM public.production_material_revisions WHERE episode_id=$1 AND storage_path=$2',[episodeId,path])).rows[0];if(!m)throw new ConfigurationError(409,'工程引用了未注册的本期素材。');await verifyNativeFile(root,m.storage_path,m.sha256,Number(m.file_size));}
+   for(const path of sources){const m=(await c.query('SELECT * FROM public.production_material_revisions WHERE episode_id=$1 AND storage_path=$2',[episodeId,path])).rows[0];if(!m)throw new ConfigurationError(409,'工程引用了未注册的本期素材。');try{await verifyNativeFile(root,m.storage_path,m.sha256,Number(m.file_size));}catch{throw new ConfigurationError(409,'已用素材缺失或指纹已变化，请检查原文件。');}}
    if(!(await inspectOpenChatCutProjectWithRuntime(doc,config)).readable)throw new ConfigurationError(409,'当前草稿不能由 Studio 读取。');
 }
