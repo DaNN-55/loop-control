@@ -3,7 +3,7 @@ import {writeFile,readFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {embeddedStudioFixture} from './embeddedStudio.fixture';
 export async function productionWorkspaceFixture(options:Parameters<typeof embeddedStudioFixture>[0]={}){
- const f=await embeddedStudioFixture({...options,migrations:['db/local/084-four-step-workspace.sql',...(options.migrations??[])]});
+ const f=await embeddedStudioFixture({...options,migrations:[...new Set(['db/local/084-four-step-workspace.sql','db/local/086-workspace-images.sql','db/local/087-workspace-narration.sql',...(options.migrations??[])])].sort()});
  try{
   const script=randomUUID(),material=randomUUID(),path=`episodes/${f.episode}/script.md`,bytes=Buffer.from('已确认的第一镜。\n缺少素材的第二镜。');
   await writeFile(join(f.assetRoot,path),bytes);
