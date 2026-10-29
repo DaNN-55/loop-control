@@ -1,0 +1,55 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/four-step-integration/loop-control
+
+ ✓ src/local-app/workspaceNarration.integration.test.ts (13 tests) 35283ms
+   ✓ Owner can prepare disabled narration before editing without queuing external tasks  1714ms
+   ✓ confirmed narration uses the real Worker, survives restart and assembles actual duration without duplicate submissions  3775ms
+   ✓ unknown paid submissions stay blocked across restart and input changes; definite rejection allows one explicit retry  2003ms
+   ✓ both first narration tracks assemble and crop an available source without invalidating the other shot  2417ms
+   ✓ a running task may register its immutable output but late speech cannot replace changed input or advance delivery  2153ms
+   ✓ manual narration and disabled modes never enqueue TTS, while short pictures preserve a recoverable conflict  2085ms
+   ✓ actual narration drives the paid video window and freezes speech provenance (changed=false)  8115ms
+   ✓ actual narration drives the paid video window and freezes speech provenance (changed=true)  2075ms
+   ✓ first speech remains a candidate after a real native save and never overwrites the edited project  3385ms
+   ✓ speech beyond the Provider maximum blocks a video submission without cutting words  1963ms
+   ✓ legacy narration already running before workspace activation cannot promote the new draft or delivery  2087ms
+   ✓ one shot with two visual ranges keeps one voice and its original task after deleting the first range  2077ms
+   ✓ registered completed task media resolve directly without a fake material and reject changed bytes  1432ms
+ ✓ src/local-app/workspaceReviewFixes.integration.test.ts (7 tests) 42448ms
+   ✓ actual delivery does not claim narration muted by the leaf native track was spoken  10733ms
+   ✓ actual delivery does not claim narration muted by the parent native track was spoken  10108ms
+   ✓ first speech preserves Owner edits made before submission and requires the existing candidate decision  5349ms
+   ✓ first speech preserves Owner edits made during submission and requires the existing candidate decision  5364ms
+   ✓ first speech preserves Owner edits made captions submission and requires the existing candidate decision  3957ms
+   ✓ first speech preserves Owner edits made locked submission and requires the existing candidate decision  3368ms
+   ✓ preserved legacy native edits stay protected when their first workspace speech completes  3567ms
+(node:13852) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/workspaceCandidates.integration.test.ts (7 tests) 25893ms
+   ✓ completed local speech versions stay immutable and rejecting a candidate preserves the native project  2134ms
+   ✓ explicit candidate duration changes only the stable main voice and stale attempts preserve the saved edit  3866ms
+   ✓ prepared old speech and changed candidate bytes cannot overwrite a newer input  2163ms
+   ✓ adopting actual speech expires only affected caption evidence and a late alignment cannot restore it  2421ms
+   ✓ new registered speech enters the existing Studio media session before relink and cannot be finalized before native save  3625ms
+   ✓ a saved native candidate can recover its missing adoption receipt after restart without regenerating speech  3888ms
+   ✓ explicit main-voice candidate adoption switches source and none atomically while preserving native sounds  7795ms
+(node:18958) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/formalWorkflow.delivery.integration.test.ts (1 test) 19955ms
+   ✓ formal Owner workflow delivers exact native export with adopted text, mixed audio and traceable late unused results  19954ms
+ ✓ src/local-app/formalWorkflow.integration.test.ts (6 tests) 18690ms
+   ✓ Owner confirms a fresh script before visual materials exist  2957ms
+   ✓ Owner builds a formal incomplete draft without old storyboard approvals  3034ms
+   ✓ first formal adoption preserves the latest unsubmitted legacy Studio document  2978ms
+   ✓ late legacy render reports retain artifacts without advancing or approving the adopted workspace  1563ms
+   ✓ fresh formal and added shots generate through the real controlled Provider Worker without legacy approval  3737ms
+   ✓ ordinary scripts use the selected real planner task and verified artifact before preparation confirmation  4419ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts (3 tests) 16486ms
+   ✓ Owner edits only the chosen native caption lane and persists manual timing without shot approval  3364ms
+   ✓ current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit  1878ms
+   ✓ real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area  11243ms
+
+ Test Files  6 passed (6)
+      Tests  37 passed (37)
+   Start at  03:41:25
+   Duration  160.13s (transform 331ms, setup 11ms, collect 760ms, tests 158.75s, environment 0ms, prepare 146ms)

@@ -1,0 +1,43 @@
+{
+  "integrationHead": "fc645efb3ad54d78d5e0da005ccde5e8d509b132",
+  "verifiedArtifacts": [
+    {
+      "type": "final_render",
+      "sha256": "93141d2795b13af2b572fd0980a0ae64cca873adfd5828620c6d2d4778276a2e",
+      "fileSize": 465942
+    },
+    {
+      "type": "editable_project",
+      "sha256": "15391dfa4b57b7d3ebb8b5270b481eb2d9da608d12ab6a9dc7deffca4ddc87f1",
+      "fileSize": 23184
+    },
+    {
+      "type": "cover",
+      "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "fileSize": 1515
+    },
+    {
+      "type": "metadata",
+      "sha256": "b596e2f1424b2cc19a17a4df2b30758748b65830c802909d2b85ba869592c286",
+      "fileSize": 2171
+    },
+    {
+      "type": "final_qc_report",
+      "sha256": "687cc4bfcbb0420a0888f743ad9f579a7806f1892f4f768f5ea544663211e589",
+      "fileSize": 6465
+    }
+  ],
+  "exactVideoAndProjectIdentity": true,
+  "adoptedText": "这一版局部口播已明确采用。",
+  "emptyBaselines": 2,
+  "formatDuration": "7.445333",
+  "videoFrames": "222",
+  "resolution": [
+    1080,
+    1920
+  ],
+  "codecs": [
+    "h264",
+    "aac"
+  ]
+}

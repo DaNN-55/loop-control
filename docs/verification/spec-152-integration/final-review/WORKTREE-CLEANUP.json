@@ -1,0 +1,21 @@
+{
+  "archived": [
+    "/Users/dan/.codex/worktrees/t02-draft-workflow/loop-control",
+    "/Users/dan/.codex/worktrees/t04-workspace-images/loop-control",
+    "/Users/dan/.codex/worktrees/t07-workspace-captions/loop-control",
+    "/Users/dan/.codex/worktrees/t05-workspace-narration/loop-control",
+    "/Users/dan/.codex/worktrees/t03-workspace-video/loop-control",
+    "/Users/dan/.codex/worktrees/t11-workspace-export/loop-control",
+    "/Users/dan/.codex/worktrees/t10-workspace-editing/loop-control",
+    "/Users/dan/.codex/worktrees/t08-workspace-candidates/loop-control",
+    "/Users/dan/.codex/worktrees/t12-workspace-delivery/loop-control",
+    "/Users/dan/.codex/worktrees/t06-workspace-audio/loop-control",
+    "/Users/dan/.codex/worktrees/t09-workspace-visuals/loop-control",
+    "/Users/dan/.codex/worktrees/t13-formal-workflow/loop-control"
+  ],
+  "retained": [
+    "/Users/dan/.codex/worktrees/four-step-integration/loop-control"
+  ],
+  "dailyWorktree": "/Users/dan/Programs/loop-control",
+  "method": "Managed recoverable archive; confirmed by list_artifacts and git worktree list"
+}

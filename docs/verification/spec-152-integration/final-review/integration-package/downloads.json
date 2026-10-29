@@ -1,0 +1,27 @@
+[
+  {
+    "relativePath": "episodes/2ba0b866-25ca-4987-aa5e-39aa3c6ca7ae/workspace-exports/53bf3f02-3495-4ea7-8abd-804a50bdbaab/93141d2795b13af2b572fd0980a0ae64cca873adfd5828620c6d2d4778276a2e.mp4",
+    "sha256": "93141d2795b13af2b572fd0980a0ae64cca873adfd5828620c6d2d4778276a2e",
+    "fileSize": 465942
+  },
+  {
+    "relativePath": "episodes/2ba0b866-25ca-4987-aa5e-39aa3c6ca7ae/production-workspace/versions/15391dfa4b57b7d3ebb8b5270b481eb2d9da608d12ab6a9dc7deffca4ddc87f1.json",
+    "sha256": "15391dfa4b57b7d3ebb8b5270b481eb2d9da608d12ab6a9dc7deffca4ddc87f1",
+    "fileSize": 23184
+  },
+  {
+    "relativePath": "episodes/2ba0b866-25ca-4987-aa5e-39aa3c6ca7ae/workspace-deliveries/0304e576-2666-4456-8d0e-c6d98f35a6d3/cover.png",
+    "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+    "fileSize": 1515
+  },
+  {
+    "relativePath": "episodes/2ba0b866-25ca-4987-aa5e-39aa3c6ca7ae/workspace-deliveries/0304e576-2666-4456-8d0e-c6d98f35a6d3/metadata.json",
+    "sha256": "b596e2f1424b2cc19a17a4df2b30758748b65830c802909d2b85ba869592c286",
+    "fileSize": 2171
+  },
+  {
+    "relativePath": "episodes/2ba0b866-25ca-4987-aa5e-39aa3c6ca7ae/workspace-deliveries/0304e576-2666-4456-8d0e-c6d98f35a6d3/checks.json",
+    "sha256": "687cc4bfcbb0420a0888f743ad9f579a7806f1892f4f768f5ea544663211e589",
+    "fileSize": 6465
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "rollbackGraphIdentical": true,
+  "rollbackFileTreeIdentical": true,
+  "snapshottedGraphTables": 18,
+  "guardStatus": {
+    "otherOwner": 404,
+    "wrongTitle": 409,
+    "stalePlan": 409,
+    "foreignPath": 409
+  },
+  "otherEpisodeUnchanged": true,
+  "otherMediaUnchanged": true,
+  "remainingEpisodes": 0,
+  "remainingWorkspaces": 0,
+  "cleanupPending": false
+}

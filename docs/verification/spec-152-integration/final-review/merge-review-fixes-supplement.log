@@ -1,0 +1,23 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/four-step-integration/loop-control
+
+ ✓ src/local-app/workspaceDelivery.integration.test.ts (4 tests) 37602ms
+   ✓ Owner delivery requires an exact confirmed export  1565ms
+   ✓ real Worker verifies exact package, fences tamper and missing inputs, retries and survives restart  12127ms
+   ✓ a queued package cannot complete or retry against a different final export  14047ms
+   ✓ delivery records the used trimmed voice source and never substitutes an unadopted draft text  9863ms
+ ✓ src/local-app/workspaceExport.integration.test.ts (1 test) 18853ms
+   ✓ Owner checks actual used content before exporting and confirms exact final bytes  18853ms
+ ✓ src/local-app/fixtureSchema.integration.test.ts (3 tests) 5138ms
+   ✓ schema provisioning accepts both the pre-workspace and upgraded sources without replaying applied DDL  2285ms
+   ✓ an applied migration SHA mismatch refuses provisioning before writing the target schema  729ms
+   ✓ schema and migration metadata retain one snapshot when the source upgrades during export  2123ms
+ ✓ src/local-app/embeddedStudio.integration.test.ts (1 test) 4582ms
+   ✓ Owner opens the real Studio and saves its versioned workspace through native HTTP  4582ms
+ ✓ src/local-app/workspaceCatalog.integration.test.ts (1 test) 1702ms
+   ✓ Owner catalog projects only current workspace export and delivery evidence  1701ms
+
+ Test Files  5 passed (5)
+      Tests  10 passed (10)
+   Start at  03:44:05
+   Duration  68.92s (transform 292ms, setup 10ms, collect 543ms, tests 67.88s, environment 0ms, prepare 122ms)

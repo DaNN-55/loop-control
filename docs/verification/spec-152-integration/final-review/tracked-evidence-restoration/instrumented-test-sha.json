@@ -1,0 +1,6 @@
+{
+  "path": "src/local-app/formalWorkflow.delivery.integration.test.ts",
+  "originalSha256": "0673cf873e2d0c53df5012cfcc2c98a14d706a48c8ff686475544bb137a6845d",
+  "instrumentedSha256": "11f0ea53688a61c61f37b9a644c5d94e19354dcab29181bbdf62f4c18425be7e",
+  "purpose": "Only append evidence outputs after original assertions; all original assertion text preserved"
+}

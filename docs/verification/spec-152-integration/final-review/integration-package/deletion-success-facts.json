@@ -1,0 +1,55 @@
+{
+  "episode": "2ba0b866-25ca-4987-aa5e-39aa3c6ca7ae",
+  "workspaceId": "0a6593a5-96ed-4d42-9434-f995b547bd08",
+  "deletedResponse": {
+    "status": 200,
+    "body": {
+      "path": "/private/tmp/loop-t06-volume-9MRHw7/mounted/loop-153-4xRJeX/account/episodes/2ba0b866-25ca-4987-aa5e-39aa3c6ca7ae",
+      "paths": [
+        "/private/tmp/loop-t06-volume-9MRHw7/mounted/loop-153-4xRJeX/account/episodes/2ba0b866-25ca-4987-aa5e-39aa3c6ca7ae"
+      ],
+      "title": "正式新单",
+      "summary": {
+        "title": "正式新单",
+        "counts": {
+          "tasks": 12,
+          "approvals": 0,
+          "artifacts": 12,
+          "asset_locks": 0,
+          "experiments": 0,
+          "audio_tracks": 5,
+          "audit_events": 32,
+          "review_packages": 1,
+          "metric_snapshots": 0,
+          "state_transitions": 2,
+          "review_annotations": 0,
+          "audio_track_annotations": 0,
+          "production_dependencies": 6,
+          "production_invalidations": 0,
+          "pre_render_review_members": 0,
+          "production_material_revisions": 5,
+          "pre_render_review_member_decisions": 0,
+          "review_render_composition_revisions": 0
+        },
+        "account_id": "41be973a-207e-46fc-a6e1-1ec212ee0a3e",
+        "deleted_at": "2026-10-29T19:43:29.501131+00:00",
+        "episode_id": "2ba0b866-25ca-4987-aa5e-39aa3c6ca7ae"
+      },
+      "episodeId": "2ba0b866-25ca-4987-aa5e-39aa3c6ca7ae",
+      "cleanupKey": "f272e234-81fc-45d8-bcc7-3e67f08618be",
+      "stagingPath": "/private/tmp/loop-t06-volume-9MRHw7/mounted/loop-153-4xRJeX/account/episodes/.deletion-staging/2ba0b866-25ca-4987-aa5e-39aa3c6ca7ae",
+      "localRemoved": true,
+      "stagingPaths": [
+        "/private/tmp/loop-t06-volume-9MRHw7/mounted/loop-153-4xRJeX/account/episodes/.deletion-staging/2ba0b866-25ca-4987-aa5e-39aa3c6ca7ae"
+      ],
+      "cleanupPending": false
+    }
+  },
+  "remainingWorkspaces": 0,
+  "remainingEpisodes": 0,
+  "otherEpisode": "bd2d35c3-b9e7-4c09-be8f-7ac626ed31c0",
+  "otherBeforeJson": "{\"id\":\"bd2d35c3-b9e7-4c09-be8f-7ac626ed31c0\",\"stage\":\"storyboard_approved\",\"title\":\"四步制作 T02 验收\",\"is_test\":false,\"tts_voice\":\"zh_female_vv_uranus_bigtts\",\"account_id\":\"41be973a-207e-46fc-a6e1-1ec212ee0a3e\",\"created_at\":\"2026-10-29T19:43:12.524404+00:00\",\"updated_at\":\"2026-10-29T19:43:12.651062+00:00\",\"archived_at\":null,\"script_source\":\"provided\",\"audio_source_mode\":\"tts\",\"series_version_id\":null,\"tts_language_code\":\"zh-CN\",\"tts_speaking_rate\":1,\"worker_preflight_at\":null,\"blueprint_version_id\":\"8ded37b8-5931-4832-acdf-e6fba1408089\",\"main_script_revision_id\":\"4db3817a-c7b1-4660-b038-9a4a2fa64b31\"}",
+  "otherAfterJson": "{\"id\":\"bd2d35c3-b9e7-4c09-be8f-7ac626ed31c0\",\"stage\":\"storyboard_approved\",\"title\":\"四步制作 T02 验收\",\"is_test\":false,\"tts_voice\":\"zh_female_vv_uranus_bigtts\",\"account_id\":\"41be973a-207e-46fc-a6e1-1ec212ee0a3e\",\"created_at\":\"2026-10-29T19:43:12.524404+00:00\",\"updated_at\":\"2026-10-29T19:43:12.651062+00:00\",\"archived_at\":null,\"script_source\":\"provided\",\"audio_source_mode\":\"tts\",\"series_version_id\":null,\"tts_language_code\":\"zh-CN\",\"tts_speaking_rate\":1,\"worker_preflight_at\":null,\"blueprint_version_id\":\"8ded37b8-5931-4832-acdf-e6fba1408089\",\"main_script_revision_id\":\"4db3817a-c7b1-4660-b038-9a4a2fa64b31\"}",
+  "otherMediaBeforeSha": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+  "otherMediaAfterSha": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da"
+}

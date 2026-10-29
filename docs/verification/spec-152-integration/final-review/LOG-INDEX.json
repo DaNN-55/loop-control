@@ -1,0 +1,25 @@
+{
+  "normalization": "Copied logs remove trailing line whitespace and trailing blank lines only; package artifacts are unchanged original bytes.",
+  "logs": [
+    {
+      "source": "/private/tmp/loop-152-orchestration/merge-review-fixes-build-runtime.log",
+      "originalSha256": "2351f29633c07ef7ef2c78b5e5b45e110bb98aab522b874cefee01198dff9b50",
+      "storedSha256": "2351f29633c07ef7ef2c78b5e5b45e110bb98aab522b874cefee01198dff9b50"
+    },
+    {
+      "source": "/private/tmp/loop-152-orchestration/merge-review-fixes-core.log",
+      "originalSha256": "2eb66d66440ef63d045d4e4b76dca62cc5ab6b8054f7c8c941ff254e360c2577",
+      "storedSha256": "dd07a73be3e8e54ad223b20c8324801f7d4b3b71df0104ecf85204c4cf6b2dd8"
+    },
+    {
+      "source": "/private/tmp/loop-152-orchestration/merge-review-fixes-npm-test.log",
+      "originalSha256": "2fc8e0b54813f7d2ee68885a1dac45b8e94b69eaf18b8671f4f04c2f30527291",
+      "storedSha256": "d756eaea665974727d58fbb889b472c5ee8dc7e36cffd30a03f5cd36d8aa19c9"
+    },
+    {
+      "source": "/private/tmp/loop-152-orchestration/merge-review-fixes-supplement.log",
+      "originalSha256": "54385e9431dd100fb3904bc07c795d95b86bd9f94b3337469cc4a14826055d61",
+      "storedSha256": "b1e1c32a4881a6901312090636ffc16828e70d27d194c01484cbb9497d902bf1"
+    }
+  ]
+}
