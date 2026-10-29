@@ -8,7 +8,7 @@ import {verifyNativeFile} from './localFiles.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
 import {probeMp3Artifact,inspectMp4Artifact} from '../worker/mediaTools.js';
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
-import {updateWorkspaceProject,workspaceContentSha256,type ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
+import {updateWorkspaceProject,type ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
 import {productionHash} from './scriptProductionStore.js';
 import type {InputRuntime} from './episodeCommands.js';
 const hash=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
@@ -18,9 +18,8 @@ export async function readWorkspaceAudio(c:PoolClient,row:ProductionWorkspaceRec
  FROM local_identity.workspace_audio_preparations p LEFT JOIN public.tasks t ON t.id=p.task_id LEFT JOIN public.audio_tracks a ON a.source_task_id=t.id AND a.episode_id=p.episode_id LEFT JOIN public.production_material_revisions m ON m.id=p.material_revision_id AND m.episode_id=p.episode_id WHERE p.workspace_id=$1 ORDER BY p.created_at DESC`,[row.id])).rows;
  return{mix:readWorkspaceAudioMix(project,workspaceAudioShotIds(row)),preparations:entries.map(p=>({id:p.id,kind:p.kind,shotId:p.shot_id,sourceItemId:p.source_item_id,sourceSha256:p.source_sha256,description:p.description,query:p.query,anchor:p.anchor,offsetSeconds:Number(p.offset_seconds),durationSeconds:Number(p.duration_seconds),taskId:p.task_id,status:p.material_revision_id?'ready':p.status??'pending',error:p.last_result?.blockers?.[0]?.detail??p.last_result?.retry?.reason??null,audioTrackId:p.audio_track_id??null,relativePath:p.relative_path??p.storage_path??null,sha256:p.sha256??p.material_sha256??null,fileSize:Number(p.file_size??p.material_size??0),adoptedItemId:p.adopted_item_id,source:p.last_result?.mediaSource??(p.material_revision_id?{provider:'manual',materialRevisionId:p.material_revision_id}:null)}))};
 }
-async function persistEdit(c:PoolClient,root:string,row:ProductionWorkspaceRecord,before:OpenChatCutProject,after:OpenChatCutProject,reason:string){
- if(workspaceContentSha256(before)!==workspaceContentSha256(after))await c.query('UPDATE local_identity.production_workspaces SET native_edit_revision=native_edit_revision+1 WHERE id=$1',[row.id]);
- return updateWorkspaceProject(c,root,row,after,row.bindings,reason);
+async function persistEdit(c:PoolClient,root:string,row:ProductionWorkspaceRecord,_before:OpenChatCutProject,after:OpenChatCutProject,reason:string){
+ return updateWorkspaceProject(c,root,row,after,row.bindings,reason,{nativeEdit:true});
 }
 export async function executeWorkspaceAudio(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,runtime:InputRuntime,command:string,data:Record<string,unknown>){
  if(command==='refreshWorkspaceAudio')return;
@@ -56,7 +55,7 @@ export async function executeWorkspaceAudio(c:PoolClient,root:string,row:Product
  if(command==='mixWorkspaceAudio'){
   const edit=data.edit as WorkspaceAudioEdit;if(edit?.workspaceId!==row.id)throw new ConfigurationError(400,'混音工程身份无效。');
   if(edit.kind==='voice'){
-   const actual=workspaceAudioShotIds(row)[edit.shotId];if(!actual||JSON.stringify([...actual].sort())!==JSON.stringify([...edit.visualItemIds].sort()))throw new ConfigurationError(409,'镜头范围已变化，请刷新。');
+   const actual=workspaceAudioShotIds(row)[edit.shotId];if(!actual||!Array.isArray(edit.visualItemIds)||JSON.stringify([...actual].sort())!==JSON.stringify([...edit.visualItemIds].sort()))throw new ConfigurationError(409,'镜头范围已变化，请刷新。');
   }
   let next;try{next=applyWorkspaceAudioMix(project,edit);}catch(e){throw new ConfigurationError(409,e instanceof Error?e.message:'混音输入无效。');}
   await persistEdit(c,root,row,project,next,'调整实际混音');return;

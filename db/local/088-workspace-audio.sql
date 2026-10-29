@@ -67,7 +67,7 @@ DECLARE track public.audio_tracks; draft public.shot_preparation_drafts; BEGIN
  IF NOT FOUND THEN RAISE EXCEPTION 'Real registered source track required' USING ERRCODE='22023'; END IF;
  SELECT * INTO draft FROM public.shot_preparation_drafts WHERE episode_id=p_episode AND review_package_id=p_review AND shot_id=p_shot;
  IF draft.id IS NULL THEN PERFORM public.save_shot_preparation_draft(p_episode,p_review,p_shot,'source','',true,NULL,NULL,NULL); END IF;
- UPDATE public.shot_preparation_drafts SET current_audio_track_id=track.id,audio_status='ready',source_audio_duration_seconds=track.duration_seconds WHERE episode_id=p_episode AND review_package_id=p_review AND shot_id=p_shot;
+ UPDATE public.shot_preparation_drafts SET audio_mode=CASE WHEN audio_mode='none' THEN 'source' ELSE audio_mode END,current_audio_track_id=track.id,audio_status='ready',source_audio_duration_seconds=track.duration_seconds WHERE episode_id=p_episode AND review_package_id=p_review AND shot_id=p_shot;
 END $$;
 REVOKE ALL ON FUNCTION local_identity.use_workspace_source_track(uuid,uuid,text,uuid) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION local_identity.use_workspace_source_track(uuid,uuid,text,uuid) TO loop_owner;

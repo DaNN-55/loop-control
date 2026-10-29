@@ -66,6 +66,7 @@ export function readWorkspaceAudioMix(project:OpenChatCutProject,shots:Record<st
 export function resolveWorkspaceMainVoice(project:OpenChatCutProject,shotId:string){
  const timeline=project.timelines.find(t=>t.items.some(i=>metadata(i)?.shotId===shotId||String(i.id).startsWith(`shot-${shotId}-`)));
  if(!timeline)return{item:undefined,explicitRoute:false};
- const item=timeline.items.find(i=>(i.id===`workspace-source-shot-${shotId}`||i.id===`workspace-narration-shot-${shotId}`)&&Number(i.volume??1)>0&&(timeline.tracks[String(i.track)] as {muted?:boolean}|undefined)?.muted!==true);
+ const audible=(i:Record<string,unknown>)=>Number(i.volume??1)>0&&(timeline.tracks[String(i.track)] as {muted?:boolean}|undefined)?.muted!==true;
+ const item=timeline.items.find(i=>i.id===`workspace-source-shot-${shotId}`&&audible(i))??timeline.items.find(i=>i.id===`workspace-narration-shot-${shotId}`&&audible(i));
  return{item,explicitRoute:!!item||timeline.items.some(i=>metadata(i)?.shotId===shotId&&typeof (i.loopControlAudio as {voiceMode?:unknown}).voiceMode==='string')};
 }

@@ -1,3 +1,4 @@
+import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
 import {readWorkspaceShotWindow} from '../workspaceShots.js';
 import {createHash} from 'node:crypto';
 import {join} from 'node:path';
@@ -18,12 +19,12 @@ async function captionContext(c:PoolClient,root:string,row:ProductionWorkspaceRe
  const draft=(await c.query('SELECT * FROM public.shot_preparation_drafts WHERE episode_id=$1 AND review_package_id=$2 AND shot_id=$3',[row.episode_id,row.storyboard_package_id,clip.shotId])).rows[0];
  const lane=readWorkspaceCaption(project,clip.itemId),contract=lane?.contract??defaultShotCaptionContract(draft?.subtitle_text??clip.text,draft?.audio_mode==='tts'?'follow_tts':'independent',draft?.subtitles_enabled??true);
  const narration=(await c.query('SELECT clip_id FROM local_identity.workspace_narrations WHERE workspace_id=$1 AND shot_id=$2',[row.id,clip.shotId])).rows[0];
- const nativeAudio=timeline.items.find(i=>i.id===`workspace-narration-shot-${clip.shotId}`)??timeline.items.find(i=>i.id===`workspace-narration-${narration?.clip_id??clip.id}`),nativeTrack=typeof nativeAudio?.sourceAssetId==='string'&&nativeAudio.sourceAssetId.startsWith('audio-track-')?nativeAudio.sourceAssetId.slice(12):null;
- const audioId=nativeTrack??(draft?.audio_mode!=='none'?draft?.current_audio_track_id:null),audio=audioId?(await c.query('SELECT * FROM public.audio_tracks WHERE id=$1 AND episode_id=$2',[audioId,row.episode_id])).rows[0]:null;
+ const route=resolveWorkspaceMainVoice(project,clip.shotId),nativeAudio=route.item??(!route.explicitRoute?timeline.items.find(i=>i.id===`workspace-narration-${narration?.clip_id??clip.id}`):undefined),nativeTrack=typeof nativeAudio?.sourceAssetId==='string'&&nativeAudio.sourceAssetId.startsWith('audio-track-')?nativeAudio.sourceAssetId.slice(12):null;
+ const audioId=nativeTrack??(!route.explicitRoute&&draft?.audio_mode!=='none'?draft?.current_audio_track_id:null),audio=audioId?(await c.query('SELECT * FROM public.audio_tracks WHERE id=$1 AND episode_id=$2',[audioId,row.episode_id])).rows[0]:null;
  if(audio)try{await verifyNativeFile(root,audio.relative_path,audio.sha256,Number(audio.file_size));}catch{throw new ConfigurationError(409,'当前字幕音轨不可用或指纹已变化。');}
- const voiceItems=timeline.items.filter(i=>i===nativeAudio||draft?.audio_mode==='source'&&i.id===clip.itemId).map(i=>({id:i.id,src:i.src,sourceAssetId:i.sourceAssetId,sourceContentHash:i.sourceContentHash,sourceRevision:i.sourceRevision,startFrame:i.startFrame,durationInFrames:i.durationInFrames,srcInFrame:i.srcInFrame,playbackRate:i.playbackRate,edits:i.edits}));
+ const voiceItems=timeline.items.filter(i=>i===nativeAudio||!route.explicitRoute&&draft?.audio_mode==='source'&&i.id===clip.itemId).map(i=>({id:i.id,src:i.src,sourceAssetId:i.sourceAssetId,sourceContentHash:i.sourceContentHash,sourceRevision:i.sourceRevision,startFrame:i.startFrame,durationInFrames:i.durationInFrames,srcInFrame:i.srcInFrame,playbackRate:i.playbackRate,edits:i.edits}));
  const inputFingerprint=fingerprint({version:'workspace-caption-input/v1',workspaceId:row.id,shotId:clip.shotId,text:contract.text,followText:contract.contentMode==='follow_tts'?draft?.tts_text:null,audioTrackId:audio?.id??null,audioSha256:audio?.sha256??null,startFrame:item.startFrame,durationInFrames:item.durationInFrames,fps:timeline.fps,voiceItems});
- return{clip,timeline,item,draft,lane,contract,audio,inputFingerprint,laneFingerprint:fingerprint(lane?.words??[])};
+ return{route,clip,timeline,item,draft,lane,contract,audio,inputFingerprint,laneFingerprint:fingerprint(lane?.words??[])};
 }
 export async function readWorkspaceCaptions(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject):Promise<WorkspaceCaptionState[]>{
  const records=(await c.query('SELECT * FROM local_identity.workspace_caption_evidence WHERE workspace_id=$1',[row.id])).rows;
@@ -45,7 +46,7 @@ export async function executeWorkspaceCaptionCommand(c:PoolClient,root:string,ro
  if(command==='saveWorkspaceCaptions'){
   if(!isValidShotCaptionContract(data.captionContract))throw new ConfigurationError(400,'字幕正文、布局或时序无效。');const contract=data.captionContract;
   if(contract.text.length>100000||contract.cues.length>1000||new Set(contract.cues.map(cue=>cue.id)).size!==contract.cues.length)throw new ConfigurationError(400,'字幕正文或 cue 数量无效。');
-  if(contract.contentMode==='follow_tts'&&(x.draft?.audio_mode!=='tts'||x.draft?.tts_text!==contract.text))throw new ConfigurationError(409,'跟随口播须采用当前口播正文，请刷新后重试。');
+  if(contract.contentMode==='follow_tts'&&(x.route.explicitRoute&&x.route.item?.id!==`workspace-narration-shot-${x.clip.shotId}`||x.draft?.audio_mode!=='tts'||x.draft?.tts_text!==contract.text))throw new ConfigurationError(409,'跟随口播须采用当前口播正文，请刷新后重试。');
   validateCues(contract,Number(x.item.durationInFrames)*1000/x.timeline.fps);
   if(data.nativeApplied!==undefined&&typeof data.nativeApplied!=='boolean')throw new ConfigurationError(400,'原生字幕保存状态无效。');
   const next=applyWorkspaceCaptionEdit(project,x.clip.itemId,contract);
@@ -79,7 +80,7 @@ export async function executeWorkspaceCaptionCommand(c:PoolClient,root:string,ro
  }
  if(command==='confirmWorkspaceCaptionText'){
   const e=(await c.query('SELECT * FROM local_identity.workspace_caption_evidence WHERE workspace_id=$1 AND shot_id=$2',[row.id,x.clip.shotId])).rows[0];
-  if(x.contract.contentMode==='follow_tts'&&!x.audio)throw new ConfigurationError(409,'请先采用当前口播音轨，再核对跟随字幕。');
+  if(x.contract.contentMode==='follow_tts'&&(!x.audio||x.route.explicitRoute&&x.route.item?.id!==`workspace-narration-shot-${x.clip.shotId}`))throw new ConfigurationError(409,'请先采用当前口播音轨，再核对跟随字幕。');
   if(!x.contract.enabled||!x.lane?.words.length||!e||e.method==='waiting'||data.expectedInputFingerprint!==x.inputFingerprint||e.input_fingerprint!==x.inputFingerprint||e.lane_fingerprint!==x.laneFingerprint)throw new ConfigurationError(409,'正文、音轨或字幕时序已变化，请重新校时后核对。');
   if(x.audio)await c.query('SELECT local_identity.confirm_caption_text($1,$2,$3,$4,$5,$6,$7)',[row.episode_id,row.storyboard_package_id,x.clip.shotId,x.audio.id,x.audio.sha256,createHash('sha256').update(x.contract.text).digest('hex'),x.draft.acoustic_alignment?.inputVersion]);
   await c.query('UPDATE local_identity.workspace_caption_evidence SET confirmed_by=local_identity.owner_id(),confirmed_at=clock_timestamp() WHERE workspace_id=$1 AND shot_id=$2',[row.id,x.clip.shotId]);return readProductionWorkspace(c,row.episode_id,root);
