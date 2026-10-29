@@ -15,13 +15,19 @@ export function useLoopControlHost(projectId,base,agent,panels){
   useEffect(()=>{
     if(!active)return;
     panels.setChatCollapsed(true);
+    const hostStyle=document.createElement('style');hostStyle.textContent=':root[data-lc-host-tools="open"] .cc-inspector{position:static;inset:auto;width:min(260px,45%);flex:0 0 min(260px,45%);box-shadow:none}';document.head.append(hostStyle);
+    let narrow=innerWidth<1100;if(narrow)panels.setInspectorCollapsed(true);
+    const resize=()=>{const next=innerWidth<1100;if(next&&!narrow)panels.setInspectorCollapsed(true);narrow=next;};
+    window.addEventListener('resize',resize);
     async function message(event){
       const msg=event.data;
       if(event.source!==parent||event.origin!==parentOrigin||!msg||msg.type!=='loop-control:command'||msg.channel!==channel||msg.projectId!==projectId||typeof msg.requestId!=='string'||!/^[a-f0-9-]{36}$/.test(msg.requestId))return;
       const result=(ok,error,value)=>emit('loop-control:result',{requestId:msg.requestId,ok,...(error?{error}:{}),...(value?{result:value}:{})});
       const digest=async doc=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(doc))))).map(b=>b.toString(16).padStart(2,'0')).join('');
       try{
-        if(msg.action==='inspect'){
+        if(msg.action==='host-panel'){
+          if(typeof msg.open!=='boolean'){result(false,'面板状态无效。');return;}document.documentElement.dataset.lcHostTools=msg.open?'open':'closed';if(msg.open)panels.setInspectorCollapsed(true);result(true);
+        }else if(msg.action==='inspect'){
           const document=structuredClone(live.current.base.doc);result(true,undefined,{revision:revision.current,documentFingerprint:await digest(document),document});
         }else if(msg.action==='apply-captions'||msg.action==='apply-workspace-edit'){
           const doc=live.current.base.doc,observedRevision=revision.current;
@@ -43,14 +49,14 @@ export function useLoopControlHost(projectId,base,agent,panels){
           live.current.agent.playerRef.current?.seekTo(item.startFrame);
           result(true);
         }
-      }catch{result(false,'编辑器操作未完成，当前修改仍保留。');}
+      }catch(cause){result(false,cause instanceof Error?cause.message:'编辑器操作未完成，当前修改仍保留。');}
     }
     window.addEventListener('message',message);
-    return()=>{window.removeEventListener('message',message);emit('loop-control:closed');};
+    return()=>{hostStyle.remove();delete document.documentElement.dataset.lcHostTools;window.removeEventListener('resize',resize);window.removeEventListener('message',message);emit('loop-control:closed');};
   },[projectId,active]);
   useEffect(()=>{
     if(!active)return;
-    emit('loop-control:state',{revision:++revision.current,selectedIds:Array.from(base.selection.selectedIds??[]),shots:readWorkspaceShots(base.doc).filter(s=>s.timelineId===base.doc.activeTimelineId),items:base.state.items.filter(i=>i.kind==='video'||i.kind==='image'||i.kind==='text'&&i.id.startsWith('shot-')).map(i=>({id:i.id,startFrame:i.startFrame,durationInFrames:i.durationInFrames,kind:i.kind,srcInFrame:i.srcInFrame??0,durationLocked:i.loopControlVideo?.durationLocked===true,sourceDurationInFrames:base.doc.assets.find(a=>a.id===i.sourceAssetId)?.durationInFrames,fit:i.fit??base.state.fit,focusX:i.transform?.x??0,focusY:i.transform?.y??0})),width:base.state.width,height:base.state.height});
+    emit('loop-control:state',{revision:++revision.current,selectedIds:Array.from(base.selection.selectedIds??[]),structureEnabled:base.doc.loopControl?.version==='four-step-workspace/v1',shots:base.doc.loopControl?.version==='four-step-workspace/v1'?readWorkspaceShots(base.doc).filter(s=>s.timelineId===base.doc.activeTimelineId):undefined,items:base.state.items.filter(i=>i.kind==='video'||i.kind==='image'||i.kind==='text'&&i.id.startsWith('shot-')).map(i=>({id:i.id,startFrame:i.startFrame,durationInFrames:i.durationInFrames,kind:i.kind,srcInFrame:i.srcInFrame??0,durationLocked:i.loopControlVideo?.durationLocked===true,sourceDurationInFrames:base.doc.assets.find(a=>a.id===i.sourceAssetId)?.durationInFrames,fit:i.fit??base.state.fit,focusX:i.transform?.x??0,focusY:i.transform?.y??0,layout:i.loopControlComposition?.layout??'full',transition:Number(i.fadeInFrames)>0||Number(i.fadeOutFrames)>0?'fade':'cut'})),width:base.state.width,height:base.state.height});
   },[base.doc,projectId,active]);
   return active?async()=>emit('loop-control:leave'):null;
 }
