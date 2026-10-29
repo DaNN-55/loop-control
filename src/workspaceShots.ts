@@ -12,7 +12,6 @@ export type WorkspaceShotOperation=
  |{kind:'range';itemId:string;edge:'in'|'out';deltaFrames:number}
  |{kind:'lock';itemId:string;locked:boolean}
  |{kind:'appearance';itemId:string;fit?:'cover'|'contain';focusX?:number;focusY?:number;transition?:'cut'|'fade'};
-const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 export function workspaceShotIdentity(item:Record<string,unknown>,workspaceId=''):WorkspaceShotIdentity|null{
  const meta=item.loopControlShot as WorkspaceShotIdentity|undefined;if(meta&&typeof meta.shotId==='string'&&typeof meta.clipId==='string')return meta;
  const match=String(item.id).match(/^shot-(.+)-([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/);
