@@ -1,6 +1,6 @@
 import {safeAssetOutputPath} from "./controlledMediaExecutor.js";
 import { createHash, randomUUID } from "node:crypto";
-import { copyFile, mkdir, readFile, writeFile, lstat } from "node:fs/promises";
+import { copyFile, mkdir, readFile, writeFile, lstat, rename } from "node:fs/promises";
 import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { createServer as createTcpServer, type Server } from "node:net";
 import { dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
@@ -139,6 +139,23 @@ export async function openOpenChatCutStudio(assetRoot: string, episodeId: string
 }
 
 export function isOpenChatCutStudio(episodeId:string):boolean{return sessions.has(episodeId);}
+
+/** Register verified LC bytes in the live session before a local item relink. */
+export async function registerOpenChatCutStudioSource(assetRoot:string,episodeId:string,relativePath:string,expectedSha256:string,expectedSize:number):Promise<string>{
+ const session=sessions.get(episodeId);if(!session||session.child.exitCode!==null)throw Error('Studio 会话已失效。');
+ const root=resolve(assetRoot),source=resolve(root,relativePath);
+ if(!relativePath.startsWith(`episodes/${episodeId}/`)||!isDescendant(root,source))throw Error('候选素材超出本期边界。');
+ const stat=await lstat(source);if(!stat.isFile()||stat.isSymbolicLink()||stat.nlink!==1)throw Error('候选必须是安全普通文件。');
+ const bytes=await readFile(source);if(bytes.length!==expectedSize||createHash('sha256').update(bytes).digest('hex')!==expectedSha256)throw Error('候选文件指纹已变化。');
+ const name=`${createHash('sha256').update(relativePath).digest('hex').slice(0,20)}${extname(relativePath).toLowerCase()}`,url=`/media/uploads/${name}`;
+ const target=await safeAssetOutputPath(root,relative(root,join(session.dataDir,'media','uploads',name)));
+ try{const previous=await lstat(target);if(!previous.isFile()||previous.isSymbolicLink()||previous.nlink!==1)throw Error('Studio 素材副本不安全。');}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
+ await writeFile(target,bytes);
+ const path=join(dirname(session.dataDir),'workspace.json'),metadata=await readWorkspaceMetadata(path);if(!metadata||metadata.projectId!==session.projectId)throw Error('Studio 来源映射身份失效。');
+ const reverseSources=new Map(session.reverseSources);reverseSources.set(url,relativePath);
+ const temp=path+'.'+randomUUID()+'.tmp';await writeFile(temp,JSON.stringify({...metadata,reverseSources:Object.fromEntries(reverseSources)},null,2)+'\n');await rename(temp,path);
+ session.reverseSources=reverseSources;return url;
+}
 
 export async function openOpenChatCutDraftStudio(assetRoot:string,episodeId:string,project:OpenChatCutProject,sourcePaths:string[],inputFingerprint:string,runtimeConfig:OpenChatCutRuntimeConfig={},validateProject?:StudioProjectValidator):Promise<OpenChatCutStudioOpenResult>{
   await validateProject?.(project);
