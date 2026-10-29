@@ -56,8 +56,8 @@ export function applyWorkspaceAudioMix(project:OpenChatCutProject,edit:Workspace
 }
 export function readWorkspaceAudioMix(project:OpenChatCutProject,shots:Record<string,string[]>):WorkspaceAudioMix {
  const items=project.timelines.flatMap(t=>t.items),voices=Object.keys(shots).map(shotId=>{
-  const tts=items.find(i=>i.id===`workspace-narration-shot-${shotId}`),source=items.find(i=>i.id===`workspace-source-shot-${shotId}`),ambience=items.find(i=>i.id===`workspace-ambience-shot-${shotId}`),active=tts??source;
-  const route=resolveWorkspaceMainVoice(project,shotId);return{...route.window,shotId,mode:(tts?'tts':source?'source':'none') as WorkspaceVoiceMode,gainDb:active?db(active.volume):0,ambienceGainDb:ambience?db(ambience.volume):null,sourceItemId:metadata(source??ambience??{})?.sourceItemId??null,sourceAssetId:metadata(source??ambience??{})?.sourceAssetId??null};
+  const ambience=items.find(i=>i.id===`workspace-ambience-shot-${shotId}`),route=resolveWorkspaceMainVoice(project,shotId),active=route.item,source=active?.id===`workspace-source-shot-${shotId}`?active:undefined;
+  return{...route.window,shotId,mode:(active?source?'source':'tts':'none') as WorkspaceVoiceMode,gainDb:active?db(active.volume):0,ambienceGainDb:ambience?db(ambience.volume):null,sourceItemId:metadata(source??ambience??{})?.sourceItemId??null,sourceAssetId:metadata(source??ambience??{})?.sourceAssetId??null};
  });
  const sounds=project.timelines.flatMap(t=>t.items.filter(i=>['bgm','sfx'].includes(metadata(i)?.kind??'')).map(i=>({itemId:String(i.id),kind:metadata(i)!.kind as 'bgm'|'sfx',gainDb:db(i.volume),duckDepthDb:Math.abs(Number(t.tracks[String(i.track)]?.audioRouting?.duckDepthDb??0)),startSeconds:Number(i.startFrame)/t.fps,durationSeconds:Number(i.durationInFrames)/t.fps})));
  return{voices,sounds};
