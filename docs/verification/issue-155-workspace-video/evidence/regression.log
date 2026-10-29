@@ -1,0 +1,33 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t03-workspace-video/loop-control
+
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx (5 tests) 160ms
+ ✓ src/local-app/WorkspaceVideoMatch.test.tsx (1 test) 84ms
+ ✓ src/local-app/WorkspaceCaptionsPanel.test.tsx (1 test) 112ms
+ ✓ src/workspaceCaptions.test.ts (4 tests) 3ms
+ ✓ src/workspaceVideo.test.ts (2 tests) 2ms
+ ✓ src/local-app/productionWorkspace.integration.test.ts (1 test) 8529ms
+   ✓ Owner persists incomplete matches, opens the real draft and fills only its placeholder after reopening  8529ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts (3 tests) 26907ms
+   ✓ Owner edits only the chosen native caption lane and persists manual timing without shot approval  5449ms
+   ✓ current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit  3327ms
+   ✓ real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area  18130ms
+ ✓ src/local-app/workspaceVideo.integration.test.ts (5 tests) 32590ms
+   ✓ Owner prepares independent exact ranges from one source across multiple shots  2732ms
+   ✓ Owner renders many-to-many exact video ranges in native Studio (landscape=false)  11453ms
+   ✓ Owner renders many-to-many exact video ranges in native Studio (landscape=true)  10151ms
+   ✓ Owner moves a locked range by exactly one frame in real native output  4952ms
+   ✓ Owner boundaries reject stale, foreign, invalid, tampered and active-editor range writes  3301ms
+ ✓ src/local-app/workspaceImages.integration.test.ts (7 tests) 35672ms
+   ✓ Owner uploads and persists a native still image with duration and composition  2749ms
+   ✓ Owner renders static and pan/zoom native images without external generation (landscape=false)  10274ms
+   ✓ Owner renders static and pan/zoom native images without external generation (landscape=true)  11783ms
+   ✓ Owner sees missing and changed image blockers without a replacement task or source  1543ms
+   ✓ AI image generation retains the selected execution path and blocks when no registered connection exists  1931ms
+   ✓ Owner first image videos preserve completed outputs and manual edit boundary (edited=false)  4301ms
+   ✓ Owner first image videos preserve completed outputs and manual edit boundary (edited=true)  3089ms
+
+ Test Files  9 passed (9)
+      Tests  29 passed (29)
+   Start at  18:33:56
+   Duration  36.18s (transform 445ms, setup 64ms, collect 2.82s, tests 104.06s, environment 989ms, prepare 317ms)
