@@ -1,19 +1,19 @@
 {
   "exports": [
     {
-      "id": "6f5ea05a-0c9d-4ca8-aefb-abfce6c1717e",
+      "id": "7b805652-6fa7-4e24-b561-97ecb3a110bd",
       "projectContentVersion": 7,
-      "contentSha256": "232af0cc24c5bfb40faa7a7c80937283100c91d16fcaf106ea7db5caf923c533",
+      "contentSha256": "b11295d6e76eb1152369bd0dafb195707dbb1252175fa2ae033ad5ffa540b714",
       "project": {
-        "sha256": "a1693a3aec984833b23cf7426153c40a79c1a9a19208d0e08a7a2a48563b5e19",
+        "sha256": "808ff002202ac988b14072accf29036c3185555da7b7fcf076206463bf8895e3",
         "fileSize": 12684,
-        "relativePath": "episodes/f40084db-d3b3-40d7-8f96-d42c7fc53973/production-workspace/versions/a1693a3aec984833b23cf7426153c40a79c1a9a19208d0e08a7a2a48563b5e19.json"
+        "relativePath": "episodes/f83de6db-5b69-4366-be5d-6415f8fb6e21/production-workspace/versions/808ff002202ac988b14072accf29036c3185555da7b7fcf076206463bf8895e3.json"
       },
       "status": "ready",
       "artifact": {
         "sha256": "3f177d167f4fe3e077d3bde327d5ce5a674a8c7abf287b976984adebf97b730f",
         "fileSize": 2439661,
-        "relativePath": "episodes/f40084db-d3b3-40d7-8f96-d42c7fc53973/workspace-exports/6f5ea05a-0c9d-4ca8-aefb-abfce6c1717e/3f177d167f4fe3e077d3bde327d5ce5a674a8c7abf287b976984adebf97b730f.mp4"
+        "relativePath": "episodes/f83de6db-5b69-4366-be5d-6415f8fb6e21/workspace-exports/7b805652-6fa7-4e24-b561-97ecb3a110bd/3f177d167f4fe3e077d3bde327d5ce5a674a8c7abf287b976984adebf97b730f.mp4"
       },
       "checks": [
         {
@@ -24,7 +24,7 @@
             {
               "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
               "fileSize": 210288,
-              "relativePath": "episodes/f40084db-d3b3-40d7-8f96-d42c7fc53973/shot.mp4"
+              "relativePath": "episodes/f83de6db-5b69-4366-be5d-6415f8fb6e21/shot.mp4"
             }
           ]
         },
@@ -58,7 +58,7 @@
           "artifact": {
             "sha256": "78f327037a2f793c635bec8e89d63b69a1ba0e9e98009ad0771b1ccdbc851483",
             "fileSize": 60291,
-            "relativePath": "episodes/f40084db-d3b3-40d7-8f96-d42c7fc53973/workspace-exports/6f5ea05a-0c9d-4ca8-aefb-abfce6c1717e/representative.jpg"
+            "relativePath": "episodes/f83de6db-5b69-4366-be5d-6415f8fb6e21/workspace-exports/7b805652-6fa7-4e24-b561-97ecb3a110bd/representative.jpg"
           }
         },
         {
@@ -67,25 +67,25 @@
           "passed": true
         }
       ],
-      "createdAt": "2026-10-29T10:48:51.294Z",
-      "confirmedAt": "2026-10-29T10:48:51.424Z",
+      "createdAt": "2026-10-29T10:50:37.133Z",
+      "confirmedAt": "2026-10-29T10:50:37.300Z",
       "confirmed": true,
       "current": true
     },
     {
-      "id": "720ee6ec-5a4e-410e-b45b-326134a82038",
+      "id": "74e8670f-b2a9-4ac3-a7b8-89d0dd7f97af",
       "projectContentVersion": 6,
-      "contentSha256": "b88f0d2249826ec39d6ba6a30f122edad15c99d8054a2e7839253351a4527fc0",
+      "contentSha256": "2b8b34d0e346a48a205ce9b0279bbc57e63081ab61bc8277bcc8bc7f345ab826",
       "project": {
-        "sha256": "17a5d1f900c75412e70cf88260204632bd4e8a40fc0fab75700e211d91f7a0a7",
+        "sha256": "652528d5ada5f23884fbf875dd2deb98ade4a96db2f22782feb56aa81469f039",
         "fileSize": 12610,
-        "relativePath": "episodes/f40084db-d3b3-40d7-8f96-d42c7fc53973/production-workspace/versions/17a5d1f900c75412e70cf88260204632bd4e8a40fc0fab75700e211d91f7a0a7.json"
+        "relativePath": "episodes/f83de6db-5b69-4366-be5d-6415f8fb6e21/production-workspace/versions/652528d5ada5f23884fbf875dd2deb98ade4a96db2f22782feb56aa81469f039.json"
       },
       "status": "ready",
       "artifact": {
         "sha256": "90ebf4eb069b8e7204a39705a04ba53d922a19a451f28fddc289a726051c4a69",
         "fileSize": 2526809,
-        "relativePath": "episodes/f40084db-d3b3-40d7-8f96-d42c7fc53973/workspace-exports/720ee6ec-5a4e-410e-b45b-326134a82038/90ebf4eb069b8e7204a39705a04ba53d922a19a451f28fddc289a726051c4a69.mp4"
+        "relativePath": "episodes/f83de6db-5b69-4366-be5d-6415f8fb6e21/workspace-exports/74e8670f-b2a9-4ac3-a7b8-89d0dd7f97af/90ebf4eb069b8e7204a39705a04ba53d922a19a451f28fddc289a726051c4a69.mp4"
       },
       "checks": [
         {
@@ -96,7 +96,7 @@
             {
               "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
               "fileSize": 210288,
-              "relativePath": "episodes/f40084db-d3b3-40d7-8f96-d42c7fc53973/shot.mp4"
+              "relativePath": "episodes/f83de6db-5b69-4366-be5d-6415f8fb6e21/shot.mp4"
             }
           ]
         },
@@ -130,7 +130,7 @@
           "artifact": {
             "sha256": "98d7563f529d694c0986cdea781b1d7b31072cbd66b47ce9bb38c31f9da1b99b",
             "fileSize": 53074,
-            "relativePath": "episodes/f40084db-d3b3-40d7-8f96-d42c7fc53973/workspace-exports/720ee6ec-5a4e-410e-b45b-326134a82038/representative.jpg"
+            "relativePath": "episodes/f83de6db-5b69-4366-be5d-6415f8fb6e21/workspace-exports/74e8670f-b2a9-4ac3-a7b8-89d0dd7f97af/representative.jpg"
           }
         },
         {
@@ -139,19 +139,19 @@
           "passed": true
         }
       ],
-      "createdAt": "2026-10-29T10:48:38.925Z",
-      "confirmedAt": "2026-10-29T10:48:39.002Z",
+      "createdAt": "2026-10-29T10:50:26.923Z",
+      "confirmedAt": "2026-10-29T10:50:27.013Z",
       "confirmed": false,
       "current": false
     },
     {
-      "id": "53e4a661-d066-4c56-9179-461c19e18c7f",
+      "id": "d67f34e9-29c0-4acc-8884-0d3c9eaf020f",
       "projectContentVersion": 3,
-      "contentSha256": "8922258d6cb3d82388506305158ecaf3a82d5e9de5e271744a62a962405a51f0",
+      "contentSha256": "f52972641014a19b8b7fddbb406591692a16a85684af79b3f87bfc37f762f592",
       "project": {
-        "sha256": "159fcd1b3665966aad562db34cb305cf47407b82636efa226cd442cef585893f",
+        "sha256": "3c9b2e112b184d0c36c4bfc1914f2c49e3ab099ff607f7ae621969990920ed8a",
         "fileSize": 2224,
-        "relativePath": "episodes/f40084db-d3b3-40d7-8f96-d42c7fc53973/production-workspace/versions/159fcd1b3665966aad562db34cb305cf47407b82636efa226cd442cef585893f.json"
+        "relativePath": "episodes/f83de6db-5b69-4366-be5d-6415f8fb6e21/production-workspace/versions/3c9b2e112b184d0c36c4bfc1914f2c49e3ab099ff607f7ae621969990920ed8a.json"
       },
       "status": "failed",
       "artifact": null,
@@ -164,7 +164,7 @@
             {
               "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
               "fileSize": 210288,
-              "relativePath": "episodes/f40084db-d3b3-40d7-8f96-d42c7fc53973/shot.mp4"
+              "relativePath": "episodes/f83de6db-5b69-4366-be5d-6415f8fb6e21/shot.mp4"
             }
           ]
         },
@@ -174,19 +174,19 @@
           "passed": false
         }
       ],
-      "createdAt": "2026-10-29T10:48:29.336Z",
+      "createdAt": "2026-10-29T10:50:14.873Z",
       "confirmedAt": null,
       "confirmed": false,
       "current": false
     },
     {
-      "id": "65f7c9f8-6094-4088-ae86-2a736bea2358",
+      "id": "7def80fb-e4bb-4649-96f4-d9eb3e3e4bc0",
       "projectContentVersion": 1,
-      "contentSha256": "186203c045beb1ab618f6bf186d67dc632e75c8d02d51cc91028755929a9f0ea",
+      "contentSha256": "5ebc139c7c3dfe7565f61fb476267d16fb9ec4799ee02656549fc144291225f8",
       "project": {
-        "sha256": "644c340d58878b491c95d47c0251d0d5c8da6b6582064f9cb3a4e8ba7512a7b4",
+        "sha256": "f4a406589deb8a81dbc829e3bf69bcf9bbeb488d26f6b5b08d654c19fd2b8da2",
         "fileSize": 1975,
-        "relativePath": "episodes/f40084db-d3b3-40d7-8f96-d42c7fc53973/production-workspace/versions/644c340d58878b491c95d47c0251d0d5c8da6b6582064f9cb3a4e8ba7512a7b4.json"
+        "relativePath": "episodes/f83de6db-5b69-4366-be5d-6415f8fb6e21/production-workspace/versions/f4a406589deb8a81dbc829e3bf69bcf9bbeb488d26f6b5b08d654c19fd2b8da2.json"
       },
       "status": "failed",
       "artifact": null,
@@ -202,7 +202,7 @@
           "passed": false
         }
       ],
-      "createdAt": "2026-10-29T10:48:29.120Z",
+      "createdAt": "2026-10-29T10:50:14.633Z",
       "confirmedAt": null,
       "confirmed": false,
       "current": false
@@ -210,16 +210,16 @@
   ],
   "exportIssues": [
     {
-      "id": "56d8b4ff-4221-493f-bb89-1e7350a4f7e8",
-      "exportId": "6f5ea05a-0c9d-4ca8-aefb-abfce6c1717e",
+      "id": "73ed25f9-c2e9-446c-8dbe-b0dae639dab8",
+      "exportId": "7b805652-6fa7-4e24-b561-97ecb3a110bd",
       "reason": "检查开头画面位置",
       "resolved": true
     }
   ],
   "captions": [
     {
-      "clipId": "4365c8a4-8abb-4a2f-b28f-04f9f4059b88",
-      "itemId": "shot-shot-1-4365c8a4-8abb-4a2f-b28f-04f9f4059b88",
+      "clipId": "b3b1c5f5-d745-40d1-baec-383df6804020",
+      "itemId": "shot-shot-1-b3b1c5f5-d745-40d1-baec-383df6804020",
       "shotId": "shot-1",
       "durationMs": 2000,
       "contract": {
@@ -243,7 +243,7 @@
           "maxCharactersPerLine": 16
         }
       },
-      "inputFingerprint": "c6b3607b8ea6d8af913e3089bc7f363b0eee1bd399242f74e71dd61c4bd963cb",
+      "inputFingerprint": "c376aa28864e3b78dccc89b6e2ac7d78700ee2ab5fb4f030f51e59c682e72320",
       "timing": "missing",
       "textConfirmed": false,
       "audioTrackId": null,
@@ -253,8 +253,8 @@
       "detail": null
     },
     {
-      "clipId": "8ab81a85-f4a7-4874-97ce-b1a77f2a6594",
-      "itemId": "shot-shot-2-8ab81a85-f4a7-4874-97ce-b1a77f2a6594",
+      "clipId": "7d14d58b-62c5-4b94-8142-56bb153b35ef",
+      "itemId": "shot-shot-2-7d14d58b-62c5-4b94-8142-56bb153b35ef",
       "shotId": "shot-2",
       "durationMs": 2000,
       "contract": {
@@ -278,7 +278,7 @@
           "maxCharactersPerLine": 16
         }
       },
-      "inputFingerprint": "e1e1e80a67b142f3618d6a42fb92ecbfea56ac4b39bf212a7470ebc8c788da0d",
+      "inputFingerprint": "e39282eb8e5b571e2388367ef31750c855c2c80a4af48437c5d54e9b8d3ca919",
       "timing": "missing",
       "textConfirmed": false,
       "audioTrackId": null,
@@ -288,17 +288,17 @@
       "detail": null
     }
   ],
-  "id": "79020e99-e6f3-4f4d-ad3b-0ac9da72444a",
-  "episodeId": "f40084db-d3b3-40d7-8f96-d42c7fc53973",
+  "id": "470c3eed-881e-4625-b86e-9709a2b7cc68",
+  "episodeId": "f83de6db-5b69-4366-be5d-6415f8fb6e21",
   "workflowVersion": "four-step/v1",
-  "scriptRevisionId": "9c7cf673-d903-4326-9c19-82a840aea19c",
-  "storyboardPackageId": "aaa537de-3012-46ba-a617-37e62c0d1dcf",
+  "scriptRevisionId": "c38f2dff-cdc9-485e-8fae-ae8bfdfd9f40",
+  "storyboardPackageId": "e3125389-3afc-4482-9b78-fc3246a217c1",
   "revision": 7,
-  "contentSha256": "232af0cc24c5bfb40faa7a7c80937283100c91d16fcaf106ea7db5caf923c533",
+  "contentSha256": "b11295d6e76eb1152369bd0dafb195707dbb1252175fa2ae033ad5ffa540b714",
   "nativeEditRevision": 2,
   "narration": [
     {
-      "clipId": "4365c8a4-8abb-4a2f-b28f-04f9f4059b88",
+      "clipId": "b3b1c5f5-d745-40d1-baec-383df6804020",
       "shotId": "shot-1",
       "mode": "none",
       "text": "第一镜",
@@ -306,7 +306,7 @@
       "languageCode": null,
       "speakingRate": null,
       "override": false,
-      "inputFingerprint": "96c3557c3242e23ede84b86c5710f8d56347b0b46011ea3bd44560116b5d4d94",
+      "inputFingerprint": "b72abd13d5b9428462f5333b6a7948908ea6f9d554c01d42d1ac6ebd3c1957c0",
       "confirmed": false,
       "taskId": null,
       "status": "pending",
@@ -317,11 +317,11 @@
       "sha256": null,
       "fileSize": null,
       "durationSeconds": null,
-      "itemId": "workspace-narration-4365c8a4-8abb-4a2f-b28f-04f9f4059b88",
+      "itemId": "workspace-narration-b3b1c5f5-d745-40d1-baec-383df6804020",
       "adoptedAudioTrackId": null
     },
     {
-      "clipId": "8ab81a85-f4a7-4874-97ce-b1a77f2a6594",
+      "clipId": "7d14d58b-62c5-4b94-8142-56bb153b35ef",
       "shotId": "shot-2",
       "mode": "none",
       "text": "缺少素材的第二镜。",
@@ -329,7 +329,7 @@
       "languageCode": null,
       "speakingRate": null,
       "override": false,
-      "inputFingerprint": "cbbc9a589d4986c6a7d1423c293de5d4355fd9fd47f19919053a97fa3884c434",
+      "inputFingerprint": "71b83a0570f5799c0d64e735aa0b20620c3d09035a8daea5c6bf56236d60f315",
       "confirmed": false,
       "taskId": null,
       "status": "pending",
@@ -340,91 +340,91 @@
       "sha256": null,
       "fileSize": null,
       "durationSeconds": null,
-      "itemId": "workspace-narration-8ab81a85-f4a7-4874-97ce-b1a77f2a6594",
+      "itemId": "workspace-narration-7d14d58b-62c5-4b94-8142-56bb153b35ef",
       "adoptedAudioTrackId": null
     }
   ],
   "clips": [
     {
-      "id": "4365c8a4-8abb-4a2f-b28f-04f9f4059b88",
+      "id": "b3b1c5f5-d745-40d1-baec-383df6804020",
       "text": "第一镜",
-      "itemId": "shot-shot-1-4365c8a4-8abb-4a2f-b28f-04f9f4059b88",
+      "itemId": "shot-shot-1-b3b1c5f5-d745-40d1-baec-383df6804020",
       "shotId": "shot-1",
       "source": {
         "kind": "video",
         "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
         "fileSize": 210288,
-        "relativePath": "episodes/f40084db-d3b3-40d7-8f96-d42c7fc53973/shot.mp4",
-        "materialRevisionId": "8bfe9dac-d9fc-4ef8-a35f-42ebc96e59e4"
+        "relativePath": "episodes/f83de6db-5b69-4366-be5d-6415f8fb6e21/shot.mp4",
+        "materialRevisionId": "f542697b-864c-4b18-a4e1-528f6e3793e6"
       }
     },
     {
-      "id": "8ab81a85-f4a7-4874-97ce-b1a77f2a6594",
+      "id": "7d14d58b-62c5-4b94-8142-56bb153b35ef",
       "text": "缺少素材的第二镜。",
-      "itemId": "shot-shot-2-8ab81a85-f4a7-4874-97ce-b1a77f2a6594",
+      "itemId": "shot-shot-2-7d14d58b-62c5-4b94-8142-56bb153b35ef",
       "shotId": "shot-2",
       "source": {
         "kind": "video",
         "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
         "fileSize": 210288,
-        "relativePath": "episodes/f40084db-d3b3-40d7-8f96-d42c7fc53973/shot.mp4",
-        "materialRevisionId": "8bfe9dac-d9fc-4ef8-a35f-42ebc96e59e4"
+        "relativePath": "episodes/f83de6db-5b69-4366-be5d-6415f8fb6e21/shot.mp4",
+        "materialRevisionId": "f542697b-864c-4b18-a4e1-528f6e3793e6"
       }
     }
   ],
   "project": {
-    "relativePath": "episodes/f40084db-d3b3-40d7-8f96-d42c7fc53973/production-workspace/versions/a1693a3aec984833b23cf7426153c40a79c1a9a19208d0e08a7a2a48563b5e19.json",
-    "sha256": "a1693a3aec984833b23cf7426153c40a79c1a9a19208d0e08a7a2a48563b5e19",
+    "relativePath": "episodes/f83de6db-5b69-4366-be5d-6415f8fb6e21/production-workspace/versions/808ff002202ac988b14072accf29036c3185555da7b7fcf076206463bf8895e3.json",
+    "sha256": "808ff002202ac988b14072accf29036c3185555da7b7fcf076206463bf8895e3",
     "fileSize": 12684,
-    "projectId": "loop-control-f40084db-d3b3-40d7-8f96-d42c7fc53973"
+    "projectId": "loop-control-f83de6db-5b69-4366-be5d-6415f8fb6e21"
   },
   "history": [
     {
       "revision": 7,
-      "sha256": "a1693a3aec984833b23cf7426153c40a79c1a9a19208d0e08a7a2a48563b5e19",
-      "scriptRevisionId": "9c7cf673-d903-4326-9c19-82a840aea19c",
+      "sha256": "808ff002202ac988b14072accf29036c3185555da7b7fcf076206463bf8895e3",
+      "scriptRevisionId": "c38f2dff-cdc9-485e-8fae-ae8bfdfd9f40",
       "reason": null
     },
     {
       "revision": 6,
-      "sha256": "42d2847bb84415c8600dcf4f40d7be8c3e19396c8ab606ae54cd8cbe7f37426e",
-      "scriptRevisionId": "9c7cf673-d903-4326-9c19-82a840aea19c",
+      "sha256": "a80dc5c64965981752b3edf9a9ff5c10fd47f0874f7201af598c2de0c32dfbb6",
+      "scriptRevisionId": "c38f2dff-cdc9-485e-8fae-ae8bfdfd9f40",
       "reason": null
     },
     {
       "revision": 6,
-      "sha256": "17a5d1f900c75412e70cf88260204632bd4e8a40fc0fab75700e211d91f7a0a7",
-      "scriptRevisionId": "9c7cf673-d903-4326-9c19-82a840aea19c",
+      "sha256": "652528d5ada5f23884fbf875dd2deb98ade4a96db2f22782feb56aa81469f039",
+      "scriptRevisionId": "c38f2dff-cdc9-485e-8fae-ae8bfdfd9f40",
       "reason": null
     },
     {
       "revision": 5,
-      "sha256": "980c51b0c2803200dc4ca15ec32980b3ab51837f99eaf3c3b05ba78252313f33",
-      "scriptRevisionId": "9c7cf673-d903-4326-9c19-82a840aea19c",
+      "sha256": "94adddefa5a5179dc3ff3201d19e41d5d351f3715b06bfa2b847d5363b0dc157",
+      "scriptRevisionId": "c38f2dff-cdc9-485e-8fae-ae8bfdfd9f40",
       "reason": "编辑字幕"
     },
     {
       "revision": 4,
-      "sha256": "a8ec5889eb1e76a4337f16eb71062c97e75ba54f82fb627569e3cc86b691a43b",
-      "scriptRevisionId": "9c7cf673-d903-4326-9c19-82a840aea19c",
+      "sha256": "fa32614b3152d81a90ff6151755b30c4c369baf142125fc1b837ffccba3e38c2",
+      "scriptRevisionId": "c38f2dff-cdc9-485e-8fae-ae8bfdfd9f40",
       "reason": "编辑字幕"
     },
     {
       "revision": 3,
-      "sha256": "159fcd1b3665966aad562db34cb305cf47407b82636efa226cd442cef585893f",
-      "scriptRevisionId": "9c7cf673-d903-4326-9c19-82a840aea19c",
+      "sha256": "3c9b2e112b184d0c36c4bfc1914f2c49e3ab099ff607f7ae621969990920ed8a",
+      "scriptRevisionId": "c38f2dff-cdc9-485e-8fae-ae8bfdfd9f40",
       "reason": null
     },
     {
       "revision": 2,
-      "sha256": "9de4c3ac352a9ca8bb86b2d1777bd6e0e3dc285fc138e1fc77cbe7e7a1c70ee0",
-      "scriptRevisionId": "9c7cf673-d903-4326-9c19-82a840aea19c",
+      "sha256": "44d66853d9dd93cd8277de8e0ded9c7c9eccd4422f2a42e3abac1602bf515dd0",
+      "scriptRevisionId": "c38f2dff-cdc9-485e-8fae-ae8bfdfd9f40",
       "reason": null
     },
     {
       "revision": 1,
-      "sha256": "644c340d58878b491c95d47c0251d0d5c8da6b6582064f9cb3a4e8ba7512a7b4",
-      "scriptRevisionId": "9c7cf673-d903-4326-9c19-82a840aea19c",
+      "sha256": "f4a406589deb8a81dbc829e3bf69bcf9bbeb488d26f6b5b08d654c19fd2b8da2",
+      "scriptRevisionId": "c38f2dff-cdc9-485e-8fae-ae8bfdfd9f40",
       "reason": "首次组装"
     }
   ],

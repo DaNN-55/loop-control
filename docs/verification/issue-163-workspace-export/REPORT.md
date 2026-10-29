@@ -31,4 +31,14 @@ LOOP_T11_EVIDENCE_DIR=/private/tmp/t11-export-evidence \
 
 ## 范围与后续
 
-本机导出不使用付费 Provider，不读取 Keychain，不写日常数据库，不运行日常 start/migrate/stop。真实公开 Provider、T12 包校验及 `production_completed`、T13 四步默认入口、T08/T10 Host 结构交互由相应票验收。本票最终还需在 T05 最终 shot 口播与最新 integration 合入后使用全新夹具复验；以本报告后续补记为准。
+本机导出不使用付费 Provider，不读取 Keychain，不写日常数据库，不运行日常 start/migrate/stop。真实公开 Provider、T12 包校验及 `production_completed`、T13 四步默认入口、T08/T10 Host 结构交互由相应票验收。按主 Agent 后续安排，本票先在当前 integration `92d0ef27`（含 T03/T07）和已合入 T05 checkpoint 上使用全新隔离夹具验收，解锁 T12。T05 后续稳定 shot 口播改造由其整合者再运行本票测试和跨票验收；不把当前 checkpoint 的 087 schema 当作最终口播改造已验收。
+
+## 当前 integration 复验
+
+已合入 `92d0ef27`，使用全新随机数据库与媒体根运行：
+
+- 受影响 UI、renderer 与 native render script：4 个文件、11 项测试通过。
+- workspace export、workspace Studio 持久化、字幕 HTTP/Worker/横竖真实像素：3 个文件、5 项集成测试通过，导出测试 24.256 秒。
+- `npm run check`、`npm run backend:build`、`npm run build` 通过；只有既有 Vite 大 chunk 提示。
+
+最终复验 MP4 独立保留在 `/private/tmp/t11-export-final-evidence/final.mp4`；视频流 120 帧、4.000000 秒，AAC 与容器 4.053333 秒，1080×1920，2,439,661 字节。`evidence/workspace.json` 已替换为此轮持久化读回。没有写入日常数据或调用付费 Provider。
