@@ -1,5 +1,5 @@
 import {applyWorkspaceShotOperation,isWorkspaceShotOperation,readWorkspaceShots} from 'virtual:loop-control-structure';
-import {applyWorkspaceCaptionEdit,isWorkspaceCaptionContract} from 'virtual:loop-control-captions';
+import {applyWorkspaceCaptionEdit,isWorkspaceCaptionContract,migrateWorkspaceCaptionLanes} from 'virtual:loop-control-captions';
 // Loaded by the Loop Control Vite adapter inside the real editor, never a second store.
 import {useEffect,useRef} from 'react';
 const query=new URLSearchParams(location.search);
@@ -34,12 +34,13 @@ export function useLoopControlHost(projectId,base,agent,panels){
           if(msg.expectedRevision!==observedRevision||msg.expectedDocumentFingerprint!==await digest(doc)||doc!==live.current.base.doc||observedRevision!==revision.current){result(false,'工程已有新修改，请重新读取当前工程后重试。');return;}
           if(msg.action==='apply-captions'&&(typeof msg.itemId!=='string'||!isWorkspaceCaptionContract(msg.contract)||msg.contract.text.length>100000||msg.contract.cues.length>1000)){result(false,'字幕增量输入无效。');return;}
           if(msg.action==='apply-workspace-edit'&&!isWorkspaceShotOperation(msg.operation)){result(false,'镜头编辑输入无效。');return;}
-          const next=msg.action==='apply-captions'?applyWorkspaceCaptionEdit(doc,msg.itemId,msg.contract):applyWorkspaceShotOperation(doc,msg.operation);
+          const next=msg.action==='apply-captions'?applyWorkspaceCaptionEdit(doc,msg.itemId,msg.contract):applyWorkspaceShotOperation(migrateWorkspaceCaptionLanes(doc),msg.operation);
           live.current.base.commands.applyDoc(next);
           await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
           const ok=await live.current.agent.flushBeforeLeaveRef.current();
           result(ok,ok?undefined:'原生保存冲突，请保留当前编辑并重试。',ok?{revision:revision.current,documentFingerprint:await digest(live.current.base.doc),document:structuredClone(live.current.base.doc)}:undefined);
         }else if(msg.action==='flush'){
+          const doc=live.current.base.doc,next=migrateWorkspaceCaptionLanes(doc);if(JSON.stringify(next)!==JSON.stringify(doc)){live.current.base.commands.applyDoc(next);await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}
           const ok=await live.current.agent.flushBeforeLeaveRef.current();
           result(ok,ok?undefined:'编辑器仍有未保存修改，请在编辑器中重试保存。');
         }else if(msg.action==='select'){

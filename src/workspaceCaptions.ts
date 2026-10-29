@@ -1,4 +1,4 @@
-import {readWorkspaceShotWindow,readWorkspaceShots} from './workspaceShots.js';
+import {readWorkspaceShotWindow,readWorkspaceShots,workspaceShotIdentity} from './workspaceShots.js';
 import {isValidShotCaptionContract,normalizeShotCaptionContract} from './shotCaptions.js';
 import type {ShotCaptionContract} from './shotCaptions.js';
 export interface WorkspaceCaptionState {clipId:string;itemId:string;shotId:string;durationMs:number;contract:ShotCaptionContract;inputFingerprint:string;timing:'missing'|'current'|'stale'|'waiting'|'failed';textConfirmed:boolean;audioTrackId:string|null;narrationText:string|null;taskId:string|null;alignmentInputVersion:string|null;detail:string|null}
@@ -44,7 +44,7 @@ export function applyWorkspaceCaptionEdit(project:OpenChatCutProject,itemId:stri
 }
 export function readWorkspaceCaption(project:OpenChatCutProject,itemId:string):{laneId:string;words:Array<{id:string;text:string;start:number;end:number}>;contract:ShotCaptionContract}|null{
  const window=readWorkspaceShotWindow(project,itemId),timeline=window?.timeline,item=window?.item,laneId=window?.shotId?`workspace-caption-shot-${window.shotId}`:`workspace-caption-${itemId}`;
- const candidates=[laneId,...(window?.items??[]).map(i=>`workspace-caption-${i.id}`)];
+ const candidates=[laneId,...(window?.items??[]).map(i=>`workspace-caption-${i.id}`),...Object.values(timeline?.tracks??{}).flatMap(t=>t.captions?.sourceEntries??[]).filter(e=>window?.shotId&&workspaceShotIdentity({id:e.id.replace(/^workspace-caption-/, '')})?.shotId===window.shotId).map(e=>e.id)];
  const track=Object.values(timeline?.tracks??{}).find(t=>t.kind==='caption'&&t.captions?.sourceEntries?.some(e=>candidates.includes(e.id)));
  const lane=track?.captions?.sourceEntries?.find(e=>candidates.includes(e.id)),meta=lane?.loopControl;
  if(!lane||!meta||!item||!timeline||!track?.captions)return null;
@@ -57,10 +57,11 @@ export function migrateWorkspaceCaptionLanes(project:OpenChatCutProject):OpenCha
  const next=structuredClone(project);
  for(const shot of readWorkspaceShots(next)){
   const timeline=next.timelines.find(t=>t.id===shot.timelineId)!,stable=`workspace-caption-shot-${shot.id}`;
-  const matches=Object.values(timeline.tracks).flatMap(track=>(track.captions?.sourceEntries??[]).filter(lane=>lane.id===stable||shot.itemIds.some(id=>lane.id===`workspace-caption-${id}`)).map(lane=>({track,lane})));
+  const matches=Object.values(timeline.tracks).flatMap(track=>(track.captions?.sourceEntries??[]).filter(lane=>lane.id===stable||workspaceShotIdentity({id:lane.id.replace(/^workspace-caption-/, '')})?.shotId===shot.id).map(lane=>({track,lane})));
   if(!matches.length||matches.length===1&&matches[0].lane.id===stable)continue;
-  const chosen=matches.find(x=>x.lane.id===stable)??matches[0],lane=chosen.lane,oldId=lane.id,oldSlot=lane.slotId;
-  const words=matches.flatMap(x=>x.lane.words??[]),seen=new Set<string>();
+  const chosen=matches.find(x=>x.lane.id===stable)??[...matches].sort((a,b)=>(a.lane.words?.[0]?.start??0)-(b.lane.words?.[0]?.start??0))[0],lane=chosen.lane,oldId=lane.id,oldSlot=lane.slotId;
+  const sameFollowing=matches.every(x=>x.lane.loopControl?.contentMode==='follow_tts'&&x.lane.loopControl.text.replace(/\s/gu,'')===lane.loopControl?.text.replace(/\s/gu,''));
+  const words=sameFollowing?lane.words:matches.flatMap(x=>x.lane.words??[]),seen=new Set<string>();
   lane.words=words.filter(w=>{const key=JSON.stringify([w.text,w.start,w.end]);if(seen.has(key))return false;seen.add(key);return true;}).sort((a,b)=>a.start-b.start);
   for(const {track,lane:old}of matches){const captions=track.captions!;captions.sourceEntries=captions.sourceEntries.filter(e=>e!==old);if(captions.layoutPolicy?.mode==='manual-slots')captions.layoutPolicy.slots=captions.layoutPolicy.slots.filter(s=>s.id!==old.slotId);if(old.id!==stable)delete captions.perSource[old.id];}
   lane.id=stable;lane.itemId=`manual:${stable}`;lane.slotId=`${stable}-slot`;
