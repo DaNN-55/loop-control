@@ -58,7 +58,7 @@ export function migrateWorkspaceCaptionLanes(project:OpenChatCutProject):OpenCha
  for(const shot of readWorkspaceShots(next)){
   const timeline=next.timelines.find(t=>t.id===shot.timelineId)!,stable=`workspace-caption-shot-${shot.id}`;
   const matches=Object.values(timeline.tracks).flatMap(track=>(track.captions?.sourceEntries??[]).filter(lane=>lane.id===stable||shot.itemIds.some(id=>lane.id===`workspace-caption-${id}`)).map(lane=>({track,lane})));
-  if(!matches.length)continue;
+  if(!matches.length||matches.length===1&&matches[0].lane.id===stable)continue;
   const chosen=matches.find(x=>x.lane.id===stable)??matches[0],lane=chosen.lane,oldId=lane.id,oldSlot=lane.slotId;
   const words=matches.flatMap(x=>x.lane.words??[]),seen=new Set<string>();
   lane.words=words.filter(w=>{const key=JSON.stringify([w.text,w.start,w.end]);if(seen.has(key))return false;seen.add(key);return true;}).sort((a,b)=>a.start-b.start);

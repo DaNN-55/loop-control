@@ -67,7 +67,7 @@ it('keeps shot navigation available after collapsing the rail',()=>{
 });
 it('uses the latest persisted file when a caller reuses its bridge for a save then a native edit',async()=>{
  let current:import('./EmbeddedStudioHost').EmbeddedStudioBridge|null=null;
- const next={...workspace,sha256:'b'.repeat(64)},save=vi.fn(async()=>next);
+ const next={...workspace,sha256:'b'.repeat(64)},save=vi.fn(async(_file:import('../reviews/reviewRevision').OpenChatCutStudioWorkspace)=>next);
  render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'episodes/e/board.json'}} shots={[]} onSave={save} onClose={()=>{}} captionEditor={value=>{current=value;return null;}}/>);
  const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel'),post=vi.spyOn(frame.contentWindow!,'postMessage');
  const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));

@@ -26,7 +26,7 @@ export function useLoopControlHost(projectId,base,agent,panels){
       const digest=async doc=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(doc))))).map(b=>b.toString(16).padStart(2,'0')).join('');
       try{
         if(msg.action==='host-panel'){
-          if(typeof msg.open!=='boolean'){result(false,'面板状态无效。');return;}document.documentElement.dataset.lcHostTools=msg.open?'open':'closed';if(msg.open)panels.setInspectorCollapsed(true);result(true);
+          if(typeof msg.open!=='boolean'){result(false,'面板状态无效。');return;}document.documentElement.dataset.lcHostTools=msg.open?'open':'closed';if(msg.open)panels.setInspectorCollapsed(true);await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));result(true);
         }else if(msg.action==='inspect'){
           const document=structuredClone(live.current.base.doc);result(true,undefined,{revision:revision.current,documentFingerprint:await digest(document),document});
         }else if(msg.action==='apply-captions'||msg.action==='apply-workspace-edit'){
