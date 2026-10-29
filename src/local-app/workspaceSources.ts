@@ -3,6 +3,7 @@ import {ConfigurationError} from './configurationCommands.js';
 import {verifyNativeFile} from './localFiles.js';
 /** One trust boundary for native document paths: never promote a task artifact to a fake material. */
 export async function resolveWorkspaceSource(c:PoolClient,root:string,episodeId:string,path:string){
+ try{
  const material=(await c.query('SELECT id,storage_path relative_path,sha256,file_size,material_type kind FROM public.production_material_revisions WHERE episode_id=$1 AND storage_path=$2',[episodeId,path])).rows[0];
  if(material){await verifyNativeFile(root,path,material.sha256,Number(material.file_size));return{...material,registration:'material' as const};}
  const audio=(await c.query(`SELECT a.id,a.relative_path,a.sha256,a.file_size,a.duration_seconds,a.source_artifact_id artifact_id,a.source_task_id task_id
@@ -14,4 +15,5 @@ export async function resolveWorkspaceSource(c:PoolClient,root:string,episodeId:
  WHERE a.episode_id=$1 AND a.relative_path=$2 AND a.artifact_type IN ('narration_audio','soundtrack_audio','source_audio','render','shot_clip','generated_video','generated_image')`,[episodeId,path])).rows[0];
  if(!artifact)throw new ConfigurationError(409,'工程引用了未注册的本期素材或已完成任务产物。');
  await verifyNativeFile(root,path,artifact.sha256,Number(artifact.file_size));return{...artifact,registration:'task_artifact' as const};
+ }catch(error){if(error instanceof ConfigurationError)throw error;throw new ConfigurationError(409,'已用素材缺失或指纹已变化，请检查原文件。');}
 }

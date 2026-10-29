@@ -1,6 +1,7 @@
 import {resolveWorkspaceSource} from './workspaceSources.js';
 import {executeWorkspaceNarration,readWorkspaceNarration} from './workspaceNarration.js';
 import type {InputRuntime} from './episodeCommands.js';
+import {matchWorkspaceImage,generateWorkspaceImage,fillWorkspaceImageResult} from './workspaceImages.js';
 import {randomUUID,createHash} from 'node:crypto';
 import {writeFile,mkdir} from 'node:fs/promises';
 import {join,dirname} from 'node:path';
@@ -13,8 +14,8 @@ import {inspectOpenChatCutProjectWithRuntime} from '../worker/openchatcutProject
 import {openOpenChatCutDraftStudio,snapshotOpenChatCutStudio,closeOpenChatCutStudio,isOpenChatCutStudio,type OpenChatCutRuntimeConfig} from '../worker/openchatcutStudio.js';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import type {ProductionWorkspace,WorkspaceClip} from '../productionWorkspace.js';
-interface Episode {id:string;main_script_revision_id:string|null;stage:string;archived_at?:string|null}
-export interface ProductionWorkspaceRecord {id:string;episode_id:string;workflow_version:'four-step/v1';script_revision_id:string;storyboard_package_id:string;revision:string|number;native_edit_revision?:string|number;bindings:WorkspaceClip[];project_path:string;project_sha256:string;content_sha256:string;project_size:string|number}
+interface Episode {id:string;account_id:string;policy:Record<string,unknown>;main_script_revision_id:string|null;stage:string;archived_at?:string|null}
+export interface ProductionWorkspaceRecord {id:string;episode_id:string;workflow_version:'four-step/v1';script_revision_id:string;storyboard_package_id:string;revision:string|number;native_edit_revision:string|number;bindings:WorkspaceClip[];project_path:string;project_sha256:string;content_sha256:string;project_size:string|number}
 const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
 const hash=(bytes:Buffer|string)=>createHash('sha256').update(bytes).digest('hex');
 export async function readProductionWorkspace(c:PoolClient,episodeId:string,root:string):Promise<ProductionWorkspace|null>{
@@ -65,6 +66,9 @@ export class ProductionWorkspaceCommands{
    }
    return readProductionWorkspace(c,e.id,root);
   }
+  if(command==='generateWorkspaceImage')return generateWorkspaceImage(c,root,e,runtime,data);
+  if(command==='fillWorkspaceImageResult')return fillWorkspaceImageResult(c,root,e.id,data);
+  if(command==='matchWorkspaceImage')return matchWorkspaceImage(c,root,e.id,data);
   const locked=await lockProductionWorkspace(c,root,e.id,data.workspaceId,data.expectedRevision);row=locked.row;const project=locked.project;
   if(command.endsWith('WorkspaceNarration')){await executeWorkspaceNarration(c,root,row,project,runtime,command,data);return readProductionWorkspace(c,e.id,root);}
   if(command==='matchWorkspaceMaterial'){
