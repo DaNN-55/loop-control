@@ -4,7 +4,11 @@ import type {PoolClient} from 'pg';
 import type {WorkspaceClip} from '../productionWorkspace.js';
 import {ConfigurationError} from './configurationCommands.js';
 import {verifyNativeFile} from './localFiles.js';
-import {inspectMp4Artifact} from '../worker/mediaTools.js';
+import {execFile} from 'node:child_process';
+import {promisify} from 'node:util';
+const exec=promisify(execFile);
+interface RegisteredVideo {id:string;storage_path:string;source_path:string;sha256:string;file_size:string|number}
+interface VideoProbe {durationSeconds:number;width:number;height:number}
 import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
 import {lockProductionWorkspace,updateWorkspaceProject} from './productionWorkspaceCommands.js';
 const uuid=/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/;
@@ -19,7 +23,7 @@ export async function saveWorkspaceVideoRanges(c:PoolClient,root:string,episodeI
  const old=timeline?.items.filter(i=>previous.some(b=>b.itemId===i.id));
  if(!timeline||!old||old.length!==previous.length||old.some(i=>i.kind!=='video'&&i.kind!=='text'))throw new ConfigurationError(409,'当前镜头结构已变化，请在剪辑中调整。');
  const start=Math.min(...old.map(i=>Number(i.startFrame))),end=Math.max(...old.map(i=>Number(i.startFrame)+Number(i.durationInFrames))),ids=new Set<string>();
- const items:Array<Record<string,unknown>>=[],bindings:WorkspaceClip[]=[];
+ const items:Array<Record<string,unknown>>=[],bindings:WorkspaceClip[]=[],materials=new Map<string,{source:RegisteredVideo;observed:VideoProbe}>();
  let frame=start;
  for(const [index,value] of data.ranges.entries()){
   if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).some(k=>!['clipId','materialRevisionId','sourceInFrame','durationInFrames','durationLocked'].includes(k)))throw new ConfigurationError(400,'视频区间字段无效。');
@@ -28,13 +32,23 @@ export async function saveWorkspaceVideoRanges(c:PoolClient,root:string,episodeI
   const existing=r.clipId?previous.find(b=>b.id===r.clipId):index===0&&!previous[0].source?previous[0]:undefined;
   if(r.clipId&&!existing)throw new ConfigurationError(409,'引用不属于当前镜头。');
   const id=existing?.id??randomUUID();if(ids.has(id))throw new ConfigurationError(400,'同一引用不能重复提交。');ids.add(id);
-  const m=(await c.query("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='video' AND mime_type='video/mp4'",[r.materialRevisionId,episodeId])).rows[0];
-  if(!m)throw new ConfigurationError(404,'本期视频材料不存在。');
-  let observed:Awaited<ReturnType<typeof inspectMp4Artifact>>;
-  try{await verifyNativeFile(root,m.storage_path,m.sha256,Number(m.file_size));observed=await inspectMp4Artifact(join(root,m.storage_path));}catch{throw new ConfigurationError(409,'视频材料缺失、指纹已变化或无法读取。');}
+  let material=materials.get(r.materialRevisionId);
+  if(!material){
+   const m=(await c.query<RegisteredVideo>("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='video' AND mime_type='video/mp4'",[r.materialRevisionId,episodeId])).rows[0];
+   if(!m)throw new ConfigurationError(404,'本期视频材料不存在。');
+   let observed:VideoProbe;
+   try{
+    await verifyNativeFile(root,m.storage_path,m.sha256,Number(m.file_size));
+    const {stdout}=await exec('ffprobe',['-v','error','-select_streams','v:0','-show_entries','stream=duration,width,height','-of','json',join(root,m.storage_path)],{timeout:15000});
+    const stream=JSON.parse(stdout).streams?.[0];observed={durationSeconds:Number(stream?.duration),width:Number(stream?.width),height:Number(stream?.height)};
+    if(!Number.isFinite(observed.durationSeconds)||observed.durationSeconds<=0||!Number.isInteger(observed.width)||observed.width<=0||!Number.isInteger(observed.height)||observed.height<=0)throw Error('Invalid video stream');
+   }catch{throw new ConfigurationError(409,'视频材料缺失、指纹已变化或无法读取视频流时长。');}
+   material={source:m,observed};materials.set(r.materialRevisionId,material);
+  }
+  const {source:m,observed}=material;
   const sourceFrames=Math.floor(observed.durationSeconds*timeline.fps+0.001);
   if(Number(r.sourceInFrame)+Number(r.durationInFrames)>sourceFrames)throw new ConfigurationError(400,'视频区间超出原片，请调整起止帧。');
-  const assetId=`material-${m.id}`;if(!project.assets.some(a=>a.id===assetId))project.assets.push(Object.assign({id:assetId,name:m.source_path.split('/').pop(),kind:'video' as const,src:m.storage_path,durationInFrames:sourceFrames},{sourceRevision:m.id,sourceContentHash:m.sha256,sourceFilename:m.source_path.split('/').pop(),width:observed.width,height:observed.height}));
+  const assetId=`material-${m.id}`;if(!project.assets.some(a=>a.id===assetId))project.assets.push(Object.assign({id:assetId,name:m.source_path.split('/').pop()??m.id,kind:'video' as const,src:m.storage_path,durationInFrames:sourceFrames},{sourceRevision:m.id,sourceContentHash:m.sha256,sourceFilename:m.source_path.split('/').pop(),width:observed.width,height:observed.height}));
   const itemId=existing?.itemId??`shot-${data.shotId}-${id}`,base=old.find(i=>i.id===itemId)??{};
   const item={...base,id:itemId,track:old[0].track,kind:'video',name:data.shotId,src:m.storage_path,sourceAssetId:assetId,sourceRevision:m.id,sourceContentHash:m.sha256,sourceFilename:m.source_path.split('/').pop(),startFrame:frame,durationInFrames:Number(r.durationInFrames),srcInFrame:Number(r.sourceInFrame),volume:base.volume??0,loopControlVideo:{durationLocked:r.durationLocked}};delete (item as Record<string,unknown>).props;
   items.push(item);bindings.push({id,itemId,shotId:data.shotId,text:previous[0].text,source:{materialRevisionId:m.id,relativePath:m.storage_path,sha256:m.sha256,fileSize:Number(m.file_size),kind:'video'}});frame+=Number(r.durationInFrames);

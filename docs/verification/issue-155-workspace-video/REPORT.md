@@ -18,4 +18,10 @@
 
 单次 Impeccable detector 对现有 CSS 的旧颜色/10px 字号给出 advisory，没有本票新增的阻塞。检测到 DESIGN.md 的旧 sidecar 已过时，未扩展本票更新设计系统。
 
-最终合并基线、完整回归及构建结果见后续补录。
+最终合并基线为 `20991dfb`，集成 merge 为 `16871b86`，保留已合图片、字幕 lane、真实 bridge、native edit counter 和夹具 084+086+089。合并后的 9 文件 / 29 测试通过（`evidence/regression.log`）；随后视频流时长修复后 3 文件 / 9 测试通过，含 6 个真实 HTTP/PG/原生 MP4 场景（`evidence/video-final.log`）。
+
+`npm run check`、`npm run backend:build`、`npm run build` 通过，见 `evidence/build-final.log`。首次严格类型检查发现 `Array.pop()` 的名称可能为 undefined，已使用材料稳定 ID 作为可空分支回退；先前失败日志 `evidence/build.log` 保留，不将其当通过。构建仅有现存大型 bundle advisory。`git diff --check` 通过。
+
+浏览器临时夹具及其独立数据库、端口、媒体根、合成凭据和浏览器会话已自清，工作树保留给 root 集成；未 push、关闭 Issue 或改 PLAN/state。
+
+补充：构造 2s 视频流 + 4s 音轨 MP4 后，原实现错误接受第 90–120 帧（HTTP 200），新边界按视频流时长返回 400；同源多引用只 probe 一次，避免按引用数量重复全片扫描。

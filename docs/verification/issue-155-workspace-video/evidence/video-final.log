@@ -1,0 +1,18 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t03-workspace-video/loop-control
+
+ ✓ src/workspaceVideo.test.ts (2 tests) 1ms
+ ✓ src/local-app/WorkspaceVideoMatch.test.tsx (1 test) 73ms
+ ✓ src/local-app/workspaceVideo.integration.test.ts (6 tests) 23112ms
+   ✓ Owner prepares independent exact ranges from one source across multiple shots  1118ms
+   ✓ Owner renders many-to-many exact video ranges in native Studio (landscape=false)  7822ms
+   ✓ Owner renders many-to-many exact video ranges in native Studio (landscape=true)  6478ms
+   ✓ Owner moves a locked range by exactly one frame in real native output  3790ms
+   ✓ Owner boundaries reject stale, foreign, invalid, tampered and active-editor range writes  2824ms
+   ✓ Owner cannot select audio-only tail beyond the video stream  1079ms
+
+ Test Files  3 passed (3)
+      Tests  9 passed (9)
+   Start at  18:35:35
+   Duration  23.61s (transform 295ms, setup 13ms, collect 1.16s, tests 23.19s, environment 297ms, prepare 83ms)
+

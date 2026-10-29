@@ -89,3 +89,11 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner boundaries reject 
   const r=await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace/project?sha=${w.project.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect((await r.json()).project.timelines[0].items[1].transform.x).toBe(17);
  }finally{await f.close();}
 },180000);
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner cannot select audio-only tail beyond the video stream',async()=>{
+ const f=await productionWorkspaceFixture();try{
+  const path=join(f.root,'long-audio.mp4');await exec('ffmpeg',['-nostdin','-v','error','-i',join(f.assetRoot,f.videoPath),'-f','lavfi','-i','sine=frequency=440:sample_rate=48000','-map','0:v:0','-map','1:a:0','-c:v','copy','-c:a','aac','-t','4',path]);
+  const uploaded=await f.request('importMaterial',{materialType:'video',sourceKind:'file',sourcePath:'long-audio.mp4',mimeType:'video/mp4',contentBase64:(await readFile(path)).toString('base64'),isMainScript:false,materialPurpose:'a_roll',deferRefresh:true});expect(uploaded.status).toBe(200);
+  const w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
+  const result=await f.request('saveWorkspaceVideoRanges',{workspaceId:w.id,expectedRevision:w.revision,shotId:w.clips[0].shotId,ranges:[{materialRevisionId:uploaded.body.id,sourceInFrame:90,durationInFrames:30,durationLocked:false}]});expect(result.status,JSON.stringify(result.body)).toBe(400);
+ }finally{await f.close();}
+},180000);

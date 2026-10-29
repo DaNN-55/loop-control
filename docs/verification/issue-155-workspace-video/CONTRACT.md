@@ -24,3 +24,11 @@
 沿用 Owner/session、Origin/CSRF、Episode ownership、幂等回执、workspace 行锁、脚本基准、不可变工程版本与 CAS。无效范围/字段为 400，不可见/错误类型材料为 404，失效版本、活动编辑器、人工保存、文件篡改为 409。
 
 未新建 SQL 表或迁移：现有 JSON bindings、原生 SHA 快照与 workspace versions 已持久保存所需审计。085 为预留编号，无需空迁移。构图/音频继续由各自票和原生工程管理。本票不改 bridge/EmbeddedStudioHost；T10 消费上述锁长 helper 和 native 字段。
+
+## 镜头与多个视觉引用
+
+`shotId` 是 canonical 镜头身份；`clipId/itemId` 是可新增、删除和排序的视觉引用身份，不等同镜头。首个初稿引用默认沿用占位 clip ID，但 Owner 可删除它，所以不能将数组第 0 项永久当作镜头/主声身份。初稿同镜头引用位于同一 timeline、同一画面轨且连续排列；镜头聚合窗口取其原生 item 的 `min(startFrame)` 至 `max(startFrame + durationInFrames)`。跨 timeline 的重组属于后续真实编辑器结构操作，不由此准备入口构建。
+
+主声/初次口播按 `shotId` 去重并绑定聚合窗口；任意 visual clip 只负责定位该镜头，不重复生成或叠加完整口播。字幕可按 visual item 有独立 lane，但初次跟随整段主声字幕不能复制到每一个 range。T05/T07/T10 应在原生当前结构解析上述关系，不依赖准备时 clip 顺序。
+
+视频范围上限使用 `ffprobe` 的 **视频流**时长，而非可能含长音轨尾部的容器时长；同一次命令的相同材料只做一次 SHA/视频流探测，不逐引用执行全片黑帧扫描。

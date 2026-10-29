@@ -16,13 +16,13 @@
     0,
     254
   ],
-  "projectSha256": "dca61b0eeea638988890575a7b2dfb0bd72363da5b15d6159eaf042272820655",
+  "projectSha256": "c4d940333287d2ff55e1c8cdafa2cd65999863d56f8927c0b2b06b0b7ca8099c",
   "width": 360,
   "height": 640,
   "items": [
     {
-      "id": "shot-shot-1-a02ea0cd-d45b-48c7-b2fe-ce4a5a6c94d1",
-      "sourceRevision": "c8bc809a-287e-48c2-815c-32d25dc346e7",
+      "id": "shot-shot-1-fa047674-336e-4690-8f03-47cd4c9166f0",
+      "sourceRevision": "ecd30d91-bf1d-4df7-8532-0bbdb40bc583",
       "srcInFrame": 0,
       "durationInFrames": 30,
       "loopControlVideo": {
@@ -30,8 +30,8 @@
       }
     },
     {
-      "id": "shot-shot-1-c93d153b-6a9f-4aad-8a1a-8d73e237e26c",
-      "sourceRevision": "0edb66d1-9ec0-439f-a8f5-f3aa6963fb08",
+      "id": "shot-shot-1-090a61fb-8afa-4742-9b82-6a4633c6e4f6",
+      "sourceRevision": "456fc96c-8361-4b2a-ab36-1ffc70502263",
       "srcInFrame": 30,
       "durationInFrames": 30,
       "loopControlVideo": {
@@ -39,8 +39,8 @@
       }
     },
     {
-      "id": "shot-shot-2-7d3109f4-b354-47ab-b951-73405480bb98",
-      "sourceRevision": "c8bc809a-287e-48c2-815c-32d25dc346e7",
+      "id": "shot-shot-2-f5f770c5-58a7-4609-9ce9-c76096e4e5cf",
+      "sourceRevision": "ecd30d91-bf1d-4df7-8532-0bbdb40bc583",
       "srcInFrame": 60,
       "durationInFrames": 30,
       "loopControlVideo": {
