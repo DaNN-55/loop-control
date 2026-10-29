@@ -15,7 +15,7 @@
 
 ## 包版本与下载
 
-历史 `publish-package/v1` 的四类产物及固定路径验证保持原行为。新 `publish-package/v2` 必须恰有 `final_render,editable_project,cover,metadata,final_qc_report` 五项，清单作为第六类下载文件。清单 `identity` 绑定工作空间、exportId、内容版本/SHA 和确切视频/工程路径、SHA、大小。新清单使用任务的不可变 `episodes/:episode/native-tasks/:taskId/manifest.json`，不会复用旧包。
+历史 `publish-package/v1` 的四类产物及固定路径验证保持原行为。新 `publish-package/v2` 必须恰有 `final_render,editable_project,cover,metadata,final_qc_report` 五项，清单作为第六类下载文件。清单 `identity` 绑定工作空间、exportId、内容版本/SHA 和确切视频/工程路径、SHA、大小。新清单使用任务的不可变 `episodes/:episode/workspace-deliveries/:taskId/manifest.json`，不会复用旧包。
 
 生产者与 `verifyPublishPackage` 同步识别 v2：核对全部普通单链接文件的存在、大小、SHA 和 Episode 归属，实际解码封面，检查完整 native project、元数据、通过的技术证据及证据引用的实际来源/代表帧。少工程、封面或元数据、文件变化均失败。完整工程和所有包文件通过现有 Owner `/_local-artifact` 入口取得；不会公开临时 native outputLocation。
 

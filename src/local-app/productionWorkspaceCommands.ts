@@ -102,6 +102,7 @@ export class ProductionWorkspaceCommands{
   if(!runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 未配置。');const config=await runtime.studioRuntime();
   const validate=(doc:OpenChatCutProject)=>validateWorkspaceProject(c,root,e.id,doc,config);
   if(command==='openWorkspaceStudio'){
+   if((await c.query("SELECT 1 FROM local_identity.workspace_deliveries d JOIN public.tasks t ON t.id=d.task_id WHERE d.workspace_id=$1 AND t.status IN ('ready','running') LIMIT 1",[row.id])).rowCount)throw new ConfigurationError(409,'交付正在排队或校验，请等待结果后再编辑。');
    const paths=[...usedWorkspaceContent(project).paths];const opened=await openOpenChatCutDraftStudio(root,e.id,project,paths,hash(JSON.stringify({id:row.id,bindings:row.bindings})),config,validate);
    this.opened.add(e.id);const current=JSON.parse((await verifyNativeFile(root,opened.workspace.relativePath,opened.workspace.sha256,opened.workspace.fileSize)).toString('utf8')) as OpenChatCutProject;await updateWorkspaceProject(c,root,row,current,row.bindings);return{...opened,productionWorkspace:await readProductionWorkspace(c,e.id,root)};
   }

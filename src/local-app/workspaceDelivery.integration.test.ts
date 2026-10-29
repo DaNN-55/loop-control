@@ -30,6 +30,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('real Worker verifies exa
  const approved=w.exports[0],approvedProject=approved.project,videoBytes=await readFile(join(f.assetRoot,approved.artifact.relativePath));
 
  const opened=await send('openWorkspaceStudio');expect(opened.status,JSON.stringify(opened.body)).toBe(200);w=opened.body.productionWorkspace;
+ expect((await send('prepareWorkspaceDelivery',{exportId:approved.id,expectedExportSha256:approved.artifact.sha256,expectedContentSha256:w.contentSha256,title:'活跃编辑不可交付',description:'',tags:[],coverBase64:(await readFile('/private/tmp/loop-152-orchestration/media/still-striped.png')).toString('base64')})).status).toBe(409);
  const base=join(f.assetRoot,`episodes/${f.episode}/openchatcut-work/current/runtime`);let path=join(base,'project-store-v1.json'),store:any,doc:any;
  try{store=JSON.parse(await readFile(path,'utf8'));doc=store.entries[`project:${w.project.projectId}`];}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;path=join(base,'project-store-v1',`${encodeURIComponent(`project:${w.project.projectId}`)}.json`);doc=JSON.parse(await readFile(path,'utf8'));}
  doc.timelines[0].selectedId=w.clips[0].itemId;doc.timelines[0].selectedIds=[w.clips[0].itemId];await writeFile(path,JSON.stringify(store??doc));
@@ -41,12 +42,16 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('real Worker verifies exa
  expect((await send('prepareWorkspaceDelivery',{...input,coverBase64:''})).status).toBe(400);
  let r=await send('prepareWorkspaceDelivery',input);expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;expect(w.deliveries[0].status).toBe('ready');expect(w.deliveries[0].verified).toBe(false);
  const first=w.deliveries[0],port=nativeWorkerPort(worker);
- async function run(){const rows=await port.rpc('claim_next_worker_task',{p_worker_capacity:2});expect(rows.length).toBe(1);return runWorkspaceDeliveryProcess(f,rows[0] as any);}
+ expect((await send('openWorkspaceStudio')).status).toBe(409);
+ async function run(){const rows=await port.rpc('claim_next_worker_task',{p_worker_capacity:2});expect(rows.length).toBe(1);expect((await send('openWorkspaceStudio')).status).toBe(409);return runWorkspaceDeliveryProcess(f,rows[0] as any);}
  async function read(){const r=await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(r.status).toBe(200);w=(await r.json()).workspace;return w;}
  await writeFile(join(f.assetRoot,approved.artifact.relativePath),'tampered');expect((await run()).status).toBe('failed');await read();expect(w.deliveries[0].status).toBe('failed');expect(w.deliveries[0].verified).toBe(false);
  const production=await fetch(f.origin+`/api/local/episodes/${f.episode}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(JSON.stringify(await production.json())).not.toContain('"stage":"production_completed"');
  expect((await send('retryWorkspaceDelivery',{deliveryId:first.id})).status).toBe(409);
  await writeFile(join(f.assetRoot,approved.artifact.relativePath),videoBytes);
+ const restoredStudio=await send('openWorkspaceStudio');expect(restoredStudio.status,JSON.stringify(restoredStudio.body)).toBe(200);w=restoredStudio.body.productionWorkspace;
+ expect((await send('retryWorkspaceDelivery',{deliveryId:first.id})).status).toBe(409);
+ w=(await send('closeWorkspaceStudio')).body;
  r=await send('retryWorkspaceDelivery',{deliveryId:first.id});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;
  const projectBytes=await readFile(join(f.assetRoot,approvedProject.relativePath));await unlink(join(f.assetRoot,approvedProject.relativePath));expect((await run()).status).toBe('failed');
  await writeFile(join(f.assetRoot,approvedProject.relativePath),projectBytes);await read();expect(w.deliveries[0].verified).toBe(false);
@@ -54,6 +59,9 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('real Worker verifies exa
  const coverPath=join(f.assetRoot,`episodes/${f.episode}/workspace-deliveries/${first.id}/cover.png`),coverBytes=await readFile(coverPath);await unlink(coverPath);expect((await run()).status).toBe('failed');await read();expect(w.deliveries[0].verified).toBe(false);await writeFile(coverPath,coverBytes);
  r=await send('retryWorkspaceDelivery',{deliveryId:w.deliveries[0].id});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;
  const result=await run();expect(result.status,JSON.stringify(result)).toBe('completed');await read();expect(w.deliveries[0].verified).toBe(true);expect(w.deliveries.length).toBe(4);
+ const persisted=(await f.c.query('SELECT t.status,t.last_result,r.status run_status,r.result run_result,r.lease_token FROM public.tasks t JOIN public.task_runs r ON r.task_id=t.id WHERE t.id=$1',[w.deliveries[0].taskId])).rows;expect(persisted).toHaveLength(1);expect(persisted[0]).toMatchObject({status:'completed',run_status:'completed',last_result:result,run_result:result});expect(persisted[0].lease_token).toBeTruthy();
+ expect((await f.c.query("SELECT count(*)::int count FROM public.state_transitions WHERE episode_id=$1 AND to_stage='production_completed'",[f.episode])).rows[0].count).toBe(1);
+ expect((await f.c.query("SELECT payload FROM public.audit_events WHERE episode_id=$1 AND event_type='publish_package_verified'",[f.episode])).rows).toEqual([{payload:expect.objectContaining({task_id:result.taskId,export_id:approved.id,protocol:'publish-package/v2'})}]);
  const pack=w.deliveries[0].artifacts.find((a:any)=>a.artifactType==='publish_package'),manifest=JSON.parse(await readFile(join(f.assetRoot,pack.relativePath),'utf8'));
  expect(manifest.version).toBe('publish-package/v2');expect(manifest.artifacts.length).toBe(5);expect(manifest.identity.video.sha256).toBe(approved.artifact.sha256);expect(manifest.identity.project).toEqual({artifactType:'editable_project',...approvedProject});
  for(const artifact of [...manifest.artifacts,pack]){const url=f.origin+`/_local-artifact?episode=${f.episode}&path=${encodeURIComponent(artifact.relativePath)}&sha256=${artifact.sha256}`,file=await fetch(url,{headers:{Cookie:'loop_owner_session='+f.token}});expect(file.status,artifact.relativePath).toBe(200);expect(createHash('sha256').update(Buffer.from(await file.arrayBuffer())).digest('hex')).toBe(artifact.sha256);expect((await fetch(url,{headers:{Cookie:'loop_owner_session='+f.otherToken}})).status).toBe(404);}

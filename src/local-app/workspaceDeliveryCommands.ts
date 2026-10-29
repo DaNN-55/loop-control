@@ -11,6 +11,7 @@ import {safeAssetOutputPath} from '../worker/controlledMediaExecutor.js';
 import {coverImageExtension} from '../publishing/coverImage.js';
 import {verifyPublishPackage} from '../publishing/publishPackage.js';
 import {verifyNativeFile} from './localFiles.js';
+import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
 export async function readWorkspaceDeliveries(c:PoolClient,root:string,row:ProductionWorkspaceRecord):Promise<WorkspaceDelivery[]>{
  if(!(await c.query("SELECT to_regclass('local_identity.workspace_deliveries') present")).rows[0].present)return[];
  const values=(await c.query('SELECT d.*,t.status,t.last_result FROM local_identity.workspace_deliveries d JOIN public.tasks t ON t.id=d.task_id WHERE workspace_id=$1 ORDER BY d.created_at DESC,d.id DESC',[row.id])).rows;
@@ -19,6 +20,7 @@ export async function readWorkspaceDeliveries(c:PoolClient,root:string,row:Produ
  return{id:d.id,exportId:d.export_id,taskId:d.task_id,status:d.status,error:verified?null:error,verified,artifacts,createdAt:d.created_at};}));
 }
 export async function executeWorkspaceDelivery(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,command:string,data:Record<string,unknown>){
+ if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请先保存并返回，再准备或重试交付。');
  const confirmed=await requireConfirmedWorkspaceExport(c,root,row,project);
  if(command==='retryWorkspaceDelivery'){
  const old=(await c.query('SELECT d.*,t.input_snapshot,t.status FROM local_identity.workspace_deliveries d JOIN public.tasks t ON t.id=d.task_id WHERE d.id=$1 AND d.workspace_id=$2',[data.deliveryId,row.id])).rows[0];
