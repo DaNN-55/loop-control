@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { act, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { Database } from "../lib/database.types";
@@ -123,4 +123,10 @@ it('shows the matching total and opens the full list without selecting a product
  const user=userEvent.setup(),all=vi.fn(),open=vi.fn();
  render(<OperationsWorkspace episodes={episodes} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={reviewPackages} series={[series]} seriesVersions={[seriesVersion]} tasks={tasks} onOpenAllEpisodes={all} onSelectEpisode={open} selectedEpisode={null}/>);
  expect(screen.getByText('3 张生产单')).toBeTruthy();await user.click(screen.getByRole('button',{name:'查看全部'}));expect(all).toHaveBeenCalledOnce();expect(open).not.toHaveBeenCalled();
+});
+it('uses the persisted four-step projection for stage, continuation and phase track without changing legacy stage',async()=>{
+ const episode={...episodes[0],stage:'script_approved' as const,title:'四步原生工程'};
+ const catalog={episodes:[episode],pending:{total:0,items:[],page:1},blocked:{total:0,items:[],page:1},worker:{running:0,blocked:0,failed:0},operationRows:[{episodeId:episode.id,reviewRevision:null,reviewPending:false,blockerCount:0,actionStatus:'running',workflowStep:'editing'}],page:1,total:1,stages:{script_approved:1}} as unknown as import('../episodes/episodeCatalogTypes').EpisodeCatalog;
+ await act(async()=>{render(<OperationsWorkspace remote={{catalog,seriesId:'all',onSeriesChange:vi.fn(),onPageChange:vi.fn(),onPendingPageChange:vi.fn(),onBlockedPageChange:vi.fn()}} episodes={[episode]} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={[]} series={[series]} seriesVersions={[seriesVersion]} tasks={[]} onSelectEpisode={vi.fn()} selectedEpisode={episode}/>);});
+ expect(within(screen.getByRole('region',{name:'系列生产单'})).getByText('剪辑工作台')).toBeTruthy();expect(within(screen.getByRole('complementary',{name:'当前作品'})).getByRole('button',{name:'继续剪辑'})).toBeTruthy();expect(within(screen.getByRole('list',{name:'当前生产阶段'})).getAllByRole('listitem')).toHaveLength(4);expect(episode.stage).toBe('script_approved');
 });

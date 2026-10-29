@@ -1,3 +1,4 @@
+import {resolveWorkspaceShotLineage} from './workspacePreparation.js';
 import {probeMp3Artifact} from '../worker/mediaTools.js';
 import {join} from 'node:path';
 import {lstat} from 'node:fs/promises';
@@ -91,8 +92,8 @@ export async function executeWorkspaceVisualCandidate(c:PoolClient,root:string,r
 
 /** Existing approved-board lineage only; T13 may extend this resolver with a versioned local-shot contract. */
 export async function resolveWorkspaceVisualLineage(c:PoolClient,row:ProductionWorkspaceRecord,shotId:string){
- const board=(await c.query("SELECT p.context_snapshot FROM public.review_packages p WHERE p.id=$1 AND p.episode_id=$2 AND p.invalidated_at IS NULL",[row.storyboard_package_id,row.episode_id])).rows[0],shot=board?.context_snapshot?.worker_result?.storyboard?.shots?.find((s:{id:string})=>s.id===shotId);
- if(!shot||!['a_roll','b_roll'].includes(shot.shotType))throw new ConfigurationError(409,'新增镜头尚无可执行生成依据；可先添加本地素材，保留原分镜与审批。');return shot as {id:string;shotType:'a_roll'|'b_roll'};
+ const shot=await resolveWorkspaceShotLineage(c,row,shotId);
+ if(!['a_roll','b_roll'].includes(shot.shotType))throw new ConfigurationError(409,'请选择并确认此镜头的生成能力。');return{id:shotId,shotType:shot.shotType as 'a_roll'|'b_roll'};
 }
 export async function workspaceVisualMainVoice(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,shotId:string){
  const route=resolveWorkspaceMainVoice(project,shotId),item=route.item;

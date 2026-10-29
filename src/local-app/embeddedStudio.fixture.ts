@@ -16,13 +16,13 @@ import { reviewRenderFromSnapshot } from '../worker/codexRunner';
 import { verifyOpenChatCutProject } from '../worker/openchatcutProjectReader';
 import { buildOpenChatCutProject } from '../worker/openchatcutProject';
 import { confirmedTtsRender } from '../worker/openchatcutProject.fixture';
+import { copyFixtureSchema } from './fixtureSchema';
 const exec=promisify(execFile);
 export async function embeddedStudioFixture(options:{testRootParent?:string;origin?:string;landscape?:boolean;testContextModule?:string;openChatCutRoot?:string;migrations?:string[];runtime?:Partial<InputRuntime>}={}){
   const mod=options.testContextModule??process.env.LOOP_TEST_CONTEXT_MODULE??join(process.cwd(),'scripts/runtime/environment.mjs');const {runtimeContext}=await import(mod);const context=runtimeContext();context.assertDatabase();
   const database='loop_studio_153_'+randomBytes(6).toString('hex');context.sql('CREATE DATABASE '+database+' TEMPLATE template0','postgres');
   try{
-  context.sql(context.docker(['exec',context.container,'pg_dump','-U','postgres','-d',context.database,'--schema-only']),database);
-  for(const migration of options.migrations??[])context.sql(await readFile(join(process.cwd(),migration),'utf8'),database);
+  await copyFixtureSchema(context,database,options.migrations??[]);
   }catch(error){context.sql('DROP DATABASE '+database+' WITH (FORCE)','postgres');throw error;}
   const bridge=spawn('docker',['exec','-i',context.container,'perl','-MIO::Socket::UNIX','-MIO::Select','-MSocket=SOCK_STREAM','-e',"my $s=IO::Socket::UNIX->new(Type=>SOCK_STREAM,Peer=>'/var/run/postgresql/.s.PGSQL.5432') or die;my $sel=IO::Select->new(\\*STDIN,$s);while(1){for my $f($sel->can_read){my $n=sysread($f,my $b,65536);exit unless $n;my $o=fileno($f)==0?$s:\\*STDOUT;while(length $b){my $w=syswrite($o,$b);die unless $w;substr($b,0,$w,'');}}}"],{env:context.env,stdio:['pipe','pipe','pipe']});
   const stream=Duplex.from({readable:bridge.stdout!,writable:bridge.stdin!});

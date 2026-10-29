@@ -1,0 +1,95 @@
+{
+  "evidenceState": "final product source release full-flow run",
+  "artifacts": [
+    {
+      "kind": "final_render",
+      "sha256": "6a879c3a38fa920e719849293aa4d3d03c3a28a13696c2d38d31bce5189d1e3a",
+      "bytes": 468907,
+      "match": true
+    },
+    {
+      "kind": "editable_project",
+      "sha256": "7261091a5998aeddd03bce546583d8fb0eb0898a6bb58d4dbb9e9bde38b22059",
+      "bytes": 23184,
+      "match": true
+    },
+    {
+      "kind": "cover",
+      "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "bytes": 1515,
+      "match": true
+    },
+    {
+      "kind": "metadata",
+      "sha256": "07de76149e4a291913830d701d76c15c0d812ea0526a07e74e1e5ea8a3e3c08b",
+      "bytes": 2171,
+      "match": true
+    },
+    {
+      "kind": "final_qc_report",
+      "sha256": "42d60b8d6ba4642096eec27bab200ee83bba2ff787e4d3c779918257ae35b865",
+      "bytes": 6465,
+      "match": true
+    }
+  ],
+  "ffprobe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "codec_type": "video",
+        "width": 1080,
+        "height": 1920,
+        "duration": "7.400000",
+        "nb_frames": "222",
+        "side_data_list": [
+          {}
+        ]
+      },
+      {
+        "codec_name": "aac",
+        "codec_type": "audio",
+        "duration": "7.445333",
+        "nb_frames": "349"
+      }
+    ],
+    "format": {
+      "duration": "7.445333",
+      "size": "468907"
+    }
+  },
+  "usedText": [
+    {
+      "shotId": "shot-01",
+      "baselineText": "填写本段完整口播。",
+      "adoptedText": "这一版局部口播已明确采用。",
+      "textSource": "owner_adoption"
+    },
+    {
+      "shotId": "added-dcb5fdad-e1e3-42a4-be3c-f63534d4701b",
+      "baselineText": "",
+      "adoptedText": null,
+      "textSource": "not_recorded"
+    },
+    {
+      "shotId": "added-0255ab5e-5767-4f94-9370-66a69efcc32f",
+      "baselineText": "",
+      "adoptedText": null,
+      "textSource": "not_recorded"
+    }
+  ],
+  "facts": {
+    "episode": "5ccbf8b7-0617-411d-ad27-44afad23d4bc",
+    "projectSha": "7261091a5998aeddd03bce546583d8fb0eb0898a6bb58d4dbb9e9bde38b22059",
+    "video": {
+      "sha256": "6a879c3a38fa920e719849293aa4d3d03c3a28a13696c2d38d31bce5189d1e3a",
+      "fileSize": 468907,
+      "relativePath": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/workspace-exports/aabe11c6-74da-460f-b0e7-52ef513a22ab/6a879c3a38fa920e719849293aa4d3d03c3a28a13696c2d38d31bce5189d1e3a.mp4"
+    },
+    "adoptedText": "这一版局部口播已明确采用。",
+    "lateTask": "eec5ee8a-97e2-416e-aade-6a5a9f4896ad",
+    "approvalCount": 0,
+    "originalSourceSha": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6"
+  }
+}

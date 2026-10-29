@@ -1,0 +1,15 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t13-formal-workflow/loop-control
+
+ ✓ src/local-app/formalWorkflow.integration.test.ts (6 tests) 18751ms
+   ✓ Owner confirms a fresh script before visual materials exist  2751ms
+   ✓ Owner builds a formal incomplete draft without old storyboard approvals  3006ms
+   ✓ first formal adoption preserves the latest unsubmitted legacy Studio document  2985ms
+   ✓ late legacy render reports retain artifacts without advancing or approving the adopted workspace  1556ms
+   ✓ fresh formal and added shots generate through the real controlled Provider Worker without legacy approval  4024ms
+   ✓ ordinary scripts use the selected real planner task and verified artifact before preparation confirmation  4430ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  02:25:35
+   Duration  19.23s (transform 261ms, setup 7ms, collect 349ms, tests 18.75s, environment 0ms, prepare 29ms)

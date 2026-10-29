@@ -1,3 +1,4 @@
+import {resolveWorkspaceShotLineage} from './workspacePreparation.js';
 import {applyWorkspaceAudioMix} from '../workspaceAudio.js';
 import {isVideoProvider,videoProviders} from '../worker/videoProviderCatalog.js';
 import {createHash} from 'node:crypto';
@@ -117,7 +118,7 @@ async function adopt(c:PoolClient,root:string,row:ProductionWorkspaceRecord,proj
  // Carry forward only requests based on the exact untouched draft, never ordinary editor saves.
  await c.query('UPDATE local_identity.workspace_narrations SET requested_project_sha256=$3 WHERE workspace_id=$1 AND requested_project_sha256=$2 AND adopted_audio_track_id IS NULL',[row.id,row.project_sha256,updated!.project.sha256]);
  await c.query('UPDATE local_identity.workspace_narrations SET adopted_audio_track_id=$3 WHERE workspace_id=$1 AND shot_id=$2',[row.id,n.shotId,n.audioTrackId]);
- await c.query(`INSERT INTO local_identity.workspace_candidate_decisions(workspace_id,candidate_id,decision,text_version,main_script_text,input_fingerprint,source_sha256,project_sha256) VALUES($1,$2,'adopted',$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING`,[row.id,n.audioTrackId,n.text,row.bindings.find(b=>b.shotId===n.shotId)?.text??'',n.inputFingerprint,n.sha256,updated!.project.sha256]);
+ await c.query(`INSERT INTO local_identity.workspace_candidate_decisions(workspace_id,candidate_id,decision,text_version,main_script_text,input_fingerprint,source_sha256,project_sha256) VALUES($1,$2,'adopted',$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING`,[row.id,n.audioTrackId,n.text,(await resolveWorkspaceShotLineage(c,row,n.shotId)).baseline_text,n.inputFingerprint,n.sha256,updated!.project.sha256]);
 }
 
 /** T04/T08 use measured main voice duration before requesting a paid picture candidate. */

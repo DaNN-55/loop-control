@@ -31,6 +31,12 @@ beforeAll(()=>{
  CREATE TABLE public.pre_render_review_member_decisions(review_package_id uuid,member_key text);
  CREATE TABLE public.tasks(id uuid PRIMARY KEY,episode_id uuid,task_type text,status text,input_snapshot jsonb,last_result jsonb,created_at timestamptz,invalidated_at timestamptz,completed_at timestamptz,claimed_at timestamptz);
  CREATE TABLE public.artifacts(episode_id uuid);
+ CREATE TABLE local_identity.production_workspaces(id uuid PRIMARY KEY,episode_id uuid,script_revision_id uuid,storyboard_package_id uuid,revision bigint,content_sha256 text,native_edit_revision bigint);
+ CREATE TABLE local_identity.workspace_preparations(package_id uuid,episode_id uuid,script_revision_id uuid);
+ CREATE TABLE local_identity.workspace_exports(id uuid PRIMARY KEY,workspace_id uuid,episode_id uuid,project_content_version bigint,content_sha256 text,status text,artifact jsonb,checks jsonb,confirmed_at timestamptz,created_at timestamptz);
+ CREATE TABLE local_identity.workspace_export_issues(workspace_id uuid,resolved_at timestamptz);
+ CREATE TABLE local_identity.workspace_deliveries(id uuid,workspace_id uuid,export_id uuid,task_id uuid,created_at timestamptz);
+
  CREATE TABLE local_identity.historical_episodes(id uuid);
  CREATE TABLE local_identity.historical_tasks(id uuid);
  CREATE FUNCTION local_identity.is_historical_episode(uuid) RETURNS boolean LANGUAGE sql STABLE AS 'SELECT EXISTS(SELECT 1 FROM local_identity.historical_episodes WHERE id=$1)';
@@ -62,7 +68,7 @@ beforeAll(()=>{
  `);
  const blockers=Array.from({length:25},(_,i)=>({code:'fixture-'+i,detail:'Synthetic blocker'}));
  psql(`INSERT INTO public.tasks VALUES('${taskId(1)}','${episode(1)}','generate_a_roll','blocked','{}',${sqlString(JSON.stringify({blockers}))},'2026-01-01',null,null,null);
- INSERT INTO public.review_packages VALUES('${packageId(124)}','${episode(24)}','script_review',2,'2026-01-02','{}');`);
+ INSERT INTO public.review_packages VALUES('${packageId(124)}','${episode(24)}','script_review',2,'2026-01-02','{}'); ALTER TABLE public.episodes ADD COLUMN main_script_revision_id uuid;`);
 },20000);
 afterAll(()=>{if(created)psql(`DROP DATABASE ${database};`,'postgres');},10000);
 function catalog(query:Partial<CatalogQuery>={},asOwner=owner):EpisodeCatalog{
@@ -119,4 +125,19 @@ it('retains independent pending/blocker queues, historical fences and Owner-only
  expect(catalog({accountId:foreignAccount}).episodes).toEqual([]);
  expect(catalog({accountId:memberAccount}).episodes).toEqual([]);
  expect(catalog({},foreignOwner).episodes.map(e=>e.id)).toEqual([episode(31)]);
+});
+
+it('projects workspace current export and delivery facts without blocking on unused failed candidates',()=>{
+ psql(`INSERT INTO public.episodes(id,account_id,title,stage,updated_at,main_script_revision_id) SELECT ('00000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,'${account}','四步 '||n,CASE WHEN n=39 THEN 'production_completed' ELSE 'script_approved' END,'2026-01-03',('50000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid FROM generate_series(36,40)n;
+ INSERT INTO public.review_packages SELECT ('10000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,('00000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,'storyboard_review',1,null,'{}' FROM generate_series(36,40)n;
+ INSERT INTO local_identity.production_workspaces SELECT ('40000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,('00000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,('50000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,('10000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,1,repeat('a',64),1 FROM generate_series(36,40)n;
+ INSERT INTO public.tasks SELECT ('20000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,('00000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,'generate_narration','failed','{}','{"blockers":[{"code":"UNUSED_CANDIDATE","detail":"Unused failed candidate"}]}','2026-01-03',null,'2026-01-03',null FROM generate_series(36,40)n;
+ INSERT INTO local_identity.workspace_exports SELECT ('60000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,('40000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,('00000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,1,repeat('a',64),'ready','{"sha256":"fixture"}','[{"passed":true}]',CASE WHEN n=38 THEN '2026-01-03'::timestamptz ELSE null END,'2026-01-03' FROM generate_series(37,38)n;
+ INSERT INTO public.tasks VALUES('${taskId(138)}','${episode(38)}','prepare_publish_package','failed','{}','{"blockers":[{"code":"DELIVERY_FAILED","detail":"Retry exact delivery"}]}','2026-01-04',null,'2026-01-04',null);
+ INSERT INTO local_identity.workspace_deliveries VALUES('${taskId(138)}','40000000-0000-4000-8000-000000000038','60000000-0000-4000-8000-000000000038','${taskId(138)}','2026-01-04');`);
+ const page=catalog({q:'四步'}),rows=new Map(page.operationRows.map(row=>[row.episodeId,row]));
+ expect(rows.get(episode(36))?.actionStatus).toBe('running');expect(rows.get(episode(37))).toMatchObject({actionStatus:'review',reviewPending:true});expect(rows.get(episode(38))?.actionStatus).toBe('blocked');expect(rows.get(episode(39))?.actionStatus).toBe('done');expect(rows.get(episode(40))?.actionStatus).toBe('running');
+ expect(catalog({q:'四步',status:'review'}).episodes.map(e=>e.id)).toEqual([episode(37)]);expect(catalog({q:'四步',view:'operations'}).blocked.items.map(row=>row.blocker.code)).toEqual(['DELIVERY_FAILED']);
+ psql(`UPDATE local_identity.production_workspaces SET revision=2,content_sha256=repeat('b',64) WHERE episode_id='${episode(37)}';`);expect(catalog({q:'四步',status:'review'}).episodes).toEqual([]);
+ psql(`UPDATE public.episodes SET archived_at='2026-01-04' WHERE id='${episode(38)}';`);expect(catalog({q:'四步',visibility:'archived'}).operationRows[0]).toMatchObject({actionStatus:'draft',blockerCount:0,reviewPending:false});
 });

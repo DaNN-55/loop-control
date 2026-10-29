@@ -1,0 +1,120 @@
+- link "跳到主要内容":
+  - /url: "#main-content"
+- complementary "主导航":
+  - text: Loop Control
+  - generic: 创作工作区
+  - navigation "工作区":
+    - group "生产工作":
+      - button "工作台":
+        - generic: 工作台
+      - button "生产单":
+        - generic: 生产单
+    - group "账号管理":
+      - button "账号蓝图":
+        - generic: 账号蓝图
+    - group "配置与资料":
+      - button "连接配置":
+        - generic: 连接配置
+      - button "历史资料":
+        - generic: 历史资料
+  - button "打开当前生产单的 OpenChatCut":
+    - generic: OpenChatCut
+  - button "系统状态：不可用":
+    - generic: 系统状态
+  - button "收起侧栏":
+    - generic: 收起侧栏
+- option "全部账号" [selected]
+- option "Studio153 fixture"
+- option "全部系列" [selected]
+- option "未归档" [selected]
+- option "已归档"
+- option "全部范围"
+- option "最近更新" [selected]
+- option "最早更新"
+- option "标题顺序"
+- complementary "当前生产单详情":
+  - button "返回工作区":
+    - generic: 返回工作区
+  - generic: 生产单
+  - group "工作区工具":
+    - textbox "查找生产单、账号或素材"
+    - generic: ⌘ K
+    - button "待处理通知":
+    - button "切换至深色模式":
+    - button "所有者设置":
+  - button "关闭生产单详情":
+  - region "四步制作工作流":
+    - heading "正式新单" [level=2]
+    - text: 四步制作
+    - button "收起历史记录" [active]:
+      - generic: 收起历史记录
+    - navigation "四步制作步骤":
+      - button "脚本确认":
+        - generic: "1"
+        - text: 脚本确认
+      - button "素材准备与匹配":
+        - generic: "2"
+        - text: 素材准备与匹配
+      - button "剪辑工作台":
+        - generic: "3"
+        - text: 剪辑工作台
+      - button "检查与交付":
+        - generic: "4"
+        - text: 检查与交付
+    - heading "素材匹配" [level=3]
+    - combobox "素材用途":
+      - option "画面参考" [selected]
+      - option "人工口播"
+      - option "背景音乐"
+      - option "音效"
+      - option "封面"
+    - button "添加素材":
+      - generic: 添加素材
+    - button "确认匹配并授权生成":
+      - generic: 确认匹配并授权生成
+    - button "保存并进入剪辑":
+      - generic: 保存并进入剪辑
+    - paragraph:
+      - strong: shot-01
+      - text: 填写本段完整口播。
+    - group "shot-01 视频区间":
+      - button "添加视频区间" [disabled]:
+        - generic: 添加视频区间
+      - text: 上传视频
+      - button "shot-01 上传视频" [disabled]
+    - combobox "shot-01 素材":
+      - option "保留占位" [selected]
+    - text: 上传图片
+    - button "上传图片"
+    - region "逐镜口播":
+      - heading "口播" [level=3]
+      - generic "本期默认"
+      - generic "shot-01 关闭":
+        - text: shot-01
+        - generic: 关闭
+      - option "关闭" [selected]
+      - option "生成口播"
+      - option "人工口播"
+    - region "配乐音效准备":
+      - heading "配乐与音效" [level=3]
+      - text: 类型
+      - combobox "类型":
+        - option "整期配乐" [selected]
+        - option "音效"
+        - option "原片声音"
+      - text: 来源
+      - combobox "来源":
+        - option "Freesound 检索获取" [selected]
+      - text: 用途
+      - textbox "用途": 整期配乐
+      - text: 英文检索词
+      - textbox "英文检索词":
+        - /placeholder: ambient piano / short click
+      - button "检索并获取" [disabled]:
+        - generic: 检索并获取
+    - generic "历史工程"
+  - region "历史记录与诊断":
+    - generic "任务与审核记录":
+      - heading "任务与审核记录" [level=3]
+    - strong: 当前版本暂无可预览产物
+    - generic: Worker 生成并登记当前输入对应的媒体后，会显示在这里。

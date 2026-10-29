@@ -5,9 +5,9 @@ import {parseProductionScript,segmentSettings,validateProductionDefaults,type Pr
 import type {ArtifactManifest,StoryboardManifest,WorkerTaskPackage} from './contracts.js';
 import {writeSafeAssetFile} from './controlledMediaExecutor.js';
 
-export function storyboardFromScript(script:ProductionScript,inputs:ArtifactManifest[],defaults:ProductionSettings={}):StoryboardManifest {
+export function storyboardFromScript(script:ProductionScript,inputs:ArtifactManifest[],defaults:ProductionSettings={},allowMissingVisuals=false):StoryboardManifest {
  const basis=inputs.map(({relativePath,sha256})=>({relativePath,sha256}));
- if(!inputs.some(i=>i.artifactType==='main_script')||!inputs.some(i=>i.artifactType!=='main_script'))throw Error('v2 分镜需要冻结脚本和已确认视觉材料。');
+ if(!inputs.some(i=>i.artifactType==='main_script')||!allowMissingVisuals&&!inputs.some(i=>i.artifactType!=='main_script'))throw Error('v2 分镜需要冻结脚本和已确认视觉材料。');
  let start=0;
  const audioCues:StoryboardManifest['audioCues']=[];
  const shots=script.segments.map(s=>{

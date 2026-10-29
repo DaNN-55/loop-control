@@ -1,6 +1,6 @@
 // @vitest-environment node
 import {createHash} from 'node:crypto';
-import {readFile,writeFile,mkdir,copyFile} from 'node:fs/promises';
+import {readFile,writeFile,mkdir,copyFile,unlink} from 'node:fs/promises';
 import {join} from 'node:path';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
@@ -23,7 +23,9 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner checks actual used
    const saved=await send('saveWorkspaceStudio',{workspaceRelativePath:opened.body.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body.productionWorkspace;
    const closed=await send('closeWorkspaceStudio');expect(closed.status,JSON.stringify(closed.body)).toBe(200);w=closed.body;
   }
-  await nativeEdit(doc=>{doc.assets.push({id:'unused-rejected',name:'discarded',kind:'video',src:`episodes/${f.episode}/missing-unused.mp4`,durationInFrames:30});const main=doc.timelines[0],first=structuredClone(main.items[0]),child={...structuredClone(main),id:'nested-used',name:'nested',items:[first],selectedId:null};doc.timelines.push(child);main.items[0]={id:'nested-reference',name:'nested sequence',kind:'sequence',track:first.track,timelineId:child.id,startFrame:first.startFrame,durationInFrames:first.durationInFrames,srcInFrame:0};});
+  const unused=await f.request('importMaterial',{sourceKind:'file',sourcePath:'unused-library.mp4',materialType:'video',materialPurpose:'visual_reference',mimeType:'video/mp4',isMainScript:false,contentBase64:(await readFile(join(f.assetRoot,f.videoPath))).toString('base64')});expect(unused.status,JSON.stringify(unused.body)).toBe(200);
+  await nativeEdit(doc=>{doc.assets.push({id:'unused-rejected',name:'discarded',kind:'video',src:unused.body.storage_path,durationInFrames:30});const main=doc.timelines[0],first=structuredClone(main.items[0]),child={...structuredClone(main),id:'nested-used',name:'nested',items:[first],selectedId:null};doc.timelines.push(child);main.items[0]={id:'nested-reference',name:'nested sequence',kind:'sequence',track:first.track,timelineId:child.id,startFrame:first.startFrame,durationInFrames:first.durationInFrames,srcInFrame:0};});
+  await unlink(join(f.assetRoot,unused.body.storage_path));
   const rendered=await send('exportWorkspace');expect(rendered.status,JSON.stringify(rendered.body)).toBe(200);w=rendered.body;expect(w.exports[0].status).toBe('ready');expect(w.exports[0].artifact.fileSize).toBeGreaterThan(1000);expect(w.exports[0].checks.every((x:{passed:boolean})=>x.passed)).toBe(true);
   const videoUrl=f.origin+`/_local-artifact?episode=${f.episode}&path=${encodeURIComponent(w.exports[0].artifact.relativePath)}&sha256=${w.exports[0].artifact.sha256}`,video=await fetch(videoUrl,{headers:{Cookie:'loop_owner_session='+f.token}});expect(video.status).toBe(200);expect(createHash('sha256').update(Buffer.from(await video.arrayBuffer())).digest('hex')).toBe(w.exports[0].artifact.sha256);expect((await fetch(videoUrl,{headers:{Cookie:'loop_owner_session='+f.otherToken}})).status).toBe(404);expect((await fetch(videoUrl,{headers:{Cookie:'loop_owner_session='+f.token,Range:'bytes=0-127'}})).status).toBe(206);
   expect((await send('confirmWorkspaceExport',{exportId:w.exports[0].id,expectedExportSha256:'0'.repeat(64),expectedContentSha256:w.contentSha256})).status).toBe(409);

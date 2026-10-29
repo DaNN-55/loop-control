@@ -1,0 +1,66 @@
+{
+  "version": "worker-result/v1",
+  "taskId": "d92540e4-4f0f-4615-be3c-9a4182a983d5",
+  "status": "completed",
+  "deliveryIdentity": {
+    "video": {
+      "sha256": "6a879c3a38fa920e719849293aa4d3d03c3a28a13696c2d38d31bce5189d1e3a",
+      "fileSize": 468907,
+      "artifactType": "final_render",
+      "relativePath": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/workspace-exports/aabe11c6-74da-460f-b0e7-52ef513a22ab/6a879c3a38fa920e719849293aa4d3d03c3a28a13696c2d38d31bce5189d1e3a.mp4"
+    },
+    "project": {
+      "sha256": "7261091a5998aeddd03bce546583d8fb0eb0898a6bb58d4dbb9e9bde38b22059",
+      "fileSize": 23184,
+      "artifactType": "editable_project",
+      "relativePath": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/production-workspace/versions/7261091a5998aeddd03bce546583d8fb0eb0898a6bb58d4dbb9e9bde38b22059.json"
+    },
+    "exportId": "aabe11c6-74da-460f-b0e7-52ef513a22ab",
+    "workspaceId": "c5cce462-f27e-4427-bb37-ad573fc5cb15",
+    "contentSha256": "d1b0fec4f035c23f971be77a8112a4e224bfa36d1360a07ee5d0899cf918b79b",
+    "projectContentVersion": 21
+  },
+  "artifacts": [
+    {
+      "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "fileSize": 1515,
+      "artifactType": "cover",
+      "relativePath": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/workspace-deliveries/d92540e4-4f0f-4615-be3c-9a4182a983d5/cover.png"
+    },
+    {
+      "sha256": "07de76149e4a291913830d701d76c15c0d812ea0526a07e74e1e5ea8a3e3c08b",
+      "fileSize": 2171,
+      "artifactType": "metadata",
+      "relativePath": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/workspace-deliveries/d92540e4-4f0f-4615-be3c-9a4182a983d5/metadata.json"
+    },
+    {
+      "sha256": "42d60b8d6ba4642096eec27bab200ee83bba2ff787e4d3c779918257ae35b865",
+      "fileSize": 6465,
+      "artifactType": "final_qc_report",
+      "relativePath": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/workspace-deliveries/d92540e4-4f0f-4615-be3c-9a4182a983d5/checks.json"
+    },
+    {
+      "artifactType": "publish_package",
+      "relativePath": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/workspace-deliveries/d92540e4-4f0f-4615-be3c-9a4182a983d5/manifest.json",
+      "sha256": "d8a67e4b612e238e2c6f4262b60c8c426fa990a23d6cf7e60ed64a92a36e94dd",
+      "fileSize": 2658
+    }
+  ],
+  "validation": {
+    "passed": true,
+    "checks": [
+      {
+        "name": "exact_workspace_package",
+        "passed": true,
+        "detail": "已确认视频、完整工程、封面、元数据、检查证据及清单的归属、大小和 SHA-256 均通过。"
+      }
+    ]
+  },
+  "actualCostCents": 0,
+  "blockers": [],
+  "retry": {
+    "shouldRetry": false,
+    "reason": "交付包已验证。"
+  },
+  "nextStep": "下载已验证交付文件。"
+}

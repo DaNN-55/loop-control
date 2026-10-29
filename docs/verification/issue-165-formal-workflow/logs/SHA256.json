@@ -1,0 +1,97 @@
+{
+  "planner-retry-red.log": {
+    "originalSha256": "dfb64a7a00d8d13b48adbc885cde96d59f6efa2452c87248e84df19c4c26f87f",
+    "displaySha256": "939cc02debed1cbb283a9452f162328722b6d4cf7b6f4a1defc3e5f8a321e976",
+    "normalization": "trailing empty lines only"
+  },
+  "release-formal-recovery.log": {
+    "originalSha256": "1b2e4c12447f9f26a453fd5aff4c7f62f17b10ebe91c474bcb30e35287fd650f",
+    "displaySha256": "cd2ebe568d03e988e015b4653c89169097575b8270af80255b920eaafb7a5f49",
+    "normalization": "trailing empty lines only"
+  },
+  "release-prepare.log": {
+    "originalSha256": "0888d176bbcea27ecb67435b2dc7c99dd17f79b24390833e2dc0fa7829411396",
+    "displaySha256": "0888d176bbcea27ecb67435b2dc7c99dd17f79b24390833e2dc0fa7829411396",
+    "normalization": "trailing empty lines only"
+  },
+  "baseline-artifact-red.log": {
+    "originalSha256": "89222aa2ba5a2055af521898d2f30a9ee5958bee6486591d09801b36f10c5750",
+    "displaySha256": "89222aa2ba5a2055af521898d2f30a9ee5958bee6486591d09801b36f10c5750",
+    "normalization": "trailing empty lines only"
+  },
+  "retimed-tts-red.log": {
+    "originalSha256": "3380155224af0ecbae48d4c304d4a2b6185eaa2f91c6044e58e409aa891fdbe8",
+    "displaySha256": "a9147a09ea98e8cbfbdc7d22ec9809d8ef3b3e5de686f960ec8e3a95ffe65319",
+    "normalization": "trailing empty lines only"
+  },
+  "caption-diagnostic.log": {
+    "originalSha256": "599b2641176ee59e3f58665d721e8eac452c111d944b60cd35cd18c44c6eb76d",
+    "displaySha256": "8759c4a9baf9e911c336b3213c38ce24af9bbe535d82193d93946668d9594a7c",
+    "normalization": "trailing empty lines only"
+  },
+  "final-formal.log": {
+    "originalSha256": "a6cb8eeac2aea036eb29d3b69d01c0ae24d5fb8bd01c16216f1657106f6af1b5",
+    "displaySha256": "e349f428c8e6dd57810590d5a436a8a4a8b37b4d4d2029ea37688fa839b28f9b",
+    "normalization": "trailing empty lines only"
+  },
+  "entry-red.log": {
+    "originalSha256": "40aae764f01bd541f19e4513b179ccc5dd79222df7c6e3ca50196bc5f9d15743",
+    "displaySha256": "5a77c85096b7e46313d409cbf9fb9834992aaeffa14caa1eafa597256777c438",
+    "normalization": "trailing empty lines only"
+  },
+  "final-npm-test.log": {
+    "originalSha256": "ac29cd60eb0e4691d275ab7b5d90ac6b93b7b4d69d90b55d5fe51754000a036d",
+    "displaySha256": "a483e121141fbaab2ae84df611237695f85512d88cbd21f197bd527a8dac9f87",
+    "normalization": "trailing empty lines only"
+  },
+  "upgrade-green.log": {
+    "originalSha256": "64a0a7540c8d2469273a91a90f2ef04b9283d59cbd8140a39c00a3b14d5d063d",
+    "displaySha256": "2f4a6313d8c7e707b1042f1ffac83d1ee83a66308f3d417553cac6097536d408",
+    "normalization": "trailing empty lines only"
+  },
+  "final-cross-ticket.log": {
+    "originalSha256": "23beb1be34fb71a8e2349b15336f2ad02d18302a5acdb4a3b61918b1085c7312",
+    "displaySha256": "9a8407f08dbd0bfae9f9cefea3a48d2c2979e1e0cdafc9226d8161605de43438",
+    "normalization": "trailing empty lines only"
+  },
+  "upgrade-red.log": {
+    "originalSha256": "ff1b1da8670db9d43c1441d0f972a7719f1715b7ea2ac459a4b9717a2424bc38",
+    "displaySha256": "d38433904c7868181738a506a19247eb144669eee122ea44e19e03ba0ed7332d",
+    "normalization": "trailing empty lines only"
+  },
+  "selection-upgrade-green.log": {
+    "originalSha256": "316daa24408d3c0275dd3c7df9b34d8d774c4e13bb0dc018fce035580d9ab8a0",
+    "displaySha256": "42c43da2ec8c5f278d67b917f2feb1ef3dac04db101daf8a407a227939c4e2b4",
+    "normalization": "trailing empty lines only"
+  },
+  "release-build.log": {
+    "originalSha256": "c44bd36d612d5f476643a516ad1b443ceac30b337efe23b315ee8a05ac7fa831",
+    "displaySha256": "c44bd36d612d5f476643a516ad1b443ceac30b337efe23b315ee8a05ac7fa831",
+    "normalization": "trailing empty lines only"
+  },
+  "final-export-delivery.log": {
+    "originalSha256": "eafb009dadbeba5021b74dcfbf87075778da9cca4a669da3af72e3a574e7627d",
+    "displaySha256": "d35a9883952ac57b254a35bfd2e8c7ecd09a752c551d5ad5d3c1fb688e33cb38",
+    "normalization": "trailing empty lines only"
+  },
+  "formal-final-green.log": {
+    "originalSha256": "2fb1ed51794d21c30102eb023d9198db5bf27f07c06f16a767e434e09888d526",
+    "displaySha256": "8612192dadc2cc1fafdab74e54f8698a44ec06cc4bcf450d4423ac91e4b72928",
+    "normalization": "trailing empty lines only"
+  },
+  "export-delivery-diagnostic.log": {
+    "originalSha256": "4568811c9ccb149808a4935d1ed76c9ed5682a0fd0b833a24bcb7d1f74deedae",
+    "displaySha256": "1aa8ab270cdc5156cd4232be5655f036d4a58e5e168915dbd95f1a7a59f1581e",
+    "normalization": "trailing empty lines only"
+  },
+  "fixture-controlled083-green.log": {
+    "originalSha256": "3a66ff6b577f9b9e67fa7ea598d948717e93f6133b4e9cf52f9f114e0381b0fe",
+    "displaySha256": "7a47b651363200d6b62520acafe16a7cd3b9fc6a07b34524ae71e511e5329009",
+    "normalization": "trailing empty lines only"
+  },
+  "caption-red.log": {
+    "originalSha256": "a77c484ff9d39b3168ea6801ccfa850924ccd70d63da40554c13c3dac997507b",
+    "displaySha256": "fba215cabf28c9c79607dae07320bb05bf563d8bc7517dbac6b8e4bd215d8ab9",
+    "normalization": "trailing empty lines only"
+  }
+}

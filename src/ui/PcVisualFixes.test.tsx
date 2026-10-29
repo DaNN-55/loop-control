@@ -50,7 +50,7 @@ it('paginates 1284 series, searches all pages, and keeps the current editor draf
   const user = userEvent.setup();
   const series = Array.from({length:1284}, (_, i) => ({id:`series-${i}`, account_id:'account', created_at:'2026-10-28T00:00:00Z', name:`联合制作系列 ${i + 1}`}));
   const {container} = render(<SeriesSettings isPending={false} onCreate={vi.fn()} series={series} seriesVersions={[]}/>);
-  const list = container.querySelector('.series-current-layout > aside')!;
+  const list = container.querySelector<HTMLElement>('.series-current-layout > aside')!;
   expect(list.querySelectorAll(':scope > button').length).toBe(20);
   const positioning = screen.getByLabelText('系列定位');
   await user.type(positioning, '未保存的定位');
@@ -63,7 +63,7 @@ it('paginates 1284 series, searches all pages, and keeps the current editor draf
   expect(screen.queryByRole('navigation', {name:'系列分页'})).toBeNull();
   await user.clear(screen.getByRole('searchbox', {name:'查找系列'}));
   await user.type(screen.getByRole('searchbox', {name:'查找系列'}), '不存在');
-  expect(screen.getByRole('status').textContent).toContain('没有匹配');
+  expect(within(list).getByRole('status').textContent).toContain('没有匹配');
   expect(screen.getByRole('button', {name:'新建系列'})).not.toBeNull();
 });
 

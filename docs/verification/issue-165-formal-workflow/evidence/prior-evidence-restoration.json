@@ -1,0 +1,22 @@
+{
+  "docs/verification/issue-159-workspace-captions/portrait-caption.jpg": {
+    "newSha": "b0840c54344558d77d57e719087335fad08c3e9cbd920bf3f3201387ef14dd3d",
+    "oldSha": "b0840c54344558d77d57e719087335fad08c3e9cbd920bf3f3201387ef14dd3d"
+  },
+  "docs/verification/issue-159-workspace-captions/landscape-caption.jpg": {
+    "newSha": "13af87842499ca2d3538602adbc42d14ccf45800fa156fe27e0a8f0ae200ed5b",
+    "oldSha": "13af87842499ca2d3538602adbc42d14ccf45800fa156fe27e0a8f0ae200ed5b"
+  },
+  "docs/verification/issue-159-workspace-captions/render-pixels.json": {
+    "newSha": "8cf120862f9ae94ce49c32ca668b1f4a3e76b9e33ae66f85b85b2cf3ff6ab43c",
+    "oldSha": "8cf120862f9ae94ce49c32ca668b1f4a3e76b9e33ae66f85b85b2cf3ff6ab43c"
+  },
+  "docs/verification/issue-162-workspace-editing/evidence/structure-caption-voice.mp4": {
+    "newSha": "edfb2bd9b616620a8b2b7fa706e12efc314eb25601dfb64ade21e3ef362f991e",
+    "oldSha": "edfb2bd9b616620a8b2b7fa706e12efc314eb25601dfb64ade21e3ef362f991e"
+  },
+  "docs/verification/issue-162-workspace-editing/evidence/cross-ticket.json": {
+    "newSha": "e1231bae2d509c2041719eaf1e417da3af42d574baa2b98856a95f4640413e51",
+    "oldSha": "3963de1d22cf9fade36b8ff719293285d8649fd463e2913e6e5a57a542bf15f4"
+  }
+}

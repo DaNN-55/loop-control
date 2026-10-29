@@ -1,0 +1,44 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t13-formal-workflow/loop-control
+
+ ❯ src/local-app/formalWorkflow.integration.test.ts (2 tests | 2 failed) 5355ms
+   × Owner confirms a fresh script before visual materials exist 2639ms
+     → {"error":"请先导入视觉参考；当前没有已验收的图片生成路径。"}: expected 409 to be 200 // Object.is equality
+   × Owner builds a formal incomplete draft without old storyboard approvals 2715ms
+     → {"error":"请先确认脚本与分镜匹配基准。"}: expected 409 to be 200 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/formalWorkflow.integration.test.ts > Owner confirms a fresh script before visual materials exist
+AssertionError: {"error":"请先导入视觉参考；当前没有已验收的图片生成路径。"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/formalWorkflow.integration.test.ts:23:239
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/formalWorkflow.integration.test.ts > Owner builds a formal incomplete draft without old storyboard approvals
+AssertionError: {"error":"请先确认脚本与分镜匹配基准。"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/formalWorkflow.integration.test.ts:27:138
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  01:16:56
+   Duration  5.78s (transform 223ms, setup 6ms, collect 300ms, tests 5.36s, environment 0ms, prepare 26ms)

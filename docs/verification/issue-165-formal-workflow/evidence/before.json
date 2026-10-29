@@ -1,0 +1,573 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "c5cce462-f27e-4427-bb37-ad573fc5cb15",
+    "transitionMode": "studio"
+  },
+  "assets": [
+    {
+      "id": "audio-track-56cb07ea-704e-4a2b-a4e4-b6c76ddf3cb0",
+      "name": "shot-01 口播",
+      "kind": "audio",
+      "src": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/native-tasks/cd2b52d3-e7c9-41e9-a1ee-164c204aa555/shot-narration-shot-01-1b559713d4e63bf426cb5ab52fc7b486.mp3",
+      "durationInFrames": 72
+    },
+    {
+      "id": "material-bdb5f663-4000-4e90-9035-bc547d0f28b5",
+      "name": "still-striped.png",
+      "kind": "image",
+      "src": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png",
+      "durationInFrames": 72
+    },
+    {
+      "width": 640,
+      "height": 360,
+      "sourceContentHash": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+      "sourceRevision": "source-sha256-7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+      "id": "candidate-44b440a9-7231-4349-b19f-2c921a5ea448",
+      "name": "待匹配画面",
+      "kind": "video",
+      "src": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/materials/7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6-landscape-red-blue.mp4",
+      "durationInFrames": 120
+    },
+    {
+      "id": "audio-track-277e3c04-6e48-4da0-a390-ce6760e8bb4e",
+      "name": "added-dcb5fdad-e1e3-42a4-be3c-f63534d4701b 原片 0.00–2.00s",
+      "kind": "audio",
+      "src": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/native-tasks/f2c7c149-9c42-477d-9d75-a7097497c610/5cb493c2-2874-477d-b50f-8a930ec921ce.mp3",
+      "durationInFrames": 60,
+      "loopControlAudioSource": {
+        "videoAssetId": "candidate-44b440a9-7231-4349-b19f-2c921a5ea448",
+        "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+        "sourceInFrame": 0,
+        "sourceFrameRate": 30
+      }
+    },
+    {
+      "id": "material-3b4d819c-cc25-41b6-b2eb-324daea5a815",
+      "name": "整期人工配乐",
+      "kind": "audio",
+      "src": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/materials/64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92-bgm.mp3",
+      "durationInFrames": 240
+    },
+    {
+      "id": "material-53da6fdd-cf9c-4d7c-bd03-c16f8f108cbf",
+      "name": "镜头人工音效",
+      "kind": "audio",
+      "src": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/materials/c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0-sfx.mp3",
+      "durationInFrames": 12
+    },
+    {
+      "id": "audio-track-aeea7799-ae0e-4126-b10f-9ac52c628cd6",
+      "name": "shot-01 口播",
+      "kind": "audio",
+      "src": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/native-tasks/13096078-8362-4f0e-8751-cf7160a72961/shot-narration-shot-01-7f247436118d7dd64e49e285a6efd55b.mp3",
+      "durationInFrames": 72
+    }
+  ],
+  "mediaFolders": [],
+  "activeTimelineId": "loop-control-5ccbf8b7-0617-411d-ad27-44afad23d4bc",
+  "timelines": [
+    {
+      "id": "loop-control-5ccbf8b7-0617-411d-ad27-44afad23d4bc",
+      "name": "整期剪辑",
+      "order": 0,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "fit": "contain",
+      "items": [
+        {
+          "id": "shot-shot-01-e9646599-bf18-4c47-ab43-c5d07f9839ba",
+          "track": "V1",
+          "kind": "image",
+          "name": "shot-01",
+          "startFrame": 0,
+          "durationInFrames": 72,
+          "width": 640,
+          "height": 360,
+          "transform": {
+            "scale": 1,
+            "x": 13,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "c5cce462-f27e-4427-bb37-ad573fc5cb15",
+            "shotId": "shot-01",
+            "clipId": "e9646599-bf18-4c47-ab43-c5d07f9839ba",
+            "text": "填写本段完整口播。",
+            "provenance": {
+              "materialRevisionId": "bdb5f663-4000-4e90-9035-bc547d0f28b5",
+              "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+              "fileSize": 1515,
+              "kind": "image"
+            }
+          },
+          "volume": 0,
+          "loopControlAudio": {
+            "workspaceId": "c5cce462-f27e-4427-bb37-ad573fc5cb15",
+            "shotId": "shot-01",
+            "voiceMode": "tts"
+          },
+          "src": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png",
+          "sourceAssetId": "material-bdb5f663-4000-4e90-9035-bc547d0f28b5",
+          "sourceRevision": "bdb5f663-4000-4e90-9035-bc547d0f28b5",
+          "sourceContentHash": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "sourceFilename": "still-striped.png",
+          "fit": "contain",
+          "keyframes": {
+            "scale": [
+              {
+                "frame": 0,
+                "value": 1,
+                "easing": "linear"
+              },
+              {
+                "frame": 71,
+                "value": 1.15,
+                "easing": "linear"
+              }
+            ],
+            "x": [
+              {
+                "frame": 0,
+                "value": 0,
+                "easing": "linear"
+              },
+              {
+                "frame": 71,
+                "value": 3,
+                "easing": "linear"
+              }
+            ]
+          }
+        },
+        {
+          "id": "shot-added-dcb5fdad-e1e3-42a4-be3c-f63534d4701b-dcb5fdad-e1e3-42a4-be3c-f63534d4701b",
+          "track": "V1",
+          "kind": "video",
+          "name": "待匹配画面",
+          "startFrame": 72,
+          "durationInFrames": 60,
+          "width": 640,
+          "height": 360,
+          "loopControlShot": {
+            "workspaceId": "c5cce462-f27e-4427-bb37-ad573fc5cb15",
+            "shotId": "added-dcb5fdad-e1e3-42a4-be3c-f63534d4701b",
+            "clipId": "dcb5fdad-e1e3-42a4-be3c-f63534d4701b",
+            "text": "本地新增原声画面"
+          },
+          "src": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/materials/7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6-landscape-red-blue.mp4",
+          "sourceAssetId": "candidate-44b440a9-7231-4349-b19f-2c921a5ea448",
+          "sourceRevision": "source-sha256-7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+          "sourceContentHash": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+          "loopControlCandidate": {
+            "inputFingerprint": "cb2af740a00020d4f47c499422ea839098c89d8df5252d2a04701cfca1fd8ea4",
+            "sourceId": "candidate-44b440a9-7231-4349-b19f-2c921a5ea448",
+            "durationPolicy": "use-candidate",
+            "startFrame": 72,
+            "durationInFrames": 120,
+            "shotWindow": {
+              "startFrame": 72,
+              "durationInFrames": 90
+            }
+          },
+          "srcInFrame": 0,
+          "volume": 0,
+          "loopControlAudio": {
+            "workspaceId": "c5cce462-f27e-4427-bb37-ad573fc5cb15",
+            "shotId": "added-dcb5fdad-e1e3-42a4-be3c-f63534d4701b",
+            "voiceMode": "source"
+          }
+        },
+        {
+          "id": "shot-added-dcb5fdad-e1e3-42a4-be3c-f63534d4701b-28652310-af7e-4822-a95d-96b69b119da4",
+          "track": "V1",
+          "kind": "video",
+          "name": "待匹配画面",
+          "startFrame": 132,
+          "durationInFrames": 60,
+          "width": 640,
+          "height": 360,
+          "loopControlShot": {
+            "workspaceId": "c5cce462-f27e-4427-bb37-ad573fc5cb15",
+            "shotId": "added-dcb5fdad-e1e3-42a4-be3c-f63534d4701b",
+            "clipId": "28652310-af7e-4822-a95d-96b69b119da4",
+            "text": "本地新增原声画面"
+          },
+          "src": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/materials/7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6-landscape-red-blue.mp4",
+          "sourceAssetId": "candidate-44b440a9-7231-4349-b19f-2c921a5ea448",
+          "sourceRevision": "source-sha256-7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+          "sourceContentHash": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+          "loopControlCandidate": {
+            "inputFingerprint": "cb2af740a00020d4f47c499422ea839098c89d8df5252d2a04701cfca1fd8ea4",
+            "sourceId": "candidate-44b440a9-7231-4349-b19f-2c921a5ea448",
+            "durationPolicy": "use-candidate",
+            "startFrame": 72,
+            "durationInFrames": 120,
+            "shotWindow": {
+              "startFrame": 72,
+              "durationInFrames": 90
+            }
+          },
+          "srcInFrame": 60,
+          "volume": 0,
+          "loopControlAudio": {
+            "workspaceId": "c5cce462-f27e-4427-bb37-ad573fc5cb15",
+            "shotId": "added-dcb5fdad-e1e3-42a4-be3c-f63534d4701b",
+            "voiceMode": "source"
+          }
+        },
+        {
+          "id": "workspace-source-shot-added-dcb5fdad-e1e3-42a4-be3c-f63534d4701b",
+          "kind": "audio",
+          "name": "added-dcb5fdad-e1e3-42a4-be3c-f63534d4701b 原声",
+          "track": "workspace-main-voice",
+          "src": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/native-tasks/f2c7c149-9c42-477d-9d75-a7097497c610/5cb493c2-2874-477d-b50f-8a930ec921ce.mp3",
+          "sourceAssetId": "audio-track-277e3c04-6e48-4da0-a390-ce6760e8bb4e",
+          "startFrame": 72,
+          "durationInFrames": 60,
+          "srcInFrame": 0,
+          "playbackRate": 1,
+          "volume": 1,
+          "loopControlAudio": {
+            "workspaceId": "c5cce462-f27e-4427-bb37-ad573fc5cb15",
+            "shotId": "added-dcb5fdad-e1e3-42a4-be3c-f63534d4701b",
+            "sourceItemId": "shot-added-dcb5fdad-e1e3-42a4-be3c-f63534d4701b-dcb5fdad-e1e3-42a4-be3c-f63534d4701b",
+            "sourceAssetId": "audio-track-277e3c04-6e48-4da0-a390-ce6760e8bb4e"
+          }
+        },
+        {
+          "id": "workspace-bgm",
+          "kind": "audio",
+          "name": "整期人工配乐",
+          "track": "workspace-bgm",
+          "src": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/materials/64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92-bgm.mp3",
+          "sourceAssetId": "material-3b4d819c-cc25-41b6-b2eb-324daea5a815",
+          "sourceContentHash": "64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92",
+          "startFrame": 0,
+          "durationInFrames": 192,
+          "srcInFrame": 0,
+          "volume": 0.251188643150958,
+          "loopControlAudio": {
+            "workspaceId": "c5cce462-f27e-4427-bb37-ad573fc5cb15",
+            "kind": "bgm",
+            "preparationId": "943df186-2dba-4e2a-819a-57e97a2959ea",
+            "anchor": "absolute"
+          }
+        },
+        {
+          "id": "workspace-sfx-7c1f78e1-eb32-427d-868b-b0504536f146",
+          "kind": "audio",
+          "name": "镜头人工音效",
+          "track": "workspace-sfx-7c1f78e1-eb32-427d-868b-b0504536f146",
+          "src": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/materials/c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0-sfx.mp3",
+          "sourceAssetId": "material-53da6fdd-cf9c-4d7c-bd03-c16f8f108cbf",
+          "sourceContentHash": "c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0",
+          "startFrame": 75,
+          "durationInFrames": 9,
+          "srcInFrame": 0,
+          "volume": 0.5011872336272722,
+          "loopControlAudio": {
+            "workspaceId": "c5cce462-f27e-4427-bb37-ad573fc5cb15",
+            "kind": "sfx",
+            "preparationId": "7c1f78e1-eb32-427d-868b-b0504536f146",
+            "shotId": "added-dcb5fdad-e1e3-42a4-be3c-f63534d4701b",
+            "anchor": "shot",
+            "offsetSeconds": 0.1
+          }
+        },
+        {
+          "id": "workspace-narration-shot-shot-01",
+          "kind": "audio",
+          "name": "shot-01 口播",
+          "src": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/native-tasks/13096078-8362-4f0e-8751-cf7160a72961/shot-narration-shot-01-7f247436118d7dd64e49e285a6efd55b.mp3",
+          "sourceAssetId": "audio-track-aeea7799-ae0e-4126-b10f-9ac52c628cd6",
+          "srcInFrame": 0,
+          "startFrame": 0,
+          "durationInFrames": 72,
+          "volume": 0.7943282347242815,
+          "track": "workspace-main-voice",
+          "loopControlAudio": {
+            "workspaceId": "c5cce462-f27e-4427-bb37-ad573fc5cb15",
+            "shotId": "shot-01"
+          },
+          "sourceRevision": "source-sha256-9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "sourceContentHash": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "loopControlCandidate": {
+            "inputFingerprint": "830fb67ea02afbd5196169f7dca9ed719744cd8132573ed1cd885355f64b1851",
+            "sourceId": "audio-track-aeea7799-ae0e-4126-b10f-9ac52c628cd6",
+            "durationPolicy": "keep-target",
+            "startFrame": 0,
+            "durationInFrames": 72,
+            "shotWindow": {
+              "startFrame": 0,
+              "durationInFrames": 72
+            }
+          }
+        },
+        {
+          "id": "shot-added-0255ab5e-5767-4f94-9370-66a69efcc32f-0255ab5e-5767-4f94-9370-66a69efcc32f",
+          "track": "V1",
+          "kind": "image",
+          "name": "added-0255ab5e-5767-4f94-9370-66a69efcc32f",
+          "startFrame": 192,
+          "durationInFrames": 30,
+          "width": 640,
+          "height": 360,
+          "loopControlShot": {
+            "workspaceId": "c5cce462-f27e-4427-bb37-ad573fc5cb15",
+            "shotId": "added-0255ab5e-5767-4f94-9370-66a69efcc32f",
+            "clipId": "0255ab5e-5767-4f94-9370-66a69efcc32f",
+            "text": "本地新增无声画面",
+            "provenance": {
+              "materialRevisionId": "bdb5f663-4000-4e90-9035-bc547d0f28b5",
+              "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+              "fileSize": 1515,
+              "kind": "image"
+            }
+          },
+          "src": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png",
+          "sourceAssetId": "material-bdb5f663-4000-4e90-9035-bc547d0f28b5",
+          "sourceRevision": "bdb5f663-4000-4e90-9035-bc547d0f28b5",
+          "sourceContentHash": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "sourceFilename": "still-striped.png",
+          "fit": "contain",
+          "transform": {
+            "scale": 1,
+            "x": 50,
+            "y": 50,
+            "rotation": 0
+          },
+          "volume": 0
+        }
+      ],
+      "trackOrder": [
+        "V1",
+        "workspace-narration",
+        "workspace-main-voice",
+        "workspace-bgm",
+        "workspace-sfx-7c1f78e1-eb32-427d-868b-b0504536f146",
+        "workspace-captions"
+      ],
+      "tracks": {
+        "V1": {
+          "kind": "video",
+          "name": "画面"
+        },
+        "workspace-narration": {
+          "kind": "audio",
+          "name": "主声音"
+        },
+        "workspace-main-voice": {
+          "kind": "audio",
+          "name": "主声音",
+          "role": "anchor"
+        },
+        "workspace-bgm": {
+          "kind": "audio",
+          "name": "整期配乐",
+          "role": "follower",
+          "audioRouting": {
+            "duckDepthDb": -10
+          }
+        },
+        "workspace-sfx-7c1f78e1-eb32-427d-868b-b0504536f146": {
+          "kind": "audio",
+          "name": "音效"
+        },
+        "workspace-captions": {
+          "kind": "caption",
+          "name": "字幕",
+          "captions": {
+            "enabled": true,
+            "template": "plain",
+            "pacing": "phrase",
+            "sourceMode": "item",
+            "sourceEntries": [
+              {
+                "id": "workspace-caption-shot-shot-01",
+                "itemId": "manual:workspace-caption-shot-shot-01",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-01-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "owner-adjusted~0",
+                    "text": "这一版局部口播已明确\n采用。",
+                    "start": 0,
+                    "end": 850
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.042954545454545454,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "follow_tts",
+                  "text": "这一版局部口播已明确采用。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 10
+                  }
+                }
+              },
+              {
+                "id": "workspace-caption-shot-added-dcb5fdad-e1e3-42a4-be3c-f63534d4701b",
+                "itemId": "manual:workspace-caption-shot-added-dcb5fdad-e1e3-42a4-be3c-f63534d4701b",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-added-dcb5fdad-e1e3-42a4-be3c-f63534d4701b-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "owner~0",
+                    "text": "原声画面字幕由Own\ner核对",
+                    "start": 2400,
+                    "end": 3300
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.042954545454545454,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "原声画面字幕由Owner核对",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 10
+                  }
+                }
+              },
+              {
+                "id": "workspace-caption-shot-added-0255ab5e-5767-4f94-9370-66a69efcc32f",
+                "itemId": "manual:workspace-caption-shot-added-0255ab5e-5767-4f94-9370-66a69efcc32f",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-added-0255ab5e-5767-4f94-9370-66a69efcc32f-slot",
+                "visible": false,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                }
+              }
+            ],
+            "layoutPolicy": {
+              "mode": "manual-slots",
+              "slots": [
+                {
+                  "id": "workspace-caption-shot-added-dcb5fdad-e1e3-42a4-be3c-f63534d4701b-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                },
+                {
+                  "id": "workspace-caption-shot-shot-01-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                },
+                {
+                  "id": "workspace-caption-shot-added-0255ab5e-5767-4f94-9370-66a69efcc32f-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                }
+              ]
+            },
+            "perSource": {
+              "workspace-caption-shot-shot-01": {
+                "maxLines": 2
+              },
+              "workspace-caption-shot-added-dcb5fdad-e1e3-42a4-be3c-f63534d4701b": {
+                "maxLines": 2
+              },
+              "workspace-caption-shot-added-0255ab5e-5767-4f94-9370-66a69efcc32f": {
+                "maxLines": 2
+              }
+            }
+          }
+        }
+      },
+      "transitions": [],
+      "selectedId": "shot-added-0255ab5e-5767-4f94-9370-66a69efcc32f-0255ab5e-5767-4f94-9370-66a69efcc32f",
+      "captionsHidden": false,
+      "selectedIds": [
+        "shot-added-0255ab5e-5767-4f94-9370-66a69efcc32f-0255ab5e-5767-4f94-9370-66a69efcc32f"
+      ]
+    }
+  ]
+}

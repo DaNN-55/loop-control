@@ -1,0 +1,17 @@
+{
+  "databasesRemoved": [
+    "loop_studio_153_b7e26f4c8884",
+    "loop_studio_153_6285e5aeb432"
+  ],
+  "latestMediaRootRemoved": true,
+  "credentialsRemoved": true,
+  "ports": [
+    49571,
+    52353
+  ],
+  "serviceExitCodes": [
+    0,
+    0
+  ],
+  "exportWindowReleased": true
+}

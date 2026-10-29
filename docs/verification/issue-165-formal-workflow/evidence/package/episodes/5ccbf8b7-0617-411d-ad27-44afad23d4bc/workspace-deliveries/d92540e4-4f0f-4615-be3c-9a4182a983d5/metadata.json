@@ -1,0 +1,66 @@
+{
+  "title": "正式四步整片交付",
+  "description": "Owner 已确认确切成片。",
+  "tags": [
+    "controlled"
+  ],
+  "exportId": "aabe11c6-74da-460f-b0e7-52ef513a22ab",
+  "contentSha256": "d1b0fec4f035c23f971be77a8112a4e224bfa36d1360a07ee5d0899cf918b79b",
+  "scriptRevisionId": "07f750ad-f3c8-4062-8149-7a46e023357b",
+  "narration": [
+    {
+      "shotId": "shot-01",
+      "baselineText": "填写本段完整口播。",
+      "sourceText": "这一版局部口播已明确采用。",
+      "adoptedText": "这一版局部口播已明确采用。",
+      "textCoverage": "complete_source",
+      "windows": [
+        {
+          "srcInFrame": 0,
+          "usedDurationSeconds": 2.4,
+          "sourceDurationSeconds": 2.4,
+          "playbackRate": 1,
+          "fps": 30,
+          "audible": true
+        }
+      ],
+      "textSource": "owner_adoption",
+      "sourceDiffersFromBaseline": true,
+      "differsFromBaseline": true,
+      "audioTrackId": "aeea7799-ae0e-4126-b10f-9ac52c628cd6",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "itemId": "workspace-narration-shot-shot-01",
+      "source": "episodes/5ccbf8b7-0617-411d-ad27-44afad23d4bc/native-tasks/13096078-8362-4f0e-8751-cf7160a72961/shot-narration-shot-01-7f247436118d7dd64e49e285a6efd55b.mp3"
+    },
+    {
+      "shotId": "added-dcb5fdad-e1e3-42a4-be3c-f63534d4701b",
+      "baselineText": "",
+      "sourceText": null,
+      "adoptedText": null,
+      "textCoverage": "no_recorded_text",
+      "windows": [],
+      "textSource": "not_recorded",
+      "sourceDiffersFromBaseline": null,
+      "differsFromBaseline": null,
+      "audioTrackId": null,
+      "sha256": null,
+      "itemId": null,
+      "source": null
+    },
+    {
+      "shotId": "added-0255ab5e-5767-4f94-9370-66a69efcc32f",
+      "baselineText": "",
+      "sourceText": null,
+      "adoptedText": null,
+      "textCoverage": "no_recorded_text",
+      "windows": [],
+      "textSource": "not_recorded",
+      "sourceDiffersFromBaseline": null,
+      "differsFromBaseline": null,
+      "audioTrackId": null,
+      "sha256": null,
+      "itemId": null,
+      "source": null
+    }
+  ]
+}

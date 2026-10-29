@@ -1,0 +1,34 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t13-formal-workflow/loop-control
+
+(node:93146) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+stderr | src/local-app/formalWorkflow.delivery.integration.test.ts > formal Owner workflow delivers exact native export with adopted text, mixed audio and traceable late unused results
+ACTUAL_SQL_ERROR 40001 Caption text review identity changed undefined
+
+ ❯ src/local-app/formalWorkflow.delivery.integration.test.ts (1 test | 1 failed) 7891ms
+   × formal Owner workflow delivers exact native export with adopted text, mixed audio and traceable late unused results 7890ms
+     → confirmWorkspaceCaptionText: {"error":"本机服务暂不可用，请检查本机状态。"}: expected 503 to be 200 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/formalWorkflow.delivery.integration.test.ts > formal Owner workflow delivers exact native export with adopted text, mixed audio and traceable late unused results
+AssertionError: confirmWorkspaceCaptionText: {"error":"本机服务暂不可用，请检查本机状态。"}: expected 503 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 503
+
+ ❯ send src/local-app/formalWorkflow.delivery.integration.test.ts:17:225
+
+ ❯ src/local-app/formalWorkflow.delivery.integration.test.ts:40:323
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  01:53:15
+   Duration  8.37s (transform 259ms, setup 6ms, collect 348ms, tests 7.89s, environment 0ms, prepare 26ms)

@@ -10,7 +10,7 @@ import {BarChart3,LogOut,MessageSquare,Moon,PanelLeft,Pencil,Play,RefreshCw,Sun,
 import type {Database} from '../lib/database.types';
 import type {EpisodeStage} from '../platform/types';
 import type {ServerPage,EpisodeCatalog} from '../episodes/episodeCatalogTypes';
-import {EpisodeStatus,episodeActionState} from './episodePresentation';
+import {EpisodeStatus,episodeActionState,episodeWorkflowLabel} from './episodePresentation';
 import './episode-list.css';
 import {blueprintAssetRoot} from '../platform/blueprintPolicy';
 import {useDialogFocus} from '../ui/useDialogFocus';
@@ -168,10 +168,10 @@ export function EpisodeWorkspace({ catalogControls, operationRows, actions, revi
       {!catalogControls&&actions}
     </div>
     <div className="episode-table" role="table" aria-label="生产单"><div className="table-row table-header" role="row">{['生产单','当前阶段','状态','最近更新','操作'].map(label=><span key={label} role="columnheader">{label}</span>)}</div>
-    {pageItems.map(episode=>{const seriesVersion=episode.series_version_id?seriesVersionsById.get(episode.series_version_id):null;const account=accountsById.get(episode.account_id);const count=artifactCounts?.[episode.id]??artifacts.filter(a=>a.episode_id===episode.id).length;const state=episodeActionState(episode,operationRows?.find(row=>row.episodeId===episode.id));const context=[account?.name??'未知账号',seriesVersion?`${seriesById.get(seriesVersion.series_id)?.name??'未知系列'} v${seriesVersion.version}`:'未关联系列'].join(' · ');
+    {pageItems.map(episode=>{const seriesVersion=episode.series_version_id?seriesVersionsById.get(episode.series_version_id):null;const account=accountsById.get(episode.account_id);const count=artifactCounts?.[episode.id]??artifacts.filter(a=>a.episode_id===episode.id).length;const summary=operationRows?.find(row=>row.episodeId===episode.id);const state=episodeActionState(episode,summary);const context=[account?.name??'未知账号',seriesVersion?`${seriesById.get(seriesVersion.series_id)?.name??'未知系列'} v${seriesVersion.version}`:'未关联系列'].join(' · ');
       return <div className={`table-row episode-row ${selectedEpisode?.id===episode.id?'is-selected':''}`} key={episode.id} onClick={()=>onSelectEpisode(episode.id)} onKeyDown={event=>{if(event.target===event.currentTarget&&(event.key==='Enter'||event.key===' ')){event.preventDefault();onSelectEpisode(episode.id);}}} role="row" tabIndex={0}>
         <div className="episode-name" role="cell"><Tooltip title={episode.title||'未命名生产单'} className="dan-ui dan-ui-tooltip"><TooltipTrigger className="lc-table-name lc-table-title" onPress={()=>onSelectEpisode(episode.id)}><span className="lc-table-text">{episode.title||'未命名生产单'}</span></TooltipTrigger></Tooltip><small title={context}>{context}</small></div>
-        <span role="cell" className="episode-stage-name">{stageLabels[episode.stage]}</span>
+        <span role="cell" className="episode-stage-name">{episodeWorkflowLabel(summary)??stageLabels[episode.stage]}</span>
         <span role="cell"><EpisodeStatus state={state}/></span>
         <span role="cell"><time dateTime={episode.updated_at} title={formatDate(episode.updated_at)} aria-label={formatDate(episode.updated_at)}>{new Intl.DateTimeFormat('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(episode.updated_at))}</time></span>
         <span role="cell" className="episode-action-cell"><EpisodeActionsMenu artifactCount={count} blueprint={blueprintsById.get(episode.blueprint_version_id)} episode={episode} isArchivePending={isArchivePending(episode.id)} isDeletePending={isDeletePending(episode.id)} isTitlePending={isTitlePending(episode.id)} onDelete={onDelete} onPlanDelete={onPlanDelete} onSetArchived={onSetArchived} onUpdateTitle={onUpdateTitle}/></span>

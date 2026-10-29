@@ -1,0 +1,7 @@
+{
+  "version": 1,
+  "entry": "src/local-app/main.tsx",
+  "sdkPresent": false,
+  "legacyControlPlanePresent": false,
+  "fourStepPrototypeModules": []
+}
