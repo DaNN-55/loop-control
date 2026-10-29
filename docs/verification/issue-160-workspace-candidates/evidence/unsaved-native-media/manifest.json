@@ -1,0 +1,44 @@
+[
+  {
+    "nativeSrc": "episodes/a770e37b-5ac4-46b8-af6f-dfb0fd91ebaf/native-tasks/a7317a4e-c34f-4efe-8b6f-fe47f9d444c4/shot-narration-shot-1-d1ba51bcf8e91188efbccdac62683c53.mp3",
+    "registeredPath": "episodes/a770e37b-5ac4-46b8-af6f-dfb0fd91ebaf/native-tasks/a7317a4e-c34f-4efe-8b6f-fe47f9d444c4/shot-narration-shot-1-d1ba51bcf8e91188efbccdac62683c53.mp3",
+    "sha256": "018a1860749296a48b31544689ab33cd8c048aeae4b7da26c89e051f6e56bde9",
+    "fileSize": 19436,
+    "backup": "018a1860749296a48b31544689ab33cd8c048aeae4b7da26c89e051f6e56bde9.mp3"
+  },
+  {
+    "nativeSrc": "/media/uploads/4239595596be49d04f4a.mp4",
+    "registeredPath": "episodes/a770e37b-5ac4-46b8-af6f-dfb0fd91ebaf/materials/89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1-source.mp4",
+    "sha256": "89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1",
+    "fileSize": 44080,
+    "backup": "89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1.mp4"
+  },
+  {
+    "nativeSrc": "/media/uploads/af75ef77b2db4b8a006d.png",
+    "registeredPath": "episodes/a770e37b-5ac4-46b8-af6f-dfb0fd91ebaf/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-striped.png",
+    "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+    "fileSize": 1515,
+    "backup": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116.png"
+  },
+  {
+    "nativeSrc": "/media/uploads/4878ad572b1604afdfbf.mp3",
+    "registeredPath": "episodes/a770e37b-5ac4-46b8-af6f-dfb0fd91ebaf/materials/64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92-bgm.mp3",
+    "sha256": "64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92",
+    "fileSize": 64556,
+    "backup": "64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92.mp3"
+  },
+  {
+    "nativeSrc": "/media/uploads/9d62533dc27c84f6866d.mp3",
+    "registeredPath": "episodes/a770e37b-5ac4-46b8-af6f-dfb0fd91ebaf/materials/c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0-sfx.mp3",
+    "sha256": "c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0",
+    "fileSize": 3692,
+    "backup": "c356e719d06ca43078c2b6d75ab633f4591e70404f5a9a4ecb466650de97b8d0.mp3"
+  },
+  {
+    "nativeSrc": "/media/uploads/4b51eaea0ee8ed8b7b3b.mp3",
+    "registeredPath": "episodes/a770e37b-5ac4-46b8-af6f-dfb0fd91ebaf/native-tasks/40d52578-0504-4208-ba63-1644f92d453c/d6bc0f23-c3ab-41ba-927e-feb1917846d9.mp3",
+    "sha256": "ee3e6c39451d918d1f5dd0d9152307ee4cf05c9cf9230604cef53a3876c6104a",
+    "fileSize": 11475,
+    "backup": "ee3e6c39451d918d1f5dd0d9152307ee4cf05c9cf9230604cef53a3876c6104a.mp3"
+  }
+]

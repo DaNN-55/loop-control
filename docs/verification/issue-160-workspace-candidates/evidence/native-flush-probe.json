@@ -1,0 +1,24 @@
+{
+  "messages": [
+    {
+      "type": "loop-control:result",
+      "requestId": "9ec0a6ff-d833-483e-9709-3af030ad7e95",
+      "ok": true,
+      "revision": 5
+    },
+    {
+      "type": "loop-control:result",
+      "requestId": "9ec0a6ff-d833-483e-9709-3af030ad7e95",
+      "ok": true,
+      "revision": 5
+    }
+  ],
+  "parent": {
+    "v": "visible",
+    "f": true
+  },
+  "child": {
+    "v": "visible",
+    "f": false
+  }
+}

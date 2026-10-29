@@ -1,0 +1,80 @@
+{
+  "records": [
+    {
+      "args": [
+        "eval",
+        "new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve({responsive:true,width:innerWidth,pageWidth:document.documentElement.scrollWidth,hostOpen:!!document.querySelector(\".embedded-studio-body.panel-open\")}))))"
+      ],
+      "ms": 140,
+      "code": 0,
+      "output": "{\n  \"hostOpen\": false,\n  \"pageWidth\": 1280,\n  \"responsive\": true,\n  \"width\": 1280\n}",
+      "error": ""
+    },
+    {
+      "args": [
+        "trace",
+        "start"
+      ],
+      "ms": 598,
+      "code": 0,
+      "output": "✓ Recording started",
+      "error": ""
+    },
+    {
+      "args": [
+        "find",
+        "role",
+        "button",
+        "click",
+        "--name",
+        "口播版本",
+        "--exact"
+      ],
+      "ms": 84,
+      "code": 0,
+      "output": "✓ Done",
+      "error": ""
+    },
+    {
+      "args": [
+        "eval",
+        "new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve({responsive:true,width:innerWidth,pageWidth:document.documentElement.scrollWidth,hostOpen:!!document.querySelector(\".embedded-studio-body.panel-open\")}))))"
+      ],
+      "ms": 180,
+      "code": 0,
+      "output": "{\n  \"hostOpen\": false,\n  \"pageWidth\": 1280,\n  \"responsive\": true,\n  \"width\": 1280\n}",
+      "error": ""
+    },
+    {
+      "args": [
+        "snapshot",
+        "-i",
+        "-s",
+        ".workspace-candidates"
+      ],
+      "ms": 63,
+      "code": 1,
+      "output": "",
+      "error": "✗ Selector '.workspace-candidates' did not match any element"
+    },
+    {
+      "args": [
+        "eval",
+        "new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve({responsive:true,width:innerWidth,pageWidth:document.documentElement.scrollWidth,hostOpen:!!document.querySelector(\".embedded-studio-body.panel-open\")}))))"
+      ],
+      "ms": 207,
+      "code": 0,
+      "output": "{\n  \"hostOpen\": false,\n  \"pageWidth\": 1280,\n  \"responsive\": true,\n  \"width\": 1280\n}",
+      "error": ""
+    },
+    {
+      "args": [
+        "trace",
+        "stop",
+        "docs/verification/issue-160-workspace-candidates/evidence/panel-final-1280.json.trace.json"
+      ],
+      "ms": 8009,
+      "timeout": true
+    }
+  ]
+}

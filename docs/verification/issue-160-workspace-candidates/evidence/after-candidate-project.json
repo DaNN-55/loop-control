@@ -1,0 +1,140 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "4a827b68-9fb1-43aa-9429-f1111d9845db",
+    "transitionMode": "studio"
+  },
+  "assets": [
+    {
+      "id": "audio-track-d3f148cd-eae1-4420-9b74-dbd9a6dac0c5",
+      "name": "shot-1 口播",
+      "kind": "audio",
+      "src": "episodes/1881eb54-c886-45bc-8989-c20a6d2f1357/native-tasks/560dcd6b-9d16-4995-a6c3-285da89a35dc/shot-narration-shot-1-e6a9eb072c3a55ff40f6902aad1eaf33.mp3",
+      "durationInFrames": 72
+    },
+    {
+      "id": "audio-track-11422641-bf08-48bd-84fd-3cab981adaa1",
+      "name": "shot-1 口播",
+      "kind": "audio",
+      "src": "episodes/1881eb54-c886-45bc-8989-c20a6d2f1357/native-tasks/0ad15626-fcec-4baa-bd84-ac4225ab47cb/shot-narration-shot-1-52c757663ae94efc550d25de8f12c562.mp3",
+      "durationInFrames": 42
+    }
+  ],
+  "mediaFolders": [],
+  "activeTimelineId": "loop-control-1881eb54-c886-45bc-8989-c20a6d2f1357",
+  "timelines": [
+    {
+      "id": "loop-control-1881eb54-c886-45bc-8989-c20a6d2f1357",
+      "name": "整期剪辑",
+      "order": 0,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "fit": "contain",
+      "items": [
+        {
+          "id": "shot-shot-1-648e45d1-5d38-4b65-970b-532e4a7300f8",
+          "track": "V1",
+          "kind": "text",
+          "name": "shot-1 · 待匹配画面",
+          "startFrame": 0,
+          "durationInFrames": 72,
+          "width": 1080,
+          "height": 1920,
+          "props": {
+            "text": "待匹配画面\nshot-1",
+            "fontSize": 64,
+            "color": "#a3acc2",
+            "align": "center"
+          },
+          "transform": {
+            "scale": 1,
+            "x": 17,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "4a827b68-9fb1-43aa-9429-f1111d9845db",
+            "shotId": "shot-1",
+            "clipId": "648e45d1-5d38-4b65-970b-532e4a7300f8",
+            "text": "第一镜",
+            "source": null
+          }
+        },
+        {
+          "id": "shot-shot-2-79dd5343-a1b6-4fbc-bd30-4ac61d6efc2f",
+          "track": "V1",
+          "kind": "text",
+          "name": "shot-2 · 待匹配画面",
+          "startFrame": 72,
+          "durationInFrames": 60,
+          "width": 1080,
+          "height": 1920,
+          "props": {
+            "text": "待匹配画面\nshot-2",
+            "fontSize": 64,
+            "color": "#a3acc2",
+            "align": "center"
+          },
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "4a827b68-9fb1-43aa-9429-f1111d9845db",
+            "shotId": "shot-2",
+            "clipId": "79dd5343-a1b6-4fbc-bd30-4ac61d6efc2f",
+            "text": "缺少素材的第二镜。",
+            "source": null
+          }
+        },
+        {
+          "id": "workspace-narration-shot-shot-1",
+          "track": "workspace-narration",
+          "kind": "audio",
+          "name": "shot-1 口播",
+          "src": "episodes/1881eb54-c886-45bc-8989-c20a6d2f1357/native-tasks/0ad15626-fcec-4baa-bd84-ac4225ab47cb/shot-narration-shot-1-52c757663ae94efc550d25de8f12c562.mp3",
+          "sourceAssetId": "audio-track-11422641-bf08-48bd-84fd-3cab981adaa1",
+          "sourceRevision": "source-sha256-92a850d524d7c4ffcd7f6f2fd94f99a195bf2909d4d7bbc7b69fed84bfac945d",
+          "sourceContentHash": "92a850d524d7c4ffcd7f6f2fd94f99a195bf2909d4d7bbc7b69fed84bfac945d",
+          "startFrame": 0,
+          "durationInFrames": 42,
+          "srcInFrame": 0,
+          "volume": 0.37,
+          "fadeInFrames": 4,
+          "loopControlCandidate": {
+            "inputFingerprint": "46aaedab833e427f4397559d0ebd2d4ca56d4ccb7cf44734bdf7861bd1797456",
+            "sourceId": "audio-track-11422641-bf08-48bd-84fd-3cab981adaa1"
+          }
+        }
+      ],
+      "trackOrder": [
+        "V1",
+        "workspace-narration"
+      ],
+      "tracks": {
+        "V1": {
+          "kind": "video",
+          "name": "画面"
+        },
+        "workspace-narration": {
+          "kind": "audio",
+          "name": "主声音"
+        }
+      },
+      "transitions": [
+        {
+          "id": "manual-cut",
+          "fromItemId": "shot-shot-1-648e45d1-5d38-4b65-970b-532e4a7300f8",
+          "toItemId": "shot-shot-2-79dd5343-a1b6-4fbc-bd30-4ac61d6efc2f",
+          "durationInFrames": 0
+        }
+      ],
+      "selectedId": null,
+      "captionsHidden": false
+    }
+  ]
+}

@@ -1,0 +1,314 @@
+[
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 399,
+    "y": 450.875,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 107,
+      "y": 432.875,
+      "width": 584,
+      "height": 36,
+      "top": 432.875,
+      "right": 691,
+      "bottom": 468.875,
+      "left": 107
+    },
+    "cover": "<span data-text=\"true\" class=\"transition-inherit-all px-0.5\">生成新口播候选</span>"
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 663,
+    "y": 369.5,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 635,
+      "y": 351.5,
+      "width": 56,
+      "height": 36,
+      "top": 351.5,
+      "right": 691,
+      "bottom": 387.5,
+      "left": 635
+    },
+    "cover": "<span data-text=\"true\" class=\"transition-inherit-all px-0.5\">刷新</span>"
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 304,
+    "y": 450.765625,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 241,
+      "y": 432.765625,
+      "width": 126,
+      "height": 36,
+      "top": 432.765625,
+      "right": 367,
+      "bottom": 468.765625,
+      "left": 241
+    },
+    "cover": "<span data-text=\"true\" class=\"transition-inherit-all px-0.5\">拒绝，保留当前</span>"
+  },
+  {
+    "phase": "reject-retains-actual-text",
+    "projectSha256": "1b40042151d0c6db239bd68a8a21c1908ddbb28e467ed93c406c08e91bcc2787",
+    "usedNarration": [
+      {
+        "sourceInFrame": 0,
+        "durationInFrames": 42,
+        "fps": 30,
+        "fullSourceUsed": true,
+        "shotId": "shot-1",
+        "itemId": "workspace-narration-shot-shot-1",
+        "audioTrackId": "d956c964-b118-43bf-85c6-fe5618192216",
+        "sha256": "788c1f6ff15d655622173084b20d4a8c401802f62812309a5a6d937cca384db4",
+        "taskId": "b6ee27e0-879e-4197-993c-fdfbb810b43f",
+        "text": "none 后在剪辑内明确采用的口播。",
+        "mainScriptText": "第一镜",
+        "inputFingerprint": "9f3f47b5782007791db70e14adaccea51ef554c5837ec98d93bf456412a7fe7f",
+        "provenance": "owner_adoption"
+      }
+    ]
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 1159,
+    "y": 184,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 1096,
+      "y": 166,
+      "width": 126,
+      "height": 36,
+      "top": 166,
+      "right": 1222,
+      "bottom": 202,
+      "left": 1096
+    },
+    "cover": "<button data-color=\"primary\" class=\"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear "
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 311,
+    "y": 276.34375,
+    "hit": true,
+    "label": "定位镜头 shot-1",
+    "disabled": false,
+    "rect": {
+      "x": 231,
+      "y": 256,
+      "width": 160,
+      "height": 40.6875,
+      "top": 256,
+      "right": 391,
+      "bottom": 296.6875,
+      "left": 231
+    },
+    "cover": "<button type=\"button\" class=\"workspace-shot-select\" title=\"1. 第一镜\" aria-label=\"定位镜头 shot-1\" aria-pressed=\"true\"><small>01</small><span>第一镜</span></button>"
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 894,
+    "y": 173.25,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 856,
+      "y": 156.25,
+      "width": 76,
+      "height": 34,
+      "top": 156.25,
+      "right": 932,
+      "bottom": 190.25,
+      "left": 856
+    },
+    "cover": "<button aria-pressed=\"false\">口播版本</button>"
+  },
+  {
+    "phase": "restored-after-refresh",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 519,
+        "height": 503
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 31,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 31.099999994039536,
+        "visibility": "visible",
+        "focus": false
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 519,
+        "height": 503
+      }
+    ],
+    "wallMs": 32
+  },
+  {
+    "phase": "refresh-restored",
+    "revision": 14,
+    "usedNarration": [
+      {
+        "sourceInFrame": 0,
+        "durationInFrames": 42,
+        "fps": 30,
+        "fullSourceUsed": true,
+        "shotId": "shot-1",
+        "itemId": "workspace-narration-shot-shot-1",
+        "audioTrackId": "d956c964-b118-43bf-85c6-fe5618192216",
+        "sha256": "788c1f6ff15d655622173084b20d4a8c401802f62812309a5a6d937cca384db4",
+        "taskId": "b6ee27e0-879e-4197-993c-fdfbb810b43f",
+        "text": "none 后在剪辑内明确采用的口播。",
+        "mainScriptText": "第一镜",
+        "inputFingerprint": "9f3f47b5782007791db70e14adaccea51ef554c5837ec98d93bf456412a7fe7f",
+        "provenance": "owner_adoption"
+      }
+    ]
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 1159,
+    "y": 184,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 1096,
+      "y": 166,
+      "width": 126,
+      "height": 36,
+      "top": 166,
+      "right": 1222,
+      "bottom": 202,
+      "left": 1096
+    },
+    "cover": "<button data-color=\"primary\" class=\"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear "
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 311,
+    "y": 276.34375,
+    "hit": true,
+    "label": "定位镜头 shot-1",
+    "disabled": false,
+    "rect": {
+      "x": 231,
+      "y": 256,
+      "width": 160,
+      "height": 40.6875,
+      "top": 256,
+      "right": 391,
+      "bottom": 296.6875,
+      "left": 231
+    },
+    "cover": "<button type=\"button\" class=\"workspace-shot-select\" title=\"1. 第一镜\" aria-label=\"定位镜头 shot-1\" aria-pressed=\"true\"><small>01</small><span>第一镜</span></button>"
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 1206,
+    "y": 319,
+    "hit": true,
+    "label": "展开属性",
+    "disabled": false,
+    "rect": {
+      "x": 767,
+      "y": 46,
+      "width": 40,
+      "height": 19,
+      "top": 46,
+      "right": 807,
+      "bottom": 65,
+      "left": 767
+    },
+    "cover": "<button type=\"button\" aria-pressed=\"false\" title=\"展开属性\" style=\"font-size: 11px; line-height: 1; padding: 3px 8px; border-radius: 5px; cursor: pointer; border: 0.5px solid var(--cc-"
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 1089.859375,
+    "y": 542.203125,
+    "hit": true,
+    "label": "输入水平的精确值",
+    "disabled": false,
+    "rect": {
+      "x": 643.859375,
+      "y": 266.703125,
+      "width": 54,
+      "height": 24,
+      "top": 266.703125,
+      "right": 697.859375,
+      "bottom": 290.703125,
+      "left": 643.859375
+    },
+    "cover": "<button aria-label=\"输入水平的精确值\" class=\"cc-insp-scalar\" title=\"点击输入精确值；左右拖动调整；Shift ×10；⌘ ×0.1\" type=\"button\">17%</button>"
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 1177.5,
+    "y": 173.25,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 1116,
+      "y": 156.25,
+      "width": 123,
+      "height": 34,
+      "top": 156.25,
+      "right": 1239,
+      "bottom": 190.25,
+      "left": 1116
+    },
+    "cover": "<button class=\"embedded-studio-save\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-li"
+  },
+  {
+    "phase": "FAILED",
+    "error": "Error: Control covered/disabled {\"x\":1177.5,\"y\":173.25,\"hit\":true,\"label\":\"\",\"disabled\":true,\"rect\":{\"x\":1116,\"y\":156.25,\"width\":123,\"height\":34,\"top\":156.25,\"right\":1239,\"bottom\":190.25,\"left\":1116},\"cover\":\"<button class=\\\"embedded-studio-save\\\" disabled=\\\"\\\"><svg xmlns=\\\"http://www.w3.org/2000/svg\\\" width=\\\"15\\\" height=\\\"15\\\" viewBox=\\\"0 0 24 24\\\" fill=\\\"none\\\" stroke=\\\"currentColor\\\" stroke-width=\\\"\"}\n    at point (file:///Users/dan/.codex/worktrees/t08-workspace-candidates/loop-control/docs/verification/issue-160-workspace-candidates/ui-acceptance.mjs:12:550)\n    at async Object.click (file:///Users/dan/.codex/worktrees/t08-workspace-candidates/loop-control/docs/verification/issue-160-workspace-candidates/ui-acceptance.mjs:13:55)\n    at async file:///Users/dan/.codex/worktrees/t08-workspace-candidates/loop-control/docs/verification/issue-160-workspace-candidates/ui-acceptance.mjs:45:755"
+  }
+]

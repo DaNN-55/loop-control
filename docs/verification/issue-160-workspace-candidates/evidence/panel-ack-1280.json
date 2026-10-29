@@ -1,0 +1,82 @@
+{
+  "records": [
+    {
+      "args": [
+        "eval",
+        "new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve({responsive:true,width:innerWidth,height:innerHeight,pageWidth:document.documentElement.scrollWidth,hostOpen:!!document.querySelector(\".embedded-studio-body.panel-open\")}))))"
+      ],
+      "ms": 48,
+      "code": 0,
+      "output": "{\n  \"height\": 720,\n  \"hostOpen\": false,\n  \"pageWidth\": 1280,\n  \"responsive\": true,\n  \"width\": 1280\n}",
+      "error": ""
+    },
+    {
+      "args": [
+        "trace",
+        "start"
+      ],
+      "ms": 245,
+      "code": 0,
+      "output": "✓ Recording started",
+      "error": ""
+    },
+    {
+      "args": [
+        "find",
+        "role",
+        "button",
+        "click",
+        "--name",
+        "口播版本",
+        "--exact"
+      ],
+      "ms": 87,
+      "code": 0,
+      "output": "✓ Done",
+      "error": ""
+    },
+    {
+      "args": [
+        "eval",
+        "new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve({responsive:true,width:innerWidth,height:innerHeight,pageWidth:document.documentElement.scrollWidth,hostOpen:!!document.querySelector(\".embedded-studio-body.panel-open\")}))))"
+      ],
+      "ms": 113,
+      "code": 0,
+      "output": "{\n  \"height\": 720,\n  \"hostOpen\": false,\n  \"pageWidth\": 1280,\n  \"responsive\": true,\n  \"width\": 1280\n}",
+      "error": ""
+    },
+    {
+      "args": [
+        "snapshot",
+        "-i",
+        "-s",
+        ".workspace-candidates"
+      ],
+      "ms": 39,
+      "code": 1,
+      "output": "",
+      "error": "✗ Selector '.workspace-candidates' did not match any element"
+    },
+    {
+      "args": [
+        "eval",
+        "new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve({responsive:true,width:innerWidth,height:innerHeight,pageWidth:document.documentElement.scrollWidth,hostOpen:!!document.querySelector(\".embedded-studio-body.panel-open\")}))))"
+      ],
+      "ms": 206,
+      "code": 0,
+      "output": "{\n  \"height\": 720,\n  \"hostOpen\": false,\n  \"pageWidth\": 1280,\n  \"responsive\": true,\n  \"width\": 1280\n}",
+      "error": ""
+    },
+    {
+      "args": [
+        "trace",
+        "stop",
+        "docs/verification/issue-160-workspace-candidates/evidence/panel-ack-1280.json.trace.json"
+      ],
+      "ms": 6545,
+      "code": 0,
+      "output": "✓ Trace saved to docs/verification/issue-160-workspace-candidates/evidence/panel-ack-1280.json.trace.json",
+      "error": ""
+    }
+  ]
+}

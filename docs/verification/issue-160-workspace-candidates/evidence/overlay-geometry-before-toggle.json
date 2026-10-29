@@ -1,0 +1,53 @@
+[
+  {
+    "context": {
+      "id": 5,
+      "origin": "http://127.0.0.1:62092",
+      "name": "",
+      "uniqueId": "8454238779604854712.686774330242401652",
+      "auxData": {
+        "isDefault": true,
+        "type": "default",
+        "frameId": "2670D43FACC0324D986B37637A88EA7A"
+      }
+    },
+    "value": {
+      "origin": "http://127.0.0.1:62092",
+      "frame": false,
+      "workspace": [
+        {
+          "tag": "cc-preview-workspace",
+          "rect": "{\"x\":276.328125,\"y\":41,\"width\":553.671875,\"height\":249.515625,\"top\":41,\"right\":830,\"bottom\":290.515625,\"left\":276.328125}",
+          "position": "relative"
+        },
+        {
+          "tag": "cc-inspector",
+          "rect": "{\"x\":525.484375,\"y\":41,\"width\":304.515625,\"height\":249.515625,\"top\":41,\"right\":830,\"bottom\":290.515625,\"left\":525.484375}",
+          "position": "absolute"
+        }
+      ],
+      "iframe": []
+    }
+  },
+  {
+    "context": {
+      "id": 4,
+      "origin": "http://127.0.0.1:54214",
+      "name": "",
+      "uniqueId": "3341406051270415219.1638003694552777064",
+      "auxData": {
+        "isDefault": true,
+        "type": "default",
+        "frameId": "291F897D84E752C1BECFB8FD49943D65"
+      }
+    },
+    "value": {
+      "origin": "http://127.0.0.1:54214",
+      "frame": true,
+      "workspace": [],
+      "iframe": [
+        "{\"x\":419,\"y\":263.5,\"width\":830,\"height\":503,\"top\":263.5,\"right\":1249,\"bottom\":766.5,\"left\":419}"
+      ]
+    }
+  }
+]
