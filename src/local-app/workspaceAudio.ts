@@ -83,10 +83,13 @@ export async function executeWorkspaceAudio(c:PoolClient,root:string,row:Product
  if(shotIds&&!anchorItems.length)throw new ConfigurationError(409,'音效锚点镜头已删除。');
  const start=p.kind==='bgm'?0:(anchorItems.length?Math.min(...anchorItems.map(i=>Number(i.startFrame))):0)+Math.round(Number(p.offset_seconds)*tl.fps);
  const end=Math.max(...tl.items.filter(i=>['video','image','text','sequence'].includes(String(i.kind))).map(i=>Number(i.startFrame)+Number(i.durationInFrames)),1),frames=p.kind==='bgm'?end:Math.round(Number(p.duration_seconds)*tl.fps);
- if(duration+.05<frames/tl.fps)throw new ConfigurationError(409,'音频短于当前整期或音效窗口，请重新准备；不会自动循环。');
- itemId=p.kind==='bgm'?'workspace-bgm':`workspace-sfx-${p.id}`;const track=p.kind==='bgm'?'workspace-bgm':`workspace-sfx-${p.id}`;
- tl.items=tl.items.filter(i=>i.id!==itemId);tl.items.push({id:itemId,kind:'audio',name:p.description,track,src:path,sourceAssetId:assetId,startFrame:start,durationInFrames:frames,srcInFrame:0,volume:10**((p.kind==='bgm'?-12:-6)/20),loopControlAudio:{workspaceId:row.id,kind:p.kind,preparationId:p.id,...(p.anchor==='shot'?{shotId:p.shot_id,anchor:'shot',offsetSeconds:Number(p.offset_seconds)}:{anchor:'absolute'})}});
- if(!tl.trackOrder.includes(track))tl.trackOrder.push(track);tl.tracks[track]={kind:'audio',name:p.kind==='bgm'?'整期配乐':'音效',...(p.kind==='bgm'?{role:'follower',audioRouting:{duckDepthDb:-10}}:{})};
+ itemId=p.kind==='bgm'?'workspace-bgm':`workspace-sfx-${p.id}`;const previous=tl.items.find(i=>i.id===itemId),track=typeof previous?.track==='string'?previous.track:p.kind==='bgm'?'workspace-bgm':`workspace-sfx-${p.id}`;
+ const actualStart=Number(previous?.startFrame??start),actualFrames=Number(previous?.durationInFrames??frames),sourceIn=Number(previous?.srcInFrame??0),rate=Number(previous?.playbackRate??1);
+ if(duration+.05<(sourceIn+actualFrames*rate)/tl.fps)throw new ConfigurationError(409,'音频短于当前整期或音效窗口，请重新准备；不会自动循环。');
+ const item:Record<string,unknown>={...previous,id:itemId,kind:'audio',name:previous?.name??p.description,track,src:path,sourceAssetId:assetId,sourceContentHash:sha,startFrame:actualStart,durationInFrames:actualFrames,srcInFrame:sourceIn,volume:previous?.volume??10**((p.kind==='bgm'?-12:-6)/20),loopControlAudio:{...((previous?.loopControlAudio as Record<string,unknown>|undefined)??{}),workspaceId:row.id,kind:p.kind,preparationId:p.id,...(!previous?(p.anchor==='shot'?{shotId:p.shot_id,anchor:'shot',offsetSeconds:Number(p.offset_seconds)}:{anchor:'absolute'}):{})}};
+ if(previous&&previous.sourceAssetId!==assetId){delete item.sourceRevision;delete item.sourceFilename;}
+ tl.items=tl.items.filter(i=>i.id!==itemId);tl.items.push(item);
+ if(!tl.trackOrder.includes(track))tl.trackOrder.push(track);if(!tl.tracks[track])tl.tracks[track]={kind:'audio',name:p.kind==='bgm'?'整期配乐':'音效',...(p.kind==='bgm'?{role:'follower',audioRouting:{duckDepthDb:-10}}:{})};
  await c.query('UPDATE local_identity.workspace_audio_preparations SET adopted_item_id=$2 WHERE id=$1',[p.id,itemId]);await persistEdit(c,root,row,project,next,'采用配乐或音效');
 }
 async function ready(c:PoolClient,row:ProductionWorkspaceRecord,runtime:InputRuntime,kind:string){

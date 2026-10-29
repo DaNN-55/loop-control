@@ -44,3 +44,13 @@ source 由 Owner 指定实际原生视频实例。真实 `extract_embedded_audio
 088 在真实 `loop_worker.plan` seam 上排除已有 `production_workspaces` 的隐式旧媒体规划；内部旧函数私有，非工作空间 Episode 的原路径保留。新四步流程的提前生成必须由明确匹配/授权动作创建任务，不能靠打开页面或启动旧 planner。旧任务晚回报的业务失效由 T13 另行收口。
 
 source 不自动拼接其他串行范围。Owner 选择一个实际 video instance，状态与 UI 展示该实例、源入点和使用窗口；并行画面不复制主声。`coverage=partial` 不是整 shot 原声覆盖，`alignmentReady=false` 不是声学对齐可用。整段 TTS、SFX 和原生手工音频编辑继续按实际文档处理。
+
+## T08 显式口播主声采用接点
+
+当前 T06 没有 inactive TTS item：source/none 移除 canonical TTS，但保留 native pool 资产。T08 的准备动作不得改变路由；明确「采用为口播主声」才可创建或恢复 `workspace-narration-shot-${shotId}`、解除 muted 并同步唯一实际主声。
+
+当前公共 mixer 调用为 `applyWorkspaceAudioMix(project,{kind:'voice',workspaceId,shotId,visualItemIds,mode:'tts',gainDb,ambienceGainDb:null,narrationAssetId:'audio-track-'+registeredTrackId})`。候选资产必须先经现有受控来源注册进入 native.assets。helper 保留 BGM/SFX/字幕，删除同 shot source/ambience，视觉实例全部静音；caption voice identity 随实际音轨改变而过期。已有主声 gain 应明确沿用，不能把一个仍 muted 的 TTS 仅换源后声称采用成功。
+
+T06 初次恢复的整窗检查保持严格。T08 另负责 Owner 明确 keep-target 时的短候选采用：音轨使用实际长度、画面长度保留，不循环、不加速、不冒充全窗覆盖。该跨票合同需 T08 合入后的真实场景联验，T06 不将它记为本票已完成的候选能力。
+
+BGM/SFX 重新采用仅替换受控源身份，保留当前 native timing、volume、track role/ducking 与效果；准备页位置只用于首次实例，不回写成另一份时间线。

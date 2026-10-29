@@ -1,0 +1,42 @@
+{
+  "revision": 6,
+  "nativeEditRevision": 3,
+  "source": {
+    "coverage": "full",
+    "startSeconds": 0,
+    "durationSeconds": 2,
+    "shotDurationSeconds": 2,
+    "sourceStartSeconds": 0,
+    "sourceLabel": "shot-1",
+    "alignmentReady": true,
+    "shotId": "shot-1",
+    "mode": "source",
+    "gainDb": 0,
+    "ambienceGainDb": null,
+    "sourceItemId": "shot-shot-1-e93318e3-1a32-4b46-be44-a2dda5b35e7d",
+    "sourceAssetId": "audio-track-ddda45f8-99c8-42d2-9cd9-bc24d0c73fb5"
+  },
+  "bgm": {
+    "itemId": "workspace-bgm",
+    "kind": "bgm",
+    "gainDb": -18,
+    "duckDepthDb": 14,
+    "startSeconds": 0,
+    "durationSeconds": 4
+  },
+  "nativeBgm": {
+    "volume": 0.12589254117941673,
+    "track": {
+      "kind": "audio",
+      "name": "整期配乐",
+      "role": "follower",
+      "audioRouting": {
+        "duckDepthDb": -14
+      }
+    }
+  },
+  "viewport800": {
+    "innerWidth": 800,
+    "scrollWidth": 800
+  }
+}

@@ -63,7 +63,7 @@ export async function executeWorkspaceNarration(c:PoolClient,root:string,row:Pro
   if(!(await c.query('UPDATE local_identity.workspace_narrations SET confirmed_fingerprint=$3,input_fingerprint=$3,requested_project_sha256=$4,confirmed_match_fingerprint=$5,requested_native_edit_revision=$6 WHERE workspace_id=$1 AND shot_id=$2',[row.id,clip.shotId,n.inputFingerprint,row.project_sha256,fingerprint(clip.source),Number(row.native_edit_revision??0)])).rowCount)throw new ConfigurationError(409,'请先保存本镜口播设置。');return;
  }
  if(command==='adoptWorkspaceNarration'){
-  if(data.inputFingerprint!==n.inputFingerprint||data.audioTrackId!==n.audioTrackId)throw new ConfigurationError(409,'口播输入或音轨已变化，请重新读取。');await adopt(c,root,row,project,n);return;
+  if(data.inputFingerprint!==n.inputFingerprint||data.audioTrackId!==n.audioTrackId)throw new ConfigurationError(409,'口播输入或音轨已变化，请重新读取。');await adopt(c,root,row,project,n,true);return;
  }
  if(command!=='generateWorkspaceNarration')throw new ConfigurationError(400,'不支持的口播操作。');
  if(n.mode!=='tts'||!n.confirmed)throw new ConfigurationError(409,'请先保存并确认当前镜头匹配与口播。');
@@ -82,7 +82,7 @@ export async function executeWorkspaceNarration(c:PoolClient,root:string,row:Pro
  await c.query('INSERT INTO local_identity.workspace_narration_requests(task_id,workspace_id,episode_id,clip_id,shot_id,input_fingerprint,authorization_hash) VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING',[t.id,row.id,row.episode_id,clip.id,clip.shotId,n.inputFingerprint,authorized.authorization_hash]);
  await c.query('UPDATE local_identity.workspace_narrations SET task_id=$3,requested_project_sha256=$4,requested_native_edit_revision=$5 WHERE workspace_id=$1 AND shot_id=$2',[row.id,clip.shotId,t.id,row.project_sha256,Number(row.native_edit_revision??0)]);
 }
-async function adopt(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,n:WorkspaceNarration){
+async function adopt(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,n:WorkspaceNarration,nativeEdit=false){
  if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请先保存并返回，再采用口播。');
  if(!n.audioTrackId||!n.relativePath||!n.sha256||!n.fileSize||!n.durationSeconds||n.mode==='none')throw new ConfigurationError(409,'当前输入还没有可用音轨。');
  await verifyNativeFile(root,n.relativePath,n.sha256,n.fileSize);const observed=await probeMp3Artifact(join(root,n.relativePath));
@@ -109,7 +109,7 @@ async function adopt(c:PoolClient,root:string,row:ProductionWorkspaceRecord,proj
  const previous=timeline.items.find(i=>i.id===n.itemId);if(previous)Object.assign(previous,item);else timeline.items.push(item);
  if(!timeline.trackOrder.includes('workspace-narration'))timeline.trackOrder.push('workspace-narration');timeline.tracks['workspace-narration']={kind:'audio',name:'主声音'};
  const mixed=applyWorkspaceAudioMix(project,{kind:'voice',workspaceId:row.id,shotId:n.shotId,visualItemIds:bindings.map(b=>b.itemId),mode:'tts',gainDb:0,ambienceGainDb:null});
- const updated=await updateWorkspaceProject(c,root,row,mixed,row.bindings,'采用实际口播时长');
+ const updated=await updateWorkspaceProject(c,root,row,mixed,row.bindings,'采用实际口播时长',{nativeEdit});
  // Carry forward only requests based on the exact untouched draft, never ordinary editor saves.
  await c.query('UPDATE local_identity.workspace_narrations SET requested_project_sha256=$3 WHERE workspace_id=$1 AND requested_project_sha256=$2 AND adopted_audio_track_id IS NULL',[row.id,row.project_sha256,updated!.project.sha256]);
  await c.query('UPDATE local_identity.workspace_narrations SET adopted_audio_track_id=$3 WHERE workspace_id=$1 AND shot_id=$2',[row.id,n.shotId,n.audioTrackId]);
