@@ -12,7 +12,7 @@ export async function resolveWorkspaceSource(c:PoolClient,root:string,episodeId:
  if(audio){await verifyNativeFile(root,path,audio.sha256,Number(audio.file_size));return{...audio,kind:'audio',registration:'audio_track' as const};}
  const artifact=(await c.query(`SELECT a.id,a.relative_path,a.sha256,a.file_size,a.producer_task_id task_id,a.artifact_type
  FROM public.artifacts a JOIN public.tasks t ON t.id=a.producer_task_id AND t.episode_id=a.episode_id AND t.status='completed'
- WHERE a.episode_id=$1 AND a.relative_path=$2 AND a.artifact_type IN ('narration_audio','soundtrack_audio','source_audio','render','shot_clip','generated_video','generated_image')`,[episodeId,path])).rows[0];
+ WHERE a.episode_id=$1 AND a.relative_path=$2 AND a.artifact_type IN ('narration_audio','soundtrack_audio','source_audio','shot_source_audio','a_roll_video','b_roll_asset','render','shot_clip','generated_video','generated_image')`,[episodeId,path])).rows[0];
  if(!artifact)throw new ConfigurationError(409,'工程引用了未注册的本期素材或已完成任务产物。');
  await verifyNativeFile(root,path,artifact.sha256,Number(artifact.file_size));return{...artifact,registration:'task_artifact' as const};
  }catch(error){if(error instanceof ConfigurationError)throw error;throw new ConfigurationError(409,'已用素材缺失或指纹已变化，请检查原文件。');}

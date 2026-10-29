@@ -149,3 +149,24 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('legacy narration already
   const w=prepared.body,refreshed=await f.request('refreshWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision});expect(refreshed.status).toBe(200);expect(refreshed.body.project.sha256).toBe(w.project.sha256);expect(refreshed.body.narration[0].adoptedAudioTrackId).toBeNull();expect(refreshed.body.readiness.deliverable).toBe(false);expect((await f.c.query('SELECT stage FROM public.episodes WHERE id=$1',[f.episode])).rows[0].stage).toBe('storyboard_approved');
  }finally{await f.close();}
 },120_000);
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('one shot with two visual ranges keeps one voice and its original task after deleting the first range',async()=>{
+ const f=await narrationFixture();try{
+  await f.authorize();let w=f.made;const first=w.clips[0],base={workspaceId:w.id,expectedRevision:w.revision,clipId:first.id};await f.request('saveWorkspaceNarration',{...base,mode:'tts',text:'镜头主声不绑定可删除的画面引用。'});await f.request('confirmWorkspaceNarration',base);const queued=await f.request('generateWorkspaceNarration',base);await f.execute(queued.body.narration[0].taskId);w=(await f.request('refreshWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision})).body;
+  const original=w.narration.find((n:any)=>n.shotId===first.shotId),ranges=await f.request('saveWorkspaceVideoRanges',{workspaceId:w.id,expectedRevision:w.revision,shotId:first.shotId,ranges:[{clipId:first.id,materialRevisionId:f.material,sourceInFrame:0,durationInFrames:36,durationLocked:false},{materialRevisionId:f.material,sourceInFrame:12,durationInFrames:36,durationLocked:false}]});expect(ranges.status,JSON.stringify(ranges.body)).toBe(200);w=ranges.body;
+  const clips=w.clips.filter((c:any)=>c.shotId===first.shotId);expect(clips).toHaveLength(2);expect(w.narration.filter((n:any)=>n.shotId===first.shotId)).toHaveLength(1);
+  for(const clip of clips)expect((await readWorkspaceNarrationTarget(f.c,f.assetRoot,w.id,clip.id)).audioTrackId).toBe(original.audioTrackId);
+  expect(w.captions.find((c:any)=>c.clipId===clips[1].id).durationMs).toBe(2400);
+  const removed=await f.request('saveWorkspaceVideoRanges',{workspaceId:w.id,expectedRevision:w.revision,shotId:first.shotId,ranges:[{clipId:clips[1].id,materialRevisionId:f.material,sourceInFrame:12,durationInFrames:36,durationLocked:false}]});expect(removed.status,JSON.stringify(removed.body)).toBe(200);w=removed.body;
+  const voice=w.narration.find((n:any)=>n.shotId===first.shotId);expect(voice).toMatchObject({taskId:original.taskId,audioTrackId:original.audioTrackId,adoptedAudioTrackId:original.adoptedAudioTrackId,itemId:original.itemId,text:'镜头主声不绑定可删除的画面引用。',status:'duration_conflict'});expect((await readWorkspaceNarrationTarget(f.c,f.assetRoot,w.id,clips[1].id)).audioTrackId).toBe(original.audioTrackId);
+  const duplicate=await f.request('generateWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision,clipId:clips[1].id});expect(duplicate.status,JSON.stringify(duplicate.body)).toBe(200);expect(duplicate.body.narration.find((n:any)=>n.shotId===first.shotId).taskId).toBe(original.taskId);
+  const doc=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));expect(doc.timelines.flatMap((t:any)=>t.items).filter((i:any)=>i.id===original.itemId)).toHaveLength(1);expect((await readFile(f.submissions,'utf8')).trim().split('\n')).toHaveLength(1);
+ }finally{await f.close();}
+},120_000);
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('registered completed task media resolve directly without a fake material and reject changed bytes',async()=>{
+ const f=await productionWorkspaceFixture();try{
+  const {copyFile}=await import('node:fs/promises'),{randomUUID,createHash}=await import('node:crypto'),{resolveWorkspaceSource}=await import('./workspaceSources');const path=`episodes/${f.episode}/registered-task-video.mp4`;await copyFile(join(f.assetRoot,f.videoPath),join(f.assetRoot,path));const bytes=await readFile(join(f.assetRoot,path)),sha=createHash('sha256').update(bytes).digest('hex');
+  await f.c.query("INSERT INTO public.artifacts(id,episode_id,producer_task_id,artifact_type,relative_path,sha256,file_size) VALUES($1,$2,$3,'b_roll_asset',$4,$5,$6)",[randomUUID(),f.episode,f.task,path,sha,bytes.length]);
+  expect(await resolveWorkspaceSource(f.c,f.assetRoot,f.episode,path)).toMatchObject({registration:'task_artifact',relative_path:path,sha256:sha,file_size:String(bytes.length)});
+  await expect(resolveWorkspaceSource(f.c,f.assetRoot,f.episode,'blob:unregistered')).rejects.toMatchObject({status:409});await writeFile(join(f.assetRoot,path),Buffer.alloc(bytes.length));await expect(resolveWorkspaceSource(f.c,f.assetRoot,f.episode,path)).rejects.toMatchObject({status:409});
+ }finally{await f.close();}
+},120_000);
