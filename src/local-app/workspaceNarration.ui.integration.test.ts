@@ -1,4 +1,5 @@
 // @vitest-environment node
+import {workspaceTestMedia} from './workspaceTestMedia.fixture';
 import {it,expect} from 'vitest';
 import {writeFile,access,readFile,rm} from 'node:fs/promises';
 import {createServer} from 'vite';
@@ -14,7 +15,7 @@ it.skipIf(process.env.LOOP_T05_UI!=='1')('keeps an isolated native UI available 
  try{
   f=await narrationFixture(origin,base=>{handler=base.handler;},true);await f.authorize();
   await f.request('setWanBudget',{trialCents:100,totalCents:200,full:false});
-  await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'still-striped.png',mimeType:'image/png',contentBase64:(await readFile('/private/tmp/loop-152-orchestration/media/still-striped.png')).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});
+  await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'still-striped.png',mimeType:'image/png',contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});
   await writeFile('/private/tmp/t05-ui-fixture.json',JSON.stringify({origin,episode:f.episode,email:f.email,password:f.password,database:f.database,root:f.root}));
   let busy=false;timer=setInterval(()=>{if(busy||!f)return;busy=true;void (async()=>{try{const next=(await f!.c.query("SELECT id FROM public.tasks WHERE episode_id=$1 AND task_type IN ('generate_narration','generate_a_roll','generate_b_roll') AND status='ready' ORDER BY created_at LIMIT 1",[f!.episode])).rows[0];if(next)expect((await f!.execute(next.id))?.status).toBe('completed');}finally{busy=false;}})();},200);
   const deadline=Date.now()+360_000;while(Date.now()<deadline){if(await access('/private/tmp/t05-ui-done').then(()=>true,()=>false))break;await new Promise(resolve=>setTimeout(resolve,250));}
