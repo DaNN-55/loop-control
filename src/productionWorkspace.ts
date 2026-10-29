@@ -9,6 +9,7 @@ export interface ProductionWorkspace {
  readiness:{deliverable:boolean;placeholders:string[];missingSources:string[]};stale:boolean;
 }
 export const productionWorkspaceFields:Record<string,string[]>={
+ editWorkspaceStructure:['episodeId','workspaceId','expectedRevision','operation'],
  saveWorkspaceVideoRanges:['episodeId','workspaceId','expectedRevision','shotId','ranges'],
  ...workspaceCaptionFields,
  generateWorkspaceImage:['episodeId','workspaceId','expectedRevision','clipId','materialRevisionId','prompt','durationSeconds','reservationCents'],

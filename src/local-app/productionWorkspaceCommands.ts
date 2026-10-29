@@ -1,3 +1,4 @@
+import {applyWorkspaceShotOperation,isWorkspaceShotOperation,synchronizeWorkspaceBindings,withWorkspaceShotMetadata} from '../workspaceShots.js';
 import {saveWorkspaceVideoRanges} from './workspaceVideo.js';
 import {executeWorkspaceCaptionCommand,readWorkspaceCaptions} from './workspaceCaptionsCommands.js';
 import {workspaceCaptionFields} from '../workspaceCaptions.js';
@@ -72,6 +73,12 @@ export class ProductionWorkspaceCommands{
   if(command==='matchWorkspaceImage')return matchWorkspaceImage(c,root,e.id,data);
   const locked=await lockProductionWorkspace(c,root,e.id,data.workspaceId,data.expectedRevision);row=locked.row;const project=locked.project;
   if(Object.hasOwn(workspaceCaptionFields,command))return executeWorkspaceCaptionCommand(c,root,row,project,runtime,command,data);
+  if(command==='editWorkspaceStructure'){
+   if(isOpenChatCutStudio(e.id))throw new ConfigurationError(409,'请在当前编辑器中修改并保存。');
+   if(!isWorkspaceShotOperation(data.operation))throw new ConfigurationError(400,'镜头编辑输入无效。');
+   let next;try{next=applyWorkspaceShotOperation(withWorkspaceShotMetadata(project,row.bindings),data.operation);}catch(error){throw new ConfigurationError(409,error instanceof Error?error.message:'镜头编辑失败。');}
+   return updateWorkspaceProject(c,root,row,next,synchronizeWorkspaceBindings(next,row.bindings),'修改镜头结构');
+  }
   if(command==='matchWorkspaceMaterial'){
    if(isOpenChatCutStudio(e.id))throw new ConfigurationError(409,'请先保存并返回素材匹配，再填入指定占位。');
    const clip=row.bindings.find(b=>b.id===data.clipId);if(!clip||clip.source)throw new ConfigurationError(409,'占位已变化，请刷新；已有片段请在剪辑中调整。');
@@ -88,7 +95,7 @@ export class ProductionWorkspaceCommands{
   if(!runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 未配置。');const config=await runtime.studioRuntime();
   const validate=(doc:OpenChatCutProject)=>validateWorkspaceProject(c,root,e.id,doc,config);
   if(command==='openWorkspaceStudio'){
-   const paths=project.assets.map(a=>a.src);const opened=await openOpenChatCutDraftStudio(root,e.id,project,paths,hash(JSON.stringify({id:row.id,bindings:row.bindings})),config,validate);
+   const editable=withWorkspaceShotMetadata(project,row.bindings);const paths=editable.assets.map(a=>a.src);const opened=await openOpenChatCutDraftStudio(root,e.id,editable,paths,hash(JSON.stringify({id:row.id,bindings:row.bindings})),config,validate);
    this.opened.add(e.id);const current=JSON.parse((await verifyNativeFile(root,opened.workspace.relativePath,opened.workspace.sha256,opened.workspace.fileSize)).toString('utf8')) as OpenChatCutProject;await updateWorkspaceProject(c,root,row,current,row.bindings);return{...opened,productionWorkspace:await readProductionWorkspace(c,e.id,root)};
   }
   if(command==='closeWorkspaceStudio'){await this.closeEpisode(e.id);return readProductionWorkspace(c,e.id,root);}
@@ -97,7 +104,7 @@ export class ProductionWorkspaceCommands{
    let file;try{file=await snapshotOpenChatCutStudio(root,e.id,`episodes/${e.id}/openchatcut-work/current/project.json`,row.project_sha256,validate);}catch(error){if(error instanceof ConfigurationError)throw error;throw new ConfigurationError(409,'Studio 会话或版本已失效，请重新打开当前工程。');}
    const current=JSON.parse((await verifyNativeFile(root,file.relativePath,file.sha256,file.fileSize)).toString('utf8')) as OpenChatCutProject;
    if(workspaceContentSha256(current)!==row.content_sha256)await c.query('UPDATE local_identity.production_workspaces SET native_edit_revision=native_edit_revision+1 WHERE id=$1',[row.id]);
-   await updateWorkspaceProject(c,root,row,current,row.bindings);return{...file,productionWorkspace:await readProductionWorkspace(c,e.id,root)};
+   await updateWorkspaceProject(c,root,row,current,synchronizeWorkspaceBindings(current,row.bindings),'保存原生剪辑');return{...file,productionWorkspace:await readProductionWorkspace(c,e.id,root)};
   }
   throw new ConfigurationError(400,'不支持的工作台操作。');
  }

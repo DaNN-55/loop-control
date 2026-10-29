@@ -1,3 +1,4 @@
+import {applyWorkspaceShotOperation,isWorkspaceShotOperation,readWorkspaceShots} from 'virtual:loop-control-structure';
 import {applyWorkspaceCaptionEdit,isWorkspaceCaptionContract} from 'virtual:loop-control-captions';
 // Loaded by the Loop Control Vite adapter inside the real editor, never a second store.
 import {useEffect,useRef} from 'react';
@@ -22,11 +23,12 @@ export function useLoopControlHost(projectId,base,agent,panels){
       try{
         if(msg.action==='inspect'){
           const document=structuredClone(live.current.base.doc);result(true,undefined,{revision:revision.current,documentFingerprint:await digest(document),document});
-        }else if(msg.action==='apply-captions'){
+        }else if(msg.action==='apply-captions'||msg.action==='apply-workspace-edit'){
           const doc=live.current.base.doc,observedRevision=revision.current;
           if(msg.expectedRevision!==observedRevision||msg.expectedDocumentFingerprint!==await digest(doc)||doc!==live.current.base.doc||observedRevision!==revision.current){result(false,'工程已有新修改，请重新读取当前工程后重试。');return;}
-          if(typeof msg.itemId!=='string'||!isWorkspaceCaptionContract(msg.contract)||msg.contract.text.length>100000||msg.contract.cues.length>1000){result(false,'字幕增量输入无效。');return;}
-          const next=applyWorkspaceCaptionEdit(doc,msg.itemId,msg.contract);
+          if(msg.action==='apply-captions'&&(typeof msg.itemId!=='string'||!isWorkspaceCaptionContract(msg.contract)||msg.contract.text.length>100000||msg.contract.cues.length>1000)){result(false,'字幕增量输入无效。');return;}
+          if(msg.action==='apply-workspace-edit'&&!isWorkspaceShotOperation(msg.operation)){result(false,'镜头编辑输入无效。');return;}
+          const next=msg.action==='apply-captions'?applyWorkspaceCaptionEdit(doc,msg.itemId,msg.contract):applyWorkspaceShotOperation(doc,msg.operation);
           live.current.base.commands.applyDoc(next);
           await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
           const ok=await live.current.agent.flushBeforeLeaveRef.current();
@@ -48,7 +50,7 @@ export function useLoopControlHost(projectId,base,agent,panels){
   },[projectId,active]);
   useEffect(()=>{
     if(!active)return;
-    emit('loop-control:state',{revision:++revision.current,selectedIds:Array.from(base.selection.selectedIds??[]),items:base.state.items.filter(i=>i.kind==='video'||i.kind==='image'||i.kind==='text'&&i.id.startsWith('shot-')).map(i=>({id:i.id,startFrame:i.startFrame,durationInFrames:i.durationInFrames})),width:base.state.width,height:base.state.height});
+    emit('loop-control:state',{revision:++revision.current,selectedIds:Array.from(base.selection.selectedIds??[]),shots:readWorkspaceShots(base.doc).filter(s=>s.timelineId===base.doc.activeTimelineId),items:base.state.items.filter(i=>i.kind==='video'||i.kind==='image'||i.kind==='text'&&i.id.startsWith('shot-')).map(i=>({id:i.id,startFrame:i.startFrame,durationInFrames:i.durationInFrames,kind:i.kind,srcInFrame:i.srcInFrame??0,durationLocked:i.loopControlVideo?.durationLocked===true,sourceDurationInFrames:base.doc.assets.find(a=>a.id===i.sourceAssetId)?.durationInFrames,fit:i.fit??base.state.fit,focusX:i.transform?.x??0,focusY:i.transform?.y??0})),width:base.state.width,height:base.state.height});
   },[base.doc,projectId,active]);
   return active?async()=>emit('loop-control:leave'):null;
 }
