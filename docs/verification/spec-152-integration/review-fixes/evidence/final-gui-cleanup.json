@@ -1,0 +1,10 @@
+{
+  "origin": "http://localhost:56870",
+  "database": "loop_studio_153_8c0745dc4f61",
+  "databaseExists": false,
+  "rootExists": false,
+  "processAlive": false,
+  "portOpen": false,
+  "credentialsRemoved": true,
+  "exportWindowReleased": true
+}

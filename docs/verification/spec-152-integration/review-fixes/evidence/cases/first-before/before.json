@@ -1,0 +1,201 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "42e701fb-0d5c-4f97-8c6d-db3d5ee290c7",
+    "transitionMode": "studio"
+  },
+  "assets": [
+    {
+      "id": "material-2315080e-a599-4b6c-8b00-946adf6ef4a6",
+      "name": "保留绝对音效位置",
+      "kind": "audio",
+      "src": "episodes/fff77d31-a58c-4510-8302-52e1ec4fa077/materials/9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100-owner-sfx.mp3",
+      "durationInFrames": 72
+    }
+  ],
+  "mediaFolders": [],
+  "activeTimelineId": "loop-control-fff77d31-a58c-4510-8302-52e1ec4fa077",
+  "timelines": [
+    {
+      "id": "loop-control-fff77d31-a58c-4510-8302-52e1ec4fa077",
+      "name": "整期剪辑",
+      "order": 0,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "fit": "contain",
+      "items": [
+        {
+          "id": "shot-shot-01-fd9d4493-1837-4f5a-a072-f649687dfc01",
+          "track": "V1",
+          "kind": "text",
+          "name": "shot-01 · 待匹配画面",
+          "startFrame": 0,
+          "durationInFrames": 150,
+          "width": 1080,
+          "height": 1920,
+          "props": {
+            "text": "待匹配画面\nshot-01",
+            "fontSize": 64,
+            "color": "#a3acc2",
+            "align": "center"
+          },
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "42e701fb-0d5c-4f97-8c6d-db3d5ee290c7",
+            "shotId": "shot-01",
+            "clipId": "fd9d4493-1837-4f5a-a072-f649687dfc01",
+            "text": "填写本段完整口播。"
+          }
+        },
+        {
+          "id": "shot-shot-02-37693150-f2d6-4b2a-b3f7-ae0813c6b8cf",
+          "track": "V1",
+          "kind": "text",
+          "name": "shot-02 · 待匹配画面",
+          "startFrame": 240,
+          "durationInFrames": 150,
+          "width": 1080,
+          "height": 1920,
+          "props": {
+            "text": "待匹配画面\nshot-02",
+            "fontSize": 64,
+            "color": "#a3acc2",
+            "align": "center"
+          },
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "42e701fb-0d5c-4f97-8c6d-db3d5ee290c7",
+            "shotId": "shot-02",
+            "clipId": "37693150-f2d6-4b2a-b3f7-ae0813c6b8cf",
+            "text": "后镜内容和布局由Owner核对。"
+          }
+        },
+        {
+          "id": "workspace-sfx-fceb142b-0966-4952-9123-d61840bd2943",
+          "kind": "audio",
+          "name": "保留绝对音效位置",
+          "track": "workspace-sfx-fceb142b-0966-4952-9123-d61840bd2943",
+          "src": "episodes/fff77d31-a58c-4510-8302-52e1ec4fa077/materials/9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100-owner-sfx.mp3",
+          "sourceAssetId": "material-2315080e-a599-4b6c-8b00-946adf6ef4a6",
+          "sourceContentHash": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "startFrame": 300,
+          "durationInFrames": 9,
+          "srcInFrame": 0,
+          "volume": 0.5011872336272722,
+          "loopControlAudio": {
+            "workspaceId": "42e701fb-0d5c-4f97-8c6d-db3d5ee290c7",
+            "kind": "sfx",
+            "preparationId": "fceb142b-0966-4952-9123-d61840bd2943",
+            "anchor": "absolute"
+          }
+        }
+      ],
+      "trackOrder": [
+        "V1",
+        "workspace-sfx-fceb142b-0966-4952-9123-d61840bd2943",
+        "workspace-captions"
+      ],
+      "tracks": {
+        "V1": {
+          "kind": "video",
+          "name": "画面"
+        },
+        "workspace-sfx-fceb142b-0966-4952-9123-d61840bd2943": {
+          "kind": "audio",
+          "name": "音效"
+        },
+        "workspace-captions": {
+          "kind": "caption",
+          "name": "字幕",
+          "captions": {
+            "enabled": true,
+            "template": "plain",
+            "pacing": "phrase",
+            "sourceMode": "item",
+            "sourceEntries": [
+              {
+                "id": "workspace-caption-shot-shot-02",
+                "itemId": "manual:workspace-caption-shot-shot-02",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-02-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "owner~0",
+                    "text": "后镜字幕的绝对时间必须保留。",
+                    "start": 8000,
+                    "end": 8900
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "后镜字幕的绝对时间必须保留。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                }
+              }
+            ],
+            "layoutPolicy": {
+              "mode": "manual-slots",
+              "slots": [
+                {
+                  "id": "workspace-caption-shot-shot-02-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                }
+              ]
+            },
+            "perSource": {
+              "workspace-caption-shot-shot-02": {
+                "maxLines": 2
+              }
+            }
+          }
+        }
+      },
+      "transitions": [],
+      "selectedId": null,
+      "captionsHidden": false
+    }
+  ]
+}

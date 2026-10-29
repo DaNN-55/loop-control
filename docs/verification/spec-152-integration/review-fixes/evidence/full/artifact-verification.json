@@ -1,0 +1,35 @@
+{
+  "artifacts": [
+    {
+      "type": "final_render",
+      "sha256": "6a0228c68e32ec657b1fc10457c387e542f923b884b69e5515a3e57c06983536",
+      "size": 470414,
+      "checked": true
+    },
+    {
+      "type": "editable_project",
+      "sha256": "7f32fc902495e12bb78858088e6ef2ce75599118ffd7742ac101655fae09b3d8",
+      "size": 23184,
+      "checked": true
+    },
+    {
+      "type": "cover",
+      "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "size": 1515,
+      "checked": true
+    },
+    {
+      "type": "metadata",
+      "sha256": "bc9bdf3519f84b478d992f37c58f58cbb0c3c6ca622ef7d226527c6b3738cbe7",
+      "size": 2171,
+      "checked": true
+    },
+    {
+      "type": "final_qc_report",
+      "sha256": "7694e09fe9fc07cfa2acd5f2ec61698e9b1655662cb9798f8e9845955009e155",
+      "size": 6465,
+      "checked": true
+    }
+  ],
+  "videoSameAsExport": true
+}

@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t13-formal-workflow/loop-control
+
+(node:10636) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/formalWorkflow.delivery.integration.test.ts (1 test) 19947ms
+   ✓ formal Owner workflow delivers exact native export with adopted text, mixed audio and traceable late unused results  19946ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  03:02:02
+   Duration  20.45s (transform 274ms, setup 7ms, collect 372ms, tests 19.95s, environment 0ms, prepare 33ms)

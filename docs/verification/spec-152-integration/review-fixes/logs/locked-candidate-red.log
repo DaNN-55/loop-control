@@ -1,0 +1,34 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t13-formal-workflow/loop-control
+
+ ❯ src/local-app/workspaceReviewFixes.integration.test.ts (6 tests | 1 failed | 5 skipped) 3219ms
+   ↓ actual delivery does not claim narration muted by the leaf native track was spoken
+   ↓ actual delivery does not claim narration muted by the parent native track was spoken
+   ↓ first speech preserves Owner edits made before submission and requires the existing candidate decision
+   ↓ first speech preserves Owner edits made during submission and requires the existing candidate decision
+   ↓ first speech preserves Owner edits made captions submission and requires the existing candidate decision
+   × first speech preserves Owner edits made locked submission and requires the existing candidate decision 3219ms
+     → refreshWorkspaceNarration: {"error":"画面时长已锁定，请在口播版本中明确时长并采用候选。"}: expected 409 to be 200 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceReviewFixes.integration.test.ts > first speech preserves Owner edits made locked submission and requires the existing candidate decision
+AssertionError: refreshWorkspaceNarration: {"error":"画面时长已锁定，请在口播版本中明确时长并采用候选。"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ send src/local-app/workspaceReviewFixes.integration.test.ts:40:210
+
+ ❯ src/local-app/workspaceReviewFixes.integration.test.ts:50:124
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 skipped (6)
+   Start at  03:14:54
+   Duration  3.70s (transform 262ms, setup 7ms, collect 358ms, tests 3.22s, environment 0ms, prepare 27ms)
