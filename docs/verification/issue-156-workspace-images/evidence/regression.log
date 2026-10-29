@@ -1,0 +1,14 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t04-workspace-images/loop-control
+
+ ✓ src/worker/openchatcutProject.test.ts (26 tests) 15ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx (4 tests) 105ms
+ ✓ src/worker/controlledMediaExecutor.test.ts (12 tests) 330ms
+ ✓ src/local-app/WorkspaceImageMatch.test.tsx (1 test) 68ms
+ ✓ src/local-app/ProductionWorkspacePanel.test.tsx (2 tests) 75ms
+
+ Test Files  5 passed (5)
+      Tests  45 passed (45)
+   Start at  18:13:25
+   Duration  1.30s (transform 255ms, setup 31ms, collect 2.15s, tests 593ms, environment 1.31s, prepare 180ms)
+
