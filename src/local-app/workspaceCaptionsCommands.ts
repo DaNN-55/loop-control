@@ -60,7 +60,7 @@ export async function executeWorkspaceCaptionCommand(c:PoolClient,root:string,ro
   const finalProject=isOpenChatCutStudio(row.episode_id)?project:next;
   x=await captionContext(c,root,row,finalProject,x.clip.id);
   await recordEvidence(c,row,x.clip.id,x.inputFingerprint,x.laneFingerprint,'manual',null,x.draft?.acoustic_alignment?.inputVersion??null);
-  await updateWorkspaceProject(c,root,row,finalProject,row.bindings,'编辑字幕');return readProductionWorkspace(c,row.episode_id,root);
+  await updateWorkspaceProject(c,root,row,finalProject,row.bindings,'编辑字幕',{nativeEdit:true});return readProductionWorkspace(c,row.episode_id,root);
  }
  if(command==='requestWorkspaceCaptionAlignment'){
   if(x.route.explicitRoute&&!x.route.alignmentReady){const label=x.route.item?.id===`workspace-source-shot-${x.clip.shotId}`?'原声':'主声';throw new ConfigurationError(409,x.route.coverage==='partial'?`${label}仅覆盖部分镜头，不能执行整段声学对齐；请按当前镜头明确调整音轨或手工校时。`:`${label}音轨已裁切或变速，请重新提取所选区间或手工校时。`);}
@@ -79,7 +79,7 @@ export async function executeWorkspaceCaptionCommand(c:PoolClient,root:string,ro
   if(!e||e.task_id!==data.taskId||e.input_fingerprint!==x.inputFingerprint||data.expectedInputFingerprint!==x.inputFingerprint||!task||task.status!=='completed'||task.task_type!=='align_shot_captions'||alignment?.status!=='completed'||alignment.inputVersion!==task.input_snapshot.acoustic_alignment.input_version||alignment.textFingerprint!==createHash('sha256').update(x.contract.text).digest('hex')||alignment.audioSha256!==x.audio?.sha256)throw new ConfigurationError(409,'对齐结果已过期或尚未完成，请按当前正文和音轨重新对齐。');
   const artifact=(await c.query("SELECT * FROM public.artifacts WHERE producer_task_id=$1 AND episode_id=$2 AND artifact_type='acoustic_alignment_evidence'",[task.id,row.episode_id])).rows[0];if(!artifact)throw new ConfigurationError(409,'对齐证据文件不存在。');await verifyNativeFile(root,artifact.relative_path,artifact.sha256,Number(artifact.file_size));
   const contract={...x.contract,cues:alignment.cues};validateCues(contract,Number(x.item.durationInFrames)*1000/x.timeline.fps);const next=applyWorkspaceCaptionEdit(project,x.clip.itemId,contract);
-  x=await captionContext(c,root,row,next,x.clip.id);await recordEvidence(c,row,x.clip.id,x.inputFingerprint,x.laneFingerprint,'alignment',task.id,alignment.inputVersion);await updateWorkspaceProject(c,root,row,next,row.bindings,'采用当前字幕对齐');return readProductionWorkspace(c,row.episode_id,root);
+  x=await captionContext(c,root,row,next,x.clip.id);await recordEvidence(c,row,x.clip.id,x.inputFingerprint,x.laneFingerprint,'alignment',task.id,alignment.inputVersion);await updateWorkspaceProject(c,root,row,next,row.bindings,'采用当前字幕对齐',{nativeEdit:true});return readProductionWorkspace(c,row.episode_id,root);
  }
  if(command==='confirmWorkspaceCaptionText'){
   const e=(await c.query('SELECT * FROM local_identity.workspace_caption_evidence WHERE workspace_id=$1 AND shot_id=$2',[row.id,x.clip.shotId])).rows[0];

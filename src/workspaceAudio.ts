@@ -63,11 +63,14 @@ export function readWorkspaceAudioMix(project:OpenChatCutProject,shots:Record<st
  return{voices,sounds};
 }
 
+/** Track and item mute both determine whether this native node contributes sound. */
+export function isWorkspaceItemAudible(item:Record<string,unknown>,timeline:OpenChatCutProject['timelines'][number]){return Number(item.volume??1)>0&&(timeline.tracks[String(item.track)] as {muted?:boolean}|undefined)?.muted!==true;}
+
 /** A stable explicit none marker prevents legacy draft fallback from reviving muted speech. */
 export function resolveWorkspaceMainVoice(project:OpenChatCutProject,shotId:string){
  const timeline=project.timelines.find(t=>t.items.some(i=>metadata(i)?.shotId===shotId||String(i.id).startsWith(`shot-${shotId}-`)));
  if(!timeline)return{item:undefined,explicitRoute:false,coverage:'none' as const,alignmentReady:false,window:{coverage:'none' as const}};
- const audible=(i:Record<string,unknown>)=>Number(i.volume??1)>0&&(timeline.tracks[String(i.track)] as {muted?:boolean}|undefined)?.muted!==true;
+ const audible=(i:Record<string,unknown>)=>isWorkspaceItemAudible(i,timeline);
  const item=timeline.items.find(i=>i.id===`workspace-source-shot-${shotId}`&&audible(i))??timeline.items.find(i=>i.id===`workspace-narration-shot-${shotId}`&&audible(i));
  const visuals=timeline.items.filter(i=>['video','image','text'].includes(String(i.kind))&&((i.loopControlShot as {shotId?:string}|undefined)?.shotId===shotId||String(i.id).startsWith(`shot-${shotId}-`)||metadata(i)?.shotId===shotId));
  const shotStart=Math.min(...visuals.map(i=>Number(i.startFrame))),shotEnd=Math.max(...visuals.map(i=>Number(i.startFrame)+Number(i.durationInFrames))),coverage=!item?'none':Number(item.startFrame)<=shotStart&&Number(item.startFrame)+Number(item.durationInFrames)>=shotEnd?'full':'partial';

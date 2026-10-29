@@ -94,7 +94,7 @@ export class ProductionWorkspaceCommands{
     await c.query('UPDATE local_identity.production_workspaces SET script_revision_id=$2,storyboard_package_id=$3 WHERE id=$1',[row.id,e.main_script_revision_id,p.id]);
     await updateWorkspaceProject(c,root,row,project,clips,String(data.reason));
    }else{
-   row=(await c.query('INSERT INTO local_identity.production_workspaces(id,episode_id,script_revision_id,storyboard_package_id,bindings,project_path,project_sha256,project_size,content_sha256) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *',[id,e.id,e.main_script_revision_id,p.id,JSON.stringify(clips),file.relativePath,file.sha256,file.fileSize,workspaceContentSha256(project)])).rows[0];
+   row=(await c.query('INSERT INTO local_identity.production_workspaces(id,episode_id,script_revision_id,storyboard_package_id,bindings,project_path,project_sha256,project_size,content_sha256,native_edit_revision) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *',[id,e.id,e.main_script_revision_id,p.id,JSON.stringify(clips),file.relativePath,file.sha256,file.fileSize,workspaceContentSha256(project),recovery?.decision==='preserve'?1:0])).rows[0];
     await recordWorkspaceVersion(c,row!,'首次组装');
     await syncWorkspaceShotInputs(c,row!,clips);
     if(recovery)await c.query('INSERT INTO local_identity.workspace_legacy_recoveries(workspace_id,decision,relative_path,sha256,file_size) VALUES($1,$2,$3,$4,$5)',[id,recovery.decision,recovery.relativePath,recovery.sha256,recovery.fileSize]);

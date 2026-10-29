@@ -1,3 +1,4 @@
+import {isWorkspaceItemAudible} from '../workspaceAudio.js';
 import {resolveWorkspaceShotLineage} from './workspacePreparation.js';
 import {randomUUID,createHash} from 'node:crypto';
 import {writeFile} from 'node:fs/promises';
@@ -59,7 +60,7 @@ export async function executeWorkspaceDelivery(c:PoolClient,root:string,row:Prod
 function usedNarrationWindows(project:OpenChatCutProject,itemId:string){
  const windows:Array<{srcInFrame:number;usedDurationSeconds:number;sourceDurationSeconds:number;playbackRate:number;fps:number;audible:boolean}>=[];
  const visit=(id:string,from=0,to=Infinity,parentRate=1,audible=true,depth=0)=>{if(depth>32)throw Error('嵌套口播窗口超出检查范围。');const timeline=project.timelines.find(t=>t.id===id);if(!timeline)throw Error('口播所属时间线缺失。');
- for(const item of timeline.items){const start=Number(item.startFrame),end=start+Number(item.durationInFrames),left=Math.max(from,start),right=Math.min(to,end);if(right<=left)continue;const rate=Number(item.playbackRate??1),src=Number(item.srcInFrame??0)+(left-start)*rate,voice=audible&&Number(item.volume??1)>0;
+ for(const item of timeline.items){const start=Number(item.startFrame),end=start+Number(item.durationInFrames),left=Math.max(from,start),right=Math.min(to,end);if(right<=left)continue;const rate=Number(item.playbackRate??1),src=Number(item.srcInFrame??0)+(left-start)*rate,voice=audible&&isWorkspaceItemAudible(item,timeline);
  if(item.kind==='sequence'){visit(String(item.timelineId),src,src+(right-left)*rate,parentRate*rate,voice,depth+1);continue;}
  if(item.id===itemId)windows.push({srcInFrame:src,usedDurationSeconds:(right-left)/timeline.fps/parentRate,sourceDurationSeconds:(right-left)*rate/timeline.fps,playbackRate:rate*parentRate,fps:timeline.fps,audible:voice});
  }};visit(project.activeTimelineId);return windows;
