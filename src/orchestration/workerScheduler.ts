@@ -1,16 +1,15 @@
 import { join } from "node:path";
 import { recordOperation } from "./operationsEvidence.js";
 import { createWorkerTaskConsumer, type DispatchScope, type WorkerDispatchExecutor, type WorkerDispatchOptions } from "./workerDispatch.js";
-import { assertPreparedRuntime } from "./runtimeBuild.js";
 
-export async function startWorkerScheduler(options: WorkerDispatchOptions, executor?: WorkerDispatchExecutor) {
-  if (!executor) await assertPreparedRuntime(options.projectRoot);
-  const evidenceDirectory = options.environment?.LOOP_N8N_STATE_DIR ?? process.env.LOOP_N8N_STATE_DIR ?? join(options.projectRoot, "n8n", "runtime", "orchestration");
+export async function startWorkerScheduler(options: WorkerDispatchOptions, executor: WorkerDispatchExecutor) {
+  const evidenceDirectory = options.environment?.LOOP_STATE_DIR ?? process.env.LOOP_STATE_DIR ?? join(options.projectRoot, ".loop-control", "local", "state");
   const recordScan = (passed: boolean) => recordOperation(evidenceDirectory, "schedule", {passed, idle: passed && consumer.activeCount() === 0, detail: passed ? "常驻调度检查完成；空闲结果仅在变化时保存。" : "常驻调度或规划失败，请检查本机日志。"}).catch(() => undefined);
   const controller = new AbortController();
   const signal = options.signal ? AbortSignal.any([options.signal, controller.signal]) : controller.signal;
   let stopped = false, fast = false, global = false, scans = 0;
   let lastScanAt: string | null = null, lastError: string | null = null, planningError: string | null = null;
+  let lastHeartbeatAt = new Date().toISOString();
   let pump: Promise<void> | undefined, planning: Promise<void> | undefined;
   let planAgain = false;
   const episodes = new Set<string>();
@@ -54,12 +53,12 @@ export async function startWorkerScheduler(options: WorkerDispatchOptions, execu
     });
   }
   // Leave one second of the five-second ready-to-claim budget for RPC and scheduling.
-  const timer = setInterval(() => wake(), 4000);
+  const timer = setInterval(() => { lastHeartbeatAt = new Date().toISOString(); wake(); }, 4000);
   timer.unref?.();
   wake();
   return {
     wake,
-    status: () => ({ stopped, scans, lastScanAt, lastError: lastError ?? planningError, scanning: Boolean(pump), planning: Boolean(planning), activeWorkers: consumer.activeCount() }),
+    status: () => ({ stopped, scans, lastHeartbeatAt, lastScanAt, lastError: lastError ?? planningError, scanning: Boolean(pump), planning: Boolean(planning), activeWorkers: consumer.activeCount(), capacity: options.concurrency }),
     async stop() {
       stopped = true; clearInterval(timer); controller.abort();
       await pump; await planning; await consumer.settled();

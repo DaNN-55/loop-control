@@ -1,0 +1,43 @@
+{
+  "historicalUnresolved": [
+    {
+      "eventId": "2bbb9716-a61d-4419-bfb5-01b484db7595",
+      "outcome": "reserved",
+      "reservedAt": "2026-10-23T15:32:39.075453+00:00",
+      "completedAt": null
+    },
+    {
+      "eventId": "2e245521-39db-4914-9937-6457b8beb4c1",
+      "outcome": "reserved",
+      "reservedAt": "2026-10-24T14:29:58.52965+00:00",
+      "completedAt": null
+    },
+    {
+      "eventId": "424f4a5a-e0e0-448c-b589-5af170c9a11e",
+      "outcome": "uncertain",
+      "reservedAt": "2026-10-23T15:35:09.321945+00:00",
+      "completedAt": "2026-10-23T15:35:09.437557+00:00"
+    },
+    {
+      "eventId": "b327db4a-413e-4945-b019-52ec8e7422a0",
+      "outcome": "uncertain",
+      "reservedAt": "2026-10-24T14:29:11.274327+00:00",
+      "completedAt": "2026-10-24T14:29:11.275449+00:00"
+    },
+    {
+      "eventId": "bc7bd2f6-7f80-4e4c-979c-fb9f92602c97",
+      "outcome": "reserved",
+      "reservedAt": "2026-10-23T15:35:02.829829+00:00",
+      "completedAt": null
+    },
+    {
+      "eventId": "d4ba7121-a608-43f4-9e32-ef3bfe8ce2a2",
+      "outcome": "uncertain",
+      "reservedAt": "2026-10-23T15:32:39.752886+00:00",
+      "completedAt": "2026-10-23T15:32:39.862862+00:00"
+    }
+  ],
+  "historicalLedgerSha256": "3f5a5add93bede667237425789cc75665a7583b117419469f16b6ad13564a5c6",
+  "allDeliveryLedgerSha256": "4e63fac6764a0031784e97342626f7f3185d06da73231e52053a81b52bdea9f2",
+  "pendingNonhistorical": 0
+}

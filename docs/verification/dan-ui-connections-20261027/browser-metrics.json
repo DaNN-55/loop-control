@@ -1,0 +1,52 @@
+{
+  "dialogWidth": 900,
+  "fields": [
+    {
+      "height": 36,
+      "width": 480
+    },
+    {
+      "height": 36,
+      "width": 480
+    },
+    {
+      "height": 36,
+      "width": 480
+    },
+    {
+      "height": 36,
+      "width": 480
+    }
+  ],
+  "horizontalOverflow": false,
+  "outside": [
+    {
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "",
+      "color": "rgb(65, 71, 83)",
+      "font": "600 14px \"Avenir Next\", \"PingFang SC\", \"Noto Sans CJK SC\", system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "padding": "0px 24px 0px 23px",
+      "selector": ".navigation-item"
+    },
+    {
+      "background": "rgba(0, 0, 0, 0)",
+      "border": "1px solid rgb(217, 221, 229)",
+      "color": "rgb(74, 83, 98)",
+      "font": "16px \"Avenir Next\", \"PingFang SC\", \"Noto Sans CJK SC\", system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "padding": "0px",
+      "selector": ".owner-menu-trigger"
+    },
+    {
+      "background": "rgb(255, 255, 255)",
+      "border": "0px none rgb(23, 26, 32)",
+      "color": "rgb(23, 26, 32)",
+      "font": "16px \"Avenir Next\", \"PingFang SC\", \"Noto Sans CJK SC\", system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "padding": "0px",
+      "selector": ".app-shell"
+    }
+  ],
+  "viewport": [
+    1280,
+    720
+  ]
+}

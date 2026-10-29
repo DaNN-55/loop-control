@@ -40,7 +40,7 @@
 
 初版 observer 若在合法 ready/退避时报错，属于已识别的观察器状态假设错误，不是任务提前失败；最终使用到期前启动的 followthrough 观察器和被动数据库转换记录。中间 `competition-continue` 摘要将连接顺序写死，不能作为竞争验收；该原始摘要仅私有保留。最终使用 `competition-finish` 实际采集的阻塞连接与返回数组。独立只读代码审查 0 项发现；证据审查提出上述竞争计数及宽泛 HTTP 唤醒两处口径问题，均明确限定，原记录不覆盖。
 
-原 690 项公开和 862 项私有证据保留；仅更新活动 README/review，其旧版分别归档为 [README](README-before-natural-lease.md) 和 [review](review-before-natural-lease.md)，旧索引私有快照保留。B/T05 的模拟过期、T23 的重启超时及修改 claimed_at 的历史演练仍按原时间解释；本轮新证据不追认它们为自然等待成功。上轮默认 5 秒修复及全部历史红/绿记录不改。
+原 690 项公开和 862 项私有证据保留；仅更新活动 README/review，其旧版分别归档为 [README](../README.md) 和 [review](review-before-natural-lease.md)，旧索引私有快照保留。B/T05 的模拟过期、T23 的重启超时及修改 claimed_at 的历史演练仍按原时间解释；本轮新证据不追认它们为自然等待成功。上轮默认 5 秒修复及全部历史红/绿记录不改。
 
 ## 继续保留的门禁
 

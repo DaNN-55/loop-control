@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/episodeDeletion.integration.test.ts (2 tests) 2814ms
+   ✓ managed=true: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences  1433ms
+   ✓ managed=false: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences  1381ms
+ ✓ src/local-app/accountDeletion.integration.test.ts (3 tests) 3205ms
+   ✓ empty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards  1179ms
+   ✓ nonempty: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards  1335ms
+   ✓ shared: deletes an account through Owner HTTP, cleaning only empty exclusive roots and preserving history and deletion guards  690ms
+
+ Test Files  2 passed (2)
+      Tests  5 passed (5)
+   Start at  21:11:53
+   Duration  3.52s (transform 144ms, setup 0ms, collect 349ms, tests 6.02s, environment 0ms, prepare 81ms)
+

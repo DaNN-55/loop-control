@@ -1,0 +1,37 @@
+{
+  "accountSelect": {
+    "bottom": 114,
+    "height": 38,
+    "left": 160,
+    "right": 640,
+    "top": 76,
+    "width": 480,
+    "x": 160,
+    "y": 76
+  },
+  "brandBackground": "rgb(249 245 255)",
+  "overflow": false,
+  "studioButton": {
+    "bottom": 741,
+    "height": 36,
+    "left": 30,
+    "right": 66,
+    "top": 705,
+    "width": 36,
+    "x": 30,
+    "y": 705
+  },
+  "studioIcon": {
+    "bottom": 733,
+    "height": 20,
+    "left": 38,
+    "right": 58,
+    "top": 713,
+    "width": 20,
+    "x": 38,
+    "y": 713
+  },
+  "theme": "light",
+  "url": "http://127.0.0.1:5174/#account-budget",
+  "width": 1543
+}

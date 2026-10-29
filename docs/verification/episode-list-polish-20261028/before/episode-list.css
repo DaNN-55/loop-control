@@ -1,0 +1,44 @@
+/* Compact episode lists and action states, shared with the native workbench. */
+html[data-interface="impeccable"] .product-ui .episode-list-workspace {min-width:0}
+html[data-interface="impeccable"] .product-ui .episode-status-tabs {display:flex;gap:24px;border-bottom:1px solid var(--lc-line);margin-bottom:18px;overflow:auto}
+html[data-interface="impeccable"] .product-ui .episode-status-tabs button {display:inline-flex;align-items:center;gap:7px;white-space:nowrap;min-height:40px;padding:0 0 12px;border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;color:var(--lc-muted);font-size:13px}
+html[data-interface="impeccable"] .product-ui .episode-status-tabs button.is-active {color:var(--lc-accent);border-bottom-color:var(--lc-accent);font-weight:600}
+html[data-interface="impeccable"] .product-ui .episode-status-tabs button > span {font-size:11px;font-variant-numeric:tabular-nums;background:var(--lc-surface-2);padding:0 5px;border-radius:4px}
+html[data-interface="impeccable"] .product-ui .episode-list-toolbar {gap:10px!important;align-items:center!important}
+html[data-interface="impeccable"] .product-ui .episode-list-toolbar label > div {min-width:0!important}
+html[data-interface="impeccable"] .product-ui .episode-list-toolbar > label {flex:0 1 150px}
+html[data-interface="impeccable"] .product-ui .episode-list-toolbar > .dan-select-field {width:144px;flex:0 0 144px}
+html[data-interface="impeccable"] .product-ui .episode-list-toolbar .summary-count {padding:0;margin-left:auto;white-space:nowrap;font-size:11px}
+html[data-interface="impeccable"] .product-ui .episode-search {display:flex;align-items:center;gap:8px;position:relative;flex:1 1 260px;min-width:220px;height:36px;border:1px solid var(--lc-line-strong);border-radius:7px;background:var(--lc-surface);padding:0 8px 0 11px;color:var(--lc-muted)}
+html[data-interface="impeccable"] .product-ui .episode-search:focus-within {outline:2px solid var(--lc-accent);outline-offset:1px}
+html[data-interface="impeccable"] .product-ui .episode-search input {flex:1;min-width:0;width:100%;border:0!important;box-shadow:none!important;background:transparent!important;padding:0!important;outline:0!important;height:32px;min-height:0;font-weight:400}
+html[data-interface="impeccable"] .product-ui .episode-search button {display:inline-flex;align-items:center;justify-content:center;background:transparent;border:0;padding:3px;min-height:24px;border-radius:4px;color:var(--lc-muted);font-size:12px;white-space:nowrap}
+html[data-interface="impeccable"] .product-ui .episode-search button:hover {background:var(--lc-surface-2);color:var(--lc-accent)}
+html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-row {grid-template-columns:minmax(230px,1.35fr) minmax(150px,1fr) 112px 126px 36px;gap:20px;min-width:790px;padding:16px 18px;min-height:76px;align-items:center}
+html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-row.table-header {min-height:40px;padding-block:10px}
+html[data-interface="impeccable"] .product-ui .episode-name {min-width:0}
+html[data-interface="impeccable"] .product-ui .episode-name small {font-size:11px;line-height:1.5;color:var(--lc-muted);white-space:nowrap;text-overflow:ellipsis;overflow:hidden;margin-top:5px}
+html[data-interface="impeccable"] .product-ui .episode-stage-name {font-size:12px;color:var(--lc-ink)}
+html[data-interface="impeccable"] .product-ui .episode-action-cell {justify-self:end}
+html[data-interface="impeccable"] .product-ui .episode-state {display:inline-flex;align-items:center;gap:6px;width:max-content;max-width:100%;font-size:12px;font-weight:500;line-height:1.4;white-space:nowrap;color:var(--lc-muted)}
+html[data-interface="impeccable"] .product-ui .episode-state svg {flex:0 0 14px;width:14px;height:14px}
+html[data-interface="impeccable"] .product-ui .episode-state-review {color:var(--lc-warning)}
+html[data-interface="impeccable"] .product-ui .episode-state-blocked {color:var(--lc-danger)}
+html[data-interface="impeccable"] .product-ui .episode-state-running {color:var(--lc-accent)}
+html[data-interface="impeccable"] .product-ui .episode-state-done {color:var(--lc-success)}
+html[data-interface="impeccable"] .product-ui .episode-list-workspace time {white-space:nowrap;font-size:12px;color:var(--lc-muted)}
+html[data-interface="impeccable"] .episode-menu-metadata {display:grid;gap:6px;margin:4px 6px 8px;font-size:11px;color:var(--lc-muted);font-weight:400}
+html[data-interface="impeccable"] .episode-menu-metadata > div {display:flex;justify-content:space-between;gap:16px;align-items:start}
+html[data-interface="impeccable"] .episode-menu-metadata dd {margin:0;text-align:right;overflow-wrap:anywhere;max-width:220px}
+@media(max-width:1100px){html[data-interface="impeccable"] .product-ui .episode-search {flex-basis:100%}html[data-interface="impeccable"] .product-ui .episode-list-toolbar > label {flex:1 1 130px}}
+@media(max-width:640px){html[data-interface="impeccable"] .product-ui .episode-status-tabs {gap:18px}html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-row {display:grid}html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-header {display:grid}html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-row > * {display:block!important;grid-column:auto;grid-row:auto}}
+
+html[data-interface="impeccable"] .product-ui .episode-list-header {display:flex;gap:20px;align-items:start;justify-content:space-between}
+html[data-interface="impeccable"] .product-ui .episode-list-header .episode-status-tabs {flex:1;min-width:0}
+html[data-interface="impeccable"] .product-ui .episode-list-header .workspace-actions {flex:0 0 auto;margin-left:auto}
+html[data-interface="impeccable"] .product-ui .episode-list-toolbar > label {flex:0 1 130px}
+html[data-interface="impeccable"] .product-ui .episode-list-toolbar > .dan-select-field {flex:0 0 140px;width:140px}
+html[data-interface="impeccable"] .product-ui .episode-list-toolbar .summary-count {align-self:center}
+@media(max-width:700px){html[data-interface="impeccable"] .product-ui .episode-list-header {flex-wrap:wrap;gap:8px}html[data-interface="impeccable"] .product-ui .episode-list-header .episode-status-tabs {flex-basis:100%;order:2}html[data-interface="impeccable"] .product-ui .episode-list-toolbar > label {flex:1 1 120px}}
+html[data-interface="impeccable"] .product-ui .episode-list-toolbar .dan-select-trigger {min-width:0!important;box-sizing:border-box;height:36px;min-height:36px;padding-block:7px}
+html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-row {grid-template-columns:minmax(230px,320px) minmax(150px,1fr) 112px 126px 36px}

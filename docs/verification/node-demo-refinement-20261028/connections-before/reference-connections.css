@@ -1,0 +1,82 @@
+/* Connections follow the approved reference. All selectors are confined to this workspace. */
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections {
+  display:grid; gap:20px; min-width:0; color:var(--lc-ink); padding:0;
+}
+html[data-interface="impeccable"] .product-ui .maintenance-embedded:has(.reference-connections) {border:0;background:transparent;overflow:visible}
+html[data-interface="impeccable"] .product-ui .maintenance-panel-content:has(.reference-connections) {padding:0}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-heading {display:flex;align-items:center;justify-content:space-between;gap:20px;margin:0}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-heading h2 {margin:0 0 6px;font-size:22px;font-weight:650}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-heading p {margin:0;color:var(--lc-muted);font-size:13px}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-actions {display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-shrink:0}
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections .reference-connections-toolbar {display:grid;grid-template-columns:minmax(240px,1fr) 180px 180px;gap:16px;align-items:end}
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections .reference-connections-toolbar > div {min-width:0;width:100%;margin:0}
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections .reference-connections-toolbar label {display:block;margin:0 0 6px;padding:0;font-size:12px;font-weight:500;color:var(--lc-muted)}
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections .reference-connections-toolbar :is(input,select) {width:100%;font-size:13px}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-table-wrap {border:1px solid var(--lc-line);border-radius:12px;background:var(--lc-surface);overflow:auto}
+html[data-interface="impeccable"] .product-ui .reference-connections table {width:100%;min-width:760px;border-collapse:collapse;table-layout:fixed;font-size:13px}
+html[data-interface="impeccable"] .product-ui .reference-connections :is(th,td) {padding:15px 18px;text-align:left;border:0;border-bottom:1px solid var(--lc-line);vertical-align:middle;overflow-wrap:anywhere}
+html[data-interface="impeccable"] .product-ui .reference-connections th {background:var(--lc-surface-2);color:var(--lc-muted);font-size:11px;font-weight:500;padding-block:12px}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(1) {width:29%}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(2) {width:24%}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(3) {width:8%}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(4) {width:12%}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(5) {width:10%;white-space:nowrap}
+html[data-interface="impeccable"] .product-ui .reference-connections th:nth-child(6) {width:150px}
+html[data-interface="impeccable"] .product-ui .reference-connections tbody tr:last-child td {border-bottom:0}
+html[data-interface="impeccable"] .product-ui .reference-connections tbody tr:hover {background:var(--lc-surface-2)}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-name {display:inline;padding:0;min-height:0;border:0;border-radius:0;background:none;color:var(--lc-ink);text-align:left;font-weight:600;font-size:13px;line-height:1.6;box-shadow:none}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-name:hover {color:var(--lc-accent);text-decoration:underline;text-underline-offset:3px}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-secondary {margin-top:3px;color:var(--lc-muted);font-size:12px;line-height:1.5;overflow-wrap:anywhere}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-model {color:var(--lc-muted)}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-status {display:inline-flex;align-items:center;gap:6px;white-space:nowrap;font-size:11px;color:var(--lc-muted)}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-status i {height:5px;width:5px;border-radius:50%;background:currentColor;flex:none}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-status[data-status="verified"] {color:var(--lc-success)}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-status[data-status="invalid"] {color:var(--lc-danger)}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connection-status[data-status="retryable"] {color:var(--lc-warning)}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-note {margin:0;color:var(--lc-muted);font-size:12px;line-height:1.6}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-empty {display:grid;justify-items:center;gap:10px;padding:44px 20px;text-align:center;color:var(--lc-muted);font-size:13px}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-empty p {margin:0;font-size:12px}
+.reference-connections-sr-only {position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+html .reference-connections-overlay {position:fixed;inset:0;z-index:150;display:flex;align-items:center;justify-content:center;padding:28px;background:#0b193b66;overflow:auto}
+html .reference-connections-modal {width:min(100%,720px);max-height:calc(100dvh - 56px);overflow:auto;border-radius:14px;background:var(--lc-surface,#fff);color:var(--lc-ink,#17263e);box-shadow:0 18px 50px #0002;outline:none}
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections-dialog {display:block;outline:none;overflow:visible}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-dialog-header {display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 24px;border-bottom:1px solid var(--lc-line)}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-dialog-header h2 {margin:0;font-size:18px;font-weight:650}
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections-dialog .connection-editor {margin:0;padding:24px;max-width:none}
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections-dialog .connection-fields {display:grid;grid-template-columns:minmax(0,1fr);gap:18px;max-width:none;margin:0;padding:0;border:0}
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections-dialog .connection-field {display:grid!important;grid-template-columns:minmax(0,1fr);gap:6px!important;max-width:none;width:100%;padding:0;margin:0}
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections-dialog .connection-field > :is(label,div,textarea,[slot="description"]) {grid-column:1;grid-row:auto}
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections-dialog .connection-field > label {display:block;padding:0;font-size:12px;font-weight:500;margin:0}
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections-dialog .connection-field :is(input,select,textarea) {font-size:13px}
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections-dialog :is(.connection-usage,.connection-availability) {margin:0;max-width:none;font-size:12px;line-height:1.6}
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections-dialog .connection-submit-row {grid-column:1;display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:10px;margin:6px -24px -24px;padding:16px 24px;border-top:1px solid var(--lc-line);max-width:none}
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections-dialog .connection-submit-row .connection-operation-result {flex:1 0 100%;margin:0 0 6px}
+html[data-interface="impeccable"] .product-ui .reference-connections .connection-operation-result {padding:12px 14px;border:1px solid var(--lc-line);border-radius:7px;background:var(--lc-surface-2);font-size:12px;line-height:1.6;max-width:none}
+html[data-interface="impeccable"] .product-ui .reference-connections .connection-operation-result[data-status="failed"] {color:var(--lc-danger);border-color:var(--lc-line);background:var(--lc-surface-2)}
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections-dialog .connection-versions {margin:0;padding:18px 24px;border-top:1px solid var(--lc-line);border-radius:0;background:transparent}
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections-dialog .connection-versions :is(ul,li) {list-style:none;margin:0;padding:0;border:0;display:block}
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections-dialog .connection-versions li {padding:16px 0;border-bottom:1px solid var(--lc-line)}
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections-dialog .connection-versions li:last-child {border-bottom:0}
+html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections-dialog .connection-versions li > button {margin:10px 8px 0 0}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-detail-body {padding:24px}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-detail-list {display:grid;grid-template-columns:140px minmax(0,1fr);gap:14px 24px;margin:24px 0;font-size:13px}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-detail-list dt {color:var(--lc-muted);font-weight:400}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-detail-list dd {margin:0;overflow-wrap:anywhere}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-detail-body .connection-versions {margin:20px -24px -24px}
+html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-dialog-footer {display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:16px 24px;border-top:1px solid var(--lc-line)}
+html .reference-connections-menu {min-width:160px;padding:5px;background:var(--lc-surface,#fff);color:var(--lc-ink,#17263e);border:1px solid var(--lc-line,#d8e1ee);border-radius:12px;box-shadow:0 8px 24px #0002;z-index:160;outline:none}
+html .reference-connections-menu [role="menu"] {outline:none}
+html .reference-connections-menu [role="menuitem"] {display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:8px;font-size:13px;outline:none;cursor:pointer}
+html .reference-connections-menu [role="menuitem"][data-focused] {background:var(--lc-accent-soft,#eaf0ff);color:var(--lc-accent,#365fe0)}
+html .reference-connections-menu [role="menuitem"] svg {height:15px;width:15px;stroke-width:1.6}
+@media(max-width:850px) {
+  html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections .reference-connections-toolbar {grid-template-columns:minmax(180px,1fr) 150px 150px;gap:12px}
+}
+@media(max-width:650px) {
+  html[data-interface="impeccable"] .product-ui .reference-connections.reference-connections .reference-connections-toolbar {grid-template-columns:1fr 1fr}
+  html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-search {grid-column:1/-1}
+  html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-heading {align-items:flex-start;flex-wrap:wrap}
+  html .reference-connections-overlay {padding:12px}
+  html .reference-connections-modal {max-height:calc(100dvh - 24px)}
+  html[data-interface="impeccable"] .product-ui .reference-connections .reference-connections-detail-list {grid-template-columns:100px minmax(0,1fr);gap:12px}
+}

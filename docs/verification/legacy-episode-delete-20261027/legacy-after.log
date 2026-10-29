@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/episodeDeletion.integration.test.ts (2 tests) 2083ms
+   ✓ managed=true: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences  998ms
+   ✓ managed=false: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences  1084ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  19:18:39
+   Duration  2.37s (transform 100ms, setup 0ms, collect 139ms, tests 2.08s, environment 0ms, prepare 37ms)
+

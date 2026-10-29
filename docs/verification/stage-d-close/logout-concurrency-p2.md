@@ -18,7 +18,7 @@
 | 最终组件/实际客户端 | 11/11。两请求 pending 时手动刷新、visibility 事件不新读；旧失败先到不清屏；最新失败要求重新登录；旧失败晚到不影响新目录/错误；旧目录响应不回填；新登录仍可刷新，实际 `localCommand` 使用新 CSRF，下一次注销也携带新组件 CSRF。[最终绿测](evidence/logout-concurrency-p2/focused-green-02.txt) |
 | 完整默认回归 | 默认 5000ms，102 文件、766/766 通过，无超时覆盖、无旧断言变更。测试进程只允许本机 Socket。[最终完整日志](evidence/logout-concurrency-p2/full-default-5s-02.txt) |
 | 类型与构建 | `npm run build` 的 `tsc -b` 与 Vite 构建通过；约 586.67KB chunk 告警保留。正常 npm 启动另编译本地应用并准备 runtime。[构建](evidence/logout-concurrency-p2/build-01.txt)、[正常启动](evidence/logout-concurrency-p2/start-02.txt) |
-| 实际 Chrome | 既有恢复隔离库、正常应用入口；仅浏览器 fetch 的两个注销 Promise 被可控拒绝。确认 pending 刷新不新读，较新失败转登录，同一文档真实重新登录，随后旧失败回调不能清空界面或注入旧错误。[浏览器结果](evidence/logout-concurrency-p2/browser-result.json)、[失败转登录](evidence/logout-concurrency-p2/newer-failure-login.png)、[旧失败后界面](evidence/logout-concurrency-p2/late-failure-keeps-session.png) |
+| 实际 Chrome | 既有恢复隔离库、正常应用入口；仅浏览器 fetch 的两个注销 Promise 被可控拒绝。确认 pending 刷新不新读，较新失败转登录，同一文档真实重新登录，随后旧失败回调不能清空界面或注入旧错误。[浏览器结果](evidence/logout-concurrency-p2/browser-result.json)、[失败转登录](evidence/logout-p2/logout-failed-login.png)、[旧失败后界面](evidence/logout-concurrency-p2/late-failure-keeps-session.png) |
 | 真实 CSRF 与收尾 | 解除两次故障后，下一次正常注销真实 POST 200，携带重新登录取得的组件 CSRF。没有新增配置写入。删除本轮认证项、关闭独立 Chrome，正常 npm 停止自有服务。[最终浏览器核对](evidence/logout-concurrency-p2/browser-final-audit-01.txt)、[停止](evidence/logout-concurrency-p2/stop-01.txt)、[范围](evidence/logout-concurrency-p2/scope-result.json) |
 
 浏览器证据证明真实 React/客户端在可控回调时序下的表现；两次注销失败由页面内 fetch 测试探针产生，不是真实服务端 503、网络包迟到或 Cookie 乱序验收。HTTP 503 与旧目录迟到由实际组件/客户端边界的可控异步测试覆盖。最后一次浏览器刷新已触发，未把其后立即正常注销前的未完成读取称为完整刷新验收。
@@ -30,7 +30,7 @@
 - 浏览器首次 `dblclick` 实际只登记一个挂起注销，导致[两个请求前提检查](evidence/logout-concurrency-p2/browser-pending-01.txt)、[依赖该前提的读围栏检查](evidence/logout-concurrency-p2/browser-pending-audit-01.txt)、[释放第二回调](evidence/logout-concurrency-p2/browser-release-newer-01.txt)失败。读取实际状态后补一次明确点击，登记两个请求再接续；没有放宽产品断言或超时。后续[前提](evidence/logout-concurrency-p2/browser-pending-02.txt)、[读围栏](evidence/logout-concurrency-p2/browser-pending-audit-02.txt)均通过。
 - 网络证据审计首次按整行匹配 `http`，误把 SVG data URL 内的 XML 命名空间识别成外部请求；[审计错误](evidence/logout-concurrency-p2/browser-network-audit-01-result.json)保留。改为解析请求 URL 字段后，实际 HTTP 均为本机 55189，登录 2 次、真实注销 1 次、配置写入 0 次。[正确审计](evidence/logout-concurrency-p2/browser-network-audit-02-result.json)
 
-原 D 收尾 331 项公开、397 项私有文件全部保持原字节。首次 P2 的原始成功/失败日志、截图、私有材料和 `logout-p2.md` 也保持原字节。当前 README、review 是已索引的活动报告，本次更新前的[README 原件](README-before-concurrency-p2.md)、[review 原件](review-before-concurrency-p2.md)与私有旧索引另存快照；索引仅刷新这两条活动报告记录，其余旧条目不变，再追加本轮证据与源码快照。[保留核验](evidence/logout-concurrency-p2/evidence-retention-result.json)记录原 SHA 与快照映射。旧索引的 379 项公开、488 项私有均可按原 SHA 追溯，不将活动报告更新伪称所有旧路径字节不变。
+原 D 收尾 331 项公开、397 项私有文件全部保持原字节。首次 P2 的原始成功/失败日志、截图、私有材料和 `logout-p2.md` 也保持原字节。当前 README、review 是已索引的活动报告，本次更新前的[README 原件](../README.md)、[review 原件](review-before-concurrency-p2.md)与私有旧索引另存快照；索引仅刷新这两条活动报告记录，其余旧条目不变，再追加本轮证据与源码快照。[保留核验](evidence/logout-concurrency-p2/evidence-retention-result.json)记录原 SHA 与快照映射。旧索引的 379 项公开、488 项私有均可按原 SHA 追溯，不将活动报告更新伪称所有旧路径字节不变。
 
 原 `760/760`、`758/759`、首次 P2 `762/762`、T21 `740/745`，以及首次 P2 两次浏览器驱动失败全部保留。本轮 `766/766` 不替代历史结果。
 

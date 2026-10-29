@@ -1,0 +1,68 @@
+{
+  "job": {
+    "id": "66898e68-2fbd-4071-bcd0-ec939a917a2e",
+    "kind": "health",
+    "token": null,
+    "checks": [
+      {
+        "id": "database",
+        "detail": "数据库检查通过。",
+        "passed": true
+      },
+      {
+        "id": "media_directory",
+        "detail": "媒体目录检查通过。",
+        "passed": true
+      },
+      {
+        "id": "runtime",
+        "detail": "运行程序检查通过。",
+        "passed": true
+      }
+    ],
+    "detail": "3 项检查通过。",
+    "due_at": "2026-10-29T03:05:43.404348+00:00",
+    "passed": true,
+    "status": "completed",
+    "attempt": 1,
+    "lease_until": null,
+    "available_at": "2026-10-29T03:06:45.848+00:00",
+    "completed_at": "2026-10-29T03:05:45.848+00:00"
+  },
+  "plans": [
+    {
+      "kind": "health",
+      "timezone": "Asia/Shanghai",
+      "next_due_at": "2026-10-30T01:00:00+00:00"
+    }
+  ],
+  "attempts": [
+    {
+      "token": "1b979299-5390-4dc0-9328-7d3a3fb583e3",
+      "checks": [
+        {
+          "id": "database",
+          "detail": "数据库检查通过。",
+          "passed": true
+        },
+        {
+          "id": "media_directory",
+          "detail": "媒体目录检查通过。",
+          "passed": true
+        },
+        {
+          "id": "runtime",
+          "detail": "运行程序检查通过。",
+          "passed": true
+        }
+      ],
+      "detail": "3 项检查通过。",
+      "job_id": "66898e68-2fbd-4071-bcd0-ec939a917a2e",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1,
+      "started_at": "2026-10-29T03:05:45.838+00:00",
+      "completed_at": "2026-10-29T03:05:45.848+00:00"
+    }
+  ]
+}

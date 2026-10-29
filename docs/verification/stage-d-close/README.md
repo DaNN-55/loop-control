@@ -32,7 +32,7 @@
 3. **恢复配置接续。** `deployment-restore.mjs` 从成功恢复回执生成正常部署文件；`readDeployment` 接受批准命名空间的恢复库，核对应用/Worker 同库、媒体回执及规范私有路径。正常应用工厂和 Worker 仍读数据库实际媒体绑定及 pending/failed 状态。没有放开任意数据库、目录、远端或生产回落。
 4. **装配后暴露的离线前置检查。** Studio 需要媒体端口，原先把它配置为 live 但不给凭据，真实外部任务会先通过检查再 failed。新增明确的 `media.mode:'local'`，CLI 根据冻结包的外部连接/图像生成需求在执行前阻塞；本机 Studio 继续可用。保留首次 failed 任务、修复前红测和修复后另一条受控任务的 blocked 结果，未重置旧任务预算/attempt。
 
-操作入口与字段见 [隔离部署说明](../../local-native-deployment.md)。未创建默认 native-worker.json，未启用在线策略；这不是默认/新主机完整部署验收。
+操作入口与字段见 [隔离部署说明](../../local-daily-runtime.md)。未创建默认 native-worker.json，未启用在线策略；这不是默认/新主机完整部署验收。
 
 ## 同入口真实验收
 

@@ -1,9 +1,11 @@
-import type { ReactNode } from "react";
+import {useState, type ReactNode} from "react";
 import { Info } from "lucide-react";
+import {Tooltip} from './dan-ui/components/base/tooltip/tooltip';
+import {Focusable} from 'react-aria-components';
 
 export function HelpTip({ label, children }: { label: string; children: ReactNode }) {
-  return <span aria-label={`${label}说明`} className="help-tip" tabIndex={0}>
+  const [open,setOpen] = useState(false);
+  return <Tooltip title={children} placement="top" isOpen={open} onOpenChange={setOpen} className="dan-ui dan-ui-tooltip"><Focusable><span aria-label={`${label}说明`} className="help-tip" role="button" tabIndex={0} onClick={()=>setOpen(true)} onKeyDown={event=>{if(event.key==='Enter'||event.key===' ')event.preventDefault();}} onKeyUp={event=>{if(event.key==='Enter'||event.key===' ')setOpen(true);}}>
     <Info aria-hidden="true" className="help-tip-icon" strokeWidth={1.8} />
-    <span className="help-tip-popover" role="tooltip">{children}</span>
-  </span>;
+  </span></Focusable></Tooltip>;
 }

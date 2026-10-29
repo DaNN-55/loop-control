@@ -1,0 +1,101 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 第二镜独立字幕先保存，未保存时键盘切步保持当前正文
+An update to ForwardRef(TextArea) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(TextArea) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/reviews/ReviewWorkspace.test.tsx (72 tests) 13136ms
+   ✓ 审核台 > 在详情头部以图标提供刷新、打开和复制本地目录  483ms
+   ✓ 审核台 > 通过统一入口标注用途后按顺序导入脚本、图片、A-roll 和 B-roll  440ms
+   ✓ 审核台 > 已批准分镜显示声音与对齐状态，并保存整期 BGM 和闪避选择  358ms
+   ✓ 审核台 > 逐镜头主声音和音效独立保存，静音后恢复原选择并保留画面草稿  942ms
+   ✓ 审核台 > 第二镜独立字幕先保存，未保存时键盘切步保持当前正文  586ms
+   ✓ 审核台 > 第二镜修改双屏槽位和衔接后保存，保留已保存的独立正文  751ms
+   ✓ 审核台 > 第二镜修改字幕空间时保留已保存构图，保存刷新后保持所选镜头  804ms
+   ✓ 审核台 > 审核阶段返回镜头工作台时保留 QC 证据，并显式确认覆盖 Studio 工程  352ms
+   ✓ 审核台 > 审核镜头可核对同步预览要求，修改字幕后旧确认与代理立即失效  953ms
+   ✓ 审核台 > 预览失败、缺少原片或旧合同阻止确认，生产就绪时仍可返回编辑  532ms
+   ✓ 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交  641ms
+   ✓ 审核台 > 逐镜头 TTS 可先于原片标记生成，完整保存仍要求视频  439ms
+   ✓ 审核台 > 逐镜头口播无需确认即可保存，并可保存单镜头覆盖  723ms
+   ✓ 审核台 > 同一原片支持多段裁剪并随镜头草稿一起保存  531ms
+   ✓ 审核台 > 人工媒体可在镜头工作台选择原片并保存镜头设置  731ms
+
+ Test Files  1 passed (1)
+      Tests  72 passed (72)
+   Start at  13:52:18
+   Duration  15.12s (transform 592ms, setup 7ms, collect 1.59s, tests 13.14s, environment 235ms, prepare 26ms)
+

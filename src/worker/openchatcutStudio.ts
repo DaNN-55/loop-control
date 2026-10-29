@@ -5,7 +5,7 @@ import { spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { createServer as createTcpServer, type Server } from "node:net";
 import { dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
 import type { WorkerTaskPackage } from "./contracts.js";
-import { activeOpenChatCutState, buildOpenChatCutProject, type OpenChatCutProject } from "./openchatcutProject.js";
+import { buildOpenChatCutProject, type OpenChatCutProject } from "./openchatcutProject.js";
 import { verifyOpenChatCutProject } from "./openchatcutProjectReader.js";
 
 type ReviewRender = NonNullable<WorkerTaskPackage["reviewRender"]>;
@@ -98,7 +98,7 @@ async function startStandaloneOpenChatCutStudio(dataDir: string, runtimeConfig: 
   const port = await availablePort();
   const child = spawn(nodePath, [resolve("scripts/openchatcut-standalone.mjs"), String(port)], {
     cwd: root,
-    env: { ...process.env, OPENCHATCUT_ROOT: root, OPENCHATCUT_DATA_DIR: dataDir, OPENCHATCUT_DEV_PROFILE_ID: randomUUID(), OPENCHATCUT_DISABLE_HARDWARE_ENCODING: "1", BROWSER: "none" },
+    env: { ...(runtimeConfig.environment ?? process.env), OPENCHATCUT_ROOT: root, OPENCHATCUT_DATA_DIR: dataDir, OPENCHATCUT_DEV_PROFILE_ID: randomUUID(), OPENCHATCUT_DISABLE_HARDWARE_ENCODING: "1", BROWSER: "none" },
     stdio: ["ignore", "pipe", "pipe"],
   });
   const logs: string[] = [];
@@ -349,10 +349,6 @@ async function writeStoredProject(dataDir: string, projectId: string, project: O
 async function readProject(path: string): Promise<OpenChatCutProject | null> {
   try { return JSON.parse(await readFile(path, "utf8")) as OpenChatCutProject; }
   catch (error) { if (error instanceof Error && "code" in error && error.code === "ENOENT") return null; throw error; }
-}
-
-export function openChatCutStateFromProject(project: OpenChatCutProject): Record<string, unknown> {
-  return activeOpenChatCutState(project);
 }
 
 function rewriteSources(value: unknown, map: Map<string, string>): void {

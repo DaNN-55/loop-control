@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (7 tests) 1207ms
+ ✓ src/local-app/ImpeccableNavigation.test.tsx (6 tests) 1346ms
+   ✓ 待审核合并到生产单，工作台审核入口使用真实目录筛选  406ms
+
+ Test Files  2 passed (2)
+      Tests  13 passed (13)
+   Start at  14:03:22
+   Duration  3.36s (transform 532ms, setup 21ms, collect 2.86s, tests 2.55s, environment 765ms, prepare 96ms)
+

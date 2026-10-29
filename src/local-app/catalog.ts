@@ -30,16 +30,17 @@ export function parseCatalogQuery(search:URLSearchParams):CatalogQuery{
  const value=(key:string,fallback:string)=>search.get(key)??fallback;
  const page=(key:string)=>{const text=value(key,'1');if(!/^[1-9][0-9]{0,8}$/.test(text))throw new ConfigurationError(400,'目录页码无效。');return Number(text);};
  const view=value('view','episodes'),visibility=value('visibility','active'),accountId=value('accountId',''),seriesId=value('seriesId','all');
+ const rawQuery=value('q',''),q=rawQuery.trim(),sort=value('sort','updated'),status=value('status','all');
  const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
- if(!['accounts','episodes','reviews','operations'].includes(view)||!['active','archived','all'].includes(visibility)||accountId&&!uuid.test(accountId)||!['all','unassigned','unavailable'].includes(seriesId)&&!uuid.test(seriesId)||[...search.keys()].some(k=>!['view','page','accountId','seriesId','visibility','pendingPage','blockedPage'].includes(k))||[...search.keys()].some(k=>search.getAll(k).length!==1))throw new ConfigurationError(400,'目录筛选无效。');
- return {view:view as CatalogQuery['view'],visibility:visibility as CatalogQuery['visibility'],accountId,seriesId,page:page('page'),pendingPage:page('pendingPage'),blockedPage:page('blockedPage')};
+ if(rawQuery.length>200||/[\u0000-\u001f\u007f]/.test(rawQuery)||!['updated','oldest','title'].includes(sort)||!['all','review','running','blocked','done'].includes(status)||!['accounts','episodes','reviews','operations'].includes(view)||!['active','archived','all'].includes(visibility)||accountId&&!uuid.test(accountId)||!['all','unassigned','unavailable'].includes(seriesId)&&!uuid.test(seriesId)||[...search.keys()].some(k=>!['view','page','accountId','seriesId','visibility','pendingPage','blockedPage','q','sort','status'].includes(k))||[...search.keys()].some(k=>search.getAll(k).length!==1))throw new ConfigurationError(400,'目录筛选无效。');
+ return {view:view as CatalogQuery['view'],visibility:visibility as CatalogQuery['visibility'],accountId,seriesId,page:page('page'),pendingPage:page('pendingPage'),blockedPage:page('blockedPage'),q,sort:sort as CatalogQuery['sort'],status:status as CatalogQuery['status']};
 }
 export async function readLocalCatalog(pool:Pool,ownerId:string,query:CatalogQuery=parseCatalogQuery(new URLSearchParams())):Promise<LocalCatalog>{
  return ownerTransaction(pool,ownerId,true,async client=>{
-  const accounts=(await client.query(`SELECT a.* FROM public.accounts a JOIN public.account_memberships m ON m.account_id=a.id WHERE m.user_id=$1 AND m.role='owner' ORDER BY a.created_at,a.id`,[ownerId])).rows;
+  const accounts=(await client.query(`SELECT a.* FROM public.accounts a JOIN public.account_memberships m ON m.account_id=a.id WHERE m.user_id=$1 AND m.role='owner' ORDER BY EXISTS(SELECT 1 FROM local_identity.history_projection_results h WHERE h.table_name='public.accounts' AND h.status='inserted' AND h.row_key->>'id'=a.id::text),a.created_at,a.id`,[ownerId])).rows;
   const ids=accounts.map(a=>a.id);
   const blueprints=(await client.query('SELECT * FROM public.account_blueprint_versions WHERE account_id=ANY($1::uuid[]) ORDER BY version DESC,id',[ids])).rows;
-  const {rows:[{catalog}]}=await client.query(localCatalogSql,[ownerId,query.view,query.page,query.accountId||null,query.seriesId,query.visibility,query.pendingPage,query.blockedPage]);
+  const {rows:[{catalog}]}=await client.query(localCatalogSql,[ownerId,query.view,query.page,query.accountId||null,query.seriesId,query.visibility,query.pendingPage,query.blockedPage,query.q??'',query.sort??'updated',query.status??'all']);
   const series=(await client.query('SELECT * FROM public.series WHERE account_id=ANY($1::uuid[]) ORDER BY name,id',[ids])).rows;
   const seriesVersions=(await client.query('SELECT * FROM public.series_versions WHERE account_id=ANY($1::uuid[]) ORDER BY version DESC,id',[ids])).rows;
   const promptVersions=(await client.query('SELECT * FROM public.prompt_versions WHERE account_id=ANY($1::uuid[]) ORDER BY capability,version DESC,id',[ids])).rows;

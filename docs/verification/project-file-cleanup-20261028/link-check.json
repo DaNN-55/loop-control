@@ -1,0 +1,15 @@
+{
+  "checkedFiles": [
+    "README.md",
+    "PLAN.md",
+    "docs/local-daily-runtime.md",
+    "docs/completed-work.md",
+    "docs/adr/README.md",
+    "docs/adr/0013-native-runtime-file-boundary.md",
+    "docs/specs/current-product.md",
+    "docs/backlog/local-first-optimization.md",
+    "docs/verification/README.md",
+    "docs/verification/project-file-cleanup-20261028/REPORT.md"
+  ],
+  "missing": []
+}

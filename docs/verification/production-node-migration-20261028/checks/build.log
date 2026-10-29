@@ -1,0 +1,20 @@
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 4420 modules transformed.
+
+(!) outDir /private/tmp/loop-node-migration-build-final is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+rendering chunks...
+computing gzip size...
+../../../../private/tmp/loop-node-migration-build-final/index.html                                  0.86 kB │ gzip:   0.47 kB
+../../../../private/tmp/loop-node-migration-build-final/native-runtime-graph.json                 281.37 kB │ gzip:  23.57 kB
+../../../../private/tmp/loop-node-migration-build-final/assets/index-CaNyNy9Z.css                 622.92 kB │ gzip:  90.15 kB
+../../../../private/tmp/loop-node-migration-build-final/assets/retiredRemoteClient-CR7xA7U4.js      0.16 kB │ gzip:   0.18 kB
+../../../../private/tmp/loop-node-migration-build-final/assets/index-DLfy4SN_.js                1,082.56 kB │ gzip: 322.76 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 23.25s

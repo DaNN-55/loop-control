@@ -2,11 +2,12 @@ import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testi
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Database } from "../lib/database.types";
-import { EpisodeDetail, EpisodeDetailDrawer, ReviewWorkspace } from "../App";
+import {EpisodeDetail,EpisodeDetailDrawer} from "../episodes/EpisodeProduction";
+import {ReviewWorkspace} from "../workspace/WorkspaceViews";
 import { clearLocalArtifactCache } from "./localArtifactPreview";
 
-vi.mock("../lib/supabase", () => ({
-  supabase: {
+vi.mock("../lib/viewTransport", () => ({
+  viewTransport: {
     auth: {
       getSession: vi.fn().mockResolvedValue({ data: { session: { access_token: "owner-token" } }, error: null }),
     },
@@ -26,7 +27,7 @@ type Task = Database["public"]["Tables"]["tasks"]["Row"];
 const originalClipboard = Object.getOwnPropertyDescriptor(navigator, "clipboard");
 
 async function openVisualStep(user: ReturnType<typeof userEvent.setup>, shotId: string) {
-  await user.click(within(screen.getByRole("tablist", { name: `${shotId} 镜头工作区` })).getByRole("tab", { name: "2 画面与构图" }));
+  await user.click(within(screen.getByRole("tablist", { name: `${shotId} 镜头工作区` })).getByRole("tab", { name: "画面与构图" }));
 }
 
 const account: Account = {
@@ -418,17 +419,17 @@ describe("审核台", () => {
     await user.click(screen.getByRole("button", { name: "放大查看 cover 产物" }));
     expect(screen.getByRole("dialog", { name: "cover 产物放大预览" })).toBeTruthy();
     expect(screen.getByRole("img", { name: "cover 产物放大预览" }).getAttribute("src")).toBe("/_local-artifact?ticket=preview");
-    expect(document.activeElement).toBe(screen.getByRole("button", { name: "关闭放大预览" }));
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByRole("button", { name: "关闭放大预览" })));
 
     await user.keyboard("{Tab}");
     expect(screen.getByRole("dialog", { name: "cover 产物放大预览" }).contains(document.activeElement)).toBe(true);
 
     await user.keyboard("{Escape}");
     expect(screen.queryByRole("dialog", { name: "cover 产物放大预览" })).toBeNull();
-    expect(document.activeElement).toBe(screen.getByRole("button", { name: "放大查看 cover 产物" }));
+    await waitFor(() => expect(document.activeElement).toBe(screen.getByRole("button", { name: "放大查看 cover 产物" })));
 
     await user.click(screen.getByRole("button", { name: "放大查看 cover 产物" }));
-    await user.click(screen.getByRole("dialog", { name: "cover 产物放大预览" }));
+    await user.click(screen.getByTestId("artifact-lightbox-scrim"));
     expect(screen.queryByRole("dialog", { name: "cover 产物放大预览" })).toBeNull();
   });
 
@@ -444,8 +445,13 @@ describe("审核台", () => {
 
     expect(screen.queryByRole("heading", { name: "准备本地输入目录" })).toBeNull();
     expect(screen.getByRole("button", { name: "刷新生产单状态" })).toBeTruthy();
-    expect(screen.getByRole("button", { name: "打开本地输入目录" }).getAttribute("title")).toBe(`打开本地输入目录：${localInputPath}`);
-    expect(screen.getByRole("button", { name: "复制本地输入目录路径" }).getAttribute("title")).toBe(`复制本地输入目录路径：${localInputPath}`);
+    fireEvent.pointerDown(document.body, {pointerType:"mouse"});
+    await user.hover(screen.getByRole("button", { name: "打开本地输入目录" }));
+    expect((await screen.findByRole("tooltip")).textContent).toContain(`打开本地输入目录：${localInputPath}`);
+    await user.unhover(screen.getByRole("button", { name: "打开本地输入目录" }));
+    await user.hover(screen.getByRole("button", { name: "复制本地输入目录路径" }));
+    expect((await screen.findByRole("tooltip")).textContent).toContain(`复制本地输入目录路径：${localInputPath}`);
+    await user.unhover(screen.getByRole("button", { name: "复制本地输入目录路径" }));
 
     await user.click(screen.getByRole("button", { name: "刷新生产单状态" }));
     expect(onRefresh).toHaveBeenCalledTimes(1);
@@ -815,7 +821,7 @@ describe("审核台", () => {
     await user.selectOptions(screen.getByLabelText("shot-1 当前原片"), "material-shot-workbench-a");
     await user.click(screen.getByRole("button", { name: "保存草稿" }));
     expect(screen.getByRole("button", { name: /^shot-1 A-roll/ }).getAttribute("aria-expanded")).toBe("true");
-    expect(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "3 同步预览与确认" }).getAttribute("aria-selected")).toBe("true");
+    expect(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "同步预览与确认" }).getAttribute("aria-selected")).toBe("true");
     expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ bgmDuckingLevel: "off" }));
     await user.click(screen.getByRole("button", { name: /^shot-2 B-roll/ }));
     const waitingAlignment = screen.getByRole("region", { name: "shot-2 声学对齐" });
@@ -848,13 +854,13 @@ describe("审核台", () => {
     expect(within(confirmationOverview).getByText("已确认 0 / 2 个镜头")).toBeTruthy();
     expect(screen.getByRole("button", { name: /shot-2 准备状态：.*确认 输入已修改，待重新确认/ })).toBeTruthy();
     const shotTwoTabs = screen.getByRole("tablist", { name: "shot-2 镜头工作区" });
-    const textTab = within(shotTwoTabs).getByRole("tab", { name: "1 文本与声音" });
+    const textTab = within(shotTwoTabs).getByRole("tab", { name: "文本与声音" });
     textTab.focus();
     await user.keyboard("{ArrowRight}");
     expect(textTab.getAttribute("aria-selected")).toBe("true");
     expect(screen.getByRole("alert").textContent).toContain("请先保存当前步骤草稿");
     await user.click(within(shotTwoTabs.closest("article") as HTMLElement).getByRole("button", { name: "保存草稿" }));
-    expect(within(shotTwoTabs).getByRole("tab", { name: "2 画面与构图" }).getAttribute("aria-selected")).toBe("true");
+    expect(within(shotTwoTabs).getByRole("tab", { name: "画面与构图" }).getAttribute("aria-selected")).toBe("true");
     expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ shotId: "shot-2", includeVideo: false, subtitleText: "修改后的字幕", ttsText: "第二镜字幕", captionContract: { version: "shot-captions/v1", enabled: true, contentMode: "independent", text: "修改后的字幕", cues: [], spatial: { version: "shot-caption-space/v2", anchor: "bottom-center", safeArea: "title-safe", aspectRatio: "9:16", insets: { top: 0.08, right: 0.08, bottom: 0.18, left: 0.08 }, maxLines: 2, maxCharactersPerLine: 16 } } }));
   });
 
@@ -865,7 +871,7 @@ describe("审核台", () => {
     await screen.findByRole("heading", { name: "分镜工作台" });
     await user.click(screen.getByRole("button", { name: /^shot-2 B-roll/ }));
     const shotTwoTabs = screen.getByRole("tablist", { name: "shot-2 镜头工作区" });
-    await user.click(within(shotTwoTabs).getByRole("tab", { name: "2 画面与构图" }));
+    await user.click(within(shotTwoTabs).getByRole("tab", { name: "画面与构图" }));
     await user.selectOptions(screen.getByLabelText("shot-2 当前原片"), "material-shot-workbench-b");
     const layoutSelect = screen.getByLabelText("shot-2 构图布局") as HTMLSelectElement;
     expect(Array.from(layoutSelect.options).map((option) => option.text)).toEqual(["全屏", "左右双屏", "上下双屏", "画中画", "四宫格"]);
@@ -897,7 +903,7 @@ describe("审核台", () => {
     await screen.findByRole("heading", { name: "分镜工作台" });
     await user.click(screen.getByRole("button", { name: /^shot-2 B-roll/ }));
     const shotTwoTabs = screen.getByRole("tablist", { name: "shot-2 镜头工作区" });
-    await user.click(within(shotTwoTabs).getByRole("tab", { name: "2 画面与构图" }));
+    await user.click(within(shotTwoTabs).getByRole("tab", { name: "画面与构图" }));
     const shotTwoCard = shotTwoTabs.closest("article") as HTMLElement;
     const advancedSettings = shotTwoCard.querySelector(".shot-advanced-settings") as HTMLElement;
     expect((screen.getByLabelText("shot-2 构图布局") as HTMLSelectElement).value).toBe("2up-vertical");
@@ -918,7 +924,7 @@ describe("审核台", () => {
     expect(screen.getByRole("figure", { name: "shot-2 字幕安全框" })).toBeTruthy();
     await user.click(within(shotTwoCard).getByRole("button", { name: "保存草稿" }));
     expect(onSave).toHaveBeenCalledWith(expect.objectContaining({ audioMode: "tts", captionContract: { version: "shot-captions/v1", enabled: true, contentMode: "independent", text: "修改后的字幕", cues: [], spatial: { version: "shot-caption-space/v2", anchor: "top-center", safeArea: "action-safe", aspectRatio: "9:16", insets: { top: 0.05, right: 0.05, bottom: 0.12, left: 0.05 }, maxLines: 1, maxCharactersPerLine: 12 } }, clipSegments: [{ end_seconds: 1, start_seconds: 0 }], composition: { version: "shot-composition/v1", layout: "2up-vertical", slots: [{ id: "top", clipSegmentIndex: 0, fit: "cover", focalPoint: { x: 0.5, y: 0.5 } }, { id: "bottom", clipSegmentIndex: 0, fit: "contain", focalPoint: { x: 1, y: 1 } }] }, episodeId: approvedEpisode.id, materialRevisionId: "material-shot-workbench-b", reviewPackageId: reviewPackage.id, shotId: "shot-2", subtitleText: "修改后的字幕", subtitlesEnabled: true, transitionMode: "fade", ttsText: "第二镜字幕" }));
-    expect(within(shotTwoTabs).getByRole("tab", { name: "3 同步预览与确认" }).getAttribute("aria-selected")).toBe("true");
+    expect(within(shotTwoTabs).getByRole("tab", { name: "同步预览与确认" }).getAttribute("aria-selected")).toBe("true");
     expect(window.location.hash).toBe(`#storyboard-shot-${reviewPackage.id}-shot-2`);
 
     view.unmount();
@@ -1024,9 +1030,9 @@ describe("审核台", () => {
       .mockResolvedValue({ fileSize: 1024, relativePath: "episodes/episode-return-workbench/openchatcut-work/current/project.json", sha256: "d".repeat(64) });
     const onGenerateShotReviewVideo = vi.fn().mockResolvedValue(undefined);
     const onGenerateShotSyncPreview = vi.fn().mockResolvedValue(undefined);
-    vi.stubGlobal("fetch", vi.fn().mockImplementation((input: string | URL | Request) => {
+    vi.stubGlobal("fetch", vi.fn().mockImplementation((input: string | URL | Request, init?: RequestInit) => {
       const url = String(input);
-      if (url.includes("_local-artifact-ticket")) return Promise.resolve(Response.json({ url: "/_local-artifact?ticket=return-qc" }));
+      if (init?.method === "POST") return Promise.resolve(Response.json({ url: "/_local-artifact?ticket=return-qc" }));
       if (url.includes("shot-previews%2Fshot-1%2Fproxy.mp4")) return Promise.resolve(Response.json({ url: "/_local-artifact?ticket=return-sync-proxy" }));
       return Promise.resolve(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜口播", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } }));
     }));
@@ -1045,6 +1051,25 @@ describe("审核台", () => {
     await user.click(screen.getByRole("button", { name: "覆盖并重新生成" }));
     await screen.findByRole("button", { name: "生成审核视频" });
   }
+
+  it("QC 首先展示当前成片与证据，返回制作时保留当前播放器", async () => {
+    const { user } = renderQcReturnWorkbench();
+    const evidence = screen.getByRole("region", { name: "当前 QC 审核证据" });
+    const preview = await within(evidence).findByLabelText("render 产物预览");
+    const returnToProduction = screen.getByRole("button", { name: "返回镜头工作台修改" });
+    const materialPreparation = screen.getByRole("heading", { name: "准备生产材料" });
+    expect(evidence.compareDocumentPosition(returnToProduction) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(evidence.compareDocumentPosition(materialPreparation) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.getAllByLabelText("render 产物预览")).toHaveLength(1);
+    const technicalEvidence = within(evidence).getByText("工程与 QC 技术信息");
+    const editWorkspace = within(evidence).getByRole("heading", { name: "编辑工作版本" });
+    expect(technicalEvidence.compareDocumentPosition(editWorkspace) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+
+    await user.click(returnToProduction);
+    await screen.findByRole("region", { name: "分镜工作台" });
+    expect(within(evidence).getByLabelText("render 产物预览")).toBe(preview);
+    expect(screen.getByRole("button", { name: "收起镜头工作台" })).toBeTruthy();
+  });
 
   it("审核阶段返回镜头工作台时保留 QC 证据，并显式确认覆盖 Studio 工程", async () => {
     const { user, props } = renderQcReturnWorkbench();
@@ -1079,15 +1104,16 @@ describe("审核台", () => {
     const { user, props } = renderQcReturnWorkbench();
     const { episode: qcEpisode, artifacts: [, , , syncProject], reviewPackages: [storyboardPackage], onGenerateShotSyncPreview, onOpenStudio, onGenerateShotReviewVideo } = props;
     await acceptReturnedStudioWorkspace(user);
-    await user.click(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "3 同步预览与确认" }));
-    expect(await screen.findByLabelText("shot_preview_proxy 产物预览")).toBeTruthy();
+    await user.click(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "同步预览与确认" }));
+    const syncSection = screen.getByRole("heading", { name: "同步预览与确认" }).closest("section")!;
+    expect(await within(syncSection).findByLabelText("shot_preview_proxy 产物预览")).toBeTruthy();
     const previewHeader = screen.getByRole("heading", { name: "同步预览与确认" }).closest("header");
     expect(within(previewHeader as HTMLElement).queryByText("预览有效")).toBeNull();
     expect(screen.queryByText("当前代理：与已保存输入一致，可用于确认。")).toBeNull();
     expect(within(previewHeader as HTMLElement).queryByRole("button", { name: "打开可编辑工程" })).toBeNull();
     const previewFacts = document.querySelector(".shot-preview-facts");
     expect(within(previewFacts as HTMLElement).getByRole("button", { name: "打开可编辑工程" })).toBeTruthy();
-    expect(within(previewFacts as HTMLElement).getByTitle(syncProject.relative_path).classList.contains("shot-preview-project-path")).toBe(true);
+    expect(within(previewFacts as HTMLElement).getByText(syncProject.relative_path, { exact: true }).classList.contains("shot-preview-project-path")).toBe(true);
     expect(within(screen.getByRole("button", { name: "重新生成同步预览" }).parentElement as HTMLElement).queryByRole("button", { name: "打开可编辑工程" })).toBeNull();
     const checklistDisclosure = screen.getByText("逐镜头要求对照").closest("details");
     expect(checklistDisclosure?.hasAttribute("open")).toBe(true);
@@ -1102,27 +1128,29 @@ describe("审核台", () => {
     expect(durationActions.firstElementChild?.textContent).toBe("调整片段");
     expect(durationActions.lastElementChild?.textContent).toBe("通过");
     await user.click(within(comparison).getByRole("button", { name: "调整构图" }));
-    expect(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "2 画面与构图" }).getAttribute("aria-selected")).toBe("true");
+    expect(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "画面与构图" }).getAttribute("aria-selected")).toBe("true");
     await waitFor(() => expect(document.activeElement?.getAttribute("data-shot-focus")).toBe("composition"));
-    await user.click(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "3 同步预览与确认" }));
+    await user.click(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "同步预览与确认" }));
     expect((screen.getByRole("button", { name: "Owner 已确认" }) as HTMLButtonElement).disabled).toBe(false);
     await user.click(screen.getByRole("button", { name: "重新生成同步预览" }));
     expect(onGenerateShotSyncPreview).toHaveBeenCalledWith({ episodeId: qcEpisode.id, reviewPackageId: storyboardPackage.id, shotId: "shot-1" });
     const subtitleRow = within(comparison).getByRole("row", { name: /字幕内容/ });
     expect(within(subtitleRow).queryByRole("textbox")).toBeNull();
     await user.click(within(subtitleRow).getByRole("button", { name: "调整字幕" }));
-    await user.click(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "1 文本与声音" }));
+    await user.click(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "文本与声音" }));
     await user.type(screen.getByLabelText("shot-1 字幕正文"), "（修订）");
     expect(screen.getByText("已确认 0 / 1 个镜头")).toBeTruthy();
     expect(screen.getByText("! 1 个预览过期")).toBeTruthy();
     expect(screen.getByRole("button", { name: /shot-1 准备状态：.*同步预览 预览过期/ })).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "保存草稿" }));
     await user.click(screen.getByRole("button", { name: "保存草稿" }));
-    expect(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "3 同步预览与确认" }).getAttribute("aria-selected")).toBe("true");
+    expect(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "同步预览与确认" }).getAttribute("aria-selected")).toBe("true");
     expect(within(screen.getByRole("table", { name: "逐镜头要求对照" })).queryByRole("textbox")).toBeNull();
     expect(screen.getByRole("heading", { name: /OpenChatCut 审核渲染/ })).toBeTruthy();
     await user.click(screen.getByLabelText("shot-1 更多操作"));
-    expect((screen.getByRole("button", { name: "新增镜头" }) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByRole("button", { name: "新增镜头" }) as HTMLButtonElement).disabled).toBe(false);
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(document.activeElement?.getAttribute("aria-label")).toBe("shot-1 更多操作"));
     expect((screen.getByRole("button", { name: "生成审核视频" }) as HTMLButtonElement).disabled).toBe(false);
     expect((within(screen.getByRole("region", { name: "OpenChatCut 审核视频" })).getByRole("button", { name: "重新打开 OpenChatCut 编辑" }) as HTMLButtonElement).disabled).toBe(false);
     expect(onOpenStudio).toHaveBeenCalledTimes(3);
@@ -1135,7 +1163,7 @@ describe("审核台", () => {
     const { episode: qcEpisode, artifacts: [storyboardArtifact], reviewPackages: [storyboardPackage], shotPreparationDrafts: [draft] } = props;
     await acceptReturnedStudioWorkspace(user);
     expect(screen.getByRole("button", { name: "生成审核视频" })).toBeTruthy();
-    await user.click(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "3 同步预览与确认" }));
+    await user.click(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "同步预览与确认" }));
     const failedDraft = { ...draft, preview_error: "Owner action is required before retrying this task.", preview_status: "failed" as const, updated_at: "2026-09-09T00:01:30.000Z" };
     view.rerender(<EpisodeDetail {...props} shotPreparationDrafts={[failedDraft]} />);
     expect(await screen.findByText(/同步预览生成失败，需要人工处理后才能重试/)).toBeTruthy();
@@ -1147,7 +1175,8 @@ describe("审核台", () => {
 
     const legacyDraft = { ...draft, preparation_contract_status: "needs_upgrade" as const, updated_at: "2026-09-09T00:03:00.000Z" };
     view.rerender(<EpisodeDetail {...props} shotPreparationDrafts={[legacyDraft]} onGenerateShotSyncPreview={undefined} />);
-    expect(await screen.findByText(/这是旧版镜头记录/)).toBeTruthy();
+    expect(await screen.findByText("旧版镜头记录，请重新保存草稿并确认同步预览。")).toBeTruthy();
+    expect((screen.getByRole("button", { name: "重新生成同步预览" }) as HTMLButtonElement).disabled).toBe(true);
     expect(screen.getByText("已确认 0 / 1 个镜头")).toBeTruthy();
     expect(screen.queryByRole("button", { name: "Owner 已确认" })).toBeNull();
 
@@ -1185,6 +1214,7 @@ describe("审核台", () => {
     for (const label of ["新增镜头", "删除镜头", "拆分镜头", "调整顺序", "修改镜头类型"]) {
       const dialog = await openOperation("shot-2", label);
       await user.click(within(dialog).getByRole("button", { name: "关闭镜头设置" }));
+      await waitFor(() => expect(document.activeElement?.getAttribute("aria-label")).toBe("shot-2 更多操作"));
     }
 
     const middleDialog = await openOperation("shot-2", "合并镜头");
@@ -1197,7 +1227,7 @@ describe("审核台", () => {
     expect(screen.getByText("正在后台应用“合并镜头”；完成后会在此处切换到新版分镜。")).toBeTruthy();
     await user.click(screen.getByLabelText("shot-2 更多操作"));
     const openMenu = screen.getByLabelText("shot-2 镜头设置");
-    expect(within(openMenu).getAllByLabelText("镜头调整说明：提交后将创建修订任务；新版完成前保留当前分镜。")).toHaveLength(1);
+    expect(within(openMenu).getAllByRole("button", { name: "镜头调整说明" })).toHaveLength(1);
     expect(screen.queryByText("提交后将创建修订任务；新版完成前保留当前分镜。")).toBeNull();
     expect(screen.queryByText("使用本期 TTS 设置")).toBeNull();
     expect((within(openMenu).getByRole("button", { name: "新增镜头" }) as HTMLButtonElement).disabled).toBe(true);
@@ -1227,7 +1257,7 @@ describe("审核台", () => {
     await user.click(within(menu).getByRole("button", { name: "删除镜头" }));
     const dialog = screen.getByRole("dialog", { name: "shot-2 删除镜头" });
     await user.type(within(dialog).getByLabelText("修订原因"), "删除多余镜头。");
-    await user.click(within(dialog).getByRole("button", { name: "提交分镜结构修订" }));
+    await user.click(within(dialog).getByRole("button", { name: "确认删除镜头" }));
     await waitFor(() => expect(onRequestShotStructureRevision).toHaveBeenCalledWith(expect.objectContaining({ operation: { kind: "delete", shotId: "shot-2" } })));
     expect(screen.getByText("正在后台应用“删除镜头”；完成后会在此处切换到新版分镜。")).toBeTruthy();
 
@@ -1456,7 +1486,7 @@ describe("审核台", () => {
     expect(screen.queryByRole("button", { name: /提取当前原声/ })).toBeNull();
     expect(screen.queryByLabelText("source 音轨")).toBeNull();
     expect(screen.queryByRole("heading", { name: "音轨" })).toBeNull();
-    await user.click(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "3 同步预览与确认" }));
+    await user.click(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "同步预览与确认" }));
     expect(screen.getAllByText("原声已就绪").length).toBeGreaterThan(0);
     expect(screen.getByText(/素材原声 · 随视频片段使用/)).toBeTruthy();
     expect((screen.getByRole("button", { name: "生成同步预览" }) as HTMLButtonElement).disabled).toBe(false);
@@ -1803,7 +1833,7 @@ describe("审核台", () => {
     const props = { ...materialInputProps, artifacts: [renderArtifact], blueprint, episode: qcEpisode, isTransitionPending: false, onOpenStudio, onSubmitStudioRevision, onTransition: vi.fn(), reviewPackages: [qcPackage], tasks: [renderTask], transitions: [] };
     render(<EpisodeDetail {...props} />);
 
-    expect(screen.getByRole("heading", { name: "在 OpenChatCut 编辑" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "编辑工作版本" })).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "在 OpenChatCut 中打开" }));
     expect(onOpenStudio).toHaveBeenCalledWith(qcEpisode.id, "episodes/episode-qc/review-render/v2/index.html");
     expect(screen.getByRole("dialog", { name: "重新生成 OpenChatCut 工程" }).textContent).toContain("尚未采纳的 Studio 修改：视频层与片段");
@@ -1835,7 +1865,7 @@ describe("审核台", () => {
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[renderArtifact]} blueprint={blueprint} episode={qcEpisode} isTransitionPending={false} onCreateQcReviewIssue={onCreateQcReviewIssue} onTransition={vi.fn()} preRenderReviewMembers={members} reviewPackages={[qcPackage]} tasks={[storyboardTask]} transitions={[]} />);
 
-    expect(screen.getByRole("heading", { name: "在 OpenChatCut 编辑" })).toBeTruthy();
+    expect(screen.getByRole("heading", { name: "编辑工作版本" })).toBeTruthy();
     expect(screen.getByRole("button", { name: "在 OpenChatCut 中打开" })).toBeTruthy();
     expect(screen.queryByText("QC 问题")).toBeNull();
   });
@@ -1991,7 +2021,7 @@ describe("审核台", () => {
     await user.selectOptions(screen.getByLabelText("shot-a-roll-1 当前原片"), manualAroll.id);
     await user.click(screen.getByRole("button", { name: "保存草稿" }));
     expect(screen.getByRole("button", { name: /^shot-a-roll-1 A-roll/ }).getAttribute("aria-expanded")).toBe("true");
-    expect(within(screen.getByRole("tablist", { name: "shot-a-roll-1 镜头工作区" })).getByRole("tab", { name: "3 同步预览与确认" }).getAttribute("aria-selected")).toBe("true");
+    expect(within(screen.getByRole("tablist", { name: "shot-a-roll-1 镜头工作区" })).getByRole("tab", { name: "同步预览与确认" }).getAttribute("aria-selected")).toBe("true");
     await user.click(screen.getByRole("button", { name: /^shot-b-roll-1 B-roll/ }));
     await user.click(screen.getByRole("switch", { name: "shot-b-roll-1 静音" }));
     await openVisualStep(user, "shot-b-roll-1");
@@ -2056,7 +2086,7 @@ describe("审核台", () => {
     expect(screen.queryByRole("button", { name: "要求修改" })).toBeNull();
   });
 
-  it("将预渲染成员作为审计证据，并自动进入审核渲染", async () => {
+  it("合成前冻结包归入合成与 QC，不再提供独立人工审核", () => {
     const onReviewPreRenderMember = vi.fn().mockResolvedValue(undefined);
     const onTransition = vi.fn().mockResolvedValue(true);
     const productionEpisode: Episode = { ...reviewEpisode, stage: "production_ready" };
@@ -2091,8 +2121,13 @@ describe("审核台", () => {
 
     render(<EpisodeDetail {...materialInputProps} artifacts={[videoArtifact]} blueprint={blueprint} episode={productionEpisode} isTransitionPending={false} onReviewPreRenderMember={onReviewPreRenderMember} onTransition={onTransition} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[member]} reviewPackages={[preRenderPackage]} tasks={[]} transitions={[]} />);
 
-    expect(screen.getByText("预渲染审核包 · 修订 v1")).toBeTruthy();
-    expect(screen.getByText("媒体与音轨已冻结，正在自动生成审核渲染。" )).toBeTruthy();
+    const phases = screen.getByRole("list", { name: "生产阶段" });
+    expect(within(phases).getAllByRole("listitem")).toHaveLength(6);
+    expect(phases.querySelector('[aria-current="step"]')?.textContent).toContain("合成与 QC");
+    expect(phases.hasAttribute("data-decision-pending")).toBe(false);
+    expect(within(screen.getByText("下一步").parentElement!).getByText("冻结已确认镜头并准备合成")).toBeTruthy();
+    expect(screen.queryByText("预渲染审核包 · 修订 v1")).toBeNull();
+    expect(screen.queryByLabelText("审批理由")).toBeNull();
     expect(screen.queryByRole("button", { name: "批准此项" })).toBeNull();
     expect(screen.queryByRole("button", { name: "批准预渲染包并进入合成" })).toBeNull();
     expect(onReviewPreRenderMember).not.toHaveBeenCalled();

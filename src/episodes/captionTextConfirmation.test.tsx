@@ -4,7 +4,7 @@ import {createHash} from 'node:crypto';
 import type {ComponentProps} from 'react';
 import {EpisodeProductionView} from './EpisodeProduction';
 import {clearLocalArtifactCache} from '../reviews/localArtifactPreview';
-vi.mock('../lib/supabase',()=>({supabase:{auth:{getSession:vi.fn().mockResolvedValue({data:{session:{access_token:'synthetic-owner'}}})}}}));
+vi.mock('../lib/viewTransport',()=>({viewTransport:{auth:{getSession:vi.fn().mockResolvedValue({data:{session:{access_token:'synthetic-owner'}}})}}}));
 const at='2026-10-25T00:00:00Z',text='完全不相干的正文',textFingerprint=createHash('sha256').update(text).digest('hex');
 function fixture(){
  const episodeId='10000000-0000-4000-8000-000000000001',reviewId='10000000-0000-4000-8000-000000000002',trackId='10000000-0000-4000-8000-000000000003';
@@ -25,7 +25,7 @@ it('keeps a completed high-score mismatch awaiting Owner text review and blocks 
  expect(review.textContent).toContain('时序对齐不验证正文');
  expect(review.textContent).toContain('正文待人工核对');
  expect(review.textContent).not.toContain('正文已核对');
- fireEvent.click(within(screen.getByRole('tablist',{name:'shot-1 镜头工作区'})).getByRole('tab',{name:'3 同步预览与确认'}));
+ fireEvent.click(within(screen.getByRole('tablist',{name:'shot-1 镜头工作区'})).getByRole('tab',{name:'同步预览与确认'}));
  expect((screen.getByRole('button',{name:'生成同步预览'}) as HTMLButtonElement).disabled).toBe(true);
 });
 
@@ -91,4 +91,113 @@ it.each(['ready','running'] as const)('allows queued alignment to start through 
  fireEvent.click(button);
  if(status==='ready')await waitFor(()=>expect(onRequestShotAlignment).toHaveBeenCalledWith({episodeId:f.draft.episode_id,reviewPackageId:f.review.id,shotId:'shot-1',localOnly:true}));
  else expect(onRequestShotAlignment).not.toHaveBeenCalled();
+});
+
+
+it('saves embedded composition fields through the real callback and keeps edits after a failed save',async()=>{
+ const f=fixture(),save=vi.fn().mockRejectedValueOnce(new Error('夹具保存失败')).mockResolvedValue(undefined);
+ render(<EpisodeProductionView {...f.props} nodeWorkspace onSaveShotPreparationDraft={save}/>);
+ const layout=await screen.findByRole('combobox',{name:'shot-1 构图布局'});
+ fireEvent.change(layout,{target:{value:'2up-horizontal'}});
+ fireEvent.change(screen.getByRole('combobox',{name:'shot-1 衔接方式'}),{target:{value:'fade'}});
+ fireEvent.click(screen.getByRole('button',{name:'保存草稿'}));
+ await screen.findByText('夹具保存失败');
+ expect((layout as HTMLSelectElement).value).toBe('2up-horizontal');
+ expect(screen.getByRole('tab',{name:'画面制作'}).getAttribute('aria-selected')).toBe('true');
+ fireEvent.click(screen.getByRole('button',{name:'保存草稿'}));
+ await waitFor(()=>expect(save).toHaveBeenCalledTimes(2));
+ expect(save.mock.calls[1][0]).toMatchObject({episodeId:f.draft.episode_id,reviewPackageId:f.review.id,shotId:'shot-1',includeVideo:true,composition:{layout:'2up-horizontal'},transitionMode:'fade',materialRevisionId:'material-1'});
+ expect(screen.queryByRole('region',{name:'OpenChatCut 审核视频'})).toBeNull();
+ fireEvent.click(screen.getByRole('tab',{name:'核对与确认'}));
+ expect(screen.queryByRole('button',{name:'打开可编辑工程'})).toBeNull();
+});
+
+
+it('keeps numeric trim edits local, rejects an invalid range and preserves valid edits after save failure',async()=>{
+ const f=fixture(),save=vi.fn().mockRejectedValueOnce(new Error('裁剪保存失败')).mockResolvedValue(undefined);
+ render(<EpisodeProductionView {...f.props} nodeWorkspace onSaveShotPreparationDraft={save}/>);
+ const end=await screen.findByRole('spinbutton',{name:'shot-1 片段出点（秒）'});
+ fireEvent.click(screen.getByRole('checkbox',{name:'锁定片段长度'}));
+ fireEvent.change(end,{target:{value:'9'}});fireEvent.blur(end);
+ fireEvent.click(screen.getByRole('button',{name:'保存草稿'}));
+ expect(save).not.toHaveBeenCalled();
+ expect(screen.getByText('请检查片段入点和出点。')).toBeTruthy();
+ fireEvent.change(end,{target:{value:'2.5'}});fireEvent.blur(end);
+ const start=screen.getByRole('spinbutton',{name:'shot-1 片段入点（秒）'});
+ fireEvent.change(start,{target:{value:'0.5'}});fireEvent.blur(start);
+ fireEvent.click(screen.getByRole('button',{name:'保存草稿'}));
+ await screen.findByText('裁剪保存失败');
+ expect((start as HTMLInputElement).value).toBe('0.5');expect((end as HTMLInputElement).value).toBe('2.5');
+ fireEvent.click(screen.getByRole('button',{name:'保存草稿'}));
+ await waitFor(()=>expect(save).toHaveBeenCalledTimes(2));
+ expect(save.mock.calls[1][0]).toMatchObject({includeVideo:true,clipSegments:[{start_seconds:0.5,end_seconds:2.5}]});
+});
+
+it('saves inline voice overrides through the normal draft action and keeps following captions in one editor',async()=>{
+ const f=fixture(),save=vi.fn().mockResolvedValue(undefined);
+ f.props.shotPreparationDrafts=[{...f.draft,caption_contract:{...f.draft.caption_contract,contentMode:'follow_tts'}}] as never;
+ render(<EpisodeProductionView {...f.props} nodeWorkspace onSaveShotPreparationDraft={save}/>);
+ await screen.findByRole('tab',{name:'声音与字幕'});
+ fireEvent.click(screen.getByRole('tab',{name:'声音与字幕'}));
+ expect(screen.queryByRole('textbox',{name:'shot-1 字幕正文'})).toBeNull();
+ expect(screen.getByRole('textbox',{name:'shot-1 口播内容'})).toBeTruthy();
+ fireEvent.change(screen.getByRole('combobox',{name:'shot-1 单独设置声音'}),{target:{value:'custom-voice'}});
+ fireEvent.change(screen.getByRole('spinbutton',{name:'shot-1 单独设置语速'}),{target:{value:'-1'}});
+ fireEvent.click(screen.getByRole('button',{name:'保存草稿'}));
+ expect(save).not.toHaveBeenCalled();
+ expect(screen.getByText('请填写有效的口播语速。')).toBeTruthy();
+ fireEvent.change(screen.getByRole('spinbutton',{name:'shot-1 单独设置语速'}),{target:{value:'1.2'}});
+ fireEvent.click(screen.getByRole('button',{name:'保存草稿'}));
+ await waitFor(()=>expect(save).toHaveBeenCalledTimes(1));
+ expect(save.mock.calls[0][0]).toMatchObject({includeVideo:false,ttsOverride:{voice:'custom-voice',speakingRate:1.2},captionContract:{contentMode:'follow_tts',text}});
+ expect(screen.queryByRole('dialog')).toBeNull();
+});
+
+
+it('preserves precise bounds on focus and preserves locked clip duration when a numeric bound moves',async()=>{
+ const f=fixture(),save=vi.fn().mockResolvedValue(undefined);
+ f.props.shotPreparationDrafts=[{...f.draft,source_video_duration_seconds:10,clip_segments:[{start_seconds:1.123456,end_seconds:4.123456}]}] as never;
+ render(<EpisodeProductionView {...f.props} nodeWorkspace onSaveShotPreparationDraft={save}/>);
+ const start=await screen.findByRole('spinbutton',{name:'shot-1 片段入点（秒）'});
+ fireEvent.focus(start);fireEvent.blur(start);
+ fireEvent.click(screen.getByRole('button',{name:'保存草稿'}));
+ await waitFor(()=>expect(save).toHaveBeenCalledTimes(1));
+ expect(save.mock.calls[0][0].clipSegments).toEqual([{start_seconds:1.123456,end_seconds:4.123456}]);
+ fireEvent.change(start,{target:{value:'2'}});fireEvent.blur(start);
+ fireEvent.click(screen.getByRole('button',{name:'保存草稿'}));
+ await waitFor(()=>expect(save).toHaveBeenCalledTimes(2));
+ const clip=save.mock.calls[1][0].clipSegments[0];
+ expect(clip.start_seconds).toBe(2);expect(clip.end_seconds).toBeCloseTo(5);expect(clip.end_seconds-clip.start_seconds).toBeCloseTo(3);
+});
+
+
+it('keeps a failed inline reset pending and retries it through the regular save action',async()=>{
+ const f=fixture(),save=vi.fn().mockRejectedValueOnce(new Error('恢复保存失败')).mockResolvedValue(undefined);
+ f.props.shotPreparationDrafts=[{...f.draft,tts_voice:'old-custom'}] as never;
+ render(<EpisodeProductionView {...f.props} nodeWorkspace onSaveShotPreparationDraft={save}/>);
+ await screen.findByRole('tab',{name:'声音与字幕'});
+ fireEvent.click(screen.getByRole('tab',{name:'声音与字幕'}));
+ fireEvent.click(screen.getByRole('button',{name:'恢复本期设置'}));
+ await screen.findByText('恢复保存失败');
+ expect((screen.getByRole('combobox',{name:'shot-1 单独设置声音'}) as HTMLInputElement).value).toBe('');
+ expect(screen.getByText('未保存修改')).toBeTruthy();
+ fireEvent.click(screen.getByRole('button',{name:'保存草稿'}));
+ await waitFor(()=>expect(save).toHaveBeenCalledTimes(2));
+ expect(save.mock.calls[1][0]).toMatchObject({includeVideo:false,ttsOverride:{voice:null,speakingRate:null}});
+});
+
+it('plays only the selected trim range without changing the source or saving a draft',async()=>{
+ const f=fixture(),save=vi.fn();
+ f.props.shotPreparationDrafts=[{...f.draft,clip_segments:[{start_seconds:0.5,end_seconds:2}]}] as never;
+ const pause=vi.spyOn(HTMLMediaElement.prototype,'pause').mockImplementation(()=>{});
+ try {
+  render(<EpisodeProductionView {...f.props} nodeWorkspace onSaveShotPreparationDraft={save}/>);
+  await screen.findByText('播放所选片段');
+  const video=await waitFor(()=>{const element=document.querySelector<HTMLVideoElement>('.shot-marker-video video');expect(element).toBeTruthy();return element!;});
+  fireEvent.play(video);expect(video.currentTime).toBe(0.5);
+  video.currentTime=0;fireEvent.timeUpdate(video);expect(video.currentTime).toBe(0.5);
+  video.currentTime=2.5;fireEvent.timeUpdate(video);expect(video.currentTime).toBe(2);expect(pause).toHaveBeenCalled();
+  expect(screen.getByText('0.500–2.000s · 仅原片截取')).toBeTruthy();
+  expect(save).not.toHaveBeenCalled();
+ } finally {pause.mockRestore();}
 });

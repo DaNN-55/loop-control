@@ -1,0 +1,29 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/WorkspaceTopbar.account-safety.test.tsx (2 tests) 1030ms
+   ✓ search switching an account respects unsaved changes: confirm=false  592ms
+   ✓ search switching an account respects unsaved changes: confirm=true  437ms
+ ✓ src/local-app/LocalCatalogApp.account.test.tsx (5 tests) 1458ms
+   ✓ checks the exact current blueprint through the local Owner command and displays its real blocker  412ms
+   ✓ does not show an old successful check after the saved blueprint revision changes  347ms
+   ✓ keeps the relogged-in session check when an old session check returns late  338ms
+ ✓ src/platform/configurationForms.test.ts (23 tests) 5ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx (13 tests) 2221ms
+   ✓ keeps a committed series save successful when its follow-up read fails  673ms
+ ✓ src/platform/ConfigurationForms.local.test.tsx (4 tests) 388ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (8 tests) 2625ms
+   ✓ 保留安全弹窗焦点，将维护入口统一为侧栏且跨页保留连接草稿  604ms
+   ✓ cleanupPending=false: confirms the actual directory and exact title, then reports unfinished file cleanup  387ms
+   ✓ cleanupPending=true: confirms the actual directory and exact title, then reports unfinished file cleanup  347ms
+   ✓ keeps one topbar instance and places the Owner menu after theme in workspace and episode  444ms
+ ✓ src/accounts/AccountWorkspace.test.tsx (34 tests) 5652ms
+   ✓ 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接  499ms
+   ✓ 账号配置工作区 > 在 A-roll 尚未配置时，仍使用本机 OpenChatCut 状态开放本地路径  344ms
+   ✓ 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿  1183ms
+
+ Test Files  7 passed (7)
+      Tests  89 passed (89)
+   Start at  09:04:20
+   Duration  7.78s (transform 1.09s, setup 57ms, collect 9.74s, tests 13.38s, environment 2.15s, prepare 289ms)
+

@@ -14,10 +14,10 @@
   },
   "include": [
     "src/local-app/catalog.ts",
-    "src/local-app/catalogRoute.ts",
     "src/local-app/password.ts",
     "src/local-app/sessions.ts",
     "src/local-app/localRoute.ts",
+    "src/local-app/runtimeStatus.ts",
     "src/local-app/keychainStore.ts",
     "src/local-app/pexelsLiveProbe.ts",
     "src/local-app/providerProbe.ts",

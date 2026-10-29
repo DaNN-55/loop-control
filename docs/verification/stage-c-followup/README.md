@@ -23,7 +23,7 @@
 | --- | --- |
 | 列表每页取数、上一页、51页、筛选、空结果 | [浏览器结果](browser-pagination.json)、[第一页](catalog-page1.png)、[尾页](catalog-page51.png)、[归档](catalog-archived.png) |
 | 运营汇总与两个独立摘要页 | [浏览器结果](browser-operations.json)、[第一页](operations-series-page1.png)、[摘要第二页](operations-highlights-page2.png) |
-| 真实提交与刷新 | 在UI重命名专用生产单，经真实RPC写入数据库；整页重载后标题与详情保留。[结果](browser-detail.json)、[提交](title-submitted.png)、[重载](title-after-reload.png) |
+| 真实提交与刷新 | 在UI重命名专用生产单，经真实RPC写入数据库；整页重载后标题与详情保留。[结果](browser-detail.json)、[提交](title-submitted.png)、[重载](catalog-page1.png) |
 | 仅产物变化 | 写入一件真实文本文件并登记专用 artifact，不改变任务/生产单；详情轮询后列表产物数更新。[截图](detail-artifact-count-updated.png) |
 | 后台暂停、恢复与增量 | 用原生 Chrome 标签栏实际切后台，连续12.439秒无详情请求；切回立即读到受控数据库 ready→completed 和标题变化，列表及所选详情同步。[结果](browser-detail.json)、[恢复后](detail-after-resume.png) |
 | 审核队列服务端第二页 | [截图](reviews-page2.png) |

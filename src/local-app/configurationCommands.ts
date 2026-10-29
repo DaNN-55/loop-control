@@ -4,6 +4,8 @@ import {realpath} from 'node:fs/promises';
 import type {Pool,PoolClient} from 'pg';
 import {ownerTransaction} from './ownerTransaction.js';
 import {tokenHash,type OwnerSession} from './sessions.js';
+import {readMediaDeployment} from './mediaDeployment.js';
+import {planEmptyAccountDirectories,cleanupEmptyAccountDirectories,type EmptyAccountDirectory} from './accountDirectoryCleanup.js';
 import type {WorkerPreflightResult} from '../worker/contracts.js';
 export class ConfigurationError extends Error {constructor(public status:number,message:string,public preflight?:WorkerPreflightResult){super(message);}}
 export function validateConfigurationPolicy(value:unknown,allowExternal=false):string[]{
@@ -12,7 +14,7 @@ export function validateConfigurationPolicy(value:unknown,allowExternal=false):s
  function visit(node:unknown){
   if(!node||typeof node!=='object')return;
   for(const [key,v] of Object.entries(node)){
-   if(['secret','password','api_key','access_token','refresh_token'].includes(key))throw new ConfigurationError(400,'蓝图不能保存秘密。');
+   if(['secret','password','api_key','access_token','refresh_token'].includes(key))throw new ConfigurationError(400,'蓝图不能保存密钥。');
    if(key==='credential_ref'&&v){if(!allowExternal)throw new ConfigurationError(409,'本地外部连接尚未就绪，请先完成连接管理。');if(typeof v!=='string'||!uuid.test(v))throw new ConfigurationError(400,'连接版本引用无效。');refs.add(v);}
    if(key==='execution_path'&&v==='external'&&!allowExternal)throw new ConfigurationError(409,'本地外部连接尚未就绪，请先完成连接管理。');
    visit(v);
@@ -51,13 +53,13 @@ export async function executeConfiguration(pool:Pool,session:OwnerSession,body:R
  }
  if(command==='createAccount'){try{new Intl.DateTimeFormat('en',{timeZone:String(data.timezone)});}catch{throw new ConfigurationError(400,'时区无效。');}}
  const hash=createHash('sha256').update(JSON.stringify(canonical(body))).digest('hex');
- return ownerTransaction(pool,session.id,false,async client=>{
+ const result=await ownerTransaction(pool,session.id,false,async client=>{
   const valid=await client.query('SELECT token_hash FROM local_identity.sessions WHERE token_hash=$1 AND owner_id=$2 AND revoked_at IS NULL AND expires_at>clock_timestamp() FOR SHARE',[tokenHash(session.token),session.id]);
   if(!valid.rowCount)throw new ConfigurationError(401,'会话已失效。');
   await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[session.id+':'+body.idempotencyKey]);
   const receipt=await client.query('SELECT payload_hash,result FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[session.id,body.idempotencyKey]);
   if(receipt.rowCount){if(receipt.rows[0].payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');return receipt.rows[0].result;}
-  let currentPolicy:Record<string,unknown>|undefined;
+  let currentPolicy:Record<string,unknown>|undefined,externalPolicy=false;
   if(data.accountId){
    const locked=await client.query('SELECT local_identity.lock_owned_account_row($1) owned',[data.accountId]);
    if(!locked.rows[0].owned)throw new ConfigurationError(404,'账号不可见。');
@@ -69,8 +71,11 @@ export async function executeConfiguration(pool:Pool,session:OwnerSession,body:R
    const selected=await client.query('SELECT policy FROM public.account_blueprint_versions WHERE account_id=$1 AND id=$2',[data.accountId,data.blueprintId]);
    if(!selected.rowCount)throw new ConfigurationError(404,'蓝图不可见。');const refs=validateConfigurationPolicy(selected.rows[0].policy,!!checkExternalReferences);if(refs.length)await checkExternalReferences!(client,refs);
   }
+  // Capture exact roots before their blueprints are deleted; filesystem writes wait for COMMIT.
+  const accountAssetRoots=command==='deleteAccount'?(await client.query("SELECT policy->>'asset_root' asset_root FROM public.account_blueprint_versions WHERE account_id=$1",[data.accountId])).rows.map(row=>row.asset_root):[];
   if(data.policy){
    const refs=validateConfigurationPolicy(data.policy,!!checkExternalReferences);if(refs.length)await checkExternalReferences!(client,refs);
+   externalPolicy=refs.length>0;
    const policy=data.policy as Record<string,unknown>,asset=policy.asset_root;
    if(asset!==undefined&&typeof asset!=='string')throw new ConfigurationError(400,'素材目录无效。');
    if(typeof asset==='string'&&asset.trim()&&asset!==currentPolicy?.asset_root){
@@ -78,8 +83,25 @@ export async function executeConfiguration(pool:Pool,session:OwnerSession,body:R
     if(!isAbsolute(asset)||rel.startsWith('..')||isAbsolute(rel)||await realpath(path).catch(()=>null)!==path)throw new ConfigurationError(400,'素材目录必须是已存在的本地授权目录。');
    }
   }
-  const {rows:[row]}=await client.query(definition.sql,definition.fields.map(f=>data[f]));
-  await client.query('INSERT INTO local_identity.command_receipts(owner_id,idempotency_key,payload_hash,result) VALUES($1,$2,$3,$4)',[session.id,body.idempotencyKey,hash,row.result]);
-  return row.result;
+  // create_account establishes membership after its initial blueprint insert.
+  // Attach external references only after membership exists, in this same transaction.
+  const attachAfterCreation=command==='createAccount'&&externalPolicy;
+  const {rows:[row]}=await client.query(definition.sql,definition.fields.map(f=>attachAfterCreation&&f==='policy'?{}:data[f]));
+  if(attachAfterCreation)await client.query('SELECT public.update_current_blueprint($1,$2)',[row.result.id,data.policy]);
+  let value=row.result;
+  if(command==='deleteAccount'){
+   const candidates=await planEmptyAccountDirectories(mediaRoot,accountAssetRoots,accountAssetRoots.some(root=>typeof root==='string'&&root)?await readMediaDeployment(client,mediaRoot):[]),emptyAccountDirectories:EmptyAccountDirectory[]=[];
+   for(const target of candidates)if(!(await client.query('SELECT local_identity.account_directory_has_references($1::text[]) referenced',[target.aliases])).rows[0].referenced)emptyAccountDirectories.push(target);
+   value={deletedAccountId:data.accountId,value:row.result,emptyAccountDirectories};
+  }
+  await client.query('INSERT INTO local_identity.command_receipts(owner_id,idempotency_key,payload_hash,result) VALUES($1,$2,$3,$4)',[session.id,body.idempotencyKey,hash,value]);
+  return value;
  });
+ // Keep the public boolean response and old receipts compatible. A replay only retries
+ // originally empty directories with the same device/inode, never discovers new roots.
+ if(command==='deleteAccount'&&result?.deletedAccountId===data.accountId&&Array.isArray(result.emptyAccountDirectories)){
+  await ownerTransaction(pool,session.id,true,client=>cleanupEmptyAccountDirectories(result.emptyAccountDirectories as EmptyAccountDirectory[],async aliases=>(await client.query('SELECT local_identity.account_directory_has_references($1::text[]) referenced',[aliases])).rows[0].referenced)).catch(()=>{/* Account deletion committed; inaccessible directories remain intact for replay. */});
+  return result.value;
+ }
+ return result;
 }

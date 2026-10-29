@@ -1,0 +1,6 @@
+{
+  "findings": 8,
+  "resolution": "已将检出的厚装饰边线收为 1px；保留文字状态与颜色。账号状态栏 top 规则同样收为 1px。",
+  "sideDeclarationsUpdated": 11,
+  "detectorRerun": false
+}

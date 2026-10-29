@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { Database } from "../lib/database.types";
@@ -30,7 +30,7 @@ describe("系列运营视图", () => {
     render(<OperationsWorkspace episodes={episodes} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={reviewPackages} series={[series]} seriesVersions={[seriesVersion]} tasks={tasks} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
 
     expect(screen.getByLabelText("运营系列筛选")).toBeTruthy();
-    expect(screen.queryByRole("button", { name: /雨夜志怪/ })).toBeNull();
+    expect(screen.queryByRole("button", { name: "雨夜志怪" })).toBeNull();
     expect(screen.getAllByText("输入与脚本").length).toBeGreaterThan(0);
     expect(screen.getAllByText("分镜与媒体").length).toBeGreaterThan(0);
     expect(screen.queryByText(/\d+%/)).toBeNull();
@@ -42,24 +42,28 @@ describe("系列运营视图", () => {
     render(<OperationsWorkspace episodes={episodes} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={reviewPackages} series={[series]} seriesVersions={[seriesVersion]} tasks={tasks} onSelectEpisode={onSelectEpisode} selectedEpisode={null} />);
 
     expect(screen.getByText("1 个待审核包")).toBeTruthy();
-    expect(screen.getByText("测试媒体适配器未配置。")).toBeTruthy();
+    expect(document.querySelector(".operations-blocker-list")).toBeNull();
     await user.click(screen.getByRole("button", { name: "脚本待审 输入与脚本 · 审核包 v2" }));
-    expect(screen.getByText("媒体供应商暂不可用")).toBeTruthy();
-    expect(screen.getByText("Worker 无法调用当前媒体供应商，通常是供应商适配器、凭据或网络状态问题。")).toBeTruthy();
-    await user.click(screen.getByRole("button", { name: "媒体受阻 media_provider_unavailable" }));
+    await user.click(within(screen.getByRole("region",{name:"系列生产单"})).getByRole("button",{name:"媒体受阻 雨夜志怪"}));
+    const continuation=within(screen.getByRole("complementary",{name:"当前作品"}));
+    expect(continuation.getByText("需处理")).toBeTruthy();
+    await user.click(continuation.getByRole("button", { name: "处理阻塞" }));
     expect(onSelectEpisode).toHaveBeenNthCalledWith(1, "episode-review");
     expect(onSelectEpisode).toHaveBeenNthCalledWith(2, "episode-blocked");
   });
 
-  it("为运营页可修复的通用执行器阻塞提供蓝图入口", async () => {
+  it("通用执行器阻塞从当前作品进入详情，不再重复铺开修复面板", async () => {
     const user = userEvent.setup();
-    const onOpenBlueprint = vi.fn();
+    const onOpenBlueprint = vi.fn(), onSelectEpisode = vi.fn();
     const genericTask = { ...tasks[0], id: "generic-blocked-task", last_result: { blockers: [{ code: "executor_invalid", detail: "执行器 adapter 未配置。" }] } };
 
-    render(<OperationsWorkspace episodes={episodes} onOpenBlueprint={onOpenBlueprint} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={reviewPackages} series={[series]} seriesVersions={[seriesVersion]} tasks={[genericTask]} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
+    render(<OperationsWorkspace episodes={episodes} onOpenBlueprint={onOpenBlueprint} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={reviewPackages} series={[series]} seriesVersions={[seriesVersion]} tasks={[genericTask]} onSelectEpisode={onSelectEpisode} selectedEpisode={null} />);
 
-    await user.click(screen.getByRole("button", { name: "修改配置并继续当前生产单" }));
-    expect(onOpenBlueprint).toHaveBeenCalledWith("account-1", { blocker: expect.objectContaining({ code: "executor_invalid", detail: "执行器 adapter 未配置。" }), blueprintVersionId: "blueprint-1", episodeId: "episode-blocked" });
+    await user.click(within(screen.getByRole("region",{name:"系列生产单"})).getByRole("button",{name:"媒体受阻 雨夜志怪"}));
+    await user.click(within(screen.getByRole("complementary",{name:"当前作品"})).getByRole("button",{name:"处理阻塞"}));
+    expect(onSelectEpisode).toHaveBeenCalledWith("episode-blocked");
+    expect(onOpenBlueprint).not.toHaveBeenCalled();
+    expect(document.querySelector(".operations-blocker-list")).toBeNull();
   });
 
   it("不把自动审核渲染前的冻结包计为待审核，并保留缺失系列关联的生产单", () => {
@@ -71,7 +75,7 @@ describe("系列运营视图", () => {
 
     expect(screen.getByRole("option", { name: "关联系列不可用" })).toBeTruthy();
     expect(screen.getByText("0 个待审核包")).toBeTruthy();
-    expect(screen.getByText("审核包 v1 已审完")).toBeTruthy();
+    expect(within(screen.getByRole("region",{name:"系列生产单"})).getByText("制作中")).toBeTruthy();
   });
 
   it("对系列生产单明细使用分页", async () => {
@@ -82,7 +86,7 @@ describe("系列运营视图", () => {
 
     expect(screen.getByText("第 1 / 2 页 · 共 21 条")).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "下一页" }));
-    expect(screen.getByText("分页生产单 21")).toBeTruthy();
+    expect(within(screen.getByRole("region",{name:"系列生产单"})).getByText("分页生产单 21",{selector:"strong"})).toBeTruthy();
   });
 
   it("默认不把已归档 Episode 纳入运营汇总", () => {
@@ -91,4 +95,32 @@ describe("系列运营视图", () => {
 
     expect(screen.queryByText("已归档运营")).toBeNull();
   });
+});
+
+it('keeps row selection separate from opening the full production order',async()=>{
+ const user=userEvent.setup(),open=vi.fn();
+ render(<OperationsWorkspace episodes={episodes} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={reviewPackages} series={[series]} seriesVersions={[seriesVersion]} tasks={tasks} onSelectEpisode={open} selectedEpisode={episodes[0]}/>);
+ const list=within(screen.getByRole('region',{name:'系列生产单'}));
+ await user.click(list.getByRole('button',{name:'媒体受阻 雨夜志怪'}));
+ expect(open).not.toHaveBeenCalled();
+ expect(within(screen.getByRole('complementary',{name:'当前作品'})).getByRole('heading',{name:'媒体受阻'})).toBeTruthy();
+ await user.click(screen.getByRole('button',{name:'查看完整生产单'}));expect(open).toHaveBeenCalledWith('episode-blocked');
+});
+
+it('uses catalog callbacks for status, account, search, sort and series without opening an episode',async()=>{
+ const user=userEvent.setup(),onSearch=vi.fn(),onStatus=vi.fn(),onAccount=vi.fn(),onSort=vi.fn(),onSeriesChange=vi.fn();
+ const catalog={pending:{total:1,items:[],page:1},blocked:{total:0,items:[],page:1},worker:{running:0,blocked:0,failed:0},operationRows:[],statusCounts:{all:3,review:1,running:0,blocked:1,done:1},page:1,total:3,stages:{}} as unknown as import('../episodes/episodeCatalogTypes').EpisodeCatalog;
+ render(<OperationsWorkspace catalogControls={{query:'',status:'all',sort:'updated',accountId:'',onSearch,onStatus,onAccount,onSort}} remote={{catalog,seriesId:'all',onSeriesChange,onPageChange:vi.fn(),onPendingPageChange:vi.fn(),onBlockedPageChange:vi.fn()}} accounts={[{id:'account-1',name:'当前账号'} as never]} episodes={[]} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={[]} series={[series]} seriesVersions={[seriesVersion]} tasks={[]} onSelectEpisode={vi.fn()} selectedEpisode={null}/>);
+ await user.click(screen.getByRole('tab',{name:'待审核 1'}));expect(onStatus).toHaveBeenCalledWith('review');
+ await user.type(screen.getByRole('textbox',{name:'搜索标题或编号'}),'  待审{Enter}');expect(onSearch).toHaveBeenCalledWith('待审');
+ await user.selectOptions(screen.getByLabelText('工作台账号筛选'),'account-1');expect(onAccount).toHaveBeenCalledWith('account-1');
+ await user.selectOptions(screen.getByLabelText('工作台排序'),'title');expect(onSort).toHaveBeenCalledWith('title');
+ await user.selectOptions(screen.getByLabelText('运营系列筛选'),'series-1');expect(onSeriesChange).toHaveBeenCalledWith('series-1');
+});
+
+
+it('shows the matching total and opens the full list without selecting a production order',async()=>{
+ const user=userEvent.setup(),all=vi.fn(),open=vi.fn();
+ render(<OperationsWorkspace episodes={episodes} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={reviewPackages} series={[series]} seriesVersions={[seriesVersion]} tasks={tasks} onOpenAllEpisodes={all} onSelectEpisode={open} selectedEpisode={null}/>);
+ expect(screen.getByText('3 张生产单')).toBeTruthy();await user.click(screen.getByRole('button',{name:'查看全部'}));expect(all).toHaveBeenCalledOnce();expect(open).not.toHaveBeenCalled();
 });

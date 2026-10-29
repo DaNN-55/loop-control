@@ -1,10 +1,10 @@
 import { createEpisodeReader, type EpisodeReadChanges } from "./episodeReadService";
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import type { Session } from "@supabase/supabase-js";
+import type { Session } from "../lib/viewTransport.js";
 import type { Database, Json } from "../lib/database.types";
-import { supabase } from "../lib/supabase";
+import { viewTransport } from "../lib/viewTransport";
 import type { EpisodeStage } from "../platform/types";
-import { recoverFinalReviewRender, requestReviewRevision, requestShotStructureRevision, reviewRenderDurationSettingsFromRules, submitStudioReviewRevision, type OpenChatCutStudioWorkspace, type ReviewRevisionOutcome, type ReviewRevisionRequest, type ReviewRenderDurationSettings, type ShotStructureRevisionRequest, type StudioReviewRevisionRequest } from "../reviews/reviewRevision";
+import { studioWorkspaceFromPayload, studioReplacementWarningFromPayload, recoverFinalReviewRender, requestReviewRevision, requestShotStructureRevision, reviewRenderDurationSettingsFromRules, submitStudioReviewRevision, type OpenChatCutStudioWorkspace, type ReviewRevisionOutcome, type ReviewRevisionRequest, type ReviewRenderDurationSettings, type ShotStructureRevisionRequest, type StudioReviewRevisionRequest } from "../reviews/reviewRevision";
 import type { WorkerBlocker } from "../reviews/reviewSelectors";
 import { parseWorkerPreflight, type WorkerPreflightResult } from "../worker/contracts";
 import { shotCaptionContractToDatabase } from "../shotCaptions";
@@ -106,19 +106,19 @@ export interface MemoryEpisodeProductionRuntime {
 }
 
 const readEpisodeChanges = createEpisodeReader<EpisodeProductionSnapshot>(async(episodeId,known,accessToken)=>{
-  const {data,error}=await (supabase.rpc as unknown as (name:string,input:object)=>{setHeader:(name:string,value:string)=>Promise<{data:unknown;error:unknown}>})("read_episode_production",{p_episode_id:episodeId,p_known:known}).setHeader("Authorization",`Bearer ${accessToken}`);
+  const {data,error}=await (viewTransport.rpc as unknown as (name:string,input:object)=>{setHeader:(name:string,value:string)=>Promise<{data:unknown;error:unknown}>})("read_episode_production",{p_episode_id:episodeId,p_known:known}).setHeader("Authorization",`Bearer ${accessToken}`);
   if(error)throw error;if(!data)throw Error("生产单不存在或当前 Owner 无权访问。");
   return data as EpisodeReadChanges<EpisodeProductionSnapshot>;
 });
 
 async function loadEpisodeProduction(episodeId:string,fresh=false){
- const{data,error}=await supabase.auth.getSession();if(error)throw error;if(!data.session)throw Error("Owner 登录会话不可用。");
+ const{data,error}=await viewTransport.auth.getSession();if(error)throw error;if(!data.session)throw Error("Owner 登录会话不可用。");
  return readEpisodeChanges(episodeId,data.session.access_token,fresh);
 }
 
 const productionRuntime: EpisodeProductionRuntime = {
   getSession: async () => {
-    const { data, error } = await supabase.auth.getSession();
+    const { data, error } = await viewTransport.auth.getSession();
     if (error) throw error;
     return data.session;
   },
@@ -128,7 +128,7 @@ const productionRuntime: EpisodeProductionRuntime = {
   request: (input, init) => fetch(input, init),
   requestReviewRevision,
   requestShotStructureRevision,
-  rpc: (name, parameters) => (supabase.rpc as unknown as (rpcName: string, rpcParameters: Record<string, unknown>) => Promise<RpcResult>)(name, parameters),
+  rpc: (name, parameters) => (viewTransport.rpc as unknown as (rpcName: string, rpcParameters: Record<string, unknown>) => Promise<RpcResult>)(name, parameters),
   submitStudioReviewRevision,
 };
 
@@ -176,20 +176,6 @@ function bytesToBase64(content: Uint8Array): string {
   let binary = "";
   for (let offset = 0; offset < content.length; offset += 0x8000) binary += String.fromCharCode(...content.subarray(offset, offset + 0x8000));
   return btoa(binary);
-}
-
-function studioWorkspaceFromPayload(value: unknown): OpenChatCutStudioWorkspace {
-  if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Studio 工作区响应无效。");
-  const workspace = value as Record<string, unknown>;
-  if (typeof workspace.relativePath !== "string" || typeof workspace.sha256 !== "string" || typeof workspace.fileSize !== "number") throw new Error("Studio 工作区响应无效。");
-  return { relativePath: workspace.relativePath, sha256: workspace.sha256, fileSize: workspace.fileSize, ...(typeof workspace.projectId === "string" ? { projectId: workspace.projectId } : {}) };
-}
-
-function studioReplacementWarningFromPayload(value: unknown): OpenChatCutStudioWorkspace["replacementWarning"] {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
-  const warning = value as Record<string, unknown>;
-  if (warning.code !== "openchatcut_workspace_replacement" || typeof warning.studioHasChanges !== "boolean" || !Array.isArray(warning.modifiedScopes) || warning.modifiedScopes.some((scope) => typeof scope !== "string")) return undefined;
-  return { code: warning.code, studioHasChanges: warning.studioHasChanges, modifiedScopes: warning.modifiedScopes as string[] };
 }
 
 async function startProductionThroughWorkerPreflight(runtime: EpisodeProductionRuntime, episodeId: string): Promise<{ episode: unknown; preflight: WorkerPreflightResult }> {

@@ -1,10 +1,13 @@
+import {isRetiredProvider,retiredProviderMessage} from './providerLifecycle.js';
+import {generateOfficialVideo} from "./officialVideoProvider.js";
+import {isVideoProvider} from "./videoProviderCatalog.js";
 import { createHash } from "node:crypto";
 import { constants } from "node:fs";
 import { lstat, mkdir, mkdtemp, open, readFile, realpath, rm, writeFile } from "node:fs/promises";
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import type { ArtifactManifest, WorkerResult, WorkerTaskPackage } from "./contracts.js";
-import { generateCloudflareWorkersAiImage, generateOpenAiImage, searchFreesoundPreview, searchPexelsVideo, synthesizeGoogleTts, synthesizeVolcengineTts, type FreesoundPreview, type MediaFetcher } from "./mediaProviders.js";
+import { generateOpenAiImage, searchFreesoundPreview, searchPexelsVideo, synthesizeVolcengineTts, type FreesoundPreview, type MediaFetcher } from "./mediaProviders.js";
 import { generateWanVideo, type WanReservation } from "./wanVideoProvider.js";
 import type { WhisperXExecution } from "./whisperxAlignment.js";
 
@@ -15,6 +18,7 @@ export async function executeControlledMediaTask(input: {
   googleTtsApiKey: string | undefined;
   volcengineTtsApiKey?: string;
   bailianCredentials?: string;
+  officialVideoCredentials?: string;
   reserveWan?: () => Promise<WanReservation>;
   recordWanSubmission?: (id: string) => Promise<void>;
   freesoundApiKey?: string;
@@ -29,6 +33,7 @@ export async function executeControlledMediaTask(input: {
   whisperXCacheDirectory?: string;
   executeWhisperX?: (input: { audioPath: string; cacheDirectory: string; model: string }) => Promise<WhisperXExecution>;
 }): Promise<string> {
+  if(isRetiredProvider(input.taskPackage.provider))throw new Error(retiredProviderMessage);
   const media = await mediaBytes(input);
   const audioDurationSeconds = await validateTemporaryMedia(input, media.bytes);
   const artifact = await writePrimaryArtifact(input.taskPackage, media.bytes);
@@ -58,6 +63,7 @@ async function mediaBytes(input: {
   googleTtsApiKey: string | undefined;
   volcengineTtsApiKey?: string;
   bailianCredentials?: string;
+  officialVideoCredentials?: string;
   reserveWan?: () => Promise<WanReservation>;
   recordWanSubmission?: (id: string) => Promise<void>;
   freesoundApiKey?: string;
@@ -71,31 +77,23 @@ async function mediaBytes(input: {
   trimMp4Segments?: (sourcePath: string, segments: Array<{ startSeconds: number; endSeconds: number }>) => Promise<Uint8Array>;
 }): Promise<{ bytes: Uint8Array; source?: FreesoundPreview }> {
   const { taskPackage } = input;
-  if (taskPackage.provider === "bailian" && taskPackage.media?.adapter === "wan_video") {
-    if (!input.bailianCredentials || !input.reserveWan || !input.recordWanSubmission) throw new Error("百炼连接或调用预算未配置。");
+  if ((taskPackage.provider === "bailian" || isVideoProvider(taskPackage.provider)) && taskPackage.media && "wanVideo" in taskPackage.media) {
+    if (!(input.bailianCredentials || input.officialVideoCredentials) || !input.reserveWan || !input.recordWanSubmission) throw new Error("百炼连接或调用预算未配置。");
     const video = taskPackage.media.wanVideo;
     const path = await realpath(resolve(taskPackage.assets.allowedRoot, video.firstFrame.relativePath));
     const root = await realpath(taskPackage.assets.allowedRoot);
     if (relative(root, path).startsWith("..") || isAbsolute(relative(root, path))) throw new Error("万相首帧路径越界。");
     const image = await readFile(path);
     if (image.byteLength !== video.firstFrame.fileSize || createHash("sha256").update(image).digest("hex") !== video.firstFrame.sha256) throw new Error("万相首帧与冻结输入不一致。");
-    return { bytes: await generateWanVideo({ credentials: input.bailianCredentials, fetcher: input.fetcher, image, imageMime: video.imageMime, prompt: video.prompt, durationSeconds: video.durationSeconds, reserve: input.reserveWan, recordSubmission: input.recordWanSubmission }) };
-  }
-  if (taskPackage.provider === "google_tts" && taskPackage.media?.adapter === "google_tts") {
-    if (!input.googleTtsApiKey) throw new Error("GOOGLE_TTS_API_KEY 未配置，无法执行冻结旁白任务。");
-    return { bytes: await synthesizeGoogleTts({
-      apiKey: input.googleTtsApiKey,
-      fetcher: input.fetcher,
-      text: taskPackage.media.narration.text,
-      voice: taskPackage.media.narration.voice,
-    }) };
+    if (isVideoProvider(taskPackage.provider)) return {bytes: await generateOfficialVideo({provider: taskPackage.provider, model: taskPackage.model, credentials: input.officialVideoCredentials!, fetcher: input.fetcher, image, imageMime: video.imageMime, prompt: video.prompt, durationSeconds: video.durationSeconds, reserve: input.reserveWan, recordSubmission: input.recordWanSubmission})};
+    return { bytes: await generateWanVideo({ credentials: input.bailianCredentials!, fetcher: input.fetcher, image, imageMime: video.imageMime, prompt: video.prompt, durationSeconds: video.durationSeconds, reserve: input.reserveWan, recordSubmission: input.recordWanSubmission }) };
   }
   if (taskPackage.provider === "volcengine_tts" && taskPackage.media?.adapter === "volcengine_tts") {
-    if (!input.volcengineTtsApiKey) throw new Error("豆包语音连接秘密不可用，无法执行冻结旁白任务。");
+    if (!input.volcengineTtsApiKey) throw new Error("豆包语音连接密钥不可用，无法执行冻结旁白任务。");
     return { bytes: await synthesizeVolcengineTts({ apiKey: input.volcengineTtsApiKey, fetcher: input.fetcher, model: taskPackage.model, text: taskPackage.media.narration.text, voice: taskPackage.media.narration.voice }) };
   }
   if (taskPackage.provider === "pexels" && taskPackage.media?.adapter === "pexels_video") {
-    if (!input.pexelsApiKey) throw new Error("Pexels 连接秘密不可用，无法执行冻结 B-roll 任务。");
+    if (!input.pexelsApiKey) throw new Error("Pexels 连接密钥不可用，无法执行冻结 B-roll 任务。");
     const selected = await searchPexelsVideo({
       apiKey: input.pexelsApiKey,
       fetcher: input.fetcher,
@@ -149,10 +147,7 @@ async function mediaBytes(input: {
     if (!input.openaiApiKey) throw new Error("OPENAI_API_KEY 未配置，无法执行冻结静态视觉任务。");
     return { bytes: await generateOpenAiImage({ apiKey: input.openaiApiKey, fetcher: input.fetcher, model: taskPackage.model, prompt: taskPackage.media.staticVisual.prompt }) };
   }
-  if (taskPackage.provider === "cloudflare" && taskPackage.media?.adapter === "workers_ai_images") {
-    if (!input.cloudflareWorkersAiCredentials) throw new Error("Cloudflare Workers AI 连接秘密不可用，无法执行冻结静态视觉任务。");
-    return { bytes: await generateCloudflareWorkersAiImage({ credentials: input.cloudflareWorkersAiCredentials, fetcher: input.fetcher, model: taskPackage.model, prompt: taskPackage.media.staticVisual.prompt }) };
-  }
+
   throw new Error("任务 Provider 与冻结媒体适配器不匹配。");
 }
 
@@ -186,7 +181,7 @@ async function validateTemporaryMedia(input: Parameters<typeof executeControlled
   const path = join(directory, input.taskPackage.output.relativePath.split("/").at(-1) ?? "output");
   try {
     await writeFile(path, bytes);
-    if (input.taskPackage.media?.adapter === "wan_video") {
+    if (input.taskPackage.media && "wanVideo" in input.taskPackage.media) {
       await input.validateMp4(path, input.taskPackage.media.wanVideo.durationSeconds);
       return undefined;
     }

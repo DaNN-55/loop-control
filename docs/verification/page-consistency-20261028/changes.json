@@ -1,0 +1,157 @@
+[
+  {
+    "file": "src/local-app/LocalSecretAdministration.tsx",
+    "before": "8e376428d0205dc79bf6a4b24e36fd8b5380a4d966544de67ab92b602bb6de72",
+    "after": "d367612c5d6de55b4f239404d7fa422a873908d52b3b6222038ea0c7a4c90ec6"
+  },
+  {
+    "file": "src/local-app/LocalConnectionsPanel.tsx",
+    "before": "281f58897f9fa5617dbed63315e37216db77e6315bbe61a8957720a052afbc19",
+    "after": "698dce53504e1a53ee474b3a5577f710615e2e3e69d7e37944b2f6e25138334a"
+  },
+  {
+    "file": "src/local-app/LocalDeliveryPanel.tsx",
+    "before": "22dc74299f023eae50244b81f3f2540a1c73843d0ed56e55e60f4d44c1ceaf97",
+    "after": "062d8d5fe8f509e6e8f64b2ee34ecb664cff00591714d3744732a7f476bb8db7"
+  },
+  {
+    "file": "src/local-app/LocalMaintenancePanel.tsx",
+    "before": "e2f9193f9adbe1cd4981feb7b7b75e4f9d0b6cd1d0bda542a08bec26ef8b6005",
+    "after": "aa60c620f1bd2faf9463733bc890920afe3c6b4b85bb8eea523170792ba926d5"
+  },
+  {
+    "file": "src/local-app/LocalCatalogApp.tsx",
+    "before": "2cd4b9e168f45ca559ecff2ad0256b037a713c59f957a684457e6b7bd9b715d4",
+    "after": "ca044bc7ccfdacc66b70bbeddc427a83cc44da538f23c51028afb63a910a82c6"
+  },
+  {
+    "file": "src/local-app/ImpeccableNavigation.test.tsx",
+    "before": "c98f8ea9cae7e4cdb393e77be8199e9f83a001012a45b99b795b4c72006b8834",
+    "after": "fc4c5875f963840fde65a16e787023fd4443715252463fdc9797d84e83d71651"
+  },
+  {
+    "file": "src/local-app/LocalHistory.tsx",
+    "before": "2d90769646917a89794cd1cb6a3a07ebae2d8638befececf5152ac57d0fdd7b3",
+    "after": "cebc99452d87f4969d59c71057cf3a99d1e47b43514d96524420950c171dfc91"
+  },
+  {
+    "file": "src/local-app/LocalCatalogApp.workspace.test.tsx",
+    "before": "ee222f49d687ab6e944637f3140c4d4132556916cee783402f23a5bc10a1b78b",
+    "after": "e2c17a539114012f304dd6d2eac867daed7c04629de5d4b95f9c5b040cbe1701"
+  },
+  {
+    "file": "src/publishing/ProductionCompletionModal.tsx",
+    "before": "533eed25da78380c3cd4f26b253e3855365ba9996349b7e8a5c46bfea9b9947e",
+    "after": "b44a4777310876c8d88e2020c7779e410eddc9a8fe005d0959198cfae1433c20"
+  },
+  {
+    "file": "src/platform/ConfigurationForms.tsx",
+    "before": "17f00208c93d07115f8f0a0f4db8734bb19d28e678803db3e427b96069e78b08",
+    "after": "25889a1decd0278244b1e75926a45c1d5c459da64fc1db38f09d81d0ce56dc99"
+  },
+  {
+    "file": "src/workspace/WorkspaceViews.tsx",
+    "before": "53ddbc0ab51184d454a864324fba2a3a337f127afbe53249259b3eac18a68740",
+    "after": "9b360678b84ebd32c64e2822ac9b790f86c67a2102dc6fc5c49a758742e7d29b"
+  },
+  {
+    "file": "src/episodes/EpisodeProduction.tsx",
+    "before": "ce0f7a996d15015947f9dab09ced02f25144f75759b8a8c7b24845cee43d0baf",
+    "after": "323be58dec3fb1aabc266735fda39991764eaa48b0fc9e8a2c6063d34fdcf5a4"
+  },
+  {
+    "file": "src/episodes/WanShotGenerator.test.tsx",
+    "before": "0eb4ccf6991103d04ae2cf0b58e3c83d85eff72bdebfeba61c57c46402bc822a",
+    "after": "ebe63430475db8ee50e73891c20e2373b157d8786d49af4597b2a8324418ea54"
+  },
+  {
+    "file": "src/episodes/EpisodeForm.tsx",
+    "before": "ba9fa7b14b94326ae65be879ba05011c54e22b7ba179ffa2708fa5a46e70affc",
+    "after": "9027c05aebd448778bcca0db3eb160b6ebeeb42e3282ddf1302c36f58a5f038a"
+  },
+  {
+    "file": "src/episodes/WanShotGenerator.tsx",
+    "before": "5d44823d85c3e78ddb5d1952cf6939685da852e02df046ae447608e5f55e1470",
+    "after": "c61f5918b4c96b956b751de7bbffbfbebb193580d7d944777a3ac6c4ca7e14a1"
+  },
+  {
+    "file": "src/observability/SystemStatusSurface.tsx",
+    "before": "4b8ff649e25d2723a22e6cdf9c69d716f14b0ac6b7b73802da52703f86c211fe",
+    "after": "c713e914d9303c48f1dc18a2b1cd36f3344a59cb9478f2bfef40f310555d1b55"
+  },
+  {
+    "file": "src/operations/OperationsWorkspace.tsx",
+    "before": "84d7824b946d366f3e75a6735574adefbaedad8dc7418374db808b58222af23f",
+    "after": "a1aad2c93bda58d48e7fb2784e8f589dfaae3a76305d27c94e69e81821bfe4be"
+  },
+  {
+    "file": "src/connections/ConnectionWorkspace.tsx",
+    "before": "cdb083fdcd5babd531d8077bea92b32f1ffeba9a45fcfee3ab1e711a76ac8932",
+    "after": "c5b9e83f43b187bec7e9e4d4987e2fcda5e605eb1cf8c0f3c16c7bb8c4245f6e"
+  },
+  {
+    "file": "src/accounts/AccountWorkspace.tsx",
+    "before": "2f9c99fcc7f613190a7901c6e81c3e79c016a801d3fd9a2b6c2f70af1f453aab",
+    "after": "86fdcdc4644171f638f6aee856e47854b41ae7664d957bad8b5b2e13759689ca"
+  },
+  {
+    "file": "src/reviews/ReviewWorkspace.test.tsx",
+    "before": "50bcc2bd4cb3bf7e5b5781c788fc5b92980039c573e43ce2d6959d041bea7b1f",
+    "after": "5c3b40b20ead22ae182c12e6a9ebe63f857f53a3f522ca94fe97c773192e9a6d"
+  },
+  {
+    "file": "src/ui/impeccable/configuration.css",
+    "before": "c44efeef1d14125dc66b62181d305e98cbeb0533e32a94f1cd3001961a0f6a56",
+    "after": "47ae814a384c93b2e3bcebdd1ea425366308c826ad57014b8c48bb7bcfa863a7"
+  },
+  {
+    "file": "src/ui/impeccable/maintenance.css",
+    "before": "b717d6343c203e0f4b189a31319b55838ea1607f296225acfae05c19d933a808",
+    "after": "a5e745bd733bc6f638fb1d037bd45ee905479b5eba0cfd981477c3af2b40f8f9"
+  },
+  {
+    "file": "src/ui/impeccable/production.css",
+    "before": "2620d27272a4d4f386bfa0604116adbe7d076b2598749196aae4e8c980540c22",
+    "after": "89236cbedb147ec01682df32b5332e49977d842a977e3eff8ddee39d5cf539fa"
+  },
+  {
+    "file": "src/ui/impeccable/foundation.css",
+    "before": "1ec9a5697e56b18ef5dda9de0205f9e33369552636f40f457cb3e986ea964fa8",
+    "after": "02210b3fbd3d50617011ae5f8979a5ec22c95c794d4387a6a5123d597417def9"
+  },
+  {
+    "file": "src/ui/dan-ui/components/base/select/select-native.tsx",
+    "before": "f0a241880f3849e13f09a3126cb253426c539636ecf13aa61d869d98578659f5",
+    "after": "bc16bbe239323b081c472b7da5459047ea4cdac13c736cd1e0ddd56eb8cc1c4e"
+  },
+  {
+    "file": "DESIGN.md",
+    "before": "66165546ea3a1252929ece1ecaeac830a6eefd5e8c9c648891fd9bd7f88828e1",
+    "after": "8fa7e88324ebc40a4822205a9d7fff2d1cb63c3043a73a523ca3b9009d2b2697"
+  },
+  {
+    "file": "src/ui/dan-ui/components/base/select/select-menu.css",
+    "before": null,
+    "after": "86e56a4e2cb47e12f68a90954baed487a820ecce030a17df7298d2448201b869"
+  },
+  {
+    "file": "src/ui/dan-ui/components/base/select/icon-combobox.tsx",
+    "before": null,
+    "after": "cf7dfeca199ade4040fb2a8991280be0e24f1fb639149b29fcce06efe409f238"
+  },
+  {
+    "file": "src/ui/dan-ui/components/base/select/icon-combobox.css",
+    "before": null,
+    "after": "4ac3cc13dd102035b4d0066a36100050a3f673cbf589846a4ee600d084be1e1b"
+  },
+  {
+    "file": "src/ui/SelectMenuInteraction.test.tsx",
+    "before": null,
+    "after": "6d87e224459212bc07825dc6b5ae814432a9a28714bc3dcbedf550693a350735"
+  },
+  {
+    "file": "src/ui/IconComboBox.test.tsx",
+    "before": null,
+    "after": "d1f24b058132077498e495b7dd7e61addc40835c8a16780048b9d2a92a18470a"
+  }
+]

@@ -1,0 +1,13 @@
+					9 按钮 缩放比例：200%
+						30 container 新建账号
+							31 container 新建账号
+									33 标题 新建账号, Value: 2
+										34 文本 新建账号
+									35 按钮 关闭新建账号
+									37 文本 账号名称
+									38 文本栏 (settable) 账号名称, Placeholder: 例如：内容工作室
+									40 文本 账号标识
+									41 文本栏 (settable) 账号标识, Placeholder: content-studio
+								47 按钮 取消
+								48 按钮 创建账号
+The focused UI element is 35 按钮 关闭新建账号

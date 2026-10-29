@@ -1,0 +1,14 @@
+{
+  "passed": true,
+  "migration": "068-archived-episode-deletion.sql",
+  "sha256": "9bc9122bf15e6a533d8849d8137b3555ac350ebfa44d6538ac49fae08dc3d600",
+  "functionDefinitionsOnly": true,
+  "accounts": 10,
+  "episodes": 16,
+  "beforeIdentitySha256": "999270d0c86bcafe555b07b415e8400ddbc873ad5d08b5a0357b2d12dac0218a",
+  "afterIdentitySha256": "999270d0c86bcafe555b07b415e8400ddbc873ad5d08b5a0357b2d12dac0218a",
+  "existingAccountsOrEpisodesDeleted": 0,
+  "afterRestartIdentitySha256": "999270d0c86bcafe555b07b415e8400ddbc873ad5d08b5a0357b2d12dac0218a",
+  "restarted": true,
+  "recordedMigrationMatches": true
+}

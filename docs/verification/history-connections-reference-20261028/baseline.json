@@ -1,0 +1,12 @@
+{
+  "head": "30f3361bbe0d80be73bac7684ad22c2e20059d09",
+  "hashes": {
+    "src/connections/ConnectionWorkspace.tsx": "742565086812147fb0bcc9e2d001d77c9dceb8a122c48f77fa0dbae958c328a2",
+    "src/local-app/LocalConnectionsPanel.tsx": "e87f113645f227461e4dc9f634d41759328b852043cdf83be1159dfc6da86ba2",
+    "src/local-app/LocalHistory.tsx": "cebc99452d87f4969d59c71057cf3a99d1e47b43514d96524420950c171dfc91",
+    "src/local-app/HistorySources.tsx": "b20e49fc374d323995c6c9f8aec1e5770be4a6428bf91c6a12b4ba2f58b9b1ce",
+    "src/local-app/LocalMaintenancePanel.tsx": "aa60c620f1bd2faf9463733bc890920afe3c6b4b85bb8eea523170792ba926d5",
+    "DESIGN.md": "0863c2aa0b254cb53a8bfd3ea433552b5ebf0c33bf75e316619a1a917f629b46",
+    "PLAN.md": "7af692b953147daffd1dc0a8380157ef123d69004a5e45c07c10b15892fb612d"
+  }
+}

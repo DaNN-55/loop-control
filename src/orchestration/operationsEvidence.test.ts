@@ -3,7 +3,18 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, expect, it, vi } from "vitest";
 import { readOperationsEvidence, recordOperation } from "./operationsEvidence";
+import {healthCheckLabels,readHealthChecks,type HealthCheck} from '../observability/healthChecks';
 const roots:string[]=[];
+it('分项随成功和失败分别保存；旧记录及不完整分项不编造检查结果',async()=>{
+ const directory=await mkdtemp(join(tmpdir(),'loop-operations-checks-'));roots.push(directory);
+ const checks=(Object.keys(healthCheckLabels) as HealthCheck['id'][]).map(id=>({id,passed:true,detail:'通过'}));
+ await recordOperation(directory,'health',{passed:false,detail:'1 项失败',checks:checks.map(check=>({...check,passed:check.id!=='runtime'}))});
+ await recordOperation(directory,'health',{passed:true,detail:'3 项通过',checks});
+ const evidence=await readOperationsEvidence(directory);
+ expect(evidence.health?.lastSuccess?.checks).toEqual(checks);expect(evidence.health?.lastFailure?.checks?.[2].passed).toBe(false);
+ expect(readHealthChecks(undefined)).toBeUndefined();expect(readHealthChecks(checks.slice(1))).toBeUndefined();expect(readHealthChecks([checks[0],checks[0],checks[2]])).toBeUndefined();expect(readHealthChecks([...checks.slice(0,2),{id:'injected',passed:false,detail:'bad'}])).toBeUndefined();
+ await recordOperation(directory,'backup',{passed:true,detail:'旧格式'});expect((await readOperationsEvidence(directory)).backup?.latest.checks).toBeUndefined();
+});
 it("筛选未来记录时仍保留实际读取错误",async()=>{
  const directory=await mkdtemp(join(tmpdir(),"loop-operations-invalid-"));roots.push(directory);
  await writeFile(join(directory,"health-result.json"),"invalid json");

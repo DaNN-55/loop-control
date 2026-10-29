@@ -1,0 +1,23 @@
+{
+  "button": {
+    "bottom": 788,
+    "height": 36,
+    "left": 30,
+    "right": 66,
+    "top": 752,
+    "width": 36,
+    "x": 30,
+    "y": 752
+  },
+  "icon": {
+    "bottom": 780,
+    "height": 20,
+    "left": 38,
+    "right": 58,
+    "top": 760,
+    "width": 20,
+    "x": 38,
+    "y": 760
+  },
+  "name": "打开 OpenChatCut 独立剪辑"
+}

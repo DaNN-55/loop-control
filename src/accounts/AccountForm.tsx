@@ -1,3 +1,8 @@
+import {HelpTip} from '../ui/HelpTip';
+import {useDialogFocus} from '../ui/useDialogFocus';
+import {InputBase} from '../ui/dan-ui/components/base/input/input';
+import {Button} from '../ui/dan-ui/components/base/buttons/button';
+import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
 import { useState, type FormEvent } from "react";
 import { X } from "lucide-react";
 import type { Json } from "../lib/database.types";
@@ -23,20 +28,23 @@ export const timezoneOptions = [
   ["UTC", "协调世界时 · UTC"],
 ] as const;
 
-export function TimezoneSelect({ value, onChange }: { value: string; onChange: (value: string) => void }) {
-  return <label>时区<select aria-label="时区" onChange={(event) => onChange(event.target.value)} value={value}>{timezoneOptions.map(([timezone, label]) => <option key={timezone} value={timezone}>{label}（{timezone}）</option>)}</select></label>;
+export function TimezoneSelect({ value, onChange, isDisabled = false }: { value: string; onChange: (value: string) => void; isDisabled?: boolean }) {
+  return <label>时区<NativeSelect size="sm" disabled={isDisabled} aria-label="时区" onChange={(event) => onChange(event.target.value)} value={value}>{timezoneOptions.map(([timezone, label]) => <option key={timezone} value={timezone}>{label}（{timezone}）</option>)}</NativeSelect></label>;
 }
 
 export function AccountForm({ isPending, onClose, onSubmit }: { isPending: boolean; onClose: () => void; onSubmit: (input: { name: string; slug: string; timezone: string; policy: Json }) => Promise<void> }) {
+  const dialogRef = useDialogFocus<HTMLFormElement>(true, () => { if (!isPending) onClose(); });
+
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [timezone, setTimezone] = useState("Asia/Shanghai");
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isPending) return;
     await onSubmit({ name, slug, timezone, policy: defaultBlueprintPolicy });
   }
 
-  return <div className="modal-backdrop" role="presentation"><form aria-label="新建账号" className="modal-card" onSubmit={submit}><header><div><h2>新建账号</h2></div><button aria-label="关闭新建账号" className="icon-button" onClick={onClose} type="button"><X aria-hidden="true" className="icon" strokeWidth={1.8} /></button></header><label>账号名称<input autoFocus onChange={(event) => setName(event.target.value)} placeholder="例如：内容工作室" required value={name} /></label><label>账号标识<input onChange={(event) => setSlug(event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))} pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="content-studio" required value={slug} /></label><TimezoneSelect onChange={setTimezone} value={timezone} /><p className="form-hint">选择账号日常运营和任务时间所使用的时区。</p><div className="modal-actions"><button className="button button-secondary" onClick={onClose} type="button">取消</button><button className="button button-primary" disabled={isPending} type="submit">{isPending ? "创建中…" : "创建账号"}</button></div></form></div>;
+  return <div className="modal-backdrop"  role="dialog" aria-modal="true" aria-label="新建账号"><form ref={dialogRef} aria-label="新建账号" className="modal-card account-identity-form" onSubmit={submit}><header><div><h2>新建账号</h2></div><Button size="sm" color="tertiary" aria-label="关闭新建账号" isDisabled={isPending} className="icon-button" onClick={onClose} type="button"><X aria-hidden="true" className="icon" strokeWidth={1.8} /></Button></header><label>账号名称<InputBase size="sm" isDisabled={isPending} autoFocus onChange={(event) => setName(event.target.value)} placeholder="例如：内容工作室" isRequired value={name} /></label><label><span className="field-label">账号标识<HelpTip label="账号标识">使用小写英文、数字和连字符；创建后作为稳定标识。</HelpTip></span><InputBase size="sm" aria-label="账号标识" isDisabled={isPending} onChange={(event) => setSlug(event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))} pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="content-studio" isRequired value={slug} /></label><TimezoneSelect isDisabled={isPending} onChange={setTimezone} value={timezone} /><div className="modal-actions"><Button size="sm" color="secondary" isDisabled={isPending} className="button button-secondary" onClick={onClose} type="button">取消</Button><Button size="sm" color="primary" className="button button-primary" isDisabled={isPending} type="submit">{isPending ? "创建中…" : "创建账号"}</Button></div></form></div>;
 }
 

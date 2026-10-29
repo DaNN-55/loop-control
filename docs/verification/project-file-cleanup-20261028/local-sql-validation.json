@@ -1,0 +1,10 @@
+{
+  "appliedMigrations": 74,
+  "appliedShaMatched": true,
+  "currentNumberedFiles": 75,
+  "unappliedFiles": [
+    "074-script-production-v2.sql"
+  ],
+  "trackedSqlDiff": [],
+  "note": "本任务未编辑 db/local。已执行迁移按数据库登记 SHA 核对；未对未执行 SQL 采集任务开始前摘要。"
+}

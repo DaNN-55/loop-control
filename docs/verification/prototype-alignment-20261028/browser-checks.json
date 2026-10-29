@@ -1,0 +1,82 @@
+{
+  "list": {
+    "captionVisible": false,
+    "cells": 5,
+    "columns": "320px 307px 112px 126px 36px",
+    "fields": [
+      {
+        "h": 36,
+        "w": 385.640625,
+        "x": 230,
+        "y": 167
+      },
+      {
+        "h": 36,
+        "w": 130,
+        "x": 625.640625,
+        "y": 167
+      },
+      {
+        "h": 36,
+        "w": 130,
+        "x": 765.640625,
+        "y": 167
+      },
+      {
+        "h": 36,
+        "w": 130,
+        "x": 905.640625,
+        "y": 167
+      },
+      {
+        "h": 36,
+        "w": 140,
+        "x": 1045.640625,
+        "y": 167
+      }
+    ],
+    "headers": [
+      "生产单",
+      "当前阶段",
+      "状态",
+      "最近更新",
+      "操作"
+    ],
+    "overflow": false
+  },
+  "search": {
+    "unmatchedReturnsZero": true,
+    "clearRestoresRow": true
+  },
+  "tabs": {
+    "endSelectsDone": true,
+    "homeSelectsAll": true,
+    "focusRetained": true
+  },
+  "sort": "title",
+  "rowMenu": {
+    "blueprint": 1,
+    "artifacts": 27,
+    "renameAndArchivePreserved": true
+  },
+  "qc": {
+    "evidenceTop": 384,
+    "returnToShotsTop": 1174,
+    "currentVideoReadyState": 4,
+    "videoError": null
+  },
+  "connection": {
+    "controlX": 251,
+    "controlWidth": 644,
+    "selectBackgroundImage": "none",
+    "order": [
+      "editor",
+      "library"
+    ]
+  },
+  "dark": {
+    "overflow": false,
+    "badgeBackground": "rgba(255,255,255,0.125)"
+  },
+  "realMutatingActions": false
+}

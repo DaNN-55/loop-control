@@ -2,11 +2,12 @@ import type { WorkerSummary } from "../episodes/episodeCatalog";
 import type { OperationsEvidence } from "../orchestration/operationsEvidence";
 import { useMemo, useState } from "react";
 import type { Database, Json } from "../lib/database.types";
-import { useDialogFocus } from "../ui/useDialogFocus";
+import {SystemStatusSurface, stateLabel, type StatusItem, type SystemState} from "./SystemStatusSurface";
+export type {SystemState} from "./SystemStatusSurface";
 
 type Task = Database["public"]["Tables"]["tasks"]["Row"];
 type Episode = Database["public"]["Tables"]["episodes"]["Row"];
-export type SystemState = "healthy" | "attention" | "unknown" | "offline";
+
 
 export interface LocalSystemStatusReport {
   operations?: OperationsEvidence;
@@ -24,25 +25,13 @@ export interface LocalSystemStatusReport {
     state: SystemState;
   };
   observedAt: string;
-  supabase?: { detail: string; state: SystemState };
+  viewTransport?: { detail: string; state: SystemState };
 }
 
 export interface GoldenProductionTestReport {
   checks: Array<{ detail: string; name: string; passed: boolean }>;
   observedAt: string;
   passed: boolean;
-}
-
-interface StatusItem {
-  detail: string;
-  detailRows?: Array<{ label: string; state?: SystemState; value: string }>;
-  id: string;
-  label: string;
-  state: SystemState;
-}
-
-function stateLabel(state: SystemState): string {
-  return state === "healthy" ? "正常" : state === "attention" ? "需处理" : state === "offline" ? "不可用" : "待确认";
 }
 
 function formatDate(source: string | null): string {
@@ -153,13 +142,9 @@ function n8nEvidence(report: LocalSystemStatusReport): { notification: { at: str
 }
 
 export function SystemStatusPanel({ workerSummary, episodes, isRefreshing = false, onRefresh = async () => {}, onRunGoldenTest, report, tasks }: { workerSummary?: WorkerSummary; episodes: Episode[]; isRefreshing?: boolean; onRefresh?: () => Promise<void>; onRunGoldenTest?: () => Promise<GoldenProductionTestReport>; report: LocalSystemStatusReport | null; tasks: Task[] }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isHovering, setIsHovering] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
   const [testReport, setTestReport] = useState<GoldenProductionTestReport | null>(null);
   const [testError, setTestError] = useState("");
-  const close = () => setIsOpen(false);
-  const dialogRef = useDialogFocus(isOpen, close);
   const currentTasks = useMemo(() => {
     const currentEpisodeIds = new Set(episodes.filter((episode) => !episode.archived_at).map((episode) => episode.id));
     return tasks.filter((task) => currentEpisodeIds.has(task.episode_id));
@@ -179,14 +164,14 @@ export function SystemStatusPanel({ workerSummary, episodes, isRefreshing = fals
     const codexModelDependencies = report?.dependencies.filter((dependency) => dependency.name === "Codex 模型" || dependency.name.startsWith("Codex 模型 · ")) ?? [];
     const codexCli = statusDependency(report, "Codex CLI");
     const otherDependencies = report?.dependencies.filter((dependency) => dependency.name !== "Supabase 迁移" && dependency.name !== "Codex CLI" && !codexModelDependencies.includes(dependency)) ?? [];
-    const supabase = report?.supabase ?? { detail: "状态报告未提供 Supabase 控制数据读取证据。", state: "unknown" as const };
+    const viewTransport = report?.viewTransport ?? { detail: "状态报告未提供 Supabase 控制数据读取证据。", state: "unknown" as const };
     const migrationStatus = migration ?? { detail: "尚未读取 Supabase 迁移状态。", state: "unknown" as const };
     const codexState = combinedState([codexCli?.state ?? "unknown", ...codexModelDependencies.map((dependency) => dependency.state)]);
     const codexCliVersion = dependencyVersion(codexCli?.detail);
     const workerRuntime = report ? combinedState([report.mediaLibrary.state, ...report.dependencies.filter((dependency) => dependency.name !== "Supabase 迁移").map((dependency) => dependency.state)]) : "unknown";
     return [
-    { id: "supabase", label: "Supabase", state: combinedState([supabase.state, migrationStatus.state]), detail: "", detailRows: [
-      { label: "控制数据", state: supabase.state, value: supabase.detail },
+    { id: "supabase", label: "Supabase", state: combinedState([viewTransport.state, migrationStatus.state]), detail: "", detailRows: [
+      { label: "控制数据", state: viewTransport.state, value: viewTransport.detail },
       { label: "迁移", state: migrationStatus.state, value: migrationDisplayDetail(migrationStatus.detail) },
     ] },
     { id: "production-pipeline", label: "生产执行链", state: combinedState([n8n.state, workerRuntime]), detail: "n8n 负责编排与派发，Worker 环境负责实际执行。", detailRows: [
@@ -221,5 +206,10 @@ export function SystemStatusPanel({ workerSummary, episodes, isRefreshing = fals
     finally { setIsTesting(false); }
   }
 
-  return <div className="system-status"><button aria-expanded={isOpen} aria-haspopup="dialog" aria-label={`系统状态：${stateLabel(overallState)}`} className={`system-status-trigger system-status-${overallState}`} onClick={() => setIsOpen((current) => !current)} onMouseEnter={() => setIsHovering(true)} onMouseLeave={() => setIsHovering(false)} title={summary} type="button"><i aria-hidden="true" /></button>{isHovering && !isOpen ? <div aria-hidden="true" className="system-status-hover-card">{items.map((item) => <div className="system-status-hover-row" key={item.id}><i className={`system-status-hover-dot system-status-hover-dot-${item.state}`} /><strong>{item.label}</strong><span>{stateLabel(item.state)}</span></div>)}</div> : null}{isOpen ? <section aria-label="系统状态详情" className="system-status-panel" ref={dialogRef} role="dialog"><header><div><h2>系统状态</h2><p>生产执行链展示服务是否可用；任务执行展示当前是否正在工作。</p></div><button aria-label="关闭系统状态详情" className="icon-button" onClick={close} type="button">×</button></header><div className="system-status-list">{items.map((item) => <article className={`system-status-item system-status-item-${item.state}`} key={item.id}><div><strong>{item.label}</strong><span>{stateLabel(item.state)}</span></div>{item.detail ? <p>{item.detail}</p> : null}{item.detailRows?.length ? <dl className="system-status-detail-rows">{item.detailRows.map((row) => <div key={`${item.id}-${row.label}-${row.value}`}><dt>{row.label}</dt><dd>{row.value}</dd>{row.state ? <span>{stateLabel(row.state)}</span> : null}</div>)}</dl> : null}{item.id === "production-pipeline" && report && n8nTimeline ? <dl><div><dt>最近调度检查</dt><dd>{formatDate(n8nTimeline.scheduleCheckAt)}</dd></div><div><dt>最近 Worker 派发</dt><dd>{formatDate(n8nTimeline.workerDispatchAt)}</dd></div><div><dt>最近通知执行</dt><dd>{n8nTimeline.notification ? <><span className="system-status-notification-result">{formatDate(n8nTimeline.notification.at)} · 通知{n8nTimeline.notification.state === "failure" ? "失败" : "成功"}</span><span className="system-status-notification-workflow">{n8nTimeline.notification.workflowName}</span></> : "暂无记录"}</dd></div><div><dt>最近健康检查</dt><dd>{formatDate(report.n8n.lastHealthCheckAt)}</dd></div></dl> : null}</article>)}</div><article className="system-status-evidence"><strong>Worker 最近任务</strong><span>{latestWorkerLabel}</span><strong>阻塞摘要</strong><span>{blockedCount ? `${blockedCount} 个阻塞任务需要处理。` : "当前没有阻塞任务。"}</span></article>{testReport || testError ? <article aria-live="polite" className={`golden-test-result ${testReport?.passed ? "is-passed" : "is-failed"}`}><strong>{testReport?.passed ? "黄金生产链测试通过" : "黄金生产链测试未通过"}</strong>{testReport?.checks.map((check) => <span key={check.name}>{check.name}：{check.detail}</span>)}{testError ? <span>{testError}</span> : null}</article> : null}<footer><span>最近读取 {report ? formatDate(report.observedAt) : "暂无"}</span><div><button className="button button-secondary" disabled={isTesting || !onRunGoldenTest} onClick={() => void runGoldenTest()} type="button">{isTesting ? "测试中…" : "一键测试"}</button><button className="button button-secondary" disabled={isRefreshing} onClick={() => void onRefresh()} type="button">{isRefreshing ? "读取中…" : "刷新系统状态"}</button></div></footer></section> : null}</div>;
+  return <SystemStatusSurface items={items} overallState={overallState} summary={summary}
+    description="生产执行链展示服务是否可用；任务执行展示当前是否正在工作。"
+    renderDetails={(item) => <>{item.id === "production-pipeline" && report && n8nTimeline ? <dl><div><dt>最近调度检查</dt><dd>{formatDate(n8nTimeline.scheduleCheckAt)}</dd></div><div><dt>最近 Worker 派发</dt><dd>{formatDate(n8nTimeline.workerDispatchAt)}</dd></div><div><dt>最近通知执行</dt><dd>{n8nTimeline.notification ? <><span className="system-status-notification-result">{formatDate(n8nTimeline.notification.at)} · 通知{n8nTimeline.notification.state === "failure" ? "失败" : "成功"}</span><span className="system-status-notification-workflow">{n8nTimeline.notification.workflowName}</span></> : "暂无记录"}</dd></div><div><dt>最近健康检查</dt><dd>{formatDate(report.n8n.lastHealthCheckAt)}</dd></div></dl> : null}</>}
+    footer={<><span>最近读取 {report ? formatDate(report.observedAt) : "暂无"}</span><div><button className="button button-secondary" disabled={isTesting || !onRunGoldenTest} onClick={() => void runGoldenTest()} type="button">{isTesting ? "测试中…" : "一键测试"}</button><button className="button button-secondary" disabled={isRefreshing} onClick={() => void onRefresh()} type="button">{isRefreshing ? "读取中…" : "刷新系统状态"}</button></div></>}>
+    <article className="system-status-evidence"><strong>Worker 最近任务</strong><span>{latestWorkerLabel}</span><strong>阻塞摘要</strong><span>{blockedCount ? `${blockedCount} 个阻塞任务需要处理。` : "当前没有阻塞任务。"}</span></article>{testReport || testError ? <article aria-live="polite" className={`golden-test-result ${testReport?.passed ? "is-passed" : "is-failed"}`}><strong>{testReport?.passed ? "黄金生产链测试通过" : "黄金生产链测试未通过"}</strong>{testReport?.checks.map((check) => <span key={check.name}>{check.name}：{check.detail}</span>)}{testError ? <span>{testError}</span> : null}</article> : null}
+  </SystemStatusSurface>;
 }

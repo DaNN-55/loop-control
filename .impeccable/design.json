@@ -1,0 +1,775 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-28T02:51:18.292180Z",
+  "title": "Design System: Loop Control",
+  "extensions": {
+    "colorMeta": {
+      "bg": {
+        "role": "neutral",
+        "displayName": "bg",
+        "canonical": "#eef2f8",
+        "tonalRamp": [
+          "oklch(0.150 0.0026 258.3)",
+          "oklch(0.265 0.0050 258.3)",
+          "oklch(0.380 0.0071 258.3)",
+          "oklch(0.495 0.0087 258.3)",
+          "oklch(0.610 0.0091 258.3)",
+          "oklch(0.725 0.0077 258.3)",
+          "oklch(0.840 0.0050 258.3)",
+          "oklch(0.950 0.0016 258.3)"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "surface",
+        "canonical": "#fff",
+        "tonalRamp": [
+          "oklch(0.150 0.0000 89.9)",
+          "oklch(0.265 0.0000 89.9)",
+          "oklch(0.380 0.0000 89.9)",
+          "oklch(0.495 0.0000 89.9)",
+          "oklch(0.610 0.0000 89.9)",
+          "oklch(0.725 0.0000 89.9)",
+          "oklch(0.840 0.0000 89.9)",
+          "oklch(0.950 0.0000 89.9)"
+        ]
+      },
+      "surface-2": {
+        "role": "neutral",
+        "displayName": "surface-2",
+        "canonical": "#f7f9fc",
+        "tonalRamp": [
+          "oklch(0.150 0.0013 258.3)",
+          "oklch(0.265 0.0025 258.3)",
+          "oklch(0.380 0.0035 258.3)",
+          "oklch(0.495 0.0043 258.3)",
+          "oklch(0.610 0.0045 258.3)",
+          "oklch(0.725 0.0038 258.3)",
+          "oklch(0.840 0.0025 258.3)",
+          "oklch(0.950 0.0008 258.3)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "ink",
+        "canonical": "#17263e",
+        "tonalRamp": [
+          "oklch(0.150 0.0139 259.5)",
+          "oklch(0.265 0.0272 259.5)",
+          "oklch(0.380 0.0386 259.5)",
+          "oklch(0.495 0.0471 259.5)",
+          "oklch(0.610 0.0495 259.5)",
+          "oklch(0.725 0.0421 259.5)",
+          "oklch(0.840 0.0272 259.5)",
+          "oklch(0.950 0.0089 259.5)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "muted",
+        "canonical": "#596b83",
+        "tonalRamp": [
+          "oklch(0.150 0.0123 255.7)",
+          "oklch(0.265 0.0241 255.7)",
+          "oklch(0.380 0.0342 255.7)",
+          "oklch(0.495 0.0417 255.7)",
+          "oklch(0.610 0.0439 255.7)",
+          "oklch(0.725 0.0373 255.7)",
+          "oklch(0.840 0.0241 255.7)",
+          "oklch(0.950 0.0079 255.7)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "line",
+        "canonical": "#d8e1ee",
+        "tonalRamp": [
+          "oklch(0.150 0.0057 257.5)",
+          "oklch(0.265 0.0111 257.5)",
+          "oklch(0.380 0.0158 257.5)",
+          "oklch(0.495 0.0192 257.5)",
+          "oklch(0.610 0.0202 257.5)",
+          "oklch(0.725 0.0172 257.5)",
+          "oklch(0.840 0.0111 257.5)",
+          "oklch(0.950 0.0036 257.5)"
+        ]
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "line-strong",
+        "canonical": "#bdcadd",
+        "tonalRamp": [
+          "oklch(0.150 0.0085 257.8)",
+          "oklch(0.265 0.0166 257.8)",
+          "oklch(0.380 0.0235 257.8)",
+          "oklch(0.495 0.0287 257.8)",
+          "oklch(0.610 0.0302 257.8)",
+          "oklch(0.725 0.0257 257.8)",
+          "oklch(0.840 0.0166 257.8)",
+          "oklch(0.950 0.0054 257.8)"
+        ]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "accent",
+        "canonical": "#365fe0",
+        "tonalRamp": [
+          "oklch(0.150 0.0392 266.1)",
+          "oklch(0.265 0.0770 266.1)",
+          "oklch(0.380 0.1092 266.1)",
+          "oklch(0.495 0.1330 266.1)",
+          "oklch(0.610 0.1400 266.1)",
+          "oklch(0.725 0.1190 266.1)",
+          "oklch(0.840 0.0770 266.1)",
+          "oklch(0.950 0.0252 266.1)"
+        ]
+      },
+      "accent-hover": {
+        "role": "primary",
+        "displayName": "accent-hover",
+        "canonical": "#254fc9",
+        "tonalRamp": [
+          "oklch(0.150 0.0392 265.0)",
+          "oklch(0.265 0.0770 265.0)",
+          "oklch(0.380 0.1092 265.0)",
+          "oklch(0.495 0.1330 265.0)",
+          "oklch(0.610 0.1400 265.0)",
+          "oklch(0.725 0.1190 265.0)",
+          "oklch(0.840 0.0770 265.0)",
+          "oklch(0.950 0.0252 265.0)"
+        ]
+      },
+      "accent-soft": {
+        "role": "primary",
+        "displayName": "accent-soft",
+        "canonical": "#eaf0ff",
+        "tonalRamp": [
+          "oklch(0.150 0.0059 268.4)",
+          "oklch(0.265 0.0116 268.4)",
+          "oklch(0.380 0.0165 268.4)",
+          "oklch(0.495 0.0201 268.4)",
+          "oklch(0.610 0.0212 268.4)",
+          "oklch(0.725 0.0180 268.4)",
+          "oklch(0.840 0.0116 268.4)",
+          "oklch(0.950 0.0038 268.4)"
+        ]
+      },
+      "rail": {
+        "role": "primary",
+        "displayName": "rail",
+        "canonical": "#173e8f",
+        "tonalRamp": [
+          "oklch(0.150 0.0392 262.5)",
+          "oklch(0.265 0.0770 262.5)",
+          "oklch(0.380 0.1092 262.5)",
+          "oklch(0.495 0.1330 262.5)",
+          "oklch(0.610 0.1400 262.5)",
+          "oklch(0.725 0.1190 262.5)",
+          "oklch(0.840 0.0770 262.5)",
+          "oklch(0.950 0.0252 262.5)"
+        ]
+      },
+      "rail-ink": {
+        "role": "primary",
+        "displayName": "rail-ink",
+        "canonical": "#e8efff",
+        "tonalRamp": [
+          "oklch(0.150 0.0064 266.9)",
+          "oklch(0.265 0.0126 266.9)",
+          "oklch(0.380 0.0178 266.9)",
+          "oklch(0.495 0.0217 266.9)",
+          "oklch(0.610 0.0228 266.9)",
+          "oklch(0.725 0.0194 266.9)",
+          "oklch(0.840 0.0126 266.9)",
+          "oklch(0.950 0.0041 266.9)"
+        ]
+      },
+      "success": {
+        "role": "secondary",
+        "displayName": "success",
+        "canonical": "#167556",
+        "tonalRamp": [
+          "oklch(0.150 0.0274 165.4)",
+          "oklch(0.265 0.0539 165.4)",
+          "oklch(0.380 0.0764 165.4)",
+          "oklch(0.495 0.0930 165.4)",
+          "oklch(0.610 0.0979 165.4)",
+          "oklch(0.725 0.0832 165.4)",
+          "oklch(0.840 0.0539 165.4)",
+          "oklch(0.950 0.0176 165.4)"
+        ]
+      },
+      "warning": {
+        "role": "secondary",
+        "displayName": "warning",
+        "canonical": "#94600c",
+        "tonalRamp": [
+          "oklch(0.150 0.0310 71.3)",
+          "oklch(0.265 0.0609 71.3)",
+          "oklch(0.380 0.0863 71.3)",
+          "oklch(0.495 0.1051 71.3)",
+          "oklch(0.610 0.1107 71.3)",
+          "oklch(0.725 0.0941 71.3)",
+          "oklch(0.840 0.0609 71.3)",
+          "oklch(0.950 0.0199 71.3)"
+        ]
+      },
+      "danger": {
+        "role": "secondary",
+        "displayName": "danger",
+        "canonical": "#bd4147",
+        "tonalRamp": [
+          "oklch(0.150 0.0392 21.3)",
+          "oklch(0.265 0.0770 21.3)",
+          "oklch(0.380 0.1092 21.3)",
+          "oklch(0.495 0.1330 21.3)",
+          "oklch(0.610 0.1400 21.3)",
+          "oklch(0.725 0.1190 21.3)",
+          "oklch(0.840 0.0770 21.3)",
+          "oklch(0.950 0.0252 21.3)"
+        ]
+      },
+      "success-soft": {
+        "role": "secondary",
+        "displayName": "success-soft",
+        "canonical": "#e9f5ef",
+        "tonalRamp": [
+          "oklch(0.150 0.0042 164.7)",
+          "oklch(0.265 0.0082 164.7)",
+          "oklch(0.380 0.0117 164.7)",
+          "oklch(0.495 0.0142 164.7)",
+          "oklch(0.610 0.0149 164.7)",
+          "oklch(0.725 0.0127 164.7)",
+          "oklch(0.840 0.0082 164.7)",
+          "oklch(0.950 0.0027 164.7)"
+        ]
+      },
+      "warning-soft": {
+        "role": "secondary",
+        "displayName": "warning-soft",
+        "canonical": "#fff5df",
+        "tonalRamp": [
+          "oklch(0.150 0.0086 86.5)",
+          "oklch(0.265 0.0169 86.5)",
+          "oklch(0.380 0.0240 86.5)",
+          "oklch(0.495 0.0292 86.5)",
+          "oklch(0.610 0.0308 86.5)",
+          "oklch(0.725 0.0262 86.5)",
+          "oklch(0.840 0.0169 86.5)",
+          "oklch(0.950 0.0055 86.5)"
+        ]
+      },
+      "danger-soft": {
+        "role": "secondary",
+        "displayName": "danger-soft",
+        "canonical": "#fff0f0",
+        "tonalRamp": [
+          "oklch(0.150 0.0045 17.4)",
+          "oklch(0.265 0.0089 17.4)",
+          "oklch(0.380 0.0127 17.4)",
+          "oklch(0.495 0.0154 17.4)",
+          "oklch(0.610 0.0162 17.4)",
+          "oklch(0.725 0.0138 17.4)",
+          "oklch(0.840 0.0089 17.4)",
+          "oklch(0.950 0.0029 17.4)"
+        ]
+      },
+      "primary-ink": {
+        "role": "primary",
+        "displayName": "primary-ink",
+        "canonical": "#fff",
+        "tonalRamp": [
+          "oklch(0.150 0.0000 89.9)",
+          "oklch(0.265 0.0000 89.9)",
+          "oklch(0.380 0.0000 89.9)",
+          "oklch(0.495 0.0000 89.9)",
+          "oklch(0.610 0.0000 89.9)",
+          "oklch(0.725 0.0000 89.9)",
+          "oklch(0.840 0.0000 89.9)",
+          "oklch(0.950 0.0000 89.9)"
+        ]
+      },
+      "dark-bg": {
+        "role": "neutral",
+        "displayName": "dark-bg",
+        "canonical": "#111c2d",
+        "tonalRamp": [
+          "oklch(0.150 0.0104 258.8)",
+          "oklch(0.265 0.0203 258.8)",
+          "oklch(0.380 0.0288 258.8)",
+          "oklch(0.495 0.0351 258.8)",
+          "oklch(0.610 0.0370 258.8)",
+          "oklch(0.725 0.0314 258.8)",
+          "oklch(0.840 0.0203 258.8)",
+          "oklch(0.950 0.0067 258.8)"
+        ]
+      },
+      "dark-surface": {
+        "role": "neutral",
+        "displayName": "dark-surface",
+        "canonical": "#1a283c",
+        "tonalRamp": [
+          "oklch(0.150 0.0118 257.3)",
+          "oklch(0.265 0.0231 257.3)",
+          "oklch(0.380 0.0328 257.3)",
+          "oklch(0.495 0.0399 257.3)",
+          "oklch(0.610 0.0420 257.3)",
+          "oklch(0.725 0.0357 257.3)",
+          "oklch(0.840 0.0231 257.3)",
+          "oklch(0.950 0.0076 257.3)"
+        ]
+      },
+      "dark-surface-2": {
+        "role": "neutral",
+        "displayName": "dark-surface-2",
+        "canonical": "#203148",
+        "tonalRamp": [
+          "oklch(0.150 0.0133 256.2)",
+          "oklch(0.265 0.0261 256.2)",
+          "oklch(0.380 0.0370 256.2)",
+          "oklch(0.495 0.0450 256.2)",
+          "oklch(0.610 0.0474 256.2)",
+          "oklch(0.725 0.0403 256.2)",
+          "oklch(0.840 0.0261 256.2)",
+          "oklch(0.950 0.0085 256.2)"
+        ]
+      },
+      "dark-ink": {
+        "role": "neutral",
+        "displayName": "dark-ink",
+        "canonical": "#e7edf7",
+        "tonalRamp": [
+          "oklch(0.150 0.0042 260.7)",
+          "oklch(0.265 0.0082 260.7)",
+          "oklch(0.380 0.0117 260.7)",
+          "oklch(0.495 0.0142 260.7)",
+          "oklch(0.610 0.0149 260.7)",
+          "oklch(0.725 0.0127 260.7)",
+          "oklch(0.840 0.0082 260.7)",
+          "oklch(0.950 0.0027 260.7)"
+        ]
+      },
+      "dark-muted": {
+        "role": "neutral",
+        "displayName": "dark-muted",
+        "canonical": "#b3c2d6",
+        "tonalRamp": [
+          "oklch(0.150 0.0092 255.6)",
+          "oklch(0.265 0.0180 255.6)",
+          "oklch(0.380 0.0255 255.6)",
+          "oklch(0.495 0.0311 255.6)",
+          "oklch(0.610 0.0327 255.6)",
+          "oklch(0.725 0.0278 255.6)",
+          "oklch(0.840 0.0180 255.6)",
+          "oklch(0.950 0.0059 255.6)"
+        ]
+      },
+      "dark-line": {
+        "role": "neutral",
+        "displayName": "dark-line",
+        "canonical": "#35475e",
+        "tonalRamp": [
+          "oklch(0.150 0.0127 254.8)",
+          "oklch(0.265 0.0250 254.8)",
+          "oklch(0.380 0.0355 254.8)",
+          "oklch(0.495 0.0432 254.8)",
+          "oklch(0.610 0.0455 254.8)",
+          "oklch(0.725 0.0387 254.8)",
+          "oklch(0.840 0.0250 254.8)",
+          "oklch(0.950 0.0082 254.8)"
+        ]
+      },
+      "dark-line-strong": {
+        "role": "neutral",
+        "displayName": "dark-line-strong",
+        "canonical": "#536b89",
+        "tonalRamp": [
+          "oklch(0.150 0.0156 254.3)",
+          "oklch(0.265 0.0306 254.3)",
+          "oklch(0.380 0.0434 254.3)",
+          "oklch(0.495 0.0529 254.3)",
+          "oklch(0.610 0.0556 254.3)",
+          "oklch(0.725 0.0473 254.3)",
+          "oklch(0.840 0.0306 254.3)",
+          "oklch(0.950 0.0100 254.3)"
+        ]
+      },
+      "dark-accent": {
+        "role": "primary",
+        "displayName": "dark-accent",
+        "canonical": "#87a6ff",
+        "tonalRamp": [
+          "oklch(0.150 0.0375 268.4)",
+          "oklch(0.265 0.0736 268.4)",
+          "oklch(0.380 0.1044 268.4)",
+          "oklch(0.495 0.1272 268.4)",
+          "oklch(0.610 0.1339 268.4)",
+          "oklch(0.725 0.1138 268.4)",
+          "oklch(0.840 0.0736 268.4)",
+          "oklch(0.950 0.0241 268.4)"
+        ]
+      },
+      "dark-accent-hover": {
+        "role": "primary",
+        "displayName": "dark-accent-hover",
+        "canonical": "#a3baff",
+        "tonalRamp": [
+          "oklch(0.150 0.0285 269.8)",
+          "oklch(0.265 0.0559 269.8)",
+          "oklch(0.380 0.0793 269.8)",
+          "oklch(0.495 0.0966 269.8)",
+          "oklch(0.610 0.1017 269.8)",
+          "oklch(0.725 0.0864 269.8)",
+          "oklch(0.840 0.0559 269.8)",
+          "oklch(0.950 0.0183 269.8)"
+        ]
+      },
+      "dark-accent-soft": {
+        "role": "primary",
+        "displayName": "dark-accent-soft",
+        "canonical": "#293d65",
+        "tonalRamp": [
+          "oklch(0.150 0.0207 263.1)",
+          "oklch(0.265 0.0407 263.1)",
+          "oklch(0.380 0.0578 263.1)",
+          "oklch(0.495 0.0704 263.1)",
+          "oklch(0.610 0.0741 263.1)",
+          "oklch(0.725 0.0630 263.1)",
+          "oklch(0.840 0.0407 263.1)",
+          "oklch(0.950 0.0133 263.1)"
+        ]
+      },
+      "dark-rail": {
+        "role": "primary",
+        "displayName": "dark-rail",
+        "canonical": "#0b2149",
+        "tonalRamp": [
+          "oklch(0.150 0.0223 261.2)",
+          "oklch(0.265 0.0439 261.2)",
+          "oklch(0.380 0.0622 261.2)",
+          "oklch(0.495 0.0758 261.2)",
+          "oklch(0.610 0.0798 261.2)",
+          "oklch(0.725 0.0678 261.2)",
+          "oklch(0.840 0.0439 261.2)",
+          "oklch(0.950 0.0144 261.2)"
+        ]
+      },
+      "dark-success": {
+        "role": "secondary",
+        "displayName": "dark-success",
+        "canonical": "#74d2ac",
+        "tonalRamp": [
+          "oklch(0.150 0.0297 165.6)",
+          "oklch(0.265 0.0583 165.6)",
+          "oklch(0.380 0.0827 165.6)",
+          "oklch(0.495 0.1008 165.6)",
+          "oklch(0.610 0.1061 165.6)",
+          "oklch(0.725 0.0902 165.6)",
+          "oklch(0.840 0.0583 165.6)",
+          "oklch(0.950 0.0191 165.6)"
+        ]
+      },
+      "dark-warning": {
+        "role": "secondary",
+        "displayName": "dark-warning",
+        "canonical": "#e8bc6a",
+        "tonalRamp": [
+          "oklch(0.150 0.0315 81.7)",
+          "oklch(0.265 0.0619 81.7)",
+          "oklch(0.380 0.0878 81.7)",
+          "oklch(0.495 0.1069 81.7)",
+          "oklch(0.610 0.1126 81.7)",
+          "oklch(0.725 0.0957 81.7)",
+          "oklch(0.840 0.0619 81.7)",
+          "oklch(0.950 0.0203 81.7)"
+        ]
+      },
+      "dark-danger": {
+        "role": "secondary",
+        "displayName": "dark-danger",
+        "canonical": "#ff9da3",
+        "tonalRamp": [
+          "oklch(0.150 0.0328 16.1)",
+          "oklch(0.265 0.0644 16.1)",
+          "oklch(0.380 0.0914 16.1)",
+          "oklch(0.495 0.1113 16.1)",
+          "oklch(0.610 0.1172 16.1)",
+          "oklch(0.725 0.0996 16.1)",
+          "oklch(0.840 0.0644 16.1)",
+          "oklch(0.950 0.0211 16.1)"
+        ]
+      },
+      "dark-success-soft": {
+        "role": "secondary",
+        "displayName": "dark-success-soft",
+        "canonical": "#193b35",
+        "tonalRamp": [
+          "oklch(0.150 0.0116 180.6)",
+          "oklch(0.265 0.0227 180.6)",
+          "oklch(0.380 0.0322 180.6)",
+          "oklch(0.495 0.0393 180.6)",
+          "oklch(0.610 0.0413 180.6)",
+          "oklch(0.725 0.0351 180.6)",
+          "oklch(0.840 0.0227 180.6)",
+          "oklch(0.950 0.0074 180.6)"
+        ]
+      },
+      "dark-warning-soft": {
+        "role": "secondary",
+        "displayName": "dark-warning-soft",
+        "canonical": "#3e3423",
+        "tonalRamp": [
+          "oklch(0.150 0.0088 80.5)",
+          "oklch(0.265 0.0172 80.5)",
+          "oklch(0.380 0.0244 80.5)",
+          "oklch(0.495 0.0297 80.5)",
+          "oklch(0.610 0.0313 80.5)",
+          "oklch(0.725 0.0266 80.5)",
+          "oklch(0.840 0.0172 80.5)",
+          "oklch(0.950 0.0056 80.5)"
+        ]
+      },
+      "dark-danger-soft": {
+        "role": "secondary",
+        "displayName": "dark-danger-soft",
+        "canonical": "#442b39",
+        "tonalRamp": [
+          "oklch(0.150 0.0120 345.1)",
+          "oklch(0.265 0.0236 345.1)",
+          "oklch(0.380 0.0335 345.1)",
+          "oklch(0.495 0.0408 345.1)",
+          "oklch(0.610 0.0430 345.1)",
+          "oklch(0.725 0.0365 345.1)",
+          "oklch(0.840 0.0236 345.1)",
+          "oklch(0.950 0.0077 345.1)"
+        ]
+      },
+      "dark-primary-ink": {
+        "role": "primary",
+        "displayName": "dark-primary-ink",
+        "canonical": "#102145",
+        "tonalRamp": [
+          "oklch(0.150 0.0200 263.2)",
+          "oklch(0.265 0.0393 263.2)",
+          "oklch(0.380 0.0557 263.2)",
+          "oklch(0.495 0.0679 263.2)",
+          "oklch(0.610 0.0714 263.2)",
+          "oklch(0.725 0.0607 263.2)",
+          "oklch(0.840 0.0393 263.2)",
+          "oklch(0.950 0.0129 263.2)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "headline",
+        "purpose": "应用页面标题。"
+      },
+      "production-title": {
+        "displayName": "production-title",
+        "purpose": "生产上下文的实体标题。"
+      },
+      "section-title": {
+        "displayName": "section-title",
+        "purpose": "工作分区标题。"
+      },
+      "title": {
+        "displayName": "title",
+        "purpose": "任务容器标题。"
+      },
+      "body": {
+        "displayName": "body",
+        "purpose": "默认正文。"
+      },
+      "control": {
+        "displayName": "control",
+        "purpose": "按钮、输入与选择器。"
+      },
+      "hint": {
+        "displayName": "hint",
+        "purpose": "必要辅助说明与审核元数据。"
+      }
+    },
+    "shadows": [
+      {
+        "name": "overlay",
+        "value": "0 18px 50px #0002",
+        "purpose": "通用模态框和 Owner 菜单。"
+      },
+      {
+        "name": "configuration-dialog",
+        "value": "0 18px 48px rgb(12 29 57 / .2)",
+        "purpose": "阶段配置弹窗。"
+      }
+    ],
+    "motion": [
+      {
+        "name": "button-color",
+        "value": "background-color .15s, color .15s, border-color .15s",
+        "purpose": "按钮状态过渡；减少动态效果时关闭。"
+      },
+      {
+        "name": "reduced-motion",
+        "value": "@media (prefers-reduced-motion: reduce) { animation: none; transition: none; scroll-behavior: auto; }",
+        "purpose": "尊重减少动态效果偏好。"
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "configuration-fields",
+        "value": "600px"
+      },
+      {
+        "name": "content-small",
+        "value": "640px"
+      },
+      {
+        "name": "production-single-column",
+        "value": "700px"
+      },
+      {
+        "name": "configuration-stack",
+        "value": "820px"
+      },
+      {
+        "name": "compact-navigation-login",
+        "value": "900px"
+      },
+      {
+        "name": "production-inspector-below",
+        "value": "1100px"
+      },
+      {
+        "name": "configuration-medium",
+        "value": "1180px"
+      },
+      {
+        "name": "work-queue-below",
+        "value": "1250px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Button / primary",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "原生 sm 动作按钮的静态外观；主按钮文字与图标共用语义墨色。",
+      "html": "<button class=\"ds-button-primary\" type=\"button\">批准</button>",
+      "css": ".ds-button-primary{font-family:var(--font-body,-apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif);font-size:13px;border-radius:7px;padding:8px 12px;font-weight:600;line-height:20px;cursor:pointer;transition:background-color .15s,color .15s,border-color .15s;background:var(--lc-accent,#365fe0);color:var(--lc-primary-ink,#fff);border:1px solid transparent}.ds-button-primary:hover{background:var(--lc-accent-hover,#254fc9)}.ds-button-primary:focus-visible{outline:2px solid var(--lc-accent,#365fe0);outline-offset:3px;}.ds-button-primary:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-button-primary{transition:none}}"
+    },
+    {
+      "name": "Button / secondary",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "原生 sm 动作按钮的静态外观；主按钮文字与图标共用语义墨色。",
+      "html": "<button class=\"ds-button-secondary\" type=\"button\">返回工作区</button>",
+      "css": ".ds-button-secondary{font-family:var(--font-body,-apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif);font-size:13px;border-radius:7px;padding:8px 12px;font-weight:600;line-height:20px;cursor:pointer;transition:background-color .15s,color .15s,border-color .15s;background:var(--lc-surface,#fff);color:var(--lc-ink,#17263e);border:1px solid var(--lc-line-strong,#bdcadd)}.ds-button-secondary:hover{background:var(--lc-surface-2,#f7f9fc)}.ds-button-secondary:focus-visible{outline:2px solid var(--lc-accent,#365fe0);outline-offset:3px;}.ds-button-secondary:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-button-secondary{transition:none}}"
+    },
+    {
+      "name": "Button / tertiary",
+      "kind": "button",
+      "refersTo": "button-tertiary",
+      "description": "原生 sm 动作按钮的静态外观；主按钮文字与图标共用语义墨色。",
+      "html": "<button class=\"ds-button-tertiary\" type=\"button\">查看详情</button>",
+      "css": ".ds-button-tertiary{font-family:var(--font-body,-apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif);font-size:13px;border-radius:7px;padding:8px 12px;font-weight:600;line-height:20px;cursor:pointer;transition:background-color .15s,color .15s,border-color .15s;background:transparent;color:var(--lc-muted,#596b83);border:1px solid transparent}.ds-button-tertiary:hover{background:var(--lc-surface-2,#f7f9fc)}.ds-button-tertiary:focus-visible{outline:2px solid var(--lc-accent,#365fe0);outline-offset:3px;}.ds-button-tertiary:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-button-tertiary{transition:none}}"
+    },
+    {
+      "name": "Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "有标签的紧凑字段，保留焦点与禁用反馈。",
+      "html": "<label class=\"ds-field\">邮箱<input class=\"ds-input\" type=\"email\" autocomplete=\"off\"></label>",
+      "css": ".ds-field{font-family:var(--font-body,-apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif);font-size:13px;display:grid;gap:7px;color:var(--lc-ink,#17263e);max-width:360px}.ds-input{font-family:var(--font-body,-apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif);font-size:13px;border:1px solid var(--lc-line-strong,#bdcadd);border-radius:7px;background:var(--lc-surface,#fff);color:var(--lc-ink,#17263e);padding:8px 12px;line-height:20px}.ds-input:focus-visible{outline:2px solid var(--lc-accent,#365fe0);outline-offset:3px;}.ds-input:disabled{opacity:.5}"
+    },
+    {
+      "name": "Navigation",
+      "kind": "nav",
+      "refersTo": "navigation",
+      "description": "固定钴蓝侧栏中的活动与普通入口。",
+      "html": "<nav class=\"ds-nav\" aria-label=\"主导航\"><button class=\"ds-nav-item ds-nav-active\" aria-current=\"page\">工作台</button><button class=\"ds-nav-item\">生产单</button><button class=\"ds-nav-item\">待审核</button></nav>",
+      "css": ".ds-nav{display:grid;gap:5px;background:var(--lc-rail,#173e8f);padding:14px;width:172px}.ds-nav-item{font-family:var(--font-body,-apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif);font-size:13px;border:0;border-radius:7px;min-height:40px;padding:10px 12px;text-align:left;background:transparent;color:var(--lc-rail-ink,#e8efff);cursor:pointer}.ds-nav-item:hover{background:#ffffff14}.ds-nav-item.ds-nav-active{background:#ffffff21;color:#fff;font-weight:600}.ds-nav-item:focus-visible{outline:2px solid var(--lc-rail-ink,#e8efff);outline-offset:2px}"
+    },
+    {
+      "name": "Pending status",
+      "kind": "chip",
+      "refersTo": "status-pending",
+      "description": "真实待审核状态的文字与底色。",
+      "html": "<span class=\"ds-status\" role=\"status\">待审核</span>",
+      "css": ".ds-status{font-family:var(--font-body,-apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif);font-size:13px;display:inline-block;font-size:11px;border-radius:5px;padding:3px 7px;background:var(--lc-warning-soft,#fff5df);color:var(--lc-warning,#94600c);font-variant-numeric:tabular-nums}"
+    },
+    {
+      "name": "Task surface",
+      "kind": "card",
+      "refersTo": "task-surface",
+      "description": "生产上下文中带边界的平面任务容器。",
+      "html": "<section class=\"ds-task\"><h3 class=\"ds-task-title\">本期配置</h3><dl class=\"ds-task-facts\"><dt>蓝图版本</dt><dd>v1</dd><dt>审核修订</dt><dd>v2</dd></dl></section>",
+      "css": ".ds-task{font-family:var(--font-body,-apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif);font-size:13px;max-width:300px;padding:20px;background:var(--lc-surface,#fff);color:var(--lc-ink,#17263e);border:1px solid var(--lc-line,#d8e1ee);border-radius:12px}.ds-task-title{font-size:14px;font-weight:650;margin:0 0 15px}.ds-task-facts{display:grid;grid-template-columns:1fr auto;gap:13px;font-size:12px;margin:0;font-variant-numeric:tabular-nums}.ds-task-facts dt{color:var(--lc-muted,#596b83)}.ds-task-facts dd{margin:0}"
+    },
+    {
+      "name": "Continuous phase track",
+      "kind": "custom",
+      "refersTo": "phase-track",
+      "description": "当前处于真实待决阶段的七段只读轨迹外观。",
+      "html": "<ol class=\"ds-track\" aria-label=\"生产阶段\"><li class=\"ds-phase ds-past\"><span class=\"ds-node\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"m5 12 4 4L19 6\"/></svg></span><strong>输入与脚本</strong></li><li class=\"ds-phase ds-past\"><span class=\"ds-node\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"m5 12 4 4L19 6\"/></svg></span><strong>视觉准备</strong></li><li class=\"ds-phase ds-past\"><span class=\"ds-node\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"m5 12 4 4L19 6\"/></svg></span><strong>分镜审核</strong></li><li class=\"ds-phase ds-past\"><span class=\"ds-node\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"m5 12 4 4L19 6\"/></svg></span><strong>逐镜头制作</strong></li><li class=\"ds-phase ds-past\"><span class=\"ds-node\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"m5 12 4 4L19 6\"/></svg></span><strong>预渲染审核</strong></li><li class=\"ds-phase ds-current\" aria-current=\"step\"><span class=\"ds-node\">6</span><strong>合成与 QC</strong></li><li class=\"ds-phase\"><span class=\"ds-node\">7</span><strong>交付</strong></li></ol>",
+      "css": ".ds-track{font-family:var(--font-body,-apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif);font-size:13px;display:flex;gap:0;list-style:none;padding:0;margin:0;overflow-x:auto;background:var(--lc-bg,#eef2f8)}.ds-phase{position:relative;display:grid;justify-items:center;gap:9px;flex:1;min-width:max-content;padding:12px 10px 14px;font-size:12px;color:var(--lc-muted,#596b83)}.ds-phase:not(:last-child)::after{content:\"\";position:absolute;top:22px;left:calc(50% + 15px);width:calc(100% - 30px);height:1px;background:var(--lc-line-strong,#bdcadd)}.ds-node{position:relative;z-index:1;width:21px;height:21px;border:1px solid var(--lc-line-strong,#bdcadd);border-radius:50%;display:grid;place-items:center;font-size:10px;background:var(--lc-bg,#eef2f8)}.ds-phase strong{font-weight:500}.ds-past{color:var(--lc-success,#167556)}.ds-past:not(:last-child)::after{background:var(--lc-success,#167556)}.ds-past .ds-node{border-color:var(--lc-success,#167556);background:var(--lc-success-soft,#e9f5ef)}.ds-current{color:var(--lc-warning,#94600c)}.ds-current .ds-node{background:var(--lc-warning,#94600c);border-color:var(--lc-warning,#94600c);color:var(--lc-primary-ink,#fff)}.ds-current strong{font-weight:650}"
+    },
+    {
+      "name": "Long table name",
+      "kind": "custom",
+      "refersTo": "table-name",
+      "description": "两行正文保留行高；真实应用使用 React Aria Tooltip 与原行打开处理函数。",
+      "html": "<button class=\"ds-table-name\" title=\"跨账号与系列的生产单完整名称，保留必要上下文和版本信息\"><span class=\"ds-table-text\">跨账号与系列的生产单完整名称，保留必要上下文和版本信息</span></button>",
+      "css": ".ds-table-name{font-family:var(--font-body,-apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif);font-size:13px;display:block;max-width:240px;width:100%;padding:0;border:0;border-radius:2px;background:transparent;color:var(--lc-ink,#17263e);text-align:left;font-weight:600;cursor:pointer}.ds-table-text{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere;line-height:1.5;max-height:3em}.ds-table-name:hover{background:var(--lc-accent-soft,#eaf0ff)}.ds-table-name:focus-visible{outline:2px solid var(--lc-accent,#365fe0);outline-offset:3px;}"
+    },
+    {
+      "name": "Button / primary dark",
+      "kind": "button",
+      "refersTo": "button-primary-dark",
+      "description": "深色主题主按钮：语义文字墨色与图标一致。",
+      "html": "<div class=\"ds-dark-surface\"><button class=\"ds-dark-button\" type=\"button\">批准</button></div>",
+      "css": ".ds-dark-surface{--lc-surface:#1a283c;--lc-accent:#87a6ff;--lc-accent-hover:#a3baff;--lc-primary-ink:#102145;background:var(--lc-surface);padding:20px}.ds-dark-button{font-family:var(--font-body,-apple-system,BlinkMacSystemFont,\"PingFang SC\",\"Microsoft YaHei\",sans-serif);font-size:13px;border-radius:7px;padding:8px 12px;font-weight:600;line-height:20px;cursor:pointer;transition:background-color .15s,color .15s,border-color .15s;background:var(--lc-accent);color:var(--lc-primary-ink);border:1px solid transparent}.ds-dark-button:hover{background:var(--lc-accent-hover)}.ds-dark-button:focus-visible{outline:2px solid var(--lc-accent);outline-offset:3px}.ds-dark-button:disabled{opacity:.5;cursor:not-allowed}@media(prefers-reduced-motion:reduce){.ds-dark-button{transition:none}}"
+    }
+  ],
+  "narrative": {
+    "northStar": "连续制作轨迹",
+    "overview": "以连续制作轨迹组织工作：冷蓝灰底色承托任务，钴蓝侧栏维持位置，白色或深蓝表面承载真实操作。界面保持紧凑，让当前生产单、下一步、审核与冻结配置处于同一上下文。\n\n桌面工作区采用系统无衬线字体、对齐列表与克制的层级。绿色表示已走过的阶段，琥珀色表示真实待决事项；蓝色负责操作、选择和当前阶段。颜色始终伴随文本、图标或语义状态。",
+    "keyCharacteristics": [
+      "冷蓝灰工作底色与固定钴蓝导航。",
+      "紧凑控件、对齐列表、完整生产上下文。",
+      "连续阶段轨迹连接当前任务、审核与交付。",
+      "浅色与深色共用语义角色；焦点和窄窗行为可用。"
+    ],
+    "rules": [
+      {
+        "name": "Semantic Theme",
+        "body": "主题切换通过语义变量与采用控件的别名完成；主按钮文字和图标一并使用 primary-ink。",
+        "section": "colors"
+      },
+      {
+        "name": "Status Has Meaning",
+        "body": "阶段颜色来自真实阶段与待决状态，不能用装饰色暗示已完成、待审核或拥有操作权限。",
+        "section": "colors"
+      },
+      {
+        "name": "Flat Task Surface",
+        "body": "常规任务表面以底色、边界与留白分层；阴影用于浮层，不用悬浮感区分普通任务的重要性。",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do 沿用语义主题变量，并检查主按钮文字与图标在两个主题下的可读性。",
+      "Do 保持列表与生产详情的返回上下文；长名称用两行截断和可聚焦 Tooltip 展示全文。",
+      "Do 让阶段轨迹、审核状态与实际 API 数据一致，保留当前阶段的语义标记。",
+      "Do 为窄窗折叠导航、堆叠面板和表单；保留可访问名称、必要错误与可见焦点。",
+      "Do 优先使用已有 React Aria 控件、真实处理函数与注册的配置目录。"
+    ],
+    "donts": [
+      "Don't 把阶段轨迹做成可以绕过业务审核的可点击步骤。",
+      "Don't 把原型的模拟媒体、假凭据、假导出或虚构列表带入原生运行时。",
+      "Don't 给正常任务容器叠加阴影、重复卡片和无关统计，削弱当前操作的层级。",
+      "Don't 为缩短界面隐藏字段标签、审批理由、阻塞错误或历史只读状态。",
+      "Don't 把设计文档和视觉截图当作全部业务集成测试已通过的证据。"
+    ]
+  }
+}

@@ -1,0 +1,63 @@
+--- before/src/publishing/ProductionCompletionModal.tsx
++++ src/publishing/ProductionCompletionModal.tsx
+@@ -1,12 +1,13 @@
++import {ProductionNodeSurface,ProductionNodePreview} from '../episodes/ProductionNodeLayout';
+ import {ModalOverlay,Modal,Dialog} from '../ui/dan-ui/components/application/modals/modal';
+ import {XClose} from '@untitledui/icons';
+ import {Disclosure} from '../ui/dan-ui/components/base/disclosure/disclosure';
+ import {TextAreaBase} from '../ui/dan-ui/components/base/textarea/textarea';
+ import {InputBase} from '../ui/dan-ui/components/base/input/input';
+ import {Button} from '../ui/dan-ui/components/base/buttons/button';
+-import { useEffect, useState } from "react";
++import { useEffect, useRef, useState } from "react";
+ import type { FormEvent } from "react";
+-import { Upload } from "lucide-react";
++import { Expand,Upload } from "lucide-react";
+ import type { Database } from "../lib/database.types";
+ import { artifactPreviewKind, localArtifactUrl, useLocalArtifactBlob, useLocalArtifactText } from "../reviews/localArtifactPreview";
+ import { useDialogFocus } from "../ui/useDialogFocus";
+@@ -22,8 +23,8 @@
+   publish_package: "发布包",
+ };
+ 
+-export function ProductionCompletionModal({ artifacts, episode, isPreparationPending, onClose, onOpenArtifact, onPrepare, publishVerification }: { artifacts: Artifact[]; episode: Episode; isPreparationPending: boolean; onClose: () => void; onOpenArtifact: (artifact: Artifact) => Promise<void>; onPrepare: (input: { cover: File; description: string; tags: string[]; title: string }) => Promise<boolean>; publishVerification: boolean }) {
+-  const dialogRef = useDialogFocus(true, onClose);
++export function ProductionCompletionModal({ inline=false,isReadOnly=false,artifacts, episode, isPreparationPending, onClose, onOpenArtifact, onPrepare, publishVerification }: { inline?:boolean;isReadOnly?:boolean;artifacts: Artifact[]; episode: Episode; isPreparationPending: boolean; onClose: () => void; onOpenArtifact: (artifact: Artifact) => Promise<void>; onPrepare: (input: { cover: File; description: string; tags: string[]; title: string }) => Promise<boolean>; publishVerification: boolean }) {
++  const dialogRef = useDialogFocus(!inline, onClose);
+   const episodeArtifacts = artifacts.filter((artifact) => artifact.episode_id === episode.id);
+   const metadataArtifact = episodeArtifacts.find((artifact) => artifact.artifact_type === "metadata") ?? null;
+   const coverArtifact = episodeArtifacts.find((artifact) => artifact.artifact_type === "cover") ?? null;
+@@ -46,18 +47,22 @@
+     return () => { if (reader.readyState === FileReader.LOADING) reader.abort(); };
+   }, [cover]);
+ 
++  const preparationLock=useRef(false);
+   async function prepare(event: FormEvent<HTMLFormElement>) {
+     event.preventDefault();
++    if(isReadOnly||isPreparationPending||preparationLock.current)return;preparationLock.current=true;
+     try {
+       setPreparationError("");
+       if (!cover) throw new Error("请选择封面。");
+       if (!(["image/jpeg", "image/png", "image/webp"].includes(cover.type) || /\.(jpe?g|png|webp)$/i.test(cover.name))) throw new Error("封面仅支持 JPG、PNG 或 WebP。");
+       if (cover.size > 20 * 1024 * 1024) throw new Error("封面不能超过 20 MB。");
+-      await onPrepare({ cover, description: publishDescription, tags: publishTags.split(/[，,\n]+/).map((tag) => tag.trim()).filter(Boolean), title: publishTitle.trim() });
++      if(!await onPrepare({ cover, description: publishDescription, tags: publishTags.split(/[，,\n]+/).map((tag) => tag.trim()).filter(Boolean), title: publishTitle.trim() }))throw new Error("发布包尚未生成，请检查错误后重试。");
+     } catch (error) {
+       setPreparationError(error instanceof Error ? error.message : "无法生成发布包。");
+-    }
++    }finally{preparationLock.current=false;}
+   }
++
++  if(inline)return <ProductionNodeSurface className="production-node-delivery" preview={<ProductionNodePreview title="交付预览" version={isPublishPackageReady?'已生成':'待交付'}><div className="production-delivery-media"><PublishVisualMaterialCard artifact={videoArtifact} label="视频" onOpenArtifact={onOpenArtifact}/>{coverPreview?<article className="publish-visual-material-card"><header><h4>封面草稿</h4></header><img className="production-delivery-cover-draft" alt="封面草稿预览" src={coverPreview}/></article>:<PublishVisualMaterialCard artifact={coverArtifact} label="封面" onOpenArtifact={onOpenArtifact}/>}</div>{isPublishPackageReady?<PublishMetadataSummary artifact={metadataArtifact} onOpenArtifact={onOpenArtifact}/>:<div className="production-delivery-metadata"><h3>{publishTitle||'尚未填写标题'}</h3>{publishDescription&&<p>{publishDescription}</p>}<dl><div><dt>标签</dt><dd>{publishTags||'尚未填写'}</dd></div><div><dt>交付状态</dt><dd>{isReadOnly?'流程尚未到达交付':'待生成并校验发布包'}</dd></div></dl></div>}</ProductionNodePreview>} actions={<><section className="production-node-section"><h4>交付文件</h4><ul className="production-delivery-files">{[videoArtifact,coverArtifact,metadataArtifact,...extraArtifacts].filter((a):a is Artifact=>Boolean(a)).map(a=><li key={a.id}><button type="button" onClick={()=>void onOpenArtifact(a)}>{artifactLabels[a.artifact_type]??a.artifact_type}</button><span>{artifactName(a.relative_path)}</span></li>)}</ul>{!episodeArtifacts.some(a=>['final_render','cover','metadata','publish_package'].includes(a.artifact_type))&&<p className="muted-copy">交付文件尚未生成。</p>}</section>{!isPublishPackageReady?<form className="production-node-section production-delivery-form" onSubmit={event=>void prepare(event)}><fieldset disabled={isReadOnly||isPreparationPending}><label>发布标题<InputBase size="sm" aria-label="发布标题" maxLength={200} onChange={event=>setPublishTitle(event.target.value)} isRequired value={publishTitle}/></label><label>简介<TextAreaBase size="sm" aria-label="发布简介" maxLength={5000} rows={3} onChange={event=>setPublishDescription(event.target.value)} value={publishDescription}/></label><label>标签<InputBase size="sm" aria-label="发布标签" onChange={event=>setPublishTags(event.target.value)} placeholder="用逗号分隔" value={publishTags}/></label><label className="material-unified-upload"><input accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" aria-label="选择封面" className="material-slot-input" onChange={event=>setCover(event.target.files?.[0]??null)} required type="file"/><Upload size={18}/><span>选择封面<small>JPG、PNG、WebP · 最大 20 MB</small></span></label>{preparationError&&<p role="alert" className="form-error">{preparationError}</p>}<Button size="sm" color="primary" type="submit" isDisabled={isReadOnly||isPreparationPending||!cover||!publishTitle.trim()}>{isPreparationPending?'正在生成…':'生成发布包并完成生产'}</Button></fieldset></form>:<p className="production-node-readonly">{publishVerification?'发布包校验通过，生产已完成。':'发布包已生成，等待校验。'}</p>}{isReadOnly&&<p className="production-node-readonly">可以回看资料；流程到达后开放交付操作。</p>}</>}/>;
+ 
+   return <div aria-label="完成生产" aria-modal="true" className="modal-backdrop publish-modal-backdrop" ref={dialogRef} role="dialog">
+     <section className="modal-card publish-modal-card lc-delivery-workspace">
+@@ -99,7 +104,7 @@
+   if (error) return <div aria-label={`${label}预览`} className="publish-material-preview"><span className="publish-material-preview-error">{error}</span></div>;
+   if (!url) return <div aria-label={`${label}预览`} className="publish-material-preview"><span>正在加载预览…</span></div>;
+   const media = kind === "image" ? <img alt={`${label}预览`} src={url} /> : kind === "video" ? <video aria-label={`${label}预览`} controls preload="metadata" src={url} /> : <audio aria-label={`${label}预览`} controls preload="metadata" src={url} />;
+-  return <><figure className="publish-material-preview"><div>{media}</div><Button size="sm" color="tertiary" aria-label={`放大查看${label}`} className="publish-material-zoom" onClick={() => setIsExpanded(true)} type="button">放大查看</Button></figure>{isExpanded ? <ModalOverlay isOpen isDismissable onOpenChange={setIsExpanded} className="dan-ui product-ui artifact-lightbox-overlay"><Modal className="artifact-lightbox-modal"><Dialog aria-label={`${label}放大预览`} className="artifact-lightbox-content"><Button autoFocus size="sm" color="tertiary" aria-label={`关闭${label}放大预览`} className="publish-material-lightbox-close" onPress={() => setIsExpanded(false)} type="button">关闭</Button>{media}</Dialog></Modal></ModalOverlay> : null}</>;
++  return <><figure className="publish-material-preview"><div>{media}</div><Button size="sm" color="tertiary" aria-label={`放大查看${label}`} className="publish-material-zoom" onClick={() => setIsExpanded(true)} type="button"><Expand size={16}/></Button></figure>{isExpanded ? <ModalOverlay isOpen isDismissable onOpenChange={setIsExpanded} className="dan-ui product-ui artifact-lightbox-overlay"><Modal className="artifact-lightbox-modal"><Dialog aria-label={`${label}放大预览`} className="artifact-lightbox-content"><Button autoFocus size="sm" color="tertiary" aria-label={`关闭${label}放大预览`} className="publish-material-lightbox-close" onPress={() => setIsExpanded(false)} type="button">关闭</Button>{media}</Dialog></Modal></ModalOverlay> : null}</>;
+ }
+ 
+ function OpenLocalArtifactButton({ artifact, onOpenArtifact }: { artifact: Artifact; onOpenArtifact: (artifact: Artifact) => Promise<void> }) {

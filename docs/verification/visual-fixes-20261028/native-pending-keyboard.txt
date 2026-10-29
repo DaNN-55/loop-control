@@ -1,0 +1,14 @@
++						504 container 新建账号
++							505 container 新建账号
++									507 标题 新建账号, Value: 2
++										508 文本 新建账号
++									509 按钮 (disabled) 关闭新建账号
++									511 文本 账号名称
++									512 文本栏 (disabled) 账号名称, Placeholder: 例如：内容工作室
++									514 文本 账号标识
++									515 文本栏 (disabled) 账号标识, Placeholder: content-studio
++									518 弹出式按钮 (disabled) 时区, Value: 中国大陆 · 上海（Asia/Shanghai）
++								520 按钮 (disabled) 取消
++								521 按钮 (disabled) 创建中…
+The focused UI element is 505 container 新建账号
+The focused UI element is 505 container 新建账号

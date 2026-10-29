@@ -1,0 +1,28 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/LocalCatalogApp.account.test.tsx (5 tests) 1600ms
+   ✓ checks the exact current blueprint through the local Owner command and displays its real blocker  396ms
+   ✓ does not show an old successful check after the saved blueprint revision changes  308ms
+   ✓ keeps the relogged-in session check when an old session check returns late  532ms
+ ✓ src/App.test.tsx (35 tests) 1860ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (7 tests) 1966ms
+   ✓ 保留安全弹窗焦点，将维护入口统一为侧栏且跨页保留连接草稿  462ms
+   ✓ cleanupPending=false: confirms the actual directory and exact title, then reports unfinished file cleanup  333ms
+   ✓ cleanupPending=true: confirms the actual directory and exact title, then reports unfinished file cleanup  368ms
+ ✓ src/local-app/ImpeccableNavigation.test.tsx (6 tests) 2125ms
+   ✓ 工作台和待审核映射到受支持的 catalog view，管理导航从不发送虚构 view  676ms
+   ✓ 超过 20 条时三组服务器分页各自推进，保留其他两组页码并显示服务器返回的第二页  418ms
+   ✓ 第二页筛选上下文在打开与关闭全页制作区后不变，底层工作区只在打开期间 inert  552ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx (13 tests) 2455ms
+   ✓ keeps a committed series save successful when its follow-up read fails  703ms
+   ✓ isolates concurrent network logout failures in older-first order from a fresh login  354ms
+ ✓ src/observability/SystemStatusPanel.test.tsx (19 tests) 675ms
+ ✓ src/local-app/LocalSystemStatus.test.tsx (4 tests) 328ms
+ ✓ src/local-app/LocalMaintenanceEmbedded.test.tsx (2 tests) 254ms
+
+ Test Files  8 passed (8)
+      Tests  91 passed (91)
+   Start at  12:16:42
+   Duration  5.43s (transform 1.02s, setup 41ms, collect 9.70s, tests 11.26s, environment 2.28s, prepare 364ms)
+

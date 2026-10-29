@@ -1,0 +1,15 @@
+{
+  "at": "2026-10-29T03:09:24.879Z",
+  "runtimePrepared": true,
+  "oldAttemptsAndPlansUnchanged": true,
+  "realHealthJob": "66898e68-2fbd-4071-bcd0-ec939a917a2e",
+  "healthyDot": "rgb(22, 117, 86)",
+  "nonHealthyDot": "rgb(189, 65, 71)",
+  "verifiedNonHealthyStates": [
+    "attention",
+    "offline",
+    "unknown"
+  ],
+  "failureUI": "isolated fixture only; no live dependency was broken",
+  "temporaryFixturesRemoved": true
+}

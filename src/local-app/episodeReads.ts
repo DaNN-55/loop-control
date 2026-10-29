@@ -6,8 +6,8 @@ import type {Pool} from 'pg';
 export async function readLocalEpisode(pool:Pool,ownerId:string,episodeId:string,known:Record<string,string>={},mediaRoot?:string){
  return ownerTransaction(pool,ownerId,true,async client=>{
   const {rows:[row]}=await client.query('SELECT public.read_episode_production($1,$2) AS result',[episodeId,known]);if(!row.result||!mediaRoot)return row.result;
-  const b=(await client.query("SELECT b.policy->>'asset_root' root FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1",[episodeId])).rows[0],roots=await readMediaDeployment(client,mediaRoot);let localAssetRoot='';try{localAssetRoot=mappedAssetPath(mediaRoot,b?.root,roots);}catch{/* No unsafe fallback to a logical source path. */}
-  const hash=createHash('sha256').update(localAssetRoot).digest('hex');return{...row.result,hashes:{...row.result.hashes,localAssetRoot:hash},sections:{...row.result.sections,...(known.localAssetRoot===hash?{}:{localAssetRoot})}};
+  const b=(await client.query("SELECT b.policy->>'asset_root' root,local_identity.is_historical_episode(e.id) historical FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1",[episodeId])).rows[0],roots=await readMediaDeployment(client,mediaRoot);let localAssetRoot='';try{localAssetRoot=mappedAssetPath(mediaRoot,b?.root,roots);}catch{/* No unsafe fallback to a logical source path. */}
+  const hash=createHash('sha256').update(localAssetRoot+String(Boolean(b?.historical))).digest('hex');return{...row.result,hashes:{...row.result.hashes,localAssetRoot:hash},sections:{...row.result.sections,...(known.localAssetRoot===hash?{}:{localAssetRoot,historicalReadOnly:Boolean(b?.historical)})}};
  });
 }
 export async function findOwnedArtifact(pool:Pool,ownerId:string,id:string){

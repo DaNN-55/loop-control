@@ -1,0 +1,23 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/platform/ConfigurationForms.local.test.tsx (4 tests) 424ms
+ ✓ src/local-app/HistoryDanUi.test.tsx (3 tests) 506ms
+ ✓ src/ui/PcVisualFixes.test.tsx (5 tests) 1243ms
+   ✓ accepts at most 200 title characters before creation and exposes the limit  764ms
+ ✓ src/connections/ConnectionDanUi.test.tsx (2 tests) 304ms
+ ✓ src/ui/DanUiInteractionGuards.test.tsx (6 tests) 334ms
+ ✓ src/ui/useDialogFocus.test.tsx (1 test) 86ms
+ ✓ src/local-app/LocalSecretAdministration.test.tsx (5 tests) 1958ms
+   ✓ reveals only after POST password verification and clears on selection/filter/visibility  646ms
+   ✓ copies through browser clipboard after verification and never renders returned plaintext  324ms
+   ✓ blocks stale reveal responses after close, filter and expired-session event  316ms
+   ✓ hides plaintext after thirty seconds and never offers control-secret reveal  589ms
+ ✓ src/accounts/AccountWorkspace.test.tsx (33 tests) 3916ms
+   ✓ 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿  875ms
+
+ Test Files  8 passed (8)
+      Tests  59 passed (59)
+   Start at  09:18:47
+   Duration  5.97s (transform 968ms, setup 40ms, collect 7.31s, tests 8.77s, environment 2.27s, prepare 337ms)
+

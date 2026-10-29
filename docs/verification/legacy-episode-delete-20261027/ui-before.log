@@ -1,0 +1,344 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/LocalCatalogApp.workspace.test.tsx (5 tests | 1 failed | 4 skipped) 1233ms
+   ↓ opens standalone OpenChatCut from the initial account page without selecting a production order
+   ↓ uses the original navigation, table and paging with local HTTP and opens the selected production drawer
+   ↓ separates login/security from maintenance, preserves drafts across tabs and restores keyboard focus
+   ↓ offers permanent deletion for an archived ordinary order and requires its exact title before sending the guarded command
+   × shows a deletion-plan failure inside the confirmation dialog instead of leaving the click without feedback 1233ms
+     → Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<form[39m
+  [33maria-label[39m=[32m"永久删除生产单"[39m
+  [33mclass[39m=[32m"modal-card modal-card-danger"[39m
+[36m>[39m
+  [36m<header>[39m
+    [36m<div>[39m
+      [36m<h2>[39m
+        [0m永久删除生产单[0m
+      [36m</h2>[39m
+      [36m<p>[39m
+        [0m此操作不可恢复，并会同时清理本地产物和数据库关联记录。[0m
+      [36m</p>[39m
+    [36m</div>[39m
+    [36m<button[39m
+      [33maria-label[39m=[32m"关闭永久删除生产单"[39m
+      [33mclass[39m=[32m"icon-button"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [36m<svg[39m
+        [33maria-hidden[39m=[32m"true"[39m
+        [33mclass[39m=[32m"lucide lucide-x icon"[39m
+        [33mfill[39m=[32m"none"[39m
+        [33mheight[39m=[32m"24"[39m
+        [33mstroke[39m=[32m"currentColor"[39m
+        [33mstroke-linecap[39m=[32m"round"[39m
+        [33mstroke-linejoin[39m=[32m"round"[39m
+        [33mstroke-width[39m=[32m"1.8"[39m
+        [33mviewBox[39m=[32m"0 0 24 24"[39m
+        [33mwidth[39m=[32m"24"[39m
+        [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+      [36m>[39m
+        [36m<path[39m
+          [33md[39m=[32m"M18 6 6 18"[39m
+        [36m/>[39m
+        [36m<path[39m
+          [33md[39m=[32m"m6 6 12 12"[39m
+        [36m/>[39m
+      [36m</svg>[39m
+    [36m</button>[39m
+  [36m</header>[39m
+  [36m<p>[39m
+    [0m本地 Episode 目录：[0m
+  [36m</p>[39m
+  [36m<code>[39m
+    [0mepisodes/20000000-0000-4000-8000-000000000001（账号资产目录未配置）[0m
+  [36m</code>[39m
+  [36m<label>[39m
+    [0m输入确认文本：[0m
+    [36m<input[39m
+      [33maria-label[39m=[32m"永久删除确认文本"[39m
+      [33mplaceholder[39m=[32m"测试"[39m
+      [33mvalue[39m=[32m"测试"[39m
+    [36m/>[39m
+  [36m</label>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"modal-actions"[39m
+  [36m>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"button button-secondary"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0m取消[0m
+    [36m</button>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"button button-danger"[39m
+      [33mtype[39m=[32m"submit"[39m
+    [36m>[39m
+      [0m确认永久删除[0m
+    [36m</button>[39m
+  [36m</div>[39m
+[36m</form>[39m
+
+Ignored nodes: comments, script, style
+[36m<form[39m
+  [33maria-label[39m=[32m"永久删除生产单"[39m
+  [33mclass[39m=[32m"modal-card modal-card-danger"[39m
+[36m>[39m
+  [36m<header>[39m
+    [36m<div>[39m
+      [36m<h2>[39m
+        [0m永久删除生产单[0m
+      [36m</h2>[39m
+      [36m<p>[39m
+        [0m此操作不可恢复，并会同时清理本地产物和数据库关联记录。[0m
+      [36m</p>[39m
+    [36m</div>[39m
+    [36m<button[39m
+      [33maria-label[39m=[32m"关闭永久删除生产单"[39m
+      [33mclass[39m=[32m"icon-button"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [36m<svg[39m
+        [33maria-hidden[39m=[32m"true"[39m
+        [33mclass[39m=[32m"lucide lucide-x icon"[39m
+        [33mfill[39m=[32m"none"[39m
+        [33mheight[39m=[32m"24"[39m
+        [33mstroke[39m=[32m"currentColor"[39m
+        [33mstroke-linecap[39m=[32m"round"[39m
+        [33mstroke-linejoin[39m=[32m"round"[39m
+        [33mstroke-width[39m=[32m"1.8"[39m
+        [33mviewBox[39m=[32m"0 0 24 24"[39m
+        [33mwidth[39m=[32m"24"[39m
+        [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+      [36m>[39m
+        [36m<path[39m
+          [33md[39m=[32m"M18 6 6 18"[39m
+        [36m/>[39m
+        [36m<path[39m
+          [33md[39m=[32m"m6 6 12 12"[39m
+        [36m/>[39m
+      [36m</svg>[39m
+    [36m</button>[39m
+  [36m</header>[39m
+  [36m<p>[39m
+    [0m本地 Episode 目录：[0m
+  [36m</p>[39m
+  [36m<code>[39m
+    [0mepisodes/20000000-0000-4000-8000-000000000001（账号资产目录未配置）[0m
+  [36m</code>[39m
+  [36m<label>[39m
+    [0m输入确认文本：[0m
+    [36m<input[39m
+      [33maria-label[39m=[32m"永久删除确认文本"[39m
+      [33mplaceholder[39m=[32m"测试"[39m
+      [33mvalue[39m=[32m"测试"[39m
+    [36m/>[39m
+  [36m</label>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"modal-actions"[39m
+  [36m>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"button button-secondary"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0m取消[0m
+    [36m</button>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"button button-danger"[39m
+      [33mtype[39m=[32m"submit"[39m
+    [36m>[39m
+      [0m确认永久删除[0m
+    [36m</button>[39m
+  [36m</div>[39m
+[36m</form>[39m
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/LocalCatalogApp.workspace.test.tsx > shows a deletion-plan failure inside the confirmation dialog instead of leaving the click without feedback
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<form[39m
+  [33maria-label[39m=[32m"永久删除生产单"[39m
+  [33mclass[39m=[32m"modal-card modal-card-danger"[39m
+[36m>[39m
+  [36m<header>[39m
+    [36m<div>[39m
+      [36m<h2>[39m
+        [0m永久删除生产单[0m
+      [36m</h2>[39m
+      [36m<p>[39m
+        [0m此操作不可恢复，并会同时清理本地产物和数据库关联记录。[0m
+      [36m</p>[39m
+    [36m</div>[39m
+    [36m<button[39m
+      [33maria-label[39m=[32m"关闭永久删除生产单"[39m
+      [33mclass[39m=[32m"icon-button"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [36m<svg[39m
+        [33maria-hidden[39m=[32m"true"[39m
+        [33mclass[39m=[32m"lucide lucide-x icon"[39m
+        [33mfill[39m=[32m"none"[39m
+        [33mheight[39m=[32m"24"[39m
+        [33mstroke[39m=[32m"currentColor"[39m
+        [33mstroke-linecap[39m=[32m"round"[39m
+        [33mstroke-linejoin[39m=[32m"round"[39m
+        [33mstroke-width[39m=[32m"1.8"[39m
+        [33mviewBox[39m=[32m"0 0 24 24"[39m
+        [33mwidth[39m=[32m"24"[39m
+        [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+      [36m>[39m
+        [36m<path[39m
+          [33md[39m=[32m"M18 6 6 18"[39m
+        [36m/>[39m
+        [36m<path[39m
+          [33md[39m=[32m"m6 6 12 12"[39m
+        [36m/>[39m
+      [36m</svg>[39m
+    [36m</button>[39m
+  [36m</header>[39m
+  [36m<p>[39m
+    [0m本地 Episode 目录：[0m
+  [36m</p>[39m
+  [36m<code>[39m
+    [0mepisodes/20000000-0000-4000-8000-000000000001（账号资产目录未配置）[0m
+  [36m</code>[39m
+  [36m<label>[39m
+    [0m输入确认文本：[0m
+    [36m<input[39m
+      [33maria-label[39m=[32m"永久删除确认文本"[39m
+      [33mplaceholder[39m=[32m"测试"[39m
+      [33mvalue[39m=[32m"测试"[39m
+    [36m/>[39m
+  [36m</label>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"modal-actions"[39m
+  [36m>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"button button-secondary"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0m取消[0m
+    [36m</button>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"button button-danger"[39m
+      [33mtype[39m=[32m"submit"[39m
+    [36m>[39m
+      [0m确认永久删除[0m
+    [36m</button>[39m
+  [36m</div>[39m
+[36m</form>[39m
+
+Ignored nodes: comments, script, style
+[36m<form[39m
+  [33maria-label[39m=[32m"永久删除生产单"[39m
+  [33mclass[39m=[32m"modal-card modal-card-danger"[39m
+[36m>[39m
+  [36m<header>[39m
+    [36m<div>[39m
+      [36m<h2>[39m
+        [0m永久删除生产单[0m
+      [36m</h2>[39m
+      [36m<p>[39m
+        [0m此操作不可恢复，并会同时清理本地产物和数据库关联记录。[0m
+      [36m</p>[39m
+    [36m</div>[39m
+    [36m<button[39m
+      [33maria-label[39m=[32m"关闭永久删除生产单"[39m
+      [33mclass[39m=[32m"icon-button"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [36m<svg[39m
+        [33maria-hidden[39m=[32m"true"[39m
+        [33mclass[39m=[32m"lucide lucide-x icon"[39m
+        [33mfill[39m=[32m"none"[39m
+        [33mheight[39m=[32m"24"[39m
+        [33mstroke[39m=[32m"currentColor"[39m
+        [33mstroke-linecap[39m=[32m"round"[39m
+        [33mstroke-linejoin[39m=[32m"round"[39m
+        [33mstroke-width[39m=[32m"1.8"[39m
+        [33mviewBox[39m=[32m"0 0 24 24"[39m
+        [33mwidth[39m=[32m"24"[39m
+        [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+      [36m>[39m
+        [36m<path[39m
+          [33md[39m=[32m"M18 6 6 18"[39m
+        [36m/>[39m
+        [36m<path[39m
+          [33md[39m=[32m"m6 6 12 12"[39m
+        [36m/>[39m
+      [36m</svg>[39m
+    [36m</button>[39m
+  [36m</header>[39m
+  [36m<p>[39m
+    [0m本地 Episode 目录：[0m
+  [36m</p>[39m
+  [36m<code>[39m
+    [0mepisodes/20000000-0000-4000-8000-000000000001（账号资产目录未配置）[0m
+  [36m</code>[39m
+  [36m<label>[39m
+    [0m输入确认文本：[0m
+    [36m<input[39m
+      [33maria-label[39m=[32m"永久删除确认文本"[39m
+      [33mplaceholder[39m=[32m"测试"[39m
+      [33mvalue[39m=[32m"测试"[39m
+    [36m/>[39m
+  [36m</label>[39m
+  [36m<div[39m
+    [33mclass[39m=[32m"modal-actions"[39m
+  [36m>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"button button-secondary"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0m取消[0m
+    [36m</button>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"button button-danger"[39m
+      [33mtype[39m=[32m"submit"[39m
+    [36m>[39m
+      [0m确认永久删除[0m
+    [36m</button>[39m
+  [36m</div>[39m
+[36m</form>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/local-app/LocalCatalogApp.workspace.test.tsx:128:30
+    126|  await user.type(within(modal).getByLabelText('永久删除确认文本'),'测试');
+    127|  await user.click(within(modal).getByRole('button',{name:'确认永久删除'}));
+    128|  expect((await within(modal).findByRole('alert')).textContent).toConta…
+       |                              ^
+    129|  expect(commands).toEqual(['planDeletion']);
+    130| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯ Unhandled Rejection ⎯⎯⎯⎯⎯
+Error: 本地生产单不可见。
+ ❯ localRequest src/local-app/client.ts:7:218
+
+ ❯ onDelete src/local-app/LocalCatalogApp.tsx:124:1647
+ ❯ submit src/workspace/WorkspaceViews.tsx:102:135
+
+This error originated in "src/local-app/LocalCatalogApp.workspace.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "shows a deletion-plan failure inside the confirmation dialog instead of leaving the click without feedback". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 skipped (5)
+     Errors  1 error
+   Start at  19:07:52
+   Duration  2.33s (transform 414ms, setup 0ms, collect 679ms, tests 1.23s, environment 262ms, prepare 39ms)
+

@@ -1,0 +1,35 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/episodeDeletion.integration.test.ts (2 tests | 1 failed | 1 skipped) 1003ms
+   × managed=true: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences 1003ms
+     → {"error":"EACCES: permission denied, rename '/private/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-episode-delete-YstygX/old-media/account/episodes/a3f5f28a-ad8b-488c-a691-609442945f6b' -> '/private/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-episode-delete-YstygX/old-media/account/episodes/.deletion-staging/a3f5f28a-ad8b-488c-a691-609442945f6b'"}: expected 409 to be 200 // Object.is equality
+   ↓ managed=false: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/episodeDeletion.integration.test.ts > managed=true: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences
+AssertionError: {"error":"EACCES: permission denied, rename '/private/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-episode-delete-YstygX/old-media/account/episodes/a3f5f28a-ad8b-488c-a691-609442945f6b' -> '/private/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-episode-delete-YstygX/old-media/account/episodes/.deletion-staging/a3f5f28a-ad8b-488c-a691-609442945f6b'"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/episodeDeletion.integration.test.ts:113:55
+    111|   chmodSync(copyDirectory,0o500);
+    112|   const deleted=await post('deleteEpisode',args,key);
+    113|   expect(deleted.status,JSON.stringify(deleted.body)).toBe(200);expect…
+       |                                                       ^
+    114|   expect(existsSync(directory)).toBe(false);
+    115|   const stagedCopy=join(copyRoot,'episodes','.deletion-staging',episod…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 skipped (2)
+   Start at  19:36:05
+   Duration  1.30s (transform 105ms, setup 0ms, collect 151ms, tests 1.00s, environment 0ms, prepare 34ms)
+

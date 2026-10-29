@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 runtime:migrate
+> node scripts/runtime/migrate.mjs
+
+{"passed":true,"applied":["074-script-production-v2.sql","077-history-episode-deletion.sql"],"database":"loop_control","oldMigrationsUnchanged":true,"backupSkippedByExplicitOption":false,"backupDisabledByOwner":true}

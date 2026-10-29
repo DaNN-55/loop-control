@@ -1,0 +1,20 @@
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 1876 modules transformed.
+
+(!) outDir /private/tmp/loop-status-deletion-build is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+rendering chunks...
+computing gzip size...
+../../../../private/tmp/loop-status-deletion-build/index.html                                0.86 kB │ gzip:   0.46 kB
+../../../../private/tmp/loop-status-deletion-build/native-runtime-graph.json               118.78 kB │ gzip:  10.17 kB
+../../../../private/tmp/loop-status-deletion-build/assets/index-fw2f21W1.css               260.24 kB │ gzip:  43.82 kB
+../../../../private/tmp/loop-status-deletion-build/assets/retiredRemoteClient-CR7xA7U4.js    0.16 kB │ gzip:   0.18 kB
+../../../../private/tmp/loop-status-deletion-build/assets/index-DVtNJUqE.js                661.62 kB │ gzip: 198.45 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.11s

@@ -1,0 +1,17 @@
+{
+  "light": {
+    "foreground": "#ffffff",
+    "background": "#365fe0",
+    "contrast": 5.43
+  },
+  "dark": {
+    "foreground": "#102145",
+    "background": "#87a6ff",
+    "contrast": 6.74
+  },
+  "darkHoverLoading": {
+    "foreground": "#102145",
+    "background": "#a3baff",
+    "contrast": 8.32
+  }
+}

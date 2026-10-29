@@ -1,11 +1,19 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import type { FormEvent } from "react";
+import {useDialogFocus} from '../ui/useDialogFocus';
+import {Dropdown} from '../ui/dan-ui/components/base/dropdown/dropdown';
+import {Tabs} from '../ui/dan-ui/components/application/tabs/tabs';
+import {MoreHorizontal,Archive,Pencil,Trash2,Users,RefreshCw} from 'lucide-react';
+import {InputBase} from '../ui/dan-ui/components/base/input/input';
+import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
+import {Button} from '../ui/dan-ui/components/base/buttons/button';
+import {HelpTip} from '../ui/HelpTip';
+import {PaginationControls} from '../ui/PaginationControls';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { FormEvent, ReactNode } from "react";
 import type { Database, Json } from "../lib/database.types";
 import { blueprintAssetRoot, defaultBlueprintPolicy } from "../platform/blueprintPolicy";
 import { BlueprintConfigurationForm, EpisodeConfigurationRepairForm, SeriesConfigurationForm } from "../platform/ConfigurationForms";
 import { ConfirmationModal } from "../ui/ConfirmationModal";
 import type { ExternalConnectionInput, ExternalConnectionVersion } from "../connections/ConnectionWorkspace";
-import { mediaAdapterKeys } from "../platform/configurationFormValues";
 import type { LocalSystemStatusReport } from "../observability/SystemStatusPanel";
 import type { WorkerBlocker } from "../reviews/reviewSelectors";
 import type { WorkerPreflightCheck, WorkerPreflightResult } from "../worker/contracts";
@@ -25,6 +33,7 @@ interface BlueprintRepairContext {
 }
 
 interface AccountWorkspaceProps {
+  actions?: ReactNode;
   account: Account | null;
   accountEpisodeCount?: number;
   accounts: Account[];
@@ -45,12 +54,13 @@ interface AccountWorkspaceProps {
   onDismissBlueprintRepair?: () => void;
   onDirtyChange?: (dirty: boolean) => void;
   onRefreshBlueprintPreflight?: () => Promise<void>;
+  onRefresh?: () => Promise<void>;
   onRenameAccount?: (id: string, name: string) => Promise<boolean | void>;
   onSetAccountArchived?: (id: string, archived: boolean) => Promise<boolean | void>;
   onRotateConnection?: (input: { connectionId: string; provider: ExternalConnectionInput["provider"]; adapter: ExternalConnectionInput["adapter"]; secret: string }) => Promise<ExternalConnection | null>;
   onSelectAccount: (id: string) => void;
   onUpdateBlueprint?: (policy: Json) => Promise<Blueprint | null>;
-  onTestConnection?: (connectionId: string) => Promise<void>;
+  onTestConnection?: (connectionId: string) => Promise<unknown>;
   onUpdateConnection?: (input: { connectionId: string; name: string; description: string }) => Promise<void>;
   promptVersions?: PromptVersion[];
   series?: Series[];
@@ -94,39 +104,24 @@ function readinessFailureLabel(check: WorkerPreflightCheck, capabilities: string
   return checkLabels[check.check] ?? "运行检查未通过";
 }
 const emptySeriesRules: Json = {};
-const blueprintSections = [
-  { id: "account-rules", label: "账号基础规则" },
-  { id: "account-capabilities", label: "生产能力" },
-  { id: "account-budget", label: "分镜规划" },
-] as const;
-
-function ReadinessRail({ isLoading, onRefresh, policy, preflight, preflightError, systemStatus }: { isLoading: boolean; onRefresh?: () => Promise<void>; policy: Json; preflight: WorkerPreflightResult | null; preflightError: string; systemStatus: LocalSystemStatusReport | null }) {
-  const failed = preflight?.checks.filter((check) => check.status !== "passed") ?? [];
-  const failureGroups = groupedReadinessFailures(failed);
-  const enabledCount = policy && typeof policy === "object" && !Array.isArray(policy) ? mediaAdapterKeys.filter((key) => policy[key]).length : 0;
-  const displayedError = preflightError.length > 120 ? "生产就绪检查暂时失败，请稍后重新检查。" : preflightError;
-  return <aside aria-label="账号默认配置检查" className="account-status-rail">
-    <section className={failed.length || preflightError ? "is-blocked" : "is-ready"}>
-      <span className="account-status-eyebrow">账号默认配置检查</span>
-      <h2>{isLoading ? "正在检查…" : preflightError ? "检查暂不可用" : failureGroups.length ? `${failureGroups.length} 项需要处理` : preflight ? "已具备生产条件" : "等待运行检查"}</h2>
-      <p>只检查当前账号蓝图，不包含具体系列；新建生产单选择系列后会再次检查并冻结配置。</p>
-      {failureGroups.length ? <ul>{failureGroups.slice(0, 3).map(({ capabilities, check }) => <li key={`${capabilities.join("-")}-${check.check}`}><strong>{readinessFailureLabel(check, capabilities)}</strong>{capabilities.length > 1 ? <span>影响阶段：{capabilities.map((capability) => readinessCapabilityLabels[capability] ?? capability).join("、")}</span> : null}<span>{check.reason.length > 120 ? (check.action === "retry" ? "运行检查失败，请稍后重新检查。" : "运行环境检查未通过，请联系环境管理员。") : check.reason}</span></li>)}</ul> : null}
-      {displayedError ? <p className="form-error">{displayedError}</p> : null}
-      {onRefresh ? <button className="button button-secondary button-small" disabled={isLoading} onClick={() => void onRefresh()} type="button">{isLoading ? "检查中…" : "重新检查"}</button> : null}
-    </section>
-    <section><h3>配置范围</h3><dl><div><dt>生效对象</dt><dd>新生产单</dd></div><div><dt>已有生产单</dt><dd>保持冻结配置</dd></div><div><dt>当前开启</dt><dd>{enabledCount} 项能力</dd></div><div><dt>本机依赖</dt><dd>{systemStatus ? (systemStatus.dependencies.some((item) => item.state === "attention" || item.state === "offline") ? "存在阻塞" : "已检查") : "待检查"}</dd></div></dl></section>
+function BlueprintReadiness({ isDirty, isLoading, onRefresh, preflight, preflightError }: { isDirty: boolean; isLoading: boolean; onRefresh?: () => Promise<void>; preflight: WorkerPreflightResult | null; preflightError: string }) {
+  const failureGroups = groupedReadinessFailures(preflight?.checks.filter((check) => check.status !== "passed") ?? []);
+  const displayedError = preflightError.length > 120 ? "检查失败，请重试。" : preflightError;
+  return <aside aria-label="账号默认配置检查" className="account-blueprint-readiness">
+    <div className="account-readiness-summary"><strong className={isDirty ? "is-dirty" : failureGroups.length || preflightError ? "is-blocked" : preflight ? "is-ready" : ""} role="status">{isLoading ? "正在检查…" : isDirty ? "修改未保存" : preflightError ? "检查暂不可用" : failureGroups.length ? `${failureGroups.length} 项需要处理` : preflight ? "账号检查通过" : "等待运行检查"}</strong><HelpTip label="生产条件检查范围">只检查已保存的账号蓝图；选择系列后会再次检查。</HelpTip>{onRefresh ? <Button size="xs" color="secondary" isDisabled={isLoading || isDirty} onClick={() => void onRefresh()} type="button">{isLoading ? "检查中…" : "重新检查"}</Button> : null}</div>
+    {!isDirty && failureGroups.length ? <ul>{failureGroups.slice(0, 3).map(({ capabilities, check }) => <li key={`${capabilities.join("-")}-${check.check}`}><strong>{readinessFailureLabel(check, capabilities)}</strong>{capabilities.length > 1 ? <span>影响阶段：{capabilities.map((capability) => readinessCapabilityLabels[capability] ?? capability).join("、")}</span> : null}<span>{check.reason.length > 120 ? (check.action === "retry" ? "运行检查失败，请重新检查。" : "运行环境检查未通过，请联系环境管理员。") : check.reason}</span></li>)}</ul> : null}
+    {!isDirty && displayedError ? <p className="form-error">{displayedError}</p> : null}
   </aside>;
 }
 
-export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, blueprints, blueprintPreflight = null, blueprintPreflightError = "", blueprintRepairContext = null, connectionVersions = [], externalConnections = [], isBlueprintPreflightLoading = false, isPending, onApplyEpisodeRepair, onCreateConnection, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeleteAccount = async () => {}, onDismissBlueprintRepair, onDirtyChange, onRefreshBlueprintPreflight, onRenameAccount = async () => {}, onRotateConnection, onSelectAccount, onSetAccountArchived = async () => {}, onTestConnection, onUpdateBlueprint, onUpdateConnection, promptVersions = [], series = [], seriesVersions = [], systemStatus = null }: AccountWorkspaceProps) {
+export function AccountWorkspace({ actions, account, accountEpisodeCount = 0, accounts, blueprints, blueprintPreflight = null, blueprintPreflightError = "", blueprintRepairContext = null, connectionVersions = [], externalConnections = [], isBlueprintPreflightLoading = false, isPending, onApplyEpisodeRepair, onCreateConnection, onCreatePromptVersion, onCreateSeries = async () => {}, onCreateSeriesVersion = async () => {}, onDeleteAccount = async () => {}, onDismissBlueprintRepair, onDirtyChange, onRefresh, onRefreshBlueprintPreflight, onRenameAccount = async () => {}, onRotateConnection, onSelectAccount, onSetAccountArchived = async () => {}, onTestConnection, onUpdateBlueprint, onUpdateConnection, promptVersions = [], series = [], seriesVersions = [], systemStatus = null }: AccountWorkspaceProps) {
   const [activeSection, setActiveSection] = useState<"blueprints" | "series">("blueprints");
   const [configurationDirty, setConfigurationDirtyState] = useState(false);
-  const [activeBlueprintSection, setActiveBlueprintSection] = useState<(typeof blueprintSections)[number]["id"]>("account-rules");
   const [renameOpen, setRenameOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [archiveOpen, setArchiveOpen] = useState(false);
   const [accountActionsOpen, setAccountActionsOpen] = useState(false);
-  const accountActionsRef = useRef<HTMLDivElement>(null);
+  const accountActionsRef = useRef<HTMLButtonElement>(null);
   const setConfigurationDirty = useCallback((dirty: boolean) => {
     setConfigurationDirtyState(dirty);
     onDirtyChange?.(dirty);
@@ -135,32 +130,13 @@ export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, b
 
   useEffect(() => { setActiveSection("blueprints"); setConfigurationDirty(false); setRenameOpen(false); setDeleteOpen(false); setArchiveOpen(false); setAccountActionsOpen(false); }, [account?.id, blueprintRepairContext?.episodeId, setConfigurationDirty]);
   useEffect(() => {
-    if (!accountActionsOpen) return;
-    const closeOnOutside = (event: PointerEvent) => { if (!accountActionsRef.current?.contains(event.target as Node)) setAccountActionsOpen(false); };
-    const closeOnEscape = (event: KeyboardEvent) => { if (event.key === "Escape") setAccountActionsOpen(false); };
-    document.addEventListener("pointerdown", closeOnOutside);
-    document.addEventListener("keydown", closeOnEscape);
-    return () => { document.removeEventListener("pointerdown", closeOnOutside); document.removeEventListener("keydown", closeOnEscape); };
-  }, [accountActionsOpen]);
-  useEffect(() => {
     if (!configurationDirty) return;
     const guard = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ""; };
     window.addEventListener("beforeunload", guard);
     return () => window.removeEventListener("beforeunload", guard);
   }, [configurationDirty]);
-  useEffect(() => {
-    if (activeSection !== "blueprints" || blueprintRepairContext) return;
-    const updateActiveSection = () => {
-      const sections = blueprintSections.map(({ id }) => ({ id, top: document.getElementById(id)?.getBoundingClientRect().top ?? Infinity })).sort((left, right) => left.top - right.top);
-      const next = sections.every(({ top }) => top === 0) ? sections[0] : sections.filter(({ top }) => top <= 160).at(-1) ?? sections[0];
-      setActiveBlueprintSection(next.id);
-    };
-    updateActiveSection();
-    window.addEventListener("scroll", updateActiveSection, { passive: true });
-    return () => window.removeEventListener("scroll", updateActiveSection);
-  }, [activeSection, blueprintRepairContext]);
-  if (!account) return <div className="empty-state">没有可读取的账号。</div>;
-  if (!currentBlueprint) return <div className="empty-state">该账号没有可读取的蓝图配置。</div>;
+  if (!account) return <><div className="workspace-actions">{actions}</div><div className="empty-state">没有可读取的账号。</div></>;
+  if (!currentBlueprint) return <><div className="workspace-actions">{actions}</div><div className="empty-state">该账号没有可读取的蓝图配置。</div></>;
 
   const policy = currentBlueprint.policy ?? defaultBlueprintPolicy;
   const localAdapterReadiness = Object.fromEntries([
@@ -177,42 +153,57 @@ export function AccountWorkspace({ account, accountEpisodeCount = 0, accounts, b
     setConfigurationDirty(false);
     action();
   }
-  return <>
+  return <section className="impeccable-config-workspace account-blueprint-workspace" aria-label="账号蓝图工作区">
     <header className="account-configuration-heading">
-      <div className="account-heading-actions"><label>当前账号<select aria-label="当前账号" onChange={(event) => leaveConfiguration(() => onSelectAccount(event.target.value))} value={account.id}><optgroup label="使用中">{accounts.filter((candidate) => !candidate.archived_at).map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.name}</option>)}</optgroup>{accounts.some((candidate) => candidate.archived_at) ? <optgroup label="已归档">{accounts.filter((candidate) => candidate.archived_at).map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.name}</option>)}</optgroup> : null}</select></label>{account.archived_at ? <span className="account-archived-badge">已归档</span> : null}<div className="account-actions" ref={accountActionsRef}><button aria-expanded={accountActionsOpen} aria-haspopup="menu" aria-label="账号操作" className="icon-button account-actions-trigger" onClick={() => setAccountActionsOpen((open) => !open)} type="button">…</button>{accountActionsOpen ? <div aria-label="账号操作" className="account-actions-menu" role="menu"><dl><div><dt>标识</dt><dd>{account.slug}</dd></div><div><dt>时区</dt><dd>{account.timezone}</dd></div><div><dt>生产单</dt><dd>{accountEpisodeCount} 个</dd></div></dl><button onClick={() => { setAccountActionsOpen(false); setRenameOpen(true); }} role="menuitem" type="button">重命名</button><button onClick={() => { setAccountActionsOpen(false); setArchiveOpen(true); }} role="menuitem" type="button">{account.archived_at ? "恢复账号" : "归档账号"}</button><button className="is-danger" onClick={() => { setAccountActionsOpen(false); setDeleteOpen(true); }} role="menuitem" type="button">删除账号</button></div> : null}</div></div>
+      <div className="account-heading-actions"><NativeSelect icon={Users} className="account-current-select" size="sm" aria-label="当前账号" onChange={(event) => leaveConfiguration(() => onSelectAccount(event.target.value))} value={account.id}><optgroup label="使用中">{accounts.filter((candidate) => !candidate.archived_at).map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.name}</option>)}</optgroup>{accounts.some((candidate) => candidate.archived_at) ? <optgroup label="已归档">{accounts.filter((candidate) => candidate.archived_at).map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.name}</option>)}</optgroup> : null}</NativeSelect>{account.archived_at ? <span className="account-archived-badge">已归档</span> : null}<div className="account-actions"><Dropdown.Root isOpen={accountActionsOpen} onOpenChange={setAccountActionsOpen}><Button size="sm" color="tertiary" aria-label="账号操作" ref={accountActionsRef} className="account-actions-trigger" type="button"><MoreHorizontal aria-hidden="true" size={20}/></Button><Dropdown.Popover className="dan-ui product-ui account-menu-overlay"><Dropdown.Menu aria-label="账号操作"><Dropdown.Section><Dropdown.SectionHeader><dl><div><dt>标识</dt><dd>{account.slug}</dd></div><div><dt>时区</dt><dd>{account.timezone}</dd></div><div><dt>生产单</dt><dd>{accountEpisodeCount} 个</dd></div></dl></Dropdown.SectionHeader>{onRefresh ? <Dropdown.Item icon={RefreshCw} id="refresh" onAction={() => leaveConfiguration(() => void onRefresh())}>刷新账号</Dropdown.Item> : null}<Dropdown.Item icon={Pencil} id="rename" onAction={() => { accountActionsRef.current?.focus(); setAccountActionsOpen(false); setRenameOpen(true); }}>重命名</Dropdown.Item><Dropdown.Item icon={Archive} id="archive" onAction={() => { accountActionsRef.current?.focus(); setAccountActionsOpen(false); setArchiveOpen(true); }}>{account.archived_at ? "恢复账号" : "归档账号"}</Dropdown.Item></Dropdown.Section><Dropdown.Separator/><Dropdown.Section aria-label="危险操作"><Dropdown.Item icon={Trash2} id="delete" className="is-danger" onAction={() => { accountActionsRef.current?.focus(); setAccountActionsOpen(false); setDeleteOpen(true); }}>删除账号</Dropdown.Item></Dropdown.Section></Dropdown.Menu></Dropdown.Popover></Dropdown.Root></div></div>
+      <div className="account-workspace-actions">{actions}</div>
     </header>
     {account.archived_at ? <p className="account-archived-note" role="status">此账号已归档，不会出现在新建生产单的账号列表中；恢复后可继续生产。</p> : null}
-    <nav aria-label="账号设置导航" className="account-tabs" role="tablist"><button aria-selected={activeSection === "blueprints"} className={`account-tab ${activeSection === "blueprints" ? "is-active" : ""}`} onClick={() => leaveConfiguration(() => setActiveSection("blueprints"))} role="tab" type="button">蓝图</button><button aria-selected={activeSection === "series"} className={`account-tab ${activeSection === "series" ? "is-active" : ""}`} onClick={() => leaveConfiguration(() => setActiveSection("series"))} role="tab" type="button">系列</button></nav>
-    {activeSection === "blueprints" ? blueprintRepairContext ? <EpisodeConfigurationRepairForm blocker={blueprintRepairContext.blocker} initialPolicy={policy} isPending={isPending === `apply-episode-repair-${blueprintRepairContext.episodeId}`} onCancel={() => onDismissBlueprintRepair?.()} onSave={async (nextPolicy) => { if (onApplyEpisodeRepair) await onApplyEpisodeRepair({ context: blueprintRepairContext, policy: nextPolicy }); }} promptVersions={promptVersions} /> : <div className="account-configuration-layout" role="tabpanel">
-      <nav aria-label="蓝图配置分区" className="account-section-nav">{blueprintSections.map(({ id, label }, index) => <a aria-current={activeBlueprintSection === id ? "location" : undefined} href={`#${id}`} key={id}><span aria-hidden="true">{index + 1}</span>{label}</a>)}</nav>
-      <main className="account-configuration-form" id="account-rules"><BlueprintConfigurationForm accountId={account.id} connectionVersions={connectionVersions} externalConnections={externalConnections} initialAssetRoot={blueprintAssetRoot(policy)} initialPolicy={policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} localAdapterReadiness={localAdapterReadiness} onCancel={() => {}} onCreateConnection={onCreateConnection} onCreatePromptVersion={onCreatePromptVersion} onDirtyChange={setConfigurationDirty} onRotateConnection={onRotateConnection} onSave={async (nextPolicy) => { if (onUpdateBlueprint && await onUpdateBlueprint(nextPolicy) === null) throw new Error("蓝图未保存，请处理错误后重试。"); }} onTestConnection={onTestConnection} onUpdateConnection={onUpdateConnection} promptVersions={promptVersions} /></main>
-      <ReadinessRail isLoading={isBlueprintPreflightLoading} onRefresh={onRefreshBlueprintPreflight} policy={policy} preflight={blueprintPreflight} preflightError={blueprintPreflightError} systemStatus={systemStatus} />
-    </div> : <div role="tabpanel"><SeriesSettings isPending={isPending} onCreate={onCreateSeries} onDirtyChange={setConfigurationDirty} onLeave={leaveConfiguration} onCreateVersion={onCreateSeriesVersion} series={series} seriesVersions={seriesVersions} /></div>}
+    <Tabs selectedKey={activeSection} onSelectionChange={key => leaveConfiguration(() => setActiveSection(key as typeof activeSection))}><div className="account-tabs-heading"><Tabs.List aria-label="账号设置导航" type="underline" className="account-tabs"><Tabs.Item id="blueprints">蓝图</Tabs.Item><Tabs.Item id="series">系列</Tabs.Item></Tabs.List>{!blueprintRepairContext ? <div className="account-blueprint-scope">仅影响新生产单<HelpTip label={activeSection === "blueprints" ? "蓝图配置生效范围" : "系列规则生效范围"}>{activeSection === "blueprints" ? "保存后仅用于新生产单；已有生产单保持冻结配置，系列规则不变。" : "保存为新版本，已有生产单保持原版本；空字段不增加约束，主脚本仍需上传。"}</HelpTip></div> : null}</div><Tabs.Panel key={activeSection} id={activeSection}>
+    {activeSection === "blueprints" ? blueprintRepairContext ? <EpisodeConfigurationRepairForm blocker={blueprintRepairContext.blocker} initialPolicy={policy} isPending={isPending === `apply-episode-repair-${blueprintRepairContext.episodeId}`} onCancel={() => onDismissBlueprintRepair?.()} onSave={async (nextPolicy) => { if (onApplyEpisodeRepair) await onApplyEpisodeRepair({ context: blueprintRepairContext, policy: nextPolicy }); }} promptVersions={promptVersions} /> : <div className="account-configuration-form"><BlueprintConfigurationForm accountLayout saveState={<span className={`account-save-state${configurationDirty ? " is-dirty" : ""}`} role="status">{configurationDirty ? "有未保存更改" : "已保存"}</span>} footerStatus={<BlueprintReadiness isDirty={configurationDirty} isLoading={isBlueprintPreflightLoading} onRefresh={onRefreshBlueprintPreflight} preflight={blueprintPreflight} preflightError={blueprintPreflightError} />} accountId={account.id} connectionVersions={connectionVersions} externalConnections={externalConnections} initialAssetRoot={blueprintAssetRoot(policy)} initialPolicy={policy} isPending={isPending === "blueprint" || isPending === "prompt-version"} localAdapterReadiness={localAdapterReadiness} onCancel={() => {}} onCreateConnection={onCreateConnection} onCreatePromptVersion={onCreatePromptVersion} onDirtyChange={setConfigurationDirty} onRotateConnection={onRotateConnection} onSave={async (nextPolicy) => { if (onUpdateBlueprint && await onUpdateBlueprint(nextPolicy) === null) throw new Error("蓝图未保存，请处理错误后重试。"); }} onTestConnection={onTestConnection} onUpdateConnection={onUpdateConnection} promptVersions={promptVersions} /></div>
+ : <div><SeriesSettings isPending={isPending} onCreate={onCreateSeries} onDirtyChange={setConfigurationDirty} onLeave={leaveConfiguration} onCreateVersion={onCreateSeriesVersion} series={series} seriesVersions={seriesVersions} /></div>}
+    </Tabs.Panel></Tabs>
     {renameOpen ? <AccountRenameModal account={account} isPending={isPending === `rename-account-${account.id}`} onClose={() => setRenameOpen(false)} onSave={(name) => onRenameAccount(account.id, name)} /> : null}
     {archiveOpen ? <ConfirmationModal confirmLabel={account.archived_at ? "确认恢复账号" : "确认归档账号"} isPending={isPending === `archive-account-${account.id}`} onCancel={() => setArchiveOpen(false)} onConfirm={async () => { if (await onSetAccountArchived(account.id, !account.archived_at) !== false) setArchiveOpen(false); }} pendingLabel={account.archived_at ? "恢复中…" : "归档中…"} title={account.archived_at ? "恢复账号" : "归档账号"}><p>{account.archived_at ? `恢复“${account.name}”后，它会重新出现在新建生产单的账号列表中。` : `归档“${account.name}”后，它不会出现在新建生产单的账号列表中；已有生产单、系列和历史配置都会保留。`}</p></ConfirmationModal> : null}
     {deleteOpen ? <AccountDeleteModal account={account} episodeCount={accountEpisodeCount} isPending={isPending === `delete-account-${account.id}`} onClose={() => setDeleteOpen(false)} onDelete={(confirmation) => onDeleteAccount(account.id, confirmation)} /> : null}
-  </>;
+  </section>;
 }
 
 export function SeriesSettings({ isPending, onCreate, onCreateVersion = async () => {}, onDirtyChange, onLeave, series, seriesVersions }: { isPending: boolean | string; onCreate: (input: { name: string; rules: Json }) => Promise<void>; onCreateVersion?: (input: { seriesId: string; rules: Json }) => Promise<void>; onDirtyChange?: (dirty: boolean) => void; onLeave?: (action: () => void) => void; series: Series[]; seriesVersions: SeriesVersion[] }) {
   const [selectedId, setSelectedId] = useState(series[0]?.id ?? "");
   const [creating, setCreating] = useState(series.length === 0);
+  const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const filteredSeries = useMemo(() => {
+    const search = query.trim().toLocaleLowerCase();
+    return series.filter(candidate => candidate.name.toLocaleLowerCase().includes(search));
+  }, [series, query]);
+  const pageSize = 20;
+  const safePage = Math.min(page, Math.max(1, Math.ceil(filteredSeries.length / pageSize)));
+  const visibleSeries = filteredSeries.slice((safePage - 1) * pageSize, safePage * pageSize);
+  const latestVersions = useMemo(() => {
+    const versions = new Map<string, number>();
+    for (const version of seriesVersions) versions.set(version.series_id, Math.max(versions.get(version.series_id) ?? 0, version.version));
+    return versions;
+  }, [seriesVersions]);
   const firstSeriesId = series[0]?.id ?? "";
   useEffect(() => { setSelectedId(firstSeriesId); setCreating(series.length === 0); }, [firstSeriesId, series.length]);
   const selected = series.find((candidate) => candidate.id === selectedId) ?? series[0] ?? null;
   const selectedVersions = selected ? seriesVersions.filter((version) => version.series_id === selected.id).sort((left, right) => right.version - left.version) : [];
   const latest = selectedVersions[0] ?? null;
   const leave = (action: () => void) => onLeave ? onLeave(action) : action();
-  return <section className="series-current-layout"><aside><header><h2 id="account-series-heading">系列</h2><button className="button button-secondary button-small" onClick={() => leave(() => setCreating(true))} type="button">新建系列</button></header>{series.map((candidate) => { const candidateVersion = seriesVersions.filter((version) => version.series_id === candidate.id).sort((left, right) => right.version - left.version)[0]?.version ?? 0; return <button className={!creating && candidate.id === selected?.id ? "is-active" : ""} key={candidate.id} onClick={() => leave(() => { setSelectedId(candidate.id); setCreating(false); })} type="button"><strong>{candidate.name}</strong><span>当前 v{candidateVersion}</span></button>; })}{!creating && selectedVersions.length ? <section className="series-version-history"><h3>版本历史</h3><ol>{selectedVersions.map((version, index) => <li key={version.id}><div><strong>v{version.version}</strong>{index === 0 ? <span>当前</span> : null}</div><time dateTime={version.created_at}>{new Intl.DateTimeFormat("zh-CN", { month: "2-digit", day: "2-digit", year: "numeric" }).format(new Date(version.created_at))}</time></li>)}</ol></section> : null}</aside><div>{creating || !selected ? <SeriesConfigurationForm initialName="" initialRules={emptySeriesRules} isEditing={false} isPending={isPending === true || isPending === "series"} onCancel={() => setCreating(false)} onDirtyChange={onDirtyChange} onSave={async (name, rules) => { await onCreate({ name, rules }); }} /> : <SeriesConfigurationForm currentVersion={latest?.version ?? 0} key={`${selected.id}-${latest?.id ?? "empty"}`} initialName={selected.name} initialRules={latest?.rules ?? {}} isEditing isPending={isPending === `series-version-${selected.id}`} onCancel={() => {}} onDirtyChange={onDirtyChange} onSave={async (_name, rules) => { await onCreateVersion({ seriesId: selected.id, rules }); }} />}</div></section>;
+  return <section className="series-current-layout" aria-label="系列规则与版本"><aside><header><h2 id="account-series-heading">系列列表</h2><Button size="xs" color="secondary" className="button button-secondary button-small" onClick={() => leave(() => setCreating(true))} type="button">新建系列</Button></header>{series.length > 0 ? <InputBase size="sm" type="search" aria-label="查找系列" placeholder="查找系列" maxLength={200} value={query} onChange={event => { setQuery(event.target.value); setPage(1); }} /> : null}{visibleSeries.map((candidate) => { const candidateVersion = latestVersions.get(candidate.id) ?? 0; return <Button size="sm" color="tertiary" className={!creating && candidate.id === selected?.id ? "is-active" : ""} key={candidate.id} onClick={() => leave(() => { setSelectedId(candidate.id); setCreating(false); })} type="button"><strong>{candidate.name}</strong><span>当前 v{candidateVersion}</span></Button>; })}{query && filteredSeries.length === 0 ? <p role="status" className="muted-copy">没有匹配的系列。</p> : null}<PaginationControls label="系列分页" page={safePage} pageSize={pageSize} total={filteredSeries.length} onPageChange={setPage} />{!creating && selectedVersions.length ? <section className="series-version-history"><h3>版本历史</h3><ol>{selectedVersions.map((version, index) => <li key={version.id}><div><strong>v{version.version}</strong>{index === 0 ? <span>当前</span> : null}</div><time dateTime={version.created_at}>{new Intl.DateTimeFormat("zh-CN", { month: "2-digit", day: "2-digit", year: "numeric" }).format(new Date(version.created_at))}</time></li>)}</ol></section> : null}</aside><div>{creating || !selected ? <SeriesConfigurationForm initialName="" initialRules={emptySeriesRules} isEditing={false} isPending={isPending === true || isPending === "series"} onCancel={() => setCreating(false)} onDirtyChange={onDirtyChange} onSave={async (name, rules) => { await onCreate({ name, rules }); }} /> : <SeriesConfigurationForm currentVersion={latest?.version ?? 0} key={`${selected.id}-${latest?.id ?? "empty"}`} initialName={selected.name} initialRules={latest?.rules ?? emptySeriesRules} isEditing isPending={isPending === `series-version-${selected.id}`} onCancel={() => {}} onDirtyChange={onDirtyChange} onSave={async (_name, rules) => { await onCreateVersion({ seriesId: selected.id, rules }); }} />}</div></section>;
 }
 
 function AccountRenameModal({ account, isPending, onClose, onSave }: { account: Account; isPending: boolean; onClose: () => void; onSave: (name: string) => Promise<boolean | void> }) {
+  const dialogRef = useDialogFocus<HTMLFormElement>(true, () => { if (!isPending) onClose(); });
+
   const [name, setName] = useState(account.name);
   async function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); if (await onSave(name.trim()) !== false) onClose(); }
-  return <div className="modal-backdrop"><form aria-label="重命名账号" className="modal-card" onSubmit={(event) => void submit(event)}><header><div><h2>重命名账号</h2><p>只修改控制台显示名称，不改变账号标识和已有生产单。</p></div></header><label>账号显示名称<input aria-label="账号显示名称" onChange={(event) => setName(event.target.value)} value={name} /></label><div className="modal-actions"><button className="button button-secondary" onClick={onClose} type="button">取消</button><button className="button button-primary" disabled={isPending || !name.trim()} type="submit">{isPending ? "保存中…" : "保存名称"}</button></div></form></div>;
+  return <div className="modal-backdrop" role="dialog" aria-modal="true" aria-label="重命名账号"><form ref={dialogRef} aria-label="重命名账号" className="modal-card" onSubmit={(event) => void submit(event)}><header><div><h2>重命名账号</h2><p>只修改控制台显示名称，不改变账号标识和已有生产单。</p></div></header><label>账号显示名称<InputBase size="sm" aria-label="账号显示名称" onChange={(event) => setName(event.target.value)} value={name} /></label><div className="modal-actions"><Button size="sm" color="secondary" className="button button-secondary" onClick={onClose} type="button">取消</Button><Button size="sm" color="primary" className="button button-primary" isDisabled={isPending || !name.trim()} type="submit">{isPending ? "保存中…" : "保存名称"}</Button></div></form></div>;
 }
 
 function AccountDeleteModal({ account, episodeCount, isPending, onClose, onDelete }: { account: Account; episodeCount: number; isPending: boolean; onClose: () => void; onDelete: (confirmation: string) => Promise<boolean | void> }) {
   const [confirmation, setConfirmation] = useState("");
-  return <ConfirmationModal confirmDisabled={episodeCount > 0 || confirmation !== account.name} confirmLabel="确认删除账号" isPending={isPending} onCancel={onClose} onConfirm={async () => { if (await onDelete(confirmation) !== false) onClose(); }} pendingLabel="删除中…" title="删除账号" tone="danger"><p>{episodeCount ? `该账号有 ${episodeCount} 个生产单，当前不能删除。请保留或归档账号。` : `此操作不可撤销。输入“${account.name}”确认删除。`}</p><label>确认文本<input aria-label="删除账号确认文本" disabled={episodeCount > 0} onChange={(event) => setConfirmation(event.target.value)} value={confirmation} /></label></ConfirmationModal>;
+  return <ConfirmationModal confirmDisabled={episodeCount > 0 || confirmation !== account.name} confirmLabel="确认删除账号" isPending={isPending} onCancel={onClose} onConfirm={async () => { if (await onDelete(confirmation) !== false) onClose(); }} pendingLabel="删除中…" title="删除账号" tone="danger"><p>{episodeCount ? `该账号有 ${episodeCount} 个生产单，当前不能删除。请先归档并永久删除这些生产单，或归档账号保留历史。` : `此操作不可撤销。输入“${account.name}”确认删除。`}</p><label>确认文本<InputBase size="sm" aria-label="删除账号确认文本" isDisabled={episodeCount > 0} onChange={(event) => setConfirmation(event.target.value)} value={confirmation} /></label></ConfirmationModal>;
 }

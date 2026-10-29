@@ -1,0 +1,290 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/historyPresentation.test.ts (2 tests) 2ms
+ ✓ src/local-app/HistoryEpisodes.test.tsx (2 tests) 153ms
+ ✓ src/connections/ConnectionDanUi.test.tsx (2 tests) 270ms
+ ✓ src/local-app/LocalConnectionsPanel.test.tsx (7 tests) 409ms
+ ❯ src/local-app/LocalHistory.test.tsx (5 tests | 1 failed) 399ms
+   ✓ defaults to folded categories and moves raw names, file paths and exact JSON into details 177ms
+   ✓ archives through the protected command and can filter archived sources without deleting 67ms
+   ✓ locks repeated preview and reports unreviewed bytes without exposing a delete action 46ms
+   × reports read failures and retains search input for retry 16ms
+     → Unable to find a label with the text of: 查找来源
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div[39m
+    [33mdata-live-announcer[39m=[32m"true"[39m
+    [33mstyle[39m=[32m"border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33maria-live[39m=[32m"assertive"[39m
+      [33maria-relevant[39m=[32m"additions"[39m
+      [33mrole[39m=[32m"log"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"react-aria-_r_9_ react-aria-_r_a_"[39m
+        [33mrole[39m=[32m"img"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"react-aria-_r_15_ react-aria-_r_16_"[39m
+        [33mrole[39m=[32m"img"[39m
+      [36m/>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33maria-live[39m=[32m"polite"[39m
+      [33maria-relevant[39m=[32m"additions"[39m
+      [33mrole[39m=[32m"log"[39m
+    [36m/>[39m
+  [36m</div>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-busy[39m=[32m"false"[39m
+      [33maria-label[39m=[32m"资料来源管理"[39m
+      [33mclass[39m=[32m"dan-ui history-ui history-workspace history-sources"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"history-header"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<h3>[39m
+            [0m资料来源[0m
+          [36m</h3>[39m
+          [36m<p>[39m
+            [0m按来源整理资料；归档可恢复，清理仅预览。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<form[39m
+        [33maria-label[39m=[32m"查找资料来源"[39m
+        [33mclass[39m=[32m"history-source-filters"[39m
+        [33mrole[39m=[32m"search"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"w-full in-data-input-wrapper:w-max"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"flex cursor-default items-center gap-0.5 text-sm font-medium text-secondary mb-1.5"[39m
+            [33mdata-label[39m=[32m"true"[39m
+            [33mfor[39m=[32m"select-native-_r_1q_"[39m
+            [33mid[39m=[32m"select-native-_r_1q_-label"[39m
+          [36m>[39m
+            [0m分类[0m
+            [36m<span[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"hidden text-brand-tertiary group-required:block group-invalid:text-error-primary"[39m
+            [36m>[39m
+              [0m*[0m
+            [36m</span>[39m
+          [36m</label>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"relative grid w-full items-center"[39m
+          [36m>[39m
+            [36m<select[39m
+              [33maria-label[39m=[32m"分类"[39m
+              [33maria-labelledby[39m=[32m"select-native-_r_1q_-label"[39m
+              [33mclass[39m=[32m"appearance-none rounded-lg bg-primary font-medium text-primary shadow-xs ring-1 ring-primary outline-hidden transition duration-100 ease-linear ring-inset placeholder:text-fg-quaternary focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-50 py-2 pl-3 text-sm in-data-input-wrapper:flex in-data-input-wrapper:h-full in-data-input-wrapper:gap-1 in-data-input-wrapper:bg-inherit in-data-input-wrapper:px-3 in-data-input-wrapper:py-2 in-data-input-wrapper:font-normal in-data-input-wrapper:text-tertiary in-data-input-wrapper:shadow-none in-data-input-wrapper:ring-transparent in-data-input-wrapper:in-data-[size=sm]:text-sm in-data-input-wrapper:group-disabled:pointer-events-none in-data-input-wrapper:group-disabled:cursor-not-allowed in-data-input-wrapper:group-disabled:bg-transparent in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-[input-size=lg]:py-2.5 in-data-input-wrapper:in-data-[input-size=md]:py-2 in-data-input-wrapper:in-data-[input-size=md]:pl-3 in-data-input-wrapper:in-data-[input-size=sm]:text-sm in-data-input-wrapper:in-data-leading:pr-4.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=lg]:pl-3.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=md]:pr-4.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=md]:pl-3 in-data-input-wrapper:in-data-leading:in-data-[input-size=sm]:pr-3.5 in-data-input-wrapper:in-data-trailing:in-data-[input-size=lg]:pr-8 in-data-input-wrapper:in-data-trailing:in-data-[input-size=md]:pr-7.5 in-data-input-wrapper:in-data-trailing:in-data-[input-size=sm]:pr-6.5"[39m
+              [33mid[39m=[32m"select-native-_r_1q_"[39m
+            [36m>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m""[39m
+              [36m>[39m
+                [0m全部分类[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"business"[39m
+              [36m>[39m
+                [0m业务资料[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"configuration"[39m
+              [36m>[39m
+                [0m配置与模板[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"diagnostics"[39m
+              [36m>[39m
+                [0m测试与诊断[0m
+              [36m</option>[39m
+            [36m</select>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"pointer-events-none absolute text-fg-quaternary size-4 right-2.5 stroke-[2.25px] in-data-input-wrapper:right-0 in-data-input-wrapper:size-4 in-data-input-wrapper:stroke-[2.625px] in-data-input-wrapper:in-data-trailing:in-data-[input-size=md]:right-3 in-data-input-wrapper:in-data-trailing:in-data-[input-size=sm]:right-3"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m6 9 6 6 6-6"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"w-full in-data-input-wrapper:w-max"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"flex cursor-default items-center gap-0.5 text-sm font-medium text-secondary mb-1.5"[39m
+            [33mdata-label[39m=[32m"true"[39m
+            [33mfor[39m=[32m"select-native-_r_1r_"[39m
+            [33mid[39m=[32m"select-native-_r_1r_-label"[39m
+          [36m>[39m
+            [0m显示范围[0m
+            [36m<span[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[...
+   ✓ discards details that finish after a new content search 92ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/LocalHistory.test.tsx > reports read failures and retains search input for retry
+TestingLibraryElementError: Unable to find a label with the text of: 查找来源
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div[39m
+    [33mdata-live-announcer[39m=[32m"true"[39m
+    [33mstyle[39m=[32m"border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33maria-live[39m=[32m"assertive"[39m
+      [33maria-relevant[39m=[32m"additions"[39m
+      [33mrole[39m=[32m"log"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"react-aria-_r_9_ react-aria-_r_a_"[39m
+        [33mrole[39m=[32m"img"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33maria-labelledby[39m=[32m"react-aria-_r_15_ react-aria-_r_16_"[39m
+        [33mrole[39m=[32m"img"[39m
+      [36m/>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33maria-live[39m=[32m"polite"[39m
+      [33maria-relevant[39m=[32m"additions"[39m
+      [33mrole[39m=[32m"log"[39m
+    [36m/>[39m
+  [36m</div>[39m
+  [36m<div>[39m
+    [36m<section[39m
+      [33maria-busy[39m=[32m"false"[39m
+      [33maria-label[39m=[32m"资料来源管理"[39m
+      [33mclass[39m=[32m"dan-ui history-ui history-workspace history-sources"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"history-header"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<h3>[39m
+            [0m资料来源[0m
+          [36m</h3>[39m
+          [36m<p>[39m
+            [0m按来源整理资料；归档可恢复，清理仅预览。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<form[39m
+        [33maria-label[39m=[32m"查找资料来源"[39m
+        [33mclass[39m=[32m"history-source-filters"[39m
+        [33mrole[39m=[32m"search"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"w-full in-data-input-wrapper:w-max"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"flex cursor-default items-center gap-0.5 text-sm font-medium text-secondary mb-1.5"[39m
+            [33mdata-label[39m=[32m"true"[39m
+            [33mfor[39m=[32m"select-native-_r_1q_"[39m
+            [33mid[39m=[32m"select-native-_r_1q_-label"[39m
+          [36m>[39m
+            [0m分类[0m
+            [36m<span[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"hidden text-brand-tertiary group-required:block group-invalid:text-error-primary"[39m
+            [36m>[39m
+              [0m*[0m
+            [36m</span>[39m
+          [36m</label>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"relative grid w-full items-center"[39m
+          [36m>[39m
+            [36m<select[39m
+              [33maria-label[39m=[32m"分类"[39m
+              [33maria-labelledby[39m=[32m"select-native-_r_1q_-label"[39m
+              [33mclass[39m=[32m"appearance-none rounded-lg bg-primary font-medium text-primary shadow-xs ring-1 ring-primary outline-hidden transition duration-100 ease-linear ring-inset placeholder:text-fg-quaternary focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-50 py-2 pl-3 text-sm in-data-input-wrapper:flex in-data-input-wrapper:h-full in-data-input-wrapper:gap-1 in-data-input-wrapper:bg-inherit in-data-input-wrapper:px-3 in-data-input-wrapper:py-2 in-data-input-wrapper:font-normal in-data-input-wrapper:text-tertiary in-data-input-wrapper:shadow-none in-data-input-wrapper:ring-transparent in-data-input-wrapper:in-data-[size=sm]:text-sm in-data-input-wrapper:group-disabled:pointer-events-none in-data-input-wrapper:group-disabled:cursor-not-allowed in-data-input-wrapper:group-disabled:bg-transparent in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-[input-size=lg]:py-2.5 in-data-input-wrapper:in-data-[input-size=md]:py-2 in-data-input-wrapper:in-data-[input-size=md]:pl-3 in-data-input-wrapper:in-data-[input-size=sm]:text-sm in-data-input-wrapper:in-data-leading:pr-4.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=lg]:pl-3.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=md]:pr-4.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=md]:pl-3 in-data-input-wrapper:in-data-leading:in-data-[input-size=sm]:pr-3.5 in-data-input-wrapper:in-data-trailing:in-data-[input-size=lg]:pr-8 in-data-input-wrapper:in-data-trailing:in-data-[input-size=md]:pr-7.5 in-data-input-wrapper:in-data-trailing:in-data-[input-size=sm]:pr-6.5"[39m
+              [33mid[39m=[32m"select-native-_r_1q_"[39m
+            [36m>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m""[39m
+              [36m>[39m
+                [0m全部分类[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"business"[39m
+              [36m>[39m
+                [0m业务资料[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"configuration"[39m
+              [36m>[39m
+                [0m配置与模板[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"diagnostics"[39m
+              [36m>[39m
+                [0m测试与诊断[0m
+              [36m</option>[39m
+            [36m</select>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"pointer-events-none absolute text-fg-quaternary size-4 right-2.5 stroke-[2.25px] in-data-input-wrapper:right-0 in-data-input-wrapper:size-4 in-data-input-wrapper:stroke-[2.625px] in-data-input-wrapper:in-data-trailing:in-data-[input-size=md]:right-3 in-data-input-wrapper:in-data-trailing:in-data-[input-size=sm]:right-3"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m6 9 6 6 6-6"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"w-full in-data-input-wrapper:w-max"[39m
+        [36m>[39m
+          [36m<label[39m
+            [33mclass[39m=[32m"flex cursor-default items-center gap-0.5 text-sm font-medium text-secondary mb-1.5"[39m
+            [33mdata-label[39m=[32m"true"[39m
+            [33mfor[39m=[32m"select-native-_r_1r_"[39m
+            [33mid[39m=[32m"select-native-_r_1r_-label"[39m
+          [36m>[39m
+            [0m显示范围[0m
+            [36m<span[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getAllByLabelText node_modules/@testing-library/dom/dist/queries/label-text.js:111:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/local-app/LocalHistory.test.tsx:42:205
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 17 passed (18)
+   Start at  22:03:16
+   Duration  1.98s (transform 486ms, setup 0ms, collect 4.11s, tests 1.23s, environment 1.86s, prepare 254ms)
+

@@ -1,0 +1,65 @@
+Window: "Loop Control · 页面一致性隔离验收", App: Google Chrome for Testing.
+0 标准窗口 Loop Control · 页面一致性隔离验收 - Google Chrome for Testing, URL: 127.0.0.1:5191/docs/verification/page-consistency-20261028/fixture.html?scene=login&theme=light, Secondary Actions: Raise
+	1 container Loop Control · 页面一致性隔离验收 - Google Chrome for Testing, URL: 127.0.0.1:5191/docs/verification/page-consistency-20261028/fixture.html?scene=login&theme=light
+		2 container
+			3 工具栏
+				4 按钮 返回
+				5 按钮 (disabled) 前进
+				6 container chrome://webui-toolbar.top-chrome/
+					7 工具栏
+						8 弹出式按钮 重新加载, Help: 重新加载此网页，按下可查看更多选项
+				9 container
+					10 弹出式按钮 查看网站信息
+					11 文本栏 (settable) 地址和搜索栏, Value: 127.0.0.1:5191/docs/verification/page-consistency-20261028/fixture.html?scene=login&theme=light, Placeholder: 问问 Google 或输入网址
+					12 按钮 为此标签页添加书签
+				13 按钮 您
+				14 弹出式按钮 Chromium
+			15 container
+				16 HTML 内容 Loop Control · 页面一致性隔离验收, URL: 127.0.0.1:5191/docs/verification/page-consistency-20261028/fixture.html?scene=login&theme=light
+					17 container
+						18 container Loop Control 创作流程
+							19 文本 Loop Control
+							20 container
+								21 text 让想法， 沿着清楚的步骤 成为作品。
+							22 内容列表 创作流程
+								23 文本 准备素材
+								24 文本 制作与审核
+								25 文本 交付成片
+							26 文本 从第一份脚本，到可交付的成片。
+						27 container
+							28 标题 登录控制台, Value: 1
+								29 文本 登录控制台
+							30 文本 邮箱
+							31 邮箱 (settable) 邮箱
+							32 文本 密码
+							33 container
+								34 安全文本栏 (settable) 密码
+								35 切换按钮 显示密码, Value: 0
+							36 按钮 使用密码登录
+								37 文本 使用密码登录
+			38 container 信息栏容器
+				39 container 信息栏
+					40 文本 Chrome 测试版 v153.0.8010.36 仅适用于自动测试。若要进行常规浏览，请使用可自动更新的标准版 Chrome。
+					41 链接 下载 Chrome
+			42 弹出式按钮 标签页搜索
+			43 container
+				44 标签页组
+					45 标签 (selected, settable, boolean) Loop Control · 页面一致性隔离验收, Value: on
+						46 按钮 关闭
+			47 按钮 新标签页
+	48 关闭按钮
+	49 全屏幕按钮 Help: 此按钮也可以执行缩放窗口的操作, Secondary Actions: 缩放窗口
+	50 最小化按钮
+51 menu bar
+	52 Google Chrome for Testing
+	53 文件
+	54 编辑
+	55 显示
+	56 历史记录
+	57 书签
+	58 个人资料
+	59 标签页
+	60 窗口
+	61 帮助
+
+The focused UI element is 16 HTML 内容 Loop Control · 页面一致性隔离验收, URL: 127.0.0.1:5191/docs/verification/page-consistency-20261028/fixture.html?scene=login&theme=light

@@ -1,0 +1,936 @@
+{
+  "bodyHeight": 1000,
+  "clipped": [],
+  "colorSamples": [
+    {
+      "back": [
+        {
+          "cls": "wordmark",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "sidebar",
+          "color": "rgb(17, 19, 24)",
+          "image": "none",
+          "tag": "ASIDE"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(17, 19, 24)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 56,
+      "cls": "wordmark",
+      "color": "rgb(255, 255, 255)",
+      "fontSize": "21px",
+      "height": 32,
+      "lineHeight": "31.5px",
+      "name": null,
+      "right": 197,
+      "tag": "DIV",
+      "text": "Loop Control",
+      "weight": "750",
+      "width": 185,
+      "x": 12,
+      "y": 24
+    },
+    {
+      "back": [
+        {
+          "cls": "navigation-label",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover navigation-item",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "navigation",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "NAV"
+        },
+        {
+          "cls": "sidebar",
+          "color": "rgb(17, 19, 24)",
+          "image": "none",
+          "tag": "ASIDE"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(17, 19, 24)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 112,
+      "cls": "navigation-label",
+      "color": "oklch(0.708 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 109,
+      "tag": "SPAN",
+      "text": "系列运营",
+      "weight": "600",
+      "width": 56,
+      "x": 53,
+      "y": 92
+    },
+    {
+      "back": [
+        {
+          "cls": "navigation-label",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover navigation-item is-active",
+          "color": "rgb(158, 119, 237)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "navigation",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "NAV"
+        },
+        {
+          "cls": "sidebar",
+          "color": "rgb(17, 19, 24)",
+          "image": "none",
+          "tag": "ASIDE"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(17, 19, 24)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 153,
+      "cls": "navigation-label",
+      "color": "oklch(0.87 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 95,
+      "tag": "SPAN",
+      "text": "生产单",
+      "weight": "600",
+      "width": 42,
+      "x": 53,
+      "y": 133
+    },
+    {
+      "back": [
+        {
+          "cls": "navigation-label",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover navigation-item",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "navigation",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "NAV"
+        },
+        {
+          "cls": "sidebar",
+          "color": "rgb(17, 19, 24)",
+          "image": "none",
+          "tag": "ASIDE"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(17, 19, 24)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 194,
+      "cls": "navigation-label",
+      "color": "oklch(0.708 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 81,
+      "tag": "SPAN",
+      "text": "账号",
+      "weight": "600",
+      "width": 28,
+      "x": 53,
+      "y": 174
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "H1"
+        },
+        {
+          "cls": "page-header",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "HEADER"
+        },
+        {
+          "cls": "content-pane",
+          "color": "oklch(0.145 0 none)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(17, 19, 24)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 56,
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fontSize": "24px",
+      "height": 32,
+      "lineHeight": "32px",
+      "name": null,
+      "right": 328,
+      "tag": "H1",
+      "text": "界面验收",
+      "weight": "600",
+      "width": 94,
+      "x": 234,
+      "y": 24
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "H2"
+        },
+        {
+          "cls": "review-heading-copy",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "review-heading",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "HEADER"
+        },
+        {
+          "cls": "local-episode-detail",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "oklch(0.145 0 none)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(17, 19, 24)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 132,
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fontSize": "20px",
+      "height": 56,
+      "lineHeight": "28px",
+      "name": null,
+      "right": 1376,
+      "tag": "H2",
+      "text": "南方城市观察｜跨境创作团队第一季：从清晨通勤到深夜收工，在复杂声场中记录普通人的一天（中英双语版・字幕复核 v12・授权素材与声音来源已补齐）",
+      "weight": "400",
+      "width": 1142,
+      "x": 234,
+      "y": 76
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "review-heading-copy",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "review-heading",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "HEADER"
+        },
+        {
+          "cls": "local-episode-detail",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "oklch(0.145 0 none)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(17, 19, 24)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 153,
+      "cls": "",
+      "color": "oklch(0.708 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 1376,
+      "tag": "SPAN",
+      "text": "fixture-",
+      "weight": "400",
+      "width": 1142,
+      "x": 234,
+      "y": 135
+    },
+    {
+      "back": [
+        {
+          "cls": "notice-message",
+          "color": "rgb(22, 39, 28)",
+          "image": "none",
+          "tag": "P"
+        },
+        {
+          "cls": "local-episode-detail",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "oklch(0.145 0 none)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(17, 19, 24)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 214,
+      "cls": "notice-message",
+      "color": "oklch(0.708 0 none)",
+      "fontSize": "12px",
+      "height": 45,
+      "lineHeight": "19.2px",
+      "name": null,
+      "right": 1416,
+      "tag": "P",
+      "text": "历史生产单保留原阶段和审核记录。后续制作请新建生产单。",
+      "weight": "400",
+      "width": 1182,
+      "x": 234,
+      "y": 169
+    },
+    {
+      "back": [
+        {
+          "cls": "review-meta",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "P"
+        },
+        {
+          "cls": "local-episode-detail",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "oklch(0.145 0 none)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(17, 19, 24)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 248,
+      "cls": "review-meta",
+      "color": "oklch(0.708 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 1416,
+      "tag": "P",
+      "text": "原阶段：storyboard_approved · 1 个任务 · 6 个产物",
+      "weight": "400",
+      "width": 1182,
+      "x": 234,
+      "y": 230
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "H3"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SUMMARY"
+        },
+        {
+          "cls": "dan-disclosure review-section detail-card-collapsible",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DETAILS"
+        },
+        {
+          "cls": "local-episode-detail",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "oklch(0.145 0 none)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(17, 19, 24)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 306,
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 355,
+      "tag": "H3",
+      "text": "任务与审核记录",
+      "weight": "600",
+      "width": 97,
+      "x": 258,
+      "y": 286
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "PRE"
+        },
+        {
+          "cls": "detail-card-body",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "dan-disclosure-content",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "dan-disclosure review-section detail-card-collapsible",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DETAILS"
+        },
+        {
+          "cls": "local-episode-detail",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "oklch(0.145 0 none)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(17, 19, 24)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 724,
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fontSize": "14px",
+      "height": 400,
+      "lineHeight": "21px",
+      "name": null,
+      "right": 1416,
+      "tag": "PRE",
+      "text": "",
+      "weight": "400",
+      "width": 1182,
+      "x": 234,
+      "y": 324
+    },
+    {
+      "back": [
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover artifact-expand-button",
+          "color": "rgba(255, 255, 255, 0.95)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "local-artifact-preview",
+          "color": "rgb(21, 23, 25)",
+          "image": "none",
+          "tag": "FIGURE"
+        },
+        {
+          "cls": "artifact-preview",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "local-episode-detail",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "oklch(0.145 0 none)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(17, 19, 24)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 539,
+      "cls": "transition-inherit-all px-0.5",
+      "color": "oklch(0.708 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 985,
+      "tag": "SPAN",
+      "text": "放大查看",
+      "weight": "600",
+      "width": 60,
+      "x": 925,
+      "y": 519
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0.72)",
+          "image": "none",
+          "tag": "FIGCAPTION"
+        },
+        {
+          "cls": "local-artifact-preview",
+          "color": "rgb(21, 23, 25)",
+          "image": "none",
+          "tag": "FIGURE"
+        },
+        {
+          "cls": "artifact-preview",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "local-episode-detail",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "oklch(0.145 0 none)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(17, 19, 24)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 639,
+      "cls": "",
+      "color": "rgb(255, 255, 255)",
+      "fontSize": "12px",
+      "height": 34,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 1416,
+      "tag": "FIGCAPTION",
+      "text": "render · fixture/video.mp4",
+      "weight": "400",
+      "width": 1182,
+      "x": 234,
+      "y": 605
+    }
+  ],
+  "dialogs": [],
+  "headings": [
+    "界面验收",
+    "南方城市观察｜跨境创作团队第一季：从清晨通勤到深夜收工，在复杂声场中记录普通人的一天（中英双语版・字幕复核 v12・授权素材与声音来源已补齐）",
+    "任务与审核记录"
+  ],
+  "height": 1000,
+  "horizontalContainers": [],
+  "images": [],
+  "nodes": 45,
+  "outside": [],
+  "overflow": false,
+  "rootFont": "16px",
+  "scrollWidth": 1440,
+  "smallTargets": [
+    {
+      "bottom": 50,
+      "cls": "help-tip",
+      "height": 20,
+      "name": "夹具边界说明",
+      "right": 1416,
+      "tag": "SPAN",
+      "text": "",
+      "width": 20,
+      "x": 1396,
+      "y": 30
+    }
+  ],
+  "url": "http://127.0.0.1:5189/docs/verification/visual-audit-20261028/fixture.html?scene=historical&data=worst&theme=dark&chrome=0",
+  "width": 1440
+}

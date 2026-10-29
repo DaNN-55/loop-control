@@ -1,3 +1,5 @@
+import {applyScriptRenderSettings} from './scriptRenderSettings.js';
+import {videoAdapters} from "./videoProviderCatalog.js";
 import {
   createWorkerTaskPackage,
   missingVisualAssetAdapterMessage,
@@ -29,7 +31,7 @@ export interface ClaimedWorkerTask {
   attempt: number;
   budgetLimitCents: number;
   maxAttempts: number;
-  provider: "codex" | "google_tts" | "volcengine_tts" | "pexels" | "ffmpeg" | "freesound" | "openchatcut" | "openai" | "cloudflare" | "whisperx" | "bailian";
+  provider: "codex" | "google_tts" | "volcengine_tts" | "pexels" | "ffmpeg" | "freesound" | "openchatcut" | "openai" | "cloudflare" | "whisperx" | "bailian" | "volcengine" | "minimax" | "kling";
   model: string;
   promptVersion: string;
   episodeId: string;
@@ -289,7 +291,7 @@ export function reviewRenderFromSnapshot(snapshot: Record<string, unknown>): Wor
   const storyboard = value.storyboard;
   if (storyboard.version !== "storyboard/v1" || !Array.isArray(storyboard.shots) || !Array.isArray(storyboard.audioCues)) throw new Error("审核渲染任务缺少冻结分镜。");
   if (value.confirmation_mode !== "shot_preparation" || !Array.isArray(value.confirmed_shots)) throw new Error("OpenChatCut 新工程缺少版本化镜头准备契约。");
-  return {
+  const render:NonNullable<WorkerTaskPackageInput["reviewRender"]> = {
     projectRelativePath: requiredString(value.project_relative_path, "审核渲染任务缺少工程路径。"),
     projectRevision: requiredPositiveNumber(value.project_revision, "审核渲染任务缺少工程修订。"),
     preRenderReviewPackageId: requiredString(value.pre_render_review_package_id, "审核渲染任务缺少预渲染审核包。"),
@@ -325,6 +327,7 @@ export function reviewRenderFromSnapshot(snapshot: Record<string, unknown>): Wor
       };
     }),
   };
+  return applyScriptRenderSettings(render,snapshot.script_production);
 }
 
 function confirmedShots(value: unknown): NonNullable<WorkerTaskPackageInput["reviewRender"]>["confirmedShots"] {
@@ -502,10 +505,10 @@ function media(snapshot: Record<string, unknown>): WorkerTaskPackageInput["media
       },
     };
   }
-  if (value.adapter === "wan_video") {
+  if (value.adapter === "wan_video" || videoAdapters.includes(String(value.adapter))) {
     const video = value.wan_video;
     if (!isRecord(video) || !isRecord(video.first_frame)) throw new Error("万相镜头缺少冻结首帧。");
-    return { adapter: "wan_video", wanVideo: { firstFrame: video.first_frame as unknown as ArtifactManifest, prompt: requiredString(video.prompt, "缺少视频提示词。"), durationSeconds: requiredPositiveNumber(video.duration_seconds, "缺少视频时长。"), imageMime: requiredString(video.image_mime, "缺少首帧 MIME。") } };
+    return { adapter: value.adapter as "wan_video" | "seedance_video" | "minimax_video" | "kling_video", wanVideo: { firstFrame: video.first_frame as unknown as ArtifactManifest, prompt: requiredString(video.prompt, "缺少视频提示词。"), durationSeconds: requiredPositiveNumber(video.duration_seconds, "缺少视频时长。"), imageMime: requiredString(video.image_mime, "缺少首帧 MIME。") } };
   }
   if (value.adapter === "pexels_video") {
     const bRoll = value.b_roll;
@@ -691,7 +694,7 @@ function reviewAnnotations(snapshot: Record<string, unknown>): WorkerTaskPackage
 }
 
 function aRoll(snapshot: Record<string, unknown>): WorkerTaskPackageInput["aRoll"] {
-  if (snapshot.capability !== "a_roll_generation" || (isRecord(snapshot.media) && snapshot.media.adapter === "wan_video")) return undefined;
+  if (snapshot.capability !== "a_roll_generation" || (isRecord(snapshot.media) && (snapshot.media.adapter === "wan_video" || videoAdapters.includes(String(snapshot.media.adapter))))) return undefined;
   const executor = snapshot.executor;
   const shot = snapshot.shot;
   if (!isRecord(executor) || !isRecord(shot)) throw new Error("A-roll 任务缺少冻结执行器或镜头。");

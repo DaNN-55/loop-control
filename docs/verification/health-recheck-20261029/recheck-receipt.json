@@ -1,0 +1,29 @@
+{
+  "observedAt": "2026-10-29T02:55:54.837Z",
+  "checks": [
+    {
+      "name": "database_role",
+      "passed": true
+    },
+    {
+      "name": "media_directory",
+      "passed": true
+    },
+    {
+      "name": "prepared_runtime",
+      "passed": true
+    }
+  ],
+  "job": {
+    "id": "8557b911-e9bb-4c6c-9d2d-96e8bb364de2",
+    "kind": "health",
+    "dueAt": "2026-10-29T02:55:54.846772+00:00"
+  },
+  "plansBefore": [
+    {
+      "kind": "health",
+      "next_due_at": "2026-10-30T01:00:00+00:00"
+    }
+  ],
+  "method": "Actual native automation health job; application pool and nativeHealth unchanged"
+}

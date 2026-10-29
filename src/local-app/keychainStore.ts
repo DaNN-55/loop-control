@@ -5,7 +5,7 @@ import {join} from 'node:path';
 import {SecretStoreError,disabledSecretStore,type SecretStore} from './connectionPorts.js';
 interface KeychainConfiguration {approved:boolean;runtimeRoot:string;helperSha256:string;keychainName?:string}
 // Deployment-only configuration. HTTP/UI can never enable or select this port.
-export function configuredKeychainStore(config:KeychainConfiguration):SecretStore{
+export function configuredKeychainStore(config:KeychainConfiguration,prepareAccess?:()=>Promise<void>|void):SecretStore{
  if(!config.approved)return disabledSecretStore;
  const helper=join(config.runtimeRoot,'native/keychain-helper'),keychain=join(config.runtimeRoot,'keychain',config.keychainName??'t15-synthetic.keychain-db');
  async function validate(){
@@ -20,6 +20,7 @@ export function configuredKeychainStore(config:KeychainConfiguration):SecretStor
  async function invoke(operation:'put'|'get',reference:string,secret?:string):Promise<{code:string;secret?:string}>{
   if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(reference))throw new SecretStoreError('unavailable');
   await validate();
+  try{await prepareAccess?.();}catch{throw new SecretStoreError('denied');}
   return new Promise((resolve,reject)=>{
    const child=spawn(helper,['--keychain',keychain],{env:{PATH:'/usr/bin:/bin'},stdio:['pipe','pipe','pipe']});
    let output='',invalid=false;

@@ -9,20 +9,11 @@
     "noEmit": false,
     "outDir": "./dist/worker",
     "rootDir": "./src",
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
   "include": [
-    "src/worker/contracts.ts",
-    "src/worker/assetRoot.ts",
-    "src/worker/runtimeEnvironment.ts",
-    "src/worker/codexRunner.ts",
-    "src/worker/mediaLibrary.ts",
-    "src/worker/codexWorkerCli.ts",
-    "src/local-app/localWorkerCli.ts",
-    "src/publishing/publishPackage.ts",
-    "src/publishing/publishContext.ts",
-    "src/publishing/publishPackageCli.ts",
-    "src/publishing/publishPackageVerifyCli.ts",
-    "src/publishing/publishInputCli.ts"
+    "src/local-app/localWorkerCli.ts"
   ]
 }

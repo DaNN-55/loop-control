@@ -1,0 +1,50 @@
+{
+  "scope": [
+    "历史生产内容",
+    "共享资料与来源管理"
+  ],
+  "upstream": "Untitled UI MIT 1d410cb8facde8d50869e7bbb5f3d048e2267466",
+  "newNpmDependencies": false,
+  "checks": {
+    "tests": "63 passed, 10 relevant files",
+    "typecheck": "passed",
+    "productionBuild": "passed",
+    "diffCheck": "passed",
+    "apiAndOperationHandlers": "Both components remain byte-identical before their pagination renderer",
+    "otherBusinessSourceChanges": [],
+    "connectionStyles": "Six controls: font, color, background, border, shadow and padding match baseline; geometry excluded because first capture was hidden",
+    "pcViewport": [
+      1235,
+      953
+    ],
+    "horizontalOverflow": false,
+    "interactiveHorizontalClipping": false,
+    "freshBrowserConsole": [],
+    "impeccable": "3 own files; regex only; no findings. Parsed-page element rules not run"
+  },
+  "browserFlows": [
+    "搜索与空结果",
+    "已归档范围空状态",
+    "复选框键盘筛选",
+    "生产单内容与分类折叠",
+    "文件和记录独立翻到第 2 页",
+    "下载入口保持历史文件路由",
+    "只读清理预览",
+    "共享来源分类与列表",
+    "来源文件浏览及搜索空结果"
+  ],
+  "protected": [
+    "真实归档和恢复未执行，命令绑定及失败重试通过受控测试验证",
+    "不提供永久删除执行操作",
+    "未改 API、数据库或连接配置页面源码",
+    "未启用自动 hook"
+  ],
+  "limitations": [
+    "未运行全量应用或数据库集成测试；未做本轮手工深色/移动端视觉验收",
+    "生产 JS 约 808 KB/gzip 244 KB，Vite 继续提示大于 500 KB；本轮未跨页拆包"
+  ],
+  "resolvedDuringWork": [
+    "分步替换按钮与补齐导入/样式之间出现过临时热更新错误，已修复。旧日志保留，最终新建标签页完整加载无警告或错误",
+    "旧输入框标签文本查询改为按实际 searchbox 可访问名称验证"
+  ]
+}

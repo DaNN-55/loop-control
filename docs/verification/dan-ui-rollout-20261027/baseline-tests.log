@@ -1,0 +1,794 @@
+
+> loop-control@0.1.0 test
+> vitest run --exclude '**/*.integration.test.ts' --reporter=dot
+
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+·xxxxxxxxx······································x······x··························································································································xxx················································································x··············································································································································································stderr | src/publishing/ProductionCompletionModal.test.tsx > 生产完成弹窗 > 展示最终材料和生产完成状态，不提供外部发布登记
+An update to PublishMetadataSummary inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to PublishMaterialPreview inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to PublishMaterialPreview inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+·················································································stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+··························································································································································································································································································xxxxxxxxxxx·······················································x···x·xxxxxxx······································xx···················x···xx······························································x·····················x··xx----------------------------xxxxxxxxxxx
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/localControlPlane.test.ts [ src/localControlPlane.test.ts ]
+Error: Hook timed out in 10000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+ ❯ src/localControlPlane.test.ts:34:1
+     32| let origin = "";
+     33| 
+     34| beforeAll(async () => {
+       | ^
+     35|   const middleware = createLocalControlPlaneMiddleware({ supabasePubli…
+     36|   server = createServer((request, response) => middleware(request, res…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/60]⎯
+
+ FAIL  src/localControlPlane.test.ts [ src/localControlPlane.test.ts ]
+ FAIL  src/localEpisodeDirectoryRoute.test.ts [ src/localEpisodeDirectoryRoute.test.ts ]
+Error: Server is not running.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/60]⎯
+
+ FAIL  src/localEpisodeDirectoryRoute.test.ts [ src/localEpisodeDirectoryRoute.test.ts ]
+Error: Hook timed out in 10000ms.
+If this is a long-running hook, pass a timeout value as the last argument or configure it globally with "hookTimeout".
+ ❯ src/localEpisodeDirectoryRoute.test.ts:37:1
+     35| }
+     36| 
+     37| beforeAll(async () => {
+       | ^
+     38|   server = createControlPlaneServer();
+     39|   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", r…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/60]⎯
+
+ FAIL  scripts/local/application.test.mjs [ scripts/local/application.test.mjs ]
+Error: Cannot find module '../../dist/local-app/local-app/secretAdministration.js' imported from '/Users/dan/Programs/loop-control/scripts/local/application.mjs'
+ ❯ scripts/local/application.mjs:1:1
+      1| import {SecretAdministration} from '../../dist/local-app/local-app/sec…
+       | ^
+      2| import{configuredKeychainStore}from'../../dist/local-app/local-app/key…
+      3| import{createProviderProbe}from'../../dist/local-app/local-app/provide…
+
+Caused by: Error: Failed to load url ../../dist/local-app/local-app/secretAdministration.js (resolved id: ../../dist/local-app/local-app/secretAdministration.js) in /Users/dan/Programs/loop-control/scripts/local/application.mjs. Does the file exist?
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:22739:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/60]⎯
+
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 55 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  scripts/local-service-record.test.mjs > 本地服务安全停止 > 未知进程即使占用记录端口也不会被关闭
+ FAIL  scripts/local-service-record.test.mjs > 本地服务安全停止 > 只关闭项目根目录、命令身份和监听端口都匹配的实际项目进程
+ FAIL  scripts/local-service-record.test.mjs > 本地服务安全停止 > 服务记录丢失后仍发现并关闭本项目的孤儿进程
+ FAIL  scripts/startup-lifecycle.acceptance.test.mjs > STARTUP-03D 生命周期验收 > 空闲端口启动与被占用时自动换用隔离端口
+ FAIL  src/local-app/accountPreflightRoute.test.ts > reports locked Provider networking independently from connection qualification through Owner HTTP
+ FAIL  src/local-app/accountPreflightRoute.test.ts > reports both locked networking and missing qualification without calling a Provider or reading secrets
+ FAIL  src/local-app/accountPreflightRoute.test.ts > keeps missing connection qualification actionable when networking is available
+ FAIL  src/local-app/accountPreflightRoute.test.ts > rejects an unavailable exact secret even when networking and recorded qualification are available
+ FAIL  src/local-app/accountPreflightRoute.test.ts > identifies a missing planning model without claiming that Provider and Prompt are also missing
+ FAIL  src/local-app/accountPreflightRoute.test.ts > reports incomplete planning configuration separately from runtime readiness
+ FAIL  src/local-app/accountPreflightRoute.test.ts > reports readiness after the current configuration, qualification and runtime checks pass
+ FAIL  src/local-app/artifactRoute.test.ts > serves verified media byte ranges for seeking and rejects invalid ranges or tampered bytes
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > accepts Owner text review only for the exact current audio, text and alignment identity
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > rejects a late Owner review after audioTrackId changes without writing a confirmation
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > rejects a late Owner review after audioSha256 changes without writing a confirmation
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > rejects a late Owner review after textFingerprint changes without writing a confirmation
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > rejects a late Owner review after alignmentInputVersion changes without writing a confirmation
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > rejects generateSyncPreview at Owner HTTP until current content review is saved
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > rejects confirmSyncPreview at Owner HTTP until current content review is saved
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > keeps the Owner permission boundary for anonymous text review
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > keeps the Owner permission boundary for no-csrf text review
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > keeps the Owner permission boundary for cross-origin text review
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > rejects malformed confirmation identities before writing state
+ FAIL  src/local-app/catalogRoute.test.ts > local directory HTTP boundary > rejects missing Owner and cross-origin requests before reading business data
+ FAIL  src/local-app/localRoute.test.ts > rejects cross-origin and Host-mismatched local authentication without accessing the database
+ FAIL  src/local-app/manualVerification.test.ts > cancels a real in-flight HTTP request on caller abort
+ FAIL  src/local-app/ownerPasswordRoute.test.ts > requires CSRF and a bounded password, hashes server-side and rechecks the active session atomically
+ FAIL  src/local-app/providerNetwork.test.ts > cancels the actual transport and records an unknown spent request after caller abort
+ FAIL  src/local-app/providerNetwork.test.ts > retains a completed real HTTP response when the caller aborts after completion
+ FAIL  src/local-app/standaloneStudioRoute.test.ts > opens standalone Studio through session/CSRF without any account or Episode, scopes its directory to the Owner and closes it with the app
+Error: listen EPERM: operation not permitted 127.0.0.1
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/60]⎯
+
+ FAIL  src/episodePreflightRoute.test.ts > Episode 修复 preflight 路由 > 程序未准备时启动请求返回503，且不记录预检或迁移Episode状态
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/episodePreflightRoute.test.ts:74:3
+     72|   afterEach(() => vi.clearAllMocks());
+     73| 
+     74|   it("程序未准备时启动请求返回503，且不记录预检或迁移Episode状态", async () => {
+       |   ^
+     75|     const originalKey=process.env.SUPABASE_SERVICE_ROLE_KEY;
+     76|     process.env.SUPABASE_SERVICE_ROLE_KEY="controlled-key";
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/60]⎯
+
+ FAIL  src/episodePreflightRoute.test.ts > Episode 修复 preflight 路由 > 使用提交中的修复策略、Episode 的系列快照，并执行资产目录检查
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/episodePreflightRoute.test.ts:126:3
+    124|   });
+    125| 
+    126|   it("使用提交中的修复策略、Episode 的系列快照，并执行资产目录检查", async () => {
+       |   ^
+    127|     mockSupabaseClient();
+    128|     const report = { version: "worker-preflight/v2", checks: [] };
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/60]⎯
+
+ FAIL  src/episodePreflightRoute.test.ts > 持久任务派发状态 > 重复提交返回可查询的排队状态，执行器退出不能改写持久状态
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/episodePreflightRoute.test.ts:154:3
+    152|   afterEach(() => vi.clearAllMocks());
+    153| 
+    154|   it("重复提交返回可查询的排队状态，执行器退出不能改写持久状态", async () => {
+       |   ^
+    155|     const taskId = "55555555-5555-4555-8555-555555555555";
+    156|     const client = mockSupabaseClient();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/60]⎯
+
+ FAIL  src/episodePreflightRoute.test.ts > 持久任务派发状态 > foreign origin 不启动额外执行
+ FAIL  src/episodePreflightRoute.test.ts > 持久任务派发状态 > missing origin 不启动额外执行
+ FAIL  src/episodePreflightRoute.test.ts > 持久任务派发状态 > forged host and origin 不启动额外执行
+ FAIL  src/episodePreflightRoute.test.ts > 持久任务派发状态 > viewer 不启动额外执行
+ FAIL  src/episodePreflightRoute.test.ts > 持久任务派发状态 > completed duplicate 不启动额外执行
+ FAIL  src/episodePreflightRoute.test.ts > 持久任务派发状态 > launch failure 不启动额外执行
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/episodePreflightRoute.test.ts:181:4
+    179|     ["completed duplicate", "owner", "completed", 200],
+    180|     ["launch failure", "owner", "ready", 500],
+    181|   ])("%s 不启动额外执行", async (scenario, role, taskStatus, expectedStatus) …
+       |    ^
+    182|     const taskId = "55555555-5555-4555-8555-555555555555";
+    183|     const client = mockSupabaseClient();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/60]⎯
+
+ FAIL  src/episodePreflightRoute.test.ts > 持久任务派发状态 > 重建 HTTP 服务后仍可查询 ready 任务
+ FAIL  src/episodePreflightRoute.test.ts > 持久任务派发状态 > 重建 HTTP 服务后仍可查询 running 任务
+ FAIL  src/episodePreflightRoute.test.ts > 持久任务派发状态 > 重建 HTTP 服务后仍可查询 completed 任务
+ FAIL  src/episodePreflightRoute.test.ts > 持久任务派发状态 > 重建 HTTP 服务后仍可查询 blocked 任务
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/episodePreflightRoute.test.ts:199:4
+    197|   it.each([
+    198|     ["ready", "queued"], ["running", "starting"], ["completed", "succe…
+    199|   ])("重建 HTTP 服务后仍可查询 %s 任务", async (taskStatus, status) => {
+       |    ^
+    200|     const taskId = "55555555-5555-4555-8555-555555555555";
+    201|     const client = mockSupabaseClient();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/60]⎯
+
+ FAIL  src/externalConnectionRoute.test.ts > 外部连接测试路由 > 只返回非密钥验证结果
+Error: Test timed out in 5000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ src/externalConnectionRoute.test.ts:20:3
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/60]⎯
+
+ FAIL  src/local-app/LocalCatalogApp.workspace.test.tsx > separates login/security from maintenance, preserves drafts across tabs and restores keyboard focus
+TestingLibraryElementError: Unable to find a label with the text of: 连接名称
+
+Ignored nodes: comments, script, style
+[36m<section[39m
+  [33maria-labelledby[39m=[32m"_r_0_-title"[39m
+  [33maria-modal[39m=[32m"true"[39m
+  [33mclass[39m=[32m"modal-card maintenance-modal"[39m
+  [33mrole[39m=[32m"dialog"[39m
+[36m>[39m
+  [36m<header>[39m
+    [36m<h2[39m
+      [33mid[39m=[32m"_r_0_-title"[39m
+    [36m>[39m
+      [0m系统维护[0m
+    [36m</h2>[39m
+    [36m<button[39m
+      [33maria-label[39m=[32m"关闭系统维护"[39m
+      [33mclass[39m=[32m"icon-button"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0m×[0m
+    [36m</button>[39m
+  [36m</header>[39m
+  [36m<div[39m
+    [33maria-label[39m=[32m"系统维护分区"[39m
+    [33mclass[39m=[32m"account-tabs maintenance-tabs"[39m
+    [33mrole[39m=[32m"tablist"[39m
+  [36m>[39m
+    [36m<button[39m
+      [33maria-controls[39m=[32m"_r_0_-connections-panel"[39m
+      [33maria-selected[39m=[32m"true"[39m
+      [33mclass[39m=[32m"account-tab is-active"[39m
+      [33mid[39m=[32m"_r_0_-connections-tab"[39m
+      [33mrole[39m=[32m"tab"[39m
+      [33mtabindex[39m=[32m"0"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0m连接管理[0m
+    [36m</button>[39m
+    [36m<button[39m
+      [33maria-controls[39m=[32m"_r_0_-history-panel"[39m
+      [33maria-selected[39m=[32m"false"[39m
+      [33mclass[39m=[32m"account-tab"[39m
+      [33mid[39m=[32m"_r_0_-history-tab"[39m
+      [33mrole[39m=[32m"tab"[39m
+      [33mtabindex[39m=[32m"-1"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [0m历史资料[0m
+    [36m</button>[39m
+  [36m</div>[39m
+  [36m<div[39m
+    [33maria-labelledby[39m=[32m"_r_0_-connections-tab"[39m
+    [33mclass[39m=[32m"maintenance-panel-content"[39m
+    [33mid[39m=[32m"_r_0_-connections-panel"[39m
+    [33mrole[39m=[32m"tabpanel"[39m
+    [33mtabindex[39m=[32m"0"[39m
+  [36m>[39m
+    [36m<section[39m
+      [33maria-label[39m=[32m"本地连接"[39m
+      [33mclass[39m=[32m"dan-ui local-connections-panel"[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"connection-panel-header"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<h3>[39m
+            [0m连接管理[0m
+          [36m</h3>[39m
+          [36m<p[39m
+            [33mrole[39m=[32m"status"[39m
+          [36m>[39m
+            [0m凭据仅保存到本机 Keychain；在线验证已锁定，当前不会发出 Provider 请求。[0m
+          [36m</p>[39m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover"[39m
+          [33mdata-rac[39m=[32m""[39m
+          [33mdata-react-aria-pressable[39m=[32m"true"[39m
+          [33mid[39m=[32m"react-aria-_r_1_"[39m
+          [33mtabindex[39m=[32m"0"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-refresh-cw pointer-events-none size-5 shrink-0 transition-inherit-all"[39m
+            [33mdata-icon[39m=[32m"leading"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21 3v5h-5"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M8 16H3v5"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+            [33mdata-text[39m=[32m"true"[39m
+          [36m>[39m
+            [0m刷新连接[0m
+          [36m</span>[39m
+        [36m</button>[39m
+      [36m</header>[39m
+      [36m<section[39m
+        [33maria-label[39m=[32m"外部连接管理"[39m
+        [33mclass[39m=[32m"dan-ui connection-workspace"[39m
+      [36m>[39m
+        [36m<form[39m
+          [33maria-label[39m=[32m"保存连接"[39m
+          [33mclass[39m=[32m"connection-editor"[39m
+        [36m>[39m
+          [36m<fieldset[39m
+            [33mclass[39m=[32m"connection-fields"[39m
+          [36m>[39m
+            [36m<legend>[39m
+              [0m新建连接[0m
+            [36m</legend>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"w-full in-data-input-wrapper:w-max connection-field connection-target-field"[39m
+            [36m>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"flex cursor-default items-center gap-0.5 text-sm font-medium text-secondary mb-1.5"[39m
+                [33mdata-label[39m=[32m"true"[39m
+                [33mfor[39m=[32m"select-native-_r_3_"[39m
+                [33mid[39m=[32m"select-native-_r_3_-label"[39m
+              [36m>[39m
+                [0m操作对象[0m
+                [36m<span[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"hidden text-brand-tertiary group-required:block group-invalid:text-error-primary"[39m
+                [36m>[39m
+                  [0m*[0m
+                [36m</span>[39m
+              [36m</label>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"relat...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getAllByLabelText node_modules/@testing-library/dom/dist/queries/label-text.js:111:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/local-app/LocalCatalogApp.workspace.test.tsx:64:38
+     62|  await within(maintenance).findByRole('region',{name:'本地连接'});
+     63|  expect(screen.queryByLabelText('新密码')).toBeNull();expect(requests.som…
+     64|  await user.type(within(maintenance).getByLabelText('连接名称'),'未提交的连接草稿'…
+       |                                      ^
+     65|  await user.click(within(maintenance).getByRole('tab',{name:'历史资料'}));
+     66|  await within(maintenance).findByText('没有匹配的历史生产单。可修改搜索或关闭“仅显示有生产内容的条目…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/60]⎯
+
+ FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 以纵向缩略图展示产物，并允许 Owner 放大后关闭预览
+AssertionError: expected <button …(3)></button> to be <button …(3)></button> // Object.is equality
+
+- Expected
++ Received
+
+  <button
+-   aria-label="关闭放大预览"
+-   class="artifact-lightbox-close"
++   aria-label="放大查看 cover 产物"
++   class="artifact-expand-button"
+    type="button"
+  >
+-   关闭
++   放大查看
+  </button>
+
+ ❯ src/reviews/ReviewWorkspace.test.tsx:421:36
+    419|     expect(screen.getByRole("dialog", { name: "cover 产物放大预览" })).toBeT…
+    420|     expect(screen.getByRole("img", { name: "cover 产物放大预览" }).getAttrib…
+    421|     expect(document.activeElement).toBe(screen.getByRole("button", { n…
+       |                                    ^
+    422| 
+    423|     await user.keyboard("{Tab}");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[13/60]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > 定时扫描先领取持久任务，再用stdin传递给Worker
+Error: Invalid tsconfig.worker.json
+ ❯ sources src/orchestration/runtimeBuild.ts:27:37
+     25|     if (config.error) throw Error(`Cannot read ${name}`);
+     26|     const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys…
+     27|     if (parsed.errors.length) throw Error(`Invalid ${name}`);
+       |                                     ^
+     28|     const program = ts.createProgram(parsed.fileNames, parsed.options);
+     29|     for (const file of program.getSourceFiles()) {
+ ❯ Module.prepareRuntime src/orchestration/runtimeBuild.ts:61:20
+ ❯ preparedFixture src/orchestration/loopOrchestratorCli.test.ts:132:3
+ ❯ runDispatch src/orchestration/loopOrchestratorCli.test.ts:119:14
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:38:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[14/60]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > 任务唤醒不重新规划冻结输入，仍消费公平共享队列
+Error: Invalid tsconfig.worker.json
+ ❯ sources src/orchestration/runtimeBuild.ts:27:37
+     25|     if (config.error) throw Error(`Cannot read ${name}`);
+     26|     const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys…
+     27|     if (parsed.errors.length) throw Error(`Invalid ${name}`);
+       |                                     ^
+     28|     const program = ts.createProgram(parsed.fileNames, parsed.options);
+     29|     for (const file of program.getSourceFiles()) {
+ ❯ Module.prepareRuntime src/orchestration/runtimeBuild.ts:61:20
+ ❯ preparedFixture src/orchestration/loopOrchestratorCli.test.ts:132:3
+ ❯ runDispatch src/orchestration/loopOrchestratorCli.test.ts:119:14
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:45:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[15/60]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > Episode入口限定规划范围，执行仍使用全局原子领取
+Error: Invalid tsconfig.worker.json
+ ❯ sources src/orchestration/runtimeBuild.ts:27:37
+     25|     if (config.error) throw Error(`Cannot read ${name}`);
+     26|     const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys…
+     27|     if (parsed.errors.length) throw Error(`Invalid ${name}`);
+       |                                     ^
+     28|     const program = ts.createProgram(parsed.fileNames, parsed.options);
+     29|     for (const file of program.getSourceFiles()) {
+ ❯ Module.prepareRuntime src/orchestration/runtimeBuild.ts:61:20
+ ❯ preparedFixture src/orchestration/loopOrchestratorCli.test.ts:132:3
+ ❯ runDispatch src/orchestration/loopOrchestratorCli.test.ts:119:14
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:53:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[16/60]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > 满载领取为空时不构建或启动空跑Worker
+Error: Invalid tsconfig.worker.json
+ ❯ sources src/orchestration/runtimeBuild.ts:27:37
+     25|     if (config.error) throw Error(`Cannot read ${name}`);
+     26|     const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys…
+     27|     if (parsed.errors.length) throw Error(`Invalid ${name}`);
+       |                                     ^
+     28|     const program = ts.createProgram(parsed.fileNames, parsed.options);
+     29|     for (const file of program.getSourceFiles()) {
+ ❯ Module.prepareRuntime src/orchestration/runtimeBuild.ts:61:20
+ ❯ preparedFixture src/orchestration/loopOrchestratorCli.test.ts:132:3
+ ❯ runDispatch src/orchestration/loopOrchestratorCli.test.ts:119:14
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:61:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[17/60]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > CLI不传显式environment时仍尊重进程中的Worker容量
+Error: Invalid tsconfig.worker.json
+ ❯ sources src/orchestration/runtimeBuild.ts:27:37
+     25|     if (config.error) throw Error(`Cannot read ${name}`);
+     26|     const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys…
+     27|     if (parsed.errors.length) throw Error(`Invalid ${name}`);
+       |                                     ^
+     28|     const program = ts.createProgram(parsed.fileNames, parsed.options);
+     29|     for (const file of program.getSourceFiles()) {
+ ❯ Module.prepareRuntime src/orchestration/runtimeBuild.ts:61:20
+ ❯ preparedFixture src/orchestration/loopOrchestratorCli.test.ts:132:3
+ ❯ runDispatch src/orchestration/loopOrchestratorCli.test.ts:119:14
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:69:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[18/60]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > 已准备的任务热路径只执行产物，不调用npm或编译器
+Error: Invalid tsconfig.worker.json
+ ❯ sources src/orchestration/runtimeBuild.ts:27:37
+     25|     if (config.error) throw Error(`Cannot read ${name}`);
+     26|     const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys…
+     27|     if (parsed.errors.length) throw Error(`Invalid ${name}`);
+       |                                     ^
+     28|     const program = ts.createProgram(parsed.fileNames, parsed.options);
+     29|     for (const file of program.getSourceFiles()) {
+ ❯ Module.prepareRuntime src/orchestration/runtimeBuild.ts:61:20
+ ❯ preparedFixture src/orchestration/loopOrchestratorCli.test.ts:132:3
+ ❯ runDispatch src/orchestration/loopOrchestratorCli.test.ts:119:14
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:78:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[19/60]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > 空队列不构建或启动Worker
+Error: Invalid tsconfig.worker.json
+ ❯ sources src/orchestration/runtimeBuild.ts:27:37
+     25|     if (config.error) throw Error(`Cannot read ${name}`);
+     26|     const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys…
+     27|     if (parsed.errors.length) throw Error(`Invalid ${name}`);
+       |                                     ^
+     28|     const program = ts.createProgram(parsed.fileNames, parsed.options);
+     29|     for (const file of program.getSourceFiles()) {
+ ❯ Module.prepareRuntime src/orchestration/runtimeBuild.ts:61:20
+ ❯ preparedFixture src/orchestration/loopOrchestratorCli.test.ts:132:3
+ ❯ runDispatch src/orchestration/loopOrchestratorCli.test.ts:119:14
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:84:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[20/60]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > 一次提醒轮次通过原子领取消费事件，不再按时间重扫 audit_events
+Error: Invalid tsconfig.worker.json
+ ❯ sources src/orchestration/runtimeBuild.ts:27:37
+     25|     if (config.error) throw Error(`Cannot read ${name}`);
+     26|     const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys…
+     27|     if (parsed.errors.length) throw Error(`Invalid ${name}`);
+       |                                     ^
+     28|     const program = ts.createProgram(parsed.fileNames, parsed.options);
+     29|     for (const file of program.getSourceFiles()) {
+ ❯ Module.prepareRuntime src/orchestration/runtimeBuild.ts:61:20
+ ❯ preparedFixture src/orchestration/loopOrchestratorCli.test.ts:132:3
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:91:37
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[21/60]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > 部分快照失败归入快照结果，不误报为调度失败
+Error: Invalid tsconfig.worker.json
+ ❯ sources src/orchestration/runtimeBuild.ts:27:37
+     25|     if (config.error) throw Error(`Cannot read ${name}`);
+     26|     const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys…
+     27|     if (parsed.errors.length) throw Error(`Invalid ${name}`);
+       |                                     ^
+     28|     const program = ts.createProgram(parsed.fileNames, parsed.options);
+     29|     for (const file of program.getSourceFiles()) {
+ ❯ Module.prepareRuntime src/orchestration/runtimeBuild.ts:61:20
+ ❯ preparedFixture src/orchestration/loopOrchestratorCli.test.ts:132:3
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:105:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[22/60]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 16 unhandled errors during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: listen EPERM: operation not permitted 127.0.0.1
+ ❯ Server.setupListenHandle [as _listen2] node:net:2302:21
+ ❯ listenInCluster node:net:2433:12
+ ❯ node:net:2662:7
+ ❯ processTicksAndRejections node:internal/process/task_queues:90:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'EPERM', errno: -1, syscall: 'listen', address: '127.0.0.1' }
+This error originated in "src/episodePreflightRoute.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "程序未准备时启动请求返回503，且不记录预检或迁移Episode状态". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: listen EPERM: operation not permitted 127.0.0.1
+ ❯ Server.setupListenHandle [as _listen2] node:net:2302:21
+ ❯ listenInCluster node:net:2433:12
+ ❯ node:net:2662:7
+ ❯ processTicksAndRejections node:internal/process/task_queues:90:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'EPERM', errno: -1, syscall: 'listen', address: '127.0.0.1' }
+This error originated in "src/localControlPlane.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: listen EPERM: operation not permitted 127.0.0.1
+ ❯ Server.setupListenHandle [as _listen2] node:net:2302:21
+ ❯ listenInCluster node:net:2433:12
+ ❯ node:net:2662:7
+ ❯ processTicksAndRejections node:internal/process/task_queues:90:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'EPERM', errno: -1, syscall: 'listen', address: '127.0.0.1' }
+This error originated in "src/localEpisodeDirectoryRoute.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: listen EPERM: operation not permitted 127.0.0.1
+ ❯ Server.setupListenHandle [as _listen2] node:net:2302:21
+ ❯ listenInCluster node:net:2433:12
+ ❯ node:net:2662:7
+ ❯ processTicksAndRejections node:internal/process/task_queues:90:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'EPERM', errno: -1, syscall: 'listen', address: '127.0.0.1' }
+This error originated in "src/externalConnectionRoute.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "只返回非密钥验证结果". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: listen EPERM: operation not permitted 127.0.0.1
+ ❯ Server.setupListenHandle [as _listen2] node:net:2302:21
+ ❯ listenInCluster node:net:2433:12
+ ❯ node:net:2662:7
+ ❯ processTicksAndRejections node:internal/process/task_queues:90:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'EPERM', errno: -1, syscall: 'listen', address: '127.0.0.1' }
+This error originated in "src/episodePreflightRoute.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "使用提交中的修复策略、Episode 的系列快照，并执行资产目录检查". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: listen EPERM: operation not permitted 127.0.0.1
+ ❯ Server.setupListenHandle [as _listen2] node:net:2302:21
+ ❯ listenInCluster node:net:2433:12
+ ❯ node:net:2662:7
+ ❯ processTicksAndRejections node:internal/process/task_queues:90:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'EPERM', errno: -1, syscall: 'listen', address: '127.0.0.1' }
+This error originated in "src/episodePreflightRoute.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "重复提交返回可查询的排队状态，执行器退出不能改写持久状态". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: listen EPERM: operation not permitted 127.0.0.1
+ ❯ Server.setupListenHandle [as _listen2] node:net:2302:21
+ ❯ listenInCluster node:net:2433:12
+ ❯ node:net:2662:7
+ ❯ processTicksAndRejections node:internal/process/task_queues:90:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'EPERM', errno: -1, syscall: 'listen', address: '127.0.0.1' }
+This error originated in "src/episodePreflightRoute.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "foreign origin 不启动额外执行". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: listen EPERM: operation not permitted 127.0.0.1
+ ❯ Server.setupListenHandle [as _listen2] node:net:2302:21
+ ❯ listenInCluster node:net:2433:12
+ ❯ node:net:2662:7
+ ❯ processTicksAndRejections node:internal/process/task_queues:90:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'EPERM', errno: -1, syscall: 'listen', address: '127.0.0.1' }
+This error originated in "src/episodePreflightRoute.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "missing origin 不启动额外执行". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: listen EPERM: operation not permitted 127.0.0.1
+ ❯ Server.setupListenHandle [as _listen2] node:net:2302:21
+ ❯ listenInCluster node:net:2433:12
+ ❯ node:net:2662:7
+ ❯ processTicksAndRejections node:internal/process/task_queues:90:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'EPERM', errno: -1, syscall: 'listen', address: '127.0.0.1' }
+This error originated in "src/episodePreflightRoute.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "forged host and origin 不启动额外执行". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: listen EPERM: operation not permitted 127.0.0.1
+ ❯ Server.setupListenHandle [as _listen2] node:net:2302:21
+ ❯ listenInCluster node:net:2433:12
+ ❯ node:net:2662:7
+ ❯ processTicksAndRejections node:internal/process/task_queues:90:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'EPERM', errno: -1, syscall: 'listen', address: '127.0.0.1' }
+This error originated in "src/episodePreflightRoute.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "viewer 不启动额外执行". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: listen EPERM: operation not permitted 127.0.0.1
+ ❯ Server.setupListenHandle [as _listen2] node:net:2302:21
+ ❯ listenInCluster node:net:2433:12
+ ❯ node:net:2662:7
+ ❯ processTicksAndRejections node:internal/process/task_queues:90:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'EPERM', errno: -1, syscall: 'listen', address: '127.0.0.1' }
+This error originated in "src/episodePreflightRoute.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "completed duplicate 不启动额外执行". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: listen EPERM: operation not permitted 127.0.0.1
+ ❯ Server.setupListenHandle [as _listen2] node:net:2302:21
+ ❯ listenInCluster node:net:2433:12
+ ❯ node:net:2662:7
+ ❯ processTicksAndRejections node:internal/process/task_queues:90:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'EPERM', errno: -1, syscall: 'listen', address: '127.0.0.1' }
+This error originated in "src/episodePreflightRoute.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "launch failure 不启动额外执行". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: listen EPERM: operation not permitted 127.0.0.1
+ ❯ Server.setupListenHandle [as _listen2] node:net:2302:21
+ ❯ listenInCluster node:net:2433:12
+ ❯ node:net:2662:7
+ ❯ processTicksAndRejections node:internal/process/task_queues:90:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'EPERM', errno: -1, syscall: 'listen', address: '127.0.0.1' }
+This error originated in "src/episodePreflightRoute.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "重建 HTTP 服务后仍可查询 ready 任务". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: listen EPERM: operation not permitted 127.0.0.1
+ ❯ Server.setupListenHandle [as _listen2] node:net:2302:21
+ ❯ listenInCluster node:net:2433:12
+ ❯ node:net:2662:7
+ ❯ processTicksAndRejections node:internal/process/task_queues:90:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'EPERM', errno: -1, syscall: 'listen', address: '127.0.0.1' }
+This error originated in "src/episodePreflightRoute.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "重建 HTTP 服务后仍可查询 running 任务". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: listen EPERM: operation not permitted 127.0.0.1
+ ❯ Server.setupListenHandle [as _listen2] node:net:2302:21
+ ❯ listenInCluster node:net:2433:12
+ ❯ node:net:2662:7
+ ❯ processTicksAndRejections node:internal/process/task_queues:90:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'EPERM', errno: -1, syscall: 'listen', address: '127.0.0.1' }
+This error originated in "src/episodePreflightRoute.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "重建 HTTP 服务后仍可查询 completed 任务". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: listen EPERM: operation not permitted 127.0.0.1
+ ❯ Server.setupListenHandle [as _listen2] node:net:2302:21
+ ❯ listenInCluster node:net:2433:12
+ ❯ node:net:2662:7
+ ❯ processTicksAndRejections node:internal/process/task_queues:90:21
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+Serialized Error: { code: 'EPERM', errno: -1, syscall: 'listen', address: '127.0.0.1' }
+This error originated in "src/episodePreflightRoute.test.ts" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "重建 HTTP 服务后仍可查询 blocked 任务". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  19 failed | 124 passed (143)
+      Tests  55 failed | 988 passed | 28 skipped (1071)
+     Errors  16 errors
+   Start at  22:30:36
+   Duration  81.20s (transform 2.16s, setup 0ms, collect 15.53s, tests 122.52s, environment 20.90s, prepare 4.67s)
+

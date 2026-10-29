@@ -1,0 +1,7 @@
+{
+  "scope": "only new read-only search modules and minimal route; no database migration",
+  "routeBefore": "f27ade6ef00e1957855d3387613ef18769272f432ad1bd153ee1f9c99fb8caf7",
+  "routeAfter": "f27ade6ef00e1957855d3387613ef18769272f432ad1bd153ee1f9c99fb8caf7",
+  "activeTasksBefore": 0,
+  "scriptStoreDeployed": false
+}

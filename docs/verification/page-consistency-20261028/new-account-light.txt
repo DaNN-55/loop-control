@@ -1,0 +1,63 @@
+Window: "Loop Control · 页面一致性隔离验收", App: Google Chrome for Testing.
+0 标准窗口 Loop Control · 页面一致性隔离验收 - Google Chrome for Testing, Secondary Actions: Raise, URL: 127.0.0.1:5191/docs/verification/page-consistency-20261028/fixture.html?scene=new-account&theme=light
+	1 container Loop Control · 页面一致性隔离验收 - Google Chrome for Testing, URL: 127.0.0.1:5191/docs/verification/page-consistency-20261028/fixture.html?scene=new-account&theme=light
+		2 container
+			3 工具栏
+				4 按钮 返回
+				5 按钮 (disabled) 前进
+				6 container chrome://webui-toolbar.top-chrome/
+					7 工具栏
+						8 弹出式按钮 重新加载, Help: 重新加载此网页，按下可查看更多选项
+				9 container
+					10 弹出式按钮 查看网站信息
+					11 文本栏 (settable) 地址和搜索栏, Placeholder: 问问 Google 或输入网址, Value: 127.0.0.1:5191/docs/verification/page-consistency-20261028/fixture.html?scene=new-account&theme=light
+					12 按钮 为此标签页添加书签
+				13 按钮 您
+				14 弹出式按钮 Chromium
+			15 container
+				16 HTML 内容 Loop Control · 页面一致性隔离验收, URL: 127.0.0.1:5191/docs/verification/page-consistency-20261028/fixture.html?scene=new-account&theme=light
+					17 container 新建账号
+						18 container 新建账号
+							19 container
+								20 标题 新建账号, Value: 2
+									21 文本 新建账号
+								22 按钮 关闭新建账号
+							23 container
+								24 文本 账号名称
+								25 文本栏 (settable) 账号名称, Placeholder: 例如：内容工作室
+							26 container
+								27 文本 账号标识
+								28 按钮 账号标识说明
+								29 文本栏 (settable) 账号标识, Placeholder: content-studio
+							30 container
+								31 文本 时区
+								32 弹出式按钮 时区, Value: 中国大陆 · 上海（Asia/Shanghai）
+									33 (selected) 中国大陆 · 上海（Asia/Shanghai）
+							34 按钮 取消
+							35 按钮 创建账号
+			36 container 信息栏容器
+				37 container 信息栏
+					38 文本 Chrome 测试版 v153.0.8010.36 仅适用于自动测试。若要进行常规浏览，请使用可自动更新的标准版 Chrome。
+					39 链接 下载 Chrome
+			40 弹出式按钮 标签页搜索
+			41 container
+				42 标签页组
+					43 标签 (selected, settable, boolean) Loop Control · 页面一致性隔离验收, Value: on
+						44 按钮 关闭
+			45 按钮 新标签页
+	46 关闭按钮
+	47 全屏幕按钮 Help: 此按钮也可以执行缩放窗口的操作, Secondary Actions: 缩放窗口
+	48 最小化按钮
+49 menu bar
+	50 Google Chrome for Testing
+	51 文件
+	52 编辑
+	53 显示
+	54 历史记录
+	55 书签
+	56 个人资料
+	57 标签页
+	58 窗口
+	59 帮助
+
+The focused UI element is 22 按钮 关闭新建账号

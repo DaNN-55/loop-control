@@ -1,3 +1,4 @@
+import {isRetiredProvider,retiredProviderMessage} from '../worker/providerLifecycle.js';
 import {createHash,randomUUID} from 'node:crypto';
 import type {Pool,PoolClient} from 'pg';
 import type {OwnerSession} from './sessions.js';
@@ -25,16 +26,19 @@ export function parseConnectionCommand(body:Record<string,unknown>){
   if(key==='secret'){if(!value.trim()||Buffer.byteLength(value)>4096)invalid('认证材料无效。');secret=value;}
   else{const clean=value.trim();if(clean.length>(key==='description'?500:100)||key!=='description'&&!clean)invalid();metadata[key]=clean;}
  }
+ if(isRetiredProvider(metadata.provider??''))throw new ConfigurationError(410,retiredProviderMessage);
  return {command,key:body.idempotencyKey,metadata,secret};
 }
 async function lockIntent(client:PoolClient,ownerId:string,key:string){await client.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',['connection:'+ownerId+':'+key]);}
 export class LocalConnections {
  constructor(private pool:Pool,private store:SecretStore=disabledSecretStore,private probe:ConnectionProbe=disabledConnectionProbe){}
- get externalReady(){return this.store.mode==='keychain'&&this.networkAvailable;}
+ get configurationReady(){return this.store.mode==='keychain'&&this.probe.mode==='live';}
+ get externalReady(){return this.configurationReady&&this.networkAvailable;}
  get networkAvailable(){return this.probe.mode==='live'&&this.probe.networkAvailable!==false;}
- async assertBlueprintReferences(client:PoolClient,refs:string[]){
+ async assertBlueprintReferences(client:PoolClient,refs:string[],options:{purpose?:'save'|'execute'}={}){
+  const execute=options.purpose!=='save';
   const networkAvailable=this.networkAvailable,checks:WorkerPreflightCheck[]=[];
-  if(!networkAvailable)checks.push({capability:'worker_runtime',check:'provider_network_policy',phase:'preflight',status:'unavailable',reason:'当前部署的 Provider 网络策略未启用或请求预算不可用；请联系环境管理员，不会发起在线检查。',scope:'worker',action:'contact_environment_admin'});
+  if(execute&&!networkAvailable)checks.push({capability:'worker_runtime',check:'provider_network_policy',phase:'preflight',status:'unavailable',reason:'当前部署的 Provider 网络策略未启用或请求预算不可用；请联系环境管理员，不会发起在线检查。',scope:'worker',action:'contact_environment_admin'});
   let credentialFailure=this.store.mode!=='keychain'||this.probe.mode!=='live'?'真实Keychain及在线验证尚未就绪。':'';
   if(!credentialFailure)try{
    const owners=await Promise.all(refs.map(id=>ownedConnectionVersion(client,id)));
@@ -46,7 +50,7 @@ export class LocalConnections {
     const verified=(await client.query("SELECT public.connection_version_is_verified($1) AND EXISTS(SELECT 1 FROM local_identity.connection_probe_evidence WHERE version_id=$1 AND mode='live' AND outcome='verified') allowed",[id])).rows[0];
     if(!verified.allowed)throw new ConfigurationError(409,'连接版本需要真实验证。');
     // Closed networking still permits metadata checks, never a secret read.
-    if(networkAvailable)await this.store.get(v.secret_ref);
+    if(execute&&networkAvailable)await this.store.get(v.secret_ref);
    }
   }catch(error){credentialFailure=error instanceof ConfigurationError?error.message:'连接版本未就绪，请检查本机绑定与验证资格。';}
   if(credentialFailure)checks.push({capability:'worker_runtime',check:'credential_presence',phase:'preflight',status:'blocked',reason:credentialFailure,scope:'connection',action:'manage_connection'});
@@ -56,20 +60,27 @@ export class LocalConnections {
  }
  async read(ownerId:string){
   return ownerTransaction(this.pool,ownerId,true,async client=>{
-   const connections=(await client.query('SELECT * FROM public.external_connections WHERE created_by=$1 ORDER BY created_at,id',[ownerId])).rows;
-   const versions=(await client.query('SELECT * FROM public.list_external_connection_versions(NULL)')).rows;
+   const connections=(await client.query("SELECT * FROM public.external_connections WHERE created_by=$1 AND provider NOT IN('cloudflare','google_tts') ORDER BY created_at,id",[ownerId])).rows;
+   const versions=(await client.query('SELECT * FROM public.list_external_connection_versions(NULL)')).rows.filter(v=>!isRetiredProvider(v.provider));
+   const usage=(await client.query(`WITH visible_versions AS(SELECT * FROM public.list_external_connection_versions(NULL)) SELECT c.id,
+    (SELECT count(*)::int FROM public.accounts a JOIN public.account_blueprint_versions b ON b.id=a.current_blueprint_version_id WHERE EXISTS(SELECT 1 FROM visible_versions v WHERE v.connection_id=c.id AND b.policy::text LIKE '%'||v.id::text||'%')) AS "currentBlueprints",
+    (SELECT count(*)::int FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE EXISTS(SELECT 1 FROM visible_versions v WHERE v.connection_id=c.id AND b.policy::text LIKE '%'||v.id::text||'%')) AS episodes,
+    (SELECT count(*)::int FROM public.tasks t WHERE EXISTS(SELECT 1 FROM visible_versions v WHERE v.connection_id=c.id AND t.input_snapshot::text LIKE '%'||v.id::text||'%')) AS tasks
+    FROM public.external_connections c WHERE c.created_by=$1 AND c.provider NOT IN('cloudflare','google_tts')`,[ownerId])).rows;
+   for(const connection of connections){const entry=usage.find(item=>item.id===connection.id);if(entry){const {id,...counts}=entry;connection.usage=counts;}}
    const bindings=(await client.query('SELECT version_id,store_mode FROM local_identity.connection_bindings WHERE owner_id=$1',[ownerId])).rows;
    const qualifications=(await client.query('SELECT version_id,qualified FROM local_identity.connection_qualifications WHERE owner_id=$1',[ownerId])).rows;
    const latest=(await client.query('SELECT DISTINCT ON(connection_version_id) connection_version_id,status FROM public.external_connection_verifications ORDER BY connection_version_id,created_at DESC,id DESC')).rows;
    const pending=(await client.query('SELECT idempotency_key,metadata,created_at FROM local_identity.connection_intents WHERE owner_id=$1 AND applied_at IS NULL ORDER BY created_at',[ownerId])).rows;
    const externalReady=this.externalReady;
-   const localVersions=versions.map(v=>{const binding=bindings.find(b=>b.version_id===v.id),qualified=qualifications.some(q=>q.version_id===v.id&&q.qualified);return {...v,historicalStatus:v.status,status:v.revoked_at?'revoked':!externalReady||!binding||binding.store_mode!=='keychain'?'retryable':qualified?'verified':v.status==='verified'?'retryable':v.status,secretState:binding?'bound-unchecked':'unbound'};});
+   const localVersions=versions.map(v=>{const binding=bindings.find(b=>b.version_id===v.id),qualified=qualifications.some(q=>q.version_id===v.id&&q.qualified);return {...v,historicalStatus:v.status,status:v.revoked_at?'revoked':this.store.mode!=='keychain'||this.probe.mode!=='live'||!binding||binding.store_mode!=='keychain'?'retryable':qualified?'verified':v.status==='verified'?'retryable':v.status,secretState:binding?'bound-unchecked':'unbound'};});
    // Historical provider text is never used as a diagnostic response channel;
    // an imported verified flag cannot stand in for a usable native binding.
    for(const c of connections){const current=localVersions.find(v=>v.id===c.current_version_id);if(current?.status==='revoked')c.status='invalid';else if(current)c.status=current.status;
     const last=latest.find(p=>p.connection_version_id===c.current_version_id);
-    c.last_verification_detail=current?.secretState==='unbound'?'本机秘密未绑定，请显式重新录入。':!externalReady?'真实Keychain及在线验证尚未启用。':last?.status==='retryable'&&c.status==='verified'?'本次测试暂不可用；上次有效验证资格保留，生产前仍须检查。':c.status==='verified'?'已验证；运行时仍检查秘密可用性。':'需要在本机重新验证。';}
-   return {connections,versions:localVersions,pending,capabilities:{secrets:this.store.mode,verification:this.probe.mode,externalReady,networkAvailable:this.networkAvailable}};
+    c.last_verification_detail=current?.secretState==='unbound'?'本机密钥未绑定，请显式重新录入。':this.store.mode!=='keychain'?'测试未开始：本机 Keychain 未启用。':this.probe.mode!=='live'?'测试未开始：当前仅配置模拟验证。':last?.status==='retryable'&&c.status==='verified'?'本次测试暂不可用；上次有效验证资格保留，生产前仍须检查。':c.status==='verified'?'已验证；运行时仍检查密钥可用性。':'需要在本机重新验证。';}
+   const verificationByProvider=Object.fromEntries(['volcengine','minimax','kling','bailian','pexels','freesound','openai','volcengine_tts'].map(provider=>[provider,this.probe.verificationStatus?.(provider)??{available:this.networkAvailable,detail:this.networkAvailable?'可测试连接。':'在线验证未启用。'}]));
+   return {connections,versions:localVersions,pending,capabilities:{secrets:this.store.mode,verification:this.probe.mode,externalReady,networkAvailable:this.networkAvailable,verificationByProvider,verificationAvailable:Object.values(verificationByProvider).some(status=>status.available)}};
   });
  }
  async command(session:OwnerSession,body:Record<string,unknown>){

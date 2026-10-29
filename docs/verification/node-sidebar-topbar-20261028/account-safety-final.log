@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/WorkspaceTopbar.account-safety.test.tsx (2 tests) 807ms
+   ✓ search switching an account respects unsaved changes: confirm=false  441ms
+   ✓ search switching an account respects unsaved changes: confirm=true  365ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  20:42:39
+   Duration  2.52s (transform 416ms, setup 9ms, collect 1.29s, tests 807ms, environment 280ms, prepare 41ms)
+

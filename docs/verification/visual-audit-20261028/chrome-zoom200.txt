@@ -1,0 +1,3 @@
+The following is a diff from the previous accessibility tree for Window: "Loop Control · Visual audit · Break UI" with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 91-96
+The focused UI element is 77 按钮 关闭新建账号

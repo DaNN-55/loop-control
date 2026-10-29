@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "jobs": 1,
+  "attempts": 1,
+  "next_due": "2026-10-28T01:00:00+00:00",
+  "health_ok": 1,
+  "backup_jobs": 0,
+  "observed_at": "2026-10-27T01:42:47.817726+00:00"
+}

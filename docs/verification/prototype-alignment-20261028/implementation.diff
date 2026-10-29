@@ -1,0 +1,1267 @@
+--- before/src/App.test.tsx
++++ src/App.test.tsx
+@@ -1,4 +1,4 @@
+-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
++import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+ import userEvent from "@testing-library/user-event";
+ import { describe, expect, it, vi } from "vitest";
+ import type { Database } from "./lib/database.types";
+@@ -78,17 +78,17 @@
+       query.order.mockReturnValue(query);
+       return { select: vi.fn().mockReturnValue(query) };
+     });
+-    const page = (number: number) => ({ episodes: Array.from({ length: 20 }, (_, index) => ({ account_id: account.id, blueprint_version_id: "blueprint-1", id: `episode-${number}-${index}`, stage: "waiting_input", title: `第${number}页记录${index}` })), page: number, pageSize: 20, total: 1005, episodeCount: 1005, accountCounts: { [account.id]: 1005 }, reviewCount: 42, stages: { waiting_input: 1005 }, artifactCounts: {}, pending: { items: [], page: 1, total: 0 }, blocked: { items: [], page: 1, total: 0 }, worker: { running: 0, blocked: 0, failed: 0, latestCompleted: false }, operationRows: [] }) as unknown as EpisodeCatalog;
++    const page = (number: number) => ({ episodes: Array.from({ length: 20 }, (_, index) => ({ account_id: account.id, blueprint_version_id: "blueprint-1", id: `episode-${number}-${index}`, stage: "waiting_input", updated_at:"2026-10-28T00:00:00Z", title: `第${number}页记录${index}` })), page: number, pageSize: 20, total: 1005, episodeCount: 1005, accountCounts: { [account.id]: 1005 }, reviewCount: 42, stages: { waiting_input: 1005 }, artifactCounts: {}, pending: { items: [], page: 1, total: 0 }, blocked: { items: [], page: 1, total: 0 }, worker: { running: 0, blocked: 0, failed: 0, latestCompleted: false }, operationRows: [] }) as unknown as EpisodeCatalog;
+     Object.assign(supabase, { from });
+     const rpc = vi.mocked(supabase.rpc);
+     rpc.mockImplementation(((_name: string, args: { p_page: number }) => ({ setHeader: () => Promise.resolve({ data: page(args.p_page), error: null }) })) as never);
+     vi.mocked(supabase.auth.getSession).mockResolvedValueOnce({ data: { session: { user: { id: "owner-1" }, access_token: "own-session" } }, error: null } as never);
+     render(<App />);
+-    expect(await screen.findByText("第1页记录0")).toBeTruthy();
++    expect(await within(await screen.findByRole("region",{name:"系列生产单"})).findByText("第1页记录0")).toBeTruthy();
+     expect(screen.getByText("1005 个生产单")).toBeTruthy();
+     expect(from.mock.calls.map(([table]) => table)).toEqual(["accounts", "account_blueprint_versions", "series", "series_versions"]);
+     await user.click(screen.getAllByRole("button", { name: "下一页" })[0]);
+-    expect(await screen.findByText("第2页记录0")).toBeTruthy();
++    expect(await within(screen.getByRole("region",{name:"系列生产单"})).findByText("第2页记录0")).toBeTruthy();
+     expect(screen.queryByText("第1页记录0")).toBeNull();
+     expect(rpc.mock.calls.some(([name, args]) => name === "read_episode_catalog" && (args as { p_page: number }).p_page === 2)).toBe(true);
+     rpc.mockImplementation(() => Object.assign(Promise.resolve({ data: [], error: null }), { range: vi.fn().mockResolvedValue({ data: [], error: null, count: 0 }) }) as never);
+--- before/src/local-app/LocalConnectionsPanel.tsx
++++ src/local-app/LocalConnectionsPanel.tsx
+@@ -10,7 +10,7 @@
+  async function refresh(){setData(await localRequest('connections'));}
+  const {command,error,setError,pending}=useConnectionActions(refresh);
+  useEffect(()=>{void refresh().catch(()=>setError('连接目录读取失败，请重试。'));},[]);
+- return <section aria-label="本地连接" className="dan-ui local-connections-panel"><header className="connection-panel-header"><div><h3>连接管理</h3><p role="status">{data?.capabilities.verificationAvailable?'测试已启用 · 内容生成需单独授权':data?.capabilities.secrets==='keychain'&&data.capabilities.networkAvailable===false?'凭据仅保存到本机 Keychain · 在线验证已锁定':data?.capabilities.externalReady?'已启用 · 每个版本需独立验证':'真实Keychain和在线验证尚未启用；保存或模拟检查不能作为生产就绪证明。'}</p></div><Button color="secondary" size="sm" iconLeading={RefreshCw} type="button" isDisabled={pending} onPress={()=>void refresh().then(()=>setError('')).catch(()=>setError('连接目录读取失败。'))}>刷新连接</Button></header>{error&&!data&&<p className="form-error" role="alert">{error}</p>}{data&&<><ConnectionWorkspace errorMessage={error} verificationByProvider={data.capabilities.verificationByProvider} showHeader={false} connections={data.connections} versions={data.versions} secretStorage="本机 Keychain（需授权）" isPending={pending} verificationEnabled={data.capabilities.verificationAvailable??data.capabilities.networkAvailable!==false}
++ return <section aria-label="本地连接" className="dan-ui local-connections-panel"><header className="connection-panel-header"><p role="status">{data?.capabilities.verificationAvailable?'测试已启用 · 内容生成需单独授权':data?.capabilities.secrets==='keychain'&&data.capabilities.networkAvailable===false?'凭据仅保存到本机 Keychain · 在线验证已锁定':data?.capabilities.externalReady?'已启用 · 每个版本需独立验证':'真实Keychain和在线验证尚未启用；保存或模拟检查不能作为生产就绪证明。'}</p><Button color="secondary" size="sm" iconLeading={RefreshCw} type="button" isDisabled={pending} onPress={()=>void refresh().then(()=>setError('')).catch(()=>setError('连接目录读取失败。'))}>刷新连接</Button></header>{error&&!data&&<p className="form-error" role="alert">{error}</p>}{data&&<><ConnectionWorkspace errorMessage={error} verificationByProvider={data.capabilities.verificationByProvider} showHeader={false} connections={data.connections} versions={data.versions} secretStorage="本机 Keychain（需授权）" isPending={pending} verificationEnabled={data.capabilities.verificationAvailable??data.capabilities.networkAvailable!==false}
+  onCreateConnection={async input=>{try{return (await command<{connection:ExternalConnection}>('create',input)).connection;}catch{return null;}}}
+  onRotateConnection={async input=>{try{return (await command<{connection:ExternalConnection}>('rotate',input)).connection;}catch{return null;}}}
+  onUpdateConnection={async input=>{await command('update',input);}}
+--- before/src/local-app/catalogQuery.ts
++++ src/local-app/catalogQuery.ts
+@@ -3,7 +3,7 @@
+ export const localCatalogSql=` with owned as materialized (
+   select e.* from public.episodes e where exists (
+    select 1 from public.account_memberships m where m.account_id=e.account_id and m.user_id=$1::uuid and m.role='owner')
+- ), filtered as materialized (
++ ), scoped as materialized (
+   select e.* from owned e left join public.series_versions v on v.id=e.series_version_id
+   left join public.series s on s.id=v.series_id
+   where ($4::uuid is null or e.account_id=$4::uuid)
+@@ -12,32 +12,23 @@
+     or s.id::text=$5::text)
+    and ($6::text='all' or $6::text='active' and e.archived_at is null or $6::text='archived' and e.archived_at is not null)
+    and ($2::text not in ('reviews','operations') or e.archived_at is null and not local_identity.is_historical_episode(e.id))
+-   and ($2::text<>'reviews' or e.stage in ('script_review','visual_review','storyboard_review','production_ready','qc_review'))
+- ), bounds as (
+-  select count(*) total,least(greatest(coalesce($3::integer,1),1),greatest(1,ceil(count(*)/20.0)::int)) page from filtered
+- ), page_rows as materialized (
+-  select e.* from filtered e where $2::text<>'accounts' order by e.updated_at desc,e.id limit 20 offset ((select page from bounds)-1)*20
++   and ($9::text='' or strpos(lower(e.title),lower($9::text))>0 or strpos(lower(e.id::text),lower($9::text))>0)
+  ), current_packages as materialized (
+-  select distinct on (e.id) r.* from filtered e join public.review_packages r on r.episode_id=e.id and r.stage=e.stage
+-  where $2::text='operations' and r.invalidated_at is null order by e.id,r.revision_number desc,r.id
++  select distinct on (e.id) r.* from scoped e join public.review_packages r on r.episode_id=e.id and r.stage=e.stage
++  where $2::text<>'accounts' and e.archived_at is null and r.invalidated_at is null and not local_identity.is_historical_episode(e.id) order by e.id,r.revision_number desc,r.id
+  ), pending as materialized (
+   select r.* from current_packages r where r.stage<>'production_ready' or (
+    coalesce(r.context_snapshot->>'approval_mode','')<>'qc_only' and (
+     not exists(select 1 from public.pre_render_review_members m where m.review_package_id=r.id)
+     or exists(select 1 from public.pre_render_review_members m where m.review_package_id=r.id and not exists(
+      select 1 from public.pre_render_review_member_decisions d where d.review_package_id=r.id and d.member_key=m.member_key))))
+- ), pending_bounds as (
+-  select count(*) total,least(greatest(coalesce($7::integer,1),1),greatest(1,ceil(count(*)/20.0)::int)) page from pending
+- ), pending_rows as materialized (
+-  select e.*,r.revision_number from filtered e join pending r on r.episode_id=e.id
+-  order by e.updated_at desc,e.id limit 20 offset ((select page from pending_bounds)-1)*20
+  ), scoped_tasks as materialized (
+   select t.*,case when t.task_type='generate_review_render' then t.task_type::text
+    when jsonb_typeof(t.input_snapshot#>'{shot_preparation,draft_id}')='string' or jsonb_typeof(t.input_snapshot#>'{shot_preparation,shot_id}')='string'
+     then t.task_type||':shot:'||case when jsonb_typeof(t.input_snapshot#>'{shot_preparation,draft_id}')='string' then t.input_snapshot#>>'{shot_preparation,draft_id}' else t.input_snapshot#>>'{shot_preparation,shot_id}' end
+    when jsonb_typeof(t.input_snapshot#>'{output,relative_path}')='string' then t.task_type||':output:'||(t.input_snapshot#>>'{output,relative_path}')
+    else t.task_type||':task:'||t.id end scope
+-  from public.tasks t join filtered e on e.id=t.episode_id where $2::text='operations' and t.invalidated_at is null
++  from public.tasks t join scoped e on e.id=t.episode_id where $2::text<>'accounts' and e.archived_at is null and t.invalidated_at is null and not local_identity.is_historical_task(t.id)
+  ), latest_tasks as materialized (
+   select distinct on (episode_id,scope) * from scoped_tasks order by episode_id,scope,created_at desc,id
+  ), task_blockers as materialized (
+@@ -51,10 +42,36 @@
+     from jsonb_array_elements(case when jsonb_typeof(t.last_result#>'{preflight,checks}')='array' then t.last_result#>'{preflight,checks}' else '[]' end)
+     where value->>'status' is distinct from 'passed' and jsonb_typeof(value->'check')='string' and value->>'check'<>'' and jsonb_typeof(value->'reason')='string' and value->>'reason'<>''),'[]') end) b
+   where t.status in ('blocked','failed')
++ ), episode_states as materialized (
++  select e.id episode_id,case
++   when exists(select 1 from latest_tasks t where t.episode_id=e.id and t.status in ('blocked','failed') and not exists(
++    select 1 from scoped_tasks newer where newer.episode_id=t.episode_id and newer.task_type=t.task_type and newer.status='completed' and newer.input_snapshot->>'recovered_from_task_id'=t.id::text)) then 'blocked'
++   when exists(select 1 from pending p where p.episode_id=e.id) then 'review'
++   when e.stage='production_completed' then 'done'
++   when exists(select 1 from latest_tasks t where t.episode_id=e.id and t.status in ('ready','running'))
++    or e.stage in ('script_approved','visual_approved','storyboard_approved','production_ready','render_ready','qc_passed') then 'running'
++   else 'draft' end action_status
++  from scoped e
++ ), filtered as materialized (
++  select e.* from scoped e join episode_states state on state.episode_id=e.id
++  where ($11::text='all' or $11::text='review' and exists(select 1 from pending p where p.episode_id=e.id) or $11::text<>'review' and state.action_status=$11::text)
++   and ($2::text<>'reviews' or exists(select 1 from pending p where p.episode_id=e.id))
++ ), bounds as (
++  select count(*) total,least(greatest(coalesce($3::integer,1),1),greatest(1,ceil(count(*)/20.0)::int)) page from filtered
++ ), page_rows as materialized (
++  select e.* from filtered e where $2::text<>'accounts'
++  order by case when $10::text='title' then lower(e.title) end asc,
++   case when $10::text='oldest' then e.updated_at end asc,e.updated_at desc,e.id
++  limit 20 offset ((select page from bounds)-1)*20
++ ), pending_bounds as (
++  select count(*) total,least(greatest(coalesce($7::integer,1),1),greatest(1,ceil(count(*)/20.0)::int)) page from pending
++ ), pending_rows as materialized (
++  select e.*,r.revision_number from scoped e join pending r on r.episode_id=e.id
++  order by e.updated_at desc,e.id limit 20 offset ((select page from pending_bounds)-1)*20
+  ), blocked as materialized (
+   select row_number() over(order by e.updated_at desc,e.id,b.task_id,b.blocker::text) position,
+    jsonb_build_object('episode',to_jsonb(e),'blocker',b.blocker||jsonb_build_object('taskId',b.task_id,'taskType',b.task_type)) item
+-  from task_blockers b join filtered e on e.id=b.episode_id
++  from task_blockers b join scoped e on e.id=b.episode_id
+  ), blocked_bounds as (
+   select count(*) total,least(greatest(coalesce($8::integer,1),1),greatest(1,ceil(count(*)/20.0)::int)) page from blocked
+  ), worker_tasks as materialized (
+@@ -73,21 +90,22 @@
+   order by episode_id,task_type,operation,coalesce(completed_at,claimed_at,created_at) desc,id desc
+  )
+  select jsonb_build_object(
+-  'episodes',coalesce((select jsonb_agg(to_jsonb(e) order by updated_at desc,id) from page_rows e),'[]'),
++  'episodes',coalesce((select jsonb_agg(to_jsonb(e) order by case when $10::text='title' then lower(e.title) end asc,case when $10::text='oldest' then e.updated_at end asc,e.updated_at desc,e.id) from page_rows e),'[]'),
+   'total',(select total from bounds),'page',(select page from bounds),'pageSize',20,
+   'episodeCount',(select count(*) from owned),
+   'accountCounts',coalesce((select jsonb_object_agg(account_id,n) from(select account_id,count(*) n from owned group by account_id)s),'{}'),
+   'reviewCount',(select count(*) from owned where archived_at is null and not local_identity.is_historical_episode(id) and stage in ('script_review','visual_review','storyboard_review','production_ready','qc_review')),
+   'stages',coalesce((select jsonb_object_agg(stage,n) from(select stage,count(*) n from filtered group by stage)s),'{}'),
+   'artifactCounts',coalesce((select jsonb_object_agg(episode_id,n) from(select a.episode_id,count(*) n from public.artifacts a join page_rows e on e.id=a.episode_id group by a.episode_id)s),'{}'),
+-  'pending',jsonb_build_object('total',(select total from pending_bounds),'page',(select page from pending_bounds),
+-   'items',coalesce((select jsonb_agg(to_jsonb(e) order by updated_at desc,id) from pending_rows e),'[]')),
+-  'blocked',jsonb_build_object('total',(select total from blocked_bounds),'page',(select page from blocked_bounds),
+-   'items',coalesce((select jsonb_agg(item order by position) from blocked where position between ((select page from blocked_bounds)-1)*20+1 and (select page from blocked_bounds)*20),'[]')),
++  'pending',case when $2::text='operations' then jsonb_build_object('total',(select total from pending_bounds),'page',(select page from pending_bounds),
++   'items',coalesce((select jsonb_agg(to_jsonb(e) order by updated_at desc,id) from pending_rows e),'[]')) else jsonb_build_object('total',0,'page',1,'items','[]'::jsonb) end,
++  'blocked',case when $2::text='operations' then jsonb_build_object('total',(select total from blocked_bounds),'page',(select page from blocked_bounds),
++   'items',coalesce((select jsonb_agg(item order by position) from blocked where position between ((select page from blocked_bounds)-1)*20+1 and (select page from blocked_bounds)*20),'[]')) else jsonb_build_object('total',0,'page',1,'items','[]'::jsonb) end,
+   'worker',jsonb_build_object('running',(select count(*) from current_worker where status='running'),
+    'blocked',(select count(*) from current_worker where status='blocked'),'failed',(select count(*) from current_worker where status='failed'),
+    'latest',(select jsonb_build_object('task_type',task_type,'at',coalesce(completed_at,claimed_at,created_at)) from worker_tasks order by coalesce(completed_at,claimed_at,created_at) desc,created_at desc,id limit 1),
+    'latestCompleted',coalesce((select status='completed' from worker_tasks order by coalesce(completed_at,claimed_at,created_at) desc,created_at desc,id limit 1),false)),
++  'statusCounts',(select jsonb_build_object('all',count(*),'review',count(*) filter(where exists(select 1 from pending p where p.episode_id=state.episode_id)),'running',count(*) filter(where action_status='running'),'blocked',count(*) filter(where action_status='blocked'),'done',count(*) filter(where action_status='done')) from episode_states state),
+   'operationRows',coalesce((select jsonb_agg(jsonb_build_object('episodeId',e.id,'reviewRevision',r.revision_number,'reviewPending',exists(select 1 from pending p where p.id=r.id),
+-   'blockerCount',(select count(*) from task_blockers b where b.episode_id=e.id))) from page_rows e left join current_packages r on r.episode_id=e.id),'[]')
++   'blockerCount',(select count(*) from task_blockers b where b.episode_id=e.id),'actionStatus',state.action_status)) from page_rows e left join current_packages r on r.episode_id=e.id join episode_states state on state.episode_id=e.id),'[]')
+  ) AS catalog`;
+--- before/src/local-app/LocalCatalogApp.tsx
++++ src/local-app/LocalCatalogApp.tsx
+@@ -1,4 +1,5 @@
+-import {Video,LayoutDashboard,Clapperboard,ScanEye,Users,Plug,Archive,Layers} from 'lucide-react';
++import type {CatalogStatus,CatalogSort} from '../episodes/episodeCatalogTypes';
++import {Video,LayoutDashboard,Clapperboard,Users,Plug,Archive,Layers} from 'lucide-react';
+ import {XClose} from '@untitledui/icons';
+ import {Tooltip} from '../ui/dan-ui/components/base/tooltip/tooltip';
+ import {Button} from '../ui/dan-ui/components/base/buttons/button';
+@@ -23,17 +24,18 @@
+ import type {LocalCatalog} from './catalog';
+ import {localRequest,localCommand} from './client';
+ type NativeView=NavigationItem|'connections'|'history';
+-const nativeNavigation=[{id:'operations',label:'工作台',icon:LayoutDashboard},{id:'episodes',label:'生产单',icon:Clapperboard},{id:'reviews',label:'待审核',icon:ScanEye},{id:'accounts',label:'账号与系列',icon:Users},{id:'connections',label:'连接配置',icon:Plug},{id:'history',label:'历史资料',icon:Archive}] as const;
++const nativeNavigation=[{id:'operations',label:'工作台',icon:LayoutDashboard},{id:'episodes',label:'生产单',icon:Clapperboard},{id:'accounts',label:'账号与系列',icon:Users},{id:'connections',label:'连接配置',icon:Plug},{id:'history',label:'历史资料',icon:Archive}] as const;
+ type Blueprint=LocalCatalog['blueprints'][number];
+ const identitySender=crypto.randomUUID();
+ function notifyIdentityChange(){if(typeof window.BroadcastChannel!=='function')return;const channel=new BroadcastChannel('loop-local-identity');channel.postMessage({kind:'changed',sender:identitySender});channel.close();}
+ export function LocalCatalogApp(){
+  const planDeletion=useCallback((episodeId:string)=>localCommand<EpisodeDeletionPlan>('planDeletion',{episodeId},undefined,'episode-lifecycle'),[]);
+- const[filters,setFilters]=useState({page:1,accountId:'',seriesId:'all',visibility:'active',view:new URLSearchParams(location.search).has('episode')?'episodes':'operations',pendingPage:1,blockedPage:1});
++ const[filters,setFilters]=useState({page:1,accountId:'',seriesId:'all',visibility:'active',view:new URLSearchParams(location.search).has('episode')?'episodes':'operations',pendingPage:1,blockedPage:1,q:'',sort:'updated' as CatalogSort,status:'all' as CatalogStatus});
+  const queryKey=JSON.stringify(filters),queryRef=useRef(queryKey);queryRef.current=queryKey;
+  const requestGeneration=useRef(0),sessionGeneration=useRef(0),authenticated=useRef(false);
+- function filter(patch:Partial<typeof filters>){requestGeneration.current++;const scopeChanged=['view','accountId','seriesId','visibility'].some(key=>key in patch);setFilters(current=>({...current,...(scopeChanged?{page:1,pendingPage:1,blockedPage:1}:{}),...patch}));}
++ function filter(patch:Partial<typeof filters>){requestGeneration.current++;const scopeChanged=['view','accountId','seriesId','visibility','q','sort','status'].some(key=>key in patch);setFilters(current=>({...current,...(scopeChanged?{page:1,pendingPage:1,blockedPage:1}:{}),...patch}));}
+  const[ownerId,setOwnerId]=useState(''),[ownerEmail,setOwnerEmail]=useState('');
++ const [catalogKey,setCatalogKey]=useState('');
+  const [catalog,setCatalog]=useState<LocalCatalog|null>(null),[error,setError]=useState(''),[pending,setPending]=useState(''),[csrf,setCsrf]=useState('');
+  const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[selectedId,setSelectedId]=useState(''),[newAccount,setNewAccount]=useState(false),[view,setView]=useState<NativeView>(()=>new URLSearchParams(location.search).has('episode')?'episodes':'operations');
+  const [connections,setConnections]=useState<ExternalConnection[]>([]),[connectionVersions,setConnectionVersions]=useState<ExternalConnectionVersion[]>([]);
+@@ -49,7 +51,7 @@
+  function rememberOwnerFocus(trigger:HTMLButtonElement|null){ownerPanelTrigger.current=trigger;}
+  function closeOwnerPanels(){setSettings(false);setSecrets(false);ownerPanelTrigger.current?.focus();}
+  const studioOpeningRef=useRef(false);
+- function navigate(next:NativeView){if(view==='accounts'&&next!=='accounts'&&accountDirty){if(!window.confirm('当前配置有未保存修改，确定放弃吗？'))return;setAccountDirty(false);}setSecrets(false);setView(next);setEpisodeId('');if(['operations','episodes','reviews','accounts'].includes(next))filter({view:next,...(next==='reviews'?{visibility:'active'}:{}),pendingPage:1,blockedPage:1});}
++ function navigate(next:NativeView){if(view==='accounts'&&next!=='accounts'&&accountDirty){if(!window.confirm('当前配置有未保存修改，确定放弃吗？'))return;setAccountDirty(false);}const destination=next==='reviews'?'episodes':next;setSecrets(false);setView(destination);setEpisodeId('');if(['operations','episodes','accounts'].includes(destination))filter({view:destination,...(next==='reviews'?{visibility:'active',status:'review' as const}:destination==='operations'?{visibility:'active',status:'all' as const,q:'',accountId:''}:{}),pendingPage:1,blockedPage:1});}
+  const navigateRef=useRef(navigate);navigateRef.current=navigate;
+  useEffect(()=>{const openConnections=()=>navigateRef.current('connections');window.addEventListener('open-external-connections',openConnections);return()=>window.removeEventListener('open-external-connections',openConnections);},[]);
+  const [newEpisode,setNewEpisode]=useState(false),[episodeId,setEpisodeId]=useState(()=>new URLSearchParams(location.search).get('episode')??'');
+@@ -63,7 +65,7 @@
+   if(request!==requestGeneration.current||session!==sessionGeneration.current||key!==queryRef.current)return;
+   const choices=await localRequest('connections');
+   if(request!==requestGeneration.current||session!==sessionGeneration.current||key!==queryRef.current)return;
+-  setConnections(Array.isArray(choices.connections)?choices.connections:[]);setConnectionVersions(Array.isArray(choices.versions)?choices.versions:[]);setCatalog(next);setSelectedId(id=>next.accounts.some(a=>a.id===id)?id:next.accounts[0]?.id??'');
++  setConnections(Array.isArray(choices.connections)?choices.connections:[]);setConnectionVersions(Array.isArray(choices.versions)?choices.versions:[]);setCatalog(next);setCatalogKey(key);setSelectedId(id=>next.accounts.some(a=>a.id===id)?id:next.accounts[0]?.id??'');
+   }catch(error){if(request===requestGeneration.current&&session===sessionGeneration.current&&key===queryRef.current)throw error;}
+  }
+  const refreshRef=useRef(refresh);refreshRef.current=refresh;
+@@ -112,11 +114,12 @@
+  const page={page:catalog.page,total:catalog.total,pageSize:catalog.pageSize,onPageChange:(page:number)=>filter({page})};
+  const life=async<T=void,>(command:string,data:unknown)=>{setPending(command);setError('');try{const result=await localCommand<T>(command,data,undefined,'episode-lifecycle');await refresh();return result;}catch(e){setError(e instanceof Error?e.message:String(e));throw e;}finally{setPending('');}};
+  const errorMessage=error||connectionActions.error;
++ const pendingReviewCount=catalog.statusCounts?.review??catalog.pending.total;
+  const workspaceActions=<div className="workspace-actions"><Tooltip title="刷新" className="dan-ui dan-ui-tooltip"><Button size="sm" color="secondary" aria-label="刷新" className="button button-secondary refresh-button" onClick={()=>void refresh().catch(e=>setError(String(e)))}  type="button"><Icon name="Refresh"/></Button></Tooltip>{view==='accounts'&&<Button size="sm" color="primary" className="button button-primary" onClick={()=>setNewAccount(true)} type="button">新建账号</Button>}{(view==='episodes'||view==='operations')&&<Button size="sm" color="primary" className="button button-primary" onClick={()=>setNewEpisode(true)} type="button">新建生产单</Button>}</div>;
+  return <div className="app-shell dan-ui product-ui impeccable-app" data-sidebar={collapsed?'collapsed':'expanded'} data-theme={theme}>
+  <a className="skip-link" href="#main-content">跳到主要内容</a><aside className="sidebar" aria-label="主导航">
+  <div className="lc-brand"><Layers aria-hidden="true" size={24}/><span>Loop Control<small>创作工作区</small></span></div>
+- <nav className="navigation" aria-label="工作区">{[{label:'生产工作',items:nativeNavigation.slice(0,3)},{label:'账号管理',items:nativeNavigation.slice(3,4)},{label:'配置与资料',items:nativeNavigation.slice(4)}].map(group=><div role="group" aria-label={group.label} className="navigation-group" key={group.label}>{group.items.map(item=><Button key={item.id} size="sm" color="tertiary" type="button" aria-label={item.label} aria-current={view===item.id?'page':undefined} className={`navigation-item ${view===item.id?'is-active':''}`} iconLeading={item.icon} onClick={()=>navigate(item.id)}><span className="navigation-label">{item.label}</span>{item.id==='reviews'&&catalog.reviewCount>0?<span className="navigation-badge" title="处于审核阶段的生产单">{catalog.reviewCount}</span>:null}</Button>)}</div>)}</nav>
++ <nav className="navigation" aria-label="工作区">{[{label:'生产工作',items:nativeNavigation.slice(0,2)},{label:'账号管理',items:nativeNavigation.slice(2,3)},{label:'配置与资料',items:nativeNavigation.slice(3)}].map(group=><div role="group" aria-label={group.label} className="navigation-group" key={group.label}>{group.items.map(item=><Button key={item.id} size="sm" color="tertiary" type="button" aria-label={item.label} aria-current={view===item.id?'page':undefined} className={`navigation-item ${view===item.id?'is-active':''}`} iconLeading={item.icon} onClick={()=>navigate(item.id)}><span className="navigation-label">{item.label}</span>{item.id==='episodes'&&pendingReviewCount>0?<span className="navigation-badge" title="当前范围待审核的生产单">{pendingReviewCount}</span>:null}</Button>)}</div>)}</nav>
+  <div className="sidebar-footer"><Tooltip title={studioReady?"打开当前生产单工程":"打开独立剪辑工作区"} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" aria-label={studioReady?"打开当前生产单的 OpenChatCut":"打开 OpenChatCut 独立剪辑"} className="sidebar-studio-shortcut" iconLeading={Video} isDisabled={studioOpening} onClick={()=>void openSidebarStudio()} type="button"><span>{studioOpening?"正在打开…":"OpenChatCut"}</span></Button></Tooltip>
+  <div className="sidebar-utilities"><LocalSystemStatus/><Tooltip title={theme==='light'?'切换至深色模式':'切换至浅色模式'} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" type="button" className="sidebar-utility" aria-pressed={theme==='dark'} aria-label={theme==='light'?'切换至深色模式':'切换至浅色模式'} onClick={()=>{const next=theme==='light'?'dark':'light';setTheme(next);localStorage.setItem('loop-control.theme.v1',next);}}><Icon name={theme==='light'?'Moon':'Sun'}/></Button></Tooltip><Tooltip title={collapsed?'展开侧栏':'收起侧栏'} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" type="button" className="sidebar-collapse-button sidebar-utility" aria-pressed={collapsed} aria-label={collapsed?'展开侧栏':'收起侧栏'} onClick={()=>{setCollapsed(!collapsed);localStorage.setItem('loop-control.sidebar.v1',collapsed?'expanded':'collapsed');}}><Icon name="PanelLeft"/></Button></Tooltip><OwnerMenu isActive={settings||secrets} onBeforeOpen={rememberOwnerFocus} onOpenSecrets={canManageSecrets?()=>{setSettings(false);setSecrets(true);}:undefined} onOpenSettings={()=>{setSecrets(false);setSettings(true);}} onSignOut={()=>void logout()}/></div></div></aside>
+  {errorMessage&&<div className="floating-notices" aria-live="polite"><div role="alert" className="error-message">{errorMessage}<Button size="sm" color="tertiary" type="submit" aria-label="关闭错误通知" onClick={()=>{setError('');connectionActions.setError('');}}><XClose aria-hidden="true" width={20} height={20}/></Button></div></div>}
+@@ -136,7 +139,7 @@
+  onSetAccountArchived={async(id,archived)=>{try{await command(`archive-account-${id}`,'archiveAccount',{accountId:id,archived});return true;}catch{return false;}}}
+  onDeleteAccount={async(id,confirmation)=>{try{await command(`delete-account-${id}`,'deleteAccount',{accountId:id,confirmation});return true;}catch{return false;}}}
+  />
+- </>:view==='operations'?<OperationsWorkspace actions={workspaceActions} remote={{catalog,seriesId:filters.seriesId,onSeriesChange:seriesId=>filter({seriesId}),onPageChange:page=>filter({page}),onPendingPageChange:pendingPage=>filter({pendingPage}),onBlockedPageChange:blockedPage=>filter({blockedPage})}} episodes={catalog.episodes} series={catalog.series} seriesVersions={catalog.seriesVersions} tasks={[]} reviewPackages={[]} preRenderReviewMembers={[]} preRenderReviewMemberDecisions={[]} selectedEpisode={selectedEpisode} onSelectEpisode={setEpisodeId} onOpenBlueprint={(id,context)=>{setSelectedId(id);setRepair(context??null);navigate('accounts');}}/>:<EpisodeWorkspace reviewOnly={view==='reviews'} actions={workspaceActions} serverPage={page} accounts={catalog.accounts} accountsById={accountsById} artifacts={[]} artifactCounts={catalog.artifactCounts} blueprintsById={blueprintsById} episodes={catalog.episodes} episodeVisibility={filters.visibility as 'active'|'archived'|'all'} onEpisodeVisibilityChange={visibility=>filter({visibility})} filter={filters.accountId||'全部账号'} onFilter={accountId=>filter({accountId:accountId==='全部账号'?'':accountId,seriesId:'all'})} seriesFilter={filters.seriesId==='all'?'全部系列':filters.seriesId} onSeriesFilter={seriesId=>filter({seriesId:seriesId==='全部系列'?'all':seriesId})} series={catalog.series} seriesById={seriesById} seriesVersionsById={versionsById} selectedEpisode={selectedEpisode} onSelectEpisode={setEpisodeId} onUpdateTitle={(episodeId,title)=>life('renameEpisode',{episodeId,title})} onSetArchived={(episodeId,archived)=>life('archiveEpisode',{episodeId,archived})} onPlanDelete={planDeletion} onDelete={async(episodeId,confirmation,plan)=>{if(!plan)throw new Error('请重新检查删除范围。');const result=await life<{cleanupPending:boolean}>('deleteEpisode',{episodeId,confirmation,expectedPath:plan.path,expectedPaths:plan.paths??[plan.path],expectedRevision:plan.revision});if(result.cleanupPending)setError('生产单记录已删除，文件清理尚未完成。请在连接配置中重试文件清理。');}}/>}</section>
++ </>:view==='operations'?<OperationsWorkspace isLoading={catalogKey!==queryKey} accounts={catalog.accounts} blueprints={catalog.blueprints} onOpenReviewQueue={()=>navigate('reviews')} actions={workspaceActions} remote={{catalog,seriesId:filters.seriesId,onSeriesChange:seriesId=>filter({seriesId}),onPageChange:page=>filter({page}),onPendingPageChange:pendingPage=>filter({pendingPage}),onBlockedPageChange:blockedPage=>filter({blockedPage})}} episodes={catalog.episodes} series={catalog.series} seriesVersions={catalog.seriesVersions} tasks={[]} reviewPackages={[]} preRenderReviewMembers={[]} preRenderReviewMemberDecisions={[]} selectedEpisode={selectedEpisode} onSelectEpisode={setEpisodeId} onOpenBlueprint={(id,context)=>{setSelectedId(id);setRepair(context??null);navigate('accounts');}}/>:<EpisodeWorkspace isPageLoading={catalogKey!==queryKey} operationRows={catalog.operationRows} catalogControls={{query:filters.q,status:filters.status,sort:filters.sort,counts:catalog.statusCounts,onSearch:q=>filter({q}),onStatus:status=>filter({status,visibility:status==='all'?filters.visibility:'active'}),onSort:sort=>filter({sort})}} actions={workspaceActions} serverPage={page} accounts={catalog.accounts} accountsById={accountsById} artifacts={[]} artifactCounts={catalog.artifactCounts} blueprintsById={blueprintsById} episodes={catalog.episodes} episodeVisibility={filters.visibility as 'active'|'archived'|'all'} onEpisodeVisibilityChange={visibility=>filter({visibility,status:'all'})} filter={filters.accountId||'全部账号'} onFilter={accountId=>filter({accountId:accountId==='全部账号'?'':accountId,seriesId:'all'})} seriesFilter={filters.seriesId==='all'?'全部系列':filters.seriesId} onSeriesFilter={seriesId=>filter({seriesId:seriesId==='全部系列'?'all':seriesId})} series={catalog.series} seriesById={seriesById} seriesVersionsById={versionsById} selectedEpisode={selectedEpisode} onSelectEpisode={setEpisodeId} onUpdateTitle={(episodeId,title)=>life('renameEpisode',{episodeId,title})} onSetArchived={(episodeId,archived)=>life('archiveEpisode',{episodeId,archived})} onPlanDelete={planDeletion} onDelete={async(episodeId,confirmation,plan)=>{if(!plan)throw new Error('请重新检查删除范围。');const result=await life<{cleanupPending:boolean}>('deleteEpisode',{episodeId,confirmation,expectedPath:plan.path,expectedPaths:plan.paths??[plan.path],expectedRevision:plan.revision});if(result.cleanupPending)setError('生产单记录已删除，文件清理尚未完成。请在连接配置中重试文件清理。');}}/>}</section>
+ 
+  {episodeId&&<EpisodeDetailDrawer isOpen onClose={()=>setEpisodeId('')}><LocalEpisodeDetail key={episodeId} ownerId={ownerId} episodeId={episodeId} onClose={()=>setEpisodeId('')} onChanged={refresh} onOpenAccount={(id,context)=>{setSelectedId(id);setRepair(context??null);navigate('accounts');}} onStudioAction={action=>{studio.current=action;setStudioReady(Boolean(action));}}/></EpisodeDetailDrawer>}
+  {settings&&<PasswordForm identity={<section aria-label="当前登录身份" className="owner-identity review-section"><h3>当前登录身份</h3><dl><div><dt>登录邮箱</dt><dd>{ownerEmail||'未读取'}</dd></div></dl></section>} isPending={pending==='password'} onClose={closeOwnerPanels} onSubmit={async password=>{setPending('password');try{await localRequest('password',{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf},body:JSON.stringify({password})});setSettings(false);}catch(e){setError(e instanceof Error?e.message:String(e));}finally{setPending('');}}}/> }
+--- before/src/local-app/catalogQuery.test.ts
++++ src/local-app/catalogQuery.test.ts
+@@ -4,3 +4,8 @@
+  expect(parseCatalogQuery(new URLSearchParams('page=2&view=reviews&visibility=archived&seriesId=unassigned'))).toMatchObject({page:2,view:'reviews',visibility:'archived',seriesId:'unassigned'});
+  for(const query of['page=0','page=-1','page=1.1','page=1000000000','page=1&page=2','view=unknown','visibility=unknown','accountId=invalid','seriesId=invalid','secret=ignored'])expect(()=>parseCatalogQuery(new URLSearchParams(query))).toThrow();
+ });
++it('accepts bounded title/id search, whitelisted order and action status with compatible defaults',()=>{
++ expect(parseCatalogQuery(new URLSearchParams())).toMatchObject({q:'',sort:'updated',status:'all'});
++ expect(parseCatalogQuery(new URLSearchParams('q=%20%E7%94%9F%E4%BA%A7%E5%8D%95%2027%20&sort=title&status=review'))).toMatchObject({q:'生产单 27',sort:'title',status:'review'});
++ for(const query of ['q='+encodeURIComponent('x'.repeat(201)),'q=%00bad','q=%0Abad','sort=updated%20desc','status=unknown','q=a&q=b','sort=oldest&sort=title','status=all&status=done'])expect(()=>parseCatalogQuery(new URLSearchParams(query))).toThrow();
++});
+--- before/src/local-app/catalogContract.integration.test.ts
++++ src/local-app/catalogContract.integration.test.ts
+@@ -41,7 +41,9 @@
+ let handler:ReturnType<typeof createLocalHandler>,origin:string;
+ let ownerCookie:string,otherCookie:string;
+ const contractKeys=['episodes','total','page','pageSize','episodeCount','accountCounts','reviewCount','stages','artifactCounts','pending','blocked','worker','operationRows'] as const;
+-const contract=(catalog:EpisodeCatalog)=>Object.fromEntries(contractKeys.map(key=>[key,catalog[key]]));
++// New action-state metadata is additive. Retained RPC parity still covers the
++// original operations rows; list views now also expose those summaries.
++const contract=(catalog:EpisodeCatalog,view:string)=>Object.fromEntries(contractKeys.map(key=>[key,key==='operationRows'?(view==='operations'?catalog.operationRows.map(({episodeId,reviewRevision,reviewPending,blockerCount})=>({episodeId,reviewRevision,reviewPending,blockerCount})):[]):catalog[key]]));
+ 
+ beforeAll(async()=>{
+  const historical=await readFile(new URL('../../supabase/migrations/20261024004749_episode_catalog_paging.sql',import.meta.url),'utf8');
+@@ -104,7 +106,7 @@
+   const identity=(await client.query('SELECT current_user,session_user,local_identity.owner_id() owner')).rows[0];
+   expect(identity).toEqual({current_user:'loop_app',session_user:'loop_app',owner:other?otherOwner:owner});
+   const retained=(await client.query(`SELECT ${schema}.read_episode_catalog($1,$2,$3,$4,$5,$6,$7) catalog`,[parameters.view??'episodes',Number(parameters.page??1),parameters.accountId??null,parameters.seriesId??'all',parameters.visibility??'active',Number(parameters.pendingPage??1),Number(parameters.blockedPage??1)])).rows[0].catalog;
+-  expect(contract(native)).toEqual(retained);await client.query('COMMIT');return native;
++  expect(contract(native,parameters.view??'episodes')).toEqual(retained);await client.query('COMMIT');return native;
+  }catch(error){await client.query('ROLLBACK');throw error;}finally{client.release();}
+ }
+ 
+--- before/src/local-app/ImpeccableNavigation.test.tsx
++++ src/local-app/ImpeccableNavigation.test.tsx
+@@ -16,7 +16,7 @@
+ function fixture(query:URLSearchParams):LocalCatalog {
+   const page=Number(query.get('page')??1),pendingPage=Number(query.get('pendingPage')??1),blockedPage=Number(query.get('blockedPage')??1);
+   const episodes=batch(page,61,'生产单');
+-  return {accounts:[{id:accountId,name:'原始账号',slug:'original',timezone:'Asia/Shanghai',created_at:at,archived_at:null,current_blueprint_version_id:accountId}],blueprints:[{id:accountId,account_id:accountId,version:1,policy:{},is_active:true,is_snapshot:false,created_at:at,archived_at:null}],blueprintRevisions:{[accountId]:'a'.repeat(32)},episodes,series:[{id:seriesId,account_id:accountId,name:'原始系列',created_at:at,archived_at:null}],seriesVersions:[{id:seriesVersionId,series_id:seriesId,version:1,rules:{},created_at:at}],promptVersions:[],sourceCreatedAt:at,importedAt:at,page,pageSize:20,total:61,episodeCount:78,accountCounts:{[accountId]:78},reviewCount:52,stages:{script_review:61},artifactCounts:{},pending:{page:pendingPage,total:45,items:batch(pendingPage,45,'审核包',100).map(item=>({...item,revision_number:3}))},blocked:{page:blockedPage,total:43,items:batch(blockedPage,43,'阻塞生产单',200).map(item=>({episode:item,blocker:{code:'CONFIGURATION_REQUIRED',detail:'请补全冻结配置。',taskId:`task-${item.id}`}}))},worker:{running:2,blocked:3,failed:1,latestCompleted:false},operationRows:episodes.map(item=>({episodeId:item.id,reviewRevision:3,reviewPending:true,blockerCount:0}))} as unknown as LocalCatalog;
++  return {accounts:[{id:accountId,name:'原始账号',slug:'original',timezone:'Asia/Shanghai',created_at:at,archived_at:null,current_blueprint_version_id:accountId}],blueprints:[{id:accountId,account_id:accountId,version:1,policy:{},is_active:true,is_snapshot:false,created_at:at,archived_at:null}],blueprintRevisions:{[accountId]:'a'.repeat(32)},episodes,series:[{id:seriesId,account_id:accountId,name:'原始系列',created_at:at,archived_at:null}],seriesVersions:[{id:seriesVersionId,series_id:seriesId,version:1,rules:{},created_at:at}],promptVersions:[],sourceCreatedAt:at,importedAt:at,page,pageSize:20,total:61,episodeCount:78,accountCounts:{[accountId]:78},reviewCount:52,statusCounts:{all:61,review:45,running:2,blocked:3,done:0},stages:{script_review:61},artifactCounts:{},pending:{page:pendingPage,total:45,items:batch(pendingPage,45,'审核包',100).map(item=>({...item,revision_number:3}))},blocked:{page:blockedPage,total:43,items:batch(blockedPage,43,'阻塞生产单',200).map(item=>({episode:item,blocker:{code:'CONFIGURATION_REQUIRED',detail:'请补全冻结配置。',taskId:`task-${item.id}`}}))},worker:{running:2,blocked:3,failed:1,latestCompleted:false},operationRows:episodes.map(item=>({episodeId:item.id,reviewRevision:3,reviewPending:true,blockerCount:0}))} as unknown as LocalCatalog;
+ }
+ function setup(options:{studioFails?:boolean}={}) {
+   const queries:URLSearchParams[]=[];
+@@ -37,127 +37,83 @@
+ async function mount(){await act(async()=>{render(<LocalCatalogApp/>);});await screen.findByRole('heading',{name:'工作台',level:1});}
+ afterEach(()=>{cleanup();vi.restoreAllMocks();vi.unstubAllGlobals();history.replaceState(null,'','/');localStorage.clear();sessionStorage.clear();});
+ 
+-it('工作台和待审核映射到受支持的 catalog view，管理导航从不发送虚构 view',async()=>{
+-  const {queries,lastQuery}=setup();await mount();
+-  expect(lastQuery().get('view')).toBe('operations');
+-  expect(screen.getByText('45 个审核包等待决定')).toBeTruthy();
+-  expect(nav().getByRole('button',{name:'待审核'}).textContent).toContain('52');
+-  fireEvent.click(nav().getByRole('button',{name:'待审核'}));
+-  await waitFor(()=>expect(lastQuery().get('view')).toBe('reviews'));
+-  await screen.findByRole('table',{name:'生产单'});
+-  const count=queries.length;
+-  for(const label of ['连接配置','历史资料']){
+-    fireEvent.click(nav().getByRole('button',{name:label}));
+-    await screen.findByRole('heading',{name:label,level:1});
+-  }
+-  expect(queries).toHaveLength(count);
+-  fireEvent.click(nav().getByRole('button',{name:'账号与系列'}));
+-  await waitFor(()=>expect(lastQuery().get('view')).toBe('accounts'));
+-  expect(queries.every(query=>['accounts','episodes','reviews','operations'].includes(query.get('view')??''))).toBe(true);
+-  expect(queries.every(query=>Array.from(query.keys()).sort().join(',')==='accountId,blockedPage,page,pendingPage,seriesId,view,visibility')).toBe(true);
++it('待审核合并到生产单，工作台审核入口使用真实目录筛选',async()=>{
++ const {queries,lastQuery}=setup();await mount();
++ expect(lastQuery().get('view')).toBe('operations');
++ expect(nav().queryByRole('button',{name:'待审核'})).toBeNull();
++ expect(nav().getByRole('button',{name:'生产单'}).textContent).toContain('45');
++ fireEvent.click(screen.getByRole('button',{name:'查看待审核'}));
++ await screen.findByRole('table',{name:'生产单'});
++ expect(lastQuery().get('view')).toBe('episodes');expect(lastQuery().get('status')).toBe('review');
++ expect(screen.getByRole('tab',{name:'待审核'}).getAttribute('aria-selected')).toBe('true');expect(screen.getByRole('tab',{name:'待审核'}).textContent).toContain('45');
++ const count=queries.length;
++ for(const label of ['连接配置','历史资料']){fireEvent.click(nav().getByRole('button',{name:label}));await screen.findByRole('heading',{name:label,level:1});}
++ expect(queries).toHaveLength(count);
++ fireEvent.click(nav().getByRole('button',{name:'账号与系列'}));await waitFor(()=>expect(lastQuery().get('view')).toBe('accounts'));
++ expect(queries.every(q=>['accounts','episodes','operations'].includes(q.get('view')??''))).toBe(true);
++ expect(queries.every(q=>Array.from(q.keys()).sort().join(',')==='accountId,blockedPage,page,pendingPage,q,seriesId,sort,status,view,visibility')).toBe(true);
+ });
+ 
+-it('超过 20 条时三组服务器分页各自推进，保留其他两组页码并显示服务器返回的第二页',async()=>{
+-  const {lastQuery}=setup();await mount();
+-  const pending=screen.getByRole('heading',{name:'待审核',level:3}).closest('section')!;
+-  const blocked=screen.getByRole('heading',{name:'阻塞项',level:3}).closest('section')!;
+-  const episodes=screen.getByRole('region',{name:'系列生产单'});
+-  fireEvent.click(within(episodes).getByRole('button',{name:'下一页'}));
+-  await waitFor(()=>expect(lastQuery().get('page')).toBe('2'));
+-  expect(await within(episodes).findByText('生产单 21')).toBeTruthy();
+-  expect(within(episodes).getAllByRole('button',{name:/生产单 \d/})).toHaveLength(20);
+-  fireEvent.click(within(pending).getByRole('button',{name:'下一页'}));
+-  await waitFor(()=>expect(lastQuery().get('pendingPage')).toBe('2'));
+-  expect(lastQuery().get('page')).toBe('2');
+-  expect(lastQuery().get('blockedPage')).toBe('1');
+-  expect(await within(pending).findByText('审核包 121')).toBeTruthy();
+-  fireEvent.click(within(blocked).getByRole('button',{name:'下一页'}));
+-  await waitFor(()=>expect(lastQuery().get('blockedPage')).toBe('2'));
+-  expect(lastQuery().get('page')).toBe('2');expect(lastQuery().get('pendingPage')).toBe('2');
+-  expect(await within(blocked).findByText('阻塞生产单 221')).toBeTruthy();
+-  fireEvent.change(screen.getByRole('combobox',{name:'运营系列筛选'}),{target:{value:seriesId}});
+-  await waitFor(()=>expect(lastQuery().get('seriesId')).toBe(seriesId));
+-  expect(['page','pendingPage','blockedPage'].map(key=>lastQuery().get(key))).toEqual(['1','1','1']);
+-  expect(await within(episodes).findByText('生产单 1')).toBeTruthy();
++it('工作台生产单和阻塞队列独立服务端分页，筛选重置页码',async()=>{
++ const {lastQuery}=setup();await mount();
++ fireEvent.click(within(screen.getByRole('region',{name:'系列生产单'})).getByRole('button',{name:'下一页'}));
++ await waitFor(()=>expect(lastQuery().get('page')).toBe('2'));
++ await screen.findByRole('complementary',{name:'当前作品'});
++ expect(within(screen.getByRole('region',{name:'系列生产单'})).getByText('生产单 21')).toBeTruthy();
++ let blocked=screen.getByRole('heading',{name:'阻塞项',level:3}).closest('section')!;
++ fireEvent.click(within(blocked).getByRole('button',{name:'下一页'}));
++ await waitFor(()=>expect(lastQuery().get('blockedPage')).toBe('2'));
++ expect(lastQuery().get('page')).toBe('2');expect(lastQuery().get('pendingPage')).toBe('1');
++ await screen.findByText('阻塞生产单 221');
++ fireEvent.change(screen.getByRole('combobox',{name:'运营系列筛选'}),{target:{value:seriesId}});
++ await waitFor(()=>expect(lastQuery().get('seriesId')).toBe(seriesId));
++ expect(['page','pendingPage','blockedPage'].map(key=>lastQuery().get(key))).toEqual(['1','1','1']);
++ await screen.findByRole('complementary',{name:'当前作品'});
++ expect(within(screen.getByRole('region',{name:'系列生产单'})).getByText('生产单 1')).toBeTruthy();
+ });
+ 
+-it('第二页筛选上下文在打开与关闭全页制作区后不变，底层工作区只在打开期间 inert',async()=>{
+-  const {lastQuery,queries}=setup();await mount();
+-  fireEvent.change(screen.getByRole('combobox',{name:'运营系列筛选'}),{target:{value:seriesId}});
+-  await waitFor(()=>expect(lastQuery().get('seriesId')).toBe(seriesId));
+-  const episodes=screen.getByRole('region',{name:'系列生产单'});
+-  fireEvent.click(within(episodes).getByRole('button',{name:'下一页'}));
+-  await within(episodes).findByText('生产单 21');
+-  const before=lastQuery().toString(),requestCount=queries.length;
+-  fireEvent.click(within(episodes).getByText('生产单 21'));
+-  await screen.findByText('实际生产单 '+uuid(21));
+-  const pane=document.getElementById('main-content')!;
+-  expect(pane.hasAttribute('inert')).toBe(true);
+-  expect(new URLSearchParams(location.search).get('episode')).toBe(uuid(21));
+-  fireEvent.click(screen.getByRole('button',{name:'返回工作区'}));
+-  expect(pane.hasAttribute('inert')).toBe(false);
+-  expect(screen.queryByText('实际生产单 '+uuid(21))).toBeNull();
+-  expect(location.search).toBe('');expect(lastQuery().toString()).toBe(before);expect(queries).toHaveLength(requestCount);
++it('选择作品更新下一步，打开及返回详情保留第二页上下文',async()=>{
++ const {lastQuery,queries}=setup();await mount();
++ fireEvent.click(within(screen.getByRole('region',{name:'系列生产单'})).getByRole('button',{name:'下一页'}));
++ await waitFor(()=>expect(lastQuery().get('page')).toBe('2'));
++ await screen.findByRole('complementary',{name:'当前作品'});
++ fireEvent.click(within(screen.getByRole('region',{name:'系列生产单'})).getByText('生产单 22'));
++ const current=screen.getByRole('complementary',{name:'当前作品'});expect(within(current).getByRole('heading',{name:'生产单 22'})).toBeTruthy();
++ const before=lastQuery().toString(),count=queries.length;
++ fireEvent.click(within(current).getByRole('button',{name:'继续审核'}));
++ await screen.findByText('实际生产单 '+uuid(22));
++ expect(document.getElementById('main-content')?.hasAttribute('inert')).toBe(true);
++ fireEvent.click(screen.getByRole('button',{name:'返回工作区'}));
++ expect(document.getElementById('main-content')?.hasAttribute('inert')).toBe(false);
++ expect(location.search).toBe('');expect(lastQuery().toString()).toBe(before);expect(queries).toHaveLength(count);
++ expect(within(screen.getByRole('complementary',{name:'当前作品'})).getByRole('heading',{name:'生产单 22'})).toBeTruthy();
+ });
+ 
+-it('连接修复事件进入真实连接配置入口且不改 catalog 查询协议',async()=>{
+-  const {queries}=setup();await mount();const count=queries.length;
+-  await act(async()=>{window.dispatchEvent(new Event('open-external-connections'));});
+-  await screen.findByRole('heading',{name:'连接配置',level:1});
+-  expect(await screen.findByRole('form',{name:'保存连接'})).toBeTruthy();
+-  expect(queries).toHaveLength(count);
+-  expect(nav().getByRole('button',{name:'连接配置'}).getAttribute('aria-current')).toBe('page');
++it('搜索、状态和排序全部送服务端，切换范围重置分页且不写业务数据',async()=>{
++ const {lastQuery,posts}=setup();await mount();fireEvent.click(nav().getByRole('button',{name:'生产单'}));await screen.findByRole('table',{name:'生产单'});
++ fireEvent.click(screen.getByRole('button',{name:'下一页'}));await waitFor(()=>expect(lastQuery().get('page')).toBe('2'));await screen.findByRole('row',{name:/生产单 21/});
++ fireEvent.change(screen.getByRole('textbox',{name:'搜索标题或编号'}),{target:{value:'指定标题'}});fireEvent.submit(screen.getByRole('search',{name:'搜索生产单'}));
++ await waitFor(()=>expect(lastQuery().get('q')).toBe('指定标题'));expect(lastQuery().get('page')).toBe('1');
++ await screen.findByRole('table',{name:'生产单'});
++ fireEvent.change(screen.getByRole('combobox',{name:'生产单排序'}),{target:{value:'title'}});await waitFor(()=>expect(lastQuery().get('sort')).toBe('title'));
++ await screen.findByRole('table',{name:'生产单'});fireEvent.click(screen.getByRole('tab',{name:'待审核'}));await waitFor(()=>expect(lastQuery().get('status')).toBe('review'));
++ expect(lastQuery().get('visibility')).toBe('active');expect(lastQuery().get('q')).toBe('指定标题');
++ fireEvent.keyDown(screen.getByRole('tab',{name:'待审核'}),{key:'ArrowRight'});await waitFor(()=>expect(lastQuery().get('status')).toBe('running'));expect(posts).toHaveLength(0);
+ });
+ 
+-it('制作区打开时 Studio 失败通知仍在可操作区域，失败弹窗关闭且命令保留 CSRF',async()=>{
+-  const {posts}=setup({studioFails:true});const close=vi.fn();
+-  vi.spyOn(window,'open').mockReturnValue({close,location:{replace:vi.fn()}} as unknown as Window);
+-  await mount();
+-  fireEvent.click(within(screen.getByRole('region',{name:'系列生产单'})).getByText('生产单 1'));
+-  await screen.findByText('实际生产单 '+uuid(1));
+-  fireEvent.click(nav().getByRole('button',{name:'打开 OpenChatCut 独立剪辑'}));
+-  const alert=await screen.findByRole('alert');
+-  expect(alert.textContent).toContain('Studio 工作区不可用，请重试。');
+-  expect(alert.closest('[inert]')).toBeNull();expect(alert.closest('#main-content')).toBeNull();
+-  expect(close).toHaveBeenCalledOnce();
+-  expect(posts).toHaveLength(1);expect(posts[0].path).toBe('/api/local/episode-commands');
+-  expect(posts[0].body).toMatchObject({command:'openStandaloneStudio',data:{}});
+-  expect(posts[0].headers.get('X-CSRF-Token')).toBe('navigation-fixture-csrf');
+-  fireEvent.click(screen.getByRole('button',{name:'关闭错误通知'}));expect(screen.queryByRole('alert')).toBeNull();
+-  expect(document.getElementById('main-content')?.hasAttribute('inert')).toBe(true);
++it('侧栏分组和底部工具保持已认可设计，Owner焦点与状态不丢',async()=>{
++ setup();await mount();
++ expect(within(nav().getByRole('group',{name:'生产工作'})).getAllByRole('button').map(b=>b.getAttribute('aria-label'))).toEqual(['工作台','生产单']);
++ expect(within(nav().getByRole('group',{name:'配置与资料'})).getAllByRole('button').map(b=>b.getAttribute('aria-label'))).toEqual(['连接配置','历史资料']);
++ expect(nav().getByRole('button',{name:/OpenChatCut/}).closest('.sidebar-footer')).toBeTruthy();
++ fireEvent.click(nav().getByRole('button',{name:'切换至深色模式'}));expect(nav().getByRole('button',{name:'切换至浅色模式'}).getAttribute('aria-pressed')).toBe('true');
++ fireEvent.click(nav().getByRole('button',{name:'收起侧栏'}));expect(nav().getByRole('button',{name:'展开侧栏'}).getAttribute('aria-pressed')).toBe('true');
++ const owner=nav().getByRole('button',{name:'所有者设置'});fireEvent.click(owner);fireEvent.click(await screen.findByRole('menuitem',{name:'登录与安全'}));await screen.findByRole('dialog',{name:'登录与安全'});expect(owner.getAttribute('data-active')).toBe('true');
+ });
+ 
+-it('侧栏分组不重复维护入口，底部工具保留主题/折叠状态与 Owner 焦点',async()=>{
+-  setup();await mount();
+-  expect(within(nav().getByRole('group',{name:'生产工作'})).getAllByRole('button').map(b=>b.getAttribute('aria-label'))).toEqual(['工作台','生产单','待审核']);
+-  expect(within(nav().getByRole('group',{name:'配置与资料'})).getAllByRole('button').map(b=>b.getAttribute('aria-label'))).toEqual(['连接配置','历史资料']);
+-  expect(nav().queryByRole('button',{name:'系统状态'})).toBeNull();
+-  expect(nav().getByRole('button',{name:/OpenChatCut/}).closest('.sidebar-footer')).toBeTruthy();
+-  fireEvent.click(nav().getByRole('button',{name:'切换至深色模式'}));
+-  expect(nav().getByRole('button',{name:'切换至浅色模式'}).getAttribute('aria-pressed')).toBe('true');
+-  fireEvent.click(nav().getByRole('button',{name:'收起侧栏'}));
+-  expect(nav().getByRole('button',{name:'展开侧栏'}).getAttribute('aria-pressed')).toBe('true');
+-  expect(localStorage.getItem('loop-control.theme.v1')).toBe('dark');expect(localStorage.getItem('loop-control.sidebar.v1')).toBe('collapsed');
+-  const owner=nav().getByRole('button',{name:'所有者设置'});
+-  fireEvent.click(owner);
+-  expect(await screen.findByRole('menuitem',{name:'登录与安全'})).toBeTruthy();
+-  expect(screen.queryByRole('menuitem',{name:'系统维护'})).toBeNull();
+-  expect(owner.getAttribute('aria-expanded')).toBe('true');
+-  fireEvent.click(screen.getByRole('menuitem',{name:'登录与安全'}));
+-  await screen.findByRole('dialog',{name:'登录与安全'});
+-  expect(owner.getAttribute('data-active')).toBe('true');
++it('制作区Studio失败通知仍在可操作区域并保留CSRF',async()=>{
++ const {posts}=setup({studioFails:true});const close=vi.fn();vi.spyOn(window,'open').mockReturnValue({close,location:{replace:vi.fn()}}as unknown as Window);await mount();
++ fireEvent.click(within(screen.getByRole('complementary',{name:'当前作品'})).getByRole('button',{name:'继续审核'}));await screen.findByText('实际生产单 '+uuid(1));
++ fireEvent.click(nav().getByRole('button',{name:'打开 OpenChatCut 独立剪辑'}));const alert=await screen.findByRole('alert');expect(alert.textContent).toContain('Studio 工作区不可用');expect(alert.closest('[inert]')).toBeNull();expect(close).toHaveBeenCalledOnce();
++ expect(posts[0].body).toMatchObject({command:'openStandaloneStudio',data:{}});expect(posts[0].headers.get('X-CSRF-Token')).toBe('navigation-fixture-csrf');
+ });
+-
+-it('待审核只保留队列筛选，切入时清除无效归档范围并保留真实查询',async()=>{
+-  const{lastQuery}=setup();await mount();
+-  fireEvent.click(nav().getByRole('button',{name:'生产单'}));
+-  fireEvent.change(await screen.findByRole('combobox',{name:'生产单状态'}),{target:{value:'archived'}});
+-  await waitFor(()=>expect(lastQuery().get('visibility')).toBe('archived'));
+-  fireEvent.click(nav().getByRole('button',{name:'待审核'}));
+-  await waitFor(()=>expect(lastQuery().get('view')).toBe('reviews'));
+-  expect(lastQuery().get('visibility')).toBe('active');
+-  expect(screen.queryByRole('combobox',{name:'生产单状态'})).toBeNull();
+-  expect(screen.queryByRole('button',{name:'新建生产单'})).toBeNull();
+-  expect(screen.getByRole('table',{name:'生产单'})).toBeTruthy();
+-  expect(screen.getByRole('button',{name:'刷新'})).toBeTruthy();
+-});
+--- before/src/local-app/LocalCatalogApp.workspace.test.tsx
++++ src/local-app/LocalCatalogApp.workspace.test.tsx
+@@ -29,8 +29,8 @@
+ });
+ it('uses the approved navigation with real table paging and a contextual production workspace',async()=>{
+  vi.stubGlobal('crypto',webcrypto);const requests:string[]=[];vi.stubGlobal('fetch',vi.fn(async(path:string)=>{requests.push(path);if(path.endsWith('/session'))return Response.json({csrfToken:'fixture',owner:{id,email:'owner@example.test'}});if(path.includes('/catalog?')){const q=new URL(path,'http://localhost').searchParams;return Response.json({...data,page:Number(q.get('page'))});}return Response.json({connections:[],versions:[]});}));
+- await act(async()=>{render(<LocalCatalogApp/>);});const nav=within(screen.getByRole('complementary',{name:'主导航'}));for(const name of['工作台','生产单','待审核','账号与系列','连接配置','历史资料'])expect(nav.getByRole('button',{name})).toBeTruthy();expect(nav.queryByRole('button',{name:'审核'})).toBeNull();
+- fireEvent.click(nav.getByRole('button',{name:'生产单'}));await screen.findByRole('table',{name:'生产单'});expect(screen.getByText('普通长度完整生产单')).toBeTruthy();expect(screen.getByText('39')).toBeTruthy();const actions=document.querySelector('.filters .workspace-actions');expect(actions?.querySelector('button:last-of-type')?.textContent).toBe('新建生产单');expect(document.querySelector('.page-header-actions')?.textContent).not.toContain('新建生产单');
++ await act(async()=>{render(<LocalCatalogApp/>);});const nav=within(screen.getByRole('complementary',{name:'主导航'}));for(const name of['工作台','生产单','账号与系列','连接配置','历史资料'])expect(nav.getByRole('button',{name})).toBeTruthy();expect(nav.queryByRole('button',{name:'审核'})).toBeNull();
++ fireEvent.click(nav.getByRole('button',{name:'生产单'}));await screen.findByRole('table',{name:'生产单'});expect(screen.getByText('普通长度完整生产单')).toBeTruthy();expect(screen.getAllByRole('columnheader').map(e=>e.textContent)).toEqual(['生产单','当前阶段','状态','最近更新','操作']);const actions=document.querySelector('.episode-list-header .workspace-actions');expect(actions?.querySelector('button:last-of-type')?.textContent).toBe('新建生产单');expect(document.querySelector('.page-header-actions')?.textContent).not.toContain('新建生产单');
+  fireEvent.click(screen.getByRole('button',{name:'下一页'}));await waitFor(()=>expect(requests.some(p=>p.includes('page=2'))).toBe(true));
+  fireEvent.click(screen.getByText('普通长度完整生产单'));await screen.findByText('已打开 '+episode);expect(location.search).toContain(episode);
+  expect(document.querySelector('.app-shell')).toBeTruthy();fireEvent.click(screen.getByRole('button',{name:'切换至深色模式'}));expect(document.querySelector('.app-shell')?.getAttribute('data-theme')).toBe('dark');
+--- before/src/local-app/LocalConnectionsPanel.test.tsx
++++ src/local-app/LocalConnectionsPanel.test.tsx
+@@ -11,7 +11,7 @@
+   if(init?.method==='POST'){commands.push(JSON.parse(String(init.body)).command);return Response.json({connection});}
+   return Response.json({connections:[connection],versions:[],pending:[],capabilities:{secrets:'keychain',verification:'live',externalReady:false,networkAvailable:false}});
+  }));
+- render(<LocalConnectionsPanel/>);await screen.findByRole('heading',{name:'连接管理'});
++ render(<LocalConnectionsPanel/>);await screen.findByRole('form',{name:'保存连接'});
+  fireEvent.change(screen.getByLabelText('操作对象'),{target:{value:connection.id}});
+  const secret=screen.getByLabelText(/^新的 API Key/) as HTMLInputElement;
+  fireEvent.change(secret,{target:{value:'synthetic-rotation-secret'}});
+@@ -35,7 +35,7 @@
+   }
+   return Response.json({connections:[connection],versions:[],pending:[],capabilities:{secrets:'keychain',verification:'live',externalReady:false,networkAvailable:false}});
+  }));
+- render(<LocalConnectionsPanel/>);await screen.findByRole('heading',{name:'连接管理'});
++ render(<LocalConnectionsPanel/>);await screen.findByRole('form',{name:'保存连接'});
+  fireEvent.change(screen.getByLabelText('操作对象'),{target:{value:connection.id}});
+  const secret=screen.getByLabelText(/^新的 API Key/) as HTMLInputElement;
+  fireEvent.change(secret,{target:{value:'synthetic-retry-secret'}});
+@@ -63,7 +63,7 @@
+   if(init?.method==='POST'){commands.push(JSON.parse(String(init.body)).command);return Response.json({rebound:true});}
+   return Response.json({connections:[connection],versions:[version],pending:[],capabilities:{secrets:'keychain',verification:'live',externalReady:false,networkAvailable:false}});
+  }));
+- render(<LocalConnectionsPanel/>);await screen.findByRole('heading',{name:'连接管理'});
++ render(<LocalConnectionsPanel/>);await screen.findByRole('form',{name:'保存连接'});
+  fireEvent.change(screen.getByLabelText('操作对象'),{target:{value:connection.id}});
+  fireEvent.click(screen.getByText('连接版本（1）'));fireEvent.click(screen.getByText('恢复缺失的密钥绑定'));
+  const secret=screen.getByLabelText('v1 恢复认证材料') as HTMLInputElement;
+@@ -78,7 +78,7 @@
+ });
+ it('saves a closed-network credential without issuing a verify command and clears the password',async()=>{
+  vi.stubGlobal('crypto',webcrypto);const commands:string[]=[];vi.stubGlobal('fetch',vi.fn(async(_path:string,init?:RequestInit)=>{if(init?.method==='POST'){commands.push(JSON.parse(String(init.body)).command);return Response.json({connection:{id:'synthetic-connection',name:'Test',provider:'pexels',adapter:'pexels_video',status:'retryable'}});}return Response.json({connections:[],versions:[],pending:[],capabilities:{secrets:'keychain',verification:'live',externalReady:false,networkAvailable:false}});}));
+- render(<LocalConnectionsPanel/>);await screen.findByRole('heading',{name:'连接管理'});fireEvent.change(screen.getByRole('textbox',{name:'连接名称'}),{target:{value:'Test'}});const field=screen.getByLabelText(/^Pexels API Key/) as HTMLInputElement;fireEvent.change(field,{target:{value:'synthetic-private-entry'}});fireEvent.click(screen.getByRole('button',{name:'仅保存凭据'}));await waitFor(()=>expect(field.value).toBe(''));expect(commands).toEqual(['create']);expect(screen.getByText(/凭据仅保存到本机 Keychain/).textContent).toContain('在线验证已锁定');expect(document.body.textContent).not.toContain('synthetic-private-entry');
++ render(<LocalConnectionsPanel/>);await screen.findByRole('form',{name:'保存连接'});fireEvent.change(screen.getByRole('textbox',{name:'连接名称'}),{target:{value:'Test'}});const field=screen.getByLabelText(/^Pexels API Key/) as HTMLInputElement;fireEvent.change(field,{target:{value:'synthetic-private-entry'}});fireEvent.click(screen.getByRole('button',{name:'仅保存凭据'}));await waitFor(()=>expect(field.value).toBe(''));expect(commands).toEqual(['create']);expect(screen.getByText(/凭据仅保存到本机 Keychain/).textContent).toContain('在线验证已锁定');expect(document.body.textContent).not.toContain('synthetic-private-entry');
+ });
+ it('keeps unconfirmed material in a password draft and persists only a random operation ID',async()=>{
+  const secret='synthetic-ui-only-secret';let postBody='';
+@@ -87,7 +87,7 @@
+   if(init?.method==='POST'){postBody=String(init.body);return new Response(JSON.stringify({error:'Keychain disabled'}),{status:503});}
+   return new Response(JSON.stringify({connections:[],versions:[],pending:[],capabilities:{secrets:'disabled',verification:'disabled',externalReady:false}}));
+  }));
+- render(<LocalConnectionsPanel/>);await screen.findByRole('heading',{name:'连接管理'});
++ render(<LocalConnectionsPanel/>);await screen.findByRole('form',{name:'保存连接'});
+  fireEvent.change(screen.getByRole('textbox',{name:'连接名称'}),{target:{value:'Synthetic'}});
+  const input=screen.getByLabelText(/^Pexels API Key/) as HTMLInputElement;fireEvent.change(input,{target:{value:secret}});
+  fireEvent.click(screen.getByRole('button',{name:'保存并测试'}));
+--- before/src/local-app/catalog.ts
++++ src/local-app/catalog.ts
+@@ -30,16 +30,17 @@
+  const value=(key:string,fallback:string)=>search.get(key)??fallback;
+  const page=(key:string)=>{const text=value(key,'1');if(!/^[1-9][0-9]{0,8}$/.test(text))throw new ConfigurationError(400,'目录页码无效。');return Number(text);};
+  const view=value('view','episodes'),visibility=value('visibility','active'),accountId=value('accountId',''),seriesId=value('seriesId','all');
++ const rawQuery=value('q',''),q=rawQuery.trim(),sort=value('sort','updated'),status=value('status','all');
+  const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+- if(!['accounts','episodes','reviews','operations'].includes(view)||!['active','archived','all'].includes(visibility)||accountId&&!uuid.test(accountId)||!['all','unassigned','unavailable'].includes(seriesId)&&!uuid.test(seriesId)||[...search.keys()].some(k=>!['view','page','accountId','seriesId','visibility','pendingPage','blockedPage'].includes(k))||[...search.keys()].some(k=>search.getAll(k).length!==1))throw new ConfigurationError(400,'目录筛选无效。');
+- return {view:view as CatalogQuery['view'],visibility:visibility as CatalogQuery['visibility'],accountId,seriesId,page:page('page'),pendingPage:page('pendingPage'),blockedPage:page('blockedPage')};
++ if(rawQuery.length>200||/[\u0000-\u001f\u007f]/.test(rawQuery)||!['updated','oldest','title'].includes(sort)||!['all','review','running','blocked','done'].includes(status)||!['accounts','episodes','reviews','operations'].includes(view)||!['active','archived','all'].includes(visibility)||accountId&&!uuid.test(accountId)||!['all','unassigned','unavailable'].includes(seriesId)&&!uuid.test(seriesId)||[...search.keys()].some(k=>!['view','page','accountId','seriesId','visibility','pendingPage','blockedPage','q','sort','status'].includes(k))||[...search.keys()].some(k=>search.getAll(k).length!==1))throw new ConfigurationError(400,'目录筛选无效。');
++ return {view:view as CatalogQuery['view'],visibility:visibility as CatalogQuery['visibility'],accountId,seriesId,page:page('page'),pendingPage:page('pendingPage'),blockedPage:page('blockedPage'),q,sort:sort as CatalogQuery['sort'],status:status as CatalogQuery['status']};
+ }
+ export async function readLocalCatalog(pool:Pool,ownerId:string,query:CatalogQuery=parseCatalogQuery(new URLSearchParams())):Promise<LocalCatalog>{
+  return ownerTransaction(pool,ownerId,true,async client=>{
+   const accounts=(await client.query(`SELECT a.* FROM public.accounts a JOIN public.account_memberships m ON m.account_id=a.id WHERE m.user_id=$1 AND m.role='owner' ORDER BY EXISTS(SELECT 1 FROM local_identity.history_projection_results h WHERE h.table_name='public.accounts' AND h.status='inserted' AND h.row_key->>'id'=a.id::text),a.created_at,a.id`,[ownerId])).rows;
+   const ids=accounts.map(a=>a.id);
+   const blueprints=(await client.query('SELECT * FROM public.account_blueprint_versions WHERE account_id=ANY($1::uuid[]) ORDER BY version DESC,id',[ids])).rows;
+-  const {rows:[{catalog}]}=await client.query(localCatalogSql,[ownerId,query.view,query.page,query.accountId||null,query.seriesId,query.visibility,query.pendingPage,query.blockedPage]);
++  const {rows:[{catalog}]}=await client.query(localCatalogSql,[ownerId,query.view,query.page,query.accountId||null,query.seriesId,query.visibility,query.pendingPage,query.blockedPage,query.q??'',query.sort??'updated',query.status??'all']);
+   const series=(await client.query('SELECT * FROM public.series WHERE account_id=ANY($1::uuid[]) ORDER BY name,id',[ids])).rows;
+   const seriesVersions=(await client.query('SELECT * FROM public.series_versions WHERE account_id=ANY($1::uuid[]) ORDER BY version DESC,id',[ids])).rows;
+   const promptVersions=(await client.query('SELECT * FROM public.prompt_versions WHERE account_id=ANY($1::uuid[]) ORDER BY capability,version DESC,id',[ids])).rows;
+--- before/src/workspace/WorkspaceViews.tsx
++++ src/workspace/WorkspaceViews.tsx
+@@ -1,17 +1,18 @@
+ import {Tooltip,TooltipTrigger} from '../ui/dan-ui/components/base/tooltip/tooltip';
+ import {Dropdown} from '../ui/dan-ui/components/base/dropdown/dropdown';
+-import {MoreHorizontal,Archive,KeyRound,ShieldCheck,Settings,Layers} from 'lucide-react';
++import {MoreHorizontal,Archive,KeyRound,ShieldCheck,Settings,Layers,Search,ArrowDownWideNarrow} from 'lucide-react';
+ import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
+ import {InputBase} from '../ui/dan-ui/components/base/input/input';
+ import {Button} from '../ui/dan-ui/components/base/buttons/button';
+ // Shared original workspace views. Data and authentication are supplied by each backend.
+-import {useState,useEffect,useRef,type FormEvent,type ReactNode} from 'react';
++import {useState,useEffect,useRef,useId,type FormEvent,type ReactNode} from 'react';
+ import {BarChart3,LogOut,MessageSquare,Moon,PanelLeft,Pencil,Play,RefreshCw,Sun,Table2,Trash2,User,Users,Video,X,type LucideIcon} from 'lucide-react';
+ import type {Database} from '../lib/database.types';
+ import type {EpisodeStage} from '../platform/types';
+-import type {ServerPage} from '../episodes/episodeCatalogTypes';
++import type {ServerPage,EpisodeCatalog} from '../episodes/episodeCatalogTypes';
++import {EpisodeStatus,episodeActionState} from './episodePresentation';
++import './episode-list.css';
+ import {blueprintAssetRoot} from '../platform/blueprintPolicy';
+-import {accountIdentityColor,accountIdentityInitials} from '../platform/accountIdentity';
+ import {useDialogFocus} from '../ui/useDialogFocus';
+ import {PaginationControls} from '../ui/PaginationControls';
+ type Row<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
+@@ -82,12 +83,12 @@
+   return reviewActions[stage] ?? null;
+ }
+ 
+-function EpisodeActionsMenu({ blueprint, episode, isArchivePending, isDeletePending, isTitlePending, onDelete, onPlanDelete, onSetArchived, onUpdateTitle }: { blueprint: Blueprint | undefined; episode: Episode; isArchivePending: boolean; isDeletePending: boolean; isTitlePending: boolean; onDelete: (episodeId: string, confirmation: string, plan?: EpisodeDeletionPlan) => Promise<void>; onPlanDelete?: (episodeId:string)=>Promise<EpisodeDeletionPlan>; onSetArchived: (episodeId: string, archived: boolean) => Promise<void>; onUpdateTitle: (episodeId: string, title: string) => Promise<void> }) {
++function EpisodeActionsMenu({ artifactCount, blueprint, episode, isArchivePending, isDeletePending, isTitlePending, onDelete, onPlanDelete, onSetArchived, onUpdateTitle }: { artifactCount?:number; blueprint: Blueprint | undefined; episode: Episode; isArchivePending: boolean; isDeletePending: boolean; isTitlePending: boolean; onDelete: (episodeId: string, confirmation: string, plan?: EpisodeDeletionPlan) => Promise<void>; onPlanDelete?: (episodeId:string)=>Promise<EpisodeDeletionPlan>; onSetArchived: (episodeId: string, archived: boolean) => Promise<void>; onUpdateTitle: (episodeId: string, title: string) => Promise<void> }) {
+   const [menuOpen, setMenuOpen] = useState(false);
+   const [action, setAction] = useState<EpisodeAction>(null);
+   const archived = episodeIsArchived(episode);
+   function openAction(nextAction: EpisodeAction) { setMenuOpen(false); setAction(nextAction); }
+-  return <div className="episode-actions" onClick={(event) => event.stopPropagation()} onKeyDown={(event) => event.stopPropagation()}><Dropdown.Root isOpen={menuOpen} onOpenChange={setMenuOpen}><Button size="sm" color="tertiary" aria-label={`生产单操作：${episode.title || "未命名生产单"}`} className="episode-actions-trigger" type="button"><MoreHorizontal aria-hidden="true" size={20}/></Button><Dropdown.Popover className="dan-ui product-ui"><Dropdown.Menu aria-label="生产单操作"><Dropdown.Item icon={Pencil} id="rename" onAction={() => openAction("rename")}>重命名</Dropdown.Item><Dropdown.Item icon={Archive} id="archive" onAction={() => openAction("archive")}>{archived ? "恢复" : "归档"}</Dropdown.Item>{archived&&<Dropdown.Item icon={Trash2} id="delete" className="menu-item-danger" onAction={() => openAction("delete")}>永久删除</Dropdown.Item>}</Dropdown.Menu></Dropdown.Popover></Dropdown.Root>{action === "rename" ? <EpisodeRenameModal episode={episode} isPending={isTitlePending} onClose={() => setAction(null)} onSave={onUpdateTitle} /> : null}{action === "archive" ? <EpisodeArchiveModal archived={archived} isPending={isArchivePending} onClose={() => setAction(null)} onSave={onSetArchived} episodeId={episode.id} /> : null}{action === "delete" ? <EpisodeDeleteModal assetRoot={blueprint ? blueprintAssetRoot(blueprint.policy) : ""} episode={episode} isPending={isDeletePending} onClose={() => setAction(null)} onDelete={onDelete} onPlanDelete={onPlanDelete} /> : null}</div>;
++  return <div className="episode-actions" onClick={(event) => event.stopPropagation()} onKeyDown={(event) => event.stopPropagation()}><Dropdown.Root isOpen={menuOpen} onOpenChange={setMenuOpen}><Button size="sm" color="tertiary" aria-label={`生产单操作：${episode.title || "未命名生产单"}`} className="episode-actions-trigger" type="button"><MoreHorizontal aria-hidden="true" size={20}/></Button><Dropdown.Popover className="dan-ui product-ui"><Dropdown.Menu aria-label="生产单操作"><Dropdown.SectionHeader><dl className="episode-menu-metadata"><div><dt>编号</dt><dd>{episode.id}</dd></div><div><dt>蓝图</dt><dd>v{blueprint?.version ?? "—"}</dd></div>{artifactCount!==undefined&&<div><dt>产物</dt><dd>{artifactCount}</dd></div>}</dl></Dropdown.SectionHeader><Dropdown.Item icon={Pencil} id="rename" onAction={() => openAction("rename")}>重命名</Dropdown.Item><Dropdown.Item icon={Archive} id="archive" onAction={() => openAction("archive")}>{archived ? "恢复" : "归档"}</Dropdown.Item>{archived&&<Dropdown.Item icon={Trash2} id="delete" className="menu-item-danger" onAction={() => openAction("delete")}>永久删除</Dropdown.Item>}</Dropdown.Menu></Dropdown.Popover></Dropdown.Root>{action === "rename" ? <EpisodeRenameModal episode={episode} isPending={isTitlePending} onClose={() => setAction(null)} onSave={onUpdateTitle} /> : null}{action === "archive" ? <EpisodeArchiveModal archived={archived} isPending={isArchivePending} onClose={() => setAction(null)} onSave={onSetArchived} episodeId={episode.id} /> : null}{action === "delete" ? <EpisodeDeleteModal assetRoot={blueprint ? blueprintAssetRoot(blueprint.policy) : ""} episode={episode} isPending={isDeletePending} onClose={() => setAction(null)} onDelete={onDelete} onPlanDelete={onPlanDelete} /> : null}</div>;
+ }
+ 
+ function EpisodeRenameModal({ episode, isPending, onClose, onSave }: { episode: Episode; isPending: boolean; onClose: () => void; onSave: (episodeId: string, title: string) => Promise<void> }) {
+@@ -136,8 +137,11 @@
+   return <div className="modal-backdrop"  role="dialog" aria-modal="true" aria-label="永久删除生产单"><form ref={dialogRef} aria-label="永久删除生产单" className="modal-card modal-card-danger episode-deletion-modal" onSubmit={(event) => void submit(event)}><header><div><h2>永久删除生产单</h2><p>此操作不可恢复，将删除该生产单的数据库记录和下方目录。</p></div><Button size="sm" color="tertiary" aria-label="关闭永久删除生产单" className="icon-button" isDisabled={pending} onClick={onClose} type="button"><Icon name="Close" /></Button></header>{loading ? <p role="status">正在检查删除范围…</p> : localEpisodePath ? <><p>清理目录（含旧副本）</p><ul className="episode-deletion-paths" aria-label="将删除的生产单目录">{deletionPaths.map(path => <li key={path}><code>{path}</code></li>)}</ul><p>仅清理列出的目录；原始素材、账号目录中的其他内容及其他生产单保留。</p></> : null}{error && <p className="form-error" role="alert">{error}</p>}{onPlanDelete && !loading && !plan && <Button size="sm" color="secondary" className="button button-secondary" onClick={() => setAttempt(value => value + 1)} type="button">重新检查删除范围</Button>}<label>输入“{confirmationTarget}”确认删除<InputBase size="sm" aria-label="永久删除确认文本" autoFocus isDisabled={loading || pending || Boolean(onPlanDelete && !plan)} onChange={(event) => setConfirmation(event.target.value)} placeholder={confirmationTarget} value={confirmation} /></label><div className="modal-actions"><Button size="sm" color="secondary" className="button button-secondary" isDisabled={pending} onClick={onClose} type="button">取消</Button><Button size="sm" color="primary-destructive" className="button button-danger" isDisabled={pending || loading || Boolean(onPlanDelete && !plan) || confirmation !== confirmationTarget} type="submit">{pending ? "删除中…" : "确认永久删除"}</Button></div></form></div>;
+ }
+ 
+-export function EpisodeWorkspace({ actions, reviewOnly = false, isPageLoading = false, serverPage, artifactCounts, accounts, accountsById, artifacts, blueprintsById, episodeVisibility, episodes, filter, onDelete = async () => {}, onPlanDelete, onEpisodeVisibilityChange, onFilter, onSetArchived = async () => {}, onSeriesFilter, onSelectEpisode, onUpdateTitle = async () => {}, series, seriesById, seriesFilter, seriesVersionsById, selectedEpisode, isArchivePending = () => false, isDeletePending = () => false, isTitlePending = () => false }: { actions?: ReactNode; reviewOnly?: boolean; isPageLoading?: boolean; serverPage?: ServerPage; artifactCounts?: Record<string, number>; accounts: Account[]; accountsById: Map<string, Account>; artifacts: Artifact[]; blueprintsById: Map<string, Blueprint>; episodeVisibility: EpisodeVisibility; episodes: Episode[]; filter: string; isArchivePending?: (episodeId: string) => boolean; isDeletePending?: (episodeId: string) => boolean; isTitlePending?: (episodeId: string) => boolean; onDelete?: (episodeId: string, confirmation: string, plan?: EpisodeDeletionPlan) => Promise<void>; onPlanDelete?: (episodeId:string)=>Promise<EpisodeDeletionPlan>; onEpisodeVisibilityChange: (value: EpisodeVisibility) => void; onFilter: (value: string) => void; onSetArchived?: (episodeId: string, archived: boolean) => Promise<void>; onSeriesFilter: (value: string) => void; onSelectEpisode: (id: string) => void; onUpdateTitle?: (episodeId: string, title: string) => Promise<void>; series: Series[]; seriesById: Map<string, Series>; seriesFilter: string; seriesVersionsById: Map<string, SeriesVersion>; selectedEpisode: Episode | null }) {
++export function EpisodeWorkspace({ catalogControls, operationRows, actions, reviewOnly = false, isPageLoading = false, serverPage, artifactCounts, accounts, accountsById, artifacts, blueprintsById, episodeVisibility, episodes, filter, onDelete = async () => {}, onPlanDelete, onEpisodeVisibilityChange, onFilter, onSetArchived = async () => {}, onSeriesFilter, onSelectEpisode, onUpdateTitle = async () => {}, series, seriesById, seriesFilter, seriesVersionsById, selectedEpisode, isArchivePending = () => false, isDeletePending = () => false, isTitlePending = () => false }: { catalogControls?: {query:string;status:"all"|"review"|"running"|"blocked"|"done";sort:"updated"|"oldest"|"title";counts?:Record<string,number>;onSearch:(query:string)=>void;onStatus:(status:"all"|"review"|"running"|"blocked"|"done")=>void;onSort:(sort:"updated"|"oldest"|"title")=>void};operationRows?:EpisodeCatalog["operationRows"];actions?: ReactNode; reviewOnly?: boolean; isPageLoading?: boolean; serverPage?: ServerPage; artifactCounts?: Record<string, number>; accounts: Account[]; accountsById: Map<string, Account>; artifacts: Artifact[]; blueprintsById: Map<string, Blueprint>; episodeVisibility: EpisodeVisibility; episodes: Episode[]; filter: string; isArchivePending?: (episodeId: string) => boolean; isDeletePending?: (episodeId: string) => boolean; isTitlePending?: (episodeId: string) => boolean; onDelete?: (episodeId: string, confirmation: string, plan?: EpisodeDeletionPlan) => Promise<void>; onPlanDelete?: (episodeId:string)=>Promise<EpisodeDeletionPlan>; onEpisodeVisibilityChange: (value: EpisodeVisibility) => void; onFilter: (value: string) => void; onSetArchived?: (episodeId: string, archived: boolean) => Promise<void>; onSeriesFilter: (value: string) => void; onSelectEpisode: (id: string) => void; onUpdateTitle?: (episodeId: string, title: string) => Promise<void>; series: Series[]; seriesById: Map<string, Series>; seriesFilter: string; seriesVersionsById: Map<string, SeriesVersion>; selectedEpisode: Episode | null }) {
+   const [page, setPage] = useState(1);
++  const [search,setSearch]=useState(catalogControls?.query??'');
++  const listId=useId();
++  useEffect(()=>setSearch(catalogControls?.query??''),[catalogControls?.query]);
+   const pageSize = 20;
+   const filteredEpisodes = episodes.filter((episode) => episodeVisibility === "all" || (episodeVisibility === "archived" ? episodeIsArchived(episode) : !episodeIsArchived(episode)));
+   const pageCount = Math.max(1, Math.ceil(filteredEpisodes.length / pageSize));
+@@ -146,7 +150,30 @@
+   const pageItems = isPageLoading ? [] : serverPage ? filteredEpisodes : filteredEpisodes.slice((safePage - 1) * pageSize, safePage * pageSize);
+   useEffect(() => setPage(1), [episodeVisibility, filter, seriesFilter]);
+   useEffect(() => setPage((current) => Math.min(current, pageCount)), [pageCount]);
+-  return <><div className="filters"><label><span>账号</span><NativeSelect icon={Users} size="sm" onChange={(event) => onFilter(event.target.value)} value={filter}><option value="全部账号">全部账号</option>{accounts.map((account) => <option key={account.id} value={account.id}>{account.name}</option>)}</NativeSelect></label><label><span>系列</span><NativeSelect icon={Layers} size="sm" onChange={(event) => onSeriesFilter(event.target.value)} value={seriesFilter}><option value="全部系列">全部系列</option>{series.map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.name}</option>)}</NativeSelect></label>{!reviewOnly&&<label><span>生产单状态</span><NativeSelect icon={Archive} size="sm" aria-label="生产单状态" onChange={(event) => onEpisodeVisibilityChange(event.target.value as EpisodeVisibility)} value={episodeVisibility}><option value="active">进行中</option><option value="archived">已归档</option><option value="all">全部</option></NativeSelect></label>}<span className="summary-count">{total} 个生产单</span>{actions}</div><div className="episode-table" role="table" aria-label="生产单"><div className="table-row table-header" role="row"><span>生产单</span><span>账号</span><span>系列</span><span>蓝图</span><span>当前阶段</span><span>产物数</span><span>更新时间</span><span>操作</span></div>{pageItems.map((episode) => { const seriesVersion = episode.series_version_id ? seriesVersionsById.get(episode.series_version_id) : null; const account = accountsById.get(episode.account_id); const accountSlug = account?.slug ?? ""; return <div className={`table-row episode-row ${selectedEpisode?.id === episode.id ? "is-selected" : ""}`} key={episode.id} onClick={() => onSelectEpisode(episode.id)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); onSelectEpisode(episode.id); } }} role="row" tabIndex={0}><span className="episode-name"><Tooltip title={episode.title || "未命名生产单"} className="dan-ui dan-ui-tooltip"><TooltipTrigger className="lc-table-name lc-table-title" onPress={()=>onSelectEpisode(episode.id)}><span className="lc-table-text">{episode.title || "未命名生产单"}</span></TooltipTrigger></Tooltip><small>{episode.id.slice(0, 8)}</small></span><span className="account-name"><i aria-hidden="true" className={`account-avatar account-avatar-${accountIdentityColor(accountSlug)}`} title={account?.name ?? "未知账号"}>{accountIdentityInitials(accountSlug)}</i><Tooltip title={account?.name ?? "未知账号"} className="dan-ui dan-ui-tooltip"><TooltipTrigger className="lc-table-name" onPress={()=>onSelectEpisode(episode.id)}><span className="lc-table-text">{account?.name ?? "未知账号"}</span></TooltipTrigger></Tooltip></span><span className="lc-table-series" title={seriesVersion ? seriesById.get(seriesVersion.series_id)?.name : undefined}>{seriesVersion ? `${seriesById.get(seriesVersion.series_id)?.name ?? "未知系列"} v${seriesVersion.version}` : "—"}</span><span>v{blueprintsById.get(episode.blueprint_version_id)?.version ?? "—"}</span><span className={`stage stage-${stageTone(episode.stage)}`}>{stageLabels[episode.stage]}</span><span>{artifactCounts?.[episode.id] ?? artifacts.filter((artifact) => artifact.episode_id === episode.id).length}</span><span>{formatDate(episode.updated_at)}</span><EpisodeActionsMenu blueprint={blueprintsById.get(episode.blueprint_version_id)} episode={episode} isArchivePending={isArchivePending(episode.id)} isDeletePending={isDeletePending(episode.id)} isTitlePending={isTitlePending(episode.id)} onDelete={onDelete} onPlanDelete={onPlanDelete} onSetArchived={onSetArchived} onUpdateTitle={onUpdateTitle} /></div>; })}</div>{filteredEpisodes.length === 0 ? <div className="empty-state compact"><h2>{reviewOnly ? "当前没有待审核生产单" : episodeVisibility === "archived" ? "还没有已归档的生产单" : "还没有符合条件的生产单"}</h2><p>{reviewOnly ? "调整账号或系列筛选。" : actions ? "调整筛选条件，或点击“新建生产单”。" : "调整筛选条件。"}</p></div> : null}{isPageLoading ? null : <PaginationControls page={safePage} pageSize={pageSize} total={total} onPageChange={serverPage?.onPageChange ?? setPage} />}<div className="status-legend"><span><i className="legend-approved" />已通过</span><span><i className="legend-review" />待审核</span><span><i className="legend-muted" />草稿 / 制作</span></div></>;
++  return <div className="episode-list-workspace">
++    <div className="episode-list-header">{catalogControls&&<div className="episode-status-tabs" role="tablist" aria-label="生产单筛选">{([['all','全部'],['review','待审核'],['running','制作中'],['blocked','需处理'],['done','已完成']] as const).map(([key,label],index,tabs)=><button type="button" role="tab" id={`${listId}-${key}`} aria-controls={`${listId}-panel`} tabIndex={catalogControls.status===key?0:-1} onKeyDown={event=>{const offset=event.key==='ArrowRight'?1:event.key==='ArrowLeft'?-1:0;const target=event.key==='Home'?0:event.key==='End'?tabs.length-1:offset?(index+offset+tabs.length)%tabs.length:-1;if(target<0)return;event.preventDefault();catalogControls.onStatus(tabs[target][0]);event.currentTarget.parentElement?.querySelectorAll<HTMLButtonElement>('[role=tab]')[target]?.focus();}} aria-label={label} aria-selected={catalogControls.status===key} className={catalogControls.status===key?'is-active':''} key={key} onClick={()=>catalogControls.onStatus(key)}>{label}{catalogControls.counts?.[key]!==undefined&&<span aria-hidden="true">{catalogControls.counts[key]}</span>}</button>)}</div>}{catalogControls&&actions}</div>
++    <div role={catalogControls?"tabpanel":undefined} id={`${listId}-panel`} aria-labelledby={catalogControls?`${listId}-${catalogControls.status}`:undefined}><div className="filters episode-list-toolbar">
++      {catalogControls&&<form className="episode-search" role="search" aria-label="搜索生产单" onSubmit={event=>{event.preventDefault();catalogControls.onSearch(search.trim());}}><Search aria-hidden="true" size={16}/><input aria-label="搜索标题或编号" placeholder="搜索标题或编号" maxLength={200} value={search} onChange={event=>setSearch(event.target.value)}/>{search&&<button aria-label="清除搜索" type="button" onClick={()=>{setSearch('');catalogControls.onSearch('');}}><X aria-hidden="true" size={14}/></button>}<button className="episode-search-submit" type="submit">搜索</button></form>}
++      <label><span>账号</span><NativeSelect icon={Users} size="sm" onChange={(event) => onFilter(event.target.value)} value={filter}><option value="全部账号">全部账号</option>{accounts.map((account) => <option key={account.id} value={account.id}>{account.name}</option>)}</NativeSelect></label>
++      <label><span>系列</span><NativeSelect icon={Layers} size="sm" onChange={(event) => onSeriesFilter(event.target.value)} value={seriesFilter}><option value="全部系列">全部系列</option>{series.map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.name}</option>)}</NativeSelect></label>
++      {!reviewOnly&&<label><span>生产单状态</span><NativeSelect icon={Archive} size="sm" aria-label="生产单状态" onChange={(event) => onEpisodeVisibilityChange(event.target.value as EpisodeVisibility)} value={episodeVisibility}><option value="active">未归档</option><option value="archived">已归档</option><option value="all">全部范围</option></NativeSelect></label>}
++      {catalogControls&&<NativeSelect icon={ArrowDownWideNarrow} size="sm" aria-label="生产单排序" value={catalogControls.sort} onChange={event=>catalogControls.onSort(event.target.value as 'updated'|'oldest'|'title')} options={[{value:'updated',label:'最近更新'},{value:'oldest',label:'最早更新'},{value:'title',label:'标题顺序'}]}/>}
++      <span className="summary-count">{total} 个生产单</span>{!catalogControls&&actions}
++    </div>
++    <div className="episode-table" role="table" aria-label="生产单"><div className="table-row table-header" role="row">{['生产单','当前阶段','状态','最近更新','操作'].map(label=><span key={label} role="columnheader">{label}</span>)}</div>
++    {pageItems.map(episode=>{const seriesVersion=episode.series_version_id?seriesVersionsById.get(episode.series_version_id):null;const account=accountsById.get(episode.account_id);const count=artifactCounts?.[episode.id]??artifacts.filter(a=>a.episode_id===episode.id).length;const state=episodeActionState(episode,operationRows?.find(row=>row.episodeId===episode.id));const context=[account?.name??'未知账号',seriesVersion?`${seriesById.get(seriesVersion.series_id)?.name??'未知系列'} v${seriesVersion.version}`:'未关联系列'].join(' · ');
++      return <div className={`table-row episode-row ${selectedEpisode?.id===episode.id?'is-selected':''}`} key={episode.id} onClick={()=>onSelectEpisode(episode.id)} onKeyDown={event=>{if(event.target===event.currentTarget&&(event.key==='Enter'||event.key===' ')){event.preventDefault();onSelectEpisode(episode.id);}}} role="row" tabIndex={0}>
++        <div className="episode-name" role="cell"><Tooltip title={episode.title||'未命名生产单'} className="dan-ui dan-ui-tooltip"><TooltipTrigger className="lc-table-name lc-table-title" onPress={()=>onSelectEpisode(episode.id)}><span className="lc-table-text">{episode.title||'未命名生产单'}</span></TooltipTrigger></Tooltip><small title={context}>{context}</small></div>
++        <span role="cell" className="episode-stage-name">{stageLabels[episode.stage]}</span>
++        <span role="cell"><EpisodeStatus state={state}/></span>
++        <span role="cell"><time dateTime={episode.updated_at} title={formatDate(episode.updated_at)} aria-label={formatDate(episode.updated_at)}>{new Intl.DateTimeFormat('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(episode.updated_at))}</time></span>
++        <span role="cell" className="episode-action-cell"><EpisodeActionsMenu artifactCount={count} blueprint={blueprintsById.get(episode.blueprint_version_id)} episode={episode} isArchivePending={isArchivePending(episode.id)} isDeletePending={isDeletePending(episode.id)} isTitlePending={isTitlePending(episode.id)} onDelete={onDelete} onPlanDelete={onPlanDelete} onSetArchived={onSetArchived} onUpdateTitle={onUpdateTitle}/></span>
++      </div>;
++    })}</div>
++    {filteredEpisodes.length===0&&!isPageLoading?<div className="empty-state compact"><h2>{reviewOnly||catalogControls?.status==='review'?'当前没有待审核生产单':episodeVisibility==='archived'?'还没有已归档的生产单':'没有符合条件的生产单'}</h2><p>{catalogControls?.query?'试试其他关键词，或清除搜索。':'调整筛选条件，或新建生产单。'}</p>{catalogControls?.query&&<Button size="sm" color="secondary" onPress={()=>{setSearch('');catalogControls.onSearch('');}}>清除搜索</Button>}</div>:null}
++    {isPageLoading?<p role="status">正在读取生产单…</p>:<PaginationControls page={safePage} pageSize={pageSize} total={total} onPageChange={serverPage?.onPageChange??setPage}/>}
++    </div>
++  </div>;
+ }
+ 
+ export function ReviewWorkspace({ serverPage, accountsById, episodes, onSelectEpisode, selectedEpisode }: { serverPage?: ServerPage; accountsById: Map<string, Account>; episodes: Episode[]; onSelectEpisode: (id: string) => void; selectedEpisode: Episode | null }) {
+--- before/src/episodes/EpisodeProduction.tsx
++++ src/episodes/EpisodeProduction.tsx
+@@ -577,6 +577,12 @@
+     </div>
+   </Disclosure>;
+ 
++  const prioritizeQcEvidence = reviewPackage?.stage === "qc_review";
++  const secondaryPreviewArtifacts = prioritizeQcEvidence && reviewArtifact && artifactPreviewKind(reviewArtifact.relative_path)
++    ? { current: episodePreviewArtifacts.current.filter((artifact) => artifact.id !== reviewArtifact.id), history: episodePreviewArtifacts.history }
++    : episodePreviewArtifacts;
++  const currentReviewSection = reviewPackage?.stage === "production_ready" ? <PreRenderReviewPackage artifacts={episodeArtifacts} decisions={preRenderMemberDecisions} isTransitionPending={isTransitionPending} members={preRenderMembers} onReviewMember={onReviewPreRenderMember} onTransition={onTransition} reviewPackage={reviewPackage} /> : reviewPackage && reviewArtifact && episode.stage !== "storyboard_approved" ? reviewPackage.stage === "qc_review" && isEditorReviewRender(reviewPackage.context_snapshot) ? <OpenChatCutReviewRenderPackage artifact={reviewArtifact} artifacts={reviewArtifacts} onOpenStudio={onOpenStudio} onRequestRevision={onRequestRevision} onSubmitStudioRevision={onSubmitStudioRevision} reviewPackage={reviewPackage} tasks={episodeTasks} /> : reviewPackage.stage === "visual_review" ? <VisualReviewPackage artifact={reviewArtifact} artifacts={reviewArtifacts} reviewPackage={reviewPackage} /> : reviewPackage.stage === "storyboard_review" ? <StoryboardReviewPackage annotations={storyboardAnnotations} artifact={reviewArtifact} episode={episode} isAnnotationPending={isStoryboardAnnotationPending} materialRevisions={materialRevisions.filter((material) => material.episode_id === episode.id)} onCreateAnnotation={onCreateStoryboardAnnotation} onRegisterManualMedia={onRegisterManualMedia} onValidationChange={onStoryboardValidationChange} policy={blueprint?.policy} reviewPackage={reviewPackage} tasks={episodeTasks} /> : <TextReviewPackage artifact={reviewArtifact} reviewPackage={reviewPackage} /> : null;
++
+   return <div className="lc-production">
+     <header className="review-heading"><div className="review-heading-copy"><h2>{episode.title || "未命名生产单"}</h2><span>{episode.id.slice(0, 8)}</span></div></header>
+     <div aria-label="生产单操作" className="episode-detail-toolbar"><div className="episode-toolbar-actions"><Tooltip title="刷新状态" className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" aria-label="刷新生产单状态" className="icon-button episode-toolbar-button" isDisabled={isRefreshPending} onClick={() => void onRefresh()}  type="button"><RefreshCw className="icon" /></Button></Tooltip><Tooltip title={`打开本地输入目录：${localInputPath}`} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" aria-label="打开本地输入目录" className="icon-button episode-toolbar-button" isDisabled={isDirectoryOpenPending} onClick={() => void onOpenLocalDirectory(episode.id)}  type="button"><FolderOpen className="icon" /></Button></Tooltip><Tooltip title={`复制本地输入目录路径：${localInputPath}`} className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" aria-label="复制本地输入目录路径" className="icon-button episode-toolbar-button" onClick={() => void copyLocalInputPath()}  type="button"><Copy className="icon" /></Button></Tooltip><Tooltip title="查看产物索引" className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" aria-expanded={openUtilityPanel === "artifacts"} aria-haspopup="dialog" aria-label="查看产物索引" className="icon-button episode-toolbar-button" onClick={() => setOpenUtilityPanel((current) => current === "artifacts" ? null : "artifacts")}  type="button"><ClipboardList className="icon" /></Button></Tooltip><Tooltip title="查看执行与审计时间线" className="dan-ui dan-ui-tooltip"><Button size="sm" color="tertiary" aria-expanded={openUtilityPanel === "timeline"} aria-haspopup="dialog" aria-label="查看执行与审计时间线" className="icon-button episode-toolbar-button" onClick={() => setOpenUtilityPanel((current) => current === "timeline" ? null : "timeline")}  type="button"><History className="icon" /></Button></Tooltip></div>{directoryMessage ? <span className="episode-toolbar-status" role="status">{directoryMessage}</span> : null}{openUtilityPanel ? <EpisodeUtilityPopover artifacts={episodeArtifacts} dispatchRequested={isProductionTracking} history={history} kind={openUtilityPanel} onClose={() => setOpenUtilityPanel(null)} taskRuns={episodeTaskRuns} tasks={episodeTasks} /> : null}</div>
+@@ -587,13 +593,14 @@
+     {stageActions}
+     {completionStage ? <section className={`publish-readiness-card ${episode.stage === "production_completed" && hasPublishPackage && hasPublishVerification ? "is-ready" : "is-missing"}`}><div><strong>{episode.stage === "production_completed" ? "生产已完成" : "最终生产材料尚未完成"}</strong><p>发布包校验通过后，生产单直接结束；外部发布和后续复盘不属于本工作台。</p><span>封面 {missingPublishInputs.includes("封面") ? "缺少" : "已索引"} · 元数据 {missingPublishInputs.includes("发布元数据") ? "缺少" : "已索引"} · 发布包 {hasPublishPackage ? "已固定" : "缺少"} · 校验 {hasPublishVerification ? "通过" : "未通过"}</span></div><Button size="sm" color="secondary" className="button button-secondary" onClick={() => window.dispatchEvent(new CustomEvent("open-production-completion", { detail: episode.id }))} type="button">{episode.stage === "production_completed" ? "查看最终材料" : "完成生产"}</Button></section> : null}
+     {blockers.length ? <Disclosure label={<><h3>优先处理 Worker 阻塞项（{blockers.length}）</h3></>} className="review-section worker-blockers detail-card-collapsible" open><div className="detail-card-body">{blockerGroups.map(({ blocker, count }) => <WorkerBlockerCard affectedTaskCount={count} blocker={blocker} connectionVersions={connectionVersionsForBlocker(blocker, episodeTasks, connectionVersions)} onOpenBlueprint={onOpenBlueprint} onRepairConnection={onRepairConnection} key={`${blocker.code}-${blocker.detail}`} />)}</div></Disclosure> : null}
++    {prioritizeQcEvidence ? <section aria-label="当前 QC 审核证据" className="qc-current-evidence">{reviewArtifact && !isEditorReviewRender(reviewPackage.context_snapshot) && artifactPreviewKind(reviewArtifact.relative_path) ? <section className="review-section qc-current-preview"><header><h3>当前审核成片</h3><span>审核包 v{reviewPackage.revision_number}</span></header><ArtifactPreview artifacts={[reviewArtifact]} /></section> : null}{currentReviewSection}</section> : null}
+     {episode.stage === "waiting_input" ? materialsSection : null}
+     {canReturnToShotWorkbench ? <section className={`review-section shot-workbench-return${showShotWorkbench ? " is-expanded" : ""}`}>{!showShotWorkbench&&<div><h3>镜头工作台</h3><p className="muted-copy">修改素材后可生成新审核快照；当前审核证据保留。</p></div>}<Button size="sm" color="secondary" aria-expanded={showShotWorkbench} className="button button-secondary" onClick={() => setShowShotWorkbench((current) => !current)} type="button">{showShotWorkbench ? "收起镜头工作台" : "返回镜头工作台修改"}</Button></section> : null}
+     {showShotWorkbench && storyboardPackage && storyboardArtifact ? <ShotWorkbench onConfirmCaptionText={onConfirmShotCaptionText} artifact={storyboardArtifact} artifacts={episodeArtifacts} audioSelections={storyboardAudioSelections.filter((selection) => selection.review_package_id === storyboardPackage.id)} audioTracks={episodeAudioTracks} blueprint={blueprint?.policy} durationSettings={durationSettings} drafts={episodeShotPreparationDrafts} episode={episode} isMaterialPending={isMaterialPending} isReviewVideoPending={isShotReviewVideoPending} isTtsSettingsPending={isShotTtsSettingsPending} materialRevisions={episodeMaterials} onRequestAlignment={onRequestShotAlignment} onSaveManualAlignment={onSaveShotManualAlignment} onConfirmPreview={onConfirmShotSyncPreview} onGeneratePreview={onGenerateShotSyncPreview} onGenerateTts={onGenerateShotTts} onGenerateReviewVideo={onGenerateShotReviewVideo} onImportMaterial={onImportMaterial} onOpenStudio={onOpenStudio} onRefresh={onRefresh} onSave={onSaveShotPreparationDraft} onSaveEpisodeTtsSettings={onSaveEpisodeTtsSettings} onSaveStoryboardAudioSelection={onSaveStoryboardAudioSelection} onRequestShotStructureRevision={onRequestShotStructureRevision} reviewPackage={storyboardPackage} tasks={episodeTasks} /> : null}
+     {latestVisualPackage && visualChecklistArtifact && reviewPackage?.stage !== "visual_review" ? <Disclosure label={<><h3>视觉清单</h3></>} className="review-section detail-card-collapsible visual-checklist-card" open={episode.stage === "visual_approved"}><div className="detail-card-body"><p className="muted-copy">这是 Worker 根据已确认脚本、系列规则和冻结素材整理的制作依据；它不是生成图片或视频的预览。</p><VisualReviewPackage artifact={visualChecklistArtifact} artifacts={episodeArtifacts.filter((candidate) => candidate.producer_task_id === latestVisualPackage.task_id)} reviewPackage={latestVisualPackage} /></div></Disclosure> : null}
+     {episode.stage !== "waiting_input" ? materialsSection : null}
+-    {episode.stage !== "waiting_input" && reviewPackage?.stage !== "visual_review" && reviewPackage?.stage !== "storyboard_review" && episodeArtifacts.some((candidate) => artifactPreviewKind(candidate.relative_path)) ? <Disclosure label={<><h3>生成媒体预览</h3></>} className="review-section detail-card-collapsible"><div className="detail-card-body"><p className="muted-copy">默认展示当前生产输入对应的媒体；旧输入生成的版本收在“历史预览产物”中。</p><ArtifactPreview artifacts={episodePreviewArtifacts.current} historyArtifacts={episodePreviewArtifacts.history} /></div></Disclosure> : null}
+-    {reviewPackage?.stage === "production_ready" ? <PreRenderReviewPackage artifacts={episodeArtifacts} decisions={preRenderMemberDecisions} isTransitionPending={isTransitionPending} members={preRenderMembers} onReviewMember={onReviewPreRenderMember} onTransition={onTransition} reviewPackage={reviewPackage} /> : reviewPackage && reviewArtifact && episode.stage !== "storyboard_approved" ? reviewPackage.stage === "qc_review" && isEditorReviewRender(reviewPackage.context_snapshot) ? <OpenChatCutReviewRenderPackage artifact={reviewArtifact} artifacts={reviewArtifacts} onOpenStudio={onOpenStudio} onRequestRevision={onRequestRevision} onSubmitStudioRevision={onSubmitStudioRevision} reviewPackage={reviewPackage} tasks={episodeTasks} /> : reviewPackage.stage === "visual_review" ? <VisualReviewPackage artifact={reviewArtifact} artifacts={reviewArtifacts} reviewPackage={reviewPackage} /> : reviewPackage.stage === "storyboard_review" ? <StoryboardReviewPackage annotations={storyboardAnnotations} artifact={reviewArtifact} episode={episode} isAnnotationPending={isStoryboardAnnotationPending} materialRevisions={materialRevisions.filter((material) => material.episode_id === episode.id)} onCreateAnnotation={onCreateStoryboardAnnotation} onRegisterManualMedia={onRegisterManualMedia} onValidationChange={onStoryboardValidationChange} policy={blueprint?.policy} reviewPackage={reviewPackage} tasks={episodeTasks} /> : <TextReviewPackage artifact={reviewArtifact} reviewPackage={reviewPackage} /> : null}
++    {episode.stage !== "waiting_input" && reviewPackage?.stage !== "visual_review" && reviewPackage?.stage !== "storyboard_review" && (secondaryPreviewArtifacts.current.length > 0 || secondaryPreviewArtifacts.history.length > 0) ? <Disclosure label={<><h3>生成媒体预览</h3></>} className="review-section detail-card-collapsible"><div className="detail-card-body"><p className="muted-copy">默认展示当前生产输入对应的媒体；旧输入生成的版本收在“历史预览产物”中。</p><ArtifactPreview artifacts={secondaryPreviewArtifacts.current} historyArtifacts={secondaryPreviewArtifacts.history} /></div></Disclosure> : null}
++    {!prioritizeQcEvidence ? currentReviewSection : null}
+     <ArollTaskEvidencePanel tasks={episodeTasks} />
+     {!showShotWorkbench ? <AudioTrackPanel annotations={audioTrackAnnotations.filter((annotation) => standaloneAudioTracks.some((track) => track.id === annotation.audio_track_id))} onCreateAnnotation={onCreateAudioTrackAnnotation} tasks={episodeTasks} tracks={standaloneAudioTracks} /> : null}
+     {failedFinalRender ? <FinalRenderRetryAction episodeId={episode.id} isPending={isTransitionPending} onRetry={onRetryFinalRender} /> : null}
+@@ -623,7 +630,7 @@
+   const projectPath = context && typeof context.project_relative_path === "string" ? context.project_relative_path : "—";
+   const checks = context && context.technical_evidence && typeof context.technical_evidence === "object" && !Array.isArray(context.technical_evidence) && Array.isArray((context.technical_evidence as Record<string, unknown>).checks) ? (context.technical_evidence as { checks: Array<{ name?: unknown; detail?: unknown }> }).checks : [];
+   const qcReport = artifacts.find((candidate) => candidate.artifact_type === "review_qc_report");
+-  return <section className="review-section review-render-package"><h3>OpenChatCut 审核渲染 · 工程 v{projectRevision}</h3><QcEditingDesk artifact={artifact} onOpenStudio={onOpenStudio} onRequestRevision={onRequestRevision} onSubmitStudioRevision={onSubmitStudioRevision} projectPath={projectPath} reviewPackage={reviewPackage} tasks={tasks} /><Disclosure label={<><h4>工程与 QC 技术信息</h4></>} className="review-render-evidence detail-card-collapsible"><div className="detail-card-body"><dl><div><dt>上游审核包</dt><dd>{upstreamPackage}</dd></div><div><dt>冻结工程</dt><dd>{projectPath}</dd></div><div><dt>渲染产物</dt><dd>{artifact.relative_path}</dd></div><div><dt>QC 报告</dt><dd>{qcReport?.relative_path ?? "缺少 QC 报告"}</dd></div></dl><h4>技术 QC</h4>{checks.length ? <ul className="technical-evidence">{checks.map((check, index) => <li key={`${String(check.name)}-${index}`}><strong>{typeof check.name === "string" ? check.name : "check"}</strong><span>{typeof check.detail === "string" ? check.detail : "证据格式无效。"}</span></li>)}</ul> : <p className="form-error">QC 报告格式无效。</p>}</div></Disclosure></section>;
++  return <section className="review-section review-render-package qc-current-preview"><h3>OpenChatCut 审核渲染 · 工程 v{projectRevision}</h3><ArtifactPreview artifacts={[artifact]} /><Disclosure label={<><h4>工程与 QC 技术信息</h4></>} className="review-render-evidence detail-card-collapsible"><div className="detail-card-body"><dl><div><dt>上游审核包</dt><dd>{upstreamPackage}</dd></div><div><dt>冻结工程</dt><dd>{projectPath}</dd></div><div><dt>渲染产物</dt><dd>{artifact.relative_path}</dd></div><div><dt>QC 报告</dt><dd>{qcReport?.relative_path ?? "缺少 QC 报告"}</dd></div></dl><h4>技术 QC</h4>{checks.length ? <ul className="technical-evidence">{checks.map((check, index) => <li key={`${String(check.name)}-${index}`}><strong>{typeof check.name === "string" ? check.name : "check"}</strong><span>{typeof check.detail === "string" ? check.detail : "证据格式无效。"}</span></li>)}</ul> : <p className="form-error">QC 报告格式无效。</p>}</div></Disclosure><QcEditingDesk artifact={artifact} onOpenStudio={onOpenStudio} onRequestRevision={onRequestRevision} onSubmitStudioRevision={onSubmitStudioRevision} projectPath={projectPath} reviewPackage={reviewPackage} tasks={tasks} /></section>;
+ }
+ 
+ 
+--- before/src/episodes/episodeCatalogTypes.ts
++++ src/episodes/episodeCatalogTypes.ts
+@@ -3,16 +3,21 @@
+ type Episode=Database["public"]["Tables"]["episodes"]["Row"];
+ export interface ServerPage { page: number; total: number; pageSize: number; onPageChange: (page: number) => void }
+ export interface WorkerSummary { running: number; blocked: number; failed: number; latestCompleted: boolean; latest?: { task_type: string; at: string } | null }
++export type CatalogStatus = "all" | "review" | "running" | "blocked" | "done";
++export type CatalogSort = "updated" | "oldest" | "title";
++export type CatalogActionStatus = Exclude<CatalogStatus, "all"> | "draft";
+ export interface EpisodeCatalog {
+   episodes: Episode[]; page: number; total: number; pageSize: number; episodeCount: number;
+   accountCounts: Record<string, number>; reviewCount: number; stages: Record<string, number>; artifactCounts: Record<string, number>;
+   pending: { page: number; total: number; items: Array<Episode & { revision_number: number }> };
+   blocked: { page: number; total: number; items: Array<{ episode: Episode; blocker: WorkerBlocker }> };
+   worker: WorkerSummary;
+-  operationRows: Array<{ episodeId: string; reviewRevision: number | null; reviewPending: boolean; blockerCount: number }>;
++  operationRows: Array<{ episodeId: string; reviewRevision: number | null; reviewPending: boolean; blockerCount: number; actionStatus?: CatalogActionStatus }>;
++  statusCounts?: Record<CatalogStatus, number>;
+ }
+ export interface CatalogQuery {
+   view: "accounts" | "episodes" | "reviews" | "operations"; page: number;
+   accountId: string; seriesId: string; visibility: "active" | "archived" | "all";
+   pendingPage: number; blockedPage: number;
++  q?: string; sort?: CatalogSort; status?: CatalogStatus;
+ }
+--- before/src/operations/OperationsWorkspace.tsx
++++ src/operations/OperationsWorkspace.tsx
+@@ -1,4 +1,7 @@
+-import {Layers} from 'lucide-react';
++import {Layers,ArrowUpRight,Check} from 'lucide-react';
++import {EpisodeStatus,episodeActionState,episodeNextAction,episodePhaseGroups} from '../workspace/episodePresentation';
++import '../workspace/episode-list.css';
++import './workbench.css';
+ import {Button} from '../ui/dan-ui/components/base/buttons/button';
+ import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
+ import type { EpisodeCatalog } from "../episodes/episodeCatalog";
+@@ -47,7 +50,7 @@
+   onPageChange: (page: number) => void; onPendingPageChange: (page: number) => void; onBlockedPageChange: (page: number) => void;
+ }
+ 
+-export function OperationsWorkspace({ actions, remote, episodes, onOpenBlueprint, onSelectEpisode, preRenderReviewMemberDecisions, preRenderReviewMembers, reviewPackages, selectedEpisode, series, seriesVersions, tasks }: { actions?: ReactNode; remote?: RemoteOperations; episodes: Episode[]; onOpenBlueprint?: (accountId: string, repairContext?: { blocker: WorkerBlocker; blueprintVersionId: string; episodeId: string }) => void; onSelectEpisode: (episodeId: string) => void; preRenderReviewMemberDecisions: PreRenderReviewMemberDecision[]; preRenderReviewMembers: PreRenderReviewMember[]; reviewPackages: ReviewPackage[]; selectedEpisode: Episode | null; series: Series[]; seriesVersions: SeriesVersion[]; tasks: Task[] }) {
++export function OperationsWorkspace({ isLoading=false,accounts=[],blueprints=[],onOpenReviewQueue,actions, remote, episodes, onOpenBlueprint, onSelectEpisode, preRenderReviewMemberDecisions, preRenderReviewMembers, reviewPackages, selectedEpisode, series, seriesVersions, tasks }: {isLoading?:boolean;accounts?:Database["public"]["Tables"]["accounts"]["Row"][];blueprints?:Database["public"]["Tables"]["account_blueprint_versions"]["Row"][];onOpenReviewQueue?:()=>void; actions?: ReactNode; remote?: RemoteOperations; episodes: Episode[]; onOpenBlueprint?: (accountId: string, repairContext?: { blocker: WorkerBlocker; blueprintVersionId: string; episodeId: string }) => void; onSelectEpisode: (episodeId: string) => void; preRenderReviewMemberDecisions: PreRenderReviewMemberDecision[]; preRenderReviewMembers: PreRenderReviewMember[]; reviewPackages: ReviewPackage[]; selectedEpisode: Episode | null; series: Series[]; seriesVersions: SeriesVersion[]; tasks: Task[] }) {
+   const [selectedSeriesId, setSelectedSeriesId] = useState("all");
+   const operations = useMemo<SeriesOperation[]>(() => {
+     const seriesById = new Map(series.map((item) => [item.id, item]));
+@@ -84,21 +87,25 @@
+   useEffect(() => setEpisodePage(1), [selectedSeriesId]);
+   useEffect(() => setEpisodePage((current) => Math.min(current, episodePageCount)), [episodePageCount]);
+ 
+-  return <section className="operations-workspace" aria-label="系列运营概览">
+-    <header className="operations-intro"><div className="operations-toolbar"><label className="operations-series-filter"><span>系列</span><NativeSelect icon={Layers} size="sm" aria-label="运营系列筛选" selectClassName="operations-series-select" onChange={(event) => (remote?.onSeriesChange ?? setSelectedSeriesId)(event.target.value)} value={effectiveSeriesId}><option value="all">全部系列</option>{(remote ? [...series.map((item) => ({ id: item.id, name: item.name })), { id: "unassigned", name: "未归属系列" }, { id: "unavailable", name: "关联系列不可用" }] : operations).map((operation) => <option key={operation.id} value={operation.id}>{operation.name}</option>)}</NativeSelect></label>{actions}</div></header>
++  const [focusedId,setFocusedId]=useState('');
++  const currentPageEpisodes=visibleEpisodePage.map(item=>item.episode);
++  const focusedEpisode=currentPageEpisodes.find(e=>e.id===(selectedEpisode?.id??focusedId))??currentPageEpisodes.find(e=>remote?.catalog.pending.items.some(item=>item.id===e.id))??currentPageEpisodes[0];
++  const focusSummary=focusedEpisode?remote?.catalog.operationRows.find(row=>row.episodeId===focusedEpisode.id):undefined;
++  const focusLocal=visibleEpisodePage.find(item=>item.episode.id===focusedEpisode?.id);
++  const focusState=focusedEpisode?episodeActionState(focusedEpisode,focusSummary??(focusLocal?{episodeId:focusedEpisode.id,reviewRevision:focusLocal.reviewPackage?.revision_number??null,reviewPending:focusLocal.reviewPending,blockerCount:focusLocal.blockers.length}:undefined)):'draft';
++  const next=focusedEpisode?episodeNextAction(focusedEpisode,focusState):null;
++  const phaseIndex=focusedEpisode?episodePhaseGroups.findIndex(group=>group.stages.includes(focusedEpisode.stage)):-1;
++  const focusedSeriesVersion=seriesVersions.find(v=>v.id===focusedEpisode?.series_version_id);
++  const focusedSeries=series.find(item=>item.id===focusedSeriesVersion?.series_id);
++  const focusedAccount=accounts.find(item=>item.id===focusedEpisode?.account_id);
+ 
+-    {remote&&<div className="lc-work-notice"><div><strong>{remote.catalog.pending.total?`${remote.catalog.pending.total} 个审核包等待决定`:'当前审核已处理完毕'}</strong><span>{remote.catalog.worker.running} 项执行中 · {remote.catalog.worker.blocked} 项任务阻塞 · {remote.catalog.worker.failed} 项失败</span></div></div>}
+-    <div className="operations-stage-grid" aria-label="阶段分布">{stageGroups.map((group) => {
+-      const count=remote ? group.stages.reduce((total, stage) => total + (remote.catalog.stages[stage] ?? 0), 0) : visibleEpisodes.filter((item) => group.stages.includes(item.episode.stage)).length;
+-      const total=remote ? Object.values(remote.catalog.stages).reduce((sum,value)=>sum+value,0) : visibleEpisodes.length;
+-      return <article key={group.id} className={count ? "has-episodes" : undefined}><span>{group.label}</span><strong>{count}</strong><small>个生产单</small><div className="operations-stage-track" aria-hidden="true"><i style={{width:`${total ? Math.min(100,count/total*100) : 0}%`}}/></div></article>;
+-    })}</div>
+-
+-    <div className="operations-detail-grid lc-work-queue">
+-      <section className="operations-list"><header><h3>待审核</h3><span>{remote?.catalog.pending.total ?? pendingReviews.length} 个待审核包</span></header>{pendingReviews.length ? <ul>{pendingReviews.map(({ episode, revision }) => <li key={episode.id}><Button size="sm" color="tertiary" className="justify-stretch text-left" onClick={() => onSelectEpisode(episode.id)} type="button"><strong>{episode.title || "未命名生产单"}</strong><span>{operationalStageLabel(episode.stage)} · 审核包 v{revision}</span></Button></li>)}</ul> : <p>当前筛选范围没有待审核包。</p>}{remote ? <PaginationControls page={remote.catalog.pending.page} pageSize={20} total={remote.catalog.pending.total} onPageChange={remote.onPendingPageChange} /> : null}</section>
+-      <section className="operations-list operations-blocker-list"><header><h3>阻塞项</h3><span>{remote?.catalog.blocked.total ?? blockers.length} 个阻塞项</span></header>{blockers.length ? <ul>{blockers.map((blocker, index) => <li key={`${blocker.taskId}-${blocker.code}-${index}`}><Button size="sm" color="tertiary" className="operations-blocker-trigger justify-stretch text-left" onClick={() => onSelectEpisode(blocker.episode.id)} type="button"><strong>{blocker.episode.title || "未命名生产单"}</strong><span>{blocker.code}</span></Button><WorkerBlockerCard blocker={blocker} compact onOpenBlueprint={onOpenBlueprint ? () => onOpenBlueprint(blocker.episode.account_id, { blocker, blueprintVersionId: blocker.episode.blueprint_version_id, episodeId: blocker.episode.id }) : undefined} /></li>)}</ul> : <p>当前筛选范围没有阻塞项。</p>}{remote ? <PaginationControls page={remote.catalog.blocked.page} pageSize={20} total={remote.catalog.blocked.total} onPageChange={remote.onBlockedPageChange} /> : null}</section>
+-    </div>
+-
+-    <section className="operations-episode-list lc-work-table" aria-label="系列生产单"><header><h3>生产单明细</h3><span>{remote?.catalog.total ?? visibleEpisodes.length} 个生产单</span></header>{visibleEpisodes.length ? <><div>{visibleEpisodePage.map(({ episode, blockers: episodeBlockers, reviewPackage, reviewPending }) => { const summary = remote?.catalog.operationRows.find((row) => row.episodeId === episode.id); const revision = summary?.reviewRevision ?? reviewPackage?.revision_number; const pending = summary?.reviewPending ?? reviewPending; const blockerCount = summary?.blockerCount ?? episodeBlockers.length; return <Button size="sm" color="tertiary" className={`operations-episode-row ${selectedEpisode?.id === episode.id ? "is-selected" : ""}`} key={episode.id} onClick={() => onSelectEpisode(episode.id)} type="button"><span><strong>{episode.title || "未命名生产单"}</strong><small>{episode.id.slice(0, 8)}</small></span><span>{operationalStageLabel(episode.stage)}</span><span>{pending ? `待审 v${revision}` : revision ? `审核包 v${revision} 已审完` : "无待审包"}</span><span>{blockerCount ? `${blockerCount} 个阻塞项` : "无阻塞"}</span></Button>; })}</div><PaginationControls page={safeEpisodePage} pageSize={episodePageSize} total={remote?.catalog.total ?? visibleEpisodes.length} onPageChange={remote?.onPageChange ?? setEpisodePage} /></> : <p>当前没有可汇总的生产单。</p>}</section>
++  if(isLoading)return <p role="status" className="workspace-loading">正在读取工作台…</p>;
++  return <section className="operations-workspace" aria-label="系列运营概览">
++    <header className="operations-intro"><div className="operations-toolbar"><label className="operations-series-filter"><span>系列</span><NativeSelect icon={Layers} size="sm" aria-label="运营系列筛选" selectClassName="operations-series-select" onChange={event=>(remote?.onSeriesChange??setSelectedSeriesId)(event.target.value)} value={effectiveSeriesId}><option value="all">全部系列</option>{(remote?[...series.map(item=>({id:item.id,name:item.name})),{id:'unassigned',name:'未归属系列'},{id:'unavailable',name:'关联系列不可用'}]:operations).map(operation=><option key={operation.id} value={operation.id}>{operation.name}</option>)}</NativeSelect></label>{actions}</div></header>
++    {remote&&<div className="lc-work-notice"><div><strong>{remote.catalog.pending.total?`${remote.catalog.pending.total} 个审核包等待决定`:'当前审核已处理完毕'}</strong><span>{remote.catalog.worker.running} 项执行中 · {remote.catalog.worker.blocked} 项任务阻塞 · {remote.catalog.worker.failed} 项失败</span></div>{remote.catalog.pending.total>0&&onOpenReviewQueue&&<Button size="sm" color="tertiary" iconTrailing={ArrowUpRight} onPress={onOpenReviewQueue}>查看待审核</Button>}</div>}
++    <div className="operations-stage-grid" aria-label="阶段分布">{stageGroups.map(group=>{const count=remote?group.stages.reduce((total,stage)=>total+(remote.catalog.stages[stage]??0),0):visibleEpisodes.filter(item=>group.stages.includes(item.episode.stage)).length;const total=remote?Object.values(remote.catalog.stages).reduce((sum,value)=>sum+value,0):visibleEpisodes.length;return <article key={group.id} className={count?'has-episodes':undefined}><span>{group.label}</span><strong>{count}</strong><small>个生产单</small><div className="operations-stage-track" aria-hidden="true"><i style={{width:`${total?Math.min(100,count/total*100):0}%`}}/></div></article>;})}</div>
++    <section className="operations-episode-list lc-work-table" aria-label="系列生产单"><header><h3>制作中的内容</h3><span>{remote?.catalog.total??visibleEpisodes.length} 个生产单</span></header>{visibleEpisodes.length?<><div>{visibleEpisodePage.map(({episode,blockers:episodeBlockers,reviewPackage,reviewPending})=>{const summary=remote?.catalog.operationRows.find(row=>row.episodeId===episode.id);const revision=summary?.reviewRevision??reviewPackage?.revision_number;const pending=summary?.reviewPending??reviewPending;const blockerCount=summary?.blockerCount??episodeBlockers.length;const itemSeries=series.find(s=>s.id===seriesVersions.find(v=>v.id===episode.series_version_id)?.series_id);return <Button size="sm" color="tertiary" aria-pressed={focusedEpisode?.id===episode.id} className={`operations-episode-row ${focusedEpisode?.id===episode.id?'is-selected':''}`} key={episode.id} onClick={()=>setFocusedId(episode.id)} type="button"><span><strong>{episode.title||'未命名生产单'}</strong><small>{[accounts.find(a=>a.id===episode.account_id)?.name,itemSeries?.name??'未关联系列'].filter(Boolean).join(' · ')}</small></span><span>{operationalStageLabel(episode.stage)}</span><span><EpisodeStatus state={episodeActionState(episode,summary??{episodeId:episode.id,reviewRevision:revision??null,reviewPending:pending,blockerCount})}/><small>{revision?`审核包 v${revision}${pending?'':' 已审完'}`:''}</small></span></Button>;})}</div><PaginationControls page={safeEpisodePage} pageSize={episodePageSize} total={remote?.catalog.total??visibleEpisodes.length} onPageChange={remote?.onPageChange??setEpisodePage}/></>:<p>还没有生产单，可以先新建一单。</p>}</section>
++    {focusedEpisode&&next&&<aside className="work-continuation" aria-label="当前作品"><header><h2>继续处理</h2><EpisodeStatus state={focusState}/></header><div className="work-continuation-body"><h3>{focusedEpisode.title||'未命名生产单'}</h3><p className="work-context">{[focusedAccount?.name,focusedSeries?.name].filter(Boolean).join(' · ')||'未关联系列'}</p><ol className="work-phase-track" aria-label="当前生产阶段">{episodePhaseGroups.map((group,index)=><li key={group.label} className={index<phaseIndex?'is-complete':index===phaseIndex?'is-current':''} aria-current={index===phaseIndex?'step':undefined}><span aria-hidden="true">{index<phaseIndex?<Check size={10}/>:null}</span>{group.label}</li>)}</ol><section className="work-next-step" aria-label="下一步"><p>{next.detail}</p><Button size="sm" color="primary" iconTrailing={ArrowUpRight} onPress={()=>onSelectEpisode(focusedEpisode.id)}>{next.label}</Button></section><dl className="work-context-details"><div><dt>当前阶段</dt><dd>{operationalStageLabel(focusedEpisode.stage)}</dd></div>{focusedAccount&&<div><dt>蓝图快照</dt><dd>v{blueprints.find(b=>b.id===focusedEpisode.blueprint_version_id)?.version??'—'}</dd></div>}<div><dt>系列版本</dt><dd>{focusedSeriesVersion?`v${focusedSeriesVersion.version}`:'未关联'}</dd></div><div><dt>最近更新</dt><dd>{new Intl.DateTimeFormat('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(focusedEpisode.updated_at))}</dd></div></dl></div></aside>}
++    {(!remote||blockers.length>0)&&<div className="operations-detail-grid lc-work-queue">{!remote&&<section className="operations-list"><header><h3>待审核</h3><span>{pendingReviews.length} 个待审核包</span></header>{pendingReviews.length?<ul>{pendingReviews.map(({episode,revision})=><li key={episode.id}><Button size="sm" color="tertiary" className="justify-stretch text-left" onClick={()=>onSelectEpisode(episode.id)} type="button"><strong>{episode.title||'未命名生产单'}</strong><span>{operationalStageLabel(episode.stage)} · 审核包 v{revision}</span></Button></li>)}</ul>:<p>当前筛选范围没有待审核包。</p>}</section>}<section className="operations-list operations-blocker-list"><header><h3>阻塞项</h3><span>{remote?.catalog.blocked.total??blockers.length} 个阻塞项</span></header>{blockers.length?<ul>{blockers.map((blocker,index)=><li key={`${blocker.taskId}-${blocker.code}-${index}`}><Button size="sm" color="tertiary" className="operations-blocker-trigger justify-stretch text-left" onClick={()=>onSelectEpisode(blocker.episode.id)} type="button"><strong>{blocker.episode.title||'未命名生产单'}</strong><span>{blocker.code}</span></Button><WorkerBlockerCard blocker={blocker} compact onOpenBlueprint={onOpenBlueprint?()=>onOpenBlueprint(blocker.episode.account_id,{blocker,blueprintVersionId:blocker.episode.blueprint_version_id,episodeId:blocker.episode.id}):undefined}/></li>)}</ul>:<p>当前筛选范围没有阻塞项。</p>}{remote?<PaginationControls page={remote.catalog.blocked.page} pageSize={20} total={remote.catalog.blocked.total} onPageChange={remote.onBlockedPageChange}/>:null}</section></div>}
+   </section>;
+ }
+--- before/src/operations/OperationsWorkspace.test.tsx
++++ src/operations/OperationsWorkspace.test.tsx
+@@ -1,4 +1,4 @@
+-import { render, screen } from "@testing-library/react";
++import { render, screen, within } from "@testing-library/react";
+ import userEvent from "@testing-library/user-event";
+ import { describe, expect, it, vi } from "vitest";
+ import type { Database } from "../lib/database.types";
+@@ -30,7 +30,7 @@
+     render(<OperationsWorkspace episodes={episodes} preRenderReviewMemberDecisions={[]} preRenderReviewMembers={[]} reviewPackages={reviewPackages} series={[series]} seriesVersions={[seriesVersion]} tasks={tasks} onSelectEpisode={vi.fn()} selectedEpisode={null} />);
+ 
+     expect(screen.getByLabelText("运营系列筛选")).toBeTruthy();
+-    expect(screen.queryByRole("button", { name: /雨夜志怪/ })).toBeNull();
++    expect(screen.queryByRole("button", { name: "雨夜志怪" })).toBeNull();
+     expect(screen.getAllByText("输入与脚本").length).toBeGreaterThan(0);
+     expect(screen.getAllByText("分镜与媒体").length).toBeGreaterThan(0);
+     expect(screen.queryByText(/\d+%/)).toBeNull();
+@@ -82,7 +82,7 @@
+ 
+     expect(screen.getByText("第 1 / 2 页 · 共 21 条")).toBeTruthy();
+     await user.click(screen.getByRole("button", { name: "下一页" }));
+-    expect(screen.getByText("分页生产单 21")).toBeTruthy();
++    expect(within(screen.getByRole("region",{name:"系列生产单"})).getByText("分页生产单 21")).toBeTruthy();
+   });
+ 
+   it("默认不把已归档 Episode 纳入运营汇总", () => {
+--- before/src/connections/ConnectionOrganization.test.tsx
++++ src/connections/ConnectionOrganization.test.tsx
+@@ -3,11 +3,13 @@
+ import {ConnectionWorkspace,type ExternalConnection} from './ConnectionWorkspace';
+ afterEach(cleanup);
+ const row=(id:string,name:string,used=0)=>({id,name,provider:'pexels',adapter:'pexels_video',current_version_id:id+'-v',status:'verified',description:'',usage:{currentBlueprints:used,episodes:used,tasks:used}} as ExternalConnection);
+-it('folds stored data and edits through the single top form',()=>{
++it('places folded stored data after the single editor and edits through it',()=>{
+  const active=row('active','TTS multishot pexels fixture',1),fresh=row('fresh','My Pexels');
+  render(<ConnectionWorkspace connections={[active,fresh]} onCreateConnection={vi.fn()} onTestConnection={vi.fn()} onUpdateConnection={vi.fn()}/>);
+  const stored=screen.getByText('已保存连接（2）').closest('details')!;
+  expect(stored.open).toBe(false);expect(screen.queryByText(/旧测试连接/)).toBeNull();
++ const editor=screen.getByRole('form',{name:'保存连接'});
++ expect(editor.compareDocumentPosition(stored) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  expect(stored.textContent).toContain(active.name);
+  expect(document.querySelectorAll('input[type=password]')).toHaveLength(1);
+  fireEvent.change(screen.getByLabelText('操作对象'),{target:{value:active.id}});
+--- before/src/connections/ConnectionWorkspace.tsx
++++ src/connections/ConnectionWorkspace.tsx
+@@ -257,14 +257,6 @@
+ 
+   return <section className="dan-ui connection-workspace connection-management-workspace" aria-label="外部连接管理">
+     {showHeader && <header className="connection-section-heading"><h2>外部连接</h2><p>凭据保存在 {secretStorage}，不会回显。</p></header>}
+-    <section aria-label="连接列表" className="connection-library">
+-      <Disclosure label={<>已保存连接（{currentConnections.length}）</>} className="connection-stored-group">
+-        <Input aria-label="查找已存连接" size="sm" className="connection-search" placeholder="搜索名称、服务或说明" onChange={setQuery} type="search" value={query}/>
+-        {storedList(currentConnections.filter(matches))}
+-        {query.trim() && !connections.some(matches) && <p className="connection-empty">没有匹配的连接。</p>}
+-      </Disclosure>
+-      {!connections.length && <p className="connection-empty">连接池为空。先添加一条经过显式验证的外部连接。</p>}
+-    </section>
+     <form aria-label="保存连接" className="connection-editor" onSubmit={event => void submit(event)} ref={editor}>
+       <fieldset className="connection-fields" disabled={busy}>
+         <legend>{selected ? '编辑连接' : '新建连接'}</legend>
+@@ -293,6 +285,14 @@
+       {version.revoked_at ? <small>已撤销</small> : onRevokeVersion && <Button color="secondary-destructive" size="sm" isDisabled={busy} onPress={() => {if(window.confirm('撤销此连接版本？引用它的生产单不会自动切换。'))void onRevokeVersion(version.id);}}>撤销版本</Button>}
+       {version.status === 'unverified' && !version.is_current && onDeleteVersion && <Button color="secondary" size="sm" isDisabled={busy} onPress={() => {if(window.confirm('删除这个未引用的连接草稿？删除后不可恢复。'))void onDeleteVersion(version.id);}}>删除草稿</Button>}
+     </li>)}</ul></Disclosure>}
++    <section aria-label="连接列表" className="connection-library">
++      <Disclosure label={<>已保存连接（{currentConnections.length}）</>} className="connection-stored-group">
++        <Input aria-label="查找已存连接" size="sm" className="connection-search" placeholder="搜索名称、服务或说明" onChange={setQuery} type="search" value={query}/>
++        {storedList(currentConnections.filter(matches))}
++        {query.trim() && !connections.some(matches) && <p className="connection-empty">没有匹配的连接。</p>}
++      </Disclosure>
++      {!connections.length && <p className="connection-empty">连接池为空。先添加一条经过显式验证的外部连接。</p>}
++    </section>
+ 
+   </section>;
+ }
+--- before/src/reviews/ReviewWorkspace.test.tsx
++++ src/reviews/ReviewWorkspace.test.tsx
+@@ -1029,9 +1029,9 @@
+       .mockResolvedValue({ fileSize: 1024, relativePath: "episodes/episode-return-workbench/openchatcut-work/current/project.json", sha256: "d".repeat(64) });
+     const onGenerateShotReviewVideo = vi.fn().mockResolvedValue(undefined);
+     const onGenerateShotSyncPreview = vi.fn().mockResolvedValue(undefined);
+-    vi.stubGlobal("fetch", vi.fn().mockImplementation((input: string | URL | Request) => {
++    vi.stubGlobal("fetch", vi.fn().mockImplementation((input: string | URL | Request, init?: RequestInit) => {
+       const url = String(input);
+-      if (url.includes("_local-artifact-ticket")) return Promise.resolve(Response.json({ url: "/_local-artifact?ticket=return-qc" }));
++      if (init?.method === "POST") return Promise.resolve(Response.json({ url: "/_local-artifact?ticket=return-qc" }));
+       if (url.includes("shot-previews%2Fshot-1%2Fproxy.mp4")) return Promise.resolve(Response.json({ url: "/_local-artifact?ticket=return-sync-proxy" }));
+       return Promise.resolve(new Response(JSON.stringify({ version: "storyboard/v1", audioCues: [], shots: [{ durationSeconds: 3, id: "shot-1", inputBasis: [{ relativePath: "script.md", sha256: "a".repeat(64) }], productionMethod: "人工", scriptSegment: "第一镜口播", shotType: "a_roll", targetSpec: "9:16" }] }), { status: 200, headers: { "Content-Type": "application/json" } }));
+     }));
+@@ -1050,6 +1050,25 @@
+     await user.click(screen.getByRole("button", { name: "覆盖并重新生成" }));
+     await screen.findByRole("button", { name: "生成审核视频" });
+   }
++
++  it("QC 首先展示当前成片与证据，返回制作时保留当前播放器", async () => {
++    const { user } = renderQcReturnWorkbench();
++    const evidence = screen.getByRole("region", { name: "当前 QC 审核证据" });
++    const preview = await within(evidence).findByLabelText("render 产物预览");
++    const returnToProduction = screen.getByRole("button", { name: "返回镜头工作台修改" });
++    const materialPreparation = screen.getByRole("heading", { name: "准备生产材料" });
++    expect(evidence.compareDocumentPosition(returnToProduction) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
++    expect(evidence.compareDocumentPosition(materialPreparation) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
++    expect(screen.getAllByLabelText("render 产物预览")).toHaveLength(1);
++    const technicalEvidence = within(evidence).getByText("工程与 QC 技术信息");
++    const editWorkspace = within(evidence).getByRole("heading", { name: "编辑工作版本" });
++    expect(technicalEvidence.compareDocumentPosition(editWorkspace) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
++
++    await user.click(returnToProduction);
++    await screen.findByRole("region", { name: "分镜工作台" });
++    expect(within(evidence).getByLabelText("render 产物预览")).toBe(preview);
++    expect(screen.getByRole("button", { name: "收起镜头工作台" })).toBeTruthy();
++  });
+ 
+   it("审核阶段返回镜头工作台时保留 QC 证据，并显式确认覆盖 Studio 工程", async () => {
+     const { user, props } = renderQcReturnWorkbench();
+@@ -1085,7 +1104,8 @@
+     const { episode: qcEpisode, artifacts: [, , , syncProject], reviewPackages: [storyboardPackage], onGenerateShotSyncPreview, onOpenStudio, onGenerateShotReviewVideo } = props;
+     await acceptReturnedStudioWorkspace(user);
+     await user.click(within(screen.getByRole("tablist", { name: "shot-1 镜头工作区" })).getByRole("tab", { name: "3 同步预览与确认" }));
+-    expect(await screen.findByLabelText("shot_preview_proxy 产物预览")).toBeTruthy();
++    const syncSection = screen.getByRole("heading", { name: "同步预览与确认" }).closest("section")!;
++    expect(await within(syncSection).findByLabelText("shot_preview_proxy 产物预览")).toBeTruthy();
+     const previewHeader = screen.getByRole("heading", { name: "同步预览与确认" }).closest("header");
+     expect(within(previewHeader as HTMLElement).queryByText("预览有效")).toBeNull();
+     expect(screen.queryByText("当前代理：与已保存输入一致，可用于确认。")).toBeNull();
+--- before/src/ui/impeccable/maintenance.css
++++ src/ui/impeccable/maintenance.css
+@@ -17,6 +17,8 @@
+ html[data-interface="impeccable"] .product-ui :is(.connection-panel-header,.history-header) { align-items: flex-start; gap: 16px; }
+ html[data-interface="impeccable"] .product-ui :is(.connection-panel-header,.history-header) h3 { font-size: 18px; font-weight: 650; letter-spacing: -.015em; }
+ html[data-interface="impeccable"] .product-ui :is(.connection-panel-header,.history-header) p { color: var(--lc-muted); font-size: 12px; margin: 4px 0 0; }
++html[data-interface="impeccable"] .product-ui .connection-panel-header { align-items: center; }
++html[data-interface="impeccable"] .product-ui .connection-panel-header > p { margin: 0; }
+ html[data-interface="impeccable"] .product-ui .connection-workspace { gap: 20px; }
+ html[data-interface="impeccable"] .product-ui .connection-workspace .connection-library {
+   padding: 12px 0;
+@@ -25,7 +27,8 @@
+ }
+ html[data-interface="impeccable"] .product-ui .connection-fields {
+   gap: 14px;
+-  max-width: 920px;
++  width: 100%;
++  max-width: 644px;
+ }
+ html[data-interface="impeccable"] .product-ui .connection-fields > legend {
+   padding: 0 0 18px;
+@@ -34,10 +37,11 @@
+   font-weight: 650;
+   color: var(--lc-ink);
+ }
+-html[data-interface="impeccable"] .product-ui .connection-workspace .connection-field { grid-template-columns: 144px minmax(0,480px); column-gap: 20px !important; }
+-html[data-interface="impeccable"] .product-ui .connection-field > label { font-size: 13px; }
++html[data-interface="impeccable"] .product-ui .connection-workspace .connection-field { grid-template-columns: minmax(0,1fr); gap: 6px !important; }
++html[data-interface="impeccable"] .product-ui .connection-field > :is(label,div,textarea,[slot="description"]) { grid-column: 1; grid-row: auto; }
++html[data-interface="impeccable"] .product-ui .connection-field > label { padding-top: 0; font-size: 13px; }
+ html[data-interface="impeccable"] .product-ui .connection-target-field { padding-bottom: 14px; border-color: var(--lc-line); }
+-html[data-interface="impeccable"] .product-ui :is(.connection-usage,.connection-availability) { margin-left: 164px; color: var(--lc-muted); font-size: 12px; }
++html[data-interface="impeccable"] .product-ui :is(.connection-usage,.connection-availability) { margin-left: 0; max-width: 100%; color: var(--lc-muted); font-size: 12px; }
+ html[data-interface="impeccable"] .product-ui .connection-availability { background: var(--lc-surface-2); border-color: var(--lc-line); padding: 10px 12px; }
+ html[data-interface="impeccable"] .product-ui .connection-submit-row { max-width: 644px; gap: 16px; padding-top: 16px; border-color: var(--lc-line); }
+ html[data-interface="impeccable"] .product-ui .connection-operation-result { font-size: 12px; line-height: 1.5; }
+--- before/src/ui/impeccable/production.css
++++ src/ui/impeccable/production.css
+@@ -154,3 +154,17 @@
+ .impeccable-app.product-ui .lc-production-workspace .shot-content-section.lc-video-generation {padding:16px 20px;border:1px solid var(--lc-line);border-radius:12px;margin-bottom:12px}
+ 
+ .impeccable-app.product-ui .shot-voice-field {display:grid;gap:8px;min-width:0}
++
++/* QC presents the frozen review evidence before any return-to-production controls. */
++.impeccable-app.product-ui .lc-production-workspace .qc-current-evidence {display:grid;gap:18px;min-width:0}
++.impeccable-app.product-ui .lc-production-workspace .qc-current-preview > header {display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:14px}
++.impeccable-app.product-ui .lc-production-workspace .qc-current-preview > header h3 {margin:0}
++.impeccable-app.product-ui .lc-production-workspace .qc-current-preview > header > span {font-size:11px;color:var(--lc-muted)}
++.impeccable-app.product-ui .lc-production-workspace .qc-current-preview .local-artifact-preview :is(video,img) {max-width:100%;max-height:58vh;object-fit:contain}
++.impeccable-app.product-ui .lc-production-workspace .qc-current-evidence .review-render-package {display:grid;gap:16px}
++.impeccable-app.product-ui .lc-production-workspace .qc-current-evidence .review-render-package > h3 {margin:0}
++.impeccable-app.product-ui .lc-production-workspace .qc-current-evidence .review-render-evidence {padding:0;border:0;background:transparent}
++.impeccable-app.product-ui .lc-production-workspace .qc-current-evidence .review-render-evidence > summary {padding:0;font-size:12px;color:var(--lc-muted)}
++.impeccable-app.product-ui .lc-production-workspace .qc-current-evidence .openchatcut-studio-launch {padding:16px 0 0;border:0;border-top:1px solid var(--lc-line);border-radius:0;background:transparent}
++.impeccable-app.product-ui .lc-production-workspace .qc-current-preview .local-artifact-preview {display:grid;grid-template-columns:minmax(0,1fr);justify-items:center}
++.impeccable-app.product-ui .lc-production-workspace .qc-current-preview .local-artifact-preview figcaption {position:static;box-sizing:border-box;width:100%;max-width:100%;padding:8px 10px}
+--- before/src/ui/impeccable/foundation.css
++++ src/ui/impeccable/foundation.css
+@@ -59,7 +59,7 @@
+ .impeccable-app.product-ui .sidebar .navigation-item.is-active {background:#ffffff21!important;color:#fff!important;font-weight:600}
+ .impeccable-app.product-ui .sidebar .navigation-item svg {width:18px;height:18px;color:inherit!important;stroke-width:1.7}
+ .impeccable-app .navigation-item [data-text] {display:flex;align-items:center;gap:8px;flex:1;padding:0}
+-.impeccable-app .navigation-badge {margin-left:auto;background:#ffffff20;color:#fff;border:0;font-size:10px;min-width:18px;line-height:18px;border-radius:4px;text-align:center}
++html[data-interface="impeccable"] .impeccable-app .navigation-badge {margin-left:auto;background:#ffffff20;color:#fff;border:0;font-size:10px;min-width:18px;line-height:18px;border-radius:4px;text-align:center}
+ .impeccable-app.product-ui .sidebar-studio-shortcut {margin:0;width:100%;min-height:40px;color:var(--lc-rail-ink)!important;background:transparent!important;padding:10px 12px!important;border:0;border-radius:7px;justify-content:start}
+ .impeccable-app.product-ui .sidebar-footer {display:flex;flex-direction:column;gap:12px;margin-top:auto;padding:0;background:transparent;border:0;width:100%}
+ .impeccable-app.product-ui .sidebar .sidebar-footer {margin-top:auto}
+--- before/src/ui/dan-ui/components/base/select/select-menu.css
++++ src/ui/dan-ui/components/base/select/select-menu.css
+@@ -1,6 +1,6 @@
+ /* A real select owns form values; React Aria owns the styled, keyboard-operable popup. */
+ .dan-ui .dan-select-control { position: relative; min-width: 0; }
+-.dan-ui .dan-select-trigger { padding-inline: 36px !important; cursor: pointer; width: 100%; min-width: 0; }
++.dan-ui .dan-select-trigger { padding-inline: 36px !important; cursor: pointer; width: 100%; min-width: 0; background-image: none !important; }
+ .dan-ui .dan-select-trigger:disabled { cursor: not-allowed; }
+ .dan-ui .dan-select-leading { position: absolute; z-index: 1; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none; color: var(--lc-muted,var(--color-fg-quaternary)); }
+ .dan-select-popover { width: max(200px,var(--trigger-width)); max-width: calc(100vw - 24px); padding: 4px; background: var(--lc-surface,var(--color-bg-primary)); color: var(--lc-ink,var(--color-text-primary)); border: 1px solid var(--lc-line,var(--color-border-secondary)); border-radius: 12px; box-shadow: 0 12px 32px rgb(12 29 57 / .15); overflow: auto; z-index: 1000; }
+--- before/PLAN.md
++++ PLAN.md
+@@ -1,3 +1,7 @@
++# 2026-10-28 原型对齐第二轮（完成）
++
++已完成：[12项清单与验证计划](docs/verification/prototype-alignment-20261028/PLAN.md)，[验收记录](docs/verification/prototype-alignment-20261028/REPORT.md)。保持未提交，保留真实数据和既有改动。
++
+ # 2026-10-28 全页面一致性整理（完成）
+ 
+ 已完成：[逐页分工与验收计划](docs/verification/page-consistency-20261028/PLAN.md)。13页独立审查及主 Agent 修正，含图标居中、侧栏/阶段分布、圆角下拉和移除外部标题。33文件313项UI回归、类型及构建通过；[验收记录](docs/verification/page-consistency-20261028/REPORT.md)。保留真实逻辑与所有已有改动，保持未提交。
+--- before/DESIGN.md
++++ DESIGN.md
+@@ -212,7 +212,7 @@
+ 
+ - 应用侧栏默认宽 200px，可主动折叠至 64px；1250px 以下默认宽 180px，900px 以下采用 64px 图标栏。每个图标仍有可访问名称与 Tooltip。
+ - 主内容最大宽 1800px，左右留白默认 30px，1250px 以下 24px，640px 以下 16px。页面标题栏高 84px。
+-- 工作台采用主列表加 300px 待办列，间距 20px；1250px 以下待办列移至列表下方，640px 以下进一步单列。各列表分页、数量与数据范围保持独立。
++- 工作台采用制作列表加 320px 当前作品列，间距 20px；1150px 以下当前作品移至列表上方。选择列表行更新当前作品，唯一的下一步主按钮打开真实生产单；待审核提醒转至生产单的待审核标签，无阻塞时隐藏空块。阻塞队列与制作列表保留独立分页。
+ - 生产详情覆盖主内容区，保留侧栏和返回入口，内部最大宽 1540px；返回栏高 64px。任务正文与 300px 审核/配置列相隔 24px。1100px 以下侧列移至下方，700px 以下单列；镜头工作台需要时占满主区。
+ - 配置采用局部目录与表单，目录默认宽 196px；820px 以下堆叠，600px 以下字段标签移到控件上方。连接配置、历史和系统状态沿用同一表面与间距关系。
+ - 登录页使用 1.05:1 左右双栏；左侧是钴蓝说明面和三个静态流程标签，右侧表单最大宽 360px。900px 以下隐藏说明面并保留完整表单。流程标签不表示某个生产单的实际进度。
+@@ -243,11 +243,11 @@
+ 
+ ### Inputs / Fields
+ 
+-字段、选择器与多行输入使用同一控件圆角、正文和任务表面。边界角色为 `line-strong`，聚焦使用 `accent`；错误文字保留 `danger`。密码框保留显隐控制，普通输入字段保留可见标签。选择下拉按用户要求移除外部可见标题与标题列，保留关联 label 或 aria-label；内嵌 16px 图标、当前选项和 chevron。必要帮助位于框内右侧，错误与说明继续按需显示。配置长文本允许换行，窄窗堆叠标签。选项由 React Aria 浮层渲染，外层圆角 12px、选项圆角 8px，保留分组、禁用、真实 select 表单值、change 事件与键盘焦点；声音建议框允许任意自定义 ID。
++字段、选择器与多行输入使用同一控件圆角、正文和任务表面。边界角色为 `line-strong`，聚焦使用 `accent`；错误文字保留 `danger`。密码框保留显隐控制，普通输入字段保留可见标签。选择下拉按用户要求移除外部可见标题与标题列，保留关联 label 或 aria-label；内嵌 16px 图标、当前选项和 chevron。必要帮助位于框内右侧，错误与说明继续按需显示。连接短表单将文字标签置上方，控件与帮助统一最大宽644px；已保存连接位于编辑表单和版本区下方。配置长文本允许换行，窄窗堆叠标签。选项由 React Aria 浮层渲染，外层圆角 12px、选项圆角 8px，保留分组、禁用、真实 select 表单值、change 事件与键盘焦点；声音建议框允许任意自定义 ID。
+ 
+ ### Navigation
+ 
+-六个原生入口分三组：工作台／生产单／待审核，账号与系列，连接配置／历史资料；组内间距 5px，组间 16px 留白与细分隔线。侧栏条目最小高 40px，活动态采用半透明白底和加粗文字。OpenChatCut 固定在底部四个工具上方，分隔线放在它与四工具之间；四工具默认无边框，系统状态仅由底部浮层入口打开。工具使用悬停、按下、键盘焦点反馈，系统状态和 Owner 菜单展开时高亮，深色主题与侧栏折叠用 aria-pressed 表达当前选中状态。Owner 菜单仅保留登录与安全、权限允许的密钥管理及退出登录；蓝图与系列位于账号内。
++五个原生入口分三组：工作台／生产单，账号与系列，连接配置／历史资料；组内间距 5px，组间 16px 留白与细分隔线。侧栏条目最小高 40px，活动态采用半透明白底和加粗文字。OpenChatCut 固定在底部四个工具上方，分隔线放在它与四工具之间；四工具默认无边框，系统状态仅由底部浮层入口打开。工具使用悬停、按下、键盘焦点反馈，系统状态和 Owner 菜单展开时高亮，深色主题与侧栏折叠用 aria-pressed 表达当前选中状态。Owner 菜单仅保留登录与安全、权限允许的密钥管理及退出登录；蓝图与系列位于账号内。
+ 
+ ### Chips / Status
+ 
+@@ -296,3 +296,12 @@
+ 证据范围：本文件依据上述源码与 `docs/verification/impeccable-migration-20261028/` 的原生生产页、深色审批控件、登录浅色/深色/窄窗截图记录视觉系统。实际 CSS 优先于原型；未把原型中的模拟预览、旧深色状态色或旧标题行高写成原生规范。视觉文档不扩展功能验收结论。
+ 
+ 2026-10-28 一致性补充证据：`docs/verification/page-consistency-20261028/REPORT.md`，包含逐页独立审查、图标几何测量、无外部标题下拉与实际应用截图。
++
++## 2026-10-28 原型对齐第二轮
++
++- 生产单采用作品、当前阶段、行动状态、最近更新、操作五列。首列最大320px，标题下显示账号/系列；编号、蓝图与产物数进入行操作信息，完整管理操作保留。
++- 阶段使用中性文本；行动状态采用语义图标＋文字：准备中（中性）、待审核（琥珀）、制作中（蓝）、需处理（红）、已完成（绿）。移除不一致且过浅的图例。状态来自真实pending及最新任务，待审与阻塞可以交叠，计数不宣称互斥。
++- 待审核并入生产单状态标签；标签支持方向键、Home/End与关联面板。标题/编号搜索、状态和排序都先在服务端执行再分页，归档范围与状态筛选分别保留。侧栏徽章与待审核标签使用同一待决口径。
++- 搜索和四个选择控件同高36px、同基线，10px间隔；新建/刷新位于状态标签同行尾部。
++- QC审核的当前成片和技术证据优先于返回制作和材料准备，真实媒体与审批合同不变。无真实封面时使用名称与账号/系列识别，不填模拟封面。
++- 验收：`docs/verification/prototype-alignment-20261028/REPORT.md`。其他已认可主题、导航分组、底部工具、OpenChatCut位置和无外部标题下拉保持。
+--- before/src/local-app/catalogFilters.integration.test.ts
++++ src/local-app/catalogFilters.integration.test.ts
+@@ -0,0 +1,122 @@
++// @vitest-environment node
++// Explicit disposable database only; never reads or writes the daily application's database.
++import assert from 'node:assert/strict';
++import {execFileSync} from 'node:child_process';
++import {randomUUID} from 'node:crypto';
++import {afterAll,beforeAll,expect,it} from 'vitest';
++import {localCatalogSql} from './catalogQuery';
++import type {CatalogQuery,EpisodeCatalog} from '../episodes/episodeCatalogTypes';
++
++const database=process.env.LOOP_CATALOG_FILTERS_TEST_DATABASE;
++assert(database&&/^loop_ui_catalog_test_[a-z0-9_]+$/.test(database),'Set a disposable LOOP_CATALOG_FILTERS_TEST_DATABASE');
++assert(process.env.DOCKER_HOST?.startsWith('unix://'),'Explicit local Docker socket required');
++const container='loop-control-local-postgres';
++const owner=randomUUID(),foreignOwner=randomUUID(),account=randomUUID(),foreignAccount=randomUUID(),memberAccount=randomUUID();
++const episode=(n:number)=>`00000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
++const packageId=(n:number)=>`10000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
++const taskId=(n:number)=>`20000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
++const sqlString=(s:string)=>"'"+s.replaceAll("'","''")+"'";
++let created=false;
++function psql(sql:string,target=database!){return execFileSync('docker',['exec','-i',container,'psql','-XqAt','-v','ON_ERROR_STOP=1','-U','postgres','-d',target],{input:sql,encoding:'utf8',maxBuffer:4*1024*1024});}
++beforeAll(()=>{
++ psql(`CREATE DATABASE ${database} TEMPLATE template0 ENCODING 'UTF8';`,'postgres');created=true;
++ psql(`
++ CREATE SCHEMA local_identity;
++ CREATE TABLE public.account_memberships(account_id uuid,user_id uuid,role text);
++ CREATE TABLE public.series(id uuid);
++ CREATE TABLE public.series_versions(id uuid,series_id uuid);
++ CREATE TABLE public.episodes(id uuid PRIMARY KEY,account_id uuid,title text,stage text,updated_at timestamptz,archived_at timestamptz,series_version_id uuid);
++ CREATE TABLE public.review_packages(id uuid PRIMARY KEY,episode_id uuid,stage text,revision_number int,invalidated_at timestamptz,context_snapshot jsonb);
++ CREATE TABLE public.pre_render_review_members(review_package_id uuid,member_key text);
++ CREATE TABLE public.pre_render_review_member_decisions(review_package_id uuid,member_key text);
++ CREATE TABLE public.tasks(id uuid PRIMARY KEY,episode_id uuid,task_type text,status text,input_snapshot jsonb,last_result jsonb,created_at timestamptz,invalidated_at timestamptz,completed_at timestamptz,claimed_at timestamptz);
++ CREATE TABLE public.artifacts(episode_id uuid);
++ CREATE TABLE local_identity.historical_episodes(id uuid);
++ CREATE TABLE local_identity.historical_tasks(id uuid);
++ CREATE FUNCTION local_identity.is_historical_episode(uuid) RETURNS boolean LANGUAGE sql STABLE AS 'SELECT EXISTS(SELECT 1 FROM local_identity.historical_episodes WHERE id=$1)';
++ CREATE FUNCTION local_identity.is_historical_task(uuid) RETURNS boolean LANGUAGE sql STABLE AS 'SELECT EXISTS(SELECT 1 FROM local_identity.historical_tasks WHERE id=$1)';
++ INSERT INTO public.account_memberships VALUES('${account}','${owner}','owner'),('${foreignAccount}','${foreignOwner}','owner'),('${memberAccount}','${owner}','worker');
++ INSERT INTO public.episodes SELECT ('00000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,'${account}',
++  case when n=23 then 'Needle 100%_literal' else '作品 '||lpad(n::text,2,'0') end,
++  case when n in(24,27,30) then 'script_review' when n in(25,26) then 'production_ready' when n=29 then 'production_completed' else 'waiting_input' end,
++  '2026-01-01T00:00:00Z'::timestamptz+n*interval '1 minute',case when n=30 then '2026-01-02T00:00:00Z'::timestamptz end,null FROM generate_series(1,30)n;
++ INSERT INTO public.episodes VALUES('${episode(31)}','${foreignAccount}','Foreign Needle','waiting_input','2026-01-01',null,null),('${episode(32)}','${memberAccount}','Member Needle','waiting_input','2026-01-01',null,null),('${episode(33)}','${account}','历史资料','production_ready','2026-01-01',null,null),('${episode(34)}','${account}','已恢复','storyboard_approved','2026-01-01',null,null),('${episode(35)}','${account}','新任务已覆盖旧失败','waiting_input','2026-01-01',null,null);
++ INSERT INTO local_identity.historical_episodes VALUES('${episode(33)}');
++ INSERT INTO public.review_packages SELECT ('10000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,('00000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid,stage,1,null,case when n=25 then '{"approval_mode":"qc_only"}'::jsonb else '{}'::jsonb end FROM generate_series(24,30)n JOIN public.episodes e ON e.id=('00000000-0000-4000-8000-'||lpad(n::text,12,'0'))::uuid WHERE n in(24,25,26,27,30);
++ INSERT INTO public.review_packages VALUES('${packageId(33)}','${episode(33)}','production_ready',1,null,'{}');
++ INSERT INTO public.pre_render_review_members VALUES('${packageId(26)}','one');
++ INSERT INTO public.pre_render_review_member_decisions VALUES('${packageId(26)}','one');
++ INSERT INTO public.tasks VALUES
++ ('${taskId(27)}','${episode(27)}','generate_a_roll','failed','{}','{}','2026-01-01',null,null,null),
++ ('${taskId(28)}','${episode(28)}','generate_a_roll','running','{}','{}','2026-01-01',null,null,null),
++ ('${taskId(29)}','${episode(29)}','generate_a_roll','running','{}','{}','2026-01-01',null,null,null),
++ ('${taskId(34)}','${episode(34)}','generate_a_roll','blocked','{}','{}','2026-01-01',null,null,null),
++ ('${taskId(134)}','${episode(34)}','generate_a_roll','completed','{"recovered_from_task_id":"${taskId(34)}"}','{}','2026-01-02',null,'2026-01-02',null),
++ ('${taskId(35)}','${episode(35)}','generate_a_roll','failed','{"output":{"relative_path":"same.mp4"}}','{}','2026-01-01',null,null,null),
++ ('${taskId(135)}','${episode(35)}','generate_a_roll','completed','{"output":{"relative_path":"same.mp4"}}','{}','2026-01-02',null,'2026-01-02',null);
++ ALTER TABLE public.episodes ENABLE ROW LEVEL SECURITY;
++ CREATE POLICY member_read ON public.episodes FOR SELECT TO loop_app USING(EXISTS(SELECT 1 FROM public.account_memberships m WHERE m.account_id=episodes.account_id AND m.user_id=current_setting('loop.owner_id',true)::uuid));
++ GRANT USAGE ON SCHEMA public,local_identity TO loop_app;
++ GRANT SELECT ON ALL TABLES IN SCHEMA public,local_identity TO loop_app;
++ GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA local_identity TO loop_app;
++ `);
++ const blockers=Array.from({length:25},(_,i)=>({code:'fixture-'+i,detail:'Synthetic blocker'}));
++ psql(`INSERT INTO public.tasks VALUES('${taskId(1)}','${episode(1)}','generate_a_roll','blocked','{}',${sqlString(JSON.stringify({blockers}))},'2026-01-01',null,null,null);
++ INSERT INTO public.review_packages VALUES('${packageId(124)}','${episode(24)}','script_review',2,'2026-01-02','{}');`);
++},20000);
++afterAll(()=>{if(created)psql(`DROP DATABASE ${database};`,'postgres');},10000);
++function catalog(query:Partial<CatalogQuery>={},asOwner=owner):EpisodeCatalog{
++ const parameters=[asOwner,query.view??'episodes',query.page??1,query.accountId||null,query.seriesId??'all',query.visibility??'active',query.pendingPage??1,query.blockedPage??1,query.q??'',query.sort??'updated',query.status??'all'];
++ const values=parameters.map(v=>v===null?'NULL':typeof v==='number'?String(v):sqlString(v)).join(',');
++ const result=psql(`SET ROLE loop_app;BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY;SELECT set_config('loop.owner_id','${asOwner}',true);PREPARE catalog_filter(uuid,text,integer,uuid,text,text,integer,integer,text,text,text) AS ${localCatalogSql};EXECUTE catalog_filter(${values});ROLLBACK;`);
++ return JSON.parse(result.trim().split('\n').at(-1)!);
++}
++it('searches all matching records before pagination, treats SQL wildcards literally, and searches UUID fragments',()=>{
++ expect(catalog().episodes).toHaveLength(20);
++ expect(catalog({q:'needle'}).episodes.map(e=>e.id)).toEqual([episode(23)]);
++ expect(catalog({q:'100%_'}).episodes.map(e=>e.id)).toEqual([episode(23)]);
++ expect(catalog({q:'000000000023'}).episodes.map(e=>e.id)).toEqual([episode(23)]);
++ expect(catalog({q:'not present',page:999})).toMatchObject({episodes:[],total:0,page:1});
++});
++it('sorts across pages with a stable id tie break and bounds filtered page counts',()=>{
++ expect(catalog().episodes[0].id).toBe(episode(29));
++ const oldest=catalog({sort:'oldest'});expect(oldest.episodes.slice(0,3).map(e=>e.id)).toEqual([episode(33),episode(34),episode(35)]);
++ expect(catalog({sort:'oldest',page:2}).episodes).toHaveLength(12);
++ const titles=catalog({sort:'title'});expect(titles.episodes[0].id).toBe(episode(23));
++ expect(catalog({q:'作品',page:999}).page).toBe(2);
++});
++it('uses actual pending decisions and prioritises blockers, review, done, running, draft',()=>{
++ const all=catalog({page:2});
++ const statuses=new Map([...catalog().operationRows,...all.operationRows].map(row=>[row.episodeId,row.actionStatus]));
++ expect(statuses.get(episode(24))).toBe('review');
++ expect(statuses.get(episode(25))).toBe('running'); // QC-only needs no member review.
++ expect(statuses.get(episode(26))).toBe('running'); // All members already decided.
++ expect(statuses.get(episode(27))).toBe('blocked'); // Failed without structured blockers still needs action.
++ expect(statuses.get(episode(28))).toBe('running');
++ expect(statuses.get(episode(29))).toBe('done'); // Final state wins over stale running task.
++ expect(statuses.get(episode(34))).toBe('running'); // Explicit successful recovery wins over old failure.
++ expect(statuses.get(episode(35))).toBe('draft'); // Latest task for same output replaces failure.
++ expect(catalog({status:'review'}).episodes.map(e=>e.id)).toEqual([episode(27),episode(24)]);
++ expect(catalog().statusCounts?.review).toBe(2);
++ expect(catalog({view:'reviews'}).episodes.map(e=>e.id)).toEqual([episode(27),episode(24)]);
++ expect(catalog({status:'blocked'}).episodes.map(e=>e.id)).toEqual([episode(27),episode(1)]);
++ expect(catalog({status:'done'}).episodes.map(e=>e.id)).toEqual([episode(29)]);
++ expect(catalog({status:'review'}).statusCounts).toEqual(catalog().statusCounts);
++ expect(catalog({q:'needle'}).statusCounts).toMatchObject({all:1,review:0,blocked:0,done:0,running:0});
++});
++it('retains independent pending/blocker queues, historical fences and Owner-only membership selection',()=>{
++ expect(catalog().pending).toEqual({total:0,page:1,items:[]});expect(catalog().blocked).toEqual({total:0,page:1,items:[]});
++ const operations=catalog({view:'operations',status:'done'});
++ expect(operations.blocked.total).toBe(25);expect(operations.blocked.items).toHaveLength(20);
++ expect(catalog({view:'operations',blockedPage:2}).blocked).toMatchObject({total:25,page:2});expect(catalog({view:'operations',blockedPage:2}).blocked.items).toHaveLength(5);
++ expect(operations.operationRows.find(row=>row.episodeId===episode(29))?.actionStatus).toBe('done');
++ expect(catalog({status:'review'}).operationRows.find(row=>row.episodeId===episode(24))?.reviewRevision).toBe(1);
++ expect(operations.pending.total).toBe(2);expect(operations.pending.items.map(e=>e.id)).toEqual([episode(27),episode(24)]);
++ expect(operations.episodes.map(e=>e.id)).toEqual([episode(29)]);
++ expect(operations.statusCounts?.all).toBe(31); // Historical episode excluded from operating views.
++ expect(catalog().statusCounts?.all).toBe(32);
++ expect(catalog({visibility:'archived'}).episodes.map(e=>e.id)).toEqual([episode(30)]);expect(catalog({visibility:'archived'}).statusCounts?.review).toBe(0);
++ expect(catalog({accountId:foreignAccount}).episodes).toEqual([]);
++ expect(catalog({accountId:memberAccount}).episodes).toEqual([]);
++ expect(catalog({},foreignOwner).episodes.map(e=>e.id)).toEqual([episode(31)]);
++});
+--- before/src/workspace/episodePresentation.tsx
++++ src/workspace/episodePresentation.tsx
+@@ -0,0 +1,41 @@
++import {AlertCircle,CheckCircle2,Clock3,LoaderCircle,PencilLine} from 'lucide-react';
++import type {EpisodeCatalog} from '../episodes/episodeCatalogTypes';
++import type {EpisodeStage} from '../platform/types';
++import type {Database} from '../lib/database.types';
++
++type Episode=Database['public']['Tables']['episodes']['Row'];
++export type EpisodeActionState='draft'|'review'|'running'|'blocked'|'done';
++export type EpisodeRowSummary=EpisodeCatalog['operationRows'][number];
++const states={draft:{label:'准备中',icon:PencilLine},review:{label:'待审核',icon:Clock3},running:{label:'制作中',icon:LoaderCircle},blocked:{label:'需处理',icon:AlertCircle},done:{label:'已完成',icon:CheckCircle2}};
++export function episodeActionState(episode:Episode,summary?:EpisodeRowSummary):EpisodeActionState {
++ if(summary?.actionStatus)return summary.actionStatus;
++ if(summary?.blockerCount)return 'blocked';
++ if(summary?.reviewPending)return 'review';
++ if(episode.stage==='production_completed')return 'done';
++ return ['waiting_input','brief_draft','script_draft'].includes(episode.stage)?'draft':'running';
++}
++export function EpisodeStatus({state}:{state:EpisodeActionState}){const {label,icon:Icon}=states[state];return <span className={`episode-state episode-state-${state}`}><Icon aria-hidden="true" size={14}/>{label}</span>;}
++export function episodeNextAction(episode:Episode,state:EpisodeActionState){
++ if(state==='blocked')return {label:'处理阻塞',detail:'查看当前问题，处理后继续制作。'};
++ if(state==='review')return {label:'继续审核',detail:'查看本次证据，决定通过或提出修改。'};
++ if(state==='done')return {label:'查看交付包',detail:'核对成片与已保存的交付文件。'};
++ const next:Partial<Record<EpisodeStage,{label:string;detail:string}>>={
++  waiting_input:{label:'准备脚本与素材',detail:'补充本期输入，确认后开始制作。'},
++  brief_draft:{label:'继续准备输入',detail:'检查本期要求与已上传材料。'},
++  script_draft:{label:'继续准备脚本',detail:'核对当前脚本和所需材料。'},
++  visual_draft:{label:'继续视觉准备',detail:'检查视觉方案和当前任务。'},
++  storyboard_draft:{label:'继续分镜规划',detail:'检查分镜方案和当前任务。'},
++  render_ready:{label:'查看合成进度',detail:'查看当前任务与已有预览。'},
++  qc_passed:{label:'检查并完成交付',detail:'核对通过 QC 的成片及交付文件。'},
++ };
++ return next[episode.stage]??{label:'继续制作',detail:'打开生产单，接着完成当前阶段。'};
++}
++export const episodePhaseGroups:Array<{label:string;stages:EpisodeStage[]}>= [
++ {label:'输入',stages:['waiting_input','brief_draft','script_draft','script_review','script_approved']},
++ {label:'视觉',stages:['visual_draft','visual_review','visual_approved']},
++ {label:'分镜',stages:['storyboard_draft','storyboard_review']},
++ {label:'镜头',stages:['storyboard_approved','production_ready']},
++ {label:'合成',stages:['render_ready']},
++ {label:'QC',stages:['qc_review','qc_passed']},
++ {label:'交付',stages:['production_completed']},
++];
+--- before/src/workspace/episode-list.css
++++ src/workspace/episode-list.css
+@@ -0,0 +1,44 @@
++/* Compact episode lists and action states, shared with the native workbench. */
++html[data-interface="impeccable"] .product-ui .episode-list-workspace {min-width:0}
++html[data-interface="impeccable"] .product-ui .episode-status-tabs {display:flex;gap:24px;border-bottom:1px solid var(--lc-line);margin-bottom:18px;overflow:auto}
++html[data-interface="impeccable"] .product-ui .episode-status-tabs button {display:inline-flex;align-items:center;gap:7px;white-space:nowrap;min-height:40px;padding:0 0 12px;border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;color:var(--lc-muted);font-size:13px}
++html[data-interface="impeccable"] .product-ui .episode-status-tabs button.is-active {color:var(--lc-accent);border-bottom-color:var(--lc-accent);font-weight:600}
++html[data-interface="impeccable"] .product-ui .episode-status-tabs button > span {font-size:11px;font-variant-numeric:tabular-nums;background:var(--lc-surface-2);padding:0 5px;border-radius:4px}
++html[data-interface="impeccable"] .product-ui .episode-list-toolbar {gap:10px!important;align-items:center!important}
++html[data-interface="impeccable"] .product-ui .episode-list-toolbar label > div {min-width:0!important}
++html[data-interface="impeccable"] .product-ui .episode-list-toolbar > label {flex:0 1 150px}
++html[data-interface="impeccable"] .product-ui .episode-list-toolbar > .dan-select-field {width:144px;flex:0 0 144px}
++html[data-interface="impeccable"] .product-ui .episode-list-toolbar .summary-count {padding:0;margin-left:auto;white-space:nowrap;font-size:11px}
++html[data-interface="impeccable"] .product-ui .episode-search {display:flex;align-items:center;gap:8px;position:relative;flex:1 1 260px;min-width:220px;height:36px;border:1px solid var(--lc-line-strong);border-radius:7px;background:var(--lc-surface);padding:0 8px 0 11px;color:var(--lc-muted)}
++html[data-interface="impeccable"] .product-ui .episode-search:focus-within {outline:2px solid var(--lc-accent);outline-offset:1px}
++html[data-interface="impeccable"] .product-ui .episode-search input {flex:1;min-width:0;width:100%;border:0!important;box-shadow:none!important;background:transparent!important;padding:0!important;outline:0!important;height:32px;min-height:0;font-weight:400}
++html[data-interface="impeccable"] .product-ui .episode-search button {display:inline-flex;align-items:center;justify-content:center;background:transparent;border:0;padding:3px;min-height:24px;border-radius:4px;color:var(--lc-muted);font-size:12px;white-space:nowrap}
++html[data-interface="impeccable"] .product-ui .episode-search button:hover {background:var(--lc-surface-2);color:var(--lc-accent)}
++html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-row {grid-template-columns:minmax(230px,1.35fr) minmax(150px,1fr) 112px 126px 36px;gap:20px;min-width:790px;padding:16px 18px;min-height:76px;align-items:center}
++html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-row.table-header {min-height:40px;padding-block:10px}
++html[data-interface="impeccable"] .product-ui .episode-name {min-width:0}
++html[data-interface="impeccable"] .product-ui .episode-name small {font-size:11px;line-height:1.5;color:var(--lc-muted);white-space:nowrap;text-overflow:ellipsis;overflow:hidden;margin-top:5px}
++html[data-interface="impeccable"] .product-ui .episode-stage-name {font-size:12px;color:var(--lc-ink)}
++html[data-interface="impeccable"] .product-ui .episode-action-cell {justify-self:end}
++html[data-interface="impeccable"] .product-ui .episode-state {display:inline-flex;align-items:center;gap:6px;width:max-content;max-width:100%;font-size:12px;font-weight:500;line-height:1.4;white-space:nowrap;color:var(--lc-muted)}
++html[data-interface="impeccable"] .product-ui .episode-state svg {flex:0 0 14px;width:14px;height:14px}
++html[data-interface="impeccable"] .product-ui .episode-state-review {color:var(--lc-warning)}
++html[data-interface="impeccable"] .product-ui .episode-state-blocked {color:var(--lc-danger)}
++html[data-interface="impeccable"] .product-ui .episode-state-running {color:var(--lc-accent)}
++html[data-interface="impeccable"] .product-ui .episode-state-done {color:var(--lc-success)}
++html[data-interface="impeccable"] .product-ui .episode-list-workspace time {white-space:nowrap;font-size:12px;color:var(--lc-muted)}
++html[data-interface="impeccable"] .episode-menu-metadata {display:grid;gap:6px;margin:4px 6px 8px;font-size:11px;color:var(--lc-muted);font-weight:400}
++html[data-interface="impeccable"] .episode-menu-metadata > div {display:flex;justify-content:space-between;gap:16px;align-items:start}
++html[data-interface="impeccable"] .episode-menu-metadata dd {margin:0;text-align:right;overflow-wrap:anywhere;max-width:220px}
++@media(max-width:1100px){html[data-interface="impeccable"] .product-ui .episode-search {flex-basis:100%}html[data-interface="impeccable"] .product-ui .episode-list-toolbar > label {flex:1 1 130px}}
++@media(max-width:640px){html[data-interface="impeccable"] .product-ui .episode-status-tabs {gap:18px}html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-row {display:grid}html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-header {display:grid}html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-row > * {display:block!important;grid-column:auto;grid-row:auto}}
++
++html[data-interface="impeccable"] .product-ui .episode-list-header {display:flex;gap:20px;align-items:start;justify-content:space-between}
++html[data-interface="impeccable"] .product-ui .episode-list-header .episode-status-tabs {flex:1;min-width:0}
++html[data-interface="impeccable"] .product-ui .episode-list-header .workspace-actions {flex:0 0 auto;margin-left:auto}
++html[data-interface="impeccable"] .product-ui .episode-list-toolbar > label {flex:0 1 130px}
++html[data-interface="impeccable"] .product-ui .episode-list-toolbar > .dan-select-field {flex:0 0 140px;width:140px}
++html[data-interface="impeccable"] .product-ui .episode-list-toolbar .summary-count {align-self:center}
++@media(max-width:700px){html[data-interface="impeccable"] .product-ui .episode-list-header {flex-wrap:wrap;gap:8px}html[data-interface="impeccable"] .product-ui .episode-list-header .episode-status-tabs {flex-basis:100%;order:2}html[data-interface="impeccable"] .product-ui .episode-list-toolbar > label {flex:1 1 120px}}
++html[data-interface="impeccable"] .product-ui .episode-list-toolbar .dan-select-trigger {min-width:0!important;box-sizing:border-box;height:36px;min-height:36px;padding-block:7px}
++html[data-interface="impeccable"] .product-ui .episode-list-workspace .table-row {grid-template-columns:minmax(230px,320px) minmax(150px,1fr) 112px 126px 36px}
+--- before/src/operations/workbench.css
++++ src/operations/workbench.css
+@@ -0,0 +1,35 @@
++html[data-interface="impeccable"] .impeccable-app.product-ui .operations-workspace {grid-template-columns:minmax(0,1fr) 320px}
++html[data-interface="impeccable"] .impeccable-app.product-ui .lc-work-table {grid-column:1;grid-row:4}
++html[data-interface="impeccable"] .impeccable-app.product-ui .lc-work-queue {grid-column:1;grid-row:5;grid-template-columns:minmax(0,1fr)}
++html[data-interface="impeccable"] .impeccable-app.product-ui .operations-episode-row {grid-template-columns:minmax(180px,1.5fr) minmax(110px,1fr) 100px;gap:16px;min-height:80px}
++html[data-interface="impeccable"] .impeccable-app.product-ui .operations-episode-row.is-selected {background:var(--lc-accent-soft)}
++html[data-interface="impeccable"] .impeccable-app.product-ui .operations-episode-row [data-text] {padding:0;width:100%;display:contents}
++html[data-interface="impeccable"] .impeccable-app.product-ui .operations-episode-row > span > .episode-state {font-size:12px}
++html[data-interface="impeccable"] .impeccable-app.product-ui .operations-episode-row small {font-size:11px}
++html[data-interface="impeccable"] .impeccable-app.product-ui .work-continuation {grid-column:2;grid-row:4 / span 2;min-width:0;position:sticky;top:20px;border:1px solid var(--lc-line);border-radius:12px;background:var(--lc-surface);overflow:hidden}
++.work-continuation > header {padding:16px 18px;border-bottom:1px solid var(--lc-line);display:flex;gap:12px;align-items:center;justify-content:space-between}
++.work-continuation > header h2 {font-size:15px;margin:0;font-weight:600}
++.work-continuation-body {padding:20px;display:grid;gap:20px}
++.work-continuation-body > h3 {font-size:18px;line-height:1.5;margin:0;overflow-wrap:anywhere;font-weight:600}
++.work-continuation-body .work-context {font-size:12px;color:var(--lc-muted);margin:-12px 0 0}
++.work-phase-track {display:flex;list-style:none;margin:0;padding:0;color:var(--lc-muted)}
++.work-phase-track li {flex:1;min-width:0;position:relative;display:grid;justify-items:center;gap:8px;font-size:10px;line-height:1.4}
++.work-phase-track li:not(:last-child)::after {content:'';position:absolute;left:50%;top:5px;height:2px;width:100%;background:var(--lc-line)}
++.work-phase-track li > span {width:12px;height:12px;border-radius:50%;background:var(--lc-line);position:relative;z-index:1;display:grid;place-items:center}
++.work-phase-track .is-complete {color:var(--lc-success)}
++.work-phase-track .is-complete > span,.work-phase-track .is-complete::after {background:var(--lc-success);color:var(--lc-surface)}
++.work-phase-track .is-current {color:var(--lc-accent);font-weight:600}
++.work-phase-track .is-current > span {background:var(--lc-accent);outline:3px solid var(--lc-accent-soft)}
++.work-next-step {padding:16px;background:var(--lc-accent-soft);border-radius:8px;display:grid;justify-items:start;gap:10px}
++.work-next-step p {font-size:12px;color:var(--lc-muted);line-height:1.6;margin:0}
++.work-context-details {display:grid;gap:12px;margin:0;font-size:12px}
++.work-context-details > div {display:flex;justify-content:space-between;gap:16px}
++.work-context-details dt {color:var(--lc-muted)}
++.work-context-details dd {margin:0;text-align:right}
++@media(max-width:1150px){html[data-interface="impeccable"] .impeccable-app.product-ui .operations-workspace {grid-template-columns:minmax(0,1fr)}html[data-interface="impeccable"] .impeccable-app.product-ui .work-continuation {grid-column:1;grid-row:4;position:static}html[data-interface="impeccable"] .impeccable-app.product-ui .lc-work-table {grid-row:5}html[data-interface="impeccable"] .impeccable-app.product-ui .lc-work-queue {grid-row:6}.work-continuation-body {grid-template-columns:1fr 1fr;align-items:start}.work-continuation-body > h3,.work-continuation-body > .work-context {grid-column:1/-1}.work-next-step {grid-column:2;grid-row:3 / span 2}.work-phase-track,.work-context-details {grid-column:1}}
++@media(max-width:640px){.work-continuation-body {grid-template-columns:minmax(0,1fr)}.work-next-step {grid-column:1;grid-row:auto}html[data-interface="impeccable"] .impeccable-app.product-ui .operations-episode-row {grid-template-columns:minmax(150px,1fr) 100px}html[data-interface="impeccable"] .impeccable-app.product-ui .operations-episode-row > span:nth-child(2){display:none}}
++
++html[data-interface="impeccable"] .product-ui .work-continuation > header h2 {font-size:15px}
++html[data-interface="impeccable"] .product-ui .work-continuation-body > h3 {font-size:18px;font-weight:600}
++
++html[data-interface="impeccable"] .impeccable-app.product-ui .operations-episode-list > header {background:var(--lc-surface)}

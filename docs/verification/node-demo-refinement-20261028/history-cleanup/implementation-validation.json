@@ -1,0 +1,26 @@
+{
+  "at": "2026-10-28T08:01:45.741Z",
+  "migration": "075-history-production-retention.sql",
+  "migrationSha256": "60929a75efcb0b375b0f84e394b45587d84f39b30c000b4ded46d1f16020aa7e",
+  "checks": [
+    {
+      "command": "npx tsc -p tsconfig.local-app.json --noEmit --pretty false",
+      "result": "passed"
+    },
+    {
+      "command": "npx vitest run src/local-app/HistoryDanUi.test.tsx src/local-app/HistoryEpisodes.test.tsx src/local-app/LocalHistory.test.tsx src/local-app/LocalMaintenanceEmbedded.test.tsx src/local-app/historyPresentation.test.ts",
+      "result": "15 tests passed"
+    },
+    {
+      "command": "LOOP_HISTORY_ORGANIZATION_ACCEPTANCE=1 npx vitest run src/local-app/historyOrganization.integration.test.ts",
+      "result": "passed; synthetic data in schema-only temporary database; rollback and database cleanup complete"
+    },
+    {
+      "command": "git diff --check",
+      "result": "passed"
+    }
+  ],
+  "realDatabaseWrites": false,
+  "physicalFileDeletion": false,
+  "fullFrontendCheck": "blocked by concurrent unused imports in EpisodeProduction.tsx; root agent to recheck"
+}

@@ -1,0 +1,29 @@
+{
+  "uiTests": 47,
+  "testFiles": 9,
+  "typecheck": "passed",
+  "build": "passed-existing-chunk-size-warning",
+  "markdownDiagnosticsChecks": 6,
+  "inlineJsSyntax": "passed",
+  "originalPrototypeJsUnchanged": true,
+  "demoSha256": "21ba9b0e99d87603c91e5e61eba121bfdd0f35ae08ba56559ef4519a7e04a165",
+  "browser": {
+    "realHistoryEnterSearch": "passed",
+    "sourceEnterSearch": "passed",
+    "modalEscapeAndFocus": "passed-unit-and-browser",
+    "longFilesSingleOverlayScroll": "passed",
+    "darkAndLight": "passed",
+    "connectionsVisibleFilterTitles": 0,
+    "visualChecksDivider": "1px above; no border below",
+    "readonlyNote": "right aligned, 10px, no divider",
+    "revisionButton": "icon only, accessible name preserved",
+    "qcIssueRowHeight": 59,
+    "horizontalShotSelection": "preview brought into visible area",
+    "dragAndKeyboardReorder": "passed; original order restored",
+    "deliveryOverflow": "none",
+    "deliveryDuration": "64s; player and metadata agree"
+  },
+  "dataWrites": "none; only read-only aggregate SQL",
+  "productionNodeMigration": false,
+  "committed": false
+}

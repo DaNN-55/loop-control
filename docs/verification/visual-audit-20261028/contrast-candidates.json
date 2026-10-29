@@ -1,0 +1,2379 @@
+[
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1280,
+    "ratio": 2.83,
+    "threshold": 4.5,
+    "text": "分镜生成与审核",
+    "cls": "stage stage-review",
+    "fontSize": "12px",
+    "foreground": "oklch(0.681 0.162 75.834)",
+    "backgrounds": [
+      "oklch(0.987 0.026 102.212)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1280,
+    "ratio": 2.83,
+    "threshold": 4.5,
+    "text": "合成与 QC 审核",
+    "cls": "stage stage-review",
+    "fontSize": "12px",
+    "foreground": "oklch(0.681 0.162 75.834)",
+    "backgrounds": [
+      "oklch(0.987 0.026 102.212)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "app",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "账号",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "app",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 3.35,
+    "threshold": 4.5,
+    "text": "账号基础规则",
+    "cls": "",
+    "fontSize": "13px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "app",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 1.91,
+    "threshold": 4.5,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "cls": "blueprint-editor-note",
+    "fontSize": "12px",
+    "foreground": "oklch(0.708 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "app",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 3.35,
+    "threshold": 4.5,
+    "text": "资产目录已填写；保存后仍需 Worker 验证目录可读写。",
+    "cls": "blueprint-readiness",
+    "fontSize": "12px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "rgb(23, 28, 37)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "账号",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 3.35,
+    "threshold": 4.5,
+    "text": "账号基础规则",
+    "cls": "",
+    "fontSize": "13px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 1.91,
+    "threshold": 4.5,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "cls": "blueprint-editor-note",
+    "fontSize": "12px",
+    "foreground": "oklch(0.708 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 3.35,
+    "threshold": 4.5,
+    "text": "资产目录已填写；保存后仍需 Worker 验证目录可读写。",
+    "cls": "blueprint-readiness",
+    "fontSize": "12px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "rgb(23, 28, 37)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "operations",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "系列运营",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "new-account",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "new-episode",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "security",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "historical",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "historical",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 2.35,
+    "threshold": 4.5,
+    "text": "放大查看",
+    "cls": "transition-inherit-all px-0.5",
+    "fontSize": "14px",
+    "foreground": "oklch(0.708 0 none)",
+    "backgrounds": [
+      "rgba(255, 255, 255, 0.95)",
+      "rgb(21, 23, 25)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "generator",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "completion",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "confirm",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "status",
+    "theme": "dark",
+    "width": 1280,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1920,
+    "ratio": 2.83,
+    "threshold": 4.5,
+    "text": "分镜生成与审核",
+    "cls": "stage stage-review",
+    "fontSize": "12px",
+    "foreground": "oklch(0.681 0.162 75.834)",
+    "backgrounds": [
+      "oklch(0.987 0.026 102.212)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1920,
+    "ratio": 2.83,
+    "threshold": 4.5,
+    "text": "合成与 QC 审核",
+    "cls": "stage stage-review",
+    "fontSize": "12px",
+    "foreground": "oklch(0.681 0.162 75.834)",
+    "backgrounds": [
+      "oklch(0.987 0.026 102.212)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "app",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "账号",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "app",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 3.35,
+    "threshold": 4.5,
+    "text": "账号基础规则",
+    "cls": "",
+    "fontSize": "13px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "app",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 1.91,
+    "threshold": 4.5,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "cls": "blueprint-editor-note",
+    "fontSize": "12px",
+    "foreground": "oklch(0.708 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "app",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 3.35,
+    "threshold": 4.5,
+    "text": "资产目录已填写；保存后仍需 Worker 验证目录可读写。",
+    "cls": "blueprint-readiness",
+    "fontSize": "12px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "rgb(23, 28, 37)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "账号",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 3.35,
+    "threshold": 4.5,
+    "text": "账号基础规则",
+    "cls": "",
+    "fontSize": "13px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 1.91,
+    "threshold": 4.5,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "cls": "blueprint-editor-note",
+    "fontSize": "12px",
+    "foreground": "oklch(0.708 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 3.35,
+    "threshold": 4.5,
+    "text": "资产目录已填写；保存后仍需 Worker 验证目录可读写。",
+    "cls": "blueprint-readiness",
+    "fontSize": "12px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "rgb(23, 28, 37)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "operations",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "系列运营",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "new-account",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "new-episode",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "security",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "historical",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "historical",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 2.35,
+    "threshold": 4.5,
+    "text": "放大查看",
+    "cls": "transition-inherit-all px-0.5",
+    "fontSize": "14px",
+    "foreground": "oklch(0.708 0 none)",
+    "backgrounds": [
+      "rgba(255, 255, 255, 0.95)",
+      "rgb(21, 23, 25)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "generator",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "completion",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "confirm",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "status",
+    "theme": "dark",
+    "width": 1920,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1440,
+    "ratio": 2.83,
+    "threshold": 4.5,
+    "text": "分镜生成与审核",
+    "cls": "stage stage-review",
+    "fontSize": "12px",
+    "foreground": "oklch(0.681 0.162 75.834)",
+    "backgrounds": [
+      "oklch(0.987 0.026 102.212)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1440,
+    "ratio": 2.83,
+    "threshold": 4.5,
+    "text": "合成与 QC 审核",
+    "cls": "stage stage-review",
+    "fontSize": "12px",
+    "foreground": "oklch(0.681 0.162 75.834)",
+    "backgrounds": [
+      "oklch(0.987 0.026 102.212)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "账号",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 3.35,
+    "threshold": 4.5,
+    "text": "账号基础规则",
+    "cls": "",
+    "fontSize": "13px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 1.91,
+    "threshold": 4.5,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "cls": "blueprint-editor-note",
+    "fontSize": "12px",
+    "foreground": "oklch(0.708 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 3.35,
+    "threshold": 4.5,
+    "text": "资产目录已填写；保存后仍需 Worker 验证目录可读写。",
+    "cls": "blueprint-readiness",
+    "fontSize": "12px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "rgb(23, 28, 37)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "operations",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "系列运营",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "new-account",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "new-episode",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "security",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "completion",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1440,
+    "ratio": 2.83,
+    "threshold": 4.5,
+    "text": "分镜生成与审核",
+    "cls": "stage stage-review",
+    "fontSize": "12px",
+    "foreground": "oklch(0.681 0.162 75.834)",
+    "backgrounds": [
+      "oklch(0.987 0.026 102.212)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1440,
+    "ratio": 2.83,
+    "threshold": 4.5,
+    "text": "合成与 QC 审核",
+    "cls": "stage stage-review",
+    "fontSize": "12px",
+    "foreground": "oklch(0.681 0.162 75.834)",
+    "backgrounds": [
+      "oklch(0.987 0.026 102.212)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 3,
+    "text": "账号",
+    "cls": "navigation-label",
+    "fontSize": "28px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 3.35,
+    "threshold": 4.5,
+    "text": "账号基础规则",
+    "cls": "",
+    "fontSize": "13px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 1.91,
+    "threshold": 4.5,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "cls": "blueprint-editor-note",
+    "fontSize": "12px",
+    "foreground": "oklch(0.708 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 3.35,
+    "threshold": 4.5,
+    "text": "资产目录已填写；保存后仍需 Worker 验证目录可读写。",
+    "cls": "blueprint-readiness",
+    "fontSize": "12px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "rgb(23, 28, 37)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 3,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "28px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "operations",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 3,
+    "text": "系列运营",
+    "cls": "navigation-label",
+    "fontSize": "28px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "new-account",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 3,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "28px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "new-episode",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 3,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "28px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "security",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 3,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "28px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 3,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "28px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 3,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "28px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 3,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "28px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "completion",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 3,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "28px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "ratio": 2.83,
+    "threshold": 4.5,
+    "text": "脚本生成与审核",
+    "cls": "stage stage-review",
+    "fontSize": "12px",
+    "foreground": "oklch(0.681 0.162 75.834)",
+    "backgrounds": [
+      "oklch(0.987 0.026 102.212)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "ratio": 2.83,
+    "threshold": 4.5,
+    "text": "视觉素材准备与审核",
+    "cls": "stage stage-review",
+    "fontSize": "12px",
+    "foreground": "oklch(0.681 0.162 75.834)",
+    "backgrounds": [
+      "oklch(0.987 0.026 102.212)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "ratio": 2.83,
+    "threshold": 4.5,
+    "text": "分镜生成与审核",
+    "cls": "stage stage-review",
+    "fontSize": "12px",
+    "foreground": "oklch(0.681 0.162 75.834)",
+    "backgrounds": [
+      "oklch(0.987 0.026 102.212)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "ratio": 2.83,
+    "threshold": 4.5,
+    "text": "合成与 QC 审核",
+    "cls": "stage stage-review",
+    "fontSize": "12px",
+    "foreground": "oklch(0.681 0.162 75.834)",
+    "backgrounds": [
+      "oklch(0.987 0.026 102.212)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 1.91,
+    "threshold": 4.5,
+    "text": "shot-1",
+    "cls": "",
+    "fontSize": "14px",
+    "foreground": "oklch(0.708 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "rgb(23, 28, 37)",
+      "rgb(17, 19, 24)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 1.91,
+    "threshold": 4.5,
+    "text": "A-roll",
+    "cls": "",
+    "fontSize": "11.2px",
+    "foreground": "oklch(0.708 0 none)",
+    "backgrounds": [
+      "rgb(127, 86, 217)",
+      "rgb(23, 28, 37)",
+      "rgb(17, 19, 24)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1440,
+    "ratio": 2.83,
+    "threshold": 4.5,
+    "text": "分镜生成与审核",
+    "cls": "stage stage-review",
+    "fontSize": "12px",
+    "foreground": "oklch(0.681 0.162 75.834)",
+    "backgrounds": [
+      "oklch(0.987 0.026 102.212)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1440,
+    "ratio": 2.83,
+    "threshold": 4.5,
+    "text": "合成与 QC 审核",
+    "cls": "stage stage-review",
+    "fontSize": "12px",
+    "foreground": "oklch(0.681 0.162 75.834)",
+    "backgrounds": [
+      "oklch(0.987 0.026 102.212)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1440,
+    "ratio": 2.83,
+    "threshold": 4.5,
+    "text": "脚本生成与审核",
+    "cls": "stage stage-review",
+    "fontSize": "12px",
+    "foreground": "oklch(0.681 0.162 75.834)",
+    "backgrounds": [
+      "oklch(0.987 0.026 102.212)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(255, 255, 255)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "new-account",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "new-episode",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "security",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "completion",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "security",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "selected-secret",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "selected-secret",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 3.18,
+    "threshold": 4.5,
+    "text": "华南跨境内容团队共用素材服务 · 联合制作项目专用（归档资料整理与授权补充）",
+    "cls": "",
+    "fontSize": "12px",
+    "foreground": "oklch(0.985 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "selected-secret",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 1.36,
+    "threshold": 4.5,
+    "text": "连接使用",
+    "cls": "",
+    "fontSize": "12px",
+    "foreground": "rgb(154, 167, 186)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "selected-secret",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 3.18,
+    "threshold": 4.5,
+    "text": "围绕真实生活中的跨境工作、通勤与家庭日常展开叙事，保留人物原有表达。中文、English 与 tiếng Việt 采访需要分别核对专有名词、素材授权和字幕时间。不要省略会影响理解的上下文；声音不可用时明确标注，不使用示例占位代替最终成片。",
+    "cls": "",
+    "fontSize": "14px",
+    "foreground": "oklch(0.985 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgba(16, 24, 40, 0.4)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "selected-secret",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 1.36,
+    "threshold": 4.5,
+    "text": "synthetic-reference-0-only",
+    "cls": "",
+    "fontSize": "12px",
+    "foreground": "rgb(154, 167, 186)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgba(16, 24, 40, 0.4)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "artifact-preview",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.24,
+    "threshold": 4.5,
+    "text": "生产单",
+    "cls": "navigation-label",
+    "fontSize": "14px",
+    "foreground": "oklch(0.87 0 none)",
+    "backgrounds": [
+      "rgb(158, 119, 237)",
+      "rgb(17, 19, 24)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  },
+  {
+    "scene": "artifact-preview",
+    "theme": "dark",
+    "width": 1440,
+    "ratio": 2.35,
+    "threshold": 4.5,
+    "text": "放大查看",
+    "cls": "transition-inherit-all px-0.5",
+    "fontSize": "14px",
+    "foreground": "oklch(0.708 0 none)",
+    "backgrounds": [
+      "rgba(255, 255, 255, 0.95)",
+      "rgb(21, 23, 25)",
+      "oklch(0.145 0 none)",
+      "rgb(17, 19, 24)",
+      "rgb(245, 247, 250)",
+      "rgb(255, 255, 255)"
+    ],
+    "source": "computed CSS; sRGB/OKLCH converted to linear sRGB, no screenshot pixel or browser AA proof"
+  }
+]

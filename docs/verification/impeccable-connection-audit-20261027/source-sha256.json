@@ -1,0 +1,7 @@
+{
+  "src/connections/ConnectionWorkspace.tsx": "3df9244f9b81f61463a9a366d86ca15896eb2696b494555644725718048ea6bc",
+  "src/connections/ConnectionTestButton.tsx": "f20fbf72c3e4d45b5a1bfe84ac7742c01974cbd7e681f0e25ba4ba9158303cdf",
+  "src/local-app/LocalConnectionsPanel.tsx": "87be2de78b297a40ec4e3b4adfb2b758f16a60a900d0b49cacf978ead2a09184",
+  "src/local-app/LocalMaintenancePanel.tsx": "4cc15ddc79f185648aae1589d41b80231f4973f8329b53331c7114842199f68a",
+  "src/styles.css": "b40bc5e68c352bcfd6ad51e5a3254eb23ac4eb600664357270d85af2b255ffaa"
+}

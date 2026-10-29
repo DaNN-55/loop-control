@@ -1,0 +1,73 @@
+Window: "Loop Control · Visual audit · Break UI", App: Google Chrome.
+0 标准窗口 Loop Control · Visual audit · Break UI - Google Chrome, Secondary Actions: Raise, URL: 127.0.0.1:5189/docs/verification/visual-audit-20261028/fixture.html?scene=new-account&data=demo&theme=light&mode=pending&chrome=0
+	1 container Loop Control · Visual audit · Break UI - Google Chrome, URL: 127.0.0.1:5189/docs/verification/visual-audit-20261028/fixture.html?scene=new-account&data=demo&theme=light&mode=pending&chrome=0
+		2 container
+			3 工具栏
+				4 按钮 返回
+				5 按钮 重新加载
+				6 container
+					7 弹出式按钮 查看网站信息
+					8 文本栏 (settable) 地址和搜索栏, Placeholder: 在 Microsoft Bing 中搜索，或输入网址, Value: 127.0.0.1:5189/docs/verification/visual-audit-20261028/fixture.html?scene=new-account&data=demo&theme=light&mode=pending&chrome=0
+					9 按钮 为此标签页添加书签
+				10 container
+					11 弹出式按钮 Obsidian Web Clipper
+可以访问此网站
+					12 弹出式按钮 扩展程序
+				13 按钮 dan
+				14 弹出式按钮 Chrome
+			15 工具栏 书签
+				16 书签文件夹按钮 AI
+				17 书签文件夹按钮 工具
+				18 书签文件夹按钮 资源
+				19 书签文件夹按钮 Guitar
+				20 书签文件夹按钮 bitcoin
+				21 书签按钮 Inbox (1) - wangdan556040@gmail.com - Gmail
+				22 书签按钮 LifeFlow
+				23 书签按钮 FretFlow
+				24 书签按钮 FRETWORK · 吉他训练计划
+			25 container
+				26 滚动区
+					27 HTML 内容 Loop Control · Visual audit · Break UI, URL: 127.0.0.1:5189/docs/verification/visual-audit-20261028/fixture.html?scene=new-account&data=demo&theme=light&mode=pending&chrome=0
+						28 container 新建账号
+							29 container 新建账号
+								30 container
+									31 标题 新建账号, Value: 2
+										32 文本 新建账号
+									33 按钮 (disabled) 关闭新建账号
+								34 container
+									35 文本 账号名称
+									36 文本栏 (settable) 账号名称, Value: test-pending-name, Placeholder: 例如：内容工作室
+								37 container
+									38 文本 账号标识
+									39 文本栏 (settable) 账号标识, Placeholder: content-studio
+								40 container
+									41 文本 时区
+									42 弹出式按钮 (disabled) 时区, Value: 中国大陆 · 上海（Asia/Shanghai）
+								43 文本 选择账号日常运营和任务时间所使用的时区。
+								44 按钮 (disabled) 取消
+								45 按钮 (disabled) 创建中…
+			46 弹出式按钮 标签页搜索
+			47 container
+				48 标签页组
+					49 标签 (settable, boolean) Home / X, Value: off
+						50 按钮 关闭
+					51 标签 (selected, settable, boolean) Loop Control · Visual audit · Break UI, Value: on
+						52 按钮 关闭
+			53 按钮 新标签页
+			54 按钮 打开 Chrome 中的 Gemini
+	55 关闭按钮
+	56 全屏幕按钮 Help: 此按钮也可以执行缩放窗口的操作, Secondary Actions: 缩放窗口
+	57 最小化按钮
+58 menu bar
+	59 Chrome
+	60 文件
+	61 编辑
+	62 显示
+	63 历史记录
+	64 书签
+	65 个人资料
+	66 标签页
+	67 窗口
+	68 帮助
+
+The focused UI element is 36 文本栏 (settable) 账号名称, Value: test-pending-name, Placeholder: 例如：内容工作室

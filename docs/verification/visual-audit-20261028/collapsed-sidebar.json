@@ -1,0 +1,59 @@
+{
+  "button": {
+    "bottom": 787.59375,
+    "height": 16,
+    "left": 30,
+    "right": 66,
+    "top": 771.59375,
+    "width": 36,
+    "x": 30,
+    "y": 771.59375
+  },
+  "children": [
+    {
+      "display": "none",
+      "rect": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "SPAN",
+      "text": "OpenChatCut"
+    },
+    {
+      "display": "block",
+      "rect": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "svg",
+      "text": ""
+    },
+    {
+      "display": "none",
+      "rect": {
+        "bottom": 0,
+        "height": 0,
+        "left": 0,
+        "right": 0,
+        "top": 0,
+        "width": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "SPAN",
+      "text": "OpenChatCut"
+    }
+  ]
+}

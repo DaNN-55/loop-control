@@ -1,0 +1,17 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/episodes/captionTextConfirmation.test.tsx (9 tests) 2664ms
+   ✓ invalidates an already saved content review when the audio identity changes  305ms
+   ✓ invalidates an already saved content review when the text identity changes  463ms
+   ✓ invalidates an already saved content review when the alignment identity changes  692ms
+ ✓ src/episodes/ProductionNodes.test.tsx (16 tests) 3597ms
+   ✓ saves an edited pending script back into the import draft and requires a fresh confirmation  552ms
+   ✓ routes rail reorder through the existing reasoned structure revision and preserves generation entrypoints  1520ms
+   ✓ enlarges the current script in a dismissible dialog and preserves the edit draft on return  304ms
+
+ Test Files  2 passed (2)
+      Tests  25 passed (25)
+   Start at  11:45:17
+   Duration  5.96s (transform 524ms, setup 22ms, collect 3.05s, tests 6.26s, environment 1.03s, prepare 133ms)
+

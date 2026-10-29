@@ -1,7 +1,7 @@
 import{assertReferenceIntegrity}from'./reference-integrity.mjs';
 // Shared native backup implementation with an explicit deployment context. No n8n/Supabase client, credentials or Keychain export.
-import{securityInventorySql}from'../isolation/security-inventory.mjs';
-import{archiveCopies,archiveSequences,readNativeBackup}from'../local/native-backup-format.mjs';
+import{securityInventorySql}from'./security-inventory.mjs';
+import{archiveCopies,archiveSequences,readNativeBackup}from'../storage/native-backup-format.mjs';
 import{mappedAssetPath}from'../../src/local-app/mediaPaths.ts';
 import{spawn,execFileSync}from'node:child_process';import{once}from'node:events';import{createInterface}from'node:readline';
 import{readFileSync,writeFileSync,readdirSync,lstatSync,realpathSync,mkdirSync,copyFileSync,chmodSync,existsSync,renameSync,unlinkSync,rmdirSync,constants}from'node:fs';

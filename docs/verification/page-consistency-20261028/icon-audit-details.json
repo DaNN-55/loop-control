@@ -1,0 +1,654 @@
+[
+  {
+    "scene": "new-account",
+    "records": [
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -63,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "系列运营",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -63,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "生产单",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -63,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "账号",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          36,
+          36
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "所有者设置",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          36,
+          36
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "关闭新建账号",
+        "svg": [
+          18,
+          18
+        ]
+      }
+    ],
+    "bad": []
+  },
+  {
+    "scene": "new-episode",
+    "records": [
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -63,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "系列运营",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -63,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "生产单",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -63,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "账号",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          36,
+          36
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "所有者设置",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          36,
+          36
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "关闭新建生产单",
+        "svg": [
+          18,
+          18
+        ]
+      }
+    ],
+    "bad": []
+  },
+  {
+    "scene": "security",
+    "records": [
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -63,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "系列运营",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -63,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "生产单",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -63,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "账号",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          36,
+          36
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "所有者设置",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          36,
+          36
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "关闭登录与安全",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          16,
+          16
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "显示密码",
+        "svg": [
+          16,
+          16
+        ]
+      },
+      {
+        "button": [
+          16,
+          16
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "显示密码",
+        "svg": [
+          16,
+          16
+        ]
+      }
+    ],
+    "bad": []
+  },
+  {
+    "scene": "secrets",
+    "records": [
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -63,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "系列运营",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -63,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "生产单",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -63,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "账号",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          36,
+          36
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "所有者设置",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          36,
+          36
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "关闭密钥管理",
+        "svg": [
+          18,
+          18
+        ]
+      }
+    ],
+    "bad": []
+  },
+  {
+    "scene": "completion",
+    "records": [
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -63,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "系列运营",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -63,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "生产单",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -63,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "账号",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          36,
+          36
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "所有者设置",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          36,
+          36
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "关闭完成生产",
+        "svg": [
+          18,
+          18
+        ]
+      }
+    ],
+    "bad": []
+  },
+  {
+    "scene": "production",
+    "records": [
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "工作台",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "生产单",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "待审核",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "账号与系列",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "连接配置",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "历史资料",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "打开当前生产单的 OpenChatCut",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "切换至深色模式",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "收起侧栏",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "所有者设置",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          120,
+          36
+        ],
+        "dx": -39,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "返回工作区",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          36,
+          36
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "关闭生产单详情",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "刷新生产单状态",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "打开本地输入目录",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "复制本地输入目录路径",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "查看产物索引",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "查看执行与审计时间线",
+        "svg": [
+          18,
+          18
+        ]
+      }
+    ],
+    "bad": []
+  }
+]

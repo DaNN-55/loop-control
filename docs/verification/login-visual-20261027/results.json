@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-27",
+  "scope": "Login audit and historical visual restoration",
+  "login": {
+    "normalLoginHttpStatus": 200,
+    "enabledEmail": "stage-a@example.test",
+    "credentialCount": 1,
+    "ownersWithoutCredentials": 10,
+    "historicalEmail": "wangdan556040@gmail.com",
+    "historicalTable": "n8n.user",
+    "credentialsChanged": false,
+    "selfRegistrationAvailable": false
+  },
+  "checks": {
+    "targetedTests": {
+      "passed": 27,
+      "files": 4
+    },
+    "typescript": "passed",
+    "nativeFrontendBuild": "passed",
+    "browser": [
+      "current identity displayed",
+      "historical email search found n8n.user record",
+      "production title and toolbar restored",
+      "grouped status in light and dark themes",
+      "390px viewport without horizontal document overflow",
+      "mobile status panel left margin 16px",
+      "default viewport and light theme restored"
+    ]
+  },
+  "screenshots": [
+    "status-restored.png",
+    "production-detail.png",
+    "status-dark.png",
+    "status-mobile.png"
+  ],
+  "remainingRuntimeObservations": [
+    "scheduler reports a failure",
+    "6 notifications in flight or with unknown outcomes"
+  ],
+  "limitations": [
+    "No visual snapshot comparison automation was installed; screenshots and browser inspection were used.",
+    "No login identity, password or permissions were changed."
+  ]
+}

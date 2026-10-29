@@ -1,0 +1,61 @@
+/* History follows the approved reference surface; these rules stay local to this page. */
+html[data-interface="impeccable"] .product-ui .reference-history.history-workspace { gap: 0; padding: 0; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-surface { overflow: hidden; border: 1px solid var(--lc-line); border-radius: 12px; background: var(--lc-surface); }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-tabs { gap: 24px; padding: 0 20px; border-bottom: 1px solid var(--lc-line); }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-tabs [role="tab"] { min-height: 52px; padding: 14px 0; font-size: 13px; color: var(--lc-muted); border-bottom: 2px solid transparent; background: transparent; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-tabs [role="tab"][data-selected] { color: var(--lc-accent); border-bottom-color: var(--lc-accent) !important; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-panel { display: grid; min-width: 0; gap: 0; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-panel:is([data-inert="true"],[hidden]) { display: none; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-episode-filters,.history-source-filters) { display: grid; grid-template-columns: minmax(240px,1fr) 150px auto auto; align-items: end; gap: 12px; padding: 20px; border: 0; border-bottom: 1px solid var(--lc-line); border-radius: 0; background: transparent; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .history-episode-filters > [data-input-wrapper] { grid-column: 1; grid-row: 1; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .history-episode-filters > .dan-select-field { grid-column: 2; grid-row: 1; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .history-episode-filters > button:first-of-type { grid-column: 3; grid-row: 1; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .history-episode-filters > button:last-of-type { grid-column: 4; grid-row: 1; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .history-content-only { grid-column: 1 / -1; grid-row: 2; min-height: 0; padding: 0; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .history-source-filters { grid-template-columns: minmax(240px,1fr) 160px 160px auto; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .dan-select-field > label { position: static !important; width: auto !important; height: auto !important; margin: 0 !important; overflow: visible !important; clip: auto !important; white-space: normal !important; font-size: 12px; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-episode-filters,.history-source-filters) > div > label { font-size: 12px; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .dan-select-field:has(> label) { row-gap: 6px !important; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-content-layout,.history-content-layout.has-selection) { display: grid; grid-template-columns: minmax(0,1fr); gap: 0; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-catalog,.history-source-catalog) { display: grid; gap: 0; min-width: 0; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-table-wrap { width: 100%; overflow: auto; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-table { width: 100%; min-width: 850px; table-layout: fixed; border-collapse: collapse; text-align: left; font-size: 13px; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-table .history-name-col { width: 33%; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-table .history-count-col { width: 7%; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-table .history-date-col { width: 14%; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-table .history-actions-col { width: 178px; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-table th { padding: 11px 16px; background: var(--lc-surface-2); color: var(--lc-muted); font-size: 12px; font-weight: 500; border-bottom: 1px solid var(--lc-line); white-space: nowrap; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-table :is(th,td):first-child { padding-left: 20px; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-table :is(th,td):last-child { padding-right: 20px; text-align: right; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-table td { padding: 17px 16px; border-bottom: 1px solid var(--lc-line); color: var(--lc-ink); vertical-align: middle; overflow-wrap: anywhere; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-table .history-episode-row { display: table-row; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-table tr[data-selected] { background: var(--lc-surface-2); }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-episode-name,.history-source-heading) { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-episode-name,.history-source-heading) > button { justify-content: flex-start; min-width: 0; max-width: 100%; padding: 0; font-size: 13px; font-weight: 600; line-height: 1.55; white-space: normal; text-align: left; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-episode-name,.history-source-heading) > button > svg { flex-shrink: 0; color: var(--lc-muted); }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-table :is(.history-number,.history-date) { font-variant-numeric: tabular-nums; white-space: nowrap; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-episode-actions,.history-source-actions) { display: flex; flex-wrap: nowrap; justify-content: flex-end; align-items: center; gap: 4px; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .history-result-count { padding: 16px 20px; margin: 0; font-size: 12px; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-summary { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 16px 20px; color: var(--lc-muted); font-size: 12px; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .history-pagination { margin: 0; padding: 0 20px 20px; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-episode-content,.history-source-view,.history-cleanup-preview) { margin: 0 20px 20px; padding: 20px; border: 1px solid var(--lc-line); border-radius: 8px; background: var(--lc-surface-2); gap: 16px; scroll-margin-top: 88px; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-message,.history-loading,.maintenance-empty) { margin: 16px 20px; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .history-source-view .history-content-search { align-items: end; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .history-source-view .history-pagination { padding: 16px 0 0; }
+@media (max-width: 1000px) {
+ html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-episode-filters,.history-source-filters) { grid-template-columns: minmax(160px,1fr) 150px auto auto; }
+ html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .history-source-filters > div:has(input) { grid-column: 1 / 3; grid-row: 1; }
+ html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .history-source-filters > button { grid-column: 4; grid-row: 2; }
+}
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-episode-name,.history-source-heading) > button > [data-text] { min-width: 0; max-width: 100%; white-space: normal; overflow-wrap: anywhere; }
+/* A full reading workspace, even when a query only returns a few records. */
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-surface { min-height: max(440px,calc(100dvh - 190px)); }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-panel { flex: 1; align-content: start; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .reference-history-panel:not([hidden]) { display: flex; flex-direction: column; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-content-layout,.history-catalog,.history-source-catalog,.history-sources) { flex: 1; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-catalog,.history-source-catalog) { display: flex; flex-direction: column; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-result-count,.reference-history-summary) { margin-top: auto; padding-top: 20px; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace .maintenance-empty { flex: 1; display: grid; place-items: center; min-height: 180px; margin: 0; padding: 32px; background: transparent; text-align: center; }
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-episode-content,.history-source-view,.history-cleanup-preview) .maintenance-empty { min-height: 0; display: block; text-align: left; padding: 12px 0; }
+
+html[data-interface="impeccable"] .product-ui .reference-history.history-ui.history-workspace :is(.history-content-layout,.history-sources) { display: flex; flex-direction: column; }

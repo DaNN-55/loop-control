@@ -1,0 +1,1564 @@
+[
+  {
+    "name": "stage-waiting_input-light",
+    "query": "scene=production&stage=waiting_input",
+    "bodyText": 610,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "准备生产材料",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-brief_draft-light",
+    "query": "scene=production&stage=brief_draft",
+    "bodyText": 399,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-script_draft-light",
+    "query": "scene=production&stage=script_draft",
+    "bodyText": 402,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-script_review-light",
+    "query": "scene=production&stage=script_review",
+    "bodyText": 494,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "可审核文本 · 修订 v1",
+      "Owner 审批",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-script_approved-light",
+    "query": "scene=production&stage=script_approved",
+    "bodyText": 402,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-visual_draft-light",
+    "query": "scene=production&stage=visual_draft",
+    "bodyText": 402,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-visual_review-light",
+    "query": "scene=production&stage=visual_review",
+    "bodyText": 609,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "准备生产材料",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "Owner 审批",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-visual_approved-light",
+    "query": "scene=production&stage=visual_approved",
+    "bodyText": 644,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-storyboard_draft-light",
+    "query": "scene=production&stage=storyboard_draft",
+    "bodyText": 398,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-storyboard_review-light",
+    "query": "scene=production&stage=storyboard_review",
+    "bodyText": 628,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "可审核分镜 · 修订 v1",
+      "Owner 审批",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-storyboard_approved-light",
+    "query": "scene=production&stage=storyboard_approved",
+    "bodyText": 1160,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "分镜工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-production_ready-light",
+    "query": "scene=production&stage=production_ready",
+    "bodyText": 534,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "镜头工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "预渲染审核包 · 修订 v1",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-render_ready-light",
+    "query": "scene=production&stage=render_ready",
+    "bodyText": 449,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "镜头工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-qc_review-light",
+    "query": "scene=production&stage=qc_review",
+    "bodyText": 636,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "镜头工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "OpenChatCut 审核渲染 · 工程 v1",
+      "在 OpenChatCut 编辑",
+      "Owner 审批"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-qc_passed-light",
+    "query": "scene=production&stage=qc_passed",
+    "bodyText": 479,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-production_completed-light",
+    "query": "scene=production&stage=production_completed",
+    "bodyText": 471,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "fixture-accounts-light",
+    "query": "scene=accounts",
+    "bodyText": 481,
+    "documentWidth": 1425,
+    "headings": [
+      "账号",
+      "演示工作室",
+      "生产条件",
+      "配置范围"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "fixture-episodes-light",
+    "query": "scene=episodes",
+    "bodyText": 232,
+    "documentWidth": 1440,
+    "headings": [
+      "生产单"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "fixture-new-account-light",
+    "query": "scene=new-account",
+    "bodyText": 534,
+    "documentWidth": 1440,
+    "headings": [
+      "界面验收",
+      "新建账号"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "fixture-new-episode-light",
+    "query": "scene=new-episode",
+    "bodyText": 181,
+    "documentWidth": 1440,
+    "headings": [
+      "界面验收",
+      "新建生产单"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "fixture-security-light",
+    "query": "scene=security",
+    "bodyText": 142,
+    "documentWidth": 1440,
+    "headings": [
+      "界面验收",
+      "登录与安全",
+      "当前登录身份"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "fixture-secrets-light",
+    "query": "scene=secrets",
+    "bodyText": 167,
+    "documentWidth": 1440,
+    "headings": [
+      "界面验收",
+      "密钥管理"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "fixture-maintenance-light",
+    "query": "scene=maintenance",
+    "bodyText": 283,
+    "documentWidth": 1440,
+    "headings": [
+      "界面验收",
+      "连接管理"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "fixture-completion-light",
+    "query": "scene=completion",
+    "bodyText": 279,
+    "documentWidth": 1440,
+    "headings": [
+      "界面验收",
+      "完成生产"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "shot-workbench-light",
+    "query": "scene=production&stage=storyboard_approved&mode=healthy",
+    "bodyText": 1040,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "分镜工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "shot-workbench-dark",
+    "query": "scene=production&stage=storyboard_approved&mode=healthy&theme=dark",
+    "bodyText": 1040,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "分镜工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "qc-dark",
+    "query": "scene=production&stage=qc_review&mode=healthy&theme=dark",
+    "bodyText": 517,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "镜头工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "OpenChatCut 审核渲染 · 工程 v1",
+      "在 OpenChatCut 编辑",
+      "Owner 审批",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "storyboard-dark",
+    "query": "scene=production&stage=storyboard_review&mode=healthy&theme=dark",
+    "bodyText": 507,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "可审核分镜 · 修订 v1",
+      "Owner 审批",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "account-dark",
+    "query": "scene=accounts&theme=dark",
+    "bodyText": 480,
+    "documentWidth": 1425,
+    "headings": [
+      "账号",
+      "演示工作室",
+      "生产条件",
+      "配置范围"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "history-dark",
+    "query": "scene=maintenance&tab=history&theme=dark",
+    "bodyText": 191,
+    "documentWidth": 1440,
+    "headings": [
+      "界面验收",
+      "历史生产内容"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "system-dark",
+    "query": "scene=status&theme=dark",
+    "bodyText": 177,
+    "documentWidth": 1440,
+    "headings": [
+      "界面验收",
+      "运行概览"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "completion-ready-dark",
+    "query": "scene=completion&mode=ready&theme=dark",
+    "bodyText": 327,
+    "documentWidth": 1440,
+    "headings": [
+      "界面验收",
+      "完成生产",
+      "最终生产材料"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-waiting_input-light",
+    "query": "scene=production&stage=waiting_input",
+    "bodyText": 610,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "准备生产材料",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-brief_draft-light",
+    "query": "scene=production&stage=brief_draft",
+    "bodyText": 399,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-script_draft-light",
+    "query": "scene=production&stage=script_draft",
+    "bodyText": 402,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-script_review-light",
+    "query": "scene=production&stage=script_review",
+    "bodyText": 494,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "可审核文本 · 修订 v1",
+      "Owner 审批",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-script_approved-light",
+    "query": "scene=production&stage=script_approved",
+    "bodyText": 402,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-visual_draft-light",
+    "query": "scene=production&stage=visual_draft",
+    "bodyText": 402,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-visual_review-light",
+    "query": "scene=production&stage=visual_review",
+    "bodyText": 609,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "准备生产材料",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "Owner 审批",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-visual_approved-light",
+    "query": "scene=production&stage=visual_approved",
+    "bodyText": 644,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-storyboard_draft-light",
+    "query": "scene=production&stage=storyboard_draft",
+    "bodyText": 398,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-storyboard_review-light",
+    "query": "scene=production&stage=storyboard_review",
+    "bodyText": 628,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "可审核分镜 · 修订 v1",
+      "Owner 审批",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-storyboard_approved-light",
+    "query": "scene=production&stage=storyboard_approved",
+    "bodyText": 1160,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "分镜工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-production_ready-light",
+    "query": "scene=production&stage=production_ready",
+    "bodyText": 534,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "镜头工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "预渲染审核包 · 修订 v1",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-render_ready-light",
+    "query": "scene=production&stage=render_ready",
+    "bodyText": 449,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "镜头工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-qc_review-light",
+    "query": "scene=production&stage=qc_review",
+    "bodyText": 636,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "镜头工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "OpenChatCut 审核渲染 · 工程 v1",
+      "在 OpenChatCut 编辑",
+      "Owner 审批"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-qc_passed-light",
+    "query": "scene=production&stage=qc_passed",
+    "bodyText": 479,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-production_completed-light",
+    "query": "scene=production&stage=production_completed",
+    "bodyText": 471,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "login-light",
+    "query": "scene=login",
+    "bodyText": 31,
+    "documentWidth": 1440,
+    "headings": [
+      "登录控制台"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "login-dark",
+    "query": "scene=login&theme=dark",
+    "bodyText": 31,
+    "documentWidth": 1440,
+    "headings": [
+      "登录控制台"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "secrets-empty",
+    "query": "scene=secrets&mode=empty",
+    "bodyText": 165,
+    "documentWidth": 1440,
+    "headings": [
+      "界面验收",
+      "密钥管理"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "secrets-error",
+    "query": "scene=secrets&mode=error",
+    "bodyText": 165,
+    "documentWidth": 1440,
+    "headings": [
+      "界面验收",
+      "密钥管理"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "pc1280-account-long",
+    "query": "scene=accounts&mode=long",
+    "bodyText": 846,
+    "documentWidth": 1265,
+    "headings": [
+      "账号",
+      "用于验收长内容换行的生产单标题 · 中文、English、emoji 🎬 用于验收长内容换行的生产单标题 · 中文、English、emoji 🎬 用于验收长内容换行的生产单标题 · 中文、English、emoji 🎬 用于验收长内容换行的生产单标题 · 中文、English、emoji 🎬 用于验收长内容换行的生产单标题 · 中文、English、emoji 🎬 ",
+      "生产条件",
+      "配置范围"
+    ],
+    "height": 900,
+    "width": 1280
+  },
+  {
+    "name": "pc1280-production-long",
+    "query": "scene=production&stage=storyboard_approved&mode=long",
+    "bodyText": 1337,
+    "documentWidth": 1280,
+    "headings": [
+      "用于验收长内容换行的生产单标题 · 中文、English、emoji 🎬 用于验收长内容换行的生产单标题 · 中文、English、emoji 🎬 用于验收长内容换行的生产单标题 · 中文、English、emoji 🎬 用于验收长内容换行的生产单标题 · 中文、English、emoji 🎬 用于验收长内容换行的生产单标题 · 中文、English、emoji 🎬 ",
+      "优先处理 Worker 阻塞项（1）",
+      "分镜工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "本期配置"
+    ],
+    "height": 900,
+    "width": 1280
+  },
+  {
+    "name": "pc1280-episodes-long-dark",
+    "query": "scene=episodes&mode=long&theme=dark",
+    "bodyText": 773,
+    "documentWidth": 1280,
+    "headings": [
+      "生产单"
+    ],
+    "height": 900,
+    "width": 1280
+  },
+  {
+    "name": "pc1280-history",
+    "query": "scene=maintenance&tab=history",
+    "bodyText": 192,
+    "documentWidth": 1280,
+    "headings": [
+      "界面验收",
+      "历史生产内容"
+    ],
+    "height": 900,
+    "width": 1280
+  },
+  {
+    "name": "pc1280-completion",
+    "query": "scene=completion",
+    "bodyText": 279,
+    "documentWidth": 1280,
+    "headings": [
+      "界面验收",
+      "完成生产"
+    ],
+    "height": 900,
+    "width": 1280
+  },
+  {
+    "name": "pc1280-empty",
+    "query": "scene=episodes&mode=empty",
+    "bodyText": 192,
+    "documentWidth": 1280,
+    "headings": [
+      "生产单",
+      "还没有符合条件的生产单"
+    ],
+    "height": 900,
+    "width": 1280
+  },
+  {
+    "name": "pc1920-account",
+    "query": "scene=accounts",
+    "bodyText": 481,
+    "documentWidth": 1905,
+    "headings": [
+      "账号",
+      "演示工作室",
+      "生产条件",
+      "配置范围"
+    ],
+    "height": 1080,
+    "width": 1920
+  },
+  {
+    "name": "pc1920-production",
+    "query": "scene=production&stage=qc_review&mode=healthy",
+    "bodyText": 517,
+    "documentWidth": 1920,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "镜头工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "OpenChatCut 审核渲染 · 工程 v1",
+      "在 OpenChatCut 编辑",
+      "Owner 审批",
+      "本期配置"
+    ],
+    "height": 1080,
+    "width": 1920
+  },
+  {
+    "name": "pc1920-completion-dark",
+    "query": "scene=completion&theme=dark",
+    "bodyText": 278,
+    "documentWidth": 1920,
+    "headings": [
+      "界面验收",
+      "完成生产"
+    ],
+    "height": 1080,
+    "width": 1920
+  },
+  {
+    "name": "mobile",
+    "query": "scene=app&mode=healthy",
+    "bodyText": 233,
+    "documentWidth": 375,
+    "headings": [
+      "工作台",
+      "待审核",
+      "阻塞项",
+      "生产单明细"
+    ],
+    "height": 844,
+    "width": 390
+  },
+  {
+    "name": "shot-workbench-dark",
+    "query": "scene=production&stage=storyboard_approved&mode=healthy&theme=dark",
+    "bodyText": 1040,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "分镜工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "qc-dark",
+    "query": "scene=production&stage=qc_review&mode=healthy&theme=dark",
+    "bodyText": 517,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "镜头工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "OpenChatCut 审核渲染 · 工程 v1",
+      "在 OpenChatCut 编辑",
+      "Owner 审批",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "account-dark",
+    "query": "scene=accounts&theme=dark",
+    "bodyText": 480,
+    "documentWidth": 1425,
+    "headings": [
+      "账号",
+      "演示工作室",
+      "生产条件",
+      "配置范围"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "completion-ready-dark",
+    "query": "scene=completion&mode=ready&theme=dark",
+    "bodyText": 327,
+    "documentWidth": 1440,
+    "headings": [
+      "界面验收",
+      "完成生产",
+      "最终生产材料"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "history-dark",
+    "query": "scene=maintenance&tab=history&theme=dark",
+    "bodyText": 191,
+    "documentWidth": 1440,
+    "headings": [
+      "界面验收",
+      "历史生产内容"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "qc-dark",
+    "query": "scene=production&stage=qc_review&mode=healthy&theme=dark",
+    "bodyText": 517,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "镜头工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "OpenChatCut 审核渲染 · 工程 v1",
+      "在 OpenChatCut 编辑",
+      "Owner 审批",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "pc1280-episodes-long-dark",
+    "query": "scene=episodes&mode=long&theme=dark",
+    "bodyText": 0,
+    "documentWidth": 1440,
+    "headings": [],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "pc1280-episodes-long-dark",
+    "query": "scene=episodes&mode=long&theme=dark",
+    "bodyText": 773,
+    "documentWidth": 1440,
+    "headings": [
+      "生产单"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "pc1280-episodes-long-dark",
+    "query": "scene=episodes&mode=long&theme=dark",
+    "postFix": true,
+    "bodyText": 773,
+    "documentWidth": 1280,
+    "headings": [
+      "生产单"
+    ],
+    "height": 900,
+    "width": 1280
+  },
+  {
+    "name": "stage-waiting_input-light",
+    "query": "scene=production&stage=waiting_input",
+    "postFix": true,
+    "bodyText": 610,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "准备生产材料",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-brief_draft-light",
+    "query": "scene=production&stage=brief_draft",
+    "postFix": true,
+    "bodyText": 399,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-script_draft-light",
+    "query": "scene=production&stage=script_draft",
+    "postFix": true,
+    "bodyText": 402,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-script_review-light",
+    "query": "scene=production&stage=script_review",
+    "postFix": true,
+    "bodyText": 494,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "可审核文本 · 修订 v1",
+      "Owner 审批",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-script_approved-light",
+    "query": "scene=production&stage=script_approved",
+    "postFix": true,
+    "bodyText": 402,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-visual_draft-light",
+    "query": "scene=production&stage=visual_draft",
+    "postFix": true,
+    "bodyText": 402,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-visual_review-light",
+    "query": "scene=production&stage=visual_review",
+    "postFix": true,
+    "bodyText": 609,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "准备生产材料",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "Owner 审批",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-visual_approved-light",
+    "query": "scene=production&stage=visual_approved",
+    "postFix": true,
+    "bodyText": 644,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-storyboard_draft-light",
+    "query": "scene=production&stage=storyboard_draft",
+    "postFix": true,
+    "bodyText": 398,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-storyboard_review-light",
+    "query": "scene=production&stage=storyboard_review",
+    "postFix": true,
+    "bodyText": 628,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "可审核分镜 · 修订 v1",
+      "Owner 审批",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-storyboard_approved-light",
+    "query": "scene=production&stage=storyboard_approved",
+    "postFix": true,
+    "bodyText": 1160,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "分镜工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-production_ready-light",
+    "query": "scene=production&stage=production_ready",
+    "postFix": true,
+    "bodyText": 534,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "镜头工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "预渲染审核包 · 修订 v1",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-render_ready-light",
+    "query": "scene=production&stage=render_ready",
+    "postFix": true,
+    "bodyText": 449,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "镜头工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-qc_review-light",
+    "query": "scene=production&stage=qc_review",
+    "postFix": true,
+    "bodyText": 636,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "镜头工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "OpenChatCut 审核渲染 · 工程 v1",
+      "在 OpenChatCut 编辑",
+      "Owner 审批"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-qc_passed-light",
+    "query": "scene=production&stage=qc_passed",
+    "postFix": true,
+    "bodyText": 479,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "stage-production_completed-light",
+    "query": "scene=production&stage=production_completed",
+    "postFix": true,
+    "bodyText": 471,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "优先处理 Worker 阻塞项（1）",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "qc-dark",
+    "query": "scene=production&stage=qc_review&mode=healthy&theme=dark",
+    "postFix": true,
+    "bodyText": 517,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "镜头工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "生成媒体预览",
+      "OpenChatCut 审核渲染 · 工程 v1",
+      "在 OpenChatCut 编辑",
+      "Owner 审批",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "shot-workbench-dark",
+    "query": "scene=production&stage=storyboard_approved&mode=healthy&theme=dark",
+    "postFix": true,
+    "bodyText": 1040,
+    "documentWidth": 1440,
+    "headings": [
+      "城市日常：清晨的第一束光",
+      "分镜工作台",
+      "视觉清单",
+      "可审核文本 · 修订 v1",
+      "角色 / 地点 / 关键道具参考组",
+      "所需静态视觉",
+      "准备生产材料",
+      "本期配置"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "login-light",
+    "query": "scene=login",
+    "postFix": true,
+    "bodyText": 86,
+    "documentWidth": 1440,
+    "headings": [
+      "登录控制台"
+    ],
+    "height": 1000,
+    "width": 1440
+  },
+  {
+    "name": "login-dark",
+    "query": "scene=login&theme=dark",
+    "postFix": true,
+    "bodyText": 86,
+    "documentWidth": 1440,
+    "headings": [
+      "登录控制台"
+    ],
+    "height": 1000,
+    "width": 1440
+  }
+]

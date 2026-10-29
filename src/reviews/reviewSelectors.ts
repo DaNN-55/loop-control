@@ -1,3 +1,4 @@
+import type { WorkerPreflightResult } from "../worker/contracts";
 import type { Database, Json } from "../lib/database.types";
 
 type Episode = Database["public"]["Tables"]["episodes"]["Row"];
@@ -8,6 +9,11 @@ type Task = Database["public"]["Tables"]["tasks"]["Row"];
 
 export type{WorkerBlocker}from"./workerBlocker";
 import type{WorkerBlocker}from"./workerBlocker";
+
+export function workerBlockersFromPreflight(preflight: WorkerPreflightResult | null): WorkerBlocker[] {
+  return preflight?.checks.filter((check) => check.status !== "passed").map((check) => ({ code: check.check, detail: check.reason, capability: check.capability, check: check.check, phase: check.phase, status: check.status, action: check.action, scope: check.scope })) ?? [];
+}
+
 
 export function currentReviewPackage(reviewPackages: ReviewPackage[], episode: Episode): ReviewPackage | null {
   return reviewPackages
@@ -85,9 +91,6 @@ function workerTaskScope(task: ScopedWorkerTask): string {
   return `${task.task_type}:task:${task.id ?? task.task_type}`;
 }
 
-export function isReviewPackagePending(reviewPackage: ReviewPackage, members: PreRenderReviewMember[], decisions: PreRenderReviewMemberDecision[]): boolean {
-  if (reviewPackage.stage !== "production_ready") return true;
-  if (reviewPackage.context_snapshot && !Array.isArray(reviewPackage.context_snapshot) && typeof reviewPackage.context_snapshot === "object" && reviewPackage.context_snapshot.approval_mode === "qc_only") return false;
-  const packageMembers = members.filter((member) => member.review_package_id === reviewPackage.id);
-  return packageMembers.length === 0 || packageMembers.some((member) => !decisions.some((decision) => decision.review_package_id === reviewPackage.id && decision.member_key === member.member_key));
+export function isReviewPackagePending(reviewPackage: ReviewPackage, _members: PreRenderReviewMember[], _decisions: PreRenderReviewMemberDecision[]): boolean {
+  return reviewPackage.stage !== "production_ready";
 }

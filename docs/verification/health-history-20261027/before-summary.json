@@ -1,0 +1,280 @@
+{
+  "plans": [
+    {
+      "kind": "backup",
+      "timezone": "Asia/Shanghai",
+      "next_due_at": "2026-10-27T01:00:00+00:00"
+    },
+    {
+      "kind": "health",
+      "timezone": "Asia/Shanghai",
+      "next_due_at": "2026-10-28T01:00:00+00:00"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "076f0a4b-2f7f-4a74-9094-6b316e915513",
+      "kind": "health",
+      "detail": "数据库、媒体目录和本地运行程序检查通过。",
+      "due_at": "2026-11-01T01:00:00+00:00",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1,
+      "lease_until": null,
+      "available_at": "2026-11-01T01:01:00+00:00",
+      "completed_at": "2026-11-01T01:00:00+00:00"
+    },
+    {
+      "id": "18e97f08-8216-428a-bedb-fb202eef6e7e",
+      "kind": "backup",
+      "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+      "due_at": "2026-10-28T01:00:00+00:00",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1,
+      "lease_until": null,
+      "available_at": "2026-10-28T01:01:00+00:00",
+      "completed_at": "2026-10-28T01:00:00+00:00"
+    },
+    {
+      "id": "1c0836a0-49ea-4c13-88a3-3783d23dd06f",
+      "kind": "health",
+      "detail": "T23 controlled health failure; independent result.",
+      "due_at": "2026-10-28T01:00:00+00:00",
+      "passed": false,
+      "status": "failed",
+      "attempt": 3,
+      "lease_until": null,
+      "available_at": "2026-10-28T01:03:00+00:00",
+      "completed_at": "2026-10-28T01:02:00+00:00"
+    },
+    {
+      "id": "1d19185d-6759-4b2e-bc77-2543c0fdf9fa",
+      "kind": "health",
+      "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。",
+      "due_at": "2026-10-24T01:00:00+00:00",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1,
+      "lease_until": null,
+      "available_at": "2026-10-24T01:01:00+00:00",
+      "completed_at": "2026-10-24T01:00:00+00:00"
+    },
+    {
+      "id": "20194f9c-70a6-40a1-8eb3-9b77fbff46eb",
+      "kind": "health",
+      "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。",
+      "due_at": "2026-10-25T01:00:00+00:00",
+      "passed": true,
+      "status": "completed",
+      "attempt": 2,
+      "lease_until": null,
+      "available_at": "2026-10-25T01:02:00+00:00",
+      "completed_at": "2026-10-25T01:01:00+00:00"
+    },
+    {
+      "id": "2cc0a6a6-211f-46cd-be5d-c9c52a4727f5",
+      "kind": "health",
+      "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。",
+      "due_at": "2026-10-30T01:00:00+00:00",
+      "passed": true,
+      "status": "completed",
+      "attempt": 2,
+      "lease_until": null,
+      "available_at": "2026-10-30T01:01:31+00:00",
+      "completed_at": "2026-10-30T01:00:31+00:00"
+    },
+    {
+      "id": "41cbcaee-4c6e-4404-92ae-bc7dc79d4455",
+      "kind": "backup",
+      "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+      "due_at": "2026-10-29T01:00:00+00:00",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1,
+      "lease_until": null,
+      "available_at": "2026-10-29T01:01:00+00:00",
+      "completed_at": "2026-10-29T01:00:00+00:00"
+    },
+    {
+      "id": "4e986e18-3c69-45df-9a0c-ad11124d0c9f",
+      "kind": "backup",
+      "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+      "due_at": "2026-10-26T01:00:00+00:00",
+      "passed": true,
+      "status": "completed",
+      "attempt": 2,
+      "lease_until": null,
+      "available_at": "2026-10-26T01:02:00+00:00",
+      "completed_at": "2026-10-26T01:01:00+00:00"
+    },
+    {
+      "id": "532a8aab-c072-4f27-8a1e-2c57f5754f29",
+      "kind": "backup",
+      "detail": "本地完整备份已生成并校验：49 张表、842 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+      "due_at": "2026-10-24T01:00:00+00:00",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1,
+      "lease_until": null,
+      "available_at": "2026-10-24T01:01:00+00:00",
+      "completed_at": "2026-10-24T01:00:00+00:00"
+    },
+    {
+      "id": "5ce285bb-387a-4101-9e5a-c5af4db1dbd9",
+      "kind": "backup",
+      "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+      "due_at": "2026-10-25T01:00:00+00:00",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1,
+      "lease_until": null,
+      "available_at": "2026-10-25T01:01:00+00:00",
+      "completed_at": "2026-10-25T01:00:00+00:00"
+    },
+    {
+      "id": "63f25b69-9606-4dba-8f80-b18599539cda",
+      "kind": "backup",
+      "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复能力尚未验收。",
+      "due_at": "2026-11-01T01:00:00+00:00",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1,
+      "lease_until": null,
+      "available_at": "2026-11-01T01:01:00+00:00",
+      "completed_at": "2026-11-01T01:00:00+00:00"
+    },
+    {
+      "id": "83107ed2-8321-4cc5-9d26-2e0748a78035",
+      "kind": "health",
+      "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。",
+      "due_at": "2026-10-31T01:00:00+00:00",
+      "passed": true,
+      "status": "completed",
+      "attempt": 2,
+      "lease_until": null,
+      "available_at": "2026-10-31T01:01:31+00:00",
+      "completed_at": "2026-10-31T01:00:31+00:00"
+    },
+    {
+      "id": "8c5b486d-9e18-4a2e-a431-c20790bb906b",
+      "kind": "backup",
+      "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+      "due_at": "2026-10-31T01:00:00+00:00",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1,
+      "lease_until": null,
+      "available_at": "2026-10-31T01:01:00+00:00",
+      "completed_at": "2026-10-31T01:00:00+00:00"
+    },
+    {
+      "id": "93b82876-03a4-4dc8-8478-4db57fbd48b4",
+      "kind": "backup",
+      "detail": "本地完整备份已生成并校验：51 张表、975 个文件；不包含密码、会话或 Keychain，恢复能力尚未验收。",
+      "due_at": "2026-10-26T04:47:09.51949+00:00",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1,
+      "lease_until": null,
+      "available_at": "2026-10-26T04:48:25.564+00:00",
+      "completed_at": "2026-10-26T04:47:25.564+00:00"
+    },
+    {
+      "id": "b6741bc6-c440-4e6f-bfcc-028ec987ac3c",
+      "kind": "health",
+      "detail": "数据库、媒体目录和本地运行程序检查通过。",
+      "due_at": "2026-10-26T04:47:09.460551+00:00",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1,
+      "lease_until": null,
+      "available_at": "2026-10-26T04:48:10.06+00:00",
+      "completed_at": "2026-10-26T04:47:10.06+00:00"
+    },
+    {
+      "id": "c2e75f4e-07d8-4f91-9996-e37b0130de7d",
+      "kind": "health",
+      "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。",
+      "due_at": "2026-10-29T01:00:00+00:00",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1,
+      "lease_until": null,
+      "available_at": "2026-10-29T01:01:00+00:00",
+      "completed_at": "2026-10-29T01:00:00+00:00"
+    },
+    {
+      "id": "e031be4a-bb18-414b-9898-8e72121c4ccb",
+      "kind": "health",
+      "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。",
+      "due_at": "2026-10-27T01:00:00+00:00",
+      "passed": true,
+      "status": "completed",
+      "attempt": 2,
+      "lease_until": null,
+      "available_at": "2026-10-28T01:00:59+00:00",
+      "completed_at": "2026-10-28T00:59:59+00:00"
+    },
+    {
+      "id": "eab83bb4-9cbf-4d26-bc23-ceb70af93b4d",
+      "kind": "health",
+      "detail": "本地数据库、媒体目录及已准备运行程序检查通过；未探测在线 Provider。",
+      "due_at": "2026-10-26T01:00:00+00:00",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1,
+      "lease_until": null,
+      "available_at": "2026-10-26T01:01:00+00:00",
+      "completed_at": "2026-10-26T01:00:00+00:00"
+    },
+    {
+      "id": "f86dd95f-b5cc-4587-a035-e0044ffd5a80",
+      "kind": "backup",
+      "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+      "due_at": "2026-10-27T01:00:00+00:00",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1,
+      "lease_until": null,
+      "available_at": "2026-10-27T01:01:00+00:00",
+      "completed_at": "2026-10-27T01:00:00+00:00"
+    },
+    {
+      "id": "f9a75111-907e-495c-bfda-b943136b4cd5",
+      "kind": "backup",
+      "detail": "本地完整备份已生成并校验：50 张表、848 个文件；不包含密码、会话或 Keychain，恢复演练待 T24。",
+      "due_at": "2026-10-30T01:00:00+00:00",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1,
+      "lease_until": null,
+      "available_at": "2026-10-30T01:01:00+00:00",
+      "completed_at": "2026-10-30T01:00:00+00:00"
+    }
+  ],
+  "attemptCount": 27,
+  "futureCompletedJobs": 11,
+  "sourceMatches": [
+    {
+      "label": ".loop-control/archives/worktrees/local-first-optimization-20261026/.scratch/disk-cleanup-20261026/retired-metadata/5f3dc01e-e7c4-431b-ab69-6d4715f3252c/business.dump",
+      "matched_rows": 49
+    },
+    {
+      "label": ".loop-control/archives/worktrees/local-first-optimization-20261026/.scratch/disk-cleanup-20261026/retired-metadata/29a246cf-0da8-4be0-b831-71237213de04/business.dump",
+      "matched_rows": 49
+    },
+    {
+      "label": ".loop-control/archives/worktrees/local-first-optimization-20261026/.scratch/disk-cleanup-20261026/retired-metadata/eb0641d4-da72-4aa4-8fd3-1ae46581c0d0/business.dump",
+      "matched_rows": 49
+    },
+    {
+      "label": ".loop-control/archives/worktrees/local-first-optimization-20261026/.scratch/disk-cleanup-20261026/retired-metadata/f553ebeb-91c3-4d03-ad4a-9132280718f4/business.dump",
+      "matched_rows": 49
+    },
+    {
+      "label": ".loop-control/archives/worktrees/local-first-optimization-20261026/.scratch/disk-cleanup-20261026/retired-metadata/8ffbafa9-3198-434f-91a5-15c1717dedda/business.dump",
+      "matched_rows": 49
+    }
+  ]
+}

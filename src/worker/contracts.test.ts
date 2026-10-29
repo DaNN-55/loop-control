@@ -50,7 +50,7 @@ describe("Worker 契约", () => {
     });
   });
 
-  it("在 B-roll Worker 任务包中冻结非秘密连接引用", () => {
+  it("在 B-roll Worker 任务包中冻结非密钥连接引用", () => {
     const inputBasis = [
       { relativePath: "episodes/episode-1/script.md", sha256: "a".repeat(64) },
       { relativePath: "episodes/episode-1/visual.png", sha256: "b".repeat(64) },

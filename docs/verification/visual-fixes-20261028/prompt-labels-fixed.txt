@@ -1,0 +1,10 @@
+				18 text 保存后自动生成下一版编号，例如 storyboard-planning-v8。 适用阶段： 分镜规划 版本名称
+				19 button 版本名称说明
+				20 text field (settable) 版本名称
+				21 text 版本摘要
+				22 button 版本摘要说明
+				23 text field (settable) 版本摘要
+				24 text Harness 内容
+				25 button Harness 内容说明
+				26 text entry area (settable) Harness 内容
+The focused UI element is 13 button (expanded) 收起新版本表单, ID: react-aria1341508908-_r_26_, Secondary Actions: Collapse

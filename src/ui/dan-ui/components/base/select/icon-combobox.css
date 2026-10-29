@@ -1,0 +1,14 @@
+.dan-icon-combobox { width: 100%; min-width: 0; }
+.dan-icon-combobox-control { position: relative; display: flex; align-items: center; min-height: 36px; min-width: 0; border: 1px solid var(--lc-line-strong,var(--color-border-primary)); border-radius: 7px; background: var(--lc-surface,var(--color-bg-primary)); color: var(--lc-ink,var(--color-text-primary)); }
+.dan-icon-combobox-control:focus-within { outline: 2px solid var(--lc-accent,var(--color-border-brand)); outline-offset: 1px; }
+.dan-icon-combobox[data-disabled] { opacity: .5; }
+.dan-icon-combobox[data-disabled] :is(input,button) { cursor: not-allowed; }
+.dan-icon-combobox .dan-icon-combobox-leading { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); display: block; width: 16px; height: 16px; flex: 0 0 16px; color: var(--lc-muted,var(--color-fg-quaternary)); pointer-events: none; }
+.dan-icon-combobox .dan-icon-combobox-input { display: block; flex: 1 1 0; width: 100%; min-width: 0; min-height: 34px; margin: 0; padding: 7px 0 7px 36px !important; background: transparent; border: 0; outline: none; box-shadow: none; border-radius: inherit; color: inherit; font: inherit; font-size: 13px; line-height: 1.5; }
+.dan-icon-combobox .dan-icon-combobox-input::placeholder { color: var(--lc-muted,var(--color-text-placeholder)); }
+.dan-icon-combobox .dan-icon-combobox-toggle { display: inline-flex; flex: 0 0 34px; width: 34px; height: 34px; min-width: 34px; min-height: 34px; align-items: center; justify-content: center; padding: 0 !important; background: transparent; border: 0; border-radius: 6px; box-shadow: none; color: var(--lc-muted,var(--color-fg-quaternary)); }
+.dan-icon-combobox .dan-icon-combobox-toggle svg { display: block; width: 16px; height: 16px; flex: 0 0 16px; }
+.dan-icon-combobox-toggle:hover:not(:disabled) { background: var(--lc-surface-2,var(--color-bg-primary_hover)); }
+.dan-icon-combobox-toggle[aria-expanded="true"] { background: var(--lc-accent-soft,var(--color-bg-brand-primary)); }
+.dan-icon-combobox-popover { max-height: min(320px,var(--available-height,320px)); }
+.dan-icon-combobox-empty { margin: 0; padding: 8px 10px; color: var(--lc-muted,var(--color-text-tertiary)); font-size: 12px; line-height: 1.5; }

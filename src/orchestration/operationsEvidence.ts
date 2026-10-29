@@ -1,8 +1,9 @@
 import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
+import {readHealthChecks,type HealthCheck} from '../observability/healthChecks.js';
 export type Operation = "schedule" | "notification" | "health" | "backup" | "snapshot";
-export interface OperationResult { at: string; passed: boolean; detail: string; idle?: boolean }
+export interface OperationResult { at: string; passed: boolean; detail: string; idle?: boolean; checks?:HealthCheck[] }
 export interface OperationEvidence { latest: OperationResult; lastSuccess: OperationResult | null; lastFailure: OperationResult | null }
 export type OperationsEvidence = Partial<Record<Operation, OperationEvidence>>;
 const operations: Operation[] = ["schedule", "notification", "health", "backup", "snapshot"];
@@ -10,7 +11,7 @@ function readResult(path: string, observedAt = new Date()): OperationResult | nu
   try {
     const value = JSON.parse(readFileSync(path, "utf8")) as OperationResult;
     if (!value || typeof value.passed !== "boolean" || typeof value.detail !== "string" || value.detail.length > 1000 || !Number.isFinite(Date.parse(value.at))) throw Error("invalid");
-    return value;
+    return {...value,checks:readHealthChecks(value.checks)};
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code === "ENOENT") return null;
     return { at: observedAt.toISOString(), passed: false, detail: "本机结果记录无效或无法读取。" };

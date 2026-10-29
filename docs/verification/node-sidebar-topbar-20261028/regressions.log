@@ -1,0 +1,539 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx > opens standalone OpenChatCut from the initial account page without selecting a production order 97ms
+ × src/local-app/LocalCatalogApp.workspace.test.tsx > uses the approved navigation with real table paging and a contextual production workspace 45ms
+   → Unable to find an element with the text: 普通长度完整生产单. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell dan-ui product-ui impeccable-app"[39m
+      [33mdata-sidebar[39m=[32m"expanded"[39m
+      [33mdata-theme[39m=[32m"light"[39m
+    [36m>[39m
+      [36m<a[39m
+        [33mclass[39m=[32m"skip-link"[39m
+        [33mhref[39m=[32m"#main-content"[39m
+      [36m>[39m
+        [0m跳到主要内容[0m
+      [36m</a>[39m
+      [36m<aside[39m
+        [33maria-label[39m=[32m"主导航"[39m
+        [33mclass[39m=[32m"sidebar"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"lc-brand"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-layers"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<span>[39m
+            [0mLoop Control[0m
+            [36m<small>[39m
+              [0m创作工作区[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"工作区"[39m
+          [33mclass[39m=[32m"navigation"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33maria-label[39m=[32m"生产工作"[39m
+            [33mclass[39m=[32m"navigation-group"[39m
+            [33mrole[39m=[32m"group"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-label[39m=[32m"工作台"[39m
+              [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover navigation-item"[39m
+              [33mdata-color[39m=[32m"tertiary"[39m
+              [33mdata-rac[39m=[32m""[39m
+              [33mdata-react-aria-pressable[39m=[32m"true"[39m
+              [33mid[39m=[32m"react-aria-_r_1i_"[39m
+              [33mtabindex[39m=[32m"0"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-layout-dashboard pointer-events-none size-5 shrink-0 transition-inherit-all"[39m
+                [33mdata-icon[39m=[32m"leading"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"9"[39m
+                  [33mrx[39m=[32m"1"[39m
+                  [33mwidth[39m=[32m"7"[39m
+                  [33mx[39m=[32m"3"[39m
+                  [33my[39m=[32m"3"[39m
+                [36m/>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"5"[39m
+                  [33mrx[39m=[32m"1"[39m
+                  [33mwidth[39m=[32m"7"[39m
+                  [33mx[39m=[32m"14"[39m
+                  [33my[39m=[32m"3"[39m
+                [36m/>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"9"[39m
+                  [33mrx[39m=[32m"1"[39m
+                  [33mwidth[39m=[32m"7"[39m
+                  [33mx[39m=[32m"14"[39m
+                  [33my[39m=[32m"12"[39m
+                [36m/>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"5"[39m
+                  [33mrx[39m=[32m"1"[39m
+                  [33mwidth[39m=[32m"7"[39m
+                  [33mx[39m=[32m"3"[39m
+                  [33my[39m=[32m"16"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+                [33mdata-text[39m=[32m"true"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"navigation-label"[39m
+                [36m>[39m
+                  [0m工作台[0m
+                [36m</span>[39m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-current[39m=[32m"page"[39m
+              [33maria-label[39m=[32m"生产单"[39m
+              [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrappe...
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx > 保留安全弹窗焦点，将维护入口统一为侧栏且跨页保留连接草稿 363ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx > cleanupPending=false: confirms the actual directory and exact title, then reports unfinished file cleanup 157ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx > cleanupPending=true: confirms the actual directory and exact title, then reports unfinished file cleanup 152ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx > shows a plan failure inside the confirmation dialog instead of leaving the click without feedback 86ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx > shows a delete failure inside the confirmation dialog instead of leaving the click without feedback 122ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx > keeps one topbar instance and places the Owner menu after theme in workspace and episode 412ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 点击抽屉外遮罩或按 Escape 可以关闭生产单详情 50ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 放大预览打开时按 Escape 不关闭生产单详情 6ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 在详情顶部显示当前阶段和下一步，并默认收起技术索引 26ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > Worker 排队或运行时显示持续刷新反馈 7ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > QC 通过但缺少最终材料时明确提示，并可进入生产完成流程 21ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 通过顶部图标按需打开产物索引及包含任务进度的审计时间线 60ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 审计时间线只显示中文原因，不展示技术原文 26ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 只列出需要 Owner 审核的 Episode，并允许选择其中一项 12ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 对待审核 Episode 使用分页 23ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 显示可预览产物和 Worker 阻塞项，并以理由执行批准或要求修改 146ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 即时派发失败时在当前任务区域持续显示原因 9ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 生成媒体预览默认展示当前镜头代理并折叠历史版本 14ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 只在整片音轨中展示可试听的 BGM，并将时间批注交给受控 RPC 93ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 展示 A-roll 的冻结执行证据和运行状态 12ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 按真实状态展示 A-roll 任务卡片：completed 8ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 按真实状态展示 A-roll 任务卡片：running 8ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 按真实状态展示 A-roll 任务卡片：failed 8ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 按真实状态展示 A-roll 任务卡片：blocked 9ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 在冻结执行器缺失时仍展示 A-roll 阻塞状态 13ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 合并重复阻塞任务并提供蓝图修改入口 28ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 以纵向缩略图展示产物，并允许 Owner 放大后关闭预览 75ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 在详情头部以图标提供刷新、打开和复制本地目录 397ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 材料区提供统一文件导入 9ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 等待输入时仅允许上传外部制作的主脚本 11ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 主脚本导入后等待 Owner 明确开始制作 19ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 显示生产开始前的真实运行态阻塞 9ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 通过统一入口标注用途后按顺序导入脚本、图片、A-roll 和 B-roll 333ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 将主脚本和补充脚本归入同一个脚本分组 76ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 最多并发导入三个材料并在完成后立即补位 201ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 导入成功后保留材料卡，直到冻结材料刷新完成 50ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 可打开脚本模板，并点击材料名称预览 65ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 使用浏览器文件地址预览待导入视频 27ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 在材料列表显示已确认、已导入和已绑定镜头状态 8ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 新 Episode 的上传阶段不要求整期声音选择 4ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 已批准分镜显示声音与对齐状态，并保存整期 BGM 和闪避选择 275ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 逐镜头主声音和音效独立保存，静音后恢复原选择并保留画面草稿 895ms
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 第二镜独立字幕先保存，未保存时键盘切步保持当前正文
+An update to ForwardRef(TextArea) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(TextArea) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 第二镜独立字幕先保存，未保存时键盘切步保持当前正文 687ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 第二镜修改双屏槽位和衔接后保存，保留已保存的独立正文 536ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 第二镜修改字幕空间时保留已保存构图，保存刷新后保持所选镜头 735ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 已生成字幕时序先只读查看，明确调整后才开放编辑 177ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 本地人工时序编辑跨音轨轮询保留并只提交本地回调 356ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > QC 首先展示当前成片与证据，返回制作时保留当前播放器 112ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 审核阶段返回镜头工作台时保留 QC 证据，并显式确认覆盖 Studio 工程 266ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 审核镜头可核对同步预览要求，修改字幕后旧确认与代理立即失效 1001ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 预览失败、缺少原片或旧合同阻止确认，生产就绪时仍可返回编辑 426ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交 737ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 删除镜头后在工作台切换新版，并打开下一镜 157ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 刷新后从运行中的结构任务恢复工作台，并在完成后打开删除镜头的下一镜 82ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 新版分镜保留旧版本 hash 中仍存在的镜头 69ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 本期 TTS 试听只在点击后读取当前表单，不保存或创建任务 180ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 本期 TTS 未保存时明确阻止逐镜头生成，并标记表单修改状态 104ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 逐镜头 TTS 可先于原片标记生成，完整保存仍要求视频 349ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 重新生成口播时隐藏旧音轨，完成后可从右上角筛选历史口播 87ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 逐镜头口播无需确认即可保存，并可保存单镜头覆盖 766ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 后台刷新时保留未保存的原片与片段标记 167ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 保留原声直接使用视频内嵌音轨并允许生成同步预览 103ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 无口播显示为明确静音，并仍可保存字幕开关 182ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 同一原片支持多段裁剪并随镜头草稿一起保存 587ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 选择镜头原片文件后立即导入，不再要求二次确认 92ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 分镜准备阶段不提供 Studio 入口 36ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 展示委托脚本的冻结输入，并让 Owner 完成审核或要求重写 51ms
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 读取分镜前文本产物及其冻结审核上下文 72ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 将冻结的外部视觉输入连同视觉资产清单交给 Owner 审核 57ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产 6ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览 6ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 在 Studio 提交一次合成修订并重新审核 108ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 在审核渲染中只提供官方 Studio 入口 8ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 按镜头审核冻结分镜、保存批注，并执行批准或返工 146ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 人工媒体可在镜头工作台选择原片并保存镜头设置 712ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 已保存原片可预览并在冻结前替换 234ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 分镜产物格式无效时不允许 Owner 批准或退回 16ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 将预渲染成员作为审计证据，并自动进入审核渲染 11ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx > keeps a committed series save successful when its follow-up read fails 317ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx > requests server pages and discards a late response from an earlier filter 84ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx > does not restore an old catalog after Owner logout 52ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx > refreshes the current page on becoming visible and does not fetch while hidden 19ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx > does not start a new catalog read while logout is pending 42ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx > returns to login after network logout failure without accepting old reads, then restores writable CSRF on login 73ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx > returns to login after 503 logout failure without accepting old reads, then restores writable CSRF on login 71ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx > isolates concurrent network logout failures in older-first order from a fresh login 116ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx > isolates concurrent 503 logout failures in older-first order from a fresh login 111ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx > isolates concurrent network logout failures in newer-first order from a fresh login 105ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx > isolates concurrent 503 logout failures in newer-first order from a fresh login 133ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx > returns to login and clears the visible workspace when a remote local session is revoked 52ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx > clears the administrator secret page when another browser tab changes identity 52ms
+ ✓ src/local-app/WorkspaceTopbar.test.tsx > opens search with the keyboard, restores focus and does not query empty input 105ms
+ ✓ src/local-app/WorkspaceTopbar.test.tsx > does not let an old response replace a newer search and opens the real result 581ms
+ ✓ src/local-app/WorkspaceTopbar.test.tsx > preserves account navigation and opens only the registered SHA-bound material 585ms
+ ✓ src/local-app/WorkspaceTopbar.test.tsx > shows a readable search error and retries the same query 562ms
+ ✓ src/local-app/WorkspaceTopbar.test.tsx > reads global pending work on demand, merges duplicate episodes and retains exact totals 113ms
+ ✓ src/local-app/WorkspaceTopbar.test.tsx > retries unavailable notifications and invokes the existing theme action 41ms
+ ✓ src/episodes/ProductionNodes.test.tsx > navigates all seven nodes without invoking production commands 210ms
+ ✓ src/episodes/ProductionNodes.test.tsx > supports keyboard workflow navigation and marks completed nodes without changing stage 18ms
+ ✓ src/episodes/ProductionNodes.test.tsx > keeps a frozen script read-only, previews its actual Markdown and routes file selection left 35ms
+ ✓ src/episodes/ProductionNodes.test.tsx > uses the real script diagnostic and refuses to save invalid edits 130ms
+ ✓ src/episodes/ProductionNodes.test.tsx > rail drag and keyboard request a revision rather than mutating the shot data 20ms
+ ✓ src/episodes/ProductionNodes.test.tsx > retains the QC decision draft while browsing other nodes 59ms
+ ✓ src/episodes/ProductionNodes.test.tsx > saves an edited pending script back into the import draft and requires a fresh confirmation 222ms
+ ✓ src/episodes/ProductionNodes.test.tsx > keeps the legacy script review text and its guarded approval action in the input node 52ms
+ ✓ src/episodes/ProductionNodes.test.tsx > routes rail reorder through the existing reasoned structure revision and preserves generation entrypoints 234ms
+ ✓ src/episodes/ProductionNodes.test.tsx > keeps the full visual basis available beside its reference gallery 31ms
+ ✓ src/episodes/ProductionNodes.test.tsx > keeps an unapproved storyboard from opening future shot editing controls 18ms
+ ✓ src/episodes/ProductionNodes.test.tsx > selects frozen pre-render media on the left and keeps only its evidence expanded 41ms
+ ✓ src/local-app/LocalCatalogApp.account.test.tsx > checks the exact current blueprint through the local Owner command and displays its real blocker 192ms
+ ✓ src/local-app/LocalCatalogApp.account.test.tsx > does not show an old successful check after the saved blueprint revision changes 186ms
+ ✓ src/local-app/LocalCatalogApp.account.test.tsx > does not start a blueprint check while logout is pending 117ms
+ ✓ src/local-app/LocalCatalogApp.account.test.tsx > keeps the new account check when the previous account check returns late 207ms
+ ✓ src/local-app/LocalCatalogApp.account.test.tsx > keeps the relogged-in session check when an old session check returns late 191ms
+ ✓ src/episodes/WanShotGenerator.test.tsx > Wan shot generation > 人工路径不出现生成入口 9ms
+ ✓ src/episodes/WanShotGenerator.test.tsx > Wan shot generation > Episode 级预算只渲染一次，多镜头生成器不重复预算表单 52ms
+ ✓ src/episodes/WanShotGenerator.test.tsx > Wan shot generation > 任务状态刷新只更新预算摘要，不覆盖正在编辑的额度 60ms
+ ✓ src/episodes/WanShotGenerator.test.tsx > Wan shot generation > 保存延迟期间切换 Episode 不会读取或覆盖新期预算 30ms
+ ✓ src/episodes/WanShotGenerator.test.tsx > Wan shot generation > 卸载旧 Episode 后，延迟的旧预算响应不影响新页面 15ms
+ ✓ src/episodes/WanShotGenerator.test.tsx > Wan shot generation > 没有 external 视频供应商时不显示 Episode 预算 0ms
+ ✓ src/episodes/WanShotGenerator.test.tsx > Wan shot generation > 读取已有预算作为编辑值，保存时保留实际额度和继续生成授权 22ms
+ ✓ src/episodes/WanShotGenerator.test.tsx > Wan shot generation > a_roll显式选首帧后才能创建任务，不自动消费 58ms
+ ✓ src/episodes/WanShotGenerator.test.tsx > Wan shot generation > b_roll显式选首帧后才能创建任务，不自动消费 42ms
+ ✓ src/episodes/WanShotGenerator.test.tsx > volcengine doubao-seedance-2-0-260128 requires an explicit per-request reservation before generating 64ms
+ ✓ src/episodes/WanShotGenerator.test.tsx > volcengine doubao-seedance-2-5-260628 requires an explicit per-request reservation before generating 66ms
+ ✓ src/episodes/WanShotGenerator.test.tsx > minimax MiniMax-H3 requires an explicit per-request reservation before generating 71ms
+ ✓ src/episodes/WanShotGenerator.test.tsx > kling kling-v3 requires an explicit per-request reservation before generating 62ms
+stderr | src/publishing/ProductionCompletionModal.test.tsx > 生产完成弹窗 > 展示最终材料和生产完成状态，不提供外部发布登记
+An update to PublishMetadataSummary inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to PublishMaterialPreview inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to PublishMaterialPreview inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/publishing/ProductionCompletionModal.test.tsx > 生产完成弹窗 > 展示最终材料和生产完成状态，不提供外部发布登记 49ms
+ ✓ src/publishing/ProductionCompletionModal.test.tsx > inline future delivery stays read-only and never submits 17ms
+ ✓ src/publishing/ProductionCompletionModal.test.tsx > inline delivery submits existing real payload once and exposes preparation failures 131ms
+ ✓ src/local-app/LocalDeliveryPanel.nodes.test.tsx > allows resolving issues only in the real current QC stage 73ms
+ ✓ src/local-app/LocalDeliveryPanel.nodes.test.tsx > keeps completed QC evidence visible without mutation controls 2ms
+ ✓ src/local-app/LocalDeliveryPanel.nodes.test.tsx > retains the existing final-render retry payload after QC approval 23ms
+ ✓ src/local-app/workspaceSearch.test.ts > workspace search query boundary > trims a bounded query and treats percent, underscore and SQL punctuation as literal search text 1ms
+ ✓ src/local-app/workspaceSearch.test.ts > workspace search query boundary > rejects invalid or ambiguous query  before opening a transaction 1ms
+ ✓ src/local-app/workspaceSearch.test.ts > workspace search query boundary > rejects invalid or ambiguous query q= before opening a transaction 0ms
+ ✓ src/local-app/workspaceSearch.test.ts > workspace search query boundary > rejects invalid or ambiguous query q=+++ before opening a transaction 0ms
+ ✓ src/local-app/workspaceSearch.test.ts > workspace search query boundary > rejects invalid or ambiguous query q=a&q=b before opening a transaction 0ms
+ ✓ src/local-app/workspaceSearch.test.ts > workspace search query boundary > rejects invalid or ambiguous query q=a&ownerId=foreign before opening a transaction 0ms
+ ✓ src/local-app/workspaceSearch.test.ts > workspace search query boundary > rejects invalid or ambiguous query q=%00bad before opening a transaction 0ms
+ ✓ src/local-app/workspaceSearch.test.ts > workspace search query boundary > rejects invalid or ambiguous query q=%0Abad before opening a transaction 0ms
+ ✓ src/local-app/workspaceSearch.test.ts > workspace search query boundary > rejects invalid or ambiguous query q=%7Fbad before opening a transaction 0ms
+ ✓ src/local-app/workspaceSearch.test.ts > workspace search query boundary > rejects invalid or ambiguous query q=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx before opening a transaction 0ms
+ ✓ src/local-app/workspaceSearch.test.ts > workspace search read contract > uses a read-only Owner transaction and parameters without interpolating the search text 1ms
+ ✓ src/local-app/workspaceSearch.test.ts > workspace search read contract > caps each group independently and reports undisplayed matches 0ms
+ ✓ src/local-app/workspaceSearch.test.ts > workspace search read contract > rolls back and releases the connection if the metadata query fails 0ms
+ ✓ src/local-app/workspaceSearch.test.ts > workspace search read contract > fences all three groups through owned account membership and only selects registered file metadata 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/LocalCatalogApp.workspace.test.tsx > uses the approved navigation with real table paging and a contextual production workspace
+TestingLibraryElementError: Unable to find an element with the text: 普通长度完整生产单. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-shell dan-ui product-ui impeccable-app"[39m
+      [33mdata-sidebar[39m=[32m"expanded"[39m
+      [33mdata-theme[39m=[32m"light"[39m
+    [36m>[39m
+      [36m<a[39m
+        [33mclass[39m=[32m"skip-link"[39m
+        [33mhref[39m=[32m"#main-content"[39m
+      [36m>[39m
+        [0m跳到主要内容[0m
+      [36m</a>[39m
+      [36m<aside[39m
+        [33maria-label[39m=[32m"主导航"[39m
+        [33mclass[39m=[32m"sidebar"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"lc-brand"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-layers"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"24"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"24"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<span>[39m
+            [0mLoop Control[0m
+            [36m<small>[39m
+              [0m创作工作区[0m
+            [36m</small>[39m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<nav[39m
+          [33maria-label[39m=[32m"工作区"[39m
+          [33mclass[39m=[32m"navigation"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33maria-label[39m=[32m"生产工作"[39m
+            [33mclass[39m=[32m"navigation-group"[39m
+            [33mrole[39m=[32m"group"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33maria-label[39m=[32m"工作台"[39m
+              [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover navigation-item"[39m
+              [33mdata-color[39m=[32m"tertiary"[39m
+              [33mdata-rac[39m=[32m""[39m
+              [33mdata-react-aria-pressable[39m=[32m"true"[39m
+              [33mid[39m=[32m"react-aria-_r_1i_"[39m
+              [33mtabindex[39m=[32m"0"[39m
+              [33mtype[39m=[32m"button"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-layout-dashboard pointer-events-none size-5 shrink-0 transition-inherit-all"[39m
+                [33mdata-icon[39m=[32m"leading"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"24"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"24"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"9"[39m
+                  [33mrx[39m=[32m"1"[39m
+                  [33mwidth[39m=[32m"7"[39m
+                  [33mx[39m=[32m"3"[39m
+                  [33my[39m=[32m"3"[39m
+                [36m/>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"5"[39m
+                  [33mrx[39m=[32m"1"[39m
+                  [33mwidth[39m=[32m"7"[39m
+                  [33mx[39m=[32m"14"[39m
+                  [33my[39m=[32m"3"[39m
+                [36m/>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"9"[39m
+                  [33mrx[39m=[32m"1"[39m
+                  [33mwidth[39m=[32m"7"[39m
+                  [33mx[39m=[32m"14"[39m
+                  [33my[39m=[32m"12"[39m
+                [36m/>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"5"[39m
+                  [33mrx[39m=[32m"1"[39m
+                  [33mwidth[39m=[32m"7"[39m
+                  [33mx[39m=[32m"3"[39m
+                  [33my[39m=[32m"16"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+                [33mdata-text[39m=[32m"true"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"navigation-label"[39m
+                [36m>[39m
+                  [0m工作台[0m
+                [36m</span>[39m
+              [36m</span>[39m
+            [36m</button>[39m
+            [36m<button[39m
+              [33maria-current[39m=[32m"page"[39m
+              [33maria-label[39m=[32m"生产单"[39m
+              [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrappe...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/local-app/LocalCatalogApp.workspace.test.tsx:33:116
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 9 passed (10)
+      Tests  1 failed | 148 passed (149)
+   Start at  20:16:32
+   Duration  26.88s (transform 602ms, setup 17ms, collect 4.61s, tests 19.92s, environment 1.30s, prepare 237ms)
+

@@ -1,0 +1,12 @@
+{
+  "shot-preview-dark": {
+    "canonical": "docs/verification/impeccable-migration-20261028/screenshots/shot-preview-dark.png",
+    "freshAlias": "docs/verification/impeccable-migration-20261028/screenshots/shot-preview-dark-recapture2.png",
+    "sha256": "94fa651249f825690983249a25bbd0ce3a2b6ce22e8105eba28c291f14958ceb"
+  },
+  "completion-ready-dark": {
+    "canonical": "docs/verification/impeccable-migration-20261028/screenshots/completion-ready-dark.png",
+    "freshAlias": "docs/verification/impeccable-migration-20261028/screenshots/completion-ready-dark-recapture2.png",
+    "sha256": "55a4a5c1cdc40571066e5cefab1b29fc77b4b57d7bd91fde350941f960c5bc16"
+  }
+}

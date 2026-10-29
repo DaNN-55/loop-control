@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-29T03:21:15.404Z",
+  "runtimePrepared": true,
+  "realEpisodeRowsUnchanged": true,
+  "realArchiveOrRestoreCommands": 0,
+  "realEpisodeCount": 5,
+  "uiRegressionTestsPassed": 22,
+  "realHttpPgAcceptancePassed": true,
+  "headerBorder": "0px",
+  "actionsBorder": "1px",
+  "temporaryFixturesRemoved": true
+}

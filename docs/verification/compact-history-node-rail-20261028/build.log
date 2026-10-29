@@ -1,0 +1,20 @@
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 4418 modules transformed.
+
+(!) outDir /private/tmp/loop-control-compact-ui-final-20261028 is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+rendering chunks...
+computing gzip size...
+../../../../private/tmp/loop-control-compact-ui-final-20261028/index.html                                  0.86 kB │ gzip:   0.46 kB
+../../../../private/tmp/loop-control-compact-ui-final-20261028/native-runtime-graph.json                 281.29 kB │ gzip:  23.55 kB
+../../../../private/tmp/loop-control-compact-ui-final-20261028/assets/index-Diftlaas.css                 597.21 kB │ gzip:  86.22 kB
+../../../../private/tmp/loop-control-compact-ui-final-20261028/assets/retiredRemoteClient-CR7xA7U4.js      0.16 kB │ gzip:   0.18 kB
+../../../../private/tmp/loop-control-compact-ui-final-20261028/assets/index-gXnrvYEC.js                1,050.00 kB │ gzip: 314.06 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.99s

@@ -1,0 +1,129 @@
+{
+  "bodyHeight": 1261,
+  "clipped": [],
+  "colorSamples": [],
+  "dialogs": [],
+  "height": 953,
+  "images": [
+    {
+      "bottom": 66,
+      "cls": "wordmark-mark",
+      "complete": true,
+      "height": 42,
+      "name": null,
+      "naturalWidth": 150,
+      "right": 57,
+      "src": "http://127.0.0.1:5174/brand/loop-mark.svg",
+      "tag": "IMG",
+      "text": "",
+      "width": 42,
+      "x": 15,
+      "y": 24
+    }
+  ],
+  "nodes": 223,
+  "outside": [],
+  "overflow": false,
+  "rootFont": "16px",
+  "scrollWidth": 1528,
+  "smallTargets": [
+    {
+      "bottom": 741,
+      "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover sidebar-studio-shortcut",
+      "height": 16,
+      "name": "打开 OpenChatCut 独立剪辑",
+      "right": 66,
+      "tag": "BUTTON",
+      "text": "",
+      "width": 36,
+      "x": 30,
+      "y": 725
+    },
+    {
+      "bottom": 282,
+      "cls": "help-tip",
+      "height": 20,
+      "name": "账号定位说明",
+      "right": 357,
+      "tag": "SPAN",
+      "text": "",
+      "width": 20,
+      "x": 337,
+      "y": 262
+    },
+    {
+      "bottom": 505,
+      "cls": "help-tip",
+      "height": 20,
+      "name": "资产目录说明",
+      "right": 348,
+      "tag": "SPAN",
+      "text": "",
+      "width": 20,
+      "x": 328,
+      "y": 485
+    },
+    {
+      "bottom": 588,
+      "cls": "help-tip",
+      "height": 20,
+      "name": "审批关卡说明",
+      "right": 344,
+      "tag": "SPAN",
+      "text": "",
+      "width": 20,
+      "x": 324,
+      "y": 568
+    },
+    {
+      "bottom": 620,
+      "cls": "help-tip",
+      "height": 20,
+      "name": "脚本审核说明",
+      "right": 378,
+      "tag": "SPAN",
+      "text": "",
+      "width": 20,
+      "x": 358,
+      "y": 600
+    },
+    {
+      "bottom": 620,
+      "cls": "help-tip",
+      "height": 20,
+      "name": "视觉审核说明",
+      "right": 625,
+      "tag": "SPAN",
+      "text": "",
+      "width": 20,
+      "x": 605,
+      "y": 600
+    },
+    {
+      "bottom": 620,
+      "cls": "help-tip",
+      "height": 20,
+      "name": "分镜审核说明",
+      "right": 872,
+      "tag": "SPAN",
+      "text": "",
+      "width": 20,
+      "x": 852,
+      "y": 600
+    },
+    {
+      "bottom": 620,
+      "cls": "help-tip",
+      "height": 20,
+      "name": "QC 审核说明",
+      "right": 1117,
+      "tag": "SPAN",
+      "text": "",
+      "width": 20,
+      "x": 1097,
+      "y": 600
+    }
+  ],
+  "url": "http://127.0.0.1:5174/#account-budget",
+  "width": 1543
+}

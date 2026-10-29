@@ -1,6 +1,6 @@
 // @vitest-environment node
-// Explicit isolated fixture only. The retained RPC is a compatibility reference:
-// its identity call is adapted to native identity, not a deployed Supabase test.
+// Explicit disposable native database only. Compare the current Owner HTTP
+// catalog with an independent SQL reference; no cloud runtime or real credentials.
 import assert from 'node:assert/strict';
 import {createServer} from 'node:http';
 import {spawn} from 'node:child_process';
@@ -17,19 +17,20 @@ import type {EpisodeCatalog} from '../episodes/episodeCatalogTypes';
 const fixturePath=process.env.LOOP_CATALOG_CONTRACT_TEST_FIXTURE;
 assert(fixturePath,'Set LOOP_CATALOG_CONTRACT_TEST_FIXTURE to an approved isolated fixture');
 const fixture=JSON.parse(await readFile(fixturePath,'utf8'));
-assert.equal(fixture.purpose,'ad-sql-closeout');assert.equal(fixture.testOnly,true);
-assert(/^loop_t24_restore_sql[a-z0-9_]+$/.test(fixture.database));
+assert.equal(fixture.purpose,'native-catalog-contract');assert.equal(fixture.testOnly,true);
+assert(/^loop_test_catalog_[a-z0-9_]+$/.test(fixture.database));
 const deployment=JSON.parse(await readFile(fixture.deploymentFile,'utf8'));
 assert.equal(deployment.database.host,'127.0.0.1');assert.equal(deployment.database.user,'loop_app');assert.equal(deployment.database.database,fixture.database);
-const {assertDatabase,env:containerEnvironment}=await import(fixture.nativeEnvironmentModule);
-assertDatabase();
+const {runtimeContext}=await import(new URL('../../scripts/runtime/environment.mjs',import.meta.url).href);
+const context=runtimeContext();context.assertDatabase();
 const bridges:ReturnType<typeof spawn>[]=[];
-const admin=new Pool({...deployment.database,user:'postgres',password:undefined,max:1,stream:()=>{
- const bridge=spawn('docker',['exec','-i','loop-control-stage-d-postgres','perl','-MIO::Socket::UNIX','-MIO::Select','-MSocket=SOCK_STREAM','-e',"my $s=IO::Socket::UNIX->new(Type=>SOCK_STREAM,Peer=>'/var/run/postgresql/.s.PGSQL.5432') or die 'socket'; my $sel=IO::Select->new(\\*STDIN,$s); while(1){for my $f($sel->can_read){my $n=sysread($f,my $b,65536);exit unless $n;my $o=fileno($f)==0?$s:\\*STDOUT;while(length $b){my $w=syswrite($o,$b);die 'write' unless $w;substr($b,0,$w,'');}}}"],{env:containerEnvironment,stdio:['pipe','pipe','pipe']});bridges.push(bridge);
+function localSocket(){
+ const bridge=spawn('docker',['exec','-i',context.container,'perl','-MIO::Socket::UNIX','-MIO::Select','-MSocket=SOCK_STREAM','-e',"my $s=IO::Socket::UNIX->new(Type=>SOCK_STREAM,Peer=>'/var/run/postgresql/.s.PGSQL.5432') or die 'socket'; my $sel=IO::Select->new(\\*STDIN,$s); while(1){for my $f($sel->can_read){my $n=sysread($f,my $b,65536);exit unless $n;my $o=fileno($f)==0?$s:\\*STDOUT;while(length $b){my $w=syswrite($o,$b);die 'write' unless $w;substr($b,0,$w,'');}}}"],{env:context.env,stdio:['pipe','pipe','pipe']});bridges.push(bridge);
  const stream=Duplex.from({readable:bridge.stdout!,writable:bridge.stdin!});
- return Object.assign(stream,{connect(){queueMicrotask(()=>stream.emit('connect'));return stream;},setNoDelay(){return stream;},setKeepAlive(){return stream;}});
-}} as ConstructorParameters<typeof Pool>[0]);
-const pool=new Pool({...deployment.database,max:4});
+ return Object.assign(stream,{connect(){queueMicrotask(()=>stream.emit('connect'));return stream;},setNoDelay(){return stream;},setKeepAlive(){return stream;},ref(){bridge.ref();return stream;},unref(){bridge.unref();return stream;}});
+}
+const admin=new Pool({...deployment.database,user:'postgres',password:undefined,max:1,stream:localSocket} as ConstructorParameters<typeof Pool>[0]);
+const pool=new Pool({...deployment.database,password:undefined,max:4,stream:localSocket} as ConstructorParameters<typeof Pool>[0]);
 const nonce=randomUUID().replaceAll('-',''),schema='catalog_contract_'+nonce;
 const owner=randomUUID(),otherOwner=randomUUID(),accountA=randomUUID(),accountB=randomUUID(),foreignAccount=randomUUID(),memberAccount=randomUUID();
 const series=randomUUID(),seriesVersion=randomUUID();
@@ -41,17 +42,20 @@ const server=createServer((request,response)=>handler(request,response));
 let handler:ReturnType<typeof createLocalHandler>,origin:string;
 let ownerCookie:string,otherCookie:string;
 const contractKeys=['episodes','total','page','pageSize','episodeCount','accountCounts','reviewCount','stages','artifactCounts','pending','blocked','worker','operationRows'] as const;
-const contract=(catalog:EpisodeCatalog)=>Object.fromEntries(contractKeys.map(key=>[key,catalog[key]]));
+// New action-state metadata is additive. Retained RPC parity still covers the
+// original operations rows; list views now also expose those summaries.
+const contract=(catalog:EpisodeCatalog,view:string)=>Object.fromEntries(contractKeys.map(key=>[key,key==='operationRows'?(view==='operations'?catalog.operationRows.map(({episodeId,reviewRevision,reviewPending,blockerCount})=>({episodeId,reviewRevision,reviewPending,blockerCount})):[]):catalog[key]]));
 
 beforeAll(async()=>{
- const historical=await readFile(new URL('../../supabase/migrations/20261024004749_episode_catalog_paging.sql',import.meta.url),'utf8');
- assert.equal(historical.match(/auth\.uid\(\)/g)?.length,1);
- const rpc=historical.slice(historical.indexOf('create function'),historical.indexOf('revoke all on function'))
-  .replace('public.read_episode_catalog(',`${schema}.read_episode_catalog(`).replace('auth.uid()','local_identity.owner_id()');
+ const historical=await readFile(new URL('../../db/contracts/episode-catalog.sql',import.meta.url),'utf8');
+ assert.equal(historical.match(/local_identity\.owner_id\(\)/g)?.length,1);
+ const rpc=historical.slice(historical.indexOf('create function'))
+  .replace('public.read_episode_catalog(',`${schema}.read_episode_catalog(`);
  const password=randomBytes(24).toString('hex'),digest=await hashPassword(password);
  const client=await admin.connect();
  try{
   await client.query('BEGIN');
+  await client.query("INSERT INTO local_identity.import_record(singleton,imported_at,source_created_at,archive_sha256) VALUES(true,now(),now(),repeat('a',64))");
   await client.query(`CREATE SCHEMA ${schema};REVOKE ALL ON SCHEMA ${schema} FROM PUBLIC;GRANT USAGE ON SCHEMA ${schema} TO loop_owner;${rpc}REVOKE ALL ON FUNCTION ${schema}.read_episode_catalog(text,integer,uuid,text,text,integer,integer) FROM PUBLIC;GRANT EXECUTE ON FUNCTION ${schema}.read_episode_catalog(text,integer,uuid,text,text,integer,integer) TO loop_owner;`);
   for(const id of [owner,otherOwner]){
    await client.query('INSERT INTO local_identity.owners(id,email) VALUES($1,$2)',[id,`catalog-${id}@example.invalid`]);
@@ -104,7 +108,7 @@ async function compare(parameters:Record<string,string>={},other=false){
   const identity=(await client.query('SELECT current_user,session_user,local_identity.owner_id() owner')).rows[0];
   expect(identity).toEqual({current_user:'loop_app',session_user:'loop_app',owner:other?otherOwner:owner});
   const retained=(await client.query(`SELECT ${schema}.read_episode_catalog($1,$2,$3,$4,$5,$6,$7) catalog`,[parameters.view??'episodes',Number(parameters.page??1),parameters.accountId??null,parameters.seriesId??'all',parameters.visibility??'active',Number(parameters.pendingPage??1),Number(parameters.blockedPage??1)])).rows[0].catalog;
-  expect(contract(native)).toEqual(retained);await client.query('COMMIT');return native;
+  expect(contract(native,parameters.view??'episodes')).toEqual(contract(retained,parameters.view??'episodes'));await client.query('COMMIT');return native;
  }catch(error){await client.query('ROLLBACK');throw error;}finally{client.release();}
 }
 

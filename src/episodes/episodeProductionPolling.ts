@@ -1,5 +1,5 @@
 import type { Database } from "../lib/database.types";
-import { supabase } from "../lib/supabase";
+import { viewTransport } from "../lib/viewTransport";
 
 type Task = Database["public"]["Tables"]["tasks"]["Row"];
 type TaskRun = Pick<Database["public"]["Tables"]["task_runs"]["Row"], "attempt" | "completed_at" | "id" | "started_at" | "status" | "task_id">;
@@ -46,7 +46,7 @@ export function mergeEpisodeTaskStatus(previous: { tasks: Task[]; taskRuns: Task
 }
 
 async function requestImmediateTaskDispatch(episodeId: string, taskId: string): Promise<{ accepted: boolean; reason: string }> {
-  const { data, error } = await supabase.auth.getSession();
+  const { data, error } = await viewTransport.auth.getSession();
   if (error || !data.session) return { accepted: false, reason: "Owner 登录会话不可用" };
   const response = await fetch(`/_episode-dispatch?${new URLSearchParams({ episode: episodeId, task: taskId }).toString()}`, {
     headers: { Authorization: `Bearer ${data.session.access_token}` },

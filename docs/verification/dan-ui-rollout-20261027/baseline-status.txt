@@ -1,0 +1,266 @@
+ M PLAN.md
+ M README.md
+ M docs/adr/0001-episode-archive-and-permanent-delete.md
+ M docs/adr/README.md
+ M docs/backlog/local-first-optimization.md
+ M docs/local-daily-runtime.md
+ D n8n/import-workflows.sh
+ D n8n/import-workflows.test.mjs
+ D n8n/node24/package-lock.json
+ D n8n/node24/package.json
+ D n8n/prepare-workflows.mjs
+ D n8n/run-orchestrator.sh
+ D n8n/run-worker.sh
+ D n8n/start-local.sh
+ D n8n/worker.env.example
+ D n8n/workflows/approval-notifications.json
+ D n8n/workflows/daily-health-check.json
+ D n8n/workflows/state-change-notifications.json
+ D n8n/workflows/task-dispatch.json
+ M package-lock.json
+ M package.json
+ M scripts/isolation/baseline.mjs
+ M scripts/isolation/c-followup.mjs
+ M scripts/isolation/capacity-consumption.mjs
+ M scripts/isolation/capacity-http.mjs
+ M scripts/isolation/capacity.mjs
+ M scripts/isolation/catalog-verification.mjs
+ M scripts/isolation/fast-dispatch-preparation.mjs
+ M scripts/isolation/fast-dispatch.mjs
+ M scripts/isolation/leases.mjs
+ M scripts/isolation/notification-restore.mjs
+ M scripts/isolation/notifications.mjs
+ M scripts/isolation/queue-entry.mjs
+ M scripts/isolation/reads.mjs
+ M scripts/isolation/render-reuse.mjs
+ M scripts/isolation/restore-fixture.mjs
+ M scripts/isolation/restore-verify.mjs
+ M scripts/isolation/restore.mjs
+ M scripts/isolation/run.mjs
+ M scripts/isolation/smoke.mjs
+ M scripts/isolation/worker-recovery.mjs
+ M scripts/local-service-record.test.mjs
+ M scripts/local/alignment-acceptance.mjs
+ M scripts/local/application.mjs
+ M scripts/local/application.test.mjs
+ M scripts/local/automation-acceptance.mjs
+ M scripts/local/catalog-acceptance.mjs
+ M scripts/local/check.mjs
+ M scripts/local/delivery-acceptance.mjs
+ M scripts/local/media-acceptance.mjs
+ M scripts/local/narration-acceptance.mjs
+ M scripts/local/native-restore.mjs
+ M scripts/local/owner-acceptance.mjs
+ M scripts/local/provider-network-prepare.mjs
+ M scripts/local/recovery-acceptance.mjs
+ M scripts/local/retired-command.mjs
+ M scripts/local/studio-acceptance.mjs
+ M scripts/openchatcut-render.mjs
+ M scripts/run-prepared.mjs
+ M scripts/runtime/environment.mjs
+ M scripts/runtime/keychain.mjs
+ M scripts/runtime/migrate.mjs
+ M scripts/runtime/offline-python
+ M scripts/runtime/services.mjs
+ M scripts/runtime/start.mjs
+ M scripts/runtime/stop.mjs
+ M scripts/startup-lifecycle.acceptance.test.mjs
+ M scripts/supabase-migrations.mjs
+ M src/App.test.tsx
+ M src/App.tsx
+ M src/accounts/AccountWorkspace.test.tsx
+ M src/accounts/AccountWorkspace.tsx
+ M src/connections/ConnectionWorkspace.test.tsx
+ M src/connections/ConnectionWorkspace.tsx
+ M src/episodePreflightRoute.test.ts
+ M src/episodes/EpisodeForm.tsx
+ M src/episodes/EpisodeProduction.tsx
+ M src/episodes/EpisodeProductionContainer.tsx
+ M src/episodes/WanShotGenerator.test.tsx
+ M src/episodes/WanShotGenerator.tsx
+ M src/externalConnectionRoute.test.ts
+ M src/lib/supabase.ts
+ M src/local-app/LocalCatalogApp.account.test.tsx
+ M src/local-app/LocalCatalogApp.test.tsx
+ M src/local-app/LocalCatalogApp.tsx
+ M src/local-app/LocalCatalogApp.workspace.test.tsx
+ M src/local-app/LocalConnectionsPanel.test.tsx
+ M src/local-app/LocalConnectionsPanel.tsx
+ M src/local-app/LocalDeliveryPanel.tsx
+ M src/local-app/LocalEpisodeDetail.tsx
+ M src/local-app/LocalSystemStatus.tsx
+ M src/local-app/artifactRoute.test.ts
+ M src/local-app/catalog.ts
+ M src/local-app/catalogQuery.ts
+ M src/local-app/client.ts
+ M src/local-app/configurationCommands.ts
+ M src/local-app/connectionPorts.ts
+ M src/local-app/connections.test.ts
+ M src/local-app/connections.ts
+ M src/local-app/episodeCommands.ts
+ M src/local-app/episodeLifecycle.ts
+ M src/local-app/episodeReads.ts
+ M src/local-app/keychainStore.test.ts
+ M src/local-app/keychainStore.ts
+ M src/local-app/localRoute.ts
+ M src/local-app/mediaWorker.test.ts
+ M src/local-app/mediaWorker.ts
+ M src/local-app/narrationWorker.ts
+ M src/local-app/nativeAutomation.ts
+ M src/local-app/providerNetwork.test.ts
+ M src/local-app/providerNetwork.ts
+ M src/local-app/providerProbe.test.ts
+ M src/local-app/providerProbe.ts
+ M src/local-app/useConnectionActions.ts
+ M src/local-control-plane/routes/handlers.ts
+ M src/localEpisodeDirectoryRoute.test.ts
+ M src/observability/SystemStatusPanel.tsx
+ M src/operations/OperationsWorkspace.tsx
+ M src/orchestration/loopOrchestratorCli.test.ts
+ M src/orchestration/loopOrchestratorCli.ts
+ M src/orchestration/runtimeBuild.test.ts
+ M src/orchestration/runtimeBuild.ts
+ M src/orchestration/workerScheduler.ts
+ M src/platform/ConfigurationForms.tsx
+ M src/platform/configurationForms.test.ts
+ M src/platform/connectionStatus.test.ts
+ M src/platform/externalConnections.test.ts
+ M src/platform/migrationContracts.test.ts
+ M src/publishing/publishContext.ts
+ M src/publishing/publishInputCli.ts
+ M src/publishing/publishPackageCli.ts
+ M src/publishing/publishPackageVerifyCli.ts
+ M src/reviews/blockerGuidance.ts
+ M src/reviews/reviewRevision.test.ts
+ M src/reviews/reviewRevision.ts
+ M src/reviews/reviewSelectors.ts
+ M src/shotComposition.ts
+ M src/standaloneOpenchatcutRoute.test.ts
+ M src/styles.css
+ M src/systemStatusRoute.test.ts
+ M src/ui/useDialogFocus.ts
+ M src/worker/codexRunner.ts
+ M src/worker/codexWorkerCli.ts
+ M src/worker/contracts.test.ts
+ M src/worker/contracts.ts
+ M src/worker/controlledMediaExecutor.test.ts
+ M src/worker/controlledMediaExecutor.ts
+ M src/worker/episodeDeletion.test.ts
+ M src/worker/episodeDeletion.ts
+ M src/worker/localConnection.ts
+ M src/worker/mediaProviders.test.ts
+ M src/worker/mediaProviders.ts
+ M src/worker/openchatcutStudio.ts
+ M src/worker/registeredAdapters.ts
+ M src/worker/runtimePreflight.test.ts
+ M src/worker/runtimePreflight.ts
+ M src/worker/runtimeProbes.test.ts
+ M src/worker/runtimeProbes.ts
+ M src/workspace/WorkspaceViews.tsx
+?? db/local/052-native-wan.sql
+?? db/local/053-native-wan-reservation-scope.sql
+?? db/local/054-native-wan-explicit-requests.sql
+?? db/local/055-history-consolidation.sql
+?? db/local/056-history-projection-results.sql
+?? db/local/057-history-file-secret-references.sql
+?? db/local/058-readonly-historical-episodes.sql
+?? db/local/059-historical-notification-fence.sql
+?? db/local/060-historical-task-read-scope.sql
+?? db/local/061-current-notification-status.sql
+?? db/local/062-isolate-historical-automation.sql
+?? db/local/063-official-video-providers.sql
+?? db/local/064-secret-administration.sql
+?? db/local/065-account-audit-deletion.sql
+?? db/local/066-retire-cloudflare-google-tts.sql
+?? db/local/067-history-organization.sql
+?? db/local/068-archived-episode-deletion.sql
+?? db/local/069-legacy-episode-cleanup.sql
+?? db/local/070-history-episode-navigation.sql
+?? db/local/071-history-episode-file-query.sql
+?? db/local/072-history-episode-file-precedence.sql
+?? db/local/073-empty-account-directory-cleanup.sql
+?? docs/adr/0010-local-secrets-and-history-consolidation.md
+?? docs/adr/0011-admin-secret-inspection.md
+?? docs/research/2026-10-27-impeccable-skills-comparison.md
+?? docs/verification/account-delete-studio-ui-20261027/
+?? docs/verification/account-empty-directory-cleanup-20261027/
+?? docs/verification/automation-status-20261027/
+?? docs/verification/cleanup-20261027/
+?? docs/verification/cleanup-second-20261027/
+?? docs/verification/connection-organization-20261027/
+?? docs/verification/dan-ui-connections-20261027/
+?? docs/verification/dan-ui-history-20261027/
+?? docs/verification/dan-ui-rollout-20261027/
+?? docs/verification/episode-deletion-tail-cleanup-20261027/
+?? docs/verification/health-history-20261027/
+?? docs/verification/history-organization-20261027/
+?? docs/verification/impeccable-connection-audit-20261027/
+?? docs/verification/legacy-episode-delete-20261027/
+?? docs/verification/login-visual-20261027/
+?? docs/verification/maintenance-episode-navigation-20261027/
+?? docs/verification/multi-directory-deletion-20261027/
+?? docs/verification/old-test-connections-cleanup-20261027/
+?? docs/verification/provider-retirement-feedback-20261027/
+?? docs/verification/secret-administration-20261027/
+?? docs/verification/status-and-episode-deletion-20261027/
+?? native/keychain-bootstrap.m
+?? native/keychain-history-reader.m
+?? scripts/build-dan-ui.mjs
+?? scripts/runtime/history-consolidation.mjs
+?? scripts/runtime/history-consolidation.test.mjs
+?? scripts/runtime/keychain.test.mjs
+?? scripts/runtime/project-history.mjs
+?? scripts/runtime/secrets.mjs
+?? scripts/runtime/secrets.test.mjs
+?? src/connections/ConnectionDanUi.test.tsx
+?? src/connections/ConnectionFeedback.test.tsx
+?? src/connections/ConnectionOrganization.test.tsx
+?? src/connections/ConnectionTestButton.tsx
+?? src/connections/connections-dan-ui.css
+?? src/lib/retiredClient.test.ts
+?? src/lib/retiredClient.ts
+?? src/local-app/HistoryDanUi.test.tsx
+?? src/local-app/HistoryEpisodes.test.tsx
+?? src/local-app/HistorySources.tsx
+?? src/local-app/LocalHistory.test.tsx
+?? src/local-app/LocalHistory.tsx
+?? src/local-app/LocalMaintenancePanel.tsx
+?? src/local-app/LocalSecretAdministration.test.tsx
+?? src/local-app/LocalSecretAdministration.tsx
+?? src/local-app/LocalSystemStatus.test.tsx
+?? src/local-app/accountDeletion.integration.test.ts
+?? src/local-app/accountDirectoryCleanup.test.ts
+?? src/local-app/accountDirectoryCleanup.ts
+?? src/local-app/automationHistory.integration.test.ts
+?? src/local-app/connectionLifecycle.integration.test.ts
+?? src/local-app/episodeDeletion.integration.test.ts
+?? src/local-app/episodeDeletionTargets.test.ts
+?? src/local-app/episodeDeletionTargets.ts
+?? src/local-app/history-dan-ui.css
+?? src/local-app/history.integration.test.ts
+?? src/local-app/history.ts
+?? src/local-app/historyEpisodes.ts
+?? src/local-app/historyOrganization.integration.test.ts
+?? src/local-app/historyPresentation.test.ts
+?? src/local-app/historyPresentation.ts
+?? src/local-app/manualVerification.test.ts
+?? src/local-app/nativeWan.integration.test.ts
+?? src/local-app/notificationStatus.integration.test.ts
+?? src/local-app/officialVideo.integration.test.ts
+?? src/local-app/officialVideoNetwork.ts
+?? src/local-app/providerRetirement.integration.test.ts
+?? src/local-app/readOnlyVerification.test.ts
+?? src/local-app/secretAdministration.integration.test.ts
+?? src/local-app/secretAdministration.ts
+?? src/local-app/secretAdministrationTypes.ts
+?? src/local-app/secretInventory.test.ts
+?? src/local-app/secretInventory.ts
+?? src/local-app/standaloneStudioRoute.test.ts
+?? src/local-app/wanCommands.ts
+?? src/observability/SystemStatusSurface.tsx
+?? src/ui/dan-ui/
+?? src/ui/useDialogFocus.test.tsx
+?? src/worker/officialVideoProvider.test.ts
+?? src/worker/officialVideoProvider.ts
+?? src/worker/providerLifecycle.ts
+?? src/worker/videoProviderCatalog.ts

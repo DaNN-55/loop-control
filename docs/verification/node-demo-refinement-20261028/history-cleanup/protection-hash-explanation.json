@@ -1,0 +1,263 @@
+{
+  "readOnly": true,
+  "protections": [
+    {
+      "originalSha256": "11357706d0b16332302d7905f58a39818d10320a2df151ced127040bacacce6b",
+      "expectedProtectedSha256": "2242c0fb1253017edd682a615153d8be351b129e399fa141144b6835fc23a272",
+      "actualOriginalNamedBodySha256": "eff2e586144ea6a3e3937ba95d9e8e75952f6d747cb8006e875ac3e95bfc7989",
+      "originalNamedBodyMatchesProtectedSha": false,
+      "protectedFileExists": true,
+      "protectedFileHashMatches": true,
+      "protectedBytes": 1086,
+      "replacementCount": 1,
+      "originalNamedBodyIsProtectionDescriptor": true,
+      "descriptorKeys": [
+        "originalBytes",
+        "originalSha256",
+        "protectedSha256",
+        "replacements",
+        "version"
+      ],
+      "descriptorContainsOriginalSha": true,
+      "descriptorContainsProtectedSha": true,
+      "explanation": "Original SHA-named file now contains a JSON protection descriptor referring to its original and protected SHA. It is scanned as a descriptor, not treated as missing content. Protected target independently hashes to protectedSha256."
+    },
+    {
+      "originalSha256": "188ec479ae31da23fa4c5fbc11674b1c1b499a2d40d01dfebc07d6d995fde887",
+      "expectedProtectedSha256": "e54a2759a2d273a8ea30d6121c63d9f994f1baf17051bcdfb21b8a6eee98cb96",
+      "actualOriginalNamedBodySha256": "e6ff4391e78e661f97e5b218c731c7c1e21de93c901358d259d2643a377088cd",
+      "originalNamedBodyMatchesProtectedSha": false,
+      "protectedFileExists": true,
+      "protectedFileHashMatches": true,
+      "protectedBytes": 225,
+      "replacementCount": 1,
+      "originalNamedBodyIsProtectionDescriptor": true,
+      "descriptorKeys": [
+        "originalBytes",
+        "originalSha256",
+        "protectedSha256",
+        "replacements",
+        "version"
+      ],
+      "descriptorContainsOriginalSha": true,
+      "descriptorContainsProtectedSha": true,
+      "explanation": "Original SHA-named file now contains a JSON protection descriptor referring to its original and protected SHA. It is scanned as a descriptor, not treated as missing content. Protected target independently hashes to protectedSha256."
+    },
+    {
+      "originalSha256": "7202f9f8f1e36a2f0021f51c15a34ff6672d9b8ae47cb0a1fe88ee25b262b1a5",
+      "expectedProtectedSha256": "909becac7c4acf95ffa32206118ea85a9d6d1051b67885bcfb14ec8d3f00001e",
+      "actualOriginalNamedBodySha256": "edb3ab85e76de775b99c6d4061e7e52c8dd849b2fe945a7348a2db94a74bd040",
+      "originalNamedBodyMatchesProtectedSha": false,
+      "protectedFileExists": true,
+      "protectedFileHashMatches": true,
+      "protectedBytes": 1009,
+      "replacementCount": 1,
+      "originalNamedBodyIsProtectionDescriptor": true,
+      "descriptorKeys": [
+        "originalBytes",
+        "originalSha256",
+        "protectedSha256",
+        "replacements",
+        "version"
+      ],
+      "descriptorContainsOriginalSha": true,
+      "descriptorContainsProtectedSha": true,
+      "explanation": "Original SHA-named file now contains a JSON protection descriptor referring to its original and protected SHA. It is scanned as a descriptor, not treated as missing content. Protected target independently hashes to protectedSha256."
+    },
+    {
+      "originalSha256": "81c695f77c6c81d0c841c9b079f752281d81ebdeed5131b7105a163cde9d1bd0",
+      "expectedProtectedSha256": "c1ba0bc342dc61f32e7141d8a593fc0c2eb1ae68e5fe75dad2b825109ab5a50a",
+      "actualOriginalNamedBodySha256": "05dc401b9881e8d66954ed0174359e74f94dcc423a2772631362309bafc30ce5",
+      "originalNamedBodyMatchesProtectedSha": false,
+      "protectedFileExists": true,
+      "protectedFileHashMatches": true,
+      "protectedBytes": 278,
+      "replacementCount": 1,
+      "originalNamedBodyIsProtectionDescriptor": true,
+      "descriptorKeys": [
+        "originalBytes",
+        "originalSha256",
+        "protectedSha256",
+        "replacements",
+        "version"
+      ],
+      "descriptorContainsOriginalSha": true,
+      "descriptorContainsProtectedSha": true,
+      "explanation": "Original SHA-named file now contains a JSON protection descriptor referring to its original and protected SHA. It is scanned as a descriptor, not treated as missing content. Protected target independently hashes to protectedSha256."
+    },
+    {
+      "originalSha256": "d88a7a401d2878822694db5cd9f8e8186baa12deeb431f91a8471194febb668c",
+      "expectedProtectedSha256": "9f7ec0c541a04b8ca6391e8488843f827a51efa72938f5bd01130fa8b76f5224",
+      "actualOriginalNamedBodySha256": "aaac36315c0c879c62530fb57db4576319b056afadb200bab8d027dfba813451",
+      "originalNamedBodyMatchesProtectedSha": false,
+      "protectedFileExists": true,
+      "protectedFileHashMatches": true,
+      "protectedBytes": 1086,
+      "replacementCount": 1,
+      "originalNamedBodyIsProtectionDescriptor": true,
+      "descriptorKeys": [
+        "originalBytes",
+        "originalSha256",
+        "protectedSha256",
+        "replacements",
+        "version"
+      ],
+      "descriptorContainsOriginalSha": true,
+      "descriptorContainsProtectedSha": true,
+      "explanation": "Original SHA-named file now contains a JSON protection descriptor referring to its original and protected SHA. It is scanned as a descriptor, not treated as missing content. Protected target independently hashes to protectedSha256."
+    },
+    {
+      "originalSha256": "dabb2d0f6d7a7faf1b20dcdbd50609d54c4a3a2cb19b153aadf7d8adbd89bf8b",
+      "expectedProtectedSha256": "3864ca4e9a34a963d4bce6dd1fdd6e31604c2fc8f5552123c644b7a060bcb543",
+      "actualOriginalNamedBodySha256": "52f151e27b851838d8ae11d61f528b034afb2359c99544ba504ca0cb16f98a8f",
+      "originalNamedBodyMatchesProtectedSha": false,
+      "protectedFileExists": true,
+      "protectedFileHashMatches": true,
+      "protectedBytes": 2469,
+      "replacementCount": 1,
+      "originalNamedBodyIsProtectionDescriptor": true,
+      "descriptorKeys": [
+        "originalBytes",
+        "originalSha256",
+        "protectedSha256",
+        "replacements",
+        "version"
+      ],
+      "descriptorContainsOriginalSha": true,
+      "descriptorContainsProtectedSha": true,
+      "explanation": "Original SHA-named file now contains a JSON protection descriptor referring to its original and protected SHA. It is scanned as a descriptor, not treated as missing content. Protected target independently hashes to protectedSha256."
+    },
+    {
+      "originalSha256": "deb053638bd82ab58aa972c07bd2970f0a0e5f8cc209b8a431aa8ad731fab615",
+      "expectedProtectedSha256": "fefd58d9bcce50501e9e7434dc387e99ebc18e601655ecfb0318bc000d40dec3",
+      "actualOriginalNamedBodySha256": "0b542aada43d2d217ad2319b722c344d883a8e555cdebcffe49b827fcd142033",
+      "originalNamedBodyMatchesProtectedSha": false,
+      "protectedFileExists": true,
+      "protectedFileHashMatches": true,
+      "protectedBytes": 3736,
+      "replacementCount": 1,
+      "originalNamedBodyIsProtectionDescriptor": true,
+      "descriptorKeys": [
+        "originalBytes",
+        "originalSha256",
+        "protectedSha256",
+        "replacements",
+        "version"
+      ],
+      "descriptorContainsOriginalSha": true,
+      "descriptorContainsProtectedSha": true,
+      "explanation": "Original SHA-named file now contains a JSON protection descriptor referring to its original and protected SHA. It is scanned as a descriptor, not treated as missing content. Protected target independently hashes to protectedSha256."
+    },
+    {
+      "originalSha256": "536e8e83982781b78f6065b09f469e4e9ad73e810c74633d2a71b2f6d560499a",
+      "expectedProtectedSha256": "6d561ed68966d1de8be08be68313e9b17d01606683e6a0dbdc5c83c0f92fcbd0",
+      "actualOriginalNamedBodySha256": "f1d5f4990cc7c48648bab863954f75b0433326fb7718107267595f351e242f59",
+      "originalNamedBodyMatchesProtectedSha": false,
+      "protectedFileExists": true,
+      "protectedFileHashMatches": true,
+      "protectedBytes": 955,
+      "replacementCount": 3,
+      "originalNamedBodyIsProtectionDescriptor": true,
+      "descriptorKeys": [
+        "originalBytes",
+        "originalSha256",
+        "protectedSha256",
+        "replacements",
+        "version"
+      ],
+      "descriptorContainsOriginalSha": true,
+      "descriptorContainsProtectedSha": true,
+      "explanation": "Original SHA-named file now contains a JSON protection descriptor referring to its original and protected SHA. It is scanned as a descriptor, not treated as missing content. Protected target independently hashes to protectedSha256."
+    },
+    {
+      "originalSha256": "7c3dca8c1112d61978d68d7e3182f96671dde570812ebbbe2f1ec76661782841",
+      "expectedProtectedSha256": "7a6a74dd54c705169c7ab29ed9af3f201a97b0de2aa5e14f5df66fee1c32aa0f",
+      "actualOriginalNamedBodySha256": "f7ea820cd3a54a2619d77a3c6bd93b711549dcdddf883e86d44d4f005da0e95c",
+      "originalNamedBodyMatchesProtectedSha": false,
+      "protectedFileExists": true,
+      "protectedFileHashMatches": true,
+      "protectedBytes": 976,
+      "replacementCount": 1,
+      "originalNamedBodyIsProtectionDescriptor": true,
+      "descriptorKeys": [
+        "originalBytes",
+        "originalSha256",
+        "protectedSha256",
+        "replacements",
+        "version"
+      ],
+      "descriptorContainsOriginalSha": true,
+      "descriptorContainsProtectedSha": true,
+      "explanation": "Original SHA-named file now contains a JSON protection descriptor referring to its original and protected SHA. It is scanned as a descriptor, not treated as missing content. Protected target independently hashes to protectedSha256."
+    },
+    {
+      "originalSha256": "7e527871546b932e87bc88cbe3ae27cd0ff8715a03dd2790572fd9beb9581375",
+      "expectedProtectedSha256": "79dc59adb66e1705e0619fec399bc7e2230652d2e998a774c6f977e323d2feab",
+      "actualOriginalNamedBodySha256": "d492c40b74971dedd9271104b2566e9ae27f58d6deee5fad2fe482e57fd07d67",
+      "originalNamedBodyMatchesProtectedSha": false,
+      "protectedFileExists": true,
+      "protectedFileHashMatches": true,
+      "protectedBytes": 976,
+      "replacementCount": 1,
+      "originalNamedBodyIsProtectionDescriptor": true,
+      "descriptorKeys": [
+        "originalBytes",
+        "originalSha256",
+        "protectedSha256",
+        "replacements",
+        "version"
+      ],
+      "descriptorContainsOriginalSha": true,
+      "descriptorContainsProtectedSha": true,
+      "explanation": "Original SHA-named file now contains a JSON protection descriptor referring to its original and protected SHA. It is scanned as a descriptor, not treated as missing content. Protected target independently hashes to protectedSha256."
+    },
+    {
+      "originalSha256": "00de6d8703c1684b0573dc345e4175e9bbfb9b2eec505a4cd7eca384df08e2f0",
+      "expectedProtectedSha256": "0bf8a8e9e71c5419413671b3abcb1ad4a5edffdd814b28a3f6b06671cc947728",
+      "actualOriginalNamedBodySha256": "4b085d7f2e43774108c5c024a997905d9c23a823f13d49372338400ec0611a89",
+      "originalNamedBodyMatchesProtectedSha": false,
+      "protectedFileExists": true,
+      "protectedFileHashMatches": true,
+      "protectedBytes": 976,
+      "replacementCount": 1,
+      "originalNamedBodyIsProtectionDescriptor": true,
+      "descriptorKeys": [
+        "originalBytes",
+        "originalSha256",
+        "protectedSha256",
+        "replacements",
+        "version"
+      ],
+      "descriptorContainsOriginalSha": true,
+      "descriptorContainsProtectedSha": true,
+      "explanation": "Original SHA-named file now contains a JSON protection descriptor referring to its original and protected SHA. It is scanned as a descriptor, not treated as missing content. Protected target independently hashes to protectedSha256."
+    },
+    {
+      "originalSha256": "9e781001a5c6a933e254aad506655ba0433f345fa522a7f687909748e4fd90fc",
+      "expectedProtectedSha256": "0cb6720bc968f20e4211e1e6093cb0541ceb91969e399f43713afd02bb92ce4b",
+      "actualOriginalNamedBodySha256": "e93a5b3eb247e640a148b9e20a9c3a58e0e5f694dde2bf06d3bf6b24006b5e96",
+      "originalNamedBodyMatchesProtectedSha": false,
+      "protectedFileExists": true,
+      "protectedFileHashMatches": true,
+      "protectedBytes": 976,
+      "replacementCount": 1,
+      "originalNamedBodyIsProtectionDescriptor": true,
+      "descriptorKeys": [
+        "originalBytes",
+        "originalSha256",
+        "protectedSha256",
+        "replacements",
+        "version"
+      ],
+      "descriptorContainsOriginalSha": true,
+      "descriptorContainsProtectedSha": true,
+      "explanation": "Original SHA-named file now contains a JSON protection descriptor referring to its original and protected SHA. It is scanned as a descriptor, not treated as missing content. Protected target independently hashes to protectedSha256."
+    }
+  ],
+  "summary": {
+    "protectionRows": 12,
+    "originalNamedBodyMatchesProtectedSha": 0,
+    "protectedFileHashMatches": 12,
+    "protectionDescriptorsExplained": 12
+  }
+}

@@ -1,0 +1,93 @@
+[
+  {
+    "file": "/Users/dan/Programs/loop-control/src/episodes/ProductionNodes.test.tsx",
+    "status": "passed",
+    "tests": [
+      {
+        "name": "navigates all six nodes without invoking production commands",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "supports keyboard workflow navigation and marks completed nodes without changing stage",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "keeps a frozen script read-only, previews its actual Markdown and routes file selection left",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "uses the real script diagnostic and refuses to save invalid edits",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "rail drag and keyboard request a revision rather than mutating the shot data",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "retains the QC decision draft while browsing other nodes",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "saves an edited pending script back into the import draft and requires a fresh confirmation",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "keeps the legacy script review text and its guarded approval action in the input node",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "routes rail reorder through the existing reasoned structure revision and preserves generation entrypoints",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "keeps the full visual basis available beside its reference gallery",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "keeps an unapproved storyboard from opening future shot editing controls",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "enlarges the current script in a dismissible dialog and preserves the edit draft on return",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "maps internal render stages directly to synthesis and exposes no individual artifact approval",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "reconfirms a persisted script explicitly and preserves edits after cancellation and failure",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "opens a historical plain main script as a valid editable Markdown draft without changing the stored source",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "脚本格式错误在编辑器上方告警，定位实际行且不触发保存；软换行不改原文",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "把审核包中的冻结上传视频、图片与生成图统一放入视觉参考，制作依据只显示清单",
+        "status": "passed",
+        "failure": ""
+      }
+    ]
+  }
+]

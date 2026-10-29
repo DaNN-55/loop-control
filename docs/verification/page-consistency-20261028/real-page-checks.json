@@ -1,0 +1,1114 @@
+[
+  {
+    "page": "生产单",
+    "icons": [
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "工作台",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "生产单",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "待审核",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "账号与系列",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "连接配置",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "历史资料",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "打开 OpenChatCut 独立剪辑",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "切换至深色模式",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "收起侧栏",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "所有者设置",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          36,
+          36
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "刷新",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "生产单操作：日照金山样片 · 原稿 v1",
+        "svg": [
+          18,
+          18
+        ]
+      }
+    ],
+    "badIcons": [],
+    "selects": [
+      {
+        "labelClipped": "auto",
+        "labelSize": "0px",
+        "leadingIcon": true,
+        "name": "账号全部账号豆包推广日照金山样片",
+        "width": 158
+      },
+      {
+        "labelClipped": "auto",
+        "labelSize": "0px",
+        "leadingIcon": true,
+        "name": "系列全部系列日照金山情景种草豆包推广-v1",
+        "width": 186
+      },
+      {
+        "labelClipped": "auto",
+        "labelSize": "0px",
+        "leadingIcon": true,
+        "name": "生产单状态",
+        "width": 140
+      }
+    ]
+  },
+  {
+    "page": "待审核",
+    "icons": [
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "工作台",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "生产单",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "待审核",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "账号与系列",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "连接配置",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "历史资料",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "打开 OpenChatCut 独立剪辑",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "切换至深色模式",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "收起侧栏",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "所有者设置",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          36,
+          36
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "刷新",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "生产单操作：日照金山样片 · 原稿 v1",
+        "svg": [
+          18,
+          18
+        ]
+      }
+    ],
+    "badIcons": [],
+    "selects": [
+      {
+        "labelClipped": "auto",
+        "labelSize": "0px",
+        "leadingIcon": true,
+        "name": "账号全部账号豆包推广日照金山样片",
+        "width": 158
+      },
+      {
+        "labelClipped": "auto",
+        "labelSize": "0px",
+        "leadingIcon": true,
+        "name": "系列全部系列日照金山情景种草豆包推广-v1",
+        "width": 186
+      }
+    ]
+  },
+  {
+    "page": "账号与系列",
+    "icons": [
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "工作台",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "生产单",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "待审核",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "账号与系列",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "连接配置",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "历史资料",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "打开 OpenChatCut 独立剪辑",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "切换至深色模式",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "收起侧栏",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "所有者设置",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          36,
+          36
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "账号操作",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          36,
+          36
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "刷新",
+        "svg": [
+          18,
+          18
+        ]
+      }
+    ],
+    "badIcons": [],
+    "selects": [
+      {
+        "labelClipped": "auto",
+        "labelSize": "0px",
+        "leadingIcon": true,
+        "name": "当前账号",
+        "width": 358.390625
+      }
+    ]
+  },
+  {
+    "page": "连接配置",
+    "icons": [
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "工作台",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "生产单",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "待审核",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "账号与系列",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "连接配置",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "历史资料",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "打开 OpenChatCut 独立剪辑",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "切换至深色模式",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "收起侧栏",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "所有者设置",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          106,
+          36
+        ],
+        "dx": -32,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "刷新连接",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          16,
+          16
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "显示密码",
+        "svg": [
+          16,
+          16
+        ]
+      }
+    ],
+    "badIcons": [],
+    "selects": [
+      {
+        "labelClipped": "rect(0px, 0px, 0px, 0px)",
+        "labelSize": "14px",
+        "leadingIcon": true,
+        "name": "操作对象",
+        "width": 644
+      },
+      {
+        "labelClipped": "rect(0px, 0px, 0px, 0px)",
+        "labelSize": "14px",
+        "leadingIcon": true,
+        "name": "连接类型",
+        "width": 644
+      }
+    ]
+  },
+  {
+    "page": "历史资料",
+    "icons": [
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "工作台",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "生产单",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "待审核",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "账号与系列",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "连接配置",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "历史资料",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "打开 OpenChatCut 独立剪辑",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "切换至深色模式",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "收起侧栏",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "所有者设置",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          106,
+          36
+        ],
+        "dx": -32,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "刷新资料",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          106.515625,
+          36
+        ],
+        "dx": -31.26,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "读取中…",
+        "svg": [
+          20,
+          20
+        ]
+      }
+    ],
+    "badIcons": [],
+    "selects": [
+      {
+        "labelClipped": "rect(0px, 0px, 0px, 0px)",
+        "labelSize": "14px",
+        "leadingIcon": true,
+        "name": "显示范围",
+        "width": 150
+      }
+    ]
+  },
+  {
+    "page": "工作台",
+    "icons": [
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "工作台",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "生产单",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "待审核",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "账号与系列",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "连接配置",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "历史资料",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          172,
+          40
+        ],
+        "dx": -65,
+        "dy": 0,
+        "iconOnly": false,
+        "label": "打开 OpenChatCut 独立剪辑",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "切换至深色模式",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "收起侧栏",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          32,
+          32
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "所有者设置",
+        "svg": [
+          18,
+          18
+        ]
+      },
+      {
+        "button": [
+          36,
+          36
+        ],
+        "dx": 0,
+        "dy": 0,
+        "iconOnly": true,
+        "label": "刷新",
+        "svg": [
+          18,
+          18
+        ]
+      }
+    ],
+    "badIcons": [],
+    "selects": [
+      {
+        "labelClipped": "auto",
+        "labelSize": "0px",
+        "leadingIcon": true,
+        "name": "运营系列筛选",
+        "width": 186
+      }
+    ]
+  }
+]

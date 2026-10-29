@@ -1,0 +1,230 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/episodes/captionTextConfirmation.test.tsx (9 tests) 6289ms
+   ✓ keeps a completed high-score mismatch awaiting Owner text review and blocks preview  1233ms
+   ✓ saves an explicit review identity, keeps it on refresh and invalidates local text edits  1532ms
+   ✓ does not count a historical preview confirmation as current text review  473ms
+   ✓ does not promote a new audio or alignment identity when an old confirmation callback arrives late  1166ms
+   ✓ invalidates an already saved content review when the audio identity changes  590ms
+   ✓ invalidates an already saved content review when the text identity changes  477ms
+   ✓ invalidates an already saved content review when the alignment identity changes  390ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx (13 tests) 6094ms
+   ✓ keeps a committed series save successful when its follow-up read fails  1935ms
+   ✓ requests server pages and discards a late response from an earlier filter  354ms
+   ✓ does not start a new catalog read while logout is pending  335ms
+   ✓ returns to login after network logout failure without accepting old reads, then restores writable CSRF on login  710ms
+   ✓ isolates concurrent network logout failures in older-first order from a fresh login  651ms
+   ✓ isolates concurrent 503 logout failures in older-first order from a fresh login  455ms
+   ✓ isolates concurrent network logout failures in newer-first order from a fresh login  353ms
+   ✓ isolates concurrent 503 logout failures in newer-first order from a fresh login  353ms
+ ✓ src/local-app/ImpeccableNavigation.test.tsx (7 tests) 6608ms
+   ✓ 工作台和待审核映射到受支持的 catalog view，管理导航从不发送虚构 view  2152ms
+   ✓ 超过 20 条时三组服务器分页各自推进，保留其他两组页码并显示服务器返回的第二页  1996ms
+   ✓ 第二页筛选上下文在打开与关闭全页制作区后不变，底层工作区只在打开期间 inert  972ms
+   ✓ 制作区打开时 Studio 失败通知仍在可操作区域，失败弹窗关闭且命令保留 CSRF  518ms
+   ✓ 侧栏分组不重复维护入口，底部工具保留主题/折叠状态与 Owner 焦点  419ms
+   ✓ 待审核只保留队列筛选，切入时清除无效归档范围并保留真实查询  382ms
+ ✓ src/local-app/LocalSecretAdministration.test.tsx (5 tests) 2313ms
+   ✓ reveals only after POST password verification and clears on selection/filter/visibility  724ms
+   ✓ copies through browser clipboard after verification and never renders returned plaintext  343ms
+   ✓ blocks stale reveal responses after close, filter and expired-session event  371ms
+   ✓ hides plaintext after thirty seconds and never offers control-secret reveal  714ms
+ ✓ src/local-app/LocalCatalogApp.account.test.tsx (5 tests) 1837ms
+   ✓ checks the exact current blueprint through the local Owner command and displays its real blocker  413ms
+   ✓ does not show an old successful check after the saved blueprint revision changes  343ms
+   ✓ keeps the new account check when the previous account check returns late  321ms
+   ✓ keeps the relogged-in session check when an old session check returns late  584ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (7 tests) 2353ms
+   ✓ 保留安全弹窗焦点，将维护入口统一为侧栏且跨页保留连接草稿  557ms
+   ✓ cleanupPending=false: confirms the actual directory and exact title, then reports unfinished file cleanup  400ms
+   ✓ cleanupPending=true: confirms the actual directory and exact title, then reports unfinished file cleanup  388ms
+   ✓ shows a delete failure inside the confirmation dialog instead of leaving the click without feedback  352ms
+ ✓ src/episodes/episodeCatalog.test.tsx (5 tests) 1345ms
+   ✓ server catalog in the real console > 筛选重置到第一页，慢旧页不能覆盖新筛选结果  492ms
+ ✓ src/accounts/AccountWorkspace.test.tsx (33 tests) 13410ms
+   ✓ 账号配置工作区 > 切换分区后选中标签始终关联当前面板  1068ms
+   ✓ 账号配置工作区 > 用当前配置工作区取代蓝图版本管理  413ms
+   ✓ 账号配置工作区 > 在账号操作菜单集中展示信息并支持归档  550ms
+   ✓ 账号配置工作区 > 直接编辑并保存当前蓝图  531ms
+   ✓ 账号配置工作区 > 取消编辑会恢复当前保存值  886ms
+   ✓ 账号配置工作区 > 有未保存修改时确认后才切换到系列  452ms
+   ✓ 账号配置工作区 > 通过矩阵打开单项能力配置  361ms
+   ✓ 账号配置工作区 > 保存启用但未完成的能力草稿  310ms
+   ✓ 账号配置工作区 > 把已验证的 Pexels 当前连接直接绑定到 B-roll 蓝图  492ms
+   ✓ 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接  1061ms
+   ✓ 账号配置工作区 > 在 A-roll 尚未配置时，仍使用本机 OpenChatCut 状态开放本地路径  711ms
+   ✓ 账号配置工作区 > 选择分镜 Prompt Harness 时保存其不可变标识  338ms
+   ✓ 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿  2904ms
+   ✓ 账号配置工作区 > 支持重命名账号  306ms
+ ✓ src/App.test.tsx (35 tests) 2112ms
+   ✓ approval console > 通过结构化表单编辑蓝图并保留高级规则  393ms
+   ✓ approval console > Studio 的结构修改只返回分镜审核，不冻结当前 Studio 工程  320ms
+ ✓ src/ui/PcVisualFixes.test.tsx (5 tests) 2210ms
+   ✓ paginates 1284 series, searches all pages, and keeps the current editor draft while browsing  392ms
+   ✓ accepts at most 200 title characters before creation and exposes the limit  1332ms
+ ✓ src/connections/ConnectionWorkspace.test.tsx (8 tests) 1527ms
+   ✓ 外部连接工作区 > 从空连接池创建并显式测试 Pexels 连接，表单提交后清空密钥  447ms
+ ✓ src/local-app/LocalHistory.test.tsx (5 tests) 751ms
+ ✓ src/ui/SelectMenuInteraction.test.tsx (11 tests) 1025ms
+ ✓ src/episodes/WanShotGenerator.test.tsx (13 tests) 1064ms
+ ✓ src/observability/SystemStatusPanel.test.tsx (19 tests) 597ms
+ ✓ src/local-app/HistoryDanUi.test.tsx (3 tests) 720ms
+   ✓ submits search, scope and the Dan UI checkbox through the existing read contract  337ms
+ ✓ src/local-app/LocalConnectionsPanel.test.tsx (7 tests) 660ms
+ ✓ src/ui/DanUiInteractionGuards.test.tsx (6 tests) 486ms
+ ✓ src/connections/ConnectionFeedback.test.tsx (8 tests) 499ms
+ ✓ src/operations/OperationsWorkspace.test.tsx (6 tests) 346ms
+ ✓ src/ui/IconComboBox.test.tsx (6 tests) 715ms
+   ✓ keeps an arbitrary voice ID and submits the input text  328ms
+ ✓ src/connections/ConnectionDanUi.test.tsx (2 tests) 542ms
+   ✓ clears the credential draft and restores masking when choosing another connection  420ms
+ ✓ src/local-app/LocalSystemStatus.test.tsx (4 tests) 307ms
+ ✓ src/local-app/LocalMaintenanceEmbedded.test.tsx (2 tests) 284ms
+ ✓ src/connections/ConnectionOrganization.test.tsx (3 tests) 348ms
+ ✓ src/local-app/HistoryEpisodes.test.tsx (2 tests) 274ms
+ ✓ src/observability/TaskProgressPanel.test.tsx (4 tests) 113ms
+ ✓ src/ui/useDialogFocus.test.tsx (1 test) 139ms
+ ✓ src/ui/PaginationControls.test.tsx (2 tests) 119ms
+ ✓ src/ui/MarkdownPreview.test.tsx (1 test) 59ms
+ ✓ src/episodes/EpisodeProductionContainer.test.tsx (4 tests) 113ms
+ ✓ src/publishing/ProductionCompletionModal.test.tsx (1 test) 65ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx (71 tests) 28430ms
+   ✓ 审核台 > 在详情顶部显示当前阶段和下一步，并默认收起技术索引  310ms
+   ✓ 审核台 > 通过顶部图标按需打开产物索引及包含任务进度的审计时间线  415ms
+   ✓ 审核台 > 显示可预览产物和 Worker 阻塞项，并以理由执行批准或要求修改  517ms
+   ✓ 审核台 > 只在整片音轨中展示可试听的 BGM，并将时间批注交给受控 RPC  542ms
+   ✓ 审核台 > 以纵向缩略图展示产物，并允许 Owner 放大后关闭预览  311ms
+   ✓ 审核台 > 在详情头部以图标提供刷新、打开和复制本地目录  689ms
+   ✓ 审核台 > 通过统一入口标注用途后按顺序导入脚本、图片、A-roll 和 B-roll  918ms
+   ✓ 审核台 > 最多并发导入三个材料并在完成后立即补位  362ms
+   ✓ 审核台 > 已批准分镜显示声音与对齐状态，并保存整期 BGM 和闪避选择  928ms
+   ✓ 审核台 > 逐镜头主声音和音效独立保存，静音后恢复原选择并保留画面草稿  2415ms
+   ✓ 审核台 > 第二镜独立字幕先保存，未保存时键盘切步保持当前正文  2049ms
+   ✓ 审核台 > 第二镜修改双屏槽位和衔接后保存，保留已保存的独立正文  1858ms
+   ✓ 审核台 > 第二镜修改字幕空间时保留已保存构图，保存刷新后保持所选镜头  2101ms
+   ✓ 审核台 > 已生成字幕时序先只读查看，明确调整后才开放编辑  555ms
+   ✓ 审核台 > 本地人工时序编辑跨音轨轮询保留并只提交本地回调  872ms
+   ✓ 审核台 > 审核阶段返回镜头工作台时保留 QC 证据，并显式确认覆盖 Studio 工程  602ms
+   ✓ 审核台 > 审核镜头可核对同步预览要求，修改字幕后旧确认与代理立即失效  2264ms
+   ✓ 审核台 > 预览失败、缺少原片或旧合同阻止确认，生产就绪时仍可返回编辑  1407ms
+   ✓ 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交  1260ms
+   ✓ 审核台 > 删除镜头后在工作台切换新版，并打开下一镜  344ms
+   ✓ 审核台 > 逐镜头 TTS 可先于原片标记生成，完整保存仍要求视频  518ms
+   ✓ 审核台 > 逐镜头口播无需确认即可保存，并可保存单镜头覆盖  928ms
+   ✓ 审核台 > 同一原片支持多段裁剪并随镜头草稿一起保存  627ms
+   ✓ 审核台 > 人工媒体可在镜头工作台选择原片并保存镜头设置  973ms
+
+ Test Files  33 passed (33)
+      Tests  313 passed (313)
+   Start at  13:21:53
+   Duration  33.77s (transform 3.51s, setup 116ms, collect 40.39s, tests 83.75s, environment 11.15s, prepare 2.24s)
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 第二镜独立字幕先保存，未保存时键盘切步保持当前正文
+An update to ForwardRef(TextArea) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(TextArea) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/publishing/ProductionCompletionModal.test.tsx > 生产完成弹窗 > 展示最终材料和生产完成状态，不提供外部发布登记
+An update to PublishMetadataSummary inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to PublishMaterialPreview inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to PublishMaterialPreview inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+

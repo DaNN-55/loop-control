@@ -1,0 +1,37 @@
+[
+  {
+    "path": "DESIGN.md",
+    "beforeSha256": "341ab49e92f1eaf296364d449c930cc3f26526377dcc3561b55631083a2111ec",
+    "afterSha256": "66165546ea3a1252929ece1ecaeac830a6eefd5e8c9c648891fd9bd7f88828e1"
+  },
+  {
+    "path": "src/local-app/LocalMaintenancePanel.tsx",
+    "beforeSha256": "b4618f67bdc5669eb57ab795868e9dc68dedf1f774f3cfc0bb009bc644e0cff8",
+    "afterSha256": "e2f9193f9adbe1cd4981feb7b7b75e4f9d0b6cd1d0bda542a08bec26ef8b6005"
+  },
+  {
+    "path": "src/local-app/LocalCatalogApp.tsx",
+    "beforeSha256": "6f1fda3b11b26f163733e13d1ae30c1406fe8f7f59d2deb171efefa5874a6373",
+    "afterSha256": "2cd4b9e168f45ca559ecff2ad0256b037a713c59f957a684457e6b7bd9b715d4"
+  },
+  {
+    "path": "src/local-app/ImpeccableNavigation.test.tsx",
+    "beforeSha256": "27ece72d1b1112104667f9834720a97a0684be962aec53e276cac426e8d4fdf5",
+    "afterSha256": "c98f8ea9cae7e4cdb393e77be8199e9f83a001012a45b99b795b4c72006b8834"
+  },
+  {
+    "path": "src/local-app/LocalCatalogApp.workspace.test.tsx",
+    "beforeSha256": "690b4809fe09761a757ffbf4b3f23837d6a37a29862e9c60790b02dd2acbbc0e",
+    "afterSha256": "ee222f49d687ab6e944637f3140c4d4132556916cee783402f23a5bc10a1b78b"
+  },
+  {
+    "path": "src/workspace/WorkspaceViews.tsx",
+    "beforeSha256": "986b4835b0c01e296b2b8e65b83e2b689c57e3e07a0d9a24d078e92cf99fdfc2",
+    "afterSha256": "53ddbc0ab51184d454a864324fba2a3a337f127afbe53249259b3eac18a68740"
+  },
+  {
+    "path": "src/ui/impeccable/foundation.css",
+    "beforeSha256": "70490b134a32016a64c7e66f9bd1ff8cbbef0e140a7ecf5ca00f606bc9531d21",
+    "afterSha256": "1ec9a5697e56b18ef5dda9de0205f9e33369552636f40f457cb3e986ea964fa8"
+  }
+]

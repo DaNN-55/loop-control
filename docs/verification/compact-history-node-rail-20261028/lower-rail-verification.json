@@ -1,0 +1,13 @@
+{
+  "scope": "standalone-node-demo-only",
+  "shotCountPreserved": 7,
+  "storyboardAspectRatio": 1.7777777777777777,
+  "shotPreviewCenterErrorPx": 0.0078125,
+  "railPosition": "static",
+  "railAfterPreview": true,
+  "overlap": false,
+  "inlineSyntax": "passed",
+  "markdownChecks": 6,
+  "realProductionChanged": false,
+  "committed": false
+}

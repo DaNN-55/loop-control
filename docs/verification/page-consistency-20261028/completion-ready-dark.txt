@@ -1,0 +1,87 @@
+Window: "Loop Control · 页面一致性隔离验收", App: Google Chrome for Testing.
+0 标准窗口 Loop Control · 页面一致性隔离验收 - Google Chrome for Testing, Secondary Actions: Raise, URL: 127.0.0.1:5191/docs/verification/page-consistency-20261028/fixture.html?scene=completion&mode=ready&theme=dark
+	1 container Loop Control · 页面一致性隔离验收 - Google Chrome for Testing, URL: 127.0.0.1:5191/docs/verification/page-consistency-20261028/fixture.html?scene=completion&mode=ready&theme=dark
+		2 container
+			3 工具栏
+				4 按钮 返回
+				5 按钮 (disabled) 前进
+				6 container chrome://webui-toolbar.top-chrome/
+					7 工具栏
+						8 弹出式按钮 重新加载, Help: 重新加载此网页，按下可查看更多选项
+				9 container
+					10 弹出式按钮 查看网站信息
+					11 文本栏 (settable) 地址和搜索栏, Placeholder: 问问 Google 或输入网址, Value: 127.0.0.1:5191/docs/verification/page-consistency-20261028/fixture.html?scene=completion&mode=ready&theme=dark
+					12 按钮 为此标签页添加书签
+				13 按钮 您
+				14 弹出式按钮 Chromium
+			15 container
+				16 HTML 内容 Loop Control · 页面一致性隔离验收, URL: 127.0.0.1:5191/docs/verification/page-consistency-20261028/fixture.html?scene=completion&mode=ready&theme=dark
+					17 container 完成生产
+						18 container
+							19 标题 完成生产, Value: 2
+								20 文本 完成生产
+							21 container
+								22 text 城市日常：清晨的第一束光  ·  fixture-
+							23 按钮 关闭完成生产
+							24 text 本地生产单目录 episodes/ fixture-episode 发布包 发布包已固定 生产状态 生产已完成
+							25 container
+								26 标题 最终生产材料, Value: 3
+									27 文本 最终生产材料
+								28 文本 生产单在发布包校验通过后结束；外部发布不在本工作台记录。
+							29 container
+								30 标题 发布元数据, Value: 4
+									31 文本 发布元数据
+								32 文本 metadata.json
+								33 按钮 在本地打开
+								34 text 标题 城市日常：清晨的第一束光 标签 城市、日常 简介 演示交付内容
+							35 container
+								36 标题 封面, Value: 4
+									37 文本 封面
+								38 文本 cover.svg
+								39 按钮 在本地打开
+								40 图像 封面预览
+								41 按钮 放大查看封面
+							42 container
+								43 标题 视频, Value: 4
+									44 文本 视频
+								45 文本 final.mp4
+								46 按钮 在本地打开
+								47 container 无法播放媒体。
+									48 container 正在缓冲
+									49 container
+										50 按钮 播放
+										51 按钮 (disabled) 静音
+										52 按钮 进入全屏模式
+										53 弹出式按钮 显示更多媒体控件, Help: 更多选项
+									54 滑块 视频时间进度条, Value: 0, Details: 已播放时间：0:00, Secondary Actions: Increment, Decrement
+								55 按钮 放大查看视频
+							56 开合三角标记 更多材料 QC 报告 · 发布包
+								57 文本 更多材料 
+								58 文本 QC 报告 · 发布包
+							59 按钮 关闭
+			60 container 信息栏容器
+				61 container 信息栏
+					62 文本 Chrome 测试版 v153.0.8010.36 仅适用于自动测试。若要进行常规浏览，请使用可自动更新的标准版 Chrome。
+					63 链接 下载 Chrome
+			64 弹出式按钮 标签页搜索
+			65 container
+				66 标签页组
+					67 标签 (selected, settable, boolean) Loop Control · 页面一致性隔离验收, Value: on
+						68 按钮 关闭
+			69 按钮 新标签页
+	70 关闭按钮
+	71 全屏幕按钮 Help: 此按钮也可以执行缩放窗口的操作, Secondary Actions: 缩放窗口
+	72 最小化按钮
+73 menu bar
+	74 Google Chrome for Testing
+	75 文件
+	76 编辑
+	77 显示
+	78 历史记录
+	79 书签
+	80 个人资料
+	81 标签页
+	82 窗口
+	83 帮助
+
+The focused UI element is 23 按钮 关闭完成生产

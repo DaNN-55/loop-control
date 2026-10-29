@@ -1,0 +1,12 @@
+{
+  "email": "wangdan556040@gmail.com",
+  "previousFailedAttempts": 5,
+  "previousLockedUntil": "2026-10-27T01:04:50.758829+00:00",
+  "failedAttempts": 0,
+  "locked": false,
+  "loginHttpStatus": 200,
+  "passwordUnchanged": true,
+  "ownerIdUnchanged": true,
+  "rateLimitPolicyUnchanged": true,
+  "validationSessionLoggedOut": true
+}

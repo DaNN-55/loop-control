@@ -1,0 +1,16 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/historyOrganization.integration.test.ts (1 test) 4642ms
+   ✓ scopes archive/restore and non-destructive cleanup previews through real HTTP and application PG permissions  4641ms
+ ✓ src/local-app/historyEpisodeDeletion.integration.test.ts (1 test) 5308ms
+   ✓ deletes only the confirmed history, live order and exclusive files through real Owner HTTP  5307ms
+ ✓ src/local-app/episodeDeletion.integration.test.ts (2 tests) 5418ms
+   ✓ managed=true: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences  3508ms
+   ✓ managed=false: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences  1909ms
+
+ Test Files  3 passed (3)
+      Tests  4 passed (4)
+   Start at  09:41:48
+   Duration  5.88s (transform 232ms, setup 37ms, collect 739ms, tests 15.37s, environment 0ms, prepare 136ms)
+

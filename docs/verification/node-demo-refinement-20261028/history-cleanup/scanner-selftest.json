@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "cases": [
+    "relative-logical-path",
+    "dot-prefixed-logical-path",
+    "absolute-project-path",
+    "sha-token",
+    "nested-gzip-tar-zip-member",
+    "unreadable-archive-fails-closed"
+  ],
+  "members": 3
+}

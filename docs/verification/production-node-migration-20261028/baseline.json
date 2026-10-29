@@ -1,0 +1,10 @@
+{
+  "files": {
+    "src/episodes/EpisodeProduction.tsx": "5c3f7b87c4d4be855ebc6737d4a6a7f05470ff9a615940087ec162b19d50fd98",
+    "src/local-app/LocalEpisodeDetail.tsx": "04ae963077fafed8f736d91ae752eafd6e76a97b2cc91844ad0c4090cef8829d",
+    "src/local-app/LocalDeliveryPanel.tsx": "062d8d5fe8f509e6e8f64b2ee34ecb664cff00591714d3744732a7f476bb8db7",
+    "src/publishing/ProductionCompletionModal.tsx": "b44a4777310876c8d88e2020c7779e410eddc9a8fe005d0959198cfae1433c20",
+    "src/local-app/ScriptProductionPanel.tsx": "922746fd633917964c879e12bb135a70b2b6442b5fd4c9327a99db7cccbf6d19"
+  },
+  "scope": "approved node workspace migration; real existing commands; no other pages; no commit"
+}

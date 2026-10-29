@@ -1,0 +1,72 @@
+{
+  "duplicateTabs": 0,
+  "groups": [
+    {
+      "items": [
+        "工作台",
+        "生产单",
+        "待审核"
+      ],
+      "name": "生产工作"
+    },
+    {
+      "items": [
+        "账号与系列"
+      ],
+      "name": "账号管理"
+    },
+    {
+      "items": [
+        "连接配置",
+        "历史资料"
+      ],
+      "name": "配置与资料"
+    }
+  ],
+  "overflow": false,
+  "studio": {
+    "bottom": 893,
+    "height": 40,
+    "left": 14,
+    "right": 186,
+    "top": 853,
+    "width": 172,
+    "x": 14,
+    "y": 853
+  },
+  "systemNavigationCount": 0,
+  "utilities": [
+    {
+      "height": 32,
+      "label": "系统状态：需处理",
+      "width": 32,
+      "x": 18,
+      "y": 905
+    },
+    {
+      "height": 32,
+      "label": "切换至深色模式",
+      "width": 32,
+      "x": 62,
+      "y": 905
+    },
+    {
+      "height": 32,
+      "label": "收起侧栏",
+      "width": 32,
+      "x": 106,
+      "y": 905
+    },
+    {
+      "height": 32,
+      "label": "所有者设置",
+      "width": 32,
+      "x": 150,
+      "y": 905
+    }
+  ],
+  "viewport": {
+    "height": 953,
+    "width": 1543
+  }
+}

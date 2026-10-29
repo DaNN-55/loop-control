@@ -1,0 +1,15 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/worker/episodeDeletion.test.ts (1 test) 14ms
+ ✓ src/local-app/LocalCatalogApp.account.test.tsx (5 tests) 731ms
+ ✓ src/App.test.tsx (35 tests) 956ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx (13 tests) 1155ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (7 tests) 1237ms
+   ✓ separates login/security from maintenance, preserves drafts across tabs and restores keyboard focus  309ms
+
+ Test Files  5 passed (5)
+      Tests  61 passed (61)
+   Start at  19:16:59
+   Duration  2.55s (transform 915ms, setup 0ms, collect 3.03s, tests 4.09s, environment 1.85s, prepare 284ms)
+

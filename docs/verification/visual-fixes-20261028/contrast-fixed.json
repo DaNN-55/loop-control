@@ -1,0 +1,2788 @@
+[
+  {
+    "scene": "app",
+    "theme": "light",
+    "width": 1440,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 7.8
+  },
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 6.16
+  },
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "width": 1440,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 7.8
+  },
+  {
+    "scene": "operations",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1440,
+    "text": "分镜生成与审核",
+    "ratio": 4.76
+  },
+  {
+    "scene": "new-account",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "new-episode",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "security",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "width": 1440,
+    "text": "synthetic-reference-0-only",
+    "ratio": 4.97
+  },
+  {
+    "scene": "maintenance",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "historical",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "historical",
+    "theme": "light",
+    "width": 1440,
+    "text": "放大查看",
+    "ratio": 17.91
+  },
+  {
+    "scene": "production",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "generator",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "delivery",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "completion",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "confirm",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "status",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "app",
+    "theme": "dark",
+    "width": 1440,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 5.63
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 9.85
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1440,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 5.63
+  },
+  {
+    "scene": "operations",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "width": 1440,
+    "text": "分镜生成与审核",
+    "ratio": 9.29
+  },
+  {
+    "scene": "new-account",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "new-episode",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "security",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "selected-secret",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "selected-secret",
+    "theme": "dark",
+    "width": 1440,
+    "text": "synthetic-reference-0-only",
+    "ratio": 5.99
+  },
+  {
+    "scene": "selected-secret",
+    "theme": "dark",
+    "width": 1440,
+    "text": "synthetic-reference-0-only",
+    "ratio": 16.72
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "artifact-preview",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "artifact-preview",
+    "theme": "dark",
+    "width": 1440,
+    "text": "放大查看",
+    "ratio": 18.96
+  },
+  {
+    "scene": "production",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "generator",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "delivery",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "completion",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "confirm",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "status",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "app",
+    "theme": "light",
+    "width": 1440,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 7.8
+  },
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 6.16
+  },
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "width": 1440,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 7.8
+  },
+  {
+    "scene": "operations",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "new-account",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "new-episode",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "security",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "width": 1440,
+    "text": "synthetic-reference-0-only",
+    "ratio": 4.97
+  },
+  {
+    "scene": "maintenance",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "historical",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "historical",
+    "theme": "light",
+    "width": 1440,
+    "text": "放大查看",
+    "ratio": 17.91
+  },
+  {
+    "scene": "production",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "generator",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "delivery",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "completion",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "confirm",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "status",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "app",
+    "theme": "dark",
+    "width": 1440,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 5.63
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 9.85
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1440,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 5.63
+  },
+  {
+    "scene": "operations",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "new-account",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "new-episode",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "security",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "text": "synthetic-reference-0-only",
+    "ratio": 7.62
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "historical",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "historical",
+    "theme": "dark",
+    "width": 1440,
+    "text": "放大查看",
+    "ratio": 18.96
+  },
+  {
+    "scene": "production",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "generator",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "delivery",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "completion",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "confirm",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "status",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 6.16
+  },
+  {
+    "scene": "operations",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "new-account",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "new-episode",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "security",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "maintenance",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "historical",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "historical",
+    "theme": "light",
+    "width": 1440,
+    "text": "放大查看",
+    "ratio": 17.91
+  },
+  {
+    "scene": "production",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "generator",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "delivery",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "completion",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "confirm",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "status",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 9.85
+  },
+  {
+    "scene": "operations",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "new-account",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "new-episode",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "security",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "historical",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "historical",
+    "theme": "dark",
+    "width": 1440,
+    "text": "放大查看",
+    "ratio": 18.96
+  },
+  {
+    "scene": "production",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "generator",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "delivery",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "completion",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "confirm",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "status",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "app",
+    "theme": "light",
+    "width": 1440,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 7.8
+  },
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 6.16
+  },
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "width": 1440,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 7.8
+  },
+  {
+    "scene": "operations",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "new-account",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "new-episode",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "security",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "width": 1440,
+    "text": "synthetic-reference-0-only",
+    "ratio": 4.97
+  },
+  {
+    "scene": "maintenance",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "historical",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "historical",
+    "theme": "light",
+    "width": 1440,
+    "text": "放大查看",
+    "ratio": 17.91
+  },
+  {
+    "scene": "production",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "generator",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "delivery",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "completion",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "confirm",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "status",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "app",
+    "theme": "dark",
+    "width": 1440,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 5.63
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 9.85
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1440,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 5.63
+  },
+  {
+    "scene": "operations",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "new-account",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "new-episode",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "security",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "text": "synthetic-reference-0-only",
+    "ratio": 7.62
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "historical",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "historical",
+    "theme": "dark",
+    "width": 1440,
+    "text": "放大查看",
+    "ratio": 18.96
+  },
+  {
+    "scene": "production",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "generator",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "delivery",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "completion",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "confirm",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "status",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "app",
+    "theme": "light",
+    "width": 1440,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 7.8
+  },
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 6.16
+  },
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "width": 1440,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 7.8
+  },
+  {
+    "scene": "operations",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1440,
+    "text": "分镜生成与审核",
+    "ratio": 4.76
+  },
+  {
+    "scene": "new-account",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "new-episode",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "security",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "width": 1440,
+    "text": "synthetic-reference-0-only",
+    "ratio": 4.97
+  },
+  {
+    "scene": "maintenance",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "historical",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "historical",
+    "theme": "light",
+    "width": 1440,
+    "text": "放大查看",
+    "ratio": 17.91
+  },
+  {
+    "scene": "production",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "generator",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "delivery",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "completion",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "confirm",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "status",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "app",
+    "theme": "dark",
+    "width": 1440,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 5.63
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 9.85
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1440,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 5.63
+  },
+  {
+    "scene": "operations",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "width": 1440,
+    "text": "分镜生成与审核",
+    "ratio": 9.29
+  },
+  {
+    "scene": "new-account",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "new-episode",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "security",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "text": "synthetic-reference-0-only",
+    "ratio": 7.62
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "historical",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "historical",
+    "theme": "dark",
+    "width": 1440,
+    "text": "放大查看",
+    "ratio": 18.96
+  },
+  {
+    "scene": "production",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "generator",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "delivery",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "completion",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "confirm",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "status",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "app",
+    "theme": "light",
+    "width": 1280,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 7.8
+  },
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 6.16
+  },
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "width": 1280,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 7.8
+  },
+  {
+    "scene": "operations",
+    "theme": "light",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1280,
+    "text": "分镜生成与审核",
+    "ratio": 4.76
+  },
+  {
+    "scene": "new-account",
+    "theme": "light",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "new-episode",
+    "theme": "light",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "security",
+    "theme": "light",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "width": 1280,
+    "text": "synthetic-reference-0-only",
+    "ratio": 4.97
+  },
+  {
+    "scene": "maintenance",
+    "theme": "light",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "historical",
+    "theme": "light",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "historical",
+    "theme": "light",
+    "width": 1280,
+    "text": "放大查看",
+    "ratio": 17.91
+  },
+  {
+    "scene": "production",
+    "theme": "light",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "generator",
+    "theme": "light",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "delivery",
+    "theme": "light",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "completion",
+    "theme": "light",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "confirm",
+    "theme": "light",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "status",
+    "theme": "light",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "app",
+    "theme": "dark",
+    "width": 1280,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 5.63
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 9.85
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1280,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 5.63
+  },
+  {
+    "scene": "operations",
+    "theme": "dark",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "width": 1280,
+    "text": "分镜生成与审核",
+    "ratio": 9.29
+  },
+  {
+    "scene": "new-account",
+    "theme": "dark",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "new-episode",
+    "theme": "dark",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "security",
+    "theme": "dark",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1280,
+    "text": "synthetic-reference-0-only",
+    "ratio": 7.62
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "historical",
+    "theme": "dark",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "historical",
+    "theme": "dark",
+    "width": 1280,
+    "text": "放大查看",
+    "ratio": 18.96
+  },
+  {
+    "scene": "production",
+    "theme": "dark",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "generator",
+    "theme": "dark",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "delivery",
+    "theme": "dark",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "completion",
+    "theme": "dark",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "confirm",
+    "theme": "dark",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "status",
+    "theme": "dark",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "app",
+    "theme": "light",
+    "width": 1920,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 7.8
+  },
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 6.16
+  },
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "width": 1920,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 7.8
+  },
+  {
+    "scene": "operations",
+    "theme": "light",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1920,
+    "text": "分镜生成与审核",
+    "ratio": 4.76
+  },
+  {
+    "scene": "new-account",
+    "theme": "light",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "new-episode",
+    "theme": "light",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "security",
+    "theme": "light",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "width": 1920,
+    "text": "synthetic-reference-0-only",
+    "ratio": 4.97
+  },
+  {
+    "scene": "maintenance",
+    "theme": "light",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "historical",
+    "theme": "light",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "historical",
+    "theme": "light",
+    "width": 1920,
+    "text": "放大查看",
+    "ratio": 17.91
+  },
+  {
+    "scene": "production",
+    "theme": "light",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "generator",
+    "theme": "light",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "delivery",
+    "theme": "light",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "completion",
+    "theme": "light",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "confirm",
+    "theme": "light",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "status",
+    "theme": "light",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "app",
+    "theme": "dark",
+    "width": 1920,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 5.63
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 9.85
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1920,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 5.63
+  },
+  {
+    "scene": "operations",
+    "theme": "dark",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "width": 1920,
+    "text": "分镜生成与审核",
+    "ratio": 9.29
+  },
+  {
+    "scene": "new-account",
+    "theme": "dark",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "new-episode",
+    "theme": "dark",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "security",
+    "theme": "dark",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1920,
+    "text": "synthetic-reference-0-only",
+    "ratio": 7.62
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "historical",
+    "theme": "dark",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "historical",
+    "theme": "dark",
+    "width": 1920,
+    "text": "放大查看",
+    "ratio": 18.96
+  },
+  {
+    "scene": "production",
+    "theme": "dark",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "generator",
+    "theme": "dark",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "delivery",
+    "theme": "dark",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "completion",
+    "theme": "dark",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "confirm",
+    "theme": "dark",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "status",
+    "theme": "dark",
+    "width": 1920,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "app",
+    "theme": "light",
+    "width": 2560,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 7.8
+  },
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 6.16
+  },
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "width": 2560,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 7.8
+  },
+  {
+    "scene": "operations",
+    "theme": "light",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 2560,
+    "text": "分镜生成与审核",
+    "ratio": 4.76
+  },
+  {
+    "scene": "new-account",
+    "theme": "light",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "new-episode",
+    "theme": "light",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "security",
+    "theme": "light",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "width": 2560,
+    "text": "synthetic-reference-0-only",
+    "ratio": 4.97
+  },
+  {
+    "scene": "maintenance",
+    "theme": "light",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "historical",
+    "theme": "light",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "historical",
+    "theme": "light",
+    "width": 2560,
+    "text": "放大查看",
+    "ratio": 17.91
+  },
+  {
+    "scene": "production",
+    "theme": "light",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "generator",
+    "theme": "light",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "delivery",
+    "theme": "light",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "completion",
+    "theme": "light",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "confirm",
+    "theme": "light",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "status",
+    "theme": "light",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "app",
+    "theme": "dark",
+    "width": 2560,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 5.63
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 9.85
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 2560,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 5.63
+  },
+  {
+    "scene": "operations",
+    "theme": "dark",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "width": 2560,
+    "text": "分镜生成与审核",
+    "ratio": 9.29
+  },
+  {
+    "scene": "new-account",
+    "theme": "dark",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "new-episode",
+    "theme": "dark",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "security",
+    "theme": "dark",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 2560,
+    "text": "synthetic-reference-0-only",
+    "ratio": 7.62
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "historical",
+    "theme": "dark",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "historical",
+    "theme": "dark",
+    "width": 2560,
+    "text": "放大查看",
+    "ratio": 18.96
+  },
+  {
+    "scene": "production",
+    "theme": "dark",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "generator",
+    "theme": "dark",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "delivery",
+    "theme": "dark",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "completion",
+    "theme": "dark",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "confirm",
+    "theme": "dark",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "status",
+    "theme": "dark",
+    "width": 2560,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "分镜生成与审核",
+    "ratio": 9.53
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "分镜生成与审核",
+    "ratio": 4.76
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "分镜生成与审核",
+    "ratio": 5.83
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "分镜生成与审核",
+    "ratio": 9.29
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 6.16
+  },
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "width": 1440,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 7.8
+  },
+  {
+    "scene": "operations",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "width": 1440,
+    "text": "分镜生成与审核",
+    "ratio": 4.76
+  },
+  {
+    "scene": "new-account",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "new-episode",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "width": 1440,
+    "text": "synthetic-reference-0-only",
+    "ratio": 4.97
+  },
+  {
+    "scene": "maintenance",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "drawer",
+    "theme": "light",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.47
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 9.85
+  },
+  {
+    "scene": "accounts",
+    "theme": "dark",
+    "width": 1440,
+    "text": "保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。",
+    "ratio": 5.63
+  },
+  {
+    "scene": "operations",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "width": 1440,
+    "text": "分镜生成与审核",
+    "ratio": 9.29
+  },
+  {
+    "scene": "new-account",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "new-episode",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "text": "synthetic-reference-0-only",
+    "ratio": 7.62
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "new-account",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "new-episode",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "security",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "completion",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "completion",
+    "theme": "dark",
+    "width": 1440,
+    "text": "放大查看",
+    "ratio": 6.45
+  },
+  {
+    "scene": "completion",
+    "theme": "dark",
+    "width": 1440,
+    "text": "放大查看",
+    "ratio": 6.45
+  },
+  {
+    "scene": "drawer",
+    "theme": "dark",
+    "width": 1440,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "new-account",
+    "theme": "dark",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "security",
+    "theme": "dark",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.17
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 1280,
+    "text": "账号",
+    "ratio": 7.17
+  }
+]

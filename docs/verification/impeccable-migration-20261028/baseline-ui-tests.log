@@ -1,0 +1,180 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > separates login/security from maintenance and restores keyboard focus to Owner menu 0
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/ui/PcVisualFixes.test.tsx (5 tests) 1742ms
+   ✓ paginates 1284 series, searches all pages, and keeps the current editor draft while browsing  367ms
+   ✓ accepts at most 200 title characters before creation and exposes the limit  1035ms
+ ✓ src/local-app/LocalSecretAdministration.test.tsx (5 tests) 2125ms
+   ✓ reveals only after POST password verification and clears on selection/filter/visibility  715ms
+   ✓ copies through browser clipboard after verification and never renders returned plaintext  327ms
+   ✓ blocks stale reveal responses after close, filter and expired-session event  347ms
+   ✓ hides plaintext after thirty seconds and never offers control-secret reveal  624ms
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > separates login/security from maintenance and restores keyboard focus to Owner menu 1
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/LocalCatalogApp.test.tsx (13 tests) 2115ms
+   ✓ keeps a committed series save successful when its follow-up read fails  607ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (8 tests) 2911ms
+   ✓ opens standalone OpenChatCut from the initial account page without selecting a production order  379ms
+   ✓ separates login/security from maintenance and restores keyboard focus to Owner menu 0  641ms
+   ✓ separates login/security from maintenance and restores keyboard focus to Owner menu 1  573ms
+   ✓ cleanupPending=false: confirms the actual directory and exact title, then reports unfinished file cleanup  304ms
+   ✓ cleanupPending=true: confirms the actual directory and exact title, then reports unfinished file cleanup  316ms
+ ✓ src/local-app/LocalHistory.test.tsx (5 tests) 726ms
+ ✓ src/local-app/HistoryDanUi.test.tsx (3 tests) 589ms
+ ✓ src/local-app/LocalCatalogApp.account.test.tsx (5 tests) 1237ms
+   ✓ checks the exact current blueprint through the local Owner command and displays its real blocker  329ms
+   ✓ keeps the relogged-in session check when an old session check returns late  307ms
+ ✓ src/operations/OperationsWorkspace.test.tsx (6 tests) 240ms
+ ✓ src/accounts/AccountWorkspace.test.tsx (33 tests) 5645ms
+   ✓ 账号配置工作区 > 切换分区后选中标签始终关联当前面板  419ms
+   ✓ 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接  647ms
+   ✓ 账号配置工作区 > 在 A-roll 尚未配置时，仍使用本机 OpenChatCut 状态开放本地路径  453ms
+   ✓ 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿  1166ms
+
+ Test Files  9 passed (9)
+      Tests  83 passed (83)
+   Start at  09:55:23
+   Duration  8.22s (transform 1.36s, setup 53ms, collect 11.64s, tests 17.33s, environment 3.07s, prepare 394ms)
+

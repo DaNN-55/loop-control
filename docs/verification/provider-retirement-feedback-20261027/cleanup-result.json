@@ -1,0 +1,48 @@
+{
+  "at": "2026-10-27T09:18:27.410Z",
+  "committed": true,
+  "deletedConnections": [
+    {
+      "id": "999fb36a-6e62-4b22-b47c-f1bddddcdacd",
+      "name": "cloudflare"
+    },
+    {
+      "id": "583dc9f2-7f92-4150-b0fa-b95b740bffab",
+      "name": "Google TTS 本地"
+    },
+    {
+      "id": "c7b8392b-53d7-4f3d-acf7-211991825330",
+      "name": "Cloudflare 本地"
+    }
+  ],
+  "retainedRevokedConnections": [
+    {
+      "id": "6050d819-c5b0-45c3-84f8-24e4fec994a3",
+      "name": "google_tts",
+      "reason": "Frozen blueprints and completed tasks retain original identity"
+    }
+  ],
+  "retiredBindings": 4,
+  "keychainItemsRemoved": 4,
+  "alreadyMissing": 0,
+  "removedNames": [
+    "外部服务·Cloudflare API Token",
+    "外部服务·Google TTS API Key",
+    "history/f7d838250820ee0538d7692ab5baf31222ee00cf0de86a946b54eda8fc738226/worker.env.local/GOOGLE_TTS_API_KEY",
+    "supabase-vault/18e07fe7-1174-4280-a1a4-4d6201e520b1",
+    "supabase-vault/7d84fec4-7ae3-49ac-95df-cde153a013a0"
+  ],
+  "changedCurrentBlueprints": [
+    {
+      "accountId": "96b01bba-db16-4447-a289-283d1a03e9c9",
+      "blueprintId": "934fb3df-e995-4b7a-97dd-41a6b3831c71"
+    }
+  ],
+  "episodeFrozenPoliciesUnchanged": true,
+  "historyReconstructionsBefore": 199,
+  "historyReconstructionsAfter": 199,
+  "otherCredentialsUnchanged": true,
+  "historyAndAuthenticationUnchanged": true,
+  "backupCreated": false,
+  "providerCallsDuringCleanup": 0
+}

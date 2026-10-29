@@ -1,0 +1,317 @@
+{
+  "mode": "commit",
+  "protected": {
+    "tasks": {
+      "rows": 236,
+      "sha256": "3739b8997d4a22c5c57c13b1445a02e25db2d058d7c97811f4610227e77b007d"
+    },
+    "series": {
+      "rows": 3,
+      "sha256": "0c3b1af6d7aa128510492db79adc9ce4c873371dbf948f656d8d8eca3362007f"
+    },
+    "accounts": {
+      "rows": 12,
+      "sha256": "157da78a61796b3a8974f175b30222aaaba1c6d30afa3b0234e904d7f1722bd4"
+    },
+    "episodes": {
+      "rows": 16,
+      "sha256": "f68a90aad7d71b4bd19b39f73f71a7531dc5b2e3ca853e93dc3cc2551f38472e"
+    },
+    "approvals": {
+      "rows": 26,
+      "sha256": "39c7dd7a8e54de9fb1bc13c1e86d98ed2cabc07e5a0ab89e8a150d4a23319aef"
+    },
+    "artifacts": {
+      "rows": 279,
+      "sha256": "69c27bc83c722692f8ac1bf408386b10a330a884b07e9e857849cfbd5bfe2e1e"
+    },
+    "task_runs": {
+      "rows": 189,
+      "sha256": "6e6ae78d5c569d29c7185e66bac7f23dc5b4d36a375b9f77bbadbe670b669507"
+    },
+    "asset_locks": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "audio_tracks": {
+      "rows": 68,
+      "sha256": "59bdc2a172e187af6b45dbd45e770dfe20d671d7ea91baa5f0974938b633fe2e"
+    },
+    "audit_events": {
+      "rows": 869,
+      "sha256": "ad78c174768ae2c52d76a2445617e5a27ed9168309d9e86879d751895304d3ae"
+    },
+    "prompt_versions": {
+      "rows": 39,
+      "sha256": "8d83220cea42f55fdfeab682c9cc648de8118d306f6fec69f97c025c9757c20c"
+    },
+    "review_packages": {
+      "rows": 44,
+      "sha256": "1d737501d323988fa1ded509c27ca4db9c9640250a420d11327cf70df696e6ae"
+    },
+    "series_versions": {
+      "rows": 3,
+      "sha256": "4db40030438b86e0deb3d6b97aac8966b63b010836b5b8358c5bff4cb5543ec9"
+    },
+    "qc_review_issues": {
+      "rows": 1,
+      "sha256": "5cbc39907c534acdb64f1a6f1371992bf65d30cc5e5e9796f1d3fa89502538b9"
+    },
+    "state_transitions": {
+      "rows": 124,
+      "sha256": "e6472f5b0ca0f998b41e1f3bbcbabb43b5e94b4b0fa926c1e3feda1f3d2f0f2e"
+    },
+    "review_annotations": {
+      "rows": 6,
+      "sha256": "c9ef9a0a7539bd5ff594c4e8f74371cafdc32ee884be06ffd07d014f36ff1103"
+    },
+    "account_memberships": {
+      "rows": 11,
+      "sha256": "4e3aaf32cf4f5d051063c5588859b56f8c495a2ebd184a431d493667f9727edc"
+    },
+    "external_connections": {
+      "rows": 32,
+      "sha256": "b4b4bdbbc9db82a1ffebe23d776468ea38f0ea6092c087b32472593d712e116f"
+    },
+    "worker_episode_turns": {
+      "rows": 2,
+      "sha256": "0271b1e84c24f14558cd2011fbbeb03b386c804e182d18a8f4cd6f65f940ae5f"
+    },
+    "local_identity.owners": {
+      "rows": 11,
+      "sha256": "0e8ae900b07b63dacb32cd470427b0ad432caea836e08a352626b2cfac639afa"
+    },
+    "episode_read_revisions": {
+      "rows": 120,
+      "sha256": "b0ad9f388ad12102c40757a3ccb88e24778565608842275c1b9ad229b09e3d5e"
+    },
+    "audio_track_annotations": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local_identity.sessions": {
+      "rows": 35,
+      "sha256": "0b611d9c182880b6be44ed8e89f11bb9748dd685ee69306f1ed26508002efd24"
+    },
+    "production_dependencies": {
+      "rows": 1147,
+      "sha256": "33217df89a52ff309b89b32e56f63fb50365614167c772968143146f67143a20"
+    },
+    "shot_preparation_drafts": {
+      "rows": 52,
+      "sha256": "a319261ec6c22d2f42b004b75fd682ea31af8a70d56d6e34055617b0f923095f"
+    },
+    "storyboard_review_shots": {
+      "rows": 97,
+      "sha256": "106f21457844671306a2b4015c65feb574ec9457e45b61edb69636dafef1d1d5"
+    },
+    "production_invalidations": {
+      "rows": 6,
+      "sha256": "63f67bd6d695c1f1b616eeccd520b07452bf827b3fcc5de440dec3104d74a6b3"
+    },
+    "worker_resource_ceilings": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "pre_render_review_members": {
+      "rows": 117,
+      "sha256": "4bc8cebcb6cdf08bf411b9f64e60707da99cc0aa6779da4ca893e74f1a14a1d1"
+    },
+    "worker_scheduler_settings": {
+      "rows": 1,
+      "sha256": "752cb4a3011e0ae24813c86a208832bddded20dcb3318dcb5ce9b43d8de293c6"
+    },
+    "account_blueprint_versions": {
+      "rows": 25,
+      "sha256": "af5548e955e6a718fc908951a3054d775b4bcf2f5e2cee866fa79d5468a6a023"
+    },
+    "generation_account_budgets": {
+      "rows": 1,
+      "sha256": "2c8055909de807b6f4c0a494a840b9318dc7d93e0eaca0b44d75643a463d915f"
+    },
+    "local_identity.credentials": {
+      "rows": 1,
+      "sha256": "942d7a32f7b1523e9a21752f131786552580fbcdffc80b4436a5d831abf9978d"
+    },
+    "material_revision_approvals": {
+      "rows": 102,
+      "sha256": "7e5e5de6cf8a329e579237f8fc06383b7acd4c7ef37c1302d10fa83b2ab8682f"
+    },
+    "notification_delivery_state": {
+      "rows": 1,
+      "sha256": "6759d87d5c0abbf9d9bd58dd287e1bed0a9f328850be39befda1a22c88cd2b26"
+    },
+    "storyboard_audio_selections": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "external_connection_versions": {
+      "rows": 54,
+      "sha256": "ef4dda505c831ef85b0fb2197a0a1db9771c6695e138a5763c4925666d39c217"
+    },
+    "local_identity.history_files": {
+      "rows": 57804,
+      "sha256": "75f745de98a0491b6c8e285a9e10379156136d0c7a1d988f335d51c842e6c06a"
+    },
+    "local_identity.import_record": {
+      "rows": 1,
+      "sha256": "fe85ec5d77a2b0b7e08ebdfd0c16b732304584f795630ab6eb00736ddddb7e01"
+    },
+    "notification_delivery_events": {
+      "rows": 3,
+      "sha256": "888cb6bb30d27c9cd316962c5015dc03d26a441852fb7f0c83e41111fceab185"
+    },
+    "paid_generation_reservations": {
+      "rows": 16,
+      "sha256": "cee921a7058514cf97e9b745d3168e94a45bef78cefc3e45cbafc11c1334dc62"
+    },
+    "local_identity.input_episodes": {
+      "rows": 2,
+      "sha256": "b822f7429e7227d5b503920a2675afc360caf4d26bdda9d0664fd5364117d20f"
+    },
+    "local_identity.restore_record": {
+      "rows": 1,
+      "sha256": "6fd33f2bd1ce3a8e478c8df86236e07bd0382c283e6de40f99a83f81e8298390"
+    },
+    "production_material_revisions": {
+      "rows": 108,
+      "sha256": "af6548af8df748b15caf40556d66a5e45f34e41449f7a0eb2e438de2b2e3ab53"
+    },
+    "local_identity.automation_jobs": {
+      "rows": 1,
+      "sha256": "3c6fef7c997342f24ac7ed16e727413e5891131c772452edf6ceccf82e39fa67"
+    },
+    "local_identity.history_sources": {
+      "rows": 185,
+      "sha256": "d07afd0346da01573ed19e294b20e787a7907a60d5c80c1ea27a68a2946191ac"
+    },
+    "local_identity.automation_plans": {
+      "rows": 1,
+      "sha256": "c75ee17c4ee00b46a1df57aa97572361f37afe285ee94a036c89e8555e0e9233"
+    },
+    "local_identity.command_receipts": {
+      "rows": 1145,
+      "sha256": "39586904178fba01a4bba63b2c4afa207cec4f1de7cc056d15ab59203757694a"
+    },
+    "local_identity.historical_tasks": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "local_identity.history_versions": {
+      "rows": 66258,
+      "sha256": "068909fa73ec1684d20b5f3932db12d25dfa998d0353ff0013d9b52a52ca3b92"
+    },
+    "local_identity.schema_migrations": {
+      "rows": 61,
+      "sha256": "d64ed964e332341a4e831110d6be904d535d0675b1b35391fc202cbc74edf47e"
+    },
+    "external_connection_verifications": {
+      "rows": 86,
+      "sha256": "63c5ee615e9e9371c3c4b6a26ee46f2a8d73a7ee2b681172160e07037c78bb9a"
+    },
+    "local_identity.connection_intents": {
+      "rows": 56,
+      "sha256": "050f6c9858c6b07139d15a74aa281ce74587a51cad7bd83560b67bfd87c17138"
+    },
+    "local_identity.automation_attempts": {
+      "rows": 1,
+      "sha256": "5567a3a3e1746f3ce59454ea86204bfa1f2533b63078cd9cf891989fdf85f5a1"
+    },
+    "local_identity.connection_bindings": {
+      "rows": 49,
+      "sha256": "260b0375baefe89bbeb7650f5edd63d7d0fce4b2551e3f6b025deb535d132a75"
+    },
+    "local_identity.historical_episodes": {
+      "rows": 6053,
+      "sha256": "afa9fc3432c8872f34f0c780b17edd573d21359d00f678f9b515fa1c994046e3"
+    },
+    "local_identity.history_source_rows": {
+      "rows": 1511192,
+      "sha256": "aebe1a7a698934c9ddc4ea215358a8530be1ae4512d1a51eb14fc3d32f9933a8"
+    },
+    "pre_render_review_member_decisions": {
+      "rows": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "review_render_composition_revisions": {
+      "rows": 27,
+      "sha256": "c2a7b155476bbf3d282467e663f9ef28b9a8a04297432c4c9ba320bdfa837af2"
+    },
+    "local_identity.historical_audit_events": {
+      "rows": 15,
+      "sha256": "8eb5911ee200872109f8435e53b2dc8410bc770b4f01d377976e0f5dee4b249d"
+    },
+    "local_identity.history_file_protections": {
+      "rows": 12,
+      "sha256": "19332bc8f7f8a75dded9cc25a6dd6bbb293e0763a8f42396de60e1ba984eaf24"
+    },
+    "local_identity.connection_probe_evidence": {
+      "rows": 53,
+      "sha256": "fea2332e22d75c5191a5d8cf4f602767a48d44886e646a9545a55f6fae2b1a2b"
+    },
+    "local_identity.connection_qualifications": {
+      "rows": 21,
+      "sha256": "a24130b3509cfeba7a9d0e4e5c6174586336d2778185311a9d19951c1ab33bb6"
+    },
+    "local_identity.historical_automation_jobs": {
+      "rows": 20,
+      "sha256": "2e8f2f3411c46b5f15a58a9cfe53cf7cb322a3ac3f7e58b76fcf7beef30150c0"
+    },
+    "local_identity.history_projection_results": {
+      "rows": 32784,
+      "sha256": "0f9eacb6c58b812f012e3377e0e32b0241d9d3fb5fb4c65fbd40b3deed255615"
+    },
+    "local_identity.historical_automation_plans": {
+      "rows": 2,
+      "sha256": "230e9020c7afaadb8e13d074fef41c0fca854f91e21a9691e5bc7124040dddba"
+    },
+    "local_identity.historical_automation_attempts": {
+      "rows": 27,
+      "sha256": "f3c5874c246852ed75a216159ebdf9544e3c1b13c6a1100e2a1ae837cb5c7a61"
+    }
+  },
+  "historySource": "7d890a9cd9ae1f246c6295a3ffd6eedd5aeaee9041a21c1385b93fbb9609c4e7",
+  "deletedAccounts": 31,
+  "deletedEpisodes": 222,
+  "deletedRelations": {
+    "tasks": 623,
+    "series": 3,
+    "accounts": 31,
+    "episodes": 222,
+    "approvals": 151,
+    "artifacts": 707,
+    "task_runs": 564,
+    "audio_tracks": 62,
+    "audit_events": 4311,
+    "prompt_versions": 86,
+    "review_packages": 186,
+    "series_versions": 13,
+    "qc_review_issues": 2,
+    "state_transitions": 584,
+    "review_annotations": 5,
+    "account_memberships": 34,
+    "worker_episode_turns": 188,
+    "episode_read_revisions": 2115,
+    "audio_track_annotations": 1,
+    "production_dependencies": 688,
+    "shot_preparation_drafts": 115,
+    "storyboard_review_shots": 130,
+    "pre_render_review_members": 29,
+    "account_blueprint_versions": 45,
+    "material_revision_approvals": 220,
+    "storyboard_audio_selections": 13,
+    "notification_delivery_events": 2297,
+    "local_identity.input_episodes": 4,
+    "production_material_revisions": 220,
+    "local_identity.historical_tasks": 570,
+    "local_identity.historical_episodes": 215,
+    "review_render_composition_revisions": 16,
+    "local_identity.historical_audit_events": 3906
+  },
+  "protectedRelations": 67,
+  "historyRowsPreserved": 18356,
+  "remainingOwnerAccounts": 6,
+  "remainingOwnerEpisodes": 10,
+  "otherOwnerAccountsPreserved": 6,
+  "otherOwnerEpisodesPreserved": 6
+}

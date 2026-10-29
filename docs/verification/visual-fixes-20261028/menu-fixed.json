@@ -1,0 +1,118 @@
+{
+  "actions": [
+    {
+      "rect": {
+        "bottom": 368,
+        "height": 36,
+        "left": 1244,
+        "right": 1356,
+        "top": 332,
+        "width": 112,
+        "x": 1244,
+        "y": 332
+      },
+      "text": "新增镜头"
+    },
+    {
+      "rect": {
+        "bottom": 406,
+        "height": 36,
+        "left": 1244,
+        "right": 1356,
+        "top": 370,
+        "width": 112,
+        "x": 1244,
+        "y": 370
+      },
+      "text": "删除镜头"
+    },
+    {
+      "rect": {
+        "bottom": 444,
+        "height": 36,
+        "left": 1244,
+        "right": 1356,
+        "top": 408,
+        "width": 112,
+        "x": 1244,
+        "y": 408
+      },
+      "text": "拆分镜头"
+    },
+    {
+      "rect": {
+        "bottom": 482,
+        "height": 36,
+        "left": 1244,
+        "right": 1356,
+        "top": 446,
+        "width": 112,
+        "x": 1244,
+        "y": 446
+      },
+      "text": "合并镜头"
+    },
+    {
+      "rect": {
+        "bottom": 520,
+        "height": 36,
+        "left": 1244,
+        "right": 1356,
+        "top": 484,
+        "width": 112,
+        "x": 1244,
+        "y": 484
+      },
+      "text": "调整顺序"
+    },
+    {
+      "rect": {
+        "bottom": 558,
+        "height": 36,
+        "left": 1244,
+        "right": 1356,
+        "top": 522,
+        "width": 112,
+        "x": 1244,
+        "y": 522
+      },
+      "text": "修改镜头类型"
+    },
+    {
+      "rect": {
+        "bottom": 621,
+        "height": 36,
+        "left": 1244,
+        "right": 1356,
+        "top": 585,
+        "width": 112,
+        "x": 1244,
+        "y": 585
+      },
+      "text": "声音设置"
+    }
+  ],
+  "dialog": {
+    "bottom": 638,
+    "height": 351,
+    "left": 1227,
+    "right": 1373,
+    "top": 287,
+    "width": 146,
+    "x": 1227,
+    "y": 287
+  },
+  "height": 1000,
+  "placement": "top",
+  "popover": {
+    "bottom": 638,
+    "height": 351,
+    "left": 1227,
+    "right": 1373,
+    "top": 287,
+    "width": 146,
+    "x": 1227,
+    "y": 287
+  },
+  "width": 1440
+}

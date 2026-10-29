@@ -1,0 +1,34 @@
+{
+  "voice": {
+    "customValue": "custom-voice-demo",
+    "escapeRetainsDialog": true,
+    "inputBorder": "0px none",
+    "captionClipped": true
+  },
+  "realMenu": {
+    "outerRadius": "12px",
+    "optionRadius": "8px"
+  },
+  "select": [
+    {
+      "label": "全部系列",
+      "radius": "8px"
+    },
+    {
+      "label": "日照金山情景种草",
+      "radius": "8px"
+    },
+    {
+      "label": "豆包推广-v1",
+      "radius": "8px"
+    },
+    {
+      "label": "未归属系列",
+      "radius": "8px"
+    },
+    {
+      "label": "关联系列不可用",
+      "radius": "8px"
+    }
+  ]
+}

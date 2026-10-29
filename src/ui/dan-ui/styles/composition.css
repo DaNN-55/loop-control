@@ -1,0 +1,264 @@
+/* Dan UI PC composition tokens. Official component sizes and state styles stay intact. */
+.product-ui {
+  color-scheme: light;
+  --dan-label-width: 152px;
+  --dan-field-short: 320px;
+  --dan-field-medium: 480px;
+  --dan-field-full: 640px;
+  --dan-field-gap: 20px;
+  --dan-column-gap: 24px;
+  --dan-section-gap: 24px;
+  --dan-row-padding: 12px 16px;
+  --dan-panel-radius: 12px;
+}
+.product-ui[data-theme="dark"] {
+  color-scheme: dark;
+}
+.product-ui ::selection {
+  background: var(--color-bg-brand-secondary);
+  color: var(--color-text-primary);
+}
+.product-ui input, .product-ui textarea {
+  caret-color: var(--color-text-brand-secondary);
+}
+.product-ui .dan-workspace {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+  gap: var(--dan-section-gap);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.product-ui .dan-heading, .product-ui .dan-actions, .product-ui .dan-inline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+.product-ui .dan-heading {
+  justify-content: space-between;
+  gap: 16px;
+}
+.product-ui .dan-workspace h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.product-ui .dan-workspace h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+.product-ui .dan-meta {
+  color: var(--color-text-tertiary);
+  font-size: 12px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.product-ui .dan-fields {
+  display: grid;
+  gap: var(--dan-field-gap);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.product-ui .dan-fields > legend {
+  margin-bottom: 20px;
+  padding: 0;
+  font-weight: 600;
+}
+.product-ui .dan-field {
+  display: grid;
+  grid-template-columns: var(--dan-label-width) minmax(
+      0,
+      var(--dan-field-medium)
+    );
+  align-items: start;
+  gap: 6px var(--dan-column-gap);
+  width: 100%;
+  min-width: 0;
+}
+.product-ui .dan-field > [data-label], .product-ui .dan-field > label {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: start;
+  padding-top: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+}
+.product-ui .dan-field > :not(label):not([data-label]) {
+  grid-column: 2;
+  min-width: 0;
+  width: 100%;
+}
+.product-ui .dan-field[data-width="short"] {
+  grid-template-columns: var(--dan-label-width) minmax(
+      0,
+      var(--dan-field-short)
+    );
+}
+.product-ui .dan-field[data-width="full"] {
+  grid-template-columns: var(--dan-label-width) minmax(0, var(--dan-field-full));
+}
+.product-ui .dan-field [slot="description"] {
+  margin-top: 6px;
+}
+.product-ui .dan-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border-secondary);
+}
+.product-ui .dan-footer > .dan-actions {
+  margin-left: auto;
+}
+.product-ui .dan-feedback {
+  margin: 0;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.product-ui .dan-feedback[data-tone="success"] {
+  color: var(--color-text-success-primary);
+}
+.product-ui .dan-feedback[data-tone="error"] {
+  color: var(--color-text-error-primary);
+}
+.product-ui .dan-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--color-border-secondary);
+  border-radius: var(--dan-panel-radius);
+  background: var(--color-bg-primary);
+  overflow: hidden;
+}
+.product-ui .dan-list > li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  padding: var(--dan-row-padding);
+  border-bottom: 1px solid var(--color-border-secondary);
+  min-width: 0;
+}
+.product-ui .dan-list > li:last-child {
+  border-bottom: 0;
+}
+.product-ui .dan-list > li[data-selected="true"] {
+  background: var(--color-bg-secondary);
+}
+.product-ui .dan-list-identity {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.product-ui .dan-list-identity strong {
+  font-weight: 600;
+}
+.product-ui .dan-disclosure {
+  min-width: 0;
+}
+.product-ui .dan-disclosure > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px 6px;
+  margin-left: -6px;
+  list-style: none;
+  border-radius: 6px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+  transition: background-color 150ms ease-out;
+}
+.product-ui .dan-disclosure > summary::-webkit-details-marker {
+  display: none;
+}
+.product-ui .dan-disclosure > summary::marker {
+  content: "";
+}
+.product-ui .dan-disclosure > summary > svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  stroke-width: 1.75;
+  color: var(--color-fg-quaternary);
+  transition: transform 150ms ease-out;
+}
+.product-ui .dan-disclosure[open] > summary {
+  color: var(--color-text-primary);
+}
+.product-ui .dan-disclosure[open] > summary > svg {
+  transform: rotate(90deg);
+}
+.product-ui .dan-disclosure > summary:hover {
+  background: var(--color-bg-secondary_hover);
+}
+.product-ui .dan-disclosure > summary:active {
+  background: var(--color-bg-tertiary);
+}
+.product-ui .dan-disclosure > summary:focus-visible {
+  outline: 2px solid var(--color-border-brand);
+  outline-offset: 2px;
+}
+.product-ui .dan-disclosure-content {
+  padding-top: 12px;
+  min-width: 0;
+}
+.product-ui .dan-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 164px auto;
+  align-items: end;
+  gap: 12px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--color-border-secondary);
+}
+.product-ui .dan-filters > :last-child {
+  justify-self: end;
+}
+@media (max-width: 700px) {
+  .product-ui .dan-field, .product-ui .dan-field[data-width] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .product-ui .dan-field > [data-label], .product-ui .dan-field > label {
+    grid-row: auto;
+    padding-top: 0;
+  }
+  .product-ui .dan-field > :not(label):not([data-label]) {
+    grid-column: 1;
+    max-width: var(--dan-field-full);
+  }
+  .product-ui .dan-filters {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .product-ui .dan-filters > :first-child {
+    grid-column: 1 / -1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .product-ui .dan-disclosure > summary, .product-ui .dan-disclosure > summary > svg {
+    transition: none;
+  }
+  .product-ui [data-react-aria-top-layer] *, .product-ui [role="tooltip"] * {
+    animation-duration: 0s !important;
+    transition-duration: 0s !important;
+  }
+}

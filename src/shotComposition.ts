@@ -89,10 +89,6 @@ const layoutRects: Record<ShotCompositionLayout, Record<string, ShotCompositionR
   },
 };
 
-export function shotCompositionSlotIds(layout: ShotCompositionLayout): readonly string[] {
-  return layoutSlotIds[layout];
-}
-
 export function shotCompositionRect(layout: ShotCompositionLayout, slotId: string): ShotCompositionRect {
   const rect = layoutRects[layout][slotId];
   if (!rect) throw new Error(`未知构图槽位：${layout}/${slotId}`);

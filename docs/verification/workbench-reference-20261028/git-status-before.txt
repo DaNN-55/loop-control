@@ -1,0 +1,877 @@
+ M .gitignore
+ M CONTEXT.md
+ M PLAN.md
+ M README.md
+ M docs/adr/0001-episode-archive-and-permanent-delete.md
+ M docs/adr/README.md
+ M docs/backlog/local-first-optimization.md
+ D docs/backlog/v1.md
+ D docs/backlog/v2.md
+ M docs/local-daily-runtime.md
+ D docs/local-native-deployment.md
+ D docs/specs/001-multi-account-platform-v1.md
+ D docs/specs/002-control-plane-ux-and-observability.md
+ D docs/specs/003-blueprint-configuration-completeness.md
+ D docs/specs/004-global-connection-management.md
+ D docs/specs/local-first-optimization.md
+ D docs/specs/local-first-tickets/01-isolated-run.md
+ D docs/specs/local-first-tickets/02-baseline.md
+ D docs/specs/local-first-tickets/03-architecture.md
+ D docs/specs/local-first-tickets/04-restore.md
+ D docs/specs/local-first-tickets/05-lease.md
+ D docs/specs/local-first-tickets/06-queue-entry.md
+ D docs/specs/local-first-tickets/07-capacity.md
+ D docs/specs/local-first-tickets/08-fast-dispatch.md
+ D docs/specs/local-first-tickets/09-notification.md
+ D docs/specs/local-first-tickets/10-reads.md
+ D docs/specs/local-first-tickets/11-render-reuse.md
+ D docs/specs/local-first-tickets/12-local-read.md
+ D docs/specs/local-first-tickets/13-local-owner.md
+ D docs/specs/local-first-tickets/14-local-config.md
+ D docs/specs/local-first-tickets/15-local-secrets.md
+ D docs/specs/local-first-tickets/16-local-input.md
+ D docs/specs/local-first-tickets/17-local-storyboard.md
+ D docs/specs/local-first-tickets/18-local-narration.md
+ D docs/specs/local-first-tickets/19-local-media.md
+ D docs/specs/local-first-tickets/20-local-alignment.md
+ D docs/specs/local-first-tickets/21-local-studio.md
+ D docs/specs/local-first-tickets/22-local-delivery.md
+ D docs/specs/local-first-tickets/23-local-automation.md
+ D docs/specs/local-first-tickets/24-local-restore.md
+ D docs/specs/local-first-tickets/25-local-contract.md
+ M docs/specs/local-first-tickets/README.md
+ D docs/verification/local-final-acceptance-20261026/media-run02/shot-3-sync-8sec.jpg
+ M docs/verification/stage-c-followup/README.md
+ D docs/verification/stage-c-followup/title-after-reload.png
+ D docs/verification/stage-d-close/README-before-concurrency-p2.md
+ D docs/verification/stage-d-close/README-before-default-5s.md
+ D docs/verification/stage-d-close/README-before-default-deployment.md
+ D docs/verification/stage-d-close/README-before-google-diagnostic.md
+ D docs/verification/stage-d-close/README-before-native-account-ui.md
+ D docs/verification/stage-d-close/README-before-natural-lease.md
+ D docs/verification/stage-d-close/README-before-provider-continuation.md
+ D docs/verification/stage-d-close/README-before-provider-online.md
+ D docs/verification/stage-d-close/README-before-provider-preparation.md
+ D docs/verification/stage-d-close/README-before-whisperx-real.md
+ M docs/verification/stage-d-close/README.md
+ M docs/verification/stage-d-close/default-5s-stability.md
+ M docs/verification/stage-d-close/default-offline-deployment.md
+ D docs/verification/stage-d-close/evidence/google-tts-diagnostic/source/check-restored.mjs.txt
+ D docs/verification/stage-d-close/evidence/google-tts-diagnostic/source/diagnose.mjs.txt
+ D docs/verification/stage-d-close/evidence/google-tts-diagnostic/source/diagnostic-policy.mjs.txt
+ D docs/verification/stage-d-close/evidence/google-tts-diagnostic/source/finalize.mjs.txt
+ D docs/verification/stage-d-close/evidence/google-tts-diagnostic/source/offline-check.mjs.txt
+ D docs/verification/stage-d-close/evidence/google-tts-diagnostic/source/online-guard.mjs.txt
+ D docs/verification/stage-d-close/evidence/google-tts-diagnostic/source/sanitize-error.mjs.txt
+ D docs/verification/stage-d-close/evidence/google-tts-diagnostic/source/setup.mjs.txt
+ D docs/verification/stage-d-close/evidence/logout-concurrency-p2/newer-failure-login.png
+ D docs/verification/stage-d-close/evidence/native-account-ui/source/acceptance/browser-final.mjs.txt
+ D docs/verification/stage-d-close/evidence/native-account-ui/source/acceptance/closed-check.mjs.txt
+ D docs/verification/stage-d-close/evidence/native-account-ui/source/acceptance/http-check-02.mjs.txt
+ D docs/verification/stage-d-close/evidence/native-account-ui/source/acceptance/http-check.mjs.txt
+ D docs/verification/stage-d-close/evidence/native-account-ui/source/acceptance/picker-lifecycle-check.mjs.txt
+ D docs/verification/stage-d-close/evidence/native-account-ui/source/acceptance/restore-state.mjs.txt
+ D docs/verification/stage-d-close/evidence/native-account-ui/source/scripts/local/application.mjs.txt
+ D docs/verification/stage-d-close/evidence/native-account-ui/source/scripts/local/application.test.mjs.txt
+ D docs/verification/stage-d-close/evidence/native-account-ui/source/src/local-app/LocalCatalogApp.account.test.tsx.txt
+ D docs/verification/stage-d-close/evidence/native-account-ui/source/src/local-app/LocalCatalogApp.tsx.txt
+ D docs/verification/stage-d-close/evidence/native-account-ui/source/src/local-app/accountCommands.ts.txt
+ D docs/verification/stage-d-close/evidence/native-account-ui/source/src/local-app/episodeCommands.ts.txt
+ D docs/verification/stage-d-close/evidence/native-account-ui/source/src/local-app/localRoute.ts.txt
+ D docs/verification/stage-d-close/evidence/native-account-ui/source/src/platform/ConfigurationForms.local.test.tsx.txt
+ D docs/verification/stage-d-close/evidence/native-account-ui/source/src/platform/ConfigurationForms.tsx.txt
+ D docs/verification/stage-d-close/evidence/provider-continuation/source/advance.mjs.txt
+ D docs/verification/stage-d-close/evidence/provider-continuation/source/carry-offline-check.mjs.txt
+ D docs/verification/stage-d-close/evidence/provider-continuation/source/carry.mjs.txt
+ D docs/verification/stage-d-close/evidence/provider-continuation/source/online-guard.mjs.txt
+ D docs/verification/stage-d-close/evidence/provider-continuation/source/planner-offline-guard.mjs.txt
+ D docs/verification/stage-d-close/evidence/provider-continuation/source/planner.mjs.txt
+ D docs/verification/stage-d-close/evidence/provider-continuation/source/sample.mjs.txt
+ D docs/verification/stage-d-close/evidence/provider-continuation/source/setup.mjs.txt
+ D docs/verification/stage-d-close/evidence/provider-offline-preparation/source/package.json
+ D docs/verification/stage-d-close/evidence/provider-offline-preparation/source/scripts/local/application.mjs
+ D docs/verification/stage-d-close/evidence/provider-offline-preparation/source/scripts/local/application.test.mjs
+ D docs/verification/stage-d-close/evidence/provider-offline-preparation/source/scripts/local/deployment.mjs
+ D docs/verification/stage-d-close/evidence/provider-offline-preparation/source/scripts/local/deployment.test.mjs
+ D docs/verification/stage-d-close/evidence/provider-offline-preparation/source/scripts/local/provider-network-prepare.mjs
+ D docs/verification/stage-d-close/evidence/provider-offline-preparation/source/src/connections/ConnectionWorkspace.tsx
+ D docs/verification/stage-d-close/evidence/provider-offline-preparation/source/src/local-app/LocalConnectionsPanel.test.tsx
+ D docs/verification/stage-d-close/evidence/provider-offline-preparation/source/src/local-app/LocalConnectionsPanel.tsx
+ D docs/verification/stage-d-close/evidence/provider-offline-preparation/source/src/local-app/connections.ts
+ D docs/verification/stage-d-close/evidence/provider-offline-preparation/source/src/local-app/narrationWorker.ts
+ D docs/verification/stage-d-close/evidence/provider-offline-preparation/source/src/local-app/providerNetwork.test.ts
+ D docs/verification/stage-d-close/evidence/provider-offline-preparation/source/src/local-app/providerNetwork.ts
+ D docs/verification/stage-d-close/evidence/provider-offline-preparation/source/src/local-app/providerProbe.test.ts
+ D docs/verification/stage-d-close/evidence/provider-offline-preparation/source/src/local-app/providerProbe.ts
+ D docs/verification/stage-d-close/evidence/provider-offline-preparation/source/src/worker/mediaProviders.ts
+ D docs/verification/stage-d-close/evidence/provider-offline-preparation/source/tsconfig.local-app.json
+ D docs/verification/stage-d-close/evidence/provider-online-acceptance/source/src/local-app/providerNetwork.test.ts.txt
+ D docs/verification/stage-d-close/evidence/provider-online-acceptance/source/src/local-app/providerNetwork.ts.txt
+ D docs/verification/stage-d-close/evidence/provider-online-acceptance/source/src/local-app/providerProbe.test.ts.txt
+ D docs/verification/stage-d-close/evidence/provider-online-acceptance/source/src/local-app/providerProbe.ts.txt
+ D docs/verification/stage-d-close/evidence/provider-online-acceptance/source/src/worker/mediaProviders.test.ts.txt
+ D docs/verification/stage-d-close/evidence/provider-online-acceptance/source/src/worker/mediaProviders.ts.txt
+ D docs/verification/stage-d-close/evidence/provider-online-acceptance/source/src/worker/runtimeProbes.ts.txt
+ M docs/verification/stage-d-close/logout-concurrency-p2.md
+ M docs/verification/stage-d-close/whisperx-real-inference.md
+ M docs/verification/stage-d-close/worker-lease-natural-expiry.md
+ D docs/verification/stage-d-t19/evidence/local-final-a_roll_video-frame-01.png
+ M docs/verification/tts-production-e2e-20261026/README.md
+ D docs/verification/tts-production-e2e-20261026/preview-shot-1.png
+ M index.html
+ D n8n/import-workflows.sh
+ D n8n/import-workflows.test.mjs
+ D n8n/node24/package-lock.json
+ D n8n/node24/package.json
+ D n8n/prepare-workflows.mjs
+ D n8n/run-orchestrator.sh
+ D n8n/run-worker.sh
+ D n8n/start-local.sh
+ D n8n/worker.env.example
+ D n8n/workflows/approval-notifications.json
+ D n8n/workflows/daily-health-check.json
+ D n8n/workflows/state-change-notifications.json
+ D n8n/workflows/task-dispatch.json
+ M package-lock.json
+ M package.json
+ D scripts/isolation/backup.mjs
+ D scripts/isolation/baseline.mjs
+ D scripts/isolation/c-browser.mjs
+ D scripts/isolation/c-evidence.mjs
+ D scripts/isolation/c-followup.mjs
+ D scripts/isolation/capacity-consumption.mjs
+ D scripts/isolation/capacity-http.mjs
+ D scripts/isolation/capacity.mjs
+ D scripts/isolation/catalog-verification.mjs
+ D scripts/isolation/colima.yaml
+ D scripts/isolation/database.mjs
+ D scripts/isolation/database.test.mjs
+ D scripts/isolation/environment.mjs
+ D scripts/isolation/environment.test.mjs
+ D scripts/isolation/fast-dispatch-preparation.mjs
+ D scripts/isolation/fast-dispatch.mjs
+ D scripts/isolation/http-credentials.test.mjs
+ D scripts/isolation/leases.mjs
+ D scripts/isolation/lifecycle.mjs
+ D scripts/isolation/notification-restore.mjs
+ D scripts/isolation/notifications.mjs
+ D scripts/isolation/package.mjs
+ D scripts/isolation/queue-entry.mjs
+ D scripts/isolation/reads-concurrency.mjs
+ D scripts/isolation/reads.mjs
+ D scripts/isolation/regressions.test.mjs
+ D scripts/isolation/render-reuse.mjs
+ D scripts/isolation/restore-fixture.mjs
+ D scripts/isolation/restore-verify.mjs
+ D scripts/isolation/restore-vite.config.mjs
+ D scripts/isolation/restore.mjs
+ D scripts/isolation/run.mjs
+ D scripts/isolation/security-inventory.mjs
+ D scripts/isolation/smoke.mjs
+ D scripts/isolation/sql-tests.mjs
+ D scripts/isolation/stage-b-audit.mjs
+ D scripts/isolation/stage-b.mjs
+ D scripts/isolation/supabase.toml
+ D scripts/isolation/tunnel.mjs
+ D scripts/isolation/worker-recovery.mjs
+ M scripts/local-service-record.test.mjs
+ D scripts/local/alignment-acceptance.mjs
+ D scripts/local/alignment-audit.mjs
+ D scripts/local/alignment-boundary-acceptance.mjs
+ D scripts/local/alignment-fence-acceptance.mjs
+ D scripts/local/alignment-offline-fixture.mjs
+ D scripts/local/alignment-range-acceptance.mjs
+ D scripts/local/application.mjs
+ D scripts/local/application.test.mjs
+ D scripts/local/automation-acceptance.mjs
+ D scripts/local/automation-audit.mjs
+ D scripts/local/automation-resilience.mjs
+ D scripts/local/backup.mjs
+ D scripts/local/catalog-acceptance.mjs
+ D scripts/local/catalog-fixture-acceptance.mjs
+ D scripts/local/check.mjs
+ D scripts/local/configuration-acceptance.mjs
+ D scripts/local/configuration-isolation.mjs
+ D scripts/local/configuration-race.mjs
+ D scripts/local/connection-qualification-check.mjs
+ D scripts/local/connections-acceptance.mjs
+ D scripts/local/delivery-acceptance.mjs
+ D scripts/local/delivery-audit.mjs
+ D scripts/local/delivery-offline-fixture.mjs
+ D scripts/local/deployment-restore.mjs
+ D scripts/local/deployment.mjs
+ D scripts/local/deployment.test.mjs
+ D scripts/local/environment.mjs
+ D scripts/local/episode-input-acceptance.mjs
+ D scripts/local/episode-input-boundaries.mjs
+ D scripts/local/episode-input-resilience.mjs
+ D scripts/local/history-preservation.mjs
+ D scripts/local/import.mjs
+ D scripts/local/import.test.mjs
+ D scripts/local/initialize-whisperx.py
+ D scripts/local/input-freeze-check.mjs
+ D scripts/local/input-worker-readiness-check.mjs
+ D scripts/local/keychain-helper-check.mjs
+ D scripts/local/keychain-real-acceptance.mjs
+ D scripts/local/keychain-test-control.m
+ D scripts/local/local-media-acceptance.mjs
+ D scripts/local/media-acceptance.mjs
+ D scripts/local/media-boundaries.mjs
+ D scripts/local/media-controlled-ports.mjs
+ D scripts/local/media-offline-fixture.mjs
+ D scripts/local/media-readiness.mjs
+ D scripts/local/media.mjs
+ D scripts/local/migrate.mjs
+ D scripts/local/narration-acceptance.mjs
+ D scripts/local/narration-boundaries.mjs
+ D scripts/local/narration-controlled-ports.mjs
+ D scripts/local/narration-readiness.mjs
+ D scripts/local/native-backup-format.mjs
+ D scripts/local/native-restore.mjs
+ D scripts/local/offline-data-acceptance.mjs
+ D scripts/local/offline-guard.mjs
+ D scripts/local/offline-preparation.mjs
+ D scripts/local/offline-preparation.test.mjs
+ D scripts/local/owner-acceptance.mjs
+ D scripts/local/owner-isolation-acceptance.mjs
+ D scripts/local/owner.mjs
+ D scripts/local/pexels-live-acceptance.mjs
+ D scripts/local/prepare-offline.mjs
+ D scripts/local/prepare.mjs
+ D scripts/local/provider-network-prepare.mjs
+ D scripts/local/recover-native-output.mjs
+ D scripts/local/recovery-acceptance.mjs
+ D scripts/local/restore.mjs
+ D scripts/local/retired-command.mjs
+ D scripts/local/start.mjs
+ D scripts/local/stop.mjs
+ D scripts/local/storyboard-acceptance.mjs
+ D scripts/local/storyboard-boundaries.mjs
+ D scripts/local/storyboard-offline-fixture.mjs
+ D scripts/local/studio-acceptance.mjs
+ D scripts/local/studio-audit.mjs
+ D scripts/local/studio-offline-fixture.mjs
+ D scripts/local/vite.config.mjs
+ D scripts/local/worker-prepare.mjs
+ M scripts/openchatcut-render.mjs
+ M scripts/prepare-runtime.mjs
+ M scripts/run-prepared.mjs
+ M scripts/runtime/environment.mjs
+ M scripts/runtime/keychain.mjs
+ M scripts/runtime/migrate.mjs
+ M scripts/runtime/offline-python
+ M scripts/runtime/services.mjs
+ M scripts/runtime/start.mjs
+ M scripts/runtime/stop.mjs
+ M scripts/runtime/vite.config.mjs
+ D scripts/start-local.mjs
+ D scripts/start-local.test.mjs
+ M scripts/start.mjs
+ D scripts/startup-lifecycle.acceptance.test.mjs
+ D scripts/stop-all.sh
+ D scripts/stop-local.mjs
+ M scripts/stop.mjs
+ M scripts/storage/backup.mjs
+ D scripts/supabase-migrations.mjs
+ D scripts/supabase-migrations.test.mjs
+ D src/App.test.tsx
+ D src/App.tsx
+ M src/accounts/AccountForm.tsx
+ M src/accounts/AccountWorkspace.test.tsx
+ M src/accounts/AccountWorkspace.tsx
+ M src/connections/ConnectionWorkspace.test.tsx
+ M src/connections/ConnectionWorkspace.tsx
+ D src/episodePreflightRoute.test.ts
+ M src/episodes/EpisodeForm.tsx
+ M src/episodes/EpisodeProduction.tsx
+ M src/episodes/EpisodeProductionContainer.tsx
+ M src/episodes/WanShotGenerator.test.tsx
+ M src/episodes/WanShotGenerator.tsx
+ M src/episodes/captionTextConfirmation.test.tsx
+ D src/episodes/episodeCatalog.test.tsx
+ M src/episodes/episodeCatalog.ts
+ M src/episodes/episodeCatalogChanges.test.ts
+ M src/episodes/episodeCatalogTypes.ts
+ M src/episodes/episodeProductionPolling.ts
+ D src/externalConnectionRoute.test.ts
+ M src/lib/backend.test.ts
+ M src/lib/backend.ts
+ D src/lib/pagedRead.test.ts
+ D src/lib/pagedRead.ts
+ D src/lib/supabase.ts
+ M src/local-app/LocalCatalogApp.account.test.tsx
+ M src/local-app/LocalCatalogApp.test.tsx
+ M src/local-app/LocalCatalogApp.tsx
+ M src/local-app/LocalCatalogApp.workspace.test.tsx
+ M src/local-app/LocalConnectionsPanel.test.tsx
+ M src/local-app/LocalConnectionsPanel.tsx
+ M src/local-app/LocalDeliveryPanel.tsx
+ M src/local-app/LocalEpisodeDetail.tsx
+ M src/local-app/LocalSystemStatus.tsx
+ M src/local-app/artifactRoute.test.ts
+ M src/local-app/catalog.ts
+ M src/local-app/catalogContract.integration.test.ts
+ M src/local-app/catalogQuery.test.ts
+ M src/local-app/catalogQuery.ts
+ D src/local-app/catalogRoute.test.ts
+ D src/local-app/catalogRoute.ts
+ M src/local-app/client.ts
+ M src/local-app/configurationCommands.ts
+ M src/local-app/connectionPorts.ts
+ M src/local-app/connections.test.ts
+ M src/local-app/connections.ts
+ M src/local-app/episodeCommands.ts
+ M src/local-app/episodeLifecycle.ts
+ M src/local-app/episodeReads.ts
+ M src/local-app/frontendBoundary.ts
+ M src/local-app/keychainStore.test.ts
+ M src/local-app/keychainStore.ts
+ M src/local-app/localFiles.ts
+ M src/local-app/localRoute.ts
+ M src/local-app/localWorkerCli.ts
+ M src/local-app/main.tsx
+ M src/local-app/mediaWorker.test.ts
+ M src/local-app/mediaWorker.ts
+ M src/local-app/narrationWorker.ts
+ M src/local-app/nativeAutomation.ts
+ M src/local-app/nativeBackup.ts
+ M src/local-app/providerNetwork.test.ts
+ M src/local-app/providerNetwork.ts
+ M src/local-app/providerProbe.test.ts
+ M src/local-app/providerProbe.ts
+ D src/local-app/retiredRemoteClient.ts
+ M src/local-app/studioCommands.ts
+ M src/local-app/useConnectionActions.ts
+ D src/local-control-plane/index.ts
+ D src/local-control-plane/middleware.ts
+ D src/local-control-plane/routes/handlers.ts
+ D src/local-control-plane/testing.ts
+ D src/local-control-plane/workerService.ts
+ D src/localControlPlane.test.ts
+ D src/localEpisodeDirectoryRoute.test.ts
+ D src/main.tsx
+ M src/observability/SystemStatusPanel.test.tsx
+ M src/observability/SystemStatusPanel.tsx
+ M src/operations/OperationsWorkspace.test.tsx
+ M src/operations/OperationsWorkspace.tsx
+ D src/orchestration/backupPolicy.test.ts
+ D src/orchestration/backupPolicy.ts
+ D src/orchestration/loopOrchestratorCli.test.ts
+ D src/orchestration/loopOrchestratorCli.ts
+ D src/orchestration/notificationDelivery.ts
+ D src/orchestration/providedScriptDispatch.test.ts
+ D src/orchestration/providedScriptDispatch.ts
+ M src/orchestration/runtimeBuild.test.ts
+ M src/orchestration/runtimeBuild.ts
+ M src/orchestration/workerDispatch.ts
+ M src/orchestration/workerScheduler.test.ts
+ M src/orchestration/workerScheduler.ts
+ M src/platform/ConfigurationForms.tsx
+ M src/platform/configurationForms.test.ts
+ M src/platform/connectionStatus.test.ts
+ D src/platform/externalConnections.test.ts
+ D src/platform/migrationContracts.test.ts
+ M src/publishing/ProductionCompletionModal.test.tsx
+ M src/publishing/ProductionCompletionModal.tsx
+ D src/publishing/publishContext.ts
+ D src/publishing/publishInputCli.ts
+ D src/publishing/publishPackageCli.ts
+ D src/publishing/publishPackageVerifyCli.ts
+ M src/reviews/ReviewWorkspace.test.tsx
+ M src/reviews/WorkerBlockerCard.tsx
+ M src/reviews/blockerGuidance.ts
+ M src/reviews/localArtifactPreview.test.tsx
+ M src/reviews/localArtifactPreview.ts
+ M src/reviews/mainScript.ts
+ M src/reviews/reviewRevision.test.ts
+ M src/reviews/reviewRevision.ts
+ M src/reviews/reviewSelectors.ts
+ M src/shotComposition.ts
+ D src/standaloneOpenchatcutRoute.test.ts
+ M src/styles.css
+ D src/systemStatusRoute.test.ts
+ M src/ui/ConfirmationModal.tsx
+ M src/ui/HelpTip.tsx
+ M src/ui/PaginationControls.tsx
+ M src/ui/useDialogFocus.ts
+ D src/worker/codexPrompt.ts
+ M src/worker/codexRunner.ts
+ D src/worker/codexWorkerCli.test.ts
+ D src/worker/codexWorkerCli.ts
+ M src/worker/contracts.test.ts
+ M src/worker/contracts.ts
+ M src/worker/controlledMediaExecutor.test.ts
+ M src/worker/controlledMediaExecutor.ts
+ M src/worker/episodeDeletion.test.ts
+ M src/worker/episodeDeletion.ts
+ M src/worker/localConnection.ts
+ M src/worker/mediaProviders.test.ts
+ M src/worker/mediaProviders.ts
+ M src/worker/openchatcutProject.ts
+ M src/worker/openchatcutStudio.ts
+ M src/worker/registeredAdapters.ts
+ D src/worker/runtimeEnvironment.ts
+ M src/worker/runtimePreflight.test.ts
+ M src/worker/runtimePreflight.ts
+ D src/worker/runtimeProbes.test.ts
+ D src/worker/runtimeProbes.ts
+ D src/worker/taskClaimArguments.test.ts
+ D src/worker/taskClaimArguments.ts
+ D src/worker/workerResultSchema.test.ts
+ D src/worker/workerResultSchema.ts
+ M src/workspace/WorkspaceViews.tsx
+ D supabase/migrations/20260812115552_initial_platform.sql
+ D supabase/migrations/20260812120407_harden_function_and_experiment_constraints.sql
+ D supabase/migrations/20260812120719_add_account_creation.sql
+ D supabase/migrations/20260812121610_add_platform_control_rpcs.sql
+ D supabase/migrations/20260812133223_add_worker_runner_schema.sql
+ D supabase/migrations/20260812133613_add_worker_runner_rpcs.sql
+ D supabase/migrations/20260812134430_harden_worker_result_and_recover_leases.sql
+ D supabase/migrations/20260812134633_fix_claim_worker_task_ambiguity.sql
+ D supabase/migrations/20260812135029_fix_worker_result_validation_patterns.sql
+ D supabase/migrations/20260814015154_update_codex_worker_model.sql
+ D supabase/migrations/20260814034655_require_transition_reason.sql
+ D supabase/migrations/20260814053648_add_learning_loop_rpcs.sql
+ D supabase/migrations/20260814053801_secure_learning_loop_rpcs.sql
+ D supabase/migrations/20260814054820_add_publish_package_control.sql
+ D supabase/migrations/20260814100000_add_learning_review_and_blueprint_suggestions.sql
+ D supabase/migrations/20260814112900_add_waiting_input_episode_stage.sql
+ D supabase/migrations/20260814113000_add_episode_series_and_material_revisions.sql
+ D supabase/migrations/20260814113100_add_provided_script_review_loop.sql
+ D supabase/migrations/20260814120650_commission_script_review.sql
+ D supabase/migrations/20260814122049_freeze_review_feedback.sql
+ D supabase/migrations/20260815093000_add_series_visual_review_baseline.sql
+ D supabase/migrations/20260815110000_add_storyboard_review_loop.sql
+ D supabase/migrations/20260815113000_harden_storyboard_review_validation.sql
+ D supabase/migrations/20260815140000_add_controlled_a_roll_tasks.sql
+ D supabase/migrations/20260815143000_harden_a_roll_execution_boundaries.sql
+ D supabase/migrations/20260815144000_bound_a_roll_configuration_values.sql
+ D supabase/migrations/20260815150000_add_controlled_b_roll_tasks.sql
+ D supabase/migrations/20260815151000_restrict_b_roll_internal_triggers.sql
+ D supabase/migrations/20260815160000_add_controlled_audio_tracks.sql
+ D supabase/migrations/20260815161000_enable_controlled_pexels_and_narration.sql
+ D supabase/migrations/20260815162000_fix_b_roll_search_query.sql
+ D supabase/migrations/20260815163000_bound_b_roll_search_query.sql
+ D supabase/migrations/20260815164000_supersede_failed_b_roll_query_tasks.sql
+ D supabase/migrations/20260815165000_supersede_long_failed_b_roll_tasks.sql
+ D supabase/migrations/20260815166000_supersede_newline_failed_b_roll_tasks.sql
+ D supabase/migrations/20260815167000_release_superseded_b_roll_budget.sql
+ D supabase/migrations/20260815168000_enable_ffmpeg_derived_audio_worker.sql
+ D supabase/migrations/20260815169000_add_optional_soundtrack_cue_tasks.sql
+ D supabase/migrations/20260815170000_orchestrate_derived_audio_and_store_actual_duration.sql
+ D supabase/migrations/20260815171000_enable_freesound_soundtrack_testing.sql
+ D supabase/migrations/20260815172000_segment_narration_and_audio_annotation_ranges.sql
+ D supabase/migrations/20260815173000_approve_video_audio_sources_and_reflow_narration.sql
+ D supabase/migrations/20260815174000_skip_tts_for_approved_embedded_audio.sql
+ D supabase/migrations/20260815175000_freeze_freesound_search_query.sql
+ D supabase/migrations/20260815176000_restore_audio_track_registration_trigger.sql
+ D supabase/migrations/20260815180000_add_pre_render_review_packages.sql
+ D supabase/migrations/20260815181000_allow_audio_track_review_revisions.sql
+ D supabase/migrations/20260815182000_track_and_invalidate_production_dependencies.sql
+ D supabase/migrations/20260815183000_scope_media_task_orchestration.sql
+ D supabase/migrations/20260815184000_advance_completed_media_to_production_ready.sql
+ D supabase/migrations/20260815190000_harden_pre_render_dependencies_and_scoped_dispatch.sql
+ D supabase/migrations/20260815200000_add_hyperframes_review_render.sql
+ D supabase/migrations/20260815201000_allow_hyperframes_worker_claims.sql
+ D supabase/migrations/20260815202000_make_review_render_dispatch_idempotent.sql
+ D supabase/migrations/20260815203000_add_review_render_composition_revisions.sql
+ D supabase/migrations/20260815204000_fix_review_render_revision_transition.sql
+ D supabase/migrations/20260815205000_preserve_review_render_project_revision.sql
+ D supabase/migrations/20260815213000_add_qc_final_render.sql
+ D supabase/migrations/20260815214000_freeze_final_render_runtime.sql
+ D supabase/migrations/20260815220000_add_publish_input_registration.sql
+ D supabase/migrations/20260817093000_add_episode_archive_state.sql
+ D supabase/migrations/20260817110000_add_series_version_creation.sql
+ D supabase/migrations/20260817112000_add_prompt_context_to_worker_tasks.sql
+ D supabase/migrations/20260817113000_fix_worker_prompt_context_delivery.sql
+ D supabase/migrations/20260817140000_add_episode_lifecycle_controls.sql
+ D supabase/migrations/20260818110000_add_publication_records.sql
+ D supabase/migrations/20260818120000_add_learning_demo_data.sql
+ D supabase/migrations/20260818123000_harden_learning_demo_data.sql
+ D supabase/migrations/20260818150000_add_account_and_blueprint_lifecycle.sql
+ D supabase/migrations/20260819015139_manage_prompt_versions_and_script_sources.sql
+ D supabase/migrations/20260819120000_add_episode_input_ready_gate.sql
+ D supabase/migrations/20260819143000_add_material_purposes_and_batch_import.sql
+ D supabase/migrations/20260819160000_apply_blueprint_to_episode.sql
+ D supabase/migrations/20260820090000_allow_superseded_a_roll_repair_tasks.sql
+ D supabase/migrations/20260820091000_skip_duplicate_repaired_tasks.sql
+ D supabase/migrations/20260820100000_apply_episode_configuration_repair.sql
+ D supabase/migrations/20260820101000_validate_episode_configuration_repair.sql
+ D supabase/migrations/20260821100000_add_account_deletion.sql
+ D supabase/migrations/20260821104828_skip_disabled_media_capabilities.sql
+ D supabase/migrations/20260821110000_update_current_blueprint_policy.sql
+ D supabase/migrations/20260821111020_require_blueprint_media_capability_gate.sql
+ D supabase/migrations/20260821180000_require_worker_preflight_before_start.sql
+ D supabase/migrations/20260822095959_guard_legacy_b_roll_history.sql
+ D supabase/migrations/20260822100000_freeze_b_roll_adapter_connection.sql
+ D supabase/migrations/20260822104421_expand_legacy_b_roll_blueprints.sql
+ D supabase/migrations/20260822112024_remove_legacy_b_roll_history_guard.sql
+ D supabase/migrations/20260822121000_use_blueprint_b_roll_technical_config.sql
+ D supabase/migrations/20260822121948_restrict_b_roll_legacy_orchestration.sql
+ D supabase/migrations/20260822130625_freeze_script_harness.sql
+ D supabase/migrations/20260822132931_freeze_hyperframes_composition.sql
+ D supabase/migrations/20260822215000_freeze_storyboard_harness.sql
+ D supabase/migrations/20260822223000_freeze_audio_adapter_connections.sql
+ D supabase/migrations/20260822223500_normalize_audio_tool_permissions.sql
+ D supabase/migrations/20260822223600_visual_asset_preparation.sql
+ D supabase/migrations/20260822223700_freeze_approved_visual_manifest.sql
+ D supabase/migrations/20260822223800_freeze_openai_images_adapter.sql
+ D supabase/migrations/20260823103000_add_manual_a_roll_uploads.sql
+ D supabase/migrations/20260823110000_fix_manual_a_roll_shot_lookup.sql
+ D supabase/migrations/20260823113000_allow_manual_a_roll_takeover.sql
+ D supabase/migrations/20260823114000_scope_embedded_audio_orchestration.sql
+ D supabase/migrations/20260823114252_fix_current_blueprint_snapshot_version.sql
+ D supabase/migrations/20260823120000_add_manual_media_bindings.sql
+ D supabase/migrations/20260823121000_scope_soundtrack_orchestration.sql
+ D supabase/migrations/20260823122000_prevent_material_invalidation_stage_skip.sql
+ D supabase/migrations/20260823123000_allow_visual_asset_manifest_approval.sql
+ D supabase/migrations/20260823130000_propagate_approved_visual_inputs_to_storyboard.sql
+ D supabase/migrations/20260823131000_allow_replacement_storyboard_after_supersede.sql
+ D supabase/migrations/20260823182000_add_cover_material_purpose.sql
+ D supabase/migrations/20260823183000_disable_script_generation.sql
+ D supabase/migrations/20260823184000_remove_production_budget_blocks.sql
+ D supabase/migrations/20260823185000_add_episode_audio_source_mode.sql
+ D supabase/migrations/20260823190000_integrate_qc_editor.sql
+ D supabase/migrations/20260823191000_fix_qc_only_review_completion.sql
+ D supabase/migrations/20260823200000_add_scoped_core_task_orchestration.sql
+ D supabase/migrations/20260823201000_allow_manual_a_roll_reuse.sql
+ D supabase/migrations/20260823202000_allow_manual_b_roll_reuse.sql
+ D supabase/migrations/20260823203000_move_hyperframes_composition_to_editing_desk.sql
+ D supabase/migrations/20260823204000_dedupe_review_render_revisions.sql
+ D supabase/migrations/20260823210000_allow_qc_only_review_render_revisions.sql
+ D supabase/migrations/20260824091000_fix_review_render_revision_approval_reuse.sql
+ D supabase/migrations/20260824092000_hyperframes_studio_review_revision.sql
+ D supabase/migrations/20260824094000_scope_stale_worker_lease_recovery.sql
+ D supabase/migrations/20260824095000_recover_failed_review_render.sql
+ D supabase/migrations/20260824100000_request_studio_structural_revision.sql
+ D supabase/migrations/20260824101000_retry_failed_final_render.sql
+ D supabase/migrations/20260824102000_remove_series_advanced_rules.sql
+ D supabase/migrations/20260824103000_unify_planning_configuration.sql
+ D supabase/migrations/20260824110000_deepen_review_revision_preconditions.sql
+ D supabase/migrations/20260824120000_internal_visual_asset_preparation.sql
+ D supabase/migrations/20260825090000_enable_local_hyperframes_card_video.sql
+ D supabase/migrations/20260825100000_owner_pexels_connections.sql
+ D supabase/migrations/20260825110000_harden_owner_pexels_connection_versions.sql
+ D supabase/migrations/20260825130000_integrate_owner_connection_versions.sql
+ D supabase/migrations/20260825150000_skip_manual_media_orchestration.sql
+ D supabase/migrations/20260825160000_scope_manual_media_orchestration.sql
+ D supabase/migrations/20260825170000_require_explicit_media_execution_paths.sql
+ D supabase/migrations/20260826072826_legacy_remote_migration.sql
+ D supabase/migrations/20260826081955_enable_cloudflare_workers_ai_images.sql
+ D supabase/migrations/20260826093000_prevent_b_roll_budget_overflow.sql
+ D supabase/migrations/20260826094000_treat_unrestricted_b_roll_budget_as_unlimited.sql
+ D supabase/migrations/20260826095500_fix_manual_media_task_type_ambiguity.sql
+ D supabase/migrations/20260826101000_enable_scoped_local_hyperframes_a_roll.sql
+ D supabase/migrations/20260901103000_fix_uploaded_visual_dispatch.sql
+ D supabase/migrations/20260901111615_enable_volcengine_tts_execution.sql
+ D supabase/migrations/20260901120000_ignore_disabled_soundtrack_cues.sql
+ D supabase/migrations/20260901130000_preserve_narration_shot_starts.sql
+ D supabase/migrations/20260901140000_allow_storyboard_rework_after_approval.sql
+ D supabase/migrations/20260901141000_remove_duplicate_storyboard_rework_approval.sql
+ D supabase/migrations/20260901150000_respect_tts_pre_render_audio.sql
+ D supabase/migrations/20260901151000_fix_frozen_studio_project_path.sql
+ D supabase/migrations/20260901160000_add_volcengine_tts_connection.sql
+ D supabase/migrations/20260902004000_complete_manual_publication_flow.sql
+ D supabase/migrations/20260902080000_allow_publish_cover_image_formats.sql
+ D supabase/migrations/20260902153000_replace_manual_shot_media.sql
+ D supabase/migrations/20260902161000_prepare_manual_shot_clips.sql
+ D supabase/migrations/20260903090000_add_shot_preparation_drafts.sql
+ D supabase/migrations/20260903100000_add_shot_tts_generation.sql
+ D supabase/migrations/20260903110000_generate_shot_clip.sql
+ D supabase/migrations/20260903120000_complete_shot_audio_modes.sql
+ D supabase/migrations/20260903130000_confirm_shot_preparation.sql
+ D supabase/migrations/20260903140000_add_storyboard_structure_revision.sql
+ D supabase/migrations/20260903150000_auto_create_confirmed_studio_snapshot.sql
+ D supabase/migrations/20260904100000_freeze_multi_segment_shot_drafts.sql
+ D supabase/migrations/20260904110000_defer_shot_trimming_to_studio.sql
+ D supabase/migrations/20260904120000_fix_shot_tts_connection_ownership.sql
+ D supabase/migrations/20260904130000_fix_shot_tts_variable_conflict.sql
+ D supabase/migrations/20260904140000_platform_worker_runtime_constraints.sql
+ D supabase/migrations/20260904150000_harden_shot_tts_track_sync.sql
+ D supabase/migrations/20260904160000_move_tts_settings_to_episode.sql
+ D supabase/migrations/20260904170000_simplify_shot_tts_confirmation.sql
+ D supabase/migrations/20260904180000_batch_confirmed_shot_tts.sql
+ D supabase/migrations/20260905100000_unify_shot_duration_decision.sql
+ D supabase/migrations/20260905110000_restore_editable_shot_workbench.sql
+ D supabase/migrations/20260905120000_generate_shot_review_video.sql
+ D supabase/migrations/20260905130000_enforce_shot_audio_modes.sql
+ D supabase/migrations/20260905140000_harden_storyboard_structure_revision.sql
+ D supabase/migrations/20260905150000_finalize_episode_tts_ownership.sql
+ D supabase/migrations/20260905160000_restore_editable_shot_clip_generation.sql
+ D supabase/migrations/20260905170000_fix_storyboard_revision_audio_track_idempotency.sql
+ D supabase/migrations/20260905180000_fix_shot_duration_search_path.sql
+ D supabase/migrations/20260905190000_fix_batch_tts_connection_ownership.sql
+ D supabase/migrations/20260905200000_fix_completed_shot_clip_replacement.sql
+ D supabase/migrations/20260905210000_fix_shot_workbench_input_fingerprint.sql
+ D supabase/migrations/20260905220000_fix_shot_review_draft_update_alias.sql
+ D supabase/migrations/20260905230000_fix_review_render_series_baseline_version.sql
+ D supabase/migrations/20260905240000_allow_review_render_without_series_baseline.sql
+ D supabase/migrations/20260905250000_recover_malformed_review_render_task.sql
+ D supabase/migrations/20260905260000_recover_duration_decision_review_render_task.sql
+ D supabase/migrations/20260905270000_requeue_asset_root_review_render_task.sql
+ D supabase/migrations/20260905280000_refresh_worker_task_lease.sql
+ D supabase/migrations/20260905300000_freeze_studio_composition_adjustments.sql
+ D supabase/migrations/20260906142420_restore_visual_asset_manifest_approval.sql
+ D supabase/migrations/20260907144500_allow_empty_disabled_subtitles.sql
+ D supabase/migrations/20260907151000_align_disabled_subtitle_constraint.sql
+ D supabase/migrations/20260907162000_keep_structure_revisions_in_workbench.sql
+ D supabase/migrations/20260907170000_stop_legacy_narration_orchestration.sql
+ D supabase/migrations/20260907180000_enable_shot_review_video_action.sql
+ D supabase/migrations/20260907190000_simplify_per_shot_tts_generation.sql
+ D supabase/migrations/20260907200000_allow_disabled_subtitles_in_review_video.sql
+ D supabase/migrations/20260907210000_allow_disabled_subtitles_in_shot_snapshot.sql
+ D supabase/migrations/20260907220000_retry_disabled_subtitle_review_render.sql
+ D supabase/migrations/20260908090000_replace_hyperframes_with_openchatcut.sql
+ D supabase/migrations/20260908143000_finalize_openchatcut_database_cleanup.sql
+ D supabase/migrations/20260909042941_restrict_openchatcut_review_helper.sql
+ D supabase/migrations/20260909044114_align_openchatcut_frozen_project_path.sql
+ D supabase/migrations/20260909044856_keep_shot_workbench_editable_after_review_submission.sql
+ D supabase/migrations/20260909051800_keep_shot_workbench_editable_during_pre_render_review.sql
+ D supabase/migrations/20260909191919_add_account_archiving.sql
+ D supabase/migrations/20260909203000_enforce_blueprint_approval_gates.sql
+ D supabase/migrations/20260910180000_add_storyboard_audio_selections.sql
+ D supabase/migrations/20260911010423_structured_shot_composition.sql
+ D supabase/migrations/20260911013320_shot_caption_contract.sql
+ D supabase/migrations/20260911020137_acoustic_alignment_priority_chain.sql
+ D supabase/migrations/20260911022322_local_whisperx_alignment.sql
+ D supabase/migrations/20260911030003_shot_audio_mix_contract.sql
+ D supabase/migrations/20260911032918_shot_sync_preview.sql
+ D supabase/migrations/20260911043000_shot_acceptance_gate.sql
+ D supabase/migrations/20260911050000_finalize_shot_preparation_contract.sql
+ D supabase/migrations/20260911071624_restore_reused_shot_tts_track.sql
+ D supabase/migrations/20260911104219_use_clip_interval_union_duration.sql
+ D supabase/migrations/20260911112639_use_composition_aware_clip_duration.sql
+ D supabase/migrations/20260911120115_remove_shot_deviation_free_text_reason.sql
+ D supabase/migrations/20260911124701_separate_source_and_playback_duration.sql
+ D supabase/migrations/20260912162500_decouple_tts_and_acoustic_alignment.sql
+ D supabase/migrations/20260912180135_use_embedded_source_audio_for_shot_preview.sql
+ D supabase/migrations/20260912200000_caption_safe_area_v2.sql
+ D supabase/migrations/20260912210000_add_production_completed_stage.sql
+ D supabase/migrations/20260912210100_remove_publication_learning_flow.sql
+ D supabase/migrations/20260912210200_preserve_nested_shot_audio_mix_nulls.sql
+ D supabase/migrations/20260912210300_fix_qc_approval_artifact_gate.sql
+ D supabase/migrations/20261023103336_worker_lease_recovery_and_fencing.sql
+ D supabase/migrations/20261023133427_worker_global_capacity_and_fair_consumption.sql
+ D supabase/migrations/20261023152247_notification_event_delivery.sql
+ D supabase/migrations/20261023155954_episode_read_aggregation.sql
+ D supabase/migrations/20261023160943_episode_read_revisions.sql
+ D supabase/migrations/20261023162703_final_render_reuse_source.sql
+ D supabase/migrations/20261024004749_episode_catalog_paging.sql
+ D supabase/migrations/20261024082643_add_bailian_wan_video_adapter.sql
+ D supabase/migrations/20261024083619_add_wan_video_tasks_and_budget.sql
+ D supabase/migrations/20261024084121_align_wan_worker_attempts.sql
+ D supabase/migrations/20261024084318_complete_wan_output_contract.sql
+ D supabase/migrations/20261024093129_resume_blocked_wan_downloads.sql
+ D supabase/tests/acoustic_alignment_priority_chain_test.sql
+ D supabase/tests/batch_shot_tts_connection_ownership_test.sql
+ D supabase/tests/clip_interval_union_duration_test.sql
+ D supabase/tests/composition_aware_clip_duration_test.sql
+ D supabase/tests/episode_catalog_test.sql
+ D supabase/tests/episode_read_aggregation_test.sql
+ D supabase/tests/external_connection_security_test.sql
+ D supabase/tests/final_render_reuse_test.sql
+ D supabase/tests/global_owner_connection_integration_test.sql
+ D supabase/tests/legacy_b_roll_blueprint_expansion_test.sql
+ D supabase/tests/local_whisperx_alignment_test.sql
+ D supabase/tests/notification_delivery_test.sql
+ D supabase/tests/review_render_duration_recovery_test.sql
+ D supabase/tests/script_harness_freeze_test.sql
+ D supabase/tests/shot_acceptance_gate_test.sql
+ D supabase/tests/shot_audio_mix_contract_test.sql
+ D supabase/tests/shot_caption_contract_test.sql
+ D supabase/tests/shot_clip_completed_task_replacement_test.sql
+ D supabase/tests/shot_composition_contract_test.sql
+ D supabase/tests/shot_preparation_contract_cutover_test.sql
+ D supabase/tests/shot_sync_preview_test.sql
+ D supabase/tests/shot_workbench_input_fingerprint_test.sql
+ D supabase/tests/storyboard_structure_revision_audio_track_test.sql
+ D supabase/tests/storyboard_structure_revision_test.sql
+ D supabase/tests/worker_global_capacity_test.sql
+ D supabase/tests/worker_runtime_constraints_test.sql
+ M tsconfig.local-app.json
+ D tsconfig.orchestrator.json
+ M tsconfig.worker.json
+ M vite.config.ts
+ D vite.legacy.config.ts
+?? .impeccable/
+?? DESIGN.md
+?? PRODUCT.md
+?? db/contracts/
+?? db/local/052-native-wan.sql
+?? db/local/053-native-wan-reservation-scope.sql
+?? db/local/054-native-wan-explicit-requests.sql
+?? db/local/055-history-consolidation.sql
+?? db/local/056-history-projection-results.sql
+?? db/local/057-history-file-secret-references.sql
+?? db/local/058-readonly-historical-episodes.sql
+?? db/local/059-historical-notification-fence.sql
+?? db/local/060-historical-task-read-scope.sql
+?? db/local/061-current-notification-status.sql
+?? db/local/062-isolate-historical-automation.sql
+?? db/local/063-official-video-providers.sql
+?? db/local/064-secret-administration.sql
+?? db/local/065-account-audit-deletion.sql
+?? db/local/066-retire-cloudflare-google-tts.sql
+?? db/local/067-history-organization.sql
+?? db/local/068-archived-episode-deletion.sql
+?? db/local/069-legacy-episode-cleanup.sql
+?? db/local/070-history-episode-navigation.sql
+?? db/local/071-history-episode-file-query.sql
+?? db/local/072-history-episode-file-precedence.sql
+?? db/local/073-empty-account-directory-cleanup.sql
+?? db/local/074-script-production-v2.sql
+?? db/local/075-history-production-retention.sql
+?? db/local/076-history-retained-file-variants.sql
+?? docs/adr/0010-local-secrets-and-history-consolidation.md
+?? docs/adr/0011-admin-secret-inspection.md
+?? docs/adr/0012-script-v2-production-continuation.md
+?? docs/adr/0013-native-runtime-file-boundary.md
+?? docs/architecture-map/
+?? docs/completed-work.md
+?? docs/production-tests/
+?? docs/research/2026-10-27-impeccable-skills-comparison.md
+?? docs/research/video-production-pilot-pricing-20261028.md
+?? docs/specs/current-product.md
+?? docs/verification/README.md
+?? docs/verification/account-delete-studio-ui-20261027/
+?? docs/verification/account-empty-directory-cleanup-20261027/
+?? docs/verification/automation-status-20261027/
+?? docs/verification/cleanup-20261027/
+?? docs/verification/cleanup-second-20261027/
+?? docs/verification/compact-history-node-rail-20261028/
+?? docs/verification/connection-organization-20261027/
+?? docs/verification/dan-ui-connections-20261027/
+?? docs/verification/dan-ui-history-20261027/
+?? docs/verification/dan-ui-rollout-20261027/
+?? docs/verification/episode-deletion-tail-cleanup-20261027/
+?? docs/verification/health-history-20261027/
+?? docs/verification/history-connections-reference-20261028/
+?? docs/verification/history-organization-20261027/
+?? docs/verification/impeccable-connection-audit-20261027/
+?? docs/verification/impeccable-migration-20261028/
+?? docs/verification/legacy-episode-delete-20261027/
+?? docs/verification/login-visual-20261027/
+?? docs/verification/maintenance-episode-navigation-20261027/
+?? docs/verification/multi-directory-deletion-20261027/
+?? docs/verification/node-demo-refinement-20261028/
+?? docs/verification/node-sidebar-topbar-20261028/
+?? docs/verification/old-test-connections-cleanup-20261027/
+?? docs/verification/page-consistency-20261028/
+?? docs/verification/production-node-migration-20261028/
+?? docs/verification/project-file-cleanup-20261028/
+?? docs/verification/prototype-alignment-20261028/
+?? docs/verification/provider-retirement-feedback-20261027/
+?? docs/verification/script-production-v2-20261028/
+?? docs/verification/secret-administration-20261027/
+?? docs/verification/sidebar-refinement-20261028/
+?? docs/verification/status-and-episode-deletion-20261027/
+?? docs/verification/visual-audit-20261028/
+?? docs/verification/visual-fixes-20261028/
+?? docs/verification/workflow-node-demo-20261028/
+?? native/keychain-bootstrap.m
+?? native/keychain-history-reader.m
+?? scripts/build-dan-ui.mjs
+?? scripts/runtime/application.mjs
+?? scripts/runtime/application.test.mjs
+?? scripts/runtime/history-consolidation.mjs
+?? scripts/runtime/history-consolidation.test.mjs
+?? scripts/runtime/keychain.test.mjs
+?? scripts/runtime/offline-guard.mjs
+?? scripts/runtime/project-history.mjs
+?? scripts/runtime/secrets.mjs
+?? scripts/runtime/secrets.test.mjs
+?? scripts/storage/native-backup-format.mjs
+?? scripts/storage/restore.mjs
+?? scripts/storage/schema-import.mjs
+?? scripts/storage/schema-import.test.mjs
+?? scripts/storage/security-inventory.mjs
+?? src/connections/ConnectionDanUi.test.tsx
+?? src/connections/ConnectionFeedback.test.tsx
+?? src/connections/ConnectionOrganization.test.tsx
+?? src/connections/ConnectionTestButton.tsx
+?? src/connections/connections.css
+?? src/episodes/ProductionNodeLayout.tsx
+?? src/episodes/ProductionNodes.test.tsx
+?? src/episodes/production-nodes.css
+?? src/lib/viewTransport.test.ts
+?? src/lib/viewTransport.ts
+?? src/local-app/HistoryDanUi.test.tsx
+?? src/local-app/HistoryEpisodes.test.tsx
+?? src/local-app/HistorySources.tsx
+?? src/local-app/ImpeccableNavigation.test.tsx
+?? src/local-app/LocalDeliveryPanel.nodes.test.tsx
+?? src/local-app/LocalHistory.test.tsx
+?? src/local-app/LocalHistory.tsx
+?? src/local-app/LocalMaintenanceEmbedded.test.tsx
+?? src/local-app/LocalMaintenancePanel.tsx
+?? src/local-app/LocalSecretAdministration.test.tsx
+?? src/local-app/LocalSecretAdministration.tsx
+?? src/local-app/LocalSystemStatus.test.tsx
+?? src/local-app/ScriptProductionPanel.test.tsx
+?? src/local-app/ScriptProductionPanel.tsx
+?? src/local-app/WorkspaceTopbar.account-safety.test.tsx
+?? src/local-app/WorkspaceTopbar.test.tsx
+?? src/local-app/WorkspaceTopbar.tsx
+?? src/local-app/accountDeletion.integration.test.ts
+?? src/local-app/accountDirectoryCleanup.test.ts
+?? src/local-app/accountDirectoryCleanup.ts
+?? src/local-app/automationHistory.integration.test.ts
+?? src/local-app/catalogFilters.integration.test.ts
+?? src/local-app/connectionLifecycle.integration.test.ts
+?? src/local-app/episodeDeletion.integration.test.ts
+?? src/local-app/episodeDeletionTargets.test.ts
+?? src/local-app/episodeDeletionTargets.ts
+?? src/local-app/history.css
+?? src/local-app/history.integration.test.ts
+?? src/local-app/history.ts
+?? src/local-app/historyEpisodes.ts
+?? src/local-app/historyOrganization.integration.test.ts
+?? src/local-app/historyPresentation.test.ts
+?? src/local-app/historyPresentation.ts
+?? src/local-app/manualVerification.test.ts
+?? src/local-app/nativeWan.integration.test.ts
+?? src/local-app/notificationStatus.integration.test.ts
+?? src/local-app/officialVideo.integration.test.ts
+?? src/local-app/officialVideoNetwork.ts
+?? src/local-app/providerRetirement.integration.test.ts
+?? src/local-app/readOnlyVerification.test.ts
+?? src/local-app/scriptProduction.integration.test.ts
+?? src/local-app/scriptProductionContinuation.test.ts
+?? src/local-app/scriptProductionContinuation.ts
+?? src/local-app/scriptProductionRunner.ts
+?? src/local-app/scriptProductionStore.ts
+?? src/local-app/secretAdministration.integration.test.ts
+?? src/local-app/secretAdministration.ts
+?? src/local-app/secretAdministrationTypes.ts
+?? src/local-app/secretInventory.test.ts
+?? src/local-app/secretInventory.ts
+?? src/local-app/standaloneStudioRoute.test.ts
+?? src/local-app/wanCommands.ts
+?? src/local-app/workspace-topbar.css
+?? src/local-app/workspaceSearch.test.ts
+?? src/local-app/workspaceSearch.ts
+?? src/local-app/workspaceSearchTypes.ts
+?? src/observability/SystemStatusSurface.tsx
+?? src/operations/workbench.css
+?? src/reviews/productionPlan.ts
+?? src/reviews/productionScript.test.ts
+?? src/reviews/productionScript.ts
+?? src/sharedViews.test.tsx
+?? src/ui/DanUiInteractionGuards.test.tsx
+?? src/ui/IconComboBox.test.tsx
+?? src/ui/PcVisualFixes.test.tsx
+?? src/ui/SelectMenuInteraction.test.tsx
+?? src/ui/dan-ui/
+?? src/ui/impeccable/
+?? src/ui/useDialogFocus.test.tsx
+?? src/worker/mediaToolsContract.test.ts
+?? src/worker/officialVideoProvider.test.ts
+?? src/worker/officialVideoProvider.ts
+?? src/worker/providerLifecycle.ts
+?? src/worker/scriptPlanning.test.ts
+?? src/worker/scriptPlanning.ts
+?? src/worker/scriptRenderSettings.test.ts
+?? src/worker/scriptRenderSettings.ts
+?? src/worker/videoProviderCatalog.ts
+?? src/workspace/episode-list.css
+?? src/workspace/episodePresentation.tsx

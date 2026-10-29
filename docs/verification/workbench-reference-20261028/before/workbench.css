@@ -1,0 +1,35 @@
+html[data-interface="impeccable"] .impeccable-app.product-ui .operations-workspace {grid-template-columns:minmax(0,1fr) 320px}
+html[data-interface="impeccable"] .impeccable-app.product-ui .lc-work-table {grid-column:1;grid-row:4}
+html[data-interface="impeccable"] .impeccable-app.product-ui .lc-work-queue {grid-column:1;grid-row:5;grid-template-columns:minmax(0,1fr)}
+html[data-interface="impeccable"] .impeccable-app.product-ui .operations-episode-row {grid-template-columns:minmax(180px,1.5fr) minmax(110px,1fr) 100px;gap:16px;min-height:80px}
+html[data-interface="impeccable"] .impeccable-app.product-ui .operations-episode-row.is-selected {background:var(--lc-accent-soft)}
+html[data-interface="impeccable"] .impeccable-app.product-ui .operations-episode-row [data-text] {padding:0;width:100%;display:contents}
+html[data-interface="impeccable"] .impeccable-app.product-ui .operations-episode-row > span > .episode-state {font-size:12px}
+html[data-interface="impeccable"] .impeccable-app.product-ui .operations-episode-row small {font-size:11px}
+html[data-interface="impeccable"] .impeccable-app.product-ui .work-continuation {grid-column:2;grid-row:4 / span 2;min-width:0;position:sticky;top:20px;border:1px solid var(--lc-line);border-radius:12px;background:var(--lc-surface);overflow:hidden}
+.work-continuation > header {padding:16px 18px;border-bottom:1px solid var(--lc-line);display:flex;gap:12px;align-items:center;justify-content:space-between}
+.work-continuation > header h2 {font-size:15px;margin:0;font-weight:600}
+.work-continuation-body {padding:20px;display:grid;gap:20px}
+.work-continuation-body > h3 {font-size:18px;line-height:1.5;margin:0;overflow-wrap:anywhere;font-weight:600}
+.work-continuation-body .work-context {font-size:12px;color:var(--lc-muted);margin:-12px 0 0}
+.work-phase-track {display:flex;list-style:none;margin:0;padding:0;color:var(--lc-muted)}
+.work-phase-track li {flex:1;min-width:0;position:relative;display:grid;justify-items:center;gap:8px;font-size:10px;line-height:1.4}
+.work-phase-track li:not(:last-child)::after {content:'';position:absolute;left:50%;top:5px;height:2px;width:100%;background:var(--lc-line)}
+.work-phase-track li > span {width:12px;height:12px;border-radius:50%;background:var(--lc-line);position:relative;z-index:1;display:grid;place-items:center}
+.work-phase-track .is-complete {color:var(--lc-success)}
+.work-phase-track .is-complete > span,.work-phase-track .is-complete::after {background:var(--lc-success);color:var(--lc-surface)}
+.work-phase-track .is-current {color:var(--lc-accent);font-weight:600}
+.work-phase-track .is-current > span {background:var(--lc-accent);outline:3px solid var(--lc-accent-soft)}
+.work-next-step {padding:16px;background:var(--lc-accent-soft);border-radius:8px;display:grid;justify-items:start;gap:10px}
+.work-next-step p {font-size:12px;color:var(--lc-muted);line-height:1.6;margin:0}
+.work-context-details {display:grid;gap:12px;margin:0;font-size:12px}
+.work-context-details > div {display:flex;justify-content:space-between;gap:16px}
+.work-context-details dt {color:var(--lc-muted)}
+.work-context-details dd {margin:0;text-align:right}
+@media(max-width:1150px){html[data-interface="impeccable"] .impeccable-app.product-ui .operations-workspace {grid-template-columns:minmax(0,1fr)}html[data-interface="impeccable"] .impeccable-app.product-ui .work-continuation {grid-column:1;grid-row:4;position:static}html[data-interface="impeccable"] .impeccable-app.product-ui .lc-work-table {grid-row:5}html[data-interface="impeccable"] .impeccable-app.product-ui .lc-work-queue {grid-row:6}.work-continuation-body {grid-template-columns:1fr 1fr;align-items:start}.work-continuation-body > h3,.work-continuation-body > .work-context {grid-column:1/-1}.work-next-step {grid-column:2;grid-row:3 / span 2}.work-phase-track,.work-context-details {grid-column:1}}
+@media(max-width:640px){.work-continuation-body {grid-template-columns:minmax(0,1fr)}.work-next-step {grid-column:1;grid-row:auto}html[data-interface="impeccable"] .impeccable-app.product-ui .operations-episode-row {grid-template-columns:minmax(150px,1fr) 100px}html[data-interface="impeccable"] .impeccable-app.product-ui .operations-episode-row > span:nth-child(2){display:none}}
+
+html[data-interface="impeccable"] .product-ui .work-continuation > header h2 {font-size:15px}
+html[data-interface="impeccable"] .product-ui .work-continuation-body > h3 {font-size:18px;font-weight:600}
+
+html[data-interface="impeccable"] .impeccable-app.product-ui .operations-episode-list > header {background:var(--lc-surface)}

@@ -1,0 +1,20 @@
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 4421 modules transformed.
+
+(!) outDir /private/tmp/inline-search-build is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+rendering chunks...
+computing gzip size...
+../../../../private/tmp/inline-search-build/index.html                            0.86 kB │ gzip:   0.47 kB
+../../../../private/tmp/inline-search-build/native-runtime-graph.json           281.38 kB │ gzip:  23.56 kB
+../../../../private/tmp/inline-search-build/assets/index-CaOxS94c.css           641.69 kB │ gzip:  92.95 kB
+../../../../private/tmp/inline-search-build/assets/viewTransport-BxFBy627.js      0.15 kB │ gzip:   0.17 kB
+../../../../private/tmp/inline-search-build/assets/index-yNzXJ7m2.js          1,099.73 kB │ gzip: 327.29 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.39s

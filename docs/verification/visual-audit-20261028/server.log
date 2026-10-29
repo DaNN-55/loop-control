@@ -1,0 +1,95 @@
+  ➜  Local:   http://127.0.0.1:5189/
+8:27:52 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx
+8:27:52 AM [vite] (client) hmr invalidate /docs/verification/visual-audit-20261028/fixture.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+8:27:52 AM [vite] (client) page reload docs/verification/visual-audit-20261028/fixture.tsx
+8:35:05 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx
+8:35:05 AM [vite] (client) hmr invalidate /docs/verification/visual-audit-20261028/fixture.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+8:35:05 AM [vite] (client) page reload docs/verification/visual-audit-20261028/fixture.tsx
+8:38:11 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx
+8:38:11 AM [vite] (client) hmr invalidate /docs/verification/visual-audit-20261028/fixture.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+8:38:11 AM [vite] (client) page reload docs/verification/visual-audit-20261028/fixture.tsx
+8:40:44 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx
+8:40:44 AM [vite] (client) hmr invalidate /docs/verification/visual-audit-20261028/fixture.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+8:40:44 AM [vite] (client) page reload docs/verification/visual-audit-20261028/fixture.tsx
+8:43:16 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx
+8:43:16 AM [vite] (client) hmr invalidate /docs/verification/visual-audit-20261028/fixture.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+8:43:16 AM [vite] (client) page reload docs/verification/visual-audit-20261028/fixture.tsx
+8:48:11 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx
+8:48:11 AM [vite] (client) hmr invalidate /docs/verification/visual-audit-20261028/fixture.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+8:48:11 AM [vite] (client) page reload docs/verification/visual-audit-20261028/fixture.tsx
+9:08:39 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx
+9:08:39 AM [vite] (client) hmr invalidate /docs/verification/visual-audit-20261028/fixture.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:08:39 AM [vite] (client) page reload docs/verification/visual-audit-20261028/fixture.tsx
+9:13:33 AM [vite] (client) hmr update /src/ui/dan-ui/components/application/tabs/tabs.tsx
+9:13:33 AM [vite] (client) hmr update /src/ui/dan-ui/components/base/input/input.tsx
+9:13:33 AM [vite] (client) hmr update /src/local-app/LocalMaintenancePanel.tsx, /src/local-app/LocalSecretAdministration.tsx, /src/episodes/EpisodeForm.tsx, /src/accounts/AccountForm.tsx, /src/publishing/ProductionCompletionModal.tsx, /src/accounts/AccountWorkspace.tsx, /src/observability/SystemStatusSurface.tsx, /src/ui/ConfirmationModal.tsx, /src/workspace/WorkspaceViews.tsx, /src/episodes/EpisodeProduction.tsx, /src/platform/ConfigurationForms.tsx
+9:13:33 AM [vite] (client) hmr update /src/styles.css
+9:13:33 AM [vite] (client) hmr update /src/local-app/LocalCatalogApp.tsx
+9:13:33 AM [vite] (client) hmr invalidate /src/accounts/AccountForm.tsx Could not Fast Refresh ("timezoneOptions" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:13:33 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx, /src/local-app/LocalCatalogApp.tsx
+9:13:33 AM [vite] (client) hmr invalidate /src/observability/SystemStatusSurface.tsx Could not Fast Refresh ("stateLabel" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:13:33 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx, /src/local-app/LocalSystemStatus.tsx
+9:13:33 AM [vite] (client) hmr invalidate /src/workspace/WorkspaceViews.tsx Could not Fast Refresh ("episodeIsArchived" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:13:33 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx, /src/local-app/LocalCatalogApp.tsx
+9:13:33 AM [vite] (client) hmr invalidate /src/episodes/EpisodeProduction.tsx Could not Fast Refresh ("abbreviatePath" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:13:33 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx, /src/local-app/LocalEpisodeDetail.tsx, /src/local-app/LocalCatalogApp.tsx
+9:13:33 AM [vite] (client) hmr invalidate /docs/verification/visual-audit-20261028/fixture.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:13:33 AM [vite] (client) page reload docs/verification/visual-audit-20261028/fixture.tsx
+9:14:51 AM [vite] (client) hmr update /src/ui/PaginationControls.tsx
+9:14:51 AM [vite] (client) hmr update /src/accounts/AccountWorkspace.tsx
+9:14:51 AM [vite] (client) hmr update /src/local-app/LocalSecretAdministration.tsx
+9:14:51 AM [vite] (client) hmr update /src/platform/ConfigurationForms.tsx
+9:14:51 AM [vite] (client) hmr update /src/episodes/EpisodeForm.tsx
+9:15:28 AM [vite] (client) hmr update /src/styles.css
+9:15:28 AM [vite] (client) hmr update /src/episodes/EpisodeProduction.tsx
+9:15:29 AM [vite] (client) hmr update /src/episodes/EpisodeProduction.tsx
+9:15:29 AM [vite] (client) hmr invalidate /src/episodes/EpisodeProduction.tsx Could not Fast Refresh ("abbreviatePath" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:15:29 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx, /src/local-app/LocalEpisodeDetail.tsx, /src/local-app/LocalCatalogApp.tsx
+9:15:29 AM [vite] (client) hmr update /src/styles.css, /src/ui/dan-ui/styles/scoped.css
+9:15:29 AM [vite] (client) hmr invalidate /docs/verification/visual-audit-20261028/fixture.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:15:29 AM [vite] (client) page reload docs/verification/visual-audit-20261028/fixture.tsx
+9:15:57 AM [vite] (client) hmr update /src/workspace/WorkspaceViews.tsx
+9:15:57 AM [vite] (client) hmr update /src/accounts/AccountForm.tsx
+9:15:57 AM [vite] (client) hmr invalidate /src/workspace/WorkspaceViews.tsx Could not Fast Refresh ("episodeIsArchived" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:15:57 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx, /src/local-app/LocalCatalogApp.tsx
+9:15:57 AM [vite] (client) hmr invalidate /src/accounts/AccountForm.tsx Could not Fast Refresh ("timezoneOptions" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:15:57 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx, /src/local-app/LocalCatalogApp.tsx
+9:15:57 AM [vite] (client) hmr invalidate /docs/verification/visual-audit-20261028/fixture.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:15:57 AM [vite] (client) page reload docs/verification/visual-audit-20261028/fixture.tsx
+9:16:34 AM [vite] (client) hmr update /src/episodes/EpisodeForm.tsx
+9:18:46 AM [vite] (client) hmr update /src/ui/dan-ui/components/base/input/input.tsx
+9:18:46 AM [vite] (client) hmr update /src/accounts/AccountWorkspace.tsx
+9:18:46 AM [vite] (client) hmr update /src/styles.css, /src/ui/dan-ui/styles/scoped.css
+9:25:00 AM [vite] (client) hmr update /src/styles.css
+9:26:43 AM [vite] (client) hmr update /src/styles.css
+9:32:07 AM [vite] (client) hmr update /src/styles.css
+9:33:21 AM [vite] (client) hmr update /src/styles.css
+9:35:01 AM [vite] (client) hmr update /src/local-app/LocalMaintenancePanel.tsx, /src/local-app/LocalSecretAdministration.tsx, /src/episodes/EpisodeForm.tsx, /src/accounts/AccountForm.tsx, /src/publishing/ProductionCompletionModal.tsx, /src/accounts/AccountWorkspace.tsx, /src/observability/SystemStatusSurface.tsx, /src/ui/ConfirmationModal.tsx, /src/workspace/WorkspaceViews.tsx, /src/episodes/EpisodeProduction.tsx, /src/platform/ConfigurationForms.tsx
+9:35:01 AM [vite] (client) hmr invalidate /src/accounts/AccountForm.tsx Could not Fast Refresh ("timezoneOptions" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:35:01 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx, /src/local-app/LocalCatalogApp.tsx
+9:35:01 AM [vite] (client) hmr invalidate /src/observability/SystemStatusSurface.tsx Could not Fast Refresh ("stateLabel" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:35:01 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx, /src/local-app/LocalSystemStatus.tsx
+9:35:01 AM [vite] (client) hmr invalidate /src/workspace/WorkspaceViews.tsx Could not Fast Refresh ("episodeIsArchived" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:35:01 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx, /src/local-app/LocalCatalogApp.tsx
+9:35:01 AM [vite] (client) hmr invalidate /src/episodes/EpisodeProduction.tsx Could not Fast Refresh ("abbreviatePath" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:35:01 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx, /src/local-app/LocalEpisodeDetail.tsx, /src/local-app/LocalCatalogApp.tsx
+9:35:01 AM [vite] (client) hmr invalidate /docs/verification/visual-audit-20261028/fixture.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:35:01 AM [vite] (client) page reload docs/verification/visual-audit-20261028/fixture.tsx
+9:36:11 AM [vite] (client) hmr update /src/styles.css
+9:38:55 AM [vite] (client) hmr update /src/episodes/EpisodeProduction.tsx
+9:38:55 AM [vite] (client) hmr invalidate /src/episodes/EpisodeProduction.tsx Could not Fast Refresh ("abbreviatePath" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:38:55 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx, /src/local-app/LocalEpisodeDetail.tsx, /src/local-app/LocalCatalogApp.tsx
+9:38:55 AM [vite] (client) hmr invalidate /docs/verification/visual-audit-20261028/fixture.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:38:55 AM [vite] (client) page reload docs/verification/visual-audit-20261028/fixture.tsx
+9:40:36 AM [vite] (client) hmr update /src/local-app/LocalMaintenancePanel.tsx, /src/local-app/LocalSecretAdministration.tsx, /src/episodes/EpisodeForm.tsx, /src/accounts/AccountForm.tsx, /src/publishing/ProductionCompletionModal.tsx, /src/accounts/AccountWorkspace.tsx, /src/observability/SystemStatusSurface.tsx, /src/ui/ConfirmationModal.tsx, /src/workspace/WorkspaceViews.tsx, /src/episodes/EpisodeProduction.tsx, /src/platform/ConfigurationForms.tsx
+9:40:36 AM [vite] (client) hmr update /src/episodes/EpisodeProduction.tsx
+9:40:37 AM [vite] (client) hmr invalidate /src/accounts/AccountForm.tsx Could not Fast Refresh ("timezoneOptions" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:40:37 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx, /src/local-app/LocalCatalogApp.tsx
+9:40:37 AM [vite] (client) hmr invalidate /src/observability/SystemStatusSurface.tsx Could not Fast Refresh ("stateLabel" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:40:37 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx, /src/local-app/LocalSystemStatus.tsx
+9:40:37 AM [vite] (client) hmr invalidate /src/workspace/WorkspaceViews.tsx Could not Fast Refresh ("episodeIsArchived" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:40:37 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx, /src/local-app/LocalCatalogApp.tsx
+9:40:37 AM [vite] (client) hmr invalidate /src/episodes/EpisodeProduction.tsx Could not Fast Refresh ("abbreviatePath" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:40:37 AM [vite] (client) hmr update /docs/verification/visual-audit-20261028/fixture.tsx, /src/local-app/LocalEpisodeDetail.tsx, /src/local-app/LocalCatalogApp.tsx
+9:40:37 AM [vite] (client) hmr invalidate /docs/verification/visual-audit-20261028/fixture.tsx Could not Fast Refresh ("true" export is incompatible). Learn more at https://github.com/vitejs/vite-plugin-react/tree/main/packages/plugin-react#consistent-components-exports
+9:40:37 AM [vite] (client) page reload docs/verification/visual-audit-20261028/fixture.tsx

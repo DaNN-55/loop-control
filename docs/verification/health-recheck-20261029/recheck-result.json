@@ -1,0 +1,18 @@
+{
+  "observedAt": "2026-10-29T02:56:05.845Z",
+  "attempts": [
+    {
+      "id": "8557b911-e9bb-4c6c-9d2d-96e8bb364de2",
+      "kind": "health",
+      "due_at": "2026-10-29T02:55:54.846772+00:00",
+      "attempt": 1,
+      "started_at": "2026-10-29T02:55:58.043+00:00",
+      "completed_at": "2026-10-29T02:55:58.055+00:00",
+      "status": "completed",
+      "passed": true,
+      "detail": "数据库、媒体目录和本地运行程序检查通过。"
+    }
+  ],
+  "plansUnchanged": true,
+  "originalAttemptsUnchanged": true
+}

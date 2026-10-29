@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/orchestration/operationsEvidence.test.ts (4 tests) 11ms
+ ✓ src/local-app/LocalSystemStatus.test.tsx (2 tests) 108ms
+
+ Test Files  2 passed (2)
+      Tests  6 passed (6)
+   Start at  09:39:49
+   Duration  751ms (transform 61ms, setup 0ms, collect 181ms, tests 119ms, environment 640ms, prepare 108ms)
+

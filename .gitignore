@@ -3,9 +3,6 @@ dist/
 .venv-whisperx/
 .env
 .env.local
-n8n/runtime/
-n8n/node24/node_modules/
-n8n/worker.env.local
 *.tsbuildinfo
 .loop-control/
 docs/运行手册.md
@@ -15,8 +12,6 @@ docs/运行手册.md
 /.playwright-cli/
 /outputs/
 /tmp/
-/supabase/.branches/
-/supabase/.temp/
 
 # Local production media; keep HTML, JSON and Markdown project sources tracked
 content/**/*.gif

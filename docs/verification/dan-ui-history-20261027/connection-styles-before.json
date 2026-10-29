@@ -1,0 +1,68 @@
+[
+  {
+    "background": "rgb(255, 255, 255)",
+    "border": "0px none oklch(0.205 0 none)",
+    "color": "oklch(0.205 0 none)",
+    "font": "500 14px / 20px Inter, -apple-system, \"Segoe UI\", Roboto, Arial, sans-serif",
+    "height": 0,
+    "padding": "8px 36px 8px 12px",
+    "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.87 0 none) 0px 0px 0px 1px inset, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+    "tag": "SELECT",
+    "width": 0
+  },
+  {
+    "background": "rgb(255, 255, 255)",
+    "border": "0px none oklch(0.205 0 none)",
+    "color": "oklch(0.205 0 none)",
+    "font": "500 14px / 20px Inter, -apple-system, \"Segoe UI\", Roboto, Arial, sans-serif",
+    "height": 0,
+    "padding": "8px 36px 8px 12px",
+    "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.87 0 none) 0px 0px 0px 1px inset, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+    "tag": "SELECT",
+    "width": 0
+  },
+  {
+    "background": "rgba(0, 0, 0, 0)",
+    "border": "0px none oklch(0.205 0 none)",
+    "color": "oklch(0.205 0 none)",
+    "font": "14px / 20px Inter, -apple-system, \"Segoe UI\", Roboto, Arial, sans-serif",
+    "height": 0,
+    "padding": "8px 12px",
+    "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.205 0 none) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+    "tag": "INPUT",
+    "width": 0
+  },
+  {
+    "background": "rgba(0, 0, 0, 0)",
+    "border": "0px none oklch(0.205 0 none)",
+    "color": "oklch(0.205 0 none)",
+    "font": "14px / 20px Inter, -apple-system, \"Segoe UI\", Roboto, Arial, sans-serif",
+    "height": 0,
+    "padding": "8px 12px",
+    "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.205 0 none) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+    "tag": "INPUT",
+    "width": 0
+  },
+  {
+    "background": "rgb(127, 86, 217)",
+    "border": "0px solid rgb(255, 255, 255)",
+    "color": "rgb(255, 255, 255)",
+    "font": "600 14px / 20px Inter, -apple-system, \"Segoe UI\", Roboto, Arial, sans-serif",
+    "height": 0,
+    "padding": "8px 12px",
+    "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 1px inset, rgba(0, 0, 0, 0.18) 0px 0px 0px 1px inset, rgba(0, 0, 0, 0.05) 0px -2px 0px 0px inset, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+    "tag": "BUTTON",
+    "width": 0
+  },
+  {
+    "background": "rgba(0, 0, 0, 0)",
+    "border": "0px none oklch(0.205 0 none)",
+    "color": "oklch(0.205 0 none)",
+    "font": "14px / 20px Inter, -apple-system, \"Segoe UI\", Roboto, Arial, sans-serif",
+    "height": 0,
+    "padding": "8px 12px",
+    "shadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.205 0 none) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+    "tag": "INPUT",
+    "width": 0
+  }
+]

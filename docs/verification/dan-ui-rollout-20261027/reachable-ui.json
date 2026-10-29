@@ -1,0 +1,78 @@
+{
+  "entry": "src/local-app/main.tsx",
+  "tsx": [
+    "src/accounts/AccountForm.tsx",
+    "src/accounts/AccountWorkspace.tsx",
+    "src/connections/ConnectionTestButton.tsx",
+    "src/connections/ConnectionWorkspace.tsx",
+    "src/episodes/EpisodeForm.tsx",
+    "src/episodes/EpisodeProduction.tsx",
+    "src/episodes/WanShotGenerator.tsx",
+    "src/local-app/HistorySources.tsx",
+    "src/local-app/LocalCatalogApp.tsx",
+    "src/local-app/LocalConnectionsPanel.tsx",
+    "src/local-app/LocalDeliveryPanel.tsx",
+    "src/local-app/LocalEpisodeDetail.tsx",
+    "src/local-app/LocalHistory.tsx",
+    "src/local-app/LocalMaintenancePanel.tsx",
+    "src/local-app/LocalSecretAdministration.tsx",
+    "src/local-app/LocalSystemStatus.tsx",
+    "src/local-app/main.tsx",
+    "src/observability/SystemStatusSurface.tsx",
+    "src/observability/TaskProgressPanel.tsx",
+    "src/operations/OperationsWorkspace.tsx",
+    "src/platform/ConfigurationForms.tsx",
+    "src/publishing/ProductionCompletionModal.tsx",
+    "src/reviews/WorkerBlockerCard.tsx",
+    "src/ui/ConfirmationModal.tsx",
+    "src/ui/HelpTip.tsx",
+    "src/ui/MarkdownPreview.tsx",
+    "src/ui/PaginationControls.tsx",
+    "src/ui/dan-ui/components/application/modals/modal.tsx",
+    "src/ui/dan-ui/components/application/tabs/tabs.tsx",
+    "src/ui/dan-ui/components/base/avatar/avatar.tsx",
+    "src/ui/dan-ui/components/base/avatar/base-components/avatar-add-button.tsx",
+    "src/ui/dan-ui/components/base/avatar/base-components/avatar-company-icon.tsx",
+    "src/ui/dan-ui/components/base/avatar/base-components/avatar-count.tsx",
+    "src/ui/dan-ui/components/base/avatar/base-components/avatar-online-indicator.tsx",
+    "src/ui/dan-ui/components/base/avatar/base-components/index.tsx",
+    "src/ui/dan-ui/components/base/avatar/base-components/verified-tick.tsx",
+    "src/ui/dan-ui/components/base/badges/badges.tsx",
+    "src/ui/dan-ui/components/base/buttons/button.tsx",
+    "src/ui/dan-ui/components/base/checkbox/checkbox.tsx",
+    "src/ui/dan-ui/components/base/disclosure/disclosure.tsx",
+    "src/ui/dan-ui/components/base/dropdown/dropdown.tsx",
+    "src/ui/dan-ui/components/base/input/hint-text.tsx",
+    "src/ui/dan-ui/components/base/input/input.tsx",
+    "src/ui/dan-ui/components/base/input/label.tsx",
+    "src/ui/dan-ui/components/base/radio-buttons/radio-buttons.tsx",
+    "src/ui/dan-ui/components/base/select/select-native.tsx",
+    "src/ui/dan-ui/components/base/textarea/textarea.tsx",
+    "src/ui/dan-ui/components/base/toggle/toggle.tsx",
+    "src/ui/dan-ui/components/base/tooltip/tooltip.tsx",
+    "src/ui/dan-ui/components/foundations/dot-icon.tsx",
+    "src/workspace/WorkspaceViews.tsx"
+  ],
+  "nativeControlsOutsideAdoptedComponents": [
+    {
+      "file": "src/episodes/EpisodeProduction.tsx",
+      "line": 955,
+      "control": "<input accept={supportedMaterialAccept} aria-label=\"选择生产材料\" className=\"material-slot-input\" disabled={isImporting || isPending} key={fileInputKey} multiple onChange={(event) => selectFiles(Array.from(event.target.files ?? []))} type=\"file\" />"
+    },
+    {
+      "file": "src/episodes/EpisodeProduction.tsx",
+      "line": 1294,
+      "control": "<input accept=\"audio/*,.mp3,.wav,.m4a,.aac,.flac\" aria-label=\"上传整期 BGM\" disabled={isPending || isMaterialPending} onChange={(event) => { const input = event.currentTarget; void importFile(input.files?.[0]).finally(() => { input.value = \"\"; }); }} type=\"file\" />"
+    },
+    {
+      "file": "src/episodes/EpisodeProduction.tsx",
+      "line": 2165,
+      "control": "<input accept=\".mp4,.mov,.webm,video/*\" aria-label={`${shot.id} 补充原片`} disabled={isImporting || isPending} onChange={(event) => { const input = event.currentTarget; void importFile(input.files?.[0]).finally(() => { input.value = \"\"; }); }} type=\"file\" />"
+    },
+    {
+      "file": "src/publishing/ProductionCompletionModal.tsx",
+      "line": 70,
+      "control": "<input accept=\".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp\" aria-label=\"选择封面\" className=\"material-slot-input\" onChange={(event) => setCover(event.target.files?.[0] ?? null)} required type=\"file\" />"
+    }
+  ]
+}

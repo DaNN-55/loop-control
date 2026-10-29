@@ -1,0 +1,57 @@
+{
+  "passed": true,
+  "artifacts": 279,
+  "materials": 108,
+  "loginEmail": "wangdan556040@gmail.com",
+  "orphanRows": 0,
+  "currentHealth": [
+    {
+      "kind": "health",
+      "passed": true,
+      "status": "completed",
+      "attempt": 1,
+      "completed_at": "2026-10-27T01:39:50.433+00:00"
+    }
+  ],
+  "ownerAccounts": [
+    {
+      "id": "83354165-b70f-46c0-9f77-05047a208b8b",
+      "name": "dao",
+      "blueprints": 8
+    },
+    {
+      "id": "e9288dc0-b0ed-47d5-b3c3-a02a3d0de9b8",
+      "name": "studio-2",
+      "blueprints": 1
+    },
+    {
+      "id": "9179a633-a946-4442-9877-6293507672e6",
+      "name": "日照金山样片",
+      "blueprints": 1
+    },
+    {
+      "id": "ad08d7a4-a844-4624-b876-35f54ce1df72",
+      "name": "普通长度三镜头端到端验收",
+      "blueprints": 1
+    },
+    {
+      "id": "96b01bba-db16-4447-a289-283d1a03e9c9",
+      "name": "测试账号",
+      "blueprints": 3
+    },
+    {
+      "id": "194e137d-7bb0-4788-a413-f8b9726891d8",
+      "name": "豆包推广",
+      "blueprints": 5
+    }
+  ],
+  "ownerEpisodes": 10,
+  "globalAccounts": 12,
+  "globalEpisodes": 16,
+  "loginCredentials": 1,
+  "foreignKeysChecked": 121,
+  "ownerActiveEpisodes": 2,
+  "nonHistoricalUnresolved": 0,
+  "deletedAccountsRemaining": 0,
+  "deletedEpisodesRemaining": 0
+}

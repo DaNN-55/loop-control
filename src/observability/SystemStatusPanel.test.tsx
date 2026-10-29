@@ -16,7 +16,7 @@ const report: LocalSystemStatusReport = {
   mediaLibrary: { detail: "已挂载：/Volumes/Media", state: "healthy" },
   n8n: { detail: "已读取本地 n8n 事件日志；n8n 负责编排、通知和健康检查，不代替 Worker。", lastDispatchAt: null, lastEventAt: "2026-08-18T00:02:00.000Z", lastHealthCheckAt: null, lastNotification: null, lastRunAt: null, lastScheduleCheckAt: "2026-08-18T00:02:00.000Z", lastWorkerDispatchAt: null, state: "healthy" },
   observedAt: "2026-08-18T00:03:00.000Z",
-  supabase: { detail: "控制数据已成功读取。", state: "healthy" },
+  viewTransport: { detail: "控制数据已成功读取。", state: "healthy" },
 };
 
 const currentEpisode = { archived_at: null, id: "episode-current" } as Episode;
@@ -59,15 +59,15 @@ describe("系统状态面板", () => {
     render(<SystemStatusPanel episodes={[currentEpisode]} report={null} tasks={[]} />);
 
     expect(screen.getByRole("button", { name: "系统状态：待确认" })).toBeTruthy();
-    expect(screen.getByTitle(/生产执行链：待确认/)).toBeTruthy();
+    expect(screen.getByRole("button", {name:/系统状态/}).getAttribute("data-status-summary")).toMatch(/生产执行链：待确认/);
   });
 
   it("n8n 不可用时即使 Worker 最近已完成也必须降级系统状态", () => {
     render(<SystemStatusPanel episodes={[currentEpisode]} report={{ ...report, n8n: { ...report.n8n, detail: "n8n 健康端点无响应", lastEventAt: null, state: "offline" } }} tasks={[completedTask]} />);
 
     expect(screen.getByRole("button", { name: "系统状态：需处理" })).toBeTruthy();
-    expect(screen.getByTitle(/生产执行链：需处理/)).toBeTruthy();
-    expect(screen.getByTitle(/任务执行：正常/)).toBeTruthy();
+    expect(screen.getByRole("button", {name:/系统状态/}).getAttribute("data-status-summary")).toMatch(/生产执行链：需处理/);
+    expect(screen.getByRole("button", {name:/系统状态/}).getAttribute("data-status-summary")).toMatch(/任务执行：正常/);
   });
 
   it("空调度检查不显示为 Worker 派发", async () => {
@@ -93,7 +93,7 @@ describe("系统状态面板", () => {
 
   it("迁移或控制数据缺少证据时保持待确认", async () => {
     const user = userEvent.setup();
-    render(<SystemStatusPanel episodes={[currentEpisode]} report={{ ...report, dependencies: report.dependencies.filter((dependency) => dependency.name !== "Supabase 迁移"), supabase: undefined }} tasks={[]} />);
+    render(<SystemStatusPanel episodes={[currentEpisode]} report={{ ...report, dependencies: report.dependencies.filter((dependency) => dependency.name !== "Supabase 迁移"), viewTransport: undefined }} tasks={[]} />);
 
     expect(screen.getByRole("button", { name: "系统状态：待确认" })).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "系统状态：待确认" }));
@@ -170,8 +170,8 @@ describe("系统状态面板", () => {
     render(<SystemStatusPanel episodes={[currentEpisode, archivedEpisode]} report={report} tasks={[completedTask, archivedBlockedTask]} />);
 
     expect(screen.getByRole("button", { name: "系统状态：正常" })).toBeTruthy();
-    expect(screen.getByTitle(/生产执行链：正常/)).toBeTruthy();
-    expect(screen.getByTitle(/任务执行：正常/)).toBeTruthy();
+    expect(screen.getByRole("button", {name:/系统状态/}).getAttribute("data-status-summary")).toMatch(/生产执行链：正常/);
+    expect(screen.getByRole("button", {name:/系统状态/}).getAttribute("data-status-summary")).toMatch(/任务执行：正常/);
   });
 
   it.each(["generate_review_render", "generate_final_render"])("后续成功的 %s 不让历史失败继续显示为需处理", async (taskType) => {

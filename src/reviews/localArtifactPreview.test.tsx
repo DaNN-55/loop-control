@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({ getSession: vi.fn() }));
 
-vi.mock("../lib/supabase", () => ({ supabase: { auth: { getSession: mocks.getSession } } }));
+vi.mock("../lib/viewTransport", () => ({ viewTransport: { auth: { getSession: mocks.getSession } } }));
 
 import { clearLocalArtifactCache, localArtifactThumbnailUrl, useLocalArtifactBlob, useLocalArtifactText } from "./localArtifactPreview";
 

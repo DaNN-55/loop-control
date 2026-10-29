@@ -57,7 +57,8 @@ interface OpenChatCutTrack {
   audioRouting?: { duckDepthDb: number };
   captions?: {
     enabled: true;
-    template: "black-bar";
+    template: "black-bar" | "plain";
+    styleOverride?: Record<string,unknown>;
     pacing: "phrase";
     sourceMode: "item";
     sourceEntries: Array<{ id: string; itemId: string; label: string; slotId: string; widthRatio: number; heightRatio: number; maxCharactersPerLine: number; words: OpenChatCutCaptionCue[] }>;
@@ -252,7 +253,8 @@ export function buildOpenChatCutProject(render: ReviewRender, projectId = "produ
         name: "字幕",
         captions: {
           enabled: true,
-          template: "black-bar",
+          template: render.adjustments.captionStyle === "minimal" ? "plain" : "black-bar",
+          ...(render.adjustments.captionStyle === "minimal" ? {styleOverride:{fontFamily:"Noto Sans SC",color:"#ffffff",highlightColor:"#ffffff",strokeColor:"#000000",strokeWidth:2.5,wholeLine:true,background:"transparent"}} : {}),
           pacing: "phrase",
           sourceMode: "item",
           sourceEntries: captionSourceEntries,

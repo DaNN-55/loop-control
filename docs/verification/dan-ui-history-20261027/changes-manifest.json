@@ -1,0 +1,52 @@
+[
+  {
+    "path": "PLAN.md",
+    "before": "d46a8bebf18d4fc4e98e2a966270dd954e750b66bb139b69c28ea55c190e8513",
+    "after": "d1dd5d54b4832aafa6c9358bfbdefa2a1485e453519442c8399af2aca5ee7eca"
+  },
+  {
+    "path": "src/local-app/HistorySources.tsx",
+    "before": "59c85bf11bb09178be02331ea7ebbb04ddc8d620172a5edece5c9b35b9b446cd",
+    "after": "5a53d115bc60acca5cdc46905480de5d1639650c04db135d41b1404a77336da9"
+  },
+  {
+    "path": "src/local-app/LocalHistory.test.tsx",
+    "before": "fd78dec993f453a0631f6a58f7972c95f4dfd0411ed6d7816f1bbe901319f9c5",
+    "after": "5fda0d0090dd3bb1d5a09357a47d9fa194ef77e1e3add2be7ecf3e1911358235"
+  },
+  {
+    "path": "src/local-app/LocalHistory.tsx",
+    "before": "b20e0443045d29bf9963c11a99ca0266f1b41ba3c1eb26e9da82118290ee6af4",
+    "after": "7928a3152c271f9efaf06734ae4bfeacef86636b371dfa9a5cbe7b1885f955d8"
+  },
+  {
+    "path": "src/ui/dan-ui/README.md",
+    "before": "5b6c4ca3ce296adb6addee7ad926be7860c6d29847753f64db91b651d37fcd7e",
+    "after": "9cbd5bd5a4e2ec484b19e4fe6a9f3dce94c5e7c2fc1b604a1807d8ed4e869d92"
+  },
+  {
+    "path": "src/ui/dan-ui/UPSTREAM.json",
+    "before": "031b59c660923f001e9d0d7b2a3c1ead4960c08c80f2bbd559e83f2c8a45da86",
+    "after": "9546898068ab5c31dee077279df3592e69a752cd3eb88d28f9cc089239479fe1"
+  },
+  {
+    "path": "src/ui/dan-ui/styles/scoped.css",
+    "before": "498738f192d0630ae1565e5a21d13f55f29b29288021a8e851e038d784ecf92c",
+    "after": "d3eff3d563c3bbb46424af3b3b6bcecc84783dde9e5cde20c4093b443496743e"
+  },
+  {
+    "path": "src/local-app/history-dan-ui.css",
+    "before": null,
+    "after": "0f03c1042fdd7e53d3b96903bf834271e4cb43e1ba1b85d76c82d09e3a54e2c2"
+  },
+  {
+    "path": "src/local-app/HistoryDanUi.test.tsx",
+    "before": null,
+    "after": "a0fd70f4ff93a79100723475c8ddadbc4830db2b1a96ec8f89c426275bedc00d"
+  },
+  {
+    "path": "src/ui/dan-ui/components/base/checkbox/checkbox.tsx",
+    "before": null,
+    "after": "1443a94320d527a0ccd130fe2111979d0aba2148259ececfea3c5436a0c021d3"
+  }
+]

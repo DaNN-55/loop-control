@@ -1,0 +1,20 @@
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 4411 modules transformed.
+
+(!) outDir /private/tmp/loop-page-consistency-delivery-20261028 is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+rendering chunks...
+computing gzip size...
+../../../../private/tmp/loop-page-consistency-delivery-20261028/index.html                                  0.86 kB │ gzip:   0.47 kB
+../../../../private/tmp/loop-page-consistency-delivery-20261028/native-runtime-graph.json                 280.99 kB │ gzip:  23.49 kB
+../../../../private/tmp/loop-page-consistency-delivery-20261028/assets/index-DTrL2GIY.css                 557.02 kB │ gzip:  81.55 kB
+../../../../private/tmp/loop-page-consistency-delivery-20261028/assets/retiredRemoteClient-CR7xA7U4.js      0.16 kB │ gzip:   0.18 kB
+../../../../private/tmp/loop-page-consistency-delivery-20261028/assets/index-CofKg0TW.js                1,023.86 kB │ gzip: 306.05 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 9.37s

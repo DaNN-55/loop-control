@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (8 tests) 1672ms
+   ✓ 保留安全弹窗焦点，将维护入口统一为侧栏且跨页保留连接草稿  390ms
+   ✓ keeps one topbar instance and places the Owner menu after theme in workspace and episode  422ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  20:19:21
+   Duration  3.69s (transform 510ms, setup 7ms, collect 1.61s, tests 1.67s, environment 283ms, prepare 33ms)
+

@@ -1,0 +1,42 @@
+[
+  {
+    "canonical": "docs/verification/impeccable-migration-20261028/screenshots/real-production.png",
+    "freshAlias": "docs/verification/impeccable-migration-20261028/screenshots/real-production-fix1.png",
+    "sha256": "908cb352f79ffb2dd5de82a76d1ef07f99204cbaa7a906c23a4cc86b38d9c6cf"
+  },
+  {
+    "canonical": "docs/verification/impeccable-migration-20261028/screenshots/qc-dark.png",
+    "freshAlias": "docs/verification/impeccable-migration-20261028/screenshots/qc-dark-fix1.png",
+    "sha256": "47c3e84d3d3fb0f5b4a1229d7d4fc57033c8b002864e65df046e9e1d6fa16df2"
+  },
+  {
+    "canonical": "docs/verification/impeccable-migration-20261028/screenshots/pc1280-episodes-long-dark.png",
+    "freshAlias": "docs/verification/impeccable-migration-20261028/screenshots/pc1280-episodes-long-dark-fix1.png",
+    "sha256": "088dd3c2d7b3e1150daed675dbb619d5d25fc85b026fe81406e8e767ec3ee028"
+  },
+  {
+    "canonical": "docs/verification/impeccable-migration-20261028/screenshots/pc1280-name-tooltip-dark.png",
+    "freshAlias": "docs/verification/impeccable-migration-20261028/screenshots/pc1280-name-tooltip-dark-fix1.png",
+    "sha256": "bc76ddd6e24e3ecdfdb31034ab8791ec30e81e700317e71856003299ac85f259"
+  },
+  {
+    "canonical": "docs/verification/impeccable-migration-20261028/screenshots/pc1920-production.png",
+    "freshAlias": "docs/verification/impeccable-migration-20261028/screenshots/pc1920-production-fix1.png",
+    "sha256": "18248218ec2ee1f9c72ef85c55703e902049a2f2c071a005b435d15628a17794"
+  },
+  {
+    "canonical": "docs/verification/impeccable-migration-20261028/screenshots/shot-composition-dark.png",
+    "freshAlias": "docs/verification/impeccable-migration-20261028/screenshots/shot-composition-dark-fix1.png",
+    "sha256": "05b0950385671c61da0d81609586824f1596a1f86e836ef699fbaed3fe31344a"
+  },
+  {
+    "canonical": "docs/verification/impeccable-migration-20261028/screenshots/shot-preview-dark.png",
+    "freshAlias": "docs/verification/impeccable-migration-20261028/screenshots/shot-preview-dark-fix1.png",
+    "sha256": "d2cf06df73abe7e11b4b0f6878cf84066a87df25fd24a59fd60a9439ecae2fa0"
+  },
+  {
+    "canonical": "docs/verification/impeccable-migration-20261028/screenshots/shot-preview-actions-dark.png",
+    "freshAlias": "docs/verification/impeccable-migration-20261028/screenshots/shot-preview-actions-dark-fix1.png",
+    "sha256": "480514050c799b35d71ddd9f1abdc04f5db9d137ebb35b9b90c4c64d69ae1841"
+  }
+]

@@ -1,0 +1,11 @@
+{
+  "source": "Chrome DevTools read-only expression, live authenticated connection management",
+  "viewport": [360, 800],
+  "documentScrollWidth": 360,
+  "dialog": {"width": 360, "clientWidth": 358, "scrollWidth": 358},
+  "closeButton": {"width": 12.65625, "height": 24, "fontSize": "16px", "borderRadius": "0px"},
+  "refreshButton": {"height": 42},
+  "inspectedInputValues": false,
+  "physicalTouchTested": false,
+  "darkThemeTested": false
+}

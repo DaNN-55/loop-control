@@ -1,0 +1,57 @@
+{
+  "observedAt": "2026-10-29T03:16:54.416Z",
+  "migrationAlreadyAppliedByConcurrentUpdate": true,
+  "migration": {
+    "sha256": "1eb2fe9bc71877d3b4388b1840aed109903610188895386b6dfde7f4ba27bb06",
+    "version": "083-legacy-episode-archive.sql",
+    "applied_at": "2026-10-29T03:14:55.905124+00:00"
+  },
+  "functionBodyVerified": true,
+  "episodes": [
+    {
+      "id": "265dcee5-32c8-4066-b3ad-58803d195e01",
+      "stage": "qc_passed",
+      "title": "操作电脑-v4",
+      "managed": false,
+      "historical": false,
+      "archived_at": "2026-10-24T07:39:33.564497+00:00",
+      "episode_sha": "a94a375bfaa37b191b70f837cbc6e3e0"
+    },
+    {
+      "id": "3bf59fde-cf0b-47e1-990e-d7034cfbcfb3",
+      "stage": "visual_review",
+      "title": "操作电脑-v2",
+      "managed": false,
+      "historical": false,
+      "archived_at": "2026-09-08T05:56:03.385022+00:00",
+      "episode_sha": "6b0fff1488a2b7a1bc04e4867272f45e"
+    },
+    {
+      "id": "603a1588-a786-4ded-a4dd-a660d48ee617",
+      "stage": "qc_review",
+      "title": "操作电脑",
+      "managed": false,
+      "historical": false,
+      "archived_at": "2026-09-08T05:56:09.922692+00:00",
+      "episode_sha": "b97acf12249299d75e8323f7175e568d"
+    },
+    {
+      "id": "92b3067d-ced9-4e85-bc44-1968fa83695a",
+      "stage": "qc_passed",
+      "title": "操作电脑-v3",
+      "managed": false,
+      "historical": false,
+      "archived_at": "2026-09-12T14:26:23.674425+00:00",
+      "episode_sha": "3664a41a29030f3702d0741333ca3c54"
+    },
+    {
+      "id": "e8700b8e-e95f-48a9-9f2e-ac3259a61ed4",
+      "stage": "production_completed",
+      "title": "电脑体检打假",
+      "managed": false,
+      "historical": false,
+      "archived_at": "2026-10-24T07:39:36.820714+00:00",
+      "episode_sha": "a774b3e8a89e354640e24be6c4b23605"
+    }
+  ]
+}

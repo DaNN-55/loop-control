@@ -1,9 +1,11 @@
+import userEvent from '@testing-library/user-event';
 import{flushSync}from'react-dom';
 import {afterEach,it,expect,vi} from 'vitest';
 import {render,screen,fireEvent,waitFor,cleanup,act,within} from '@testing-library/react';
 import {webcrypto} from 'node:crypto';
 import {LocalCatalogApp} from './LocalCatalogApp';
 import type {LocalCatalog} from './catalog';
+vi.mock('./LocalSystemStatus',()=>({LocalSystemStatus:()=>null}));
 import {localCommand} from './client';
 async function productionButton(){return within(await screen.findByRole('complementary',{name:'主导航'})).getByRole('button',{name:'生产单'});}
 function clickLogout(){if(!screen.queryByRole('menuitem',{name:'退出登录'}))flushSync(()=>{fireEvent.click(screen.getAllByRole('button',{name:'所有者设置'})[0]);});fireEvent.click(screen.getByRole('menuitem',{name:'退出登录'}));}
@@ -21,15 +23,15 @@ it('keeps a committed series save successful when its follow-up read fails',asyn
   if(saved&&!readFailure){readFailure=true;return json({error:'induced catalog read failure'},503);}
   return json(saved?{...catalog,seriesVersions:[{...version,id:'10000000-0000-4000-8000-000000000006',version:2,rules:{positioning:'saved'}},version]}:catalog);
  }));
- // Finish asynchronous session/catalog initialization before switching account tabs.
+ // Open the real account workspace from the new home before checking its save semantics.
  await act(async()=>{render(<LocalCatalogApp/>);});
- fireEvent.click(await screen.findByRole('tab',{name:'系列'}));
+ fireEvent.click(await screen.findByRole('button',{name:'账号蓝图'}));fireEvent.click(await screen.findByRole('tab',{name:'系列'}));
  fireEvent.change(screen.getByRole('textbox',{name:'系列定位'}),{target:{value:'saved'}});
  fireEvent.click(screen.getByRole('button',{name:'保存为 v2'}));
  fireEvent.click(screen.getByRole('button',{name:'确认保存为 v2'}));
  expect(await screen.findByRole('alert')).toHaveProperty('textContent',expect.stringContaining('配置已保存'));
  expect(screen.queryByRole('dialog',{name:'确认保存系列版本'})).toBeNull();
- fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));
+ const user=userEvent.setup();await user.click(screen.getByRole('button',{name:'账号操作'}));await user.click(screen.getByRole('menuitem',{name:'刷新账号'}));
  await waitFor(()=>expect(screen.getByRole('heading',{name:'Fixture series · 当前 v2'})).toBeTruthy());
  expect(posts).toBe(1);
 });
@@ -37,16 +39,16 @@ function pagedCatalog(title:string,page=1):LocalCatalog{return{accounts:[],bluep
 it('requests server pages and discards a late response from an earlier filter',async()=>{
  const waiting:Array<(value:Response)=>void>=[];let catalogs=0;const paths:string[]=[];const json=(v:unknown)=>new Response(JSON.stringify(v));
  vi.stubGlobal('fetch',vi.fn(async(path:string)=>{if(path.endsWith('/session'))return json({csrfToken:'synthetic'});if(path.includes('/catalog?')){paths.push(path);if(catalogs++===0)return json(pagedCatalog('initial'));return new Promise<Response>(resolve=>waiting.push(resolve));}return json({});}));
- render(<LocalCatalogApp/>);fireEvent.click(await productionButton());
+ render(<LocalCatalogApp/>);fireEvent.click(await productionButton());await waitFor(()=>expect(waiting).toHaveLength(1));await act(async()=>{waiting.shift()!(json(pagedCatalog('initial')));});
  fireEvent.click(screen.getByRole('button',{name:'下一页'}));await waitFor(()=>expect(waiting).toHaveLength(1));expect(paths.at(-1)).toContain('page=2');
- fireEvent.click(within(screen.getByRole('complementary',{name:'主导航'})).getByRole('button',{name:'审核'}));await waitFor(()=>expect(waiting).toHaveLength(2));expect(paths.at(-1)).toContain('page=1');
+ fireEvent.change(screen.getByRole('combobox',{name:'生产单状态'}),{target:{value:'all'}});await waitFor(()=>expect(waiting).toHaveLength(2));expect(paths.at(-1)).toContain('page=1');
  waiting[1](json(pagedCatalog('new-filter')));await screen.findByText(/new-filter/);waiting[0](json(pagedCatalog('stale-page',2)));
  await waitFor(()=>expect(screen.queryByText(/stale-page/)).toBeNull());expect(screen.getByText(/new-filter/)).toBeTruthy();
 });
 it('does not restore an old catalog after Owner logout',async()=>{
  let resolveLate!:(value:Response)=>void,catalogs=0;const json=(v:unknown)=>new Response(JSON.stringify(v));
  vi.stubGlobal('fetch',vi.fn(async(path:string)=>{if(path.endsWith('/session'))return json({csrfToken:'synthetic'});if(path.includes('/catalog?'))return catalogs++===0?json(pagedCatalog('before')):new Promise<Response>(r=>{resolveLate=r;});return json({});}));
- render(<LocalCatalogApp/>);await productionButton();fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));await waitFor(()=>expect(resolveLate).toBeTypeOf('function'));clickLogout();await screen.findByRole('button',{name:'使用密码登录'});resolveLate(json(pagedCatalog('old-owner')));await waitFor(()=>expect(screen.queryByRole('button',{name:'退出登录'})).toBeNull());
+ render(<LocalCatalogApp/>);await productionButton();fireEvent(document,new Event('visibilitychange'));await waitFor(()=>expect(resolveLate).toBeTypeOf('function'));clickLogout();await screen.findByRole('button',{name:'使用密码登录'});resolveLate(json(pagedCatalog('old-owner')));await waitFor(()=>expect(screen.queryByRole('button',{name:'退出登录'})).toBeNull());
 });
 it('refreshes the current page on becoming visible and does not fetch while hidden',async()=>{
  let reads=0;const json=(v:unknown)=>new Response(JSON.stringify(v));
@@ -57,7 +59,7 @@ it('refreshes the current page on becoming visible and does not fetch while hidd
 it('does not start a new catalog read while logout is pending',async()=>{
  let reads=0,finishLogout!:(value:Response)=>void;const json=(v:unknown)=>new Response(JSON.stringify(v));
  vi.stubGlobal('fetch',vi.fn(async(path:string)=>{if(path.endsWith('/session'))return json({csrfToken:'synthetic'});if(path.endsWith('/logout'))return new Promise<Response>(r=>{finishLogout=r;});if(path.includes('/catalog?')){reads++;return json(pagedCatalog('owner'));}return json({});}));
- render(<LocalCatalogApp/>);await productionButton();const before=reads;clickLogout();await waitFor(()=>expect(finishLogout).toBeTypeOf('function'));fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));expect(reads).toBe(before);finishLogout(json({}));await screen.findByRole('button',{name:'使用密码登录'});
+ render(<LocalCatalogApp/>);await productionButton();const before=reads;clickLogout();await waitFor(()=>expect(finishLogout).toBeTypeOf('function'));fireEvent(document,new Event('visibilitychange'));expect(reads).toBe(before);finishLogout(json({}));await screen.findByRole('button',{name:'使用密码登录'});
 });
 it.each(['network','503'] as const)('returns to login after %s logout failure without accepting old reads, then restores writable CSRF on login',async fault=>{
  let reads=0,failLogout!:()=>void,resolveOld!:(response:Response)=>void;
@@ -74,11 +76,11 @@ it.each(['network','503'] as const)('returns to login after %s logout failure wi
  }));
  render(<LocalCatalogApp/>);
  fireEvent.click(await productionButton());
- fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));
+ fireEvent(document,new Event('visibilitychange'));
  await waitFor(()=>expect(resolveOld).toBeTypeOf('function'));
  clickLogout();
  await waitFor(()=>expect(failLogout).toBeTypeOf('function'));
- const before=reads;fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));expect(reads).toBe(before);
+ const before=reads;fireEvent(document,new Event('visibilitychange'));expect(reads).toBe(before);
  await act(async()=>{failLogout();});
  expect(await screen.findByRole('button',{name:'使用密码登录'})).toBeTruthy();
  expect(screen.getByRole('alert').textContent).toContain('未能确认退出，请重新登录');
@@ -116,20 +118,20 @@ it.each([
  }));
  render(<LocalCatalogApp/>);
  fireEvent.click(await productionButton());
- fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));
+ fireEvent(document,new Event('visibilitychange'));
  await waitFor(()=>expect(resolveOld).toBeTypeOf('function'));
  clickLogout();
  clickLogout();
  await waitFor(()=>expect(failures).toHaveLength(2));
  const before=reads;
- fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));
+ fireEvent(document,new Event('visibilitychange'));
  fireEvent(document,new Event('visibilitychange'));
  expect(reads).toBe(before);
  if(order==='older-first'){
   await act(async()=>{failures[0]();});
   expect(screen.queryByRole('button',{name:'使用密码登录'})).toBeNull();
   expect(screen.queryByRole('alert')).toBeNull();
-  fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));
+  fireEvent(document,new Event('visibilitychange'));
   expect(reads).toBe(before);
  }
  await act(async()=>{failures[1]();});
@@ -146,7 +148,7 @@ it.each([
  expect(screen.queryByRole('alert')).toBeNull();
  expect(screen.queryByText(/stale-concurrent-owner/)).toBeNull();
  expect(screen.getByText(/fresh-owner/)).toBeTruthy();
- await act(async()=>{fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));});
+ await act(async()=>{fireEvent(document,new Event('visibilitychange'));});
  await waitFor(()=>expect(reads).toBe(before+2));
  await expect(localCommand('renameAccount',{accountId:'10000000-0000-4000-8000-000000000001',name:'Concurrent fixture'})).resolves.toEqual({saved:true});
  expect(writes).toBe(1);
@@ -156,5 +158,14 @@ it.each([
 });
 it('returns to login and clears the visible workspace when a remote local session is revoked',async()=>{
  let revoked=false;vi.stubGlobal('fetch',vi.fn(async(path:string)=>{if(path.endsWith('/session'))return Response.json({owner:{id:'owner'},csrfToken:'fixture'});if(path.includes('/catalog?'))return revoked?Response.json({error:'请先登录所有者。'},{status:401}):Response.json(pagedCatalog('revoked-owner-data'));return Response.json({connections:[],versions:[]});}));
- render(<LocalCatalogApp/>);fireEvent.click(await productionButton());await screen.findByText('revoked-owner-data');revoked=true;fireEvent.click(screen.getByRole('button',{name:/^刷新$/}));await screen.findByRole('button',{name:'使用密码登录'});expect(screen.queryByText('revoked-owner-data')).toBeNull();
+ render(<LocalCatalogApp/>);fireEvent.click(await productionButton());await screen.findByText('revoked-owner-data');revoked=true;fireEvent(document,new Event('visibilitychange'));await screen.findByRole('button',{name:'使用密码登录'});expect(screen.queryByText('revoked-owner-data')).toBeNull();
+});
+it('clears the administrator secret page when another browser tab changes identity',async()=>{
+ const channels:Array<{onmessage:((event:{data:unknown})=>void)|null}>=[];
+ class Channel{onmessage:((event:{data:unknown})=>void)|null=null;constructor(){channels.push(this);}postMessage(){}close(){}}
+ vi.stubGlobal('BroadcastChannel',Channel);
+ vi.stubGlobal('fetch',vi.fn(async(path:string)=>new Response(JSON.stringify(path.endsWith('/session')?{owner:{id:'fixture-owner'},secretAdministration:true,csrfToken:'fixture-csrf'}:path.includes('/catalog?')?pagedCatalog('fixture'):path.includes('/secrets?')?{items:[],total:0,page:1,pageSize:50}:{}))));
+ render(<LocalCatalogApp/>);await productionButton();fireEvent.click(screen.getAllByRole('button',{name:'所有者设置'})[0]);fireEvent.click(screen.getByRole('menuitem',{name:'密钥管理'}));await screen.findByRole('dialog',{name:'密钥管理'});
+ act(()=>channels[0].onmessage?.({data:{kind:'changed',sender:'other-browser-tab'}}));
+ expect(screen.queryByRole('dialog',{name:'密钥管理'})).toBeNull();expect(screen.getByRole('heading',{name:'登录控制台'})).toBeTruthy();
 });

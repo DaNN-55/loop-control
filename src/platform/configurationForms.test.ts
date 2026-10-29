@@ -223,7 +223,7 @@ describe("账号蓝图表单转换", () => {
   });
 
   it("校验旁白和配乐必须选择已登记的外部连接", () => {
-    const narration = blueprintPolicyToForm({ narration: { execution_path: "external", credential_ref: "google-tts-default", executor: { provider: "google_tts", adapter: "google_tts", model: "standard", prompt_version: "narration-v1" }, allowed_tools: ["read", "write"], budget_cents: 10, max_attempts: 1, voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 1 } } }).mediaAdapters.narration;
+    const narration = blueprintPolicyToForm({ narration: { execution_path: "external", credential_ref: "volcengine-default", executor: { provider: "volcengine_tts", adapter: "volcengine_tts", model: "seed-tts-2.0", prompt_version: "narration-v1" }, allowed_tools: ["read", "write"], budget_cents: 10, max_attempts: 1, voice: { language_code: "zh-CN", name: "voice-a", speaking_rate: 1 } } }).mediaAdapters.narration;
     const form = blueprintPolicyToForm({ soundtrack: { execution_path: "external", credential_ref: "freesound-default", executor: { provider: "freesound", adapter: "freesound_preview", model: "freesound-preview-v1", prompt_version: "soundtrack-v1" }, allowed_tools: ["read", "write"], budget_cents: 10, max_attempts: 1 } }).mediaAdapters.soundtrack;
 
     expect(() => validateMediaAdapter("narration", narration)).toThrow("外部连接");

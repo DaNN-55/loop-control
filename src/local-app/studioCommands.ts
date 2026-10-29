@@ -1,3 +1,5 @@
+import {applyScriptRenderSettings,scriptRenderHint} from '../worker/scriptRenderSettings.js';
+import type {ResolvedProductionPlan} from '../reviews/productionPlan.js';
 import {defaultReviewRenderComposition,reviewRenderCompositionFromJson,reviewRenderCompositionToJson} from '../reviews/reviewComposition.js';
 import {createHash} from 'node:crypto';
 import type {PoolClient} from 'pg';
@@ -12,7 +14,7 @@ import {workerPreflightVersion} from '../worker/contracts.js';
 interface AudioFile {id?:string;relative_path:string;sha256:string;file_size:number|string;start_seconds?:number|string;duration_seconds?:number|string}
 interface SelectedAudio {member_key:string;cue:{kind:'bgm'|'sfx';startSeconds?:number};task?:{id:string};audio_track?:AudioFile;source_material?:AudioFile;duration_seconds?:number}
 type Render=NonNullable<WorkerTaskPackage['reviewRender']>;
-type Episode={id:string;stage:string;account_id:string;series_version_id:string|null;storyboard_enabled:boolean};
+type Episode={id:string;stage:string;account_id:string;series_version_id:string|null;storyboard_enabled:boolean;script_template_version?:number};
 export interface StudioRuntime {studioRuntime?():Promise<OpenChatCutRuntimeConfig>}
 interface Basis {hash:string;render:Render;mode:'workbench'|'shot'|'qc';reviewPackageId:string;sourcePath:string}
 interface Binding {basis:Basis;workspaceRelativePath:string}
@@ -132,6 +134,7 @@ export class NativeStudioCommands {
    const candidate={...reviewRenderCompositionToJson(defaultReviewRenderComposition),...(rules?.openchatcut_composition??{}),frame_rate:render.adjustments.frameRate,allowed_frames:render.adjustments.allowedFrames};
    const composition=reviewRenderCompositionFromJson(candidate);if(!composition)throw new ConfigurationError(409,'当前冻结系列合成规则无效。');
    render.adjustments={...composition,frameRate:render.adjustments.frameRate,allowedFrames:render.adjustments.allowedFrames,reason:'镜头工作版本'};
+   if(e.script_template_version===2){const p=(await c.query('SELECT plan FROM local_identity.script_productions WHERE episode_id=$1',[e.id])).rows[0]?.plan as ResolvedProductionPlan|undefined;if(p)render=applyScriptRenderSettings(render,scriptRenderHint(p.settings,p.segments));}
   }
   if(!render){
    const draft=(await c.query('SELECT d.* FROM public.shot_preparation_drafts d JOIN public.artifacts a ON a.id=d.current_preview_project_artifact_id WHERE d.episode_id=$1 AND d.review_package_id=$2 AND a.relative_path=$3 AND d.current_preview_input_fingerprint=d.preparation_input_fingerprint',[e.id,p.id,path])).rows[0];

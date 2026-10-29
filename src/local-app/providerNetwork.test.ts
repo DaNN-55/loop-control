@@ -89,7 +89,8 @@ function ttsFixture(provider:'google_tts'|'volcengine_tts',tts?:Record<string,un
  writeFileSync(join(c.directory,'policy.json'),bytes,{mode:0o600});writeFileSync(join(c.directory,'state.json'),JSON.stringify({version:1,policySha256:c.policySha256,used:0,costMicrounits:0,byOperation:{},halted:false,events:[]}),{mode:0o600});return c;
 }
 const ordinaryNarration='走进清晨的森林，放慢脚步，听见风穿过树梢，也看见阳光一点一点照亮前方的道路。';
-for(const provider of ['google_tts','volcengine_tts'] as const){
+for(const selected of ['volcengine_tts'] as const){
+ const provider:'google_tts'|'volcengine_tts'=String(selected) as 'google_tts'|'volcengine_tts';
  const alternate=provider==='google_tts'?'cmn-CN-Standard-B':'zh_female_shuangkuaisisi_moon_bigtts';
  const rules={maxCharacters:200,voices:[alternate],...(provider==='google_tts'?{languageCodes:['zh-CN']}:{resourceIds:['seed-tts-1.0']})};
  async function synthesize(c:ProviderNetworkConfiguration,text:string,voice=alternate,transport=vi.fn(async()=>provider==='google_tts'?new Response(JSON.stringify({audioContent:Buffer.from('ID3synthetic').toString('base64')})):new Response('data: '+JSON.stringify({code:0,data:Buffer.from('ID3synthetic').toString('base64')})+'\n'))){
@@ -146,3 +147,5 @@ for(const provider of ['google_tts','volcengine_tts'] as const){
   const c=ttsFixture(provider,invalid);await expect(synthesize(c,'短句。')).rejects.toThrow();expect(JSON.parse(readFileSync(join(c.directory,'state.json'),'utf8')).used).toBe(0);
  });
 }
+
+it.each(['cloudflare','google_tts'] as const)('blocks retired %s before transport and reservation',async provider=>{const c=fixture(true),transport=vi.fn();await expect(createProviderFetcher(c,provider,'verify',transport)(provider==='cloudflare'?'https://api.cloudflare.com/client/v4/accounts/a/ai/models/search':'https://texttospeech.googleapis.com/v1/voices')).rejects.toThrow();expect(transport).not.toHaveBeenCalled();expect(JSON.parse(readFileSync(join(c.directory,'state.json'),'utf8')).used).toBe(0);});

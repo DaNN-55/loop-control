@@ -1,0 +1,170 @@
+/* Approved Impeccable maintenance surfaces. Runtime adapters and controls retain their contracts. */
+html[data-interface="impeccable"] .product-ui .maintenance-embedded {
+  min-width: 0;
+  border: 1px solid var(--lc-line);
+  border-radius: 12px;
+  background: var(--lc-surface);
+  overflow: clip;
+}
+html[data-interface="impeccable"] .product-ui .maintenance-embedded .maintenance-tabs { padding: 0 20px; }
+html[data-interface="impeccable"] .product-ui .maintenance-embedded .maintenance-panel-content { padding: 20px; }
+html[data-interface="impeccable"] .product-ui :is(.local-connections-panel,.history-ui.history-workspace) {
+  gap: 16px;
+  padding-block: 0;
+  color: var(--lc-ink);
+  min-width: 0;
+}
+html[data-interface="impeccable"] .product-ui :is(.connection-panel-header,.history-header) { align-items: flex-start; gap: 16px; }
+html[data-interface="impeccable"] .product-ui :is(.connection-panel-header,.history-header) h3 { font-size: 18px; font-weight: 650; letter-spacing: -.015em; }
+html[data-interface="impeccable"] .product-ui :is(.connection-panel-header,.history-header) p { color: var(--lc-muted); font-size: 12px; margin: 4px 0 0; }
+html[data-interface="impeccable"] .product-ui .connection-panel-header { align-items: center; }
+html[data-interface="impeccable"] .product-ui .connection-panel-header > p { margin: 0; }
+html[data-interface="impeccable"] .product-ui .connection-workspace { gap: 20px; }
+html[data-interface="impeccable"] .product-ui .connection-workspace .connection-library {
+  padding: 12px 0;
+  border-top: 1px solid var(--lc-line);
+  border-bottom: 1px solid var(--lc-line);
+}
+html[data-interface="impeccable"] .product-ui .connection-fields {
+  gap: 14px;
+  width: 100%;
+  max-width: 644px;
+}
+html[data-interface="impeccable"] .product-ui .connection-fields > legend {
+  padding: 0 0 18px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+  color: var(--lc-ink);
+}
+html[data-interface="impeccable"] .product-ui .connection-workspace .connection-field { grid-template-columns: minmax(0,1fr); gap: 6px !important; }
+html[data-interface="impeccable"] .product-ui .connection-field > :is(label,div,textarea,[slot="description"]) { grid-column: 1; grid-row: auto; }
+html[data-interface="impeccable"] .product-ui .connection-field > label { padding-top: 0; font-size: 13px; }
+html[data-interface="impeccable"] .product-ui .connection-target-field { padding-bottom: 14px; border-color: var(--lc-line); }
+html[data-interface="impeccable"] .product-ui :is(.connection-usage,.connection-availability) { margin-left: 0; max-width: 100%; color: var(--lc-muted); font-size: 12px; }
+html[data-interface="impeccable"] .product-ui .connection-availability { background: var(--lc-surface-2); border-color: var(--lc-line); padding: 10px 12px; }
+html[data-interface="impeccable"] .product-ui .connection-submit-row { max-width: 644px; gap: 16px; padding-top: 16px; border-color: var(--lc-line); }
+html[data-interface="impeccable"] .product-ui .connection-operation-result { font-size: 12px; line-height: 1.5; }
+html[data-interface="impeccable"] .product-ui .connection-saved-list { margin-top: 14px; border-radius: 8px; border-color: var(--lc-line); }
+html[data-interface="impeccable"] .product-ui .connection-saved-item { align-items: start; padding: 12px 16px; gap: 16px; background: var(--lc-surface); border-color: var(--lc-line); }
+html[data-interface="impeccable"] .product-ui .connection-saved-item[data-selected] { background: var(--lc-surface-2); }
+html[data-interface="impeccable"] .product-ui .connection-saved-identity { gap: 2px; }
+html[data-interface="impeccable"] .product-ui .connection-versions { border-top: 1px solid var(--lc-line); padding-top: 16px; }
+html[data-interface="impeccable"] .product-ui .connection-versions > ul > li { padding: 12px 0; border-color: var(--lc-line); font-size: 13px; }
+
+/* History is a compact catalog with an adjacent evidence inspector when selected. */
+html[data-interface="impeccable"] .product-ui .history-ui .history-episode-filters {
+  grid-template-columns: minmax(200px,1fr) 150px minmax(190px,auto) auto;
+  align-items: end;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--lc-line);
+  border-radius: 8px;
+  background: var(--lc-surface-2);
+}
+html[data-interface="impeccable"] .product-ui .history-ui .history-episode-filters > button { grid-row: 1; grid-column: 4; }
+html[data-interface="impeccable"] .product-ui .history-ui .history-content-only { grid-column: 3; grid-row: 1; align-self: end; min-height:36px; padding-bottom:0; }
+html[data-interface="impeccable"] .product-ui .history-ui .history-content-only p { font-size: 12px; }
+html[data-interface="impeccable"] .product-ui .history-ui :is(.history-episode-filters,.history-source-filters) > div > label { font-size: 12px; }
+html[data-interface="impeccable"] .product-ui .history-content-layout { display: grid; grid-template-columns: minmax(0,1fr); gap: 24px; align-items: start; min-width: 0; }
+html[data-interface="impeccable"] .product-ui .history-content-layout.has-selection { grid-template-columns: minmax(300px,.9fr) minmax(0,1.1fr); }
+html[data-interface="impeccable"] .product-ui .history-catalog { min-width: 0; display: grid; gap: 12px; }
+html[data-interface="impeccable"] .product-ui .history-ui .history-episode-list { border-radius: 8px; border-color: var(--lc-line); background: var(--lc-surface); }
+html[data-interface="impeccable"] .product-ui .history-ui .history-episode-list > li { padding: 12px 16px; border-color: var(--lc-line); }
+html[data-interface="impeccable"] .product-ui .history-ui .history-episode-list > li[data-selected] { background: var(--lc-surface-2); }
+html[data-interface="impeccable"] .product-ui .history-ui .history-episode-row { gap: 12px; }
+html[data-interface="impeccable"] .product-ui .history-content-layout.has-selection .history-episode-row { grid-template-columns: minmax(0,1fr); }
+html[data-interface="impeccable"] .product-ui .history-content-layout.has-selection .history-episode-actions { justify-content: start; }
+html[data-interface="impeccable"] .product-ui .history-ui .history-episode-name { gap: 3px; }
+html[data-interface="impeccable"] .product-ui .history-ui .history-episode-name strong { font-size: 13px; }
+html[data-interface="impeccable"] .product-ui .history-ui .history-episode-content { padding: 18px; border: 1px solid var(--lc-line); border-radius: 12px; background: var(--lc-surface-2); gap: 12px; scroll-margin-top: 88px; }
+html[data-interface="impeccable"] .product-ui .history-ui .history-episode-content .history-header { align-items: start; }
+html[data-interface="impeccable"] .product-ui .history-ui :is(.history-source-view,.history-cleanup-preview) { border-color: var(--lc-line); background: var(--lc-surface-2); gap: 16px; }
+html[data-interface="impeccable"] .product-ui .history-ui :is(.history-files,.history-records) { border-radius: 7px; border-color: var(--lc-line); background: var(--lc-surface); }
+html[data-interface="impeccable"] .product-ui .history-ui :is(.history-files,.history-records) > li { padding: 10px 12px; border-color: var(--lc-line); }
+html[data-interface="impeccable"] .product-ui .history-ui :is(.history-category,.history-source-list > li,.history-advanced) { border-color: var(--lc-line); }
+html[data-interface="impeccable"] .product-ui .history-ui .history-category { padding-block: 12px; }
+html[data-interface="impeccable"] .product-ui .history-ui .history-pagination { margin-top: 4px; font-size: 12px; gap: 8px; }
+html[data-interface="impeccable"] .product-ui .history-ui .history-source-filters { background: var(--lc-surface-2); padding: 16px; border: 1px solid var(--lc-line); border-radius: 8px; }
+html[data-interface="impeccable"] .product-ui .history-ui .history-preview-counts { grid-template-columns: minmax(0,1fr); gap: 12px; }
+html[data-interface="impeccable"] .product-ui .history-ui .history-preview-counts > div { display: grid; grid-template-columns: 124px minmax(0,1fr); gap: 16px; align-items: baseline; }
+html[data-interface="impeccable"] .product-ui .history-ui .history-preview-counts dd { margin: 0; font-size: 13px; }
+
+/* Same real system report, now read as evidence rows rather than status cards. */
+html[data-interface="impeccable"] .product-ui .system-status-workspace { border: 1px solid var(--lc-line); border-radius: 12px; background: var(--lc-surface); overflow: clip; }
+html[data-interface="impeccable"] .product-ui .system-page-heading { padding: 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+html[data-interface="impeccable"] .product-ui .system-page-heading h2 { font-size: 18px; font-weight: 650; margin: 0; letter-spacing: -.015em; }
+html[data-interface="impeccable"] .product-ui .system-page-heading p { font-size: 13px; color: var(--lc-muted); margin: 6px 0 0; }
+html[data-interface="impeccable"] .product-ui .system-overall { padding: 4px 10px; border-radius: 6px; font-size: 12px; background: var(--lc-surface-2); }
+html[data-interface="impeccable"] .product-ui :is(.system-evidence-row,.system-evidence-head) { display: grid; grid-template-columns: 160px 100px minmax(0,1fr); gap: 20px; padding: 18px 20px; border-top: 1px solid var(--lc-line); min-width: 0; }
+html[data-interface="impeccable"] .product-ui .system-evidence-head { background: var(--lc-surface-2); font-size: 12px; color: var(--lc-muted); padding-block: 10px; }
+html[data-interface="impeccable"] .product-ui .system-evidence-row { font-size: 13px; align-items: baseline; }
+html[data-interface="impeccable"] .product-ui .system-evidence-row > strong { font-weight: 600; color: var(--lc-ink); }
+html[data-interface="impeccable"] .product-ui .system-evidence-row p { margin: 0; color: var(--lc-ink); overflow-wrap: anywhere; }
+html[data-interface="impeccable"] .product-ui .system-evidence-details { margin: 10px 0 0; display: flex; flex-wrap: wrap; gap: 8px 24px; }
+html[data-interface="impeccable"] .product-ui .system-evidence-details > div { display: flex; align-items: baseline; gap: 8px; font-size: 12px; min-width: 0; }
+html[data-interface="impeccable"] .product-ui .system-evidence-details dt { color: var(--lc-muted); flex-shrink: 0; }
+html[data-interface="impeccable"] .product-ui .system-evidence-details dd { margin: 0; color: var(--lc-ink); overflow-wrap: anywhere; }
+html[data-interface="impeccable"] .product-ui .system-status-item-healthy .system-evidence-state { color: var(--color-text-success-primary); }
+html[data-interface="impeccable"] .product-ui .system-status-item-attention .system-evidence-state { color: var(--lc-warning); }
+html[data-interface="impeccable"] .product-ui .system-status-item-offline .system-evidence-state { color: var(--lc-danger); }
+html[data-interface="impeccable"] .product-ui .system-status-item-unknown .system-evidence-state { color: var(--lc-muted); }
+html[data-interface="impeccable"] .product-ui .system-page-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding: 18px 20px; border-top: 1px solid var(--lc-line); color: var(--lc-muted); font-size: 12px; }
+
+html[data-interface="impeccable"] .product-ui .secret-modal { max-width: 1180px; border-radius: 14px; }
+html[data-interface="impeccable"] .product-ui .secret-workspace { display: grid; gap: 16px; }
+html[data-interface="impeccable"] .product-ui .secret-filters { padding: 14px 16px; background: var(--lc-surface-2); border: 1px solid var(--lc-line); border-radius: 8px; }
+html[data-interface="impeccable"] .product-ui .secret-columns { grid-template-columns: minmax(260px,.8fr) minmax(0,1.2fr); gap: 24px; }
+html[data-interface="impeccable"] .product-ui .secret-list { border-radius: 8px; border-color: var(--lc-line); }
+html[data-interface="impeccable"] .product-ui .secret-detail { border: 0; border-left: 1px solid var(--lc-line); border-radius: 0; padding: 0 0 0 24px; background: transparent; }
+html[data-interface="impeccable"] .product-ui .secret-metadata { font-size: 13px; gap: 12px; }
+html[data-interface="impeccable"] .product-ui .secret-metadata > div { grid-template-columns: 112px minmax(0,1fr); gap: 16px; }
+html[data-interface="impeccable"] .product-ui .secret-verification { border-top: 1px solid var(--lc-line); padding-top: 16px; margin-top: 16px; }
+html[data-interface="impeccable"] .product-ui .key-management-help { background: var(--lc-surface-2); border: 1px solid var(--lc-line); border-radius: 8px; padding: 12px 16px; font-size: 12px; }
+@media(max-width:1180px) {
+  html[data-interface="impeccable"] .product-ui .history-ui .history-episode-filters { grid-template-columns: minmax(180px,1fr) 140px auto; }
+  html[data-interface="impeccable"] .product-ui .history-ui .history-episode-filters > button { grid-column: 3; }
+  html[data-interface="impeccable"] .product-ui .history-ui .history-content-only { grid-column: 1 / -1; grid-row: 2; padding-bottom: 0; }
+  html[data-interface="impeccable"] .product-ui .history-content-layout.has-selection { grid-template-columns: minmax(280px,.8fr) minmax(0,1fr); }
+}
+@media(max-width:900px) {
+  html[data-interface="impeccable"] .product-ui .history-content-layout.has-selection { grid-template-columns: minmax(0,1fr); }
+  html[data-interface="impeccable"] .product-ui :is(.system-evidence-row,.system-evidence-head) { grid-template-columns: 130px 80px minmax(0,1fr); gap: 12px; }
+}
+@media(max-width:700px) {
+  html[data-interface="impeccable"] .product-ui .connection-workspace .connection-field { grid-template-columns: minmax(0,1fr); }
+  html[data-interface="impeccable"] .product-ui :is(.connection-usage,.connection-availability) { margin-left: 0; }
+  html[data-interface="impeccable"] .product-ui .secret-columns { grid-template-columns: minmax(0,1fr); }
+  html[data-interface="impeccable"] .product-ui .secret-detail { border-left: 0; border-top: 1px solid var(--lc-line); padding: 18px 0 0; }
+  html[data-interface="impeccable"] .product-ui .system-evidence-row { grid-template-columns: minmax(0,1fr) auto; }
+  html[data-interface="impeccable"] .product-ui .system-evidence-row > div { grid-column: 1 / -1; }
+  html[data-interface="impeccable"] .product-ui .system-evidence-head { display: none; }
+}
+
+/* Detail headings and row actions retain their first-line baseline. */
+html[data-interface="impeccable"] .product-ui .history-ui :is(.history-episode-content,.history-source-view,.history-cleanup-preview) .history-header h3 {font-size:16px}
+html[data-interface="impeccable"] .product-ui .secret-workspace .maintenance-section-header {align-items:flex-start;gap:16px}
+html[data-interface="impeccable"] .product-ui .system-status-panel {padding:20px;border-radius:12px;background:var(--lc-surface);color:var(--lc-ink);border-color:var(--lc-line)}
+html[data-interface="impeccable"] .product-ui .system-status-panel > header {align-items:flex-start;gap:16px}
+html[data-interface="impeccable"] .product-ui .system-status-panel .system-status-list {gap:12px}
+html[data-interface="impeccable"] .product-ui .system-status-panel .system-status-item {padding:12px 16px;border-radius:8px;border-color:var(--lc-line);background:var(--lc-surface-2);color:var(--lc-ink)}
+html[data-interface="impeccable"] .product-ui .system-status-panel .system-status-item-attention {background:var(--lc-warning-soft);color:var(--lc-warning)}
+html[data-interface="impeccable"] .product-ui .system-status-panel .system-status-item-offline {background:var(--lc-danger-soft);color:var(--lc-danger)}
+html[data-interface="impeccable"] .product-ui .system-status-panel .system-status-item-healthy > div > span {color:var(--lc-success)}
+html[data-interface="impeccable"] .product-ui .system-status-panel .system-status-item-unknown > div > span {color:var(--lc-muted)}
+
+html[data-interface="impeccable"] .product-ui .system-status-panel .system-status-item-attention > div > span {color:var(--lc-warning)}
+html[data-interface="impeccable"] .product-ui .system-status-panel .system-status-item-offline > div > span {color:var(--lc-danger)}
+html[data-interface="impeccable"] .product-ui .system-status-healthy i {background:var(--lc-success)}
+html[data-interface="impeccable"] .product-ui :is(.system-status-attention,.system-status-offline,.system-status-unknown) i {background:var(--lc-danger)}
+
+html[data-interface="impeccable"] .product-ui .history-ui .history-source-list > li {align-items:start}
+
+/* Five content rows must size to content rather than stretching the intro and empty notices. */
+html[data-interface="impeccable"] .product-ui .secret-modal {padding:24px;gap:16px}
+html[data-interface="impeccable"] .product-ui .secret-modal > header {padding:0 0 16px;margin:0;border-bottom:1px solid var(--lc-line)}
+html[data-interface="impeccable"] .product-ui .secret-workspace {padding:0;grid-template-rows:none;align-content:start;overflow-y:auto}
+html[data-interface="impeccable"] .product-ui .secret-notices:empty {display:none}
+html[data-interface="impeccable"] .product-ui .history-ui .history-content-only {align-items:center!important;align-self:end!important;min-height:36px!important;padding-bottom:0!important}
+
+html[data-interface="impeccable"] .product-ui .connection-workspace .dan-select-field {max-width:644px}

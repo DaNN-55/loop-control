@@ -1,0 +1,54 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/episodes/ProductionNodes.test.tsx (12 tests) 8080ms
+   ✓ navigates all seven nodes without invoking production commands  1445ms
+   ✓ uses the real script diagnostic and refuses to save invalid edits  733ms
+   ✓ retains the QC decision draft while browsing other nodes  469ms
+   ✓ saves an edited pending script back into the import draft and requires a fresh confirmation  1426ms
+   ✓ keeps the legacy script review text and its guarded approval action in the input node  358ms
+   ✓ routes rail reorder through the existing reasoned structure revision and preserves generation entrypoints  2365ms
+   ✓ keeps the full visual basis available beside its reference gallery  324ms
+stderr | src/publishing/ProductionCompletionModal.test.tsx > 生产完成弹窗 > 展示最终材料和生产完成状态，不提供外部发布登记
+An update to PublishMetadataSummary inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to PublishMaterialPreview inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to PublishMaterialPreview inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/publishing/ProductionCompletionModal.test.tsx (3 tests) 1148ms
+   ✓ 生产完成弹窗 > 展示最终材料和生产完成状态，不提供外部发布登记  348ms
+   ✓ inline delivery submits existing real payload once and exposes preparation failures  663ms
+ ✓ src/local-app/LocalDeliveryPanel.nodes.test.tsx (3 tests) 535ms
+   ✓ allows resolving issues only in the real current QC stage  420ms
+
+ Test Files  3 passed (3)
+      Tests  18 passed (18)
+   Start at  18:53:54
+   Duration  32.22s (transform 2.23s, setup 55ms, collect 16.12s, tests 9.76s, environment 4.14s, prepare 607ms)
+

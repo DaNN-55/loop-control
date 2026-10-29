@@ -1,0 +1,55 @@
+{
+  "passed": true,
+  "historyExact": true,
+  "protectedTablesExact": 10,
+  "historical": {
+    "automation_plans": {
+      "rows": 2,
+      "sha256": "e141a7bbbb1518948c5a43da82f523310095ce76d5f81b5f2d3b9b3ab3271d37"
+    },
+    "automation_jobs": {
+      "rows": 20,
+      "sha256": "ed51fe0d3f4658f70e91e9eb3e58e700eb7f1c3c439e4172b4428b65c48ae490"
+    },
+    "automation_attempts": {
+      "rows": 27,
+      "sha256": "97413dd1c568fd0616a3823b29d2407c86a845b14a5148b9ad72270550f15ed9"
+    }
+  },
+  "current": {
+    "jobs": [
+      {
+        "id": "93dcd102-e254-4c0c-9cfe-449a6e31bec8",
+        "kind": "health",
+        "detail": "数据库、媒体目录和本地运行程序检查通过。",
+        "due_at": "2026-10-27T01:00:00+00:00",
+        "passed": true,
+        "status": "completed",
+        "attempt": 1,
+        "available_at": "2026-10-27T01:40:50.433+00:00",
+        "completed_at": "2026-10-27T01:39:50.433+00:00"
+      }
+    ],
+    "plans": [
+      {
+        "kind": "health",
+        "timezone": "Asia/Shanghai",
+        "next_due_at": "2026-10-28T01:00:00+00:00"
+      }
+    ],
+    "attempts": [
+      {
+        "detail": "数据库、媒体目录和本地运行程序检查通过。",
+        "job_id": "93dcd102-e254-4c0c-9cfe-449a6e31bec8",
+        "passed": true,
+        "status": "completed",
+        "attempt": 1,
+        "started_at": "2026-10-27T01:39:50.415+00:00",
+        "completed_at": "2026-10-27T01:39:50.433+00:00"
+      }
+    ],
+    "observed_at": "2026-10-27T01:40:10.595209+00:00",
+    "future_results": 0,
+    "unresolved_notifications": 0
+  }
+}

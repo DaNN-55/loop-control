@@ -1,0 +1,20 @@
+/* A real select owns form values; React Aria owns the styled, keyboard-operable popup. */
+.dan-ui .dan-select-control { position: relative; min-width: 0; }
+.dan-ui .dan-select-trigger { padding-inline: 36px !important; cursor: pointer; width: 100%; min-width: 0; background-image: none !important; }
+.dan-ui .dan-select-trigger:disabled { cursor: not-allowed; }
+.dan-ui .dan-select-leading { position: absolute; z-index: 1; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; pointer-events: none; color: var(--lc-muted,var(--color-fg-quaternary)); }
+.dan-select-popover { width: max(200px,var(--trigger-width)); max-width: calc(100vw - 24px); padding: 4px; background: var(--lc-surface,var(--color-bg-primary)); color: var(--lc-ink,var(--color-text-primary)); border: 1px solid var(--lc-line,var(--color-border-secondary)); border-radius: 12px; box-shadow: 0 12px 32px rgb(12 29 57 / .15); overflow: auto; z-index: 1000; }
+.dan-select-listbox { max-height: 320px; overflow-y: auto; outline: none; padding: 0; font: inherit; }
+.dan-select-popover .dan-select-option { display: flex; align-items: center; gap: 10px; min-height: 36px; padding: 8px 10px; margin: 2px 0; border: 0; border-radius: 8px; outline: none; font-size: 13px; line-height: 1.5; cursor: pointer; }
+.dan-select-option > span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.dan-select-option-icon,.dan-select-option-check { flex: 0 0 16px; width: 16px; height: 16px; color: var(--lc-muted,var(--color-fg-quaternary)); }
+.dan-select-option-check { opacity: 0; }
+.dan-select-option[data-selected] { background: var(--lc-accent-soft,var(--color-bg-brand-primary)); }
+.dan-select-option[data-selected] .dan-select-option-check { opacity: 1; color: var(--lc-accent,var(--color-fg-brand-primary)); }
+.dan-select-option:is([data-focused],[data-hovered]) { background: var(--lc-surface-2,var(--color-bg-primary_hover)); }
+.dan-select-option[data-focus-visible] { outline: 2px solid var(--lc-accent,var(--color-border-brand)); outline-offset: -2px; }
+.dan-select-option[data-disabled] { opacity: .5; cursor: not-allowed; }
+.dan-select-group-label { padding: 8px 10px 4px; color: var(--lc-muted,var(--color-text-tertiary)); font-size: 12px; font-weight: 500; }
+
+.dan-ui .dan-select-caret {top:50%;right:12px!important;left:auto;transform:translateY(-50%);width:16px;height:16px;pointer-events:none}
+.dan-ui .dan-select-control:has(> .dan-select-trigger:disabled) > svg {opacity:.5}

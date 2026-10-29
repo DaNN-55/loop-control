@@ -1,0 +1,15 @@
+{
+  "passed": true,
+  "auditMethodVersion": 2,
+  "provenRetainedCount": 6659,
+  "eligiblePhysicalCount": 0,
+  "heldPhysicalCount": 10370,
+  "retainedEligibleIntersection": 0,
+  "inputDigestsMatch": true,
+  "files": {
+    "final-retained-shas.json": "d7b66b28c3cb3a502d210c6d2dc2d87e3c84cc630c3a46b5418231268005ac5e",
+    "eligible-physical.json": "2de866fcb451edfeb42193dc3e421b44a54da5b2a942891a41810f9291ba03ea",
+    "held-physical.json": "d8417b667bc97a73c9ad4691f474000a7d358d4d92c46a03f3db1dd900d1387b",
+    "scan-errors.json": "4156cfc62e46b92b784175a24f1e83ab3dac53479b6e60012978fe8d6db7911e"
+  }
+}

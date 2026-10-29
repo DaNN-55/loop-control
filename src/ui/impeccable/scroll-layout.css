@@ -1,0 +1,33 @@
+/* One vertical reading surface per page. Keep horizontal navigation and Studio gestures intact. */
+html[data-interface="impeccable"] .impeccable-app.product-ui > .content-pane {
+  height: auto; max-height: none; overflow: visible;
+}
+html[data-interface="impeccable"] .impeccable-app.product-ui :is(
+  .maintenance-embedded,.maintenance-panel-content,.secret-workspace,.secret-columns,.secret-columns > section,
+  .operations-list > ul,.series-version-history ul,.blueprint-version-list,.blueprint-history-list,
+  .markdown-preview,.advanced-configuration pre,.blueprint-view pre,.history-ui pre,.history-selected pre,
+  .secret-plaintext pre,.material-preview-content,.script-template-content,
+  .shot-composition-body > .shot-advanced-settings > .shot-advanced-settings-body
+) {
+  height: auto; max-height: none; overflow-y: visible; overscroll-behavior-y: auto;
+}
+html[data-interface="impeccable"] .impeccable-app.product-ui .maintenance-panel-content {
+  overflow-x: visible; padding-right: 0;
+}
+html[data-interface="impeccable"] .impeccable-app.product-ui :is(.secret-workspace,.secret-columns) { grid-template-rows: auto; overflow: visible; }
+html[data-interface="impeccable"] .impeccable-app.product-ui :is(.markdown-preview,.advanced-configuration pre,.blueprint-view pre,.history-ui pre,.history-selected pre,.secret-plaintext pre,.script-template-content) {
+  overflow-x: auto; overflow-y: visible; white-space: pre-wrap; overflow-wrap: anywhere;
+}
+/* A production sheet replaces the page; its own scroll reaches every expanded section. */
+html[data-interface="impeccable"] .impeccable-app.product-ui:has(.lc-production-workspace) { height: 100dvh; overflow: hidden; }
+html[data-interface="impeccable"] .impeccable-app.product-ui .lc-production-workspace { overflow-y: auto; overscroll-behavior-y: auto; }
+html[data-interface="impeccable"] .impeccable-app.product-ui :is(.episode-table,.reference-history-table-wrap,.reference-connections-table-wrap,.shot-preview-checklist-scroll) { overflow-x: auto; overflow-y: visible; max-height: none; }
+/* The backdrop owns scrolling while a dialog is open; content within it remains continuous. */
+html[data-interface="impeccable"] body:has(:is(.modal-backdrop,.stage-configuration-dialog,.reference-connections-overlay)) { overflow: hidden; }
+html[data-interface="impeccable"] :is(.impeccable-app.product-ui .modal-backdrop,.impeccable-app.product-ui .stage-configuration-dialog,.reference-connections-overlay) {
+  overflow-y: auto; overscroll-behavior-y: contain; align-items: flex-start; padding-block: 28px;
+}
+html[data-interface="impeccable"] :is(.impeccable-app.product-ui .modal-backdrop > .modal-card,.impeccable-app.product-ui .modal-backdrop > .owner-preferences-dialog,.impeccable-app.product-ui .stage-configuration-dialog > section,.reference-connections-overlay > .reference-connections-modal) {
+  flex-shrink: 0; max-height: none; overflow: visible; margin-block: auto;
+}
+html[data-interface="impeccable"] .impeccable-app.product-ui :is(.episode-deletion-paths,.material-preview-dialog,.maintenance-modal .maintenance-panel-content,.shot-settings-dialog .shot-settings-body) { max-height: none; overflow-y: visible; overscroll-behavior-y: auto; }

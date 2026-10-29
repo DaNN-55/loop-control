@@ -1,0 +1,18 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (8 tests) 1658ms
+   ✓ 保留安全弹窗焦点，将维护入口统一为侧栏且跨页保留连接草稿  376ms
+   ✓ keeps one topbar instance and places the Owner menu after theme in workspace and episode  441ms
+ ✓ src/local-app/WorkspaceTopbar.test.tsx (6 tests) 1968ms
+   ✓ does not let an old response replace a newer search and opens the real result  582ms
+   ✓ preserves account navigation and opens only the registered SHA-bound material  596ms
+   ✓ shows a readable search error and retries the same query  543ms
+ ✓ src/operations/OperationsWorkspace.test.tsx (8 tests) 401ms
+ ✓ src/operations/workbenchPreview.test.tsx (2 tests) 44ms
+
+ Test Files  4 passed (4)
+      Tests  24 passed (24)
+   Start at  21:16:58
+   Duration  7.41s (transform 482ms, setup 10ms, collect 2.22s, tests 4.07s, environment 669ms, prepare 110ms)
+

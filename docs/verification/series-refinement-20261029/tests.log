@@ -1,0 +1,30 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/WorkspaceTopbar.account-safety.test.tsx (2 tests) 978ms
+   ✓ search switching an account respects unsaved changes: confirm=false  546ms
+   ✓ search switching an account respects unsaved changes: confirm=true  431ms
+ ✓ src/local-app/LocalCatalogApp.account.test.tsx (5 tests) 1604ms
+   ✓ checks the exact current blueprint through the local Owner command and displays its real blocker  407ms
+   ✓ does not show an old successful check after the saved blueprint revision changes  406ms
+   ✓ keeps the relogged-in session check when an old session check returns late  412ms
+ ✓ src/platform/configurationForms.test.ts (23 tests) 6ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx (13 tests) 2279ms
+   ✓ keeps a committed series save successful when its follow-up read fails  634ms
+ ✓ src/platform/ConfigurationForms.local.test.tsx (4 tests) 468ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (8 tests) 2679ms
+   ✓ 保留安全弹窗焦点，将维护入口统一为侧栏且跨页保留连接草稿  595ms
+   ✓ cleanupPending=false: confirms the actual directory and exact title, then reports unfinished file cleanup  384ms
+   ✓ cleanupPending=true: confirms the actual directory and exact title, then reports unfinished file cleanup  390ms
+   ✓ keeps one topbar instance and places the Owner menu after theme in workspace and episode  462ms
+ ✓ src/accounts/AccountWorkspace.test.tsx (36 tests) 6541ms
+   ✓ 账号配置工作区 > 把已验证的 Pexels 当前连接直接绑定到 B-roll 蓝图  315ms
+   ✓ 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接  532ms
+   ✓ 账号配置工作区 > 在 A-roll 尚未配置时，仍使用本机 OpenChatCut 状态开放本地路径  533ms
+   ✓ 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿  1483ms
+
+ Test Files  7 passed (7)
+      Tests  91 passed (91)
+   Start at  09:13:22
+   Duration  8.73s (transform 1.33s, setup 186ms, collect 10.35s, tests 14.56s, environment 2.08s, prepare 298ms)
+

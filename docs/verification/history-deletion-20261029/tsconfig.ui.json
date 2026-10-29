@@ -1,0 +1,5 @@
+{
+  "extends": "../../../tsconfig.app.json",
+  "compilerOptions": {"tsBuildInfoFile": "/private/tmp/loop-history-ui-20261029.tsbuildinfo"},
+  "include": ["../../../src/local-app/LocalHistory.tsx", "../../../src/local-app/HistoryDeleteAction.tsx", "../../../src/local-app/HistorySources.tsx", "../../../src/vite-env.d.ts"]
+}

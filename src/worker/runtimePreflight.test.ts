@@ -72,7 +72,7 @@ describe("runtime preflight", () => {
         { action: "none", capability: "b_roll_generation", check: "capability_registration", phase: "preflight", reason: "Worker 已注册 pexels/pexels_video 执行路径。", scope: "worker", status: "passed" },
         { action: "none", capability: "b_roll_generation", check: "tool_permission", phase: "preflight", reason: "Worker 运行权限包含 read 和 write。", scope: "worker", status: "passed" },
         { action: "none", capability: "b_roll_generation", check: "connection_reference", phase: "preflight", reason: "外部连接引用已解析。", scope: "connection", status: "passed" },
-        { action: "none", capability: "b_roll_generation", check: "credential_presence", phase: "preflight", reason: "外部连接秘密已由 Worker 解析。", scope: "connection", status: "passed" },
+        { action: "none", capability: "b_roll_generation", check: "credential_presence", phase: "preflight", reason: "外部连接密钥已由 Worker 解析。", scope: "connection", status: "passed" },
         { action: "retry", capability: "b_roll_generation", check: "network_connectivity", phase: "preflight", reason: "Pexels 暂时不可达。", scope: "worker", status: "retryable" },
       ],
     });

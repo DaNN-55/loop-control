@@ -1,0 +1,99 @@
+{
+  "at": "2026-10-29T03:04:45.547Z",
+  "applied": [
+    "081-health-check-details.sql"
+  ],
+  "oldMigrationsUnchanged": true,
+  "oldAttemptsAndPlansUnchanged": true,
+  "baseline": {
+    "plans": [
+      {
+        "kind": "health",
+        "timezone": "Asia/Shanghai",
+        "next_due_at": "2026-10-30T01:00:00+00:00"
+      }
+    ],
+    "attempts": [
+      {
+        "token": "57cdd872-7f85-43db-a335-ffad39cb43ba",
+        "detail": "本地数据库、媒体目录或运行程序检查失败，请检查本机部署。",
+        "job_id": "627f651e-e36f-41f1-ba94-0325a3b9ed44",
+        "passed": false,
+        "status": "failed",
+        "attempt": 1,
+        "started_at": "2026-10-29T01:00:03.028+00:00",
+        "completed_at": "2026-10-29T01:00:03.034+00:00"
+      },
+      {
+        "token": "b35ba467-93f8-41ab-9dd2-1ddb9b62f26a",
+        "detail": "本地数据库、媒体目录或运行程序检查失败，请检查本机部署。",
+        "job_id": "627f651e-e36f-41f1-ba94-0325a3b9ed44",
+        "passed": false,
+        "status": "failed",
+        "attempt": 2,
+        "started_at": "2026-10-29T01:01:03.034+00:00",
+        "completed_at": "2026-10-29T01:01:03.043+00:00"
+      },
+      {
+        "token": "3e74fbd8-5dc1-43f6-8a6a-a2caf72eb7ac",
+        "detail": "本地数据库、媒体目录或运行程序检查失败，请检查本机部署。",
+        "job_id": "627f651e-e36f-41f1-ba94-0325a3b9ed44",
+        "passed": false,
+        "status": "failed",
+        "attempt": 3,
+        "started_at": "2026-10-29T01:02:03.159+00:00",
+        "completed_at": "2026-10-29T01:02:03.179+00:00"
+      },
+      {
+        "token": "a595dcfc-c2d3-40f1-afe7-0b0dd3a9b61d",
+        "detail": "本地数据库、媒体目录或运行程序检查失败，请检查本机部署。",
+        "job_id": "7e67af57-c225-4f19-b75e-ebed4c99d7d9",
+        "passed": false,
+        "status": "failed",
+        "attempt": 1,
+        "started_at": "2026-10-28T01:00:02.138+00:00",
+        "completed_at": "2026-10-28T01:00:02.158+00:00"
+      },
+      {
+        "token": "431122a8-a2e9-4dec-a123-7e1dc568d3ab",
+        "detail": "本地数据库、媒体目录或运行程序检查失败，请检查本机部署。",
+        "job_id": "7e67af57-c225-4f19-b75e-ebed4c99d7d9",
+        "passed": false,
+        "status": "failed",
+        "attempt": 2,
+        "started_at": "2026-10-28T01:01:06.12+00:00",
+        "completed_at": "2026-10-28T01:01:06.13+00:00"
+      },
+      {
+        "token": "741f04a6-a5e0-4a52-a102-8fc813fdd734",
+        "detail": "本地数据库、媒体目录或运行程序检查失败，请检查本机部署。",
+        "job_id": "7e67af57-c225-4f19-b75e-ebed4c99d7d9",
+        "passed": false,
+        "status": "failed",
+        "attempt": 3,
+        "started_at": "2026-10-28T01:02:06.133+00:00",
+        "completed_at": "2026-10-28T01:02:06.14+00:00"
+      },
+      {
+        "token": "5d6d6016-fb5b-4baa-a9bd-316f9f65b006",
+        "detail": "数据库、媒体目录和本地运行程序检查通过。",
+        "job_id": "8557b911-e9bb-4c6c-9d2d-96e8bb364de2",
+        "passed": true,
+        "status": "completed",
+        "attempt": 1,
+        "started_at": "2026-10-29T02:55:58.043+00:00",
+        "completed_at": "2026-10-29T02:55:58.055+00:00"
+      },
+      {
+        "token": "e280150b-cd8a-40d4-93d0-86f738e38c3b",
+        "detail": "数据库、媒体目录和本地运行程序检查通过。",
+        "job_id": "93dcd102-e254-4c0c-9cfe-449a6e31bec8",
+        "passed": true,
+        "status": "completed",
+        "attempt": 1,
+        "started_at": "2026-10-27T01:39:50.415+00:00",
+        "completed_at": "2026-10-27T01:39:50.433+00:00"
+      }
+    ]
+  }
+}

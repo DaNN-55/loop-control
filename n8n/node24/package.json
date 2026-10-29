@@ -1,6 +1,0 @@
-{
-  "private": true,
-  "dependencies": {
-    "n8n": "2.34.5"
-  }
-}

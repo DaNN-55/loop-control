@@ -17,11 +17,11 @@ async function packageFor(overrides: Partial<WorkerTaskPackageInput>, assetRoot?
   const root = assetRoot ?? await mkdtemp(join(tmpdir(), "controlled-media-"));
   if (!assetRoot) directories.push(root);
   return createWorkerTaskPackage({
-    task: { id: "task-1", type: "generate_narration", attempt: 0, budgetLimitCents: 100, maxAttempts: 1, provider: "google_tts", model: "standard", promptVersion: "narration-v1" },
+    task: { id: "task-1", type: "generate_narration", attempt: 0, budgetLimitCents: 100, maxAttempts: 1, provider: "volcengine_tts", model: "seed-tts-2.0", promptVersion: "narration-v1" },
     episode: { id: "episode-1", accountId: "account-1", blueprintVersionId: "blueprint-1", title: "测试" },
     capability: "narration_generation", credentialRef: "11111111-1111-4111-8111-111111111111", allowedTools: ["network", "write"], allowedAssetRoot: root,
     output: { requiredArtifactTypes: ["narration_audio"], contentType: "audio/mpeg", relativePath: "episodes/episode-1/audio/narration.mp3", reviewStage: "production_ready" }, inputArtifacts: [],
-    media: { adapter: "google_tts", narration: { text: "冻结旁白", voice: { languageCode: "cmn-CN", name: "cmn-CN-Standard-A", speakingRate: 1 } } },
+    media: { adapter: "volcengine_tts", narration: { text: "冻结旁白", voice: { languageCode: "zh-CN", name: "zh_female_vv_uranus_bigtts", speakingRate: 1 } } },
     ...overrides,
   });
 }
@@ -83,10 +83,10 @@ describe("受控媒体执行器", () => {
     expect(common.fetcher).not.toHaveBeenCalled();
   }, 30_000);
 
-  it("只用冻结的 Google 旁白配置写入冻结输出路径", async () => {
+  it("只用冻结的火山旁白配置写入冻结输出路径", async () => {
     const taskPackage = await packageFor({});
-    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ audioContent: Buffer.from("mp3-data").toString("base64") }), { status: 200 }));
-    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: "google-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(2), extractMp3: vi.fn(), trimMp3: vi.fn() }));
+    const fetcher = vi.fn().mockResolvedValue(new Response("data: "+JSON.stringify({code:0,data:Buffer.from("mp3-data").toString("base64")})+"\n", {status:200}));
+    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: undefined, volcengineTtsApiKey: "synthetic-active-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(2), extractMp3: vi.fn(), trimMp3: vi.fn() }));
     expect(result.status).toBe("completed");
     await expect(readFile(join(taskPackage.assets.allowedRoot, taskPackage.output.relativePath), "utf8")).resolves.toBe("mp3-data");
   });
@@ -95,18 +95,18 @@ describe("受控媒体执行器", () => {
     const confirmedText = "冻结旁白";
     const fixedAudioSample = Buffer.from([0x52,0x49,0x46,0x46,0x24,0,0,0,0x57,0x41,0x56,0x45,0x66,0x6d,0x74,0x20,0x10,0,0,0,1,0,1,0,0x40,0x1f,0,0,0x40,0x1f,0,0,1,0,8,0,0x64,0x61,0x74,0x61,0,0,0,0]);
     const taskPackage = await packageFor({ acousticAlignment: { confirmedText, textFingerprint: createHash("sha256").update(confirmedText).digest("hex") } });
-    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ audioContent: fixedAudioSample.toString("base64") }), { status: 200 }));
+    const fetcher = vi.fn().mockResolvedValue(new Response("data: "+JSON.stringify({code:0,data:fixedAudioSample.toString("base64")})+"\n", {status:200}));
     const executeWhisperX = vi.fn().mockRejectedValue(new Error("口播任务不应执行声学对齐"));
-    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: "google-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(2), extractMp3: vi.fn(), trimMp3: vi.fn(), executeWhisperX }));
+    const result = JSON.parse(await executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: undefined, volcengineTtsApiKey: "synthetic-active-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(2), extractMp3: vi.fn(), trimMp3: vi.fn(), executeWhisperX }));
     expect(result).not.toHaveProperty("acousticAlignment");
     expect(validateWorkerResult(result, taskPackage).status).toBe("completed");
     expect(executeWhisperX).not.toHaveBeenCalled();
   });
 
-  it("Google TTS 产物无法探测为音频时不上报成功", async () => {
+  it("火山语音产物无法探测为音频时不上报成功", async () => {
     const taskPackage = await packageFor({});
-    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ audioContent: Buffer.from("not-an-mp3").toString("base64") }), { status: 200 }));
-    await expect(executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: "google-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: async () => { throw new Error("无法播放"); }, extractMp3: vi.fn(), trimMp3: vi.fn() })).rejects.toThrow("无法播放");
+    const fetcher = vi.fn().mockResolvedValue(new Response("data: "+JSON.stringify({code:0,data:Buffer.from("not-an-mp3").toString("base64")})+"\n", {status:200}));
+    await expect(executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: undefined, volcengineTtsApiKey: "synthetic-active-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: async () => { throw new Error("无法播放"); }, extractMp3: vi.fn(), trimMp3: vi.fn() })).rejects.toThrow("无法播放");
   });
 
   it("拒绝通过输出目录符号链接写出资产根目录", async () => {
@@ -114,8 +114,8 @@ describe("受控媒体执行器", () => {
     const outside = await mkdtemp(join(tmpdir(), "controlled-media-outside-"));
     directories.push(outside);
     await symlink(outside, join(taskPackage.assets.allowedRoot, "episodes"));
-    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ audioContent: Buffer.from("mp3-data").toString("base64") }), { status: 200 }));
-    await expect(executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: "google-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(2), extractMp3: vi.fn(), trimMp3: vi.fn() })).rejects.toThrow("符号链接");
+    const fetcher = vi.fn().mockResolvedValue(new Response("data: "+JSON.stringify({code:0,data:Buffer.from("mp3-data").toString("base64")})+"\n", {status:200}));
+    await expect(executeControlledMediaTask({ taskPackage, fetcher, googleTtsApiKey: undefined, volcengineTtsApiKey: "synthetic-active-key", pexelsApiKey: undefined, validateMp4: vi.fn(), probeMp3: vi.fn().mockResolvedValue(2), extractMp3: vi.fn(), trimMp3: vi.fn() })).rejects.toThrow("符号链接");
   });
 
   it("拒绝将非 MP4 的 Pexels 下载伪装成视频产物", async () => {

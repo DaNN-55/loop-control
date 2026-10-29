@@ -1,0 +1,34 @@
+{
+  "aside": {
+    "bottom": 474,
+    "height": 267,
+    "left": 234,
+    "right": 464,
+    "top": 207,
+    "width": 230,
+    "x": 234,
+    "y": 207
+  },
+  "button": {
+    "bottom": 391,
+    "height": 100,
+    "left": 234,
+    "right": 464,
+    "top": 291,
+    "width": 230,
+    "x": 234,
+    "y": 291
+  },
+  "editor": {
+    "bottom": 877,
+    "height": 670,
+    "left": 488,
+    "right": 1416,
+    "top": 207,
+    "width": 928,
+    "x": 488,
+    "y": 207
+  },
+  "whiteSpace": "normal",
+  "width": 1440
+}

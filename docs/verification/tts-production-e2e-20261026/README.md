@@ -12,7 +12,7 @@ Owner 已查看本轮生产单，确认素材清晰度、第三镜头与字幕�
 
 ## 修复及回归
 
-普通 TTS 通过新批准策略的 `operations.google_tts.generate.tts` / `operations.volcengine_tts.generate.tts` 声明最大字符数、允许音色和语言/资源集合，不再统一限定 10 字及一个音色。`maxCharacters` 为 1–5000 个 Unicode 字符，原请求正文 16 KiB 限制同时生效；缺少 `tts` 的历史策略继续保持原验收范围。新规则在发送与费用预留前检查，原预算、SHA 绑定、闭网、结果未知和停账本机制保留。[部署说明](../../local-native-deployment.md#普通长度-tts-的批准策略2026-10-26)
+普通 TTS 通过新批准策略的 `operations.google_tts.generate.tts` / `operations.volcengine_tts.generate.tts` 声明最大字符数、允许音色和语言/资源集合，不再统一限定 10 字及一个音色。`maxCharacters` 为 1–5000 个 Unicode 字符，原请求正文 16 KiB 限制同时生效；缺少 `tts` 的历史策略继续保持原验收范围。新规则在发送与费用预留前检查，原预算、SHA 绑定、闭网、结果未知和停账本机制保留。[部署说明](../../local-daily-runtime.md)
 
 真实 E2E 首轮另复现了 13,326,115 字节 MP4 的 Base64 导入导致重复正则栈溢出、接口 503。最小补修改用解码后规范 Base64 回编码比较，保留原路径和 100 MiB 材料上限，同时拒绝非规范编码。
 
@@ -86,4 +86,4 @@ Episode：`86f722d2-3675-4732-a8cd-d4276af51e7c`。脚本为森林、河流、�
 
 本次 Chrome 会话及测试应用/Studio（55189/55190）已正常停止，专用 Keychain 恢复原锁定状态；隔离数据库、媒体、过程证据和发布包保留。原库 51 表内容与旧账本均未变。[资源收尾](root-resource-closeout.json)
 
-规格、票单索引及 25 票同步本次实际结果；75 条原 AC、依赖与映射保留，73 项已勾选，T18 首项及 T19 第三项仍未勾选，四家豁免未改为技术通过。相关状态见[规格](../../specs/local-first-optimization.md)及[票单索引](../../specs/local-first-tickets/README.md)。未在本轮重跑全部历史 SQL、容量压力或新硬件安装验收，不以旧证据冒称新执行。
+规格、票单索引及 25 票同步本次实际结果；75 条原 AC、依赖与映射保留，73 项已勾选，T18 首项及 T19 第三项仍未勾选，四家豁免未改为技术通过。相关状态见[规格](../../specs/current-product.md)及[票单索引](../../specs/local-first-tickets/README.md)。未在本轮重跑全部历史 SQL、容量压力或新硬件安装验收，不以旧证据冒称新执行。

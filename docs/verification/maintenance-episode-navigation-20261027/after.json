@@ -1,0 +1,82 @@
+{
+  "at": "2026-10-27T11:53:35.123Z",
+  "tables": {
+    "public.tasks": {
+      "hash": "93032b95683a4053c0512ef56b885765",
+      "rows": 212
+    },
+    "public.accounts": {
+      "hash": "8080b81f77afd1701ce94be825e2facb",
+      "rows": 8
+    },
+    "public.episodes": {
+      "hash": "0e2d5703b5294103b7aa4c8c2956cd94",
+      "rows": 13
+    },
+    "public.artifacts": {
+      "hash": "3aebe44ea5f52264beb3edc6f8e1f188",
+      "rows": 242
+    },
+    "local_identity.owners": {
+      "hash": "2c742f2a169ea379ed48dd09f918e8db",
+      "rows": 11
+    },
+    "local_identity.credentials": {
+      "hash": "7c88b0d5229dc385b5509d353dda25eb",
+      "rows": 1
+    },
+    "public.account_memberships": {
+      "hash": "fb3a6176d1d9c4572503e845ba18720f",
+      "rows": 4
+    },
+    "public.external_connections": {
+      "hash": "ae071bee11a432d06f867f994d60b36b",
+      "rows": 9
+    },
+    "local_identity.history_files": {
+      "hash": "f21ecec31fa1e10934c6954125232f83",
+      "rows": 57806
+    },
+    "local_identity.history_sources": {
+      "hash": "5db3fe9ef7b276984586da80f32067d5",
+      "rows": 187
+    },
+    "local_identity.history_versions": {
+      "hash": "6a9eb52638be8308fcf125ef5df53271",
+      "rows": 66258
+    },
+    "public.account_blueprint_versions": {
+      "hash": "8e6fb9222440beb949dcae8a49181e20",
+      "rows": 12
+    },
+    "local_identity.connection_bindings": {
+      "hash": "3c49a85580ffad7f6e1df0b67f76f630",
+      "rows": 10
+    },
+    "local_identity.history_source_rows": {
+      "hash": "2fb1416bcfe48388393bc21b0cc13d84",
+      "rows": 1511192
+    },
+    "public.external_connection_versions": {
+      "hash": "4e6d8fb804eec1888a9cde73eb25b124",
+      "rows": 11
+    },
+    "local_identity.history_file_protections": {
+      "hash": "bc205db1d112618ebb2d1148fe897553",
+      "rows": 12
+    },
+    "local_identity.connection_qualifications": {
+      "hash": "6b006e73aae92062c854c725109fdf00",
+      "rows": 10
+    }
+  },
+  "content": {
+    "count": 12080,
+    "inventory": "0ad4d3e7a30c10cbdffc648cbbce47b510be1924dfbbd24635443d238a1a5f43"
+  },
+  "keyIndexSha256": "89b86d38bc846315a93a8a0b8f11c0f084cb5381e90d8fe9bf8ce1ab6ffbf2ea",
+  "originalTablesUnchanged": true,
+  "changedTables": [],
+  "contentUnchanged": true,
+  "keyIndexUnchanged": true
+}

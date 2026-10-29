@@ -1,0 +1,39 @@
+{
+  "scope": "Connection settings only",
+  "upstream": "1d410cb8facde8d50869e7bbb5f3d048e2267466",
+  "checks": {
+    "tests": "51 passed in 6 files",
+    "typecheckAndProductionBuild": "passed",
+    "diffCheck": "passed",
+    "browser": "1280x720 and 1235x953; 480px fields and 36px controls; no horizontal overflow",
+    "browserConsole": [],
+    "outsideTaskSourceChanges": [],
+    "sharedPickerAndOperationFunctions": "byte-identical to task baseline",
+    "outsideComputedStyles": "navigation, owner menu and app root match original values",
+    "impeccable": "3 own source files; regex scan only; no findings; element rules not run"
+  },
+  "browserFlows": [
+    "new/existing selection",
+    "saved list search and empty state",
+    "edit from list",
+    "version expand/collapse",
+    "masked empty key",
+    "read-only refresh"
+  ],
+  "notRun": [
+    "Real Provider validation, create, rotate, revoke and delete; functional write paths verified in controlled component tests",
+    "Full application test suite",
+    "Manual dark-mode and mobile visual checks"
+  ],
+  "unchanged": [
+    "other business page sources",
+    "API/DB/Keychain behavior",
+    "automatic hooks"
+  ],
+  "buildSize": {
+    "jsBytes": 799070,
+    "jsGzipBytes": 241220,
+    "note": "Vite emitted a >500 kB bundle advisory; no cross-page splitting in this scope."
+  },
+  "dependencies": "Only selected official component runtime and CSS build dependencies added. PostCSS 8.5.32 used for the new builder; remaining installation audit warnings concern existing dependencies."
+}

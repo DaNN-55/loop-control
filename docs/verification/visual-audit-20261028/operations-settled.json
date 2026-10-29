@@ -1,0 +1,5904 @@
+{
+  "bodyHeight": 1149,
+  "clipped": [],
+  "colorSamples": [
+    {
+      "back": [
+        {
+          "cls": "wordmark",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "sidebar",
+          "color": "oklch(0.985 0 none)",
+          "image": "none",
+          "tag": "ASIDE"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 56,
+      "cls": "wordmark",
+      "color": "oklch(0.205 0 none)",
+      "fontSize": "21px",
+      "height": 32,
+      "lineHeight": "31.5px",
+      "name": null,
+      "right": 197,
+      "tag": "DIV",
+      "text": "Loop Control",
+      "weight": "750",
+      "width": 185,
+      "x": 12,
+      "y": 24
+    },
+    {
+      "back": [
+        {
+          "cls": "navigation-label",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover navigation-item is-active",
+          "color": "rgb(249, 245, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "navigation",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "NAV"
+        },
+        {
+          "cls": "sidebar",
+          "color": "oklch(0.985 0 none)",
+          "image": "none",
+          "tag": "ASIDE"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 112,
+      "cls": "navigation-label",
+      "color": "rgb(105, 65, 198)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 109,
+      "tag": "SPAN",
+      "text": "系列运营",
+      "weight": "600",
+      "width": 56,
+      "x": 53,
+      "y": 92
+    },
+    {
+      "back": [
+        {
+          "cls": "navigation-label",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover navigation-item",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "navigation",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "NAV"
+        },
+        {
+          "cls": "sidebar",
+          "color": "oklch(0.985 0 none)",
+          "image": "none",
+          "tag": "ASIDE"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 153,
+      "cls": "navigation-label",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 95,
+      "tag": "SPAN",
+      "text": "生产单",
+      "weight": "600",
+      "width": 42,
+      "x": 53,
+      "y": 133
+    },
+    {
+      "back": [
+        {
+          "cls": "navigation-label",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover navigation-item",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "navigation",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "NAV"
+        },
+        {
+          "cls": "sidebar",
+          "color": "oklch(0.985 0 none)",
+          "image": "none",
+          "tag": "ASIDE"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 194,
+      "cls": "navigation-label",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 81,
+      "tag": "SPAN",
+      "text": "账号",
+      "weight": "600",
+      "width": 28,
+      "x": 53,
+      "y": 174
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "H1"
+        },
+        {
+          "cls": "page-header",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "HEADER"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 56,
+      "cls": "",
+      "color": "oklch(0.205 0 none)",
+      "fontSize": "24px",
+      "height": 32,
+      "lineHeight": "32px",
+      "name": null,
+      "right": 328,
+      "tag": "H1",
+      "text": "系列运营",
+      "weight": "600",
+      "width": 94,
+      "x": 234,
+      "y": 24
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "operations-series-filter",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LABEL"
+        },
+        {
+          "cls": "operations-toolbar",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-intro",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "HEADER"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 104,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 839,
+      "tag": "SPAN",
+      "text": "系列",
+      "weight": "750",
+      "width": 24,
+      "x": 815,
+      "y": 86
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "operations-stage-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 158,
+      "cls": "",
+      "color": "oklch(0.371 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 456,
+      "tag": "SPAN",
+      "text": "输入与脚本",
+      "weight": "750",
+      "width": 210,
+      "x": 246,
+      "y": 140
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "STRONG"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "operations-stage-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 184,
+      "cls": "",
+      "color": "oklch(0.205 0 none)",
+      "fontSize": "22px",
+      "height": 24,
+      "lineHeight": "24.2px",
+      "name": null,
+      "right": 456,
+      "tag": "STRONG",
+      "text": "1",
+      "weight": "700",
+      "width": 210,
+      "x": 246,
+      "y": 160
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SMALL"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "operations-stage-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 204,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 456,
+      "tag": "SMALL",
+      "text": "个生产单",
+      "weight": "400",
+      "width": 210,
+      "x": 246,
+      "y": 186
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "operations-stage-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 158,
+      "cls": "",
+      "color": "oklch(0.371 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 689,
+      "tag": "SPAN",
+      "text": "视觉准备",
+      "weight": "750",
+      "width": 210,
+      "x": 479,
+      "y": 140
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "STRONG"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "operations-stage-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 184,
+      "cls": "",
+      "color": "oklch(0.205 0 none)",
+      "fontSize": "22px",
+      "height": 24,
+      "lineHeight": "24.2px",
+      "name": null,
+      "right": 689,
+      "tag": "STRONG",
+      "text": "2",
+      "weight": "700",
+      "width": 210,
+      "x": 479,
+      "y": 160
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SMALL"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "operations-stage-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 204,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 689,
+      "tag": "SMALL",
+      "text": "个生产单",
+      "weight": "400",
+      "width": 210,
+      "x": 479,
+      "y": 186
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "operations-stage-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 158,
+      "cls": "",
+      "color": "oklch(0.371 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 922,
+      "tag": "SPAN",
+      "text": "分镜与媒体",
+      "weight": "750",
+      "width": 210,
+      "x": 712,
+      "y": 140
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "STRONG"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "operations-stage-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 184,
+      "cls": "",
+      "color": "oklch(0.205 0 none)",
+      "fontSize": "22px",
+      "height": 24,
+      "lineHeight": "24.2px",
+      "name": null,
+      "right": 922,
+      "tag": "STRONG",
+      "text": "3",
+      "weight": "700",
+      "width": 210,
+      "x": 712,
+      "y": 160
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SMALL"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "operations-stage-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 204,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 922,
+      "tag": "SMALL",
+      "text": "个生产单",
+      "weight": "400",
+      "width": 210,
+      "x": 712,
+      "y": 186
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "operations-stage-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 158,
+      "cls": "",
+      "color": "oklch(0.371 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 1155,
+      "tag": "SPAN",
+      "text": "合成与 QC",
+      "weight": "750",
+      "width": 210,
+      "x": 945,
+      "y": 140
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "STRONG"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "operations-stage-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 184,
+      "cls": "",
+      "color": "oklch(0.205 0 none)",
+      "fontSize": "22px",
+      "height": 24,
+      "lineHeight": "24.2px",
+      "name": null,
+      "right": 1155,
+      "tag": "STRONG",
+      "text": "1",
+      "weight": "700",
+      "width": 210,
+      "x": 945,
+      "y": 160
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SMALL"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "operations-stage-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 204,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 1155,
+      "tag": "SMALL",
+      "text": "个生产单",
+      "weight": "400",
+      "width": 210,
+      "x": 945,
+      "y": 186
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "operations-stage-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 158,
+      "cls": "",
+      "color": "oklch(0.371 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 1389,
+      "tag": "SPAN",
+      "text": "生产完成",
+      "weight": "750",
+      "width": 211,
+      "x": 1178,
+      "y": 140
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "STRONG"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "operations-stage-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 184,
+      "cls": "",
+      "color": "oklch(0.205 0 none)",
+      "fontSize": "22px",
+      "height": 24,
+      "lineHeight": "24.2px",
+      "name": null,
+      "right": 1389,
+      "tag": "STRONG",
+      "text": "1",
+      "weight": "700",
+      "width": 211,
+      "x": 1178,
+      "y": 160
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SMALL"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "operations-stage-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 204,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 1389,
+      "tag": "SMALL",
+      "text": "个生产单",
+      "weight": "400",
+      "width": 211,
+      "x": 1178,
+      "y": 186
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "H3"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HEADER"
+        },
+        {
+          "cls": "operations-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 259,
+      "cls": "",
+      "color": "oklch(0.205 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 285,
+      "tag": "H3",
+      "text": "待审核",
+      "weight": "400",
+      "width": 36,
+      "x": 249,
+      "y": 241
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HEADER"
+        },
+        {
+          "cls": "operations-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 259,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 797,
+      "tag": "SPAN",
+      "text": "0 个待审核包",
+      "weight": "750",
+      "width": 71,
+      "x": 725,
+      "y": 241
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "P"
+        },
+        {
+          "cls": "operations-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 318,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "12px",
+      "height": 48,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 811,
+      "tag": "P",
+      "text": "当前筛选范围没有待审核包。",
+      "weight": "400",
+      "width": 576,
+      "x": 235,
+      "y": 270
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "H3"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HEADER"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 259,
+      "cls": "",
+      "color": "oklch(0.205 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 875,
+      "tag": "H3",
+      "text": "阻塞项",
+      "weight": "400",
+      "width": 36,
+      "x": 839,
+      "y": 241
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HEADER"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 259,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 1386,
+      "tag": "SPAN",
+      "text": "1 个阻塞项",
+      "weight": "750",
+      "width": 57,
+      "x": 1329,
+      "y": 241
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "STRONG"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-blocker-trigger justify-stretch text-left",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "UL"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 296,
+      "cls": "",
+      "color": "oklch(0.577 0.245 27.325)",
+      "fontSize": "12px",
+      "height": 17,
+      "lineHeight": "17.4px",
+      "name": null,
+      "right": 1663,
+      "tag": "STRONG",
+      "text": "南方城市观察｜跨境创作团队第一季：从清晨通勤到深夜收工，在复杂声场中记录普通人的一天（中英双语版・字幕复核 v12・授权素材与声音来源已补齐）",
+      "weight": "900",
+      "width": 826,
+      "x": 837,
+      "y": 278
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-blocker-trigger justify-stretch text-left",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "UL"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 317,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "12px",
+      "height": 17,
+      "lineHeight": "17.4px",
+      "name": null,
+      "right": 929,
+      "tag": "SPAN",
+      "text": "executor_invalid",
+      "weight": "600",
+      "width": 93,
+      "x": 837,
+      "y": 300
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "STRONG"
+        },
+        {
+          "cls": "worker-blocker-heading",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "HEADER"
+        },
+        {
+          "cls": "worker-blocker worker-blocker-compact",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "UL"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 354,
+      "cls": "",
+      "color": "oklch(0.577 0.245 27.325)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 980,
+      "tag": "STRONG",
+      "text": "Worker 执行器配置不完整",
+      "weight": "700",
+      "width": 141,
+      "x": 839,
+      "y": 336
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "worker-blocker-heading",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "HEADER"
+        },
+        {
+          "cls": "worker-blocker worker-blocker-compact",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "UL"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 353,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "12px",
+      "height": 17,
+      "lineHeight": "17.4px",
+      "name": null,
+      "right": 1371,
+      "tag": "SPAN",
+      "text": "修正执行器并继续当前生产单",
+      "weight": "750",
+      "width": 156,
+      "x": 1215,
+      "y": 336
+    },
+    {
+      "back": [
+        {
+          "cls": "worker-blocker-summary",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "P"
+        },
+        {
+          "cls": "worker-blocker worker-blocker-compact",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "UL"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 380,
+      "cls": "worker-blocker-summary",
+      "color": "oklch(0.371 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 1371,
+      "tag": "P",
+      "text": "任务没有可用的通用执行器，Worker 不会自行替换供应商继续执行。",
+      "weight": "400",
+      "width": 533,
+      "x": 839,
+      "y": 362
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "worker-blocker-resolution",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "OL"
+        },
+        {
+          "cls": "worker-blocker worker-blocker-compact",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "UL"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 405,
+      "cls": "",
+      "color": "oklch(0.371 0 none)",
+      "fontSize": "12px",
+      "height": 17,
+      "lineHeight": "17.4px",
+      "name": null,
+      "right": 1371,
+      "tag": "LI",
+      "text": "点击“修改配置并继续当前生产单”，检查当前任务的 Provider、模型和 Prompt 版本。",
+      "weight": "400",
+      "width": 515,
+      "x": 857,
+      "y": 388
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "worker-blocker-resolution",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "OL"
+        },
+        {
+          "cls": "worker-blocker worker-blocker-compact",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "UL"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 428,
+      "cls": "",
+      "color": "oklch(0.371 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "17.4px",
+      "name": null,
+      "right": 1371,
+      "tag": "LI",
+      "text": "只有系统已登记或支持的执行器才能使用；不要随意填写未知 adapter。",
+      "weight": "400",
+      "width": 515,
+      "x": 857,
+      "y": 409
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "worker-blocker-resolution",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "OL"
+        },
+        {
+          "cls": "worker-blocker worker-blocker-compact",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "UL"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 450,
+      "cls": "",
+      "color": "oklch(0.371 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "17.4px",
+      "name": null,
+      "right": 1371,
+      "tag": "LI",
+      "text": "直接应用到当前生产单；已完成任务不会重跑，也不会新建蓝图版本。",
+      "weight": "400",
+      "width": 515,
+      "x": 857,
+      "y": 432
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "worker-blocker-next-step ",
+          "color": "rgba(255, 255, 255, 0.58)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "worker-blocker worker-blocker-compact",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "UL"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        }
+      ],
+      "bottom": 485,
+      "cls": "",
+      "color": "oklch(0.577 0.245 27.325)",
+      "fontSize": "12px",
+      "height": 17,
+      "lineHeight": "17.4px",
+      "name": null,
+      "right": 903,
+      "tag": "SPAN",
+      "text": "处理位置",
+      "weight": "750",
+      "width": 54,
+      "x": 849,
+      "y": 467
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "STRONG"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "worker-blocker-next-step ",
+          "color": "rgba(255, 255, 255, 0.58)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "worker-blocker worker-blocker-compact",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "UL"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        }
+      ],
+      "bottom": 485,
+      "cls": "",
+      "color": "oklch(0.371 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 1361,
+      "tag": "STRONG",
+      "text": "当前生产单 → 执行器配置",
+      "weight": "700",
+      "width": 451,
+      "x": 911,
+      "y": 467
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "P"
+        },
+        {
+          "cls": "worker-blocker-next-step ",
+          "color": "rgba(255, 255, 255, 0.58)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "worker-blocker worker-blocker-compact",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "UL"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 508,
+      "cls": "",
+      "color": "oklch(0.577 0.245 27.325)",
+      "fontSize": "12px",
+      "height": 17,
+      "lineHeight": "16.8px",
+      "name": null,
+      "right": 1361,
+      "tag": "P",
+      "text": "这里只修改当前生产单的通用脚本、视觉或分镜执行器。",
+      "weight": "400",
+      "width": 513,
+      "x": 849,
+      "y": 491
+    },
+    {
+      "back": [
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 *:data-icon:size-4 *:data-icon:stroke-[2.25px] bg-primary text-error-primary shadow-xs-skeuomorphic ring-1 ring-error_subtle outline-error ring-inset hover:bg-error-primary hover:text-error-primary_hover data-loading:bg-error-primary *:data-icon:text-fg-error-secondary hover:*:data-icon:text-fg-error-primary button button-danger-soft button-small",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "worker-blocker-next-step ",
+          "color": "rgba(255, 255, 255, 0.58)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "worker-blocker worker-blocker-compact",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "UL"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        }
+      ],
+      "bottom": 539,
+      "cls": "transition-inherit-all px-0.5",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "12px",
+      "height": 17,
+      "lineHeight": "17.4px",
+      "name": null,
+      "right": 1179,
+      "tag": "SPAN",
+      "text": "修改配置并继续当前生产单",
+      "weight": "600",
+      "width": 148,
+      "x": 1031,
+      "y": 522
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SUMMARY"
+        },
+        {
+          "cls": "dan-disclosure worker-blocker-technical",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DETAILS"
+        },
+        {
+          "cls": "worker-blocker worker-blocker-compact",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "UL"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        }
+      ],
+      "bottom": 595,
+      "cls": "",
+      "color": "oklch(0.371 0 none)",
+      "fontSize": "12px",
+      "height": 17,
+      "lineHeight": "17.4px",
+      "name": null,
+      "right": 911,
+      "tag": "SPAN",
+      "text": "技术详情",
+      "weight": "500",
+      "width": 48,
+      "x": 863,
+      "y": 578
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DT"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DL"
+        },
+        {
+          "cls": "dan-disclosure-content",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "dan-disclosure worker-blocker-technical",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DETAILS"
+        },
+        {
+          "cls": "worker-blocker worker-blocker-compact",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "UL"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 639,
+      "cls": "",
+      "color": "oklch(0.577 0.245 27.325)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 897,
+      "tag": "DT",
+      "text": "",
+      "weight": "750",
+      "width": 58,
+      "x": 839,
+      "y": 621
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DD"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DL"
+        },
+        {
+          "cls": "dan-disclosure-content",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "dan-disclosure worker-blocker-technical",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DETAILS"
+        },
+        {
+          "cls": "worker-blocker worker-blocker-compact",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "UL"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 639,
+      "cls": "",
+      "color": "oklch(0.371 0 none)",
+      "fontSize": "10px",
+      "height": 18,
+      "lineHeight": "14.5px",
+      "name": null,
+      "right": 1371,
+      "tag": "DD",
+      "text": "",
+      "weight": "400",
+      "width": 467,
+      "x": 905,
+      "y": 621
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DT"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DL"
+        },
+        {
+          "cls": "dan-disclosure-content",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "dan-disclosure worker-blocker-technical",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DETAILS"
+        },
+        {
+          "cls": "worker-blocker worker-blocker-compact",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "UL"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 673,
+      "cls": "",
+      "color": "oklch(0.577 0.245 27.325)",
+      "fontSize": "12px",
+      "height": 29,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 897,
+      "tag": "DT",
+      "text": "",
+      "weight": "750",
+      "width": 58,
+      "x": 839,
+      "y": 644
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DD"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DL"
+        },
+        {
+          "cls": "dan-disclosure-content",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "dan-disclosure worker-blocker-technical",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DETAILS"
+        },
+        {
+          "cls": "worker-blocker worker-blocker-compact",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "UL"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 673,
+      "cls": "",
+      "color": "oklch(0.371 0 none)",
+      "fontSize": "10px",
+      "height": 29,
+      "lineHeight": "14.5px",
+      "name": null,
+      "right": 1371,
+      "tag": "DD",
+      "text": "",
+      "weight": "400",
+      "width": 467,
+      "x": 905,
+      "y": 644
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DT"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DL"
+        },
+        {
+          "cls": "dan-disclosure-content",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "dan-disclosure worker-blocker-technical",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DETAILS"
+        },
+        {
+          "cls": "worker-blocker worker-blocker-compact",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "UL"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 696,
+      "cls": "",
+      "color": "oklch(0.577 0.245 27.325)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 897,
+      "tag": "DT",
+      "text": "",
+      "weight": "750",
+      "width": 58,
+      "x": 839,
+      "y": 678
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DD"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DL"
+        },
+        {
+          "cls": "dan-disclosure-content",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "dan-disclosure worker-blocker-technical",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DETAILS"
+        },
+        {
+          "cls": "worker-blocker worker-blocker-compact",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "ARTICLE"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "LI"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "UL"
+        },
+        {
+          "cls": "operations-list operations-blocker-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-detail-grid",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 696,
+      "cls": "",
+      "color": "oklch(0.371 0 none)",
+      "fontSize": "10px",
+      "height": 18,
+      "lineHeight": "14.5px",
+      "name": null,
+      "right": 1371,
+      "tag": "DD",
+      "text": "",
+      "weight": "400",
+      "width": 467,
+      "x": 905,
+      "y": 678
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "H3"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HEADER"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 646,
+      "cls": "",
+      "color": "oklch(0.205 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 309,
+      "tag": "H3",
+      "text": "生产单明细",
+      "weight": "400",
+      "width": 60,
+      "x": 249,
+      "y": 628
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HEADER"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        },
+        {
+          "cls": "",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "HTML"
+        }
+      ],
+      "bottom": 646,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "12px",
+      "height": 18,
+      "lineHeight": "18px",
+      "name": null,
+      "right": 1386,
+      "tag": "SPAN",
+      "text": "8 个生产单",
+      "weight": "750",
+      "width": 59,
+      "x": 1327,
+      "y": 628
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "STRONG"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 703,
+      "cls": "",
+      "color": "oklch(0.205 0 none)",
+      "fontSize": "12px",
+      "height": 34,
+      "lineHeight": "16.8px",
+      "name": null,
+      "right": 716,
+      "tag": "STRONG",
+      "text": "南方城市观察｜跨境创作团队第一季：从清晨通勤到深夜收工，在复杂声场中记录普通人的一天（中英双语版・字幕复核 v12・授权素材与声音来源已补齐）",
+      "weight": "900",
+      "width": 465,
+      "x": 251,
+      "y": 669
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SMALL"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 718,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "10px",
+      "height": 14,
+      "lineHeight": "13.5px",
+      "name": null,
+      "right": 716,
+      "tag": "SMALL",
+      "text": "fixture-",
+      "weight": "400",
+      "width": 465,
+      "x": 251,
+      "y": 705
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        }
+      ],
+      "bottom": 704,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 939,
+      "tag": "SPAN",
+      "text": "分镜与媒体",
+      "weight": "600",
+      "width": 219,
+      "x": 720,
+      "y": 684
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        }
+      ],
+      "bottom": 704,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 1161,
+      "tag": "SPAN",
+      "text": "无待审包",
+      "weight": "600",
+      "width": 219,
+      "x": 943,
+      "y": 684
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        }
+      ],
+      "bottom": 704,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 1384,
+      "tag": "SPAN",
+      "text": "1 个阻塞项",
+      "weight": "600",
+      "width": 219,
+      "x": 1165,
+      "y": 684
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "STRONG"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 759,
+      "cls": "",
+      "color": "oklch(0.205 0 none)",
+      "fontSize": "12px",
+      "height": 17,
+      "lineHeight": "16.8px",
+      "name": null,
+      "right": 716,
+      "tag": "STRONG",
+      "text": "J",
+      "weight": "900",
+      "width": 465,
+      "x": 251,
+      "y": 742
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SMALL"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 775,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "10px",
+      "height": 14,
+      "lineHeight": "13.5px",
+      "name": null,
+      "right": 716,
+      "tag": "SMALL",
+      "text": "00000002",
+      "weight": "400",
+      "width": 465,
+      "x": 251,
+      "y": 761
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        }
+      ],
+      "bottom": 768,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 939,
+      "tag": "SPAN",
+      "text": "视觉准备",
+      "weight": "600",
+      "width": 219,
+      "x": 720,
+      "y": 748
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        }
+      ],
+      "bottom": 768,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 1161,
+      "tag": "SPAN",
+      "text": "无待审包",
+      "weight": "600",
+      "width": 219,
+      "x": 943,
+      "y": 748
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        }
+      ],
+      "bottom": 768,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 1384,
+      "tag": "SPAN",
+      "text": "无阻塞",
+      "weight": "600",
+      "width": 219,
+      "x": 1165,
+      "y": 748
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "STRONG"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 815,
+      "cls": "",
+      "color": "oklch(0.205 0 none)",
+      "fontSize": "12px",
+      "height": 17,
+      "lineHeight": "16.8px",
+      "name": null,
+      "right": 716,
+      "tag": "STRONG",
+      "text": "👩🏽‍💻 Priya：一段普通的工作日记录",
+      "weight": "900",
+      "width": 465,
+      "x": 251,
+      "y": 799
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SMALL"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 831,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "10px",
+      "height": 14,
+      "lineHeight": "13.5px",
+      "name": null,
+      "right": 716,
+      "tag": "SMALL",
+      "text": "00000003",
+      "weight": "400",
+      "width": 465,
+      "x": 251,
+      "y": 817
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        }
+      ],
+      "bottom": 825,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 939,
+      "tag": "SPAN",
+      "text": "分镜与媒体",
+      "weight": "600",
+      "width": 219,
+      "x": 720,
+      "y": 805
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        }
+      ],
+      "bottom": 825,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 1161,
+      "tag": "SPAN",
+      "text": "无待审包",
+      "weight": "600",
+      "width": 219,
+      "x": 943,
+      "y": 805
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        }
+      ],
+      "bottom": 825,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 1384,
+      "tag": "SPAN",
+      "text": "无阻塞",
+      "weight": "600",
+      "width": 219,
+      "x": 1165,
+      "y": 805
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "STRONG"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 872,
+      "cls": "",
+      "color": "oklch(0.205 0 none)",
+      "fontSize": "12px",
+      "height": 17,
+      "lineHeight": "16.8px",
+      "name": null,
+      "right": 716,
+      "tag": "STRONG",
+      "text": "Đặng Thị Ngọc Hân 的清晨",
+      "weight": "900",
+      "width": 465,
+      "x": 251,
+      "y": 855
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SMALL"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 887,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "10px",
+      "height": 14,
+      "lineHeight": "13.5px",
+      "name": null,
+      "right": 716,
+      "tag": "SMALL",
+      "text": "00000004",
+      "weight": "400",
+      "width": 465,
+      "x": 251,
+      "y": 874
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        }
+      ],
+      "bottom": 881,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 939,
+      "tag": "SPAN",
+      "text": "分镜与媒体",
+      "weight": "600",
+      "width": 219,
+      "x": 720,
+      "y": 861
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        }
+      ],
+      "bottom": 881,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 1161,
+      "tag": "SPAN",
+      "text": "无待审包",
+      "weight": "600",
+      "width": 219,
+      "x": 943,
+      "y": 861
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        }
+      ],
+      "bottom": 881,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 1384,
+      "tag": "SPAN",
+      "text": "无阻塞",
+      "weight": "600",
+      "width": 219,
+      "x": 1165,
+      "y": 861
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "STRONG"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 928,
+      "cls": "",
+      "color": "oklch(0.205 0 none)",
+      "fontSize": "12px",
+      "height": 17,
+      "lineHeight": "16.8px",
+      "name": null,
+      "right": 716,
+      "tag": "STRONG",
+      "text": "2026-Q4_客户授权与交付复核_跨境联合制作_approved-by-legal_v12-final.mp4",
+      "weight": "900",
+      "width": 465,
+      "x": 251,
+      "y": 911
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SMALL"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 943,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "10px",
+      "height": 14,
+      "lineHeight": "13.5px",
+      "name": null,
+      "right": 716,
+      "tag": "SMALL",
+      "text": "00000005",
+      "weight": "400",
+      "width": 465,
+      "x": 251,
+      "y": 930
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        }
+      ],
+      "bottom": 937,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 939,
+      "tag": "SPAN",
+      "text": "合成与 QC",
+      "weight": "600",
+      "width": 219,
+      "x": 720,
+      "y": 917
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        }
+      ],
+      "bottom": 937,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 1161,
+      "tag": "SPAN",
+      "text": "无待审包",
+      "weight": "600",
+      "width": 219,
+      "x": 943,
+      "y": 917
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        }
+      ],
+      "bottom": 937,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 1384,
+      "tag": "SPAN",
+      "text": "无阻塞",
+      "weight": "600",
+      "width": 219,
+      "x": 1165,
+      "y": 917
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "STRONG"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 984,
+      "cls": "",
+      "color": "oklch(0.205 0 none)",
+      "fontSize": "12px",
+      "height": 17,
+      "lineHeight": "16.8px",
+      "name": null,
+      "right": 716,
+      "tag": "STRONG",
+      "text": "<b>城市日常</b> &amp; **拍摄记录**",
+      "weight": "900",
+      "width": 465,
+      "x": 251,
+      "y": 967
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SMALL"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        }
+      ],
+      "bottom": 1000,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "10px",
+      "height": 14,
+      "lineHeight": "13.5px",
+      "name": null,
+      "right": 716,
+      "tag": "SMALL",
+      "text": "00000006",
+      "weight": "400",
+      "width": 465,
+      "x": 251,
+      "y": 986
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        }
+      ],
+      "bottom": 994,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 939,
+      "tag": "SPAN",
+      "text": "生产完成",
+      "weight": "600",
+      "width": 219,
+      "x": 720,
+      "y": 974
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        }
+      ],
+      "bottom": 994,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 1161,
+      "tag": "SPAN",
+      "text": "无待审包",
+      "weight": "600",
+      "width": 219,
+      "x": 943,
+      "y": 974
+    },
+    {
+      "back": [
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "transition-inherit-all px-0.5",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SPAN"
+        },
+        {
+          "cls": "group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover operations-episode-row",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "BUTTON"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "operations-episode-list",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "operations-workspace",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "SECTION"
+        },
+        {
+          "cls": "content-pane",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "MAIN"
+        },
+        {
+          "cls": "app-shell dan-ui product-ui",
+          "color": "rgb(255, 255, 255)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgba(0, 0, 0, 0)",
+          "image": "none",
+          "tag": "DIV"
+        },
+        {
+          "cls": "",
+          "color": "rgb(245, 247, 250)",
+          "image": "none",
+          "tag": "BODY"
+        }
+      ],
+      "bottom": 994,
+      "cls": "",
+      "color": "oklch(0.439 0 none)",
+      "fontSize": "14px",
+      "height": 20,
+      "lineHeight": "20px",
+      "name": null,
+      "right": 1384,
+      "tag": "SPAN",
+      "text": "无阻塞",
+      "weight": "600",
+      "width": 219,
+      "x": 1165,
+      "y": 974
+    }
+  ],
+  "dialogs": [],
+  "headings": [
+    "系列运营",
+    "待审核",
+    "阻塞项",
+    "生产单明细"
+  ],
+  "height": 1000,
+  "horizontalContainers": [
+    {
+      "bottom": 600,
+      "clientWidth": 561,
+      "cls": "",
+      "height": 330,
+      "name": null,
+      "overflow": "auto",
+      "right": 1400,
+      "scrollWidth": 838,
+      "tag": "UL",
+      "text": "南方城市观察｜跨境创作团队第一季：从清晨通勤到深夜收工，在复杂声场中记录普通人的一天（中英双语版・字幕复核 v12・授权素材与声音来源已补齐）\nexecutor_invalid\nWorker 执行器配置不完整\n修正执行器并继续当前生产单\n\n任务没有可用的通用执行器，Worker 不会自行替换供应商继续执行。\n\n点击“修",
+      "width": 576,
+      "x": 825,
+      "y": 270
+    }
+  ],
+  "images": [],
+  "nodes": 156,
+  "outside": [
+    {
+      "bottom": 296,
+      "cls": "",
+      "height": 17,
+      "name": null,
+      "right": 1663,
+      "tag": "STRONG",
+      "text": "南方城市观察｜跨境创作团队第一季：从清晨通勤到深夜收工，在复杂声场中记录普通人的一天（中英双语版・字幕复核 v12・授权素材与声音来源已补齐）",
+      "width": 826,
+      "x": 837,
+      "y": 278
+    }
+  ],
+  "overflow": false,
+  "rootFont": "16px",
+  "scrollWidth": 1425,
+  "smallTargets": [
+    {
+      "bottom": 50,
+      "cls": "help-tip",
+      "height": 20,
+      "name": "夹具边界说明",
+      "right": 1401,
+      "tag": "SPAN",
+      "text": "",
+      "width": 20,
+      "x": 1381,
+      "y": 30
+    }
+  ],
+  "url": "http://127.0.0.1:5189/docs/verification/visual-audit-20261028/fixture.html?scene=operations&data=worst&theme=light&chrome=0",
+  "width": 1440
+}

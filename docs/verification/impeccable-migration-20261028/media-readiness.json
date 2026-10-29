@@ -1,0 +1,18 @@
+{
+  "images": [
+    {
+      "alt": "封面预览",
+      "complete": true,
+      "naturalWidth": 720
+    }
+  ],
+  "videos": [
+    {
+      "duration": 4,
+      "error": null,
+      "readyState": 4,
+      "videoHeight": 640,
+      "videoWidth": 360
+    }
+  ]
+}

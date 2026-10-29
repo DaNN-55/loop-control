@@ -1,0 +1,239 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > opens standalone OpenChatCut from the initial account page without selecting a production order
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > uses the original navigation, table and paging with local HTTP and opens the selected production drawer
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > separates login/security from maintenance, preserves drafts across tabs and restores keyboard focus
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > separates login/security from maintenance, preserves drafts across tabs and restores keyboard focus
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > cleanupPending=false: confirms the actual directory and exact title, then reports unfinished file cleanup
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > cleanupPending=true: confirms the actual directory and exact title, then reports unfinished file cleanup
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > shows a plan failure inside the confirmation dialog instead of leaving the click without feedback
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > shows a delete failure inside the confirmation dialog instead of leaving the click without feedback
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (7 tests) 1076ms
+   ✓ separates login/security from maintenance, preserves drafts across tabs and restores keyboard focus  318ms
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 已批准分镜显示声音与对齐状态，并保存整期 BGM 和闪避选择
+Each child in a list should have a unique "key" prop.
+
+Check the render method of `ShotPreparationCard`. See https://react.dev/link/warning-keys for more information.
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 第二镜独立字幕先保存，未保存时键盘切步保持当前正文
+An update to ForwardRef(TextArea) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(TextArea) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/reviews/ReviewWorkspace.test.tsx (71 tests) 9232ms
+   ✓ 审核台 > 在详情头部以图标提供刷新、打开和复制本地目录  384ms
+   ✓ 审核台 > 逐镜头主声音和音效独立保存，静音后恢复原选择并保留画面草稿  708ms
+   ✓ 审核台 > 第二镜独立字幕先保存，未保存时键盘切步保持当前正文  340ms
+   ✓ 审核台 > 第二镜修改双屏槽位和衔接后保存，保留已保存的独立正文  455ms
+   ✓ 审核台 > 第二镜修改字幕空间时保留已保存构图，保存刷新后保持所选镜头  512ms
+   ✓ 审核台 > 审核镜头可核对同步预览要求，修改字幕后旧确认与代理立即失效  583ms
+   ✓ 审核台 > 预览失败、缺少原片或旧合同阻止确认，生产就绪时仍可返回编辑  502ms
+   ✓ 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交  395ms
+   ✓ 审核台 > 逐镜头口播无需确认即可保存，并可保存单镜头覆盖  485ms
+   ✓ 审核台 > 同一原片支持多段裁剪并随镜头草稿一起保存  328ms
+   ✓ 审核台 > 人工媒体可在镜头工作台选择原片并保存镜头设置  465ms
+
+ Test Files  2 passed (2)
+      Tests  78 passed (78)
+   Start at  23:37:40
+   Duration  10.74s (transform 627ms, setup 15ms, collect 2.20s, tests 10.31s, environment 563ms, prepare 70ms)
+

@@ -1,0 +1,622 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/externalConnectionRoute.test.ts (1 test) 20ms
+ ✓ src/localControlPlane.test.ts (2 tests) 36ms
+ ✓ src/episodePreflightRoute.test.ts (15 tests) 57ms
+ ✓ src/local-app/manualVerification.test.ts (7 tests) 22ms
+ ✓ src/localEpisodeDirectoryRoute.test.ts (26 tests) 221ms
+ ✓ src/local-app/accountPreflightRoute.test.ts (7 tests) 55ms
+ ✓ src/local-app/artifactRoute.test.ts (1 test) 56ms
+ ✓ src/local-app/standaloneStudioRoute.test.ts (1 test) 53ms
+ ✓ src/local-app/captionTextConfirmationRoute.test.ts (11 tests) 96ms
+ ✓ src/local-app/catalogRoute.test.ts (1 test) 19ms
+ ✓ src/local-app/localRoute.test.ts (1 test) 24ms
+ ✓ src/local-app/ownerPasswordRoute.test.ts (1 test) 163ms
+ ✓ src/local-app/providerNetwork.test.ts (29 tests) 1540ms
+   ✓ halts and keeps the consumed reservation on timeout  1025ms
+ ✓ src/local-app/mediaWorker.reference.test.ts (5 tests) 606ms
+   ✓ crops real local video without resolving an unrelated frozen Provider reference  423ms
+ ✓ src/local-app/password.test.ts (1 test) 259ms
+ ✓ src/local-app/providerProbe.test.ts (52 tests) 949ms
+ ✓ src/orchestration/workerScheduler.test.ts (2 tests) 239ms
+ ✓ src/local-app/readOnlyVerification.test.ts (3 tests) 188ms
+ ✓ src/local-app/nativeAttemptOutput.test.ts (20 tests) 1333ms
+ ✓ scripts/isolation/regressions.test.mjs (10 tests) 208ms
+ ✓ src/local-app/localFiles.test.ts (8 tests) 71ms
+ ✓ src/local-app/accountDirectoryCleanup.test.ts (3 tests) 22ms
+ ✓ src/local-app/secretInventory.test.ts (1 test) 17ms
+ ✓ src/local-app/episodeDeletionTargets.test.ts (4 tests) 49ms
+ ✓ src/worker/officialVideoProvider.test.ts (6 tests) 15ms
+ ✓ scripts/isolation/database.test.mjs (5 tests) 17ms
+ ✓ src/worker/visualAssetExecutor.test.ts (1 test) 17ms
+ ✓ scripts/local/offline-preparation.test.mjs (2 tests) 12ms
+ ✓ scripts/isolation/http-credentials.test.mjs (1 test) 7ms
+ ✓ scripts/local/deployment.test.mjs (13 tests) 5ms
+ ✓ scripts/runtime/history-consolidation.test.mjs (3 tests) 4ms
+ ✓ src/systemStatusRoute.test.ts (1 test) 8ms
+ ✓ src/standaloneOpenchatcutRoute.test.ts (3 tests) 6ms
+ ✓ scripts/runtime/environment.test.mjs (7 tests) 4ms
+ ✓ src/local-app/workerDatabase.test.ts (1 test) 4ms
+ ✓ src/local-app/catalogQuery.test.ts (1 test) 2ms
+ ✓ scripts/storage/reference-integrity.test.mjs (10 tests) 4ms
+ ✓ scripts/runtime/keychain.test.mjs (4 tests) 3ms
+ ✓ src/local-app/mediaWorker.test.ts (4 tests) 3ms
+ ✓ src/local-app/inputPreflight.test.ts (1 test) 2ms
+ ✓ scripts/runtime/secrets.test.mjs (1 test) 2ms
+ ✓ src/local-app/databaseConfig.test.ts (1 test) 1ms
+ ✓ src/local-app/configurationCommands.test.ts (1 test) 2ms
+ ✓ scripts/startup-lifecycle.acceptance.test.mjs (7 tests) 186ms
+ ❯ src/orchestration/loopOrchestratorCli.test.ts (9 tests | 9 failed) 260ms
+   × 定向生产单调度 > 定时扫描先领取持久任务，再用stdin传递给Worker 198ms
+     → Invalid tsconfig.worker.json
+   × 定向生产单调度 > 任务唤醒不重新规划冻结输入，仍消费公平共享队列 11ms
+     → Invalid tsconfig.worker.json
+   × 定向生产单调度 > Episode入口限定规划范围，执行仍使用全局原子领取 6ms
+     → Invalid tsconfig.worker.json
+   × 定向生产单调度 > 满载领取为空时不构建或启动空跑Worker 6ms
+     → Invalid tsconfig.worker.json
+   × 定向生产单调度 > CLI不传显式environment时仍尊重进程中的Worker容量 5ms
+     → Invalid tsconfig.worker.json
+   × 定向生产单调度 > 已准备的任务热路径只执行产物，不调用npm或编译器 5ms
+     → Invalid tsconfig.worker.json
+   × 定向生产单调度 > 空队列不构建或启动Worker 5ms
+     → Invalid tsconfig.worker.json
+   × 定向生产单调度 > 一次提醒轮次通过原子领取消费事件，不再按时间重扫 audit_events 6ms
+     → Invalid tsconfig.worker.json
+   × 定向生产单调度 > 部分快照失败归入快照结果，不误报为调度失败 17ms
+     → Invalid tsconfig.worker.json
+ ✓ scripts/local-service-record.test.mjs (6 tests) 489ms
+ ✓ src/orchestration/runtimeBuild.test.ts (2 tests) 3368ms
+   ✓ 准备后可执行，源码变化或产物损坏必须重新准备  2424ms
+   ✓ 前端独立改动不使 Worker 过期，Worker 引用的共享依赖变化仍需重建  943ms
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > separates login/security from maintenance and restores keyboard focus to Owner menu 0
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > separates login/security from maintenance and restores keyboard focus to Owner menu 1
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/LocalSecretAdministration.test.tsx (5 tests) 1996ms
+   ✓ reveals only after POST password verification and clears on selection/filter/visibility  679ms
+   ✓ copies through browser clipboard after verification and never renders returned plaintext  312ms
+   ✓ blocks stale reveal responses after close, filter and expired-session event  314ms
+   ✓ hides plaintext after thirty seconds and never offers control-secret reveal  589ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx (13 tests) 1654ms
+   ✓ keeps a committed series save successful when its follow-up read fails  502ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (8 tests) 1896ms
+   ✓ separates login/security from maintenance and restores keyboard focus to Owner menu 0  481ms
+ ✓ src/episodes/captionTextConfirmation.test.tsx (9 tests) 1288ms
+   ✓ saves an explicit review identity, keeps it on refresh and invalidates local text edits  350ms
+ ✓ src/App.test.tsx (35 tests) 1294ms
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 第二镜独立字幕先保存，未保存时键盘切步保持当前正文
+An update to ForwardRef(TextArea) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(TextArea) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/ui/PcVisualFixes.test.tsx (5 tests) 1477ms
+   ✓ accepts at most 200 title characters before creation and exposes the limit  960ms
+ ✓ src/accounts/AccountWorkspace.test.tsx (33 tests) 5470ms
+   ✓ 账号配置工作区 > 切换分区后选中标签始终关联当前面板  317ms
+   ✓ 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接  417ms
+   ✓ 账号配置工作区 > 在 A-roll 尚未配置时，仍使用本机 OpenChatCut 状态开放本地路径  376ms
+   ✓ 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿  1406ms
+ ✓ src/connections/ConnectionWorkspace.test.tsx (8 tests) 962ms
+ ✓ src/local-app/LocalCatalogApp.account.test.tsx (5 tests) 1026ms
+ ✓ src/episodes/episodeCatalog.test.tsx (5 tests) 862ms
+ ✓ src/observability/SystemStatusPanel.test.tsx (19 tests) 515ms
+ ✓ src/platform/ConfigurationForms.local.test.tsx (4 tests) 386ms
+ ✓ src/local-app/LocalHistory.test.tsx (5 tests) 529ms
+ ✓ src/local-app/HistoryDanUi.test.tsx (3 tests) 481ms
+ ✓ src/worker/controlledMediaExecutor.test.ts (12 tests) 427ms
+   ✓ 受控媒体执行器 > 使用真实 ffmpeg 裁剪带原声视频并提取当前片段原声  377ms
+ ✓ src/episodes/WanShotGenerator.test.tsx (8 tests) 521ms
+ ✓ src/local-app/LocalConnectionsPanel.test.tsx (7 tests) 483ms
+ ✓ src/ui/DanUiInteractionGuards.test.tsx (6 tests) 372ms
+ ✓ src/connections/ConnectionDanUi.test.tsx (2 tests) 357ms
+ ✓ src/connections/ConnectionFeedback.test.tsx (8 tests) 293ms
+ ✓ src/local-app/LocalMaintenanceEmbedded.test.tsx (2 tests) 332ms
+ ✓ src/local-app/LocalSystemStatus.test.tsx (4 tests) 245ms
+ ✓ scripts/openchatcut-render.test.mjs (5 tests) 211ms
+ ✓ src/connections/ConnectionOrganization.test.tsx (3 tests) 247ms
+ ✓ src/operations/OperationsWorkspace.test.tsx (6 tests) 234ms
+ ✓ src/worker/whisperxAlignment.test.ts (11 tests) 123ms
+ ✓ src/ui/useDialogFocus.test.tsx (1 test) 86ms
+ ✓ src/local-app/HistoryEpisodes.test.tsx (2 tests) 158ms
+ ✓ src/orchestration/providedScriptDispatch.test.ts (6 tests) 108ms
+ ✓ src/observability/systemStatusEvidence.test.ts (4 tests) 105ms
+ ✓ src/observability/TaskProgressPanel.test.tsx (4 tests) 75ms
+ ✓ src/ui/PaginationControls.test.tsx (2 tests) 104ms
+ ✓ src/reviews/WorkerBlockerCard.test.tsx (2 tests) 100ms
+ ✓ src/episodes/EpisodeProductionContainer.test.tsx (4 tests) 93ms
+ ✓ src/ui/MarkdownPreview.test.tsx (1 test) 56ms
+ ✓ src/platform/migrationContracts.test.ts (112 tests) 48ms
+ ✓ src/worker/episodeDeletion.test.ts (5 tests) 36ms
+ ✓ src/worker/renderReuse.test.ts (2 tests) 31ms
+stderr | src/publishing/ProductionCompletionModal.test.tsx > 生产完成弹窗 > 展示最终材料和生产完成状态，不提供外部发布登记
+An update to PublishMetadataSummary inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to PublishMaterialPreview inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to PublishMaterialPreview inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/publishing/ProductionCompletionModal.test.tsx (1 test) 73ms
+ ✓ src/publishing/publishPackage.test.ts (2 tests) 26ms
+ ✓ src/reviews/localArtifactPreview.test.tsx (3 tests) 29ms
+ ✓ scripts/isolation/environment.test.mjs (14 tests) 27ms
+ ✓ src/worker/mediaLibrary.test.ts (7 tests) 22ms
+ ✓ src/orchestration/operationsEvidence.test.ts (4 tests) 18ms
+ ✓ src/worker/codexRunner.test.ts (28 tests) 14ms
+ ✓ src/worker/openchatcutRenderer.test.ts (3 tests) 22ms
+ ✓ src/worker/openchatcutProject.test.ts (26 tests) 16ms
+ ✓ src/worker/wanVideoProvider.test.ts (7 tests) 15ms
+ ✓ src/worker/runtimeProbes.test.ts (8 tests) 14ms
+ ✓ scripts/local/import.test.mjs (1 test) 17ms
+ ✓ src/worker/contracts.test.ts (18 tests) 14ms
+ ✓ src/platform/configurationForms.test.ts (23 tests) 10ms
+ ✓ src/orchestration/notificationConsumer.test.ts (3 tests) 12ms
+ ✓ src/worker/mediaProviders.test.ts (8 tests) 26ms
+ ✓ src/platform/platformService.test.ts (7 tests) 10ms
+ ✓ src/reviews/reviewSelectors.test.ts (7 tests) 12ms
+ ✓ scripts/start-local.test.mjs (10 tests) 15ms
+ ✓ src/worker/storyboardArtifact.test.ts (4 tests) 9ms
+ ✓ src/orchestration/notificationPolicy.test.ts (5 tests) 14ms
+ ✓ src/local-app/keychainStore.test.ts (7 tests) 8ms
+ ✓ src/reviews/reviewRevision.test.ts (5 tests) 5ms
+ ✓ src/worker/wanTaskContract.test.ts (2 tests) 8ms
+ ✓ src/worker/registeredAdapters.test.ts (7 tests) 3ms
+ ✓ src/worker/legacyPexelsReference.test.ts (2 tests) 3ms
+ ✓ src/worker/runtimePreflight.test.ts (4 tests) 4ms
+ ✓ src/local-app/connections.test.ts (4 tests) 5ms
+ ✓ src/worker/workerResultSchema.test.ts (3 tests) 3ms
+ ✓ src/reviews/blockerGuidance.test.ts (19 tests) 8ms
+ ✓ src/local-app/pexelsLiveProbe.test.ts (11 tests) 5ms
+ ✓ src/worker/acousticAlignment.test.ts (7 tests) 8ms
+ ✓ scripts/supabase-migrations.test.mjs (3 tests) 5ms
+ ✓ src/local-app/historyPresentation.test.ts (2 tests) 2ms
+ ✓ src/reviews/materialImport.test.ts (3 tests) 5ms
+ ✓ src/worker/manualMaterialChecklist.test.ts (1 test) 2ms
+ ✓ src/worker/codexWorkerCli.test.ts (6 tests) 3ms
+ ✓ src/platform/connectionStatus.test.ts (3 tests) 5ms
+ ✓ src/lib/pagedRead.test.ts (3 tests) 4ms
+ ✓ src/shotComposition.test.ts (2 tests) 2ms
+ ✓ src/local-app/mediaPaths.test.ts (3 tests) 3ms
+ ✓ src/orchestration/backupPolicy.test.ts (2 tests) 3ms
+ ✓ src/worker/taskClaimArguments.test.ts (2 tests) 1ms
+ ✓ src/worker/durationDecision.test.ts (13 tests) 5ms
+ ✓ src/worker/storyboardRevision.test.ts (3 tests) 6ms
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/shotAcceptance.test.ts (3 tests) 2ms
+ ✓ src/episodes/episodeCatalogChanges.test.ts (4 tests) 3ms
+ ✓ src/platform/externalConnections.test.ts (1 test) 1ms
+ ✓ src/worker/shotWorkbenchStudio.test.ts (1 test) 3ms
+ ✓ src/shotCaptions.test.ts (3 tests) 3ms
+ ✓ src/worker/productionCapabilities.test.ts (1 test) 2ms
+ ✓ src/episodes/episodeReadService.test.ts (3 tests) 4ms
+ ✓ src/lib/retiredClient.test.ts (2 tests) 3ms
+ ✓ src/worker/runtimeConstraints.test.ts (2 tests) 2ms
+ ✓ src/reviews/repairTarget.test.ts (3 tests) 3ms
+ ✓ src/clipTiming.test.ts (3 tests) 2ms
+ ✓ src/manualArollVideo.test.ts (2 tests) 2ms
+ ✓ src/lib/backend.test.ts (1 test) 1ms
+ ✓ src/platform/accountIdentity.test.ts (2 tests) 2ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx (71 tests) 18897ms
+   ✓ 审核台 > 在详情头部以图标提供刷新、打开和复制本地目录  420ms
+   ✓ 审核台 > 通过统一入口标注用途后按顺序导入脚本、图片、A-roll 和 B-roll  323ms
+   ✓ 审核台 > 已批准分镜显示声音与对齐状态，并保存整期 BGM 和闪避选择  380ms
+   ✓ 审核台 > 逐镜头主声音和音效独立保存，静音后恢复原选择并保留画面草稿  1214ms
+   ✓ 审核台 > 第二镜独立字幕先保存，未保存时键盘切步保持当前正文  737ms
+   ✓ 审核台 > 第二镜修改双屏槽位和衔接后保存，保留已保存的独立正文  757ms
+   ✓ 审核台 > 第二镜修改字幕空间时保留已保存构图，保存刷新后保持所选镜头  981ms
+   ✓ 审核台 > 已生成字幕时序先只读查看，明确调整后才开放编辑  433ms
+   ✓ 审核台 > 本地人工时序编辑跨音轨轮询保留并只提交本地回调  427ms
+   ✓ 审核台 > 审核阶段返回镜头工作台时保留 QC 证据，并显式确认覆盖 Studio 工程  479ms
+   ✓ 审核台 > 审核镜头可核对同步预览要求，修改字幕后旧确认与代理立即失效  1607ms
+   ✓ 审核台 > 预览失败、缺少原片或旧合同阻止确认，生产就绪时仍可返回编辑  844ms
+   ✓ 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交  894ms
+   ✓ 审核台 > 删除镜头后在工作台切换新版，并打开下一镜  365ms
+   ✓ 审核台 > 逐镜头 TTS 可先于原片标记生成，完整保存仍要求视频  511ms
+   ✓ 审核台 > 逐镜头口播无需确认即可保存，并可保存单镜头覆盖  1619ms
+   ✓ 审核台 > 后台刷新时保留未保存的原片与片段标记  672ms
+   ✓ 审核台 > 无口播显示为明确静音，并仍可保存字幕开关  452ms
+   ✓ 审核台 > 同一原片支持多段裁剪并随镜头草稿一起保存  721ms
+   ✓ 审核台 > 人工媒体可在镜头工作台选择原片并保存镜头设置  938ms
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  scripts/local/application.test.mjs [ scripts/local/application.test.mjs ]
+Error: Cannot find module '../../dist/local-app/local-app/secretAdministration.js' imported from '/Users/dan/Programs/loop-control/scripts/local/application.mjs'
+ ❯ scripts/local/application.mjs:1:1
+      1| import {SecretAdministration} from '../../dist/local-app/local-app/sec…
+       | ^
+      2| import{configuredKeychainStore}from'../../dist/local-app/local-app/key…
+      3| import{createProviderProbe}from'../../dist/local-app/local-app/provide…
+
+Caused by: Error: Failed to load url ../../dist/local-app/local-app/secretAdministration.js (resolved id: ../../dist/local-app/local-app/secretAdministration.js) in /Users/dan/Programs/loop-control/scripts/local/application.mjs. Does the file exist?
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:22739:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > 定时扫描先领取持久任务，再用stdin传递给Worker
+Error: Invalid tsconfig.worker.json
+ ❯ sources src/orchestration/runtimeBuild.ts:27:37
+     25|     if (config.error) throw Error(`Cannot read ${name}`);
+     26|     const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys…
+     27|     if (parsed.errors.length) throw Error(`Invalid ${name}`);
+       |                                     ^
+     28|     const program = ts.createProgram(parsed.fileNames, parsed.options);
+     29|     for (const file of program.getSourceFiles()) {
+ ❯ Module.prepareRuntime src/orchestration/runtimeBuild.ts:61:20
+ ❯ preparedFixture src/orchestration/loopOrchestratorCli.test.ts:132:3
+ ❯ runDispatch src/orchestration/loopOrchestratorCli.test.ts:119:14
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:38:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > 任务唤醒不重新规划冻结输入，仍消费公平共享队列
+Error: Invalid tsconfig.worker.json
+ ❯ sources src/orchestration/runtimeBuild.ts:27:37
+     25|     if (config.error) throw Error(`Cannot read ${name}`);
+     26|     const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys…
+     27|     if (parsed.errors.length) throw Error(`Invalid ${name}`);
+       |                                     ^
+     28|     const program = ts.createProgram(parsed.fileNames, parsed.options);
+     29|     for (const file of program.getSourceFiles()) {
+ ❯ Module.prepareRuntime src/orchestration/runtimeBuild.ts:61:20
+ ❯ preparedFixture src/orchestration/loopOrchestratorCli.test.ts:132:3
+ ❯ runDispatch src/orchestration/loopOrchestratorCli.test.ts:119:14
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:45:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > Episode入口限定规划范围，执行仍使用全局原子领取
+Error: Invalid tsconfig.worker.json
+ ❯ sources src/orchestration/runtimeBuild.ts:27:37
+     25|     if (config.error) throw Error(`Cannot read ${name}`);
+     26|     const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys…
+     27|     if (parsed.errors.length) throw Error(`Invalid ${name}`);
+       |                                     ^
+     28|     const program = ts.createProgram(parsed.fileNames, parsed.options);
+     29|     for (const file of program.getSourceFiles()) {
+ ❯ Module.prepareRuntime src/orchestration/runtimeBuild.ts:61:20
+ ❯ preparedFixture src/orchestration/loopOrchestratorCli.test.ts:132:3
+ ❯ runDispatch src/orchestration/loopOrchestratorCli.test.ts:119:14
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:53:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > 满载领取为空时不构建或启动空跑Worker
+Error: Invalid tsconfig.worker.json
+ ❯ sources src/orchestration/runtimeBuild.ts:27:37
+     25|     if (config.error) throw Error(`Cannot read ${name}`);
+     26|     const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys…
+     27|     if (parsed.errors.length) throw Error(`Invalid ${name}`);
+       |                                     ^
+     28|     const program = ts.createProgram(parsed.fileNames, parsed.options);
+     29|     for (const file of program.getSourceFiles()) {
+ ❯ Module.prepareRuntime src/orchestration/runtimeBuild.ts:61:20
+ ❯ preparedFixture src/orchestration/loopOrchestratorCli.test.ts:132:3
+ ❯ runDispatch src/orchestration/loopOrchestratorCli.test.ts:119:14
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:61:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > CLI不传显式environment时仍尊重进程中的Worker容量
+Error: Invalid tsconfig.worker.json
+ ❯ sources src/orchestration/runtimeBuild.ts:27:37
+     25|     if (config.error) throw Error(`Cannot read ${name}`);
+     26|     const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys…
+     27|     if (parsed.errors.length) throw Error(`Invalid ${name}`);
+       |                                     ^
+     28|     const program = ts.createProgram(parsed.fileNames, parsed.options);
+     29|     for (const file of program.getSourceFiles()) {
+ ❯ Module.prepareRuntime src/orchestration/runtimeBuild.ts:61:20
+ ❯ preparedFixture src/orchestration/loopOrchestratorCli.test.ts:132:3
+ ❯ runDispatch src/orchestration/loopOrchestratorCli.test.ts:119:14
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:69:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > 已准备的任务热路径只执行产物，不调用npm或编译器
+Error: Invalid tsconfig.worker.json
+ ❯ sources src/orchestration/runtimeBuild.ts:27:37
+     25|     if (config.error) throw Error(`Cannot read ${name}`);
+     26|     const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys…
+     27|     if (parsed.errors.length) throw Error(`Invalid ${name}`);
+       |                                     ^
+     28|     const program = ts.createProgram(parsed.fileNames, parsed.options);
+     29|     for (const file of program.getSourceFiles()) {
+ ❯ Module.prepareRuntime src/orchestration/runtimeBuild.ts:61:20
+ ❯ preparedFixture src/orchestration/loopOrchestratorCli.test.ts:132:3
+ ❯ runDispatch src/orchestration/loopOrchestratorCli.test.ts:119:14
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:78:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > 空队列不构建或启动Worker
+Error: Invalid tsconfig.worker.json
+ ❯ sources src/orchestration/runtimeBuild.ts:27:37
+     25|     if (config.error) throw Error(`Cannot read ${name}`);
+     26|     const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys…
+     27|     if (parsed.errors.length) throw Error(`Invalid ${name}`);
+       |                                     ^
+     28|     const program = ts.createProgram(parsed.fileNames, parsed.options);
+     29|     for (const file of program.getSourceFiles()) {
+ ❯ Module.prepareRuntime src/orchestration/runtimeBuild.ts:61:20
+ ❯ preparedFixture src/orchestration/loopOrchestratorCli.test.ts:132:3
+ ❯ runDispatch src/orchestration/loopOrchestratorCli.test.ts:119:14
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:84:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > 一次提醒轮次通过原子领取消费事件，不再按时间重扫 audit_events
+Error: Invalid tsconfig.worker.json
+ ❯ sources src/orchestration/runtimeBuild.ts:27:37
+     25|     if (config.error) throw Error(`Cannot read ${name}`);
+     26|     const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys…
+     27|     if (parsed.errors.length) throw Error(`Invalid ${name}`);
+       |                                     ^
+     28|     const program = ts.createProgram(parsed.fileNames, parsed.options);
+     29|     for (const file of program.getSourceFiles()) {
+ ❯ Module.prepareRuntime src/orchestration/runtimeBuild.ts:61:20
+ ❯ preparedFixture src/orchestration/loopOrchestratorCli.test.ts:132:3
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:91:37
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯
+
+ FAIL  src/orchestration/loopOrchestratorCli.test.ts > 定向生产单调度 > 部分快照失败归入快照结果，不误报为调度失败
+Error: Invalid tsconfig.worker.json
+ ❯ sources src/orchestration/runtimeBuild.ts:27:37
+     25|     if (config.error) throw Error(`Cannot read ${name}`);
+     26|     const parsed = ts.parseJsonConfigFileContent(config.config, ts.sys…
+     27|     if (parsed.errors.length) throw Error(`Invalid ${name}`);
+       |                                     ^
+     28|     const program = ts.createProgram(parsed.fileNames, parsed.options);
+     29|     for (const file of program.getSourceFiles()) {
+ ❯ Module.prepareRuntime src/orchestration/runtimeBuild.ts:61:20
+ ❯ preparedFixture src/orchestration/loopOrchestratorCli.test.ts:132:3
+ ❯ src/orchestration/loopOrchestratorCli.test.ts:105:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/10]⎯
+
+
+ Test Files  2 failed | 144 passed (146)
+      Tests  9 failed | 1077 passed (1086)
+   Start at  10:07:35
+   Duration  24.67s (transform 2.24s, setup 269ms, collect 22.29s, tests 54.85s, environment 21.08s, prepare 5.42s)
+

@@ -1,0 +1,19 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/operations/workbenchPreview.test.tsx (2 tests) 66ms
+ ✓ src/reviews/reviewSelectors.test.ts (7 tests) 11ms
+ ✓ src/local-app/LocalDeliveryPanel.nodes.test.tsx (3 tests) 192ms
+ ✓ src/episodes/EpisodeProductionContainer.test.tsx (4 tests) 164ms
+ ✓ src/episodes/captionTextConfirmation.test.tsx (9 tests) 1647ms
+   ✓ keeps a completed high-score mismatch awaiting Owner text review and blocks preview  396ms
+ ✓ src/episodes/ProductionNodes.test.tsx (15 tests) 2096ms
+   ✓ navigates all six nodes without invoking production commands  371ms
+   ✓ saves an edited pending script back into the import draft and requires a fresh confirmation  322ms
+   ✓ routes rail reorder through the existing reasoned structure revision and preserves generation entrypoints  693ms
+
+ Test Files  6 passed (6)
+      Tests  40 passed (40)
+   Start at  11:18:27
+   Duration  4.32s (transform 798ms, setup 42ms, collect 6.26s, tests 4.17s, environment 2.18s, prepare 466ms)
+

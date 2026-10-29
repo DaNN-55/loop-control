@@ -1,0 +1,5 @@
+{
+  "databaseCommitted": false,
+  "message": "Command failed: docker exec -i loop-control-local-postgres psql -XqAt -U postgres -d loop_control -v ON_ERROR_STOP=1\nERROR:  null value in column \"account_id\" of relation \"audit_events\" violates not-null constraint\nDETAIL:  Failing row contains (dfdfca5b-2727-40c3-913c-0ce434896e1f, null, null, maintenance_cleanup_completed, {\"kind\": \"owner-approved-history-cleanup\", \"scopeSha256\": \"133e3..., 644f8c5a-b668-48a3-8a25-94c4e502fa04, 2026-10-27 01:18:51.748857+00).\n",
+  "stagedDirectoryCount": 0
+}

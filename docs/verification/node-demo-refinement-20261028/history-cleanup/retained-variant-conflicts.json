@@ -1,0 +1,374 @@
+[
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "efffc39599d40cb92203e0556c7b2f5fda5b5bbc97e3cc79dc3be4eb636a66f6",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/archives/worktrees/local-first-optimization-20261026/.loop-control/local/backups/loop_control/63a77d57-6b46-448b-b146-3414ea6716c4/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "3fc19250f42001f24fce84f9185aa671df43fe3fb9af638f662bd542432d9624",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/archives/worktrees/local-first-optimization-20261026/.loop-control/stage-d/backups/loop_t23/18e97f08-8216-428a-bedb-fb202eef6e7e/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "03ae6bb61e81a93af3d59f8f7fef131c435df6a874d4a29d70ea7ccf0f54512b",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/archives/worktrees/local-first-optimization-20261026/.loop-control/stage-d/backups/loop_t23/41cbcaee-4c6e-4404-92ae-bc7dc79d4455/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "6f43535386d8a216d50425bac9300ea0a6bce4db058dac8e3c0631723a4aaa94",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/archives/worktrees/local-first-optimization-20261026/.loop-control/stage-d/backups/loop_t23/4e986e18-3c69-45df-9a0c-ad11124d0c9f/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "ad7941aa9df7f859e0cd8c02523351aacb7179ead2a430679d1e1fb3c54b9e1c",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/archives/worktrees/local-first-optimization-20261026/.loop-control/stage-d/backups/loop_t23/532a8aab-c072-4f27-8a1e-2c57f5754f29/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "06529773e57a7cf78ffbb6c96026511059c6871913381ed090ddd64091cbe0c9",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/archives/worktrees/local-first-optimization-20261026/.loop-control/stage-d/backups/loop_t23/5ce285bb-387a-4101-9e5a-c5af4db1dbd9/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "ee8cec06ba1473bc082a0b9bb18c93063b2d9f37f0378622953d4a1752103ee1",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/archives/worktrees/local-first-optimization-20261026/.loop-control/stage-d/backups/loop_t23/63f25b69-9606-4dba-8f80-b18599539cda/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "15446c36fc8a0be0217df01e778b8098c39e5bd66bdeab253ea1e381a838ccc8",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/archives/worktrees/local-first-optimization-20261026/.loop-control/stage-d/backups/loop_t23/8c5b486d-9e18-4a2e-a431-c20790bb906b/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "3ab70d50044164443d764c51b9c49f152f723533fceaaf860dc99cc46c08866c",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/archives/worktrees/local-first-optimization-20261026/.loop-control/stage-d/backups/loop_t23/a77bf602-6f8f-4c5a-93ad-bf07cdbc813a/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "3c0f900becbcad22bd1645a3e7bf21c3eb1743690628205557292c976a9d60f4",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/archives/worktrees/local-first-optimization-20261026/.loop-control/stage-d/backups/loop_t23/f86dd95f-b5cc-4587-a035-e0044ffd5a80/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "13665d6dfc8ff9334db272372039689ff8e0e57724510b836fe0f0704f77ec8a",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/archives/worktrees/local-first-optimization-20261026/.loop-control/stage-d/backups/loop_t23/f9a75111-907e-495c-bfda-b943136b4cd5/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "348dc0e58fb94cec74de6ae0c7316db3c3c391346e6225577cb952d6135cac73",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/archives/worktrees/local-first-optimization-20261026/.loop-control/stage-d/backups/loop_t24_restored2/7e867bb4-519d-4895-ba78-d3d4e0180fa1/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "f6c1f16d6ea5ec9015682b2f9f2fd6353f84fa2dab9a887ee2c99830f1c3c872",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/archives/worktrees/local-first-optimization-20261026/.loop-control/stage-d/backups/loop_t24_restore_dclose01/8d6cb063-667e-46c2-82db-b64bddb7b0d8/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "1a6a2204edb3a27d7e4ba424efe6fea89a1c578bb1292197465f251d0fdfa0ac",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/archives/worktrees/local-first-optimization-20261026/.loop-control/stage-d/backups/loop_t24_restore_default20261025/6505a5f9-c5fd-461c-bf04-fdbef4dcdcb4/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "4a8041953feb54666791df4e383706694bc066fad13940c456f129e407d469ad",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/archives/worktrees/local-first-optimization-20261026/.loop-control/stage-d/backups/loop_t24_restore_ttsproduction20261026_02/fc73dc47-c9de-4a55-9a3a-7f45b5b70bb2/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "80e5c75da46a4b9363ed54b618c7b24cb9799e1a4d25dee00ab6c1217ef31e3f",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/archives/worktrees/local-first-optimization-20261026/.loop-control/stage-d/backups/loop_t24_source/a2313549-ada8-4617-aa5c-d8ca181c56e3/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "6f7f18cb3c119633ab606c41da7b34fa0b2702353b163c9c805c379f0076b683",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/archives/worktrees/local-first-optimization-20261026/.loop-control/stage-d/backups/loop_t24_source/c6b2186d-e752-4812-80ff-c21a9901f2a6/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "006fa4e06757b7895ebe032618c2a372fb5e08eae33a232c804b88baf73161e0",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/archives/worktrees/local-first-optimization-20261026/.loop-control/stage-d/backups/loop_t25/c4edd11d-ae5f-4b6a-a948-82897cd467ce/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "54ff29ff0ae1c20a1a1b91190a731d9ff6753a5eb773a8fb157b0f5cd483102f",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/archives/worktrees/local-first-optimization-20261026/.loop-control/stage-d/backups/t24-negative/missing-reference/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "historical-backup-metadata",
+      "historical-evidence"
+    ],
+    "links": 2,
+    "sha256": "efffc39599d40cb92203e0556c7b2f5fda5b5bbc97e3cc79dc3be4eb636a66f6",
+    "bytevariants": 1,
+    "kindvariants": 2,
+    "logical_path": ".loop-control/local/backups/loop_control/63a77d57-6b46-448b-b146-3414ea6716c4/manifest.json",
+    "metadatavariants": 1
+  },
+  {
+    "kinds": [
+      "media"
+    ],
+    "links": 2,
+    "sha256": "a9b28b39a9377805d3406d18f6dd48ba3d35d3d996d495c9669a012191ff2416",
+    "bytevariants": 1,
+    "kindvariants": 1,
+    "logical_path": "ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/.native-worker-attempts/c7cd06b42c665b4181d3b9da5f622cc480325d1e93a768664d17b76db00565ed.interrupted-preserved/identity.json",
+    "metadatavariants": 2
+  },
+  {
+    "kinds": [
+      "media"
+    ],
+    "links": 2,
+    "sha256": "a9b28b39a9377805d3406d18f6dd48ba3d35d3d996d495c9669a012191ff2416",
+    "bytevariants": 1,
+    "kindvariants": 1,
+    "logical_path": "ordinary-multishot-06657c3e-b8d5-4089-8d96-ded73c75f071/.native-worker-attempts/c7cd06b42c665b4181d3b9da5f622cc480325d1e93a768664d17b76db00565ed.recovery-preparation-preserved/identity.json",
+    "metadatavariants": 2
+  },
+  {
+    "kinds": [
+      "media"
+    ],
+    "links": 3,
+    "sha256": "5220930a453cd30ccd7ea6893062574c0bb45fc85b58393a56408dd20b5ccb78",
+    "bytevariants": 1,
+    "kindvariants": 1,
+    "logical_path": "whisperx-models/models--jonatasgrosman--wav2vec2-large-xlsr-53-chinese-zh-cn/refs/main",
+    "metadatavariants": 3
+  },
+  {
+    "kinds": [
+      "media"
+    ],
+    "links": 3,
+    "sha256": "9af98614e322a5300c75605227d93c98af0c8f78754aba1dfc279166688afddd",
+    "bytevariants": 1,
+    "kindvariants": 1,
+    "logical_path": "whisperx-models/models--jonatasgrosman--wav2vec2-large-xlsr-53-chinese-zh-cn/snapshots/99ccb2737be22b8bb50dcfcc39ad4d567fb90cfd/config.json",
+    "metadatavariants": 3
+  },
+  {
+    "kinds": [
+      "media"
+    ],
+    "links": 3,
+    "sha256": "c403ce09975b90dff0dd8302c42d422e9de1f166cd7772df23490069893cb0cf",
+    "bytevariants": 1,
+    "kindvariants": 1,
+    "logical_path": "whisperx-models/models--jonatasgrosman--wav2vec2-large-xlsr-53-chinese-zh-cn/snapshots/99ccb2737be22b8bb50dcfcc39ad4d567fb90cfd/preprocessor_config.json",
+    "metadatavariants": 3
+  },
+  {
+    "kinds": [
+      "media"
+    ],
+    "links": 3,
+    "sha256": "de031fd4b29e0c0667e5346450fadfe1326c89936b888b59c4ede608db763ee4",
+    "bytevariants": 1,
+    "kindvariants": 1,
+    "logical_path": "whisperx-models/models--jonatasgrosman--wav2vec2-large-xlsr-53-chinese-zh-cn/snapshots/99ccb2737be22b8bb50dcfcc39ad4d567fb90cfd/pytorch_model.bin",
+    "metadatavariants": 3
+  },
+  {
+    "kinds": [
+      "media"
+    ],
+    "links": 3,
+    "sha256": "bb7068de1150661a10b55f9e4b12a0e77af8bf91f5e45e1b58afaf1d0e17f675",
+    "bytevariants": 1,
+    "kindvariants": 1,
+    "logical_path": "whisperx-models/models--jonatasgrosman--wav2vec2-large-xlsr-53-chinese-zh-cn/snapshots/99ccb2737be22b8bb50dcfcc39ad4d567fb90cfd/special_tokens_map.json",
+    "metadatavariants": 3
+  },
+  {
+    "kinds": [
+      "media"
+    ],
+    "links": 3,
+    "sha256": "33fea3444869c2cd2433f59da079b04ce91515f946d21fe1b0ff3825398bcec7",
+    "bytevariants": 1,
+    "kindvariants": 1,
+    "logical_path": "whisperx-models/models--jonatasgrosman--wav2vec2-large-xlsr-53-chinese-zh-cn/snapshots/99ccb2737be22b8bb50dcfcc39ad4d567fb90cfd/vocab.json",
+    "metadatavariants": 3
+  },
+  {
+    "kinds": [
+      "media"
+    ],
+    "links": 3,
+    "sha256": "92a3e070f43d9b4c5534758ca40ad7343b04e7e29bfe0c2eb658a39445a4f779",
+    "bytevariants": 1,
+    "kindvariants": 1,
+    "logical_path": "whisperx-models/nltk_data/tokenizers/punkt_tab/english/abbrev_types.txt",
+    "metadatavariants": 3
+  },
+  {
+    "kinds": [
+      "media"
+    ],
+    "links": 3,
+    "sha256": "8e2da1225e4dd2cc9dba261ee231ccb134859e21b46006e7f472c5ee269af0cf",
+    "bytevariants": 1,
+    "kindvariants": 1,
+    "logical_path": "whisperx-models/nltk_data/tokenizers/punkt_tab/english/collocations.tab",
+    "metadatavariants": 3
+  },
+  {
+    "kinds": [
+      "media"
+    ],
+    "links": 3,
+    "sha256": "4bbcca25ed3d3f06c02402abf8419b9f033b8adc06e7b482eca4e45f81a5dc4c",
+    "bytevariants": 1,
+    "kindvariants": 1,
+    "logical_path": "whisperx-models/nltk_data/tokenizers/punkt_tab/english/ortho_context.tab",
+    "metadatavariants": 3
+  },
+  {
+    "kinds": [
+      "media"
+    ],
+    "links": 3,
+    "sha256": "f3f8535483e1dba487241b764945168123bca3209a9645e59acd1225dc76edac",
+    "bytevariants": 1,
+    "kindvariants": 1,
+    "logical_path": "whisperx-models/nltk_data/tokenizers/punkt_tab/english/sent_starters.txt",
+    "metadatavariants": 3
+  }
+]

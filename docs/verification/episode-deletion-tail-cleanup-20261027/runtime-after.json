@@ -1,0 +1,40 @@
+{
+  "after": {
+    "accountIds": [
+      "194e137d-7bb0-4788-a413-f8b9726891d8",
+      "1b25d8f0-d8e3-414a-a736-635f8810c3dd",
+      "4ecf1795-060a-47c0-93e6-cc777f56d2a1",
+      "69d3380c-3f57-45fd-ab36-e05fd2ee730f",
+      "6ad5e58d-64e1-4a90-a7e1-2629beea9715",
+      "9179a633-a946-4442-9877-6293507672e6",
+      "982fdc36-14e4-4aad-890c-aa2be9db1317",
+      "f43ff40a-0c62-4a2e-8096-b2e36e55b57e"
+    ],
+    "episodeIds": [
+      "265dcee5-32c8-4066-b3ad-58803d195e01",
+      "32df1ba3-a3ad-4c2d-a7b3-29ece82ade41",
+      "3bf59fde-cf0b-47e1-990e-d7034cfbcfb3",
+      "4bf30683-7a28-4f7f-ac2f-2a263b90bfff",
+      "603a1588-a786-4ded-a4dd-a660d48ee617",
+      "6227e470-38a2-4a41-ace7-23de415683b4",
+      "6cb99a74-9e7d-44dd-9a16-98aa12c1e7ad",
+      "92b3067d-ced9-4e85-bc44-1968fa83695a",
+      "b7f6f1f5-35f8-41f2-90b2-cb7b5911a035",
+      "bbea3b57-061b-4341-9ba1-3bf65d28899f",
+      "c6d66cc3-c61e-4800-8b24-198b8376a76c",
+      "e8700b8e-e95f-48a9-9f2e-ac3259a61ed4",
+      "eb841772-1a2a-4966-8fc2-e981ce47d151"
+    ],
+    "runningTasks": 0,
+    "historySources": 187,
+    "historyFiles": 36973,
+    "historyVersions": 34821
+  },
+  "checks": {
+    "businessIdsUnchanged": true,
+    "historyCountsUnchanged": true,
+    "homeStatus": 200,
+    "compiledCleanupPresent": true,
+    "noExistingDeletionCommandInvoked": true
+  }
+}

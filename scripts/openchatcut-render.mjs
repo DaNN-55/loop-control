@@ -4,7 +4,7 @@ import { createServer } from "node:net";
 import { spawn, spawnSync } from "node:child_process";
 import { once } from "node:events";
 import { tmpdir } from "node:os";
-import { dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
+import {extname,isAbsolute,join,relative,resolve} from "node:path";
 import { randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
 

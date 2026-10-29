@@ -1,0 +1,20 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/platform/configurationForms.test.ts (23 tests) 9ms
+ ✓ src/connections/ConnectionFeedback.test.tsx (8 tests) 462ms
+ ✓ src/local-app/LocalConnectionsPanel.test.tsx (7 tests) 670ms
+ ✓ src/local-app/LocalHistory.test.tsx (5 tests) 677ms
+ ✓ src/local-app/HistoryDanUi.test.tsx (3 tests) 623ms
+   ✓ submits search, scope and the Dan UI checkbox through the existing read contract  305ms
+ ✓ src/connections/ConnectionWorkspace.test.tsx (8 tests) 1024ms
+ ✓ src/local-app/historyPresentation.test.ts (2 tests) 2ms
+ ✓ src/connections/ConnectionOrganization.test.tsx (3 tests) 240ms
+ ✓ src/local-app/HistoryEpisodes.test.tsx (2 tests) 149ms
+ ✓ src/connections/ConnectionDanUi.test.tsx (2 tests) 273ms
+
+ Test Files  10 passed (10)
+      Tests  63 passed (63)
+   Start at  22:06:07
+   Duration  3.61s (transform 457ms, setup 0ms, collect 7.37s, tests 4.13s, environment 2.84s, prepare 609ms)
+

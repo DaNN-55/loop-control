@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/ImpeccableNavigation.test.tsx (5 tests) 962ms
+   ✓ 工作台和待审核映射到受支持的 catalog view，管理导航从不发送虚构 view  342ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  10:13:45
+   Duration  2.58s (transform 401ms, setup 7ms, collect 1.23s, tests 962ms, environment 235ms, prepare 33ms)
+

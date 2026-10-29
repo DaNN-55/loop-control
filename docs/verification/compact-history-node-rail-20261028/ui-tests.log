@@ -1,0 +1,24 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/connections/ConnectionOrganization.test.tsx (6 tests) 514ms
+ ✓ src/connections/ConnectionFeedback.test.tsx (9 tests) 533ms
+ ✓ src/local-app/LocalConnectionsPanel.test.tsx (7 tests) 719ms
+ ✓ src/connections/ConnectionWorkspace.test.tsx (8 tests) 1192ms
+   ✓ 外部连接工作区 > 从空连接池创建并显式测试 Pexels 连接，表单提交后清空密钥  304ms
+   ✓ 外部连接工作区 > 轮换版本后只测试新连接并保留版本操作边界  312ms
+ ✓ src/local-app/HistoryDanUi.test.tsx (6 tests) 1380ms
+   ✓ submits search, scope and the Dan UI checkbox through the existing read contract  303ms
+   ✓ keeps file/record pagination independent, download links intact and JSON exact  331ms
+   ✓ loads sources only when opened and preserves each tab search and source detail  390ms
+ ✓ src/local-app/HistoryEpisodes.test.tsx (2 tests) 218ms
+ ✓ src/local-app/LocalHistory.test.tsx (5 tests) 506ms
+ ✓ src/connections/ConnectionDanUi.test.tsx (2 tests) 506ms
+   ✓ clears the credential draft and restores masking when opening another connection  397ms
+ ✓ src/local-app/LocalMaintenanceEmbedded.test.tsx (2 tests) 150ms
+
+ Test Files  9 passed (9)
+      Tests  47 passed (47)
+   Start at  17:14:43
+   Duration  3.54s (transform 327ms, setup 33ms, collect 6.86s, tests 5.72s, environment 2.25s, prepare 338ms)
+

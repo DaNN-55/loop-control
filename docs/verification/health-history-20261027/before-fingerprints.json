@@ -1,0 +1,59 @@
+{
+  "observedAt": "2026-10-27T01:39:34.431Z",
+  "protected": {
+    "public.accounts": {
+      "rows": 43,
+      "sha256": "757ad64d1bcddb2fa377090f95d15f9de95f55298e2bcaede8ceadc17c73d389"
+    },
+    "public.episodes": {
+      "rows": 238,
+      "sha256": "86cce87fdaf9a279a572b8c141efe190d07107af395242620f60d6505f5c9e84"
+    },
+    "public.tasks": {
+      "rows": 859,
+      "sha256": "d20e6ed090164a1f0af7e2600ffd721690908977e8d84e1330ff07f89fb8a4ad"
+    },
+    "public.artifacts": {
+      "rows": 986,
+      "sha256": "0d18ef10743db3d154aa7915289fa0f42b44f5b84721b7385544776c992c1d39"
+    },
+    "public.production_material_revisions": {
+      "rows": 328,
+      "sha256": "8cfe7dac3581554122dc07b7eb742355f451af126158132e94922bf812f82f3c"
+    },
+    "public.account_memberships": {
+      "rows": 45,
+      "sha256": "523c316ace0b1ff17a23961e26e88bad35d7d1c1171f4cb18ba6168a7f376931"
+    },
+    "public.notification_delivery_events": {
+      "rows": 2300,
+      "sha256": "0bb1b6e47d4d63c030f4dc55d13bd4f1eff9abde5a108f6cd2f35ff699e73efd"
+    },
+    "local_identity.owners": {
+      "rows": 11,
+      "sha256": "0cc8a94c5f32be20fc8008f261e9fd94cf7a152fc9859d7354da985ec9da1c38"
+    },
+    "local_identity.credentials": {
+      "rows": 1,
+      "sha256": "a9a418641d0cb16d6adbcacb1cd8ddb81a6e203dc9e1c7ad2cd3393e1792e1f4"
+    },
+    "local_identity.history_versions": {
+      "rows": 47651,
+      "sha256": "0b55e916eeef3aca1eea742b3beed8a64cc7fe568bffb27d41cdc5fead304099"
+    }
+  },
+  "maintenance": {
+    "automation_plans": {
+      "rows": 2,
+      "sha256": "e141a7bbbb1518948c5a43da82f523310095ce76d5f81b5f2d3b9b3ab3271d37"
+    },
+    "automation_jobs": {
+      "rows": 20,
+      "sha256": "ed51fe0d3f4658f70e91e9eb3e58e700eb7f1c3c439e4172b4428b65c48ae490"
+    },
+    "automation_attempts": {
+      "rows": 27,
+      "sha256": "97413dd1c568fd0616a3823b29d2407c86a845b14a5148b9ad72270550f15ed9"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "mode": "commit",
+  "newArchives": 210,
+  "archiveTotal": 213,
+  "deletedTasks": 5048,
+  "deletedAccounts": 11,
+  "deletedEpisodes": 6053,
+  "remainingAccounts": 37,
+  "remainingEpisodes": 232,
+  "protectedRelations": 56,
+  "unchangedOtherEpisodes": 19,
+  "preservedDataChecksPassed": true,
+  "deletedMediaDirectories": 3,
+  "deletedMediaFiles": 4,
+  "preservedMediaFiles": 1420,
+  "preservedMediaBytes": 4747532494,
+  "retainedMediaSha256Unchanged": true
+}

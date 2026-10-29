@@ -4,7 +4,7 @@ import {resolve,isAbsolute,join,basename} from 'node:path';
 import {createHash} from 'node:crypto';
 import {writeSafeAssetFile} from '../worker/controlledMediaExecutor.js';
 import {ConfigurationError} from './configurationCommands.js';
-import {isValidMainScript,mainScriptFormatError} from '../reviews/mainScript.js';
+import {mainScriptDiagnostic} from '../reviews/mainScript.js';
 const uuid=/^[0-9a-f-]{36}$/;
 export function safeRelative(path:string){return !!path&&!isAbsolute(path)&&!path.split(/[\\/]/).some(p=>!p||p==='.'||p==='..');}
 export async function nativeAssetRoot(mediaRoot:string,value:unknown,sourceRoots:readonly string[]=[]){
@@ -38,7 +38,7 @@ export async function snapshotInput(root:string,episodeId:string,input:{sourceKi
   if(bytes.toString('base64')!==input.contentBase64)throw new ConfigurationError(400,'材料内容无效。');
  }
  if(!bytes.length||bytes.length>100*1024*1024)throw new ConfigurationError(400,'材料不能为空或超过100MB。');
- if(input.isMainScript&&!isValidMainScript(bytes.toString('utf8')))throw new ConfigurationError(400,mainScriptFormatError);
+ if(input.isMainScript){const diagnostic=mainScriptDiagnostic(bytes.toString('utf8'));if(diagnostic)throw new ConfigurationError(400,diagnostic);}
  const sha256=createHash('sha256').update(bytes).digest('hex'),sourcePath=input.logicalName??input.sourcePath,storagePath=`episodes/${episodeId}/materials/${sha256}-${basename(sourcePath)}`;
  // Existing immutable content is checked before an idempotent write.
  try{await lstat(join(root,storagePath));await verifyNativeFile(root,storagePath,sha256,bytes.length);}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;await writeSafeAssetFile(root,storagePath,bytes);}

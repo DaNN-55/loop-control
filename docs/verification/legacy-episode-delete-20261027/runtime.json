@@ -1,0 +1,56 @@
+{
+  "beforeIdentitySha256": "5729ece1a8ab187a7d572b2b62f0a936640849003d8f446ffe0c384df7c69ac2",
+  "accountCount": 9,
+  "episodeCount": 14,
+  "testEpisode": "da8677ae-3c4d-4815-92d5-e1fef8bc7164",
+  "paths": [
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/local/volume/media/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164",
+      "exists": true
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164",
+      "exists": true
+    }
+  ],
+  "directoryChecks": [
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/local/volume/media/test-account/episodes",
+      "exists": true,
+      "directory": true,
+      "symlink": false,
+      "canonical": true
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/local/volume/media/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164",
+      "exists": true,
+      "directory": true,
+      "symlink": false,
+      "canonical": true
+    },
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/local/volume/media/test-account/episodes/.deletion-staging",
+      "exists": false
+    }
+  ],
+  "migration": "069-legacy-episode-cleanup.sql",
+  "migrationSha256": "51c9b328af5433daf1bef09615b6e127f3b568b96b4b01ace531d95df3fa0e36",
+  "afterMigrationIdentitySha256": "5729ece1a8ab187a7d572b2b62f0a936640849003d8f446ffe0c384df7c69ac2",
+  "identitiesUnchanged": true,
+  "afterBrowserIdentitySha256": "5729ece1a8ab187a7d572b2b62f0a936640849003d8f446ffe0c384df7c69ac2",
+  "pathsAfterVerification": [
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/local/volume/media/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164",
+      "exists": true
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/test-account/episodes/da8677ae-3c4d-4815-92d5-e1fef8bc7164",
+      "exists": true
+    }
+  ],
+  "testEpisodeAfter": {
+    "exists": true,
+    "managed": false,
+    "archived": true
+  }
+}

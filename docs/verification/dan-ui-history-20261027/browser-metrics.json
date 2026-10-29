@@ -1,0 +1,22 @@
+{
+  "checkbox": {
+    "checked": true,
+    "height": 13
+  },
+  "controls": [
+    {
+      "height": 36,
+      "width": 583
+    },
+    {
+      "height": 36,
+      "width": 164
+    }
+  ],
+  "horizontalOverflow": false,
+  "scope": 1,
+  "viewport": [
+    1235,
+    953
+  ]
+}

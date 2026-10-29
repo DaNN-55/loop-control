@@ -1,0 +1,331 @@
+{
+  "at": "2026-10-28T08:18:49Z",
+  "readOnly": true,
+  "sourceSha256": "84ab728c84a9654414bcfdec8d38403e4e927bdd61ee11c80793b5f432078d48",
+  "sourceBytes": 956227935,
+  "logicalContexts": 0,
+  "logicalContextEvidence": "protection-context-review.json confirmed no history_files row for this SHA",
+  "bounds": {
+    "compressedBytes": 67108864,
+    "expandedBytes": 134217728,
+    "members": 512,
+    "seconds": 45
+  },
+  "elapsedSeconds": 7.16,
+  "compressedBytesRead": 67108864,
+  "expandedBytesRead": 67108864,
+  "membersRead": 30,
+  "scanEndOffset": 67112600,
+  "unknownRemainderBytes": 889115335,
+  "complete": false,
+  "unknownDependencyHoldRequired": true,
+  "stop": {
+    "reason": "stored-member-descriptor-not-found-within-read-bound",
+    "offset": 67112600,
+    "memberNameSha256": "f7dda2c151550745e03f05a20a021f697976c179e7a2eae602b614a0d16e2cd7"
+  },
+  "members": [
+    {
+      "offset": 0,
+      "memberNameSha256": "b458b5f2055385f3dd013e91c3a1ed01d6eb4110e4c1bc88ce2168e8f1847a9a",
+      "extension": ".pkl",
+      "compressionMethod": 0,
+      "compressedBytesRead": 93352,
+      "expandedBytesRead": 93352,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 93432,
+      "memberNameSha256": "4ef6637370280c85b2897146e91132603d34a7555d22c31d23ea51eff70493eb",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 2048,
+      "expandedBytesRead": 2048,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 95568,
+      "memberNameSha256": "c8a8186aa5cd94e883ace79d23c908037ef208069c7ef2ed19c3054fa9fc0abe",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 3145728,
+      "expandedBytesRead": 3145728,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 3241424,
+      "memberNameSha256": "e9bb2393858351cfc3428555ef52b3f42c75c03c039bedc0f18f08c28467d7dc",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 2048,
+      "expandedBytesRead": 2048,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 3243600,
+      "memberNameSha256": "9c1bd3b915c2ea2bf895b8784cbfc479a25942d35d0cb45c0b9e6c240a85d5c2",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4096,
+      "expandedBytesRead": 4096,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 3247824,
+      "memberNameSha256": "a8972e76e64e64d6bc4766fbb9f0d241ad5073fc53d4378ad6e8a1c9b2037340",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 16777216,
+      "expandedBytesRead": 16777216,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 20025168,
+      "memberNameSha256": "fba3ae48fba495210a7bc14b3b5933d1be929ae50c07d36323ce87f7bf2df0e5",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 16384,
+      "expandedBytesRead": 16384,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 20041680,
+      "memberNameSha256": "1fd4ccc6abf112e4da833a9c14cacb7c34a9544e6e88c5147879be662404489e",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 16777216,
+      "expandedBytesRead": 16777216,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 36819024,
+      "memberNameSha256": "9b4a0c1442df6c8f59ba656242196a905a64240fb875f60395d7b37b9064ae71",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4096,
+      "expandedBytesRead": 4096,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 36823248,
+      "memberNameSha256": "78af52a1efb2693d2404a20378ad7c9e8d8c73f8d653b480fef972f9572bd0e3",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4096,
+      "expandedBytesRead": 4096,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 36827472,
+      "memberNameSha256": "7b82e093b877ee7af7aae7c3b4f4d6757b98a4f437020820754c6ce3ed5b7a73",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4194304,
+      "expandedBytesRead": 4194304,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 41021904,
+      "memberNameSha256": "1a8f8da54c17a0d478caa430798fb3627b1295fdd5716ee971a0e2706c8cf604",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4096,
+      "expandedBytesRead": 4096,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 41026128,
+      "memberNameSha256": "8c1a0062f92cc4e432ad957939a12f1c68ea63d4601941448d234dabcd3c8613",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4194304,
+      "expandedBytesRead": 4194304,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 45220560,
+      "memberNameSha256": "cf53b84b1a2a3f521eec8848721e6aa0799d55bc8696d455b309b1b47fd0ffce",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4096,
+      "expandedBytesRead": 4096,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 45224784,
+      "memberNameSha256": "73f60dd6729a03d1abb5f0e46cbfa69c744ac86fa9e9773d587eb82c2092c6a0",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4096,
+      "expandedBytesRead": 4096,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 45229008,
+      "memberNameSha256": "6706995c8a18ec08f0a022eac19b75755437a001c3a6017d4269cb11220c6fa5",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4096,
+      "expandedBytesRead": 4096,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 45233232,
+      "memberNameSha256": "d1b53866873c99e16107fb6ea7895165de918accbcb4732a36edf79717506033",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4096,
+      "expandedBytesRead": 4096,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 45237456,
+      "memberNameSha256": "73e9f4f91ceb5f6e6ee4b897c85e664dada49e74d44f7cb6a2cb5611fbb19254",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4194304,
+      "expandedBytesRead": 4194304,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 49431888,
+      "memberNameSha256": "b61f31a86aae2da8481bd3b873658410b9ee59adb68580e3ec01d5e59bef903f",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4096,
+      "expandedBytesRead": 4096,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 49436112,
+      "memberNameSha256": "c4dead5b7f1fc360fbd7b9b45733cd9d0b4738f27fabc91b4f81a7f5278d11e9",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4194304,
+      "expandedBytesRead": 4194304,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 53630544,
+      "memberNameSha256": "a68930f5f241b0cc90a6ab9cf1e20c79fd5aa29a0d2cbcb8085477c563ee5f1c",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4096,
+      "expandedBytesRead": 4096,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 53634768,
+      "memberNameSha256": "4f298d68fd7a20026be81753fd1288a01e7a99344fe539f0f769dcebca3a80fb",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4194304,
+      "expandedBytesRead": 4194304,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 57829200,
+      "memberNameSha256": "f19cc72fce7ef1cc92d0c133051be55d0bef4afede64df8b5d946386ecb2622d",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4096,
+      "expandedBytesRead": 4096,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 57833424,
+      "memberNameSha256": "500fc08d294e1df77ecada2f2b7cf2903b590c65ca5ae50872893db98af60eae",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4096,
+      "expandedBytesRead": 4096,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 57837648,
+      "memberNameSha256": "064d0efd61e493aad0a4c7a58e47f2a63dcc5b32ce7e79f3337d25528e578d62",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4096,
+      "expandedBytesRead": 4096,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 57841872,
+      "memberNameSha256": "bebf3acb95bbdfddfbcaa201bbdb4eeeefd44353de792a23954dece806f570ed",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4194304,
+      "expandedBytesRead": 4194304,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 62036304,
+      "memberNameSha256": "e884305681191f1f60871f9226ef1a8079c48ec9b3410371dfa85bbb1d55249e",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4096,
+      "expandedBytesRead": 4096,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 62040528,
+      "memberNameSha256": "c88c32f8bbf47ed23bc065cc51c9709756a328b8ca10e07e63fc34ac23939738",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4194304,
+      "expandedBytesRead": 4194304,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 66234960,
+      "memberNameSha256": "db761545d0cea0547f86e137a6a98e19a1d95ab1b4bde3c80cd83d08331011b3",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 4096,
+      "expandedBytesRead": 4096,
+      "memberCompleteAndCRCVerified": true,
+      "nestedScanErrorClass": null
+    },
+    {
+      "offset": 66239184,
+      "memberNameSha256": "f7dda2c151550745e03f05a20a021f697976c179e7a2eae602b614a0d16e2cd7",
+      "extension": "",
+      "compressionMethod": 0,
+      "compressedBytesRead": 873304,
+      "expandedBytesRead": 873304,
+      "memberCompleteAndCRCVerified": false,
+      "nestedScanErrorClass": null
+    }
+  ],
+  "references": [],
+  "limits": "Only complete local member CRCs prove member completeness; unknown remaining bytes and missing central directory remain held. No claim that recovered local members exhaust the archive."
+}

@@ -41,3 +41,14 @@ it('uses the independently scoped daily application Keychain without the accepta
  expect(await configuredKeychainStore(daily).get(reference)).toBe(secret);expect(vi.mocked(spawn).mock.calls[0][1]).toEqual(['--keychain','/tmp/fixture/.loop-control/local/keychain/loop-control.keychain-db']);
  await expect(configuredKeychainStore({...daily,keychainName:'../other.keychain-db'}).get(reference)).rejects.toMatchObject({code:'unavailable'});
 });
+it('prepares the daily Keychain before every access and stops on preparation failure',async()=>{
+ let unlocked=false;
+ mockHelper(()=>unlocked?{status:0,value:{ok:true,code:'stored'}}:{status:1,value:{ok:false,code:'locked_or_denied'}});
+ const prepare=vi.fn(async()=>{unlocked=true;});
+ const store=configuredKeychainStore(config,prepare);
+ await store.putImmutable(reference,secret);unlocked=false;await store.putImmutable(reference,secret);
+ expect(prepare).toHaveBeenCalledTimes(2);
+ const denied=vi.fn(async()=>{throw Error('synthetic unlock failure');});
+ await expect(configuredKeychainStore(config,denied).get(reference)).rejects.toMatchObject({code:'denied'});
+ expect(spawn).toHaveBeenCalledTimes(2);
+});

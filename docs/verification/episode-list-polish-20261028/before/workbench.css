@@ -1,0 +1,66 @@
+/* The list is the primary workspace; the current work starts beside its review notice. */
+html[data-interface="impeccable"] .impeccable-app.product-ui .operations-workspace{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:24px 20px;align-items:start}
+html[data-interface="impeccable"] .impeccable-app.product-ui .operations-intro{grid-column:1/-1;align-items:center}
+html[data-interface="impeccable"] .product-ui .operations-intro h2{font-size:26px;line-height:1.3;font-weight:650;letter-spacing:-.02em;margin:0 0 8px}
+html[data-interface="impeccable"] .product-ui .operations-intro p{font-size:13px;color:var(--lc-muted);margin:0}
+.work-main-column,.work-results{display:grid;gap:20px;min-width:0}
+html[data-interface="impeccable"] .impeccable-app.product-ui .work-main-column>.lc-work-notice{display:flex;gap:16px;align-items:center;padding:20px;min-height:88px;border-radius:8px;margin:0;background:var(--lc-accent-soft);color:var(--lc-accent)}
+.work-main-column>.lc-work-notice>div{flex:1;min-width:0}
+html[data-interface="impeccable"] .product-ui .work-main-column>.lc-work-notice strong{display:block;font-size:13px;font-weight:600;color:var(--lc-ink)}
+html[data-interface="impeccable"] .product-ui .work-main-column>.lc-work-notice span{display:block;font-size:12px;color:var(--lc-muted);margin-top:6px;line-height:1.5}
+html[data-interface="impeccable"] .product-ui .work-main-column>.episode-status-tabs{margin:0;gap:24px}
+.work-filters{display:flex;gap:8px;align-items:center;min-width:0}
+html[data-interface="impeccable"] .product-ui .work-filters .episode-search{flex:1 1 180px;min-width:160px}
+.work-filters>.dan-select-field{flex:0 1 130px;min-width:110px;width:130px}
+html[data-interface="impeccable"] .product-ui .work-filters select{height:36px;font-size:12px}
+html[data-interface="impeccable"] .impeccable-app.product-ui .lc-work-table{grid-column:auto;grid-row:auto;min-width:0;border:1px solid var(--lc-line);border-radius:12px;overflow:hidden;background:var(--lc-surface)}
+.work-table-scroll{overflow-x:auto}
+.work-table-scroll table{width:100%;border-collapse:collapse;table-layout:fixed;text-align:left;font-size:12px;min-width:620px}
+html[data-interface="impeccable"] .product-ui .work-table-scroll :is(th,td){text-align:left;border:0;padding:16px 12px;vertical-align:middle;overflow:hidden}
+html[data-interface="impeccable"] .product-ui .work-table-scroll th{background:var(--lc-surface-2);color:var(--lc-muted);font-size:11px;font-weight:500;padding-block:12px}
+.work-table-scroll th:first-child{width:35%}.work-table-scroll th:nth-child(2){width:22%}.work-table-scroll th:nth-child(3){width:19%}.work-table-scroll th:nth-child(4){width:19%}.work-table-scroll th:last-child{width:56px}
+.work-table-scroll tbody tr{border-top:1px solid var(--lc-line);cursor:pointer;min-height:80px}
+.work-table-scroll tr.is-selected{background:var(--lc-accent-soft)}
+.work-table-scroll tbody tr:hover{background:var(--lc-surface-2)}
+html[data-interface="impeccable"] .product-ui .work-table-scroll td:first-child{padding-left:16px}
+.work-episode-select{display:flex;align-items:center;gap:12px;width:100%;min-width:0;padding:0;border:0;background:transparent;color:var(--lc-ink);text-align:left;cursor:pointer}
+.work-episode-select>span:last-child{display:grid;gap:5px;min-width:0}
+.work-episode-select strong{font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.work-episode-select small{font-size:11px;color:var(--lc-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.work-table-scroll time{font-size:11px;color:var(--lc-muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.work-table-scroll td:last-child{--lc-icon-control-size:28px;padding-inline:4px}
+.work-table-scroll td:last-child button{color:var(--lc-muted)}
+.work-episode-select:focus-visible,.work-main-column [role=tab]:focus-visible{outline:2px solid var(--lc-accent);outline-offset:3px}
+.work-empty{padding:56px 24px;text-align:center}.work-empty h3{font-size:14px;margin:0 0 8px}.work-empty p{color:var(--lc-muted);font-size:12px;margin:0}
+html[data-interface="impeccable"] .impeccable-app.product-ui .work-continuation{grid-column:2;grid-row:2 / span 2;position:static;display:flex;flex-direction:column;min-height:740px;min-width:0;border:1px solid var(--lc-line);border-radius:12px;background:var(--lc-surface);overflow:hidden}
+.work-continuation>header{padding:18px 20px;display:flex;gap:12px;align-items:center;justify-content:space-between;min-height:58px}
+html[data-interface="impeccable"] .product-ui .work-continuation>header h2{font-size:15px;margin:0;font-weight:600}
+.work-continuation>header>span{color:var(--lc-muted);font-size:11px}
+.work-artwork{aspect-ratio:8/5;overflow:hidden;min-width:0;padding:28px 24px;display:flex;flex-direction:column;justify-content:center;gap:12px;background:var(--lc-rail);color:var(--lc-rail-ink)}
+.work-artwork>strong{font-size:25px;line-height:1.4;font-weight:600;letter-spacing:-.02em;overflow-wrap:anywhere}.work-artwork>span{font-size:11px;opacity:.8}
+.work-artwork.has-media{padding:0;background:var(--lc-surface-2);position:relative;display:block}.work-artwork :is(img,video){position:absolute;inset:0;width:100%;height:100%;object-fit:contain;display:block}
+.work-continuation-body{padding:20px;display:flex;flex:1;flex-direction:column;gap:20px;min-width:0}
+html[data-interface="impeccable"] .product-ui .work-title h3{font-size:17px;line-height:1.5;margin:0 0 6px;overflow-wrap:anywhere;font-weight:600}
+.work-context{font-size:12px;color:var(--lc-muted);margin:0;line-height:1.6}
+.work-phase-track{display:flex;list-style:none;margin:0;padding:0;color:var(--lc-muted)}
+.work-phase-track li{flex:1;min-width:0;position:relative;display:grid;justify-items:center;gap:10px;font-size:10px;line-height:1.4}
+.work-phase-track li:not(:last-child)::after{content:'';position:absolute;left:50%;top:5px;height:2px;width:100%;background:var(--lc-line)}
+.work-phase-track li>span{width:12px;height:12px;border-radius:50%;background:var(--lc-line);position:relative;z-index:1;display:grid;place-items:center}
+.work-phase-track .is-complete{color:var(--lc-success)}.work-phase-track .is-complete>span,.work-phase-track .is-complete::after{background:var(--lc-success);color:var(--lc-surface)}
+.work-phase-track .is-current{color:var(--lc-accent);font-weight:600}.work-phase-track .is-current>span{background:var(--lc-accent);outline:3px solid var(--lc-accent-soft)}
+.work-next-step{padding:16px;background:var(--lc-surface-2);border-radius:8px;display:grid;justify-items:start;gap:10px}
+.work-next-step>strong{display:flex;align-items:center;justify-content:space-between;width:100%;font-size:12px;font-weight:600;gap:4px;flex-wrap:wrap}.work-next-step>strong>span{margin-left:auto;display:flex;align-items:center;gap:4px;font-weight:400}
+.work-next-step p{font-size:12px;color:var(--lc-muted);line-height:1.6;margin:0}
+.work-context-details{display:grid;gap:12px;margin:0;font-size:12px}
+.work-context-details>div{display:flex;justify-content:space-between;gap:16px}.work-context-details dt{color:var(--lc-muted)}.work-context-details dd{margin:0;text-align:right}
+.work-continuation-body>footer{margin-top:auto;padding-top:20px;border-top:1px solid var(--lc-line)}.work-continuation-body>footer>button{width:100%;justify-content:center}
+html[data-interface="impeccable"] .impeccable-app.product-ui .lc-work-queue{grid-column:1;grid-row:3;grid-template-columns:minmax(0,1fr)}
+@media(max-width:1250px){.work-filters{flex-wrap:wrap}html[data-interface="impeccable"] .product-ui .work-filters .episode-search{flex-basis:100%}.work-filters>.dan-select-field{flex:1 1 110px}}
+@media(max-width:1000px){html[data-interface="impeccable"] .impeccable-app.product-ui .operations-workspace{grid-template-columns:minmax(0,1fr)}html[data-interface="impeccable"] .impeccable-app.product-ui .work-continuation{grid-column:1;grid-row:3;min-height:0;display:grid;grid-template-columns:280px minmax(0,1fr)}.work-continuation>header{grid-column:1/-1}.work-continuation>.work-artwork{align-self:start}.work-continuation-body{grid-column:2;grid-row:2;gap:20px}html[data-interface="impeccable"] .impeccable-app.product-ui .lc-work-queue{grid-row:4}}
+@media(max-width:640px){html[data-interface="impeccable"] .impeccable-app.product-ui .work-continuation{display:flex}.work-main-column>.lc-work-notice{flex-wrap:wrap}.operations-intro{flex-wrap:wrap}.work-continuation>.work-artwork{align-self:stretch}}
+
+html[data-interface="impeccable"] .impeccable-app.product-ui .operations-workspace[data-has-current="false"]{grid-template-columns:minmax(0,1fr)}
+
+.work-list-footer{display:flex;align-items:center;justify-content:space-between;gap:16px;color:var(--lc-muted);font-size:12px;margin-top:-8px;padding:0 0 4px}
+.work-list-footer>button{color:var(--lc-muted);font-size:12px}

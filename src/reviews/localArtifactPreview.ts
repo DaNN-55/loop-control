@@ -3,7 +3,7 @@ import { backend } from "../lib/backend";
 
 // Select once during module initialization. Native pages never initialize the
 // legacy client; legacy previews share the same client across concurrent loads.
-const legacyClient = backend === 'local' ? null : (await import('../lib/supabase')).supabase;
+const legacyClient = backend === 'local' ? null : (await import('../lib/viewTransport')).viewTransport;
 
 const previewCacheDurationMs = 29 * 60_000;
 const localArtifactPreviewLoads = new Map<string, { expiresAt: number; load: Promise<string> }>();

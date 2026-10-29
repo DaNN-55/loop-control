@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { episodeCatalogChanged } from './episodeCatalog';
 import type { EpisodeProductionSnapshot } from './EpisodeProductionContainer';
 import { vi } from 'vitest';
-vi.mock('../lib/supabase', () => ({ supabase: {} }));
+vi.mock('../lib/viewTransport', () => ({ viewTransport: {} }));
 const episode = { id: 'episode-one', stage: 'waiting_input' };
 const before = { episode, tasks: [{ id: 'task-one', status: 'ready', task_type: 'draft_brief', created_at: '2000-01-01', input_snapshot: {}, last_result: {} }], taskRuns: [], artifacts: [], reviewPackages: [], preRenderReviewMembers: [], preRenderReviewMemberDecisions: [] } as unknown as EpisodeProductionSnapshot;
 describe('catalog updates from detail state', () => {

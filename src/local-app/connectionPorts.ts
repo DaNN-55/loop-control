@@ -10,7 +10,10 @@ export interface SecretStore {
 }
 export const disabledSecretStore:SecretStore={mode:'disabled',async putImmutable(){throw new SecretStoreError('disabled');},async get(){throw new SecretStoreError('disabled');}};
 export type ProbeOutcome='verified'|'invalid'|'retryable';
+export interface ProbeResult {outcome:ProbeOutcome;attempted:boolean;code:string;detail:string;httpStatus?:number}
 export interface ConnectionProbe {
+ verificationStatus?(provider:string):{available:boolean;code:string;detail:string};
+ test?(input:{provider:string;adapter:string;endpoint:string;secret:string}):Promise<ProbeResult>;
  readonly mode:'disabled'|'simulated'|'live';
  readonly networkAvailable?:boolean;
  verify(input:{provider:string;adapter:string;endpoint:string;secret:string}):Promise<ProbeOutcome>;

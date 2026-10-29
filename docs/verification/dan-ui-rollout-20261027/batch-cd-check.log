@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 check
+> tsc -b --pretty false
+
+src/workspace/WorkspaceViews.tsx(7,28): error TS6133: 'useRef' is declared but its value is never read.

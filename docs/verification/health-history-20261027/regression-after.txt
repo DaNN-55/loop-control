@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/automationHistory.integration.test.ts (1 test) 217ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  09:38:53
+   Duration  376ms (transform 34ms, setup 0ms, collect 42ms, tests 217ms, environment 0ms, prepare 30ms)
+

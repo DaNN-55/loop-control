@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import type { ComponentProps } from "react";
 import { useState } from "react";
@@ -6,9 +6,9 @@ import { describe, expect, it, vi } from "vitest";
 import type { Database, Json } from "../lib/database.types";
 import type { WorkerPreflightResult } from "../worker/contracts";
 import type { ExternalConnectionVersion } from "../connections/ConnectionWorkspace";
-import { AccountWorkspace } from "../App";
+import { AccountWorkspace } from "./AccountWorkspace";
 
-vi.mock("../lib/supabase", () => ({ supabase: {} }));
+vi.mock("../lib/viewTransport", () => ({ viewTransport: {} }));
 
 type Account = Database["public"]["Tables"]["accounts"]["Row"];
 type Blueprint = Database["public"]["Tables"]["account_blueprint_versions"]["Row"];
@@ -42,12 +42,24 @@ function PromptVersionRefreshWorkspace() {
 }
 
 describe("账号配置工作区", () => {
+  it("切换分区后选中标签始终关联当前面板", async () => {
+    const user = userEvent.setup();
+    renderWorkspace({ series: [series], seriesVersions });
+    for (const name of ["系列", "蓝图"]) {
+      const tab = screen.getByRole("tab", { name });
+      await user.click(tab);
+      const panel = screen.getByRole("tabpanel", { name });
+      expect(tab.getAttribute("aria-controls")).toBe(panel.id);
+      expect(panel.getAttribute("aria-labelledby")).toBe(tab.id);
+    }
+  });
+
   it("用当前配置工作区取代蓝图版本管理", () => {
     renderWorkspace({ blueprints: [blueprint, { ...blueprint, id: "old", is_active: false, version: 2 }], onUpdateBlueprint: vi.fn().mockResolvedValue(blueprint) });
 
     expect(screen.getByLabelText("当前账号")).toBeTruthy();
     expect(screen.queryByRole("heading", { name: "蓝图配置" })).toBeNull();
-    expect(screen.getByRole("navigation", { name: "蓝图配置分区" })).toBeTruthy();
+    expect(screen.queryByRole("navigation", { name: "蓝图配置分区" })).toBeNull();
     expect(screen.getByRole("complementary", { name: "账号默认配置检查" })).toBeTruthy();
     expect(screen.queryByText("蓝图版本")).toBeNull();
     expect(screen.queryByRole("button", { name: /激活|归档|停用/ })).toBeNull();
@@ -85,13 +97,26 @@ describe("账号配置工作区", () => {
     expect(onUpdateBlueprint).toHaveBeenCalledWith(expect.objectContaining({ positioning: "新定位" }));
   });
 
+  it("保存失败时在确认弹窗中展示错误并保留草稿", async () => {
+    const user = userEvent.setup();
+    renderWorkspace({onUpdateBlueprint: vi.fn().mockResolvedValue(null)});
+    await user.clear(screen.getByLabelText("账号定位"));
+    await user.type(screen.getByLabelText("账号定位"), "失败后保留的草稿");
+    await user.click(screen.getByRole("button", {name: "保存并检查"}));
+    const dialog = screen.getByRole("dialog", {name: "确认保存蓝图"});
+    await user.click(within(dialog).getByRole("button", {name: "确认保存并检查"}));
+    expect(await within(dialog).findByRole("alert")).toHaveProperty("textContent", "蓝图未保存，请处理错误后重试。");
+    await user.click(within(dialog).getByRole("button", {name: "取消"}));
+    expect(screen.getByLabelText("账号定位")).toHaveProperty("value", "失败后保留的草稿");
+  });
+
   it("取消编辑会恢复当前保存值", async () => {
     const user = userEvent.setup();
     const onDirtyChange = vi.fn();
     renderWorkspace({ onDirtyChange });
     await user.clear(screen.getByLabelText("账号定位"));
     await user.type(screen.getByLabelText("账号定位"), "未保存定位");
-    await user.click(screen.getByRole("button", { name: "取消编辑" }));
+    await user.click(screen.getByRole("button", { name: "撤销修改" }));
     expect((screen.getByLabelText("账号定位") as HTMLTextAreaElement).value).toBe("越南民间信仰");
     expect(onDirtyChange).toHaveBeenCalledWith(true);
     expect(onDirtyChange).toHaveBeenLastCalledWith(false);
@@ -110,24 +135,29 @@ describe("账号配置工作区", () => {
     confirm.mockRestore();
   });
 
-  it("左侧分区导航都有真实目标", () => {
+  it("资产目录紧随定位，分镜并入能力表且保留审核设置", () => {
     renderWorkspace();
-    expect(document.querySelector("#account-rules")).toBeTruthy();
-    expect(document.querySelector("#account-capabilities")).toBeTruthy();
-    expect(document.querySelector("#account-budget")).toBeTruthy();
-    expect(document.querySelector("#account-budget")?.tagName).toBe("FIELDSET");
+    const groups = screen.getAllByRole("group").filter(group => group.tagName === "FIELDSET");
+    expect(groups.map(group => group.querySelector("legend")?.textContent)).toEqual(["账号定位", "资产目录", "生产能力", "审核设置"]);
+    const matrix = screen.getByRole("table", { name: "生产能力配置矩阵" });
+    const storyboard = within(matrix).getByRole("checkbox", { name: "分镜规划已启用" }) as HTMLInputElement;
+    expect(storyboard.checked).toBe(true);
+    expect(storyboard.disabled).toBe(true);
+    expect(within(matrix).getByRole("button", { name: "修改分镜规划配置" })).toBeTruthy();
   });
 
-  it("右侧滚动时更新左侧当前分区", async () => {
-    renderWorkspace();
-    const positions = { "#account-rules": -400, "#account-capabilities": 80, "#account-budget": 420 };
-    for (const [selector, top] of Object.entries(positions)) {
-      Object.defineProperty(document.querySelector(selector), "getBoundingClientRect", { configurable: true, value: () => ({ top }) });
-    }
-
-    await act(async () => window.dispatchEvent(new Event("scroll")));
-
-    await waitFor(() => expect(screen.getByRole("link", { name: "生产能力" }).getAttribute("aria-current")).toBe("location"));
+  it("修改草稿时不沿用已保存配置的检查通过状态，撤销后可重新检查", async () => {
+    const user = userEvent.setup();
+    const onRefreshBlueprintPreflight = vi.fn().mockResolvedValue(undefined);
+    renderWorkspace({blueprintPreflight: {checks: [], ready: true} as unknown as WorkerPreflightResult, onRefreshBlueprintPreflight});
+    const readiness = screen.getByRole("complementary", {name: "账号默认配置检查"});
+    expect(within(readiness).getByText("账号检查通过")).toBeTruthy();
+    await user.type(screen.getByLabelText("账号定位"), "草稿");
+    expect(within(readiness).queryByText("账号检查通过")).toBeNull();
+    expect((within(readiness).getByRole("button", {name: "重新检查"}) as HTMLButtonElement).disabled).toBe(true);
+    await user.click(screen.getByRole("button", {name: "撤销修改"}));
+    await user.click(within(readiness).getByRole("button", {name: "重新检查"}));
+    expect(onRefreshBlueprintPreflight).toHaveBeenCalledOnce();
   });
 
   it("始终展示默认关闭的五项生产能力", () => {
@@ -161,7 +191,7 @@ describe("账号配置工作区", () => {
     renderWorkspace({ onUpdateBlueprint });
 
     await user.click(screen.getByRole("checkbox", { name: "启用图片生成" }));
-    expect(screen.getByText("未配置", { selector: ".capability-matrix-status" })).toBeTruthy();
+    expect(screen.getByText("未配置")).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "保存并检查" }));
     await user.click(screen.getByRole("button", { name: "确认保存并检查" }));
 
@@ -199,13 +229,13 @@ describe("账号配置工作区", () => {
   });
 
 
-  it("旁白和配乐只选择登记的 Adapter 与非秘密连接", async () => {
+  it("旁白和配乐只选择登记的 Adapter 与非密钥连接", async () => {
     const user = userEvent.setup();
-    const connection: ExternalConnection = { adapter: "google_tts", created_at: "2026-08-25T00:00:00.000Z", created_by: "owner-1", current_version_id: "33333333-3333-4333-8333-333333333333", id: "33333333-3333-4333-8333-333333333333", last_verification_detail: "连接已接受请求。", last_verified_at: "2026-08-25T00:01:00.000Z", name: "主 Google TTS", provider: "google_tts", status: "verified" };
+    const connection: ExternalConnection = { adapter: "volcengine_tts", created_at: "2026-08-25T00:00:00.000Z", created_by: "owner-1", current_version_id: "33333333-3333-4333-8333-333333333333", id: "33333333-3333-4333-8333-333333333333", last_verification_detail: "连接已接受请求。", last_verified_at: "2026-08-25T00:01:00.000Z", name: "主火山语音", provider: "volcengine_tts", status: "verified" };
     const connectionVersions: ExternalConnectionVersion[] = [
       { adapter: "pexels_video", connection_id: "11111111-1111-4111-8111-111111111111", created_at: "2026-08-25T00:00:00.000Z", endpoint: "https://api.pexels.com", id: "11111111-1111-4111-8111-111111111111", is_current: true, provider: "pexels", revoked_at: null, status: "verified", version: 1 },
       { adapter: "freesound_preview", connection_id: "22222222-2222-4222-8222-222222222222", created_at: "2026-08-25T00:00:00.000Z", endpoint: "https://freesound.org/apiv2", id: "22222222-2222-4222-8222-222222222222", is_current: true, provider: "freesound", revoked_at: null, status: "verified", version: 1 },
-      { adapter: "google_tts", connection_id: "33333333-3333-4333-8333-333333333333", created_at: "2026-08-25T00:00:00.000Z", endpoint: "https://texttospeech.googleapis.com", id: "33333333-3333-4333-8333-333333333333", is_current: true, provider: "google_tts", revoked_at: null, status: "verified", version: 1 },
+      { adapter: "volcengine_tts", connection_id: "33333333-3333-4333-8333-333333333333", created_at: "2026-08-25T00:00:00.000Z", endpoint: "https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse", id: "33333333-3333-4333-8333-333333333333", is_current: true, provider: "volcengine_tts", revoked_at: null, status: "verified", version: 1 },
     ];
     renderWorkspace({ connectionVersions, externalConnections: [
       { ...connection, adapter: "pexels_video", current_version_id: "11111111-1111-4111-8111-111111111111", id: "11111111-1111-4111-8111-111111111111", name: "主 Pexels", provider: "pexels" },
@@ -217,7 +247,7 @@ describe("账号配置工作区", () => {
     await user.click(screen.getByRole("checkbox", { name: "启用配乐 / 音效" }));
     await user.click(screen.getByRole("button", { name: "配置旁白" }));
     await user.selectOptions(screen.getByRole("combobox", { name: "旁白 执行路径" }), "external");
-    await user.selectOptions(screen.getByRole("combobox", { name: "旁白 Adapter" }), "google_tts");
+    await user.selectOptions(screen.getByRole("combobox", { name: "旁白 Adapter" }), "volcengine_tts");
     await user.click(screen.getByRole("button", { name: "完成" }));
     await user.click(screen.getByRole("button", { name: "配置配乐 / 音效" }));
     await user.selectOptions(screen.getByRole("combobox", { name: "配乐 / 音效 执行路径" }), "external");
@@ -227,7 +257,7 @@ describe("账号配置工作区", () => {
     await user.click(screen.getByRole("button", { name: "配置旁白" }));
     expect(screen.queryByRole("combobox", { name: "语言代码" })).toBeNull();
     expect(screen.getByRole("combobox", { name: "旁白 模型" })).toBeTruthy();
-    expect(screen.getByText("主 Google TTS · v1 · 已验证")).toBeTruthy();
+    expect(screen.getByText("主火山语音 · v1 · 已验证")).toBeTruthy();
     await user.click(screen.getByRole("button", { name: "完成" }));
     await user.click(screen.getByRole("button", { name: "配置配乐 / 音效" }));
     expect(screen.getByText("官方 Endpoint：https://freesound.org/apiv2")).toBeTruthy();
@@ -317,7 +347,7 @@ describe("账号配置工作区", () => {
     await user.click(screen.getByRole("button", { name: "完成" }));
     await user.click(screen.getByRole("button", { name: "配置旁白" }));
     await user.selectOptions(screen.getByRole("combobox", { name: "旁白 执行路径" }), "external");
-    await user.selectOptions(screen.getByRole("combobox", { name: "旁白 Adapter" }), "google_tts");
+    await user.selectOptions(screen.getByRole("combobox", { name: "旁白 Adapter" }), "volcengine_tts");
     await user.click(screen.getByRole("button", { name: "完成" }));
     await user.click(screen.getByRole("button", { name: "配置配乐 / 音效" }));
     await user.selectOptions(screen.getByRole("combobox", { name: "配乐 / 音效 执行路径" }), "external");
@@ -341,7 +371,7 @@ describe("账号配置工作区", () => {
     expect((screen.getByRole("combobox", { name: "B-roll Adapter" }) as HTMLSelectElement).value).toBe("pexels_video");
     await user.click(screen.getByRole("button", { name: "完成" }));
     await user.click(screen.getByRole("button", { name: "配置旁白" }));
-    expect((screen.getByRole("combobox", { name: "旁白 Adapter" }) as HTMLSelectElement).value).toBe("google_tts");
+    expect((screen.getByRole("combobox", { name: "旁白 Adapter" }) as HTMLSelectElement).value).toBe("volcengine_tts");
     await user.click(screen.getByRole("button", { name: "完成" }));
     await user.click(screen.getByRole("button", { name: "配置配乐 / 音效" }));
     expect((screen.getByRole("combobox", { name: "配乐 / 音效 Adapter" }) as HTMLSelectElement).value).toBe("freesound_preview");
@@ -413,7 +443,7 @@ describe("账号配置工作区", () => {
   it("不在第一屏展示冗长的接口错误", () => {
     const error = `检查接口失败：${"server trace ".repeat(20)}`;
     renderWorkspace({ blueprintPreflightError: error });
-    expect(screen.getByText("生产就绪检查暂时失败，请稍后重新检查。")).toBeTruthy();
+    expect(screen.getByText("检查失败，请重试。")).toBeTruthy();
     expect(screen.queryByText(error)).toBeNull();
   });
 
@@ -431,6 +461,38 @@ describe("账号配置工作区", () => {
     expect(within(dialog).getByText(/创建系列 v3/)).toBeTruthy();
     await user.click(within(dialog).getByRole("button", { name: "确认保存为 v3" }));
     expect(onCreateSeriesVersion).toHaveBeenCalledWith({ seriesId: series.id, rules: expect.objectContaining({ positioning: "当前系列定位" }) });
+  });
+
+  it("系列分组调整后仍保存全部字段，并在底部恢复保存状态", async () => {
+    const user = userEvent.setup();
+    const onCreateSeriesVersion = vi.fn().mockResolvedValue(undefined);
+    renderWorkspace({onCreateSeriesVersion, series:[series], seriesVersions});
+    await user.click(screen.getByRole("tab", {name:"系列"}));
+    const footer = screen.getByRole("button", {name:"保存为 v3"}).closest("footer") as HTMLElement;
+    for (const [label, value] of [["系列定位", "聚焦城市生活"], ["内容格式", "竖屏"], ["角色设定", "主持人"], ["地点设定", "街区"], ["视觉风格", "写实"], ["叙事结构", "开场到结尾"], ["限制与禁用内容", "不使用商标"]]) {
+      await user.clear(screen.getByLabelText(label));
+      await user.type(screen.getByLabelText(label), value);
+    }
+    expect(within(footer).getByRole("status").textContent).toBe("有未保存更改");
+    await user.click(screen.getByRole("button", {name:"保存为 v3"}));
+    await user.click(screen.getByRole("button", {name:"确认保存为 v3"}));
+    expect(onCreateSeriesVersion).toHaveBeenCalledWith({seriesId:series.id,rules:expect.objectContaining({positioning:"聚焦城市生活",format:"竖屏",characters:"主持人",locations:"街区",visual_style:"写实",narrative_structure:"开场到结尾",restrictions:"不使用商标"})});
+    expect(within(footer).getByRole("status").textContent).toBe("已保存");
+  });
+
+  it("系列保存失败时错误在弹窗内可见，取消后可撤销草稿", async () => {
+    const user = userEvent.setup();
+    renderWorkspace({onCreateSeriesVersion:vi.fn().mockRejectedValue(new Error("系列保存失败，请重试。")),series:[series],seriesVersions});
+    await user.click(screen.getByRole("tab", {name:"系列"}));
+    await user.type(screen.getByLabelText("系列定位"), "保留草稿");
+    await user.click(screen.getByRole("button", {name:"保存为 v3"}));
+    const dialog = screen.getByRole("dialog", {name:"确认保存系列版本"});
+    await user.click(within(dialog).getByRole("button", {name:"确认保存为 v3"}));
+    expect(await within(dialog).findByRole("alert")).toHaveProperty("textContent","系列保存失败，请重试。");
+    await user.click(within(dialog).getByRole("button", {name:"取消"}));
+    expect(screen.getByLabelText("系列定位")).toHaveProperty("value","当前系列定位保留草稿");
+    await user.click(screen.getByRole("button", {name:"撤销修改"}));
+    expect(screen.getByLabelText("系列定位")).toHaveProperty("value","当前系列定位");
   });
 
   it("系列有未保存修改时也会拦截离开", async () => {

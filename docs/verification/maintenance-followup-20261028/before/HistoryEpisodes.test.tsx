@@ -1,0 +1,14 @@
+import{act,cleanup,fireEvent,render,screen,within}from'@testing-library/react';import{afterEach,beforeEach,expect,it,vi}from'vitest';import{LocalHistory}from'./LocalHistory';import{localRequest,localCommand}from'./client';vi.mock('./client',()=>({localRequest:vi.fn(),localCommand:vi.fn()}));
+const episode={episode_id:'10000000-0000-4000-8000-000000000001',title:'日照金山样片',account_name:'样片账号',updated_at:'now',file_count:1,record_count:2,archived_at:null};
+const report={items:[episode],total:1,page:1,pageSize:30,selected:null as typeof episode|null,files:[{logical_path:'episodes/'+episode.episode_id+'/script.md',sha256:'a'.repeat(64),bytes:'123',title:'说明文档 · script.md',section:'script'}],versions:[],pagination:{filesPage:1,recordsPage:1,fileTotal:1,recordTotal:2}};
+beforeEach(()=>{Element.prototype.scrollIntoView=vi.fn();vi.mocked(localRequest).mockImplementation(async(path)=>({...report,selected:new URL(path,'http://local/').searchParams.get('episode')?episode:null}));});afterEach(()=>{cleanup();vi.resetAllMocks();});
+it('starts with production history and keeps sources behind a lazy main tab',async()=>{
+ render(<LocalHistory/>);await screen.findByText('日照金山样片');expect(screen.queryByText(/测试与诊断/)).toBeNull();expect(screen.getByRole('tab',{name:'生产单历史'}).getAttribute('aria-selected')).toBe('true');expect(screen.getByRole('tab',{name:'资料来源'}).getAttribute('aria-selected')).toBe('false');expect(screen.queryByRole('region',{name:'资料来源管理'})).toBeNull();
+ const title=screen.getByText('日照金山样片').closest('.history-episode-row')!;expect(within(title as HTMLElement).getByRole('button',{name:'清理预览 日照金山样片'})).toBeTruthy();
+ fireEvent.click(screen.getByRole('button',{name:'查看内容 日照金山样片'}));await screen.findByRole('region',{name:'生产单历史内容'});const script=screen.getByText('脚本（本页 1 项）').closest('details')!;expect(script.open).toBe(false);fireEvent.click(screen.getByText('脚本（本页 1 项）'));expect(screen.getByRole('link',{name:/episodes/}).getAttribute('href')).toContain('/api/local/history-file?sha=');
+});
+it('archives only the historical entry and offers a preview without delete execution',async()=>{
+ vi.mocked(localCommand).mockResolvedValueOnce({archived:true}).mockResolvedValueOnce({episodeId:episode.episode_id,recordLinks:2,fileLinks:1,sharedContents:1,protectedContents:0,reviewContents:0,reviewBytes:0,samples:[]});render(<LocalHistory/>);await screen.findByText(episode.title);
+ await act(async()=>fireEvent.click(screen.getByRole('button',{name:'归档历史 '+episode.title})));expect(localCommand).toHaveBeenCalledWith('archive',{episodeId:episode.episode_id},undefined,'history-episode-management');expect(screen.getByText(/生产单和文件不变/)).toBeTruthy();
+ await act(async()=>fireEvent.click(screen.getByRole('button',{name:'清理预览 '+episode.title})));const preview=screen.getByRole('region',{name:'生产单清理预览'});expect(preview.textContent).toContain('仅预览，不删除生产单、索引或文件。');expect(within(preview).queryByRole('button',{name:/删除/})).toBeNull();
+});

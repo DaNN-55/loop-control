@@ -9,27 +9,11 @@ describe("受控媒体供应商", () => {
     await expect(generateOpenAiImage({ apiKey: "openai-key", fetcher, model: "gpt-image-1", prompt: "雨夜的古城门" })).resolves.toEqual(new Uint8Array(png));
     expect(fetcher).toHaveBeenCalledWith("https://api.openai.com/v1/images/generations", expect.objectContaining({ method: "POST", headers: expect.objectContaining({ Authorization: "Bearer openai-key" }) }));
   });
-  it("使用 Cloudflare Workers AI 的 Account ID、Token 和 base64 JPEG 响应", async () => {
-    const jpeg = Buffer.from([0xff, 0xd8, 0xff, 1]);
-    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ result: { image: jpeg.toString("base64") }, success: true }), { status: 200 }));
-
-    await expect(generateCloudflareWorkersAiImage({ credentials: "account-id:token-value", fetcher, model: "@cf/black-forest-labs/flux-1-schnell", prompt: "雨夜的古城门" })).resolves.toEqual(new Uint8Array(jpeg));
-    expect(fetcher).toHaveBeenCalledWith("https://api.cloudflare.com/client/v4/accounts/account-id/ai/run/@cf/black-forest-labs/flux-1-schnell", expect.objectContaining({ method: "POST", headers: expect.objectContaining({ Authorization: "Bearer token-value" }) }));
-    expect(JSON.parse(fetcher.mock.calls[0][1].body)).toMatchObject({ prompt: "雨夜的古城门", steps: 4 });
-  });
-  it("使用冻结的旁白文本和声音向 Google TTS 请求 MP3", async () => {
-    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ audioContent: Buffer.from("audio-bytes").toString("base64") }), { status: 200 }));
-
-    await expect(synthesizeGoogleTts({ apiKey: "google-key", fetcher, text: "冻结旁白。", voice: { languageCode: "cmn-CN", name: "cmn-CN-Standard-A", speakingRate: 1 } })).resolves.toEqual(new Uint8Array(Buffer.from("audio-bytes")));
-    expect(fetcher).toHaveBeenCalledWith("https://texttospeech.googleapis.com/v1/text:synthesize", expect.objectContaining({
-      method: "POST",
-      headers: expect.objectContaining({ "X-goog-api-key": "google-key" }),
-    }));
-    expect(JSON.parse(fetcher.mock.calls[0][1].body)).toEqual({
-      input: { text: "冻结旁白。" },
-      voice: { languageCode: "cmn-CN", name: "cmn-CN-Standard-A" },
-      audioConfig: { audioEncoding: "MP3", speakingRate: 1 },
-    });
+  it("停用 Cloudflare 和 Google TTS 的旧执行入口，且不发出网络请求", async () => {
+    const fetcher=vi.fn();
+    await expect(generateCloudflareWorkersAiImage({credentials:'synthetic',fetcher,model:'legacy',prompt:'test'})).rejects.toThrow('已停用');
+    await expect(synthesizeGoogleTts({apiKey:'synthetic',fetcher,text:'test',voice:{languageCode:'zh-CN',name:'legacy',speakingRate:1}})).rejects.toThrow('已停用');
+    expect(fetcher).not.toHaveBeenCalled();
   });
 
   it("使用豆包语音 V3 SSE 合并 MP3 音频分片", async () => {
@@ -89,8 +73,8 @@ describe("受控媒体供应商", () => {
     expect(fetcher.mock.calls[0][0]).toContain("sort=duration_asc");
   });
 
-  it("拒绝缺失的音频内容和无法使用的 Pexels 视频", async () => {
-    await expect(synthesizeGoogleTts({ apiKey: "google-key", fetcher: vi.fn().mockResolvedValue(new Response("{}", { status: 200 })), text: "旁白", voice: { languageCode: "cmn-CN", name: "cmn-CN-Standard-A", speakingRate: 1 } })).rejects.toThrow("音频内容");
+  it("拒绝停用的音频 Provider 和无法使用的 Pexels 视频", async () => {
+    await expect(synthesizeGoogleTts({ apiKey: "google-key", fetcher: vi.fn().mockResolvedValue(new Response("{}", { status: 200 })), text: "旁白", voice: { languageCode: "cmn-CN", name: "cmn-CN-Standard-A", speakingRate: 1 } })).rejects.toThrow("已停用");
     await expect(searchPexelsVideo({ apiKey: "pexels-key", fetcher: vi.fn().mockResolvedValue(new Response(JSON.stringify({ videos: [] }), { status: 200 })), query: "雨夜", targetDurationSeconds: 5 })).rejects.toThrow("竖屏视频");
     await expect(searchPexelsVideo({ apiKey: "pexels-key", fetcher: vi.fn(), query: "雨".repeat(101), targetDurationSeconds: 5 })).rejects.toThrow("100");
   });

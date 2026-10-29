@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/ui/useDialogFocus.test.tsx (1 test) 72ms
+ ✓ src/ui/PcVisualFixes.test.tsx (5 tests) 758ms
+   ✓ accepts at most 200 title characters before creation and exposes the limit  418ms
+
+ Test Files  2 passed (2)
+      Tests  6 passed (6)
+   Start at  09:35:01
+   Duration  2.28s (transform 215ms, setup 17ms, collect 1.17s, tests 830ms, environment 625ms, prepare 90ms)
+

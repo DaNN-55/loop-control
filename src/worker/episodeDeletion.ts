@@ -70,6 +70,51 @@ async function deletionParents(root:string){
  for(const suffix of ['episodes','episodes/.deletion-staging']){const path=resolve(root,suffix);let st;try{st=await fs.lstat(path);}catch(error){if((error as NodeJS.ErrnoException).code==='ENOENT')return false;throw error;}if(!st.isDirectory()||st.isSymbolicLink()||await fs.realpath(path)!==path)throw Error('删除暂存父目录不是安全目录。');}return true;
 }
 
+async function optionalEntry(path: string) {
+  try { return await fs.lstat(path); }
+  catch (error) { if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null; throw error; }
+}
+
+async function safeCleanupDirectory(path: string) {
+  const stat = await optionalEntry(path);
+  if (stat && (!stat.isDirectory() || stat.isSymbolicLink() || await fs.realpath(path) !== path)) throw Error('清理位置不是安全目录：' + path);
+  return stat;
+}
+
+async function removeEmptyCleanupDirectory(path: string) {
+  if (!await safeCleanupDirectory(path)) return;
+  try { await fs.rmdir(path); }
+  catch (error) {
+    // Shared containers may still contain another Episode, staged deletion or title.
+    if (!['ENOENT', 'ENOTEMPTY', 'EEXIST'].includes((error as NodeJS.ErrnoException).code ?? '')) throw error;
+  }
+}
+
+async function cleanupDeletedEpisodeContainers(root: string, episodeId: string) {
+  const episodes = resolve(root, 'episodes');
+  if (!await safeCleanupDirectory(episodes)) return;
+  const episode = resolve(episodes, episodeId);
+  const navigation = resolve(episodes, '按标题浏览');
+  const navigationStat = await safeCleanupDirectory(navigation);
+  if (navigationStat) {
+    for (const name of await fs.readdir(navigation)) {
+      const link = resolve(navigation, name);
+      const stat = await optionalEntry(link);
+      if (!stat?.isSymbolicLink()) continue;
+      const target = await fs.readlink(link);
+      if (resolve(navigation, target) !== episode) continue;
+      if (await optionalEntry(episode)) throw Error('生产单目录重新出现，请重新检查删除范围。');
+      const parent = await safeCleanupDirectory(navigation);
+      const current = await optionalEntry(link);
+      if (!parent || parent.dev !== navigationStat.dev || parent.ino !== navigationStat.ino || !current?.isSymbolicLink() || current.dev !== stat.dev || current.ino !== stat.ino || await fs.readlink(link) !== target) throw Error('标题链接位置已变化，请重试清理。');
+      await fs.unlink(link);
+    }
+    await removeEmptyCleanupDirectory(navigation);
+  }
+  await removeEmptyCleanupDirectory(resolve(episodes, '.deletion-staging'));
+  await removeEmptyCleanupDirectory(episodes);
+}
+
 export async function restoreStagedLocalEpisodeDirectory(assetRoot: string, episodeId: string): Promise<void> {
   if (!isEpisodeId(episodeId)) throw new Error("无效的 Episode ID。");
   const resolvedRoot = await fs.realpath(assetRoot);
@@ -90,18 +135,23 @@ export async function restoreStagedLocalEpisodeDirectory(assetRoot: string, epis
 export async function finalizeStagedLocalEpisodeDirectory(assetRoot: string, episodeId: string): Promise<boolean> {
   if (!isEpisodeId(episodeId)) throw new Error("无效的 Episode ID。");
   const resolvedRoot = await fs.realpath(assetRoot);
-  if(!await deletionParents(resolvedRoot))return false;
-  const stagingPath = resolve(resolvedRoot, "episodes", ".deletion-staging", episodeId);
-  let stagedStat;
-  try {
-    stagedStat = await fs.lstat(stagingPath);
-  } catch (error) {
-    if (error instanceof Error && "code" in error && error.code === "ENOENT") return false;
-    throw error;
+  if (isFilesystemRoot(resolvedRoot)) throw Error('资产根不能是文件系统根目录。');
+  const episodes = resolve(resolvedRoot, 'episodes');
+  await safeCleanupDirectory(episodes);
+  if (await optionalEntry(resolve(episodes, episodeId))) throw Error('生产单目录重新出现，请重新检查删除范围。');
+  let removed = false;
+  if (await deletionParents(resolvedRoot)) {
+    const stagingPath = resolve(resolvedRoot, "episodes", ".deletion-staging", episodeId);
+    const stagedStat = await optionalEntry(stagingPath);
+    if (stagedStat) {
+      if (stagedStat.isSymbolicLink() || !stagedStat.isDirectory()) throw new Error("删除暂存目录不是安全目录。");
+      const resolvedStagingPath = await fs.realpath(stagingPath);
+      if (!isDescendant(resolvedRoot, resolvedStagingPath)) throw new Error("删除暂存目录超出资产根。");
+      await fs.rm(resolvedStagingPath, { force: false, recursive: true });
+      removed = true;
+    }
   }
-  if (stagedStat.isSymbolicLink() || !stagedStat.isDirectory()) throw new Error("删除暂存目录不是安全目录。");
-  const resolvedStagingPath = await fs.realpath(stagingPath);
-  if (!isDescendant(resolvedRoot, resolvedStagingPath)) throw new Error("删除暂存目录超出资产根。");
-  await fs.rm(resolvedStagingPath, { force: false, recursive: true });
-  return true;
+  // Also run on retry when the staged files are already gone but links remain.
+  await cleanupDeletedEpisodeContainers(resolvedRoot, episodeId);
+  return removed;
 }

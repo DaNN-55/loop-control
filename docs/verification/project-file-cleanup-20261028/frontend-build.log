@@ -1,0 +1,20 @@
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 4420 modules transformed.
+
+(!) outDir /private/tmp/loop-file-cleanup-20261028/frontend-build is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+rendering chunks...
+computing gzip size...
+../../../../private/tmp/loop-file-cleanup-20261028/frontend-build/index.html                            0.86 kB │ gzip:   0.46 kB
+../../../../private/tmp/loop-file-cleanup-20261028/frontend-build/native-runtime-graph.json           281.34 kB │ gzip:  23.56 kB
+../../../../private/tmp/loop-file-cleanup-20261028/frontend-build/assets/index-D0HFgVEG.css           636.82 kB │ gzip:  92.15 kB
+../../../../private/tmp/loop-file-cleanup-20261028/frontend-build/assets/viewTransport-BxFBy627.js      0.15 kB │ gzip:   0.17 kB
+../../../../private/tmp/loop-file-cleanup-20261028/frontend-build/assets/index-ulK0acV3.js          1,093.90 kB │ gzip: 325.74 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.12s

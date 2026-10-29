@@ -1,0 +1,19 @@
+/* Keep the video useful at laptop heights; the shot strip can continue below it. */
+html[data-interface="impeccable"] .product-ui .production-node-workspace .production-node-shot-preview .production-node-preview{height:auto;max-height:none}
+html[data-interface="impeccable"] .product-ui .production-node-workspace .production-node-shot-preview .production-node-media{flex:none;height:clamp(360px,52dvh,600px);min-height:360px;background:var(--lc-surface-2)}
+html[data-interface="impeccable"] .product-ui .production-node-shot-preview :is(.manual-material-preview,.local-artifact-preview) video{background:var(--lc-surface-2)!important}
+.production-node-modal .text-review-package-embedded{padding:20px 24px}
+.production-node-modal .review-checklist{margin:0 0 20px}.production-node-modal .review-checklist-row{padding-inline:12px}
+.production-node-modal .production-node-modal-body:has(>.production-node-story-caption){display:flex;flex-direction:column;height:calc(100dvh - 118px);overflow:hidden}
+.production-node-modal .production-node-modal-body:has(>.production-node-story-caption)>.production-node-media{flex:1;min-height:0;padding:16px;background:var(--lc-surface-2);overflow:hidden}
+.production-node-modal .production-node-modal-body:has(>.production-node-story-caption)>.production-node-media :is(img,video){height:100%;max-height:100%;max-width:100%;object-fit:contain}
+.production-node-modal .production-node-story-caption{padding:12px 24px;max-height:100px;overflow:auto;flex-shrink:0}
+.production-node-modal .production-shot-rail{min-width:0;flex:0 0 auto;overflow:hidden;display:block;padding:12px 24px}.production-node-modal .production-shot-rail>header{padding:0;margin:0 0 8px;min-height:0}
+.production-node-modal .production-shot-track{min-width:0;max-width:100%;overflow-x:auto}
+.production-input-basis{display:grid;gap:8px;padding:0;margin:0;list-style:none;min-width:0}.production-input-basis li{display:grid;gap:2px;min-width:0}.production-input-basis strong{font-size:11px;overflow-wrap:anywhere;font-weight:500}.production-input-basis code{font-size:10px;color:var(--lc-muted)}
+.production-preview-blocker{margin:0;padding:0 16px 12px;font-size:11px;color:var(--lc-muted);line-height:1.6}
+.production-node-shot-controls .shot-alignment-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.production-node-shot-controls .shot-alignment-actions>button:last-child{grid-column:1/-1}
+@media(max-width:600px){.production-node-modal .text-review-package-embedded{padding:16px}.production-node-modal .production-node-story-caption,.production-node-modal .production-shot-rail{padding-inline:16px}}
+html[data-interface="impeccable"] .product-ui .production-node-workspace .production-node-shot-controls .shot-source-toolbar{grid-template-columns:minmax(0,1fr) 94px;align-items:end}
+html[data-interface="impeccable"] .product-ui .production-node-workspace .production-node-shot-controls .shot-source-material-slot{display:flex;align-items:center;justify-content:center;min-width:0;width:100%;height:38px;min-height:38px;padding:8px;border:1px solid var(--lc-line-strong);border-radius:6px;cursor:pointer;background:var(--lc-surface)}
+.production-node-shot-controls .shot-source-material-slot:hover{background:var(--lc-surface-2)}.production-node-shot-controls .shot-source-material-slot strong{white-space:nowrap;font-size:12px}

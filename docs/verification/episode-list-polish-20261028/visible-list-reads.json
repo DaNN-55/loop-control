@@ -1,0 +1,22 @@
+[
+  {
+    "method": "GET",
+    "url": "http://127.0.0.1:5174/api/local/catalog?page=1&accountId=&seriesId=all&visibility=active&view=episodes&pendingPage=1&blockedPage=1&q=&sort=updated&status=all"
+  },
+  {
+    "method": "GET",
+    "url": "http://127.0.0.1:5174/api/local/catalog?page=1&accountId=&seriesId=all&visibility=active&view=episodes&pendingPage=1&blockedPage=1&q=&sort=updated&status=all"
+  },
+  {
+    "method": "GET",
+    "url": "http://127.0.0.1:5174/api/local/catalog?page=1&accountId=&seriesId=all&visibility=active&view=episodes&pendingPage=1&blockedPage=1&q=&sort=updated&status=all"
+  },
+  {
+    "method": "GET",
+    "url": "http://127.0.0.1:5174/api/local/catalog?page=1&accountId=&seriesId=all&visibility=active&view=episodes&pendingPage=1&blockedPage=1&q=&sort=updated&status=all"
+  },
+  {
+    "method": "GET",
+    "url": "http://127.0.0.1:5174/api/local/catalog?page=1&accountId=&seriesId=all&visibility=active&view=episodes&pendingPage=1&blockedPage=1&q=&sort=updated&status=all"
+  }
+]

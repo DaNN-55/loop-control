@@ -1,0 +1,21 @@
+日志未给 Worker 扫描错误单独打时间戳。以下保留带相邻时间行的原文，不把它当作 09:02 分项失败证明。
+
+5053: 10:19:48 PM [vite] (client) hmr update /src/local-app/LocalCatalogApp.tsx
+5054: 10:19:48 PM [vite] (client) hmr update /src/local-app/workspace-topbar.css
+5055: 10:19:48 PM [vite] (client) hmr update /src/connections/ConnectionWorkspace.tsx
+5056: 10:19:48 PM [vite] (client) hmr update /src/connections/connections.css
+5057: 10:19:48 PM [vite] (client) hmr update /src/local-app/LocalConnectionsPanel.tsx
+5058: 10:19:48 PM [vite] (client) hmr update /src/local-app/LocalHistory.tsx
+5059: 10:19:48 PM [vite] (client) hmr update /src/local-app/history.css
+5060: Worker调度扫描失败：Worker/编排程序未准备、已过期或产物损坏；请先运行 npm run runtime:prepare 并重启服务。
+5061: 10:29:36 PM [vite] (client) hmr update /src/local-app/LocalHistory.tsx
+5062: 10:31:47 PM [vite] (client) hmr update /src/local-app/HistorySources.tsx
+5063: 10:31:47 PM [vite] (client) hmr update /src/local-app/history.css
+5064: 10:31:47 PM [vite] (client) hmr update /src/connections/connections.css
+5065: 10:32:14 PM [vite] (client) hmr update /src/local-app/HistorySources.tsx
+5066: 10:32:14 PM [vite] (client) hmr update /src/local-app/LocalHistory.tsx
+5067: 10:32:14 PM [vite] (client) hmr update /src/local-app/history.css
+5068: 8:40:52 AM [vite] (client) hmr update /src/local-app/LocalHistory.tsx
+5069: 8:40:52 AM [vite] (client) hmr update /src/local-app/history.css
+5070: 8:47:11 AM [vite] (client) hmr update /src/local-app/history.css
+5071: 8:51:17 AM [vite] (client) hmr update /src/local-app/LocalHistory.tsx

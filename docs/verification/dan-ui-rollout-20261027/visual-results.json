@@ -1,0 +1,646 @@
+[
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "heading": [
+      "账号",
+      "等待运行检查"
+    ],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "operations",
+    "theme": "light",
+    "heading": [
+      "系列运营",
+      "系列运营概览"
+    ],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "episodes",
+    "theme": "light",
+    "heading": [
+      "生产单"
+    ],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "new-account",
+    "theme": "light",
+    "heading": [
+      "界面验收",
+      "新建账号"
+    ],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "new-episode",
+    "theme": "light",
+    "heading": [
+      "界面验收",
+      "新建生产单"
+    ],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "security",
+    "theme": "light",
+    "heading": [
+      "界面验收",
+      "登录与安全"
+    ],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "production",
+    "stage": "当前阶段等待输入下一步导入主脚本当前任务已阻塞plan_storyboard 需要处理阻塞项。",
+    "theme": "light",
+    "controls": 18,
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "production",
+    "stage": "当前阶段等待输入下一步查看生产单详情当前任务已阻塞plan_storyboard 需要处理阻塞项。",
+    "theme": "light",
+    "controls": 20,
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "production",
+    "stage": "当前阶段脚本生成与审核下一步等待 Worker 生成脚本当前任务已阻塞plan_storyboard 需要处理阻塞项。",
+    "theme": "light",
+    "controls": 20,
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "production",
+    "stage": "当前阶段脚本生成与审核下一步审核生成脚本当前审核脚本审核需要你审核当前任务已阻塞plan_storyboard 需要处理阻塞项。",
+    "theme": "light",
+    "controls": 24,
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "production",
+    "stage": "当前阶段视觉素材准备与审核下一步等待整理视觉素材清单当前任务已阻塞plan_storyboard 需要处理阻塞项。",
+    "theme": "light",
+    "controls": 20,
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "production",
+    "stage": "当前阶段视觉素材准备与审核下一步等待 Worker 整理视觉素材清单当前任务已阻塞plan_storyboard 需要处理阻塞项。",
+    "theme": "light",
+    "controls": 20,
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "production",
+    "stage": "当前阶段视觉素材准备与审核下一步审核视觉素材清单当前审核视觉审核需要你审核当前任务已阻塞plan_storyboard 需要处理阻塞项。",
+    "theme": "light",
+    "controls": 19,
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "production",
+    "stage": "当前阶段视觉素材准备与审核下一步等待生成分镜当前任务已阻塞plan_storyboard 需要处理阻塞项。",
+    "theme": "light",
+    "controls": 20,
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "production",
+    "stage": "当前阶段分镜生成与审核下一步等待 Worker 生成分镜当前任务已阻塞plan_storyboard 需要处理阻塞项。",
+    "theme": "light",
+    "controls": 20,
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "production",
+    "stage": "当前阶段分镜生成与审核下一步审核分镜并处理镜头批注当前审核分镜审核需要你审核当前任务已阻塞plan_storyboard 需要处理阻塞项。",
+    "theme": "light",
+    "controls": 26,
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "production",
+    "stage": "当前阶段逐镜头准备工作台下一步逐镜头准备画面、口播和字幕当前任务已阻塞plan_storyboard 需要处理阻塞项。",
+    "theme": "light",
+    "controls": 82,
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "production",
+    "stage": "当前阶段媒体生产与预渲染审核下一步逐项审核预渲染成员当前任务已阻塞plan_storyboard 需要处理阻塞项。",
+    "theme": "light",
+    "controls": 24,
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "production",
+    "stage": "当前阶段媒体生产与预渲染审核下一步等待生成审核渲染当前任务已阻塞plan_storyboard 需要处理阻塞项。",
+    "theme": "light",
+    "controls": 21,
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "production",
+    "stage": "当前阶段合成与 QC 审核下一步审核合成渲染与 QC 报告当前审核QC 审核需要你审核当前任务已阻塞plan_storyboard 需要处理阻塞项。",
+    "theme": "light",
+    "controls": 25,
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "production",
+    "stage": "当前阶段合成与 QC 审核下一步补齐发布包（先补 发布元数据）当前任务已阻塞plan_storyboard 需要处理阻塞项。",
+    "theme": "light",
+    "controls": 21,
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "production",
+    "stage": "当前阶段生产完成下一步查看最终生产材料当前任务已阻塞plan_storyboard 需要处理阻塞项。",
+    "theme": "light",
+    "controls": 21,
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "login",
+    "theme": "light",
+    "background": "oklch(0.985 0 none)",
+    "heading": [
+      "登录控制台"
+    ],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "maintenance",
+    "theme": "light",
+    "background": "rgb(255, 255, 255)",
+    "heading": [
+      "界面验收",
+      "系统维护"
+    ],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "background": "rgb(255, 255, 255)",
+    "heading": [
+      "界面验收",
+      "密钥管理"
+    ],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "completion",
+    "theme": "light",
+    "background": "rgb(255, 255, 255)",
+    "heading": [
+      "界面验收",
+      "完成生产"
+    ],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "confirm",
+    "theme": "light",
+    "background": "rgb(255, 255, 255)",
+    "heading": [
+      "界面验收",
+      "永久删除生产单"
+    ],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "status",
+    "theme": "light",
+    "background": "rgb(255, 255, 255)",
+    "heading": [
+      "界面验收"
+    ],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "login",
+    "theme": "dark",
+    "background": "oklch(0.205 0 none)",
+    "heading": [
+      "登录控制台"
+    ],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "background": "rgb(17, 19, 24)",
+    "heading": [
+      "界面验收",
+      "系统维护"
+    ],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "secrets",
+    "theme": "dark",
+    "background": "rgb(17, 19, 24)",
+    "heading": [
+      "界面验收",
+      "密钥管理"
+    ],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "completion",
+    "theme": "dark",
+    "background": "rgb(17, 19, 24)",
+    "heading": [
+      "界面验收",
+      "完成生产"
+    ],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "confirm",
+    "theme": "dark",
+    "background": "rgb(17, 19, 24)",
+    "heading": [
+      "界面验收",
+      "永久删除生产单"
+    ],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "status",
+    "theme": "dark",
+    "background": "rgb(17, 19, 24)",
+    "heading": [
+      "界面验收"
+    ],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "secrets",
+    "mode": "error",
+    "theme": "light",
+    "alerts": [
+      "密钥列表读取失败，请检查会话和本机服务。"
+    ],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "secrets",
+    "mode": "loading",
+    "theme": "dark",
+    "alerts": [],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "secrets",
+    "mode": "empty",
+    "theme": "light",
+    "alerts": [],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "accounts",
+    "mode": "long",
+    "theme": "light",
+    "alerts": [],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "episodes",
+    "mode": "long",
+    "theme": "dark",
+    "alerts": [],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "operations",
+    "mode": "empty",
+    "theme": "dark",
+    "alerts": [],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "new-episode",
+    "mode": "pending",
+    "theme": "light",
+    "alerts": [],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "completion",
+    "mode": "ready",
+    "theme": "dark",
+    "alerts": [],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "generator",
+    "mode": "default",
+    "theme": "light",
+    "alerts": [],
+    "height": 1000,
+    "overflow": false,
+    "width": 1440
+  },
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "width": 900,
+    "height": 1000,
+    "overflow": false,
+    "scrollWidth": 885
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "mode": "long",
+    "width": 900,
+    "height": 1000,
+    "overflow": false,
+    "scrollWidth": 900
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 900,
+    "height": 1000,
+    "overflow": false,
+    "scrollWidth": 900
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "width": 900,
+    "height": 1000,
+    "overflow": false,
+    "scrollWidth": 900
+  },
+  {
+    "scene": "production",
+    "stage": "storyboard_approved",
+    "theme": "dark",
+    "width": 900,
+    "height": 1000,
+    "overflow": false,
+    "scrollWidth": 885
+  },
+  {
+    "scene": "new-episode",
+    "theme": "light",
+    "width": 900,
+    "height": 1000,
+    "overflow": false,
+    "scrollWidth": 900
+  },
+  {
+    "scene": "accounts",
+    "theme": "light",
+    "width": 390,
+    "height": 844,
+    "overflow": false,
+    "scrollWidth": 375
+  },
+  {
+    "scene": "episodes",
+    "theme": "dark",
+    "mode": "long",
+    "width": 390,
+    "height": 844,
+    "overflow": false,
+    "scrollWidth": 390
+  },
+  {
+    "scene": "maintenance",
+    "theme": "dark",
+    "width": 390,
+    "height": 844,
+    "overflow": false,
+    "scrollWidth": 390
+  },
+  {
+    "scene": "secrets",
+    "theme": "light",
+    "width": 390,
+    "height": 844,
+    "overflow": false,
+    "scrollWidth": 390
+  },
+  {
+    "scene": "production",
+    "stage": "storyboard_approved",
+    "theme": "dark",
+    "width": 390,
+    "height": 844,
+    "overflow": false,
+    "scrollWidth": 375
+  },
+  {
+    "scene": "new-episode",
+    "theme": "light",
+    "width": 390,
+    "height": 844,
+    "overflow": false,
+    "scrollWidth": 390
+  },
+  {
+    "scene": "production",
+    "stageId": "waiting_input",
+    "theme": "dark",
+    "overflow": false,
+    "scrollWidth": 1425
+  },
+  {
+    "scene": "production",
+    "stageId": "brief_draft",
+    "theme": "dark",
+    "overflow": false,
+    "scrollWidth": 1440
+  },
+  {
+    "scene": "production",
+    "stageId": "script_draft",
+    "theme": "dark",
+    "overflow": false,
+    "scrollWidth": 1440
+  },
+  {
+    "scene": "production",
+    "stageId": "script_review",
+    "theme": "dark",
+    "overflow": false,
+    "scrollWidth": 1425
+  },
+  {
+    "scene": "production",
+    "stageId": "script_approved",
+    "theme": "dark",
+    "overflow": false,
+    "scrollWidth": 1440
+  },
+  {
+    "scene": "production",
+    "stageId": "visual_draft",
+    "theme": "dark",
+    "overflow": false,
+    "scrollWidth": 1440
+  },
+  {
+    "scene": "production",
+    "stageId": "visual_review",
+    "theme": "dark",
+    "overflow": false,
+    "scrollWidth": 1425
+  },
+  {
+    "scene": "production",
+    "stageId": "visual_approved",
+    "theme": "dark",
+    "overflow": false,
+    "scrollWidth": 1425
+  },
+  {
+    "scene": "production",
+    "stageId": "storyboard_draft",
+    "theme": "dark",
+    "overflow": false,
+    "scrollWidth": 1440
+  },
+  {
+    "scene": "production",
+    "stageId": "storyboard_review",
+    "theme": "dark",
+    "overflow": false,
+    "scrollWidth": 1425
+  },
+  {
+    "scene": "production",
+    "stageId": "storyboard_approved",
+    "theme": "dark",
+    "overflow": false,
+    "scrollWidth": 1425
+  },
+  {
+    "scene": "production",
+    "stageId": "production_ready",
+    "theme": "dark",
+    "overflow": false,
+    "scrollWidth": 1425
+  },
+  {
+    "scene": "production",
+    "stageId": "render_ready",
+    "theme": "dark",
+    "overflow": false,
+    "scrollWidth": 1440
+  },
+  {
+    "scene": "production",
+    "stageId": "qc_review",
+    "theme": "dark",
+    "overflow": false,
+    "scrollWidth": 1425
+  },
+  {
+    "scene": "production",
+    "stageId": "qc_passed",
+    "theme": "dark",
+    "overflow": false,
+    "scrollWidth": 1425
+  },
+  {
+    "scene": "production",
+    "stageId": "production_completed",
+    "theme": "dark",
+    "overflow": false,
+    "scrollWidth": 1425
+  }
+]

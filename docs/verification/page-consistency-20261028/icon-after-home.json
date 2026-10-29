@@ -1,0 +1,156 @@
+[
+  {
+    "button": [
+      172,
+      40
+    ],
+    "dx": -65,
+    "dy": 0,
+    "iconOnly": false,
+    "label": "工作台",
+    "svg": [
+      18,
+      18
+    ]
+  },
+  {
+    "button": [
+      172,
+      40
+    ],
+    "dx": -65,
+    "dy": 0,
+    "iconOnly": false,
+    "label": "生产单",
+    "svg": [
+      18,
+      18
+    ]
+  },
+  {
+    "button": [
+      172,
+      40
+    ],
+    "dx": -65,
+    "dy": 0,
+    "iconOnly": false,
+    "label": "待审核",
+    "svg": [
+      18,
+      18
+    ]
+  },
+  {
+    "button": [
+      172,
+      40
+    ],
+    "dx": -65,
+    "dy": 0,
+    "iconOnly": false,
+    "label": "账号与系列",
+    "svg": [
+      18,
+      18
+    ]
+  },
+  {
+    "button": [
+      172,
+      40
+    ],
+    "dx": -65,
+    "dy": 0,
+    "iconOnly": false,
+    "label": "连接配置",
+    "svg": [
+      18,
+      18
+    ]
+  },
+  {
+    "button": [
+      172,
+      40
+    ],
+    "dx": -65,
+    "dy": 0,
+    "iconOnly": false,
+    "label": "历史资料",
+    "svg": [
+      18,
+      18
+    ]
+  },
+  {
+    "button": [
+      172,
+      40
+    ],
+    "dx": -65,
+    "dy": 0,
+    "iconOnly": false,
+    "label": "打开 OpenChatCut 独立剪辑",
+    "svg": [
+      18,
+      18
+    ]
+  },
+  {
+    "button": [
+      32,
+      32
+    ],
+    "dx": 0,
+    "dy": 0,
+    "iconOnly": true,
+    "label": "切换至深色模式",
+    "svg": [
+      18,
+      18
+    ]
+  },
+  {
+    "button": [
+      32,
+      32
+    ],
+    "dx": 0,
+    "dy": 0,
+    "iconOnly": true,
+    "label": "收起侧栏",
+    "svg": [
+      18,
+      18
+    ]
+  },
+  {
+    "button": [
+      32,
+      32
+    ],
+    "dx": 0,
+    "dy": 0,
+    "iconOnly": true,
+    "label": "所有者设置",
+    "svg": [
+      18,
+      18
+    ]
+  },
+  {
+    "button": [
+      36,
+      36
+    ],
+    "dx": 0,
+    "dy": 0,
+    "iconOnly": true,
+    "label": "刷新",
+    "svg": [
+      18,
+      18
+    ]
+  }
+]

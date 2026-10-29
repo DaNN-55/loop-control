@@ -1,0 +1,105 @@
+{
+  "completedOn": "2026-10-28",
+  "branch": "main",
+  "head": "30f3361bbe0d80be73bac7684ad22c2e20059d09",
+  "committed": false,
+  "pushed": false,
+  "baselineChangedPaths": [
+    "src/styles.css",
+    "src/local-app/LocalSecretAdministration.tsx",
+    "src/local-app/LocalEpisodeDetail.tsx",
+    "src/local-app/LocalDeliveryPanel.tsx",
+    "src/local-app/LocalMaintenancePanel.tsx",
+    "src/local-app/HistorySources.tsx",
+    "src/local-app/LocalCatalogApp.tsx",
+    "src/local-app/LocalHistory.tsx",
+    "src/local-app/LocalSystemStatus.tsx",
+    "src/publishing/ProductionCompletionModal.tsx",
+    "src/ui/PaginationControls.tsx",
+    "src/ui/ConfirmationModal.tsx",
+    "src/ui/HelpTip.tsx",
+    "src/platform/ConfigurationForms.tsx",
+    "src/workspace/WorkspaceViews.tsx",
+    "src/episodes/EpisodeProduction.tsx",
+    "src/episodes/EpisodeForm.tsx",
+    "src/episodes/WanShotGenerator.tsx",
+    "src/observability/SystemStatusSurface.tsx",
+    "src/operations/OperationsWorkspace.tsx",
+    "src/connections/ConnectionTestButton.tsx",
+    "src/connections/ConnectionWorkspace.tsx",
+    "src/accounts/AccountForm.tsx",
+    "src/accounts/AccountWorkspace.tsx",
+    "src/reviews/WorkerBlockerCard.tsx",
+    "src/ui/dan-ui/styles/scoped.css",
+    "src/ui/dan-ui/styles/theme.css",
+    "src/ui/dan-ui/styles/entry.css",
+    "src/ui/dan-ui/components/base/tooltip/tooltip.tsx",
+    "src/ui/dan-ui/components/base/buttons/button.tsx",
+    "src/ui/dan-ui/components/base/input/label.tsx",
+    "src/ui/dan-ui/components/base/input/input.tsx",
+    "src/ui/dan-ui/components/base/select/select-native.tsx",
+    "scripts/build-dan-ui.mjs",
+    "PLAN.md"
+  ],
+  "packageFilesUnchanged": true,
+  "sourceBackup": "/private/tmp/loop-dan-ui-baseline-20261027",
+  "reachableTsx": 51,
+  "nativeControlsOutsideAdopted": 4,
+  "nativeControlReason": "仅 4 个 file 输入，保留专用浏览器行为；媒体 range 为专用交互。",
+  "visualLayoutCases": 71,
+  "overflowCases": [],
+  "screenshots": 89,
+  "checks": {
+    "type": "passed",
+    "fixtureType": "passed",
+    "uiBuild": "passed",
+    "productionBuild": "passed",
+    "fullTests": {
+      "filesPassed": 142,
+      "filesFailed": 2,
+      "testsPassed": 1068,
+      "testsFailed": 9,
+      "baselineFailures": [
+        "missing dist/local-app/local-app/secretAdministration.js",
+        "Invalid tsconfig.worker.json"
+      ],
+      "log": "final-tests.log"
+    },
+    "lastUiTests": {
+      "files": 3,
+      "tests": 109,
+      "status": "passed"
+    },
+    "lastTooltipTests": {
+      "files": 3,
+      "tests": 16,
+      "status": "passed"
+    },
+    "designDetector": {
+      "findings": 8,
+      "resolved": 8,
+      "verification": "exact detector snippets absent in final source",
+      "rerun": false
+    },
+    "finalBrowserLogs": "browser-last-logs.json; browser-real-logs.json (both empty)",
+    "diffCheck": "passed",
+    "browserTooltipNote": "原生折叠菜单展开后才挂载 Focusable；聚焦后 Enter/Space 展示、Escape 收起。滚动会按官方 Tooltip 行为关闭。"
+  },
+  "runtime": {
+    "dailyPort": 5174,
+    "sameDailyPid": 93487,
+    "restarted": false,
+    "fixturePort": 5188,
+    "fixtureStopped": true
+  },
+  "build": {
+    "javascriptKB": 955.17,
+    "javascriptGzipKB": 287.24,
+    "cssKB": 471.89,
+    "cssGzipKB": 69.63,
+    "chunkWarningRetained": true
+  },
+  "realBusinessWrites": false,
+  "providerRequests": false,
+  "thirdPartyEditorExecuted": false
+}

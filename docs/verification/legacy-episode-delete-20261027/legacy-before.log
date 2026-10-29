@@ -1,0 +1,31 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/episodeDeletion.integration.test.ts (2 tests | 1 failed) 1868ms
+   ✓ managed=true: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences  1255ms
+   × managed=false: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences 613ms
+     → expected 404 to be 200 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/episodeDeletion.integration.test.ts > managed=false: deletes an archived ordinary order and then its empty account through Owner HTTP, retaining deletion fences
+AssertionError: expected 404 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 404
+
+ ❯ plan src/local-app/episodeDeletion.integration.test.ts:64:106
+
+ ❯ src/local-app/episodeDeletion.integration.test.ts:68:38
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  19:11:00
+   Duration  2.15s (transform 100ms, setup 0ms, collect 144ms, tests 1.87s, environment 0ms, prepare 33ms)
+

@@ -1,0 +1,277 @@
+Window: "Impeccable · 隔离验收", App: Google Chrome for Testing.
+0 标准窗口 Impeccable · 隔离验收 - Google Chrome for Testing, Secondary Actions: Raise, URL: 127.0.0.1:5191/docs/verification/impeccable-migration-20261028/fixture.html?scene=app&episode=fixture-episode&stage=storyboard_approved&theme=light
+	1 container Impeccable · 隔离验收 - Google Chrome for Testing, URL: 127.0.0.1:5191/docs/verification/impeccable-migration-20261028/fixture.html?scene=app&episode=fixture-episode&stage=storyboard_approved&theme=light
+		2 container
+			3 工具栏
+				4 按钮 返回
+				5 按钮 (disabled) 前进
+				6 container chrome://webui-toolbar.top-chrome/
+					7 工具栏
+						8 弹出式按钮 重新加载, Help: 重新加载此网页，按下可查看更多选项
+				9 container
+					10 弹出式按钮 查看网站信息
+					11 文本栏 (settable) 地址和搜索栏, Placeholder: 问问 Google 或输入网址, Value: 127.0.0.1:5191/docs/verification/impeccable-migration-20261028/fixture.html?scene=app&episode=fixture-episode&stage=storyboard_approved&theme=light
+					12 按钮 为此标签页添加书签
+				13 按钮 您
+				14 弹出式按钮 Chromium
+			15 container
+				16 HTML 内容 Impeccable · 隔离验收, URL: 127.0.0.1:5191/docs/verification/impeccable-migration-20261028/fixture.html?scene=app&episode=fixture-episode&stage=storyboard_approved&theme=light
+					17 container
+						18 link 跳到主要内容, Value: 127.0.0.1:5191/docs/verification/impeccable-migration-20261028/fixture.html?scene=app&episode=fixture-episode&stage=storyboard_approved&theme=light#main-content
+						19 container 主导航
+							20 文本 Loop Control
+							21 文本 创作工作区
+							22 container 工作区
+								23 container 生产工作
+									24 按钮 工作台
+									25 按钮 生产单
+									26 按钮 待审核
+										27 文本 待审核
+										28 文本 1
+								29 container 账号管理
+									30 按钮 账号与系列
+								31 container 配置与资料
+									32 按钮 连接配置
+									33 按钮 历史资料
+							34 container
+								35 按钮 打开当前生产单的 OpenChatCut
+								36 弹出式按钮 系统状态：正常
+								37 切换按钮 切换至深色模式, Value: 0
+								38 切换按钮 收起侧栏, Value: 0
+								39 弹出式按钮 所有者设置
+						40 container 当前生产单详情
+							41 container
+								42 按钮 返回工作区
+								43 文本 生产单
+							44 按钮 关闭生产单详情
+							45 container
+								46 标题 城市日常：清晨的第一束光, Value: 2
+									47 文本 城市日常：清晨的第一束光
+								48 文本 fixture-
+								49 container 生产单操作
+									50 按钮 刷新生产单状态
+									51 按钮 打开本地输入目录
+									52 按钮 复制本地输入目录路径
+									53 弹出式按钮 查看产物索引
+									54 弹出式按钮 查看执行与审计时间线
+								55 text 蓝图 v 1  · 创建于  2026年10月27日 21:00
+								56 内容列表 生产阶段
+									57 文本 输入与脚本
+									58 文本 视觉准备
+									59 文本 分镜审核
+									60 container
+										61 text 逐镜头制作 当前阶段
+									62 文本 预渲染审核
+									63 文本 合成与 QC
+									64 文本 交付
+								65 文本 当前阶段
+								66 文本 逐镜头准备工作台
+								67 文本 下一步
+								68 文本 先处理 Worker 阻塞项
+								69 container
+									70 text 当前任务 已阻塞 plan_storyboard 需要处理阻塞项。
+								71 按钮 生成分镜媒体
+								72 开合三角标记 优先处理 Worker 阻塞项（1）
+									73 标题 优先处理 Worker 阻塞项（1）, Value: 3
+										74 text 优先处理 Worker 阻塞项（ 1 ）
+								75 container
+									76 文本 Worker 执行器配置不完整
+									77 text 任务没有可用的通用执行器，Worker 不会自行替换供应商继续执行。 处理位置 当前生产单 → 执行器配置
+									78 按钮 修改配置并继续当前生产单
+									79 开合三角标记 处理说明
+										80 文本 处理说明
+									81 开合三角标记 技术详情
+										82 文本 技术详情
+								83 container 分镜工作台
+									84 container
+										85 标题 分镜工作台, Value: 3
+											86 文本 分镜工作台
+										87 text 2  个镜头 · 当前待处理  shot-1 设置口播、绑定原片并保存片段标记，再用冻结输入生成审核视频与可编辑工程。
+									88 container 镜头确认概览
+										89 container
+											90 text 已确认  0  /  2  个镜头 0 / 2  配置已保存（不代表完成）
+										91 进度指示器 已确认 0 / 2 个镜头, Value: 0
+										92 container
+											93 按钮 ! 2 个待补素材
+												94 文本 ! 
+												95 文本 2
+												96 文本  个待补素材
+											97 text !  2  个待对齐 !  2  个预览过期
+									98 container 整期 BGM
+										99 container
+											100 标题 整期 BGM, Value: 4
+												101 文本 整期 BGM
+											102 文本 为整期审核视频配置背景音乐。
+											103 切换 使用 BGM, Value: off
+											104 文本 使用 BGM
+										105 文本 本期不配置 BGM。
+									106 container 本期 TTS 设置
+										107 container
+											108 标题 本期 TTS 设置, Value: 4
+												109 文本 本期 TTS 设置
+											110 text 逐镜头口播共用这套语言、声音和语速。 已保存
+										111 container
+											112 文本 语言
+											113 弹出式按钮 本期 TTS 语言, Value: zh-CN
+												114 (selected) zh-CN
+										115 container
+											116 文本 声音
+											117 弹出式按钮 本期 TTS 声音, Value: zh_female_shuangkuaisisi_moon_bigtts
+												118 (selected) zh_female_shuangkuaisisi_moon_bigtts
+										119 container
+											120 文本 语速
+											121 步进器 (settable, float) 本期 TTS 语速, Value: 1
+										122 按钮 试听本期 TTS
+										123 按钮 (disabled) 保存本期设置
+									124 container
+										125 按钮 shot-1 A-roll · 当前画面 1.000s shot-1 准备状态：画面 待补素材；音频 失败；字幕 待对齐；同步预览 待生成；确认 正文待核对
+											126 文本 shot-1
+											127 container
+												128 text A-roll  · 当前画面  1.000 s
+											129 container shot-1 准备状态：画面 待补素材；音频 失败；字幕 待对齐；同步预览 待生成；确认 正文待核对
+												130 文本 画面待处理
+												131 container
+													132 text 另  4  项
+										133 标签页组 shot-1 镜头工作区
+											134 标签 (selected) 1 文本与声音, Value: 1
+											135 标签 (settable, integer) 2 画面与构图, Value: 0
+											136 标签 (settable, integer) 3 同步预览与确认, Value: 0
+										137 container 1 文本与声音
+											138 container shot-1 声音
+												139 container
+													140 标题 主声音, Value: 4
+														141 文本 主声音
+													142 文本 TTS 成为唯一主声音；素材原声静音，字幕可跟随口播。
+													143 切换 shot-1 静音, Value: off
+													144 文本 静音
+												145 container
+													146 文本 声音模式
+													147 弹出式按钮 shot-1 主声音, Value: TTS 口播
+														148 (selected) TTS 口播
+												149 container
+													150 文本 镜头音效
+													151 弹出式按钮 (disabled) shot-1 镜头音效, Value: 不配置
+												152 按钮 (disabled) shot-1 试听镜头音效
+												153 文本 口播内容
+												154 文本输入区 (settable) shot-1 口播内容, Value: 清晨，城市慢慢醒来。
+												155 container
+													156 按钮 (disabled) shot-1 恢复分镜文案
+													157 按钮 生成口播
+											158 container shot-1 字幕
+												159 container
+													160 标题 字幕, Value: 4
+														161 文本 字幕
+													162 切换 显示字幕, Value: on
+													163 文本 显示字幕
+												164 container
+													165 文本 字幕正文模式
+													166 弹出式按钮 shot-1 字幕正文模式, Value: 跟随最终 TTS 正文
+														167 (selected) 跟随最终 TTS 正文
+												168 container
+													169 文本 字幕正文
+													170 文本输入区 (disabled) shot-1 字幕正文, Value: 清晨，城市慢慢醒来。
+												171 文本 正文直接引用当前最终口播；请在上方编辑口播内容。
+											172 container shot-1 正文核对
+												173 标题 正文核对, Value: 4
+													174 文本 正文核对
+												175 文本 时序对齐不验证正文。请试听当前音频，逐句核对上方正文；对齐完成或高分不能代替人工核对。
+												176 文本 正文待人工核对
+												177 按钮 (disabled) 我已核对当前音频正文
+											178 container shot-1 声学对齐
+												179 container
+													180 标题 声学对齐, Value: 4
+														181 文本 声学对齐
+													182 文本 等待当前音频后按原生时间戳、外部打轴、本地 WhisperX 的顺序对齐。
+													183 container 等待音频后开始声学对齐
+												184 定义列表
+													185 container 方法
+														186 文本 方法
+													187 文本 未采用
+													188 container 粒度
+														189 文本 粒度
+													190 文本 无
+													191 container 输入版本
+														192 文本 输入版本
+													193 文本 待生成
+													194 container 短语数量
+														195 文本 短语数量
+													196 文本 0
+												197 按钮 (disabled) 安全重试对齐
+												198 按钮 (disabled) 使用本地 WhisperX
+												199 按钮 (disabled) 手动设置时序
+										200 按钮 保存草稿
+										201 按钮 shot-1 更多操作
+									202 container
+										203 按钮 shot-2 B-roll · 当前画面 1.000s shot-2 准备状态：画面 待补素材；音频 待生成；字幕 待对齐；同步预览 待生成；确认 正文待核对
+											204 文本 shot-2
+											205 container
+												206 text B-roll  · 当前画面  1.000 s
+											207 container shot-2 准备状态：画面 待补素材；音频 待生成；字幕 待对齐；同步预览 待生成；确认 正文待核对
+												208 文本 画面待处理
+												209 container
+													210 text 另  4  项
+										211 按钮 shot-2 更多操作
+									212 container OpenChatCut 审核视频
+										213 标题 在 OpenChatCut 编辑并生成审核视频, Value: 4
+											214 文本 在 OpenChatCut 编辑并生成审核视频
+										215 text 镜头已保存  0 / 2  · 口播已就绪  0 / 2
+										216 按钮 (disabled) 在 OpenChatCut 中编辑
+								217 开合三角标记 视觉清单
+									218 标题 视觉清单, Value: 3
+										219 文本 视觉清单
+								220 开合三角标记 准备生产材料
+									221 标题 准备生产材料, Value: 3
+										222 文本 准备生产材料
+								223 container 当前生产上下文
+									224 container
+										225 标题 本期配置, Value: 3
+											226 文本 本期配置
+										227 定义列表
+											228 container 蓝图版本
+												229 文本 蓝图版本
+											230 container
+												231 text v 1
+											232 container 审核修订
+												233 文本 审核修订
+											234 文本 v1
+											235 container 产物
+												236 文本 产物
+											237 container
+												238 text 6  项
+											239 container 任务
+												240 文本 任务
+											241 container
+												242 text 1  项
+										243 文本 以当前生产单冻结的版本为准。
+								244 开合三角标记 生产单管理
+									245 标题 生产单管理, Value: 3
+										246 文本 生产单管理
+								247 开合三角标记 生成媒体预览
+									248 标题 生成媒体预览, Value: 3
+										249 文本 生成媒体预览
+			250 container 信息栏容器
+				251 container 信息栏
+					252 文本 Chrome 测试版 v153.0.8010.36 仅适用于自动测试。若要进行常规浏览，请使用可自动更新的标准版 Chrome。
+					253 链接 下载 Chrome
+			254 弹出式按钮 标签页搜索
+			255 container
+				256 标签页组
+					257 标签 (selected, settable, boolean) Impeccable · 隔离验收, Value: on
+						258 按钮 关闭
+			259 按钮 新标签页
+	260 关闭按钮
+	261 全屏幕按钮 Help: 此按钮也可以执行缩放窗口的操作, Secondary Actions: 缩放窗口
+	262 最小化按钮
+263 menu bar
+	264 Google Chrome for Testing
+	265 文件
+	266 编辑
+	267 显示
+	268 历史记录
+	269 书签
+	270 个人资料
+	271 标签页
+	272 窗口
+	273 帮助
+
+The focused UI element is 16 HTML 内容 Impeccable · 隔离验收, URL: 127.0.0.1:5191/docs/verification/impeccable-migration-20261028/fixture.html?scene=app&episode=fixture-episode&stage=storyboard_approved&theme=light

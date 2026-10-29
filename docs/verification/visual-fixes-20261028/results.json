@@ -1,0 +1,81 @@
+{
+  "date": "2026-10-28",
+  "status": "16/16 fixed and verified",
+  "scope": "PC-first; no business writes, provider generation, commit, push or deployment",
+  "productFilesChanged": [
+    "src/styles.css",
+    "src/local-app/LocalSecretAdministration.tsx",
+    "src/local-app/LocalCatalogApp.tsx",
+    "src/ui/PaginationControls.tsx",
+    "src/ui/useDialogFocus.ts",
+    "src/platform/ConfigurationForms.tsx",
+    "src/workspace/WorkspaceViews.tsx",
+    "src/episodes/EpisodeProduction.tsx",
+    "src/episodes/EpisodeForm.tsx",
+    "src/accounts/AccountForm.tsx",
+    "src/accounts/AccountWorkspace.tsx",
+    "src/reviews/ReviewWorkspace.test.tsx",
+    "src/ui/dan-ui/LOCAL-PATCHES.md",
+    "src/ui/dan-ui/styles/scoped.css",
+    "src/ui/dan-ui/styles/theme.css",
+    "src/ui/dan-ui/styles/product.css",
+    "src/ui/dan-ui/components/base/input/input.tsx",
+    "src/ui/dan-ui/components/application/tabs/tabs.tsx"
+  ],
+  "productFilesAdded": [
+    "src/ui/PcVisualFixes.test.tsx"
+  ],
+  "headUnchanged": true,
+  "rawMeasurements": 381,
+  "uniqueCurrentMeasurements": 349,
+  "wholePageOverflow": 0,
+  "unintendedVisibleHorizontalContainers": [],
+  "textContrastCandidates": 0,
+  "avatarMinimumContrast": 4.72,
+  "uiSuite": {
+    "files": 32,
+    "passed": 292,
+    "failed": 0
+  },
+  "focusedSuite": {
+    "files": 8,
+    "passed": 59
+  },
+  "postFocusChange": {
+    "passed": 6,
+    "failed": 0
+  },
+  "typecheck": "passed",
+  "fixtureTypecheck": "passed",
+  "build": "passed, large-chunk warning remains",
+  "detector": {
+    "initialLayoutFindings": 0,
+    "finalLayoutFindings": 0
+  },
+  "dailyRuntime": {
+    "url": "http://127.0.0.1:5174/#account-budget",
+    "pid": 93487,
+    "verifiedLoadedNewStyles": true,
+    "restarted": false
+  },
+  "preview": {
+    "port": 5189,
+    "pid": 15672,
+    "url": "http://127.0.0.1:5189/docs/verification/visual-audit-20261028/fixture.html?scene=accounts&data=worst&theme=light",
+    "tab": "7",
+    "demoWorstToggle": "verified after fixes; URL persisted"
+  },
+  "finalUiSuite": {
+    "files": 32,
+    "passed": 292,
+    "failed": 0,
+    "log": "ui-suite-final.log"
+  },
+  "postMenuFocusSuite": {
+    "files": 3,
+    "passed": 77,
+    "failed": 0
+  },
+  "browserCleanup": "CDP metrics cleared; browser viewport reset; native Chrome zoom restored and own tab closed",
+  "sourceEditsOutsideScope": []
+}

@@ -1,3 +1,5 @@
+import {isRetiredProvider,retiredProviderMessage} from './providerLifecycle.js';
+import {videoProviders} from "./videoProviderCatalog.js";
 export const executionPathKeys = ["external", "local", "manual"] as const;
 
 export type ExecutionPath = typeof executionPathKeys[number];
@@ -58,17 +60,16 @@ interface RegisteredAdapterDefinition {
   provider: string;
 }
 
-const googleTtsAlignment: AcousticAlignmentCapabilities = {
-  nativeTimestamps: { support: "unsupported", detail: "当前冻结的 Google TTS v1 synthesize 接口只返回音频；尚未迁移并验证 v1beta1 SSML_MARK。" },
-  existingTextAudioAlignment: { support: "unsupported", detail: "当前 Google TTS Adapter 未注册已有文本与音频的强制打轴接口。" },
-};
-
 const volcengineTtsAlignment: AcousticAlignmentCapabilities = {
   nativeTimestamps: { support: "unsupported", detail: "当前豆包 V3 SSE 实现只请求并解析音频数据，尚未验证时间戳响应字段。" },
   existingTextAudioAlignment: { support: "unsupported", detail: "自动字幕打轴是独立服务与授权，当前冻结的豆包 TTS 连接版本未声明兼容。" },
 };
 
 const manifest: readonly RegisteredAdapterDefinition[] = [
+  ...Object.entries(videoProviders).map(([provider, definition]): RegisteredAdapterDefinition => ({
+    provider, adapter: definition.adapter, executionPath: "external", connection: {kind: "owner_managed", type: provider+"_video_api", endpoint: definition.endpoint}, execution: {kind: "controlled_media", safetyLimit: 1},
+    capabilities: ["a_roll_generation", "b_roll_generation"].map(capability => ({capability, configurationFields: ["credential_ref", "max_attempts"], modelCatalog: definition.models, presetCatalog: ["official-video-v1"]})),
+  })),
   { provider: "bailian", adapter: "wan_video", executionPath: "external", connection: { kind: "owner_managed", type: "bailian_video_api", endpoint: "https://dashscope.aliyuncs.com" }, execution: { kind: "controlled_media", safetyLimit: 1 }, capabilities: [
     { capability: "a_roll_generation", configurationFields: ["credential_ref", "max_attempts"], modelCatalog: ["wan2.6-i2v-flash"], presetCatalog: ["wan-video-v1"] },
     { capability: "b_roll_generation", configurationFields: ["credential_ref", "max_attempts"], modelCatalog: ["wan2.6-i2v-flash"], presetCatalog: ["wan-video-v1"] },
@@ -81,14 +82,8 @@ const manifest: readonly RegisteredAdapterDefinition[] = [
   { provider: "openai", adapter: "openai_images", executionPath: "external", connection: { kind: "owner_managed", type: "openai_api" }, execution: { kind: "controlled_media", safetyLimit: 1 }, capabilities: [
     { capability: "static_visual_generation", configurationFields: ["model", "credential_ref", "max_attempts"], modelCatalog: ["gpt-image-1"], presetCatalog: ["static-visual-v1"] },
   ] },
-  { provider: "cloudflare", adapter: "workers_ai_images", executionPath: "external", connection: { kind: "owner_managed", type: "cloudflare_workers_ai_api", endpoint: "https://api.cloudflare.com/client/v4" }, execution: { kind: "controlled_media", safetyLimit: 1 }, capabilities: [
-    { capability: "static_visual_generation", configurationFields: ["model", "credential_ref", "max_attempts"], modelCatalog: ["@cf/black-forest-labs/flux-1-schnell"], presetCatalog: ["static-visual-v1"] },
-  ] },
   { provider: "pexels", adapter: "pexels_video", executionPath: "external", connection: { kind: "owner_managed", type: "pexels_api" }, execution: { kind: "controlled_media", safetyLimit: 3 }, capabilities: [
     { capability: "b_roll_generation", configurationFields: ["max_attempts"], modelCatalog: ["pexels-video-v1"], presetCatalog: ["b-roll-v1"] },
-  ] },
-  { provider: "google_tts", adapter: "google_tts", executionPath: "external", connection: { kind: "owner_managed", type: "google_tts_api", endpoint: "https://texttospeech.googleapis.com/v1" }, execution: { kind: "controlled_media", safetyLimit: 2 }, capabilities: [
-    { capability: "narration_generation", configurationFields: ["credential_ref", "max_attempts"], modelCatalog: ["standard"], presetCatalog: ["narration-v1"], voiceCatalog: { "en-US": ["en-US-Standard-A", "en-US-Standard-B", "en-US-Standard-C", "en-US-Standard-D"], "zh-CN": ["cmn-CN-Standard-A", "cmn-CN-Standard-B", "cmn-CN-Standard-C", "cmn-CN-Standard-D", "cmn-CN-standard-cm"], "vi-VN": ["vi-VN-Standard-A", "vi-VN-Standard-B", "vi-VN-Standard-C", "vi-VN-Standard-D"] }, acousticAlignment: googleTtsAlignment },
   ] },
   { provider: "volcengine_tts", adapter: "volcengine_tts", executionPath: "external", connection: { kind: "owner_managed", type: "volcengine_tts_api", endpoint: "https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse" }, execution: { kind: "controlled_media", safetyLimit: 2 }, capabilities: [
     { capability: "narration_generation", configurationFields: ["credential_ref", "max_attempts"], modelCatalog: ["seed-tts-2.0"], presetCatalog: ["narration-v1"], voiceCatalog: { "zh-CN": ["zh_female_vv_uranus_bigtts", "zh_male_m191_uranus_bigtts", "zh_male_taocheng_uranus_bigtts", "zh_female_xiaohe_uranus_bigtts", "zh_female_qingxinnvsheng_uranus_bigtts", "zh_male_huolixiaoge_uranus_bigtts", "zh_male_baqiqingshu_uranus_bigtts", "zh_female_mizai_uranus_bigtts", "ICL_uranus_zh_male_paoxiaoxiaoge_tob", "zh_male_xionger_uranus_bigtts"], "en-US": ["zh_female_vv_uranus_bigtts"], "ja-JP": ["zh_female_vv_uranus_bigtts"], "es-ES": ["zh_female_vv_uranus_bigtts"] }, acousticAlignment: volcengineTtsAlignment },
@@ -151,6 +146,7 @@ function resolve(selection: AdapterSelection): AdapterResolution {
   const provider = selection.provider?.trim() ?? "";
   let adapter = selection.adapter?.trim() ?? "";
   if (!adapter && provider === "openchatcut" && (selection.capability === "review_rendering" || selection.capability === "final_rendering")) adapter = "openchatcut";
+  if(isRetiredProvider(provider))return{kind:"invalid",code:"adapter_unregistered",detail:retiredProviderMessage};
   if (!provider || !adapter) return { kind: "invalid", code: "adapter_missing", detail: `能力 ${selection.capability} 缺少 Provider 或 Adapter。` };
   const definition = manifest.find((candidate) => candidate.provider === provider && candidate.adapter === adapter);
   if (!definition) return { kind: "invalid", code: "adapter_unregistered", detail: `未注册 Adapter ${provider}/${adapter}。` };

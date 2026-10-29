@@ -1,0 +1,3 @@
+ERROR:  Owner membership is required to delete an account
+CONTEXT:  PL/pgSQL function public.delete_account(uuid,text) line 12 at RAISE
+PL/pgSQL function inline_code_block line 1 at IF

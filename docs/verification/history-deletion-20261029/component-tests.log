@@ -1,0 +1,22 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/LocalMaintenanceEmbedded.test.tsx (2 tests) 642ms
+   ✓ 嵌入式导航保留同一维护实例的草稿，历史首次访问才挂载，文件清理入口仍存在  511ms
+ ✓ src/local-app/LocalHistory.test.tsx (5 tests) 1059ms
+   ✓ lists source rows and keeps raw names, file paths and exact JSON in on-demand details  568ms
+ ✓ src/local-app/HistoryEpisodes.test.tsx (3 tests) 753ms
+   ✓ starts with production history and keeps sources behind a lazy main tab  368ms
+ ✓ src/local-app/historyEpisodeDeletion.test.ts (1 test) 7ms
+ ✓ src/local-app/HistoryDanUi.test.tsx (6 tests) 1751ms
+   ✓ submits search, scope and the Dan UI checkbox through the existing read contract  710ms
+   ✓ keeps file/record pagination independent, download links intact and JSON exact  413ms
+   ✓ loads sources only when opened and preserves each tab search and source detail  333ms
+ ✓ src/local-app/HistoryDeleteAction.test.tsx (2 tests) 187ms
+ ✓ src/sharedViews.test.tsx (27 tests) 958ms
+
+ Test Files  7 passed (7)
+      Tests  46 passed (46)
+   Start at  09:35:48
+   Duration  3.63s (transform 1.37s, setup 39ms, collect 6.88s, tests 5.36s, environment 1.81s, prepare 275ms)
+

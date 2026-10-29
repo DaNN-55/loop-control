@@ -1,0 +1,39 @@
+{
+  "implementation": "complete",
+  "uncommitted": true,
+  "headUnchanged": true,
+  "uiTests": {
+    "files": 31,
+    "passed": 290
+  },
+  "lastAuthTests": {
+    "files": 3,
+    "passed": 26
+  },
+  "fullTests": {
+    "filesPassed": 144,
+    "filesFailed": 2,
+    "testsPassed": 1077,
+    "testsFailed": 9,
+    "failuresMatchEarlierBaseline": true
+  },
+  "types": "pass",
+  "fixtureTypes": "pass",
+  "build": "pass",
+  "independentReview": {
+    "fixedItems": 3,
+    "resolved": 3,
+    "disposition": "ship",
+    "scope": "scored fixes only"
+  },
+  "loginReview": {
+    "disposition": "ship",
+    "scope": "login only"
+  },
+  "designSchemaVersion": 2,
+  "freshRealBrowserErrors": 0,
+  "url": "http://127.0.0.1:5174/",
+  "realBusinessWrites": false,
+  "realGeneration": false,
+  "temporaryFixtureServer": "stopped"
+}

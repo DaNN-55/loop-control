@@ -1,0 +1,74 @@
+Window: "Loop Control · 页面一致性隔离验收", App: Google Chrome for Testing.
+0 标准窗口 Loop Control · 页面一致性隔离验收 - Google Chrome for Testing, Secondary Actions: Raise, URL: 127.0.0.1:5191/docs/verification/page-consistency-20261028/fixture.html?scene=new-episode&theme=light
+	1 container Loop Control · 页面一致性隔离验收 - Google Chrome for Testing, URL: 127.0.0.1:5191/docs/verification/page-consistency-20261028/fixture.html?scene=new-episode&theme=light
+		2 container
+			3 工具栏
+				4 按钮 返回
+				5 按钮 (disabled) 前进
+				6 container chrome://webui-toolbar.top-chrome/
+					7 工具栏
+						8 弹出式按钮 重新加载, Help: 重新加载此网页，按下可查看更多选项
+				9 container
+					10 弹出式按钮 查看网站信息
+					11 文本栏 (settable) 地址和搜索栏, Placeholder: 问问 Google 或输入网址, Value: 127.0.0.1:5191/docs/verification/page-consistency-20261028/fixture.html?scene=new-episode&theme=light
+					12 按钮 为此标签页添加书签
+				13 按钮 您
+				14 弹出式按钮 Chromium
+			15 container
+				16 HTML 内容 Loop Control · 页面一致性隔离验收, URL: 127.0.0.1:5191/docs/verification/page-consistency-20261028/fixture.html?scene=new-episode&theme=light
+					17 container 新建生产单
+						18 container 新建生产单
+							19 container
+								20 标题 新建生产单, Value: 2
+									21 文本 新建生产单
+								22 文本 使用当前蓝图与系列快照。
+								23 按钮 关闭新建生产单
+							24 container
+								25 文本 账号
+								26 弹出式按钮 账号, Value: 演示工作室
+									27 (selected) 演示工作室
+							28 container
+								29 文本 系列版本
+								30 按钮 系列版本说明说明
+								31 弹出式按钮 系列版本, Value: 不关联系列
+									32 (selected) 不关联系列
+							33 container
+								34 文本 工作标题
+								35 按钮 工作标题说明说明
+								36 文本栏 (settable) 工作标题（可留空）, Placeholder: 可在首次适用审核前补充
+							37 container
+								38 text 0  / 200 字符
+							39 container
+								40 container
+									41 文本 本单将冻结的生产能力
+									42 按钮 冻结的生产能力说明
+								43 text 0  项 当前蓝图没有已完整配置的可选媒体能力。
+							44 container
+								45 按钮 取消
+								46 按钮 创建生产单
+			47 container 信息栏容器
+				48 container 信息栏
+					49 文本 Chrome 测试版 v153.0.8010.36 仅适用于自动测试。若要进行常规浏览，请使用可自动更新的标准版 Chrome。
+					50 链接 下载 Chrome
+			51 弹出式按钮 标签页搜索
+			52 container
+				53 标签页组
+					54 标签 (selected, settable, boolean) Loop Control · 页面一致性隔离验收, Value: on
+						55 按钮 关闭
+			56 按钮 新标签页
+	57 关闭按钮
+	58 全屏幕按钮 Help: 此按钮也可以执行缩放窗口的操作, Secondary Actions: 缩放窗口
+	59 最小化按钮
+60 menu bar
+	61 Google Chrome for Testing
+	62 文件
+	63 编辑
+	64 显示
+	65 历史记录
+	66 书签
+	67 个人资料
+	68 标签页
+	69 窗口
+	70 帮助
+
+The focused UI element is 23 按钮 关闭新建生产单

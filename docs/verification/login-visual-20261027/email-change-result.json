@@ -1,0 +1,18 @@
+{
+  "date": "2026-10-27",
+  "ownerId": "644f8c5a-b668-48a3-8a25-94c4e502fa04",
+  "previousEmail": "stage-a@example.test",
+  "email": "wangdan556040@gmail.com",
+  "loginHttpStatus": 200,
+  "sessionHttpStatus": 200,
+  "catalogHttpStatus": 200,
+  "visibleEpisodeCount": 6267,
+  "previousEmailLoginHttpStatus": 401,
+  "ownerCountUnchanged": true,
+  "credentialCountUnchanged": true,
+  "passwordDigestUnchanged": true,
+  "passwordUpdatedAtUnchanged": true,
+  "passwordReferenceUnchanged": true,
+  "newUserCreated": false,
+  "operation": "Updated only the existing Owner email and private login metadata. Validation sessions logged out."
+}

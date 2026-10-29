@@ -8,7 +8,7 @@ it('keeps the default policy gate closed and validates reference shape when expl
  expect(()=>validateConfigurationPolicy({credential_ref:id})).toThrow('尚未就绪');
  expect(validateConfigurationPolicy({credential_ref:id},true)).toEqual([id]);
  expect(()=>validateConfigurationPolicy({credential_ref:'arbitrary'},true)).toThrow('引用无效');
- expect(()=>validateConfigurationPolicy({secret:'synthetic'},true)).toThrow('不能保存秘密');
+ expect(()=>validateConfigurationPolicy({secret:'synthetic'},true)).toThrow('不能保存密钥');
 });
 it('requires a current native binding, live verification, and available exact secret before blueprint save',async()=>{
  const row={id,connection_id:id,secret_ref:reference,store_mode:'keychain',is_current:true,revoked_at:null};
@@ -24,4 +24,13 @@ it('never calls a secret port for disabled, revoked, foreign, or non-native refe
   await expect(new LocalConnections({} as Pool,store,probe).assertBlueprintReferences(client,[id])).rejects.toThrow('版本');
  }
  expect(get).not.toHaveBeenCalled();
+});
+it('saves a qualified reference with closed networking without reading its secret, while execution stays blocked',async()=>{
+ const row={id,connection_id:id,secret_ref:reference,store_mode:'keychain',is_current:true,revoked_at:null};
+ const get=vi.fn(),query=vi.fn().mockResolvedValueOnce({rows:[row]}).mockResolvedValueOnce({rows:[{owned:true}]}).mockResolvedValueOnce({rows:[row]}).mockResolvedValueOnce({rows:[{allowed:true}]});
+ const service=new LocalConnections({}as Pool,{mode:'keychain',get,putImmutable:vi.fn()}as SecretStore,{mode:'live',networkAvailable:false,verify:vi.fn()}as ConnectionProbe);
+ expect(service.configurationReady).toBe(true);expect(service.externalReady).toBe(false);
+ await service.assertBlueprintReferences({query}as unknown as PoolClient,[id],{purpose:'save'});expect(get).not.toHaveBeenCalled();
+ const runtimeQuery=vi.fn().mockResolvedValueOnce({rows:[row]}).mockResolvedValueOnce({rows:[{owned:true}]}).mockResolvedValueOnce({rows:[row]}).mockResolvedValueOnce({rows:[{allowed:true}]});
+ await expect(service.assertBlueprintReferences({query:runtimeQuery}as unknown as PoolClient,[id])).rejects.toMatchObject({status:409,preflight:{checks:[expect.objectContaining({check:'provider_network_policy'})]}});expect(get).not.toHaveBeenCalled();
 });

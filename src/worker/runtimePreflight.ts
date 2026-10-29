@@ -345,7 +345,7 @@ function appendCredentialPresence(checks: WorkerPreflightCheck[], capability: Ru
     check: "credential_presence",
     phase: "preflight",
     status: fact.value ? "passed" : "unavailable",
-    reason: connection ? (fact.value ? "外部连接秘密已由 Worker 解析。" : "外部连接秘密不可用，请管理该连接。") : (fact.value ? `${key} 已在 Worker 环境中配置。` : `${key} 未配置。`),
+    reason: connection ? (fact.value ? "外部连接密钥已由 Worker 解析。" : "外部连接密钥不可用，请管理该连接。") : (fact.value ? `${key} 已在 Worker 环境中配置。` : `${key} 未配置。`),
     action: fact.value ? "none" : connection ? "manage_connection" : "contact_environment_admin",
     scope: connection ? "connection" : "worker",
   });

@@ -1,0 +1,15 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/connections/ConnectionOrganization.test.tsx (3 tests) 292ms
+ ✓ src/connections/ConnectionDanUi.test.tsx (2 tests) 365ms
+ ✓ src/connections/ConnectionFeedback.test.tsx (8 tests) 435ms
+ ✓ src/local-app/LocalConnectionsPanel.test.tsx (7 tests) 587ms
+ ✓ src/platform/configurationForms.test.ts (23 tests) 6ms
+ ✓ src/connections/ConnectionWorkspace.test.tsx (8 tests) 852ms
+
+ Test Files  6 passed (6)
+      Tests  51 passed (51)
+   Start at  21:48:41
+   Duration  2.35s (transform 253ms, setup 0ms, collect 5.30s, tests 2.54s, environment 1.76s, prepare 204ms)
+

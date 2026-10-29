@@ -1,0 +1,51 @@
+{
+  "at": "2026-10-27T10:48:53.907Z",
+  "deleted": {
+    "public.external_connections": 10,
+    "local_identity.command_receipts": 48,
+    "local_identity.connection_intents": 32,
+    "local_identity.connection_bindings": 24,
+    "local_identity.connection_probe_evidence": 32,
+    "local_identity.connection_qualifications": 2,
+    "public.external_connection_verifications": 44
+  },
+  "guardHashes": {
+    "public.tasks": "e5065005c3e00f9d398f153b45517b33",
+    "public.accounts": "0e6c98827641591ec665bc0b884f1479",
+    "public.episodes": "29a021e2df6f5e34807a0663dca30cb1",
+    "public.artifacts": "70932009e182a21e5b110e5a8ba46489",
+    "public.audit_events": "ae02aab398ac2a50e8b77d24225f6ca4",
+    "local_identity.owners": "2c742f2a169ea379ed48dd09f918e8db",
+    "local_identity.sessions": "b2983d5cb9bf3668b09a528527d6c9df",
+    "local_identity.credentials": "7c88b0d5229dc385b5509d353dda25eb",
+    "public.account_memberships": "a67adc6002fcb349e8c88ddaec9aa85a",
+    "public.external_connections": "ae071bee11a432d06f867f994d60b36b",
+    "local_identity.history_files": "f21ecec31fa1e10934c6954125232f83",
+    "local_identity.history_sources": "5db3fe9ef7b276984586da80f32067d5",
+    "local_identity.command_receipts": "3c277d657b56558c583bc8d06273f838",
+    "local_identity.history_versions": "6a9eb52638be8308fcf125ef5df53271",
+    "local_identity.connection_intents": "392939d97608575661bb700f4f17423c",
+    "public.account_blueprint_versions": "d8383c7e111c5826af1c074896802782",
+    "local_identity.connection_bindings": "3c49a85580ffad7f6e1df0b67f76f630",
+    "local_identity.history_source_rows": "2fb1416bcfe48388393bc21b0cc13d84",
+    "public.external_connection_versions": "4e6d8fb804eec1888a9cde73eb25b124",
+    "local_identity.history_file_protections": "bc205db1d112618ebb2d1148fe897553",
+    "local_identity.connection_probe_evidence": "133e1480bb3d27a29450bce631143052",
+    "local_identity.connection_qualifications": "6b006e73aae92062c854c725109fdf00",
+    "public.external_connection_verifications": "fe820ea184b26baa688bf03ea11de4da",
+    "local_identity.history_projection_results": "1d10b6ef21ef0a033b99b653bddcd535"
+  },
+  "versionsDeleted": 27,
+  "unrelatedDataUnchanged": true,
+  "historyFiles": {
+    "count": 12080,
+    "bytes": 4853378712,
+    "inventorySha256": "0ad4d3e7a30c10cbdffc648cbbce47b510be1924dfbbd24635443d238a1a5f43"
+  },
+  "historyFilesUnchanged": true,
+  "secretIndexUnchanged": true,
+  "keychainOperations": 0,
+  "backupCreated": false,
+  "providerCalls": 0,
+  "retainedSnapshots": true
+}

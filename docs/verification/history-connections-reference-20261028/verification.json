@@ -1,0 +1,40 @@
+{
+  "sourceChangesSinceNodeDemo": [
+    "src/local-app/LocalConnectionsPanel.tsx",
+    "src/local-app/HistoryEpisodes.test.tsx",
+    "src/local-app/HistoryDanUi.test.tsx",
+    "src/local-app/HistorySources.tsx",
+    "src/local-app/LocalHistory.tsx",
+    "src/local-app/LocalHistory.test.tsx",
+    "src/local-app/LocalConnectionsPanel.test.tsx",
+    "src/connections/ConnectionOrganization.test.tsx",
+    "src/connections/ConnectionFeedback.test.tsx",
+    "src/connections/ConnectionDanUi.test.tsx",
+    "src/connections/ConnectionWorkspace.test.tsx",
+    "src/connections/ConnectionWorkspace.tsx"
+  ],
+  "newUiStyles": [
+    "src/local-app/reference-history.css",
+    "src/connections/reference-connections.css"
+  ],
+  "tests": {
+    "files": 11,
+    "passed": 83
+  },
+  "typeCheck": "passed",
+  "viteBuild": "passed",
+  "buildOutput": "/private/tmp/loop-control-reference-pages-build-20261028",
+  "realApp": "http://127.0.0.1:5174/",
+  "browserChecks": [
+    "history tabs and source draft persistence",
+    "real source and episode detail",
+    "long source title stays inside cell",
+    "connection search and capability filter",
+    "new/edit/detail/version dialogs",
+    "Escape restores focus",
+    "light and dark",
+    "no document horizontal overflow"
+  ],
+  "realBusinessWrites": false,
+  "committed": false
+}

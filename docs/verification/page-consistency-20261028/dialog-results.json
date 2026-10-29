@@ -1,0 +1,55 @@
+[
+  {
+    "name": "new-account-light",
+    "headings": [
+      "20 标题 新建账号, Value: 2"
+    ]
+  },
+  {
+    "name": "new-episode-light",
+    "headings": [
+      "20 标题 新建生产单, Value: 2",
+      "34 文本 工作标题",
+      "35 按钮 工作标题说明说明",
+      "36 文本栏 (settable) 工作标题（可留空）, Placeholder: 可在首次适用审核前补充"
+    ]
+  },
+  {
+    "name": "login-light",
+    "headings": [
+      "28 标题 登录控制台, Value: 1"
+    ]
+  },
+  {
+    "name": "login-dark",
+    "headings": [
+      "28 标题 登录控制台, Value: 1"
+    ]
+  },
+  {
+    "name": "completion-prepare-light",
+    "headings": [
+      "19 标题 完成生产, Value: 2",
+      "28 文本 发布标题",
+      "29 文本栏 (settable) 发布标题, Value: 城市日常：清晨的第一束光",
+      "39 标题 最终视频, Value: 4"
+    ]
+  },
+  {
+    "name": "completion-ready-dark",
+    "headings": [
+      "19 标题 完成生产, Value: 2",
+      "26 标题 最终生产材料, Value: 3",
+      "30 标题 发布元数据, Value: 4",
+      "34 text 标题 城市日常：清晨的第一束光 标签 城市、日常 简介 演示交付内容",
+      "36 标题 封面, Value: 4",
+      "43 标题 视频, Value: 4"
+    ]
+  },
+  {
+    "name": "secrets-dark",
+    "headings": [
+      "19 标题 密钥管理, Value: 2"
+    ]
+  }
+]

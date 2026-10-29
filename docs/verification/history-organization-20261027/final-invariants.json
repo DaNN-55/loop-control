@@ -1,0 +1,21 @@
+{
+  "at": "2026-10-27T10:59:16.617Z",
+  "state": {
+    "sources": 187,
+    "versions": 66258,
+    "distinctFiles": 12068,
+    "testDatabases": 0,
+    "archivedSources": 0,
+    "ownerConnections": 4
+  },
+  "originalTableHashesUnchanged": true,
+  "mismatchedTables": [],
+  "fileInventoryUnchanged": true,
+  "fileInventory": {
+    "count": 12080,
+    "bytes": 4853378712,
+    "inventorySha256": "0ad4d3e7a30c10cbdffc648cbbce47b510be1924dfbbd24635443d238a1a5f43"
+  },
+  "backupsCreated": 0,
+  "paidProviderCalls": 0
+}

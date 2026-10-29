@@ -1,0 +1,2996 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/local-app/LocalCatalogApp.account.test.tsx > checks the exact current blueprint through the local Owner command and displays its real blocker
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 用当前配置工作区取代蓝图版本管理
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > opens standalone OpenChatCut from the initial account page without selecting a production order
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.test.tsx > keeps a committed series save successful when its follow-up read fails
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 在账号操作菜单集中展示信息并支持归档
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.account.test.tsx > does not show an old successful check after the saved blueprint revision changes
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > uses the original navigation, table and paging with local HTTP and opens the selected production drawer
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.test.tsx > keeps a committed series save successful when its follow-up read fails
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 直接编辑并保存当前蓝图
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.test.tsx > keeps a committed series save successful when its follow-up read fails
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > separates login/security from maintenance, preserves drafts across tabs and restores keyboard focus
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.account.test.tsx > does not start a blueprint check while logout is pending
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 取消编辑会恢复当前保存值
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.account.test.tsx > keeps the new account check when the previous account check returns late
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 有未保存修改时确认后才切换到系列
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > cleanupPending=false: confirms the actual directory and exact title, then reports unfinished file cleanup
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.account.test.tsx > keeps the relogged-in session check when an old session check returns late
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 有未保存修改时确认后才切换到系列
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+ ❯ src/local-app/LocalSystemStatus.test.tsx (4 tests | 2 failed) 2271ms
+   ✓ 本地状态沿用历史分组、真实状态颜色和键盘关闭，关闭备份不显示为故障 130ms
+   ✓ 读取失败不保留正常状态，并允许重试 81ms
+   × 页面加载自动读取，悬停无需点击即可区分已关闭、未启用和尚未执行 1014ms
+     → the given combination of arguments (null and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"system-status"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"false"[39m
+          [33maria-haspopup[39m=[32m"dialog"[39m
+          [33maria-label[39m=[32m"系统状态：需处理"[39m
+          [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover system-status-trigger system-status-attention"[39m
+          [33mdata-rac[39m=[32m""[39m
+          [33mdata-react-aria-pressable[39m=[32m"true"[39m
+          [33mid[39m=[32m"react-aria-_r_f_"[39m
+          [33mtabindex[39m=[32m"0"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+            [33mdata-text[39m=[32m"true"[39m
+          [36m>[39m
+            [36m<i[39m
+              [33maria-hidden[39m=[32m"true"[39m
+            [36m/>[39m
+          [36m</span>[39m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+   × 读取期间打开面板不重复请求，刷新不显示过期请求结果 1045ms
+     → the given combination of arguments (null and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div />[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"system-status"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"false"[39m
+          [33maria-haspopup[39m=[32m"dialog"[39m
+          [33maria-label[39m=[32m"系统状态：需处理"[39m
+          [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover system-status-trigger system-status-attention"[39m
+          [33mdata-rac[39m=[32m""[39m
+          [33mdata-react-aria-pressable[39m=[32m"true"[39m
+          [33mid[39m=[32m"react-aria-_r_p_"[39m
+          [33mtabindex[39m=[32m"0"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+            [33mdata-text[39m=[32m"true"[39m
+          [36m>[39m
+            [36m<i[39m
+              [33maria-hidden[39m=[32m"true"[39m
+            [36m/>[39m
+          [36m</span>[39m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 左侧分区导航都有真实目标
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 右侧滚动时更新左侧当前分区
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.account.test.tsx > keeps the relogged-in session check when an old session check returns late
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 始终展示默认关闭的五项生产能力
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+ ✓ src/local-app/LocalCatalogApp.account.test.tsx (5 tests) 1613ms
+   ✓ checks the exact current blueprint through the local Owner command and displays its real blocker  422ms
+   ✓ does not show an old successful check after the saved blueprint revision changes  373ms
+   ✓ keeps the new account check when the previous account check returns late  300ms
+   ✓ keeps the relogged-in session check when an old session check returns late  343ms
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 通过矩阵打开单项能力配置
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > cleanupPending=true: confirms the actual directory and exact title, then reports unfinished file cleanup
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 通过矩阵打开单项能力配置
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 保存启用但未完成的能力草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 首次启用不自动选择 B-roll 执行路径
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > shows a plan failure inside the confirmation dialog instead of leaving the click without feedback
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 首次启用不自动选择 B-roll 执行路径
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 把已验证的 Pexels 当前连接直接绑定到 B-roll 蓝图
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 把已验证的 Pexels 当前连接直接绑定到 B-roll 蓝图
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > shows a delete failure inside the confirmation dialog instead of leaving the click without feedback
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 把已验证的 Pexels 当前连接直接绑定到 B-roll 蓝图
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+ ❯ src/local-app/LocalCatalogApp.workspace.test.tsx (7 tests | 1 failed) 2502ms
+   ✓ opens standalone OpenChatCut from the initial account page without selecting a production order  432ms
+   ✓ uses the original navigation, table and paging with local HTTP and opens the selected production drawer  317ms
+   × separates login/security from maintenance, preserves drafts across tabs and restores keyboard focus 453ms
+     → expected <body><div>…(1)</div></body> to be <button …(9)>…(1)</button> // Object.is equality
+   ✓ cleanupPending=false: confirms the actual directory and exact title, then reports unfinished file cleanup  406ms
+   ✓ cleanupPending=true: confirms the actual directory and exact title, then reports unfinished file cleanup  365ms
+   ✓ shows a plan failure inside the confirmation dialog instead of leaving the click without feedback 205ms
+   ✓ shows a delete failure inside the confirmation dialog instead of leaving the click without feedback  323ms
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+ ✓ src/local-app/LocalCatalogApp.test.tsx (13 tests) 2865ms
+   ✓ keeps a committed series save successful when its follow-up read fails  811ms
+   ✓ isolates concurrent network logout failures in older-first order from a fresh login  440ms
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+ ✓ src/operations/OperationsWorkspace.test.tsx (6 tests) 315ms
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 火山旁白配置不再展示声音和语速字段
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 火山旁白配置不再展示声音和语速字段
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 用本地 Adapter 的完整身份识别就绪状态，并兼容旧检查
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+ ✓ src/platform/configurationForms.test.ts (23 tests) 8ms
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 用本地 Adapter 的完整身份识别就绪状态，并兼容旧检查
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 用本地 Adapter 的完整身份识别就绪状态，并兼容旧检查
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 用本地 Adapter 的完整身份识别就绪状态，并兼容旧检查
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 在 A-roll 尚未配置时，仍使用本机 OpenChatCut 状态开放本地路径
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 在 A-roll 尚未配置时，仍使用本机 OpenChatCut 状态开放本地路径
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 在 A-roll 尚未配置时，仍使用本机 OpenChatCut 状态开放本地路径
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+ ✓ src/reviews/WorkerBlockerCard.test.tsx (2 tests) 80ms
+ ✓ src/connections/ConnectionWorkspace.test.tsx (8 tests) 1041ms
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 选择分镜 Prompt Harness 时保存其不可变标识
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 选择分镜 Prompt Harness 时保存其不可变标识
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 通过弹窗配置分镜规划
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 通过弹窗配置分镜规划
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 展示真实 Worker 就绪检查并允许重新检查
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 合并影响审核渲染和最终渲染的同一 OpenChatCut 环境故障
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 不在第一屏展示冗长的运行命令错误
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 不在第一屏展示冗长的接口错误
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 系列页展示版本历史并通过新版本保存
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 系列页展示版本历史并通过新版本保存
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 系列有未保存修改时也会拦截离开
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 系列有未保存修改时也会拦截离开
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 系列有未保存修改时也会拦截离开
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 保留新建系列入口
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 保留新建系列入口
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 保留新建系列入口
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 支持重命名账号
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 有生产单时阻止删除账号
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 无生产单时要求输入账号名后才删除
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 从生产单进入时只显示定向修复表单
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 按 Worker 的可修复目标打开对应配置，不读取错误文案
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 修复视觉或分镜阻塞时冻结同一个已登记 Harness
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+ ✓ src/accounts/AccountWorkspace.test.tsx (32 tests) 5433ms
+   ✓ 账号配置工作区 > 在账号操作菜单集中展示信息并支持归档  405ms
+   ✓ 账号配置工作区 > 把已验证的 Pexels 当前连接直接绑定到 B-roll 蓝图  304ms
+   ✓ 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接  674ms
+   ✓ 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿  883ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/LocalCatalogApp.workspace.test.tsx > separates login/security from maintenance, preserves drafts across tabs and restores keyboard focus
+AssertionError: expected <body><div>…(1)</div></body> to be <button …(9)>…(1)</button> // Object.is equality
+
+- Expected
++ Received
+
+@@ -1,6 +1,315 @@
++ <body>
++   <div>
++     <div
++       class="app-shell dan-ui product-ui"
++       data-sidebar="expanded"
++       data-theme="light"
++     >
++       <a
++         class="skip-link"
++         href="#main-content"
++       >
++         跳到主要内容
++       </a>
++       <aside
++         aria-label="主导航"
++         class="sidebar"
++       >
++         <div
++           class="wordmark"
++         >
++           <span
++             class="wordmark-text"
++           >
++             <span>
++               <span
++                 class="wordmark-letter-cyan"
++               >
++                 L
++               </span>
++               <span
++                 class="wordmark-letter-blue"
++               >
++                 oo
++               </span>
++               p
++             </span>
++             <span>
++               <span
++                 class="wordmark-letter-pink"
++               >
++                 C
++               </span>
++               ontrol
++             </span>
++           </span>
++           <img
++             alt="Loop Control"
++             class="wordmark-mark"
++             src="/brand/loop-mark.svg"
++           />
++         </div>
++         <nav
++           class="navigation"
++         >
++           <button
++             aria-label="系列运营"
++             class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover navigation-item"
++             data-rac=""
++             data-react-aria-pressable="true"
++             id="react-aria-_r_5u_"
++             tabindex="0"
++             type="button"
++           >
++             <span
++               class="transition-inherit-all px-0.5"
++               data-text="true"
++             >
++               <svg
++                 aria-hidden="true"
++                 class="lucide lucide-chart-column icon"
++                 fill="none"
++                 height="24"
++                 stroke="currentColor"
++                 stroke-linecap="round"
++                 stroke-linejoin="round"
++                 stroke-width="1.8"
++                 viewBox="0 0 24 24"
++                 width="24"
++                 xmlns="http://www.w3.org/2000/svg"
++               >
++                 <path
++                   d="M3 3v16a2 2 0 0 0 2 2h16"
++                 />
++                 <path
++                   d="M18 17V9"
++                 />
++                 <path
++                   d="M13 17V5"
++                 />
++                 <path
++                   d="M8 17v-3"
++                 />
++               </svg>
++               <span
++                 class="navigation-label"
++               >
++                 系列运营
++               </span>
++             </span>
++           </button>
++           <button
++             aria-label="生产单"
++             class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover navigation-item"
++             data-rac=""
++             data-react-aria-pressable="true"
++             id="react-aria-_r_60_"
++             tabindex="0"
++             type="button"
++           >
++             <span
++               class="transition-inherit-all px-0.5"
++               data-text="true"
++             >
++               <svg
++                 aria-hidden="true"
++                 class="lucide lucide-table2 lucide-table-2 icon"
++                 fill="none"
++                 height="24"
++                 stroke="currentColor"
++                 stroke-linecap="round"
++                 stroke-linejoin="round"
++                 stroke-width="1.8"
++                 viewBox="0 0 24 24"
++                 width="24"
++                 xmlns="http://www.w3.org/2000/svg"
++               >
++                 <path
++                   d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"
++                 />
++               </svg>
++               <span
++                 class="navigation-label"
++               >
++                 生产单
++               </span>
++             </span>
++           </button>
++           <button
++             aria-current="page"
++             aria-label="账号"
++             class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover navigation-item is-active"
++             data-rac=""
++             data-react-aria-pressable="true"
++             id="react-aria-_r_62_"
++             tabindex="0"
++             type="button"
++           >
++             <span
++               class="transition-inherit-all px-0.5"
++               data-text="true"
++             >
++               <svg
++                 aria-hidden="true"
++                 class="lucide lucide-users icon"
++                 fill="none"
++                 height="24"
++                 stroke="currentColor"
++                 stroke-linecap="round"
++                 stroke-linejoin="round"
++                 stroke-width="1.8"
++                 viewBox="0 0 24 24"
++                 width="24"
++                 xmlns="http://www.w3.org/2000/svg"
++               >
++                 <path
++                   d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
++                 />
++                 <path
++                   d="M16 3.128a4 4 0 0 1 0 7.744"
++                 />
++                 <path
++                   d="M22 21v-2a4 4 0 0 0-3-3.87"
++                 />
++                 <circle
++                   cx="9"
++                   cy="7"
++                   r="4"
++                 />
++               </svg>
++               <span
++                 class="navigation-label"
++               >
++                 账号
++               </span>
++             </span>
++           </button>
++         </nav>
++         <button
++           aria-label="打开 OpenChatCut 独立剪辑"
++           class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover sidebar-studio-shortcut"
++           data-rac=""
++           data-react-aria-pressable="true"
++           id="react-aria-_r_65_"
++           tabindex="0"
++           type="button"
++         >
++           <span
++             class="transition-inherit-all px-0.5"
++             data-text="true"
++           >
++             <svg
++               aria-hidden="true"
++               class="lucide lucide-video icon"
++               fill="none"
++               height="24"
++               stroke="currentColor"
++               stroke-linecap="round"
++               stroke-linejoin="round"
++               stroke-width="1.8"
++               viewBox="0 0 24 24"
++               width="24"
++               xmlns="http://www.w3.org/2000/svg"
++             >
++               <path
++                 d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"
++               />
++               <rect
++                 height="12"
++                 rx="2"
++                 width="14"
++                 x="2"
++                 y="6"
++               />
++             </svg>
++             <span>
++               OpenChatCut
++             </span>
++           </span>
++         </button>
++         <div
++           class="sidebar-footer"
++         >
++           <div
++             class="sidebar-utilities"
++           >
+              <button
++               aria-label="切换至深色模式"
++               class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover sidebar-utility"
++               data-rac=""
++               data-react-aria-pressable="true"
++               id="react-aria-_r_67_"
++               tabindex="0"
++               type="submit"
++             >
++               <span
++                 class="transition-inherit-all px-0.5"
++                 data-text="true"
++               >
++                 <svg
++                   aria-hidden="true"
++                   class="lucide lucide-moon icon"
++                   fill="none"
++                   height="24"
++                   stroke="currentColor"
++                   stroke-linecap="round"
++                   stroke-linejoin="round"
++                   stroke-width="1.8"
++                   viewBox="0 0 24 24"
++                   width="24"
++                   xmlns="http://www.w3.org/2000/svg"
++                 >
++                   <path
++                     d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"
++                   />
++                 </svg>
++               </span>
++             </button>
++             <button
++               aria-label="收起侧栏"
++               class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover sidebar-collapse-button sidebar-utility"
++               data-rac=""
++               data-react-aria-pressable="true"
++               id="react-aria-_r_69_"
++               tabindex="0"
++               type="submit"
++             >
++               <span
++                 class="transition-inherit-all px-0.5"
++                 data-text="true"
++               >
++                 <svg
++                   aria-hidden="true"
++                   class="lucide lucide-panel-left icon"
++                   fill="none"
++                   height="24"
++                   stroke="currentColor"
++                   stroke-linecap="round"
++                   stroke-linejoin="round"
++                   stroke-width="1.8"
++                   viewBox="0 0 24 24"
++                   width="24"
++                   xmlns="http://www.w3.org/2000/svg"
++                 >
++                   <rect
++                     height="18"
++                     rx="2"
++                     width="18"
++                     x="3"
++                     y="3"
++                   />
++                   <path
++                     d="M9 3v18"
++                   />
++                 </svg>
++               </span>
++             </button>
++             <div
++               class="owner-menu"
++             >
++               <button
+                  aria-expanded="false"
+                  aria-haspopup="true"
+                  aria-label="所有者设置"
+                  class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover owner-menu-trigger"
+                  data-rac=""
+@@ -26,14 +335,1775 @@
+                      width="24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
++                     />
++                     <circle
++                       cx="12"
++                       cy="7"
++                       r="4"
++                     />
++                   </svg>
++                 </span>
++               </button>
++             </div>
++           </div>
++         </div>
++       </aside>
++       <section
++         aria-label="平台工作台"
++         class="content-pane"
++         id="main-content"
++         tabindex="-1"
++       >
++         <header
++           class="page-header"
++         >
++           <h1>
++             账号
++           </h1>
++           <div
++             class="page-header-actions"
++           >
++             <div
++               class="mobile-header-actions"
++             >
++               <div
++                 class="owner-menu"
++               >
++                 <button
++                   aria-expanded="false"
++                   aria-haspopup="true"
++                   aria-label="所有者设置"
++                   class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover owner-menu-trigger"
++                   data-rac=""
++                   data-react-aria-pressable="true"
++                   id="react-aria-_r_6f_"
++                   tabindex="0"
++                   type="button"
++                 >
++                   <span
++                     class="transition-inherit-all px-0.5"
++                     data-text="true"
++                   >
++                     <svg
++                       aria-hidden="true"
++                       class="lucide lucide-user icon"
++                       fill="none"
++                       height="24"
++                       stroke="currentColor"
++                       stroke-linecap="round"
++                       stroke-linejoin="round"
++                       stroke-width="1.8"
++                       viewBox="0 0 24 24"
++                       width="24"
++                       xmlns="http://www.w3.org/2000/svg"
++                     >
++                       <path
++                         d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"
++                       />
++                       <circle
++                         cx="12"
++                         cy="7"
++                         r="4"
++                       />
++                     </svg>
++                   </span>
++                 </button>
++               </div>
++             </div>
++           </div>
++         </header>
++         <header
++           class="account-configuration-heading"
++         >
++           <div
++             class="account-heading-actions"
++           >
++             <label>
++               当前账号
++               <div
++                 class="w-full in-data-input-wrapper:w-max"
++               >
++                 <div
++                   class="relative grid w-full items-center"
++                 >
++                   <select
++                     aria-label="当前账号"
++                     class="appearance-none rounded-lg bg-primary font-medium text-primary shadow-xs ring-1 ring-primary outline-hidden transition duration-100 ease-linear ring-inset placeholder:text-fg-quaternary focus-visible:ring-2 focus-visible:ring-brand disabled:cursor-not-allowed disabled:opacity-50 py-2 pl-3 text-sm in-data-input-wrapper:flex in-data-input-wrapper:h-full in-data-input-wrapper:gap-1 in-data-input-wrapper:bg-inherit in-data-input-wrapper:px-3 in-data-input-wrapper:py-2 in-data-input-wrapper:font-normal in-data-input-wrapper:text-tertiary in-data-input-wrapper:shadow-none in-data-input-wrapper:ring-transparent in-data-input-wrapper:in-data-[size=sm]:text-sm in-data-input-wrapper:group-disabled:pointer-events-none in-data-input-wrapper:group-disabled:cursor-not-allowed in-data-input-wrapper:group-disabled:bg-transparent in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-[input-size=lg]:py-2.5 in-data-input-wrapper:in-data-[input-size=md]:py-2 in-data-input-wrapper:in-data-[input-size=md]:pl-3 in-data-input-wrapper:in-data-[input-size=sm]:text-sm in-data-input-wrapper:in-data-leading:pr-4.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=lg]:pl-3.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=md]:pr-4.5 in-data-input-wrapper:in-data-leading:in-data-[input-size=md]:pl-3 in-data-input-wrapper:in-data-leading:in-data-[input-size=sm]:pr-3.5 in-data-input-wrapper:in-data-trailing:in-data-[input-size=lg]:pr-8 in-data-input-wrapper:in-data-trailing:in-data-[input-size=md]:pr-7.5 in-data-input-wrapper:in-data-trailing:in-data-[input-size=sm]:pr-6.5"
++                     id="select-native-_r_6j_"
++                   >
++                     <optgroup
++                       label="使用中"
++                     >
++                       <option
++                         value="10000000-0000-4000-8000-000000000001"
++                       >
++                         日常账号
++                       </option>
++                     </optgroup>
++                   </select>
++                   <svg
++                     aria-hidden="true"
++                     class="pointer-events-none absolute text-fg-quaternary size-4 right-2.5 stroke-[2.25px] in-data-input-wrapper:right-0 in-data-input-wrapper:size-4 in-data-input-wrapper:stroke-[2.625px] in-data-input-wrapper:in-data-trailing:in-data-[input-size=md]:right-3 in-data-input-wrapper:in-data-trailing:in-data-[input-size=sm]:right-3"
++                     fill="none"
++                     height="24"
++                     stroke="currentColor"
++                     stroke-linecap="round"
++                     stroke-linejoin="round"
++                     stroke-width="2"
++                     viewBox="0 0 24 24"
++                     width="24"
++                   >
++                     <path
++                       d="m6 9 6 6 6-6"
++                     />
++                   </svg>
++                 </div>
++               </div>
++             </label>
++             <div
++               class="account-actions"
++             >
++               <button
++                 aria-expanded="false"
++                 aria-haspopup="true"
++                 aria-label="账号操作"
++                 class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover account-actions-trigger"
++                 data-rac=""
++                 data-react-aria-pressable="true"
++                 id="react-aria-_r_6k_"
++                 tabindex="0"
++                 type="button"
++               >
++                 <span
++                   class="transition-inherit-all px-0.5"
++                   data-text="true"
++                 >
++                   <svg
++                     aria-hidden="true"
++                     class="lucide lucide-ellipsis"
++                     fill="none"
++                     height="20"
++                     stroke="currentColor"
++                     stroke-linecap="round"
++                     stroke-linejoin="round"
++                     stroke-width="2"
++                     viewBox="0 0 24 24"
++                     width="20"
++                     xmlns="http://www.w3.org/2000/svg"
++                   >
++                     <circle
++                       cx="12"
++                       cy="12"
++                       r="1"
++                     />
++                     <circle
++                       cx="19"
++                       cy="12"
++                       r="1"
++                     />
++                     <circle
++                       cx="5"
++                       cy="12"
++                       r="1"
++                     />
++                   </svg>
++                 </span>
++               </button>
++             </div>
++           </div>
++           <div
++             class="workspace-actions"
++           >
++             <button
++               aria-label="刷新"
++               class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover button button-secondary refresh-button"
++               data-rac=""
++               data-react-aria-pressable="true"
++               id="react-aria-_r_6p_"
++               tabindex="0"
++               type="button"
++             >
++               <span
++                 class="transition-inherit-all px-0.5"
++                 data-text="true"
++               >
++                 <svg
++                   aria-hidden="true"
++                   class="lucide lucide-refresh-cw icon"
++                   fill="none"
++                   height="24"
++                   stroke="currentColor"
++                   stroke-linecap="round"
++                   stroke-linejoin="round"
++                   stroke-width="1.8"
++                   viewBox="0 0 24 24"
++                   width="24"
++                   xmlns="http://www.w3.org/2000/svg"
++                 >
++                   <path
++                     d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"
++                   />
++                   <path
++                     d="M21 3v5h-5"
++                   />
++                   <path
++                     d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"
++                   />
++                   <path
++                     d="M8 16H3v5"
++                   />
++                 </svg>
++               </span>
++             </button>
++             <button
++               class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-brand-solid text-white shadow-xs-skeuomorphic ring-1 ring-transparent ring-inset hover:bg-brand-solid_hover data-loading:bg-brand-solid_hover before:absolute before:inset-px before:border before:border-white/12 before:mask-b-from-0% *:data-icon:text-white/60 hover:*:data-icon:text-white/70 button button-primary"
++               data-rac=""
++               data-react-aria-pressable="true"
++               id="react-aria-_r_6r_"
++               tabindex="0"
++               type="button"
++             >
++               <span
++                 class="transition-inherit-all px-0.5"
++                 data-text="true"
++               >
++                 新建账号
++               </span>
++             </button>
++           </div>
++         </header>
++         <template />
++         <div
++           class="flex w-full flex-col"
++           data-orientation="horizontal"
++           data-rac=""
++         >
++           <div
++             aria-label="账号设置导航"
++             aria-orientation="horizontal"
++             class="group flex gap-3 relative before:absolute before:inset-x-0 before:bottom-0 before:h-px before:bg-border-secondary account-tabs"
++             data-collection="react-aria-_r_6t_"
++             data-orientation="horizontal"
++             data-rac=""
++             id="react-aria-_r_6u_"
++             role="tablist"
++           >
++             <div
++               aria-controls="react-aria-_r_6u_-tabpanel-blueprints"
++               aria-selected="true"
++               class="z-10 flex h-max cursor-pointer items-center justify-center whitespace-nowrap transition duration-100 ease-linear group-orientation-vertical:justify-start text-sm font-semibold gap-1 *:data-icon:size-4 px-0.5 pb-2.5 pt-0 rounded-none border-b-2 outline-focus-ring border-fg-brand-primary_alt text-brand-secondary *:data-icon:text-fg-brand-secondary_hover"
++               data-collection="react-aria-_r_6t_"
++               data-key="blueprints"
++               data-rac=""
++               data-react-aria-pressable="true"
++               data-selected="true"
++               id="react-aria-_r_6u_-tab-blueprints"
++               role="tab"
++               tabindex="0"
++             >
++               <span
++                 class="flex items-center gap-1.5 px-0.5"
++               >
++                 蓝图
++               </span>
++             </div>
++             <div
++               aria-selected="false"
++               class="z-10 flex h-max cursor-pointer items-center justify-center whitespace-nowrap text-quaternary transition duration-100 ease-linear group-orientation-vertical:justify-start text-sm font-semibold gap-1 *:data-icon:size-4 px-0.5 pb-2.5 pt-0 rounded-none border-b-2 border-transparent outline-focus-ring *:data-icon:text-fg-quaternary"
++               data-collection="react-aria-_r_6t_"
++               data-key="series"
++               data-rac=""
++               data-react-aria-pressable="true"
++               id="react-aria-_r_6u_-tab-series"
++               role="tab"
++               tabindex="-1"
++             >
++               <span
++                 class="flex items-center gap-1.5 px-0.5"
++               >
++                 系列
++               </span>
++             </div>
++           </div>
++           <div
++             aria-labelledby="react-aria-_r_6u_-tab-blueprints"
++             class="outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2"
++             data-rac=""
++             id="react-aria-_r_6u_-tabpanel-blueprints"
++             role="tabpanel"
++           >
++             <div
++               class="account-configuration-layout"
++               role="tabpanel"
++             >
++               <nav
++                 aria-label="蓝图配置分区"
++                 class="account-section-nav"
++               >
++                 <a
++                   aria-current="location"
++                   href="#account-rules"
++                 >
++                   <span
++                     aria-hidden="true"
++                   >
++                     1
++                   </span>
++                   账号基础规则
++                 </a>
++                 <a
++                   href="#account-capabilities"
++                 >
++                   <span
++                     aria-hidden="true"
++                   >
++                     2
++                   </span>
++                   生产能力
++                 </a>
++                 <a
++                   href="#account-budget"
++                 >
++                   <span
++                     aria-hidden="true"
++                   >
++                     3
++                   </span>
++                   分镜规划
++                 </a>
++               </nav>
++               <main
++                 class="account-configuration-form"
++                 id="account-rules"
++               >
++                 <section
++                   class="configuration-form blueprint-configuration-form"
++                 >
++                   <p
++                     class="blueprint-editor-note"
++                   >
++                     保存会直接更新当前蓝图规则，不创建新的用户可见版本；已经创建的 Episode 仍使用自己的规则快照。
++                   </p>
++                   <fieldset>
++                     <legend>
++                       <span
++                         class="field-label"
++                       >
++                         账号定位
++                         <span
++                           aria-label="账号定位说明"
++                           class="help-tip"
++                           tabindex="0"
++                         >
++                           <svg
++                             aria-hidden="true"
++                             class="lucide lucide-info help-tip-icon"
++                             fill="none"
++                             height="24"
++                             stroke="currentColor"
++                             stroke-linecap="round"
++                             stroke-linejoin="round"
++                             stroke-width="1.8"
++                             viewBox="0 0 24 24"
++                             width="24"
++                             xmlns="http://www.w3.org/2000/svg"
++                           >
++                             <circle
++                               cx="12"
++                               cy="12"
++                               r="10"
++                             />
++                             <path
++                               d="M12 16v-4"
++                             />
++                             <path
++                               d="M12 8h.01"
++                             />
++                           </svg>
++                         </span>
++                       </span>
++                     </legend>
++                     <label>
++                       <textarea
++                         aria-label="账号定位"
++                         class="w-full scroll-py-3 rounded-lg bg-primary text-primary shadow-xs ring-1 ring-primary transition duration-100 ease-linear ring-inset placeholder:text-placeholder autofill:rounded-lg autofill:text-primary focus:outline-hidden p-3 text-sm [&::-webkit-resizer]:bg-(image:--resize-handle-bg) [&::-webkit-resizer]:bg-contain dark:[&::-webkit-resizer]:bg-(image:--resize-handle-bg-dark)"
++                         data-rac=""
++                         placeholder="例如：面向固定受众，持续制作某类短视频内容。"
++                         rows="3"
++                         style="--resize-handle-bg: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgMkwyIDEwIiBzdHJva2U9IiNENUQ3REEiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMSA3TDcgMTEiIHN0cm9rZT0iI0Q1RDdEQSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+); --resize-handle-bg-dark: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgMkwyIDEwIiBzdHJva2U9IiMzNzNBNDEiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0xMSA3TDcgMTEiIHN0cm9rZT0iIzM3M0E0MSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+);"
++                       />
++                     </label>
++                     <p
++                       class="field-hint"
++                     >
++                       描述账号面向谁、持续讲什么以及希望保持的表达方向。
++                     </p>
++                   </fieldset>
++                   <fieldset>
++                     <legend>
++                       本地资产与审批
++                     </legend>
++                     <label>
++                       <span
++                         class="field-label"
++                       >
++                         资产目录
++                         <span
++                           aria-label="资产目录说明"
++                           class="help-tip"
++                           tabindex="0"
++                         >
++                           <svg
++                             aria-hidden="true"
++                             class="lucide lucide-info help-tip-icon"
++                             fill="none"
++                             height="24"
++                             stroke="currentColor"
++                             stroke-linecap="round"
++                             stroke-linejoin="round"
++                             stroke-width="1.8"
++                             viewBox="0 0 24 24"
++                             width="24"
++                             xmlns="http://www.w3.org/2000/svg"
++                           >
++                             <circle
++                               cx="12"
++                               cy="12"
++                               r="10"
++                             />
++                             <path
++                               d="M12 16v-4"
++                             />
++                             <path
++                               d="M12 8h.01"
++                             />
++                           </svg>
++                         </span>
++                       </span>
++                       <div
++                         class="asset-root-control"
++                       >
++                         <div
++                           class="group/input relative flex w-full flex-row place-content-center place-items-center rounded-lg bg-primary shadow-xs ring-1 ring-primary transition-shadow duration-100 ease-linear ring-inset group-disabled:cursor-not-allowed group-disabled:opacity-50 group-invalid:ring-error_subtle"
++                           data-rac=""
++                           role="group"
++                         >
++                           <input
++                             aria-label="资产目录"
++                             class="m-0 w-full bg-transparent text-primary ring-0 outline-hidden placeholder:text-placeholder autofill:rounded-lg autofill:text-primary disabled:cursor-not-allowed px-3 py-2 text-sm"
++                             data-rac=""
++                             placeholder="例如：/Volumes/素材盘/账号目录"
++                             type="text"
++                             value=""
++                           />
++                           <svg
++                             aria-hidden="true"
++                             class="pointer-events-none absolute hidden size-4 stroke-[2.25px] text-fg-error-secondary group-invalid/input:block right-3"
++                             fill="none"
++                             height="24"
++                             stroke="currentColor"
++                             stroke-linecap="round"
++                             stroke-linejoin="round"
++                             stroke-width="2"
++                             viewBox="0 0 24 24"
++                             width="24"
++                           >
++                             <path
++                               d="M12 16v-4m0-4h.01M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10Z"
++                             />
++                           </svg>
++                         </div>
++                         <button
++                           class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 *:data-icon:size-4 *:data-icon:stroke-[2.25px] bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover button button-secondary button-small"
++                           data-rac=""
++                           data-react-aria-pressable="true"
++                           id="react-aria-_r_73_"
++                           tabindex="0"
++                           type="button"
++                         >
++                           <span
++                             class="transition-inherit-all px-0.5"
++                             data-text="true"
++                           >
++                             选择文件夹
++                           </span>
++                         </button>
++                         <button
++                           class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 *:data-icon:size-4 *:data-icon:stroke-[2.25px] bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover button button-secondary button-small"
++                           data-disabled="true"
++                           data-rac=""
++                           data-react-aria-pressable="true"
++                           disabled=""
++                           id="react-aria-_r_75_"
++                           type="button"
++                         >
++                           <span
++                             class="transition-inherit-all px-0.5"
++                             data-text="true"
++                           >
++                             打开文件夹
++                           </span>
++                         </button>
++                       </div>
++                     </label>
++                     <p
++                       class="blueprint-readiness"
++                       role="status"
++                     >
++                       草稿：未填写资产目录，不能达到生产就绪。
++                     </p>
++                     <div
++                       class="configuration-switch-groups"
++                     >
++                       <div>
++                         <span
++                           class="configuration-label"
++                         >
++                           <span
++                             class="field-label"
++                           >
++                             审批关卡
++                             <span
++                               aria-label="审批关卡说明"
++                               class="help-tip"
++                               tabindex="0"
++                             >
++                               <svg
++                                 aria-hidden="true"
++                                 class="lucide lucide-info help-tip-icon"
++                                 fill="none"
++                                 height="24"
++                                 stroke="currentColor"
++                                 stroke-linecap="round"
++                                 stroke-linejoin="round"
++                                 stroke-width="1.8"
++                                 viewBox="0 0 24 24"
++                                 width="24"
++                                 xmlns="http://www.w3.org/2000/svg"
++                               >
++                                 <circle
++                                   cx="12"
++                                   cy="12"
++                                   r="10"
++                                 />
++                                 <path
++                                   d="M12 16v-4"
++                                 />
++                                 <path
++                                   d="M12 8h.01"
++                                 />
++                               </svg>
++                             </span>
++                           </span>
++                         </span>
++                         <div
++                           class="configuration-switch-list approval-gate-switches"
++                         >
++                           <div
++                             class="configuration-switch"
++                           >
++                             <label
++                               class="relative flex items-start gap-2"
++                               data-rac=""
++                               data-react-aria-pressable="true"
++                               data-selected="true"
++                             >
++                               <span
++                                 style="border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"
++                               >
++                                 <input
++                                   aria-label="脚本审核"
++                                   checked=""
++                                   data-react-aria-pressable="true"
++                                   tabindex="0"
++                                   title=""
++                                   type="checkbox"
++                                 />
++                               </span>
++                               <div
++                                 class="relative flex size-4 shrink-0 cursor-pointer appearance-none items-center justify-center rounded ring-1 ring-inset bg-brand-solid ring-brand-solid mt-0.5"
++                               >
++                                 <svg
++                                   aria-hidden="true"
++                                   class="pointer-events-none absolute h-3 w-2.5 text-fg-white opacity-0 transition-inherit-all"
++                                   fill="none"
++                                   viewBox="0 0 14 14"
++                                 >
++                                   <path
++                                     d="M2.91675 7H11.0834"
++                                     stroke="currentColor"
++                                     stroke-linecap="round"
++                                     stroke-linejoin="round"
++                                     stroke-width="2"
++                                   />
++                                 </svg>
++                                 <svg
++                                   aria-hidden="true"
++                                   class="pointer-events-none absolute size-3 text-fg-white transition-inherit-all opacity-100"
++                                   fill="none"
++                                   viewBox="0 0 14 14"
++                                 >
++                                   <path
++                                     d="M11.6666 3.5L5.24992 9.91667L2.33325 7"
++                                     stroke="currentColor"
++                                     stroke-linecap="round"
++                                     stroke-linejoin="round"
++                                     stroke-width="2"
++                                   />
++                                 </svg>
++                               </div>
++                               <div
++                                 class="inline-flex flex-col"
++                               >
++                                 <p
++                                   class="text-secondary select-none text-sm font-medium"
++                                 >
++                                   脚本审核
++                                 </p>
++                               </div>
++                             </label>
++                             <span
++                               aria-label="脚本审核说明"
++                               class="help-tip"
++                               tabindex="0"
++                             >
++                               <svg
++                                 aria-hidden="true"
++                                 class="lucide lucide-info help-tip-icon"
++                                 fill="none"
++                                 height="24"
++                                 stroke="currentColor"
++                                 stroke-linecap="round"
++                                 stroke-linejoin="round"
++                                 stroke-width="1.8"
++                                 viewBox="0 0 24 24"
++                                 width="24"
++                                 xmlns="http://www.w3.org/2000/svg"
++                               >
++                                 <circle
++                                   cx="12"
++                                   cy="12"
++                                   r="10"
++                                 />
++                                 <path
++                                   d="M12 16v-4"
++                                 />
++                                 <path
++                                   d="M12 8h.01"
++                                 />
++                               </svg>
++                             </span>
++                           </div>
++                           <div
++                             class="configuration-switch"
++                           >
++                             <label
++                               class="relative flex items-start gap-2"
++                               data-rac=""
++                               data-react-aria-pressable="true"
++                               data-selected="true"
++                             >
++                               <span
++                                 style="border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"
++                               >
++                                 <input
++                                   aria-label="视觉审核"
++                                   checked=""
++                                   data-react-aria-pressable="true"
++                                   tabindex="0"
++                                   title=""
++                                   type="checkbox"
++                                 />
++                               </span>
++                               <div
++                                 class="relative flex size-4 shrink-0 cursor-pointer appearance-none items-center justify-center rounded ring-1 ring-inset bg-brand-solid ring-brand-solid mt-0.5"
++                               >
++                                 <svg
++                                   aria-hidden="true"
++                                   class="pointer-events-none absolute h-3 w-2.5 text-fg-white opacity-0 transition-inherit-all"
++                                   fill="none"
++                                   viewBox="0 0 14 14"
++                                 >
++                                   <path
++                                     d="M2.91675 7H11.0834"
++                                     stroke="currentColor"
++                                     stroke-linecap="round"
++                                     stroke-linejoin="round"
++                                     stroke-width="2"
++                                   />
++                                 </svg>
++                                 <svg
++                                   aria-hidden="true"
++                                   class="pointer-events-none absolute size-3 text-fg-white transition-inherit-all opacity-100"
++                                   fill="none"
++                                   viewBox="0 0 14 14"
++                                 >
++                                   <path
++                                     d="M11.6666 3.5L5.24992 9.91667L2.33325 7"
++                                     stroke="currentColor"
++                                     stroke-linecap="round"
++                                     stroke-linejoin="round"
++                                     stroke-width="2"
++                                   />
++                                 </svg>
++                               </div>
++                               <div
++                                 class="inline-flex flex-col"
++                               >
++                                 <p
++                                   class="text-secondary select-none text-sm font-medium"
++                                 >
++                                   视觉审核
++                                 </p>
++                               </div>
++                             </label>
++                             <span
++                               aria-label="视觉审核说明"
++                               class="help-tip"
++                               tabindex="0"
++                             >
++                               <svg
++                                 aria-hidden="true"
++                                 class="lucide lucide-info help-tip-icon"
++                                 fill="none"
++                                 height="24"
++                                 stroke="currentColor"
++                                 stroke-linecap="round"
++                                 stroke-linejoin="round"
++                                 stroke-width="1.8"
++                                 viewBox="0 0 24 24"
++                                 width="24"
++                                 xmlns="http://www.w3.org/2000/svg"
++                               >
++                                 <circle
++                                   cx="12"
++                                   cy="12"
++                                   r="10"
++                                 />
++                                 <path
++                                   d="M12 16v-4"
++                                 />
++                                 <path
++                                   d="M12 8h.01"
++                                 />
++                               </svg>
++                             </span>
++                           </div>
++                           <div
++                             class="configuration-switch"
++                           >
++                             <label
++                               class="relative flex items-start gap-2"
++                               data-rac=""
++                               data-react-aria-pressable="true"
++                               data-selected="true"
++                             >
++                               <span
++                                 style="border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"
++                               >
++                                 <input
++                                   aria-label="分镜审核"
++                                   checked=""
++                                   data-react-aria-pressable="true"
++                                   tabindex="0"
++                                   title=""
++                                   type="checkbox"
++                                 />
++                               </span>
++                               <div
++                                 class="relative flex size-4 shrink-0 cursor-pointer appearance-none items-center justify-center rounded ring-1 ring-inset bg-brand-solid ring-brand-solid mt-0.5"
++                               >
++                                 <svg
++                                   aria-hidden="true"
++                                   class="pointer-events-none absolute h-3 w-2.5 text-fg-white opacity-0 transition-inherit-all"
++                                   fill="none"
++                                   viewBox="0 0 14 14"
++                                 >
++                                   <path
++                                     d="M2.91675 7H11.0834"
++                                     stroke="currentColor"
++                                     stroke-linecap="round"
++                                     stroke-linejoin="round"
++                                     stroke-width="2"
++                                   />
++                                 </svg>
++                                 <svg
++                                   aria-hidden="true"
++                                   class="pointer-events-none absolute size-3 text-fg-white transition-inherit-all opacity-100"
++                                   fill="none"
++                                   viewBox="0 0 14 14"
++                                 >
++                                   <path
++                                     d="M11.6666 3.5L5.24992 9.91667L2.33325 7"
++                                     stroke="currentColor"
++                                     stroke-linecap="round"
++                                     stroke-linejoin="round"
++                                     stroke-width="2"
++                                   />
++                                 </svg>
++                               </div>
++                               <div
++                                 class="inline-flex flex-col"
++                               >
++                                 <p
++                                   class="text-secondary select-none text-sm font-medium"
++                                 >
++                                   分镜审核
++                                 </p>
++                               </div>
++                             </label>
++                             <span
++                               aria-label="分镜审核说明"
++                               class="help-tip"
++                               tabindex="0"
++                             >
++                               <svg
++                                 aria-hidden="true"
++                                 class="lucide lucide-info help-tip-icon"
++                                 fill="none"
++                                 height="24"
++                                 stroke="currentColor"
++                                 stroke-linecap="round"
++                                 stroke-linejoin="round"
++                                 stroke-width="1.8"
++                                 viewBox="0 0 24 24"
++                                 width="24"
++                                 xmlns="http://www.w3.org/2000/svg"
++                               >
++                                 <circle
++                                   cx="12"
++                                   cy="12"
++                                   r="10"
++                                 />
++                                 <path
++                                   d="M12 16v-4"
++                                 />
++                                 <path
++                                   d="M12 8h.01"
++                                 />
++                               </svg>
++                             </span>
++                           </div>
++                           <div
++                             class="configuration-switch"
++                           >
++                             <label
++                               class="relative flex items-start gap-2"
++                               data-rac=""
++                               data-react-aria-pressable="true"
++                               data-selected="true"
++                             >
++                               <span
++                                 style="border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"
++                               >
++                                 <input
++                                   aria-label="QC 审核"
++                                   checked=""
++                                   data-react-aria-pressable="true"
++                                   tabindex="0"
++                                   title=""
++                                   type="checkbox"
++                                 />
++                               </span>
++                               <div
++                                 class="relative flex size-4 shrink-0 cursor-pointer appearance-none items-center justify-center rounded ring-1 ring-inset bg-brand-solid ring-brand-solid mt-0.5"
++                               >
++                                 <svg
++                                   aria-hidden="true"
++                                   class="pointer-events-none absolute h-3 w-2.5 text-fg-white opacity-0 transition-inherit-all"
++                                   fill="none"
++                                   viewBox="0 0 14 14"
++                                 >
++                                   <path
++                                     d="M2.91675 7H11.0834"
++                                     stroke="currentColor"
++                                     stroke-linecap="round"
++                                     stroke-linejoin="round"
++                                     stroke-width="2"
++                                   />
++                                 </svg>
++                                 <svg
++                                   aria-hidden="true"
++                                   class="pointer-events-none absolute size-3 text-fg-white transition-inherit-all opacity-100"
++                                   fill="none"
++                                   viewBox="0 0 14 14"
++                                 >
++                                   <path
++                                     d="M11.6666 3.5L5.24992 9.91667L2.33325 7"
++                                     stroke="currentColor"
++                                     stroke-linecap="round"
++                                     stroke-linejoin="round"
++                                     stroke-width="2"
+                                    />
++                                 </svg>
++                               </div>
++                               <div
++                                 class="inline-flex flex-col"
++                               >
++                                 <p
++                                   class="text-secondary select-none text-sm font-medium"
++                                 >
++                                   QC 审核
++                                 </p>
++                               </div>
++                             </label>
++                             <span
++                               aria-label="QC 审核说明"
++                               class="help-tip"
++                               tabindex="0"
++                             >
++                               <svg
++                                 aria-hidden="true"
++                                 class="lucide lucide-info help-tip-icon"
++                                 fill="none"
++                                 height="24"
++                                 stroke="currentColor"
++                                 stroke-linecap="round"
++                                 stroke-linejoin="round"
++                                 stroke-width="1.8"
++                                 viewBox="0 0 24 24"
++                                 width="24"
++                                 xmlns="http://www.w3.org/2000/svg"
++                               >
+                                  <circle
+                                    cx="12"
++                                   cy="12"
++                                   r="10"
++                                 />
++                                 <path
++                                   d="M12 16v-4"
++                                 />
++                                 <path
++                                   d="M12 8h.01"
++                                 />
++                               </svg>
++                             </span>
++                           </div>
++                         </div>
++                       </div>
++                     </div>
++                   </fieldset>
++                   <fieldset
++                     id="account-capabilities"
++                   >
++                     <legend>
++                       生产能力
++                     </legend>
++                     <p
++                       class="field-hint"
++                     >
++                       在此启用能力并比较当前路径与配置状态；点击“配置”只打开该能力。配置未完成时，生产前检查会阻止创建生产单。
++                     </p>
++                     <div
++                       aria-label="生产能力配置矩阵"
++                       class="capability-matrix"
++                       role="table"
++                     >
++                       <div
++                         class="capability-matrix-row capability-matrix-heading"
++                         role="row"
++                       >
++                         <span
++                           role="columnheader"
++                         >
++                           能力
++                         </span>
++                         <span
++                           role="columnheader"
++                         >
++                           启用
++                         </span>
++                         <span
++                           role="columnheader"
++                         >
++                           执行路径
++                         </span>
++                         <span
++                           role="columnheader"
++                         >
++                           状态
++                         </span>
++                         <span
++                           role="columnheader"
++                         >
++                           操作
++                         </span>
++                       </div>
++                       <div
++                         class="capability-matrix-row"
++                         role="row"
++                       >
++                         <strong
++                           role="cell"
++                         >
++                           图片生成
++                         </strong>
++                         <div
++                           role="cell"
++                         >
++                           <div
++                             class="configuration-switch"
++                           >
++                             <label
++                               class="relative flex items-start gap-2"
++                               data-rac=""
++                               data-react-aria-pressable="true"
++                             >
++                               <span
++                                 style="border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"
++                               >
++                                 <input
++                                   aria-label="启用图片生成"
++                                   data-react-aria-pressable="true"
++                                   tabindex="0"
++                                   title=""
++                                   type="checkbox"
++                                 />
++                               </span>
++                               <div
++                                 class="relative flex size-4 shrink-0 cursor-pointer appearance-none items-center justify-center rounded bg-primary ring-1 ring-primary ring-inset mt-0.5"
++                               >
++                                 <svg
++                                   aria-hidden="true"
++                                   class="pointer-events-none absolute h-3 w-2.5 text-fg-white opacity-0 transition-inherit-all"
++                                   fill="none"
++                                   viewBox="0 0 14 14"
++                                 >
++                                   <path
++                                     d="M2.91675 7H11.0834"
++                                     stroke="currentColor"
++                                     stroke-linecap="round"
++                                     stroke-linejoin="round"
++                                     stroke-width="2"
++                                   />
++                                 </svg>
++                                 <svg
++                                   aria-hidden="true"
++                                   class="pointer-events-none absolute size-3 text-fg-white opacity-0 transition-inherit-all"
++                                   fill="none"
++                                   viewBox="0 0 14 14"
++                                 >
++                                   <path
++                                     d="M11.6666 3.5L5.24992 9.91667L2.33325 7"
++                                     stroke="currentColor"
++                                     stroke-linecap="round"
++                                     stroke-linejoin="round"
++                                     stroke-width="2"
++                                   />
++                                 </svg>
++                               </div>
++                               <div
++                                 class="inline-flex flex-col"
++                               >
++                                 <p
++                                   class="text-secondary select-none text-sm font-medium"
++                                 >
++                                   图片生成
++                                 </p>
++                               </div>
++                             </label>
++                           </div>
++                         </div>
++                         <span
++                           class="capability-matrix-path"
++                           role="cell"
++                         >
++                           —
++                         </span>
++                         <span
++                           class="capability-matrix-status"
++                           role="cell"
++                         >
++                           未启用
++                         </span>
++                         <div
++                           role="cell"
++                         />
++                       </div>
++                       <div
++                         class="capability-matrix-row"
++                         role="row"
++                       >
++                         <strong
++                           role="cell"
++                         >
++                           A-roll
++                         </strong>
++                         <div
++                           role="cell"
++                         >
++                           <div
++                             class="configuration-switch"
++                           >
++                             <label
++                               class="relative flex items-start gap-2"
++                               data-rac=""
++                               data-react-aria-pressable="true"
++                             >
++                               <span
++                                 style="border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"
++                               >
++                                 <input
++                                   aria-label="启用A-roll"
++                                   data-react-aria-pressable="true"
++                                   tabindex="0"
++                                   title=""
++                                   type="checkbox"
++                                 />
++                               </span>
++                               <div
++                                 class="relative flex size-4 shrink-0 cursor-pointer appearance-none items-center justify-center rounded bg-primary ring-1 ring-primary ring-inset mt-0.5"
++                               >
++                                 <svg
++                                   aria-hidden="true"
++                                   class="pointer-events-none absolute h-3 w-2.5 text-fg-white opacity-0 transition-inherit-all"
++                                   fill="none"
++                                   viewBox="0 0 14 14"
++                                 >
++                                   <path
++                                     d="M2.91675 7H11.0834"
++                                     stroke="currentColor"
++                                     stroke-linecap="round"
++                                     stroke-linejoin="round"
++                                     stroke-width="2"
++                                   />
++                                 </svg>
++                                 <svg
++                                   aria-hidden="true"
++                                   class="pointer-events-none absolute size-3 text-fg-white opacity-0 transition-inherit-all"
++                                   fill="none"
++                                   viewBox="0 0 14 14"
++                                 >
++                                   <path
++                                     d="M11.6666 3.5L5.24992 9.91667L2.33325 7"
++                                     stroke="currentColor"
++                                     stroke-linecap="round"
++                                     stroke-linejoin="round"
++                                     stroke-width="2"
++                                   />
++                                 </svg>
++                               </div>
++                               <div
++                                 class="inline-flex flex-col"
++                               >
++                                 <p
++                                   class="text-secondary select-none text-sm font-medium"
++                                 >
++                                   A-roll
++                                 </p>
++                               </div>
++                             </label>
++                           </div>
++                         </div>
++                         <span
++                           class="capability-matrix-path"
++                           role="cell"
++                         >
++                           —
++                         </span>
++                         <span
++                           class="capability-matrix-status"
++                           role="cell"
++                         >
++                           未启用
++                         </span>
++                         <div
++                           role="cell"
++                         />
++                       </div>
++                       <div
++                         class="capability-matrix-row"
++                         role="row"
++                       >
++                         <strong
++                           role="cell"
++                         >
++                           B-roll
++                         </strong>
++                         <div
++                           role="cell"
++                         >
++                           <div
++                             class="configuration-switch"
++                           >
++                             <label
++                               class="relative flex items-start gap-2"
++                               data-rac=""
++                               data-react-aria-pressable="true"
++                             >
++                               <span
++                                 style="border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"
++                               >
++                                 <input
++                                   aria-label="启用B-roll"
++                                   data-react-aria-pressable="true"
++                                   tabindex="0"
++                                   title=""
++                                   type="checkbox"
++                                 />
++                               </span>
++                               <div
++                                 class="relative flex size-4 shrink-0 cursor-pointer appearance-none items-center justify-center rounded bg-primary ring-1 ring-primary ring-inset mt-0.5"
++                               >
++                                 <svg
++                                   aria-hidden="true"
++                                   class="pointer-events-none absolute h-3 w-2.5 text-fg-white opacity-0 transition-inherit-all"
++                                   fill="none"
++                                   viewBox="0 0 14 14"
++                                 >
++                                   <path
++                                     d="M2.91675 7H11.0834"
++                                     stroke="currentColor"
++                                     stroke-linecap="round"
++                                     stroke-linejoin="round"
++                                     stroke-width="2"
++                                   />
++                                 </svg>
++                                 <svg
++                                   aria-hidden="true"
++                                   class="pointer-events-none absolute size-3 text-fg-white opacity-0 transition-inherit-all"
++                                   fill="none"
++                                   viewBox="0 0 14 14"
++                                 >
++                                   <path
++                                     d="M11.6666 3.5L5.24992 9.91667L2.33325 7"
++                                     stroke="currentColor"
++                                     stroke-linecap="round"
++                                     stroke-linejoin="round"
++                                     stroke-width="2"
++                                   />
++                                 </svg>
++                               </div>
++                               <div
++                                 class="inline-flex flex-col"
++                               >
++                                 <p
++                                   class="text-secondary select-none text-sm font-medium"
++                                 >
++                                   B-roll
++                                 </p>
++                               </div>
++                             </label>
++                           </div>
++                         </div>
++                         <span
++                           class="capability-matrix-path"
++                           role="cell"
++                         >
++                           —
++                         </span>
++                         <span
++                           class="capability-matrix-status"
++                           role="cell"
++                         >
++                           未启用
++                         </span>
++                         <div
++                           role="cell"
++                         />
++                       </div>
++                       <div
++                         class="capability-matrix-row"
++                         role="row"
++                       >
++                         <strong
++                           role="cell"
++                         >
++                           旁白
++                         </strong>
++                         <div
++                           role="cell"
++                         >
++                           <div
++                             class="configuration-switch"
++                           >
++                             <label
++                               class="relative flex items-start gap-2"
++                               data-rac=""
++                               data-react-aria-pressable="true"
++                             >
++                               <span
++                                 style="border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"
++                               >
++                                 <input
++                                   aria-label="启用旁白"
++                                   data-react-aria-pressable="true"
++                                   tabindex="0"
++                                   title=""
++                                   type="checkbox"
++                                 />
++                               </span>
++                               <div
++                                 class="relative flex size-4 shrink-0 cursor-pointer appearance-none items-center justify-center rounded bg-primary ring-1 ring-primary ring-inset mt-0.5"
++                               >
++                                 <svg
++                                   aria-hidden="true"
++                                   class="pointer-events-none absolute h-3 w-2.5 text-fg-white opacity-0 transition-inherit-all"
++                                   fill="none"
++                                   viewBox="0 0 14 14"
++                                 >
++                                   <path
++                                     d="M2.91675 7H11.0834"
++                                     stroke="currentColor"
++                                     stroke-linecap="round"
++                                     stroke-linejoin="round"
++                                     stroke-width="2"
++                                   />
++                                 </svg>
++                                 <svg
++                                   aria-hidden="true"
++                                   class="pointer-events-none absolute size-3 text-fg-white opacity-0 transition-inherit-all"
++                                   fill="none"
++                                   viewBox="0 0 14 14"
++                                 >
++                                   <path
++                                     d="M11.6666 3.5L5.24992 9.91667L2.33325 7"
++                                     stroke="currentColor"
++                                     stroke-linecap="round"
++                                     stroke-linejoin="round"
++                                     stroke-width="2"
++                                   />
++                                 </svg>
++                               </div>
++                               <div
++                                 class="inline-flex flex-col"
++                               >
++                                 <p
++                                   class="text-secondary select-none text-sm font-medium"
++                                 >
++                                   旁白
++                                 </p>
++                               </div>
++                             </label>
++                           </div>
++                         </div>
++                         <span
++                           class="capability-matrix-path"
++                           role="cell"
++                         >
++                           —
++                         </span>
++                         <span
++                           class="capability-matrix-status"
++                           role="cell"
++                         >
++                           未启用
++                         </span>
++                         <div
++                           role="cell"
++                         />
++                       </div>
++                       <div
++                         class="capability-matrix-row"
++                         role="row"
++                       >
++                         <strong
++                           role="cell"
++                         >
++                           配乐 / 音效
++                         </strong>
++                         <div
++                           role="cell"
++                         >
++                           <div
++                             class="configuration-switch"
++                           >
++                             <label
++                               class="relative flex items-start gap-2"
++                               data-rac=""
++                               data-react-aria-pressable="true"
++                             >
++                               <span
++                                 style="border: 0px; clip-path: inset(50%); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px; white-space: nowrap;"
++                               >
++                                 <input
++                                   aria-label="启用配乐 / 音效"
++                                   data-react-aria-pressable="true"
++                                   tabindex="0"
++                                   title=""
++                                   type="checkbox"
++                                 />
++                               </span>
++                               <div
++                                 class="relative flex size-4 shrink-0 cursor-pointer appearance-none items-center justify-center rounded bg-primary ring-1 ring-primary ring-inset mt-0.5"
++                               >
++                                 <svg
++                                   aria-hidden="true"
++                                   class="pointer-events-none absolute h-3 w-2.5 text-fg-white opacity-0 transition-inherit-all"
++                                   fill="none"
++                                   viewBox="0 0 14 14"
++                                 >
++                                   <path
++                                     d="M2.91675 7H11.0834"
++                                     stroke="currentColor"
++                                     stroke-linecap="round"
++                                     stroke-linejoin="round"
++                                     stroke-width="2"
++                                   />
++                                 </svg>
++                                 <svg
++                                   aria-hidden="true"
++                                   class="pointer-events-none absolute size-3 text-fg-white opacity-0 transition-inherit-all"
++                                   fill="none"
++                                   viewBox="0 0 14 14"
++                                 >
++                                   <path
++                                     d="M11.6666 3.5L5.24992 9.91667L2.33325 7"
++                                     stroke="currentColor"
++                                     stroke-linecap="round"
++                                     stroke-linejoin="round"
++                                     stroke-width="2"
++                                   />
++                                 </svg>
++                               </div>
++                               <div
++                                 class="inline-flex flex-col"
++                               >
++                                 <p
++                                   class="text-secondary select-none text-sm font-medium"
++                                 >
++                                   配乐 / 音效
++                                 </p>
++                               </div>
++                             </label>
++                           </div>
++                         </div>
++                         <span
++                           class="capability-matrix-path"
++                           role="cell"
++                         >
++                           —
++                         </span>
++                         <span
++                           class="capability-matrix-status"
++                           role="cell"
++                         >
++                           未启用
++                         </span>
++                         <div
++                           role="cell"
++                         />
++                       </div>
++                     </div>
++                     <p
++                       class="field-hint"
++                     >
++                       Provider、Adapter、连接、模型、预设和调度参数只作用于之后新建的 Episode。
++                     </p>
++                   </fieldset>
++                   <fieldset
++                     id="account-budget"
++                   >
++                     <legend>
++                       分镜规划
++                     </legend>
++                     <section
++                       class="stage-configuration-summary"
++                     >
++                       <article>
++                         <div
++                           class="stage-configuration-summary-title"
++                         >
++                           <strong>
++                             分镜规划
++                           </strong>
++                           <span>
++                             新建 Episode 时冻结此选择
++                           </span>
++                         </div>
++                         <dl>
++                           <div>
++                             <dt>
++                               运行模型
++                             </dt>
++                             <dd>
++                               codex
++                                · 
++                               gpt-5.6-codex
++                             </dd>
++                           </div>
++                           <div>
++                             <dt>
++                               提示词 Harness
++                             </dt>
++                             <dd>
++                               unversioned
++                             </dd>
++                           </div>
++                         </dl>
++                         <button
++                           aria-label="修改分镜规划配置"
++                           class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 *:data-icon:size-4 *:data-icon:stroke-[2.25px] bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover button button-secondary button-small"
++                           data-rac=""
++                           data-react-aria-pressable="true"
++                           id="react-aria-_r_7u_"
++                           tabindex="0"
++                           type="button"
++                         >
++                           <span
++                             class="transition-inherit-all px-0.5"
++                             data-text="true"
++                           >
++                             配置
++                           </span>
++                         </button>
++                       </article>
++                     </section>
++                   </fieldset>
++                   <div
++                     class="configuration-actions"
++                   >
++                     <button
++                       class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover button button-secondary"
++                       data-rac=""
++                       data-react-aria-pressable="true"
++                       id="react-aria-_r_80_"
++                       tabindex="0"
++                       type="button"
++                     >
++                       <span
++                         class="transition-inherit-all px-0.5"
++                         data-text="true"
++                       >
++                         取消编辑
++                       </span>
++                     </button>
++                     <button
++                       class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 bg-brand-solid text-white shadow-xs-skeuomorphic ring-1 ring-transparent ring-inset hover:bg-brand-solid_hover data-loading:bg-brand-solid_hover before:absolute before:inset-px before:border before:border-white/12 before:mask-b-from-0% *:data-icon:text-white/60 hover:*:data-icon:text-white/70 button button-primary"
++                       data-rac=""
++                       data-react-aria-pressable="true"
++                       id="react-aria-_r_82_"
++                       tabindex="0"
++                       type="button"
++                     >
++                       <span
++                         class="transition-inherit-all px-0.5"
++                         data-text="true"
++                       >
++                         保存并检查
++                       </span>
++                     </button>
++                   </div>
++                 </section>
++               </main>
++               <aside
++                 aria-label="账号默认配置检查"
++                 class="account-status-rail"
++               >
++                 <section
++                   class="is-ready"
++                 >
++                   <span
++                     class="account-status-eyebrow"
++                   >
++                     账号默认配置检查
++                   </span>
++                   <h2>
++                     等待运行检查
++                   </h2>
++                   <p>
++                     只检查当前账号蓝图，不包含具体系列；新建生产单选择系列后会再次检查并冻结配置。
++                   </p>
++                   <button
++                     class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 *:data-icon:size-4 *:data-icon:stroke-[2.25px] bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover button button-secondary button-small"
++                     data-rac=""
++                     data-react-aria-pressable="true"
++                     id="react-aria-_r_84_"
++                     tabindex="0"
++                     type="button"
++                   >
++                     <span
++                       class="transition-inherit-all px-0.5"
++                       data-text="true"
++                     >
++                       重新检查
++                     </span>
++                   </button>
++                 </section>
++                 <section>
++                   <h3>
++                     配置范围
++                   </h3>
++                   <dl>
++                     <div>
++                       <dt>
++                         生效对象
++                       </dt>
++                       <dd>
++                         新生产单
++                       </dd>
++                     </div>
++                     <div>
++                       <dt>
++                         已有生产单
++                       </dt>
++                       <dd>
++                         保持冻结配置
++                       </dd>
++                     </div>
++                     <div>
++                       <dt>
++                         当前开启
++                       </dt>
++                       <dd>
++                         0
++                          项能力
++                       </dd>
++                     </div>
++                     <div>
++                       <dt>
++                         本机依赖
++                       </dt>
++                       <dd>
++                         待检查
++                       </dd>
++                     </div>
++                   </dl>
++                 </section>
++               </aside>
++             </div>
++           </div>
++         </div>
++       </section>
++       <nav
++         aria-label="移动端主导航"
++         class="mobile-navigation"
++       >
++         <button
++           aria-label="系列运营"
++           class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover navigation-item"
++           data-rac=""
++           data-react-aria-pressable="true"
++           id="react-aria-_r_86_"
++           tabindex="0"
++           type="button"
++         >
++           <span
++             class="transition-inherit-all px-0.5"
++             data-text="true"
++           >
++             <svg
++               aria-hidden="true"
++               class="lucide lucide-chart-column icon"
++               fill="none"
++               height="24"
++               stroke="currentColor"
++               stroke-linecap="round"
++               stroke-linejoin="round"
++               stroke-width="1.8"
++               viewBox="0 0 24 24"
++               width="24"
++               xmlns="http://www.w3.org/2000/svg"
++             >
++               <path
++                 d="M3 3v16a2 2 0 0 0 2 2h16"
++               />
++               <path
++                 d="M18 17V9"
++               />
++               <path
++                 d="M13 17V5"
++               />
++               <path
++                 d="M8 17v-3"
++               />
++             </svg>
++             <span
++               class="navigation-label"
++             >
++               系列运营
++             </span>
++           </span>
++         </button>
++         <button
++           aria-label="生产单"
++           class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover navigation-item"
++           data-rac=""
++           data-react-aria-pressable="true"
++           id="react-aria-_r_88_"
++           tabindex="0"
++           type="button"
++         >
++           <span
++             class="transition-inherit-all px-0.5"
++             data-text="true"
++           >
++             <svg
++               aria-hidden="true"
++               class="lucide lucide-table2 lucide-table-2 icon"
++               fill="none"
++               height="24"
++               stroke="currentColor"
++               stroke-linecap="round"
++               stroke-linejoin="round"
++               stroke-width="1.8"
++               viewBox="0 0 24 24"
++               width="24"
++               xmlns="http://www.w3.org/2000/svg"
++             >
++               <path
++                 d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"
++               />
++             </svg>
++             <span
++               class="navigation-label"
++             >
++               生产单
++             </span>
++           </span>
++         </button>
++         <button
++           aria-current="page"
++           aria-label="账号"
++           class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover navigation-item is-active"
++           data-rac=""
++           data-react-aria-pressable="true"
++           id="react-aria-_r_8a_"
++           tabindex="0"
++           type="button"
++         >
++           <span
++             class="transition-inherit-all px-0.5"
++             data-text="true"
++           >
++             <svg
++               aria-hidden="true"
++               class="lucide lucide-users icon"
++               fill="none"
++               height="24"
++               stroke="currentColor"
++               stroke-linecap="round"
++               stroke-linejoin="round"
++               stroke-width="1.8"
++               viewBox="0 0 24 24"
++               width="24"
++               xmlns="http://www.w3.org/2000/svg"
++             >
++               <path
++                 d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
++               />
++               <path
++                 d="M16 3.128a4 4 0 0 1 0 7.744"
++               />
++               <path
++                 d="M22 21v-2a4 4 0 0 0-3-3.87"
++               />
++               <circle
++                 cx="9"
+                  cy="7"
+                  r="4"
+                />
+              </svg>
++             <span
++               class="navigation-label"
++             >
++               账号
++             </span>
+            </span>
+          </button>
++       </nav>
++     </div>
++   </div>
++ </body>
+
+ ❯ src/local-app/LocalCatalogApp.workspace.test.tsx:59:113
+     57|  expect(password.querySelector('form')).toBeNull();expect(screen.query…
+     58|  expect(requests.some(path=>/history|deletion-cleanups/.test(path))).t…
+     59|  await user.keyboard('{Escape}');expect(screen.queryByRole('dialog')).…
+       |                                                                                                                 ^
+     60|  await user.click(owner);await user.click(screen.getByRole('menuitem',…
+     61|  const maintenance=screen.getByRole('dialog',{name:'系统维护'});
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/local-app/LocalSystemStatus.test.tsx > 页面加载自动读取，悬停无需点击即可区分已关闭、未启用和尚未执行
+AssertionError: the given combination of arguments (null and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"system-status"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"false"[39m
+          [33maria-haspopup[39m=[32m"dialog"[39m
+          [33maria-label[39m=[32m"系统状态：需处理"[39m
+          [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover system-status-trigger system-status-attention"[39m
+          [33mdata-rac[39m=[32m""[39m
+          [33mdata-react-aria-pressable[39m=[32m"true"[39m
+          [33mid[39m=[32m"react-aria-_r_f_"[39m
+          [33mtabindex[39m=[32m"0"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+            [33mdata-text[39m=[32m"true"[39m
+          [36m>[39m
+            [36m<i[39m
+              [33maria-hidden[39m=[32m"true"[39m
+            [36m/>[39m
+          [36m</span>[39m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ src/local-app/LocalSystemStatus.test.tsx:39:68
+     37|  await waitFor(()=>expect(localRequest).toHaveBeenCalledTimes(1));
+     38|  const button=screen.getByRole('button',{name:/系统状态/});
+     39|  await waitFor(()=>expect(button.getAttribute('aria-description')).toC…
+       |                                                                    ^
+     40|  await user.hover(button);
+     41|  const hover=document.querySelector('.system-status-hover-card') as HT…
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/local-app/LocalSystemStatus.test.tsx > 读取期间打开面板不重复请求，刷新不显示过期请求结果
+AssertionError: the given combination of arguments (null and string) is invalid for this assertion. You can use an array, a map, an object, a set, a string, or a weakset instead of a string
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div />[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"system-status"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"false"[39m
+          [33maria-haspopup[39m=[32m"dialog"[39m
+          [33maria-label[39m=[32m"系统状态：需处理"[39m
+          [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover system-status-trigger system-status-attention"[39m
+          [33mdata-rac[39m=[32m""[39m
+          [33mdata-react-aria-pressable[39m=[32m"true"[39m
+          [33mid[39m=[32m"react-aria-_r_p_"[39m
+          [33mtabindex[39m=[32m"0"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+            [33mdata-text[39m=[32m"true"[39m
+          [36m>[39m
+            [36m<i[39m
+              [33maria-hidden[39m=[32m"true"[39m
+            [36m/>[39m
+          [36m</span>[39m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ src/local-app/LocalSystemStatus.test.tsx:61:102
+     59|  first.unmount();
+     60|  render(<LocalSystemStatus/>);
+     61|  await waitFor(()=>expect(screen.getByRole('button',{name:/系统状态/}).get…
+       |                                                                                                      ^
+     62|  await act(async()=>finish({observedAt:latest.at,automation:{stopped:t…
+     63|  expect(screen.getByRole('button',{name:/系统状态/}).getAttribute('aria-de…
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  2 failed | 7 passed (9)
+      Tests  3 failed | 97 passed (100)
+   Start at  22:42:06
+   Duration  7.39s (transform 1.18s, setup 49ms, collect 8.99s, tests 16.13s, environment 2.32s, prepare 353ms)
+

@@ -1,0 +1,15 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/episodes/captionTextConfirmation.test.tsx > preserves precise bounds on focus and preserves locked clip duration when a numeric bound moves
+The `values` property is in conflict with the current `step`, `min`, and `max` properties. Please provide values that are accessible using the min, max, and step values.
+The `values` property is in conflict with the current `step`, `min`, and `max` properties. Please provide values that are accessible using the min, max, and step values.
+
+ ✓ src/episodes/captionTextConfirmation.test.tsx (15 tests) 2256ms
+   ✓ saves embedded composition fields through the real callback and keeps edits after a failed save  391ms
+
+ Test Files  1 passed (1)
+      Tests  15 passed (15)
+   Start at  14:35:50
+   Duration  3.99s (transform 320ms, setup 10ms, collect 1.09s, tests 2.26s, environment 437ms, prepare 65ms)
+

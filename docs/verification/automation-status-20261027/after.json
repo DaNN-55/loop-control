@@ -1,0 +1,61 @@
+{
+  "observedAt": "2026-10-27T00:48:08.239Z",
+  "schedule": {
+    "latest": {
+      "passed": true,
+      "idle": true,
+      "detail": "常驻调度检查完成；空闲结果仅在变化时保存。",
+      "at": "2026-10-27T00:41:19.519Z"
+    },
+    "lastSuccess": {
+      "passed": true,
+      "idle": true,
+      "detail": "常驻调度检查完成；空闲结果仅在变化时保存。",
+      "at": "2026-10-27T00:41:19.519Z"
+    },
+    "lastFailure": {
+      "passed": false,
+      "idle": false,
+      "detail": "常驻调度或规划失败，请检查本机日志。",
+      "at": "2026-10-27T00:30:51.243Z"
+    }
+  },
+  "notification": {
+    "latest": {
+      "passed": true,
+      "idle": true,
+      "detail": "没有新提醒；历史消费位置保留。",
+      "at": "2026-10-27T00:47:43.577Z"
+    },
+    "lastSuccess": {
+      "passed": true,
+      "idle": true,
+      "detail": "没有新提醒；历史消费位置保留。",
+      "at": "2026-10-27T00:47:43.577Z"
+    },
+    "lastFailure": {
+      "passed": false,
+      "idle": true,
+      "detail": "有 6 条提醒正在投递或结果未知；不会自动重发，请核对控制台队列。",
+      "at": "2026-10-27T00:46:15.630Z"
+    }
+  },
+  "automation": {
+    "stopped": false,
+    "lastScanAt": "2026-10-27T00:48:07.564Z",
+    "lastError": null,
+    "timezone": "Asia/Shanghai",
+    "hour": 9,
+    "n8nRequired": false,
+    "backupsEnabled": false
+  },
+  "currentUnresolved": 0,
+  "historicalUnknownRetained": 6,
+  "historicalLedgerUnchanged": true,
+  "allDeliveryLedgerUnchanged": true,
+  "repeatedDeliveries": 0,
+  "runtimeManifestVersion": 2,
+  "runtimeSourceCount": 75,
+  "integrityCheckMs": 4.3,
+  "actualWorkerSourcesStillValidated": true
+}

@@ -1,0 +1,98 @@
+[
+  {
+    "stage": "waiting_input",
+    "theme": "light",
+    "detail": true,
+    "errorOverlay": false
+  },
+  {
+    "stage": "brief_draft",
+    "theme": "light",
+    "detail": true,
+    "errorOverlay": false
+  },
+  {
+    "stage": "script_draft",
+    "theme": "light",
+    "detail": true,
+    "errorOverlay": false
+  },
+  {
+    "stage": "script_review",
+    "theme": "dark",
+    "detail": true,
+    "errorOverlay": false
+  },
+  {
+    "stage": "script_approved",
+    "theme": "light",
+    "detail": true,
+    "errorOverlay": false
+  },
+  {
+    "stage": "visual_draft",
+    "theme": "light",
+    "detail": true,
+    "errorOverlay": false
+  },
+  {
+    "stage": "visual_review",
+    "theme": "dark",
+    "detail": true,
+    "errorOverlay": false
+  },
+  {
+    "stage": "visual_approved",
+    "theme": "light",
+    "detail": true,
+    "errorOverlay": false
+  },
+  {
+    "stage": "storyboard_draft",
+    "theme": "light",
+    "detail": true,
+    "errorOverlay": false
+  },
+  {
+    "stage": "storyboard_review",
+    "theme": "dark",
+    "detail": true,
+    "errorOverlay": false
+  },
+  {
+    "stage": "storyboard_approved",
+    "theme": "light",
+    "detail": true,
+    "errorOverlay": false
+  },
+  {
+    "stage": "production_ready",
+    "theme": "dark",
+    "detail": true,
+    "errorOverlay": false
+  },
+  {
+    "stage": "render_ready",
+    "theme": "light",
+    "detail": true,
+    "errorOverlay": false
+  },
+  {
+    "stage": "qc_review",
+    "theme": "dark",
+    "detail": true,
+    "errorOverlay": false
+  },
+  {
+    "stage": "qc_passed",
+    "theme": "light",
+    "detail": true,
+    "errorOverlay": false
+  },
+  {
+    "stage": "production_completed",
+    "theme": "light",
+    "detail": true,
+    "errorOverlay": false
+  }
+]

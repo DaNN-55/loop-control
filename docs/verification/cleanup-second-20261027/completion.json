@@ -1,0 +1,43 @@
+{
+  "passed": true,
+  "completedAt": "2026-10-27T01:59:31.693Z",
+  "deletedEpisodes": 222,
+  "deletedAccounts": 31,
+  "remainingOwnerEpisodes": 10,
+  "remainingOwnerAccounts": [
+    "dao",
+    "studio-2",
+    "日照金山样片",
+    "普通长度三镜头端到端验收",
+    "测试账号",
+    "豆包推广"
+  ],
+  "activeEpisodes": 2,
+  "archivedEpisodes": 8,
+  "artifacts": 279,
+  "materials": 108,
+  "foreignKeysChecked": 121,
+  "orphanRows": 0,
+  "protectedRelations": 67,
+  "originalRowsInExistingHistory": 18356,
+  "media": {
+    "passed": true,
+    "deletedDirectories": 213,
+    "deletedFiles": 993,
+    "deletedBytes": 660998052,
+    "preservedFiles": 427,
+    "preservedBytes": 4086534442,
+    "allPreservedMediaHashesEqual": true,
+    "existingHistoryContentVerified": 413
+  },
+  "appRestarted": true,
+  "browserVerified": {
+    "all": 10,
+    "active": 2,
+    "accounts": 6,
+    "scheduler": "normal",
+    "notifications": "normal",
+    "health": "normal"
+  },
+  "newBackupArchives": 0
+}

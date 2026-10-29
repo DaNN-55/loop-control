@@ -1,0 +1,127 @@
+{
+  "at": "2026-10-27T08:16:12.920Z",
+  "committed": true,
+  "candidates": [
+    {
+      "version_id": "ff811b85-3a9a-4357-a7cb-bbb5dc5e4d73",
+      "reference": "08afddc9-dd0a-4df3-a572-f7674abe519d",
+      "connection_id": "75784aac-ad43-4a8f-b168-b79c1135f38a",
+      "name": "T18 CONTROLLED METADATA ONLY google_tts",
+      "qualified": false
+    },
+    {
+      "version_id": "13592ea6-5467-4217-b037-a15df18b2770",
+      "reference": "3b73cb2e-c615-434a-ae0b-de0376c74faa",
+      "connection_id": "2aaeca98-1fee-4dc4-a78a-48b603e5fda7",
+      "name": "T18 CONTROLLED METADATA ONLY volcengine_tts",
+      "qualified": false
+    },
+    {
+      "version_id": "6590efc9-8efd-4af4-87fb-8774be2a4f7e",
+      "reference": "3dd84dd9-2ce3-4aa4-9016-d6a5438bcc3a",
+      "connection_id": "53d7afc1-1b28-40e4-b241-84ec70d5a948",
+      "name": "T15 real Keychain cebcd9b9",
+      "qualified": false
+    },
+    {
+      "version_id": "b79e9659-cf88-44b0-b789-536ea6bfb7ab",
+      "reference": "720f8787-e4d7-440b-a0ce-a447eb5c5ffe",
+      "connection_id": "53d7afc1-1b28-40e4-b241-84ec70d5a948",
+      "name": "T15 real Keychain cebcd9b9",
+      "qualified": false
+    },
+    {
+      "version_id": "80027138-9094-437c-b128-8a71d31a2205",
+      "reference": "263eaba2-44b6-42f3-94fc-d16bfdcc90f1",
+      "connection_id": "53d7afc1-1b28-40e4-b241-84ec70d5a948",
+      "name": "T15 real Keychain cebcd9b9",
+      "qualified": false
+    },
+    {
+      "version_id": "1931c664-0bdd-427b-b769-7c74352410cf",
+      "reference": "e57f1cc2-b5cc-4767-bbdc-f2cb49ac4881",
+      "connection_id": "8dd93fe6-1e01-4c46-90f1-4d1450ea0d86",
+      "name": "T19 CONTROLLED METADATA ONLY openai",
+      "qualified": false
+    },
+    {
+      "version_id": "e9bb2554-af6c-4714-ac9b-40d4368292a1",
+      "reference": "297d5591-eb2b-4782-b3d5-c601d52e0f4f",
+      "connection_id": "ea56b576-fc7d-4e72-a0ff-1f27cf4464e8",
+      "name": "T19 CONTROLLED METADATA ONLY cloudflare",
+      "qualified": false
+    },
+    {
+      "version_id": "521f29bc-c252-4686-8ab7-0f3cc53ca650",
+      "reference": "ffa8212f-a0a2-42fd-9ccd-2cbbe04f63d8",
+      "connection_id": "62f7d1c0-54d3-49cb-98ec-2f9781d32699",
+      "name": "T19 CONTROLLED METADATA ONLY pexels",
+      "qualified": false
+    },
+    {
+      "version_id": "03757f67-e0ea-4bae-b7b9-274eda8d95c5",
+      "reference": "f4748f38-235b-4758-9cbd-67098e8b512b",
+      "connection_id": "01ee63af-fa36-4913-9e84-fa60c78cb30a",
+      "name": "T19 CONTROLLED METADATA ONLY freesound",
+      "qualified": false
+    },
+    {
+      "version_id": "77c390c3-2bf3-4302-8c62-fa71ee136ff4",
+      "reference": "44e6b42e-757d-4122-9e6b-b029a6da1f13",
+      "connection_id": "1554252d-6e27-43d7-b004-9f102f134784",
+      "name": "T15 Pexels live e309082b",
+      "qualified": false
+    },
+    {
+      "version_id": "54a49f01-5c96-4b8e-86d6-b6ad128d50ef",
+      "reference": "d30c8041-2c6f-4ecf-82db-b6c17450da9d",
+      "connection_id": "1554252d-6e27-43d7-b004-9f102f134784",
+      "name": "T15 Pexels live e309082b",
+      "qualified": false
+    },
+    {
+      "version_id": "5aeaef4a-ae20-4c82-bbac-f0afe9f53e27",
+      "reference": "3c6cd186-f8e5-4a0c-bb09-3eddbe94e7a9",
+      "connection_id": "39b34262-64b7-4513-ad74-5caece3886e5",
+      "name": "T24 synthetic rebound bc894de2",
+      "qualified": false
+    },
+    {
+      "version_id": "084880df-5f5f-4d42-bf34-56cf7cb3d208",
+      "reference": "8e70b6ff-c59e-4fa4-a6ac-fb9e4f89d2b1",
+      "connection_id": "af019b00-ba8e-4404-b6c0-6b5e4f11dab2",
+      "name": "D close synthetic df34423b",
+      "qualified": false
+    }
+  ],
+  "removed": {
+    "public.external_connection_verifications": 20,
+    "local_identity.connection_probe_evidence": 17,
+    "local_identity.connection_qualifications": 11,
+    "local_identity.connection_bindings": 13,
+    "public.external_connections": 10,
+    "public.external_connection_versions": 13
+  },
+  "retainedRowsUnchanged": true,
+  "privateConfigurationAndIndexUnchanged": true,
+  "readableRetainedConnections": 12,
+  "databaseReferencesReadable": 2,
+  "historicalReconstructionsBefore": 199,
+  "historicalReconstructionsAfter": 199,
+  "foreignKeyOrphans": 0,
+  "historicalArchiveAndCompletedOperationRecordsPreserved": true,
+  "keychainItemsDeleted": 0,
+  "backupCreated": false,
+  "postVerification": {
+    "remainingTargetConnections": 0,
+    "remainingTargetVersions": 0,
+    "remainingTargetBindings": 0,
+    "preservedCompletedIntents": 16,
+    "remainingConnections": 22,
+    "remainingKeychainBindings": 12,
+    "homeStatus": 200,
+    "browserConnectionRows": 16,
+    "browserRemovedNamesAbsent": true,
+    "browserReferenceSearchEmpty": true
+  }
+}

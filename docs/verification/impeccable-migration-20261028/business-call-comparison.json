@@ -1,0 +1,62 @@
+[
+  {
+    "file": "src/episodes/WanShotGenerator.tsx",
+    "before": 4,
+    "after": 4,
+    "equal": true
+  },
+  {
+    "file": "src/local-app/HistorySources.tsx",
+    "before": 3,
+    "after": 3,
+    "equal": true
+  },
+  {
+    "file": "src/local-app/LocalCatalogApp.tsx",
+    "before": 13,
+    "after": 13,
+    "equal": true
+  },
+  {
+    "file": "src/local-app/LocalConnectionsPanel.tsx",
+    "before": 1,
+    "after": 1,
+    "equal": true
+  },
+  {
+    "file": "src/local-app/LocalDeliveryPanel.tsx",
+    "before": 4,
+    "after": 4,
+    "equal": true
+  },
+  {
+    "file": "src/local-app/LocalEpisodeDetail.tsx",
+    "before": 2,
+    "after": 2,
+    "equal": true
+  },
+  {
+    "file": "src/local-app/LocalHistory.tsx",
+    "before": 3,
+    "after": 3,
+    "equal": true
+  },
+  {
+    "file": "src/local-app/LocalSecretAdministration.tsx",
+    "before": 3,
+    "after": 3,
+    "equal": true
+  },
+  {
+    "file": "src/local-app/LocalSystemStatus.tsx",
+    "before": 1,
+    "after": 1,
+    "equal": true
+  },
+  {
+    "file": "src/platform/ConfigurationForms.tsx",
+    "before": 1,
+    "after": 1,
+    "equal": true
+  }
+]

@@ -1,0 +1,106 @@
+[
+  {
+    "file": "/Users/dan/Programs/loop-control/src/shotAcceptance.test.ts",
+    "status": "passed",
+    "tests": [
+      {
+        "name": "逐镜头确认推进 只打开当前镜头之后的下一条未确认镜头",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "逐镜头确认推进 到末尾时回到前面仍未确认的镜头，而不打开已确认镜头",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "逐镜头确认推进 全部真实确认后不再打开任何镜头",
+        "status": "passed",
+        "failure": ""
+      }
+    ]
+  },
+  {
+    "file": "/Users/dan/Programs/loop-control/src/shotCaptions.test.ts",
+    "status": "passed",
+    "tests": [
+      {
+        "name": "shot caption database boundary normalizes persisted snake-case contracts for the workbench",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "shot caption database boundary serializes the workbench contract to the database schema",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "shot caption database boundary uses orientation-aware presets and preserves custom four-edge margins",
+        "status": "passed",
+        "failure": ""
+      }
+    ]
+  },
+  {
+    "file": "/Users/dan/Programs/loop-control/src/reviews/reviewSelectors.test.ts",
+    "status": "passed",
+    "tests": [
+      {
+        "name": "blockersFromResult 从结构化 preflight 结果提取未通过检查",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "blockersFromResult 把带结构化执行失败的 failed 任务也呈现为 Worker 阻塞项",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "blockersFromResult 不把已失效的历史任务呈现为 Worker 阻塞项",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "blockersFromResult 同一镜头的新任务成功后不再呈现旧失败阻塞",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "blockersFromResult 新的审核渲染成功后不再呈现旧修订的阻塞",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "blockersFromResult 保留连接管理动作的 connection 影响范围",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "blockersFromResult 不把自动审核渲染前的冻结包计为人工待审",
+        "status": "passed",
+        "failure": ""
+      }
+    ]
+  },
+  {
+    "file": "/Users/dan/Programs/loop-control/src/worker/storyboardRevision.test.ts",
+    "status": "passed",
+    "tests": [
+      {
+        "name": "applyStoryboardStructureRevision supports add, delete, reorder, type and duration changes",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "applyStoryboardStructureRevision splits and merges while preserving stable IDs and duration",
+        "status": "passed",
+        "failure": ""
+      },
+      {
+        "name": "applyStoryboardStructureRevision rejects non-adjacent merges",
+        "status": "passed",
+        "failure": ""
+      }
+    ]
+  }
+]

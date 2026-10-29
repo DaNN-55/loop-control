@@ -1,0 +1,449 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stderr | src/episodes/WanShotGenerator.test.tsx > Wan shot generation > a_roll显式选首帧后才能创建任务，不自动消费
+An update to WanShotGenerator inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WanShotGenerator inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WanShotGenerator inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WanShotGenerator inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/episodes/WanShotGenerator.test.tsx > Wan shot generation > b_roll显式选首帧后才能创建任务，不自动消费
+An update to WanShotGenerator inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WanShotGenerator inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WanShotGenerator inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to WanShotGenerator inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ❯ src/episodes/WanShotGenerator.test.tsx (8 tests | 6 failed) 276ms
+   ✓ Wan shot generation > 人工路径不出现生成入口 16ms
+   ✓ Wan shot generation > 读取已有预算作为编辑值，保存时保留实际额度和继续生成授权 97ms
+   × Wan shot generation > a_roll显式选首帧后才能创建任务，不自动消费 14ms
+     → expected undefined to be true // Object.is equality
+   × Wan shot generation > b_roll显式选首帧后才能创建任务，不自动消费 18ms
+     → expected undefined to be true // Object.is equality
+   × volcengine doubao-seedance-2-0-260128 requires an explicit per-request reservation before generating 52ms
+     → expected undefined to be true // Object.is equality
+   × volcengine doubao-seedance-2-5-260628 requires an explicit per-request reservation before generating 21ms
+     → expected undefined to be true // Object.is equality
+   × minimax MiniMax-H3 requires an explicit per-request reservation before generating 26ms
+     → expected undefined to be true // Object.is equality
+   × kling kling-v3 requires an explicit per-request reservation before generating 30ms
+     → expected undefined to be true // Object.is equality
+ ✓ src/local-app/LocalHistory.test.tsx (5 tests) 656ms
+ ✓ src/local-app/HistoryDanUi.test.tsx (3 tests) 687ms
+ ✓ src/local-app/LocalSecretAdministration.test.tsx (5 tests) 2121ms
+   ✓ reveals only after POST password verification and clears on selection/filter/visibility  705ms
+   ✓ copies through browser clipboard after verification and never renders returned plaintext  331ms
+   ✓ blocks stale reveal responses after close, filter and expired-session event  324ms
+   ✓ hides plaintext after thirty seconds and never offers control-secret reveal  603ms
+ ✓ src/local-app/LocalConnectionsPanel.test.tsx (7 tests) 678ms
+ ❯ src/connections/ConnectionFeedback.test.tsx (8 tests | 1 failed) 525ms
+   × shows immediate testing feedback and prevents duplicate retry while the real callback is pending 92ms
+     → expected null to be 'true' // Object.is equality
+   ✓ retests the selected connection when several connections share a Provider 36ms
+   ✓ shows feedback during automatic verification after a credential update and prevents duplicate rotation 69ms
+   ✓ does not choose among multiple verified connections or replace an explicit unavailable reference 4ms
+   ✓ reports an unconfirmed create beside the submit action and retains the credential draft 68ms
+   ✓ keeps the created connection selected and announces saving, testing and the named result 112ms
+   ✓ keeps the selected connection and edited fields after a failed test with one visible failure result 72ms
+   ✓ shows the saved verification result when reopening an existing connection 70ms
+ ✓ src/connections/ConnectionDanUi.test.tsx (2 tests) 501ms
+   ✓ clears the credential draft and restores masking when choosing another connection  397ms
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 已批准分镜显示声音与对齐状态，并保存整期 BGM 和闪避选择
+Each child in a list should have a unique "key" prop.
+
+Check the render method of `ShotPreparationCard`. See https://react.dev/link/warning-keys for more information.
+
+ ✓ src/local-app/HistoryEpisodes.test.tsx (2 tests) 133ms
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 第二镜独立字幕先保存，未保存时键盘切步保持当前正文
+An update to ForwardRef(TextArea) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(TextArea) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ❯ src/reviews/ReviewWorkspace.test.tsx (71 tests | 3 failed) 10280ms
+   ✓ 审核台 > 点击抽屉外遮罩或按 Escape 可以关闭生产单详情 70ms
+   ✓ 审核台 > 放大预览打开时按 Escape 不关闭生产单详情 11ms
+   ✓ 审核台 > 在详情顶部显示当前阶段和下一步，并默认收起技术索引 41ms
+   ✓ 审核台 > Worker 排队或运行时显示持续刷新反馈 7ms
+   ✓ 审核台 > QC 通过但缺少最终材料时明确提示，并可进入生产完成流程 38ms
+   ✓ 审核台 > 通过顶部图标按需打开产物索引及包含任务进度的审计时间线 93ms
+   ✓ 审核台 > 审计时间线只显示中文原因，不展示技术原文 55ms
+   ✓ 审核台 > 只列出需要 Owner 审核的 Episode，并允许选择其中一项 27ms
+   ✓ 审核台 > 对待审核 Episode 使用分页 56ms
+   ✓ 审核台 > 显示可预览产物和 Worker 阻塞项，并以理由执行批准或要求修改 209ms
+   ✓ 审核台 > 即时派发失败时在当前任务区域持续显示原因 12ms
+   ✓ 审核台 > 生成媒体预览默认展示当前镜头代理并折叠历史版本 20ms
+   ✓ 审核台 > 只在整片音轨中展示可试听的 BGM，并将时间批注交给受控 RPC 162ms
+   ✓ 审核台 > 展示 A-roll 的冻结执行证据和运行状态 18ms
+   ✓ 审核台 > 按真实状态展示 A-roll 任务卡片：completed 11ms
+   ✓ 审核台 > 按真实状态展示 A-roll 任务卡片：running 18ms
+   ✓ 审核台 > 按真实状态展示 A-roll 任务卡片：failed 17ms
+   ✓ 审核台 > 按真实状态展示 A-roll 任务卡片：blocked 14ms
+   ✓ 审核台 > 在冻结执行器缺失时仍展示 A-roll 阻塞状态 25ms
+   ✓ 审核台 > 合并重复阻塞任务并提供蓝图修改入口 58ms
+   × 审核台 > 以纵向缩略图展示产物，并允许 Owner 放大后关闭预览 78ms
+     → expected <button …(9)>…(1)</button> to be <button …(7)>…(1)</button> // Object.is equality
+   × 审核台 > 在详情头部以图标提供刷新、打开和复制本地目录 23ms
+     → expected null to be '打开本地输入目录：/Volumes/素材盘/loop-control/da…' // Object.is equality
+   ✓ 审核台 > 材料区提供统一文件导入 20ms
+   ✓ 审核台 > 等待输入时仅允许上传外部制作的主脚本 42ms
+   ✓ 审核台 > 主脚本导入后等待 Owner 明确开始制作 36ms
+   ✓ 审核台 > 显示生产开始前的真实运行态阻塞 14ms
+   × 审核台 > 通过统一入口标注用途后按顺序导入脚本、图片、A-roll 和 B-roll 327ms
+     → expected 3rd "spy" call to have been called with [ ObjectContaining{…} ]
+   ✓ 审核台 > 将主脚本和补充脚本归入同一个脚本分组 108ms
+   ✓ 审核台 > 最多并发导入三个材料并在完成后立即补位 217ms
+   ✓ 审核台 > 导入成功后保留材料卡，直到冻结材料刷新完成 66ms
+   ✓ 审核台 > 可打开脚本模板，并点击材料名称预览 82ms
+   ✓ 审核台 > 使用浏览器文件地址预览待导入视频 37ms
+   ✓ 审核台 > 在材料列表显示已确认、已导入和已绑定镜头状态 11ms
+   ✓ 审核台 > 新 Episode 的上传阶段不要求整期声音选择 7ms
+   ✓ 审核台 > 已批准分镜显示声音与对齐状态，并保存整期 BGM 和闪避选择  371ms
+   ✓ 审核台 > 逐镜头主声音和音效独立保存，静音后恢复原选择并保留画面草稿  700ms
+   ✓ 审核台 > 第二镜独立字幕先保存，未保存时键盘切步保持当前正文  580ms
+   ✓ 审核台 > 第二镜修改双屏槽位和衔接后保存，保留已保存的独立正文  408ms
+   ✓ 审核台 > 第二镜修改字幕空间时保留已保存构图，保存刷新后保持所选镜头  624ms
+   ✓ 审核台 > 已生成字幕时序先只读查看，明确调整后才开放编辑 143ms
+   ✓ 审核台 > 本地人工时序编辑跨音轨轮询保留并只提交本地回调 193ms
+   ✓ 审核台 > 审核阶段返回镜头工作台时保留 QC 证据，并显式确认覆盖 Studio 工程  322ms
+   ✓ 审核台 > 审核镜头可核对同步预览要求，修改字幕后旧确认与代理立即失效  632ms
+   ✓ 审核台 > 预览失败、缺少原片或旧合同阻止确认，生产就绪时仍可返回编辑  513ms
+   ✓ 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交  396ms
+   ✓ 审核台 > 删除镜头后在工作台切换新版，并打开下一镜 135ms
+   ✓ 审核台 > 刷新后从运行中的结构任务恢复工作台，并在完成后打开删除镜头的下一镜 131ms
+   ✓ 审核台 > 新版分镜保留旧版本 hash 中仍存在的镜头 110ms
+   ✓ 审核台 > 本期 TTS 试听只在点击后读取当前表单，不保存或创建任务 131ms
+   ✓ 审核台 > 本期 TTS 未保存时明确阻止逐镜头生成，并标记表单修改状态 87ms
+   ✓ 审核台 > 逐镜头 TTS 可先于原片标记生成，完整保存仍要求视频 219ms
+   ✓ 审核台 > 重新生成口播时隐藏旧音轨，完成后可从右上角筛选历史口播 67ms
+   ✓ 审核台 > 逐镜头口播无需确认即可保存，并可保存单镜头覆盖  494ms
+   ✓ 审核台 > 后台刷新时保留未保存的原片与片段标记 187ms
+   ✓ 审核台 > 保留原声直接使用视频内嵌音轨并允许生成同步预览 85ms
+   ✓ 审核台 > 无口播显示为明确静音，并仍可保存字幕开关 133ms
+   ✓ 审核台 > 同一原片支持多段裁剪并随镜头草稿一起保存  333ms
+   ✓ 审核台 > 选择镜头原片文件后立即导入，不再要求二次确认 91ms
+   ✓ 审核台 > 分镜准备阶段不提供 Studio 入口 44ms
+   ✓ 审核台 > 展示委托脚本的冻结输入，并让 Owner 完成审核或要求重写 56ms
+   ✓ 审核台 > 读取分镜前文本产物及其冻结审核上下文 71ms
+   ✓ 审核台 > 将冻结的外部视觉输入连同视觉资产清单交给 Owner 审核 50ms
+   ✓ 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产 6ms
+   ✓ 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览 6ms
+   ✓ 审核台 > 在 Studio 提交一次合成修订并重新审核 94ms
+   ✓ 审核台 > 在审核渲染中只提供官方 Studio 入口 8ms
+   ✓ 审核台 > 按镜头审核冻结分镜、保存批注，并执行批准或返工 134ms
+   ✓ 审核台 > 人工媒体可在镜头工作台选择原片并保存镜头设置  462ms
+   ✓ 审核台 > 已保存原片可预览并在冻结前替换 213ms
+   ✓ 审核台 > 分镜产物格式无效时不允许 Owner 批准或退回 10ms
+   ✓ 审核台 > 将预渲染成员作为审计证据，并自动进入审核渲染 6ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/connections/ConnectionFeedback.test.tsx > shows immediate testing feedback and prevents duplicate retry while the real callback is pending
+AssertionError: expected null to be 'true' // Object.is equality
+
+- Expected: 
+"true"
+
++ Received: 
+null
+
+ ❯ src/connections/ConnectionFeedback.test.tsx:10:155
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  src/episodes/WanShotGenerator.test.tsx > Wan shot generation > a_roll显式选首帧后才能创建任务，不自动消费
+ FAIL  src/episodes/WanShotGenerator.test.tsx > Wan shot generation > b_roll显式选首帧后才能创建任务，不自动消费
+AssertionError: expected undefined to be true // Object.is equality
+
+- Expected: 
+true
+
++ Received: 
+undefined
+
+ ❯ src/episodes/WanShotGenerator.test.tsx:28:74
+     26|     render(<WanShotGenerator {...props} shot={{ ...props.shot, shotTyp…
+     27|     expect(mocks.command).not.toHaveBeenCalled();
+     28|     expect((screen.getByText("生成 AI 视频") as HTMLButtonElement).disable…
+       |                                                                          ^
+     29|     await user.selectOptions(screen.getByLabelText("shot-01 AI 首帧"), "…
+     30|     expect(mocks.command).toHaveBeenCalledWith("generateWan", expect.o…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  src/episodes/WanShotGenerator.test.tsx > volcengine doubao-seedance-2-0-260128 requires an explicit per-request reservation before generating
+ FAIL  src/episodes/WanShotGenerator.test.tsx > volcengine doubao-seedance-2-5-260628 requires an explicit per-request reservation before generating
+ FAIL  src/episodes/WanShotGenerator.test.tsx > minimax MiniMax-H3 requires an explicit per-request reservation before generating
+ FAIL  src/episodes/WanShotGenerator.test.tsx > kling kling-v3 requires an explicit per-request reservation before generating
+AssertionError: expected undefined to be true // Object.is equality
+
+- Expected: 
+true
+
++ Received: 
+undefined
+
+ ❯ src/episodes/WanShotGenerator.test.tsx:38:144
+     36|  const user=userEvent.setup();mocks.command.mockClear();mocks.command.…
+     37|  render(<WanShotGenerator {...props} materials={[{...props.materials[0…
+     38|  await user.selectOptions(screen.getByLabelText('shot-01 AI 首帧'),'imag…
+       |                                                                                                                                                ^
+     39|  await user.type(screen.getByLabelText('shot-01 本次费用预留'),'1.23');await…
+     40|  expect(mocks.command).toHaveBeenCalledWith('generateOfficialVideo',ex…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 以纵向缩略图展示产物，并允许 Owner 放大后关闭预览
+AssertionError: expected <button …(9)>…(1)</button> to be <button …(7)>…(1)</button> // Object.is equality
+
+- Expected
++ Received
+
+  <button
+-   aria-label="关闭放大预览"
+-   class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover artifact-lightbox-close"
++   aria-label="放大查看 cover 产物"
++   class="group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:size-5 *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-3 py-2 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 text-tertiary hover:bg-primary_hover hover:text-tertiary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover artifact-expand-button"
++   data-focused="true"
++   data-hovered="true"
+    data-rac=""
+    data-react-aria-pressable="true"
+-   id="react-aria-_r_c3_"
++   id="react-aria-_r_c1_"
+    tabindex="0"
+    type="button"
+  >
+    <span
+      class="transition-inherit-all px-0.5"
+      data-text="true"
+    >
+-     关闭
++     放大查看
+    </span>
+  </button>
+
+ ❯ src/reviews/ReviewWorkspace.test.tsx:421:36
+    419|     expect(screen.getByRole("dialog", { name: "cover 产物放大预览" })).toBeT…
+    420|     expect(screen.getByRole("img", { name: "cover 产物放大预览" }).getAttrib…
+    421|     expect(document.activeElement).toBe(screen.getByRole("button", { n…
+       |                                    ^
+    422| 
+    423|     await user.keyboard("{Tab}");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 在详情头部以图标提供刷新、打开和复制本地目录
+AssertionError: expected null to be '打开本地输入目录：/Volumes/素材盘/loop-control/da…' // Object.is equality
+
+- Expected: 
+"打开本地输入目录：/Volumes/素材盘/loop-control/dao/episodes/episode-review/input"
+
++ Received: 
+null
+
+ ❯ src/reviews/ReviewWorkspace.test.tsx:447:84
+    445|     expect(screen.queryByRole("heading", { name: "准备本地输入目录" })).toBeNu…
+    446|     expect(screen.getByRole("button", { name: "刷新生产单状态" })).toBeTruthy…
+    447|     expect(screen.getByRole("button", { name: "打开本地输入目录" }).getAttribu…
+       |                                                                                    ^
+    448|     expect(screen.getByRole("button", { name: "复制本地输入目录路径" }).getAttri…
+    449| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  src/reviews/ReviewWorkspace.test.tsx > 审核台 > 通过统一入口标注用途后按顺序导入脚本、图片、A-roll 和 B-roll
+AssertionError: expected 3rd "spy" call to have been called with [ ObjectContaining{…} ]
+
+- Expected
++ Received
+
+  [
+-   ObjectContaining {
++   {
++     "content": Uint8Array [
++       91,
++       111,
++       98,
++       106,
++       101,
++       99,
++       116,
++       32,
++       70,
++       105,
++       108,
++       101,
++       93,
++     ],
++     "deferRefresh": true,
++     "episodeId": "episode-materials",
++     "isMainScript": false,
+      "logicalName": "a-shot-001.mp4",
+      "materialPurpose": "a_roll",
+      "materialType": "video",
+-     "sourcePath": "shot-2.mp4",
++     "mimeType": "video/mp4",
++     "sourceKind": "file",
++     "sourcePath": "shot-1.mp4",
+    },
+  ]
+
+ ❯ src/reviews/ReviewWorkspace.test.tsx:549:30
+    547|     expect(onImportMaterial).toHaveBeenNthCalledWith(1, expect.objectC…
+    548|     expect(onImportMaterial).toHaveBeenNthCalledWith(2, expect.objectC…
+    549|     expect(onImportMaterial).toHaveBeenNthCalledWith(3, expect.objectC…
+       |                              ^
+    550|     expect(onImportMaterial).toHaveBeenNthCalledWith(4, expect.objectC…
+    551|     expect(onImportMaterial).toHaveBeenNthCalledWith(5, expect.objectC…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+
+ Test Files  3 failed | 6 passed (9)
+      Tests  10 failed | 101 passed (111)
+   Start at  22:42:07
+   Duration  12.57s (transform 1.08s, setup 36ms, collect 8.79s, tests 15.86s, environment 2.15s, prepare 523ms)
+

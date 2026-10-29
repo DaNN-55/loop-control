@@ -61,11 +61,11 @@ function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "ac
     return {
       primaryAction: "connection",
       title: "外部连接需要更新",
-      summary: "当前连接引用仍然有效，但供应商拒绝了认证材料或连接秘密已不可用。",
+      summary: "当前连接引用仍然有效，但供应商拒绝了认证材料或连接密钥已不可用。",
       resolution: ["打开外部连接管理，重新提交对应 Provider 的认证材料。", "点击测试连接，确认供应商接受新的认证材料。", "连接恢复后重新执行当前任务。"],
       retryLabel: "管理连接并重试当前任务",
       location: "外部连接管理 → 对应 Provider",
-      locationNote: "连接秘密不会写入蓝图、Episode、任务或普通日志。",
+      locationNote: "连接密钥不会写入蓝图、Episode、任务或普通日志。",
       technicalDetail: blocker.detail,
     };
   }
@@ -98,7 +98,7 @@ function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "ac
       resolution: ["在 Worker 环境中更新或更换对应 Provider 凭据。", "确认凭据属于正确的供应商账户，并具备当前能力权限。", "更新后重新执行当前任务。"],
       retryLabel: "更新凭据后重试当前任务",
       location: "Worker 运行环境 / Provider 凭据",
-      locationNote: "当前页面不会展示或编辑秘密。",
+      locationNote: "当前页面不会展示或编辑密钥。",
       technicalDetail: blocker.detail,
     };
   }
@@ -168,7 +168,7 @@ function structuredPreflightGuidance(blocker: Pick<WorkerBlocker, "detail" | "ac
       resolution: ["打开蓝图配置，修正当前能力的 Provider、Adapter、模型或工具声明。", "保存配置后修复当前受阻生产单。", "已完成工作和审核记录会保留。"],
       retryLabel: "修改配置并继续当前生产单",
       location: "账号蓝图 → 能力配置",
-      locationNote: "只修复当前能力的声明，不修改 Worker 秘密。",
+      locationNote: "只修复当前能力的声明，不修改 Worker 密钥。",
       technicalDetail: blocker.detail,
     };
   }

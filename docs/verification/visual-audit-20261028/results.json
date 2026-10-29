@@ -1,0 +1,69 @@
+{
+  "date": "2026-10-28",
+  "scope": "PC-first visual audit and recommendations only",
+  "productFilesChecked": 594,
+  "sourceChangesSinceAuditStart": [],
+  "sourceFilesAddedSinceAuditStart": [],
+  "head": "30f3361bbe0d80be73bac7684ad22c2e20059d09",
+  "branch": "main",
+  "headMatchesBaseline": true,
+  "branchMatchesBaseline": true,
+  "findings": {
+    "P0": 0,
+    "P1": 7,
+    "P2": 8,
+    "P3": 1
+  },
+  "score": {
+    "accessibility": 2,
+    "performance": 2,
+    "theming": 2,
+    "pcResponsive": 2,
+    "implementationIntegrity": 2,
+    "total": 10
+  },
+  "measurements": 277,
+  "screenshots": 301,
+  "actualViewports": {
+    "(1440, 1000)": 149,
+    "(320, 844)": 32,
+    "(2560, 1440)": 32,
+    "(1280, 900)": 32,
+    "(1920, 1080)": 32
+  },
+  "detector": {
+    "runs": 1,
+    "findings": 0,
+    "kind": "source scan, not rendered audit"
+  },
+  "validation": {
+    "fixtureTypecheck": "passed after final fixture toolbar change (exit 0)",
+    "previewScriptSyntax": "passed",
+    "productViteBuild": "passed; independent /private/tmp output, existing large-chunk warning",
+    "productTests": "not rerun: no product code changes",
+    "demoWorstToggle": "passed in visible IAB at actual 1280x720; URL persisted, series panel opened",
+    "browserCleanup": "temporary audit tab closed, viewport override reset, preview tab marked deliverable"
+  },
+  "dailyService": {
+    "port": 5174,
+    "pid": 93487,
+    "unchanged": true
+  },
+  "auditPreview": {
+    "port": 5189,
+    "pid": 15672,
+    "host": "127.0.0.1",
+    "url": "http://127.0.0.1:5189/docs/verification/visual-audit-20261028/fixture.html?scene=accounts&data=worst&theme=light",
+    "restart": "node docs/verification/visual-audit-20261028/preview.mjs",
+    "stop": "verify port owner with lsof, then kill 15672",
+    "deliverableTab": "6"
+  },
+  "limits": [
+    "Mobile is appendix only",
+    "Early empty color/clipping probe fields are not pass evidence",
+    "Unsettled secret initial-paint cases were followed by settled captures",
+    "Three intended 1280x720 cases remained 1440x1000 and were renamed",
+    "No backend write, real credential action, provider call, deployment, commit or push",
+    "No full keyboard/screen-reader audit or runtime performance profiling"
+  ]
+}

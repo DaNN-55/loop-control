@@ -1,4 +1,5 @@
 import{mappedAssetPath}from'./mediaPaths.js';
+import {executeScriptPlanning} from '../worker/scriptPlanning.js';
 import{readMediaDeployment}from'./mediaDeployment.js';
 import{assertAlignmentReady,executeNativeAlignment}from'./alignmentWorker.js';
 import{assertMediaReady,executeNativeMedia,nativeMediaTask,nativeMediaRequiresExternal}from'./mediaWorker.js';
@@ -44,6 +45,7 @@ try{
    const additionalInputs:ArtifactManifest[]=[];
    if(p.finalRender){const source=(await pool.query('SELECT local_identity.input_final_reuse_source($1,$2,$3) result',[args.p_task_id,args.p_attempt,args.p_lease_token])).rows[0]?.result;if(source?.inputsMatch&&source.video)additionalInputs.push(source.video);}
    outputs=await prepareNativeAttemptOutput(p,args,additionalInputs);const staged=outputs.taskPackage;
+   const scripted=await executeScriptPlanning(staged);if(scripted!==null)return scripted;
    return staged.capability==='acoustic_alignment'?executeNativeAlignment(config.projectRoot,config.mediaRoot,config.alignment,staged):staged.capability==='narration_generation'?executeNativeNarration(pool,config.narration,staged,args):nativeMediaTask(String(task.task_type),String(task.provider))?executeNativeMedia(pool,config.media,staged,args):staged.storyboardRevision?executeStoryboardRevision(staged):staged.visualAssetPreparation?.imageGeneration?executeNativeMedia(pool,config.media,staged,args,await executeVisual(staged)):executeVisual(staged);
   },
  });

@@ -1,0 +1,31 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+(node:83759) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ❯ src/local-app/automationHistory.integration.test.ts (1 test | 1 failed) 186ms
+   × isolates original maintenance history, respects due times and preserves daily once-per-slot execution 186ms
+     → future available_at must not bypass due_at; old same-day history must not suppress current check: expected 2 to be 1 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/automationHistory.integration.test.ts > isolates original maintenance history, respects due times and preserves daily once-per-slot execution
+AssertionError: future available_at must not bypass due_at; old same-day history must not suppress current check: expected 2 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/local-app/automationHistory.integration.test.ts:53:122
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  09:37:47
+   Duration  385ms (transform 41ms, setup 0ms, collect 56ms, tests 186ms, environment 0ms, prepare 42ms)
+

@@ -1,0 +1,45 @@
+{
+  "aside": {
+    "bottom": 390,
+    "height": 183,
+    "left": 234,
+    "right": 464,
+    "top": 207,
+    "width": 230,
+    "x": 234,
+    "y": 207
+  },
+  "button": {
+    "bottom": 307,
+    "height": 60,
+    "left": 234,
+    "right": 696.59375,
+    "top": 247,
+    "width": 462.59375,
+    "x": 234,
+    "y": 247
+  },
+  "editor": {
+    "bottom": 877,
+    "height": 670,
+    "left": 488,
+    "right": 1416,
+    "top": 207,
+    "width": 928,
+    "x": 488,
+    "y": 207
+  },
+  "name": "城市日常与跨境生活观察：Aleksandra Wiśniewska-Kowalczyk 的联合拍摄记录",
+  "nameRect": {
+    "bottom": 275,
+    "height": 20,
+    "left": 248,
+    "right": 682.59375,
+    "top": 255,
+    "width": 434.59375,
+    "x": 248,
+    "y": 255
+  },
+  "rootWidth": 1440,
+  "whiteSpace": "nowrap"
+}

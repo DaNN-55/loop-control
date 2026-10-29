@@ -1,0 +1,26 @@
+[
+  {
+    "level": "error",
+    "message": "ReferenceError: Button is not defined\n    at LocalHistory (http://127.0.0.1:5174/src/local-app/LocalHistory.tsx?t=1793109643321:121:30)\n    at Object.react_stack_bottom_frame (http://127.0.0.1:5174/.loop-control/local/state/vite-cache/deps/react-dom_client.js?v=5450f6f8:6:394634)\n    at renderWithHooks (http://127.0.0.1:5174/.loop-control/local/state/vite-cache/deps/react-dom_client.js?v=5450f6f8:4:182819)\n    at updateFunctionComponent (http://127.0.0.1:5174/.loop-control/local/state/vite-cache/deps/react-dom_client.js?v=5450f6f8:6:5625)\n    at beginWork (http://127.0.0.1:5174/.loop-control/local/state/vite-cache/deps/react-dom_client.js?v=5450f6f8:6:52667)\n    at runWithFiberInDEV (http://127.0.0.1:5174/.loop-control/local/state/vite-cache/deps/react-dom_client.js?v=5450f6f8:4:20381)\n    at performUnitOfWork (http://127.0.0.1:5174/.loop-control/local/state/vite-cache/deps/react-dom_client.js?v=5450f6f8:6:190802)\n    at workLoopSync (http://127.0.0.1:5174/.loop-control/local/state/vite-cache/deps/react-dom_client.js?v=5450f6f8:6:186747)\n    at renderRootSync (http://127.0.0.1:5174/.loop-control/local/state/vite-cache/deps/react-dom_client.js?v=5450f6f8:6:186242)\n    at performWorkOnRoot (http://127.0.0.1:5174/.loop-control/local/state/vite-cache/deps/react-dom_client.js?v=5450f6f8:6:166199)",
+    "timestamp": "2026-10-27T14:00:43.427Z",
+    "url": "http://127.0.0.1:5174/src/local-app/LocalHistory.tsx?t=1793109643321"
+  },
+  {
+    "level": "warn",
+    "message": "%s\n\n%s\n An error occurred in the <LocalHistory> component. Consider adding an error boundary to your tree to customize error handling behavior.\nVisit https://react.dev/link/error-boundaries to learn more about error boundaries.",
+    "timestamp": "2026-10-27T14:00:43.427Z",
+    "url": "http://127.0.0.1:5174/.loop-control/local/state/vite-cache/deps/react-dom_client.js?v=5450f6f8"
+  },
+  {
+    "level": "error",
+    "message": "[vite] Failed to reload /src/local-app/LocalHistory.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above)",
+    "timestamp": "2026-10-27T14:01:50.088Z",
+    "url": "http://127.0.0.1:5174/@vite/client"
+  },
+  {
+    "level": "error",
+    "message": "[vite] Failed to reload /src/local-app/HistorySources.tsx. This could be due to syntax errors or importing non-existent modules. (see errors above)",
+    "timestamp": "2026-10-27T14:01:50.115Z",
+    "url": "http://127.0.0.1:5174/@vite/client"
+  }
+]

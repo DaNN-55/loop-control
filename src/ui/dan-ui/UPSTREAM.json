@@ -1,0 +1,126 @@
+{
+  "repository": "https://github.com/untitleduico/react",
+  "commit": "1d410cb8facde8d50869e7bbb5f3d048e2267466",
+  "license": "MIT",
+  "adaptation": "Official MIT source from recorded commit, imports made relative. Template 0.5 accessibility/font/contrast patches adopted. Local adaptations: NativeSelect also accepts option/optgroup children and honors disabled options; Button and Tab expose React 19 DOM refs; Toggle accepts rich labels; Tooltip preserves its portal class and adds a scoped theme boundary. See LOCAL-PATCHES.md.",
+  "files": {
+    "components/base/buttons/button.tsx": {
+      "sourceSha256": "9125b94dd75d4043e08140233f536a116909b8f589322a69fdd799c34ee912f0",
+      "localSha256": "ddb63a57dac0f7ec6ad3912d8d54da816c6b425dca7d6744232a35458ba0a619"
+    },
+    "components/base/input/input.tsx": {
+      "sourceSha256": "1f6b9f6c8ab27c676b750da37f7bcc8d5531cf8510be2cf9e1da437ead4b69f9",
+      "localSha256": "3f2d9ce58fd85ff9925dc5a9657804713f9054610bd6a4ee9703550ceedf333a"
+    },
+    "components/base/input/label.tsx": {
+      "sourceSha256": "62f17790c4ac7787e8d29fcbfed432ed8d4aabc2f022040fab0bde4d33a922b3",
+      "localSha256": "53c4d260e964e2f2ab013b798fd45cfd45ed59a4d79ae441045103852c965d5e"
+    },
+    "components/base/input/hint-text.tsx": {
+      "sourceSha256": "7e6eeb63387c025362108b07ec1d219e9cb024cbe8d6a7805953af9143650a66",
+      "localSha256": "f824024c7d0abc4e58e0d79a056f889ff194a79dda2ede421a28bcdb87e84bf0"
+    },
+    "components/base/select/select-native.tsx": {
+      "sourceSha256": "f692fbbc5f9a1f6be2c17fb23edd42048bb3a24b0af290adebc126c464b80ee3",
+      "localSha256": "f0a241880f3849e13f09a3126cb253426c539636ecf13aa61d869d98578659f5"
+    },
+    "components/base/textarea/textarea.tsx": {
+      "sourceSha256": "68e35186954efe5c7e2b7c722b9557df871589f7d82dccf326bafad11f3f5b0b",
+      "localSha256": "829cb1f6a1932677178a8f74872d4894a2a1beadb0378475111d5bdac072349e"
+    },
+    "components/base/tooltip/tooltip.tsx": {
+      "sourceSha256": "7011cc9c0e9041c6807eef5140c34e503a3eda1324a74232a4474af7ebd312a4",
+      "localSha256": "e6901a714517039f35987582d08c08945d05fcf930aadf7c97240ec52bf33929"
+    },
+    "components/base/badges/badges.tsx": {
+      "sourceSha256": "22e44ffd938a0febffad557c1ac4575cada58f526afdd7bec14809f7ee34e59c",
+      "localSha256": "e7b695879eba7a60db7fa3689eedd3a0bb07a6f6f1a1151bb099d5a0258c3f69"
+    },
+    "components/base/badges/badge-types.ts": {
+      "sourceSha256": "086f2d74cddd0decb0fa78b80609ff17968df7a9c09661d813243ead847d1501",
+      "localSha256": "086f2d74cddd0decb0fa78b80609ff17968df7a9c09661d813243ead847d1501"
+    },
+    "components/foundations/dot-icon.tsx": {
+      "sourceSha256": "a908145b197665d9fc0148d93d7a67806a7548bb69e82d7c2b21a80f9568b4f6",
+      "localSha256": "a908145b197665d9fc0148d93d7a67806a7548bb69e82d7c2b21a80f9568b4f6"
+    },
+    "utils/cx.ts": {
+      "sourceSha256": "d32cbae0ef101a957c58c0fff7b81738917c9f6b3f150103301e26192af62bcf",
+      "localSha256": "d32cbae0ef101a957c58c0fff7b81738917c9f6b3f150103301e26192af62bcf"
+    },
+    "utils/is-react-component.ts": {
+      "sourceSha256": "71fb098f5b2e1e1965b02d363dd7be3982698dce005077f9e497e6603fcce958",
+      "localSha256": "71fb098f5b2e1e1965b02d363dd7be3982698dce005077f9e497e6603fcce958"
+    },
+    "styles/theme.css": {
+      "sourceSha256": "52241a7d0d28f7022b59f11006d5f4b6b38e8173ef1ef2d81fb62cde520e344c",
+      "localSha256": "84d2518889c3b94430f77821ab0505bcdaa7c9c6221e3fedc956307ca50fac9f"
+    },
+    "LICENSE": {
+      "sourceSha256": "c4b824495f1d48ee0b257606dccdb9b0a442d565ce155fc1eb86f497172534e1",
+      "localSha256": "c4b824495f1d48ee0b257606dccdb9b0a442d565ce155fc1eb86f497172534e1"
+    },
+    "components/base/checkbox/checkbox.tsx": {
+      "sourceSha256": "99783e19584c0a1df1ae501c50ec9c8fd27f9fcd207e6ad2c2f9afcd5fa4388d",
+      "localSha256": "1443a94320d527a0ccd130fe2111979d0aba2148259ececfea3c5436a0c021d3"
+    },
+    "components/base/avatar/base-components/index.tsx": {
+      "sourceSha256": "d630103c098195bb12b76683ddce85402dcc394feef45d2427e478209d2c2bd5",
+      "localSha256": "d630103c098195bb12b76683ddce85402dcc394feef45d2427e478209d2c2bd5"
+    },
+    "components/base/avatar/base-components/avatar-count.tsx": {
+      "sourceSha256": "ac7958c908a28fe7c4e090d54af4dcfb5cceb1faf3c2bac94ea0cb8a08bc088d",
+      "localSha256": "3859e5d6d7f6300419e7fe02f32d46d54c86a168982a068a34ee14f46c56c360"
+    },
+    "components/base/avatar/avatar.tsx": {
+      "sourceSha256": "239e9e672b2b9e18fb7db6ff1730c9d83447111efd4135581f22fbef353e3d9c",
+      "localSha256": "fab39a81a010ee71d63b76d9e6a48b1f1217693b24c788dbf0ea1e7475d96936"
+    },
+    "components/base/radio-buttons/radio-buttons.tsx": {
+      "sourceSha256": "defebef02ca9ffec949f85532483e663bbdc602f26edeb6cbbb46740022eb9f0",
+      "localSha256": "cf0be8031ebd4c58a3d0445037e5956e13406f3f1fe83d7591c4a1c752a30f41"
+    },
+    "components/base/toggle/toggle.tsx": {
+      "sourceSha256": "9cd1020b9b48e5cb2f49a52177ea270eb2813ad6bb8ef1bbb7068df57750e0e5",
+      "localSha256": "1e090c261d2a8791107a027b511dd360e7d548bc3b33781319803d25e0c8d903"
+    },
+    "components/base/dropdown/dropdown.tsx": {
+      "sourceSha256": "74639dbd028d2a5e4e20cbdc54e2ae318bbc15145cc39de2d73627b84296202f",
+      "localSha256": "0dc6ed6a60cec7edd720a41df970ab6f47dd716afef29d50a953a60d627f357c"
+    },
+    "components/application/tabs/tabs.tsx": {
+      "sourceSha256": "090aa84ea228281db1eb3ef811038bef3b2aa6e1b93174ced73a71ea0bf16914",
+      "localSha256": "f87894ee4af498f2b040330838755939c7fce374a9b46e5b847e7aea9c3da68e"
+    },
+    "components/application/modals/modal.tsx": {
+      "sourceSha256": "d698ac483dcf8e305b5258b0edbb860ea45c1562a82a7fe5717baa6c08272d42",
+      "localSha256": "7d8845b1a447f35cd42e089d9b24be07176b172e9caea724601379dcaed3fe31"
+    },
+    "components/base/avatar/base-components/avatar-online-indicator.tsx": {
+      "sourceSha256": "40dd93e07eb5d2875298586f027bad205b78aabb3be6a296ef036437595b0226",
+      "localSha256": "90c00d91e625bff1bf764fdeb83188c7fabbc9abe0d8fac0812f7c0d95ac0a27"
+    },
+    "components/base/avatar/base-components/verified-tick.tsx": {
+      "sourceSha256": "9cf7b0cd9970923bd6eb9d0a1c82eab1ddcdda007a6e94e48b047f7ef85b2473",
+      "localSha256": "870c764dfe77826de932ac0cf6edab36db4c07001dd4e932c9d02c61e2109a7e"
+    },
+    "components/base/avatar/base-components/avatar-company-icon.tsx": {
+      "sourceSha256": "52223fe32cd9f6b1f08702eb052af37a875f380c3f2626ccc8c2e6da0329bb09",
+      "localSha256": "ba1b6a23e4792ac2c3d027c633fcad3ce382a36e86021d575b84c1a26d1ca824"
+    },
+    "components/base/avatar/base-components/avatar-add-button.tsx": {
+      "sourceSha256": "4676000225227c5e9f6a0e953c03c015a5c10ea0de282024ddaabb3c8600032d",
+      "localSha256": "0345bf5100dbb6332f26514b70b112363b2f837560aa270e2308b2e42e9fc352"
+    },
+    "components/base/disclosure/disclosure.tsx": {
+      "sourceSha256": "3511e024924d1c21026c89e65cabb57605f537e524458b040b81596c1c646cd0",
+      "localSha256": "d94be4b73e1219fb1854862a5359416bfb65d1377fc696d60feda69df270495c",
+      "origin": "Dan UI local composition"
+    },
+    "styles/composition.css": {
+      "origin": "Dan UI local composition",
+      "localSha256": "d03d3198c5c06d0d9eae9c8cbb587b35171e118f2bba763bd4118eda47ddb5e2"
+    }
+  },
+  "templateVersion": "0.5.0"
+}

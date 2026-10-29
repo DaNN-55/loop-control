@@ -1,0 +1,856 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/observability/SystemStatusPanel.test.tsx (19 tests) 406ms
+ ✓ src/episodes/WanShotGenerator.test.tsx (8 tests) 427ms
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 用当前配置工作区取代蓝图版本管理
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 在账号操作菜单集中展示信息并支持归档
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > opens standalone OpenChatCut from the initial account page without selecting a production order
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > uses the original navigation, table and paging with local HTTP and opens the selected production drawer
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 直接编辑并保存当前蓝图
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > separates login/security from maintenance and restores keyboard focus to Owner menu 0
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 取消编辑会恢复当前保存值
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 有未保存修改时确认后才切换到系列
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 有未保存修改时确认后才切换到系列
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 左侧分区导航都有真实目标
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 右侧滚动时更新左侧当前分区
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > separates login/security from maintenance and restores keyboard focus to Owner menu 0
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 始终展示默认关闭的五项生产能力
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 通过矩阵打开单项能力配置
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > separates login/security from maintenance and restores keyboard focus to Owner menu 1
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 通过矩阵打开单项能力配置
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 保存启用但未完成的能力草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+ ✓ src/ui/DanUiInteractionGuards.test.tsx (5 tests) 240ms
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 首次启用不自动选择 B-roll 执行路径
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 首次启用不自动选择 B-roll 执行路径
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 把已验证的 Pexels 当前连接直接绑定到 B-roll 蓝图
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > separates login/security from maintenance and restores keyboard focus to Owner menu 1
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 把已验证的 Pexels 当前连接直接绑定到 B-roll 蓝图
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 把已验证的 Pexels 当前连接直接绑定到 B-roll 蓝图
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > cleanupPending=false: confirms the actual directory and exact title, then reports unfinished file cleanup
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > cleanupPending=true: confirms the actual directory and exact title, then reports unfinished file cleanup
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > shows a plan failure inside the confirmation dialog instead of leaving the click without feedback
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 火山旁白配置不再展示声音和语速字段
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 火山旁白配置不再展示声音和语速字段
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 用本地 Adapter 的完整身份识别就绪状态，并兼容旧检查
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 用本地 Adapter 的完整身份识别就绪状态，并兼容旧检查
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 用本地 Adapter 的完整身份识别就绪状态，并兼容旧检查
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > shows a delete failure inside the confirmation dialog instead of leaving the click without feedback
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 用本地 Adapter 的完整身份识别就绪状态，并兼容旧检查
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 在 A-roll 尚未配置时，仍使用本机 OpenChatCut 状态开放本地路径
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 在 A-roll 尚未配置时，仍使用本机 OpenChatCut 状态开放本地路径
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 在 A-roll 尚未配置时，仍使用本机 OpenChatCut 状态开放本地路径
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (8 tests) 1589ms
+   ✓ separates login/security from maintenance and restores keyboard focus to Owner menu 0  388ms
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 已批准分镜显示声音与对齐状态，并保存整期 BGM 和闪避选择
+Each child in a list should have a unique "key" prop.
+
+Check the render method of `ShotPreparationCard`. See https://react.dev/link/warning-keys for more information.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 选择分镜 Prompt Harness 时保存其不可变标识
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 选择分镜 Prompt Harness 时保存其不可变标识
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 通过弹窗配置分镜规划
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 通过弹窗配置分镜规划
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 展示真实 Worker 就绪检查并允许重新检查
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 合并影响审核渲染和最终渲染的同一 OpenChatCut 环境故障
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 不在第一屏展示冗长的运行命令错误
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 不在第一屏展示冗长的接口错误
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 系列页展示版本历史并通过新版本保存
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 系列页展示版本历史并通过新版本保存
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 系列有未保存修改时也会拦截离开
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 系列有未保存修改时也会拦截离开
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 第二镜独立字幕先保存，未保存时键盘切步保持当前正文
+An update to ForwardRef(TextArea) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(TextArea) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 系列有未保存修改时也会拦截离开
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 保留新建系列入口
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 保留新建系列入口
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 保留新建系列入口
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 支持重命名账号
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 有生产单时阻止删除账号
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 无生产单时要求输入账号名后才删除
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 从生产单进入时只显示定向修复表单
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 按 Worker 的可修复目标打开对应配置，不读取错误文案
+<Focusable> child must have an interactive ARIA role.
+
+stderr | src/accounts/AccountWorkspace.test.tsx > 账号配置工作区 > 修复视觉或分镜阻塞时冻结同一个已登记 Harness
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+<Focusable> child must have an interactive ARIA role.
+
+ ✓ src/accounts/AccountWorkspace.test.tsx (32 tests) 3380ms
+   ✓ 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接  353ms
+   ✓ 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿  833ms
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/reviews/ReviewWorkspace.test.tsx (71 tests) 9707ms
+   ✓ 审核台 > 在详情头部以图标提供刷新、打开和复制本地目录  394ms
+   ✓ 审核台 > 逐镜头主声音和音效独立保存，静音后恢复原选择并保留画面草稿  728ms
+   ✓ 审核台 > 第二镜独立字幕先保存，未保存时键盘切步保持当前正文  378ms
+   ✓ 审核台 > 第二镜修改双屏槽位和衔接后保存，保留已保存的独立正文  551ms
+   ✓ 审核台 > 第二镜修改字幕空间时保留已保存构图，保存刷新后保持所选镜头  433ms
+   ✓ 审核台 > 审核镜头可核对同步预览要求，修改字幕后旧确认与代理立即失效  772ms
+   ✓ 审核台 > 预览失败、缺少原片或旧合同阻止确认，生产就绪时仍可返回编辑  338ms
+   ✓ 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交  445ms
+   ✓ 审核台 > 逐镜头口播无需确认即可保存，并可保存单镜头覆盖  510ms
+   ✓ 审核台 > 同一原片支持多段裁剪并随镜头草稿一起保存  456ms
+   ✓ 审核台 > 人工媒体可在镜头工作台选择原片并保存镜头设置  606ms
+
+ Test Files  6 passed (6)
+      Tests  143 passed (143)
+   Start at  23:50:57
+   Duration  11.02s (transform 742ms, setup 36ms, collect 4.74s, tests 15.75s, environment 945ms, prepare 185ms)
+

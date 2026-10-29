@@ -51,7 +51,7 @@ macOS 不允许已受限父进程再次嵌套 `sandbox_apply`。第一次将应�
 
 ## 证据保留与收尾
 
-本轮前 **756 项公开、1001 项私有证据**先逐项核对 SHA/大小。仅更新活动 README/review 和总索引，原 README/review 逐字归档为 [README](README-before-whisperx-real.md)、[review](review-before-whisperx-real.md)，原索引保留私有快照。T20 模型缺失 blocked、T21 740/745、默认 5 秒失败、两次 P2、自然租约历史失败及全部旧门禁记录不改判。上轮已经关闭的默认测试稳定性和当前 30 分钟自然租约范围保持原结论。
+本轮前 **756 项公开、1001 项私有证据**先逐项核对 SHA/大小。仅更新活动 README/review 和总索引，原 README/review 逐字归档为 [README](../README.md)、[review](review-before-whisperx-real.md)，原索引保留私有快照。T20 模型缺失 blocked、T21 740/745、默认 5 秒失败、两次 P2、自然租约历史失败及全部旧门禁记录不改判。上轮已经关闭的默认测试稳定性和当前 30 分钟自然租约范围保持原结论。
 
 只停止本轮服务、Worker 和浏览器，撤销新克隆测试会话、删除本轮浏览器合成认证项；新库、APFS、模型、venv、缓存及原始材料继续私有保留。模型/venv/媒体不进入提交或公开目录，以来源、版本和文件摘要追溯；原始 HTTP、Cookie/CSRF、部署文件、密码、网络头部不公开。[收尾](evidence/whisperx-real-inference/cleanup-result.json)、[源码与范围](evidence/whisperx-real-inference/source-preservation-result.json)、[证据包复核](evidence/whisperx-real-inference/package-verification-result.json)、[总索引](evidence-index.json)
 

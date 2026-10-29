@@ -1,0 +1,62 @@
+[
+  {
+    "file": "src/local-app/LocalSecretAdministration.tsx",
+    "baselineCalls": 3,
+    "currentCalls": 3,
+    "identical": true
+  },
+  {
+    "file": "src/local-app/LocalConnectionsPanel.tsx",
+    "baselineCalls": 1,
+    "currentCalls": 1,
+    "identical": true
+  },
+  {
+    "file": "src/local-app/LocalEpisodeDetail.tsx",
+    "baselineCalls": 2,
+    "currentCalls": 2,
+    "identical": true
+  },
+  {
+    "file": "src/local-app/LocalDeliveryPanel.tsx",
+    "baselineCalls": 4,
+    "currentCalls": 4,
+    "identical": true
+  },
+  {
+    "file": "src/local-app/HistorySources.tsx",
+    "baselineCalls": 3,
+    "currentCalls": 3,
+    "identical": true
+  },
+  {
+    "file": "src/local-app/LocalCatalogApp.tsx",
+    "baselineCalls": 13,
+    "currentCalls": 13,
+    "identical": true
+  },
+  {
+    "file": "src/local-app/LocalHistory.tsx",
+    "baselineCalls": 3,
+    "currentCalls": 3,
+    "identical": true
+  },
+  {
+    "file": "src/local-app/LocalSystemStatus.tsx",
+    "baselineCalls": 1,
+    "currentCalls": 1,
+    "identical": true
+  },
+  {
+    "file": "src/platform/ConfigurationForms.tsx",
+    "baselineCalls": 1,
+    "currentCalls": 1,
+    "identical": true
+  },
+  {
+    "file": "src/episodes/WanShotGenerator.tsx",
+    "baselineCalls": 4,
+    "currentCalls": 4,
+    "identical": true
+  }
+]

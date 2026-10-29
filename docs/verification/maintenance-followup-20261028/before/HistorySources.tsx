@@ -1,0 +1,73 @@
+import {Disclosure} from '../ui/dan-ui/components/base/disclosure/disclosure';
+import {Button} from '../ui/dan-ui/components/base/buttons/button';
+import {Input} from '../ui/dan-ui/components/base/input/input';
+import {NativeSelect} from '../ui/dan-ui/components/base/select/select-native';
+import {BadgeWithDot} from '../ui/dan-ui/components/base/badges/badges';
+import {ChevronLeft,ChevronRight,X,FileText,Search,Archive,Layers} from 'lucide-react';
+import '../ui/dan-ui/styles/scoped.css';
+import './history.css';
+import {useEffect,useRef,useState} from 'react';
+import {localCommand,localRequest} from './client';
+import {historyCategories,historySize,type HistoryCategory,type HistorySource,type HistoryCleanupPreview} from './historyPresentation';
+interface HistoryVersion {table_name:string;row_key:unknown;payload_sha256:string;label:string;title:string;status:string}
+interface HistoryFile {logical_path:string;sha256:string;bytes:string;kind:string;category:HistoryCategory;title:string}
+interface Report {summary:{versions:string;files:string};sources:HistorySource[];source:HistorySource|null;versions:HistoryVersion[];files:HistoryFile[];pagination:{filesPage:number;recordsPage:number;fileTotal:number;versionTotal:number};sourceCounts:{active:number;archived:number}}
+interface VersionDetail {version:{table_name:string;row_key:unknown;payload_json:string}}
+const states:Record<string,string>={'superseded-import-precision':'旧导入精度版本',inserted:'有合入记录','current-preserved':'保留当时版本','secondary-key-conflict':'冲突版本','history-only:missing-parent':'缺少原始引用','history-only':'历史版本'};
+export function HistorySources(){
+ const [report,setReport]=useState<Report|null>(null),[category,setCategory]=useState(''),[state,setState]=useState('active');
+ const [sourceQuery,setSourceQuery]=useState(''),[source,setSource]=useState(''),[query,setQuery]=useState('');
+ const [error,setError]=useState(''),[notice,setNotice]=useState(''),[busy,setBusy]=useState(false),[operation,setOperation]=useState('');
+ const [selected,setSelected]=useState<HistoryVersion|null>(null),[version,setVersion]=useState<VersionDetail|null>(null);
+ const [preview,setPreview]=useState<{source:HistorySource;result:HistoryCleanupPreview}|null>(null);
+ const request=useRef(0),detailRequest=useRef(0),operationLock=useRef(false),viewer=useRef<HTMLElement>(null),previewPanel=useRef<HTMLElement>(null);
+ const [sourceLimit,setSourceLimit]=useState(50);
+ const disabled=busy||Boolean(operation);
+ async function load(options:{source?:string;q?:string;category?:string;state?:string;sourcesQ?:string;filesPage?:number;recordsPage?:number}={}){
+  const generation=++request.current;detailRequest.current++;setBusy(true);setError('');setSelected(null);setVersion(null);
+  const params={source:options.source??source,q:options.q??query,category:options.category??category,state:options.state??state,sourcesQ:options.sourcesQ??sourceQuery,filesPage:String(options.filesPage??1),recordsPage:String(options.recordsPage??1)};
+  try{const next:Report=await localRequest('history?'+new URLSearchParams(params));if(generation===request.current)setReport(next);}
+  catch(cause){if(generation===request.current)setError(cause instanceof Error?cause.message:'历史资料读取失败，请重试。');}
+  finally{if(generation===request.current)setBusy(false);}
+ }
+ useEffect(()=>{void load({source:'',q:'',category:'',state:'active',sourcesQ:''});return()=>{request.current++;detailRequest.current++;};},[]);
+ useEffect(()=>{if(report?.source&&source===report.source.id)viewer.current?.scrollIntoView({block:'start',behavior:'instant'});},[report?.source?.id]);
+ useEffect(()=>{if(preview)previewPanel.current?.scrollIntoView({block:'start',behavior:'instant'});},[preview]);
+ async function openSource(item:HistorySource){if(disabled)return;setSource(item.id);setQuery('');setPreview(null);await load({source:item.id,q:''});viewer.current?.scrollIntoView({block:'start',behavior:'instant'});}
+ async function select(item:HistoryVersion){const generation=++detailRequest.current;setSelected(item);setVersion(null);setError('');try{const next:VersionDetail=await localRequest('history?version='+item.payload_sha256);if(generation===detailRequest.current)setVersion(next);}catch(cause){if(generation===detailRequest.current)setError(cause instanceof Error?cause.message:'历史详情读取失败。');}}
+ async function manage(item:HistorySource,command:'archive'|'restore'|'preview'){
+  if(operationLock.current||busy)return;operationLock.current=true;setOperation(command+item.id);setError('');setNotice('');setPreview(null);
+  try{
+   const result=await localCommand<HistoryCleanupPreview>(command,{sourceId:item.id},undefined,'history-management');
+   if(command==='preview')setPreview({source:item,result});
+   else{setNotice(command==='archive'?'已归档，可在「已归档」中恢复。文件和索引保留。':'已恢复到资料列表。');setSource('');setQuery('');await load({source:'',q:''});}
+  }catch(cause){setError(cause instanceof Error?cause.message:'资料操作未确认完成，请重试。');}
+  finally{operationLock.current=false;setOperation('');}
+ }
+ function paging(kind:'files'|'records'){
+  if(!report)return null;const page=kind==='files'?report.pagination.filesPage:report.pagination.recordsPage,total=kind==='files'?report.pagination.fileTotal:report.pagination.versionTotal;
+  if(total<=50)return null;
+  return <nav aria-label={kind==='files'?'文件分页':'记录分页'} className="history-pagination"><Button color="secondary" size="sm" isDisabled={disabled||page<=1} onPress={()=>void load({filesPage:kind==='files'?page-1:report.pagination.filesPage,recordsPage:kind==='records'?page-1:report.pagination.recordsPage})} iconLeading={ChevronLeft} type="button">上一页</Button><span>第 {page} / {Math.ceil(total/50)} 页 · {total.toLocaleString()} 项</span><Button color="secondary" size="sm" isDisabled={disabled||page*50>=total} onPress={()=>void load({filesPage:kind==='files'?page+1:report.pagination.filesPage,recordsPage:kind==='records'?page+1:report.pagination.recordsPage})} iconTrailing={ChevronRight} type="button">下一页</Button></nav>;
+ }
+ return <section aria-label="资料来源管理" className="dan-ui history-ui history-workspace history-sources reference-history" aria-busy={disabled}>
+  <form aria-label="查找资料来源" className="history-source-filters" role="search" onSubmit={event=>{event.preventDefault();if(!disabled){setSource('');setPreview(null);void load({source:'',q:''});}}}>
+   <Input aria-label="查找来源" icon={Search} placeholder="搜索名称、文件或来源" size="sm" maxLength={200} onChange={setSourceQuery} type="search" value={sourceQuery}/>
+   <NativeSelect icon={Layers} aria-label="分类" size="sm" disabled={disabled} value={category} onChange={event=>{setCategory(event.target.value);setSource('');setPreview(null);void load({category:event.target.value,source:'',q:''});}} options={[{value:"",label:"全部分类"},...historyCategories.map(item=>({value:item.id,label:item.label}))]}/>
+   <NativeSelect icon={Archive} aria-label="显示范围" size="sm" disabled={disabled} value={state} onChange={event=>{setState(event.target.value);setSource('');setPreview(null);void load({state:event.target.value,source:'',q:''});}} options={[{value:"active",label:report?`未归档（${report.sourceCounts.active}）`:"未归档"},{value:"archived",label:report?`已归档（${report.sourceCounts.archived}）`:"已归档"},{value:"all",label:"全部来源"}]}/>
+  </form>
+  {error&&<p className="history-message history-error" role="alert">{error}</p>}{notice&&<p role="status" className="history-message history-notice">{notice}</p>}
+  {!report&&busy&&<p role="status" className="history-loading">正在读取资料来源…</p>}
+  {report&&<>
+   <section aria-label="资料来源" className="history-source-catalog"><div className="reference-history-table-wrap"><table className="reference-history-table" aria-label="资料来源列表"><colgroup><col className="history-name-col"/><col/><col className="history-count-col"/><col className="history-count-col"/><col className="history-date-col"/><col className="history-actions-col"/></colgroup><thead><tr><th scope="col">资料来源</th><th scope="col">分类</th><th scope="col">记录</th><th scope="col">文件</th><th scope="col">导入日期</th><th scope="col">操作</th></tr></thead><tbody>{report.sources.slice(0,sourceLimit).map(item=><tr key={item.id} data-selected={report.source?.id===item.id||undefined}><td><div className="history-source-heading"><Button aria-label={`查看 ${item.title}`} aria-expanded={report.source?.id===item.id} color="link-gray" size="sm" iconLeading={FileText} isLoading={busy&&source===item.id} showTextWhileLoading isDisabled={disabled} onPress={()=>void openSource(item)} type="button">{item.title}</Button>{item.archived_at&&<BadgeWithDot color="gray" size="sm">已归档</BadgeWithDot>}</div></td><td>{historyCategories.find(group=>group.id===item.category)?.label??'其他'}</td><td className="history-number">{Number(item.rows).toLocaleString()}</td><td className="history-number">{Number(item.files).toLocaleString()}</td><td className="history-date"><time dateTime={item.imported_at}>{new Date(item.imported_at).toLocaleDateString('zh-CN',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'})}</time></td><td><div className="history-source-actions"><Button aria-label={`${item.archived_at?'恢复':'归档'} ${item.title}`} color="tertiary" size="sm" isLoading={operation==='archive'+item.id||operation==='restore'+item.id} showTextWhileLoading isDisabled={disabled} onPress={()=>void manage(item,item.archived_at?'restore':'archive')} type="button">{operation==='archive'+item.id||operation==='restore'+item.id?'保存中…':item.archived_at?'恢复':'归档'}</Button><Button aria-label={`永久清理预览 ${item.title}`} color="tertiary" size="sm" isLoading={operation==='preview'+item.id} showTextWhileLoading isDisabled={disabled} onPress={()=>void manage(item,'preview')} type="button">{operation==='preview'+item.id?'核查中…':'清理预览'}</Button></div></td></tr>)}</tbody></table></div>{!report.sources.length&&<p className="maintenance-empty">没有匹配的来源。</p>}<footer className="reference-history-summary"><span>共 {report.sources.length.toLocaleString()} 个来源 · {Number(report.summary.versions).toLocaleString()} 个记录版本 · {Number(report.summary.files).toLocaleString()} 个独立文件</span>{report.sources.length>sourceLimit&&<Button color="secondary" size="sm" isDisabled={disabled} onPress={()=>setSourceLimit(current=>current+50)} type="button">显示更多来源</Button>}</footer></section>
+   {preview&&<section aria-label="永久清理预览" className="history-cleanup-preview" ref={previewPanel}><header className="history-header"><div><h3>永久清理预览</h3><p>{preview.source.title}</p></div><Button aria-label="关闭清理预览" color="tertiary" size="sm" iconLeading={X} onPress={()=>setPreview(null)} type="button"/></header><p>仅预览，不删除文件或索引。</p><dl className="history-preview-counts"><div><dt>来源关联</dt><dd>{preview.result.recordLinks.toLocaleString()} 条记录 / {preview.result.fileLinks.toLocaleString()} 个文件</dd></div><div><dt>其他来源共用</dt><dd>{preview.result.sharedRecords.toLocaleString()} 条记录 / {preview.result.sharedContents.toLocaleString()} 份内容，保留</dd></div><div><dt>保护依赖</dt><dd>{preview.result.protectedContents.toLocaleString()} 份内容，保留</dd></div><div><dt>有业务合入记录</dt><dd>{preview.result.projectedRecords.toLocaleString()} 条</dd></div><div><dt>独占待核查</dt><dd>{preview.result.reviewContents.toLocaleString()} 份内容 · {historySize(preview.result.reviewBytes)}</dd></div></dl><p className="field-hint">待核查大小不等于可释放空间。还需核验运行引用、资料正文中的间接引用和磁盘文件；永久删除尚未开放。</p><Disclosure label={<>核查样例（最多 12 项）</>}><ul className="history-preview-samples">{preview.result.samples.map(item=><li key={item.logical_path}><span>{item.logical_path}</span><small>{item.state==='shared'?'共用，保留':item.state==='protected'?'保护依赖，保留':'待核查'}</small></li>)}</ul></Disclosure></section>}
+   {report.source&&source===report.source.id&&<section aria-label="来源资料" className="history-source-view" ref={viewer}><header className="history-header"><div><h3>{report.source.title}</h3><p>{report.source.archived_at?'已归档 · 仍可查询和下载':'资料内容'}</p></div><Button color="secondary" size="sm" isDisabled={disabled} onPress={()=>{setSource('');setPreview(null);void load({source:'',q:''});}} type="button">收起资料</Button></header>
+    <Disclosure label={<>原始来源信息</>} className="history-source-original"><dl><dt>原名称或路径</dt><dd>{report.source.label}</dd><dt>来源编号</dt><dd>{report.source.id}</dd><dt>导入时间</dt><dd>{report.source.imported_at}</dd></dl></Disclosure>
+    <form aria-label="查找来源内容" className="history-content-search" role="search" onSubmit={event=>{event.preventDefault();if(!disabled)void load();}}><Input aria-label="查找文件或记录" size="sm" maxLength={200} onChange={setQuery} type="search" value={query}/></form>
+    <Disclosure label={<>文件（{report.pagination.fileTotal.toLocaleString()} 项）</>} className="history-category" key={source+'files'}>{report.files.length?historyCategories.map(group=>{
+     const items=report.files.filter(item=>item.category===group.id);return items.length?<section className="history-list-section" key={group.id}><h4>{group.label}</h4><ul className="history-files">{items.map(file=><li key={file.logical_path+file.sha256}><div className="history-file-name"><a aria-label={file.logical_path} download={file.logical_path.split('/').at(-1)} href={'/api/local/history-file?sha='+file.sha256}>{file.title}</a><Disclosure label={<>原路径与摘要</>}><p>{file.logical_path}</p><code>{file.sha256}</code></Disclosure></div><small>{historySize(file.bytes)}</small></li>)}</ul></section>:null;
+    }):<p className="maintenance-empty">没有匹配的历史文件。</p>}{paging('files')}</Disclosure>
+    <Disclosure label={<>技术记录（{report.pagination.versionTotal.toLocaleString()} 项）</>} className="history-category" key={source+'records'}>{report.versions.length?<ul className="history-records">{report.versions.map(item=><li key={item.table_name+JSON.stringify(item.row_key)+item.payload_sha256}><Button aria-pressed={selected===item} color="link-color" size="sm" className="history-record-button" isDisabled={disabled} onPress={()=>void select(item)} type="button">{item.title}</Button><small>{states[item.status]??'历史记录'}</small></li>)}</ul>:<p className="maintenance-empty">没有匹配的历史记录。</p>}{paging('records')}{selected&&<section aria-label="选定历史记录" className="history-selected"><h4>{selected.title}</h4>{version?<Disclosure label={<>技术详情</>} key={selected.payload_sha256}><p>数据表：{version.version.table_name}</p><pre>{version.version.payload_json}</pre></Disclosure>:<p role="status">{error?'详情未能读取，可重新选择记录。':'正在读取记录…'}</p>}</section>}</Disclosure>
+   </section>}
+  </>}
+ </section>;
+}

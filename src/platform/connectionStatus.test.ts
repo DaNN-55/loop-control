@@ -21,9 +21,9 @@ describe("externalConnectionStatuses", () => {
   });
 
   it("没有执行检查时标记为待检查", () => {
-    const statuses = externalConnectionStatuses({ narration: { executor: { provider: "google_tts", adapter: "google_tts" } } }, null);
+    const statuses = externalConnectionStatuses({ narration: { executor: { provider: "volcengine_tts", adapter: "volcengine_tts" } } }, null);
 
-    expect(statuses[0]).toMatchObject({ capability: "narration_generation", provider: "google_tts", status: "pending", action: "none" });
+    expect(statuses[0]).toMatchObject({ capability: "narration_generation", provider: "volcengine_tts", status: "pending", action: "none" });
   });
 
   it("人工能力留空时不显示外部连接状态", () => {

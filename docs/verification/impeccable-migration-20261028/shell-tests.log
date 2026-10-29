@@ -1,0 +1,1015 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/operations/OperationsWorkspace.test.tsx (6 tests) 433ms
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > separates login/security from maintenance and restores keyboard focus to Owner menu 0
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/local-app/LocalCatalogApp.workspace.test.tsx > separates login/security from maintenance and restores keyboard focus to Owner menu 1
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(Button) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ❯ src/local-app/LocalCatalogApp.account.test.tsx (5 tests | 2 failed) 1200ms
+   × checks the exact current blueprint through the local Owner command and displays its real blocker 333ms
+     → Unable to find an accessible element with the role "heading" and name "1 项需要处理"
+
+Here are the accessible roles:
+
+  heading:
+
+  Name "生产条件":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  strong:
+
+  Name "":
+  [36m<strong[39m
+    [33mclass[39m=[32m"account-readiness-title"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"account-readiness-help"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "生产条件检查范围说明":
+  [36m<span[39m
+    [33maria-label[39m=[32m"生产条件检查范围说明"[39m
+    [33mclass[39m=[32m"help-tip"[39m
+    [33mrole[39m=[32m"button"[39m
+    [33mtabindex[39m=[32m"0"[39m
+  [36m/>[39m
+
+  Name "重新检查":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 *:data-icon:size-4 *:data-icon:stroke-[2.25px] bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover button button-secondary button-small"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_2r_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  list:
+
+  Name "":
+  [36m<ul />[39m
+
+  --------------------------------------------------
+  listitem:
+
+  Name "":
+  [36m<li />[39m
+
+  --------------------------------------------------heading:
+
+  Name "配置范围":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  term:
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  --------------------------------------------------
+  definition:
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<aside[39m
+  [33maria-label[39m=[32m"账号默认配置检查"[39m
+  [33mclass[39m=[32m"account-status-rail"[39m
+[36m>[39m
+  [36m<section[39m
+    [33mclass[39m=[32m"is-blocked"[39m
+  [36m>[39m
+    [36m<h3>[39m
+      [0m生产条件[0m
+    [36m</h3>[39m
+    [36m<strong[39m
+      [33mclass[39m=[32m"account-readiness-title"[39m
+    [36m>[39m
+      [0m1 项需要处理[0m
+    [36m</strong>[39m
+    [36m<p[39m
+      [33mclass[39m=[32m"account-readiness-help"[39m
+    [36m>[39m
+      [0m账号蓝图检查[0m
+      [36m<span[39m
+        [33maria-label[39m=[32m"生产条件检查范围说明"[39m
+        [33mclass[39m=[32m"help-tip"[39m
+        [33mrole[39m=[32m"button"[39m
+        [33mtabindex[39m=[32m"0"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mclass[39m=[32m"lucide lucide-info help-tip-icon"[39m
+          [33mfill[39m=[32m"none"[39m
+          [33mheight[39m=[32m"24"[39m
+          [33mstroke[39m=[32m"currentColor"[39m
+          [33mstroke-linecap[39m=[32m"round"[39m
+          [33mstroke-linejoin[39m=[32m"round"[39m
+          [33mstroke-width[39m=[32m"1.8"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"24"[39m
+          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+        [36m>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"12"[39m
+            [33mcy[39m=[32m"12"[39m
+            [33mr[39m=[32m"10"[39m
+          [36m/>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M12 16v-4"[39m
+          [36m/>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M12 8h.01"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</span>[39m
+    [36m</p>[39m
+    [36m<ul>[39m
+      [36m<li>[39m
+        [36m<strong>[39m
+          [0m运行命令不可用[0m
+        [36m</strong>[39m
+        [36m<span>[39m
+          [0mNative Worker unavailable fixture[0m
+        [36m</span>[39m
+      [36m</li>[39m
+    [36m</ul>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 *:data-icon:size-4 *:data-icon:stroke-[2.25px] bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover button button-secondary button-small"[39m
+      [33mdata-rac[39m=[32m""[39m
+      [33mdata-react-aria-pressable[39m=[32m"true"[39m
+      [33mid[39m=[32m"react-aria-_r_2r_"[39m
+      [33mtabindex[39m=[32m"0"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+        [33mdata-text[39m=[32m"true"[39m
+      [36m>[39m
+        [0m重新检查[0m
+      [36m</span>[39m
+    [36m</button>[39m
+  [36m</section>[39m
+  [36m<section>[39m
+    [36m<h3>[39m
+      [0m配置范围[0m
+    [36m</h3>[39m
+    [36m<dl>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m生效对象[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m新生产单[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m已有生产单[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m保持冻结配置[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m当前开启[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m0[0m
+          [0m 项能力[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m本机依赖[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m待检查[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+    [36m</dl>[39m
+  [36m</section>[39m
+[36m</aside>[39m
+   × does not show an old successful check after the saved blueprint revision changes 233ms
+     → Unable to find an accessible element with the role "heading" and name "等待运行检查"
+
+Here are the accessible roles:
+
+  heading:
+
+  Name "生产条件":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  strong:
+
+  Name "":
+  [36m<strong[39m
+    [33mclass[39m=[32m"account-readiness-title"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"account-readiness-help"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "生产条件检查范围说明":
+  [36m<span[39m
+    [33maria-label[39m=[32m"生产条件检查范围说明"[39m
+    [33mclass[39m=[32m"help-tip"[39m
+    [33mrole[39m=[32m"button"[39m
+    [33mtabindex[39m=[32m"0"[39m
+  [36m/>[39m
+
+  Name "重新检查":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 *:data-icon:size-4 *:data-icon:stroke-[2.25px] bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover button button-secondary button-small"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_5q_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------heading:
+
+  Name "配置范围":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  term:
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  --------------------------------------------------
+  definition:
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<aside[39m
+  [33maria-label[39m=[32m"账号默认配置检查"[39m
+  [33mclass[39m=[32m"account-status-rail"[39m
+[36m>[39m
+  [36m<section[39m
+    [33mclass[39m=[32m"is-ready"[39m
+  [36m>[39m
+    [36m<h3>[39m
+      [0m生产条件[0m
+    [36m</h3>[39m
+    [36m<strong[39m
+      [33mclass[39m=[32m"account-readiness-title"[39m
+    [36m>[39m
+      [0m等待运行检查[0m
+    [36m</strong>[39m
+    [36m<p[39m
+      [33mclass[39m=[32m"account-readiness-help"[39m
+    [36m>[39m
+      [0m账号蓝图检查[0m
+      [36m<span[39m
+        [33maria-label[39m=[32m"生产条件检查范围说明"[39m
+        [33mclass[39m=[32m"help-tip"[39m
+        [33mrole[39m=[32m"button"[39m
+        [33mtabindex[39m=[32m"0"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mclass[39m=[32m"lucide lucide-info help-tip-icon"[39m
+          [33mfill[39m=[32m"none"[39m
+          [33mheight[39m=[32m"24"[39m
+          [33mstroke[39m=[32m"currentColor"[39m
+          [33mstroke-linecap[39m=[32m"round"[39m
+          [33mstroke-linejoin[39m=[32m"round"[39m
+          [33mstroke-width[39m=[32m"1.8"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"24"[39m
+          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+        [36m>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"12"[39m
+            [33mcy[39m=[32m"12"[39m
+            [33mr[39m=[32m"10"[39m
+          [36m/>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M12 16v-4"[39m
+          [36m/>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M12 8h.01"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</span>[39m
+    [36m</p>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 *:data-icon:size-4 *:data-icon:stroke-[2.25px] bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover button button-secondary button-small"[39m
+      [33mdata-rac[39m=[32m""[39m
+      [33mdata-react-aria-pressable[39m=[32m"true"[39m
+      [33mid[39m=[32m"react-aria-_r_5q_"[39m
+      [33mtabindex[39m=[32m"0"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+        [33mdata-text[39m=[32m"true"[39m
+      [36m>[39m
+        [0m重新检查[0m
+      [36m</span>[39m
+    [36m</button>[39m
+  [36m</section>[39m
+  [36m<section>[39m
+    [36m<h3>[39m
+      [0m配置范围[0m
+    [36m</h3>[39m
+    [36m<dl>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m生效对象[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m新生产单[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m已有生产单[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m保持冻结配置[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m当前开启[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m0[0m
+          [0m 项能力[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m本机依赖[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m待检查[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+    [36m</dl>[39m
+  [36m</section>[39m
+[36m</aside>[39m
+   ✓ does not start a blueprint check while logout is pending 93ms
+   ✓ keeps the new account check when the previous account check returns late 263ms
+   ✓ keeps the relogged-in session check when an old session check returns late 276ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx (13 tests) 1592ms
+   ✓ keeps a committed series save successful when its follow-up read fails  458ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (8 tests) 1655ms
+   ✓ separates login/security from maintenance and restores keyboard focus to Owner menu 0  362ms
+   ✓ separates login/security from maintenance and restores keyboard focus to Owner menu 1  392ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/LocalCatalogApp.account.test.tsx > checks the exact current blueprint through the local Owner command and displays its real blocker
+TestingLibraryElementError: Unable to find an accessible element with the role "heading" and name "1 项需要处理"
+
+Here are the accessible roles:
+
+  heading:
+
+  Name "生产条件":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  strong:
+
+  Name "":
+  [36m<strong[39m
+    [33mclass[39m=[32m"account-readiness-title"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<strong />[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"account-readiness-help"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "生产条件检查范围说明":
+  [36m<span[39m
+    [33maria-label[39m=[32m"生产条件检查范围说明"[39m
+    [33mclass[39m=[32m"help-tip"[39m
+    [33mrole[39m=[32m"button"[39m
+    [33mtabindex[39m=[32m"0"[39m
+  [36m/>[39m
+
+  Name "重新检查":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 *:data-icon:size-4 *:data-icon:stroke-[2.25px] bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover button button-secondary button-small"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_2r_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  list:
+
+  Name "":
+  [36m<ul />[39m
+
+  --------------------------------------------------
+  listitem:
+
+  Name "":
+  [36m<li />[39m
+
+  --------------------------------------------------heading:
+
+  Name "配置范围":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  term:
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  --------------------------------------------------
+  definition:
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<aside[39m
+  [33maria-label[39m=[32m"账号默认配置检查"[39m
+  [33mclass[39m=[32m"account-status-rail"[39m
+[36m>[39m
+  [36m<section[39m
+    [33mclass[39m=[32m"is-blocked"[39m
+  [36m>[39m
+    [36m<h3>[39m
+      [0m生产条件[0m
+    [36m</h3>[39m
+    [36m<strong[39m
+      [33mclass[39m=[32m"account-readiness-title"[39m
+    [36m>[39m
+      [0m1 项需要处理[0m
+    [36m</strong>[39m
+    [36m<p[39m
+      [33mclass[39m=[32m"account-readiness-help"[39m
+    [36m>[39m
+      [0m账号蓝图检查[0m
+      [36m<span[39m
+        [33maria-label[39m=[32m"生产条件检查范围说明"[39m
+        [33mclass[39m=[32m"help-tip"[39m
+        [33mrole[39m=[32m"button"[39m
+        [33mtabindex[39m=[32m"0"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mclass[39m=[32m"lucide lucide-info help-tip-icon"[39m
+          [33mfill[39m=[32m"none"[39m
+          [33mheight[39m=[32m"24"[39m
+          [33mstroke[39m=[32m"currentColor"[39m
+          [33mstroke-linecap[39m=[32m"round"[39m
+          [33mstroke-linejoin[39m=[32m"round"[39m
+          [33mstroke-width[39m=[32m"1.8"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"24"[39m
+          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+        [36m>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"12"[39m
+            [33mcy[39m=[32m"12"[39m
+            [33mr[39m=[32m"10"[39m
+          [36m/>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M12 16v-4"[39m
+          [36m/>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M12 8h.01"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</span>[39m
+    [36m</p>[39m
+    [36m<ul>[39m
+      [36m<li>[39m
+        [36m<strong>[39m
+          [0m运行命令不可用[0m
+        [36m</strong>[39m
+        [36m<span>[39m
+          [0mNative Worker unavailable fixture[0m
+        [36m</span>[39m
+      [36m</li>[39m
+    [36m</ul>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 *:data-icon:size-4 *:data-icon:stroke-[2.25px] bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover button button-secondary button-small"[39m
+      [33mdata-rac[39m=[32m""[39m
+      [33mdata-react-aria-pressable[39m=[32m"true"[39m
+      [33mid[39m=[32m"react-aria-_r_2r_"[39m
+      [33mtabindex[39m=[32m"0"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+        [33mdata-text[39m=[32m"true"[39m
+      [36m>[39m
+        [0m重新检查[0m
+      [36m</span>[39m
+    [36m</button>[39m
+  [36m</section>[39m
+  [36m<section>[39m
+    [36m<h3>[39m
+      [0m配置范围[0m
+    [36m</h3>[39m
+    [36m<dl>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m生效对象[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m新生产单[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m已有生产单[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m保持冻结配置[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m当前开启[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m0[0m
+          [0m 项能力[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m本机依赖[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m待检查[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+    [36m</dl>[39m
+  [36m</section>[39m
+[36m</aside>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/local-app/LocalCatalogApp.account.test.tsx:24:22
+     22|  const rail=screen.getByLabelText('账号默认配置检查');fireEvent.click(within(r…
+     23|  await waitFor(()=>expect(rail.textContent).toContain('Native Worker u…
+     24|  expect(within(rail).getByRole('heading',{name:'1 项需要处理'})).toBeTruthy…
+       |                      ^
+     25|  expect(rail.textContent).not.toContain('尚未接管');
+     26| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/LocalCatalogApp.account.test.tsx > does not show an old successful check after the saved blueprint revision changes
+TestingLibraryElementError: Unable to find an accessible element with the role "heading" and name "等待运行检查"
+
+Here are the accessible roles:
+
+  heading:
+
+  Name "生产条件":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  strong:
+
+  Name "":
+  [36m<strong[39m
+    [33mclass[39m=[32m"account-readiness-title"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"account-readiness-help"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "生产条件检查范围说明":
+  [36m<span[39m
+    [33maria-label[39m=[32m"生产条件检查范围说明"[39m
+    [33mclass[39m=[32m"help-tip"[39m
+    [33mrole[39m=[32m"button"[39m
+    [33mtabindex[39m=[32m"0"[39m
+  [36m/>[39m
+
+  Name "重新检查":
+  [36m<button[39m
+    [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 *:data-icon:size-4 *:data-icon:stroke-[2.25px] bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover button button-secondary button-small"[39m
+    [33mdata-rac[39m=[32m""[39m
+    [33mdata-react-aria-pressable[39m=[32m"true"[39m
+    [33mid[39m=[32m"react-aria-_r_5q_"[39m
+    [33mtabindex[39m=[32m"0"[39m
+    [33mtype[39m=[32m"button"[39m
+  [36m/>[39m
+
+  --------------------------------------------------heading:
+
+  Name "配置范围":
+  [36m<h3 />[39m
+
+  --------------------------------------------------
+  term:
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  Name "":
+  [36m<dt />[39m
+
+  --------------------------------------------------
+  definition:
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  Name "":
+  [36m<dd />[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<aside[39m
+  [33maria-label[39m=[32m"账号默认配置检查"[39m
+  [33mclass[39m=[32m"account-status-rail"[39m
+[36m>[39m
+  [36m<section[39m
+    [33mclass[39m=[32m"is-ready"[39m
+  [36m>[39m
+    [36m<h3>[39m
+      [0m生产条件[0m
+    [36m</h3>[39m
+    [36m<strong[39m
+      [33mclass[39m=[32m"account-readiness-title"[39m
+    [36m>[39m
+      [0m等待运行检查[0m
+    [36m</strong>[39m
+    [36m<p[39m
+      [33mclass[39m=[32m"account-readiness-help"[39m
+    [36m>[39m
+      [0m账号蓝图检查[0m
+      [36m<span[39m
+        [33maria-label[39m=[32m"生产条件检查范围说明"[39m
+        [33mclass[39m=[32m"help-tip"[39m
+        [33mrole[39m=[32m"button"[39m
+        [33mtabindex[39m=[32m"0"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mclass[39m=[32m"lucide lucide-info help-tip-icon"[39m
+          [33mfill[39m=[32m"none"[39m
+          [33mheight[39m=[32m"24"[39m
+          [33mstroke[39m=[32m"currentColor"[39m
+          [33mstroke-linecap[39m=[32m"round"[39m
+          [33mstroke-linejoin[39m=[32m"round"[39m
+          [33mstroke-width[39m=[32m"1.8"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"24"[39m
+          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+        [36m>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"12"[39m
+            [33mcy[39m=[32m"12"[39m
+            [33mr[39m=[32m"10"[39m
+          [36m/>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M12 16v-4"[39m
+          [36m/>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M12 8h.01"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+      [36m</span>[39m
+    [36m</p>[39m
+    [36m<button[39m
+      [33mclass[39m=[32m"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear before:absolute focus-visible:outline-2 focus-visible:outline-offset-2 in-data-input-wrapper:shadow-xs in-data-input-wrapper:focus:!z-50 in-data-input-wrapper:in-data-leading:-mr-px in-data-input-wrapper:in-data-leading:rounded-r-none in-data-input-wrapper:in-data-leading:before:rounded-r-none in-data-input-wrapper:in-data-trailing:-ml-px in-data-input-wrapper:in-data-trailing:rounded-l-none in-data-input-wrapper:in-data-trailing:before:rounded-l-none disabled:cursor-not-allowed disabled:opacity-50 in-data-input-wrapper:disabled:opacity-100 *:data-icon:pointer-events-none *:data-icon:shrink-0 *:data-icon:transition-inherit-all gap-1 rounded-lg px-2.5 py-1.5 text-sm font-semibold before:rounded-[7px] data-icon-only:p-2 in-data-input-wrapper:px-3.5 in-data-input-wrapper:py-2.5 in-data-input-wrapper:data-icon-only:p-2.5 *:data-icon:size-4 *:data-icon:stroke-[2.25px] bg-primary text-secondary shadow-xs-skeuomorphic ring-1 ring-primary ring-inset hover:bg-primary_hover hover:text-secondary_hover data-loading:bg-primary_hover *:data-icon:text-fg-quaternary hover:*:data-icon:text-fg-quaternary_hover button button-secondary button-small"[39m
+      [33mdata-rac[39m=[32m""[39m
+      [33mdata-react-aria-pressable[39m=[32m"true"[39m
+      [33mid[39m=[32m"react-aria-_r_5q_"[39m
+      [33mtabindex[39m=[32m"0"[39m
+      [33mtype[39m=[32m"button"[39m
+    [36m>[39m
+      [36m<span[39m
+        [33mclass[39m=[32m"transition-inherit-all px-0.5"[39m
+        [33mdata-text[39m=[32m"true"[39m
+      [36m>[39m
+        [0m重新检查[0m
+      [36m</span>[39m
+    [36m</button>[39m
+  [36m</section>[39m
+  [36m<section>[39m
+    [36m<h3>[39m
+      [0m配置范围[0m
+    [36m</h3>[39m
+    [36m<dl>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m生效对象[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m新生产单[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m已有生产单[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m保持冻结配置[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m当前开启[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m0[0m
+          [0m 项能力[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+      [36m<div>[39m
+        [36m<dt>[39m
+          [0m本机依赖[0m
+        [36m</dt>[39m
+        [36m<dd>[39m
+          [0m待检查[0m
+        [36m</dd>[39m
+      [36m</div>[39m
+    [36m</dl>[39m
+  [36m</section>[39m
+[36m</aside>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/local-app/LocalCatalogApp.account.test.tsx:38:22
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  2 failed | 30 passed (32)
+   Start at  10:04:01
+   Duration  3.98s (transform 1.33s, setup 65ms, collect 6.58s, tests 4.88s, environment 1.30s, prepare 180ms)
+

@@ -53,7 +53,7 @@
 
 ## 历史与其他门禁
 
-原 442 项公开、577 项私有证据保留；只更新活动 README/review 的当前结论，更新前的[README](README-before-default-5s.md)、[review](review-before-default-5s.md)及私有旧索引另存快照。其他旧条目和所有历史原始日志保持原字节，原始失败仍然失败。[保留核验](evidence/default-5s-stability/evidence-retention-result.json)
+原 442 项公开、577 项私有证据保留；只更新活动 README/review 的当前结论，更新前的[README](../README.md)、[review](review-before-default-5s.md)及私有旧索引另存快照。其他旧条目和所有历史原始日志保持原字节，原始失败仍然失败。[保留核验](evidence/default-5s-stability/evidence-retention-result.json)
 
 当前索引的五秒稳定性关闭标志仅指本轮当前源码和测试资源策略；旧索引、旧 followup 和 B/T06、T19、T21 等报告中的历史判定不改写。不追认旧运行通过，也不追溯认定每次历史失败都由同一个原因造成。
 

@@ -1,0 +1,24 @@
+
+> loop-control@0.1.0 build
+> tsc -b && vite build --outDir /private/tmp/loop-dan-ui-build-20261027
+
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 4404 modules transformed.
+
+(!) outDir /private/tmp/loop-dan-ui-build-20261027 is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+rendering chunks...
+computing gzip size...
+../../../../private/tmp/loop-dan-ui-build-20261027/index.html                                0.86 kB │ gzip:   0.46 kB
+../../../../private/tmp/loop-dan-ui-build-20261027/native-runtime-graph.json               280.64 kB │ gzip:  23.44 kB
+../../../../private/tmp/loop-dan-ui-build-20261027/assets/index-LIRHXem4.css               471.89 kB │ gzip:  69.63 kB
+../../../../private/tmp/loop-dan-ui-build-20261027/assets/retiredRemoteClient-CR7xA7U4.js    0.16 kB │ gzip:   0.18 kB
+../../../../private/tmp/loop-dan-ui-build-20261027/assets/index-CtFcllkd.js                955.17 kB │ gzip: 287.24 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 1.79s

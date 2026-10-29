@@ -1,0 +1,22 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/LocalMaintenanceEmbedded.test.tsx (2 tests) 365ms
+ ✓ src/local-app/LocalConnectionsPanel.test.tsx (7 tests) 592ms
+ ✓ src/local-app/HistoryDanUi.test.tsx (3 tests) 581ms
+ ✓ src/connections/ConnectionWorkspace.test.tsx (8 tests) 959ms
+ ✓ src/connections/ConnectionOrganization.test.tsx (3 tests) 287ms
+ ✓ src/connections/ConnectionFeedback.test.tsx (8 tests) 425ms
+ ✓ src/local-app/LocalHistory.test.tsx (5 tests) 600ms
+ ✓ src/local-app/LocalSystemStatus.test.tsx (4 tests) 287ms
+ ✓ src/local-app/LocalSecretAdministration.test.tsx (5 tests) 2016ms
+   ✓ reveals only after POST password verification and clears on selection/filter/visibility  664ms
+   ✓ copies through browser clipboard after verification and never renders returned plaintext  312ms
+   ✓ blocks stale reveal responses after close, filter and expired-session event  319ms
+   ✓ hides plaintext after thirty seconds and never offers control-secret reveal  585ms
+
+ Test Files  9 passed (9)
+      Tests  45 passed (45)
+   Start at  10:03:44
+   Duration  3.30s (transform 452ms, setup 39ms, collect 6.17s, tests 6.11s, environment 1.68s, prepare 327ms)
+

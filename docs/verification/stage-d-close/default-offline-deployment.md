@@ -13,7 +13,7 @@
 3. 成功后保存私有准备回执；默认或标记 `offlinePreparationRequired:true` 的部署在监听前复核文件/清单、部署、准备脚本、runner 和 Node 身份。缺回执、准备失败或资产变更明确拒绝。实际任务仍执行原 30 秒模型 preflight，不能由静态回执保证任意冷缓存环境的加载耗时。
 4. 默认选择首次写入不覆盖已有指针；有活服务或无效服务记录时拒绝切换。历史死亡进程记录只保留，不因文件仍存在就冒充活服务。流程要求先停止服务，不提供并行部署切换或通用安装器。
 
-只修改部署读取/启动准备、命令注册与必要测试/说明；停止身份检查、业务 SQL、任务租约/结果围栏、模型 runner、阈值和产品界面不改。[本轮源码与范围](evidence/default-offline-deployment/scope-result.json)、[使用说明](../../local-native-deployment.md)
+只修改部署读取/启动准备、命令注册与必要测试/说明；停止身份检查、业务 SQL、任务租约/结果围栏、模型 runner、阈值和产品界面不改。[本轮源码与范围](evidence/default-offline-deployment/scope-result.json)、[使用说明](../../local-daily-runtime.md)
 
 ## 实际环境与准备
 
@@ -57,7 +57,7 @@
 
 ## 历史保留、收尾和未关闭范围
 
-原 **831 项公开、1178 项私有**证据在报告更新前逐一核对 SHA/大小；仅更新活动 README/review/索引，原文归档为 [README](README-before-default-deployment.md)、[review](review-before-default-deployment.md)，原索引私有保留。旧随访、默认 5 秒稳定性、自然租约及 WhisperX 限定验收对象保持原值，全部历史失败不改判。[旧证据核对](evidence/default-offline-deployment/old-evidence-preservation-result.json)
+原 **831 项公开、1178 项私有**证据在报告更新前逐一核对 SHA/大小；仅更新活动 README/review/索引，原文归档为 [README](../README.md)、[review](review-before-default-deployment.md)，原索引私有保留。旧随访、默认 5 秒稳定性、自然租约及 WhisperX 限定验收对象保持原值，全部历史失败不改判。[旧证据核对](evidence/default-offline-deployment/old-evidence-preservation-result.json)
 
 默认指针、最终准备回执、新恢复库/媒体及模型环境保留，供本地主动启动使用；服务最后经无参 `npm stop` 停止，仅撤销新库测试会话、关闭本轮浏览器/删除合成认证项，旧服务未被 signal。根 PLAN 和 43 个无关文件保持原字节，HEAD 不变、未暂存/提交/推送。[收尾](evidence/default-offline-deployment/cleanup-result.json)、[证据包复核](evidence/default-offline-deployment/package-verification-result.json)、[总索引](evidence-index.json)
 

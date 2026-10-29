@@ -1,0 +1,21 @@
+{
+  "realSourceFilesChecked": 378,
+  "realSourceChanged": [],
+  "originalModules": [
+    {
+      "name": "configuration including connections",
+      "unchanged": true,
+      "bytes": 47104
+    },
+    {
+      "name": "maintenance including history",
+      "unchanged": true,
+      "bytes": 32661
+    }
+  ],
+  "originalTopbarUnchanged": true,
+  "originalCSSRetained": true,
+  "singleHTML": true,
+  "networkPolicy": true,
+  "artifactSha256": "2f3eeb53c11c64ef85c656468cd266978f66af2ff138f50a85233eff276cf646"
+}

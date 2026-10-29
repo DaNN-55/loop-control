@@ -1,0 +1,22 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (8 tests) 1638ms
+   ✓ 保留安全弹窗焦点，将维护入口统一为侧栏且跨页保留连接草稿  423ms
+   ✓ keeps one topbar instance and places the Owner menu after theme in workspace and episode  424ms
+ ✓ src/local-app/WorkspaceTopbar.test.tsx (6 tests) 1930ms
+   ✓ does not let an old response replace a newer search and opens the real result  568ms
+   ✓ preserves account navigation and opens only the registered SHA-bound material  576ms
+   ✓ shows a readable search error and retries the same query  543ms
+ ✓ src/ui/PcVisualFixes.test.tsx (5 tests) 863ms
+   ✓ accepts at most 200 title characters before creation and exposes the limit  524ms
+ ✓ src/local-app/WorkspaceTopbar.account-safety.test.tsx (2 tests) 777ms
+   ✓ search switching an account respects unsaved changes: confirm=false  410ms
+   ✓ search switching an account respects unsaved changes: confirm=true  367ms
+ ✓ src/operations/OperationsWorkspace.test.tsx (9 tests) 386ms
+
+ Test Files  5 passed (5)
+      Tests  30 passed (30)
+   Start at  21:37:36
+   Duration  9.64s (transform 484ms, setup 9ms, collect 2.76s, tests 5.60s, environment 768ms, prepare 122ms)
+

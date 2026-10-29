@@ -1,0 +1,39 @@
+{
+  "beforeIdentitySha256": "74750c2d6a4d287a0bf6e451856d2b00c70a2826b79707127989b0de4c0d3b51",
+  "accountCount": 8,
+  "episodeCount": 13,
+  "exampleId": "265dcee5-32c8-4066-b3ad-58803d195e01",
+  "exampleTitle": "操作电脑-v4",
+  "paths": [
+    "/Users/dan/Programs/loop-control/.loop-control/local/volume/media/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01",
+    "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01"
+  ],
+  "directoryIdentity": [
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/local/volume/media/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01",
+      "dev": "16777301",
+      "ino": "2566",
+      "exists": true
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01",
+      "dev": "16777244",
+      "ino": "1681955",
+      "exists": true
+    }
+  ],
+  "afterIdentitySha256": "74750c2d6a4d287a0bf6e451856d2b00c70a2826b79707127989b0de4c0d3b51",
+  "identitiesUnchanged": true,
+  "afterDirectories": [
+    {
+      "path": "/Users/dan/Programs/loop-control/.loop-control/local/volume/media/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01",
+      "exists": true,
+      "sameDirectory": true
+    },
+    {
+      "path": "/Volumes/Ebuget 1T/Media/accounts/doubao/episodes/265dcee5-32c8-4066-b3ad-58803d195e01",
+      "exists": true,
+      "sameDirectory": true
+    }
+  ]
+}

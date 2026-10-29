@@ -1,0 +1,51 @@
+{
+  "at": "2026-10-27T09:30:43.149Z",
+  "production": {
+    "policyUnchanged": true,
+    "used": 11,
+    "maxRequests": 11
+  },
+  "readOnly": {
+    "bailian": {
+      "used": 1,
+      "limit": 2,
+      "expired": true,
+      "expiresAt": "2026-10-27T09:24:32.710Z",
+      "events": [
+        {
+          "operation": "bailian.verify",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "bailian.verify",
+          "outcome": "completed",
+          "status": 200
+        }
+      ]
+    },
+    "freesound": {
+      "used": 1,
+      "limit": 2,
+      "expired": true,
+      "expiresAt": "2026-10-27T09:24:32.710Z",
+      "events": [
+        {
+          "operation": "freesound.verify",
+          "outcome": "reserved"
+        },
+        {
+          "operation": "freesound.verify",
+          "outcome": "completed",
+          "status": 200
+        }
+      ]
+    }
+  },
+  "database": {
+    "activeRetiredConnections": 0,
+    "retiredBindings": 0,
+    "activeRetiredCapabilities": 0,
+    "testDatabasesRemaining": 0
+  },
+  "homeStatus": 200
+}

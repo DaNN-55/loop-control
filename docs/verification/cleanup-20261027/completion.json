@@ -1,0 +1,29 @@
+{
+  "completed": true,
+  "deletedEpisodes": 6053,
+  "deletedAccounts": 11,
+  "archivedSelected": 213,
+  "newlyArchived": 210,
+  "unchangedOtherEpisodes": 19,
+  "totalEpisodes": 232,
+  "activeEpisodes": 5,
+  "archivedEpisodes": 227,
+  "totalAccounts": 37,
+  "artifactsPreserved": 986,
+  "materialsPreserved": 328,
+  "mediaFilesPreserved": 1420,
+  "foreignKeysChecked": 119,
+  "orphanRows": 0,
+  "databaseProtectedRelations": 56,
+  "retainedMediaContentUnchanged": true,
+  "browserVerified": {
+    "allEpisodes": 232,
+    "activeEpisodes": 5,
+    "accountOptionsIncludingAll": 38
+  },
+  "serviceRunning": true,
+  "schedulerAndNotifications": "normal",
+  "unrelatedExistingObservation": "Health history contains future completion timestamps; retained without rewriting.",
+  "loginIdentityPasswordAndPermissionsChanged": false,
+  "newBackupCreated": false
+}

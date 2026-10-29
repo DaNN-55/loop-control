@@ -1,0 +1,209 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 点击抽屉外遮罩或按 Escape 可以关闭生产单详情 256ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 放大预览打开时按 Escape 不关闭生产单详情 20ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 在详情顶部显示当前阶段和下一步，并默认收起技术索引 192ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > Worker 排队或运行时显示持续刷新反馈 51ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > QC 通过但缺少最终材料时明确提示，并可进入生产完成流程 121ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 通过顶部图标按需打开产物索引及包含任务进度的审计时间线 395ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 审计时间线只显示中文原因，不展示技术原文 195ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 只列出需要 Owner 审核的 Episode，并允许选择其中一项 129ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 对待审核 Episode 使用分页 159ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 显示可预览产物和 Worker 阻塞项，并以理由执行批准或要求修改 915ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 即时派发失败时在当前任务区域持续显示原因 68ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 生成媒体预览默认展示当前镜头代理并折叠历史版本 187ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 只在整片音轨中展示可试听的 BGM，并将时间批注交给受控 RPC 772ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 展示 A-roll 的冻结执行证据和运行状态 143ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 按真实状态展示 A-roll 任务卡片：completed 69ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 按真实状态展示 A-roll 任务卡片：running 88ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 按真实状态展示 A-roll 任务卡片：failed 74ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 按真实状态展示 A-roll 任务卡片：blocked 75ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 在冻结执行器缺失时仍展示 A-roll 阻塞状态 148ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 合并重复阻塞任务并提供蓝图修改入口 182ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 以纵向缩略图展示产物，并允许 Owner 放大后关闭预览 398ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 在详情头部以图标提供刷新、打开和复制本地目录 895ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 材料区提供统一文件导入 85ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 等待输入时仅允许上传外部制作的主脚本 90ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 主脚本导入后等待 Owner 明确开始制作 114ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 显示生产开始前的真实运行态阻塞 70ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 通过统一入口标注用途后按顺序导入脚本、图片、A-roll 和 B-roll 2554ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 将主脚本和补充脚本归入同一个脚本分组 475ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 最多并发导入三个材料并在完成后立即补位 1238ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 导入成功后保留材料卡，直到冻结材料刷新完成 535ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 可打开脚本模板，并点击材料名称预览 482ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 使用浏览器文件地址预览待导入视频 227ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 在材料列表显示已确认、已导入和已绑定镜头状态 109ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 新 Episode 的上传阶段不要求整期声音选择 119ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 已批准分镜显示声音与对齐状态，并保存整期 BGM 和闪避选择 5929ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 逐镜头主声音和音效独立保存，静音后恢复原选择并保留画面草稿 8994ms
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 第二镜独立字幕先保存，未保存时键盘切步保持当前正文
+An update to ForwardRef(TextArea) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(TextArea) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 第二镜独立字幕先保存，未保存时键盘切步保持当前正文 6228ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 第二镜修改双屏槽位和衔接后保存，保留已保存的独立正文 5823ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 第二镜修改字幕空间时保留已保存构图，保存刷新后保持所选镜头 7052ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 已生成字幕时序先只读查看，明确调整后才开放编辑 2211ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 本地人工时序编辑跨音轨轮询保留并只提交本地回调 3211ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > QC 首先展示当前成片与证据，返回制作时保留当前播放器 909ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 审核阶段返回镜头工作台时保留 QC 证据，并显式确认覆盖 Studio 工程 3344ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 审核镜头可核对同步预览要求，修改字幕后旧确认与代理立即失效 10013ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 预览失败、缺少原片或旧合同阻止确认，生产就绪时仍可返回编辑 5361ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交 6134ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 删除镜头后在工作台切换新版，并打开下一镜 1522ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 刷新后从运行中的结构任务恢复工作台，并在完成后打开删除镜头的下一镜 1186ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 新版分镜保留旧版本 hash 中仍存在的镜头 929ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 本期 TTS 试听只在点击后读取当前表单，不保存或创建任务 1138ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 本期 TTS 未保存时明确阻止逐镜头生成，并标记表单修改状态 613ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 逐镜头 TTS 可先于原片标记生成，完整保存仍要求视频 3572ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 重新生成口播时隐藏旧音轨，完成后可从右上角筛选历史口播 1479ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 逐镜头口播无需确认即可保存，并可保存单镜头覆盖 7831ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 后台刷新时保留未保存的原片与片段标记 2635ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 保留原声直接使用视频内嵌音轨并允许生成同步预览 1304ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 无口播显示为明确静音，并仍可保存字幕开关 2674ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 同一原片支持多段裁剪并随镜头草稿一起保存 4460ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 选择镜头原片文件后立即导入，不再要求二次确认 1175ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 分镜准备阶段不提供 Studio 入口 517ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 展示委托脚本的冻结输入，并让 Owner 完成审核或要求重写 415ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 读取分镜前文本产物及其冻结审核上下文 384ms
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 将冻结的外部视觉输入连同视觉资产清单交给 Owner 审核 477ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产 85ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览 75ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 在 Studio 提交一次合成修订并重新审核 912ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 在审核渲染中只提供官方 Studio 入口 74ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 按镜头审核冻结分镜、保存批注，并执行批准或返工 1004ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 人工媒体可在镜头工作台选择原片并保存镜头设置 6483ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 已保存原片可预览并在冻结前替换 2226ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 分镜产物格式无效时不允许 Owner 批准或退回 88ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx > 审核台 > 将预渲染成员作为审计证据，并自动进入审核渲染 119ms
+ ✓ src/episodes/ProductionNodes.test.tsx > navigates all seven nodes without invoking production commands 1462ms
+ ✓ src/episodes/ProductionNodes.test.tsx > supports keyboard workflow navigation and marks completed nodes without changing stage 84ms
+ ✓ src/episodes/ProductionNodes.test.tsx > keeps a frozen script read-only, previews its actual Markdown and routes file selection left 196ms
+ ✓ src/episodes/ProductionNodes.test.tsx > uses the real script diagnostic and refuses to save invalid edits 604ms
+ ✓ src/episodes/ProductionNodes.test.tsx > rail drag and keyboard request a revision rather than mutating the shot data 94ms
+ ✓ src/episodes/ProductionNodes.test.tsx > retains the QC decision draft while browsing other nodes 411ms
+ ✓ src/episodes/ProductionNodes.test.tsx > saves an edited pending script back into the import draft and requires a fresh confirmation 1790ms
+ ✓ src/episodes/ProductionNodes.test.tsx > keeps the legacy script review text and its guarded approval action in the input node 225ms
+ ✓ src/episodes/ProductionNodes.test.tsx > routes rail reorder through the existing reasoned structure revision and preserves generation entrypoints 1495ms
+ ✓ src/episodes/ProductionNodes.test.tsx > keeps the full visual basis available beside its reference gallery 253ms
+stderr | src/publishing/ProductionCompletionModal.test.tsx > 生产完成弹窗 > 展示最终材料和生产完成状态，不提供外部发布登记
+An update to PublishMetadataSummary inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to PublishMaterialPreview inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to PublishMaterialPreview inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/publishing/ProductionCompletionModal.test.tsx > 生产完成弹窗 > 展示最终材料和生产完成状态，不提供外部发布登记 237ms
+ ✓ src/publishing/ProductionCompletionModal.test.tsx > inline future delivery stays read-only and never submits 114ms
+ ✓ src/publishing/ProductionCompletionModal.test.tsx > inline delivery submits existing real payload once and exposes preparation failures 590ms
+ ✓ src/episodes/EpisodeProductionContainer.test.tsx > EpisodeProduction container > 对 App 只暴露已确认的五个协作参数 7ms
+ ✓ src/episodes/EpisodeProductionContainer.test.tsx > EpisodeProduction container > 可通过内存适配器加载完整生产工作台，不访问真实 Supabase 228ms
+ ✓ src/episodes/EpisodeProductionContainer.test.tsx > EpisodeProduction container > 内存适配器记录 RPC 与本地路由边界 7ms
+ ✓ src/episodes/EpisodeProductionContainer.test.tsx > EpisodeProduction container > 详情状态变化通知当前页摘要，隐藏时停止请求、恢复可见立即更新 107ms
+ ✓ src/local-app/LocalDeliveryPanel.nodes.test.tsx > allows resolving issues only in the real current QC stage 321ms
+ ✓ src/local-app/LocalDeliveryPanel.nodes.test.tsx > keeps completed QC evidence visible without mutation controls 9ms
+ ✓ src/local-app/LocalDeliveryPanel.nodes.test.tsx > retains the existing final-render retry payload after QC approval 78ms
+
+ Test Files  5 passed (5)
+      Tests  92 passed (92)
+   Start at  18:46:35
+   Duration  158.43s (transform 2.80s, setup 65ms, collect 21.56s, tests 128.55s, environment 5.10s, prepare 823ms)
+

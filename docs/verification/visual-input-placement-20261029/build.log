@@ -1,0 +1,20 @@
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 4431 modules transformed.
+
+(!) outDir /private/tmp/loop-visual-layout-build-20261029 is not inside project root and will not be emptied.
+Use --emptyOutDir to override.
+
+rendering chunks...
+computing gzip size...
+../../../../private/tmp/loop-visual-layout-build-20261029/index.html                            0.86 kB │ gzip:   0.46 kB
+../../../../private/tmp/loop-visual-layout-build-20261029/native-runtime-graph.json           281.81 kB │ gzip:  23.66 kB
+../../../../private/tmp/loop-visual-layout-build-20261029/assets/index-DImGerTS.css           692.19 kB │ gzip:  99.42 kB
+../../../../private/tmp/loop-visual-layout-build-20261029/assets/viewTransport-BxFBy627.js      0.15 kB │ gzip:   0.17 kB
+../../../../private/tmp/loop-visual-layout-build-20261029/assets/index-DanqXvnW.js          1,129.94 kB │ gzip: 336.35 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 2.30s

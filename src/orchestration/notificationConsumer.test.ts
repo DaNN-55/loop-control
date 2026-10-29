@@ -1,5 +1,5 @@
 import { expect, it, vi } from "vitest";
-import { consumeNotifications, type ClaimedNotificationEvent } from "./notificationConsumer";
+import { notificationCategory,consumeNotifications, type ClaimedNotificationEvent } from "./notificationConsumer";
 function fixture() {
  const queue:ClaimedNotificationEvent[]=[], outcomes:Record<string,string>={};
  const delivery={initialize:async()=>{},claim:async()=>queue.shift()??null,finish:async(event:ClaimedNotificationEvent,outcome:string)=>{outcomes[event.id]=outcome;}};
@@ -22,4 +22,20 @@ it("无有效提醒内容的事件标为跳过，避免将未投递记录当成�
  const f=fixture();f.queue.push({...event,payload:{}});const send=vi.fn(async()=>{});
  expect(await consumeNotifications(f.delivery,send)).toEqual({notifications:0,skipped:1});
  expect(f.outcomes).toEqual({"event-1":"skipped"});
+});
+it('disabled categories are finished as skipped without sending',async()=>{
+ const f=fixture();f.queue.push(event);const send=vi.fn(async()=>{});
+ expect(await consumeNotifications({...f.delivery,enabled:async()=>false},send)).toEqual({notifications:0,skipped:1});
+ expect(send).not.toHaveBeenCalled();expect(f.outcomes).toEqual({'event-1':'skipped'});
+});
+it('delivery and connection failure events use the existing once-only ledger',async()=>{
+ const f=fixture(),send=vi.fn(async()=>{});f.queue.push({...event,eventType:'publish_package_verified'},{...event,id:'event-2',eventType:'connection_verification_failed'});
+ await consumeNotifications(f.delivery,send);await consumeNotifications(f.delivery,send);
+ expect(send.mock.calls).toHaveLength(2);expect(send).toHaveBeenCalledWith(expect.objectContaining({title:'交付包已完成'}));expect(send).toHaveBeenCalledWith(expect.objectContaining({title:'连接验证失败'}));
+ expect(f.outcomes).toEqual({'event-1':'accepted','event-2':'accepted'});
+});
+
+it('classifies final production failures and ignores ordinary stage progress',async()=>{
+ expect(notificationCategory({...event,eventType:'production_task_failed'})).toBe('failure');expect(notificationCategory({...event,payload:{to_stage:'production_ready'}})).toBeNull();
+ const f=fixture(),send=vi.fn(async()=>{});f.queue.push({...event,eventType:'production_task_failed'});await consumeNotifications(f.delivery,send);expect(send).toHaveBeenCalledWith(expect.objectContaining({title:'生产任务失败'}));
 });

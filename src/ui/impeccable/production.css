@@ -1,0 +1,170 @@
+/* Production uses the approved continuous workspace, while all commands stay in their runtime adapters. */
+.impeccable-app.product-ui .lc-production-workspace {
+  position: fixed; inset: 0 0 0 var(--lc-rail-width, 200px); width: auto;
+  height: 100dvh; max-width: none; min-width: 0; padding: 0 30px 36px;
+  border: 0; border-radius: 0; box-shadow: none; overflow-y: auto;
+  background: var(--lc-bg); color: var(--lc-ink); z-index: 45;
+}
+.impeccable-app.product-ui .episode-detail-scrim { display: none; }
+.impeccable-app:has(.lc-production-workspace) > .content-pane { visibility: hidden; }
+.impeccable-app.product-ui .lc-production-return {
+  min-height: 64px; display: flex; align-items: center; gap: 16px;
+  border-bottom: 1px solid var(--lc-line); margin: 0 -30px 25px; padding: 0 30px;
+  background: var(--lc-surface-2); color: var(--lc-muted); font-size: 12px;
+  position: sticky; top: 0; z-index: 15;
+}
+.impeccable-app.product-ui .lc-production-return > span { border-left: 1px solid var(--lc-line); padding-left: 16px; }
+.impeccable-app.product-ui .lc-production-workspace > .drawer-close { position: fixed; top: 15px; right: 24px; z-index: 16; }
+.impeccable-app.product-ui .local-episode-detail { max-width: 1540px; margin: auto; min-width: 0; }
+.impeccable-app.product-ui .lc-production { display: grid; grid-template-columns: minmax(0,1fr) auto; column-gap: 20px; }
+.impeccable-app.product-ui .lc-production > .review-heading { margin: 0; padding: 0; align-self: center; }
+.impeccable-app.product-ui .lc-production .review-heading h2 { font-size: 25px; line-height: 1.4; letter-spacing: -.025em; font-weight: 650; margin: 0; }
+.impeccable-app.product-ui .lc-production .review-heading-copy { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.impeccable-app.product-ui .lc-production .review-heading-copy > span { font-size: 11px; font-weight: 400; color: var(--lc-muted); }
+.impeccable-app.product-ui .lc-production > .episode-detail-toolbar { margin: 0; padding: 0; border: 0; align-self: center; }
+.impeccable-app.product-ui .lc-production > .review-meta { grid-column: 1 / -1; font-size: 11px; margin: 8px 0 20px; color: var(--lc-muted); }
+.impeccable-app.product-ui .lc-production-phases {grid-column:1 / -1;display:flex;list-style:none;padding:0;margin:0 0 22px;gap:0;overflow-x:auto;border:0}
+.impeccable-app.product-ui .lc-production-phases li {position:relative;display:grid;justify-items:center;align-content:start;gap:9px;flex:1;min-width:max-content;padding:12px 10px 14px;color:var(--lc-muted);font-size:12px;border:0}
+.impeccable-app.product-ui .lc-production-phases li:not(:last-child)::after {content:"";position:absolute;top:22px;left:calc(50% + 15px);width:calc(100% - 30px);height:1px;background:var(--lc-line-strong)}
+.impeccable-app.product-ui .lc-production-phases li>span:first-child {position:relative;z-index:1;width:21px;height:21px;border:1px solid var(--lc-line-strong);border-radius:50%;display:grid;place-items:center;font-size:10px;font-variant-numeric:tabular-nums;background:var(--lc-bg)}
+.impeccable-app.product-ui .lc-production-phases strong {font-weight:500}
+.impeccable-app.product-ui .lc-production-phases .is-past {color:var(--lc-success)}
+.impeccable-app.product-ui .lc-production-phases li.is-past:not(:last-child)::after {background:var(--lc-success)}
+.impeccable-app.product-ui .lc-production-phases .is-past>span:first-child {background:var(--lc-success-soft);border-color:var(--lc-success)}
+.impeccable-app.product-ui .lc-production-phases .is-current {color:var(--lc-accent)}
+.impeccable-app.product-ui .lc-production-phases .is-current>span:first-child {background:var(--lc-accent);border-color:var(--lc-accent);color:var(--lc-primary-ink)}
+.impeccable-app.product-ui .lc-production-phases .is-current strong {font-weight:650}
+.impeccable-app.product-ui .lc-production-phases[data-decision-pending] .is-current {color:var(--lc-warning)}
+.impeccable-app.product-ui .lc-production-phases[data-decision-pending] .is-current>span:first-child {background:var(--lc-warning);border-color:var(--lc-warning);color:var(--lc-primary-ink)}
+.impeccable-app.product-ui .lc-production > .episode-next-step-card { grid-column: 1 / -1; background: var(--lc-surface); border: 1px solid var(--lc-line); border-radius: 9px; box-shadow: none; display: flex; align-items: center; flex-wrap: wrap; gap: 14px 28px; padding: 14px 18px; margin: 0 0 22px; }
+.impeccable-app.product-ui .episode-next-step-card > div { min-width: 0; }
+.impeccable-app.product-ui .episode-next-step-card > div > span { font-size: 11px; color: var(--lc-muted); }
+.impeccable-app.product-ui .episode-next-step-card p { font-size: 12px; line-height: 1.55; margin: 3px 0 0; }
+.impeccable-app.product-ui .episode-next-step-card .episode-worker-status { margin-left: auto; padding: 0; border: 0; background: transparent; max-width: 430px; }
+.impeccable-app.product-ui .episode-next-step-card .episode-current-approval { background: transparent; border: 0; padding: 0; }
+.impeccable-app.product-ui .episode-current-approval > p { display: none; }
+.impeccable-app.product-ui .worker-refresh-feedback { font-size: 10px; color: var(--lc-muted); }
+.impeccable-app.product-ui .lc-production-body { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0,1fr) 300px; gap: 24px; align-items: start; min-width: 0; }
+.impeccable-app.product-ui .lc-production-main { min-width: 0; display: grid; align-content: start; gap: 18px; }
+.impeccable-app.product-ui .lc-production-inspector { min-width: 0; display: grid; gap: 18px; position: sticky; top: 84px; }
+.impeccable-app.product-ui .lc-production-workspace .review-section { padding: 20px; margin: 0; background: var(--lc-surface); color: var(--lc-ink); border: 1px solid var(--lc-line); border-radius: 12px; box-shadow: none; min-width: 0; }
+.impeccable-app.product-ui .lc-production-workspace .review-section .review-section { padding: 16px 0; background: transparent; border: 0; border-top: 1px solid var(--lc-line); border-radius: 0; }
+.impeccable-app.product-ui .lc-production-workspace .review-section h3 { font-size: 15px; font-weight: 650; line-height: 1.5; color: var(--lc-ink); margin-bottom: 12px; }
+.impeccable-app.product-ui .lc-production-workspace .review-section h4 { font-size: 13px; font-weight: 600; }
+.impeccable-app.product-ui .lc-production-workspace .detail-card-body { gap: 16px; }
+.impeccable-app.product-ui .lc-production-workspace .detail-card-collapsible > summary h3 { margin-bottom: 0; }
+.impeccable-app.product-ui .lc-production-snapshot { padding: 18px 20px; border: 1px solid var(--lc-line); border-radius: 12px; background: var(--lc-surface); }
+.impeccable-app.product-ui .lc-production-snapshot h3 { font-size: 14px; font-weight: 650; margin: 0 0 15px; }
+.impeccable-app.product-ui .lc-production-snapshot dl { display: grid; gap: 13px; font-size: 12px; margin: 0; }
+.impeccable-app.product-ui .lc-production-snapshot dl > div { display: flex; justify-content: space-between; gap: 20px; }
+.impeccable-app.product-ui .lc-production-snapshot dt { color: var(--lc-muted); }
+.impeccable-app.product-ui .lc-production-snapshot dd { margin: 0; }
+.impeccable-app.product-ui .lc-production-snapshot p { font-size: 11px; color: var(--lc-muted); border-top: 1px solid var(--lc-line); padding-top: 14px; margin: 16px 0 0; }
+.impeccable-app.product-ui .lc-production-inspector .review-decision { display: grid; gap: 12px; }
+.impeccable-app.product-ui .lc-production-inspector .review-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; margin-top: 6px; }
+.impeccable-app.product-ui .lc-production-workspace .review-decision > label { display: grid; grid-template-columns: 1fr; gap: 8px; font-size: 12px; }
+.impeccable-app.product-ui .lc-production-workspace .local-episode-stage-actions { margin: 0; }
+.impeccable-app.product-ui .local-episode-stage-actions:empty { display: none; }
+.impeccable-app.product-ui .local-episode-stage-actions > label { display: flex; align-items: center; gap: 16px; font-size: 12px; max-width: 470px; }
+.impeccable-app.product-ui .lc-production-workspace .publish-readiness-card { background: var(--lc-surface-2); border: 1px solid var(--lc-line); border-radius: 12px; padding: 18px 20px; margin: 0; }
+.impeccable-app.product-ui .lc-production-workspace .publish-readiness-card p { font-size: 12px; }
+.impeccable-app.product-ui .lc-production-body:has(.shot-workbench) { grid-template-columns: minmax(0,1fr); }
+.impeccable-app.product-ui .lc-production-body:has(.shot-workbench) > .lc-production-inspector { position: static; grid-template-columns: minmax(0,1fr) 300px; }
+.impeccable-app.product-ui .lc-production-workspace .shot-workbench { padding: 0; border: 0; border-radius: 0; background: transparent; }
+.impeccable-app.product-ui .lc-production-workspace .shot-workbench-list { gap: 16px; }
+.impeccable-app.product-ui .lc-production-workspace .shot-preparation-card { background: var(--lc-surface); border-color: var(--lc-line); border-radius: 12px; }
+.impeccable-app.product-ui .lc-production-workspace .shot-preparation-card.is-open { border-color: var(--lc-accent); }
+.impeccable-app.product-ui .lc-production-workspace .shot-preparation-summary { padding-block: 15px; background: var(--lc-surface); }
+.impeccable-app.product-ui .lc-production-workspace .shot-preparation-summary small { border: 0; padding: 3px 7px; min-width: 0; border-radius: 4px; font-size: 11px; background: var(--lc-surface-2); }
+.impeccable-app.product-ui .lc-production-workspace .shot-preparation-content { background: var(--lc-surface); }
+.impeccable-app.product-ui .lc-production-workspace :is(.shot-content-section,.episode-tts-settings,.storyboard-shot,.qc-issue-panel) { background: var(--lc-surface); border-color: var(--lc-line); box-shadow: none; }
+.impeccable-app.product-ui .lc-production-workspace .shot-content-section { padding: 18px 0; border: 0; border-top: 1px solid var(--lc-line); border-radius: 0; }
+.impeccable-app.product-ui .lc-production-workspace .episode-tts-settings { background: var(--lc-surface); border-radius: 12px; margin: 0; }
+.impeccable-app.product-ui .lc-production-workspace .storyboard-shot { border-radius: 9px; padding: 18px; }
+.impeccable-app.product-ui .lc-production-workspace .storyboard-timeline { gap: 8px; background: var(--lc-surface-2); padding: 12px; border-radius: 9px; }
+.impeccable-app.product-ui .lc-production-workspace .storyboard-timeline > button { border-radius: 7px; }
+.impeccable-app.product-ui .lc-production-workspace .storyboard-timeline-thumb { background: var(--lc-surface-2); color: var(--lc-muted); }
+.impeccable-app.product-ui .lc-production-workspace .lc-video-generation { display: grid; gap: 16px; }
+.impeccable-app.product-ui .lc-production-workspace .lc-video-generation > label { display: grid; grid-template-columns: 130px minmax(0,520px); gap: 12px; align-items: center; font-size: 12px; }
+.impeccable-app.product-ui .lc-production-workspace .lc-video-generation > label > small { grid-column: 2; font-size: 11px; color: var(--lc-muted); }
+.impeccable-app.product-ui .lc-production-workspace .lc-video-generation > button { justify-self: start; }
+.impeccable-app.product-ui .lc-production-workspace .lc-qc-issue-form { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; align-items: start; }
+.impeccable-app.product-ui .lc-qc-issue-form > label { display: grid; gap: 7px; font-size: 12px; min-width: 0; }
+.impeccable-app.product-ui .lc-qc-issue-form > label:has(textarea) { grid-column: 1 / -1; grid-template-columns: 100px minmax(0,1fr); align-items: start; }
+.impeccable-app.product-ui .lc-qc-issue-form > button { grid-column: 1 / -1; justify-self: end; }
+.impeccable-app.product-ui .lc-production-workspace > .local-episode-detail > .review-section { margin-top: 18px; }
+html[data-interface="impeccable"] .lc-delivery-workspace { max-width: 1020px; padding: 0; gap: 0; background: var(--lc-surface); color: var(--lc-ink); border-radius: 14px; overflow: auto; }
+html[data-interface="impeccable"] .lc-delivery-workspace > header { padding: 20px 24px; margin: 0; border-bottom: 1px solid var(--lc-line); }
+html[data-interface="impeccable"] .lc-delivery-workspace > header h2 { font-size: 20px; }
+html[data-interface="impeccable"] .lc-delivery-workspace > header p { font-size: 12px; color: var(--lc-muted); margin-top: 5px; }
+html[data-interface="impeccable"] .lc-delivery-workspace .publish-modal-overview { border: 0; border-bottom: 1px solid var(--lc-line); border-radius: 0; padding: 16px 24px; background: var(--lc-surface-2); gap: 24px; }
+html[data-interface="impeccable"] .lc-delivery-workspace .publish-modal-overview span { font-size: 11px; font-weight: 400; }
+html[data-interface="impeccable"] .lc-delivery-workspace .publish-modal-overview strong { font-size: 12px; font-weight: 600; }
+html[data-interface="impeccable"] .lc-delivery-workspace :is(.publish-preparation-warning,.publish-materials) { border: 0; background: var(--lc-surface); padding: 24px; margin: 0; }
+html[data-interface="impeccable"] .lc-delivery-workspace .publish-preparation-warning > strong { font-size: 15px; }
+html[data-interface="impeccable"] .lc-delivery-workspace .publish-preparation-warning > p { font-size: 12px; color: var(--lc-muted); margin: 6px 0 22px; }
+html[data-interface="impeccable"] .lc-delivery-workspace .publish-preparation-layout { grid-template-columns: minmax(0,1fr) minmax(240px,.8fr); gap: 24px; }
+html[data-interface="impeccable"] .lc-delivery-workspace .publish-preparation-form { gap: 16px; }
+html[data-interface="impeccable"] .lc-delivery-workspace .publish-preparation-form > label { display: grid; grid-template-columns: 80px minmax(0,1fr); align-items: center; gap: 12px; font-size: 12px; }
+html[data-interface="impeccable"] .lc-delivery-workspace .publish-preparation-cover { background: var(--lc-surface-2); border: 1px solid var(--lc-line); border-radius: 9px; }
+html[data-interface="impeccable"] .lc-delivery-workspace .publish-preparation-form > button { justify-self: end; }
+html[data-interface="impeccable"] .lc-delivery-workspace :is(.publish-metadata-summary,.publish-visual-material-card) { box-shadow: none; background: var(--lc-surface); border-color: var(--lc-line); border-radius: 9px; }
+html[data-interface="impeccable"] .lc-delivery-workspace .publish-materials > header p { margin-top: 5px; }
+html[data-interface="impeccable"] .lc-delivery-workspace > .modal-actions { background: var(--lc-surface-2); border-top: 1px solid var(--lc-line); padding: 16px 24px; margin: 0; }
+@media (max-width: 1100px) {
+  .impeccable-app.product-ui .lc-production-body { grid-template-columns: minmax(0,1fr); }
+  .impeccable-app.product-ui .lc-production-inspector { position: static; grid-template-columns: minmax(0,1fr) 280px; }
+  .impeccable-app.product-ui .lc-production > .episode-next-step-card .episode-worker-status { margin-left: 0; }
+}
+@media (max-width: 700px) {
+  .impeccable-app.product-ui .lc-production-workspace { left: var(--lc-rail-width); padding: 0 16px 24px; }
+  .impeccable-app.product-ui .lc-production-return { padding: 0 16px; margin-inline: -16px; }
+  .impeccable-app.product-ui .lc-production { grid-template-columns: minmax(0,1fr); }
+  .impeccable-app.product-ui .lc-production > .episode-detail-toolbar { margin-top: 12px; }
+  .impeccable-app.product-ui .lc-production-inspector, .impeccable-app.product-ui .lc-production-body:has(.shot-workbench) > .lc-production-inspector { grid-template-columns: minmax(0,1fr); }
+  .impeccable-app.product-ui .lc-production-workspace .lc-qc-issue-form { grid-template-columns: minmax(0,1fr); }
+  .impeccable-app.product-ui .lc-production-workspace .lc-video-generation > label, .impeccable-app.product-ui .lc-qc-issue-form > label:has(textarea) { grid-template-columns: 1fr; }
+  .impeccable-app.product-ui .lc-production-workspace .lc-video-generation > label > small { grid-column: 1; }
+  html[data-interface="impeccable"] .lc-delivery-workspace .publish-preparation-layout { grid-template-columns: minmax(0,1fr); }
+}
+
+.impeccable-app.product-ui .lc-production-workspace :is(.shot-preparation-fields,.shot-alignment-card,.shot-preview-facts>div,.shot-preview-checklist-disclosure,.shot-deviation-resolution,.material-import-panel,.material-slot-input,.shot-source-material-slot,.no-media-preview,.a-roll-task) {background:var(--lc-surface-2);border-color:var(--lc-line);color:var(--lc-ink)}
+.impeccable-app.product-ui .lc-production-workspace .shot-preparation-fields {padding:0 18px 18px;border:0;box-shadow:none}
+.impeccable-app.product-ui .lc-production-workspace .shot-alignment-card {padding:16px;border:1px solid var(--lc-line);border-radius:8px}
+.impeccable-app.product-ui .lc-production-workspace :is(.shot-clip-editor,.shot-composition-editor,.shot-transition-editor,.shot-caption-space-disclosure,.shot-caption-space-editor,.shot-advanced-subsection) {background:var(--lc-surface);border-color:var(--lc-line);color:var(--lc-ink);box-shadow:none}
+.impeccable-app.product-ui .lc-production-workspace .manual-clip-selection {background:var(--lc-surface-2);border-color:var(--lc-line)}
+.impeccable-app.product-ui .lc-production-workspace .shot-advanced-subsection fieldset {background:transparent;border-color:var(--lc-line)}
+
+/* Keep long media names beside actions instead of centering the actions on wrapped copy. */
+html[data-interface="impeccable"] .lc-delivery-workspace :is(.publish-metadata-summary > header,.publish-visual-material-card > header,.publish-structured-material) {align-items:flex-start;gap:16px}
+html[data-interface="impeccable"] .lc-delivery-workspace :is(.publish-metadata-summary > header,.publish-visual-material-card > header,.publish-structured-material) > div {min-width:0;overflow-wrap:anywhere}
+.impeccable-app.product-ui .lc-production-workspace :is(.openchatcut-studio-launch,.shot-workbench-completion) {padding:20px;border-radius:12px;background:var(--lc-surface);border:1px solid var(--lc-line);gap:16px}
+.impeccable-app.product-ui .lc-production-workspace .shot-workbench-studio-path {display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+
+.impeccable-app.product-ui .lc-production-workspace .episode-video-budget {grid-column:1 / -1;padding:16px 20px;margin:0;background:var(--lc-surface);border:1px solid var(--lc-line);border-radius:12px}
+.impeccable-app.product-ui .lc-production-workspace .shot-workbench-studio-path {width:100%!important;min-width:0;text-align:left;color:var(--lc-muted);font-size:12px;padding:4px 0;background:transparent;border:0}
+
+.impeccable-app.product-ui .lc-production-workspace .shot-workbench-return.is-expanded {display:flex;justify-content:flex-end;padding:0;border:0;background:transparent}
+
+.impeccable-app.product-ui .local-episode-stage-actions > button {justify-self:start}
+
+.impeccable-app.product-ui .lc-production-workspace .shot-workbench {gap:16px}
+.impeccable-app.product-ui .lc-production-workspace .episode-video-budget .configuration-form {max-width:644px}
+.impeccable-app.product-ui .lc-production-workspace .episode-video-budget .configuration-form > button {justify-self:end}
+.impeccable-app.product-ui .lc-production-workspace .shot-content-section.lc-video-generation {padding:16px 20px;border:1px solid var(--lc-line);border-radius:12px;margin-bottom:12px}
+
+.impeccable-app.product-ui .shot-voice-field {display:grid;gap:8px;min-width:0}
+
+/* QC presents the frozen review evidence before any return-to-production controls. */
+.impeccable-app.product-ui .lc-production-workspace .qc-current-evidence {display:grid;gap:18px;min-width:0}
+.impeccable-app.product-ui .lc-production-workspace .qc-current-preview > header {display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:14px}
+.impeccable-app.product-ui .lc-production-workspace .qc-current-preview > header h3 {margin:0}
+.impeccable-app.product-ui .lc-production-workspace .qc-current-preview > header > span {font-size:11px;color:var(--lc-muted)}
+.impeccable-app.product-ui .lc-production-workspace .qc-current-preview .local-artifact-preview :is(video,img) {max-width:100%;max-height:58vh;object-fit:contain}
+.impeccable-app.product-ui .lc-production-workspace .qc-current-evidence .review-render-package {display:grid;gap:16px}
+.impeccable-app.product-ui .lc-production-workspace .qc-current-evidence .review-render-package > h3 {margin:0}
+.impeccable-app.product-ui .lc-production-workspace .qc-current-evidence .review-render-evidence {padding:0;border:0;background:transparent}
+.impeccable-app.product-ui .lc-production-workspace .qc-current-evidence .review-render-evidence > summary {padding:0;font-size:12px;color:var(--lc-muted)}
+.impeccable-app.product-ui .lc-production-workspace .qc-current-evidence .openchatcut-studio-launch {padding:16px 0 0;border:0;border-top:1px solid var(--lc-line);border-radius:0;background:transparent}
+.impeccable-app.product-ui .lc-production-workspace .qc-current-preview .local-artifact-preview {display:grid;grid-template-columns:minmax(0,1fr);justify-items:center}
+.impeccable-app.product-ui .lc-production-workspace .qc-current-preview .local-artifact-preview figcaption {position:static;box-sizing:border-box;width:100%;max-width:100%;padding:8px 10px}

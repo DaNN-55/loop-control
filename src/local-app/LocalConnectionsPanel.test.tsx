@@ -11,12 +11,11 @@ it('labels a closed-network rotation as save-only and clears its secret without 
   if(init?.method==='POST'){commands.push(JSON.parse(String(init.body)).command);return Response.json({connection});}
   return Response.json({connections:[connection],versions:[],pending:[],capabilities:{secrets:'keychain',verification:'live',externalReady:false,networkAvailable:false}});
  }));
- render(<LocalConnectionsPanel/>);await screen.findByRole('heading',{name:'外部连接'});
- fireEvent.click(screen.getByText('轮换认证版本'));
- const secret=screen.getByLabelText('Closed Pexels 新的认证材料') as HTMLInputElement;
+ render(<LocalConnectionsPanel/>);fireEvent.click(await screen.findByRole('button',{name:connection.name}));fireEvent.click(screen.getByRole('button',{name:'编辑连接'}));
+ const secret=screen.getByLabelText(/^新的 API Key/) as HTMLInputElement;
  fireEvent.change(secret,{target:{value:'synthetic-rotation-secret'}});
- const rotate=screen.getByRole('button',{name:'仅保存新版本'});
- expect((screen.getByRole('button',{name:'重新测试'}) as HTMLButtonElement).disabled).toBe(true);
+ const rotate=screen.getByRole('button',{name:'保存更新'});
+ expect(screen.queryByRole('button',{name:'重新测试'})).toBeNull();
  fireEvent.click(rotate);
  await waitFor(()=>expect(secret.value).toBe(''));
  expect(commands).toEqual(['rotate']);
@@ -35,11 +34,10 @@ it('keeps one locked rotation in flight and reuses its operation ID after an unc
   }
   return Response.json({connections:[connection],versions:[],pending:[],capabilities:{secrets:'keychain',verification:'live',externalReady:false,networkAvailable:false}});
  }));
- render(<LocalConnectionsPanel/>);await screen.findByRole('heading',{name:'外部连接'});
- fireEvent.click(screen.getByText('轮换认证版本'));
- const secret=screen.getByLabelText('Retry Pexels 新的认证材料') as HTMLInputElement;
+ render(<LocalConnectionsPanel/>);fireEvent.click(await screen.findByRole('button',{name:connection.name}));fireEvent.click(screen.getByRole('button',{name:'编辑连接'}));
+ const secret=screen.getByLabelText(/^新的 API Key/) as HTMLInputElement;
  fireEvent.change(secret,{target:{value:'synthetic-retry-secret'}});
- const rotate=screen.getByRole('button',{name:'仅保存新版本'}) as HTMLButtonElement;
+ const rotate=screen.getByRole('button',{name:'保存更新'}) as HTMLButtonElement;
  fireEvent.click(rotate);fireEvent.click(rotate);
  await waitFor(()=>expect(posts).toHaveLength(1));
  expect(rotate.disabled).toBe(true);
@@ -52,7 +50,7 @@ it('keeps one locked rotation in flight and reuses its operation ID after an unc
  expect(posts.map(p=>p.command)).toEqual(['rotate','rotate']);
  expect(posts[1].idempotencyKey).toBe(posts[0].idempotencyKey);
  expect(sessionStorage.length).toBe(0);
- expect(screen.getByRole('alert').textContent).toContain('未再次写入秘密');
+ expect(screen.getByRole('alert').textContent).toContain('未再次写入密钥');
 });
 it('restores a missing binding in locked mode without testing or promoting its qualification',async()=>{
  vi.stubGlobal('crypto',webcrypto);vi.stubGlobal('confirm',vi.fn().mockReturnValue(true));
@@ -63,8 +61,8 @@ it('restores a missing binding in locked mode without testing or promoting its q
   if(init?.method==='POST'){commands.push(JSON.parse(String(init.body)).command);return Response.json({rebound:true});}
   return Response.json({connections:[connection],versions:[version],pending:[],capabilities:{secrets:'keychain',verification:'live',externalReady:false,networkAvailable:false}});
  }));
- render(<LocalConnectionsPanel/>);await screen.findByRole('heading',{name:'外部连接'});
- fireEvent.click(screen.getByText('连接版本（1）'));fireEvent.click(screen.getByText('恢复缺失的秘密绑定'));
+ render(<LocalConnectionsPanel/>);fireEvent.click(await screen.findByRole('button',{name:connection.name}));fireEvent.click(screen.getByRole('button',{name:'编辑连接'}));
+ fireEvent.click(screen.getByText('连接版本（1）'));fireEvent.click(screen.getByText('恢复缺失的密钥绑定'));
  const secret=screen.getByLabelText('v1 恢复认证材料') as HTMLInputElement;
  const restore=screen.getByRole('button',{name:'重新绑定此版本'}) as HTMLButtonElement;
  expect(restore.disabled).toBe(true);
@@ -73,11 +71,11 @@ it('restores a missing binding in locked mode without testing or promoting its q
  expect(commands).toEqual(['rebind']);
  expect(restore.disabled).toBe(true);
  expect(screen.getByText('v1 · 未测试 · 当前')).toBeTruthy();
- expect((screen.getByRole('button',{name:'重新测试'}) as HTMLButtonElement).disabled).toBe(true);
+ expect(screen.queryByRole('button',{name:'重新测试'})).toBeNull();
 });
 it('saves a closed-network credential without issuing a verify command and clears the password',async()=>{
  vi.stubGlobal('crypto',webcrypto);const commands:string[]=[];vi.stubGlobal('fetch',vi.fn(async(_path:string,init?:RequestInit)=>{if(init?.method==='POST'){commands.push(JSON.parse(String(init.body)).command);return Response.json({connection:{id:'synthetic-connection',name:'Test',provider:'pexels',adapter:'pexels_video',status:'retryable'}});}return Response.json({connections:[],versions:[],pending:[],capabilities:{secrets:'keychain',verification:'live',externalReady:false,networkAvailable:false}});}));
- render(<LocalConnectionsPanel/>);await screen.findByRole('heading',{name:'外部连接'});fireEvent.change(screen.getByRole('textbox',{name:'连接名称'}),{target:{value:'Test'}});const field=screen.getByLabelText('Pexels API Key') as HTMLInputElement;fireEvent.change(field,{target:{value:'synthetic-private-entry'}});fireEvent.click(screen.getByRole('button',{name:'仅保存凭据'}));await waitFor(()=>expect(field.value).toBe(''));expect(commands).toEqual(['create']);expect(screen.getByRole('status').textContent).toContain('在线验证已锁定');expect(document.body.textContent).not.toContain('synthetic-private-entry');
+ render(<LocalConnectionsPanel/>);fireEvent.click(await screen.findByRole('button',{name:'新建连接'}));fireEvent.change(screen.getByRole('textbox',{name:'连接名称'}),{target:{value:'Test'}});const field=screen.getByLabelText(/^Pexels API Key/) as HTMLInputElement;fireEvent.change(field,{target:{value:'synthetic-private-entry'}});fireEvent.click(screen.getByRole('button',{name:'仅保存凭据'}));await waitFor(()=>expect(field.value).toBe(''));expect(commands).toEqual(['create']);expect(screen.getByText(/凭据仅保存到本机 Keychain/).textContent).toContain('在线验证已锁定');expect(document.body.textContent).not.toContain('synthetic-private-entry');
 });
 it('keeps unconfirmed material in a password draft and persists only a random operation ID',async()=>{
  const secret='synthetic-ui-only-secret';let postBody='';
@@ -86,11 +84,24 @@ it('keeps unconfirmed material in a password draft and persists only a random op
   if(init?.method==='POST'){postBody=String(init.body);return new Response(JSON.stringify({error:'Keychain disabled'}),{status:503});}
   return new Response(JSON.stringify({connections:[],versions:[],pending:[],capabilities:{secrets:'disabled',verification:'disabled',externalReady:false}}));
  }));
- render(<LocalConnectionsPanel/>);await screen.findByRole('heading',{name:'外部连接'});
+ render(<LocalConnectionsPanel/>);fireEvent.click(await screen.findByRole('button',{name:'新建连接'}));
  fireEvent.change(screen.getByRole('textbox',{name:'连接名称'}),{target:{value:'Synthetic'}});
- const input=screen.getByLabelText('Pexels API Key') as HTMLInputElement;fireEvent.change(input,{target:{value:secret}});
+ const input=screen.getByLabelText(/^Pexels API Key/) as HTMLInputElement;fireEvent.change(input,{target:{value:secret}});
  fireEvent.click(screen.getByRole('button',{name:'保存并测试'}));
  await waitFor(()=>expect(screen.getByRole('alert').textContent).toContain('未确认完成'));
  expect(input.type).toBe('password');expect(input.value).toBe(secret);expect(document.body.textContent).not.toContain(secret);expect(JSON.parse(postBody).data.secret).toBe(secret);
- expect(sessionStorage.length).toBe(1);const key=sessionStorage.key(0)!;expect(key).not.toContain(secret);expect(sessionStorage.getItem(key)).toMatch(/^[0-9a-f-]{36}$/);expect(screen.getByRole('status').textContent).toContain('尚未启用');
+ expect(sessionStorage.length).toBe(1);const key=sessionStorage.key(0)!;expect(key).not.toContain(secret);expect(sessionStorage.getItem(key)).toMatch(/^[0-9a-f-]{36}$/);expect(screen.getByText(/真实Keychain和在线验证尚未启用/)).toBeTruthy();
+});
+it('enables a newly selected Provider from its own verification status and shows other Providers lock reasons',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({connections:[],versions:[],pending:[],capabilities:{secrets:'keychain',verification:'live',externalReady:false,networkAvailable:false,verificationAvailable:true,verificationByProvider:{volcengine:{available:true,detail:'可只读测试。'},pexels:{available:false,detail:'测试未开始：Pexels 授权已过期。'}}}})));
+ render(<LocalConnectionsPanel/>);fireEvent.click(await screen.findByRole('button',{name:'新建连接'}));await screen.findByRole('button',{name:'仅保存凭据'});
+ expect(screen.getByText(/Pexels 授权已过期/)).toBeTruthy();
+ fireEvent.change(screen.getByLabelText('连接类型'),{target:{value:'seedance_video'}});
+ expect(screen.getByRole('button',{name:'保存并测试'})).toBeTruthy();expect(screen.queryByText(/Pexels 授权已过期/)).toBeNull();
+});
+it('keeps interrupted write intents internal instead of rendering a second credential recovery form',async()=>{
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({connections:[],versions:[],pending:[{idempotency_key:'old-intent',metadata:{command:'create',name:'seedance'}}],capabilities:{secrets:'keychain',verification:'live',externalReady:false,networkAvailable:false}})));
+ render(<LocalConnectionsPanel/>);fireEvent.click(await screen.findByRole('button',{name:'新建连接'}));await screen.findByRole('button',{name:'仅保存凭据'});
+ expect(screen.queryByRole('region',{name:'未完成连接操作'})).toBeNull();expect(screen.queryByText('重试原操作')).toBeNull();
+ expect(document.querySelectorAll('input[type=password]')).toHaveLength(1);
 });

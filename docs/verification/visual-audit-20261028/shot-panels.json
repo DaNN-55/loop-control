@@ -1,0 +1,39 @@
+{
+  "panels": [
+    {
+      "cls": "outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2 shot-preparation-fields",
+      "height": 965.5,
+      "inert": "true",
+      "text": "主声音TTS 成为唯一主声音；素材原声静音，字幕可跟随口播。静音声音模式TTS 口播保留原声镜头音效不配置口播内容Đặng Thị Ngọc Hân：清晨六点四十五分，城市慢慢醒来",
+      "top": 517.34375
+    },
+    {
+      "cls": "outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2 shot-visual-workspace",
+      "height": 849.5,
+      "inert": null,
+      "text": "原片与片段标记当前原片请选择原片清晨街道采访_Đặng_Thị_Ngọc_Hân_原片_授权确认_中英越字幕_2026-10-28_v12-final-approved.mp4A-",
+      "top": 1482.84375
+    },
+    {
+      "cls": "outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2 shot-preview-workspace",
+      "height": 69,
+      "inert": "true",
+      "text": "同步预览与确认同一次 Worker 生成会产出可播放代理和可编辑 OpenChatCut 工程，两者共享当前输入指纹。待生成",
+      "top": 2332.34375
+    }
+  ],
+  "tabs": [
+    {
+      "selected": "false",
+      "text": "1文本与声音"
+    },
+    {
+      "selected": "true",
+      "text": "2画面与构图"
+    },
+    {
+      "selected": "false",
+      "text": "3同步预览与确认"
+    }
+  ]
+}

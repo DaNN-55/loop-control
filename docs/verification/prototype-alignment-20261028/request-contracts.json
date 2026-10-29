@@ -1,0 +1,17 @@
+{
+  "note": "AST argument comparison of direct localRequest/localCommand calls; supports source review, not runtime proof.",
+  "results": [
+    {
+      "file": "src/local-app/LocalConnectionsPanel.tsx",
+      "calls": 1,
+      "currentCalls": 1,
+      "identical": true
+    },
+    {
+      "file": "src/local-app/LocalCatalogApp.tsx",
+      "calls": 13,
+      "currentCalls": 13,
+      "identical": true
+    }
+  ]
+}

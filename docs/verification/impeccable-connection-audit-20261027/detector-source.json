@@ -1,0 +1,202 @@
+[
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 185,
+    "snippet": "border-left: 3px solid #db565d"
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 193,
+    "snippet": "border-left: 3px solid #8eafe1"
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 197,
+    "snippet": "border-left: 3px solid #d8961f"
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 209,
+    "snippet": "border-left: 3px solid #4b78bd"
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 211,
+    "snippet": "border-left: 3px solid #5aa675"
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 214,
+    "snippet": "border-left: 3px solid #d99a2b"
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 280,
+    "snippet": "border-left: 3px solid #d18b10"
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 284,
+    "snippet": "border-left: 2px solid #c84955"
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 316,
+    "snippet": "border-left: 3px solid #77a1dd"
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 589,
+    "snippet": "border-left: 3px solid #d8961f"
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 647,
+    "snippet": "border-left: 3px solid #77a1dd"
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 1075,
+    "snippet": "border-left: 3px solid #8eafe1"
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 1412,
+    "snippet": "border-left: 3px solid #c6902f"
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 569,
+    "snippet": "border-inline-start: 3px solid"
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 1113,
+    "snippet": "border-inline-start: 4px solid"
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 1129,
+    "snippet": "border-inline-start: 4px solid"
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 1170,
+    "snippet": "border-inline-start: 4px solid"
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 1180,
+    "snippet": "border-inline-start: 4px solid"
+  },
+  {
+    "antipattern": "side-tab",
+    "name": "Side-tab accent border",
+    "description": "Thick colored border on one side of a card — the most recognizable tell of AI-generated UIs. Use a subtler accent or remove it entirely.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 1517,
+    "snippet": "border-inline-start: 3px solid"
+  },
+  {
+    "antipattern": "border-accent-on-rounded",
+    "name": "Border accent on rounded element",
+    "description": "Thick accent border on a rounded card — the border clashes with the rounded corners. Remove the border or the border-radius.",
+    "severity": "warning",
+    "category": "slop",
+    "file": "/Users/dan/Programs/loop-control/docs/verification/impeccable-connection-audit-20261027/source-snapshot/src/styles.css",
+    "line": 762,
+    "snippet": "border-top: 3px solid"
+  }
+]

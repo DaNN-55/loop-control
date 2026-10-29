@@ -1,0 +1,12 @@
+@import "tailwindcss" source(none) important;
+@import "./theme.css" theme(static);
+@source "../components";
+@plugin "tailwindcss-react-aria-components";
+@plugin "tailwindcss-animate";
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@utility transition-inherit-all {
+  transition-property: inherit;
+  transition-duration: inherit;
+  transition-timing-function: inherit;
+}

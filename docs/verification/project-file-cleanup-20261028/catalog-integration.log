@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/catalogContract.integration.test.ts (4 tests) 930ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  20:09:52
+   Duration  1.30s (transform 136ms, setup 8ms, collect 207ms, tests 930ms, environment 0ms, prepare 37ms)
+

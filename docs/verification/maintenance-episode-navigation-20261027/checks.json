@@ -1,0 +1,31 @@
+{
+  "focused": {
+    "numPassedTests": 60,
+    "numFailedTests": 0,
+    "numTotalTests": 60,
+    "success": true
+  },
+  "httpAndCommands": {
+    "numPassedTests": 3,
+    "numFailedTests": 0,
+    "numTotalTests": 3,
+    "success": true
+  },
+  "finalHistoryHttp": {
+    "numPassedTests": 1,
+    "numFailedTests": 0,
+    "numTotalTests": 1,
+    "success": true
+  },
+  "mechanicalScan": {
+    "warnings": 20,
+    "lastFindingLine": 1517,
+    "newScopedFindings": 0
+  },
+  "checks": {
+    "mainTypecheck": true,
+    "localBackendTypecheck": true,
+    "nativeBuild": true,
+    "diffCheck": true
+  }
+}

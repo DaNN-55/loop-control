@@ -1,0 +1,20 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/operations/workbenchPreview.test.tsx (2 tests) 61ms
+ ✓ src/operations/OperationsWorkspace.test.tsx (9 tests) 452ms
+stderr | src/episodes/captionTextConfirmation.test.tsx > preserves precise bounds on focus and preserves locked clip duration when a numeric bound moves
+The `values` property is in conflict with the current `step`, `min`, and `max` properties. Please provide values that are accessible using the min, max, and step values.
+The `values` property is in conflict with the current `step`, `min`, and `max` properties. Please provide values that are accessible using the min, max, and step values.
+
+ ✓ src/episodes/ProductionNodes.test.tsx (19 tests) 2057ms
+   ✓ routes rail reorder through the existing reasoned structure revision and preserves generation entrypoints  810ms
+ ✓ src/episodes/captionTextConfirmation.test.tsx (14 tests) 2357ms
+   ✓ saves embedded composition fields through the real callback and keeps edits after a failed save  442ms
+   ✓ keeps a failed inline reset pending and retries it through the regular save action  309ms
+
+ Test Files  4 passed (4)
+      Tests  44 passed (44)
+   Start at  14:32:53
+   Duration  4.15s (transform 608ms, setup 31ms, collect 3.99s, tests 4.93s, environment 1.19s, prepare 156ms)
+

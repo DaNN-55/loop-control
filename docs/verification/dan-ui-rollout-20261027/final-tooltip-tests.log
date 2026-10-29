@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+················
+
+ Test Files  3 passed (3)
+      Tests  16 passed (16)
+   Start at  04:08:44
+   Duration  1.53s (transform 166ms, setup 20ms, collect 2.42s, tests 755ms, environment 749ms, prepare 109ms)
+
