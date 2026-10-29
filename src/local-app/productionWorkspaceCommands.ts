@@ -1,4 +1,4 @@
-import {readWorkspaceCandidates,readUsedWorkspaceNarrationVersions,executeWorkspaceCandidateCommand} from './workspaceCandidates.js';
+import {readWorkspaceCandidates,readUsedWorkspaceNarrationVersions,validateWorkspaceCandidateUses,executeWorkspaceCandidateCommand} from './workspaceCandidates.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
 import {executeWorkspaceNarration,readWorkspaceNarration} from './workspaceNarration.js';
 import type {InputRuntime} from './episodeCommands.js';
@@ -106,7 +106,7 @@ export class ProductionWorkspaceCommands{
    await updateWorkspaceProject(c,root,row,project,row.bindings);return readProductionWorkspace(c,e.id,root);
   }
   if(!runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 未配置。');const config=await runtime.studioRuntime();
-  const validate=(doc:OpenChatCutProject)=>validateWorkspaceProject(c,root,e.id,doc,config);
+  const validate=async(doc:OpenChatCutProject)=>{await validateWorkspaceProject(c,root,e.id,doc,config);await validateWorkspaceCandidateUses(c,row!,project,doc);};
   if(command==='openWorkspaceStudio'){
    const editable=withWorkspaceShotMetadata(project,row.bindings);const paths=[...usedWorkspaceContent(editable).paths];const opened=await openOpenChatCutDraftStudio(root,e.id,editable,paths,hash(JSON.stringify({id:row.id,bindings:row.bindings})),config,validate);
    this.opened.add(e.id);const current=JSON.parse((await verifyNativeFile(root,opened.workspace.relativePath,opened.workspace.sha256,opened.workspace.fileSize)).toString('utf8')) as OpenChatCutProject;await updateWorkspaceProject(c,root,row,current,row.bindings);return{...opened,productionWorkspace:await readProductionWorkspace(c,e.id,root)};

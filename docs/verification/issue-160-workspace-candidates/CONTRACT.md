@@ -35,3 +35,13 @@ T09 可在自己的命令入口和读投影复用以上两个函数；不要复�
 `readUsedWorkspaceNarrationVersions(c,row,project)` 只按实际 native canonical/兼容主声 item.src 解析本期 narration audio track。优先同 workspace+candidate_id(audioTrackId)+decision='adopted'+source_sha256=track.sha256 的不可变记录；native 有 loopControlCandidate.inputFingerprint 时再核同一创作输入。记录 text_version 和 main_script_text 均为正文 string，input_fingerprint 为创作指纹，project_sha256 为采用后工程快照。首次 TTS/人工口播采用也写此表。
 
 无决定记录的历史 TTS 回退到该实际 track.source_task_id 对应不可变 task.input_snapshot.media.narration.text。没有已记录正文的人工轨返回 text=null/provenance=not_recorded，仍保留实际 track/task/SHA/item 身份。不能用当前 draft.tts_text、未采用候选或候选准备 token 填写交付正文。T12 Worker 可按同一 SQL 契约读表，避免导入 Owner 模块。
+
+## 保存竞态与失败恢复
+
+Owner Studio snapshot 在注册来源验证后调用 `validateWorkspaceCandidateUses`。尚未进入已提交工程的候选 relink 必须有匹配当前工程 SHA 的准备 token；canonical 主声还须匹配当前 TTS 输入和当前实际候选 track。prepare 之后改正文时，旧候选的 native 本地编辑可保留供撤销，但 Owner 保存返回409，已提交工程不推进。既有已提交来源及曾明确采用的版本仍可正常编辑/原生 undo；不把正常撤销误判为迟到候选。
+
+原生保存成功、最后决定回执失败时，候选投影标记 pendingConfirmation，界面提供「确认采用」。重启后可按真实已存源/输入/时长找回准备 token，再确认已有版本，不重新生成、不重建工程。音视频共用 token/project/source fence，只有 canonical 主声应用 TTS 当前输入校验；T09/T06 仍负责自己域的输入有效性。
+
+## T10/T13 新增镜头接续缺口
+
+2026-10-29 的随机夹具真实 Owner 检查：`editWorkspaceStructure(insert)` 返回200；该 `added-*` 镜头随后 `saveWorkspaceNarration` 返回400「配置校验未通过。」；原 scriptRevisionId/storyboardPackageId 均未变化。087 wrapper 仍调用旧 `public.save_shot_preparation_draft` 的冻结分镜 membership 门槛。T08 本次 existing-shot 候选测试不能证明新增 workspace-local shot 的首次 TTS。T13 须用受控的 workspace 局部 shot 输入/版本接原 Provider/授权/Worker fence，不可改写旧批准分镜或伪造旧审批。
