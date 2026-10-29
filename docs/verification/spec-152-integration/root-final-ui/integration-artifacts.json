@@ -1,0 +1,144 @@
+{
+  "passed": true,
+  "integrationHead": "6792940ecbc6c2127516e34ce55be6e78fa52722",
+  "facts": {
+    "episode": "f3ffed06-eee2-499c-a6fd-d7894ee35ae7",
+    "projectSha": "7461367c8867fdca75a4347e2b8cca536cdccde9ed27e9a8e0d5bcfdadea6d82",
+    "video": {
+      "sha256": "e47f6b44e3c2bd08e21a226f5179aa8e539e0249de016ff8f976979b7f9af8dd",
+      "fileSize": 468064,
+      "relativePath": "episodes/f3ffed06-eee2-499c-a6fd-d7894ee35ae7/workspace-exports/c8e5cb5b-11ed-4b38-b6a1-994bd34ade84/e47f6b44e3c2bd08e21a226f5179aa8e539e0249de016ff8f976979b7f9af8dd.mp4"
+    },
+    "adoptedText": "这一版局部口播已明确采用。",
+    "lateTask": "c080cb96-97f8-4db8-b3f8-3db51ce2fda9",
+    "approvalCount": 0,
+    "originalSourceSha": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6"
+  },
+  "artifacts": [
+    {
+      "type": "final_render",
+      "path": "episodes/f3ffed06-eee2-499c-a6fd-d7894ee35ae7/workspace-exports/c8e5cb5b-11ed-4b38-b6a1-994bd34ade84/e47f6b44e3c2bd08e21a226f5179aa8e539e0249de016ff8f976979b7f9af8dd.mp4",
+      "sha256": "e47f6b44e3c2bd08e21a226f5179aa8e539e0249de016ff8f976979b7f9af8dd",
+      "bytes": 468064
+    },
+    {
+      "type": "editable_project",
+      "path": "episodes/f3ffed06-eee2-499c-a6fd-d7894ee35ae7/production-workspace/versions/7461367c8867fdca75a4347e2b8cca536cdccde9ed27e9a8e0d5bcfdadea6d82.json",
+      "sha256": "7461367c8867fdca75a4347e2b8cca536cdccde9ed27e9a8e0d5bcfdadea6d82",
+      "bytes": 23184
+    },
+    {
+      "type": "cover",
+      "path": "episodes/f3ffed06-eee2-499c-a6fd-d7894ee35ae7/workspace-deliveries/ddde94ed-3003-4d89-9a43-53da7716a72a/cover.png",
+      "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "bytes": 1515
+    },
+    {
+      "type": "metadata",
+      "path": "episodes/f3ffed06-eee2-499c-a6fd-d7894ee35ae7/workspace-deliveries/ddde94ed-3003-4d89-9a43-53da7716a72a/metadata.json",
+      "sha256": "c2b2fef1bd4c35c2001c45e624e85ae47d34feaee4c40900d2e40ff0b2eb0e26",
+      "bytes": 2171
+    },
+    {
+      "type": "final_qc_report",
+      "path": "episodes/f3ffed06-eee2-499c-a6fd-d7894ee35ae7/workspace-deliveries/ddde94ed-3003-4d89-9a43-53da7716a72a/checks.json",
+      "sha256": "a2392db63dbca0f431016c2bf9fc4f766dea93cd2377ac8d922b57f94c1f88bf",
+      "bytes": 6465
+    }
+  ],
+  "probe": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 1080,
+        "height": 1920,
+        "duration": "7.400000",
+        "nb_frames": "222",
+        "side_data_list": [
+          {}
+        ]
+      },
+      {
+        "codec_name": "aac",
+        "duration": "7.445333",
+        "nb_frames": "349"
+      }
+    ],
+    "format": {
+      "duration": "7.445333",
+      "size": "468064"
+    }
+  },
+  "narration": [
+    {
+      "shotId": "shot-01",
+      "baselineText": "填写本段完整口播。",
+      "sourceText": "这一版局部口播已明确采用。",
+      "adoptedText": "这一版局部口播已明确采用。",
+      "textCoverage": "complete_source",
+      "windows": [
+        {
+          "srcInFrame": 0,
+          "usedDurationSeconds": 2.4,
+          "sourceDurationSeconds": 2.4,
+          "playbackRate": 1,
+          "fps": 30,
+          "audible": true
+        }
+      ],
+      "textSource": "owner_adoption",
+      "sourceDiffersFromBaseline": true,
+      "differsFromBaseline": true,
+      "audioTrackId": "e3d3230e-7374-491a-beb2-490995789484",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "itemId": "workspace-narration-shot-shot-01",
+      "source": "episodes/f3ffed06-eee2-499c-a6fd-d7894ee35ae7/native-tasks/8be99c0f-e220-46d0-9dee-4f6c59c836fb/shot-narration-shot-01-54bc669600c312977a12ee16b5af5e61.mp3"
+    },
+    {
+      "shotId": "added-9519539b-0378-4f63-b61a-c919f122706a",
+      "baselineText": "",
+      "sourceText": null,
+      "adoptedText": null,
+      "textCoverage": "no_recorded_text",
+      "windows": [],
+      "textSource": "not_recorded",
+      "sourceDiffersFromBaseline": null,
+      "differsFromBaseline": null,
+      "audioTrackId": null,
+      "sha256": null,
+      "itemId": null,
+      "source": null
+    },
+    {
+      "shotId": "added-80758078-ea11-44b7-96f7-fac4160cbda6",
+      "baselineText": "",
+      "sourceText": null,
+      "adoptedText": null,
+      "textCoverage": "no_recorded_text",
+      "windows": [],
+      "textSource": "not_recorded",
+      "sourceDiffersFromBaseline": null,
+      "differsFromBaseline": null,
+      "audioTrackId": null,
+      "sha256": null,
+      "itemId": null,
+      "source": null
+    }
+  ],
+  "lateLedger": [
+    {
+      "id": "c080cb96-97f8-4db8-b3f8-3db51ce2fda9",
+      "status": "completed",
+      "actual_cost_cents": 1,
+      "run_status": "completed",
+      "submission_outcome": "received"
+    }
+  ],
+  "packageManifest": {
+    "sha256": "a992e1c1c4fc5011adc6f468f6ffc59ce8332d1a87b48ea0c9f171ffd4c93132",
+    "bytes": 2658,
+    "registeredIdentityMatches": true
+  }
+}
