@@ -5,7 +5,7 @@ import { spawn, spawnSync } from "node:child_process";
 import { once } from "node:events";
 import { tmpdir } from "node:os";
 import {extname,isAbsolute,join,relative,resolve} from "node:path";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
 
 async function main() {
@@ -24,6 +24,7 @@ const assetRoot = resolve(requiredString(spec.assetRoot, "assetRoot"));
 const outputPath = resolve(requiredString(spec.outputPath, "outputPath"));
 const nodePath = resolve(spec.nodePath || process.execPath);
 const state = structuredClone(spec.state);
+const project = spec.project ? structuredClone(spec.project) : undefined;
 const sources = Array.isArray(spec.sources) ? spec.sources : [];
 
 if (!isAbsolute(root) || !isAbsolute(assetRoot) || !isAbsolute(outputPath)) throw new Error("OpenChatCut paths must be absolute.");
@@ -44,9 +45,11 @@ try {
     const targetName = requiredSafeName(source.targetName || `${randomUUID()}${extname(relativePath)}`);
     const targetPath = join(uploadDir, targetName);
     await copyFile(sourcePath, targetPath);
+    if(source.sha256 || source.fileSize !== undefined){const bytes=await readFile(targetPath);if(bytes.length!==source.fileSize||createHash('sha256').update(bytes).digest('hex')!==source.sha256)throw new Error('Copied export source no longer matches its registered fingerprint.');}
     copied.set(relativePath, `/media/uploads/${targetName}`);
   }
   rewriteSources(state, copied);
+  if(project) rewriteSources(project, copied);
   const port = await availablePort();
   const child = spawn(nodePath, openChatCutViteArguments(root, port), {
     cwd: root,
@@ -60,7 +63,7 @@ try {
     const response = await fetch(`http://127.0.0.1:${port}/export`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Origin: `http://127.0.0.1:${port}`, "Sec-Fetch-Site": "same-origin" },
-      body: JSON.stringify({ state, format: "video", codec: "h264", name: "loop-control" }),
+      body: JSON.stringify({ state, ...(project ? { project, timelineId: spec.timelineId || project.activeTimelineId } : {}), format: "video", codec: "h264", name: "loop-control" }),
     });
     if (!response.ok) throw new Error(`OpenChatCut export failed (${response.status}): ${await response.text()}`);
     const bytes = new Uint8Array(await response.arrayBuffer());
