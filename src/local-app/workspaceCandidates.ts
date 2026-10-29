@@ -54,7 +54,7 @@ export async function finishRegisteredWorkspaceCandidate(c:PoolClient,root:strin
  }else{
  if(prepared.project_sha256!==row.project_sha256)throw new ConfigurationError(409,'工程已变化，请重新比较后采用。');
  let next;try{next=applyWorkspaceCandidate(project,edit);}catch(error){throw new ConfigurationError(409,error instanceof Error?error.message:'采用未完成。');}
- await updateWorkspaceProject(c,root,row,next,row.bindings,'采用局部口播候选');
+ await updateWorkspaceProject(c,root,row,next,row.bindings,'采用局部口播候选',{nativeEdit:true});
  }
  await decision(c,row,candidate,'adopted');
 }

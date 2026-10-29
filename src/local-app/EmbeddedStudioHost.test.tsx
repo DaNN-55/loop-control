@@ -65,7 +65,6 @@ it('keeps shot navigation available after collapsing the rail',()=>{
  const post=vi.spyOn(frame.contentWindow!,'postMessage');fireEvent.click(screen.getByRole('button',{name:'定位镜头 S02'}));expect(post.mock.calls.at(-1)![0].itemId).toBe('shot-S02-full');
  expect(screen.getByRole('button',{name:'展开镜头导航'})).toBeTruthy();
 });
-
 it('uses the latest persisted file when a caller reuses its bridge for a save then a native edit',async()=>{
  let current:import('./EmbeddedStudioHost').EmbeddedStudioBridge|null=null;
  const next={...workspace,sha256:'b'.repeat(64)},save=vi.fn(async(_file:import('../reviews/reviewRevision').OpenChatCutStudioWorkspace)=>next);
