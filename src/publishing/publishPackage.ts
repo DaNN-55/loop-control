@@ -1,3 +1,4 @@
+import {verifyWorkspaceManifest,workspacePublishPackageVersion,type WorkspaceDeliveryIdentity} from "./workspacePublishPackage.js";
 import { createHash } from "node:crypto";
 import { mkdir, readFile, realpath, writeFile } from "node:fs/promises";
 import { dirname, relative, resolve } from "node:path";
@@ -49,13 +50,14 @@ async function existingPublishPackage(assetRoot: string, episodeId: string, rela
   }
 }
 
-export async function verifyPublishPackage(input: { assetRoot: string; episodeId: string; publishPackage: PublishPackage }): Promise<void> {
+export async function verifyPublishPackage(input: { assetRoot: string; episodeId: string; publishPackage: PublishPackage; expectedWorkspaceIdentity?:WorkspaceDeliveryIdentity }): Promise<void> {
   const packageFilePath = await assetPath(input.assetRoot, input.episodeId, input.publishPackage.relativePath);
   const contents = await readFile(packageFilePath);
   if (contents.length !== input.publishPackage.fileSize) throw new Error("发布包清单文件大小不匹配。");
   if (createHash("sha256").update(contents).digest("hex") !== input.publishPackage.sha256) throw new Error("发布包清单 SHA-256 不匹配。");
 
   const manifest: unknown = JSON.parse(contents.toString("utf8"));
+  if (isRecord(manifest)&&manifest.version===workspacePublishPackageVersion) { await verifyWorkspaceManifest(input.assetRoot,input.episodeId,manifest,input.expectedWorkspaceIdentity); return; }
   if (!isManifest(manifest, input.episodeId)) throw new Error("发布包清单格式无效。");
   const artifacts = selectRequiredArtifacts(manifest.artifacts, "发布包清单");
   await verifyArtifacts(input.assetRoot, input.episodeId, artifacts);
