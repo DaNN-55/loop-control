@@ -1,0 +1,12 @@
+{
+  "voiceDurationSeconds": 2.4,
+  "providerDurationSeconds": 4,
+  "nativeFrames": 72,
+  "rendered": {
+    "durationSeconds": 4.458667,
+    "width": 180,
+    "height": 320,
+    "hasAudio": true,
+    "blackFrameCount": 0
+  }
+}

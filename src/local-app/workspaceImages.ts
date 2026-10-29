@@ -1,3 +1,5 @@
+import {readWorkspaceNarration,readWorkspaceNarrationTarget} from './workspaceNarration.js';
+import {isVideoProvider,videoProviders} from '../worker/videoProviderCatalog.js';
 import {randomUUID} from 'node:crypto';
 import {executeWanCommand} from './wanCommands.js';
 import {inspectMp4Artifact} from '../worker/mediaTools.js';
@@ -44,12 +46,18 @@ export async function generateWorkspaceImage(c:PoolClient,root:string,e:{id:stri
  try{await verifyNativeFile(root,image.storage_path,image.sha256,Number(image.file_size));}catch{throw new ConfigurationError(409,'首帧图片缺失或指纹已变化。');}
  const item=project.timelines.flatMap(t=>t.items).find(i=>i.id===clip.itemId);if(!item||item.kind!=='text')throw new ConfigurationError(409,'占位已由剪辑修改，不能首次生成覆盖。');
  const board=(await c.query('SELECT context_snapshot FROM public.review_packages WHERE id=$1',[row.storyboard_package_id])).rows[0];const shot=board.context_snapshot?.worker_result?.storyboard?.shots?.find((s:{id:string})=>s.id===clip.shotId),config=e.policy[shot?.shotType] as {executor?:{provider?:string}}|undefined;
- const task=await executeWanCommand(c,e,root,runtime,config?.executor?.provider==='bailian'?'generateWan':'generateOfficialVideo',{reviewPackageId:row.storyboard_package_id,shotId:clip.shotId,firstFrameId:image.id,prompt:data.prompt,durationSeconds:data.durationSeconds,reservationCents:data.reservationCents},randomUUID());
+ const narration=(await readWorkspaceNarration(c,row,project)).find(n=>n.shotId===clip.shotId),hasVoice=narration?.mode==='tts'||narration?.mode==='manual';
+ const narrationTarget=hasVoice?await readWorkspaceNarrationTarget(c,root,row.id,clip.id):null;
  const timeline=project.timelines.find(t=>t.items.some(i=>i.id===clip.itemId))!;
- const frames=Math.max(1,Math.round(Number(data.durationSeconds)*timeline.fps)),delta=frames-Number(item.durationInFrames),end=Number(item.startFrame)+Number(item.durationInFrames);
+ const targetDuration=narrationTarget?Math.ceil(narrationTarget.durationSeconds*timeline.fps)/timeline.fps:Number(data.durationSeconds);
+ const provider=config?.executor?.provider??'',bounds=isVideoProvider(provider)?videoProviders[provider]:{minDuration:2,maxDuration:15};
+ const providerDuration=narrationTarget?Math.max(bounds.minDuration,Math.ceil(targetDuration)):Number(data.durationSeconds);
+ if(narrationTarget&&providerDuration>bounds.maxDuration)throw new ConfigurationError(409,`主声音长于当前视频服务上限 ${bounds.maxDuration} 秒，请明确拆分镜头；系统不会裁词或加速口播。`);
+ const task=await executeWanCommand(c,e,root,runtime,config?.executor?.provider==='bailian'?'generateWan':'generateOfficialVideo',{reviewPackageId:row.storyboard_package_id,shotId:clip.shotId,firstFrameId:image.id,prompt:data.prompt,durationSeconds:providerDuration,reservationCents:data.reservationCents},randomUUID());
+ const frames=Math.max(1,Math.ceil(targetDuration*timeline.fps)),delta=frames-Number(item.durationInFrames),end=Number(item.startFrame)+Number(item.durationInFrames);
  for(const other of timeline.items)if(other.id!==item.id&&Number(other.startFrame)>=end)other.startFrame=Number(other.startFrame)+delta;item.durationInFrames=frames;
- await c.query('INSERT INTO local_identity.workspace_image_requests(task_id,workspace_id,episode_id,clip_id,item_id,native_edit_revision,project_content_sha256,image_revision_id,image_sha256,duration_seconds) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)',[task.id,row.id,e.id,clip.id,clip.itemId,row.native_edit_revision,workspaceContentSha256(project),image.id,image.sha256,data.durationSeconds]);
- clip.image={usage:'ai-video',durationSeconds:Number(data.durationSeconds),fit:timeline.fit,focusX:0,focusY:0,taskId:task.id,materialRevisionId:image.id};
+ await c.query('INSERT INTO local_identity.workspace_image_requests(task_id,workspace_id,episode_id,clip_id,item_id,native_edit_revision,project_content_sha256,image_revision_id,image_sha256,duration_seconds,provider_duration_seconds,narration_target) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',[task.id,row.id,e.id,clip.id,clip.itemId,row.native_edit_revision,workspaceContentSha256(project),image.id,image.sha256,targetDuration,providerDuration,narrationTarget?JSON.stringify(narrationTarget):null]);
+ clip.image={usage:'ai-video',durationSeconds:targetDuration,providerDurationSeconds:providerDuration,fit:timeline.fit,focusX:0,focusY:0,taskId:task.id,materialRevisionId:image.id};
  return updateWorkspaceProject(c,root,row,project,row.bindings,'请求首次图片视频');
 }
 
@@ -63,6 +71,10 @@ export async function fillWorkspaceImageResult(c:PoolClient,root:string,episodeI
  if(request.status!=='completed'||!request.material_revision_id)throw new ConfigurationError(409,'首次图片任务尚未完成，请保留占位后重试。');
  const clip=row.bindings.find(b=>b.id===request.clip_id),item=project.timelines.flatMap(t=>t.items).find(i=>i.id===request.item_id);
  if(Number(row.native_edit_revision)!==Number(request.native_edit_revision)||!clip||clip.source||clip.image?.usage!=='ai-video'||clip.image.taskId!==request.task_id||clip.image.materialRevisionId!==request.image_revision_id||item?.kind!=='text')throw new ConfigurationError(409,'工程已人工编辑或占位已变化，结果保留为候选，请在剪辑中明确采用。');
+ if(request.narration_target){
+  const current=await readWorkspaceNarrationTarget(c,root,row.id,request.clip_id),frozen=request.narration_target;
+  if(current.audioTrackId!==frozen.audioTrackId||current.artifactId!==frozen.artifactId||current.sha256!==frozen.sha256||current.inputFingerprint!==frozen.inputFingerprint||current.durationSeconds!==frozen.durationSeconds)throw new ConfigurationError(409,'主声音输入或实际时长已变化，视频结果保留为候选。');
+ }
  const source=(await c.query('SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2',[request.image_revision_id,episodeId])).rows[0];if(!source||source.sha256!==request.image_sha256)throw new ConfigurationError(409,'首帧图片身份已变化。');
  try{await verifyNativeFile(root,source.storage_path,source.sha256,Number(source.file_size));}catch{throw new ConfigurationError(409,'首帧图片缺失或指纹已变化。');}
  const material=(await c.query("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='video'",[request.material_revision_id,episodeId])).rows[0];if(!material)throw new ConfigurationError(409,'生成结果尚未登记。');

@@ -1,0 +1,46 @@
+ ✓ src/local-app/productionWorkspace.integration.test.ts (1 test) 7784ms
+   ✓ Owner persists incomplete matches, opens the real draft and fills only its placeholder after reopening  7783ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx (5 tests) 192ms
+ ✓ src/local-app/WorkspaceVideoMatch.test.tsx (1 test) 94ms
+ ✓ src/local-app/WorkspaceCaptionsPanel.test.tsx (1 test) 114ms
+ ✓ src/local-app/ProductionWorkspacePanel.test.tsx (2 tests) 142ms
+ ✓ src/local-app/WorkspaceImageMatch.test.tsx (1 test) 127ms
+ ✓ src/workspaceCaptions.test.ts (4 tests) 3ms
+ ✓ src/workspaceVideo.test.ts (2 tests) 1ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts (3 tests) 32138ms
+   ✓ Owner edits only the chosen native caption lane and persists manual timing without shot approval  5791ms
+   ✓ current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit  4456ms
+   ✓ real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area  21889ms
+ ✓ src/local-app/workspaceVideo.integration.test.ts (6 tests) 38300ms
+   ✓ Owner prepares independent exact ranges from one source across multiple shots  2607ms
+   ✓ Owner renders many-to-many exact video ranges in native Studio (landscape=false)  13715ms
+   ✓ Owner renders many-to-many exact video ranges in native Studio (landscape=true)  10506ms
+   ✓ Owner moves a locked range by exactly one frame in real native output  5368ms
+   ✓ Owner boundaries reject stale, foreign, invalid, tampered and active-editor range writes  4122ms
+   ✓ Owner cannot select audio-only tail beyond the video stream  1982ms
+ ✓ src/local-app/workspaceImages.integration.test.ts (7 tests) 40218ms
+   ✓ Owner uploads and persists a native still image with duration and composition  2609ms
+   ✓ Owner renders static and pan/zoom native images without external generation (landscape=false)  13641ms
+   ✓ Owner renders static and pan/zoom native images without external generation (landscape=true)  11092ms
+   ✓ Owner sees missing and changed image blockers without a replacement task or source  2163ms
+   ✓ AI image generation retains the selected execution path and blocks when no registered connection exists  2197ms
+   ✓ Owner first image videos preserve completed outputs and manual edit boundary (edited=false)  4060ms
+   ✓ Owner first image videos preserve completed outputs and manual edit boundary (edited=true)  4455ms
+ ✓ src/local-app/workspaceNarration.integration.test.ts (12 tests) 46311ms
+   ✓ Owner can prepare disabled narration before editing without queuing external tasks  2531ms
+   ✓ confirmed narration uses the real Worker, survives restart and assembles actual duration without duplicate submissions  6236ms
+   ✓ unknown paid submissions stay blocked across restart and input changes; definite rejection allows one explicit retry  4807ms
+   ✓ both first narration tracks assemble and crop an available source without invalidating the other shot  6190ms
+   ✓ a running task may register its immutable output but late speech cannot replace changed input or advance delivery  3258ms
+   ✓ manual narration and disabled modes never enqueue TTS, while short pictures preserve a recoverable conflict  3680ms
+   ✓ actual narration drives the paid video window and freezes speech provenance (changed=false)  8995ms
+   ✓ actual narration drives the paid video window and freezes speech provenance (changed=true)  2547ms
+   ✓ first speech remains a candidate after a real native save and never overwrites the edited project  3533ms
+   ✓ speech beyond the Provider maximum blocks a video submission without cutting words  1484ms
+   ✓ legacy narration already running before workspace activation cannot promote the new draft or delivery  1587ms
+   ✓ one shot with two visual ranges keeps one voice and its original task after deleting the first range  1462ms
+
+ Test Files  12 passed (12)
+      Tests  45 passed (45)
+   Start at  18:45:00
+   Duration  46.86s (transform 531ms, setup 47ms, collect 7.38s, tests 165.42s, environment 1.73s, prepare 429ms)
