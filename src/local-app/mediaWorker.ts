@@ -33,6 +33,7 @@ export function nativeMediaRequiresExternal(p:WorkerTaskPackage){
  return resolved.choice.connection.kind==='owner_managed';
 }
 export async function executeNativeMedia(pool:Pool,config:NativeMediaConfiguration|undefined,p:WorkerTaskPackage,fence:{p_task_id:string;p_attempt:number;p_lease_token:string},visualOutput?:string){
+ if(p.task.type==='generate_soundtrack'||p.task.type==='extract_embedded_audio'){const current=(await pool.query('SELECT local_identity.workspace_audio_task_current($1,$2,$3) current',[fence.p_task_id,fence.p_attempt,fence.p_lease_token])).rows[0]?.current;if(!current)throw Error('音频准备输入或制作授权已变化。');}
  const external=nativeMediaRequiresExternal(p);
  await assertMediaReady(config,{},process.env,external);
  const ports=external?await narrationPorts(config?.mode==='local'?undefined:config):undefined;
