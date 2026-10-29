@@ -1,3 +1,5 @@
+import {executeWorkspaceDelivery,readWorkspaceDeliveries} from './workspaceDeliveryCommands.js';
+import {workspaceDeliveryFields} from '../workspaceDelivery.js';
 import {executeWorkspaceExport,readWorkspaceExports,usedWorkspaceContent} from './workspaceExportCommands.js';
 import {workspaceExportFields} from '../workspaceExport.js';
 import {saveWorkspaceVideoRanges} from './workspaceVideo.js';
@@ -34,7 +36,7 @@ export async function readProductionWorkspace(c:PoolClient,episodeId:string,root
  if(!inputsReady||stale)for(const e of exportState.exports)e.confirmed=false;
  const deliverable=inputsReady&&!stale&&!!exportState.exports[0]?.current&&exportState.exports[0].status==='ready'&&exportState.exports[0].checks.every(x=>x.passed);
  const history=(await c.query('SELECT revision,project_sha256,script_revision_id,reason FROM local_identity.production_workspace_versions WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 50',[row.id])).rows.map(v=>({revision:Number(v.revision),sha256:v.project_sha256,scriptRevisionId:v.script_revision_id,reason:v.reason}));
- return{...exportState,captions,id:row.id,episodeId,workflowVersion:row.workflow_version,scriptRevisionId:row.script_revision_id,storyboardPackageId:row.storyboard_package_id,revision:Number(row.revision),contentSha256:row.content_sha256,nativeEditRevision:Number(row.native_edit_revision),narration:await readWorkspaceNarration(c,row,project),clips:row.bindings,project:{relativePath:row.project_path,sha256:row.project_sha256,fileSize:Number(row.project_size),projectId:`loop-control-${episodeId}`},history,readiness:{deliverable,placeholders,missingSources},stale};
+ return{deliveries:await readWorkspaceDeliveries(c,root,row),...exportState,captions,id:row.id,episodeId,workflowVersion:row.workflow_version,scriptRevisionId:row.script_revision_id,storyboardPackageId:row.storyboard_package_id,revision:Number(row.revision),contentSha256:row.content_sha256,nativeEditRevision:Number(row.native_edit_revision),narration:await readWorkspaceNarration(c,row,project),clips:row.bindings,project:{relativePath:row.project_path,sha256:row.project_sha256,fileSize:Number(row.project_size),projectId:`loop-control-${episodeId}`},history,readiness:{deliverable,placeholders,missingSources},stale};
 }
 export function workspaceContentSha256(project:OpenChatCutProject):string{
  const content=structuredClone(project);for(const timeline of content.timelines){delete (timeline as unknown as Record<string,unknown>).selectedId;delete (timeline as unknown as Record<string,unknown>).selectedIds;}
@@ -80,6 +82,7 @@ export class ProductionWorkspaceCommands{
   if(command==='fillWorkspaceImageResult')return fillWorkspaceImageResult(c,root,e.id,data);
   if(command==='matchWorkspaceImage')return matchWorkspaceImage(c,root,e.id,data);
   const locked=await lockProductionWorkspace(c,root,e.id,data.workspaceId,data.expectedRevision);row=locked.row;const project=locked.project;
+  if(Object.hasOwn(workspaceDeliveryFields,command)){await executeWorkspaceDelivery(c,root,row,project,command,data);return readProductionWorkspace(c,e.id,root);}
   if(Object.hasOwn(workspaceExportFields,command)){await executeWorkspaceExport(c,root,row,project,runtime,command,data);return readProductionWorkspace(c,e.id,root);}
   if(Object.hasOwn(workspaceCaptionFields,command))return executeWorkspaceCaptionCommand(c,root,row,project,runtime,command,data);
   if(command.endsWith('WorkspaceNarration')){await executeWorkspaceNarration(c,root,row,project,runtime,command,data);return readProductionWorkspace(c,e.id,root);}
