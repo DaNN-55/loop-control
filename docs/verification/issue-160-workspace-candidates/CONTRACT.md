@@ -45,3 +45,11 @@ Owner Studio snapshot 在注册来源验证后调用 `validateWorkspaceCandidate
 ## T10/T13 新增镜头接续缺口
 
 2026-10-29 的随机夹具真实 Owner 检查：`editWorkspaceStructure(insert)` 返回200；该 `added-*` 镜头随后 `saveWorkspaceNarration` 返回400「配置校验未通过。」；原 scriptRevisionId/storyboardPackageId 均未变化。087 wrapper 仍调用旧 `public.save_shot_preparation_draft` 的冻结分镜 membership 门槛。T08 本次 existing-shot 候选测试不能证明新增 workspace-local shot 的首次 TTS。T13 须用受控的 workspace 局部 shot 输入/版本接原 Provider/授权/Worker fence，不可改写旧批准分镜或伪造旧审批。
+
+## 显式切换为口播主声
+
+source/none 下，准备候选仍不改变项目、实际路由或人工 epoch。Owner 必须点击「采用为口播主声」并选择时长政策；采用才创建或恢复 canonical TTS、解除主声静音、切换唯一实际主声。T06 的 BGM/SFX/ducking 和已有环境声实例保留。当前实际 TTS 已可听时，增益、淡入淡出及其它 native 属性原样保留；切换原声时沿用当前实际主声的 volume，none 时启用正常音量。
+
+共享 edit 的可选 mainVoice 保存准备时的 canonical 声音/音量/轨道静音和实际画面窗口身份。live payload 将该身份内的本期路径映射为已注册会话 URL；Owner token 保留相应 LC 身份。路由或窗口已变化时必须重新比较，不能借采用覆盖另一标签的新决定。新建 TTS 使用 `applyWorkspaceAudioMix` 的仅内部 `narrationDurationInFrames` 选项；普通 mixer 首次整窗检查不放宽。
+
+keep-target 对口播使用目标窗口与真实候选长度的较小值；超长明确裁尾，较短按真实音频结束，剩余画面无该段口播。use-candidate 使用完整真实音频长度。两者都不移动其它画面或补词、循环、变速。视频/非主声音频的通用 keep-target 仍拒绝短于目标的源。界面显示时差、目标窗口、短口播空余或完整口播延伸影响；字幕和交付元数据继续按实际已用 range/coverage 核对。

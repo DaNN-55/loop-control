@@ -15,7 +15,7 @@ const db=(value:unknown)=>Math.round(20*Math.log10(Math.max(.000001,Number(value
 function validDb(value:unknown,min=-60,max=12):value is number{return typeof value==='number'&&Number.isFinite(value)&&value>=min&&value<=max;}
 function metadata(item:Record<string,unknown>){return item.loopControlAudio as {workspaceId?:string;shotId?:string;kind?:string;sourceItemId?:string;sourceAssetId?:string;anchor?:string;offsetSeconds?:number}|undefined;}
 /** Only edits current native nodes. No preparation rows or hidden timeline are consulted. */
-export function applyWorkspaceAudioMix(project:OpenChatCutProject,edit:WorkspaceAudioEdit):OpenChatCutProject {
+export function applyWorkspaceAudioMix(project:OpenChatCutProject,edit:WorkspaceAudioEdit,options:{narrationDurationInFrames?:number}={}):OpenChatCutProject {
  if(!edit||typeof edit!=='object'||typeof edit.workspaceId!=='string'||!validDb(edit.gainDb))throw Error('混音输入无效。');
  const next=structuredClone(project);
  if(edit.kind==='sound'){
@@ -32,7 +32,7 @@ export function applyWorkspaceAudioMix(project:OpenChatCutProject,edit:Workspace
  const timeline=timelines[0],visuals=timeline.items.filter(i=>ids.has(String(i.id)));
  if(visuals.length!==ids.size||visuals.some(i=>!['video','image','text'].includes(String(i.kind))))throw Error('画面实例已变化，请刷新。');
  const narrationId=`workspace-narration-shot-${edit.shotId}`,sourceId=`workspace-source-shot-${edit.shotId}`,ambienceId=`workspace-ambience-shot-${edit.shotId}`;
- let narration=timeline.items.find(i=>i.id===narrationId);const narrationAsset=next.assets.find(a=>a.id===edit.narrationAssetId&&a.kind==='audio');if(!narration&&edit.mode==='tts'&&narrationAsset){const start=Math.min(...visuals.map(i=>Number(i.startFrame))),end=Math.max(...visuals.map(i=>Number(i.startFrame)+Number(i.durationInFrames)));if(narrationAsset.durationInFrames!==end-start)throw Error('画面范围与完整口播时长不同，请先明确调整。');narration={id:narrationId,kind:'audio',name:edit.shotId+' 口播',src:narrationAsset.src,sourceAssetId:narrationAsset.id,srcInFrame:0,startFrame:start,durationInFrames:end-start};}const oldSource=timeline.items.find(i=>i.id===sourceId),oldAmbience=timeline.items.find(i=>i.id===ambienceId);
+ let narration=timeline.items.find(i=>i.id===narrationId);const narrationAsset=next.assets.find(a=>a.id===edit.narrationAssetId&&a.kind==='audio');if(!narration&&edit.mode==='tts'&&narrationAsset){const start=Math.min(...visuals.map(i=>Number(i.startFrame))),end=Math.max(...visuals.map(i=>Number(i.startFrame)+Number(i.durationInFrames)));const frames=options.narrationDurationInFrames??end-start;if(!Number.isSafeInteger(frames)||frames<1||frames>narrationAsset.durationInFrames||options.narrationDurationInFrames===undefined&&narrationAsset.durationInFrames!==end-start)throw Error('画面范围与完整口播时长不同，请先明确调整。');narration={id:narrationId,kind:'audio',name:edit.shotId+' 口播',src:narrationAsset.src,sourceAssetId:narrationAsset.id,srcInFrame:0,startFrame:start,durationInFrames:frames};}const oldSource=timeline.items.find(i=>i.id===sourceId),oldAmbience=timeline.items.find(i=>i.id===ambienceId);
  // Muting every visual avoids duplicate source audio from multiple composition slots.
  for(const visual of visuals){visual.volume=0;visual.loopControlAudio={workspaceId:edit.workspaceId,shotId:edit.shotId,voiceMode:edit.mode};}
  const retained=timeline.items.filter(i=>![narrationId,sourceId,ambienceId].includes(String(i.id)));
