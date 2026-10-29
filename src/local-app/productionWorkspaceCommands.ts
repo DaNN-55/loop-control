@@ -3,7 +3,7 @@ import {workspaceAudioFields} from '../workspaceAudio.js';
 import {executeWorkspaceDelivery,readWorkspaceDeliveries} from './workspaceDeliveryCommands.js';
 import {workspaceDeliveryFields} from '../workspaceDelivery.js';
 import {migrateWorkspaceCaptionLanes} from '../workspaceCaptions.js';
-import {applyWorkspaceShotOperation,isWorkspaceShotOperation,synchronizeWorkspaceBindings,withWorkspaceShotMetadata} from '../workspaceShots.js';
+import {applyWorkspaceShotOperation,isWorkspaceShotOperation,synchronizeWorkspaceBindings,withWorkspaceShotMetadata,workspaceShotIdentity} from '../workspaceShots.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
 import {executeWorkspaceNarration,readWorkspaceNarration} from './workspaceNarration.js';
 import type {InputRuntime} from './episodeCommands.js';
@@ -111,7 +111,7 @@ export class ProductionWorkspaceCommands{
    await updateWorkspaceProject(c,root,row,project,row.bindings);return readProductionWorkspace(c,e.id,root);
   }
   if(!runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 未配置。');const config=await runtime.studioRuntime();
-  const validate=(doc:OpenChatCutProject)=>validateWorkspaceProject(c,root,e.id,doc,config);
+  const validate=(doc:OpenChatCutProject)=>validateWorkspaceProject(c,root,e.id,doc,config,project);
   if(command==='openWorkspaceStudio'){
    if((await c.query("SELECT 1 FROM local_identity.workspace_deliveries d JOIN public.tasks t ON t.id=d.task_id WHERE d.workspace_id=$1 AND t.status IN ('ready','running') LIMIT 1",[row.id])).rowCount)throw new ConfigurationError(409,'交付正在排队或校验，请等待结果后再编辑。');
    const editable=migrateWorkspaceCaptionLanes(withWorkspaceShotMetadata(project,row.bindings)),paths=[...usedWorkspaceContent(editable).paths];const opened=await openOpenChatCutDraftStudio(root,e.id,editable,paths,hash(JSON.stringify({id:row.id,scriptRevisionId:row.script_revision_id,storyboardPackageId:row.storyboard_package_id})),config,validate);
@@ -162,8 +162,10 @@ export async function readWorkspaceVersion(c:PoolClient,root:string,episodeId:st
  return readWorkspaceProject(root,row);
 }
 
-export async function validateWorkspaceProject(c:PoolClient,root:string,episodeId:string,doc:OpenChatCutProject,config:OpenChatCutRuntimeConfig){
-   const sources=usedWorkspaceContent(doc).paths;
+export async function validateWorkspaceProject(c:PoolClient,root:string,episodeId:string,doc:OpenChatCutProject,config:OpenChatCutRuntimeConfig,previousProject?:OpenChatCutProject){
+   const used=usedWorkspaceContent(doc),effective=(item:Record<string,unknown>)=>item.kind==='video'||item.kind==='image';
+   if(!used.items.some(effective)&&((previousProject&&usedWorkspaceContent(previousProject).items.some(effective))||!used.items.some(item=>item.kind==='text'&&workspaceShotIdentity(item))))throw new ConfigurationError(409,'不能删除最后一个有效镜头；请在当前编辑器中恢复画面后重试保存。');
+   const sources=used.paths;
    for(const path of sources)await resolveWorkspaceSource(c,root,episodeId,path);
    if(!(await inspectOpenChatCutProjectWithRuntime(doc,config)).readable)throw new ConfigurationError(409,'当前草稿不能由 Studio 读取。');
 }
