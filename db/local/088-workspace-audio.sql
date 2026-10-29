@@ -30,8 +30,8 @@ DECLARE prep local_identity.workspace_audio_preparations; workspace local_identi
   p_source:=previous.input_snapshot->'workspace_source';
  END IF;
  IF prep.kind='source' THEN
-  IF p_source IS NULL OR p_source->>'sha256' IS DISTINCT FROM prep.source_sha256 OR coalesce(p_source->>'relativePath','') NOT LIKE 'episodes/'||prep.episode_id::text||'/%' THEN RAISE EXCEPTION 'Current native source required' USING ERRCODE='22023'; END IF;
-  frozen:=jsonb_build_object('capability','embedded_audio_extraction','workspace_source',p_source,'storyboard_review_package_id',workspace.storyboard_package_id,'media',jsonb_build_object('adapter','ffmpeg_extract_audio','embedded_audio',jsonb_build_object('source_relative_path',p_source->>'relativePath','duration_seconds',prep.duration_seconds-0.04)),'input_artifacts',jsonb_build_array(jsonb_build_object('artifactType','source_video','relativePath',p_source->>'relativePath','sha256',p_source->>'sha256','fileSize',(p_source->>'fileSize')::bigint)),'allowed_tools',jsonb_build_array('read','write'));
+  IF p_source IS NULL OR p_source->>'sha256' IS DISTINCT FROM prep.source_sha256 OR coalesce(p_source->>'startSeconds','') !~ '^[0-9]+([.][0-9]+)?$' OR (p_source->>'startSeconds')::numeric>7200 OR (p_source->>'durationSeconds')::numeric IS DISTINCT FROM prep.duration_seconds OR coalesce(p_source->>'relativePath','') NOT LIKE 'episodes/'||prep.episode_id::text||'/%' THEN RAISE EXCEPTION 'Current native source required' USING ERRCODE='22023'; END IF;
+  frozen:=jsonb_build_object('capability','embedded_audio_extraction','workspace_source',p_source,'storyboard_review_package_id',workspace.storyboard_package_id,'media',jsonb_build_object('adapter','ffmpeg_extract_audio','embedded_audio',jsonb_build_object('source_relative_path',p_source->>'relativePath','duration_seconds',prep.duration_seconds,'start_seconds',(p_source->>'startSeconds')::numeric)),'input_artifacts',jsonb_build_array(jsonb_build_object('artifactType','source_video','relativePath',p_source->>'relativePath','sha256',p_source->>'sha256','fileSize',(p_source->>'fileSize')::bigint)),'allowed_tools',jsonb_build_array('read','write'));
  ELSE
   config:=policy->'soundtrack';executor:=config->'executor';
   IF config->>'execution_path' IS DISTINCT FROM 'external' OR executor->>'provider' IS DISTINCT FROM 'freesound' OR executor->>'adapter' IS DISTINCT FROM 'freesound_preview' OR executor->>'model' IS DISTINCT FROM 'freesound-preview-v1' THEN RAISE EXCEPTION 'Selected Freesound execution required' USING ERRCODE='22023'; END IF;
@@ -71,3 +71,18 @@ DECLARE track public.audio_tracks; draft public.shot_preparation_drafts; BEGIN
 END $$;
 REVOKE ALL ON FUNCTION local_identity.use_workspace_source_track(uuid,uuid,text,uuid) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION local_identity.use_workspace_source_track(uuid,uuid,text,uuid) TO loop_owner;
+
+-- Activating the legacy claim/connection flag must not resurrect its old
+-- implicit media planner. Native workspaces create tasks through explicit Owner
+-- preparation/matching commands; legacy Episodes retain their existing planner.
+ALTER FUNCTION local_identity.plan_input_tasks(uuid) RENAME TO plan_input_tasks_before_workspace_audio;
+REVOKE ALL ON FUNCTION local_identity.plan_input_tasks_before_workspace_audio(uuid) FROM PUBLIC,loop_worker,loop_app,loop_owner,loop_anonymous;
+CREATE FUNCTION local_identity.plan_input_tasks(p_episode_id uuid DEFAULT NULL) RETURNS SETOF public.tasks LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$
+DECLARE candidate record; BEGIN
+ IF local_identity.actor_role() IS DISTINCT FROM 'service_role' THEN RAISE EXCEPTION 'Worker service role required' USING ERRCODE='42501'; END IF;
+ FOR candidate IN SELECT i.episode_id FROM local_identity.input_episodes i WHERE i.enabled AND (p_episode_id IS NULL OR i.episode_id=p_episode_id) AND NOT EXISTS(SELECT 1 FROM local_identity.production_workspaces w WHERE w.episode_id=i.episode_id) LOOP
+  RETURN QUERY SELECT * FROM local_identity.plan_input_tasks_before_workspace_audio(candidate.episode_id);
+ END LOOP;
+END $$;
+REVOKE ALL ON FUNCTION local_identity.plan_input_tasks(uuid) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION local_identity.plan_input_tasks(uuid) TO loop_worker;

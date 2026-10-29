@@ -3,7 +3,7 @@ export type WorkspaceVoiceMode='source'|'tts'|'none';
 export interface WorkspaceVoiceEdit {kind:'voice';workspaceId:string;shotId:string;visualItemIds:string[];mode:WorkspaceVoiceMode;gainDb:number;ambienceGainDb:number|null;sourceItemId?:string;sourceAssetId?:string;narrationAssetId?:string}
 export interface WorkspaceSoundEdit {kind:'sound';workspaceId:string;itemId:string;gainDb:number;duckDepthDb:number;remove?:boolean}
 export type WorkspaceAudioEdit=WorkspaceVoiceEdit|WorkspaceSoundEdit;
-export interface WorkspaceAudioMix {voices:Array<{shotId:string;mode:WorkspaceVoiceMode;gainDb:number;ambienceGainDb:number|null;sourceItemId:string|null;sourceAssetId:string|null}>;sounds:Array<{itemId:string;kind:'bgm'|'sfx';gainDb:number;duckDepthDb:number;startSeconds:number;durationSeconds:number}>}
+export interface WorkspaceAudioMix {voices:Array<{shotId:string;mode:WorkspaceVoiceMode;gainDb:number;ambienceGainDb:number|null;sourceItemId:string|null;sourceAssetId:string|null;coverage?:'full'|'partial'|'none';startSeconds?:number|null;durationSeconds?:number|null;shotDurationSeconds?:number;sourceStartSeconds?:number|null;sourceLabel?:string|null;alignmentReady?:boolean}>;sounds:Array<{itemId:string;kind:'bgm'|'sfx';gainDb:number;duckDepthDb:number;startSeconds:number;durationSeconds:number}>}
 export const workspaceAudioFields:Record<string,string[]>={
  prepareWorkspaceAudio:['episodeId','workspaceId','expectedRevision','preparationId','kind','query','description','durationSeconds','shotId','sourceItemId','anchor','offsetSeconds','materialRevisionId','retry'],
  adoptWorkspaceAudio:['episodeId','workspaceId','expectedRevision','preparationId'],
@@ -44,9 +44,9 @@ export function applyWorkspaceAudioMix(project:OpenChatCutProject,edit:Workspace
   const prior=edit.mode==='source'?oldSource:oldAmbience,sourceItemId=edit.sourceItemId??metadata(prior??{})?.sourceItemId,source=visuals.find(i=>i.id===sourceItemId),assetId=edit.sourceAssetId??metadata(prior??{})?.sourceAssetId;
   const asset=next.assets.find(a=>a.id===assetId&&a.kind==='audio');
   if(!source||source.kind!=='video'||!asset)throw Error('请先准备并选择本镜的原片音轨。');
-  const provenance=(asset as unknown as {loopControlAudioSource?:{videoAssetId?:string}}).loopControlAudioSource;if(provenance&&provenance.videoAssetId!==source.sourceAssetId)throw Error('画面来源已变化，请重新提取当前原片声音。');
-  const start=Number(source.startFrame),duration=Number(source.durationInFrames),srcIn=Number(source.srcInFrame??0),rate=Number(source.playbackRate??1);
-  if(!(rate>0)||srcIn+duration*rate>asset.durationInFrames+1)throw Error('原声音轨短于当前画面使用窗口。');
+  const provenance=(asset as unknown as {loopControlAudioSource?:{videoAssetId?:string;sourceInFrame?:number;sourceFrameRate?:number}}).loopControlAudioSource;if(provenance&&provenance.videoAssetId!==source.sourceAssetId)throw Error('画面来源已变化，请重新提取当前原片声音。');
+  const start=Number(source.startFrame),duration=Number(source.durationInFrames),baseSeconds=Number(provenance?.sourceInFrame??0)/Number(provenance?.sourceFrameRate??timeline.fps),srcIn=Number(source.srcInFrame??0)-Math.round(baseSeconds*timeline.fps),rate=Number(source.playbackRate??1);
+  if(!(rate>0)||srcIn<0||srcIn+duration*rate>asset.durationInFrames+1)throw Error('原声音轨短于当前画面使用窗口。');
   const id=edit.mode==='source'?sourceId:ambienceId,track=edit.mode==='source'?'workspace-main-voice':'workspace-ambience';
   retained.push({id,kind:'audio',name:edit.shotId+(edit.mode==='source'?' 原声':' 环境声'),track,src:asset.src,sourceAssetId:asset.id,startFrame:start,durationInFrames:duration,srcInFrame:srcIn,playbackRate:rate,volume:gain(edit.mode==='source'?edit.gainDb:edit.ambienceGainDb!),loopControlAudio:{workspaceId:edit.workspaceId,shotId:edit.shotId,sourceItemId:source.id,sourceAssetId:asset.id}});
  }
@@ -57,7 +57,7 @@ export function applyWorkspaceAudioMix(project:OpenChatCutProject,edit:Workspace
 export function readWorkspaceAudioMix(project:OpenChatCutProject,shots:Record<string,string[]>):WorkspaceAudioMix {
  const items=project.timelines.flatMap(t=>t.items),voices=Object.keys(shots).map(shotId=>{
   const tts=items.find(i=>i.id===`workspace-narration-shot-${shotId}`),source=items.find(i=>i.id===`workspace-source-shot-${shotId}`),ambience=items.find(i=>i.id===`workspace-ambience-shot-${shotId}`),active=tts??source;
-  return{shotId,mode:(tts?'tts':source?'source':'none') as WorkspaceVoiceMode,gainDb:active?db(active.volume):0,ambienceGainDb:ambience?db(ambience.volume):null,sourceItemId:metadata(source??ambience??{})?.sourceItemId??null,sourceAssetId:metadata(source??ambience??{})?.sourceAssetId??null};
+  const route=resolveWorkspaceMainVoice(project,shotId);return{...route.window,shotId,mode:(tts?'tts':source?'source':'none') as WorkspaceVoiceMode,gainDb:active?db(active.volume):0,ambienceGainDb:ambience?db(ambience.volume):null,sourceItemId:metadata(source??ambience??{})?.sourceItemId??null,sourceAssetId:metadata(source??ambience??{})?.sourceAssetId??null};
  });
  const sounds=project.timelines.flatMap(t=>t.items.filter(i=>['bgm','sfx'].includes(metadata(i)?.kind??'')).map(i=>({itemId:String(i.id),kind:metadata(i)!.kind as 'bgm'|'sfx',gainDb:db(i.volume),duckDepthDb:Math.abs(Number(t.tracks[String(i.track)]?.audioRouting?.duckDepthDb??0)),startSeconds:Number(i.startFrame)/t.fps,durationSeconds:Number(i.durationInFrames)/t.fps})));
  return{voices,sounds};
@@ -66,8 +66,12 @@ export function readWorkspaceAudioMix(project:OpenChatCutProject,shots:Record<st
 /** A stable explicit none marker prevents legacy draft fallback from reviving muted speech. */
 export function resolveWorkspaceMainVoice(project:OpenChatCutProject,shotId:string){
  const timeline=project.timelines.find(t=>t.items.some(i=>metadata(i)?.shotId===shotId||String(i.id).startsWith(`shot-${shotId}-`)));
- if(!timeline)return{item:undefined,explicitRoute:false};
+ if(!timeline)return{item:undefined,explicitRoute:false,coverage:'none' as const,alignmentReady:false,window:{coverage:'none' as const}};
  const audible=(i:Record<string,unknown>)=>Number(i.volume??1)>0&&(timeline.tracks[String(i.track)] as {muted?:boolean}|undefined)?.muted!==true;
  const item=timeline.items.find(i=>i.id===`workspace-source-shot-${shotId}`&&audible(i))??timeline.items.find(i=>i.id===`workspace-narration-shot-${shotId}`&&audible(i));
- return{item,explicitRoute:!!item||timeline.items.some(i=>metadata(i)?.shotId===shotId&&typeof (i.loopControlAudio as {voiceMode?:unknown}).voiceMode==='string')};
+ const visuals=timeline.items.filter(i=>['video','image','text'].includes(String(i.kind))&&((i.loopControlShot as {shotId?:string}|undefined)?.shotId===shotId||String(i.id).startsWith(`shot-${shotId}-`)||metadata(i)?.shotId===shotId));
+ const shotStart=Math.min(...visuals.map(i=>Number(i.startFrame))),shotEnd=Math.max(...visuals.map(i=>Number(i.startFrame)+Number(i.durationInFrames))),coverage=!item?'none':Number(item.startFrame)<=shotStart&&Number(item.startFrame)+Number(item.durationInFrames)>=shotEnd?'full':'partial';
+ const asset=project.assets.find(a=>a.id===item?.sourceAssetId),source=visuals.find(i=>i.id===metadata(item??{})?.sourceItemId),provenance=(asset as unknown as {loopControlAudioSource?:{sourceInFrame?:number;sourceFrameRate?:number}}|undefined)?.loopControlAudioSource,sourceStart=item?Number(provenance?.sourceInFrame??0)/Number(provenance?.sourceFrameRate??timeline.fps)+Number(item.srcInFrame??0)/timeline.fps:null;
+ const alignmentReady=!!item&&coverage==='full'&&Number(item.playbackRate??1)===1&&Number(item.srcInFrame??0)===0&&!!asset&&Math.abs(asset.durationInFrames-Number(item.durationInFrames))<=2;
+ return{item,explicitRoute:!!item||timeline.items.some(i=>metadata(i)?.shotId===shotId&&typeof (i.loopControlAudio as {voiceMode?:unknown}).voiceMode==='string'),coverage:coverage as 'full'|'partial'|'none',alignmentReady,window:{coverage:coverage as 'full'|'partial'|'none',startSeconds:item?Number(item.startFrame)/timeline.fps:null,durationSeconds:item?Number(item.durationInFrames)/timeline.fps:null,shotDurationSeconds:Number.isFinite(shotEnd-shotStart)?(shotEnd-shotStart)/timeline.fps:0,sourceStartSeconds:sourceStart,sourceLabel:source?String(source.name??shotId):null,alignmentReady}};
 }

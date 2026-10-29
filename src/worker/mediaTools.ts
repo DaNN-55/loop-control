@@ -7,14 +7,15 @@ import {promisify} from 'node:util';
 import {durationToleranceSeconds,videoDurationMeetsMinimum} from './durationDecision.js';
 async function runCommandWithOutput(command:string,args:string[]){return promisify(execFile)(command,args,{timeout:300000,maxBuffer:4*1024*1024});}
 async function runCommand(command:string,args:string[]){await runCommandWithOutput(command,args);}
-export async function extractMp3Artifact(sourcePath: string, minimumDurationSeconds: number): Promise<Uint8Array> {
+export async function extractMp3Artifact(sourcePath: string, minimumDurationSeconds: number,startSeconds?:number): Promise<Uint8Array> {
+  if(startSeconds!==undefined&&(!Number.isFinite(startSeconds)||startSeconds<0||startSeconds>7200||!Number.isFinite(minimumDurationSeconds)||minimumDurationSeconds<=0||minimumDurationSeconds>7200))throw Error("原声提取窗口无效。");
   const directory = await mkdtemp(join(tmpdir(), "loop-control-audio-"));
   const outputPath = join(directory, "derived.mp3");
   try {
-    await runCommand("ffmpeg", ["-nostdin", "-v", "error", "-i", sourcePath, "-vn", "-codec:a", "libmp3lame", "-q:a", "2", outputPath]);
+    await runCommand("ffmpeg", ["-nostdin", "-v", "error", "-i", sourcePath,...(startSeconds!==undefined?["-ss",String(startSeconds),"-t",String(minimumDurationSeconds)]:[]), "-vn", "-codec:a", "libmp3lame", "-q:a", "2", outputPath]);
     const { stdout } = await runCommandWithOutput("ffprobe", ["-v", "error", "-show_entries", "format=duration", "-of", "default=noprint_wrappers=1:nokey=1", outputPath]);
     const duration = Number(stdout.trim());
-    if (!Number.isFinite(duration) || duration < minimumDurationSeconds) throw new Error(`派生音频不可播放或时长不足：${duration || "未知"} 秒。`);
+    if (!Number.isFinite(duration) || (startSeconds===undefined?duration < minimumDurationSeconds:duration+.04<minimumDurationSeconds||duration>minimumDurationSeconds+.15)) throw new Error(`派生音频不可播放或时长不足：${duration || "未知"} 秒。`);
     return new Uint8Array(await readFile(outputPath));
   } finally {
     await rm(directory, { recursive: true, force: true });

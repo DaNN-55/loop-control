@@ -6,9 +6,9 @@
 
 `src/workspaceAudio.ts` 提供受限公共接口 `applyWorkspaceAudioMix(project, edit)`、`readWorkspaceAudioMix(project, shots)`、`resolveWorkspaceMainVoice(project, shotId)`。主声 canonical 为 `workspace-narration-shot-${shotId}` 或 `workspace-source-shot-${shotId}`，环境声为 `workspace-ambience-shot-${shotId}`。同 shot 的视觉实例全部静音；并行槽不会把完整口播复制多次。明确 none 删除主声和环境声，保留视觉实例中的稳定 `{workspaceId,shotId,voiceMode}` 标记，字幕 resolver 不会回退到旧 draft 音轨。
 
-source 由 Owner 指定实际原生视频实例。真实 `extract_embedded_audio / ffmpeg_extract_audio` 任务提取完整原片，沿原 Worker lease、attempt output、result 和 `audio_tracks` 登记，再按实际视频源入点、速度和使用窗口建立一条 source 主声。准备不会伪造旧 `video_ready` 或准备素材。多画面构图使用明确选中的原片音轨，不将多个槽声音叠加。切回 TTS 可从本期已采用的原生素材池恢复完整 canonical 主声；时长与 shot 聚合窗口不符时明确阻塞。
+source 由 Owner 指定实际原生视频实例。真实 `extract_embedded_audio / ffmpeg_extract_audio` 任务只提取 Owner 所选实例的源窗口，沿原 Worker lease、attempt output、result 和 `audio_tracks` 登记，native 从该裁切音轨的零入点建立唯一 source 主声。请求冻结原片 SHA/大小、源入点、原生 fps、窗口和速度；采用前再次比较当前实例。旧任务未提供可选 `start_seconds` 时仍完整提取原片。准备不会伪造旧 `video_ready` 或准备素材。多画面构图使用明确选中的原片音轨，不将多个槽声音叠加。切回 TTS 可从本期已采用的原生素材池恢复完整 canonical 主声；时长与 shot 聚合窗口不符时明确阻塞。
 
-`loopControlAudio` 仅携带稳定 ID、类型、锚点/偏移，不携带自定义路径。实际 `src/sourceAssetId` 仍由 native doc 持有，来源由 `resolveWorkspaceSource` 验证本期登记、SHA、大小和文件。TTS 默认原片静音，显式环境声限 -60～-12 dB。
+`loopControlAudio` 携带稳定 ID、类型、锚点/偏移；裁切音轨资产另保存原视频 asset ID、SHA、源入点帧数和 fps 的来源关系，不携带自定义路径。实际 `src/sourceAssetId` 仍由 native doc 持有，来源由 `resolveWorkspaceSource` 验证本期登记、SHA、大小和文件。TTS 默认原片静音，显式环境声限 -60～-12 dB。
 
 ## Owner 命令
 
@@ -33,8 +33,14 @@ source 由 Owner 指定实际原生视频实例。真实 `extract_embedded_audio
 
 ## 相关消费者
 
-- T07：实际可听 source 优先，其次 canonical TTS；explicit none 不回退 draft。实际 source 不能冒用旧 TTS 正文核对 follow_tts；须切换独立字幕或恢复 TTS。
+- T07：`resolveWorkspaceMainVoice` 返回 actual `coverage=full/partial/none`、`alignmentReady` 和真实主声窗口。仅覆盖部分 shot、非零音轨入点、裁切/变速或旧整片轨无法匹配使用窗时，整段声学对齐返回明确 409；独立字幕仍可手工校时，但不把它登记成完整语音对齐证据。实际可听 source 优先，其次 canonical TTS；explicit none 不回退 draft。实际 source 不能冒用旧 TTS 正文核对 follow_tts；须切换独立字幕或恢复 TTS。
 - T08：口播 target 缺失时保持显式恢复阻塞，不悄悄将 source/none 切回 TTS；已存在的 canonical 音轨采用继续保留 item gain/track。
 - T12：使用实际 native audio item/sourceAssetId 查询登记 audio_tracks；没有来源正文的 source 维持 unknown，不将 mutable narration draft 作为已用正文。
 
 实际 Worker、原生渲染、频谱与浏览器证据见 REPORT。受控正弦波只能证明路由、时序、增益和闪避，不能证明语音或音乐质量。
+
+## T13 普通入口接续
+
+088 在真实 `loop_worker.plan` seam 上排除已有 `production_workspaces` 的隐式旧媒体规划；内部旧函数私有，非工作空间 Episode 的原路径保留。新四步流程的提前生成必须由明确匹配/授权动作创建任务，不能靠打开页面或启动旧 planner。旧任务晚回报的业务失效由 T13 另行收口。
+
+source 不自动拼接其他串行范围。Owner 选择一个实际 video instance，状态与 UI 展示该实例、源入点和使用窗口；并行画面不复制主声。`coverage=partial` 不是整 shot 原声覆盖，`alignmentReady=false` 不是声学对齐可用。整段 TTS、SFX 和原生手工音频编辑继续按实际文档处理。
