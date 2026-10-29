@@ -1,4 +1,5 @@
 // @vitest-environment node
+import {workspaceTestMedia} from './workspaceTestMedia.fixture';
 import {it,expect} from 'vitest';
 import {readFile,writeFile,unlink,mkdir,copyFile} from 'node:fs/promises';
 import {setTimeout as pause} from 'node:timers/promises';
@@ -30,14 +31,14 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('real Worker verifies exa
  const approved=w.exports[0],approvedProject=approved.project,videoBytes=await readFile(join(f.assetRoot,approved.artifact.relativePath));
 
  const opened=await send('openWorkspaceStudio');expect(opened.status,JSON.stringify(opened.body)).toBe(200);w=opened.body.productionWorkspace;
- expect((await send('prepareWorkspaceDelivery',{exportId:approved.id,expectedExportSha256:approved.artifact.sha256,expectedContentSha256:w.contentSha256,title:'活跃编辑不可交付',description:'',tags:[],coverBase64:(await readFile('/private/tmp/loop-152-orchestration/media/still-striped.png')).toString('base64')})).status).toBe(409);
+ expect((await send('prepareWorkspaceDelivery',{exportId:approved.id,expectedExportSha256:approved.artifact.sha256,expectedContentSha256:w.contentSha256,title:'活跃编辑不可交付',description:'',tags:[],coverBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')})).status).toBe(409);
  const base=join(f.assetRoot,`episodes/${f.episode}/openchatcut-work/current/runtime`);let path=join(base,'project-store-v1.json'),store:any,doc:any;
  try{store=JSON.parse(await readFile(path,'utf8'));doc=store.entries[`project:${w.project.projectId}`];}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;path=join(base,'project-store-v1',`${encodeURIComponent(`project:${w.project.projectId}`)}.json`);doc=JSON.parse(await readFile(path,'utf8'));}
  doc.timelines[0].selectedId=w.clips[0].itemId;doc.timelines[0].selectedIds=[w.clips[0].itemId];await writeFile(path,JSON.stringify(store??doc));
  const saved=await send('saveWorkspaceStudio',{workspaceRelativePath:opened.body.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body.productionWorkspace;
  w=(await send('closeWorkspaceStudio')).body;expect(w.revision).toBe(approved.projectContentVersion);expect(w.project.sha256).not.toBe(approvedProject.sha256);expect(w.exports[0].confirmed).toBe(true);
  const formWorkspace=structuredClone(w);
- const input={exportId:approved.id,expectedExportSha256:approved.artifact.sha256,expectedContentSha256:w.contentSha256,title:'交付验收',description:'真实文件',tags:['测试'],coverBase64:(await readFile('/private/tmp/loop-152-orchestration/media/still-striped.png')).toString('base64')};
+ const input={exportId:approved.id,expectedExportSha256:approved.artifact.sha256,expectedContentSha256:w.contentSha256,title:'交付验收',description:'真实文件',tags:['测试'],coverBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')};
  expect((await send('prepareWorkspaceDelivery',{...input,expectedExportSha256:'0'.repeat(64)})).status).toBe(409);
  expect((await send('prepareWorkspaceDelivery',{...input,coverBase64:''})).status).toBe(400);
  let r=await send('prepareWorkspaceDelivery',input);expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;expect(w.deliveries[0].status).toBe('ready');expect(w.deliveries[0].verified).toBe(false);
@@ -91,7 +92,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('a queued package cannot 
  for(const clip of w.clips){w=(await send('saveWorkspaceCaptions',{clipId:clip.id,captionContract:defaultShotCaptionContract(clip.text,'independent',false)})).body;}
  w=(await send('exportWorkspace')).body;expect(w.exports[0].status).toBe('ready');
  w=(await send('confirmWorkspaceExport',{exportId:w.exports[0].id,expectedExportSha256:w.exports[0].artifact.sha256,expectedContentSha256:w.contentSha256})).body;
- const input={exportId:w.exports[0].id,expectedExportSha256:w.exports[0].artifact.sha256,expectedContentSha256:w.contentSha256,title:'身份锁定',description:'',tags:[],coverBase64:(await readFile('/private/tmp/loop-152-orchestration/media/still-striped.png')).toString('base64')};
+ const input={exportId:w.exports[0].id,expectedExportSha256:w.exports[0].artifact.sha256,expectedContentSha256:w.contentSha256,title:'身份锁定',description:'',tags:[],coverBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')};
  const queued=await send('prepareWorkspaceDelivery',input);expect(queued.status,JSON.stringify(queued.body)).toBe(200);w=queued.body;const delivery=w.deliveries[0];
  const task=(await nativeWorkerPort(worker).rpc('claim_next_worker_task',{p_worker_capacity:2}))[0] as any;
  w=(await send('exportWorkspace')).body;expect(w.exports[0].id).not.toBe(input.exportId);expect(w.exports[0].confirmed).toBe(false);
@@ -109,7 +110,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('delivery records the use
  let r=await send('saveWorkspaceNarration',{clipId:clip.id,mode:'tts',text:sourceText});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;
  await send('confirmWorkspaceNarration',{clipId:clip.id});const queued=await send('generateWorkspaceNarration',{clipId:clip.id});expect(queued.status,JSON.stringify(queued.body)).toBe(200);expect((await f.execute(queued.body.narration[0].taskId))?.status).toBe('completed');
  w=(await send('refreshWorkspaceNarration')).body;
- const uploaded=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'still.png',mimeType:'image/png',contentBase64:(await readFile('/private/tmp/loop-152-orchestration/media/still-striped.png')).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});expect(uploaded.status,JSON.stringify(uploaded.body)).toBe(200);
+ const uploaded=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'still.png',mimeType:'image/png',contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});expect(uploaded.status,JSON.stringify(uploaded.body)).toBe(200);
  for(const visual of w.clips){r=await send('matchWorkspaceImage',{clipId:visual.id,materialRevisionId:uploaded.body.id,usage:'still',durationSeconds:visual.shotId===clip.shotId?2.4:2,fit:'contain',focusX:.5,focusY:.5});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;}
  for(const visual of w.clips)w=(await send('saveWorkspaceCaptions',{clipId:visual.id,captionContract:defaultShotCaptionContract(visual.text,'independent',false)})).body;
  const opened=await send('openWorkspaceStudio');expect(opened.status).toBe(200);w=opened.body.productionWorkspace;
@@ -118,7 +119,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('delivery records the use
  r=await send('saveWorkspaceStudio',{workspaceRelativePath:opened.body.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body.productionWorkspace;w=(await send('closeWorkspaceStudio')).body;
  r=await send('saveWorkspaceNarration',{clipId:clip.id,mode:'tts',text:'尚未采用的新草稿，不应替换实际说词。'});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;
  w=(await send('exportWorkspace')).body;expect(w.exports[0].status,JSON.stringify(w.exports[0])).toBe('ready');w=(await send('confirmWorkspaceExport',{exportId:w.exports[0].id,expectedExportSha256:w.exports[0].artifact.sha256,expectedContentSha256:w.contentSha256})).body;
- r=await send('prepareWorkspaceDelivery',{exportId:w.exports[0].id,expectedExportSha256:w.exports[0].artifact.sha256,expectedContentSha256:w.contentSha256,title:'裁切正文证据',description:'',tags:[],coverBase64:(await readFile('/private/tmp/loop-152-orchestration/media/still-striped.png')).toString('base64')});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;
+ r=await send('prepareWorkspaceDelivery',{exportId:w.exports[0].id,expectedExportSha256:w.exports[0].artifact.sha256,expectedContentSha256:w.contentSha256,title:'裁切正文证据',description:'',tags:[],coverBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64')});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;
  const task=(await nativeWorkerPort(worker).rpc('claim_next_worker_task',{p_worker_capacity:2}))[0] as any;expect(task.task_id).toBe(w.deliveries[0].taskId);const result=await runWorkspaceDeliveryProcess(f,task);expect(result.status,JSON.stringify(result)).toBe('completed');
  const metadata=result.artifacts.find((a:any)=>a.artifactType==='metadata'),url=f.origin+`/_local-artifact?episode=${f.episode}&path=${encodeURIComponent(metadata.relativePath)}&sha256=${metadata.sha256}`,download=await fetch(url,{headers:{Cookie:'loop_owner_session='+f.token}});expect(download.status).toBe(200);const json=await download.json(),record=json.narration.find((n:any)=>n.shotId===clip.shotId);
  expect(record.sourceText).toBe(sourceText);expect(record.adoptedText).toBeNull();expect(record.textCoverage).toBe('partial_or_retimed_unverified');expect(record.windows[0]).toMatchObject({srcInFrame:12,sourceDurationSeconds:2,playbackRate:1});expect(record.sourceDiffersFromBaseline).toBe(true);

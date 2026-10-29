@@ -1,4 +1,5 @@
 // @vitest-environment node
+import {workspaceTestMedia} from './workspaceTestMedia.fixture';
 import {it,expect} from 'vitest';
 import {writeFile,readFile} from 'node:fs/promises';
 import {join} from 'node:path';
@@ -55,7 +56,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('both first narration tra
   for(const clip of w.clips){const base={workspaceId:w.id,expectedRevision:w.revision,clipId:clip.id};await f.request('saveWorkspaceNarration',{...base,mode:'tts',text:clip.text});await f.request('confirmWorkspaceNarration',base);const q=await f.request('generateWorkspaceNarration',base);expect(q.status,JSON.stringify(q.body)).toBe(200);jobs.push(q.body.narration.find((n:any)=>n.clipId===clip.id).taskId);}
   for(const job of jobs)expect((await f.execute(job))?.status).toBe('completed');
   const before=await f.read();
-  const imported=await f.request('importMaterial',{sourceKind:'file',sourcePath:'four-second.mp4',contentBase64:(await readFile('/private/tmp/loop-152-orchestration/media/landscape-red-blue.mp4')).toString('base64'),materialType:'video',mimeType:'video/mp4',isMainScript:false,materialPurpose:'a_roll'});
+  const imported=await f.request('importMaterial',{sourceKind:'file',sourcePath:'four-second.mp4',contentBase64:(await readFile(workspaceTestMedia('landscape-red-blue.mp4'))).toString('base64'),materialType:'video',mimeType:'video/mp4',isMainScript:false,materialPurpose:'a_roll'});
   expect(imported.status,JSON.stringify(imported.body)).toBe(200);
   const matched=await f.request('matchWorkspaceMaterial',{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id,materialRevisionId:imported.body.id});expect(matched.status,JSON.stringify(matched.body)).toBe(200);w=matched.body;
   expect(w.narration[1].inputFingerprint).toBe(before.narration[1].inputFingerprint);expect(w.narration[1].audioTrackId).toBe(before.narration[1].audioTrackId);
@@ -80,7 +81,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('manual narration and dis
   const match=await f.request('matchWorkspaceMaterial',{...base,materialRevisionId:f.material});expect(match.status).toBe(200);w=match.body;const current={...base,expectedRevision:w.revision};
   await f.request('saveWorkspaceNarration',{...current,mode:'tts',text:'实际口播长于短画面，不允许循环填充。'});await f.request('confirmWorkspaceNarration',current);const q=await f.request('generateWorkspaceNarration',current);expect((await f.execute(q.body.narration[0].taskId))?.status).toBe('completed');
   const conflict=await f.request('refreshWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision});expect(conflict.status,JSON.stringify(conflict.body)).toBe(409);expect((await f.read()).project.sha256).toBe(w.project.sha256);
-  const imported=await f.request('importMaterial',{sourceKind:'file',sourcePath:'manual.mp3',contentBase64:(await readFile('/private/tmp/loop-152-orchestration/media/controlled-narration-tone.mp3')).toString('base64'),materialType:'audio',mimeType:'audio/mpeg',isMainScript:false,materialPurpose:'narration'});expect(imported.status,JSON.stringify(imported.body)).toBe(200);
+  const imported=await f.request('importMaterial',{sourceKind:'file',sourcePath:'manual.mp3',contentBase64:(await readFile(workspaceTestMedia('controlled-narration-tone.mp3'))).toString('base64'),materialType:'audio',mimeType:'audio/mpeg',isMainScript:false,materialPurpose:'narration'});expect(imported.status,JSON.stringify(imported.body)).toBe(200);
   const registered=await f.request('registerManualMedia',{materialRevisionId:imported.body.id,targetId:w.clips[1].shotId,storyboardReviewPackageId:f.board,kind:'narration'});expect(registered.status,JSON.stringify(registered.body)).toBe(200);
   const registeredTrack=(await f.c.query('SELECT id FROM public.audio_tracks WHERE episode_id=$1 AND source_task_id=$2',[f.episode,registered.body.id])).rows[0];expect(registeredTrack).toBeTruthy();
   const manual={...current,clipId:w.clips[1].id};const saved=await f.request('saveWorkspaceNarration',{...manual,mode:'manual',text:'Owner 人工口播。',audioTrackId:registeredTrack.id});expect(saved.status,JSON.stringify(saved.body)).toBe(200);await f.request('confirmWorkspaceNarration',manual);
@@ -93,7 +94,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('manual narration and dis
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('actual narration drives the paid video window and freezes speech provenance (changed=%s)',async changed=>{
  const f=await narrationFixture(undefined,undefined,true);try{
   await f.authorize();let w=f.made;let base={workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id};
-  const uploaded=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'first.png',mimeType:'image/png',contentBase64:(await readFile('/private/tmp/loop-152-orchestration/media/still-striped.png')).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});expect(uploaded.status,JSON.stringify(uploaded.body)).toBe(200);await f.request('setWanBudget',{trialCents:100,totalCents:200,full:false});
+  const uploaded=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'first.png',mimeType:'image/png',contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});expect(uploaded.status,JSON.stringify(uploaded.body)).toBe(200);await f.request('setWanBudget',{trialCents:100,totalCents:200,full:false});
   await f.request('saveWorkspaceNarration',{...base,mode:'tts',text:'主声音完整保留，画面仅使用实际窗口。'});await f.request('confirmWorkspaceNarration',base);
   const imageData={...base,materialRevisionId:uploaded.body.id,prompt:'画面缓慢推进',durationSeconds:11,reservationCents:90};
   const notReady=await f.request('generateWorkspaceImage',imageData);expect(notReady.status,JSON.stringify(notReady.body)).toBe(409);
@@ -131,7 +132,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('speech beyond the Provid
  const f=await narrationFixture(undefined,undefined,true);try{
   const {execFile}=await import('node:child_process'),{promisify}=await import('node:util');await promisify(execFile)('ffmpeg',['-nostdin','-v','error','-y','-f','lavfi','-i','sine=frequency=330:sample_rate=48000','-t','16','-c:a','libmp3lame',join(f.assetRoot,`episodes/${f.episode}/voice.mp3`)]);
   await f.authorize();const w=f.made,base={workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id};await f.request('saveWorkspaceNarration',{...base,mode:'tts',text:'超出单次画面服务范围的口播必须明确拆镜，不删词。'});await f.request('confirmWorkspaceNarration',base);const q=await f.request('generateWorkspaceNarration',base);await f.execute(q.body.narration[0].taskId);
-  const uploaded=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'first.png',mimeType:'image/png',contentBase64:(await readFile('/private/tmp/loop-152-orchestration/media/still-striped.png')).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});
+  const uploaded=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'first.png',mimeType:'image/png',contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});
   const blocked=await f.request('generateWorkspaceImage',{...base,materialRevisionId:uploaded.body.id,prompt:'保持自然运动',durationSeconds:4,reservationCents:90});expect(blocked.status,JSON.stringify(blocked.body)).toBe(409);expect(blocked.body.error).toContain('上限 15 秒');expect((await readFile(f.videoSubmissions,'utf8').catch(()=>''))).toBe('');expect((await f.read()).narration[0].text).toBe('超出单次画面服务范围的口播必须明确拆镜，不删词。');
  }finally{await f.close();}
 },120_000);

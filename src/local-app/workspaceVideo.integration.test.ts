@@ -1,4 +1,5 @@
 // @vitest-environment node
+import {workspaceTestMedia} from './workspaceTestMedia.fixture';
 import {it,expect} from 'vitest';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
@@ -22,7 +23,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner prepares independe
 const exec=promisify(execFile);
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('Owner renders many-to-many exact video ranges in native Studio (landscape=%s)',async landscape=>{
  const f=await productionWorkspaceFixture({landscape});try{
-  const upload=async(name:string)=>{const bytes=await readFile('/private/tmp/loop-152-orchestration/media/'+name);const r=await f.request('importMaterial',{materialType:'video',sourceKind:'file',sourcePath:name,mimeType:'video/mp4',contentBase64:bytes.toString('base64'),isMainScript:false,materialPurpose:'a_roll',deferRefresh:true});expect(r.status,JSON.stringify(r.body)).toBe(200);return{...r.body,bytes};};
+  const upload=async(name:string)=>{const bytes=await readFile(workspaceTestMedia(name));const r=await f.request('importMaterial',{materialType:'video',sourceKind:'file',sourcePath:name,mimeType:'video/mp4',contentBase64:bytes.toString('base64'),isMainScript:false,materialPurpose:'a_roll',deferRefresh:true});expect(r.status,JSON.stringify(r.body)).toBe(200);return{...r.body,bytes};};
   const source=await upload('landscape-red-blue.mp4'),portrait=await upload('portrait-green.mp4');
   expect(source.storage_path).toContain(source.sha256);expect(source.sha256).toBe('7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6');
   let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
@@ -57,7 +58,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('Owner
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner moves a locked range by exactly one frame in real native output',async()=>{
  const f=await productionWorkspaceFixture();try{
-  const bytes=await readFile('/private/tmp/loop-152-orchestration/media/landscape-red-blue.mp4'),upload=await f.request('importMaterial',{materialType:'video',sourceKind:'file',sourcePath:'transition.mp4',mimeType:'video/mp4',contentBase64:bytes.toString('base64'),isMainScript:false,materialPurpose:'a_roll',deferRefresh:true});expect(upload.status).toBe(200);
+  const bytes=await readFile(workspaceTestMedia('landscape-red-blue.mp4')),upload=await f.request('importMaterial',{materialType:'video',sourceKind:'file',sourcePath:'transition.mp4',mimeType:'video/mp4',contentBase64:bytes.toString('base64'),isMainScript:false,materialPurpose:'a_roll',deferRefresh:true});expect(upload.status).toBe(200);
   let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
   const moved=adjustWorkspaceVideoRange({materialRevisionId:upload.body.id,sourceInFrame:59,durationInFrames:30,durationLocked:true},'in',1,120);
   const matched=await f.request('saveWorkspaceVideoRanges',{workspaceId:w.id,expectedRevision:w.revision,shotId:w.clips[0].shotId,ranges:[moved]});expect(matched.status).toBe(200);w=matched.body;
