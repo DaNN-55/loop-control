@@ -1,13 +1,15 @@
+import {workspaceCaptionFields,type WorkspaceCaptionState} from './workspaceCaptions.js';
 /** Provenance bindings identify native items; the OpenChatCut document owns editing. */
 export interface WorkspaceSource {materialRevisionId:string;relativePath:string;sha256:string;fileSize:number;kind:'video'|'image'|'audio'}
 export interface WorkspaceClip {id:string;itemId:string;shotId:string;text:string;source:WorkspaceSource|null;image?:{usage:'still'|'pan-zoom'|'ai-video';durationSeconds:number;fit:'contain'|'cover';focusX:number;focusY:number;taskId?:string;materialRevisionId?:string}}
 export interface ProductionWorkspace {
  id:string;episodeId:string;workflowVersion:'four-step/v1';scriptRevisionId:string;storyboardPackageId:string;revision:number;contentSha256:string;
- clips:WorkspaceClip[];project:{relativePath:string;sha256:string;fileSize:number;projectId:string};
+ captions?:WorkspaceCaptionState[];clips:WorkspaceClip[];project:{relativePath:string;sha256:string;fileSize:number;projectId:string};
  history:Array<{revision:number;sha256:string;scriptRevisionId:string;reason:string|null}>;
  readiness:{deliverable:boolean;placeholders:string[];missingSources:string[]};stale:boolean;
 }
 export const productionWorkspaceFields:Record<string,string[]>={
+ ...workspaceCaptionFields,
  generateWorkspaceImage:['episodeId','workspaceId','expectedRevision','clipId','materialRevisionId','prompt','durationSeconds','reservationCents'],
  fillWorkspaceImageResult:['episodeId','workspaceId','expectedRevision','taskId'],
  matchWorkspaceImage:['episodeId','workspaceId','expectedRevision','clipId','materialRevisionId','usage','durationSeconds','fit','focusX','focusY'],

@@ -1,0 +1,23 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t07-workspace-captions/loop-control
+
+ ✓ src/local-app/productionWorkspace.integration.test.ts (1 test) 4864ms
+   ✓ Owner persists incomplete matches, opens the real draft and fills only its placeholder after reopening  4864ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts (3 tests) 20493ms
+   ✓ Owner edits only the chosen native caption lane and persists manual timing without shot approval  3049ms
+   ✓ current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit  2167ms
+   ✓ real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area  15275ms
+ ✓ src/local-app/workspaceImages.integration.test.ts (7 tests) 23932ms
+   ✓ Owner uploads and persists a native still image with duration and composition  1581ms
+   ✓ Owner renders static and pan/zoom native images without external generation (landscape=false)  7000ms
+   ✓ Owner renders static and pan/zoom native images without external generation (landscape=true)  7578ms
+   ✓ Owner sees missing and changed image blockers without a replacement task or source  1029ms
+   ✓ AI image generation retains the selected execution path and blocks when no registered connection exists  960ms
+   ✓ Owner first image videos preserve completed outputs and manual edit boundary (edited=false)  2940ms
+   ✓ Owner first image videos preserve completed outputs and manual edit boundary (edited=true)  2842ms
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  18:23:35
+   Duration  29.33s (transform 230ms, setup 17ms, collect 578ms, tests 49.29s, environment 0ms, prepare 72ms)
+

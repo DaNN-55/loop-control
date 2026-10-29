@@ -1,3 +1,4 @@
+import {applyWorkspaceCaptionEdit,isWorkspaceCaptionContract} from 'virtual:loop-control-captions';
 // Loaded by the Loop Control Vite adapter inside the real editor, never a second store.
 import {useEffect,useRef} from 'react';
 const query=new URLSearchParams(location.search);
@@ -16,9 +17,21 @@ export function useLoopControlHost(projectId,base,agent,panels){
     async function message(event){
       const msg=event.data;
       if(event.source!==parent||event.origin!==parentOrigin||!msg||msg.type!=='loop-control:command'||msg.channel!==channel||msg.projectId!==projectId||typeof msg.requestId!=='string'||!/^[a-f0-9-]{36}$/.test(msg.requestId))return;
-      const result=(ok,error)=>emit('loop-control:result',{requestId:msg.requestId,ok,...(error?{error}:{})});
+      const result=(ok,error,value)=>emit('loop-control:result',{requestId:msg.requestId,ok,...(error?{error}:{}),...(value?{result:value}:{})});
+      const digest=async doc=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(doc))))).map(b=>b.toString(16).padStart(2,'0')).join('');
       try{
-        if(msg.action==='flush'){
+        if(msg.action==='inspect'){
+          const document=structuredClone(live.current.base.doc);result(true,undefined,{revision:revision.current,documentFingerprint:await digest(document),document});
+        }else if(msg.action==='apply-captions'){
+          const doc=live.current.base.doc,observedRevision=revision.current;
+          if(msg.expectedRevision!==observedRevision||msg.expectedDocumentFingerprint!==await digest(doc)||doc!==live.current.base.doc||observedRevision!==revision.current){result(false,'工程已有新修改，请重新读取当前工程后重试。');return;}
+          if(typeof msg.itemId!=='string'||!isWorkspaceCaptionContract(msg.contract)||msg.contract.text.length>100000||msg.contract.cues.length>1000){result(false,'字幕增量输入无效。');return;}
+          const next=applyWorkspaceCaptionEdit(doc,msg.itemId,msg.contract);
+          live.current.base.commands.applyDoc(next);
+          await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+          const ok=await live.current.agent.flushBeforeLeaveRef.current();
+          result(ok,ok?undefined:'原生保存冲突，请保留当前编辑并重试。',ok?{revision:revision.current,documentFingerprint:await digest(live.current.base.doc),document:structuredClone(live.current.base.doc)}:undefined);
+        }else if(msg.action==='flush'){
           const ok=await live.current.agent.flushBeforeLeaveRef.current();
           result(ok,ok?undefined:'编辑器仍有未保存修改，请在编辑器中重试保存。');
         }else if(msg.action==='select'){

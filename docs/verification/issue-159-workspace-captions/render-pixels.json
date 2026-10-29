@@ -1,0 +1,38 @@
+[
+  {
+    "aspect": "9:16",
+    "width": 640,
+    "height": 1138,
+    "changedPixels": 4983,
+    "bounds": {
+      "minX": 245,
+      "minY": 813,
+      "maxX": 394,
+      "maxY": 921
+    },
+    "insets": {
+      "top": 0.08,
+      "right": 0.08,
+      "bottom": 0.18,
+      "left": 0.08
+    }
+  },
+  {
+    "aspect": "16:9",
+    "width": 640,
+    "height": 360,
+    "changedPixels": 572,
+    "bounds": {
+      "minX": 296,
+      "minY": 287,
+      "maxX": 343,
+      "maxY": 321
+    },
+    "insets": {
+      "top": 0.1,
+      "right": 0.1,
+      "bottom": 0.1,
+      "left": 0.1
+    }
+  }
+]

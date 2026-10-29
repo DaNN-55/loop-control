@@ -1,4 +1,4 @@
-import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
+import {act,cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {afterEach,it,expect,vi} from 'vitest';
 import {EmbeddedStudioHost} from './EmbeddedStudioHost';
 const workspace={relativePath:'episodes/e/openchatcut-work/current/project.json',sha256:'a'.repeat(64),fileSize:42,projectId:'loop-control-e'};
@@ -43,4 +43,17 @@ it('uses the same flush and save boundary for the native home action',async()=>{
  expect(post).toHaveBeenCalled();const request=post.mock.calls.at(-1)![0] as Record<string,unknown>;
  expect(request.action).toBe('flush');expect(close).not.toHaveBeenCalled();
  deliver({type:'loop-control:result',requestId:request.requestId,ok:true});await waitFor(()=>expect(close).toHaveBeenCalledOnce());expect(save).toHaveBeenCalledWith(workspace);
+});
+it('binds incremental caption edits to the inspected live document before flush and save',async()=>{
+ let bridge:import('./EmbeddedStudioHost').EmbeddedStudioBridge|null=null;
+ const save=vi.fn(async()=>workspace);
+ render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'episodes/e/board.json'}} shots={[]} onSave={save} onClose={()=>{}} captionEditor={value=>{bridge=value;return null;}}/>);
+ const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel');
+ const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
+ deliver({type:'loop-control:state',revision:3,items:[],selectedIds:[]});
+ const post=vi.spyOn(frame.contentWindow!,'postMessage');const contract=(await import('../shotCaptions')).defaultShotCaptionContract('正文','independent');
+ let promise:Promise<unknown>;act(()=>{promise=bridge!.applyCaptions('target',contract);});await waitFor(()=>expect(post.mock.calls.at(-1)?.[0].action).toBe('inspect'));
+ let request=post.mock.calls.at(-1)![0];deliver({type:'loop-control:result',requestId:request.requestId,ok:true,result:{revision:3,documentFingerprint:'c'.repeat(64)}});
+ await waitFor(()=>expect(post.mock.calls.at(-1)?.[0].action).toBe('apply-captions'));request=post.mock.calls.at(-1)![0];expect(request.expectedRevision).toBe(3);expect(request.expectedDocumentFingerprint).toBe('c'.repeat(64));expect(request.itemId).toBe('target');
+ await act(async()=>{deliver({type:'loop-control:result',requestId:request.requestId,ok:false,error:'工程已有新修改，请重试。'});await expect(promise!).rejects.toThrow('已有新修改');});expect(save).not.toHaveBeenCalled();
 });
