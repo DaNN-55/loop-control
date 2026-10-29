@@ -1,0 +1,71 @@
+{
+  "httpStatus": [
+    200,
+    200
+  ],
+  "video": {
+    "sourceInFrame": 61,
+    "durationInFrames": 30,
+    "durationLocked": true,
+    "x": 7
+  },
+  "image": {
+    "durationInFrames": 60,
+    "keyframes": {
+      "scale": [
+        {
+          "frame": 0,
+          "value": 1,
+          "easing": "linear"
+        },
+        {
+          "frame": 59,
+          "value": 1.15,
+          "easing": "linear"
+        }
+      ],
+      "x": [
+        {
+          "frame": 0,
+          "value": 0,
+          "easing": "linear"
+        },
+        {
+          "frame": 59,
+          "value": 3,
+          "easing": "linear"
+        }
+      ]
+    }
+  },
+  "captionTrackCount": 1,
+  "lanes": [
+    {
+      "id": "workspace-caption-shot-shot-1-e0143bfd-45c2-466e-a1da-ed29ab91bacd",
+      "words": [
+        {
+          "id": "first~0~0",
+          "text": "第一句\n字幕正",
+          "start": 0,
+          "end": 857.1428571428571
+        },
+        {
+          "id": "first~0~1",
+          "text": "文",
+          "start": 857.1428571428571,
+          "end": 1000
+        }
+      ]
+    }
+  ],
+  "captionStatus": [
+    {
+      "shotId": "shot-1",
+      "chars": 3
+    },
+    {
+      "shotId": "shot-2",
+      "chars": 16
+    }
+  ]
+}
