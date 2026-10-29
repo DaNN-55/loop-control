@@ -56,3 +56,5 @@ updateWorkspaceProject(c, root, row, project,
 - **新增 shot 的 generation lineage（T08/T13）**：新增 shot 不在原 approved storyboard 中。T10 只保留新实例与原基准的可追溯关系，支持注册图片/原片编辑；不会伪造批准 shot 或改写 storyboard。旧生成 RPC 若强验 board membership，须由后票接本地工作版本 manifest/授权路径，不能为了通过 RPC 写假批准。root 最终验新增画面+局部口播闭环。
 - **actual source/none 字幕解析（T06）**：T06 提供实际主声 resolver，优先可听 source/TTS，排除静音轨/零音量；visual `loopControlAudio.voiceMode` 明确区分首次未采用和 Owner 选择 none。有 explicit native route 时禁止回退旧 draft track；source 不能冒充 follow_tts 正文核对。仅无明确 native route 的早期 draft 对齐保留兼容。此有限 resolver 接线由 T06 完成，不属于本票已验证的 TTS 跨票路径。
 - **候选工具性能（T08）**：真实候选组件/媒体控件的特定卡顿由 T08 闭环。T10 自身字幕工具矩阵已通过；早先“旧 Host + 短静态面板”仍加载最新 CSS，不是完整旧版对照，不能排除 auto grid row 的反馈。诊断驱动与 trace 已交 `/private/tmp/loop-152-orchestration/t10-performance-handoff/`，不将其当成候选性能通过。
+
+测试夹具默认路径的完整迁移由 T06 维护 `workspaceNarration.fixture.ts`；本票未抢写该文件。T10 自有测试使用 `workspaceTestMedia()`，原受控媒体与版本化媒体 SHA 相同；不将此描述成所有依赖均已脱离临时目录。

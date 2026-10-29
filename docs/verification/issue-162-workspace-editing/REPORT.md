@@ -37,7 +37,11 @@ LOOP_TEST_OPENCHATCUT_ROOT=/Users/dan/Programs/loop-control/.loop-control/local/
   src/local-app/workspaceExport.integration.test.ts
 ```
 
-受影响组件/契约测试 42 项通过，完整 build 通过（保留现有 bundle 大小提示）。最终真实回归与最新 integration 合并记录在 `evidence/final-integration.log`；以下集成状态在收尾后补齐。
+已合入最终 integration `ad167810`，保留 T12 的 094、Studio/交付互斥与 runtimePrepare 顺序。最终 TypeScript check、42 项受影响测试和完整 build 通过（保留现有 bundle 大小提示）。
+
+真实回归的原始日志分开保留：`pre-t12-integration.log` 为 11/11；合入 T12 后 `post-t12-render-failure.log` 为 10/11，唯一失败是原生 MP4 引擎返回 retryable HTTP 500，提示 localhost:3000/index.html 无响应。root 分配串行渲染窗口后，同一用例原断言重试通过，见 `final-render-retry.log`（1/1，6 项无关跳过）。`final-integration.log` 汇总这组证据，结果包含一次明确重试。
+
+只读端口观察记录在 `port-3000-observation.json`：重试期间 OpenChatCut Vite 子进程同时使用内部 3000 端口，重试结束后未见监听；未捕获失败时的跨进程竞争，不把冲突假设写成已证实根因。重试后已释放渲染窗口，没有停止其他验收进程。T10 自有媒体读取使用已版本化 helper，受控输入字节与原素材相同，见 `controlled-media-equivalence.json`。
 
 ## 边界与后续
 
