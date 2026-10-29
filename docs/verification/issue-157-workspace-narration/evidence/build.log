@@ -25,4 +25,3 @@ dist/assets/index-BYbAIrU1.js          1,167.63 kB │ gzip: 346.90 kB
 
 > loop-control@0.1.0 worker:build
 > tsc -p tsconfig.worker.json
-
