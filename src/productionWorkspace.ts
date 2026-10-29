@@ -3,7 +3,7 @@ import {workspaceCaptionFields,type WorkspaceCaptionState} from './workspaceCapt
 export interface WorkspaceSource {materialRevisionId:string;relativePath:string;sha256:string;fileSize:number;kind:'video'|'image'|'audio'}
 export interface WorkspaceClip {id:string;itemId:string;shotId:string;text:string;source:WorkspaceSource|null;image?:{usage:'still'|'pan-zoom'|'ai-video';durationSeconds:number;providerDurationSeconds?:number;fit:'contain'|'cover';focusX:number;focusY:number;taskId?:string;materialRevisionId?:string}}
 export interface ProductionWorkspace {
- id:string;episodeId:string;workflowVersion:'four-step/v1';scriptRevisionId:string;storyboardPackageId:string;revision:number;contentSha256:string;
+ id:string;episodeId:string;workflowVersion:'four-step/v1';scriptRevisionId:string;storyboardPackageId:string;revision:number;contentSha256:string;nativeEditRevision?:number;
  captions?:WorkspaceCaptionState[];narration?:WorkspaceNarration[];clips:WorkspaceClip[];project:{relativePath:string;sha256:string;fileSize:number;projectId:string};
  history:Array<{revision:number;sha256:string;scriptRevisionId:string;reason:string|null}>;
  readiness:{deliverable:boolean;placeholders:string[];missingSources:string[]};stale:boolean;
@@ -14,6 +14,7 @@ export const productionWorkspaceFields:Record<string,string[]>={
  generateWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId','retry'],
  adoptWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId','inputFingerprint','audioTrackId'],
  refreshWorkspaceNarration:['episodeId','workspaceId','expectedRevision'],
+ saveWorkspaceVideoRanges:['episodeId','workspaceId','expectedRevision','shotId','ranges'],
  ...workspaceCaptionFields,
  generateWorkspaceImage:['episodeId','workspaceId','expectedRevision','clipId','materialRevisionId','prompt','durationSeconds','reservationCents'],
  fillWorkspaceImageResult:['episodeId','workspaceId','expectedRevision','taskId'],

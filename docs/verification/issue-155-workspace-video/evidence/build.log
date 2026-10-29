@@ -1,0 +1,24 @@
+
+> loop-control@0.1.0 check
+> tsc -b --pretty false
+
+src/local-app/workspaceVideo.ts(51,99): error TS2345: Argument of type '{ id: string; name: string | undefined; kind: "video"; src: string; durationInFrames: number; } & { sourceRevision: string; sourceContentHash: string; sourceFilename: string | undefined; width: number; height: number; }' is not assignable to parameter of type '{ id: string; name: string; kind: "image" | "audio" | "video"; src: string; durationInFrames: number; }'.
+  Types of property 'name' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+
+> loop-control@0.1.0 backend:build
+> tsc -p tsconfig.local-app.json
+
+src/local-app/workspaceVideo.ts(51,99): error TS2345: Argument of type '{ id: string; name: string | undefined; kind: "video"; src: string; durationInFrames: number; } & { sourceRevision: string; sourceContentHash: string; sourceFilename: string | undefined; width: number; height: number; }' is not assignable to parameter of type '{ id: string; name: string; kind: "image" | "video" | "audio"; src: string; durationInFrames: number; }'.
+  Types of property 'name' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
+
+> loop-control@0.1.0 build
+> tsc -b && vite build
+
+src/local-app/workspaceVideo.ts(51,99): error TS2345: Argument of type '{ id: string; name: string | undefined; kind: "video"; src: string; durationInFrames: number; } & { sourceRevision: string; sourceContentHash: string; sourceFilename: string | undefined; width: number; height: number; }' is not assignable to parameter of type '{ id: string; name: string; kind: "image" | "audio" | "video"; src: string; durationInFrames: number; }'.
+  Types of property 'name' are incompatible.
+    Type 'string | undefined' is not assignable to type 'string'.
+      Type 'undefined' is not assignable to type 'string'.
