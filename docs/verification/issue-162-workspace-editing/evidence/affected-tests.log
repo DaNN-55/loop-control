@@ -1,0 +1,17 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t10-workspace-editing/loop-control
+
+ ✓ src/workspaceVideo.test.ts (2 tests) 9ms
+ ✓ src/workspaceCaptions.test.ts (4 tests) 53ms
+ ✓ src/worker/openchatcutProject.test.ts (26 tests) 112ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx (7 tests) 1062ms
+   ✓ waits for the real frame flush before saving and rejects foreign messages  496ms
+ ✓ src/shotComposition.test.ts (2 tests) 7ms
+ ✓ src/local-app/WorkspaceCaptionsPanel.test.tsx (1 test) 2147ms
+   ✓ keeps timing explicit when text changes and sends saved native cues through the Owner command  2141ms
+
+ Test Files  6 passed (6)
+      Tests  42 passed (42)
+   Start at  20:21:11
+   Duration  12.21s (transform 1.62s, setup 173ms, collect 10.45s, tests 3.39s, environment 8.56s, prepare 2.01s)
+

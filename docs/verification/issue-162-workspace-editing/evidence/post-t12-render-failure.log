@@ -1,0 +1,47 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t10-workspace-editing/loop-control
+
+ ❯ src/local-app/workspaceShots.integration.test.ts (7 tests | 1 failed) 42776ms
+   ✓ Owner reorders native shot instances without rewriting registered sources or storyboard history  1776ms
+   ✓ a shot with two visual ranges owns one stable caption lane when its first range is removed  1652ms
+   ✓ native range locks, frame steps and parallel composition preserve source instances through Owner persistence  4163ms
+   × two ranges retain one actual main voice and full following captions after deleting their first visual instance 10435ms
+     → Command failed: /opt/homebrew/Cellar/node@24/24.20.0/bin/node scripts/openchatcut-render.mjs /private/tmp/loop-153-77ybOf/t10-render.json
+OpenChatCut export failed (500): {"error":"Visited \"http://localhost:3000/index.html\" but got no response.","failure":{"stage":"render","code":"export_render_failed","retryable":true,"cleanupStatus":"succeeded","targetPath":null,"message":"Visited \"http://localhost:3000/index.html\" but got no response."}}
+[OpenChatCut] isolated profile f7ff4eb1-64f3-4c7f-a717-c903f3549d1f · /var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/tk-openchatcut-T56ex8
+
+  VITE v8.1.4  ready in 970 ms
+
+  ➜  Local:   http://127.0.0.1:52609/
+8:11:53 PM [vite] (client) Pre-transform error: Failed to load url /@fs/src/main.tsx (resolved id: /src/main.tsx). Does the file exist?
+
+   ✓ reopening an actively edited native structure reuses its running Studio and latest project  12301ms
+   ✓ upgrades duplicate legacy visual caption lanes into one shot lane without losing the complete body or cues  8500ms
+   ✓ added native shots accept registered images and source video while the approved storyboard stays unchanged  3947ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts (3 tests) 46497ms
+   ✓ Owner edits only the chosen native caption lane and persists manual timing without shot approval  3959ms
+   ✓ current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit  5758ms
+   ✓ real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area  36777ms
+ ✓ src/local-app/workspaceExport.integration.test.ts (1 test) 42960ms
+   ✓ Owner checks actual used content before exporting and confirms exact final bytes  42959ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceShots.integration.test.ts > two ranges retain one actual main voice and full following captions after deleting their first visual instance
+Error: Command failed: /opt/homebrew/Cellar/node@24/24.20.0/bin/node scripts/openchatcut-render.mjs /private/tmp/loop-153-77ybOf/t10-render.json
+OpenChatCut export failed (500): {"error":"Visited \"http://localhost:3000/index.html\" but got no response.","failure":{"stage":"render","code":"export_render_failed","retryable":true,"cleanupStatus":"succeeded","targetPath":null,"message":"Visited \"http://localhost:3000/index.html\" but got no response."}}
+[OpenChatCut] isolated profile f7ff4eb1-64f3-4c7f-a717-c903f3549d1f · /var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/tk-openchatcut-T56ex8
+
+  VITE v8.1.4  ready in 970 ms
+
+  ➜  Local:   http://127.0.0.1:52609/
+8:11:53 PM [vite] (client) Pre-transform error: Failed to load url /@fs/src/main.tsx (resolved id: /src/main.tsx). Does the file exist?
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 10 passed (11)
+   Start at  20:11:38
+   Duration  133.25s (transform 369ms, setup 10ms, collect 593ms, tests 132.23s, environment 0ms, prepare 106ms)
+
