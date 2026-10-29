@@ -41,7 +41,16 @@ export async function executeNativeNarration(pool:Pool,config:NativeNarrationCon
  }catch{throw new SecretStoreError('unavailable');}
  const unavailable=async():Promise<never>=>{throw Error('Task outside native narration scope');};
  let output:string;
- try{output=await executeControlledMediaTask({taskPackage:p,fetcher:ports.fetcher,pexelsApiKey:undefined,googleTtsApiKey:undefined,volcengineTtsApiKey:p.provider==='volcengine_tts'?secret:undefined,validateMp4:unavailable,extractMp3:unavailable,trimMp3:unavailable,
+ try{output=await executeControlledMediaTask({taskPackage:p,fetcher:async(url,init)=>{
+   const reserved=(await pool.query('SELECT local_identity.reserve_workspace_narration_submission($1,$2,$3) reserved',[fence.p_task_id,fence.p_attempt,fence.p_lease_token])).rows[0]?.reserved;
+   if(!reserved)throw new ProviderOutcomeUnknownError();
+   let response:Response;try{response=await ports.fetcher(url,init);}catch{throw new ProviderOutcomeUnknownError();}
+   // A transport break or accepted-but-malformed response must never resend a paid request.
+   // Only a definite client rejection permits Owner's explicit retry.
+   const outcome=response.status>=400&&response.status<500&&response.status!==408?'rejected':'received';
+   await pool.query('SELECT local_identity.record_workspace_narration_submission($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,outcome]);
+   return response;
+  },pexelsApiKey:undefined,googleTtsApiKey:undefined,volcengineTtsApiKey:p.provider==='volcengine_tts'?secret:undefined,validateMp4:unavailable,extractMp3:unavailable,trimMp3:unavailable,
   async probeMp3(path){const{stdout}=await promisify(execFile)('ffprobe',['-v','error','-show_entries','format=duration','-of','default=noprint_wrappers=1:nokey=1',path],{env:{PATH:process.env.PATH},timeout:5000,maxBuffer:65536});const duration=Number(stdout.trim());if(!Number.isFinite(duration)||duration<=0)throw Error('音频不可播放或时长无效。');return duration;}});}catch(error){if(error instanceof ProviderOutcomeUnknownError)throw error;throw Error('口播生成或音频验证失败，请检查连接和本机执行状态。');}
  const result=JSON.parse(output);result.validation.checks.push({name:'native_narration_mode',passed:true,detail:ports.mode==='controlled'?'受控响应及密钥存储替身；没有在线Provider请求或真实语音生成证明。':'实际在线Provider执行。'});return JSON.stringify(result);
 }
