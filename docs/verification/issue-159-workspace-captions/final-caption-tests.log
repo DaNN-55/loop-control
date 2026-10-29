@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t07-workspace-captions/loop-control
+
+ ✓ src/local-app/workspaceCaptions.integration.test.ts (3 tests) 17375ms
+   ✓ Owner edits only the chosen native caption lane and persists manual timing without shot approval  2605ms
+   ✓ current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit  1192ms
+   ✓ real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area  13577ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  18:27:16
+   Duration  17.74s (transform 184ms, setup 6ms, collect 244ms, tests 17.38s, environment 0ms, prepare 24ms)
+

@@ -13,5 +13,7 @@ let closing=false;async function close(){if(closing)return;closing=true;await se
 try{await server.listen();let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
  const contract=defaultShotCaptionContract('第一句字幕正文','independent');contract.spatial.maxCharactersPerLine=4;contract.cues=[{id:'first',text:contract.text,startMs:0,endMs:1000}];const saved=await f.request('saveWorkspaceCaptions',{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id,captionContract:contract});if(saved.status!==200)throw Error(JSON.stringify(saved));w=saved.body;
  const info={pid:process.pid,origin:f.origin,episode:f.episode,database:f.database,assetRoot:f.assetRoot,email:f.email,password:f.password,workspaceId:w.id};await writeFile('/private/tmp/t07-caption-ui.json',JSON.stringify(info,null,2)+'\n',{mode:0o600});console.log(JSON.stringify(info));
- for(const signal of ['SIGINT','SIGTERM'] as const)process.once(signal,()=>void close());
+ // This dedicated fixture owns the Vite process; replace Vite's early exit
+ // handlers so the isolated database/media cleanup completes before exit.
+ for(const signal of ['SIGINT','SIGTERM'] as const){process.removeAllListeners(signal);process.once(signal,()=>void close());}
 }catch(error){await close();throw error;}

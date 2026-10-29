@@ -10,7 +10,7 @@
 
 ## 已执行
 
-1. Native adapter／宿主／字幕Panel／原工作台Panel／旧原生工程与正文核对回归：46项通过，随后新增 native track-ID 迁移和共享布局/颜色保留测试通过。
+1. Native adapter／宿主／字幕Panel／原工作台Panel／旧原生工程与正文核对回归：最终7个相关测试文件、50项通过；包括native track-ID迁移、共享布局／颜色／lane顺序保持，以及native改画幅后的安全区派生。
 2. `tsc -b`、`tsc -p tsconfig.local-app.json`、正式 `npm run build` 通过。Vite保留既有 >500kB chunk 提示，没有新增依赖。
 3. `workspaceCaptions.integration.test.ts`：3项真实独立HTTP/DB/文件/原生Studio/Worker RPC/Remotion验收通过。包括保存／刷新／模式关闭、跟随口播变化仅过期目标、局部lane保留；真 `loop_worker` claim/report lease边界、当前对齐采用与正文核对、正文修改后的迟到结果拒绝。
 4. 原生 `render-still` 横竖帧对照：竖屏640×1138检测4983个字幕变化像素，边界x245–394/y813–921；横屏640×360检测572个变化像素，边界x296–343/y287–321。均在当前title-safe内。见 `render-pixels.json`、`portrait-caption.jpg`、`landscape-caption.jpg`。已目视确认3字／行、2行。**这是实际Remotion静帧像素证据，不是正式视频export或交付审批。**
@@ -20,7 +20,7 @@
 
 - HTTP red首次缺命令返回400；随后实现闭态编辑往返。
 - 原生会迁移track ID。首次live测试暴露旧key导致重复轨；按stable lane解析实际track修复，新增失败后转绿测试，并用全新fixture真实保存确认单轨单lane。该策略写入CONTRACT供T08/T10。
-- Native JSON会排序对象键。读回先规范化契约，避免键序差异触发错误校验；实际cue与anchor从native读取。
+- Native JSON会排序对象键。读回先规范化契约，避免键序差异触发错误校验；实际cue与anchor从native读取；安全区preset使用当前native canvas纵横比，改画幅后不会继续沿旧preset。
 - 局部修改不能替换共享auto-stack布局或丢弃native颜色，已补失败后转绿回归。
 - 测试fixture缺scheduler singleton及enabled输入，均仅在随机测试库显式seed。渲染检查改用已有FFmpeg解码，并读取实际返回尺寸，避免将原生静帧缩放误当像素缺失。
 
@@ -33,6 +33,6 @@
 
 ## 隔离与复现
 
-基线 `3fb5055d`；唯一修改树 `t07-workspace-captions/loop-control`。所有DDL/DML在随机测试数据库、媒体在自建`/private/tmp/loop-153-*`、服务在随机回环端口。只读schema-only复制日常库；无日常DML/DDL、Keychain、付费调用、既有服务启停或第三方源码修改。
+基线 `3fb5055d`，已merge最新integration `a96e4d075`（merge commit `3f6d612b`）；合并后T02/T04/T07真实原生集成共11项通过，见`merged-native-tests.log`。保留T04图片缺失409、native_edit_revision内容保存counter以及084+086+089迁移去重。唯一修改树 `t07-workspace-captions/loop-control`。所有DDL/DML在随机测试数据库、媒体在自建`/private/tmp/loop-153-*`、服务在随机回环端口。只读schema-only复制日常库；无日常DML/DDL、Keychain、付费调用、既有服务启停或第三方源码修改。
 
-UI fixture的tsx CLI wrapper在首次停止时先关闭Docker streams；已按确切记录逐一清理本票DB/媒体根，无前缀删除。CONTRACT使用`node --import`启动driver，避免CLI wrapper信号转发。driver与测试复现命令见CONTRACT。
+UI fixture的tsx CLI wrapper在首次停止时先关闭Docker streams；已按确切记录逐一清理本票DB/媒体根，无前缀删除。driver已改用`node --import`并在该专用进程内替换Vite提前退出信号handler；最终smoke以确切PID SIGTERM退出码0，媒体根已自动移除，数据库清理已核验。driver与测试复现命令见CONTRACT。

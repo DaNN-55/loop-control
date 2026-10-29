@@ -13,7 +13,7 @@ OpenChatCut document 是正文、cue、布局的唯一编辑权威。`workspace.
 
 Owner cue 的 `startMs/endMs` 相对当前片段；原生 manual lane words 是**绝对 timeline 毫秒**。`applyWorkspaceCaptionEdit` 显式加上当前 item.startFrame/fps 的时间偏移。
 
-安装版原生 generated captions 固定每行24字，`maxCharactersPerLine` 不被消费。本适配器按 `maxCharactersPerLine × maxLines` 将 cue 分成 timed manual pages，写入明确 `\n`，并计算适合安全区的字号；原生 preview 与 Remotion 使用同一数据。分页只在原 cue 的时间范围内分配时间，不省略正文。行数为1～2，每行1～24字。保存后读回可编辑的实际分页 cue。
+安装版原生 generated captions 固定每行24字，`maxCharactersPerLine` 不被消费。本适配器按 `maxCharactersPerLine × maxLines` 将 cue 分成 timed manual pages，写入明确 `\n`，并计算适合安全区的字号；原生 preview 与 Remotion 使用同一数据；安全区preset始终按当前native canvas纵横比派生。分页只在原 cue 的时间范围内分配时间，不省略正文。行数为1～2，每行1～24字。保存后读回可编辑的实际分页 cue。
 
 T08 移动/替换片段时必须显式平移目标 manual words，不能仅移动视频 item 后认为字幕会跟随。任何正文、实际已用音轨、源区间/播放速度或目标时间窗口变化，都要重核当前证据。单纯选择、其他片段和背景音乐变化不影响此目标输入指纹。
 
@@ -67,4 +67,4 @@ node --import /Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut/n
 docs/verification/issue-159-workspace-captions/serve.ts
 ```
 
-driver 输出随机 localhost origin、测试 Owner、确切 PID/DB/媒体根，并写 `/private/tmp/t07-caption-ui.json`。登录 → 进入本票生产单 →「保存并进入剪辑」→ 宿主「字幕」→ 改每行字数并保存。经 bridge inspect 或 Owner workspace GET 核对始终只有一个目标 lane。验收后先「返回生产单」，再仅向输出的 node PID 发 SIGTERM，driver 清理自己的随机环境；不要对整个 PTY 发 Ctrl-C（tsx CLI wrapper 会先终止其 Docker streams）。不运行 `scripts/start.mjs` 或日常 migrate。
+driver 输出随机 localhost origin、测试 Owner、确切 PID/DB/媒体根，并写 `/private/tmp/t07-caption-ui.json`。登录 → 进入本票生产单 →「保存并进入剪辑」→ 宿主「字幕」→ 改每行字数并保存。经 bridge inspect 或 Owner workspace GET 核对始终只有一个目标 lane。验收后先「返回生产单」，再仅向输出的 node PID 发 SIGTERM，driver替换本专用Vite进程的提前退出handler并等待自己的DB／媒体清理后退出；不要对整个 PTY 发 Ctrl-C（tsx CLI wrapper 会先终止其 Docker streams）。不运行 `scripts/start.mjs` 或日常 migrate。
