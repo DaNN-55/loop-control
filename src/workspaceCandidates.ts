@@ -1,5 +1,6 @@
 import type {OpenChatCutProject} from './worker/openchatcutProject.js';
-export interface WorkspaceCandidate {id:string;kind:'audio'|'video';shotId:string;clipId:string;targetItemId:string;taskId:string;inputFingerprint:string;text:string;mainScriptText:string;audioTrackId:string|null;relativePath:string;sha256:string;fileSize:number;durationSeconds:number;status:'available'|'stale'|'adopted'|'rejected';currentDurationSeconds:number|null}
+export interface WorkspaceUsedNarration {shotId:string;itemId:string;audioTrackId:string;sha256:string;taskId:string|null;text:string|null;mainScriptText:string;inputFingerprint:string|null;sourceInFrame:number;durationInFrames:number;fps:number;fullSourceUsed:boolean;provenance:'owner_adoption'|'immutable_task'|'not_recorded'}
+export interface WorkspaceCandidate {id:string;kind:'audio'|'video';shotId:string;clipId:string;targetItemId:string;taskId:string;inputFingerprint:string;text:string;mainScriptText:string;audioTrackId:string|null;relativePath:string;sha256:string;fileSize:number;durationSeconds:number;status:'available'|'stale'|'adopted'|'rejected';currentDurationSeconds:number|null;durationImpact?:{deltaSeconds:number;overlapItemIds:string[]}}
 /** Only source identity is compared; all editing properties remain native-owned. */
 export function workspaceCandidateTarget(item:Record<string,unknown>){return {id:item.id,kind:item.kind,src:item.src??null,sourceAssetId:item.sourceAssetId??null,sourceRevision:item.sourceRevision??null,sourceContentHash:item.sourceContentHash??null,startFrame:item.startFrame,durationInFrames:item.durationInFrames,srcInFrame:item.srcInFrame??0,playbackRate:item.playbackRate??1};}
 export interface WorkspaceCandidateEdit {targetItemId:string;expectedTarget:ReturnType<typeof workspaceCandidateTarget>;source:{id:string;kind:'audio'|'video';src:string;sha256:string;inputFingerprint:string;durationSeconds:number};durationPolicy:'keep-target'|'use-candidate'}
@@ -14,7 +15,7 @@ export function applyWorkspaceCandidate(project:OpenChatCutProject,edit:Workspac
  if(edit.durationPolicy==='keep-target'&&Number(item.durationInFrames)>frames)throw Error('候选短于目标窗口，请明确采用候选时长。');
  const asset={id:edit.source.id,name:String(item.name??edit.targetItemId),kind:edit.source.kind,src:edit.source.src,durationInFrames:frames};
  const existing=next.assets.find(a=>a.id===asset.id);if(existing&&existing.src!==asset.src)throw Error('候选素材身份已变化。');if(!existing)next.assets.push(asset);
- Object.assign(item,{src:edit.source.src,sourceAssetId:asset.id,sourceRevision:edit.source.inputFingerprint,sourceContentHash:edit.source.sha256,srcInFrame:0});
+ Object.assign(item,{src:edit.source.src,sourceAssetId:asset.id,sourceRevision:`source-sha256-${edit.source.sha256}`,sourceContentHash:edit.source.sha256,loopControlCandidate:{inputFingerprint:edit.source.inputFingerprint,sourceId:edit.source.id},srcInFrame:0});
  if(edit.durationPolicy==='use-candidate')item.durationInFrames=frames;
  return next;
 }

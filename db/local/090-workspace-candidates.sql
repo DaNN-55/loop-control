@@ -2,7 +2,7 @@
 CREATE TABLE local_identity.workspace_candidate_decisions(
  workspace_id uuid NOT NULL REFERENCES local_identity.production_workspaces(id),candidate_id uuid NOT NULL,
  decision text NOT NULL CHECK(decision IN ('adopted','rejected')),text_version text NOT NULL,main_script_text text NOT NULL,
- input_fingerprint text NOT NULL,project_sha256 text NOT NULL,created_at timestamptz NOT NULL DEFAULT clock_timestamp(),
+ input_fingerprint text NOT NULL,source_sha256 text NOT NULL CHECK(source_sha256~'^[a-f0-9]{64}$'),project_sha256 text NOT NULL,created_at timestamptz NOT NULL DEFAULT clock_timestamp(),
  PRIMARY KEY(workspace_id,candidate_id)
 );
 CREATE TABLE local_identity.workspace_candidate_adoptions(

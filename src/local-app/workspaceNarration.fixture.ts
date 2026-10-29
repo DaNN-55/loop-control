@@ -1,5 +1,5 @@
 // @vitest-environment node
-import {expect} from 'vitest';
+import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
 import {writeFile,readFile,copyFile} from 'node:fs/promises';
 import {join} from 'node:path';
@@ -12,7 +12,7 @@ import {prepareNativeAttemptOutput} from './nativeAttemptOutput';
 import {verifyArtifactIndex} from '../worker/mediaLibrary';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 export async function narrationFixture(origin?:string,onBase?:(f:Awaited<ReturnType<typeof productionWorkspaceFixture>>)=>void,videoConfiguration=false,skipWorkspace=false,migrations:string[]=[]){
- const f=await productionWorkspaceFixture({origin,migrations:['db/local/087-workspace-narration.sql',...migrations],runtime:{mediaReady:async()=>{},narrationReady:async()=>{},checkReferences:async()=>{},wake(){}}});
+ const f=await productionWorkspaceFixture({origin,migrations:['db/local/087-workspace-narration.sql',...migrations],runtime:{postReady:async()=>{},mediaReady:async()=>{},narrationReady:async()=>{},checkReferences:async()=>{},wake(){}}});
  onBase?.(f);
  try{
  const version=randomUUID(),connection=randomUUID(),secret=randomUUID();
@@ -46,12 +46,12 @@ export async function narrationFixture(origin?:string,onBase?:(f:Awaited<ReturnT
  await writeFile(responseMode,'success');
  await copyFile('/private/tmp/loop-152-orchestration/media/controlled-narration-tone.mp3',join(f.assetRoot,`episodes/${f.episode}/voice.mp3`));
  await writeFile(modulePath,`import{readFileSync,appendFileSync}from'node:fs';export async function createNarrationPorts(){return{mode:'controlled',store:{mode:'keychain',get:async()=> 'synthetic-narration-secret'},fetcher:async(url,init)=>{const mode=readFileSync(${JSON.stringify(responseMode)},'utf8');appendFileSync(${JSON.stringify(submissions)},JSON.stringify({url:String(url),body:JSON.parse(init.body)})+'\\n');if(mode==='delay')await new Promise(resolve=>setTimeout(resolve,400));if(mode==='unknown')throw Error('Controlled transport break');if(mode==='reject')return new Response('controlled rejection',{status:400});return new Response('data: '+JSON.stringify({code:0,data:readFileSync(${JSON.stringify(join(f.assetRoot,`episodes/${f.episode}/voice.mp3`))}).toString('base64')})+'\\n');}};}`);
- const made=skipWorkspace?{status:200,body:null}:await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});expect(made.status,JSON.stringify(made.body)).toBe(200);
- const defaults=await f.request('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1});expect(defaults.status,JSON.stringify(defaults.body)).toBe(200);
+ const made=skipWorkspace?{status:200,body:null}:await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});assert.equal(made.status,200,JSON.stringify(made.body));
+ const defaults=await f.request('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1});assert.equal(defaults.status,200,JSON.stringify(defaults.body));
  async function authorize(){const script=(await f.c.query('SELECT sha256 FROM public.production_material_revisions WHERE id=$1',[f.script])).rows[0];await f.c.query("INSERT INTO local_identity.script_productions(episode_id,owner_id,script_revision_id,script_sha256,plan,enabled,authorization_hash,authorized_at) VALUES($1,$2,$3,$4,$5,true,$6,now()) ON CONFLICT(episode_id) DO UPDATE SET enabled=true",[f.episode,f.owner,f.script,script.sha256,{executionFingerprint:productionHash(policy)},'a'.repeat(64)]);}
  let worker=f.workerPool(),port=nativeWorkerPort(worker);
- async function execute(taskId:string,expectSuccess=true){
-  const task=(await port.rpc('claim_next_worker_task',{p_task_id:taskId,p_worker_capacity:1}) as Array<Record<string,any>>)[0];expect(task,'Task claimed by actual loop_worker').toBeTruthy();
+ async function execute(taskId:string,expectSuccess=true,workerCapacity=1){
+  const task=(await port.rpc('claim_next_worker_task',{p_task_id:taskId,p_worker_capacity:workerCapacity}) as Array<Record<string,any>>)[0];assert.ok(task,'Task claimed by actual loop_worker');
   const fence={p_task_id:task.task_id,p_attempt:task.attempt,p_lease_token:task.lease_token};
   let executionError:unknown;
   let outputs:Awaited<ReturnType<typeof prepareNativeAttemptOutput>>|undefined;
@@ -59,6 +59,6 @@ export async function narrationFixture(origin?:string,onBase?:(f:Awaited<ReturnT
   if(expectSuccess&&result?.status!=='completed'&&await readFile(responseMode,'utf8')==='success')throw Error(String(executionError)+' '+JSON.stringify((await f.c.query('SELECT last_result FROM public.tasks WHERE id=$1',[taskId])).rows[0]));
   return result;
  }
- return{...f,made:made.body,authorize,execute,videoSubmissions,restartWorker:async()=>{await worker.end();worker=f.workerPool();port=nativeWorkerPort(worker);},responseMode,submissions,read:async()=>{const response=await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(response.status).toBe(200);return(await response.json()).workspace;},close:async()=>{await worker.end();await f.close();}};
+ return{...f,made:made.body,authorize,execute,videoSubmissions,restartWorker:async()=>{await worker.end();worker=f.workerPool();port=nativeWorkerPort(worker);},responseMode,submissions,read:async()=>{const response=await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});assert.equal(response.status,200);return(await response.json()).workspace;},close:async()=>{await worker.end();await f.close();}};
  }catch(error){await f.close();throw error;}
 }

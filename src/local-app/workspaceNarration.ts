@@ -82,6 +82,8 @@ export async function executeWorkspaceNarration(c:PoolClient,root:string,row:Pro
  await c.query('UPDATE local_identity.workspace_narrations SET task_id=$3,requested_project_sha256=$4,requested_native_edit_revision=$5 WHERE workspace_id=$1 AND shot_id=$2',[row.id,clip.shotId,t.id,row.project_sha256,Number(row.native_edit_revision??0)]);
 }
 async function adopt(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,n:WorkspaceNarration){
+ if(n.adoptedAudioTrackId===n.audioTrackId&&n.audioTrackId)return;
+ if(n.adoptedAudioTrackId)throw new ConfigurationError(409,'已有口播的局部替换请在口播版本中明确时长并采用候选。');
  if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请先保存并返回，再采用口播。');
  if(!n.audioTrackId||!n.relativePath||!n.sha256||!n.fileSize||!n.durationSeconds||n.mode==='none')throw new ConfigurationError(409,'当前输入还没有可用音轨。');
  await verifyNativeFile(root,n.relativePath,n.sha256,n.fileSize);const observed=await probeMp3Artifact(join(root,n.relativePath));
@@ -111,6 +113,7 @@ async function adopt(c:PoolClient,root:string,row:ProductionWorkspaceRecord,proj
  // Carry forward only requests based on the exact untouched draft, never ordinary editor saves.
  await c.query('UPDATE local_identity.workspace_narrations SET requested_project_sha256=$3 WHERE workspace_id=$1 AND requested_project_sha256=$2 AND adopted_audio_track_id IS NULL',[row.id,row.project_sha256,updated!.project.sha256]);
  await c.query('UPDATE local_identity.workspace_narrations SET adopted_audio_track_id=$3 WHERE workspace_id=$1 AND shot_id=$2',[row.id,n.shotId,n.audioTrackId]);
+ await c.query(`INSERT INTO local_identity.workspace_candidate_decisions(workspace_id,candidate_id,decision,text_version,main_script_text,input_fingerprint,source_sha256,project_sha256) VALUES($1,$2,'adopted',$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING`,[row.id,n.audioTrackId,n.text,row.bindings.find(b=>b.shotId===n.shotId)?.text??'',n.inputFingerprint,n.sha256,updated!.project.sha256]);
 }
 
 /** T04/T08 use measured main voice duration before requesting a paid picture candidate. */

@@ -8,7 +8,7 @@
 
 - `WorkspaceCandidate`：id/kind/shotId/clipId/targetItemId/taskId/inputFingerprint/text/mainScriptText/audioTrackId/relativePath/sha256/fileSize/durationSeconds/status/currentDurationSeconds。视频 audioTrackId=null，服务端须从自己的可信本期请求和完成产物解析此对象，不能信任客户端传入 source。
 - `workspaceCandidateTarget(item)` 提取稳定目标及当前源/区间身份。`WorkspaceCandidateEdit` 同时绑定该身份、新注册 source 与显式 durationPolicy。
-- `applyWorkspaceCandidate(project,edit)` 从 live document 精确 clone 后只更改唯一目标实例的来源及必要时长，保留其他 items、timelines、mix、transform、effects、transitions、captions 和 target volume/fade。拒绝目标重复/缺失、输入冲突、变速/分段。新 asset 使用独立 ID，不做 pool-wide relink。
+- `applyWorkspaceCandidate(project,edit)` 从 live document 精确 clone 后只更改唯一目标实例的来源及必要时长，保留其他 items、timelines、mix、transform、effects、transitions、captions 和 target volume/fade。拒绝目标重复/缺失、输入冲突、变速/分段。新 asset 使用独立 ID，不做 pool-wide relink。原生 sourceRevision 按已安装 runtime 的 `source-sha256-${sha256}` 规范，创作输入身份另存 target.loopControlCandidate.inputFingerprint/sourceId；不得把创作指纹塞进会被原生规范化的 sourceRevision。
 - `keep-target` 仅源足够长时保留目标窗口；`use-candidate` 使用完整候选时长，其他片段不移动。源从 0 开始；绝不隐式循环/变速/ripple。UI 必须显式选择策略。
 
 `src/local-app/workspaceCandidates.ts`：
@@ -29,3 +29,9 @@ T09 可在自己的命令入口和读投影复用以上两个函数；不要复�
 宿主顺序：`bridge.save()` → GET 当前 workspace → prepare → `bridge.applyNativeEdit('apply-candidate',{edit})` → GET 当前 workspace → adopt(nativeApplied:true)。bridge 沿现有 inspect revision+SHA 双检查，再从 live doc 增量 apply，等真实 flush ownership CAS，最后既有 Owner saveWorkspaceStudio 不可变快照/CAS。applyDoc 本身不是 CAS。裸 LC 文件路径/blob/外部 URL 不能进入 bridge candidate handler。
 
 字幕不重建；已用音轨/源窗口变化会自然使 T07 输入指纹和核对过期；旧对齐不能通过当前指纹检查。仍须由 Owner 重新对齐或手工校时。任何冲突保留编辑器当前 doc 和本地错误，允许重新比较/重试。
+
+## T12 实际采用正文
+
+`readUsedWorkspaceNarrationVersions(c,row,project)` 只按实际 native canonical/兼容主声 item.src 解析本期 narration audio track。优先同 workspace+candidate_id(audioTrackId)+decision='adopted'+source_sha256=track.sha256 的不可变记录；native 有 loopControlCandidate.inputFingerprint 时再核同一创作输入。记录 text_version 和 main_script_text 均为正文 string，input_fingerprint 为创作指纹，project_sha256 为采用后工程快照。首次 TTS/人工口播采用也写此表。
+
+无决定记录的历史 TTS 回退到该实际 track.source_task_id 对应不可变 task.input_snapshot.media.narration.text。没有已记录正文的人工轨返回 text=null/provenance=not_recorded，仍保留实际 track/task/SHA/item 身份。不能用当前 draft.tts_text、未采用候选或候选准备 token 填写交付正文。T12 Worker 可按同一 SQL 契约读表，避免导入 Owner 模块。
