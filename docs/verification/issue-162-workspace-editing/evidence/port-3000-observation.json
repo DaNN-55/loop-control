@@ -1,0 +1,7 @@
+{
+  "observedAt": "2026-10-29T12:17:44.012911+00:00",
+  "lsofExitCode": 0,
+  "listener": "COMMAND   PID USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME\nnode    58664  dan   16u  IPv6 0x38ee04735407fb5b      0t0  TCP *:3000 (LISTEN)",
+  "stderr": "",
+  "scope": "read-only; no process stopped"
+}

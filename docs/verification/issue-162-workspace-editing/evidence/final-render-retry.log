@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t10-workspace-editing/loop-control
+
+ ✓ src/local-app/workspaceShots.integration.test.ts (7 tests | 6 skipped) 41056ms
+   ✓ two ranges retain one actual main voice and full following captions after deleting their first visual instance  41052ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 6 skipped (7)
+   Start at  20:17:14
+   Duration  43.63s (transform 1.46s, setup 75ms, collect 1.84s, tests 41.06s, environment 1ms, prepare 177ms)
+

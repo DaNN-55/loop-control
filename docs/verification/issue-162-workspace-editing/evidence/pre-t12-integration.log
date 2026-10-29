@@ -1,0 +1,23 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t10-workspace-editing/loop-control
+
+ ✓ src/local-app/workspaceShots.integration.test.ts (7 tests) 140693ms
+   ✓ Owner reorders native shot instances without rewriting registered sources or storyboard history  12846ms
+   ✓ a shot with two visual ranges owns one stable caption lane when its first range is removed  9283ms
+   ✓ native range locks, frame steps and parallel composition preserve source instances through Owner persistence  15853ms
+   ✓ two ranges retain one actual main voice and full following captions after deleting their first visual instance  52866ms
+   ✓ reopening an actively edited native structure reuses its running Studio and latest project  16865ms
+   ✓ upgrades duplicate legacy visual caption lanes into one shot lane without losing the complete body or cues  17915ms
+   ✓ added native shots accept registered images and source video while the approved storyboard stays unchanged  15059ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts (3 tests) 113389ms
+   ✓ Owner edits only the chosen native caption lane and persists manual timing without shot approval  17847ms
+   ✓ current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit  11459ms
+   ✓ real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area  84080ms
+ ✓ src/local-app/workspaceExport.integration.test.ts (1 test) 136764ms
+   ✓ Owner checks actual used content before exporting and confirms exact final bytes  136762ms
+
+ Test Files  3 passed (3)
+      Tests  11 passed (11)
+   Start at  20:01:12
+   Duration  395.30s (transform 1.53s, setup 33ms, collect 2.74s, tests 390.85s, environment 1ms, prepare 477ms)
+

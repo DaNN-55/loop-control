@@ -1,0 +1,134 @@
+[
+  {
+    "width": 1280,
+    "cycle": 1,
+    "nativeInspectorOpen": true,
+    "captionAXMs": 190,
+    "captionAXPresent": true,
+    "responseMs": 159,
+    "frameWidth": 530,
+    "hostOpen": true,
+    "pageWidth": 1280,
+    "rafMs": 118.89999999850988
+  },
+  {
+    "width": 1280,
+    "cycle": 1,
+    "hostClosed": true,
+    "responseMs": 174,
+    "frameWidth": 830,
+    "hostOpen": false,
+    "pageWidth": 1280,
+    "rafMs": 20.899999998509884
+  },
+  {
+    "width": 1280,
+    "cycle": 2,
+    "nativeInspectorOpen": true,
+    "captionAXMs": 491,
+    "captionAXPresent": true,
+    "responseMs": 139,
+    "frameWidth": 530,
+    "hostOpen": true,
+    "pageWidth": 1280,
+    "rafMs": 52.10000000149011
+  },
+  {
+    "width": 1280,
+    "cycle": 2,
+    "hostClosed": true,
+    "responseMs": 215,
+    "frameWidth": 830,
+    "hostOpen": false,
+    "pageWidth": 1280,
+    "rafMs": 13.5
+  },
+  {
+    "width": 1280,
+    "cycle": 3,
+    "nativeInspectorOpen": true,
+    "captionAXMs": 579,
+    "captionAXPresent": true,
+    "responseMs": 178,
+    "frameWidth": 530,
+    "hostOpen": true,
+    "pageWidth": 1280,
+    "rafMs": 111.30000000074506
+  },
+  {
+    "width": 1280,
+    "cycle": 3,
+    "hostClosed": true,
+    "responseMs": 217,
+    "frameWidth": 830,
+    "hostOpen": false,
+    "pageWidth": 1280,
+    "rafMs": 124.59999999776484
+  },
+  {
+    "width": 800,
+    "cycle": 1,
+    "nativeInspectorOpen": true,
+    "captionAXMs": 164,
+    "captionAXPresent": true,
+    "responseMs": 132,
+    "frameWidth": 624,
+    "hostOpen": true,
+    "pageWidth": 800,
+    "rafMs": 108.40000000223516
+  },
+  {
+    "width": 800,
+    "cycle": 1,
+    "hostClosed": true,
+    "responseMs": 183,
+    "frameWidth": 524,
+    "hostOpen": false,
+    "pageWidth": 800,
+    "rafMs": 156.09999999776483
+  },
+  {
+    "width": 800,
+    "cycle": 2,
+    "nativeInspectorOpen": true,
+    "captionAXMs": 360,
+    "captionAXPresent": true,
+    "responseMs": 309,
+    "frameWidth": 624,
+    "hostOpen": true,
+    "pageWidth": 800,
+    "rafMs": 203.19999999925497
+  },
+  {
+    "width": 800,
+    "cycle": 2,
+    "hostClosed": true,
+    "responseMs": 172,
+    "frameWidth": 524,
+    "hostOpen": false,
+    "pageWidth": 800,
+    "rafMs": 40.89999999850989
+  },
+  {
+    "width": 800,
+    "cycle": 3,
+    "nativeInspectorOpen": true,
+    "captionAXMs": 174,
+    "captionAXPresent": true,
+    "responseMs": 42,
+    "frameWidth": 624,
+    "hostOpen": true,
+    "pageWidth": 800,
+    "rafMs": 6.899999998509884
+  },
+  {
+    "width": 800,
+    "cycle": 3,
+    "hostClosed": true,
+    "responseMs": 133,
+    "frameWidth": 524,
+    "hostOpen": false,
+    "pageWidth": 800,
+    "rafMs": 38.400000002235174
+  }
+]
