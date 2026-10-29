@@ -1,0 +1,20 @@
+{
+  "normalization": "Trailing whitespace and final blank lines removed from copied logs only.",
+  "logs": [
+    {
+      "name": "build.log",
+      "rawSha256": "441e3d097699d601a2d7e3f0f8b5bf3baef6360851d4ea4a1d52e5daa1c3d81a",
+      "storedSha256": "441e3d097699d601a2d7e3f0f8b5bf3baef6360851d4ea4a1d52e5daa1c3d81a"
+    },
+    {
+      "name": "migrate.log",
+      "rawSha256": "407c283170a9d45fae1a865a7768b65b17c6d069435f29544a3eb19eaebeaf6b",
+      "storedSha256": "407c283170a9d45fae1a865a7768b65b17c6d069435f29544a3eb19eaebeaf6b"
+    },
+    {
+      "name": "start.log",
+      "rawSha256": "18099495b8e94980f74ca83409df6e7c9632bbfef2c65335532e6b84902ca3fe",
+      "storedSha256": "18099495b8e94980f74ca83409df6e7c9632bbfef2c65335532e6b84902ca3fe"
+    }
+  ]
+}

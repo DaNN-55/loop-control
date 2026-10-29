@@ -1,0 +1,9 @@
+Root 只读观察摘要（同次完整 AX 已实际显示；下方保留随后读取的 AX 差异）：
+- 本机 Worker：在线 · 空闲
+- 任务队列：1 需处理；最终渲染已阻塞，操作电脑-v4
+- 日常维护：正常
+
+Browser tab: 18, Title: "Loop Control", URL: "http://127.0.0.1:5174/?episode=bbea3b57-061b-4341-9ba1-3bf65d28899f".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~			29 text 最近读取  2026/10/30 06:49:46
+The focused UI element is 6 button Description: 关闭系统状态详情, ID: react-aria5442828451-_r_31_

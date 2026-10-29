@@ -49,3 +49,7 @@ Provider 使用受控协议样本，音频为测试音调，画面为受控图�
 [#152 及 13 张子票](https://github.com/DaNN-55/loop-control/issues/152) 已关闭，原生完成率 13/13；[完成评论](https://github.com/DaNN-55/loop-control/issues/152#issuecomment-6506782342) 保留验收边界。12 个执行工作树均通过 managed archive 归档，集成工作树仍附加到本任务；没有删除集成分支或日常工作树。见 [Issue 回读](final-review/GITHUB-CLOSURE.json) 与 [归档记录](final-review/WORKTREE-CLEANUP.json)。
 
 最终交付为本地 `codex/four-step-integration-152`；未推送、未部署、未合入日常 main。日常 5343 个基线文件内容、956 项状态及原 main 均保持，见 [指纹核对](final-review/DAILY-BASELINE-CHECK.json)。
+
+## 后续本地更新（2026-10-30）
+
+Owner 随后明确授权合入 main 并更新本地服务。现已完成快进合并、12 份前向迁移及正式服务启动，旧业务指纹与额外草稿保持，正式四步页面已打开供验收；仍未推送。详见 [main 更新记录](../main-four-step-update-20261030/REPORT.md)。上文“未合入日常 main”是此前独立集成阶段的记录。

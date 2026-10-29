@@ -1,0 +1,66 @@
+{
+  "unchanged": true,
+  "before": {
+    "episodes": {
+      "count": 6,
+      "fingerprint": "a047aee3e840f2d400d9984feb543363"
+    },
+    "tasks": {
+      "count": 210,
+      "fingerprint": "7b58c8cab239df6f388953ef879fbaa2"
+    },
+    "production_material_revisions": {
+      "count": 82,
+      "fingerprint": "5b1e10af539c2e2cf553fd7eb6857862"
+    },
+    "artifacts": {
+      "count": 240,
+      "fingerprint": "ab94c2ba79964f4fd5790fc4caedf666"
+    },
+    "review_packages": {
+      "count": 38,
+      "fingerprint": "0835ffe4250f8074e3ad4a9b783eded6"
+    },
+    "approvals": {
+      "count": 22,
+      "fingerprint": "e012d118fc5c993cedddf3fa3be84beb"
+    },
+    "audio_tracks": {
+      "count": 65,
+      "fingerprint": "1b489cb07b9cfc57e29baced30cbd1d7"
+    }
+  },
+  "after": {
+    "episodes": {
+      "count": 6,
+      "fingerprint": "a047aee3e840f2d400d9984feb543363"
+    },
+    "tasks": {
+      "count": 210,
+      "fingerprint": "7b58c8cab239df6f388953ef879fbaa2"
+    },
+    "production_material_revisions": {
+      "count": 82,
+      "fingerprint": "5b1e10af539c2e2cf553fd7eb6857862"
+    },
+    "artifacts": {
+      "count": 240,
+      "fingerprint": "ab94c2ba79964f4fd5790fc4caedf666"
+    },
+    "review_packages": {
+      "count": 38,
+      "fingerprint": "0835ffe4250f8074e3ad4a9b783eded6"
+    },
+    "approvals": {
+      "count": 22,
+      "fingerprint": "e012d118fc5c993cedddf3fa3be84beb"
+    },
+    "audio_tracks": {
+      "count": 65,
+      "fingerprint": "1b489cb07b9cfc57e29baced30cbd1d7"
+    }
+  },
+  "migrationCount": 95,
+  "lastMigration": "096-workspace-episode-deletion.sql",
+  "newWorkspaceRows": 0
+}

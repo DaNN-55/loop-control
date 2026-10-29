@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 runtime:migrate
+> node scripts/runtime/migrate.mjs
+
+{"passed":true,"applied":["084-four-step-workspace.sql","086-workspace-images.sql","087-workspace-narration.sql","088-workspace-audio.sql","089-workspace-captions.sql","090-workspace-candidates.sql","091-workspace-visual-candidates.sql","092-workspace-shot-caption-identity.sql","093-workspace-export.sql","094-workspace-delivery.sql","095-formal-workflow.sql","096-workspace-episode-deletion.sql"],"database":"loop_control","oldMigrationsUnchanged":true,"backupSkippedByExplicitOption":false,"backupDisabledByOwner":true}

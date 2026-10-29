@@ -1,0 +1,10 @@
+{
+  "projectRoot": "/Users/dan/Programs/loop-control",
+  "preparedRuntimePassed": true,
+  "matchedService": true,
+  "pid": 36613,
+  "port": 5174,
+  "httpStatus": 200,
+  "workerGuiStatus": "online idle",
+  "migrationRows": 95
+}
