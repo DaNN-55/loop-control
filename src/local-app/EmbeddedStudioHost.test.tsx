@@ -8,7 +8,7 @@ it('waits for the real frame flush before saving and rejects foreign messages',a
  const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement;
  const url=new URL(frame.src),channel=url.searchParams.get('lcChannel');
  expect((screen.getByRole('button',{name:'保存工作版本'}) as HTMLButtonElement).disabled).toBe(true);
- const state={type:'loop-control:state',channel,projectId:'loop-control-e',items:[{id:'shot-S01-full',startFrame:0,durationInFrames:60}],selectedIds:[],revision:1};
+ const state={type:'loop-control:state',writable:true,channel,projectId:'loop-control-e',items:[{id:'shot-S01-full',startFrame:0,durationInFrames:60}],selectedIds:[],revision:1};
  fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:9999',source:frame.contentWindow!,data:state}));
  expect((screen.getByRole('button',{name:'保存工作版本'}) as HTMLButtonElement).disabled).toBe(true);
  fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:state}));
@@ -21,9 +21,9 @@ it('keeps the editor open when its real flush fails and ignores a wrong channel'
  const save=vi.fn(async()=>workspace),close=vi.fn();render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'episodes/e/board.json'}} shots={[]} onSave={save} onClose={close}/>);
  const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel');
  const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
- deliver({type:'loop-control:state',channel:'wrong',revision:1,items:[],selectedIds:[]});
+ deliver({type:'loop-control:state',writable:true,channel:'wrong',revision:1,items:[],selectedIds:[]});
  expect((screen.getByRole('button',{name:'返回生产单'}) as HTMLButtonElement).disabled).toBe(true);
- deliver({type:'loop-control:state',revision:1,items:[],selectedIds:[]});
+ deliver({type:'loop-control:state',writable:true,revision:1,items:[],selectedIds:[]});
  const post=vi.spyOn(frame.contentWindow!,'postMessage');fireEvent.click(screen.getByRole('button',{name:'返回生产单'}));
  const request=post.mock.calls.at(-1)![0] as Record<string,unknown>;
  deliver({type:'loop-control:result',requestId:request.requestId,ok:false,error:'保存失败，请重试。'});
@@ -38,7 +38,7 @@ it('uses the same flush and save boundary for the native home action',async()=>{
  const save=vi.fn(async()=>workspace),close=vi.fn();render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'episodes/e/board.json'}} shots={[]} onSave={save} onClose={close}/>);
  const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel');
  const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
- deliver({type:'loop-control:state',revision:1,items:[],selectedIds:[]});
+ deliver({type:'loop-control:state',writable:true,revision:1,items:[],selectedIds:[]});
  const post=vi.spyOn(frame.contentWindow!,'postMessage');deliver({type:'loop-control:leave'});
  expect(post).toHaveBeenCalled();const request=post.mock.calls.at(-1)![0] as Record<string,unknown>;
  expect(request.action).toBe('flush');expect(close).not.toHaveBeenCalled();
@@ -50,7 +50,7 @@ it('binds incremental caption edits to the inspected live document before flush 
  render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'episodes/e/board.json'}} shots={[]} onSave={save} onClose={()=>{}} captionEditor={value=>{bridge=value;return null;}}/>);
  const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel');
  const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
- deliver({type:'loop-control:state',revision:3,items:[],selectedIds:[]});
+ deliver({type:'loop-control:state',writable:true,revision:3,items:[],selectedIds:[]});
  const post=vi.spyOn(frame.contentWindow!,'postMessage');const contract=(await import('../shotCaptions')).defaultShotCaptionContract('正文','independent');
  let promise:Promise<unknown>;act(()=>{promise=bridge!.applyCaptions('target',contract);});await waitFor(()=>expect(post.mock.calls.at(-1)?.[0].action).toBe('inspect'));
  let request=post.mock.calls.at(-1)![0];deliver({type:'loop-control:result',requestId:request.requestId,ok:true,result:{revision:3,documentFingerprint:'c'.repeat(64)}});
@@ -60,7 +60,7 @@ it('binds incremental caption edits to the inspected live document before flush 
 it('keeps shot navigation available after collapsing the rail',()=>{
  render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'episodes/e/board.json'}} shots={[{id:'S01',text:'第一镜的完整简介'},{id:'S02',text:'第二镜'}]} onSave={async()=>workspace} onClose={()=>{}}/>);
  const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel');
- fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,type:'loop-control:state',revision:1,items:[{id:'shot-S01-full',startFrame:0,durationInFrames:60},{id:'shot-S02-full',startFrame:60,durationInFrames:60}],selectedIds:[]}}));
+ fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,type:'loop-control:state',writable:true,revision:1,items:[{id:'shot-S01-full',startFrame:0,durationInFrames:60},{id:'shot-S02-full',startFrame:60,durationInFrames:60}],selectedIds:[]}}));
  fireEvent.click(screen.getByRole('button',{name:'折叠镜头导航'}));
  const post=vi.spyOn(frame.contentWindow!,'postMessage');fireEvent.click(screen.getByRole('button',{name:'定位镜头 S02'}));expect(post.mock.calls.at(-1)![0].itemId).toBe('shot-S02-full');
  expect(screen.getByRole('button',{name:'展开镜头导航'})).toBeTruthy();
@@ -71,7 +71,7 @@ it('uses the latest persisted file when a caller reuses its bridge for a save th
  render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'episodes/e/board.json'}} shots={[]} onSave={save} onClose={()=>{}} captionEditor={value=>{current=value;return null;}}/>);
  const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel'),post=vi.spyOn(frame.contentWindow!,'postMessage');
  const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
- deliver({type:'loop-control:state',revision:1,items:[],selectedIds:[]});const oldBridge=current!;
+ deliver({type:'loop-control:state',writable:true,revision:1,items:[],selectedIds:[]});const oldBridge=current!;
  let first:Promise<unknown>;act(()=>{first=oldBridge.save();});const flush=post.mock.calls.at(-1)![0];await act(async()=>{deliver({type:'loop-control:result',requestId:flush.requestId,ok:true});await first!;});
  let second:Promise<unknown>;act(()=>{second=oldBridge.applyNativeEdit('apply-candidate',{candidateId:'accepted'});});const inspect=post.mock.calls.at(-1)![0];deliver({type:'loop-control:result',requestId:inspect.requestId,ok:true,result:{revision:2,documentFingerprint:'c'.repeat(64)}});
  await waitFor(()=>expect(post.mock.calls.at(-1)?.[0].action).toBe('apply-candidate'));const edit=post.mock.calls.at(-1)![0];await act(async()=>{deliver({type:'loop-control:result',requestId:edit.requestId,ok:true,result:{document:{version:3}}});await second!;});expect(save.mock.calls.map(call=>call[0])).toEqual([workspace,next]);
@@ -81,4 +81,15 @@ it('keeps the native frame and content actions locked until the real SDK write o
  const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel'),post=vi.spyOn(frame.contentWindow!,'postMessage');const deliver=(writable:boolean)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,type:'loop-control:state',revision:1,writable,items:[{id:'shot-S01-full',startFrame:0,durationInFrames:60}],selectedIds:[]}}));
  deliver(false);expect((screen.getByRole('button',{name:'保存工作版本'}) as HTMLButtonElement).disabled).toBe(true);expect((screen.getByRole('button',{name:'定位镜头 S01'}) as HTMLButtonElement).disabled).toBe(true);expect(frame.hasAttribute('inert')).toBe(true);fireEvent.click(screen.getByRole('button',{name:'保存工作版本'}));expect(post).not.toHaveBeenCalled();expect(save).not.toHaveBeenCalled();
  deliver(true);expect((screen.getByRole('button',{name:'保存工作版本'}) as HTMLButtonElement).disabled).toBe(false);expect((screen.getByRole('button',{name:'定位镜头 S01'}) as HTMLButtonElement).disabled).toBe(false);expect(frame.hasAttribute('inert')).toBe(false);deliver(false);expect(screen.getByText('编辑连接已变化，当前修改仍保留。请在最新窗口继续。')).toBeTruthy();expect((screen.getByRole('button',{name:'保存工作版本'}) as HTMLButtonElement).disabled).toBe(true);
+});
+
+it('does not treat a connected state without SDK ownership as write readiness',async()=>{
+ let bridge:import('./EmbeddedStudioHost').EmbeddedStudioBridge|null=null;
+ const save=vi.fn(async()=>workspace);render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'episodes/e/board.json'}} shots={[{id:'S01',text:'第一镜'}]} onSave={save} onClose={()=>{}} captionEditor={value=>{bridge=value;return null;}}/>);
+ const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel'),post=vi.spyOn(frame.contentWindow!,'postMessage');
+ const deliver=(writable:unknown)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,type:'loop-control:state',revision:1,writable,items:[{id:'shot-S01-full',startFrame:0,durationInFrames:60}],selectedIds:[]}}));
+ for(const value of [undefined,'true',1,null]){deliver(value);expect((screen.getByRole('button',{name:'保存工作版本'}) as HTMLButtonElement).disabled).toBe(true);expect((screen.getByRole('button',{name:'定位镜头 S01'}) as HTMLButtonElement).disabled).toBe(true);expect(frame.hasAttribute('inert')).toBe(true);expect(bridge!.connected).toBe(false);}
+ let inspected:Promise<unknown>;act(()=>{inspected=bridge!.inspect();});const request=post.mock.calls.at(-1)![0];expect(request.action).toBe('inspect');
+ await act(async()=>{fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,type:'loop-control:result',requestId:request.requestId,ok:true,result:{revision:1,documentFingerprint:'c'.repeat(64),document:{}}}}));await inspected!;});expect(save).not.toHaveBeenCalled();
+ deliver(true);expect(bridge!.connected).toBe(true);expect(frame.hasAttribute('inert')).toBe(false);
 });

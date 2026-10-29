@@ -56,7 +56,7 @@ keep-target 对口播使用目标窗口与真实候选长度的较小值；超�
 
 ## Studio 初始写就绪与旧窗口
 
-`loop-control:state.writable` 来自 SDK 实际 `browserProjectOwnership(projectId)`，不能以文档可见或固定延时替代。未取得 ownership 时宿主 iframe inert + 覆盖，保存、镜头选择和 Host 内容操作禁用；只读 inspect 仍可用。客户端写命令也再次核验实际 ownership。就绪后沿原生 ownership/CAS/flush 保存，不改第三方 SDK，不跳过刷盘。
+宿主只接受显式 `writable === true` 为写就绪；缺失字段或错误类型不能开放 iframe、保存、选择或 bridge 写操作，只读 inspect 仍可用。`loop-control:state.writable` 来自 SDK 实际 `browserProjectOwnership(projectId)`，不能以文档可见或固定延时替代。未取得 ownership 时宿主 iframe inert + 覆盖，保存、镜头选择和 Host 内容操作禁用；只读 inspect 仍可用。客户端写命令也再次核验实际 ownership。就绪后沿原生 ownership/CAS/flush 保存，不改第三方 SDK，不跳过刷盘。
 
 曾就绪后失权，界面提示「编辑连接已变化，当前修改仍保留。请在最新窗口继续。」，保持当前原生 doc 与局部文字草稿，不自动刷新、重置或伪造 ownership。旧窗口可能在发出 Owner 保存前已被安全禁写；此时只能报告实际 SDK register409，不能声称执行了 Owner save409。完整重连和恢复编辑状态机不属于本票。
 

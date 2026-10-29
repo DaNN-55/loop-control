@@ -14,7 +14,7 @@ interface EditorState {writable?:boolean;structureEnabled?:boolean;shots?:Worksp
 export function EmbeddedStudioHost({episodeId,title,session,shots,onSave,onClose,captionEditor,panels=[]}:{episodeId:string;title:string;session:EmbeddedStudioSession;shots:Array<{id:string;text:string}>;onSave:(workspace:OpenChatCutStudioWorkspace)=>Promise<OpenChatCutStudioWorkspace>;onClose:()=>void;captionEditor?:(bridge:EmbeddedStudioBridge)=>ReactNode;panels?:Array<{id:string;label:string;render:(bridge:EmbeddedStudioBridge)=>ReactNode}>}){
   const frame=useRef<HTMLIFrameElement>(null),[channel]=useState(()=>crypto.randomUUID());
   const [workspace,setWorkspace]=useState(session.workspace),[editor,setEditor]=useState<EditorState|null>(null),[pending,setPending]=useState(false),[error,setError]=useState(''),[saved,setSaved]=useState(false),[activePanel,setActivePanel]=useState<string|null>(null),[railCollapsed,setRailCollapsed]=useState(false);
-  const writable=!!editor&&editor.writable!==false;
+  const writable=editor?.writable===true;
   const workspaceRef=useRef(session.workspace),pendingRef=useRef(false),everWritable=useRef(false);
   function remember(next:OpenChatCutStudioWorkspace){workspaceRef.current=next;setWorkspace(next);setSaved(true);}
   function begin(){if(!writable)throw Error('编辑器写连接尚未就绪，请稍后重试。');if(pendingRef.current)throw Error('请等待当前保存完成。');pendingRef.current=true;setPending(true);setError('');}
@@ -30,8 +30,8 @@ export function EmbeddedStudioHost({episodeId,title,session,shots,onSave,onClose
       if(event.source!==frame.current?.contentWindow||event.origin!==origin||!data||data.channel!==channel||data.projectId!==workspace.projectId)return;
       if(data.type==='loop-control:state'){
         if(data.writable!==undefined&&typeof data.writable!=='boolean'||!Number.isSafeInteger(data.revision)||data.revision<0||!Array.isArray(data.items)||data.items.length>10000||!data.items.every((i:EditorState['items'][number])=>i&&typeof i.id==='string'&&Number.isFinite(i.startFrame)&&Number.isFinite(i.durationInFrames))||!Array.isArray(data.selectedIds)||!data.selectedIds.every((id:unknown)=>typeof id==='string'))return;
-        if(data.writable!==false)everWritable.current=true;
-        setEditor({writable:data.writable!==false,structureEnabled:data.structureEnabled===true,shots:Array.isArray(data.shots)?data.shots:undefined,revision:data.revision,items:data.items,selectedIds:data.selectedIds});setSaved(false);
+        if(data.writable===true)everWritable.current=true;
+        setEditor({writable:data.writable===true,structureEnabled:data.structureEnabled===true,shots:Array.isArray(data.shots)?data.shots:undefined,revision:data.revision,items:data.items,selectedIds:data.selectedIds});setSaved(false);
       }else if(data.type==='loop-control:leave'){leave.current();}
       else if(data.type==='loop-control:closed'){setEditor(null);}
       else if(data.type==='loop-control:result'){
