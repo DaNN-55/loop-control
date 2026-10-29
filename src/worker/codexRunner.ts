@@ -562,6 +562,7 @@ function media(snapshot: Record<string, unknown>): WorkerTaskPackageInput["media
       embeddedAudio: {
         sourceRelativePath: requiredString(embeddedAudio.source_relative_path, "派生音频任务缺少冻结视频路径。"),
         durationSeconds: requiredPositiveNumber(embeddedAudio.duration_seconds, "派生音频任务缺少有效时长。"),
+        ...(embeddedAudio.start_seconds!==undefined?{startSeconds:requiredNonNegativeNumber(embeddedAudio.start_seconds,"原声源入点无效。")}:{ }),
       },
     };
   }

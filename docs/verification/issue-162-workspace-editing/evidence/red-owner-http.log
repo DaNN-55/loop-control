@@ -1,0 +1,34 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t10-workspace-editing/loop-control
+
+ ❯ src/local-app/workspaceShots.integration.test.ts (1 test | 1 failed) 2208ms
+   × Owner reorders native shot instances without rewriting registered sources or storyboard history 2207ms
+     → {"error":"Episode命令无效。"}: expected 400 to be 200 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceShots.integration.test.ts > Owner reorders native shot instances without rewriting registered sources or storyboard history
+AssertionError: {"error":"Episode命令无效。"}: expected 400 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 400
+
+ ❯ src/local-app/workspaceShots.integration.test.ts:11:51
+      9|   const before=await readFile(join(f.assetRoot,f.boardPath),'utf8');
+     10|   const moved=await f.request('editWorkspaceStructure',{workspaceId:w.…
+     11|   expect(moved.status,JSON.stringify(moved.body)).toBe(200);w=moved.bo…
+       |                                                   ^
+     12|   const project=(await (await fetch(f.origin+`/api/local/episodes/${f.…
+     13|   expect(project.timelines[0].items.find((i:{id:string})=>i.id===w.cli…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  18:43:27
+   Duration  2.82s (transform 304ms, setup 10ms, collect 437ms, tests 2.21s, environment 0ms, prepare 33ms)
+

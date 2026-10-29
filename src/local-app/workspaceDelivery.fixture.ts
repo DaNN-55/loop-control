@@ -5,7 +5,7 @@ import {createServer,connect} from 'node:net';
 import {spawn} from 'node:child_process';
 import {join} from 'node:path';
 import type {ClaimedTaskRow} from '../orchestration/workerDispatch';
-export async function runWorkspaceDeliveryProcess(f:{database:string;root:string},task:ClaimedTaskRow){
+export async function runWorkspaceDeliveryProcess(f:{database:string;root:string},task:ClaimedTaskRow,workerConfig:Record<string,unknown>={}){
  const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MODULE!);const context=runtimeContext();
  const bridges=new Set<ReturnType<typeof spawn>>();
  const server=createServer(socket=>{
@@ -23,7 +23,7 @@ export async function runWorkspaceDeliveryProcess(f:{database:string;root:string
  for(const [user,name] of [['postgres',f.database],['loop_worker','not_'+f.database]])await new Promise<void>((resolve,reject)=>{const probe=connect(database.port,'127.0.0.1');const fields=Buffer.from(`user\0${user}\0database\0${name}\0\0`),packet=Buffer.alloc(8+fields.length);packet.writeInt32BE(packet.length);packet.writeInt32BE(196608,4);fields.copy(packet,8);probe.once('connect',()=>probe.end(packet));probe.once('data',()=>{probe.destroy();reject(Error('Isolated Worker transport accepted a foreign startup.'));});probe.once('error',reject);probe.once('close',()=>resolve());});
  return await new Promise<any>((resolve,reject)=>{
  const child=spawn(process.execPath,[join(process.cwd(),'dist/worker/local-app/localWorkerCli.js')],{cwd:process.cwd(),env:process.env,stdio:['pipe','pipe','pipe']});let stdout='',stderr='';const timer=setTimeout(()=>child.kill('SIGKILL'),60000);timer.unref();
- child.stdin.on('error',()=>{});child.stdin.end(JSON.stringify({task,config:{projectRoot:process.cwd(),database,applicationDatabase:{host:database.host,port:database.port,database:database.database},mediaRoot:f.root,mountPath:f.root,minimumFreeBytes:0,visualCommand:[],actualCostCents:0}}));
+ child.stdin.on('error',()=>{});child.stdin.end(JSON.stringify({task,config:{projectRoot:process.cwd(),database,applicationDatabase:{host:database.host,port:database.port,database:database.database},mediaRoot:f.root,mountPath:f.root,minimumFreeBytes:0,visualCommand:[],actualCostCents:0,...workerConfig}}));
  child.stdout.on('data',b=>stdout+=String(b));child.stderr.on('data',b=>stderr+=String(b));child.once('error',reject);child.once('close',code=>{clearTimeout(timer);if(code!==0)return reject(Error(`Worker child exited ${code}: ${stderr.slice(0,4000)}`));try{resolve(JSON.parse(stdout.trim().split('\n').at(-1)!));}catch{reject(Error('Worker returned no persisted result.'));}});
  });}finally{for(const child of bridges)child.kill();await new Promise<void>(done=>server.close(()=>done()));}
 }

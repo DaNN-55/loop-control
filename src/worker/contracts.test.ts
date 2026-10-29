@@ -110,6 +110,8 @@ describe("Worker 契约", () => {
       inputArtifacts: [sourceArtifact],
     };
     const taskPackage = createWorkerTaskPackage(sourceInput);
+    expect(createWorkerTaskPackage({...sourceInput,media:{adapter:"ffmpeg_extract_audio",embeddedAudio:{sourceRelativePath:sourceArtifact.relativePath,durationSeconds:1,startSeconds:1}}})).toMatchObject({media:{embeddedAudio:{startSeconds:1,durationSeconds:1}}});
+    for(const startSeconds of [-1,Number.NaN,Number.POSITIVE_INFINITY,7201])expect(()=>createWorkerTaskPackage({...sourceInput,media:{adapter:"ffmpeg_extract_audio",embeddedAudio:{sourceRelativePath:sourceArtifact.relativePath,durationSeconds:1,startSeconds}}})).toThrow("冻结视频输入或时长无效");
 
     expect(taskPackage).toMatchObject({
       capability: "embedded_audio_extraction",

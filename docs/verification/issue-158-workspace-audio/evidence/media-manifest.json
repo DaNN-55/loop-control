@@ -1,0 +1,230 @@
+[
+  {
+    "name": "ambience.mp4",
+    "sha256": "d67f51b6078e7ac446057c96c80936d0afc4df9385c7e2d5fbc9755d976ed903",
+    "fileSize": 186531,
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "start_time": "0.000000",
+          "duration": "4.400000",
+          "side_data_list": [
+            {}
+          ]
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "start_time": "0.000000",
+          "duration": "4.458667"
+        }
+      ],
+      "format": {
+        "duration": "4.458667"
+      }
+    }
+  },
+  {
+    "name": "none.mp4",
+    "sha256": "487b7cc64d84d6137872a647501d59e32af001759cb1d84dd063a081d561277c",
+    "fileSize": 186531,
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "start_time": "0.000000",
+          "duration": "4.400000",
+          "side_data_list": [
+            {}
+          ]
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "start_time": "0.000000",
+          "duration": "4.458667"
+        }
+      ],
+      "format": {
+        "duration": "4.458667"
+      }
+    }
+  },
+  {
+    "name": "parallel.mp4",
+    "sha256": "8485edef9fa189dd2d6d89ce75696fb2758b17389140248fbba7e2c51fdd3b4c",
+    "fileSize": 186531,
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "start_time": "0.000000",
+          "duration": "4.400000",
+          "side_data_list": [
+            {}
+          ]
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "start_time": "0.000000",
+          "duration": "4.458667"
+        }
+      ],
+      "format": {
+        "duration": "4.458667"
+      }
+    }
+  },
+  {
+    "name": "selected-window.mp3",
+    "sha256": "3da3bf65ea1313022d955b59e3393ba55fd0890ce9bad2875be1007111d21023",
+    "fileSize": 6099,
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "mp3",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "start_time": "0.023021",
+          "duration": "1.000000"
+        }
+      ],
+      "format": {
+        "duration": "1.000000"
+      }
+    }
+  },
+  {
+    "name": "selected-window.mp4",
+    "sha256": "9a83eb4b94e3a6998e75c40e1d0ac2f3701727f356826ae0e7b924048625b926",
+    "fileSize": 173359,
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "start_time": "0.000000",
+          "duration": "4.000000",
+          "side_data_list": [
+            {}
+          ]
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "start_time": "0.000000",
+          "duration": "4.053333"
+        }
+      ],
+      "format": {
+        "duration": "4.053333"
+      }
+    }
+  },
+  {
+    "name": "source.mp4",
+    "sha256": "1412db8f1e61e870bd02d338bf2205c3104d89ea0583fc8dd6212dc2b79c1ca0",
+    "fileSize": 186531,
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "start_time": "0.000000",
+          "duration": "4.400000",
+          "side_data_list": [
+            {}
+          ]
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "start_time": "0.000000",
+          "duration": "4.458667"
+        }
+      ],
+      "format": {
+        "duration": "4.458667"
+      }
+    }
+  },
+  {
+    "name": "tts.mp4",
+    "sha256": "8485edef9fa189dd2d6d89ce75696fb2758b17389140248fbba7e2c51fdd3b4c",
+    "fileSize": 186531,
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "start_time": "0.000000",
+          "duration": "4.400000",
+          "side_data_list": [
+            {}
+          ]
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "start_time": "0.000000",
+          "duration": "4.458667"
+        }
+      ],
+      "format": {
+        "duration": "4.458667"
+      }
+    }
+  },
+  {
+    "name": "window-source.mp4",
+    "sha256": "bc9e4f49a66082ed68f5553ff51c78b25c136381366cc266829e1bc72805d199",
+    "fileSize": 43476,
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "start_time": "0.000000",
+          "duration": "4.000000"
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio",
+          "sample_rate": "48000",
+          "start_time": "0.000000",
+          "duration": "4.000000"
+        }
+      ],
+      "format": {
+        "duration": "4.000000"
+      }
+    }
+  }
+]

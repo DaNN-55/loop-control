@@ -1,0 +1,315 @@
+{
+  "audio": {
+    "mix": {
+      "voices": [
+        {
+          "coverage": "full",
+          "startSeconds": 0,
+          "durationSeconds": 2,
+          "shotDurationSeconds": 2,
+          "sourceStartSeconds": 0,
+          "sourceLabel": "shot-1",
+          "alignmentReady": true,
+          "shotId": "shot-1",
+          "mode": "source",
+          "gainDb": 0,
+          "ambienceGainDb": null,
+          "sourceItemId": "shot-shot-1-e93318e3-1a32-4b46-be44-a2dda5b35e7d",
+          "sourceAssetId": "audio-track-ddda45f8-99c8-42d2-9cd9-bc24d0c73fb5"
+        },
+        {
+          "coverage": "none",
+          "startSeconds": null,
+          "durationSeconds": null,
+          "shotDurationSeconds": 2,
+          "sourceStartSeconds": null,
+          "sourceLabel": null,
+          "alignmentReady": false,
+          "shotId": "shot-2",
+          "mode": "none",
+          "gainDb": 0,
+          "ambienceGainDb": null,
+          "sourceItemId": null,
+          "sourceAssetId": null
+        }
+      ],
+      "sounds": [
+        {
+          "itemId": "workspace-bgm",
+          "kind": "bgm",
+          "gainDb": -18,
+          "duckDepthDb": 14,
+          "startSeconds": 0,
+          "durationSeconds": 4
+        }
+      ]
+    },
+    "preparations": [
+      {
+        "id": "77b4962c-5e90-48c3-8e1f-6a7eaf1ad374",
+        "kind": "bgm",
+        "shotId": null,
+        "sourceItemId": null,
+        "sourceSha256": null,
+        "description": "整期配乐",
+        "query": null,
+        "anchor": "absolute",
+        "offsetSeconds": 0,
+        "durationSeconds": 4,
+        "taskId": null,
+        "status": "ready",
+        "error": null,
+        "audioTrackId": null,
+        "relativePath": "episodes/b2f96a07-6cdf-4a4b-a7b2-1d833cd6aef0/materials/64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92-bgm.mp3",
+        "sha256": "64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92",
+        "fileSize": 64556,
+        "adoptedItemId": "workspace-bgm",
+        "source": {
+          "provider": "manual",
+          "materialRevisionId": "7859f615-cb3e-47db-8ff7-3a4952066ff2"
+        }
+      },
+      {
+        "id": "b3f04a21-ea4b-4dde-b593-e8bb671b5bce",
+        "kind": "source",
+        "shotId": "shot-1",
+        "sourceItemId": "shot-shot-1-e93318e3-1a32-4b46-be44-a2dda5b35e7d",
+        "sourceSha256": "89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1",
+        "description": "shot-1 原片 0.00–2.00s",
+        "sourceWindow": {
+          "sha256": "89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1",
+          "fileSize": 44080,
+          "playbackRate": 1,
+          "relativePath": "episodes/b2f96a07-6cdf-4a4b-a7b2-1d833cd6aef0/materials/89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1-source.mp4",
+          "startSeconds": 0,
+          "sourceInFrame": 0,
+          "durationSeconds": 2,
+          "sourceFrameRate": 30,
+          "visualDurationInFrames": 60
+        },
+        "query": null,
+        "anchor": "shot",
+        "offsetSeconds": 0,
+        "durationSeconds": 2,
+        "taskId": "632ae4ab-1ccb-444b-a095-905810c052f1",
+        "status": "completed",
+        "error": null,
+        "audioTrackId": "ddda45f8-99c8-42d2-9cd9-bc24d0c73fb5",
+        "relativePath": "episodes/b2f96a07-6cdf-4a4b-a7b2-1d833cd6aef0/native-tasks/632ae4ab-1ccb-444b-a095-905810c052f1/839b2f1d-acf6-41a7-bad0-eb12e6396e4f.mp3",
+        "sha256": "c2fac4488f7d9774df19ae5fdc74c4233bf8a42e98c1790796a07c5251cac568",
+        "fileSize": 9843,
+        "adoptedItemId": "workspace-source-shot-shot-1",
+        "source": null
+      }
+    ]
+  },
+  "deliveries": [],
+  "exports": [],
+  "exportIssues": [],
+  "captions": [
+    {
+      "clipId": "e93318e3-1a32-4b46-be44-a2dda5b35e7d",
+      "itemId": "shot-shot-1-e93318e3-1a32-4b46-be44-a2dda5b35e7d",
+      "shotId": "shot-1",
+      "durationMs": 2000,
+      "contract": {
+        "version": "shot-captions/v1",
+        "enabled": true,
+        "contentMode": "follow_tts",
+        "text": "第一镜",
+        "cues": [],
+        "spatial": {
+          "version": "shot-caption-space/v2",
+          "anchor": "bottom-center",
+          "safeArea": "title-safe",
+          "aspectRatio": "9:16",
+          "insets": {
+            "top": 0.08,
+            "right": 0.08,
+            "bottom": 0.18,
+            "left": 0.08
+          },
+          "maxLines": 2,
+          "maxCharactersPerLine": 16
+        }
+      },
+      "inputFingerprint": "e66c31ee746a8fe0749f3a8a4dc52c5544ba63f913a51352044f56dfc1953911",
+      "timing": "missing",
+      "textConfirmed": false,
+      "audioTrackId": "ddda45f8-99c8-42d2-9cd9-bc24d0c73fb5",
+      "narrationText": null,
+      "taskId": null,
+      "alignmentInputVersion": null,
+      "detail": null
+    },
+    {
+      "clipId": "ef748f67-fc82-4b2d-a2b4-30efeb412665",
+      "itemId": "shot-shot-2-ef748f67-fc82-4b2d-a2b4-30efeb412665",
+      "shotId": "shot-2",
+      "durationMs": 2000,
+      "contract": {
+        "version": "shot-captions/v1",
+        "enabled": true,
+        "contentMode": "follow_tts",
+        "text": "缺少素材的第二镜。",
+        "cues": [],
+        "spatial": {
+          "version": "shot-caption-space/v2",
+          "anchor": "bottom-center",
+          "safeArea": "title-safe",
+          "aspectRatio": "9:16",
+          "insets": {
+            "top": 0.08,
+            "right": 0.08,
+            "bottom": 0.18,
+            "left": 0.08
+          },
+          "maxLines": 2,
+          "maxCharactersPerLine": 16
+        }
+      },
+      "inputFingerprint": "aa62bd6570f39207d0d0a6f97d9dffc122faa29c64951d0c900063be6e3a1804",
+      "timing": "missing",
+      "textConfirmed": false,
+      "audioTrackId": null,
+      "narrationText": null,
+      "taskId": null,
+      "alignmentInputVersion": null,
+      "detail": null
+    }
+  ],
+  "id": "e78c01f8-fb6a-4f83-ad70-35a333a5d419",
+  "episodeId": "b2f96a07-6cdf-4a4b-a7b2-1d833cd6aef0",
+  "workflowVersion": "four-step/v1",
+  "scriptRevisionId": "f5bcbd9d-6598-464b-8faf-238dbee56921",
+  "storyboardPackageId": "368ce529-f89b-451e-89f0-cc05884e5fd2",
+  "revision": 6,
+  "contentSha256": "a381fde2d6f12384f33396b0d853f7ad347dc79ff63ad123f9359732d7a8bd24",
+  "nativeEditRevision": 3,
+  "narration": [
+    {
+      "clipId": "e93318e3-1a32-4b46-be44-a2dda5b35e7d",
+      "shotId": "shot-1",
+      "mode": "none",
+      "text": "第一镜",
+      "voice": "zh_female_vv_uranus_bigtts",
+      "languageCode": "zh-CN",
+      "speakingRate": 1,
+      "override": false,
+      "inputFingerprint": "1421cc56a7049b89fa0ed5872f03283cc2f8eddedf2c861460f063e085c8b708",
+      "confirmed": false,
+      "taskId": null,
+      "status": "pending",
+      "error": null,
+      "audioTrackId": null,
+      "artifactId": null,
+      "relativePath": null,
+      "sha256": null,
+      "fileSize": null,
+      "durationSeconds": null,
+      "itemId": "workspace-narration-shot-shot-1",
+      "adoptedAudioTrackId": null
+    },
+    {
+      "clipId": "ef748f67-fc82-4b2d-a2b4-30efeb412665",
+      "shotId": "shot-2",
+      "mode": "none",
+      "text": "缺少素材的第二镜。",
+      "voice": "zh_female_vv_uranus_bigtts",
+      "languageCode": "zh-CN",
+      "speakingRate": 1,
+      "override": false,
+      "inputFingerprint": "1bd332acd5f546539f90dd0a836f7ade67d9e5dd7c7eedbf7a84aaeb03fa1f0a",
+      "confirmed": false,
+      "taskId": null,
+      "status": "pending",
+      "error": null,
+      "audioTrackId": null,
+      "artifactId": null,
+      "relativePath": null,
+      "sha256": null,
+      "fileSize": null,
+      "durationSeconds": null,
+      "itemId": "workspace-narration-shot-shot-2",
+      "adoptedAudioTrackId": null
+    }
+  ],
+  "clips": [
+    {
+      "id": "e93318e3-1a32-4b46-be44-a2dda5b35e7d",
+      "text": "第一镜",
+      "itemId": "shot-shot-1-e93318e3-1a32-4b46-be44-a2dda5b35e7d",
+      "shotId": "shot-1",
+      "source": {
+        "kind": "video",
+        "sha256": "89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1",
+        "fileSize": 44080,
+        "relativePath": "episodes/b2f96a07-6cdf-4a4b-a7b2-1d833cd6aef0/materials/89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1-source.mp4",
+        "materialRevisionId": "10cbd6fc-f64b-4f1f-8253-cae624292cfe"
+      }
+    },
+    {
+      "id": "ef748f67-fc82-4b2d-a2b4-30efeb412665",
+      "text": "缺少素材的第二镜。",
+      "itemId": "shot-shot-2-ef748f67-fc82-4b2d-a2b4-30efeb412665",
+      "shotId": "shot-2",
+      "source": {
+        "kind": "video",
+        "sha256": "89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1",
+        "fileSize": 44080,
+        "relativePath": "episodes/b2f96a07-6cdf-4a4b-a7b2-1d833cd6aef0/materials/89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1-source.mp4",
+        "materialRevisionId": "10cbd6fc-f64b-4f1f-8253-cae624292cfe"
+      }
+    }
+  ],
+  "project": {
+    "relativePath": "episodes/b2f96a07-6cdf-4a4b-a7b2-1d833cd6aef0/production-workspace/versions/0bd50b9f305651ee4d676eb5f1d3285059415cabca8db1fab136209bd65d3857.json",
+    "sha256": "0bd50b9f305651ee4d676eb5f1d3285059415cabca8db1fab136209bd65d3857",
+    "fileSize": 6040,
+    "projectId": "loop-control-b2f96a07-6cdf-4a4b-a7b2-1d833cd6aef0"
+  },
+  "history": [
+    {
+      "revision": 6,
+      "sha256": "0bd50b9f305651ee4d676eb5f1d3285059415cabca8db1fab136209bd65d3857",
+      "scriptRevisionId": "f5bcbd9d-6598-464b-8faf-238dbee56921",
+      "reason": "调整实际混音"
+    },
+    {
+      "revision": 5,
+      "sha256": "201976b10054c051be1eb100b83275b269f5b8c2575ed93975716f7728b489fb",
+      "scriptRevisionId": "f5bcbd9d-6598-464b-8faf-238dbee56921",
+      "reason": "采用配乐或音效"
+    },
+    {
+      "revision": 4,
+      "sha256": "ef307c23bed06409d8a77e61460543c2893cc79c6ed1e344f4b6d585415ef0b6",
+      "scriptRevisionId": "f5bcbd9d-6598-464b-8faf-238dbee56921",
+      "reason": "采用原片主声"
+    },
+    {
+      "revision": 3,
+      "sha256": "703f4dfefb9b353c33017213153ca7ef9e1acbd118e7b6fbb19f159e2137a0f9",
+      "scriptRevisionId": "f5bcbd9d-6598-464b-8faf-238dbee56921",
+      "reason": null
+    },
+    {
+      "revision": 2,
+      "sha256": "c0b8f5d4ed2e8323cc7567783367c4da0519cd5d73772f36e48d9c7ff9028aef",
+      "scriptRevisionId": "f5bcbd9d-6598-464b-8faf-238dbee56921",
+      "reason": null
+    },
+    {
+      "revision": 1,
+      "sha256": "d16ae5fe71510155ed04f22a6cd121ec6c851feddbf5d798ea64205172ea5775",
+      "scriptRevisionId": "f5bcbd9d-6598-464b-8faf-238dbee56921",
+      "reason": "首次组装"
+    }
+  ],
+  "readiness": {
+    "deliverable": false,
+    "placeholders": [],
+    "missingSources": []
+  },
+  "stale": false
+}

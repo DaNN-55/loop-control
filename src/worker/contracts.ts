@@ -221,6 +221,7 @@ export interface WorkerTaskPackageInput {
       embeddedAudio: {
         sourceRelativePath: string;
         durationSeconds: number;
+        startSeconds?: number;
       };
     }
     | {
@@ -537,7 +538,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
   if (input.media?.adapter === "ffmpeg_extract_audio") {
     if (input.task.provider !== "ffmpeg") throw new Error("派生音频任务 Provider 必须与冻结 ffmpeg 适配器匹配。");
     const embeddedAudio = input.media.embeddedAudio;
-    if (!isSafeRelativePath(embeddedAudio.sourceRelativePath) || !isPositiveFiniteNumber(embeddedAudio.durationSeconds)) throw new Error("派生音频任务的冻结视频输入或时长无效。");
+    if (!isSafeRelativePath(embeddedAudio.sourceRelativePath) || !isPositiveFiniteNumber(embeddedAudio.durationSeconds) || embeddedAudio.startSeconds!==undefined&&(!Number.isFinite(embeddedAudio.startSeconds)||embeddedAudio.startSeconds<0||embeddedAudio.startSeconds>7200||embeddedAudio.durationSeconds>7200)) throw new Error("派生音频任务的冻结视频输入或时长无效。");
     if (!input.inputArtifacts.some((artifact) => artifact.relativePath === embeddedAudio.sourceRelativePath)) throw new Error("派生音频任务的视频输入未冻结。");
   }
   if (input.media?.adapter === "ffmpeg_trim_video") {

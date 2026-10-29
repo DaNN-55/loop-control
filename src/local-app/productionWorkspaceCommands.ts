@@ -1,11 +1,13 @@
 import {readWorkspaceCandidates,readUsedWorkspaceNarrationVersions,validateWorkspaceCandidateUses,executeWorkspaceCandidateCommand} from './workspaceCandidates.js';
+import {executeWorkspaceAudio,readWorkspaceAudio} from './workspaceAudio.js';
+import {workspaceAudioFields} from '../workspaceAudio.js';
+import {executeWorkspaceDelivery,readWorkspaceDeliveries} from './workspaceDeliveryCommands.js';
+import {workspaceDeliveryFields} from '../workspaceDelivery.js';
 import {migrateWorkspaceCaptionLanes} from '../workspaceCaptions.js';
-import {applyWorkspaceShotOperation,isWorkspaceShotOperation,synchronizeWorkspaceBindings,withWorkspaceShotMetadata} from '../workspaceShots.js';
+import {applyWorkspaceShotOperation,isWorkspaceShotOperation,synchronizeWorkspaceBindings,withWorkspaceShotMetadata,workspaceShotIdentity} from '../workspaceShots.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
 import {executeWorkspaceNarration,readWorkspaceNarration} from './workspaceNarration.js';
 import type {InputRuntime} from './episodeCommands.js';
-import {executeWorkspaceDelivery,readWorkspaceDeliveries} from './workspaceDeliveryCommands.js';
-import {workspaceDeliveryFields} from '../workspaceDelivery.js';
 import {executeWorkspaceExport,readWorkspaceExports,usedWorkspaceContent} from './workspaceExportCommands.js';
 import {workspaceExportFields} from '../workspaceExport.js';
 import {saveWorkspaceVideoRanges} from './workspaceVideo.js';
@@ -39,7 +41,7 @@ export async function readProductionWorkspace(c:PoolClient,episodeId:string,root
  if(!inputsReady||stale)for(const e of exportState.exports)e.confirmed=false;
  const deliverable=inputsReady&&!stale&&!!exportState.exports[0]?.current&&exportState.exports[0].status==='ready'&&exportState.exports[0].checks.every(x=>x.passed);
  const history=(await c.query('SELECT revision,project_sha256,script_revision_id,reason FROM local_identity.production_workspace_versions WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 50',[row.id])).rows.map(v=>({revision:Number(v.revision),sha256:v.project_sha256,scriptRevisionId:v.script_revision_id,reason:v.reason}));
- return{deliveries:await readWorkspaceDeliveries(c,root,row),usedNarration:await readUsedWorkspaceNarrationVersions(c,row,project),candidates:await readWorkspaceCandidates(c,row,project),...exportState,captions,id:row.id,episodeId,workflowVersion:row.workflow_version,scriptRevisionId:row.script_revision_id,storyboardPackageId:row.storyboard_package_id,revision:Number(row.revision),contentSha256:row.content_sha256,nativeEditRevision:Number(row.native_edit_revision),narration:await readWorkspaceNarration(c,row,project),clips:row.bindings,project:{relativePath:row.project_path,sha256:row.project_sha256,fileSize:Number(row.project_size),projectId:`loop-control-${episodeId}`},history,readiness:{deliverable,placeholders,missingSources},stale};
+ return{audio:await readWorkspaceAudio(c,row,project),deliveries:await readWorkspaceDeliveries(c,root,row),usedNarration:await readUsedWorkspaceNarrationVersions(c,row,project),candidates:await readWorkspaceCandidates(c,row,project),...exportState,captions,id:row.id,episodeId,workflowVersion:row.workflow_version,scriptRevisionId:row.script_revision_id,storyboardPackageId:row.storyboard_package_id,revision:Number(row.revision),contentSha256:row.content_sha256,nativeEditRevision:Number(row.native_edit_revision),narration:await readWorkspaceNarration(c,row,project),clips:row.bindings,project:{relativePath:row.project_path,sha256:row.project_sha256,fileSize:Number(row.project_size),projectId:`loop-control-${episodeId}`},history,readiness:{deliverable,placeholders,missingSources},stale};
 }
 export function workspaceContentSha256(project:OpenChatCutProject):string{
  const content=structuredClone(project);for(const timeline of content.timelines){delete (timeline as unknown as Record<string,unknown>).selectedId;delete (timeline as unknown as Record<string,unknown>).selectedIds;}
@@ -86,6 +88,7 @@ export class ProductionWorkspaceCommands{
   if(command==='matchWorkspaceImage')return matchWorkspaceImage(c,root,e.id,data);
   const locked=await lockProductionWorkspace(c,root,e.id,data.workspaceId,data.expectedRevision);row=locked.row;const project=locked.project;
   if(['prepareWorkspaceCandidate','adoptWorkspaceCandidate','rejectWorkspaceCandidate'].includes(command))return executeWorkspaceCandidateCommand(c,root,row,project,command,data);
+  if(Object.hasOwn(workspaceAudioFields,command)){await executeWorkspaceAudio(c,root,row,project,runtime,command,data);return readProductionWorkspace(c,e.id,root);}
   if(Object.hasOwn(workspaceDeliveryFields,command)){await executeWorkspaceDelivery(c,root,row,project,command,data);return readProductionWorkspace(c,e.id,root);}
   if(Object.hasOwn(workspaceExportFields,command)){await executeWorkspaceExport(c,root,row,project,runtime,command,data);return readProductionWorkspace(c,e.id,root);}
   if(Object.hasOwn(workspaceCaptionFields,command))return executeWorkspaceCaptionCommand(c,root,row,project,runtime,command,data);
@@ -110,7 +113,7 @@ export class ProductionWorkspaceCommands{
    await updateWorkspaceProject(c,root,row,project,row.bindings);return readProductionWorkspace(c,e.id,root);
   }
   if(!runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 未配置。');const config=await runtime.studioRuntime();
-  const validate=async(doc:OpenChatCutProject)=>{await validateWorkspaceProject(c,root,e.id,doc,config);await validateWorkspaceCandidateUses(c,row!,project,doc);};
+  const validate=async(doc:OpenChatCutProject)=>{await validateWorkspaceProject(c,root,e.id,doc,config,project);await validateWorkspaceCandidateUses(c,row!,project,doc);};
   if(command==='openWorkspaceStudio'){
    if((await c.query("SELECT 1 FROM local_identity.workspace_deliveries d JOIN public.tasks t ON t.id=d.task_id WHERE d.workspace_id=$1 AND t.status IN ('ready','running') LIMIT 1",[row.id])).rowCount)throw new ConfigurationError(409,'交付正在排队或校验，请等待结果后再编辑。');
    const editable=migrateWorkspaceCaptionLanes(withWorkspaceShotMetadata(project,row.bindings)),paths=[...usedWorkspaceContent(editable).paths];const opened=await openOpenChatCutDraftStudio(root,e.id,editable,paths,hash(JSON.stringify({id:row.id,scriptRevisionId:row.script_revision_id,storyboardPackageId:row.storyboard_package_id})),config,validate);
@@ -161,8 +164,10 @@ export async function readWorkspaceVersion(c:PoolClient,root:string,episodeId:st
  return readWorkspaceProject(root,row);
 }
 
-export async function validateWorkspaceProject(c:PoolClient,root:string,episodeId:string,doc:OpenChatCutProject,config:OpenChatCutRuntimeConfig){
-   const sources=usedWorkspaceContent(doc).paths;
+export async function validateWorkspaceProject(c:PoolClient,root:string,episodeId:string,doc:OpenChatCutProject,config:OpenChatCutRuntimeConfig,previousProject?:OpenChatCutProject){
+   const used=usedWorkspaceContent(doc),effective=(item:Record<string,unknown>)=>item.kind==='video'||item.kind==='image';
+   if(!used.items.some(effective)&&((previousProject&&usedWorkspaceContent(previousProject).items.some(effective))||!used.items.some(item=>item.kind==='text'&&workspaceShotIdentity(item))))throw new ConfigurationError(409,'不能删除最后一个有效镜头；请在当前编辑器中恢复画面后重试保存。');
+   const sources=used.paths;
    for(const path of sources)await resolveWorkspaceSource(c,root,episodeId,path);
    if(!(await inspectOpenChatCutProjectWithRuntime(doc,config)).readable)throw new ConfigurationError(409,'当前草稿不能由 Studio 读取。');
 }

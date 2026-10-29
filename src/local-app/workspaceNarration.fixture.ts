@@ -1,3 +1,4 @@
+import {workspaceTestMedia} from './workspaceTestMedia.fixture';
 // @vitest-environment node
 import assert from 'node:assert/strict';
 import {randomUUID} from 'node:crypto';
@@ -11,8 +12,9 @@ import {executeNativeNarration} from './narrationWorker';
 import {prepareNativeAttemptOutput} from './nativeAttemptOutput';
 import {verifyArtifactIndex} from '../worker/mediaLibrary';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
-export async function narrationFixture(origin?:string,onBase?:(f:Awaited<ReturnType<typeof productionWorkspaceFixture>>)=>void,videoConfiguration=false,skipWorkspace=false,migrations:string[]=[]){
- const f=await productionWorkspaceFixture({origin,migrations:['db/local/087-workspace-narration.sql',...migrations],runtime:{postReady:async()=>{},mediaReady:async()=>{},narrationReady:async()=>{},checkReferences:async()=>{},wake(){}}});
+export async function narrationFixture(origin?:string,onBase?:(f:Awaited<ReturnType<typeof productionWorkspaceFixture>>)=>void,videoConfiguration=false,skipWorkspace=false,options?:{voice:string;video:string;testRootParent?:string}|string[]){
+ const controlledMedia=Array.isArray(options)?undefined:options,migrations=Array.isArray(options)?options:[];
+ const f=await productionWorkspaceFixture({testRootParent:controlledMedia?.testRootParent,origin,migrations:['db/local/087-workspace-narration.sql',...migrations],runtime:{postReady:async()=>{},mediaReady:async()=>{},narrationReady:async()=>{},checkReferences:async()=>{},wake(){}}});
  onBase?.(f);
  try{
  const version=randomUUID(),connection=randomUUID(),secret=randomUUID();
@@ -41,10 +43,10 @@ export async function narrationFixture(origin?:string,onBase?:(f:Awaited<ReturnT
  await f.c.query('UPDATE local_identity.input_episodes SET enabled=true WHERE episode_id=$1',[f.episode]);
  await f.c.query('COMMIT');
  const videoModulePath=join(f.root,'controlled-video.mjs'),videoSubmissions=join(f.root,'video-submissions.jsonl');
- await writeFile(videoModulePath,`import{readFileSync,appendFileSync}from'node:fs';export async function createNarrationPorts(){return{mode:'controlled',store:{mode:'keychain',get:async()=> 'synthetic-t05-video-secret'},fetcher:async(input,init={})=>{if(init.method==='POST'){appendFileSync(${JSON.stringify(videoSubmissions)},init.body+'\\n');return Response.json({id:'controlled-t05-video'});}if(new URL(String(input)).hostname==='ark.cn-beijing.volces.com')return Response.json({status:'succeeded',content:{video_url:'https://result.volccdn.com/t05.mp4'}});return new Response(readFileSync('/private/tmp/loop-152-orchestration/media/landscape-red-blue.mp4'),{headers:{'content-type':'video/mp4'}});}};}`);
+ await writeFile(videoModulePath,`import{readFileSync,appendFileSync}from'node:fs';export async function createNarrationPorts(){return{mode:'controlled',store:{mode:'keychain',get:async()=> 'synthetic-t05-video-secret'},fetcher:async(input,init={})=>{if(init.method==='POST'){appendFileSync(${JSON.stringify(videoSubmissions)},init.body+'\\n');return Response.json({id:'controlled-t05-video'});}if(new URL(String(input)).hostname==='ark.cn-beijing.volces.com')return Response.json({status:'succeeded',content:{video_url:'https://result.volccdn.com/t05.mp4'}});return new Response(readFileSync(${JSON.stringify(controlledMedia?.video??workspaceTestMedia('landscape-red-blue.mp4'))}),{headers:{'content-type':'video/mp4'}});}};}`);
  const modulePath=join(f.root,'controlled-narration.mjs'),submissions=join(f.root,'submissions.jsonl'),responseMode=join(f.root,'response-mode');
  await writeFile(responseMode,'success');
- await copyFile('/private/tmp/loop-152-orchestration/media/controlled-narration-tone.mp3',join(f.assetRoot,`episodes/${f.episode}/voice.mp3`));
+ await copyFile(controlledMedia?.voice??workspaceTestMedia('controlled-narration-tone.mp3'),join(f.assetRoot,`episodes/${f.episode}/voice.mp3`));
  await writeFile(modulePath,`import{readFileSync,appendFileSync}from'node:fs';export async function createNarrationPorts(){return{mode:'controlled',store:{mode:'keychain',get:async()=> 'synthetic-narration-secret'},fetcher:async(url,init)=>{const mode=readFileSync(${JSON.stringify(responseMode)},'utf8');appendFileSync(${JSON.stringify(submissions)},JSON.stringify({url:String(url),body:JSON.parse(init.body)})+'\\n');if(mode==='delay')await new Promise(resolve=>setTimeout(resolve,400));if(mode==='unknown')throw Error('Controlled transport break');if(mode==='reject')return new Response('controlled rejection',{status:400});return new Response('data: '+JSON.stringify({code:0,data:readFileSync(${JSON.stringify(join(f.assetRoot,`episodes/${f.episode}/voice.mp3`))}).toString('base64')})+'\\n');}};}`);
  const made=skipWorkspace?{status:200,body:null}:await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});assert.equal(made.status,200,JSON.stringify(made.body));
  const defaults=await f.request('saveTtsSettings',{languageCode:'zh-CN',voice:'zh_female_vv_uranus_bigtts',speakingRate:1});assert.equal(defaults.status,200,JSON.stringify(defaults.body));

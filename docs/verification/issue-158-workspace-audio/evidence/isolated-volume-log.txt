@@ -1,0 +1,10 @@
+{
+  "root": "/private/tmp/loop-t06-volume-D4x9rp",
+  "image": "/private/tmp/loop-t06-volume-D4x9rp/media.sparseimage",
+  "mountPath": "/private/tmp/loop-t06-volume-D4x9rp/mounted",
+  "log": [
+    "",
+    "/dev/disk8          \tGUID_partition_scheme          \t\n/dev/disk8s1        \tApple_APFS                     \t\n/dev/disk9          \tEF57347C-0000-11AA-AA11-0030654\t\n/dev/disk9s1        \t41504653-0000-11AA-AA11-0030654\t/private/tmp/loop-t06-volume-D4x9rp/mounted\n",
+    "\"disk8\" ejected.\n"
+  ]
+}

@@ -1,0 +1,30 @@
+[
+  {
+    "name": "landscape-red-blue.mp4",
+    "versionedSha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+    "manifestMatch": true,
+    "priorControlledInputSha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+    "byteEquivalent": true
+  },
+  {
+    "name": "portrait-green.mp4",
+    "versionedSha256": "97b1552e7f98b3819d89e303bddd8f4b4d24f479f008a8b54f63a119457008be",
+    "manifestMatch": true,
+    "priorControlledInputSha256": "97b1552e7f98b3819d89e303bddd8f4b4d24f479f008a8b54f63a119457008be",
+    "byteEquivalent": true
+  },
+  {
+    "name": "still-striped.png",
+    "versionedSha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+    "manifestMatch": true,
+    "priorControlledInputSha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+    "byteEquivalent": true
+  },
+  {
+    "name": "controlled-narration-tone.mp3",
+    "versionedSha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+    "manifestMatch": true,
+    "priorControlledInputSha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+    "byteEquivalent": true
+  }
+]

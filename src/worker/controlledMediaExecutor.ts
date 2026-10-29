@@ -26,7 +26,7 @@ export async function executeControlledMediaTask(input: {
   cloudflareWorkersAiCredentials?: string;
   validateMp4: (path: string, minimumDurationSeconds: number) => Promise<void>;
   probeMp3: (path: string) => Promise<number>;
-  extractMp3: (sourcePath: string, minimumDurationSeconds: number) => Promise<Uint8Array>;
+  extractMp3: (sourcePath: string, minimumDurationSeconds: number, startSeconds?:number) => Promise<Uint8Array>;
   trimMp3: (bytes: Uint8Array, targetDurationSeconds: number) => Promise<Uint8Array>;
   trimMp4?: (sourcePath: string, startSeconds: number, endSeconds: number) => Promise<Uint8Array>;
   trimMp4Segments?: (sourcePath: string, segments: Array<{ startSeconds: number; endSeconds: number }>) => Promise<Uint8Array>;
@@ -71,7 +71,7 @@ async function mediaBytes(input: {
   cloudflareWorkersAiCredentials?: string;
   validateMp4: (path: string, minimumDurationSeconds: number) => Promise<void>;
   probeMp3: (path: string) => Promise<number>;
-  extractMp3: (sourcePath: string, minimumDurationSeconds: number) => Promise<Uint8Array>;
+  extractMp3: (sourcePath: string, minimumDurationSeconds: number, startSeconds?:number) => Promise<Uint8Array>;
   trimMp3: (bytes: Uint8Array, targetDurationSeconds: number) => Promise<Uint8Array>;
   trimMp4?: (sourcePath: string, startSeconds: number, endSeconds: number) => Promise<Uint8Array>;
   trimMp4Segments?: (sourcePath: string, segments: Array<{ startSeconds: number; endSeconds: number }>) => Promise<Uint8Array>;
@@ -112,7 +112,7 @@ async function mediaBytes(input: {
     const sourcePath = resolve(taskPackage.assets.allowedRoot, taskPackage.media.embeddedAudio.sourceRelativePath);
     const fromRoot = relative(resolve(taskPackage.assets.allowedRoot), sourcePath);
     if (isAbsolute(fromRoot) || fromRoot.startsWith("..")) throw new Error("冻结视频输入路径超出资产根目录。");
-    return { bytes: await input.extractMp3(sourcePath, taskPackage.media.embeddedAudio.durationSeconds) };
+    return { bytes: await (taskPackage.media.embeddedAudio.startSeconds===undefined?input.extractMp3(sourcePath,taskPackage.media.embeddedAudio.durationSeconds):input.extractMp3(sourcePath,taskPackage.media.embeddedAudio.durationSeconds,taskPackage.media.embeddedAudio.startSeconds)) };
   }
   if (taskPackage.provider === "ffmpeg" && taskPackage.media?.adapter === "ffmpeg_trim_video") {
     const clip = taskPackage.media.videoClips ?? taskPackage.media.videoClip;

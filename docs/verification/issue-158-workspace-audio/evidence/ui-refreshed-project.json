@@ -1,0 +1,169 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "e78c01f8-fb6a-4f83-ad70-35a333a5d419",
+    "transitionMode": "studio"
+  },
+  "assets": [
+    {
+      "id": "material-10cbd6fc-f64b-4f1f-8253-cae624292cfe",
+      "name": "source.mp4",
+      "kind": "video",
+      "src": "episodes/b2f96a07-6cdf-4a4b-a7b2-1d833cd6aef0/materials/89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1-source.mp4",
+      "durationInFrames": 120,
+      "width": 360,
+      "height": 640,
+      "sourceRevision": "10cbd6fc-f64b-4f1f-8253-cae624292cfe",
+      "sourceContentHash": "89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1"
+    },
+    {
+      "id": "audio-track-ddda45f8-99c8-42d2-9cd9-bc24d0c73fb5",
+      "name": "shot-1 原片 0.00–2.00s",
+      "kind": "audio",
+      "src": "episodes/b2f96a07-6cdf-4a4b-a7b2-1d833cd6aef0/native-tasks/632ae4ab-1ccb-444b-a095-905810c052f1/839b2f1d-acf6-41a7-bad0-eb12e6396e4f.mp3",
+      "durationInFrames": 60,
+      "loopControlAudioSource": {
+        "videoAssetId": "material-10cbd6fc-f64b-4f1f-8253-cae624292cfe",
+        "sha256": "89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1",
+        "sourceInFrame": 0,
+        "sourceFrameRate": 30
+      }
+    },
+    {
+      "id": "material-7859f615-cb3e-47db-8ff7-3a4952066ff2",
+      "name": "整期配乐",
+      "kind": "audio",
+      "src": "episodes/b2f96a07-6cdf-4a4b-a7b2-1d833cd6aef0/materials/64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92-bgm.mp3",
+      "durationInFrames": 240
+    }
+  ],
+  "mediaFolders": [],
+  "activeTimelineId": "loop-control-b2f96a07-6cdf-4a4b-a7b2-1d833cd6aef0",
+  "timelines": [
+    {
+      "id": "loop-control-b2f96a07-6cdf-4a4b-a7b2-1d833cd6aef0",
+      "name": "整期剪辑",
+      "order": 0,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "fit": "contain",
+      "items": [
+        {
+          "id": "shot-shot-1-e93318e3-1a32-4b46-be44-a2dda5b35e7d",
+          "track": "V1",
+          "kind": "video",
+          "name": "shot-1",
+          "startFrame": 0,
+          "durationInFrames": 60,
+          "width": 360,
+          "height": 640,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "src": "episodes/b2f96a07-6cdf-4a4b-a7b2-1d833cd6aef0/materials/89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1-source.mp4",
+          "sourceAssetId": "material-10cbd6fc-f64b-4f1f-8253-cae624292cfe",
+          "sourceRevision": "10cbd6fc-f64b-4f1f-8253-cae624292cfe",
+          "sourceContentHash": "89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1",
+          "srcInFrame": 0,
+          "volume": 0,
+          "loopControlAudio": {
+            "workspaceId": "e78c01f8-fb6a-4f83-ad70-35a333a5d419",
+            "shotId": "shot-1",
+            "voiceMode": "source"
+          }
+        },
+        {
+          "id": "shot-shot-2-ef748f67-fc82-4b2d-a2b4-30efeb412665",
+          "track": "V1",
+          "kind": "video",
+          "name": "shot-2",
+          "startFrame": 60,
+          "durationInFrames": 60,
+          "width": 360,
+          "height": 640,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "src": "episodes/b2f96a07-6cdf-4a4b-a7b2-1d833cd6aef0/materials/89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1-source.mp4",
+          "sourceAssetId": "material-10cbd6fc-f64b-4f1f-8253-cae624292cfe",
+          "sourceRevision": "10cbd6fc-f64b-4f1f-8253-cae624292cfe",
+          "sourceContentHash": "89d213b664aa3f2c776ae42f175e610307c366b82cc422c35bdf3c4327f682e1",
+          "srcInFrame": 0,
+          "volume": 0
+        },
+        {
+          "id": "workspace-source-shot-shot-1",
+          "kind": "audio",
+          "name": "shot-1 原声",
+          "track": "workspace-main-voice",
+          "src": "episodes/b2f96a07-6cdf-4a4b-a7b2-1d833cd6aef0/native-tasks/632ae4ab-1ccb-444b-a095-905810c052f1/839b2f1d-acf6-41a7-bad0-eb12e6396e4f.mp3",
+          "sourceAssetId": "audio-track-ddda45f8-99c8-42d2-9cd9-bc24d0c73fb5",
+          "startFrame": 0,
+          "durationInFrames": 60,
+          "srcInFrame": 0,
+          "playbackRate": 1,
+          "volume": 1,
+          "loopControlAudio": {
+            "workspaceId": "e78c01f8-fb6a-4f83-ad70-35a333a5d419",
+            "shotId": "shot-1",
+            "sourceItemId": "shot-shot-1-e93318e3-1a32-4b46-be44-a2dda5b35e7d",
+            "sourceAssetId": "audio-track-ddda45f8-99c8-42d2-9cd9-bc24d0c73fb5"
+          }
+        },
+        {
+          "id": "workspace-bgm",
+          "kind": "audio",
+          "name": "整期配乐",
+          "track": "workspace-bgm",
+          "src": "episodes/b2f96a07-6cdf-4a4b-a7b2-1d833cd6aef0/materials/64c3f3f39322f8391dc4a9f7cf3f9ba207be6319500db037d1a676d007267b92-bgm.mp3",
+          "sourceAssetId": "material-7859f615-cb3e-47db-8ff7-3a4952066ff2",
+          "startFrame": 0,
+          "durationInFrames": 120,
+          "srcInFrame": 0,
+          "volume": 0.12589254117941673,
+          "loopControlAudio": {
+            "workspaceId": "e78c01f8-fb6a-4f83-ad70-35a333a5d419",
+            "kind": "bgm",
+            "preparationId": "77b4962c-5e90-48c3-8e1f-6a7eaf1ad374",
+            "anchor": "absolute"
+          }
+        }
+      ],
+      "trackOrder": [
+        "V1",
+        "workspace-main-voice",
+        "workspace-bgm"
+      ],
+      "tracks": {
+        "V1": {
+          "kind": "video",
+          "name": "画面"
+        },
+        "workspace-main-voice": {
+          "kind": "audio",
+          "name": "主声音",
+          "role": "anchor"
+        },
+        "workspace-bgm": {
+          "kind": "audio",
+          "name": "整期配乐",
+          "role": "follower",
+          "audioRouting": {
+            "duckDepthDb": -14
+          }
+        }
+      },
+      "transitions": [],
+      "selectedId": null,
+      "captionsHidden": false
+    }
+  ]
+}
