@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t02-draft-workflow/loop-control
+
+ ✓ src/local-app/scriptProductionContinuation.test.ts (13 tests) 4ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx (4 tests) 77ms
+ ✓ src/local-app/ProductionWorkspacePanel.test.tsx (2 tests) 62ms
+
+ Test Files  3 passed (3)
+      Tests  19 passed (19)
+   Start at  17:42:28
+   Duration  1.30s (transform 110ms, setup 28ms, collect 1.03s, tests 142ms, environment 782ms, prepare 115ms)

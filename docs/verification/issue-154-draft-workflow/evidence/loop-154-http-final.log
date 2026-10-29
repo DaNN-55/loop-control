@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t02-draft-workflow/loop-control
+
+ ✓ src/local-app/productionWorkspace.integration.test.ts (1 test) 5404ms
+   ✓ Owner persists incomplete matches, opens the real draft and fills only its placeholder after reopening  5404ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  17:43:53
+   Duration  5.92s (transform 233ms, setup 9ms, collect 331ms, tests 5.40s, environment 0ms, prepare 35ms)

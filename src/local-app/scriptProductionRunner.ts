@@ -11,7 +11,7 @@ export function productionActionId(scope:ProductionScope,action:ProductionAction
 export async function readContinuationSnapshot(c:Parameters<Parameters<typeof ownerTransaction>[3]>[0],scope:ProductionScope):Promise<ContinuationSnapshot|null>{
  const record=(await c.query('SELECT * FROM local_identity.script_productions WHERE episode_id=$1 AND enabled AND authorization_hash=$2',[scope.episode_id,scope.authorization_hash])).rows[0] as ScriptProductionRecord|undefined;
  if(!record)return null;
- const e=(await c.query('SELECT e.*,b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1 AND e.main_script_revision_id=$2',[scope.episode_id,record.script_revision_id])).rows[0];
+ const e=(await c.query('SELECT e.*,b.policy,EXISTS(SELECT 1 FROM local_identity.production_workspaces w WHERE w.episode_id=e.id) AS workspace_enabled FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1 AND e.main_script_revision_id=$2',[scope.episode_id,record.script_revision_id])).rows[0];
  if(!e)return null;
  const review=(await c.query("SELECT p.id,a.relative_path artifact_path,p.context_snapshot#>'{worker_result,storyboard,shots}' shots FROM public.review_packages p JOIN public.artifacts a ON a.id=p.artifact_id WHERE p.episode_id=$1 AND p.stage='storyboard_review' AND p.invalidated_at IS NULL ORDER BY p.revision_number DESC LIMIT 1",[e.id])).rows[0];
  const drafts=review?(await c.query('SELECT d.*,local_identity.caption_text_is_confirmed(d.id) caption_confirmed FROM public.shot_preparation_drafts d WHERE d.episode_id=$1 AND d.review_package_id=$2',[e.id,review.id])).rows:[];

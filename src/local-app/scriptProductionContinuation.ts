@@ -10,7 +10,7 @@ export interface ContinuationDraft {
 }
 export interface ContinuationTask {id:string;status:string;provider:string;input_snapshot:Record<string,unknown>;task_type:string;invalidated_at?:string|null;created_at?:string}
 export interface ContinuationSnapshot {
- episode:{id:string;stage:string;policy:Record<string,unknown>;tts_voice?:string};
+ episode:{id:string;stage:string;policy:Record<string,unknown>;workspace_enabled?:boolean;tts_voice?:string};
  record:ScriptProductionRecord;review?:{id:string;artifact_path:string;shots?:Array<{id:string;productionMethod:string}>};drafts:ContinuationDraft[];
  tasks:ContinuationTask[];videoMaterials:Record<string,{id:string;duration?:number}>;
 }
@@ -24,6 +24,7 @@ function generationDuration(segment:ResolvedProductionSegment,draft:Continuation
 }
 export function nextScriptProductionAction(state:ContinuationSnapshot):ProductionDecision {
  const {episode:e,record,review,drafts,tasks,videoMaterials}=state,plan:ResolvedProductionPlan=record.plan;
+ if(e.workspace_enabled)return{wait:'使用四步制作工作台继续'};
  if(!record.enabled)return{wait:'自动继续已暂停'};
  if(plan.issues.length)return{wait:plan.issues.join('；')};
  if(e.stage==='waiting_input')return{wait:'等待确认主脚本并开始制作'};

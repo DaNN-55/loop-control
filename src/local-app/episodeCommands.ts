@@ -1,3 +1,5 @@
+import {productionWorkspaceFields} from '../productionWorkspace.js';
+import {ProductionWorkspaceCommands} from './productionWorkspaceCommands.js';
 import {reconfirmScript} from './scriptRevisionCommands.js';
 import {parseProductionScript} from '../reviews/productionScript.js';
 import {ScriptProductionStore,productionHash,type ScriptProductionRecord} from './scriptProductionStore.js';
@@ -28,14 +30,15 @@ import {verifyReportedStoryboardArtifact} from '../worker/storyboardArtifact.js'
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 export interface InputRuntime {deliveryReady?():Promise<void>;studioRuntime?():Promise<OpenChatCutRuntimeConfig>;ready():Promise<void>;narrationReady?():Promise<void>;mediaReady?(policy:Record<string,unknown>):Promise<void>;localClipReady?():Promise<void>;postReady?(kind:'source'|'alignment'|'preview'):Promise<void>;wake(episodeId:string):void;mountPath:string;minimumFreeBytes:number;checkReferences(client:PoolClient,refs:string[]):Promise<void>}
 export class LocalEpisodeCommands {
+ private workspace=new ProductionWorkspaceCommands();
  private studios=new NativeStudioCommands();
  private delivery=new NativeDeliveryCommands();
  private standaloneStudios=new Set<string>();
  private scriptStore:ScriptProductionStore;
  private continuation?:ReturnType<typeof startScriptProductionRunner>;
  startScriptContinuation(){this.continuation??=startScriptProductionRunner(this.pool,(scope,command,data,key)=>this.executeAutomatic(scope,{command,data,idempotencyKey:key}));return this.continuation;}
- closeStudio(episodeId:string){return this.studios.closeEpisode(episodeId);}
- async close(){await this.continuation?.stop();await Promise.all([this.studios.close(),...[...this.standaloneStudios].map(root=>closeStandaloneOpenChatCutStudio(root))]);this.standaloneStudios.clear();}
+ closeStudio(episodeId:string){return Promise.all([this.studios.closeEpisode(episodeId),this.workspace.closeEpisode(episodeId)]).then(()=>{});}
+ async close(){await this.continuation?.stop();await Promise.all([this.studios.close(),this.workspace.close(),...[...this.standaloneStudios].map(root=>closeStandaloneOpenChatCutStudio(root))]);this.standaloneStudios.clear();}
  constructor(private pool:Pool,private mediaRoot:string,private runtime:InputRuntime){this.scriptStore=new ScriptProductionStore(mediaRoot);}
  async blueprintPreflight(c:PoolClient,accountId:string,policy:Record<string,unknown>){
   try{await this.preflight(c,accountId,policy,false);}
@@ -64,7 +67,7 @@ export class LocalEpisodeCommands {
   }),true);
  }
  private async executeCommand(session:{id:string},body:Record<string,unknown>,transaction:<T>(run:(c:PoolClient)=>Promise<T>)=>Promise<T>,automatic:boolean){
-  if(typeof body.command!=='string'||!['prepareScriptPublish','configureScriptProduction','pauseScriptProduction','applyScriptSettings','bindScriptVideo','renderScriptReview','generateOfficialVideo','generateWan','resumeWan','setWanBudget','annotateAudio','requestQcMemberRevision','repairConnection','repairConfiguration','create','reconfirmScript','importMaterial','start','review','openDirectory','openStandaloneStudio','planStoryboard','annotateStoryboard','requestStructureRevision','saveTtsSettings','saveTtsDraft','generateTts','registerManualMedia','saveAudioSelection','planMedia','retryMedia','saveMediaDraft','generateClip','setAudioSourceMode','generateSourceAudio','requestAlignment','saveManualAlignment','confirmCaptionText','generateSyncPreview','confirmSyncPreview','openStudio','saveStudio','generateReviewVideo','submitStudioRevision','requestStudioCompositionRevision','requestStudioStoryboardRevision','createQcIssue','resolveQcIssue','approveQc','retryFinalRender','preparePublishPackage'].includes(body.command)||typeof body.idempotencyKey!=='string'||!/^[0-9a-f-]{36}$/.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data)||Object.keys(body).some(k=>!['command','idempotencyKey','data'].includes(k)))throw new ConfigurationError(400,'Episode命令无效。');
+  if(typeof body.command!=='string'||!Object.hasOwn(productionWorkspaceFields,body.command)&&!['prepareScriptPublish','configureScriptProduction','pauseScriptProduction','applyScriptSettings','bindScriptVideo','renderScriptReview','generateOfficialVideo','generateWan','resumeWan','setWanBudget','annotateAudio','requestQcMemberRevision','repairConnection','repairConfiguration','create','reconfirmScript','importMaterial','start','review','openDirectory','openStandaloneStudio','planStoryboard','annotateStoryboard','requestStructureRevision','saveTtsSettings','saveTtsDraft','generateTts','registerManualMedia','saveAudioSelection','planMedia','retryMedia','saveMediaDraft','generateClip','setAudioSourceMode','generateSourceAudio','requestAlignment','saveManualAlignment','confirmCaptionText','generateSyncPreview','confirmSyncPreview','openStudio','saveStudio','generateReviewVideo','submitStudioRevision','requestStudioCompositionRevision','requestStudioStoryboardRevision','createQcIssue','resolveQcIssue','approveQc','retryFinalRender','preparePublishPackage'].includes(body.command)||typeof body.idempotencyKey!=='string'||!/^[0-9a-f-]{36}$/.test(body.idempotencyKey)||!body.data||typeof body.data!=='object'||Array.isArray(body.data)||Object.keys(body).some(k=>!['command','idempotencyKey','data'].includes(k)))throw new ConfigurationError(400,'Episode命令无效。');
   const data=body.data as Record<string,unknown>,hash=createHash('sha256').update(JSON.stringify(canonical(body))).digest('hex');
   const allowed:Record<string,string[]>={create:['accountId','title','seriesVersionId','isTest'],importMaterial:['episodeId','sourceKind','sourcePath','logicalName','materialType','materialPurpose','mimeType','isMainScript','contentBase64','deferRefresh'],start:['episodeId'],review:['episodeId','toStage','reason','reviewPackageId'],openDirectory:['episodeId']};
   allowed.reconfirmScript=['episodeId','expectedScriptRevisionId','text','reason'];
@@ -77,11 +80,12 @@ export class LocalEpisodeCommands {
   allowed.generateOfficialVideo=['episodeId','reviewPackageId','shotId','firstFrameId','prompt','durationSeconds','reservationCents'];allowed.generateWan=['episodeId','reviewPackageId','shotId','firstFrameId','prompt','durationSeconds'];allowed.resumeWan=['episodeId','taskId'];allowed.setWanBudget=['episodeId','trialCents','totalCents','full'];
   allowed.annotateAudio=['episodeId','audioTrackId','atSeconds','reason'];allowed.requestQcMemberRevision=['episodeId','issueId'];allowed.repairConnection=['episodeId','versionId','blockerCode','blockerDetail'];allowed.repairConfiguration=['episodeId','policy','blockerCode','blockerDetail'];
   allowed.prepareScriptPublish=['episodeId'];allowed.configureScriptProduction=['episodeId','enabled','choices'];allowed.pauseScriptProduction=['episodeId'];allowed.applyScriptSettings=['episodeId','reviewPackageId'];allowed.bindScriptVideo=['episodeId','reviewPackageId','shotId','materialRevisionId'];allowed.renderScriptReview=['episodeId','reviewPackageId','projectRelativePath'];
+  Object.assign(allowed,productionWorkspaceFields);
   if(Object.keys(data).some(k=>!allowed[body.command as string].includes(k)))throw new ConfigurationError(400,'Episode字段无效。');
   const result=await transaction(async c=>{
    await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[session.id+':'+body.idempotencyKey]);
    const old=(await c.query('SELECT payload_hash,result FROM local_identity.command_receipts WHERE owner_id=$1 AND idempotency_key=$2',[session.id,body.idempotencyKey])).rows[0];
-   if(old){if(old.payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');if(!['openStudio','openStandaloneStudio'].includes(body.command as string))return old.result;}
+   if(old){if(old.payload_hash!==hash)throw new ConfigurationError(409,'同一操作标识不能用于不同内容。');if(!['openStudio','openStandaloneStudio','openWorkspaceStudio'].includes(body.command as string))return old.result;}
    let value;
    if(body.command==='openStandaloneStudio'){
     if(!this.runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 尚未配置。');
@@ -104,7 +108,9 @@ export class LocalEpisodeCommands {
     const e=(await c.query('SELECT e.*,b.policy,i.storyboard_enabled,i.script_template_version FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN local_identity.input_episodes i ON i.episode_id=e.id WHERE e.id=$1 AND m.user_id=$2 AND m.role=\'owner\' AND i.owner_id=$2',[data.episodeId,session.id])).rows[0];
     if(!e)throw new ConfigurationError(404,'本地生产单不可见。');const root=await resolveLocalAssetRoot(c,this.mediaRoot,e.policy.asset_root);
     const inputPolicy=e.script_template_version===2?{...e.policy,static_visual:{execution_path:'manual'},soundtrack:{execution_path:'manual'}}:e.policy;
-    if(body.command==='configureScriptProduction'){
+    if(['reconfirmScript','requestStructureRevision'].includes(String(body.command))&&this.workspace.isOpen(e.id))throw new ConfigurationError(409,'请先保存并返回，再修订脚本或分镜。');
+    if(Object.hasOwn(productionWorkspaceFields,String(body.command))){value=await this.workspace.execute(c,e,root,this.runtime,String(body.command),data);
+    }else if(body.command==='configureScriptProduction'){
      if(typeof data.enabled!=='boolean'||data.choices!==undefined&&(!data.choices||typeof data.choices!=='object'||Array.isArray(data.choices)||Object.values(data.choices).some(x=>typeof x!=='string'||!uuid.test(x))))throw new ConfigurationError(400,'制作计划设置无效。');
      value=await this.scriptStore.configure(c,e,root,session.id,data.enabled,(data.choices??{}) as Record<string,string>);
     }else if(body.command==='pauseScriptProduction'){

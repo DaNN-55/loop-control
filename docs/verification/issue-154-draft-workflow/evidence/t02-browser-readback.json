@@ -1,0 +1,17 @@
+{
+  "status": 200,
+  "workspaceId": "d08e1879-fa67-4005-93a2-5e83ce4b4544",
+  "revision": 3,
+  "sha256": "b389c525b570c4e448a5a2c55a9e94970780fcd434f1a1dcb770ba5b7216b2a9",
+  "kind": [
+    "video",
+    "text"
+  ],
+  "transform": {
+    "scale": 1,
+    "x": 13,
+    "y": 0,
+    "rotation": 0
+  },
+  "placeholders": 1
+}

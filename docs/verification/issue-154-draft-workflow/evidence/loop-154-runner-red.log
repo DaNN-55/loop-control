@@ -1,0 +1,59 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t02-draft-workflow/loop-control
+
+ ❯ src/local-app/scriptProductionContinuation.test.ts (13 tests | 1 failed) 7ms
+   ✓ never approves the waiting_input review automatically 1ms
+   ✓ never approves the visual_review review automatically 0ms
+   ✓ never approves the storyboard_review review automatically 0ms
+   ✓ never approves the qc_review review automatically 0ms
+   ✓ applies initial settings only once and plans after visual approval 0ms
+   ✓ waits at both current text and synchronization review gates 0ms
+   ✓ uses the exact script prompt and frozen first frame after narration is ready 1ms
+   ✓ does not resubmit an in-flight or failed paid request 0ms
+   ✓ fails closed on missing material, absent reservation and overlong narration 0ms
+   ✓ keeps a manual video binding and never resets a completed review 0ms
+   ✓ uses durable action identities across restart and changes them for changed inputs 0ms
+   ✓ uses a changed prompt only from the current approved storyboard 0ms
+   × leaves legacy authorization intact but schedules no legacy actions after workspace adoption 3ms
+     → expected { action: { …(3) } } to deeply equal { wait: '使用四步制作工作台继续' }
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/scriptProductionContinuation.test.ts > leaves legacy authorization intact but schedules no legacy actions after workspace adoption
+AssertionError: expected { action: { …(3) } } to deeply equal { wait: '使用四步制作工作台继续' }
+
+- Expected
++ Received
+
+  {
+-   "wait": "使用四步制作工作台继续",
++   "action": {
++     "command": "renderScriptReview",
++     "data": {
++       "episodeId": "episode",
++       "projectRelativePath": "episodes/episode/storyboard.json",
++       "reviewPackageId": "review",
++     },
++     "identity": {
++       "episodeId": "episode",
++       "inputs": [
++         [
++           "shot-01",
++           "input",
++         ],
++       ],
++       "reviewPackageId": "review",
++     },
++   },
+  }
+
+ ❯ src/local-app/scriptProductionContinuation.test.ts:23:231
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 12 passed (13)
+   Start at  17:42:18
+   Duration  457ms (transform 38ms, setup 7ms, collect 38ms, tests 7ms, environment 263ms, prepare 32ms)

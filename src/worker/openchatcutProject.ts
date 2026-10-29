@@ -17,11 +17,11 @@ type ReviewRender = NonNullable<WorkerTaskPackage["reviewRender"]>;
 export interface OpenChatCutProject {
   version: 3;
   loopControl?: {
-    version: "shot-sync-preview/v1";
+    version: "shot-sync-preview/v1" | "four-step-workspace/v1";
     inputFingerprint: string;
     transitionMode: "cut" | "fade" | "studio";
   };
-  assets: Array<{ id: string; name: string; kind: "video" | "audio"; src: string; durationInFrames: number }>;
+  assets: Array<{ id: string; name: string; kind: "video" | "audio" | "image"; src: string; durationInFrames: number }>;
   mediaFolders: [];
   timelines: [OpenChatCutTimeline];
   activeTimelineId: string;
