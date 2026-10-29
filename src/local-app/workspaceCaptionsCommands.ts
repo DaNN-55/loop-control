@@ -1,0 +1,89 @@
+import {createHash} from 'node:crypto';
+import {join} from 'node:path';
+import type {PoolClient} from 'pg';
+import {applyWorkspaceCaptionEdit,readWorkspaceCaption,type WorkspaceCaptionState} from '../workspaceCaptions.js';
+import {defaultShotCaptionContract,isValidShotCaptionContract,shotCaptionContractToDatabase,type ShotCaptionContract} from '../shotCaptions.js';
+import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
+import {isOpenChatCutStudio} from '../worker/openchatcutStudio.js';
+import {probeMp3Artifact} from '../worker/mediaTools.js';
+import {verifyNativeFile} from './localFiles.js';
+import {ConfigurationError} from './configurationCommands.js';
+import {readProductionWorkspace,updateWorkspaceProject,type ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
+const fingerprint=(v:unknown)=>createHash('sha256').update(JSON.stringify(v)).digest('hex');
+const comparable=(v:string)=>v.replace(/\s/gu,'');
+async function captionContext(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,clipId:unknown){
+ const clip=row.bindings.find(b=>b.id===clipId);if(!clip)throw new ConfigurationError(404,'当前片段不存在。');
+ const timeline=project.timelines.find(t=>t.items.some(i=>i.id===clip.itemId)),item=timeline?.items.find(i=>i.id===clip.itemId);if(!timeline||!item)throw new ConfigurationError(409,'片段已从当前工程删除。');
+ const draft=(await c.query('SELECT * FROM public.shot_preparation_drafts WHERE episode_id=$1 AND review_package_id=$2 AND shot_id=$3',[row.episode_id,row.storyboard_package_id,clip.shotId])).rows[0];
+ const lane=readWorkspaceCaption(project,clip.itemId),contract=lane?.contract??defaultShotCaptionContract(draft?.subtitle_text??clip.text,draft?.audio_mode==='tts'?'follow_tts':'independent',draft?.subtitles_enabled??true);
+ const nativeAudio=timeline.items.find(i=>i.id===`workspace-narration-${clip.id}`),nativeTrack=typeof nativeAudio?.sourceAssetId==='string'&&nativeAudio.sourceAssetId.startsWith('audio-track-')?nativeAudio.sourceAssetId.slice(12):null;
+ const audioId=nativeTrack??(draft?.audio_mode!=='none'?draft?.current_audio_track_id:null),audio=audioId?(await c.query('SELECT * FROM public.audio_tracks WHERE id=$1 AND episode_id=$2',[audioId,row.episode_id])).rows[0]:null;
+ if(audio)try{await verifyNativeFile(root,audio.relative_path,audio.sha256,Number(audio.file_size));}catch{throw new ConfigurationError(409,'当前字幕音轨不可用或指纹已变化。');}
+ const voiceItems=timeline.items.filter(i=>i===nativeAudio||draft?.audio_mode==='source'&&i.id===item.id).map(i=>({id:i.id,src:i.src,sourceAssetId:i.sourceAssetId,sourceContentHash:i.sourceContentHash,sourceRevision:i.sourceRevision,startFrame:i.startFrame,durationInFrames:i.durationInFrames,srcInFrame:i.srcInFrame,playbackRate:i.playbackRate,edits:i.edits}));
+ const inputFingerprint=fingerprint({version:'workspace-caption-input/v1',itemId:clip.itemId,text:contract.text,followText:contract.contentMode==='follow_tts'?draft?.tts_text:null,audioTrackId:audio?.id??null,audioSha256:audio?.sha256??null,startFrame:item.startFrame,durationInFrames:item.durationInFrames,fps:timeline.fps,voiceItems});
+ return{clip,timeline,item,draft,lane,contract,audio,inputFingerprint,laneFingerprint:fingerprint(lane?.words??[])};
+}
+export async function readWorkspaceCaptions(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject):Promise<WorkspaceCaptionState[]>{
+ const records=(await c.query('SELECT * FROM local_identity.workspace_caption_evidence WHERE workspace_id=$1',[row.id])).rows;
+ const states:WorkspaceCaptionState[]=[];
+ for(const clip of row.bindings){if(!project.timelines.some(t=>t.items.some(i=>i.id===clip.itemId)))continue;const x=await captionContext(c,root,row,project,clip.id),e=records.find(r=>r.clip_id===clip.id),current=e?.input_fingerprint===x.inputFingerprint&&e?.lane_fingerprint===x.laneFingerprint,task=e?.task_id?(await c.query('SELECT status,last_result FROM public.tasks WHERE id=$1 AND episode_id=$2',[e.task_id,row.episode_id])).rows[0]:null;
+  states.push({clipId:clip.id,itemId:clip.itemId,shotId:clip.shotId,durationMs:Math.round(Number(x.item.durationInFrames)*1000/x.timeline.fps),contract:x.contract,inputFingerprint:x.inputFingerprint,timing:!x.contract.enabled?'missing':current&&e.method==='waiting'?['failed','blocked','superseded'].includes(task?.status)?'failed':'waiting':!x.lane?.words.length?'missing':current?'current':'stale',textConfirmed:!!(current&&e?.confirmed_at),audioTrackId:x.audio?.id??null,narrationText:x.draft?.tts_text??null,taskId:e?.task_id??null,alignmentInputVersion:e?.alignment_input_version??null,detail:task&&['failed','blocked'].includes(task.status)?task.last_result?.blockers?.[0]?.detail??'对齐未完成，可重试或手工校时。':null});
+ }
+ return states;
+}
+async function recordEvidence(c:PoolClient,row:ProductionWorkspaceRecord,clipId:string,input:string,lane:string,method:string,taskId:string|null=null,alignment:string|null=null){
+ await c.query(`INSERT INTO local_identity.workspace_caption_evidence(workspace_id,clip_id,input_fingerprint,lane_fingerprint,method,task_id,alignment_input_version) VALUES($1,$2,$3,$4,$5,$6,$7)
+ ON CONFLICT(workspace_id,clip_id) DO UPDATE SET input_fingerprint=excluded.input_fingerprint,lane_fingerprint=excluded.lane_fingerprint,method=excluded.method,task_id=excluded.task_id,alignment_input_version=excluded.alignment_input_version,
+ confirmed_by=CASE WHEN workspace_caption_evidence.input_fingerprint=excluded.input_fingerprint AND workspace_caption_evidence.lane_fingerprint=excluded.lane_fingerprint THEN workspace_caption_evidence.confirmed_by END,
+ confirmed_at=CASE WHEN workspace_caption_evidence.input_fingerprint=excluded.input_fingerprint AND workspace_caption_evidence.lane_fingerprint=excluded.lane_fingerprint THEN workspace_caption_evidence.confirmed_at END`,[row.id,clipId,input,lane,method,taskId,alignment]);
+}
+export async function executeWorkspaceCaptionCommand(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,runtime:{postReady?(kind:'alignment'):Promise<void>;wake?(id:string):void},command:string,data:Record<string,unknown>){
+ let x=await captionContext(c,root,row,project,data.clipId);
+ if(command==='saveWorkspaceCaptions'){
+  if(!isValidShotCaptionContract(data.captionContract))throw new ConfigurationError(400,'字幕正文、布局或时序无效。');const contract=data.captionContract;
+  if(contract.text.length>100000||contract.cues.length>1000||new Set(contract.cues.map(cue=>cue.id)).size!==contract.cues.length)throw new ConfigurationError(400,'字幕正文或 cue 数量无效。');
+  if(contract.contentMode==='follow_tts'&&(x.draft?.audio_mode!=='tts'||x.draft?.tts_text!==contract.text))throw new ConfigurationError(409,'跟随口播须采用当前口播正文，请刷新后重试。');
+  validateCues(contract,Number(x.item.durationInFrames)*1000/x.timeline.fps);
+  if(data.nativeApplied!==undefined&&typeof data.nativeApplied!=='boolean')throw new ConfigurationError(400,'原生字幕保存状态无效。');
+  const next=applyWorkspaceCaptionEdit(project,x.clip.itemId,contract);
+  if(isOpenChatCutStudio(row.episode_id)){
+   if(data.nativeApplied!==true||JSON.stringify(readWorkspaceCaption(project,x.clip.itemId)?.contract)!==JSON.stringify(contract))throw new ConfigurationError(409,'请先将字幕修改保存到当前编辑器。');
+  }
+  await c.query('SELECT local_identity.save_workspace_caption_input($1,$2,$3)',[row.id,x.clip.id,shotCaptionContractToDatabase(contract)]);
+  if(x.audio&&contract.cues.length){const duration=await probeMp3Artifact(join(root,x.audio.relative_path));if(contract.cues.some(cue=>cue.endMs>duration*1000+1))throw new ConfigurationError(400,'字幕时序超出当前实际音轨。');await c.query('SELECT public.save_shot_manual_alignment($1,$2,$3,$4)',[row.episode_id,row.storyboard_package_id,x.clip.shotId,JSON.stringify(shotCaptionContractToDatabase(contract).cues)]);}
+  const finalProject=isOpenChatCutStudio(row.episode_id)?project:next;
+  x=await captionContext(c,root,row,finalProject,x.clip.id);
+  await recordEvidence(c,row,x.clip.id,x.inputFingerprint,x.laneFingerprint,'manual',null,x.draft?.acoustic_alignment?.inputVersion??null);
+  await updateWorkspaceProject(c,root,row,finalProject,row.bindings,'编辑字幕');return readProductionWorkspace(c,row.episode_id,root);
+ }
+ if(command==='requestWorkspaceCaptionAlignment'){
+  if(!x.audio||!x.draft||x.draft.current_audio_track_id!==x.audio.id||!x.contract.enabled)throw new ConfigurationError(409,'请先采用当前成功口播或原声音轨，再对齐字幕。');
+  if(data.localOnly!==undefined&&typeof data.localOnly!=='boolean')throw new ConfigurationError(400,'对齐策略无效。');
+  if(!runtime.postReady)throw new ConfigurationError(503,'本地对齐执行环境尚未就绪。');await runtime.postReady('alignment');
+  await c.query('SELECT local_identity.save_workspace_caption_input($1,$2,$3)',[row.id,x.clip.id,shotCaptionContractToDatabase(x.contract)]);
+  await c.query('UPDATE local_identity.input_episodes SET alignment_enabled=true WHERE episode_id=$1',[row.episode_id]);
+  const task=(await c.query('SELECT to_jsonb(public.request_shot_acoustic_alignment($1,$2,$3,$4)) result',[row.episode_id,row.storyboard_package_id,x.clip.shotId,data.localOnly??true])).rows[0].result;
+  await recordEvidence(c,row,x.clip.id,x.inputFingerprint,x.laneFingerprint,'waiting',task.id,task.input_snapshot.acoustic_alignment.input_version);
+  return{workspace:await readProductionWorkspace(c,row.episode_id,root),task};
+ }
+ if(command==='applyWorkspaceCaptionAlignment'){
+  if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请先保存并返回，再采用声学对齐结果。');
+  const e=(await c.query('SELECT * FROM local_identity.workspace_caption_evidence WHERE workspace_id=$1 AND clip_id=$2',[row.id,x.clip.id])).rows[0],task=typeof data.taskId==='string'?(await c.query('SELECT * FROM public.tasks WHERE id=$1 AND episode_id=$2',[data.taskId,row.episode_id])).rows[0]:null,alignment=x.draft?.acoustic_alignment;
+  if(!e||e.task_id!==data.taskId||e.input_fingerprint!==x.inputFingerprint||data.expectedInputFingerprint!==x.inputFingerprint||!task||task.status!=='completed'||task.task_type!=='align_shot_captions'||alignment?.status!=='completed'||alignment.inputVersion!==task.input_snapshot.acoustic_alignment.input_version||alignment.textFingerprint!==createHash('sha256').update(x.contract.text).digest('hex')||alignment.audioSha256!==x.audio?.sha256)throw new ConfigurationError(409,'对齐结果已过期或尚未完成，请按当前正文和音轨重新对齐。');
+  const artifact=(await c.query("SELECT * FROM public.artifacts WHERE producer_task_id=$1 AND episode_id=$2 AND artifact_type='acoustic_alignment_evidence'",[task.id,row.episode_id])).rows[0];if(!artifact)throw new ConfigurationError(409,'对齐证据文件不存在。');await verifyNativeFile(root,artifact.relative_path,artifact.sha256,Number(artifact.file_size));
+  const contract={...x.contract,cues:alignment.cues};validateCues(contract,Number(x.item.durationInFrames)*1000/x.timeline.fps);const next=applyWorkspaceCaptionEdit(project,x.clip.itemId,contract);
+  x=await captionContext(c,root,row,next,x.clip.id);await recordEvidence(c,row,x.clip.id,x.inputFingerprint,x.laneFingerprint,'alignment',task.id,alignment.inputVersion);await updateWorkspaceProject(c,root,row,next,row.bindings,'采用当前字幕对齐');return readProductionWorkspace(c,row.episode_id,root);
+ }
+ if(command==='confirmWorkspaceCaptionText'){
+  const e=(await c.query('SELECT * FROM local_identity.workspace_caption_evidence WHERE workspace_id=$1 AND clip_id=$2',[row.id,x.clip.id])).rows[0];
+  if(x.contract.contentMode==='follow_tts'&&!x.audio)throw new ConfigurationError(409,'请先采用当前口播音轨，再核对跟随字幕。');
+  if(!x.contract.enabled||!x.lane?.words.length||!e||e.method==='waiting'||data.expectedInputFingerprint!==x.inputFingerprint||e.input_fingerprint!==x.inputFingerprint||e.lane_fingerprint!==x.laneFingerprint)throw new ConfigurationError(409,'正文、音轨或字幕时序已变化，请重新校时后核对。');
+  if(x.audio)await c.query('SELECT local_identity.confirm_caption_text($1,$2,$3,$4,$5,$6,$7)',[row.episode_id,row.storyboard_package_id,x.clip.shotId,x.audio.id,x.audio.sha256,createHash('sha256').update(x.contract.text).digest('hex'),x.draft.acoustic_alignment?.inputVersion]);
+  await c.query('UPDATE local_identity.workspace_caption_evidence SET confirmed_by=local_identity.owner_id(),confirmed_at=clock_timestamp() WHERE workspace_id=$1 AND clip_id=$2',[row.id,x.clip.id]);return readProductionWorkspace(c,row.episode_id,root);
+ }
+ throw new ConfigurationError(400,'字幕操作无效。');
+}
+function validateCues(contract:ShotCaptionContract,duration:number){
+ let previous=0;for(const cue of contract.cues){if(!cue.text.trim()||cue.id.length>200||cue.startMs<previous||cue.endMs>duration+1)throw new ConfigurationError(400,'字幕 cue 重叠或超出当前片段。');previous=cue.endMs;}
+ if(contract.cues.length&&comparable(contract.cues.map(c=>c.text).join(''))!==comparable(contract.text))throw new ConfigurationError(400,'字幕时序正文与当前字幕不一致，请重新校时。');
+}

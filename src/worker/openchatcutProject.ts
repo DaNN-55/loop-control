@@ -56,14 +56,14 @@ interface OpenChatCutTrack {
   role?: "anchor" | "follower";
   audioRouting?: { duckDepthDb: number };
   captions?: {
-    enabled: true;
+    enabled: boolean;
     template: "black-bar" | "plain";
     styleOverride?: Record<string,unknown>;
     pacing: "phrase";
     sourceMode: "item";
-    sourceEntries: Array<{ id: string; itemId: string; label: string; slotId: string; widthRatio: number; heightRatio: number; maxCharactersPerLine: number; words: OpenChatCutCaptionCue[] }>;
+    sourceEntries: Array<{ id: string; itemId: string; label: string; slotId: string; widthRatio: number; heightRatio: number; maxCharactersPerLine?: number; visible?:boolean;anchor?:string;offsetXRatio?:number;offsetYRatio?:number;style?:Record<string,unknown>; loopControl?:{version:string;contentMode:"follow_tts"|"independent";text:string;spatial:import("../shotCaptions.js").ShotCaptionSpatialConstraints}; words: OpenChatCutCaptionCue[] }>;
     layoutPolicy: { mode: "manual-slots"; slots: Array<{ id: string; anchor: string; offsetXRatio: number; offsetYRatio: number; widthRatio: number; heightRatio: number }> };
-    perSource: Record<string, { maxLines: number; maxCharactersPerLine: number }>;
+    perSource: Record<string, { maxLines: number; maxCharactersPerLine?: number }>;
   };
 }
 
