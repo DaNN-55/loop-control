@@ -46,7 +46,7 @@ export async function generateWorkspaceImage(c:PoolClient,root:string,e:{id:stri
  try{await verifyNativeFile(root,image.storage_path,image.sha256,Number(image.file_size));}catch{throw new ConfigurationError(409,'首帧图片缺失或指纹已变化。');}
  const item=project.timelines.flatMap(t=>t.items).find(i=>i.id===clip.itemId);if(!item||item.kind!=='text')throw new ConfigurationError(409,'占位已由剪辑修改，不能首次生成覆盖。');
  const board=(await c.query('SELECT context_snapshot FROM public.review_packages WHERE id=$1',[row.storyboard_package_id])).rows[0];const shot=board.context_snapshot?.worker_result?.storyboard?.shots?.find((s:{id:string})=>s.id===clip.shotId),config=e.policy[shot?.shotType] as {executor?:{provider?:string}}|undefined;
- const narration=(await readWorkspaceNarration(c,row,project)).find(n=>n.clipId===clip.id),hasVoice=narration?.mode==='tts'||narration?.mode==='manual';
+ const narration=(await readWorkspaceNarration(c,row,project)).find(n=>n.shotId===clip.shotId),hasVoice=narration?.mode==='tts'||narration?.mode==='manual';
  const narrationTarget=hasVoice?await readWorkspaceNarrationTarget(c,root,row.id,clip.id):null;
  const timeline=project.timelines.find(t=>t.items.some(i=>i.id===clip.itemId))!;
  const targetDuration=narrationTarget?Math.ceil(narrationTarget.durationSeconds*timeline.fps)/timeline.fps:Number(data.durationSeconds);

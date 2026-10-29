@@ -2,15 +2,15 @@
 CREATE TABLE local_identity.workspace_narrations (
  workspace_id uuid NOT NULL REFERENCES local_identity.production_workspaces(id) ON DELETE CASCADE,
  episode_id uuid NOT NULL REFERENCES public.episodes(id) ON DELETE CASCADE,
- clip_id uuid NOT NULL, mode text NOT NULL CHECK(mode IN ('tts','manual','none')),
+ clip_id uuid NOT NULL,shot_id text NOT NULL, mode text NOT NULL CHECK(mode IN ('tts','manual','none')),
  input_fingerprint text NOT NULL, confirmed_fingerprint text,confirmed_match_fingerprint text,
  task_id uuid REFERENCES public.tasks(id),manual_audio_track_id uuid REFERENCES public.audio_tracks(id),
  adopted_audio_track_id uuid REFERENCES public.audio_tracks(id), requested_project_sha256 text,requested_native_edit_revision bigint,
- PRIMARY KEY(workspace_id,clip_id)
+ PRIMARY KEY(workspace_id,shot_id)
 );
 CREATE TABLE local_identity.workspace_narration_requests (
  task_id uuid PRIMARY KEY REFERENCES public.tasks(id),workspace_id uuid NOT NULL REFERENCES local_identity.production_workspaces(id),
- episode_id uuid NOT NULL REFERENCES public.episodes(id),clip_id uuid NOT NULL,input_fingerprint text NOT NULL,
+ episode_id uuid NOT NULL REFERENCES public.episodes(id),clip_id uuid NOT NULL,shot_id text NOT NULL,input_fingerprint text NOT NULL,
  authorization_hash text NOT NULL,created_at timestamptz NOT NULL DEFAULT clock_timestamp()
 );
 CREATE TABLE local_identity.workspace_narration_submissions (
@@ -29,11 +29,11 @@ LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$ DECLARE request local
  PERFORM public.refresh_worker_task_lease(p_task_id,p_attempt,p_lease_token);
  SELECT * INTO request FROM local_identity.workspace_narration_requests WHERE task_id=p_task_id;
  IF NOT FOUND THEN RETURN NOT EXISTS(SELECT 1 FROM public.tasks t JOIN local_identity.production_workspaces w ON w.episode_id=t.episode_id WHERE t.id=p_task_id); END IF;
- PERFORM pg_advisory_xact_lock(hashtextextended(request.workspace_id::text||request.clip_id::text,0));
- IF NOT EXISTS(SELECT 1 FROM local_identity.workspace_narrations n WHERE n.workspace_id=request.workspace_id AND n.clip_id=request.clip_id AND n.mode='tts' AND n.task_id=p_task_id AND n.input_fingerprint=request.input_fingerprint AND n.confirmed_fingerprint=request.input_fingerprint) THEN RETURN false; END IF;
+ PERFORM pg_advisory_xact_lock(hashtextextended(request.workspace_id::text||request.shot_id,0));
+ IF NOT EXISTS(SELECT 1 FROM local_identity.workspace_narrations n WHERE n.workspace_id=request.workspace_id AND n.shot_id=request.shot_id AND n.mode='tts' AND n.task_id=p_task_id AND n.input_fingerprint=request.input_fingerprint AND n.confirmed_fingerprint=request.input_fingerprint) THEN RETURN false; END IF;
  IF NOT EXISTS(SELECT 1 FROM local_identity.script_productions p JOIN public.episodes e ON e.id=p.episode_id WHERE p.episode_id=request.episode_id AND p.enabled AND p.authorized_at IS NOT NULL AND p.authorization_hash=request.authorization_hash AND p.script_revision_id=e.main_script_revision_id AND e.archived_at IS NULL) THEN RETURN false; END IF;
  IF NOT EXISTS(SELECT 1 FROM public.tasks t JOIN public.shot_preparation_drafts d ON d.id=(t.input_snapshot#>>'{shot_preparation,draft_id}')::uuid WHERE t.id=p_task_id AND d.audio_mode='tts' AND coalesce(d.tts_text,d.subtitle_text)=t.input_snapshot#>>'{media,narration,text}' AND d.tts_voice=t.input_snapshot#>>'{media,narration,voice,name}' AND d.tts_speaking_rate=(t.input_snapshot#>>'{media,narration,voice,speaking_rate}')::numeric AND d.tts_language_code=t.input_snapshot#>>'{media,narration,voice,language_code}') THEN RETURN false; END IF;
- IF EXISTS(SELECT 1 FROM local_identity.workspace_narration_requests r JOIN local_identity.workspace_narration_submissions s ON s.task_id=r.task_id JOIN public.tasks t ON t.id=r.task_id WHERE r.workspace_id=request.workspace_id AND r.clip_id=request.clip_id AND r.task_id<>p_task_id AND s.outcome IN ('started','received') AND t.status<>'completed') THEN RETURN false; END IF;
+ IF EXISTS(SELECT 1 FROM local_identity.workspace_narration_requests r JOIN local_identity.workspace_narration_submissions s ON s.task_id=r.task_id JOIN public.tasks t ON t.id=r.task_id WHERE r.workspace_id=request.workspace_id AND r.shot_id=request.shot_id AND r.task_id<>p_task_id AND s.outcome IN ('started','received') AND t.status<>'completed') THEN RETURN false; END IF;
  INSERT INTO local_identity.workspace_narration_submissions(task_id,attempt,outcome) VALUES(p_task_id,p_attempt,'started') ON CONFLICT DO NOTHING;
  RETURN FOUND;
 END $$;
