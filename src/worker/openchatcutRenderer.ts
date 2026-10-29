@@ -161,6 +161,7 @@ async function renderProject(
     assetRoot: input.taskPackage.assets.allowedRoot,
     outputPath,
     state: activeOpenChatCutState(project),
+    project, timelineId: project.activeTimelineId,
     sources,
   }, null, 2) + "\n");
   try {

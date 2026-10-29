@@ -24,6 +24,7 @@ const assetRoot = resolve(requiredString(spec.assetRoot, "assetRoot"));
 const outputPath = resolve(requiredString(spec.outputPath, "outputPath"));
 const nodePath = resolve(spec.nodePath || process.execPath);
 const state = structuredClone(spec.state);
+const project = spec.project ? structuredClone(spec.project) : undefined;
 const sources = Array.isArray(spec.sources) ? spec.sources : [];
 
 if (!isAbsolute(root) || !isAbsolute(assetRoot) || !isAbsolute(outputPath)) throw new Error("OpenChatCut paths must be absolute.");
@@ -47,6 +48,7 @@ try {
     copied.set(relativePath, `/media/uploads/${targetName}`);
   }
   rewriteSources(state, copied);
+  if(project) rewriteSources(project, copied);
   const port = await availablePort();
   const child = spawn(nodePath, openChatCutViteArguments(root, port), {
     cwd: root,
@@ -60,7 +62,7 @@ try {
     const response = await fetch(`http://127.0.0.1:${port}/export`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Origin: `http://127.0.0.1:${port}`, "Sec-Fetch-Site": "same-origin" },
-      body: JSON.stringify({ state, format: "video", codec: "h264", name: "loop-control" }),
+      body: JSON.stringify({ state, ...(project ? { project, timelineId: spec.timelineId || project.activeTimelineId } : {}), format: "video", codec: "h264", name: "loop-control" }),
     });
     if (!response.ok) throw new Error(`OpenChatCut export failed (${response.status}): ${await response.text()}`);
     const bytes = new Uint8Array(await response.arrayBuffer());

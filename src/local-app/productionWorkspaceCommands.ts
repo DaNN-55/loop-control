@@ -1,3 +1,5 @@
+import {executeWorkspaceExport,readWorkspaceExports,usedWorkspaceContent} from './workspaceExportCommands.js';
+import {workspaceExportFields} from '../workspaceExport.js';
 import {executeWorkspaceCaptionCommand,readWorkspaceCaptions} from './workspaceCaptionsCommands.js';
 import {workspaceCaptionFields} from '../workspaceCaptions.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
@@ -27,7 +29,7 @@ export async function readProductionWorkspace(c:PoolClient,episodeId:string,root
  const used=new Set(project.timelines.flatMap(t=>t.items.map(i=>String(i.id)))),placeholders=row.bindings.filter((b:WorkspaceClip)=>used.has(b.itemId)&&!b.source).map((b:WorkspaceClip)=>b.itemId),missingSources:string[]=[];
  for(const clip of row.bindings as WorkspaceClip[]){if(clip.source&&used.has(clip.itemId))try{await verifyNativeFile(root,clip.source.relativePath,clip.source.sha256,clip.source.fileSize);}catch{missingSources.push(clip.itemId);}}
  const history=(await c.query('SELECT revision,project_sha256,script_revision_id,reason FROM local_identity.production_workspace_versions WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 50',[row.id])).rows.map(v=>({revision:Number(v.revision),sha256:v.project_sha256,scriptRevisionId:v.script_revision_id,reason:v.reason}));
- return{captions:await readWorkspaceCaptions(c,root,row,project),id:row.id,episodeId,workflowVersion:row.workflow_version,scriptRevisionId:row.script_revision_id,storyboardPackageId:row.storyboard_package_id,revision:Number(row.revision),contentSha256:row.content_sha256,narration:await readWorkspaceNarration(c,row),clips:row.bindings,project:{relativePath:row.project_path,sha256:row.project_sha256,fileSize:Number(row.project_size),projectId:`loop-control-${episodeId}`},history,readiness:{deliverable:false,placeholders,missingSources},stale:row.current_script!==row.script_revision_id||!!row.invalidated_at};
+ return{...await readWorkspaceExports(c,root,row),captions:await readWorkspaceCaptions(c,root,row,project),id:row.id,episodeId,workflowVersion:row.workflow_version,scriptRevisionId:row.script_revision_id,storyboardPackageId:row.storyboard_package_id,revision:Number(row.revision),contentSha256:row.content_sha256,narration:await readWorkspaceNarration(c,row),clips:row.bindings,project:{relativePath:row.project_path,sha256:row.project_sha256,fileSize:Number(row.project_size),projectId:`loop-control-${episodeId}`},history,readiness:{deliverable:false,placeholders,missingSources},stale:row.current_script!==row.script_revision_id||!!row.invalidated_at};
 }
 export function workspaceContentSha256(project:OpenChatCutProject):string{
  const content=structuredClone(project);for(const timeline of content.timelines){delete (timeline as unknown as Record<string,unknown>).selectedId;delete (timeline as unknown as Record<string,unknown>).selectedIds;}
@@ -72,6 +74,7 @@ export class ProductionWorkspaceCommands{
   if(command==='fillWorkspaceImageResult')return fillWorkspaceImageResult(c,root,e.id,data);
   if(command==='matchWorkspaceImage')return matchWorkspaceImage(c,root,e.id,data);
   const locked=await lockProductionWorkspace(c,root,e.id,data.workspaceId,data.expectedRevision);row=locked.row;const project=locked.project;
+  if(Object.hasOwn(workspaceExportFields,command)){await executeWorkspaceExport(c,root,row,project,runtime,command,data);return readProductionWorkspace(c,e.id,root);}
   if(Object.hasOwn(workspaceCaptionFields,command))return executeWorkspaceCaptionCommand(c,root,row,project,runtime,command,data);
   if(command.endsWith('WorkspaceNarration')){await executeWorkspaceNarration(c,root,row,project,runtime,command,data);return readProductionWorkspace(c,e.id,root);}
   if(command==='matchWorkspaceMaterial'){
@@ -90,7 +93,7 @@ export class ProductionWorkspaceCommands{
   if(!runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 未配置。');const config=await runtime.studioRuntime();
   const validate=(doc:OpenChatCutProject)=>validateWorkspaceProject(c,root,e.id,doc,config);
   if(command==='openWorkspaceStudio'){
-   const paths=project.assets.map(a=>a.src);const opened=await openOpenChatCutDraftStudio(root,e.id,project,paths,hash(JSON.stringify({id:row.id,bindings:row.bindings})),config,validate);
+   const paths=[...usedWorkspaceContent(project).paths];const opened=await openOpenChatCutDraftStudio(root,e.id,project,paths,hash(JSON.stringify({id:row.id,bindings:row.bindings})),config,validate);
    this.opened.add(e.id);const current=JSON.parse((await verifyNativeFile(root,opened.workspace.relativePath,opened.workspace.sha256,opened.workspace.fileSize)).toString('utf8')) as OpenChatCutProject;await updateWorkspaceProject(c,root,row,current,row.bindings);return{...opened,productionWorkspace:await readProductionWorkspace(c,e.id,root)};
   }
   if(command==='closeWorkspaceStudio'){await this.closeEpisode(e.id);return readProductionWorkspace(c,e.id,root);}
@@ -140,7 +143,7 @@ export async function readWorkspaceVersion(c:PoolClient,root:string,episodeId:st
 }
 
 export async function validateWorkspaceProject(c:PoolClient,root:string,episodeId:string,doc:OpenChatCutProject,config:OpenChatCutRuntimeConfig){
-   const sources=new Set<string>();const visit=(value:unknown)=>{if(Array.isArray(value)){value.forEach(visit);return;}if(value&&typeof value==='object')for(const[key,v]of Object.entries(value)){if(key==='src'&&typeof v==='string')sources.add(v);visit(v);}};visit(doc);
+   const sources=new Set<string>();const visit=(value:unknown)=>{if(Array.isArray(value)){value.forEach(visit);return;}if(value&&typeof value==='object')for(const[key,v]of Object.entries(value)){if(key==='src'&&typeof v==='string')sources.add(v);visit(v);}};for(const path of usedWorkspaceContent(doc).paths)sources.add(path);
    for(const path of sources)await resolveWorkspaceSource(c,root,episodeId,path);
    if(!(await inspectOpenChatCutProjectWithRuntime(doc,config)).readable)throw new ConfigurationError(409,'当前草稿不能由 Studio 读取。');
 }
