@@ -9,7 +9,7 @@
 - `WorkspaceCandidate`：id/kind/shotId/clipId/targetItemId/taskId/inputFingerprint/text/mainScriptText/audioTrackId/relativePath/sha256/fileSize/durationSeconds/status/currentDurationSeconds。视频 audioTrackId=null，服务端须从自己的可信本期请求和完成产物解析此对象，不能信任客户端传入 source。
 - `workspaceCandidateTarget(item)` 提取稳定目标及当前源/区间身份。`WorkspaceCandidateEdit` 同时绑定该身份、新注册 source 与显式 durationPolicy。
 - `applyWorkspaceCandidate(project,edit)` 从 live document 精确 clone 后只更改唯一目标实例的来源及必要时长，保留其他 items、timelines、mix、transform、effects、transitions、captions 和 target volume/fade。拒绝目标重复/缺失、输入冲突、变速/分段。新 asset 使用独立 ID，不做 pool-wide relink。原生 sourceRevision 按已安装 runtime 的 `source-sha256-${sha256}` 规范，创作输入身份另存 target.loopControlCandidate.inputFingerprint/sourceId；不得把创作指纹塞进会被原生规范化的 sourceRevision。
-- `keep-target` 仅源足够长时保留目标窗口；`use-candidate` 使用完整候选时长，其他片段不移动。源从 0 开始；绝不隐式循环/变速/ripple。UI 必须显式选择策略。
+- 通用非主声 `keep-target` 仅源足够长时保留目标窗口；`use-candidate` 使用完整候选时长，其他片段不移动。源从 0 开始；绝不隐式循环/变速/ripple。UI 必须显式选择策略。
 
 `src/local-app/workspaceCandidates.ts`：
 
@@ -53,3 +53,11 @@ source/none 下，准备候选仍不改变项目、实际路由或人工 epoch�
 共享 edit 的可选 mainVoice 保存准备时的 canonical 声音/音量/轨道静音和实际画面窗口身份。live payload 将该身份内的本期路径映射为已注册会话 URL；Owner token 保留相应 LC 身份。路由或窗口已变化时必须重新比较，不能借采用覆盖另一标签的新决定。新建 TTS 使用 `applyWorkspaceAudioMix` 的仅内部 `narrationDurationInFrames` 选项；普通 mixer 首次整窗检查不放宽。
 
 keep-target 对口播使用目标窗口与真实候选长度的较小值；超长明确裁尾，较短按真实音频结束，剩余画面无该段口播。use-candidate 使用完整真实音频长度。两者都不移动其它画面或补词、循环、变速。视频/非主声音频的通用 keep-target 仍拒绝短于目标的源。界面显示时差、目标窗口、短口播空余或完整口播延伸影响；字幕和交付元数据继续按实际已用 range/coverage 核对。
+
+## Studio 初始写就绪与旧窗口
+
+`loop-control:state.writable` 来自 SDK 实际 `browserProjectOwnership(projectId)`，不能以文档可见或固定延时替代。未取得 ownership 时宿主 iframe inert + 覆盖，保存、镜头选择和 Host 内容操作禁用；只读 inspect 仍可用。客户端写命令也再次核验实际 ownership。就绪后沿原生 ownership/CAS/flush 保存，不改第三方 SDK，不跳过刷盘。
+
+曾就绪后失权，界面提示「编辑连接已变化，当前修改仍保留。请在最新窗口继续。」，保持当前原生 doc 与局部文字草稿，不自动刷新、重置或伪造 ownership。旧窗口可能在发出 Owner 保存前已被安全禁写；此时只能报告实际 SDK register409，不能声称执行了 Owner save409。完整重连和恢复编辑状态机不属于本票。
+
+局部正文草稿按 workspaceId + shotId 存在生产单内存 Map，并核对当前 inputFingerprint；切换候选/字幕工具保留未提交文字，新输入或切换 Episode 不误用旧草稿。它不替代不可变采用记录，不能用于交付正文。

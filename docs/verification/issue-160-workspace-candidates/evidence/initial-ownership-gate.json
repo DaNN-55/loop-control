@@ -1,0 +1,266 @@
+[
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 1159,
+    "y": 184,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 1096,
+      "y": 166,
+      "width": 126,
+      "height": 36,
+      "top": 166,
+      "right": 1222,
+      "bottom": 202,
+      "left": 1096
+    },
+    "cover": "<button data-color=\"primary\" class=\"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear "
+  },
+  {
+    "phase": "delayed-real-registration-gated",
+    "gate": {
+      "inert": true,
+      "overlay": true,
+      "saveDisabled": true,
+      "shotDisabled": true,
+      "status": "正在连接编辑器…"
+    },
+    "ownership": false,
+    "held": [
+      {
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "status": 200,
+        "method": "GET"
+      }
+    ],
+    "documentFingerprint": "7074999e92fa0864892b7a24ed67221b0bb93537e295fd7a9ff82c4e04c2f7a5",
+    "stableDocument": true,
+    "visibility": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 819,
+        "height": 554
+      }
+    ]
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 311,
+    "y": 276.34375,
+    "hit": true,
+    "label": "定位镜头 shot-1",
+    "disabled": false,
+    "rect": {
+      "x": 231,
+      "y": 256,
+      "width": 160,
+      "height": 40.6875,
+      "top": 256,
+      "right": 391,
+      "bottom": 296.6875,
+      "left": 231
+    },
+    "cover": "<button type=\"button\" class=\"workspace-shot-select\" title=\"1. 第一镜\" aria-label=\"定位镜头 shot-1\" aria-pressed=\"false\"><small>01</small><span>第一镜</span></button>"
+  },
+  {
+    "phase": "ready-selection-responsive",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 819,
+        "height": 554
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 64.60000000149012,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 64.70000000298023,
+        "visibility": "visible",
+        "focus": false
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 819,
+        "height": 554
+      }
+    ],
+    "wallMs": 68
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 1206,
+    "y": 319,
+    "hit": true,
+    "label": "展开属性",
+    "disabled": false,
+    "rect": {
+      "x": 767,
+      "y": 46,
+      "width": 40,
+      "height": 19,
+      "top": 46,
+      "right": 807,
+      "bottom": 65,
+      "left": 767
+    },
+    "cover": "<button type=\"button\" aria-pressed=\"false\" title=\"展开属性\" style=\"font-size: 11px; line-height: 1; padding: 3px 8px; border-radius: 5px; cursor: pointer; border: 0.5px solid var(--cc-"
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 1089.859375,
+    "y": 542.203125,
+    "hit": true,
+    "label": "输入水平的精确值",
+    "disabled": false,
+    "rect": {
+      "x": 643.859375,
+      "y": 266.703125,
+      "width": 54,
+      "height": 24,
+      "top": 266.703125,
+      "right": 697.859375,
+      "bottom": 290.703125,
+      "left": 643.859375
+    },
+    "cover": "<button aria-label=\"输入水平的精确值\" class=\"cc-insp-scalar\" title=\"点击输入精确值；左右拖动调整；Shift ×10；⌘ ×0.1\" type=\"button\">0%</button>"
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 1177.5,
+    "y": 173.25,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 1116,
+      "y": 156.25,
+      "width": 123,
+      "height": 34,
+      "top": 156.25,
+      "right": 1239,
+      "bottom": 190.25,
+      "left": 1116
+    },
+    "cover": "<button class=\"embedded-studio-save\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-li"
+  },
+  {
+    "phase": "ready-native-save-responsive",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 819,
+        "height": 503
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 61.80000000447035,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 61.70000000298023,
+        "visibility": "visible",
+        "focus": false
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 819,
+        "height": 503
+      }
+    ],
+    "wallMs": 63
+  },
+  {
+    "phase": "real-register-edit-save",
+    "registration": [
+      {
+        "status": 200,
+        "time": 1793287597181
+      }
+    ],
+    "project": {
+      "relativePath": "episodes/ba7c908c-5c3a-4c32-9542-4bf3088d37c7/production-workspace/versions/e0260548014f326ac70cea44d5bbca1d530418c76185c7d467daf1d109ee6c07.json",
+      "sha256": "e0260548014f326ac70cea44d5bbca1d530418c76185c7d467daf1d109ee6c07",
+      "fileSize": 10847,
+      "projectId": "loop-control-ba7c908c-5c3a-4c32-9542-4bf3088d37c7"
+    },
+    "network": [
+      {
+        "url": "http://127.0.0.1:53725/api/local/episode-commands",
+        "command": "openWorkspaceStudio",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:53725/api/local/episode-commands",
+        "command": "saveWorkspaceStudio",
+        "status": 200
+      }
+    ]
+  }
+]

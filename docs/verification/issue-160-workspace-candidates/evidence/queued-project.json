@@ -1,0 +1,147 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "649624a5-b1a5-41ba-9fd1-98d5ee9641c9",
+    "transitionMode": "studio"
+  },
+  "assets": [
+    {
+      "id": "audio-track-ec3094e4-e791-49f3-a2ed-e78cd8044902",
+      "name": "shot-1 口播",
+      "kind": "audio",
+      "src": "episodes/ec334f95-9750-4dd8-98cb-bfa87f8781ca/native-tasks/d65d8ca5-d1b0-4679-8937-0f9b89d44755/shot-narration-shot-1-d6e9a4d5b045ca7fe77ae43f2e023a7a.mp3",
+      "durationInFrames": 72,
+      "sourceRevision": "source-v1--peu99t-vk3vxe"
+    },
+    {
+      "id": "material-facbc7db-46c3-429f-bee9-13999983d845",
+      "name": "striped.png",
+      "kind": "image",
+      "src": "episodes/ec334f95-9750-4dd8-98cb-bfa87f8781ca/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-striped.png",
+      "durationInFrames": 72,
+      "sourceRevision": "source-v1--5tsj9a-wiukur"
+    }
+  ],
+  "mediaFolders": [],
+  "activeTimelineId": "loop-control-ec334f95-9750-4dd8-98cb-bfa87f8781ca",
+  "timelines": [
+    {
+      "id": "loop-control-ec334f95-9750-4dd8-98cb-bfa87f8781ca",
+      "name": "整期剪辑",
+      "order": 0,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "fit": "contain",
+      "items": [
+        {
+          "id": "shot-shot-1-d23b4dcf-c4df-4c0b-91a9-e6281ce83384",
+          "track": "track_loop-control-ec334f95-9750-4dd8-98cb-bfa87f8781ca_1",
+          "kind": "image",
+          "name": "shot-1",
+          "startFrame": 0,
+          "durationInFrames": 72,
+          "width": 640,
+          "height": 360,
+          "transform": {
+            "scale": 1,
+            "x": 17,
+            "y": 0,
+            "rotation": 0
+          },
+          "src": "episodes/ec334f95-9750-4dd8-98cb-bfa87f8781ca/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-striped.png",
+          "sourceAssetId": "material-facbc7db-46c3-429f-bee9-13999983d845",
+          "fit": "contain",
+          "volume": 0,
+          "loopControlShot": {
+            "workspaceId": "649624a5-b1a5-41ba-9fd1-98d5ee9641c9",
+            "shotId": "shot-1",
+            "clipId": "d23b4dcf-c4df-4c0b-91a9-e6281ce83384",
+            "text": "第一镜",
+            "source": {
+              "kind": "image",
+              "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+              "fileSize": 1515,
+              "relativePath": "episodes/ec334f95-9750-4dd8-98cb-bfa87f8781ca/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-striped.png",
+              "materialRevisionId": "facbc7db-46c3-429f-bee9-13999983d845"
+            }
+          },
+          "sourceFilename": "striped.png",
+          "sourceContentHash": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "sourceRevision": "source-sha256-89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116"
+        },
+        {
+          "id": "shot-shot-2-842ed3d4-3fe5-4210-a889-8fe0ed4811bd",
+          "track": "track_loop-control-ec334f95-9750-4dd8-98cb-bfa87f8781ca_1",
+          "kind": "image",
+          "name": "shot-2",
+          "startFrame": 72,
+          "durationInFrames": 60,
+          "width": 640,
+          "height": 360,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "src": "episodes/ec334f95-9750-4dd8-98cb-bfa87f8781ca/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-striped.png",
+          "sourceAssetId": "material-facbc7db-46c3-429f-bee9-13999983d845",
+          "fit": "contain",
+          "volume": 0,
+          "loopControlShot": {
+            "workspaceId": "649624a5-b1a5-41ba-9fd1-98d5ee9641c9",
+            "shotId": "shot-2",
+            "clipId": "842ed3d4-3fe5-4210-a889-8fe0ed4811bd",
+            "text": "缺少素材的第二镜。",
+            "source": {
+              "kind": "image",
+              "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+              "fileSize": 1515,
+              "relativePath": "episodes/ec334f95-9750-4dd8-98cb-bfa87f8781ca/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-striped.png",
+              "materialRevisionId": "facbc7db-46c3-429f-bee9-13999983d845"
+            }
+          },
+          "sourceFilename": "striped.png",
+          "sourceContentHash": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "sourceRevision": "source-sha256-89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116"
+        },
+        {
+          "id": "workspace-narration-shot-shot-1",
+          "track": "track_loop-control-ec334f95-9750-4dd8-98cb-bfa87f8781ca_2",
+          "kind": "audio",
+          "name": "shot-1 口播",
+          "src": "episodes/ec334f95-9750-4dd8-98cb-bfa87f8781ca/native-tasks/d65d8ca5-d1b0-4679-8937-0f9b89d44755/shot-narration-shot-1-d6e9a4d5b045ca7fe77ae43f2e023a7a.mp3",
+          "sourceAssetId": "audio-track-ec3094e4-e791-49f3-a2ed-e78cd8044902",
+          "startFrame": 0,
+          "durationInFrames": 72,
+          "srcInFrame": 0,
+          "volume": 1,
+          "sourceContentHash": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "sourceRevision": "source-sha256-9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100"
+        }
+      ],
+      "trackOrder": [
+        "track_loop-control-ec334f95-9750-4dd8-98cb-bfa87f8781ca_1",
+        "track_loop-control-ec334f95-9750-4dd8-98cb-bfa87f8781ca_2"
+      ],
+      "tracks": {
+        "track_loop-control-ec334f95-9750-4dd8-98cb-bfa87f8781ca_1": {
+          "kind": "video",
+          "name": "画面"
+        },
+        "track_loop-control-ec334f95-9750-4dd8-98cb-bfa87f8781ca_2": {
+          "kind": "audio",
+          "name": "主声音"
+        }
+      },
+      "transitions": [],
+      "selectedId": "shot-shot-1-d23b4dcf-c4df-4c0b-91a9-e6281ce83384",
+      "captionsHidden": false,
+      "selectedIds": [
+        "shot-shot-1-d23b4dcf-c4df-4c0b-91a9-e6281ce83384"
+      ]
+    }
+  ]
+}

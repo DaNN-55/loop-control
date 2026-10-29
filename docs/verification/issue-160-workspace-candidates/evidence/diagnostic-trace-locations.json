@@ -1,0 +1,27 @@
+[
+  {
+    "name": "panel-final-1280.json.trace.json",
+    "bytes": 82500789,
+    "retainedAt": "/private/tmp/loop-152-orchestration/t08-traces/panel-final-1280.json.trace.json"
+  },
+  {
+    "name": "panel-plain-select-1280.json.trace.json",
+    "bytes": 178932048,
+    "retainedAt": "/private/tmp/loop-152-orchestration/t08-traces/panel-plain-select-1280.json.trace.json"
+  },
+  {
+    "name": "panel-no-style-1280.json.trace.json",
+    "bytes": 144768948,
+    "retainedAt": "/private/tmp/loop-152-orchestration/t08-traces/panel-no-style-1280.json.trace.json"
+  },
+  {
+    "name": "panel-original-1280.json.trace.json",
+    "bytes": 1102527141,
+    "retainedAt": "/private/tmp/loop-152-orchestration/t08-traces/panel-original-1280.json.trace.json"
+  },
+  {
+    "name": "panel-ack-1280.json.trace.json",
+    "bytes": 26932181,
+    "retainedAt": "/private/tmp/loop-152-orchestration/t08-traces/panel-ack-1280.json.trace.json"
+  }
+]

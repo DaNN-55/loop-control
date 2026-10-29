@@ -1,0 +1,59 @@
+{
+  "before": {
+    "sha256": "07ecfacb8f273b10b0356d4db5e480c11079757b2701f8e68bcd85dedd9b2a50",
+    "bytes": 190331,
+    "frequencyHz": 330,
+    "tailRmsAt1_8s": 0.03112807372486645,
+    "ffprobe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 180,
+          "height": 320,
+          "side_data_list": [
+            {}
+          ]
+        },
+        {
+          "codec_name": "aac"
+        }
+      ],
+      "format": {
+        "duration": "4.458667"
+      }
+    }
+  },
+  "after": {
+    "sha256": "3cd51dabd9dc4d28e19a1c5402f1a51efbf3138a4a5b091195ac99bc9bb1c37b",
+    "bytes": 190331,
+    "frequencyHz": 660,
+    "tailRmsAt1_8s": 0.0,
+    "ffprobe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 180,
+          "height": 320,
+          "side_data_list": [
+            {}
+          ]
+        },
+        {
+          "codec_name": "aac"
+        }
+      ],
+      "format": {
+        "duration": "4.458667"
+      }
+    }
+  },
+  "decodedVideoSHA256": {
+    "before": "4f77604e4e58b6dfa4aee0332695f57feb98ddc439ea1b35f1a4132ce122d4f1",
+    "after": "4f77604e4e58b6dfa4aee0332695f57feb98ddc439ea1b35f1a4132ce122d4f1"
+  },
+  "videoFramesIdentical": true
+}

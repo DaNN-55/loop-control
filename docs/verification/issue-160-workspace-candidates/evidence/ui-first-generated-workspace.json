@@ -1,0 +1,290 @@
+{
+  "deliveries": [],
+  "usedNarration": [
+    {
+      "sourceInFrame": 0,
+      "durationInFrames": 72,
+      "fps": 30,
+      "fullSourceUsed": true,
+      "shotId": "shot-1",
+      "itemId": "workspace-narration-shot-shot-1",
+      "audioTrackId": "4ad68001-bbc1-4a4e-8085-9d13270a66ed",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "taskId": "e2648451-cffb-4374-9b4d-3c5fd22ae36d",
+      "text": "第一版原始口播。",
+      "mainScriptText": "第一镜",
+      "inputFingerprint": "4044c8947744eff5f0bcf00d8caccbcc384be735374a2cc45351d81a4ad299fe",
+      "provenance": "owner_adoption"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "073d1d7d-c6ca-4541-9c15-32d3e708b5ed",
+      "kind": "audio",
+      "shotId": "shot-1",
+      "clipId": "c9692f42-eabd-4406-995f-6d8863d26a6d",
+      "targetItemId": "workspace-narration-shot-shot-1",
+      "taskId": "8ed76ab9-8828-45cd-b78f-38744c59a467",
+      "inputFingerprint": "99fd8522e45408fc71aa095a80d67856fde18de3bf0d7d8a1917f8328701aa96",
+      "text": "剪辑内采用的新口播。",
+      "mainScriptText": "第一镜",
+      "audioTrackId": "073d1d7d-c6ca-4541-9c15-32d3e708b5ed",
+      "relativePath": "episodes/29988b71-fc90-4ada-8351-2506da5b7c2e/native-tasks/8ed76ab9-8828-45cd-b78f-38744c59a467/shot-narration-shot-1-393c9e64b55ae143a2a5d1bbcd9fa234.mp3",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "fileSize": 19628,
+      "durationSeconds": 2.4,
+      "pendingConfirmation": false,
+      "currentDurationSeconds": 2.4,
+      "durationImpact": {
+        "deltaSeconds": 0,
+        "overlapItemIds": []
+      },
+      "status": "available"
+    },
+    {
+      "id": "4ad68001-bbc1-4a4e-8085-9d13270a66ed",
+      "kind": "audio",
+      "shotId": "shot-1",
+      "clipId": "c9692f42-eabd-4406-995f-6d8863d26a6d",
+      "targetItemId": "workspace-narration-shot-shot-1",
+      "taskId": "e2648451-cffb-4374-9b4d-3c5fd22ae36d",
+      "inputFingerprint": "4044c8947744eff5f0bcf00d8caccbcc384be735374a2cc45351d81a4ad299fe",
+      "text": "第一版原始口播。",
+      "mainScriptText": "第一镜",
+      "audioTrackId": "4ad68001-bbc1-4a4e-8085-9d13270a66ed",
+      "relativePath": "episodes/29988b71-fc90-4ada-8351-2506da5b7c2e/native-tasks/e2648451-cffb-4374-9b4d-3c5fd22ae36d/shot-narration-shot-1-ac02be1366a5ae267852bc641943d5b1.mp3",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "fileSize": 19628,
+      "durationSeconds": 2.4,
+      "pendingConfirmation": false,
+      "currentDurationSeconds": 2.4,
+      "durationImpact": {
+        "deltaSeconds": 0,
+        "overlapItemIds": []
+      },
+      "status": "adopted"
+    }
+  ],
+  "exports": [],
+  "exportIssues": [],
+  "captions": [
+    {
+      "clipId": "c9692f42-eabd-4406-995f-6d8863d26a6d",
+      "itemId": "shot-shot-1-c9692f42-eabd-4406-995f-6d8863d26a6d",
+      "shotId": "shot-1",
+      "durationMs": 2400,
+      "contract": {
+        "version": "shot-captions/v1",
+        "enabled": true,
+        "contentMode": "follow_tts",
+        "text": "第一镜",
+        "cues": [],
+        "spatial": {
+          "version": "shot-caption-space/v2",
+          "anchor": "bottom-center",
+          "safeArea": "title-safe",
+          "aspectRatio": "9:16",
+          "insets": {
+            "top": 0.08,
+            "right": 0.08,
+            "bottom": 0.18,
+            "left": 0.08
+          },
+          "maxLines": 2,
+          "maxCharactersPerLine": 16
+        }
+      },
+      "inputFingerprint": "f4af84dfd32cb9c082fe4b5d628e7b3faf29965bc6dc026a333591c82c1925e9",
+      "timing": "missing",
+      "textConfirmed": false,
+      "audioTrackId": "4ad68001-bbc1-4a4e-8085-9d13270a66ed",
+      "narrationText": "剪辑内采用的新口播。",
+      "taskId": null,
+      "alignmentInputVersion": null,
+      "detail": null
+    },
+    {
+      "clipId": "a013fef0-c9ca-47e3-afdf-cc1c7d0b8722",
+      "itemId": "shot-shot-2-a013fef0-c9ca-47e3-afdf-cc1c7d0b8722",
+      "shotId": "shot-2",
+      "durationMs": 2000,
+      "contract": {
+        "version": "shot-captions/v1",
+        "enabled": true,
+        "contentMode": "follow_tts",
+        "text": "缺少素材的第二镜。",
+        "cues": [],
+        "spatial": {
+          "version": "shot-caption-space/v2",
+          "anchor": "bottom-center",
+          "safeArea": "title-safe",
+          "aspectRatio": "9:16",
+          "insets": {
+            "top": 0.08,
+            "right": 0.08,
+            "bottom": 0.18,
+            "left": 0.08
+          },
+          "maxLines": 2,
+          "maxCharactersPerLine": 16
+        }
+      },
+      "inputFingerprint": "5ca00ca40bae51a4d5daf7597f1bd7c0b5a2df952ce875a33d2e9791a3b3ef2d",
+      "timing": "missing",
+      "textConfirmed": false,
+      "audioTrackId": null,
+      "narrationText": null,
+      "taskId": null,
+      "alignmentInputVersion": null,
+      "detail": null
+    }
+  ],
+  "id": "fce1ffb8-57ae-40b9-9c8a-1daa2dd5d360",
+  "episodeId": "29988b71-fc90-4ada-8351-2506da5b7c2e",
+  "workflowVersion": "four-step/v1",
+  "scriptRevisionId": "e823cc3a-4cd6-4d9b-b70e-3e0c1086768d",
+  "storyboardPackageId": "303f69b2-b5ad-42cf-86a8-0f5510f20e4d",
+  "revision": 6,
+  "contentSha256": "b724fabe4d0fa41ffd3ebec5dfce34bbce87f98d7c94d2504d371d451d640f45",
+  "nativeEditRevision": 1,
+  "narration": [
+    {
+      "clipId": "c9692f42-eabd-4406-995f-6d8863d26a6d",
+      "shotId": "shot-1",
+      "mode": "tts",
+      "text": "剪辑内采用的新口播。",
+      "voice": "zh_female_vv_uranus_bigtts",
+      "languageCode": "zh-CN",
+      "speakingRate": 1,
+      "override": false,
+      "inputFingerprint": "99fd8522e45408fc71aa095a80d67856fde18de3bf0d7d8a1917f8328701aa96",
+      "confirmed": true,
+      "taskId": "8ed76ab9-8828-45cd-b78f-38744c59a467",
+      "status": "completed",
+      "error": null,
+      "audioTrackId": "073d1d7d-c6ca-4541-9c15-32d3e708b5ed",
+      "artifactId": "7a7adb82-7597-403d-aa34-e6a9f2d7a255",
+      "relativePath": "episodes/29988b71-fc90-4ada-8351-2506da5b7c2e/native-tasks/8ed76ab9-8828-45cd-b78f-38744c59a467/shot-narration-shot-1-393c9e64b55ae143a2a5d1bbcd9fa234.mp3",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "fileSize": 19628,
+      "durationSeconds": 2.4,
+      "itemId": "workspace-narration-shot-shot-1",
+      "adoptedAudioTrackId": "4ad68001-bbc1-4a4e-8085-9d13270a66ed"
+    },
+    {
+      "clipId": "a013fef0-c9ca-47e3-afdf-cc1c7d0b8722",
+      "shotId": "shot-2",
+      "mode": "none",
+      "text": "缺少素材的第二镜。",
+      "voice": "zh_female_vv_uranus_bigtts",
+      "languageCode": "zh-CN",
+      "speakingRate": 1,
+      "override": false,
+      "inputFingerprint": "17baa8e7c30423402336a9527883c1dc5a7427c32f96f54b6d345ed4217d742a",
+      "confirmed": false,
+      "taskId": null,
+      "status": "pending",
+      "error": null,
+      "audioTrackId": null,
+      "artifactId": null,
+      "relativePath": null,
+      "sha256": null,
+      "fileSize": null,
+      "durationSeconds": null,
+      "itemId": "workspace-narration-shot-shot-2",
+      "adoptedAudioTrackId": null
+    }
+  ],
+  "clips": [
+    {
+      "id": "c9692f42-eabd-4406-995f-6d8863d26a6d",
+      "text": "第一镜",
+      "image": {
+        "fit": "contain",
+        "usage": "still",
+        "focusX": 0,
+        "focusY": 0,
+        "durationSeconds": 2.4
+      },
+      "itemId": "shot-shot-1-c9692f42-eabd-4406-995f-6d8863d26a6d",
+      "shotId": "shot-1",
+      "source": {
+        "kind": "image",
+        "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+        "fileSize": 1515,
+        "relativePath": "episodes/29988b71-fc90-4ada-8351-2506da5b7c2e/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-striped.png",
+        "materialRevisionId": "4d111d87-00cc-4c62-a55b-f0cb102ff37f"
+      }
+    },
+    {
+      "id": "a013fef0-c9ca-47e3-afdf-cc1c7d0b8722",
+      "text": "缺少素材的第二镜。",
+      "image": {
+        "fit": "contain",
+        "usage": "still",
+        "focusX": 0,
+        "focusY": 0,
+        "durationSeconds": 2
+      },
+      "itemId": "shot-shot-2-a013fef0-c9ca-47e3-afdf-cc1c7d0b8722",
+      "shotId": "shot-2",
+      "source": {
+        "kind": "image",
+        "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+        "fileSize": 1515,
+        "relativePath": "episodes/29988b71-fc90-4ada-8351-2506da5b7c2e/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-striped.png",
+        "materialRevisionId": "4d111d87-00cc-4c62-a55b-f0cb102ff37f"
+      }
+    }
+  ],
+  "project": {
+    "relativePath": "episodes/29988b71-fc90-4ada-8351-2506da5b7c2e/production-workspace/versions/602e3a62c028a3ec8823d260ea5f7111cb89187a2e18c9da72307d3fcc4070d7.json",
+    "sha256": "602e3a62c028a3ec8823d260ea5f7111cb89187a2e18c9da72307d3fcc4070d7",
+    "fileSize": 5789,
+    "projectId": "loop-control-29988b71-fc90-4ada-8351-2506da5b7c2e"
+  },
+  "history": [
+    {
+      "revision": 6,
+      "sha256": "602e3a62c028a3ec8823d260ea5f7111cb89187a2e18c9da72307d3fcc4070d7",
+      "scriptRevisionId": "e823cc3a-4cd6-4d9b-b70e-3e0c1086768d",
+      "reason": "保存原生剪辑"
+    },
+    {
+      "revision": 5,
+      "sha256": "6d4b1cac97c14baff8012c079988523978091f53d315cfa87ac409508619da15",
+      "scriptRevisionId": "e823cc3a-4cd6-4d9b-b70e-3e0c1086768d",
+      "reason": null
+    },
+    {
+      "revision": 4,
+      "sha256": "46b08ea230c92fea59867165ae46c7eac178f8b13e9c33d08f1576ffaffdd446",
+      "scriptRevisionId": "e823cc3a-4cd6-4d9b-b70e-3e0c1086768d",
+      "reason": "匹配图片"
+    },
+    {
+      "revision": 3,
+      "sha256": "08af932d19cf02306ef615184773dbd5b44c046820453296574d47d45bf64878",
+      "scriptRevisionId": "e823cc3a-4cd6-4d9b-b70e-3e0c1086768d",
+      "reason": "匹配图片"
+    },
+    {
+      "revision": 2,
+      "sha256": "6b0de4ef261b572b81603017695c0f28fb653868c0368cbcb4bb868d9ff09a5c",
+      "scriptRevisionId": "e823cc3a-4cd6-4d9b-b70e-3e0c1086768d",
+      "reason": "采用实际口播时长"
+    },
+    {
+      "revision": 1,
+      "sha256": "e3648bb17aa8f7f5c50eb51af34e1bc3b2451245ea76ec40f8cd429d60423fc8",
+      "scriptRevisionId": "e823cc3a-4cd6-4d9b-b70e-3e0c1086768d",
+      "reason": "首次组装"
+    }
+  ],
+  "readiness": {
+    "deliverable": false,
+    "placeholders": [],
+    "missingSources": []
+  },
+  "stale": false
+}

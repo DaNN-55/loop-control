@@ -1,0 +1,289 @@
+[
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 1159,
+    "y": 184,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 1096,
+      "y": 166,
+      "width": 126,
+      "height": 36,
+      "top": 166,
+      "right": 1222,
+      "bottom": 202,
+      "left": 1096
+    },
+    "cover": "<button data-color=\"primary\" class=\"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear "
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 311,
+    "y": 276.34375,
+    "hit": true,
+    "label": "定位镜头 shot-1",
+    "disabled": false,
+    "rect": {
+      "x": 231,
+      "y": 256,
+      "width": 160,
+      "height": 40.6875,
+      "top": 256,
+      "right": 391,
+      "bottom": 296.6875,
+      "left": 231
+    },
+    "cover": "<button type=\"button\" class=\"workspace-shot-select\" title=\"1. 第一镜\" aria-label=\"定位镜头 shot-1\" aria-pressed=\"true\"><small>01</small><span>第一镜</span></button>"
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 894,
+    "y": 173.25,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 856,
+      "y": 156.25,
+      "width": 76,
+      "height": 34,
+      "top": 156.25,
+      "right": 932,
+      "bottom": 190.25,
+      "left": 856
+    },
+    "cover": "<button aria-pressed=\"false\">口播版本</button>"
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 1159,
+    "y": 184,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 1096,
+      "y": 166,
+      "width": 126,
+      "height": 36,
+      "top": 166,
+      "right": 1222,
+      "bottom": 202,
+      "left": 1096
+    },
+    "cover": "<button data-color=\"primary\" class=\"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear "
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 311,
+    "y": 276.34375,
+    "hit": true,
+    "label": "定位镜头 shot-1",
+    "disabled": false,
+    "rect": {
+      "x": 231,
+      "y": 256,
+      "width": 160,
+      "height": 40.6875,
+      "top": 256,
+      "right": 391,
+      "bottom": 296.6875,
+      "left": 231
+    },
+    "cover": "<button type=\"button\" class=\"workspace-shot-select\" title=\"1. 第一镜\" aria-label=\"定位镜头 shot-1\" aria-pressed=\"true\"><small>01</small><span>第一镜</span></button>"
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 1206,
+    "y": 319,
+    "hit": true,
+    "label": "展开属性",
+    "disabled": false,
+    "rect": {
+      "x": 767,
+      "y": 46,
+      "width": 40,
+      "height": 19,
+      "top": 46,
+      "right": 807,
+      "bottom": 65,
+      "left": 767
+    },
+    "cover": "<button type=\"button\" aria-pressed=\"false\" title=\"展开属性\" style=\"font-size: 11px; line-height: 1; padding: 3px 8px; border-radius: 5px; cursor: pointer; border: 0.5px solid var(--cc-"
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 1089.859375,
+    "y": 542.203125,
+    "hit": true,
+    "label": "输入水平的精确值",
+    "disabled": false,
+    "rect": {
+      "x": 643.859375,
+      "y": 266.703125,
+      "width": 54,
+      "height": 24,
+      "top": 266.703125,
+      "right": 697.859375,
+      "bottom": 290.703125,
+      "left": 643.859375
+    },
+    "cover": "<button aria-label=\"输入水平的精确值\" class=\"cc-insp-scalar\" title=\"点击输入精确值；左右拖动调整；Shift ×10；⌘ ×0.1\" type=\"button\">19%</button>"
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 1177.5,
+    "y": 173.25,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 1116,
+      "y": 156.25,
+      "width": 123,
+      "height": 34,
+      "top": 156.25,
+      "right": 1239,
+      "bottom": 190.25,
+      "left": 1116
+    },
+    "cover": "<button class=\"embedded-studio-save\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-li"
+  },
+  {
+    "phase": "old-client-conflict-responsive",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 519,
+        "height": 503
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 28.5,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 28.399999998509884,
+        "visibility": "visible",
+        "focus": false
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 519,
+        "height": 503
+      }
+    ],
+    "wallMs": 33
+  },
+  {
+    "phase": "new-client-responsive",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 819,
+        "height": 503
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 23,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 23.099999994039536,
+        "visibility": "visible",
+        "focus": false
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 819,
+        "height": 503
+      }
+    ],
+    "wallMs": 23
+  },
+  {
+    "phase": "two-clients-real-sdk409-and-retention",
+    "state": {
+      "status": "编辑连接已变化，当前修改仍保留。请在最新窗口继续。",
+      "disabled": true,
+      "inert": true
+    },
+    "draft": "双窗口未提交的局部文字，必须保留。",
+    "oldNativeFingerprint": "b6a0aab760a63e3a1c9fad25d9a0dd2f5dbf657604f29cfd2c575718f2ce4b54",
+    "newNativeFingerprint": "7ed25e1b34f705ed8c4ecbb7eaf5f1b4e661985d59e2be6126845937b13c3657",
+    "oldWorkspaceRevision": 15,
+    "newWorkspaceRevision": 16,
+    "project": {
+      "relativePath": "episodes/ba7c908c-5c3a-4c32-9542-4bf3088d37c7/production-workspace/versions/de0a7a0a6d0488e77573477c08c209d2edefcf0e77b2cc81c68215916fff1df2.json",
+      "sha256": "de0a7a0a6d0488e77573477c08c209d2edefcf0e77b2cc81c68215916fff1df2",
+      "fileSize": 12200,
+      "projectId": "loop-control-ba7c908c-5c3a-4c32-9542-4bf3088d37c7"
+    },
+    "network": [
+      {
+        "url": "http://127.0.0.1:53725/api/local/episode-commands",
+        "command": "openWorkspaceStudio",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:53894/api/external-agent/register",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:53894/api/external-agent/register",
+        "status": 409
+      }
+    ],
+    "ownerWriteAttemptedByOld": false
+  }
+]

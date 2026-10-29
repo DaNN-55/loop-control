@@ -1,0 +1,46 @@
+{
+  "events": [
+    {
+      "url": "http://127.0.0.1:51941/api/external-agent/register",
+      "method": "POST",
+      "baseRevision": "v3-4d68cda4",
+      "status": 409,
+      "requestId": "45715.5607"
+    },
+    {
+      "url": "http://127.0.0.1:51740/api/local/episodes/a770e37b-5ac4-46b8-af6f-dfb0fd91ebaf?known=%7B%22tasks%22%3A%22v%3A25%22%2C%22episode%22%3A%222f68f648623ebee28bab503e9b7948da%22%2C%22taskRuns%22%3A%22v%3A10%3A25%22%2C%22artifacts%22%3A%22v%3A5%22%2C%22blueprint%22%3A%222406ceac4caea6c1337fff07decad75e%22%2C%22audioTracks%22%3A%22v%3A2%22%2C%22transitions%22%3A%22v%3A0%22%2C%22seriesVersion%22%3A%2237a6259cc0c1dae299a7866489dff0bd%22%2C%22qcReviewIssues%22%3A%22v%3A0%3A3%22%2C%22reviewPackages%22%3A%22v%3A3%22%2C%22materialRevisions%22%3A%22v%3A6%22%2C%22reviewAnnotations%22%3A%22v%3A0%3A3%22%2C%22connectionVersions%22%3A%22e66a8881468b8d5574d6575be48aede2%22%2C%22audioTrackAnnotations%22%3A%22v%3A0%3A2%22%2C%22shotPreparationDrafts%22%3A%22v%3A14%22%2C%22preRenderReviewMembers%22%3A%22v%3A0%3A3%22%2C%22storyboardAudioSelections%22%3A%22v%3A0%22%2C%22preRenderReviewMemberDecisions%22%3A%22v%3A0%3A3%22%2C%22tasks%2F136b3fc8-627e-44c8-bdc8-d1b047d4383b%22%3A%22v%3A1%22%2C%22tasks%2F40d52578-0504-4208-ba63-1644f92d453c%22%3A%22v%3A13%22%2C%22tasks%2F66d7fc5a-8a5c-446c-aa56-a3be24f2bd0e%22%3A%22v%3A1%22%2C%22tasks%2Fa7317a4e-c34f-4efe-8b6f-fe47f9d444c4%22%3A%22v%3A10%22%2C%22taskRuns%2F35d9adc6-4320-4d8a-be6a-e27a8f414416%22%3A%22v%3A7%22%2C%22taskRuns%2Faeeef7f1-d271-42b2-96e0-36cf4f3f9775%22%3A%22v%3A3%22%2C%22localAssetRoot%22%3A%22de1d4f4683f11dc092b6b49a93894692b811b2449d081f72f95d8c25b96ceca6%22%7D",
+      "method": "GET",
+      "status": 200,
+      "requestId": "45715.5608"
+    },
+    {
+      "url": "http://127.0.0.1:51941/api/external-agent/register",
+      "method": "POST",
+      "baseRevision": "v3-4d68cda4",
+      "status": 409,
+      "requestId": "45715.5609"
+    },
+    {
+      "url": "http://127.0.0.1:51941/api/external-agent/register",
+      "method": "POST",
+      "baseRevision": "v3-4d68cda4",
+      "status": 409,
+      "requestId": "45715.5610"
+    }
+  ],
+  "readiness": {
+    "ownershipPresent": false,
+    "body": "OpenChatCut",
+    "apiResources": [
+      "http://127.0.0.1:51941/api/plugins",
+      "http://127.0.0.1:51941/api/keys",
+      "http://127.0.0.1:51941/api/keys",
+      "http://127.0.0.1:51941/api/project-store/entry?key=projects",
+      "http://127.0.0.1:51941/api/project-store/merge",
+      "http://127.0.0.1:51941/api/project-store/entry?key=projects",
+      "http://127.0.0.1:51941/api/project-store/entry?key=projects",
+      "http://127.0.0.1:51941/api/project-store/entry?key=project%3Aloop-control-a770e37b-5ac4-46b8-af6f-dfb0fd91ebaf",
+      "http://127.0.0.1:51941/api/project-store/entry?key=project%3Aloop-control-a770e37b-5ac4-46b8-af6f-dfb0fd91ebaf"
+    ]
+  }
+}

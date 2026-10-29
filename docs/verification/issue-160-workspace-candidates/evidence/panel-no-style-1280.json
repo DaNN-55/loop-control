@@ -1,0 +1,74 @@
+{
+  "records": [
+    {
+      "args": [
+        "eval",
+        "new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve({responsive:true,width:innerWidth,pageWidth:document.documentElement.scrollWidth,hostOpen:!!document.querySelector(\".embedded-studio-body.panel-open\")}))))"
+      ],
+      "ms": 41,
+      "code": 0,
+      "output": "{\n  \"hostOpen\": false,\n  \"pageWidth\": 1280,\n  \"responsive\": true,\n  \"width\": 1280\n}",
+      "error": ""
+    },
+    {
+      "args": [
+        "trace",
+        "start"
+      ],
+      "ms": 686,
+      "code": 0,
+      "output": "✓ Recording started",
+      "error": ""
+    },
+    {
+      "args": [
+        "find",
+        "role",
+        "button",
+        "click",
+        "--name",
+        "口播版本",
+        "--exact"
+      ],
+      "ms": 246,
+      "code": 0,
+      "output": "✓ Done",
+      "error": ""
+    },
+    {
+      "args": [
+        "eval",
+        "new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve({responsive:true,width:innerWidth,pageWidth:document.documentElement.scrollWidth,hostOpen:!!document.querySelector(\".embedded-studio-body.panel-open\")}))))"
+      ],
+      "ms": 8011,
+      "timeout": true
+    },
+    {
+      "args": [
+        "snapshot",
+        "-i",
+        "-s",
+        ".workspace-candidates"
+      ],
+      "ms": 8049,
+      "timeout": true
+    },
+    {
+      "args": [
+        "eval",
+        "new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>resolve({responsive:true,width:innerWidth,pageWidth:document.documentElement.scrollWidth,hostOpen:!!document.querySelector(\".embedded-studio-body.panel-open\")}))))"
+      ],
+      "ms": 8019,
+      "timeout": true
+    },
+    {
+      "args": [
+        "trace",
+        "stop",
+        "docs/verification/issue-160-workspace-candidates/evidence/panel-no-style-1280.json.trace.json"
+      ],
+      "ms": 8008,
+      "timeout": true
+    }
+  ]
+}

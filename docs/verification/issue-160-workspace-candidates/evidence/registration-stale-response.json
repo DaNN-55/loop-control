@@ -1,0 +1,16 @@
+{
+  "responses": [
+    {
+      "status": 409,
+      "baseRevision": "v3-4d68cda4",
+      "response": {
+        "error": "project changed after the browser loaded it",
+        "currentRevision": "v3-1ae32f7a",
+        "reloadRequired": true
+      }
+    }
+  ],
+  "storedX": 0,
+  "pendingX": 17,
+  "preserved": true
+}

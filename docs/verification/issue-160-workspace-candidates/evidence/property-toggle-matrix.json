@@ -1,0 +1,12 @@
+[
+  {
+    "args": [
+      "set",
+      "viewport",
+      "800",
+      "720"
+    ],
+    "ms": 8000,
+    "timeout": true
+  }
+]

@@ -1,0 +1,63 @@
+[
+  {
+    "args": [
+      "eval",
+      "JSON.stringify(document.querySelector(\"iframe\").getBoundingClientRect())"
+    ],
+    "ms": 33,
+    "output": "\"{\\\"x\\\":419,\\\"y\\\":263.5,\\\"width\\\":830,\\\"height\\\":503,\\\"top\\\":263.5,\\\"right\\\":1249,\\\"bottom\\\":766.5,\\\"left\\\":419}\"\n",
+    "error": "",
+    "code": 0
+  },
+  {
+    "args": [
+      "find",
+      "role",
+      "button",
+      "click",
+      "--name",
+      "\u4fdd\u5b58\u5de5\u4f5c\u7248\u672c",
+      "--exact"
+    ],
+    "ms": 140,
+    "output": "\u2713 Done\n",
+    "error": "",
+    "code": 0
+  },
+  {
+    "args": [
+      "wait",
+      "--text",
+      "\u5de5\u4f5c\u7248\u672c\u5df2\u4fdd\u5b58"
+    ],
+    "ms": 2165,
+    "output": "\u5de5\u4f5c\u7248\u672c\u5df2\u4fdd\u5b58\n",
+    "error": "",
+    "code": 0
+  },
+  {
+    "args": [
+      "find",
+      "role",
+      "button",
+      "click",
+      "--name",
+      "\u53e3\u64ad\u7248\u672c",
+      "--exact"
+    ],
+    "ms": 279,
+    "output": "\u2713 Done\n",
+    "error": "",
+    "code": 0
+  },
+  {
+    "args": [
+      "eval",
+      "new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(()=>r({open:!!document.querySelector(\".embedded-studio-body.panel-open\"),visible:document.querySelector(\".workspace-candidates\")?.checkVisibility(),rect:JSON.stringify(document.querySelector(\"iframe\").getBoundingClientRect())}))))"
+    ],
+    "ms": 253,
+    "output": "{\n  \"open\": false,\n  \"rect\": \"{\\\"x\\\":419,\\\"y\\\":263.5,\\\"width\\\":830,\\\"height\\\":503,\\\"top\\\":263.5,\\\"right\\\":1249,\\\"bottom\\\":766.5,\\\"left\\\":419}\"\n}\n",
+    "error": "",
+    "code": 0
+  }
+]

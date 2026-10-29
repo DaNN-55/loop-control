@@ -1,0 +1,1208 @@
+[
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 905,
+    "y": 173.25,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 867,
+      "y": 156.25,
+      "width": 76,
+      "height": 34,
+      "top": 156.25,
+      "right": 943,
+      "bottom": 190.25,
+      "left": 867
+    },
+    "cover": "<button aria-pressed=\"true\">口播版本</button>"
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 311,
+    "y": 276.34375,
+    "hit": true,
+    "label": "定位镜头 shot-1",
+    "disabled": false,
+    "rect": {
+      "x": 231,
+      "y": 256,
+      "width": 160,
+      "height": 40.6875,
+      "top": 256,
+      "right": 391,
+      "bottom": 296.6875,
+      "left": 231
+    },
+    "cover": "<button type=\"button\" class=\"workspace-shot-select\" title=\"1. 第一镜\" aria-label=\"定位镜头 shot-1\" aria-pressed=\"true\"><small>01</small><span>第一镜</span></button>"
+  },
+  {
+    "phase": "initial-native-properties",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 633
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 830,
+        "height": 447
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 11,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 11,
+        "visibility": "visible",
+        "focus": false
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 633
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 830,
+        "height": 447
+      }
+    ],
+    "wallMs": 13
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 905,
+    "y": 173.25,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 867,
+      "y": 156.25,
+      "width": 76,
+      "height": 34,
+      "top": 156.25,
+      "right": 943,
+      "bottom": 190.25,
+      "left": 867
+    },
+    "cover": "<button aria-pressed=\"false\">口播版本</button>"
+  },
+  {
+    "phase": "candidate-open",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 633
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 530,
+        "height": 447
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 26.200000002980232,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 26.200000002980232,
+        "visibility": "visible",
+        "focus": false
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 633
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 530,
+        "height": 447
+      }
+    ],
+    "wallMs": 27
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 834,
+    "y": 173.25,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 809,
+      "y": 156.25,
+      "width": 50,
+      "height": 34,
+      "top": 156.25,
+      "right": 859,
+      "bottom": 190.25,
+      "left": 809
+    },
+    "cover": "<button aria-pressed=\"false\">字幕</button>"
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 905,
+    "y": 173.25,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 867,
+      "y": 156.25,
+      "width": 76,
+      "height": 34,
+      "top": 156.25,
+      "right": 943,
+      "bottom": 190.25,
+      "left": 867
+    },
+    "cover": "<button aria-pressed=\"false\">口播版本</button>"
+  },
+  {
+    "phase": "viewport-1280",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 530,
+        "height": 503
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 17.80000000447035,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 17.700000002980232,
+        "visibility": "visible",
+        "focus": false
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 530,
+        "height": 503
+      }
+    ],
+    "wallMs": 27
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 921,
+    "y": 319,
+    "hit": true,
+    "label": "展开属性",
+    "disabled": false,
+    "rect": {
+      "x": 482,
+      "y": 46,
+      "width": 40,
+      "height": 19,
+      "top": 46,
+      "right": 522,
+      "bottom": 65,
+      "left": 482
+    },
+    "cover": "<button type=\"button\" aria-pressed=\"false\" title=\"展开属性\" style=\"font-size: 11px; line-height: 1; padding: 3px 8px; border-radius: 5px; cursor: pointer; border: 0.5px solid var(--cc-"
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 873.6953125,
+    "y": 325.5,
+    "hit": true,
+    "label": "收起属性",
+    "disabled": false,
+    "rect": {
+      "x": 379.390625,
+      "y": 41,
+      "width": 150.609375,
+      "height": 42,
+      "top": 41,
+      "right": 530,
+      "bottom": 83,
+      "left": 379.390625
+    },
+    "cover": "<span class=\"cc-insp-title-name\" title=\"shot-1\">shot-1</span>"
+  },
+  {
+    "phase": "properties-closed-1280-0",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 530,
+        "height": 503
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 17.899999998509884,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 18,
+        "visibility": "visible",
+        "focus": true
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 530,
+        "height": 503
+      }
+    ],
+    "wallMs": 19
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 921,
+    "y": 319,
+    "hit": true,
+    "label": "展开属性",
+    "disabled": false,
+    "rect": {
+      "x": 482,
+      "y": 46,
+      "width": 40,
+      "height": 19,
+      "top": 46,
+      "right": 522,
+      "bottom": 65,
+      "left": 482
+    },
+    "cover": "<button type=\"button\" aria-pressed=\"false\" title=\"展开属性\" style=\"font-size: 11px; line-height: 1; padding: 3px 8px; border-radius: 5px; cursor: pointer; border: 0.5px solid var(--cc-"
+  },
+  {
+    "phase": "properties-open-1280-0",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 530,
+        "height": 503
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 18.700000002980232,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 18.700000002980232,
+        "visibility": "visible",
+        "focus": true
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 530,
+        "height": 503
+      }
+    ],
+    "wallMs": 20
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 873.6953125,
+    "y": 325.5,
+    "hit": true,
+    "label": "收起属性",
+    "disabled": false,
+    "rect": {
+      "x": 379.390625,
+      "y": 41,
+      "width": 150.609375,
+      "height": 42,
+      "top": 41,
+      "right": 530,
+      "bottom": 83,
+      "left": 379.390625
+    },
+    "cover": "<span class=\"cc-insp-title-name\" title=\"shot-1\">shot-1</span>"
+  },
+  {
+    "phase": "properties-closed-1280-1",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 530,
+        "height": 503
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 21.5,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 21.5,
+        "visibility": "visible",
+        "focus": true
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 530,
+        "height": 503
+      }
+    ],
+    "wallMs": 22
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 921,
+    "y": 319,
+    "hit": true,
+    "label": "展开属性",
+    "disabled": false,
+    "rect": {
+      "x": 482,
+      "y": 46,
+      "width": 40,
+      "height": 19,
+      "top": 46,
+      "right": 522,
+      "bottom": 65,
+      "left": 482
+    },
+    "cover": "<button type=\"button\" aria-pressed=\"false\" title=\"展开属性\" style=\"font-size: 11px; line-height: 1; padding: 3px 8px; border-radius: 5px; cursor: pointer; border: 0.5px solid var(--cc-"
+  },
+  {
+    "phase": "properties-open-1280-1",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 530,
+        "height": 503
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 18.5,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 18.69999999552965,
+        "visibility": "visible",
+        "focus": true
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 530,
+        "height": 503
+      }
+    ],
+    "wallMs": 20
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 873.6953125,
+    "y": 325.5,
+    "hit": true,
+    "label": "收起属性",
+    "disabled": false,
+    "rect": {
+      "x": 379.390625,
+      "y": 41,
+      "width": 150.609375,
+      "height": 42,
+      "top": 41,
+      "right": 530,
+      "bottom": 83,
+      "left": 379.390625
+    },
+    "cover": "<span class=\"cc-insp-title-name\" title=\"shot-1\">shot-1</span>"
+  },
+  {
+    "phase": "properties-closed-1280-2",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 530,
+        "height": 503
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 21.200000002980232,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 21.200000002980232,
+        "visibility": "visible",
+        "focus": true
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 530,
+        "height": 503
+      }
+    ],
+    "wallMs": 22
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 921,
+    "y": 319,
+    "hit": true,
+    "label": "展开属性",
+    "disabled": false,
+    "rect": {
+      "x": 482,
+      "y": 46,
+      "width": 40,
+      "height": 19,
+      "top": 46,
+      "right": 522,
+      "bottom": 65,
+      "left": 482
+    },
+    "cover": "<button type=\"button\" aria-pressed=\"false\" title=\"展开属性\" style=\"font-size: 11px; line-height: 1; padding: 3px 8px; border-radius: 5px; cursor: pointer; border: 0.5px solid var(--cc-"
+  },
+  {
+    "phase": "properties-open-1280-2",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 530,
+        "height": 503
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 18.799999997019768,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 18.899999998509884,
+        "visibility": "visible",
+        "focus": true
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 530,
+        "height": 503
+      }
+    ],
+    "wallMs": 19
+  },
+  {
+    "phase": "viewport-800",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 800,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 624,
+        "height": 331
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 25.400000005960464,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 25.5,
+        "visibility": "visible",
+        "focus": true
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 800,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 624,
+        "height": 331
+      }
+    ],
+    "wallMs": 27
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 678.4140625,
+    "y": 369.5,
+    "hit": true,
+    "label": "收起属性",
+    "disabled": false,
+    "rect": {
+      "x": 442.828125,
+      "y": 41,
+      "width": 181.171875,
+      "height": 42,
+      "top": 41,
+      "right": 624,
+      "bottom": 83,
+      "left": 442.828125
+    },
+    "cover": "<span class=\"cc-insp-title-name\" title=\"shot-1\">shot-1</span>"
+  },
+  {
+    "phase": "properties-closed-800-0",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 800,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 624,
+        "height": 331
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 19.599999994039536,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 19.599999994039536,
+        "visibility": "visible",
+        "focus": true
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 800,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 624,
+        "height": 331
+      }
+    ],
+    "wallMs": 20
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 741,
+    "y": 363,
+    "hit": true,
+    "label": "展开属性",
+    "disabled": false,
+    "rect": {
+      "x": 576,
+      "y": 46,
+      "width": 40,
+      "height": 19,
+      "top": 46,
+      "right": 616,
+      "bottom": 65,
+      "left": 576
+    },
+    "cover": "<button type=\"button\" aria-pressed=\"false\" title=\"展开属性\" style=\"font-size: 11px; line-height: 1; padding: 3px 8px; border-radius: 5px; cursor: pointer; border: 0.5px solid var(--cc-"
+  },
+  {
+    "phase": "properties-open-800-0",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 800,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 624,
+        "height": 331
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 17.200000002980232,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 17.299999997019768,
+        "visibility": "visible",
+        "focus": true
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 800,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 624,
+        "height": 331
+      }
+    ],
+    "wallMs": 18
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 678.4140625,
+    "y": 369.5,
+    "hit": true,
+    "label": "收起属性",
+    "disabled": false,
+    "rect": {
+      "x": 442.828125,
+      "y": 41,
+      "width": 181.171875,
+      "height": 42,
+      "top": 41,
+      "right": 624,
+      "bottom": 83,
+      "left": 442.828125
+    },
+    "cover": "<span class=\"cc-insp-title-name\" title=\"shot-1\">shot-1</span>"
+  },
+  {
+    "phase": "properties-closed-800-1",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 800,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 624,
+        "height": 331
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 22.399999998509884,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 22.5,
+        "visibility": "visible",
+        "focus": true
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 800,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 624,
+        "height": 331
+      }
+    ],
+    "wallMs": 23
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 741,
+    "y": 363,
+    "hit": true,
+    "label": "展开属性",
+    "disabled": false,
+    "rect": {
+      "x": 576,
+      "y": 46,
+      "width": 40,
+      "height": 19,
+      "top": 46,
+      "right": 616,
+      "bottom": 65,
+      "left": 576
+    },
+    "cover": "<button type=\"button\" aria-pressed=\"false\" title=\"展开属性\" style=\"font-size: 11px; line-height: 1; padding: 3px 8px; border-radius: 5px; cursor: pointer; border: 0.5px solid var(--cc-"
+  },
+  {
+    "phase": "properties-open-800-1",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 800,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 624,
+        "height": 331
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 16.899999998509884,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 17,
+        "visibility": "visible",
+        "focus": true
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 800,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 624,
+        "height": 331
+      }
+    ],
+    "wallMs": 18
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 678.4140625,
+    "y": 369.5,
+    "hit": true,
+    "label": "收起属性",
+    "disabled": false,
+    "rect": {
+      "x": 442.828125,
+      "y": 41,
+      "width": 181.171875,
+      "height": 42,
+      "top": 41,
+      "right": 624,
+      "bottom": 83,
+      "left": 442.828125
+    },
+    "cover": "<span class=\"cc-insp-title-name\" title=\"shot-1\">shot-1</span>"
+  },
+  {
+    "phase": "properties-closed-800-2",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 800,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 624,
+        "height": 331
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 22.69999999552965,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 22.69999999552965,
+        "visibility": "visible",
+        "focus": true
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 800,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 624,
+        "height": 331
+      }
+    ],
+    "wallMs": 23
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 741,
+    "y": 363,
+    "hit": true,
+    "label": "展开属性",
+    "disabled": false,
+    "rect": {
+      "x": 576,
+      "y": 46,
+      "width": 40,
+      "height": 19,
+      "top": 46,
+      "right": 616,
+      "bottom": 65,
+      "left": 576
+    },
+    "cover": "<button type=\"button\" aria-pressed=\"false\" title=\"展开属性\" style=\"font-size: 11px; line-height: 1; padding: 3px 8px; border-radius: 5px; cursor: pointer; border: 0.5px solid var(--cc-"
+  },
+  {
+    "phase": "properties-open-800-2",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 800,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 624,
+        "height": 331
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 20.399999998509884,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 20.5,
+        "visibility": "visible",
+        "focus": true
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 800,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 624,
+        "height": 331
+      }
+    ],
+    "wallMs": 21
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 905,
+    "y": 173.25,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 867,
+      "y": 156.25,
+      "width": 76,
+      "height": 34,
+      "top": 156.25,
+      "right": 943,
+      "bottom": 190.25,
+      "left": 867
+    },
+    "cover": "<button aria-pressed=\"true\">口播版本</button>"
+  },
+  {
+    "phase": "before-native-edit",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 830,
+        "height": 503
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 16.399999998509884,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 16.399999998509884,
+        "visibility": "visible",
+        "focus": false
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 720
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 830,
+        "height": 503
+      }
+    ],
+    "wallMs": 17
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 1096.484375,
+    "y": 542.203125,
+    "hit": true,
+    "label": "输入水平的精确值",
+    "disabled": false,
+    "rect": {
+      "x": 650.484375,
+      "y": 266.703125,
+      "width": 54,
+      "height": 24,
+      "top": 266.703125,
+      "right": 704.484375,
+      "bottom": 290.703125,
+      "left": 650.484375
+    },
+    "cover": "<button aria-label=\"输入水平的精确值\" class=\"cc-insp-scalar\" title=\"点击输入精确值；左右拖动调整；Shift ×10；⌘ ×0.1\" type=\"button\">0%</button>"
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 1188.5,
+    "y": 173.25,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 1127,
+      "y": 156.25,
+      "width": 123,
+      "height": 34,
+      "top": 156.25,
+      "right": 1250,
+      "bottom": 190.25,
+      "left": 1127
+    },
+    "cover": "<button class=\"embedded-studio-save\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-li"
+  },
+  {
+    "phase": "FAILED",
+    "error": "Error: 编辑器未确认操作，请检查编辑器状态后重试。\n    at file:///Users/dan/.codex/worktrees/t08-workspace-candidates/loop-control/docs/verification/issue-160-workspace-candidates/ui-acceptance.mjs:19:361\n    at async until (file:///Users/dan/.codex/worktrees/t08-workspace-candidates/loop-control/docs/verification/issue-160-workspace-candidates/ui-acceptance.mjs:5:98)\n    at async Object.save (file:///Users/dan/.codex/worktrees/t08-workspace-candidates/loop-control/docs/verification/issue-160-workspace-candidates/ui-acceptance.mjs:19:79)\n    at async file:///Users/dan/.codex/worktrees/t08-workspace-candidates/loop-control/docs/verification/issue-160-workspace-candidates/ui-acceptance.mjs:27:902"
+  }
+]
