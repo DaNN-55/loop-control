@@ -19,7 +19,7 @@ import {TextAreaBase} from '../ui/dan-ui/components/base/textarea/textarea';
 import {Button} from '../ui/dan-ui/components/base/buttons/button';
 import {mainScriptDiagnostic} from "../reviews/mainScript";
 import { EpisodeVideoBudget, WanShotGenerator } from "./WanShotGenerator";
-import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {createPortal} from "react-dom";
 import type { FormEvent, ReactNode } from "react";
 import { Plus, Scissors, Combine, ArrowDownUp, Clock, ArrowLeft, Check, ClipboardList, Copy, Download, Ellipsis, FileText, Film, FolderOpen, GripVertical, History, ImageIcon, Play, RefreshCw, ShieldAlert, ShieldCheck, Trash2, Upload, Volume2, X, type LucideIcon } from "lucide-react";
@@ -75,9 +75,6 @@ interface ReviewAction {
 
 type ReviewDecisionDraft = { reason: string };
 type UtilityPanelKind = "artifacts" | "timeline";
-
-// Throwaway four-step workflow demo; no production callbacks are passed to it.
-const FourStepPrototype = import.meta.env.DEV ? lazy(() => import('./FourStepWorkflow.prototype')) : null;
 
 const approvalGateDefinitions = [
   { key: "script", label: "脚本审核", reviewStage: "script_review" },
@@ -597,10 +594,6 @@ export function EpisodeProductionView({ nodeWorkspace=false,scriptProductionPlan
     ? { current: episodePreviewArtifacts.current.filter((artifact) => artifact.id !== reviewArtifact.id), history: episodePreviewArtifacts.history }
     : episodePreviewArtifacts;
   const currentReviewSection = reviewPackage && reviewArtifact && episode.stage !== "storyboard_approved" ? reviewPackage.stage === "qc_review" && isEditorReviewRender(reviewPackage.context_snapshot) ? <OpenChatCutReviewRenderPackage artifact={reviewArtifact} artifacts={reviewArtifacts} onOpenStudio={onOpenStudio} onRequestRevision={onRequestRevision} onSubmitStudioRevision={onSubmitStudioRevision} reviewPackage={reviewPackage} tasks={episodeTasks} /> : reviewPackage.stage === "visual_review" ? <VisualReviewPackage artifact={reviewArtifact} artifacts={reviewArtifacts} reviewPackage={reviewPackage} /> : reviewPackage.stage === "storyboard_review" ? <StoryboardReviewPackage annotations={storyboardAnnotations} artifact={reviewArtifact} episode={episode} isAnnotationPending={isStoryboardAnnotationPending} materialRevisions={materialRevisions.filter((material) => material.episode_id === episode.id)} onCreateAnnotation={onCreateStoryboardAnnotation} onRegisterManualMedia={onRegisterManualMedia} onValidationChange={onStoryboardValidationChange} policy={blueprint?.policy} reviewPackage={reviewPackage} tasks={episodeTasks} /> : <TextReviewPackage artifact={reviewArtifact} reviewPackage={reviewPackage} /> : null;
-
-  if (import.meta.env.DEV && FourStepPrototype && new URLSearchParams(window.location.search).get('prototype') === 'four-step-workflow') {
-    return <Suspense fallback={<p role="status">正在读取流程演示…</p>}><FourStepPrototype episode={episode} artifacts={episodeArtifacts} materials={episodeMaterials} drafts={episodeShotPreparationDrafts} tracks={episodeAudioTracks} storyboardArtifact={storyboardArtifact}/></Suspense>;
-  }
 
   if(nodeWorkspace){
     const actual=nodeForStage(episode.stage);

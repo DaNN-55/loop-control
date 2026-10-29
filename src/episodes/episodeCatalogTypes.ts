@@ -12,7 +12,7 @@ export interface EpisodeCatalog {
   pending: { page: number; total: number; items: Array<Episode & { revision_number: number }> };
   blocked: { page: number; total: number; items: Array<{ episode: Episode; blocker: WorkerBlocker }> };
   worker: WorkerSummary;
-  operationRows: Array<{ episodeId: string; reviewRevision: number | null; reviewPending: boolean; blockerCount: number; actionStatus?: CatalogActionStatus }>;
+  operationRows: Array<{ episodeId: string; reviewRevision: number | null; reviewPending: boolean; blockerCount: number; actionStatus?: CatalogActionStatus;workflowStep?: 'script'|'preparation'|'editing'|'delivery' }>;
   statusCounts?: Record<CatalogStatus, number>;
 }
 export interface CatalogQuery {

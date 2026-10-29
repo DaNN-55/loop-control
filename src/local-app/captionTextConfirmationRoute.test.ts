@@ -32,6 +32,7 @@ async function fixture(){
   if(sql.includes('FROM public.audio_tracks'))return{rows:[{id:trackId,relative_path:files[1].relative_path,sha256:audioSha256,file_size:files[1].bytes.length}],rowCount:1};
   if(sql.includes('FROM public.shot_preparation_drafts'))return{rows:[draft],rowCount:1};
   if(sql.includes('local_identity.caption_text_is_confirmed('))return{rows:[{confirmed:false}],rowCount:1};
+  if(sql.includes('FROM local_identity.production_workspaces'))return{rows:[],rowCount:0};
   if(sql.includes('FROM public.tasks'))return{rows:[],rowCount:0};
   if(sql.includes('local_identity.confirm_caption_text(')){writes++;return{rows:[{result:{saved:true}}],rowCount:1};}
   if(sql.startsWith('BEGIN')||sql==='COMMIT'||sql==='ROLLBACK'||sql.includes('set_config')||sql.includes('pg_advisory_xact_lock')||sql.includes('local_identity.command_receipts'))return{rows:[],rowCount:0};

@@ -109,6 +109,7 @@ export class LocalEpisodeCommands {
     if(!e)throw new ConfigurationError(404,'本地生产单不可见。');const root=await resolveLocalAssetRoot(c,this.mediaRoot,e.policy.asset_root);
     const inputPolicy=e.script_template_version===2?{...e.policy,static_visual:{execution_path:'manual'},soundtrack:{execution_path:'manual'}}:e.policy;
     if(['reconfirmScript','requestStructureRevision'].includes(String(body.command))&&this.workspace.isOpen(e.id))throw new ConfigurationError(409,'请先保存并返回，再修订脚本或分镜。');
+    if(['review','approveQc','retryFinalRender','preparePublishPackage','renderScriptReview','generateReviewVideo','submitStudioRevision','planStoryboard','confirmSyncPreview'].includes(String(body.command))&&(await c.query('SELECT 1 FROM local_identity.production_workspaces WHERE episode_id=$1',[e.id])).rowCount)throw new ConfigurationError(409,'此生产单使用四步制作，请在当前工程检查与交付。');
     if(Object.hasOwn(productionWorkspaceFields,String(body.command))){value=await this.workspace.execute(c,e,root,this.runtime,String(body.command),data);
     }else if(body.command==='configureScriptProduction'){
      if(typeof data.enabled!=='boolean'||data.choices!==undefined&&(!data.choices||typeof data.choices!=='object'||Array.isArray(data.choices)||Object.values(data.choices).some(x=>typeof x!=='string'||!uuid.test(x))))throw new ConfigurationError(400,'制作计划设置无效。');
@@ -173,10 +174,9 @@ export class LocalEpisodeCommands {
      const materials=(await c.query('SELECT * FROM public.production_material_revisions WHERE episode_id=$1',[e.id])).rows;
      if(!e.main_script_revision_id)throw new ConfigurationError(409,'请先上传并确认主脚本。');
      for(const m of materials)await verifyNativeFile(root,m.storage_path,m.sha256,Number(m.file_size));
-     if(!inputPolicy.static_visual?.executor&&!materials.some(m=>['visual_reference','a_roll','b_roll'].includes(m.material_purpose)&&['image','video','reference'].includes(m.material_type)))throw new ConfigurationError(409,'请先导入视觉参考；当前没有已验收的图片生成路径。');
      await c.query('SELECT public.record_episode_worker_preflight($1,$2)',[e.id,session.id]);
      value=(await c.query('SELECT to_jsonb(public.start_episode_production($1)) result',[e.id])).rows[0].result;
-     await c.query('UPDATE local_identity.input_episodes SET enabled=true,visual_media_enabled=$2 WHERE episode_id=$1',[e.id,Boolean(inputPolicy.static_visual?.executor)]);
+     await c.query('UPDATE local_identity.input_episodes SET enabled=false,visual_media_enabled=$2 WHERE episode_id=$1',[e.id,Boolean(inputPolicy.static_visual?.executor)]);
     }else if(['generateSourceAudio','requestAlignment','saveManualAlignment','confirmCaptionText','generateSyncPreview','confirmSyncPreview'].includes(String(body.command))){
      if(!['storyboard_approved','production_ready','render_ready','qc_review'].includes(e.stage)||!e.storyboard_enabled)throw new ConfigurationError(409,'请先批准当前分镜。');
      const p=(await c.query("SELECT * FROM public.review_packages WHERE episode_id=$1 AND stage='storyboard_review' AND invalidated_at IS NULL ORDER BY revision_number DESC LIMIT 1",[e.id])).rows[0];
@@ -262,7 +262,7 @@ export class LocalEpisodeCommands {
       }else value={id:e.id,queued:true};
      }
     }else if(['saveTtsSettings','saveTtsDraft','generateTts'].includes(String(body.command))){
-     if(!['storyboard_approved','production_ready','render_ready','qc_review'].includes(e.stage)||!e.storyboard_enabled)throw new ConfigurationError(409,'请先批准当前分镜。');
+     if(body.command!=='saveTtsSettings'&&(!['storyboard_approved','production_ready','render_ready','qc_review'].includes(e.stage)||!e.storyboard_enabled))throw new ConfigurationError(409,'请先批准当前分镜。');
      if(body.command==='saveTtsSettings'){
       if(typeof data.languageCode!=='string'||typeof data.voice!=='string'||typeof data.speakingRate!=='number'||!Number.isFinite(data.speakingRate)||data.voice.length>200)throw new ConfigurationError(400,'本期TTS设置无效。');
       value=(await c.query('SELECT to_jsonb(public.save_episode_tts_settings($1,$2,$3,$4)) result',[e.id,data.languageCode,data.voice,data.speakingRate])).rows[0].result;
@@ -317,7 +317,7 @@ export class LocalEpisodeCommands {
    if(!automatic&&['saveMediaDraft','saveTtsDraft'].includes(String(body.command)))await c.query("UPDATE local_identity.script_productions SET progress=progress||jsonb_build_object($2::text,true) WHERE episode_id=$1",[data.episodeId,'manual:'+data.reviewPackageId+':'+data.shotId]);
    await c.query('INSERT INTO local_identity.command_receipts(owner_id,idempotency_key,payload_hash,result) VALUES($1,$2,$3,$4) ON CONFLICT(owner_id,idempotency_key) DO NOTHING',[session.id,body.idempotencyKey,hash,value]);return value;
   });
-  if(['requestWorkspaceVisualCandidate','retryWorkspaceVisualCandidate','prepareWorkspaceAudio','prepareWorkspaceDelivery','retryWorkspaceDelivery','requestWorkspaceCaptionAlignment','generateWorkspaceNarration','generateWorkspaceImage','configureScriptProduction','applyScriptSettings','bindScriptVideo','renderScriptReview','generateOfficialVideo','generateWan','resumeWan','requestQcMemberRevision','repairConnection','repairConfiguration','approveQc','retryFinalRender','generateReviewVideo','submitStudioRevision','requestStudioCompositionRevision','requestStudioStoryboardRevision','generateSourceAudio','requestAlignment','generateSyncPreview','start','planStoryboard','requestStructureRevision','review','generateTts','registerManualMedia','saveAudioSelection','planMedia','retryMedia','saveMediaDraft','generateClip'].includes(body.command))this.runtime.wake(String(data.episodeId??result.id));void this.continuation?.wake();return result;
+  if(['retryWorkspacePlanning','requestWorkspaceVisualCandidate','retryWorkspaceVisualCandidate','prepareWorkspaceAudio','prepareWorkspaceDelivery','retryWorkspaceDelivery','requestWorkspaceCaptionAlignment','generateWorkspaceNarration','generateWorkspaceImage','configureScriptProduction','applyScriptSettings','bindScriptVideo','renderScriptReview','generateOfficialVideo','generateWan','resumeWan','requestQcMemberRevision','repairConnection','repairConfiguration','approveQc','retryFinalRender','generateReviewVideo','submitStudioRevision','requestStudioCompositionRevision','requestStudioStoryboardRevision','generateSourceAudio','requestAlignment','generateSyncPreview','start','planStoryboard','requestStructureRevision','review','generateTts','registerManualMedia','saveAudioSelection','planMedia','retryMedia','saveMediaDraft','generateClip'].includes(body.command)||['prepareWorkspace','replanWorkspace'].includes(body.command)&&(result as {planning?:boolean}).planning===true)this.runtime.wake(String(data.episodeId??result.id));void this.continuation?.wake();return result;
  }
  private async requireCaptionTextReview(c:PoolClient,draft:{id:string;subtitles_enabled:boolean;audio_mode:string}){
   if(draft.subtitles_enabled&&draft.audio_mode!=='none'&&!(await c.query('SELECT local_identity.caption_text_is_confirmed($1) confirmed',[draft.id])).rows[0]?.confirmed)throw new ConfigurationError(409,'请先核对当前音频正文并保存确认。');

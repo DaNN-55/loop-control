@@ -15,7 +15,17 @@ export function episodeActionState(episode:Episode,summary?:EpisodeRowSummary):E
  return ['waiting_input','brief_draft','script_draft'].includes(episode.stage)?'draft':'running';
 }
 export function EpisodeStatus({state}:{state:EpisodeActionState}){const {label,icon:Icon}=states[state];return <span className={`episode-state episode-state-${state}`}><Icon aria-hidden="true" size={14}/>{label}</span>;}
-export function episodeNextAction(episode:Episode,state:EpisodeActionState){
+export const workflowStepLabels={script:'脚本确认',preparation:'素材准备与匹配',editing:'剪辑工作台',delivery:'检查与交付'} as const;
+export const workspacePhaseGroups=Object.entries(workflowStepLabels).map(([id,label])=>({id:id as keyof typeof workflowStepLabels,label,stages:[] as EpisodeStage[]}));
+export function episodeWorkflowLabel(summary?:EpisodeRowSummary){return summary?.workflowStep?workflowStepLabels[summary.workflowStep]:null;}
+export function episodeNextAction(episode:Episode,state:EpisodeActionState,summary?:EpisodeRowSummary){
+ if(summary?.workflowStep){
+  if(state==='done')return{label:'查看交付包',detail:'核对成片与已保存的交付文件。'};
+  if(state==='blocked')return{label:summary.workflowStep==='delivery'?'处理交付问题':'处理制作问题',detail:'查看当前问题，处理后继续。'};
+  if(state==='review')return{label:summary.workflowStep==='delivery'?'确认整片':summary.workflowStep==='script'?'确认脚本':'确认素材匹配',detail:summary.workflowStep==='delivery'?'观看实际成片，确认本次交付版本。':'核对当前内容并明确确认。'};
+  return{label:summary.workflowStep==='script'?'继续确认脚本':summary.workflowStep==='preparation'?'继续准备素材':summary.workflowStep==='editing'?'继续剪辑':'继续检查与交付',detail:'打开生产单，接着完成当前步骤。'};
+ }
+
  if(state==='blocked')return {label:'处理阻塞',detail:'查看当前问题，处理后继续制作。'};
  if(state==='review')return {label:'继续审核',detail:'查看本次证据，决定通过或提出修改。'};
  if(state==='done')return {label:'查看交付包',detail:'核对成片与已保存的交付文件。'};

@@ -25,8 +25,7 @@
     "secrets:list": "node scripts/runtime/secrets.mjs",
     "secrets:copy": "node scripts/runtime/secrets.mjs --copy",
     "ui:build": "node scripts/build-dan-ui.mjs",
-    "backend:build": "tsc -p tsconfig.local-app.json",
-    "prototype:four-step": "node scripts/prototype-four-step.mjs"
+    "backend:build": "tsc -p tsconfig.local-app.json"
   },
   "dependencies": {
     "@untitledui/icons": "0.0.23",

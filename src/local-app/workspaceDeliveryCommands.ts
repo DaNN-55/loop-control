@@ -1,3 +1,4 @@
+import {resolveWorkspaceShotLineage} from './workspacePreparation.js';
 import {randomUUID,createHash} from 'node:crypto';
 import {writeFile} from 'node:fs/promises';
 import type {PoolClient} from 'pg';
@@ -38,7 +39,7 @@ export async function executeWorkspaceDelivery(c:PoolClient,root:string,row:Prod
  const track=item?.src?(await c.query('SELECT a.*,t.input_snapshot FROM public.audio_tracks a LEFT JOIN public.tasks t ON t.id=a.source_task_id WHERE a.episode_id=$1 AND a.relative_path=$2',[row.episode_id,item.src])).rows[0]:null;
  const marker=(item as unknown as {loopControlCandidate?:{inputFingerprint?:string}}|undefined)?.loopControlCandidate;
  const adopted=hasDecisions&&track?(await c.query("SELECT * FROM local_identity.workspace_candidate_decisions WHERE workspace_id=$1 AND candidate_id=$2 AND decision='adopted' AND source_sha256=$3 AND ($4::text IS NULL OR input_fingerprint=$4) ORDER BY created_at DESC LIMIT 1",[row.id,track.id,track.sha256,marker?.inputFingerprint??null])).rows[0]:null;
- const sourceText=adopted?.text_version??track?.input_snapshot?.media?.narration?.text??null,baselineText=adopted?.main_script_text??clip.text,windows=item?usedNarrationWindows(approvedProject,String(item.id)):[];
+ const sourceText=adopted?.text_version??track?.input_snapshot?.media?.narration?.text??null,baselineText=(await resolveWorkspaceShotLineage(c,row,clip.shotId)).baseline_text,windows=item?usedNarrationWindows(approvedProject,String(item.id)):[];
  const fullSource=!!track&&windows.length===1&&windows[0].audible&&windows[0].srcInFrame===0&&windows[0].playbackRate===1&&Math.abs(windows[0].sourceDurationSeconds-Number(track.duration_seconds))<=1/windows[0].fps;
  const actualText=fullSource?sourceText:null;
  narration.push({shotId:clip.shotId,baselineText,sourceText,adoptedText:actualText,textCoverage:sourceText===null?'no_recorded_text':fullSource?'complete_source':'partial_or_retimed_unverified',windows,textSource:adopted?'owner_adoption':sourceText===null?'not_recorded':'frozen_task',sourceDiffersFromBaseline:sourceText===null?null:sourceText!==baselineText,differsFromBaseline:actualText===null?null:actualText!==baselineText,audioTrackId:track?.id??null,sha256:track?.sha256??null,itemId:item?.id??null,source:item?.src??null});

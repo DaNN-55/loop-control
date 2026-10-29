@@ -1,0 +1,36 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t13-formal-workflow/loop-control
+
+ ❯ src/local-app/formalWorkflow.integration.test.ts (6 tests | 1 failed | 5 skipped) 3073ms
+   ↓ Owner confirms a fresh script before visual materials exist
+   ↓ Owner builds a formal incomplete draft without old storyboard approvals
+   ↓ first formal adoption preserves the latest unsubmitted legacy Studio document
+   ↓ late legacy render reports retain artifacts without advancing or approving the adopted workspace
+   ↓ fresh formal and added shots generate through the real controlled Provider Worker without legacy approval
+   × ordinary scripts use the selected real planner task and verified artifact before preparation confirmation 3073ms
+     → expected { planning: true, …(1) } to match object { planning: true, …(2) }
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/formalWorkflow.integration.test.ts > ordinary scripts use the selected real planner task and verified artifact before preparation confirmation
+AssertionError: expected { planning: true, …(1) } to match object { planning: true, …(2) }
+
+- Expected
++ Received
+
+  {
+    "planning": true,
+-   "status": "failed",
+    "taskId": "4ab852d6-557c-450e-93e3-cb32a5e1ca28",
+  }
+
+ ❯ src/local-app/formalWorkflow.integration.test.ts:82:108
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 skipped (6)
+   Start at  02:20:14
+   Duration  3.55s (transform 268ms, setup 7ms, collect 358ms, tests 3.07s, environment 0ms, prepare 26ms)

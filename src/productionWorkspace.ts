@@ -8,6 +8,8 @@ import {workspaceCaptionFields,type WorkspaceCaptionState} from './workspaceCapt
 export interface WorkspaceSource {materialRevisionId:string;relativePath:string;sha256:string;fileSize:number;kind:'video'|'image'|'audio'}
 export interface WorkspaceClip {id:string;itemId:string;shotId:string;text:string;source:WorkspaceSource|null;image?:{usage:'still'|'pan-zoom'|'ai-video';durationSeconds:number;providerDurationSeconds?:number;fit:'contain'|'cover';focusX:number;focusY:number;taskId?:string;materialRevisionId?:string}}
 export interface ProductionWorkspace {
+ recovery?:{decision:'preserve'|'fresh';relativePath:string;sha256:string;fileSize:number};
+ preparation?:{origin:string;authorized:boolean;authorizationHash?:string;scriptRevisionId:string;shots:Array<{shotId:string;origin:string;shotType:'a_roll'|'b_roll'|null}>};
  visualCandidates?:WorkspaceVisualCandidate[];visualTasks?:WorkspaceVisualTask[];visualTargets?:WorkspaceVisualTarget[];
  id:string;episodeId:string;workflowVersion:'four-step/v1';scriptRevisionId:string;storyboardPackageId:string;revision:number;contentSha256:string;nativeEditRevision?:number;
  audio?:{mix:WorkspaceAudioMix;preparations:Array<{id:string;kind:string;shotId:string|null;sourceItemId:string|null;description:string;query:string|null;anchor:string;offsetSeconds:number;durationSeconds:number;taskId:string|null;status:string;error:string|null;audioTrackId:string|null;relativePath:string|null;sha256:string|null;fileSize:number;adoptedItemId:string|null;source:Record<string,unknown>|null}>};usedNarration?:WorkspaceUsedNarration[];candidates?:WorkspaceCandidate[];deliveries?:WorkspaceDelivery[];exports?:WorkspaceExport[];exportIssues?:WorkspaceExportIssue[];captions?:WorkspaceCaptionState[];narration?:WorkspaceNarration[];clips:WorkspaceClip[];project:{relativePath:string;sha256:string;fileSize:number;projectId:string};
@@ -15,6 +17,8 @@ export interface ProductionWorkspace {
  readiness:{deliverable:boolean;placeholders:string[];missingSources:string[]};stale:boolean;
 }
 export const productionWorkspaceFields:Record<string,string[]>={
+ authorizeWorkspacePreparation:['episodeId','workspaceId','expectedRevision','enabled'],
+ confirmWorkspaceShot:['episodeId','workspaceId','expectedRevision','clipId','shotType'],
  ...workspaceVisualFields,
  prepareWorkspaceCandidate:['episodeId','workspaceId','expectedRevision','candidateId','durationPolicy'],
  adoptWorkspaceCandidate:['episodeId','workspaceId','expectedRevision','candidateId','adoptionId','nativeApplied'],
@@ -33,8 +37,9 @@ export const productionWorkspaceFields:Record<string,string[]>={
  generateWorkspaceImage:['episodeId','workspaceId','expectedRevision','clipId','materialRevisionId','prompt','durationSeconds','reservationCents'],
  fillWorkspaceImageResult:['episodeId','workspaceId','expectedRevision','taskId'],
  matchWorkspaceImage:['episodeId','workspaceId','expectedRevision','clipId','materialRevisionId','usage','durationSeconds','fit','focusX','focusY'],
- replanWorkspace:['episodeId','workspaceId','expectedRevision','reviewPackageId','expectedScriptRevisionId','reason'],
- prepareWorkspace:['episodeId','reviewPackageId','expectedScriptRevisionId'],
+ replanWorkspace:['episodeId','workspaceId','expectedRevision','reviewPackageId','expectedScriptRevisionId','reason','legacyDecision'],
+ retryWorkspacePlanning:['episodeId','expectedScriptRevisionId','taskId'],
+ prepareWorkspace:['episodeId','reviewPackageId','expectedScriptRevisionId','legacyDecision'],
  matchWorkspaceMaterial:['episodeId','workspaceId','expectedRevision','clipId','materialRevisionId'],
  openWorkspaceStudio:['episodeId','workspaceId','expectedRevision'],
  saveWorkspaceStudio:['episodeId','workspaceId','expectedRevision','workspaceRelativePath','projectId','expectedWorkspaceSha256'],

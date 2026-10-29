@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t13-formal-workflow/loop-control
+
+ ✓ src/local-app/fixtureSchema.integration.test.ts (3 tests) 4592ms
+   ✓ schema provisioning accepts both the pre-workspace and upgraded sources without replaying applied DDL  2021ms
+   ✓ an applied migration SHA mismatch refuses provisioning before writing the target schema  693ms
+   ✓ schema and migration metadata retain one snapshot when the source upgrades during export  1879ms
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  01:23:56
+   Duration  4.71s (transform 23ms, setup 6ms, collect 19ms, tests 4.59s, environment 0ms, prepare 23ms)

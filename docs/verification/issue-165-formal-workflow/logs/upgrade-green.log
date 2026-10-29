@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t13-formal-workflow/loop-control
+
+ ✓ src/local-app/formalWorkflow.integration.test.ts (6 tests | 4 skipped) 5982ms
+   ✓ Owner builds a formal incomplete draft without old storyboard approvals  3112ms
+   ✓ first formal adoption preserves the latest unsubmitted legacy Studio document  2870ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed | 4 skipped (6)
+   Start at  02:00:11
+   Duration  6.47s (transform 268ms, setup 6ms, collect 359ms, tests 5.98s, environment 0ms, prepare 23ms)

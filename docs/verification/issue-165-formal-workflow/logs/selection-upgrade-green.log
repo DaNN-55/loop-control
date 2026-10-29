@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t13-formal-workflow/loop-control
+
+ ✓ src/local-app/workspaceDelivery.integration.test.ts (4 tests | 3 skipped) 13467ms
+   ✓ real Worker verifies exact package, fences tamper and missing inputs, retries and survives restart  13467ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 3 skipped (4)
+   Start at  02:10:48
+   Duration  13.93s (transform 241ms, setup 7ms, collect 334ms, tests 13.47s, environment 0ms, prepare 29ms)

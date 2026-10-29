@@ -1,0 +1,33 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t13-formal-workflow/loop-control
+
+ ❯ src/local-app/workspaceDelivery.integration.test.ts (4 tests | 1 failed | 3 skipped) 10765ms
+   ↓ Owner delivery requires an exact confirmed export
+   × real Worker verifies exact package, fences tamper and missing inputs, retries and survives restart 10765ms
+     → expected 6 to be 5 // Object.is equality
+   ↓ a queued package cannot complete or retry against a different final export
+   ↓ delivery records the used trimmed voice source and never substitutes an unadopted draft text
+ ✓ src/local-app/workspaceExport.integration.test.ts (1 test) 18856ms
+   ✓ Owner checks actual used content before exporting and confirms exact final bytes  18856ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceDelivery.integration.test.ts > real Worker verifies exact package, fences tamper and missing inputs, retries and survives restart
+AssertionError: expected 6 to be 5 // Object.is equality
+
+- Expected
++ Received
+
+- 5
++ 6
+
+ ❯ src/local-app/workspaceDelivery.integration.test.ts:39:423
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 1 passed | 3 skipped (5)
+   Start at  02:08:20
+   Duration  30.22s (transform 251ms, setup 7ms, collect 395ms, tests 29.62s, environment 0ms, prepare 50ms)

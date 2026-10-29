@@ -26,6 +26,10 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('real Worker verifies exa
  const send=async(name:string,extra={})=>{const r=await f.request(name,{workspaceId:w.id,expectedRevision:w.revision,...extra});return r;};
  for(const clip of w.clips){const r=await send('matchWorkspaceMaterial',{clipId:clip.id,materialRevisionId:f.material});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;}
  for(const clip of w.clips){w=(await send('saveWorkspaceCaptions',{clipId:clip.id,captionContract:defaultShotCaptionContract(clip.text,'independent',false)})).body;}
+ // Upgrade compatibility: a pre-095 snapshot has stable native IDs/bindings,
+ // but no loopControlShot extension. No GET or approval is synthesized.
+ const legacy=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));for(const timeline of legacy.timelines)for(const item of timeline.items)delete item.loopControlShot;
+ const legacyBytes=Buffer.from(JSON.stringify(legacy,null,2)+'\n'),legacySha=createHash('sha256').update(legacyBytes).digest('hex'),legacyPath=`episodes/${f.episode}/production-workspace/versions/${legacySha}.json`;await writeFile(join(f.assetRoot,legacyPath),legacyBytes);const content=structuredClone(legacy);for(const timeline of content.timelines){delete timeline.selectedId;delete timeline.selectedIds;}await f.c.query('UPDATE local_identity.production_workspaces SET project_path=$2,project_sha256=$3,project_size=$4,content_sha256=$5 WHERE id=$1',[w.id,legacyPath,legacySha,legacyBytes.length,createHash('sha256').update(JSON.stringify(content)).digest('hex')]);
  w=(await send('exportWorkspace')).body;expect(w.exports[0].status,JSON.stringify(w.exports[0])).toBe('ready');
  w=(await send('confirmWorkspaceExport',{exportId:w.exports[0].id,expectedExportSha256:w.exports[0].artifact.sha256,expectedContentSha256:w.contentSha256})).body;
  const approved=w.exports[0],approvedProject=approved.project,videoBytes=await readFile(join(f.assetRoot,approved.artifact.relativePath));

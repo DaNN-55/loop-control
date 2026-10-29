@@ -1,3 +1,5 @@
+import {prepareAuthoredWorkspace,readWorkspacePlanning,syncWorkspaceShotInputs,authorizeWorkspacePreparation,readWorkspacePreparation,preserveLegacyWorkspace,recoverLegacyBindings} from './workspacePreparation.js';
+import {verifyReportedStoryboardArtifact} from '../worker/storyboardArtifact.js';
 import {readWorkspaceVisualCandidates,readWorkspaceVisualTasks,readWorkspaceVisualTargets,validateWorkspaceVisualUses,executeWorkspaceVisualCandidate} from './workspaceVisualCandidates.js';
 import {workspaceVisualFields} from '../workspaceVisualCandidates.js';
 import {readWorkspaceCandidates,readUsedWorkspaceNarrationVersions,validateWorkspaceCandidateUses,executeWorkspaceCandidateCommand} from './workspaceCandidates.js';
@@ -43,7 +45,8 @@ export async function readProductionWorkspace(c:PoolClient,episodeId:string,root
  if(!inputsReady||stale)for(const e of exportState.exports)e.confirmed=false;
  const deliverable=inputsReady&&!stale&&!!exportState.exports[0]?.current&&exportState.exports[0].status==='ready'&&exportState.exports[0].checks.every(x=>x.passed);
  const history=(await c.query('SELECT revision,project_sha256,script_revision_id,reason FROM local_identity.production_workspace_versions WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 50',[row.id])).rows.map(v=>({revision:Number(v.revision),sha256:v.project_sha256,scriptRevisionId:v.script_revision_id,reason:v.reason}));
- return{visualCandidates:await readWorkspaceVisualCandidates(c,row,project,root),visualTasks:await readWorkspaceVisualTasks(c,row),visualTargets:await readWorkspaceVisualTargets(c,row,project),audio:await readWorkspaceAudio(c,row,project),deliveries:await readWorkspaceDeliveries(c,root,row),usedNarration:await readUsedWorkspaceNarrationVersions(c,row,project),candidates:await readWorkspaceCandidates(c,row,project),...exportState,captions,id:row.id,episodeId,workflowVersion:row.workflow_version,scriptRevisionId:row.script_revision_id,storyboardPackageId:row.storyboard_package_id,revision:Number(row.revision),contentSha256:row.content_sha256,nativeEditRevision:Number(row.native_edit_revision),narration:await readWorkspaceNarration(c,row,project),clips:row.bindings,project:{relativePath:row.project_path,sha256:row.project_sha256,fileSize:Number(row.project_size),projectId:`loop-control-${episodeId}`},history,readiness:{deliverable,placeholders,missingSources},stale};
+ const recovered=(await c.query('SELECT decision,relative_path,sha256,file_size FROM local_identity.workspace_legacy_recoveries WHERE workspace_id=$1',[row.id])).rows[0];
+ return{...(recovered?{recovery:{decision:recovered.decision,relativePath:recovered.relative_path,sha256:recovered.sha256,fileSize:Number(recovered.file_size)}}:{}),preparation:await readWorkspacePreparation(c,row),visualCandidates:await readWorkspaceVisualCandidates(c,row,project,root),visualTasks:await readWorkspaceVisualTasks(c,row),visualTargets:await readWorkspaceVisualTargets(c,row,project),audio:await readWorkspaceAudio(c,row,project),deliveries:await readWorkspaceDeliveries(c,root,row),usedNarration:await readUsedWorkspaceNarrationVersions(c,row,project),candidates:await readWorkspaceCandidates(c,row,project),...exportState,captions,id:row.id,episodeId,workflowVersion:row.workflow_version,scriptRevisionId:row.script_revision_id,storyboardPackageId:row.storyboard_package_id,revision:Number(row.revision),contentSha256:row.content_sha256,nativeEditRevision:Number(row.native_edit_revision),narration:await readWorkspaceNarration(c,row,project),clips:row.bindings,project:{relativePath:row.project_path,sha256:row.project_sha256,fileSize:Number(row.project_size),projectId:`loop-control-${episodeId}`},history,readiness:{deliverable,placeholders,missingSources},stale};
 }
 export function workspaceContentSha256(project:OpenChatCutProject):string{
  const content=structuredClone(project);for(const timeline of content.timelines){delete (timeline as unknown as Record<string,unknown>).selectedId;delete (timeline as unknown as Record<string,unknown>).selectedIds;}
@@ -59,28 +62,42 @@ export class ProductionWorkspaceCommands{
   if(e.archived_at||e.stage==='production_completed'||(await c.query('SELECT local_identity.is_historical_episode($1) historical',[e.id])).rows[0].historical)throw new ConfigurationError(409,'历史或已完成生产单只读。');
   await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[e.id+':studio']);
   let row=(await c.query('SELECT * FROM local_identity.production_workspaces WHERE episode_id=$1 FOR UPDATE',[e.id])).rows[0] as ProductionWorkspaceRecord|undefined;
+  if(command==='retryWorkspacePlanning'){
+   if(!e.main_script_revision_id||e.main_script_revision_id!==data.expectedScriptRevisionId||row?.script_revision_id===e.main_script_revision_id)throw new ConfigurationError(409,'当前脚本或制作依据已变化。');
+   if(typeof data.taskId!=='string'||!uuid.test(data.taskId))throw new ConfigurationError(400,'规划任务无效。');
+   let taskId;try{taskId=(await c.query('SELECT local_identity.queue_workspace_planning($1,$2,$3) id',[e.id,e.main_script_revision_id,data.taskId])).rows[0].id;}catch(error){if((error as {code?:string}).code==='40001')throw new ConfigurationError(409,'规划任务已变化，请刷新当前结果。');throw error;}return readWorkspacePlanning(c,taskId);
+  }
   if(command==='prepareWorkspace'||command==='replanWorkspace'){
    if(!e.main_script_revision_id||e.main_script_revision_id!==data.expectedScriptRevisionId)throw new ConfigurationError(409,'脚本基准已变化，请先确认当前脚本。');
-   const p=(await c.query("SELECT p.*,a.relative_path,a.sha256,a.file_size FROM public.review_packages p JOIN public.artifacts a ON a.id=p.artifact_id WHERE p.id=$1 AND p.episode_id=$2 AND p.stage='storyboard_review' AND p.invalidated_at IS NULL",[data.reviewPackageId,e.id])).rows[0];
-   if(!p||!['storyboard_approved','production_ready','render_ready','qc_review'].includes(e.stage))throw new ConfigurationError(409,'请先确认脚本与分镜匹配基准。');
+   let p=(await c.query("SELECT p.*,a.relative_path,a.sha256,a.file_size FROM public.review_packages p JOIN public.artifacts a ON a.id=p.artifact_id WHERE p.id=$1 AND p.episode_id=$2 AND p.stage='storyboard_review' AND p.invalidated_at IS NULL",[data.reviewPackageId,e.id])).rows[0];
+   if(!p&&!data.reviewPackageId)p=await prepareAuthoredWorkspace(c,root,e);
+   if(p?.planning)return p;
+   if(p?.context_snapshot?.workspace_preparation?.scriptRevisionId===e.main_script_revision_id){await verifyNativeFile(root,p.relative_path,p.sha256,Number(p.file_size));await verifyReportedStoryboardArtifact({assetRoot:root,relativePath:p.relative_path,frozenInputs:p.context_snapshot.input_artifacts,storyboard:p.context_snapshot.worker_result.storyboard});await c.query('SELECT local_identity.confirm_workspace_plan($1,$2,$3)',[e.id,e.main_script_revision_id,p.id]);}
+   const formal=p&&(await c.query('SELECT 1 FROM local_identity.workspace_preparations WHERE package_id=$1 AND script_revision_id=$2',[p.id,e.main_script_revision_id])).rowCount;
+   if(!p||!formal&&!['storyboard_approved','production_ready','render_ready','qc_review'].includes(e.stage))throw new ConfigurationError(409,'请先确认脚本与分镜匹配基准。');
    if(row){
     const same=row.script_revision_id===e.main_script_revision_id&&row.storyboard_package_id===p.id;
-    if(same)return readProductionWorkspace(c,e.id,root);
+    if(same){await syncWorkspaceShotInputs(c,row,row.bindings);return readProductionWorkspace(c,e.id,root);}
     if(command!=='replanWorkspace'||data.workspaceId!==row.id||data.expectedRevision!==Number(row.revision))throw new ConfigurationError(409,'已有工程使用旧基准，请明确重新规划；不会覆盖原工程。');
     if(typeof data.reason!=='string'||!data.reason.trim()||data.reason.length>4000)throw new ConfigurationError(400,'请填写重规划原因。');
     if(isOpenChatCutStudio(e.id))throw new ConfigurationError(409,'请先保存并返回，再重新规划。');
    }else if(command==='replanWorkspace')throw new ConfigurationError(409,'原工程不存在，请先建立初稿。');
    const storyboard=JSON.parse((await verifyNativeFile(root,p.relative_path,p.sha256,Number(p.file_size))).toString('utf8'));
    if(!Array.isArray(storyboard.shots)||!storyboard.shots.length||new Set(storyboard.shots.map((s:{id:string})=>s.id)).size!==storyboard.shots.length)throw new ConfigurationError(409,'分镜基准无效。');
-   const id=row?.id??randomUUID(),clips:WorkspaceClip[]=storyboard.shots.map((s:{id:string;scriptSegment:string})=>{if(typeof s.id!=='string'||typeof s.scriptSegment!=='string')throw new ConfigurationError(409,'分镜身份无效。');const clip=randomUUID();return{id:clip,itemId:`shot-${s.id}-${clip}`,shotId:s.id,text:s.scriptSegment,source:null};});
-   let frame=0;const project:OpenChatCutProject={version:3,loopControl:{version:'four-step-workspace/v1',inputFingerprint:id,transitionMode:'studio'},assets:[],mediaFolders:[],activeTimelineId:`loop-control-${e.id}`,timelines:[{id:`loop-control-${e.id}`,name:'整期剪辑',order:0,fps:30,width:1080,height:1920,fit:'contain',items:clips.map((clip,i)=>{const duration=Math.max(1,Math.round(Number(storyboard.shots[i].durationSeconds||3)*30)),item={id:clip.itemId,track:'V1',kind:'text',name:`${clip.shotId} · 待匹配画面`,startFrame:frame,durationInFrames:duration,width:1080,height:1920,props:{text:`待匹配画面\n${clip.shotId}`,fontSize:64,color:'#a3acc2',align:'center'},transform:{scale:1,x:0,y:0,rotation:0}};frame+=duration;return item;}),trackOrder:['V1'],tracks:{V1:{kind:'video',name:'画面'}},transitions:[],selectedId:null,captionsHidden:false}]};
-   const file=await persistWorkspaceProject(root,e.id,project);
+   const recovery=!row?await preserveLegacyWorkspace(c,root,e.id,data.legacyDecision):null;
+   const id=row?.id??randomUUID();let clips:WorkspaceClip[]=storyboard.shots.map((s:{id:string;scriptSegment:string})=>{if(typeof s.id!=='string'||typeof s.scriptSegment!=='string')throw new ConfigurationError(409,'分镜身份无效。');const clip=randomUUID();return{id:clip,itemId:`shot-${s.id}-${clip}`,shotId:s.id,text:s.scriptSegment,source:null};});
+   const [width,height]=storyboard.shots[0].targetSpec==='16:9'?[1920,1080]:storyboard.shots[0].targetSpec==='1:1'?[1080,1080]:[1080,1920];
+   let frame=0;let project:OpenChatCutProject={version:3,loopControl:{version:'four-step-workspace/v1',inputFingerprint:id,transitionMode:'studio'},assets:[],mediaFolders:[],activeTimelineId:`loop-control-${e.id}`,timelines:[{id:`loop-control-${e.id}`,name:'整期剪辑',order:0,fps:30,width,height,fit:'contain',items:clips.map((clip,i)=>{const duration=Math.max(1,Math.round(Number(storyboard.shots[i].durationSeconds||3)*30)),item={id:clip.itemId,track:'V1',kind:'text',name:`${clip.shotId} · 待匹配画面`,startFrame:frame,durationInFrames:duration,width,height,props:{text:`待匹配画面\n${clip.shotId}`,fontSize:64,color:'#a3acc2',align:'center'},transform:{scale:1,x:0,y:0,rotation:0}};frame+=duration;return item;}),trackOrder:['V1'],tracks:{V1:{kind:'video',name:'画面'}},transitions:[],selectedId:null,captionsHidden:false}]};
+   if(recovery?.decision==='preserve'){project=recovery.project;clips=await recoverLegacyBindings(c,root,e.id,id,project,clips);}
+   project=withWorkspaceShotMetadata(project,clips);const file=await persistWorkspaceProject(root,e.id,project);
    if(row){
     await c.query('UPDATE local_identity.production_workspaces SET script_revision_id=$2,storyboard_package_id=$3 WHERE id=$1',[row.id,e.main_script_revision_id,p.id]);
     await updateWorkspaceProject(c,root,row,project,clips,String(data.reason));
    }else{
    row=(await c.query('INSERT INTO local_identity.production_workspaces(id,episode_id,script_revision_id,storyboard_package_id,bindings,project_path,project_sha256,project_size,content_sha256) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *',[id,e.id,e.main_script_revision_id,p.id,JSON.stringify(clips),file.relativePath,file.sha256,file.fileSize,workspaceContentSha256(project)])).rows[0];
     await recordWorkspaceVersion(c,row!,'首次组装');
+    await syncWorkspaceShotInputs(c,row!,clips);
+    if(recovery)await c.query('INSERT INTO local_identity.workspace_legacy_recoveries(workspace_id,decision,relative_path,sha256,file_size) VALUES($1,$2,$3,$4,$5)',[id,recovery.decision,recovery.relativePath,recovery.sha256,recovery.fileSize]);
    }
    return readProductionWorkspace(c,e.id,root);
   }
@@ -89,6 +106,8 @@ export class ProductionWorkspaceCommands{
   if(command==='fillWorkspaceImageResult')return fillWorkspaceImageResult(c,root,e.id,data);
   if(command==='matchWorkspaceImage')return matchWorkspaceImage(c,root,e.id,data);
   const locked=await lockProductionWorkspace(c,root,e.id,data.workspaceId,data.expectedRevision);row=locked.row;const project=locked.project;
+  if(command==='authorizeWorkspacePreparation'){await authorizeWorkspacePreparation(c,row,data.enabled);return readProductionWorkspace(c,e.id,root);}
+  if(command==='confirmWorkspaceShot'){const clip=row.bindings.find(b=>b.id===data.clipId);if(!clip||!['a_roll','b_roll'].includes(String(data.shotType)))throw new ConfigurationError(400,'请选择当前镜头生成能力。');await syncWorkspaceShotInputs(c,row,row.bindings);await c.query('UPDATE local_identity.workspace_shot_inputs SET shot_type=$3 WHERE workspace_id=$1 AND shot_id=$2 AND preparation_id=$4',[row.id,clip.shotId,data.shotType,row.storyboard_package_id]);return readProductionWorkspace(c,e.id,root);}
   if(Object.hasOwn(workspaceVisualFields,command))return executeWorkspaceVisualCandidate(c,root,row,project,command,data,runtime);
   if(['prepareWorkspaceCandidate','adoptWorkspaceCandidate','rejectWorkspaceCandidate'].includes(command))return executeWorkspaceCandidateCommand(c,root,row,project,command,data);
   if(Object.hasOwn(workspaceAudioFields,command)){await executeWorkspaceAudio(c,root,row,project,runtime,command,data);return readProductionWorkspace(c,e.id,root);}
@@ -144,11 +163,17 @@ export async function persistWorkspaceProject(root:string,episodeId:string,proje
 }
 /** Caller holds the Owner transaction and workspace row lock. Editing state stays in the native document. */
 export async function updateWorkspaceProject(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,bindings:WorkspaceClip[]=row.bindings,reason?:string,options:{nativeEdit?:boolean}={}){
+ // Existing pre-normalization snapshots retain their confirmed content identity
+ // when only the already-bound shot metadata is added. Real metadata/source edits
+ // still differ from this normalized previous document and invalidate confirmation.
+ const previous=await readWorkspaceProject(root,row),normalizedPrevious=withWorkspaceShotMetadata(previous,row.bindings);project=withWorkspaceShotMetadata(project,bindings);
+ const contentSha=workspaceContentSha256(normalizedPrevious)===workspaceContentSha256(project)?row.content_sha256:workspaceContentSha256(project);
  const file=await persistWorkspaceProject(root,row.episode_id,project);
- const changed=await c.query('UPDATE local_identity.production_workspaces SET native_edit_revision=native_edit_revision+CASE WHEN $9 AND content_sha256<>$6 THEN 1 ELSE 0 END,revision=revision+CASE WHEN content_sha256=$6 THEN 0 ELSE 1 END,content_sha256=$6,project_path=$3,project_sha256=$2,project_size=$4,bindings=$5,updated_at=clock_timestamp() WHERE id=$1 AND revision=$7 AND project_sha256=$8',[row.id,file.sha256,file.relativePath,file.fileSize,JSON.stringify(bindings),workspaceContentSha256(project),row.revision,row.project_sha256,options.nativeEdit===true]);
+ const changed=await c.query('UPDATE local_identity.production_workspaces SET native_edit_revision=native_edit_revision+CASE WHEN $9 AND content_sha256<>$6 THEN 1 ELSE 0 END,revision=revision+CASE WHEN content_sha256=$6 THEN 0 ELSE 1 END,content_sha256=$6,project_path=$3,project_sha256=$2,project_size=$4,bindings=$5,updated_at=clock_timestamp() WHERE id=$1 AND revision=$7 AND project_sha256=$8',[row.id,file.sha256,file.relativePath,file.fileSize,JSON.stringify(bindings),contentSha,row.revision,row.project_sha256,options.nativeEdit===true]);
  if(!changed.rowCount)throw new ConfigurationError(409,'工程版本已变化，请重新读取当前工程。');
  const current=(await c.query('SELECT * FROM local_identity.production_workspaces WHERE id=$1',[row.id])).rows[0] as ProductionWorkspaceRecord;
  await recordWorkspaceVersion(c,current,reason??null);
+ await syncWorkspaceShotInputs(c,current,bindings);
  return readProductionWorkspace(c,row.episode_id,root);
 }
 export async function lockProductionWorkspace(c:PoolClient,root:string,episodeId:string,workspaceId:unknown,expectedRevision:unknown){
@@ -156,14 +181,14 @@ export async function lockProductionWorkspace(c:PoolClient,root:string,episodeId
  if(!row||row.id!==workspaceId||!Number.isSafeInteger(expectedRevision)||Number(row.revision)!==expectedRevision)throw new ConfigurationError(409,'工程版本已变化，请重新打开当前工作版本。');
  if(row.archived_at||row.stage==='production_completed'||row.historical)throw new ConfigurationError(409,'历史或已完成生产单只读。');
  if(row.script_revision_id!==row.current_script||row.invalidated_at)throw new ConfigurationError(409,'脚本基准已变化，请明确重新规划，原工程已保留。');
- return{row:row as ProductionWorkspaceRecord,project:await readWorkspaceProject(root,row)};
+ const project=await readWorkspaceProject(root,row);await syncWorkspaceShotInputs(c,row,row.bindings);return{row:row as ProductionWorkspaceRecord,project};
 }
 async function recordWorkspaceVersion(c:PoolClient,row:ProductionWorkspaceRecord,reason:string|null){
  await c.query('INSERT INTO local_identity.production_workspace_versions(workspace_id,episode_id,revision,script_revision_id,storyboard_package_id,project_path,project_sha256,project_size,content_sha256,reason) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) ON CONFLICT DO NOTHING',[row.id,row.episode_id,row.revision,row.script_revision_id,row.storyboard_package_id,row.project_path,row.project_sha256,row.project_size,row.content_sha256,reason]);
 }
 export async function readWorkspaceVersion(c:PoolClient,root:string,episodeId:string,sha:string){
  const row=(await c.query('SELECT * FROM local_identity.production_workspace_versions WHERE episode_id=$1 AND project_sha256=$2',[episodeId,sha])).rows[0];
- if(!row)throw new ConfigurationError(404,'工程版本不可见。');
+ if(!row){const recovery=(await c.query('SELECT r.* FROM local_identity.workspace_legacy_recoveries r JOIN local_identity.production_workspaces w ON w.id=r.workspace_id WHERE w.episode_id=$1 AND r.sha256=$2',[episodeId,sha])).rows[0];if(!recovery)throw new ConfigurationError(404,'工程版本不可见。');const frozen=JSON.parse((await verifyNativeFile(root,recovery.relative_path,recovery.sha256,Number(recovery.file_size))).toString('utf8'));return frozen.project as OpenChatCutProject;}
  return readWorkspaceProject(root,row);
 }
 

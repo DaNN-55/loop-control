@@ -141,6 +141,16 @@ export async function openOpenChatCutStudio(assetRoot: string, episodeId: string
 export function isOpenChatCutStudio(episodeId:string):boolean{return sessions.has(episodeId);}
 
 /** Register verified LC bytes in the live session before a local item relink. */
+/** Read the latest persisted native store, including legacy edits not submitted to LC. No writes. */
+export async function inspectOpenChatCutStoredProject(assetRoot:string,episodeId:string){
+ const root=resolve(assetRoot),projectId=`loop-control-${episodeId}`;await assertStudioWorkspace(root,episodeId,projectId);
+ const workRoot=join(root,'episodes',episodeId,'openchatcut-work','current'),metadata=await readWorkspaceMetadata(join(workRoot,'workspace.json'));
+ const live=sessions.get(episodeId);if(live)return{project:await currentSessionProject(live),metadata:metadata??{reverseSources:Object.fromEntries(live.reverseSources)}};
+ const stored=await readStoredProject(join(workRoot,'runtime','project-store-v1.json'),projectId);if(!stored)return null;
+ if(!metadata||metadata.projectId!==projectId)throw Error('旧剪辑来源映射不可用，请先恢复旧工程。');
+ const project=structuredClone(stored);rewriteSources(project,new Map(Object.entries(metadata.reverseSources)));return{project,metadata};
+}
+
 export async function registerOpenChatCutStudioSource(assetRoot:string,episodeId:string,relativePath:string,expectedSha256:string,expectedSize:number):Promise<string>{
  const session=sessions.get(episodeId);if(!session||session.child.exitCode!==null)throw Error('Studio 会话已失效。');
  const root=resolve(assetRoot),source=resolve(root,relativePath);

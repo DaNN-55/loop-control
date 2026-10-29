@@ -1,0 +1,33 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t13-formal-workflow/loop-control
+
+ ❯ src/local-app/formalWorkflow.integration.test.ts (6 tests | 1 failed | 5 skipped) 2974ms
+   ↓ Owner confirms a fresh script before visual materials exist
+   × Owner builds a formal incomplete draft without old storyboard approvals 2973ms
+     → expected [] to have a length of 1 but got +0
+   ↓ first formal adoption preserves the latest unsubmitted legacy Studio document
+   ↓ late legacy render reports retain artifacts without advancing or approving the adopted workspace
+   ↓ fresh formal and added shots generate through the real controlled Provider Worker without legacy approval
+   ↓ ordinary scripts use the selected real planner task and verified artifact before preparation confirmation
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/formalWorkflow.integration.test.ts > Owner builds a formal incomplete draft without old storyboard approvals
+AssertionError: expected [] to have a length of 1 but got +0
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/local-app/formalWorkflow.integration.test.ts:17:321
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 skipped (6)
+   Start at  01:58:45
+   Duration  3.45s (transform 259ms, setup 7ms, collect 351ms, tests 2.97s, environment 0ms, prepare 32ms)
