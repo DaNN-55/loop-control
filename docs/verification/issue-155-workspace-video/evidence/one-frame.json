@@ -1,0 +1,18 @@
+{
+  "before": {
+    "sourceInFrame": 59,
+    "durationInFrames": 30
+  },
+  "after": {
+    "materialRevisionId": "9a9c2663-76dc-4aef-8ad0-ae98a86f490f",
+    "sourceInFrame": 60,
+    "durationInFrames": 30,
+    "durationLocked": true
+  },
+  "firstPixel": [
+    0,
+    0,
+    254
+  ],
+  "durationSeconds": 1
+}
