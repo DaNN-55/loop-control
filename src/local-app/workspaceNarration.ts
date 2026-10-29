@@ -1,3 +1,4 @@
+import {isVideoProvider,videoProviders} from '../worker/videoProviderCatalog.js';
 import {createHash} from 'node:crypto';
 import {join} from 'node:path';
 import type {PoolClient} from 'pg';
@@ -16,17 +17,21 @@ const fingerprint=(value:unknown)=>createHash('sha256').update(JSON.stringify(va
 export const workspaceNarrationItemId=(clipId:string)=>`workspace-narration-${clipId}`;
 async function inputs(c:PoolClient,row:ProductionWorkspaceRecord){
  const drafts=(await c.query('SELECT * FROM public.shot_preparation_drafts WHERE episode_id=$1 AND review_package_id=$2',[row.episode_id,row.storyboard_package_id])).rows;
- return row.bindings.map(clip=>{const d=drafts.find(d=>d.shot_id===clip.shotId);return{clip,d,hash:fingerprint([row.script_revision_id,row.storyboard_package_id,clip.id,d?.audio_mode,d?.tts_text,d?.tts_voice,d?.tts_speaking_rate,d?.tts_language_code,d?.audio_mode==='source'?d?.current_audio_track_id:null])};});
+ return row.bindings.map(clip=>{const d=drafts.find(d=>d.shot_id===clip.shotId);return{clip,d,hash:fingerprint([row.script_revision_id,row.storyboard_package_id,clip.id,d?.audio_mode,d?.tts_text,...(d?.audio_mode==='source'?[d?.current_audio_track_id]:[d?.tts_voice,d?.tts_speaking_rate,d?.tts_language_code])])};});
 }
-export async function readWorkspaceNarration(c:PoolClient,row:ProductionWorkspaceRecord):Promise<WorkspaceNarration[]>{
+export async function readWorkspaceNarration(c:PoolClient,row:ProductionWorkspaceRecord,project?:OpenChatCutProject):Promise<WorkspaceNarration[]>{
+ const context=(await c.query('SELECT b.policy,p.context_snapshot FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN public.review_packages p ON p.id=$2 WHERE e.id=$1',[row.episode_id,row.storyboard_package_id])).rows[0];
  const state=(await c.query(`SELECT n.*,t.status,t.last_result,a.id audio_track_id,a.source_artifact_id,a.relative_path,a.sha256,a.file_size,a.duration_seconds
  FROM local_identity.workspace_narrations n LEFT JOIN public.tasks t ON t.id=n.task_id
  LEFT JOIN public.audio_tracks a ON a.episode_id=n.episode_id AND (a.id=n.manual_audio_track_id OR (n.mode='tts' AND a.source_task_id=n.task_id AND a.track_kind='narration')) WHERE n.workspace_id=$1`,[row.id])).rows;
- return(await inputs(c,row)).map(({clip,d,hash})=>{const s=state.find(s=>s.clip_id===clip.id),current=s?.input_fingerprint===hash,track=current?s?.audio_track_id:null;return{clipId:clip.id,shotId:clip.shotId,mode:s?.mode??'none',text:d?.tts_text??clip.text,voice:d?.tts_voice??null,languageCode:d?.tts_language_code??null,speakingRate:d?.tts_speaking_rate?Number(d.tts_speaking_rate):null,override:!!d?.tts_override_voice,inputFingerprint:hash,confirmed:!!s&&s.confirmed_fingerprint===hash,taskId:s?.task_id??null,status:!current?'pending':s?.status??(s?.mode==='none'?'disabled':'pending'),error:s&&['failed','blocked'].includes(s.status)?s.last_result?.blockers?.[0]?.detail??s.last_result?.retry?.reason??null:null,audioTrackId:track??null,artifactId:track?s.source_artifact_id:null,relativePath:track?s.relative_path:null,sha256:track?s.sha256:null,fileSize:track?Number(s.file_size):null,durationSeconds:track?Number(s.duration_seconds):null,itemId:workspaceNarrationItemId(clip.id),adoptedAudioTrackId:s?.adopted_audio_track_id??null};});
+ return(await inputs(c,row)).map(({clip,d,hash})=>{const s=state.find(s=>s.clip_id===clip.id),current=s?.input_fingerprint===hash,track=current?s?.audio_track_id:null;
+  const shot=context?.context_snapshot?.worker_result?.storyboard?.shots?.find((shot:{id:string})=>shot.id===clip.shotId),provider=context?.policy?.[shot?.shotType]?.executor?.provider,bounds=isVideoProvider(provider??'')?videoProviders[provider as keyof typeof videoProviders]:provider==='bailian'?{minDuration:2,maxDuration:15}:null;
+  const fps=project?.timelines.find(t=>t.items.some(i=>i.id===clip.itemId))?.fps,duration=track&&fps?Math.ceil(Number(s.duration_seconds)*fps)/fps:null;
+  return{...(duration&&bounds?{videoWindow:{durationSeconds:duration,generationSeconds:Math.max(bounds.minDuration,Math.ceil(duration)),maximumSeconds:bounds.maxDuration}}:{}),clipId:clip.id,shotId:clip.shotId,mode:s?.mode??'none',text:d?.tts_text??clip.text,voice:d?.tts_voice??null,languageCode:d?.tts_language_code??null,speakingRate:d?.tts_speaking_rate?Number(d.tts_speaking_rate):null,override:!!d?.tts_override_voice,inputFingerprint:hash,confirmed:!!s&&s.confirmed_fingerprint===hash,taskId:s?.task_id??null,status:!current?'pending':s?.status??(s?.mode==='none'?'disabled':'pending'),error:s&&['failed','blocked'].includes(s.status)?s.last_result?.blockers?.[0]?.detail??s.last_result?.retry?.reason??null:null,audioTrackId:track??null,artifactId:track?s.source_artifact_id:null,relativePath:track?s.relative_path:null,sha256:track?s.sha256:null,fileSize:track?Number(s.file_size):null,durationSeconds:track?Number(s.duration_seconds):null,itemId:workspaceNarrationItemId(clip.id),adoptedAudioTrackId:s?.adopted_audio_track_id??null};});
 }
 export async function executeWorkspaceNarration(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,runtime:Pick<InputRuntime,'narrationReady'|'checkReferences'>,command:string,data:Record<string,unknown>){
  if(command==='refreshWorkspaceNarration'){
-  for(const n of await readWorkspaceNarration(c,row)){
+  for(const n of await readWorkspaceNarration(c,row,project)){
    const s=(await c.query('SELECT * FROM local_identity.workspace_narrations WHERE workspace_id=$1 AND clip_id=$2',[row.id,n.clipId])).rows[0];
    if(n.confirmed&&n.audioTrackId&&!n.adoptedAudioTrackId&&Number(s?.requested_native_edit_revision)===Number(row.native_edit_revision??0)){await adopt(c,root,row,project,n);break;}
   }return;
@@ -50,7 +55,7 @@ export async function executeWorkspaceNarration(c:PoolClient,root:string,row:Pro
    ON CONFLICT(workspace_id,clip_id) DO UPDATE SET mode=excluded.mode,input_fingerprint=excluded.input_fingerprint,confirmed_fingerprint=NULL,task_id=CASE WHEN workspace_narrations.input_fingerprint=excluded.input_fingerprint THEN workspace_narrations.task_id ELSE NULL END,manual_audio_track_id=excluded.manual_audio_track_id`,[row.id,row.episode_id,clip.id,data.mode,input.hash,data.mode==='manual'?data.audioTrackId:null]);
   return;
  }
- const n=(await readWorkspaceNarration(c,row)).find(n=>n.clipId===clip.id)!;
+ const n=(await readWorkspaceNarration(c,row,project)).find(n=>n.clipId===clip.id)!;
  if(command==='confirmWorkspaceNarration'){
   if(!(await c.query('UPDATE local_identity.workspace_narrations SET confirmed_fingerprint=$3,input_fingerprint=$3,requested_project_sha256=$4,confirmed_match_fingerprint=$5,requested_native_edit_revision=$6 WHERE workspace_id=$1 AND clip_id=$2',[row.id,clip.id,n.inputFingerprint,row.project_sha256,fingerprint(clip.source),Number(row.native_edit_revision??0)])).rowCount)throw new ConfigurationError(409,'请先保存本镜口播设置。');return;
  }

@@ -28,7 +28,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('confirmed narration uses
   const generated=await f.request('generateWorkspaceNarration',base);expect(generated.status,JSON.stringify(generated.body)).toBe(200);const task=generated.body.narration[0].taskId;
   expect((await f.request('generateWorkspaceNarration',base)).body.narration[0].taskId).toBe(task);
   await f.restart();await f.restartWorker();expect(await f.execute(task)).toEqual({status:'completed',taskId:task});await f.restart();
-  const ready=await f.read();
+  const ready=await f.read();expect(ready.narration[0].error).toBeNull();
   expect((await readWorkspaceNarrationTarget(f.c,f.assetRoot,w.id,w.clips[0].id)).durationSeconds).toBe(2.4);expect(ready.narration[0].audioTrackId).toBeTruthy();expect(ready.narration[0].durationSeconds).toBe(2.4);expect(ready.narration[0].durationSeconds).toBeLessThan(2.5);
   const assembled=await f.request('refreshWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision});expect(assembled.status,JSON.stringify(assembled.body)).toBe(200);expect(assembled.body.narration[0].adoptedAudioTrackId).toBe(ready.narration[0].audioTrackId);
   const project=JSON.parse(await readFile(join(f.assetRoot,assembled.body.project.relativePath),'utf8'));const item=project.timelines[0].items.find((i:any)=>i.id===ready.narration[0].itemId);expect(item.durationInFrames).toBe(72);expect(item.sourceAssetId).toBe('audio-track-'+ready.narration[0].audioTrackId);expect(project.timelines[0].items.find((i:any)=>i.id===w.clips[1].itemId).startFrame).toBe(72);
@@ -71,7 +71,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('a running task may regis
   await f.authorize();const w=f.made,base={workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id};await f.request('saveWorkspaceNarration',{...base,mode:'tts',text:'旧输入。'});await f.request('confirmWorkspaceNarration',base);const q=await f.request('generateWorkspaceNarration',base);await writeFile(f.responseMode,'delay');const running=f.execute(q.body.narration[0].taskId);
   for(let i=0;i<50;i++){if(await readFile(f.submissions,'utf8').catch(()=>''))break;await new Promise(resolve=>setTimeout(resolve,10));}
   const changed=await f.request('saveWorkspaceNarration',{...base,mode:'tts',text:'Owner 已手工修改的新输入。'});expect(changed.status,JSON.stringify(changed.body)).toBe(200);expect((await running)?.status).toBe('completed');
-  const refreshed=await f.request('refreshWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision});expect(refreshed.status).toBe(200);expect(refreshed.body.narration[0].text).toBe('Owner 已手工修改的新输入。');expect(refreshed.body.narration[0].audioTrackId).toBeNull();expect(refreshed.body.project.sha256).toBe(w.project.sha256);expect(refreshed.body.readiness.deliverable).toBe(false);
+  const refreshed=await f.request('refreshWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision});expect(refreshed.status).toBe(200);expect(refreshed.body.narration[0].text).toBe('Owner 已手工修改的新输入。');expect(refreshed.body.narration[0].audioTrackId).toBeNull();expect(refreshed.body.project.sha256).toBe(w.project.sha256);expect(refreshed.body.readiness.deliverable).toBe(false);expect((await f.c.query('SELECT stage FROM public.episodes WHERE id=$1',[f.episode])).rows[0].stage).toBe('storyboard_approved');
  }finally{await f.close();}
 },120_000);
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('manual narration and disabled modes never enqueue TTS, while short pictures preserve a recoverable conflict',async()=>{
@@ -87,5 +87,65 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('manual narration and dis
   expect((await f.request('generateWorkspaceNarration',manual)).status).toBe(409);
   const disabled=await f.request('saveWorkspaceNarration',{...manual,mode:'none',text:'关闭后保留正文。'});expect(disabled.status).toBe(200);expect((await f.request('generateWorkspaceNarration',manual)).status).toBe(409);
   expect((await readFile(f.submissions,'utf8')).trim().split('\n')).toHaveLength(1);
+ }finally{await f.close();}
+},120_000);
+
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each([false,true])('actual narration drives the paid video window and freezes speech provenance (changed=%s)',async changed=>{
+ const f=await narrationFixture(undefined,undefined,true);try{
+  await f.authorize();let w=f.made;let base={workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id};
+  const uploaded=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'first.png',mimeType:'image/png',contentBase64:(await readFile('/private/tmp/loop-152-orchestration/media/still-striped.png')).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});expect(uploaded.status,JSON.stringify(uploaded.body)).toBe(200);await f.request('setWanBudget',{trialCents:100,totalCents:200,full:false});
+  await f.request('saveWorkspaceNarration',{...base,mode:'tts',text:'主声音完整保留，画面仅使用实际窗口。'});await f.request('confirmWorkspaceNarration',base);
+  const imageData={...base,materialRevisionId:uploaded.body.id,prompt:'画面缓慢推进',durationSeconds:11,reservationCents:90};
+  const notReady=await f.request('generateWorkspaceImage',imageData);expect(notReady.status,JSON.stringify(notReady.body)).toBe(409);
+  const q=await f.request('generateWorkspaceNarration',base);expect(q.status).toBe(200);await f.execute(q.body.narration[0].taskId);const speech=(await f.read()).narration[0];expect(speech.adoptedAudioTrackId).toBeNull();
+  const image=await f.request('generateWorkspaceImage',imageData);expect(image.status,JSON.stringify(image.body)).toBe(200);w=image.body;base={...base,expectedRevision:w.revision};
+  expect(w.clips[0].image.durationSeconds).toBe(2.4);expect(w.clips[0].image.providerDurationSeconds).toBe(4);
+  const task=w.clips[0].image.taskId,request=(await f.c.query('SELECT * FROM local_identity.workspace_image_requests WHERE task_id=$1',[task])).rows[0];expect(Number(request.duration_seconds)).toBe(2.4);expect(Number(request.provider_duration_seconds)).toBe(4);expect(request.narration_target).toMatchObject({audioTrackId:speech.audioTrackId,sha256:speech.sha256,inputFingerprint:speech.inputFingerprint,durationSeconds:2.4});
+  if(changed){const save=await f.request('saveWorkspaceNarration',{...base,mode:'tts',text:'Owner 后来改过口播输入。'});expect(save.status).toBe(200);}
+  expect((await f.execute(task))?.status).toBe('completed');const fill=await f.request('fillWorkspaceImageResult',{workspaceId:w.id,expectedRevision:w.revision,taskId:task});
+  if(changed){expect(fill.status,JSON.stringify(fill.body)).toBe(409);expect((await f.read()).project.sha256).toBe(w.project.sha256);}else{
+   expect(fill.status,JSON.stringify(fill.body)).toBe(200);w=fill.body;
+   const refresh=await f.request('refreshWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision});expect(refresh.status,JSON.stringify(refresh.body)).toBe(200);w=refresh.body;
+   const doc=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));expect(doc.timelines[0].items.find((i:any)=>i.id===w.clips[0].itemId).durationInFrames).toBe(72);expect(doc.timelines[0].items.find((i:any)=>i.id===speech.itemId).durationInFrames).toBe(72);
+   const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status,JSON.stringify(opened.body)).toBe(200);await f.closeStudio();
+   const {execFile}=await import('node:child_process'),{promisify}=await import('node:util'),{inspectMp4Artifact}=await import('../worker/mediaTools');const spec=join(f.root,'narration-video-render.json'),output=join(f.root,'narration-video.mp4');
+   await writeFile(spec,JSON.stringify({openchatcutRoot:f.runtime.root,assetRoot:f.assetRoot,outputPath:output,state:{...doc.timelines[0],width:180,height:320},sources:doc.assets.map((a:{src:string})=>({relativePath:a.src}))}));
+   await promisify(execFile)(process.execPath,['scripts/openchatcut-render.mjs',spec],{timeout:120000,maxBuffer:4*1024*1024});const rendered=await inspectMp4Artifact(output);expect(rendered.hasAudio).toBe(true);expect(rendered.durationSeconds).toBeGreaterThanOrEqual(4.4);expect(rendered.durationSeconds).toBeLessThan(4.5);
+   if(process.env.LOOP_T05_EVIDENCE_DIR){const {mkdir,copyFile}=await import('node:fs/promises');await mkdir(process.env.LOOP_T05_EVIDENCE_DIR,{recursive:true});await copyFile(output,join(process.env.LOOP_T05_EVIDENCE_DIR,'narration-video.mp4'));await writeFile(join(process.env.LOOP_T05_EVIDENCE_DIR,'render-observation.json'),JSON.stringify({voiceDurationSeconds:2.4,providerDurationSeconds:4,nativeFrames:72,rendered},null,2));}
+
+  }
+  const sent=JSON.parse((await readFile(f.videoSubmissions,'utf8')).trim());expect(sent.duration).toBe(4);
+ }finally{await f.close();}
+},120_000);
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('first speech remains a candidate after a real native save and never overwrites the edited project',async()=>{
+ const f=await narrationFixture();try{
+  await f.authorize();let w=f.made;const base={workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id};await f.request('saveWorkspaceNarration',{...base,mode:'tts',text:'手改后保留原工程。'});await f.request('confirmWorkspaceNarration',base);const queued=await f.request('generateWorkspaceNarration',base);
+  const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status,JSON.stringify(opened.body)).toBe(200);w=opened.body.productionWorkspace;
+  const nativePath=join(f.assetRoot,`episodes/${f.episode}/openchatcut-work/current/runtime/project-store-v1.json`),store=JSON.parse(await readFile(nativePath,'utf8'));store.entries[`project:${w.project.projectId}`].timelines[0].items[0].transform.x=17;await writeFile(nativePath,JSON.stringify(store));
+  const saved=await f.request('saveWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision,workspaceRelativePath:opened.body.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:opened.body.workspace.sha256});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body.productionWorkspace;await f.request('closeWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});
+  expect((await f.execute(queued.body.narration[0].taskId))?.status).toBe('completed');const refreshed=await f.request('refreshWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision});expect(refreshed.status).toBe(200);expect(refreshed.body.project.sha256).toBe(w.project.sha256);expect(refreshed.body.narration[0].audioTrackId).toBeTruthy();expect(refreshed.body.narration[0].adoptedAudioTrackId).toBeNull();
+  const doc=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));expect(doc.timelines[0].items[0].transform.x).toBe(17);
+ }finally{await f.close();}
+},120_000);
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('speech beyond the Provider maximum blocks a video submission without cutting words',async()=>{
+ const f=await narrationFixture(undefined,undefined,true);try{
+  const {execFile}=await import('node:child_process'),{promisify}=await import('node:util');await promisify(execFile)('ffmpeg',['-nostdin','-v','error','-y','-f','lavfi','-i','sine=frequency=330:sample_rate=48000','-t','16','-c:a','libmp3lame',join(f.assetRoot,`episodes/${f.episode}/voice.mp3`)]);
+  await f.authorize();const w=f.made,base={workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id};await f.request('saveWorkspaceNarration',{...base,mode:'tts',text:'超出单次画面服务范围的口播必须明确拆镜，不删词。'});await f.request('confirmWorkspaceNarration',base);const q=await f.request('generateWorkspaceNarration',base);await f.execute(q.body.narration[0].taskId);
+  const uploaded=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'first.png',mimeType:'image/png',contentBase64:(await readFile('/private/tmp/loop-152-orchestration/media/still-striped.png')).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});
+  const blocked=await f.request('generateWorkspaceImage',{...base,materialRevisionId:uploaded.body.id,prompt:'保持自然运动',durationSeconds:4,reservationCents:90});expect(blocked.status,JSON.stringify(blocked.body)).toBe(409);expect(blocked.body.error).toContain('上限 15 秒');expect((await readFile(f.videoSubmissions,'utf8').catch(()=>''))).toBe('');expect((await f.read()).narration[0].text).toBe('超出单次画面服务范围的口播必须明确拆镜，不删词。');
+ }finally{await f.close();}
+},120_000);
+
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('legacy narration already running before workspace activation cannot promote the new draft or delivery',async()=>{
+ const f=await narrationFixture(undefined,undefined,false,true);try{
+  const saved=await f.request('saveTtsDraft',{reviewPackageId:f.board,shotId:'shot-1',audioMode:'tts',subtitleText:'旧流程正在运行。',subtitlesEnabled:false,ttsText:'旧流程正在运行。'});expect(saved.status,JSON.stringify(saved.body)).toBe(200);
+  // Arrange an already-created legacy task through its real Owner RPC. The legacy
+  // HTTP mount preflight is outside this delayed-completion scenario.
+  await f.c.query('BEGIN');await f.c.query('SET SESSION AUTHORIZATION loop_app');await f.c.query("SELECT set_config('loop.owner_id',$1,true)",[f.owner]);await f.c.query('UPDATE local_identity.input_episodes SET narration_enabled=true WHERE episode_id=$1',[f.episode]);
+  const queued=(await f.c.query('SELECT to_jsonb(local_identity.generate_input_shot_tts($1,$2,$3,false)) task',[f.episode,f.board,'shot-1'])).rows[0].task;await f.c.query('SET SESSION AUTHORIZATION DEFAULT');await f.c.query('COMMIT');
+  await writeFile(f.responseMode,'delay');const running=f.execute(queued.id);
+  for(let i=0;i<50;i++){if(await readFile(f.submissions,'utf8').catch(()=>''))break;await new Promise(resolve=>setTimeout(resolve,10));}
+  const prepared=await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});expect(prepared.status).toBe(200);expect((await running)?.status).toBe('completed');
+  const w=prepared.body,refreshed=await f.request('refreshWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision});expect(refreshed.status).toBe(200);expect(refreshed.body.project.sha256).toBe(w.project.sha256);expect(refreshed.body.narration[0].adoptedAudioTrackId).toBeNull();expect(refreshed.body.readiness.deliverable).toBe(false);expect((await f.c.query('SELECT stage FROM public.episodes WHERE id=$1',[f.episode])).rows[0].stage).toBe('storyboard_approved');
  }finally{await f.close();}
 },120_000);

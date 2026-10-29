@@ -66,3 +66,6 @@ LANGUAGE plpgsql SECURITY DEFINER SET search_path='' AS $$ DECLARE track public.
 END $$;
 REVOKE ALL ON FUNCTION local_identity.save_workspace_narration_draft(uuid,uuid,text,text,text,text,numeric),local_identity.use_workspace_narration_track(uuid,uuid,text,uuid) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION local_identity.save_workspace_narration_draft(uuid,uuid,text,text,text,text,numeric),local_identity.use_workspace_narration_track(uuid,uuid,text,uuid) TO loop_owner;
+
+-- Actual voice window and Provider billable window have distinct meanings.
+ALTER TABLE local_identity.workspace_image_requests ADD COLUMN provider_duration_seconds numeric CHECK(provider_duration_seconds>0),ADD COLUMN narration_target jsonb;
