@@ -36,7 +36,7 @@ export async function workspaceExportReadiness(c:PoolClient,root:string,row:Prod
   for(const path of used.paths){const s=await resolveWorkspaceSource(c,root,row.episode_id,path);sources.push({relativePath:s.relative_path,sha256:s.sha256,fileSize:Number(s.file_size)});}
   checks.push({name:'used_content',passed:true,detail:`已核对 ${used.paths.size} 个实际来源。`,sources});
  }catch(error){checks.push({name:'used_content',passed:false,detail:error instanceof Error?error.message:'实际来源不可用。'});}
- try{const captions=await readWorkspaceCaptions(c,root,row,project);const required=captions.filter(x=>used?.ids.has(x.itemId)&&x.contract.enabled);if(required.some(x=>x.timing!=='current'||!x.textConfirmed||!x.contract.cues.length||x.contract.cues.some(q=>q.startMs<0||q.endMs<=q.startMs||q.endMs>x.durationMs+1)))throw Error('必要字幕缺少当前时序或正文核对证据。');checks.push({name:'captions',passed:true,detail:`已核对 ${required.length} 组必要字幕。`,evidence:required});}catch(error){checks.push({name:'captions',passed:false,detail:error instanceof Error?error.message:'字幕不可用。'});}
+ try{const captions=await readWorkspaceCaptions(c,root,{...row,bindings:row.bindings.filter(b=>used?.ids.has(b.itemId))},project);const required=captions.filter(x=>used?.ids.has(x.itemId)&&x.contract.enabled);if(required.some(x=>x.timing!=='current'||!x.textConfirmed||!x.contract.cues.length||x.contract.cues.some(q=>q.startMs<0||q.endMs<=q.startMs||q.endMs>x.durationMs+1)))throw Error('必要字幕缺少当前时序或正文核对证据。');checks.push({name:'captions',passed:true,detail:`已核对 ${required.length} 组必要字幕。`,evidence:required});}catch(error){checks.push({name:'captions',passed:false,detail:error instanceof Error?error.message:'字幕不可用。'});}
  return{checks,sources,used};
 }
 export async function readWorkspaceExports(c:PoolClient,root:string,row:ProductionWorkspaceRecord):Promise<{exports:WorkspaceExport[];exportIssues:WorkspaceExportIssue[]}>{
@@ -46,7 +46,7 @@ export async function readWorkspaceExports(c:PoolClient,root:string,row:Producti
  const exports:WorkspaceExport[]=[];
  for(const [index,e] of rows.entries()){
   const current=index===0&&e.content_sha256===row.content_sha256&&Number(e.project_content_version)===Number(row.revision);let available=true;
-  if(e.artifact)try{await verifyNativeFile(root,e.artifact.relativePath,e.artifact.sha256,e.artifact.fileSize);}catch{available=false;}
+  if(index===0&&e.artifact)try{await verifyNativeFile(root,e.artifact.relativePath,e.artifact.sha256,e.artifact.fileSize);}catch{available=false;}
   exports.push({id:e.id,projectContentVersion:Number(e.project_content_version),contentSha256:e.content_sha256,project:e.project,status:e.status,artifact:e.artifact,checks:[...e.checks,...(!available?[{name:'export_file',passed:false,detail:'导出文件缺失或指纹已变化。'}]:[])],createdAt:e.created_at,confirmedAt:e.confirmed_at,confirmed:!!e.confirmed_at&&current&&available&&!issues.some(i=>!i.resolved_at||new Date(i.created_at)>new Date(e.confirmed_at)),current});
  }
  return{exports,exportIssues:issues.map(i=>({id:i.id,exportId:i.export_id,reason:i.reason,resolved:!!i.resolved_at}))};
@@ -54,12 +54,14 @@ export async function readWorkspaceExports(c:PoolClient,root:string,row:Producti
 export async function executeWorkspaceExport(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,runtime:InputRuntime,command:string,data:Record<string,unknown>){
  if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请先保存并返回，再检查最终文件。');
  if(command==='recordWorkspaceExportIssue'){
+  if(data.exportId!==undefined&&(typeof data.exportId!=='string'||!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(data.exportId)))throw new ConfigurationError(400,'导出标识无效。');
   if(typeof data.reason!=='string'||!data.reason.trim()||data.reason.length>4000)throw new ConfigurationError(400,'请填写问题内容。');
   if(data.exportId!==undefined&&!(await c.query('SELECT 1 FROM local_identity.workspace_exports WHERE id=$1 AND workspace_id=$2',[data.exportId,row.id])).rowCount)throw new ConfigurationError(409,'导出版本已变化。');
   await c.query('INSERT INTO local_identity.workspace_export_issues(workspace_id,episode_id,export_id,reason) VALUES($1,$2,$3,$4)',[row.id,row.episode_id,data.exportId??null,data.reason.trim()]);return;
  }
- if(command==='resolveWorkspaceExportIssue'){if(!(await c.query('UPDATE local_identity.workspace_export_issues SET resolved_at=clock_timestamp() WHERE id=$1 AND workspace_id=$2',[data.issueId,row.id])).rowCount)throw new ConfigurationError(404,'问题记录不存在。');return;}
+ if(command==='resolveWorkspaceExportIssue'){if(typeof data.issueId!=='string'||!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(data.issueId))throw new ConfigurationError(400,'问题标识无效。');if(!(await c.query('UPDATE local_identity.workspace_export_issues SET resolved_at=clock_timestamp() WHERE id=$1 AND workspace_id=$2',[data.issueId,row.id])).rowCount)throw new ConfigurationError(404,'问题记录不存在。');return;}
  if(command==='confirmWorkspaceExport'){
+  if(typeof data.exportId!=='string'||!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(data.exportId)||typeof data.expectedExportSha256!=='string'||!/^[a-f0-9]{64}$/.test(data.expectedExportSha256)||typeof data.expectedContentSha256!=='string'||!/^[a-f0-9]{64}$/.test(data.expectedContentSha256))throw new ConfigurationError(400,'最终文件确认身份无效。');
   const {exports,exportIssues}=await readWorkspaceExports(c,root,row),e=exports[0];
   if(!e||!e.current||e.id!==data.exportId||e.status!=='ready'||e.contentSha256!==data.expectedContentSha256||e.artifact?.sha256!==data.expectedExportSha256||e.checks.some(x=>!x.passed)||exportIssues.some(x=>!x.resolved))throw new ConfigurationError(409,'当前工程、最终文件或检查已变化，请重新检查这份文件。');
   const readiness=await workspaceExportReadiness(c,root,row,project);if(readiness.checks.some(x=>!x.passed))throw new ConfigurationError(409,'当前已用内容或字幕检查未通过。');
@@ -72,11 +74,11 @@ export async function executeWorkspaceExport(c:PoolClient,root:string,row:Produc
   try{
    const output=join(dir,'final.mp4'),spec=join(dir,'spec.json');await writeFile(spec,JSON.stringify({openchatcutRoot:config.root,nodePath:config.nodePath,assetRoot:root,outputPath:output,state:activeOpenChatCutState(project),project,timelineId:project.activeTimelineId,sources:ready.sources}));
    await promisify(execFile)(config.nodePath??process.execPath,[resolve('scripts/openchatcut-render.mjs'),spec],{env:{...process.env,...config.environment},timeout:300000,maxBuffer:4*1024*1024});
-   const inspection=await inspectMp4Artifact(output),timeline=project.timelines.find(t=>t.id===project.activeTimelineId)!;
+   const inspection=await inspectMp4Artifact(output),probe=JSON.parse((await promisify(execFile)('ffprobe',['-v','error','-show_entries','stream=codec_type,duration,nb_frames:format=duration','-of','json',output],{timeout:30000})).stdout),video=probe.streams?.find((s:{codec_type:string})=>s.codec_type==='video'),videoDurationSeconds=Number(video?.duration),timeline=project.timelines.find(t=>t.id===project.activeTimelineId)!;
    const duration=Math.max(...timeline.items.map(i=>Number(i.startFrame)+Number(i.durationInFrames)))/timeline.fps;
    const audioExpected=ready.used!.items.some(i=>(i.kind==='audio'||i.kind==='video')&&Number(i.volume??1)>0);
-   const passed=inspection.width===timeline.width&&inspection.height===timeline.height&&Math.abs(inspection.durationSeconds-duration)<Math.max(.15,2/timeline.fps)&&(!audioExpected||inspection.hasAudio)&&inspection.blackFrameCount===0;
-   checks.push({name:'technical',passed,detail:passed?'实际 MP4 时长、画幅、音频及黑帧检查通过。':'实际 MP4 技术检查未通过。',inspection,expectedDurationSeconds:duration,audioExpected});
+   const passed=inspection.width===timeline.width&&inspection.height===timeline.height&&Number.isFinite(videoDurationSeconds)&&Math.abs(videoDurationSeconds-duration)<Math.max(.15,2/timeline.fps)&&(!audioExpected||inspection.hasAudio)&&inspection.blackFrameCount===0;
+   checks.push({name:'technical',passed,detail:passed?'实际 MP4 时长、画幅、音频及黑帧检查通过。':'实际 MP4 技术检查未通过。',inspection,videoDurationSeconds,containerDurationSeconds:Number(probe.format?.duration),videoFrames:Number(video?.nb_frames),expectedDurationSeconds:duration,audioExpected});
    const bytes=await readFile(output),sha=createHash('sha256').update(bytes).digest('hex'),relativePath=`episodes/${row.episode_id}/workspace-exports/${id}/${sha}.mp4`,path=await safeAssetOutputPath(root,relativePath);await mkdir(dirname(path),{recursive:true});await writeFile(path,bytes,{flag:'wx'});artifact={relativePath,sha256:sha,fileSize:bytes.length};await verifyNativeFile(root,relativePath,sha,bytes.length);
    const framePath=await safeAssetOutputPath(root,`episodes/${row.episode_id}/workspace-exports/${id}/representative.jpg`);await promisify(execFile)('ffmpeg',['-nostdin','-v','error','-ss',String(Math.min(.5,inspection.durationSeconds/2)),'-i',path,'-frames:v','1',framePath],{timeout:30000});const frame=await readFile(framePath);checks.push({name:'representative_frame',passed:frame.length>0,detail:'已实际解码代表帧。',artifact:{relativePath:`episodes/${row.episode_id}/workspace-exports/${id}/representative.jpg`,sha256:createHash('sha256').update(frame).digest('hex'),fileSize:frame.length}});
    checks.push({name:'export_file',passed:true,detail:'最终文件已按字节 SHA-256 与大小不可变登记。'});

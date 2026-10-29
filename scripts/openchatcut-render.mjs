@@ -5,7 +5,7 @@ import { spawn, spawnSync } from "node:child_process";
 import { once } from "node:events";
 import { tmpdir } from "node:os";
 import {extname,isAbsolute,join,relative,resolve} from "node:path";
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { fileURLToPath } from "node:url";
 
 async function main() {
@@ -45,6 +45,7 @@ try {
     const targetName = requiredSafeName(source.targetName || `${randomUUID()}${extname(relativePath)}`);
     const targetPath = join(uploadDir, targetName);
     await copyFile(sourcePath, targetPath);
+    if(source.sha256 || source.fileSize !== undefined){const bytes=await readFile(targetPath);if(bytes.length!==source.fileSize||createHash('sha256').update(bytes).digest('hex')!==source.sha256)throw new Error('Copied export source no longer matches its registered fingerprint.');}
     copied.set(relativePath, `/media/uploads/${targetName}`);
   }
   rewriteSources(state, copied);
