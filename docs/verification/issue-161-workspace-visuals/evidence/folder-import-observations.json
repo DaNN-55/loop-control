@@ -1,0 +1,232 @@
+[
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 629,
+    "y": 333.5,
+    "hit": true,
+    "label": "更多操作",
+    "disabled": false,
+    "rect": {
+      "x": 198,
+      "y": 109,
+      "width": 24,
+      "height": 24,
+      "top": 109,
+      "right": 222,
+      "bottom": 133,
+      "left": 198
+    },
+    "cover": "<path d=\"M5 12h.01 M12 12h.01 M19 12h.01\"></path>"
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 547,
+    "y": 464,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 14,
+      "y": 236,
+      "width": 228,
+      "height": 31,
+      "top": 236,
+      "right": 242,
+      "bottom": 267,
+      "left": 14
+    },
+    "cover": "<button><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style"
+  },
+  {
+    "phase": "folder-before-picker",
+    "opened": true,
+    "pickerCalled": false
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 810,
+    "y": 173.25,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 772,
+      "y": 156.25,
+      "width": 76,
+      "height": 34,
+      "top": 156.25,
+      "right": 848,
+      "bottom": 190.25,
+      "left": 772
+    },
+    "cover": "<button aria-pressed=\"true\">画面版本</button>"
+  },
+  {
+    "phase": "real-image-drop-before-asset",
+    "unchanged": true
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 810,
+    "y": 173.25,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 772,
+      "y": 156.25,
+      "width": 76,
+      "height": 34,
+      "top": 156.25,
+      "right": 848,
+      "bottom": 190.25,
+      "left": 772
+    },
+    "cover": "<button aria-pressed=\"true\">画面版本</button>"
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 629,
+    "y": 333.5,
+    "hit": true,
+    "label": "更多操作",
+    "disabled": false,
+    "rect": {
+      "x": 198,
+      "y": 109,
+      "width": 24,
+      "height": 24,
+      "top": 109,
+      "right": 222,
+      "bottom": 133,
+      "left": 198
+    },
+    "cover": "<path d=\"M5 12h.01 M12 12h.01 M19 12h.01\"></path>"
+  },
+  {
+    "phase": "keyboard-native-focus",
+    "blank": {
+      "x": 48,
+      "y": 74,
+      "hit": "cc-media-pool"
+    },
+    "state": {
+      "visibility": "visible",
+      "focus": true,
+      "active": "<button class=\"cc-media-icon cc-tip\" aria-label=\"上传素材\" data-tip=\"上传素材\"><svg width=\"19\" height=\"19\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" style=\"display: block; flex-shrink: 0;\"><path d=\"M12 16V3 M7 8l5-5 5 5 M4 14v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5\"></path></svg></button>"
+    }
+  },
+  {
+    "phase": "keyboard-toolbar-import-before-asset",
+    "covered": true,
+    "unchanged": true
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 810,
+    "y": 173.25,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 772,
+      "y": 156.25,
+      "width": 76,
+      "height": 34,
+      "top": 156.25,
+      "right": 848,
+      "bottom": 190.25,
+      "left": 772
+    },
+    "cover": "<button aria-pressed=\"true\">画面版本</button>"
+  },
+  {
+    "phase": "audio-drop-owner-register",
+    "network": []
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 1159,
+    "y": 184,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 1096,
+      "y": 166,
+      "width": 126,
+      "height": 36,
+      "top": 166,
+      "right": 1222,
+      "bottom": 202,
+      "left": 1096
+    },
+    "cover": "<button data-color=\"primary\" class=\"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear "
+  },
+  {
+    "phase": "refresh-comparison",
+    "assetsEqual": true,
+    "timelineEqual": true,
+    "beforeSha": "0f6f9b1c07db852382f470906a621498df7044b770f953ad5f1c14470fb4c8db",
+    "afterSha": "0f6f9b1c07db852382f470906a621498df7044b770f953ad5f1c14470fb4c8db",
+    "beforeContentSha": "c504e8f5a1b76e0432b0d9feb7963a3638098980ed9ced27b9b775faa94f2ea5",
+    "afterContentSha": "c504e8f5a1b76e0432b0d9feb7963a3638098980ed9ced27b9b775faa94f2ea5"
+  },
+  {
+    "phase": "refresh-restored",
+    "projectSha256": "0f6f9b1c07db852382f470906a621498df7044b770f953ad5f1c14470fb4c8db"
+  },
+  {
+    "phase": "refreshed-native-visible",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 900
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 819,
+        "height": 734
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 17.299999997019768,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 17.399999998509884,
+        "visibility": "visible",
+        "focus": false
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 900
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 819,
+        "height": 734
+      }
+    ],
+    "wallMs": 18
+  }
+]

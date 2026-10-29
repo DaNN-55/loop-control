@@ -1,5 +1,5 @@
 import {browserProjectOwnership} from '/src/persist/projectStoreTransport.ts';
-import {applyWorkspaceCandidate,isWorkspaceCandidateEdit} from 'virtual:loop-control-candidates';
+import {applyWorkspaceCandidate,isWorkspaceCandidateEdit,addWorkspaceRegisteredSource} from 'virtual:loop-control-candidates';
 import {applyWorkspaceAudioMix} from 'virtual:loop-control-audio';
 import {applyWorkspaceShotOperation,isWorkspaceShotOperation,readWorkspaceShots} from 'virtual:loop-control-structure';
 import {applyWorkspaceCaptionEdit,isWorkspaceCaptionContract,migrateWorkspaceCaptionLanes} from 'virtual:loop-control-captions';
@@ -10,6 +10,13 @@ const channel=query.get('lcChannel'),expectedProject=query.get('lcProject');
 const parentValue=query.get('lcParent');
 let parentOrigin=null;
 try{const url=new URL(parentValue);if(url.protocol==='http:'&&['127.0.0.1','localhost'].includes(url.hostname)&&!url.username&&!url.password)parentOrigin=url.origin;}catch{/* not an embedded launch */}
+/** Embedded native import is redirected before any placeholder or pool master exists. */
+export function redirectLoopControlImport(kind){
+ if(!(parentOrigin&&parent!==window&&channel&&expectedProject&&location.hash===`#/editor/${expectedProject}`))return;
+ if(!browserProjectOwnership(expectedProject))throw Error('编辑器写连接尚未就绪，请稍后重试。');
+ parent.postMessage({type:'loop-control:import-requested',channel,projectId:expectedProject,kind:kind==='audio'||String(kind).startsWith('audio/')?'audio':'visual'},parentOrigin);
+ throw Error(kind==='audio'||String(kind).startsWith('audio/')?'请从宿主声音素材入口登记文件。':'请从宿主画面版本上传并登记素材。');
+}
 export function useLoopControlHost(projectId,base,agent,panels){
   const live=useRef({base,agent});live.current={base,agent};
   const revision=useRef(0),reportedWritable=useRef(null);
@@ -28,18 +35,18 @@ export function useLoopControlHost(projectId,base,agent,panels){
       const result=(ok,error,value)=>emit('loop-control:result',{requestId:msg.requestId,ok,...(error?{error}:{}),...(value?{result:value}:{})});
       const digest=async doc=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(doc))))).map(b=>b.toString(16).padStart(2,'0')).join('');
       try{
-        if(['select','flush','apply-captions','apply-workspace-edit','apply-candidate','apply-audio-mix'].includes(msg.action)&&!browserProjectOwnership(projectId)){result(false,'编辑器写连接尚未就绪或已变化，请保留当前编辑并重试。');return;}
+        if(['select','flush','apply-captions','apply-workspace-edit','apply-candidate','apply-audio-mix','add-registered-source'].includes(msg.action)&&!browserProjectOwnership(projectId)){result(false,'编辑器写连接尚未就绪或已变化，请保留当前编辑并重试。');return;}
         if(msg.action==='host-panel'){
           if(typeof msg.open!=='boolean'){result(false,'面板状态无效。');return;}document.documentElement.dataset.lcHostTools=msg.open?'open':'closed';if(msg.open)panels.setInspectorCollapsed(true);await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));result(true);
         }else if(msg.action==='inspect'){
           const document=structuredClone(live.current.base.doc);result(true,undefined,{revision:revision.current,documentFingerprint:await digest(document),document});
-        }else if(msg.action==='apply-captions'||msg.action==='apply-workspace-edit'||msg.action==='apply-candidate'||msg.action==='apply-audio-mix'){
+        }else if(msg.action==='apply-captions'||msg.action==='apply-workspace-edit'||msg.action==='apply-candidate'||msg.action==='apply-audio-mix'||msg.action==='add-registered-source'){
           const doc=live.current.base.doc,observedRevision=revision.current;
           if(msg.expectedRevision!==observedRevision||msg.expectedDocumentFingerprint!==await digest(doc)||doc!==live.current.base.doc||observedRevision!==revision.current){result(false,'工程已有新修改，请重新读取当前工程后重试。');return;}
           if(msg.action==='apply-captions'&&(typeof msg.itemId!=='string'||!isWorkspaceCaptionContract(msg.contract)||msg.contract.text.length>100000||msg.contract.cues.length>1000)){result(false,'字幕增量输入无效。');return;}
           if(msg.action==='apply-workspace-edit'&&!isWorkspaceShotOperation(msg.operation)){result(false,'镜头编辑输入无效。');return;}
           if(msg.action==='apply-candidate'&&(!isWorkspaceCandidateEdit(msg.edit)||!/^\/media\/uploads\/[a-f0-9]+\.[a-z0-9]+$/.test(msg.edit.source.src))){result(false,'候选增量输入无效。');return;}
-          const next=msg.action==='apply-audio-mix'?applyWorkspaceAudioMix(doc,msg.edit):msg.action==='apply-candidate'?applyWorkspaceCandidate(doc,msg.edit):msg.action==='apply-captions'?applyWorkspaceCaptionEdit(doc,msg.itemId,msg.contract):applyWorkspaceShotOperation(migrateWorkspaceCaptionLanes(doc),msg.operation);
+          const next=msg.action==='add-registered-source'?addWorkspaceRegisteredSource(doc,msg.asset):msg.action==='apply-audio-mix'?applyWorkspaceAudioMix(doc,msg.edit):msg.action==='apply-candidate'?applyWorkspaceCandidate(doc,msg.edit):msg.action==='apply-captions'?applyWorkspaceCaptionEdit(doc,msg.itemId,msg.contract):applyWorkspaceShotOperation(migrateWorkspaceCaptionLanes(doc),msg.operation);
           live.current.base.commands.applyDoc(next);
           await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
           const ok=await live.current.agent.flushBeforeLeaveRef.current();

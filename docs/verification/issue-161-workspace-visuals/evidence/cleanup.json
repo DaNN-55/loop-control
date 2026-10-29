@@ -1,0 +1,7 @@
+{
+  "uiPortClosed": true,
+  "chromePortClosed": true,
+  "chromeExited": true,
+  "chromeProfileRemoved": true,
+  "scope": "Only T09 dedicated UI/Chrome; test DB/media/volumes closed by fixture finally blocks; worktree and evidence retained."
+}

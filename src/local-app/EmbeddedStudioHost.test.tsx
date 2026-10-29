@@ -93,3 +93,9 @@ it('does not treat a connected state without SDK ownership as write readiness',a
  await act(async()=>{fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,type:'loop-control:result',requestId:request.requestId,ok:true,result:{revision:1,documentFingerprint:'c'.repeat(64),document:{}}}}));await inspected!;});expect(save).not.toHaveBeenCalled();
  deliver(true);expect(bridge!.connected).toBe(true);expect(frame.hasAttribute('inert')).toBe(false);
 });
+it('redirects native file imports to the registered Host tools only after true SDK write readiness',()=>{
+ render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'episodes/e/board.json'}} shots={[]} onSave={async()=>workspace} onClose={()=>{}} panels={[{id:'visuals',label:'画面版本',render:()=> <p>Owner 登记画面入口</p>},{id:'audio',label:'混音',render:()=> <p>Owner 声音素材入口</p>}]}/>);
+ const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel'),deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
+ deliver({type:'loop-control:import-requested',kind:'visual'});expect(screen.queryByText('Owner 登记画面入口')).toBeNull();
+ deliver({type:'loop-control:state',writable:true,revision:1,items:[],selectedIds:[]});deliver({type:'loop-control:import-requested',kind:'visual'});expect(screen.getByText('Owner 登记画面入口')).toBeTruthy();deliver({type:'loop-control:import-requested',kind:'audio'});expect(screen.getByText('Owner 声音素材入口')).toBeTruthy();
+});

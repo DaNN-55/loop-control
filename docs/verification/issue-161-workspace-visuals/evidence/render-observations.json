@@ -1,0 +1,78 @@
+{
+  "sourceVideoSha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+  "imageSha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+  "targetItemId": "shot-shot-1-9d789bac-3d80-4d93-a96f-10a7514f49c3",
+  "untouchedItemId": "shot-shot-2-48b68cd7-6968-4b62-8c75-ea580880176f",
+  "before": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 180,
+        "height": 320,
+        "nb_frames": "120",
+        "side_data_list": [
+          {}
+        ]
+      },
+      {
+        "codec_name": "aac",
+        "nb_frames": "190"
+      }
+    ],
+    "format": {
+      "duration": "4.053333"
+    },
+    "sha256": "9e86b503f3c673fcd564fcd10c6f4835a410b115c560c2a8fc758a97bf4f2cb1"
+  },
+  "still": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 180,
+        "height": 320,
+        "nb_frames": "120",
+        "side_data_list": [
+          {}
+        ]
+      },
+      {
+        "codec_name": "aac",
+        "nb_frames": "190"
+      }
+    ],
+    "format": {
+      "duration": "4.053333"
+    },
+    "sha256": "98bf711a1a9850c056c45dee2732a08651539e9ae54adc1dd3427e0345a81c68"
+  },
+  "pan-zoom": {
+    "programs": [],
+    "stream_groups": [],
+    "streams": [
+      {
+        "codec_name": "h264",
+        "width": 180,
+        "height": 320,
+        "nb_frames": "120",
+        "side_data_list": [
+          {}
+        ]
+      },
+      {
+        "codec_name": "aac",
+        "nb_frames": "190"
+      }
+    ],
+    "format": {
+      "duration": "4.053333"
+    },
+    "sha256": "a5db87a260d4bfa822a0e14e134302af9c777091ad1b66a057d34f19bccadfd6"
+  },
+  "stillFrameMeanDifference": 0.004386574074074074,
+  "panZoomFrameMeanDifference": 10.13140625,
+  "untouchedSecondClipMeanDifference": 0
+}

@@ -1,3 +1,4 @@
+import {assertWorkspaceVisualExecution} from './workspaceVisualWorker.js';
 import {isVideoProvider} from "../worker/videoProviderCatalog.js";
 import{ProviderOutcomeUnknownError}from'../worker/providerOutcome.js';
 import{registeredAdapters}from'../worker/registeredAdapters.js';
@@ -50,7 +51,16 @@ export async function executeNativeMedia(pool:Pool,config:NativeMediaConfigurati
   }else{
    const secret=external?await resolve(p.credentialRef,p.provider,p.media!.adapter):undefined;
    const denied=async():Promise<never>=>{throw Error('External media not configured');};
-   output=await executeControlledMediaTask({taskPackage:p,fetcher:ports?.fetcher??denied,pexelsApiKey:p.provider==='pexels'?secret:undefined,googleTtsApiKey:undefined,bailianCredentials:p.provider==='bailian'?secret:undefined,officialVideoCredentials:isVideoProvider(p.provider)?secret:undefined,reserveWan:(p.provider==='bailian'||isVideoProvider(p.provider))?async()=>{return (await pool.query('SELECT local_identity.reserve_wan_generation($1,$2,$3) result',[fence.p_task_id,fence.p_attempt,fence.p_lease_token])).rows[0].result;}:undefined,recordWanSubmission:(p.provider==='bailian'||isVideoProvider(p.provider))?async id=>{await pool.query('SELECT local_identity.record_wan_submission($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,id]);}:undefined,freesoundApiKey:p.provider==='freesound'?secret:undefined,validateMp4:validateMp4Artifact,probeMp3:probeMp3Artifact,extractMp3:extractMp3Artifact,trimMp3:trimMp3Artifact,trimMp4:trimMp4Artifact,trimMp4Segments:trimMp4SegmentsArtifact});
+   const observeVideo:typeof denied|NonNullable<typeof ports>['fetcher']=async(input,init)=>{
+    const response=await (ports?.fetcher??denied)(input,init);
+    if(p.provider==='bailian'||isVideoProvider(p.provider)){
+     let rejected=init?.method==='POST'&&response.status>=400&&response.status<500&&response.status!==408;
+     if(init?.method!=='POST'&&response.ok){try{const value=await response.clone().json();const status=value.status??value.task?.status??value.data?.task_status;rejected=['failed','fail','cancelled','canceled'].includes(status);}catch{/* Existing Provider parser reports invalid payloads. */}}
+     if(rejected)await pool.query('SELECT local_identity.record_workspace_visual_submission($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,'rejected']);
+    }return response;
+   };
+
+   output=await executeControlledMediaTask({taskPackage:p,fetcher:observeVideo,pexelsApiKey:p.provider==='pexels'?secret:undefined,googleTtsApiKey:undefined,bailianCredentials:p.provider==='bailian'?secret:undefined,officialVideoCredentials:isVideoProvider(p.provider)?secret:undefined,reserveWan:(p.provider==='bailian'||isVideoProvider(p.provider))?async()=>{await assertWorkspaceVisualExecution(pool,fence);return (await pool.query('SELECT local_identity.reserve_workspace_visual_generation($1,$2,$3) result',[fence.p_task_id,fence.p_attempt,fence.p_lease_token])).rows[0].result;}:undefined,recordWanSubmission:(p.provider==='bailian'||isVideoProvider(p.provider))?async id=>{await pool.query('SELECT local_identity.record_wan_submission($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,id]);await pool.query('SELECT local_identity.record_workspace_visual_submission($1,$2,$3,$4)',[fence.p_task_id,fence.p_attempt,fence.p_lease_token,'received']);}:undefined,freesoundApiKey:p.provider==='freesound'?secret:undefined,validateMp4:validateMp4Artifact,probeMp3:probeMp3Artifact,extractMp3:extractMp3Artifact,trimMp3:trimMp3Artifact,trimMp4:trimMp4Artifact,trimMp4Segments:trimMp4SegmentsArtifact});
   }
   const result=JSON.parse(output);result.validation.checks.push({name:'native_media_mode',passed:true,detail:ports?.mode==='controlled'?'受控Provider响应和SecretStore替身；没有在线资格或在线生成证明。':external?'在线执行路径。':'本机媒体执行。'});return JSON.stringify(result);
  }catch(error){if(error instanceof ProviderOutcomeUnknownError)throw error;throw Error('媒体执行或产物验证失败，请检查冻结输入和本机执行状态。');}

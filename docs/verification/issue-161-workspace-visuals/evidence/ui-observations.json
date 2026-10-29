@@ -1,0 +1,395 @@
+[
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 1053,
+    "y": 173.25,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 998,
+      "y": 156.25,
+      "width": 110,
+      "height": 34,
+      "top": 156.25,
+      "right": 1108,
+      "bottom": 190.25,
+      "left": 998
+    },
+    "cover": "<button class=\"embedded-studio-back\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-li"
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 1159,
+    "y": 184,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 1096,
+      "y": 166,
+      "width": 126,
+      "height": 36,
+      "top": 166,
+      "right": 1222,
+      "bottom": 202,
+      "left": 1096
+    },
+    "cover": "<button data-color=\"primary\" class=\"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear "
+  },
+  {
+    "phase": "native-ready",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 900
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 819,
+        "height": 734
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 17.299999997019768,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 17.399999998509884,
+        "visibility": "visible",
+        "focus": false
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 900
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 819,
+        "height": 734
+      }
+    ],
+    "wallMs": 18
+  },
+  {
+    "phase": "hit-test",
+    "native": true,
+    "x": 517,
+    "y": 333.5,
+    "hit": true,
+    "label": "上传素材",
+    "disabled": false,
+    "rect": {
+      "x": 86,
+      "y": 109,
+      "width": 24,
+      "height": 24,
+      "top": 109,
+      "right": 110,
+      "bottom": 133,
+      "left": 86
+    },
+    "cover": "<path d=\"M12 16V3 M7 8l5-5 5 5 M4 14v5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5\"></path>"
+  },
+  {
+    "phase": "native-file-chooser",
+    "chooser": {
+      "frameId": "1C4A59ACA0CF67B91F234D7BC986D7CB",
+      "mode": "selectMultiple",
+      "backendNodeId": 2422
+    }
+  },
+  {
+    "phase": "native-toolbar-redirect",
+    "unchanged": true
+  },
+  {
+    "phase": "owner-upload-live-pool",
+    "asset": {
+      "id": "material-c362528e-7d32-4859-8439-e8cea6da9ab8",
+      "name": "still-striped.png",
+      "kind": "image",
+      "src": "/media/uploads/4750f767f5bf8bc44380.png",
+      "sourceRevision": "source-sha256-89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "sourceContentHash": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "durationInFrames": 90,
+      "width": 640,
+      "height": 360
+    },
+    "studioUnchanged": true
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 1083,
+    "y": 449.6875,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 951,
+      "y": 431.6875,
+      "width": 264,
+      "height": 36,
+      "top": 431.6875,
+      "right": 1215,
+      "bottom": 467.6875,
+      "left": 951
+    },
+    "cover": "<span data-text=\"true\" class=\"transition-inherit-all px-0.5\">添加为画面候选</span>"
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 1000,
+    "y": 450.1875,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 951,
+      "y": 432.1875,
+      "width": 98,
+      "height": 36,
+      "top": 432.1875,
+      "right": 1049,
+      "bottom": 468.1875,
+      "left": 951
+    },
+    "cover": "<button data-color=\"primary\" class=\"group relative inline-flex h-max cursor-pointer items-center justify-center whitespace-nowrap outline-brand transition duration-100 ease-linear "
+  },
+  {
+    "phase": "native-single-target-adopt",
+    "target": {
+      "id": "shot-shot-1-65279c95-982a-42f6-b359-6cf2ac9c5454",
+      "track": "track_loop-control-6a6820f4-2297-4793-9bb7-25c089f050d1_1",
+      "kind": "image",
+      "name": "shot-1",
+      "startFrame": 0,
+      "durationInFrames": 60,
+      "width": 640,
+      "height": 360,
+      "transform": {
+        "scale": 1,
+        "x": 17,
+        "y": 0,
+        "rotation": 0
+      },
+      "src": "/media/uploads/4750f767f5bf8bc44380.png",
+      "sourceAssetId": "candidate-0a59928a-a732-4951-8943-eeae021c8a2e",
+      "srcInFrame": 0,
+      "volume": 0,
+      "loopControlShot": {
+        "workspaceId": "fdbfc614-55eb-4835-a88d-a97833727512",
+        "shotId": "shot-1",
+        "clipId": "65279c95-982a-42f6-b359-6cf2ac9c5454",
+        "text": "第一镜",
+        "provenance": {
+          "materialRevisionId": "888c8f98-f99e-4878-9efc-245f1b816bba",
+          "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+          "fileSize": 210288,
+          "kind": "video"
+        }
+      },
+      "loopControlCandidate": {
+        "inputFingerprint": "074f4a430b4f9a5bf0da45bed51b76274fd02f0b162e5d1a689beaa90b907aad",
+        "sourceId": "candidate-0a59928a-a732-4951-8943-eeae021c8a2e",
+        "durationPolicy": "keep-target",
+        "startFrame": 0,
+        "durationInFrames": 60,
+        "shotWindow": {
+          "startFrame": 0,
+          "durationInFrames": 60
+        }
+      },
+      "keyframes": {
+        "scale": [
+          {
+            "frame": 0,
+            "value": 1,
+            "easing": "linear"
+          },
+          {
+            "frame": 59,
+            "value": 1.15,
+            "easing": "linear"
+          }
+        ],
+        "x": [
+          {
+            "frame": 0,
+            "value": 17,
+            "easing": "linear"
+          },
+          {
+            "frame": 59,
+            "value": 20,
+            "easing": "linear"
+          }
+        ]
+      },
+      "sourceContentHash": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "sourceRevision": "source-sha256-89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116"
+    },
+    "untouchedItem": {
+      "id": "shot-shot-2-cd9bc9ca-5e2d-4d7a-91b0-95efc0533988",
+      "track": "track_loop-control-6a6820f4-2297-4793-9bb7-25c089f050d1_1",
+      "kind": "video",
+      "name": "shot-2",
+      "startFrame": 60,
+      "durationInFrames": 60,
+      "width": 360,
+      "height": 640,
+      "transform": {
+        "scale": 1,
+        "x": 0,
+        "y": 0,
+        "rotation": 0
+      },
+      "src": "/media/uploads/e23b0c9abec4ef604ffc.mp4",
+      "sourceAssetId": "material-888c8f98-f99e-4878-9efc-245f1b816bba",
+      "srcInFrame": 0,
+      "volume": 0,
+      "loopControlShot": {
+        "workspaceId": "fdbfc614-55eb-4835-a88d-a97833727512",
+        "shotId": "shot-2",
+        "clipId": "cd9bc9ca-5e2d-4d7a-91b0-95efc0533988",
+        "text": "缺少素材的第二镜。",
+        "provenance": {
+          "materialRevisionId": "888c8f98-f99e-4878-9efc-245f1b816bba",
+          "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+          "fileSize": 210288,
+          "kind": "video"
+        }
+      },
+      "sourceContentHash": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+      "sourceRevision": "source-sha256-a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da"
+    }
+  },
+  {
+    "phase": "hit-test",
+    "native": false,
+    "x": 1177.5,
+    "y": 173.25,
+    "hit": true,
+    "label": "",
+    "disabled": false,
+    "rect": {
+      "x": 1116,
+      "y": 156.25,
+      "width": 123,
+      "height": 34,
+      "top": 156.25,
+      "right": 1239,
+      "bottom": 190.25,
+      "left": 1116
+    },
+    "cover": "<button class=\"embedded-studio-save\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-li"
+  },
+  {
+    "phase": "visual-panel-1280",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 900
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 519,
+        "height": 734
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 17.899999998509884,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 17.80000000447035,
+        "visibility": "visible",
+        "focus": false
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 900
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 519,
+        "height": 734
+      }
+    ],
+    "wallMs": 19
+  },
+  {
+    "phase": "visual-panel-800",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 800,
+        "height": 900
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 613,
+        "height": 423
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 30.5,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 30.399999998509884,
+        "visibility": "visible",
+        "focus": false
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 800,
+        "height": 900
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 613,
+        "height": 423
+      }
+    ],
+    "wallMs": 36
+  }
+]
