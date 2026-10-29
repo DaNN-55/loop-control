@@ -1,0 +1,32 @@
+{
+  "alerts": [],
+  "captions": [
+    {
+      "characters": 3,
+      "cues": [
+        {
+          "endMs": 686,
+          "id": "first~0~0",
+          "startMs": 0,
+          "text": "第一句字幕正"
+        },
+        {
+          "endMs": 800,
+          "id": "first~0~1",
+          "startMs": 686,
+          "text": "文"
+        }
+      ],
+      "shotId": "shot-1",
+      "timing": "current"
+    },
+    {
+      "characters": 16,
+      "cues": [],
+      "shotId": "shot-2",
+      "timing": "missing"
+    }
+  ],
+  "revision": 6,
+  "sha": "dc2c573443d6d4ea0efe6867ef6fe0bbd7e56f90222bdc783015fc0237064583"
+}

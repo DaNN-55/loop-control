@@ -11,6 +11,7 @@ export interface ProductionWorkspace {
  readiness:{deliverable:boolean;placeholders:string[];missingSources:string[]};stale:boolean;
 }
 export const productionWorkspaceFields:Record<string,string[]>={
+ editWorkspaceStructure:['episodeId','workspaceId','expectedRevision','operation'],
  ...workspaceDeliveryFields,
  ...workspaceExportFields,
  saveWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId','mode','text','voice','speakingRate','audioTrackId'],

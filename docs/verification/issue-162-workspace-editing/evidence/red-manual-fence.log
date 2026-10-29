@@ -1,0 +1,28 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t10-workspace-editing/loop-control
+
+ ❯ src/local-app/workspaceShots.integration.test.ts (7 tests | 1 failed | 6 skipped) 10376ms
+   ↓ Owner reorders native shot instances without rewriting registered sources or storyboard history
+   ↓ a shot with two visual ranges owns one stable caption lane when its first range is removed
+   ↓ native range locks, frame steps and parallel composition preserve source instances through Owner persistence
+   ↓ two ranges retain one actual main voice and full following captions after deleting their first visual instance
+   ↓ reopening an actively edited native structure reuses its running Studio and latest project
+   ↓ upgrades duplicate legacy visual caption lanes into one shot lane without losing the complete body or cues
+   × added native shots accept registered images and source video while the approved storyboard stays unchanged 10374ms
+     → expected 0 to be greater than 0
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceShots.integration.test.ts > added native shots accept registered images and source video while the approved storyboard stays unchanged
+AssertionError: expected 0 to be greater than 0
+ ❯ src/local-app/workspaceShots.integration.test.ts:98:72
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 skipped (7)
+   Start at  19:49:46
+   Duration  14.40s (transform 2.03s, setup 96ms, collect 2.74s, tests 10.38s, environment 0ms, prepare 295ms)
+

@@ -188,3 +188,34 @@ function isUnit(value: unknown): value is number {
 function isRecord(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
+
+export function shotCompositionTransform(rect: ShotCompositionRect, slot: ShotCompositionSlot): Record<string, unknown> {
+  const centerX = rect.x + rect.width / 2;
+  const centerY = rect.y + rect.height / 2;
+  if (slot.fit === "contain") {
+    return { scale: round(Math.min(rect.width, rect.height), 6), x: round((centerX - 0.5) * 100, 4), y: round((centerY - 0.5) * 100, 4), rotation: 0 };
+  }
+  const wide = rect.width >= rect.height;
+  const visibleWidth = wide ? 1 : rect.width / rect.height;
+  const visibleHeight = wide ? rect.height / rect.width : 1;
+  const scale = rect.width / visibleWidth;
+  const left = (1 - visibleWidth) * slot.focalPoint.x;
+  const top = (1 - visibleHeight) * slot.focalPoint.y;
+  const visibleCenterX = left + visibleWidth / 2;
+  const visibleCenterY = top + visibleHeight / 2;
+  const crop = visibleWidth < 1 || visibleHeight < 1 ? {
+    left: round(left, 6), top: round(top, 6), right: round(1 - visibleWidth - left, 6), bottom: round(1 - visibleHeight - top, 6),
+  } : undefined;
+  return {
+    scale: round(scale, 6),
+    x: round((centerX - (0.5 + (visibleCenterX - 0.5) * scale)) * 100, 4),
+    y: round((centerY - (0.5 + (visibleCenterY - 0.5) * scale)) * 100, 4),
+    rotation: 0,
+    ...(crop ? { crop } : {}),
+  };
+}
+
+function round(value: number, digits: number): number {
+  const factor = 10 ** digits;
+  return Math.round(value * factor) / factor;
+}

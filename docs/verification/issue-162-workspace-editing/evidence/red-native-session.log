@@ -1,0 +1,30 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t10-workspace-editing/loop-control
+
+ ❯ src/local-app/workspaceShots.integration.test.ts (5 tests | 1 failed | 4 skipped) 4070ms
+   ↓ Owner reorders native shot instances without rewriting registered sources or storyboard history
+   ↓ a shot with two visual ranges owns one stable caption lane when its first range is removed
+   ↓ native range locks, frame steps and parallel composition preserve source instances through Owner persistence
+   ↓ two ranges retain one actual main voice and full following captions after deleting their first visual instance
+   × reopening an actively edited native structure reuses its running Studio and latest project 4069ms
+     → expected 'http://127.0.0.1:54918/?lcBridge=1#/e…' to be 'http://127.0.0.1:54909/?lcBridge=1#/e…' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceShots.integration.test.ts > reopening an actively edited native structure reuses its running Studio and latest project
+AssertionError: expected 'http://127.0.0.1:54918/?lcBridge=1#/e…' to be 'http://127.0.0.1:54909/?lcBridge=1#/e…' // Object.is equality
+
+Expected: "http://127.0.0.1:54909/?lcBridge=1#/editor/loop-control-a2e0bc53-9c2e-4475-8c38-94da7a692f43"
+Received: "http://127.0.0.1:54918/?lcBridge=1#/editor/loop-control-a2e0bc53-9c2e-4475-8c38-94da7a692f43"
+
+ ❯ src/local-app/workspaceShots.integration.test.ts:79:200
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 skipped (5)
+   Start at  19:05:31
+   Duration  4.65s (transform 243ms, setup 10ms, collect 324ms, tests 4.07s, environment 0ms, prepare 73ms)
+
