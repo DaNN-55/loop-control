@@ -1,0 +1,67 @@
+[
+  {
+    "phase": "unique-audio-drop-owner-register",
+    "filename": "t09-audio-5614d156-0752-46ab-8f1b-65b9aa842ffa.mp3",
+    "bytes": 19628,
+    "network": [
+      {
+        "url": "http://127.0.0.1:60073/api/local/episode-commands",
+        "command": "saveWorkspaceStudio",
+        "status": 200
+      },
+      {
+        "url": "http://127.0.0.1:60073/api/local/episode-commands",
+        "command": "importMaterial",
+        "status": 200
+      }
+    ],
+    "unchangedProjectSha256": "0f6f9b1c07db852382f470906a621498df7044b770f953ad5f1c14470fb4c8db",
+    "unchangedContentSha256": "c504e8f5a1b76e0432b0d9feb7963a3638098980ed9ced27b9b775faa94f2ea5"
+  },
+  {
+    "phase": "audio-owner-entry-visible",
+    "before": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 900
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 519,
+        "height": 734
+      }
+    ],
+    "frames": [
+      {
+        "timeout": false,
+        "ms": 27.19999999552965,
+        "visibility": "visible",
+        "focus": true
+      },
+      {
+        "timeout": false,
+        "ms": 27.19999999552965,
+        "visibility": "visible",
+        "focus": false
+      }
+    ],
+    "after": [
+      {
+        "visibility": "visible",
+        "focus": true,
+        "width": 1280,
+        "height": 900
+      },
+      {
+        "visibility": "visible",
+        "focus": false,
+        "width": 519,
+        "height": 734
+      }
+    ],
+    "wallMs": 28
+  }
+]

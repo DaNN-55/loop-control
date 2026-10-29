@@ -1,0 +1,420 @@
+{
+  "visualCandidates": [
+    {
+      "durationImpact": {
+        "deltaSeconds": 1,
+        "overlapItemIds": [
+          "shot-shot-2-cd9bc9ca-5e2d-4d7a-91b0-95efc0533988"
+        ]
+      },
+      "id": "0a59928a-a732-4951-8943-eeae021c8a2e",
+      "kind": "image",
+      "usage": "pan-zoom",
+      "shotId": "shot-1",
+      "clipId": "65279c95-982a-42f6-b359-6cf2ac9c5454",
+      "targetItemId": "shot-shot-1-65279c95-982a-42f6-b359-6cf2ac9c5454",
+      "taskId": null,
+      "inputFingerprint": "074f4a430b4f9a5bf0da45bed51b76274fd02f0b162e5d1a689beaa90b907aad",
+      "text": "",
+      "mainScriptText": "",
+      "audioTrackId": null,
+      "relativePath": "episodes/6a6820f4-2297-4793-9bb7-25c089f050d1/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png",
+      "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "fileSize": 1515,
+      "durationSeconds": 3,
+      "width": 640,
+      "height": 360,
+      "currentDurationSeconds": 2,
+      "pendingConfirmation": false,
+      "status": "adopted"
+    },
+    {
+      "durationImpact": {
+        "deltaSeconds": 1,
+        "overlapItemIds": [
+          "shot-shot-2-cd9bc9ca-5e2d-4d7a-91b0-95efc0533988"
+        ]
+      },
+      "id": "6dd2eca0-d3e5-4867-89f7-e18b8eec2ddc",
+      "kind": "image",
+      "usage": "pan-zoom",
+      "shotId": "shot-1",
+      "clipId": "65279c95-982a-42f6-b359-6cf2ac9c5454",
+      "targetItemId": "shot-shot-1-65279c95-982a-42f6-b359-6cf2ac9c5454",
+      "taskId": null,
+      "inputFingerprint": "b84333a333a855ce1f20e71097c31a5d7985f63a42401b009836501287607299",
+      "text": "",
+      "mainScriptText": "",
+      "audioTrackId": null,
+      "relativePath": "episodes/6a6820f4-2297-4793-9bb7-25c089f050d1/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png",
+      "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "fileSize": 1515,
+      "durationSeconds": 3,
+      "width": 640,
+      "height": 360,
+      "currentDurationSeconds": 2,
+      "pendingConfirmation": false,
+      "status": "adopted"
+    },
+    {
+      "durationImpact": {
+        "deltaSeconds": 1,
+        "overlapItemIds": [
+          "shot-shot-2-cd9bc9ca-5e2d-4d7a-91b0-95efc0533988"
+        ]
+      },
+      "id": "9f98d8eb-b243-408f-923f-68d2c1ac867f",
+      "kind": "image",
+      "usage": "pan-zoom",
+      "shotId": "shot-1",
+      "clipId": "65279c95-982a-42f6-b359-6cf2ac9c5454",
+      "targetItemId": "shot-shot-1-65279c95-982a-42f6-b359-6cf2ac9c5454",
+      "taskId": null,
+      "inputFingerprint": "10013e321135e51a227229b6d517ba8aa37c1c8e5f56b844412c5d76d57e74cd",
+      "text": "",
+      "mainScriptText": "",
+      "audioTrackId": null,
+      "relativePath": "episodes/6a6820f4-2297-4793-9bb7-25c089f050d1/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png",
+      "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "fileSize": 1515,
+      "durationSeconds": 3,
+      "width": 640,
+      "height": 360,
+      "currentDurationSeconds": 2,
+      "pendingConfirmation": false,
+      "status": "adopted"
+    },
+    {
+      "durationImpact": {
+        "deltaSeconds": 1,
+        "overlapItemIds": [
+          "shot-shot-2-cd9bc9ca-5e2d-4d7a-91b0-95efc0533988"
+        ]
+      },
+      "id": "58f091a9-1a29-4182-8c68-fbe84389ef3b",
+      "kind": "image",
+      "usage": "pan-zoom",
+      "shotId": "shot-1",
+      "clipId": "65279c95-982a-42f6-b359-6cf2ac9c5454",
+      "targetItemId": "shot-shot-1-65279c95-982a-42f6-b359-6cf2ac9c5454",
+      "taskId": null,
+      "inputFingerprint": "3c6e6965d0a69647279b672a77a684148bf4569919d085c25700a3216a8f785b",
+      "text": "",
+      "mainScriptText": "",
+      "audioTrackId": null,
+      "relativePath": "episodes/6a6820f4-2297-4793-9bb7-25c089f050d1/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png",
+      "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "fileSize": 1515,
+      "durationSeconds": 3,
+      "width": 640,
+      "height": 360,
+      "currentDurationSeconds": 2,
+      "pendingConfirmation": false,
+      "status": "adopted"
+    }
+  ],
+  "visualTasks": [],
+  "visualTargets": [
+    {
+      "targetItemId": "shot-shot-1-65279c95-982a-42f6-b359-6cf2ac9c5454",
+      "voiceMode": "none",
+      "durationSeconds": null,
+      "providerDurationSeconds": null,
+      "minimumSeconds": 2,
+      "maximumSeconds": 15
+    },
+    {
+      "targetItemId": "shot-shot-2-cd9bc9ca-5e2d-4d7a-91b0-95efc0533988",
+      "voiceMode": "none",
+      "durationSeconds": null,
+      "providerDurationSeconds": null,
+      "minimumSeconds": 2,
+      "maximumSeconds": 15
+    }
+  ],
+  "audio": {
+    "mix": {
+      "voices": [
+        {
+          "coverage": "none",
+          "startSeconds": null,
+          "durationSeconds": null,
+          "shotDurationSeconds": 2,
+          "sourceStartSeconds": null,
+          "sourceLabel": null,
+          "alignmentReady": false,
+          "shotId": "shot-1",
+          "mode": "none",
+          "gainDb": 0,
+          "ambienceGainDb": null,
+          "sourceItemId": null,
+          "sourceAssetId": null
+        },
+        {
+          "coverage": "none",
+          "startSeconds": null,
+          "durationSeconds": null,
+          "shotDurationSeconds": 2,
+          "sourceStartSeconds": null,
+          "sourceLabel": null,
+          "alignmentReady": false,
+          "shotId": "shot-2",
+          "mode": "none",
+          "gainDb": 0,
+          "ambienceGainDb": null,
+          "sourceItemId": null,
+          "sourceAssetId": null
+        }
+      ],
+      "sounds": []
+    },
+    "preparations": []
+  },
+  "deliveries": [],
+  "usedNarration": [],
+  "candidates": [],
+  "exports": [],
+  "exportIssues": [],
+  "captions": [
+    {
+      "clipId": "65279c95-982a-42f6-b359-6cf2ac9c5454",
+      "itemId": "shot-shot-1-65279c95-982a-42f6-b359-6cf2ac9c5454",
+      "shotId": "shot-1",
+      "durationMs": 2000,
+      "contract": {
+        "version": "shot-captions/v1",
+        "enabled": true,
+        "contentMode": "independent",
+        "text": "第一镜",
+        "cues": [],
+        "spatial": {
+          "version": "shot-caption-space/v2",
+          "anchor": "bottom-center",
+          "safeArea": "title-safe",
+          "aspectRatio": "9:16",
+          "insets": {
+            "top": 0.08,
+            "right": 0.08,
+            "bottom": 0.18,
+            "left": 0.08
+          },
+          "maxLines": 2,
+          "maxCharactersPerLine": 16
+        }
+      },
+      "inputFingerprint": "a3a8fbcf00a32dd15f150a9a8c2f7f90c591924b7398507837dce528cff51776",
+      "timing": "missing",
+      "textConfirmed": false,
+      "audioTrackId": null,
+      "narrationText": null,
+      "taskId": null,
+      "alignmentInputVersion": null,
+      "detail": null
+    },
+    {
+      "clipId": "cd9bc9ca-5e2d-4d7a-91b0-95efc0533988",
+      "itemId": "shot-shot-2-cd9bc9ca-5e2d-4d7a-91b0-95efc0533988",
+      "shotId": "shot-2",
+      "durationMs": 2000,
+      "contract": {
+        "version": "shot-captions/v1",
+        "enabled": true,
+        "contentMode": "independent",
+        "text": "缺少素材的第二镜。",
+        "cues": [],
+        "spatial": {
+          "version": "shot-caption-space/v2",
+          "anchor": "bottom-center",
+          "safeArea": "title-safe",
+          "aspectRatio": "9:16",
+          "insets": {
+            "top": 0.08,
+            "right": 0.08,
+            "bottom": 0.18,
+            "left": 0.08
+          },
+          "maxLines": 2,
+          "maxCharactersPerLine": 16
+        }
+      },
+      "inputFingerprint": "c3222f72fda350fe85140250fea8b0a1e7279bcb653aeded46d2b7e83a94a44f",
+      "timing": "missing",
+      "textConfirmed": false,
+      "audioTrackId": null,
+      "narrationText": null,
+      "taskId": null,
+      "alignmentInputVersion": null,
+      "detail": null
+    }
+  ],
+  "id": "fdbfc614-55eb-4835-a88d-a97833727512",
+  "episodeId": "6a6820f4-2297-4793-9bb7-25c089f050d1",
+  "workflowVersion": "four-step/v1",
+  "scriptRevisionId": "7412adca-074c-43c5-b9d8-a419043a0ea4",
+  "storyboardPackageId": "957fd9ff-984a-4db8-b112-1ba489acc934",
+  "revision": 12,
+  "contentSha256": "c504e8f5a1b76e0432b0d9feb7963a3638098980ed9ced27b9b775faa94f2ea5",
+  "nativeEditRevision": 9,
+  "narration": [
+    {
+      "clipId": "65279c95-982a-42f6-b359-6cf2ac9c5454",
+      "shotId": "shot-1",
+      "mode": "none",
+      "text": "第一镜",
+      "voice": null,
+      "languageCode": null,
+      "speakingRate": null,
+      "override": false,
+      "inputFingerprint": "e0943f3a031b1f02abfab3657919e96c6830335e348f00f72749248593d4d180",
+      "confirmed": false,
+      "taskId": null,
+      "status": "pending",
+      "error": null,
+      "audioTrackId": null,
+      "artifactId": null,
+      "relativePath": null,
+      "sha256": null,
+      "fileSize": null,
+      "durationSeconds": null,
+      "itemId": "workspace-narration-shot-shot-1",
+      "adoptedAudioTrackId": null
+    },
+    {
+      "clipId": "cd9bc9ca-5e2d-4d7a-91b0-95efc0533988",
+      "shotId": "shot-2",
+      "mode": "none",
+      "text": "缺少素材的第二镜。",
+      "voice": null,
+      "languageCode": null,
+      "speakingRate": null,
+      "override": false,
+      "inputFingerprint": "c83abf538029cac90a9fc5e4fae3aadcc9cc85be5f6804a443c2477d860b44ae",
+      "confirmed": false,
+      "taskId": null,
+      "status": "pending",
+      "error": null,
+      "audioTrackId": null,
+      "artifactId": null,
+      "relativePath": null,
+      "sha256": null,
+      "fileSize": null,
+      "durationSeconds": null,
+      "itemId": "workspace-narration-shot-shot-2",
+      "adoptedAudioTrackId": null
+    }
+  ],
+  "clips": [
+    {
+      "id": "65279c95-982a-42f6-b359-6cf2ac9c5454",
+      "text": "第一镜",
+      "itemId": "shot-shot-1-65279c95-982a-42f6-b359-6cf2ac9c5454",
+      "shotId": "shot-1",
+      "source": {
+        "kind": "video",
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288,
+        "relativePath": "episodes/6a6820f4-2297-4793-9bb7-25c089f050d1/shot.mp4",
+        "materialRevisionId": "888c8f98-f99e-4878-9efc-245f1b816bba"
+      }
+    },
+    {
+      "id": "cd9bc9ca-5e2d-4d7a-91b0-95efc0533988",
+      "text": "缺少素材的第二镜。",
+      "itemId": "shot-shot-2-cd9bc9ca-5e2d-4d7a-91b0-95efc0533988",
+      "shotId": "shot-2",
+      "source": {
+        "kind": "video",
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288,
+        "relativePath": "episodes/6a6820f4-2297-4793-9bb7-25c089f050d1/shot.mp4",
+        "materialRevisionId": "888c8f98-f99e-4878-9efc-245f1b816bba"
+      }
+    }
+  ],
+  "project": {
+    "relativePath": "episodes/6a6820f4-2297-4793-9bb7-25c089f050d1/production-workspace/versions/0f6f9b1c07db852382f470906a621498df7044b770f953ad5f1c14470fb4c8db.json",
+    "sha256": "0f6f9b1c07db852382f470906a621498df7044b770f953ad5f1c14470fb4c8db",
+    "fileSize": 9705,
+    "projectId": "loop-control-6a6820f4-2297-4793-9bb7-25c089f050d1"
+  },
+  "history": [
+    {
+      "revision": 12,
+      "sha256": "0f6f9b1c07db852382f470906a621498df7044b770f953ad5f1c14470fb4c8db",
+      "scriptRevisionId": "7412adca-074c-43c5-b9d8-a419043a0ea4",
+      "reason": "保存原生剪辑"
+    },
+    {
+      "revision": 11,
+      "sha256": "8c4347b5bbb60e4fdee7dcb2755d6f8e2775d48d55dcc9a46c13ae365ec56ad2",
+      "scriptRevisionId": "7412adca-074c-43c5-b9d8-a419043a0ea4",
+      "reason": "保存原生剪辑"
+    },
+    {
+      "revision": 10,
+      "sha256": "b94e11fe776f1c6c5b0c91561426b8a7f15d65ff5cecc376ed05f21dfe79c3ce",
+      "scriptRevisionId": "7412adca-074c-43c5-b9d8-a419043a0ea4",
+      "reason": "保存原生剪辑"
+    },
+    {
+      "revision": 9,
+      "sha256": "8005f0ca2355efc82c07b0e7517837af200b68f9686bd3df32b3755ac682605d",
+      "scriptRevisionId": "7412adca-074c-43c5-b9d8-a419043a0ea4",
+      "reason": "保存原生剪辑"
+    },
+    {
+      "revision": 8,
+      "sha256": "9f4b34ff16eb156fb78c39a754e86aff34e385f510b426fc745fb372fdd5db05",
+      "scriptRevisionId": "7412adca-074c-43c5-b9d8-a419043a0ea4",
+      "reason": "保存原生剪辑"
+    },
+    {
+      "revision": 7,
+      "sha256": "47bccc286ad28ee9a31e5c8273ace192250752b040e8b06d0bd76ae990164b1c",
+      "scriptRevisionId": "7412adca-074c-43c5-b9d8-a419043a0ea4",
+      "reason": "保存原生剪辑"
+    },
+    {
+      "revision": 6,
+      "sha256": "a1f6a69f1d56e1cb382286bf28780f18a16a5686102b925bc504c3543cbc92b6",
+      "scriptRevisionId": "7412adca-074c-43c5-b9d8-a419043a0ea4",
+      "reason": "保存原生剪辑"
+    },
+    {
+      "revision": 5,
+      "sha256": "07f84065c556a19ec3658e85abae1976af42a6cc8e734895513cd8413bacbed5",
+      "scriptRevisionId": "7412adca-074c-43c5-b9d8-a419043a0ea4",
+      "reason": "保存原生剪辑"
+    },
+    {
+      "revision": 4,
+      "sha256": "a2e69b19b4429bc53fdd3fe01c7ee21437ecfb2fd4ad9afd121f71b156a38ae7",
+      "scriptRevisionId": "7412adca-074c-43c5-b9d8-a419043a0ea4",
+      "reason": "修改镜头结构"
+    },
+    {
+      "revision": 3,
+      "sha256": "cff923321ad6d35dac94dff10d07bb3bf08c48f610ac1e00dd015fe0c5a44de2",
+      "scriptRevisionId": "7412adca-074c-43c5-b9d8-a419043a0ea4",
+      "reason": null
+    },
+    {
+      "revision": 2,
+      "sha256": "427a1ba33d79818275ce60802a472f8020903e9b2a391b5e71db56ed8ab6a8e1",
+      "scriptRevisionId": "7412adca-074c-43c5-b9d8-a419043a0ea4",
+      "reason": null
+    },
+    {
+      "revision": 1,
+      "sha256": "ea0cad03a4596e62bdc416dd43e50796da20a0209282964059616b8c54407ea0",
+      "scriptRevisionId": "7412adca-074c-43c5-b9d8-a419043a0ea4",
+      "reason": "首次组装"
+    }
+  ],
+  "readiness": {
+    "deliverable": false,
+    "placeholders": [],
+    "missingSources": []
+  },
+  "stale": false
+}

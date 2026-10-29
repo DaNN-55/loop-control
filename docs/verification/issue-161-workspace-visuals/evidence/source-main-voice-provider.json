@@ -1,0 +1,113 @@
+{
+  "inputSnapshot": {
+    "shot": {
+      "id": "shot-1",
+      "shotType": "a_roll",
+      "inputBasis": [
+        {
+          "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "relativePath": "episodes/d610852d-e8db-4ceb-953d-3554b100a0ce/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-first.png"
+        }
+      ],
+      "targetSpec": "9:16",
+      "scriptSegment": "第一镜",
+      "durationSeconds": 2,
+      "productionMethod": "全屏 TTS"
+    },
+    "media": {
+      "adapter": "seedance_video",
+      "wan_video": {
+        "audio": false,
+        "prompt": "沿当前原声缓慢移动",
+        "image_mime": "image/png",
+        "resolution": "720P",
+        "first_frame": {
+          "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "fileSize": 1515,
+          "artifactType": "wan_first_frame",
+          "relativePath": "episodes/d610852d-e8db-4ceb-953d-3554b100a0ce/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-first.png"
+        },
+        "duration_seconds": 5
+      }
+    },
+    "budget": {
+      "limit_cents": 90,
+      "max_attempts": 1
+    },
+    "output": {
+      "content_type": "video/mp4",
+      "review_stage": "production_ready",
+      "relative_path": "episodes/d610852d-e8db-4ceb-953d-3554b100a0ce/native-tasks/132e0905-1d22-4c7b-b190-b03415e1faa0/132e0905-1d22-4c7b-b190-b03415e1faa0.mp4",
+      "required_artifact_types": [
+        "a_roll_video"
+      ]
+    },
+    "executor": {
+      "model": "doubao-seedance-2-0-260128",
+      "adapter": "seedance_video",
+      "provider": "volcengine"
+    },
+    "capability": "a_roll_generation",
+    "requested_by": "d886a0c8-b657-40f4-8440-c6cd8d2c1356",
+    "allowed_tools": [
+      "read",
+      "write"
+    ],
+    "credential_ref": "72deea74-d42b-415c-b289-23db2c189b1a",
+    "wan_request_id": "db90fcd1-fb0b-42f8-b4ef-81cdc4eaa119",
+    "input_artifacts": [
+      {
+        "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+        "fileSize": 1515,
+        "artifactType": "wan_first_frame",
+        "relativePath": "episodes/d610852d-e8db-4ceb-953d-3554b100a0ce/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-first.png"
+      }
+    ],
+    "workspace_visual": {
+      "mode": "source",
+      "source": {
+        "id": "273ad442-5a9a-48f7-b828-2d68dbcc8dd1",
+        "sha256": "6d6328dc46146484eee31dd196a6d15a1ccec526072f4c2fb61a30ac41405413",
+        "coverage": "full",
+        "fileSize": 22587,
+        "srcInFrame": 0,
+        "playbackRate": 1,
+        "relativePath": "episodes/d610852d-e8db-4ceb-953d-3554b100a0ce/native-tasks/0d7254d7-7d62-4e1c-a70d-8a8049924ad2/ce9f3757-2697-47b2-a0d6-653af2524fb9.mp3"
+      },
+      "identity": "{\"mode\":\"source\",\"id\":\"workspace-source-shot-shot-1\",\"src\":\"episodes/d610852d-e8db-4ceb-953d-3554b100a0ce/native-tasks/0d7254d7-7d62-4e1c-a70d-8a8049924ad2/ce9f3757-2697-47b2-a0d6-653af2524fb9.mp3\",\"sourceAssetId\":\"audio-track-273ad442-5a9a-48f7-b828-2d68dbcc8dd1\",\"sha256\":null,\"startFrame\":0,\"durationInFrames\":150,\"srcInFrame\":0,\"playbackRate\":1,\"edits\":null,\"fps\":30}",
+      "windowDurationSeconds": 5
+    },
+    "configuration_hash": "132e0905-1d22-4c7b-b190-b03415e1faa0",
+    "native_output_namespace": "132e0905-1d22-4c7b-b190-b03415e1faa0",
+    "workspace_visual_request_id": "db90fcd1-fb0b-42f8-b4ef-81cdc4eaa119",
+    "storyboard_review_package_id": "93dffc85-885f-45dc-9f75-67c73b158550"
+  },
+  "actualProviderPost": {
+    "model": "doubao-seedance-2-0-260128",
+    "content": [
+      {
+        "type": "text",
+        "text": "沿当前原声缓慢移动"
+      },
+      {
+        "type": "image_url",
+        "image_url": {
+          "url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAFoCAIAAABIUN0GAAAACXBIWXMAAAABAAAAAQBPJcTWAAAFnUlEQVR4nO3VwQmAMADAwFrcf+TWHQoS0LsJ8su1xxp8116zTgAOzbHrBF501wEA8EcGDAABAwaAgAEDQMCAASBgwAAQMGAACBgwAAQMGAACBgwAAQMGgIABA0DAgAEgYMAAEDBgAAgYMAAEDBgAAgYMAAEDBoCAAQNAwIABIGDAABAwYAAIGDAABAwYAAIGDAABAwaAgAEDQMCAASBgwAAQMGAACBgwAAQMGAACBgwAAQMGgIABA0DAgAEgYMAAEDBgAAgYMAAEDBgAAgYMAAEDBoCAAQNAwIABIGDAABAwYAAIGDAABAwYAAIGDAABAwaAgAEDQMCAASBgwAAQMGAACBgwAAQMGAACBgwAAQMGgIABA0DAgAEgYMAAEDBgAAgYMAAEDBgAAgYMAAEDBoCAAQNAwIABIGDAABAwYAAIGDAABAwYAAIGDAABAwaAgAEDQMCAASBgwAAQMGAACBgwAAQMGAACBgwAAQMGgIABA0DAgAEgYMAAEDBgAAgYMAAEDBgAAgYMAAEDBoCAAQNAwIABIGDAABAwYAAIGDAABAwYAAIGDAABAwaAgAEDQMCAASBgwAAQMGAACBgwAAQMGAACBgwAAQMGgIABA0DAgAEgYMAAEDBgAAgYMAAEDBgAAgYMAAEDBoCAAQNAwIABIGDAABAwYAAIGDAABAwYAAIGDAABAwaAgAEDQMCAASBgwAAQMGAACBgwAAQMGAACBgwAAQMGgIABA0DAgAEgYMAAEDBgAAgYMAAEDBgAAgYMAAEDBoCAAQNAwIABIGDAABAwYAAIGDAABAwYAAIGDAABAwaAgAEDQMCAASBgwAAQMGAACBgwAAQMGAACBgwAAQMGgIABA0DAgAEgYMAAEDBgAAgYMAAEDBgAAgYMAAEDBoCAAQNAwIABIGDAABAwYAAIGDAABAwYAAIGDAABAwaAgAEDQMCAASBgwAAQMGAACBgwAAQMGAACBgwAAQMGgIABA0DAgAEgYMAAEDBgAAgYMAAEDBgAAgYMAAEDBoCAAQNAwIABIGDAABAwYAAIGDAABAwYAAIGDAABAwaAgAEDQMCAASBgwAAQMGAACBgwAAQMGAACBgwAAQMGgIABA0DAgAEgYMAAEDBgAAgYMAAEDBgAAgYMAAEDBoCAAQNAwIABIGDAABAwYAAIGDAABAwYAAIGDAABAwaAgAEDQMCAASBgwAAQMGAACBgwAAQMGAACBgwAAQMGgIABA0DAgAEgYMAAEDBgAAgYMAAEDBgAAgYMAAEDBoCAAQNAwIABIGDAABAwYAAIGDAABAwYAAIGDAABAwaAgAEDQMCAASBgwAAQMGAACBgwAAQMGAACBgwAAQMGgIABA0DAgAEgYMAAEDBgAAgYMAAEDBgAAgYMAAEDBoCAAQNAwIABIGDAABAwYAAIGDAABAwYAAIGDAABAwaAgAEDQMCAASBgwAAQMGAACBgwAAQMGAACBgwAAQMGgIABA0DAgAEgYMAAEDBgAAgYMAAEDBgAAgYMAAEDBoCAAQNAwIABIGDAABAwYAAIGDAABAwYAAIGDAABAwaAgAEDQMCAASBgwAAQMGAACBgwAAQMGAACBgwAAQMGgIABA0DAgAEgYMAAEDBgAAgYMAAEDBgAAgYMAAEDBoCAAQNAwIABIGDAABAwYAAIGDAABAwYAAIGDAABAwaAgAEDQMCAASBgwAAQMGAACBgwAAQMGAACBgwAAQMGgIABA0DAgAEgYMAAEDBgAAgYMAAEDBgAAgYMAAEDBoCAAQNAwIABIGDAABAwYAAIGDAABAwYAAIGDAABAwaAgAEDQMCAASBgwAAQMGAACBgwAAQMGAACBgwAAQMGgIABA0DAgAEgYMAAEDBgAAgYMAAEDBgAAgYMAAEDBoCAAQNAwIABIGDAABAwYAAIPHkDCpv5hVLWAAAAAElFTkSuQmCC"
+        },
+        "role": "first_frame"
+      }
+    ],
+    "duration": 5,
+    "ratio": "adaptive",
+    "resolution": "720p",
+    "generate_audio": false,
+    "watermark": false
+  },
+  "retainedMutedTts": {
+    "sourceSha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+    "durationSeconds": 2.4
+  },
+  "lateRouteAdoptionStatus": 409,
+  "unchangedProjectSha256": "8fb2363c4af0514b32304014e0e04ebb491698d25d4862c58ec7a136190b8d18",
+  "episodeStage": "storyboard_approved"
+}

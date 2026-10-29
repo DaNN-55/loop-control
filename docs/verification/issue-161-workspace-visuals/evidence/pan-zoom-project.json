@@ -1,0 +1,175 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "06544c11-d8c9-407f-a2f3-00887f1f0fd7",
+    "transitionMode": "studio"
+  },
+  "assets": [
+    {
+      "id": "material-4b127f81-0e5b-47f1-9fad-f5e2f8e3b502",
+      "name": "shot.mp4",
+      "kind": "video",
+      "src": "episodes/9333ccb6-d4cf-4830-a8d7-2af1dc26b287/shot.mp4",
+      "durationInFrames": 60,
+      "width": 360,
+      "height": 640,
+      "sourceRevision": "4b127f81-0e5b-47f1-9fad-f5e2f8e3b502",
+      "sourceContentHash": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da"
+    },
+    {
+      "width": 640,
+      "height": 360,
+      "sourceContentHash": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "sourceRevision": "source-sha256-89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "id": "candidate-7827cc5d-d1aa-433b-b812-1c3b7de9c1c5",
+      "name": "shot-1",
+      "kind": "image",
+      "src": "episodes/9333ccb6-d4cf-4830-a8d7-2af1dc26b287/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-striped.png",
+      "durationInFrames": 60
+    },
+    {
+      "width": 640,
+      "height": 360,
+      "sourceContentHash": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "sourceRevision": "source-sha256-89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "id": "candidate-a37d47c7-ea9c-46e8-a3d4-98b1c5abb64c",
+      "name": "shot-1",
+      "kind": "image",
+      "src": "episodes/9333ccb6-d4cf-4830-a8d7-2af1dc26b287/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-striped.png",
+      "durationInFrames": 60
+    }
+  ],
+  "mediaFolders": [],
+  "activeTimelineId": "loop-control-9333ccb6-d4cf-4830-a8d7-2af1dc26b287",
+  "timelines": [
+    {
+      "id": "loop-control-9333ccb6-d4cf-4830-a8d7-2af1dc26b287",
+      "name": "整期剪辑",
+      "order": 0,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "fit": "contain",
+      "items": [
+        {
+          "id": "shot-shot-1-9d789bac-3d80-4d93-a96f-10a7514f49c3",
+          "track": "V1",
+          "kind": "image",
+          "name": "shot-1",
+          "startFrame": 0,
+          "durationInFrames": 60,
+          "width": 640,
+          "height": 360,
+          "transform": {
+            "scale": 1,
+            "x": 17,
+            "y": 0,
+            "rotation": 0
+          },
+          "src": "episodes/9333ccb6-d4cf-4830-a8d7-2af1dc26b287/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-striped.png",
+          "sourceAssetId": "candidate-a37d47c7-ea9c-46e8-a3d4-98b1c5abb64c",
+          "sourceRevision": "source-sha256-89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "sourceContentHash": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "srcInFrame": 0,
+          "volume": 0,
+          "loopControlShot": {
+            "workspaceId": "06544c11-d8c9-407f-a2f3-00887f1f0fd7",
+            "shotId": "shot-1",
+            "clipId": "9d789bac-3d80-4d93-a96f-10a7514f49c3",
+            "text": "第一镜",
+            "provenance": {
+              "materialRevisionId": "4b127f81-0e5b-47f1-9fad-f5e2f8e3b502",
+              "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+              "fileSize": 210288,
+              "kind": "video"
+            }
+          },
+          "loopControlCandidate": {
+            "inputFingerprint": "aa073df0784f823aec7d9bc582bde162a5163fee713a1ae562e15f23de875091",
+            "sourceId": "candidate-a37d47c7-ea9c-46e8-a3d4-98b1c5abb64c",
+            "durationPolicy": "keep-target",
+            "startFrame": 0,
+            "durationInFrames": 60,
+            "shotWindow": {
+              "startFrame": 0,
+              "durationInFrames": 60
+            }
+          },
+          "keyframes": {
+            "scale": [
+              {
+                "frame": 0,
+                "value": 1,
+                "easing": "linear"
+              },
+              {
+                "frame": 59,
+                "value": 1.15,
+                "easing": "linear"
+              }
+            ],
+            "x": [
+              {
+                "frame": 0,
+                "value": 17,
+                "easing": "linear"
+              },
+              {
+                "frame": 59,
+                "value": 20,
+                "easing": "linear"
+              }
+            ]
+          }
+        },
+        {
+          "id": "shot-shot-2-48b68cd7-6968-4b62-8c75-ea580880176f",
+          "track": "V1",
+          "kind": "video",
+          "name": "shot-2",
+          "startFrame": 60,
+          "durationInFrames": 60,
+          "width": 360,
+          "height": 640,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "src": "episodes/9333ccb6-d4cf-4830-a8d7-2af1dc26b287/shot.mp4",
+          "sourceAssetId": "material-4b127f81-0e5b-47f1-9fad-f5e2f8e3b502",
+          "sourceRevision": "4b127f81-0e5b-47f1-9fad-f5e2f8e3b502",
+          "sourceContentHash": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+          "srcInFrame": 0,
+          "volume": 0,
+          "loopControlShot": {
+            "workspaceId": "06544c11-d8c9-407f-a2f3-00887f1f0fd7",
+            "shotId": "shot-2",
+            "clipId": "48b68cd7-6968-4b62-8c75-ea580880176f",
+            "text": "缺少素材的第二镜。",
+            "provenance": {
+              "materialRevisionId": "4b127f81-0e5b-47f1-9fad-f5e2f8e3b502",
+              "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+              "fileSize": 210288,
+              "kind": "video"
+            }
+          }
+        }
+      ],
+      "trackOrder": [
+        "V1"
+      ],
+      "tracks": {
+        "V1": {
+          "kind": "video",
+          "name": "画面"
+        }
+      },
+      "transitions": [],
+      "selectedId": null,
+      "captionsHidden": false
+    }
+  ]
+}

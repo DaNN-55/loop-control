@@ -1,0 +1,383 @@
+{
+  "result": {
+    "status": "completed",
+    "taskId": "70930833-cb7f-4bb4-b0b9-3246befaac7f"
+  },
+  "submissionCount": 1,
+  "submittedDuration": 4,
+  "task": {
+    "id": "70930833-cb7f-4bb4-b0b9-3246befaac7f",
+    "task_type": "generate_a_roll",
+    "status": "completed",
+    "input_snapshot": {
+      "shot": {
+        "id": "shot-1",
+        "shotType": "a_roll",
+        "inputBasis": [
+          {
+            "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+            "relativePath": "episodes/e6beef03-486c-474c-b2c8-24eae01b2c3e/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-cli-first.png"
+          }
+        ],
+        "targetSpec": "9:16",
+        "scriptSegment": "第一镜",
+        "durationSeconds": 2,
+        "productionMethod": "全屏 TTS"
+      },
+      "media": {
+        "adapter": "seedance_video",
+        "wan_video": {
+          "audio": false,
+          "prompt": "Prepared CLI controlled visual",
+          "image_mime": "image/png",
+          "resolution": "720P",
+          "first_frame": {
+            "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+            "fileSize": 1515,
+            "artifactType": "wan_first_frame",
+            "relativePath": "episodes/e6beef03-486c-474c-b2c8-24eae01b2c3e/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-cli-first.png"
+          },
+          "duration_seconds": 4
+        }
+      },
+      "budget": {
+        "limit_cents": 90,
+        "max_attempts": 1
+      },
+      "output": {
+        "content_type": "video/mp4",
+        "review_stage": "production_ready",
+        "relative_path": "episodes/e6beef03-486c-474c-b2c8-24eae01b2c3e/native-tasks/70930833-cb7f-4bb4-b0b9-3246befaac7f/70930833-cb7f-4bb4-b0b9-3246befaac7f.mp4",
+        "required_artifact_types": [
+          "a_roll_video"
+        ]
+      },
+      "executor": {
+        "model": "doubao-seedance-2-0-260128",
+        "adapter": "seedance_video",
+        "provider": "volcengine"
+      },
+      "capability": "a_roll_generation",
+      "requested_by": "23e02afe-aac8-42f6-98c1-293c1e94d5ac",
+      "allowed_tools": [
+        "read",
+        "write"
+      ],
+      "credential_ref": "1b7c84be-bf62-4bb4-bafe-224e6d9620ff",
+      "wan_request_id": "717736d7-e6a1-4a0a-886d-9bf5fb6c1ac4",
+      "input_artifacts": [
+        {
+          "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "fileSize": 1515,
+          "artifactType": "wan_first_frame",
+          "relativePath": "episodes/e6beef03-486c-474c-b2c8-24eae01b2c3e/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-cli-first.png"
+        }
+      ],
+      "workspace_visual": {
+        "mode": "none",
+        "source": null,
+        "identity": "{\"mode\":\"none\"}",
+        "windowDurationSeconds": null
+      },
+      "configuration_hash": "70930833-cb7f-4bb4-b0b9-3246befaac7f",
+      "runtime_constraints": {
+        "source": {
+          "worker_capacity": 1,
+          "adapter_safety_limit": 1,
+          "provider_or_connection_limit": null
+        },
+        "version": "worker-runtime/v1",
+        "resource_limits": [
+          {
+            "key": "adapter:volcengine:seedance_video",
+            "limit": 1
+          },
+          {
+            "key": "connection:1b7c84be-bf62-4bb4-bafe-224e6d9620ff",
+            "limit": 1
+          },
+          {
+            "key": "provider:volcengine",
+            "limit": 1
+          }
+        ],
+        "concurrency_group": "volcengine:seedance_video:1b7c84be-bf62-4bb4-bafe-224e6d9620ff",
+        "effective_concurrency": 1
+      },
+      "native_output_namespace": "70930833-cb7f-4bb4-b0b9-3246befaac7f",
+      "workspace_visual_request_id": "717736d7-e6a1-4a0a-886d-9bf5fb6c1ac4",
+      "storyboard_review_package_id": "96661529-8f7e-457f-85a2-86ffeca1a13a"
+    },
+    "last_result": {
+      "retry": {
+        "reason": "Completed successfully.",
+        "shouldRetry": false
+      },
+      "status": "completed",
+      "taskId": "70930833-cb7f-4bb4-b0b9-3246befaac7f",
+      "version": "worker-result/v1",
+      "blockers": [],
+      "nextStep": "Await the next controlled production step.",
+      "artifacts": [
+        {
+          "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+          "fileSize": 44148,
+          "artifactType": "a_roll_video",
+          "relativePath": "episodes/e6beef03-486c-474c-b2c8-24eae01b2c3e/native-tasks/70930833-cb7f-4bb4-b0b9-3246befaac7f/70930833-cb7f-4bb4-b0b9-3246befaac7f.mp4"
+        }
+      ],
+      "preflight": {
+        "checks": [
+          {
+            "check": "command_availability",
+            "phase": "preflight",
+            "scope": "worker",
+            "action": "none",
+            "reason": "本地受控规划执行路径；不自动调用在线Provider。",
+            "status": "passed",
+            "capability": "a_roll_generation"
+          }
+        ],
+        "version": "worker-preflight/v2"
+      },
+      "validation": {
+        "checks": [
+          {
+            "name": "controlled_media_output",
+            "detail": "已按冻结 volcengine 适配器生成并校验主产物。",
+            "passed": true
+          },
+          {
+            "name": "native_media_mode",
+            "detail": "受控Provider响应和SecretStore替身；没有在线资格或在线生成证明。",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "actualCostCents": 0
+    }
+  },
+  "runs": [
+    {
+      "id": "8e8cb058-3e59-4e13-8452-85f26a7f2532",
+      "task_id": "70930833-cb7f-4bb4-b0b9-3246befaac7f",
+      "attempt": 0,
+      "task_package": {
+        "shot": {
+          "id": "shot-1",
+          "shotType": "a_roll",
+          "inputBasis": [
+            {
+              "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+              "relativePath": "episodes/e6beef03-486c-474c-b2c8-24eae01b2c3e/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-cli-first.png"
+            }
+          ],
+          "targetSpec": "9:16",
+          "scriptSegment": "第一镜",
+          "durationSeconds": 2,
+          "productionMethod": "全屏 TTS"
+        },
+        "task": {
+          "id": "70930833-cb7f-4bb4-b0b9-3246befaac7f",
+          "type": "generate_a_roll",
+          "attempt": 0
+        },
+        "media": {
+          "adapter": "seedance_video",
+          "wan_video": {
+            "audio": false,
+            "prompt": "Prepared CLI controlled visual",
+            "image_mime": "image/png",
+            "resolution": "720P",
+            "first_frame": {
+              "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+              "fileSize": 1515,
+              "artifactType": "wan_first_frame",
+              "relativePath": "episodes/e6beef03-486c-474c-b2c8-24eae01b2c3e/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-cli-first.png"
+            },
+            "duration_seconds": 4
+          }
+        },
+        "budget": {
+          "attempt": 0,
+          "limit_cents": 90,
+          "max_attempts": 1
+        },
+        "output": {
+          "content_type": "video/mp4",
+          "review_stage": "production_ready",
+          "relative_path": "episodes/e6beef03-486c-474c-b2c8-24eae01b2c3e/native-tasks/70930833-cb7f-4bb4-b0b9-3246befaac7f/70930833-cb7f-4bb4-b0b9-3246befaac7f.mp4",
+          "required_artifact_types": [
+            "a_roll_video"
+          ]
+        },
+        "episode": {
+          "id": "e6beef03-486c-474c-b2c8-24eae01b2c3e",
+          "title": "四步制作 T02 验收",
+          "account_id": "4c72f065-103c-49be-ba88-d303d92d7226",
+          "blueprint_version_id": "4c72f065-103c-49be-ba88-d303d92d7226"
+        },
+        "version": "worker-task/v1",
+        "executor": {
+          "model": "doubao-seedance-2-0-260128",
+          "adapter": "seedance_video",
+          "provider": "volcengine"
+        },
+        "capability": "a_roll_generation",
+        "lease_token": "[isolated lease omitted]",
+        "allowed_tools": [
+          "read",
+          "write"
+        ],
+        "prompt_context": {
+          "hash": "b93d397afd49cb78176f714d5e12a05d",
+          "version": "prompt-context/v1",
+          "episode_input": {
+            "shot": {
+              "id": "shot-1",
+              "shotType": "a_roll",
+              "inputBasis": [
+                {
+                  "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+                  "relativePath": "episodes/e6beef03-486c-474c-b2c8-24eae01b2c3e/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-cli-first.png"
+                }
+              ],
+              "targetSpec": "9:16",
+              "scriptSegment": "第一镜",
+              "durationSeconds": 2,
+              "productionMethod": "全屏 TTS"
+            },
+            "media": {
+              "adapter": "seedance_video",
+              "wan_video": {
+                "audio": false,
+                "prompt": "Prepared CLI controlled visual",
+                "image_mime": "image/png",
+                "resolution": "720P",
+                "first_frame": {
+                  "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+                  "fileSize": 1515,
+                  "artifactType": "wan_first_frame",
+                  "relativePath": "episodes/e6beef03-486c-474c-b2c8-24eae01b2c3e/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-cli-first.png"
+                },
+                "duration_seconds": 4
+              }
+            },
+            "input_artifacts": [
+              {
+                "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+                "fileSize": 1515,
+                "artifactType": "wan_first_frame",
+                "relativePath": "episodes/e6beef03-486c-474c-b2c8-24eae01b2c3e/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-cli-first.png"
+              }
+            ]
+          },
+          "account_defaults": {},
+          "blueprint_version_id": "4c72f065-103c-49be-ba88-d303d92d7226",
+          "account_hard_constraints": {
+            "asset_root": "/private/tmp/loop-t06-volume-RvXu04/mounted/loop-153-mBydn8/account"
+          }
+        },
+        "input_artifacts": [
+          {
+            "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+            "fileSize": 1515,
+            "artifactType": "wan_first_frame",
+            "relativePath": "episodes/e6beef03-486c-474c-b2c8-24eae01b2c3e/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-cli-first.png"
+          }
+        ],
+        "forbidden_actions": [
+          "approve",
+          "publish",
+          "change_blueprint",
+          "change_episode_stage"
+        ],
+        "storyboard_review_package_id": "96661529-8f7e-457f-85a2-86ffeca1a13a"
+      },
+      "result": {
+        "retry": {
+          "reason": "Completed successfully.",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "70930833-cb7f-4bb4-b0b9-3246befaac7f",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "Await the next controlled production step.",
+        "artifacts": [
+          {
+            "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+            "fileSize": 44148,
+            "artifactType": "a_roll_video",
+            "relativePath": "episodes/e6beef03-486c-474c-b2c8-24eae01b2c3e/native-tasks/70930833-cb7f-4bb4-b0b9-3246befaac7f/70930833-cb7f-4bb4-b0b9-3246befaac7f.mp4"
+          }
+        ],
+        "preflight": {
+          "checks": [
+            {
+              "check": "command_availability",
+              "phase": "preflight",
+              "scope": "worker",
+              "action": "none",
+              "reason": "本地受控规划执行路径；不自动调用在线Provider。",
+              "status": "passed",
+              "capability": "a_roll_generation"
+            }
+          ],
+          "version": "worker-preflight/v2"
+        },
+        "validation": {
+          "checks": [
+            {
+              "name": "controlled_media_output",
+              "detail": "已按冻结 volcengine 适配器生成并校验主产物。",
+              "passed": true
+            },
+            {
+              "name": "native_media_mode",
+              "detail": "受控Provider响应和SecretStore替身；没有在线资格或在线生成证明。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 0
+      },
+      "status": "completed",
+      "actual_cost_cents": 0,
+      "started_at": "2026-10-29T16:51:51.234Z",
+      "completed_at": "2026-10-29T16:51:51.473Z",
+      "lease_token": "[isolated lease omitted]"
+    }
+  ],
+  "candidate": {
+    "durationImpact": {
+      "deltaSeconds": 2,
+      "overlapItemIds": [
+        "shot-shot-2-390959f3-88ea-46c6-984e-34e22f8bf632"
+      ]
+    },
+    "id": "717736d7-e6a1-4a0a-886d-9bf5fb6c1ac4",
+    "kind": "video",
+    "usage": "video",
+    "shotId": "shot-1",
+    "clipId": "ac241c1f-8f12-41c2-a481-7b457718c0bf",
+    "targetItemId": "shot-shot-1-ac241c1f-8f12-41c2-a481-7b457718c0bf",
+    "taskId": "70930833-cb7f-4bb4-b0b9-3246befaac7f",
+    "inputFingerprint": "f4539c4e5e834f3d643ff9d1cccdab0a20ab0daa3fcf0e6beeca62dcced95f49",
+    "text": "",
+    "mainScriptText": "",
+    "audioTrackId": null,
+    "relativePath": "episodes/e6beef03-486c-474c-b2c8-24eae01b2c3e/native-tasks/70930833-cb7f-4bb4-b0b9-3246befaac7f/70930833-cb7f-4bb4-b0b9-3246befaac7f.mp4",
+    "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+    "fileSize": 44148,
+    "durationSeconds": 4,
+    "width": 640,
+    "height": 360,
+    "currentDurationSeconds": 2,
+    "pendingConfirmation": false,
+    "status": "available"
+  },
+  "unchangedProjectSha256": "e4cc84d6dba154ae0a29b13c9fb3f6f5c111ea6f0720e55c7d8ad437e5675ede"
+}
