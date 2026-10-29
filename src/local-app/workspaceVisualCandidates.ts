@@ -36,6 +36,7 @@ export async function executeWorkspaceVisualCandidate(c:PoolClient,root:string,r
 
  if(command==='retryWorkspaceVisualCandidate'){
   if(typeof data.candidateId!=='string'||!uuid.test(data.candidateId))throw new ConfigurationError(400,'候选标识无效。');
+  if(!(await c.query('SELECT 1 FROM local_identity.workspace_visual_candidates WHERE id=$1 AND workspace_id=$2 AND episode_id=$3',[data.candidateId,row.id,row.episode_id])).rowCount)throw new ConfigurationError(404,'本工作空间视觉候选不存在。');
   try{await c.query('SELECT local_identity.retry_workspace_visual($1)',[data.candidateId]);}catch(error){if((error as {code?:string}).code==='55000')throw new ConfigurationError(409,'供应商提交结果未知或不能恢复；必须核对已有结果，不会创建重复付费任务。');throw error;}return readProductionWorkspace(c,row.episode_id,root);
  }
  if(command==='requestWorkspaceVisualCandidate'){

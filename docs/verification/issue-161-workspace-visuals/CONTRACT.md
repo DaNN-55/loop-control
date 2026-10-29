@@ -4,7 +4,7 @@
 
 ## Owner 命令
 
-所有工作空间命令沿用 Owner/CSRF、episode 归属、expectedRevision、历史只读和当前脚本/分镜边界。嵌入操作还必须等真实 SDK `writable === true`；字段缺失不表示可写。
+所有工作空间命令沿用 Owner/CSRF、episode 归属、expectedRevision、历史只读和当前脚本/分镜边界。重试同样先限定当前锁定 workspaceId/episodeId 下的候选；即使同一 Owner，另一生产单的 candidateId 也返回 404，原任务不变。嵌入操作还必须等真实 SDK `writable === true`；字段缺失不表示可写。
 
 | 命令 | 输入与结果 |
 | --- | --- |
