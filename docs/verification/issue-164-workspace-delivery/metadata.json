@@ -1,0 +1,42 @@
+{
+  "title": "交付验收",
+  "description": "真实文件",
+  "tags": [
+    "测试"
+  ],
+  "exportId": "497bd06a-b160-44f6-aa75-6155889f3264",
+  "contentSha256": "d75542d37ab00ed64644c72caf8b2a510b3b6eb09eac13bb816b203a6bca51f5",
+  "scriptRevisionId": "cc7f79df-b672-424c-91e9-c60f32dc021a",
+  "narration": [
+    {
+      "shotId": "shot-1",
+      "baselineText": "第一镜",
+      "sourceText": null,
+      "adoptedText": null,
+      "textCoverage": "no_recorded_text",
+      "windows": [],
+      "textSource": "not_recorded",
+      "sourceDiffersFromBaseline": null,
+      "differsFromBaseline": null,
+      "audioTrackId": null,
+      "sha256": null,
+      "itemId": null,
+      "source": null
+    },
+    {
+      "shotId": "shot-2",
+      "baselineText": "缺少素材的第二镜。",
+      "sourceText": null,
+      "adoptedText": null,
+      "textCoverage": "no_recorded_text",
+      "windows": [],
+      "textSource": "not_recorded",
+      "sourceDiffersFromBaseline": null,
+      "differsFromBaseline": null,
+      "audioTrackId": null,
+      "sha256": null,
+      "itemId": null,
+      "source": null
+    }
+  ]
+}
