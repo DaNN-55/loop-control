@@ -12,8 +12,8 @@ import {executeNativeNarration} from './narrationWorker';
 import {prepareNativeAttemptOutput} from './nativeAttemptOutput';
 import {verifyArtifactIndex} from '../worker/mediaLibrary';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
-export async function narrationFixture(origin?:string,onBase?:(f:Awaited<ReturnType<typeof productionWorkspaceFixture>>)=>void,videoConfiguration=false,skipWorkspace=false,controlledMedia?:{voice:string;video:string}){
- const f=await productionWorkspaceFixture({origin,migrations:['db/local/087-workspace-narration.sql'],runtime:{mediaReady:async()=>{},narrationReady:async()=>{},checkReferences:async()=>{},wake(){}}});
+export async function narrationFixture(origin?:string,onBase?:(f:Awaited<ReturnType<typeof productionWorkspaceFixture>>)=>void,videoConfiguration=false,skipWorkspace=false,controlledMedia?:{voice:string;video:string;testRootParent?:string}){
+ const f=await productionWorkspaceFixture({testRootParent:controlledMedia?.testRootParent,origin,migrations:['db/local/087-workspace-narration.sql'],runtime:{mediaReady:async()=>{},narrationReady:async()=>{},checkReferences:async()=>{},wake(){}}});
  onBase?.(f);
  try{
  const version=randomUUID(),connection=randomUUID(),secret=randomUUID();

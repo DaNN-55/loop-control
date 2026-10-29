@@ -13,3 +13,9 @@ it('routes one shot voice across repeated visual slots and preserves independent
  expect(readWorkspaceAudioMix(source,{s1:['visual-1','visual-2']}).voices[0]).toMatchObject({shotId:'s1',mode:'source',gainDb:-6});
  expect(applyWorkspaceAudioMix(source,{kind:'voice',workspaceId:'w',shotId:'s1',visualItemIds:['visual-1','visual-2'],mode:'none',gainDb:0,ambienceGainDb:null}).timelines[0].items.filter(i=>i.kind==='audio')).toHaveLength(0);
 });
+it('mixes music and effects independently and refuses unprepared voice sources',()=>{
+ const p=project();p.timelines[0].items.push({id:'music',kind:'audio',track:'music-track',src:'music.mp3',startFrame:0,durationInFrames:120,volume:.25,loopControlAudio:{kind:'bgm',workspaceId:'w'}},{id:'effect',kind:'audio',track:'effect-track',src:'effect.mp3',startFrame:30,durationInFrames:12,volume:.5,loopControlAudio:{kind:'sfx',workspaceId:'w'}});p.timelines[0].tracks['music-track']={kind:'audio',name:'music'};p.timelines[0].tracks['effect-track']={kind:'audio',name:'effect'};
+ const before=structuredClone(p.timelines[0].items.find(i=>i.id==='effect'));
+ const next=applyWorkspaceAudioMix(p,{kind:'sound',workspaceId:'w',itemId:'music',gainDb:-18,duckDepthDb:14});expect(next.timelines[0].tracks['music-track']).toMatchObject({role:'follower',audioRouting:{duckDepthDb:-14}});expect(next.timelines[0].items.find(i=>i.id==='effect')).toEqual(before);expect(next.timelines[0].tracks.captions).toEqual(p.timelines[0].tracks.captions);
+ expect(()=>applyWorkspaceAudioMix(p,{kind:'voice',workspaceId:'w',shotId:'s1',visualItemIds:['visual-1','visual-2'],mode:'source',gainDb:0,ambienceGainDb:null})).toThrow('准备');
+});

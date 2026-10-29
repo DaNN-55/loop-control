@@ -1,3 +1,4 @@
+import {defaultShotCaptionContract} from '../shotCaptions';
 // @vitest-environment node
 import {it,expect} from 'vitest';
 import {readFile} from 'node:fs/promises';
@@ -8,12 +9,13 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner prepares manual ep
  const f=await productionWorkspaceFixture({migrations:['db/local/088-workspace-audio.sql'],runtime:{wake(){}}});try{
  const media=await workspaceAudioMedia(f.root);let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
  const send=(name:string,data={})=>f.request(name,{workspaceId:w.id,expectedRevision:w.revision,...data});
+ const captions=defaultShotCaptionContract(w.clips[0].text,'independent');captions.cues=[{id:'caption',text:w.clips[0].text,startMs:0,endMs:1000}];let saved=await send('saveWorkspaceCaptions',{clipId:w.clips[0].id,captionContract:captions});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body;saved=await send('confirmWorkspaceCaptionText',{clipId:w.clips[0].id,expectedInputFingerprint:w.captions[0].inputFingerprint});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body;const captionFingerprint=w.captions[0].inputFingerprint;
  const imported=await f.request('importMaterial',{sourceKind:'file',sourcePath:'music.mp3',contentBase64:(await readFile(media.bgm)).toString('base64'),materialType:'audio',mimeType:'audio/mpeg',isMainScript:false,materialPurpose:'background_music'});expect(imported.status,JSON.stringify(imported.body)).toBe(200);
  const prepared=await send('prepareWorkspaceAudio',{kind:'bgm',materialRevisionId:imported.body.id,description:'人工整期配乐',durationSeconds:4,anchor:'absolute',offsetSeconds:0});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);w=prepared.body;expect(w.audio.preparations[0].taskId).toBeNull();
  const adopted=await send('adoptWorkspaceAudio',{preparationId:w.audio.preparations[0].id});expect(adopted.status,JSON.stringify(adopted.body)).toBe(200);w=adopted.body;expect(w.audio.mix.sounds).toHaveLength(1);expect(w.audio.mix.sounds[0]).toMatchObject({kind:'bgm',durationSeconds:4,gainDb:-12});
  const mixed=await send('mixWorkspaceAudio',{edit:{kind:'sound',workspaceId:w.id,itemId:w.audio.mix.sounds[0].itemId,gainDb:-18,duckDepthDb:14}});expect(mixed.status,JSON.stringify(mixed.body)).toBe(200);w=mixed.body;
- expect(w.audio.mix.sounds[0]).toMatchObject({gainDb:-18,duckDepthDb:14});
- const project=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));expect(project.timelines[0].items.filter((i:any)=>i.kind==='audio')).toHaveLength(1);expect(project.timelines[0].tracks['workspace-bgm']).toMatchObject({role:'follower',audioRouting:{duckDepthDb:14}});
+ expect(w.audio.mix.sounds[0]).toMatchObject({gainDb:-18,duckDepthDb:14});expect(w.captions[0]).toMatchObject({inputFingerprint:captionFingerprint,timing:'current',textConfirmed:true});
+ const project=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));expect(project.timelines[0].items.filter((i:any)=>i.kind==='audio')).toHaveLength(1);expect(project.timelines[0].tracks['workspace-bgm']).toMatchObject({role:'follower',audioRouting:{duckDepthDb:-14}});
  expect((await f.c.query("SELECT count(*)::int n FROM public.tasks WHERE episode_id=$1 AND task_type='generate_soundtrack'",[f.episode])).rows[0].n).toBe(0);
  expect((await send('prepareWorkspaceAudio',{kind:'bgm',query:'ambient',description:'整期',durationSeconds:4})).status).toBe(409);
  expect((await f.request('mixWorkspaceAudio',{workspaceId:w.id,expectedRevision:w.revision,edit:{}},{csrf:false})).status).toBe(403);
@@ -25,9 +27,9 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Freesound preparation tr
  let w=f.made;const send=(name:string,data={})=>f.request(name,{workspaceId:w.id,expectedRevision:w.revision,...data});
  expect((await send('prepareWorkspaceAudio',{kind:'bgm',query:'ambient',description:'整期配乐',durationSeconds:4})).status).toBe(409);await f.authorize();
  const queued=await send('prepareWorkspaceAudio',{kind:'bgm',query:'ambient',description:'整期配乐',durationSeconds:4});expect(queued.status,JSON.stringify(queued.body)).toBe(200);w=queued.body;let prep=w.audio.preparations[0];expect(prep.status).toBe('ready');
- await import('node:fs/promises').then(fs=>fs.writeFile(f.audioResponseMode,'reject'));expect((await f.executeAudio(prep.taskId,false)).status).toBe('blocked');
+ await import('node:fs/promises').then(fs=>fs.writeFile(f.audioResponseMode,'reject'));expect((await f.executeAudio(prep.taskId,false)).status).toBe('failed');
  await f.restart();await import('node:fs/promises').then(fs=>fs.writeFile(f.audioResponseMode,'success'));const retry=await send('prepareWorkspaceAudio',{preparationId:prep.id,retry:true,kind:'bgm'});expect(retry.status,JSON.stringify(retry.body)).toBe(200);w=retry.body;expect(w.audio.preparations[0].taskId).not.toBe(prep.taskId);prep=w.audio.preparations[0];
- expect((await f.executeAudio(prep.taskId)).status).toBe('completed');const refresh=await send('refreshWorkspaceAudio');expect(refresh.status).toBe(200);w=refresh.body;expect(w.audio.preparations[0].source).toMatchObject({provider:'freesound',sourceId:'1',creator:'fixture',license:'https://creativecommons.org/publicdomain/zero/1.0/'});
+ expect((await f.executeAudio(prep.taskId)).status).toBe('completed');const refresh=await send('refreshWorkspaceAudio');expect(refresh.status).toBe(200);w=refresh.body;expect(w.audio.preparations[0].source).toMatchObject({provider:'freesound',sourceId:1,creator:'fixture',license:'https://creativecommons.org/publicdomain/zero/1.0/'});
  const adopted=await send('adoptWorkspaceAudio',{preparationId:prep.id});expect(adopted.status,JSON.stringify(adopted.body)).toBe(200);w=adopted.body;expect(w.audio.mix.sounds[0].kind).toBe('bgm');await f.restart();expect((await f.read()).audio.preparations[0].adoptedItemId).toBe('workspace-bgm');
  }finally{await f.close();}
 },180000);

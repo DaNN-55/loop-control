@@ -24,10 +24,10 @@ export function applyWorkspaceAudioMix(project:OpenChatCutProject,edit:Workspace
   if(!timeline||!item||item.kind!=='audio'||!['bgm','sfx'].includes(metadata(item)?.kind??''))throw Error('当前配乐或音效实例不存在。');
   if(edit.remove){timeline.items=timeline.items.filter(i=>i.id!==edit.itemId);return next;}
   item.volume=gain(edit.gainDb);const track=timeline.tracks[String(item.track)];
-  if(!track)throw Error('声音轨道不存在。');track.role=edit.duckDepthDb>0?'follower':undefined;track.audioRouting={duckDepthDb:edit.duckDepthDb};return next;
+  if(!track)throw Error('声音轨道不存在。');track.role=edit.duckDepthDb>0?'follower':undefined;track.audioRouting={duckDepthDb:-edit.duckDepthDb};return next;
  }
  if(edit.kind!=='voice'||typeof edit.shotId!=='string'||!Array.isArray(edit.visualItemIds)||!edit.visualItemIds.length||edit.visualItemIds.some(x=>typeof x!=='string')||!['source','tts','none'].includes(edit.mode)||edit.ambienceGainDb!==null&&!validDb(edit.ambienceGainDb,-60,-12))throw Error('主声音配置无效；环境声须不高于 -12 dB。');
- const ids=new Set(edit.visualItemIds),timelines=next.timelines.filter(t=>t.items.some(i=>ids.has(String(i.id))));
+ const ids=new Set(edit.visualItemIds);for(const t of next.timelines)for(const item of t.items)if((item.loopControlShot as {shotId?:string}|undefined)?.shotId===edit.shotId&&['video','image','text'].includes(String(item.kind)))ids.add(String(item.id));const timelines=next.timelines.filter(t=>t.items.some(i=>ids.has(String(i.id))));
  if(timelines.length!==1)throw Error('镜头画面跨时间线或已删除。');
  const timeline=timelines[0],visuals=timeline.items.filter(i=>ids.has(String(i.id)));
  if(visuals.length!==ids.size||visuals.some(i=>!['video','image','text'].includes(String(i.kind))))throw Error('画面实例已变化，请刷新。');
@@ -44,6 +44,7 @@ export function applyWorkspaceAudioMix(project:OpenChatCutProject,edit:Workspace
   const prior=edit.mode==='source'?oldSource:oldAmbience,sourceItemId=edit.sourceItemId??metadata(prior??{})?.sourceItemId,source=visuals.find(i=>i.id===sourceItemId),assetId=edit.sourceAssetId??metadata(prior??{})?.sourceAssetId;
   const asset=next.assets.find(a=>a.id===assetId&&a.kind==='audio');
   if(!source||source.kind!=='video'||!asset)throw Error('请先准备并选择本镜的原片音轨。');
+  const provenance=(asset as unknown as {loopControlAudioSource?:{videoAssetId?:string}}).loopControlAudioSource;if(provenance&&provenance.videoAssetId!==source.sourceAssetId)throw Error('画面来源已变化，请重新提取当前原片声音。');
   const start=Number(source.startFrame),duration=Number(source.durationInFrames),srcIn=Number(source.srcInFrame??0),rate=Number(source.playbackRate??1);
   if(!(rate>0)||srcIn+duration*rate>asset.durationInFrames+1)throw Error('原声音轨短于当前画面使用窗口。');
   const id=edit.mode==='source'?sourceId:ambienceId,track=edit.mode==='source'?'workspace-main-voice':'workspace-ambience';
@@ -58,7 +59,7 @@ export function readWorkspaceAudioMix(project:OpenChatCutProject,shots:Record<st
   const tts=items.find(i=>i.id===`workspace-narration-shot-${shotId}`),source=items.find(i=>i.id===`workspace-source-shot-${shotId}`),ambience=items.find(i=>i.id===`workspace-ambience-shot-${shotId}`),active=tts??source;
   return{shotId,mode:(tts?'tts':source?'source':'none') as WorkspaceVoiceMode,gainDb:active?db(active.volume):0,ambienceGainDb:ambience?db(ambience.volume):null,sourceItemId:metadata(source??ambience??{})?.sourceItemId??null,sourceAssetId:metadata(source??ambience??{})?.sourceAssetId??null};
  });
- const sounds=project.timelines.flatMap(t=>t.items.filter(i=>['bgm','sfx'].includes(metadata(i)?.kind??'')).map(i=>({itemId:String(i.id),kind:metadata(i)!.kind as 'bgm'|'sfx',gainDb:db(i.volume),duckDepthDb:Number(t.tracks[String(i.track)]?.audioRouting?.duckDepthDb??0),startSeconds:Number(i.startFrame)/t.fps,durationSeconds:Number(i.durationInFrames)/t.fps})));
+ const sounds=project.timelines.flatMap(t=>t.items.filter(i=>['bgm','sfx'].includes(metadata(i)?.kind??'')).map(i=>({itemId:String(i.id),kind:metadata(i)!.kind as 'bgm'|'sfx',gainDb:db(i.volume),duckDepthDb:Math.abs(Number(t.tracks[String(i.track)]?.audioRouting?.duckDepthDb??0)),startSeconds:Number(i.startFrame)/t.fps,durationSeconds:Number(i.durationInFrames)/t.fps})));
  return{voices,sounds};
 }
 
