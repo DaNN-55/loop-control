@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t02-draft-workflow/loop-control
+
+ ✓ src/local-app/embeddedStudio.integration.test.ts (1 test) 5096ms
+   ✓ Owner opens the real Studio and saves its versioned workspace through native HTTP  5095ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  17:43:17
+   Duration  5.50s (transform 179ms, setup 8ms, collect 241ms, tests 5.10s, environment 0ms, prepare 30ms)

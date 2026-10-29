@@ -22,7 +22,7 @@ export function useLoopControlHost(projectId,base,agent,panels){
           const ok=await live.current.agent.flushBeforeLeaveRef.current();
           result(ok,ok?undefined:'编辑器仍有未保存修改，请在编辑器中重试保存。');
         }else if(msg.action==='select'){
-          const item=live.current.base.state.items.find(i=>i.id===msg.itemId&&(i.kind==='video'||i.kind==='image'));
+          const item=live.current.base.state.items.find(i=>i.id===msg.itemId&&(i.kind==='video'||i.kind==='image'||i.kind==='text'&&i.id.startsWith('shot-')));
           if(!item){result(false,'当前工程中找不到该镜头。');return;}
           live.current.base.commands.selectItem(item.id);
           live.current.agent.playerRef.current?.seekTo(item.startFrame);
@@ -35,7 +35,7 @@ export function useLoopControlHost(projectId,base,agent,panels){
   },[projectId,active]);
   useEffect(()=>{
     if(!active)return;
-    emit('loop-control:state',{revision:++revision.current,selectedIds:Array.from(base.selection.selectedIds??[]),items:base.state.items.filter(i=>i.kind==='video'||i.kind==='image').map(i=>({id:i.id,startFrame:i.startFrame,durationInFrames:i.durationInFrames})),width:base.state.width,height:base.state.height});
+    emit('loop-control:state',{revision:++revision.current,selectedIds:Array.from(base.selection.selectedIds??[]),items:base.state.items.filter(i=>i.kind==='video'||i.kind==='image'||i.kind==='text'&&i.id.startsWith('shot-')).map(i=>({id:i.id,startFrame:i.startFrame,durationInFrames:i.durationInFrames})),width:base.state.width,height:base.state.height});
   },[base.doc,projectId,active]);
   return active?async()=>emit('loop-control:leave'):null;
 }

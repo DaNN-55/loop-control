@@ -6,7 +6,7 @@ import { createServer as createTcpServer, type Server } from "node:net";
 import { dirname, extname, isAbsolute, join, relative, resolve } from "node:path";
 import type { WorkerTaskPackage } from "./contracts.js";
 import { buildOpenChatCutProject, type OpenChatCutProject } from "./openchatcutProject.js";
-import { verifyOpenChatCutProject } from "./openchatcutProjectReader.js";
+import { inspectOpenChatCutProjectWithRuntime, verifyOpenChatCutProject } from "./openchatcutProjectReader.js";
 
 type ReviewRender = NonNullable<WorkerTaskPackage["reviewRender"]>;
 type Composition = Record<string, unknown>;
@@ -47,7 +47,7 @@ interface Session {
   workspace: OpenChatCutStudioSnapshot;
   reverseSources: Map<string, string>;
   child: ChildProcess;
-  render: ReviewRender;
+  render?: ReviewRender;
   runtimeConfig: OpenChatCutRuntimeConfig;
   baseProject: OpenChatCutProject;
   inputFingerprint: string;
@@ -125,10 +125,7 @@ export async function closeOpenChatCutStudio(episodeId: string): Promise<void> {
 }
 
 export async function openOpenChatCutStudio(assetRoot: string, episodeId: string, render: ReviewRender, runtimeConfig: OpenChatCutRuntimeConfig = {}, options: { replaceWorkspace?: boolean; validateProject?: StudioProjectValidator } = {}): Promise<OpenChatCutStudioOpenResult> {
-  const existing = sessions.get(episodeId);
-  const root = resolve(assetRoot);
-  const projectId = `loop-control-${episodeId}`;
-  await assertStudioWorkspace(root, episodeId, projectId);
+  const root = resolve(assetRoot), projectId = `loop-control-${episodeId}`;
   let project = buildOpenChatCutProject(render, projectId);
   if (render.studioProject) {
     const path = resolve(root, render.studioProject.relativePath);
@@ -138,7 +135,20 @@ export async function openOpenChatCutStudio(assetRoot: string, episodeId: string
     project = JSON.parse(bytes.toString("utf8")) as OpenChatCutProject;
   }
   if (render.confirmationMode === "shot_preparation") await verifyOpenChatCutProject(render, project, runtimeConfig, { requireConfirmedText: !render.studioProject, allowStudioEdits: Boolean(render.studioProject) });
-  const inputFingerprint = reviewRenderInputFingerprint(render, project);
+  return openStudioDocument(assetRoot,episodeId,project,render.members.map(m=>m.relativePath),reviewRenderInputFingerprint(render,project),render.adjustments as unknown as Composition,runtimeConfig,options,render);
+}
+
+export function isOpenChatCutStudio(episodeId:string):boolean{return sessions.has(episodeId);}
+
+export async function openOpenChatCutDraftStudio(assetRoot:string,episodeId:string,project:OpenChatCutProject,sourcePaths:string[],inputFingerprint:string,runtimeConfig:OpenChatCutRuntimeConfig={},validateProject?:StudioProjectValidator):Promise<OpenChatCutStudioOpenResult>{
+  await validateProject?.(project);
+  if(!(await inspectOpenChatCutProjectWithRuntime(project,runtimeConfig)).readable)throw Error('草稿不能由当前 OpenChatCut 读取。');
+  return openStudioDocument(assetRoot,episodeId,project,sourcePaths,inputFingerprint,undefined,runtimeConfig,{replaceWorkspace:true,validateProject});
+}
+
+async function openStudioDocument(assetRoot:string,episodeId:string,project:OpenChatCutProject,sourcePaths:string[],inputFingerprint:string,composition:Composition|undefined,runtimeConfig:OpenChatCutRuntimeConfig,options:{replaceWorkspace?:boolean;validateProject?:StudioProjectValidator},render?:ReviewRender):Promise<OpenChatCutStudioOpenResult>{
+  const existing=sessions.get(episodeId),root=resolve(assetRoot),projectId=`loop-control-${episodeId}`;
+  await assertStudioWorkspace(root,episodeId,projectId);
   if (existing) {
     if (existing.inputFingerprint === inputFingerprint) {
       existing.workspace = await persistCurrentWorkspace(root, existing, options.validateProject);
@@ -166,7 +176,7 @@ export async function openOpenChatCutStudio(assetRoot: string, episodeId: string
   const uploadDir = join(dataDir, "media", "uploads");
   await mkdir(uploadDir, { recursive: true });
   const reverseSources = new Map<string, string>();
-  const sourcePaths = [...new Set(render.members.map((member) => member.relativePath))];
+  sourcePaths = [...new Set(sourcePaths)];
   const copiedProject = structuredClone(project);
   for (const sourceRelativePath of sourcePaths) {
     const source = resolve(root, sourceRelativePath);
@@ -206,7 +216,7 @@ export async function openOpenChatCutStudio(assetRoot: string, episodeId: string
     const activeProject = structuredClone(activeStoredProject);
     rewriteSources(activeProject, reverseSources);
     try { await options.validateProject?.(activeProject); } catch (error) { validationError = error; throw error; }
-    const workspace = await persistProject(root, workspaceRelativePath, activeProject, render.adjustments as unknown as Composition, projectId);
+    const workspace = await persistProject(root, workspaceRelativePath, activeProject, composition, projectId);
     const session = { episodeId, projectId, baseUrl: `http://127.0.0.1:${port}`, dataDir, workspace, reverseSources, child, render, runtimeConfig, baseProject: project, inputFingerprint } satisfies Session;
     sessions.set(episodeId, session);
     child.once("close", () => { if (sessions.get(episodeId)?.child === child) sessions.delete(episodeId); });
@@ -229,7 +239,7 @@ export async function snapshotOpenChatCutStudio(assetRoot: string, episodeId: st
   }
   const project = await currentSessionProject(session);
   await validateProject?.(project);
-  if (session.render.confirmationMode === "shot_preparation") await verifyOpenChatCutProject(session.render, project, session.runtimeConfig, { requireConfirmedText: false, allowStudioEdits: true });
+  if (session.render?.confirmationMode === "shot_preparation") await verifyOpenChatCutProject(session.render, project, session.runtimeConfig, { requireConfirmedText: false, allowStudioEdits: true });
   session.workspace = await persistProject(resolve(assetRoot), session.workspace.relativePath, project, session.workspace.composition, session.projectId);
   return session.workspace;
 }
