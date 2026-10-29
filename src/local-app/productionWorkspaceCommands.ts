@@ -1,9 +1,11 @@
-import {resolveWorkspaceSource} from './workspaceSources.js';
-import {executeWorkspaceNarration,readWorkspaceNarration} from './workspaceNarration.js';
-import type {InputRuntime} from './episodeCommands.js';
+import {executeWorkspaceExport,readWorkspaceExports,usedWorkspaceContent} from './workspaceExportCommands.js';
+import {workspaceExportFields} from '../workspaceExport.js';
 import {saveWorkspaceVideoRanges} from './workspaceVideo.js';
 import {executeWorkspaceCaptionCommand,readWorkspaceCaptions} from './workspaceCaptionsCommands.js';
 import {workspaceCaptionFields} from '../workspaceCaptions.js';
+import {resolveWorkspaceSource} from './workspaceSources.js';
+import {executeWorkspaceNarration,readWorkspaceNarration} from './workspaceNarration.js';
+import type {InputRuntime} from './episodeCommands.js';
 import {matchWorkspaceImage,generateWorkspaceImage,fillWorkspaceImageResult} from './workspaceImages.js';
 import {randomUUID,createHash} from 'node:crypto';
 import {writeFile,mkdir} from 'node:fs/promises';
@@ -25,10 +27,14 @@ export async function readProductionWorkspace(c:PoolClient,episodeId:string,root
  const row=(await c.query('SELECT w.*,e.main_script_revision_id current_script,p.invalidated_at FROM local_identity.production_workspaces w JOIN public.episodes e ON e.id=w.episode_id JOIN public.review_packages p ON p.id=w.storyboard_package_id WHERE w.episode_id=$1',[episodeId])).rows[0];
  if(!row)return null;
  const project=JSON.parse((await verifyNativeFile(root,row.project_path,row.project_sha256,Number(row.project_size))).toString('utf8')) as OpenChatCutProject;
- const used=new Set(project.timelines.flatMap(t=>t.items.map(i=>String(i.id)))),placeholders=row.bindings.filter((b:WorkspaceClip)=>used.has(b.itemId)&&!b.source).map((b:WorkspaceClip)=>b.itemId),missingSources:string[]=[];
- for(const clip of row.bindings as WorkspaceClip[]){if(clip.source&&used.has(clip.itemId))try{await verifyNativeFile(root,clip.source.relativePath,clip.source.sha256,clip.source.fileSize);}catch{missingSources.push(clip.itemId);}}
+ const usedContent=usedWorkspaceContent(project),placeholders=row.bindings.filter((b:WorkspaceClip)=>usedContent.items.some(i=>i.id===b.itemId&&i.kind==='text'&&!i.src&&!b.source)).map((b:WorkspaceClip)=>b.itemId),missingSources:string[]=[];
+ for(const path of usedContent.paths)try{await resolveWorkspaceSource(c,root,episodeId,path);}catch{missingSources.push(path);}
+ let captionProblem=false;const captions=await readWorkspaceCaptions(c,root,{...row,bindings:row.bindings.filter((b:WorkspaceClip)=>usedContent.ids.has(b.itemId))},project).catch(()=>{captionProblem=true;return[];});
+ const exportState=await readWorkspaceExports(c,root,row),inputsReady=!placeholders.length&&!missingSources.length&&!captionProblem&&captions.filter(x=>usedContent.ids.has(x.itemId)&&x.contract.enabled).every(x=>x.timing==='current'&&x.textConfirmed),stale=row.current_script!==row.script_revision_id||!!row.invalidated_at;
+ if(!inputsReady||stale)for(const e of exportState.exports)e.confirmed=false;
+ const deliverable=inputsReady&&!stale&&!!exportState.exports[0]?.current&&exportState.exports[0].status==='ready'&&exportState.exports[0].checks.every(x=>x.passed);
  const history=(await c.query('SELECT revision,project_sha256,script_revision_id,reason FROM local_identity.production_workspace_versions WHERE workspace_id=$1 ORDER BY created_at DESC LIMIT 50',[row.id])).rows.map(v=>({revision:Number(v.revision),sha256:v.project_sha256,scriptRevisionId:v.script_revision_id,reason:v.reason}));
- return{captions:await readWorkspaceCaptions(c,root,row,project),id:row.id,episodeId,workflowVersion:row.workflow_version,scriptRevisionId:row.script_revision_id,storyboardPackageId:row.storyboard_package_id,revision:Number(row.revision),contentSha256:row.content_sha256,nativeEditRevision:Number(row.native_edit_revision),narration:await readWorkspaceNarration(c,row,project),clips:row.bindings,project:{relativePath:row.project_path,sha256:row.project_sha256,fileSize:Number(row.project_size),projectId:`loop-control-${episodeId}`},history,readiness:{deliverable:false,placeholders,missingSources},stale:row.current_script!==row.script_revision_id||!!row.invalidated_at};
+ return{...exportState,captions,id:row.id,episodeId,workflowVersion:row.workflow_version,scriptRevisionId:row.script_revision_id,storyboardPackageId:row.storyboard_package_id,revision:Number(row.revision),contentSha256:row.content_sha256,nativeEditRevision:Number(row.native_edit_revision),narration:await readWorkspaceNarration(c,row,project),clips:row.bindings,project:{relativePath:row.project_path,sha256:row.project_sha256,fileSize:Number(row.project_size),projectId:`loop-control-${episodeId}`},history,readiness:{deliverable,placeholders,missingSources},stale};
 }
 export function workspaceContentSha256(project:OpenChatCutProject):string{
  const content=structuredClone(project);for(const timeline of content.timelines){delete (timeline as unknown as Record<string,unknown>).selectedId;delete (timeline as unknown as Record<string,unknown>).selectedIds;}
@@ -74,8 +80,9 @@ export class ProductionWorkspaceCommands{
   if(command==='fillWorkspaceImageResult')return fillWorkspaceImageResult(c,root,e.id,data);
   if(command==='matchWorkspaceImage')return matchWorkspaceImage(c,root,e.id,data);
   const locked=await lockProductionWorkspace(c,root,e.id,data.workspaceId,data.expectedRevision);row=locked.row;const project=locked.project;
-  if(command.endsWith('WorkspaceNarration')){await executeWorkspaceNarration(c,root,row,project,runtime,command,data);return readProductionWorkspace(c,e.id,root);}
+  if(Object.hasOwn(workspaceExportFields,command)){await executeWorkspaceExport(c,root,row,project,runtime,command,data);return readProductionWorkspace(c,e.id,root);}
   if(Object.hasOwn(workspaceCaptionFields,command))return executeWorkspaceCaptionCommand(c,root,row,project,runtime,command,data);
+  if(command.endsWith('WorkspaceNarration')){await executeWorkspaceNarration(c,root,row,project,runtime,command,data);return readProductionWorkspace(c,e.id,root);}
   if(command==='matchWorkspaceMaterial'){
    if(isOpenChatCutStudio(e.id))throw new ConfigurationError(409,'请先保存并返回素材匹配，再填入指定占位。');
    const clip=row.bindings.find(b=>b.id===data.clipId);if(!clip||clip.source)throw new ConfigurationError(409,'占位已变化，请刷新；已有片段请在剪辑中调整。');
@@ -92,7 +99,7 @@ export class ProductionWorkspaceCommands{
   if(!runtime.studioRuntime)throw new ConfigurationError(503,'本地 Studio 未配置。');const config=await runtime.studioRuntime();
   const validate=(doc:OpenChatCutProject)=>validateWorkspaceProject(c,root,e.id,doc,config);
   if(command==='openWorkspaceStudio'){
-   const paths=project.assets.map(a=>a.src);const opened=await openOpenChatCutDraftStudio(root,e.id,project,paths,hash(JSON.stringify({id:row.id,bindings:row.bindings})),config,validate);
+   const paths=[...usedWorkspaceContent(project).paths];const opened=await openOpenChatCutDraftStudio(root,e.id,project,paths,hash(JSON.stringify({id:row.id,bindings:row.bindings})),config,validate);
    this.opened.add(e.id);const current=JSON.parse((await verifyNativeFile(root,opened.workspace.relativePath,opened.workspace.sha256,opened.workspace.fileSize)).toString('utf8')) as OpenChatCutProject;await updateWorkspaceProject(c,root,row,current,row.bindings);return{...opened,productionWorkspace:await readProductionWorkspace(c,e.id,root)};
   }
   if(command==='closeWorkspaceStudio'){await this.closeEpisode(e.id);return readProductionWorkspace(c,e.id,root);}
@@ -142,7 +149,7 @@ export async function readWorkspaceVersion(c:PoolClient,root:string,episodeId:st
 }
 
 export async function validateWorkspaceProject(c:PoolClient,root:string,episodeId:string,doc:OpenChatCutProject,config:OpenChatCutRuntimeConfig){
-   const sources=new Set<string>();const visit=(value:unknown)=>{if(Array.isArray(value)){value.forEach(visit);return;}if(value&&typeof value==='object')for(const[key,v]of Object.entries(value)){if(key==='src'&&typeof v==='string')sources.add(v);visit(v);}};visit(doc);
+   const sources=usedWorkspaceContent(doc).paths;
    for(const path of sources)await resolveWorkspaceSource(c,root,episodeId,path);
    if(!(await inspectOpenChatCutProjectWithRuntime(doc,config)).readable)throw new ConfigurationError(409,'当前草稿不能由 Studio 读取。');
 }
