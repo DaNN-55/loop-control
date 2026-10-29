@@ -14,6 +14,7 @@ export interface ProductionWorkspace {
 export const productionWorkspaceFields:Record<string,string[]>={
  ...workspaceAudioFields,
  ...workspaceDeliveryFields,
+ editWorkspaceStructure:['episodeId','workspaceId','expectedRevision','operation'],
  ...workspaceExportFields,
  saveWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId','mode','text','voice','speakingRate','audioTrackId'],
  confirmWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId'],
