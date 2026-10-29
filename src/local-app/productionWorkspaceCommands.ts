@@ -86,7 +86,9 @@ export class ProductionWorkspaceCommands{
   if(command==='saveWorkspaceStudio'){
    if(data.projectId!==`loop-control-${e.id}`||typeof data.workspaceRelativePath!=='string'||data.workspaceRelativePath!==`episodes/${e.id}/openchatcut-work/current/project.json`||data.expectedWorkspaceSha256!==row.project_sha256)throw new ConfigurationError(409,'当前工程身份或文件版本已变化。');
    let file;try{file=await snapshotOpenChatCutStudio(root,e.id,`episodes/${e.id}/openchatcut-work/current/project.json`,row.project_sha256,validate);}catch(error){if(error instanceof ConfigurationError)throw error;throw new ConfigurationError(409,'Studio 会话或版本已失效，请重新打开当前工程。');}
-   const current=JSON.parse((await verifyNativeFile(root,file.relativePath,file.sha256,file.fileSize)).toString('utf8')) as OpenChatCutProject;await updateWorkspaceProject(c,root,row,current,row.bindings);return{...file,productionWorkspace:await readProductionWorkspace(c,e.id,root)};
+   const current=JSON.parse((await verifyNativeFile(root,file.relativePath,file.sha256,file.fileSize)).toString('utf8')) as OpenChatCutProject;
+   if(workspaceContentSha256(current)!==row.content_sha256)await c.query('UPDATE local_identity.production_workspaces SET native_edit_revision=native_edit_revision+1 WHERE id=$1',[row.id]);
+   await updateWorkspaceProject(c,root,row,current,row.bindings);return{...file,productionWorkspace:await readProductionWorkspace(c,e.id,root)};
   }
   throw new ConfigurationError(400,'不支持的工作台操作。');
  }
