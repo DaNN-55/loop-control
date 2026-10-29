@@ -1,0 +1,215 @@
+{
+  "recovery": {
+    "decision": "preserve",
+    "relativePath": "episodes/cfb823af-ba67-46f9-ad42-0198da92dee4/production-workspace/recoveries/fc86547819a239afd255ad38a1e2bf815c926142654c44017f172267a8045b97.json",
+    "sha256": "fc86547819a239afd255ad38a1e2bf815c926142654c44017f172267a8045b97",
+    "fileSize": 3605
+  },
+  "preparation": {
+    "origin": "legacy-board",
+    "scriptRevisionId": "4c9e2230-66c3-4776-b119-2af2a31f22ed",
+    "authorized": true,
+    "authorizationHash": "3354e7f2402ccead2eac2f3bebdeadb215494fdffe02d4fcce6814dfef09dfe9",
+    "shots": [
+      {
+        "shotId": "shot-1",
+        "origin": "legacy-board",
+        "shotType": "a_roll"
+      }
+    ]
+  },
+  "visualCandidates": [],
+  "visualTasks": [],
+  "visualTargets": [
+    {
+      "targetItemId": "shot-shot-1-full",
+      "voiceMode": "tts",
+      "durationSeconds": 2,
+      "providerDurationSeconds": 2,
+      "minimumSeconds": 2,
+      "maximumSeconds": 15
+    }
+  ],
+  "audio": {
+    "mix": {
+      "voices": [
+        {
+          "coverage": "full",
+          "startSeconds": 0,
+          "durationSeconds": 2,
+          "shotDurationSeconds": 2,
+          "sourceStartSeconds": 0,
+          "sourceLabel": null,
+          "alignmentReady": true,
+          "shotId": "shot-1",
+          "mode": "tts",
+          "gainDb": 0,
+          "ambienceGainDb": null,
+          "sourceItemId": null,
+          "sourceAssetId": null
+        }
+      ],
+      "sounds": []
+    },
+    "preparations": []
+  },
+  "deliveries": [],
+  "usedNarration": [
+    {
+      "sourceInFrame": 0,
+      "durationInFrames": 60,
+      "fps": 30,
+      "fullSourceUsed": true,
+      "shotId": "shot-1",
+      "itemId": "workspace-narration-shot-shot-1",
+      "audioTrackId": "d97a9f05-4426-4d4a-9694-4ae59b326df7",
+      "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b",
+      "taskId": "c9766c61-503d-42e1-8f6c-7dd5018c209d",
+      "text": "新的首次口播必须保留旧编辑。",
+      "mainScriptText": "第一镜",
+      "inputFingerprint": "9c2ab8b5f0064d94dbbc23b34376251a134310d54f083a3b5b768053ae2ee344",
+      "provenance": "owner_adoption"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "d97a9f05-4426-4d4a-9694-4ae59b326df7",
+      "kind": "audio",
+      "shotId": "shot-1",
+      "clipId": "b3ca1c51-00a3-4435-b4c6-a13c3bce4bf8",
+      "targetItemId": "workspace-narration-shot-shot-1",
+      "taskId": "c9766c61-503d-42e1-8f6c-7dd5018c209d",
+      "inputFingerprint": "9c2ab8b5f0064d94dbbc23b34376251a134310d54f083a3b5b768053ae2ee344",
+      "text": "新的首次口播必须保留旧编辑。",
+      "mainScriptText": "第一镜",
+      "audioTrackId": "d97a9f05-4426-4d4a-9694-4ae59b326df7",
+      "relativePath": "episodes/cfb823af-ba67-46f9-ad42-0198da92dee4/native-tasks/c9766c61-503d-42e1-8f6c-7dd5018c209d/shot-narration-shot-1-838f4dd870f454757b5ab32562e57cc2.mp3",
+      "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b",
+      "fileSize": 16556,
+      "durationSeconds": 2,
+      "pendingConfirmation": false,
+      "currentVoiceMode": "tts",
+      "currentDurationSeconds": 2,
+      "targetDurationSeconds": 2,
+      "durationImpact": {
+        "deltaSeconds": 0,
+        "overlapItemIds": []
+      },
+      "status": "adopted"
+    }
+  ],
+  "exports": [],
+  "exportIssues": [],
+  "captions": [
+    {
+      "clipId": "b3ca1c51-00a3-4435-b4c6-a13c3bce4bf8",
+      "itemId": "shot-shot-1-full",
+      "shotId": "shot-1",
+      "durationMs": 2000,
+      "contract": {
+        "version": "shot-captions/v1",
+        "enabled": false,
+        "contentMode": "follow_tts",
+        "text": "第一镜",
+        "cues": [],
+        "spatial": {
+          "version": "shot-caption-space/v2",
+          "anchor": "bottom-center",
+          "safeArea": "title-safe",
+          "aspectRatio": "9:16",
+          "insets": {
+            "top": 0.08,
+            "right": 0.08,
+            "bottom": 0.18,
+            "left": 0.08
+          },
+          "maxLines": 2,
+          "maxCharactersPerLine": 16
+        }
+      },
+      "inputFingerprint": "bd0d485663762229d1a62b631d29870a1247e5031d38e4536cae54de58b7cd7b",
+      "timing": "missing",
+      "textConfirmed": false,
+      "audioTrackId": "d97a9f05-4426-4d4a-9694-4ae59b326df7",
+      "narrationText": "新的首次口播必须保留旧编辑。",
+      "taskId": null,
+      "alignmentInputVersion": null,
+      "detail": null
+    }
+  ],
+  "id": "452e6bb5-2365-4576-8c24-61eccc3b05bf",
+  "episodeId": "cfb823af-ba67-46f9-ad42-0198da92dee4",
+  "workflowVersion": "four-step/v1",
+  "scriptRevisionId": "4c9e2230-66c3-4776-b119-2af2a31f22ed",
+  "storyboardPackageId": "003c9431-1cc4-4331-a73d-51a87d754bc5",
+  "revision": 2,
+  "contentSha256": "38bde3a4bfb0742b3e2e17ee15b2a7829dd856b19e8dac051c5dea761dcce3b6",
+  "nativeEditRevision": 2,
+  "narration": [
+    {
+      "requiresCandidateAdoption": true,
+      "clipId": "b3ca1c51-00a3-4435-b4c6-a13c3bce4bf8",
+      "shotId": "shot-1",
+      "mode": "tts",
+      "text": "新的首次口播必须保留旧编辑。",
+      "voice": "zh_female_vv_uranus_bigtts",
+      "languageCode": "zh-CN",
+      "speakingRate": 1,
+      "override": false,
+      "inputFingerprint": "9c2ab8b5f0064d94dbbc23b34376251a134310d54f083a3b5b768053ae2ee344",
+      "confirmed": true,
+      "taskId": "c9766c61-503d-42e1-8f6c-7dd5018c209d",
+      "status": "completed",
+      "error": null,
+      "audioTrackId": "d97a9f05-4426-4d4a-9694-4ae59b326df7",
+      "artifactId": "30077fbc-1d1a-42d3-996e-88f060665aa9",
+      "relativePath": "episodes/cfb823af-ba67-46f9-ad42-0198da92dee4/native-tasks/c9766c61-503d-42e1-8f6c-7dd5018c209d/shot-narration-shot-1-838f4dd870f454757b5ab32562e57cc2.mp3",
+      "sha256": "21367e1bb28c3f86626206d5349933c1755207ff4e2bf770e59606432875899b",
+      "fileSize": 16556,
+      "durationSeconds": 2,
+      "itemId": "workspace-narration-shot-shot-1",
+      "adoptedAudioTrackId": "d97a9f05-4426-4d4a-9694-4ae59b326df7"
+    }
+  ],
+  "clips": [
+    {
+      "id": "b3ca1c51-00a3-4435-b4c6-a13c3bce4bf8",
+      "text": "第一镜",
+      "itemId": "shot-shot-1-full",
+      "shotId": "shot-1",
+      "source": {
+        "kind": "video",
+        "sha256": "a8170765d9db83985ffb3efc7aef118e3afa18503034944cf9f657b8f208f1da",
+        "fileSize": 210288,
+        "relativePath": "episodes/cfb823af-ba67-46f9-ad42-0198da92dee4/shot.mp4",
+        "materialRevisionId": "822b5ecf-c393-447a-962a-238ba5cba3e3"
+      }
+    }
+  ],
+  "project": {
+    "relativePath": "episodes/cfb823af-ba67-46f9-ad42-0198da92dee4/production-workspace/versions/6693c08252787c832b1d46b4bf9f65216f5ee8de6e0e6da48cc32d73d9ffe2db.json",
+    "sha256": "6693c08252787c832b1d46b4bf9f65216f5ee8de6e0e6da48cc32d73d9ffe2db",
+    "fileSize": 5393,
+    "projectId": "loop-control-cfb823af-ba67-46f9-ad42-0198da92dee4"
+  },
+  "history": [
+    {
+      "revision": 2,
+      "sha256": "6693c08252787c832b1d46b4bf9f65216f5ee8de6e0e6da48cc32d73d9ffe2db",
+      "scriptRevisionId": "4c9e2230-66c3-4776-b119-2af2a31f22ed",
+      "reason": "采用局部口播候选"
+    },
+    {
+      "revision": 1,
+      "sha256": "e71cd867f1306a49d54557e6198cde2009d02b0a47d1c4f482e39827398a7b7d",
+      "scriptRevisionId": "4c9e2230-66c3-4776-b119-2af2a31f22ed",
+      "reason": "首次组装"
+    }
+  ],
+  "readiness": {
+    "deliverable": false,
+    "placeholders": [],
+    "missingSources": []
+  },
+  "stale": false
+}

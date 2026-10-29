@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t13-formal-workflow/loop-control
+
+ ✓ src/local-app/workspaceReviewFixes.integration.test.ts (7 tests | 6 skipped) 3384ms
+   ✓ preserved legacy native edits stay protected when their first workspace speech completes  3383ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 6 skipped (7)
+   Start at  03:32:20
+   Duration  3.85s (transform 257ms, setup 7ms, collect 349ms, tests 3.38s, environment 0ms, prepare 26ms)

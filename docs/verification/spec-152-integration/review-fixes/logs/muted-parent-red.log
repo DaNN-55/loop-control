@@ -1,0 +1,29 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t13-formal-workflow/loop-control
+
+ ❯ src/local-app/workspaceReviewFixes.integration.test.ts (2 tests | 1 failed | 1 skipped) 10350ms
+   ↓ actual delivery does not claim narration muted by the leaf native track was spoken
+   × actual delivery does not claim narration muted by the parent native track was spoken 10350ms
+     → expected '这份已采用的口播在此导出中被明确静音。' to be null
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceReviewFixes.integration.test.ts > actual delivery does not claim narration muted by the parent native track was spoken
+AssertionError: expected '这份已采用的口播在此导出中被明确静音。' to be null
+
+- Expected:
+null
+
++ Received:
+"这份已采用的口播在此导出中被明确静音。"
+
+ ❯ src/local-app/workspaceReviewFixes.integration.test.ts:29:66
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 skipped (2)
+   Start at  03:05:47
+   Duration  10.83s (transform 264ms, setup 7ms, collect 353ms, tests 10.35s, environment 0ms, prepare 32ms)

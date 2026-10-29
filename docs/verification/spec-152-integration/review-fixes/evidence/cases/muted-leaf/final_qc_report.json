@@ -1,0 +1,67 @@
+{
+  "passed": true,
+  "exportId": "c8109cad-f730-46c4-8e90-a72f8c0ef831",
+  "contentSha256": "5dcc781bebe37068575a4bab86c2f5b82af3bdcefab74635d27cd82d4cb618b6",
+  "checks": [
+    {
+      "name": "used_content",
+      "detail": "已核对 3 个实际来源。",
+      "passed": true,
+      "sources": [
+        {
+          "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "fileSize": 1515,
+          "relativePath": "episodes/ce65ca15-d4f2-4548-979a-65a8a3e5fa20/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-still-striped.png"
+        },
+        {
+          "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "fileSize": 19628,
+          "relativePath": "episodes/ce65ca15-d4f2-4548-979a-65a8a3e5fa20/native-tasks/2943e08e-ee32-4270-8ddb-5fe74de17c78/shot-narration-shot-01-f858b37868c68e7f346f32d17574fa14.mp3"
+        },
+        {
+          "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "fileSize": 19628,
+          "relativePath": "episodes/ce65ca15-d4f2-4548-979a-65a8a3e5fa20/materials/9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100-controlled-narration-tone.mp3"
+        }
+      ]
+    },
+    {
+      "name": "captions",
+      "detail": "已核对 0 组必要字幕。",
+      "passed": true,
+      "evidence": []
+    },
+    {
+      "name": "technical",
+      "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。",
+      "passed": true,
+      "inspection": {
+        "width": 1080,
+        "height": 1920,
+        "hasAudio": true,
+        "blackFrameCount": 0,
+        "durationSeconds": 2.453333
+      },
+      "videoFrames": 72,
+      "audioExpected": true,
+      "videoDurationSeconds": 2.4,
+      "expectedDurationSeconds": 2.4,
+      "containerDurationSeconds": 2.453333
+    },
+    {
+      "name": "representative_frame",
+      "detail": "已实际解码代表帧。",
+      "passed": true,
+      "artifact": {
+        "sha256": "7ef6e5873339b7a3f28e237ddf8d29f7179eeaf6ecd32bba416291e244b3ad77",
+        "fileSize": 37183,
+        "relativePath": "episodes/ce65ca15-d4f2-4548-979a-65a8a3e5fa20/workspace-exports/c8109cad-f730-46c4-8e90-a72f8c0ef831/representative.jpg"
+      }
+    },
+    {
+      "name": "export_file",
+      "detail": "最终文件已按字节 SHA-256 与大小不可变登记。",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t13-formal-workflow/loop-control
+
+ ✓ src/local-app/WorkspaceNarrationPanel.test.tsx (4 tests) 60ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  03:18:11
+   Duration  1.15s (transform 47ms, setup 7ms, collect 718ms, tests 60ms, environment 251ms, prepare 26ms)

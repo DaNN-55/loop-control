@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t13-formal-workflow/loop-control
+
+ ✓ src/local-app/workspaceReviewFixes.integration.test.ts (2 tests) 20530ms
+   ✓ actual delivery does not claim narration muted by the leaf native track was spoken  10255ms
+   ✓ actual delivery does not claim narration muted by the parent native track was spoken  10274ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  03:06:51
+   Duration  21.00s (transform 268ms, setup 7ms, collect 363ms, tests 20.53s, environment 0ms, prepare 23ms)

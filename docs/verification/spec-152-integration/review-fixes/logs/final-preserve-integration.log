@@ -1,0 +1,27 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t13-formal-workflow/loop-control
+
+(node:80320) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/formalWorkflow.delivery.integration.test.ts (1 test) 21475ms
+   ✓ formal Owner workflow delivers exact native export with adopted text, mixed audio and traceable late unused results  21475ms
+ ✓ src/local-app/formalWorkflow.integration.test.ts (6 tests) 19457ms
+   ✓ Owner confirms a fresh script before visual materials exist  2869ms
+   ✓ Owner builds a formal incomplete draft without old storyboard approvals  3059ms
+   ✓ first formal adoption preserves the latest unsubmitted legacy Studio document  3253ms
+   ✓ late legacy render reports retain artifacts without advancing or approving the adopted workspace  1787ms
+   ✓ fresh formal and added shots generate through the real controlled Provider Worker without legacy approval  3882ms
+   ✓ ordinary scripts use the selected real planner task and verified artifact before preparation confirmation  4606ms
+ ✓ src/local-app/workspaceReviewFixes.integration.test.ts (7 tests) 46853ms
+   ✓ actual delivery does not claim narration muted by the leaf native track was spoken  12845ms
+   ✓ actual delivery does not claim narration muted by the parent native track was spoken  10454ms
+   ✓ first speech preserves Owner edits made before submission and requires the existing candidate decision  5483ms
+   ✓ first speech preserves Owner edits made during submission and requires the existing candidate decision  5487ms
+   ✓ first speech preserves Owner edits made captions submission and requires the existing candidate decision  4208ms
+   ✓ first speech preserves Owner edits made locked submission and requires the existing candidate decision  3651ms
+   ✓ preserved legacy native edits stay protected when their first workspace speech completes  4724ms
+
+ Test Files  3 passed (3)
+      Tests  14 passed (14)
+   Start at  03:33:49
+   Duration  88.59s (transform 284ms, setup 8ms, collect 500ms, tests 87.78s, environment 0ms, prepare 72ms)

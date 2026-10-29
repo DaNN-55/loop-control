@@ -1,0 +1,45 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t13-formal-workflow/loop-control
+
+ ❯ src/local-app/workspaceReviewFixes.integration.test.ts (2 tests | 2 failed) 15900ms
+   × actual delivery does not claim narration muted by the leaf native track was spoken 10437ms
+     → expected '这份已采用的口播在此导出中被明确静音。' to be null
+   × actual delivery does not claim narration muted by the parent native track was spoken 5462ms
+     → {"error":"当前草稿不能由 Studio 读取。"}: expected 409 to be 200 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceReviewFixes.integration.test.ts > actual delivery does not claim narration muted by the leaf native track was spoken
+AssertionError: expected '这份已采用的口播在此导出中被明确静音。' to be null
+
+- Expected:
+null
+
++ Received:
+"这份已采用的口播在此导出中被明确静音。"
+
+ ❯ src/local-app/workspaceReviewFixes.integration.test.ts:29:66
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/workspaceReviewFixes.integration.test.ts > actual delivery does not claim narration muted by the parent native track was spoken
+AssertionError: {"error":"当前草稿不能由 Studio 读取。"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ nativeEdit src/local-app/workspaceReviewFixes.integration.test.ts:14:344
+
+ ❯ src/local-app/workspaceReviewFixes.integration.test.ts:25:4
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  03:05:02
+   Duration  16.36s (transform 261ms, setup 7ms, collect 350ms, tests 15.90s, environment 0ms, prepare 29ms)

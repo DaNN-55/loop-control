@@ -1,0 +1,163 @@
+[
+  {
+    "source": "/private/tmp/loop-152-review-delete-red.log",
+    "rawSha256": "a5bfabf78a03da08bf5f7f5ae4a512926cfb8b61691a529ffca9956f1b6d8faa",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/delete-red.log",
+    "savedSha256": "66cd91a7cf2fce6b463f76dd4c1d487a9b605a97b38d791f418edbe818c55d14",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-delete-green.log",
+    "rawSha256": "94aee3b36acd7891f9f1e9646e24f3273c32d52b8dfe40a820f98b199f325a3f",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/delete-green.log",
+    "savedSha256": "46fede73fecae72e7211921c5e1b17a231241b6d26ec267472303728027c1f6a",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-muted-red.log",
+    "rawSha256": "ad6eeb5518c4345605d6b6a37771b33cbf4f06c94a25f1f8d2ccd42768c18718",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/muted-red.log",
+    "savedSha256": "9816c2360df1538a3d6b65e1d704f23d0f8e5142841313397ae1fba34038af97",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-muted-parent-red.log",
+    "rawSha256": "39de026fb14822aa385c9bfbe177bac8ace601842f9e5d91624020a5582a0a06",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/muted-parent-red.log",
+    "savedSha256": "b161bbaed116149dc89c32f2e5011ed9e5565f08579b6a21ed769d214c3768b9",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-muted-green.log",
+    "rawSha256": "50099e4fc3ea62aa32e01428e284075308a4279ba5f416a4ebd1a5cb21268118",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/muted-green.log",
+    "savedSha256": "3766187cee4b6845918103e2a22321fe7e187acc4721c414b2f3e290951f393f",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-first-speech-red.log",
+    "rawSha256": "cc1868332cd4885400226f91ae298d029c9eee737a7568bdd2cc03191645d8a5",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/first-speech-red.log",
+    "savedSha256": "4a622f8d20ff9f935b1bf89947c6c57948ec58f77fe5f3bd0bcd180bb2a48fbe",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-first-speech-green.log",
+    "rawSha256": "0028f24babf4ecc9da2b15ed6495bb3a868bd22cf0c14102896ceaf8b2ea4ae4",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/first-speech-green.log",
+    "savedSha256": "be4657a4d99ef5b43862b44527c92602b9c4d239c1c24fc0b850d650785324ab",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-locked-candidate-red.log",
+    "rawSha256": "0bc6f573ed98905b1686fd231c2707f4a69102f1aabe58dab0ab50a12174fba5",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/locked-candidate-red.log",
+    "savedSha256": "ef768b34873294883cae12aab9441d3fb2545b2f94353c589f8fdeb2170ab51e",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-first-all-green.log",
+    "rawSha256": "e101163550b4e3e4ab0542d9f05fd347c2627d0cd3ada1ce708fd96c07d95d12",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/first-all-green.log",
+    "savedSha256": "fd0fea453d02e93ec178bd885e643d26ba4e42b7a310795d98c9536418ca070a",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-preserve-first-red.log",
+    "rawSha256": "5247dff3855a8ebe46b41a7a8a3455ea143a38bb2970e23b8a0fa442d9b77b2c",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/preserve-first-red.log",
+    "savedSha256": "10a8a93f67ae014b45dee442f35531205e5e9fcaeadbd4b073d399fcd81881b1",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-preserve-first-business-red.log",
+    "rawSha256": "fc6be26d69c229a9738cbaa6d7e13643266e00590da9e6e12dac8ea9f379e9a0",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/preserve-first-business-red.log",
+    "savedSha256": "9dbe4d0abdb53573f97826e0ca173b7b114c2f3e646814b871dfdea914747a2b",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-preserve-first-green.log",
+    "rawSha256": "963e32f0177d2ea41e8ce2294ec8d2ee8c86bbda6bb9c232bd1f429a7e80e68e",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/preserve-first-green.log",
+    "savedSha256": "6c3754b005422fa0b7eb67bbe98dea2ff5f2e6f765e56ebf8a0a42bf3a64f325",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-preserve-first-green2.log",
+    "rawSha256": "ed37ebbaeca58716e2bf88c1681dbd4fad3bdaa9c8034a653f2f7966190e882c",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/preserve-first-green2.log",
+    "savedSha256": "148f4db95e699e1b6c9259f3d1a86072fe5a8ddaf5a0b2e632146de23a8cb608",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-narration-ui.log",
+    "rawSha256": "4b2ffb5a470bfbbe2cdb2edf9f2639eae79b09ba4dfa50c1d759f440e78bf477",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/narration-ui.log",
+    "savedSha256": "f020232171a6aa0d649e0266619f21de2c35d8b9523df1557b46882c9f659513",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-final-type.log",
+    "rawSha256": "928dd2453fd01e81e22aeb4106e166671312b96a2a55a28c6841f24d1af4c1b0",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/final-type.log",
+    "savedSha256": "2d6df7c81f0e82300cd961005451d9cdbb95b2f851cbcb7a52ad4146907ad148",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-final-build.log",
+    "rawSha256": "d76c3577d102b68f5ceef3307721e62fe0df9c02d8f804c43f272cd9be68f87a",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/final-build.log",
+    "savedSha256": "d76c3577d102b68f5ceef3307721e62fe0df9c02d8f804c43f272cd9be68f87a",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-final-prepare.log",
+    "rawSha256": "0888d176bbcea27ecb67435b2dc7c99dd17f79b24390833e2dc0fa7829411396",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/final-prepare.log",
+    "savedSha256": "0888d176bbcea27ecb67435b2dc7c99dd17f79b24390833e2dc0fa7829411396",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-final-npm-test.log",
+    "rawSha256": "6615de65ede7ccc2a516d9f239a9d812125feb7b19b7a582311a77de58e629e0",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/final-npm-test.log",
+    "savedSha256": "4f0a28d86b2eb38a7f959d580074a805f66945d8912362b80cc682eecc35d2b3",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-final-integration.log",
+    "rawSha256": "191481a4e1d843542072ffc125d336399bef7ed777a00f8ce8b396d68532e574",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/final-integration.log",
+    "savedSha256": "b1dbb09f18e5381c19f9472dca802d2df5e08d3b9274da01c88bb9b35e71a4d7",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-preserve-type.log",
+    "rawSha256": "928dd2453fd01e81e22aeb4106e166671312b96a2a55a28c6841f24d1af4c1b0",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/preserve-type.log",
+    "savedSha256": "2d6df7c81f0e82300cd961005451d9cdbb95b2f851cbcb7a52ad4146907ad148",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-preserve-build.log",
+    "rawSha256": "875ec438790c87f25926c9b1bae0ec21e9df40f60a6c0fe9cfb6e3ef4ff21bfd",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/preserve-build.log",
+    "savedSha256": "875ec438790c87f25926c9b1bae0ec21e9df40f60a6c0fe9cfb6e3ef4ff21bfd",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-preserve-prepare.log",
+    "rawSha256": "0888d176bbcea27ecb67435b2dc7c99dd17f79b24390833e2dc0fa7829411396",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/preserve-prepare.log",
+    "savedSha256": "0888d176bbcea27ecb67435b2dc7c99dd17f79b24390833e2dc0fa7829411396",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  },
+  {
+    "source": "/private/tmp/loop-152-review-final-preserve-integration.log",
+    "rawSha256": "92242d02b929e008160ebeb380236316dd1e4f7a871a1b0a8beaa166f6eca548",
+    "savedPath": "docs/verification/spec-152-integration/review-fixes/logs/final-preserve-integration.log",
+    "savedSha256": "4982a5c5abf354d3322fde91fd55d6e33977a1ba56800dd11d89d157d46f5a34",
+    "normalization": "Trailing horizontal whitespace per line and trailing empty lines removed; raw source unchanged"
+  }
+]

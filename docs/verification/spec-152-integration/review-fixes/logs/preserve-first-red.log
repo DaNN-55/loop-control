@@ -1,0 +1,34 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t13-formal-workflow/loop-control
+
+ ❯ src/local-app/workspaceReviewFixes.integration.test.ts (7 tests | 1 failed | 6 skipped) 1705ms
+   ↓ actual delivery does not claim narration muted by the leaf native track was spoken
+   ↓ actual delivery does not claim narration muted by the parent native track was spoken
+   ↓ first speech preserves Owner edits made before submission and requires the existing candidate decision
+   ↓ first speech preserves Owner edits made during submission and requires the existing candidate decision
+   ↓ first speech preserves Owner edits made captions submission and requires the existing candidate decision
+   ↓ first speech preserves Owner edits made locked submission and requires the existing candidate decision
+   × preserved legacy native edits stay protected when their first workspace speech completes 1704ms
+     → {"error":"请先核对当前音频正文并保存确认。"}: expected 409 to be 200 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceReviewFixes.integration.test.ts > preserved legacy native edits stay protected when their first workspace speech completes
+AssertionError: {"error":"请先核对当前音频正文并保存确认。"}: expected 409 to be 200 // Object.is equality
+
+- Expected
++ Received
+
+- 200
++ 409
+
+ ❯ src/local-app/workspaceReviewFixes.integration.test.ts:59:291
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 skipped (7)
+   Start at  03:26:19
+   Duration  2.20s (transform 270ms, setup 7ms, collect 366ms, tests 1.70s, environment 0ms, prepare 33ms)

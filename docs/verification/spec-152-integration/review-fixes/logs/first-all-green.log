@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 /Users/dan/.codex/worktrees/t13-formal-workflow/loop-control
+
+ ✓ src/local-app/workspaceReviewFixes.integration.test.ts (6 tests | 2 skipped) 17974ms
+   ✓ first speech preserves Owner edits made before submission and requires the existing candidate decision  5388ms
+   ✓ first speech preserves Owner edits made during submission and requires the existing candidate decision  5257ms
+   ✓ first speech preserves Owner edits made captions submission and requires the existing candidate decision  3959ms
+   ✓ first speech preserves Owner edits made locked submission and requires the existing candidate decision  3368ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed | 2 skipped (6)
+   Start at  03:16:03
+   Duration  18.45s (transform 266ms, setup 7ms, collect 357ms, tests 17.97s, environment 0ms, prepare 27ms)
