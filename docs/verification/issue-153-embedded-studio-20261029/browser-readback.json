@@ -1,0 +1,41 @@
+[
+  {
+    "scenario": "browser",
+    "episode": "a4958528-dfc0-4ce8-99b3-893a175c8f02",
+    "width": 1080,
+    "height": 1920,
+    "transform": {
+      "scale": 1,
+      "x": 99,
+      "y": 0,
+      "rotation": 0
+    },
+    "sha256": "f0fc4865c3dd2550b2416ed6de665c2afe4f2213cbb3a8b4f565421afdd1ea24"
+  },
+  {
+    "scenario": "landscape",
+    "episode": "867c531e-1298-42c7-a0fe-98fb916628b1",
+    "width": 640,
+    "height": 360,
+    "transform": {
+      "scale": 1,
+      "x": 0,
+      "y": 0,
+      "rotation": 0
+    },
+    "sha256": "20c007244e344d6de5d276836d26959f72dbc63a9ed410b2d37d8a7a0c312e21"
+  },
+  {
+    "scenario": "same-port-recovery",
+    "episode": "89cfed04-4248-4fbc-bc3f-9267a6cc2133",
+    "width": 640,
+    "height": 360,
+    "transform": {
+      "scale": 1,
+      "x": 18,
+      "y": 0,
+      "rotation": 0
+    },
+    "sha256": "43faa569a72972d90b7d76220ad5093d78cf1264e73cc2d835c501cd90bcd8ff"
+  }
+]

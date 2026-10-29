@@ -30,7 +30,7 @@ export class NativeStudioCommands {
   if(command==='requestStudioCompositionRevision'){
    const qc=await this.currentPackage(c,e.id,'qc_review');if(e.stage!=='qc_review'||!qc||qc.id!==data.reviewPackageId)throw new ConfigurationError(409,'当前审核包已变化，请刷新。');
    const sourcePath=qc.context_snapshot.project_relative_path,basis=await this.basis(c,e,root,sourcePath),binding=this.bindings.get(e.id);
-   if(!binding||binding.basis.hash!==basis.hash){const opened=await openOpenChatCutStudio(root,e.id,basis.render,config);if(!opened.studioUrl)throw new ConfigurationError(409,'工作版本存在输入变更，请先打开 Studio 确认保留或替换。');this.bindings.set(e.id,{basis,workspaceRelativePath:opened.workspace.relativePath});}
+   if(!binding||binding.basis.hash!==basis.hash){const opened=await openOpenChatCutStudio(root,e.id,basis.render,config,{validateProject:project=>this.assertProjectSources(project,basis.render)});if(!opened.studioUrl)throw new ConfigurationError(409,'工作版本存在输入变更，请先打开 Studio 确认保留或替换。');this.bindings.set(e.id,{basis,workspaceRelativePath:opened.workspace.relativePath});}
    return this.execute(c,e,root,runtime,'submitStudioRevision',{...data,sourceProjectRelativePath:sourcePath,workspaceRelativePath:this.bindings.get(e.id)!.workspaceRelativePath});
   }
   if(command==='requestStudioStoryboardRevision'){
@@ -39,17 +39,26 @@ export class NativeStudioCommands {
    const result=(await c.query('SELECT to_jsonb(public.request_studio_storyboard_revision($1,$2)) result',[qc.id,reason])).rows[0].result;
    await closeOpenChatCutStudio(e.id);this.bindings.delete(e.id);return result;
   }
+  await c.query('SELECT pg_advisory_xact_lock(hashtextextended($1,0))',[e.id+':studio']);
   const sourcePath=command==='openStudio'?data.projectRelativePath:data.sourceProjectRelativePath;
   if(typeof sourcePath!=='string'||!sourcePath.startsWith(`episodes/${e.id}/`))throw new ConfigurationError(400,'Studio 来源路径无效。');
   const basis=await this.basis(c,e,root,sourcePath);
   if(command==='openStudio'){
    if(data.replaceWorkspace!==undefined&&typeof data.replaceWorkspace!=='boolean')throw new ConfigurationError(400,'工作版本替换参数无效。');
-   const opened=await openOpenChatCutStudio(root,e.id,basis.render,config,{replaceWorkspace:data.replaceWorkspace===true});
+   const opened=await openOpenChatCutStudio(root,e.id,basis.render,config,{replaceWorkspace:data.replaceWorkspace===true,validateProject:project=>this.assertProjectSources(project,basis.render)});
    if(opened.studioUrl){try{await this.verifyProjectSources(root,opened.workspace,basis.render);}catch(error){await closeOpenChatCutStudio(e.id);this.bindings.delete(e.id);throw error;}this.bindings.set(e.id,{basis,workspaceRelativePath:opened.workspace.relativePath});}
    return opened;
   }
   const binding=this.bindings.get(e.id);
   if(!binding||binding.basis.hash!==basis.hash||binding.workspaceRelativePath!==data.workspaceRelativePath)throw new ConfigurationError(409,'Studio 会话或输入已变化，请重新打开当前工程后提交。');
+  if(command==='saveStudio'){
+   if(data.projectId!==`loop-control-${e.id}`)throw new ConfigurationError(409,'Studio 工程身份已变化，请重新打开当前工程。');
+   if(typeof data.expectedWorkspaceSha256!=='string'||!/^[a-f0-9]{64}$/.test(data.expectedWorkspaceSha256))throw new ConfigurationError(400,'请携带当前工作版本指纹。');
+   let workspace;
+   try{workspace=await snapshotOpenChatCutStudio(root,e.id,binding.workspaceRelativePath,data.expectedWorkspaceSha256,project=>this.assertProjectSources(project,basis.render));}
+   catch(error){if((error as {code?:string}).code==='STUDIO_WORKSPACE_CHANGED')throw new ConfigurationError(409,'工作版本已变化，请重新打开当前工程后保存。');throw error;}
+   return workspace;
+  }
   if(command==='generateReviewVideo'&&(basis.mode!=='workbench'||data.reviewPackageId!==basis.reviewPackageId))throw new ConfigurationError(409,'请从当前整期镜头工作版本生成审核视频。');
   if(command==='submitStudioRevision'&&(e.stage!=='qc_review'||basis.mode!=='qc'||data.reviewPackageId!==basis.reviewPackageId))throw new ConfigurationError(409,'请从当前 QC 工作版本提交修订。');
   if(data.acceptDurationRisk!==undefined&&typeof data.acceptDurationRisk!=='boolean')throw new ConfigurationError(400,'时长风险接受参数无效。');
@@ -89,6 +98,9 @@ export class NativeStudioCommands {
  }
  private async verifyProjectSources(root:string,file:{relativePath:string;sha256:string;fileSize:number},render:Render){
   const project=JSON.parse((await this.file(root,file.relativePath,file.sha256,file.fileSize)).toString('utf8'));
+  this.assertProjectSources(project,render);
+ }
+ private assertProjectSources(project:unknown,render:Render){
   const allowed=new Set(render.members.map(m=>m.relativePath));
   const visit=(value:unknown)=>{if(Array.isArray(value))return value.forEach(visit);if(!value||typeof value!=='object')return;for(const[key,entry]of Object.entries(value)){if(key==='src'&&typeof entry==='string'&&!allowed.has(entry))throw new ConfigurationError(409,'Studio 包含当前冻结输入以外的素材，请先经材料工作流批准。');visit(entry);}};visit(project);
  }

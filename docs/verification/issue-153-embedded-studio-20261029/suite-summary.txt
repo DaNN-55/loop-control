@@ -1,0 +1,53 @@
+Full suite
+ FAIL  scripts/local-service-record.test.mjs > 本地服务安全停止 > 未知进程即使占用记录端口也不会被关闭
+ FAIL  scripts/local-service-record.test.mjs > 本地服务安全停止 > 只关闭项目根目录、命令身份和监听端口都匹配的实际项目进程
+ FAIL  scripts/local-service-record.test.mjs > 本地服务安全停止 > 服务记录丢失后仍发现并关闭本项目的孤儿进程
+ FAIL  src/local-app/accountPreflightRoute.test.ts > reports locked Provider networking independently from connection qualification through Owner HTTP
+ FAIL  src/local-app/accountPreflightRoute.test.ts > reports both locked networking and missing qualification without calling a Provider or reading secrets
+ FAIL  src/local-app/accountPreflightRoute.test.ts > keeps missing connection qualification actionable when networking is available
+ FAIL  src/local-app/accountPreflightRoute.test.ts > rejects an unavailable exact secret even when networking and recorded qualification are available
+ FAIL  src/local-app/accountPreflightRoute.test.ts > identifies a missing planning model without claiming that Provider and Prompt are also missing
+ FAIL  src/local-app/accountPreflightRoute.test.ts > reports incomplete planning configuration separately from runtime readiness
+ FAIL  src/local-app/accountPreflightRoute.test.ts > reports readiness after the current configuration, qualification and runtime checks pass
+ FAIL  src/local-app/artifactRoute.test.ts > serves verified media byte ranges for seeking and rejects invalid ranges or tampered bytes
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > accepts Owner text review only for the exact current audio, text and alignment identity
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > rejects a late Owner review after audioTrackId changes without writing a confirmation
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > rejects a late Owner review after audioSha256 changes without writing a confirmation
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > rejects a late Owner review after textFingerprint changes without writing a confirmation
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > rejects a late Owner review after alignmentInputVersion changes without writing a confirmation
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > rejects generateSyncPreview at Owner HTTP until current content review is saved
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > rejects confirmSyncPreview at Owner HTTP until current content review is saved
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > keeps the Owner permission boundary for anonymous text review
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > keeps the Owner permission boundary for no-csrf text review
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > keeps the Owner permission boundary for cross-origin text review
+ FAIL  src/local-app/captionTextConfirmationRoute.test.ts > rejects malformed confirmation identities before writing state
+ FAIL  src/local-app/localRoute.test.ts > rejects cross-origin and Host-mismatched local authentication without accessing the database
+ FAIL  src/local-app/manualVerification.test.ts > cancels a real in-flight HTTP request on caller abort
+ FAIL  src/local-app/ownerPasswordRoute.test.ts > requires CSRF and a bounded password, hashes server-side and rechecks the active session atomically
+ FAIL  src/local-app/providerNetwork.test.ts > cancels the actual transport and records an unknown spent request after caller abort
+ FAIL  src/local-app/providerNetwork.test.ts > retains a completed real HTTP response when the caller aborts after completion
+ FAIL  src/local-app/standaloneStudioRoute.test.ts > opens standalone Studio through session/CSRF without any account or Episode, scopes its directory to the Owner and closes it with the app
+ FAIL  src/local-app/ImpeccableNavigation.test.tsx > 待审核合并到生产单，工作台审核入口使用真实目录筛选
+ FAIL  src/local-app/ImpeccableNavigation.test.tsx > 工作台生产单和阻塞队列独立服务端分页，筛选重置页码
+ FAIL  src/local-app/ImpeccableNavigation.test.tsx > 选择作品更新下一步，打开及返回详情保留第二页上下文
+ FAIL  src/local-app/ImpeccableNavigation.test.tsx > 搜索、状态和排序全部送服务端，切换范围重置分页且不写业务数据
+ FAIL  src/local-app/ImpeccableNavigation.test.tsx > 侧栏分组和底部工具保持已认可设计，Owner焦点与状态不丢
+ FAIL  src/local-app/ImpeccableNavigation.test.tsx > 制作区Studio失败通知仍在可操作区域并保留CSRF
+ FAIL  src/ui/PcVisualFixes.test.tsx > paginates 1284 series, searches all pages, and keeps the current editor draft while browsing
+ Test Files  11 failed | 135 passed (146)
+      Tests  35 failed | 976 passed (1011)
+
+Port-permission retries
+ Test Files  9 passed (9)
+      Tests  64 passed (64)
+
+Pre-task UI baseline
+ FAIL  src/ui/PcVisualFixes.test.tsx > paginates 1284 series, searches all pages, and keeps the current editor draft while browsing
+ FAIL  src/local-app/ImpeccableNavigation.test.tsx > 待审核合并到生产单，工作台审核入口使用真实目录筛选
+ FAIL  src/local-app/ImpeccableNavigation.test.tsx > 工作台生产单和阻塞队列独立服务端分页，筛选重置页码
+ FAIL  src/local-app/ImpeccableNavigation.test.tsx > 选择作品更新下一步，打开及返回详情保留第二页上下文
+ FAIL  src/local-app/ImpeccableNavigation.test.tsx > 搜索、状态和排序全部送服务端，切换范围重置分页且不写业务数据
+ FAIL  src/local-app/ImpeccableNavigation.test.tsx > 侧栏分组和底部工具保持已认可设计，Owner焦点与状态不丢
+ FAIL  src/local-app/ImpeccableNavigation.test.tsx > 制作区Studio失败通知仍在可操作区域并保留CSRF
+ Test Files  2 failed (2)
+      Tests  7 failed | 4 passed (11)

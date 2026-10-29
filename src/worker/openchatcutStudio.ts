@@ -10,6 +10,7 @@ import { verifyOpenChatCutProject } from "./openchatcutProjectReader.js";
 
 type ReviewRender = NonNullable<WorkerTaskPackage["reviewRender"]>;
 type Composition = Record<string, unknown>;
+type StudioProjectValidator = (project: OpenChatCutProject) => void | Promise<void>;
 
 export interface OpenChatCutStudioSnapshot {
   relativePath: string;
@@ -123,7 +124,7 @@ export async function closeOpenChatCutStudio(episodeId: string): Promise<void> {
   }
 }
 
-export async function openOpenChatCutStudio(assetRoot: string, episodeId: string, render: ReviewRender, runtimeConfig: OpenChatCutRuntimeConfig = {}, options: { replaceWorkspace?: boolean } = {}): Promise<OpenChatCutStudioOpenResult> {
+export async function openOpenChatCutStudio(assetRoot: string, episodeId: string, render: ReviewRender, runtimeConfig: OpenChatCutRuntimeConfig = {}, options: { replaceWorkspace?: boolean; validateProject?: StudioProjectValidator } = {}): Promise<OpenChatCutStudioOpenResult> {
   const existing = sessions.get(episodeId);
   const root = resolve(assetRoot);
   const projectId = `loop-control-${episodeId}`;
@@ -140,12 +141,11 @@ export async function openOpenChatCutStudio(assetRoot: string, episodeId: string
   const inputFingerprint = reviewRenderInputFingerprint(render, project);
   if (existing) {
     if (existing.inputFingerprint === inputFingerprint) {
-      existing.workspace = await persistCurrentWorkspace(root, existing);
-      return { studioUrl: `${existing.baseUrl}/#/editor/${existing.projectId}`, workspace: existing.workspace };
+      existing.workspace = await persistCurrentWorkspace(root, existing, options.validateProject);
+      return { studioUrl: `${existing.baseUrl}/?lcBridge=1#/editor/${existing.projectId}`, workspace: existing.workspace };
     }
     const current = await currentSessionProject(existing);
     const warning = replacementWarning(existing.baseProject, current);
-    existing.workspace = await persistProject(root, existing.workspace.relativePath, current, existing.workspace.composition, existing.projectId);
     if (!options.replaceWorkspace) return { workspace: existing.workspace, replacementWarning: warning };
     await closeOpenChatCutStudio(episodeId);
   }
@@ -158,7 +158,8 @@ export async function openOpenChatCutStudio(assetRoot: string, episodeId: string
   if (storedMetadata && storedProject && storedMetadata.inputFingerprint !== inputFingerprint && !options.replaceWorkspace) {
     const restoredProject = structuredClone(storedProject);
     rewriteSources(restoredProject, new Map(Object.entries(storedMetadata.reverseSources)));
-    const workspace = await persistProject(root, workspaceRelativePath, restoredProject, render.adjustments as unknown as Composition, projectId);
+    const bytes = await readFile(resolve(root, workspaceRelativePath));
+    const workspace = { relativePath: workspaceRelativePath, sha256: createHash("sha256").update(bytes).digest("hex"), fileSize: bytes.length, projectId };
     const storedBaseline = await readProject(join(workRoot, "generated-project.json"));
     return { workspace, replacementWarning: replacementWarning(storedBaseline ?? restoredProject, restoredProject) };
   }
@@ -190,7 +191,7 @@ export async function openOpenChatCutStudio(assetRoot: string, episodeId: string
   const openchatcutRoot = runtimeConfig.root?.trim() || process.env.OPENCHATCUT_ROOT?.trim();
   if (!openchatcutRoot) throw new Error("未配置 OPENCHATCUT_ROOT，无法打开 OpenChatCut 编辑器。");
   const port = await availablePort(runtimeConfig.port);
-  const child = spawn(nodePath, [join(openchatcutRoot, "node_modules/vite/bin/vite.js"), openchatcutRoot, "--config", join(openchatcutRoot, "config/vite.config.ts"), "--host", "127.0.0.1", `--port=${port}`], {
+  const child = spawn(nodePath, [resolve("scripts/openchatcut-embedded.mjs"), String(port)], {
     cwd: openchatcutRoot,
     env: { ...(runtimeConfig.environment ?? process.env), OPENCHATCUT_ROOT: openchatcutRoot, OPENCHATCUT_DATA_DIR: dataDir, OPENCHATCUT_DEV_PROFILE_ID: randomUUID(), OPENCHATCUT_DISABLE_HARDWARE_ENCODING: "1" },
     stdio: ["ignore", "pipe", "pipe"],
@@ -198,30 +199,38 @@ export async function openOpenChatCutStudio(assetRoot: string, episodeId: string
   const logs: string[] = [];
   child.stdout?.on("data", (chunk) => { logs.push(String(chunk).slice(-4000)); if (logs.length > 8) logs.shift(); });
   child.stderr?.on("data", (chunk) => { logs.push(String(chunk).slice(-4000)); if (logs.length > 8) logs.shift(); });
+  let validationError: unknown;
   try {
     await waitForServer(`http://127.0.0.1:${port}`, child, logs);
     const activeStoredProject = await readStoredProject(join(dataDir, "project-store-v1.json"), projectId) ?? copiedProject;
     const activeProject = structuredClone(activeStoredProject);
     rewriteSources(activeProject, reverseSources);
+    try { await options.validateProject?.(activeProject); } catch (error) { validationError = error; throw error; }
     const workspace = await persistProject(root, workspaceRelativePath, activeProject, render.adjustments as unknown as Composition, projectId);
     const session = { episodeId, projectId, baseUrl: `http://127.0.0.1:${port}`, dataDir, workspace, reverseSources, child, render, runtimeConfig, baseProject: project, inputFingerprint } satisfies Session;
     sessions.set(episodeId, session);
     child.once("close", () => { if (sessions.get(episodeId)?.child === child) sessions.delete(episodeId); });
-    return { studioUrl: `${session.baseUrl}/#/editor/${projectId}`, workspace };
+    return { studioUrl: `${session.baseUrl}/?lcBridge=1#/editor/${projectId}`, workspace };
   } catch (error) {
     child.kill("SIGTERM");
+    if (validationError === error) throw error;
     throw new Error(`${error instanceof Error ? error.message : String(error)}${logs.length ? `\n${logs.join("").slice(-1000)}` : ""}`);
   }
 }
 
-export async function snapshotOpenChatCutStudio(assetRoot: string, episodeId: string, expectedWorkspaceRelativePath: string): Promise<OpenChatCutStudioSnapshot> {
+export async function snapshotOpenChatCutStudio(assetRoot: string, episodeId: string, expectedWorkspaceRelativePath: string, expectedSha256?: string, validateProject?: StudioProjectValidator): Promise<OpenChatCutStudioSnapshot> {
   const session = sessions.get(episodeId);
   if (!session) throw new Error("OpenChatCut 编辑器会话已失效，请重新打开生产单预览。");
   if (session.workspace.relativePath !== expectedWorkspaceRelativePath) throw new Error("OpenChatCut 工作版本与当前编辑器会话不一致，请重新打开后再生成。");
   await assertStudioWorkspace(resolve(assetRoot), episodeId, session.projectId);
+  if (expectedSha256) {
+    const bytes = await readFile(resolve(assetRoot, session.workspace.relativePath));
+    if (createHash('sha256').update(bytes).digest('hex') !== expectedSha256) throw Object.assign(new Error('工作版本已变化，请重新打开当前工程后保存。'), {status:409,code:'STUDIO_WORKSPACE_CHANGED'});
+  }
   const project = await currentSessionProject(session);
-  session.workspace = await persistProject(resolve(assetRoot), session.workspace.relativePath, project, session.workspace.composition, session.projectId);
+  await validateProject?.(project);
   if (session.render.confirmationMode === "shot_preparation") await verifyOpenChatCutProject(session.render, project, session.runtimeConfig, { requireConfirmedText: false, allowStudioEdits: true });
+  session.workspace = await persistProject(resolve(assetRoot), session.workspace.relativePath, project, session.workspace.composition, session.projectId);
   return session.workspace;
 }
 
@@ -292,8 +301,10 @@ async function currentSessionProject(session: Session): Promise<OpenChatCutProje
   return project;
 }
 
-async function persistCurrentWorkspace(root: string, session: Session): Promise<OpenChatCutStudioSnapshot> {
-  return persistProject(root, session.workspace.relativePath, await currentSessionProject(session), session.workspace.composition, session.projectId);
+async function persistCurrentWorkspace(root: string, session: Session, validateProject?: StudioProjectValidator): Promise<OpenChatCutStudioSnapshot> {
+  const project = await currentSessionProject(session);
+  await validateProject?.(project);
+  return persistProject(root, session.workspace.relativePath, project, session.workspace.composition, session.projectId);
 }
 
 async function persistProject(root: string, relativePath: string, project: OpenChatCutProject, composition: Composition | undefined, projectId: string): Promise<OpenChatCutStudioSnapshot> {

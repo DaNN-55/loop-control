@@ -7,3 +7,4 @@
 - [ADR-0007：版本化外部连接](0007-versioned-external-connections.md)
 - [ADR-0008：本地执行及迁移合同](0008-local-execution-and-migration-contract.md)
 - [ADR-0009：原界面与日常本地运行](0009-daily-native-workspace.md)
+- [ADR-0015：四步制作与嵌入式整期工程](0015-four-step-production-and-embedded-studio.md)

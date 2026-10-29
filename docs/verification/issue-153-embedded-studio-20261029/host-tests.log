@@ -1,0 +1,9 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx (4 tests) 72ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  16:45:00
+   Duration  629ms (transform 26ms, setup 7ms, collect 149ms, tests 72ms, environment 258ms, prepare 32ms)

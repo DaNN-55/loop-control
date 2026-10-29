@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/embeddedStudio.integration.test.ts (1 test) 8479ms
+   ✓ Owner opens the real Studio and saves its versioned workspace through native HTTP  8478ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed (1)
+   Start at  16:54:19
+   Duration  9.03s (transform 267ms, setup 8ms, collect 375ms, tests 8.48s, environment 0ms, prepare 34ms)

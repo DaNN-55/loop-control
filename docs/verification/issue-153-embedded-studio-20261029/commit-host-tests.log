@@ -1,0 +1,9 @@
+
+ RUN  v3.2.7 /private/tmp/loop-153-commit-0olrhcbp
+
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx (4 tests) 71ms
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  16:46:32
+   Duration  562ms (transform 23ms, setup 0ms, collect 130ms, tests 71ms, environment 235ms, prepare 30ms)
