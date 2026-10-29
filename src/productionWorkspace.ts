@@ -14,6 +14,7 @@ export const productionWorkspaceFields:Record<string,string[]>={
  generateWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId','retry'],
  adoptWorkspaceNarration:['episodeId','workspaceId','expectedRevision','clipId','inputFingerprint','audioTrackId'],
  refreshWorkspaceNarration:['episodeId','workspaceId','expectedRevision'],
+ editWorkspaceStructure:['episodeId','workspaceId','expectedRevision','operation'],
  saveWorkspaceVideoRanges:['episodeId','workspaceId','expectedRevision','shotId','ranges'],
  ...workspaceCaptionFields,
  generateWorkspaceImage:['episodeId','workspaceId','expectedRevision','clipId','materialRevisionId','prompt','durationSeconds','reservationCents'],

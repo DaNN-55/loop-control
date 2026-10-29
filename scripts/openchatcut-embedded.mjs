@@ -4,10 +4,12 @@ import {readFile} from 'node:fs/promises';
 import {pathToFileURL} from 'node:url';
 const root=process.env.OPENCHATCUT_ROOT,dataDir=process.env.OPENCHATCUT_DATA_DIR,port=Number(process.argv[2]);
 if(!root||!dataDir||!Number.isInteger(port)||port<1||port>65535)throw Error('Studio 嵌入运行配置无效。');
+const structureVirtual='\0loop-control-structure',rangeVirtual='\0loop-control-ranges';
+const structureCode=await readFile(new URL('../src/workspaceShots.ts',import.meta.url),'utf8'),rangeCode=await readFile(new URL('../src/workspaceVideo.ts',import.meta.url),'utf8');
 const virtual='\0loop-control-embed',captionVirtual='\0loop-control-captions',shotVirtual='\0loop-control-shot-captions';
 const captionCode=await readFile(new URL('../src/workspaceCaptions.ts',import.meta.url),'utf8'),shotCode=await readFile(new URL('../src/shotCaptions.ts',import.meta.url),'utf8');
 const client=await readFile(new URL('./openchatcut-embed-client.mjs',import.meta.url),'utf8');
-const bridge={name:'loop-control-embedded-editor',enforce:'pre',resolveId(id,importer){if(importer===captionVirtual&&id==='./shotCaptions.js')return shotVirtual;if(id==='virtual:loop-control-embed')return virtual;if(id==='virtual:loop-control-captions')return captionVirtual;},async load(id){if(id===virtual)return client;if(id===captionVirtual)return (await transformWithEsbuild(captionCode,'workspaceCaptions.ts',{loader:'ts'})).code;if(id===shotVirtual)return (await transformWithEsbuild(shotCode,'shotCaptions.ts',{loader:'ts'})).code;},transform(code,id){
+const bridge={name:'loop-control-embedded-editor',enforce:'pre',resolveId(id,importer){if(importer===structureVirtual&&id==='./workspaceVideo.js')return rangeVirtual;if(importer===captionVirtual&&id==='./workspaceShots.js')return structureVirtual;if(id==='virtual:loop-control-structure')return structureVirtual;if(importer===captionVirtual&&id==='./shotCaptions.js')return shotVirtual;if(id==='virtual:loop-control-embed')return virtual;if(id==='virtual:loop-control-captions')return captionVirtual;},async load(id){if(id===structureVirtual)return (await transformWithEsbuild(structureCode,'workspaceShots.ts',{loader:'ts'})).code;if(id===rangeVirtual)return (await transformWithEsbuild(rangeCode,'workspaceVideo.ts',{loader:'ts'})).code;if(id===virtual)return client;if(id===captionVirtual)return (await transformWithEsbuild(captionCode,'workspaceCaptions.ts',{loader:'ts'})).code;if(id===shotVirtual)return (await transformWithEsbuild(shotCode,'shotCaptions.ts',{loader:'ts'})).code;},transform(code,id){
   if(!id.split('?')[0].endsWith('/src/editor/useEditorController.tsx'))return;
   const anchor='  return buildEditorWorkspaceViewProps(props, base, environment, ui);';
   if(!code.includes(anchor))throw Error('当前 Studio 版本缺少已验证的编辑器宿主接入点。');
