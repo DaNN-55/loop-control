@@ -45,7 +45,7 @@ it('reports an unconfirmed create beside the submit action and retains the crede
  const alert=await screen.findByRole('alert');expect(alert.closest('form')).toBeTruthy();expect(alert.textContent).toContain('未确认完成');
  expect((screen.getByLabelText(/^Pexels API Key/)as HTMLInputElement).value).toBe('synthetic-draft');
 });
-it('keeps the created connection selected and announces saving, testing and the named result',async()=>{
+it('closes the editor only after a created connection tests successfully and keeps the named result',async()=>{
  let finish!:(value:unknown)=>void;const test=vi.fn(()=>new Promise(resolve=>finish=resolve));
  const connection={id:'seedance-created',name:'方舟连接',provider:'volcengine',adapter:'seedance_video',status:'unverified'}as ExternalConnection;
  const {useState}=await import('react');
@@ -59,8 +59,9 @@ it('keeps the created connection selected and announces saving, testing and the 
  expect((screen.getByLabelText(/^连接名称/)as HTMLInputElement).value).toBe(connection.name);
  expect((screen.getByLabelText(/^新的 API Key/)as HTMLInputElement).value).toBe('');
  await act(async()=>finish({ready:true,detail:'连接验证通过；尚未执行内容生成。'}));
- const result=screen.getByRole('status');expect(result.textContent).toContain('连接测试通过');expect(result.textContent).toContain(connection.name);
- expect((screen.getByLabelText(/^连接名称/)as HTMLInputElement).value).toBe(connection.name);
+ const result=screen.getByRole('status',{name:'连接操作结果'});expect(result.textContent).toContain('连接测试通过');expect(result.textContent).toContain(connection.name);
+ expect(screen.queryByRole('form',{name:'保存连接'})).toBeNull();expect(screen.queryByRole('dialog')).toBeNull();expect(document.querySelectorAll('input[type=password]')).toHaveLength(0);
+ fireEvent.click(screen.getByRole('button',{name:'新建连接'}));expect(screen.getByRole('form',{name:'保存连接'})).toBeTruthy();
 });
 it('keeps the selected connection and edited fields after a failed test with one visible failure result',async()=>{
  const connection={id:'saved-ark',name:'方舟连接',provider:'volcengine',adapter:'seedance_video',status:'verified',description:'保留说明'}as ExternalConnection;
@@ -86,4 +87,13 @@ it('keeps historical verification failures visible as a plain error when editing
  const connection={id:'failed-existing',name:'无效连接',provider:'pexels',adapter:'pexels_video',status:'invalid',last_verification_detail:'服务拒绝认证（HTTP 401）。'}as ExternalConnection;
  render(<ConnectionWorkspace connections={[connection]} onCreateConnection={vi.fn()} onTestConnection={vi.fn()}/>);edit(connection.name);
  expect(screen.getByRole('alert').textContent).toContain('HTTP 401');expect(screen.queryByLabelText('连接操作结果')).toBeNull();
+});
+
+it('closes an unchanged editor only on an explicitly successful connection test',async()=>{
+ const connection={id:'saved-test',name:'已保存连接',provider:'pexels',adapter:'pexels_video',status:'verified'}as ExternalConnection;
+ const test=vi.fn().mockResolvedValueOnce(undefined).mockResolvedValueOnce({ready:true,detail:'连接验证通过。'});
+ render(<ConnectionWorkspace connections={[connection]} onCreateConnection={vi.fn()} onTestConnection={test}/>);edit(connection.name);
+ fireEvent.click(screen.getByRole('button',{name:'测试连接'}));await screen.findByText('测试已结束');expect(screen.getByRole('form',{name:'保存连接'})).toBeTruthy();
+ fireEvent.click(screen.getByRole('button',{name:'测试连接'}));await screen.findByRole('status',{name:'连接操作结果'});expect(screen.queryByRole('form',{name:'保存连接'})).toBeNull();expect(screen.getByRole('status',{name:'连接操作结果'}).textContent).toContain('连接测试通过');
+ edit(connection.name);expect(screen.getByRole('form',{name:'保存连接'})).toBeTruthy();expect((screen.getByLabelText(/^新的 API Key/)as HTMLInputElement).value).toBe('');
 });

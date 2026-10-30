@@ -216,7 +216,7 @@ export function ConnectionWorkspace({ connections, isPending = false, onCreateCo
   }
   async function submit(event:FormEvent<HTMLFormElement>){
     event.preventDefault();if(operationLock.current||busy)return;
-    if(selected&&!hasChanges){if(canVerify)await testSelected(selected.id);return;}
+    if(selected&&!hasChanges){if(canVerify){const result=await testSelected(selected.id);if(result?.ready===true)setDialog('');}return;}
     operationLock.current=true;setOperation('saving');setError('');setNotice('');setResultName(name.trim());setResultTitle('');
     try{
       let connection:ExternalConnection|null=selected??null;
@@ -237,7 +237,7 @@ export function ConnectionWorkspace({ connections, isPending = false, onCreateCo
       if(!selected){setSelectedId(connection.id);setName(connection.name);setDescription(connection.description??'');setWorkspaceId('');}
       setResultTitle(credentialChanged?'凭据已保存':'连接资料已保存');
       setNotice(credentialChanged?'认证材料已保存。':'连接资料已保存。');
-      if(canVerify){setOperation('testing');await test(connection.id);}
+      if(canVerify){setOperation('testing');const result=await test(connection.id);if(result?.ready===true)setDialog('');}
     }catch(cause){setResultTitle('连接保存未确认完成');setError(cause instanceof Error?cause.message:'连接保存未确认完成，请重试。');}
     finally{operationLock.current=false;setOperation('');}
   }
@@ -276,14 +276,14 @@ export function ConnectionWorkspace({ connections, isPending = false, onCreateCo
     </div>
     {!dialog&&operationResult}
     <section aria-label="连接列表" className="reference-connections-table-wrap">
-      <table aria-label="已保存连接"><thead><tr><th scope="col">连接</th><th scope="col">能力 / 服务</th><th scope="col">模型</th><th scope="col">验证</th><th scope="col">凭据版本</th><th scope="col">测试</th><th scope="col"><span className="reference-connections-sr-only">更多操作</span></th></tr></thead>
+      <table aria-label="已保存连接"><thead><tr><th scope="col">连接</th><th scope="col">能力</th><th scope="col">模型 / 服务</th><th scope="col">验证</th><th scope="col">凭据版本</th><th scope="col">测试</th><th scope="col"><span className="reference-connections-sr-only">更多操作</span></th></tr></thead>
       <tbody>{filteredConnections.map(connection=>{
         const current=versions.find(version=>version.id===connection.current_version_id)??versions.find(version=>version.connection_id===connection.id&&version.is_current);
         const canTest=verificationByProvider?.[connection.provider]?.available??verificationEnabled;
         return <tr key={connection.id}>
           <td><button type="button" className="reference-connection-name" disabled={busy} onClick={()=>openConnection(connection.id,'detail')}>{connection.name}</button>{connection.description&&<div className="reference-connection-secondary">{connection.description}</div>}</td>
-          <td>{capabilityOf(connection.adapter)}<div className="reference-connection-secondary">{connectionTypes.find(type=>type.adapter===connection.adapter)?.label??connection.adapter}</div></td>
-          <td className="reference-connection-model">—</td>
+          <td>{capabilityOf(connection.adapter)}</td>
+          <td className="reference-connection-model">{connectionTypes.find(type=>type.adapter===connection.adapter)?.label??connection.adapter}</td>
           <td><span className="reference-connection-status" data-status={connection.status}><i aria-hidden="true"/>{statusLabels[connection.status]}</span></td>
           <td>{current?`v${current.version}`:'—'}</td>
           <td className="reference-connection-test"><Button color="secondary" size="sm" iconLeading={Play} aria-label={`测试 ${connection.name}`} isLoading={testingId===connection.id} showTextWhileLoading isDisabled={busy||!canTest} onPress={()=>void testSelected(connection.id)}>{testingId===connection.id?'测试中…':'测试'}</Button></td><td className="reference-connection-more"><MenuTrigger><Button aria-label={`${connection.name} 连接操作`} color="tertiary" size="sm" iconLeading={MoreHorizontal} isDisabled={busy}/><Popover placement="bottom end" className="dan-ui reference-connections-menu"><Menu aria-label={`${connection.name} 操作`} onAction={key=>openConnection(connection.id,key==='edit'?'edit':'detail',key==='versions')}><MenuItem id="edit" textValue="编辑连接"><Pencil aria-hidden="true"/>编辑连接</MenuItem><MenuItem id="versions" textValue="版本详情"><History aria-hidden="true"/>版本详情</MenuItem></Menu></Popover></MenuTrigger></td>
