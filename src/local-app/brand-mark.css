@@ -1,0 +1,6 @@
+/* The reference mark and name sit on the existing blue navigation rail. */
+.impeccable-app.product-ui .sidebar>.lc-brand{display:flex;align-items:center;gap:8px;margin:0;padding:0 8px 30px;background:transparent;color:var(--lc-rail-ink,#e8efff);white-space:nowrap}
+.lc-brand-mark{display:block;flex:0 0 auto;color:var(--lc-rail-ink,#e8efff)}
+.impeccable-app.product-ui .sidebar>.lc-brand>span{font-size:19px;font-weight:650;letter-spacing:-.02em;line-height:1.25}
+.impeccable-app.product-ui[data-sidebar="collapsed"] .sidebar>.lc-brand{justify-content:center;padding:0 10px 28px}
+@media(max-width:900px){.impeccable-app.product-ui .sidebar>.lc-brand{justify-content:center;padding:0 10px 28px}}

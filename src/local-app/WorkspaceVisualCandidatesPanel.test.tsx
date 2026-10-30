@@ -3,7 +3,7 @@ import {afterEach,it,expect,vi} from 'vitest';
 import {WorkspaceVisualCandidatesPanel} from './WorkspaceVisualCandidatesPanel';
 import type {ProductionWorkspace} from '../productionWorkspace';
 const workspace={id:'workspace',episodeId:'episode',revision:3,stale:false,clips:[{id:'clip-1',itemId:'visual-1',shotId:'S1',text:'第一片段',source:null},{id:'clip-2',itemId:'visual-2',shotId:'S1',text:'同镜第二片段',source:null}],visualCandidates:[{id:'candidate',kind:'video',usage:'video',clipId:'clip-1',shotId:'S1',targetItemId:'visual-1',taskId:null,inputFingerprint:'a'.repeat(64),text:'',mainScriptText:'',audioTrackId:null,relativePath:'episodes/episode/new.mp4',sha256:'b'.repeat(64),fileSize:100,durationSeconds:2,currentDurationSeconds:3,status:'available',width:640,height:360}]} as unknown as ProductionWorkspace;
-afterEach(()=>{cleanup();vi.unstubAllGlobals();});
+afterEach(()=>{cleanup();sessionStorage.clear();vi.unstubAllGlobals();});
 it('Owner explicitly chooses a target duration policy and adopts only the selected visual instance',async()=>{
  vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace})));
  const command=vi.fn(async(name:string)=>name==='prepareWorkspaceVisualCandidate'?{adoptionId:'adoption',edit:{targetItemId:'visual-1'}}:workspace),onChange=vi.fn();
@@ -82,4 +82,39 @@ it('changed post-save main voice timing requires reconfirmation before a paid vi
  fireEvent.change(screen.getByLabelText('画面候选来源'),{target:{value:'generate'}});fireEvent.change(screen.getByLabelText('画面首帧图片'),{target:{value:'image'}});fireEvent.change(screen.getByLabelText('画面动作'),{target:{value:'缓慢推近'}});fireEvent.change(screen.getByLabelText('本次费用预留（分）'),{target:{value:'90'}});fireEvent.click(screen.getByRole('button',{name:'生成画面候选'}));await screen.findByText('当前主声窗口已变化，请重新确认后生成画面。');
  expect(onChange).toHaveBeenCalledWith(changed);expect(command).not.toHaveBeenCalled();expect((screen.getByLabelText('画面动作') as HTMLInputElement).value).toBe('缓慢推近');
  view.rerender(<WorkspaceVisualCandidatesPanel {...props} workspace={{...source,visualTargets:[{...source.visualTargets[0],durationSeconds:16,providerDurationSeconds:16}]}}/>);expect(screen.getByText('主声窗口超过服务上限 15 秒，请先明确拆分镜头。')).toBeTruthy();expect((screen.getByRole('button',{name:'生成画面候选'}) as HTMLButtonElement).disabled).toBe(true);
+});
+
+it('starts both tabs with placeholders and keeps API fields out of the upload flow',()=>{
+ const w={...workspace,clips:[workspace.clips[0]],visualCandidates:[]};render(<WorkspaceVisualCandidatesPanel workspace={w} command={vi.fn()} onChange={vi.fn()} materials={[]} preparation/>);
+ expect(screen.getByText('尚未添加图片')).toBeTruthy();expect(screen.queryByRole('textbox',{name:'图片提示词'})).toBeNull();
+ fireEvent.click(screen.getByRole('tab',{name:'视频'}));expect(screen.getByText('尚未添加视频')).toBeTruthy();expect(screen.queryByLabelText('画面动作')).toBeNull();
+});
+it('preserves each target’s generation draft across tabs and shot selection',async()=>{
+ const props={workspace,command:vi.fn(),onChange:vi.fn(),materials:[],selectedShotId:'S1',preparation:true};const{rerender}=render(<WorkspaceVisualCandidatesPanel {...props} selectedTargetItemId="visual-1"/>);
+ fireEvent.click(screen.getByRole('tab',{name:'视频'}));fireEvent.click(screen.getByRole('button',{name:'AI 生成'}));fireEvent.change(screen.getByLabelText('画面动作'),{target:{value:'第一片段的动作草稿'}});
+ rerender(<WorkspaceVisualCandidatesPanel {...props} selectedTargetItemId="visual-2"/>);fireEvent.click(screen.getByRole('tab',{name:'视频'}));fireEvent.click(screen.getByRole('button',{name:'AI 生成'}));fireEvent.change(screen.getByLabelText('画面动作'),{target:{value:'第二片段的动作草稿'}});
+ rerender(<WorkspaceVisualCandidatesPanel {...props} selectedTargetItemId="visual-1"/>);expect((screen.getByLabelText('画面动作') as HTMLTextAreaElement).value).toBe('第一片段的动作草稿');expect(props.command).not.toHaveBeenCalled();
+});
+it('image carousel browsing does not adopt or change the explicitly chosen video first frame',()=>{
+ const images=[1,2,3,4].map(i=>({...workspace.visualCandidates![0],id:'image-'+i,kind:'image' as const,usage:'still' as const,materialRevisionId:'material-'+i,relativePath:'image-'+i+'.png'}));
+ const w={...workspace,visualCandidates:images};const command=vi.fn();render(<WorkspaceVisualCandidatesPanel workspace={w} command={command} onChange={vi.fn()} materials={[]} preparation/>);
+ expect(screen.getByText('第 1 / 4 张')).toBeTruthy();fireEvent.click(screen.getByRole('button',{name:'下一张图片'}));expect(screen.getByText('第 2 / 4 张')).toBeTruthy();expect(command).not.toHaveBeenCalled();
+ fireEvent.click(screen.getByRole('button',{name:'用作视频首帧'}));expect((screen.getByLabelText('画面首帧图片') as HTMLSelectElement).value).toBe('material-2');
+ fireEvent.click(screen.getByRole('tab',{name:'图片'}));fireEvent.click(screen.getByRole('button',{name:'下一张图片'}));fireEvent.click(screen.getByRole('tab',{name:'视频'}));expect((screen.getByLabelText('画面首帧图片') as HTMLSelectElement).value).toBe('material-2');expect(command).not.toHaveBeenCalled();
+});
+it('explicit image generation freezes reference IDs, count, quality and dimensions without adopting',async()=>{
+ const w={...workspace,visualCandidates:[],visualConfiguration:{imageModel:'gpt-image-2',videoModel:null,videoProvider:null}};vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:w})));const command=vi.fn(async(_name:string,_data:unknown)=>w);
+ render(<WorkspaceVisualCandidatesPanel workspace={w} command={command} onChange={vi.fn()} materials={[{id:'reference',material_type:'image',source_path:'ref.png'}]} preparation/>);
+ fireEvent.click(screen.getByRole('button',{name:'AI 生成'}));fireEvent.change(screen.getByLabelText('图片提示词'),{target:{value:'保留主体，改变背景'}});fireEvent.change(screen.getByLabelText('添加本期参考图'),{target:{value:'reference'}});fireEvent.change(screen.getByLabelText('生成图片数量'),{target:{value:'4'}});fireEvent.change(screen.getByLabelText('图片质量'),{target:{value:'high'}});fireEvent.change(screen.getByLabelText('本次费用预留（元）'),{target:{value:'2.50'}});
+ expect(command).not.toHaveBeenCalled();fireEvent.click(screen.getByRole('button',{name:'生成图片'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('requestWorkspaceImageCandidates',expect.objectContaining({targetItemId:'visual-1',model:'gpt-image-2',prompt:'保留主体，改变背景',settings:{count:4,size:'864x1536',quality:'high'},referenceMaterialRevisionIds:['reference'],reservationCents:250})));expect(command.mock.calls.some(([name])=>name.includes('adopt'))).toBe(false);
+});
+it('keeps the adopted video when manually choosing an image as fallback',async()=>{
+ const image={...workspace.visualCandidates![0],kind:'image' as const,id:'still',materialRevisionId:'image',usage:'still' as const,relativePath:'image.png'};const w={...workspace,visualCandidates:[image]};vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:w})));const command=vi.fn(async()=>w);
+ render(<WorkspaceVisualCandidatesPanel workspace={w} command={command} onChange={vi.fn()} materials={[]} preparation currentVisualKind="video" currentVisualPath="current.mp4"/>);fireEvent.click(screen.getByRole('tab',{name:'图片'}));fireEvent.click(screen.getByRole('button',{name:'采用此图片'}));await waitFor(()=>expect(command).toHaveBeenCalledWith('retainWorkspaceImageCandidate',expect.objectContaining({candidateId:'still'})));expect(command).toHaveBeenCalledTimes(1);
+});
+it('reuses a generated video’s frozen inputs only on request, then generates a separate candidate',async()=>{
+ const generated={...workspace,visualConfiguration:{imageModel:null,videoModel:'wan2.6-i2v-flash',videoProvider:'bailian'},visualCandidates:[{...workspace.visualCandidates![0],taskId:'task',generation:{prompt:'原始运镜',firstFrameMaterialRevisionId:'image',durationSeconds:4}}]};
+ vi.stubGlobal('fetch',vi.fn(async()=>Response.json({workspace:generated})));const command=vi.fn(async(_name:string,_data:unknown)=>generated);render(<WorkspaceVisualCandidatesPanel workspace={generated} command={command} onChange={vi.fn()} materials={[{id:'image',material_type:'image',source_path:'frame.png'}]} preparation/>);
+ fireEvent.click(screen.getByRole('tab',{name:'视频'}));fireEvent.click(screen.getByRole('button',{name:'复用生成设置'}));expect((screen.getByLabelText('画面动作') as HTMLTextAreaElement).value).toBe('原始运镜');fireEvent.change(screen.getByLabelText('画面动作'),{target:{value:'减慢推进'}});fireEvent.change(screen.getByLabelText('本次费用预留（元）'),{target:{value:'0.90'}});fireEvent.click(screen.getByRole('button',{name:'生成视频'}));
+ await waitFor(()=>expect(command).toHaveBeenCalledWith('requestWorkspaceVisualCandidate',expect.objectContaining({prompt:'减慢推进',firstFrameMaterialRevisionId:'image',durationSeconds:4})));expect(command.mock.calls.some(([name])=>name.includes('adopt'))).toBe(false);
 });

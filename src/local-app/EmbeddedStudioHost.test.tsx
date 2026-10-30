@@ -99,3 +99,27 @@ it('redirects native file imports to the registered Host tools only after true S
  deliver({type:'loop-control:import-requested',kind:'visual'});expect(screen.queryByText('Owner 登记画面入口')).toBeNull();
  deliver({type:'loop-control:state',writable:true,revision:1,items:[],selectedIds:[]});deliver({type:'loop-control:import-requested',kind:'visual'});expect(screen.getByText('Owner 登记画面入口')).toBeTruthy();deliver({type:'loop-control:import-requested',kind:'audio'});expect(screen.getByText('Owner 声音素材入口')).toBeTruthy();
 });
+
+it('starts with supplemental tools closed and preserves the native frame while tools toggle',async()=>{
+ const save=vi.fn(async()=>workspace);render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'episodes/e/board.json'}} shots={[]} onSave={save} onClose={()=>{}} panels={[{id:'visuals',label:'画面版本',render:()=> <p>生成与版本</p>}]} captionEditor={()=> <p>对齐工具</p>}/>);
+ expect(screen.queryByRole('tab',{name:'画面版本'})).toBeNull();
+ const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,channel=new URL(frame.src).searchParams.get('lcChannel');
+ const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
+ deliver({type:'loop-control:state',writable:true,structureEnabled:true,revision:1,items:[],selectedIds:[]});
+ const post=vi.spyOn(frame.contentWindow!,'postMessage');fireEvent.click(screen.getByRole('button',{name:'生成、版本与对齐'}));let request=post.mock.calls.at(-1)![0];expect(request.action).toBe('host-panel');expect(request.open).toBe(true);deliver({type:'loop-control:result',requestId:request.requestId,ok:true});
+ await screen.findByRole('tab',{name:'画面版本'});expect(screen.queryByRole('tab',{name:'字幕'})).toBeNull();expect(screen.getByRole('tab',{name:'字幕对齐'})).toBeTruthy();
+ fireEvent.click(screen.getByRole('button',{name:'收起补充工具'}));request=post.mock.calls.at(-1)![0];expect(request.open).toBe(false);deliver({type:'loop-control:result',requestId:request.requestId,ok:true});await waitFor(()=>expect(screen.queryByRole('tab',{name:'画面版本'})).toBeNull());expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBe(frame);expect(save).not.toHaveBeenCalled();
+});
+it('moves only platform shot settings into closed supplemental tools without replacing the native frame',async()=>{
+ render(<EmbeddedStudioHost episodeId="e" title="工程" session={{studioUrl:'http://127.0.0.1:5175/#/editor/loop-control-e',workspace,sourcePath:'episodes/e/board.json'}} shots={[]} onSave={async()=>workspace} onClose={()=>{}}/>);
+ const frame=screen.getByTitle('OpenChatCut 剪辑工程') as HTMLIFrameElement,canvas=frame.parentElement!,channel=new URL(frame.src).searchParams.get('lcChannel'),post=vi.spyOn(frame.contentWindow!,'postMessage');
+ const deliver=(data:Record<string,unknown>)=>fireEvent(window,new MessageEvent('message',{origin:'http://127.0.0.1:5175',source:frame.contentWindow!,data:{channel,projectId:workspace.projectId,...data}}));
+ const items=[{id:'first',kind:'video',startFrame:0,durationInFrames:30},{id:'second',kind:'video',startFrame:30,durationInFrames:30}];
+ const state={type:'loop-control:state',writable:true,structureEnabled:true,revision:1,items,selectedIds:['first'],shots:[{id:'S01',text:'第一镜',timelineId:'timeline',itemIds:['first','second'],startFrame:0,durationInFrames:60,effective:true}]};
+ deliver(state);
+ expect(canvas.firstElementChild).toBe(frame);expect(canvas.querySelector('.workspace-native-controls')).toBeNull();expect(screen.queryByRole('tab',{name:'镜头设置'})).toBeNull();expect(screen.queryByRole('checkbox',{name:'保留片段时长'})).toBeNull();
+ fireEvent.click(screen.getByRole('button',{name:'生成、版本与对齐'}));let request=post.mock.calls.at(-1)![0];deliver({type:'loop-control:result',requestId:request.requestId,ok:true});
+ await screen.findByRole('tab',{name:'镜头设置'});expect(screen.getByRole('checkbox',{name:'保留片段时长'})).toBeTruthy();expect(screen.getByRole('combobox',{name:'镜头构图布局'})).toBeTruthy();expect(screen.queryByRole('combobox',{name:'当前画面片段'})).toBeNull();expect(screen.queryByRole('button',{name:'源起点减少一帧'})).toBeNull();expect(screen.queryByRole('combobox',{name:'画面填充'})).toBeNull();expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBe(frame);
+ fireEvent.click(screen.getByRole('button',{name:'收起补充工具'}));request=post.mock.calls.at(-1)![0];deliver({type:'loop-control:result',requestId:request.requestId,ok:true});await waitFor(()=>expect(screen.queryByRole('tab',{name:'镜头设置'})).toBeNull());expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBe(frame);
+ deliver({...state,revision:2,selectedIds:[]});expect(screen.getByTitle('OpenChatCut 剪辑工程')).toBe(frame);
+});
