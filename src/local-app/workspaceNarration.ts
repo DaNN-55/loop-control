@@ -1,5 +1,5 @@
 import {resolveWorkspaceShotLineage} from './workspacePreparation.js';
-import {applyWorkspaceAudioMix} from '../workspaceAudio.js';
+import {applyWorkspaceAudioMix,resolveWorkspaceMainVoice} from '../workspaceAudio.js';
 import {isVideoProvider,videoProviders} from '../worker/videoProviderCatalog.js';
 import {createHash} from 'node:crypto';
 import {join} from 'node:path';
@@ -26,23 +26,22 @@ export async function readWorkspaceNarration(c:PoolClient,row:ProductionWorkspac
  const state=(await c.query(`SELECT n.*,t.status,t.last_result,a.id audio_track_id,a.source_artifact_id,a.relative_path,a.sha256,a.file_size,a.duration_seconds
  FROM local_identity.workspace_narrations n LEFT JOIN public.tasks t ON t.id=n.task_id
  LEFT JOIN public.audio_tracks a ON a.episode_id=n.episode_id AND (a.id=n.manual_audio_track_id OR (n.mode='tts' AND a.source_task_id=n.task_id AND a.track_kind='narration')) WHERE n.workspace_id=$1`,[row.id])).rows;
+ const legacyTracks=project?.timelines.some(t=>t.items.some(i=>(i.loopControlAudio as {origin?:string}|undefined)?.origin==='legacy-frozen'))?(await c.query("SELECT a.*,t.input_snapshot FROM public.audio_tracks a LEFT JOIN public.tasks t ON t.id=a.source_task_id WHERE a.episode_id=$1 AND a.track_kind='narration'",[row.episode_id])).rows:[];
  return(await inputs(c,row)).map(({clip,d,hash})=>{const s=state.find(s=>s.shot_id===clip.shotId),current=s?.input_fingerprint===hash,track=current?s?.audio_track_id:null;
   const shot=context?.context_snapshot?.worker_result?.storyboard?.shots?.find((shot:{id:string})=>shot.id===clip.shotId),provider=context?.policy?.[shot?.shotType]?.executor?.provider,bounds=isVideoProvider(provider??'')?videoProviders[provider as keyof typeof videoProviders]:provider==='bailian'?{minDuration:2,maxDuration:15}:null;
   const fps=project?.timelines.find(t=>t.items.some(i=>i.id===clip.itemId))?.fps,duration=track&&fps?Math.ceil(Number(s.duration_seconds)*fps)/fps:null;
   const ids=new Set(row.bindings.filter(b=>b.shotId===clip.shotId).map(b=>b.itemId)),visuals=project?.timelines.flatMap(t=>t.items.filter(i=>ids.has(String(i.id))).map(i=>({start:Number(i.startFrame),end:Number(i.startFrame)+Number(i.durationInFrames),fps:t.fps,locked:!!(i.loopControlVideo as {durationLocked?:boolean}|undefined)?.durationLocked})))??[];
   const requiresCandidateAdoption=Number(row.native_edit_revision??0)>0||!!(track&&visuals.some(v=>v.locked)&&Math.max(...visuals.map(v=>v.end))-Math.min(...visuals.map(v=>v.start))!==Math.ceil(Number(s.duration_seconds)*visuals[0].fps));
   const nativeVoice=project?.timelines.flatMap(t=>t.items).find(i=>i.id===workspaceNarrationItemId(clip.shotId))??project?.timelines.flatMap(t=>t.items).find(i=>i.id===`workspace-narration-${s?.clip_id??clip.id}`),adopted=nativeVoice?.loopControlCandidate as {sourceId?:string;inputFingerprint?:string;durationPolicy?:string;startFrame?:number;durationInFrames?:number;shotWindow?:{startFrame:number;durationInFrames:number}}|undefined;
+  // Adoption describes the current native main voice; the SQL pointer also retains historical decisions after replanning.
+  const mainVoice=project?resolveWorkspaceMainVoice(project,clip.shotId).item:undefined,adoptedTrack=project?(mainVoice===nativeVoice&&typeof nativeVoice?.sourceAssetId==='string'&&nativeVoice.sourceAssetId.startsWith('audio-track-')?nativeVoice.sourceAssetId.slice('audio-track-'.length):null):s?.adopted_audio_track_id??null;
   const deliberate=!!(nativeVoice&&adopted?.sourceId===nativeVoice.sourceAssetId&&adopted?.inputFingerprint===hash&&['keep-target','use-candidate'].includes(adopted.durationPolicy??'')&&adopted.startFrame===nativeVoice.startFrame&&adopted.durationInFrames===nativeVoice.durationInFrames&&visuals.length&&adopted.shotWindow?.startFrame===Math.min(...visuals.map(v=>v.start))&&adopted.shotWindow?.durationInFrames===Math.max(...visuals.map(v=>v.end))-Math.min(...visuals.map(v=>v.start)));
+  const legacyMeta=nativeVoice?.loopControlAudio as {origin?:string;text?:string}|undefined,inherited=!s&&legacyMeta?.origin==='legacy-frozen'?legacyTracks.find(a=>a.id===adoptedTrack&&a.relative_path===nativeVoice?.src):null;
   const conflict=!!(!deliberate&&track&&track===s?.adopted_audio_track_id&&nativeVoice?.sourceAssetId===`audio-track-${track}`&&visuals.length&&Math.max(...visuals.map(i=>i.end))-Math.min(...visuals.map(i=>i.start))!==Math.ceil(Number(s.duration_seconds)*visuals[0].fps));
-  return{requiresCandidateAdoption,...(duration&&bounds?{videoWindow:{durationSeconds:duration,generationSeconds:Math.max(bounds.minDuration,Math.ceil(duration)),maximumSeconds:bounds.maxDuration}}:{}),clipId:clip.id,shotId:clip.shotId,mode:s?.mode??'none',text:d?.tts_text??clip.text,voice:d?.tts_voice??null,languageCode:d?.tts_language_code??null,speakingRate:d?.tts_speaking_rate?Number(d.tts_speaking_rate):null,override:!!d?.tts_override_voice,inputFingerprint:hash,confirmed:!!s&&s.confirmed_fingerprint===hash,taskId:s?.task_id??null,status:conflict?'duration_conflict':!current?'pending':s?.status??(s?.mode==='none'?'disabled':'pending'),error:conflict?'画面范围与完整口播时长不同，请明确调整画面或主声音轨。':s&&['failed','blocked'].includes(s.status)?s.last_result?.blockers?.[0]?.detail??s.last_result?.retry?.reason??null:null,audioTrackId:track??null,artifactId:track?s.source_artifact_id:null,relativePath:track?s.relative_path:null,sha256:track?s.sha256:null,fileSize:track?Number(s.file_size):null,durationSeconds:track?Number(s.duration_seconds):null,itemId:workspaceNarrationItemId(clip.shotId),adoptedAudioTrackId:s?.adopted_audio_track_id??null};});
+  return{requiresCandidateAdoption,...(duration&&bounds?{videoWindow:{durationSeconds:duration,generationSeconds:Math.max(bounds.minDuration,Math.ceil(duration)),maximumSeconds:bounds.maxDuration}}:{}),clipId:clip.id,shotId:clip.shotId,mode:s?.mode??(inherited?'manual':'none'),text:d?.tts_text??inherited?.input_snapshot?.media?.narration?.text??legacyMeta?.text??clip.text,voice:d?.tts_voice??null,languageCode:d?.tts_language_code??null,speakingRate:d?.tts_speaking_rate?Number(d.tts_speaking_rate):null,override:!!d?.tts_override_voice,inputFingerprint:hash,confirmed:!!s&&s.confirmed_fingerprint===hash,taskId:s?.task_id??null,status:inherited?'completed':conflict?'duration_conflict':!current?'pending':s?.status??(s?.mode==='none'?'disabled':'pending'),error:conflict?'画面范围与完整口播时长不同，请明确调整画面或主声音轨。':s&&['failed','blocked'].includes(s.status)?s.last_result?.blockers?.[0]?.detail??s.last_result?.retry?.reason??null:null,audioTrackId:track??inherited?.id??null,artifactId:track?s.source_artifact_id:inherited?.source_artifact_id??null,relativePath:track?s.relative_path:inherited?.relative_path??null,sha256:track?s.sha256:inherited?.sha256??null,fileSize:track?Number(s.file_size):inherited?Number(inherited.file_size):null,durationSeconds:track?Number(s.duration_seconds):inherited?Number(inherited.duration_seconds):null,itemId:workspaceNarrationItemId(clip.shotId),adoptedAudioTrackId:adoptedTrack};});
 }
 export async function executeWorkspaceNarration(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,runtime:Pick<InputRuntime,'narrationReady'|'checkReferences'>,command:string,data:Record<string,unknown>){
- if(command==='refreshWorkspaceNarration'){
-  for(const n of await readWorkspaceNarration(c,row,project)){
-   const s=(await c.query('SELECT * FROM local_identity.workspace_narrations WHERE workspace_id=$1 AND shot_id=$2',[row.id,n.shotId])).rows[0];
-   if(!n.requiresCandidateAdoption&&Number(row.native_edit_revision??0)===0&&n.confirmed&&n.audioTrackId&&!n.adoptedAudioTrackId&&Number(s?.requested_native_edit_revision)===Number(row.native_edit_revision??0)){await adopt(c,root,row,project,n);break;}
-  }return;
- }
+ if(command==='refreshWorkspaceNarration'){await adoptFirstWorkspaceNarration(c,root,row,project);return;}
  const clip=row.bindings.find(b=>b.id===data.clipId);if(!clip)throw new ConfigurationError(404,'镜头实例不存在。');
  if(command==='saveWorkspaceNarration'){
   if(!['tts','manual','none'].includes(String(data.mode))||typeof data.text!=='string'||data.text.length>100000||data.mode==='tts'&&!data.text.trim())throw new ConfigurationError(400,'口播配置无效。');
@@ -85,6 +84,15 @@ export async function executeWorkspaceNarration(c:PoolClient,root:string,row:Pro
  const t=(await c.query('SELECT to_jsonb(local_identity.generate_input_shot_tts($1,$2,$3,$4)) result',[row.episode_id,row.storyboard_package_id,clip.shotId,data.retry??false])).rows[0].result;
  await c.query('INSERT INTO local_identity.workspace_narration_requests(task_id,workspace_id,episode_id,clip_id,shot_id,input_fingerprint,authorization_hash) VALUES($1,$2,$3,$4,$5,$6,$7) ON CONFLICT DO NOTHING',[t.id,row.id,row.episode_id,clip.id,clip.shotId,n.inputFingerprint,authorized.authorization_hash]);
  await c.query('UPDATE local_identity.workspace_narrations SET task_id=$3,requested_project_sha256=$4,requested_native_edit_revision=$5 WHERE workspace_id=$1 AND shot_id=$2',[row.id,clip.shotId,t.id,row.project_sha256,Number(row.native_edit_revision??0)]);
+}
+/** Only the first ready voice of an untouched draft may be assembled automatically. */
+export async function adoptFirstWorkspaceNarration(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,shotId?:string){
+ for(const n of await readWorkspaceNarration(c,row,project)){
+  if(shotId!==undefined&&n.shotId!==shotId||resolveWorkspaceMainVoice(project,n.shotId).item)continue;
+  const s=(await c.query('SELECT requested_native_edit_revision FROM local_identity.workspace_narrations WHERE workspace_id=$1 AND shot_id=$2',[row.id,n.shotId])).rows[0];
+  if(!n.requiresCandidateAdoption&&Number(row.native_edit_revision??0)===0&&n.confirmed&&n.audioTrackId&&!n.adoptedAudioTrackId&&Number(s?.requested_native_edit_revision)===Number(row.native_edit_revision??0)){await adopt(c,root,row,project,n);return true;}
+ }
+ return false;
 }
 async function adopt(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,n:WorkspaceNarration,nativeEdit=false){
  if(n.adoptedAudioTrackId===n.audioTrackId&&n.audioTrackId)return;

@@ -1,4 +1,5 @@
 import {readProductionWorkspace,readWorkspaceVersion} from './productionWorkspaceCommands.js';
+import {readLegacyStudioProject} from './legacyStudioProject.js';
 import {resolveLocalAssetRoot} from './mediaDeployment.js';
 import{ownerTransaction}from'./ownerTransaction.js';
 import {readWorkspaceSearch} from './workspaceSearch.js';
@@ -159,6 +160,19 @@ export function createLocalHandler(options:LocalOptions){
     const file=await findOwnedInputFile(options.pool,session.id,id,path);if(!file){send(404,{error:'产物不可见。'});return;}
     if(hash&&hash!==file.sha256){send(409,{error:'产物指纹已变化。'});return;}
     try{await serveOwnedArtifact(options.mediaRoot,file,response,request.headers.range);}catch{if(response.headersSent)response.destroy();else send(409,{error:'产物路径或指纹校验失败。'});}return;
+   }
+   const legacyProject=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/legacy-project$/);
+   if(legacyProject&&uuid.test(legacyProject[1])&&request.method==='GET'){
+    const download=url.searchParams.get('download');
+    if([...url.searchParams.keys()].some(k=>k!=='download')||download!==null&&(!/^[a-f0-9]{64}$/.test(download)||url.searchParams.getAll('download').length!==1))throw new ConfigurationError(400,'工程版本指纹无效。');
+    const value=await ownerTransaction(options.pool,session.id,true,async c=>{
+     const e=(await c.query("SELECT e.id,b.policy FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1 AND m.user_id=$2 AND m.role='owner'",[legacyProject[1],session.id])).rows[0];
+     if(!e)throw new ConfigurationError(404,'生产单不可见。');
+     return readLegacyStudioProject(await resolveLocalAssetRoot(c,options.mediaRoot,e.policy.asset_root),e.id);
+    });
+    if(download){if(!value||download!==value.sha256)throw new ConfigurationError(409,'已有工程已变化，请重新读取后下载。');response.writeHead(200,{'Content-Type':'application/json; charset=utf-8','Content-Disposition':`attachment; filename="${legacyProject[1]}-saved-project.json"`});response.end(value.document);}
+    else send(200,value?{project:value.project,sha256:value.sha256}:{project:null});
+    return;
    }
    const workspace=url.pathname.match(/^\/api\/local\/episodes\/([^/]+)\/workspace(?:\/project)?$/);
    if(workspace&&uuid.test(workspace[1])&&request.method==='GET'){

@@ -43,6 +43,49 @@ async function recordEvidence(c:PoolClient,row:ProductionWorkspaceRecord,clipId:
  confirmed_by=CASE WHEN workspace_caption_evidence.input_fingerprint=excluded.input_fingerprint AND workspace_caption_evidence.lane_fingerprint=excluded.lane_fingerprint THEN workspace_caption_evidence.confirmed_by END,
  confirmed_at=CASE WHEN workspace_caption_evidence.input_fingerprint=excluded.input_fingerprint AND workspace_caption_evidence.lane_fingerprint=excluded.lane_fingerprint THEN workspace_caption_evidence.confirmed_at END`,[row.id,clipId,input,lane,method,taskId,alignment,row.bindings.find(b=>b.id===clipId)!.shotId]);
 }
+/** First assembly seeds frozen subtitles as editable native lanes; later opens preserve native edits. */
+export async function assembleWorkspaceCaptions(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject){
+ if((await c.query("SELECT 1 FROM local_identity.production_workspace_versions WHERE workspace_id=$1 AND reason='保存原生剪辑' LIMIT 1",[row.id])).rowCount)return project;
+ let next=project;const seen=new Set<string>();
+ for(const clip of row.bindings){
+  if(seen.has(clip.shotId)||readWorkspaceCaption(next,clip.itemId))continue;seen.add(clip.shotId);
+  const x=await captionContext(c,root,row,next,clip.id);if(!x.contract.enabled||!x.contract.text.trim())continue;
+  const contract={...x.contract,cues:x.contract.cues.length?x.contract.cues:[{id:`initial-${clip.shotId}`,text:x.contract.text,startMs:0,endMs:Math.round(Number(x.item.durationInFrames)*1000/x.timeline.fps)}]};
+  next=applyWorkspaceCaptionEdit(next,clip.itemId,contract);
+ }
+ return next;
+}
+/** A native save adopts actual cue edits without claiming that a human reviewed the text. */
+export async function syncNativeWorkspaceCaptions(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject){
+ const records=(await c.query('SELECT * FROM local_identity.workspace_caption_evidence WHERE workspace_id=$1',[row.id])).rows;
+ const seen=new Set<string>();
+ for(const clip of row.bindings){
+  if(seen.has(clip.shotId)||!project.timelines.some(t=>t.items.some(i=>i.id===clip.itemId)))continue;seen.add(clip.shotId);
+  const lane=readWorkspaceCaption(project,clip.itemId);
+  // Removing a managed lane in the editor disables that shot's inherited subtitle input.
+  if(!lane){await c.query('SELECT local_identity.save_workspace_caption_input($1,$2,$3)',[row.id,clip.id,shotCaptionContractToDatabase({...defaultShotCaptionContract(clip.text,'independent',false),enabled:false,contentMode:'independent',cues:[]})]);continue;}
+  if(!lane||!lane.contract.enabled)continue;
+  let x:Awaited<ReturnType<typeof captionContext>>;
+  try{
+   x=await captionContext(c,root,row,project,clip.id);
+   if(!x.contract.cues.length||lane.words.length!==x.contract.cues.length)continue;
+   validateCues(x.contract,Number(x.item.durationInFrames)*1000/x.timeline.fps);
+  }catch{continue;} // Invalid or unavailable inputs remain visible to the export checks.
+  const old=records.find(e=>e.shot_id===clip.shotId);
+  if(old?.input_fingerprint===x.inputFingerprint&&old?.lane_fingerprint===x.laneFingerprint)continue;
+  // An audio/shot change alone is not evidence of manually retiming unchanged cues.
+  if(old&&old.input_fingerprint!==x.inputFingerprint&&old.lane_fingerprint===x.laneFingerprint)continue;
+  await recordEvidence(c,row,clip.id,x.inputFingerprint,x.laneFingerprint,'manual',old?.input_fingerprint===x.inputFingerprint?old.task_id:null,old?.input_fingerprint===x.inputFingerprint?old.alignment_input_version:null);
+ }
+}
+/** Final-file approval reviews the current rendered text once for the whole episode. */
+export async function confirmWorkspaceCaptionTexts(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject){
+ const states=await readWorkspaceCaptions(c,root,row,project);
+ for(const state of states.filter(s=>s.contract.enabled)){
+  if(state.timing!=='current')throw new ConfigurationError(409,'字幕时序已变化，请重新检查当前工程。');
+  await c.query('UPDATE local_identity.workspace_caption_evidence SET confirmed_by=local_identity.owner_id(),confirmed_at=clock_timestamp() WHERE workspace_id=$1 AND shot_id=$2 AND input_fingerprint=$3',[row.id,state.shotId,state.inputFingerprint]);
+ }
+}
 export async function executeWorkspaceCaptionCommand(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,runtime:{postReady?(kind:'alignment'):Promise<void>;wake?(id:string):void},command:string,data:Record<string,unknown>){
  let x=await captionContext(c,root,row,project,data.clipId);
  if(command==='saveWorkspaceCaptions'){
@@ -73,12 +116,17 @@ export async function executeWorkspaceCaptionCommand(c:PoolClient,root:string,ro
   await recordEvidence(c,row,x.clip.id,x.inputFingerprint,x.laneFingerprint,'waiting',task.id,task.input_snapshot.acoustic_alignment.input_version);
   return{workspace:await readProductionWorkspace(c,row.episode_id,root),task};
  }
- if(command==='applyWorkspaceCaptionAlignment'){
-  if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请先保存并返回，再采用声学对齐结果。');
+ if(command==='applyWorkspaceCaptionAlignment'||command==='prepareWorkspaceCaptionAlignment'){
+  if(command==='applyWorkspaceCaptionAlignment'&&isOpenChatCutStudio(row.episode_id)&&data.nativeApplied!==true)throw new ConfigurationError(409,'请先保存并返回，再采用声学对齐结果。');
   const e=(await c.query('SELECT * FROM local_identity.workspace_caption_evidence WHERE workspace_id=$1 AND shot_id=$2',[row.id,x.clip.shotId])).rows[0],task=typeof data.taskId==='string'?(await c.query('SELECT * FROM public.tasks WHERE id=$1 AND episode_id=$2',[data.taskId,row.episode_id])).rows[0]:null,alignment=x.route.explicitRoute?task?.last_result?.acousticAlignment:x.draft?.acoustic_alignment;
   if(!e||e.task_id!==data.taskId||e.input_fingerprint!==x.inputFingerprint||data.expectedInputFingerprint!==x.inputFingerprint||!task||task.status!=='completed'||task.task_type!=='align_shot_captions'||alignment?.status!=='completed'||alignment.inputVersion!==task.input_snapshot.acoustic_alignment.input_version||alignment.textFingerprint!==createHash('sha256').update(x.contract.text).digest('hex')||alignment.audioSha256!==x.audio?.sha256)throw new ConfigurationError(409,'对齐结果已过期或尚未完成，请按当前正文和音轨重新对齐。');
   const artifact=(await c.query("SELECT * FROM public.artifacts WHERE producer_task_id=$1 AND episode_id=$2 AND artifact_type='acoustic_alignment_evidence'",[task.id,row.episode_id])).rows[0];if(!artifact)throw new ConfigurationError(409,'对齐证据文件不存在。');await verifyNativeFile(root,artifact.relative_path,artifact.sha256,Number(artifact.file_size));
-  const contract={...x.contract,cues:alignment.cues};validateCues(contract,Number(x.item.durationInFrames)*1000/x.timeline.fps);const next=applyWorkspaceCaptionEdit(project,x.clip.itemId,contract);
+  const contract={...x.contract,cues:alignment.cues};validateCues(contract,Number(x.item.durationInFrames)*1000/x.timeline.fps);
+  if(command==='prepareWorkspaceCaptionAlignment')return{captionContract:contract};
+  if(data.nativeApplied!==undefined&&typeof data.nativeApplied!=='boolean')throw new ConfigurationError(400,'原生字幕保存状态无效。');
+  const aligned=applyWorkspaceCaptionEdit(project,x.clip.itemId,contract,{timingOnly:true});
+  if(data.nativeApplied===true&&JSON.stringify(readWorkspaceCaption(project,x.clip.itemId)?.contract.cues)!==JSON.stringify(readWorkspaceCaption(aligned,x.clip.itemId)?.contract.cues))throw new ConfigurationError(409,'对齐结果尚未保存到当前编辑器。');
+  const next=data.nativeApplied===true?project:aligned;
   x=await captionContext(c,root,row,next,x.clip.id);await recordEvidence(c,row,x.clip.id,x.inputFingerprint,x.laneFingerprint,'alignment',task.id,alignment.inputVersion);await updateWorkspaceProject(c,root,row,next,row.bindings,'采用当前字幕对齐',{nativeEdit:true});return readProductionWorkspace(c,row.episode_id,root);
  }
  if(command==='confirmWorkspaceCaptionText'){

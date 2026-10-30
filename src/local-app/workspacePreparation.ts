@@ -58,8 +58,11 @@ export async function readWorkspacePreparation(c:PoolClient,row:ProductionWorksp
 export async function preserveLegacyWorkspace(_c:PoolClient,root:string,episodeId:string,decision:unknown){
  const stored=await inspectOpenChatCutStoredProject(root,episodeId);if(!stored||stored.project.loopControl?.version==='four-step-workspace/v1')return null;
  if(!['preserve','fresh'].includes(String(decision)))throw new ConfigurationError(409,'发现旧剪辑工作版本，请明确保留旧编辑或封存后建立初稿。');
+ return{...await preserveLegacyDocument(root,episodeId,stored),decision:String(decision) as 'preserve'|'fresh'};
+}
+export async function preserveLegacyDocument(root:string,episodeId:string,stored:{project:OpenChatCutProject;metadata?:unknown;source?:unknown}){
  const bytes=Buffer.from(JSON.stringify(stored,null,2)+'\n'),sha=createHash('sha256').update(bytes).digest('hex'),path=`episodes/${episodeId}/production-workspace/recoveries/${sha}.json`,file=await safeAssetOutputPath(root,path);await mkdir(dirname(file),{recursive:true});try{await writeFile(file,bytes,{flag:'wx'});}catch(error){if((error as NodeJS.ErrnoException).code!=='EEXIST')throw error;await verifyNativeFile(root,path,sha,bytes.length);}
- return{...stored,decision:String(decision) as 'preserve'|'fresh',relativePath:path,sha256:sha,fileSize:bytes.length};
+ return{...stored,relativePath:path,sha256:sha,fileSize:bytes.length};
 }
 export async function recoverLegacyBindings(c:PoolClient,root:string,episodeId:string,workspaceId:string,project:OpenChatCutProject,original:WorkspaceClip[]){
  const bindings:WorkspaceClip[]=[];

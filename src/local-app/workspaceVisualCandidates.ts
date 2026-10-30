@@ -1,4 +1,6 @@
+import {isWanGenerationSettings} from '../videoGenerationSettings.js';
 import {resolveWorkspaceShotLineage} from './workspacePreparation.js';
+import {queueWorkspaceImageCandidates} from './workspaceImageGeneration.js';
 import {probeMp3Artifact} from '../worker/mediaTools.js';
 import {join} from 'node:path';
 import {lstat} from 'node:fs/promises';
@@ -29,11 +31,42 @@ function target(row:ProductionWorkspaceRecord,project:OpenChatCutProject,id:unkn
 export async function readWorkspaceVisualCandidates(c:PoolClient,row:ProductionWorkspaceRecord,project:OpenChatCutProject,root:string):Promise<WorkspaceVisualCandidate[]>{
  const records=(await c.query('SELECT v.*,m.id output_material_id,m.storage_path,m.sha256,m.file_size,m.material_type FROM local_identity.workspace_visual_candidates v LEFT JOIN public.paid_generation_reservations r ON r.task_id=v.task_id JOIN public.production_material_revisions m ON m.id=coalesce(v.material_revision_id,r.material_revision_id) AND m.episode_id=v.episode_id WHERE v.workspace_id=$1 ORDER BY v.created_at DESC',[row.id])).rows;
  const decisions=(await c.query('SELECT * FROM local_identity.workspace_candidate_decisions WHERE workspace_id=$1',[row.id])).rows;
- return Promise.all(records.map(async r=>{let readable=true,observed:Awaited<ReturnType<typeof inspectWorkspaceVisualFile>>|null=null;try{const file=await lstat(join(root,r.storage_path));if(!file.isFile()||file.isSymbolicLink()||file.size!==Number(r.file_size))throw Error();if(r.task_id)observed=await inspectWorkspaceVisualFile(root,r.storage_path,'video');}catch{readable=false;}const current=project.timelines.flatMap(t=>t.items.filter(i=>i.id===r.target_item_id).map(item=>({item,timeline:t})))[0],d=decisions.find(d=>d.candidate_id===r.id),pending=current?.item.sourceAssetId===`candidate-${r.id}`&&(current.item.loopControlCandidate as {inputFingerprint?:string}|undefined)?.inputFingerprint===r.input_fingerprint;
+ return Promise.all(records.map(async r=>{let readable=true,observed:Awaited<ReturnType<typeof inspectWorkspaceVisualFile>>|null=null;try{const file=await lstat(join(root,r.storage_path));if(!file.isFile()||file.isSymbolicLink()||file.size!==Number(r.file_size))throw Error();if(r.task_id||r.request_snapshot.execution)observed=await inspectWorkspaceVisualFile(root,r.storage_path,r.material_type);}catch{readable=false;}const current=project.timelines.flatMap(t=>t.items.filter(i=>i.id===r.target_item_id).map(item=>({item,timeline:t})))[0],d=decisions.find(d=>d.candidate_id===r.id),pending=current?.item.sourceAssetId===`candidate-${r.id}`&&(current.item.loopControlCandidate as {inputFingerprint?:string}|undefined)?.inputFingerprint===r.input_fingerprint;
  const duration=observed?.durationSeconds??r.request_snapshot.durationSeconds??r.request_snapshot.providerDurationSeconds,frames=current?Math.ceil(duration*current.timeline.fps):0,deltaSeconds=current?(frames-Number(current.item.durationInFrames))/current.timeline.fps:0,overlapItemIds=current&&deltaSeconds>0?current.timeline.items.filter(i=>i.id!==current.item.id&&i.track===current.item.track&&Number(i.startFrame)<Number(current.item.startFrame)+frames&&Number(i.startFrame)+Number(i.durationInFrames)>Number(current.item.startFrame)+Number(current.item.durationInFrames)).map(i=>String(i.id)):[];
- return{durationImpact:{deltaSeconds,overlapItemIds},id:r.id,kind:r.request_snapshot.kind,usage:r.request_snapshot.usage,shotId:r.shot_id,clipId:r.clip_id,targetItemId:r.target_item_id,taskId:r.task_id,inputFingerprint:r.input_fingerprint,text:'',mainScriptText:'',audioTrackId:null,relativePath:r.storage_path,sha256:r.sha256,fileSize:Number(r.file_size),durationSeconds:observed?.durationSeconds??r.request_snapshot.durationSeconds??r.request_snapshot.providerDurationSeconds,width:observed?.width??r.request_snapshot.width,height:observed?.height??r.request_snapshot.height,currentDurationSeconds:current?Number(current.item.durationInFrames)/current.timeline.fps:null,pendingConfirmation:!!pending&&!d,status:d?.decision??(readable&&(pending||current&&hash(workspaceCandidateTarget(current.item))===hash(r.target_snapshot))&&await visualContextCurrent(c,root,row,project,r)?'available':'stale')};}));
+ return{materialRevisionId:r.output_material_id,...(typeof r.request_snapshot.prompt==='string'?{generation:{prompt:r.request_snapshot.prompt,firstFrameMaterialRevisionId:r.request_snapshot.firstFrameId??'',durationSeconds:r.request_snapshot.providerDurationSeconds??r.request_snapshot.durationSeconds,...(r.request_snapshot.videoSettings?{videoSettings:r.request_snapshot.videoSettings}:{}),...(r.request_snapshot.firstFrameComposition?{firstFrameFit:r.request_snapshot.firstFrameComposition.fit}:{}),...(r.request_snapshot.imageSettings?{imageSettings:r.request_snapshot.imageSettings,referenceMaterialRevisionIds:r.request_snapshot.referenceMaterialRevisionIds}:{} )}}:{}),durationImpact:{deltaSeconds,overlapItemIds},id:r.id,kind:r.request_snapshot.kind,usage:r.request_snapshot.usage,shotId:r.shot_id,clipId:r.clip_id,targetItemId:r.target_item_id,taskId:r.task_id,inputFingerprint:r.input_fingerprint,text:'',mainScriptText:'',audioTrackId:null,relativePath:r.storage_path,sha256:r.sha256,fileSize:Number(r.file_size),durationSeconds:observed?.durationSeconds??r.request_snapshot.durationSeconds??r.request_snapshot.providerDurationSeconds,width:observed?.width??r.request_snapshot.width,height:observed?.height??r.request_snapshot.height,currentDurationSeconds:current?Number(current.item.durationInFrames)/current.timeline.fps:null,pendingConfirmation:!!pending&&!d,status:(r.request_snapshot.kind==='image'?(d?.decision==='rejected'?'rejected':current?.item.sourceAssetId===`candidate-${r.id}`?'adopted':undefined):d?.decision)??(readable&&(pending||current&&(r.request_snapshot.kind==='image'||hash(workspaceCandidateTarget(current.item))===hash(r.target_snapshot)))&&await visualContextCurrent(c,root,row,project,r)?'available':'stale')};}));
+}
+/** One real authorization, frozen input and private queue boundary for first fill and later candidates. */
+export async function queueWorkspaceVisualGeneration(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,data:Record<string,unknown>,runtime:InputRuntime,mode:'candidate'|'first'='candidate'){
+  const {clip,item,timeline}=target(row,project,data.targetItemId),lineage=await resolveWorkspaceVisualLineage(c,row,clip.shotId);
+  if(typeof data.firstFrameMaterialRevisionId!=='string'||!uuid.test(data.firstFrameMaterialRevisionId)||typeof data.prompt!=='string'||!data.prompt.trim()||data.prompt.length>1500)throw new ConfigurationError(400,'首帧或动作描述无效。');
+  const e=(await c.query('SELECT e.*,b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1',[row.episode_id])).rows[0],config=e.policy[lineage.shotType],provider=config?.executor?.provider??'';
+  if(!config?.credential_ref||!(provider==='bailian'&&config.executor?.adapter==='wan_video'||isVideoProvider(provider)&&config.executor?.adapter===videoProviders[provider].adapter))throw new ConfigurationError(409,'请为当前镜头选择既有视频连接。');
+  if(data.videoSettings!==undefined&&(provider!=='bailian'||!isWanGenerationSettings(data.videoSettings)))throw new ConfigurationError(400,'视频参数无效或不适用于当前模型。');
+  if(data.firstFrameFit!==undefined&&!['contain','cover'].includes(String(data.firstFrameFit)))throw new ConfigurationError(400,'首帧构图无效。');
+  const authorized=(await c.query('SELECT * FROM local_identity.script_productions WHERE episode_id=$1 AND script_revision_id=$2 AND enabled AND authorized_at IS NOT NULL',[row.episode_id,row.script_revision_id])).rows[0];if(!authorized||authorized.plan?.executionFingerprint!==productionHash(e.policy))throw new ConfigurationError(409,'请先确认并授权当前制作计划。');
+  const first=(await c.query("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='image'",[data.firstFrameMaterialRevisionId,row.episode_id])).rows[0];if(!first)throw new ConfigurationError(404,'本期首帧图片不存在。');await verifyNativeFile(root,first.storage_path,first.sha256,Number(first.file_size));
+  const mainVoice=await workspaceVisualMainVoice(c,root,row,project,clip.shotId),targetSeconds=mainVoice.windowDurationSeconds??Number(data.durationSeconds),bounds=isVideoProvider(provider)?videoProviders[provider]:{minDuration:2,maxDuration:15},seconds=mainVoice.windowDurationSeconds!==null?Math.max(bounds.minDuration,Math.ceil(targetSeconds)):targetSeconds;
+  if(mainVoice.windowDurationSeconds!==null&&targetSeconds>bounds.maxDuration)throw new ConfigurationError(409,`当前实际主声时长超过所选服务上限 ${bounds.maxDuration} 秒，请明确拆分镜头；不会截断口播。`);
+  if(!Number.isInteger(seconds)||seconds<bounds.minDuration||seconds>bounds.maxDuration)throw new ConfigurationError(409,`当前画面时长不在所选服务 ${bounds.minDuration}～${bounds.maxDuration} 秒范围，请明确拆分或调整；不会变速或循环。`);
+  if(isVideoProvider(provider)&&(!Number.isSafeInteger(data.reservationCents)||Number(data.reservationCents)<1||Number(data.reservationCents)>100000))throw new ConfigurationError(400,'请填写本次费用预留。');
+  await runtime.checkReferences(c,[config.credential_ref]);if(!runtime.mediaReady)throw new ConfigurationError(503,'视频Worker未配置。');await runtime.mediaReady({[lineage.shotType]:config});
+  if(mode==='first'){
+   if(clip.source||clip.image||item.kind!=='text')throw new ConfigurationError(409,'首次生成只填入尚未匹配的占位。');
+   const frames=Math.max(1,Math.ceil(targetSeconds*timeline.fps)),end=Number(item.startFrame)+Number(item.durationInFrames),delta=frames-Number(item.durationInFrames);
+   for(const other of timeline.items)if(other.id!==item.id&&Number(other.startFrame)>=end)other.startFrame=Number(other.startFrame)+delta;
+   item.durationInFrames=frames;
+  }
+  const id=randomUUID(),expected=workspaceCandidateTarget(item),snapshot={origin:mode==='first'?'first-fill':'candidate',kind:'video',usage:'video',capability:lineage.shotType,execution:config,firstFrameId:first.id,firstFrameSha256:first.sha256,prompt:data.prompt.trim(),providerDurationSeconds:seconds,targetDurationSeconds:targetSeconds,reservationCents:data.reservationCents??null,authorizationHash:authorized.authorization_hash,nativeEditRevision:Number(row.native_edit_revision),expectedRevision:Number(row.revision),mainVoice,...(data.videoSettings?{videoSettings:data.videoSettings}:{}),...(data.firstFrameFit?{firstFrameComposition:{fit:data.firstFrameFit,width:timeline.width,height:timeline.height}}:{})};
+  await c.query('INSERT INTO local_identity.workspace_visual_candidates(id,workspace_id,episode_id,clip_id,shot_id,target_item_id,input_fingerprint,target_snapshot,request_snapshot) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',[id,row.id,row.episode_id,clip.id,clip.shotId,item.id,hash({expected,snapshot}),JSON.stringify(expected),JSON.stringify(snapshot)]);
+  let taskId:string;
+  try{taskId=(await c.query('SELECT local_identity.queue_workspace_visual($1) id',[id])).rows[0].id;}catch(error){if((error as {code?:string}).code==='55000')throw new ConfigurationError(409,'已有画面任务正在进行或供应商提交结果未知，请先恢复已有任务或核对结果；不会重复付费提交。');if((error as {code?:string;message?:string}).code==='P0001'&&(error as Error).message==='Approve a generation budget first')throw new ConfigurationError(409,'请先设置并批准账号生成预算，再提交视频生成。');throw error;}
+  return{id,taskId,clip,item,targetSeconds,providerSeconds:seconds};
 }
 export async function executeWorkspaceVisualCandidate(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,command:string,data:Record<string,unknown>,runtime:InputRuntime){
+ if(command==='requestWorkspaceImageCandidates'){
+  await queueWorkspaceImageCandidates(c,root,row,project,data,runtime);
+  return readProductionWorkspace(c,row.episode_id,root);
+ }
 
  if(command==='retryWorkspaceVisualCandidate'){
   if(typeof data.candidateId!=='string'||!uuid.test(data.candidateId))throw new ConfigurationError(400,'候选标识无效。');
@@ -42,19 +75,7 @@ export async function executeWorkspaceVisualCandidate(c:PoolClient,root:string,r
  }
  if(command==='requestWorkspaceVisualCandidate'){
 
-  const {clip,item}=target(row,project,data.targetItemId),lineage=await resolveWorkspaceVisualLineage(c,row,clip.shotId);
-  if(typeof data.firstFrameMaterialRevisionId!=='string'||!uuid.test(data.firstFrameMaterialRevisionId)||typeof data.prompt!=='string'||!data.prompt.trim()||data.prompt.length>1500)throw new ConfigurationError(400,'首帧或动作描述无效。');
-  const e=(await c.query('SELECT e.*,b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1',[row.episode_id])).rows[0],config=e.policy[lineage.shotType],provider=config?.executor?.provider??'';
-  if(!config?.credential_ref||!(provider==='bailian'&&config.executor?.adapter==='wan_video'||isVideoProvider(provider)&&config.executor?.adapter===videoProviders[provider].adapter))throw new ConfigurationError(409,'请为当前镜头选择既有视频连接。');
-  const authorized=(await c.query('SELECT * FROM local_identity.script_productions WHERE episode_id=$1 AND script_revision_id=$2 AND enabled AND authorized_at IS NOT NULL',[row.episode_id,row.script_revision_id])).rows[0];if(!authorized||authorized.plan?.executionFingerprint!==productionHash(e.policy))throw new ConfigurationError(409,'请先确认并授权当前制作计划。');
-  const first=(await c.query("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='image'",[data.firstFrameMaterialRevisionId,row.episode_id])).rows[0];if(!first)throw new ConfigurationError(404,'本期首帧图片不存在。');await verifyNativeFile(root,first.storage_path,first.sha256,Number(first.file_size));
-  const mainVoice=await workspaceVisualMainVoice(c,root,row,project,clip.shotId),targetSeconds=mainVoice.windowDurationSeconds??Number(data.durationSeconds),bounds=isVideoProvider(provider)?videoProviders[provider]:{minDuration:2,maxDuration:15},seconds=mainVoice.windowDurationSeconds!==null?Math.max(bounds.minDuration,Math.ceil(targetSeconds)):targetSeconds;
-  if(!Number.isInteger(seconds)||seconds<bounds.minDuration||seconds>bounds.maxDuration)throw new ConfigurationError(409,`当前画面时长不在所选服务 ${bounds.minDuration}～${bounds.maxDuration} 秒范围，请明确拆分或调整；不会变速或循环。`);
-  if(isVideoProvider(provider)&&(!Number.isSafeInteger(data.reservationCents)||Number(data.reservationCents)<1||Number(data.reservationCents)>100000))throw new ConfigurationError(400,'请填写本次费用预留。');
-  await runtime.checkReferences(c,[config.credential_ref]);if(!runtime.mediaReady)throw new ConfigurationError(503,'视频Worker未配置。');await runtime.mediaReady({[lineage.shotType]:config});
-  const id=randomUUID(),expected=workspaceCandidateTarget(item),snapshot={kind:'video',usage:'video',capability:lineage.shotType,execution:config,firstFrameId:first.id,firstFrameSha256:first.sha256,prompt:data.prompt.trim(),providerDurationSeconds:seconds,targetDurationSeconds:targetSeconds,reservationCents:data.reservationCents??null,authorizationHash:authorized.authorization_hash,nativeEditRevision:Number(row.native_edit_revision),expectedRevision:Number(row.revision),mainVoice};
-  await c.query('INSERT INTO local_identity.workspace_visual_candidates(id,workspace_id,episode_id,clip_id,shot_id,target_item_id,input_fingerprint,target_snapshot,request_snapshot) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',[id,row.id,row.episode_id,clip.id,clip.shotId,item.id,hash({expected,snapshot}),JSON.stringify(expected),JSON.stringify(snapshot)]);
-  try{await c.query('SELECT local_identity.queue_workspace_visual($1)',[id]);}catch(error){if((error as {code?:string}).code==='55000')throw new ConfigurationError(409,'已有画面任务正在进行或供应商提交结果未知，请先恢复已有任务或核对结果；不会重复付费提交。');throw error;}
+  await queueWorkspaceVisualGeneration(c,root,row,project,data,runtime);
   return readProductionWorkspace(c,row.episode_id,root);
  }
  if(command==='prepareWorkspaceVisualPool'){
@@ -76,10 +97,21 @@ export async function executeWorkspaceVisualCandidate(c:PoolClient,root:string,r
   return readProductionWorkspace(c,row.episode_id,root);
  }
  const candidate=(await readWorkspaceVisualCandidates(c,row,project,root)).find(v=>v.id===data.candidateId);if(!candidate)throw new ConfigurationError(404,'本工作空间视觉候选不存在。');
+ if(command==='retainWorkspaceImageCandidate'){
+  if(candidate.kind!=='image'||!['available','adopted'].includes(candidate.status))throw new ConfigurationError(409,'请选择当前有效的图片候选。');
+  await c.query('INSERT INTO local_identity.workspace_visual_image_choices(workspace_id,target_item_id,candidate_id) VALUES($1,$2,$3) ON CONFLICT(workspace_id,target_item_id) DO UPDATE SET candidate_id=excluded.candidate_id',[row.id,candidate.targetItemId,candidate.id]);
+  return readProductionWorkspace(c,row.episode_id,root);
+ }
  if(command==='prepareWorkspaceVisualCandidate'){
-  const {item}=target(row,project,candidate.targetItemId);if(data.acceptTimelineImpact!==undefined&&typeof data.acceptTimelineImpact!=='boolean'||data.motionPolicy!==undefined&&!['preserve-target','replace-motion'].includes(String(data.motionPolicy)))throw new ConfigurationError(400,'请明确本次时长与运动处理。');
+  if(candidate.kind==='image'&&target(row,project,candidate.targetItemId).item.kind==='video')throw new ConfigurationError(409,'当前视频优先；请将图片保留为备用画面或视频首帧。');
+  const {item}=target(row,project,candidate.targetItemId);
+  if(data.imageUsage!==undefined&&(candidate.kind!=='image'||!['still','pan-zoom'].includes(String(data.imageUsage))))throw new ConfigurationError(400,'图片使用方式无效。');
+  if(candidate.kind==='image'&&data.imageUsage)candidate.usage=data.imageUsage as 'still'|'pan-zoom';
+  if(data.acceptTimelineImpact!==undefined&&typeof data.acceptTimelineImpact!=='boolean'||data.motionPolicy!==undefined&&!['preserve-target','replace-motion'].includes(String(data.motionPolicy)))throw new ConfigurationError(400,'请明确本次时长与运动处理。');
   if(candidate.usage==='pan-zoom'&&!data.motionPolicy)throw new ConfigurationError(400,'请选择保留当前运动或采用新图片推拉。');
-  candidate.visual={usage:candidate.usage,motionPolicy:(data.motionPolicy??'preserve-target') as 'preserve-target'|'replace-motion',acceptTimelineImpact:data.acceptTimelineImpact===true,expectedAppearance:workspaceCandidateAppearance(item),placeholder:item.kind==='text'};
+  const sourceIn=data.sourceInSeconds??0,sourceOut=data.sourceOutSeconds??candidate.durationSeconds;
+  if((data.sourceInSeconds!==undefined||data.sourceOutSeconds!==undefined)&&(candidate.kind!=='video'||typeof sourceIn!=='number'||!Number.isFinite(sourceIn)||sourceIn<0||typeof sourceOut!=='number'||!Number.isFinite(sourceOut)||sourceOut<=sourceIn||sourceOut>candidate.durationSeconds+0.001))throw new ConfigurationError(400,'视频使用区间无效。');
+  candidate.visual={...(candidate.kind==='video'&&data.sourceInSeconds!==undefined?{sourceInSeconds:Number(sourceIn),sourceOutSeconds:Number(sourceOut)}:{}),usage:candidate.usage,motionPolicy:(data.motionPolicy??'preserve-target') as 'preserve-target'|'replace-motion',acceptTimelineImpact:data.acceptTimelineImpact===true,expectedAppearance:workspaceCandidateAppearance(item),placeholder:item.kind==='text'};
   return prepareRegisteredWorkspaceCandidate(c,root,row,project,candidate,data.durationPolicy);
  }
  if(command==='adoptWorkspaceVisualCandidate'){await finishRegisteredWorkspaceCandidate(c,root,row,project,candidate,data);return readProductionWorkspace(c,row.episode_id,root);}
@@ -103,11 +135,16 @@ export async function workspaceVisualMainVoice(c:PoolClient,root:string,row:Prod
  return{mode:item.id===`workspace-source-shot-${shotId}`?'source':'tts',windowDurationSeconds:duration,identity:workspaceVisualVoiceIdentity(project,shotId),source:{id:source.id,relativePath:item.src,sha256:source.sha256,fileSize:Number(source.file_size),srcInFrame:Number(item.srcInFrame??0),playbackRate:Number(item.playbackRate??1),coverage:route.coverage}};
 }
 export async function readWorkspaceVisualTasks(c:PoolClient,row:ProductionWorkspaceRecord){
- return(await c.query(`SELECT v.id,t.id "taskId",t.status,t.last_result#>>'{blockers,0,detail}' error,(t.status IN ('failed','blocked') AND r.provider_task_id IS NOT NULL AND s.outcome<>'rejected') "canResume" FROM local_identity.workspace_visual_candidates v JOIN public.tasks t ON t.id=v.task_id LEFT JOIN public.paid_generation_reservations r ON r.task_id=t.id LEFT JOIN local_identity.workspace_visual_submissions s ON s.task_id=t.id WHERE v.workspace_id=$1 ORDER BY v.created_at DESC`,[row.id])).rows;
+ return(await c.query(`SELECT v.id,v.shot_id "shotId",v.request_snapshot->>'kind' kind,t.id "taskId",t.status,t.last_result#>>'{blockers,0,detail}' error,(t.status IN ('failed','blocked') AND r.provider_task_id IS NOT NULL AND s.outcome<>'rejected') "canResume" FROM local_identity.workspace_visual_candidates v JOIN public.tasks t ON t.id=v.task_id LEFT JOIN public.paid_generation_reservations r ON r.task_id=t.id LEFT JOIN local_identity.workspace_visual_submissions s ON s.task_id=t.id WHERE v.workspace_id=$1 ORDER BY v.created_at DESC`,[row.id])).rows;
 }
 
 async function visualContextCurrent(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,record:Record<string,any>){
  if(!record.request_snapshot.execution)return true;
+ if(record.request_snapshot.kind==='image'){
+  const current=(await c.query('SELECT b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1',[row.episode_id])).rows[0];
+  if(hash(current?.policy.static_visual)!==hash(record.request_snapshot.execution))return false;
+  try{for(const ref of record.request_snapshot.references??[])await verifyNativeFile(root,ref.relativePath,ref.sha256,Number(ref.fileSize));return true;}catch{return false;}
+ }
  try{const e=(await c.query('SELECT b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1',[row.episode_id])).rows[0],lineage=await resolveWorkspaceVisualLineage(c,row,record.shot_id),first=(await c.query('SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2',[record.request_snapshot.firstFrameId,row.episode_id])).rows[0];
  if(hash(e.policy[lineage.shotType])!==hash(record.request_snapshot.execution)||first?.sha256!==record.request_snapshot.firstFrameSha256)return false;await verifyNativeFile(root,first.storage_path,first.sha256,Number(first.file_size));
  const voice=await workspaceVisualMainVoice(c,root,row,project,record.shot_id);return voice.identity===record.request_snapshot.mainVoice.identity&&voice.source?.id===record.request_snapshot.mainVoice.source?.id&&voice.source?.sha256===record.request_snapshot.mainVoice.source?.sha256;
@@ -126,6 +163,8 @@ export async function validateWorkspaceVisualUses(c:PoolClient,root:string,row:P
 
 export async function readWorkspaceVisualTargets(c:PoolClient,row:ProductionWorkspaceRecord,project:OpenChatCutProject){
  const data=(await c.query('SELECT b.policy,p.context_snapshot FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN public.review_packages p ON p.id=$2 WHERE e.id=$1',[row.episode_id,row.storyboard_package_id])).rows[0];
- return row.bindings.map(clip=>{const route=resolveWorkspaceMainVoice(project,clip.shotId),shot=data?.context_snapshot?.worker_result?.storyboard?.shots?.find((s:{id:string})=>s.id===clip.shotId),provider=data?.policy[shot?.shotType]?.executor?.provider??'',bounds=isVideoProvider(provider)?videoProviders[provider]:{minDuration:2,maxDuration:15},duration=route.item?Number(route.window.durationSeconds):null;
- return{targetItemId:clip.itemId,voiceMode:(route.item?.id===`workspace-source-shot-${clip.shotId}`?'source':route.item?'tts':'none') as 'source'|'tts'|'none',durationSeconds:duration,providerDurationSeconds:duration===null?null:Math.max(bounds.minDuration,Math.ceil(duration)),minimumSeconds:bounds.minDuration,maximumSeconds:bounds.maxDuration};});
+ const shotInputs=(await c.query('SELECT shot_id,shot_type FROM local_identity.workspace_shot_inputs WHERE workspace_id=$1 AND preparation_id=$2',[row.id,row.storyboard_package_id])).rows;
+ return row.bindings.map(clip=>{const route=resolveWorkspaceMainVoice(project,clip.shotId),shot=data?.context_snapshot?.worker_result?.storyboard?.shots?.find((s:{id:string})=>s.id===clip.shotId),shotType=shotInputs.find(s=>s.shot_id===clip.shotId)?.shot_type??shot?.shotType,provider=data?.policy[shotType]?.executor?.provider??'',bounds=isVideoProvider(provider)?videoProviders[provider]:{minDuration:2,maxDuration:15},duration=route.item?Number(route.window.durationSeconds):null;
+ const timeline=project.timelines.find(t=>t.items.some(i=>i.id===clip.itemId))!;
+ return{targetItemId:clip.itemId,width:timeline.width,height:timeline.height,model:data?.policy[shotType]?.executor?.model,provider,voiceMode:(route.item?.id===`workspace-source-shot-${clip.shotId}`?'source':route.item?'tts':'none') as 'source'|'tts'|'none',durationSeconds:duration,providerDurationSeconds:duration===null?null:Math.max(bounds.minDuration,Math.ceil(duration)),minimumSeconds:bounds.minDuration,maximumSeconds:bounds.maxDuration};});
 }

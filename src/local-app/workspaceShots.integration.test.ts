@@ -1,7 +1,8 @@
 // @vitest-environment node
 import {workspaceTestMedia} from './workspaceTestMedia.fixture';
+import {editStudioDocument} from './studioDocument.fixture';
 import {it,expect} from 'vitest';
-import {readFile,writeFile} from 'node:fs/promises';
+import {readFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner reorders native shot instances without rewriting registered sources or storyboard history',async()=>{
@@ -46,7 +47,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('native range locks, fram
   await op({kind:'composition',shotId:w.clips[0].shotId,layout:'2up-horizontal'});
   await op({kind:'appearance',itemId:id,fit:'contain',focusX:12,transition:'fade'});
   project=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));const visuals=project.timelines[0].items.filter((i:any)=>w.clips.filter((c:any)=>c.shotId===w.clips[0].shotId).some((c:any)=>c.itemId===i.id));expect(visuals.map((i:any)=>i.startFrame)).toEqual([0,0]);expect(new Set(visuals.map((i:any)=>i.track)).size).toBe(2);expect(visuals[0].fadeInFrames).toBe(11);expect(visuals[0].transform.x).toBe(12);expect(visuals[0].sourceAssetId).toBe('material-'+f.material);
-  const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status,JSON.stringify(opened.body)).toBe(200);expect(opened.body.productionWorkspace.clips.map((c:any)=>c.itemId)).toEqual(w.clips.map((c:any)=>c.itemId));
+  w=await f.fillVisuals(w);const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status,JSON.stringify(opened.body)).toBe(200);expect(opened.body.productionWorkspace.clips.map((c:any)=>c.itemId)).toEqual(w.clips.map((c:any)=>c.itemId));
  }finally{await f.close();}
 },180_000);
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('two ranges retain one actual main voice and full following captions after deleting their first visual instance',async()=>{
@@ -65,31 +66,31 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('two ranges retain one ac
   expect((await f.request('generateWorkspaceNarration',{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id})).body.narration[0].taskId).toBe(taskId);expect((await readFile(f.submissions,'utf8')).trim().split('\n')).toHaveLength(1);
   const project=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));expect(project.timelines[0].items.filter((i:any)=>i.id===voice.itemId)).toHaveLength(1);expect(Object.values(project.timelines[0].tracks).flatMap((t:any)=>t.captions?.sourceEntries??[])).toHaveLength(1);
   await f.restart();const resumed=await f.read();expect(resumed.captions.find((c:any)=>c.shotId===first.shotId).contract.text).toBe(text);
-  const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status,JSON.stringify(opened.body)).toBe(200);await f.closeStudio();
+  w=await f.fillVisuals(w);const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status,JSON.stringify(opened.body)).toBe(200);await f.closeStudio();
   const output=join(f.root,'t10-structure.mp4'),spec=join(f.root,'t10-render.json');await writeFile(spec,JSON.stringify({openchatcutRoot:f.runtime.root,assetRoot:f.assetRoot,outputPath:output,state:{...project.timelines[0],width:180,height:320},sources:project.assets.map((a:any)=>({relativePath:a.src}))}));await promisify(execFile)(process.execPath,['scripts/openchatcut-render.mjs',spec],{timeout:120000,maxBuffer:4*1024*1024});
   const measure=async(path:string)=>{const {stderr}=await promisify(execFile)('ffmpeg',['-nostdin','-v','info','-i',path,'-t','2','-af','aformat=channel_layouts=stereo,volumedetect','-f','null','-']);return Number(stderr.match(/mean_volume: (-?[\d.]+) dB/)?.[1]);};const outputDb=await measure(output),sourceDb=await measure(join(f.assetRoot,voice.relativePath));expect(Math.abs(outputDb-sourceDb)).toBeLessThan(.6);
   const evidence=join(process.cwd(),'docs/verification/issue-162-workspace-editing/evidence');await mkdir(evidence,{recursive:true});await copyFile(output,join(evidence,'structure-caption-voice.mp4'));await writeFile(join(evidence,'cross-ticket.json'),JSON.stringify({taskId,voiceItemId:voice.itemId,voiceTrackId:voice.audioTrackId,remainingVisualItemId:w.clips[0].itemId,captionLaneId:`workspace-caption-shot-${first.shotId}`,cueText:text,cueEndMs:2400,submissions:1,sourceDb,outputDb,sha256:createHash('sha256').update(await readFile(output)).digest('hex')},null,2)+'\n');
  }finally{await f.close();}
 },180_000);
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('reopening an actively edited native structure reuses its running Studio and latest project',async()=>{
- const {writeFile}=await import('node:fs/promises'),{applyWorkspaceShotOperation}=await import('../workspaceShots');const f=await productionWorkspaceFixture();try{
+ const {applyWorkspaceShotOperation}=await import('../workspaceShots');const f=await productionWorkspaceFixture();try{
   let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
-  const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status).toBe(200);w=opened.body.productionWorkspace;
-  const path=join(f.assetRoot,`episodes/${f.episode}/openchatcut-work/current/runtime/project-store-v1.json`),store=JSON.parse(await readFile(path,'utf8'));store.entries[`project:${w.project.projectId}`]=applyWorkspaceShotOperation(store.entries[`project:${w.project.projectId}`],{kind:'insert',afterShotId:w.clips[0].shotId,text:'保留原生结构与会话'});await writeFile(path,JSON.stringify(store));
+  w=await f.fillVisuals(w);const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status).toBe(200);w=opened.body.productionWorkspace;
+  await editStudioDocument(opened.body.studioUrl,w.project.projectId,doc=>{const next=applyWorkspaceShotOperation(doc,{kind:'insert',afterShotId:w.clips[0].shotId,text:'保留原生结构与会话'});const added=next.timelines[0].items.find((i:any)=>i.kind==='text')!,source=doc.timelines[0].items.find((i:any)=>i.kind==='video');Object.assign(added,source,{id:added.id,startFrame:added.startFrame,loopControlShot:added.loopControlShot});return next;});
   const saved=await f.request('saveWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision,workspaceRelativePath:opened.body.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:opened.body.workspace.sha256});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body.productionWorkspace;expect(w.clips).toHaveLength(3);
   const reopened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(reopened.status,JSON.stringify(reopened.body)).toBe(200);expect(reopened.body.studioUrl).toBe(opened.body.studioUrl);expect(reopened.body.productionWorkspace.clips).toHaveLength(3);
  }finally{await f.close();}
 },180_000);
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('upgrades duplicate legacy visual caption lanes into one shot lane without losing the complete body or cues',async()=>{
- const {defaultShotCaptionContract}=await import('../shotCaptions'),{writeFile}=await import('node:fs/promises');const f=await productionWorkspaceFixture();try{
+ const {defaultShotCaptionContract}=await import('../shotCaptions');const f=await productionWorkspaceFixture();try{
   let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;const first=w.clips[0];w=(await f.request('saveWorkspaceVideoRanges',{workspaceId:w.id,expectedRevision:w.revision,shotId:first.shotId,ranges:[{clipId:first.id,materialRevisionId:f.material,sourceInFrame:0,durationInFrames:30,durationLocked:false},{materialRevisionId:f.material,sourceInFrame:30,durationInFrames:30,durationLocked:false}]})).body;
   const contract=defaultShotCaptionContract('完整的旧字幕正文','follow_tts');contract.cues=[{id:'legacy-body',text:contract.text,startMs:0,endMs:900}];
   w=(await f.request('saveWorkspaceCaptions',{workspaceId:w.id,expectedRevision:w.revision,clipId:first.id,captionContract:{...contract,contentMode:'independent'}})).body;
   await f.c.query("UPDATE public.shot_preparation_drafts SET audio_mode='tts',tts_text=$3,tts_voice='fixture',tts_speaking_rate=1 WHERE episode_id=$1 AND shot_id=$2",[f.episode,first.shotId,contract.text]);
   const captions=await f.request('saveWorkspaceCaptions',{workspaceId:w.id,expectedRevision:w.revision,clipId:first.id,captionContract:contract});expect(captions.status,JSON.stringify(captions.body)).toBe(200);w=captions.body;
-  const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status).toBe(200);w=opened.body.productionWorkspace;const path=join(f.assetRoot,`episodes/${f.episode}/openchatcut-work/current/runtime/project-store-v1.json`),store=JSON.parse(await readFile(path,'utf8')),doc=store.entries[`project:${w.project.projectId}`],track=Object.values(doc.timelines[0].tracks).find((t:any)=>t.kind==='caption') as any,lane=track.captions.sourceEntries[0];lane.id=`workspace-caption-${first.itemId}`;lane.itemId=`manual:${lane.id}`;const duplicate=structuredClone(lane);duplicate.id=`workspace-caption-${w.clips[1].itemId}`;duplicate.itemId=`manual:${duplicate.id}`;for(const word of duplicate.words){word.start+=1000;word.end+=1000;}track.captions.sourceEntries.push(duplicate);await writeFile(path,JSON.stringify(store));
+  w=await f.fillVisuals(w);const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status).toBe(200);w=opened.body.productionWorkspace;await editStudioDocument(opened.body.studioUrl,w.project.projectId,doc=>{const track=Object.values(doc.timelines[0].tracks).find((t:any)=>t.kind==='caption') as any,lane=track.captions.sourceEntries[0];lane.id=`workspace-caption-${first.itemId}`;lane.itemId=`manual:${lane.id}`;const duplicate=structuredClone(lane);duplicate.id=`workspace-caption-${w.clips[1].itemId}`;duplicate.itemId=`manual:${duplicate.id}`;for(const word of duplicate.words){word.start+=1000;word.end+=1000;}track.captions.sourceEntries.push(duplicate);});
   const saved=await f.request('saveWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision,workspaceRelativePath:opened.body.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:opened.body.workspace.sha256});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body.productionWorkspace;await f.request('closeWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});
-  const removed=await f.request('editWorkspaceStructure',{workspaceId:w.id,expectedRevision:w.revision,operation:{kind:'remove-range',itemId:first.itemId}});expect(removed.status,JSON.stringify(removed.body)).toBe(200);w=removed.body;const current=w.captions.find((c:any)=>c.shotId===first.shotId);expect(current.contract.text).toBe(contract.text);expect(current.contract.cues).toHaveLength(1);expect(current.contract.cues[0].endMs).toBe(900);const upgraded=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));expect(Object.values(upgraded.timelines[0].tracks).flatMap((t:any)=>t.captions?.sourceEntries??[])).toHaveLength(1);
+  const removed=await f.request('editWorkspaceStructure',{workspaceId:w.id,expectedRevision:w.revision,operation:{kind:'remove-range',itemId:first.itemId}});expect(removed.status,JSON.stringify(removed.body)).toBe(200);w=removed.body;const current=w.captions.find((c:any)=>c.shotId===first.shotId);expect(current.contract.text).toBe(contract.text);expect(current.contract.cues).toHaveLength(1);expect(current.contract.cues[0].endMs).toBe(900);const upgraded=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));expect(Object.values(upgraded.timelines[0].tracks).flatMap((t:any)=>t.captions?.sourceEntries??[]).filter((lane:any)=>lane.id===`workspace-caption-shot-${first.shotId}`)).toHaveLength(1);
  }finally{await f.close();}
 },180_000);
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('added native shots accept registered images and source video while the approved storyboard stays unchanged',async()=>{
@@ -102,50 +103,57 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('added native shots accep
   const videoClip=await insert('新增的原片引用');const video=await f.request('importMaterial',{materialType:'video',sourceKind:'file',sourcePath:'added.mp4',mimeType:'video/mp4',contentBase64:(await readFile(workspaceTestMedia('landscape-red-blue.mp4'))).toString('base64'),isMainScript:false,materialPurpose:'a_roll'});expect(video.status).toBe(200);
   const filled=await f.request('matchWorkspaceMaterial',{workspaceId:w.id,expectedRevision:w.revision,clipId:videoClip.id,materialRevisionId:video.body.id});expect(filled.status,JSON.stringify(filled.body)).toBe(200);w=filled.body;
   const doc=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8')),item=doc.timelines[0].items.find((i:any)=>i.id===videoClip.itemId),still=doc.timelines[0].items.find((i:any)=>i.id===imageClip.itemId);expect([item.width,item.height]).toEqual([640,360]);expect(item.sourceAssetId).toBe('material-'+video.body.id);expect(still.kind).toBe('image');expect(still.keyframes.x[0].value).toBe(7);expect(await readFile(join(f.assetRoot,f.boardPath),'utf8')).toBe(boardBefore);
-  const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status,JSON.stringify(opened.body)).toBe(200);
+  w=await f.fillVisuals(w);const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status,JSON.stringify(opened.body)).toBe(200);
  }finally{await f.close();}
 },180_000);
-// The runtime may migrate its legacy snapshot to per-entry files after any native read.
-async function nativeProjectFile(assetRoot:string,episode:string,projectId:string){
- const base=join(assetRoot,`episodes/${episode}/openchatcut-work/current/runtime`),key=`project:${projectId}`,flat=join(base,'project-store-v1.json');
- try{const store=JSON.parse(await readFile(flat,'utf8'));return{doc:store.entries[key],write:async(doc:any)=>{store.entries[key]=doc;await writeFile(flat,JSON.stringify(store));}};}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;}
- const path=join(base,'project-store-v1',encodeURIComponent(key)+'.json');return{doc:JSON.parse(await readFile(path,'utf8')),write:async(doc:any)=>{await writeFile(path,JSON.stringify(doc));}};
+async function nativeProjectFile(studioUrl:string,projectId:string){
+ const r=await fetch(new URL(`/api/project-store/entry?key=${encodeURIComponent('project:'+projectId)}`,studioUrl),{headers:{'Sec-Fetch-Site':'none'}});expect(r.status).toBe(200);
+ return{doc:(await r.json()).value,write:(doc:any)=>editStudioDocument(studioUrl,projectId,()=>doc)};
 }
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('native Owner save rejects deleting the last effective shot while retaining the recoverable document',async()=>{
  const f=await productionWorkspaceFixture();try{
   let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
   const matched=await f.request('matchWorkspaceMaterial',{workspaceId:w.id,expectedRevision:w.revision,clipId:w.clips[0].id,materialRevisionId:f.material});expect(matched.status).toBe(200);w=matched.body;
-  const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status).toBe(200);w=opened.body.productionWorkspace;
-  const originalDoc=structuredClone((await nativeProjectFile(f.assetRoot,f.episode,w.project.projectId)).doc),source=await readFile(join(f.assetRoot,f.videoPath));
+  w=await f.fillVisuals(w);const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status).toBe(200);w=opened.body.productionWorkspace;
+  const originalDoc=structuredClone((await nativeProjectFile(opened.body.studioUrl,w.project.projectId)).doc),source=await readFile(join(f.assetRoot,f.videoPath));
   const save=()=>f.request('saveWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision,workspaceRelativePath:opened.body.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256});
   for(const keepPlaceholder of [true,false]){
    const doc=structuredClone(originalDoc),timeline=doc.timelines[0],visual=structuredClone(timeline.items.find((i:any)=>i.kind==='video'));
    // An unreachable timeline must not masquerade as a surviving effective shot.
    doc.timelines.push({...structuredClone(timeline),id:'unused-parked-visual',items:[visual]});
    timeline.items=keepPlaceholder?timeline.items.filter((i:any)=>i.kind==='text'):[];timeline.selectedId=null;timeline.selectedIds=[];
-   await(await nativeProjectFile(f.assetRoot,f.episode,w.project.projectId)).write(doc);
+   await(await nativeProjectFile(opened.body.studioUrl,w.project.projectId)).write(doc);
    const denied=await save();expect(denied.status,JSON.stringify(denied.body)).toBe(409);expect(denied.body.error).toContain('最后');
    const refreshed=(await(await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}})).json()).workspace;
    expect(refreshed.project.sha256).toBe(w.project.sha256);expect(refreshed.clips.map((c:any)=>c.itemId)).toEqual(w.clips.map((c:any)=>c.itemId));
-   expect((await nativeProjectFile(f.assetRoot,f.episode,w.project.projectId)).doc.timelines[0].items.some((i:any)=>i.kind==='video')).toBe(false);
+   expect((await nativeProjectFile(opened.body.studioUrl,w.project.projectId)).doc.timelines[0].items.some((i:any)=>i.kind==='video')).toBe(false);
    expect(await readFile(join(f.assetRoot,f.videoPath))).toEqual(source);
   }
   // Restoring the real native document succeeds without discarding its other edits.
-  const restored=structuredClone(originalDoc);restored.timelines[0].items.find((i:any)=>i.kind==='text').transform.x=17;await(await nativeProjectFile(f.assetRoot,f.episode,w.project.projectId)).write(restored);
+  const restored=structuredClone(originalDoc);restored.timelines[0].items[0].transform.x=17;await(await nativeProjectFile(opened.body.studioUrl,w.project.projectId)).write(restored);
   const saved=await save();expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body.productionWorkspace;
-  const restoredProject=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));expect(restoredProject.timelines[0].items.find((i:any)=>i.kind==='text').transform.x).toBe(17);
+  const restoredProject=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));expect(restoredProject.timelines[0].items[0].transform.x).toBe(17);
   expect(restoredProject.timelines[0].items.find((i:any)=>i.kind==='video').id).toBe(originalDoc.timelines[0].items.find((i:any)=>i.kind==='video').id);
   await f.restart();const refreshed=(await(await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}})).json()).workspace;expect(refreshed.project.sha256).toBe(w.project.sha256);
  }finally{await f.close();}
 },180_000);
 
-it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('native Owner save still accepts edits in an initial all-placeholder draft',async()=>{
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('initial all-placeholder drafts remain saved but cannot enter native editing',async()=>{
  const f=await productionWorkspaceFixture();try{
-  let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
-  const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status).toBe(200);w=opened.body.productionWorkspace;
-  const native=await nativeProjectFile(f.assetRoot,f.episode,w.project.projectId);expect(native.doc.timelines[0].items.every((i:any)=>i.kind==='text')).toBe(true);native.doc.timelines[0].items[0].transform.x=17;await native.write(native.doc);
-  const saved=await f.request('saveWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision,workspaceRelativePath:opened.body.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:w.project.sha256});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body.productionWorkspace;
-  expect(w.clips).toHaveLength(2);expect(w.clips.every((c:any)=>c.source===null)).toBe(true);const project=(await(await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace/project?sha=${w.project.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}})).json()).project;expect(project.timelines[0].items[0].transform.x).toBe(17);
+  const made=await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});expect(made.status).toBe(200);const w=made.body;
+  const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status).toBe(409);expect(opened.body.error).toContain('采用');
   await f.restart();const refreshed=(await(await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}})).json()).workspace;expect(refreshed.project.sha256).toBe(w.project.sha256);expect(refreshed.readiness.placeholders).toHaveLength(2);
  }finally{await f.close();}
 },180_000);
+
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('removes a selected shot, retains original media and historical projects, and protects the final shot after reopening',async()=>{
+ const f=await productionWorkspaceFixture();try{
+  let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;
+  for(const clip of w.clips){const r=await f.request('matchWorkspaceMaterial',{workspaceId:w.id,expectedRevision:w.revision,clipId:clip.id,materialRevisionId:f.material});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;}
+  const old=w,source=await readFile(join(f.assetRoot,f.videoPath)),board=await readFile(join(f.assetRoot,f.boardPath));
+  const removed=await f.request('editWorkspaceStructure',{workspaceId:w.id,expectedRevision:w.revision,operation:{kind:'remove',shotId:w.clips[0].shotId}});expect(removed.status,JSON.stringify(removed.body)).toBe(200);w=removed.body;expect(w.clips).toHaveLength(1);expect(w.clips[0].shotId).toBe('shot-2');
+  const project=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));expect(project.timelines[0].items.find((i:any)=>i.id===w.clips[0].itemId).startFrame).toBe(0);expect(project.assets).toHaveLength(1);expect(await readFile(join(f.assetRoot,f.videoPath))).toEqual(source);expect(await readFile(join(f.assetRoot,f.boardPath))).toEqual(board);
+  const historical=await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace/project?sha=${old.project.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(historical.status).toBe(200);expect((await historical.json()).project.timelines[0].items.filter((i:any)=>i.kind==='video')).toHaveLength(2);
+  await f.restart();const restored=(await(await fetch(`${f.origin}/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}})).json()).workspace;expect(restored.clips).toHaveLength(1);expect((await f.request('editWorkspaceStructure',{workspaceId:w.id,expectedRevision:w.revision,operation:{kind:'remove',shotId:w.clips[0].shotId}})).status).toBe(409);expect(await readFile(join(f.assetRoot,f.videoPath))).toEqual(source);
+ }finally{await f.close();}
+},120000);

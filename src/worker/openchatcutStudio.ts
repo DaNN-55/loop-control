@@ -117,12 +117,14 @@ async function startStandaloneOpenChatCutStudio(dataDir: string, runtimeConfig: 
 export async function closeOpenChatCutStudio(episodeId: string): Promise<void> {
   const session = sessions.get(episodeId);
   if (!session) return;
-  sessions.delete(episodeId);
   if (session.child.exitCode === null) {
-    const closed = new Promise<void>((resolveClose) => session.child.once("close", () => resolveClose()));
-    session.child.kill("SIGTERM");
-    await Promise.race([closed, new Promise<void>((resolveWait) => setTimeout(resolveWait, 2_000))]);
+    await new Promise<void>((resolveClose,reject) => {
+      const timer=setTimeout(()=>reject(Error('Studio 尚未关闭，请稍后重试；不会替换仍在编辑的工程。')),2_000);
+      session.child.once('close',()=>{clearTimeout(timer);resolveClose();});
+      session.child.kill('SIGTERM');
+    });
   }
+  if(sessions.get(episodeId)===session)sessions.delete(episodeId);
 }
 
 export async function openOpenChatCutStudio(assetRoot: string, episodeId: string, render: ReviewRender, runtimeConfig: OpenChatCutRuntimeConfig = {}, options: { replaceWorkspace?: boolean; validateProject?: StudioProjectValidator } = {}): Promise<OpenChatCutStudioOpenResult> {

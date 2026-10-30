@@ -1,7 +1,6 @@
-import {readWorkspaceNarration,readWorkspaceNarrationTarget} from './workspaceNarration.js';
-import {isVideoProvider,videoProviders} from '../worker/videoProviderCatalog.js';
-import {randomUUID} from 'node:crypto';
-import {executeWanCommand} from './wanCommands.js';
+import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
+import {adoptFirstWorkspaceNarration,readWorkspaceNarration,readWorkspaceNarrationTarget} from './workspaceNarration.js';
+import {queueWorkspaceVisualGeneration} from './workspaceVisualCandidates.js';
 import {inspectMp4Artifact} from '../worker/mediaTools.js';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
@@ -38,26 +37,25 @@ export async function matchWorkspaceImage(c:PoolClient,root:string,episodeId:str
 
 /** Existing registered provider path, connection, explicit submission and budget checks remain authoritative. */
 export async function generateWorkspaceImage(c:PoolClient,root:string,e:{id:string;account_id:string;policy:Record<string,unknown>},runtime:import('./episodeCommands.js').InputRuntime,data:Record<string,unknown>){
- const {row,project}=await lockProductionWorkspace(c,root,e.id,data.workspaceId,data.expectedRevision);
+ let {row,project}=await lockProductionWorkspace(c,root,e.id,data.workspaceId,data.expectedRevision);
  if(isOpenChatCutStudio(e.id))throw new ConfigurationError(409,'请先保存并返回素材准备。');
  const clip=row.bindings.find(b=>b.id===data.clipId);if(!clip||clip.source||clip.image)throw new ConfigurationError(409,'首次生成只填入尚未匹配的占位。');
  if(typeof data.materialRevisionId!=='string'||!uuid.test(data.materialRevisionId))throw new ConfigurationError(400,'首帧图片标识无效。');
  const image=(await c.query("SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2 AND material_type='image'",[data.materialRevisionId,e.id])).rows[0];if(!image)throw new ConfigurationError(409,'首帧图片不存在，请选择本期图片。');
  try{await verifyNativeFile(root,image.storage_path,image.sha256,Number(image.file_size));}catch{throw new ConfigurationError(409,'首帧图片缺失或指纹已变化。');}
  const item=project.timelines.flatMap(t=>t.items).find(i=>i.id===clip.itemId);if(!item||item.kind!=='text')throw new ConfigurationError(409,'占位已由剪辑修改，不能首次生成覆盖。');
- const board=(await c.query('SELECT context_snapshot FROM public.review_packages WHERE id=$1',[row.storyboard_package_id])).rows[0];const shot=board.context_snapshot?.worker_result?.storyboard?.shots?.find((s:{id:string})=>s.id===clip.shotId),config=e.policy[shot?.shotType] as {executor?:{provider?:string}}|undefined;
- const narration=(await readWorkspaceNarration(c,row,project)).find(n=>n.shotId===clip.shotId),hasVoice=narration?.mode==='tts'||narration?.mode==='manual';
+ // Prepare the existing first voice through the same guarded assembly used by refresh, then freeze the actual native route.
+ if(await adoptFirstWorkspaceNarration(c,root,row,project,clip.shotId)){
+  const revision=Number((await c.query('SELECT revision FROM local_identity.production_workspaces WHERE id=$1',[row.id])).rows[0].revision);
+  ({row,project}=await lockProductionWorkspace(c,root,e.id,row.id,revision));
+ }
+ const currentClip=row.bindings.find(b=>b.id===data.clipId)!;
+ const narration=(await readWorkspaceNarration(c,row,project)).find(n=>n.shotId===currentClip.shotId),voice=resolveWorkspaceMainVoice(project,currentClip.shotId).item,hasVoice=(!voice||voice.id===narration?.itemId)&&(narration?.mode==='tts'||narration?.mode==='manual');
  const narrationTarget=hasVoice?await readWorkspaceNarrationTarget(c,root,row.id,clip.id):null;
- const timeline=project.timelines.find(t=>t.items.some(i=>i.id===clip.itemId))!;
- const targetDuration=narrationTarget?Math.ceil(narrationTarget.durationSeconds*timeline.fps)/timeline.fps:Number(data.durationSeconds);
- const provider=config?.executor?.provider??'',bounds=isVideoProvider(provider)?videoProviders[provider]:{minDuration:2,maxDuration:15};
- const providerDuration=narrationTarget?Math.max(bounds.minDuration,Math.ceil(targetDuration)):Number(data.durationSeconds);
- if(narrationTarget&&providerDuration>bounds.maxDuration)throw new ConfigurationError(409,`主声音长于当前视频服务上限 ${bounds.maxDuration} 秒，请明确拆分镜头；系统不会裁词或加速口播。`);
- const task=await executeWanCommand(c,e,root,runtime,config?.executor?.provider==='bailian'?'generateWan':'generateOfficialVideo',{reviewPackageId:row.storyboard_package_id,shotId:clip.shotId,firstFrameId:image.id,prompt:data.prompt,durationSeconds:providerDuration,reservationCents:data.reservationCents},randomUUID());
- const frames=Math.max(1,Math.ceil(targetDuration*timeline.fps)),delta=frames-Number(item.durationInFrames),end=Number(item.startFrame)+Number(item.durationInFrames);
- for(const other of timeline.items)if(other.id!==item.id&&Number(other.startFrame)>=end)other.startFrame=Number(other.startFrame)+delta;item.durationInFrames=frames;
+ const queued=await queueWorkspaceVisualGeneration(c,root,row,project,{targetItemId:clip.itemId,firstFrameMaterialRevisionId:image.id,prompt:data.prompt,durationSeconds:data.durationSeconds,reservationCents:data.reservationCents},runtime,'first');
+ const targetDuration=queued.targetSeconds,providerDuration=queued.providerSeconds,task={id:queued.taskId};
  await c.query('INSERT INTO local_identity.workspace_image_requests(task_id,workspace_id,episode_id,clip_id,item_id,native_edit_revision,project_content_sha256,image_revision_id,image_sha256,duration_seconds,provider_duration_seconds,narration_target) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)',[task.id,row.id,e.id,clip.id,clip.itemId,row.native_edit_revision,workspaceContentSha256(project),image.id,image.sha256,targetDuration,providerDuration,narrationTarget?JSON.stringify(narrationTarget):null]);
- clip.image={usage:'ai-video',durationSeconds:targetDuration,providerDurationSeconds:providerDuration,fit:timeline.fit,focusX:0,focusY:0,taskId:task.id,materialRevisionId:image.id};
+ currentClip.image={usage:'ai-video',durationSeconds:targetDuration,providerDurationSeconds:providerDuration,fit:project.timelines.find(t=>t.items.some(i=>i.id===clip.itemId))!.fit,focusX:0,focusY:0,taskId:task.id,materialRevisionId:image.id};
  return updateWorkspaceProject(c,root,row,project,row.bindings,'请求首次图片视频');
 }
 

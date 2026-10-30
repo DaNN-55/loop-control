@@ -15,7 +15,7 @@ export const productionHash=(value:unknown)=>createHash('sha256').update(JSON.st
 export class ScriptProductionStore {
  constructor(private mediaRoot:string){}
  async read(c:PoolClient,episodeId:string){
-  const e=(await c.query('SELECT e.*,b.policy,i.script_template_version FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN local_identity.input_episodes i ON i.episode_id=e.id WHERE e.id=$1',[episodeId])).rows[0] as ScriptEpisode|undefined;
+  const e=(await c.query("SELECT e.*,b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN public.account_memberships m ON m.account_id=e.account_id AND m.user_id=local_identity.owner_id() AND m.role='owner' WHERE e.id=$1",[episodeId])).rows[0] as ScriptEpisode|undefined;
   if(!e)throw new ConfigurationError(404,'本地生产单不可见。');
   const root=await resolveLocalAssetRoot(c,this.mediaRoot,e.policy.asset_root),result=await this.inspect(c,e,root);
   return{v2:!!result.plan,inspection:result.plan,plan:result.record?.plan??result.plan,enabled:result.record?.enabled??false,authorizationHash:result.record?.authorization_hash,status:result.record?.last_status??'请核对素材与设置后保存制作计划'};

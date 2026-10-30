@@ -10,7 +10,7 @@ import type {InputRuntime} from './episodeCommands.js';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import type {WorkspaceExport,WorkspaceExportCheck,WorkspaceExportIssue} from '../workspaceExport.js';
 import {activeOpenChatCutState} from '../worker/openchatcutProject.js';
-import {readWorkspaceCaptions} from './workspaceCaptionsCommands.js';
+import {readWorkspaceCaptions,confirmWorkspaceCaptionTexts} from './workspaceCaptionsCommands.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
 import {verifyNativeFile} from './localFiles.js';
 import {ConfigurationError} from './configurationCommands.js';
@@ -36,7 +36,15 @@ export async function workspaceExportReadiness(c:PoolClient,root:string,row:Prod
   for(const path of used.paths){const s=await resolveWorkspaceSource(c,root,row.episode_id,path);sources.push({relativePath:s.relative_path,sha256:s.sha256,fileSize:Number(s.file_size)});}
   checks.push({name:'used_content',passed:true,detail:`已核对 ${used.paths.size} 个实际来源。`,sources});
  }catch(error){checks.push({name:'used_content',passed:false,detail:error instanceof Error?error.message:'实际来源不可用。'});}
- try{const captions=await readWorkspaceCaptions(c,root,{...row,bindings:row.bindings.filter(b=>used?.ids.has(b.itemId))},project);const required=captions.filter(x=>used?.ids.has(x.itemId)&&x.contract.enabled);if(required.some(x=>x.timing!=='current'||!x.textConfirmed||!x.contract.cues.length||x.contract.cues.some(q=>q.startMs<0||q.endMs<=q.startMs||q.endMs>x.durationMs+1)))throw Error('必要字幕缺少当前时序或正文核对证据。');checks.push({name:'captions',passed:true,detail:`已核对 ${required.length} 组必要字幕。`,evidence:required});}catch(error){checks.push({name:'captions',passed:false,detail:error instanceof Error?error.message:'字幕不可用。'});}
+ try{
+  for(const timeline of project.timelines.filter(t=>used?.timelineIds.has(t.id))){
+   if(timeline.captionsHidden)continue;const endMs=Math.max(0,...timeline.items.map(i=>Number(i.startFrame)+Number(i.durationInFrames)))*1000/timeline.fps;
+   for(const track of Object.values(timeline.tracks))if(track.kind==='caption'&&track.captions?.enabled!==false)for(const lane of track.captions?.sourceEntries??[]){
+    if(lane.visible===false)continue;
+    if(lane.words.some(word=>!word.text.trim()||!Number.isFinite(word.start)||!Number.isFinite(word.end)||word.start<0||word.end<=word.start||word.end>endMs+1))throw Error('原生字幕存在空正文或越界时序，请在剪辑器调整。');
+   }
+  }
+  const captions=await readWorkspaceCaptions(c,root,{...row,bindings:row.bindings.filter(b=>used?.ids.has(b.itemId))},project);const required=captions.filter(x=>used?.ids.has(x.itemId)&&x.contract.enabled);if(required.some(x=>x.timing!=='current'||!x.contract.cues.length||x.contract.cues.some(q=>q.startMs<0||q.endMs<=q.startMs||q.endMs>x.durationMs+1)))throw Error('必要字幕缺少当前时序，请在剪辑器校时或使用字幕对齐。');checks.push({name:'captions',passed:true,detail:`已核对 ${required.length} 组字幕时序，正文随最终文件一次确认。`,evidence:required});}catch(error){checks.push({name:'captions',passed:false,detail:error instanceof Error?error.message:'字幕不可用。'});}
  return{checks,sources,used};
 }
 export async function readWorkspaceExports(c:PoolClient,root:string,row:ProductionWorkspaceRecord):Promise<{exports:WorkspaceExport[];exportIssues:WorkspaceExportIssue[]}>{
@@ -66,6 +74,7 @@ export async function executeWorkspaceExport(c:PoolClient,root:string,row:Produc
   if(!e||!e.current||e.id!==data.exportId||e.status!=='ready'||e.contentSha256!==data.expectedContentSha256||e.artifact?.sha256!==data.expectedExportSha256||e.checks.some(x=>!x.passed)||exportIssues.some(x=>!x.resolved))throw new ConfigurationError(409,'当前工程、最终文件或检查已变化，请重新检查这份文件。');
   const readiness=await workspaceExportReadiness(c,root,row,project);if(readiness.checks.some(x=>!x.passed))throw new ConfigurationError(409,'当前已用内容或字幕检查未通过。');
   await verifyNativeFile(root,e.project.relativePath,e.project.sha256,e.project.fileSize);
+  await confirmWorkspaceCaptionTexts(c,root,{...row,bindings:row.bindings.filter(b=>readiness.used?.ids.has(b.itemId))},project);
   await c.query('UPDATE local_identity.workspace_exports SET confirmed_at=clock_timestamp(),confirmed_by=local_identity.owner_id() WHERE id=$1',[e.id]);return;
  }
  const id=randomUUID(),ready=await workspaceExportReadiness(c,root,row,project),checks=ready.checks;let artifact=null;
