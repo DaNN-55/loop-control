@@ -1,0 +1,179 @@
+{
+  "source": {
+    "id": "94b54441-b7c9-4a9a-872f-269778bdb1f0",
+    "path": "episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/review-render/v8/index.html",
+    "sha256": "c80397715a4ca89bd22268233ccb3bd4f94f32233ef9970d87ec7cded08dd2b9"
+  },
+  "confirmationMode": "shot_preparation",
+  "confirmedShots": 7,
+  "members": 13,
+  "hasStudioProject": false,
+  "fps": 30,
+  "frames": 1609,
+  "items": [
+    {
+      "id": "shot-shot-001-hook-top",
+      "track": "V1",
+      "kind": "video",
+      "start": 0,
+      "duration": 98,
+      "srcIn": 0,
+      "volume": 0,
+      "caption": null
+    },
+    {
+      "id": "shot-shot-001-hook-bottom",
+      "track": "V2",
+      "kind": "video",
+      "start": 0,
+      "duration": 98,
+      "srcIn": 0,
+      "volume": 0,
+      "caption": null
+    },
+    {
+      "id": "shot-shot-002-nightmare-sheet-full",
+      "track": "V1",
+      "kind": "video",
+      "start": 98,
+      "duration": 166,
+      "srcIn": 62,
+      "volume": 0,
+      "caption": null
+    },
+    {
+      "id": "shot-shot-003-task-instruction-full",
+      "track": "V1",
+      "kind": "video",
+      "start": 264,
+      "duration": 834,
+      "srcIn": 0,
+      "volume": 0,
+      "caption": null
+    },
+    {
+      "id": "shot-shot-004-reading-full",
+      "track": "V1",
+      "kind": "video",
+      "start": 1098,
+      "duration": 70,
+      "srcIn": 40,
+      "volume": 0,
+      "caption": null
+    },
+    {
+      "id": "shot-shot-005-waiting-transition-full",
+      "track": "V1",
+      "kind": "video",
+      "start": 1168,
+      "duration": 58,
+      "srcIn": 0,
+      "volume": 0,
+      "caption": null
+    },
+    {
+      "id": "main-source-shot-005-waiting-transition",
+      "track": "A1",
+      "kind": "audio",
+      "start": 1168,
+      "duration": 58,
+      "srcIn": 0,
+      "volume": 1,
+      "caption": null
+    },
+    {
+      "id": "shot-shot-006-execution-montage-full",
+      "track": "V1",
+      "kind": "video",
+      "start": 1226,
+      "duration": 262,
+      "srcIn": 0,
+      "volume": 0,
+      "caption": null
+    },
+    {
+      "id": "shot-shot-008-outro-full",
+      "track": "V1",
+      "kind": "video",
+      "start": 1488,
+      "duration": 121,
+      "srcIn": 1566,
+      "volume": 0,
+      "caption": null
+    },
+    {
+      "id": "main-tts-narration-shot-001-hook",
+      "track": "A1",
+      "kind": "audio",
+      "start": 0,
+      "duration": 98,
+      "volume": 1,
+      "caption": null
+    },
+    {
+      "id": "main-tts-narration-shot-002-nightmare-sheet",
+      "track": "A1",
+      "kind": "audio",
+      "start": 98,
+      "duration": 165,
+      "volume": 1,
+      "caption": null
+    },
+    {
+      "id": "main-tts-narration-shot-003-task-instruction",
+      "track": "A1",
+      "kind": "audio",
+      "start": 264,
+      "duration": 834,
+      "volume": 1,
+      "caption": null
+    },
+    {
+      "id": "main-tts-narration-shot-004-reading",
+      "track": "A1",
+      "kind": "audio",
+      "start": 1098,
+      "duration": 70,
+      "volume": 1,
+      "caption": null
+    },
+    {
+      "id": "main-tts-narration-shot-006-execution-montage",
+      "track": "A1",
+      "kind": "audio",
+      "start": 1226,
+      "duration": 160,
+      "volume": 1,
+      "caption": null
+    },
+    {
+      "id": "main-tts-narration-shot-008-outro",
+      "track": "A1",
+      "kind": "audio",
+      "start": 1488,
+      "duration": 88,
+      "volume": 1,
+      "caption": null
+    }
+  ],
+  "tracks": [
+    {
+      "id": "V1",
+      "name": "画面层 1"
+    },
+    {
+      "id": "V2",
+      "name": "画面层 2"
+    },
+    {
+      "id": "A1",
+      "name": "主声音"
+    },
+    {
+      "id": "C1",
+      "name": "字幕",
+      "captionEntries": 5
+    }
+  ],
+  "inputFiles": 13
+}

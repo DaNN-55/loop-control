@@ -1,0 +1,11 @@
+{
+  "state": "ready",
+  "database": "loop_studio_153_a3be4e25cdc7",
+  "root": "/private/tmp/loop-t06-volume-PQgqhE/mounted/loop-153-CbsF2q",
+  "at": "2026-10-30T03:21:48.411Z",
+  "url": "http://localhost:55357",
+  "processRestarted": false,
+  "databaseRecreated": false,
+  "businessDataChanged": false,
+  "cleanupReferenceRetained": true
+}

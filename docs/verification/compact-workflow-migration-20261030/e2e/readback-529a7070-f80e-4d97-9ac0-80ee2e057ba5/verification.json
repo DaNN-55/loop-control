@@ -1,0 +1,61 @@
+{
+  "checkedAt": "2026-10-30T03:53:48.505Z",
+  "episodeId": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+  "stage": "production_completed",
+  "workspaceRevision": 12,
+  "exportId": "c69fd0b3-b3f1-4a3e-aec5-3cd8c7615714",
+  "deliveryId": "7d4c8c8f-2821-407d-b85a-eb26a35a88a6",
+  "exactConfirmedVideo": true,
+  "allSixDiskAndHttpShaMatch": true,
+  "independentDecodePassed": true,
+  "files": [
+    {
+      "artifactType": "cover",
+      "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-deliveries/7d4c8c8f-2821-407d-b85a-eb26a35a88a6/cover.png",
+      "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "fileSize": 1515,
+      "httpStatus": 200,
+      "diskAndHttpMatch": true
+    },
+    {
+      "artifactType": "metadata",
+      "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-deliveries/7d4c8c8f-2821-407d-b85a-eb26a35a88a6/metadata.json",
+      "sha256": "3beee91216e15011399faa53117ae890052c424d5800cc49f6f4ca19a9ae86c9",
+      "fileSize": 1490,
+      "httpStatus": 200,
+      "diskAndHttpMatch": true
+    },
+    {
+      "artifactType": "final_qc_report",
+      "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-deliveries/7d4c8c8f-2821-407d-b85a-eb26a35a88a6/checks.json",
+      "sha256": "2f28599ac3c04c1bbfa0b97e3cd32f53b542744e3240016c16d554b9aa3a9263",
+      "fileSize": 3759,
+      "httpStatus": 200,
+      "diskAndHttpMatch": true
+    },
+    {
+      "artifactType": "publish_package",
+      "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-deliveries/7d4c8c8f-2821-407d-b85a-eb26a35a88a6/manifest.json",
+      "sha256": "6e2bf0a1c52aa3190b6d1d0528f9b59c88d0a8fc3a83a15f6f7926c3a6bcca95",
+      "fileSize": 2656,
+      "httpStatus": 200,
+      "diskAndHttpMatch": true
+    },
+    {
+      "artifactType": "final_render",
+      "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-exports/c69fd0b3-b3f1-4a3e-aec5-3cd8c7615714/ffc68a2b32eb5ee4e1388de7302b89e4f225922e772891ef111301bcaf89b34b.mp4",
+      "sha256": "ffc68a2b32eb5ee4e1388de7302b89e4f225922e772891ef111301bcaf89b34b",
+      "fileSize": 163207,
+      "httpStatus": 200,
+      "diskAndHttpMatch": true
+    },
+    {
+      "artifactType": "editable_project",
+      "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/production-workspace/versions/1257abe2efca04426ed700c50eabf96da6059cfa5bd941e8b6be54e9a1adef0d.json",
+      "sha256": "1257abe2efca04426ed700c50eabf96da6059cfa5bd941e8b6be54e9a1adef0d",
+      "fileSize": 8422,
+      "httpStatus": 200,
+      "diskAndHttpMatch": true
+    }
+  ]
+}

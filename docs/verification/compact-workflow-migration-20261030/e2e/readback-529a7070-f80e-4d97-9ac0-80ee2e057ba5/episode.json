@@ -1,0 +1,860 @@
+{
+  "episode": {
+    "id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+    "stage": "production_completed",
+    "title": "紧凑布局完整验收 · 已启用画面与旁白",
+    "is_test": false,
+    "tts_voice": "zh_female_vv_uranus_bigtts",
+    "account_id": "d0a154db-6c8b-4836-a749-29b878f18bd9",
+    "created_at": "2026-10-30T02:58:14.275082+00:00",
+    "updated_at": "2026-10-30T03:52:29.609296+00:00",
+    "archived_at": null,
+    "script_source": "provided",
+    "audio_source_mode": "tts",
+    "series_version_id": null,
+    "tts_language_code": "zh-CN",
+    "tts_speaking_rate": 1,
+    "worker_preflight_at": null,
+    "blueprint_version_id": "d0a154db-6c8b-4836-a749-29b878f18bd9",
+    "main_script_revision_id": "deebd962-988e-4bba-9689-5794181bb4cc"
+  },
+  "artifacts": [
+    {
+      "id": "25dd5ba0-90d5-4b03-877f-9452ccfdd985",
+      "sha256": "2f28599ac3c04c1bbfa0b97e3cd32f53b542744e3240016c16d554b9aa3a9263",
+      "file_size": 3759,
+      "created_at": "2026-10-30T03:52:29.602183+00:00",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "artifact_type": "final_qc_report",
+      "relative_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-deliveries/7d4c8c8f-2821-407d-b85a-eb26a35a88a6/checks.json",
+      "producer_task_id": "7d4c8c8f-2821-407d-b85a-eb26a35a88a6"
+    },
+    {
+      "id": "948363c3-d655-4ff0-bd92-c59b852b3efc",
+      "sha256": "3beee91216e15011399faa53117ae890052c424d5800cc49f6f4ca19a9ae86c9",
+      "file_size": 1490,
+      "created_at": "2026-10-30T03:52:29.602183+00:00",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "artifact_type": "metadata",
+      "relative_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-deliveries/7d4c8c8f-2821-407d-b85a-eb26a35a88a6/metadata.json",
+      "producer_task_id": "7d4c8c8f-2821-407d-b85a-eb26a35a88a6"
+    },
+    {
+      "id": "9a6ff202-0e32-4a76-bdd1-4e34739d34ac",
+      "sha256": "6e2bf0a1c52aa3190b6d1d0528f9b59c88d0a8fc3a83a15f6f7926c3a6bcca95",
+      "file_size": 2656,
+      "created_at": "2026-10-30T03:52:29.602183+00:00",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "artifact_type": "publish_package",
+      "relative_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-deliveries/7d4c8c8f-2821-407d-b85a-eb26a35a88a6/manifest.json",
+      "producer_task_id": "7d4c8c8f-2821-407d-b85a-eb26a35a88a6"
+    },
+    {
+      "id": "e62d07dc-e6e9-4330-9477-bc6a31a20c4c",
+      "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "file_size": 1515,
+      "created_at": "2026-10-30T03:52:29.602183+00:00",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "artifact_type": "cover",
+      "relative_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-deliveries/7d4c8c8f-2821-407d-b85a-eb26a35a88a6/cover.png",
+      "producer_task_id": "7d4c8c8f-2821-407d-b85a-eb26a35a88a6"
+    },
+    {
+      "id": "4e88ad4c-8353-4411-8b2c-6076b72ae9f9",
+      "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+      "file_size": 44148,
+      "created_at": "2026-10-30T03:32:52.847634+00:00",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "artifact_type": "a_roll_video",
+      "relative_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/a1907d3a-ab9b-4255-8cf0-97827e28abf6/a1907d3a-ab9b-4255-8cf0-97827e28abf6.mp4",
+      "producer_task_id": "a1907d3a-ab9b-4255-8cf0-97827e28abf6"
+    },
+    {
+      "id": "3a2e7e8d-dffe-43b1-be63-e19c741093d8",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "file_size": 19628,
+      "created_at": "2026-10-30T03:05:44.909713+00:00",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "artifact_type": "narration_audio",
+      "relative_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/5c5d7812-3856-485e-b365-4d1562b8fe83/shot-narration-shot-01-ae76ff7e03a6cffa49ace78505b536e3.mp3",
+      "producer_task_id": "5c5d7812-3856-485e-b365-4d1562b8fe83"
+    },
+    {
+      "id": "e4ee96cd-f82a-4169-bcec-336ea455b7ad",
+      "sha256": "0be50304ff48268f1858238265f37e71e4458261bc5e9a294238b37e5250b9e0",
+      "file_size": 669,
+      "created_at": "2026-10-30T03:04:13.55036+00:00",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "artifact_type": "storyboard",
+      "relative_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/preparation/d55fa629-32e7-4fcc-b86c-833e16d06ca7.json",
+      "producer_task_id": null
+    },
+    {
+      "id": "bbda487e-619f-4fe0-ae98-d750e8981b4d",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "file_size": 19628,
+      "created_at": "2026-10-30T03:00:51.816841+00:00",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "artifact_type": "narration_audio",
+      "relative_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/782681a5-be3f-4609-ac85-4298133eef80/shot-narration-shot-01-ae76ff7e03a6cffa49ace78505b536e3.mp3",
+      "producer_task_id": "782681a5-be3f-4609-ac85-4298133eef80"
+    },
+    {
+      "id": "98e5ab89-705a-429f-85ea-8a04cf70c206",
+      "sha256": "741935369ee6d73a8c27370e2398496d50842ddc17209f05ee4b6d9912c0c00e",
+      "file_size": 669,
+      "created_at": "2026-10-30T02:58:15.3504+00:00",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "artifact_type": "storyboard",
+      "relative_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/preparation/0fb7da6a-2b8e-4055-9e1a-13fa505bbadf.json",
+      "producer_task_id": null
+    }
+  ],
+  "blueprint": {
+    "id": "d0a154db-6c8b-4836-a749-29b878f18bd9",
+    "policy": {
+      "a_roll": {
+        "executor": {
+          "model": "doubao-seedance-2-0-260128",
+          "adapter": "seedance_video",
+          "provider": "volcengine",
+          "prompt_version": "official-video-v1"
+        },
+        "budget_cents": 90,
+        "max_attempts": 1,
+        "allowed_tools": [
+          "read",
+          "write"
+        ],
+        "credential_ref": "296fa804-5784-42ee-ab08-82bc98e94640",
+        "execution_path": "external"
+      },
+      "budgets": {
+        "storyboard_planning_cents": 0
+      },
+      "executors": {
+        "storyboard_planning": {
+          "model": "gpt-5.6-luna",
+          "adapter": "codex",
+          "provider": "codex",
+          "harness_id": "933aed89-8d98-4a82-a2be-00cf16a76c69",
+          "prompt_version": "storyboard-planning-v2"
+        }
+      },
+      "narration": {
+        "executor": {
+          "model": "seed-tts-2.0",
+          "adapter": "volcengine_tts",
+          "provider": "volcengine_tts",
+          "prompt_version": "narration-v1"
+        },
+        "budget_cents": 10,
+        "max_attempts": 1,
+        "credential_ref": "d0f8fdb5-8e26-4a58-879f-250c7d92d78f",
+        "execution_path": "external"
+      },
+      "asset_root": "/private/tmp/loop-t06-volume-PQgqhE/mounted/loop-153-CbsF2q/account",
+      "allowed_tools": [
+        "read",
+        "write"
+      ]
+    },
+    "version": 1,
+    "is_active": true,
+    "account_id": "d0a154db-6c8b-4836-a749-29b878f18bd9",
+    "created_at": "2026-10-30T02:55:59.022404+00:00",
+    "archived_at": null,
+    "is_snapshot": false
+  },
+  "audioTracks": [
+    {
+      "id": "207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3",
+      "cue_id": "shot-01",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "file_size": 19628,
+      "created_at": "2026-10-30T03:05:44.909713+00:00",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "track_kind": "narration",
+      "relative_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/5c5d7812-3856-485e-b365-4d1562b8fe83/shot-narration-shot-01-ae76ff7e03a6cffa49ace78505b536e3.mp3",
+      "start_seconds": 0,
+      "source_task_id": "5c5d7812-3856-485e-b365-4d1562b8fe83",
+      "duration_seconds": 2.4,
+      "source_artifact_id": "3a2e7e8d-dffe-43b1-be63-e19c741093d8",
+      "source_review_package_id": "d55fa629-32e7-4fcc-b86c-833e16d06ca7",
+      "source_material_revision_id": null
+    },
+    {
+      "id": "1ffc1e7e-8a67-4eb4-968b-a7d7fc661e25",
+      "cue_id": "shot-01",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "file_size": 19628,
+      "created_at": "2026-10-30T03:00:51.816841+00:00",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "track_kind": "narration",
+      "relative_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/782681a5-be3f-4609-ac85-4298133eef80/shot-narration-shot-01-ae76ff7e03a6cffa49ace78505b536e3.mp3",
+      "start_seconds": 0,
+      "source_task_id": "782681a5-be3f-4609-ac85-4298133eef80",
+      "duration_seconds": 2.4,
+      "source_artifact_id": "bbda487e-619f-4fe0-ae98-d750e8981b4d",
+      "source_review_package_id": "0fb7da6a-2b8e-4055-9e1a-13fa505bbadf",
+      "source_material_revision_id": null
+    }
+  ],
+  "transitions": [
+    {
+      "id": "14752666-758f-461f-9f37-47ef1e38c159",
+      "reason": "Exact workspace delivery package verified.",
+      "actor_id": null,
+      "to_stage": "production_completed",
+      "created_at": "2026-10-30T03:52:29.602183+00:00",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "from_stage": "script_approved"
+    },
+    {
+      "id": "6ae3fc35-82f5-4ad5-a1b2-1016400eb0fe",
+      "reason": "Owner confirmed all production materials are ready; start production.",
+      "actor_id": "521857d2-08fa-48b0-85ec-c832d476018f",
+      "to_stage": "script_approved",
+      "created_at": "2026-10-30T03:03:57.343748+00:00",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "from_stage": "waiting_input"
+    },
+    {
+      "id": "d598e03c-b17e-432f-a29e-5eba9e137b7f",
+      "reason": "匹配本期已冻结的 A-roll 视频能力，保留原素材。",
+      "actor_id": "521857d2-08fa-48b0-85ec-c832d476018f",
+      "to_stage": "waiting_input",
+      "created_at": "2026-10-30T03:03:57.162236+00:00",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "from_stage": "script_approved"
+    },
+    {
+      "id": "d8d702d2-70fb-46e6-bed6-f3d24c618a55",
+      "reason": "Owner confirmed all production materials are ready; start production.",
+      "actor_id": "521857d2-08fa-48b0-85ec-c832d476018f",
+      "to_stage": "script_approved",
+      "created_at": "2026-10-30T02:58:15.155264+00:00",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "from_stage": "waiting_input"
+    }
+  ],
+  "seriesVersion": null,
+  "qcReviewIssues": [],
+  "reviewPackages": [
+    {
+      "id": "d55fa629-32e7-4fcc-b86c-833e16d06ca7",
+      "stage": "storyboard_review",
+      "task_id": null,
+      "created_at": "2026-10-30T03:04:13.55036+00:00",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "artifact_id": "e4ee96cd-f82a-4169-bcec-336ea455b7ad",
+      "task_run_id": null,
+      "invalidated_at": null,
+      "revision_number": 2,
+      "context_snapshot": {
+        "worker_result": {
+          "storyboard": {
+            "shots": [
+              {
+                "id": "shot-01",
+                "shotType": "a_roll",
+                "inputBasis": [
+                  {
+                    "sha256": "e4657944653ed60f96c6a48c43b8a8ad33466e3af189f1cc32647657e3e0a176",
+                    "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/materials/e4657944653ed60f96c6a48c43b8a8ad33466e3af189f1cc32647657e3e0a176-script.md"
+                  }
+                ],
+                "targetSpec": "9:16",
+                "scriptSegment": "清晨第一束光落在山脊上，今天从这里出发。",
+                "durationSeconds": 5,
+                "productionMethod": "清晨山谷，镜头缓慢向前推进，山脊被光线照亮。"
+              }
+            ],
+            "version": "storyboard/v1",
+            "audioCues": []
+          }
+        },
+        "workspace_preparation": {
+          "origin": "script-segment",
+          "script_revision_id": "deebd962-988e-4bba-9689-5794181bb4cc"
+        }
+      },
+      "invalidated_reason": null
+    },
+    {
+      "id": "0fb7da6a-2b8e-4055-9e1a-13fa505bbadf",
+      "stage": "storyboard_review",
+      "task_id": null,
+      "created_at": "2026-10-30T02:58:15.3504+00:00",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "artifact_id": "98e5ab89-705a-429f-85ea-8a04cf70c206",
+      "task_run_id": null,
+      "invalidated_at": "2026-10-30T03:03:57.162236+00:00",
+      "revision_number": 1,
+      "context_snapshot": {
+        "worker_result": {
+          "storyboard": {
+            "shots": [
+              {
+                "id": "shot-01",
+                "shotType": "b_roll",
+                "inputBasis": [
+                  {
+                    "sha256": "8077ea645e60018d8fd50a7f5a65c2f3e3dd6f8ab42df1352c11be8a01af8bd2",
+                    "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/materials/8077ea645e60018d8fd50a7f5a65c2f3e3dd6f8ab42df1352c11be8a01af8bd2-script.md"
+                  }
+                ],
+                "targetSpec": "9:16",
+                "scriptSegment": "清晨第一束光落在山脊上，今天从这里出发。",
+                "durationSeconds": 5,
+                "productionMethod": "清晨山谷，镜头缓慢向前推进，山脊被光线照亮。"
+              }
+            ],
+            "version": "storyboard/v1",
+            "audioCues": []
+          }
+        },
+        "workspace_preparation": {
+          "origin": "script-segment",
+          "script_revision_id": "0c0401c3-8921-4b30-8bb6-90ce19b5916b"
+        }
+      },
+      "invalidated_reason": "匹配本期已冻结的 A-roll 视频能力，保留原素材。"
+    }
+  ],
+  "materialRevisions": [
+    {
+      "id": "fa2ff2ad-91ad-4028-87ec-392dc600cc38",
+      "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+      "file_size": 44148,
+      "mime_type": "video/mp4",
+      "created_at": "2026-10-30T03:32:52.847634+00:00",
+      "created_by": "521857d2-08fa-48b0-85ec-c832d476018f",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "source_kind": "worker",
+      "source_path": "wan-shot-01.mp4",
+      "storage_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/a1907d3a-ab9b-4255-8cf0-97827e28abf6/a1907d3a-ab9b-4255-8cf0-97827e28abf6.mp4",
+      "material_type": "video",
+      "is_main_script": false,
+      "revision_number": 1,
+      "material_purpose": "a_roll"
+    },
+    {
+      "id": "7252c506-8cb0-4b8c-9155-b3ff8b37092e",
+      "sha256": "8d6544a938272b1488fe4b3069b296f7b246b377384a59651bd387285ceb8203",
+      "file_size": 48796,
+      "mime_type": "audio/mpeg",
+      "created_at": "2026-10-30T03:30:31.975416+00:00",
+      "created_by": "521857d2-08fa-48b0-85ec-c832d476018f",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "source_kind": "file",
+      "source_path": "bgm.mp3",
+      "storage_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/materials/8d6544a938272b1488fe4b3069b296f7b246b377384a59651bd387285ceb8203-bgm.mp3",
+      "material_type": "audio",
+      "is_main_script": false,
+      "revision_number": 2,
+      "material_purpose": "background_music"
+    },
+    {
+      "id": "d4d36167-e0e8-4b58-9a0c-eb3163615f5e",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "file_size": 19628,
+      "mime_type": "audio/mpeg",
+      "created_at": "2026-10-30T03:29:55.039459+00:00",
+      "created_by": "521857d2-08fa-48b0-85ec-c832d476018f",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "source_kind": "file",
+      "source_path": "voice.mp3",
+      "storage_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/materials/9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100-voice.mp3",
+      "material_type": "audio",
+      "is_main_script": false,
+      "revision_number": 1,
+      "material_purpose": "background_music"
+    },
+    {
+      "id": "deebd962-988e-4bba-9689-5794181bb4cc",
+      "sha256": "e4657944653ed60f96c6a48c43b8a8ad33466e3af189f1cc32647657e3e0a176",
+      "file_size": 933,
+      "mime_type": "text/markdown",
+      "created_at": "2026-10-30T03:03:57.162236+00:00",
+      "created_by": "521857d2-08fa-48b0-85ec-c832d476018f",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "source_kind": "file",
+      "source_path": "script.md",
+      "storage_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/materials/e4657944653ed60f96c6a48c43b8a8ad33466e3af189f1cc32647657e3e0a176-script.md",
+      "material_type": "script",
+      "is_main_script": true,
+      "revision_number": 2,
+      "material_purpose": "main_script"
+    },
+    {
+      "id": "b30adb02-0046-483f-8b47-ca9e31400c32",
+      "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "file_size": 1515,
+      "mime_type": "image/png",
+      "created_at": "2026-10-30T03:02:03.366288+00:00",
+      "created_by": "521857d2-08fa-48b0-85ec-c832d476018f",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "source_kind": "file",
+      "source_path": "cover.png",
+      "storage_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-cover.png",
+      "material_type": "image",
+      "is_main_script": false,
+      "revision_number": 1,
+      "material_purpose": "visual_reference"
+    },
+    {
+      "id": "0c0401c3-8921-4b30-8bb6-90ce19b5916b",
+      "sha256": "8077ea645e60018d8fd50a7f5a65c2f3e3dd6f8ab42df1352c11be8a01af8bd2",
+      "file_size": 933,
+      "mime_type": "text/markdown",
+      "created_at": "2026-10-30T02:58:15.087707+00:00",
+      "created_by": "521857d2-08fa-48b0-85ec-c832d476018f",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "source_kind": "file",
+      "source_path": "script.md",
+      "storage_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/materials/8077ea645e60018d8fd50a7f5a65c2f3e3dd6f8ab42df1352c11be8a01af8bd2-script.md",
+      "material_type": "script",
+      "is_main_script": true,
+      "revision_number": 1,
+      "material_purpose": "main_script"
+    }
+  ],
+  "reviewAnnotations": [],
+  "connectionVersions": [
+    {
+      "id": "d0f8fdb5-8e26-4a58-879f-250c7d92d78f",
+      "status": "unverified",
+      "adapter": "volcengine_tts",
+      "version": 1,
+      "endpoint": "https://openspeech.bytedance.com/api/v3/tts/unidirectional/sse",
+      "provider": "volcengine_tts",
+      "created_at": "2026-10-30T02:55:59.090012+00:00",
+      "is_current": true,
+      "revoked_at": null,
+      "connection_id": "eedfa264-bad9-4ea8-938b-939370af62a1"
+    },
+    {
+      "id": "296fa804-5784-42ee-ab08-82bc98e94640",
+      "status": "unverified",
+      "adapter": "seedance_video",
+      "version": 1,
+      "endpoint": "https://ark.cn-beijing.volces.com/api/v3",
+      "provider": "volcengine",
+      "created_at": "2026-10-30T02:55:59.090012+00:00",
+      "is_current": true,
+      "revoked_at": null,
+      "connection_id": "f6021212-7470-48fe-be9a-2b787d2815a3"
+    }
+  ],
+  "audioTrackAnnotations": [],
+  "shotPreparationDrafts": [
+    {
+      "id": "09dc506a-da0e-4291-922c-1883f9f1158b",
+      "shot_id": "shot-01",
+      "tts_text": "清晨第一束光落在山脊上，今天从这里出发。",
+      "frozen_at": null,
+      "frozen_by": null,
+      "tts_error": null,
+      "tts_voice": "zh_female_vv_uranus_bigtts",
+      "audio_mode": "tts",
+      "created_at": "2026-10-30T03:05:44.237134+00:00",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "skipped_at": null,
+      "skipped_by": null,
+      "updated_at": "2026-10-30T03:35:43.855225+00:00",
+      "composition": {
+        "slots": [
+          {
+            "id": "full",
+            "fit": "cover",
+            "focalPoint": {
+              "x": 0.5,
+              "y": 0.5
+            },
+            "clipSegmentIndex": 0
+          }
+        ],
+        "layout": "full",
+        "version": "shot-composition/v1"
+      },
+      "video_error": null,
+      "audio_status": "ready",
+      "confirmed_at": null,
+      "confirmed_by": null,
+      "video_status": "pending",
+      "clip_segments": [],
+      "preview_error": null,
+      "subtitle_text": "清晨第一束光落在山脊上，今天从这里出发。",
+      "preview_status": "pending",
+      "warning_reason": null,
+      "transition_mode": "cut",
+      "caption_contract": {
+        "cues": [
+          {
+            "id": "0c6b998a-ac0c-4110-9b2d-1a9fa17eec5e~0",
+            "text": "清晨第一束光落在山脊上，今天从这里出发。",
+            "end_ms": 2400,
+            "start_ms": 0
+          }
+        ],
+        "text": "清晨第一束光落在山脊上，今天从这里出发。",
+        "enabled": true,
+        "spatial": {
+          "anchor": "bottom-center",
+          "insets": {
+            "top": 0.08,
+            "left": 0.08,
+            "right": 0.08,
+            "bottom": 0.18
+          },
+          "version": "shot-caption-space/v2",
+          "max_lines": 2,
+          "safe_area": "title-safe",
+          "aspect_ratio": "9:16",
+          "max_characters_per_line": 16
+        },
+        "version": "shot-captions/v1",
+        "content_mode": "independent"
+      },
+      "clip_end_seconds": null,
+      "warning_decision": "not_required",
+      "bgm_ducking_level": "off",
+      "input_fingerprint": null,
+      "review_package_id": "d55fa629-32e7-4fcc-b86c-833e16d06ca7",
+      "subtitles_enabled": true,
+      "tts_language_code": "zh-CN",
+      "tts_speaking_rate": 1,
+      "acoustic_alignment": {
+        "cues": [],
+        "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+        "detail": "口播音频已可试听；声学对齐正在后台排队。",
+        "method": "none",
+        "status": "waiting",
+        "version": "acoustic-alignment/v1",
+        "attempts": [],
+        "provider": "whisperx",
+        "wordCount": 0,
+        "audioSha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+        "generatedAt": "2026-10-30T03:05:44.909713+00:00",
+        "granularity": "none",
+        "inputVersion": "dbd01affb44b41b5ecca85e8737975ab8d3278abad8727d3440979b54e1b6f04",
+        "reviewIssues": [],
+        "textFingerprint": "f429f9a412b6184844e57a26bae76938c32326c93df400ac328ef5e46d477bac",
+        "connectionVersionId": null
+      },
+      "clip_start_seconds": null,
+      "script_bgm_gain_db": null,
+      "script_sfx_gain_db": null,
+      "source_audio_error": null,
+      "tts_override_voice": null,
+      "confirmation_reason": null,
+      "confirmation_status": "pending",
+      "current_tts_task_id": "5c5d7812-3856-485e-b365-4d1562b8fe83",
+      "pending_tts_task_id": null,
+      "warning_accepted_at": null,
+      "warning_accepted_by": null,
+      "preparation_contract": {
+        "version": "shot-preparation/v1",
+        "captions": {
+          "cues": [
+            {
+              "id": "0c6b998a-ac0c-4110-9b2d-1a9fa17eec5e~0",
+              "text": "清晨第一束光落在山脊上，今天从这里出发。",
+              "end_ms": 2400,
+              "start_ms": 0
+            }
+          ],
+          "text": "清晨第一束光落在山脊上，今天从这里出发。",
+          "enabled": true,
+          "spatial": {
+            "anchor": "bottom-center",
+            "insets": {
+              "top": 0.08,
+              "left": 0.08,
+              "right": 0.08,
+              "bottom": 0.18
+            },
+            "version": "shot-caption-space/v2",
+            "max_lines": 2,
+            "safe_area": "title-safe",
+            "aspect_ratio": "9:16",
+            "max_characters_per_line": 16
+          },
+          "version": "shot-captions/v1",
+          "content_mode": "independent"
+        },
+        "tts_text": "清晨第一束光落在山脊上，今天从这里出发。",
+        "audio_mix": {
+          "bgm": null,
+          "sfx": null,
+          "version": "shot-audio-mix/v1",
+          "main_voice": {
+            "mode": "tts",
+            "role": "anchor",
+            "gain_db": 0,
+            "track_id": "207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3"
+          }
+        },
+        "tts_voice": "zh_female_vv_uranus_bigtts",
+        "audio_mode": "tts",
+        "composition": {
+          "slots": [
+            {
+              "id": "full",
+              "fit": "cover",
+              "focalPoint": {
+                "x": 0.5,
+                "y": 0.5
+              },
+              "clipSegmentIndex": 0
+            }
+          ],
+          "layout": "full",
+          "version": "shot-composition/v1"
+        },
+        "clip_segments": [],
+        "audio_track_id": "207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3",
+        "transition_mode": "cut",
+        "input_fingerprint": "fac2440d70f564a42829f839188f9ede",
+        "tts_speaking_rate": 1,
+        "acoustic_alignment": {
+          "cues": [],
+          "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+          "detail": "口播音频已可试听；声学对齐正在后台排队。",
+          "method": "none",
+          "status": "waiting",
+          "version": "acoustic-alignment/v1",
+          "attempts": [],
+          "provider": "whisperx",
+          "wordCount": 0,
+          "audioSha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "generatedAt": "2026-10-30T03:05:44.909713+00:00",
+          "granularity": "none",
+          "inputVersion": "dbd01affb44b41b5ecca85e8737975ab8d3278abad8727d3440979b54e1b6f04",
+          "reviewIssues": [],
+          "textFingerprint": "f429f9a412b6184844e57a26bae76938c32326c93df400ac328ef5e46d477bac",
+          "connectionVersionId": null
+        },
+        "storyboard_fingerprint": null,
+        "source_material_revision_id": null
+      },
+      "current_video_task_id": null,
+      "pending_video_task_id": null,
+      "tts_text_confirmed_at": null,
+      "tts_text_confirmed_by": null,
+      "current_audio_track_id": "207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3",
+      "video_duration_seconds": null,
+      "current_preview_task_id": null,
+      "pending_preview_task_id": null,
+      "script_narration_gain_db": null,
+      "caption_text_confirmation": null,
+      "current_video_artifact_id": null,
+      "pending_alignment_task_id": "0ab32d53-50c8-4068-82c1-99e03c25ba5a",
+      "tts_override_speaking_rate": null,
+      "current_preview_artifact_id": null,
+      "preparation_contract_status": "current",
+      "tts_actual_duration_seconds": 2.4,
+      "pending_source_audio_task_id": null,
+      "preparation_input_fingerprint": "fac2440d70f564a42829f839188f9ede",
+      "selected_material_revision_id": null,
+      "source_audio_duration_seconds": null,
+      "source_video_duration_seconds": null,
+      "current_preview_input_fingerprint": null,
+      "tts_text_confirmation_fingerprint": null,
+      "current_preview_project_artifact_id": null
+    },
+    {
+      "id": "de1c9bb4-02b2-4cac-a099-67c30111e0aa",
+      "shot_id": "shot-01",
+      "tts_text": "清晨第一束光落在山脊上，今天从这里出发。",
+      "frozen_at": null,
+      "frozen_by": null,
+      "tts_error": null,
+      "tts_voice": "zh_female_vv_uranus_bigtts",
+      "audio_mode": "tts",
+      "created_at": "2026-10-30T03:00:51.289869+00:00",
+      "episode_id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "skipped_at": null,
+      "skipped_by": null,
+      "updated_at": "2026-10-30T03:00:51.816841+00:00",
+      "composition": {
+        "slots": [
+          {
+            "id": "full",
+            "fit": "cover",
+            "focalPoint": {
+              "x": 0.5,
+              "y": 0.5
+            },
+            "clipSegmentIndex": 0
+          }
+        ],
+        "layout": "full",
+        "version": "shot-composition/v1"
+      },
+      "video_error": null,
+      "audio_status": "ready",
+      "confirmed_at": null,
+      "confirmed_by": null,
+      "video_status": "pending",
+      "clip_segments": [],
+      "preview_error": null,
+      "subtitle_text": "清晨第一束光落在山脊上，今天从这里出发。",
+      "preview_status": "pending",
+      "warning_reason": null,
+      "transition_mode": "cut",
+      "caption_contract": {
+        "cues": [],
+        "text": "清晨第一束光落在山脊上，今天从这里出发。",
+        "enabled": true,
+        "spatial": {
+          "anchor": "bottom-center",
+          "version": "shot-caption-space/v1",
+          "max_lines": 2,
+          "safe_area": "title-safe",
+          "max_characters_per_line": 16
+        },
+        "version": "shot-captions/v1",
+        "content_mode": "follow_tts"
+      },
+      "clip_end_seconds": null,
+      "warning_decision": "not_required",
+      "bgm_ducking_level": "off",
+      "input_fingerprint": null,
+      "review_package_id": "0fb7da6a-2b8e-4055-9e1a-13fa505bbadf",
+      "subtitles_enabled": true,
+      "tts_language_code": "zh-CN",
+      "tts_speaking_rate": 1,
+      "acoustic_alignment": {
+        "cues": [],
+        "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+        "detail": "口播音频已可试听；声学对齐正在后台排队。",
+        "method": "none",
+        "status": "waiting",
+        "version": "acoustic-alignment/v1",
+        "attempts": [],
+        "provider": "whisperx",
+        "wordCount": 0,
+        "audioSha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+        "generatedAt": "2026-10-30T03:00:51.816841+00:00",
+        "granularity": "none",
+        "inputVersion": "dbd01affb44b41b5ecca85e8737975ab8d3278abad8727d3440979b54e1b6f04",
+        "reviewIssues": [],
+        "textFingerprint": "f429f9a412b6184844e57a26bae76938c32326c93df400ac328ef5e46d477bac",
+        "connectionVersionId": null
+      },
+      "clip_start_seconds": null,
+      "script_bgm_gain_db": null,
+      "script_sfx_gain_db": null,
+      "source_audio_error": null,
+      "tts_override_voice": null,
+      "confirmation_reason": null,
+      "confirmation_status": "pending",
+      "current_tts_task_id": "782681a5-be3f-4609-ac85-4298133eef80",
+      "pending_tts_task_id": null,
+      "warning_accepted_at": null,
+      "warning_accepted_by": null,
+      "preparation_contract": {
+        "version": "shot-preparation/v1",
+        "captions": {
+          "cues": [],
+          "text": "清晨第一束光落在山脊上，今天从这里出发。",
+          "enabled": true,
+          "spatial": {
+            "anchor": "bottom-center",
+            "version": "shot-caption-space/v1",
+            "max_lines": 2,
+            "safe_area": "title-safe",
+            "max_characters_per_line": 16
+          },
+          "version": "shot-captions/v1",
+          "content_mode": "follow_tts"
+        },
+        "tts_text": "清晨第一束光落在山脊上，今天从这里出发。",
+        "audio_mix": {
+          "bgm": null,
+          "sfx": null,
+          "version": "shot-audio-mix/v1",
+          "main_voice": {
+            "mode": "tts",
+            "role": "anchor",
+            "gain_db": 0,
+            "track_id": "1ffc1e7e-8a67-4eb4-968b-a7d7fc661e25"
+          }
+        },
+        "tts_voice": "zh_female_vv_uranus_bigtts",
+        "audio_mode": "tts",
+        "composition": {
+          "slots": [
+            {
+              "id": "full",
+              "fit": "cover",
+              "focalPoint": {
+                "x": 0.5,
+                "y": 0.5
+              },
+              "clipSegmentIndex": 0
+            }
+          ],
+          "layout": "full",
+          "version": "shot-composition/v1"
+        },
+        "clip_segments": [],
+        "audio_track_id": "1ffc1e7e-8a67-4eb4-968b-a7d7fc661e25",
+        "transition_mode": "cut",
+        "input_fingerprint": "cb383738124333c2b8d517bccd8bb508",
+        "tts_speaking_rate": 1,
+        "acoustic_alignment": {
+          "cues": [],
+          "model": "jonatasgrosman/wav2vec2-large-xlsr-53-chinese-zh-cn",
+          "detail": "口播音频已可试听；声学对齐正在后台排队。",
+          "method": "none",
+          "status": "waiting",
+          "version": "acoustic-alignment/v1",
+          "attempts": [],
+          "provider": "whisperx",
+          "wordCount": 0,
+          "audioSha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "generatedAt": "2026-10-30T03:00:51.816841+00:00",
+          "granularity": "none",
+          "inputVersion": "dbd01affb44b41b5ecca85e8737975ab8d3278abad8727d3440979b54e1b6f04",
+          "reviewIssues": [],
+          "textFingerprint": "f429f9a412b6184844e57a26bae76938c32326c93df400ac328ef5e46d477bac",
+          "connectionVersionId": null
+        },
+        "storyboard_fingerprint": null,
+        "source_material_revision_id": null
+      },
+      "current_video_task_id": null,
+      "pending_video_task_id": null,
+      "tts_text_confirmed_at": null,
+      "tts_text_confirmed_by": null,
+      "current_audio_track_id": "1ffc1e7e-8a67-4eb4-968b-a7d7fc661e25",
+      "video_duration_seconds": null,
+      "current_preview_task_id": null,
+      "pending_preview_task_id": null,
+      "script_narration_gain_db": null,
+      "caption_text_confirmation": null,
+      "current_video_artifact_id": null,
+      "pending_alignment_task_id": "dbc72553-6024-456c-9dac-0d35a4082c98",
+      "tts_override_speaking_rate": null,
+      "current_preview_artifact_id": null,
+      "preparation_contract_status": "current",
+      "tts_actual_duration_seconds": 2.4,
+      "pending_source_audio_task_id": null,
+      "preparation_input_fingerprint": "cb383738124333c2b8d517bccd8bb508",
+      "selected_material_revision_id": null,
+      "source_audio_duration_seconds": null,
+      "source_video_duration_seconds": null,
+      "current_preview_input_fingerprint": null,
+      "tts_text_confirmation_fingerprint": null,
+      "current_preview_project_artifact_id": null
+    }
+  ],
+  "preRenderReviewMembers": [],
+  "storyboardAudioSelections": [],
+  "preRenderReviewMemberDecisions": [],
+  "localAssetRoot": "/private/tmp/loop-t06-volume-PQgqhE/mounted/loop-153-CbsF2q/account",
+  "historicalReadOnly": false
+}

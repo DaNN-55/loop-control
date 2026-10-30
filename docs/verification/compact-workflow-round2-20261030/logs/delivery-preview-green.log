@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx (6 tests) 153ms
+ ✓ src/local-app/WorkspaceShotPreview.test.tsx (4 tests) 45ms
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+   Start at  13:47:03
+   Duration  1.25s (transform 91ms, setup 14ms, collect 1.51s, tests 198ms, environment 317ms, prepare 57ms)
+

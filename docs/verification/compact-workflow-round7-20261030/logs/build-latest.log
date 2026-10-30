@@ -1,0 +1,6 @@
+
+> loop-control@0.1.0 build
+> tsc -b && vite build
+
+src/local-app/workspaceImageGeneration.integration.test.ts(4,18): error TS6133: 'writeFile' is declared but its value is never read.
+src/local-app/workspaceVisualBrowser.integration.test.ts(5,19): error TS6133: 'readFile' is declared but its value is never read.

@@ -1,0 +1,34 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/useWorkspaceCanvas.test.tsx (1 test | 1 failed) 31ms
+   × keeps the working canvas at 800px while the outer page scrolls up and down 31ms
+     → expected 838.25 to be 800 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/useWorkspaceCanvas.test.tsx > keeps the working canvas at 800px while the outer page scrolls up and down
+AssertionError: expected 838.25 to be 800 // Object.is equality
+
+- Expected
++ Received
+
+- 800
++ 838.25
+
+ ❯ src/local-app/useWorkspaceCanvas.test.tsx:11:110
+      9|  scroller.getBoundingClientRect=()=>({top:0,width:1455} as DOMRect);ca…
+     10|  fireEvent(window,new Event('resize'));const height=()=>parseFloat(can…
+     11|  for(const top of [40,100,160,300,100,0]){scroller.scrollTop=top;fireE…
+       |                                                                                                              ^
+     12| });
+     13| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  19:06:33
+   Duration  543ms (transform 25ms, setup 9ms, collect 91ms, tests 31ms, environment 272ms, prepare 35ms)
+

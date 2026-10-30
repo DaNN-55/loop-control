@@ -1,0 +1,50 @@
+[
+  {
+    "name": "脚本确认",
+    "height": 800,
+    "history": 0,
+    "left": 230,
+    "padding": "193px",
+    "scrollTop": 0,
+    "top": 205,
+    "transition": "all",
+    "viewport": 953,
+    "width": 1625
+  },
+  {
+    "name": "素材准备与匹配",
+    "height": 800,
+    "history": 0,
+    "left": 230,
+    "padding": "193px",
+    "scrollTop": 0,
+    "top": 205,
+    "transition": "all",
+    "viewport": 953,
+    "width": 1625
+  },
+  {
+    "name": "剪辑工作台",
+    "height": 800,
+    "history": 0,
+    "left": 230,
+    "padding": "193px",
+    "scrollTop": 0,
+    "top": 205,
+    "transition": "all",
+    "viewport": 953,
+    "width": 1625
+  },
+  {
+    "name": "检查与交付",
+    "height": 800,
+    "history": 0,
+    "left": 230,
+    "padding": "193px",
+    "scrollTop": 0,
+    "top": 205,
+    "transition": "all",
+    "viewport": 953,
+    "width": 1625
+  }
+]

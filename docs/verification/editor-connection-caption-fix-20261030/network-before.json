@@ -1,0 +1,782 @@
+[
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117507.724137,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117507.725682,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117507.734625,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117507.73561,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117507.735655,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117507.741088,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117508.783075,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117509.831857,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117509.833133,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117509.838687,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117509.839693,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117509.839807,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117509.844742,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117510.882029,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117511.928621,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117511.92928,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117511.931845,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117511.932282,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117511.932308,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117511.934262,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117512.973332,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117514.019301,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117514.020129,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117514.022926,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117514.023508,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117514.023556,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117514.026133,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117515.06951,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117516.120438,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117516.121747,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117516.125101,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117516.125548,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117516.12557,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117516.128028,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117517.168651,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117518.216919,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117518.21807,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117518.223376,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117518.22441,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117518.22449,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117518.228075,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117519.272002,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117520.321637,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117520.322476,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117520.325714,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117520.326277,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117520.326304,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117520.329041,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117521.370212,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117522.407,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117522.40751,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117522.409247,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117522.409559,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117522.409579,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117522.412191,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117523.453038,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117524.501519,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117524.502787,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117524.507015,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117524.508036,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117524.508111,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117524.512322,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117525.553453,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117526.600497,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117526.602228,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117526.607189,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117526.608075,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117526.608141,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117526.612605,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117527.65466,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117528.721046,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117528.721868,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117528.72437,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117528.724732,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117528.724756,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117528.726087,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117529.777868,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117530.8298,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117530.83106,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117530.837606,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117530.83858,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117530.838663,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117530.843221,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117531.887887,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117532.928615,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117532.929182,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117532.930987,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117532.931306,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117532.931326,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117532.932928,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117533.964984,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117535.001921,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117535.00256,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117535.003798,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117535.004119,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117535.004135,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117535.005137,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117536.056526,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117537.106012,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117537.107398,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117537.111819,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117537.112839,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117537.112926,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117537.117111,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117538.15874,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117539.206651,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117539.208061,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117539.212114,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117539.21316,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117539.21324,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117539.217736,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117540.258105,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117541.300968,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117541.301464,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117541.303021,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117541.303354,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117541.303374,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117541.304668,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117542.349178,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117543.392807,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117543.393475,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117543.395402,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117543.395799,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117543.395824,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117543.397486,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117544.432322,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117545.474611,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117545.475411,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117545.478247,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117545.478889,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117545.478927,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117545.481729,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117546.525022,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117547.574167,
+    "status": 204,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117547.575126,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117547.579134,
+    "status": 409,
+    "path": "/api/external-agent/poll"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117547.580108,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.loadingFailed",
+    "timestamp": 117547.580204,
+    "error": "net::ERR_ABORTED"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117547.584602,
+    "status": 409,
+    "path": "/api/external-agent/unregister"
+  },
+  {
+    "method": "Network.responseReceived",
+    "timestamp": 117548.631698,
+    "status": 200,
+    "path": "/api/external-agent/register"
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "activated": true,
+  "version": "0.2.17",
+  "activeRoot": "/Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut",
+  "backupRoot": "/Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut-v0.2.14-backup-20261030",
+  "stoppedOldSdkPids": [
+    1467
+  ],
+  "userConfirmedAllSaved": true,
+  "projectDataRewritten": false,
+  "uiPatchApplied": true
+}

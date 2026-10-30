@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/worker/codexRunner.test.ts (28 tests) 12ms
+ ✓ src/worker/controlledMediaExecutor.test.ts (12 tests) 285ms
+ ✓ src/local-app/providerNetwork.test.ts (30 tests) 1329ms
+   ✓ halts and keeps the consumed reservation on timeout  1023ms
+
+ Test Files  3 passed (3)
+      Tests  70 passed (70)
+   Start at  17:15:24
+   Duration  1.54s (transform 165ms, setup 15ms, collect 252ms, tests 1.63s, environment 641ms, prepare 98ms)
+

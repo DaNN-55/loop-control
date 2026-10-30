@@ -1,0 +1,20 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ scripts/openchatcut-bridge-retry.integration.test.ts (6 tests) 32ms
+ ✓ scripts/openchatcut-caption-layout.integration.test.ts (4 tests) 49ms
+ ✓ scripts/openchatcut-bridge-retry.test.mjs (3 tests) 2ms
+ ✓ scripts/openchatcut-caption-drag.test.mjs (3 tests) 8ms
+stdout | src/worker/openchatcutStudio.validation.integration.test.ts > retains both validators while reading the identical document once during each draft open
+{"name":"draft-open-validation","sdkReads":1,"validatorCalls":2,"readDurationsMs":[100],"elapsedMs":1172}
+
+ ✓ src/worker/openchatcutStudio.validation.integration.test.ts (3 tests) 5272ms
+   ✓ retains both validators while reading the identical document once during each draft open  2068ms
+   ✓ still rejects a source SHA change at the second validation when SDK evidence is reused  888ms
+   ✓ revalidates a changed native-store document instead of trusting the input fingerprint  2314ms
+
+ Test Files  5 passed (5)
+      Tests  19 passed (19)
+   Start at  21:33:44
+   Duration  6.00s (transform 454ms, setup 51ms, collect 652ms, tests 5.36s, environment 706ms, prepare 262ms)
+

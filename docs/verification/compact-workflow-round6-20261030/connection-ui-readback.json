@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-30T08:21:38.777Z",
+  "processStopped": true,
+  "portClosed": true,
+  "databaseRetained": true,
+  "mediaRetained": true,
+  "controlledConnectionSaved": true,
+  "stopMarkerWritten": false,
+  "stopSignal": "SIGTERM",
+  "realKeychainModified": false,
+  "externalProviderCalled": false
+}

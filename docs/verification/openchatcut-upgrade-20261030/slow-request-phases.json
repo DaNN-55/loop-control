@@ -1,0 +1,450 @@
+[
+  {
+    "path": "/api/media-poster",
+    "type": "Image",
+    "durationMs": 7393,
+    "queueMs": 7096,
+    "serverWaitMs": 296
+  },
+  {
+    "path": "/api/plugins",
+    "type": "Fetch",
+    "durationMs": 7324,
+    "queueMs": 7323,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/plugins",
+    "type": "Fetch",
+    "durationMs": 7217,
+    "queueMs": 7216,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/waveform",
+    "type": "Fetch",
+    "durationMs": 7171,
+    "queueMs": 7074,
+    "serverWaitMs": 97
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7152,
+    "queueMs": 7151,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7152,
+    "queueMs": 7151,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7151,
+    "queueMs": 7150,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7151,
+    "queueMs": 7150,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7151,
+    "queueMs": 7151,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7150,
+    "queueMs": 7149,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7149,
+    "queueMs": 7148,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7149,
+    "queueMs": 7148,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7148,
+    "queueMs": 7146,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7148,
+    "queueMs": 7147,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7148,
+    "queueMs": 7147,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7148,
+    "queueMs": 7147,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/waveform",
+    "type": "Fetch",
+    "durationMs": 7147,
+    "queueMs": 7060,
+    "serverWaitMs": 86
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7146,
+    "queueMs": 7145,
+    "serverWaitMs": 1
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7145,
+    "queueMs": 7144,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7145,
+    "queueMs": 7144,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7144,
+    "queueMs": 7143,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/waveform",
+    "type": "Fetch",
+    "durationMs": 7133,
+    "queueMs": 7044,
+    "serverWaitMs": 88
+  },
+  {
+    "path": "/src/shortcuts/ShortcutsDialog.tsx",
+    "type": "Script",
+    "durationMs": 7123,
+    "queueMs": 7094,
+    "serverWaitMs": 24
+  },
+  {
+    "path": "/api/waveform",
+    "type": "Fetch",
+    "durationMs": 7112,
+    "queueMs": 7031,
+    "serverWaitMs": 80
+  },
+  {
+    "path": "/media/uploads/2189163831e42f39da74.mp3",
+    "type": "Fetch",
+    "durationMs": 7107,
+    "queueMs": 7100,
+    "serverWaitMs": 1
+  },
+  {
+    "path": "/src/components/VersionHistory.tsx",
+    "type": "Script",
+    "durationMs": 7107,
+    "queueMs": 7088,
+    "serverWaitMs": 18
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7100,
+    "queueMs": 7092,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7100,
+    "queueMs": 7092,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7100,
+    "queueMs": 7092,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7100,
+    "queueMs": 7093,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7100,
+    "queueMs": 7094,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/src/components/settings/DesignStylePanel.tsx",
+    "type": "Script",
+    "durationMs": 7094,
+    "queueMs": 7084,
+    "serverWaitMs": 10
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7092,
+    "queueMs": 7091,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7092,
+    "queueMs": 7091,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7091,
+    "queueMs": 7090,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7090,
+    "queueMs": 7089,
+    "serverWaitMs": 1
+  },
+  {
+    "path": "/api/waveform",
+    "type": "Fetch",
+    "durationMs": 7089,
+    "queueMs": 6127,
+    "serverWaitMs": 962
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7089,
+    "queueMs": 7087,
+    "serverWaitMs": 1
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7089,
+    "queueMs": 7088,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/src/components/settings/SettingsDialog.tsx",
+    "type": "Script",
+    "durationMs": 7089,
+    "queueMs": 7076,
+    "serverWaitMs": 11
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7087,
+    "queueMs": 7086,
+    "serverWaitMs": 0
+  },
+  {
+    "path": "/src/export/ExportDialog.tsx",
+    "type": "Script",
+    "durationMs": 7077,
+    "queueMs": 7069,
+    "serverWaitMs": 6
+  },
+  {
+    "path": "/api/waveform",
+    "type": "Fetch",
+    "durationMs": 7075,
+    "queueMs": 6111,
+    "serverWaitMs": 963
+  },
+  {
+    "path": "/api/waveform",
+    "type": "Fetch",
+    "durationMs": 7061,
+    "queueMs": 5918,
+    "serverWaitMs": 1142
+  },
+  {
+    "path": "/api/project-store/semantic-vectors/prune",
+    "type": "Fetch",
+    "durationMs": 7059,
+    "queueMs": 7041,
+    "serverWaitMs": 9
+  },
+  {
+    "path": "/api/waveform",
+    "type": "Fetch",
+    "durationMs": 7045,
+    "queueMs": 5903,
+    "serverWaitMs": 1142
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7045,
+    "queueMs": 7037,
+    "serverWaitMs": 5
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7037,
+    "queueMs": 7035,
+    "serverWaitMs": 1
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7036,
+    "queueMs": 7031,
+    "serverWaitMs": 4
+  },
+  {
+    "path": "/media/uploads/402bfb4758e484d755b0.mp4",
+    "type": "Fetch",
+    "durationMs": 7035,
+    "queueMs": 7028,
+    "serverWaitMs": 6
+  },
+  {
+    "path": "/api/project-store/entry",
+    "type": "Fetch",
+    "durationMs": 7033,
+    "queueMs": 7027,
+    "serverWaitMs": 4
+  },
+  {
+    "path": "/api/filmstrip",
+    "type": "Fetch",
+    "durationMs": 7032,
+    "queueMs": 4353,
+    "serverWaitMs": 2678
+  },
+  {
+    "path": "/media/uploads/2189163831e42f39da74.mp3",
+    "type": "Fetch",
+    "durationMs": 7031,
+    "queueMs": 7026,
+    "serverWaitMs": 5
+  },
+  {
+    "path": "/api/waveform",
+    "type": "Fetch",
+    "durationMs": 6128,
+    "queueMs": 4683,
+    "serverWaitMs": 1444
+  },
+  {
+    "path": "/api/filmstrip",
+    "type": "Fetch",
+    "durationMs": 6112,
+    "queueMs": 4178,
+    "serverWaitMs": 1933
+  },
+  {
+    "path": "/api/waveform",
+    "type": "Fetch",
+    "durationMs": 5919,
+    "queueMs": 4332,
+    "serverWaitMs": 1586
+  },
+  {
+    "path": "/api/filmstrip",
+    "type": "Fetch",
+    "durationMs": 5904,
+    "queueMs": 3080,
+    "serverWaitMs": 2823
+  },
+  {
+    "path": "/api/codex/status",
+    "type": "Fetch",
+    "durationMs": 5109,
+    "queueMs": 1,
+    "serverWaitMs": 5107
+  },
+  {
+    "path": "/api/waveform",
+    "type": "Fetch",
+    "durationMs": 4700,
+    "queueMs": 3097,
+    "serverWaitMs": 1602
+  },
+  {
+    "path": "/api/filmstrip",
+    "type": "Fetch",
+    "durationMs": 4684,
+    "queueMs": 1827,
+    "serverWaitMs": 2856
+  },
+  {
+    "path": "/api/waveform",
+    "type": "Fetch",
+    "durationMs": 4354,
+    "queueMs": 2971,
+    "serverWaitMs": 1382
+  },
+  {
+    "path": "/api/filmstrip",
+    "type": "Fetch",
+    "durationMs": 4333,
+    "queueMs": 2951,
+    "serverWaitMs": 1381
+  },
+  {
+    "path": "/api/waveform",
+    "type": "Fetch",
+    "durationMs": 3098,
+    "queueMs": 1844,
+    "serverWaitMs": 1253
+  },
+  {
+    "path": "/api/filmstrip",
+    "type": "Fetch",
+    "durationMs": 3081,
+    "queueMs": 1777,
+    "serverWaitMs": 1303
+  }
+]

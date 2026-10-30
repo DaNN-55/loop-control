@@ -1,0 +1,60 @@
+[
+  {
+    "path": "/src/main.tsx",
+    "status": 200,
+    "transformed": true
+  },
+  {
+    "path": "/src/editor/useEditorController.tsx",
+    "status": 200,
+    "transformed": true
+  },
+  {
+    "path": "/src/captions/CaptionPreviewEditor.tsx",
+    "status": 200,
+    "transformed": true
+  },
+  {
+    "path": "/src/captions/captionPreviewTarget.ts",
+    "status": 200,
+    "transformed": true
+  },
+  {
+    "path": "/src/components/inspector/CaptionInspectorControls.tsx",
+    "status": 200,
+    "transformed": true
+  },
+  {
+    "path": "/src/agent/useExternalAgentBridge.ts",
+    "status": 200,
+    "transformed": true
+  },
+  {
+    "path": "/src/media/upload.ts",
+    "status": 200,
+    "transformed": true
+  },
+  {
+    "path": "/src/media/mobileImport.ts",
+    "status": 200,
+    "transformed": true
+  },
+  {
+    "path": "/src/media/useEditorMediaIngest.ts",
+    "status": 500,
+    "transformed": false
+  },
+  {
+    "path": "/src/media/DirectoryImportActions.tsx",
+    "status": 200,
+    "transformed": true
+  }
+]
+file:///Users/dan/Programs/loop-control/.scratch/openchatcut-upgrade-20261030/smoke-adapter.mjs:17
+ await writeFile('docs/verification/openchatcut-upgrade-20261030/adapter-http-smoke.json',JSON.stringify({sdkRoot:root,results},null,2));console.log(JSON.stringify(results,null,2));if(results.some(r=>r.status!==200||!r.transformed))throw Error('module transform failed');
+                                                                                                                                                                                                                                              ^
+
+Error: module transform failed
+    at file:///Users/dan/Programs/loop-control/.scratch/openchatcut-upgrade-20261030/smoke-adapter.mjs:17:239
+
+Node.js v24.20.0

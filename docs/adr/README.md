@@ -19,3 +19,6 @@
 - [ADR-0014：六步制作流程与版本修订](0014-production-reconfirmation-and-six-step-workflow.md)
 
 - [ADR-0015：四步制作与嵌入式整期工程](0015-four-step-production-and-embedded-studio.md)
+
+- [ADR-0016：正式准备谱系](0016-formal-preparation-lineage.md)
+- [ADR-0017：旧HTML工程接入可编辑工作区](0017-legacy-html-editable-workspace.md)

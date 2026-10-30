@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Pexels 素材连接",
+    "at": "2026-10-30 11:11:57",
+    "status": "success",
+    "detail": "连接测试通过Pexels 素材连接连接验证通过；尚未执行内容生成。"
+  },
+  {
+    "name": "火山语音连接",
+    "at": "2026-10-30 11:11:58",
+    "status": "success",
+    "detail": "连接测试通过火山语音连接语音接口验证通过（固定短句）。"
+  },
+  {
+    "name": "百炼-万象",
+    "at": "2026-10-30 11:11:58",
+    "status": "success",
+    "detail": "连接测试通过百炼-万象连接验证通过；尚未执行内容生成。"
+  },
+  {
+    "name": "Freesound 本地",
+    "at": "2026-10-30 11:12:10",
+    "status": "success",
+    "detail": "连接测试通过Freesound 本地连接验证通过；尚未执行内容生成。"
+  },
+  {
+    "name": "seedance",
+    "at": "2026-10-30 11:12:11",
+    "status": "success",
+    "detail": "连接测试通过seedance连接验证通过；尚未执行内容生成。"
+  },
+  {
+    "name": "minimax",
+    "at": "2026-10-30 11:12:13",
+    "status": "success",
+    "detail": "连接测试通过minimax连接验证通过；尚未执行内容生成。"
+  },
+  {
+    "name": "kling",
+    "at": "2026-10-30 11:12:16",
+    "status": "success",
+    "detail": "连接测试通过kling连接验证通过；尚未执行内容生成。"
+  }
+]

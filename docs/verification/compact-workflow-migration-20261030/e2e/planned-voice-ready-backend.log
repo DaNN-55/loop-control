@@ -1,0 +1,4 @@
+
+> loop-control@0.1.0 backend:build
+> tsc -p tsconfig.local-app.json
+

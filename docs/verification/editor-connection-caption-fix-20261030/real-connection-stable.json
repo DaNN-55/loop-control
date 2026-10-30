@@ -1,0 +1,73 @@
+{
+  "elapsedMs": 153259,
+  "truncated": false,
+  "events": [
+    {
+      "path": "/api/external-agent/cancellation",
+      "status": 204,
+      "timestamp": 118762.746162
+    },
+    {
+      "path": "/api/external-agent/poll",
+      "status": 204,
+      "timestamp": 118762.84944
+    },
+    {
+      "path": "/api/external-agent/cancellation",
+      "status": 204,
+      "timestamp": 118787.77588
+    },
+    {
+      "path": "/api/external-agent/poll",
+      "status": 204,
+      "timestamp": 118787.902211
+    },
+    {
+      "path": "/api/external-agent/cancellation",
+      "status": 204,
+      "timestamp": 118812.809572
+    },
+    {
+      "path": "/api/external-agent/poll",
+      "status": 204,
+      "timestamp": 118812.95777
+    },
+    {
+      "path": "/api/external-agent/cancellation",
+      "status": 204,
+      "timestamp": 118837.842729
+    },
+    {
+      "path": "/api/external-agent/poll",
+      "status": 204,
+      "timestamp": 118838.013237
+    },
+    {
+      "path": "/api/external-agent/cancellation",
+      "status": 204,
+      "timestamp": 118862.876303
+    },
+    {
+      "path": "/api/external-agent/poll",
+      "status": 204,
+      "timestamp": 118863.072762
+    },
+    {
+      "path": "/api/external-agent/cancellation",
+      "status": 204,
+      "timestamp": 118887.918592
+    },
+    {
+      "path": "/api/external-agent/poll",
+      "status": 204,
+      "timestamp": 118888.138666
+    }
+  ],
+  "conflicts": 0,
+  "registrations": 0,
+  "status": [
+    "编辑器已连接",
+    "0",
+    "150"
+  ]
+}

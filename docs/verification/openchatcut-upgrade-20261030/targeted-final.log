@@ -1,0 +1,32 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ scripts/openchatcut-media-imports.integration.test.ts (1 test) 23ms
+ ✓ scripts/openchatcut-bridge-retry.integration.test.ts (6 tests) 28ms
+ ✓ scripts/openchatcut-caption-layout.integration.test.ts (4 tests) 85ms
+ ✓ scripts/openchatcut-caption-drag.test.mjs (3 tests) 8ms
+ ✓ src/local-app/WorkspaceNativeControls.test.tsx (2 tests) 91ms
+ ✓ scripts/openchatcut-bridge-retry.test.mjs (3 tests) 3ms
+ ✓ scripts/openchatcut-media-imports.test.mjs (1 test) 2ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx (12 tests) 693ms
+stdout | src/worker/openchatcutStudio.validation.integration.test.ts > retains both validators while reading the identical document once during each draft open
+{"name":"draft-open-validation","sdkReads":1,"validatorCalls":2,"readDurationsMs":[137],"elapsedMs":1783}
+
+stdout | src/worker/openchatcutStudio.media-cache.integration.test.ts > keeps the real SDK waveform cache key and copied-source mtime across close/reopen when bytes match
+{"name":"studio-waveform-reopen-cache","mtimeBefore":1790812800000,"mtimeAfter":1790812800000,"cacheKeyBefore":"ebeecaf7b023c70128af.mp3.preview-v3-2106-1790812800000000.peaks.json","cacheKeyAfter":"ebeecaf7b023c70128af.mp3.preview-v3-2106-1790812800000000.peaks.json"}
+
+ ✓ src/worker/openchatcutStudio.validation.integration.test.ts (3 tests) 6091ms
+   ✓ retains both validators while reading the identical document once during each draft open  2409ms
+   ✓ still rejects a source SHA change at the second validation when SDK evidence is reused  1504ms
+   ✓ revalidates a changed native-store document instead of trusting the input fingerprint  2177ms
+ ✓ src/worker/openchatcutStudio.media-cache.integration.test.ts (4 tests) 12062ms
+   ✓ keeps the real SDK waveform cache key and copied-source mtime across close/reopen when bytes match  5300ms
+   ✓ repairs different copied bytes even when source and destination have equal size and mtime  3075ms
+   ✓ still rejects an existing symlink media copy before considering content equality  1881ms
+   ✓ still rejects an existing hardlink media copy before considering content equality  1805ms
+
+ Test Files  10 passed (10)
+      Tests  39 passed (39)
+   Start at  22:39:58
+   Duration  12.44s (transform 753ms, setup 60ms, collect 1.70s, tests 19.09s, environment 1.53s, prepare 386ms)
+

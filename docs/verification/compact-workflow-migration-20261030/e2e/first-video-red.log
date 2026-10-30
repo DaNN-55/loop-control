@@ -1,0 +1,34 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/workspaceFirstVideo.integration.test.ts (1 test | 1 failed) 2830ms
+   × fresh authored first video uses current preparation and explicit authorization without a legacy storyboard approval 2830ms
+     → {"error":"本机服务暂不可用，请检查本机状态。"}: expected 503 to be 409 // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceFirstVideo.integration.test.ts > fresh authored first video uses current preparation and explicit authorization without a legacy storyboard approval
+AssertionError: {"error":"本机服务暂不可用，请检查本机状态。"}: expected 503 to be 409 // Object.is equality
+
+- Expected
++ Received
+
+- 409
++ 503
+
+ ❯ src/local-app/workspaceFirstVideo.integration.test.ts:18:90
+     16|   expect((await f.send('setWanBudget',{trialCents:300,totalCents:1000,…
+     17|   const payload={clipId:w.clips[0].id,materialRevisionId:uploaded.body…
+     18|   r=await send('generateWorkspaceImage',payload);expect(r.status,JSON.…
+       |                                                                                          ^
+     19|   expect((await send('authorizeWorkspacePreparation',{enabled:true})).…
+     20|   r=await send('generateWorkspaceImage',payload);expect(r.status,JSON.…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  11:14:51
+   Duration  3.34s (transform 274ms, setup 7ms, collect 389ms, tests 2.83s, environment 0ms, prepare 33ms)
+

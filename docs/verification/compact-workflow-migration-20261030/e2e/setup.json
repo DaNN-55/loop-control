@@ -1,0 +1,11 @@
+{
+  "origin": "http://localhost:55357",
+  "accountId": "d0a154db-6c8b-4836-a749-29b878f18bd9",
+  "initialEmptyEpisode": "44dbee0d-cc07-408d-ae52-16aa8a78762b",
+  "database": "loop_studio_153_a3be4e25cdc7",
+  "assetRoot": "/private/tmp/loop-t06-volume-PQgqhE/mounted/loop-153-CbsF2q/account",
+  "mountPath": "/private/tmp/loop-t06-volume-PQgqhE/mounted",
+  "controlledProvider": true,
+  "preseeded": "Owner/账号/蓝图/受控连接，另由既有fixture提供一张历史样本及通过真实create命令建立的一张空生产单；主验收请经普通新建按钮另建生产单。",
+  "dailyDatabaseWritten": false
+}

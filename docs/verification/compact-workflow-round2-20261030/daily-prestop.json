@@ -1,0 +1,17 @@
+{
+  "phase": "prestop",
+  "previousBaselineMatches": false,
+  "at": "2026-10-30T05:53:56.377Z",
+  "comparisonBaseline": "compact-workflow-round2-20261030/daily-before.json (complete rows, canonical jsonb_agg by id)",
+  "hashes": {
+    "episodes": "6:a047aee3e840f2d400d9984feb543363",
+    "tasks": "210:7b58c8cab239df6f388953ef879fbaa2",
+    "review_packages": "38:0835ffe4250f8074e3ad4a9b783eded6",
+    "approvals": "22:e012d118fc5c993cedddf3fa3be84beb",
+    "production_material_revisions": "86:1ee0cd8153fa1df9907881b4686221c4",
+    "artifacts": "240:ab94c2ba79964f4fd5790fc4caedf666",
+    "audio_tracks": "65:1b489cb07b9cfc57e29baced30cbd1d7"
+  },
+  "activeTasks": 0,
+  "unchanged": true
+}

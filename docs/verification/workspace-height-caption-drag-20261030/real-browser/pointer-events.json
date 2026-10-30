@@ -1,0 +1,212 @@
+[
+  {
+    "type": "pointermove",
+    "x": 853.6796875,
+    "y": 245.296875,
+    "target": "cc-capedit-hit",
+    "buttons": 0
+  },
+  {
+    "type": "pointerdown",
+    "x": 853.6796875,
+    "y": 245.296875,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointermove",
+    "x": 858.6796875,
+    "y": 240.8524169921875,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointermove",
+    "x": 863.6796875,
+    "y": 236.40798950195312,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointermove",
+    "x": 868.6796875,
+    "y": 231.96353149414062,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointermove",
+    "x": 873.6796875,
+    "y": 227.51910400390625,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointermove",
+    "x": 878.6796875,
+    "y": 223.07464599609375,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointermove",
+    "x": 883.6796875,
+    "y": 218.63021850585938,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointermove",
+    "x": 888.6796875,
+    "y": 214.18576049804688,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointermove",
+    "x": 893.6796875,
+    "y": 209.7413330078125,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointermove",
+    "x": 898.6796875,
+    "y": 205.296875,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointerup",
+    "x": 898.6796875,
+    "y": 205.296875,
+    "target": "cc-capedit-hit",
+    "buttons": 0
+  },
+  {
+    "type": "pointermove",
+    "x": 1070,
+    "y": 20,
+    "target": {},
+    "buttons": 0
+  },
+  {
+    "type": "pointerdown",
+    "x": 1070,
+    "y": 20,
+    "target": {},
+    "buttons": 1
+  },
+  {
+    "type": "pointerup",
+    "x": 1070,
+    "y": 20,
+    "target": {},
+    "buttons": 0
+  },
+  {
+    "type": "pointermove",
+    "x": 1070,
+    "y": 20,
+    "target": {},
+    "buttons": 0
+  },
+  {
+    "type": "pointerdown",
+    "x": 1070,
+    "y": 20,
+    "target": {},
+    "buttons": 1
+  },
+  {
+    "type": "pointerup",
+    "x": 1070,
+    "y": 20,
+    "target": {},
+    "buttons": 0
+  },
+  {
+    "type": "pointermove",
+    "x": 853.6796875,
+    "y": 245.296875,
+    "target": "cc-capedit-hit",
+    "buttons": 0
+  },
+  {
+    "type": "pointerdown",
+    "x": 853.6796875,
+    "y": 245.296875,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointermove",
+    "x": 858.6796875,
+    "y": 240.8524169921875,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointermove",
+    "x": 863.6796875,
+    "y": 236.40798950195312,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointermove",
+    "x": 868.6796875,
+    "y": 231.96353149414062,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointermove",
+    "x": 873.6796875,
+    "y": 227.51910400390625,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointermove",
+    "x": 878.6796875,
+    "y": 223.07464599609375,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointermove",
+    "x": 883.6796875,
+    "y": 218.63021850585938,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointermove",
+    "x": 888.6796875,
+    "y": 214.18576049804688,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointermove",
+    "x": 893.6796875,
+    "y": 209.7413330078125,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointermove",
+    "x": 898.6796875,
+    "y": 205.296875,
+    "target": "cc-capedit-hit",
+    "buttons": 1
+  },
+  {
+    "type": "pointerup",
+    "x": 898.6796875,
+    "y": 205.296875,
+    "target": "cc-capedit-hit",
+    "buttons": 0
+  }
+]

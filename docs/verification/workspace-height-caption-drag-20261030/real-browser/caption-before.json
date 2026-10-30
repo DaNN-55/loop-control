@@ -1,0 +1,96 @@
+{
+  "hit": {
+    "x": 780.640625,
+    "y": 230.265625,
+    "width": 146.078125,
+    "height": 30.0625,
+    "top": 230.265625,
+    "right": 926.71875,
+    "bottom": 260.328125,
+    "left": 780.640625
+  },
+  "ancestors": [
+    {
+      "class": "cc-capedit-hit",
+      "style": "font-family: \"DM Sans\", system-ui, sans-serif; font-size: 12.025px; font-weight: 800; font-style: normal; text-align: center; text-decoration-line: none; letter-spacing: 0px; line-height: 1.25; text-transform: none; color: rgb(255, 216, 74); text-shadow: rgba(0, 0, 0, 0.867) 0px 2px 6px; paint-order: stroke; -webkit-text-stroke: 1px rgb(30, 22, 0); background: transparent; border: 0px solid transparent; border-radius: 0px; box-shadow: none; box-sizing: border-box; padding: 0px; white-space: pre-wrap; cursor: grab; touch-action: none; user-select: none; opacity: 1;"
+    },
+    {
+      "class": "",
+      "style": "position: relative; pointer-events: auto; max-width: 100%;"
+    },
+    {
+      "class": "",
+      "style": "position: absolute; left: 0px; right: 0px; display: flex; flex-direction: column; gap: 0.1em; padding: 0px 10%; font-family: \"DM Sans\", system-ui, sans-serif; font-size: 12.025px; font-weight: 800; font-style: normal; text-align: center; text-decoration-line: none; letter-spacing: 0px; line-height: 1.25; text-transform: none; align-items: center; opacity: 1; transform-origin: center center; top: 50%; transform: translateY(-50%) translate(0px, 0px) rotate(0deg) scale(1); pointer-events: none;"
+    },
+    {
+      "class": "",
+      "style": "position: absolute; inset: 0px; pointer-events: none; z-index: 4; overflow: visible;"
+    },
+    {
+      "class": "cc-preview-canvas",
+      "style": "position: relative; width: 182.584px; height: 324.594px; aspect-ratio: 1080 / 1920;"
+    }
+  ],
+  "inputs": [
+    {
+      "label": "搜索素材",
+      "value": ""
+    },
+    {
+      "label": "字号",
+      "value": "0.037"
+    },
+    {
+      "label": "字重",
+      "value": "800"
+    },
+    {
+      "label": "文字描边",
+      "value": "1"
+    },
+    {
+      "label": "文描透明度",
+      "value": "1"
+    },
+    {
+      "label": "文字阴影",
+      "value": "6"
+    },
+    {
+      "label": "边框描边",
+      "value": "0"
+    },
+    {
+      "label": "边描透明度",
+      "value": "1"
+    },
+    {
+      "label": "边框圆角",
+      "value": "0"
+    },
+    {
+      "label": "边框阴影",
+      "value": "0"
+    },
+    {
+      "label": "缩放",
+      "value": "1"
+    },
+    {
+      "label": "水平",
+      "value": "-0.12"
+    },
+    {
+      "label": "垂直",
+      "value": "0.53"
+    },
+    {
+      "label": "旋转",
+      "value": "0"
+    },
+    {
+      "label": "透明",
+      "value": "1"
+    }
+  ]
+}

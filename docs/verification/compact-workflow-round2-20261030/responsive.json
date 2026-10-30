@@ -1,0 +1,182 @@
+[
+  {
+    "step": "脚本确认",
+    "active": "1脚本确认已确认",
+    "height": 900,
+    "pageWidth": 1440,
+    "splitVisible": false,
+    "width": 1440,
+    "passed": true
+  },
+  {
+    "step": "素材准备与匹配",
+    "active": "2素材准备与匹配0 项待准备",
+    "height": 900,
+    "pageWidth": 1440,
+    "splitVisible": true,
+    "width": 1440,
+    "passed": true
+  },
+  {
+    "step": "剪辑工作台",
+    "active": "3剪辑工作台已核对",
+    "height": 900,
+    "pageWidth": 1440,
+    "splitVisible": false,
+    "width": 1440,
+    "passed": true
+  },
+  {
+    "step": "检查与交付",
+    "active": "4检查与交付已交付",
+    "height": 900,
+    "pageWidth": 1440,
+    "splitVisible": false,
+    "width": 1440,
+    "passed": true
+  },
+  {
+    "step": "脚本确认",
+    "active": "1脚本确认已确认",
+    "height": 800,
+    "pageWidth": 1280,
+    "splitVisible": false,
+    "width": 1280,
+    "passed": true
+  },
+  {
+    "step": "素材准备与匹配",
+    "active": "2素材准备与匹配0 项待准备",
+    "height": 800,
+    "pageWidth": 1280,
+    "splitVisible": true,
+    "width": 1280,
+    "passed": true
+  },
+  {
+    "step": "剪辑工作台",
+    "active": "3剪辑工作台已核对",
+    "height": 800,
+    "pageWidth": 1280,
+    "splitVisible": false,
+    "width": 1280,
+    "passed": true
+  },
+  {
+    "step": "检查与交付",
+    "active": "4检查与交付已交付",
+    "height": 800,
+    "pageWidth": 1280,
+    "splitVisible": false,
+    "width": 1280,
+    "passed": true
+  },
+  {
+    "step": "脚本确认",
+    "active": "1脚本确认已确认",
+    "height": 768,
+    "pageWidth": 1024,
+    "splitVisible": false,
+    "width": 1024,
+    "passed": true
+  },
+  {
+    "step": "素材准备与匹配",
+    "active": "2素材准备与匹配0 项待准备",
+    "height": 768,
+    "pageWidth": 1024,
+    "splitVisible": true,
+    "width": 1024,
+    "passed": true
+  },
+  {
+    "step": "剪辑工作台",
+    "active": "3剪辑工作台已核对",
+    "height": 768,
+    "pageWidth": 1024,
+    "splitVisible": false,
+    "width": 1024,
+    "passed": true
+  },
+  {
+    "step": "检查与交付",
+    "active": "4检查与交付已交付",
+    "height": 768,
+    "pageWidth": 1024,
+    "splitVisible": false,
+    "width": 1024,
+    "passed": true
+  },
+  {
+    "step": "脚本确认",
+    "active": "1脚本确认已确认",
+    "height": 900,
+    "pageWidth": 800,
+    "splitVisible": false,
+    "width": 800,
+    "passed": true
+  },
+  {
+    "step": "素材准备与匹配",
+    "active": "2素材准备与匹配0 项待准备",
+    "height": 900,
+    "pageWidth": 800,
+    "splitVisible": false,
+    "width": 800,
+    "passed": true
+  },
+  {
+    "step": "剪辑工作台",
+    "active": "3剪辑工作台已核对",
+    "height": 900,
+    "pageWidth": 800,
+    "splitVisible": false,
+    "width": 800,
+    "passed": true
+  },
+  {
+    "step": "检查与交付",
+    "active": "4检查与交付已交付",
+    "height": 900,
+    "pageWidth": 800,
+    "splitVisible": false,
+    "width": 800,
+    "passed": true
+  },
+  {
+    "step": "脚本确认",
+    "active": "1脚本确认已确认",
+    "height": 844,
+    "pageWidth": 390,
+    "splitVisible": false,
+    "width": 390,
+    "passed": true
+  },
+  {
+    "step": "素材准备与匹配",
+    "active": "2素材准备与匹配0 项待准备",
+    "height": 844,
+    "pageWidth": 390,
+    "splitVisible": false,
+    "width": 390,
+    "passed": true
+  },
+  {
+    "step": "剪辑工作台",
+    "active": "3剪辑工作台已核对",
+    "height": 844,
+    "pageWidth": 390,
+    "splitVisible": false,
+    "width": 390,
+    "passed": true
+  },
+  {
+    "step": "检查与交付",
+    "active": "4检查与交付已交付",
+    "height": 844,
+    "pageWidth": 390,
+    "splitVisible": false,
+    "width": 390,
+    "passed": true
+  }
+]

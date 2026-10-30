@@ -1,0 +1,38 @@
+{
+  "title": "紧凑四工作流完整验收",
+  "description": "隔离测试生成与真实 Studio 渲染的验收短片；非商业发布。",
+  "tags": [
+    "E2E",
+    "紧凑布局",
+    "完整交付"
+  ],
+  "exportId": "c69fd0b3-b3f1-4a3e-aec5-3cd8c7615714",
+  "contentSha256": "60987364729e3809bb824501cc9a8fcf89603e6ecbb25b630f23574e7e055b05",
+  "scriptRevisionId": "deebd962-988e-4bba-9689-5794181bb4cc",
+  "narration": [
+    {
+      "shotId": "shot-01",
+      "baselineText": "清晨第一束光落在山脊上，今天从这里出发。",
+      "sourceText": "清晨第一束光落在山脊上，今天从这里出发。",
+      "adoptedText": "清晨第一束光落在山脊上，今天从这里出发。",
+      "textCoverage": "complete_source",
+      "windows": [
+        {
+          "srcInFrame": 0,
+          "usedDurationSeconds": 2.4,
+          "sourceDurationSeconds": 2.4,
+          "playbackRate": 1,
+          "fps": 30,
+          "audible": true
+        }
+      ],
+      "textSource": "owner_adoption",
+      "sourceDiffersFromBaseline": false,
+      "differsFromBaseline": false,
+      "audioTrackId": "207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "itemId": "workspace-narration-shot-shot-01",
+      "source": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/5c5d7812-3856-485e-b365-4d1562b8fe83/shot-narration-shot-01-ae76ff7e03a6cffa49ace78505b536e3.mp3"
+    }
+  ]
+}

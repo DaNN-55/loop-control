@@ -1,0 +1,35 @@
+{
+  "episode": {
+    "id": "bbea3b57-061b-4341-9ba1-3bf65d28899f",
+    "stage": "waiting_input",
+    "blueprintIsCurrent": true
+  },
+  "references": [
+    {
+      "exists": true,
+      "current": true,
+      "revoked": false,
+      "provider": "volcengine_tts",
+      "versionId": "0367524f-7b2b-4016-9061-1f23ca29919b",
+      "ownerMatchesInputOwner": false
+    },
+    {
+      "exists": true,
+      "current": true,
+      "revoked": false,
+      "provider": "bailian",
+      "versionId": "d7aa9014-a90e-4ada-afa9-77f4388fcc1c",
+      "ownerMatchesInputOwner": false
+    }
+  ],
+  "deployment": {
+    "verificationMode": "manual",
+    "networkConfigured": true,
+    "productionNetworkAvailable": false,
+    "productionNetworkStatus": {
+      "available": false,
+      "code": "network_expired",
+      "detail": "测试未开始：在线验证授权已过期。 未发出 Provider 请求。"
+    }
+  }
+}

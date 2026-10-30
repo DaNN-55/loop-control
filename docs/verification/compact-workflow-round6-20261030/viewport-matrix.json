@@ -1,0 +1,562 @@
+[
+  {
+    "size": {
+      "width": 1625,
+      "height": 953
+    },
+    "name": "脚本确认",
+    "before": {
+      "height": 800,
+      "history": 0,
+      "left": 230,
+      "padding": "193px",
+      "scrollTop": 0,
+      "top": 205,
+      "transition": "all",
+      "viewport": 953,
+      "width": 1625
+    },
+    "after": {
+      "height": 953,
+      "history": 0,
+      "left": 230,
+      "padding": "0px",
+      "scrollTop": 205,
+      "top": 0,
+      "transition": "all",
+      "viewport": 953,
+      "width": 1625
+    },
+    "layout": {
+      "leftInset": 30,
+      "pageWidth": 1625,
+      "rightInset": 30
+    },
+    "passed": true
+  },
+  {
+    "size": {
+      "width": 1625,
+      "height": 953
+    },
+    "name": "素材准备与匹配",
+    "before": {
+      "height": 800,
+      "history": 0,
+      "left": 230,
+      "padding": "193px",
+      "scrollTop": 0,
+      "top": 205,
+      "transition": "all",
+      "viewport": 953,
+      "width": 1625
+    },
+    "after": {
+      "height": 953,
+      "history": 0,
+      "left": 230,
+      "padding": "0px",
+      "scrollTop": 205,
+      "top": 0,
+      "transition": "all",
+      "viewport": 953,
+      "width": 1625
+    },
+    "layout": {
+      "leftInset": 30,
+      "pageWidth": 1625,
+      "rightInset": 30
+    },
+    "passed": true
+  },
+  {
+    "size": {
+      "width": 1625,
+      "height": 953
+    },
+    "name": "剪辑工作台",
+    "before": {
+      "height": 800,
+      "history": 0,
+      "left": 230,
+      "padding": "193px",
+      "scrollTop": 0,
+      "top": 205,
+      "transition": "all",
+      "viewport": 953,
+      "width": 1625
+    },
+    "after": {
+      "height": 953,
+      "history": 0,
+      "left": 230,
+      "padding": "0px",
+      "scrollTop": 205,
+      "top": 0,
+      "transition": "all",
+      "viewport": 953,
+      "width": 1625
+    },
+    "layout": {
+      "leftInset": 30,
+      "pageWidth": 1625,
+      "rightInset": 30
+    },
+    "passed": true
+  },
+  {
+    "size": {
+      "width": 1625,
+      "height": 953
+    },
+    "name": "检查与交付",
+    "before": {
+      "height": 800,
+      "history": 0,
+      "left": 230,
+      "padding": "193px",
+      "scrollTop": 0,
+      "top": 205,
+      "transition": "all",
+      "viewport": 953,
+      "width": 1625
+    },
+    "after": {
+      "height": 953,
+      "history": 0,
+      "left": 230,
+      "padding": "0px",
+      "scrollTop": 205,
+      "top": 0,
+      "transition": "all",
+      "viewport": 953,
+      "width": 1625
+    },
+    "layout": {
+      "leftInset": 30,
+      "pageWidth": 1625,
+      "rightInset": 30
+    },
+    "passed": true
+  },
+  {
+    "size": {
+      "width": 1440,
+      "height": 900
+    },
+    "name": "脚本确认",
+    "before": {
+      "height": 800,
+      "history": 0,
+      "left": 230,
+      "padding": "140px",
+      "scrollTop": 0,
+      "top": 205,
+      "transition": "all",
+      "viewport": 900,
+      "width": 1440
+    },
+    "after": {
+      "height": 900,
+      "history": 0,
+      "left": 230,
+      "padding": "0px",
+      "scrollTop": 205,
+      "top": 0,
+      "transition": "all",
+      "viewport": 900,
+      "width": 1440
+    },
+    "layout": {
+      "leftInset": 30,
+      "pageWidth": 1440,
+      "rightInset": 30
+    },
+    "passed": true
+  },
+  {
+    "size": {
+      "width": 1440,
+      "height": 900
+    },
+    "name": "素材准备与匹配",
+    "before": {
+      "height": 800,
+      "history": 0,
+      "left": 230,
+      "padding": "140px",
+      "scrollTop": 0,
+      "top": 205,
+      "transition": "all",
+      "viewport": 900,
+      "width": 1440
+    },
+    "after": {
+      "height": 900,
+      "history": 0,
+      "left": 230,
+      "padding": "0px",
+      "scrollTop": 205,
+      "top": 0,
+      "transition": "all",
+      "viewport": 900,
+      "width": 1440
+    },
+    "layout": {
+      "leftInset": 30,
+      "pageWidth": 1440,
+      "rightInset": 30
+    },
+    "passed": true
+  },
+  {
+    "size": {
+      "width": 1440,
+      "height": 900
+    },
+    "name": "剪辑工作台",
+    "before": {
+      "height": 800,
+      "history": 0,
+      "left": 230,
+      "padding": "140px",
+      "scrollTop": 0,
+      "top": 205,
+      "transition": "all",
+      "viewport": 900,
+      "width": 1440
+    },
+    "after": {
+      "height": 900,
+      "history": 0,
+      "left": 230,
+      "padding": "0px",
+      "scrollTop": 205,
+      "top": 0,
+      "transition": "all",
+      "viewport": 900,
+      "width": 1440
+    },
+    "layout": {
+      "leftInset": 30,
+      "pageWidth": 1440,
+      "rightInset": 30
+    },
+    "passed": true
+  },
+  {
+    "size": {
+      "width": 1440,
+      "height": 900
+    },
+    "name": "检查与交付",
+    "before": {
+      "height": 800,
+      "history": 0,
+      "left": 230,
+      "padding": "140px",
+      "scrollTop": 0,
+      "top": 205,
+      "transition": "all",
+      "viewport": 900,
+      "width": 1440
+    },
+    "after": {
+      "height": 900,
+      "history": 0,
+      "left": 230,
+      "padding": "0px",
+      "scrollTop": 205,
+      "top": 0,
+      "transition": "all",
+      "viewport": 900,
+      "width": 1440
+    },
+    "layout": {
+      "leftInset": 30,
+      "pageWidth": 1440,
+      "rightInset": 30
+    },
+    "passed": true
+  },
+  {
+    "size": {
+      "width": 1280,
+      "height": 720
+    },
+    "name": "脚本确认",
+    "before": {
+      "height": 800,
+      "history": 0,
+      "left": 230,
+      "padding": "40px",
+      "scrollTop": 0,
+      "top": 205,
+      "transition": "all",
+      "viewport": 720,
+      "width": 1280
+    },
+    "after": {
+      "height": 720,
+      "history": 0,
+      "left": 230,
+      "padding": "0px",
+      "scrollTop": 205,
+      "top": 0,
+      "transition": "all",
+      "viewport": 720,
+      "width": 1280
+    },
+    "layout": {
+      "leftInset": 30,
+      "pageWidth": 1280,
+      "rightInset": 30
+    },
+    "passed": true
+  },
+  {
+    "size": {
+      "width": 1280,
+      "height": 720
+    },
+    "name": "素材准备与匹配",
+    "before": {
+      "height": 800,
+      "history": 0,
+      "left": 230,
+      "padding": "40px",
+      "scrollTop": 0,
+      "top": 205,
+      "transition": "all",
+      "viewport": 720,
+      "width": 1280
+    },
+    "after": {
+      "height": 720,
+      "history": 0,
+      "left": 230,
+      "padding": "0px",
+      "scrollTop": 205,
+      "top": 0,
+      "transition": "all",
+      "viewport": 720,
+      "width": 1280
+    },
+    "layout": {
+      "leftInset": 30,
+      "pageWidth": 1280,
+      "rightInset": 30
+    },
+    "passed": true
+  },
+  {
+    "size": {
+      "width": 1280,
+      "height": 720
+    },
+    "name": "剪辑工作台",
+    "before": {
+      "height": 800,
+      "history": 0,
+      "left": 230,
+      "padding": "40px",
+      "scrollTop": 0,
+      "top": 205,
+      "transition": "all",
+      "viewport": 720,
+      "width": 1280
+    },
+    "after": {
+      "height": 720,
+      "history": 0,
+      "left": 230,
+      "padding": "0px",
+      "scrollTop": 205,
+      "top": 0,
+      "transition": "all",
+      "viewport": 720,
+      "width": 1280
+    },
+    "layout": {
+      "leftInset": 30,
+      "pageWidth": 1280,
+      "rightInset": 30
+    },
+    "passed": true
+  },
+  {
+    "size": {
+      "width": 1280,
+      "height": 720
+    },
+    "name": "检查与交付",
+    "before": {
+      "height": 800,
+      "history": 0,
+      "left": 230,
+      "padding": "40px",
+      "scrollTop": 0,
+      "top": 205,
+      "transition": "all",
+      "viewport": 720,
+      "width": 1280
+    },
+    "after": {
+      "height": 720,
+      "history": 0,
+      "left": 230,
+      "padding": "0px",
+      "scrollTop": 205,
+      "top": 0,
+      "transition": "all",
+      "viewport": 720,
+      "width": 1280
+    },
+    "layout": {
+      "leftInset": 30,
+      "pageWidth": 1280,
+      "rightInset": 30
+    },
+    "passed": true
+  },
+  {
+    "size": {
+      "width": 390,
+      "height": 844
+    },
+    "name": "脚本确认",
+    "before": {
+      "height": 800,
+      "history": 0,
+      "left": 80,
+      "padding": "84px",
+      "scrollTop": 0,
+      "top": 214,
+      "transition": "all",
+      "viewport": 844,
+      "width": 390
+    },
+    "after": {
+      "height": 844,
+      "history": 0,
+      "left": 80,
+      "padding": "0px",
+      "scrollTop": 214,
+      "top": 0,
+      "transition": "all",
+      "viewport": 844,
+      "width": 390
+    },
+    "layout": {
+      "leftInset": 16,
+      "pageWidth": 390,
+      "rightInset": 16
+    },
+    "passed": true
+  },
+  {
+    "size": {
+      "width": 390,
+      "height": 844
+    },
+    "name": "素材准备与匹配",
+    "before": {
+      "height": 800,
+      "history": 0,
+      "left": 80,
+      "padding": "84px",
+      "scrollTop": 0,
+      "top": 214,
+      "transition": "all",
+      "viewport": 844,
+      "width": 390
+    },
+    "after": {
+      "height": 844,
+      "history": 0,
+      "left": 80,
+      "padding": "0px",
+      "scrollTop": 214,
+      "top": 0,
+      "transition": "all",
+      "viewport": 844,
+      "width": 390
+    },
+    "layout": {
+      "leftInset": 16,
+      "pageWidth": 390,
+      "rightInset": 16
+    },
+    "passed": true
+  },
+  {
+    "size": {
+      "width": 390,
+      "height": 844
+    },
+    "name": "剪辑工作台",
+    "before": {
+      "height": 800,
+      "history": 0,
+      "left": 80,
+      "padding": "84px",
+      "scrollTop": 0,
+      "top": 214,
+      "transition": "all",
+      "viewport": 844,
+      "width": 390
+    },
+    "after": {
+      "height": 844,
+      "history": 0,
+      "left": 80,
+      "padding": "0px",
+      "scrollTop": 214,
+      "top": 0,
+      "transition": "all",
+      "viewport": 844,
+      "width": 390
+    },
+    "layout": {
+      "leftInset": 16,
+      "pageWidth": 390,
+      "rightInset": 16
+    },
+    "passed": true
+  },
+  {
+    "size": {
+      "width": 390,
+      "height": 844
+    },
+    "name": "检查与交付",
+    "before": {
+      "height": 800,
+      "history": 0,
+      "left": 80,
+      "padding": "84px",
+      "scrollTop": 0,
+      "top": 214,
+      "transition": "all",
+      "viewport": 844,
+      "width": 390
+    },
+    "after": {
+      "height": 844,
+      "history": 0,
+      "left": 80,
+      "padding": "0px",
+      "scrollTop": 214,
+      "top": 0,
+      "transition": "all",
+      "viewport": 844,
+      "width": 390
+    },
+    "layout": {
+      "leftInset": 16,
+      "pageWidth": 390,
+      "rightInset": 16
+    },
+    "passed": true
+  }
+]

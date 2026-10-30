@@ -1,0 +1,27 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+(node:576) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/workspaceImageGeneration.integration.test.ts (1 test) 2192ms
+   ✓ HTTP → isolated queue → actual Worker publishes a reference-based image batch; selecting and adopting remain explicit  2191ms
+ ✓ src/local-app/workspaceVisualCandidates.integration.test.ts (13 tests) 28665ms
+   ✓ Owner registers a local visual candidate and replaces only one source instance  2138ms
+   ✓ Owner locally fills a placeholder with a registered still image without video generation  1280ms
+   ✓ Owner locally fills a placeholder with a registered pan-zoom image without video generation  1234ms
+   ✓ Owner registers new media into the existing live pool and can save and reopen it  4389ms
+   ✓ Owner creates a controlled Provider visual candidate during editing without changing Episode stage  1630ms
+   ✓ visual generation freezes the actual source voice window instead of retained muted TTS and rejects a later route change  6585ms
+   ✓ unknown paid visual submissions cannot be bypassed by retry or a new prompt  1388ms
+   ✓ a visual task with a saved Provider ID resumes polling without a second paid submission  1534ms
+   ✓ short visual source requires an explicit duration decision without repeating or moving other clips  1528ms
+   ✓ voice gain and BGM edits do not stale a visual request or overwrite the new mix  2638ms
+   ✓ an unavailable unused visual candidate does not prevent editing and cannot be adopted  1187ms
+   ✓ added shots accept registered local visuals but require explicit generation lineage and changed target input blocks a new paid POST  1805ms
+   ✓ manual video adoption preserves the selected source interval and refuses a short range  1327ms
+
+ Test Files  2 passed (2)
+      Tests  14 passed (14)
+   Start at  17:25:17
+   Duration  29.13s (transform 353ms, setup 16ms, collect 690ms, tests 30.86s, environment 0ms, prepare 54ms)
+

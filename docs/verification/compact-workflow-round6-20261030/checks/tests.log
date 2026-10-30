@@ -1,0 +1,20 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/connections/ConnectionOrganization.test.tsx (7 tests) 608ms
+ ✓ src/connections/ConnectionDanUi.test.tsx (2 tests) 611ms
+   ✓ clears the credential draft and restores masking when opening another connection  515ms
+ ✓ src/connections/ConnectionFeedback.test.tsx (10 tests) 708ms
+ ✓ src/local-app/WorkspaceNoticeToast.test.tsx (1 test) 45ms
+ ✓ src/connections/ConnectionWorkspace.test.tsx (8 tests) 1263ms
+   ✓ 外部连接工作区 > 从空连接池创建并显式测试 Pexels 连接，表单提交后清空密钥  367ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx (8 tests) 299ms
+ ✓ src/local-app/ProductionWorkspacePanel.legacy.test.tsx (6 tests) 285ms
+ ✓ src/local-app/ProductionWorkspacePanel.test.tsx (16 tests) 1642ms
+   ✓ keeps another shot’s unsaved video range when saving an image advances the project version  325ms
+
+ Test Files  8 passed (8)
+      Tests  58 passed (58)
+   Start at  15:58:49
+   Duration  3.68s (transform 534ms, setup 36ms, collect 7.80s, tests 5.46s, environment 2.16s, prepare 335ms)
+

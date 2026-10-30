@@ -1,0 +1,91 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+(node:91905) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/workspaceCandidates.integration.test.ts (7 tests) 28220ms
+   ✓ completed local speech versions stay immutable and rejecting a candidate preserves the native project  3204ms
+   ✓ explicit candidate duration changes only the stable main voice and stale attempts preserve the saved edit  4931ms
+   ✓ prepared old speech and changed candidate bytes cannot overwrite a newer input  1926ms
+   ✓ adopting actual speech expires only affected caption evidence and a late alignment cannot restore it  2142ms
+   ✓ new registered speech enters the existing Studio media session before relink and cannot be finalized before native save  4040ms
+   ✓ a saved native candidate can recover its missing adoption receipt after restart without regenerating speech  4260ms
+   ✓ explicit main-voice candidate adoption switches source and none atomically while preserving native sounds  7716ms
+ ✓ src/local-app/workspaceReviewFixes.integration.test.ts (7 tests) 46305ms
+   ✓ actual delivery does not claim narration muted by the leaf native track was spoken  13644ms
+   ✓ actual delivery does not claim narration muted by the parent native track was spoken  11582ms
+   ✓ first speech preserves Owner edits made before submission and requires the existing candidate decision  5564ms
+   ✓ first speech preserves Owner edits made during submission and requires the existing candidate decision  5337ms
+   ✓ first speech preserves Owner edits made captions submission and requires the existing candidate decision  4083ms
+   ✓ first speech preserves Owner edits made locked submission and requires the existing candidate decision  3141ms
+   ✓ preserved legacy native edits stay protected when their first workspace speech completes  2953ms
+ ❯ src/local-app/workspaceDelivery.integration.test.ts (4 tests | 2 failed) 37912ms
+   ✓ Owner delivery requires an exact confirmed export  1211ms
+   ✓ real Worker verifies exact package, fences tamper and missing inputs, retries and survives restart  12029ms
+   × a queued package cannot complete or retry against a different final export 15113ms
+     → Worker child exited 1: file:///Users/dan/Programs/loop-control/dist/worker/orchestration/runtimeBuild.js:49
+        throw Error("Worker/编排程序未准备、已过期或产物损坏；请先运行 npm run runtime:prepare 并重启服务。");
+              ^
+
+Error: Worker/编排程序未准备、已过期或产物损坏；请先运行 npm run runtime:prepare 并重启服务。
+    at assertPreparedRuntime (file:///Users/dan/Programs/loop-control/dist/worker/orchestration/runtimeBuild.js:49:15)
+    at async file:///Users/dan/Programs/loop-control/dist/worker/local-app/localWorkerCli.js:32:1
+
+Node.js v24.20.0
+
+   × delivery records the used trimmed voice source and never substitutes an unadopted draft text 9558ms
+     → Worker child exited 1: file:///Users/dan/Programs/loop-control/dist/worker/orchestration/runtimeBuild.js:49
+        throw Error("Worker/编排程序未准备、已过期或产物损坏；请先运行 npm run runtime:prepare 并重启服务。");
+              ^
+
+Error: Worker/编排程序未准备、已过期或产物损坏；请先运行 npm run runtime:prepare 并重启服务。
+    at assertPreparedRuntime (file:///Users/dan/Programs/loop-control/dist/worker/orchestration/runtimeBuild.js:49:15)
+    at async file:///Users/dan/Programs/loop-control/dist/worker/local-app/localWorkerCli.js:32:1
+
+Node.js v24.20.0
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceDelivery.integration.test.ts > a queued package cannot complete or retry against a different final export
+Error: Worker child exited 1: file:///Users/dan/Programs/loop-control/dist/worker/orchestration/runtimeBuild.js:49
+        throw Error("Worker/编排程序未准备、已过期或产物损坏；请先运行 npm run runtime:prepare 并重启服务。");
+              ^
+
+Error: Worker/编排程序未准备、已过期或产物损坏；请先运行 npm run runtime:prepare 并重启服务。
+    at assertPreparedRuntime (file:///Users/dan/Programs/loop-control/dist/worker/orchestration/runtimeBuild.js:49:15)
+    at async file:///Users/dan/Programs/loop-control/dist/worker/local-app/localWorkerCli.js:32:1
+
+Node.js v24.20.0
+
+ ❯ assertPreparedRuntime dist/worker/orchestration/runtimeBuild.js:49:15
+ ❯ dist/worker/local-app/localWorkerCli.js:32:1
+ ❯ ChildProcess.<anonymous> src/local-app/workspaceDelivery.fixture.ts:27:191
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/local-app/workspaceDelivery.integration.test.ts > delivery records the used trimmed voice source and never substitutes an unadopted draft text
+Error: Worker child exited 1: file:///Users/dan/Programs/loop-control/dist/worker/orchestration/runtimeBuild.js:49
+        throw Error("Worker/编排程序未准备、已过期或产物损坏；请先运行 npm run runtime:prepare 并重启服务。");
+              ^
+
+Error: Worker/编排程序未准备、已过期或产物损坏；请先运行 npm run runtime:prepare 并重启服务。
+    at assertPreparedRuntime (file:///Users/dan/Programs/loop-control/dist/worker/orchestration/runtimeBuild.js:49:15)
+    at async file:///Users/dan/Programs/loop-control/dist/worker/local-app/localWorkerCli.js:32:1
+
+Node.js v24.20.0
+
+ ❯ assertPreparedRuntime dist/worker/orchestration/runtimeBuild.js:49:15
+ ❯ dist/worker/local-app/localWorkerCli.js:32:1
+ ❯ ChildProcess.<anonymous> src/local-app/workspaceDelivery.fixture.ts:27:191
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 2 passed (3)
+      Tests  2 failed | 16 passed (18)
+   Start at  11:37:41
+   Duration  113.46s (transform 366ms, setup 0ms, collect 655ms, tests 112.44s, environment 0ms, prepare 75ms)
+

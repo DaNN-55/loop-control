@@ -1,0 +1,5 @@
+
+> loop-control@0.1.0 start
+> node scripts/start.mjs
+
+本地服务启动成功，访问地址：http://127.0.0.1:5174

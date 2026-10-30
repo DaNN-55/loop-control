@@ -1,0 +1,20 @@
+{
+  "fingerprint": "29915cd8f6459821773b4560b56e741ac305850c7667891fd0d0776800ce38c2",
+  "matchesBaseline": true,
+  "entry": {
+    "id": "workspace-caption-shot-shot-001-hook",
+    "slotId": "caption-slot-shot-001-hook",
+    "anchor": "middle-center",
+    "offsetXRatio": -0.12015454234972678,
+    "offsetYRatio": 0.5323076923076923
+  },
+  "policy": "manual-slots",
+  "slot": {
+    "id": "caption-slot-shot-001-hook",
+    "anchor": "middle-center",
+    "offsetXRatio": 0,
+    "offsetYRatio": 0,
+    "widthRatio": 0.866667,
+    "heightRatio": 1
+  }
+}

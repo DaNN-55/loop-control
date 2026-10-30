@@ -1,0 +1,134 @@
+{
+  "at": "2026-10-30T09:37:30.426Z",
+  "workspaceId": "c9ad11c6-4981-4db5-bfe8-d5a77b5fde43",
+  "revision": 2,
+  "sha256": "5bdecab2cb47b0c57f6cb99e7db36b1478640bc6f138297dba208f7627e1ca5c",
+  "bindings": 8,
+  "shots": 7,
+  "frameRate": 30,
+  "frames": 1609,
+  "visualItems": 8,
+  "voiceItems": [
+    {
+      "id": "workspace-source-shot-shot-005-waiting-transition",
+      "startFrame": 1168,
+      "durationInFrames": 58,
+      "sourceInFrame": 0,
+      "volume": 1
+    },
+    {
+      "id": "workspace-narration-shot-shot-001-hook",
+      "startFrame": 0,
+      "durationInFrames": 98,
+      "sourceInFrame": 0,
+      "volume": 1
+    },
+    {
+      "id": "workspace-narration-shot-shot-002-nightmare-sheet",
+      "startFrame": 98,
+      "durationInFrames": 165,
+      "sourceInFrame": 0,
+      "volume": 1
+    },
+    {
+      "id": "workspace-narration-shot-shot-003-task-instruction",
+      "startFrame": 264,
+      "durationInFrames": 834,
+      "sourceInFrame": 0,
+      "volume": 1
+    },
+    {
+      "id": "workspace-narration-shot-shot-004-reading",
+      "startFrame": 1098,
+      "durationInFrames": 70,
+      "sourceInFrame": 0,
+      "volume": 1
+    },
+    {
+      "id": "workspace-narration-shot-shot-006-execution-montage",
+      "startFrame": 1226,
+      "durationInFrames": 160,
+      "sourceInFrame": 0,
+      "volume": 1
+    },
+    {
+      "id": "workspace-narration-shot-shot-008-outro",
+      "startFrame": 1488,
+      "durationInFrames": 88,
+      "sourceInFrame": 0,
+      "volume": 1
+    }
+  ],
+  "captions": [
+    {
+      "shotId": "shot-001-hook",
+      "enabled": true,
+      "cues": 1,
+      "withinWindow": true,
+      "durationMs": 3266.6666666666665
+    },
+    {
+      "shotId": "shot-002-nightmare-sheet",
+      "enabled": true,
+      "cues": 2,
+      "withinWindow": true,
+      "durationMs": 5533.333333333333
+    },
+    {
+      "shotId": "shot-003-task-instruction",
+      "enabled": true,
+      "cues": 6,
+      "withinWindow": true,
+      "durationMs": 27800
+    },
+    {
+      "shotId": "shot-004-reading",
+      "enabled": true,
+      "cues": 1,
+      "withinWindow": true,
+      "durationMs": 2333.3333333333335
+    },
+    {
+      "shotId": "shot-005-waiting-transition",
+      "enabled": false,
+      "cues": 0,
+      "withinWindow": true,
+      "durationMs": 1933.3333333333333
+    },
+    {
+      "shotId": "shot-006-execution-montage",
+      "enabled": false,
+      "cues": 0,
+      "withinWindow": true,
+      "durationMs": 8733.333333333334
+    },
+    {
+      "shotId": "shot-008-outro",
+      "enabled": true,
+      "cues": 1,
+      "withinWindow": true,
+      "durationMs": 4033.3333333333335
+    }
+  ],
+  "verifiedFrozenMembers": 13,
+  "oldFiles": [
+    {
+      "sha": "fdbf68e4bdc463f055443dc4bb50fceacba07cec6ca45d93ba16dbc8fec52de3",
+      "path": "episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/final-render/v8/final-render.mp4",
+      "size": 72582820,
+      "verified": true
+    },
+    {
+      "sha": "a4e33a19ba9fd53aed50e235c379401ad8b36bcc1899fd1a0531ebe29b8fe1f5",
+      "path": "episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/review-render/v8/review-render.mp4",
+      "size": 45010020,
+      "verified": true
+    },
+    {
+      "sha": "c80397715a4ca89bd22268233ccb3bd4f94f32233ef9970d87ec7cded08dd2b9",
+      "path": "episodes/92b3067d-ced9-4e85-bc44-1968fa83695a/review-render/v8/index.html",
+      "size": 8911,
+      "verified": true
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceVisualCandidates.integration.test.ts (12 tests) 25339ms
+   ✓ Owner registers a local visual candidate and replaces only one source instance  2216ms
+   ✓ Owner locally fills a placeholder with a registered still image without video generation  1406ms
+   ✓ Owner locally fills a placeholder with a registered pan-zoom image without video generation  1381ms
+   ✓ Owner registers new media into the existing live pool and can save and reopen it  4249ms
+   ✓ Owner creates a controlled Provider visual candidate during editing without changing Episode stage  1586ms
+   ✓ visual generation freezes the actual source voice window instead of retained muted TTS and rejects a later route change  4755ms
+   ✓ unknown paid visual submissions cannot be bypassed by retry or a new prompt  1317ms
+   ✓ a visual task with a saved Provider ID resumes polling without a second paid submission  1612ms
+   ✓ short visual source requires an explicit duration decision without repeating or moving other clips  1458ms
+   ✓ voice gain and BGM edits do not stale a visual request or overwrite the new mix  2530ms
+   ✓ an unavailable unused visual candidate does not prevent editing and cannot be adopted  1175ms
+   ✓ added shots accept registered local visuals but require explicit generation lineage and changed target input blocks a new paid POST  1654ms
+
+ Test Files  1 passed (1)
+      Tests  12 passed (12)
+   Start at  13:33:25
+   Duration  26.06s (transform 290ms, setup 0ms, collect 367ms, tests 25.34s, environment 0ms, prepare 28ms)
+

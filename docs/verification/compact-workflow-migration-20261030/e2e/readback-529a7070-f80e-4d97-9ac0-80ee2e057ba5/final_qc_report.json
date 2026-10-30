@@ -1,0 +1,105 @@
+{
+  "passed": true,
+  "exportId": "c69fd0b3-b3f1-4a3e-aec5-3cd8c7615714",
+  "contentSha256": "60987364729e3809bb824501cc9a8fcf89603e6ecbb25b630f23574e7e055b05",
+  "checks": [
+    {
+      "name": "used_content",
+      "detail": "已核对 2 个实际来源。",
+      "passed": true,
+      "sources": [
+        {
+          "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+          "fileSize": 44148,
+          "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/a1907d3a-ab9b-4255-8cf0-97827e28abf6/a1907d3a-ab9b-4255-8cf0-97827e28abf6.mp4"
+        },
+        {
+          "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "fileSize": 19628,
+          "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/5c5d7812-3856-485e-b365-4d1562b8fe83/shot-narration-shot-01-ae76ff7e03a6cffa49ace78505b536e3.mp3"
+        }
+      ]
+    },
+    {
+      "name": "captions",
+      "detail": "已核对 1 组必要字幕。",
+      "passed": true,
+      "evidence": [
+        {
+          "clipId": "9308797c-e9b7-4ce9-8046-d54d20704763",
+          "detail": null,
+          "itemId": "shot-shot-01-9308797c-e9b7-4ce9-8046-d54d20704763",
+          "shotId": "shot-01",
+          "taskId": null,
+          "timing": "current",
+          "contract": {
+            "cues": [
+              {
+                "id": "0c6b998a-ac0c-4110-9b2d-1a9fa17eec5e~0",
+                "text": "清晨第一束光落在山脊上，今天从这里出发。",
+                "endMs": 2400,
+                "startMs": 0
+              }
+            ],
+            "text": "清晨第一束光落在山脊上，今天从这里出发。",
+            "enabled": true,
+            "spatial": {
+              "anchor": "bottom-center",
+              "insets": {
+                "top": 0.08,
+                "left": 0.08,
+                "right": 0.08,
+                "bottom": 0.18
+              },
+              "version": "shot-caption-space/v2",
+              "maxLines": 2,
+              "safeArea": "title-safe",
+              "aspectRatio": "9:16",
+              "maxCharactersPerLine": 16
+            },
+            "version": "shot-captions/v1",
+            "contentMode": "follow_tts"
+          },
+          "durationMs": 2400,
+          "audioTrackId": "207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3",
+          "narrationText": "清晨第一束光落在山脊上，今天从这里出发。",
+          "textConfirmed": true,
+          "inputFingerprint": "9a94491980ecaebc1e280c46a1b1d8095a34c3a291dd9f74cd2eb7ee2c5898a6",
+          "alignmentInputVersion": "dbd01affb44b41b5ecca85e8737975ab8d3278abad8727d3440979b54e1b6f04"
+        }
+      ]
+    },
+    {
+      "name": "technical",
+      "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。",
+      "passed": true,
+      "inspection": {
+        "width": 1080,
+        "height": 1920,
+        "hasAudio": true,
+        "blackFrameCount": 0,
+        "durationSeconds": 2.453333
+      },
+      "videoFrames": 72,
+      "audioExpected": true,
+      "videoDurationSeconds": 2.4,
+      "expectedDurationSeconds": 2.4,
+      "containerDurationSeconds": 2.453333
+    },
+    {
+      "name": "representative_frame",
+      "detail": "已实际解码代表帧。",
+      "passed": true,
+      "artifact": {
+        "sha256": "23b25342883e63c3f12b480f50095258fda92a6ae31e44ba0317f2efbf8851bc",
+        "fileSize": 41607,
+        "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-exports/c69fd0b3-b3f1-4a3e-aec5-3cd8c7615714/representative.jpg"
+      }
+    },
+    {
+      "name": "export_file",
+      "detail": "最终文件已按字节 SHA-256 与大小不可变登记。",
+      "passed": true
+    }
+  ]
+}

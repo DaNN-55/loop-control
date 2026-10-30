@@ -1,0 +1,7 @@
+Browser tab: 5, Title: "Loop Control", URL: "http://127.0.0.1:5174/?episode=603a1588-a786-4ded-a4dd-a660d48ee617".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~				75 button (collapsed) 已封存旧工程, Secondary Actions: Expand
++					77 text 已封存旧工程
+~				76 button (collapsed) 历史工程, Secondary Actions: Expand
++					78 text 历史工程
+The focused UI element is 35 button 脚本确认

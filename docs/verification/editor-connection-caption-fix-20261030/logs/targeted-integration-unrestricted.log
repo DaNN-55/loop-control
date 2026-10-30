@@ -1,0 +1,28 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ scripts/openchatcut-bridge-retry.integration.test.ts (6 tests) 31ms
+ ✓ scripts/openchatcut-caption-layout.integration.test.ts (4 tests) 42ms
+ ✓ scripts/openchatcut-bridge-retry.test.mjs (3 tests) 11ms
+ ✓ scripts/openchatcut-caption-drag.test.mjs (3 tests) 17ms
+stdout | src/worker/openchatcutStudio.validation.integration.test.ts > retains both validators while reading the identical document once during each draft open
+{"name":"draft-open-validation","sdkReads":1,"validatorCalls":2,"readDurationsMs":[138],"elapsedMs":1463}
+
+ ❯ src/worker/openchatcutStudio.validation.integration.test.ts (3 tests | 1 failed) 8252ms
+   ✓ retains both validators while reading the identical document once during each draft open  2824ms
+   × still rejects a source SHA change at the second validation when SDK evidence is reused 1467ms
+     → ENOTEMPTY: directory not empty, rmdir '/private/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-control-studio-validation-nPQAeT/episodes/9eba5488-64a4-40c9-a1aa-64178776e125/openchatcut-work/current/runtime'
+   ✓ revalidates a changed native-store document instead of trusting the input fingerprint  3959ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/worker/openchatcutStudio.validation.integration.test.ts > still rejects a source SHA change at the second validation when SDK evidence is reused
+Error: ENOTEMPTY: directory not empty, rmdir '/private/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/loop-control-studio-validation-nPQAeT/episodes/9eba5488-64a4-40c9-a1aa-64178776e125/openchatcut-work/current/runtime'
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 18 passed (19)
+   Start at  21:31:20
+   Duration  9.22s (transform 567ms, setup 49ms, collect 891ms, tests 8.35s, environment 748ms, prepare 298ms)
+

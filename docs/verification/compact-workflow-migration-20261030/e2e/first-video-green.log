@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceFirstVideo.integration.test.ts (2 tests) 6397ms
+   ✓ fresh authored first video uses current preparation without a legacy approval (actual voice=false)  3370ms
+   ✓ fresh authored first video uses current preparation without a legacy approval (actual voice=true)  3027ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  11:19:51
+   Duration  6.89s (transform 266ms, setup 7ms, collect 373ms, tests 6.40s, environment 0ms, prepare 29ms)
+

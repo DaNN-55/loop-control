@@ -1,0 +1,16 @@
+{
+  "entry": {
+    "id": "workspace-caption-shot-shot-001-hook",
+    "slotId": "caption-slot-shot-001-hook",
+    "offsetXRatio": 0.2459016393442623,
+    "offsetYRatio": -0.12307692307692308
+  },
+  "slot": {
+    "anchor": "middle-center",
+    "heightRatio": 1,
+    "id": "caption-slot-shot-001-hook",
+    "offsetXRatio": 0,
+    "offsetYRatio": 0,
+    "widthRatio": 0.866667
+  }
+}

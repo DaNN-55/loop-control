@@ -1,0 +1,32 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+stdout | src/worker/openchatcutStudio.validation.integration.test.ts > retains both validators while reading the identical document once during each draft open
+{"name":"draft-open-validation","sdkReads":1,"validatorCalls":2,"readDurationsMs":[88],"elapsedMs":1443}
+
+stdout | src/worker/openchatcutStudio.media-cache.integration.test.ts > keeps the real SDK waveform cache key and copied-source mtime across close/reopen when bytes match
+{"name":"studio-waveform-reopen-cache","mtimeBefore":1790812800000,"mtimeAfter":1790812800000,"cacheKeyBefore":"ebeecaf7b023c70128af.mp3.preview-v3-2106-1790812800000000.peaks.json","cacheKeyAfter":"ebeecaf7b023c70128af.mp3.preview-v3-2106-1790812800000000.peaks.json"}
+
+ ✓ src/worker/openchatcutStudio.validation.integration.test.ts (3 tests) 8940ms
+   ✓ retains both validators while reading the identical document once during each draft open  2623ms
+   ✓ still rejects a source SHA change at the second validation when SDK evidence is reused  3182ms
+   ✓ revalidates a changed native-store document instead of trusting the input fingerprint  3135ms
+ ✓ scripts/openchatcut-caption-layout.integration.test.ts (4 tests) 53ms
+ ✓ scripts/openchatcut-bridge-retry.integration.test.ts (6 tests) 15ms
+ ✓ src/worker/openchatcutStudio.storage.integration.test.ts (1 test) 3732ms
+   ✓ reads the latest offline SQLite edit and opens the exact new LC version instead of reimporting JSON backups  3732ms
+ ✓ scripts/openchatcut-media-imports.integration.test.ts (1 test) 12ms
+ ✓ scripts/openchatcut-caption-drag.test.mjs (3 tests) 4ms
+ ✓ scripts/openchatcut-bridge-retry.test.mjs (3 tests) 2ms
+ ✓ scripts/openchatcut-media-imports.test.mjs (1 test) 1ms
+ ✓ src/worker/openchatcutStudio.media-cache.integration.test.ts (4 tests) 16589ms
+   ✓ keeps the real SDK waveform cache key and copied-source mtime across close/reopen when bytes match  7551ms
+   ✓ repairs different copied bytes even when source and destination have equal size and mtime  4548ms
+   ✓ still rejects an existing symlink media copy before considering content equality  2073ms
+   ✓ still rejects an existing hardlink media copy before considering content equality  2416ms
+
+ Test Files  9 passed (9)
+      Tests  26 passed (26)
+   Start at  23:18:27
+   Duration  16.81s (transform 348ms, setup 36ms, collect 1.80s, tests 29.35s, environment 990ms, prepare 330ms)
+

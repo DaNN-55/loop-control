@@ -1,0 +1,27 @@
+{
+  "at": "2026-10-30T09:56:13.465Z",
+  "dailyScriptPage": {
+    "mainButtons": 0,
+    "headerButtons": 0,
+    "confirmInRightSidebar": true,
+    "realScriptSubmitted": false
+  },
+  "isolatedScriptRevision": {
+    "reasonInSidebar": true,
+    "reasonInvalid": "true",
+    "sideButtons": [
+      "确认脚本修订",
+      "取消编辑"
+    ],
+    "discardConfirmed": true
+  },
+  "isolatedDeletion": {
+    "cancelRetainedShots": 2,
+    "confirmedRemainingShots": 1,
+    "remainingSelectedShot": "shot-1",
+    "lastShotDeleteDisabled": true,
+    "reloadRemainingShots": 1,
+    "reloadDeleteDisabled": true
+  },
+  "realOrderDeletionPerformed": false
+}

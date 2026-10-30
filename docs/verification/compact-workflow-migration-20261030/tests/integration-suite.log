@@ -1,0 +1,185 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/workspaceReviewFixes.integration.test.ts (7 tests | 2 failed) 41622ms
+   × actual delivery does not claim narration muted by the leaf native track was spoken 11868ms
+     → Cannot find package 'undefined' imported from '/Users/dan/Programs/loop-control/src/local-app/workspaceDelivery.fixture.ts'
+   × actual delivery does not claim narration muted by the parent native track was spoken 10422ms
+     → Cannot find package 'undefined' imported from '/Users/dan/Programs/loop-control/src/local-app/workspaceDelivery.fixture.ts'
+   ✓ first speech preserves Owner edits made before submission and requires the existing candidate decision  4952ms
+   ✓ first speech preserves Owner edits made during submission and requires the existing candidate decision  4782ms
+   ✓ first speech preserves Owner edits made captions submission and requires the existing candidate decision  3658ms
+   ✓ first speech preserves Owner edits made locked submission and requires the existing candidate decision  2944ms
+   ✓ preserved legacy native edits stay protected when their first workspace speech completes  2995ms
+ ✓ src/local-app/workspaceImages.integration.test.ts (7 tests) 24515ms
+   ✓ Owner uploads and persists a native still image with duration and composition  1341ms
+   ✓ Owner renders static and pan/zoom native images without external generation (landscape=false)  6502ms
+   ✓ Owner renders static and pan/zoom native images without external generation (landscape=true)  7434ms
+   ✓ Owner sees missing and changed image blockers without a replacement task or source  1254ms
+   ✓ AI image generation retains the selected execution path and blocks when no registered connection exists  1146ms
+   ✓ Owner first image videos preserve completed outputs and manual edit boundary (edited=false)  3529ms
+   ✓ Owner first image videos preserve completed outputs and manual edit boundary (edited=true)  3309ms
+ ❯ src/local-app/workspaceDelivery.integration.test.ts (4 tests | 3 failed) 38637ms
+   ✓ Owner delivery requires an exact confirmed export  1125ms
+   × real Worker verifies exact package, fences tamper and missing inputs, retries and survives restart 11044ms
+     → Cannot find package 'undefined' imported from '/Users/dan/Programs/loop-control/src/local-app/workspaceDelivery.fixture.ts'
+   × a queued package cannot complete or retry against a different final export 16988ms
+     → Cannot find package 'undefined' imported from '/Users/dan/Programs/loop-control/src/local-app/workspaceDelivery.fixture.ts'
+   × delivery records the used trimmed voice source and never substitutes an unadopted draft text 9479ms
+     → Cannot find package 'undefined' imported from '/Users/dan/Programs/loop-control/src/local-app/workspaceDelivery.fixture.ts'
+ ✓ src/local-app/workspaceShots.integration.test.ts (9 tests) 29598ms
+   ✓ Owner reorders native shot instances without rewriting registered sources or storyboard history  1190ms
+   ✓ a shot with two visual ranges owns one stable caption lane when its first range is removed  1289ms
+   ✓ native range locks, frame steps and parallel composition preserve source instances through Owner persistence  3464ms
+   ✓ two ranges retain one actual main voice and full following captions after deleting their first visual instance  8583ms
+   ✓ reopening an actively edited native structure reuses its running Studio and latest project  3397ms
+   ✓ upgrades duplicate legacy visual caption lanes into one shot lane without losing the complete body or cues  2922ms
+   ✓ added native shots accept registered images and source video while the approved storyboard stays unchanged  2742ms
+   ✓ native Owner save rejects deleting the last effective shot while retaining the recoverable document  3221ms
+   ✓ native Owner save still accepts edits in an initial all-placeholder draft  2789ms
+ ❯ src/local-app/workspaceCandidates.integration.test.ts (7 tests | 1 failed) 20959ms
+   ✓ completed local speech versions stay immutable and rejecting a candidate preserves the native project  1706ms
+   ✓ explicit candidate duration changes only the stable main voice and stale attempts preserve the saved edit  4411ms
+   ✓ prepared old speech and changed candidate bytes cannot overwrite a newer input  2223ms
+   ✓ adopting actual speech expires only affected caption evidence and a late alignment cannot restore it  2242ms
+   ✓ new registered speech enters the existing Studio media session before relink and cannot be finalized before native save  3445ms
+   ✓ a saved native candidate can recover its missing adoption receipt after restart without regenerating speech  3263ms
+   × explicit main-voice candidate adoption switches source and none atomically while preserving native sounds 3667ms
+     → Cannot find package 'undefined' imported from '/Users/dan/Programs/loop-control/src/local-app/workspaceDelivery.fixture.ts'
+ ✓ src/local-app/workspaceVisualCandidates.integration.test.ts (12 tests) 23549ms
+   ✓ Owner registers a local visual candidate and replaces only one source instance  1436ms
+   ✓ Owner locally fills a placeholder with a registered still image without video generation  1186ms
+   ✓ Owner locally fills a placeholder with a registered pan-zoom image without video generation  1206ms
+   ✓ Owner registers new media into the existing live pool and can save and reopen it  3762ms
+   ✓ Owner creates a controlled Provider visual candidate during editing without changing Episode stage  1353ms
+   ✓ visual generation freezes the actual source voice window instead of retained muted TTS and rejects a later route change  4195ms
+   ✓ unknown paid visual submissions cannot be bypassed by retry or a new prompt  1203ms
+   ✓ a visual task with a saved Provider ID resumes polling without a second paid submission  1656ms
+   ✓ short visual source requires an explicit duration decision without repeating or moving other clips  1773ms
+   ✓ voice gain and BGM edits do not stale a visual request or overwrite the new mix  2452ms
+   ✓ an unavailable unused visual candidate does not prevent editing and cannot be adopted  1502ms
+   ✓ added shots accept registered local visuals but require explicit generation lineage and changed target input blocks a new paid POST  1826ms
+ ✓ src/local-app/workspaceExport.integration.test.ts (1 test) 20389ms
+   ✓ Owner checks actual used content before exporting and confirms exact final bytes  20389ms
+ ❯ src/local-app/workspaceAudio.integration.test.ts (8 tests | 4 failed) 24665ms
+   ✓ Owner prepares manual episode music, adopts actual audio and persists native independent mix  2139ms
+   × Freesound preparation traverses actual Worker lease and result, records attribution, retries failed work and restores after restart 2889ms
+     → Cannot find package 'undefined' imported from '/Users/dan/Programs/loop-control/src/local-app/workspaceDelivery.fixture.ts'
+   × source mode uses real native source extraction task without fabricating a legacy video-ready draft 3569ms
+     → Cannot find package 'undefined' imported from '/Users/dan/Programs/loop-control/src/local-app/workspaceDelivery.fixture.ts'
+   × actual native audio renders source, speech, ambience, music ducking and positioned sound without multiplying speech in parallel slots 3592ms
+     → Cannot find package 'undefined' imported from '/Users/dan/Programs/loop-control/src/local-app/workspaceDelivery.fixture.ts'
+   ✓ real loop_worker planning never queues legacy soundtrack cues for an editable native workspace  3102ms
+   ✓ real loop_worker planning retains the legacy soundtrack path outside native workspaces  2680ms
+   × nonzero source extraction freezes the selected native window and partial coverage cannot align an entire shot 3385ms
+     → Cannot find package 'undefined' imported from '/Users/dan/Programs/loop-control/src/local-app/workspaceDelivery.fixture.ts'
+   ✓ explicit narration adoption advances the shared edit fence and late first results remain candidates  3308ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts (3 tests) 22625ms
+   ✓ Owner edits only the chosen native caption lane and persists manual timing without shot approval  4719ms
+   ✓ current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit  3100ms
+   ✓ real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area  14805ms
+ ↓ src/local-app/legacyWorkspaceEditing.integration.test.ts (2 tests | 2 skipped)
+ ❯ src/local-app/workspaceFirstVideo.integration.test.ts (3 tests | 1 failed) 10452ms
+   ✓ fresh authored first video uses current preparation without a legacy approval (actual voice=false)  3815ms
+   ✓ fresh authored first video uses current preparation without a legacy approval (actual voice=true)  3412ms
+   × replanning discards current voice adoption without discarding historical decisions, then adopts the first new voice 3225ms
+     → expected 'fa3dcb3f-4d2e-47b4-b396-a16a70393883' to be null
+ ✓ src/local-app/productionWorkspace.integration.test.ts (1 test) 4979ms
+   ✓ Owner persists incomplete matches, opens the real draft and fills only its placeholder after reopening  4978ms
+ ↓ src/local-app/legacyWorkspaceEntry.integration.test.ts (3 tests | 3 skipped)
+ ↓ src/local-app/legacyStudioProject.integration.test.ts (1 test | 1 skipped)
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 11 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceAudio.integration.test.ts > Freesound preparation traverses actual Worker lease and result, records attribution, retries failed work and restores after restart
+ FAIL  src/local-app/workspaceAudio.integration.test.ts > source mode uses real native source extraction task without fabricating a legacy video-ready draft
+ FAIL  src/local-app/workspaceAudio.integration.test.ts > actual native audio renders source, speech, ambience, music ducking and positioned sound without multiplying speech in parallel slots
+ FAIL  src/local-app/workspaceAudio.integration.test.ts > nonzero source extraction freezes the selected native window and partial coverage cannot align an entire shot
+Error: Cannot find package 'undefined' imported from '/Users/dan/Programs/loop-control/src/local-app/workspaceDelivery.fixture.ts'
+ ❯ runWorkspaceDeliveryProcess src/local-app/workspaceDelivery.fixture.ts:9:25
+      7| import type {ClaimedTaskRow} from '../orchestration/workerDispatch';
+      8| export async function runWorkspaceDeliveryProcess(f:{database:string;r…
+      9|  const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MOD…
+       |                         ^
+     10|  const bridges=new Set<ReturnType<typeof spawn>>();
+     11|  const server=createServer(socket=>{
+ ❯ Object.execute [as executeAudio] src/local-app/workspaceAudio.fixture.ts:27:276
+ ❯ src/local-app/workspaceAudio.integration.test.ts:30:96
+
+Caused by: Error: Failed to load url undefined (resolved id: undefined). Does the file exist?
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:22739:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/11]⎯
+
+ FAIL  src/local-app/workspaceCandidates.integration.test.ts > explicit main-voice candidate adoption switches source and none atomically while preserving native sounds
+Error: Cannot find package 'undefined' imported from '/Users/dan/Programs/loop-control/src/local-app/workspaceDelivery.fixture.ts'
+ ❯ runWorkspaceDeliveryProcess src/local-app/workspaceDelivery.fixture.ts:9:25
+      7| import type {ClaimedTaskRow} from '../orchestration/workerDispatch';
+      8| export async function runWorkspaceDeliveryProcess(f:{database:string;r…
+      9|  const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MOD…
+       |                         ^
+     10|  const bridges=new Set<ReturnType<typeof spawn>>();
+     11|  const server=createServer(socket=>{
+ ❯ Object.execute [as executeAudio] src/local-app/workspaceAudio.fixture.ts:27:276
+ ❯ src/local-app/workspaceCandidates.integration.test.ts:93:306
+
+Caused by: Error: Failed to load url undefined (resolved id: undefined). Does the file exist?
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:22739:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/11]⎯
+
+ FAIL  src/local-app/workspaceDelivery.integration.test.ts > real Worker verifies exact package, fences tamper and missing inputs, retries and survives restart
+ FAIL  src/local-app/workspaceDelivery.integration.test.ts > a queued package cannot complete or retry against a different final export
+ FAIL  src/local-app/workspaceDelivery.integration.test.ts > delivery records the used trimmed voice source and never substitutes an unadopted draft text
+Error: Cannot find package 'undefined' imported from '/Users/dan/Programs/loop-control/src/local-app/workspaceDelivery.fixture.ts'
+ ❯ runWorkspaceDeliveryProcess src/local-app/workspaceDelivery.fixture.ts:9:25
+      7| import type {ClaimedTaskRow} from '../orchestration/workerDispatch';
+      8| export async function runWorkspaceDeliveryProcess(f:{database:string;r…
+      9|  const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MOD…
+       |                         ^
+     10|  const bridges=new Set<ReturnType<typeof spawn>>();
+     11|  const server=createServer(socket=>{
+ ❯ src/local-app/workspaceDelivery.integration.test.ts:53:87
+
+Caused by: Error: Failed to load url undefined (resolved id: undefined). Does the file exist?
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:22739:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/11]⎯
+
+ FAIL  src/local-app/workspaceFirstVideo.integration.test.ts > replanning discards current voice adoption without discarding historical decisions, then adopts the first new voice
+AssertionError: expected 'fa3dcb3f-4d2e-47b4-b396-a16a70393883' to be null
+
+- Expected: 
+null
+
++ Received: 
+"fa3dcb3f-4d2e-47b4-b396-a16a70393883"
+
+ ❯ src/local-app/workspaceFirstVideo.integration.test.ts:57:46
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/11]⎯
+
+ FAIL  src/local-app/workspaceReviewFixes.integration.test.ts > actual delivery does not claim narration muted by the leaf native track was spoken
+ FAIL  src/local-app/workspaceReviewFixes.integration.test.ts > actual delivery does not claim narration muted by the parent native track was spoken
+Error: Cannot find package 'undefined' imported from '/Users/dan/Programs/loop-control/src/local-app/workspaceDelivery.fixture.ts'
+ ❯ runWorkspaceDeliveryProcess src/local-app/workspaceDelivery.fixture.ts:9:25
+      7| import type {ClaimedTaskRow} from '../orchestration/workerDispatch';
+      8| export async function runWorkspaceDeliveryProcess(f:{database:string;r…
+      9|  const {runtimeContext}=await import(process.env.LOOP_TEST_CONTEXT_MOD…
+       |                         ^
+     10|  const bridges=new Set<ReturnType<typeof spawn>>();
+     11|  const server=createServer(socket=>{
+ ❯ src/local-app/workspaceReviewFixes.integration.test.ts:27:182
+
+Caused by: Error: Failed to load url undefined (resolved id: undefined). Does the file exist?
+ ❯ loadAndTransform node_modules/vite/dist/node/chunks/config.js:22739:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/11]⎯
+
+
+ Test Files  5 failed | 6 passed | 3 skipped (14)
+      Tests  11 failed | 51 passed | 6 skipped (68)
+   Start at  11:34:26
+   Duration  264.92s (transform 443ms, setup 21ms, collect 1.43s, tests 261.99s, environment 1ms, prepare 358ms)
+

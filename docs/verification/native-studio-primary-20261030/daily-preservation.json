@@ -1,0 +1,8 @@
+{
+  "at": "2026-10-30T11:02:25.996Z",
+  "sevenBusinessTablesUnchanged": true,
+  "workspaceRowsByteIdentical": false,
+  "workspaceContentStillMatchesPriorSnapshots": true,
+  "workspaceVersionsAddedSinceBaseline": 1,
+  "note": "工作区更新时间与选择态快照刷新；内容指纹与基线前保存版本比对。未对真实生产单提交字幕、生成、导出、交付或删除。"
+}

@@ -1,0 +1,38 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/WorkspaceDeliveryPanel.test.tsx (6 tests | 1 failed) 142ms
+   ✓ registers the selected real cover and binds delivery metadata to the confirmed export 112ms
+   ✓ keeps metadata unavailable before confirmation and retains the retry action for the original failed delivery 9ms
+   ✓ keeps verified file links bound to actual paths and hashes 2ms
+   ✓ releases cover preview URLs when replaced and on unmount, while leaving the real file selection intact 6ms
+   ✓ releases the preview while delivery runs and restores it with the existing draft after a failed attempt 8ms
+   × continues delivery polling when parent refreshes replace the callback 4ms
+     → expected "spy" to be called with arguments: [ { id: 'workspace', …(5) } ]
+
+Number of calls: 0
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/WorkspaceDeliveryPanel.test.tsx > continues delivery polling when parent refreshes replace the callback
+AssertionError: expected "spy" to be called with arguments: [ { id: 'workspace', …(5) } ]
+
+Number of calls: 0
+
+ ❯ src/local-app/WorkspaceDeliveryPanel.test.tsx:38:70
+     36|  await act(async()=>vi.advanceTimersByTimeAsync(1000));view.rerender(<…
+     37|  await act(async()=>vi.advanceTimersByTimeAsync(1000));const latest=vi…
+     38|  await act(async()=>vi.advanceTimersByTimeAsync(500));expect(latest).t…
+       |                                                                      ^
+     39| });
+     40| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  13:46:39
+   Duration  655ms (transform 39ms, setup 7ms, collect 268ms, tests 142ms, environment 121ms, prepare 26ms)
+

@@ -1,0 +1,17 @@
+{
+  "fingerprint": "9d575d71ec914662427f8c685a925f457ef572a47f55029c58a2478f3972cf35",
+  "entry": {
+    "id": "lane-S01",
+    "slotId": "caption-slot-S01",
+    "offsetXRatio": null,
+    "offsetYRatio": null
+  },
+  "slot": {
+    "id": "caption-slot-S01",
+    "anchor": "bottom-center",
+    "offsetXRatio": 0,
+    "offsetYRatio": 0.1,
+    "widthRatio": 0.84,
+    "heightRatio": 0.74
+  }
+}

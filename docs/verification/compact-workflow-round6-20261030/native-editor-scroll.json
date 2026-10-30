@@ -1,0 +1,186 @@
+[
+  {
+    "size": {
+      "width": 1440,
+      "height": 900
+    },
+    "before": {
+      "frame": 690.5,
+      "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+      "height": 800
+    },
+    "frames": [
+      {
+        "frame": 700.25,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 809.75,
+        "top": 185
+      },
+      {
+        "frame": 710,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 819.5,
+        "top": 165
+      },
+      {
+        "frame": 719.765625,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 829.265625,
+        "top": 145
+      },
+      {
+        "frame": 729.515625,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 839.015625,
+        "top": 125
+      },
+      {
+        "frame": 739.265625,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 848.765625,
+        "top": 105
+      },
+      {
+        "frame": 749.03125,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 858.53125,
+        "top": 85
+      },
+      {
+        "frame": 758.78125,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 868.28125,
+        "top": 65
+      },
+      {
+        "frame": 768.546875,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 878.046875,
+        "top": 45
+      },
+      {
+        "frame": 778.296875,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 887.796875,
+        "top": 25
+      },
+      {
+        "frame": 788.046875,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 897.546875,
+        "top": 5
+      },
+      {
+        "frame": 790.5,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 900,
+        "top": 0
+      },
+      {
+        "frame": 790.5,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 900,
+        "top": 0
+      },
+      {
+        "frame": 790.5,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 900,
+        "top": 0
+      }
+    ],
+    "connected": true
+  },
+  {
+    "size": {
+      "width": 1280,
+      "height": 720
+    },
+    "before": {
+      "frame": 690.5,
+      "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+      "height": 800
+    },
+    "frames": [
+      {
+        "frame": 682.6875,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 792.1875,
+        "top": 185
+      },
+      {
+        "frame": 674.875,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 784.375,
+        "top": 165
+      },
+      {
+        "frame": 667.078125,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 776.578125,
+        "top": 145
+      },
+      {
+        "frame": 659.265625,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 768.765625,
+        "top": 125
+      },
+      {
+        "frame": 651.46875,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 760.96875,
+        "top": 105
+      },
+      {
+        "frame": 643.65625,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 753.15625,
+        "top": 85
+      },
+      {
+        "frame": 635.859375,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 745.359375,
+        "top": 65
+      },
+      {
+        "frame": 628.046875,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 737.546875,
+        "top": 45
+      },
+      {
+        "frame": 620.25,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 729.75,
+        "top": 25
+      },
+      {
+        "frame": 612.4375,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 721.9375,
+        "top": 5
+      },
+      {
+        "frame": 610.5,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 720,
+        "top": 0
+      },
+      {
+        "frame": 610.5,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 720,
+        "top": 0
+      },
+      {
+        "frame": 610.5,
+        "frameUrl": "http://127.0.0.1:58840/?lcBridge=1&lcParent=http%3A%2F%2Flocalhost%3A55358&lcChannel=52f4a9ac-7b05-454c-9d7c-9cace851c347&lcProject=loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798#/editor/loop-control-2cde086b-dec1-45cf-aea3-03a4dd591798",
+        "height": 720,
+        "top": 0
+      }
+    ],
+    "connected": true
+  }
+]

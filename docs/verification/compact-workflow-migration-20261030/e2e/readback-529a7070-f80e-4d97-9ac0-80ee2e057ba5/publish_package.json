@@ -1,0 +1,54 @@
+{
+  "version": "publish-package/v2",
+  "episodeId": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+  "identity": {
+    "video": {
+      "sha256": "ffc68a2b32eb5ee4e1388de7302b89e4f225922e772891ef111301bcaf89b34b",
+      "fileSize": 163207,
+      "artifactType": "final_render",
+      "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-exports/c69fd0b3-b3f1-4a3e-aec5-3cd8c7615714/ffc68a2b32eb5ee4e1388de7302b89e4f225922e772891ef111301bcaf89b34b.mp4"
+    },
+    "project": {
+      "sha256": "1257abe2efca04426ed700c50eabf96da6059cfa5bd941e8b6be54e9a1adef0d",
+      "fileSize": 8422,
+      "artifactType": "editable_project",
+      "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/production-workspace/versions/1257abe2efca04426ed700c50eabf96da6059cfa5bd941e8b6be54e9a1adef0d.json"
+    },
+    "exportId": "c69fd0b3-b3f1-4a3e-aec5-3cd8c7615714",
+    "workspaceId": "41af6884-9cba-465a-a4d5-adcb131bbe8d",
+    "contentSha256": "60987364729e3809bb824501cc9a8fcf89603e6ecbb25b630f23574e7e055b05",
+    "projectContentVersion": 12
+  },
+  "artifacts": [
+    {
+      "sha256": "ffc68a2b32eb5ee4e1388de7302b89e4f225922e772891ef111301bcaf89b34b",
+      "fileSize": 163207,
+      "artifactType": "final_render",
+      "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-exports/c69fd0b3-b3f1-4a3e-aec5-3cd8c7615714/ffc68a2b32eb5ee4e1388de7302b89e4f225922e772891ef111301bcaf89b34b.mp4"
+    },
+    {
+      "sha256": "1257abe2efca04426ed700c50eabf96da6059cfa5bd941e8b6be54e9a1adef0d",
+      "fileSize": 8422,
+      "artifactType": "editable_project",
+      "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/production-workspace/versions/1257abe2efca04426ed700c50eabf96da6059cfa5bd941e8b6be54e9a1adef0d.json"
+    },
+    {
+      "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "fileSize": 1515,
+      "artifactType": "cover",
+      "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-deliveries/7d4c8c8f-2821-407d-b85a-eb26a35a88a6/cover.png"
+    },
+    {
+      "sha256": "3beee91216e15011399faa53117ae890052c424d5800cc49f6f4ca19a9ae86c9",
+      "fileSize": 1490,
+      "artifactType": "metadata",
+      "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-deliveries/7d4c8c8f-2821-407d-b85a-eb26a35a88a6/metadata.json"
+    },
+    {
+      "sha256": "2f28599ac3c04c1bbfa0b97e3cd32f53b542744e3240016c16d554b9aa3a9263",
+      "fileSize": 3759,
+      "artifactType": "final_qc_report",
+      "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-deliveries/7d4c8c8f-2821-407d-b85a-eb26a35a88a6/checks.json"
+    }
+  ]
+}

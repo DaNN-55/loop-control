@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-30T09:35:41.336Z",
+  "episodeId": "92b3067d-ced9-4e85-bc44-1968fa83695a",
+  "connected": true,
+  "shotNavigationCount": 7,
+  "timeline": "00:00.00 / 00:53.63",
+  "saveFeedback": "工作版本已保存",
+  "playbackClockObserved": "00:12.46 / 00:53.63",
+  "paused": true,
+  "returnedToMaterials": true,
+  "materialShots": 7,
+  "returnAlerts": [],
+  "reopenedConnected": true,
+  "reopenedTimeline": "00:00.00 / 00:53.63",
+  "reopenedShotNavigationCount": 7,
+  "finalEditorClosed": true,
+  "uploadedToRealOrder": false,
+  "onlineGenerationRequested": false,
+  "automationNote": "嵌套iframe按钮两次DOM点击目标失效；改用实际DOM位置的鼠标点击后，播放/暂停成功。"
+}

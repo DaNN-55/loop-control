@@ -1,0 +1,40 @@
+{
+  "uiTiming": {
+    "elapsedMs": 10879,
+    "started": 1793370215806,
+    "writableAt": 1793370226685
+  },
+  "responseCounts": {
+    "http://127.0.0.1:5174": 9,
+    "http://127.0.0.1:54976": 1209
+  },
+  "phases": [
+    {
+      "path": "/api/local/episode-commands",
+      "origin": "http://127.0.0.1:5174",
+      "type": "Fetch",
+      "requestAt": 121616.342515,
+      "responseAt": 121618.173144,
+      "durationMs": 1831,
+      "status": 200
+    },
+    {
+      "path": "/",
+      "origin": "http://127.0.0.1:54976",
+      "type": "Document",
+      "requestAt": 121618.307694,
+      "responseAt": 121618.321608,
+      "durationMs": 14,
+      "status": 200
+    },
+    {
+      "path": "/api/external-agent/register",
+      "origin": "http://127.0.0.1:54976",
+      "type": "Fetch",
+      "requestAt": 121627.057468,
+      "responseAt": 121627.197789,
+      "durationMs": 140,
+      "status": 200
+    }
+  ]
+}

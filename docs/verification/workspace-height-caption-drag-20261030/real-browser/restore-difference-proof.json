@@ -1,0 +1,31 @@
+{
+  "remainingDifference": [
+    {
+      "container": "timeline",
+      "field": "offsetXRatio",
+      "current": 0,
+      "baseline": -0.12015454234972678
+    },
+    {
+      "container": "timeline",
+      "field": "offsetYRatio",
+      "current": 0,
+      "baseline": 0.5323076923076923
+    },
+    {
+      "container": "track_loop-control-92b3067d-ced9-4e85-bc44-1968fa83695a_4",
+      "field": "offsetXRatio",
+      "current": 0,
+      "baseline": -0.12015454234972678
+    },
+    {
+      "container": "track_loop-control-92b3067d-ced9-4e85-bc44-1968fa83695a_4",
+      "field": "offsetYRatio",
+      "current": 0,
+      "baseline": 0.5323076923076923
+    }
+  ],
+  "reconstructedFingerprint": "29915cd8f6459821773b4560b56e741ac305850c7667891fd0d0776800ce38c2",
+  "matchesBaseline": true,
+  "baselineEvidence": "content-before.json captured before final single-window selection and drag; initial snapshot native Undo disabled"
+}

@@ -1,0 +1,45 @@
+{
+  "before": {
+    "rect": {
+      "bottom": 349.09375,
+      "height": 35.09375,
+      "left": 626.703125,
+      "right": 772.78125,
+      "top": 314,
+      "width": 146.078125,
+      "x": 626.703125,
+      "y": 314
+    },
+    "transform": "translate(0px, -32.5px) rotate(0deg) scale(1)"
+  },
+  "moved": {
+    "rect": {
+      "bottom": 309.09375,
+      "height": 35.09375,
+      "left": 671.703125,
+      "right": 817.78125,
+      "top": 274,
+      "width": 146.078125,
+      "x": 671.703125,
+      "y": 274
+    },
+    "transform": "translate(45px, -72.5px) rotate(0deg) scale(1)"
+  },
+  "fields": {
+    "x": "0.25",
+    "y": "-0.22"
+  },
+  "undone": {
+    "rect": {
+      "bottom": 349.09375,
+      "height": 35.09375,
+      "left": 626.703125,
+      "right": 772.78125,
+      "top": 314,
+      "width": 146.078125,
+      "x": 626.703125,
+      "y": 314
+    },
+    "transform": "translate(0px, -32.5px) rotate(0deg) scale(1)"
+  }
+}

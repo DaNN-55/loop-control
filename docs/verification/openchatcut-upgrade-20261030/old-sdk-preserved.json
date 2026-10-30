@@ -1,0 +1,12 @@
+{
+  "oldSelectedSourcesUnchanged": true,
+  "checkedPaths": [
+    "package.json",
+    "package-lock.json",
+    "src/captions/CaptionPreviewEditor.tsx",
+    "src/captions/captionPreviewTarget.ts",
+    "src/components/inspector/CaptionInspectorControls.tsx",
+    "src/agent/useExternalAgentBridge.ts",
+    "config/vite.config.ts"
+  ]
+}

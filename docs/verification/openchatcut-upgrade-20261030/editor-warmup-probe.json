@@ -1,0 +1,246 @@
+{
+  "sdkVersion": "0.2.17",
+  "runs": [
+    {
+      "run": 0,
+      "editorWarmup": false,
+      "profile": "590e6e17-a418-4d73-a802-923c3f4b76a1",
+      "elapsedMs": 1916,
+      "phases": [
+        {
+          "name": "beforeViteImport",
+          "ms": 1
+        },
+        {
+          "name": "beforeCreateServer",
+          "ms": 59
+        },
+        {
+          "name": "created",
+          "ms": 879
+        },
+        {
+          "name": "listening",
+          "ms": 912
+        },
+        {
+          "name": "mainWarmupRequest",
+          "ms": 1168
+        },
+        {
+          "name": "graphIdle",
+          "ms": 1635,
+          "modules": 233
+        },
+        {
+          "name": "metadataReady",
+          "ms": 1856,
+          "configHash": "09167b54",
+          "lockfileHash": "bde27850",
+          "optimized": 62
+        },
+        {
+          "name": "beforeEditorRequest",
+          "ms": 1856
+        },
+        {
+          "name": "editorEntryTransformed",
+          "ms": 1858
+        },
+        {
+          "name": "editorGraphIdle",
+          "ms": 1858,
+          "modules": 238
+        },
+        {
+          "name": "done",
+          "ms": 1858
+        }
+      ],
+      "reoptimizationLines": [
+        "PROBE {\"name\":\"metadataReady\",\"ms\":1856,\"configHash\":\"09167b54\",\"lockfileHash\":\"bde27850\",\"optimized\":62}"
+      ]
+    },
+    {
+      "run": 1,
+      "editorWarmup": false,
+      "profile": "cd20c899-31cb-4cee-b194-5c099906a8ac",
+      "elapsedMs": 986,
+      "phases": [
+        {
+          "name": "beforeViteImport",
+          "ms": 1
+        },
+        {
+          "name": "beforeCreateServer",
+          "ms": 73
+        },
+        {
+          "name": "created",
+          "ms": 662
+        },
+        {
+          "name": "listening",
+          "ms": 683
+        },
+        {
+          "name": "mainWarmupRequest",
+          "ms": 715
+        },
+        {
+          "name": "graphIdle",
+          "ms": 935,
+          "modules": 236
+        },
+        {
+          "name": "metadataReady",
+          "ms": 935,
+          "configHash": "09167b54",
+          "lockfileHash": "bde27850",
+          "optimized": 62
+        },
+        {
+          "name": "beforeEditorRequest",
+          "ms": 935
+        },
+        {
+          "name": "editorEntryTransformed",
+          "ms": 936
+        },
+        {
+          "name": "editorGraphIdle",
+          "ms": 936,
+          "modules": 238
+        },
+        {
+          "name": "done",
+          "ms": 936
+        }
+      ],
+      "reoptimizationLines": [
+        "PROBE {\"name\":\"metadataReady\",\"ms\":935,\"configHash\":\"09167b54\",\"lockfileHash\":\"bde27850\",\"optimized\":62}"
+      ]
+    },
+    {
+      "run": 2,
+      "editorWarmup": true,
+      "profile": "1a5322eb-370b-4787-b56a-19bfbcca4276",
+      "elapsedMs": 1507,
+      "phases": [
+        {
+          "name": "beforeViteImport",
+          "ms": 1
+        },
+        {
+          "name": "beforeCreateServer",
+          "ms": 71
+        },
+        {
+          "name": "created",
+          "ms": 706
+        },
+        {
+          "name": "listening",
+          "ms": 727
+        },
+        {
+          "name": "mainWarmupRequest",
+          "ms": 759
+        },
+        {
+          "name": "graphIdle",
+          "ms": 1441,
+          "modules": 1113
+        },
+        {
+          "name": "metadataReady",
+          "ms": 1441,
+          "configHash": "09167b54",
+          "lockfileHash": "bde27850",
+          "optimized": 62
+        },
+        {
+          "name": "beforeEditorRequest",
+          "ms": 1441
+        },
+        {
+          "name": "editorEntryTransformed",
+          "ms": 1441
+        },
+        {
+          "name": "editorGraphIdle",
+          "ms": 1441,
+          "modules": 1113
+        },
+        {
+          "name": "done",
+          "ms": 1441
+        }
+      ],
+      "reoptimizationLines": [
+        "PROBE {\"name\":\"metadataReady\",\"ms\":1441,\"configHash\":\"09167b54\",\"lockfileHash\":\"bde27850\",\"optimized\":62}"
+      ]
+    },
+    {
+      "run": 3,
+      "editorWarmup": false,
+      "profile": "7e7b0601-310c-46df-88c0-b6ac7da913e5",
+      "elapsedMs": 936,
+      "phases": [
+        {
+          "name": "beforeViteImport",
+          "ms": 1
+        },
+        {
+          "name": "beforeCreateServer",
+          "ms": 48
+        },
+        {
+          "name": "created",
+          "ms": 606
+        },
+        {
+          "name": "listening",
+          "ms": 627
+        },
+        {
+          "name": "mainWarmupRequest",
+          "ms": 660
+        },
+        {
+          "name": "graphIdle",
+          "ms": 872,
+          "modules": 236
+        },
+        {
+          "name": "metadataReady",
+          "ms": 873,
+          "configHash": "09167b54",
+          "lockfileHash": "bde27850",
+          "optimized": 62
+        },
+        {
+          "name": "beforeEditorRequest",
+          "ms": 873
+        },
+        {
+          "name": "editorEntryTransformed",
+          "ms": 873
+        },
+        {
+          "name": "editorGraphIdle",
+          "ms": 873,
+          "modules": 238
+        },
+        {
+          "name": "done",
+          "ms": 873
+        }
+      ],
+      "reoptimizationLines": [
+        "PROBE {\"name\":\"metadataReady\",\"ms\":873,\"configHash\":\"09167b54\",\"lockfileHash\":\"bde27850\",\"optimized\":62}"
+      ]
+    }
+  ],
+  "syntheticDataRemoved": true
+}

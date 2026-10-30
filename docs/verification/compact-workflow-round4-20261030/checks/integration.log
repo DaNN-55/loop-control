@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/productionRevisions.integration.test.ts (1 test) 1164ms
+   ✓ immutable script reconfirmation and reasoned shot deletion preserve Owner/version/idle fences  1164ms
+ ✓ src/local-app/productionWorkspace.integration.test.ts (1 test) 5066ms
+   ✓ Owner persists incomplete matches, opens the real draft and fills only its placeholder after reopening  5065ms
+
+ Test Files  2 passed (2)
+      Tests  2 passed (2)
+   Start at  15:18:15
+   Duration  5.55s (transform 267ms, setup 16ms, collect 699ms, tests 6.23s, environment 0ms, prepare 54ms)
+

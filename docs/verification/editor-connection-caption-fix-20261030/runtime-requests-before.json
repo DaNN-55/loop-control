@@ -1,0 +1,2825 @@
+[
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117910.563799,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117910.569031,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117911.578744,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117911.618647,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117911.618746,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117912.660711,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117912.662807,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117913.669054,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117913.70979,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117913.709936,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117914.75278,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117914.754457,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117915.762204,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117915.804865,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117915.805006,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117916.850985,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117916.856298,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117917.865247,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117917.90229,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117917.902413,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117918.948062,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117918.952199,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117919.958523,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117920.000161,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117920.000235,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117921.04369,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117921.046327,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117922.052661,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117922.094965,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117922.095096,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117923.146448,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117923.152236,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117924.162525,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117924.201361,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117924.201444,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117925.234076,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117925.235714,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117926.242296,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117926.283678,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117926.283812,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117927.32972,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117927.332749,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117928.33803,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117928.373952,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117928.374035,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117929.415865,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117929.41832,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117930.426134,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117930.465075,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117930.465163,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117931.51751,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117931.522611,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117932.532683,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117932.569626,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117932.569705,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117933.613096,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117933.616978,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117934.625602,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117934.65938,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117934.659482,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117935.710809,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117935.714768,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117936.723116,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117936.763373,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117936.76347,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117937.8119,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117937.817754,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117938.825706,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117938.856487,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117938.856543,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117939.893257,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117939.896604,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117940.904442,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117940.944311,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117940.944403,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117941.989474,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117941.994507,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117943.003303,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117943.04561,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117943.045749,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117944.099022,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117944.104071,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117945.11343,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117945.156608,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117945.156766,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117946.204374,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117946.209576,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117947.218801,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117947.261073,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117947.261235,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117948.312562,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117948.317948,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117949.326175,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117949.366882,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117949.366964,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117950.405575,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117950.4076,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117951.411713,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117951.444566,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117951.44462,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117952.484636,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117952.487316,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117953.490868,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117953.520779,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117953.520843,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117954.562157,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117954.565022,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117955.570817,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117955.663301,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117955.663544,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117956.749865,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117956.752076,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117957.757302,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117957.793021,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117957.793106,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117958.842072,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117958.843871,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117959.848938,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117959.889209,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117959.889268,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117960.927811,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117960.929715,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117961.934136,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117961.989965,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117961.990021,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117963.021666,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117963.023136,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117964.02718,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117964.063864,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117964.063925,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117965.105677,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117965.107266,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117966.111019,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117966.157766,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117966.157825,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117967.189769,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117967.191316,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117968.196514,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117968.255662,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117968.255739,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117969.296974,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117969.298502,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117970.303025,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117970.333627,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117970.333691,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117971.370113,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117971.371553,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117972.376037,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117972.407349,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117972.407407,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117973.443005,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117973.445894,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/register",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117974.451895,
+    "initiator": [
+      {
+        "functionName": "registerEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 49
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 111
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117974.531162,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/cancellation",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117974.531336,
+    "initiator": [
+      {
+        "functionName": "pollCancellations",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 86
+      },
+      {
+        "functionName": "pollRegisteredBridge",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 101
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/poll",
+    "method": "GET",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117975.805698,
+    "initiator": [
+      {
+        "functionName": "pollEditor",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 71
+      }
+    ]
+  },
+  {
+    "path": "/api/external-agent/unregister",
+    "method": "POST",
+    "runtime": "runtime-1",
+    "frame": "frame-1",
+    "timestamp": 117975.815635,
+    "initiator": [
+      {
+        "functionName": "unregisterEditorBridge",
+        "url": "http://127.0.0.1:57138/src/agent/external-bridge-registration.ts",
+        "line": 38
+      },
+      {
+        "functionName": "runBridgeAttempt",
+        "url": "http://127.0.0.1:57138/src/agent/useExternalAgentBridge.ts",
+        "line": 121
+      }
+    ]
+  }
+]

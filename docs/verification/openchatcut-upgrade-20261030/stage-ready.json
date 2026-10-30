@@ -1,0 +1,14 @@
+{
+  "ready": true,
+  "activated": false,
+  "sdkRoot": "/Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut-v0.2.17-staged-20261030",
+  "version": "0.2.17",
+  "tagCommit": "72ddb3300cda4ed31cbd0bccbfc94fb29b8cffca",
+  "lockSha256": "0bafda2fd9108b96e725f856899388cd4150a6127307c5a18f3a3c1d5959f6a3",
+  "sdkGitClean": true,
+  "loopControlTestsPassed": 15,
+  "httpModulesPassed": 11,
+  "oldSdkSelectedSourcesUnchanged": true,
+  "projectDataModified": false,
+  "existingServicesStopped": false
+}

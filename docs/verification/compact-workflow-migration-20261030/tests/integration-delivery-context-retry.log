@@ -1,0 +1,135 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/workspaceDelivery.integration.test.ts (4 tests | 4 failed) 81ms
+   × Owner delivery requires an exact confirmed export 16ms
+     → Command failed: docker inspect loop-control-local-postgres
+permission denied while trying to connect to the docker API at unix:///Users/dan/.colima/loop-control/docker.sock
+
+   × real Worker verifies exact package, fences tamper and missing inputs, retries and survives restart 9ms
+     → Command failed: docker inspect loop-control-local-postgres
+permission denied while trying to connect to the docker API at unix:///Users/dan/.colima/loop-control/docker.sock
+
+   × a queued package cannot complete or retry against a different final export 9ms
+     → Command failed: docker inspect loop-control-local-postgres
+permission denied while trying to connect to the docker API at unix:///Users/dan/.colima/loop-control/docker.sock
+
+   × delivery records the used trimmed voice source and never substitutes an unadopted draft text 48ms
+     → Command failed: docker inspect loop-control-local-postgres
+permission denied while trying to connect to the docker API at unix:///Users/dan/.colima/loop-control/docker.sock
+
+ ❯ src/local-app/workspaceReviewFixes.integration.test.ts (7 tests | 7 failed) 6156ms
+   × actual delivery does not claim narration muted by the leaf native track was spoken 1025ms
+     → Command failed: hdiutil create -quiet -type SPARSE -size 256m -fs APFS -volname loop-t06-isolated /private/tmp/loop-t06-volume-hxKBzq/media.sparseimage
+
+   × actual delivery does not claim narration muted by the parent native track was spoken 1018ms
+     → Command failed: hdiutil create -quiet -type SPARSE -size 256m -fs APFS -volname loop-t06-isolated /private/tmp/loop-t06-volume-hQTjjH/media.sparseimage
+
+   × first speech preserves Owner edits made before submission and requires the existing candidate decision 1020ms
+     → Command failed: hdiutil create -quiet -type SPARSE -size 256m -fs APFS -volname loop-t06-isolated /private/tmp/loop-t06-volume-jacnRj/media.sparseimage
+
+   × first speech preserves Owner edits made during submission and requires the existing candidate decision 1014ms
+     → Command failed: hdiutil create -quiet -type SPARSE -size 256m -fs APFS -volname loop-t06-isolated /private/tmp/loop-t06-volume-MbysqX/media.sparseimage
+
+   × first speech preserves Owner edits made captions submission and requires the existing candidate decision 1022ms
+     → Command failed: hdiutil create -quiet -type SPARSE -size 256m -fs APFS -volname loop-t06-isolated /private/tmp/loop-t06-volume-AqekJu/media.sparseimage
+
+   × first speech preserves Owner edits made locked submission and requires the existing candidate decision 1022ms
+     → Command failed: hdiutil create -quiet -type SPARSE -size 256m -fs APFS -volname loop-t06-isolated /private/tmp/loop-t06-volume-u34uiO/media.sparseimage
+
+   × preserved legacy native edits stay protected when their first workspace speech completes 36ms
+     → Command failed: docker inspect loop-control-local-postgres
+permission denied while trying to connect to the docker API at unix:///Users/dan/.colima/loop-control/docker.sock
+
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 11 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceDelivery.integration.test.ts > Owner delivery requires an exact confirmed export
+Error: Command failed: docker inspect loop-control-local-postgres
+permission denied while trying to connect to the docker API at unix:///Users/dan/.colima/loop-control/docker.sock
+
+ ❯ docker scripts/runtime/environment.mjs:13:41
+
+ ❯ Object.assertDatabase scripts/runtime/environment.mjs:14:47
+ ❯ embeddedStudioFixture src/local-app/embeddedStudio.fixture.ts:22:212
+ ❯ productionWorkspaceFixture src/local-app/productionWorkspace.fixture.ts:6:10
+ ❯ src/local-app/workspaceDelivery.integration.test.ts:13:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/11]⎯
+
+ FAIL  src/local-app/workspaceDelivery.integration.test.ts > real Worker verifies exact package, fences tamper and missing inputs, retries and survives restart
+Error: Command failed: docker inspect loop-control-local-postgres
+permission denied while trying to connect to the docker API at unix:///Users/dan/.colima/loop-control/docker.sock
+
+ ❯ docker scripts/runtime/environment.mjs:13:41
+
+ ❯ Object.assertDatabase scripts/runtime/environment.mjs:14:47
+ ❯ embeddedStudioFixture src/local-app/embeddedStudio.fixture.ts:22:212
+ ❯ productionWorkspaceFixture src/local-app/productionWorkspace.fixture.ts:6:10
+ ❯ src/local-app/workspaceDelivery.integration.test.ts:22:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/11]⎯
+
+ FAIL  src/local-app/workspaceDelivery.integration.test.ts > a queued package cannot complete or retry against a different final export
+Error: Command failed: docker inspect loop-control-local-postgres
+permission denied while trying to connect to the docker API at unix:///Users/dan/.colima/loop-control/docker.sock
+
+ ❯ docker scripts/runtime/environment.mjs:13:41
+
+ ❯ Object.assertDatabase scripts/runtime/environment.mjs:14:47
+ ❯ embeddedStudioFixture src/local-app/embeddedStudio.fixture.ts:22:212
+ ❯ productionWorkspaceFixture src/local-app/productionWorkspace.fixture.ts:6:10
+ ❯ src/local-app/workspaceDelivery.integration.test.ts:90:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/11]⎯
+
+ FAIL  src/local-app/workspaceDelivery.integration.test.ts > delivery records the used trimmed voice source and never substitutes an unadopted draft text
+ FAIL  src/local-app/workspaceReviewFixes.integration.test.ts > preserved legacy native edits stay protected when their first workspace speech completes
+Error: Command failed: docker inspect loop-control-local-postgres
+permission denied while trying to connect to the docker API at unix:///Users/dan/.colima/loop-control/docker.sock
+
+ ❯ docker scripts/runtime/environment.mjs:13:41
+
+ ❯ Object.assertDatabase scripts/runtime/environment.mjs:14:47
+ ❯ embeddedStudioFixture src/local-app/embeddedStudio.fixture.ts:22:212
+ ❯ productionWorkspaceFixture src/local-app/productionWorkspace.fixture.ts:6:10
+ ❯ narrationFixture src/local-app/workspaceNarration.fixture.ts:17:10
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/11]⎯
+
+ FAIL  src/local-app/workspaceReviewFixes.integration.test.ts > actual delivery does not claim narration muted by the leaf native track was spoken
+Error: Command failed: hdiutil create -quiet -type SPARSE -size 256m -fs APFS -volname loop-t06-isolated /private/tmp/loop-t06-volume-hxKBzq/media.sparseimage
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/11]⎯
+
+ FAIL  src/local-app/workspaceReviewFixes.integration.test.ts > actual delivery does not claim narration muted by the parent native track was spoken
+Error: Command failed: hdiutil create -quiet -type SPARSE -size 256m -fs APFS -volname loop-t06-isolated /private/tmp/loop-t06-volume-hQTjjH/media.sparseimage
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/11]⎯
+
+ FAIL  src/local-app/workspaceReviewFixes.integration.test.ts > first speech preserves Owner edits made before submission and requires the existing candidate decision
+Error: Command failed: hdiutil create -quiet -type SPARSE -size 256m -fs APFS -volname loop-t06-isolated /private/tmp/loop-t06-volume-jacnRj/media.sparseimage
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/11]⎯
+
+ FAIL  src/local-app/workspaceReviewFixes.integration.test.ts > first speech preserves Owner edits made during submission and requires the existing candidate decision
+Error: Command failed: hdiutil create -quiet -type SPARSE -size 256m -fs APFS -volname loop-t06-isolated /private/tmp/loop-t06-volume-MbysqX/media.sparseimage
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/11]⎯
+
+ FAIL  src/local-app/workspaceReviewFixes.integration.test.ts > first speech preserves Owner edits made captions submission and requires the existing candidate decision
+Error: Command failed: hdiutil create -quiet -type SPARSE -size 256m -fs APFS -volname loop-t06-isolated /private/tmp/loop-t06-volume-AqekJu/media.sparseimage
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/11]⎯
+
+ FAIL  src/local-app/workspaceReviewFixes.integration.test.ts > first speech preserves Owner edits made locked submission and requires the existing candidate decision
+Error: Command failed: hdiutil create -quiet -type SPARSE -size 256m -fs APFS -volname loop-t06-isolated /private/tmp/loop-t06-volume-u34uiO/media.sparseimage
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/11]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  11 failed (11)
+   Start at  11:37:18
+   Duration  7.21s (transform 332ms, setup 0ms, collect 511ms, tests 6.24s, environment 0ms, prepare 52ms)
+

@@ -1,0 +1,453 @@
+{
+  "tasks": "74877b71538250356f71af133b843d9b",
+  "online": {
+    "enabled": false,
+    "media_enabled": false,
+    "studio_enabled": false
+  },
+  "episode": {
+    "id": "bbea3b57-061b-4341-9ba1-3bf65d28899f",
+    "stage": "storyboard_review",
+    "mainScriptRevisionId": "8f372c17-be66-4bc0-afb0-5e4a0d6488ad"
+  },
+  "approvals": "bf18a8147c063be047a378f8d4035d8a",
+  "materials": [
+    {
+      "id": "08e666e8-5eea-4229-8ffa-771d4a1ef5d5",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/f86f03a8ab06b9680e0096a57ac4f48516e4d23e17c6e170cb8fc01864b8b301-prepared-S08.mp4",
+      "sha256": "f86f03a8ab06b9680e0096a57ac4f48516e4d23e17c6e170cb8fc01864b8b301",
+      "fileSize": 2923722
+    },
+    {
+      "id": "0b867410-a175-41bd-b977-87e7401ab0df",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/70f3ad0b2c84e3fa8ae37dea1e0577effabd9b0263171f57b759fa44d5b264c1-prepared-S10.mp4",
+      "sha256": "70f3ad0b2c84e3fa8ae37dea1e0577effabd9b0263171f57b759fa44d5b264c1",
+      "fileSize": 2406688
+    },
+    {
+      "id": "2a18c3e8-4efe-4b32-93b2-979a7fb59e0d",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/9794cba9e12b7d027ba5ca7fb3b3e9800205c17ed3fc740b94aed0fb37a1467a-00-product-original.png",
+      "sha256": "9794cba9e12b7d027ba5ca7fb3b3e9800205c17ed3fc740b94aed0fb37a1467a",
+      "fileSize": 1458475
+    },
+    {
+      "id": "314acd3c-eb38-4425-b185-4058c891846d",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/9e1035475a79576b965e94dd3654bc29772e421e6400f14ff924ca9ab7f69727-prepared-S05.mp4",
+      "sha256": "9e1035475a79576b965e94dd3654bc29772e421e6400f14ff924ca9ab7f69727",
+      "fileSize": 2118925
+    },
+    {
+      "id": "3cfefcba-7a69-49cb-b0cb-e3de355076b1",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/wan/bfc1b53e-993b-4626-a264-c8c9cfb0a6ae.mp4",
+      "sha256": "4fc01f4c98e961490209bfd874f5d1577687e2cf1c11428f7bb322e713b7fa92",
+      "fileSize": 6405999
+    },
+    {
+      "id": "470874a6-11a5-45a2-9bfb-e5aecc91e35b",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/d7558407a4062c531fd5747b4a09e9ddc2ca1586266005dee671a8292783ae4c-04-find-the-origin.png",
+      "sha256": "d7558407a4062c531fd5747b4a09e9ddc2ca1586266005dee671a8292783ae4c",
+      "fileSize": 866176
+    },
+    {
+      "id": "489477b7-7cec-4a0d-b694-6569cefca13e",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/b2a08eeeeefdd00ce76d0bf2e89a94d919a75305f9213c2d3afe441f51f3fe2f-prepared-S04.mp4",
+      "sha256": "b2a08eeeeefdd00ce76d0bf2e89a94d919a75305f9213c2d3afe441f51f3fe2f",
+      "fileSize": 1009725
+    },
+    {
+      "id": "66830007-0e1a-4aed-88ca-b2d49068a0f2",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/wan/b4640091-7b22-4f51-829c-9d56e4187f74.mp4",
+      "sha256": "47ae1b7018dabe46a59a5414f1dfb26acac3ebcd398948bc43f1e88ffb530dcd",
+      "fileSize": 5718805
+    },
+    {
+      "id": "66b8d1c7-95e5-4c66-bce2-7bd2e7a8b7c1",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/abba64dfe88ea6714061b809485ea17cc12b68aa780ee807951344636ae4fe16-prepared-S09.mp4",
+      "sha256": "abba64dfe88ea6714061b809485ea17cc12b68aa780ee807951344636ae4fe16",
+      "fileSize": 2573051
+    },
+    {
+      "id": "70540b72-c0cf-4bce-8d18-dc4d34895226",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/ba0a7c99fdf0d6dae15657f44711226a1a484731015a567df257d308a483bdcd-06-shop-display.png",
+      "sha256": "ba0a7c99fdf0d6dae15657f44711226a1a484731015a567df257d308a483bdcd",
+      "fileSize": 2189141
+    },
+    {
+      "id": "70c2d544-3295-4bef-a301-10c65698db70",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/1cf029cc7348537bff46a35925637410e121e3dd96249b94d3d549e3e1712120-prepared-S02.mp4",
+      "sha256": "1cf029cc7348537bff46a35925637410e121e3dd96249b94d3d549e3e1712120",
+      "fileSize": 2505843
+    },
+    {
+      "id": "725d4db9-de05-4e0f-b326-a700998f6d08",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/wan/42493b4f-749e-4ccf-b4c0-d78b3992d354.mp4",
+      "sha256": "673d815b2b3eb3e1702182870021448fe232de1c839d8d9dc4b4a40ff9af6f61",
+      "fileSize": 3567469
+    },
+    {
+      "id": "7c232d40-073e-4fb1-abbf-0c42e1c65d7a",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/c842afdf4bffb9c11116619b5f51ca7cb4e98cd3f47e29cc469fd4d2074aac03-02-shop-owner.png",
+      "sha256": "c842afdf4bffb9c11116619b5f51ca7cb4e98cd3f47e29cc469fd4d2074aac03",
+      "fileSize": 2267835
+    },
+    {
+      "id": "80de95d7-66f2-4cf7-be8b-8865b7589789",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/e193d228e7b75e43b07b3a0a1dd8b48b944a50c6023cff7838008355be962de2-prepared-S07.mp4",
+      "sha256": "e193d228e7b75e43b07b3a0a1dd8b48b944a50c6023cff7838008355be962de2",
+      "fileSize": 1572425
+    },
+    {
+      "id": "8f372c17-be66-4bc0-afb0-5e4a0d6488ad",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/2b746f0a59c9c9831eed2f20fe14da016591ac9ed88f8b1f6e79df534862ec98-main-script.md",
+      "sha256": "2b746f0a59c9c9831eed2f20fe14da016591ac9ed88f8b1f6e79df534862ec98",
+      "fileSize": 668
+    },
+    {
+      "id": "94194dcb-5c06-4acf-b0eb-9f08b7ea9722",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/8b1e1d1c8507f24f147f3f7e0f64c2a560c3bc5e88d859256130dd8bdc7abd31-prepared-S06.mp4",
+      "sha256": "8b1e1d1c8507f24f147f3f7e0f64c2a560c3bc5e88d859256130dd8bdc7abd31",
+      "fileSize": 2294459
+    },
+    {
+      "id": "a1e58487-bc1b-4900-9e6d-62396de74f15",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/74e27bb9f6e15d4ec5ae1650f43faf0fc1e4275a3121e6842e41cb08fb30f7f1-04-couple-phone.png",
+      "sha256": "74e27bb9f6e15d4ec5ae1650f43faf0fc1e4275a3121e6842e41cb08fb30f7f1",
+      "fileSize": 2107141
+    },
+    {
+      "id": "a4017759-96b6-4140-b941-5776fbf0af8a",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/ed9327b043e212887ee4c39fb448a7facff4a8f3906a39fb652e9e2e11e763bc-00-cover-left-text.png",
+      "sha256": "ed9327b043e212887ee4c39fb448a7facff4a8f3906a39fb652e9e2e11e763bc",
+      "fileSize": 987038
+    },
+    {
+      "id": "b2c25fe3-5ed2-4dd4-8bb6-98e587ab3151",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/e9045ed4c50db62cc3ec673f21943949334c0620c7ad321ce62e85f8c708180e-03-card-hands.png",
+      "sha256": "e9045ed4c50db62cc3ec673f21943949334c0620c7ad321ce62e85f8c708180e",
+      "fileSize": 2005629
+    },
+    {
+      "id": "b980271b-7cd3-4e02-90c3-7cb28f651d07",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/wan/f4ed699c-c7ef-4ebe-9366-8d854f0b5162.mp4",
+      "sha256": "a3509f9dd62188de0eb0b2181706d7f6f118c604fa86e6ee1a4320f357f034e1",
+      "fileSize": 3758252
+    },
+    {
+      "id": "bc6beb5a-d5c2-4cf9-b06c-0be95536811e",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/wan/bbbc2419-63f0-4cd2-ad16-81c3c13f5009.mp4",
+      "sha256": "f359af990e0b77c904d97e8bd0d363e6437c3a60bf24b35d3c3e35ef021b352b",
+      "fileSize": 2965726
+    },
+    {
+      "id": "bde8a5f7-2e62-4dc8-b73b-a923231608a2",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/c6efc49954d4f1404c4ac41172a526d783961180d06dfa494b8f61e7238dfabf-01-man-product.png",
+      "sha256": "c6efc49954d4f1404c4ac41172a526d783961180d06dfa494b8f61e7238dfabf",
+      "fileSize": 2352230
+    },
+    {
+      "id": "c08cbf06-e0e8-4e6d-809a-35e377ee03ab",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/7f4b295ead815a9698112503fb0350cc316b769f4add74d8d1ade38a56e10087-05-living-room.png",
+      "sha256": "7f4b295ead815a9698112503fb0350cc316b769f4add74d8d1ade38a56e10087",
+      "fileSize": 2325127
+    },
+    {
+      "id": "cae9a06c-3773-4a65-8a8f-3cf04d0e34a1",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/wan/e50d204d-9ca7-43af-bf18-243218c0f52f.mp4",
+      "sha256": "35c9a21c03acd6661ab6334830a69ef94e5aed8c6eed4db10a2c0fffd8ff1ac2",
+      "fileSize": 4961884
+    },
+    {
+      "id": "e0c25c48-b261-4353-af28-73e9a617d561",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/54254cbbc3c770ec259bdc18dce1570bd65e13dd98446accfe449ca61a6fd3b1-prepared-S01.mp4",
+      "sha256": "54254cbbc3c770ec259bdc18dce1570bd65e13dd98446accfe449ca61a6fd3b1",
+      "fileSize": 3611909
+    },
+    {
+      "id": "f56ace38-e4f2-4b60-a871-b437501b0d21",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/2d1de3e1ff1f24ec0aabe017ee1357abf5a78314988db45c7e2e5164f40cbfe3-main-script.md",
+      "sha256": "2d1de3e1ff1f24ec0aabe017ee1357abf5a78314988db45c7e2e5164f40cbfe3",
+      "fileSize": 643
+    },
+    {
+      "id": "ffec0142-a77e-41c3-9d04-13eb7d7f239f",
+      "path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/de688d12bec3a104074599874fcec84d2cfe30e064e645fbb4004f20ebef405b-prepared-S03.mp4",
+      "sha256": "de688d12bec3a104074599874fcec84d2cfe30e064e645fbb4004f20ebef405b",
+      "fileSize": 1838317
+    }
+  ],
+  "workspace": {
+    "id": "80af0f97-b557-443d-852e-391307f47427",
+    "bindings": [
+      {
+        "id": "3361363c-c80f-4252-9b61-cc628825208b",
+        "text": "怪不得我今年财运这么差！原来是少了补财运的东西，",
+        "itemId": "shot-S01-full",
+        "shotId": "S01",
+        "source": {
+          "kind": "video",
+          "sha256": "54254cbbc3c770ec259bdc18dce1570bd65e13dd98446accfe449ca61a6fd3b1",
+          "fileSize": 3611909,
+          "relativePath": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/54254cbbc3c770ec259bdc18dce1570bd65e13dd98446accfe449ca61a6fd3b1-prepared-S01.mp4",
+          "materialRevisionId": "e0c25c48-b261-4353-af28-73e9a617d561"
+        }
+      },
+      {
+        "id": "1eeba7bd-1549-4d76-87f2-2cc02ed2f5ae",
+        "text": "自从朋友推荐我请了这副日照金山后，店铺里生意好了不少，",
+        "itemId": "shot-S02-full",
+        "shotId": "S02",
+        "source": {
+          "kind": "video",
+          "sha256": "1cf029cc7348537bff46a35925637410e121e3dd96249b94d3d549e3e1712120",
+          "fileSize": 2505843,
+          "relativePath": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/1cf029cc7348537bff46a35925637410e121e3dd96249b94d3d549e3e1712120-prepared-S02.mp4",
+          "materialRevisionId": "70c2d544-3295-4bef-a301-10c65698db70"
+        }
+      },
+      {
+        "id": "5dac67be-bf3a-4071-ad15-34632e138947",
+        "text": "天天出去打牌，手气也感觉比以前顺了！",
+        "itemId": "shot-S03-full",
+        "shotId": "S03",
+        "source": {
+          "kind": "video",
+          "sha256": "de688d12bec3a104074599874fcec84d2cfe30e064e645fbb4004f20ebef405b",
+          "fileSize": 1838317,
+          "relativePath": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/de688d12bec3a104074599874fcec84d2cfe30e064e645fbb4004f20ebef405b-prepared-S03.mp4",
+          "materialRevisionId": "ffec0142-a77e-41c3-9d04-13eb7d7f239f"
+        }
+      },
+      {
+        "id": "b038cd8c-490d-449a-a80a-312486fcc05c",
+        "text": "就连老婆也突然升职加薪了，",
+        "itemId": "shot-S04-full",
+        "shotId": "S04",
+        "source": {
+          "kind": "video",
+          "sha256": "b2a08eeeeefdd00ce76d0bf2e89a94d919a75305f9213c2d3afe441f51f3fe2f",
+          "fileSize": 1009725,
+          "relativePath": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/b2a08eeeeefdd00ce76d0bf2e89a94d919a75305f9213c2d3afe441f51f3fe2f-prepared-S04.mp4",
+          "materialRevisionId": "489477b7-7cec-4a0d-b694-6569cefca13e"
+        }
+      },
+      {
+        "id": "9cf30365-25d2-4cfb-8955-1a72f131e9b1",
+        "text": "后来朋友告诉我，这幅日照象征金山旭日东升、前程光明、事业兴旺！",
+        "itemId": "shot-S05-full",
+        "shotId": "S05",
+        "source": {
+          "kind": "video",
+          "sha256": "9e1035475a79576b965e94dd3654bc29772e421e6400f14ff924ca9ab7f69727",
+          "fileSize": 2118925,
+          "relativePath": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/9e1035475a79576b965e94dd3654bc29772e421e6400f14ff924ca9ab7f69727-prepared-S05.mp4",
+          "materialRevisionId": "314acd3c-eb38-4425-b185-4058c891846d"
+        }
+      },
+      {
+        "id": "d340bece-28a6-47f3-b060-9ed48f6146dc",
+        "text": "挂在家里的客厅或者店铺里，",
+        "itemId": "shot-S06-full",
+        "shotId": "S06",
+        "source": {
+          "kind": "video",
+          "sha256": "8b1e1d1c8507f24f147f3f7e0f64c2a560c3bc5e88d859256130dd8bdc7abd31",
+          "fileSize": 2294459,
+          "relativePath": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/8b1e1d1c8507f24f147f3f7e0f64c2a560c3bc5e88d859256130dd8bdc7abd31-prepared-S06.mp4",
+          "materialRevisionId": "94194dcb-5c06-4acf-b0eb-9f08b7ea9722"
+        }
+      },
+      {
+        "id": "f3173ced-108f-474c-85a3-70293c8f753e",
+        "text": "背靠金山，流水生金，寓意招财纳福、财源广进！",
+        "itemId": "shot-S07-full",
+        "shotId": "S07",
+        "source": {
+          "kind": "video",
+          "sha256": "e193d228e7b75e43b07b3a0a1dd8b48b944a50c6023cff7838008355be962de2",
+          "fileSize": 1572425,
+          "relativePath": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/e193d228e7b75e43b07b3a0a1dd8b48b944a50c6023cff7838008355be962de2-prepared-S07.mp4",
+          "materialRevisionId": "80de95d7-66f2-4cf7-be8b-8865b7589789"
+        }
+      },
+      {
+        "id": "bf5eb575-6869-46d2-a631-93924128848a",
+        "text": "如果你最近生意平平，做事总觉得差一点机会，",
+        "itemId": "shot-S08-full",
+        "shotId": "S08",
+        "source": {
+          "kind": "video",
+          "sha256": "f86f03a8ab06b9680e0096a57ac4f48516e4d23e17c6e170cb8fc01864b8b301",
+          "fileSize": 2923722,
+          "relativePath": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/f86f03a8ab06b9680e0096a57ac4f48516e4d23e17c6e170cb8fc01864b8b301-prepared-S08.mp4",
+          "materialRevisionId": "08e666e8-5eea-4229-8ffa-771d4a1ef5d5"
+        }
+      },
+      {
+        "id": "8ee7ac9c-b63e-4643-b6a2-17a514f0f914",
+        "text": "不妨给家里或者店铺添上一幅日照金山，讨个好彩头！",
+        "itemId": "shot-S09-full",
+        "shotId": "S09",
+        "source": {
+          "kind": "video",
+          "sha256": "abba64dfe88ea6714061b809485ea17cc12b68aa780ee807951344636ae4fe16",
+          "fileSize": 2573051,
+          "relativePath": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/abba64dfe88ea6714061b809485ea17cc12b68aa780ee807951344636ae4fe16-prepared-S09.mp4",
+          "materialRevisionId": "66b8d1c7-95e5-4c66-bce2-7bd2e7a8b7c1"
+        }
+      },
+      {
+        "id": "5d66cc10-0173-4285-9f24-4a6ed982c2a3",
+        "text": "点击视频左下角链接，把这幅日照金山请回家！",
+        "itemId": "shot-S10-full",
+        "shotId": "S10",
+        "source": {
+          "kind": "video",
+          "sha256": "70f3ad0b2c84e3fa8ae37dea1e0577effabd9b0263171f57b759fa44d5b264c1",
+          "fileSize": 2406688,
+          "relativePath": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/materials/70f3ad0b2c84e3fa8ae37dea1e0577effabd9b0263171f57b759fa44d5b264c1-prepared-S10.mp4",
+          "materialRevisionId": "0b867410-a175-41bd-b977-87e7401ab0df"
+        }
+      }
+    ],
+    "revision": 4,
+    "created_at": "2026-10-30T01:58:28.135603+00:00",
+    "episode_id": "bbea3b57-061b-4341-9ba1-3bf65d28899f",
+    "updated_at": "2026-10-30T09:58:17.054679+00:00",
+    "project_path": "episodes/bbea3b57-061b-4341-9ba1-3bf65d28899f/production-workspace/versions/b17ab2581202f3b8d2181ec6cd94c89bf9dde47d42edd3e17ca04d5e050f2f59.json",
+    "project_size": 39100,
+    "content_sha256": "c717845a089e14d4e93df397b59455cc7dda1d696506180bcb2ac68202f1f26b",
+    "project_sha256": "b17ab2581202f3b8d2181ec6cd94c89bf9dde47d42edd3e17ca04d5e050f2f59",
+    "workflow_version": "four-step/v1",
+    "script_revision_id": "8f372c17-be66-4bc0-afb0-5e4a0d6488ad",
+    "native_edit_revision": 3,
+    "storyboard_package_id": "662b98b0-f921-48db-a0ce-54aa6bc07fa1"
+  },
+  "activeTasks": 0,
+  "oldInvalidation": {
+    "at": "2026-10-30T06:05:52.816933+00:00",
+    "reason": "测试"
+  },
+  "preservation": {
+    "tasks": true,
+    "approvals": true,
+    "materials": true,
+    "project": true,
+    "bindings": true
+  },
+  "businessBaseline": "docs/verification/compact-workflow-round7-20261030/daily-after.json",
+  "globalFingerprints": {
+    "tasks": "210:666c7ced2ab65fe85275d2e55a7efa4c",
+    "approvals": "22:e012d118fc5c993cedddf3fa3be84beb"
+  },
+  "fileChecks": [
+    {
+      "id": "08e666e8-5eea-4229-8ffa-771d4a1ef5d5",
+      "valid": true
+    },
+    {
+      "id": "0b867410-a175-41bd-b977-87e7401ab0df",
+      "valid": true
+    },
+    {
+      "id": "2a18c3e8-4efe-4b32-93b2-979a7fb59e0d",
+      "valid": true
+    },
+    {
+      "id": "314acd3c-eb38-4425-b185-4058c891846d",
+      "valid": true
+    },
+    {
+      "id": "3cfefcba-7a69-49cb-b0cb-e3de355076b1",
+      "valid": true
+    },
+    {
+      "id": "470874a6-11a5-45a2-9bfb-e5aecc91e35b",
+      "valid": true
+    },
+    {
+      "id": "489477b7-7cec-4a0d-b694-6569cefca13e",
+      "valid": true
+    },
+    {
+      "id": "66830007-0e1a-4aed-88ca-b2d49068a0f2",
+      "valid": true
+    },
+    {
+      "id": "66b8d1c7-95e5-4c66-bce2-7bd2e7a8b7c1",
+      "valid": true
+    },
+    {
+      "id": "70540b72-c0cf-4bce-8d18-dc4d34895226",
+      "valid": true
+    },
+    {
+      "id": "70c2d544-3295-4bef-a301-10c65698db70",
+      "valid": true
+    },
+    {
+      "id": "725d4db9-de05-4e0f-b326-a700998f6d08",
+      "valid": true
+    },
+    {
+      "id": "7c232d40-073e-4fb1-abbf-0c42e1c65d7a",
+      "valid": true
+    },
+    {
+      "id": "80de95d7-66f2-4cf7-be8b-8865b7589789",
+      "valid": true
+    },
+    {
+      "id": "8f372c17-be66-4bc0-afb0-5e4a0d6488ad",
+      "valid": true
+    },
+    {
+      "id": "94194dcb-5c06-4acf-b0eb-9f08b7ea9722",
+      "valid": true
+    },
+    {
+      "id": "a1e58487-bc1b-4900-9e6d-62396de74f15",
+      "valid": true
+    },
+    {
+      "id": "a4017759-96b6-4140-b941-5776fbf0af8a",
+      "valid": true
+    },
+    {
+      "id": "b2c25fe3-5ed2-4dd4-8bb6-98e587ab3151",
+      "valid": true
+    },
+    {
+      "id": "b980271b-7cd3-4e02-90c3-7cb28f651d07",
+      "valid": true
+    },
+    {
+      "id": "bc6beb5a-d5c2-4cf9-b06c-0be95536811e",
+      "valid": true
+    },
+    {
+      "id": "bde8a5f7-2e62-4dc8-b73b-a923231608a2",
+      "valid": true
+    },
+    {
+      "id": "c08cbf06-e0e8-4e6d-809a-35e377ee03ab",
+      "valid": true
+    },
+    {
+      "id": "cae9a06c-3773-4a65-8a8f-3cf04d0e34a1",
+      "valid": true
+    },
+    {
+      "id": "e0c25c48-b261-4353-af28-73e9a617d561",
+      "valid": true
+    },
+    {
+      "id": "f56ace38-e4f2-4b60-a871-b437501b0d21",
+      "valid": true
+    },
+    {
+      "id": "ffec0142-a77e-41c3-9d04-13eb7d7f239f",
+      "valid": true
+    }
+  ],
+  "originalProjectVerified": true
+}

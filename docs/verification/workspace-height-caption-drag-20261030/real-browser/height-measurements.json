@@ -1,0 +1,38 @@
+[
+  {
+    "action": "up 2000",
+    "height": 800,
+    "top": 205,
+    "scrollTop": 0
+  },
+  {
+    "action": "down 100",
+    "height": 800,
+    "top": 105,
+    "scrollTop": 100
+  },
+  {
+    "action": "down 100",
+    "height": 800,
+    "top": 5,
+    "scrollTop": 200
+  },
+  {
+    "action": "down 200",
+    "height": 800,
+    "top": -40,
+    "scrollTop": 245
+  },
+  {
+    "action": "up 150",
+    "height": 800,
+    "top": 110,
+    "scrollTop": 95
+  },
+  {
+    "action": "up 2000",
+    "height": 800,
+    "top": 205,
+    "scrollTop": 0
+  }
+]

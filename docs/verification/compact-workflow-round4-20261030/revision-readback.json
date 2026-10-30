@@ -1,0 +1,41 @@
+{
+  "at": "2026-10-30T07:25:10.535Z",
+  "episodeId": "2cde086b-dec1-45cf-aea3-03a4dd591798",
+  "scriptAndWorkspaceMatch": true,
+  "sameReasonInScriptAuditAndWorkspace": true,
+  "previousProjectPreserved": true,
+  "historyFiles": [
+    {
+      "sha256": "c619540361765243defc21021c8ceff0f83e13fb46837e7a4d879b2d87348766",
+      "reason": "首次组装",
+      "revision": 1,
+      "existsAndShaMatches": true
+    },
+    {
+      "sha256": "55e373f6d845f74c43aa93d1ee85af4beddaa39bf6ba32327e4b1cb5135ca197",
+      "reason": "采用局部口播候选",
+      "revision": 2,
+      "existsAndShaMatches": true
+    },
+    {
+      "sha256": "ebbbf039b861c88457a7ff58a5fd501e6f0d40940b20325490a52fffd8a4e7b1",
+      "reason": "保存原生剪辑",
+      "revision": 3,
+      "existsAndShaMatches": true
+    },
+    {
+      "sha256": "d3dd3f0ab41599ba5d790963da60e759fcc77e62900aff0e65a3268fe8ff5db2",
+      "reason": "第四轮验收：调整口播并复用单次修订原因",
+      "revision": 4,
+      "existsAndShaMatches": true
+    },
+    {
+      "sha256": "df73ac962507adad6023f474128f99c04ff180a3f51bebab566a2f66491e5c67",
+      "reason": "保存原生剪辑",
+      "revision": 5,
+      "existsAndShaMatches": true
+    }
+  ],
+  "stage": "script_approved",
+  "currentRevision": 5
+}

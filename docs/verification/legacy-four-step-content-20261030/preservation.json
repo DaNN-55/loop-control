@@ -1,0 +1,21 @@
+{
+  "verifiedAt": "2026-10-30",
+  "episodes": 6,
+  "files": 280,
+  "totalBytes": 2046885695,
+  "fileManifestSha256": "6cef51e6d6ed504c2953dd64d8f7d4b535d760b224fdd13955cdb1ccfd82ea95",
+  "allOriginalFilesUnchanged": true,
+  "businessRecordsUnchanged": true,
+  "businessFingerprints": {
+    "tasks": "7b58c8cab239df6f388953ef879fbaa2",
+    "episodes": "a047aee3e840f2d400d9984feb543363",
+    "approvals": "e012d118fc5c993cedddf3fa3be84beb",
+    "artifacts": "ab94c2ba79964f4fd5790fc4caedf666",
+    "audio_tracks": "1b489cb07b9cfc57e29baced30cbd1d7",
+    "input_episodes": "5679ae9b656f10ec17d12e4b7ad457d9",
+    "review_packages": "0835ffe4250f8074e3ad4a9b783eded6",
+    "production_workspaces": "d751713988987e9331980363e24189ce",
+    "shot_preparation_drafts": "5c7663012ed8f58dd09a432d06fe548c",
+    "production_material_revisions": "cb456ab2ade00fe455773a46c2046b71"
+  }
+}

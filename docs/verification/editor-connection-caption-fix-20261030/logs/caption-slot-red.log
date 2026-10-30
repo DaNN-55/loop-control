@@ -1,0 +1,62 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ scripts/openchatcut-caption-layout.integration.test.mjs (3 tests | 2 failed) 26ms
+   × writes the actual rendered manual slot, preserving unrelated slots, safe area and source data 5ms
+     → expected { anchor: 'middle-center', …(4) } to match object { offsetXRatio: 0.25, …(1) }
+(3 matching properties omitted from actual)
+   × nudges and resets the same slot used by the renderer 1ms
+     → expected +0 to be 0.01 // Object.is equality
+   ✓ retains the native entry and single-stream paths when no manual slot exists 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  scripts/openchatcut-caption-layout.integration.test.mjs > writes the actual rendered manual slot, preserving unrelated slots, safe area and source data
+AssertionError: expected { anchor: 'middle-center', …(4) } to match object { offsetXRatio: 0.25, …(1) }
+(3 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "offsetXRatio": 0.25,
+-   "offsetYRatio": -0.125,
++   "offsetXRatio": 0,
++   "offsetYRatio": 0,
+  }
+
+ ❯ scripts/openchatcut-caption-layout.integration.test.mjs:21:47
+     19|  const patch=sdk.captionPreviewLayoutPatch(before,target,{...target.la…
+     20|  const next={...before,...patch};
+     21|  expect(sdk.buildLaneGroups(next,[],30,0)[0]).toMatchObject({offsetXRa…
+       |                                               ^
+     22|  expect(sdk.findCaptionPreviewTarget(next,[],30,0).layout).toMatchObje…
+     23|  expect(next.layoutPolicy.slots[1]).toEqual(before.layoutPolicy.slots[…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  scripts/openchatcut-caption-layout.integration.test.mjs > nudges and resets the same slot used by the renderer
+AssertionError: expected +0 to be 0.01 // Object.is equality
+
+- Expected
++ Received
+
+- 0.01
++ 0
+
+ ❯ scripts/openchatcut-caption-layout.integration.test.mjs:31:62
+     29|  const before=captions(),target=sdk.findCaptionPreviewTarget(before,[]…
+     30|  const nudged={...before,...sdk.captionPreviewNudgePatch(before,target…
+     31|  expect(sdk.buildLaneGroups(nudged,[],30,0)[0].offsetXRatio).toBe(.01);
+       |                                                              ^
+     32|  const movedTarget=sdk.findCaptionPreviewTarget(nudged,[],30,0);
+     33|  const reset={...nudged,...sdk.captionPreviewLayoutResetPatch(nudged,m…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  21:15:33
+   Duration  180ms (transform 18ms, setup 7ms, collect 12ms, tests 26ms, environment 0ms, prepare 34ms)
+

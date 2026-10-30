@@ -1,0 +1,701 @@
+{
+  "preparation": {
+    "origin": "script-segment",
+    "scriptRevisionId": "deebd962-988e-4bba-9689-5794181bb4cc",
+    "authorized": true,
+    "authorizationHash": "35a4d8ccc6cf459a89ceab30519374235679575d58b98c8e8a5d9fd69e7207db",
+    "shots": [
+      {
+        "shotId": "shot-01",
+        "origin": "script-segment",
+        "shotType": "a_roll"
+      }
+    ]
+  },
+  "visualCandidates": [
+    {
+      "durationImpact": {
+        "deltaSeconds": 1.6,
+        "overlapItemIds": []
+      },
+      "id": "213e78fa-1a2f-48f7-86c0-61355a8929c3",
+      "kind": "video",
+      "usage": "video",
+      "shotId": "shot-01",
+      "clipId": "9308797c-e9b7-4ce9-8046-d54d20704763",
+      "targetItemId": "shot-shot-01-9308797c-e9b7-4ce9-8046-d54d20704763",
+      "taskId": "a1907d3a-ab9b-4255-8cf0-97827e28abf6",
+      "inputFingerprint": "f03510a84e70724d585f3d11fb7407c5caa5df4f2c5565cacfb0d6ce9b1cb491",
+      "text": "",
+      "mainScriptText": "",
+      "audioTrackId": null,
+      "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/a1907d3a-ab9b-4255-8cf0-97827e28abf6/a1907d3a-ab9b-4255-8cf0-97827e28abf6.mp4",
+      "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+      "fileSize": 44148,
+      "durationSeconds": 4,
+      "width": 640,
+      "height": 360,
+      "currentDurationSeconds": 2.4,
+      "pendingConfirmation": false,
+      "status": "stale"
+    }
+  ],
+  "visualTasks": [
+    {
+      "id": "213e78fa-1a2f-48f7-86c0-61355a8929c3",
+      "taskId": "a1907d3a-ab9b-4255-8cf0-97827e28abf6",
+      "status": "completed",
+      "error": null,
+      "canResume": false
+    }
+  ],
+  "visualTargets": [
+    {
+      "targetItemId": "shot-shot-01-9308797c-e9b7-4ce9-8046-d54d20704763",
+      "voiceMode": "tts",
+      "durationSeconds": 2.4,
+      "providerDurationSeconds": 4,
+      "minimumSeconds": 4,
+      "maximumSeconds": 15
+    }
+  ],
+  "audio": {
+    "mix": {
+      "voices": [
+        {
+          "coverage": "full",
+          "startSeconds": 0,
+          "durationSeconds": 2.4,
+          "shotDurationSeconds": 2.4,
+          "sourceStartSeconds": 0,
+          "sourceLabel": null,
+          "alignmentReady": true,
+          "shotId": "shot-01",
+          "mode": "tts",
+          "gainDb": 0,
+          "ambienceGainDb": null,
+          "sourceItemId": null,
+          "sourceAssetId": null
+        }
+      ],
+      "sounds": []
+    },
+    "preparations": [
+      {
+        "id": "2b70e2bd-c838-40db-89fd-d34226336bf8",
+        "kind": "bgm",
+        "shotId": null,
+        "sourceItemId": null,
+        "sourceSha256": null,
+        "description": "整期配乐",
+        "query": null,
+        "anchor": "absolute",
+        "offsetSeconds": 0,
+        "durationSeconds": 2.4,
+        "taskId": null,
+        "status": "ready",
+        "error": null,
+        "audioTrackId": null,
+        "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/materials/8d6544a938272b1488fe4b3069b296f7b246b377384a59651bd387285ceb8203-bgm.mp3",
+        "sha256": "8d6544a938272b1488fe4b3069b296f7b246b377384a59651bd387285ceb8203",
+        "fileSize": 48796,
+        "adoptedItemId": null,
+        "source": {
+          "provider": "manual",
+          "materialRevisionId": "7252c506-8cb0-4b8c-9155-b3ff8b37092e"
+        }
+      },
+      {
+        "id": "804ddfeb-a3fe-499f-99ca-a6929db078a5",
+        "kind": "bgm",
+        "shotId": null,
+        "sourceItemId": null,
+        "sourceSha256": null,
+        "description": "整期配乐",
+        "query": null,
+        "anchor": "absolute",
+        "offsetSeconds": 0,
+        "durationSeconds": 5,
+        "taskId": null,
+        "status": "ready",
+        "error": null,
+        "audioTrackId": null,
+        "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/materials/8d6544a938272b1488fe4b3069b296f7b246b377384a59651bd387285ceb8203-bgm.mp3",
+        "sha256": "8d6544a938272b1488fe4b3069b296f7b246b377384a59651bd387285ceb8203",
+        "fileSize": 48796,
+        "adoptedItemId": "workspace-bgm",
+        "source": {
+          "provider": "manual",
+          "materialRevisionId": "7252c506-8cb0-4b8c-9155-b3ff8b37092e"
+        }
+      }
+    ]
+  },
+  "deliveries": [
+    {
+      "id": "7d4c8c8f-2821-407d-b85a-eb26a35a88a6",
+      "exportId": "c69fd0b3-b3f1-4a3e-aec5-3cd8c7615714",
+      "taskId": "7d4c8c8f-2821-407d-b85a-eb26a35a88a6",
+      "status": "completed",
+      "error": null,
+      "verified": true,
+      "artifacts": [
+        {
+          "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+          "fileSize": 1515,
+          "artifactType": "cover",
+          "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-deliveries/7d4c8c8f-2821-407d-b85a-eb26a35a88a6/cover.png"
+        },
+        {
+          "sha256": "3beee91216e15011399faa53117ae890052c424d5800cc49f6f4ca19a9ae86c9",
+          "fileSize": 1490,
+          "artifactType": "metadata",
+          "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-deliveries/7d4c8c8f-2821-407d-b85a-eb26a35a88a6/metadata.json"
+        },
+        {
+          "sha256": "2f28599ac3c04c1bbfa0b97e3cd32f53b542744e3240016c16d554b9aa3a9263",
+          "fileSize": 3759,
+          "artifactType": "final_qc_report",
+          "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-deliveries/7d4c8c8f-2821-407d-b85a-eb26a35a88a6/checks.json"
+        },
+        {
+          "sha256": "6e2bf0a1c52aa3190b6d1d0528f9b59c88d0a8fc3a83a15f6f7926c3a6bcca95",
+          "fileSize": 2656,
+          "artifactType": "publish_package",
+          "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-deliveries/7d4c8c8f-2821-407d-b85a-eb26a35a88a6/manifest.json"
+        },
+        {
+          "sha256": "ffc68a2b32eb5ee4e1388de7302b89e4f225922e772891ef111301bcaf89b34b",
+          "fileSize": 163207,
+          "artifactType": "final_render",
+          "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-exports/c69fd0b3-b3f1-4a3e-aec5-3cd8c7615714/ffc68a2b32eb5ee4e1388de7302b89e4f225922e772891ef111301bcaf89b34b.mp4"
+        },
+        {
+          "sha256": "1257abe2efca04426ed700c50eabf96da6059cfa5bd941e8b6be54e9a1adef0d",
+          "fileSize": 8422,
+          "artifactType": "editable_project",
+          "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/production-workspace/versions/1257abe2efca04426ed700c50eabf96da6059cfa5bd941e8b6be54e9a1adef0d.json"
+        }
+      ],
+      "createdAt": "2026-10-30T03:52:29.295Z"
+    }
+  ],
+  "usedNarration": [
+    {
+      "sourceInFrame": 0,
+      "durationInFrames": 72,
+      "fps": 30,
+      "fullSourceUsed": true,
+      "shotId": "shot-01",
+      "itemId": "workspace-narration-shot-shot-01",
+      "audioTrackId": "207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "taskId": "5c5d7812-3856-485e-b365-4d1562b8fe83",
+      "text": "清晨第一束光落在山脊上，今天从这里出发。",
+      "mainScriptText": "清晨第一束光落在山脊上，今天从这里出发。",
+      "inputFingerprint": "6e6d56a22a0b18e80e353da37be5368a9392e0cc3699a92607bd3d27770a0f15",
+      "provenance": "owner_adoption"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3",
+      "kind": "audio",
+      "shotId": "shot-01",
+      "clipId": "9308797c-e9b7-4ce9-8046-d54d20704763",
+      "targetItemId": "workspace-narration-shot-shot-01",
+      "taskId": "5c5d7812-3856-485e-b365-4d1562b8fe83",
+      "inputFingerprint": "6e6d56a22a0b18e80e353da37be5368a9392e0cc3699a92607bd3d27770a0f15",
+      "text": "清晨第一束光落在山脊上，今天从这里出发。",
+      "mainScriptText": "清晨第一束光落在山脊上，今天从这里出发。",
+      "audioTrackId": "207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3",
+      "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/5c5d7812-3856-485e-b365-4d1562b8fe83/shot-narration-shot-01-ae76ff7e03a6cffa49ace78505b536e3.mp3",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "fileSize": 19628,
+      "durationSeconds": 2.4,
+      "pendingConfirmation": false,
+      "currentVoiceMode": "tts",
+      "currentDurationSeconds": 2.4,
+      "targetDurationSeconds": 2.4,
+      "durationImpact": {
+        "deltaSeconds": 0,
+        "overlapItemIds": []
+      },
+      "status": "adopted"
+    },
+    {
+      "id": "1ffc1e7e-8a67-4eb4-968b-a7d7fc661e25",
+      "kind": "audio",
+      "shotId": "shot-01",
+      "clipId": "9308797c-e9b7-4ce9-8046-d54d20704763",
+      "targetItemId": "workspace-narration-shot-shot-01",
+      "taskId": "782681a5-be3f-4609-ac85-4298133eef80",
+      "inputFingerprint": "84ac414aa7e5f4d39b2d86f72847da04d1cad859bdc25669f8fd4269e8abee8b",
+      "text": "清晨第一束光落在山脊上，今天从这里出发。",
+      "mainScriptText": "清晨第一束光落在山脊上，今天从这里出发。",
+      "audioTrackId": "1ffc1e7e-8a67-4eb4-968b-a7d7fc661e25",
+      "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/782681a5-be3f-4609-ac85-4298133eef80/shot-narration-shot-01-ae76ff7e03a6cffa49ace78505b536e3.mp3",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "fileSize": 19628,
+      "durationSeconds": 2.4,
+      "pendingConfirmation": false,
+      "currentVoiceMode": "tts",
+      "currentDurationSeconds": 2.4,
+      "targetDurationSeconds": 2.4,
+      "durationImpact": {
+        "deltaSeconds": 0,
+        "overlapItemIds": []
+      },
+      "status": "stale"
+    }
+  ],
+  "exports": [
+    {
+      "id": "c69fd0b3-b3f1-4a3e-aec5-3cd8c7615714",
+      "projectContentVersion": 12,
+      "contentSha256": "60987364729e3809bb824501cc9a8fcf89603e6ecbb25b630f23574e7e055b05",
+      "project": {
+        "sha256": "1257abe2efca04426ed700c50eabf96da6059cfa5bd941e8b6be54e9a1adef0d",
+        "fileSize": 8422,
+        "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/production-workspace/versions/1257abe2efca04426ed700c50eabf96da6059cfa5bd941e8b6be54e9a1adef0d.json"
+      },
+      "status": "ready",
+      "artifact": {
+        "sha256": "ffc68a2b32eb5ee4e1388de7302b89e4f225922e772891ef111301bcaf89b34b",
+        "fileSize": 163207,
+        "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-exports/c69fd0b3-b3f1-4a3e-aec5-3cd8c7615714/ffc68a2b32eb5ee4e1388de7302b89e4f225922e772891ef111301bcaf89b34b.mp4"
+      },
+      "checks": [
+        {
+          "name": "used_content",
+          "detail": "已核对 2 个实际来源。",
+          "passed": true,
+          "sources": [
+            {
+              "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+              "fileSize": 44148,
+              "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/a1907d3a-ab9b-4255-8cf0-97827e28abf6/a1907d3a-ab9b-4255-8cf0-97827e28abf6.mp4"
+            },
+            {
+              "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+              "fileSize": 19628,
+              "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/5c5d7812-3856-485e-b365-4d1562b8fe83/shot-narration-shot-01-ae76ff7e03a6cffa49ace78505b536e3.mp3"
+            }
+          ]
+        },
+        {
+          "name": "captions",
+          "detail": "已核对 1 组必要字幕。",
+          "passed": true,
+          "evidence": [
+            {
+              "clipId": "9308797c-e9b7-4ce9-8046-d54d20704763",
+              "detail": null,
+              "itemId": "shot-shot-01-9308797c-e9b7-4ce9-8046-d54d20704763",
+              "shotId": "shot-01",
+              "taskId": null,
+              "timing": "current",
+              "contract": {
+                "cues": [
+                  {
+                    "id": "0c6b998a-ac0c-4110-9b2d-1a9fa17eec5e~0",
+                    "text": "清晨第一束光落在山脊上，今天从这里出发。",
+                    "endMs": 2400,
+                    "startMs": 0
+                  }
+                ],
+                "text": "清晨第一束光落在山脊上，今天从这里出发。",
+                "enabled": true,
+                "spatial": {
+                  "anchor": "bottom-center",
+                  "insets": {
+                    "top": 0.08,
+                    "left": 0.08,
+                    "right": 0.08,
+                    "bottom": 0.18
+                  },
+                  "version": "shot-caption-space/v2",
+                  "maxLines": 2,
+                  "safeArea": "title-safe",
+                  "aspectRatio": "9:16",
+                  "maxCharactersPerLine": 16
+                },
+                "version": "shot-captions/v1",
+                "contentMode": "follow_tts"
+              },
+              "durationMs": 2400,
+              "audioTrackId": "207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3",
+              "narrationText": "清晨第一束光落在山脊上，今天从这里出发。",
+              "textConfirmed": true,
+              "inputFingerprint": "9a94491980ecaebc1e280c46a1b1d8095a34c3a291dd9f74cd2eb7ee2c5898a6",
+              "alignmentInputVersion": "dbd01affb44b41b5ecca85e8737975ab8d3278abad8727d3440979b54e1b6f04"
+            }
+          ]
+        },
+        {
+          "name": "technical",
+          "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。",
+          "passed": true,
+          "inspection": {
+            "width": 1080,
+            "height": 1920,
+            "hasAudio": true,
+            "blackFrameCount": 0,
+            "durationSeconds": 2.453333
+          },
+          "videoFrames": 72,
+          "audioExpected": true,
+          "videoDurationSeconds": 2.4,
+          "expectedDurationSeconds": 2.4,
+          "containerDurationSeconds": 2.453333
+        },
+        {
+          "name": "representative_frame",
+          "detail": "已实际解码代表帧。",
+          "passed": true,
+          "artifact": {
+            "sha256": "23b25342883e63c3f12b480f50095258fda92a6ae31e44ba0317f2efbf8851bc",
+            "fileSize": 41607,
+            "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-exports/c69fd0b3-b3f1-4a3e-aec5-3cd8c7615714/representative.jpg"
+          }
+        },
+        {
+          "name": "export_file",
+          "detail": "最终文件已按字节 SHA-256 与大小不可变登记。",
+          "passed": true
+        }
+      ],
+      "createdAt": "2026-10-30T03:51:00.688Z",
+      "confirmedAt": "2026-10-30T03:51:45.566Z",
+      "confirmed": true,
+      "current": true
+    },
+    {
+      "id": "13dbbdd2-74d0-4aa6-98c1-2656d7e8e40d",
+      "projectContentVersion": 11,
+      "contentSha256": "ddf24ec4f904f56f1e0ad9c0223d92a741d0bcc958d164b92969e1d59a37c115",
+      "project": {
+        "sha256": "e16ac18e33bbb6e2e7725c1fb4d66703cdf4b2a9d7c8c6132beb02e345d9c7fd",
+        "fileSize": 9493,
+        "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/production-workspace/versions/e16ac18e33bbb6e2e7725c1fb4d66703cdf4b2a9d7c8c6132beb02e345d9c7fd.json"
+      },
+      "status": "ready",
+      "artifact": {
+        "sha256": "9546549b529e5f037cbe7e38c367df1db60bb13921135302443f29308721414c",
+        "fileSize": 316442,
+        "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-exports/13dbbdd2-74d0-4aa6-98c1-2656d7e8e40d/9546549b529e5f037cbe7e38c367df1db60bb13921135302443f29308721414c.mp4"
+      },
+      "checks": [
+        {
+          "name": "used_content",
+          "detail": "已核对 3 个实际来源。",
+          "passed": true,
+          "sources": [
+            {
+              "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+              "fileSize": 44148,
+              "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/a1907d3a-ab9b-4255-8cf0-97827e28abf6/a1907d3a-ab9b-4255-8cf0-97827e28abf6.mp4"
+            },
+            {
+              "sha256": "8d6544a938272b1488fe4b3069b296f7b246b377384a59651bd387285ceb8203",
+              "fileSize": 48796,
+              "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/materials/8d6544a938272b1488fe4b3069b296f7b246b377384a59651bd387285ceb8203-bgm.mp3"
+            },
+            {
+              "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+              "fileSize": 19628,
+              "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/5c5d7812-3856-485e-b365-4d1562b8fe83/shot-narration-shot-01-ae76ff7e03a6cffa49ace78505b536e3.mp3"
+            }
+          ]
+        },
+        {
+          "name": "captions",
+          "detail": "已核对 1 组必要字幕。",
+          "passed": true,
+          "evidence": [
+            {
+              "clipId": "9308797c-e9b7-4ce9-8046-d54d20704763",
+              "detail": null,
+              "itemId": "shot-shot-01-9308797c-e9b7-4ce9-8046-d54d20704763",
+              "shotId": "shot-01",
+              "taskId": null,
+              "timing": "current",
+              "contract": {
+                "cues": [
+                  {
+                    "id": "0c6b998a-ac0c-4110-9b2d-1a9fa17eec5e~0",
+                    "text": "清晨第一束光落在山脊上，今天从这里出发。",
+                    "endMs": 2400,
+                    "startMs": 0
+                  }
+                ],
+                "text": "清晨第一束光落在山脊上，今天从这里出发。",
+                "enabled": true,
+                "spatial": {
+                  "anchor": "bottom-center",
+                  "insets": {
+                    "top": 0.08,
+                    "left": 0.08,
+                    "right": 0.08,
+                    "bottom": 0.18
+                  },
+                  "version": "shot-caption-space/v2",
+                  "maxLines": 2,
+                  "safeArea": "title-safe",
+                  "aspectRatio": "9:16",
+                  "maxCharactersPerLine": 16
+                },
+                "version": "shot-captions/v1",
+                "contentMode": "follow_tts"
+              },
+              "durationMs": 2400,
+              "audioTrackId": "207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3",
+              "narrationText": "清晨第一束光落在山脊上，今天从这里出发。",
+              "textConfirmed": true,
+              "inputFingerprint": "9a94491980ecaebc1e280c46a1b1d8095a34c3a291dd9f74cd2eb7ee2c5898a6",
+              "alignmentInputVersion": "dbd01affb44b41b5ecca85e8737975ab8d3278abad8727d3440979b54e1b6f04"
+            }
+          ]
+        },
+        {
+          "name": "technical",
+          "detail": "实际 MP4 时长、画幅、音频及黑帧检查通过。",
+          "passed": true,
+          "inspection": {
+            "width": 1080,
+            "height": 1920,
+            "hasAudio": true,
+            "blackFrameCount": 0,
+            "durationSeconds": 5.056
+          },
+          "videoFrames": 150,
+          "audioExpected": true,
+          "videoDurationSeconds": 5,
+          "expectedDurationSeconds": 5,
+          "containerDurationSeconds": 5.056
+        },
+        {
+          "name": "representative_frame",
+          "detail": "已实际解码代表帧。",
+          "passed": true,
+          "artifact": {
+            "sha256": "23b25342883e63c3f12b480f50095258fda92a6ae31e44ba0317f2efbf8851bc",
+            "fileSize": 41607,
+            "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/workspace-exports/13dbbdd2-74d0-4aa6-98c1-2656d7e8e40d/representative.jpg"
+          }
+        },
+        {
+          "name": "export_file",
+          "detail": "最终文件已按字节 SHA-256 与大小不可变登记。",
+          "passed": true
+        }
+      ],
+      "createdAt": "2026-10-30T03:38:22.720Z",
+      "confirmedAt": "2026-10-30T03:39:05.047Z",
+      "confirmed": false,
+      "current": false
+    }
+  ],
+  "exportIssues": [
+    {
+      "id": "190daf99-5c56-4083-896f-b1d173ea5517",
+      "exportId": "13dbbdd2-74d0-4aa6-98c1-2656d7e8e40d",
+      "reason": "E2E 核对：字幕和配乐需人工复看后再确认最终文件。",
+      "resolved": true
+    }
+  ],
+  "captions": [
+    {
+      "clipId": "9308797c-e9b7-4ce9-8046-d54d20704763",
+      "itemId": "shot-shot-01-9308797c-e9b7-4ce9-8046-d54d20704763",
+      "shotId": "shot-01",
+      "durationMs": 2400,
+      "contract": {
+        "version": "shot-captions/v1",
+        "enabled": true,
+        "contentMode": "follow_tts",
+        "text": "清晨第一束光落在山脊上，今天从这里出发。",
+        "cues": [
+          {
+            "id": "0c6b998a-ac0c-4110-9b2d-1a9fa17eec5e~0",
+            "text": "清晨第一束光落在山脊上，今天从这里出发。",
+            "startMs": 0,
+            "endMs": 2400
+          }
+        ],
+        "spatial": {
+          "version": "shot-caption-space/v2",
+          "anchor": "bottom-center",
+          "safeArea": "title-safe",
+          "aspectRatio": "9:16",
+          "insets": {
+            "top": 0.08,
+            "right": 0.08,
+            "bottom": 0.18,
+            "left": 0.08
+          },
+          "maxLines": 2,
+          "maxCharactersPerLine": 16
+        }
+      },
+      "inputFingerprint": "9a94491980ecaebc1e280c46a1b1d8095a34c3a291dd9f74cd2eb7ee2c5898a6",
+      "timing": "current",
+      "textConfirmed": true,
+      "audioTrackId": "207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3",
+      "narrationText": "清晨第一束光落在山脊上，今天从这里出发。",
+      "taskId": null,
+      "alignmentInputVersion": "dbd01affb44b41b5ecca85e8737975ab8d3278abad8727d3440979b54e1b6f04",
+      "detail": null
+    }
+  ],
+  "id": "41af6884-9cba-465a-a4d5-adcb131bbe8d",
+  "episodeId": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+  "workflowVersion": "four-step/v1",
+  "scriptRevisionId": "deebd962-988e-4bba-9689-5794181bb4cc",
+  "storyboardPackageId": "d55fa629-32e7-4fcc-b86c-833e16d06ca7",
+  "revision": 12,
+  "contentSha256": "60987364729e3809bb824501cc9a8fcf89603e6ecbb25b630f23574e7e055b05",
+  "nativeEditRevision": 7,
+  "narration": [
+    {
+      "requiresCandidateAdoption": true,
+      "videoWindow": {
+        "durationSeconds": 2.4,
+        "generationSeconds": 4,
+        "maximumSeconds": 15
+      },
+      "clipId": "9308797c-e9b7-4ce9-8046-d54d20704763",
+      "shotId": "shot-01",
+      "mode": "tts",
+      "text": "清晨第一束光落在山脊上，今天从这里出发。",
+      "voice": "zh_female_vv_uranus_bigtts",
+      "languageCode": "zh-CN",
+      "speakingRate": 1,
+      "override": false,
+      "inputFingerprint": "6e6d56a22a0b18e80e353da37be5368a9392e0cc3699a92607bd3d27770a0f15",
+      "confirmed": true,
+      "taskId": "5c5d7812-3856-485e-b365-4d1562b8fe83",
+      "status": "completed",
+      "error": null,
+      "audioTrackId": "207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3",
+      "artifactId": "3a2e7e8d-dffe-43b1-be63-e19c741093d8",
+      "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/5c5d7812-3856-485e-b365-4d1562b8fe83/shot-narration-shot-01-ae76ff7e03a6cffa49ace78505b536e3.mp3",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "fileSize": 19628,
+      "durationSeconds": 2.4,
+      "itemId": "workspace-narration-shot-shot-01",
+      "adoptedAudioTrackId": "207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3"
+    }
+  ],
+  "clips": [
+    {
+      "id": "9308797c-e9b7-4ce9-8046-d54d20704763",
+      "text": "清晨第一束光落在山脊上，今天从这里出发。",
+      "image": {
+        "fit": "contain",
+        "usage": "ai-video",
+        "focusX": 0,
+        "focusY": 0,
+        "taskId": "a1907d3a-ab9b-4255-8cf0-97827e28abf6",
+        "durationSeconds": 2.4,
+        "materialRevisionId": "b30adb02-0046-483f-8b47-ca9e31400c32",
+        "providerDurationSeconds": 4
+      },
+      "itemId": "shot-shot-01-9308797c-e9b7-4ce9-8046-d54d20704763",
+      "shotId": "shot-01",
+      "source": {
+        "kind": "video",
+        "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+        "fileSize": 44148,
+        "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/a1907d3a-ab9b-4255-8cf0-97827e28abf6/a1907d3a-ab9b-4255-8cf0-97827e28abf6.mp4",
+        "materialRevisionId": "fa2ff2ad-91ad-4028-87ec-392dc600cc38"
+      }
+    }
+  ],
+  "project": {
+    "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/production-workspace/versions/1257abe2efca04426ed700c50eabf96da6059cfa5bd941e8b6be54e9a1adef0d.json",
+    "sha256": "1257abe2efca04426ed700c50eabf96da6059cfa5bd941e8b6be54e9a1adef0d",
+    "fileSize": 8422,
+    "projectId": "loop-control-529a7070-f80e-4d97-9ac0-80ee2e057ba5"
+  },
+  "history": [
+    {
+      "revision": 12,
+      "sha256": "1257abe2efca04426ed700c50eabf96da6059cfa5bd941e8b6be54e9a1adef0d",
+      "scriptRevisionId": "deebd962-988e-4bba-9689-5794181bb4cc",
+      "reason": "保存原生剪辑"
+    },
+    {
+      "revision": 11,
+      "sha256": "e16ac18e33bbb6e2e7725c1fb4d66703cdf4b2a9d7c8c6132beb02e345d9c7fd",
+      "scriptRevisionId": "deebd962-988e-4bba-9689-5794181bb4cc",
+      "reason": "保存原生剪辑"
+    },
+    {
+      "revision": 10,
+      "sha256": "2f7ccf8482f00e79ffb4a6eae0bbf7055291ad639a16cdb8692c584c5122598c",
+      "scriptRevisionId": "deebd962-988e-4bba-9689-5794181bb4cc",
+      "reason": "保存原生剪辑"
+    },
+    {
+      "revision": 9,
+      "sha256": "81358072b236e86265526cf4153db64d1e229e4f26258a64c07d3aeb6c383106",
+      "scriptRevisionId": "deebd962-988e-4bba-9689-5794181bb4cc",
+      "reason": "保存原生剪辑"
+    },
+    {
+      "revision": 8,
+      "sha256": "ae9a9ef484c1736c438d8b0df515fdc90ae89ca9fa50c2469b93487a8b52d2d6",
+      "scriptRevisionId": "deebd962-988e-4bba-9689-5794181bb4cc",
+      "reason": "填入首次图片视频"
+    },
+    {
+      "revision": 7,
+      "sha256": "3b2332680e55e9f6ef5243411fcfbb8f232e1e498f1c0efa0d5edb943a3b0ecf",
+      "scriptRevisionId": "deebd962-988e-4bba-9689-5794181bb4cc",
+      "reason": "请求首次图片视频"
+    },
+    {
+      "revision": 6,
+      "sha256": "ec3341781dc6dbdae8cd3551dcd82fcd2e3a5dbfc03813748818865b9d9bbebf",
+      "scriptRevisionId": "deebd962-988e-4bba-9689-5794181bb4cc",
+      "reason": "保存原生剪辑"
+    },
+    {
+      "revision": 5,
+      "sha256": "12f119066d1a1c821cbd494299929f6d5feff1e2216e35e34c977278d0958ea9",
+      "scriptRevisionId": "deebd962-988e-4bba-9689-5794181bb4cc",
+      "reason": "保存原生剪辑"
+    },
+    {
+      "revision": 4,
+      "sha256": "da324a5c8d87313a702752be0ee2a8550c3ce440a9d87d9162ad3852ad88f00d",
+      "scriptRevisionId": "deebd962-988e-4bba-9689-5794181bb4cc",
+      "reason": "采用配乐或音效"
+    },
+    {
+      "revision": 3,
+      "sha256": "72acfd47e7e8a9af31512f92d583f8787d9ade40afb04604d931b2603f01cf0d",
+      "scriptRevisionId": "deebd962-988e-4bba-9689-5794181bb4cc",
+      "reason": "使用已配置的 A-roll 能力重规划，保留旧版本与媒体。"
+    },
+    {
+      "revision": 2,
+      "sha256": "6ddc691f8c6b40fa73478bed81f64bbb504ffa7dc871b60b60a998c170b7e8e2",
+      "scriptRevisionId": "0c0401c3-8921-4b30-8bb6-90ce19b5916b",
+      "reason": "采用实际口播时长"
+    },
+    {
+      "revision": 1,
+      "sha256": "7c8c7ffef6ae1889c880eac55fb717143301b607386ed97a59fb0de9066395ca",
+      "scriptRevisionId": "0c0401c3-8921-4b30-8bb6-90ce19b5916b",
+      "reason": "首次组装"
+    }
+  ],
+  "readiness": {
+    "deliverable": true,
+    "placeholders": [],
+    "missingSources": []
+  },
+  "stale": false
+}

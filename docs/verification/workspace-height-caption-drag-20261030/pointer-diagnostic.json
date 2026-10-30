@@ -1,0 +1,116 @@
+[
+  {
+    "level": "debug",
+    "message": "[DEBUG-cap10] pointermove cc-capedit-hit 591 322 0",
+    "timestamp": "2026-10-30T12:10:34.584Z",
+    "url": "http://127.0.0.1:64348/@id/__x00__loop-control-embed"
+  },
+  {
+    "level": "debug",
+    "message": "[DEBUG-cap10] pointerdown cc-capedit-hit 591 322 1",
+    "timestamp": "2026-10-30T12:10:34.592Z",
+    "url": "http://127.0.0.1:64348/@id/__x00__loop-control-embed"
+  },
+  {
+    "level": "debug",
+    "message": "[DEBUG-cap10] pointerup cc-capedit-hit 591 322 0",
+    "timestamp": "2026-10-30T12:10:34.666Z",
+    "url": "http://127.0.0.1:64348/@id/__x00__loop-control-embed"
+  },
+  {
+    "level": "debug",
+    "message": "[DEBUG-cap10] pointermove cc-capedit-hit 591 343.5 0",
+    "timestamp": "2026-10-30T12:10:46.916Z",
+    "url": "http://127.0.0.1:64348/@id/__x00__loop-control-embed"
+  },
+  {
+    "level": "debug",
+    "message": "[DEBUG-cap10] pointerdown cc-capedit-hit 591 343.5 1",
+    "timestamp": "2026-10-30T12:10:46.923Z",
+    "url": "http://127.0.0.1:64348/@id/__x00__loop-control-embed"
+  },
+  {
+    "level": "debug",
+    "message": "[DEBUG-cap10] pointermove cc-capedit-btn 636 303.5 1",
+    "timestamp": "2026-10-30T12:10:46.965Z",
+    "url": "http://127.0.0.1:64348/@id/__x00__loop-control-embed"
+  },
+  {
+    "level": "debug",
+    "message": "[DEBUG-cap10] pointerup cc-capedit-btn 636 303.5 0",
+    "timestamp": "2026-10-30T12:10:46.969Z",
+    "url": "http://127.0.0.1:64348/@id/__x00__loop-control-embed"
+  },
+  {
+    "level": "debug",
+    "message": "[DEBUG-cap10] pointermove cc-capedit-hit 591 322 0",
+    "timestamp": "2026-10-30T12:13:24.966Z",
+    "url": "http://127.0.0.1:64768/@id/__x00__loop-control-embed"
+  },
+  {
+    "level": "debug",
+    "message": "[DEBUG-cap10] pointerdown cc-capedit-hit 591 322 1",
+    "timestamp": "2026-10-30T12:13:24.973Z",
+    "url": "http://127.0.0.1:64768/@id/__x00__loop-control-embed"
+  },
+  {
+    "level": "debug",
+    "message": "[DEBUG-cap10] pointerup cc-capedit-hit 591 322 0",
+    "timestamp": "2026-10-30T12:13:25.020Z",
+    "url": "http://127.0.0.1:64768/@id/__x00__loop-control-embed"
+  },
+  {
+    "level": "debug",
+    "message": "[DEBUG-cap10] pointerdown cc-capedit-hit 591 343.5 1",
+    "timestamp": "2026-10-30T12:13:25.239Z",
+    "url": "http://127.0.0.1:64768/@id/__x00__loop-control-embed"
+  },
+  {
+    "level": "debug",
+    "message": "[DEBUG-cap10] pointermove cc-capedit-btn 636 303.5 1",
+    "timestamp": "2026-10-30T12:13:25.266Z",
+    "url": "http://127.0.0.1:64768/@id/__x00__loop-control-embed"
+  },
+  {
+    "level": "debug",
+    "message": "[DEBUG-cap10] pointerup cc-capedit-hit 636 303.5 0",
+    "timestamp": "2026-10-30T12:13:25.269Z",
+    "url": "http://127.0.0.1:64768/@id/__x00__loop-control-embed"
+  },
+  {
+    "level": "debug",
+    "message": "[DEBUG-cap10] pointermove SVGAnimatedString 658 20 0",
+    "timestamp": "2026-10-30T12:14:42.168Z",
+    "url": "http://127.0.0.1:64768/@id/__x00__loop-control-embed"
+  },
+  {
+    "level": "debug",
+    "message": "[DEBUG-cap10] pointerdown SVGAnimatedString 658 20 1",
+    "timestamp": "2026-10-30T12:14:42.178Z",
+    "url": "http://127.0.0.1:64768/@id/__x00__loop-control-embed"
+  },
+  {
+    "level": "debug",
+    "message": "[DEBUG-cap10] pointerup SVGAnimatedString 658 20 0",
+    "timestamp": "2026-10-30T12:14:42.187Z",
+    "url": "http://127.0.0.1:64768/@id/__x00__loop-control-embed"
+  },
+  {
+    "level": "debug",
+    "message": "[DEBUG-cap10] pointermove SVGAnimatedString 690 20 0",
+    "timestamp": "2026-10-30T12:14:42.446Z",
+    "url": "http://127.0.0.1:64768/@id/__x00__loop-control-embed"
+  },
+  {
+    "level": "debug",
+    "message": "[DEBUG-cap10] pointerdown SVGAnimatedString 690 20 1",
+    "timestamp": "2026-10-30T12:14:42.452Z",
+    "url": "http://127.0.0.1:64768/@id/__x00__loop-control-embed"
+  },
+  {
+    "level": "debug",
+    "message": "[DEBUG-cap10] pointerup SVGAnimatedString 690 20 0",
+    "timestamp": "2026-10-30T12:14:42.456Z",
+    "url": "http://127.0.0.1:64768/@id/__x00__loop-control-embed"
+  }
+]

@@ -1,0 +1,60 @@
+{
+  "sdkRoot": "/Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut-v0.2.17-staged-20261030",
+  "results": [
+    {
+      "path": "/src/main.tsx",
+      "status": 200,
+      "transformed": true
+    },
+    {
+      "path": "/src/editor/useEditorController.tsx",
+      "status": 200,
+      "transformed": true
+    },
+    {
+      "path": "/src/captions/CaptionPreviewEditor.tsx",
+      "status": 200,
+      "transformed": true
+    },
+    {
+      "path": "/src/captions/captionPreviewTarget.ts",
+      "status": 200,
+      "transformed": true
+    },
+    {
+      "path": "/src/components/inspector/CaptionInspectorControls.tsx",
+      "status": 200,
+      "transformed": true
+    },
+    {
+      "path": "/src/agent/useExternalAgentBridge.ts",
+      "status": 200,
+      "transformed": true
+    },
+    {
+      "path": "/src/media/upload.ts",
+      "status": 200,
+      "transformed": true
+    },
+    {
+      "path": "/src/media/mobileImport.ts",
+      "status": 200,
+      "transformed": true
+    },
+    {
+      "path": "/src/media/useEditorMediaIngest.ts",
+      "status": 200,
+      "transformed": true
+    },
+    {
+      "path": "/src/media/poolImportRun.ts",
+      "status": 200,
+      "transformed": true
+    },
+    {
+      "path": "/src/media/DirectoryImportActions.tsx",
+      "status": 200,
+      "transformed": true
+    }
+  ]
+}

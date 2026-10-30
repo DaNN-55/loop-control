@@ -1,0 +1,30 @@
+{
+  "verifiedAt": "2026-10-30",
+  "originalFiles": 280,
+  "totalBytes": 2046885695,
+  "manifestSha256": "ee6dec108edba9e5942d6dc2fc9679627d93e2598371439fed67fd6f3282781f",
+  "allOriginalFilesUnchanged": true,
+  "originalBusinessRowsUnchanged": true,
+  "changedTables": [
+    "production_workspaces"
+  ],
+  "changeReason": "显式接入原工程并保存新工作版本；原任务、审核、批准、素材及产物记录不变。",
+  "businessFingerprints": {
+    "tasks": "7b58c8cab239df6f388953ef879fbaa2",
+    "episodes": "a047aee3e840f2d400d9984feb543363",
+    "approvals": "e012d118fc5c993cedddf3fa3be84beb",
+    "artifacts": "ab94c2ba79964f4fd5790fc4caedf666",
+    "audio_tracks": "1b489cb07b9cfc57e29baced30cbd1d7",
+    "review_packages": "0835ffe4250f8074e3ad4a9b783eded6",
+    "shot_preparation_drafts": "5c7663012ed8f58dd09a432d06fe548c",
+    "production_material_revisions": "cb456ab2ade00fe455773a46c2046b71",
+    "input_episodes": "5679ae9b656f10ec17d12e4b7ad457d9",
+    "production_workspaces": "1ad1ccfa143d4b7f6f842955f836d446"
+  },
+  "isolatedGui": {
+    "originalUnchanged": true,
+    "versions": 3,
+    "transformX": 51,
+    "taskCount": 1
+  }
+}

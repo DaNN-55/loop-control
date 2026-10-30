@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceScriptResume.integration.test.ts (2 tests) 5962ms
+   ✓ Owner confirms a formatting-only revision while preserving the exact edited project and old invalidated evidence  4346ms
+   ✓ substantive script edits cannot bypass the stale-project guard through formatting recovery  1615ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  17:52:41
+   Duration  6.48s (transform 275ms, setup 7ms, collect 384ms, tests 5.96s, environment 0ms, prepare 26ms)
+

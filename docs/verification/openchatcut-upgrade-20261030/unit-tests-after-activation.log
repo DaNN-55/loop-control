@@ -1,0 +1,363 @@
+
+> loop-control@0.1.0 test
+> vitest run --exclude '**/*.integration.test.ts'
+
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/ImpeccableNavigation.test.tsx (6 tests) 1491ms
+   ✓ 待审核合并到生产单，工作台审核入口使用真实目录筛选  424ms
+   ✓ 搜索、状态和排序全部送服务端，切换范围重置分页且不写业务数据  334ms
+stderr | src/episodes/captionTextConfirmation.test.tsx > preserves precise bounds on focus and preserves locked clip duration when a numeric bound moves
+The `values` property is in conflict with the current `step`, `min`, and `max` properties. Please provide values that are accessible using the min, max, and step values.
+The `values` property is in conflict with the current `step`, `min`, and `max` properties. Please provide values that are accessible using the min, max, and step values.
+
+ ✓ src/episodes/captionTextConfirmation.test.tsx (15 tests) 2856ms
+   ✓ saves embedded composition fields through the real callback and keeps edits after a failed save  371ms
+   ✓ saves inline voice overrides through the normal draft action and keeps following captions in one editor  405ms
+ ✓ src/local-app/ProductionWorkspacePanel.test.tsx (20 tests) 1203ms
+ ✓ src/local-app/LocalSecretAdministration.test.tsx (13 tests) 4730ms
+   ✓ reveals only after POST password verification and clears on selection/filter/visibility  681ms
+   ✓ copies through browser clipboard after verification and never renders returned plaintext  328ms
+   ✓ blocks stale reveal responses after close, filter and expired-session event  318ms
+   ✓ hides plaintext after thirty seconds and never offers control-secret reveal  596ms
+   ✓ does not apply an older detail response to a newer row action  321ms
+   ✓ discards a late reveal after collapse  322ms
+   ✓ discards a late reveal after filter  315ms
+   ✓ discards a late reveal after close  313ms
+   ✓ preserves server paging and clears the expanded secret before requesting the next page  582ms
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 第二镜独立字幕先保存，未保存时键盘切步保持当前正文
+An update to ForwardRef(TextArea) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ForwardRef(TextArea) inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to Component inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to $b4f18e3395fe64d7$var$TabsInner inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/accounts/AccountWorkspace.test.tsx (36 tests) 6282ms
+   ✓ 账号配置工作区 > 旁白和配乐只选择登记的 Adapter 与非密钥连接  526ms
+   ✓ 账号配置工作区 > 在 A-roll 尚未配置时，仍使用本机 OpenChatCut 状态开放本地路径  335ms
+   ✓ 账号配置工作区 > 登记分镜 Harness 刷新目录时保留全部生产能力卡片的草稿  1491ms
+   ✓ 账号配置工作区 > 系列分组调整后仍保存全部字段，并在底部恢复保存状态  393ms
+ ✓ src/local-app/LocalCatalogApp.workspace.test.tsx (9 tests) 2657ms
+   ✓ 保留安全弹窗焦点，将维护入口统一为侧栏且跨页保留连接草稿  556ms
+   ✓ keeps one topbar instance and places the Owner menu after theme in workspace and episode  447ms
+   ✓ 恢复失败留在确认框内且可重试，成功后关闭；操作错误不显示重复全局通知  385ms
+ ✓ src/local-app/HistoryDanUi.test.tsx (6 tests) 2076ms
+   ✓ keeps file/record pagination independent, download links intact and JSON exact  490ms
+   ✓ locks a pending restore, reports failure and permits retry without deleting anything  355ms
+   ✓ loads sources only when opened and preserves each tab search and source detail  651ms
+ ✓ src/episodes/ProductionNodes.test.tsx (19 tests) 3818ms
+   ✓ saves an edited pending script back into the import draft and requires a fresh confirmation  400ms
+   ✓ routes rail reorder through the existing reasoned structure revision and preserves generation entrypoints  1974ms
+ ✓ src/local-app/WorkspaceTopbar.test.tsx (8 tests) 2426ms
+   ✓ does not let an old response replace a newer search and opens the real result  582ms
+   ✓ preserves account navigation and opens only the registered SHA-bound material  591ms
+   ✓ shows a readable search error and retries the same query  554ms
+ ✓ src/ui/PcVisualFixes.test.tsx (5 tests) 1867ms
+   ✓ accepts at most 200 title characters before creation and exposes the limit  1302ms
+ ✓ src/local-app/LocalCatalogApp.test.tsx (13 tests) 2638ms
+   ✓ keeps a committed series save successful when its follow-up read fails  546ms
+   ✓ isolates concurrent network logout failures in older-first order from a fresh login  334ms
+   ✓ isolates concurrent 503 logout failures in older-first order from a fresh login  371ms
+ ✓ src/local-app/LocalCatalogApp.account.test.tsx (5 tests) 1591ms
+   ✓ checks the exact current blueprint through the local Owner command and displays its real blocker  426ms
+   ✓ does not show an old successful check after the saved blueprint revision changes  377ms
+   ✓ keeps the relogged-in session check when an old session check returns late  374ms
+ ✓ src/connections/ConnectionWorkspace.test.tsx (8 tests) 1580ms
+   ✓ 外部连接工作区 > 从空连接池创建并显式测试 Pexels 连接，表单提交后清空密钥  400ms
+   ✓ 外部连接工作区 > 可预先登记火山语音 Adapter 凭据  378ms
+   ✓ 外部连接工作区 > 轮换版本后只测试新连接并保留版本操作边界  398ms
+ ✓ src/episodes/WanShotGenerator.test.tsx (13 tests) 1158ms
+ ✓ src/sharedViews.test.tsx (27 tests) 1437ms
+   ✓ approval console > Studio 的结构修改只返回分镜审核，不冻结当前 Studio 工程  329ms
+ ✓ src/local-app/WorkspaceTopbar.account-safety.test.tsx (2 tests) 1055ms
+   ✓ search switching an account respects unsaved changes: confirm=false  568ms
+   ✓ search switching an account respects unsaved changes: confirm=true  486ms
+ ✓ src/ui/SelectMenuInteraction.test.tsx (11 tests) 924ms
+ ✓ src/local-app/WorkspaceVisualCandidatesPanel.test.tsx (16 tests) 956ms
+ ✓ src/local-app/LocalConnectionsPanel.test.tsx (7 tests) 674ms
+ ✓ src/connections/ConnectionFeedback.test.tsx (10 tests) 519ms
+ ✓ src/ui/IconComboBox.test.tsx (6 tests) 496ms
+ ✓ src/local-app/LocalSystemStatus.test.tsx (9 tests) 599ms
+ ✓ src/connections/ConnectionOrganization.test.tsx (7 tests) 434ms
+ ✓ src/operations/OperationsWorkspace.test.tsx (10 tests) 505ms
+ ✓ scripts/local-service-record.test.mjs (6 tests) 435ms
+ ✓ src/local-app/LocalHistory.test.tsx (5 tests) 457ms
+ ✓ src/connections/ConnectionDanUi.test.tsx (2 tests) 468ms
+   ✓ clears the credential draft and restores masking when opening another connection  385ms
+ ✓ src/local-app/OwnerPreferencesDialog.test.tsx (5 tests) 416ms
+ ✓ src/observability/SystemStatusPanel.test.tsx (19 tests) 397ms
+ ✓ src/worker/controlledMediaExecutor.test.ts (12 tests) 395ms
+   ✓ 受控媒体执行器 > 使用真实 ffmpeg 裁剪带原声视频并提取当前片段原声  338ms
+ ✓ src/local-app/HistoryEpisodes.test.tsx (3 tests) 347ms
+ ✓ src/platform/ConfigurationForms.local.test.tsx (4 tests) 321ms
+ ✓ src/ui/DanUiInteractionGuards.test.tsx (6 tests) 338ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx (12 tests) 351ms
+ ✓ src/local-app/ProductionWorkspacePanel.legacy.test.tsx (7 tests) 271ms
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 仅在视觉审核包包含静态视觉时显示生成视觉资产
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/reviews/ReviewWorkspace.test.tsx > 审核台 > 视觉关卡自动继续后仍保留视觉清单，并隐藏没有媒体的空预览
+An update to TextArtifactContent inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx (8 tests) 233ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx (8 tests) 262ms
+ ✓ src/local-app/LocalCatalogApp.list-refresh.test.tsx (2 tests) 229ms
+ ✓ src/local-app/WorkspaceNarrationPanel.test.tsx (13 tests) 222ms
+stderr | src/publishing/ProductionCompletionModal.test.tsx > 生产完成弹窗 > 展示最终材料和生产完成状态，不提供外部发布登记
+An update to PublishMetadataSummary inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to PublishMaterialPreview inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to PublishMaterialPreview inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/local-app/WorkspaceVideoMatch.test.tsx (3 tests) 121ms
+ ✓ src/publishing/ProductionCompletionModal.test.tsx (3 tests) 234ms
+ ✓ src/local-app/HistoryDeleteAction.test.tsx (2 tests) 133ms
+ ✓ scripts/openchatcut-render.test.mjs (5 tests) 188ms
+ ✓ src/worker/whisperxAlignment.test.ts (11 tests) 115ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx (6 tests) 172ms
+ ✓ src/reviews/ReviewWorkspace.test.tsx (72 tests) 20689ms
+   ✓ 审核台 > 在详情头部以图标提供刷新、打开和复制本地目录  424ms
+   ✓ 审核台 > 通过统一入口标注用途后按顺序导入脚本、图片、A-roll 和 B-roll  467ms
+   ✓ 审核台 > 已批准分镜显示声音与对齐状态，并保存整期 BGM 和闪避选择  453ms
+   ✓ 审核台 > 逐镜头主声音和音效独立保存，静音后恢复原选择并保留画面草稿  1140ms
+   ✓ 审核台 > 第二镜独立字幕先保存，未保存时键盘切步保持当前正文  871ms
+   ✓ 审核台 > 第二镜修改双屏槽位和衔接后保存，保留已保存的独立正文  1189ms
+   ✓ 审核台 > 第二镜修改字幕空间时保留已保存构图，保存刷新后保持所选镜头  1879ms
+   ✓ 审核台 > 本地人工时序编辑跨音轨轮询保留并只提交本地回调  827ms
+   ✓ 审核台 > 审核阶段返回镜头工作台时保留 QC 证据，并显式确认覆盖 Studio 工程  814ms
+   ✓ 审核台 > 审核镜头可核对同步预览要求，修改字幕后旧确认与代理立即失效  2189ms
+   ✓ 审核台 > 预览失败、缺少原片或旧合同阻止确认，生产就绪时仍可返回编辑  1132ms
+   ✓ 审核台 > 结构修订留在工作台后台应用，并在应用期间阻止重复提交  1282ms
+   ✓ 审核台 > 删除镜头后在工作台切换新版，并打开下一镜  362ms
+   ✓ 审核台 > 逐镜头 TTS 可先于原片标记生成，完整保存仍要求视频  562ms
+   ✓ 审核台 > 逐镜头口播无需确认即可保存，并可保存单镜头覆盖  897ms
+   ✓ 审核台 > 无口播显示为明确静音，并仍可保存字幕开关  328ms
+   ✓ 审核台 > 同一原片支持多段裁剪并随镜头草稿一起保存  606ms
+   ✓ 审核台 > 人工媒体可在镜头工作台选择原片并保存镜头设置  987ms
+   ✓ 审核台 > 已保存原片可预览并在冻结前替换  315ms
+ ✓ src/local-app/LocalMaintenanceEmbedded.test.tsx (2 tests) 185ms
+ ✓ src/local-app/LocalDeliveryPanel.nodes.test.tsx (3 tests) 125ms
+ ✓ src/local-app/WorkspaceGenerationBudget.test.tsx (2 tests) 75ms
+ ✓ src/local-app/ScriptProductionPanel.test.tsx (3 tests) 117ms
+ ✓ src/local-app/WorkspaceCaptionsPanel.test.tsx (2 tests) 101ms
+ ✓ src/reviews/WorkerBlockerCard.test.tsx (2 tests) 79ms
+ ✓ src/observability/systemStatusEvidence.test.ts (4 tests) 105ms
+ ✓ src/episodes/EpisodeProductionContainer.test.tsx (4 tests) 70ms
+ ✓ src/ui/useDialogFocus.test.tsx (1 test) 91ms
+ ✓ src/local-app/WorkspaceExportPanel.test.tsx (1 test) 61ms
+ ✓ src/observability/TaskProgressPanel.test.tsx (4 tests) 56ms
+ ✓ src/ui/PaginationControls.test.tsx (2 tests) 65ms
+ ✓ src/operations/workbenchPreview.test.tsx (2 tests) 47ms
+ ✓ src/worker/episodeDeletion.test.ts (5 tests) 35ms
+ ✓ src/ui/MarkdownPreview.test.tsx (1 test) 34ms
+ ✓ src/reviews/localArtifactPreview.test.tsx (3 tests) 23ms
+ ✓ src/worker/renderReuse.test.ts (2 tests) 20ms
+ ✓ src/publishing/publishPackage.test.ts (2 tests) 26ms
+ ✓ src/local-app/WorkspaceCandidatesPanel.test.tsx (1 test) 58ms
+ ✓ src/worker/openchatcutRenderer.test.ts (3 tests) 20ms
+ ✓ src/local-app/WorkspaceAudioUpload.test.tsx (1 test) 36ms
+ ✓ src/worker/codexRunner.test.ts (28 tests) 15ms
+ ✓ src/orchestration/operationsEvidence.test.ts (5 tests) 19ms
+ ✓ src/worker/wanVideoProvider.test.ts (8 tests) 8ms
+ ✓ src/worker/mediaLibrary.test.ts (7 tests) 19ms
+ ✓ src/worker/openchatcutProject.test.ts (26 tests) 12ms
+ ✓ src/orchestration/notificationConsumer.test.ts (6 tests) 12ms
+ ✓ src/reviews/reviewSelectors.test.ts (7 tests) 9ms
+ ✓ src/reviews/productionScript.test.ts (20 tests) 8ms
+ ✓ src/platform/configurationForms.test.ts (23 tests) 9ms
+ ✓ src/orchestration/notificationPolicy.test.ts (5 tests) 10ms
+ ✓ src/local-app/WorkspaceNativeControls.test.tsx (2 tests) 58ms
+ ✓ src/local-app/WorkspacePreparationLayout.test.tsx (2 tests) 43ms
+ ✓ src/local-app/WorkspaceNoticeToast.test.tsx (1 test) 53ms
+ ✓ src/local-app/legacyWorkspaceMetadata.test.ts (9 tests) 14ms
+ ✓ src/local-app/useWorkspaceCanvas.test.tsx (1 test) 12ms
+ ✓ src/local-app/WorkspaceImageMatch.test.tsx (1 test) 74ms
+ ✓ src/local-app/WorkspaceShotPreview.test.tsx (4 tests) 51ms
+ ✓ scripts/storage/schema-import.test.mjs (1 test) 11ms
+ ✓ src/local-app/legacyHtmlWorkspace.test.ts (12 tests) 11ms
+ ✓ src/worker/scriptRenderSettings.test.ts (3 tests) 12ms
+ ✓ src/worker/storyboardArtifact.test.ts (4 tests) 9ms
+ ✓ src/worker/wanTaskContract.test.ts (2 tests) 3ms
+ ✓ src/worker/mediaProviders.test.ts (10 tests) 8ms
+ ✓ src/preferences/preferences.test.ts (2 tests) 2ms
+ ✓ src/worker/contracts.test.ts (18 tests) 7ms
+ ✓ scripts/openchatcut-caption-drag.test.mjs (3 tests) 4ms
+ ✓ src/local-app/connections.test.ts (4 tests) 6ms
+ ✓ src/local-app/scriptProductionContinuation.test.ts (13 tests) 6ms
+ ✓ src/local-app/pexelsLiveProbe.test.ts (11 tests) 3ms
+ ✓ src/worker/acousticAlignment.test.ts (7 tests) 3ms
+ ✓ src/local-app/keychainStore.test.ts (7 tests) 7ms
+ ✓ src/local-app/avatarUpload.test.ts (2 tests) 7ms
+ ✓ src/worker/runtimePreflight.test.ts (4 tests) 3ms
+ ✓ src/workspaceCaptions.test.ts (4 tests) 3ms
+ ✓ src/reviews/blockerGuidance.test.ts (19 tests) 6ms
+ ✓ src/platform/platformService.test.ts (7 tests) 4ms
+ ✓ src/reviews/reviewRevision.test.ts (5 tests) 8ms
+ ✓ src/worker/registeredAdapters.test.ts (7 tests) 2ms
+ ✓ src/reviews/materialImport.test.ts (3 tests) 2ms
+ ✓ src/worker/legacyPexelsReference.test.ts (2 tests) 3ms
+ ✓ src/workspaceAudio.test.ts (2 tests) 4ms
+ ✓ src/worker/shotWorkbenchStudio.test.ts (1 test) 2ms
+ ✓ src/worker/manualMaterialChecklist.test.ts (1 test) 4ms
+ ✓ src/lib/viewTransport.test.ts (1 test) 3ms
+ ✓ src/episodes/episodeReadService.test.ts (3 tests) 2ms
+ ✓ src/worker/runtimeConstraints.test.ts (2 tests) 2ms
+ ✓ src/local-app/mediaPaths.test.ts (3 tests) 4ms
+ ✓ src/worker/scriptPlanning.test.ts (1 test) 3ms
+ ✓ src/worker/durationDecision.test.ts (13 tests) 2ms
+ ✓ src/platform/connectionStatus.test.ts (3 tests) 2ms
+ ✓ src/reviews/repairTarget.test.ts (3 tests) 1ms
+ ✓ src/worker/storyboardRevision.test.ts (3 tests) 2ms
+ ✓ scripts/openchatcut-bridge-retry.test.mjs (3 tests) 2ms
+ ✓ src/shotCaptions.test.ts (3 tests) 2ms
+ ✓ src/lib/backend.test.ts (1 test) 2ms
+ ✓ src/shotComposition.test.ts (2 tests) 2ms
+ ✓ src/workspaceVideo.test.ts (2 tests) 1ms
+ ✓ src/reviews/mainScript.test.ts (2 tests) 3ms
+ ✓ src/clipTiming.test.ts (3 tests) 3ms
+ ✓ src/worker/productionCapabilities.test.ts (1 test) 3ms
+ ✓ src/platform/accountIdentity.test.ts (2 tests) 1ms
+ ✓ src/episodes/episodeCatalogChanges.test.ts (4 tests) 2ms
+ ✓ src/local-app/historyPresentation.test.ts (2 tests) 2ms
+ ✓ src/worker/mediaToolsContract.test.ts (2 tests) 1ms
+ ✓ scripts/openchatcut-media-imports.test.mjs (1 test) 1ms
+ ✓ src/manualArollVideo.test.ts (2 tests) 1ms
+ ✓ src/shotAcceptance.test.ts (3 tests) 2ms
+ ✓ src/local-app/mediaWorker.reference.test.ts (5 tests) 483ms
+ ✓ src/local-app/providerProbe.test.ts (54 tests) 841ms
+ ✓ src/local-app/password.test.ts (1 test) 213ms
+ ✓ src/orchestration/workerScheduler.test.ts (2 tests) 184ms
+ ✓ src/local-app/nativeAttemptOutput.test.ts (20 tests) 1133ms
+ ✓ src/local-app/readOnlyVerification.test.ts (3 tests) 175ms
+ ✓ src/local-app/providerNetwork.test.ts (30 tests) 1406ms
+   ✓ halts and keeps the consumed reservation on timeout  1022ms
+ ✓ src/local-app/standaloneStudioRoute.test.ts (1 test) 39ms
+ ✓ src/local-app/accountPreflightRoute.test.ts (7 tests) 64ms
+ ✓ src/local-app/ownerPasswordRoute.test.ts (1 test) 137ms
+ ✓ src/local-app/captionTextConfirmationRoute.test.ts (11 tests) 99ms
+ ✓ src/local-app/artifactRoute.test.ts (1 test) 56ms
+ ✓ src/local-app/localFiles.test.ts (8 tests) 60ms
+ ✓ src/local-app/episodeDeletionTargets.test.ts (4 tests) 44ms
+ ✓ src/local-app/manualVerification.test.ts (7 tests) 24ms
+ ✓ src/local-app/secretInventory.test.ts (1 test) 11ms
+ ✓ src/local-app/accountDirectoryCleanup.test.ts (3 tests) 15ms
+ ✓ src/worker/visualAssetExecutor.test.ts (1 test) 9ms
+ ✓ src/local-app/localRoute.test.ts (1 test) 26ms
+ ✓ scripts/runtime/start.test.mjs (3 tests) 9ms
+ ✓ scripts/runtime/services.test.mjs (7 tests) 8ms
+ ✓ src/local-app/nativeHealth.test.ts (7 tests) 10ms
+ ✓ src/worker/officialVideoProvider.test.ts (6 tests) 12ms
+ ✓ scripts/runtime/keychain.test.mjs (4 tests) 3ms
+ ✓ scripts/runtime/application.test.mjs (6 tests) 3ms
+ ✓ src/local-app/historyEpisodeDeletion.test.ts (1 test) 7ms
+ ✓ src/local-app/workspaceSearch.test.ts (14 tests) 7ms
+ ✓ src/orchestration/runtimeBuild.test.ts (2 tests) 2672ms
+   ✓ 准备后可执行，源码变化或产物损坏必须重新准备  1969ms
+   ✓ 前端独立改动不使 Worker 过期，Worker 引用的共享依赖变化仍需重建  703ms
+ ✓ src/local-app/workerDatabase.test.ts (1 test) 3ms
+ ✓ src/local-app/catalogQuery.test.ts (2 tests) 2ms
+ ✓ src/local-app/databaseConfig.test.ts (1 test) 2ms
+ ✓ scripts/runtime/history-consolidation.test.mjs (3 tests) 4ms
+ ✓ scripts/runtime/environment.test.mjs (7 tests) 2ms
+ ✓ scripts/storage/reference-integrity.test.mjs (10 tests) 2ms
+ ✓ scripts/runtime/secrets.test.mjs (1 test) 2ms
+ ✓ src/local-app/configurationCommands.test.ts (1 test) 1ms
+ ✓ src/local-app/mediaWorker.test.ts (4 tests) 2ms
+ ✓ src/local-app/inputPreflight.test.ts (1 test) 2ms
+ ✓ src/local-app/runtimeStatus.test.ts (2 tests) 1ms
+
+ Test Files  173 passed (173)
+      Tests  1163 passed (1163)
+   Start at  22:11:44
+   Duration  31.70s (transform 2.84s, setup 229ms, collect 34.27s, tests 80.58s, environment 21.57s, prepare 4.85s)
+

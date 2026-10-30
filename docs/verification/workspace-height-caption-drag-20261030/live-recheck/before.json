@@ -1,0 +1,22 @@
+{
+  "checkedAt": "2026-10-30T12:30:44.527305+00:00",
+  "currentPageBrowserAccess": "browser.user is unavailable",
+  "episodeId": "92b3067d-ced9-4e85-bc44-1968fa83695a",
+  "nativeProcesses": [
+    {
+      "port": 56360,
+      "containsTargetProject": true,
+      "fixedAdapterServed": false
+    },
+    {
+      "port": 56365,
+      "containsTargetProject": false,
+      "fixedAdapterServed": false
+    },
+    {
+      "port": 60362,
+      "containsTargetProject": false,
+      "fixedAdapterServed": false
+    }
+  ]
+}

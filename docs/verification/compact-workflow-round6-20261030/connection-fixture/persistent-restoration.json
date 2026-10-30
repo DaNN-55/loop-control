@@ -1,0 +1,14 @@
+{
+  "at": "2026-10-30T07:52:32.490Z",
+  "pid": 57928,
+  "origin": "http://localhost:55358",
+  "database": "loop_studio_153_a3be4e25cdc7",
+  "root": "/private/tmp/loop-t06-volume-PQgqhE/mounted/loop-153-CbsF2q",
+  "episode": {
+    "id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+    "stage": "production_completed"
+  },
+  "reattachedExistingData": true,
+  "databaseCreated": false,
+  "dataCleaned": false
+}

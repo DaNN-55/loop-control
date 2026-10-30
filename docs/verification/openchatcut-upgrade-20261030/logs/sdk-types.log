@@ -1,0 +1,1 @@
+desktop/native-rhythm-worker.ts(3,22): error TS2307: Cannot find module 'onnxruntime-node' or its corresponding type declarations.

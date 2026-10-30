@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceAudio.integration.test.ts (8 tests | 6 skipped) 7657ms
+   ✓ source mode uses real native source extraction task without fabricating a legacy video-ready draft  4381ms
+   ✓ explicit narration adoption advances the shared edit fence and late first results remain candidates  3275ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed | 6 skipped (8)
+   Start at  23:26:07
+   Duration  8.64s (transform 618ms, setup 20ms, collect 803ms, tests 7.66s, environment 0ms, prepare 36ms)
+

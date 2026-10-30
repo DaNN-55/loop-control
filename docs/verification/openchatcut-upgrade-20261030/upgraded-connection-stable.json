@@ -1,0 +1,81 @@
+{
+  "elapsedMs": 176923,
+  "events": [
+    {
+      "path": "/api/external-agent/poll",
+      "status": 204,
+      "timestamp": 121079.225069
+    },
+    {
+      "path": "/api/external-agent/cancellation",
+      "status": 204,
+      "timestamp": 121079.22678
+    },
+    {
+      "path": "/api/external-agent/poll",
+      "status": 204,
+      "timestamp": 121104.237811
+    },
+    {
+      "path": "/api/external-agent/cancellation",
+      "status": 204,
+      "timestamp": 121104.239632
+    },
+    {
+      "path": "/api/external-agent/poll",
+      "status": 204,
+      "timestamp": 121129.25157
+    },
+    {
+      "path": "/api/external-agent/cancellation",
+      "status": 204,
+      "timestamp": 121129.253436
+    },
+    {
+      "path": "/api/external-agent/poll",
+      "status": 204,
+      "timestamp": 121154.26709
+    },
+    {
+      "path": "/api/external-agent/cancellation",
+      "status": 204,
+      "timestamp": 121154.268876
+    },
+    {
+      "path": "/api/external-agent/poll",
+      "status": 204,
+      "timestamp": 121179.281355
+    },
+    {
+      "path": "/api/external-agent/cancellation",
+      "status": 204,
+      "timestamp": 121179.283193
+    },
+    {
+      "path": "/api/external-agent/poll",
+      "status": 204,
+      "timestamp": 121204.296783
+    },
+    {
+      "path": "/api/external-agent/cancellation",
+      "status": 204,
+      "timestamp": 121204.298474
+    },
+    {
+      "path": "/api/external-agent/poll",
+      "status": 204,
+      "timestamp": 121229.311066
+    },
+    {
+      "path": "/api/external-agent/cancellation",
+      "status": 204,
+      "timestamp": 121229.312517
+    }
+  ],
+  "conflicts": 0,
+  "registrations": 0,
+  "truncated": false,
+  "status": [
+    "工作版本已保存"
+  ]
+}

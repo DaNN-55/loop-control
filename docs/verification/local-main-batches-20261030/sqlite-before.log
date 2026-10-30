@@ -1,0 +1,37 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/legacyWorkspaceEditing.integration.test.ts (2 tests | 1 failed) 8857ms
+   ✓ continues the exact original native project, saves a new immutable version and restores it after restart without generation  5907ms
+   × prefers the most recently saved native edit and archives it before creating the working copy 2950ms
+     → expected +0 to be 37 // Object.is equality
+ ✓ src/local-app/nativeStudioPrimary.integration.test.ts (1 test) 103374ms
+   ✓ native text, style and timing save once, final-file approval confirms captions and later edits invalidate it  103374ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/legacyWorkspaceEditing.integration.test.ts > prefers the most recently saved native edit and archives it before creating the working copy
+AssertionError: expected +0 to be 37 // Object.is equality
+
+- Expected
++ Received
+
+- 37
++ 0
+
+ ❯ src/local-app/legacyWorkspaceEditing.integration.test.ts:62:182
+     60|   const result=await f.request('adoptLegacyWorkspace',data);expect(res…
+     61|   const archived=JSON.parse(await readFile(join(f.assetRoot,result.bod…
+     62|   const working=JSON.parse(await readFile(join(f.assetRoot,result.body…
+       |                                                                                                                                                                                      ^
+     63|  }finally{await f.close();}
+     64| },120000);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 2 passed (3)
+   Start at  23:17:02
+   Duration  103.83s (transform 259ms, setup 16ms, collect 683ms, tests 112.23s, environment 0ms, prepare 48ms)
+

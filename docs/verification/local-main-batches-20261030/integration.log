@@ -1,0 +1,138 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/workspaceFirstVideo.source.integration.test.ts (1 test | 1 failed) 3759ms
+   × first video freezes the actual source main voice without requiring an unused TTS draft 3758ms
+     → Worker child exited 1: node:internal/modules/cjs/loader:1568
+  throw err;
+  ^
+
+Error: Cannot find module '/Users/dan/Programs/loop-control/dist/worker/local-app/localWorkerCli.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1564:15)
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1118:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1142:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1169:12)
+    at Module._load (node:internal/modules/cjs/loader:1341:5)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+
+Node.js v24.20.0
+
+ ✓ src/local-app/legacyWorkspaceEditing.integration.test.ts (2 tests) 8366ms
+   ✓ continues the exact original native project, saves a new immutable version and restores it after restart without generation  5390ms
+   ✓ prefers the most recently saved native edit and archives it before creating the working copy  2975ms
+ ✓ src/local-app/nativeStudioPrimary.integration.test.ts (1 test) 21269ms
+   ✓ native text, style and timing save once, final-file approval confirms captions and later edits invalidate it  21268ms
+ ✓ src/local-app/workspaceVisualCandidates.integration.test.ts (14 tests) 32671ms
+   ✓ Owner registers a local visual candidate and replaces only one source instance  1772ms
+   ✓ Owner locally fills a placeholder with a registered still image without video generation  1367ms
+   ✓ Owner locally fills a placeholder with a registered pan-zoom image without video generation  1319ms
+   ✓ Owner registers new media into the existing live pool and can save and reopen it  6332ms
+   ✓ Owner creates a controlled Provider visual candidate during editing without changing Episode stage  1565ms
+   ✓ visual generation freezes the actual source voice window instead of retained muted TTS and rejects a later route change  5366ms
+   ✓ unknown paid visual submissions cannot be bypassed by retry or a new prompt  1909ms
+   ✓ a visual task with a saved Provider ID resumes polling without a second paid submission  2121ms
+   ✓ short visual source requires an explicit duration decision without repeating or moving other clips  1844ms
+   ✓ voice gain and BGM edits do not stale a visual request or overwrite the new mix  2763ms
+   ✓ an unavailable unused visual candidate does not prevent editing and cannot be adopted  1319ms
+   ✓ added shots accept registered local visuals but require explicit generation lineage and changed target input blocks a new paid POST  1755ms
+   ✓ manual video adoption preserves the selected source interval and refuses a short range  1555ms
+   ✓ video generation freezes and applies the first-frame composition without changing the source image  1682ms
+ ✓ src/local-app/workspaceFirstVideo.integration.test.ts (3 tests) 10006ms
+   ✓ fresh authored first video uses current preparation without a legacy approval (actual voice=false)  3089ms
+   ✓ fresh authored first video uses current preparation without a legacy approval (actual voice=true)  3589ms
+   ✓ replanning discards current voice adoption without discarding historical decisions, then adopts the first new voice  3327ms
+stdout | src/worker/openchatcutStudio.media-cache.integration.test.ts > keeps the real SDK waveform cache key and copied-source mtime across close/reopen when bytes match
+{"name":"studio-waveform-reopen-cache","mtimeBefore":1790812800000,"mtimeAfter":1790812800000,"cacheKeyBefore":"ebeecaf7b023c70128af.mp3.preview-v3-2106-1790812800000000.peaks.json","cacheKeyAfter":"ebeecaf7b023c70128af.mp3.preview-v3-2106-1790812800000000.peaks.json"}
+
+ ✓ src/local-app/workspaceShots.integration.test.ts (10 tests) 32928ms
+   ✓ Owner reorders native shot instances without rewriting registered sources or storyboard history  1535ms
+   ✓ a shot with two visual ranges owns one stable caption lane when its first range is removed  1389ms
+   ✓ native range locks, frame steps and parallel composition preserve source instances through Owner persistence  2914ms
+   ✓ two ranges retain one actual main voice and full following captions after deleting their first visual instance  9374ms
+   ✓ reopening an actively edited native structure reuses its running Studio and latest project  3904ms
+   ✓ upgrades duplicate legacy visual caption lanes into one shot lane without losing the complete body or cues  3488ms
+   ✓ added native shots accept registered images and source video while the approved storyboard stays unchanged  3038ms
+   ✓ native Owner save rejects deleting the last effective shot while retaining the recoverable document  4322ms
+   ✓ initial all-placeholder drafts remain saved but cannot enter native editing  1182ms
+   ✓ removes a selected shot, retains original media and historical projects, and protects the final shot after reopening  1781ms
+ ✓ src/worker/openchatcutStudio.media-cache.integration.test.ts (4 tests) 7736ms
+   ✓ keeps the real SDK waveform cache key and copied-source mtime across close/reopen when bytes match  2347ms
+   ✓ repairs different copied bytes even when source and destination have equal size and mtime  3205ms
+   ✓ still rejects an existing symlink media copy before considering content equality  1089ms
+   ✓ still rejects an existing hardlink media copy before considering content equality  1094ms
+ ✓ src/local-app/productionWorkspace.integration.test.ts (1 test) 5032ms
+   ✓ Owner persists incomplete matches, gates native entry until visuals are ready and reopens safely  5031ms
+ ✓ src/local-app/workspaceScriptResume.integration.test.ts (2 tests) 5270ms
+   ✓ Owner confirms a formatting-only revision while preserving the exact edited project and old invalidated evidence  3857ms
+   ✓ substantive script edits cannot bypass the stale-project guard through formatting recovery  1412ms
+ ✓ src/local-app/legacyHtmlWorkspace.integration.test.ts (1 test) 5178ms
+   ✓ adopts frozen HTML over real HTTP/PG/SDK, permits per-shot replacement, saves and reopens without touching original records  5177ms
+stdout | src/worker/openchatcutStudio.validation.integration.test.ts > retains both validators while reading the identical document once during each draft open
+{"name":"draft-open-validation","sdkReads":1,"validatorCalls":2,"readDurationsMs":[78],"elapsedMs":861}
+
+ ✓ src/worker/openchatcutStudio.validation.integration.test.ts (3 tests) 4644ms
+   ✓ retains both validators while reading the identical document once during each draft open  1117ms
+   ✓ still rejects a source SHA change at the second validation when SDK evidence is reused  1617ms
+   ✓ revalidates a changed native-store document instead of trusting the input fingerprint  1910ms
+ ✓ src/local-app/workspaceImages.integration.test.ts (7 tests) 23128ms
+   ✓ Owner uploads and persists a native still image with duration and composition  1429ms
+   ✓ Owner renders static and pan/zoom native images without external generation (landscape=false)  6891ms
+   ✓ Owner renders static and pan/zoom native images without external generation (landscape=true)  6372ms
+   ✓ Owner sees missing and changed image blockers without a replacement task or source  1346ms
+   ✓ AI image generation retains the selected execution path and blocks when no registered connection exists  1179ms
+   ✓ Owner first image videos preserve completed outputs and manual edit boundary (edited=false)  4141ms
+   ✓ Owner first image videos preserve completed outputs and manual edit boundary (edited=true)  1769ms
+ ✓ src/local-app/legacyWorkspaceEntry.integration.test.ts (3 tests) 3818ms
+   ✓ legacy orders enter four-step preparation only on an explicit owned command  1498ms
+   ✓ legacy script revision uses the same explicit entry and failed imports leave no registration  1178ms
+   ✓ legacy inspection stays read-only and completed, archived and historical orders are not enrolled  1142ms
+(node:24846) DeprecationWarning: Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0. Use async/await or an external async flow control mechanism instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ ✓ src/local-app/legacyStudioProject.integration.test.ts (1 test) 2221ms
+   ✓ Owner reads and downloads the exact saved legacy edit without adopting or rewriting it  2221ms
+ ✓ src/local-app/workspaceImageGeneration.integration.test.ts (1 test) 1868ms
+   ✓ HTTP → isolated queue → actual Worker publishes a reference-based image batch; selecting and adopting remain explicit  1868ms
+ ✓ scripts/openchatcut-caption-layout.integration.test.ts (4 tests) 29ms
+ ✓ scripts/openchatcut-bridge-retry.integration.test.ts (6 tests) 12ms
+ ✓ scripts/openchatcut-media-imports.integration.test.ts (1 test) 8ms
+ ✓ src/worker/openchatcutStudio.storage.integration.test.ts (1 test) 2231ms
+   ✓ reads the latest offline SQLite edit and opens the exact new LC version instead of reimporting JSON backups  2231ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceFirstVideo.source.integration.test.ts > first video freezes the actual source main voice without requiring an unused TTS draft
+Error: Worker child exited 1: node:internal/modules/cjs/loader:1568
+  throw err;
+  ^
+
+Error: Cannot find module '/Users/dan/Programs/loop-control/dist/worker/local-app/localWorkerCli.js'
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1564:15)
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1118:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1142:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1169:12)
+    at Module._load (node:internal/modules/cjs/loader:1341:5)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:261:19)
+    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)
+    at node:internal/main/run_main_module:33:47 {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: []
+}
+
+Node.js v24.20.0
+
+ ❯ ChildProcess.<anonymous> src/local-app/workspaceDelivery.fixture.ts:27:191
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 18 passed (19)
+      Tests  1 failed | 65 passed (66)
+   Start at  23:28:57
+   Duration  87.87s (transform 417ms, setup 33ms, collect 1.56s, tests 170.17s, environment 1ms, prepare 429ms)
+

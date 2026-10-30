@@ -1,0 +1,10 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ scripts/openchatcut-bridge-retry.integration.test.ts (6 tests) 15ms
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  21:46:32
+   Duration  216ms (transform 27ms, setup 9ms, collect 19ms, tests 15ms, environment 0ms, prepare 43ms)
+

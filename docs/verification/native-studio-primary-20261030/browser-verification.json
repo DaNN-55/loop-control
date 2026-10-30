@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-30T10:56:54.703Z",
+  "episodeId": "9e211cf2-c039-46c4-8711-d2b305f901f8",
+  "origin": "http://localhost:55369",
+  "scriptImportedAndConfirmed": true,
+  "videoUploadedAndAdopted": true,
+  "initialCaptionsAssembled": true,
+  "nativeCaptionText": "原生字幕修改已保存。",
+  "nativeFontSize": 0.029,
+  "nativeOffsetX": 0.01,
+  "supplementalCollapsedByDefault": true,
+  "nativeInspectorRemainedAvailable": true,
+  "alignmentPanelHadNoDuplicateEditor": true,
+  "nativeSaveReopenVerified": true,
+  "exportTechnicalChecks": 5,
+  "captionApproval": "single final-file confirmation",
+  "deliveryVerified": true,
+  "realOrderModified": false,
+  "paidGenerationSubmitted": false
+}

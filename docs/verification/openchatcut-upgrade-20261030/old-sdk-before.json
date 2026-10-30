@@ -1,0 +1,9 @@
+{
+  "package.json": "a465d5bcedf5f2d12052186c40b94d272d2f1328715d9dd7c347e2f9e4254f95",
+  "package-lock.json": "323bcbf37c8981d49ead4fc30b936ecdf04dcf5808fa8c4d7df8daec1b1686a5",
+  "src/captions/CaptionPreviewEditor.tsx": "26980e757e3149e1ca355b9a198cb1bf5395661c9b564d740ad1bcb584c7d3b8",
+  "src/captions/captionPreviewTarget.ts": "69b052077cae308633ceb9a43b282e1b74c8faff955d6e7b6a13e796ff9058f7",
+  "src/components/inspector/CaptionInspectorControls.tsx": "4bc4e2626472a9f7b08a1566dd477a65af10a03e85fe94ce0eb1cd6e48b62e8a",
+  "src/agent/useExternalAgentBridge.ts": "467aa8139abf53cfc2092c0a0be0c480b889ef815c7e557f77294268cdd9ba80",
+  "config/vite.config.ts": "37903e514cc6199bc501e84370ce18e82484a40d6f974ed174239cf8b237830d"
+}

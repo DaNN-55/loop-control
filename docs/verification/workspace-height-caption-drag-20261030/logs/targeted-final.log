@@ -1,0 +1,12 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ scripts/openchatcut-caption-drag.test.mjs (3 tests) 4ms
+ ✓ src/local-app/useWorkspaceCanvas.test.tsx (1 test) 15ms
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx (11 tests) 293ms
+
+ Test Files  3 passed (3)
+      Tests  15 passed (15)
+   Start at  20:12:44
+   Duration  945ms (transform 82ms, setup 24ms, collect 346ms, tests 313ms, environment 856ms, prepare 103ms)
+

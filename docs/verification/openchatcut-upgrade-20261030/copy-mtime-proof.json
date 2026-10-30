@@ -1,0 +1,26 @@
+{
+  "sdkFunctionSource": "function previewFingerprint(source) {\n  return `${PREVIEW_TRANSFORM_VERSION}-${Math.max(0, Math.floor(source.size))}-${Math.max(0, Math.floor(source.mtimeMs * 1000))}`;\n}",
+  "original": {
+    "key": "preview-v3-8-1790812800000000",
+    "sha256": "04abc8821a06e5a30937967d11ad10221cb5ac3b5273e434f1284ee87129a061"
+  },
+  "unconditionalIdenticalCopy": {
+    "key": "preview-v3-8-1793370780731690",
+    "sha256": "04abc8821a06e5a30937967d11ad10221cb5ac3b5273e434f1284ee87129a061",
+    "mtimeChanged": true,
+    "cacheKeyChanged": true
+  },
+  "shaIdenticalSkip": {
+    "contentEqual": true,
+    "key": "preview-v3-8-1793370780731690",
+    "cacheKeyPreserved": true,
+    "mtimePreserved": true
+  },
+  "sameSizeDifferentContent": {
+    "sizeEqual": true,
+    "mtimeEqual": true,
+    "shaDiffers": true,
+    "copyPerformed": true,
+    "resultSha256": "10ae0fdbf8c4f1f2b5e708fd7478abd2bf03b190edc878dc62ada645aa7e0310"
+  }
+}

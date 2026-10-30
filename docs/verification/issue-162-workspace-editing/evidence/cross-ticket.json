@@ -1,8 +1,8 @@
 {
-  "taskId": "fde128bc-21c5-48c2-987b-40f37021f286",
+  "taskId": "2e0c2a6c-b323-48ec-9714-d5f3b12d0905",
   "voiceItemId": "workspace-narration-shot-shot-1",
-  "voiceTrackId": "e008089d-5f65-40da-9971-8b60c1d9839a",
-  "remainingVisualItemId": "shot-shot-1-bdfe88c6-b5a1-438c-907b-b539a42d6262",
+  "voiceTrackId": "df7dc9e0-71a7-46bc-a6c7-f13e533b3526",
+  "remainingVisualItemId": "shot-shot-1-6bdee4dc-81ba-4cee-83bf-13abe647ba65",
   "captionLaneId": "workspace-caption-shot-shot-1",
   "cueText": "完整口播跟随字幕，删除首个画面也不会丢失。",
   "cueEndMs": 2400,

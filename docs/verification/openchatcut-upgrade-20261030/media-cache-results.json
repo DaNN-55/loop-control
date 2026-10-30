@@ -1,0 +1,14 @@
+{
+  "sdkVersion": "0.2.17",
+  "command": "OPENCHATCUT_ROOT=/Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut npx vitest run src/worker/openchatcutStudio.media-cache.integration.test.ts src/worker/openchatcutStudio.validation.integration.test.ts",
+  "red": {"tests":4,"passed":3,"failed":1,"mtimeExpected":1790812800000,"mtimeActual":1793370987534.4463},
+  "green": {
+    "tests":7,"passed":7,
+    "mtimeBefore":1790812800000,"mtimeAfter":1790812800000,
+    "cacheKeyBefore":"ebeecaf7b023c70128af.mp3.preview-v3-2106-1790812800000000.peaks.json",
+    "cacheKeyAfter":"ebeecaf7b023c70128af.mp3.preview-v3-2106-1790812800000000.peaks.json",
+    "sdkReadsPerOpen":1,"validatorCallsPerOpen":2,
+    "sameSizeSameMtimeDifferentBytesRepaired":true,"symlinkRejected":true,"hardlinkRejected":true,"sourceShaRechecked":true
+  },
+  "realServicesChanged":false,"realProjectsChanged":false,"temporaryServicesAndMediaCleaned":true
+}

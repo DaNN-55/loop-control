@@ -1,0 +1,24 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/productionWorkspace.integration.test.ts (1 test) 6894ms
+   ✓ Owner persists incomplete matches, gates native entry until visuals are ready and reopens safely  6893ms
+ ✓ src/local-app/workspaceCaptions.integration.test.ts (3 tests) 30398ms
+   ✓ Owner edits only the chosen native caption lane and persists manual timing without shot approval  6732ms
+   ✓ current native caption evidence follows the real alignment queue and rejects a late Worker result after a text edit  2254ms
+   ✓ real landscape and portrait Remotion frames contain caption pixels inside the chosen safe area  21411ms
+ ✓ src/local-app/workspaceDelivery.integration.test.ts (4 tests) 57472ms
+   ✓ Owner delivery requires an exact confirmed export  1999ms
+   ✓ real Worker verifies exact package, fences tamper and missing inputs, retries and survives restart  18840ms
+   ✓ a queued package cannot complete or retry against a different final export  21945ms
+   ✓ delivery records the used trimmed voice source and never substitutes an unadopted draft text  14687ms
+ ✓ src/local-app/workspaceExport.integration.test.ts (1 test) 31124ms
+   ✓ Owner checks actual used content before exporting and confirms exact final bytes  31123ms
+ ✓ src/local-app/nativeStudioPrimary.integration.test.ts (1 test) 20735ms
+   ✓ native text, style and timing save once, final-file approval confirms captions and later edits invalidate it  20735ms
+
+ Test Files  5 passed (5)
+      Tests  10 passed (10)
+   Start at  18:55:32
+   Duration  79.61s (transform 667ms, setup 29ms, collect 1.91s, tests 146.62s, environment 0ms, prepare 586ms)
+

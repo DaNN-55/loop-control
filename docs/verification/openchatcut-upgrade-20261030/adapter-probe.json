@@ -1,0 +1,18 @@
+[
+  {
+    "file": "src/captions/CaptionPreviewEditor.tsx",
+    "compatible": true
+  },
+  {
+    "file": "src/captions/captionPreviewTarget.ts",
+    "compatible": true
+  },
+  {
+    "file": "src/components/inspector/CaptionInspectorControls.tsx",
+    "compatible": true
+  },
+  {
+    "file": "src/agent/useExternalAgentBridge.ts",
+    "compatible": true
+  }
+]

@@ -1,0 +1,28 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx (12 tests) 502ms
+ ✓ src/connections/ConnectionOrganization.test.tsx (7 tests) 571ms
+ ✓ src/connections/ConnectionFeedback.test.tsx (10 tests) 657ms
+ ✓ src/local-app/WorkspaceVisualCandidatesPanel.test.tsx (16 tests) 740ms
+ ✓ src/local-app/ProductionWorkspacePanel.legacy.test.tsx (7 tests) 448ms
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx (8 tests) 318ms
+ ✓ src/local-app/WorkspaceAudioPanel.test.tsx (8 tests) 402ms
+ ✓ src/local-app/ProductionWorkspacePanel.test.tsx (20 tests) 1730ms
+ ✓ src/local-app/WorkspaceNarrationPanel.test.tsx (13 tests) 278ms
+ ✓ src/local-app/WorkspaceDeliveryPanel.test.tsx (6 tests) 185ms
+ ✓ src/local-app/WorkspaceNativeControls.test.tsx (2 tests) 68ms
+ ✓ src/local-app/WorkspaceVideoMatch.test.tsx (3 tests) 145ms
+ ✓ src/local-app/WorkspaceGenerationBudget.test.tsx (2 tests) 88ms
+ ✓ src/local-app/WorkspaceExportPanel.test.tsx (1 test) 85ms
+ ✓ src/local-app/WorkspaceCaptionsPanel.test.tsx (2 tests) 102ms
+ ✓ src/local-app/WorkspacePreparationLayout.test.tsx (2 tests) 37ms
+ ✓ src/local-app/useWorkspaceCanvas.test.tsx (1 test) 15ms
+ ✓ src/local-app/WorkspaceNoticeToast.test.tsx (1 test) 45ms
+ ✓ src/local-app/WorkspaceShotPreview.test.tsx (4 tests) 49ms
+
+ Test Files  19 passed (19)
+      Tests  125 passed (125)
+   Start at  23:26:53
+   Duration  4.64s (transform 640ms, setup 51ms, collect 9.28s, tests 6.46s, environment 3.74s, prepare 590ms)
+

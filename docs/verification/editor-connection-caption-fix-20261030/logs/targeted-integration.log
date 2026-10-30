@@ -1,0 +1,44 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ scripts/openchatcut-bridge-retry.integration.test.ts (6 tests) 66ms
+ ✓ scripts/openchatcut-caption-layout.integration.test.ts (4 tests) 96ms
+ ✓ scripts/openchatcut-bridge-retry.test.mjs (3 tests) 3ms
+ ✓ scripts/openchatcut-caption-drag.test.mjs (3 tests) 4ms
+ ❯ src/worker/openchatcutStudio.validation.integration.test.ts (3 tests | 3 failed) 686ms
+   × retains both validators while reading the identical document once during each draft open 264ms
+     → listen EPERM: operation not permitted 127.0.0.1
+   × still rejects a source SHA change at the second validation when SDK evidence is reused 219ms
+     → expected [Function] to throw error including '文件指纹已变化' but got 'listen EPERM: operation not permitted…'
+   × revalidates a changed native-store document instead of trusting the input fingerprint 201ms
+     → listen EPERM: operation not permitted 127.0.0.1
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/worker/openchatcutStudio.validation.integration.test.ts > retains both validators while reading the identical document once during each draft open
+ FAIL  src/worker/openchatcutStudio.validation.integration.test.ts > revalidates a changed native-store document instead of trusting the input fingerprint
+Error: listen EPERM: operation not permitted 127.0.0.1
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/worker/openchatcutStudio.validation.integration.test.ts > still rejects a source SHA change at the second validation when SDK evidence is reused
+AssertionError: expected [Function] to throw error including '文件指纹已变化' but got 'listen EPERM: operation not permitted…'
+
+Expected: "文件指纹已变化"
+Received: "listen EPERM: operation not permitted 127.0.0.1"
+
+ ❯ src/worker/openchatcutStudio.validation.integration.test.ts:67:3
+     65|  try{
+     66|   for(const path of paths){await mkdir(dirname(join(root,path)),{recur…
+     67|   await expect(openOpenChatCutDraftStudio(root,episodeId,project,paths…
+       |   ^
+     68|   expect(validate).toHaveBeenCalledTimes(2);
+     69|   expect(reader).toHaveBeenCalledTimes(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  3 failed | 16 passed (19)
+   Start at  21:30:04
+   Duration  1.89s (transform 727ms, setup 116ms, collect 1.09s, tests 855ms, environment 761ms, prepare 414ms)
+

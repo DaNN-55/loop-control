@@ -1,0 +1,247 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "470a1e53-20c6-4205-b10a-9bbf0cfa4d4f",
+    "transitionMode": "studio"
+  },
+  "assets": [
+    {
+      "id": "material-24525633-c218-4865-bbe5-bc4918bf5ab6",
+      "name": "cover.png",
+      "kind": "image",
+      "src": "episodes/4d27f8b8-0de5-478a-903e-d0bfbc6a67a0/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-cover.png",
+      "durationInFrames": 90,
+      "sourceRevision": "source-v1-079t7ke-sl5i68"
+    },
+    {
+      "id": "material-927a1191-7bb1-46c0-9899-ab941698e526",
+      "name": "脚步音效一",
+      "kind": "audio",
+      "src": "episodes/4d27f8b8-0de5-478a-903e-d0bfbc6a67a0/materials/8d6544a938272b1488fe4b3069b296f7b246b377384a59651bd387285ceb8203-bgm.mp3",
+      "durationInFrames": 360,
+      "sourceRevision": "source-v1--8hhrv90uywysx"
+    },
+    {
+      "width": 640,
+      "height": 360,
+      "id": "candidate-d021d023-cb16-4ef0-bc1e-e33edfe1d82d",
+      "name": "shot-01",
+      "kind": "video",
+      "src": "episodes/4d27f8b8-0de5-478a-903e-d0bfbc6a67a0/materials/7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6-video.mp4",
+      "durationInFrames": 120,
+      "sourceContentHash": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+      "sourceRevision": "source-sha256-7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6"
+    }
+  ],
+  "mediaFolders": [],
+  "activeTimelineId": "loop-control-4d27f8b8-0de5-478a-903e-d0bfbc6a67a0",
+  "timelines": [
+    {
+      "id": "loop-control-4d27f8b8-0de5-478a-903e-d0bfbc6a67a0",
+      "name": "整期剪辑",
+      "order": 0,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "fit": "contain",
+      "items": [
+        {
+          "id": "shot-shot-01-51e4690d-c6ec-4b7e-89cf-8b25fa4995b7",
+          "track": "track_loop-control-4d27f8b8-0de5-478a-903e-d0bfbc6a67a0_1",
+          "kind": "video",
+          "name": "shot-01",
+          "startFrame": 0,
+          "durationInFrames": 90,
+          "width": 640,
+          "height": 360,
+          "transform": {
+            "scale": 1,
+            "x": 0,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "470a1e53-20c6-4205-b10a-9bbf0cfa4d4f",
+            "shotId": "shot-01",
+            "clipId": "51e4690d-c6ec-4b7e-89cf-8b25fa4995b7",
+            "text": "清晨第一束光落在山脊上，今天从这里出发。",
+            "provenance": {
+              "materialRevisionId": "24525633-c218-4865-bbe5-bc4918bf5ab6",
+              "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+              "fileSize": 1515,
+              "kind": "image"
+            }
+          },
+          "src": "episodes/4d27f8b8-0de5-478a-903e-d0bfbc6a67a0/materials/7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6-video.mp4",
+          "sourceAssetId": "candidate-d021d023-cb16-4ef0-bc1e-e33edfe1d82d",
+          "fit": "contain",
+          "volume": 0,
+          "loopControlCandidate": {
+            "inputFingerprint": "34ce8b94e47f5ac37e4be18dbb6fc79585b7f3038400ccbcbbb37e7aea660a0d",
+            "sourceId": "candidate-d021d023-cb16-4ef0-bc1e-e33edfe1d82d",
+            "durationPolicy": "keep-target",
+            "startFrame": 0,
+            "durationInFrames": 90,
+            "shotWindow": {
+              "startFrame": 0,
+              "durationInFrames": 90
+            }
+          },
+          "srcInFrame": 0,
+          "sourceFilename": "cover.png",
+          "sourceContentHash": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+          "sourceRevision": "source-sha256-7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6"
+        },
+        {
+          "id": "workspace-sfx-0ced7771-e3f5-4ac9-a399-a761a2f92904",
+          "kind": "audio",
+          "name": "脚步音效一",
+          "track": "workspace-sfx-0ced7771-e3f5-4ac9-a399-a761a2f92904",
+          "src": "episodes/4d27f8b8-0de5-478a-903e-d0bfbc6a67a0/materials/8d6544a938272b1488fe4b3069b296f7b246b377384a59651bd387285ceb8203-bgm.mp3",
+          "sourceAssetId": "material-927a1191-7bb1-46c0-9899-ab941698e526",
+          "startFrame": 6,
+          "durationInFrames": 30,
+          "srcInFrame": 0,
+          "volume": 0.5011872336272722,
+          "loopControlAudio": {
+            "workspaceId": "470a1e53-20c6-4205-b10a-9bbf0cfa4d4f",
+            "kind": "sfx",
+            "preparationId": "0ced7771-e3f5-4ac9-a399-a761a2f92904",
+            "shotId": "shot-01",
+            "anchor": "shot",
+            "offsetSeconds": 0.2
+          },
+          "sourceContentHash": "8d6544a938272b1488fe4b3069b296f7b246b377384a59651bd387285ceb8203",
+          "sourceRevision": "source-sha256-8d6544a938272b1488fe4b3069b296f7b246b377384a59651bd387285ceb8203"
+        },
+        {
+          "id": "workspace-sfx-8a558188-270e-409b-abd7-190254c4b493",
+          "kind": "audio",
+          "name": "转场音效二",
+          "track": "workspace-sfx-8a558188-270e-409b-abd7-190254c4b493",
+          "src": "episodes/4d27f8b8-0de5-478a-903e-d0bfbc6a67a0/materials/8d6544a938272b1488fe4b3069b296f7b246b377384a59651bd387285ceb8203-bgm.mp3",
+          "sourceAssetId": "material-927a1191-7bb1-46c0-9899-ab941698e526",
+          "startFrame": 45,
+          "durationInFrames": 18,
+          "srcInFrame": 0,
+          "volume": 0.251188643150958,
+          "loopControlAudio": {
+            "workspaceId": "470a1e53-20c6-4205-b10a-9bbf0cfa4d4f",
+            "kind": "sfx",
+            "preparationId": "8a558188-270e-409b-abd7-190254c4b493",
+            "shotId": "shot-01",
+            "anchor": "shot",
+            "offsetSeconds": 1.5
+          },
+          "sourceContentHash": "8d6544a938272b1488fe4b3069b296f7b246b377384a59651bd387285ceb8203",
+          "sourceRevision": "source-sha256-8d6544a938272b1488fe4b3069b296f7b246b377384a59651bd387285ceb8203"
+        }
+      ],
+      "trackOrder": [
+        "track_loop-control-4d27f8b8-0de5-478a-903e-d0bfbc6a67a0_1",
+        "workspace-sfx-0ced7771-e3f5-4ac9-a399-a761a2f92904",
+        "workspace-sfx-8a558188-270e-409b-abd7-190254c4b493",
+        "workspace-captions"
+      ],
+      "tracks": {
+        "track_loop-control-4d27f8b8-0de5-478a-903e-d0bfbc6a67a0_1": {
+          "kind": "video",
+          "name": "画面"
+        },
+        "workspace-sfx-0ced7771-e3f5-4ac9-a399-a761a2f92904": {
+          "kind": "audio",
+          "name": "音效"
+        },
+        "workspace-sfx-8a558188-270e-409b-abd7-190254c4b493": {
+          "kind": "audio",
+          "name": "音效",
+          "audioRouting": {
+            "duckDepthDb": 0
+          }
+        },
+        "workspace-captions": {
+          "kind": "caption",
+          "captions": {
+            "enabled": true,
+            "template": "plain",
+            "pacing": "phrase",
+            "sourceMode": "item",
+            "sourceEntries": [
+              {
+                "id": "workspace-caption-shot-shot-01",
+                "itemId": "manual:workspace-caption-shot-shot-01",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-01-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "86eb4052-4744-4b62-8c03-58e76bb6bb29~0",
+                    "text": "清晨第一束光落在山脊上，今天从这\n里出发。",
+                    "start": 0,
+                    "end": 3000
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "independent",
+                  "text": "清晨第一束光落在山脊上，今天从这里出发。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                }
+              }
+            ],
+            "layoutPolicy": {
+              "mode": "manual-slots",
+              "slots": [
+                {
+                  "id": "workspace-caption-shot-shot-01-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                }
+              ]
+            },
+            "perSource": {
+              "workspace-caption-shot-shot-01": {
+                "maxLines": 2
+              }
+            }
+          }
+        }
+      },
+      "transitions": [],
+      "selectedId": "shot-shot-01-51e4690d-c6ec-4b7e-89cf-8b25fa4995b7",
+      "captionsHidden": false,
+      "selectedIds": [
+        "shot-shot-01-51e4690d-c6ec-4b7e-89cf-8b25fa4995b7"
+      ]
+    }
+  ]
+}

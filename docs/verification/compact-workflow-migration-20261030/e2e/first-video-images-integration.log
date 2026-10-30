@@ -1,0 +1,17 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceImages.integration.test.ts (7 tests) 38607ms
+   ✓ Owner uploads and persists a native still image with duration and composition  1367ms
+   ✓ Owner renders static and pan/zoom native images without external generation (landscape=false)  10647ms
+   ✓ Owner renders static and pan/zoom native images without external generation (landscape=true)  11787ms
+   ✓ Owner sees missing and changed image blockers without a replacement task or source  2696ms
+   ✓ AI image generation retains the selected execution path and blocks when no registered connection exists  2610ms
+   ✓ Owner first image videos preserve completed outputs and manual edit boundary (edited=false)  6194ms
+   ✓ Owner first image videos preserve completed outputs and manual edit boundary (edited=true)  3305ms
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  11:20:43
+   Duration  39.06s (transform 304ms, setup 8ms, collect 336ms, tests 38.61s, environment 0ms, prepare 29ms)
+

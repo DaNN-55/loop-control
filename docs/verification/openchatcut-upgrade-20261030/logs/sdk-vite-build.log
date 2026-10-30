@@ -1,0 +1,13 @@
+failed to load config from /Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut-v0.2.17-staged-20261030/config/vite.config.ts
+error during build:
+Error: OPENCHATCUT_DEV_PROFILE_ID must be a lowercase UUID v4
+    at configuredProfileId (file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut-v0.2.17-staged-20261030/node_modules/.vite-temp/vite.config.ts.timestamp-1793368491294-eaf89ed5c28488.mjs:561:89)
+    at resolveRuntimeProfile (file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut-v0.2.17-staged-20261030/node_modules/.vite-temp/vite.config.ts.timestamp-1793368491294-eaf89ed5c28488.mjs:587:20)
+    at file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut-v0.2.17-staged-20261030/node_modules/.vite-temp/vite.config.ts.timestamp-1793368491294-eaf89ed5c28488.mjs:627:18
+    at file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut-v0.2.17-staged-20261030/node_modules/.vite-temp/vite.config.ts.timestamp-1793368491294-eaf89ed5c28488.mjs:61:23
+    at file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut-v0.2.17-staged-20261030/node_modules/.vite-temp/vite.config.ts.timestamp-1793368491294-eaf89ed5c28488.mjs:1171:2
+    at file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut-v0.2.17-staged-20261030/node_modules/.vite-temp/vite.config.ts.timestamp-1793368491294-eaf89ed5c28488.mjs:61:23
+    at file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut-v0.2.17-staged-20261030/node_modules/.vite-temp/vite.config.ts.timestamp-1793368491294-eaf89ed5c28488.mjs:1182:1
+    at ModuleJob.run (node:internal/modules/esm/module_job:561:25)
+    at async node:internal/modules/esm/loader:647:26
+    at async loadConfigFromBundledFile (file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut-v0.2.17-staged-20261030/node_modules/vite/dist/node/chunks/node.js:36123:12)

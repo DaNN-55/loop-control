@@ -1,0 +1,29 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceNarration.integration.test.ts (13 tests) 41895ms
+   ✓ Owner can prepare disabled narration before editing without queuing external tasks  1182ms
+   ✓ confirmed narration uses the real Worker, survives restart and assembles actual duration without duplicate submissions  3227ms
+   ✓ unknown paid submissions stay blocked across restart and input changes; definite rejection allows one explicit retry  1555ms
+   ✓ both first narration tracks assemble and crop an available source without invalidating the other shot  1917ms
+   ✓ a running task may register its immutable output but late speech cannot replace changed input or advance delivery  1651ms
+   ✓ manual narration and disabled modes never enqueue TTS, while short pictures preserve a recoverable conflict  1608ms
+   ✓ actual narration drives the paid video window and freezes speech provenance (changed=false)  7456ms
+   ✓ actual narration drives the paid video window and freezes speech provenance (changed=true)  3451ms
+   ✓ first speech remains a candidate after a real native save and never overwrites the edited project  7652ms
+   ✓ speech beyond the Provider maximum blocks a video submission without cutting words  3228ms
+   ✓ legacy narration already running before workspace activation cannot promote the new draft or delivery  2925ms
+   ✓ one shot with two visual ranges keeps one voice and its original task after deleting the first range  3804ms
+   ✓ registered completed task media resolve directly without a fake material and reject changed bytes  2239ms
+ ✓ src/local-app/workspaceFirstVideo.integration.test.ts (3 tests) 13093ms
+   ✓ fresh authored first video uses current preparation without a legacy approval (actual voice=false)  4849ms
+   ✓ fresh authored first video uses current preparation without a legacy approval (actual voice=true)  5226ms
+   ✓ replanning discards current voice adoption without discarding historical decisions, then adopts the first new voice  3017ms
+ ✓ src/local-app/workspaceFirstVideo.source.integration.test.ts (1 test) 5665ms
+   ✓ first video freezes the actual source main voice without requiring an unused TTS draft  5664ms
+
+ Test Files  3 passed (3)
+      Tests  17 passed (17)
+   Start at  12:09:47
+   Duration  61.66s (transform 312ms, setup 0ms, collect 630ms, tests 60.65s, environment 0ms, prepare 79ms)
+

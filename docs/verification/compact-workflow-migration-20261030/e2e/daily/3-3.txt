@@ -1,0 +1,3 @@
+Browser tab: 5, Title: "Loop Control", URL: "http://127.0.0.1:5174/?episode=3bf59fde-cf0b-47e1-990e-d7034cfbcfb3".
+There has been no change in the accessibility tree.
+The focused UI element is 43 button 剪辑工作台

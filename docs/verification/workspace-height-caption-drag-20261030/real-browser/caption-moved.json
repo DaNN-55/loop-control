@@ -1,0 +1,28 @@
+{
+  "hit": {
+    "x": 780.640625,
+    "y": 230.265625,
+    "width": 146.078125,
+    "height": 30.0625,
+    "top": 230.265625,
+    "right": 926.71875,
+    "bottom": 260.328125,
+    "left": 780.640625
+  },
+  "transform": "translateY(-50%) translate(0px, 0px) rotate(0deg) scale(1)",
+  "undo": [
+    {
+      "box": {
+        "x": 1056,
+        "y": 6,
+        "width": 28,
+        "height": 28,
+        "top": 6,
+        "right": 1084,
+        "bottom": 34,
+        "left": 1056
+      },
+      "disabled": false
+    }
+  ]
+}

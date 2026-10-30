@@ -1,0 +1,6 @@
+{
+  "at": "2026-10-30T03:08:50.614Z",
+  "transactionConnectionClosed": true,
+  "rolledBack": true,
+  "error": "ERROR:  Return to the approved storyboard shot workbench first\nCONTEXT:  PL/pgSQL function public.request_official_shot_video(uuid,uuid,text,uuid,text,integer,uuid,integer) line 11 at RAISE"
+}

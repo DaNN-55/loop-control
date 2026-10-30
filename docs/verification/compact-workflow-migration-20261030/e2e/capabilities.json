@@ -1,0 +1,26 @@
+{
+  "checkedAt": "2026-10-30T02:56:32.541Z",
+  "connectionStatuses": [
+    {
+      "provider": "volcengine_tts",
+      "adapter": "volcengine_tts",
+      "status": "verified"
+    },
+    {
+      "provider": "volcengine",
+      "adapter": "seedance_video",
+      "status": "verified"
+    }
+  ],
+  "capabilities": [
+    {
+      "key": "a_roll",
+      "status": "已配置"
+    },
+    {
+      "key": "narration",
+      "status": "已配置"
+    }
+  ],
+  "blueprintVersion": 1
+}

@@ -1,0 +1,31 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ❯ src/local-app/workspaceFirstVideo.integration.test.ts (3 tests | 1 failed | 2 skipped) 4002ms
+   ↓ fresh authored first video uses current preparation without a legacy approval (actual voice=false)
+   ↓ fresh authored first video uses current preparation without a legacy approval (actual voice=true)
+   × replanning discards current voice adoption without discarding historical decisions, then adopts the first new voice 4002ms
+     → expected '6d417ab9-c5b5-4890-8f13-2f5b9aae90cf' to be null
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/local-app/workspaceFirstVideo.integration.test.ts > replanning discards current voice adoption without discarding historical decisions, then adopts the first new voice
+AssertionError: expected '6d417ab9-c5b5-4890-8f13-2f5b9aae90cf' to be null
+
+- Expected: 
+null
+
++ Received: 
+"6d417ab9-c5b5-4890-8f13-2f5b9aae90cf"
+
+ ❯ src/local-app/workspaceFirstVideo.integration.test.ts:57:46
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 skipped (3)
+   Start at  11:38:34
+   Duration  4.75s (transform 395ms, setup 9ms, collect 597ms, tests 4.00s, environment 0ms, prepare 36ms)
+

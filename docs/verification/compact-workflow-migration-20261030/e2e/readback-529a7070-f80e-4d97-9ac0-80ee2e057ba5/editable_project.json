@@ -1,0 +1,226 @@
+{
+  "version": 3,
+  "loopControl": {
+    "version": "four-step-workspace/v1",
+    "inputFingerprint": "41af6884-9cba-465a-a4d5-adcb131bbe8d",
+    "transitionMode": "studio"
+  },
+  "assets": [
+    {
+      "id": "material-7252c506-8cb0-4b8c-9155-b3ff8b37092e",
+      "name": "整期配乐",
+      "kind": "audio",
+      "src": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/materials/8d6544a938272b1488fe4b3069b296f7b246b377384a59651bd387285ceb8203-bgm.mp3",
+      "durationInFrames": 360,
+      "sourceRevision": "source-v1-0jr282k0aj49xk"
+    },
+    {
+      "id": "audio-track-207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3",
+      "name": "workspace-narration-shot-shot-01",
+      "kind": "audio",
+      "src": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/5c5d7812-3856-485e-b365-4d1562b8fe83/shot-narration-shot-01-ae76ff7e03a6cffa49ace78505b536e3.mp3",
+      "durationInFrames": 72,
+      "sourceRevision": "source-v1-0qiayb3-9zwk9z"
+    },
+    {
+      "id": "material-fa2ff2ad-91ad-4028-87ec-392dc600cc38",
+      "name": "wan-shot-01.mp4",
+      "kind": "video",
+      "src": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/a1907d3a-ab9b-4255-8cf0-97827e28abf6/a1907d3a-ab9b-4255-8cf0-97827e28abf6.mp4",
+      "durationInFrames": 120,
+      "sourceRevision": "source-v1-0w1y8tf-prj5m7"
+    }
+  ],
+  "mediaFolders": [],
+  "activeTimelineId": "loop-control-529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+  "timelines": [
+    {
+      "id": "loop-control-529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+      "name": "整期剪辑",
+      "order": 0,
+      "fps": 30,
+      "width": 1080,
+      "height": 1920,
+      "fit": "contain",
+      "items": [
+        {
+          "id": "shot-shot-01-9308797c-e9b7-4ce9-8046-d54d20704763",
+          "track": "track_loop-control-529a7070-f80e-4d97-9ac0-80ee2e057ba5_1",
+          "kind": "video",
+          "name": "shot-01",
+          "startFrame": 0,
+          "durationInFrames": 72,
+          "width": 1080,
+          "height": 1920,
+          "transform": {
+            "scale": 1,
+            "x": 13,
+            "y": 0,
+            "rotation": 0
+          },
+          "loopControlShot": {
+            "workspaceId": "41af6884-9cba-465a-a4d5-adcb131bbe8d",
+            "shotId": "shot-01",
+            "clipId": "9308797c-e9b7-4ce9-8046-d54d20704763",
+            "text": "清晨第一束光落在山脊上，今天从这里出发。",
+            "provenance": {
+              "materialRevisionId": "fa2ff2ad-91ad-4028-87ec-392dc600cc38",
+              "sha256": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+              "fileSize": 44148,
+              "kind": "video"
+            }
+          },
+          "volume": 0,
+          "loopControlAudio": {
+            "workspaceId": "41af6884-9cba-465a-a4d5-adcb131bbe8d",
+            "shotId": "shot-01",
+            "voiceMode": "tts"
+          },
+          "src": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/a1907d3a-ab9b-4255-8cf0-97827e28abf6/a1907d3a-ab9b-4255-8cf0-97827e28abf6.mp4",
+          "sourceAssetId": "material-fa2ff2ad-91ad-4028-87ec-392dc600cc38",
+          "srcInFrame": 0,
+          "fit": "contain",
+          "fadeInFrames": 0,
+          "fadeOutFrames": 0,
+          "sourceContentHash": "7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6",
+          "sourceRevision": "source-sha256-7328eafc62fad1f3537bc91fccb097bcb19698427e7bee0badae74334bc64ba6"
+        },
+        {
+          "id": "workspace-narration-shot-shot-01",
+          "kind": "audio",
+          "name": "shot-01 口播",
+          "src": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/5c5d7812-3856-485e-b365-4d1562b8fe83/shot-narration-shot-01-ae76ff7e03a6cffa49ace78505b536e3.mp3",
+          "sourceAssetId": "audio-track-207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3",
+          "srcInFrame": 0,
+          "startFrame": 0,
+          "durationInFrames": 72,
+          "volume": 1,
+          "track": "workspace-main-voice",
+          "loopControlAudio": {
+            "workspaceId": "41af6884-9cba-465a-a4d5-adcb131bbe8d",
+            "shotId": "shot-01"
+          },
+          "loopControlCandidate": {
+            "inputFingerprint": "6e6d56a22a0b18e80e353da37be5368a9392e0cc3699a92607bd3d27770a0f15",
+            "sourceId": "audio-track-207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3",
+            "durationPolicy": "use-candidate",
+            "startFrame": 0,
+            "durationInFrames": 72,
+            "shotWindow": {
+              "startFrame": 0,
+              "durationInFrames": 150
+            }
+          },
+          "sourceContentHash": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+          "sourceRevision": "source-sha256-9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100"
+        }
+      ],
+      "trackOrder": [
+        "track_loop-control-529a7070-f80e-4d97-9ac0-80ee2e057ba5_1",
+        "track_loop-control-529a7070-f80e-4d97-9ac0-80ee2e057ba5_2",
+        "workspace-main-voice",
+        "workspace-captions"
+      ],
+      "tracks": {
+        "track_loop-control-529a7070-f80e-4d97-9ac0-80ee2e057ba5_1": {
+          "kind": "video",
+          "name": "画面"
+        },
+        "track_loop-control-529a7070-f80e-4d97-9ac0-80ee2e057ba5_2": {
+          "kind": "audio",
+          "name": "整期配乐",
+          "role": "follower",
+          "audioRouting": {
+            "duckDepthDb": -10
+          }
+        },
+        "workspace-main-voice": {
+          "kind": "audio",
+          "name": "主声音",
+          "role": "anchor"
+        },
+        "workspace-captions": {
+          "kind": "caption",
+          "captions": {
+            "enabled": true,
+            "template": "plain",
+            "pacing": "phrase",
+            "sourceMode": "item",
+            "sourceEntries": [
+              {
+                "id": "workspace-caption-shot-shot-01",
+                "itemId": "manual:workspace-caption-shot-shot-01",
+                "label": "字幕",
+                "slotId": "workspace-caption-shot-shot-01-slot",
+                "visible": true,
+                "anchor": "bottom-center",
+                "offsetXRatio": 0,
+                "offsetYRatio": 0.09999999999999999,
+                "widthRatio": 0.8400000000000001,
+                "heightRatio": 0.74,
+                "words": [
+                  {
+                    "id": "0c6b998a-ac0c-4110-9b2d-1a9fa17eec5e~0",
+                    "text": "清晨第一束光落在山脊上，今天从这\n里出发。",
+                    "start": 0,
+                    "end": 2400
+                  }
+                ],
+                "style": {
+                  "fontFamily": "sans-serif",
+                  "fontWeight": 600,
+                  "color": "#ffffff",
+                  "fontSize": 0.02684659090909091,
+                  "wholeLine": true
+                },
+                "loopControl": {
+                  "version": "workspace-caption/v1",
+                  "contentMode": "follow_tts",
+                  "text": "清晨第一束光落在山脊上，今天从这里出发。",
+                  "spatial": {
+                    "version": "shot-caption-space/v2",
+                    "anchor": "bottom-center",
+                    "safeArea": "title-safe",
+                    "aspectRatio": "9:16",
+                    "insets": {
+                      "top": 0.08,
+                      "right": 0.08,
+                      "bottom": 0.18,
+                      "left": 0.08
+                    },
+                    "maxLines": 2,
+                    "maxCharactersPerLine": 16
+                  }
+                }
+              }
+            ],
+            "layoutPolicy": {
+              "mode": "manual-slots",
+              "slots": [
+                {
+                  "id": "workspace-caption-shot-shot-01-slot",
+                  "anchor": "bottom-center",
+                  "offsetXRatio": 0,
+                  "offsetYRatio": 0.09999999999999999,
+                  "widthRatio": 0.8400000000000001,
+                  "heightRatio": 0.74
+                }
+              ]
+            },
+            "perSource": {
+              "workspace-caption-shot-shot-01": {
+                "maxLines": 2
+              }
+            }
+          }
+        }
+      },
+      "transitions": [],
+      "selectedId": "workspace-bgm",
+      "captionsHidden": false,
+      "selectedIds": [
+        "workspace-bgm"
+      ]
+    }
+  ]
+}

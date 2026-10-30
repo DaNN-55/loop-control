@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/legacyWorkspaceMetadata.test.ts (9 tests) 14ms
+ ✓ src/local-app/legacyHtmlWorkspace.test.ts (12 tests) 9ms
+ ✓ src/local-app/WorkspaceNarrationPanel.test.tsx (13 tests) 209ms
+ ✓ src/local-app/ProductionWorkspacePanel.legacy.test.tsx (7 tests) 278ms
+
+ Test Files  4 passed (4)
+      Tests  41 passed (41)
+   Start at  17:07:10
+   Duration  1.14s (transform 354ms, setup 20ms, collect 1.29s, tests 510ms, environment 593ms, prepare 113ms)
+

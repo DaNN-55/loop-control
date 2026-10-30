@@ -1,0 +1,36 @@
+{
+  "episode": "5eca7062-ec52-4e84-be50-bf457f880bd3",
+  "heightRuns": [
+    {
+      "height": 800,
+      "scrollTop": 200
+    },
+    {
+      "height": 800,
+      "scrollTop": 200
+    },
+    {
+      "height": 800,
+      "scrollTop": 100
+    }
+  ],
+  "moved": {
+    "x": "0.2459016393442623",
+    "y": "-0.22307692307692306"
+  },
+  "undone": {
+    "x": "0",
+    "y": "-0.09999999999999999"
+  },
+  "reopened": {
+    "x": "0.2459016393442623",
+    "y": "-0.22307692307692306",
+    "inspector": "static"
+  },
+  "dragPixels": {
+    "x": 45,
+    "y": -40
+  },
+  "originalSDKFilesModified": false,
+  "realOrderModified": false
+}

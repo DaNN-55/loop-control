@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/WorkspaceScriptPanel.test.tsx (7 tests) 174ms
+ ✓ src/local-app/ProductionWorkspacePanel.test.tsx (16 tests) 779ms
+
+ Test Files  2 passed (2)
+      Tests  23 passed (23)
+   Start at  15:18:09
+   Duration  2.11s (transform 204ms, setup 13ms, collect 1.50s, tests 953ms, environment 492ms, prepare 67ms)
+

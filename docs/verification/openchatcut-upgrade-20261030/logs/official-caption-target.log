@@ -1,0 +1,20 @@
+node:net:2302
+      const error = new UVExceptionWithHostPort(rval, 'listen', address, port);
+                    ^
+
+Error: listen EPERM: operation not permitted /var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/tsx-501/68199.pipe
+    at Server.setupListenHandle [as _listen2] (node:net:2302:21)
+    at listenInCluster (node:net:2433:12)
+    at Server.listen (node:net:2575:5)
+    at file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut-v0.2.17-staged-20261030/node_modules/tsx/dist/cli.mjs:53:31472
+    at new Promise (<anonymous>)
+    at createIpcServer (file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut-v0.2.17-staged-20261030/node_modules/tsx/dist/cli.mjs:53:31450)
+    at async file:///Users/dan/Programs/loop-control/.loop-control/local/OpenChatCut-v0.2.17-staged-20261030/node_modules/tsx/dist/cli.mjs:55:500 {
+  code: 'EPERM',
+  errno: -1,
+  syscall: 'listen',
+  address: '/var/folders/6c/wzgq_5_n40lfd6c48djmqwf40000gn/T/tsx-501/68199.pipe',
+  port: -1
+}
+
+Node.js v24.20.0

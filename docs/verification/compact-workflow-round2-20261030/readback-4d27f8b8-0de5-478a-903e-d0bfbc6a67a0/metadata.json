@@ -1,0 +1,29 @@
+{
+  "title": "清晨山脊 · 多音效验收",
+  "description": "四工作流第二轮验收。\n上传画面、两条镜头音效、独立字幕与真实交付。",
+  "tags": [
+    "清晨",
+    "山脊",
+    "验收"
+  ],
+  "exportId": "279ebe1a-cfeb-46e1-a735-b5ca5c270f4c",
+  "contentSha256": "f8ed9855b10563e3bf3c6c0cdff1eedba84f716233ba7510546e88f10aae63a0",
+  "scriptRevisionId": "2c69c28c-e364-4d30-bd4b-5723a4a11882",
+  "narration": [
+    {
+      "shotId": "shot-01",
+      "baselineText": "清晨第一束光落在山脊上，今天从这里出发。",
+      "sourceText": null,
+      "adoptedText": null,
+      "textCoverage": "no_recorded_text",
+      "windows": [],
+      "textSource": "not_recorded",
+      "sourceDiffersFromBaseline": null,
+      "differsFromBaseline": null,
+      "audioTrackId": null,
+      "sha256": null,
+      "itemId": null,
+      "source": null
+    }
+  ]
+}

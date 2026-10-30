@@ -1,0 +1,13 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/EmbeddedStudioHost.test.tsx (11 tests) 382ms
+ ✓ src/local-app/WorkspaceExportPanel.test.tsx (1 test) 73ms
+ ✓ src/local-app/WorkspaceCaptionsPanel.test.tsx (2 tests) 98ms
+ ✓ src/local-app/ProductionWorkspacePanel.test.tsx (20 tests) 1100ms
+
+ Test Files  4 passed (4)
+      Tests  34 passed (34)
+   Start at  18:42:41
+   Duration  3.15s (transform 403ms, setup 35ms, collect 3.41s, tests 1.65s, environment 1.61s, prepare 786ms)
+

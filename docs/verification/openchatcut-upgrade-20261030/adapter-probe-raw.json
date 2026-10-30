@@ -1,0 +1,22 @@
+[
+  {
+    "file": "CaptionPreviewEditor.tsx",
+    "compatible": true,
+    "changed": true
+  },
+  {
+    "file": "captionPreviewTarget.ts",
+    "compatible": true,
+    "changed": true
+  },
+  {
+    "file": "CaptionInspectorControls.tsx",
+    "compatible": true,
+    "changed": true
+  },
+  {
+    "file": "useExternalAgentBridge.ts",
+    "compatible": true,
+    "changed": true
+  }
+]

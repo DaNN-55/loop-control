@@ -1,0 +1,11 @@
+
+ RUN  v3.2.7 /Users/dan/Programs/loop-control
+
+ ✓ src/local-app/workspaceVisualCandidates.integration.test.ts (14 tests | 13 skipped) 1988ms
+   ✓ video generation freezes and applies the first-frame composition without changing the source image  1987ms
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 13 skipped (14)
+   Start at  17:28:18
+   Duration  2.47s (transform 290ms, setup 7ms, collect 357ms, tests 1.99s, environment 0ms, prepare 28ms)
+

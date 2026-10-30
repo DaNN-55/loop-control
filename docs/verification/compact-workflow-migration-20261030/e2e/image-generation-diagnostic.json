@@ -1,0 +1,217 @@
+{
+  "at": "2026-10-30T03:30:10.049Z",
+  "episode": {
+    "id": "529a7070-f80e-4d97-9ac0-80ee2e057ba5",
+    "stage": "script_approved",
+    "main_script_revision_id": "deebd962-988e-4bba-9689-5794181bb4cc",
+    "blueprint_version_id": "d0a154db-6c8b-4836-a749-29b878f18bd9",
+    "policy": {
+      "a_roll": {
+        "executor": {
+          "model": "doubao-seedance-2-0-260128",
+          "adapter": "seedance_video",
+          "provider": "volcengine",
+          "prompt_version": "official-video-v1"
+        },
+        "budget_cents": 90,
+        "max_attempts": 1,
+        "allowed_tools": [
+          "read",
+          "write"
+        ],
+        "credential_ref": "296fa804-5784-42ee-ab08-82bc98e94640",
+        "execution_path": "external"
+      },
+      "budgets": {
+        "storyboard_planning_cents": 0
+      },
+      "executors": {
+        "storyboard_planning": {
+          "model": "gpt-5.6-luna",
+          "adapter": "codex",
+          "provider": "codex",
+          "harness_id": "933aed89-8d98-4a82-a2be-00cf16a76c69",
+          "prompt_version": "storyboard-planning-v2"
+        }
+      },
+      "narration": {
+        "executor": {
+          "model": "seed-tts-2.0",
+          "adapter": "volcengine_tts",
+          "provider": "volcengine_tts",
+          "prompt_version": "narration-v1"
+        },
+        "budget_cents": 10,
+        "max_attempts": 1,
+        "credential_ref": "d0f8fdb5-8e26-4a58-879f-250c7d92d78f",
+        "execution_path": "external"
+      },
+      "asset_root": "/private/tmp/loop-t06-volume-PQgqhE/mounted/loop-153-CbsF2q/account",
+      "allowed_tools": [
+        "read",
+        "write"
+      ]
+    }
+  },
+  "workspace": {
+    "id": "41af6884-9cba-465a-a4d5-adcb131bbe8d",
+    "revision": 3,
+    "native_edit_revision": 0,
+    "script_revision_id": "deebd962-988e-4bba-9689-5794181bb4cc",
+    "storyboard_package_id": "d55fa629-32e7-4fcc-b86c-833e16d06ca7",
+    "bindings": [
+      {
+        "id": "9308797c-e9b7-4ce9-8046-d54d20704763",
+        "text": "清晨第一束光落在山脊上，今天从这里出发。",
+        "itemId": "shot-shot-01-9308797c-e9b7-4ce9-8046-d54d20704763",
+        "shotId": "shot-01",
+        "source": null
+      }
+    ]
+  },
+  "tasks": [
+    {
+      "id": "782681a5-be3f-4609-ac85-4298133eef80",
+      "task_type": "generate_narration",
+      "status": "completed",
+      "provider": "volcengine_tts",
+      "last_result": {
+        "retry": {
+          "reason": "Completed successfully.",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "782681a5-be3f-4609-ac85-4298133eef80",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "Await the next controlled production step.",
+        "artifacts": [
+          {
+            "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+            "fileSize": 19628,
+            "artifactType": "narration_audio",
+            "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/782681a5-be3f-4609-ac85-4298133eef80/shot-narration-shot-01-ae76ff7e03a6cffa49ace78505b536e3.mp3"
+          }
+        ],
+        "validation": {
+          "checks": [
+            {
+              "name": "controlled_media_output",
+              "detail": "已按冻结 volcengine_tts 适配器生成并校验主产物。",
+              "passed": true
+            },
+            {
+              "name": "native_narration_mode",
+              "detail": "受控响应及密钥存储替身；没有在线Provider请求或真实语音生成证明。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 1,
+        "audioDurationSeconds": 2.4
+      }
+    },
+    {
+      "id": "dbc72553-6024-456c-9dac-0d35a4082c98",
+      "task_type": "align_shot_captions",
+      "status": "ready",
+      "provider": "whisperx",
+      "last_result": null
+    },
+    {
+      "id": "5c5d7812-3856-485e-b365-4d1562b8fe83",
+      "task_type": "generate_narration",
+      "status": "completed",
+      "provider": "volcengine_tts",
+      "last_result": {
+        "retry": {
+          "reason": "Completed successfully.",
+          "shouldRetry": false
+        },
+        "status": "completed",
+        "taskId": "5c5d7812-3856-485e-b365-4d1562b8fe83",
+        "version": "worker-result/v1",
+        "blockers": [],
+        "nextStep": "Await the next controlled production step.",
+        "artifacts": [
+          {
+            "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+            "fileSize": 19628,
+            "artifactType": "narration_audio",
+            "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/native-tasks/5c5d7812-3856-485e-b365-4d1562b8fe83/shot-narration-shot-01-ae76ff7e03a6cffa49ace78505b536e3.mp3"
+          }
+        ],
+        "validation": {
+          "checks": [
+            {
+              "name": "controlled_media_output",
+              "detail": "已按冻结 volcengine_tts 适配器生成并校验主产物。",
+              "passed": true
+            },
+            {
+              "name": "native_narration_mode",
+              "detail": "受控响应及密钥存储替身；没有在线Provider请求或真实语音生成证明。",
+              "passed": true
+            }
+          ],
+          "passed": true
+        },
+        "actualCostCents": 1,
+        "audioDurationSeconds": 2.4
+      }
+    },
+    {
+      "id": "0ab32d53-50c8-4068-82c1-99e03c25ba5a",
+      "task_type": "align_shot_captions",
+      "status": "ready",
+      "provider": "whisperx",
+      "last_result": null
+    }
+  ],
+  "budget": [
+    {
+      "account_id": "d0a154db-6c8b-4836-a749-29b878f18bd9",
+      "trial_video_limit_cents": 100,
+      "total_limit_cents": 500,
+      "full_generation_enabled": false,
+      "approved_by": "521857d2-08fa-48b0-85ec-c832d476018f",
+      "approved_at": "2026-10-30T03:16:02.319293+00:00"
+    }
+  ],
+  "requests": [],
+  "materials": [
+    {
+      "id": "d4d36167-e0e8-4b58-9a0c-eb3163615f5e",
+      "material_type": "audio",
+      "source_path": "voice.mp3",
+      "storage_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/materials/9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100-voice.mp3",
+      "sha256": "9c40eaec3822c6943dee6f975d405551ce9b658dd55898112fc6a163f45b5100",
+      "file_size": 19628
+    },
+    {
+      "id": "deebd962-988e-4bba-9689-5794181bb4cc",
+      "material_type": "script",
+      "source_path": "script.md",
+      "storage_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/materials/e4657944653ed60f96c6a48c43b8a8ad33466e3af189f1cc32647657e3e0a176-script.md",
+      "sha256": "e4657944653ed60f96c6a48c43b8a8ad33466e3af189f1cc32647657e3e0a176",
+      "file_size": 933
+    },
+    {
+      "id": "b30adb02-0046-483f-8b47-ca9e31400c32",
+      "material_type": "image",
+      "source_path": "cover.png",
+      "storage_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/materials/89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116-cover.png",
+      "sha256": "89d3d2db0710dad01a95754cd362e2e561476f925aeda6332874987826a35116",
+      "file_size": 1515
+    },
+    {
+      "id": "0c0401c3-8921-4b30-8bb6-90ce19b5916b",
+      "material_type": "script",
+      "source_path": "script.md",
+      "storage_path": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/materials/8077ea645e60018d8fd50a7f5a65c2f3e3dd6f8ab42df1352c11be8a01af8bd2-script.md",
+      "sha256": "8077ea645e60018d8fd50a7f5a65c2f3e3dd6f8ab42df1352c11be8a01af8bd2",
+      "file_size": 933
+    }
+  ]
+}

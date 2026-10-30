@@ -1,0 +1,44 @@
+[
+  {
+    "step": "脚本确认",
+    "active": "1脚本确认已确认",
+    "pageWidth": 1440,
+    "width": 1440,
+    "passed": true
+  },
+  {
+    "step": "素材准备与匹配",
+    "active": "2素材准备与匹配0 项待准备",
+    "pageWidth": 1440,
+    "width": 1440,
+    "passed": true
+  },
+  {
+    "step": "脚本确认",
+    "active": "1脚本确认已确认",
+    "pageWidth": 1280,
+    "width": 1280,
+    "passed": true
+  },
+  {
+    "step": "素材准备与匹配",
+    "active": "2素材准备与匹配0 项待准备",
+    "pageWidth": 1280,
+    "width": 1280,
+    "passed": true
+  },
+  {
+    "step": "脚本确认",
+    "active": "1脚本确认已确认",
+    "pageWidth": 390,
+    "width": 390,
+    "passed": true
+  },
+  {
+    "step": "素材准备与匹配",
+    "active": "2素材准备与匹配0 项待准备",
+    "pageWidth": 390,
+    "width": 390,
+    "passed": true
+  }
+]

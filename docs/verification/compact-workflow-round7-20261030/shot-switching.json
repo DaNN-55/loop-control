@@ -1,0 +1,142 @@
+[
+  {
+    "id": "shot-001-hook",
+    "audio": 1,
+    "duplicateScript": 0,
+    "filters": 0,
+    "heading": "shot-001-hook · 已有匹配",
+    "match": [
+      "画面要求使用冻结 B-roll 快切并上下分屏；静音；中文字幕；硬切进入原始 Excel",
+      "已选画面b-shot-001.mp4",
+      "声音TTS 口播 · 3.26 秒",
+      "字幕第一批把电脑交给豆包的人，已经出现了。"
+    ],
+    "sections": 1,
+    "videos": [
+      {
+        "ready": 4,
+        "src": "/_local-artifact?episode=92b3067d-ced9-4e85-bc44-1968fa83695a&path=episodes%2F92b3067d-ced9-4e85-bc44-1968fa83695a%2Fmaterials%2Fd6bffc203be92d4635191e2f3478f05fb0454f49f7f70ebef7551d8cb3698c2a-b-shot-001.mp4&sha256=d6bffc203be92d4635191e2f3478f05fb0454f49f7f70ebef7551d8cb3698c2a"
+      }
+    ]
+  },
+  {
+    "id": "shot-002-nightmare-sheet",
+    "audio": 1,
+    "duplicateScript": 0,
+    "filters": 0,
+    "heading": "shot-002-nightmare-sheet · 已有匹配",
+    "match": [
+      "画面要求使用冻结 A-roll 原始电脑录屏；按真实画面剪切，不伪造数据或操作；正文中文字幕。",
+      "已选画面a-shot-001.mov",
+      "声音TTS 口播 · 5.50 秒",
+      "字幕老板扔来一张一千多行的地狱表。我不碰鼠标，看豆包到底能不能自己收拾完。"
+    ],
+    "sections": 1,
+    "videos": [
+      {
+        "ready": 4,
+        "src": "/_local-artifact?episode=92b3067d-ced9-4e85-bc44-1968fa83695a&path=episodes%2F92b3067d-ced9-4e85-bc44-1968fa83695a%2Fmaterials%2F20950a870362bcee64964be03bbaf4c0baa35059ae03d176ff1c62bedd0c736c-a-shot-001.mov&sha256=20950a870362bcee64964be03bbaf4c0baa35059ae03d176ff1c62bedd0c736c"
+      }
+    ]
+  },
+  {
+    "id": "shot-003-task-instruction",
+    "audio": 1,
+    "duplicateScript": 0,
+    "filters": 0,
+    "heading": "shot-003-task-instruction · 已有匹配",
+    "match": [
+      "画面要求使用冻结 A-roll 电脑操作录屏，完整展示任务指令进入豆包及真实操作；TTS 文本逐字保留，不加速到听不清。",
+      "已选画面a-shot-002.mov",
+      "声音TTS 口播 · 27.79 秒",
+      "字幕打开桌面的“测试销售表.xlsx”。先复制一份，禁止修改和删除原文件。统一所有日期格式，删除完全空白行，按订单号去重，把金额统一保留两位小数。缺失客户名、异常金额和无法判断的数据，全部标成黄色。然后按地区和产品分类生成销售汇总和趋势图，导出“测试销售表_已整理.xlsx”，再写一份处理报告。完成后停下，不要发送、上传或覆盖任何文件。"
+    ],
+    "sections": 1,
+    "videos": [
+      {
+        "ready": 4,
+        "src": "/_local-artifact?episode=92b3067d-ced9-4e85-bc44-1968fa83695a&path=episodes%2F92b3067d-ced9-4e85-bc44-1968fa83695a%2Fmaterials%2F45271908fd702abcb2eebce5a52441abd871ecabc9b881969ba15b6a37cc4dd2-a-shot-002.mov&sha256=45271908fd702abcb2eebce5a52441abd871ecabc9b881969ba15b6a37cc4dd2"
+      }
+    ]
+  },
+  {
+    "id": "shot-004-reading",
+    "audio": 1,
+    "duplicateScript": 0,
+    "filters": 0,
+    "heading": "shot-004-reading · 已有匹配",
+    "match": [
+      "画面要求使用冻结 A-roll 运行画面；保留真实进度与界面状态；不补录、不伪造。",
+      "已选画面a-shot-003.mov",
+      "声音TTS 口播 · 2.33 秒",
+      "字幕豆包在一行一行阅读。"
+    ],
+    "sections": 1,
+    "videos": [
+      {
+        "ready": 4,
+        "src": "/_local-artifact?episode=92b3067d-ced9-4e85-bc44-1968fa83695a&path=episodes%2F92b3067d-ced9-4e85-bc44-1968fa83695a%2Fmaterials%2F593a0e7df76acee1d6b02af4fd1d6ae41e12422005a32c111f814423dddc43e4-a-shot-003.mov&sha256=593a0e7df76acee1d6b02af4fd1d6ae41e12422005a32c111f814423dddc43e4"
+      }
+    ]
+  },
+  {
+    "id": "shot-005-waiting-transition",
+    "audio": 0,
+    "duplicateScript": 0,
+    "filters": 0,
+    "heading": "shot-005-waiting-transition · 已有匹配",
+    "match": [
+      "画面要求使用冻结 B-roll 转场素材完整播放；等比缩放并居中；保留源音频；不叠加旁白或字幕。",
+      "已选画面b-shot-002.mp4",
+      "声音素材原声",
+      "字幕字幕已关闭"
+    ],
+    "sections": 1,
+    "videos": [
+      {
+        "ready": 4,
+        "src": "/_local-artifact?episode=92b3067d-ced9-4e85-bc44-1968fa83695a&path=episodes%2F92b3067d-ced9-4e85-bc44-1968fa83695a%2Fmaterials%2Ff877d71b0f44aa9013a5808ecbeab05b24ae5d5b31f83ac5acc76ea376709809-b-shot-002.mp4&sha256=f877d71b0f44aa9013a5808ecbeab05b24ae5d5b31f83ac5acc76ea376709809"
+      }
+    ]
+  },
+  {
+    "id": "shot-006-execution-montage",
+    "audio": 1,
+    "duplicateScript": 0,
+    "filters": 0,
+    "heading": "shot-006-execution-montage · 已有匹配",
+    "match": [
+      "画面要求从冻结 A-roll 执行录屏中剪出真实连续步骤，允许加速画面但不改变事件顺序；叠加计时器与关键步骤字幕。",
+      "已选画面a-shot-004.mov",
+      "声音TTS 口播 · 5.33 秒",
+      "字幕字幕已关闭"
+    ],
+    "sections": 1,
+    "videos": [
+      {
+        "ready": 4,
+        "src": "/_local-artifact?episode=92b3067d-ced9-4e85-bc44-1968fa83695a&path=episodes%2F92b3067d-ced9-4e85-bc44-1968fa83695a%2Fmaterials%2Fb23442f1ff42badc5e5cec38934ceadc998a36447b27ac35767aac438a0388d8-a-shot-004.mov&sha256=b23442f1ff42badc5e5cec38934ceadc998a36447b27ac35767aac438a0388d8"
+      }
+    ]
+  },
+  {
+    "id": "shot-008-outro",
+    "audio": 1,
+    "duplicateScript": 0,
+    "filters": 0,
+    "heading": "shot-008-outro · 已有匹配",
+    "match": [
+      "画面要求使用冻结 B-roll 结尾画面；静音或沿用已确认的源声；显示互动问题字幕并停留。",
+      "已选画面a-shot-005.mov",
+      "声音TTS 口播 · 2.93 秒",
+      "字幕下一次，你想让我拿什么活儿继续测它？"
+    ],
+    "sections": 1,
+    "videos": [
+      {
+        "ready": 4,
+        "src": "/_local-artifact?episode=92b3067d-ced9-4e85-bc44-1968fa83695a&path=episodes%2F92b3067d-ced9-4e85-bc44-1968fa83695a%2Fmaterials%2Fb23442f1ff42badc5e5cec38934ceadc998a36447b27ac35767aac438a0388d8-a-shot-005.mov&sha256=b23442f1ff42badc5e5cec38934ceadc998a36447b27ac35767aac438a0388d8"
+      }
+    ]
+  }
+]

@@ -1,0 +1,20 @@
+{
+  "environmentAndConfigCandidatePathsOnly": [
+    ".mcp.json",
+    ".env.example"
+  ],
+  "topLevelDirectories": [
+    "config",
+    "node_modules",
+    "desktop",
+    "server",
+    "shared",
+    "public",
+    "scripts",
+    ".github",
+    "skills",
+    "assets",
+    "remotion",
+    "src"
+  ]
+}

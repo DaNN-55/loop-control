@@ -1,0 +1,34 @@
+[
+  {
+    "path": "/timelines/0/tracks/track_production-bbea3b57-061b-4341-9ba1-3bf65d28899f_3/captions/layoutPolicy/slots/0/offsetXRatio",
+    "oldType": "int",
+    "newType": "float",
+    "old": 0,
+    "new": 0.011441256830601172
+  },
+  {
+    "path": "/timelines/0/tracks/track_production-bbea3b57-061b-4341-9ba1-3bf65d28899f_3/captions/layoutPolicy/slots/0/offsetYRatio",
+    "old": 0.1,
+    "new": 0.08432692307692306
+  },
+  {
+    "path": "/timelines/0/items/1/startFrame",
+    "old": 150,
+    "new": 249
+  },
+  {
+    "path": "/timelines/0/items/2/startFrame",
+    "old": 284,
+    "new": 150
+  },
+  {
+    "path": "/timelines/0/items/7/effects",
+    "added": true,
+    "removed": false
+  },
+  {
+    "path": "/timelines/0/captions",
+    "added": true,
+    "removed": false
+  }
+]

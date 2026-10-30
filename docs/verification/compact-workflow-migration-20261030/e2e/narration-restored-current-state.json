@@ -1,0 +1,32 @@
+{
+  "at": "2026-10-30T03:42:51.333Z",
+  "pid": 1666,
+  "url": "http://localhost:55357",
+  "sameDatabase": "loop_studio_153_a3be4e25cdc7",
+  "workspaceRevision": 11,
+  "project": {
+    "relativePath": "episodes/529a7070-f80e-4d97-9ac0-80ee2e057ba5/production-workspace/versions/e16ac18e33bbb6e2e7725c1fb4d66703cdf4b2a9d7c8c6132beb02e345d9c7fd.json",
+    "sha256": "e16ac18e33bbb6e2e7725c1fb4d66703cdf4b2a9d7c8c6132beb02e345d9c7fd",
+    "fileSize": 9493,
+    "projectId": "loop-control-529a7070-f80e-4d97-9ac0-80ee2e057ba5"
+  },
+  "narration": [
+    {
+      "audioTrackId": "207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3",
+      "adoptedAudioTrackId": "207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3",
+      "requiresCandidateAdoption": true
+    }
+  ],
+  "candidates": [
+    {
+      "id": "207516cd-e0f6-41dd-ad7f-ab4eac3a9ae3",
+      "status": "adopted"
+    },
+    {
+      "id": "1ffc1e7e-8a67-4eb4-968b-a7d7fc661e25",
+      "status": "stale"
+    }
+  ],
+  "inspectorClosed": true,
+  "businessDataChangedByRestore": false
+}
