@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-30",
+  "method": "只读查询 PostgreSQL 系统目录；未读取业务正文或修改数据库",
+  "databaseScope": [
+    "public",
+    "local_identity"
+  ],
+  "tables": 96,
+  "functions": 341,
+  "rowLevelSecurityPolicies": 66,
+  "nonInternalTriggers": 86,
+  "securityDefinerFunctions": 307,
+  "localSqlFiles": 100,
+  "localSqlLines": 20382,
+  "srcTsFilesDirectlyImportingPg": 70,
+  "limits": "对象与源码总量只说明耦合规模，不等同于必须逐个重写的数量、工期或性能结论。"
+}
