@@ -1,19 +1,21 @@
 import {resolveWorkspaceMainVoice} from './workspaceAudio.js';
 import type {OpenChatCutProject} from './worker/openchatcutProject.js';
 import type {WorkspaceCandidate} from './workspaceCandidates.js';
-export interface WorkspaceVisualCandidate extends WorkspaceCandidate {usage:'video'|'still'|'pan-zoom';width:number;height:number}
-export interface WorkspaceVisualTask {id:string;taskId:string;status:string;error:string|null;canResume?:boolean}
+export interface WorkspaceVisualCandidate extends WorkspaceCandidate {usage:'video'|'still'|'pan-zoom';materialRevisionId?:string;generation?:{prompt:string;firstFrameMaterialRevisionId:string;durationSeconds:number;imageSettings?:import('./imageGeneration.js').ImageGenerationSettings;referenceMaterialRevisionIds?:string[];videoSettings?:import('./videoGenerationSettings.js').WanGenerationSettings;firstFrameFit?:'contain'|'cover'};width:number;height:number}
+export interface WorkspaceVisualTask {id:string;taskId:string;shotId?:string;kind?:'image'|'video';status:string;error:string|null;canResume?:boolean}
 export const workspaceVisualFields:Record<string,string[]>={
- requestWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','targetItemId','firstFrameMaterialRevisionId','prompt','durationSeconds','reservationCents'],
+ requestWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','targetItemId','firstFrameMaterialRevisionId','prompt','durationSeconds','reservationCents','videoSettings','firstFrameFit'],
+ retainWorkspaceImageCandidate:['episodeId','workspaceId','expectedRevision','candidateId'],
+ requestWorkspaceImageCandidates:['episodeId','workspaceId','expectedRevision','targetItemId','model','prompt','settings','referenceMaterialRevisionIds','reservationCents'],
  retryWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','candidateId'],
  prepareWorkspaceVisualPool:['episodeId','workspaceId','expectedRevision','materialRevisionId'],
  registerWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','targetItemId','materialRevisionId','usage','durationSeconds'],
- prepareWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','candidateId','durationPolicy','acceptTimelineImpact','motionPolicy'],
+ prepareWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','candidateId','durationPolicy','acceptTimelineImpact','motionPolicy','imageUsage','sourceInSeconds','sourceOutSeconds'],
  adoptWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','candidateId','adoptionId','nativeApplied'],
  rejectWorkspaceVisualCandidate:['episodeId','workspaceId','expectedRevision','candidateId'],
 };
 
-export interface WorkspaceVisualTarget {targetItemId:string;voiceMode:'source'|'tts'|'none';durationSeconds:number|null;providerDurationSeconds:number|null;minimumSeconds:number;maximumSeconds:number}
+export interface WorkspaceVisualTarget {targetItemId:string;voiceMode:'source'|'tts'|'none';durationSeconds:number|null;providerDurationSeconds:number|null;minimumSeconds:number;maximumSeconds:number;model?:string;provider?:string;width?:number;height?:number}
 
 /** Visual generation follows audible content/window, not independent gain or BGM edits. */
 export function workspaceVisualVoiceIdentity(project:OpenChatCutProject,shotId:string){

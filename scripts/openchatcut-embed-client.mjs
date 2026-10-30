@@ -25,10 +25,7 @@ export function useLoopControlHost(projectId,base,agent,panels){
   useEffect(()=>{
     if(!active)return;
     panels.setChatCollapsed(true);
-    const hostStyle=document.createElement('style');hostStyle.textContent=':root[data-lc-host-tools="open"] .cc-inspector{position:static;inset:auto;width:min(260px,45%);flex:0 0 min(260px,45%);box-shadow:none}';document.head.append(hostStyle);
-    let narrow=innerWidth<1100;if(narrow)panels.setInspectorCollapsed(true);
-    const resize=()=>{const next=innerWidth<1100;if(next&&!narrow)panels.setInspectorCollapsed(true);narrow=next;};
-    window.addEventListener('resize',resize);
+    const hostStyle=document.createElement('style');hostStyle.textContent=':root .cc-inspector{position:static;inset:auto;width:min(260px,45%);flex:0 0 min(260px,45%);box-shadow:none}';document.head.append(hostStyle);
     async function message(event){
       const msg=event.data;
       if(event.source!==parent||event.origin!==parentOrigin||!msg||msg.type!=='loop-control:command'||msg.channel!==channel||msg.projectId!==projectId||typeof msg.requestId!=='string'||!/^[a-f0-9-]{36}$/.test(msg.requestId))return;
@@ -37,16 +34,16 @@ export function useLoopControlHost(projectId,base,agent,panels){
       try{
         if(['select','flush','apply-captions','apply-workspace-edit','apply-candidate','apply-audio-mix','add-registered-source'].includes(msg.action)&&!browserProjectOwnership(projectId)){result(false,'编辑器写连接尚未就绪或已变化，请保留当前编辑并重试。');return;}
         if(msg.action==='host-panel'){
-          if(typeof msg.open!=='boolean'){result(false,'面板状态无效。');return;}document.documentElement.dataset.lcHostTools=msg.open?'open':'closed';if(msg.open)panels.setInspectorCollapsed(true);await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));result(true);
+          if(typeof msg.open!=='boolean'){result(false,'面板状态无效。');return;}document.documentElement.dataset.lcHostTools=msg.open?'open':'closed';await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));result(true);
         }else if(msg.action==='inspect'){
           const document=structuredClone(live.current.base.doc);result(true,undefined,{revision:revision.current,documentFingerprint:await digest(document),document});
         }else if(msg.action==='apply-captions'||msg.action==='apply-workspace-edit'||msg.action==='apply-candidate'||msg.action==='apply-audio-mix'||msg.action==='add-registered-source'){
           const doc=live.current.base.doc,observedRevision=revision.current;
           if(msg.expectedRevision!==observedRevision||msg.expectedDocumentFingerprint!==await digest(doc)||doc!==live.current.base.doc||observedRevision!==revision.current){result(false,'工程已有新修改，请重新读取当前工程后重试。');return;}
-          if(msg.action==='apply-captions'&&(typeof msg.itemId!=='string'||!isWorkspaceCaptionContract(msg.contract)||msg.contract.text.length>100000||msg.contract.cues.length>1000)){result(false,'字幕增量输入无效。');return;}
+          if(msg.action==='apply-captions'&&(typeof msg.itemId!=='string'||!isWorkspaceCaptionContract(msg.contract)||msg.contract.text.length>100000||msg.contract.cues.length>1000||msg.timingOnly!==undefined&&typeof msg.timingOnly!=='boolean')){result(false,'字幕增量输入无效。');return;}
           if(msg.action==='apply-workspace-edit'&&!isWorkspaceShotOperation(msg.operation)){result(false,'镜头编辑输入无效。');return;}
           if(msg.action==='apply-candidate'&&(!isWorkspaceCandidateEdit(msg.edit)||!/^\/media\/uploads\/[a-f0-9]+\.[a-z0-9]+$/.test(msg.edit.source.src))){result(false,'候选增量输入无效。');return;}
-          const next=msg.action==='add-registered-source'?addWorkspaceRegisteredSource(doc,msg.asset):msg.action==='apply-audio-mix'?applyWorkspaceAudioMix(doc,msg.edit):msg.action==='apply-candidate'?applyWorkspaceCandidate(doc,msg.edit):msg.action==='apply-captions'?applyWorkspaceCaptionEdit(doc,msg.itemId,msg.contract):applyWorkspaceShotOperation(migrateWorkspaceCaptionLanes(doc),msg.operation);
+          const next=msg.action==='add-registered-source'?addWorkspaceRegisteredSource(doc,msg.asset):msg.action==='apply-audio-mix'?applyWorkspaceAudioMix(doc,msg.edit):msg.action==='apply-candidate'?applyWorkspaceCandidate(doc,msg.edit):msg.action==='apply-captions'?applyWorkspaceCaptionEdit(doc,msg.itemId,msg.contract,{timingOnly:msg.timingOnly===true}):applyWorkspaceShotOperation(migrateWorkspaceCaptionLanes(doc),msg.operation);
           live.current.base.commands.applyDoc(next);
           await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
           const ok=await live.current.agent.flushBeforeLeaveRef.current();
@@ -65,7 +62,7 @@ export function useLoopControlHost(projectId,base,agent,panels){
       }catch(cause){result(false,cause instanceof Error?cause.message:'编辑器操作未完成，当前修改仍保留。');}
     }
     window.addEventListener('message',message);
-    return()=>{hostStyle.remove();delete document.documentElement.dataset.lcHostTools;window.removeEventListener('resize',resize);window.removeEventListener('message',message);emit('loop-control:closed');};
+    return()=>{hostStyle.remove();delete document.documentElement.dataset.lcHostTools;window.removeEventListener('message',message);emit('loop-control:closed');};
   },[projectId,active]);
   function reportState(){
     if(!active)return;const base=live.current.base;reportedWritable.current=!!browserProjectOwnership(projectId);

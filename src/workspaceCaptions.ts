@@ -6,14 +6,15 @@ export const isWorkspaceCaptionContract=isValidShotCaptionContract;
 export const workspaceCaptionFields:Record<string,string[]>={
  saveWorkspaceCaptions:['episodeId','workspaceId','expectedRevision','clipId','captionContract','nativeApplied'],
  requestWorkspaceCaptionAlignment:['episodeId','workspaceId','expectedRevision','clipId','localOnly'],
- applyWorkspaceCaptionAlignment:['episodeId','workspaceId','expectedRevision','clipId','taskId','expectedInputFingerprint'],
+ prepareWorkspaceCaptionAlignment:['episodeId','workspaceId','expectedRevision','clipId','taskId','expectedInputFingerprint'],
+ applyWorkspaceCaptionAlignment:['episodeId','workspaceId','expectedRevision','clipId','taskId','expectedInputFingerprint','nativeApplied'],
  confirmWorkspaceCaptionText:['episodeId','workspaceId','expectedRevision','clipId','expectedInputFingerprint'],
 };
 
 import type {OpenChatCutProject} from './worker/openchatcutProject.js';
 // Shared by the Owner boundary and the embedded runtime. Input validation lives
 // at those boundaries; this function edits only one native caption lane.
-export function applyWorkspaceCaptionEdit(project:OpenChatCutProject,itemId:string,contract:ShotCaptionContract):OpenChatCutProject{
+export function applyWorkspaceCaptionEdit(project:OpenChatCutProject,itemId:string,contract:ShotCaptionContract,options:{timingOnly?:boolean}={}):OpenChatCutProject{
  const next=migrateWorkspaceCaptionLanes(project),window=readWorkspaceShotWindow(next,itemId),timeline=window?.timeline,item=window?.item;
  if(!item||!timeline)throw Error('当前工程中找不到字幕所属片段。');
  contract=normalizeShotCaptionContract(contract,{enabled:contract.enabled,text:contract.text,aspectRatio:timeline.width===timeline.height?'1:1':timeline.width>timeline.height?'16:9':'9:16'});
@@ -36,10 +37,11 @@ export function applyWorkspaceCaptionEdit(project:OpenChatCutProject,itemId:stri
  // maxCharactersPerLine knob or on generated-lane fixed 24-character paging.
  const fontSize=Math.min(.045,width*timeline.width/(timeline.height*Math.max(1,spatial.maxCharactersPerLine)*1.1),height/(spatial.maxLines*1.5));
  const lane={...existing,id:laneId,itemId:`manual:${laneId}`,label:'字幕',slotId,visible:contract.enabled,anchor,offsetXRatio:offsetX,offsetYRatio:offsetY,widthRatio:width,heightRatio:height,words,style:{fontFamily:'sans-serif',fontWeight:600,color:'#ffffff',...existing?.style,fontSize,wholeLine:true},loopControl:{version:'workspace-caption/v1',contentMode:contract.contentMode,text:contract.text,spatial:structuredClone(spatial)}};
- captions.sourceEntries=existing?captions.sourceEntries.map(e=>e.id===laneId?lane:e):[...(captions.sourceEntries??[]),lane];
+ const applied=options.timingOnly&&existing?{...existing,words,loopControl:lane.loopControl}:lane;
+ captions.sourceEntries=existing?captions.sourceEntries.map(e=>e.id===laneId?applied:e):[...(captions.sourceEntries??[]),lane];
  const oldSlots=captions.layoutPolicy?.mode==='manual-slots'?captions.layoutPolicy.slots:[];
- if(captions.layoutPolicy?.mode==='manual-slots')captions.layoutPolicy={mode:'manual-slots',slots:[...oldSlots.filter(s=>s.id!==slotId),{id:slotId,anchor,offsetXRatio:offsetX,offsetYRatio:offsetY,widthRatio:width,heightRatio:height}]};
- captions.perSource={...captions.perSource,[laneId]:{maxLines:spatial.maxLines}};
+ if(!options.timingOnly&&captions.layoutPolicy?.mode==='manual-slots')captions.layoutPolicy={mode:'manual-slots',slots:[...oldSlots.filter(s=>s.id!==slotId),{id:slotId,anchor,offsetXRatio:offsetX,offsetYRatio:offsetY,widthRatio:width,heightRatio:height}]};
+ if(!options.timingOnly)captions.perSource={...captions.perSource,[laneId]:{maxLines:spatial.maxLines}};
  return next;
 }
 export function readWorkspaceCaption(project:OpenChatCutProject,itemId:string):{laneId:string;words:Array<{id:string;text:string;start:number;end:number}>;contract:ShotCaptionContract}|null{
@@ -48,7 +50,7 @@ export function readWorkspaceCaption(project:OpenChatCutProject,itemId:string):{
  const track=Object.values(timeline?.tracks??{}).find(t=>t.kind==='caption'&&t.captions?.sourceEntries?.some(e=>candidates.includes(e.id)));
  const lane=track?.captions?.sourceEntries?.find(e=>candidates.includes(e.id)),meta=lane?.loopControl;
  if(!lane||!meta||!item||!timeline||!track?.captions)return null;
- const raw:ShotCaptionContract={version:'shot-captions/v1',enabled:lane.visible!==false&&track.captions.enabled!==false,contentMode:meta.contentMode,text:lane.words?.length?lane.words.map(w=>w.text.replace(/\n/g,'')).join(''):meta.text,cues:(lane.words??[]).map(w=>({id:w.id,text:w.text.replace(/\n/g,''),startMs:Math.round(w.start-Number(window?.startFrame??item.startFrame)*1000/timeline.fps),endMs:Math.round(w.end-Number(window?.startFrame??item.startFrame)*1000/timeline.fps)})),spatial:{...meta.spatial,anchor:(lane.anchor??track.captions.layoutPolicy?.slots?.find(s=>s.id===lane.slotId)?.anchor??meta.spatial.anchor) as ShotCaptionContract['spatial']['anchor']}};
+ const raw:ShotCaptionContract={version:'shot-captions/v1',enabled:timeline.captionsHidden!==true&&lane.visible!==false&&track.captions.enabled!==false,contentMode:meta.contentMode==='follow_tts'&&lane.words?.length&&lane.words.map(w=>w.text.replace(/\s/g,'')).join('')!==meta.text.replace(/\s/g,'')?'independent':meta.contentMode,text:lane.words?.length?lane.words.map(w=>w.text.replace(/\n/g,'')).join(''):meta.text,cues:(lane.words??[]).map(w=>({id:w.id,text:w.text.replace(/\n/g,''),startMs:Math.round(w.start-Number(window?.startFrame??item.startFrame)*1000/timeline.fps),endMs:Math.round(w.end-Number(window?.startFrame??item.startFrame)*1000/timeline.fps)})),spatial:{...meta.spatial,anchor:(lane.anchor??track.captions.layoutPolicy?.slots?.find(s=>s.id===lane.slotId)?.anchor??meta.spatial.anchor) as ShotCaptionContract['spatial']['anchor']}};
  return {laneId:lane.id,words:lane.words??[],contract:normalizeShotCaptionContract(raw,{enabled:raw.enabled,text:raw.text,aspectRatio:timeline.width===timeline.height?'1:1':timeline.width>timeline.height?'16:9':'9:16'})};
 }
 
