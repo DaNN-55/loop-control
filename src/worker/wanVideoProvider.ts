@@ -1,3 +1,4 @@
+import {isWanGenerationSettings,type WanGenerationSettings} from '../videoGenerationSettings.js';
 import type { MediaFetcher } from "./mediaProviders.js";
 
 export function bailianCredential(secret: string): { apiKey: string; origin: string } {
@@ -23,6 +24,7 @@ export function bailianCredential(secret: string): { apiKey: string; origin: str
 
 export interface WanReservation { new: boolean; provider_task_id?: string | null; }
 export interface WanVideoInput {
+  settings?: WanGenerationSettings;
   credentials: string;
   fetcher: MediaFetcher;
   image: Uint8Array;
@@ -42,6 +44,7 @@ export function wanVideoCostCents(durationSeconds: number): number {
 
 export async function generateWanVideo(input: WanVideoInput): Promise<Uint8Array> {
   wanVideoCostCents(input.durationSeconds);
+  if(input.settings&&!isWanGenerationSettings(input.settings))throw Error('视频生成设置无效。');
   if (!input.prompt.trim() || input.prompt.length > 1500 || input.image.byteLength === 0 || input.image.byteLength > 20 * 1024 * 1024 || !["image/png", "image/jpeg", "image/webp", "image/bmp"].includes(input.imageMime)) throw new Error("万相首帧或提示词无效。");
   // Input validation precedes the reservation and every paid request.
   const { apiKey, origin } = bailianCredential(input.credentials);
@@ -52,7 +55,7 @@ export async function generateWanVideo(input: WanVideoInput): Promise<Uint8Array
     const response = await input.fetcher(`${origin}/api/v1/services/aigc/video-generation/video-synthesis`, {
       method: "POST", signal: AbortSignal.timeout(30_000),
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json", "X-DashScope-Async": "enable" },
-      body: JSON.stringify({ model: "wan2.6-i2v-flash", input: { prompt: input.prompt.trim(), img_url: `data:${input.imageMime};base64,${Buffer.from(input.image).toString("base64")}` }, parameters: { resolution: "720P", duration: input.durationSeconds, audio: false, prompt_extend: false, watermark: false } }),
+      body: JSON.stringify({ model: "wan2.6-i2v-flash", input: { prompt: input.prompt.trim(), ...(input.settings?.negativePrompt?{negative_prompt:input.settings.negativePrompt}:{}),img_url: `data:${input.imageMime};base64,${Buffer.from(input.image).toString("base64")}` }, parameters: { resolution: "720P", duration: input.durationSeconds, audio: false, prompt_extend: false, watermark: false,...(input.settings?{resolution:input.settings.resolution,audio:input.settings.audio,prompt_extend:input.settings.promptExtend,watermark:input.settings.watermark,...(input.settings.promptExtend?{shot_type:input.settings.shotType}:{}),...(input.settings.seed!==undefined?{seed:input.settings.seed}:{})}:{}) } }),
     });
     const data = await supplierJson(response);
     taskId = typeof data.task_id === "string" ? data.task_id : "";

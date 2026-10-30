@@ -52,3 +52,9 @@ describe("Bailian video provider", () => {
     expect(fetcher).toHaveBeenCalledTimes(2);
   });
 });
+
+it('sends explicit Wan settings in the paid request and rejects incompatible multi-shot settings before reserving',async()=>{
+ const fetcher=vi.fn().mockResolvedValueOnce(output({task_id:'settings-task'})).mockResolvedValueOnce(output({task_status:'SUCCEEDED',video_url:'https://dashscope-result-bj.oss-cn-beijing.aliyuncs.com/video.mp4'})).mockResolvedValueOnce(new Response(new Uint8Array([4,5]),{headers:{'Content-Type':'video/mp4'}}));
+ const settings={resolution:'1080P' as const,audio:true,promptExtend:true,shotType:'multi' as const,watermark:true,negativePrompt:'画面闪烁',seed:123};await generateWanVideo({...base(),fetcher,settings});expect(JSON.parse(fetcher.mock.calls[0][1].body)).toMatchObject({input:{negative_prompt:'画面闪烁'},parameters:{resolution:'1080P',audio:true,prompt_extend:true,shot_type:'multi',watermark:true,seed:123}});
+ const input=base();await expect(generateWanVideo({...input,fetcher:vi.fn(),settings:{...settings,promptExtend:false}})).rejects.toThrow('设置无效');expect(input.reserve).not.toHaveBeenCalled();
+});

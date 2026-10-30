@@ -7,7 +7,7 @@ function input(provider:OnlineProvider){return{provider,adapter:endpoints[provid
 afterEach(()=>{for(const p of dirs.splice(0))rmSync(p,{recursive:true,force:true});});
 it('uses the officially migrated Pexels v1 video search path',async()=>{const transport=vi.fn(async(_input:string|URL,_init?:RequestInit)=>Response.json({page:1,per_page:1,videos:[{id:1,video_files:[{file_type:'video/mp4'}]}]}));expect(await createProviderProbe(fixture('pexels'),transport).verify(input('pexels'))).toBe('verified');expect(String(transport.mock.calls[0]?.[0])).toBe('https://api.pexels.com/v1/videos/search?query=nature&per_page=1');});
 it.each(Object.keys(endpoints).filter(p=>!['cloudflare','google_tts'].includes(p)) as OnlineProvider[])('classifies a compatible %s response with one reserved request',async provider=>{
- const payloads={volcengine:{items:[]},minimax:{items:[]},kling:{code:0,data:[]},bailian:{output:{models:[{model:'wan2.6-i2v-flash'}]}},openai:{id:'gpt-image-1'},cloudflare:{success:true,result:[{name:'@cf/black-forest-labs/flux-1-schnell'}]},pexels:{page:1,per_page:1,videos:[{id:1,video_files:[{file_type:'video/mp4'}]}]},freesound:{results:[{id:1}]},google_tts:{voices:[{name:'cmn-CN-Standard-A',languageCodes:['cmn-CN']}]}};
+ const payloads={volcengine:{items:[]},minimax:{items:[]},kling:{code:0,data:[]},bailian:{output:{models:[{model:'wan2.6-i2v-flash'}]}},openai:{id:'gpt-image-2'},cloudflare:{success:true,result:[{name:'@cf/black-forest-labs/flux-1-schnell'}]},pexels:{page:1,per_page:1,videos:[{id:1,video_files:[{file_type:'video/mp4'}]}]},freesound:{results:[{id:1}]},google_tts:{voices:[{name:'cmn-CN-Standard-A',languageCodes:['cmn-CN']}]}};
  const c=fixture(provider),transport=vi.fn(async()=>provider==='volcengine_tts'?new Response('data: '+JSON.stringify({code:0,data:Buffer.from('ID3synthetic-test').toString('base64')})+'\n'):Response.json(payloads[provider as keyof typeof payloads]));const probe=createProviderProbe(c,transport);expect(await probe.verify(input(provider))).toBe('verified');expect(transport).toHaveBeenCalledTimes(1);const s=JSON.parse(readFileSync(join(c.directory,'state.json'),'utf8'));expect(s.used).toBe(1);expect(s.events.at(-1).bytes).toBeGreaterThan(0);expect(JSON.stringify(s)).not.toContain('synthetic-token');
 });
 it.each(Object.keys(endpoints).filter(p=>!['cloudflare','google_tts'].includes(p)) as OnlineProvider[])('keeps %s closed without touching transport',async provider=>{const c=fixture(provider,false),transport=vi.fn(),probe=createProviderProbe(c,transport);expect(probe.networkAvailable).toBe(false);expect(await probe.verify(input(provider))).toBe('retryable');expect(transport).not.toHaveBeenCalled();});
@@ -41,4 +41,14 @@ it.each(Object.keys(endpoints).filter(p=>!['cloudflare','google_tts'].includes(p
  expect(probe.networkAvailable).toBe(false);expect(probe.verificationStatus!(provider).available).toBe(true);
  for(let n=0;n<4;n++)expect((await probe.test!(input(provider))).outcome).toBe('invalid');
  expect(transport).toHaveBeenCalledTimes(4);expect(readFileSync(join(c.directory,'state.json'),'utf8')).toBe(before);
+});
+
+it('verifies GPT Image 2 model access without invoking image generation',async()=>{
+ const transport=vi.fn(async(_input:string|URL,_init?:RequestInit)=>Response.json({id:'gpt-image-2'}));
+ expect(await createProviderProbe(fixture('openai'),transport).verify(input('openai'))).toBe('verified');
+ expect(transport).toHaveBeenCalledTimes(1);
+ expect(String(transport.mock.calls[0]?.[0])).toBe('https://api.openai.com/v1/models/gpt-image-2');
+});
+it('does not accept the retired image model as GPT Image 2 verification',async()=>{
+ expect(await createProviderProbe(fixture('openai'),async()=>Response.json({id:'gpt-image-1'})).verify(input('openai'))).toBe('retryable');
 });

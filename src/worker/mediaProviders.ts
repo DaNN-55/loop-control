@@ -1,5 +1,6 @@
 import {retiredProviderMessage} from './providerLifecycle.js';
 import { randomUUID } from "node:crypto";
+import {isImageGenerationSettings, type ImageGenerationSettings} from '../imageGeneration.js';
 
 export interface MediaFetcher {
   (input: string | URL, init?: RequestInit): Promise<Response>;
@@ -21,19 +22,30 @@ export interface FreesoundPreview {
 }
 
 export async function generateOpenAiImage(input: { apiKey: string; fetcher: MediaFetcher; model: string; prompt: string }): Promise<Uint8Array> {
+  return (await generateOpenAiImages(input))[0];
+}
+
+export async function generateOpenAiImages(input: { apiKey: string; fetcher: MediaFetcher; model: string; prompt: string; settings?: ImageGenerationSettings; references?: Array<{mimeType:string;bytes:Uint8Array}> }): Promise<Uint8Array[]> {
   if (!input.apiKey.trim() || !input.model.trim() || !input.prompt.trim()) throw new Error("OpenAI Images 配置或视觉提示词无效。");
-  const response = await input.fetcher("https://api.openai.com/v1/images/generations", {
+  if (input.settings && !isImageGenerationSettings(input.settings)) throw Error('图片生成参数无效。');
+  const refs=input.references??[];
+  if(refs.length>16||refs.some(r=>!['image/png','image/jpeg','image/webp'].includes(r.mimeType)||!r.bytes.length||r.bytes.length>20*1024*1024))throw Error('参考图格式或大小无效。');
+  const response = await input.fetcher(`https://api.openai.com/v1/images/${refs.length?'edits':'generations'}`, {
     method: "POST",
     headers: { Authorization: `Bearer ${input.apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ model: input.model, prompt: input.prompt, size: "1024x1536", output_format: "png" }),
+    body: JSON.stringify({ model: input.model, prompt: input.prompt, n: input.settings?.count??1, size: input.settings?.size??"1024x1536", output_format: "png", ...(input.settings?{quality:input.settings.quality}:{}), ...(refs.length?{images:refs.map(r=>({image_url:`data:${r.mimeType};base64,${Buffer.from(r.bytes).toString('base64')}`}))}:{}) }),
   });
   const payload: unknown = await response.json();
   if (!response.ok) throw new Error(`OpenAI Images 请求失败：HTTP ${response.status}。`);
-  const encoded = isRecord(payload) && Array.isArray(payload.data) && isRecord(payload.data[0]) ? payload.data[0].b64_json : undefined;
+  if(!isRecord(payload)||!Array.isArray(payload.data)||!payload.data.length)throw Error('OpenAI Images 响应缺少 PNG 数据。');
+  if(payload.data.length!==(input.settings?.count??1))throw Error('OpenAI Images 返回的图片数量不完整。');
+  return payload.data.map(row=>{
+  const encoded = isRecord(row)?row.b64_json:undefined;
   if (typeof encoded !== "string" || !encoded) throw new Error("OpenAI Images 响应缺少 PNG 数据。");
   const bytes = Uint8Array.from(Buffer.from(encoded, "base64"));
   if (bytes.byteLength < 8 || !bytes.slice(0, 8).every((value, index) => value === [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a][index])) throw new Error("OpenAI Images 响应不是 PNG 图片。");
   return bytes;
+  });
 }
 
 export async function generateCloudflareWorkersAiImage(_input: { credentials: string; fetcher: MediaFetcher; model: string; prompt: string }): Promise<Uint8Array> {

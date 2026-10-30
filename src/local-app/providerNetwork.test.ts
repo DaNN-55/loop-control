@@ -2,7 +2,7 @@
 import{afterEach,it,expect,vi}from'vitest';import{mkdtempSync,writeFileSync,readFileSync,rmSync,realpathSync,unlinkSync}from'node:fs';import{join}from'node:path';import{tmpdir}from'node:os';import{createHash}from'node:crypto';
 import{createProviderFetcher,type ProviderNetworkConfiguration}from'./providerNetwork';
 import{createServer}from'node:http';
-import{synthesizeGoogleTts,synthesizeVolcengineTts}from'../worker/mediaProviders';
+import{generateOpenAiImage,synthesizeGoogleTts,synthesizeVolcengineTts}from'../worker/mediaProviders';
 const dirs:string[]=[];
 function fixture(enabled:boolean,maxRequests=1):ProviderNetworkConfiguration{const directory=realpathSync(mkdtempSync(join(tmpdir(),'provider-budget-')));dirs.push(directory);const policy={version:1,runId:'fixture',enabled,expiresAt:'2099-01-01T00:00:00Z',maxRequests,currency:'USD',maxCostMicrounits:100,priceEvidenceSha256:'a'.repeat(64),approvalSha256:'b'.repeat(64),providers:['pexels'],operations:{'pexels.verify':{maxRequests,maxBytes:64,timeoutMs:1000,costMicrounits:0}}};const bytes=JSON.stringify(policy);const policySha256=createHash('sha256').update(bytes).digest('hex');writeFileSync(join(directory,'policy.json'),bytes,{mode:0o600});writeFileSync(join(directory,'state.json'),JSON.stringify({version:1,policySha256,used:0,costMicrounits:0,byOperation:{},halted:false,events:[]}),{mode:0o600});return{directory,policySha256};}
 afterEach(()=>{for(const p of dirs.splice(0))rmSync(p,{recursive:true,force:true});vi.unstubAllGlobals();});
@@ -149,3 +149,26 @@ for(const selected of ['volcengine_tts'] as const){
 }
 
 it.each(['cloudflare','google_tts'] as const)('blocks retired %s before transport and reservation',async provider=>{const c=fixture(true),transport=vi.fn();await expect(createProviderFetcher(c,provider,'verify',transport)(provider==='cloudflare'?'https://api.cloudflare.com/client/v4/accounts/a/ai/models/search':'https://texttospeech.googleapis.com/v1/voices')).rejects.toThrow();expect(transport).not.toHaveBeenCalled();expect(JSON.parse(readFileSync(join(c.directory,'state.json'),'utf8')).used).toBe(0);});
+
+it('runs GPT Image 2 through the production request budget and rejects retired or unbounded requests before dispatch',async()=>{
+ const c=fixture(true,2),policy=JSON.parse(readFileSync(join(c.directory,'policy.json'),'utf8'));
+ policy.providers=['openai'];policy.operations={'openai.generate':{maxRequests:2,maxBytes:1024,timeoutMs:1000,costMicrounits:1}};
+ const bytes=JSON.stringify(policy);c.policySha256=createHash('sha256').update(bytes).digest('hex');
+ writeFileSync(join(c.directory,'policy.json'),bytes,{mode:0o600});
+ writeFileSync(join(c.directory,'state.json'),JSON.stringify({version:1,policySha256:c.policySha256,used:0,costMicrounits:0,byOperation:{},halted:false,events:[]}),{mode:0o600});
+ const png=Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aD1sAAAAASUVORK5CYII=','base64');
+ const transport=vi.fn(async(_url:string|URL,init?:RequestInit)=>{
+  expect(JSON.parse(String(init?.body))).toEqual({model:'gpt-image-2',prompt:'清晨的雪山',n:1,size:'1024x1536',output_format:'png'});
+  expect(JSON.parse(readFileSync(join(c.directory,'state.json'),'utf8')).used).toBe(1);
+  return Response.json({data:[{b64_json:png.toString('base64')}]});
+ });
+ const fetcher=createProviderFetcher(c,'openai','execute',transport);
+ await expect(generateOpenAiImage({apiKey:'synthetic-image-key',fetcher,model:'gpt-image-2',prompt:'清晨的雪山'})).resolves.toEqual(new Uint8Array(png));
+ for(const override of [{model:'gpt-image-1'},{n:3},{size:'4096x4096'},{prompt:'x'.repeat(1201)}]){
+  await expect(fetcher('https://api.openai.com/v1/images/generations',{method:'POST',body:JSON.stringify({model:'gpt-image-2',prompt:'test',n:1,size:'1024x1536',output_format:'png',...override})})).rejects.toThrow();
+ }
+ expect(transport).toHaveBeenCalledTimes(1);
+ const state=readFileSync(join(c.directory,'state.json'),'utf8');
+ expect(JSON.parse(state)).toMatchObject({used:1,costMicrounits:1,byOperation:{'openai.generate':1}});
+ expect(state).not.toContain('synthetic-image-key');
+});

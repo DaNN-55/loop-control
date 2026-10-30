@@ -490,6 +490,11 @@ function media(snapshot: Record<string, unknown>): WorkerTaskPackageInput["media
   const value = snapshot.media;
   if (value === undefined) return undefined;
   if (!isRecord(value)) throw new Error("媒体任务冻结配置格式无效。");
+  if(value.adapter==='openai_images') {
+    const image=value.static_visual;
+    if(!isRecord(image))throw Error('图片生成输入无效。');
+    return {adapter:'openai_images',staticVisual:{prompt:requiredString(image.prompt,'缺少图片提示词。'),settings:image.settings as import('../imageGeneration.js').ImageGenerationSettings,references:image.references as Array<ArtifactManifest&{mimeType:string}>}};
+  }
   if (value.adapter === "google_tts" || value.adapter === "volcengine_tts") {
     const narration = value.narration;
     if (!isRecord(narration) || !isRecord(narration.voice)) throw new Error("旁白任务冻结配置无效。");
@@ -508,7 +513,7 @@ function media(snapshot: Record<string, unknown>): WorkerTaskPackageInput["media
   if (value.adapter === "wan_video" || videoAdapters.includes(String(value.adapter))) {
     const video = value.wan_video;
     if (!isRecord(video) || !isRecord(video.first_frame)) throw new Error("万相镜头缺少冻结首帧。");
-    return { adapter: value.adapter as "wan_video" | "seedance_video" | "minimax_video" | "kling_video", wanVideo: { firstFrame: video.first_frame as unknown as ArtifactManifest, prompt: requiredString(video.prompt, "缺少视频提示词。"), durationSeconds: requiredPositiveNumber(video.duration_seconds, "缺少视频时长。"), imageMime: requiredString(video.image_mime, "缺少首帧 MIME。") } };
+    return { adapter: value.adapter as "wan_video" | "seedance_video" | "minimax_video" | "kling_video", wanVideo: { settings:video.settings as import('../videoGenerationSettings.js').WanGenerationSettings,composition:video.composition as import('../videoGenerationSettings.js').FirstFrameComposition,firstFrame: video.first_frame as unknown as ArtifactManifest, prompt: requiredString(video.prompt, "缺少视频提示词。"), durationSeconds: requiredPositiveNumber(video.duration_seconds, "缺少视频时长。"), imageMime: requiredString(video.image_mime, "缺少首帧 MIME。") } };
   }
   if (value.adapter === "pexels_video") {
     const bRoll = value.b_roll;

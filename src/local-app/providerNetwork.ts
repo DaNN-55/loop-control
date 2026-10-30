@@ -1,3 +1,5 @@
+import {isWanGenerationSettings} from '../videoGenerationSettings.js';
+import {imageSizes} from '../imageGeneration.js';
 import {isRetiredProvider} from '../worker/providerLifecycle.js';
 import {isVideoProvider} from "../worker/videoProviderCatalog.js";
 import {officialVideoOperation} from "./officialVideoNetwork.js";
@@ -72,8 +74,8 @@ function requestOperation(provider:OnlineProvider,phase:'verify'|'execute',input
   if(api('freesound.org','/apiv2/search/'))op=phase==='verify'?'verify':'search';
   if(phase==='execute'&&u.hostname==='cdn.freesound.org'&&u.pathname.startsWith('/previews/')&&!u.search)op='download';
  }else if(provider==='openai'){
-  if(phase==='verify'&&method==='GET'&&api('api.openai.com','/v1/models/gpt-image-1'))op='verify';
-  if(phase==='execute'&&method==='POST'&&api('api.openai.com','/v1/images/generations'))op='generate';
+  if(phase==='verify'&&method==='GET'&&api('api.openai.com','/v1/models/gpt-image-2'))op='verify';
+  if(phase==='execute'&&method==='POST'&&(api('api.openai.com','/v1/images/generations')||api('api.openai.com','/v1/images/edits')))op='generate';
  }else if(provider==='cloudflare'){
   if(u.hostname==='api.cloudflare.com'&&/^\/client\/v4\/accounts\/[a-f0-9]{32}\/ai\//.test(u.pathname)){
    if(phase==='verify'&&method==='GET'&&u.pathname.endsWith('/ai/models/search')&&u.searchParams.get('search')==='@cf/black-forest-labs/flux-1-schnell')op='verify';
@@ -91,9 +93,9 @@ function requestOperation(provider:OnlineProvider,phase:'verify'|'execute',input
  }else if(provider==='volcengine_tts'&&method==='POST'&&api('openspeech.bytedance.com','/api/v3/tts/unidirectional/sse'))op=phase==='verify'?'verify':'generate';
  if(!op)throw denied();
  if(method==='POST'){
-  if(typeof init.body!=='string'||Buffer.byteLength(init.body)>(provider==='bailian'?28*1024*1024:16384))throw denied();const b=JSON.parse(init.body);
-  if(provider==='bailian'&&(b.model!=='wan2.6-i2v-flash'||typeof b.input?.prompt!=='string'||!b.input.prompt.trim()||b.input.prompt.length>1500||typeof b.input?.img_url!=='string'||!/^data:image\/(png|jpeg|webp|bmp);base64,/.test(b.input.img_url)||!Number.isInteger(b.parameters?.duration)||b.parameters.duration<2||b.parameters.duration>15||b.parameters.resolution!=='720P'||b.parameters.audio!==false||b.parameters.prompt_extend!==false||b.parameters.watermark!==false))throw denied();
-  if(provider==='openai'&&(b.model!=='gpt-image-1'||b.size!=='1024x1536'||b.output_format!=='png'||b.n!==undefined&&b.n!==1||typeof b.prompt!=='string'||b.prompt.length>1200))throw denied();
+  if(typeof init.body!=='string'||Buffer.byteLength(init.body)>(provider==='bailian'?28*1024*1024:provider==='openai'?64*1024*1024:16384))throw denied();const b=JSON.parse(init.body);
+  if(provider==='bailian'&&(b.model!=='wan2.6-i2v-flash'||typeof b.input?.prompt!=='string'||!b.input.prompt.trim()||b.input.prompt.length>1500||typeof b.input?.img_url!=='string'||!/^data:image\/(png|jpeg|webp|bmp);base64,/.test(b.input.img_url)||!Number.isInteger(b.parameters?.duration)||b.parameters.duration<2||b.parameters.duration>15||!isWanGenerationSettings({resolution:b.parameters?.resolution,audio:b.parameters?.audio,promptExtend:b.parameters?.prompt_extend,shotType:b.parameters?.shot_type??'single',watermark:b.parameters?.watermark,negativePrompt:b.input?.negative_prompt??'',...(b.parameters?.seed!==undefined?{seed:b.parameters.seed}:{})})))throw denied();
+  if(provider==='openai'&&(b.model!=='gpt-image-2'||!imageSizes.includes(b.size)||b.output_format!=='png'||b.n!==undefined&&![1,2,4].includes(b.n)||typeof b.prompt!=='string'||b.prompt.length>1200||b.quality!==undefined&&!['auto','low','medium','high'].includes(b.quality)||b.images!==undefined&&(!Array.isArray(b.images)||!b.images.length||b.images.length>16||b.images.some((r:{image_url?:unknown})=>typeof r.image_url!=='string'||!/^data:image\/(png|jpeg|webp);base64,/.test(r.image_url)))))throw denied();
   if(provider==='cloudflare'&&(b.steps!==4||typeof b.prompt!=='string'||b.prompt.length>1200))throw denied();
   if(provider==='google_tts'&&(typeof b.input?.text!=='string'||!b.input.text.trim()||b.audioConfig?.audioEncoding!=='MP3'))throw denied();
   if(provider==='volcengine_tts'&&(typeof b.req_params?.text!=='string'||!b.req_params.text.trim()))throw denied();

@@ -6,8 +6,15 @@ describe("受控媒体供应商", () => {
     const png = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 1]);
     const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ data: [{ b64_json: png.toString("base64") }] }), { status: 200 }));
 
-    await expect(generateOpenAiImage({ apiKey: "openai-key", fetcher, model: "gpt-image-1", prompt: "雨夜的古城门" })).resolves.toEqual(new Uint8Array(png));
+    await expect(generateOpenAiImage({ apiKey: "openai-key", fetcher, model: "gpt-image-2", prompt: "雨夜的古城门" })).resolves.toEqual(new Uint8Array(png));
     expect(fetcher).toHaveBeenCalledWith("https://api.openai.com/v1/images/generations", expect.objectContaining({ method: "POST", headers: expect.objectContaining({ Authorization: "Bearer openai-key" }) }));
+    expect(JSON.parse(fetcher.mock.calls[0][1].body)).toEqual({ model: "gpt-image-2", prompt: "雨夜的古城门", n: 1, size: "1024x1536", output_format: "png" });
+  });
+  it.each([
+    [{ data: [] }, "缺少 PNG"],
+    [{ data: [{ b64_json: Buffer.from("not a PNG").toString("base64") }] }, "不是 PNG"],
+  ])("拒绝无效图片响应，不将其登记为 PNG", async (payload, message) => {
+    await expect(generateOpenAiImage({ apiKey: "synthetic", model: "gpt-image-2", prompt: "test", fetcher: async () => Response.json(payload) })).rejects.toThrow(message);
   });
   it("停用 Cloudflare 和 Google TTS 的旧执行入口，且不发出网络请求", async () => {
     const fetcher=vi.fn();

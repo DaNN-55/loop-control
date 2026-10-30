@@ -80,7 +80,7 @@ const manifest: readonly RegisteredAdapterDefinition[] = [
     { capability: "storyboard_planning", configurationFields: ["model", "prompt_harness"], modelCatalog: [], presetCatalog: [] },
   ] },
   { provider: "openai", adapter: "openai_images", executionPath: "external", connection: { kind: "owner_managed", type: "openai_api" }, execution: { kind: "controlled_media", safetyLimit: 1 }, capabilities: [
-    { capability: "static_visual_generation", configurationFields: ["model", "credential_ref", "max_attempts"], modelCatalog: ["gpt-image-1"], presetCatalog: ["static-visual-v1"] },
+    { capability: "static_visual_generation", configurationFields: ["model", "credential_ref", "max_attempts"], modelCatalog: ["gpt-image-2"], presetCatalog: ["static-visual-v1"] },
   ] },
   { provider: "pexels", adapter: "pexels_video", executionPath: "external", connection: { kind: "owner_managed", type: "pexels_api" }, execution: { kind: "controlled_media", safetyLimit: 3 }, capabilities: [
     { capability: "b_roll_generation", configurationFields: ["max_attempts"], modelCatalog: ["pexels-video-v1"], presetCatalog: ["b-roll-v1"] },

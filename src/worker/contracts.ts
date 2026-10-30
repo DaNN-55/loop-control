@@ -194,7 +194,7 @@ export interface WorkerTaskPackageInput {
     shot: StoryboardShotManifest;
   };
   media?:
-    | { adapter: "wan_video" | "seedance_video" | "minimax_video" | "kling_video"; wanVideo: { firstFrame: ArtifactManifest; prompt: string; durationSeconds: number; imageMime: string } }
+    | { adapter: "wan_video" | "seedance_video" | "minimax_video" | "kling_video"; wanVideo: { settings?:import('../videoGenerationSettings.js').WanGenerationSettings;composition?:import('../videoGenerationSettings.js').FirstFrameComposition;firstFrame: ArtifactManifest; prompt: string; durationSeconds: number; imageMime: string } }
     | {
       adapter: "google_tts" | "volcengine_tts";
       narration: {
@@ -249,6 +249,8 @@ export interface WorkerTaskPackageInput {
     | {
       adapter: "openai_images" | "workers_ai_images";
       staticVisual: {
+        settings?: import("../imageGeneration.js").ImageGenerationSettings;
+        references?: Array<ArtifactManifest & {mimeType:string}>;
         prompt: string;
       };
     };

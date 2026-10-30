@@ -235,9 +235,11 @@ describe("账号蓝图表单转换", () => {
   });
 
   it("校验静态视觉必须使用 OpenAI 已验证连接版本引用", () => {
-    const form = blueprintPolicyToForm({ static_visual: { execution_path: "external", credential_ref: "openai-default", executor: { provider: "openai", adapter: "openai_images", model: "gpt-image-1", prompt_version: "static-visual-v1" }, allowed_tools: ["read", "write"], budget_cents: 10, max_attempts: 1 } }).mediaAdapters.static_visual;
+    const form = blueprintPolicyToForm({ static_visual: { execution_path: "external", credential_ref: "openai-default", executor: { provider: "openai", adapter: "openai_images", model: "gpt-image-2", prompt_version: "static-visual-v1" }, allowed_tools: ["read", "write"], budget_cents: 10, max_attempts: 1 } }).mediaAdapters.static_visual;
     expect(() => validateMediaAdapter("static_visual", form)).toThrow("外部连接");
-    expect(() => validateMediaAdapter("static_visual", { ...form, credentialRef: "44444444-4444-4444-8444-444444444444" })).not.toThrow();
+    const configured = { ...form, credentialRef: "44444444-4444-4444-8444-444444444444" };
+    expect(() => validateMediaAdapter("static_visual", configured)).not.toThrow();
+    expect(() => validateMediaAdapter("static_visual", { ...configured, model: "gpt-image-1" })).toThrow();
   });
 });
 

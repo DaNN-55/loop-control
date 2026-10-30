@@ -30,7 +30,7 @@ export function createProviderProbe(config:ProviderNetworkConfiguration,transpor
    let url:string,headers:Record<string,string>={};
    if(isVideoProvider(provider)){url=videoProviders[provider].endpoint+(provider==='volcengine'?'/contents/generations/tasks':provider==='minimax'?'/v2/query/video_generation':'/v1/videos/image2video')+(provider==='kling'?'?pageNum=1&pageSize=1':'?page_num=1&page_size=1');headers.Authorization=videoAuthorization(provider,input.secret);}
    else if(provider==='bailian'){const credential=bailianCredential(input.secret);url=credential.origin+'/api/v1/models?model=wan2.6-i2v-flash&page_no=1&page_size=20';headers.Authorization='Bearer '+credential.apiKey;}
-   else if(provider==='openai'){url='https://api.openai.com/v1/models/gpt-image-1';headers.Authorization='Bearer '+input.secret;}
+   else if(provider==='openai'){url='https://api.openai.com/v1/models/gpt-image-2';headers.Authorization='Bearer '+input.secret;}
    else if(provider==='pexels'){url='https://api.pexels.com/v1/videos/search?query=nature&per_page=1';headers.Authorization=input.secret;}
    else{const u=new URL('https://freesound.org/apiv2/search/');u.searchParams.set('token',input.secret);u.searchParams.set('query','rain');u.searchParams.set('fields','id');u.searchParams.set('page_size','1');url=u.toString();}
    await fetcher(url,{headers});return outcome;
@@ -46,7 +46,7 @@ async function classify(provider:OnlineProvider,r:Response):Promise<'verified'|'
   if(provider==='volcengine'||provider==='minimax')return Array.isArray(body.items)?'verified':'retryable';
   if(provider==='kling')return body.code===0&&Array.isArray(body.data)?'verified':body.code===1002||body.code===1003?'invalid':'retryable';
   if(provider==='bailian')return Array.isArray(body.output?.models)&&body.output.models.some((m:{model?:string})=>m.model==='wan2.6-i2v-flash')?'verified':'retryable';
-  if(provider==='openai')return body.id==='gpt-image-1'?'verified':'retryable';
+  if(provider==='openai')return body.id==='gpt-image-2'?'verified':'retryable';
   if(provider==='pexels')return body.page===1&&body.per_page===1&&Array.isArray(body.videos)&&body.videos.length===1&&Number.isSafeInteger(body.videos[0]?.id)&&Array.isArray(body.videos[0]?.video_files)&&body.videos[0].video_files.some((v:{file_type?:string})=>v.file_type==='video/mp4')?'verified':'retryable';
   return Array.isArray(body.results)&&body.results.some((v:{id?:number})=>Number.isSafeInteger(v.id)&&Number(v.id)>0)?'verified':'retryable';
  }catch{return'retryable';}
