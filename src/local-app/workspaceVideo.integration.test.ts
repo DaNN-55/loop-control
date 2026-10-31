@@ -8,6 +8,7 @@ import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {join} from 'node:path';
 import {adjustWorkspaceVideoRange} from '../workspaceVideo';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
+import {editStudioDocument} from './studioDocument.fixture';
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner prepares independent exact ranges from one source across multiple shots',async()=>{
  const f=await productionWorkspaceFixture();try{
   const made=await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});expect(made.status).toBe(200);let w=made.body;
@@ -80,11 +81,11 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner boundaries reject 
   expect((await f.request('saveWorkspaceVideoRanges',{...payload,ranges:[{...payload.ranges[0],materialRevisionId:f.script}]})).status).toBe(404);
   expect((await f.request('saveWorkspaceVideoRanges',{...payload,ranges:[{...payload.ranges[0],clipId:w.clips[1].id}]})).status).toBe(409);
   expect((await f.request('saveWorkspaceVideoRanges',{...payload,ranges:[payload.ranges[0],payload.ranges[0]]})).status).toBe(400);
-  const source=join(f.assetRoot,f.videoPath),original=await readFile(source);await writeFile(source,Buffer.alloc(original.length));expect((await f.request('saveWorkspaceVideoRanges',payload)).status).toBe(409);await writeFile(source,original);
+  const source=join(f.assetRoot,f.videoPath),original=await readFile(source);await writeFile(source,Buffer.alloc(original.length));expect((await f.request('saveWorkspaceVideoRanges',payload)).status).toBe(409);await writeFile(source,original);w=await f.fillVisuals(w);
   const opened=await f.request('openWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});expect(opened.status).toBe(200);w=opened.body.productionWorkspace;
   expect((await f.request('saveWorkspaceVideoRanges',{...payload,expectedRevision:w.revision})).status).toBe(409);
-  // Simulate persisted native content from the real editor store, then save through Owner HTTP.
-  const native=join(f.assetRoot,`episodes/${f.episode}/openchatcut-work/current/runtime/project-store-v1.json`),store=JSON.parse(await readFile(native,'utf8'));store.entries[`project:${w.project.projectId}`].timelines[0].items[1].transform.x=17;await writeFile(native,JSON.stringify(store));
+  // Persist an actual native edit through the Studio ownership boundary, then save through Owner HTTP.
+  await editStudioDocument(opened.body.studioUrl,w.project.projectId,project=>{project.timelines[0].items[1].transform.x=17;});
   const saved=await f.request('saveWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision,workspaceRelativePath:opened.body.workspace.relativePath,projectId:w.project.projectId,expectedWorkspaceSha256:opened.body.workspace.sha256});expect(saved.status,JSON.stringify(saved.body)).toBe(200);w=saved.body.productionWorkspace;
   await f.request('closeWorkspaceStudio',{workspaceId:w.id,expectedRevision:w.revision});const denied=await f.request('saveWorkspaceVideoRanges',{...payload,expectedRevision:w.revision});expect(denied.status).toBe(409);expect(denied.body.error).toContain('剪辑');
   const r=await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace/project?sha=${w.project.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect((await r.json()).project.timelines[0].items[1].transform.x).toBe(17);

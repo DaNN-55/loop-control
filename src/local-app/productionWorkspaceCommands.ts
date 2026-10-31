@@ -232,7 +232,7 @@ export class ProductionWorkspaceCommands{
  }
 }
 export async function readWorkspaceProject(c:PoolClient,root:string,row:ProductionWorkspaceRecord):Promise<OpenChatCutProject>{
- try{return JSON.parse((await verifyEpisodeFile(c,root,row.episode_id,row.project_path,row.project_sha256,Number(row.project_size))).toString('utf8')) as OpenChatCutProject;}catch{throw new ConfigurationError(409,'工程快照不可用或指纹已变化，原始素材未修改。');}
+ try{return JSON.parse((await verifyEpisodeFile(c,root,row.episode_id,row.project_path,row.project_sha256,Number(row.project_size))).toString('utf8')) as OpenChatCutProject;}catch(error){if(error instanceof ConfigurationError)throw error;throw new ConfigurationError(409,'工程快照不可用或指纹已变化，原始素材未修改。');}
 }
 /** Every version is immutable. A rolled-back DB update only leaves an unreferenced snapshot. */
 export async function persistWorkspaceProject(c:PoolClient,root:string,episodeId:string,project:OpenChatCutProject){

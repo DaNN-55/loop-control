@@ -1,17 +1,19 @@
 // @vitest-environment node
 import { execFile } from "node:child_process";
-import { mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { lstat, mkdir, mkdtemp, readFile, readdir, realpath, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { promisify } from "node:util";
 import { afterEach, describe, expect, it } from "vitest";
-import { buildOpenChatCutProject } from "./openchatcutProject";
+import { buildOpenChatCutProject, type OpenChatCutProject } from "./openchatcutProject";
 import { inspectOpenChatCutProjectWithRuntime, verifyOpenChatCutProject } from "./openchatcutProjectReader";
 import { closeOpenChatCutStudio, closeStandaloneOpenChatCutStudio, freezeOpenChatCutStudio, openOpenChatCutStudio, openStandaloneOpenChatCutStudio } from "./openchatcutStudio";
 import { confirmedTtsRender } from "./openchatcutProject.fixture";
 import { createWorkerTaskPackage } from "./contracts";
 import { executeOpenChatCutRender } from "./openchatcutRenderer";
 import { defaultShotComposition } from "../shotComposition";
+import { editStudioDocument } from "../local-app/studioDocument.fixture";
+import { verifyNativeFile } from "../local-app/localFiles";
 
 const execFileAsync = promisify(execFile);
 
@@ -36,12 +38,14 @@ describe("OpenChatCut real project reader integration", () => {
       expect((await fetch(first.studioUrl)).status).toBe(200);
       const entryModule = await (await fetch(new URL("src/main.tsx", first.studioUrl))).text();
       expect(entryModule).toContain("vite-cache/deps");
-      await mkdir(join(dataDir, "project-store-v1"), { recursive: true });
-      await writeFile(join(dataDir, "project-store-v1", `${encodeURIComponent("project:standalone-project")}.json`), JSON.stringify(project));
+      await createStudioProject(first.studioUrl, "standalone-project", project);
       await closeStandaloneOpenChatCutStudio(dataDir);
       const reopened = await openStandaloneOpenChatCutStudio(dataDir, runtime);
       const saved = await waitForStoredProject(new URL(reopened.studioUrl).origin, "standalone-project");
-      expect(saved).toEqual(JSON.parse(JSON.stringify(project)));
+      const inputFingerprint = project.loopControl?.inputFingerprint;
+      if (!inputFingerprint) throw new Error("测试工程缺少输入指纹。");
+      expect((saved as { loopControl?: { inputFingerprint?: string } }).loopControl?.inputFingerprint).toBe(inputFingerprint);
+      expect(await verifyOpenChatCutProject(confirmedTtsRender(), saved as ReturnType<typeof buildOpenChatCutProject>, runtime)).toMatchObject({ readable: true });
     } finally {
       await closeStandaloneOpenChatCutStudio(dataDir);
       await rm(dataDir, { recursive: true, force: true });
@@ -63,7 +67,7 @@ describe("OpenChatCut real project reader integration", () => {
     const stored = await waitForStoredProject(new URL(opened.studioUrl).origin, opened.workspace.projectId);
     const observation = await inspectOpenChatCutProjectWithRuntime(stored, runtime);
 
-    expect(opened.studioUrl).toContain(`/#/editor/${opened.workspace.projectId}`);
+    expect(opened.studioUrl).toContain(`?lcBridge=1#/editor/${opened.workspace.projectId}`);
     expect(observation).toMatchObject({ readable: true, captionTracks: [{ enabled: true, editable: true, cues: [{ id: "cue-shot-1", text: render.confirmedShots[0].subtitleText, start: 0, end: 2000 }] }], textItemsOnCaptionTracks: 0 });
   }, 120_000);
 
@@ -78,22 +82,20 @@ describe("OpenChatCut real project reader integration", () => {
     const render = confirmedTtsRender();
     const opened = await openOpenChatCutStudio(assetRoot, episodeId, render, runtime);
     if (!opened.studioUrl) throw new Error("测试未能打开 OpenChatCut Studio。");
-    const origin = new URL(opened.studioUrl).origin;
-    const project = await waitForStoredProject(origin, opened.workspace.projectId) as ReturnType<typeof buildOpenChatCutProject>;
-    const video = project.timelines[0].items.find((item) => item.kind === "video")!;
-    video.transform = { ...video.transform as Record<string, unknown>, x: 12 };
-    const caption = project.timelines[0].tracks.C1.captions!.sourceEntries[0].words[0];
-    caption.text = "Studio 内继续编辑的字幕";
-    const audio = project.timelines[0].items.find((item) => item.kind === "audio")!;
-    audio.volume = 0.4;
-    video.fadeInFrames = 15;
+    await editStudioDocument(opened.studioUrl, opened.workspace.projectId, project => {
+      const video = project.timelines[0].items.find((item: { kind: string }) => item.kind === "video")!;
+      video.transform = { ...video.transform as Record<string, unknown>, x: 12 };
+      const caption = captionEntries(project)[0].words[0];
+      caption.text = "Studio 内继续编辑的字幕";
+      const audio = project.timelines[0].items.find((item: { kind: string }) => item.kind === "audio")!;
+      audio.volume = 0.4;
+      video.fadeInFrames = 15;
+    });
     await closeOpenChatCutStudio(episodeId);
-    const storedProjectPath = join(assetRoot, `episodes/${episodeId}/openchatcut-work/current/runtime/project-store-v1/${encodeURIComponent(`project:${opened.workspace.projectId}`)}.json`);
-    await writeFile(storedProjectPath, JSON.stringify(project) + "\n");
 
     const reopened = await openOpenChatCutStudio(assetRoot, episodeId, render, runtime);
     expect(reopened.replacementWarning).toBeUndefined();
-    expect(JSON.parse(await readFile(join(assetRoot, reopened.workspace.relativePath), "utf8")).timelines[0].tracks.C1.captions.sourceEntries[0].words[0].text).toBe("Studio 内继续编辑的字幕");
+    expect(captionEntries(JSON.parse(await readFile(join(assetRoot, reopened.workspace.relativePath), "utf8")))[0].words[0].text).toBe("Studio 内继续编辑的字幕");
     expect((await readdir(join(assetRoot, `episodes/${episodeId}/openchatcut-frozen`)).catch(() => []))).toEqual([]);
 
     const changedRender = structuredClone(render);
@@ -101,14 +103,14 @@ describe("OpenChatCut real project reader integration", () => {
     const warning = await openOpenChatCutStudio(assetRoot, episodeId, changedRender, runtime);
     expect(warning.studioUrl).toBeUndefined();
     expect(warning.replacementWarning).toEqual({ code: "openchatcut_workspace_replacement", studioHasChanges: true, modifiedScopes: expect.arrayContaining(["视频层与片段", "字幕", "音量与音轨", "转场与节奏"]) });
-    expect(JSON.parse(await readFile(join(assetRoot, warning.workspace.relativePath), "utf8")).timelines[0].tracks.C1.captions.sourceEntries[0].words[0].text).toBe("Studio 内继续编辑的字幕");
+    expect(captionEntries(JSON.parse(await readFile(join(assetRoot, warning.workspace.relativePath), "utf8")))[0].words[0].text).toBe("Studio 内继续编辑的字幕");
 
     const replaced = await openOpenChatCutStudio(assetRoot, episodeId, changedRender, runtime, { replaceWorkspace: true });
     expect(replaced.studioUrl).toBeTruthy();
     const firstFrozen = await freezeOpenChatCutStudio(assetRoot, episodeId, replaced.workspace.relativePath);
-    const regeneratedProject = await waitForStoredProject(new URL(replaced.studioUrl!).origin, replaced.workspace.projectId) as ReturnType<typeof buildOpenChatCutProject>;
-    regeneratedProject.timelines[0].tracks.C1.captions!.sourceEntries[0].words[0].text = "下一次修改";
-    await writeFile(storedProjectPath, JSON.stringify(regeneratedProject) + "\n");
+    await editStudioDocument(replaced.studioUrl!, replaced.workspace.projectId, project => {
+      captionEntries(project)[0].words[0].text = "下一次修改";
+    });
     const secondFrozen = await freezeOpenChatCutStudio(assetRoot, episodeId, replaced.workspace.relativePath);
     expect(secondFrozen.relativePath).not.toBe(firstFrozen.relativePath);
     expect(secondFrozen.sha256).not.toBe(firstFrozen.sha256);
@@ -276,7 +278,7 @@ describe("OpenChatCut real project reader integration", () => {
   it("opens, edits, freezes, and renders one real Episode containing TTS split-screen, source-audio, and silent captioned shots", async () => {
     const episodeId = "00000000-0000-4000-8000-000000000106";
     episodeIds.push(episodeId);
-    const assetRoot = await mkdtemp(join(tmpdir(), "loop-control-issue-106-real-episode-"));
+    const assetRoot = await realpath(await mkdtemp(join(tmpdir(), "loop-control-issue-106-real-episode-")));
     assetRoots.push(assetRoot);
     await mkdir(join(assetRoot, "episodes/e"), { recursive: true });
     await execFileAsync("ffmpeg", ["-nostdin", "-v", "error", "-f", "lavfi", "-i", "testsrc2=size=640x360:rate=30", "-t", "2", "-c:v", "libx264", "-pix_fmt", "yuv420p", join(assetRoot, "episodes/e/tts.mp4")]);
@@ -289,25 +291,27 @@ describe("OpenChatCut real project reader integration", () => {
 
     const opened = await openOpenChatCutStudio(assetRoot, episodeId, render, runtime);
     if (!opened.studioUrl) throw new Error("测试未能打开 OpenChatCut Studio。");
-    const origin = new URL(opened.studioUrl).origin;
-    const project = await waitForStoredProject(origin, opened.workspace.projectId) as ReturnType<typeof buildOpenChatCutProject>;
-    const visual = project.timelines[0].items.find((item) => item.id === "shot-shot-tts-top")!;
-    visual.transform = { ...visual.transform as Record<string, unknown>, x: 8 };
-    const sourceCaption = project.timelines[0].tracks.C1.captions!.sourceEntries.find((entry) => entry.id === "lane-shot-source")!.words[0];
-    sourceCaption.text = "OpenChatCut 修改后的原声字幕";
-    sourceCaption.start += 50;
-    sourceCaption.end -= 50;
-    const narration = project.timelines[0].items.find((item) => item.id === "main-tts-narration-shot-tts")!;
-    narration.volume = 0.5;
+    await editStudioDocument(opened.studioUrl, opened.workspace.projectId, project => {
+      const visual = project.timelines[0].items.find((item: { id: string }) => item.id === "shot-shot-tts-top")!;
+      visual.transform = { ...visual.transform as Record<string, unknown>, x: 8 };
+      const sourceCaption = captionEntries(project).find((entry: { id: string }) => entry.id === "lane-shot-source")!.words[0];
+      sourceCaption.text = "OpenChatCut 修改后的原声字幕";
+      sourceCaption.start += 50;
+      sourceCaption.end -= 50;
+      const narration = project.timelines[0].items.find((item: { id: string }) => item.id === "main-tts-narration-shot-tts")!;
+      narration.volume = 0.5;
+    });
     await closeOpenChatCutStudio(episodeId);
-    const storedProjectPath = join(assetRoot, `episodes/${episodeId}/openchatcut-work/current/runtime/project-store-v1/${encodeURIComponent(`project:${opened.workspace.projectId}`)}.json`);
-    await writeFile(storedProjectPath, JSON.stringify(project) + "\n");
     const reopened = await openOpenChatCutStudio(assetRoot, episodeId, render, runtime);
     if (!reopened.studioUrl) throw new Error("修改后的 OpenChatCut 工程未能重新打开。");
     const reopenedProject = await waitForStoredProject(new URL(reopened.studioUrl).origin, reopened.workspace.projectId) as ReturnType<typeof buildOpenChatCutProject>;
-    expect(reopenedProject.timelines[0].tracks.C1.captions!.sourceEntries.find((entry) => entry.id === "lane-shot-source")!.words[0].text).toBe("OpenChatCut 修改后的原声字幕");
+    expect(captionEntries(reopenedProject).find((entry: { id: string }) => entry.id === "lane-shot-source")!.words[0].text).toBe("OpenChatCut 修改后的原声字幕");
     const frozen = await freezeOpenChatCutStudio(assetRoot, episodeId, reopened.workspace.relativePath);
     render.studioProject = { relativePath: frozen.relativePath, sha256: frozen.sha256, fileSize: frozen.fileSize };
+    const frozenFile = await lstat(join(assetRoot, frozen.relativePath));
+    expect(frozenFile.size).toBe(frozen.fileSize);
+    expect(frozenFile.nlink).toBe(1);
+    await expect(verifyNativeFile(assetRoot, frozen.relativePath, frozen.sha256, frozen.fileSize)).resolves.toEqual(expect.any(Buffer));
     const taskPackage = createWorkerTaskPackage({
       task: { id: "review-real-three-paths", type: "generate_review_render", attempt: 0, budgetLimitCents: 0, maxAttempts: 1, provider: "openchatcut", model: "openchatcut@0.2.14", promptVersion: "review-render-v1" },
       episode: { id: episodeId, accountId: "account-real", blueprintVersionId: "blueprint-real", title: "Issue 106 三路径真实 Episode" },
@@ -316,6 +320,7 @@ describe("OpenChatCut real project reader integration", () => {
       output: { requiredArtifactTypes: ["review_render_video", "review_render_project", "review_render_runtime", "review_qc_report"], contentType: "video/mp4", relativePath: `episodes/${episodeId}/review-render/v1/review.mp4`, reviewStage: "pre_render" },
       inputArtifacts: render.members.map((member) => ({ artifactType: member.memberKind, relativePath: member.relativePath, sha256: member.sha256, fileSize: 1 })),
     });
+    expect(taskPackage.reviewRender?.studioProject).toEqual(render.studioProject);
     const inspect = async (path: string) => {
       const { stdout } = await execFileAsync("ffprobe", ["-v", "error", "-show_entries", "format=duration:stream=codec_type,width,height", "-of", "json", path]);
       const probe = JSON.parse(stdout) as { format?: { duration?: string }; streams?: Array<{ codec_type?: string; width?: number; height?: number }> };
@@ -362,6 +367,25 @@ describe("OpenChatCut real project reader integration", () => {
     await expect(verifyOpenChatCutProject(render, unreadable, runtime)).rejects.toThrow("OpenChatCut 真实读取失败");
   });
 });
+
+async function createStudioProject(baseUrl: string, projectId: string, project: ReturnType<typeof buildOpenChatCutProject>): Promise<void> {
+  const origin = new URL(baseUrl).origin;
+  const headers = { Origin: origin, "Sec-Fetch-Site": "none", "Content-Type": "application/json" };
+  const created = await fetch(`${origin}/api/project-store/project-document/write`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ operation: "project-document-write", key: `project:${projectId}`, expectedRevision: null, value: project }),
+  });
+  expect(created.status).toBe(200);
+  expect((await created.json()).accepted).toBe(true);
+}
+
+function captionEntries(project: OpenChatCutProject) {
+  for (const track of Object.values(project.timelines[0].tracks)) {
+    if (track.captions) return track.captions.sourceEntries;
+  }
+  throw new Error("Studio 项目缺少可编辑字幕轨。");
+}
 
 async function waitForStoredProject(baseUrl: string, projectId: string): Promise<unknown> {
   const deadline = Date.now() + 15_000;

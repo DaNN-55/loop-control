@@ -1,14 +1,13 @@
 // @vitest-environment node
 import {it,expect} from 'vitest';
-import {mkdir,lstat,readFile} from 'node:fs/promises';
+import {mkdir,readFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {workspaceImageGenerationFixture} from './workspaceImageGeneration.fixture';
 const migrations=['db/local/110-episode-storage-locations.sql','db/local/118-visual-storage-locations.sql'];
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['legacy','registered'])('%s production location owns image generation after rename/restart while request, fees and explicit adoption stay frozen',async layout=>{
- const {f,ref,submissions}=await workspaceImageGenerationFixture(migrations);try{
- const prefix=layout==='registered'?'系列 stable/本期 stable':`episodes/${f.episode}`,directory=join(f.assetRoot,prefix);await mkdir(directory,{recursive:true});const identity=await lstat(directory,{bigint:true});
- if(layout==='registered')await f.c.query('UPDATE local_identity.episode_asset_locations SET directory_relative_path=$2,directory_device_id=$3,directory_inode_id=$4,layout_version=2 WHERE episode_id=$1',[f.episode,prefix,String(identity.dev),String(identity.ino)]);
- else expect((await f.c.query('SELECT layout_version FROM local_identity.episode_storage_location($1)',[f.episode])).rows[0].layout_version).toBe(1);
+ const {f,ref,submissions}=await workspaceImageGenerationFixture(migrations,layout==='registered'?()=>'系列 stable/本期 stable':undefined);try{
+ const prefix=f.episodeRelativePath;
+ if(layout==='legacy')expect((await f.c.query('SELECT layout_version FROM local_identity.episode_storage_location($1)',[f.episode])).rows[0].layout_version).toBe(1);
  let w=await f.read();const before=w.project.sha256;
  const selection={capability:'image',provider:'openai',adapter:'openai_images',model:'gpt-image-2',connectionVersionId:(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='openai_images'")).rows[0].id};
  const requested=await f.request('requestWorkspaceImageCandidates',{workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,selection,prompt:'保留参考图，使用蓝色背景',settings:{size:'864x1536',quality:'high',count:1},referenceMaterialRevisionIds:[ref.body.id],reservationCents:100});expect(requested.status,JSON.stringify(requested.body)).toBe(200);w=requested.body;
@@ -27,8 +26,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['legacy','registere
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('registered production directory contains Pexels searches, downloads and adopted owned copies after preview and external source go offline',async()=>{
  const {workspacePexelsFixture}=await import('./workspacePexels.fixture'),{writeFile,unlink}=await import('node:fs/promises');
- const f=await workspacePexelsFixture(undefined,migrations);try{
- const prefix='未分系列 stable/视频 stable',directory=join(f.assetRoot,prefix);await mkdir(directory,{recursive:true});const identity=await lstat(directory,{bigint:true});await f.c.query('UPDATE local_identity.episode_asset_locations SET directory_relative_path=$2,directory_device_id=$3,directory_inode_id=$4,layout_version=2 WHERE episode_id=$1',[f.episode,prefix,String(identity.dev),String(identity.ino)]);
+ const prefix='未分系列 stable/视频 stable',f=await workspacePexelsFixture({episodeRelativePath:()=>prefix},migrations),directory=join(f.assetRoot,prefix);try{
  let w=await f.read();const original=w.project.sha256,base=()=>({workspaceId:w.id,expectedRevision:w.revision});
  const send=async(command:string,data:Record<string,unknown>)=>{const r=await f.request(command,{...base(),...data});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;};
  await send('searchWorkspacePexelsVideos',{targetItemId:w.clips[0].itemId,selection:{capability:'video',provider:'pexels',adapter:'pexels_video',connectionVersionId:f.version},query:'ocean'});const searchTask=w.pexels.requests[0].taskId;expect((await f.execute(searchTask))?.status).toBe('completed');w=await f.read();const search=w.pexels.requests[0];
@@ -38,16 +36,17 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('registered production di
  await unlink(join(f.assetRoot,preview.preview.relativePath));await writeFile(f.pexelsMode,'download-fail');await f.restart();await f.restartWorker();w=await f.read();expect(w.visualCandidates[0].status).toBe('available');
  const prepared=await f.request('prepareWorkspaceVisualCandidate',{...base(),candidateId:candidate.id,durationPolicy:'keep-target'});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);await send('adoptWorkspaceVisualCandidate',{candidateId:candidate.id,adoptionId:prepared.body.adoptionId});expect(w.visualCandidates[0].status).toBe('adopted');
  const previewResponse=await fetch(f.origin+'/_local-artifact?episode='+f.episode+'&path='+encodeURIComponent(candidate.relativePath)+'&sha256='+candidate.sha256,{headers:{Cookie:'loop_owner_session='+f.token}});expect(previewResponse.status).toBe(200);expect(Buffer.from(await previewResponse.arrayBuffer())).toEqual(await readFile(join(f.assetRoot,candidate.relativePath)));
- expect((await f.request('openDirectory')).body).toMatchObject({opened:true,path:directory});expect((await f.c.query('SELECT count(*)::int n FROM public.paid_generation_reservations')).rows[0].n).toBe(0);
+ try{expect((await f.request('openDirectory')).body).toMatchObject({opened:true,path:directory});}finally{
+  const {execFile}=await import('node:child_process'),{promisify}=await import('node:util');await promisify(execFile)('/usr/bin/osascript',['-e','on run argv\nset expected to (item 1 of argv) & "/"\ntell application "Finder"\nrepeat 40 times\nrepeat with w in (get windows)\ntry\nif (POSIX path of (target of w as alias)) is expected then\nclose w\nreturn\nend if\nend try\nend repeat\ndelay 0.1\nend repeat\nend tell\nend run','--',directory],{timeout:7000});
+ }expect((await f.c.query('SELECT count(*)::int n FROM public.paid_generation_reservations')).rows[0].n).toBe(0);
  }finally{await f.close();}
 },180000);
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('registered video output resumes the frozen Provider task after restart without a second submission or namespace change',async()=>{
  const {narrationFixture}=await import('./workspaceNarration.fixture'),{workspaceTestMedia}=await import('./workspaceTestMedia.fixture'),{writeFile}=await import('node:fs/promises');
- const f=await narrationFixture(undefined,undefined,true,false,migrations);try{
+ const prefix='系列 video/生产单 video',f=await narrationFixture(undefined,undefined,true,false,{migrations,episodeRelativePath:()=>prefix});try{
  await f.authorize();await f.request('setWanBudget',{trialCents:300,totalCents:1000,full:false});let w=f.made;
  const imported=await f.request('importMaterial',{materialType:'image',sourceKind:'file',sourcePath:'resume.png',mimeType:'image/png',contentBase64:(await readFile(workspaceTestMedia('still-striped.png'))).toString('base64'),isMainScript:false,materialPurpose:'visual_reference'});expect(imported.status).toBe(200);
- const prefix='系列 video/生产单 video',directory=join(f.assetRoot,prefix);await mkdir(directory,{recursive:true});const identity=await lstat(directory,{bigint:true});await f.c.query('UPDATE local_identity.episode_asset_locations SET directory_relative_path=$2,directory_device_id=$3,directory_inode_id=$4,layout_version=2 WHERE episode_id=$1',[f.episode,prefix,String(identity.dev),String(identity.ino)]);
  const mode=join(f.root,'poll-mode'),module=join(f.root,'controlled-video.mjs');await writeFile(mode,'fail');await writeFile(module,(await readFile(module,'utf8')).replace("if(new URL(String(input)).hostname==='ark.cn-beijing.volces.com')return",`if(new URL(String(input)).hostname==='ark.cn-beijing.volces.com'&&readFileSync(${JSON.stringify(mode)},'utf8')==='fail')throw Error('Controlled polling interruption');if(new URL(String(input)).hostname==='ark.cn-beijing.volces.com')return`));
  const r=await f.chosenRequest('requestWorkspaceVisualCandidate',{workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,firstFrameMaterialRevisionId:imported.body.id,prompt:'继续当前镜头',durationSeconds:4,reservationCents:90});expect(r.status,JSON.stringify(r.body)).toBe(200);w=r.body;const job=w.visualTasks[0];
  await f.execute(job.taskId,false);w=await f.read();expect(w.visualTasks[0].canResume).toBe(true);const frozen=(await f.c.query('SELECT input_snapshot FROM public.tasks WHERE id=$1',[job.taskId])).rows[0].input_snapshot;expect(frozen.output.relative_path.startsWith(prefix+'/native-tasks/'+job.taskId+'/')).toBe(true);await f.restart();await f.restartWorker();
@@ -56,8 +55,8 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('registered video output 
 },180000);
 
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('replaced registered directory blocks new visual writes and an already queued task before any paid submission',async()=>{
- const {rename,rmdir}=await import('node:fs/promises');const {f,ref,submissions}=await workspaceImageGenerationFixture(migrations);try{
- const prefix='系列 identity/本期 identity',directory=join(f.assetRoot,prefix);await mkdir(directory,{recursive:true});const identity=await lstat(directory,{bigint:true});await f.c.query('UPDATE local_identity.episode_asset_locations SET directory_relative_path=$2,directory_device_id=$3,directory_inode_id=$4,layout_version=2 WHERE episode_id=$1',[f.episode,prefix,String(identity.dev),String(identity.ino)]);
+ const {rename,rmdir}=await import('node:fs/promises');const prefix='系列 identity/本期 identity',{f,ref,submissions}=await workspaceImageGenerationFixture(migrations,()=>prefix);try{
+ const directory=join(f.assetRoot,prefix);
  let w=await f.read();const payload={workspaceId:w.id,expectedRevision:w.revision,targetItemId:w.clips[0].itemId,selection:{capability:'image',provider:'openai',adapter:'openai_images',model:'gpt-image-2',connectionVersionId:(await f.c.query("SELECT id FROM public.external_connection_versions WHERE adapter='openai_images'")).rows[0].id},prompt:'身份校验',settings:{size:'864x1536',quality:'high',count:1},referenceMaterialRevisionIds:[ref.body.id],reservationCents:100};
  await rename(directory,directory+'-original');await mkdir(directory);const denied=await f.request('requestWorkspaceImageCandidates',payload);expect(denied.status).toBe(409);expect(denied.body.error).toContain('身份');await rmdir(directory);await rename(directory+'-original',directory);
  const queued=await f.request('requestWorkspaceImageCandidates',payload);expect(queued.status,JSON.stringify(queued.body)).toBe(200);w=queued.body;await rename(directory,directory+'-original');await mkdir(directory);expect((await f.execute(w.visualTasks[0].taskId,false))?.status).not.toBe('completed');await expect(readFile(submissions)).rejects.toMatchObject({code:'ENOENT'});expect((await f.c.query('SELECT count(*)::int n FROM public.paid_generation_reservations')).rows[0].n).toBe(0);

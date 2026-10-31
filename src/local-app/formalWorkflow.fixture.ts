@@ -1,5 +1,4 @@
 import {parseProductionScript} from '../reviews/productionScript';
-import {mkdir} from 'node:fs/promises';
 import {randomUUID,createHash} from 'node:crypto';
 import assert from 'node:assert/strict';
 import {csrfFor} from './sessions';
@@ -13,7 +12,9 @@ export async function formalWorkflowFixture(options:{origin?:string;controlled?:
  try{
  await f.c.query('INSERT INTO public.worker_scheduler_settings(singleton,capacity) VALUES(true,2) ON CONFLICT(singleton) DO NOTHING');
  const existing=(await f.c.query('SELECT e.account_id,b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1',[f.episode])).rows[0],harness=randomUUID();let account=existing.account_id,assetRoot=f.assetRoot;
- if(options.freshAccount){assetRoot=f.root+'/creative-account';await mkdir(assetRoot,{recursive:true});const r=await fetch(f.origin+'/api/local/configuration',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command:'createAccount',idempotencyKey:randomUUID(),data:{name:'新内容账号',slug:'creative-'+randomUUID(),timezone:'Asia/Shanghai',policy:{positioning:'保留事实',tone:'克制'},assetRoot}})});const value=await r.json();assert.equal(r.status,200,JSON.stringify(value));account=value.id;}
+ if(options.freshAccount){const r=await fetch(f.origin+'/api/local/configuration',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command:'createAccount',idempotencyKey:randomUUID(),data:{name:'新内容账号',slug:'creative-'+randomUUID(),timezone:'Asia/Shanghai',policy:{positioning:'保留事实',tone:'克制'}}})});const value=await r.json();assert.equal(r.status,200,JSON.stringify(value));account=value.id;
+  const location=await fetch(f.origin+'/api/local/account-commands',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command:'readAssetDirectory',idempotencyKey:randomUUID(),data:{accountId:account}})});const directory=await location.json();assert.equal(location.status,200,JSON.stringify(directory));assetRoot=directory.assetRoot;
+ }
  if(options.controlled&&existing.policy.a_roll)existing.policy.a_roll={...existing.policy.a_roll,budget_cents:90,max_attempts:1,allowed_tools:['read','write'],executor:{...existing.policy.a_roll.executor,prompt_version:'official-video-v1'}};
  await f.c.query("INSERT INTO public.prompt_versions(id,account_id,capability,version,slug,name,summary,instructions,content_hash) VALUES($1,$2,'storyboard_planning',100,'formal','Formal controlled','Controlled planning','Use original contract',$3)",[harness,account,createHash('sha256').update('Use original contract').digest('hex')]);
  await f.c.query('BEGIN');await f.c.query("SELECT set_config('loop.owner_id',$1,true)",[f.owner]);await f.c.query('SET SESSION AUTHORIZATION loop_app');await f.c.query('SELECT public.update_current_blueprint($1,$2)',[account,{positioning:'保留事实',tone:'克制'}]);await f.c.query('SET SESSION AUTHORIZATION DEFAULT');await f.c.query('COMMIT');

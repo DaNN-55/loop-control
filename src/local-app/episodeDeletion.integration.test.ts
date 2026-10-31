@@ -40,7 +40,7 @@ it.skipIf(process.env.LOOP_EPISODE_DELETION_ACCEPTANCE!=='1').each([true,false])
  const oldMedia=join(temporary,'old-media'),copyRoot=join(oldMedia,'account'),directory=join(root,'episodes',episode),copyDirectory=join(copyRoot,'episodes',episode),neighbor=join(root,'keep.txt');
  const asAdmin=async(sql:string,values?:unknown[])=>{await pool.query('RESET SESSION AUTHORIZATION');try{return await pool.query(sql,values);}finally{await pool.query('SET SESSION AUTHORIZATION loop_app');}};
  try{
-  await copyFixtureSchema(context,database,['db/local/110-episode-storage-locations.sql','db/local/111-global-media-root.sql','db/local/112-series-extension-rules.sql','db/local/113-automatic-account-directories.sql','db/local/114-series-storage-containers.sql','db/local/115-exact-episode-deletion-intents.sql','db/local/117-input-storage-locations.sql','db/local/118-visual-storage-locations.sql','db/local/119-audio-caption-storage-locations.sql']);
+  await copyFixtureSchema(context,database,['db/local/110-episode-storage-locations.sql','db/local/111-global-media-root.sql','db/local/112-series-extension-rules.sql','db/local/113-automatic-account-directories.sql','db/local/114-series-storage-containers.sql','db/local/115-exact-episode-deletion-intents.sql','db/local/117-input-storage-locations.sql','db/local/118-visual-storage-locations.sql','db/local/119-audio-caption-storage-locations.sql','db/local/122-automatic-episode-directories.sql']);
   await pool.query(readFileSync('db/local/068-archived-episode-deletion.sql','utf8'));
   await pool.query(readFileSync('db/local/069-legacy-episode-cleanup.sql','utf8'));
   await pool.query(readFileSync('db/local/073-empty-account-directory-cleanup.sql','utf8'));

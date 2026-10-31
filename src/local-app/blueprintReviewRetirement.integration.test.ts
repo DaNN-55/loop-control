@@ -9,12 +9,24 @@ import {defaultShotCaptionContract} from '../shotCaptions';
 import {workspaceAudioVolume} from './workspaceAudioVolume.fixture';
 import {csrfFor} from './sessions';
 
+// This disposable fixture imports pre-108 bytes; current production writes stay projected.
+async function seedHistoricalPolicy(c:Awaited<ReturnType<typeof productionWorkspaceFixture>>['c'],blueprintId:string,policy:Record<string,unknown>){
+ await c.query('BEGIN');
+ try{
+  await c.query('ALTER TABLE public.account_blueprint_versions DISABLE TRIGGER a_blueprint_creative_write');
+  await c.query('UPDATE public.account_blueprint_versions SET policy=$2 WHERE id=$1',[blueprintId,policy]);
+  await c.query('ALTER TABLE public.account_blueprint_versions ENABLE TRIGGER a_blueprint_creative_write');
+  await c.query('COMMIT');
+ }catch(error){await c.query('ROLLBACK');throw error;}
+}
+
 it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('Owner confirms a script and final file with every retired gate enabled and unused tools unavailable',async()=>{
  const volume=await workspaceAudioVolume(),f=await productionWorkspaceFixture({testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath,wake(){}}});try{
   const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id;
   // Imported policy is historical input, deliberately missing a planner and containing an unused unavailable tool.
   const policy={positioning:'保留创作规则',asset_root:f.assetRoot,approval_gates:['script','visual','storyboard','qc','publish'],a_roll:{execution_path:'local'}};
-  await f.c.query('UPDATE public.account_blueprint_versions SET policy=$2 WHERE id=$1',[account,policy]);
+  await seedHistoricalPolicy(f.c,account,policy);
+  expect((await f.c.query('SELECT policy FROM public.account_blueprint_versions WHERE id=$1',[account])).rows[0].policy).toEqual(policy);
   const response=await fetch(f.origin+'/api/local/episode-commands',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command:'create',idempotencyKey:randomUUID(),data:{accountId:account,title:'退役审核配置的新单'}})});const created={status:response.status,body:await response.json()};expect(created.status,JSON.stringify(created.body)).toBe(200);const episode=created.body.id;
   const send=(command:string,data:Record<string,unknown>={})=>f.request(command,{episodeId:episode,...data});
   expect((await send('start')).status).toBe(409);
@@ -40,7 +52,10 @@ it.skipIf(process.env.LOOP_FORMAL_ACCEPTANCE!=='1')('an old storyboard-review or
   const retired=(cookie=true,csrf=true)=>fetch(f.origin+'/api/local/account-commands',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',...(cookie?{Cookie:'loop_owner_session='+f.token}:{}),...(csrf?{'X-CSRF-Token':csrfFor(f.token)}:{})},body:JSON.stringify({command:'checkBlueprint',idempotencyKey:randomUUID(),data:{accountId:f.episode}})});
   expect((await retired()).status).toBe(400);expect((await retired(true,false)).status).toBe(403);expect((await retired(false)).status).toBe(401);
   await f.c.query("UPDATE public.episodes SET stage='storyboard_review' WHERE id=$1",[f.episode]);
-  await f.c.query("UPDATE public.account_blueprint_versions SET policy=policy||'{\"approval_gates\":[\"script\",\"visual\",\"storyboard\",\"qc\"]}'::jsonb WHERE id=(SELECT blueprint_version_id FROM public.episodes WHERE id=$1)",[f.episode]);
+  const blueprint=(await f.c.query('SELECT b.id,b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1',[f.episode])).rows[0];
+  const historicalPolicy={...blueprint.policy,approval_gates:['script','visual','storyboard','qc']};
+  await seedHistoricalPolicy(f.c,blueprint.id,historicalPolicy);
+  expect((await f.c.query('SELECT policy FROM public.account_blueprint_versions WHERE id=$1',[blueprint.id])).rows[0].policy).toEqual(historicalPolicy);
   const before=(await f.c.query('SELECT id,stage,context_snapshot FROM public.review_packages WHERE episode_id=$1 ORDER BY id',[f.episode])).rows;
   const prepared=await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script});expect(prepared.status,JSON.stringify(prepared.body)).toBe(200);const w=prepared.body;
   expect(w.preparation.origin).toBe('legacy-board');expect(w.clips).toHaveLength(2);

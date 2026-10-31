@@ -11,7 +11,7 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('first video freezes the 
  const f=await workspaceAudioFixture({videoConfiguration:true});
  try{
   let w=f.made;
-  const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.request(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,JSON.stringify(r.body)).toBe(200);if(r.body.id===w.id)w=r.body;return r;};
+  const send=async(command:string,data:Record<string,unknown>={})=>{const r=await f.chosenRequest(command,{workspaceId:w.id,expectedRevision:w.revision,...data});expect(r.status,JSON.stringify(r.body)).toBe(200);if(r.body.id===w.id)w=r.body;return r;};
   const video=await f.request('importMaterial',{sourceKind:'file',sourcePath:'source.mp4',contentBase64:(await readFile(f.media.video)).toString('base64'),materialType:'video',mimeType:'video/mp4',isMainScript:false,materialPurpose:'a_roll'});expect(video.status).toBe(200);
   const first=w.clips[0];for(const clip of [...w.clips])await send('matchWorkspaceMaterial',{clipId:clip.id,materialRevisionId:video.body.id});
   await send('prepareWorkspaceAudio',{kind:'source',shotId:first.shotId,sourceItemId:first.itemId});const prep=w.audio.preparations[0];expect((await f.executeAudio(prep.taskId)).status).toBe('completed');await send('adoptWorkspaceAudio',{preparationId:prep.id});

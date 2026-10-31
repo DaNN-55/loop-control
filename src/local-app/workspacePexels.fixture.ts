@@ -3,8 +3,8 @@ import {writeFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {narrationFixture} from './workspaceNarration.fixture';
 import {workspaceTestMedia} from './workspaceTestMedia.fixture';
-export async function workspacePexelsFixture(options?:{testRootParent:string;mountPath:string},migrations:string[]=[]){
- const f=await narrationFixture(undefined,undefined,false,false,options?{voice:workspaceTestMedia('controlled-narration-tone.mp3'),video:workspaceTestMedia('landscape-red-blue.mp4'),...options}:migrations);try{
+export async function workspacePexelsFixture(options?:{testRootParent?:string;mountPath?:string;episodeRelativePath?:(episodeId:string)=>string},migrations:string[]=[]){
+ const f=await narrationFixture(undefined,undefined,false,false,options?{voice:workspaceTestMedia('controlled-narration-tone.mp3'),video:workspaceTestMedia('landscape-red-blue.mp4'),...options,migrations}:migrations);try{
  const version=randomUUID(),connection=randomUUID(),secret=randomUUID();await f.c.query('BEGIN');
  await f.c.query("INSERT INTO public.external_connections(id,provider,adapter,name,created_by,current_version_id,endpoint) VALUES($1,'pexels','pexels_video','Pexels A',$2,$3,'https://api.pexels.com')",[connection,f.owner,version]);
  await f.c.query("INSERT INTO public.external_connection_versions(id,connection_id,version,provider,adapter,endpoint,vault_secret_id) VALUES($1,$2,1,'pexels','pexels_video','https://api.pexels.com',$3)",[version,connection,secret]);

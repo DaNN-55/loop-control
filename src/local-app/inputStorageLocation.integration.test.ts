@@ -7,6 +7,7 @@ import {workspaceAudioVolume} from './workspaceAudioVolume.fixture';
 import {randomUUID} from 'node:crypto';
 import {csrfFor} from './sessions';
 import {embeddedStudioFixture} from './embeddedStudio.fixture';
+import {collectionOwnerPost,prepareCollectionTargets,moveCollection} from './episodeCollection.fixture';
 import {productionScriptTemplate} from '../reviews/productionScript';
 const publicationFault=vi.hoisted(()=>({directory:'',once:false,triggered:false}));
 // Controlled fault at the system filesystem boundary; DB, HTTP and file bytes stay real.
@@ -14,12 +15,12 @@ vi.mock('node:fs/promises',async importOriginal=>{const actual=await importOrigi
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner imports and confirms managed script bytes at the registered production location, retaining legacy previews after restart',async()=>{
  const volume=await workspaceAudioVolume();const f=await embeddedStudioFixture({testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath,wake(){}},migrations:['db/local/117-input-storage-locations.sql']});
  try{
+  const {account,a}=await prepareCollectionTargets(f,{a:'系列 stable',b:'预留'}),moved=await moveCollection(f,account,a.series_id),prefix=moved.episodes.find((episode:{id:string})=>episode.id===f.episode)!.targetPrefix,directory=join(f.assetRoot,prefix);
   await f.c.query("UPDATE public.episodes SET stage='waiting_input' WHERE id=$1",[f.episode]);
-  const prefix='系列 stable/生产单 stable',directory=join(f.assetRoot,prefix);await mkdir(join(directory,'input'),{recursive:true});const stat=await lstat(directory,{bigint:true});
-  await f.c.query('UPDATE local_identity.episode_asset_locations SET directory_relative_path=$2,directory_device_id=$3,directory_inode_id=$4,layout_version=2 WHERE episode_id=$1',[f.episode,prefix,String(stat.dev),String(stat.ino)]);
+  await mkdir(join(directory,'input'),{recursive:true});
   await writeFile(join(directory,'input','main.md'),productionScriptTemplate);
   const imported=await f.request('importMaterial',{sourceKind:'directory',sourcePath:'main.md',materialType:'script',materialPurpose:'main_script',mimeType:'text/markdown',isMainScript:true});
-  expect(imported.status,JSON.stringify(imported.body)).toBe(200);expect(imported.body.storage_path).toMatch(/^系列 stable\/生产单 stable\/materials\/[a-f0-9]{64}-main.md$/);
+  expect(imported.status,JSON.stringify(imported.body)).toBe(200);expect(imported.body.storage_path.startsWith(prefix+'/materials/')).toBe(true);expect(imported.body.storage_path).toMatch(/\/materials\/[a-f0-9]{64}-main.md$/);
   await rename(join(directory,'input','main.md'),join(f.root,'source-moved.md'));
   const preview=async(path:string,sha:string)=>fetch(f.origin+`/_local-artifact?episode=${f.episode}&path=${encodeURIComponent(path)}&sha256=${sha}`,{headers:{Cookie:'loop_owner_session='+f.token}});
   const bytes=await preview(imported.body.storage_path,imported.body.sha256);expect(bytes.status).toBe(200);expect(await bytes.text()).toBe(productionScriptTemplate);
@@ -42,22 +43,19 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner imports and confir
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner reuses an approved series input as a self-contained managed copy with original source approval evidence',async()=>{
  const volume=await workspaceAudioVolume();const f=await embeddedStudioFixture({testRootParent:volume.mountPath,runtime:{mountPath:volume.mountPath,wake(){}},migrations:['db/local/117-input-storage-locations.sql']});
  try{
-  const {randomUUID}=await import('node:crypto');const series=randomUUID(),version=randomUUID();
-  const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id;
-  await f.c.query("INSERT INTO public.series(id,account_id,name) VALUES($1,$2,'Input reuse')",[series,account]);await f.c.query("INSERT INTO public.series_versions(id,account_id,series_id,version,rules,created_by) VALUES($1,$2,$3,1,'{}',$4)",[version,account,series,f.owner]);
-  await f.c.query("UPDATE public.episodes SET stage='waiting_input',series_version_id=$2 WHERE id=$1",[f.episode,version]);
-  const source=await f.request('importMaterial',{sourceKind:'file',sourcePath:'shared.png',materialType:'image',materialPurpose:'visual_reference',mimeType:'image/png',isMainScript:false,contentBase64:Buffer.from('approved inert image bytes').toString('base64')});expect(source.status,JSON.stringify(source.body)).toBe(200);
+  const account=(await f.c.query('SELECT account_id FROM public.episodes WHERE id=$1',[f.episode])).rows[0].account_id,post=collectionOwnerPost(f),series=await post('configuration','createSeries',{accountId:account,name:'Input reuse',rules:{}});expect(series.status,JSON.stringify(series.body)).toBe(200);
+  const sourceEpisode=await f.request('create',{episodeId:undefined,accountId:account,seriesVersionId:series.body.id,title:'复用来源'});expect(sourceEpisode.status,JSON.stringify(sourceEpisode.body)).toBe(200);const sourceId=sourceEpisode.body.id;
+  const source=await f.request('importMaterial',{episodeId:sourceId,sourceKind:'file',sourcePath:'shared.png',materialType:'image',materialPurpose:'visual_reference',mimeType:'image/png',isMainScript:false,contentBase64:Buffer.from('approved inert image bytes').toString('base64')});expect(source.status,JSON.stringify(source.body)).toBe(200);
   const foreignRoot=join(f.root,'foreign-account');await mkdir(foreignRoot);const configuredAccount=await fetch(f.origin+'/api/local/configuration',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command:'createAccount',idempotencyKey:randomUUID(),data:{name:'另一个账号',slug:'foreign-'+randomUUID(),timezone:'Asia/Shanghai',policy:{positioning:'隔离复用',tone:'克制'}}})});const foreignAccount=await configuredAccount.json();expect(configuredAccount.status,JSON.stringify(foreignAccount)).toBe(200);const repaired=await fetch(f.origin+'/api/local/account-commands',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command:'setAssetDirectory',idempotencyKey:randomUUID(),data:{accountId:foreignAccount.id,path:foreignRoot}})});expect(repaired.status,JSON.stringify(await repaired.json())).toBe(200);
   const foreignEpisode=await f.request('create',{episodeId:undefined,accountId:foreignAccount.id,title:'跨账号源'});expect(foreignEpisode.status,JSON.stringify(foreignEpisode.body)).toBe(200);
   const foreign=await f.request('importMaterial',{episodeId:foreignEpisode.body.id,sourceKind:'file',sourcePath:'shared.png',materialType:'image',materialPurpose:'visual_reference',mimeType:'image/png',isMainScript:false,contentBase64:Buffer.from('different account owned bytes').toString('base64')});expect(foreign.status,JSON.stringify(foreign.body)).toBe(200);
-  const target=await f.request('create',{episodeId:undefined,accountId:account,seriesVersionId:version,title:'复用目标'});expect(target.status,JSON.stringify(target.body)).toBe(200);const id=target.body.id;
-  const prefix='未分系列 stable/复用目标 stable',directory=join(f.assetRoot,prefix);await mkdir(directory,{recursive:true});const stat=await lstat(directory,{bigint:true});await f.c.query('UPDATE local_identity.episode_asset_locations SET directory_relative_path=$2,directory_device_id=$3,directory_inode_id=$4,layout_version=2 WHERE episode_id=$1',[id,prefix,String(stat.dev),String(stat.ino)]);
+  const target=await f.request('create',{episodeId:undefined,accountId:account,seriesVersionId:series.body.id,title:'复用目标'});expect(target.status,JSON.stringify(target.body)).toBe(200);const id=target.body.id,prefix=(await f.c.query('SELECT directory_relative_path FROM local_identity.episode_storage_location($1)',[id])).rows[0].directory_relative_path;
   const text=productionScriptTemplate.replace('填写已上传图片的素材名称','shared');
   const script=await f.request('importMaterial',{episodeId:id,sourceKind:'file',sourcePath:'script.md',materialType:'script',materialPurpose:'main_script',mimeType:'text/markdown',isMainScript:true,contentBase64:Buffer.from(text).toString('base64')});expect(script.status,JSON.stringify(script.body)).toBe(200);
   const foreignChoice=await f.request('configureScriptProduction',{episodeId:id,enabled:false,choices:{'image:shared':foreign.body.id}});expect(foreignChoice.status,JSON.stringify(foreignChoice.body)).toBe(200);expect(foreignChoice.body.plan.segments[0].firstFrame.material).toBeUndefined();expect(foreignChoice.body.plan.segments[0].firstFrame.candidates.map((m:{id:string})=>m.id)).not.toContain(foreign.body.id);
   const configured=await f.request('configureScriptProduction',{episodeId:id,enabled:false,choices:{}});expect(configured.status,JSON.stringify(configured.body)).toBe(200);
-  const material=configured.body.plan.segments[0].firstFrame.material;expect(material).toMatchObject({episodeId:id,sha256:source.body.sha256,path:expect.stringContaining(prefix+'/materials/'),provenance:{source:{id:source.body.id,episode_id:f.episode,storage_path:source.body.storage_path},approvals:[expect.objectContaining({approved_by:f.owner})]}});
-  await rename(join(f.assetRoot,'episodes',f.episode),join(f.root,'source-production-offline'));await f.restart();
+  const material=configured.body.plan.segments[0].firstFrame.material;expect(material).toMatchObject({episodeId:id,sha256:source.body.sha256,path:expect.stringContaining(prefix+'/materials/'),provenance:{source:{id:source.body.id,episode_id:sourceId,storage_path:source.body.storage_path},approvals:[expect.objectContaining({approved_by:f.owner})]}});
+  const sourcePrefix=(await f.c.query('SELECT directory_relative_path FROM local_identity.episode_storage_location($1)',[sourceId])).rows[0].directory_relative_path;await rename(join(f.assetRoot,sourcePrefix),join(f.root,'source-production-offline'));await f.restart();
   const preview=await fetch(f.origin+`/_local-artifact?episode=${id}&path=${encodeURIComponent(material.path)}&sha256=${material.sha256}`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(preview.status).toBe(200);expect(await preview.text()).toBe('approved inert image bytes');
   const reconfigured=await f.request('configureScriptProduction',{episodeId:id,enabled:false,choices:{}});expect(reconfigured.status,JSON.stringify(reconfigured.body)).toBe(200);expect(reconfigured.body.authorizationHash).toBe(configured.body.authorizationHash);
   const read=await(await fetch(f.origin+`/api/local/script-production?episode=${id}`,{headers:{Cookie:'loop_owner_session='+f.token}})).json();expect(read.inspection.segments[0].firstFrame.material.provenance).toEqual(material.provenance);
@@ -67,8 +65,9 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('Owner reuses an approved
 it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('input retries preserve immutable bytes and reject unsafe, foreign, interrupted and replaced-directory submissions',async()=>{
  const f=await embeddedStudioFixture();
  try{
+  await prepareCollectionTargets(f);
   await f.c.query("UPDATE public.episodes SET stage='waiting_input' WHERE id=$1",[f.episode]);
-  const prefix='stable/account-input',directory=join(f.assetRoot,prefix);await mkdir(directory,{recursive:true});const stat=await lstat(directory,{bigint:true});await f.c.query('UPDATE local_identity.episode_asset_locations SET directory_relative_path=$2,directory_device_id=$3,directory_inode_id=$4,layout_version=2 WHERE episode_id=$1',[f.episode,prefix,String(stat.dev),String(stat.ino)]);
+  const prefix=(await f.c.query('SELECT directory_relative_path FROM local_identity.episode_storage_location($1)',[f.episode])).rows[0].directory_relative_path,directory=join(f.assetRoot,prefix);
   const data={sourceKind:'file',sourcePath:'same.png',materialType:'image',materialPurpose:'visual_reference',mimeType:'image/png',isMainScript:false,contentBase64:Buffer.from('first immutable bytes').toString('base64')};
   const submit=async(value:Record<string,unknown>,key:string)=>{const response=await fetch(f.origin+'/api/local/episode-commands',{method:'POST',headers:{Origin:f.origin,'Content-Type':'application/json',Cookie:'loop_owner_session='+f.token,'X-CSRF-Token':csrfFor(f.token)},body:JSON.stringify({command:'importMaterial',idempotencyKey:key,data:{episodeId:f.episode,...value}})});return{status:response.status,body:await response.json()};};
   const key=randomUUID(),first=await submit(data,key);expect(first.status,JSON.stringify(first.body)).toBe(200);expect(await submit(data,key)).toEqual(first);expect((await submit({...data,contentBase64:Buffer.from('different').toString('base64')},key)).status).toBe(409);

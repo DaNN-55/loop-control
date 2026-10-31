@@ -1,9 +1,10 @@
 // @vitest-environment node
 import {it,expect} from 'vitest';
-import {readFile,writeFile,copyFile} from 'node:fs/promises';
+import {readFile,copyFile} from 'node:fs/promises';
 import {join} from 'node:path';
 import {createHash} from 'node:crypto';
 import {embeddedStudioFixture} from './embeddedStudio.fixture';
+import {editStudioDocument} from './studioDocument.fixture';
 it.skipIf(process.env.LOOP_EMBEDDED_STUDIO_ACCEPTANCE!=='1')('Owner opens the real Studio and saves its versioned workspace through native HTTP',async()=>{
   const f=await embeddedStudioFixture();
   try{
@@ -29,20 +30,29 @@ it.skipIf(process.env.LOOP_EMBEDDED_STUDIO_ACCEPTANCE!=='1')('Owner opens the re
     expect((await f.request('saveStudio',{...data,expectedWorkspaceSha256:'invalid'})).status).toBe(400);
     const stale=await f.request('saveStudio',{sourceProjectRelativePath:f.boardPath,workspaceRelativePath:workspace.relativePath,projectId:workspace.projectId,expectedWorkspaceSha256:'0'.repeat(64)});
     expect(stale.status,JSON.stringify(stale.body)).toBe(409);
-    const runtimePath=join(f.assetRoot,`episodes/${f.episode}/openchatcut-work/current/runtime/project-store-v1/${encodeURIComponent(`project:${workspace.projectId}`)}.json`);
-    const original=await readFile(runtimePath,'utf8'),candidate=JSON.parse(original);
-    candidate.assets.push({id:'unapproved',kind:'video',name:'unapproved.mp4',src:'/media/uploads/unapproved.mp4'});
-    await writeFile(runtimePath,JSON.stringify(candidate));
+    let original:any;
+    await editStudioDocument(opened.body.studioUrl,workspace.projectId,doc=>{
+      original=structuredClone(doc);
+      const unapproved={...structuredClone(doc.assets.find((asset:any)=>asset.kind==='video')),id:'unapproved',name:'unapproved.mp4',src:'/media/uploads/unapproved.mp4'};
+      doc.assets.push(unapproved);
+      const item=doc.timelines[0].items.find((item:any)=>item.kind==='video');
+      item.sourceAssetId=unapproved.id;item.src=unapproved.src;
+    });
+    const injected=await fetch(new URL(`/api/project-store/entry?key=${encodeURIComponent('project:'+workspace.projectId)}`,opened.body.studioUrl),{headers:{'Sec-Fetch-Site':'none'}});
+    expect(injected.status).toBe(200);
+    expect((await injected.json()).value.timelines[0].items.find((item:any)=>item.kind==='video')).toMatchObject({sourceAssetId:'unapproved',src:'/media/uploads/unapproved.mp4'});
     const before=await readFile(join(f.assetRoot,workspace.relativePath),'utf8');
     const denied=await f.request('saveStudio',data);
     expect(denied.status,JSON.stringify(denied.body)).toBe(409);
     expect(await readFile(join(f.assetRoot,workspace.relativePath),'utf8')).toBe(before);
     expect((await f.request('openStudio',{projectRelativePath:f.boardPath})).status).toBe(409);
     expect(await readFile(join(f.assetRoot,workspace.relativePath),'utf8')).toBe(before);
-    await writeFile(runtimePath,original);
-    expect((await f.request('saveStudio',data)).status).toBe(200);
-    const edited=JSON.parse(original);edited.timelines[0].items.find((i:{kind:string})=>i.kind==='video').transform.x=17;
-    await writeFile(runtimePath,JSON.stringify(edited));
+    await editStudioDocument(opened.body.studioUrl,workspace.projectId,()=>original);
+    const restored=await f.request('saveStudio',data);expect(restored.status,JSON.stringify(restored.body)).toBe(200);
+    data.expectedWorkspaceSha256=restored.body.sha256;
+    await editStudioDocument(opened.body.studioUrl,workspace.projectId,doc=>{
+      doc.timelines[0].items.find((i:{kind:string})=>i.kind==='video').transform.x=17;
+    });
     const changed=await f.request('saveStudio',data);expect(changed.status,JSON.stringify(changed.body)).toBe(200);expect(changed.body.sha256).not.toBe(data.expectedWorkspaceSha256);
     expect((await f.request('saveStudio',data)).status).toBe(409);
     saved.body.sha256=changed.body.sha256;data.expectedWorkspaceSha256=changed.body.sha256;
