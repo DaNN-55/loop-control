@@ -792,3 +792,46 @@ T11/#189 tracker closure verified after root read the independent 20/20 real int
 已确认 seam：正式页面 → Owner HTTP → 隔离真实 PostgreSQL / 文件 → 受控 Provider / 实际原生工程及 Finder。只用固定外部 context、随机 owned DB、外部 SDK；不碰 daily、秘密或付费。
 
 T12/#190 tracker CLOSED readback after root verified MERGE-T12 independent 5 actual creation/fault +2 full formal series/unassigned (184.84s), 34 units, all zero skip. Source extra12 legacy regressions were read and not repeated. Actual red/blue native frames, four true dumps/SQLite/OwnerSHA, old tree/frozen equality, exact archived deletion/manual retention and full baseline schema/ledger equality are evidenced. 390 background workbench width635 is a current observation with base attribution unverified; dialog bounds pass, T17/final spec review must assess relevant narrow-screen scope. No daily/main/push change.
+
+## T13：旧账号与生产单受控纳管
+
+基线：7f6e74c2，分支 codex/issue-178-t13。只在本 worktree 实施，不改日常数据、integration 或其它票。
+
+确认的验收 seam：正式页面 → Owner HTTP → 隔离真实 PostgreSQL/FS → 受控 Provider／真实 SDK／系统 folder-open。既有用户授权覆盖该边界。
+
+## 步骤与验证
+
+1. [完成] 当前 checkout 的 shared global legacy Owner RED → GREEN，保留通用 root overlap。
+2. [完成] 扩展 SQL110/106 与 EpisodeFileIO 的可信 append-only lineage；保留 frozen root/prefix/dev/ino 与原始引用。
+3. [完成] 扩展现有迁移：显式稳定计划、episode scoped inventory、独占位置、bounded copy、barrier、resume/rollback 和原子 switch。
+4. [完成] Owner/Worker/native/delivery/probe/backup/deletion 接统一 lineage；验源离线、混合多根、故障、SIGKILL/重启。
+5. [完成] 正式维护页面 plan/execute/recovery；headed WebGPU 原生 edit/save/close/reopen/play/export 与 Finder target。
+6. [完成] 精确回归、基线/资源检查、合最新 integration、提交及外部 HANDOFF/CONTRACT，交独立 merger。
+
+## 已查证
+
+- clean integration 7f6e74c2 建立并确认 ancestor；node_modules 仅链接 main。
+- baseline109 仅做 fixture 源，不迁移；SQL123 本票，124–126 留后票。
+- 历史 global legacy RED runner 硬编码 integration，须复制为当前 checkout tracked 测试。
+- 旧迁移缺子目录身份，不能伪造 frozen inode bridge；managed layout2 高级 root migration 需接协调器或动作前拒绝。
+
+T13 首次 execute 两次诊断：删除 intent 实际列为 state 且账号在 manifest；修正后到达 completion，pg 数组参数编码成 PostgreSQL array 而非 JSON。已记录并改用 JSON.stringify 的 jsonb 参数，不重复盲跑。
+
+T13 final SQL race：真实触发器暂停+替换目标目录，原实现错误200/completed（cutover-race-red.log）；补最终SQL后父链/子目录/目标hash/源snapshot复验，同用例core-2.log已409并保持原current、无operation edge、未知替代原样保留。nativeAttemptOutput旧unit mock新增SQL110读取后发现其temp root未realpath；补正fixture路径和只读location stub，不改其故障/lease断言。
+
+T13 restore-native-1：实际restore/新应用/SDK已到原生内容断言；T12 helper固定video.transform.x=1，T13来源独立已知0。改为显式expectedTransformX参数（T12默认仍1）；首次替换未命中.find表达式，已按真实行修正，避免重复同一失败。
+
+T13 copy-barrier-red.log：真实native process在已持久化temp identity后的首次write暂停，status=copying已可见；unregistered global legacy并发unarchive错误200，导致原计划后续409。补account级copying barrier至生命周期与archive路径，绿色再检查delete-first与archive均409、原源/删除intent不变。restore-native-2为prepared runtime源码漂移（运行中改了本票代码），此后compiled app/Worker验证期间冻结源码，build→prepare→run串行。
+
+T13 Worker publication 首两次fixture失败：runCodexWorker在execute前先调用verifyArtifacts验证输入，临时runner误用尚未初始化outputs.verify。实际blocked原因已记录worker-publication-diagnostic.log；改为execute前真实verifyArtifactIndex、execute后attempt.verify，保持原业务断言和真实DB/FS。
+
+T13 cross-volume fixture：host-root new Episode create被原system mount guard正确拒绝；改用实际APFS target再nested mount又被macOS拒绝。调整为host owned global root下仅一块真实旧源APFS，目标host形成实际跨卷；混合新布局采用正常Owner建账号/容器后严格stat登记的隔离历史夹具，不放宽create/system mount guard，不声明该分支正式新单创建。
+
+T13 compiled CLI fixture：首轮planning在INSERT后才将input_episodes.enabled=true，故首task合法未带118 native身份。用实际CLI先失败，再走既有Owner retryWorkspacePlanning产生真正enabled阶段的冻结任务；不回写旧snapshot补字段。此task再实际失败→调度暂停→纳管/旧源offline→原ID ready重试，first run/费用保持。未用resolveAbsoluteReference已删除，避免扩展未验证authority。
+
+
+T13 最终边界证据：owner-final-1.log 8/8；final-directed-1.log 的 native 两种布局、process4、Worker原task与committed recovery、跨卷均通过；其restore末尾证据EEXIST已换新目录，在restore-native-final-1.log targeted1/2filtered通过。交付首claim会正常补prompt_context/resource约束，且max_attempts=1；fixture改为queued原task在claim前暂停，核整个snapshot跨纳管不变，再保留原manifest/output走实际compiled CLI，frozen-delivery-3.log targeted1/2filtered通过，不改max_attempt或冻结字段。原failed任务真实同ID重试由planner单独证明，首失败run/旧inode/input/model/budget/0付费保持。
+
+T13 正式页browser-2.log1/1完整链：plan→最终SQL故障→刷新恢复→旧源offline→账号/生产单Finder逐个观测并关闭→真实原生0→1编辑保存→重建应用/重开→实际Play变化图案→导出OwnerSHA。browser-plan-final-3.log为visual-only + 正式rollback，不计第二次完整native。早期smooth scroll未完成导致viewport/crop空图，已现场查DOM滚动位置并改instant+500ms；visible-plan-1440/390与visible-expanded-390亲看源/目标/范围/未分系列/生产单，241/241无横溢。78项定向单测全通过；独立只读末检补最终unscoped refs复验。外部T13-CONTRACT为后票记录统一API/SQL/锁/证明责任。
+
+T13 收口：当前integration仍7f6e74c2，合入自身显示Already up to date；仅新增SQL123，已应用迁移均未改。build-16/runtime prepare-16/check-final-1通过，旧位置/T12/SQL120回归8/8，单测78/78；固定baseline107账本/max109/0账号、schema及ledger SHA与MERGE-T12精确一致。全部随机DB和自有browser/native/卷已关，保留3个Oct30旧卷与daily服务。fresh默认角色替代不可用专用UI reviewer，只读维护section结论ship；不扩大成全站或错误态视觉通过，见外部T13/UI-FINISH-READONLY.md。核心本地提交2cfbb207与本验收提交供fresh merger；未merge integration/main、push、部署或close191。
