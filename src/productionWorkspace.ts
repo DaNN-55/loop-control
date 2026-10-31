@@ -10,7 +10,7 @@ export interface WorkspaceClip {id:string;itemId:string;shotId:string;text:strin
 export interface ProductionWorkspace {
  scriptResume?:{canReuse:boolean;reason:string};
  selectedImages?:Array<{targetItemId:string;candidateId:string;materialRevisionId:string}>;
- visualConfiguration?:{imageModel:string|null;videoModel:string|null;videoProvider:string|null};
+ visualConfiguration?:{imageSelection?:import('./productionSelection.js').ProductionSelection;imageModel:string|null;videoModel:string|null;videoProvider:string|null};
  recovery?:{decision:'preserve'|'fresh';relativePath:string;sha256:string;fileSize:number};
  preparation?:{origin:string;authorized:boolean;authorizationHash?:string;scriptRevisionId:string;shots:Array<{shotId:string;origin:string;shotType:'a_roll'|'b_roll'|null}>};
  visualCandidates?:WorkspaceVisualCandidate[];visualTasks?:WorkspaceVisualTask[];visualTargets?:WorkspaceVisualTarget[];
