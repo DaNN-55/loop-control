@@ -9,8 +9,8 @@ Confirmed acceptance: formal UI → Owner HTTP → isolated real database/files 
 | #179 | None | Integrated locally; acceptance passed; tracker closed |
 | #180 | None | Integrated locally; acceptance passed; tracker closed |
 | #181 | #179 | Integrated locally; independent acceptance passed; tracker closed |
-| #182 | #180, #181 | Integrated locally; independent acceptance passed; root tracker closure pending |
-| #183 | #182 | Pending |
+| #182 | #180, #181 | Completed; independent acceptance passed and tracker closed |
+| #183 | #182 | Implementing in isolated worktree |
 | #184 | #179 | Integrated locally; publication ownership fix independently accepted; tracker closed |
 | #185 | #179 | Integrated locally; acceptance passed; tracker closed |
 | #186 | #179 | Completed; independent acceptance passed and tracker closed |
@@ -30,7 +30,7 @@ Baseline verification: `npm run check` passed; default suite 174 files / 1144 te
 
 Verification log and ticket handoffs: `/private/tmp/loop-control-178-20261031`. Preserve RED/GREEN, actual skip counts and any unresolved integration limitations.
 
-Tracker: #179, #180, #181, #184, #185 and #186 closed after independent merger acceptance; 6/17 complete. T04/#182 is integrated and independently accepted; root owns its tracker closure. T09/#187 remains active in its isolated worktree. T06's required publication ownership fix is independently accepted. Clean merged T01/T02/T03/T06/T06-fix worktrees removed by root; recovery branches retained. Migration reservations live in external `MIGRATION-RESERVATIONS.json`.
+Tracker: #179/#180/#181/#182/#184/#185/#186 closed after independent acceptance; 7/17 complete. T05/#183 and T09/#187 are active in isolated worktrees. Completed clean implementer worktrees are removed after ancestry/status/runtime checks; recovery branches retained. Migration reservations and exact cleanup receipts remain in the shared external context.
 
 Cross-ticket notes: T03 binds global storage to the persisted workspace Owner. T04 now creates the genuine first account through the trusted T03 binding without importing source metadata or broadening credentials. T07 owns shared producer namespaces/native output authority and mediaLibrary prefix checks; T06 owns input/planning guards and localFiles. Relative-prefix migration of frozen references remains a mandatory T13/T14 seam (external LOCATION-CALLERS.md), not solved by account-root-only mapping.
 
@@ -55,6 +55,8 @@ T08/#186 integrated without conflicts at `01c79c4f` from clean source `192d03b8`
 Root tracker readback: #179/#180/#181/#184/#185/#186 are completed (6/17). T04/#182 is independently accepted locally, awaiting root tracker closure; T09/#187 remains the active implementation frontier. Clean, fully merged implementer worktrees T01/T02/T03/T06/T06-publication-fix/T07/T08 were removed after status and ancestry verification; all recovery branch refs remain. Exact closure comments and cleanup receipt are retained outside the repo. User-directed unused-window cleanup was verified through the actual Finder Window menu (zero entries); daily IAB5174 is retained.
 
 T04/#182 merged without conflicts at `6c20004d` from clean source `41059893` (implementation `668cb61f`, identity/compact-row fix `41059893`, synchronized with integration `04a86253`). Independent merger passed `npm run check`, `npm run runtime:prepare`, four affected account/UI/query files /28 tests, automatic-creation + formal browser two files /5 tests, and real input/media-root/audio three files /19 tests, all zero skips and maxWorkers1. Four selected legacy repair/native export/delivery tests passed in two files with six explicitly deselected. Actual new-install runtime begins with zero accounts/import rows, same-key concurrency is identical, SIGKILL/new PID20835→20902 resumes the original account UUID/path, and actual material import/preview works without fabricated provenance. Same-byte new-inode marker compensation and receipt replay preserve both original/replacement bytes and identities; final INSERT pause + directory replacement returns409 with zero account commit. Final directory identity is checked before registration and against the recorded inode afterward. Formal copy/open/rename/refresh and1440/1100/390 row bounding boxes passed; fresh1440/390 screenshots were personally inspected. Normal Owner creation always creates automatically and rejects explicit assetRoot; historical set/migration remains separate, with original business assertions retained. One unchanged accountAssetRoots legacy-policy conflict test was independently rerun and remains RED (unset vs conflict), matching its complete-originald46554a1 source reproduction; old-suite all-green is not claimed. Fixed baseline remains107 migrations/max109 and0 accounts; explicit110/111/112/113/117/118/119 forwards apply only to fresh fixture DBs. All own browser/native windows close before fixture teardown; final actual Finder Window menu has zero entries and was cancelled. Evidence and exact commands: external `MERGE-T04.md`, `MERGE-T04-*.log`, `MERGE-T04-browser/`, `T04/HANDOFF.md` and `T04-CONTRACT.md`. No full default/build repeat, issue closure, worktree cleanup, daily service/data/config change, paid calls or push. T09 native/export/120 WIP remains untouched; T10/T13/T14 retain pending-intent reservation and relocation/recovery responsibilities.
+
+Root tracker readback: #182 is completed; seven of17 tickets are closed (179/180/181/182/184/185/186). T05/#183 and T09/#187 are active. T04 clean fully merged worktree was removed after ancestry/status/no-runtime-reference verification; recovery branch retained.
 
 ---
 
