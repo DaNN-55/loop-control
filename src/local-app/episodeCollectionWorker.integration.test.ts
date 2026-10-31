@@ -99,4 +99,3 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('a committed native attem
   const evidence='/private/tmp/loop-control-178-20261031/T14/worker-evidence';await mkdir(evidence,{recursive:true});await writeFile(join(evidence,'frozen.json'),JSON.stringify({task:frozen,fee,originalPackage,plan,moves,fence,providerSubmissions:originalSubmission},null,2),{mode:0o600});await writeFile(join(evidence,'original-publication-receipt.json'),receipt,{mode:0o600});await writeFile(join(evidence,'recovered-publication-receipt.json'),await readFile(join(stagingRoot,'publication-receipt-private.json')),{mode:0o600});
  }finally{await worker.end();await f.close();}
 },180000);
-
