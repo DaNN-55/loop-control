@@ -1,5 +1,5 @@
 import{mappedAssetPath}from'./mediaPaths.js';
-import {mkdir,realpath,lstat,readFile,open,link,unlink} from 'node:fs/promises';
+import {mkdir,realpath,lstat,readFile,open,link,unlink,readdir} from 'node:fs/promises';
 import {resolve,isAbsolute,join,basename,dirname} from 'node:path';
 import {createHash,randomUUID} from 'node:crypto';
 import {safeAssetOutputPath} from '../worker/controlledMediaExecutor.js';
@@ -43,15 +43,43 @@ export async function snapshotInput(root:string,episodeId:string,input:{sourceKi
  if(!bytes.length||bytes.length>100*1024*1024)throw new ConfigurationError(400,'材料不能为空或超过100MB。');
  if(input.isMainScript){const diagnostic=mainScriptDiagnostic(bytes.toString('utf8'));if(diagnostic)throw new ConfigurationError(400,diagnostic);}
  const sha256=createHash('sha256').update(bytes).digest('hex'),sourcePath=input.logicalName??input.sourcePath,storagePath=`${directoryRelativePath}/materials/${sha256}-${basename(sourcePath)}`;
- // Existing immutable content is checked before an idempotent write.
+ // Recover only our receipted publication; unknown or corrupt targets stay untouched.
+ await recoverInputPublication(root,storagePath,sha256,bytes.length);
  try{await lstat(join(root,storagePath));await verifyNativeFile(root,storagePath,sha256,bytes.length);}catch(e){
   if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;
-  // Publish complete immutable bytes atomically; interruption never exposes a partial snapshot.
-  const destination=await safeAssetOutputPath(root,storagePath),temporary=join(dirname(destination),'.input-'+randomUUID());
-  try{const file=await open(temporary,'wx',0o600);try{await file.writeFile(bytes);await file.sync();}finally{await file.close();}
-   try{await link(temporary,destination);}catch(error){if((error as NodeJS.ErrnoException).code!=='EEXIST')throw error;}
-  }finally{await unlink(temporary).catch(error=>{if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;});}
+  try{await publishInputSnapshot(root,storagePath,bytes,sha256);}catch(error){const code=(error as NodeJS.ErrnoException).code;if(code==='EACCES'||code==='EPERM')throw new ConfigurationError(403,'没有写入输入快照的权限，请恢复权限后重试。');if(code==='ENOSPC'||code==='EIO')throw new ConfigurationError(409,'输入快照未完成，请检查存储空间与挂载后重试。');throw error;}
   await verifyNativeFile(root,storagePath,sha256,bytes.length);
  }
  return {sourcePath,storagePath,sha256,fileSize:bytes.length};
+}
+
+async function publishInputSnapshot(root:string,path:string,bytes:Buffer,sha256:string){
+ const destination=await safeAssetOutputPath(root,path),token=randomUUID(),temporary=join(dirname(destination),`.input-${token}.part`),receipt=join(dirname(destination),`.input-${token}.receipt.json`);let receipted=false;
+ try{
+  const file=await open(temporary,'wx',0o600);try{await file.writeFile(bytes);await file.sync();}finally{await file.close();}
+  const stat=await lstat(temporary,{bigint:true}),record=await open(receipt,'wx',0o600);try{await record.writeFile(JSON.stringify({version:1,target:basename(path),sha256,size:bytes.length,device:String(stat.dev),inode:String(stat.ino)}));await record.sync();receipted=true;}finally{await record.close();}
+  try{await link(temporary,destination);}catch(error){if((error as NodeJS.ErrnoException).code!=='EEXIST')throw error;await verifyNativeFile(root,path,sha256,bytes.length);}
+ }finally{
+  // If unlink fails the durable receipt remains, so restart can safely finish it.
+  await unlink(temporary).catch(error=>{if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;});
+  if(receipted)await unlink(receipt);
+ }
+}
+async function recoverInputPublication(root:string,path:string,sha256:string,size:number){
+ const directory=dirname(join(root,path));
+ for(const name of await readdir(directory)){
+  const match=/^\.input-([0-9a-f-]{36})\.receipt\.json$/.exec(name);if(!match)continue;
+  const receipt=join(directory,name),temporary=join(directory,`.input-${match[1]}.part`),target=join(root,path);
+  const r=await lstat(receipt);if(!r.isFile()||r.isSymbolicLink()||r.nlink!==1||r.size>4096||await realpath(receipt)!==receipt)continue;
+  let record;try{record=JSON.parse(await readFile(receipt,'utf8'));}catch{continue;}
+  if(!record||typeof record!=='object'||record.version!==1||record.target!==basename(path)||record.sha256!==sha256||record.size!==size)continue;
+  const temp=await lstat(temporary,{bigint:true}).catch(error=>{if((error as NodeJS.ErrnoException).code==='ENOENT')return null;throw error;});
+  if(!temp){await verifyNativeFile(root,path,sha256,size);await unlink(receipt);continue;}
+  if(!temp.isFile()||temp.isSymbolicLink()||await realpath(temporary)!==temporary||String(temp.dev)!==record.device||String(temp.ino)!==record.inode||Number(temp.size)!==size||createHash('sha256').update(await readFile(temporary)).digest('hex')!==sha256)throw new ConfigurationError(409,'输入发布记录或临时文件已变化，请检查恢复记录。');
+  let final=await lstat(target,{bigint:true}).catch(error=>{if((error as NodeJS.ErrnoException).code==='ENOENT')return null;throw error;});
+  if(!final){if(temp.nlink!==1n)throw new ConfigurationError(409,'输入发布临时文件链接已变化。');try{await link(temporary,target);}catch(error){if((error as NodeJS.ErrnoException).code!=='EEXIST')throw error;}final=await lstat(target,{bigint:true});}
+  if(final.dev===temp.dev&&final.ino===temp.ino){if(temp.nlink>2n||final.nlink!==2n||await realpath(target)!==target)throw new ConfigurationError(409,'输入发布目标链接已变化。');}
+  else{if(temp.nlink!==1n)throw new ConfigurationError(409,'输入发布临时文件链接已变化。');await verifyNativeFile(root,path,sha256,size);}
+  await unlink(temporary);await unlink(receipt);
+ }
 }

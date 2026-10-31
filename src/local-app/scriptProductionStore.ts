@@ -1,12 +1,12 @@
-import {resolveEpisodeAssetRoot} from './accountAssetRoots.js';
+import {verifyEpisodeFile,resolveEpisodeFileReference} from './episodeFiles.js';
+import {resolveEpisodeStorageLocation,requireEpisodeStorageDirectory} from './episodeStorageLocation.js';
 import type {PoolClient} from 'pg';
 import {createHash} from 'node:crypto';
-import {basename,join} from 'node:path';
+import {basename} from 'node:path';
 import {parseProductionScript,validateProductionDefaults} from '../reviews/productionScript.js';
 import {resolveProductionPlan,type ResolvedProductionPlan,type ProductionMaterial} from '../reviews/productionPlan.js';
 import {defaultShotCaptionContract,shotCaptionContractToDatabase,type ShotCaptionAnchor} from '../shotCaptions.js';
-import {verifyNativeFile,snapshotInput} from './localFiles.js';
-import {resolveLocalAssetRoot} from './mediaDeployment.js';
+import {snapshotInput} from './localFiles.js';
 import {ConfigurationError,canonical} from './configurationCommands.js';
 import {probeMp3Artifact} from '../worker/mediaTools.js';
 
@@ -18,7 +18,8 @@ export class ScriptProductionStore {
  async read(c:PoolClient,episodeId:string){
   const e=(await c.query("SELECT e.*,b.policy FROM public.episodes e JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id JOIN public.account_memberships m ON m.account_id=e.account_id AND m.user_id=local_identity.owner_id() AND m.role='owner' WHERE e.id=$1",[episodeId])).rows[0] as ScriptEpisode|undefined;
   if(!e)throw new ConfigurationError(404,'本地生产单不可见。');
-  const root=await resolveEpisodeAssetRoot(c,this.mediaRoot,e.id),result=await this.inspect(c,e,root);
+  const location=await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id);await requireEpisodeStorageDirectory(c,location);
+  const result=await this.inspect(c,e,location.assetRoot);
   return{v2:!!result.plan,inspection:result.plan,plan:result.record?.plan??result.plan,enabled:result.record?.enabled??false,authorizationHash:result.record?.authorization_hash,status:result.record?.last_status??'请核对素材与设置后保存制作计划'};
  }
  async alias(c:PoolClient,ownerId:string,materialId:string,name:string){
@@ -28,26 +29,28 @@ export class ScriptProductionStore {
   if(!e.main_script_revision_id)return{plan:null,record:null,script:null};
   const script=(await c.query('SELECT * FROM public.production_material_revisions WHERE id=$1 AND episode_id=$2',[e.main_script_revision_id,e.id])).rows[0];
   if(!script)throw new ConfigurationError(409,'主脚本修订不存在。');
-  const bytes=await verifyNativeFile(root,script.storage_path,script.sha256,Number(script.file_size)),text=bytes.toString('utf8');
+  const bytes=await verifyEpisodeFile(c,root,e.id,script.storage_path,script.sha256,Number(script.file_size)),text=bytes.toString('utf8');
   if(!parseProductionScript(text))return{plan:null,record:null,script:null};
   const rules=e.series_version_id?(await c.query('SELECT rules,series_id FROM public.series_versions WHERE id=$1 AND account_id=$2',[e.series_version_id,e.account_id])).rows[0]:null;
   const defaults=validateProductionDefaults(rules?.rules?.production_defaults??{});
-  const raw=(await c.query(`SELECT m.*,sv.series_id,local_identity.episode_asset_root(e.id) asset_root,n.name reference_name
+  const raw=(await c.query(`SELECT m.*,sv.series_id,local_identity.episode_asset_root(e.id) asset_root,n.name reference_name,o.provenance
    FROM public.production_material_revisions m JOIN public.episodes e ON e.id=m.episode_id
    JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id
    LEFT JOIN public.series_versions sv ON sv.id=e.series_version_id
    LEFT JOIN local_identity.material_reference_names n ON n.material_id=m.id
+   LEFT JOIN local_identity.material_import_origins o ON o.material_id=m.id
    WHERE e.account_id=$1 AND e.archived_at IS NULL AND NOT local_identity.is_historical_episode(e.id)
    AND local_identity.script_material_is_approved(m.id)
    AND (e.id=$2 OR ($3::uuid IS NOT NULL AND sv.series_id=$3))
    AND m.material_type IN ('image','audio') ORDER BY m.created_at,m.id`,[e.account_id,e.id,rules?.series_id??null])).rows;
-  const materials:ProductionMaterial[]=raw.map(m=>({id:m.id,episodeId:m.episode_id,seriesId:m.series_id,name:m.source_path,alias:m.reference_name??undefined,type:m.material_type,purpose:m.material_purpose,mime:m.mime_type,path:m.storage_path,sha256:m.sha256,size:Number(m.file_size),root:m.asset_root}));
+  const materials:ProductionMaterial[]=raw.map(m=>({id:m.id,episodeId:m.episode_id,seriesId:m.series_id,name:m.source_path,alias:m.reference_name??undefined,type:m.material_type,purpose:m.material_purpose,mime:m.mime_type,path:m.storage_path,sha256:m.sha256,size:Number(m.file_size),root:m.asset_root,...(m.provenance?{provenance:m.provenance}:{})}));
   const plan=resolveProductionPlan(text,defaults,materials,e.id,rules?.series_id??null,choices);
   plan.executionFingerprint=productionHash(e.policy);
   const record=(await c.query('SELECT * FROM local_identity.script_productions WHERE episode_id=$1',[e.id])).rows[0] as ScriptProductionRecord|undefined;
   return{plan,record:record??null,script};
  }
  async configure(c:PoolClient,e:ScriptEpisode,root:string,ownerId:string,enabled:boolean,choices:Record<string,string>){
+  const location=await resolveEpisodeStorageLocation(c,this.mediaRoot,e.id);await requireEpisodeStorageDirectory(c,location);
   const inspected=await this.inspect(c,e,root,choices),plan=inspected.plan;
   if(!plan||!inspected.script)throw new ConfigurationError(400,'请导入 v2 主脚本。');
   if(enabled&&plan.issues.length)throw new ConfigurationError(409,plan.issues.join('；'));
@@ -58,17 +61,19 @@ export class ScriptProductionStore {
    if(ref.status!=='bound'||!ref.material)continue;
    const m=ref.material;
    if(copied.has(m.id)){ref.material=copied.get(m.id);continue;}
-   const sourceRoot=await resolveLocalAssetRoot(c,this.mediaRoot,m.root);
-   const bytes=await verifyNativeFile(sourceRoot,m.path,m.sha256,m.size);
+   const sourceLocation=await resolveEpisodeStorageLocation(c,this.mediaRoot,m.episodeId);await requireEpisodeStorageDirectory(c,sourceLocation);
+   const sourceRoot=sourceLocation.assetRoot;
+   const bytes=await verifyEpisodeFile(c,sourceRoot,m.episodeId,m.path,m.sha256,m.size);
    if(m.type==='audio'){
-    const duration=await probeMp3Artifact(join(sourceRoot,m.path));
+    const duration=await probeMp3Artifact(await resolveEpisodeFileReference(c,sourceLocation,m.path));
     for(const segment of plan.segments)if(segment.sfx.material?.id===m.id&&(segment.settings.sfxDuration??1)>duration+0.05)throw new ConfigurationError(409,segment.id+'：上传音效短于指定使用时长。');
    }
    if(m.episodeId===e.id){copied.set(m.id,m);continue;}
-   const source=await snapshotInput(root,e.id,{sourceKind:'file',sourcePath:basename(m.name),contentBase64:bytes.toString('base64')});
+   const source=await snapshotInput(root,e.id,{sourceKind:'file',sourcePath:basename(m.name),contentBase64:bytes.toString('base64')},location.relativePath);
    const purpose=ref.kind==='image'?'visual_reference':ref.kind==='cover'?'cover':ref.kind==='bgm'?'background_music':'sound_effect';
    const created=(await c.query('SELECT to_jsonb(public.import_production_material($1,$2,$3,$4,$5,$6,$7,$8,false,$9)) result',[e.id,m.type,'file',source.sourcePath,source.storagePath,m.mime,source.sha256,source.fileSize,purpose])).rows[0].result;
-   const local={...m,id:created.id,episodeId:e.id,path:source.storagePath,root};copied.set(m.id,local);ref.material=local;
+   const provenance=(await c.query('SELECT local_identity.record_material_reuse($1,$2) result',[created.id,m.id])).rows[0].result;
+   const local={...m,id:created.id,episodeId:e.id,path:source.storagePath,root,provenance};copied.set(m.id,local);ref.material=local;
    await this.alias(c,ownerId,created.id,m.alias??m.name);
   }
   const hash=productionHash({script:inspected.script.sha256,execution:plan.executionFingerprint,settings:plan.settings,segments:plan.segments.map(s=>({...s,firstFrame:{...s.firstFrame,candidates:[]},sfx:{...s.sfx,candidates:[]}})),bgm:{...plan.bgm,candidates:[]},cover:{...plan.cover,candidates:[]}});
@@ -113,7 +118,7 @@ export class ScriptProductionStore {
    await c.query('SELECT local_identity.save_script_shot_gains($1,$2,$3,$4,$5,$6)',[e.id,reviewId,segment.id,s.narrationGainDb??0,s.bgmGainDb??-12,s.sfxGainDb??-6]);
    if(record.plan.bgm.status==='bound')await c.query('SELECT public.save_shot_audio_mix($1,$2,$3,$4)',[e.id,reviewId,segment.id,s.bgmDucking??'medium']);
    if(segment.sfx.status==='bound'&&segment.sfx.material){
-    const m=segment.sfx.material;await verifyNativeFile(root,m.path,m.sha256,m.size);
+    const m=segment.sfx.material;await verifyEpisodeFile(c,root,e.id,m.path,m.sha256,m.size);
     await c.query('SELECT public.register_manual_audio($1,$2,$3,$4)',[e.id,m.id,'sfx-'+segment.id,reviewId]);
     await c.query('SELECT public.save_storyboard_audio_selection($1,$2,$3,$4,$5,$6,NULL)',[e.id,reviewId,'shot',segment.id,'sfx','sfx-'+segment.id]);
    }
