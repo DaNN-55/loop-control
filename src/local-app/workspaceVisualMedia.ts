@@ -18,7 +18,8 @@ export async function requireVisualStorageLocation(c:PoolClient,assetRoot:string
  const row=(await c.query('SELECT * FROM local_identity.episode_storage_location($1)',[episodeId])).rows[0];
  if(!row||!safeRelative(row.directory_relative_path))throw new ConfigurationError(409,'生产单目录记录不可用。');
  const location={accountId:row.account_id,assetRoot,relativePath:row.directory_relative_path as string,directoryPath:join(assetRoot,row.directory_relative_path),deviceId:row.directory_device_id as string|null,inodeId:row.directory_inode_id as string|null,storageSeriesId:row.storage_series_id as string|null,layoutVersion:row.layout_version as number};
- await requireEpisodeStorageDirectory(c,location);await access(location.directoryPath,constants.W_OK);
+ await requireEpisodeStorageDirectory(c,location);
+ try{await access(location.directoryPath,constants.W_OK);}catch{throw new ConfigurationError(403,'没有写入生产单目录的权限，请恢复访问权限后重试。');}
  const fs=await statfs(location.directoryPath);if(fs.bavail*fs.bsize<minimumFreeBytes)throw new ConfigurationError(409,'生产单存储空间不足，请释放空间后重试。');
  return location;
 }

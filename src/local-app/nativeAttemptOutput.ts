@@ -47,6 +47,8 @@ export async function prepareNativeAttemptOutput(taskPackage:WorkerTaskPackage,f
   async function outcome(status:string){await writeFile(join(stagingRoot,'publication-outcome.json'),JSON.stringify({status,taskId:fence.p_task_id,attempt:fence.p_attempt,files:prepared.map(file=>({candidate:file.artifact,previous:file.previous??null}))},null,2)+'\n',{mode:0o600}).catch(()=>{});}
   try{
    await client.query('BEGIN');
+   const currentDirectory=await lstat(directory,{bigint:true});
+   if(!currentDirectory.isDirectory()||await realpath(directory)!==directory||currentDirectory.dev!==details.dev||currentDirectory.ino!==details.ino)throw Error('生产单目录身份已变化，保留任务文件等待恢复。');
    // The existing lease function asserts this attempt/token and updates the
    // task row. Keep that row lock until files and result registration finish.
    await client.query('SELECT local_identity.input_worker_call($1,$2)',['refresh_worker_task_lease',fence]);
