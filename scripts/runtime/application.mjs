@@ -26,7 +26,7 @@ async function createNativeInstance(d,activate){
  readMediaRootAuthorization(d);
  const binding=d.mediaRootBinding??await inspectMediaRoot(d.mediaRoot);
  await verifyMediaRootBinding(binding,d.worker?.minimumFreeBytes??0);
- await pool.query('SELECT local_identity.bind_media_root($1,$2,$3,$4,false,$5)',[binding.path,binding.deviceId,binding.inodeId,binding.mountPath,d.storageOwnerId??d.secretAdministration?.adminOwnerId??null]);
+ await pool.query('SELECT local_identity.bind_media_root($1,$2,$3,$4,false,coalesce($5::uuid,CASE WHEN local_identity.media_root_binding() IS NULL THEN $6::uuid END))',[binding.path,binding.deviceId,binding.inodeId,binding.mountPath,d.storageOwnerId??null,d.secretAdministration?.adminOwnerId??null]);
  const sourceRoots=await readMediaDeployment(pool,d.mediaRoot);const environment={PATH:process.env.PATH,HOME:d.home,TMPDIR:process.env.TMPDIR,LOOP_STATE_DIR:d.stateDirectory,...(d.openChatCut?{OPENCHATCUT_ROOT:d.openChatCut.root,OPENCHATCUT_NODE:d.openChatCut.node}:{}),...(process.env.LOOP_LOCAL_OFFLINE==='1'?{NODE_OPTIONS:'--import '+join(d.projectRoot,'scripts/runtime/offline-guard.mjs')}:{})};
  worker=d.worker?await startNativeWorkerService({...d.worker,studioPort:d.openChatCut?.port,projectRoot:d.projectRoot,applicationDatabase:{host:d.database.host,port:d.database.port,database:d.database.database},database:d.workerDatabase,mediaRoot:d.mediaRoot,environment}):undefined;
  const store=d.connections?.keychain?configuredKeychainStore(d.connections.keychain,d.prepareKeychainAccess):undefined;
