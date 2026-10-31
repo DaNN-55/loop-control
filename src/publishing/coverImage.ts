@@ -7,6 +7,6 @@ export function coverImageExtension(bytes: Uint8Array): CoverImageExtension | nu
   return null;
 }
 
-export function coverInputPath(episodeId: string, extension: CoverImageExtension): string {
-  return `episodes/${episodeId}/publish-input/cover-v1.${extension}`;
+export function coverInputPath(episodeId: string, extension: CoverImageExtension,episodeRelativePath=`episodes/${episodeId}`): string {
+  return `${episodeRelativePath}/publish-input/cover-v1.${extension}`;
 }

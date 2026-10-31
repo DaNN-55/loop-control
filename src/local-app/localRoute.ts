@@ -177,7 +177,7 @@ export function createLocalHandler(options:LocalOptions){
     const value=await ownerTransaction(options.pool,session.id,true,async c=>{
      const e=(await c.query("SELECT e.id,b.policy FROM public.episodes e JOIN public.account_memberships m ON m.account_id=e.account_id JOIN public.account_blueprint_versions b ON b.id=e.blueprint_version_id WHERE e.id=$1 AND m.user_id=$2 AND m.role='owner'",[legacyProject[1],session.id])).rows[0];
      if(!e)throw new ConfigurationError(404,'生产单不可见。');
-     return readLegacyStudioProject(await resolveEpisodeAssetRoot(c,options.mediaRoot,e.id),e.id);
+     return readLegacyStudioProject(c,await resolveEpisodeAssetRoot(c,options.mediaRoot,e.id),e.id);
     });
     if(download){if(!value||download!==value.sha256)throw new ConfigurationError(409,'已有工程已变化，请重新读取后下载。');response.writeHead(200,{'Content-Type':'application/json; charset=utf-8','Content-Disposition':`attachment; filename="${legacyProject[1]}-saved-project.json"`});response.end(value.document);}
     else send(200,value?{project:value.project,sha256:value.sha256}:{project:null});

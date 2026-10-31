@@ -1,17 +1,17 @@
 // @vitest-environment node
 import {editStudioDocument} from './studioDocument.fixture';
 import {it,expect} from 'vitest';
-import {readFile} from 'node:fs/promises';
+import {readFile,lstat} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import {productionWorkspaceFixture} from './productionWorkspace.fixture';
-it.skipIf(process.env.LOOP_LEGACY_WORKSPACE_ACCEPTANCE!=='1')('Owner reads and downloads the exact saved legacy edit without adopting or rewriting it',async()=>{
- const f=await productionWorkspaceFixture();
+it.skipIf(process.env.LOOP_LEGACY_WORKSPACE_ACCEPTANCE!=='1').each(['legacy','registered'] as const)('Owner reads and downloads the exact saved legacy edit without adopting or rewriting it (%s)',async layout=>{
+ const f=await productionWorkspaceFixture({episodeRelativePath:layout==='registered'?()=> '旧工程 [T09]_%/本期':undefined,migrations:['db/local/120-native-workspace-storage-locations.sql']});
  try{
   const get=async(suffix='',token=f.token)=>fetch(`${f.origin}/api/local/episodes/${f.episode}/legacy-project${suffix}`,{headers:{Cookie:'loop_owner_session='+token}});
-  const missing=await get();expect(missing.status).toBe(200);expect(await missing.json()).toEqual({project:null});
+  const missing=await get();expect(missing.status).toBe(200);expect(await missing.json()).toEqual({project:null});await expect(lstat(`${f.assetRoot}/${f.episodeRelativePath}/openchatcut-work`)).rejects.toMatchObject({code:'ENOENT'});
   await f.c.query("UPDATE public.episodes SET stage='qc_review' WHERE id=$1",[f.episode]);
   const opened=await f.request('openStudio',{projectRelativePath:f.boardPath});expect(opened.status,JSON.stringify(opened.body)).toBe(200);
-  const base=`${f.assetRoot}/episodes/${f.episode}/openchatcut-work/current`;
+  const base=`${f.assetRoot}/${f.episodeRelativePath}/openchatcut-work/current`;
   await editStudioDocument(opened.body.studioUrl,opened.body.workspace.projectId,doc=>{doc.timelines[0].items.find((i:any)=>i.kind==='video').transform.x=37;});await f.closeStudio();
   const path=base+'/runtime/project-store-v1.sqlite3';
   await f.c.query('DELETE FROM local_identity.input_episodes WHERE episode_id=$1',[f.episode]);

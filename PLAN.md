@@ -1,3 +1,14 @@
+# 2026-10-31 #187 / T09 工程与交付位置兼容（实现完成，待独立验收）
+
+- [x] 真实 Owner HTTP 新位置工程 red→green，保留外部日志。
+- [x] Studio 工作文件、恢复、工程版本、来源 I/O 和导出/交付复用持久位置；SQL120六函数兼容。
+- [x] 旧/新位置实际 SDK 编辑保存、关闭重启重开、播放导出和 compiled Worker 交付读回；身份/冲突保护回归。
+- [x] check/build/runtime:prepare、正式浏览器验收、T05 同步后 12 项原生/恢复及 2 项浏览器复验、child SIGKILL 与契约交接完成。
+
+最终证据与限制见仓库外 `T09/HANDOFF.md` 和 `T09-CONTRACT.md`。完整相关回归 29 passed / 1 已独立复现的原有 platformBlueprint 夹具失败，原断言保留；本票未修改该断言或声称整组全绿。
+
+验收 seam 已授权：正式页 → Owner HTTP → 隔离真实 DB/files → 实际 SDK。外部证据 `/private/tmp/loop-control-178-20261031/T09`；不碰日常数据、默认布局、付费 Provider 或 main。
+
 # Active execution: issue 178
 
 Integration branch: `codex/issue-178-integration`; baseline `8f134dc2`. Main checkout and existing uncommitted work remain untouched. Spec: https://github.com/DaNN-55/loop-control/issues/178. All 17 ticket descriptions and the live-read graph are saved in `/private/tmp/loop-control-178-20261031`.
@@ -10,12 +21,12 @@ Confirmed acceptance: formal UI → Owner HTTP → isolated real database/files 
 | #180 | None | Integrated locally; acceptance passed; tracker closed |
 | #181 | #179 | Integrated locally; independent acceptance passed; tracker closed |
 | #182 | #180, #181 | Completed; independent acceptance passed and tracker closed |
-| #183 | #182 | Integrated locally; independent acceptance passed; awaiting root tracker closure |
+| #183 | #182 | Completed; independent acceptance passed and tracker closed |
 | #184 | #179 | Integrated locally; publication ownership fix independently accepted; tracker closed |
 | #185 | #179 | Integrated locally; acceptance passed; tracker closed |
 | #186 | #179 | Completed; independent acceptance passed and tracker closed |
 | #187 | #184, #185, #186 | Implementing in isolated worktree |
-| #188 | #183 | Pending |
+| #188 | #183 | Implementing in isolated worktree |
 | #189 | #183, #187 | Pending |
 | #190 | #187, #188, #189 | Pending |
 | #191 | #190 | Pending |
@@ -30,7 +41,7 @@ Baseline verification: `npm run check` passed; default suite 174 files / 1144 te
 
 Verification log and ticket handoffs: `/private/tmp/loop-control-178-20261031`. Preserve RED/GREEN, actual skip counts and any unresolved integration limitations.
 
-Tracker: #179/#180/#181/#182/#184/#185/#186 closed after independent acceptance; 7/17 complete. T05/#183 is independently accepted locally and awaits root tracker closure; T09/#187 remains active in its isolated worktree. Completed clean implementer worktrees are removed after ancestry/status/runtime checks; recovery branches retained. Migration reservations and exact cleanup receipts remain in the shared external context.
+Tracker: #179 through #186 are completed after independent acceptance; 8/17 complete. T09/#187 and T10/#188 are active. Completed clean implementer worktrees are removed after ancestry/status/no-runtime-reference verification; recovery branches retained. Exact receipts and migration reservations remain in the shared external context.
 
 Cross-ticket notes: T03 binds global storage to the persisted workspace Owner. T04 now creates the genuine first account through the trusted T03 binding without importing source metadata or broadening credentials. T07 owns shared producer namespaces/native output authority and mediaLibrary prefix checks; T06 owns input/planning guards and localFiles. Relative-prefix migration of frozen references remains a mandatory T13/T14 seam (external LOCATION-CALLERS.md), not solved by account-root-only mapping.
 
@@ -59,6 +70,8 @@ T04/#182 merged without conflicts at `6c20004d` from clean source `41059893` (im
 Root tracker readback: #182 is completed; seven of17 tickets are closed (179/180/181/182/184/185/186). T05/#183 and T09/#187 are active. T04 clean fully merged worktree was removed after ancestry/status/no-runtime-reference verification; recovery branch retained.
 
 T05/#183 merged without conflicts at `65419a72` from clean source `712c66ca` (integration e747ee2b is an ancestor). Independent merger passed `npm run check`, `npm run runtime:prepare`, four targeted unit/UI files /51 tests, real Owner HTTP/database/files two files /6 tests, separate native runtime one test and formal headed browser one test:59 tests, zero skips, maxWorkers1. Native SIGKILL/new PID36370→36444 resumes the original container UUID/inode/manual bytes; seven concurrent special names succeed independently. Formal create returns series_versions.series_id as series identity; independent rename preserves frozen versions and unsaved rule drafts; actual OS pbpaste exactly matches the path, and actual Finder series/unassigned targets are observed and closed before fixture teardown. Current1440/1100/390 same-row path/open and document bounds passed; merger personally inspected current1440/390 series/account, full-path390 and unassigned390 screenshots. Shared T04 naming/marker extraction keeps original defaults and identity semantics byte-for-byte; the prior actual four-case T04 green log was read and not repeated. Migration114 explicitly follows110/111/112/113; fixed isolated source baseline remains107 migrations through109, zero114 and zero accounts. Names may repeat while UUID/account FK identity remains authoritative; completed-intent replay validates the current registered container, pending roots remain frozen, and final parent/child/original-marker checks surround the container INSERT. Compensation only removes its own identity-matched marker-only empty folder; new episode defaults stay legacy until T12. No product correction was needed during merge. External `MERGE-T05.md`, `MERGE-T05-*.log`, `MERGE-T05-browser/`, T05-CONTRACT.md and T05/HANDOFF.md retain exact commands/evidence/downstream migration contracts. No full default/build repeat, daily data/service/config change, paid calls, main/push, tracker closure or worktree cleanup. Own browser/native windows close before teardown; the later unused test tmp fallback was closed through its actual AX close button, then the actual Finder Window menu had zero window entries and was cancelled; Desktop Ebuget1T selection remains. Root tracker state remains7/17 closed (179/180/181/182/184/185/186);183 is accepted awaiting root closure and T09 remains active.
+
+Root tracker readback: #183 completed after independent59-test acceptance, OS clipboard/Finder and rendered narrow checks. Eight of17 children are closed. T10 started in fresh worktree; T09 continues final cache/special-path/native acceptance. T05 clean merged worktree removed; recovery ref retained.
 
 ---
 

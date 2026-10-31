@@ -1,3 +1,6 @@
+import type {EpisodeFileIO} from './episodeFiles.js';
+import {verifyNativeFile} from './localFiles.js';
+import {relative} from 'node:path';
 import {constants} from 'node:fs';
 import {copyFile,lstat,open,readFile,realpath,rename,rm,writeFile} from 'node:fs/promises';
 import {createHash,randomUUID} from 'node:crypto';
@@ -11,7 +14,7 @@ import {verifyArtifactIndex} from '../worker/mediaLibrary.js';
 import {verifyReportedStoryboardArtifact} from '../worker/storyboardArtifact.js';
 
 export interface NativeAttemptFence {p_task_id:string;p_attempt:number;p_lease_token:string}
-export async function prepareNativeAttemptOutput(taskPackage:WorkerTaskPackage,fence:NativeAttemptFence,additionalInputs:ArtifactManifest[]=[]){
+export async function prepareNativeAttemptOutput(taskPackage:WorkerTaskPackage,fence:NativeAttemptFence,additionalInputs:ArtifactManifest[]=[],storage?:EpisodeFileIO){
  if(fence.p_task_id!==taskPackage.task.id||fence.p_attempt!==taskPackage.budget.attempt)throw Error('输出尝试与冻结任务不一致。');
  const episodeRelativePath=taskPackage.assets.episodeRelativePath??`episodes/${taskPackage.episode.id}`;
  const directory=join(await realpath(taskPackage.assets.allowedRoot),episodeRelativePath),details=await lstat(directory,{bigint:true}),expected=taskPackage.assets.episodeDirectoryIdentity;
@@ -22,10 +25,13 @@ export async function prepareNativeAttemptOutput(taskPackage:WorkerTaskPackage,f
  await writeFile(marker,JSON.stringify({taskId:taskPackage.task.id,attempt:fence.p_attempt})+'\n',{flag:'wx',mode:0o600});
  const staged={...taskPackage,assets:{...taskPackage.assets,allowedRoot:stagingRoot}};
  const inputs=[...taskPackage.assets.inputs,...additionalInputs];
- await verifyArtifactIndex({assetRoot:taskPackage.assets.allowedRoot,episodeId:taskPackage.episode.id,episodeRelativePath,artifacts:inputs});
+ if(storage){
+  await storage.assertValid();
+  for(const input of inputs){if(![episodeRelativePath,`episodes/${taskPackage.episode.id}`].some(prefix=>input.relativePath.startsWith(prefix+'/')))throw Error('输入文件不属于当前生产单。');await verifyNativeFile(taskPackage.assets.allowedRoot,relative(taskPackage.assets.allowedRoot,await storage.resolveReference(input.relativePath)),input.sha256,input.fileSize);}
+ }else await verifyArtifactIndex({assetRoot:taskPackage.assets.allowedRoot,episodeId:taskPackage.episode.id,episodeRelativePath,artifacts:inputs});
  for(const input of new Map(inputs.map(input=>[input.relativePath,input])).values()){
   const destination=await safeAssetOutputPath(stagingRoot,input.relativePath);
-  await copyFile(join(taskPackage.assets.allowedRoot,input.relativePath),destination,constants.COPYFILE_FICLONE|constants.COPYFILE_EXCL);
+  await copyFile(storage?await storage.resolveReference(input.relativePath):join(taskPackage.assets.allowedRoot,input.relativePath),destination,constants.COPYFILE_FICLONE|constants.COPYFILE_EXCL);
  }
  await verifyArtifactIndex({assetRoot:stagingRoot,episodeId:taskPackage.episode.id,episodeRelativePath,artifacts:inputs});
  // Normal planners may use an exclusive direct write rather than mkdir.
