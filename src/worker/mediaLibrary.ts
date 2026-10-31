@@ -1,6 +1,6 @@
 import { constants } from "node:fs";
 import { createHash } from "node:crypto";
-import { access, readFile, realpath, stat, statfs } from "node:fs/promises";
+import { access, readFile, realpath, stat, statfs, lstat } from "node:fs/promises";
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import type { ArtifactManifest } from "./contracts.js";
 
@@ -21,6 +21,8 @@ export interface MediaLibraryStatus {
 export interface ArtifactIndexCheckInput {
   assetRoot: string;
   episodeId: string;
+  /** Trusted persisted/frozen account-relative production directory, never client input. */
+  episodeRelativePath?: string;
   artifacts: readonly ArtifactManifest[];
 }
 
@@ -55,16 +57,21 @@ export async function verifyArtifactIndex(input: ArtifactIndexCheckInput): Promi
   if (!isSafePathSegment(input.episodeId)) throw new Error("Episode 标识不能用作媒体目录名。");
   const assetRoot = await directoryPath(input.assetRoot, "媒体库账号目录");
   if (input.artifacts.length === 0) return;
-  const episodeDirectory = await directoryPath(join(assetRoot, "episodes", input.episodeId), "当前 Episode 目录");
+  const prefixes = [...new Set([`episodes/${input.episodeId}`, ...(input.episodeRelativePath ? [input.episodeRelativePath] : [])])];
+  if (prefixes.some(path => isAbsolute(path) || path.split(/[\\/]/).some(part => !part || part === "." || part === ".."))) throw new Error("当前 Episode 目录无效。");
 
   for (const artifact of input.artifacts) {
+    if (isAbsolute(artifact.relativePath) || artifact.relativePath.split(/[\\/]/).some(part => !part || part === "." || part === "..")) throw new Error("产物不属于当前 Episode 目录。");
+    const prefix = prefixes.find(prefix => artifact.relativePath.startsWith(prefix + "/"));
+    if (!prefix) throw new Error(`产物不属于当前 Episode 目录：${artifact.relativePath}`);
+    const episodeDirectory = await directoryPath(join(assetRoot, prefix), "当前 Episode 目录");
     const declaredArtifactPath = resolve(assetRoot, artifact.relativePath);
     const artifactPath = await realpath(declaredArtifactPath);
-    if (!isDescendant(episodeDirectory, artifactPath)) {
+    if (episodeDirectory !== join(assetRoot,prefix) || artifactPath !== declaredArtifactPath || !isDescendant(episodeDirectory, artifactPath)) {
       throw new Error(`产物不属于当前 Episode 目录：${artifact.relativePath}`);
     }
-    const details = await stat(artifactPath);
-    if (!details.isFile()) throw new Error(`产物不是文件：${artifact.relativePath}`);
+    const details = await lstat(artifactPath);
+    if (!details.isFile() || details.nlink !== 1) throw new Error(`产物不是文件：${artifact.relativePath}`);
     if (details.size !== artifact.fileSize) throw new Error(`产物文件大小不匹配：${artifact.relativePath}`);
     const sha256 = createHash("sha256").update(await readFile(artifactPath)).digest("hex");
     if (sha256 !== artifact.sha256) throw new Error(`产物 SHA-256 不匹配：${artifact.relativePath}`);

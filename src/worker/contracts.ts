@@ -319,6 +319,8 @@ export interface WorkerTaskPackageInput {
   };
   allowedTools: string[];
   allowedAssetRoot: string;
+  episodeRelativePath?: string;
+  episodeDirectoryIdentity?: {deviceId:string|null;inodeId:string|null};
   output: {
     requiredArtifactTypes: string[];
     contentType: string;
@@ -370,6 +372,8 @@ export interface WorkerTaskPackage {
   episode: WorkerTaskPackageInput["episode"];
   assets: {
     allowedRoot: string;
+    episodeRelativePath?: string;
+    episodeDirectoryIdentity?: WorkerTaskPackageInput["episodeDirectoryIdentity"];
     inputs: ArtifactManifest[];
   };
   output: {
@@ -436,6 +440,8 @@ export interface WorkerResult {
 const forbiddenActions = ["approve", "publish", "change_blueprint", "change_episode_stage"] as const;
 
 export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTaskPackage {
+  if (input.episodeRelativePath !== undefined && !isSafeRelativePath(input.episodeRelativePath)) throw new Error("冻结生产单目录无效。");
+  if (input.episodeDirectoryIdentity && ((input.episodeDirectoryIdentity.deviceId===null)!==(input.episodeDirectoryIdentity.inodeId===null) || [input.episodeDirectoryIdentity.deviceId,input.episodeDirectoryIdentity.inodeId].some(id=>id!==null && (typeof id!=="string" || !/^\d+$/.test(id))))) throw new Error("冻结生产单目录身份无效。");
   if (!input.allowedAssetRoot.trim()) throw new Error("allowedAssetRoot is required.");
   if (!Number.isInteger(input.task.budgetLimitCents) || input.task.budgetLimitCents < 0) throw new Error("budgetLimitCents must be a non-negative integer.");
   if (!Number.isInteger(input.task.maxAttempts) || input.task.maxAttempts < 1) throw new Error("maxAttempts must be a positive integer.");
@@ -597,7 +603,7 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     task: { id: input.task.id, type: input.task.type },
     accountId: input.episode.accountId,
     episode: input.episode,
-    assets: { allowedRoot: input.allowedAssetRoot, inputs: input.inputArtifacts },
+    assets: { allowedRoot: input.allowedAssetRoot, ...(input.episodeRelativePath?{episodeRelativePath:input.episodeRelativePath}:{}), ...(input.episodeDirectoryIdentity?{episodeDirectoryIdentity:input.episodeDirectoryIdentity}:{}), inputs: input.inputArtifacts },
     output: { requiredArtifactTypes: [...new Set(input.output.requiredArtifactTypes)], contentType: input.output.contentType, relativePath: input.output.relativePath, reviewStage: input.output.reviewStage },
     budget: { limitCents: input.task.budgetLimitCents, maxAttempts: input.task.maxAttempts, attempt: input.task.attempt },
     forbiddenActions,

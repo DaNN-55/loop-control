@@ -123,7 +123,7 @@ async function executeCardVideo(
   input: Parameters<typeof executeOpenChatCutRender>[0],
   shot: NonNullable<WorkerTaskPackage["aRoll"]>["shot"],
 ): Promise<string> {
-  const projectRelativePath = `episodes/${input.taskPackage.episode.id}/card-video/${input.taskPackage.task.id}/project.json`;
+  const projectRelativePath = `${input.taskPackage.assets.episodeRelativePath??`episodes/${input.taskPackage.episode.id}`}/card-video/${input.taskPackage.task.id}/project.json`;
   const outputPath = await safeAssetOutputPath(input.taskPackage.assets.allowedRoot, input.taskPackage.output.relativePath);
   const project = buildOpenChatCutCardProject(shot, `card-${input.taskPackage.task.id}`);
   await safeAssetOutputPath(input.taskPackage.assets.allowedRoot, projectRelativePath);

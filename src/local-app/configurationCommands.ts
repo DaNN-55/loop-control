@@ -54,7 +54,7 @@ export async function executeConfiguration(pool:Pool,session:OwnerSession,body:R
   if(field.endsWith('Id')||field==='accountId'){if(typeof value!=='string'||!uuid.test(value))throw new ConfigurationError(400,'引用无效。');}
   else if(field==='archived'){if(typeof value!=='boolean')throw new ConfigurationError(400,'归档选项无效。');}
   else if(field==='policy'){validatePolicySecrets(value);data.policy=creativeAccountRules(value as Record<string,unknown>);validateConfigurationPolicy(data.policy,true);}
-  else if(field==='rules'){if(!value||typeof value!=='object'||Array.isArray(value))throw new ConfigurationError(400,'系列规则必须是对象。');}
+  else if(field==='rules'){if(!value||typeof value!=='object'||Array.isArray(value))throw new ConfigurationError(400,'系列规则必须是对象。');validatePolicySecrets(value);}
   else if(typeof value!=='string'||value.length>100000)throw new ConfigurationError(400,'配置字段无效。');
  }
  if(command==='createAccount'){try{new Intl.DateTimeFormat('en',{timeZone:String(data.timezone)});}catch{throw new ConfigurationError(400,'时区无效。');}}

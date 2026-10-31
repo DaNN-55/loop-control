@@ -38,6 +38,18 @@ describe("外置媒体库", () => {
     })).resolves.toBeUndefined();
   });
 
+  it("使用登记的生产单目录校验产物，同时拒绝其他生产单、越界和符号链接", async () => {
+    const assetRoot = await mkdtemp(join(tmpdir(), "loop-t07-artifacts-"));directories.push(assetRoot);
+    const prefix = "系列 stable/生产单 stable", path = prefix + "/brief.md";
+    await mkdir(join(assetRoot,prefix),{recursive:true});await writeFile(join(assetRoot,path),"brief");
+    const artifact={artifactType:"brief",relativePath:path,fileSize:5,sha256:"29a8825bd242f14386ee528d76e0e8f1e38f3c8c4047d7b2d6df7493368a17d0"};
+    await expect(verifyArtifactIndex({assetRoot,episodeId:"episode-1",episodeRelativePath:prefix,artifacts:[artifact]} as never)).resolves.toBeUndefined();
+    await expect(verifyArtifactIndex({assetRoot,episodeId:"episode-2",artifacts:[artifact]})).rejects.toThrow("当前 Episode");
+    await expect(verifyArtifactIndex({assetRoot,episodeId:"episode-1",episodeRelativePath:"../escape",artifacts:[artifact]} as never)).rejects.toThrow();
+    await symlink(join(assetRoot,path),join(assetRoot,prefix,"alias.md"));
+    await expect(verifyArtifactIndex({assetRoot,episodeId:"episode-1",episodeRelativePath:prefix,artifacts:[{...artifact,relativePath:prefix+"/alias.md"}]} as never)).rejects.toThrow();
+  });
+
   it("空输入产物不要求预先创建 Episode 目录", async () => {
     const assetRoot = await mkdtemp(join(tmpdir(), "loop-control-media-library-"));
     directories.push(assetRoot);

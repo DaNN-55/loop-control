@@ -253,11 +253,11 @@ describe("系列规则表单转换", () => {
     expect(form.positioning).toBe("雨夜志怪");
     expect(form.format).toBe("短视频");
     expect(form.characters).toContain("林砚");
-    expect(form).not.toHaveProperty("advancedJson");
+    expect(form.advancedJson).toContain("b_roll");
   });
 
-  it("拒绝系列携带未被表单支持的配置", () => {
-    expect(() => validateSeriesRules({ b_roll: { executor: { provider: "pexels" } } })).toThrow("系列规则仅支持表单字段");
+  it("保留未单独展示的系列扩展规则", () => {
+    expect(() => validateSeriesRules({ extension: { nested: ["preserved"] } })).not.toThrow();
   });
 
   it("往返保存 JSON 数组形式的角色设定", () => {

@@ -3,7 +3,7 @@ import type{ArtifactManifest,VisualAssetRequest,WorkerTaskPackage}from'./contrac
 import{parseCodexOutput}from'./codexRunner.js';
 import{generateCloudflareWorkersAiImage,generateOpenAiImage,type MediaFetcher}from'./mediaProviders.js';
 import{writeSafeAssetFile}from'./controlledMediaExecutor.js';
-export async function generateVisualAssets(taskPackage: WorkerTaskPackage, output: string, resolveConnectionSecret:(ref:string|undefined,provider:string,adapter:string,accountId:string)=>Promise<string|undefined>, fetcher:MediaFetcher,outputDirectory=`episodes/${taskPackage.episode.id}/visuals`): Promise<string> {
+export async function generateVisualAssets(taskPackage: WorkerTaskPackage, output: string, resolveConnectionSecret:(ref:string|undefined,provider:string,adapter:string,accountId:string)=>Promise<string|undefined>, fetcher:MediaFetcher,outputDirectory=`${taskPackage.assets.episodeRelativePath??`episodes/${taskPackage.episode.id}`}/visuals`): Promise<string> {
   const candidate = parseCodexOutput(output, 0);
   if (!candidate || typeof candidate !== "object" || Array.isArray(candidate)) throw new Error("视觉资产准备结果格式无效。");
   const result = candidate as Record<string, unknown>;
