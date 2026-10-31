@@ -87,7 +87,7 @@ Confirmed acceptance: formal UI → Owner HTTP → isolated real database/files 
 | #192 | #190 | Isolated TDD implementation in t14; T13 merged3edf5f80 |
 | #193 | #191 | Pending |
 | #194 | #193 | Pending |
-| #195 | #192, #194 | Pending |
+| #195 | #192, #194 | Complete |
 
 Runtime ready: independent `loop-control-178-test-postgres` container (network none, no host ports or persistent volumes, memory512MiB/cpu1) bootstrapped from repository baseline and all 107 numbered migrations through109; 0 source business accounts. Test context and independent tracked OpenChatCut source live under `/private/tmp/loop-control-178-20261031`. Keep baseline109 fixed; each test requests its needed forward migrations. No daily runtime context or credentials are used.
 
@@ -967,3 +967,11 @@ freeze check/build/runtime:prepare/compiled assert全通过；SQL110–126原字
 正式账号 UI 在 1543/1440/1100/390 无 document 横溢出，path/open/copy 同排，独立保存、history、dirty guard、Enter/Escape 焦点、改名目录稳定及三层 Finder 通过。旧删除严格检查四个 managed 全 ENOENT、仅未知空 input 原 dev/inode 留存；Pexels 23 managed 全 ENOENT、8 retained 原 dev/inode/SHA 及精确集合保持。读取未变的 source 正式制作两布局完整 2/2 零 skip 187.05s 实证，独算四份 dump、188 个 archive 媒体、四个 SQLite integrity/x=1、12 个 Owner 交付文件 SHA，并亲看各布局红→蓝；按本轮边界不重复运行该已独立接受的完整流程。T16 未变故障组及 source 相关 seam 日志已读取，未计入本轮运行。
 
 资源独立核验固定 107/max109/0 账号、ledger4806437b/schema1989a647、完整 schema 字节及仅 base+baseline 不变；pinned isolated container none-network / ports{} / mounts[]，原四个挂载、daily5174 PID71478、QuickLook39211/55969 和七个未知 Finder IDs 保持；自有进程/浏览器/session/cache/临时根/随机 DB 已无残留。完整报告 `/private/tmp/loop-control-178-20261031/MERGE-T17.md`，命令、原始日志、逐字节证据、截图及资源收据在同级 `MERGE-T17/`。本次仅追加本收据；main/source 未写，未 push、部署、付费或操作日常资料；#195/#178 tracker 关闭及全规格 Standards/Spec review 由 root 接续。
+
+
+### #178 orchestration — T17 accepted, final review gate
+
+- Root read MERGE-T17 complete report, current logs and resources; personally viewed four fresh real moving native frames and independently verified actual dump c33032a… /29 media/two SQLite saved edits and Owner export6ed62f…. Closed #195 with CLOSED readback2026-10-31T20:31:46Z. All17 children #179–#195 are complete; parent #178 remains open.
+- Source21c9beb6 → noff482b2a67 → independent receipt e25a9d4c. Current87 actual tests zero skip: combined1/accountUI1/known17/creative1/units67, plus independently verified source freshformal2 physical evidence (not recounted as rerun). Fixed baseline/schema/ledger/original4mounts/daily/user windows preserved; own runtime resources closed.
+- Next mandatory gate: fresh parallel Standards / Spec review of the whole integration since fixed8f134dc2, followed by one fresh fix implementer and fresh merger if findings require changes. Root keeps integration stable during review.
+- Dedicated cleanup may remove only accepted inactive clean T17 worktree/branch after fresh proof. Preserve integration/main, current review resources and exact evidence. No main merge, push, deployment, daily migration or paid Provider.
