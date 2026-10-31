@@ -21,13 +21,13 @@
 | Seedance `doubao-seedance-2-0-260128` | 真实最短提交返回 HTTP 404，`ModelNotOpen`，当前账号未开通模型。 |
 | Kling `kling-v3` | 真实最短提交返回 HTTP 429、业务码 `1102`，原因是余额不足。 |
 | Freesound | 连接探测 HTTP 200；未作为本期实际声音来源。 |
-| OpenAI `gpt-image-2` | 未调用。已确认存在保存的密钥引用，复用选择尚未收到答复。 |
+| OpenAI `gpt-image-2` | 已按补充授权复用连接，模型读取 HTTP 200；免费额度未核实，图片生成未执行。见 `free-only-followup.md`。 |
 
 所有生成提交串行执行。余额或权限拒绝后，没有充值、改模型、自动重提或把拒绝视为已生成。供应商响应中的秘密、请求头、凭据、完整签名网址和图片 Base64 没有写入证据。
 
 正式万相任务 `ffaf1bc5-7e02-406a-9707-012fad9770e3` 对应供应商任务 `5f34a997-811a-4516-a1d8-e3297c644c3c`。独立样片任务、请求标识、策略与价格依据见 [真实 API 样片报告](provider-samples-report.md)、[价格记录](price-evidence.md)及 [任务结果](real-task-results.json)。
 
-费用是预算预留与公开价格估算，未读取供应商账单。独立样片策略合计占额 9.376 CNY，正式策略增加万相 0.30 CNY、两次语音各 0.10 CNY，总占额 9.876 CNY。失败提交的账本没有重置，也未冒充退款。Worker 的 `actual_cost_cents` 不能代替真实账单。
+用户后来明确限定只使用免费额度。上一轮实际调用没有事先核实免费额度，不能保证未产生付费；本次补充验证未提交生成。费用记录是预算预留与公开价格估算，未读取供应商账单。独立样片策略合计占额 9.376 CNY，正式策略增加万相 0.30 CNY、两次语音各 0.10 CNY，总占额 9.876 CNY。失败提交的账本没有重置，也未冒充退款。Worker 的 `actual_cost_cents` 不能代替真实账单。
 
 ## 正式制作链路
 
@@ -79,7 +79,7 @@
 
 1. 原生 SDK 对不同字幕 lane 内相同 cue ID 使用全局 Map，真实复现了重复 React key，可能影响字幕选中、拖动和展示。正式导出代表帧正常，但不能据此宣称字幕编辑完全可靠。共享 SDK 未修改，根因、红色复现及建议见 [SDK 问题记录](native-sdk-findings.md)。
 2. SDK 内部导出面板点击后未观察到任务或进度，未定位原因；不能声称 SDK 内导出通过。正式第 4 步导出与交付已通过。
-3. OpenAI 密钥复用仍待用户选择。所应用的 [openai-platform-api-key Skill](/Users/dan/.codex/plugins/cache/openai-curated-remote/openai-developers/1.3.13/skills/openai-platform-api-key/SKILL.md) 明确要求：「Finding an existing key is not permission to proceed.」因此没有自动复用或调用该 API。
+3. 用户已补充确认复用现有 OpenAI 密钥，并限定只使用免费额度。现已完成模型读取检查（HTTP 200），生成请求为 0；无法核实未过期免费额度及付费回退边界，因此未继续生成。上一轮万相及语音请求是否扣费仍未知，不能视为免费完成。见 [补充说明](free-only-followup.md)。
 4. WhisperX 首次冷探测曾超过 30 秒；预热后，生产 `assertAlignmentReady` 检查实际用时 8093 毫秒，两段强制对齐均完成。本轮不证明冷启动可在 30 秒内通过。
 5. 本轮隔离服务曾退出，未有停服事件；恢复后数据和交付可用，暂不能确定退出原因。
 6. 日常服务 PID `71478` 未重启，日常数据库和媒体未迁移。本地 main 合并不等于日常运行态已升级到新 schema。

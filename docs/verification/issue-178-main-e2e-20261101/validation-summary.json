@@ -23,9 +23,16 @@
     "deliveryFilesByteVerified": 6,
     "artifact": "final.mp4"
   },
-  "openaiLiveCalls": 0,
-  "openaiCredentialReuseAwaitingAnswer": true,
+  "openaiLiveCalls": 1,
+  "openaiCredentialReuseAwaitingAnswer": false,
   "dailyRuntimeUpgraded": false,
   "rawToolWhitespacePreservedForEvidenceHashes": true,
-  "stagedMarkdownWhitespaceCheckExit": 0
+  "stagedMarkdownWhitespaceCheckExit": 0,
+  "openaiModelMetadataReads": 1,
+  "openaiGenerationRequests": 0,
+  "userSpendingConstraint": "free-credits-only",
+  "freeCreditBalanceVerified": false,
+  "openaiGenerationStatus": "not_executed_free_only_unverified",
+  "priorGenerationBillingOutcome": "not_verified",
+  "freeOnlyFollowupEvidence": "openai-free-only-followup.json"
 }

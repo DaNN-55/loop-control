@@ -1,0 +1,36 @@
+{
+  "at": "2026-10-31T23:17:56.472Z",
+  "userCredentialDecision": "reuse-existing",
+  "userSpendingConstraint": "free-credits-only",
+  "connectionName": "gpt-image2",
+  "connectionVersion": "022dff01-abac-4444-8bc8-a7500751f657",
+  "model": "gpt-image-2",
+  "probe": {
+    "outcome": "verified",
+    "attempted": true,
+    "code": "verified",
+    "detail": "连接验证通过；尚未执行内容生成。",
+    "httpStatus": 200
+  },
+  "events": [
+    {
+      "at": "2026-10-31T23:17:55.016Z",
+      "event": "request",
+      "method": "GET",
+      "host": "api.openai.com",
+      "path": "/v1/models/gpt-image-2"
+    },
+    {
+      "at": "2026-10-31T23:17:56.466Z",
+      "event": "response",
+      "httpStatus": 200,
+      "elapsedMs": 1450
+    }
+  ],
+  "generationRequestsSent": 0,
+  "freeCreditBalanceVerified": false,
+  "paidFallbackDisabledByProvider": false,
+  "generationDecision": "not_submitted_free_only_unverified",
+  "reason": "No verified balance of unexpired free credits or provider-enforced free-only payment boundary is available. Model metadata success does not prove free generation or remaining credits.",
+  "source": "Existing production createProviderProbe/createManualVerificationFetcher; no secret writes, no database writes, no generation endpoint allowed"
+}
