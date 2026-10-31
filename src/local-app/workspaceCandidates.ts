@@ -1,8 +1,8 @@
+import {episodeStorageLocationAtRoot} from './episodeStorageLocation.js';
 import {resolveWorkspaceShotLineage} from './workspacePreparation.js';
 import {inspectWorkspaceVisualFile} from './workspaceVisualMedia.js';
 import {resolveWorkspaceMainVoice} from '../workspaceAudio.js';
 import {randomUUID} from 'node:crypto';
-import {join} from 'node:path';
 import type {PoolClient} from 'pg';
 import {applyWorkspaceCandidate,workspaceCandidateTarget,workspaceCandidateVoiceRoute,workspaceCandidateDurationFrames,type WorkspaceCandidate,type WorkspaceCandidateEdit,type WorkspaceUsedNarration} from '../workspaceCandidates.js';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
@@ -10,7 +10,7 @@ import {probeMp3Artifact,inspectMp4Artifact} from '../worker/mediaTools.js';
 import {isOpenChatCutStudio,registerOpenChatCutStudioSource,inspectOpenChatCutStoredProject} from '../worker/openchatcutStudio.js';
 import {readWorkspaceNarration,workspaceNarrationItemId,validateSpeechParameters} from './workspaceNarration.js';
 import {ConfigurationError} from './configurationCommands.js';
-import {verifyNativeFile} from './localFiles.js';
+import {verifyEpisodeFile,resolveEpisodeFileReference} from './episodeFiles.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
 import {readProductionWorkspace,updateWorkspaceProject,type ProductionWorkspaceRecord} from './productionWorkspaceCommands.js';
 export async function readWorkspaceCandidates(c:PoolClient,row:ProductionWorkspaceRecord,project:OpenChatCutProject):Promise<WorkspaceCandidate[]>{
@@ -28,8 +28,8 @@ export async function prepareRegisteredWorkspaceCandidate(c:PoolClient,root:stri
  if(candidate.status!=='available')throw new ConfigurationError(409,'候选已过期或已有决定，请读取当前版本。');
  if(!['keep-target','use-candidate'].includes(String(durationPolicy)))throw new ConfigurationError(400,'请明确选择保留目标时长或采用候选时长。');
  const source=await resolveWorkspaceSource(c,root,row.episode_id,candidate.relativePath);if(source.sha256!==candidate.sha256||Number(source.file_size)!==candidate.fileSize)throw new ConfigurationError(409,'候选源身份已变化。');
- await verifyNativeFile(root,candidate.relativePath,candidate.sha256,candidate.fileSize);
- const observed=candidate.kind==='image'?(await inspectWorkspaceVisualFile(root,candidate.relativePath,'image'),candidate.durationSeconds):candidate.kind==='audio'?await probeMp3Artifact(join(root,candidate.relativePath)):(await inspectMp4Artifact(join(root,candidate.relativePath))).durationSeconds;
+ await verifyEpisodeFile(c,root,row.episode_id,candidate.relativePath,candidate.sha256,candidate.fileSize);
+ const observed=candidate.kind==='image'?(await inspectWorkspaceVisualFile(root,candidate.relativePath,'image'),candidate.durationSeconds):candidate.kind==='audio'?await probeMp3Artifact(await resolveEpisodeFileReference(c,await episodeStorageLocationAtRoot(c,root,row.episode_id),candidate.relativePath)):(await inspectMp4Artifact(await resolveEpisodeFileReference(c,await episodeStorageLocationAtRoot(c,root,row.episode_id),candidate.relativePath))).durationSeconds;
  if(Math.abs(observed-candidate.durationSeconds)>0.05)throw new ConfigurationError(409,'候选实际时长与登记不同。');
  let explicitSpeech=false;
  if(candidate.kind==='audio'){const frozen=(await c.query('SELECT t.input_snapshot FROM public.tasks t JOIN local_identity.workspace_narration_requests r ON r.task_id=t.id WHERE r.workspace_id=$1 AND t.id=$2',[row.id,candidate.taskId])).rows[0]?.input_snapshot;if(frozen?.selectionVersion===1){explicitSpeech=true;const voice=frozen.media.narration.voice;validateSpeechParameters(frozen.production_selection,voice.name,voice.language_code,Number(voice.speaking_rate));}}
@@ -61,7 +61,7 @@ export async function finishRegisteredWorkspaceCandidate(c:PoolClient,root:strin
  if(data.adoptionId!==undefined&&(typeof data.adoptionId!=='string'||!/^[a-f0-9-]{36}$/.test(data.adoptionId))||data.nativeApplied!==undefined&&typeof data.nativeApplied!=='boolean')throw new ConfigurationError(400,'采用身份无效。');
  const prepared=(await c.query('SELECT * FROM local_identity.workspace_candidate_adoptions WHERE workspace_id=$1 AND candidate_id=$2 AND ($3::text IS NULL OR id::text=$3) ORDER BY created_at DESC LIMIT 1',[row.id,candidate.id,data.adoptionId??null])).rows[0];
  if(!prepared||candidate.status==='rejected'||candidate.status==='stale'||prepared.input_fingerprint!==candidate.inputFingerprint)throw new ConfigurationError(409,'采用身份已失效，请重新比较当前候选。');
- await verifyNativeFile(root,candidate.relativePath,candidate.sha256,candidate.fileSize);
+ await verifyEpisodeFile(c,root,row.episode_id,candidate.relativePath,candidate.sha256,candidate.fileSize);
  const edit=prepared.edit as WorkspaceCandidateEdit;
  if(isOpenChatCutStudio(row.episode_id)||data.nativeApplied===true){
  const item=project.timelines.flatMap(t=>t.items).find(i=>i.id===edit.targetItemId);if(data.nativeApplied!==true||!item||item.sourceAssetId!==edit.source.id||item.src!==candidate.relativePath||item.sourceContentHash!==candidate.sha256||item.sourceRevision!==`source-sha256-${candidate.sha256}`||(item.loopControlCandidate as {inputFingerprint?:string}|undefined)?.inputFingerprint!==candidate.inputFingerprint||Number(item.srcInFrame??0)!==Math.round((edit.source.sourceInSeconds??0)*project.timelines.find(t=>t.items.includes(item))!.fps)||Number(item.playbackRate??1)!==1||Number(item.durationInFrames)!==workspaceCandidateDurationFrames(edit,project.timelines.find(t=>t.items.includes(item))!.fps))throw new ConfigurationError(409,'请先将此候选保存到当前原生编辑器。');
