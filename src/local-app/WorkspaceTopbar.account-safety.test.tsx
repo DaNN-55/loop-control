@@ -16,7 +16,7 @@ it.each([false,true])('search switching an account respects unsaved changes: con
   if(path.includes('/workspace-search?'))return Response.json({query:'账号B',episodes:[],materials:[],accounts:[{id:'account-b',accountId:'account-b',kind:'account',title:'账号B',subtitle:'账号与系列'}],hasMore:{accounts:false,episodes:false,materials:false}});
   return Response.json({connections:[],versions:[]});
  }));
- const user=userEvent.setup();render(<LocalCatalogApp/>);await user.click(await screen.findByRole('button',{name:'账号蓝图'}));await screen.findByRole('heading',{name:'选中账号：账号A'});await user.click(screen.getByRole('button',{name:'修改配置草稿'}));
+ const user=userEvent.setup();render(<LocalCatalogApp/>);await user.click(await screen.findByRole('button',{name:'账号'}));await screen.findByRole('heading',{name:'选中账号：账号A'});await user.click(screen.getByRole('button',{name:'修改配置草稿'}));
  await user.click(screen.getByRole('textbox',{name:'查找生产单、账号或素材'}));await user.type(screen.getByRole('textbox',{name:'查找生产单、账号或素材'}),'账号B');await user.click(await screen.findByRole('button',{name:'账号B 账号与系列'}));
  expect(confirm).toHaveBeenCalledWith('当前配置有未保存修改，确定放弃吗？');expect(screen.getByRole('heading',{name:accepted?'选中账号：账号B':'选中账号：账号A'})).toBeTruthy();
 });

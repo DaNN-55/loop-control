@@ -7,12 +7,12 @@ Confirmed acceptance: formal UI → Owner HTTP → isolated real database/files 
 | Ticket | Direct blockers | Status |
 |---|---|---|
 | #179 | None | Integrated locally; acceptance passed, tracker remains open |
-| #180 | None | Implementing |
-| #181 | #179 | Pending |
+| #180 | None | Integrated locally; acceptance passed, tracker remains open |
+| #181 | #179 | Implementing (T03; isolated worktree) |
 | #182 | #180, #181 | Pending |
 | #183 | #182 | Pending |
-| #184 | #179 | Pending |
-| #185 | #179 | Pending |
+| #184 | #179 | Implementing (T06; isolated worktree) |
+| #185 | #179 | Implementing in isolated T07 worktree |
 | #186 | #179 | Pending |
 | #187 | #184, #185, #186 | Pending |
 | #188 | #183 | Pending |
@@ -30,7 +30,13 @@ Baseline verification: `npm run check` passed; default suite 174 files / 1144 te
 
 Verification log and ticket handoffs: `/private/tmp/loop-control-178-20261031`. Preserve RED/GREEN, actual skip counts and any unresolved integration limitations.
 
+Tracker: #179 and #180 closed after independent merger acceptance; 2/17 complete. T03/#181, T06/#184 and T07/#185 now implementing. T01/T02 clean merged worktrees removed; recovery branches retained. Migration reservations live in external `MIGRATION-RESERVATIONS.json`.
+
+Cross-ticket notes: T03 will bind global storage to the workspace Owner. Existing zero-account create_account rejects first account via membership-only check; T04 owns fixing that through the trusted T03 binding, not broadening credentials. T07 owns shared producer namespaces/native output authority and mediaLibrary prefix checks; T06 owns input/planning guards and localFiles. Relative-prefix migration of frozen references remains a mandatory T13/T14 seam (external LOCATION-CALLERS.md), not solved by account-root-only mapping.
+
 T01/#179 integrated without conflicts at `9ac31698` from clean source `33256ff8` (implementation `c6458f8b`, includes integration base `916f3f3f`). Merger verification passed: `npm run check`; four targeted catalog UI files / 25 tests; isolated real Owner HTTP/database/files `episodeStorageLocation.integration.test.ts` / 4 tests, zero skips, `--maxWorkers=1`. The HTTP run exercised actual system-folder opening, old bytes/preview, persisted new-layout identity, restart/rename, foreign Owner/CSRF/extra path rejection, missing/replaced/symlink/permission failures, repeat-receipt revalidation and controlled desktop-open failure. Root mapping and no-old-root-fallback review found no serious new issue. Logs and exact commands: external `MERGE-T01.md` and `MERGE-T01-*.log`. Worker evidence already covers default 175 files / 1145 tests, build/runtime preparation and one formal browser test; those were not repeated. Browser clipboard readback remains unverified. No daily data, shared baseline migration, paid calls, tracker closure, push or worktree cleanup.
+
+T02/#180 integrated without conflicts at `b588f930` from clean source `95b3143c` (implementation `dbccc108`, includes integration base `916f3f3f`). T01's actual production-folder callback remains intact. Merger verification passed: `npm run check`; ten affected account/navigation/configuration UI files / 113 tests; formal `accountWorkspace.browser.integration.test.ts` / one test, zero skips, `--maxWorkers=1`, through actual LocalCatalogApp login, Owner HTTP, isolated real DB/files and independent OpenChatCut SDK. The browser run verified independent account metadata/rule/series saves, unknown nested series fields, frozen blueprint preservation, foreign Owner/CSRF/nonobject/secret rejection and no overflow at account widths1440/1100/390 and series1280/390; desktop and narrow screenshots were visually inspected. Shared fixture requests110 and T02 requests112, deduplicated/sorted and applied only to a fresh random database; a live read confirmed the shared baseline remains107 migrations through109 with0 business accounts. No feature source edits were needed during integration. Full build/default suite and separate frozen-version HTTP test were not repeated; T02 does not claim later automatic storage behavior or native project editing/export. Evidence and exact commands: external `MERGE-T02.md`, `MERGE-T02-*.log` and `MERGE-T02-browser/`. T03/#181 and T06/#184 are the current isolated implementation frontier; no tracker closure, push or worktree cleanup.
 
 ---
 

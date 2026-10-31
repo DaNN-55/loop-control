@@ -16,10 +16,10 @@ it('the blueprint page offers creative configuration without review switches or 
   if(path.includes('/catalog?'))return Response.json(catalog());
   return Response.json({connections:[],versions:[],capabilities:{externalReady:false}});
  });vi.stubGlobal('fetch',fetcher);
- await act(async()=>{render(<LocalCatalogApp/>);});await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'账号蓝图'}));});
+ await act(async()=>{render(<LocalCatalogApp/>);});await act(async()=>{fireEvent.click(screen.getByRole('button',{name:'账号'}));});
  expect(screen.getByLabelText('账号定位')).toBeTruthy();
  expect(screen.queryByText('审核设置')).toBeNull();expect(screen.queryByLabelText('账号默认配置检查')).toBeNull();
- expect(screen.getByRole('button',{name:'保存蓝图'})).toBeTruthy();
+ expect(screen.getByRole('button',{name:'保存通用规则'})).toBeTruthy();
  const user=userEvent.setup();await user.click(screen.getByRole('button',{name:'账号操作'}));await user.click(screen.getByRole('menuitem',{name:'刷新账号'}));
  expect(fetcher.mock.calls.some(([path,init])=>String(path).includes('/account-commands')&&JSON.parse(String(init?.body??'{}')).command==='checkBlueprint')).toBe(false);
 });
