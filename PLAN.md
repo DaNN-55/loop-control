@@ -53,8 +53,8 @@ Confirmed acceptance: formal UI → Owner HTTP → isolated real database/files 
 | #186 | #179 | Completed; independent acceptance passed and tracker closed |
 | #187 | #184, #185, #186 | Completed; independent acceptance passed and tracker closed |
 | #188 | #183 | Completed; independent acceptance passed and tracker closed |
-| #189 | #183, #187 | Integrated locally; independent acceptance passed; awaiting root tracker closure |
-| #190 | #187, #188, #189 | Pending |
+| #189 | #183, #187 | Completed; independent acceptance passed and tracker closed |
+| #190 | #187, #188, #189 | Ready; isolated TDD implementation starting |
 | #191 | #190 | Pending |
 | #192 | #190 | Pending |
 | #193 | #191 | Pending |
@@ -67,7 +67,7 @@ Baseline verification: `npm run check` passed; default suite 174 files / 1144 te
 
 Verification log and ticket handoffs: `/private/tmp/loop-control-178-20261031`. Preserve RED/GREEN, actual skip counts and any unresolved integration limitations.
 
-Tracker: #179 through #188 are closed after independent acceptance; 10/17 closed. T11/#189 is independently accepted locally, awaiting root tracker closure; T12/#190 remains pending. Completed clean implementer worktrees and their merged ticket/process branches are removed after fresh ancestry/status/no-runtime-reference checks, with exact tips and deletion receipts retained outside the repo. The user explicitly authorized a dedicated cleanup subagent to free space; integration, active T11, shared runtime/SDK and acceptance evidence stay available. Exact receipts and migration reservations remain in the shared external context.
+Tracker: #179 through #189 are closed after independent acceptance; 11/17 closed. T12/#190 is now ready and starts isolated TDD implementation. Completed clean implementer worktrees and their merged ticket/process branches are removed after fresh ancestry/status/no-runtime-reference checks, with exact tips and deletion receipts retained outside the repo. The user explicitly authorized a dedicated cleanup subagent to free space; integration, active task worktrees, shared runtime/SDK and acceptance evidence stay available; completed T11 is released for proof-based cleanup. Exact receipts and migration reservations remain in the shared external context.
 
 Cross-ticket notes: T03 binds global storage to the persisted workspace Owner. T04 now creates the genuine first account through the trusted T03 binding without importing source metadata or broadening credentials. T07 owns shared producer namespaces/native output authority and mediaLibrary prefix checks; T06 owns input/planning guards and localFiles. Relative-prefix migration of frozen references remains a mandatory T13/T14 seam (external LOCATION-CALLERS.md), not solved by account-root-only mapping.
 
@@ -767,3 +767,5 @@ Owner 已选择通知同时作用于应用内和 macOS 桌面提醒。偏好按�
 T10/#188 独立合入 `4f465187`，来源 clean `22f3057d`，与原 integration `21828c57` 无冲突。独立 `npm run build`、`runtime:prepare`、5 文件23项单测、8 文件31项真实 HTTP/DB/文件/原生集成全部通过，31项零 skip。另独立正式恢复页通过1项，明确按名称过滤另1项 archive/delete browser case；不把过滤当通过。新进程 SIGKILL 的 prepared intent 经正式页恢复为 rolled_back；旧无精确清单回执重试仍 pending 且保留手放 inode/hash；归档和 production_completed 的列表入口均实际打开同一特殊字符 Finder 路径，核对4个文件后逐次关闭。1440/390 确认框截图亲看，390弹框388/388、三组路径356/356均无自身溢出；背景顶栏 document408/viewport390 为已有范围外问题。取消后 focus 落 body（继承入口行为，本票未改焦点），单独记录不扩展修复。实际 Finder Window 菜单0窗口条目并已取消，Ebuget1T桌面选择保留；自有 agent-browser 在 fixture close 前关闭，native/temp/随机DB无本票残留。固定源107迁移/max109与0账号保持；115 SHA与合同一致。详见仓库外 MERGE-T10.md、MERGE-T10-*.log、MERGE-T10/。未关闭Issue、清工作树、操作daily/main/push或付费。
 
 T10/#188 tracker closure verified on 2026-10-31 after root read the independent 31/31 real integration, 23/23 unit and formal recovery browser results. Source and local integration remain recoverable through integrated commits. Cleanup ownership: issue178_completed_cleanup; only completed task resources with fresh proofs may be removed. No main merge, push or daily change.
+
+T11/#189 tracker closure verified after root read the independent 20/20 real integration, 18/18 units, old-v1 targeted1/4filtered and actual native/archive evidence. Independent merge5d28c135 and receipt15890b6c remain recoverable on integration. T12 starts only after #187/#188/#189 are all closed; no default-layout source change precedes this gate.
