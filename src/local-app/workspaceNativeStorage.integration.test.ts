@@ -25,9 +25,10 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['legacy','registere
   const doc=JSON.parse(await readFile(join(f.assetRoot,w.project.relativePath),'utf8'));expect(doc.timelines[0].items[0].name).toBe('T09 保存并重开');
   expect((await send('closeWorkspaceStudio')).status).toBe(200);
   if(layout==='registered'){
-   const actual=join(f.assetRoot,f.episodeRelativePath),retained=actual+'-retained';await rename(actual,retained);await mkdir(actual);
-   for(const command of ['openWorkspaceStudio','exportWorkspace','prepareWorkspaceDelivery'])expect((await send(command)).status).toBe(409);
-   expect(await readdir(actual)).toEqual([]);await (await import('node:fs/promises')).rmdir(actual);await rename(retained,actual);
+   for(const actual of [join(f.assetRoot,f.episodeRelativePath),f.assetRoot,f.root]){const retained=actual+'-retained';await rename(actual,retained);await mkdir(actual);
+    try{for(const command of ['openWorkspaceStudio','exportWorkspace','prepareWorkspaceDelivery'])expect((await send(command)).status,actual).toBe(409);expect(await readdir(actual)).toEqual([]);}
+    finally{await rename(actual,retained+'-rejected');await rename(retained,actual);if(!(await readdir(retained+'-rejected')).length)await (await import('node:fs/promises')).rmdir(retained+'-rejected');}
+   }
   }
   const exported=await send('exportWorkspace');expect(exported.status,JSON.stringify(exported.body)).toBe(200);w=exported.body;expect(w.exports[0].status,JSON.stringify(w.exports[0].checks)).toBe('ready');expect(w.exports[0].artifact.relativePath.startsWith(f.episodeRelativePath+'/workspace-exports/')).toBe(true);
 
@@ -39,5 +40,17 @@ it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1').each(['legacy','registere
    await f.restart();const readback=await fetch(f.origin+`/api/local/episodes/${f.episode}/workspace`,{headers:{Cookie:'loop_owner_session='+f.token}});expect(readback.status).toBe(200);expect((await readback.json()).workspace.deliveries[0].verified).toBe(true);
    if(process.env.LOOP_T09_EVIDENCE){const dir=join(process.env.LOOP_T09_EVIDENCE,layout);await mkdir(dir,{recursive:true});await writeFile(join(dir,'result.json'),JSON.stringify({result,manifest,workspace:w,compilerCache:nativeReceipt.cache,compilerCacheRemovedAfterClose:true},null,2));for(const a of [...manifest.artifacts,pack])await writeFile(join(dir,a.artifactType==='final_render'?'final.mp4':a.artifactType==='cover'?'cover.png':a.artifactType+'.json'),await readFile(join(f.assetRoot,a.relativePath)));}
   }finally{await worker.end();}
+ }finally{await f.close();}
+},120000);
+
+it.skipIf(process.env.LOOP_WORKSPACE_ACCEPTANCE!=='1')('an owned native child crash removes its private compiler cache and preserves the SQLite workspace',async()=>{
+ const f=await productionWorkspaceFixture({episodeRelativePath:()=> '崩溃缓存_[T09]/本单',migrations:['db/local/120-native-workspace-storage-locations.sql']});
+ try{
+  let w=(await f.request('prepareWorkspace',{reviewPackageId:f.board,expectedScriptRevisionId:f.script})).body;w=await f.fillVisuals(w);
+  const send=(command:string)=>f.request(command,{workspaceId:w.id,expectedRevision:w.revision}),opened=await send('openWorkspaceStudio');expect(opened.status,JSON.stringify(opened.body)).toBe(200);w=opened.body.productionWorkspace;
+  const receiptPath=join(f.assetRoot,f.episodeRelativePath,'openchatcut-work/current/runtime/.loop-control-studio-process.json'),receipt=JSON.parse(await readFile(receiptPath,'utf8'));expect(receipt.episodeId).toBe(f.episode);
+  process.kill(receipt.pid,'SIGKILL');let removed=false;for(let i=0;i<100;i++){try{await lstat(receipt.cache.path);}catch(error){if((error as NodeJS.ErrnoException).code!=='ENOENT')throw error;removed=true;break;}await new Promise(done=>setTimeout(done,25));}expect(removed).toBe(true);
+  const reopened=await send('openWorkspaceStudio');expect(reopened.status,JSON.stringify(reopened.body)).toBe(200);w=reopened.body.productionWorkspace;
+  const next=JSON.parse(await readFile(receiptPath,'utf8'));expect(next.cache.path).not.toBe(receipt.cache.path);expect(w.project.projectId).toBe(opened.body.workspace.projectId);expect((await send('closeWorkspaceStudio')).status).toBe(200);await expect(lstat(next.cache.path)).rejects.toMatchObject({code:'ENOENT'});
  }finally{await f.close();}
 },120000);
