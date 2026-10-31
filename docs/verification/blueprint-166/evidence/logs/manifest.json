@@ -1,0 +1,56 @@
+[
+  {
+    "name": "final-merge-actual.log",
+    "archive": "final-merge-actual.log.gz",
+    "bytes": 15891,
+    "sha256": "a9c5c3cfbc6fe3407d6c53f6f1ff4603cb69e3b6fd9520b424968ad08e0eb8be"
+  },
+  {
+    "name": "final-merge-default.log",
+    "archive": "final-merge-default.log.gz",
+    "bytes": 23725,
+    "sha256": "70944daed1d213e0865d305abb6076fbd63bd0c4f170a24c226e62ffc048cec7"
+  },
+  {
+    "name": "final-merge-build.log",
+    "archive": "final-merge-build.log.gz",
+    "bytes": 895,
+    "sha256": "e75db7b1d85c006463f2ed7bf8eb6701375c1f537df307d5275e47be67dfddd0"
+  },
+  {
+    "name": "final-merge-prepare.log",
+    "archive": "final-merge-prepare.log.gz",
+    "bytes": 281,
+    "sha256": "0888d176bbcea27ecb67435b2dc7c99dd17f79b24390833e2dc0fa7829411396"
+  },
+  {
+    "name": "final-merge-check.log",
+    "archive": "final-merge-check.log.gz",
+    "bytes": 53,
+    "sha256": "928dd2453fd01e81e22aeb4106e166671312b96a2a55a28c6841f24d1af4c1b0"
+  },
+  {
+    "name": "T11-merge-actual.log",
+    "archive": "T11-merge-actual.log.gz",
+    "bytes": 17180,
+    "sha256": "8253e308e2b51b49717cf992df37c0c4315617d50c89ade007c090f7ad419d13"
+  },
+  {
+    "name": "T11-merge-diagnostic.log",
+    "archive": "T11-merge-diagnostic.log.gz",
+    "bytes": 36135,
+    "sha256": "59bcd1c38032e5daaac0d7ca028c190f0663b67ebae162d81923e04d0e02148f"
+  },
+  {
+    "name": "T11-native-red.log",
+    "archive": "T11-native-red.log.gz",
+    "bytes": 1405,
+    "sha256": "b13af3de3b2b5c5a6b350a11927c311530d5391c3592b79b2665312fa50cd5bf"
+  },
+  {
+    "name": "T11-native-green.log",
+    "archive": "T11-native-green.log.gz",
+    "bytes": 432,
+    "sha256": "a8e530bf76b0308cc233cf13507499214ef26ad949937690f2efa2756f2e2dd3"
+  }
+]

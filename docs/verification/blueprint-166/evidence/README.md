@@ -1,6 +1,6 @@
 # 逐票验收证据
 
-保留实施者与独立合并者的原始交接记录及代表性浏览器截图。记录中的临时绝对路径反映当时运行位置；对应实现、测试与迁移在集成分支中保留。所有服务返回均为受控测试响应，不代表真实供应商质量或日常环境已经切换。
+保留实施者与独立合并者的原始交接记录及代表性浏览器截图。记录中的临时绝对路径反映当时运行位置，后续清理已移除这些临时目录与工作树；对应实现、测试与迁移已合入 main。所有服务返回均为受控测试响应，不代表真实供应商质量或日常环境已经切换。
 
 - [T01-handoff.md](T01-handoff.md)
 - [T01-merge.md](T01-merge.md)
@@ -65,3 +65,7 @@
 - [final-results.json](final-results.json)
 - [issue-closeout.json](issue-closeout.json)
 - [worktree-cleanup-final.json](worktree-cleanup-final.json)
+- [main-merge-cleanup.json](main-merge-cleanup.json)
+- [原始日志压缩清单](logs/manifest.json)
+
+日志压缩文件保留原始字节，清单记录未压缩大小和 SHA-256。可用 `gzip -dc <文件.log.gz>` 读取；最终通过结果与关键旧失败日志分别保留。
