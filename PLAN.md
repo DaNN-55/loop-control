@@ -6,7 +6,7 @@ Confirmed acceptance: formal UI → Owner HTTP → isolated real database/files 
 
 | Ticket | Direct blockers | Status |
 |---|---|---|
-| #179 | None | Implementing |
+| #179 | None | Integrated locally; acceptance passed, tracker remains open |
 | #180 | None | Implementing |
 | #181 | #179 | Pending |
 | #182 | #180, #181 | Pending |
@@ -29,6 +29,8 @@ Runtime ready: independent `loop-control-178-test-postgres` container (network n
 Baseline verification: `npm run check` passed; default suite 174 files / 1144 tests passed (maxWorkers2). Log: external `baseline-default.log`. This is a pre-change baseline, not feature acceptance.
 
 Verification log and ticket handoffs: `/private/tmp/loop-control-178-20261031`. Preserve RED/GREEN, actual skip counts and any unresolved integration limitations.
+
+T01/#179 integrated without conflicts at `9ac31698` from clean source `33256ff8` (implementation `c6458f8b`, includes integration base `916f3f3f`). Merger verification passed: `npm run check`; four targeted catalog UI files / 25 tests; isolated real Owner HTTP/database/files `episodeStorageLocation.integration.test.ts` / 4 tests, zero skips, `--maxWorkers=1`. The HTTP run exercised actual system-folder opening, old bytes/preview, persisted new-layout identity, restart/rename, foreign Owner/CSRF/extra path rejection, missing/replaced/symlink/permission failures, repeat-receipt revalidation and controlled desktop-open failure. Root mapping and no-old-root-fallback review found no serious new issue. Logs and exact commands: external `MERGE-T01.md` and `MERGE-T01-*.log`. Worker evidence already covers default 175 files / 1145 tests, build/runtime preparation and one formal browser test; those were not repeated. Browser clipboard readback remains unverified. No daily data, shared baseline migration, paid calls, tracker closure, push or worktree cleanup.
 
 ---
 
