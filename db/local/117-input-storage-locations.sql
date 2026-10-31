@@ -1,13 +1,12 @@
 -- Input writes use the registered actual directory. No default layout change,
 -- historical reference rewrite, or alternative storage authority is introduced.
 DO $adapt$
-DECLARE d text;changed text;prefix text:='(SELECT directory_relative_path FROM local_identity.episode_storage_location(p_episode_id))';
+DECLARE d text;changed text;trusted_guard text;prefix text:='(SELECT directory_relative_path FROM local_identity.episode_storage_location(p_episode_id))';
 BEGIN
  d:=pg_get_functiondef('public.import_production_material(uuid,text,text,text,text,text,text,bigint,boolean,text)'::regprocedure);
- changed:=replace(d,
-  'p_storage_path !~ (''^episodes/'' || p_episode_id::text || ''/materials/[0-9a-f]{64}-[^/]+$'')',
-  '(left(p_storage_path,length('||prefix||')+11) IS DISTINCT FROM '||prefix||'||''/materials/'' OR substring(p_storage_path from length('||prefix||')+12) !~ ''^[0-9a-f]{64}-[^/]+$'')');
- IF changed=d THEN RAISE EXCEPTION 'Input path guard contract changed';END IF;EXECUTE changed;
+ trusted_guard:='(left(p_storage_path,length('||prefix||')+11) IS DISTINCT FROM '||prefix||'||''/materials/'' OR substring(p_storage_path from length('||prefix||')+12) !~ ''^[0-9a-f]{64}-[^/]+$'')';
+ changed:=replace(d,'p_storage_path !~ (''^episodes/'' || p_episode_id::text || ''/materials/[0-9a-f]{64}-[^/]+$'')',trusted_guard);
+ IF changed=d AND position(trusted_guard IN d)=0 THEN RAISE EXCEPTION 'Input path guard contract changed';END IF;EXECUTE changed;
  d:=pg_get_functiondef('local_identity.register_workspace_preparation(uuid,uuid,uuid,jsonb,jsonb,text)'::regprocedure);
  changed:=replace(d,'p_file->>''relativePath'' NOT LIKE ''episodes/''||p_episode::text||''/preparation/%''',
   '(left(p_file->>''relativePath'',length((SELECT directory_relative_path FROM local_identity.episode_storage_location(p_episode)))+13) IS DISTINCT FROM (SELECT directory_relative_path FROM local_identity.episode_storage_location(p_episode))||''/preparation/'' OR p_file->>''relativePath'' ~ ''(^/|\\|(^|/)\.{1,2}(/|$)|//|/$)'')');
