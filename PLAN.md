@@ -934,3 +934,10 @@ integration check → build → runtime:prepare → compiled assert 全通过；
 独算本轮真实dump29c270fd…=manifest=restore receipt、25项实际archive媒体大小/SHA、project45e3aeb1…、global与restore SQLite53248/header/独立只读clone integrity=ok/实际保存timeline、global native92861→93129及restore6213→6364、旧源offline/历史保持，global与restore Owner export6ed62f57…；browser实际2565316 B SHA6fb4d826…=Owner。compiledCLI原失败task/snapshot/model/budget重试，1本地0付费/无remoteID/旧prefix未重建。真实own第二target卷detach后host完整同名树/manual前后完全相同，409且source/config/DB binding原样。提前createFixture throw负例真实卷关闭、前后目录与mount plist相同、未到DB。
 
 来源24项相关、18项T15兼容及末次copy/mount30项日志已读，不机械重跑。旧accountDirectoryMigration first末尾lstat已知RED保持，未改断言或计绿。固定107/max109/0账号、ledger4806437b/schema1989a647与完整schema字节前后相同；DB只base+baseline、pinned container none-network/ports{}/volumes[]。own browser/native/Finder/process/cache/随机DB/mount均收尾，daily5174 PID71478、QuickLook与原4卷保留，main/sourceT16/T17/sharedSDK/context不动。完整报告与原始证据在外部 MERGE-T16.md、MERGE-T16/logs/、verified-evidence.json、resources.json。仅本收据提交且clean后释放integration写权与heavy资源给root；未关闭Issue、merge main、push、deploy或操作日常资料。
+
+
+### #194 closure / final ticket frontier
+
+- Root read full independent MERGE-T16 report, core28 / units25 / formal1 logs and resources; personally viewed fresh moving native frames, refreshed disabled progress and error390, independently hashed fresh dump29c270f… and both Owner exports. Closed #194 and verified CLOSED. 16/17 children (#179–#194) complete; #178 remains open.
+- #195/T17 read-only preparation is complete and source freeze32/32 verified in own723ae5d9 worktree. Implementation / final combined acceptance is now released from latest integration. Root retains final fresh Standards+Spec review and one fresh implementer/merger for raised findings after all17.
+- Dedicated cleanup actor may remove only merged inactive clean T16 branch/worktree after fresh proof. Preserve active T17, integration/main, exact source/merger evidence, shared SDK/runtime and original unknown mounts. No main merge, push, deployment or daily-data operation.
