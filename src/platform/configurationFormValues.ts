@@ -43,6 +43,7 @@ export interface BlueprintFormValues {
 }
 
 export interface SeriesFormValues {
+  advancedJson?: string;
   positioning: string;
   format: string;
   characters: string;
@@ -320,6 +321,7 @@ export function legacyBlueprintFormToPolicy(form: BlueprintFormValues): Json {
 export function seriesRulesToForm(rules: Json): SeriesFormValues {
   const value = objectValue(rules);
   return {
+    advancedJson: JSON.stringify(Object.fromEntries(Object.entries(value).filter(([key]) => !seriesKnownKeys.has(key))), null, 2),
     positioning: displayValue(value.positioning),
     format: displayValue(value.format),
     characters: displayValue(value.characters),
@@ -331,7 +333,7 @@ export function seriesRulesToForm(rules: Json): SeriesFormValues {
 }
 
 export function seriesFormToRules(form: SeriesFormValues): Json {
-  return Object.fromEntries([
+  return {...parseAdvancedJson(form.advancedJson ?? "{}"), ...Object.fromEntries([
     ["positioning", parseSeriesField(form.positioning)],
     ["format", parseSeriesField(form.format)],
     ["characters", parseSeriesField(form.characters)],
@@ -339,7 +341,7 @@ export function seriesFormToRules(form: SeriesFormValues): Json {
     ["visual_style", parseSeriesField(form.visualStyle)],
     ["narrative_structure", parseSeriesField(form.narrativeStructure)],
     ["restrictions", parseSeriesField(form.restrictions)],
-  ].filter(([, value]) => value !== undefined)) as Json;
+  ].filter(([, value]) => value !== undefined))} as Json;
 }
 
 function parseSeriesField(source: string): Json | undefined {
@@ -352,7 +354,5 @@ function parseSeriesField(source: string): Json | undefined {
 }
 
 export function validateSeriesRules(rules: Json): void {
-  const value = objectValue(rules);
-  const unsupported = Object.keys(value).filter((key) => !seriesKnownKeys.has(key));
-  if (unsupported.length) throw new Error(`系列规则仅支持表单字段：${unsupported.join("、")}。`);
+  if (!rules || typeof rules !== "object" || Array.isArray(rules)) throw new Error("系列规则必须为 JSON 对象。");
 }
