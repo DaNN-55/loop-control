@@ -36,11 +36,19 @@ async function inventory(root:string):Promise<File[]>{const files:File[]=[];asyn
  }}await visit('');return files;}
 async function allInventory(roots:{path:string}[]){const files:File[]=[];for(const root of roots){files.push(...await inventory(root.path));if(files.length>100000)throw new ConfigurationError(409,'迁移文件总数超过本次上限，请先整理目录。');}return files;}
 function references(evidence:unknown){const refs:Reference[]=[];function visit(value:unknown){if(!value||typeof value!=='object')return;if(Array.isArray(value)){for(const x of value)visit(x);return;}
- const row=value as Record<string,unknown>;for(const key of ['relative_path','storage_path','relativePath','project_relative_path','projectRelativePath','workspaceRelativePath','project_path']){
+ const row=value as Record<string,unknown>;
+ // Frozen output contracts describe promised files, not completed artifacts.
+ if(Array.isArray(row.required_artifact_types)&&typeof row.content_type==='string'||Array.isArray(row.requiredArtifactTypes)&&typeof row.contentType==='string')return;
+ for(const key of ['relative_path','storage_path','relativePath','project_relative_path','projectRelativePath','workspaceRelativePath','project_path']){
  const path=row[key];if(typeof path==='string'&&path){if(!safeRelative(path))throw new ConfigurationError(409,'文件引用不安全：'+path);refs.push({relativePath:path,...(typeof (row.sha256??row.project_sha256)==='string'&&/^[a-f0-9]{64}$/.test(String(row.sha256??row.project_sha256))?{sha256:String(row.sha256??row.project_sha256)}:{}),...(row.file_size!==undefined||row.fileSize!==undefined||key==='project_path'&&row.project_size!==undefined?{fileSize:Number(row.file_size??row.fileSize??row.project_size)}:{})});}}
  if(typeof row.src==='string'&&row.src.startsWith('episodes/'))refs.push({relativePath:row.src});
  if(row.reverseSources&&typeof row.reverseSources==='object')for(const source of Object.values(row.reverseSources))if(typeof source==='string'&&source.startsWith('episodes/'))refs.push({relativePath:source});
- for(const x of Object.values(row))visit(x);
+ for(const [key,x] of Object.entries(row)){
+  if(key==='input_snapshot'&&typeof row.task_type==='string'&&x&&typeof x==='object'){
+   for(const [slot,entry] of Object.entries(x)){if(slot==='output')continue;if(['review_render','final_render'].includes(slot)&&entry&&typeof entry==='object')visit(Object.fromEntries(Object.entries(entry).filter(([field])=>field!=='project_relative_path')));else visit(entry);}
+  }else visit(x);
+ }
+
  }visit(evidence);return refs;}
 function verifyReferences(files:File[],refs:Reference[]){const byPath=new Map(files.map(f=>[f.relativePath,f]));for(const ref of refs){const f=byPath.get(ref.relativePath);if(!f||ref.sha256&&ref.sha256!==f.sha256||ref.fileSize!==undefined&&ref.fileSize!==f.fileSize)throw new ConfigurationError(409,'文件引用校验失败：'+ref.relativePath);}}
 async function lock(c:Client,account:string){if(!(await c.query("SELECT pg_try_advisory_xact_lock(hashtextextended($1,0)) locked",['account-directory-migration:'+account])).rows[0].locked)throw new ConfigurationError(409,'账号迁移正在执行，请稍后读取结果。');await c.query("SELECT pg_advisory_xact_lock(hashtextextended('account-asset-root-ownership',0))");await c.query('SELECT local_identity.lock_account_directory_migration($1)',[account]);}

@@ -34,15 +34,17 @@ END $$;
 REVOKE ALL ON FUNCTION local_identity.lock_account_directory_migration(uuid) FROM PUBLIC;
 GRANT EXECUTE ON FUNCTION local_identity.lock_account_directory_migration(uuid) TO loop_app;
 CREATE FUNCTION local_identity.account_directory_busy(p_account uuid) RETURNS jsonb LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path='' AS $$
-DECLARE result jsonb;f record;pending boolean;BEGIN
+DECLARE result jsonb;f record;rejected uuid[]:='{}';unknowns uuid[]:='{}';table_rejected uuid[];table_unknown uuid[];BEGIN
  IF NOT EXISTS(SELECT 1 FROM public.account_memberships WHERE account_id=p_account AND user_id=local_identity.owner_id() AND role='owner') THEN RAISE EXCEPTION 'Owner required' USING ERRCODE='42501';END IF;
- SELECT coalesce(jsonb_agg(jsonb_build_object('taskId',t.id,'reason',CASE WHEN t.status IN ('ready','running') THEN '存在待执行或运行中的任务，请完成或明确处理后重新盘点。' ELSE '供应商提交结果尚未确认，请先恢复或核对已有请求。' END)),'[]') INTO result
- FROM public.tasks t JOIN public.episodes e ON e.id=t.episode_id LEFT JOIN public.paid_generation_reservations r ON r.task_id=t.id
- WHERE e.account_id=p_account AND ((t.status IN ('ready','running') AND (t.invalidated_at IS NULL OR t.status='running')) OR (r.request_state<>'succeeded' AND t.status<>'completed'));
+ -- A definite rejection may leave the paid ledger at submitting. Inspect all
+ -- submission protocols first; any started/received evidence outweighs rejection.
  FOR f IN SELECT c.table_name FROM information_schema.columns c WHERE c.table_schema='local_identity' AND c.column_name='outcome' AND c.table_name LIKE '%submissions' LOOP
-  EXECUTE format('SELECT EXISTS(SELECT 1 FROM local_identity.%I s JOIN public.tasks t ON t.id=s.task_id JOIN public.episodes e ON e.id=t.episode_id WHERE e.account_id=$1 AND s.outcome IN (''started'',''received'') AND t.status<>''completed'')',f.table_name) INTO pending USING p_account;
-  IF pending THEN result:=result||jsonb_build_array(jsonb_build_object('reason','供应商提交结果尚未确认，请先恢复或核对已有请求。'));END IF;
+  EXECUTE format('SELECT coalesce(array_agg(DISTINCT s.task_id) FILTER(WHERE s.outcome=''rejected''),''{}''::uuid[]),coalesce(array_agg(DISTINCT s.task_id) FILTER(WHERE s.outcome IN (''started'',''received'')),''{}''::uuid[]) FROM local_identity.%I s JOIN public.tasks t ON t.id=s.task_id JOIN public.episodes e ON e.id=t.episode_id WHERE e.account_id=$1 AND t.status<>''completed''',f.table_name) INTO table_rejected,table_unknown USING p_account;
+  rejected:=rejected||table_rejected;unknowns:=unknowns||table_unknown;
  END LOOP;
+ SELECT coalesce(jsonb_agg(jsonb_build_object('taskId',t.id,'reason',CASE WHEN t.status IN ('ready','running') AND (t.invalidated_at IS NULL OR t.status='running') THEN '存在待执行或运行中的任务，请完成或明确处理后重新盘点。' ELSE '供应商提交结果尚未确认，请先恢复或核对已有请求。' END)),'[]') INTO result
+ FROM public.tasks t JOIN public.episodes e ON e.id=t.episode_id LEFT JOIN public.paid_generation_reservations r ON r.task_id=t.id
+ WHERE e.account_id=p_account AND ((t.status IN ('ready','running') AND (t.invalidated_at IS NULL OR t.status='running')) OR (t.status<>'completed' AND (t.id=ANY(unknowns) OR (r.request_state<>'succeeded' AND NOT t.id=ANY(rejected)))));
  IF EXISTS(SELECT 1 FROM public.asset_locks l JOIN public.episodes e ON e.id=l.episode_id WHERE e.account_id=p_account AND l.expires_at>clock_timestamp()) THEN result:=result||jsonb_build_array(jsonb_build_object('reason','存在未释放的生产文件租约。'));END IF;
  RETURN result;
 END $$;
