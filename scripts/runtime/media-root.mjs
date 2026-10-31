@@ -3,6 +3,8 @@ import {join} from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {readFileSync,lstatSync,realpathSync,accessSync,constants,statfsSync,writeFileSync,renameSync,unlinkSync} from 'node:fs';
 import {dirname} from 'node:path';
+import {readdirSync} from 'node:fs';
+import {fingerprintFile} from '../storage/file-io.mjs';
 const sameBinding=(a,b)=>['path','deviceId','inodeId','mountPath'].every(key=>a?.[key]===b?.[key]);
 export const mediaRootReceiptPath=d=>join(d.runtimeRoot,'media-root-receipt.json');
 async function atomicPrivateFile(path,bytes){const temp=path+'.'+randomUUID()+'.tmp';try{await writeFile(temp,bytes,{mode:0o600,flag:'wx'});await rename(temp,path);}finally{await unlink(temp).catch(()=>{});}}
@@ -12,14 +14,15 @@ export function readMediaRootAuthorization(d){
  if(binding.path!==d.mediaRoot||d.worker&&d.worker.mountPath!==binding.mountPath)throw Error('Media root configuration mismatch');
  const receiptPath=mediaRootReceiptPath(d),receiptStat=lstatSync(receiptPath);if(receiptStat.isSymbolicLink()||receiptStat.uid!==process.getuid?.()||(receiptStat.mode&0o077)!==0||realpathSync(receiptPath)!==receiptPath)throw Error('Media root receipt must be private and owned');
  const receipt=JSON.parse(readFileSync(receiptPath,'utf8'));
- if(!['initialize','restore'].includes(receipt.operation)||receipt.database!==d.database.database||!sameBinding(receipt.binding,binding)||receipt.publicationFence!==true)throw Error('Media root initialization receipt mismatch');
+ if(!['initialize','restore','migration'].includes(receipt.operation)||receipt.database!==d.database.database||!sameBinding(receipt.binding,binding)||receipt.publicationFence!==true)throw Error('Media root initialization receipt mismatch');
  if(receipt.operation==='restore'){
   if(!d.restoreReceiptPath||receipt.restoreReceiptPath!==d.restoreReceiptPath)throw Error('Restore receipt authorization mismatch');
   const restoreStat=lstatSync(d.restoreReceiptPath);if(!restoreStat.isFile()||restoreStat.isSymbolicLink()||restoreStat.nlink!==1||restoreStat.uid!==process.getuid?.()||(restoreStat.mode&0o077)!==0||realpathSync(d.restoreReceiptPath)!==d.restoreReceiptPath)throw Error('Restore receipt must be private and owned');
   const restored=JSON.parse(readFileSync(d.restoreReceiptPath,'utf8'));
   if(restored.passed!==true||restored.publicationFence!==true||restored.database!==d.database.database||restored.mediaRoot!==d.mediaRoot||restored.archiveSha256!==receipt.archiveSha256||!sameBinding(restored.binding,binding))throw Error('Restored deployment receipt mismatch');
  }
- verifyMediaRootIdentity(d,binding);
+ if(receipt.operation==='migration')migrationProofQuery(receipt);
+ verifyMediaRootIdentity(d,binding);return receipt;
 }
 function verifyMediaRootIdentity(d,binding){
  const stat=lstatSync(binding.path,{bigint:true});
@@ -39,6 +42,7 @@ export function readPendingMediaRootDeployment(d){
 function atomicPrivateFileSync(path,bytes){const temp=path+'.'+randomUUID()+'.tmp';try{writeFileSync(temp,bytes,{mode:0o600,flag:'wx'});renameSync(temp,path);}finally{try{unlinkSync(temp);}catch(error){if(error.code!=='ENOENT')throw error;}}}
 export function recoverMediaRootDeployment(d,currentBinding,options={}){
  const pending=readPendingMediaRootDeployment(d);if(!pending)return d;
+ if(pending.publication?.operation==='migration')verifyMediaRootMigrationProof(options.migrationProof,pending.publication);
  const previous=JSON.parse(pending.previousSettings),configurationPath=d.deploymentFile??join(d.runtimeRoot,'deployment.json'),configuration=readFileSync(configurationPath,'utf8');
  if(pending.targetSettings&&configuration!==pending.previousSettings&&configuration!==pending.targetSettings)throw Error('Deployment configuration changed during publication; retain the journal');
 
@@ -57,9 +61,10 @@ export function recoverMediaRootDeployment(d,currentBinding,options={}){
   }
   atomicPrivateFileSync(mediaRootReceiptPath(d),pending.targetReceipt);atomicPrivateFileSync(d.deploymentFile??join(d.runtimeRoot,'deployment.json'),pending.targetSettings);
   const recovered={...d,mediaRoot:next.mediaRoot,mediaRootBinding:next.mediaRootBinding,restoreReceiptPath:next.restoreReceiptPath,restoreReceiptMediaRoot:next.restoreReceiptMediaRoot,worker:d.worker?{...d.worker,mountPath:next.worker.mountPath,alignment:next.worker.alignment}:undefined};
-  if(publication.operation!=='restore'||options.restoreState==='ready'){try{if(restoring)atomicPrivateFileSync(restoring.path,JSON.stringify(restoring.completed)+'\n');readMediaRootAuthorization(recovered);}catch(error){if(restoring)atomicPrivateFileSync(restoring.path,JSON.stringify({...restoring.prepared,passed:false})+'\n');throw error;}unlinkSync(mediaRootPendingPath(d));}
+  if(publication.operation!=='restore'||options.restoreState==='ready'){try{if(restoring)atomicPrivateFileSync(restoring.path,JSON.stringify(restoring.completed)+'\n');readMediaRootAuthorization(recovered);}catch(error){if(restoring)atomicPrivateFileSync(restoring.path,JSON.stringify({...restoring.prepared,passed:false})+'\n');throw error;}if(publication.operation!=='migration')unlinkSync(mediaRootPendingPath(d));}
   return recovered;
  }
+ if(pending.publication?.operation==='migration'&&!sameBinding(currentBinding,options.migrationProof?.manifest?.sourceBinding))throw Error('Migration source binding conflicts; retain the journal');
  if(currentBinding?.path!==previous.mediaRoot)throw Error('Media initialization journal conflicts with database binding');
  if(!pending.targetSettings){const unrelated=bytes=>{const config=JSON.parse(bytes);delete config.mediaRoot;delete config.mediaRootBinding;if(config.worker){delete config.worker.mountPath;if(config.worker.alignment)delete config.worker.alignment.cacheBinding;}return JSON.stringify(config);};if(unrelated(configuration)!==unrelated(pending.previousSettings))throw Error('Deployment configuration changed during initialization; retain the journal');}
 
@@ -80,7 +85,8 @@ export async function mediaRootWorkerSettings(d,binding){
  return{...d.worker,mountPath:binding.mountPath,...(alignment?{alignment}:{})};
 }
 export async function persistMediaRootDeployment(d,binding,publication={operation:'initialize'}){
- if(!['initialize','restore'].includes(publication.operation)||publication.operation==='restore'&&(!publication.restoreReceiptPath||!/^[a-f0-9]{64}$/.test(publication.archiveSha256??'')))throw Error('Invalid media publication authority');
+ if(!['initialize','restore','migration'].includes(publication.operation)||publication.operation==='restore'&&(!publication.restoreReceiptPath||!/^[a-f0-9]{64}$/.test(publication.archiveSha256??'')))throw Error('Invalid media publication authority');
+ if(publication.operation==='migration')migrationProofQuery(publication);
  if(!d.deploymentFile)throw Error('Deployment configuration is not writable');
  for(const path of [d.deploymentFile,d.runtimeRoot]){const stat=await lstat(path);if(stat.isSymbolicLink()||stat.uid!==process.getuid?.()||(stat.mode&0o077)!==0||await realpath(path)!==path)throw Error('Deployment configuration must be private and owned');}
  const configBytes=await readFile(d.deploymentFile),settings=JSON.parse(configBytes.toString());
@@ -94,4 +100,23 @@ export async function persistMediaRootDeployment(d,binding,publication={operatio
  try{await atomicPrivateFile(pendingPath,JSON.stringify({version:1,database:d.database.database,previousSettings:configBytes.toString(),previousReceipt:oldReceipt?.toString()??null,target:binding,publication,targetSettings,targetReceipt})+'\n');await atomicPrivateFile(receiptPath,targetReceipt);await atomicPrivateFile(d.deploymentFile,targetSettings);}catch(error){await undo();throw error;}
  undo.commit=async()=>{await unlink(pendingPath).catch(error=>{if(error.code!=='ENOENT')throw error;});};
  return undo;
+}
+
+/** Only the private publication journal/authorization names the plan. The DB
+ * proves all registered objects; actual file and directory identities follow. */
+export function migrationProofQuery(publication){
+ if(!/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(publication?.planId??'')||!/^[a-f0-9]{64}$/.test(publication?.manifestSha256??''))throw Error('Invalid migration publication authority');
+ return "SELECT local_identity.media_root_publication_proof('"+publication.planId+"'::uuid,'"+publication.manifestSha256+"')";
+}
+export function verifyMediaRootMigrationProof(row,publication){
+ migrationProofQuery(publication);
+ if(!row||row.id!==publication.planId||row.manifest_sha256!==publication.manifestSha256)throw Error('Migration plan readback mismatch');
+ const m=row.manifest,committed=['committed','completed'].includes(row.status);
+ const verify=d=>{const s=lstatSync(d.path,{bigint:true});if(!s.isDirectory()||s.isSymbolicLink()||realpathSync(d.path)!==d.path||String(s.dev)!==d.device||String(s.ino)!==d.inode)throw Error('Migration directory identity changed');};
+ if(!committed){verifyMediaRootIdentity({},m.sourceBinding);for(const d of m.directories)verify(d.source);return row;}
+ verifyMediaRootIdentity({},m.targetBinding);
+ if(row.status==='completed'){for(const d of row.runtimeDirectories??[])verify(d);return row;}
+ const directories=new Set(row.progress.createdDirectories.map(d=>d.path));for(const d of row.progress.createdDirectories)verify(d);
+ const expected=new Map(m.files.map(f=>[f.targetRelativePath,f]));let entries=0;
+ const scan=(path,prefix='',depth=0)=>{if(depth>128)throw Error('Migration target depth exceeded');for(const name of readdirSync(path).sort()){if(++entries>100000)throw Error('Migration target entry limit exceeded');const full=join(path,name),rel=prefix?prefix+'/'+name:name,s=lstatSync(full);if(s.isSymbolicLink()||realpathSync(full)!==full)throw Error('Migration target alias changed');if(s.isDirectory()){if(!directories.has(full))throw Error('Unknown migration target directory');scan(full,rel,depth+1);}else{const f=expected.get(rel);if(!s.isFile()||s.nlink!==1||!f)throw Error('Unknown migration target file');const digest=fingerprintFile(full);if(digest.bytes!==f.fileSize||digest.sha256!==f.sha256)throw Error('Migration target fingerprint changed');expected.delete(rel);}}};scan(m.targetBinding.path);if(expected.size)throw Error('Migration target files missing');return row;
 }

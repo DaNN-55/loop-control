@@ -3,6 +3,7 @@ import { createHash } from "node:crypto";
 import { access, readFile, realpath, stat, statfs, lstat } from "node:fs/promises";
 import { dirname, isAbsolute, join, relative, resolve } from "node:path";
 import type { ArtifactManifest } from "./contracts.js";
+import {verifyMediaRootBinding,type MediaRootBinding} from '../local-app/mediaRootSettings.js';
 import type {EpisodeFileIO} from "../local-app/episodeFiles.js";
 
 export interface MediaLibraryCheckInput {
@@ -11,6 +12,8 @@ export interface MediaLibraryCheckInput {
   minimumFreeBytes: number;
   requireEpisodesDirectory?: boolean;
   allowMountRoot?: boolean;
+  /** Binding read from the trusted deployment database, never a request flag. */
+  mediaRootBinding?: MediaRootBinding | null;
 }
 
 export interface MediaLibraryStatus {
@@ -39,8 +42,14 @@ export async function verifyMediaLibrary(input: MediaLibraryCheckInput): Promise
   }
 
   const mountPath = await directoryPath(input.mountPath, "媒体库挂载点");
-  await mountPointPath(mountPath);
   const assetRoot = await directoryPath(input.assetRoot, "媒体库账号目录");
+  if (input.mediaRootBinding) {
+    await verifyMediaRootBinding(input.mediaRootBinding, input.minimumFreeBytes);
+    if (input.mediaRootBinding.mountPath !== mountPath || !(assetRoot === input.mediaRootBinding.path || isDescendant(input.mediaRootBinding.path, assetRoot))) throw new Error("媒体库目录不在已提交媒体根内。");
+  }
+  // '/' alone remains invalid. A committed deep root with unchanged identity
+  // can live on the system volume without authorizing the system root itself.
+  if (!(mountPath === "/" && input.mediaRootBinding)) await mountPointPath(mountPath);
   if (!isDescendant(mountPath, assetRoot) && !(input.allowMountRoot && assetRoot === mountPath)) {
     throw new Error("媒体库账号目录必须位于预期挂载点下。");
   }

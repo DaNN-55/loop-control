@@ -1,7 +1,6 @@
 import type {Pool,PoolClient} from 'pg';
 import {randomUUID} from 'node:crypto';
-import {constants} from 'node:fs';
-import {lstat,readdir,realpath,open,mkdir,link,unlink,readFile,statfs} from 'node:fs/promises';
+import {lstat,readdir,realpath,mkdir,unlink,readFile,statfs} from 'node:fs/promises';
 import {join,relative} from 'node:path';
 import {sessionTransaction} from './ownerTransaction.js';
 import type {OwnerSession} from './sessions.js';
@@ -15,7 +14,7 @@ import {resolveEpisodeStorageLocation,requireEpisodeStorageDirectory,resolveEpis
 import {verifyMediaRootBinding,type MediaRootBinding} from './mediaRootSettings.js';
 import {episodeFileIO} from './episodeFiles.js';
 import {resolveStorageContainer,requireStorageContainer} from './seriesDirectories.js';
-import {identity,fileDigest,inventory,references,fingerprint,type File,type Root,type Reference} from './storageInventory.js';
+import {copyStorageFile,identity,fileDigest,inventory,references,fingerprint,type File,type Root,type Reference} from './storageInventory.js';
 type Client=Pick<PoolClient,'query'>;
 interface Manifest{targetRoot:string;targetIdentity:Root;sources:Root[];logicalRoots:string[];episodes:{id:string;title:string}[];files:File[];references:Reference[];evidenceSha256:string;conflicts:string[];totalBytes:number}
 async function allInventory(roots:{path:string}[]){const files:File[]=[];for(const root of roots){files.push(...await inventory(root.path));if(files.length>100000)throw new ConfigurationError(409,'迁移文件总数超过本次上限，请先整理目录。');}return files;}
@@ -44,17 +43,6 @@ async function plan(c:Client,mediaRoot:string,account:string,path:unknown):Promi
 }
 export async function planAccountDirectoryMigration(c:Client,mediaRoot:string,account:string,path:unknown){await lock(c,account);const manifest=await plan(c,mediaRoot,account,path),id=randomUUID();await c.query("INSERT INTO local_identity.account_directory_migrations(id,account_id,status,manifest) VALUES($1,$2,'planned',$3)",[id,account,manifest]);return{id,status:'planned',...manifest};}
 export async function readAccountDirectoryMigrations(c:Client,account:string){return(await c.query('SELECT id,status,manifest,error,created_at,updated_at FROM local_identity.account_directory_migrations WHERE account_id=$1 ORDER BY created_at DESC LIMIT 20',[account])).rows.map(row=>({id:row.id,status:row.status,...row.manifest,error:row.error,updatedAt:row.updated_at}));}
-async function safeParents(root:string,path:string){for(const part of path.split('/').slice(0,-1)){root=join(root,part);await mkdir(root,{mode:0o700}).catch(e=>{if(e.code!=='EEXIST')throw e;});await identity(root);}}
-async function copy(root:string,f:File,id:string,signal?:AbortSignal,onTemporary?:(value:{path:string;device:string;inode:string})=>Promise<void>){const outputPath=f.targetRelativePath??f.relativePath;await safeParents(root,outputPath);const dest=join(root,outputPath);
- try{const existing=await fileDigest(root,outputPath);if(existing.sha256!==f.sha256||existing.fileSize!==f.fileSize)throw new ConfigurationError(409,'目标已有冲突文件，原件已保留：'+outputPath);return;}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}
- const temp=dest+'.migration-'+id;await identity(root);if(await realpath(join(f.sourceRoot,f.relativePath))!==join(f.sourceRoot,f.relativePath))throw new ConfigurationError(409,'复制源路径已变化。');const input=await open(join(f.sourceRoot,f.relativePath),constants.O_RDONLY|constants.O_NOFOLLOW);let output:Awaited<ReturnType<typeof open>>;try{output=await open(temp,constants.O_WRONLY|constants.O_CREAT|constants.O_EXCL|constants.O_NOFOLLOW,0o600);}catch(error){await input.close();throw error;}
- try{if(await realpath(temp)!==temp)throw new ConfigurationError(409,'复制目标路径已变化。');const own=await output.stat({bigint:true});await onTemporary?.({path:temp,device:String(own.dev),inode:String(own.ino)});const stat=await input.stat();if(!stat.isFile()||stat.nlink!==1)throw new ConfigurationError(409,'复制源不是独立普通文件。');for await(const chunk of input.createReadStream({autoClose:false,highWaterMark:256*1024})){if(signal?.aborted)throw new ConfigurationError(409,'复制已中断，可恢复迁移；原位置仍有效。');const bytes=chunk as Buffer;let offset=0;while(offset<bytes.length){const written=await output.write(bytes,offset,bytes.length-offset);offset+=written.bytesWritten;}}await output.sync();}finally{try{await input.close();}finally{await output.close();}}
- const copied=await fileDigest(root,relative(root,temp));if(copied.sha256!==f.sha256||copied.fileSize!==f.fileSize)throw new ConfigurationError(409,'复制文件指纹不一致：'+f.relativePath);
- // Exclusive publication never replaces a file created after the collision check.
- // The receipt also recovers a crash between linking and removing this temp name.
- try{await lstat(dest);throw new ConfigurationError(409,'复制目标被其他操作占用：'+f.relativePath);}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}
- await link(temp,dest);await unlink(temp);
-}
 export async function executeAccountDirectoryMigration(pool:Pool,session:OwnerSession,mediaRoot:string,account:string,id:string,rollback:boolean,signal?:AbortSignal){
  const kind=await sessionTransaction(pool,session,async c=>(await c.query('SELECT manifest->>\'kind\' kind FROM local_identity.account_directory_migrations WHERE id=$1 AND account_id=$2',[id,account])).rows[0]?.kind);
  if(kind==='adoption'||kind==='move')return executeStorageAdoption(pool,session,mediaRoot,account,id,rollback,signal);
@@ -79,7 +67,7 @@ export async function executeAccountDirectoryMigration(pool:Pool,session:OwnerSe
  for(const f of expected.values()){const temp=join(m.targetRoot,f.relativePath+'.migration-'+id);try{const stat=await lstat(temp);if(!stat.isFile()||await realpath(temp)!==temp)throw new ConfigurationError(409,'迁移暂存文件身份无效。');if(stat.nlink!==1){const published=await lstat(join(m.targetRoot,f.relativePath));if(stat.nlink!==2||!published.isFile()||published.dev!==stat.dev||published.ino!==stat.ino||await realpath(join(m.targetRoot,f.relativePath))!==join(m.targetRoot,f.relativePath))throw new ConfigurationError(409,'迁移暂存文件身份无效。');}await unlink(temp);}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}}
 for(const actual of await inventory(m.targetRoot)){const f=expected.get(actual.relativePath);if(!f||f.sha256!==actual.sha256||f.fileSize!==actual.fileSize)throw new ConfigurationError(409,'目标存在冲突文件，请保留副本并重新盘点。');}
  const capacity=await statfs(m.targetRoot,{bigint:true}),remaining=[...expected.values()].reduce((bytes,file)=>bytes+BigInt(file.fileSize),0n)-(await inventory(m.targetRoot)).reduce((bytes,file)=>bytes+BigInt(file.fileSize),0n);if(capacity.bavail*capacity.bsize<remaining)throw new ConfigurationError(409,'目标磁盘空间不足，请释放空间后恢复迁移。');
- for(const file of m.files){if(signal?.aborted)throw new ConfigurationError(409,'复制已中断，可恢复迁移；原位置仍有效。');await copy(m.targetRoot,file,id,signal);}
+ for(const file of m.files){if(signal?.aborted)throw new ConfigurationError(409,'复制已中断，可恢复迁移；原位置仍有效。');await copyStorageFile(m.targetIdentity,file,id,signal);}
  const copied=await inventory(m.targetRoot),copiedByPath=new Map(copied.map(f=>[f.relativePath,f]));verifyReferences(copied,m.references);for(const f of expected.values()){const dest=copiedByPath.get(f.relativePath);if(!dest||dest.sha256!==f.sha256||dest.fileSize!==f.fileSize)throw new ConfigurationError(409,'复制结果校验失败：'+f.relativePath);}
  if(fingerprint(await allInventory(m.sources))!==fingerprint(m.files)||fingerprint(await evidence(c,account))!==m.evidenceSha256)throw new ConfigurationError(409,'复制期间源文件或引用已变化，未切换目录。');
  if(fingerprint(await identity(m.targetRoot))!==fingerprint(m.targetIdentity))throw new ConfigurationError(409,'切换前目标挂载已变化。');
@@ -236,7 +224,7 @@ async function executeStorageAdoption(pool:Pool,session:OwnerSession,mediaRoot:s
    const actual=await identity(path);if(!created&&(await readdir(path)).length)throw new ConfigurationError(409,'未登记目标目录已有内容，拒绝覆盖。');
    m.createdDirectories.push(actual);await persist();return actual;
   };
-  await ensure(m.targetRoot,m.targetIdentity);
+  const copyTarget=await ensure(m.targetRoot,m.targetIdentity);
   for(const container of m.containers)await ensure(join(m.targetRoot,container.prefix),container.identity);
   for(const episode of m.episodes.filter(e=>!e.managed))await ensure(join(m.targetRoot,episode.targetPrefix),null);
   const unique=[...new Map(m.files.map(f=>[f.targetRelativePath!,f])).values()];
@@ -248,7 +236,7 @@ async function executeStorageAdoption(pool:Pool,session:OwnerSession,mediaRoot:s
    const expected=new Map(unique.filter(f=>f.targetRelativePath!.startsWith(episode.targetPrefix+'/')).map(f=>[f.targetRelativePath!.slice(episode.targetPrefix.length+1),f]));
    for(const actual of await inventory(join(m.targetRoot,episode.targetPrefix))){const f=expected.get(actual.relativePath);if(!f||actual.sha256!==f.sha256||actual.fileSize!==f.fileSize)throw new ConfigurationError(409,'目标出现未知或冲突文件，保留现场，未切换位置。');}
   }
-  for(const file of unique){if(signal?.aborted)throw new ConfigurationError(409,'复制已中断，可恢复；原位置仍有效。');await copy(m.targetRoot,file,id,signal,async temp=>{m.temporaryFiles=m.temporaryFiles.filter(f=>f.path!==temp.path);m.temporaryFiles.push(temp);await persist();});}
+  for(const file of unique){if(signal?.aborted)throw new ConfigurationError(409,'复制已中断，可恢复；原位置仍有效。');await copyStorageFile(copyTarget,file,id,signal,async temp=>{m.temporaryFiles=m.temporaryFiles.filter(f=>f.path!==temp.path);m.temporaryFiles.push(temp);await persist();});}
   for(const file of unique){const actual=await fileDigest(m.targetRoot,file.targetRelativePath!);if(actual.sha256!==file.sha256||actual.fileSize!==file.fileSize)throw new ConfigurationError(409,'目标文件校验失败，原位置保留。');}
   if(fingerprint(await scopedInventory(m.episodes))!==fingerprint(m.files))throw new ConfigurationError(409,'复制期间旧源改变，未切换位置。');
   const result=await transaction(async c=>{

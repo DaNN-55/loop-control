@@ -1,8 +1,9 @@
-import { mkdtemp, mkdir, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, rm, symlink, writeFile, realpath } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { verifyArtifactIndex, verifyMediaLibrary } from "./mediaLibrary";
+import {inspectMediaRoot} from "../local-app/mediaRootSettings";
 
 const directories: string[] = [];
 
@@ -17,6 +18,15 @@ describe("外置媒体库", () => {
     await mkdir(join(assetRoot, "episodes"), { recursive: true });
 
     await expect(verifyMediaLibrary({ assetRoot, mountPath: "/", minimumFreeBytes: 0 })).rejects.toThrow("不能是系统根目录");
+    await expect(verifyMediaLibrary({ assetRoot, mountPath: "/", minimumFreeBytes: 0, allowMountRoot:true })).rejects.toThrow("不能是系统根目录");
+  });
+
+  it("提交的深层媒体根不能授权系统根、外部目录或替代身份", async () => {
+    const root=await realpath(await mkdtemp("/private/tmp/loop-media-bound-")),outside=await realpath(await mkdtemp("/private/tmp/loop-media-outside-"));directories.push(root,outside);
+    const binding=await inspectMediaRoot(root);
+    await expect(verifyMediaLibrary({assetRoot:"/",mountPath:"/",minimumFreeBytes:0,mediaRootBinding:binding,requireEpisodesDirectory:false,allowMountRoot:true})).rejects.toThrow("已提交媒体根");
+    await expect(verifyMediaLibrary({assetRoot:outside,mountPath:"/",minimumFreeBytes:0,mediaRootBinding:binding,requireEpisodesDirectory:false})).rejects.toThrow("已提交媒体根");
+    await expect(verifyMediaLibrary({assetRoot:root,mountPath:"/",minimumFreeBytes:0,mediaRootBinding:{...binding,inodeId:"1"},requireEpisodesDirectory:false})).rejects.toThrow("身份");
   });
 
   it("只接受当前 Episode 目录中的产物索引，并核对文件大小与 SHA-256", async () => {

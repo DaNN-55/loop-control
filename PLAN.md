@@ -910,3 +910,17 @@ fresh原布局PID29640：真实detach后无host树、API409；重挂原dev167772
 - Root read independent MERGE-T15 report, exact logs and mount/browser receipts, personally viewed fresh1440 plan and390 restart. Closed #193 and verified CLOSED at2026-10-31T17:52:27Z. 15/17 children (#179–#193) complete; #178 remains open.
 - #194/T16 read-only preparation is complete in own clean worktree; implementation now released from latest accepted integration, extending the same SQL125 plan and publication journal. #195 depends on #194 plus already closed #192. Final fresh Standards/Spec review and fixes remain mandatory.
 - Dedicated cleanup actor may remove only clean merged inactive T15 branch/worktree after fresh proof. Keep active T16, integration/main, shared SDK/runtime, evidence and original unknown mounts. No main merge, push, deployment or daily-data operation.
+
+### #194 / T16 全局媒体根迁移实施
+
+基于已独立验收的 integration9ec16724，在独立 t16 worktree 扩展同一 SQL125 plan / 原 manifest、共用复制与原 publication journal；仅新增 SQL126，旧110–125字节不变。
+
+- [x] 真实 Owner execute RED→GREEN；全对象复制与整体 lineage、service/Worker/新进程同根，新建单进入新根。
+- [x] 持久实际字节进度、客户端断开、SIGKILL同计划resume/rollback、源/目标变化、FIFO/容量/挂载、全局写屏障及0账号failed初始化拒绝。
+- [x] 最终SQL/真实TCP COMMIT回应丢失、配置publication、接管前/后失败与两个pre-instance proof接点；释放旧pool client后接管。
+- [x] 正式设置UI1440/1100/390、刷新重复请求/键盘、精确Finder、新根native保存重开播放导出、真实backup/freshDB/root restore。
+- [x] check/build/prepare及精确回归、固定基线/own资源、ADR/CONTRACT/HANDOFF与源码冻结准备；独立fresh merger与最终全spec双轴审查由root接续。
+
+完整组核心6files27/27、受影响5files24/24、原T15兼容4files18/18、units5files25/25通过；末次共享copy冻结身份修复后另跑copy/mount5files30/30及targeted actualdetach，并核原账号mount/interrupted2项。旧账号first末尾删除断言失败已在全未改9ec archive独立复现，单列KNOWN-BASELINES，不计全绿。正式browser最终1/1零skip45.98s。
+
+外部证据：`/private/tmp/loop-control-178-20261031/T16/`与`T16-CONTRACT.md`，完整命令与证据界限见HANDOFF。固定107/max109/0账号、schema1989a647/ledger4806437b；daily5174/QuickLook/main/sharedSDK保持，未push/部署/付费或处理日常数据。此为实现交付，不代表独立合并验收或关闭#194。

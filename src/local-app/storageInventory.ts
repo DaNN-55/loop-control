@@ -1,7 +1,7 @@
 import {createHash} from 'node:crypto';
 import {constants} from 'node:fs';
-import {lstat,opendir,realpath,open} from 'node:fs/promises';
-import {join} from 'node:path';
+import {lstat,opendir,realpath,open,mkdir,link,unlink} from 'node:fs/promises';
+import {join,relative} from 'node:path';
 import {ConfigurationError} from './configurationCommands.js';
 import {safeRelative} from './localFiles.js';
 export interface File{sourceRoot:string;relativePath:string;sha256:string;fileSize:number;targetRelativePath?:string}
@@ -43,3 +43,17 @@ export function references(evidence:unknown){const refs:Reference[]=[],workspace
  }
 
  }visit(evidence);return refs;}
+
+async function assertCopyRoot(root:Root){if(fingerprint(await identity(root.path))!==fingerprint(root))throw new ConfigurationError(409,'复制目标挂载或目录身份已变化，请恢复原位置。');}
+async function safeParents(root:Root,path:string){let parent=root.path;for(const part of path.split('/').slice(0,-1)){await assertCopyRoot(root);parent=join(parent,part);await mkdir(parent,{mode:0o700}).catch(e=>{if(e.code!=='EEXIST')throw e;});if((await identity(parent)).device!==root.device)throw new ConfigurationError(409,'复制目标父目录所在位置已变化。');await assertCopyRoot(root);}}
+export async function copyStorageFile(root:Root,f:File,id:string,signal?:AbortSignal,onTemporary?:(value:{path:string;device:string;inode:string})=>Promise<void>,onProgress?:(bytes:number)=>Promise<void>){const outputPath=f.targetRelativePath??f.relativePath;await assertCopyRoot(root);await safeParents(root,outputPath);const dest=join(root.path,outputPath);
+ try{const existing=await fileDigest(root.path,outputPath);if(existing.sha256!==f.sha256||existing.fileSize!==f.fileSize)throw new ConfigurationError(409,'目标已有冲突文件，原件已保留：'+outputPath);await assertCopyRoot(root);return;}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}
+ const temp=dest+'.migration-'+id;if(await realpath(join(f.sourceRoot,f.relativePath))!==join(f.sourceRoot,f.relativePath))throw new ConfigurationError(409,'复制源路径已变化。');const input=await open(join(f.sourceRoot,f.relativePath),constants.O_RDONLY|constants.O_NOFOLLOW|constants.O_NONBLOCK);let output:Awaited<ReturnType<typeof open>>;try{await assertCopyRoot(root);output=await open(temp,constants.O_WRONLY|constants.O_CREAT|constants.O_EXCL|constants.O_NOFOLLOW,0o600);}catch(error){await input.close();throw error;}
+ try{const own=await output.stat({bigint:true});try{await assertCopyRoot(root);if(String(own.dev)!==root.device||await realpath(temp)!==temp)throw new ConfigurationError(409,'复制目标路径已变化。');}catch(error){const actual=await lstat(temp,{bigint:true}).catch(()=>undefined);if(actual?.dev===own.dev&&actual.ino===own.ino)await unlink(temp);throw error;}
+ await onTemporary?.({path:temp,device:String(own.dev),inode:String(own.ino)});await assertCopyRoot(root);const stat=await input.stat();if(!stat.isFile()||stat.nlink!==1)throw new ConfigurationError(409,'复制源不是独立普通文件。');let copiedBytes=0,reportedBytes=0;for await(const chunk of input.createReadStream({autoClose:false,highWaterMark:256*1024})){if(signal?.aborted)throw new ConfigurationError(409,'复制已中断，可恢复迁移；原位置仍有效。');const bytes=chunk as Buffer;let offset=0;while(offset<bytes.length){const written=await output.write(bytes,offset,bytes.length-offset);offset+=written.bytesWritten;}copiedBytes+=bytes.length;if(onProgress&&(!reportedBytes||copiedBytes-reportedBytes>=4*1024*1024)){await onProgress(copiedBytes);reportedBytes=copiedBytes;}}await output.sync();}finally{try{await input.close();}finally{await output.close();}}
+ await assertCopyRoot(root);const copied=await fileDigest(root.path,relative(root.path,temp));if(copied.sha256!==f.sha256||copied.fileSize!==f.fileSize)throw new ConfigurationError(409,'复制文件指纹不一致：'+f.relativePath);
+ // Exclusive publication never replaces a file created after the collision check.
+ // The receipt also recovers a crash between linking and removing this temp name.
+ try{await lstat(dest);throw new ConfigurationError(409,'复制目标被其他操作占用：'+f.relativePath);}catch(e){if((e as NodeJS.ErrnoException).code!=='ENOENT')throw e;}
+ await assertCopyRoot(root);await link(temp,dest);await unlink(temp);
+}
