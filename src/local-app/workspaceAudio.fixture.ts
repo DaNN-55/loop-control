@@ -9,8 +9,8 @@ import {productionHash} from './scriptProductionStore';
 import {nativeWorkerPort} from './workerDatabase';
 import {runWorkspaceDeliveryProcess} from './workspaceDelivery.fixture';
 import {narrationFixture} from './workspaceNarration.fixture';
-export async function workspaceAudioFixture(options:{skipWorkspace?:boolean;videoConfiguration?:boolean;origin?:string;onBase?:Parameters<typeof narrationFixture>[1]}={}){
- const volume=await workspaceAudioVolume(),mediaRoot=await mkdtemp('/private/tmp/loop-t06-tones-'),media=await workspaceAudioMedia(mediaRoot);let f:Awaited<ReturnType<typeof narrationFixture>>;try{f=await narrationFixture(options.origin,options.onBase,options.videoConfiguration??false,options.skipWorkspace??false,{...media,testRootParent:volume.mountPath});}catch(e){await volume.close();await rm(mediaRoot,{recursive:true,force:true});throw e;}try{
+export async function workspaceAudioFixture(options:{skipWorkspace?:boolean;videoConfiguration?:boolean;migrations?:string[];origin?:string;onBase?:Parameters<typeof narrationFixture>[1]}={}){
+ const volume=await workspaceAudioVolume(),mediaRoot=await mkdtemp('/private/tmp/loop-t06-tones-'),media=await workspaceAudioMedia(mediaRoot);let f:Awaited<ReturnType<typeof narrationFixture>>;try{f=await narrationFixture(options.origin,options.onBase,options.videoConfiguration??false,options.skipWorkspace??false,{...media,testRootParent:volume.mountPath,migrations:options.migrations});}catch(e){await volume.close();await rm(mediaRoot,{recursive:true,force:true});throw e;}try{
  const version=randomUUID(),connection=randomUUID(),secret=randomUUID();
  await f.c.query('BEGIN');await f.c.query("SELECT set_config('loop.owner_id',$1,true)",[f.owner]);
  await f.c.query("INSERT INTO public.external_connections(id,provider,adapter,name,created_by,current_version_id,endpoint) VALUES($1,'freesound','freesound_preview','Controlled audio',$2,$3,'https://freesound.org/apiv2')",[connection,f.owner,version]);

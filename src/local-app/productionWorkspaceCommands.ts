@@ -1,3 +1,4 @@
+import {verifyEpisodeFile} from './episodeFiles.js';
 import {saveWorkspacePlanningSelection} from './planningSelectionStore.js';
 import {readWorkspacePexels} from './workspacePexels.js';
 import {readWorkspaceScriptResume,resumeWorkspaceScript} from './workspaceScriptResume.js';
@@ -44,7 +45,7 @@ const hash=(bytes:Buffer|string)=>createHash('sha256').update(bytes).digest('hex
 export async function readProductionWorkspace(c:PoolClient,episodeId:string,root:string):Promise<ProductionWorkspace|null>{
  const row=(await c.query('SELECT w.*,e.main_script_revision_id current_script,e.stage episode_stage,p.invalidated_at FROM local_identity.production_workspaces w JOIN public.episodes e ON e.id=w.episode_id JOIN public.review_packages p ON p.id=w.storyboard_package_id WHERE w.episode_id=$1',[episodeId])).rows[0];
  if(!row)return null;
- const project=JSON.parse((await verifyNativeFile(root,row.project_path,row.project_sha256,Number(row.project_size))).toString('utf8')) as OpenChatCutProject;
+ const project=JSON.parse((await verifyEpisodeFile(c,root,episodeId,row.project_path,row.project_sha256,Number(row.project_size))).toString('utf8')) as OpenChatCutProject;
  const usedContent=usedWorkspaceContent(project),placeholders=row.bindings.filter((b:WorkspaceClip)=>usedContent.items.some(i=>i.id===b.itemId&&(!['video','image'].includes(String(i.kind))||!i.src))).map((b:WorkspaceClip)=>b.itemId),missingSources:string[]=[];
  for(const path of usedContent.paths)try{await resolveWorkspaceSource(c,root,episodeId,path);}catch{missingSources.push(path);}
  let captionProblem=false;const captions=await readWorkspaceCaptions(c,root,{...row,bindings:row.bindings.filter((b:WorkspaceClip)=>usedContent.ids.has(b.itemId))},project).catch(()=>{captionProblem=true;return[];});

@@ -1,3 +1,4 @@
+import {episodeStorageLocationAtRoot,requireWritableEpisodeStorage} from './episodeStorageLocation.js';
 import {creativeAccountRules} from '../creativeAccountRules.js';
 import {resolveProductionSelection} from './productionSelection.js';
 import {registeredAdapters} from '../worker/registeredAdapters.js';
@@ -6,14 +7,13 @@ import {resolveWorkspaceShotLineage} from './workspacePreparation.js';
 import {applyWorkspaceAudioMix,resolveWorkspaceMainVoice} from '../workspaceAudio.js';
 import {isVideoProvider,videoProviders} from '../worker/videoProviderCatalog.js';
 import {createHash} from 'node:crypto';
-import {join} from 'node:path';
 import type {PoolClient} from 'pg';
 import type {WorkspaceNarration} from '../productionWorkspace.js';
 import type {OpenChatCutProject} from '../worker/openchatcutProject.js';
 import type {InputRuntime} from './episodeCommands.js';
 import {productionHash} from './scriptProductionStore.js';
 import {ConfigurationError} from './configurationCommands.js';
-import {verifyNativeFile} from './localFiles.js';
+import {verifyEpisodeFile,resolveEpisodeFileReference} from './episodeFiles.js';
 import {resolveWorkspaceSource} from './workspaceSources.js';
 import {inspectMp4Artifact} from '../worker/mediaTools.js';
 import {probeMp3Artifact} from '../worker/mediaTools.js';
@@ -48,6 +48,7 @@ export async function readWorkspaceNarration(c:PoolClient,row:ProductionWorkspac
   return{windowWarning,selection:s?.selection??null,defaults:defaults??null,requiresCandidateAdoption,...(!s?.selection&&duration&&bounds?{videoWindow:{durationSeconds:duration,generationSeconds:Math.max(bounds.minDuration,Math.ceil(duration)),maximumSeconds:bounds.maxDuration}}:{}),clipId:clip.id,shotId:clip.shotId,mode:s?.mode??(inherited?'manual':'none'),text:d?.tts_text??inherited?.input_snapshot?.media?.narration?.text??legacyMeta?.text??clip.text,voice:d?.tts_voice??null,languageCode:d?.tts_language_code??null,speakingRate:d?.tts_speaking_rate?Number(d.tts_speaking_rate):null,override:!!d?.tts_override_voice,inputFingerprint:hash,confirmed:!!s&&s.confirmed_fingerprint===hash,taskId:s?.task_id??null,status:inherited?'completed':conflict?'duration_conflict':!current?'pending':s?.status??(s?.mode==='none'?'disabled':'pending'),error:conflict?'画面范围与完整口播时长不同，请明确调整画面或主声音轨。':s&&['failed','blocked'].includes(s.status)?s.last_result?.blockers?.[0]?.detail??s.last_result?.retry?.reason??null:null,audioTrackId:track??inherited?.id??null,artifactId:track?s.source_artifact_id:inherited?.source_artifact_id??null,relativePath:track?s.relative_path:inherited?.relative_path??null,sha256:track?s.sha256:inherited?.sha256??null,fileSize:track?Number(s.file_size):inherited?Number(inherited.file_size):null,durationSeconds:track?Number(s.duration_seconds):inherited?Number(inherited.duration_seconds):null,itemId:workspaceNarrationItemId(clip.shotId),adoptedAudioTrackId:adoptedTrack};});
 }
 export async function executeWorkspaceNarration(c:PoolClient,root:string,row:ProductionWorkspaceRecord,project:OpenChatCutProject,runtime:Pick<InputRuntime,'narrationReady'|'checkReferences'>,command:string,data:Record<string,unknown>){
+ await requireWritableEpisodeStorage(c,root,row.episode_id);
  if(command==='saveWorkspaceNarrationDefaults'){
   const resolved=await resolveProductionSelection(c,data.selection,'speech');validateSpeechParameters(resolved.selection,data.voice,data.languageCode,data.speakingRate);
   await c.query('UPDATE local_identity.production_workspaces SET narration_defaults=$2 WHERE id=$1',[row.id,JSON.stringify({selection:resolved.selection,voice:data.voice,languageCode:data.languageCode,speakingRate:data.speakingRate})]);return;
@@ -129,7 +130,7 @@ async function adopt(c:PoolClient,root:string,row:ProductionWorkspaceRecord,proj
  if(n.adoptedAudioTrackId)throw new ConfigurationError(409,'已有口播的局部替换请在口播版本中明确时长并采用候选。');
  if(isOpenChatCutStudio(row.episode_id))throw new ConfigurationError(409,'请先保存并返回，再采用口播。');
  if(!n.audioTrackId||!n.relativePath||!n.sha256||!n.fileSize||!n.durationSeconds||n.mode==='none')throw new ConfigurationError(409,'当前输入还没有可用音轨。');
- await verifyNativeFile(root,n.relativePath,n.sha256,n.fileSize);const observed=await probeMp3Artifact(join(root,n.relativePath));
+ await verifyEpisodeFile(c,root,row.episode_id,n.relativePath,n.sha256,n.fileSize);const observed=await probeMp3Artifact(await resolveEpisodeFileReference(c,await episodeStorageLocationAtRoot(c,root,row.episode_id),n.relativePath));
  if(Math.abs(observed-n.durationSeconds)>0.05)throw new ConfigurationError(409,'实际音轨时长与登记不一致。');
  const bindings=row.bindings.filter(b=>b.shotId===n.shotId),ids=new Set(bindings.map(b=>b.itemId));
  const timelines=project.timelines.filter(t=>t.items.some(i=>ids.has(String(i.id))));
@@ -143,7 +144,7 @@ async function adopt(c:PoolClient,root:string,row:ProductionWorkspaceRecord,proj
  if(n.adoptedAudioTrackId&&oldDuration!==duration)throw new ConfigurationError(409,'替换口播会改变镜头时长，请在剪辑中明确处理。');
  if(!n.adoptedAudioTrackId&&oldDuration!==duration){
   if(visual.kind==='video'){
-   const source=await resolveWorkspaceSource(c,root,row.episode_id,String(visual.src));const video=await inspectMp4Artifact(join(root,source.relative_path));
+   const source=await resolveWorkspaceSource(c,root,row.episode_id,String(visual.src));const video=await inspectMp4Artifact(await resolveEpisodeFileReference(c,await episodeStorageLocationAtRoot(c,root,row.episode_id),source.relative_path));
    if((Number(visual.srcInFrame??0)+duration)/timeline.fps>video.durationSeconds+0.025)throw new ConfigurationError(409,'已匹配画面短于实际口播，请补充画面或明确调整，系统不会循环或变速。');
   }else if(!['text','image'].includes(String(visual.kind)))throw new ConfigurationError(409,'当前画面类型不能按口播时长自动调整。');
   const end=Number(visual.startFrame)+oldDuration;for(const item of timeline.items)if(item.id!==visual.id&&Number(item.startFrame)>=end)item.startFrame=Number(item.startFrame)+duration-oldDuration;visual.durationInFrames=duration;
@@ -168,8 +169,8 @@ export async function readWorkspaceNarrationTarget(c:PoolClient,root:string,work
  const clip=row.bindings.find(b=>b.id===clipId);if(!clip)throw new ConfigurationError(404,'画面引用不存在。');
  const n=(await readWorkspaceNarration(c,row)).find(n=>n.shotId===clip.shotId);
  if(!n?.audioTrackId||!n.relativePath||!n.sha256||!n.fileSize||!n.durationSeconds)throw new ConfigurationError(409,'请先准备当前镜头的实际主声音轨。');
- await verifyNativeFile(root,n.relativePath,n.sha256,n.fileSize);
- const observed=await probeMp3Artifact(join(root,n.relativePath));if(Math.abs(observed-n.durationSeconds)>0.05)throw new ConfigurationError(409,'主声音轨实际时长已变化。');
+ await verifyEpisodeFile(c,root,row.episode_id,n.relativePath,n.sha256,n.fileSize);
+ const observed=await probeMp3Artifact(await resolveEpisodeFileReference(c,await episodeStorageLocationAtRoot(c,root,row.episode_id),n.relativePath));if(Math.abs(observed-n.durationSeconds)>0.05)throw new ConfigurationError(409,'主声音轨实际时长已变化。');
  return{audioTrackId:n.audioTrackId,artifactId:n.artifactId,sha256:n.sha256,durationSeconds:observed,inputFingerprint:n.inputFingerprint,itemId:n.itemId};
 }
 
