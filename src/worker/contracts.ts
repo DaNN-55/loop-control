@@ -205,9 +205,10 @@ export interface WorkerTaskPackageInput {
     | {
       adapter: "pexels_video";
       bRoll: {
+        request?: import('./pexelsVideos.js').PexelsVideoRequest;
         query: string;
         targetDurationSeconds: number;
-        shot: StoryboardShotManifest;
+        shot?: StoryboardShotManifest;
       };
     }
     | {
@@ -531,7 +532,8 @@ export function createWorkerTaskPackage(input: WorkerTaskPackageInput): WorkerTa
     if (input.task.provider !== "pexels") throw new Error("B-roll 任务 Provider 必须与冻结 Pexels 适配器匹配。");
     const { bRoll } = input.media;
     if (!isNonEmptyString(bRoll.query) || !isPositiveFiniteNumber(bRoll.targetDurationSeconds)) throw new Error("B-roll 任务的冻结检索词或时长无效。");
-    validateStoryboardManifest({ version: "storyboard/v1", shots: [bRoll.shot] }, input.inputArtifacts);
+    if(bRoll.request){if(!['search','preview'].includes(bRoll.request.operation)||!bRoll.request.parameters||bRoll.request.operation==='preview'&&!bRoll.request.source)throw Error('Pexels 检索或预览请求无效。');}
+    else {if(!bRoll.shot)throw Error("Pexels 历史生成任务缺少冻结分镜。");validateStoryboardManifest({ version: "storyboard/v1", shots: [bRoll.shot] }, input.inputArtifacts);}
   }
   if (input.media?.adapter === "openchatcut_card_video") {
     if (input.task.provider !== "openchatcut") throw new Error("B-roll 卡片视频任务 Provider 必须是 OpenChatCut。");

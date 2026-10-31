@@ -1,3 +1,4 @@
+import {queryPexelsVideos,downloadPexelsVideo} from './pexelsVideos.js';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {isRetiredProvider,retiredProviderMessage} from './providerLifecycle.js';
@@ -36,8 +37,9 @@ export async function executeControlledMediaTask(input: {
   executeWhisperX?: (input: { audioPath: string; cacheDirectory: string; model: string }) => Promise<WhisperXExecution>;
 }): Promise<string> {
   if(isRetiredProvider(input.taskPackage.provider))throw new Error(retiredProviderMessage);
-  const media = await mediaBytes(input);
-  const audioDurationSeconds = await validateTemporaryMedia(input, media.bytes);
+  const search=input.taskPackage.media?.adapter==='pexels_video'&&input.taskPackage.media.bRoll.request?.operation==='search';
+  const media:{bytes:Uint8Array;source?:FreesoundPreview} = search ? {bytes:Buffer.from(JSON.stringify(await queryPexelsVideos({apiKey:input.pexelsApiKey??'',fetcher:input.fetcher,query:input.taskPackage.media!.adapter==='pexels_video'?input.taskPackage.media!.bRoll.query:'',parameters:input.taskPackage.media!.adapter==='pexels_video'?input.taskPackage.media!.bRoll.request!.parameters:undefined!})))} : await mediaBytes(input);
+  const audioDurationSeconds = search?undefined:await validateTemporaryMedia(input, media.bytes);
   const artifact = await writePrimaryArtifact(input.taskPackage, media.bytes);
   const result: WorkerResult = {
     version: "worker-result/v1",
@@ -102,6 +104,7 @@ async function mediaBytes(input: {
   }
   if (taskPackage.provider === "pexels" && taskPackage.media?.adapter === "pexels_video") {
     if (!input.pexelsApiKey) throw new Error("Pexels 连接密钥不可用，无法执行冻结 B-roll 任务。");
+    if(taskPackage.media.bRoll.request?.operation==='preview'){if(!taskPackage.media.bRoll.request.source)throw Error('Pexels 预览缺少明确选择。');return {bytes:await downloadPexelsVideo(input.fetcher,taskPackage.media.bRoll.request.source)};}
     const selected = await searchPexelsVideo({
       apiKey: input.pexelsApiKey,
       fetcher: input.fetcher,
@@ -194,7 +197,10 @@ async function validateTemporaryMedia(input: Parameters<typeof executeControlled
       return undefined;
     }
     if (input.taskPackage.provider === "pexels" && input.taskPackage.media?.adapter === "pexels_video") {
-      await input.validateMp4(path, input.taskPackage.media.bRoll.targetDurationSeconds);
+      await input.validateMp4(path, input.taskPackage.media.bRoll.request?.operation==='preview'?0.001:input.taskPackage.media.bRoll.targetDurationSeconds);
+      if(input.taskPackage.media.bRoll.request?.operation==='preview'){
+       const {stdout}=await promisify(execFile)('ffprobe',['-v','error','-select_streams','v:0','-show_entries','stream=codec_type,width,height','-of','json',path],{timeout:10000,maxBuffer:65536});const video=JSON.parse(stdout).streams?.[0];if(video?.codec_type!=='video'||!(video.width>0&&video.height>0&&video.width<=4096&&video.height<=4096))throw Error('Pexels 下载文件缺少有效视频流。');
+      }
       return undefined;
     }
     if (input.taskPackage.provider === "ffmpeg" && input.taskPackage.media?.adapter === "ffmpeg_trim_video") {
