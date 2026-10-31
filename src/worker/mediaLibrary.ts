@@ -9,6 +9,7 @@ export interface MediaLibraryCheckInput {
   mountPath: string;
   minimumFreeBytes: number;
   requireEpisodesDirectory?: boolean;
+  allowMountRoot?: boolean;
 }
 
 export interface MediaLibraryStatus {
@@ -34,7 +35,7 @@ export async function verifyMediaLibrary(input: MediaLibraryCheckInput): Promise
   const mountPath = await directoryPath(input.mountPath, "媒体库挂载点");
   await mountPointPath(mountPath);
   const assetRoot = await directoryPath(input.assetRoot, "媒体库账号目录");
-  if (!isDescendant(mountPath, assetRoot)) {
+  if (!isDescendant(mountPath, assetRoot) && !(input.allowMountRoot && assetRoot === mountPath)) {
     throw new Error("媒体库账号目录必须位于预期挂载点下。");
   }
 

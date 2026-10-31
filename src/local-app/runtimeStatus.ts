@@ -70,7 +70,7 @@ export function createRuntimeStatusReader(options: Options) {
       const cpu=cpuTimes(),total=cpu.total-previousCpu.total,idle=cpu.idle-previousCpu.idle;previousCpu=cpu;
       const [disk,media]=await Promise.all([
         statfs(options.projectRoot).then(fs=>({availableBytes:fs.bavail*fs.bsize,totalBytes:fs.blocks*fs.bsize})).catch(()=>null),
-        options.mountPath ? verifyMediaLibrary({assetRoot:options.mediaRoot,mountPath:options.mountPath,minimumFreeBytes:0,requireEpisodesDirectory:false})
+        options.mountPath ? verifyMediaLibrary({assetRoot:options.mediaRoot,mountPath:options.mountPath,minimumFreeBytes:0,requireEpisodesDirectory:false,allowMountRoot:true})
           .then(result=>({state:result.availableBytes<(options.minimumFreeBytes??0)?'attention' as const:'healthy' as const,availableBytes:result.availableBytes,minimumFreeBytes:options.minimumFreeBytes??0}))
           .catch(()=>({state:'offline' as const,availableBytes:null,minimumFreeBytes:options.minimumFreeBytes??0}))
           : Promise.resolve({state:'unknown' as const,availableBytes:null,minimumFreeBytes:null}),

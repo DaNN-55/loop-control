@@ -1,7 +1,8 @@
 // @vitest-environment node
 import{it,expect,vi}from'vitest';
 const ports=vi.hoisted(()=>({worker:vi.fn(async()=>({stop:vi.fn()})),connections:vi.fn(),accountClose:vi.fn(),runtime:vi.fn(()=>vi.fn()),store:vi.fn(()=>({mode:'keychain'})),probe:vi.fn(()=>({mode:'live'})),providerProbe:vi.fn((config,_transport,_readOnly,options)=>({mode:'live',networkAvailable:false,config,options}))}));
-vi.mock('../../dist/local-app/local-app/catalog.js',()=>({createLocalDatabase:()=>({end:vi.fn()})}));
+vi.mock('../../dist/local-app/local-app/catalog.js',()=>({createLocalDatabase:()=>({end:vi.fn(),query:vi.fn()})}));
+vi.mock('../../dist/local-app/local-app/mediaRootSettings.js',()=>({inspectMediaRoot:async path=>({path,deviceId:'fixture-device',inodeId:'fixture-inode',mountPath:'/isolated/volume'}),verifyMediaRootBinding:async value=>value,LocalMediaRootSettings:class{close=vi.fn();}}));
 vi.mock('../../dist/local-app/local-app/runtimeStatus.js',()=>({createRuntimeStatusReader:ports.runtime}));
 vi.mock('../../dist/local-app/local-app/mediaDeployment.js',()=>({readMediaDeployment:vi.fn()}));
 vi.mock('../../dist/local-app/local-app/localWorkerService.js',()=>({startNativeWorkerService:ports.worker}));

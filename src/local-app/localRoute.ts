@@ -1,3 +1,4 @@
+import {LocalMediaRootSettings} from './mediaRootSettings.js';
 import {readWorkspacePlanningSelection} from './planningSelectionStore.js';
 import {readProductionWorkspace,readWorkspaceVersion} from './productionWorkspaceCommands.js';
 import {readLegacyStudioProject} from './legacyStudioProject.js';
@@ -28,7 +29,7 @@ import {SecretStoreError} from './connectionPorts.js';
 import type {LocalEpisodeCommands} from './episodeCommands.js';
 import type {SecretAdministration,SecretOperation} from './secretAdministration.js';
 import type {RuntimeStatus} from '../observability/runtimeStatus.js';
-interface LocalOptions {pool:Pool;origin:string;mediaRoot:string;historyRoot?:string;secrets?:SecretAdministration;connections?:LocalConnections;episodes?:LocalEpisodeCommands;automation?:NativeAutomation;accounts?:LocalAccountCommands;runtimeStatus?:(ownerId:string,page:number)=>Promise<RuntimeStatus>}
+interface LocalOptions {mediaRootSettings?:LocalMediaRootSettings;pool:Pool;origin:string;mediaRoot:string;historyRoot?:string;secrets?:SecretAdministration;connections?:LocalConnections;episodes?:LocalEpisodeCommands;automation?:NativeAutomation;accounts?:LocalAccountCommands;runtimeStatus?:(ownerId:string,page:number)=>Promise<RuntimeStatus>}
 const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 async function readBody(request:IncomingMessage,limit=8192):Promise<Record<string,unknown>>{
  if(request.headers['content-type']?.split(';')[0]!=='application/json')throw Error('JSON required');
@@ -37,6 +38,7 @@ async function readBody(request:IncomingMessage,limit=8192):Promise<Record<strin
 }
 export function createLocalHandler(options:LocalOptions){
  const host=new URL(options.origin).host;
+ const mediaRootSettings=options.mediaRootSettings??new LocalMediaRootSettings(options.pool,options.mediaRoot);
  const lifecycle=new LocalEpisodeLifecycle(options.pool,options.mediaRoot,id=>options.episodes?.closeStudio(id)??Promise.resolve(),options.historyRoot);
  const connections=options.connections??new LocalConnections(options.pool);
  const accounts=options.accounts??new LocalAccountCommands(options.pool,options.mediaRoot,options.episodes);
@@ -95,6 +97,12 @@ export function createLocalHandler(options:LocalOptions){
      result=await service.reveal(session,body);
     }else{await reject(session.id,'invalid_request');send(405,{error:'密钥请求路径或方法无效。'});return;}
     send(result.status,result.body);return;
+   }
+   if(url.pathname==='/api/local/media-root'){
+    if(request.method==='GET'){send(200,await mediaRootSettings.read(session));return;}
+    if(request.method!=='POST'){send(405,{error:'本机存储请求方法无效。'});return;}
+    let body;try{body=await readBody(request);}catch{send(400,{error:'本机存储请求格式无效。'});return;}
+    send(200,await mediaRootSettings.execute(session,body));return;
    }
    await readMediaDeployment(options.pool,options.mediaRoot);
    if(url.pathname==='/api/local/account-commands'&&request.method==='POST'){
