@@ -3,7 +3,6 @@ import { assetRootFromPolicy } from "../worker/assetRoot";
 
 export const defaultBlueprintPolicy = {
   positioning: "",
-  approval_gates: ["script", "visual", "storyboard", "qc"],
   asset_root: "",
   budgets: { script_writing_cents: 0, storyboard_planning_cents: 0 },
   executors: {
